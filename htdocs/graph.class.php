@@ -37,6 +37,9 @@ class Graph
 
     $this->precision_y = 0;
 
+    $this->width = 400;
+    $this->height = 200;
+
     return 1;
   }
   
@@ -45,19 +48,21 @@ class Graph
    *
    *
    */
-  Function draw($file, $data)
+  Function draw($file, $data, $title='')
   {
-    $w = 400;
-    $h = 200;
     //Define the object
-    $graph = new PHPlot($w,$h);
+    $graph = new PHPlot($this->width, $this->height);
     $graph->SetIsInline(1);
+
     $graph->SetPlotType('bars');
 
-    $graph->SetPlotAreaPixels(60,10,$w-10,$h-30) ;
+    $graph->SetPlotAreaPixels(60, 10, $this->width-10, $this->height - 30) ;
 
     $graph->SetBackgroundColor($this->bgcolor);
-    $graph->SetPrecisionY($this->precision_Y);
+
+    // TODO
+    //$graph->SetPrecisionY($this->precision_Y);
+
     $graph->SetDataColors($this->datacolor, $this->bordercolor);
 
     $graph->SetOutputFile($file);
@@ -67,15 +72,37 @@ class Graph
 
     $graph->SetVertTickIncrement(0);
 
+    //
+    if (strlen($title))
+      {
+	$graph->SetTitle = $title;
+      }
+
     //Draw it
     $graph->DrawGraph();
   }
 
-  function SetPrecisionY($which_prec)
+  Function SetPrecisionY($which_prec)
   {
     $this->precision_y = $which_prec;
     return true;
   }
+
+  Function SetYLabel($label)
+  {
+    $this->YLabel = $label;
+  }
+
+  Function SetWidth($w)
+  {
+    $this->width = $w;
+  }
+
+  Function SetHeight($h)
+  {
+    $this->height = $h;
+  }
+
 }
 
 ?>
