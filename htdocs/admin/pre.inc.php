@@ -51,16 +51,6 @@ function llxHeader($head = "", $urlp = "") {
 
   //$menu->add_submenu("sqltables.php", "Tables");
 
-  if ($conf->boutique->enabled)
-    {
-      $menu->add(DOL_URL_ROOT."/admin/boutique.php", "Boutique");
-
-      if (defined("DB_NAME_OSC"))
-	{
-	  $menu->add_submenu(DOL_URL_ROOT."/admin/osc-languages.php", "OSC Languages $toto");
-	}      
-    }
-
   $menu->add("system/", "Système");
 
   left_menu($menu->liste);
