@@ -67,7 +67,7 @@ class AdherentType
        *  Insertion dans la base
        */
 
-      $sql = "INSERT INTO llx_adherent_type (statut)";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (statut)";
       $sql .= " VALUES ($this->statut)";
       
       $result = $this->db->query($sql);
@@ -93,7 +93,7 @@ class AdherentType
   Function update() 
     {
       
-      $sql = "UPDATE llx_adherent_type SET ";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type SET ";
       $sql .= "libelle = '".$this->libelle ."'";
       $sql .= ",statut=".$this->statut;
       $sql .= ",cotisation='".$this->cotisation."'";
@@ -125,7 +125,7 @@ class AdherentType
 
   {
     
-    $sql = "DELETE FROM llx_adherent_type WHERE rowid = $rowid";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type WHERE rowid = $rowid";
 
     if ( $this->db->query( $sql) )
       {
@@ -152,7 +152,7 @@ class AdherentType
   Function fetch($rowid)
   {
     $sql = "SELECT *";
-    $sql .= " FROM llx_adherent_type as d";
+    $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
     $sql .= " WHERE d.rowid = $rowid";
 
     if ( $this->db->query( $sql) )
@@ -186,7 +186,7 @@ class AdherentType
     {
       $projets = array();
 
-      $sql = "SELECT rowid, libelle FROM llx_adherent_type";
+      $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."adherent_type";
       
       if ($this->db->query($sql) )
 	{

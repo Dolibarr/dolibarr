@@ -84,7 +84,7 @@ print_titre("Configuration");
 /* ************************************************************************** */
 
 $sql = "SELECT d.rowid, d.libelle, d.cotisation, d.vote";
-$sql .= " FROM llx_adherent_type as d";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
 
 $result = $db->query($sql);
 if ($result) 
@@ -162,7 +162,7 @@ if ($action == 'create') {
 
   /*
    * $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
-   *  $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
+   *  $sql .= " FROM societe as s, ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp";
    *  $sql .= " AND f.rowid = $facid";
 
    *  $result = $db->query($sql);

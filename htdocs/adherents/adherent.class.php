@@ -249,7 +249,7 @@ class Adherent
 
       $this->date = $this->db->idate($this->date);
 
-      $sql = "INSERT INTO llx_adherent (datec)";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent (datec)";
       $sql .= " VALUES (now())";
       
       $result = $this->db->query($sql);
@@ -275,7 +275,7 @@ class Adherent
   Function update() 
     {
 
-      $sql = "UPDATE llx_adherent SET ";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
       $sql .= "prenom = '".$this->prenom ."'";
       $sql .= ",nom='"    .$this->nom."'";
       $sql .= ",societe='".$this->societe."'";
@@ -307,7 +307,7 @@ class Adherent
 
       if (sizeof($this->array_options) > 0 )
 	{
-	  $sql = "REPLACE INTO llx_adherent_options SET adhid = $this->id";
+	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options SET adhid = $this->id";
 	  foreach($this->array_options as $key => $value)
 	    {
 	      // recupere le nom de l'attribut
@@ -337,14 +337,14 @@ class Adherent
 
   {
     $result = 0;
-    $sql = "DELETE FROM llx_adherent WHERE rowid = $rowid";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = $rowid";
 
     if ( $this->db->query( $sql) )
       {
 	if ( $this->db->affected_rows() )
 	  {
 
-	    $sql = "DELETE FROM llx_cotisation WHERE fk_adherent = $rowid";
+	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = $rowid";
 	    if ( $this->db->query( $sql) )
 	      {
 		if ( $this->db->affected_rows() )
@@ -352,7 +352,7 @@ class Adherent
 		    $result = 1;
 		  }
 	      }
-	    $sql = "DELETE FROM llx_adherent_options WHERE adhid = $rowid";
+	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = $rowid";
 	    if ( $this->db->query( $sql) )
 	      {
 		if ( $this->db->affected_rows() )
@@ -378,7 +378,7 @@ class Adherent
   /* Fetch adherent corresponding to login passed in argument */
   Function fetch_login($login)
   {
-    $sql = "SELECT rowid FROM llx_adherent WHERE login='$login' LIMIT 1";
+    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login' LIMIT 1";
     if ( $this->db->query( $sql) )
       {
 	if ($this->db->num_rows())
@@ -397,7 +397,7 @@ class Adherent
   {
     $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.login, d.pass, d.naiss, d.photo, d.fk_adherent_type, d.morphy, t.libelle as type";
     $sql .= ",".$this->db->pdate("d.datefin")." as datefin";
-    $sql .= " FROM llx_adherent as d, llx_adherent_type as t";
+    $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
     $sql .= " WHERE d.rowid = $rowid AND d.fk_adherent_type = t.rowid";
 
     if ( $this->db->query( $sql) )
@@ -444,7 +444,7 @@ class Adherent
   {
     $tab=array();
     $sql = "SELECT *";
-    $sql .= " FROM llx_adherent_options";
+    $sql .= " FROM ".MAIN_DB_PREFIX."adherent_options";
     $sql .= " WHERE adhid=$rowid";
     
     if ( $this->db->query( $sql) ){
@@ -472,7 +472,7 @@ class Adherent
   Function fetch_name_optionals()
   {
     $array_name_options=array();
-    $sql = "SHOW COLUMNS FROM llx_adherent_options";
+    $sql = "SHOW COLUMNS FROM ".MAIN_DB_PREFIX."adherent_options";
 
     if ( $this->db->query( $sql) ){
       if ($this->db->num_rows()){
@@ -502,7 +502,7 @@ class Adherent
 
   {
     
-    $sql = "INSERT INTO llx_cotisation (fk_adherent, dateadh, cotisation)";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, dateadh, cotisation)";
     $sql .= " VALUES ($this->id, ".$this->db->idate($date).", $montant)";
 
     if ( $this->db->query( $sql) )
@@ -515,7 +515,7 @@ class Adherent
 			      strftime("%d",$date),
 			      strftime("%Y",$date)+1) - (24 * 3600);
 
-	    $sql = "UPDATE llx_adherent SET datefin = ".$this->db->idate($datefin)." WHERE rowid =". $this->id;
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET datefin = ".$this->db->idate($datefin)." WHERE rowid =". $this->id;
 
 	    if ( $this->db->query( $sql) )
 	      {
@@ -544,7 +544,7 @@ class Adherent
   Function validate($userid) 
     {
       
-      $sql = "UPDATE llx_adherent SET ";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
       $sql .= "statut=1";
       $sql .= ",fk_user_valid=".$userid;
 
@@ -571,7 +571,7 @@ class Adherent
   Function resiliate($userid) 
     {
       
-      $sql = "UPDATE llx_adherent SET ";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
       $sql .= "statut=0";
       $sql .= ",fk_user_valid=".$userid;
 

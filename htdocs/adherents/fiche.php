@@ -73,7 +73,7 @@ if ($HTTP_POST_VARS["action"] == 'cotisation')
 	else
 	  {
 	    // met a jour la table cotisation
-	    $sql="UPDATE llx_cotisation SET fk_bank=$insertid WHERE rowid=$crowid ";
+	    $sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=$insertid WHERE rowid=$crowid ";
 	    $result = $db->query($sql);
 	    if ($result) 
 	      {
@@ -97,7 +97,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
     $error+=1;
     $errmsg .="Login vide. Veuillez en positionner un<BR>\n";
   }
-  $sql = "SELECT login FROM llx_adherent WHERE login='$login';";
+  $sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login';";
   $result = $db->query($sql);
   if ($result) {
     $num = $db->num_rows();
@@ -175,7 +175,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	      else
 		{
 		  // met a jour la table cotisation
-		  $sql="UPDATE llx_cotisation SET fk_bank=$insertid WHERE rowid=$crowid ";
+		  $sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=$insertid WHERE rowid=$crowid ";
 		  $result = $db->query($sql);
 		  if ($result) 
 		    {
@@ -765,7 +765,7 @@ if ($rowid > 0)
    *
    */
   $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
-  $sql .= " FROM llx_adherent as d, llx_cotisation as c";
+  $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
   $sql .= " WHERE d.rowid = c.fk_adherent AND d.rowid=$rowid";
 
   $result = $db->query($sql);

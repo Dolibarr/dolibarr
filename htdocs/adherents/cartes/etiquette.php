@@ -52,7 +52,7 @@ if (!isset($annee)){
 
 // requete en prenant que les adherents a jour de cotisation
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin, adresse,cp,ville,pays, t.libelle as type, d.naiss, d.email, d.photo";
-$sql .= " FROM llx_adherent as d, llx_adherent_type as t";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1 AND datefin > now()";
 $sql .= " ORDER BY d.rowid ASC ";
 

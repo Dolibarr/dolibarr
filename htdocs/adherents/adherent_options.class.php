@@ -117,7 +117,7 @@ class AdherentOptions
      *  Insertion dans la base
      */
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
-      $sql = "ALTER TABLE llx_adherent_options ";
+      $sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options ";
       switch ($type){
       case 'varchar' :
       case 'interger' :
@@ -153,7 +153,7 @@ class AdherentOptions
      *  Insertion dans la base
      */
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
-      $sql = "INSERT INTO llx_adherent_options_label SET ";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label SET ";
       $escaped_label=mysql_escape_string($label);
       $sql .= " name='$attrname',label='$escaped_label' ";
       
@@ -177,7 +177,7 @@ class AdherentOptions
   Function delete($attrname)
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
-      $sql = "ALTER TABLE llx_adherent_options DROP COLUMN $attrname";
+      $sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options DROP COLUMN $attrname";
       
       if ( $this->db->query( $sql) )
 	{
@@ -202,7 +202,7 @@ class AdherentOptions
   Function delete_label($attrname)
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
-      $sql = "DELETE FROM llx_adherent_options_label WHERE name='$attrname'";
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options_label WHERE name='$attrname'";
       
       if ( $this->db->query( $sql) )
 	{
@@ -227,7 +227,7 @@ class AdherentOptions
   Function update($attrname,$type='varchar',$length=255)
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
-      $sql = "ALTER TABLE llx_adherent_options ";
+      $sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options ";
       switch ($type){
       case 'varchar' :
       case 'interger' :
@@ -268,7 +268,7 @@ class AdherentOptions
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
       $escaped_label=mysql_escape_string($label);
-      $sql = "REPLACE INTO llx_adherent_options_label SET name='$attrname',label='$escaped_label'";
+      $sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options_label SET name='$attrname',label='$escaped_label'";
       
       if ( $this->db->query( $sql) )
 	{
@@ -301,7 +301,7 @@ class AdherentOptions
   Function fetch_name_optionals()
   {
     $array_name_options=array();
-    $sql = "SHOW COLUMNS FROM llx_adherent_options";
+    $sql = "SHOW COLUMNS FROM ".MAIN_DB_PREFIX."adherent_options";
 
     if ( $this->db->query( $sql) )
       {
@@ -333,7 +333,7 @@ class AdherentOptions
   Function fetch_name_optionals_label()
   {
     $array_name_label=array();
-    $sql = "SELECT name,label FROM llx_adherent_options_label";
+    $sql = "SELECT name,label FROM ".MAIN_DB_PREFIX."adherent_options_label";
 
     if ( $this->db->query( $sql) )
       {

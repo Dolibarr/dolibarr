@@ -38,7 +38,7 @@ if (! isset($cotis))
   $cotis=1;
 }
 $sql = "SELECT d.login, d.pass, ".$db->pdate("d.datefin")." as datefin";
-$sql .= " FROM llx_adherent as d ";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d ";
 $sql .= " WHERE d.statut = $statut ";
 if ($cotis==1){
   $sql .= " AND datefin > now() ";

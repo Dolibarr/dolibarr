@@ -166,7 +166,7 @@ class Cotisation
 
       $this->date = $this->db->idate($this->date);
 
-      $sql = "INSERT INTO llx_don (datec, amount, fk_paiement,prenom, nom, societe,adresse, cp, ville, pays, public, fk_don_projet, note, fk_user_author, datedon, email)";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."don (datec, amount, fk_paiement,prenom, nom, societe,adresse, cp, ville, pays, public, fk_don_projet, note, fk_user_author, datedon, email)";
       $sql .= " VALUES (now(), $this->amount, $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, $this->projetid, '$this->commentaire', $userid, '$this->date','$this->email')";
       
       $result = $this->db->query($sql);
@@ -193,7 +193,7 @@ class Cotisation
       
       $this->date = $this->db->idate($this->date);
 
-      $sql = "UPDATE llx_don SET ";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
       $sql .= "amount = " . $this->amount;
       $sql .= ",fk_paiement = ".$this->modepaiementid;
       $sql .= ",prenom = '".$this->prenom ."'";
@@ -234,7 +234,7 @@ class Cotisation
 
   {
     
-    $sql = "DELETE FROM llx_don WHERE rowid = $rowid AND fk_statut = 0;";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0;";
 
     if ( $this->db->query( $sql) )
       {
@@ -305,7 +305,7 @@ class Cotisation
   Function valid_promesse($rowid, $userid)
   {
 
-    $sql = "UPDATE llx_don SET fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid AND fk_statut = 0;";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid AND fk_statut = 0;";
 
     if ( $this->db->query( $sql) )
       {
@@ -330,7 +330,7 @@ class Cotisation
    */
   Function set_paye($rowid, $modepaiement='')
   {
-    $sql = "UPDATE llx_don SET fk_statut = 2";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
 
     if ($modepaiement)
       {
@@ -361,7 +361,7 @@ class Cotisation
    */
   Function set_commentaire($rowid, $commentaire='')
   {
-    $sql = "UPDATE llx_don SET note = '$commentaire'";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."don SET note = '$commentaire'";
 
     $sql .=  " WHERE rowid = $rowid ;";
 
@@ -389,7 +389,7 @@ class Cotisation
   Function set_encaisse($rowid)
   {
 
-    $sql = "UPDATE llx_don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2;";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2;";
 
     if ( $this->db->query( $sql) )
       {
@@ -414,7 +414,7 @@ class Cotisation
   Function sum_actual()
   {
     $sql = "SELECT sum(amount)";
-    $sql .= " FROM llx_don";
+    $sql .= " FROM ".MAIN_DB_PREFIX."don";
     $sql .= " WHERE fk_statut = 3";
 
     if ( $this->db->query( $sql) )
@@ -432,7 +432,7 @@ class Cotisation
   Function sum_pending()
   {
     $sql = "SELECT sum(amount)";
-    $sql .= " FROM llx_don";
+    $sql .= " FROM ".MAIN_DB_PREFIX."don";
     $sql .= " WHERE fk_statut = 2";
 
     if ( $this->db->query( $sql) )
@@ -450,7 +450,7 @@ class Cotisation
   Function sum_intent()
   {
     $sql = "SELECT sum(amount)";
-    $sql .= " FROM llx_don";
+    $sql .= " FROM ".MAIN_DB_PREFIX."don";
     $sql .= " WHERE fk_statut = 1";
 
     if ( $this->db->query( $sql) )

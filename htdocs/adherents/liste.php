@@ -51,7 +51,7 @@ if (! isset($statut))
 
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin";
 $sql .= " , d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
-$sql .= " FROM llx_adherent as d, llx_adherent_type as t";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
 if ( $_POST["action"] == 'search')
 {

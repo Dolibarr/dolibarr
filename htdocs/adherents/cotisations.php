@@ -47,7 +47,7 @@ if ($action == 'add') {
 if ($HTTP_POST_VARS["action"] == '2bank' && $HTTP_POST_VARS["rowid"] !=''){
   if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
     $dateop=strftime("%Y%m%d",time());
-    $sql="SELECT cotisation FROM llx_cotisation WHERE rowid=".$HTTP_POST_VARS["rowid"]." ";
+    $sql="SELECT cotisation FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid=".$HTTP_POST_VARS["rowid"]." ";
     $result = $db->query($sql);
     if ($result) 
       {
@@ -65,7 +65,7 @@ if ($HTTP_POST_VARS["action"] == '2bank' && $HTTP_POST_VARS["rowid"] !=''){
 	    else
 	      {
 		// met a jour la table cotisation
-		$sql="UPDATE llx_cotisation SET fk_bank=$insertid WHERE rowid=".$HTTP_POST_VARS["rowid"]." ";
+		$sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=$insertid WHERE rowid=".$HTTP_POST_VARS["rowid"]." ";
 		$result = $db->query($sql);
 		if ($result) 
 		  {
@@ -101,7 +101,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $sql = "SELECT c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
-$sql .= " FROM llx_adherent as d, llx_cotisation as c";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
 $sql .= " WHERE d.rowid = c.fk_adherent";
 if(isset($date_select) && $date_select != ''){
   $sql .= " AND dateadh LIKE '$date_select%'";
@@ -122,7 +122,7 @@ if ($result)
     }
 }
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh, c.fk_bank as bank, c.rowid as crowid";
-$sql .= " FROM llx_adherent as d, llx_cotisation as c";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
 $sql .= " WHERE d.rowid = c.fk_adherent";
 if(isset($date_select) && $date_select != ''){
   $sql .= " AND dateadh LIKE '$date_select%'";
