@@ -40,7 +40,7 @@ $facture_addon_var_pdf = FACTURE_ADDON_PDF;
 
 if ($action == 'set')
 {
-  $sql = "REPLACE INTO llx_const SET name = 'FACTURE_ADDON', value='".$value."'";
+  $sql = "REPLACE INTO llx_const SET name = 'FACTURE_ADDON', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {
@@ -52,7 +52,7 @@ if ($action == 'set')
 
 if ($action == 'setpdf')
 {
-  $sql = "REPLACE INTO llx_const SET name = 'FACTURE_ADDON_PDF', value='".$value."'";
+  $sql = "REPLACE INTO llx_const SET name = 'FACTURE_ADDON_PDF', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {
