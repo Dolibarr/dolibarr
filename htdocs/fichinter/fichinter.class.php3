@@ -36,6 +36,7 @@ class Fichinter {
       $this->db = $DB ;
       $this->socidp = $soc_idp;
       $this->products = array();
+      $this->projet_id = 0;
     }
 
   Function add_product($idproduct)
@@ -75,13 +76,18 @@ class Fichinter {
    */
   Function update($id)
     {
+      if (! strlen($this->projet_id))
+	{
+	  $this->projet_id = 0;
+	}
+
       /*
        *  Insertion dans la base
        */
       $sql = "UPDATE llx_fichinter SET ";
-      $sql .= " datei = $this->date,";
-      $sql .= " note  = '$this->note',";
-      $sql .= " duree = $this->duree";
+      $sql .= " datei = $this->date";
+      $sql .= ", note  = '$this->note'";
+      $sql .= ", duree = $this->duree";
       $sql .= ", fk_projet = $this->projet_id";
       $sql .= " WHERE rowid = $id";
       
@@ -94,6 +100,44 @@ class Fichinter {
     }
   /*
    *
+   *
+   *
+   */
+  Function get_new_num($prefix_comm)
+    {
+      
+      $sql = "SELECT max(ref) FROM llx_fichinter WHERE ref like 'FI-".$prefix_comm."-%'";
+      
+      if ($this->db->query($sql) )
+	{
+	  if ($this->db->num_rows())
+	    {
+	      $row = $this->db->fetch_row(0);
+	      $num = $row[0];
+	      /*
+	       *$num = substr($num, strlen($num) - 4, 4);
+	       *$num = $num + 1;
+	       *$num = '0000' . $num;
+	       *$num = 'FI-' . $prefix_comm . '-' . substr($num, strlen($num) - 4, 4);
+	       */
+	      $num = substr($num, 3);
+	      $num = substr(strstr($num, "-"),1);
+	      print $num."</br>";
+
+	      $num = $num + 1;
+	      //$num = '0000' . $num;
+	      //$num = 'FI-' . $prefix_comm . '-' . substr($num, strlen($num) - 4, 4);
+	      $num = 'FI-' . $prefix_comm . '-' . $num;
+	      return $num;
+	    }
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+    }
+  
+  /*
    *
    *
    */
@@ -112,7 +156,7 @@ class Fichinter {
 	      $this->date       = $obj->di;
 	      $this->duree      = $obj->duree;
 	      $this->ref        = $obj->ref;
-	      $this->note       = $obj->note;
+	      $this->note       = stripslashes($obj->note);
 	      $this->societe_id = $obj->fk_soc;
 	      $this->projet_id  = $obj->fk_projet;
 	      $this->statut     = $obj->fk_statut;
