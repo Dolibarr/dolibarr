@@ -58,6 +58,8 @@ class modBoutique extends DolibarrModules
     $this->const_name = "MAIN_MODULE_BOUTIQUE";
     $this->const_config = MAIN_MODULE_BOUTIQUE;
 
+    $this->special = 1;
+
     // Config pages
     $this->config_page_url = array("boutique.php","osc-languages.php");
 
