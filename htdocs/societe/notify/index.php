@@ -57,7 +57,7 @@ $pagenext = $page + 1;
  */
 print_barre_liste("Liste des societes", $page, $PHP_SELF);
 
-$sql = "SELECT s.nom, s.idp, c.name, c.firstname, a.titre,n.rowid FROM llx_socpeople as c, llx_action_def as a, llx_notify as n, llx_societe as s";
+$sql = "SELECT s.nom, s.idp, c.name, c.firstname, a.titre,n.rowid FROM llx_socpeople as c, llx_action_def as a, llx_notify_def as n, llx_societe as s";
 $sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
 $sql .= " AND n.fk_soc = s.idp";
 
