@@ -29,6 +29,7 @@ create table llx_facture
   paye               smallint default 0 NOT NULL,
   amount             real     default 0 NOT NULL,
   remise             real     default 0,
+  remise_percent     real     default 0,
   tva                real     default 0,
   total              real     default 0,
   total_ttc          real     default 0,
