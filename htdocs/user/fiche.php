@@ -153,7 +153,7 @@ if ($action == 'create')
     print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
     print '<td class="valeur"><input size="40" type="text" name="email" value=""></td></tr>';
 
-    print "<tr>".'<td valign="top">Admin</td>';
+    print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
     print '<td class="valeur">';
     $form->selectyesnonum('admin',0);
     print "</td></tr>\n";
@@ -314,7 +314,7 @@ else
             print '<td width="25%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
             print "</tr>\n";
             
-            print "<tr>".'<td width="25%" valign="top">Administrateur</td>';
+            print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
             print '<td colspan="3" class="valeur">'.yn($fuser->admin).'</td>';
             print "</tr>\n";
 
@@ -327,15 +327,15 @@ else
 		print "</tr>\n";
 	      }
 
-            print "<tr>".'<td width="25%" valign="top">Fiche contact</td>';
+            print "<tr>".'<td width="25%" valign="top">'.$langs->trans("ContactCard").'</td>';
             print '<td colspan="3" valign="top">';
             if ($fuser->contact_id)
             {
-	      print '<a href="../contact/fiche.php?id='.$fuser->contact_id.'">Fiche contact</a>';
+	            print '<a href="../contact/fiche.php?id='.$fuser->contact_id.'">'.$langs->trans("ContactCard").'</a>';
             }
             else
             {
-                print "Pas de fiche parmi les Contacts";
+                print $langs->trans("NoContactCard");
             }
             print '</td>';
             print "</tr>\n";
@@ -436,7 +436,7 @@ else
             print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
             print '<td><input size="30" type="text" name="email" value="'.$fuser->email.'"></td></tr>';
 
-    	    print "<tr>".'<td valign="top">'.$langs->trans("Admin").'</td>';
+    	    print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
     	    if ($fuser->societe_id > 0)
     	      {
         		print '<td class="valeur">';

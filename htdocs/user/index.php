@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +22,17 @@
  */
 require("./pre.inc.php");
 
+$langs->load("users");
+
+
 llxHeader();
 
-print_titre("Liste des utilisateurs");
+
+$sortfield=$_GET["sortfield"];
+$sortorder=$_GET["sortorder"];
+
+
+print_titre($langs->trans("ListOfUsers"));
 
 $sql = "SELECT u.rowid, u.name, u.firstname, u.code, u.login, u.module_comm, u.module_compta";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -37,45 +46,47 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-  print '<TR class="liste_titre">';
-  print "<TD>";
-  print_liste_field_titre("Nom","index.php","name");
-  print "</TD>";
-  print "<TD>";
-  print_liste_field_titre("Prénom","index.php","firstname");
-  print "</TD>";
-  print "<TD>";
-  print_liste_field_titre("Login","index.php","login");
-  print "</TD>";
-  print "<TD>";
-  print_liste_field_titre("Code","index.php","code");
-  print "</TD>";
-  print "</TR>\n";
+  print "<br>";
+  
+  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+  print '<tr class="liste_titre">';
+  print "<td>";
+  print_liste_field_titre($langs->trans("LastName"),"index.php","name");
+  print "</td>";
+  print "<td>";
+  print_liste_field_titre($langs->trans("FirstName"),"index.php","firstname");
+  print "</td>";
+  print "<td>";
+  print_liste_field_titre($langs->trans("Login"),"index.php","login");
+  print "</td>";
+  print "<td>";
+  print_liste_field_titre($langs->trans("Code"),"index.php","code");
+  print "</td>";
+  print "</tr>\n";
   $var=True;
   while ($i < $num)
     {
       $obj = $db->fetch_object( $i);
       $var=!$var;
       
-      print "<TR $bc[$var]>";
-      print '<TD><a href="fiche.php?id='.$obj->rowid.'">';
+      print "<tr $bc[$var]>";
+      print '<td><a href="fiche.php?id='.$obj->rowid.'">';
       print img_file();
       print '</a>&nbsp;'.ucfirst($obj->name).'</TD>';
-      print '<TD>'.ucfirst($obj->firstname).'</td>';
+      print '<td>'.ucfirst($obj->firstname).'</td>';
       if ($obj->login)
 	{
-	  print '<TD><a href="fiche.php?id='.$obj->rowid.'">'.$obj->login.'</a></TD>';
+	  print '<td><a href="fiche.php?id='.$obj->rowid.'">'.$obj->login.'</a></td>';
 	}
       else
 	{
-	  print '<TD><a class="impayee" href="fiche.php?id='.$obj->rowid.'">Inactif</a></TD>';
+	  print '<td><a class="impayee" href="fiche.php?id='.$obj->rowid.'">Inactif</a></td>';
 	}        
-      print '<TD>'.$obj->code.'</TD>';
-      print "</TR>\n";
+      print '<td>'.$obj->code.'</TD>';
+      print "</tr>\n";
       $i++;
     }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else 
