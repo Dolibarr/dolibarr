@@ -58,6 +58,55 @@ values ('demo1','demo1','DM1','demo1','demo',1,1,'demo1');
 
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
 values ('demo2','demo2','DM2','demo2','demo',1,1,'demo2');
+
+INSERT INTO llx_user_rights VALUES (1,11);
+INSERT INTO llx_user_rights VALUES (1,12);
+INSERT INTO llx_user_rights VALUES (1,13);
+INSERT INTO llx_user_rights VALUES (1,14);
+INSERT INTO llx_user_rights VALUES (1,15);
+INSERT INTO llx_user_rights VALUES (1,16);
+INSERT INTO llx_user_rights VALUES (1,17);
+INSERT INTO llx_user_rights VALUES (1,18);
+INSERT INTO llx_user_rights VALUES (1,19);
+INSERT INTO llx_user_rights VALUES (1,21);
+INSERT INTO llx_user_rights VALUES (1,22);
+INSERT INTO llx_user_rights VALUES (1,23);
+INSERT INTO llx_user_rights VALUES (1,24);
+INSERT INTO llx_user_rights VALUES (1,25);
+INSERT INTO llx_user_rights VALUES (1,26);
+INSERT INTO llx_user_rights VALUES (1,27);
+INSERT INTO llx_user_rights VALUES (1,28);
+INSERT INTO llx_user_rights VALUES (1,29);
+INSERT INTO llx_user_rights VALUES (1,31);
+INSERT INTO llx_user_rights VALUES (1,32);
+INSERT INTO llx_user_rights VALUES (1,33);
+INSERT INTO llx_user_rights VALUES (1,34);
+INSERT INTO llx_user_rights VALUES (1,35);
+INSERT INTO llx_user_rights VALUES (1,36);
+INSERT INTO llx_user_rights VALUES (1,37);
+INSERT INTO llx_user_rights VALUES (1,38);
+INSERT INTO llx_user_rights VALUES (1,39);
+INSERT INTO llx_user_rights VALUES (1,41);
+INSERT INTO llx_user_rights VALUES (1,42);
+INSERT INTO llx_user_rights VALUES (1,43);
+INSERT INTO llx_user_rights VALUES (1,44);
+INSERT INTO llx_user_rights VALUES (1,45);
+INSERT INTO llx_user_rights VALUES (1,46);
+INSERT INTO llx_user_rights VALUES (1,47);
+INSERT INTO llx_user_rights VALUES (1,48);
+INSERT INTO llx_user_rights VALUES (1,49);
+INSERT INTO llx_user_rights VALUES (1,61);
+INSERT INTO llx_user_rights VALUES (1,62);
+INSERT INTO llx_user_rights VALUES (1,63);
+INSERT INTO llx_user_rights VALUES (1,64);
+INSERT INTO llx_user_rights VALUES (1,65);
+INSERT INTO llx_user_rights VALUES (1,66);
+INSERT INTO llx_user_rights VALUES (1,67);
+INSERT INTO llx_user_rights VALUES (1,68);
+INSERT INTO llx_user_rights VALUES (1,69);
+
+
+
 --
 -- Societe les fournisseurs sont sur les numéros pairs
 --
