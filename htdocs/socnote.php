@@ -32,22 +32,72 @@ llxHeader();
 
 if ($socid > 0) {
 
-  $soc = new Societe($db, $socid);
-  $soc->fetch($socid);
+  $societe = new Societe($db, $socid);
+  $societe->fetch($socid);
   /*
    *
    */
 
-  print_titre($soc->nom);
+      $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$_GET["socid"];
+      $head[0][1] = "Fiche société";
+      $h = 1;
 
-  print '<table class="border" border="1" width="100%" cellspacing="0" cellpadding="3">';
-  print "<tr><td>";
-  print "<form method=\"post\" action=\"socnote.php?socid=$soc->id\">";
+      if ($societe->client==1)
+	{
+	  $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
+	  $head[$h][1] = 'Fiche client';
+	  $h++;
+	}
+      
+      if ($societe->client==2)
+	{
+	  $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
+	  $head[$h][1] = 'Fiche prospect';
+	  $h++;
+	}
+      if ($societe->fournisseur)
+	{
+	  $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
+	  $head[$h][1] = 'Fiche fournisseur';
+	  $h++;
+	}
+      
+      if ($societe->fournisseur)
+	{
+	  $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
+	  $head[$h][1] = 'Fiche fournisseur';
+	  $h++;
+	}
+      $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
+      $head[$h][1] = 'Note';
+      $a = $h;
+      $h++;
+
+      if ($user->societe_id == 0)
+	{
+	  $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
+	  $head[$h][1] = 'Documents';
+	  $h++;
+	}
+      
+      $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
+      $head[$h][1] = 'Notifications';
+      
+      dolibarr_fiche_head($head, $a);
+
+
+  print_titre($societe->nom);
+
+  print "<form method=\"post\" action=\"socnote.php?socid=$societe->id\">";
+
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+  print '<tr><td width="50%" valign="top">';
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-  print "<textarea name=\"note\" cols=\"60\" rows=\"10\">$soc->note</textarea><br>";
-  print '<input type="submit" value="Enregistrer">';
-  print "</form></td></tr>";
-  print "</table>";
+  print "<textarea name=\"note\" cols=\"60\" rows=\"10\">$societe->note</textarea><br>";
+  print '</td><td width="50%" valign="top">'.nl2br($societe->note).'</td>';
+  print "</td></tr>";
+  print "</table></div>";
+  print '<input type="submit" value="Enregistrer"></form>';
 }
 
 $db->close();
