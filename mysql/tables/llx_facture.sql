@@ -21,27 +21,28 @@
 
 create table llx_facture
 (
-  rowid              integer AUTO_INCREMENT PRIMARY KEY,
-  facnumber          varchar(50)        NOT NULL,
-  fk_soc             integer            NOT NULL,
-  datec              datetime,  -- date de creation de la facture
-  datef              date,      -- date de la facture
-  paye               smallint DEFAULT 0 NOT NULL,
-  amount             real     DEFAULT 0 NOT NULL,
-  remise             real     DEFAULT 0,
-  remise_percent     real     DEFAULT 0,
-  tva                real     DEFAULT 0,
-  total              real     DEFAULT 0,
-  total_ttc          real     DEFAULT 0,
-  fk_statut          smallint DEFAULT 0 NOT NULL,
-  author             varchar(50),
-  fk_user            integer,   -- createur de la facture
-  fk_user_author     integer,   -- createur de la propale
-  fk_user_valid      integer,   -- valideur de la propale
-  fk_projet          integer,   -- projet auquel est associé la facture
-  fk_cond_reglement  integer,   -- condition de reglement
-  date_lim_reglement date,      -- date limite de reglement
-  note               text,
+  rowid               integer AUTO_INCREMENT PRIMARY KEY,
+  facnumber           varchar(50)        NOT NULL,
+  fk_soc              integer            NOT NULL,
+  datec               datetime,  -- date de creation de la facture
+  datef               date,      -- date de la facture
+  paye                smallint DEFAULT 0 NOT NULL,
+  amount              real     DEFAULT 0 NOT NULL,
+  remise              real     DEFAULT 0,
+  remise_percent      real     DEFAULT 0,
+  tva                 real     DEFAULT 0,
+  total               real     DEFAULT 0,
+  total_ttc           real     DEFAULT 0,
+  fk_statut           smallint DEFAULT 0 NOT NULL,
+  author              varchar(50),
+  fk_user             integer,   -- createur de la facture
+  fk_user_author      integer,   -- createur de la propale
+  fk_user_valid       integer,   -- valideur de la propale
+  fk_projet           integer,   -- projet auquel est associé la facture
+  fk_cond_reglement   integer,   -- condition de reglement
+  date_lim_reglement  date,      -- date limite de reglement
+  fk_code_ventilation integer DEFAULT 0 NOT NULL,
+  note                text,
 
   UNIQUE INDEX (facnumber),
   INDEX fksoc (fk_soc)
