@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-define('DOL_VERSION','0.2.4');
+define('DOL_VERSION','0.3.0');
 
 if (! include ("conf/conf.php"))
 {
