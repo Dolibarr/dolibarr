@@ -54,10 +54,11 @@ while ( $childrenNow < $childrenTotal )
     }
   else
     {
-      usleep(10000);
       $process = new ProcessGraphLignes( $childrenNow, $clientPerChild );
       $process->go();
       die();
-    }  
+    }
+
+  usleep(100000);
 }
 ?>
