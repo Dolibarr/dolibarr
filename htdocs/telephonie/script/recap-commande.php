@@ -176,13 +176,14 @@ function Generate($date_gen, $db, $date_now, $email)
 	  $soc->fetch($obj->socid);
       
 	  $worksheet->write($j, 0,  $obj->code_client, $formatc);
+
 	  $worksheet->write($j, 1,  $obj->nom, $formatc);
       
-	  $worksheet->write_string($j, 2,  "$obj->ligne", $formatcc);
+	  $worksheet->write_string($j, 2,  "$obj->ligne", $format[$obj->statut]);
       
-	  $worksheet->write($j, 3,  strftime("%d/%m/%y",$obj->date_commande), $formatcc);
+	  $worksheet->write($j, 3,  strftime("%d/%m/%y",$obj->date_commande), $format[$obj->statut]);
 
-	  $worksheet->write($j, 4,  $ligne->statuts[$obj->statut], $format[3]);
+	  $worksheet->write($j, 4,  $ligne->statuts[$obj->statut], $format[$obj->statut]);
   
 	  $i++;
 	}
@@ -221,10 +222,8 @@ function MailFile($filename, $shortname, $to)
   $from = TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC;
   
   $message = "Bonjour,\n\nVeuillez trouver ci-joint le dernier récapitulatif des commandes.\n\n";
-  $message .= "\n\nCordialement,\n\n";
+  $message .= "\n\nCordialement,\n";
   
-  $message .= "-- \n";
-
   $mailfile = new DolibarrMail($subject,
 			       $sendto,
 			       $from,
