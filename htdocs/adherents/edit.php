@@ -175,7 +175,7 @@ if ($rowid)
   }
   print '<tr><td colspan="2" align="center">';
   print '<input type="submit" name="bouton" value="'.$langs->trans("Save").'">&nbsp;';
-  print '<input type="submit" value="'.$langs->trans("Cancel").'>';
+  print '<input type="submit" value="'.$langs->trans("Cancel").'">';
   print '</td></tr>';
   print '</form>';
   print '</table>';

@@ -21,7 +21,15 @@
  *
  */
 
+/*!
+        \file       htdocs/commande/index.php
+        \ingroup    compta
+		\brief      Page acceuil zone comptabilité
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
 $langs->load("orders");
 
 
@@ -29,18 +37,19 @@ llxHeader("",$langs->trans("Orders"),"Commande");
 
 print_titre($langs->trans("OrdersArea"));
 
-print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
+print '<table class="noborder" width="100%">';
 
 print '<tr><td valign="top" width="30%">';
+
 /*
- *
+ * Zone recherche
  */
 print '<form method="post" action="liste.php">';
-print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchOrder").'</td></tr>';
 print "<tr $bc[1]><td>";
 print $langs->trans("Ref").' : <input type="text" name="sf_ref"> <input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
-print "</table></form>\n";
+print "</table></form><br>\n";
 
 
 /*
@@ -60,7 +69,7 @@ if ( $db->query($sql) )
   if ($num)
     {
       $i = 0;
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">'.$langs->trans("OrdersToValid").'</td></tr>';
       $var = True;
@@ -94,7 +103,7 @@ if ( $db->query($sql) )
   if ($num)
     {
       $i = 0;
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
       $var = True;
@@ -111,13 +120,12 @@ if ( $db->query($sql) )
     }
 }
 
-/*
- *
- */
+
 print '</td><td valign="top" width="70%">';
 
+
 /*
- * 
+ * Commandes en cours
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 2 ";
@@ -132,9 +140,9 @@ if ( $db->query($sql) )
   if ($num)
     {
       $i = 0;
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="2">Commandes en traitement</td></tr>';
+      print '<td colspan="2">Commandes en traitement ('.$num.')</td></tr>';
       $var = True;
       while ($i < $num)
 	{
@@ -148,6 +156,7 @@ if ( $db->query($sql) )
       print "</table><br>";
     }
 }
+
 /*
  * Commandes à traiter
  */
@@ -165,7 +174,7 @@ if ( $db->query($sql) )
   if ($num)
     {
       $i = 0;
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">5 dernières commandes</td></tr>';
       $var = True;

@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/*!
+        \file       htdocs/commande/pre.inc.php
+        \ingroup    commandes
+		\brief      Gestionnaire du menu commandes
+		\version    $Revision$
+*/
+
 require("../main.inc.php");
 require("./commande.class.php");
 
@@ -30,10 +38,6 @@ function llxHeader($head = "", $title="", $help_url='')
 {
   global $user, $conf, $langs;
 
-  /*
-   *
-   *
-   */
   top_menu($head, $title);
 
   $menu = new Menu();

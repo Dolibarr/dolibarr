@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,29 +20,34 @@
  * $Source$
  *
  */
+
+/*!
+        \file       htdocs/commande/stats/pre.inc.php
+        \ingroup    commandes
+		\brief      Gestionnaire du menu commandes
+		\version    $Revision$
+*/
+
 require("../../main.inc.php");
 require("../../bargraph.class.php");
 
-function llxHeader($head = "", $urlp = "")
+function llxHeader($head = "", $title="", $help_url='')
 {
-  global $langs;
-  $langs->load("orders");
-  
-  top_menu($head);
+  global $user, $conf, $langs;
+
+  top_menu($head, $title);
 
   $menu = new Menu();
 
   $menu->add(DOL_URL_ROOT."/commande/", $langs->trans("Orders"));
+  $menu->add_submenu(DOL_URL_ROOT."/commande/liste.php", $langs->trans("List"));
 
+  if ($conf->expedition->enabled) {
+    $menu->add(DOL_URL_ROOT."/expedition/", "Expeditions");
+  }
+  
+  $menu->add(DOL_URL_ROOT."/commande/stats/", $langs->trans("Statistics"));
 
-  $menu->add("./", $langs->trans("Statistics"));
-
-   
-  left_menu($menu->liste);
-  /*
-   *
-   *
-   */
-
+  left_menu($menu->liste, $help_url);
 }
 ?>

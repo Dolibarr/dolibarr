@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/*!
+        \file       htdocs/compta/index.php
+        \ingroup    compta
+		\brief      Page acceuil zone comptabilité
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $user->getrights('banque');
@@ -37,22 +45,22 @@ if ($user->societe_id > 0)
 
 llxHeader("","Accueil Compta");
 
-/*
- *
- */
 
+/*
+ * Actions
+ */
 
 if ($action == 'add_bookmark')
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
   if (! $db->query($sql) )
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
   if (! $db->query($sql) )
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
 }
 
@@ -61,33 +69,37 @@ if ($action == 'del_bookmark')
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=$bid";
   $result = $db->query($sql);
 }
+
+
+
 /*
- *
+ * Affichage page
  *
  */
 print_titre("Espace comptabilité");
 
-print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+print '<table border="0" width="100%">';
 
 print '<tr><td valign="top" width="30%">';
+
 /*
- *
+ * Zone recherche facture
  */
 print '<form method="post" action="facture.php">';
-print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
 print '<td colspan="2">Rechercher une facture</td></tr>';
 print "<tr $bc[0]><td>";
 print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
-print "</table></form>";
+print "</table></form><br>";
 
 
 
+/*
+* Factures brouillons
+*/
 if ($conf->facture->enabled)
 {
-  /*
-   * Factures brouillons
-   */
   
   $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
   
@@ -103,7 +115,7 @@ if ($conf->facture->enabled)
       
       if ($num)
 	{
-	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
 	  print '<td colspan="2">Factures brouillons ('.$num.')</td></tr>';
 	  $var = True;
@@ -122,7 +134,7 @@ if ($conf->facture->enabled)
     }
   else
     {
-      print $sql;
+      dolibarr_print_error($db);
     }  
 }
 
@@ -130,7 +142,6 @@ if ($conf->compta->enabled) {
 
 /*
  * Charges a payer
- *
  */
 if ($user->societe_id == 0)
 {
@@ -144,9 +155,9 @@ if ($user->societe_id == 0)
       $num = $db->num_rows();
       if ($num)
 	{
-	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
-	  print '<td colspan="2">Charges à payer</td></tr>';
+	  print '<td colspan="2">Charges à payer ('.$num.')</td></tr>';
 	  $i = 0;
 	  $var = True;
 	  while ($i < $num)
@@ -164,7 +175,7 @@ if ($user->societe_id == 0)
     }
   else
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
 }
 
@@ -173,7 +184,6 @@ if ($user->societe_id == 0)
 
 /*
  * Bookmark
- *
  */
 $sql = "SELECT s.idp, s.nom,b.rowid as bid";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
@@ -186,8 +196,8 @@ if ( $db->query($sql) )
   $i = 0;
   if ($num)
     {
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-      print "<tr class=\"liste_titre\"><TD colspan=\"2\">Bookmark</td></TR>\n";
+      print '<table class="noborder" width="100%">';
+      print "<tr class=\"liste_titre\"><td colspan=\"2\">Bookmark</td></tr>\n";
       $var = True;
       while ($i < $num)
 	{
@@ -203,10 +213,7 @@ if ( $db->query($sql) )
       print '</table>';
     }
 }
-/*
- *
- *
- */
+
 print '</td><td valign="top" width="70%">';
 
 
@@ -230,9 +237,9 @@ if ($user->comm > 0 && $conf->commercial->enabled )
       if ($num)
 	{
 	  $i = 0;
-	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<table class="noborder" width="100%">';
 	  print "<tr class=\"liste_titre\">";
-	  print '<td colspan="2">'.$langs->trans("OrdersToBill").'</td></tr>';
+	  print '<td colspan="2">'.$langs->trans("OrdersToBill").' ('.$num.')</td></tr>';
 	  $var = True;
 	  while ($i < $num)
 	    {
@@ -246,6 +253,9 @@ if ($user->comm > 0 && $conf->commercial->enabled )
 	  print "</table><br>";
 	}
     }
+  else {
+      dolibarr_print_error($db);
+    }    
 }
 
 
@@ -273,7 +283,7 @@ if ($conf->facture->enabled)
       
       if ($num)
 	{
-	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td colspan="2">Factures clients impayées ('.$num.')</td><td align="right">Montant TTC</td><td align="right">Reçu</td></tr>';
 	  $var = True;
 	  $total = $totalam = 0;
@@ -298,15 +308,16 @@ if ($conf->facture->enabled)
     }
   else
     {
-      print $sql;
+      dolibarr_print_error($db);
     }  
 }
 
 
+// \todo Mettre ici recup des actions en rapport avec la compta
 $result = 0;
 if ( $result )
 {
-  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td colspan="2">Actions à faire</td>';
   print "</tr>\n";
   $var = True;
@@ -322,58 +333,53 @@ if ( $result )
   $db->free();
   print "</table><br>";
 }
-else
-{
-  print $db->error();
-}
 
-
-if ($conf->facture->enabled) {
 
 /*
  * Factures a payer
- *
  */
-if ($user->societe_id == 0)
-{
-  $sql = "SELECT ff.rowid, ff.facnumber, ff.libelle, ff.total_ttc";
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
-  $sql .= " WHERE ff.paye=0";
-  
-  if ( $db->query($sql) ) 
+if ($conf->facture->enabled) {
+
+    if ($user->societe_id == 0)
     {
-      $num = $db->num_rows();
-      if ($num)
-	{
-	  print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre"><td colspan="2">Factures fournisseurs à payer</td><td align="right">Montant TTC</td></tr>';
-	  print "</tr>\n";
-	  $i = 0;
-	  $var = True;
-	  $total = $totalam = 0;
-	  while ($i < $num)
-	    {
-	      $obj = $db->fetch_object();
-	      $var = !$var;
-    	  print '<tr '.$bc[$var].'><td width="20%"><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_file().'</a>';
-	      print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-	      print '<td><a href="../fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->libelle.'</a></td>';
-	      print '<td align="right">'.price($obj->total_ttc).'</td>';
-	      print '</tr>';
-    	  $total +=  $obj->total_ttc;
-    	  $totalam +=  $obj->am;
-	      $i++;
+      $sql = "SELECT ff.rowid, ff.facnumber, ff.libelle, ff.total_ttc";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
+      $sql .= " WHERE ff.paye=0";
+      
+      if ( $db->query($sql) ) 
+        {
+          $num = $db->num_rows();
+          if ($num)
+    	{
+    	  print '<table class="noborder" width="100%">';
+          print '<tr class="liste_titre"><td colspan="2">Factures fournisseurs à payer ('.$num.')</td><td align="right">Montant TTC</td></tr>';
+    	  print "</tr>\n";
+    	  $i = 0;
+    	  $var = True;
+    	  $total = $totalam = 0;
+    	  while ($i < $num)
+    	    {
+    	      $obj = $db->fetch_object();
+    	      $var = !$var;
+        	  print '<tr '.$bc[$var].'><td width="20%"><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_file().'</a>';
+    	      print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
+    	      print '<td><a href="../fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->libelle.'</a></td>';
+    	      print '<td align="right">'.price($obj->total_ttc).'</td>';
+    	      print '</tr>';
+        	  $total +=  $obj->total_ttc;
+        	  $totalam +=  $obj->am;
+    	      $i++;
+            }
+          $var=!$var;
+          print '<tr '.$bc[$var].'><td colspan="2" align="left">Reste à payer : '.price($total-$totalam).'</td><td align="right">'.price($total).'</td></tr>';
+    	  print '</table><br>';
+    	}
         }
-      $var=!$var;
-      print '<tr '.$bc[$var].'><td colspan="2" align="left">Reste à payer : '.price($total-$totalam).'</td><td align="right">'.price($total).'</td></tr>';
-	  print '</table><br>';
-	}
+      else
+        {
+          dolibarr_print_error($db);
+        }
     }
-  else
-    {
-      print $db->error();
-    }
-}
 
 }
 
