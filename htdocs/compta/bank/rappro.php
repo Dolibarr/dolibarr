@@ -24,7 +24,6 @@ llxHeader();
 
 if ($action == 'rappro')
 {
-  $author = $GLOBALS["REMOTE_USER"];
   if ($num_releve > 0) {
     $sql = "UPDATE llx_bank set rappro=$rappro, num_releve=$num_releve WHERE rowid=$rowid";
     $result = $db->query($sql);
@@ -62,14 +61,23 @@ if ($result) {
 }
 
 $sql = "SELECT max(num_releve) FROM llx_bank WHERE fk_account=$account";
-if ( $db->query($sql) ) {
-  if ( $db->num_rows() ) {
-    $last_releve = $db->result(0, 0);
-  }
+if ( $db->query($sql) )
+{
+  if ( $db->num_rows() )
+    {
+      $last_releve = $db->result(0, 0);
+    }
   $db->free();
-} else { print $db->error(); }
+}
+else
+{
+  print $db->error();
+}
 
-print_titre("Rapprochement bancaire");
+$acct = new Account($db);
+$acct->fetch($account);
+
+print_titre('Rapprochement bancaire compte : <a href="account.php?account='.$account.'">'.$acct->label.'</a>');
 print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 print "<TR class=\"liste_titre\">";
 print "<td>Date</td><td>Description</TD>";
