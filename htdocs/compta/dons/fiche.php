@@ -33,19 +33,20 @@ if ($action == 'add')
 
       $don = new Don($db);
       
-      $don->prenom     = $prenom;
-      $don->nom        = $nom;  
-      $don->societe    = $societe;
-      $don->adresse    = $adresse;
-      $don->amount     = $amount;
-      $don->cp         = $cp;
-      $don->ville      = $ville;
-      $don->email      = $email;
-      $don->date       = mktime(12, 0 , 0, $remonth, $reday, $reyear);
-      $don->note       = $note;
-      $don->pays       = $pays;
-      $don->public     = $public;
-      $don->projetid   = $projetid;
+      $don->prenom      = $prenom;
+      $don->nom         = $nom;  
+      $don->societe     = $societe;
+      $don->adresse     = $adresse;
+      $don->amount      = $amount;
+      $don->cp          = $cp;
+      $don->ville       = $ville;
+      $don->email       = $email;
+      $don->date        = mktime(12, 0 , 0, $remonth, $reday, $reyear);
+      $don->note        = $note;
+      $don->pays        = $pays;
+      $don->public      = $public;
+      $don->projetid    = $projetid;
+      $don->commentaire = $HTTP_POST_VARS["comment"];
       $don->modepaiementid = $modepaiement;
       
       if ($don->create($user->id) ) 
@@ -257,7 +258,7 @@ if ($rowid > 0 && $action == 'edit')
    * Case 1
    */
 
-  print "<td align=\"center\" width=\"25%\">-</td>";
+  print '<td align="center" width="25%"><a href="edit.php?rowid='.$don->id.'">Editer</a></td>';
 	
   /*
    * Case 2
@@ -293,7 +294,9 @@ if ($rowid > 0 && $action == 'edit')
     {
       print "<td align=\"center\" width=\"25%\">-</td>";
     }
-  
+  /*
+   * Case 4
+   */
   if ($don->statut == 0) 
     {
       print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=delete\">Supprimer</a>]</td>";
