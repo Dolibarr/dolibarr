@@ -80,6 +80,8 @@ class Graph
 
     $graph->SetVertTickIncrement(0);
 
+    $graph->SetDrawYGrid(1); 
+
     //
     if (strlen($title))
       {
