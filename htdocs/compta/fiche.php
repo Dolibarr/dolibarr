@@ -413,7 +413,7 @@ if ($socid > 0)
         	print img_edit();
         	print '</a></td>';
         	
-            print '<td align="center"><a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">';
+            print '<td align="center"><a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">';
             print img_actions();
             print '</a></td>';
 
@@ -429,7 +429,7 @@ if ($socid > 0)
          *
          */
         print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
-        print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
+        print '<tr class="liste_titre"><td><a href="../comm/action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
         print '<tr>';
         print '<td valign="top">';
 
