@@ -1,0 +1,44 @@
+-- MySQL dump 8.21
+--
+-- Host: localhost    Database: dolibarr
+---------------------------------------------------------
+-- Server version	3.23.49-log
+
+--
+-- Dumping data for table 'llx_paiement'
+--
+
+
+INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (1,1,'2002-05-09 03:05:03','2002-05-09 12:00:00',11960,'rodo',0,'321654654','');
+INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (2,2,'2002-05-09 03:18:10','2002-04-12 12:00:00',500,'rodo',0,'255555','');
+INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (3,2,'2002-05-09 03:18:32','2002-05-02 12:00:00',588.36,'rodo',0,'25555','');
+INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (4,3,'2002-05-09 03:21:43','2002-03-30 12:00:00',11.96,'rodo',0,'','');
+INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (5,4,'2002-05-09 03:23:47','2002-02-20 12:00:00',11960,'rodo',0,'','');
+INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (6,5,'2002-05-09 03:37:05','2002-02-09 12:00:00',23.92,'rodo',0,'','');
+INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (7,6,'2002-05-09 03:40:58','2002-05-09 12:00:00',35.88,'rodo',0,'','');
+INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (8,8,'2002-05-09 14:44:56','2002-03-12 12:00:00',5000,'rodo',0,'','');
+INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (9,7,'2002-05-09 14:49:51','2002-05-09 12:00:00',23920,'rodo',0,'','');
+INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (10,8,'2002-05-09 15:00:35','2002-05-09 12:00:00',9483.56,'rodo',0,'','');
+INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (11,9,'2002-05-09 15:02:36','2002-05-09 12:00:00',43355,'rodo',0,'','');
+
+-- MySQL dump 8.21
+--
+-- Host: localhost    Database: dolibarr
+---------------------------------------------------------
+-- Server version	3.23.49-log
+
+--
+-- Dumping data for table 'llx_facture'
+--
+
+
+INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (1,'F-BO-020509',1,'2002-05-09 03:04:48','2002-05-09',1,10000,0,1960,11960,1,'rodo',NULL,NULL,NULL,'');
+INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (2,'F-DO-020410',3,'2002-05-09 03:17:44','2002-04-10',1,910,100,178.36,1088.36,1,'rodo',NULL,NULL,NULL,'');
+INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (3,'F-BO-020314',1,'2002-05-09 03:21:25','2002-03-14',1,10,0,1.96,11.96,1,'rodo',NULL,NULL,NULL,'');
+INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (4,'F-CU-020215',2,'2002-05-09 03:23:31','2002-02-15',1,10000,0,1960,11960,1,'rodo',NULL,NULL,NULL,'');
+INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (5,'F-BO-020117',1,'2002-05-09 03:36:43','2002-01-17',1,20,0,3.92,23.92,1,'rodo',NULL,NULL,NULL,'');
+INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (6,'F-BO-020119',1,'2002-05-09 03:40:26','2002-05-09',1,30,0,5.88,35.88,1,'rodo',NULL,NULL,NULL,'');
+INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (7,'F-CU-020509',2,'2002-05-09 03:46:54','2002-05-09',1,20000,0,3920,23920,1,'rodo',NULL,NULL,NULL,'');
+INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (8,'F-FOO-020309',4,'2002-05-09 14:44:34','2002-03-09',1,12110,0,2373.56,14483.56,1,'rodo',NULL,NULL,NULL,'');
+INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (9,'F-CU-020509.1',2,'2002-05-09 15:02:08','2002-05-09',1,36250,0,7105,43355,1,'rodo',NULL,NULL,NULL,'');
+

@@ -21,13 +21,11 @@
  */
 require("./pre.inc.php3");
 
-function pt ($db, $sql, $title) 
-{
-  $bc[0]='bgcolor="#90c090"';
-  $bc[1]='bgcolor="#b0e0b0"';
+function pt ($db, $sql, $title) {
+  global $bc;
 
   print '<p><TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
-  print "<TR bgcolor=\"orange\">";
+  print "<TR class=\"liste_titre\">";
   print "<TD>$title</TD>";
   print "<TD align=\"right\">Montant</TD>";
   
@@ -79,15 +77,14 @@ if ($sortorder == "") {
 }
 
 $in = "(1,2)";
-//$in = "(3)";
 
-print "<P>CA Prévisionnel basé sur les propal <b>ouvertes</b> et <b>signées</b>";
+print_titre ("CA Prévisionnel basé sur les propal <b>ouvertes</b> et <b>signées</b>");
 
 print '<table width="100%">';
 
 print '<tr><td valign="top">';
 
-$sql = "SELECT sum(f.price) as amount, date_format(f.datep,'%Y-%m') as dm";
+$sql = "SELECT sum(f.price - f.remise) as amount, date_format(f.datep,'%Y-%m') as dm";
 $sql .= " FROM llx_propal as f WHERE fk_statut in $in";
 $sql .= " GROUP BY dm DESC";
 
@@ -95,7 +92,7 @@ pt($db, $sql, "Mois");
 
 print '</td><td valign="top">';
 
-$sql = "SELECT sum(f.price) as amount, year(f.datep) as dm";
+$sql = "SELECT sum(f.price - f.remise) as amount, year(f.datep) as dm";
 $sql .= " FROM llx_propal as f WHERE fk_statut in $in";
 $sql .= " GROUP BY dm DESC";
 
@@ -103,7 +100,7 @@ pt($db, $sql, "Année");
 
 print "<P>";
 
-$sql = "SELECT sum(f.price) as amount, month(f.datep) as dm";
+$sql = "SELECT sum(f.price - f.remise) as amount, month(f.datep) as dm";
 $sql .= " FROM llx_propal as f WHERE fk_statut in $in";
 $sql .= " GROUP BY dm";
 

@@ -35,15 +35,6 @@ if ($result) {
   }
   $db->free();
 }
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
-
-$yn["t"] = "oui";
-$yn["f"] = "non";
-
-llxHeader();
-
-print_titre("Propositions commerciales pour <b><a href=\"index.php3?socid=$socidp\">$objsoc->nom</a></b>");
 
 
 if ($action == 'add') {
@@ -60,10 +51,10 @@ if ($action == 'add') {
 
   $propal->ref = $ref;
 
-  $propal->add_product($idprod1);
-  $propal->add_product($idprod2);
-  $propal->add_product($idprod3);
-  $propal->add_product($idprod4);
+  $propal->add_product($idprod1,$qty1);
+  $propal->add_product($idprod2,$qty2);
+  $propal->add_product($idprod3,$qty3);
+  $propal->add_product($idprod4,$qty4);
   
   $id = $propal->create();
   
@@ -73,7 +64,7 @@ if ($action == 'add') {
    *
    */
   if ($id) {
-    print "<hr><b>Génération du PDF</b><p>";
+    //    print "<hr><b>Génération du PDF</b><p>";
 
     //$DBI = "dbi:mysql:dbname=lolixdev:host=espy:user=rodo";
 
@@ -84,12 +75,22 @@ if ($action == 'add') {
     $command .= " --templates=".$conf->propal->templatesdir;
 
     $output = system($command);
-    print "<p>command : $command<br>";
-    print $output;
+    //print "<p>command : $command<br>";
+    //print $output;
+
+    
+    //    Header("Location: propal.php3?propalid=$id");
+
   } else {
     print $db->error();
   }
 }
+
+llxHeader();
+
+print_titre("Nouvelle proposition commerciale pour <b><a href=\"index.php3?socid=$socidp\">$objsoc->nom</a></b>");
+
+
 /*
  *
  * Creation d'une nouvelle propale
@@ -111,7 +112,9 @@ if ($action == 'create') {
     }
     
     print "<form action=\"$PHP_SELF?socidp=$socidp\" method=\"post\">";
-    print '<table border="0" cellspacing="3"><tr><td valign="top">';
+    print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+
+    print '<table border="1" cellspacing="0" cellpadding="3" width="100%"><tr><td width="50%" valign="top">';
     
     $strmonth[1] = "Janvier";
     $strmonth[2] = "F&eacute;vrier";
@@ -158,8 +161,6 @@ if ($action == 'create') {
     }
     print "</select></td></tr>";
     
-    print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-
     print '<tr><td>Auteur</td><td>'.$user->fullname.'</td></tr>';
     print "<tr><td>Num</td><td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
     /*
@@ -245,12 +246,20 @@ if ($action == 'create') {
     
     print "<table border=1 cellspacing=0>";
     
-    print "<tr><td>Service/Produits</td></tr>\n";
-    print "<tr><td><select name=\"idprod1\">$opt</select></td></tr>\n";
-    print "<tr><td><select name=\"idprod2\">$opt</select></td></tr>\n";
-    print "<tr><td><select name=\"idprod3\">$opt</select></td></tr>\n";
-    print "<tr><td><select name=\"idprod4\">$opt</select></td></tr>\n";
-    print "<tr><td align=\"right\">Remise : <input size=\"6\" name=\"remise\" value=\"0\"></td></tr>\n";    
+    print "<tr><td colspan=\"2\">Service/Produits</td></tr>\n";
+    print "<tr><td><select name=\"idprod1\">$opt</select></td>";
+    print "<td><input type=\"text\" size=\"2\" name=\"qty1\" value=\"1\"></td></tr>\n";
+
+    print "<tr><td><select name=\"idprod2\">$opt</select></td>";
+    print "<td><input type=\"text\" size=\"2\" name=\"qty2\" value=\"1\"></td></tr>\n";
+
+    print "<tr><td><select name=\"idprod3\">$opt</select></td>";
+    print "<td><input type=\"text\" size=\"2\" name=\"qty3\" value=\"1\"></td></tr>\n";
+
+    print "<tr><td><select name=\"idprod4\">$opt</select></td>";
+    print "<td><input type=\"text\" size=\"2\" name=\"qty4\" value=\"1\"></td></tr>\n";
+
+    print "<tr><td align=\"right\" colspan=\"2\">Remise : <input size=\"6\" name=\"remise\" value=\"0\"></td></tr>\n";    
     print "</table>";
     /*
      * Si il n'y a pas de contact pour la societe on ne permet pas la creation de propale
@@ -278,18 +287,15 @@ if ($action == 'create') {
  */
 $sql = "SELECT s.nom,s.idp, p.price, p.ref,".$db->pdate("p.datep")." as dp, p.rowid as propalid, c.id as statut, c.label as lst";
 $sql .= " FROM societe as s, llx_propal as p, c_propalst as c ";
-$sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
-if ($socidp) {
-  $sql .= " AND s.idp = $socidp";
-}
+$sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND s.idp = $socidp";
 $sql .= " ORDER BY p.datec DESC ;";
-
+  
 if ( $db->query($sql) ) {
   $num = $db->num_rows();
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR bgcolor=\"orange\">";
-  print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
+  print "<TR class=\"liste_titre\">";
+  print "<TD>Société</td>";
   print "<TD>Num</TD>";
   print "<TD>Statut</TD>";
   print "<TD align=\"right\">Date</TD>";
@@ -303,22 +309,25 @@ if ( $db->query($sql) ) {
     print "<TD><a href=\"index.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
     print "<TD><a href=\"propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
     print "<TD>$objp->lst</TD>\n";
-    
+      
     print "<TD align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
     print "<TD align=\"right\">".price($objp->price)."</TD><td>&nbsp;</td>\n";
     print "</TR>\n";
-    
+      
     $total = $total + $objp->price;
-    
+      
     $i++;
   }
-  print "<tr><td colspan=\"2\" align=\"right\"><b>Total : ".francs($total)." FF</b></td><td colspan=\"3\" align=\"right\"><b>Total : ".price($total)."</b></td><td>euros</td></tr>";
+  print "<tr><td colspan=\"5\" align=\"right\"><b>Total : ".price($total)."</b></td><td>euros</td></tr>";
   print "</TABLE>";
   $db->free();
 } else {
   print $db->error();
   print "<p>$sql";
 }
+/*
+ *
+ */
 $db->close();
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

@@ -66,7 +66,7 @@ if ($action == 'update') {
 
 if ($action == 'create') {
 
-  print '<div class="titre">Nouveau service</div><br>';
+  print_titre("Nouveau service");
   print '<form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<table border="1" cellpadding="3" cellspacing="0">';

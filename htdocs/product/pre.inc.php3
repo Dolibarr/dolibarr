@@ -30,81 +30,24 @@ function llxHeader($head = "", $urlp = "") {
    */
   top_menu($head);
 
+  $menu = new Menu();
 
-  print "<TABLE border=\"1\" width=\"100%\" cellpadding=\"0\">";
-  print "<TR><TD valign=\"top\" align=\"right\">";
+  $menu->add("/product/index.php3", "Produits");
 
-  print "<TABLE border=\"1\" cellspacing=\"0\" width=\"100%\" cellpadding=\"3\">";
-  print '<TR><TD class="barre" valign="top" align="right">';
-  print "<center><b>" . $conf->db->name . " - " . $user->code ."</B></center>";
-  print "<A href=\"".$urlp."../\">Accueil</A><br>";
-  print "<A href=\"".$urlp."bookmark.php3\">Bookmark</A>";
-  print "</td></tr>";
+  $menu->add("/service/index.php3", "Services");
 
-  print '<TR><TD class="barre" valign="top" align="right">';
-  print "<CENTER><A href=\"".$urlp."index.php3\">Societe</A></CENTER>\n";
-  print "<A href=\"".$urlp."contact.php3\">Contact</A><BR>\n";
-  print "</TD></TR>";
+  $menu->add("/comm/index.php3", "Clients");
 
-  print '<TR><TD class="barre_select" valign="top" align="right">';
-  print "<div align=\"center\"><A href=\"index.php3\">Produits</A></div>";
-  print "</TD></TR>";
+  $menu->add("/fourn/index.php3", "Fournisseurs");
 
 
-  print '<TR><TD class="barre" valign="top" align="right">';
-  print "<div align=\"center\"><A href=\"".$urlp."../comm/actioncomm.php3\">Actions</A></div>\n";
-  print "</TD></TR>";
-  /*
-   *
-   */
-  print '<TR><TD class="barre" valign="top" align="right">';
-  print '<div align="center"><A href="'.$urlp.'propal.php3">Propal</A></div>';
-  print "</TD></TR>";
-  /*
-   *
-   */
-  print '<TR><TD class="barre" valign="top" align="right">';
-  print '<div align="center"><A href="'.$urlp.'../compta/\">Factures</A></div>';
-  print "</TD></TR>";
-  /*
-   *
-   */
-
-  print '<TR><TD class="barre" valign="top" align="right">';
-  print "<CENTER><A href=\"".$urlp."../comm/index.php3\">Societes</A></CENTER>\n";
-  print "<form action=\"../comm/index.php3\">";
-  print '<input type="hidden" name="mode" value="search">';
-  print '<input type="hidden" name="mode-search" value="soc">';
-  print '<input type="text" name="socname" size="8">&nbsp;';
-  print "<input type=\"submit\" value=\"go\">";
-  print "</form>";
-
-  print "<CENTER><A href=\"".$urlp."contact.php3\">Contacts</A></CENTER>\n";
-  print "<form action=\"".$urlp."contact.php3\">";
-  print '<input type="hidden" name="mode" value="search">';
-  print '<input type="hidden" name="mode-search" value="contact">';
-  print "<input type=\"text\" name=\"contactname\" size=\"8\">&nbsp;";
-  print "<input type=\"submit\" value=\"go\">";
-  print "</form>";
+  $menu->add_submenu("/soc.php3?&action=create","Nouvelle sociétée");
+  $menu->add_submenu("contact.php3","Contacts");
 
 
-  print "<form action=\"index.php3\">";
-  print "Soc : <input type=\"text\" name=\"socid\" size=\"5\">";
-  print "<input type=\"submit\" value=\"id\">";
-  print "</form>";
-  print "</td></tr>";
-
-  print "</table>";
-
-  print "</td>";
+  left_menu($menu->liste);
 
 
-  print "<TD valign=\"top\" width=\"85%\">\n";
+
 }
-
-
-/*
- * $Id$
- * $Source$
- */
 ?>

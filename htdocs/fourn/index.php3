@@ -21,7 +21,7 @@
  */
 require("./pre.inc.php3");
 require("../contact.class.php3");
-require("../societe.class.php3");
+
 
 llxHeader();
 $db = new Db();
@@ -103,7 +103,7 @@ if ($socid > 0) {
    */
   print_barre_liste("Liste des fournisseurs",$page, $PHP_SELF);
 
-  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
+  $sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
 
   if (strlen($stcomm)) {
     $sql .= " AND s.fk_stcomm=$stcomm";
@@ -132,11 +132,10 @@ if ($socid > 0) {
       $sortorder="DESC";
     }
     print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-    print '<TR class="liste_titre">';
-    print "<TD><a href=\"index.php3?sortfield=lower(s.nom)&sortorder=$sortorder&begin=$begin\">Societe</a></td>";
-    print "<TD>Contact</TD>";
-    print "<TD>email</TD>";
-    print "<TD align=\"center\">Statut</TD><td>&nbsp;</td><td colspan=\"2\">&nbsp;</td>";
+    print '<TR class="liste_titre"><td>';
+    print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+    print "</td><TD>Ville</TD>";
+    print "<td colspan=\"2\">&nbsp;</td>";
     print "</TR>\n";
     $var=True;
     while ($i < $num) {
@@ -146,16 +145,11 @@ if ($socid > 0) {
 
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
-      print "<TD>&nbsp;</TD>\n";
-      print "<TD>&nbsp;</TD>\n";
-      print "<TD align=\"center\">$obj->stcomm</TD>\n";
+      print "<TD>".$obj->ville."</TD>\n";
+
       print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
-      print "<TD align=\"center\"><a href=\"addpropal.php3?socidp=$obj->idp&action=create\">[Propal]</A></td>\n";
-      if ($conf->fichinter->enabled) {
-	print "<TD align=\"center\"><a href=\"../fichinter/fiche.php3?socidp=$obj->idp&action=create\">[Fiche Inter]</A></td>\n";
-      } else {
-	print "<TD>&nbsp;</TD>\n";
-      }
+
+
       print "</TR>\n";
       $i++;
     }

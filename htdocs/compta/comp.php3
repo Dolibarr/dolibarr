@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ *
  * $Id$
  * $Source$
  *
@@ -20,14 +21,11 @@
  */
 require("./pre.inc.php3");
 
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
 
-$a = setlocale("LC_TIME", "FRENCH");
 
 function get_ca_propal ($db, $year, $socidp) {
 
-  $sql = "SELECT sum(f.price) as sum FROM llx_propal as f WHERE fk_statut in (1,2) AND date_format(f.datep, '%Y') = $year ";
+  $sql = "SELECT sum(f.price - f.remise) as sum FROM llx_propal as f WHERE fk_statut in (1,2) AND date_format(f.datep, '%Y') = $year ";
   if ($socidp) {
     $sql .= " AND f.fk_soc = $socidp";
   }
@@ -61,7 +59,7 @@ function get_ca ($db, $year, $socidp) {
 
 function propals ($db, $year, $month) {
   global $bc;
-  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
   $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
   $sql .= " AND c.id in (1,2)";
   $sql .= " AND date_format(p.datep, '%Y') = $year ";
@@ -69,7 +67,6 @@ function propals ($db, $year, $month) {
 
 
   $sql .= " ORDER BY p.fk_statut";
-
 
   $result = $db->query($sql);
   $num = $db->num_rows();
@@ -82,42 +79,42 @@ function propals ($db, $year, $month) {
   while ($i < $num) {
     $objp = $db->fetch_object( $i);
 
-  if ($objp->statut <> $oldstatut ) {
-    $oldstatut = $objp->statut;
+    if ($objp->statut <> $oldstatut ) {
+      $oldstatut = $objp->statut;
+      
+      if ($i > 0) {
+	print "<tr><td align=\"right\" colspan=\"4\">Total : <b>".price($subtotal)."</b></td>\n";
+	print "<td align=\"left\">Euros HT</td></tr>\n";
+      }
+      $subtotal = 0;
 
-    if ($i > 0) {
-      print "<tr><td align=\"right\" colspan=\"4\">Total : <b>".price($subtotal)."</b></td>\n";
-      print "<td align=\"left\">Euros HT</td></tr>\n";
+      print "<TR bgcolor=\"#e0e0e0\">";
+      print "<TD>Societe</td>";
+      print "<TD>Réf</TD>";
+      print "<TD align=\"right\">Date</TD>";
+      print "<TD align=\"right\">Prix</TD>";
+      print "<TD align=\"center\">Statut</TD>";
+      print "</TR>\n";
+      $var=True;
     }
-    $subtotal = 0;
-
-    print "<TR bgcolor=\"#e0e0e0\">";
-    print "<TD>Societe</td>";
-    print "<TD>Réf</TD>";
-    print "<TD align=\"right\">Date</TD>";
-    print "<TD align=\"right\">Prix</TD>";
-    print "<TD align=\"center\">Statut</TD>";
+  
+    $var=!$var;
+    print "<TR $bc[$var]>";
+    
+    print "<TD><a href=\"comp.php3?socidp=$objp->idp\">$objp->nom</a></TD>\n";
+    
+    print "<TD><a href=\"../comm/propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+    
+    print "<TD align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+    
+    print "<TD align=\"right\">".price($objp->price)."</TD>\n";
+    print "<TD align=\"center\">$objp->statut</TD>\n";
     print "</TR>\n";
-    $var=True;
-  }
-  
-  $var=!$var;
-  print "<TR $bc[$var]>";
-
-  print "<TD><a href=\"comp.php3?socidp=$objp->idp\">$objp->nom</a></TD>\n";
-  
-  print "<TD><a href=\"../comm/propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-  
-  print "<TD align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-  
-  print "<TD align=\"right\">".price($objp->price)."</TD>\n";
-  print "<TD align=\"center\">$objp->statut</TD>\n";
-  print "</TR>\n";
-  
-  $total = $total + $objp->price;
-  $subtotal = $subtotal + $objp->price;
-  
-  $i++;
+    
+    $total = $total + $objp->price;
+    $subtotal = $subtotal + $objp->price;
+    
+    $i++;
   }
   print "<tr><td align=\"right\" colspan=\"4\">Total : <b>".price($subtotal)."</b></td>\n";
   print "<td align=\"left\">Euros HT</td></tr>\n";
@@ -131,8 +128,7 @@ function propals ($db, $year, $month) {
 
 
 function factures ($db, $year, $month, $paye) {
-  $bc[0]="bgcolor=\"#90c090\"";
-  $bc[1]="bgcolor=\"#b0e0b0\"";
+  global $bc;
 
   $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
   $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye = $paye";
@@ -190,15 +186,14 @@ function factures ($db, $year, $month, $paye) {
 
 
 function pt ($db, $sql, $year) {
-  $bc[0]="bgcolor=\"#90c090\"";
-  $bc[1]="bgcolor=\"#b0e0b0\"";
+  global $bc;
 
   $result = $db->query($sql);
   if ($result) {
     $num = $db->num_rows();
     $i = 0; $total = 0 ;
     print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-    print "<TR bgcolor=\"orange\">";
+    print "<TR class=\"liste_titre\">";
     print "<TD>Mois</TD>";
     print "<td align=\"right\">Montant</td></tr>\n";
     $var=True;
@@ -261,7 +256,7 @@ function pt ($db, $sql, $year) {
 }
 
 function ppt ($db, $year, $socidp) {
-
+  global $bc;
   print "<table width=\"100%\">";
 
   print "<tr><td valign=\"top\" width=\"30%\">";
@@ -272,7 +267,7 @@ function ppt ($db, $year, $socidp) {
   
   print "<tr><td valign=\"top\" width=\"30%\">";
   
-  $sql = "SELECT sum(f.price) as sum, round(date_format(f.datep,'%m')) as dm";
+  $sql = "SELECT sum(f.price - f.remise) as sum, round(date_format(f.datep,'%m')) as dm";
   $sql .= " FROM llx_propal as f WHERE fk_statut in (1,2) AND date_format(f.datep,'%Y') = $year ";
 
   if ($socidp) {
@@ -298,12 +293,11 @@ function ppt ($db, $year, $socidp) {
   print "</td><td valign=\"top\" width=\"30%\">";
   
   print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-  print "<TR bgcolor=\"orange\">";
+  print "<TR class=\"liste_titre\">";
   print "<TD>Mois</TD>";
   print "<TD align=\"right\">Montant</TD>";
   print "</TR>\n";
-  $bc[0]="bgcolor=\"#90c090\"";
-  $bc[1]="bgcolor=\"#b0e0b0\"";
+
   $var = 1 ;
   for ($b = 1 ; $b <= 12 ; $b++) {
     $var=!$var;

@@ -21,25 +21,35 @@
  */
 
 class Webcal {
+  var $localdb;
+
+  var $heure = -1;
+  var $duree = 0;
+
+
 
   Function Webcal() {
+    global $conf;
 
+    $this->localdb = new Db($conf->webcal->db->type,
+			    $conf->webcal->db->host,
+			    $conf->webcal->db->user,
+			    $conf->webcal->db->pass,
+			    $conf->webcal->db->name);
   }
 
 
   Function add($user, $date, $texte, $desc) {
 
-    $db = new Db();
-
-    $id = get_next_id($db);
+    $id = $this->get_next_id();
 
     $cal_id = $id;
-    $cal_create_by = $user;
+    $cal_create_by = $user->webcal_login;
     $cal_date = strftime('%Y%m%d', $date);
-    $cal_time  = -1;
+    $cal_time  = $this->heure;
     $cal_mod_date = strftime('%Y%m%d', time());
     $cal_mod_time = strftime('%H%M', time());
-    $cal_duration = 0;
+    $cal_duration = $this->duree;
     $cal_priority = 2;
     $cal_type = "E";
     $cal_access = "P";
@@ -49,23 +59,38 @@ class Webcal {
 
     $sql = "INSERT INTO webcal_entry (cal_id, cal_create_by,cal_date,cal_time,cal_mod_date, cal_mod_time,cal_duration,cal_priority,cal_type, cal_access, cal_name,cal_description)";
 
-    $sql .= " VALUES ($cal_id, '$cal_create_by',$cal_date,$cal_time,$cal_mod_date, $cal_mod_time,cal_duration,$cal_priority,'$cal_type', '$cal_access', '$cal_name','$cal_description');";
+    $sql .= " VALUES ($cal_id, '$cal_create_by', $cal_date, $cal_time,$cal_mod_date, $cal_mod_time, $cal_duration,$cal_priority,'$cal_type', '$cal_access', '$cal_name','$cal_description');";
 
-    $db->query($sql);
+    if ( $this->localdb->query($sql) ) {
 
-    $db->close();
- 
+      $sql = "INSERT INTO webcal_entry_user (cal_id, cal_login, cal_status)";
+      $sql .= " VALUES ($cal_id, '$cal_create_by', 'A')";
+
+      if ( $this->localdb->query($sql) ) {
+	
+      } else {
+	print $this->localdb->error() . '<br>' .$sql;
+      }
+    } else {
+      print $this->localdb->error() . '<br>' .$sql;
+    }
+
+    $this->localdb->close();
   }
 
 
-  Function get_next_id($db) {
+  Function get_next_id() {
 
     $sql = "SELECT max(cal_id) FROM webcal_entry";
 
-    if ($db->query($sql)) {
-      $id = $db->result(0, 0) + 1;
+    if ($this->localdb->query($sql)) {
+      $id = $this->localdb->result(0, 0) + 1;
       return $id;
+    } else {
+      print $this->localdb->error();
     }
 
+
   }
+}
 ?>

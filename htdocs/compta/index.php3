@@ -68,11 +68,11 @@ if ($result) {
 
   $i = 0;
   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-    print '<TR class="liste_titre">';
+  print '<TR class="liste_titre">';
   print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
-  print "<TD>Num&eacute;ro</TD>";
-  print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
-  print "<TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
+  print "<TD>Num&eacute;ro</TD><td>";
+  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+  print "</td><TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
   print "<TD align=\"right\">Payé</TD>";
   print "</TR>\n";
 
@@ -89,9 +89,9 @@ if ($result) {
 
 	print '<TR class="liste_titre">';
 	print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
-	print "<TD>Num&eacute;ro</TD>";
-	print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
-	print "<TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
+	print "<TD>Num&eacute;ro</TD><td>";
+	print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+	print "</td><TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
 	print "<TD align=\"right\">Payé</TD></TR>\n";
 	$sep = 1 ; $j = 0;
 	$subtotal = 0;

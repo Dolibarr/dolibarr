@@ -37,6 +37,8 @@ class Societe {
 
   var $client;
 
+  var $note;
+
   Function Societe($DB, $id=0) {
     global $config;
 
@@ -84,7 +86,9 @@ class Societe {
    *
    *
    */
-  Function fetch() {
+  Function fetch($socid) {
+    $this->id = $socid;
+
 
     $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc,";
 
@@ -110,6 +114,7 @@ class Societe {
 	$this->ville = $obj->ville;
 
 	$this->siren = $obj->siren;
+	$this->note = $obj->note;
 
       }
       $this->db->free();

@@ -21,11 +21,6 @@
  */
 require("./pre.inc.php3");
 
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
-
-$a = setlocale("LC_TIME", "FRENCH");
-
 function pt ($db, $sql) {
   $result = $db->query($sql);
   if ($result) {

@@ -26,3 +26,5 @@ BASE=dolibarr
 
 dev:
 	$(MYSQL) $(BASE) < data_dev.sql
+	$(MYSQL) $(BASE) < propal_dev.sql
+	$(MYSQL) $(BASE) < facture_dev.sql

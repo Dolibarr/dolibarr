@@ -22,6 +22,7 @@
 
 require ("./main.inc.php3");
 
+
 function llxHeader($head = "") {
   global $user, $conf;
 
@@ -30,77 +31,36 @@ function llxHeader($head = "") {
    *
    */
   top_menu($head);
-     
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  /*
-   * Colonne de gauche
-   *
-   */
-  print "<TABLE border=\"1\" cellspacing=\"0\" width=\"100%\" cellpadding=\"3\">";
 
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  print "<div align=\"center\"><A href=\"/comm/index.php3\">Clients</A></div>\n";
-  print '</td></tr>';
+  $menu = new Menu();
 
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  print "<div align=\"center\"><A href=\"/fourn/index.php3\">Fournisseurs</A></div>\n";
-  print '</td></tr>';
+  $menu->add("/comm/index.php3", "Commercial");
 
+  $menu->add_submenu("/comm/index.php3", "Clients");
 
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  print "<center><A href=\"/comm/propal.php3\">Propales</A></center>\n";
-  print '</td></tr>';
+  $menu->add_submenu("/comm/propal.php3", "Propales");
 
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  print "<center><A href=\"/compta/\">Factures</center></A>\n";
-  print '</td></tr>';
+  $menu->add("/compta/", "Comptabilité");
 
-  if ($conf->fichinter->enabled) {
+  $menu->add_submenu("/compta/", "Factures");
 
-    print "<TR><TD valign=\"top\" align=\"right\">";
-    print "<center><A href=\"/fichinter/\">Fiches d'intervention</center></A>\n";
-    print '</td></tr>';
+  if ($conf->fichinter->enabled ) {
+
+    $menu->add("/fichinter/", "Fiches d'intervention");
 
   }
 
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  print "<center><A href=\"/product/\">Produits</center></A>\n";
+  $menu->add("/fourn/index.php3", "Fournisseurs");
 
-  print "<center><A href=\"/service/\">Services</center></A>\n";
-  print '</td></tr>';
+  $menu->add("/product/", "Produits");
 
+  $menu->add("/service/", "Services");
 
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  print '<div align="center"><A href="user/index.php3">Utilisateurs</div></A>';
-  print '</td></tr>';
+  $menu->add("/user/", "Utilisateurs");
 
-  print '<TR><TD valign="top" align="center">';
+  $menu->add("/info.php3", "Configuration");
 
-  print '<A href="comm/index.php3">Societes</A>';
-  print '<form action="comm/index.php3">';
-  print '<input type="hidden" name="mode" value="search">';
-  print '<input type="hidden" name="mode-search" value="soc">';
-  print '<input type="text" name="socname" size="8">&nbsp;';
-  print "<input type=\"submit\" value=\"go\">";
-  print "</form>";
-
-  print '<A href="comm/contact.php3">Contacts</A>';
-  print '<form action="comm/contact.php3">';
-  print '<input type="hidden" name="mode" value="search">';
-  print '<input type="hidden" name="mode-search" value="contact">';
-  print "<input type=\"text\" name=\"contactname\" size=\"8\">&nbsp;";
-  print "<input type=\"submit\" value=\"go\">";
-  print '</form>';
-  print '</td></tr>';
-
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  print "<A href=\"info.php3\">Configuration</A><br>";
-  print '</td></tr></table>';
-  /*
-   *
-   *
-   */
-  print "</TD>\n<TD valign=\"top\" width=\"85%\">\n";
+  left_menu($menu->liste);
 
 }
 ?>

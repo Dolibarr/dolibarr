@@ -28,8 +28,6 @@ if ($sortorder == "") {
   $sortfield="lower(s.nom)";
   $sortorder="ASC";
 }
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
 
 $yn["1"] = "oui";
 $yn["0"] = "non";
@@ -95,7 +93,7 @@ if ($facid > 0) {
   print "<tr><td>Montant</td><td align=\"right\"><b>".price($obj->amount)."</b></td><td>euros HT</td></tr>";
   print "<tr><td>TVA</td><td align=\"right\">".tva($obj->amount)."</td><td>euros</td></tr>";
   print "<tr><td>Total</td><td align=\"right\">".price($obj->total)."</td><td>euros TTC</td></tr>";
-  print "<tr><td><small>soit</small></td><td align=\"right\"><small>".francs(inctva($obj->amount))."</small></td><td><small>francs</small></td></tr>";
+
   print "</tr>";
   print "</table>";
   
@@ -115,7 +113,7 @@ if ($facid > 0) {
     $i = 0; $total = 0;
     print "<p><b>Paiements</b>";
     echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="3">';
-    print "<TR bgcolor=\"orange\">";
+    print "<TR class=\"liste_titre\">";
     print "<td>Date</td>";
     print "<td>Type</td>";
     print "<td align=\"right\">Montant</TD><td>&nbsp;</td>";
@@ -163,7 +161,7 @@ if ($facid > 0) {
   } else {
     print "<td align=\"center\" width=\"25%\">-</td>";
   }
-  if ($obj->statut == 1 && $resteapayer == 0 && $obj->paye == 0) {
+  if ($obj->statut == 1 && abs($resteapayer == 0) && $obj->paye == 0) {
     print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=payed\">Classer 'Payée'</a>]</td>";
   } else {
     print "<td align=\"center\" width=\"25%\">-</td>";
@@ -225,7 +223,7 @@ if ($facid > 0) {
     $i = 0; $total = 0;
     print "<p><b>Proposition(s) commerciale(s) associée(s)</b>";
     print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
-    print "<TR bgcolor=\"orange\">";
+    print "<TR class=\"liste_titre\">";
     print "<td>Num</td>";
     print "<td>Date</td>";
     print "<td align=\"right\">Prix</TD>";

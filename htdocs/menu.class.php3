@@ -1,9 +1,9 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
+/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * 
  * $Id$
  * $Source$
- *
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -19,33 +19,34 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-require("../main.inc.php3");
 
-function llxHeader($head = "", $urlp = "") {
-  global $user, $conf;
+class Menu {
+  var $liste;
 
-  /*
-   *
-   *
-   */
-  top_menu($head);
+  Function Menu() {
+    $this->liste = array();
 
-  $menu = new Menu();
-
-  $menu->add("/product/index.php3", "Produits");
-
-  $menu->add("/service/index.php3", "Services");
-
-  $menu->add("/comm/index.php3", "Clients");
-
-  $menu->add("/fourn/index.php3", "Fournisseurs");
+  }
 
 
-  $menu->add_submenu("/soc.php3?&action=create","Nouvelle sociétée");
-  $menu->add_submenu("contact.php3","Contacts");
+  Function add($url, $titre) {
+
+    $i = sizeof($this->liste);
+
+    $this->liste[$i][0] = $url;
+    $this->liste[$i][1] = $titre;
+
+  }
+
+  Function add_submenu($url, $titre) {
+
+    $i = sizeof($this->liste) - 1;
+    $j = sizeof($this->liste[$i]);
+
+    $this->liste[$i][$j] = $url;
+    $this->liste[$i][$j+1] = $titre;
+
+  }
 
 
-  left_menu($menu->liste);
 }
-
-?>

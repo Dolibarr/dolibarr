@@ -23,10 +23,6 @@ require("./pre.inc.php3");
 
 llxHeader();
 
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
-
-
 print 'Utilisateur : ' . $user->prenom . ' ' . $user->nom .' ['.$user->code.']';
 
 
@@ -47,26 +43,38 @@ $db = new Db();
 
 if ($db->ok) {
 
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+  print '<br><br><TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
-  print '<tr><td valign="top" width="50%">';
+  print '<tr><td valign="top" width="30%">';
 
-  print "<TABLE border=\"1\" cellspacing=\"0\" cellpadding=\"2\">";
-  print "<TR bgcolor=\"orange\">";
-  print "<td>Description</td><td>Valeur</TD>";
+  print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+  print "<TR class=\"liste_titre\">";
+  print "<td colspan=\"2\">Propositions commerciales</td>";
   print "</TR>\n";
 
   $sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 0";
   if (valeur($sql)) {
     $var=!$var;
-    print "<tr $bc[$var]><td><a href=\"comm/propal.php3?viewstatut=0\">Propales brouillons</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
+    print "<tr $bc[$var]><td><a href=\"comm/propal.php3?viewstatut=0\">Broullionsrouillons</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
   }
 
   $sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 1";
   if (valeur($sql)) {
     $var=!$var;
-    print "<tr $bc[$var]><td><a href=\"comm/propal.php3?viewstatut=1\">Propales ouvertes</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
+    print "<tr $bc[$var]><td><a href=\"comm/propal.php3?viewstatut=1\">Ouvertes</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
   }
+
+
+  print "</table><br>";
+  /*
+   * Factures
+   *
+   */
+  print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+  print "<TR class=\"liste_titre\">";
+  print "<td colspan=\"2\">Factures</td>";
+  print "</TR>\n";
+
 
   $sql = "SELECT count(*) FROM llx_facture WHERE paye=0";
   if (valeur($sql)) {
@@ -74,27 +82,38 @@ if ($db->ok) {
     print "<tr $bc[$var]><td><a href=\"compta/index.php3\">Factures en attente de paiement</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
   }
   print "</table><br>";
+  /*
+   *
+   *
+   */
 
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr><td valign="top" width="50%">';
+  /*
+   *
+   *
+   */
+  print '</td><td valign="top" width="70%">';
 
-  print "<TABLE border=\"1\" cellspacing=\"0\" cellpadding=\"2\">";
-  print "<TR bgcolor=\"orange\">";
-  print "<td>Description</td><td>Valeur</TD>";
+  print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+  print "<TR class=\"liste_titre\">";
+  print "<td colspan=\"2\">Actions a faire</td>";
   print "</TR>\n";
 
-  $sql = "SELECT count(*) FROM societe WHERE fk_stcomm=2";
+
+  $sql = "SELECT datea, label FROM llx_todocomm WHERE fk_user_author = $user->id";
   if (valeur($sql)) {
-    $var=!$var;
-    print "<tr $bc[$var]><td><a href=\"comm/index.php3?stcomm=2\">Société en cours de contact</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
+    $i=0;
+    if ( $db->query($sql) ) {
+      while ($i < $db->num_rows() ) {
+	$obj = $db->fetch_object($i);
+	$var=!$var;
+	
+	print "<tr $bc[$var]><td>".$obj->datea."</td><td><a href=\"compta/index.php3\">$obj->label</a></td></tr>";
+	$i++;
+      }
+      $db->free();
+    }
   }
-
-  print '</table>';
-  print '</td></tr></table><br>';
-
-
-  print '</td><td valign="top">';
-
+  print "</table><br>";
 
 
   print '</td></tr>';

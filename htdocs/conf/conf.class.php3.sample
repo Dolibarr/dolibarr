@@ -46,9 +46,7 @@ class Conf {
 
     $this->years = 2001;
 
-    $this->mode = 1 ;
-
-    $this->css = "dolibarr.css";
+    $this->css = "theme/dolibarr/dolibarr.css";
 
   }  
 }
@@ -86,7 +84,7 @@ class WebcalConf {
     $this->enabled = 1;
 
     $this->db = new DbConf();
-    $this->name = "webcal";
+    $this->db->name = "webcal";
     
   }
 }

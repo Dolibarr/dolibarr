@@ -20,19 +20,22 @@
  *
  */
 
-class ActionComm {
+class TodoComm {
   var $id;
   var $db;
 
   var $date;
-  var $type;
+  var $libelle;
+
   var $user;
+  var $creator;
+
   var $societe;
   var $contact;
   var $note;
 
-  Function ActionComm($db) {
-    $this->db = $db;
+  Function TodoComm($DB) {
+    $this->db = $DB;
   }
   /*
    *
@@ -40,8 +43,10 @@ class ActionComm {
    *
    */
   Function add($user) {
-    $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, fk_user_author, fk_contact, note) ";
-    $sql .= " VALUES ('$this->date',$this->type,$this->societe, $user->id, $this->contact,'$this->note')";
+    $sqldate = $this->db->idate($this->date);
+
+    $sql = "INSERT INTO llx_todocomm (datea, label, fk_soc, fk_user_author, fk_contact, note) ";
+    $sql .= " VALUES ('$sqldate', '$this->libelle', $this->societe, $user->id, $this->contact, '$this->note')";
 
     if ($this->db->query($sql) ) {
 
@@ -53,24 +58,22 @@ class ActionComm {
    *
    *
    */
-  Function fetch($id) {
+  Function fetch($db, $id) {
 
-    $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note,c.libelle ";
-    $sql .= "FROM actioncomm as a, c_actioncomm as c WHERE a.id=$id AND a.fk_action=c.id;";
+    $sql = "SELECT label FROM llx_todocomm WHERE rowid=$id;";
 
-    if ($this->db->query($sql) ) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object(0);
+    if ($db->query($sql) ) {
+      if ($db->num_rows()) {
+	$obj = $db->fetch_object(0);
 
-	$this->id = $obj->rowid;
-	$this->type = $obj->libelle;
-	$this->date = $obj->da;
-	$this->note =$obj->note;
-
-	$this->db->free();
+	$this->id = $rowid;
+	$this->libelle = $obj->label;
+	$this->note = $obj->note;
+	
+	$db->free();
       }
     } else {
-      print $this->db->error();
+      print $db->error();
     }    
   }
 }    

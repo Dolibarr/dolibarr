@@ -4,10 +4,6 @@
  * $Id$
  * $Source$
  *
- * action : - create
- *          - add
- *
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,8 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  *
- *
- *
  */
 require("./pre.inc.php3");
 
@@ -35,7 +29,6 @@ $db = new Db();
 
 if ($action == 'add') {
   $datepaye = $db->idate(mktime(12, 0 , 0, $pmonth, $pday, $pyear));
-  $author = $GLOBALS["REMOTE_USER"];
 
   $sql = "INSERT INTO llx_paiement (fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note)";
   $sql .= " VALUES ($facid, now(), $datepaye,$amount,'$author', $paiementid, '$num_paiement', '$note')";
@@ -61,15 +54,30 @@ if ($action == 'add') {
     $num = $db->num_rows();
     if ($num) {
       $obj = $db->fetch_object( 0);
-      print "Emettre un paiement<p>";
+
+      $total = $obj->total;
+
+      print_titre("Emettre un paiement");
       print "<form action=\"$PHP_SELF\" method=\"post\">";
-      print "<table cellspacing=0 border=1>";
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
       print "<tr bgcolor=\"#f0f0f0\"><td colspan=\"3\">Facture</td>";
 
-      print "<tr bgcolor=\"#e0e0e0\"><td>Société :</td><td>$obj->nom</td></tr>";
       print "<tr bgcolor=\"#e0e0e0\"><td>Numéro :</td><td>$obj->facnumber</td></tr>";
+      print "<tr bgcolor=\"#e0e0e0\"><td>Société :</td><td>$obj->nom</td></tr>";
+
       print "<tr bgcolor=\"#e0e0e0\"><td>Montant :</td><td align=\"right\">".price($obj->total)." euros TTC</td></tr>";
+
+
       print "<tr bgcolor=\"#f0f0f0\"><td colspan=\"3\">Paiement</td>";
+
+
+      $sql = "SELECT sum(p.amount) FROM llx_paiement as p WHERE p.fk_facture = $facid;";
+      $result = $db->query($sql);
+      if ($result) {
+	$sumpayed = $db->result(0,0);
+	$db->free();
+      }
+      print '<tr><td>Déjà payé</td><td align="right">'.price($sumpayed).' euros TTC</td></tr>';
 
 
       print "<input type=\"hidden\" name=\"action\" value=\"add\">";
@@ -127,11 +135,8 @@ if ($action == 'add') {
       print "<td rowspan=\"5\">Commentaires :<br>";
       print "<textarea name=\"comment\" wrap=\"soft\" cols=\"30\" rows=\"15\"></textarea></td></tr>";
 
-
       $author = $GLOBALS["REMOTE_USER"];
       print "<input type=\"hidden\" name=\"author\" value=\"$author\">\n";
-
-      print "<tr><td>Auteur :</td><td>$author</td></tr>\n";
 
       print "<tr><td>Type :</td><td><select name=\"paiementid\">\n";
 
@@ -140,8 +145,7 @@ if ($action == 'add') {
       $result = $db->query($sql);
       if ($result) {
 	$num = $db->num_rows();
-	$i = 0; $total = 0;
-
+	$i = 0; 
 	while ($i < $num) {
 	  $objopt = $db->fetch_object( $i);
 	  print "<option value=\"$objopt->id\">$objopt->libelle</option>\n";
@@ -151,7 +155,7 @@ if ($action == 'add') {
       print "</select><br>";
       print "</td></tr>\n";
       print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Num du cheque ou virement</em></td></tr>\n";
-      print "<tr><td>Montant :</td><td><input name=\"amount\" type=\"text\" value=\"$obj->price\"></td></tr>\n";
+      print "<tr><td valign=\"top\">Montant :</td><td>Reste à payer : ".price($total - $sumpayed)." euros TTC<br><input name=\"amount\" type=\"text\"></td></tr>\n";
       print "<tr><td colspan=\"3\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>\n";
       print "</form>\n";
       print "</table>\n";
@@ -179,8 +183,6 @@ if ($action == '') {
     print "<td>Type</TD>";
     print "<td align=\"right\">Montant</TD>";
     print "<td>&nbsp;</td>";
-    print "<td align=\"right\">FF TTC</td>";
-    print "<td>&nbsp;</td>";
     print "</TR>\n";
     
     $var=True;
@@ -192,12 +194,12 @@ if ($action == '') {
       print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
       print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
       print '<TD align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';
-      print "<TD align=\"right\">".francs(inctva($objp->amount))."</TD><td>&nbsp;</td>\n";
+
       print "</tr>";
       $total = $total + $objp->amount;
       $i++;
     }
-    print "<tr><td align=\"right\" colspan=\"4\">Total : <b>$total</b></td><td>Euros HT</td></tr>\n";
+    print "<tr><td align=\"right\" colspan=\"4\">Total : <b>".price($total)."</b></td><td>Euros HT</td></tr>\n";
     print "</table>";
   }
 

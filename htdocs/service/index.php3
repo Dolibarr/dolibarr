@@ -26,7 +26,7 @@ llxHeader();
 
 $db = new Db();
 if ($sortfield == "") {
-  $sortfield="lower(p.label),p.price";
+  $sortfield="lower(p.ref)";
 }
 if ($sortorder == "") {
   $sortorder="ASC";
@@ -35,10 +35,8 @@ if ($sortorder == "") {
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
-print '<div class="titre">Liste des services</div><br>';
+print_barre_liste("Liste des services", $page, $PHP_SELF);
 
  /*
   *
@@ -46,21 +44,20 @@ print '<div class="titre">Liste des services</div><br>';
   *
   */
 
-$now = strftime ("%Y-%m-%d %H:%M", time());
-
 $sql = "SELECT p.rowid, p.label, p.price, p.duration,p.ref FROM llx_service as p";
-$sql .= " WHERE p.fin_comm >= '$now'";
+
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
  
 if ( $db->query($sql) ) {
   $num = $db->num_rows();
   $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR bgcolor=\"orange\">";
-  print "<TH>Réf</TH>";
-  print "<TH><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Nom</a></th>";
-  print "<TH align=\"right\">Prix</th>";
+  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<TR class=\"liste_titre\"><td>";
+  print_liste_field_titre("Réf",$PHP_SELF, "p.ref");
+  print "</td><td>";
+  print_liste_field_titre("Libellé",$PHP_SELF, "p.label");
+  print "</td><td align=\"right\">Prix</td>";
   print "</TR>\n";
   $var=True;
   while ($i < $num) {
@@ -80,38 +77,6 @@ if ( $db->query($sql) ) {
 }
 
 
-$sql = "SELECT p.rowid, p.label, p.fin_comm, p.price, p.duration,p.ref FROM llx_service as p";
-$sql .= " WHERE p.fin_comm < '$now'";
-$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit( $limit ,$offset);
- 
-if ( $db->query($sql) ) {
-  $num = $db->num_rows();
-  $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR bgcolor=\"orange\">";
-  print "<TD>Réf</TD>";
-  print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Nom</a></td>";
-  print "<TD align=\"right\">Prix</TD>";
-  print "<TD align=\"right\">Fin</TD>";
-  print "</TR>\n";
-  $var=True;
-  while ($i < $num) {
-    $objp = $db->fetch_object( $i);
-    $var=!$var;
-    print "<TR $bc[$var]>";
-    print "<TD><a href=\"fiche.php3?id=$objp->rowid\">$objp->ref</a></TD>\n";
-    print "<TD>$objp->label</TD>\n";
-    print '<TD align="right">'.price($objp->price).'</TD>';
-    print "<TD align=\"right\">$objp->fin_comm</TD>\n";
-    print "</TR>\n";
-    $i++;
-  }
-  print "</TABLE>";
-  $db->free();
-} else {
-  print $this->db->error() . ' in ' . $sql;
-}
 
 
 

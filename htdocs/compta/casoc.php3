@@ -22,13 +22,9 @@
 require("./pre.inc.php3");
 
 llxHeader();
-print '<div class="titre">Chiffre d\'affaire par société</div>';
-
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
-
 
 $db = new Db();
+
 if ($sortfield == "") {
   $sortfield="lower(p.label)";
 }
@@ -68,9 +64,8 @@ function liste($db, $paye) {
     if ($num > 0) {
       $i = 0;
       print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-      print "<TR bgcolor=\"orange\">";
-      print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
-      print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
+      print "<TR class=\"liste_titre\">";
+      print "<TD>Société</td>";
       print "<TD align=\"right\">Montant</TD><td>&nbsp;</td>";
       print "<TD align=\"right\">Moyenne</TD>";
       print "</TR>\n";
@@ -79,7 +74,7 @@ function liste($db, $paye) {
 	$objp = $db->fetch_object( $i);
 	$var=!$var;
 	print "<TR $bc[$var]>";
-	print "<TD>[<a href=\"$PHP_SELF?socidp=$objp->idp\">Filtre</a>]</TD>\n";
+
 	print "<TD><a href=\"../comm/index.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
 	print "<TD align=\"right\">".price($objp->ca)."</TD><td>&nbsp;</td>\n";
 		
@@ -89,8 +84,8 @@ function liste($db, $paye) {
 	print "</TR>\n";
 	$i++;
       }
-      print "<tr><td></td><td align=\"right\"><b>Total : ".francs($total)." FF</b></td>";
-      print "<td align=\"right\"><b>Total : ".price($total)."</b></td><td>euros HT</td>";
+      print "<tr>";
+      print "<td colspan=\"2\" align=\"right\"><b>Total : ".price($total)."</b></td><td>euros HT</td>";
       print "<td align=\"right\"><b>Moyenne : ".price($total/ $i)."</b></td></tr>";
       print "</TABLE>";
     }
@@ -99,6 +94,8 @@ function liste($db, $paye) {
     print $db->error();
   }
 }
+
+print_barre_liste("Chiffre d'affaire par société", $page, $PHP_SELF);
 
 print "<P>";
 liste($db, 0);

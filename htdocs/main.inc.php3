@@ -28,28 +28,23 @@ require ($GLOBALS["DOCUMENT_ROOT"]."/lib/functions.inc.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/user.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/lib/product.class.php3");
 
+require ($GLOBALS["DOCUMENT_ROOT"]."/menu.class.php3");
+
+require($GLOBALS["DOCUMENT_ROOT"]."/societe.class.php3");
+
+
 $conf = new Conf();
 
 
 $db = new Db();
 $user = new User($db);
 $user->fetch($GLOBALS["REMOTE_USER"]);
+$db->close();
 
 $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
 
-
-function llxFooter($foot='') {
-  print "</TD></TR>";
-  /*
-   *
-   */
-  print "</TABLE>\n";
-  print "$foot<br>";
-  print '[<a href="http://savannah.gnu.org/bugs/?group_id=1915">Bug report</a>]&nbsp;';
-  print '[<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>]&nbsp;';
-  print "</BODY></HTML>";
-}
+$a = setlocale("LC_TIME", "FRENCH");
 
 function top_menu($head) {
   global $user, $conf;
@@ -60,7 +55,7 @@ function top_menu($head) {
   print '<LINK REL="stylesheet" TYPE="text/css" HREF="/'.$conf->css.'">';
   print "</HEAD>\n";
   
-  print '<BODY BGCOLOR="#c0c0c0" TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">';
+  print '<BODY TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">';
   /*
    * Barre superieure
    *
@@ -89,7 +84,9 @@ function top_menu($head) {
 
 
   print '<TD width="15%" class="menu" align="center">-</TD>';
-  print '<TD width="15%" class="menu" align="center">-</TD>';
+  print '<TD width="15%" class="menu" align="center">';
+  print '<a class="menu" href="'.$conf->webcal->url.'">Calendrier</a>';
+  print '</TD>';
   print '<TD width="15%" class="menu" align="center">-</TD>';
 
   print '<TD width="10%" class="menu" align="center">'.$user->code.'</td>';
@@ -101,9 +98,73 @@ function top_menu($head) {
    * Table principale
    *
    */
-  print '<TABLE border="0" width="100%">';
+  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+
+  print "<TR><TD valign=\"top\" align=\"right\">";
+}
+
+function left_menu($menu) {
+  global $conf;
+  /*
+   * Colonne de gauche
+   *
+   */
+  print '<TABLE border="0" width="100%" bgcolor="#000000" cellspacing="0" cellpadding="0">';
+  print '<tr><td>';
+  print '<TABLE border="0" width="100%" cellspacing="1" cellpadding="4">';
+
+
+  for ($i = 0 ; $i < sizeof($menu) ; $i++) {
+
+    print "<TR><TD class=\"barre\" valign=\"top\">";
+    print '<A class="menu" href="'.$menu[$i][0].'">'.$menu[$i][1].'</a>';
+
+    for ($j = 2 ; $j < sizeof($menu[$i]) - 1 ; $j = $j +2) {
+      print '<br>&nbsp;-&nbsp;<a class="submenu" href="'.$menu[$i][$j].'">'.$menu[$i][$j+1].'</A>';
+    }
+    print '</td></tr>';
+
+  }
+
+  print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
+  print '<A class="menu" href="/comm/index.php3">Societes</A>';
+  print '<form action="/comm/index.php3">';
+  print '<input type="hidden" name="mode" value="search">';
+  print '<input type="hidden" name="mode-search" value="soc">';
+  print '<input type="text" name="socname" size="8">&nbsp;';
+  print "<input type=\"submit\" value=\"go\">";
+  print "</form>";
+
+  print '<A class="menu" href="/comm/contact.php3">Contacts</A>';
+  print '<form action="/comm/contact.php3">';
+  print '<input type="hidden" name="mode" value="search">';
+  print '<input type="hidden" name="mode-search" value="contact">';
+  print "<input type=\"text\" name=\"contactname\" size=\"8\">&nbsp;";
+  print "<input type=\"submit\" value=\"go\">";
+  print '</form>';
+  print '</td></tr>';
+
+  print '</table></td></tr></table>';
+  /*
+   *
+   *
+   */
+  print "</TD>\n<TD valign=\"top\" width=\"85%\">\n";
 
 
 }
+
+function llxFooter($foot='') {
+  print "</TD></TR>";
+  /*
+   *
+   */
+  print "</TABLE>\n";
+  print "$foot<br>";
+  print '[<a href="http://savannah.gnu.org/bugs/?group_id=1915">Bug report</a>]&nbsp;';
+  print '[<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>]&nbsp;';
+  print "</BODY></HTML>";
+}
+
 
 ?>

@@ -30,80 +30,29 @@ function llxHeader($head = "", $urlp = "") {
    */
   top_menu($head);
 
-  print "<TR><TD valign=\"top\" align=\"right\" class=\"barre\">";
+  $menu = new Menu();
 
-  print "<TABLE border=\"1\" cellspacing=\"0\" width=\"100%\" cellpadding=\"3\">";
+  $menu->add("/comm/index.php3", "Clients");
 
-  print '<TR><TD class="barre" valign="top" align="right">';
-  print "<div align=\"center\"><A href=\"".$urlp."index.php3\">Clients</A></div>\n";
-  print "<A href=\"".$urlp."../soc.php3?&action=create\">Nouvelle société</A><BR>\n";
-  print "<A href=\"".$urlp."contact.php3\">Contacts</A><BR><br>\n";
-  print "<A href=\"".$urlp."recontact.php3\">A Recontacter</A><BR>\n";
-  print "</TD></TR>";
+  $menu->add_submenu("../soc.php3?&action=create", "Nouvelle société");
+  $menu->add_submenu("contact.php3", "Contacts");
 
+  $menu->add("actioncomm.php3", "Actions");
 
-  print '<TR><TD class="barre" valign="top" align="right">';
-  print "<div align=\"center\"><A href=\"".$urlp."actioncomm.php3\">Actions</A></div>\n";
-  print "</TD></TR>";
-  /*
-   *
-   */
-  print '<TR><TD class="barre_select" valign="top" align="right">';
-  print '<div align="center"><A href="'.$urlp.'propal.php3">Propal</A></div>';
-  print '<A href="'.$urlp.'propal.php3?viewstatut=0">Brouillon</A><br>';
-  print '<A href="'.$urlp.'propal.php3?viewstatut=1">Ouvertes</A>';
-  print "</TD></TR>";
-  /*
-   *
-   */
-  print '<TR><TD class="barre" valign="top" align="right">';
-  print '<div align="center"><A href="'.$urlp.'../compta/">Factures</A></div>';
-  print "</TD></TR>";
-  /*
-   *
-   */
-  print '<TR><TD class="barre" valign="top" align="right">';
-  print '<div align="center"><A href="'.$urlp.'../product/">Produits</A></div>';
-  print '<div align="center"><A href="'.$urlp.'../service/">Services</A></div>';
-  print "</td></tr>";
-  /*
-   *
-   */
-  print '<TR><TD class="barre" valign="top" align="right">';
-  print '<div align="center"><A href="projet/">Projets</A></div>';
-  print "</td></tr>";
-  /*
-   *
-   */
-  print '<TR><TD class="barre" valign="top" align="right">';
-  print "<CENTER><A href=\"".$urlp."index.php3\">Societes</A></CENTER>\n";
-  print "<form action=\"index.php3\">";
-  print '<input type="hidden" name="mode" value="search">';
-  print '<input type="hidden" name="mode-search" value="soc">';
-  print '<input type="text" name="socname" size="8">&nbsp;';
-  print "<input type=\"submit\" value=\"go\">";
-  print "</form>";
+  $menu->add("/comm/propal.php3", "Propales");
 
-  print "<CENTER><A href=\"".$urlp."contact.php3\">Contacts</A></CENTER>\n";
-  print "<form action=\"".$urlp."contact.php3\">";
-  print '<input type="hidden" name="mode" value="search">';
-  print '<input type="hidden" name="mode-search" value="contact">';
-  print "<input type=\"text\" name=\"contactname\" size=\"8\">&nbsp;";
-  print "<input type=\"submit\" value=\"go\">";
-  print "</form>";
+  $menu->add_submenu("propal.php3?viewstatut=0", "Brouillons");
+  $menu->add_submenu("propal.php3?viewstatut=1", "Ouvertes");
 
-  print "</td></tr>";
+  $menu->add("/product/", "Produits");
 
-  print "</table>";
+  $menu->add("/service/", "Services");
 
-  print "</td>";
+  $menu->add("projet/", "Projets");
 
+  left_menu($menu->liste);
 
-  print "<TD valign=\"top\" width=\"85%\">\n";
 }
 
-/*
- * $Id$
- * $Source$
- */
+
 ?>

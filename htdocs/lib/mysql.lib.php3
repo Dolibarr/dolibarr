@@ -5,8 +5,6 @@
  * $Id$
  * $Source$
  *
- * Classe Db 
- * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -26,34 +24,63 @@
 class Db {
   var $db, $results, $ok;
 
-  Function Db() {
-    global $conf;
+
+
+  Function Db($type = 'mysql', $host = '', $user = '', $pass = '', $name = '') 
+    {
+
+      //      print "Name DB : $host, $user, $pass, $name<br>";
+
+
+      global $conf; 
+      
+      if ($host == '') {
+	$host = $conf->db->host;
+      }
+      if ($user == '') {
+	$user = $conf->db->user;
+      }
+      if ($pass == '') {
+	$pass = $conf->db->pass;
+      }
+
+      if ($name == '') {
+	$name = $conf->db->name;
+      }
+
+
 		
-    $this->db = $this->connect($conf->db->host, $conf->db->user, $conf->db->pass);
-
-    if (! $this->db) {
-      print "Db->Db() raté<br>\n";
-      $this->ok = 0;
-      return 0;
+      $this->db = $this->connect($host, $user, $pass);
+      
+      if (! $this->db) {
+	print "Db->Db() raté<br>\n";
+	$this->ok = 0;
+	return 0;
+      }
+      $ret = $this->select_db($name);
+      $this->ok = 1;
+      return $ret;
     }
-    $ret = $this->select_db($conf->db->name, $this->db);
-    $this->ok = 1;
-    return $ret;
-  }
-
+  /*
+   *
+   */
   Function select_db($database) {
     return mysql_select_db($database, $this->db);
   }
-  
+  /*
+   *
+   */
+  Function connect($host, $login, $passwd) {
+    $this->db  = mysql_connect($host, $login, $passwd);
+    return $this->db;
+  }
+  /*
+   *
+   */  
   Function clone() {
     $db2 = new Db("", "", "", "", "");
     $db2->db = $this->db;
     return $db2;
-  }
-
-  Function connect($host, $login, $passwd) {
-    $this->db  = mysql_connect($host, $login, $passwd);
-    return $this->db;
   }
 
   Function pconnect($host, $login, $passwd) {

@@ -184,7 +184,7 @@ if ($propalid) {
       /*
        * Produits
        */
-      $sql = "SELECT p.label as product, p.ref, pt.price";
+      $sql = "SELECT p.label as product, p.ref, pt.price, pt.qty";
       $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
 
       $result = $db->query($sql);
@@ -194,7 +194,7 @@ if ($propalid) {
 	print "<p><b>Produits</b><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
 	print "<TR bgcolor=\"orange\">";
 	print "<td>Réf</td><td>Produit</td>";
-	print "<td align=\"right\">Prix</TD><td>&nbsp;</td>";
+	print "<td align=\"right\">Prix</TD><td align=\"center\">Qté.</td>";
 	print "</TR>\n";
 
 	$var=True;
@@ -204,7 +204,7 @@ if ($propalid) {
 	  print "<TR $bc[$var]>";
 	  print "<TD>[$objp->ref]</TD>\n";
 	  print "<TD>$objp->product</TD>\n";
-	  print "<TD align=\"right\">".price($objp->price)."</TD><td>euros</td>\n";
+	  print "<TD align=\"right\">".price($objp->price)."</TD><td align=\"center\">".$objp->qty."</td>\n";
 	  print "</tr>";
 	  $total = $total + $objp->price;
 	  $i++;
@@ -536,7 +536,7 @@ if ($propalid) {
 	
 	print '<TR class="liste_titre">';
 	print "<TD>Réf</TD>";
-	print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
+	print "<TD>Société</td>";
 	print "<TD align=\"right\" colspan=\"2\">Date</TD>";
 	print "<TD align=\"right\">Prix</TD>";
 	print "<TD align=\"center\">Statut <a href=\"$PHP_SELF?viewstatut=$objp->statutid\">";

@@ -44,6 +44,15 @@ if ($conf->fichinter->enabled) {
   print '<tr><td>output url</td><td>' . $conf->fichinter->outputurl . '</td></tr>';
 }
 
+
+print '<tr><td  bgcolor="#e0e0e0" colspan="2">Webcal</td></tr>';
+print '<tr><td>type</td><td>' . $conf->webcal->db->type . '</td></tr>';
+print '<tr><td>host</td><td>' . $conf->webcal->db->host . '</td></tr>';
+print '<tr><td>user</td><td>' . $conf->webcal->db->user . '&nbsp;</td></tr>';
+print '<tr><td>pass</td><td>' . $conf->webcal->db->pass . '&nbsp;</td></tr>';
+print '<tr><td>Database name</td><td>' . $conf->webcal->db->name . '</td></tr>';
+
+
 print '</table>';
 
 

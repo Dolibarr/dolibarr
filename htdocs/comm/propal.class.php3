@@ -31,6 +31,7 @@ class Propal {
   var $datep;
   var $remise;
   var $products;
+  var $products_qty;
   var $note;
 
   var $price;
@@ -40,11 +41,19 @@ class Propal {
     $this->socidp = $soc_idp;
     $this->products = array();
   }
-
-  Function add_product($idproduct) {
+  /*
+   *
+   *
+   *
+   */
+  Function add_product($idproduct, $qty) {
     if ($idproduct > 0) {
       $i = sizeof($this->products);
       $this->products[$i] = $idproduct;
+      if (!$qty) {
+	$qty = 1 ;
+      }
+      $this->products_qty[$i] = $qty;
     }
   }
   /*
@@ -54,30 +63,10 @@ class Propal {
    */
   Function create() {
     /*
-     *  Total des produits a ajouter
-     */
-    $sql = "SELECT sum(price) FROM llx_product ";
-    $sql .= " WHERE rowid in (";
-    for ($i = 0 ; $i < sizeof($this->products) ; $i++) {
-      $sql .= $this->products[$i] . ",";
-    }
-    $sql = substr($sql, 0, strlen($sql)-1) . ");";
-
-    if ( $this->db->query($sql) ) {
-      $cprice = $this->db->result(0, 0);
-      $this->db->free();
-    }
-    /*
-     *  Calcul TVA, Remise
-     */
-    $totalht = $cprice - $this->remise;
-    $tva = tva($totalht);
-    $total = $totalht + $tva;
-    /*
      *  Insertion dans la base
      */
     $sql = "INSERT INTO llx_propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note) ";
-    $sql .= " VALUES ($this->socidp, $this->contactid, $cprice, $this->remise, $tva, $total, $this->datep, now(), '$this->ref', $this->author, '$this->note')";
+    $sql .= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0, $this->datep, now(), '$this->ref', $this->author, '$this->note')";
     $sqlok = 0;
       
     if ( $this->db->query($sql) ) {
@@ -95,15 +84,19 @@ class Propal {
 	    
 	  for ($i = 0 ; $i < sizeof($this->products) ; $i++) {
 	    $prod = new Product($this->db, $this->products[$i]);
-	    $prod->fetch();
+	    $prod->fetch($this->products[$i]);
 
-	    $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, price) VALUES ";
-	    $sql .= " ($propalid,". $this->products[$i].", $prod->price) ; ";
+	    $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price) VALUES ";
+	    $sql .= " ($propalid,". $this->products[$i].",". $this->products_qty[$i].", $prod->price) ; ";
 
 	    if (! $this->db->query($sql) ) {
 	      print $sql . '<br>' . $this->db->error() .'<br>';
 	    }
 	  }
+	  /*
+	   *
+	   */
+	  $this->update_price($this->id);
 	  /*
 	   *  Affectation au projet
 	   */
@@ -120,6 +113,46 @@ class Propal {
     }
     return $this->id;
   }
+  /*
+   *
+   *
+   */
+  Function update_price($rowid) {
+    /*
+     *  Remise
+     */
+    $sql = "SELECT remise FROM llx_propal WHERE rowid = $rowid";
+    if ( $this->db->query($sql) ) {
+      $remise = $this->db->result(0, 0);
+      $this->db->free();
+    
+      
+      /*
+       *  Total des produits a ajouter
+       */
+      $sql = "SELECT sum(price * qty) FROM llx_propaldet WHERE fk_propal = $rowid";
+      if ( $this->db->query($sql) ) {
+	$cprice = $this->db->result(0, 0);
+	$this->db->free();
+	
+	/*
+	 *  Calcul TVA, Remise
+	 */
+	$totalht = $cprice - $this->remise;
+	$tva = tva($totalht);
+	$total = $totalht + $tva;
+	/*
+	 *
+	 */
+	$sql = "UPDATE llx_propal set price=$cprice, tva=$tva, total=$total WHERE rowid = $rowid";
+	if ( $this->db->query($sql) ) {
+	  
+	}
+      }
+    }
+
+  }
+
   /*
    *
    *

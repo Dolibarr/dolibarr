@@ -27,6 +27,7 @@ insert into c_actioncomm (id,libelle) values ( 1, 'Appel Téléphonique');
 insert into c_actioncomm (id,libelle) values ( 2, 'Envoi Fax');
 insert into c_actioncomm (id,libelle) values ( 3, 'Envoi propal par mail');
 insert into c_actioncomm (id,libelle) values ( 4, 'Envoi d\'un email'); 
+insert into c_actioncomm (id,libelle) values ( 5, 'Rendez-vous'); 
 insert into c_actioncomm (id,libelle) values ( 9, 'Envoi Facture');
 insert into c_actioncomm (id,libelle) values (10, 'Relance effectuée');
 insert into c_actioncomm (id,libelle) values (11, 'Clôture');

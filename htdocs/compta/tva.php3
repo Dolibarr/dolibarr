@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ *
  * $Id$
  * $Source$
  *
@@ -20,10 +21,6 @@
  */
 require("./pre.inc.php3");
 
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
-
-$a = setlocale("LC_TIME", "FRENCH");
 
 /*
  *
@@ -31,15 +28,14 @@ $a = setlocale("LC_TIME", "FRENCH");
  */
 
 function pt ($db, $sql, $date) {
-  $bc[0]="bgcolor=\"#90c090\"";
-  $bc[1]="bgcolor=\"#b0e0b0\"";
+  global $bc; 
 
   $result = $db->query($sql);
   if ($result) {
     $num = $db->num_rows();
     $i = 0; $total = 0 ;
     print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-    print "<TR bgcolor=\"orange\">";
+    print "<TR class=\"liste_titre\">";
     print "<TD width=\"60%\">$date</TD>";
     print "<TD align=\"right\">Montant</TD>";
     print "<td>&nbsp;</td>\n";

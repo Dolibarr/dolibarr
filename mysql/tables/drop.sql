@@ -101,6 +101,8 @@ drop table if exists llx_service;
 
 drop table if exists llx_soc_recontact;
 
+drop table if exists llx_todocomm;
+
 drop table if exists llx_user;
 
 drop table if exists llx_ventes;
@@ -126,31 +128,4 @@ drop table if exists soc_events;
 drop table if exists soc_recontact;
 
 drop table if exists socpeople;
-
-drop table if exists soc_ssii;
-
-drop table if exists soc_rescontact_byweek;
-
-drop table if exists soc_resviewed_byweek;
-
-drop table if exists socmessage ;
-
-drop table if exists somenews;
-
-drop table if exists stat_base ;
-
-drop table if exists stat_abo ;
-
-drop table if exists stat_cat;
-
-drop table if exists stat_subs;
-
-drop table if exists statcv ;
-
-drop table if exists statcv_day;
-
-drop table if exists statof ;
-
-drop table if exists statof_day;
-
 

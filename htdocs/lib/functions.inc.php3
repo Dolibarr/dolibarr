@@ -24,6 +24,17 @@
  * $Source$
  *
  */
+function print_liste_field_titre($name, $file, $field, $begin="") {
+  global $conf;
+
+  print $name."&nbsp;";
+  print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.'">';
+  print '<img src="/theme/'.$conf->theme.'/img/1downarrow.png" border="0"></a>';
+  print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.'">';
+  print '<img src="/theme/'.$conf->theme.'/img/1uparrow.png" border="0"></a>';
+
+}
+
 function print_titre($titre) {
   global $conf;
   print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
@@ -40,9 +51,9 @@ function print_barre_liste($titre,$page,$file) {
   print '<tr><td><div class="titre">'.$titre.'</div></td>';
   print '<td align="right">';
   if ($page > 0) {
-    print '<a href="'.$file.'?page='.($page-1).'"><img src="/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
+    print '<a href="'.$file.'?page='.($page-1).'"><img alt="Page précédente" src="/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
   }
-  print '<a href="'.$file.'?page='.($page+1).'"><img src="/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
+  print '<a href="'.$file.'?page='.($page+1).'"><img alt="Page suivante" src="/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
   print '</td></tr></table>';
 }
 /*
@@ -87,8 +98,49 @@ function print_date_select() {
   for ($year = $syear ; $year < $syear + 5 ; $year++) {
     print "<option value=\"$year\">$year";
   }
-  print "</select>";
+  print "</select>\n";
   
+}
+/*
+ *
+ *
+ */
+function print_heure_select($prefix,$begin=1,$end=23) {
+  
+  print '<select name="'.$prefix.'hour">';
+  for ($hour = $begin ; $hour <= $end ; $hour++) {
+    print "<option value=\"$hour\">$hour";
+  }
+  print "</select>&nbsp;H&nbsp;";
+  print '<select name="'.$prefix.'min">';
+  for ($min = 0 ; $min < 60 ; $min=$min+5) {
+    if ($min < 10) {
+      $min = "0" . $min;
+    }
+    print "<option value=\"$min\">$min";
+  }
+  print "</select>\n";  
+}
+/*
+ *
+ *
+ */
+function print_duree_select($prefix) {
+  
+  print '<select name="'.$prefix.'hour">';
+
+  print "<option value=\"0\">0";
+  print "<option value=\"1\" SELECTED>1";
+
+  for ($hour = 2 ; $hour < 13 ; $hour++) {
+    print "<option value=\"$hour\">$hour";
+  }
+  print "</select>&nbsp;H&nbsp;";
+  print '<select name="'.$prefix.'min">';
+  for ($min = 0 ; $min < 55 ; $min=$min+5) {
+    print "<option value=\"$min\">$min";
+  }
+  print "</select>\n";  
 }
 
 function price($amount) {

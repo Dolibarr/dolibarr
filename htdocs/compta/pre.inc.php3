@@ -22,7 +22,7 @@
 require("../main.inc.php3");
 
 function llxHeader($head = "") {
-  global $PREFIX, $user, $conf;
+  global $user, $conf;
 
 
   /*
@@ -31,62 +31,28 @@ function llxHeader($head = "") {
    */
   top_menu($head);
 
+  $menu = new Menu();
 
-  print "<TR><TD valign=\"top\" align=\"right\">";
+  $menu->add("/compta/index.php3","Factures");
+  $menu->add_submenu("paiement.php3","Paiements");
+  $menu->add_submenu("fac.php3","admin fac");
 
-  print "<TABLE border=\"1\" cellspacing=\"0\" width=\"100%\" cellpadding=\"3\">";
+  $menu->add("ca.php3","Chiffres d'affaires");
 
-  print '<TR><TD class="barre_select" valign="top" align="right">';
-  print '<div align="center"><A href="/compta/index.php3">Factures</A></div><p>';
-  print "<A href=\"paiement.php3\">Paiements</A><BR>\n";
-  print "<A href=\"fac.php3\">admin fac</A><BR>\n";
-  print "</td></tr>";
+  $menu->add_submenu("prev.php3","Prévisionnel");
+  $menu->add_submenu("comp.php3","Comparatif");
 
-  print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
-  print "<div align=\"center\">Chiffres d'affaires</div><br>\n";
-  print "<A href=\"ca.php3\">Réalisé</A><BR>\n";
-  print "<A href=\"prev.php3\">Prévisionnel</A><BR>\n";
-  print "<A href=\"comp.php3\">Comparatif</A>\n";
-  print "</td></tr>";
+  $menu->add_submenu("casoc.php3","Par société");
+  $menu->add_submenu("pointmort.php3","Point mort");
+  $menu->add_submenu("tva.php3","TVA");
 
-  print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
-  print "<CENTER>Analyses</CENTER><br>\n";
-  print "<A href=\"casoc.php3\">CA par societe</A><BR>\n";
-  print "<A href=\"pointmort.php3\">Point mort</A><BR>\n";
-  print "<A href=\"tva.php3\">TVA</A><BR>\n";
-  print "</td></tr>";
+  $menu->add("/comm/propal.php3","Propal");
 
-  print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
-  print "<A href=\"/comm/propal.php3\">Propal</A><BR>\n";
-  print "</td></tr>";
-
-  print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
-  print "<A href=\"bank/index.php3\">Bank</A><BR>\n";
-  print "</td></tr>";
+  $menu->add("bank/index.php3","Bank");
 
 
-  print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
-  print "<A href=\"/comm/index.php3\">Societes</A>\n";
-  print "<form action=\"/comm/index.php3\">";
-  print "<input type=\"text\" name=\"socname\" size=\"8\">";
-  print "<input type=\"submit\" value=\"nom\">";
-  print "</form>";
+  left_menu($menu->liste);
 
-  print "<form action=\"/comm/index.php3\">";
-  print "<input type=\"text\" name=\"socid\" size=\"5\">";
-  print "<input type=\"submit\" value=\"id\">";
-  print "</form>";
-  print "</td></tr>";
-
-  print "</table>";
-
-
-  print "</TD>\n<TD valign=\"top\" width=\"85%\">\n";
 }
-/*
- *
- */
 
-// $Id$
-// $Source$
 ?>

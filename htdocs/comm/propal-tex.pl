@@ -217,27 +217,27 @@ $dbh->disconnect if $dbh;
 #
 #
 #
-print "Generate dvi file<br>\n";
-system("cd $outputdir/ ; latex $numpropale.tex "); 
+#print "Generate dvi file<br>\n";
+system("cd $outputdir/ ; latex $numpropale.tex > /dev/null"); 
 #
 #
 #
 if ($do_pdf) {
-    print "<p>Generate pdf file<br>\n";
+    #print "<p>Generate pdf file<br>\n";
     system("cd $outputdir/ ; pdflatex $numpropale.tex > /dev/null");
 }
 #
 #
 #
 if ($do_ps) {
-    print "Generate ps file\n";
+    #print "Generate ps file\n";
     system("cd $outputdir/ ; dvips $numpropale.dvi -o $numpropale.ps > /dev/null");
 }
 #
 # $outputdir/$numpropale.tex
 #
 if ($do_fax) {
-    print "Generate fax file\n";
+    #print "Generate fax file\n";
     system("gs -q -sDEVICE=tiffg3 -dNOPAUSE -sOutputFile=$outputdir/$numpropale.%03d $outputdir/$numpropale.ps </dev/null");
 }
 Sys::Syslog::syslog('info', 'End propale '.$idpropal);
