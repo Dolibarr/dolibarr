@@ -46,7 +46,7 @@ function llxHeader($head = "", $title="", $help_url='')
       $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php",$langs->trans("Receipts"));
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste.php",$langs->trans("List"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste_factures.php","Factures");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste_factures.php",$langs->trans("Bills"));
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/rejets.php",$langs->trans("Rejects"));
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/stats.php",$langs->trans("Statistics"));
 
@@ -63,7 +63,7 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $langs->load("bills");
   $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
-  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Impayées"));
+  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("BillsUnpayed"));
 
   left_menu($menu->liste, $help_url);
 }
