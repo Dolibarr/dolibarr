@@ -25,23 +25,26 @@
  *
  */
 
-/*!	\file htdocs/conf/conf.class.php
+/**
+    	\file       htdocs/conf/conf.class.php
 		\brief      Fichier de la classe de stockage de la config courante
 		\version    $Revision$
 */
 
 
-/*!	\class Conf
+/**	
+        \class      Conf
 		\brief      Classe de stockage de la config courante
 		\todo       Deplacer ce fichier dans htdocs/lib
 */
 
 class Conf
 {
-    /*! \public */
-    var $db;         // Objet des caractéristiques de connexions
-                    // base db->host, db->name, db->user, db->pass, db->type
-    var $langage;    // Langue choisit fr_FR, en_US, ...
+    /** \public */
+    var $db;            // Objet des caractéristiques de connexions
+                        // base db->host, db->name, db->user, db->pass, db->type
+    var $langage;                   // Langue choisie fr_FR, en_US, ...
+    var $maxfilesize = 2000000;     // Taille max des fichiers uploadés
 
     var $externalrss;
     var $commande;
