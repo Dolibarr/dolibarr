@@ -22,10 +22,9 @@
  *
  */
 
-/*!
-    \file       htdocs/comm/propal.php
-    \ingroup    propale
-    \brief      Page liste des propales
+/**     \file       htdocs/comm/propal.php
+        \ingroup    propale
+        \brief      Page liste des propales
 */
 
 require("./pre.inc.php");
@@ -859,11 +858,12 @@ else
   $pagenext = $page + 1;
 
   $sql = "SELECT s.nom, s.idp, s.client, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp,".$db->pdate("p.fin_validite")." as dfv, c.label as statut, c.id as statutid";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
+  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
 
-  if ($socidp)
+  if ($_GET["socidp"])
     { 
-      $sql .= " AND s.idp = $socidp"; 
+      $sql .= " AND s.idp = ".$_GET["socidp"]; 
     }
   
   if ($_GET["viewstatut"] <> '')
