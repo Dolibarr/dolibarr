@@ -88,10 +88,13 @@ if ($action == 'add')
 
   $propal->ref = $ref;
 
-  $propal->add_product($idprod1,$qty1);
-  $propal->add_product($idprod2,$qty2);
-  $propal->add_product($idprod3,$qty3);
-  $propal->add_product($idprod4,$qty4);
+  for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
+    {
+      $xid = "idprod".$i;
+      $xqty = "qty".$i;
+
+      $propal->add_product($$xid,$$xqty);
+    }
   
   $id = $propal->create();
   
@@ -236,7 +239,7 @@ if ($propalid)
    */
   if ($action == 'delete')
     {
-      $html->form_confirm("$PHP_SELF?propalid=$propalid","Supprimer la proposition","Etes-vous sûr de vouloir modifier cette proposition ?","confirm_delete");
+      $html->form_confirm("$PHP_SELF?propalid=$propalid","Supprimer la proposition","Etes-vous sûr de vouloir supprimer cette proposition ?","confirm_delete");
     }
   /*
    *
