@@ -395,6 +395,7 @@ foreach ($groupes as $keygroupe => $groupe)
       $sql .=" , ".MAIN_DB_PREFIX."telephonie_groupe_ligne as gl";
   
       $sql .= " WHERE gl.fk_ligne = sl.rowid";
+      $sql .= " AND sl.statut <> 7";
       $sql .= " AND gl.fk_groupe = ".$keygroupe;
 
       $sql .= " ORDER BY sl.fk_soc_facture ASC";
