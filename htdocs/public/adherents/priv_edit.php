@@ -208,6 +208,7 @@ if (isset($_SERVER["REMOTE_USER"])){
   print "<input type=\"hidden\" name=\"action\" value=\"update\">";
   print "<input type=\"hidden\" name=\"rowid\" value=\"$adh->id\">";
   print "<input type=\"hidden\" name=\"statut\" value=\"".$adh->statut."\">";
+  print "<input type=\"hidden\" name=\"login\" value=\"".$adh->login."\">";
   //  print "<input type=\"hidden\" name=\"public\" value=\"".$adh->public."\">";
 
   $htmls = new Form($db);
