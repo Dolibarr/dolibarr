@@ -98,6 +98,26 @@ class Societe {
     $this->fax = ereg_replace("\.","",$this->fax);
 
 
+    /*
+     * TODO simpliste pour l'instant mais remplit 95% des cas
+     * à améliorer
+     */
+
+    if ($this->departement_id == -1 && $this->pays_id == 1)
+      {
+	if (strlen(trim($this->cp)) == 5)
+	  {
+	    $depid = departement_rowid($this->db, 
+				       substr(trim($this->cp),0,2), 
+				       $this->pays_id);
+	    if ($depid > 0)
+	      {
+		$this->departement_id = $depid;
+	      }
+	  }
+      }
+    
+
     $sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
     $sql .= " SET nom = '" . trim($this->nom) ."'";
     $sql .= ",address = '" . trim($this->adresse) ."'";
