@@ -35,7 +35,7 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  if ($conf->societe) 
+  if ($conf->societe->enabled) 
     {
       $menu->add(DOL_URL_ROOT."/societe.php", "Sociétés","company");
 
@@ -124,7 +124,7 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/domain/index.php", "Domaines");
     }
 
-  if (defined("MAIN_MODULE_POSTNUKE") && MAIN_MODULE_POSTNUKE)
+  if ($conf->postnuke->enabled)
     {
       $menu->add(DOL_URL_ROOT."/postnuke/articles/index.php", "Editorial");
     }

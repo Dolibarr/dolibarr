@@ -198,10 +198,9 @@ if (defined("MAIN_MODULE_EXPEDITION"))
 {
   $conf->expedition->enabled=MAIN_MODULE_EXPEDITION;
 }
-if (defined("MAIN_MODULE_SOCIETE") && MAIN_MODULE_SOCIETE)
+if (defined("MAIN_MODULE_SOCIETE"))
 {
   $conf->societe->enabled=MAIN_MODULE_SOCIETE; 
-  $conf->societe = 1 ; 	// TODO A remplacer par $conf->societe->enabled
 }
 if (defined("MAIN_MODULE_COMMERCIAL"))
 {
@@ -211,7 +210,7 @@ if (defined("MAIN_MODULE_COMPTABILITE"))
 {
   $conf->compta->enabled=MAIN_MODULE_COMPTABILITE;
 }
-if (defined("MAIN_MODULE_DON") && MAIN_MODULE_DON)
+if (defined("MAIN_MODULE_DON"))
 {
   $conf->don->enabled=MAIN_MODULE_DON;
 }
@@ -219,14 +218,10 @@ if (defined("MAIN_MODULE_FOURNISSEUR"))
 {
   $conf->fournisseur->enabled=MAIN_MODULE_FOURNISSEUR;
 }
-if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
+if (defined("MAIN_MODULE_FICHEINTER"))
 {
   require (DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
   $conf->fichinter->enabled=MAIN_MODULE_FICHEINTER;
-}
-if (defined("MAIN_MODULE_COMMANDE") && MAIN_MODULE_COMMANDE)
-{
-  $conf->commande->enabled=MAIN_MODULE_COMMANDE;
 }
 if (defined("MAIN_MODULE_ADHERENT"))
 {
@@ -239,6 +234,10 @@ if (defined("MAIN_MODULE_PRODUIT"))
 if (defined("MAIN_MODULE_SERVICE"))
 {
   $conf->service->enabled=MAIN_MODULE_SERVICE;
+}
+if (defined("MAIN_MODULE_STOCK"))
+{
+  $conf->stock->enabled=MAIN_MODULE_STOCK;
 }
 if (defined("MAIN_MODULE_BOUTIQUE"))
 {
@@ -256,7 +255,11 @@ if (defined("BOUTIQUE_ALBUM"))
 {
   $conf->boutique->album->enabled=BOUTIQUE_ALBUM;
 }
-if (defined("MAIN_MODULE_FACTURE") && MAIN_MODULE_FACTURE)
+if (defined("MAIN_MODULE_POSTNUKE"))
+{
+  $conf->postnuke->enabled=MAIN_MODULE_POSTNUKE; 
+}
+if (defined("MAIN_MODULE_FACTURE"))
 {
   require (DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
@@ -267,7 +270,7 @@ if (defined("MAIN_MODULE_FACTURE") && MAIN_MODULE_FACTURE)
   if (defined("FACTURE_ADDON_PDF"))
     require(DOL_DOCUMENT_ROOT ."/includes/modules/facture/pdf_".FACTURE_ADDON_PDF.".modules.php");
 }
-if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
+if (defined("MAIN_MODULE_PROPALE"))
 {
   $conf->propal->enabled=MAIN_MODULE_PROPALE;
 
