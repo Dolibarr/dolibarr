@@ -89,11 +89,12 @@ if ($_GET["action"] == 'delete')
   }
 }
 
-llxHeader('','Fiche commande','FactureConfiguration');
-
 $dir = "../includes/modules/facture/";
 
-print_titre("Configuration du module Factures");
+
+llxHeader('','Fiche commande','FactureConfiguration');
+
+print_titre($langs->trans("BillsSetup"));
 
 
 /*
@@ -102,7 +103,7 @@ print_titre("Configuration du module Factures");
 print "<br>";
 print_titre("Module de numérotation des factures");
 
-print '<table class="noborder" cellpadding="2" cellspacing="0" width=\"100%\">';
+print '<table class="noborder" width=\"100%\">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -188,9 +189,6 @@ else
 }
 print "</td></tr>\n";
 
-
-
-
 print '</table>';
 
 
@@ -201,7 +199,7 @@ print '</table>';
 print '<br>';
 print_titre("Modèles de facture pdf");
 
-print '<table class="noborder" cellpadding="2" cellspacing="0" width=\"100%\">';
+print '<table class="noborder" width=\"100%\">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
@@ -365,6 +363,7 @@ print "</form>";
 print "</table>";
 
 print "<br>";
+
 
 $db->close();
 

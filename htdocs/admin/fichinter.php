@@ -22,7 +22,8 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/fichinter.php
+/**
+    	\file       htdocs/admin/fichinter.php
 		\ingroup    fichinter
 		\brief      Page d'administration/configuration du module FicheInter
 		\version    $Revision$
@@ -37,8 +38,6 @@ llxHeader();
 if (!$user->admin)
   accessforbidden();
 
-
-// positionne la variable pour le test d'affichage de l'icone
 
 $ficheinter_addon_var_pdf = FICHEINTER_ADDON_PDF;
 
@@ -60,11 +59,8 @@ if ($_GET["action"] == 'setpdf')
 
 $dir = "../includes/modules/fichinter/";
 
-/*
- *
- */
 
-print_titre("Configuration du module Fiches d'interventions");
+print_titre($langs->trans("InterventionsSetup"));
 
 print "<br>";
 

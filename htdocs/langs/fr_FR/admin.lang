@@ -216,3 +216,7 @@ LDAPSetup=Configuration du module LDAP
 LDAPServer=Serveur LDAP
 ##### Propal #####
 PropalSetup=Configuration du module Propositions Commerciales
+##### Bills #####
+BillsSetup=Configuration du module Factures
+##### Interventions #####
+InterventionsSetup=Configuration du module Interventions
