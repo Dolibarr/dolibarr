@@ -143,7 +143,7 @@ if ($result)
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
   print '<tr class="liste_titre">';
-  print '<td width="25%">';
+  print '<td>';
   print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom", $params);
   print '</td><td width="25%">';
   print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville",$params);
