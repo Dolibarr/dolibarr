@@ -61,10 +61,10 @@ if ( $db->query($sql) )
       $var=!$var;
       print "<TR $bc[$var]>";
       
-      print '<td><a href="fiche.php?id='.$objp->rowid.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche livre"></a>&nbsp;';
+      print '<td><a href="fiche.php?id='.$objp->pn_sid.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche livre"></a>&nbsp;';
       
-      print "<a href=\"fiche.php?id=$objp->rowid\">$objp->pn_title</a></TD>\n";
-      print "<TD width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->title</a></TD>\n";
+      print "<a href=\"fiche.php?id=$objp->pn_sid\">$objp->pn_title</a></TD>\n";
+      print "<TD width='70%'><a href=\"fiche.php?id=$objp->pn_sid\">$objp->title</a></TD>\n";
             
       print "</TR>\n";
       $i++;
