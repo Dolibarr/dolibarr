@@ -21,8 +21,15 @@
  */
 require("./pre.inc.php");
 require("../commande.class.php");
-require("../../graph.class.php");
 require("./commandestats.class.php");
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socidp = $user->societe_id;
+}
 
 llxHeader();
 /*
@@ -32,46 +39,40 @@ llxHeader();
 
 print_fiche_titre('Statistiques commandes', $mesg);
 
-$stats = new CommandeStats($db);
+$stats = new CommandeStats($db, $socidp);
+
 $year = strftime("%Y", time());
 $data = $stats->getNbCommandeByMonthWithPrevYear($year);
 $filev = "/document/images/nbcommande2year.png";
 
-$px = new Graph($data);
+$px = new BarGraph($data);
 $px->SetMaxValue($px->GetMaxValue());
 $px->SetWidth(450);
 $px->SetHeight(280);
 $px->SetYLabel("Nombre de commande");
 $px->draw(DOL_DOCUMENT_ROOT.$filev, $data, $year);
       
-$sql = "SELECT count(*), date_format(date_commande,'%Y') as dm, sum(total_ht)  FROM llx_commande WHERE fk_statut > 0 GROUP BY dm DESC ";
-if ($db->query($sql))
-{
-  $num = $db->num_rows();
+$rows = $stats->getNbByYear();
+$num = sizeof($rows);
 
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr><td align="center">Année</td><td width="10%">Nb de commande</td><td>Somme des commandes</td>';
-  print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-  print 'Nombre de commande par mois<br><img src="'.DOL_URL_ROOT.$filev.'" alt="Graphique nombre de commande">';
-  print '</td></tr>';
-  $i = 0;
-  while ($i < $num)
-    {
-      $row = $db->fetch_row($i);
-      $nbproduct = $row[0];
-      $year = $row[1];
-      print "<tr>";
-      print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td><td>'.price($row[2]).'</td></tr>';
-      $i++;
-    }
-
-  print '</table>';
-  $db->free();
-}
-else
+print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr><td align="center">Année</td><td width="10%">Nb de commande</td><td align="center">Somme des commandes</td>';
+print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
+print 'Nombre de commande par mois<br><img src="'.DOL_URL_ROOT.$filev.'" alt="Graphique nombre de commande">';
+print '</td></tr>';
+$i = 0;
+while (list($key, $value) = each ($rows))
 {
-  print "Erreur";
+  $nbproduct = $value[0];
+  $price = $value[1];
+  $year = $key;
+  print "<tr>";
+  print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td><td align="center">'.price($price).'</td></tr>';
+  $i++;
 }
+
+print '</table>';
+$db->free();
 
 
 $db->close();
