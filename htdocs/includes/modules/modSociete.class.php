@@ -83,6 +83,8 @@ class modSociete extends DolibarrModules
     */
   function init()
   {
+    global $conf;
+    
     // Permissions
     $this->remove();
 
@@ -106,6 +108,9 @@ class modSociete extends DolibarrModules
     $this->rights[3][2] = 'd'; // type de la permission (déprécié à ce jour)
     $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
 
+    // Dir
+    $this->dirs[0] = $conf->societe->dir_output;
+    
     $sql = array();
     
     return $this->_init($sql);

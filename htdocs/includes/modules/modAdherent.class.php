@@ -121,16 +121,41 @@ class modAdherent extends DolibarrModules
     */
   function init()
   {
+    global $conf;
+    
     // Permissions
     $this->remove();
 
-    $sql = array(
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (70,'Tous les droits sur les adherents','adherent','a',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (71,'Lire les fiche adherents','adherent','r',1);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (72,'Créer modifier des adherents','adherent','w',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (73,'Modifier les adherents','adherent','m',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (74,'Supprimer les adherents','adherent','d',0);"
-		 );
+    $this->rights[0][0] = 70; // id de la permission
+    $this->rights[0][1] = 'Tous les droits sur les adherents'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[1][0] = 71; // id de la permission
+    $this->rights[1][1] = 'Lire les fiche adherents'; // libelle de la permission
+    $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[1][3] = 1; // La permission est-elle une permission par défaut
+
+    $this->rights[2][0] = 72; // id de la permission
+    $this->rights[2][1] = 'Créer modifier des adherents'; // libelle de la permission
+    $this->rights[2][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[3][0] = 73; // id de la permission
+    $this->rights[3][1] = 'Modifier les adherents'; // libelle de la permission
+    $this->rights[3][2] = 'm'; // type de la permission (déprécié à ce jour)
+    $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[4][0] = 74; // id de la permission
+    $this->rights[4][1] = 'Supprimer les adherents'; // libelle de la permission
+    $this->rights[4][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[4][3] = 0; // La permission est-elle une permission par défaut
+
+    // Dir
+    $this->dirs[0] = $conf->adherent->dir_output;
+    $this->dirs[1] = $conf->adherent->dir_output."/photos";
+  
+    $sql = array();
     
     return $this->_init($sql);
   }

@@ -83,8 +83,11 @@ class modComptabilite extends DolibarrModules
     */
   function init()
   {
+    global $conf;
+    
     // Permissions
     $this->remove();
+
     $isq = "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES";
     $sql = array(
 		 "$isq (90,'Tous les droits sur la compta','compta',NULL,NULL,'a',0);",
@@ -98,10 +101,9 @@ class modComptabilite extends DolibarrModules
 
 
     // Dir
-    $this->dirs[0] = DOL_DATA_ROOT."/compta/";
-    $this->dirs[1] = DOL_DATA_ROOT."/compta/export/";
-    
-
+    $this->dirs[0] = $conf->compta->dir_output;
+    $this->dirs[1] = $conf->compta->dir_output."/rapport";
+    $this->dirs[2] = $conf->compta->dir_output."/export";
     
     return $this->_init($sql);
   }

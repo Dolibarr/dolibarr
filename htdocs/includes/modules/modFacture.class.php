@@ -126,6 +126,8 @@ class modFacture extends DolibarrModules
     */
   function init()
   {
+    global $conf;
+    
     // Permissions
     $this->remove();
 
@@ -163,6 +165,11 @@ class modFacture extends DolibarrModules
     $this->rights[6][1] = 'Supprimer les factures';
     $this->rights[6][2] = 'a';
     $this->rights[6][3] = 0;
+
+    // Dir
+    $this->dirs[0] = $conf->facture->dir_output;
+    
+    $sql = array();
 
     return $this->_init($sql);
   }
