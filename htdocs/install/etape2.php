@@ -294,7 +294,7 @@ if ($_POST["action"] == "set")
                         else
                         {
                             $ok = 0;
-                            print "Erreur SQL ".$db->errno()." sur requete '$buffer': ".$db->error()."<br>";
+                            print $langs->trans("ErrorSQL")." : ".$db->errno()." - '$buffer' - ".$db->error()."<br>";
                         }
                     }
                 }
@@ -349,7 +349,7 @@ if ($_POST["action"] == "set")
                         else
                         {
                             $ok = 0;
-                            print "Erreur SQL ".$db->errno()." sur requete '$buffer': ".$db->error()."<br>";
+                            print $langs->trans("ErrorSQL")." : ".$db->errno()." - '$buffer' - ".$db->error()."<br>";
                         }
                     }
                 }
