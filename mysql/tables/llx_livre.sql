@@ -33,6 +33,8 @@ create table llx_livre
   description     text,
   prix            decimal(15,4),
   fk_editeur      integer,
-  fk_user_author  integer
+  fk_user_author  integer,
+
+  UNIQUE(ref)
 );
 
