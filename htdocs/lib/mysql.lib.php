@@ -469,9 +469,11 @@ class DoliDb {
     }
 
 		
-function getdsn()
+function getdsn($db_type,$db_user,$db_pass,$db_host,$dbname)
 		{
-		  $pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
+		  $pear = $db_type.'://'.$db_user.':'.$db_pass.'@'.
+			$db_host.'/'.$db_name;
+			
 			return $pear;
 		}
 }

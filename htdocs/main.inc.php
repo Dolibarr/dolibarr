@@ -129,19 +129,21 @@ else
       require_once DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php";
 
       $params = array(
-		      "dsn" => $conf->db->getdsn(),
+//		      "dsn" => $conf->db->getdsn(),
+		      "dsn" => $db->getdsn($dolibarr_main_db_type,$dolibarr_main_db_user,$dolibarr_main_db_pass,$dolibarr_main_db_host,$dolibarr_main_db_name),
 		      "table" => MAIN_DB_PREFIX."user",
 		      "usernamecol" => "login",
 		      "passwordcol" => "pass",
 		      "cryptType" => "none",
 		      );
-
+			
       $aDol = new DOLIAuth("DB", $params, "loginfunction");
       $aDol->start();
       $result = $aDol->getAuth();
       if ($result)
 	{ 
         // Authentification Auth OK, on va chercher les infos du user
+				dolibarr_syslog ("auth demarre va chercher les infos du user");
         $user->fetch($aDol->getUsername());
 	}
       else
