@@ -227,6 +227,7 @@ if ($action == '') {
       }
     print "</table>";
   }
+  print '<a href="paiement/index.php">Rapports</a>';
 
 }
 
