@@ -40,7 +40,7 @@ print_titre("Chiffre d'affaire par société");
  *
  */
 
-$sql = "SELECT sum(f.amount) as ca FROM llx_facture as f";
+$sql = "SELECT sum(f.total) as ca FROM llx_facture as f";
 if ($socidp)
 {
   $sql .= " WHERE f.fk_soc = $socidp";
@@ -60,7 +60,7 @@ print "<b>Total : ".price($catotal)."</b>";
 if ($catotal == 0) { $catotal = 1; };
 
 
-$sql = "SELECT s.nom, s.idp, sum(f.amount) as ca";
+$sql = "SELECT s.nom, s.idp, sum(f.total) as ca";
 $sql .= " FROM llx_societe as s,llx_facture as f";
 $sql .= " WHERE f.fk_soc = s.idp";
 if ($socidp)
