@@ -380,7 +380,7 @@ border: 1px solid #6C7C8B;
 
 table.noborder {
 border-collapse: collapse;
-border: 0px
+border: 0px;
 }
 
 table.liste {
@@ -391,7 +391,8 @@ width: 100%;
 
 table.noborder td {
 border-collapse: collapse;
-border: 0px
+border: 0px;
+padding: 1px 3px;
 }
 
 table#actions {
