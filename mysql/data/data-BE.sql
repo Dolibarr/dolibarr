@@ -215,9 +215,9 @@ insert into llx_c_pays (rowid,libelle,code) values (25, 'Cameroun',       'CM');
 --
 delete from llx_c_regions;
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (01,'97105',1,'Flandre');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (02,'97209',2,'Wallonie');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (03,'97302',3,'Bruxelles-Capitale');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (2,01,'97105',1,'Flandre');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (2,02,'97209',2,'Wallonie');
+insert into llx_c_regions (fk_pays,code_region,cheflieu,tncc,nom) values (2,03,'97302',3,'Bruxelles-Capitale');
 
 --
 -- Provinces
