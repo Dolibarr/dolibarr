@@ -32,8 +32,8 @@ print_titre("Liste de tous les paramètres de configuration Dolibarr");
 print '<br>';
 print '<table class="noborder" cellpadding="3" cellspacing="0">';
 print '<tr class="liste_titre">';
-print '<td>Paramètre</td>';
-print '<td>Valeur</td>';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const ORDER BY name ASC";

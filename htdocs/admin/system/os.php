@@ -31,7 +31,8 @@ print_titre("OS");
 print "<br>\n";
 
 print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print "<tr class=\"liste_titre\"><td>Paramètre</td><td>Valeur</td></tr>\n";
+print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
+print "\n";
 // Récupère la version de l'OS
 ob_start(); 
 phpinfo();

@@ -2,7 +2,7 @@
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003 Éric Seigne          <erics@rycks.com>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Benoit Mortier 			 <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,8 +81,8 @@ if ($actionsave)
 print '<form name="phpwebcalendarconfig" action="webcalendar.php" method="post">';
 print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"1\">
 <tr class=\"liste_titre\">
-<td>Paramètre</td>
-<td>Valeur</td>
+<td>".$langs->trans("Parameter")."</td>
+<td>".$langs->trans("Value")."</td>
 </tr>
 <tr class=\"impair\">
 <td>Adresse URL d'accès au calendrier</td>
@@ -101,17 +101,17 @@ print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"1\">
 <td><input type=\"text\" name=\"phpwebcalendar_user\" value=\"". PHPWEBCALENDAR_USER . "\" size=\"45\"></td>
 </tr>
 <tr class=\"impair\">
-<td>Mot de passe d'accès à la base</td>
+<td>".$langs->trans("Password")."</td>
 <td><input type=\"password\" name=\"phpwebcalendar_pass\" value=\"" . PHPWEBCALENDAR_PASS . "\" size=\"45\"></td>
 </tr>
 <tr class=\"pair\">
-<td>Mot de passe (vérification)</td>
+<td>".$langs->trans("PasswordRetype")."</td>
 <td><input type=\"password\" name=\"phpwebcalendar_pass2\" value=\"" . PHPWEBCALENDAR_PASS ."\" size=\"45\"></td>
 </tr>
 <tr class=\"impair\">
 <td colspan=\"2\" align=\"center\">
-<input type=\"submit\" name=\"test\" value=\"Tester connexion\">
-<input type=\"submit\" name=\"save\" value=\"Enregistrer\">
+<input type=\"submit\" name=\"test\" value=\"".$langs->trans("TestConnection")."\">
+<input type=\"submit\" name=\"save\" value=\"".$langs->trans("Save")."\">
 </td>
 </tr>\n";
 

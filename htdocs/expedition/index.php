@@ -35,7 +35,7 @@ print '<form method="post" action="liste.php">';
 print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">Rechercher une expédition</td></tr>';
 print "<tr $bc[1]><td>";
-print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
+print 'Num. : <input type="text" name="sf_ref"> <input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
 print "</table></form>\n";
 
 /*
@@ -55,7 +55,7 @@ if ( $db->query($sql) )
     {
       print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="3">'.translate("Expeditions à valider").'</td></tr>';
+      print '<td colspan="3">Expeditions à valider</td></tr>';
       $i = 0;
       $var = True;
       while ($i < $num)
@@ -87,10 +87,12 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   if ($num)
     {
+      $langs->load("orders");
+
       $i = 0;
       print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="2">'.translate("Commandes à traiter").'</td></tr>';
+      print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
       $var = True;
       while ($i < $num)
 	{
@@ -124,13 +126,15 @@ if ($socidp)
 
 if ( $db->query($sql) ) 
 {
+  $langs->load("orders");
+  
   $num = $db->num_rows();
   if ($num)
     {
       $i = 0;
       print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="2">'.translate("Commandes en traitement").'</td></tr>';
+      print '<td colspan="2">'.$langs->trans("OrdersInProcess").'</td></tr>';
       $var = True;
       while ($i < $num)
 	{
@@ -166,7 +170,7 @@ if ( $db->query($sql) )
       $i = 0;
       print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="3">'.translate("5 dernières expéditions").'</td></tr>';
+      print '<td colspan="3">5 dernières expéditions</td></tr>';
       $var = True;
       while ($i < $num)
 	{

@@ -93,14 +93,21 @@ Class Translate {
 
     /**
     *  Return the list of available languages
-    *  [fr] Retourne la liste des langues disponibles
     *
     *  @access     public
     *  @return     array: list of languages
     */
     function get_available_languages()
     {
-    
+      // On parcour le répertoire langs pour détecter les langues dispo
+      $handle=opendir(DOL_DOCUMENT_ROOT ."/langs");
+      $langs_available=array();
+      while ($file = trim(readdir($handle))){
+    	if($file != "." && $file != ".." && $file != "CVS") {
+          array_push($langs_available,$file);
+        }
+      }
+      return $langs_available;
     }
     
     /**
@@ -122,13 +129,6 @@ Class Translate {
     }
 
 
-}
-
-// Pour compatibilité avec l'existant. Il existe quelques appels a une fonction
-// tranlsate. On l'implémente donc ici mais il vaut mieux utiliser $langs->trans
-function translate($str) {
-
-    return $str;
 }
 
 ?>

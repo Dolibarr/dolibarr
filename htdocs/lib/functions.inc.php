@@ -474,7 +474,7 @@ function dolibarr_print_error($db='',$msg='')
 
   print "<b>Serveur:</b>".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
   print "<b>URL sollicitée:</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
-  print "<b>Paramètres:</b> ".$_SERVER["QUERY_STRING"]."<br>\n";;
+  print "<b>".$langs->trans("Parameters").":</b> ".$_SERVER["QUERY_STRING"]."<br>\n";;
   print "<b>URL d'origine:</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
   
   if ($db) {

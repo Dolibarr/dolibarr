@@ -126,7 +126,7 @@ if ($_GET["propalid"])
       print "<td valign=\"top\" width=\"50%\" rowspan=\"9\">Note :<br>". nl2br($obj->note)."</td></tr>";
       //
 
-      print '<tr><td>'.translate("Date").'</td><td colspan="2">'.strftime("%A %d %B %Y",$obj->dp).'</td></tr>';
+      print '<tr><td>'.$langs->trans("Date").'</td><td colspan="2">'.dolibarr_print_date($obj->dp).'</td></tr>';
 
       if ($obj->fk_projet) 
 	{

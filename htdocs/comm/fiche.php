@@ -374,14 +374,7 @@ if ($_socid > 0)
 	print '<a class="tabAction" href="../fichinter/fiche.php?socidp='.$objsoc->id.'&amp;action=create">Intervention</a>';
       }
 
-//    if ($user->societe_id == 0)
-//    {
-//        if ($user->rights->facture->creer) {
-//            print "<a class=\"tabAction\" href=\"facture.php?action=create&socidp=$objsoc->idp\">".translate("Créer Facture")."</a>";
-//        }
-//    }
-
-    
+  
     print '</div>';
     print '<br>';
     
@@ -400,7 +393,7 @@ if ($_socid > 0)
       print "<option value=\"t\">Oui";
       print "<option value=\"f\">Non";
       print "</select>";
-      print "<input type=\"submit\" value=\"Mettre &agrave; jour\">";
+      print "<input type=\"submit\" value=\"".$langs->trans("Valid")."\">";
       print "</form>\n";
     } else {
       /*

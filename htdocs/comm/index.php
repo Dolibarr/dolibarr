@@ -124,6 +124,7 @@ if ($conf->propal->enabled) {
  */
 if ($conf->commande->enabled)
 {
+    $langs->load("orders");
     $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
     $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
     if ($socidp)
@@ -138,7 +139,7 @@ if ($conf->commande->enabled)
         {
 	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
 	  print '<tr class="liste_titre">';
-	  print '<td colspan="2">'.translate("Commandes à valider").'</td></tr>';
+	  print '<td colspan="2">'.$langs->trans("OrdersToValid").'</td></tr>';
           $i = 0;
           $var = False;
           while ($i < $num)

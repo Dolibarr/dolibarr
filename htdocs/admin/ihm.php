@@ -55,7 +55,7 @@ if ($_GET["action"] == 'edit')
   print '<form method="post" action="ihm.php">';
 
   print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr class="liste_titre"><td>Nom</td><td>Valeur</td></tr>';
+  print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
   print '<tr class="impair"><td>Thème</td>';
   print '<td><select name="main_theme">';
@@ -107,13 +107,10 @@ if ($_GET["action"] == 'edit')
   print '</td></tr>';
 
   print '<tr class="pair"><td width="50%">Langue par défaut à utiliser (code langue)</td><td>';
+  $langs_available=$langs->get_available_languages();
   print '<select name="main_lang_default">';
-  // On parcour le répertoire langs pour détecter les langues possibles
-  $handle=opendir(DOL_DOCUMENT_ROOT ."/langs");
-  while ($file = trim(readdir($handle))){
-	if($file != "." && $file != ".." && $file != "CVS") {
-      print '<option value="'.$file.'"'.(MAIN_LANG_DEFAULT==$file?'selected':'').'>'.$file.'</option>';
-    }
+  foreach ($langs_available as $lang) {
+          print '<option value="'.$lang.'"'.(MAIN_LANG_DEFAULT==$lang?'selected':'').'>'.$lang.'</option>';
   }
   print '</select>';
   print '</td></tr>';
@@ -128,7 +125,7 @@ if ($_GET["action"] == 'edit')
   print '</table><br>';
   
   print '<div class="tabsAction">';
-  print '<input class="tabAction" type="submit" value="Enregistrer">';
+  print '<input class="tabAction" type="submit" value="'.$langs->trans("Save").'">';
   print '</div>';
 
   print '</form>';
@@ -137,7 +134,7 @@ else
 {
 
   print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr class="liste_titre"><td>Nom</td><td>Valeur</td></tr>';
+  print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
   print '<tr class="impair"><td width="50%">Thème</td><td>' . MAIN_THEME . '</td></tr>';
   print '<tr class="pair"><td>Longueur maximum des listes</td><td>' . SIZE_LISTE_LIMIT . '</td></tr>';
   print '<tr class="impair"><td width="50%">Gestionnaire du menu du haut</td><td>';
@@ -157,7 +154,7 @@ else
 
 
   print '<div class="tabsAction">';
-  print '<a class="tabAction" href="ihm.php?action=edit">Editer</a>';
+  print '<a class="tabAction" href="ihm.php?action=edit">'.$langs->trans("Edit").'</a>';
   print '</div>';
 
 }

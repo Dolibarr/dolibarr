@@ -22,12 +22,14 @@
  */
 
 require("./pre.inc.php");
+$langs->load("orders");
 
-llxHeader("", 'Commandes','Commande');
 
-print_titre("Commandes");
+llxHeader("",$langs->trans("Orders"),"Commande");
 
-print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+print_titre($langs->trans("OrdersArea"));
+
+print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
 
 print '<tr><td valign="top" width="30%">';
 /*
@@ -35,9 +37,9 @@ print '<tr><td valign="top" width="30%">';
  */
 print '<form method="post" action="liste.php">';
 print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-print '<tr class="liste_titre"><td colspan="2">Rechercher une commande</td></tr>';
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchOrder").'</td></tr>';
 print "<tr $bc[1]><td>";
-print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
+print 'Num. : <input type="text" name="sf_ref"> <input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
 print "</table></form>\n";
 
 
@@ -53,13 +55,14 @@ if ($socidp)
 
 if ( $db->query($sql) ) 
 {
+  $langs->load("orders");
   $num = $db->num_rows();
   if ($num)
     {
       $i = 0;
       print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="2">'.translate("Commandes à valider").'</td></tr>';
+      print '<td colspan="2">'.$langs->trans("OrdersToValid").'</td></tr>';
       $var = True;
       while ($i < $num)
 	{
@@ -93,7 +96,7 @@ if ( $db->query($sql) )
       $i = 0;
       print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="2">Commandes à traiter</td></tr>';
+      print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
       $var = True;
       while ($i < $num)
 	{

@@ -24,6 +24,8 @@ require("./pre.inc.php");
 
 $user->getrights('banque');
 
+$langs->load("compta");
+
 /*
  * Sécurité accés client
  */
@@ -63,7 +65,7 @@ if ($action == 'del_bookmark')
  *
  *
  */
-print_titre(translate("Espace comptabilité"));
+print_titre("Espace comptabilité");
 
 print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 
@@ -213,6 +215,8 @@ print '</td><td valign="top" width="70%">';
  */
 if ($user->comm > 0 && $conf->commercial->enabled ) 
 {
+  $langs->load("orders");
+
   $sql = "SELECT p.rowid, p.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as p, ".MAIN_DB_PREFIX."societe as s";
   $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut >= 1 AND p.facture = 0";
   if ($socidp)
@@ -228,7 +232,7 @@ if ($user->comm > 0 && $conf->commercial->enabled )
 	  $i = 0;
 	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
 	  print "<tr class=\"liste_titre\">";
-	  print '<td colspan="2">'.translate("Commandes à facturer").'</td></tr>';
+	  print '<td colspan="2">'.$langs->trans("OrdersToBill").'</td></tr>';
 	  $var = True;
 	  while ($i < $num)
 	    {

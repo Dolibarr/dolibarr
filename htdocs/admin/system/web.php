@@ -31,7 +31,7 @@ print_titre("Serveur Web");
 print "<br>\n";
 
 print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print "<tr class=\"liste_titre\"><td>Paramètre</td><td>Valeur</td></tr>\n";
+print "<tr class=\"liste_titre\"><td>".$langs->trans("Parameter")."</td><td>".$langs->trans("Value")."</td></tr>\n";
 print "<tr $bc[1]><td width=\"140\">Version</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
 print "<tr $bc[0]><td>Nom du serveur virtuel</td><td>" . $_SERVER["SERVER_NAME"] . "</td></tr>\n";
 print "<tr $bc[1]><td width=\"140\">IP</td><td>".$_SERVER["SERVER_ADDR"]."</td></tr>\n";
