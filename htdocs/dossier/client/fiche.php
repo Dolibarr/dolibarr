@@ -44,13 +44,6 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-/*
- * Mode Liste
- *
- *
- *
- */
-
 if ($_GET["facid"])
 {
   require_once DOL_DOCUMENT_ROOT.'/facture.class.php';
@@ -67,17 +60,21 @@ if ($_GET["facid"])
     }
   else
     {
-      exec("/usr/bin/convert $file $file_img");
-
-      if (file_exists($file_img))
+      if ( exec("/usr/bin/convert $file $file_img"))
 	{
-	  print '<br><img src="./image.php?file='.$file_img.'"></img>';
+
+	  if (file_exists($file_img))
+	    {
+	      print '<br><img src="./image.php?file='.$file_img.'"></img>';
+	    }
+	}
+      else
+	{
+	  print "Erreur ";
 	}
     }
 
 }
-
-
 
 $db->close();
 
