@@ -49,6 +49,9 @@ Function ldap_unacc($str)
   $stu = ereg_replace("è","e",$stu);
   $stu = ereg_replace("ê","e",$stu);
   $stu = ereg_replace("à","a",$stu);
+  $stu = ereg_replace("ç","c",$stu);
+  $stu = ereg_replace("ï","i",$stu);
+  $stu = ereg_replace("ä","a",$stu);
   return $stu;
 }
 
