@@ -32,9 +32,9 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("/public/adherents/","Non adherent");
+  $menu->add(DOL_URL_ROOT."/public/adherents/","Non adherent");
   $menu->add_submenu("new.php","Inscription");
-  $menu->add("/public/adherents/","Adherents");
+  $menu->add(DOL_URL_ROOT."/public/adherents/","Adherents");
   $menu->add_submenu("priv_edit.php","Edition de sa fiche");
   $menu->add_submenu("priv_liste.php","Liste des adherents");
   /*

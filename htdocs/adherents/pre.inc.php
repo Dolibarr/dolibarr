@@ -43,7 +43,7 @@ function llxHeader($head = "") {
       $menu->add("fiche.php?action=create","Nouvel adhérent");
     }
 
-  $menu->add("/public/adherents/","Espace adherents public");
+  $menu->add(DOL_URL_ROOT."/public/adherents/","Espace adherents public");
 
   $menu->add("index.php","Export");
   $menu->add_submenu("htpasswd.php","Format htpasswd");
@@ -52,14 +52,14 @@ function llxHeader($head = "") {
 
   $menu->add("index.php","Comptabilite");
   $menu->add_submenu("cotisations.php","Cotisations");
-  $menu->add_submenu("/compta/bank/","Bank");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/","Bank");
 
   if ($user->admin)
     {
       $menu->add("index.php","Configuration");
       $menu->add_submenu("type.php","Type d'adhérent");
       $menu->add_submenu("options.php","Champs optionnels");
-      $menu->add_submenu("/admin/adherent.php","Constantes");
+      $menu->add_submenu(DOL_URL_ROOT."/admin/adherent.php","Constantes");
     }
 
   left_menu($menu->liste);
