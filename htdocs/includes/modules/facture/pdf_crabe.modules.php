@@ -26,7 +26,7 @@ Class pdf_crabe {
   Function pdf_crabe($db=0)
     { 
       $this->db = $db;
-      $this->description = "Modèle de facture classique (Gère l'option fiscale de facturation TVA et les mode de règlement)";
+      $this->description = "Modèle de facture classique (Gère l'option fiscale de facturation TVA et le choix du mode de règlement à afficher)";
     }
 
   Function write_pdf_file($facid)
