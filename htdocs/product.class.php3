@@ -126,7 +126,7 @@ class Product
 	  $this->type        = $result["fk_product_type"];
 	  $this->nbvente     = $result["nbvente"];
 	  $this->envente     = $result["envente"];
-
+	  $this->duration    = $result["duration"];
 	  $this->duration_value = substr($result["duration"],0,strlen($result["duration"])-1);
 	  $this->duration_unit = substr($result["duration"],-1);
 
