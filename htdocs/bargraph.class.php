@@ -70,6 +70,14 @@ class BarGraph extends Graph
       {
 	$this->graph->SetNumVertTicks(4);
       }
+    elseif (substr($this->MaxValue,0,1) == 3)
+      {
+	$this->graph->SetNumVertTicks(6);
+      }
+    elseif (substr($this->MaxValue,0,1) == 4)
+      {
+	$this->graph->SetNumVertTicks(8);
+      }
     else
       {
 	$this->graph->SetNumVertTicks(substr($this->MaxValue,0,1));
