@@ -598,10 +598,10 @@ class Propal
    */
   Function delete()
   {
-    $sql = "DELETE FROM llx_propal WHERE rowid = $this->id;";
+    $sql = "DELETE FROM llx_propaldet WHERE fk_propal = $this->id ;";
     if ( $this->db->query($sql) ) 
       {
-	$sql = "DELETE FROM llx_propaldet WHERE fk_propal = $this->id ;";
+	$sql = "DELETE FROM llx_propal WHERE rowid = $this->id;";
 	if ( $this->db->query($sql) ) 
 	  {
 	    return 1;
