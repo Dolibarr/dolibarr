@@ -22,7 +22,7 @@
 require("../main.inc.php");
 require("./commande.class.php");
 
-function llxHeader($head = "", $urlp = "")
+function llxHeader($head = "", $title="", $help_url='')
 {
   global $user, $conf;
 
@@ -30,7 +30,7 @@ function llxHeader($head = "", $urlp = "")
    *
    *
    */
-  top_menu($head);
+  top_menu($head, $title);
 
   $menu = new Menu();
 
@@ -39,11 +39,6 @@ function llxHeader($head = "", $urlp = "")
 
   $menu->add(DOL_URL_ROOT."/commande/stats/", "Statistiques");
 
-  left_menu($menu->liste);
-  /*
-   *
-   *
-   */
-
+  left_menu($menu->liste, $help_url);
 }
 ?>
