@@ -38,7 +38,8 @@ class ComptaJournalPaiement  {
       $date = strftime("%Y%m",time());
 
       $dir = DOL_DATA_ROOT."/compta/export/";
-      $file = $dir . $date . ".pdf";
+      $file = $dir . "JournalPaiement".$date . ".pdf";
+
       if (file_exists($dir))
 	{
 	  $pdf = new ComptaJournalPaiementPdf('P','mm','A4');
@@ -84,7 +85,7 @@ class ComptaJournalPaiement  {
 	  $sql .= " AND p.statut = 1 ";
 	  $sql .= " AND pf.fk_facture = f.rowid";
 	  $sql .= " AND date_format(datep,'%Y%m') = '".$date."'";
-	  $sql .= " ORDER BY p.datep ASC";
+	  $sql .= " ORDER BY date_format(p.datep,'%Y%m%d') ASC, s.nom ASC";
 
 	  $oldate = '';
 	  
@@ -107,11 +108,11 @@ class ComptaJournalPaiement  {
 			{
 			  $pdf->SetFont('Arial','B',9);
 
-			  $pdf->cell(130,$hligne,'');
+			  $pdf->cell(143,$hligne,'');
 
-			  $pdf->cell(20,$hligne,'Total : ',0,0,'R');
-			  $pdf->cell(20,$hligne,$total_debit,0,0,'R');
-			  $pdf->cell(20,$hligne,$total_credit,0,0,'R');
+			  $pdf->cell(16,$hligne,'Total : ',0,0,'R');
+			  $pdf->cell(18,$hligne,$total_debit,0,0,'R');
+			  $pdf->cell(18,$hligne,$total_credit,0,0,'R');
 			  $pdf->ln();
 			}
 
@@ -125,19 +126,19 @@ class ComptaJournalPaiement  {
 
 		      $pdf->SetFont('Arial','',9);
 
-		      $pdf->cell(20,$hligne,'Date');
+		      $pdf->cell(16,$hligne,'Date');
 
 		      $pdf->cell(20,$hligne,'N Facture');
 
 		      $pdf->cell(20,$hligne,'Tiers');
 
-		      $pdf->cell(70,$hligne,'Libellé');
+		      $pdf->cell(87,$hligne,'Libellé');
 
-		      $pdf->cell(20,$hligne,'Echeance');
+		      $pdf->cell(16,$hligne,'Echeance',0,0,'R');
 
-		      $pdf->cell(20,$hligne,'Débit',0,0,'R');
+		      $pdf->cell(18,$hligne,'Débit',0,0,'R');
 
-		      $pdf->cell(20,$hligne,'Crédit',0,0,'R');
+		      $pdf->cell(18,$hligne,'Crédit',0,0,'R');
 		      $pdf->ln();
 
 		      $oldate = strftime("%d%m%Y",$obj->dp);
@@ -146,6 +147,13 @@ class ComptaJournalPaiement  {
 		  /*
 		   *
 		   */
+		  $socnom = $obj->nom;
+		  $libelle = $obj->libelle;
+
+		  if (strlen($obj->nom) > 31)
+		  {
+		    $socnom = substr($obj->nom, 0 , 31);
+		  }
 
 		  $pdf->SetFont('Arial','',9);
 
@@ -160,23 +168,24 @@ class ComptaJournalPaiement  {
 		      $credit = abs($obj->amount);
 		      $debit = '';
 		      $total_credit = $total_credit + $credit;
+		      $libelle = "Rejet Prélèvement";
 		    }
 
-		  $pdf->cell(20,$hligne,strftime('%d%m%y',$obj->dp));
+		  $pdf->cell(16,$hligne,strftime('%d%m%y',$obj->dp));
 
 		  $pdf->cell(20,$hligne,$obj->facnumber);
 
-		  $pdf->cell(20,$hligne,'4110000');
+		  $pdf->cell(20,$hligne,'41100000');
 
-		  $pdf->cell(70,$hligne,$obj->nom .' '.$obj->libelle);
+		  $pdf->cell(87,$hligne,$socnom .' '.$libelle);
 
 		  /* Echeance */
 
-		  $pdf->cell(20,$hligne,strftime('%d%m%y',$obj->dp));
+		  $pdf->cell(16,$hligne,strftime('%d%m%y',$obj->dp),0,0,'R');
 
-		  $pdf->cell(20,$hligne,$credit,0,0,'R');
+		  $pdf->cell(18,$hligne,$credit,0,0,'R');
 
-		  $pdf->cell(20,$hligne,$debit,0,0,'R');
+		  $pdf->cell(18,$hligne,$debit,0,0,'R');
 
 		  $pdf->ln();
 
@@ -198,21 +207,21 @@ class ComptaJournalPaiement  {
 		      $total_debit = $total_debit + $debit;
 		    }
 
-		  $pdf->cell(20,$hligne,strftime('%d%m%y',$obj->dp));
+		  $pdf->cell(16,$hligne,strftime('%d%m%y',$obj->dp));
 
 		  $pdf->cell(20,$hligne,$obj->facnumber);
 
-		  $pdf->cell(20,$hligne,'5121000');
+		  $pdf->cell(20,$hligne,'5122000');
 
-		  $pdf->cell(70,$hligne,$obj->nom . ' '.$obj->libelle);
+		  $pdf->cell(87,$hligne,$socnom . ' '.$libelle);
 
 		  /* Echeance */
 
-		  $pdf->cell(20,$hligne,strftime('%d%m%y',$obj->dp));
+		  $pdf->cell(16,$hligne,strftime('%d%m%y',$obj->dp),0,0,'R');
 
-		  $pdf->cell(20,$hligne,$credit,0,0,'R');
+		  $pdf->cell(18,$hligne,$credit,0,0,'R');
 
-		  $pdf->cell(20,$hligne,$debit,0,0,'R');
+		  $pdf->cell(18,$hligne,$debit,0,0,'R');
 
 		  $pdf->ln();
 
