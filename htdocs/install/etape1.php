@@ -136,16 +136,20 @@ if ($_POST["action"] == "set")
   
 	if ($error == 0)
 	{
+
+        // Les images générés dynamiquement sont dans main_dir car doivent etre accessibles par url
+        $dir[0] = "$main_dir/images";
     
-    $dir[0] = "$main_data_dir/facture";
-    $dir[1] = "$main_data_dir/propale";
-    $dir[2] = "$main_data_dir/societe";
-    $dir[3] = "$main_data_dir/ficheinter";
-    $dir[4] = "$main_data_dir/produit";
-    $dir[5] = "$main_data_dir/rapport";
-    $dir[6] = "$main_data_dir/images";
-    $dir[7] = "$main_data_dir/rsscache";
-    $dir[8] = "$main_data_dir/logo";
+        // Les documents sont en dehors de htdocs car ne doivent pas pouvoir etre téléchargés en passant outre l'authentification
+        $dir[1] = "$main_data_dir/facture";
+        $dir[2] = "$main_data_dir/propale";
+        $dir[3] = "$main_data_dir/societe";
+        $dir[4] = "$main_data_dir/ficheinter";
+        $dir[5] = "$main_data_dir/produit";
+        $dir[6] = "$main_data_dir/rapport";
+        $dir[7] = "$main_data_dir/rsscache";
+        $dir[8] = "$main_data_dir/logo";
+
 
 		if (! is_dir($main_dir))
 		{
@@ -156,10 +160,7 @@ if ($_POST["action"] == "set")
 		{	      
 			dolibarr_syslog ("Le dossier '".$main_dir."' existe");
 	  
-		 /*
-			* Répertoire des documents
-			*/
-	  
+            // Répertoire des documents
 			if (! is_dir($main_data_dir))
 			{
 				@mkdir($main_data_dir, 0755);
@@ -174,6 +175,7 @@ if ($_POST["action"] == "set")
 			}
 			else
 			{		      
+                // Boucle sur chaque répertoire de dir[] pour les créer s'ils nexistent pas
 				for ($i = 0 ; $i < sizeof($dir) ; $i++)
 				{
 					if (is_dir($dir[$i]))
