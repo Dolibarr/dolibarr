@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -36,8 +36,14 @@
 
 class MailingTargets
 {
+    var $db='';
     var $error='';
 
+    function MailingTargets($DB)
+    {
+        $this->db=$DB;
+    }
+    
     /**     \brief      Renvoi un exemple de numérotation
      *      \return     string      Retourne la traduction de la clé MailingModuleDescXXX ou XXX nom du module, ou $this->desc si non trouvé
      */
@@ -57,6 +63,137 @@ class MailingTargets
     {
         return 0;
     }
+
+    /**
+     *    \brief      Retourne nombre de destinataires
+     *    \param      sql         Requete sql de comptage
+     *    \return     int         Nb de destinataires
+     */
+    function getNbOfRecipients($sql)
+    {
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            $obj = $this->db->fetch_object($result);
+            return $obj->nb;
+        }
+        return 0;
+    }
+
+    /**
+     *      \brief      Met a jour nombre de destinataires
+     *      \param      mailing_id          Id du mailing concerné
+     *      \return     int                 < 0 si erreur, nb destinataires si ok
+     */
+    function update_nb($mailing_id)
+    {
+        // Mise a jour nombre de destinataire dans table des mailings
+        $sql = "SELECT COUNT(*) nb FROM ".MAIN_DB_PREFIX."mailing_cibles";
+        $sql .= " WHERE fk_mailing = ".$mailing_id;
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            $obj=$this->db->fetch_object($result);
+            $nb=$obj->nb;
+                    
+            $sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
+            $sql .= " SET nbemail = ".$nb." WHERE rowid = ".$mailing_id;
+            if (!$this->db->query($sql))
+            {
+                dolibarr_syslog($this->db->error());
+                return -1;
+            }
+        }
+        else {
+            return -1;
+        }
+        return $nb;
+    }
+
+    /**
+     *    \brief      Ajoute destinataires dans table des cibles
+     *    \param      mailing_id    Id du mailing concerné
+     *    \param      sql           Requete sql de selection des destinataires
+     *    \return     int           < 0 si erreur, nb ajout si ok
+     */
+    function add_to_target($mailing_id, $sql)
+    {
+        $cibles = array();
+
+        // Stocke destinataires dans cibles
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            $j = 0;
+
+            dolibarr_syslog("mailing-prepare: mailing $num cibles trouvées");
+
+            $old = '';
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                if ($old <> $obj->email)
+                {
+                    $cibles[$j] = array($obj->email,$obj->fk_contact,$obj->name,$obj->firstname);
+                    $old = $obj->email;
+                    $j++;
+                }
+
+                $i++;
+            }
+        }
+        else
+        {
+            dolibarr_syslog($this->db->error());
+            return -1;
+        }
+
+        // Insère destinataires de cibles dans table
+        $num = sizeof($cibles);
+        for ($i = 0 ; $i < $num ; $i++)
+        {
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
+            $sql .= " (fk_mailing, ";
+            if ($cibles[$i][1]) $sql .= "fk_contact, ";
+            $sql .= "nom, prenom, email)";
+            $sql .= " VALUES (".$mailing_id.",";
+            if ($cibles[$i][1]) $sql .=  $cibles[$i][1] .",";
+            $sql .=  "'".$cibles[$i][2] ."',";
+            $sql .=  "'".$cibles[$i][3] ."',";
+            $sql .=  "'".$cibles[$i][0] ."')";
+            if (!$this->db->query($sql))
+            {
+                dolibarr_syslog($this->db->error());
+                return -1;
+            }
+        }
+
+        dolibarr_syslog("mailing-prepare: mailing $num cibles ajoutées");
+
+        $this->update_nb($mailing_id);
+
+        return $num;
+    }
+
+    /**
+     *    \brief      Supprime tous les destinataires de la table des cibles
+     *    \param      mailing_id        Id du mailing concerné
+     */
+    function clear_target($mailing_id)
+    {
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
+        $sql .= " WHERE fk_mailing = ".$mailing_id;
+
+        if (! $this->db->query($sql))
+        {
+            dolibarr_syslog($this->db->error());
+        }
+
+        $this->update_nb($mailing_id);
+    }
+
 }
 
 ?>

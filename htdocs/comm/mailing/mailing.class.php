@@ -258,7 +258,7 @@ class Mailing
     $this->db->query($sql);
     return 1;
   }
-  
+   
 }
 
 ?>

@@ -44,60 +44,76 @@ llxHeader('','Mailing');
  */
 
 print_titre($langs->trans("MailingArea"));
+print '<br>';
 
-print '<table border="0" width="100%">';
+print '<table class="noborder" width="100%">';
 
 print '<tr><td valign="top" width="30%">';
 
-/*
- * Dernières actions commerciales effectuées
- *
- */
+// Affiche stats de tous les modules de destinataires mailings
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("TargetsStatistics").'</td></tr>';
 
-$sql = "SELECT count(*), client";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe";
-$sql .= " WHERE client in (1,2)";
-$sql .= " GROUP BY client";
+$dir=DOL_DOCUMENT_ROOT."/includes/modules/mailings";
+$handle=opendir($dir);
 
-
-
-if ( $db->query($sql) ) 
+$var=True;
+while (($file = readdir($handle))!==false)
 {
-  $num = $db->num_rows();
-
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Statistics").'</td></tr>';
-  $i = 0;
-
-  while ($i < $num ) 
+    if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
     {
-      $row = $db->fetch_row();
- 
-      $st[$row[1]] = $row[0];
+        if (eregi("(.*)\.(.*)\.(.*)",$file,$reg)) {
+            $var = !$var;
 
-      $i++;
+            $modulename=$reg[1];
+
+            // Chargement de la classe
+            $file = $dir."/".$modulename.".modules.php";
+            $classname = "mailing_".$modulename;
+            require_once($file);
+            $obj = new $classname($db);
+            
+            foreach ($obj->statssql as $sql) 
+            {
+                print '<tr '.$bc[$var].'>';
+    
+                $result=$db->query($sql);
+                if ($result) 
+                {
+                  $num = $db->num_rows($result);
+                
+                  $i = 0;
+                
+                  while ($i < $num ) 
+                    {
+                      $obj = $db->fetch_object($result);
+                      print '<td>'.$obj->label.'</td><td>'.$obj->nb.'<td>';
+                      $i++;
+                    }
+                
+                  $db->free();
+                } 
+                else
+                {
+                  dolibarr_print_error($db);
+                }
+            }
+            
+            print '</tr>';
+        }
     }
-  
-  $var = true;
-  print "<tr $bc[$var]>".'<td>'.$langs->trans("Customers").'</td><td align="center">'.($st[1]?$st[1]:"0")."</td></tr>";
-  $var=!$var;
-  print "<tr $bc[$var]>".'<td>'.$langs->trans("Prospects").'</td><td align="center">'.($st[2]?$st[2]:"0")."</td></tr>";
-
-  print "</table><br>";
-
-  $db->free();
-} 
-else
-{
-  dolibarr_print_error($db);
 }
+closedir($handle);
+ 
+
+
+print "</table><br>";
 
 print '</td><td valign="top" width="70%">';
 
 
 /*
- * 
- *
+ * Liste des derniers mailings
  */
 
 $sql  = "SELECT m.rowid, m.titre, m.nbemail, m.statut";

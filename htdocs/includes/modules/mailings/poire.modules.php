@@ -50,19 +50,29 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 
 class mailing_poire extends MailingTargets
 {
-    var $name='ContactCustomers';
-    var $desc='Tous les contacts associés aux clients';
-    var $require_module=array("customer");
+    var $name='ContactCustomers';                       // Identifiant du module mailing
+    var $desc='Tous les contacts associés aux clients'; // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+    var $require_module=array("commercial");            // Module mailing actif si modules require_module actifs
     
     var $db;
+    var $statssql=array();
+    
 
     function mailing_poire($DB)
     {
+        global $langs;
+        $langs->load("commercial");
+
         $this->db=$DB;
+
+        // Liste des tableaux des stats espace mailing
+        $this->statssql[0]="SELECT '".$langs->trans("Customers")."' label, count(*) nb FROM ".MAIN_DB_PREFIX."societe WHERE client = 1";
+        $this->statssql[1]="SELECT '".$langs->trans("NbOfCustomersContacts")."' label, count(distinct(c.email)) nb FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = c.fk_soc AND s.client = 1 AND c.email IS NOT NULL";
     }
     
     function getNbOfRecipients()
     {
+        // La requete doit retourner: nb
         $sql  = "SELECT count(distinct(c.email)) nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= ", ".MAIN_DB_PREFIX."societe as s";
@@ -70,94 +80,21 @@ class mailing_poire extends MailingTargets
         $sql .= " AND s.client = 1";
         $sql .= " AND c.email IS NOT NULL";
 
-        if ( $this->db->query($sql) )
-        {
-            $obj = $this->db->fetch_object();
-            return $obj->nb;
-        }
-        return 0;
+        return parent::getNbOfRecipients($sql); 
     }
     
     function add_to_target($mailing_id)
     {
-        $cibles = array();
-    
-        $sql = "SELECT distinct(c.email), c.idp, c.name, c.firstname, s.nom ";
+        // La requete doit retourner: email, fk_contact, name, firstname
+        $sql = "SELECT c.email email, c.idp fk_contact, c.name name, c.firstname firstname";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= ", ".MAIN_DB_PREFIX."societe as s";
         $sql .= " WHERE s.idp = c.fk_soc";
         $sql .= " AND s.client = 1";
         $sql .= " AND c.email IS NOT NULL";
-        $sql .= " ORDER BY c.email ASC";
-    
-        if ( $this->db->query($sql) )
-        {
-            $num = $this->db->num_rows();
-            $i = 0;
-            $j = 0;
-    
-            dolibarr_syslog("mailing-prepare: mailing $num cibles trouvées");
-    
-            $olde = '';
-    
-            while ($i < $num)
-            {
-                $row = $this->db->fetch_row();
-    
-                if ($olde <> $row[0])
-                {
-                    $cibles[$j] = $row;
-                    $olde = $row[0];
-                    $j++;
-                }
-    
-                $i++;
-            }
-        }
-        else
-        {
-            dolibarr_syslog($this->db->error());
-        }
-    
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing_cibles";
-        $sql .= " WHERE fk_mailing = ".$mailing_id;
-    
-        if (!$this->db->query($sql))
-        {
-            dolibarr_syslog($this->db->error());
-        }
-    
-        $num = sizeof($cibles);
-    
-        for ($i = 0 ; $i < $num ; $i++)
-        {
-    
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."mailing_cibles";
-            $sql .= " (fk_mailing, fk_contact, nom, prenom, email)";
-            $sql .= " VALUES (".$mailing_id.",";
-            $sql .=  $cibles[$i][1] .",";
-            $sql .=  "'".$cibles[$i][2] ."',";
-            $sql .=  "'".$cibles[$i][3] ."',";
-            $sql .=  "'".$cibles[$i][0] ."')";
-    
-            if (!$this->db->query($sql))
-            {
-                dolibarr_syslog($this->db->error());
-            }
-        }
-    
-        dolibarr_syslog("mailing-prepare: mailing $i cibles ajoutées");
-    
-        $sql = "UPDATE ".MAIN_DB_PREFIX."mailing";
-        $sql .= " SET nbemail = ".$i." WHERE rowid = ".$mailing_id;
-    
-        if (!$this->db->query($sql))
-        {
-            dolibarr_syslog($this->db->error());
-        }
-    
-        return 0;
-    
+        $sql .= " ORDER BY c.email";
+            
+        return parent::add_to_target($mailing_id, $sql);
     }
 
 }

@@ -53,6 +53,19 @@ if ($_GET["action"] == 'add')
     Header("Location: cibles.php?id=".$_GET["rowid"]);
 }
 
+if ($_GET["action"] == 'clear')
+{
+    // Chargement de la classe
+    $file = $dir."/modules_mailings.php";
+    $classname = "MailingTargets";
+    require_once($file);
+    
+    $obj = new $classname($db);
+    $obj->clear_target($_GET["rowid"]);
+   
+    Header("Location: cibles.php?id=".$_GET["rowid"]);
+}
+
 
 
 /*
@@ -90,15 +103,22 @@ if ($mil->fetch($_GET["id"]) == 0)
     print '<tr><td width="25%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
     print '<tr><td width="25%">'.$langs->trans("MailFrom").'</td><td colspan="3">'.htmlentities($mil->email_from).'</td></tr>';
     print '<tr><td width="25%">'.$langs->trans("TotalNbOfDistinctRecipients").'</td><td colspan="3">'.($mil->nbemail?$mil->nbemail:'<font class="error">'.$langs->trans("NoTargetYet").'</font>').'</td></tr>';
+    print '<tr><td width="25%">'.$langs->trans("Status").'</td><td colspan="3">'.$mil->statuts[$mil->statut].'</td></tr>';
     print '</table><br>';
     
-    // Ajout d'une liste de sélection
+    print "</div>";
+    
+
+    // Affiche les listes de sélection
     print '<table class="noborder" width=\"100%\">';
     print '<tr class="liste_titre">';
     print '<td>'.$langs->trans("RecipientSelectionModules").'</td>';
-    //print '<td>'.$langs->trans("Name").'</td>';
     print '<td align="center">'.$langs->trans("NbOfRecipients").'</td>';
-    print '<td width="80">&nbsp;</td>';
+    print '<td align="center" width="120">';
+    if ($mil->statut == 0) {
+       print $langs->trans("Actions");
+    }
+    print '</td>';
     print "</tr>\n";
     
     clearstatcache();
@@ -110,8 +130,8 @@ if ($mil->fetch($_GET["id"]) == 0)
     {
         if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
         {
-            $var = !$var;
             if (eregi("(.*)\.(.*)\.(.*)",$file,$reg)) {
+                $var = !$var;
                 $modulename=$reg[1];
     
                 // Chargement de la classe
@@ -132,18 +152,32 @@ if ($mil->fetch($_GET["id"]) == 0)
                 print "</td>";
                 */
                 print '<td align="center">'.$obj->getNbOfRecipients().'</td>';
-                print '<td><a href="cibles.php?action=add&amp;rowid='.$mil->id.'&amp;module='.$modulename.'">'.img_edit_add($langs->trans("AddRecipients")).'</a></td>';
+
+                print '<td align="center">';
+                if ($mil->statut == 0) {
+                    print '<form action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST"><input type="submit" value="'.$langs->trans("Add").'"></form>';
+                }
+                else {
+                    //print $langs->trans("MailNoChangePossible");
+                    print "&nbsp;";
+                }
+                print '</td>';
             }
             print "</tr>\n";
         }
     }
     closedir($handle);
+
+    if ($mil->statut == 0) {
+        print '<tr>';
+        print '<td>&nbsp;</td><td>&nbsp;</td><td align="center"><form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST"><input type="submit" value="'.$langs->trans("Clear").'"></form></td>';
+        print '</tr>';
+    }
     
     print '</table><br>';
-    
-    
-    print "</div>";
-    
+
+
+    // Liste des destinataires électionnés
     $NBMAX=100;
     
     $sql  = "SELECT mc.nom, mc.prenom, mc.email";
