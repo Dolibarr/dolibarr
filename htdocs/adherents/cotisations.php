@@ -69,7 +69,7 @@ if ($HTTP_POST_VARS["action"] == '2bank' && $HTTP_POST_VARS["rowid"] !=''){
 		$result = $db->query($sql);
 		if ($result) 
 		  {
-		    //Header("Location: $PHP_SELF");
+		    //Header("Location: cotisations.php");
 		  }
 		else
 		  {
@@ -135,7 +135,7 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Liste des cotisations", $page, $PHP_SELF, "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+  print_barre_liste("Liste des cotisations", $page, "cotisations.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
 
   print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">\n";
   print '<TR class="liste_titre">';
@@ -147,7 +147,7 @@ if ($result)
 
   foreach ($Total as $key=>$value){
     $var=!$var;
-    print "<TR $bc[$var]><TD><A HREF=\"$PHP_SELF?statut=$statut&date_select=$key\">$key</A></TD><TD align=\"right\">".price($value)."</TD><TD align=\"right\">".$Number[$key]."</TD><TD align=\"right\">".price($value/$Number[$key])."</TD></TR>\n";
+    print "<TR $bc[$var]><TD><A HREF=\"cotisations.php?statut=$statut&date_select=$key\">$key</A></TD><TD align=\"right\">".price($value)."</TD><TD align=\"right\">".$Number[$key]."</TD><TD align=\"right\">".price($value/$Number[$key])."</TD></TR>\n";
   }
   print "</table><BR>\n";
 
@@ -156,24 +156,24 @@ if ($result)
   print '<TR class="liste_titre">';
   //print "<td>Date</td>";
   print '<TD>';
-  print_liste_field_titre("Date<BR>",$PHP_SELF,"c.dateadh","&page=$page&statut=$statut");
+  print_liste_field_titre("Date<BR>","cotisations.php","c.dateadh","&page=$page&statut=$statut");
   print "</TD>\n";
 
   //print "<td align=\"right\">Montant</TD>";
   print '<TD>';
-  print_liste_field_titre("Montant<BR>",$PHP_SELF,"c.cotisation","&page=$page&statut=$statut");
+  print_liste_field_titre("Montant<BR>","cotisations.php","c.cotisation","&page=$page&statut=$statut");
   print "</TD>\n";
 
   //print "<td>Prenom Nom / Société</td>";
   print '<TD>';
-  //  print_liste_field_titre("Prenom",$PHP_SELF,"d.prenom","&page=$page&statut=$statut");
-  print_liste_field_titre("Prenom Nom<BR>",$PHP_SELF,"d.nom","&page=$page&statut=$statut");
+  //  print_liste_field_titre("Prenom","cotisations.php","d.prenom","&page=$page&statut=$statut");
+  print_liste_field_titre("Prenom Nom<BR>","cotisations.php","d.nom","&page=$page&statut=$statut");
   //  print " / Société";
   print "</TD>\n";
 
   if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
     print '<TD>';
-    //  print_liste_field_titre("Bank",$PHP_SELF,"c.fk_bank","&page=$page&statut=$statut");
+    //  print_liste_field_titre("Bank","cotisations.php","c.fk_bank","&page=$page&statut=$statut");
     print 'Bank<BR>(Type,Numéro,Libelle)';
     print "</TD>\n";
   }
@@ -203,7 +203,7 @@ if ($result)
 	  print "<TD>Deposé</TD>";
 	}else{
 	  print "<TD>";
-	  print "<form method=\"post\" action=\"$PHP_SELF\">";
+	  print "<form method=\"post\" action=\"cotisations.php\">";
 	  print '<input type="hidden" name="action" value="2bank">';
 	  print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
 	  print '<select name="operation">';
@@ -232,7 +232,7 @@ if ($result)
   print "<TD align=\"right\">".price($total)."</TD>\n";
   //  print "<TD>&nbsp;</TD>\n";
   print "<TD align=\"right\" colspan=\"2\">";
-  print_fleche_navigation($page,$PHP_SELF,"&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",1);
+  print_fleche_navigation($page,"cotisations.php","&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",1);
   print "</TD>\n";
 
   print "</TR>\n";

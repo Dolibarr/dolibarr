@@ -38,6 +38,10 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
+$begin=$_GET["begin"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
 if ($sortfield == "")
 {
   $sortfield="c.rowid";
@@ -80,20 +84,20 @@ $sql .= $db->plimit($limit + 1,$offset);
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
-  print_barre_liste("Commandes", $_GET["page"], $PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+  print_barre_liste("Commandes", $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
     
   $i = 0;
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   
   print '<tr class="liste_titre">';
   
-  print_liste_field_titre_new ("Réf",$PHP_SELF,"c.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
+  print_liste_field_titre_new ("Réf","liste.php","c.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
   
-  print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp",'width="30%"',$sortfield);
+  print_liste_field_titre_new ("Société","liste.php","s.nom","","&amp;socidp=$socidp",'width="30%"',$sortfield);
   
-  print_liste_field_titre_new ("Date",$PHP_SELF,"c.date_commande","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
+  print_liste_field_titre_new ("Date","liste.php","c.date_commande","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
   
-  print_liste_field_titre_new ("Statut",$PHP_SELF,"c.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
+  print_liste_field_titre_new ("Statut","liste.php","c.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
   print "</tr>\n";
   $var=True;
   

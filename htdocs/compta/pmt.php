@@ -86,9 +86,8 @@ if ($result) {
 
 print "</td><td valign=\"top\">";
 
-print "<form action=\"$PHP_SELF\" method=\"post\">";
+print '<form action="pmt.php" method="post">';
 print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-
 
 $strmonth[1] = "Janvier";
 $strmonth[2] = "F&eacute;vrier";
@@ -102,8 +101,6 @@ $strmonth[9] = "Septembre";
 $strmonth[10] = "Octobre";
 $strmonth[11] = "Novembre";
 $strmonth[12] = "D&eacute;cembre";
-
-
 
 print "Date :";
 $cmonth = date("n", time());

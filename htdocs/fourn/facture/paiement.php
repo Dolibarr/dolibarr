@@ -206,7 +206,7 @@ if ($action == '') {
       $i = 0; 
       $var=True;
 
-      print_barre_liste("Paiements", $page, $PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+      print_barre_liste("Paiements", $page, "paiement.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<TR class="liste_titre">';

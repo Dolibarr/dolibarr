@@ -38,7 +38,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 
-print_barre_liste("Liste des Artistes/Groupes", $page, $PHP_SELF);
+print_barre_liste("Liste des Artistes/Groupes", $page, "index.php");
 
 $sql = "SELECT g.rowid, g.nom, groupart FROM ".MAIN_DB_PREFIX."groupart as g";
   
@@ -50,7 +50,7 @@ if ( $db->query($sql) ) {
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Réf",$PHP_SELF, "p.ref");
+  print_liste_field_titre("Réf","index.php", "p.ref");
   print "</td>";
   print "<td></td>";
   print "</TR>\n";

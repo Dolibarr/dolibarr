@@ -74,7 +74,7 @@ if ($_GET["id"])
 	  $sortfield="f.datef";
 	}
       
-      print_barre_liste("Factures",$page,$PHP_SELF,"&amp;id=$product->id",$sortfield,$sortorder);
+      print_barre_liste("Factures",$page,"facture.php","&amp;id=$product->id",$sortfield,$sortorder);
       
       $sql = "SELECT distinct(f.rowid), s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as d WHERE f.fk_soc = s.idp";
@@ -95,9 +95,9 @@ if ($_GET["id"])
 	print '<TR class="liste_titre">';
 	print '<TD>Num&eacute;ro</TD>';
 	print '<td>';
-	print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
+	print_liste_field_titre("Société","facture.php","s.nom","","&amp;socidp=$socidp");
 	print '</td><TD align="right">';
-	print_liste_field_titre("Date",$PHP_SELF,"f.datef","","&amp;socidp=$socidp");
+	print_liste_field_titre("Date","facture.php","f.datef","","&amp;socidp=$socidp");
 	print '</td><TD align="right">Montant</TD>';
 	print '<td>&nbsp;</td>';
 	print "</TR>\n";

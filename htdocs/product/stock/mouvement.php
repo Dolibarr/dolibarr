@@ -65,15 +65,15 @@ if ($result)
   $texte = "Liste des mouvements";
   llxHeader("","",$texte);
   
-  print_barre_liste($texte, $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+  print_barre_liste($texte, $page, "mouvement.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
   print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
   print "<tr class=\"liste_titre\"><td>";
-  print_liste_field_titre("Réf",$PHP_SELF, "p.ref","");
+  print_liste_field_titre("Réf","mouvement.php", "p.ref","");
   print "</td><TD align=\"center\">Unités</TD><td>";
-  print_liste_field_titre("Date",$PHP_SELF, "m.datem","");
+  print_liste_field_titre("Date","mouvement.php", "m.datem","");
   print "</td><td>";
-  print_liste_field_titre("Entrepôt",$PHP_SELF, "s.label","");
+  print_liste_field_titre("Entrepôt","mouvement.php", "s.label","");
   print "</td></tr>\n";
     
   $var=True;

@@ -65,9 +65,9 @@ $pagenext = $page + 1;
 print '<br>';
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>';
-print_liste_field_titre("Titre",$PHP_SELF,"p.title");
+print_liste_field_titre("Titre","index.php","p.title");
 print "</td><td>Réf</td><td>";
-print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+print_liste_field_titre("Société","index.php","s.nom");
 print "</td></tr>\n";
 
 $sql = "SELECT s.nom, s.idp, p.rowid as projectid, p.ref, p.title, s.client,".$db->pdate("p.dateo")." as do";

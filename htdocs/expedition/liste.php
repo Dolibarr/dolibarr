@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -83,18 +83,18 @@ $sql .= $db->plimit($limit + 1,$offset);
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
-  print_barre_liste("Expeditions", $_GET["page"], $PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+  print_barre_liste("Expeditions", $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
   
   $i = 0;
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   
   print '<tr class="liste_titre">';
   
-  print_liste_field_titre_new ("Réf",$PHP_SELF,"e.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
+  print_liste_field_titre_new ("Réf","liste.php","e.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
   
-  print_liste_field_titre_new ("Date",$PHP_SELF,"e.date_expedition","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
+  print_liste_field_titre_new ("Date","liste.php","e.date_expedition","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
   
-  print_liste_field_titre_new ("Statut",$PHP_SELF,"e.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
+  print_liste_field_titre_new ("Statut","liste.php","e.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
   print "</tr>\n";
   $var=True;
   

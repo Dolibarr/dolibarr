@@ -166,7 +166,7 @@ if ($_GET["id"])
   if ($_GET["action"] == "correction")
     {
       print_titre ("Correction du stock");
-      print "<form action=\"$PHP_SELF?id=$product->id\" method=\"post\">\n";
+      print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
       print '<input type="hidden" name="action" value="correct_stock">';
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
       print '<td width="20%">Entrepôt</td><td width="20%"><select name="id_entrepot">';
@@ -205,7 +205,7 @@ if ($_GET["id"])
   if ($_GET["action"] == "definir")
     {
       print_titre ("Créer un stock");
-      print "<form action=\"$PHP_SELF?id=$product->id\" method=\"post\">\n";
+      print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
       print '<input type="hidden" name="action" value="create_stock">';
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
       print '<td width="20%">Entrepôt</td><td width="40%"><select name="id_entrepot">';

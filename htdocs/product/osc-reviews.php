@@ -37,7 +37,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 
-print_barre_liste("Liste des produits oscommerce", $page, $PHP_SELF);
+print_barre_liste("Liste des produits oscommerce", $page, "osc-reviews.php");
 
 $sql = "SELECT r.reviews_rating FROM ".DB_NAME_OSC.".reviews as r";
   

@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,7 +94,7 @@ if ($handle)
 	  else
 	    {
 		  print '<td>&nbsp;</td>';
-		  print '<td align="center"><a href="'.$PHP_SELF.'?action=setmod&amp;value='.$file.'">activer</a></td>';
+		  print '<td align="center"><a href="commande.php?action=setmod&amp;value='.$file.'">activer</a></td>';
 	    }
 
 	  print '</tr>';

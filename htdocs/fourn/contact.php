@@ -81,13 +81,13 @@ $result = $db->query($sql);
 if ($result) {
   $num = $db->num_rows();
   
-  print_barre_liste("Liste des contacts fournisseurs",$page, $PHP_SELF, "",$sortfield,$sortorder,"",$num);
+  print_barre_liste("Liste des contacts fournisseurs",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
   
   print "<DIV align=\"center\">";
   
-  print "| <A href=\"$PHP_SELF?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
+  print "| <A href=\"contact.php?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
   for ($i = 65 ; $i < 91; $i++) {
-    print "<A href=\"$PHP_SELF?begin=" . chr($i) . "&stcomm=$stcomm\" class=\"T3\">";
+    print "<A href=\"contact.php?begin=" . chr($i) . "&stcomm=$stcomm\" class=\"T3\">";
     
     if ($begin == chr($i) ) {
       print  "<b>-&gt;" . chr($i) . "&lt;-</b>" ; 
@@ -106,11 +106,11 @@ if ($result) {
   print '<p><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print "<TR class=\"liste_titre\">";
   print "<TD>";
-  print_liste_field_titre("Nom",$PHP_SELF,"lower(p.name)", $begin);
+  print_liste_field_titre("Nom","contact.php","lower(p.name)", $begin);
   print "</td><td>";
-  print_liste_field_titre("Prénom",$PHP_SELF,"lower(p.firstname)", $begin);
+  print_liste_field_titre("Prénom","contact.php","lower(p.firstname)", $begin);
   print "</td><td>";
-  print_liste_field_titre("Société",$PHP_SELF,"lower(s.nom)", $begin);
+  print_liste_field_titre("Société","contact.php","lower(s.nom)", $begin);
   print '</td><td>email</td><td>Téléphone</td>';
   print "</tr>\n";
   $var=True;
@@ -137,7 +137,7 @@ if ($result) {
   print "</TABLE>";
   $db->free();
 } else {
-  print_barre_liste("Liste des contacts $label",$page, $PHP_SELF);
+  print_barre_liste("Liste des contacts $label",$page, "contact.php");
   
   print $db->error();
 }

@@ -61,7 +61,7 @@ if ($_GET["bid"] == 0)
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"$PHP_SELF?bid=$objp->rowid\">$objp->label</a></td>";
+	  print "<td><a href=\"budget.php?bid=$objp->rowid\">$objp->label</a></td>";
 	  print '<td align="center">'.$objp->nombre.'</td>';
 	  print "<td align=\"right\">".price(abs($objp->somme))."</td>";
 	  print "<td align=\"right\">".price(abs($objp->somme / $objp->nombre))."</td>";

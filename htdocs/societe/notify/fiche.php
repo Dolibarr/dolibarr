@@ -150,8 +150,8 @@ if ( $soc->fetch($soc->id) )
 
   print '<table width="100%" class="noborder" cellspacing="0" cellpadding="3">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre_new ("Contact",$PHP_SELF,"c.name","","&socid=$socid",'',$sortfield);
-  print_liste_field_titre_new ("Action",$PHP_SELF,"a.titre","","&socid=$socid",'',$sortfield);
+  print_liste_field_titre_new ("Contact","fiche.php","c.name","","&socid=$socid",'',$sortfield);
+  print_liste_field_titre_new ("Action","fiche.php","a.titre","","&socid=$socid",'',$sortfield);
   print '<td>&nbsp;</td>';
   print '</tr>';
 

@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -80,7 +80,7 @@ if ($_POST["action"] == 'cotisation')
                 $result = $db->query($sql);
                 if ($result)
                 {
-                    //Header("Location: $PHP_SELF");
+                    //Header("Location: fiche.php");
                 }
                 else
                 {
@@ -202,7 +202,7 @@ if ($_POST["action"] == 'add')
                     $result = $db->query($sql);
                     if ($result)
                     {
-                        //Header("Location: $PHP_SELF");
+                        //Header("Location: fiche.php");
                     }
                     else
                     {
@@ -342,7 +342,7 @@ $adho->fetch_optionals();
 if ($action == 'create') {
 
     print_titre("Nouvel adhérent");
-    print "<form action=\"$PHP_SELF\" method=\"post\">\n";
+    print "<form action=\"fiche.php\" method=\"post\">\n";
     print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
     print '<input type="hidden" name="action" value="add">';
@@ -449,7 +449,7 @@ if ($rowid > 0)
     */
     if ($action == 'delete')
     {
-        $html->form_confirm("$PHP_SELF?rowid=$rowid","Supprimer un adhérent","Etes-vous sûr de vouloir supprimer cet adhérent (La suppression d'un adhérent entraine la suppression de toutes ses cotisations !)","confirm_delete");
+        $html->form_confirm("fiche.php?rowid=$rowid","Supprimer un adhérent","Etes-vous sûr de vouloir supprimer cet adhérent (La suppression d'un adhérent entraine la suppression de toutes ses cotisations !)","confirm_delete");
     }
 
     /*
@@ -457,7 +457,7 @@ if ($rowid > 0)
     */
     if ($action == 'valid')
     {
-        $html->form_confirm("$PHP_SELF?rowid=$rowid","Valider un adhérent","Etes-vous sûr de vouloir valider cet adhérent ?","confirm_valid");
+        $html->form_confirm("fiche.php?rowid=$rowid","Valider un adhérent","Etes-vous sûr de vouloir valider cet adhérent ?","confirm_valid");
     }
 
     /*
@@ -465,7 +465,7 @@ if ($rowid > 0)
     */
     if ($action == 'resign')
     {
-        $html->form_confirm("$PHP_SELF?rowid=$rowid","Résilier une adhésion","Etes-vous sûr de vouloir résilier cet adhérent ?","confirm_resign");
+        $html->form_confirm("fiche.php?rowid=$rowid","Résilier une adhésion","Etes-vous sûr de vouloir résilier cet adhérent ?","confirm_resign");
     }
 
     /*
@@ -473,7 +473,7 @@ if ($rowid > 0)
     */
     if ($action == 'add_glasnost')
     {
-        $html->form_confirm("$PHP_SELF?rowid=$rowid","Ajouter dans glasnost","Etes-vous sur de vouloir ajouter cet adhérent dans glasnost ? (serveur : ".ADHERENT_GLASNOST_SERVEUR.")","confirm_add_glasnost");
+        $html->form_confirm("fiche.php?rowid=$rowid","Ajouter dans glasnost","Etes-vous sur de vouloir ajouter cet adhérent dans glasnost ? (serveur : ".ADHERENT_GLASNOST_SERVEUR.")","confirm_add_glasnost");
     }
 
     /*
@@ -481,7 +481,7 @@ if ($rowid > 0)
     */
     if ($action == 'del_glasnost')
     {
-        $html->form_confirm("$PHP_SELF?rowid=$rowid","Supprimer dans glasnost","Etes-vous sur de vouloir effacer cet adhérent dans glasnost ? (serveur : ".ADHERENT_GLASNOST_SERVEUR.")","confirm_del_glasnost");
+        $html->form_confirm("fiche.php?rowid=$rowid","Supprimer dans glasnost","Etes-vous sur de vouloir effacer cet adhérent dans glasnost ? (serveur : ".ADHERENT_GLASNOST_SERVEUR.")","confirm_del_glasnost");
     }
 
     /*
@@ -489,7 +489,7 @@ if ($rowid > 0)
     */
     if ($action == 'add_spip')
     {
-        $html->form_confirm("$PHP_SELF?rowid=$rowid","Ajouter dans spip","Etes-vous sur de vouloir ajouter cet adhérent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_add_spip");
+        $html->form_confirm("fiche.php?rowid=$rowid","Ajouter dans spip","Etes-vous sur de vouloir ajouter cet adhérent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_add_spip");
     }
 
     /*
@@ -497,12 +497,12 @@ if ($rowid > 0)
     */
     if ($action == 'del_spip')
     {
-        $html->form_confirm("$PHP_SELF?rowid=$rowid","Supprimer dans spip","Etes-vous sur de vouloir effacer cet adhérent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_del_spip");
-        $html->form_confirm("$PHP_SELF?rowid=$rowid","Ajouter dans glasnost","Etes-vous sur de vouloir ajouter cet adhérent dans glasnost ? (serveur : ".ADHERENT_GLASNOST_SERVEUR.")","confirm_del_spip");
+        $html->form_confirm("fiche.php?rowid=$rowid","Supprimer dans spip","Etes-vous sur de vouloir effacer cet adhérent dans spip ? (serveur : ".ADHERENT_SPIP_SERVEUR.")","confirm_del_spip");
+        $html->form_confirm("fiche.php?rowid=$rowid","Ajouter dans glasnost","Etes-vous sur de vouloir ajouter cet adhérent dans glasnost ? (serveur : ".ADHERENT_GLASNOST_SERVEUR.")","confirm_del_spip");
     }
 
 
-    print "<form action=\"$PHP_SELF\" method=\"post\">\n";
+    print "<form action=\"fiche.php\" method=\"post\">\n";
     print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
     print '<tr><td>Numero</td><td class="valeur">'.$adh->id.'&nbsp;</td>';
@@ -556,36 +556,36 @@ if ($user->admin)
 
     if ($adh->statut < 1)
     {
-        print "<a class=\"tabAction\" href=\"$PHP_SELF?rowid=$rowid&action=valid\">Valider l'adhésion</a>\n";
+        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$rowid&action=valid\">Valider l'adhésion</a>\n";
     }
 
     if ($adh->statut == 1)
     {
-        print "<a class=\"tabAction\" href=\"$PHP_SELF?rowid=$rowid&action=resign\">Résilier l'adhésion</a>\n";
+        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$rowid&action=resign\">Résilier l'adhésion</a>\n";
     }
 
-    print "<a class=\"tabAction\" href=\"$PHP_SELF?rowid=$adh->id&action=delete\">Supprimer</a>\n";
+    print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=delete\">Supprimer</a>\n";
 
     /*
     * bouton : "Envoie des informations"
     */
-    print "<a class=\"tabAction\" href=\"$PHP_SELF?rowid=$adh->id&action=sendinfo\">Envoyer sa fiche a l'adhérent</a>\n";
+    print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">Envoyer sa fiche a l'adhérent</a>\n";
 
     if ($adht->vote == 'yes' && defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1){
         define("XMLRPC_DEBUG", 1);
 
         if ($adh->is_in_glasnost() == 1){
-            print "<a class=\"tabAction\" href=\"$PHP_SELF?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>\n";
+            print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>\n";
         }
-        print "<a class=\"tabAction\" href=\"$PHP_SELF?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>\n";
-        print "<a class=\"tabAction\" href=\"$PHP_SELF?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>\n";
+        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>\n";
+        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>\n";
     }
 
     if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1){
         if ($adh->is_in_spip() == 1){
-            print "<a class=\"tabAction\" href=\"$PHP_SELF?rowid=$adh->id&action=del_spip\">Suppression dans Spip</a>\n";
+            print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=del_spip\">Suppression dans Spip</a>\n";
         }else{
-        print "<a class=\"tabAction\" href=\"$PHP_SELF?rowid=$adh->id&action=add_spip\">Ajout dans Spip</a>\n";
+        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=add_spip\">Ajout dans Spip</a>\n";
     }
 
 }

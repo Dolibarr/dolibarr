@@ -58,7 +58,7 @@ if ($action == 'updateosc') {
 if ($action == 'create')
 {
 
-  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+  print "<form action=\"fichelieu.php?id=$id\" method=\"post\">\n";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
   print '<div class="titre">Nouveau lieu de concert</div><br>';
@@ -101,7 +101,7 @@ else
 	{
 	  print '<hr><div class="titre">Edition de la fiche lieu de concert : '.$lieuconcert->nom.'</div><br>';
 
-	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	  print "<form action=\"fichelieu.php?id=$id\" method=\"post\">\n";
 	  print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	  
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';

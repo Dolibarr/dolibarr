@@ -65,18 +65,18 @@ if ( $db->query($sql) )
   $i = 0;
 
 
-  print_barre_liste("Liste des contrats en service", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+  print_barre_liste("Liste des contrats en service", $page, "enservice.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 
   print '<tr class="liste_titre"><td>';
-  print_liste_field_titre("Libellé",$PHP_SELF, "p.label");
+  print_liste_field_titre("Libellé","enservice.php", "p.label");
   print "</td><td>";
-  print_liste_field_titre("Société",$PHP_SELF, "s.nom");
+  print_liste_field_titre("Société","enservice.php", "s.nom");
   print "</td>";
   print "<td align=\"center\">Statut</td>";
   print "<td align=\"center\">";
-  print_liste_field_titre("Date fin",$PHP_SELF, "date_fin_validite");
+  print_liste_field_titre("Date fin","enservice.php", "date_fin_validite");
   print '</td>';
   print "</tr>\n";
 

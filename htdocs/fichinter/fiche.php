@@ -130,7 +130,7 @@ if ($action == 'create')
       $fix = new Fichinter($db);
       $numpr = $fix->get_new_num($objsoc->prefix_comm);
     
-      print "<form action=\"$PHP_SELF?socidp=$socidp\" method=\"post\">";
+      print "<form action=\"fiche.php?socidp=$socidp\" method=\"post\">";
       
       $strmonth[1] = "Janvier";
       $strmonth[2] = "F&eacute;vrier";
@@ -260,7 +260,7 @@ if ($action == 'edit')
 
   print_titre("Mettre à jour Fiche d'intervention");
 
-  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">";
+  print "<form action=\"fiche.php?id=$id\" method=\"post\">";
   
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
   print "<tr><td>Date</td><td>";

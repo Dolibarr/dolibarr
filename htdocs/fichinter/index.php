@@ -66,14 +66,14 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
-  print_barre_liste("Liste des fiches d'intervention", $page, $PHP_SELF,"&amp;socid=$socid",$sortfield,$sortorder,'',$num);
+  print_barre_liste("Liste des fiches d'intervention", $page, "index.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
 
   $i = 0;
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre_new ("Num",$PHP_SELF,"f.ref","","&amp;socid=$socid",'width="15%"',$sortfield);
-  print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","","&amp;socid=$socid",'',$sortfield);
-  print_liste_field_titre_new ("Date",$PHP_SELF,"f.datei","","&amp;socid=$socid",'',$sortfield);
+  print_liste_field_titre_new ("Num","index.php","f.ref","","&amp;socid=$socid",'width="15%"',$sortfield);
+  print_liste_field_titre_new ("Société","index.php","s.nom","","&amp;socid=$socid",'',$sortfield);
+  print_liste_field_titre_new ("Date","index.php","f.datei","","&amp;socid=$socid",'',$sortfield);
   print '<td align="center">Durée</td>';
   print '<td align="center">Statut</td><td>&nbsp;</td>';
   print "</tr>\n";

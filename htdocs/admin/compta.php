@@ -1,5 +1,6 @@
 <?PHP
-/* Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,7 +66,7 @@ print "<br>";
 
 print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
 
-print '<form action="'.$PHP_SELF.'" method="post">';
+print '<form action="compta.php" method="post">';
 print '<input type="hidden" name="action" value="setcomptamode">';
 print '<tr class="liste_titre">';
 print '<td>Option de tenue de comptabilité</td><td>Description</td>';
@@ -102,7 +103,7 @@ if ($result)
       $obj = $db->fetch_object( $i);
       $var=!$var;
 
-      print '<form action="'.$PHP_SELF.'" method="POST">';
+      print '<form action="compta.php" method="POST">';
       print '<input type="hidden" name="action" value="update">';
       print '<input type="hidden" name="rowid" value="'.$rowid.'">';
       print '<input type="hidden" name="constname" value="'.$obj->name.'">';
@@ -135,7 +136,7 @@ if ($result)
       print '<input type="text" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
       print '</td><td>';
       print '<input type="Submit" value="Update" name="Button"> &nbsp; ';
-      print '<a href="'.$PHP_SELF.'?constname='.$obj->name.'&action=delete">'.img_delete().'</a>';
+      print '<a href="compta.php?constname='.$obj->name.'&action=delete">'.img_delete().'</a>';
       print "</td></tr>\n";
 
       print '</form>';

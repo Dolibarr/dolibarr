@@ -53,7 +53,7 @@ $pagenext = $page + 1;
  *
  *
  */
-print_barre_liste("Liste des societes", $page, $PHP_SELF);
+print_barre_liste("Liste des societes", $page, "index.php");
 
 $sql = "SELECT s.nom, s.idp, c.name, c.firstname, a.titre,n.rowid FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
@@ -75,11 +75,11 @@ if ($result)
   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print '<TR class="liste_titre">';
   print "<TD valign=\"center\">";
-  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+  print_liste_field_titre("Société","index.php","s.nom");
   print "</td><td>";
-  print_liste_field_titre("Contact",$PHP_SELF,"c.name");
+  print_liste_field_titre("Contact","index.php","c.name");
   print "</td><td>";
-  print_liste_field_titre("Action",$PHP_SELF,"a.titre");
+  print_liste_field_titre("Action","index.php","a.titre");
   print "</td></tr>\n";
   $var=True;
   while ($i < $num)

@@ -200,10 +200,10 @@ if ($result)
   $i = 0;
   
   if ($action == 'facturer') {
-  	print_barre_liste("Liste des clients facturables", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
+  	print_barre_liste("Liste des clients facturables", $page, "clients.php","",$sortfield,$sortorder,'',$num);
   }
   else {
-  	print_barre_liste("Liste des clients", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
+  	print_barre_liste("Liste des clients", $page, "clients.php","",$sortfield,$sortorder,'',$num);
   }
   
   if ($sortorder == "DESC")
@@ -216,7 +216,7 @@ if ($result)
     }
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td valign="center">';
-  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+  print_liste_field_titre("Société","clients.php","s.nom");
   print "</td><td>Ville</td>";
   print "<td align=\"center\">Préfix</td><td colspan=\"2\">&nbsp;</td></tr>\n";
 

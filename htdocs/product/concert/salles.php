@@ -36,7 +36,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des concerts", $page, $PHP_SELF);
+print_barre_liste("Liste des concerts", $page, "salles.php");
 
 $sql = "SELECT lc.rowid, lc.nom, lc.ville FROM ".MAIN_DB_PREFIX."lieu_concert as lc";
   
@@ -48,9 +48,9 @@ if ( $db->query($sql) ) {
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Nom",$PHP_SELF, "lc.nom");
+  print_liste_field_titre("Nom","salles.php", "lc.nom");
   print "</td><td>";
-  print_liste_field_titre("Ville",$PHP_SELF, "lc.ville");
+  print_liste_field_titre("Ville","salles.php", "lc.ville");
   print "</td>";
 
   print "</TR>\n";

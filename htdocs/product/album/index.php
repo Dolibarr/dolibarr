@@ -39,7 +39,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 
-print_barre_liste("Liste des albums", $page, $PHP_SELF);
+print_barre_liste("Liste des albums", $page, "index.php");
 
 $sql = "SELECT a.rowid, a.title, a.osc_id FROM ".MAIN_DB_PREFIX."album as a";
   
@@ -51,7 +51,7 @@ if ( $db->query($sql) ) {
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Titre",$PHP_SELF, "a.title");
+  print_liste_field_titre("Titre","index.php", "a.title");
   print "</td>";
   print "<td></td>";
   print "</TR>\n";

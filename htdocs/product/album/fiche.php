@@ -66,7 +66,7 @@ if ($action == 'updateosc') {
 if ($action == 'create')
 {
 
-  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+  print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
   print '<div class="titre">Nouvel album</div><br>';
@@ -126,7 +126,7 @@ else
 	    {
 	      print '<hr><div class="titre">Edition de la fiche Album : '.$album->titre.'</div><br>';
 	      
-	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	      print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
 	      print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	      
 	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
@@ -149,7 +149,7 @@ else
 	      $htmls = new Form($db);
 	      $ga = new Groupart($db);
 	      
-	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	      print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
 	      print "<input type=\"hidden\" name=\"action\" value=\"addga\">";
 	      
 	      foreach ($gas as $key => $value)

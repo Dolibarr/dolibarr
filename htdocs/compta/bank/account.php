@@ -63,7 +63,7 @@ if ($action == 'add' && $account)
     }
   else
     {
-      Header("Location: $PHP_SELF?account=" . $account);
+      Header("Location: account.php?account=" . $account);
     }
 }
 if ($action == 'del' && $account && $user->rights->banque->modifier)
@@ -183,7 +183,7 @@ if ($account > 0)
   print_fiche_titre("Journal de trésorerie du compte : " .$acct->label,$mesg);
   print '<br>';
 
-  print '<form method="post" action="'.$PHP_SELF.'">';
+  print '<form method="post" action="account.php">';
   print '<input type="hidden" name="action" value="search">';
   print '<input type="hidden" name="account" value="' . $acct->id . '">';
   print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
@@ -211,7 +211,7 @@ if ($account > 0)
    */
   if ($user->rights->banque->modifier)
     {
-      print '<form method="post" action="'.$PHP_SELF.'">';
+      print '<form method="post" action="account.php">';
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="vline" value="' . $vline . '">';
       print '<input type="hidden" name="account" value="' . $acct->id . '">';
@@ -402,7 +402,7 @@ Function _print_lines($db,$sql,$acct)
 		{
 		  if ($user->rights->banque->modifier)
 		    {
-		      print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id&amp;page=$page\">";
+		      print "<td align=\"center\"><a href=\"account.php?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id&amp;page=$page\">";
 		      print img_delete();
 		      print "</a></td>";
 		    }

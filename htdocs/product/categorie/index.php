@@ -29,7 +29,7 @@ if ($id)
 {
   $title = title_url($id, $db);
 
-  print_barre_liste($title, $page, $PHP_SELF);
+  print_barre_liste($title, $page, "index.php");
 
   $sql = "SELECT products_id FROM ".DB_NAME_OSC.".products_to_categories WHERE categories_id = $id";
   
@@ -69,7 +69,7 @@ if ($id)
 	  $i = 0;
 	  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 	  print "<TR class=\"liste_titre\"><td>Réf.</td><td>";
-	  print_liste_field_titre("Titre",$PHP_SELF, "l.title");
+	  print_liste_field_titre("Titre","index.php", "l.title");
 	  print "</td>";
 	  print '<td colspan="3">&nbsp;</td>';
 	  print "</TR>\n";
@@ -119,7 +119,7 @@ if ($id)
 else
 {
 
-  print_barre_liste("Liste des catégories", $page, $PHP_SELF);
+  print_barre_liste("Liste des catégories", $page, "index.php");
 
   $sql = "SELECT c.categories_id, cd.categories_name ";
   $sql .= " FROM ".DB_NAME_OSC.".categories as c,".DB_NAME_OSC.".categories_description as cd";
@@ -133,7 +133,7 @@ else
       $i = 0;
       print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
       print "<TR class=\"liste_titre\"><td>";
-      print_liste_field_titre("Titre",$PHP_SELF, "a.title");
+      print_liste_field_titre("Titre","index.php", "a.title");
       print "</td>";
       print "<td></td>";
       print "</TR>\n";

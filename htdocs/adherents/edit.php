@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -75,7 +75,7 @@ if ($action == 'update')
 	}
       else
 	{
-	  Header("Location: $PHP_SELF?rowid=$adh->id");
+	  Header("Location: edit.php?rowid=$adh->id");
 	}
 
     }
@@ -119,7 +119,7 @@ if ($rowid)
 
   print_titre("Edition de la fiche adhérent");
 
-  print "<form action=\"$PHP_SELF\" method=\"post\">";
+  print "<form action=\"edit.php\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
   print "<input type=\"hidden\" name=\"action\" value=\"update\">";

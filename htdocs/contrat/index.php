@@ -73,22 +73,22 @@ if ( $db->query($sql) )
   $i = 0;
 
 
-  print_barre_liste("Liste des contrats", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+  print_barre_liste("Liste des contrats", $page, "index.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 
   print '<tr class="liste_titre">';
   print '<td>';
-  print_liste_field_titre("Numéro",$PHP_SELF, "c.rowid");
+  print_liste_field_titre("Numéro","index.php", "c.rowid");
   print "</td><td>";
-  print_liste_field_titre("Libellé",$PHP_SELF, "p.label");
+  print_liste_field_titre("Libellé","index.php", "p.label");
   print "</td><td>";
-  print_liste_field_titre("Société",$PHP_SELF, "s.nom");
+  print_liste_field_titre("Société","index.php", "s.nom");
   print '</td><td align="center">';
-  print_liste_field_titre("Statut",$PHP_SELF, "c.enservice");
+  print_liste_field_titre("Statut","index.php", "c.enservice");
   print '</td>';
   print '</td><td align="center">';
-  print_liste_field_titre("Date Fin",$PHP_SELF, "c.fin_validite");
+  print_liste_field_titre("Date Fin","index.php", "c.fin_validite");
   print '</td>';
   print "</tr>\n";
     

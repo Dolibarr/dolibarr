@@ -98,8 +98,8 @@ llxHeader();
           print "<td>".$adho->attribute_label[$key]."&nbsp;</td>\n";
           print "<td>$key</td>\n";
           print "<td>$value</TD>\n";
-          print "<td align=\"center\"><a href=\"$PHP_SELF?action=edit&attrname=$key\">".img_edit()."</a>";
-          print "&nbsp; <a href=\"$PHP_SELF?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
+          print "<td align=\"center\"><a href=\"options.php?action=edit&attrname=$key\">".img_edit()."</a>";
+          print "&nbsp; <a href=\"options.php?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
           print "</tr>";
           //      $i++;
         }
@@ -110,7 +110,7 @@ llxHeader();
          *
          */
         print '<div class="tabsAction">';
-        print "<a class=\"tabAction\" href=\"$PHP_SELF?action=create\">Nouvel attribut</a>";
+        print "<a class=\"tabAction\" href=\"options.php?action=create\">Nouvel attribut</a>";
         print "</div>";
     }
 
@@ -127,7 +127,7 @@ if ($_GET["action"] == 'create') {
   print_titre("Nouvel attribut");
   print '<br>';
   
-  print "<form action=\"$PHP_SELF\" method=\"post\">";
+  print "<form action=\"options.php\" method=\"post\">";
   print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
   
   print '<input type="hidden" name="action" value="add">';
@@ -164,7 +164,7 @@ if ($_GET["attrname"] && $_GET["action"] == 'edit')
   /*
    * formulaire d'edition
    */
-  print '<form method="post" action="'.$PHP_SELF.'?attrname='.$_GET["attrname"].'">';
+  print '<form method="post" action="options.php?attrname='.$_GET["attrname"].'">';
   print '<input type="hidden" name="attrname" value="'.$_GET["attrname"].'">';
   print '<input type="hidden" name="action" value="update">';
   print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';

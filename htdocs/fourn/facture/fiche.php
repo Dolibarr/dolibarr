@@ -188,7 +188,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
     }
   print_titre("Saisir une facture fournisseur");
       
-  print '<form action="'.$PHP_SELF.'" method="post">';
+  print '<form action="fiche.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
   print '<tr><td>Société</td>';
@@ -288,7 +288,7 @@ else
 
 	  print_titre('Facture : '.$fac->ref);
 	  
-	  print "<form action=\"$PHP_SELF?facid=$fac->id\" method=\"post\">";
+	  print '<form action="fiche.php?facid='.$fac->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="update">';
       
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
@@ -332,7 +332,7 @@ else
 	   * Lignes
 	   *
 	   */	  
-	  print "<p><form action=\"$PHP_SELF?facid=$fac->id&amp;action=add_ligne\" method=\"post\">";
+	  print "<p><form action=\"$fiche.php?facid=$fac->id&amp;action=add_ligne\" method=\"post\">";
 	  print '<table class="noborder" cellspacing="0" cellpadding="2" width="100%">';
 	  print '<tr class="liste_titre"><td>Libellé</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Total HT</td>';
 	  print '<td align="center">Taux TVA</td>';
@@ -379,7 +379,7 @@ else
 	   *
 	   */
 	  
-	  $head[0][0] = DOL_URL_ROOT."$PHP_SELF?facid=".$fac->id;
+	  $head[0][0] = DOL_URL_ROOT."fiche.php?facid=".$fac->id;
 	  $head[0][1] = 'Facture : '.$fac->ref;
 	  $h = 1;
 	  $a = 0;
@@ -562,11 +562,11 @@ else
 	  if ($fac->statut == 0)
 	    {
 	      if ($_GET["action"] <> "edit")
-		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=valid\">Valider</a>";
+		print "<a class=\"tabAction\" href=\"fiche.php?facid=$fac->id&amp;action=valid\">Valider</a>";
 	    }
 	  else
 	    {
-	      print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=copy&amp;socid=$fac->socidp\">Copier</a>";
+	      print "<a class=\"tabAction\" href=\"fiche.php?facid=$fac->id&amp;action=copy&amp;socid=$fac->socidp\">Copier</a>";
 	    }
 	}
       

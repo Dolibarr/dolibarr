@@ -107,13 +107,13 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
 
-  print_barre_liste($titre ,$page, $PHP_SELF, '&amp;begin='.$_GET["begin"].'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
+  print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$_GET["begin"].'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
 
   print "<div align=\"center\">";
 
-  print "| <A href=\"$PHP_SELF?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
+  print "| <A href=\"index.php?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
   for ($ij = 65 ; $ij < 91; $ij++) {
-    print "<A href=\"$PHP_SELF?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
+    print "<A href=\"index.php?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
     
     if ($_GET["begin"] == chr($ij) )
       {
@@ -137,11 +137,11 @@ if ($result)
     }
   print '<p><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>';
-  print_liste_field_titre("Nom",$PHP_SELF,"lower(p.name)", $begin);
+  print_liste_field_titre("Nom","index.php","lower(p.name)", $begin);
   print "</td><td>";
-  print_liste_field_titre("Prénom",$PHP_SELF,"lower(p.firstname)", $begin);
+  print_liste_field_titre("Prénom","index.php","lower(p.firstname)", $begin);
   print "</td><td>";
-  print_liste_field_titre("Société",$PHP_SELF,"lower(s.nom)", $begin);
+  print_liste_field_titre("Société","index.php","lower(s.nom)", $begin);
   print '</td>';
 
   print '<td>Téléphone</td>';

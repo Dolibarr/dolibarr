@@ -64,7 +64,7 @@ if (empty ($MM))
 if (empty($YY))
   $YY=strftime("%Y",time());;
 echo "<div class='noprint'>";
-echo "\n<form action='$PHP_SELF'>";
+echo "\n<form action='rapport.php'>";
 echo "<input type='hidden' name='socid' value='$socid'>";
 echo "Mois <input name='MM' size='2' value='$MM'>";
 echo " Ann&eacute;e <input size='4' name='YY' value='$YY'>";
@@ -91,7 +91,7 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $title = "Rapport d'activité de " . strftime("%B %Y",strtotime ($start));
-  print_barre_liste($title, $page, $PHP_SELF,"&socid=$socid",$sortfield,$sortorder,'',$num);
+  print_barre_liste($title, $page, "rapport.php","&socid=$socid",$sortfield,$sortorder,'',$num);
 
   $i = 0;
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';

@@ -132,7 +132,7 @@ if ($result)
 
   $params = "&amp;socname=$socname";
 
-  print_barre_liste($title, $page, $PHP_SELF,$params,$sortfield,$sortorder,'',$num);
+  print_barre_liste($title, $page, "societe.php",$params,$sortfield,$sortorder,'',$num);
     
   if ($title_filtre)
     {
@@ -144,9 +144,9 @@ if ($result)
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
   print '<tr class="liste_titre">';
   print '<td width="25%">';
-  print_liste_field_titre($langs->trans("Company"),$PHP_SELF,"s.nom", $params);
+  print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom", $params);
   print '</td><td width="25%">';
-  print_liste_field_titre($langs->trans("Town"),$PHP_SELF,"s.ville",$params);
+  print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville",$params);
   print '</td><td colspan="2" align="center">'.$langs->trans("Cards").'</td>';
   print "</tr>\n";
   $var=True;

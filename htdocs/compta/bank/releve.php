@@ -78,7 +78,7 @@ if (! isset($_GET["num"]))
       $numrows = $db->num_rows();
       $i = 0; 
       
-      print_barre_liste("Relevés bancaires, compte : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>", $page, $PHP_SELF,"&amp;account=$account",$sortfield,$sortorder,'',$numrows);
+      print_barre_liste("Relevés bancaires, compte : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>", $page, "releve.php","&amp;account=$account",$sortfield,$sortorder,'',$numrows);
       print '<br>';
       
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
@@ -89,14 +89,17 @@ if (! isset($_GET["num"]))
 	{
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
-	  if (! $objp->numr) { 
-//	  	print "<tr $bc[$var]><td><a href=\"$PHP_SELF?num=&amp;account=".$_GET["account"]."\">Ecritures rapprochées à aucun relevé</a></td></tr>\n";
-	  } else {
-	  	print "<tr $bc[$var]><td><a href=\"$PHP_SELF?num=$objp->numr&amp;account=".$_GET["account"]."\">$objp->numr</a></td></tr>\n";
-	  }
+	  if (! $objp->numr)
+	    { 
+	      //
+	    }
+	  else
+	    {
+	      print "<tr $bc[$var]><td><a href=\"releve.php?num=$objp->numr&amp;account=".$_GET["account"]."\">$objp->numr</a></td></tr>\n";
+	    }
 	  $i++;
 	}
-  	print "</table>\n";
+      print "</table>\n";
     }
 
 
@@ -146,13 +149,13 @@ else
     $num=$_GET["num"];
   }
 
-  $mesprevnext ="<a href=\"$PHP_SELF?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_previous()."</a>";
+  $mesprevnext ="<a href=\"releve.php?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_previous()."</a>";
   $mesprevnext.=" Relevé $num ";
-  $mesprevnext.="<a href=\"$PHP_SELF?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_next()."</a>";
+  $mesprevnext.="<a href=\"releve.php?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_next()."</a>";
   print_fiche_titre('Relevé numéro '.$num.', compte : <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>',$mesprevnext);
   
 
-  print "<form method=\"post\" action=\"$PHP_SELF\">";
+  print "<form method=\"post\" action=\"releve.php\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
   print "<tr class=\"liste_titre\">";
@@ -186,7 +189,7 @@ else
       $var=True;  
       $numrows = $db->num_rows();
       $i = 0; 
-      print "<tr><td colspan=\"3\"><a href=\"$PHP_SELF?num=$num&amp;ve=1&amp;rel=$rel&amp;account=".$acct->id."\">Vue etendue</a></td>";
+      print "<tr><td colspan=\"3\"><a href=\"releve.php?num=$num&amp;ve=1&amp;rel=$rel&amp;account=".$acct->id."\">Vue etendue</a></td>";
       print "<td align=\"right\" colspan=\"2\">&nbsp;</td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
 
       while ($i < $numrows)

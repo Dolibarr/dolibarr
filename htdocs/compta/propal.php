@@ -183,7 +183,7 @@ if ($_GET["propalid"])
 
       if ($action == 'statut')
 	{
-	  print "<form action=\"$PHP_SELF?propalid=".$propal->id."\" method=\"post\">";
+	  print "<form action=\"propal.php?propalid=".$propal->id."\" method=\"post\">";
 	  print "<input type=\"hidden\" name=\"action\" value=\"setstatut\">";
 	  print "<select name=\"statut\">";
 	  print "<option value=\"2\">Signée";
@@ -285,7 +285,7 @@ if ($_GET["propalid"])
 	  
 	  if ($obj->statut == 2 && $num_fac_asso)
 	    {
-	      print "<td width=\"20%\">[<a href=\"$PHP_SELF?propalid=".$propal->id."&action=setstatut&statut=4\">Facturée</a>]</td>";
+	      print "<td width=\"20%\">[<a href=\"propal.php?propalid=".$propal->id."&action=setstatut&statut=4\">Facturée</a>]</td>";
 	    }
 	  else	
 	    {
@@ -373,7 +373,7 @@ if ($_GET["propalid"])
 	$cloturor = new User($db, $obj->fk_user_cloture);
 	$cloturor->fetch('');
 	
-	print '<p><a href="'.$PHP_SELF.'?propalid='.$propal->id.'">Cacher le suivi des actions </a>';
+	print '<p><a href="propal.php?propalid='.$propal->id.'">Cacher le suivi des actions </a>';
 	print '<table cellspacing=0 border=1 cellpadding=3>';
 	print '<tr><td>&nbsp;</td><td>Nom</td><td>Date</td></tr>';
 	print '<tr><td>Création</td><td>'.$author->fullname.'</td>';
@@ -388,7 +388,7 @@ if ($_GET["propalid"])
       }
     else
       {
-	print '<p><a href="'.$PHP_SELF.'?propalid='.$propal->id.'&suivi=1">Voir le suivi des actions </a>';
+	print '<p><a href="propal.php?propalid='.$propal->id.'&suivi=1">Voir le suivi des actions </a>';
       }
     
   } else {
@@ -459,16 +459,16 @@ if ($_GET["propalid"])
     {
       $num = $db->num_rows();
 
-      print_barre_liste("Propositions commerciales", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder,'',$num);
+      print_barre_liste("Propositions commerciales", $page, "propal.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
       $i = 0;
       print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
       print '<tr class="liste_titre">';
-      print_liste_field_titre_new ("Réf",$PHP_SELF,"p.ref","","&year=$year&viewstatut=$viewstatut",'',$sortfield);
-      print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","&viewstatut=$viewstatut","",'',$sortfield);
-      print_liste_field_titre_new ("Date",$PHP_SELF,"p.datep","&viewstatut=$viewstatut","",'align="right" colspan="2"',$sortfield);
-      print_liste_field_titre_new ("Prix",$PHP_SELF,"p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
-      print_liste_field_titre_new ("Statut",$PHP_SELF,"p.fk_statut","&viewstatut=$viewstatut","",'align="center"',$sortfield);
+      print_liste_field_titre_new ("Réf","propal.php","p.ref","","&year=$year&viewstatut=$viewstatut",'',$sortfield);
+      print_liste_field_titre_new ("Société","propal.php","s.nom","&viewstatut=$viewstatut","",'',$sortfield);
+      print_liste_field_titre_new ("Date","propal.php","p.datep","&viewstatut=$viewstatut","",'align="right" colspan="2"',$sortfield);
+      print_liste_field_titre_new ("Prix","propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
+      print_liste_field_titre_new ("Statut","propal.php","p.fk_statut","&viewstatut=$viewstatut","",'align="center"',$sortfield);
       print "</tr>\n";
 
       while ($i < min($num, $limit))
@@ -477,7 +477,7 @@ if ($_GET["propalid"])
 	
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></td>\n";
+	  print "<td><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></td>\n";
 	  print "<td><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
 	  
 	  $now = time();

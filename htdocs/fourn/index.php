@@ -144,7 +144,7 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Liste des fournisseurs", $page, $PHP_SELF, "", $sortfield, $sortorder, '', $num);
+  print_barre_liste("Liste des fournisseurs", $page, "index.php", "", $sortfield, $sortorder, '', $num);
   if ($sortorder == "DESC")
     {
       $sortorder="ASC";
@@ -155,7 +155,7 @@ if ($result)
     }
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td valign="center">';
-  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+  print_liste_field_titre("Société","index.php","s.nom");
   print "</td><td>Ville</td>";
   print "</tr>\n";
   $var=True;

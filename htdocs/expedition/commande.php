@@ -79,7 +79,7 @@ if ($_GET["id"] > 0)
        */
       if ($_GET["action"] == 'cloture')
 	{
-	  $html->form_confirm("$PHP_SELF?id=$id","Cloturer la commande","Etes-vous sûr de cloturer cette commande ?","confirm_cloture");
+	  $html->form_confirm("commande.php?id=$id","Cloturer la commande","Etes-vous sûr de cloturer cette commande ?","confirm_cloture");
 	}
       /*
        *

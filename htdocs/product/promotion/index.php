@@ -48,7 +48,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des promotions", $page, $PHP_SELF, "",$sortfield, $sortorder);
+print_barre_liste("Liste des promotions", $page, "index.php", "",$sortfield, $sortorder);
 
 $urladd = "&sortorder=$sortorder&sortfield=$sortfield";
 
@@ -65,9 +65,9 @@ if ( $db->query($sql) )
   $i = 0;
   print '<p><TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Réf",$PHP_SELF, "p.products_model");
+  print_liste_field_titre("Réf","index.php", "p.products_model");
   print "</td><td>";
-  print_liste_field_titre("Titre",$PHP_SELF, "pd.products_name");
+  print_liste_field_titre("Titre","index.php", "pd.products_name");
   print "</td>";
   print "</td><td></td><td></td><td>Fin</td>";
   print '<td align="right">Prix initial</td>';

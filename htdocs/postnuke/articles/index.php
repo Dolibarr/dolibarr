@@ -37,7 +37,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des articles", $page, $PHP_SELF, "", $sortfield, $sortorder, $form);
+print_barre_liste("Liste des articles", $page, "index.php", "", $sortfield, $sortorder, $form);
 
 $sql = "SELECT p.pn_sid, p.pn_title FROM " . PN_DB_NAME . "." . PN_TABLE_STORIES_NAME . " as p";
 
@@ -50,7 +50,7 @@ if ( $db->query($sql) )
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Titre.",$PHP_SELF, "p.pn_title");
+  print_liste_field_titre("Titre.","index.php", "p.pn_title");
   print '<td colspan="3">&nbsp;</td>';
   print "</TR>\n";
   $var=True;

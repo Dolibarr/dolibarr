@@ -37,7 +37,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 
-print_barre_liste("Liste des produits oscommerce", $page, $PHP_SELF);
+print_barre_liste("Liste des produits oscommerce", $page, "osc-liste.php");
 
 $sql = "SELECT p.products_id, p.products_model, p.products_quantity, p.products_status, d.products_name, m.manufacturers_name, m.manufacturers_id";
 $sql .= " FROM ".DB_NAME_OSC.".products as p, ".DB_NAME_OSC.".products_description as d, ".DB_NAME_OSC.".manufacturers as m";

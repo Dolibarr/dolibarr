@@ -168,11 +168,11 @@ if ($_GET["id"])
             print '<tr class="liste_titre">';
             foreach ($fieldlist as $field => $value) {
                 print '<td>';
-                print_liste_field_titre(ucfirst($fieldlist[$field]),$PHP_SELF,$fieldlist[$field],"&id=".$_GET["id"]);
+                print_liste_field_titre(ucfirst($fieldlist[$field]),"dict.php",$fieldlist[$field],"&id=".$_GET["id"]);
                 print '</td>';
             }
             print '<td>';
-            print_liste_field_titre("Activer/Désactiver",$PHP_SELF,"active","&id=".$_GET["id"]);
+            print_liste_field_titre("Activer/Désactiver","dict.php","active","&id=".$_GET["id"]);
             print '</td>';
             print '</tr>';
 
@@ -189,9 +189,9 @@ if ($_GET["id"])
                 }
                 print '<td>';
                 if ($obj->code) {
-                    print '<a href="'.$PHP_SELF.'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$obj->rowid.'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+                    print '<a href="'."dict.php".'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$obj->rowid.'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                 } else {
-                    print '<a href="'.$PHP_SELF.'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$obj->rowid.'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+                    print '<a href="'."dict.php".'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$obj->rowid.'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                 }
                 print "</td>";
 
