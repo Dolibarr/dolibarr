@@ -616,7 +616,7 @@ if ($id > 0)
 	}
       else
 	{
-	  print $db->error();
+	  dolibarr_print_error($db);
 	}
       print "&nbsp;</td></tr></table>";
 
@@ -624,15 +624,18 @@ if ($id > 0)
        * Documents générés
        *
        */
-      $file = FAC_OUTPUTDIR . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
-	
+      $file = $conf->commande->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
+	  $relativepath=$commande->ref . "/" . $commande->ref . ".pdf";
+	  
+	  $var=true;
+	  
       if (file_exists($file))
 	{
 	  print_titre("Documents");
 	  print '<table width="100%" class="border">';
 	    
-	  print "<tr $bc[0]><td>Commande PDF</td>";
-	  print '<td><a href="'.FAC_OUTPUT_URL."/".$commande->ref."/".$commande->ref.'.pdf">'.$commande->ref.'.pdf</a></td>';
+	  print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
+	  print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
 	  print '<td align="right">'.filesize($file). ' bytes</td>';
 	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	  print '</tr>';

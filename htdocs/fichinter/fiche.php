@@ -157,7 +157,7 @@ if ($_GET["action"] == 'create')
       
       $smonth = 1;
       $syear = date("Y", time());
-      print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+      print '<table class="border" width="100%">';
       
       print '<input type="hidden" name="socidp" value='.$_GET["socidp"].'>';
       print "<tr><td>Société</td><td><b>".$objsoc->nom."</td></tr>";
@@ -169,7 +169,7 @@ if ($_GET["action"] == 'create')
 	{
 	  if ($day == $cday)
 	    {
-	      print "<option value=\"$day\" SELECTED>$day";
+	      print "<option value=\"$day\" selected>$day";
 	    }
 	  else
 	    {
@@ -371,7 +371,7 @@ if ($_GET["id"])
 	      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=edit">'.$langs->trans("Edit").'</a>';
 	    }
 	  	  
-	  $file = FICHEINTER_OUTPUTDIR . "/$fichinter->ref/$fichinter->ref.pdf";
+	  $file = $conf->ficheinter->dir_output . "/$fichinter->ref/$fichinter->ref.pdf";
 	  if ($fichinter->statut == 0 or !file_exists($file))
 	    {
 	      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=generate">'.$langs->trans("BuildPDF").'</a>';
@@ -389,13 +389,17 @@ if ($_GET["id"])
   
       print '<table width="50%" cellspacing="2"><tr><td width="50%" valign="top">';
       print_titre("Documents générés");
-      print '<table width="100%" cellspacing="0" class="border" cellpadding="3">';
+      print '<table width="100%" class="border">';
       
-      $file = FICHEINTER_OUTPUTDIR . "/$fichinter->ref/$fichinter->ref.pdf";
+      $file = $conf->ficheinter->dir_output . "/$fichinter->ref/$fichinter->ref.pdf";
+      $relativepath="$fichinter->ref/$fichinter->ref.pdf";
+      
+      $var=true;
+
       if (file_exists($file))
 	{
 	  print "<tr $bc[0]><td>Ficheinter PDF</a></td>";
-	  print '<td><a href="'.FICHEINTER_OUTPUT_URL.'/'.$fichinter->ref.'/'.$fichinter->ref.'.pdf">'.$fichinter->ref.'.pdf</a></td>';
+	  print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=ficheinter&file='.urlencode($relativepath).'">'.$fichinter->ref.'.pdf</a></td>';
 	  print '<td align="right">'.filesize($file). ' bytes</td>';
 	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
 	}  

@@ -484,16 +484,19 @@ else
 	 * Documents générés
 	 *
 	 */
-	$file = FAC_OUTPUTDIR . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
-	
+	$file = $conf->commande->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
+	$relativepath = $commande->ref . "/" . $commande->ref . ".pdf";
+
+    $var=true;
+    	
 	if (file_exists($file))
 	  {
 	    print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
 	    print_titre("Documents");
-	    print '<table width="100%" cellspacing="0" class="border" cellpadding="3">';
+	    print '<table width="100%" class="border">';
 	    
-	    print "<tr $bc[0]><td>Commande PDF</td>";
-	    print '<td><a href="'.FAC_OUTPUT_URL."/".$commande->ref."/".$commande->ref.'.pdf">'.$commande->ref.'.pdf</a></td>';
+	    print "<tr $bc[$true]><td>".$langs->trans("Order")." PDF</td>";
+	    print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
 	    print '<td align="right">'.filesize($file). ' bytes</td>';
 	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	    print '</tr>';
@@ -515,8 +518,8 @@ else
 		if ($num)
 		  {
 		    $i = 0; $total = 0;
-		    print '<table border="1" cellspacing="0" cellpadding="4" width="100%">';
-		    print "<tr $bc[$var]><td>Date</td><td>Action</td></tr>\n";
+		    print '<table class="border" width="100%">';
+		    print "<tr $bc[$var]><td>".$langs->trans("Date")."</td><td>".$langs->trans("Action")."</td></tr>\n";
 		    
 		    $var=True;
 		    while ($i < $num)
@@ -524,8 +527,8 @@ else
 			$objp = $db->fetch_object($result);
 			$var=!$var;
 			print "<tr $bc[$var]>";
-			print "<td>".strftime("%d %B %Y",$objp->da)."</TD>\n";
-			print '<td>'.stripslashes($objp->note).'</TD>';
+			print "<td>".strftime("%d %B %Y",$objp->da)."</td>\n";
+			print '<td>'.stripslashes($objp->note).'</td>';
 			print "</tr>";
 			$i++;
 		      }
@@ -534,7 +537,7 @@ else
 	      }
 	    else
 	      {
-		print $db->error();
+		dolibarr_print_error($db);
 	      }
 	    
 	    /*

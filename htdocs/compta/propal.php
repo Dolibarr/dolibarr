@@ -21,6 +21,11 @@
  * $Source$
  *
  */
+ 
+/**
+\todo Ce fichier ne semble plus utilisé. A virer ?
+*/
+
 require("./pre.inc.php");
 
 $user->getrights('facture');
@@ -122,9 +127,9 @@ if ($_GET["propalid"])
             
       $color1 = "#e0e0e0";
 
-      print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
+      print '<table class="border" width="100%">';
 
-      print '<tr><td>Société</td><td colspan="2"><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="2"><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print "<td valign=\"top\" width=\"50%\" rowspan=\"9\">Note :<br>". nl2br($obj->note)."</td></tr>";
       //
 
@@ -134,7 +139,7 @@ if ($_GET["propalid"])
 	{
 	  $projet = new Project($db);
 	  $projet->fetch($obj->fk_projet); 
-	  print '<tr><td>Projet</td><td colspan="1">';
+	  print '<tr><td>'.$langs->trans("Project").'</td><td colspan="1">';
 	  print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id.'">';
 	  print $projet->title.'</a></td></tr>';
 	}
@@ -143,7 +148,7 @@ if ($_GET["propalid"])
        *
        */
 
-      print "<tr><td bgcolor=\"$color1\">Montant HT</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->price + $obj->remise)." euros</td></tr>";
+      print "<tr><td bgcolor=\"$color1\">".$langs->trans("AmountHT")."</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->price + $obj->remise)." euros</td></tr>";
       /*
        *
        */
@@ -156,7 +161,7 @@ if ($_GET["propalid"])
 
       $totalht = $propal->price ;
 
-      print "<tr><td bgcolor=\"$color1\">Total HT</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\"><b>".price($totalht)."</b> euros</td></tr>";
+      print "<tr><td bgcolor=\"$color1\">".$langs->trans("TotalHT")."</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\"><b>".price($totalht)."</b> euros</td></tr>";
       /*
        *
        */
@@ -167,10 +172,12 @@ if ($_GET["propalid"])
       /*
        *
        */
-      print "<tr><td>PDF</a></td>";
-      $file = PROPALE_OUTPUTDIR. "/$obj->ref/$obj->ref.pdf";
+      print "<tr><td>".$langs->trans("Propal")." PDF</a></td>";
+      $file = $conf->propal->dir_output. "/$obj->ref/$obj->ref.pdf";
+      $relativepath = "$obj->ref/$obj->ref.pdf";
+
       if (file_exists($file)) {
-	print '<td colspan="2"><a href="'.PROPALE_OUTPUT_URL.'/'.$obj->ref.'/'.$obj->ref.'.pdf">'.$obj->ref.'.pdf</a></td></tr>';
+	    print '<td colspan="2"><a href="'.DOL_URL_ROOT.'/document.php?type=propal&file='.urlencode($relativepath).'">'.$obj->ref.'.pdf</a></td></tr>';
       }
       print '</tr>';
       /*
@@ -223,7 +230,7 @@ if ($_GET["propalid"])
 	    {
 	      print_titre("Facture associée");
 	    }
-	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+	  print '<table class="border" width="100%">';
 	  print "<tr>";
 	  print '<td>'.$langs->trans("Ref").'</td>';
 	  print '<td>'.$langs->trans("Date").'</td>';
@@ -305,7 +312,7 @@ if ($_GET["propalid"])
        */
       if ($obj->statut <> 4 && $user->societe_id == 0)
 	{  
-	  print '<p><table id="actions" width="100%" cellspacing="4" cellpadding="4"><tr>';
+	  print '<br><table id="actions" width="100%"><tr>';
 	  
 	  if ($obj->statut == 2 && $user->rights->facture->creer)
 	    {
@@ -345,7 +352,7 @@ if ($_GET["propalid"])
      */
     print_titre("Produits");
     
-    print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+    print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
     print "<td>".$langs->trans("Ref")."</td><td>Produit</td>";
     print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
