@@ -23,18 +23,39 @@ require("./pre.inc.php3");
 
 llxHeader();
 
-?>
-    <h3>Dolibarr</h3>
-    <?PHP print translate("User") . ' : <b>' . $user->prenom . ' ' . $user->nom .'</b> ['.$user->code.']';?>
+print "<h3>Dolibarr</h3>";
 
-    <br><br>
-      
-    <style type="text/css">
-      td.dash { border: 1px dashed #c0C0C0; }
-    </style>
+print translate("User") . ' : <b>' . $user->prenom . ' ' . $user->nom .'</b> ['.$user->code.']';
+print "<p>";
+/*
+ * Boites
+ *
+ * TODO mettre les boites dans une table
+ */
+
+$db = new Db();
+
+$sql = "SELECT b.rowid, b.box_id, d.file FROM llx_boxes as b, llx_boxes_def as d WHERE b.box_id = d.rowid";
+$result = $db->query($sql);
+if ($result) 
+{
+  $num = $db->num_rows();
+  $i = 0;
+  
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object( $i);
+
+      $boxs = "includes/boxes/".$obj->file;
+
+      include($boxs);
+      $i++;
+    }
+}
+
+$db->close();
 
 
-<?PHP
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
 
