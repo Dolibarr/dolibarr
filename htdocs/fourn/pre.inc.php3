@@ -35,7 +35,7 @@ function llxHeader($head = "", $urlp = "")
 
   $menu->add(DOL_URL_ROOT."/comm/clients.php3", "Clients");
 
-  $menu->add(DOL_URL_ROOT."/fourn/index.php3", "Fournisseurs");
+  $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
 
   /*
    * Sécurité accés client
@@ -47,7 +47,7 @@ function llxHeader($head = "", $urlp = "")
 
   $menu->add_submenu("contact.php3","Contacts");
 
-  $menu->add(DOL_URL_ROOT."/fourn/facture/index.php3", "Factures");
+  $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", "Factures");
 
   if ($user->societe_id == 0) 
     {
