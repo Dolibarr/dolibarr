@@ -237,6 +237,7 @@ else
 if ($conf->contrat->enabled) {
     $labelservice[0]="Hors service";
     $labelservice[1]="En service";
+    $labelservice[2]="Cloturé";
 
     $sql = "SELECT s.nom, s.idp, c.enservice, c.rowid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p WHERE c.fk_soc = s.idp and c.fk_product = p.rowid";
