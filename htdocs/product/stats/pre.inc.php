@@ -23,16 +23,60 @@ require("../../main.inc.php");
 
 function llxHeader($head = "", $urlp = "")
 {
+  global $user, $conf;
+
   top_menu($head);
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
+  if ($conf->produit->enabled)
+    {
+	  $menu->add(DOL_URL_ROOT."/product/index.php?type=0", "Produits");
+  	  $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=0","Liste");
+  	  $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0","Nouveau produit");
+	}
+	
+  if ($conf->service->enabled)
+    {
+      $menu->add(DOL_URL_ROOT."/product/index.php?type=1", "Services");
+      $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=1","Liste");
+      $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=1","Nouveau service");
+    }
+
+  if ($conf->boutique->enabled)
+    {
+
+      $menu->add(DOL_URL_ROOT."/product/osc-liste.php", "Osc");
+      $menu->add_submenu(DOL_URL_ROOT."/product/osc-liste.php?reqstock=epuise", "Produits Epuisés");
 
 
-  $menu->add("./", "Statistiques");
+      $menu->add(DOL_URL_ROOT."/product/osc-reviews.php", "Critiques");
 
-   
+      $menu->add_submenu(DOL_URL_ROOT."/product/osc-productsbyreviews.php", "Meilleurs produits");
+
+      $menu->add(DOL_URL_ROOT."/product/album/", "Albums");
+      $menu->add(DOL_URL_ROOT."/product/groupart/", "Groupes/Artistes");
+      
+      $menu->add(DOL_URL_ROOT."/product/categorie/", "Catégories");
+    }      
+    
+  $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
+
+  if ($conf->commande->enabled)
+    {
+      $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
+	}
+	
+  $menu->add(DOL_URL_ROOT."/product/stats/", "Statistiques");
+  if ($conf->propal->enabled) {
+    $menu->add_submenu(DOL_URL_ROOT."/product/popuprop.php", "Popularité");
+  }
+  
+  if ($conf->stock->enabled)
+    {
+      $menu->add(DOL_URL_ROOT."/product/stock/", "Stock");
+   	}
+
   left_menu($menu->liste);
   /*
    *

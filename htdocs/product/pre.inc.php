@@ -36,27 +36,30 @@ function llxHeader($head = "", $urlp = "", $title="")
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/product/index.php?type=0", "Produits");
-  $menu->add_submenu("liste.php?type=0","Liste");
-  $menu->add_submenu("fiche.php?action=create&amp;type=0","Nouveau produit");
-
-  if (defined("MAIN_MODULE_SERVICE") && MAIN_MODULE_SERVICE)
+  if ($conf->produit->enabled)
+    {
+	  $menu->add(DOL_URL_ROOT."/product/index.php?type=0", "Produits");
+  	  $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=0","Liste");
+  	  $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0","Nouveau produit");
+	}
+	
+  if ($conf->service->enabled)
     {
       $menu->add(DOL_URL_ROOT."/product/index.php?type=1", "Services");
-      $menu->add_submenu("liste.php?type=1","Liste");
-      $menu->add_submenu("fiche.php?action=create&amp;type=1","Nouveau service");
+      $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=1","Liste");
+      $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=1","Nouveau service");
     }
 
-  if (defined("MAIN_MODULE_BOUTIQUE") && MAIN_MODULE_BOUTIQUE)
+  if ($conf->boutique->enabled)
     {
 
-      $menu->add("osc-liste.php", "Osc");
-      $menu->add_submenu("osc-liste.php?reqstock=epuise", "Produits Epuisés");
+      $menu->add(DOL_URL_ROOT."/product/osc-liste.php", "Osc");
+      $menu->add_submenu(DOL_URL_ROOT."/product/osc-liste.php?reqstock=epuise", "Produits Epuisés");
 
 
-      $menu->add("osc-reviews.php", "Critiques");
+      $menu->add(DOL_URL_ROOT."/product/osc-reviews.php", "Critiques");
 
-      $menu->add_submenu("osc-productsbyreviews.php", "Meilleurs produits");
+      $menu->add_submenu(DOL_URL_ROOT."/product/osc-productsbyreviews.php", "Meilleurs produits");
 
       $menu->add(DOL_URL_ROOT."/product/album/", "Albums");
       $menu->add(DOL_URL_ROOT."/product/groupart/", "Groupes/Artistes");
@@ -66,13 +69,20 @@ function llxHeader($head = "", $urlp = "", $title="")
     
   $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
 
-  $menu->add("stats/", "Statistiques");
+  if ($conf->commande->enabled)
+    {
+      $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
+	}
+	
+  $menu->add(DOL_URL_ROOT."/product/stats/", "Statistiques");
   if ($conf->propal->enabled) {
-    $menu->add_submenu("popuprop.php", "Popularité");
+    $menu->add_submenu(DOL_URL_ROOT."/product/popuprop.php", "Popularité");
   }
   
-  if (defined("MAIN_MODULE_STOCK"))
-    $menu->add("stock/", "Stock");
+  if ($conf->stock->enabled)
+    {
+      $menu->add(DOL_URL_ROOT."/product/stock/", "Stock");
+   	}
 
   left_menu($menu->liste);
   /*
