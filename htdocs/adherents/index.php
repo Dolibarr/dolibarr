@@ -24,7 +24,7 @@ require("./pre.inc.php");
 
 llxHeader();
 
-$db = new Db();
+//$db = new Db();
 
 print_titre("Gestion des adherents");
 

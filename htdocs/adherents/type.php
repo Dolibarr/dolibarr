@@ -27,7 +27,7 @@ require($GLOBALS["DOCUMENT_ROOT"]."/adherent_type.class.php");
 //require($GLOBALS["DOCUMENT_ROOT"]."/paiement.class.php");
 
 
-$db = new Db();
+//$db = new Db();
 
 
 if ($HTTP_POST_VARS["action"] == 'add' && $user->admin) 

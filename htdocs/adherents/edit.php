@@ -24,7 +24,7 @@ require("../adherent.class.php");
 require("../adherent_type.class.php");
 require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
 
-$db = new Db();
+//$db = new Db();
 $adho = new AdherentOptions($db);
 
 /* 

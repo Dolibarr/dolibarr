@@ -28,7 +28,7 @@ require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
 //require("../paiement.class.php");
 
 
-$db = new Db();
+//$db = new Db();
 $adho = new AdherentOptions($db);
 $form = new Form($db);
 

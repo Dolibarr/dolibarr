@@ -24,7 +24,7 @@ require("./pre.inc.php");
 
 llxHeader();
 
-$db = new Db();
+//$db = new Db();
 
 if ($action == 'add') {
   $datepaye = $db->idate(mktime(12, 0 , 0, $pmonth, $pday, $pyear));
