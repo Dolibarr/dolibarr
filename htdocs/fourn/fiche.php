@@ -182,7 +182,7 @@ if ($socid > 0)
      */
     $sql  = "SELECT p.rowid,p.libelle,p.facnumber,".$db->pdate("p.datef")." as df";
     $sql .= " FROM llx_facture_fourn as p WHERE p.fk_soc = $objsoc->idp";
-    $sql .= " ORDER BY p.rowid DESC LIMIT 0,4";
+    $sql .= " ORDER BY p.datef DESC LIMIT 0,4";
     if ( $db->query($sql) )
       {
 	print '<table class="noborder" cellspacing="0" width="100%" cellpadding="1">';
