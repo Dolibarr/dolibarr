@@ -60,7 +60,7 @@ $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.a
 $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, r.nom as region, p.libelle as pays, d.active FROM llx_c_departements as d, llx_c_regions as r, llx_c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid and r.active=1 and p.active=1";
 $tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, p.libelle as pays, r.active FROM llx_c_regions as r, llx_c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
 $tabsql[4] = "SELECT rowid   as rowid, code, libelle, active FROM llx_c_pays";
-$tabsql[5] = "SELECT c.rowid as rowid, c.civilite AS libelle, c.active FROM llx_c_civilite AS c, llx_c_pays AS p WHERE c.fk_pays = p.rowid";
+$tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.lang as lang, c.civilite AS libelle, c.active FROM llx_c_civilite AS c, llx_c_pays AS p WHERE c.fk_pays = p.rowid";
 $tabsql[6] = "SELECT a.id    as rowid, a.libelle AS libelle, a.type, a.lang AS lang, a.active FROM llx_c_actioncomm AS a";
 
 // Tri par defaut
@@ -68,7 +68,7 @@ $tabsqlsort[1]="pays, code ASC";
 $tabsqlsort[2]="pays, code ASC";
 $tabsqlsort[3]="pays, code ASC";
 $tabsqlsort[4]="libelle ASC";
-$tabsqlsort[5]="c.libelle ASC";
+$tabsqlsort[5]="lang, c.libelle ASC";
 $tabsqlsort[6]="lang ASC, a.type ASC";
  
 // Nom des champs en resultat de select pour affichage du dictionnaire
@@ -76,7 +76,7 @@ $tabfield[1] = "code,libelle,pays";
 $tabfield[2] = "code,libelle,region,pays";   // "code,libelle,region,pays"
 $tabfield[3] = "code,libelle,pays";
 $tabfield[4] = "code,libelle";
-$tabfield[5] = "libelle";
+$tabfield[5] = "code,libelle,lang";
 $tabfield[6] = "libelle,type,lang";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
@@ -84,7 +84,7 @@ $tabfieldinsert[1] = "code,libelle,fk_pays";
 $tabfieldinsert[2] = "code_departement,nom,fk_region";
 $tabfieldinsert[3] = "code_region,nom,fk_pays";
 $tabfieldinsert[4] = "code,libelle";
-$tabfieldinsert[5] = "civilite";
+$tabfieldinsert[5] = "code,civilite,lang";
 $tabfieldinsert[6] = "libelle,type,lang";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
