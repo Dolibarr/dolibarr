@@ -38,7 +38,6 @@ function llxHeader($head = "") {
   $menu->add_submenu("liste.php?statut=-1","Adhésions à valider");
 
   $menu->add_submenu("liste.php?statut=0","Adhésions résiliées");
-  $menu->add_submenu("cartes/carte.php","Cartes d'adhérents");
   if ($user->admin)
     {
       $menu->add("fiche.php?action=create","Nouvel adhérent");
@@ -48,6 +47,8 @@ function llxHeader($head = "") {
 
   $menu->add("index.php","Export");
   $menu->add_submenu("htpasswd.php","Format htpasswd");
+  $menu->add_submenu("cartes/carte.php","Cartes d'adhérents");
+  $menu->add_submenu("cartes/etiquette.php","Etiquettes d'adhérents");
 
   $menu->add("index.php","Comptabilite");
   $menu->add_submenu("cotisations.php","Cotisations");
