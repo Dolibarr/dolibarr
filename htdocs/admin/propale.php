@@ -117,11 +117,11 @@ print "<br>";
 
 print_titre("Module de numérotation des propositions commerciales");
 
-print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">\n";
+print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
-print "  <td>Nom</td>\n";
-print "  <td>Info</td>\n";
-print "  <td align=\"center\">Activé</td>\n";
+print "  <td>".$langs->trans("Name")."</td>\n";
+print "  <td>".$langs->trans("Description")."</td>\n";
+print "  <td align=\"center\">".$langs->trans("Activated")."</td>\n";
 print "  <td>&nbsp;</td>\n";
 print "</tr>\n";
 
@@ -158,7 +158,7 @@ if ($handle)
 	  else
 	    {
 		  print "  <td>&nbsp;</td>\n";
-		  print "  <td align=\"center\"><a href=\"propale.php?action=setmod&amp;value=".$file."\">activer</a></td>\n";
+		  print "  <td align=\"center\"><a href=\"propale.php?action=setmod&amp;value=".$file."\">".$langs->trans("Activate")."</a></td>\n";
 	    }
 	  
 	  print "</tr>\n";
@@ -166,11 +166,14 @@ if ($handle)
     }
   closedir($handle);
 }
-print "</table>\n";
+print "</table><br>\n";
+
+
 /*
  * PDF
  */
 
+print_titre("Modèles de propale pdf");
 
 $def = array();
 
@@ -187,23 +190,17 @@ if ($db->query($sql))
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 $dir = "../includes/modules/propale/";
 
-/*
- * PDF
- */
-
-print_titre("Modèles de propale pdf");
-
-print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">\n";
+print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
-print "  <td width=\"140\">Nom</td>\n";
-print "  <td>Info</td>\n";
-print "  <td colspan=\"2\">Actif</td>\n";
-print "  <td colspan=\"2\">Défaut</td>\n";
+print "  <td width=\"140\">".$langs->trans("Name")."</td>\n";
+print "  <td>".$langs->trans("Description")."</td>\n";
+print "  <td colspan=\"2\">".$langs->trans("Activated")."</td>\n";
+print "  <td colspan=\"2\">".$langs->trans("Default")."</td>\n";
 print "</tr>\n";
 
 clearstatcache();
@@ -235,13 +232,13 @@ while (($file = readdir($handle))!==false)
 	{
 	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
 	  print "</td>\n  <td>";
-	  print '<a href="propale.php?action=del&amp;value='.$name.'">désactiver</a>';
+	  print '<a href="propale.php?action=del&amp;value='.$name.'">'.$langs->trans("Disable").'</a>';
 	}
       else
 	{
 	  print "&nbsp;";
 	  print "</td>\n  <td>";
-	  print '<a href="propale.php?action=set&amp;value='.$name.'">activer</a>';
+	  print '<a href="propale.php?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
 	}
 
       print "</td>\n  <td align=\"center\">";
@@ -257,7 +254,7 @@ while (($file = readdir($handle))!==false)
 
       print "</td>\n  <td>";
 
-      print '<a href="propale.php?action=setpdf&amp;value='.$name.'">activer</a>';
+      print '<a href="propale.php?action=setpdf&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
 
       print '</td></tr>';
     }
@@ -272,31 +269,33 @@ print '</table>';
 print '<br>';
 print_titre("Chemins d'accés aux documents");
 
-print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">\n";
+print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
-print "  <td>Nom</td>\n  <td>Valeur</td>\n";
+print "  <td>".$langs->trans("Name")."</td>\n";
+print "  <td>".$langs->trans("Value")."</td>\n";
 print "</tr>\n";
-print "<tr ".$bc[True].">\n  <td width=\"140\">Répertoire</td>\n  <td>".PROPALE_OUTPUTDIR."</td>\n</tr>\n";
+print "<tr ".$bc[True].">\n  <td width=\"140\">".$langs->trans("Directory")."</td>\n  <td>".$conf->propale->dir_output."</td>\n</tr>\n";
 print "</table>\n<br>";
 
 
 
 /*
- *
+ * Formulaire création
  *
  */
 print_titre("Formulaire de création");
+
 print "<form method=\"post\" action=\"propale.php\">
 <input type=\"hidden\" name=\"action\" value=\"nbprod\">
 <table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">
-<tr class=\"liste_titre\">
-  <td>Nom</td>
-  <td>Valeur</td>
-  <td>&nbsp;</td>
-</tr>
+<tr class=\"liste_titre\">";
+print "  <td>".$langs->trans("Name")."</td>\n";
+print "  <td align=\"left\">".$langs->trans("Value")."</td>\n";
+print "  <td>&nbsp;</td>\n";
+print "</tr>
 <tr class=\"pair\">
   <td>Nombre de ligne produits</td>
-  <td align=\"center\"><input size=\"3\" type=\"text\" name=\"value\" value=\"".PROPALE_NEW_FORM_NB_PRODUCT."\"></td>
+  <td align=\"left\"><input size=\"3\" type=\"text\" name=\"value\" value=\"".PROPALE_NEW_FORM_NB_PRODUCT."\"></td>
   <td><input type=\"submit\" value=\"changer\"></td>
 </tr>
 </table>
