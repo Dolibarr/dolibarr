@@ -93,7 +93,7 @@ if (isset($action) && $action== 'added'){
   print "<FONT COLOR=\"blue\">Nouvel Adhérent ajouté. En attente de validation</FONT><BR>\n";
 }
 if ($errmsg != ''){
-  print "<FONT COLOR=\"red\">$errmsg</FONT><BR>\n";
+  print "<FONT COLOR=\"red\">$errmsg</FONT>\n";
 }
 
 print_titre("Nouvel adhérent");
