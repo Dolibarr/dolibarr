@@ -142,13 +142,13 @@ div.tabBar {
   color: #234046;
   background: #dee7ec;
   padding: 0em 1em;
-  margin: 0em 0em 2em 0em;
+  margin: 0em 0em 1.5em 0em;
   border: 1px solid #8CACBB;
 }
 
 div.tabs {
   margin: 0em;
-  padding: 0em 1em;
+  padding: 0em 0.5em;
   text-align: left;
 }
 
@@ -162,9 +162,9 @@ a.tabTitle {
   background: #436976;
   border: 1px solid #8CACBB;
   color: white;
-  font: 100% Bold;
-  padding: 0em 1.0em;
-  margin: 0em 0em;
+  font-weight: normal;
+  padding: 0em 0.5em;
+  margin: 0em 1em;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -175,7 +175,7 @@ a.tab {
   border: 1px solid #8CACBB;
   color: #436976;
   padding: 0em 1.0em;
-  margin: 0em 0.5em;
+  margin: 0em 0.2em;
   text-decoration: none;
   white-space: nowrap;
 }
