@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@
  *
  */
 
-/*! \file htdocs/adherents/pre.inc.php
-    \ingroup    adherent
+/**     \file       htdocs/adherents/pre.inc.php
+        \ingroup    adherent
 		\brief      Fichier de gestion du menu gauche du module adherent
 		\version    $Revision$
 */
@@ -60,10 +60,6 @@ function llxHeader($head = "") {
   $menu->add_submenu("type.php","Type d'adhérent");
   $menu->add_submenu("options.php","Champs optionnels");
 
-  if ($user->admin) {
-    $menu->add_submenu(DOL_URL_ROOT."/admin/adherent.php",$langs->trans("Module"));
-  }
-  
   left_menu($menu->liste);
 
 }

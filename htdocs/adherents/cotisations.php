@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,17 +22,21 @@
  *
  */
 
-/*! \file htdocs/adherents/cotisations.php
+/**     \file       htdocs/adherents/cotisations.php
         \ingroup    adherent
 		\brief      Page de consultation et insertion d'une cotisation
 		\version    $Revision$
 */
 
 require("./pre.inc.php");
-require(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
+
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
+
 
 llxHeader();
 
+
+// \todo    Cette partie de code semble non utilisée
 if ($action == 'add') {
   $datepaye = $db->idate(mktime(12, 0 , 0, $pmonth, $pday, $pyear));
 
@@ -51,9 +55,15 @@ if ($action == 'add') {
   $action = '';
 
 }
+
+
 // Insertion de la cotisation dans le compte banquaire
 if ($_POST["action"] == '2bank' && $_POST["rowid"] !=''){
   if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
+
+    // \todo    Créer une facture et enregistrer son paiement
+
+
     $dateop=strftime("%Y%m%d",time());
     $sql="SELECT cotisation FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid=".$_POST["rowid"]." ";
     $result = $db->query($sql);
