@@ -35,12 +35,13 @@ function llxHeader($head = "") {
 
   $menu->add("/compta/facture.php3","Factures");
 
-  $menu->add("../charges.php3","Charges");
-  $menu->add_submenu("index.php3","Prestations sociales");
+  $menu->add("index.php3","Charges");
 
-  $menu->add("../ca.php3","Chiffres d'affaires");
+  $menu->add_submenu("/compta/sociales/index.php3","Prestations sociales");
 
-  $menu->add("resultat/","Résultats");
+  $menu->add("/compta/ca.php3","Chiffres d'affaires");
+
+  $menu->add("/compta/resultat/","Résultats");
 
   $menu->add("/compta/bank/index.php3","Bank");
 
