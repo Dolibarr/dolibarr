@@ -20,8 +20,18 @@
  * $Source$
  *
  */
+
+/**	    \file       htdocs/comm/action/rapport/rapport.pdf.php
+        \ingroup    commercial
+		\brief      Fichier de generation de PDF pour les rapports d'actions
+		\version    $Revision$
+*/
+
+
 require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf_indexes.php");
 require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf_html.php");
+
+
 
 class CommActionRapport {
 
@@ -36,9 +46,20 @@ class CommActionRapport {
 
   function generate($socid = 0, $catid = 0)
     {
-      global $user;
+      global $user,$conf;
 
-      $dir = DOL_DOCUMENT_ROOT . "/document/rapport/";
+      $dir = $conf->commercial->dir_output;
+
+      if (! file_exists($dir))
+	{
+	  umask(0);
+	  if (! mkdir($dir, 0755))
+	    {
+ 	      return "Error";
+	    }
+	}
+
+      $dir = $conf->commercial->dir_output . "/comm";
 
       if (! file_exists($dir))
 	{
@@ -49,7 +70,7 @@ class CommActionRapport {
 	    }
 	}
 
-      $dir = DOL_DOCUMENT_ROOT . "/document/rapport/comm/";
+      $dir = $conf->commercial->dir_output . "/comm/actions";
 
       if (! file_exists($dir))
 	{
@@ -60,18 +81,7 @@ class CommActionRapport {
 	    }
 	}
 
-      $dir = DOL_DOCUMENT_ROOT . "/document/rapport/comm/actions/";
-
-      if (! file_exists($dir))
-	{
-	  umask(0);
-	  if (! mkdir($dir, 0755))
-	    {
-	      return "Error";
-	    }
-	}
-
-      $file = $dir . "rapport-action-".$this->month."-".$this->year.".pdf";
+      $file = $dir . "/rapport-action-".$this->month."-".$this->year.".pdf";
 
       if (file_exists($dir))
 	{
@@ -81,7 +91,7 @@ class CommActionRapport {
 	  $pdf->SetTitle("Rapport Commercial");
 	  $pdf->SetSubject("Rapport Commercial");
 	  $pdf->SetCreator("Dolibarr ".DOL_VERSION);
-	  $pdf->SetAuthor("Rodolphe Quiedeville");
+	  $pdf->SetAuthor($user->fullname);
 
 	  $pdf->SetFillColor(220,220,220);
 	  
@@ -104,6 +114,8 @@ class CommActionRapport {
    */
   function _cover(&$pdf)
     {
+        global $user;
+        
       $pdf->AddPage();
       $pdf->SetAutoPageBreak(false);
       $pdf->SetFont('Arial','',40);
@@ -117,7 +129,7 @@ class CommActionRapport {
 
       $pdf->SetXY (10, 170);
       $pdf->SetFont('Arial','B',18);
-      $pdf->MultiCell(190, 15, "Rodolphe Quiédeville <rq@lolix.org>", 0, 'C');
+      $pdf->MultiCell(190, 15, $user->fullname, 0, 'C');
       $pdf->SetFont('Arial','B',16);
       $pdf->MultiCell(190, 15, "Tél : +33 (0) 6 13 79 63 41", 0, 'C');
 

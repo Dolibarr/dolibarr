@@ -207,6 +207,7 @@ if (defined("MAIN_MODULE_SOCIETE"))
 if (defined("MAIN_MODULE_COMMERCIAL"))
 {
   $conf->commercial->enabled=MAIN_MODULE_COMMERCIAL;
+  $conf->commercial->dir_output=DOL_DATA_ROOT."/rapport";
 }
 if (defined("MAIN_MODULE_COMPTABILITE"))
 {

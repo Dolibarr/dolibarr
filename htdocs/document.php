@@ -124,6 +124,17 @@ if ($modulepart)
     }
 
 
+    // Wrapping pour la telephonie
+    if ($modulepart == 'actionscomm')
+    {
+        $user->getrights('commercial');
+        //if ($user->rights->commercial->lire)      // Ce droit n'existe pas encore
+        //{
+            $accessallowed=1;
+        //}
+        $original_file=$conf->commercial->dir_output.'/'.$original_file;
+    }
+
 }
 
 // Limite accès si droits non corrects

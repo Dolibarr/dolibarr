@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
  *
  */
 
-/*!
-	    \file       htdocs/comm/action/rapport/index.php
+/**	    \file       htdocs/comm/action/rapport/index.php
         \ingroup    commercial
 		\brief      Page accueil des rapports des actions commerciales
 		\version    $Revision$
@@ -154,14 +153,14 @@ if ( $db->query($sql) )
   print_barre_liste("Liste des actions commerciales réalisées ou à faire", $page, "index.php",'',$sortfield,$sortorder,'',$num);
   
   $i = 0;
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print '<td>Date</td>';
-  print '<td align="center">Nombre</td>';
-  print '<td>Action</td>';
-  print '<td align="center">PDF</td>';
-  print '<td align="center">Date</td>';
-  print '<td align="center">Taille</td>';
+  print '<td align="center">'.$langs->trans("Nb").'</td>';
+  print '<td>'.$langs->trans("Action").'</td>';
+  print '<td align="center">'.$langs->trans("PDF").'</td>';
+  print '<td align="center">'.$langs->trans("Date").'</td>';
+  print '<td align="center">'.$langs->trans("Size").'</td>';
   print "</tr>\n";
   $var=true;
   while ($i < min($num,$limit))
@@ -177,18 +176,21 @@ if ( $db->query($sql) )
 
       print '<td><a href="index.php?action=pdf&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_file_new().'</a></td>';
 
-      $root = DOL_DOCUMENT_ROOT; 
-      $dir =  "/document/rapport/comm/actions/";
       $name = "rapport-action-".$obj->month."-".$obj->year.".pdf";
-      $file = $root . $dir . $name;
-      $url = $dir . $name;
-	
+      $relativepath="comm/actions/" .$name;
+      $file = $conf->commercial->dir_output . "/comm/actions/" .$name;
+
       if (file_exists($file))
 	{
-	  print '<td ><a href="'.DOL_URL_ROOT.$url.'">'.img_pdf().'</a></td>';
-	  print '<td>'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-	  print '<td>'.filesize($file). ' bytes</td>';
+	  print '<td align="center"><a href="'.DOL_URL_ROOT.'/document.php?file='.urlencode($relativepath).'&modulepart=actionscomm">'.img_pdf().'</a></td>';
+	  print '<td align="center">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+	  print '<td align="center">'.filesize($file). ' bytes</td>';
 	}
+	else {
+	   print '<td>&nbsp;</td>';  
+	   print '<td>&nbsp;</td>';  
+	   print '<td>&nbsp;</td>';  
+	 }
 
       print "</tr>\n";
       $i++;
@@ -198,7 +200,7 @@ if ( $db->query($sql) )
 }
 else
 {
-  print $db->error() . ' ' . $sql ;
+  dolibarr_print_error($db);
 }
 
 
