@@ -20,6 +20,7 @@
 --
 -- ========================================================================
 
+
 create table llx_telephonie_facture (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   fk_ligne          integer NOT NULL,
