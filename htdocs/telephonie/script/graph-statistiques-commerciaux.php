@@ -68,13 +68,8 @@ if (is_array($dirs))
 	}	
     }
 }
-/***********************************************************************/
-/*
-/* Chiffre d'affaire mensuel
-/*
-/***********************************************************************/
 
-$sql = "SELECT distinct fk_commercial";
+$sql = "SELECT distinct fk_commercial_sign";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
 
 $result = $db->query($sql);
@@ -87,10 +82,28 @@ if ($result)
     {
       $row = $db->fetch_row();	
       
+      /***********************************************************************
+       *
+       * Chiffre d'affaire mensuel
+       *
+       ***********************************************************************/
+      
+      
       $file = $img_root . "commercials/".$row[0]."/ca.mensuel.png";
-      print "Graph : Lignes commandes$file\n";
+      if ($verbose) print "Graph : Lignes commandes$file\n";
       $graph = new GraphCommercialChiffreAffaire($db, $file);
       $graph->width = 400;
+      $graph->GraphMakeGraph($row[0]);
+
+      /*
+       * Statut des lignes
+       *
+       */
+      require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/statut.class.php");
+      
+      $file = $img_root . "commercials/".$row[0]."/lignes.statut.png";
+      if ($verbose) print "Graph : Lignes statut $file\n";
+      $graph = new GraphLignesStatut($db, $file);
       $graph->GraphMakeGraph($row[0]);
       
       $i++;
