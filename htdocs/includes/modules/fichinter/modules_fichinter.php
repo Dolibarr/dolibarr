@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@
  *
  */
 
-/*!	\file htdocs/includes/modules/fichinter/modules_fichinter.php
+/**	
+        \file       htdocs/includes/modules/fichinter/modules_fichinter.php
 		\ingroup    ficheinter
 		\brief      Fichier contenant la classe mère de generation des fiches interventions en PDF
 		            et la classe mère de numérotation des fiches interventions
@@ -30,22 +31,23 @@
 */
 
 
-/*!	\class ModelePDFFicheinter
-		\brief  Classe mère des modèles de fiche intervention
+/**
+    	\class      ModelePDFFicheinter
+		\brief      Classe mère des modèles de fiche intervention
 */
 
 class ModelePDFFicheinter extends FPDF
 {
     var $error='';
 
-    /*!  \brief      Constructeur
+    /**  \brief      Constructeur
      */
     function ModelePDFFicheinter()
     {
     
     }
 
-   /*! 
+   /** 
         \brief Renvoi le dernier message d'erreur de création de fiche intervention
     */
     function pdferror()
@@ -56,7 +58,7 @@ class ModelePDFFicheinter extends FPDF
 }
 
 
-/*!	\class ModeleNumRefFicheinter
+/**	\class ModeleNumRefFicheinter
 		\brief  Classe mère des modèles de numérotation des références de fiches d'intervention
 */
 
@@ -64,7 +66,7 @@ class ModeleNumRefFicheinter
 {
     var $error='';
 
-    /*!     \brief      Renvoi la description par defaut du modele de numérotation
+    /**     \brief      Renvoi la description par defaut du modele de numérotation
      *      \return     string      Texte descripif
      */
     function info()
@@ -74,7 +76,7 @@ class ModeleNumRefFicheinter
         return $langs->trans("NoDescription");
     }
 
-    /*!     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numérotation
      *      \return     string      Example
      */
     function getExample()
@@ -84,7 +86,7 @@ class ModeleNumRefFicheinter
         return $langs->trans("NoExample");
     }
 
-   /*! 
+   /** 
         \brief Renvoi le dernier message d'erreur de création de fiche intervention
     */
     function numreferror()
@@ -95,10 +97,11 @@ class ModeleNumRefFicheinter
 }
 
 
-/*!
+/**
 		\brief      Crée une fiche intervention sur disque en fonction du modèle de FICHEINTER_ADDON_PDF
 		\param	    db  		objet base de donnée
 		\param	    facid		id de la facture à créer
+        \return     int         0 si KO, 1 si OK
 */
 function fichinter_pdf_create($db, $facid)
 {
