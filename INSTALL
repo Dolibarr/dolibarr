@@ -1,6 +1,12 @@
-Paquets Debian requis :
-	- php3
-	- php3-mysql
+Paquets Debian
+--------------
+Liste des paquets à installer pour faire fonctionner Dolibarr,
+certains paquets ne sont pas indiqués car ils sont des dépendances de
+ceux-ci.
+
+
+	- php4
+	- php4-mysql
 	- tetex-bin
 	- tetex-extra
 	- perl
@@ -10,7 +16,39 @@ Paquets Debian requis :
 	- recode
 	- libtext-unaccent-perl
 
-Configuration :
+
+Installation
+------------
+	Base de données :
+	
+	Vous trouverez un fichier Makefile dans le repertoire mysql/
+qui contient toutes les commandes pour créer la base, les tables et
+les données de bases.
+
+	'make create' crée la base de données 'dolibarr' vous pouvez
+changer le nom de la base avec la commande 'make create
+BASE=autrenom', pensez a executer 'make create' avec un utilisateur
+ayant les droits de création de base. Les droits sur la base sont créés
+en même temps, si vous souhaitez les changer vous pouvez éditer le
+fichier Makefile.
+
+
+	'make table' crée les tables
+
+	'make load' charge les donnees nécessaire dans les tables de
+constantes.
+
+	'make dev' charge un ensemble de données de test, cette étapes
+est facultative
+
+
+	Une fois les 3 commandes (make create, make table et make
+load) passées votre base de donnees est prêtes a etre utilisée.
+
+
+Configuration
+-------------
+
 	- dans le repertoire dolibarr/htdocs/conf recopier le fichier
 	conf.inc.php3.sample vers conf.inc.php3 et paramétrer selon
 	vos besoins
@@ -19,33 +57,6 @@ Apache :
 	- un fichier httpd.conf.sample est fournit vous pouvez vous en
 	servir pour configurer votre serveur
 
-Installation
-------------
-	Base de données :
-	
-	Vous trouverez un fichier Makefile dans le repertoire mysql/
-qui contient toutes les commandes pour creer la base, les tables et
-les data.
-
-	'make create' cree la base de donnee 'dolibarr' vous pouvez
-changer le nom de la base avec la commande 'make create
-BASE=autrenom', pensez a executer 'make create' avec un utilisateur
-ayant les droits de creation de base. Les droits sur la base sont cree
-en meme temps, si vous souhaitez les changer vous pouvez editer le
-fichier Makefile.
-
-
-	'make table' cree les tables
-
-	'make load' charge les donnees necessaire dans les tables de
-constantes.
-
-	'make dev' charge un ensemble de donnees de test, cette étapes
-est facultative
-
-
-	Une fois ces 3 commandes passees votre base de donnees est
-pretes a etre utilisee.
 
 Initialisation
 --------------
