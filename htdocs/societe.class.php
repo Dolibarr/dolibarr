@@ -174,8 +174,10 @@ class Societe {
       { 
 	$sql .= ",fk_forme_juridique = '" . trim($this->forme_juridique_code) ."'";
       }
-    if (trim($this->client))          { $sql .= ",client = '" . $this->client ."'"; }
-    if (trim($this->fournisseur))     { $sql .= ",fournisseur = '" . $this->fournisseur ."'"; }
+
+    $sql .= ",client = " . $this->client;
+    $sql .= ",fournisseur = " . $this->fournisseur;
+
     if ($user)                        { $sql .= ",fk_user_modif = '".$user->id."'"; }
 
 
