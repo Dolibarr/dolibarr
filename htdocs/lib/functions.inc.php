@@ -592,33 +592,36 @@ function print_liste_field_titre_new($name, $file, $field, $begin="", $options="
   print "</td>";
 }
 
+/*
+ *
+ */
 function print_titre($titre)
 {
   print '<div class="titre">'.$titre.'</div>';
 }
 /*
- *
- *
+ * Idem que print_titre mais offre en plus possibilité de mettre un text à droite
  */
 function print_fiche_titre($titre, $mesg='')
 {
   print "\n".'<table width="100%" border="0" cellpadding="3" cellspacing="0">';
-  print '<tr><td><div class="titre">'.$titre.'</div></td>';
+  print '<tr><td><div class="titre" valign="middle">'.$titre.'</div></td>';
   if (strlen($mesg))
     {
-      print '<td align="right"><b>'.$mesg.'</b></td>';
+      print '<td align="right" valign="middle"><b>'.$mesg.'</b></td>';
     }
   print '</tr></table>'."\n";
 }
+
 /*
  *
  *
  */
-
 function dol_delete_file($file)
 {
   return unlink($file);
 }
+
 /*
  *
  *
