@@ -96,7 +96,7 @@ if ($result)
   print '<TR class="liste_titre">';
   print "<td>Annee</td>";
   print '<td align="right">Montant</TD>';
-  print "<td align=\"right\">Montant</TD>";
+  print "<td align=\"right\">Nombre</TD>";
   print "<td align=\"right\">Moyenne</TD>\n";
   //  print "<td>Prenom Nom / Société</td>";
   print "</TR>\n";
