@@ -204,8 +204,8 @@ elseif ($action == 'edit')
 
   clearstatcache();
 
-  $docdir = $GLOBALS["DOCUMENT_ROOT"] . "/document/societe/$socid";
-  $url = "/document/societe/$socid";
+  $docdir = SOCIETE_OUTPUTDIR . "/$socid";
+  $url = SOCIETE_OUTPUT_URL . "/$socid";
 
   if (file_exists ($docdir))
     {
@@ -213,12 +213,12 @@ elseif ($action == 'edit')
     }
   else
     {
-   
-    mkdir ("$docdir", 2775);
-    if (file_exists ($docdir))
-      {
-	print '<a href="'.$url.'">Documents</a>';
-      }
+      
+      @mkdir ($docdir);
+      if (file_exists ($docdir))
+	{
+	  print '<a href="'.$url.'">Documents</a>';
+	}
     }
 }
 
