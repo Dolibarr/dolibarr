@@ -469,6 +469,15 @@ class User
 
 		}
 
+	      if ($module == 'prelevement' or $module == '')
+		{
+		  if ($obj->fk_id == 151)
+		    $this->rights->prelevement->lire = 1;
+
+		  if ($obj->fk_id == 152)
+		    $this->rights->prelevement->configurer = 1;
+
+		}
 
 	      if ($module == 'contrat' or $module == '')
 		{

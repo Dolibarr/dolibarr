@@ -94,11 +94,11 @@ if ($result)
 
       print "<td>".$obj->firstname . " ".$obj->name."</td>\n";
       print "<td>".$obj->nom."</td>\n";
-      $dir = $conf->telephonie->dir_output . "/ligne/commande/";
 
-      $encfile = urlencode($dir.$obj->filename);
+      $dir = $conf->telephonie->dir_output . "/ligne/commande/";
+      $relativepath = urlencode("ligne/commande/".$obj->filename);
       
-      print '<td><a href="'.DOL_URL_ROOT . '/document.php?file='.$encfile.'&amp;type=application/msexcel">'.$obj->filename.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=telephonie&amp;file='.urlencode($relativepath).'&amp;type=application/msexcel">'.$obj->filename.'</a></td>';
 
       print "</tr>\n";
       $i++;
@@ -108,7 +108,7 @@ if ($result)
 }
 else 
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 /* ******************************************** */

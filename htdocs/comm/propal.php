@@ -665,21 +665,22 @@ if ($_GET["propalid"])
 	  print '<table class="border" width="100%">';
 	  
 	  $file = $conf->propal->dir_output . "/$propal->ref/$propal->ref.pdf";
+      $relativepath = "$propal->ref/$propal->ref.pdf";
+
+      $var=true;
+      
 	  if (file_exists($file))
 	    {
-	      print "<tr $bc[0]><td>PDF</td>";
+	      print "<tr $bc[$var]><td>".$langs->trans("Propal")." PDF</td>";
 
-	      $encfile = urlencode($file);
-
-	      print '<td><a href="'.DOL_URL_ROOT . '/document.php?file='.$encfile.'">'.$propal->ref.'.pdf</a></td>';
-
+	      print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$propal->ref.'.pdf</a></td>';
 	      print '<td align="right">'.filesize($file). ' bytes</td>';
 	      print '<td align="right">'.strftime("%d %B %Y %H:%M:%S",filemtime($file)).'</td></tr>';
 	    }  
 
 	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
 	    {
-	      print "<tr $bc[1]><td>Modèle</td><td align=\"right\">";
+	      print "<tr $bc[$var]><td>Modèle</td><td align=\"right\">";
 	      $html = new Form($db);
 	      $modelpdf = new Propal_Model_pdf($db);
 	      $html->select_array("modelpdf",$modelpdf->liste_array(),$propal->modelpdf);
@@ -916,7 +917,7 @@ else
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="propal.php?propalid='.$objp->propalid.'">';
 	  print img_file();
-	  print "</a>&nbsp;<a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+	  print "</a>&nbsp;<a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></td>\n";
 	  if ($objp->client == 1)
 	    {
 	      $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp;

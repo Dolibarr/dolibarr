@@ -25,8 +25,7 @@
 /**
         \file       htdocs/document.php
 		\brief      Wrapper permettant le téléchargement de fichier de données Dolibarr
-                    L'appel ancienne méthode (non sécurisée) est document.php?file=pathcompletdufichier
-                    L'appel nouvelle méthode (sécurisée) est document.php?file=pathrelatifdufichier&modulepart=typefichier
+                    L'appel est document.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
 		\version    $Revision$
 */
 
@@ -46,15 +45,8 @@ $accessallowed=0;
 if ($modulepart)
 {
     // On fait une vérification des droits et on définit le répertoire concerné
-    if ($modulepart == 'facture_paiement')
-    {
-        $user->getrights('facture');
-        if ($user->rights->facture->lire)
-        {
-            $accessallowed=1;
-        }
-        $original_file=$conf->compta->dir_output.'/'.$original_file;
-    }
+
+    // Wrapping pour les factures
     if ($modulepart == 'facture')
     {
         $user->getrights('facture');
@@ -64,16 +56,74 @@ if ($modulepart)
         }
         $original_file=$conf->facture->dir_output.'/'.$original_file;
     }
-}
-else
-{
-    // A terme, on ne doit rien pouvoir télécharger via document.php sans fournir type
-    // car c'est grace au type qu'on vérifie que les droits et qu'on définit le répertoire racine des fichiers
 
-    // \todo    Corriger ce trou de sécurité pour ne plus permettre l'utilisation via un nom de fichier complet et sans test de droits
+    // Wrapping pour les fiches intervention
+    if ($modulepart == 'ficheinter')
+    {
+        $user->getrights('ficheinter');
+        if ($user->rights->ficheinter->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->ficheinter->dir_output.'/'.$original_file;
+    }
 
-    // Pour l'instant, autorise la passage   
-    $accessallowed=1;
+    // Wrapping pour les prelevements
+    if ($modulepart == 'prelevement')
+    {
+        $user->getrights('prelevement');
+        if ($user->rights->prelevement->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->prelevement->dir_output.'/'.$original_file;
+    }
+
+    // Wrapping pour les propales
+    if ($modulepart == 'propal')
+    {
+        $user->getrights('propale');
+        if ($user->rights->propale->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->propal->dir_output.'/'.$original_file;
+    }
+
+    // Wrapping pour les rapport de paiements
+    if ($modulepart == 'facture_paiement')
+    {
+        $user->getrights('facture');
+        if ($user->rights->facture->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->compta->dir_output.'/'.$original_file;
+    }
+
+    // Wrapping pour les societe
+    if ($modulepart == 'societe')
+    {
+        $user->getrights('societe');
+        if ($user->rights->societe->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->societe->dir_output.'/'.$original_file;
+    }
+
+    // Wrapping pour la telephonie
+    if ($modulepart == 'telephonie')
+    {
+        $user->getrights('telephonie');
+        if ($user->rights->telephonie->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->telephonie->dir_output.'/'.$original_file;
+    }
+
+
 }
 
 // Limite accès si droits non corrects
