@@ -19,11 +19,18 @@
  * $Source$
  *
  */
-
 require("./pre.inc.php");
 require("../commande.class.php");
-require("../../graph.class.php");
 require("./commandestats.class.php");
+
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socidp = $user->societe_id;
+}
 
 llxHeader();
 
@@ -34,7 +41,7 @@ $mesg = '';
  *
  */
 
-$stats = new CommandeStats($db);
+$stats = new CommandeStats($db, $socidp);
 
 $year = $_GET["year"];
 
@@ -49,7 +56,7 @@ $data = $stats->getNbCommandeByMonth($year);
 
 $filev = "/document/images/commande$year.png";
 
-$px = new Graph($data);
+$px = new BarGraph($data);
 $px->SetMaxValue($px->GetMaxValue());
 $px->SetWidth(500);
 $px->SetHeight(280);
@@ -69,7 +76,7 @@ for ($i = 1 ; $i < 13 ; $i++)
 
 $file_amount = "/document/images/commandeamount.png";
 
-$px = new Graph($data);
+$px = new BarGraph($data);
 $px->SetMaxValue($px->GetAmountMaxValue());
 $px->SetWidth(500);
 $px->SetHeight(250);
@@ -85,7 +92,7 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
 $file_avg = "/document/images/commandeaverage.png";
-$px = new Graph($data);
+$px = new BarGraph($data);
 $px->SetMaxValue($px->GetAmountMaxValue());
 $px->SetWidth(500);
 $px->SetHeight(250);
