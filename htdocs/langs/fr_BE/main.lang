@@ -86,4 +86,5 @@ Ref=Réf
 Comments=Commentaires
 ActionsDone=Actions effectuées
 ActionsToDo=Actions à faire
-
+Filter=Filtre
+RemoveFilter=Supprimer le filtre
