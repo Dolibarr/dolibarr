@@ -76,10 +76,58 @@ if ($action == 'del_bookmark')
 
 print_titre("Espace commercial");
 
-print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
 
 print '<tr><td valign="top" width="30%">';
 
+
+/*
+ * Résumé
+ *
+ */
+
+$sql = "SELECT count(s.idp) as nb, client";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE client in (1,2)";
+$sql .= " GROUP BY client";
+$nb = array();
+if ( $db->query($sql) )
+{
+    $i=0;
+    $num = $db->num_rows();
+    while ($i < $num)
+    {
+      $obj = $db->fetch_object( $i);
+      $nb[$obj->client]=$obj->nb;
+      $i++;
+    }
+}
+else {
+    print $db->error();   
+}
+
+
+print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+print "<tr class=\"liste_titre\">";
+print "<td colspan=\"2\">Résumé</td>";
+print "</tr>\n";
+$var = false;
+$type_client_id = array(1,2);
+$type_client[1]="Clients";
+$type_client[2]="Prospects";
+foreach ($type_client_id as $type) {
+    print "<tr $bc[$var]>";
+    print '<td>Nombre de '.$type_client[$type].'</td>';
+    print '<td align="right">'.round($nb[$type]).'</td>';
+    print '</tr>';
+    $var=!$var;
+}
+print "</table><br>\n";
+
+
+/*
+ * Recherche Propal
+ */
 if ($conf->propal->enabled) {
 	print '<form method="post" action="propal.php">';
 	print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
@@ -99,7 +147,7 @@ if ($conf->propal->enabled) {
 	  if ($num > 0 )
 	    {
 	      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-	      print "<TR class=\"liste_titre\">";
+	      print "<tr class=\"liste_titre\">";
 	      print "<td colspan=\"2\">Propositions commerciales brouillons</td></tr>";
 	      
 	      while ($i < $num)
@@ -117,40 +165,42 @@ if ($conf->propal->enabled) {
 /*
  * Commandes à valider
  */
-$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
-if ($socidp)
-{
-  $sql .= " AND c.fk_soc = $socidp";
-}
+if ($conf->commande->enabled) {
+    print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="2">'.translate("Commandes à valider").'</td></tr>';
 
-if ( $db->query($sql) ) 
-{
-  $num = $db->num_rows();
-  if ($num)
+    $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
+    $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
+    if ($socidp)
     {
-      $i = 0;
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td colspan="2">'.translate("Commandes à valider").'</td></tr>';
-      $var = False;
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object($i);
-	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"../commande/fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
-	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
-	  $i++;
-	  $var=!$var;
-	}
-      print "</table><br>";
+      $sql .= " AND c.fk_soc = $socidp";
     }
+    
+    if ( $db->query($sql) ) 
+    {
+      $num = $db->num_rows();
+      if ($num)
+        {
+          $i = 0;
+          $var = False;
+          while ($i < $num)
+    	{
+    	  $obj = $db->fetch_object($i);
+    	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"../commande/fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+    	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+    	  $i++;
+    	  $var=!$var;
+    	}
+        }
+    }
+    print "</table><br>";
 }
 
 /*
- *
+ * Bookmark
  *
  */
-
 $sql = "SELECT s.idp, s.nom,b.rowid as bid";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
 $sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
@@ -162,9 +212,9 @@ if ( $db->query($sql) )
   $i = 0;
 
   print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-  print "<TR class=\"liste_titre\">";
-  print "<TD colspan=\"2\">Bookmark</td>";
-  print "</TR>\n";
+  print "<tr class=\"liste_titre\">";
+  print "<td colspan=\"2\">Bookmark</td>";
+  print "</tr>\n";
 
   while ($i < $num)
     {
@@ -179,9 +229,9 @@ if ( $db->query($sql) )
     }
   print '</table>';
 }
+
 /*
  * Actions commerciales a faire
- *
  *
  */
 print '</td><td valign="top" width="70%">';
@@ -194,13 +244,13 @@ $sql .= " ORDER BY a.datea DESC";
 if ( $db->query($sql) ) 
 {
   $num = $db->num_rows();
-  if ($num > 0)
-    {
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-      print '<TR class="liste_titre"><td colspan="4">Actions à faire</td></tr>';
-      $var = True;
-      $i = 0;
-      while ($i < $num ) 
+
+  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+  print '<tr class="liste_titre"><td colspan="4">Actions à faire</td></tr>';
+  $var = true;
+  $i = 0;
+
+  while ($i < $num ) 
 	{
 	  $obj = $db->fetch_object($i);
 	  $var=!$var;
@@ -212,8 +262,10 @@ if ( $db->query($sql) )
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->sname.'</a></td>';
 	  $i++;
 	}
-      print "</table><br>";
-    }
+  // TODO Ajouter rappel pour "il y a des contrats à mettre en service"
+  // TODO Ajouter rappel pour "il y a des contrats qui arrivent à expiration"
+  print "</table><br>";
+
   $db->free();
 } 
 else
@@ -221,43 +273,96 @@ else
   print $db->error();
 }
 
-$sql = "SELECT s.nom, s.idp, p.rowid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut = 1";
-if ($socidp)
-{ 
-  $sql .= " AND s.idp = $socidp"; 
-}
+//Speed: Si le module n'est pas actif on ne fait pas les select en rapport.
+//New: Ajout d'un résumé sur page accueil espace commercial (nbre de client et nbre de prospect).
+//Fix: Les zone en rapport avec les commandes et propales s'affichent ou nons sur l'espace commercial si le module commande ou propale est actif ou non.
+//New: Ajout des derniers contrats sur page accueil commercial
 
-$sql .= " ORDER BY p.rowid DESC";
-$sql .= $db->plimit(5, 0);
+/*
+ * Derniers contrat
+ *
+ */
+if ($conf->contrat->enabled) {
+    $labelservice[0]="Hors service";
+    $labelservice[1]="En service";
 
-if ( $db->query($sql) )
-{
-  $num = $db->num_rows();
-  $i = 0;
-  if ($num > 0 )
-    {
-      print '<table class="noborder" cellspacing="0" cellpadding="4" width="100%">';
-      print '<tr class="liste_titre"><td colspan="4">Propositions commerciales ouvertes</td></tr>';
-      $var=False;
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object( $i);
-	  print "<tr $bc[$var]><td width=\"12%\"><a href=\"propal.php?propalid=".$obj->rowid."\">".img_file()."</a>&nbsp;";
-	  print "<a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td>";
-	  print "<td width=\"30%\"><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
-	  print "<td align=\"right\">";
-	  print strftime("%d %B %Y",$obj->dp)."</td>\n";	  
-	  print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
-	  $var=!$var;
-	  $i++;
-	}
-      print "</table><br>";
+    $sql = "SELECT s.nom, s.idp, c.enservice, c.rowid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p WHERE c.fk_soc = s.idp and c.fk_product = p.rowid";
+    if ($socidp)
+    { 
+      $sql .= " AND s.idp = $socidp"; 
     }
+    $sql .= " ORDER BY c.tms DESC";
+    $sql .= $db->plimit(5, 0);
+    
+    print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+    print '<tr class="liste_titre"><td colspan="3">Les 5 derniers contrats</td></tr>';
+
+    if ( $db->query($sql) )
+    {
+      $num = $db->num_rows();
+      $i = 0;
+    
+      $var=false;
+      while ($i < $num)
+    	{
+    	  $obj = $db->fetch_object( $i);
+    	  print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".img_file()."</a>&nbsp;";
+    	  print "<a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".$obj->ref."</a></td>";
+    	  print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
+    	  print "<td align=\"right\">".$labelservice[$obj->enservice]."</td></tr>\n";
+    	  $var=!$var;
+    	  $i++;
+    	}
+    }
+    else {
+        print $db->error();   
+    }
+    print "</table><br>";
 }
 
 /*
- * Dernières propales
+ * Dernières propales ouvertes
+ *
+ */
+if ($conf->propal->enabled) {
+
+    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut = 1";
+    if ($socidp)
+    { 
+      $sql .= " AND s.idp = $socidp"; 
+    }
+    $sql .= " ORDER BY p.rowid DESC";
+    $sql .= $db->plimit(5, 0);
+    
+    if ( $db->query($sql) )
+    {
+      $num = $db->num_rows();
+      $i = 0;
+    
+      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+      print '<tr class="liste_titre"><td colspan="4">Les 5 dernières propositions commerciales ouvertes</td></tr>';
+      $var=false;
+      while ($i < $num)
+    	{
+    	  $obj = $db->fetch_object( $i);
+    	  print "<tr $bc[$var]><td width=\"12%\"><a href=\"propal.php?propalid=".$obj->propalid."\">".img_file()."</a>&nbsp;";
+    	  print "<a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td>";
+    	  print "<td width=\"30%\"><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
+    	  print "<td align=\"right\">";
+    	  print strftime("%d %B %Y",$obj->dp)."</td>\n";	  
+    	  print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
+    	  $var=!$var;
+    	  $i++;
+    	}
+      print "</table><br>";
+    }
+    
+}
+
+/*
+ * Dernières propales fermées
  *
  */
 
@@ -269,7 +374,6 @@ if ($conf->propal->enabled) {
 	{ 
 	  $sql .= " AND s.idp = $socidp"; 
 	}
-	
 	$sql .= " ORDER BY p.rowid DESC";
 	$sql .= $db->plimit(5, 0);
 	
@@ -278,8 +382,8 @@ if ($conf->propal->enabled) {
 	    $num = $db->num_rows();
 	      
 	    $i = 0;
-	    print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';      
-	    print '<tr class="liste_titre"><td colspan="6">Dernières propositions commerciales</td></tr>';
+	    print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';      
+	    print '<tr class="liste_titre"><td colspan="6">Les 5 dernières propositions commerciales traitées</td></tr>';
 	    $var=False;	      
 	    while ($i < $num)
 	      {
