@@ -46,7 +46,7 @@ table.border {
                }
 
 table.border td {
-                  background: #444444;   
+                  background: #444444 url(img/action_background.jpg) top left no-repeat;   
                   border-collapse: collapse; 
                   border-top: 1px solid #555555;
                   border-right: 1px solid #888888;
@@ -55,12 +55,12 @@ table.border td {
                   }
 
 table.noborder {
-                 background: #444444;  
+                 background: #444444 ;  
                  border-collapse: collapse;
                  border: 0px  }
 
 table.noborder td {
-                    background: #444444;     
+                    background: #444444 url(img/pair_background.jpg) top left repeat;     
                     border-collapse: collapse;
                     border: 0px  
                     border-top:    1px dashed #555555;
@@ -68,12 +68,13 @@ table.noborder td {
                     }
 
 table#actions {
-                background: #444444;
+                background: #444444 url(img/action_background.jpg) top left no-repeat;
                 border: 0px;
                 cell-spacing: 1em;
                 }
 
 table#actions td {
+                   background: #444444 url(img/action_background.jpg) top left no-repeat;
                    border-bottom: 1px ridge #bbbbbb;
                    border-right: 1px ridge #cccccc;
                    border-left: 1px ridge #999999; 
@@ -93,8 +94,8 @@ a {
 
 a:hover {     text-decoration: underline;    color: #ffffff; }
 
-td.menu {
-          background: #444444; 
+td.menu { 
+          background: #444444 url(img/action_background.jpg) top left no-repeat;
           border-right: 1px solid #888888;
           border-bottom: 1px solid #777777;
           }
@@ -151,7 +152,7 @@ a.leftmenu {
   }
 
 td.barre { 
-           background: #444444;
+           background: #444444 url(img/menu_background.jpg) top left no-repeat;
            font-family: Helvetica, Verdana;
            font-size: 1.0em;  
            color: #dddddd;
@@ -176,7 +177,7 @@ div.titre {
  *
  */
 .liste { 
-         background: #666666; 
+         background: #666666 ; 
          color: #dddddd;
          border-top:    1px dashed #555555;
          border-right:  1px dashed #888888;
@@ -193,14 +194,14 @@ tr.liste_titre {
                  }
 
 tr.pair { 
-          background: #777777; 
+          background: #777777 url(img/pair_background.jpg) top left repeat; 
           font-family: Helvetica, Verdana; 
           font-size: 1.0em;
           color: #eeeeee; 
           }
 
 tr.impair { 
-            background: #666666; 
+            background: #666666 url(img/impair_background.jpg) top left repeat; 
             font-family: Helvetica, Verdana;
             font-size: 1.0em;
             color: #eeeeee;
@@ -218,13 +219,13 @@ tr.box_titre {
                }
 
 tr.box_pair { 
-              background: #666666; 
+              background: #666666 url(img/pair_background.jpg) top left repeat; 
               font-family: Helvetica, Verdana; 
               font-size: 0.9em;              
               }
 
 tr.box_impair { 
-                background: #777777; 
+                background: #777777 url(img/impair_background.jpg) top left repeat; 
                 font-family: Helvetica, Verdana;
                 font-size: 0.9em; 
                 }
