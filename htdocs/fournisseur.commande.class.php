@@ -196,13 +196,16 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 
 	$message .= $this->details_text;
 
-	$message .= "\nCette demande d'approbation a été envoyée à :\n";
-
-	foreach($this->approbs as $approb)
+	if (sizeof($this->approbs) > 1)
 	  {
-	    if (strlen($approb[2]))
+	    $message .= "\nCette demande d'approbation a été envoyée à :\n";
+	    
+	    foreach($this->approbs as $approb)
 	      {
-		$message .= "- $approb[0] $approb[1] <$approb[2]>\n";
+		if (strlen($approb[2]))
+		  {
+		    $message .= "- $approb[0] $approb[1] <$approb[2]>\n";
+		  }
 	      }
 	  }
 
