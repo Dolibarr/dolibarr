@@ -55,10 +55,18 @@ class ProcessGraphContrats
     $this->db = new DoliDb('','','','','',1);
   }
   
-  function go()
+  function go($contrat_id = 0)
   {
-    $min = $this->ident * $this->cpc;
-    $max = ($this->ident + 1 ) * $this->cpc;
+    if ($contrat_id = 0)
+      {
+	$min = $this->ident * $this->cpc;
+	$max = ($this->ident + 1 ) * $this->cpc;
+      }
+    else
+      {
+	$min = $contrat_id;
+	$max = $contrat_id;
+      }
 
     dolibarr_syslog("Deb contrat ".$this->ident . " ($min - $max)");
     $error = 0;
