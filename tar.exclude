@@ -1,4 +1,7 @@
 doc/dev/dolibarr-phpdoc
+doc/dev/html
 htdocs/document
+htdocs/documents
+documents
 CVS
 *~

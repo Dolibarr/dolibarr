@@ -1,4 +1,5 @@
 # Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+# Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@ FILE=dolibarr-2.0.0-alpha1
 tar:
 	rm -fr dolibarr-*.tar.gz* $(FILE)
 	mkdir $(FILE)
-	rsync -ar doc ChangeLog htdocs mysql pgsql misc COPY* http* INSTALL README scripts templates $(FILE)/
+	rsync -ar ChangeLog doc htdocs misc scripts mysql pgsql COPY* http* INSTALL README $(FILE)/
 	tar --exclude-from tar.exclude -cvvf $(FILE).tar $(FILE)/
 	gzip $(FILE).tar
 	md5sum $(FILE).tar.gz > $(FILE).tar.gz.md5
