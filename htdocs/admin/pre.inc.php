@@ -40,11 +40,13 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"));
 
-  $menu->add(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
-
   $menu->add(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"));
 
+  $menu->add(DOL_URL_ROOT."/admin/perms.php", $langs->trans("Rights"));
+
   $menu->add(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
+
+  $menu->add(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
 
   $menu->add("system/", $langs->trans("System"));
 
