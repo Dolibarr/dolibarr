@@ -92,7 +92,7 @@ print '</tr>';
 print '<tr class="liste_titre">';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="right">Valeur</td>';
+  print '<td align="right">Montant</td>';
   print '<td align="center">Delta</td>';
 }
 print '</tr>';
@@ -109,7 +109,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
       $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
       $caseprev = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee-1));
 
-	  // Valeur CA
+	  // Montant CA
       print '<td align="right">';
       if ($cum[$case])
 	{
