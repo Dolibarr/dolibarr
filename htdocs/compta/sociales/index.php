@@ -21,7 +21,8 @@
  *
  */
 
-/*!	\file htdocs/compta/sociales/index.php
+/** 
+    	\file       htdocs/compta/sociales/index.php
 		\ingroup    compta
 		\brief      Ecran des charges sociales
 		\version    $Revision$
@@ -38,6 +39,24 @@ if (!$user->admin && !$user->rights->compta->charges->lire)
 
 
 llxHeader();
+
+
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page = $_GET["page"];
+if ($page < 0) { 
+  $page = 0 ; }
+
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
+  
+if ($sortfield == "") {
+  $sortfield="c.id"; }
+     
+if ($sortorder == "")
+{
+  $sortorder="DESC";
+}
 
 
 /*
@@ -161,13 +180,13 @@ if ($user->rights->compta->charges->creer) {
 }
 
 print "<tr class=\"liste_titre\">";
-print_liste_field_titre($langs->trans("Ref"),"index.php","id");
-print_liste_field_titre($langs->trans("DateDue"),"index.php","de");
-print_liste_field_titre($langs->trans("Period"),"index.php","periode");
-print_liste_field_titre($langs->trans("Type"),"index.php","type","","",'align="left"');
-print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle","","",'align="left"');
-print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount","","",'align="right"');
-print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","","",'align="center"');
+print_liste_field_titre($langs->trans("Ref"),"index.php","id","","","",$sortfield);
+print_liste_field_titre($langs->trans("DateDue"),"index.php","de","","","",$sortfield);
+print_liste_field_titre($langs->trans("Period"),"index.php","periode","","","",$sortfield);
+print_liste_field_titre($langs->trans("Type"),"index.php","type","","",'align="left"',$sortfield);
+print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle","","",'align="left"',$sortfield);
+print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount","","",'align="right"',$sortfield);
+print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","","",'align="center"',$sortfield);
 print "</tr>\n";
 
 
