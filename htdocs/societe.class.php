@@ -644,7 +644,7 @@ class Societe {
     $retour = "";
     $tab = explode(" ",$nom);
     if($mot < count($tab)) {
-      $prefix = substr($tab[$mot],0,$taille);
+      $prefix = strtoupper(substr($tab[$mot],0,$taille));
       //On vérifie que ce prefix n'a pas déjà été pris ...
       $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
       if ( $this->db->query( $sql) )
