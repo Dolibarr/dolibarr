@@ -83,6 +83,16 @@ if ($user->societe_id)
   $sql .= " AND s.idp = " .$user->societe_id;
 }
 
+if ($_GET["search_nom"])
+{
+  $sql .= " AND lower(s.nom) like '%".strtolower($_GET["search_nom"])."%'";
+}
+
+if ($_GET["search_ville"])
+{
+  $sql .= " AND lower(s.ville) like '%".strtolower($_GET["search_ville"])."%'";
+}
+
 if ($socname)
 {
   $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
@@ -137,9 +147,12 @@ if ($result)
   print '<td valign="right">';
   print '<input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'">';
   print '</td><td>';
-  print '<input type="text" class="flat" name="search_ville" value="'.$_GET["search_nom"].'">';
-  print "</td><td>&nbsp;</td>";
-  print "<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>";
+
+  print '<input type="text" name="search_ville" value="'.$_GET["search_ville"].'">';
+  print "</td>";
+  print "<td>";
+  print '<input type="submit"></td><td colspan="6">&nbsp;</td>';
+
   print "</tr>\n";
 
   $var=true;

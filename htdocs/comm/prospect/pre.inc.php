@@ -20,10 +20,11 @@
  *
  */
 
-/**     \file       htdocs/comm/prospect/pre.inc.php
-        \ingroup    commercial
-		\brief      Fichier de gestion du menu gauche de l'espace commercial
-		\version    $Revision$
+/*!
+  \file       htdocs/comm/prospect/pre.inc.php
+  \ingroup    commercial
+  \brief      Fichier de gestion du menu gauche de l'espace commercial
+  \version    $Revision$
 */
 
 require("../../main.inc.php");
@@ -55,11 +56,9 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
     }
 
+
   $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
 	
   left_menu($menu->liste);
-
 }
-
-
 ?>
