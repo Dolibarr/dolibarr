@@ -39,5 +39,5 @@ create table llx_facture_rec
 
   note               text,
 
-  INDEX fksoc (fk_soc)
+  INDEX idx_facture_rec_fksoc (fk_soc)
 )type=innodb;
