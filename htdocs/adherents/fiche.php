@@ -121,22 +121,25 @@ if ($action == 'create') {
   $htmls = new Form($db);
   $adht = new AdherentType($db);
 
-  print "<tr><td>Type</td><td>";
+  print '<tr><td width="15%">Type</td><td width="35%">';
   $htmls->select_array("type",  $adht->liste_array());
-  print "</td></tr>";
+  print "</td>";
+
+  print '<td width="50%" valign="top">Commentaires :</td></tr>';
 
   $morphys["phy"] = "Physique";
   $morphys["mor"] = "Morale";
 
   print "<tr><td>Personne</td><td>";
   $htmls->select_array("morphy",  $morphys);
-  print "</td></tr>";
-
-
-  print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td>';  
+  print "</td>";
   
-  print '<td rowspan="11" valign="top">Commentaires :<br>';
-  print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
+  print '<td valign="top" rowspan="11"><textarea name="comment" wrap="soft" cols="40" rows="25"></textarea></td></tr>';
+
+  print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td></tr>';  
+  
+
+
 
 
   print '<tr><td>Nom</td><td><input type="text" name="nom" size="40"></td></tr>';
