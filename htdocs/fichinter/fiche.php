@@ -284,7 +284,7 @@ if ($_GET["action"] == 'edit')
   print "<input type=\"hidden\" name=\"action\" value=\"update\">";
   print "<input type=\"hidden\" name=\"id\" value=\"".$_GET["id"]."\">";
 
-  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+  print '<table class="border" width="100%">';
   print "<tr><td>".$langs->trans("Date")."</td><td>";
   /*
    * set $reday, $remonth, $reyear
@@ -346,7 +346,8 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
       print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$fichinter->ref.'</td></tr>';
       print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$fichinter->duree.'</td></tr>';
       if ($conf->projet->enabled) {
-          print '<tr><td valign="top">'.$langs->trans("Ref").'</td><td>&nbsp;</td></tr>';
+          $fichinter->fetch_projet();
+          print '<tr><td valign="top">'.$langs->trans("Ref").'</td><td>'.$fichinter->projet.'</td></tr>';
       }
       print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
       print '<td colspan="3">';
