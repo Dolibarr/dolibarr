@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - main
 charset=iso-8859-1
 Error=Erreur
+ErrorFieldRequired=Le champ '%s' est obligatoire
 ErrorFileDoesNotExists=Le fichier %s n'existe pas
 ErrorCanNotCreateDir=Impossible de créer le répertoire %s
 ErrorConstantNotDefined=Paramètre %s non défini
@@ -183,3 +184,4 @@ Preview=Aperçu
 NextStep=Etape suivante
 PreviousStep=Etape précédente
 None=Aucun
+Late=Retard

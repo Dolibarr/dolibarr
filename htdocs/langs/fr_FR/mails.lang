@@ -41,6 +41,7 @@ AddRecipients=Ajout de destinataires
 MailingModuleDescContactProspects=Tous les contacts de toutes les sociétés propsects
 MailingModuleDescContactCustomers=Tous les contacts de toutes les sociétés clientes
 MailingModuleDescDolibarrUsers=Tous les utilisateurs Dolibarr
+MailingModuleDescMembersValidated=Tous les adhérents validés
 RecipientSelectionModules=Modules actifs de sélection de destinataires
 MailSelectedRecipients=Destinataires sélectionnés
 MailingArea=Espace Mailings

@@ -63,7 +63,8 @@ while (($file = readdir($handle))!==false)
 {
     if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
     {
-        if (eregi("(.*)\.(.*)\.(.*)",$file,$reg)) {
+        if (eregi("(.*)\.(.*)\.(.*)",$file,$reg))
+        {
             $var = !$var;
 
             $modulename=$reg[1];
@@ -72,35 +73,49 @@ while (($file = readdir($handle))!==false)
             $file = $dir."/".$modulename.".modules.php";
             $classname = "mailing_".$modulename;
             require_once($file);
-            $obj = new $classname($db);
+            $mailmodule = new $classname($db);
             
-            foreach ($obj->statssql as $sql) 
+            foreach ($mailmodule->statssql as $sql) 
             {
-                print '<tr '.$bc[$var].'>';
-    
-                $result=$db->query($sql);
-                if ($result) 
+                $qualified=1;
+                foreach ($mailmodule->require_module as $key)
                 {
-                  $num = $db->num_rows($result);
-                
-                  $i = 0;
-                
-                  while ($i < $num ) 
+                    if (! $conf->$key->enabled)
                     {
-                      $obj = $db->fetch_object($result);
-                      print '<td>'.$obj->label.'</td><td>'.$obj->nb.'<td>';
-                      $i++;
+                        $qualified=0;
+                        //print "Le module mailing a besoin du module $key. Il ne sera pas actif";
+                        break;
                     }
-                
-                  $db->free();
-                } 
-                else
-                {
-                  dolibarr_print_error($db);
                 }
-            }
-            
-            print '</tr>';
+                
+                // Si le module mailing est qualifié
+                if ($qualified)
+                {
+                    print '<tr '.$bc[$var].'>';
+        
+                    $result=$db->query($sql);
+                    if ($result) 
+                    {
+                      $num = $db->num_rows($result);
+                    
+                      $i = 0;
+                    
+                      while ($i < $num ) 
+                        {
+                          $obj = $db->fetch_object($result);
+                          print '<td>'.img_object('',$mailmodule->picto).' '.$obj->label.'</td><td>'.$obj->nb.'<td>';
+                          $i++;
+                        }
+                    
+                      $db->free($result);
+                    } 
+                    else
+                    {
+                      dolibarr_print_error($db);
+                    }
+                    print '</tr>';
+                }
+            }            
         }
     }
 }

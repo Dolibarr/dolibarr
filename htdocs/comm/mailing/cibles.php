@@ -159,7 +159,7 @@ if ($mil->fetch($_GET["id"]) == 0)
         
                     print '<td>';
                     $obj = new $classname($db);
-                    print $obj->getDesc();
+                    print img_object('',$obj->picto).' '.$obj->getDesc();
                     print '</td>';
         
                     /*

@@ -1,6 +1,7 @@
 # Dolibarr language file - en_US - main
 charset=iso-8859-1
 Error=Error
+ErrorFieldRequired=Field '%s' is required
 ErrorFileDoesNotExists=File %s does not exists
 ErrorCanNotCreateDir=Can not create dir %s
 ErrorConstantNotDefined=Parameter %s not defined
@@ -182,3 +183,4 @@ Preview=Preview
 NextStep=Next step
 PreviousStep=Previous step
 None=None
+Late=Late
