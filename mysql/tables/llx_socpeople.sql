@@ -22,20 +22,21 @@
 
 create table llx_socpeople
 (
-  idp          integer AUTO_INCREMENT PRIMARY KEY,
-  datec        datetime,
-  fk_soc       integer,
-  name         varchar(50),
-  firstname    varchar(50),
-  address      varchar(255),
-  birthday     date,
-  poste        varchar(80),
-  phone        varchar(30),
-  phone_perso  varchar(30),
-  phone_mobile varchar(30),
-  fax          varchar(30),
-  email        varchar(255),
-  jabberid     varchar(255),
-  fk_user      integer default 0,
-  note         text
+  idp            integer AUTO_INCREMENT PRIMARY KEY,
+  datec          datetime,
+  tms            timestamp,
+  fk_soc         integer,
+  name           varchar(50),
+  firstname      varchar(50),
+  address        varchar(255),
+  birthday       date,
+  poste          varchar(80),
+  phone          varchar(30),
+  phone_perso    varchar(30),
+  phone_mobile   varchar(30),
+  fax            varchar(30),
+  email          varchar(255),
+  jabberid       varchar(255),
+  fk_user        integer default 0,
+  note           text
 );
