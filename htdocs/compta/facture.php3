@@ -46,7 +46,69 @@ if ($user->societe_id > 0)
 /*
  *
  */	
+if ($HTTP_POST_VARS["action"] == 'add') 
+{
+  $datefacture = mktime(12, 0 , 0, $remonth, $reday, $reyear); 
 
+  $facture = new Facture($db, $socid);
+
+  $facture->number         = $HTTP_POST_VARS["facnumber"];
+  $facture->date           = $datefacture;      
+  $facture->note           = $HTTP_POST_VARS["note"];
+  $facture->projetid       = $HTTP_POST_VARS["projetid"];
+  $facture->cond_reglement = $HTTP_POST_VARS["condid"];
+  $facture->amount         = $HTTP_POST_VARS["amount"];
+  $facture->remise         = $HTTP_POST_VARS["remise"];
+  $facture->remise_percent = $HTTP_POST_VARS["remise_percent"];
+  
+  if (!$HTTP_POST_VARS["propalid"]) 
+    {      
+      $facture->add_product($HTTP_POST_VARS["idprod1"],$HTTP_POST_VARS["qty1"]);
+      $facture->add_product($HTTP_POST_VARS["idprod2"],$HTTP_POST_VARS["qty2"]);
+      $facture->add_product($HTTP_POST_VARS["idprod3"],$HTTP_POST_VARS["qty3"]);
+      $facture->add_product($HTTP_POST_VARS["idprod4"],$HTTP_POST_VARS["qty4"]);
+      
+      $facid = $facture->create($user);
+    }
+  else
+    {
+      $facture->propalid       = $HTTP_POST_VARS["propalid"];
+
+      $facid = $facture->create($user);
+
+      if ($facid)
+	{
+	  $prop = New Propal($db);
+	  if ( $prop->fetch($HTTP_POST_VARS["propalid"]) )
+	    {
+	      for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
+		{
+		  $result = $facture->addline($facid,
+					      $prop->lignes[$i]->desc,
+					      $prop->lignes[$i]->price,
+					      $prop->lignes[$i]->qty,
+					      $prop->lignes[$i]->tva_tx,
+					      $prop->lignes[$i]->product_id);
+		}
+	    }
+	  else
+	    {
+	      print "Erreur";
+	    }
+	}
+      else
+	{
+	  print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
+	  print "<p>Retour à la <a href=\"propal.php3?propalid=$propalid\">propal</a>";
+	  print $db->error();
+	}
+    }
+
+  $action = '';  
+}
+/*
+ *
+ */
 if ($action == 'add_paiement')
 {
   $datepaye = $db->idate(mktime(12, 0 , 0, $HTTP_POST_VARS["remonth"], $HTTP_POST_VARS["reday"], $HTTP_POST_VARS["reyear"]));
@@ -149,65 +211,6 @@ if ($action == 'delete' && $user->rights->facture->supprimer)
   $facid = 0 ;
 }
 
-if ($HTTP_POST_VARS["action"] == 'add') 
-{
-  $datefacture = mktime(12, 0 , 0, $remonth, $reday, $reyear); 
-
-  $facture = new Facture($db, $socid);
-
-  $facture->number         = $HTTP_POST_VARS["facnumber"];
-  $facture->date           = $datefacture;      
-  $facture->note           = $HTTP_POST_VARS["note"];
-  $facture->projetid       = $HTTP_POST_VARS["projetid"];
-  $facture->cond_reglement = $HTTP_POST_VARS["condid"];
-  
-  if (!$HTTP_POST_VARS["propalid"]) 
-    {
-      $facture->amount = $HTTP_POST_VARS["amount"];
-      $facture->remise = $HTTP_POST_VARS["remise"];
-      $facture->remise_percent = $HTTP_POST_VARS["remise_percent"];
-      
-      $facture->add_product($HTTP_POST_VARS["idprod1"],$HTTP_POST_VARS["qty1"]);
-      $facture->add_product($HTTP_POST_VARS["idprod2"],$HTTP_POST_VARS["qty2"]);
-      $facture->add_product($HTTP_POST_VARS["idprod3"],$HTTP_POST_VARS["qty3"]);
-      $facture->add_product($HTTP_POST_VARS["idprod4"],$HTTP_POST_VARS["qty4"]);
-      
-      $facid = $facture->create($user);
-    }
-  else
-    {
-      $facture->remise_percent = $HTTP_POST_VARS["remise_percent"];
-      $facture->amount   = $HTTP_POST_VARS["amount"];
-      $facture->remise   = $remise;
-      $facture->propalid = $HTTP_POST_VARS["propalid"];
-
-      $facid = $facture->create($user);
-      //TODO
-      if ($facid)
-	{
-	  $prop = New Propal($db);
-	  $prop->fetch($HTTP_POST_VARS["propalid"]);
-
-	  for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
-	    {
-	      $result = $facture->addline($facid,
-					  $prop->lignes[$i]->desc,
-					  $prop->lignes[$i]->price,
-					  $prop->lignes[$i]->qty,
-					  $prop->lignes[$i]->tva_tx,
-					  $prop->lignes[$i]->product_id);
-	    }
-	}
-      else
-	{
-	  print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
-	  print "<p>Retour à la <a href=\"propal.php3?propalid=$propalid\">propal</a>";
-	  print $db->error();
-	}
-    }
-  $action = '';  
-
-}
 /*
  *
  */
@@ -373,7 +376,7 @@ if ($action == 'create')
 	  $html->select_array("projetid",$proj->liste_array($socidp));
 	  print "</td></tr>";
 	  
-	  if ($propalid)
+	  if ($propalid > 0)
 	    {
 	      $amount = ($obj->price);
 	      print '<input type="hidden" name="amount"   value="'.$amount.'">'."\n";
@@ -431,14 +434,45 @@ if ($action == 'create')
 	      print '</table>';
 	      print '</td></tr>';
 	    }
-
-
-
 	  
 	  print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
 	  print "</form>\n";
 	  print "</table>\n";
-	  
+
+	  if ($propalid)
+	    {
+	      /*
+	       * Produits
+	       */
+	      print_titre("Produits");
+	      
+	      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<tr class="liste_titre"><td>Réf</td><td>Produit</td>';
+	      print '<td align="right">Prix</td><td align="center">&nbsp;</td><td align="center">Qté.</td></tr>';
+	      
+	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid";
+	      $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
+	      
+	      $result = $db->query($sql);
+	      if ($result) 
+		{
+		  $num = $db->num_rows();
+		  $i = 0;	
+		  $var=True;	
+		  while ($i < $num) 
+		    {
+		      $objp = $db->fetch_object($i);
+		      $var=!$var;
+		      print "<tr $bc[$var]><td>[$objp->ref]</TD>\n";
+		      print '<td>'.$objp->product.'</td>';
+		      print "<td align=\"right\">".price($objp->price)."</TD>";
+		      print '<td>&nbsp;</td>';
+		      print "<td align=\"center\">".$objp->qty."</td></tr>\n";
+		      $i++;
+		    }
+		}
+	      print '</table>';
+	    }	  
 	}
     } 
   else 
@@ -458,72 +492,45 @@ else
     {
     
       $fac = New Facture($db);
-      $fac->fetch($facid);
-
-    $sql = "SELECT s.nom as socnom, s.idp as socidp, f.facnumber, f.amount, f.total, ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.fk_user_author, f.note";
-    $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
-
-    if ($user->societe_id > 0) 
-      {
-	$sql .= " AND s.idp = ".$user->societe_id;
-      }
-
-    $result = $db->query( $sql);
-  
-    if ($result)
-      {
-	$num = $db->num_rows();
-	if ($num)
-	  {
-	    $obj = $db->fetch_object( $i);    
-	  }
-	$db->free();
-      }
-    else
-      {
-	print $db->error();
-      }
-
-    if ($num > 0)
-      {
-
-	$soc = new Societe($db, $obj->socidp);
-
-	$author = new User($db);
-	$author->id = $obj->fk_user_author;
-	$author->fetch();
-
-	print_titre("Facture : ".$fac->ref);
-  
-	/*
-	 *   Facture
-	 */
-	print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
-	print "<tr><td>Client</td>";
-	print "<td colspan=\"3\">";
-	print "<b><a href=\"fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td>";
-	
-	print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
-
-	print "<tr><td>Date</td>";
-	print "<td colspan=\"3\">".strftime("%A %d %B %Y",$obj->df)."</td>\n";
-	print "<td>Date limite de réglement : " . strftime("%d %B %Y",$fac->date_lim_reglement) ."</td></tr>";
-	print "<tr><td>Auteur</td><td colspan=\"3\">$author->fullname</td>";
-
-	if ($fac->remise_percent > 0)
-	  {
-	    print '<td rowspan="5" valign="top">';
-	  }
-	else
-	  {
-	    print '<td rowspan="4" valign="top">';
-	  }
-
-	$_MONNAIE="euros";
-       
-	/*
-	 * Paiements
-	 */
+      if ( $fac->fetch($facid, $user->societe_id) > 0)
+	{	  
+	  $soc = new Societe($db, $fac->socidp);
+	  $soc->fetch($fac->socidp);
+	  $author = new User($db);
+	  $author->id = $fac->user_author;
+	  $author->fetch();
+	  
+	  print_titre("Facture : ".$fac->ref);
+	  
+	  /*
+	   *   Facture
+	   */
+	  print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
+	  print "<tr><td>Client</td>";
+	  print "<td colspan=\"3\">";
+	  print '<b><a href="fiche.php3?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
+	  
+	  print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
+	  
+	  print "<tr><td>Date</td>";
+	  print "<td colspan=\"3\">".strftime("%A %d %B %Y",$fac->date)."</td>\n";
+	  print "<td>Date limite de réglement : " . strftime("%d %B %Y",$fac->date_lim_reglement) ."</td></tr>";
+	  print "<tr><td>Auteur</td><td colspan=\"3\">$author->fullname</td>";
+	  
+	  if ($fac->remise_percent > 0)
+	    {
+	      print '<td rowspan="5" valign="top">';
+	    }
+	  else
+	    {
+	      print '<td rowspan="4" valign="top">';
+	    }
+	  
+	  $_MONNAIE="euros";
+	  
+	  /*
+	   * Paiements
+	   */
 	$sql = "SELECT ".$db->pdate("datep")." as dp, p.amount, c.libelle as paiement_type, p.num_paiement, p.rowid";
 	$sql .= " FROM llx_paiement as p, c_paiement as c WHERE p.fk_facture = $facid AND p.fk_paiement = c.id";
 	
@@ -538,7 +545,7 @@ else
 	    print "<td>Date</td>";
 	    print "<td>Type</td>";
 	    print "<td align=\"right\">Montant</TD><td>&nbsp;</td>";
-	    if (! $obj->paye)
+	    if (! $fac->paye)
 	      {
 		print "<td>&nbsp;</td>";
 	      }
@@ -553,7 +560,7 @@ else
 		print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
 		print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
 		print '<td align="right">'.price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
-		if (! $obj->paye && $user->rights->facture->paiement)
+		if (! $fac->paye && $user->rights->facture->paiement)
 		  {
 		    print '<td><a href="facture.php3?facid='.$facid.'&action=del_paiement&paiementid='.$objp->rowid.'">Del</a>';
 		  }
@@ -562,15 +569,15 @@ else
 		$i++;
 	      }
 
-	    if ($obj->paye == 0)
+	    if ($fac->paye == 0)
 	      {
 		print "<tr><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>$_MONNAIE</td></tr>\n";
-		print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($obj->total)."</td><td bgcolor=\"#d0d0d0\">$_MONNAIE</td></tr>\n";
+		print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($fac->total_ttc)."</td><td bgcolor=\"#d0d0d0\">$_MONNAIE</td></tr>\n";
 		
-		$resteapayer = price($obj->total - $total);
+		$resteapayer = price($fac->total_ttc - $total);
 
 		print "<tr><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
-		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($obj->total - $total)."</b></td><td bgcolor=\"#f0f0f0\">$_MONNAIE</td></tr>\n";
+		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($fac->total_ttc - $total)."</b></td><td bgcolor=\"#f0f0f0\">$_MONNAIE</td></tr>\n";
 	      }
 	    print "</table>";
 	    $db->free();
@@ -597,7 +604,7 @@ else
 	print '<td>euros TTC</td></tr>';
 	if ($fac->note)
 	  {
-	    print '<tr><td colspan="5">Note : '.nl2br($obj->note)."</td></tr>";
+	    print '<tr><td colspan="5">Note : '.nl2br($fac->note)."</td></tr>";
 	  }
 
 	print "</table><br>";
@@ -654,7 +661,7 @@ else
 		print '<TD align="center">'.$objp->tva_taux.' %</TD>';
 		print '<TD align="center">'.$objp->qty.'</TD>';
 		print '<TD align="right">'.price($objp->price)."</TD>\n";
-		if ($obj->statut == 0) 
+		if ($fac->statut == 0) 
 		  {
 		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=deleteline&rowid='.$objp->rowid.'">del</a></td>';
 		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=editline&rowid='.$objp->rowid.'">edit</a></td>';
@@ -695,7 +702,7 @@ else
 	 * Ajouter une ligne
 	 *
 	 */
-	if ($obj->statut == 0) 
+	if ($fac->statut == 0) 
 	  {
 	    print "<form action=\"$PHP_SELF?facid=$facid\" method=\"post\">";
 	    //	    echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="1">';
@@ -728,11 +735,11 @@ else
 	  {
 	    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
 	
-	    if ($obj->statut == 0 && $user->rights->facture->supprimer)
+	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
 	      } 
-	    elseif ($obj->statut == 1 && abs($resteapayer) > 0 && $user->rights->facture->envoyer) 
+	    elseif ($fac->statut == 1 && abs($resteapayer) > 0 && $user->rights->facture->envoyer) 
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=presend\">Envoyer</a>]</td>";
 	      }
@@ -741,7 +748,7 @@ else
 		print "<td align=\"center\" width=\"25%\">-</td>";
 	      } 
 	    
-	    if ($obj->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
+	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php3?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
 	      }
@@ -750,7 +757,7 @@ else
 		print "<td align=\"center\" width=\"25%\">-</td>";
 	      }
 	    
-	    if ($obj->statut == 1 && abs($resteapayer) == 0 && $obj->paye == 0) 
+	    if ($fac->statut == 1 && abs($resteapayer) == 0 && $fac->paye == 0) 
 	      {
 		if ($user->rights->facture->paiement)
 		  {
@@ -761,7 +768,7 @@ else
 		    print '<td align="center" width="25%">-</td>';
 		  }
 	      }
-	    elseif ($obj->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer) 
+	    elseif ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer) 
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=prerelance\">Envoyer une relance</a>]</td>";
 	      }
@@ -770,7 +777,7 @@ else
 		print '<td align="center" width="25%">-</td>';
 	      }
 	    
-	    if ($obj->statut == 0 && $obj->total > 0) 
+	    if ($fac->statut == 0 && $fac->total_ht > 0) 
 	      {
 		if ($user->rights->facture->valider)
 		  {
@@ -781,7 +788,7 @@ else
 		    print '<td align="center" width="25%">-</td>';
 		  }
 	      }
-	    elseif ($obj->statut == 1 && $obj->paye == 0)
+	    elseif ($fac->statut == 1 && $fac->paye == 0)
 	      {
 		if ($user->rights->facture->creer)
 		  {
@@ -809,23 +816,23 @@ else
 	print_titre("Documents");
 	print '<table width="100%" cellspacing="0" border="1" cellpadding="3">';
 	
-	$file = FAC_OUTPUTDIR . "/" . $obj->facnumber . "/" . $obj->facnumber . ".pdf";
+	$file = FAC_OUTPUTDIR . "/" . $fac->facnumber . "/" . $fac->facnumber . ".pdf";
 	
 	if (file_exists($file))
 	  {
 	    print "<tr $bc[0]><td>Facture PDF</a></td>";
-	    print '<td><a href="'.FAC_OUTPUT_URL."/".$obj->facnumber."/".$obj->facnumber.'.pdf">'.$obj->facnumber.'.pdf</a></td>';
+	    print '<td><a href="'.FAC_OUTPUT_URL."/".$fac->facnumber."/".$fac->facnumber.'.pdf">'.$fac->facnumber.'.pdf</a></td>';
 	    print '<td align="right">'.filesize($file). ' bytes</td>';
 	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	    print '</tr>';
 	  }  
 	
-	$file = FAC_OUTPUTDIR . "/" . $obj->facnumber . "/" . $obj->facnumber . ".ps";
+	$file = FAC_OUTPUTDIR . "/" . $fac->facnumber . "/" . $fac->facnumber . ".ps";
 	
 	if (file_exists($file))
 	  {
 	    print "<tr $bc[0]><td>Facture Postscript</a></td>";
-	    print '<td><a href="'.FAC_OUTPUT_URL."/".$obj->facnumber."/".$obj->facnumber.'.ps">'.$obj->facnumber.'.ps</a></td>';
+	    print '<td><a href="'.FAC_OUTPUT_URL."/".$fac->facnumber."/".$fac->facnumber.'.ps">'.$fac->facnumber.'.ps</a></td>';
 	    print '<td align="right">'.filesize($file). ' bytes</td>';
 	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	    print '</tr>';
@@ -841,7 +848,7 @@ else
 	 *
 	 */
 	$sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-	$sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $obj->socidp AND a.fk_action in (9,10) AND a.fk_facture = $facid";
+	$sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $facid";
 	
 	$result = $db->query($sql);
 	if ($result)
@@ -904,7 +911,7 @@ else
 	    $form = new Form($db);	    
 	    $form->select_array("destinataire",$soc->contact_email_array());
 	    
-	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$obj->email\"></td></tr>";
+	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
 	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
 	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
 	    print "<td>$replytomail</td></tr></table>";
@@ -932,7 +939,7 @@ else
 	    $form = new Form($db);	    
 	    $form->select_array("destinataire",$soc->contact_email_array());
 	    
-	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$obj->email\"></td></tr>";
+	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
 	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
 	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
 	    print "<td>$replytomail</td></tr></table>";

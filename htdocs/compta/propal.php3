@@ -192,7 +192,7 @@ if ($propalid)
       /*
        * Factures associees
        */
-      $sql = "SELECT f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
+      $sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
       $sql .= " FROM llx_facture as f, llx_fa_pr as fp WHERE fp.fk_facture = f.rowid AND fp.fk_propal = $propalid";
 
       $result = $db->query($sql);
@@ -240,9 +240,9 @@ if ($propalid)
 		{
 		  print "<td>".$user->fullname."</td>\n";
 		}
-	      print '<TD align="right">'.price($objp->amount).'</TD>';
+	      print '<TD align="right">'.price($objp->total).'</TD>';
 	      print "</tr>";
-	      $total = $total + $objp->amount;
+	      $total = $total + $objp->total;
 	      $i++;
 	    }
 	  print "<tr><td align=\"right\" colspan=\"4\">Total : <b>$total</b> Euros HT</td></tr>\n";
@@ -302,8 +302,7 @@ if ($propalid)
     $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid";
     $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
     
-    $result = $db->query($sql);
-    if ($result) 
+    if ($db->query($sql)) 
       {
 	$num = $db->num_rows();
 	$i = 0;	

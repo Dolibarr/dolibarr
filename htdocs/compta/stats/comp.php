@@ -25,7 +25,7 @@ require("./lib.inc.php");
 
 function propals ($db, $year, $month) {
   global $bc;
-  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
   $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
   $sql .= " AND c.id in (1,2,4)";
   $sql .= " AND date_format(p.datep, '%Y') = $year ";
@@ -96,7 +96,7 @@ function propals ($db, $year, $month) {
 function factures ($db, $year, $month, $paye) {
   global $bc;
 
-  $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
+  $sql = "SELECT s.nom, s.idp, f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
   $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye = $paye";
   $sql .= " AND date_format(f.datef, '%Y') = $year ";
   $sql .= " AND round(date_format(f.datef, '%m')) = $month ";
@@ -135,7 +135,7 @@ function factures ($db, $year, $month, $paye) {
 		  print "<TD align=\"right\"><b>!!!</b></TD>\n";
 		}
 	      
-	      print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
+	      print "<TD align=\"right\">".price($objp->total)."</TD>\n";
 	      
 	      $payes[1] = "oui";
 	      $payes[0] = "<b>non</b>";
@@ -143,7 +143,7 @@ function factures ($db, $year, $month, $paye) {
 	      print "<TD align=\"right\">".$payes[$objp->paye]."</TD>\n";
 	      print "</TR>\n";
 	      
-	      $total = $total + $objp->amount;
+	      $total = $total + $objp->total;
 	      
 	      $i++;
 	    }
@@ -257,7 +257,7 @@ function ppt ($db, $year, $socidp)
   
   print "</td><td valign=\"top\" width=\"30%\">";
   
-  $sql = "SELECT sum(f.amount) as sum, round(date_format(f.datef, '%m')) as dm";
+  $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
   $sql .= " FROM llx_facture as f WHERE f.paye = 1 AND date_format(f.datef,'%Y') = $year ";
   if ($socidp)
     {

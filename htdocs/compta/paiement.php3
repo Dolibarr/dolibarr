@@ -43,7 +43,7 @@ llxHeader();
 if ($action == 'create') 
 {
 
-  $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
+  $sql = "SELECT s.nom,s.idp, f.amount, f.total_ttc as total, f.facnumber";
   $sql .= " FROM llx_societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
   $sql .= " AND f.rowid = $facid";
 
