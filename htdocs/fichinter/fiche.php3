@@ -436,7 +436,7 @@ if ($socidp)
 {
   $sql .= "AND s.idp = $socidp";
 }
-if (isset($fichinter))
+if ($fichinter > 0)
 {
   $sql .= "AND s.idp = $fichinter->societe_id";
 }
