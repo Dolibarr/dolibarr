@@ -84,7 +84,7 @@ class ComptaExportPoivre
 
 	if ( $line_in[$i][1] == $line_in[$i-1][1] && $line_in[$i][4] == $line_in[$i-1][4])
 	  {
-	    $line_out[$j][8] = $line_out[$j][8] + $line_in[$i][8];
+	    $line_out[$j][8] = ($line_out[$j][8] + $line_in[$i][8]);
 	  }
 	else
 	  {
