@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/compta/clients.php
         \ingroup    compta
 		\brief      Page accueil des clients
@@ -230,7 +230,7 @@ if ($result)
   	print_barre_liste("Liste des clients facturables", $page, "clients.php","",$sortfield,$sortorder,'',$num);
   }
   else {
-  	print_barre_liste("Liste des clients", $page, "clients.php","",$sortfield,$sortorder,'',$num);
+  	print_barre_liste($langs->trans("ListOfCustomers"), $page, "clients.php","",$sortfield,$sortorder,'',$num);
   }
   
   if ($sortorder == "DESC")
@@ -245,8 +245,8 @@ if ($result)
   print '<tr class="liste_titre">';
 
   print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","","",'valign="center"',$sortfield);
-  print_liste_field_titre($langs->trans("Code compta"),"clients.php","s.code_compta","","",'align="left"',$sortfield);
   print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","","",'valign="center"',$sortfield);
+  print_liste_field_titre($langs->trans("AccountancyCode"),"clients.php","s.code_compta","","",'align="left"',$sortfield);
   print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client","","",'align="center"',$sortfield);
 
   print "<td>&nbsp;</td></tr>\n";
@@ -279,12 +279,11 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?socid=$obj->idp\">\n";
-      print img_file();
-      print "&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">';
+      print img_object($langs->trans("ShowCustomer"),"company");
+      print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+      print '<td>'.$obj->ville.'&nbsp;</td>';
       print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
-
-      print "<td>".$obj->ville."&nbsp;</td>\n";
       print "<td align=\"center\">$obj->code_client&nbsp;</td>\n";
       print '<td><a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';
       print img_folder();
