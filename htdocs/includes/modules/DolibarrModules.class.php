@@ -132,7 +132,7 @@ class DolibarrModules
             }
         }
 
-        // Définit les permissions associées au module activ
+        // Définit les permissions associées au module actif
         if (is_array($this->rights))
         {
             foreach ($this->rights as $key => $value)
@@ -196,7 +196,7 @@ class DolibarrModules
             }
         }
 
-        // Exécute les requets sql complémentaires
+        // Exécute les requetes sql complémentaires
         for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
         {
             if (! $this->db->query($array_sql[$i]))
@@ -224,23 +224,21 @@ class DolibarrModules
     {
         $err = 0;
 
+        // Supprime la constante d'activation du module
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."'";
-
         if (!$this->db->query($sql))
         {
             $err++;
         }
 
-        for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
+        // Supprime les droits de la liste des droits disponibles
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = '".$this->right_class."';"
+        if (!$this->db->query($sql))
         {
-
-            if (!$this->db->query($array_sql[$i]))
-            {
-                $err++;
-            }
+            $err++;
         }
 
-        // Supprime les boites
+        // Supprime les boites de la liste des boites disponibles
         foreach ($this->boxes as $key => $value)
         {
             $titre = $this->boxes[$key][0];
@@ -248,6 +246,15 @@ class DolibarrModules
 
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$file."'";
             if (! $this->db->query($sql) )
+            {
+                $err++;
+            }
+        }
+
+        // Exécute les requets sql complémentaires
+        for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
+        {
+            if (!$this->db->query($array_sql[$i]))
             {
                 $err++;
             }
