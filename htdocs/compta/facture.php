@@ -198,8 +198,8 @@ if ($action == 'add_paiement')
   $fac->fetch($HTTP_POST_VARS["facid"]);
   $fac->fetch_client();
 
-  $label = "Réglement facture".($fac->ref?" ".$fac->ref:"")." client".($fac->client->nom?" ".$fac->client->nom:"");
-
+  $label = "Règlement facture";
+ 
   //On ajoute une ligne dans la table llx_bank pour qu'ensuite on puisse rapprocher le compte !
   $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
   //paiementid est correct, il contient "CHQ ou VIR par exemple"
