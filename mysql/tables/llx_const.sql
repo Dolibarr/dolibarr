@@ -30,6 +30,7 @@ create table llx_const
   name        varchar(255),
   value       text, -- max 65535 caracteres
   type        enum('yesno','texte','chaine'),
+  visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
 
   UNIQUE INDEX(name)
