@@ -1,5 +1,6 @@
 --
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,21 +20,21 @@
 -- $Source$
 --
 
-alter table c_actioncomm type=INNODB;
+alter table llx_c_actioncomm type=INNODB;
 
-alter table c_chargesociales type=INNODB;
+alter table llx_c_chargesociales type=INNODB;
 
-alter table c_effectif type=INNODB;
+alter table llx_c_effectif type=INNODB;
 
-alter table c_paiement  type=INNODB;
+alter table llx_c_paiement  type=INNODB;
 
-alter table c_pays  type=INNODB;
+alter table llx_c_pays  type=INNODB;
 
-alter table c_propalst  type=INNODB;
+alter table llx_c_propalst  type=INNODB;
 
-alter table c_stcomm type=INNODB;
+alter table llx_c_stcomm type=INNODB;
 
-alter table c_typent  type=INNODB;
+alter table llx_c_typent  type=INNODB;
 
 alter table llx_action_def type=INNODB;
 
