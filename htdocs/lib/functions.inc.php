@@ -43,13 +43,20 @@ Function dolibarr_fiche_head($links, $active=0)
 
   for ($i = 0 ; $i < sizeof($links) ; $i++)
     {
-      if ($i == $active)
+      if ($links[$i][2] == 'image')
 	{
-	  print '<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+	  print '<a class="tabimage" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 	}
       else
 	{
-	  print '<a class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+	  if ($i == $active)
+	    {
+	      print '<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+	    }
+	  else
+	    {
+	      print '<a class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
+	    }
 	}
     }
 
