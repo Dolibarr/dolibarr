@@ -314,21 +314,11 @@ class Livre {
 
     $auteurs = array();
     $auteurs = $this->liste_auteur();
-    foreach ($auteurs as $key => $value)
-      {
-	$auteursid = $key;
-	$auteur = new Auteur($this->db);
-	$result = $auteur->fetch($auteursid);
 
-	if ( $result )
-	  { 
-	    $liste_auteurs .= '<a href="">'.addslashes($auteur->nom)."</a>, ";
-	  }
-      }
 
-    if (sizeof($auteurs)>1)
+    if (sizeof($auteurs)>0)
       {
-	$desc .= 'Auteurs : <ul>';
+	$desc .= 'Auteur(s) : <ul>';
 
 	reset($auteurs);
 	foreach ($auteurs as $key => $value)
@@ -365,7 +355,7 @@ class Livre {
       }
     else
       {
-	$desc .= 'Auteur : ' . substr($liste_auteurs, 0, strlen($liste_auteurs) - 2);
+
       }
 
 
