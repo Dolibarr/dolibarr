@@ -406,6 +406,7 @@ else
     }
 
   print '<table class="border" width="100%">';
+
   print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>'.$soc->nom.'</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
 
   print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
@@ -460,6 +461,8 @@ else
 
       print '<div class="tabsAction">';
       
+      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">Commerciaux</a>';
+
       print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">Maison mère</a>';
 
       print '<a class="tabAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
