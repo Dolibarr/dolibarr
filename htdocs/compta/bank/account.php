@@ -25,7 +25,7 @@ require("./pre.inc.php");
 
 $user->getrights('compta');
 
-if (!$user->admin && !$user->rights->compta->bank)
+if (!$user->rights->banque->lire)
   accessforbidden();
 
 if ($HTTP_POST_VARS["action"] == 'add' && $account)
@@ -78,7 +78,7 @@ if ($HTTP_POST_VARS["action"] == 'add' && $account)
     }
     */
 }
-if ($action == 'del' && $account)
+if ($action == 'del' && $account && $user->rights->banque->modifier)
 {
   $acct=new Account($db,$account);
   $acct->deleteline($rowid);
@@ -93,7 +93,7 @@ if ($action == 'del' && $account)
 
 llxHeader();
 
-if ($account > 0)
+if ($_GET["account"] > 0)
 {
   if ($vline)
     {
@@ -212,15 +212,27 @@ if ($account > 0)
   print '<td align="right"><input type="text" name="req_debit" size="6"></TD>';
   print '<td align="right"><input type="text" name="req_credit" size="6"></TD>';
   print '<td align="center"><input type="submit" value="Chercher"></td>';
-  print '<td align="center"><a href="rappro.php?account='.$account.'">Rappro</a></td>';
+  print '<td align="center">';
+  if ($user->rights->banque->modifier)
+    {
+      print '<a href="rappro.php?account='.$account.'">Rappro</a>';
+    }
+  else
+    {
+      print "&nbsp;";
+    }
+  print '</td>';
   print "</tr>\n";
   print "</form>\n";
   /*
    *
    *
    */
-  print "<form method=\"post\" action=\"$PHP_SELF?vline=$vline&amp;account=$account\">";
-  print '<input type="hidden" name="action" value="add">';
+  if ($user->rights->banque->modifier)
+    {
+      print "<form method=\"post\" action=\"$PHP_SELF?vline=$vline&amp;account=$account\">";
+      print '<input type="hidden" name="action" value="add">';
+    }
   print '<tr class="liste_titre">';
   print '<td>Date</td><td>Type</td><td>Description</td>';
   print '<td align="right">Débit</td><td align="right">Crédit</td><td align="right">Solde</td>';
@@ -275,27 +287,33 @@ if ($account > 0)
    *
    */
 
-
-  print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
-  print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
-  print '<tr><td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
-  print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
-  print '<td><select name="operation">';
-  print '<option value="CB">CB';
-  print '<option value="CHQ">CHQ';
-  print '<option value="DEP">DEP';
-  print '<option value="TIP">TIP';
-  print '<option value="PRE">PRE';
-  print '<option value="VIR">VIR';
-  print '</select></td>';
-  print '<td><input name="num_chq" type="text" size="4">';
-  print '<input name="label" type="text" size="40"></td>';
-  print '<td><input name="debit" type="text" size="8"></td>';
-  print '<td><input name="credit" type="text" size="8"></td>';
-  print "<td colspan=\"2\" align=\"center\"><select name=\"cat1\">$options</select></td>";
-  print '</tr><tr><td colspan="3"><small>YYYYMMDD</small></td><td>0000.00</td>';
-  print '<td colspan="3" align="center"><input type="submit" value="Ajouter"></td></tr>';
-  print "</table></form>";
+  if ($user->rights->banque->modifier)
+    {
+      print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
+      print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
+      print '<tr><td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
+      print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
+      print '<td><select name="operation">';
+      print '<option value="CB">CB';
+      print '<option value="CHQ">CHQ';
+      print '<option value="DEP">DEP';
+      print '<option value="TIP">TIP';
+      print '<option value="PRE">PRE';
+      print '<option value="VIR">VIR';
+      print '</select></td>';
+      print '<td><input name="num_chq" type="text" size="4">';
+      print '<input name="label" type="text" size="40"></td>';
+      print '<td><input name="debit" type="text" size="8"></td>';
+      print '<td><input name="credit" type="text" size="8"></td>';
+      print "<td colspan=\"2\" align=\"center\"><select name=\"cat1\">$options</select></td>";
+      print '</tr><tr><td colspan="3"><small>YYYYMMDD</small></td><td>0000.00</td>';
+      print '<td colspan="3" align="center"><input type="submit" value="Ajouter"></td></tr>';
+    }
+  print "</table>";
+  if ($user->rights->banque->modifier)
+    {
+      print "</form>";
+    }
 }
 else
 {
@@ -310,7 +328,7 @@ llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</e
  */
 Function _print_lines($db,$sql, $acct)
 {
-  global $bc, $nbline, $viewline;
+  global $bc, $nbline, $viewline, $user;
   $var=True;  
   $num = $db->num_rows();
   $i = 0; $total = 0;
@@ -409,7 +427,16 @@ Function _print_lines($db,$sql, $acct)
 		}
 	      else
 		{
-		  print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id&amp;page=$page\">[Del]</a></td>";
+		  if ($user->rights->banque->modifier)
+		    {
+		      print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id&amp;page=$page\">";
+		      print img_delete();
+		      print "</a></td>";
+		    }
+		  else
+		    {
+		      print "<td align=\"center\">&nbsp;</td>";
+		    }
 		}
 	      
 	      print "</tr>";

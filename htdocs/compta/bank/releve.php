@@ -25,9 +25,7 @@
  */
 require("./pre.inc.php");
 
-$user->getrights('compta');
-
-if (!$user->admin && !$user->rights->compta->bank)
+if (!$user->rights->banque->lire)
   accessforbidden();
 
 llxHeader();
@@ -64,7 +62,7 @@ if (! strlen($num))
       
       print_barre_liste("Relevés bancaires", $page, $PHP_SELF,"&amp;account=$account",$sortfield,$sortorder,'',$numrows);
 
-      print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="2">';
+      print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
       print "<TR class=\"liste_titre\">";
       print "<td>Date</td></tr>";
 
@@ -210,8 +208,14 @@ else
     
 	  print "<td align=\"right\">".price($total)."</TD>\n";
 	  
-	  print "<td align=\"center\">[<a href=\"ligne.php?rowid=$objp->rowid&amp;account=$account\">edit</a>]</td>";
-	  
+	  if ($user->rights->banque->modifier)
+	    {
+	      print "<td align=\"center\">[<a href=\"ligne.php?rowid=$objp->rowid&amp;account=$account\">edit</a>]</td>";
+	    }
+	  else
+	    {
+	      print "<td align=\"center\">&nbsp;</td>";
+	    }
 	  print "</tr>";
 	  $i++;
 	}

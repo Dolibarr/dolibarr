@@ -23,6 +23,8 @@
 require("../../main.inc.php");
 require("./account.class.php");
 
+$user->getrights('banque');
+
 function llxHeader($head = "")
 {
   global $db, $user, $conf, $account;
@@ -61,9 +63,16 @@ function llxHeader($head = "")
 
   $menu->add_submenu("budget.php","Budgets");
   $menu->add_submenu("bilan.php","Bilan");
-  $menu->add_submenu("virement.php","Virement");
 
-  $menu->add_submenu("config.php","Config");
+  if ($user->rights->banque->modifier)
+    {
+      $menu->add_submenu("virement.php","Virement");
+    }
+
+  if ($user->rights->banque->configurer)
+    {
+      $menu->add_submenu("config.php","Configuration");
+    }
 
   if (defined("COMPTA_ONLINE_PAYMENT_BPLC") && COMPTA_ONLINE_PAYMENT_BPLC)
     {
