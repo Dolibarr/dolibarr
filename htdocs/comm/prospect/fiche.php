@@ -21,8 +21,7 @@
  *
  */
 
-/**
-	    \file       htdocs/comm/prospect/fiche.php
+/**	    \file       htdocs/comm/prospect/fiche.php
         \ingroup    prospect
 		\brief      Page de la fiche prospect
 		\version    $Revision$
@@ -83,11 +82,11 @@ if ($socid > 0)
     {
       $h=0;
       $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
-      $head[$h][1] = "Société";
+      $head[$h][1] = $langs->trans("Company");
       $h++;
       
       $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
-      $head[$h][1] = 'Prospect';
+      $head[$h][1] = $langs->trans("Prospect");
       $hselected=$h;
       $h++;
 
@@ -97,13 +96,21 @@ if ($socid > 0)
 	  $head[$h][1] = 'Fiche catalogue';
 	  $h++;
 	}
-      
+
       if ($societe->fournisseur)
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
-	  $head[$h][1] = 'Fiche fournisseur';
+	  $head[$h][1] = $langs->trans("Supplier");
 	  $h++;
 	}
+
+      if ($conf->compta->enabled) {
+          $langs->load("compta");
+          $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;
+          $head[$h][1] = $langs->trans("Accountancy");
+          $h++;
+      }
+
       $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
       $head[$h][1] = $langs->trans("Note");      
       $h++;
@@ -138,7 +145,7 @@ if ($socid > 0)
 
     if ($societe->url)
       {
-	print "<tr><td>Site</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
+	print "<tr><td>".$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
       }
 
     if ($societe->rubrique)
@@ -355,8 +362,8 @@ if ($socid > 0)
 		  $oldmonth = strftime("%Y%b",$obj->da);
 		}
 	      
-	      print "<TD>" .strftime("%d",$obj->da)."</td>\n"; 
-	      print "<TD>" .strftime("%H:%M",$obj->da)."</td>\n";
+	      print "<td>" .strftime("%d",$obj->da)."</td>\n"; 
+	      print "<td>" .strftime("%H:%M",$obj->da)."</td>\n";
 	      
 	      print '<td width="10%">&nbsp;</td>';
 	      
