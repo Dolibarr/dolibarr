@@ -27,6 +27,17 @@ require_once("../../facture.class.php");
 
 $mesg = '';
 
+if ($page == -1)
+{
+$page = 0 ;
+}
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
+
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="f.datef";
+
+
 if ($user->societe_id > 0)
 {
   $action = '';
@@ -74,24 +85,9 @@ if ($_GET["id"])
       print '<tr><td>'.$langs->trans("CurrentPrice").'</td><td>'.price($product->price).'</td></tr>';
       print "</table>";
 
-      if ($page == -1)
-	{
-	  $page = 0 ;
-	}
-      $limit = $conf->liste_limit;
-      $offset = $limit * $page ;
-      
-      if ($sortorder == "")
-	{
-	  $sortorder="DESC";
-	}
-      if ($sortfield == "")
-	{
-	  $sortfield="f.datef";
-	}
-      
+     
       print "<br>";
-      print_barre_liste("Factures",$page,"facture.php","&amp;id=$product->id",$sortfield,$sortorder);
+      print_barre_liste($langs->trans("Bills"),$page,"facture.php","&amp;id=$product->id",$sortfield,$sortorder);
       
       $sql = "SELECT distinct(f.rowid), s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.fk_statut as statut,f.rowid as facid";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as d WHERE f.fk_soc = s.idp";
@@ -115,7 +111,7 @@ if ($_GET["id"])
 	print_liste_field_titre($langs->trans("Company"),"facture.php","s.nom","","&amp;id=".$_GET["id"],'',$sortfield);
 	print_liste_field_titre($langs->trans("Date"),"facture.php","f.datef","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
 	print_liste_field_titre($langs->trans("Amount"),"facture.php","f.amount","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
-	print '<td>&nbsp;</td>';
+	print_liste_field_titre($langs->trans("Status"),"facture.php","f.paye,f.fk_statut","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
 	print "</tr>\n";
 	
 	if ($num > 0)
@@ -127,17 +123,10 @@ if ($_GET["id"])
 		$var=!$var;
 		
 		print "<tr $bc[$var]>";
-		print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">';
-		if ($objp->paye)
-		  {
-		    print $objp->facnumber;
-		  }
-		else
-		  {
-		    print '<b>'.$objp->facnumber.'</b>';
-		  }
+		print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' ';
+	    print $objp->facnumber;
 		print "</a></td>\n";
-		print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom.'</a></td>';
 		
 		if ($objp->df > 0 )
 		  {
