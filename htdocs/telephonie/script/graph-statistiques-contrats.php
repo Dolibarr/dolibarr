@@ -26,7 +26,7 @@
 require ("../../master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/ProcessGraphContrats.class.php");
 
-$childrenTotal = 10;
+$childrenTotal = 6;
 $childrenNow = 0;
 $clientPerChild = 0;
 
