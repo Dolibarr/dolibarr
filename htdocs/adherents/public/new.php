@@ -54,29 +54,12 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	{     
 	  $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
 	}
-      Header("Location: new.php");
+      Header("Location: new.php?action=added");
     }
 }
 
 llxHeader();
-// Header
-/*
-print "<HTML><HEAD>";
-print '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">';
-print '<LINK REL="stylesheet" TYPE="text/css" HREF="/'.$conf->css.'">';
-print "\n";
-print '<title>Dolibarr</title>';
-print "\n";
 
-
-print "</HEAD>\n";
-
-print '<BODY TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">';
-
-print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
-
-print '<tr><td valign="top" align="right">';
-*/
 /* ************************************************************************** */
 /*                                                                            */
 /* Création d'une fiche                                                       */
@@ -84,64 +67,68 @@ print '<tr><td valign="top" align="right">';
 /* ************************************************************************** */
 
 
-  $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
-  $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
-  $sql .= " AND f.rowid = $facid";
+$sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
+$sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
+$sql .= " AND f.rowid = $facid";
 
-  $result = $db->query($sql);
-  if ($result) {
-    $num = $db->num_rows();
-    if ($num) {
-      $obj = $db->fetch_object( 0);
-
-      $total = $obj->total;
-    }
+if (isset($action) && $action== 'added'){
+  print "<FONT COLOR=\"red\">Nouvel Adhérent ajouté. En attente de validation</FONT><BR>\n";
+}
+$result = $db->query($sql);
+if ($result) {
+  $num = $db->num_rows();
+  if ($num) {
+    $obj = $db->fetch_object( 0);
+    
+    $total = $obj->total;
   }
-  print_titre("Nouvel adhérent");
-  print "<form action=\"$PHP_SELF\" method=\"post\">\n";
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-  
-  print '<input type="hidden" name="action" value="add">';
+}
+print_titre("Nouvel adhérent");
 
-  $htmls = new Form($db);
-  $adht = new AdherentType($db);
+print "<form action=\"$PHP_SELF\" method=\"post\">\n";
+print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
-  print '<tr><td width="15%">Type</td><td width="35%">';
-  $htmls->select_array("type",  $adht->liste_array());
-  print "</td>\n";
+print '<input type="hidden" name="action" value="add">';
 
-  print '<td width="50%" valign="top">Commentaires :</td></tr>';
+$htmls = new Form($db);
+$adht = new AdherentType($db);
 
-  $morphys["phy"] = "Physique";
-  $morphys["mor"] = "Morale";
+print '<tr><td width="15%">Type</td><td width="35%">';
+$htmls->select_array("type",  $adht->liste_array());
+print "</td>\n";
 
-  print "<tr><td>Personne</td><td>\n";
-  $htmls->select_array("morphy",  $morphys);
-  print "</td>\n";
-  
-  print '<td valign="top" rowspan="11"><textarea name="comment" wrap="soft" cols="40" rows="25"></textarea></td></tr>';
+print '<td width="50%" valign="top">Commentaires :</td></tr>';
 
-  print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td></tr>';  
-  
+$morphys["phy"] = "Physique";
+$morphys["mor"] = "Morale";
 
+print "<tr><td>Personne</td><td>\n";
+$htmls->select_array("morphy",  $morphys);
+print "</td>\n";
 
+print '<td valign="top" rowspan="11"><textarea name="comment" wrap="soft" cols="40" rows="25"></textarea></td></tr>';
 
-
-  print '<tr><td>Nom</td><td><input type="text" name="nom" size="40"></td></tr>';
-  print '<tr><td>Societe</td><td><input type="text" name="societe" size="40"></td></tr>';
-  print '<tr><td>Adresse</td><td>';
-  print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
-  print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
-  print '<tr><td>Pays</td><td><input type="text" name="pays" size="40"></td></tr>';
-  print '<tr><td>Email</td><td><input type="text" name="email" size="40"></td></tr>';
-  print '<tr><td>Login</td><td><input type="text" name="login" size="40"></td></tr>';
-  print '<tr><td>Password</td><td><input type="text" name="pass" size="40"></td></tr>';
+print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td></tr>';  
 
 
-  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
-  print "</form>\n";
-  print "</table>\n";
-  
+
+
+
+print '<tr><td>Nom</td><td><input type="text" name="nom" size="40"></td></tr>';
+print '<tr><td>Societe</td><td><input type="text" name="societe" size="40"></td></tr>';
+print '<tr><td>Adresse</td><td>';
+print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
+print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
+print '<tr><td>Pays</td><td><input type="text" name="pays" size="40"></td></tr>';
+print '<tr><td>Email</td><td><input type="text" name="email" size="40"></td></tr>';
+print '<tr><td>Login</td><td><input type="text" name="login" size="40"></td></tr>';
+print '<tr><td>Password</td><td><input type="text" name="pass" size="40"></td></tr>';
+
+
+print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
+print "</form>\n";
+print "</table>\n";
+
       
 $db->close();
 
