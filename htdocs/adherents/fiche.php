@@ -31,7 +31,7 @@ require(DOL_DOCUMENT_ROOT."/adherents/XML-RPC.functions.php");
 $adho = new AdherentOptions($db);
 $errmsg='';
 
-if (isset($action) && $action='sendinfo')
+if (isset($action) && $action=='sendinfo')
 {
   $adh = new Adherent($db);
   $adh->id = $rowid;
