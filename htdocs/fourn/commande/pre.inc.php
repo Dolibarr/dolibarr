@@ -38,7 +38,7 @@ function llxHeader($head = "", $title = "")
   $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
 
   $menu->add(DOL_URL_ROOT."/fourn/commande/", $langs->trans("Orders"));
-  $menu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php", $langs->trans("Liste"));
+  $menu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php", $langs->trans("List"));
 
   left_menu($menu->liste);
 }
