@@ -81,7 +81,8 @@ class CMailFile
       if (strlen($filename))
 	{
 	  $out = "--" . $this->mime_boundary . "\n";
-	  $out = $out . "Content-Type: text/plain; charset=\"us-ascii\"\n\n";
+	  $out = $out . "Content-Type: text/plain; charset=\"iso8859-15\"\n\n";
+	  //	  $out = $out . "Content-Type: text/plain; charset=\"us-ascii\"\n\n";
 	}
       $out = $out . $msgtext . "\n";
       return $out;
