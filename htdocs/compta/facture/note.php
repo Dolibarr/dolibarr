@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!     \file       htdocs/compta/facture/note.php
+/**     \file       htdocs/compta/facture/note.php
         \ingroup    facture
         \brief      Fiche de notes sur une facture
 		\version    $Revision$
@@ -126,7 +126,7 @@ if ($_GET["facid"])
       $author->fetch('');
       print $author->fullname.'</td></tr>';
       
-      print '<tr><td valign="top" colspan="4">Note :</td></tr>';
+      print '<tr><td valign="top" colspan="4">'.$langs->trans("Note").' :</td></tr>';
 
       print '<tr><td valign="top" colspan="4">'.nl2br($facture->note)."</td></tr>";
       

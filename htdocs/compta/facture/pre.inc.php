@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +21,11 @@
  *
  */
 
-/*!
-  \file htdocs/compta/facture/pre.inc.php
-  \ingroup    facture
-  \brief      Fichier de gestion du menu gauche du module facture
-  \version    $Revision$
+/**
+  \file         htdocs/compta/facture/pre.inc.php
+  \ingroup      facture
+  \brief        Fichier de gestion du menu gauche du module facture
+  \version      $Revision$
 */
 
 require("../../main.inc.php");
@@ -32,7 +33,8 @@ require_once("../../facture.class.php");
 
 function llxHeader($head = "", $title="", $help_url='') {
   global $conf, $langs;
-
+  $langs->load("companies");
+  $langs->load("bills");
   /*
    *
    *
@@ -41,7 +43,7 @@ function llxHeader($head = "", $title="", $help_url='') {
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/compta/clients.php", "Clients");
+  $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
 
   $langs->load("bills");
   $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));

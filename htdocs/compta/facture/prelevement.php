@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *
  */
 
-/*!	  
+/**
   \file       htdocs/compta/facture/prelevement.php
   \ingroup    facture
   \brief      Gestion des prelevement d'une facture
@@ -103,7 +103,7 @@ if ($_GET["facid"] > 0)
       $head[$h][1] = $langs->trans("Apercu");
       $h++;
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
-      $head[$h][1] = $langs->trans("Prélèvement");
+      $head[$h][1] = $langs->trans("Prélévement");
       $hselected = $h;
       $h++;
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
@@ -133,11 +133,11 @@ if ($_GET["facid"] > 0)
       
       print '<tr><td height="10">'.$langs->trans("AmountHT").'</td>';
       print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-      print '<td>'.$conf->monnaie.' HT</td><td>&nbsp;</td></tr>';
+      print '<td>'.$conf->monnaie.'</td><td>&nbsp;</td></tr>';
                 
       print '<tr><td height="10">'.$langs->trans("AmountTTC").'</td>';
       print '<td align="right" colspan="2"><b>'.price($fac->total_ttc).'</b></td>';
-      print '<td>'.$conf->monnaie.' HT</td><td>&nbsp;</td></tr>';
+      print '<td>'.$conf->monnaie.'</td><td>&nbsp;</td></tr>';
 
       print "</table>";
 
@@ -152,16 +152,17 @@ if ($_GET["facid"] > 0)
 	    }
 	}
       print "</div><br/>";
+
       /*
        * Prélèvement
        */
 
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+      print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';      
       print '<td align="center">Date demande</td>';
       print '<td align="center">Date traitement</td>';
       print '<td align="center">Bon prélèvement</td>';
-      print '<td align="center">Utilisateur</td><td>&nbsp;</td><td>&nbsp;</td>';
+      print '<td align="center">'.$langs->trans("User").'</td><td>&nbsp;</td><td>&nbsp;</td>';
       print '</tr>';      
       $var=True;
 
@@ -204,7 +205,7 @@ if ($_GET["facid"] > 0)
 	}
       else 
 	{
-	  print $db->error() . ' ' . $sql;
+	  dolibarr_print_error($db);
 	}
       
       $sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
@@ -250,7 +251,7 @@ if ($_GET["facid"] > 0)
 	}
       else 
 	{
-	  print $db->error() . ' ' . $sql;
+	  dolibarr_print_error($db);
 	}
 
       print "</table>";      
