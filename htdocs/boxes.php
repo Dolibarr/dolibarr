@@ -75,24 +75,26 @@ class infoBox
 	    if ($contents[$i][$j]['align']) $tdparam.=' align="'. $contents[$i][$j]['align'].'"';
 	    if ($contents[$i][$j]['width']) $tdparam.=' width="'. $contents[$i][$j]['width'].'"';
 
-		if ($contents[$i][$j]['logo']) print '<td width="16">';
-		else print '<td '.$tdparam.'>';
-
-	    if ($contents[$i][$j]['url']) print '<a href="'.$contents[$i][$j]['url'].'" title="'.$contents[$i][$j]['text'].'">';
-		if ($contents[$i][$j]['logo']) {
-		    $logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
-		    print img_object($langs->trans("Show"),$logo);
-		    print '</a></td><td '.$tdparam.'><a href="'.$contents[$i][$j]['url'].'" title="'.$contents[$i][$j]['text'].'">';
-		}
-		$texte=$contents[$i][$j]['text'];
-		if ($MAXLENGTHBOX && strlen($texte) > $MAXLENGTHBOX)
-		{
-		     $texte=substr($texte,0,$MAXLENGTHBOX)."...";
-		}
-		print $texte;
-		if ($contents[$i][$j]['url']) print '</a>';
-
-	    print "</td>";
+        if ($contents[$i][$j]['text']) {
+    		if ($contents[$i][$j]['logo']) print '<td width="16">';
+    		else print '<td '.$tdparam.'>';
+    
+    	    if ($contents[$i][$j]['url']) print '<a href="'.$contents[$i][$j]['url'].'" title="'.$contents[$i][$j]['text'].'">';
+    		if ($contents[$i][$j]['logo']) {
+    		    $logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
+    		    print img_object($langs->trans("Show"),$logo);
+    		    print '</a></td><td '.$tdparam.'><a href="'.$contents[$i][$j]['url'].'" title="'.$contents[$i][$j]['text'].'">';
+    		}
+    		$texte=$contents[$i][$j]['text'];
+    		if ($MAXLENGTHBOX && strlen($texte) > $MAXLENGTHBOX)
+    		{
+    		     $texte=substr($texte,0,$MAXLENGTHBOX)."...";
+    		}
+    		print $texte;
+    		if ($contents[$i][$j]['url']) print '</a>';
+    
+    	    print "</td>";
+        }
 	  }
 	print '</tr>';
       }
