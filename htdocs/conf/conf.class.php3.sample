@@ -4,8 +4,6 @@
  * $Id$
  * $Source$
  *
- * Classe de configuration
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -20,6 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * 
+ *
+ * Classe de configuration
  */
 
 class Conf {
@@ -30,13 +30,22 @@ class Conf {
 
     $this->db = new DbConf();
 
+    $this->propal = new PropalConf();
+
+    $this->facture = new FactureConf();
+
+    $this->fichinter = new FichinterConf();
+
+    $this->webcal = new WebcalConf();
+
     $this->readonly = 0;
 
     $this->years = 2001;
 
     $this->mode = 1 ;
 
-    $this->propal = new PropalConf();
+    $this->css = "dolibarr.css";
+
   }  
 }
 
@@ -60,10 +69,58 @@ class PropalConf {
 
 class DbConf {
   Function DbConf() {
+    $this->type = "mysql";
     $this->host = "localhost";
     $this->user = "";
     $this->pass = "";
     $this->name = "dolibarr";
   }
 }
+
+class WebcalConf {
+  Function WebcalConf {
+    $this->enabled = 1;
+
+    $this->db = new DbConf();
+    $this->name = "webcal";
+    
+  }
+}
+
+/*
+ * Factures
+ *
+ */
+class FactureConf {
+  Function FactureConf() {
+
+    $this->enabled = 1;
+
+    $this->templatesdir = "/home/www/dolibarr/dolibarr/templates/facture/default";
+    $this->outputdir    = "/home/www/dolibarr/dolibarr/htdocs/document/facture";
+    /*
+     * Without ended slash
+     */
+    $this->outputurl    = "/document/facture";
+  }
+}
+
+/*
+ * Fiche d'intervention
+ *
+ */
+class FicheInterConf {
+  Function FicheInterConf() {
+
+    $this->enabled = 1;
+
+    $this->templatesdir = "/home/www/dolibarr/dolibarr/templates/fichinter/default";
+    $this->outputdir    = "/home/www/dolibarr/dolibarr/htdocs/document/fichinter";
+    /*
+     * Without ended slash
+     */
+    $this->outputurl    = "/document/fichinter";
+  }
+}
+
 ?>
