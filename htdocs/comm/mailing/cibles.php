@@ -45,6 +45,9 @@ $offset = $conf->liste_limit * $_GET["page"] ;
 $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="nom";
+
 
 
 /*
@@ -204,8 +207,8 @@ if ($mil->fetch($_GET["id"]) == 0)
         print_barre_liste($langs->trans("MailSelectedRecipients"), $page, "cibles.php","&amp;id=".$mil->id,$sortfield,$sortorder,"",$num);
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans("Firstname"),"cibles.php","mc.prenom",$addu,"","",$sortfield);
         print_liste_field_titre($langs->trans("Lastname"),"cibles.php","mc.nom",$addu,"","",$sortfield);
+        print_liste_field_titre($langs->trans("Firstname"),"cibles.php","mc.prenom",$addu,"","",$sortfield);
         print_liste_field_titre($langs->trans("EMail"),"cibles.php","mc.email",$addu,"","",$sortfield);
         print '</tr>';
         $var = true;
@@ -217,8 +220,8 @@ if ($mil->fetch($_GET["id"]) == 0)
             $var=!$var;
     
             print "<tr $bc[$var]>";
-            print '<td>'.stripslashes($obj->prenom).'</a></td>';
             print '<td>'.stripslashes($obj->nom).'</a></td>';
+            print '<td>'.stripslashes($obj->prenom).'</a></td>';
             print '<td>'.$obj->email.'</td>';
     
             $i++;
