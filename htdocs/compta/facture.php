@@ -141,7 +141,7 @@ if ($_POST["action"] == 'add')
 		    {
 		      for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
 			{
-			  print "<pre>la propale précédente en ligne " . $prop->lignes[$i]->libelle . " avait comme prix : " . $prop->lignes[$i]->price . " !</pre>\n";
+			  //			  print "<pre>DEBUG: la propale précédente en ligne " . $prop->lignes[$i]->libelle . " avait comme prix : " . $prop->lignes[$i]->price . " !</pre>\n";
 			  $result = $facture->addline($facid,
 						      addslashes($prop->lignes[$i]->libelle),
 						      $prop->lignes[$i]->subprice,
