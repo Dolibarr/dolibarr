@@ -18,8 +18,39 @@ if ($action == "set")
 	  $HTTP_POST_VARS["main_url"] = substr($HTTP_POST_VARS["main_url"], 0, strlen($HTTP_POST_VARS["main_url"])-1);
 	}
 
+      clearstatcache();
+
       fwrite($fp, '<?PHP');
       fputs($fp,"\n");
+
+      if (! is_dir($HTTP_POST_VARS["main_dir"]))
+	{
+	  print "- Erreur le dossier ".$HTTP_POST_VARS["main_dir"]." n'existe pas !<br>";
+	}
+      else
+	{
+	  if (! is_dir($HTTP_POST_VARS["main_dir"]."/document"))
+	    {
+	      print "- Vous devez créer le dossier : <b>".$HTTP_POST_VARS["main_dir"]."/document</b> et permettre au serveur web d'écrire dans celui-ci";
+	    }
+	  else
+	    {
+	      if (! is_dir($HTTP_POST_VARS["main_dir"]."/document/facture"))
+		{
+		  if (! mkdir($HTTP_POST_VARS["main_dir"]."/document/facture"))
+		    {
+		      print "- Impossible de créer : ".$HTTP_POST_VARS["main_dir"]."/document/facture";
+		    }
+		}
+	      if (! is_dir($HTTP_POST_VARS["main_dir"]."/document/propale"))
+		{
+		  if (! mkdir($HTTP_POST_VARS["main_dir"]."/document/propale"))
+		    {
+		      print "- Impossible de créer : ".$HTTP_POST_VARS["main_dir"]."/document/propale";
+		    }
+		}
+	    }
+	}
 
       fputs($fp, '$dolibarr_main_document_root="'.$HTTP_POST_VARS["main_dir"].'";');
       fputs($fp,"\n");
@@ -58,13 +89,13 @@ if ($action == "set")
       $conf->db->pass = $dolibarr_main_db_pass;
       $db = new Db();
 
-      $sql[0] = "REPLACE INTO llx_const SET name = 'FAC_OUTPUTDIR', value='".$dolibarr_main_document_root."/document', visible=0, type='chaine'";
+      $sql[0] = "REPLACE INTO llx_const SET name = 'FAC_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/facture', visible=0, type='chaine'";
 
-      $sql[1] = "REPLACE INTO llx_const SET name = 'FAC_OUTPUT_URL', value='".$dolibarr_main_url_root."/document', visible=0, type='chaine'";
+      $sql[1] = "REPLACE INTO llx_const SET name = 'FAC_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/facture', visible=0, type='chaine'";
 
-      $sql[2] = "REPLACE INTO llx_const SET name = 'PROPALE_OUTPUTDIR', value='".$dolibarr_main_document_root."/document', visible=0, type='chaine'";
+      $sql[2] = "REPLACE INTO llx_const SET name = 'PROPALE_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/propale', visible=0, type='chaine'";
 
-      $sql[3] = "REPLACE INTO llx_const SET name = 'PROPALE_OUTPUT_URL', value='".$dolibarr_main_url_root."/document', visible=0, type='chaine'";
+      $sql[3] = "REPLACE INTO llx_const SET name = 'PROPALE_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/propale', visible=0, type='chaine'";
 
       $result = 0;
       for ($i=0; $i < sizeof($sql);$i++)
