@@ -30,7 +30,6 @@ Class pdf_tourteau {
     }
 
 
-
   Function write_pdf_file($facid)
     {
       global $user;
@@ -59,93 +58,16 @@ Class pdf_tourteau {
 	      $pdf->Open();
 	      $pdf->AddPage();
 
+	      $this->_pagehead($pdf, $fac);
+
 	      $pdf->SetTitle($fac->ref);
 	      $pdf->SetSubject("Facture");
 	      $pdf->SetCreator("Dolibarr ".DOL_VERSION);
 	      $pdf->SetAuthor($user->fullname);
 	      
-	      $pdf->SetXY(10,5);
-	      if (defined("FAC_PDF_INTITULE"))
-		{
-		  $pdf->SetTextColor(0,0,200);
-		  $pdf->SetFont('Arial','B',14);
-		  $pdf->MultiCell(60, 8, FAC_PDF_INTITULE, 0, 'L');
-		}
-	      
-	      $pdf->SetTextColor(70,70,170);
-	      if (defined("FAC_PDF_ADRESSE"))
-		{
-		  $pdf->SetFont('Arial','',12);
-		  $pdf->MultiCell(40, 5, FAC_PDF_ADRESSE);
-		}
-	      if (defined("FAC_PDF_TEL"))
-		{
-		  $pdf->SetFont('Arial','',10);
-		  $pdf->MultiCell(40, 5, "Tél : ".FAC_PDF_TEL);
-		}  
-	      if (defined("FAC_PDF_SIREN"))
-		{
-		  $pdf->SetFont('Arial','',10);
-		  $pdf->MultiCell(40, 5, "SIREN : ".FAC_PDF_SIREN);
-		}  
-	      
-	      if (defined("FAC_PDF_INTITULE2"))
-		{
-		  $pdf->SetXY(100,5);
-		  $pdf->SetFont('Arial','B',14);
-		  $pdf->SetTextColor(0,0,200);
-		  $pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
-		}
-	      /*
-	       * Adresse Client
-	       */
-	      $pdf->SetTextColor(0,0,0);
-	      $pdf->SetFont('Arial','B',12);
-	      $fac->fetch_client();
-	      $pdf->SetXY(102,42);
-	      $pdf->MultiCell(66,5, $fac->client->nom);
-	      $pdf->SetFont('Arial','B',11);
-	      $pdf->SetXY(102,47);
-	      $pdf->MultiCell(66,5, $fac->client->adresse . "\n" . $fac->client->cp . " " . $fac->client->ville);
-	      $pdf->rect(100, 40, 100, 40);
-	      
-	      
-	      $pdf->SetTextColor(200,0,0);
-	      $pdf->SetFont('Arial','B',14);
-	      $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $fac->date));
-	      $pdf->Text(11, 94, "Facture : ".$fac->ref);
-	      
-	      /*
-	       */
-	      $pdf->SetTextColor(0,0,0);
-	      $pdf->SetFont('Arial','',10);
-	      $titre = "Montants exprimés en euros";
-	      $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
-	      /*
-	       */
-	      
-	      $pdf->SetFont('Arial','',12);
-	      
 	      $tab_top = 100;
-	      $tab_height = 110;
-	      
-	      $pdf->Text(11,$tab_top + 5,'Désignation');
-	      
-	      $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-	      $pdf->Text(134,$tab_top + 5,'TVA');
-	      
-	      $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-	      $pdf->Text(147,$tab_top + 5,'Qté');
-	      
-	      $pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-	      $pdf->Text(160,$tab_top + 5,'P.U.');
-	      
-	      $pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-	      $pdf->Text(187,$tab_top + 5,'Total');
-	      
-	      $pdf->Rect(10, $tab_top, 190, $tab_height);
-	      $pdf->line(10, $tab_top + 10, 200, $tab_top + 10 );
-	      
+	      $tab_height = 110;      	      
+
 	      /*
 	       *
 	       */  
@@ -153,26 +75,49 @@ Class pdf_tourteau {
 	      $pdf->SetFillColor(220,220,220);
 	      
 	      $pdf->SetFont('Arial','', 10);
-	      for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
+
+	      $pdf->SetXY (10, $tab_top + 10 );
+
+	      $iniY = $pdf->GetY();
+	      $curY = $pdf->GetY();
+	      $nexY = $pdf->GetY();
+	      $nblignes = sizeof($fac->lignes);
+
+	      for ($i = 0 ; $i < $nblignes ; $i++)
 		{
-		  $pdf->SetXY (11, $tab_top + 11 + ($i * 27) );
+		  $curY = $nexY;
+
+		  $pdf->SetXY (11, $curY );
 		  $pdf->MultiCell(118, 5, $fac->lignes[$i]->desc, 0, 'J');
+
+		  $nexY = $pdf->GetY();
 		  
-		  $pdf->SetXY (133, $tab_top + 11 + ($i * 27) );
+		  $pdf->SetXY (133, $curY);
 		  $pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_taux, 0, 'C');
 		  
-		  $pdf->SetXY (145, $tab_top + 11 + ($i * 27) );
+		  $pdf->SetXY (145, $curY);
 		  $pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'C');
 		  
-		  $pdf->SetXY (156, $tab_top + 11 + ($i * 27) );
+		  $pdf->SetXY (156, $curY);
 		  $pdf->MultiCell(18, 5, price($fac->lignes[$i]->price), 0, 'R', 0);
 	      
-		  $pdf->SetXY (174, $tab_top + 11 + ($i * 27) );
+		  $pdf->SetXY (174, $curY);
 		  $total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
 		  $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
+
+
+		  if ($nexY > 200 && $i < $nblignes - 1)
+		    {
+		      $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
+		      $pdf->AddPage();
+		      $nexY = $iniY;
+		      $this->_pagehead($pdf, $fac);
+		      $pdf->SetTextColor(0,0,0);
+		      $pdf->SetFont('Arial','', 10);
+		    }
 		  
-		  $pdf->line(10, $pdf->GetY + 37 + $tab_top, 200, $pdf->GetY + 37 + $tab_top);
 		}
+	      $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 	      /*
 	       *
 	       */
@@ -282,6 +227,103 @@ Class pdf_tourteau {
 	  print "FAC_OUTPUTDIR non définit !";
 	}
     }
+  /*
+   *
+   *
+   *
+   */
+  Function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+    {
+      $pdf->SetFont('Arial','',12);
+      
+      $pdf->Text(11,$tab_top + 5,'Désignation');
+      
+      $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
+      $pdf->Text(134,$tab_top + 5,'TVA');
+      
+      $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
+      $pdf->Text(147,$tab_top + 5,'Qté');
+      
+      $pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
+      $pdf->Text(160,$tab_top + 5,'P.U.');
+      
+      $pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
+      $pdf->Text(187,$tab_top + 5,'Total');
+      
+      $pdf->Rect(10, $tab_top, 190, $tab_height);
+      $pdf->line(10, $tab_top + 10, 200, $tab_top + 10 );
+    }
+  /*
+   *
+   *
+   *
+   *
+   */
+  Function _pagehead(&$pdf, $fac)
+    {
+      
+      $pdf->SetXY(10,5);
+      if (defined("FAC_PDF_INTITULE"))
+	{
+	  $pdf->SetTextColor(0,0,200);
+	  $pdf->SetFont('Arial','B',14);
+	  $pdf->MultiCell(60, 8, FAC_PDF_INTITULE, 0, 'L');
+	}
+      
+      $pdf->SetTextColor(70,70,170);
+      if (defined("FAC_PDF_ADRESSE"))
+	{
+	  $pdf->SetFont('Arial','',12);
+	  $pdf->MultiCell(40, 5, FAC_PDF_ADRESSE);
+	}
+      if (defined("FAC_PDF_TEL"))
+	{
+	  $pdf->SetFont('Arial','',10);
+	  $pdf->MultiCell(40, 5, "Tél : ".FAC_PDF_TEL);
+	}  
+      if (defined("FAC_PDF_SIREN"))
+	{
+	  $pdf->SetFont('Arial','',10);
+	  $pdf->MultiCell(40, 5, "SIREN : ".FAC_PDF_SIREN);
+	}  
+      
+      if (defined("FAC_PDF_INTITULE2"))
+	{
+	  $pdf->SetXY(100,5);
+	  $pdf->SetFont('Arial','B',14);
+	  $pdf->SetTextColor(0,0,200);
+	  $pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
+	}
+      /*
+       * Adresse Client
+       */
+      $pdf->SetTextColor(0,0,0);
+      $pdf->SetFont('Arial','B',12);
+      $fac->fetch_client();
+      $pdf->SetXY(102,42);
+      $pdf->MultiCell(66,5, $fac->client->nom);
+      $pdf->SetFont('Arial','B',11);
+      $pdf->SetXY(102,47);
+      $pdf->MultiCell(66,5, $fac->client->adresse . "\n" . $fac->client->cp . " " . $fac->client->ville);
+      $pdf->rect(100, 40, 100, 40);
+      
+      
+      $pdf->SetTextColor(200,0,0);
+      $pdf->SetFont('Arial','B',14);
+      $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $fac->date));
+      $pdf->Text(11, 94, "Facture : ".$fac->ref);
+      
+      /*
+       */
+      $pdf->SetTextColor(0,0,0);
+      $pdf->SetFont('Arial','',10);
+      $titre = "Montants exprimés en euros";
+      $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
+      /*
+       */
+      
+    }
+  
 }
 
 ?>
