@@ -82,8 +82,8 @@ if ($account) {
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";
   print "<td>Date</td><td>Description</TD>";
-  print "<td align=\"right\"><a href=\"$PHP_SELF?vue=debit&account=$account\">Debit</a></TD>";
-  print "<td align=\"right\"><a href=\"$PHP_SELF?vue=credit&account=$account\">Credit</a></TD>";
+  print "<td align=\"right\">Debit</TD>";
+  print "<td align=\"right\">Credit</TD>";
   print "<td align=\"right\">Solde</TD>";
   print "<td align=\"right\">Francs</td>";
   print "</TR>\n";
@@ -158,19 +158,16 @@ if ($account) {
 	  if ($objp->do > $time && !$sep) {
 	    $sep = 1 ;
 	    print "<tr><td align=\"right\" colspan=\"4\">Total :</td>";
-	    print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td><td align=\"right\">".francs($total - $objp->amount)."</td></tr>\n";
+	    print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td><td></td><td align=\"right\"><small>".francs($total - $objp->amount)."</small></td></tr>\n";
 	    print "<tr>";
 	    print "<td><input name=\"dateo\" type=\"text\" size=8 maxlength=8></td>";
 	    print "<td>CHQ<input name=\"num_chq\" type=\"text\" size=4>&nbsp;-";
 	    print "<input name=\"label\" type=\"text\" size=40></td>";
 	    print "<td><input name=\"debit\" type=\"text\" size=8></td>";
 	    print "<td><input name=\"credit\" type=\"text\" size=8></td>";
-	    print "<td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"ajouter\"</td>";
+	    print "<td colspan=\"3\" align=\"center\"><select name=\"cat1\">$options</select></td>";
 	    print "</tr><tr><td colspan=\"2\">Format : YYYYMMDD - 20010826</td><td>0000.00</td>";
-	    print "<td colspan=\"4\"><select name=\"cat1\">$options";
-  
-	    print "</select></td></tr>";
-
+	    print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
 	  }
 
 	  print "<tr $bc[$var]>";
