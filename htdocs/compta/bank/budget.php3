@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,8 +78,8 @@ if ($bid == 0)
       $db->free();
 
       print '<tr><td colspan="2" align="right">Total</td>';
-      print '<td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
-      print "<tr><td colspan=\"3\" align=\"right\"><small>soit en francs</td><td align=\"right\"><small>".francs($total)."</td></tr>\n";
+      print '<td align="right"><b>'.price($total).'</b></td><td colspan="2">&nbsp;</td></tr>';
+      print "<tr><td colspan=\"3\" align=\"right\"><small>soit en francs</td><td align=\"right\"><small>".francs($total)."</td><td>&nbsp;</td></tr>\n";
     }
   else
     {
@@ -138,7 +138,7 @@ else
 	}
       $db->free();
       print "<tr><td colspan=\"2\" align=\"right\">Total</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>euros</td></tr>";
-      print "<tr><td colspan=\"2\" align=\"right\"><small>soit</td><td align=\"right\"><small>".francs(abs($total))."</td><td><small>francs</small></tr>\n";
+      print "<tr><td colspan=\"2\" align=\"right\"><small>soit</td><td align=\"right\"><small>".francs(abs($total))."</td><td><small>francs</small></td></tr>\n";
     }
   else
     {
