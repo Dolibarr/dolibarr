@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * $Id$
  * $Source$
