@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+ 
+/*!	\file htdocs/socnote.php
+		\brief      Fichier onglet notes liées à la société
+		\ingroup    societe
+		\version $Revision$
+*/
+ 
 require("./pre.inc.php");
 
 if ($_POST["action"] == 'add') {
@@ -103,6 +110,8 @@ if ($_GET["socid"] > 0) {
   print "</table>";
   print '<input type="submit" value="'.$langs->trans("Save").'"></form>';
 }
+
+print '<br>';
 
 $db->close();
 

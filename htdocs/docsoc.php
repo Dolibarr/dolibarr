@@ -19,6 +19,13 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/docsoc.php
+		\brief      Fichier onglet documents liés à la société
+		\ingroup    societe
+		\version $Revision$
+*/
+
 require("./pre.inc.php");
 
 llxHeader();
@@ -141,7 +148,7 @@ if ($socid > 0)
 	  print '<input type="hidden" name="max_file_size" value="2000000">';
 	  print '<input type="file"   name="userfile" size="40" maxlength="80">';
 	  print '<br>';
-	  print '<input type="submit" value="'.$langs->trans("Upload").'" name="sendit">';
+	  print '<input type="submit" value="'.$langs->trans("Upload").'" name="sendit"> &nbsp; ';
 	  print '<input type="submit" value="'.$langs->trans("Cancel").'" name="cancelit"><br>';
 	  print '</form>';
 	}
