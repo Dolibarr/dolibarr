@@ -46,12 +46,13 @@ create table llx_adherent
   login            varchar(50) NOT NULL,      -- login utilise pour editer sa fiche
   pass             varchar(50),      -- pass utilise pour editer sa fiche
   naiss            date,             -- date de naissance
-  photo		   varchar(255),     -- url vers la photo de l'adherent
+  photo            varchar(255),     -- url vers la photo de l'adherent
   fk_user_author   integer NOT NULL,
   fk_user_mod      integer NOT NULL,
   fk_user_valid    integer NOT NULL,
   datefin          datetime NOT NULL, -- date de fin de validité de la cotisation
   note             text,
-
+  fk_bank          int(11) default NULL,
+ 
   UNIQUE INDEX(login)
 );
