@@ -33,6 +33,8 @@ class modFacture extends modDolibarrModules
   Function modFacture($DB)
   {
     $this->db = $DB ;
+    $this->depends = array("MAIN_MODULE_SOCIETE","MAIN_MODULE_COMPTABILITE");
+
     $this->const = array();
 
     $this->const[0][0] = "FAC_PDF_INTITULE";

@@ -33,6 +33,8 @@ class modPropale extends modDolibarrModules
   Function modPropale($DB)
   {
     $this->db = $DB ;
+    $this->depends = array("MAIN_MODULE_SOCIETE","MAIN_MODULE_COMMERCIAL");
+
     $this->const = array();
     /*
      *  Constantes
