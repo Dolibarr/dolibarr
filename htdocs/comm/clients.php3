@@ -25,8 +25,6 @@ require("../lib/webcal.class.php3");
 require("../cactioncomm.class.php3");
 require("../actioncomm.class.php3");
 
-llxHeader();
-
 /*
  * Sécurité accés client
  */
@@ -130,21 +128,26 @@ if ($action == 'stcomm')
  *
  *
  */
-if ($mode == 'search') {
-  if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM llx_societe as s ";
-    $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
-  }
-      
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() == 1) {
-      $obj = $db->fetch_object(0);
-      $socid = $obj->idp;
+/*
+if ($mode == 'search')
+{
+  if ($mode-search == 'soc')
+    {
+      $sql = "SELECT s.idp FROM llx_societe as s ";
+      $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
     }
-    $db->free();
-  }
+  
+  if ( $db->query($sql) )
+    {
+      if ( $db->num_rows() == 1)
+	{
+	  $obj = $db->fetch_object(0);
+	  $socid = $obj->idp;
+	}
+      $db->free();
+    }
 }
-
+*/
 if ($page == -1) { $page = 0 ; }
 
 $offset = $conf->liste_limit * $page ;
@@ -197,6 +200,18 @@ $result = $db->query($sql);
 if ($result)
 {
   $num = $db->num_rows();
+
+  if ($num == 1)
+    {
+      $obj = $db->fetch_object(0);
+      Header("Location: fiche.php3?socid=$obj->idp");
+    }
+  else
+    {
+      llxHeader();
+    }
+
+
   print_barre_liste("Liste des clients", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
 
   $i = 0;
