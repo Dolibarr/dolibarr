@@ -55,8 +55,8 @@ if ($_GET["action"] == 'create_user' && $user->admin)
 if ($_POST["action"] == 'add') 
 {
   if (! $_POST["name"] && ! $_POST["firstname"]) {
-    array_push($error,"Le champ nom ou prénom est obligatoire. Cliquez sur <a href=# onclick=history.back()>Retour</a> et réessayez.");
-    $_GET["id"]=0;
+    array_push($error,'Le champ nom ou prénom est obligatoire.');
+    $_GET["action"]="create";
   }
   else {
       $contact = new Contact($db);
@@ -139,6 +139,15 @@ llxHeader();
 $form = new Form($db);
 
 
+// Affiche les erreurs
+if (sizeof($error))
+{
+  print "<div class='error'>";
+  print join("<br>",$error);
+  print "</div>\n";
+}
+
+
 /*
  * Onglets
  */
@@ -180,15 +189,6 @@ if ($_GET["action"] == 'delete')
     $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],"Supprimer le contact","Êtes-vous sûr de vouloir supprimer ce contact&nbsp;?","confirm_delete");
     print '<br>';
 }
-
-// Affiche les erreurs
-if (sizeof($error))
-{
-  print '<div class="message"><br>'.LDAP_SERVER_TYPE.'<br>';
-  print join("<br>",$error);
-  print '<br><br></div>';
-}
-
 
 if ($_GET["socid"] > 0)
 {
@@ -323,7 +323,11 @@ else
   //TODO Aller chercher le libellé de la civilite a partir de l'id $contact->civilite_id
   //print '<tr><td valign="top">Titre : '.$contact->civilite."<br>";
 
-  print '<tr><td valign="top">'.$langs->trans("Name").' : '.$contact->name.' '.$contact->firstname ."<br>";
+  print '<tr><td valign="top">';
+  
+  if ($contact->name || $contact->firstname) {
+    print $langs->trans("Name").' : '.$contact->name.' '.$contact->firstname ."<br>";
+  }
 
   if ($contact->poste)
     print 'Poste : '.$contact->poste ."<br>";
