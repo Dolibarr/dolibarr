@@ -1,0 +1,446 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+   <html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Docs For Class vCard</title>
+  <link rel="stylesheet" href="../media/stylesheet.css" />
+  <script src="../media/lib/classTree.js"></script>
+<link id="webfx-tab-style-sheet" type="text/css" rel="stylesheet" href="../media/lib/tab.webfx.css" />
+<script type="text/javascript" src="../media/lib/tabpane.js"></script>
+  <script language="javascript" type="text/javascript" src="../media/lib/ua.js"></script>
+<script language="javascript" type="text/javascript">
+	var imgPlus = new Image();
+	var imgMinus = new Image();
+	imgPlus.src = "../media/images/plus.gif";
+	imgMinus.src = "../media/images/minus.gif";
+	
+	function showNode(Node){
+        switch(navigator.family){
+        	case 'nn4':
+        		// Nav 4.x code fork...
+				var oTable = document.layers["span" + Node];
+				var oImg = document.layers["img" + Node];
+        		break;
+        	case 'ie4':
+        		// IE 4/5 code fork...
+				var oTable = document.all["span" + Node];
+				var oImg = document.all["img" + Node];
+        		break;
+        	case 'gecko':
+        		// Standards Compliant code fork...
+				var oTable = document.getElementById("span" + Node);
+				var oImg = document.getElementById("img" + Node);
+        		break;
+        }
+		oImg.src = imgMinus.src;
+		oTable.style.display = "block";
+	}
+	
+	function hideNode(Node){
+        switch(navigator.family){
+        	case 'nn4':
+        		// Nav 4.x code fork...
+				var oTable = document.layers["span" + Node];
+				var oImg = document.layers["img" + Node];
+        		break;
+        	case 'ie4':
+        		// IE 4/5 code fork...
+				var oTable = document.all["span" + Node];
+				var oImg = document.all["img" + Node];
+        		break;
+        	case 'gecko':
+        		// Standards Compliant code fork...
+				var oTable = document.getElementById("span" + Node);
+				var oImg = document.getElementById("img" + Node);
+        		break;
+        }
+		oImg.src = imgPlus.src;
+		oTable.style.display = "none";
+	}
+	
+	function nodeIsVisible(Node){
+        switch(navigator.family){
+        	case 'nn4':
+        		// Nav 4.x code fork...
+				var oTable = document.layers["span" + Node];
+        		break;
+        	case 'ie4':
+        		// IE 4/5 code fork...
+				var oTable = document.all["span" + Node];
+        		break;
+        	case 'gecko':
+        		// Standards Compliant code fork...
+				var oTable = document.getElementById("span" + Node);
+        		break;
+        }
+		return (oTable && oTable.style.display == "block");
+	}
+	
+	function toggleNodeVisibility(Node){
+		if (nodeIsVisible(Node)){
+			hideNode(Node);
+		}else{
+			showNode(Node);
+		}
+	}
+</script>
+<!-- template designed by Julien Damon based on PHPEdit's generated templates, and tweaked by Greg Beaver -->
+<body bgcolor="#ffffff" ><!-- Start of Class Data -->
+<h2>
+	Class vCard
+</h2> (line <span class="linenumber">69</span>)
+<div class="tab-pane" id="tabPane1">
+<script type="text/javascript">
+tp1 = new WebFXTabPane( document.getElementById( "tabPane1" ));
+</script>
+
+<div class="tab-page" id="Description">
+<h2 class="tab">Description</h2>
+<pre>
+</pre>
+<p>
+	<b><i>Located in File: <a href="_vcard_vcard_class_php.html">/vcard/vcard.class.php</a></i></b><br>
+</p>
+<!-- ========== Info from phpDoc block ========= -->
+<ul>
+	</ul>
+<br /><hr />
+</div>
+<script type="text/javascript">tp1.addTabPage( document.getElementById( "Description" ) );</script>
+<div class="tab-page" id="tabPage1">
+<h2 class="tab">Class Variables</h2>
+<!-- ============ VARIABLE DETAIL =========== -->
+<strong>Summary:</strong><br />
+<div class="var-title">
+    <span class="var-type">mixed</span>
+    <a href="#var$filename" title="details" class="property"><strong>$filename</strong></a>
+</div>
+<div class="var-title">
+    <span class="var-type">mixed</span>
+    <a href="#var$properties" title="details" class="property"><strong>$properties</strong></a>
+</div>
+<hr />
+<a name="var$filename" id="var$filename"><!-- --></A>
+<div style="background='#ffffff'">
+<h4>
+<img src="../media/images/PublicProperty.gif" border="0" /> <strong class="property">$filename</strong> (line <span class="linenumber">71</span>)
+ </h4>
+<h4>Data type : mixed</h4>
+<!-- ========== Info from phpDoc block ========= -->
+<ul>
+	</ul>
+</div>
+<a name="var$properties" id="var$properties"><!-- --></A>
+<div style="background='#eeeeee'">
+<h4>
+<img src="../media/images/PublicProperty.gif" border="0" /> <strong class="property">$properties</strong> (line <span class="linenumber">70</span>)
+ </h4>
+<h4>Data type : mixed</h4>
+<!-- ========== Info from phpDoc block ========= -->
+<ul>
+	</ul>
+</div>
+<script type="text/javascript">tp1.addTabPage( document.getElementById( "tabPage1" ) );</script>
+</div>
+<div class="tab-page" id="tabPage2">
+<h2 class="tab">Method Detail</h2>
+<!-- ============ METHOD DETAIL =========== -->
+<strong>Summary:</strong><br />
+<div class="method-summary">
+				
+    <div class="method-definition">
+            <span class="method-result">void</span>
+        <a href="#methodgetFileName" title="details" class="method-name">getFileName</a>
+        ()
+        </div>
+				
+    <div class="method-definition">
+            <span class="method-result">void</span>
+        <a href="#methodgetVCard" title="details" class="method-name">getVCard</a>
+        ()
+        </div>
+				
+    <div class="method-definition">
+            <span class="method-result">void</span>
+        <a href="#methodsetAddress" title="details" class="method-name">setAddress</a>
+        ([<span class="var-type">mixed</span>&nbsp;<span class="var-name">$postoffice</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$extended</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$street</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$city</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$region</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$zip</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$country</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">"HOME;POSTAL"</span>])
+        </div>
+				
+    <div class="method-definition">
+            <span class="method-result">void</span>
+        <a href="#methodsetBirthday" title="details" class="method-name">setBirthday</a>
+        (<span class="var-type">mixed</span>&nbsp;<span class="var-name">$date</span>)
+        </div>
+				
+    <div class="method-definition">
+            <span class="method-result">void</span>
+        <a href="#methodsetEmail" title="details" class="method-name">setEmail</a>
+        (<span class="var-type">mixed</span>&nbsp;<span class="var-name">$address</span>)
+        </div>
+				
+    <div class="method-definition">
+            <span class="method-result">void</span>
+        <a href="#methodsetFormattedName" title="details" class="method-name">setFormattedName</a>
+        (<span class="var-type">mixed</span>&nbsp;<span class="var-name">$name</span>)
+        </div>
+				
+    <div class="method-definition">
+            <span class="method-result">void</span>
+        <a href="#methodsetLabel" title="details" class="method-name">setLabel</a>
+        ([<span class="var-type">mixed</span>&nbsp;<span class="var-name">$postoffice</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$extended</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$street</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$city</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$region</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$zip</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$country</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">"HOME;POSTAL"</span>])
+        </div>
+				
+    <div class="method-definition">
+            <span class="method-result">void</span>
+        <a href="#methodsetName" title="details" class="method-name">setName</a>
+        ([<span class="var-type">mixed</span>&nbsp;<span class="var-name">$family</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$first</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$additional</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$prefix</span> = <span class="var-default">""</span>], [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$suffix</span> = <span class="var-default">""</span>])
+        </div>
+				
+    <div class="method-definition">
+            <span class="method-result">void</span>
+        <a href="#methodsetNote" title="details" class="method-name">setNote</a>
+        (<span class="var-type">mixed</span>&nbsp;<span class="var-name">$note</span>)
+        </div>
+				
+    <div class="method-definition">
+            <span class="method-result">void</span>
+        <a href="#methodsetPhoneNumber" title="details" class="method-name">setPhoneNumber</a>
+        (<span class="var-type">mixed</span>&nbsp;<span class="var-name">$number</span>, [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">""</span>])
+        </div>
+				
+    <div class="method-definition">
+            <span class="method-result">void</span>
+        <a href="#methodsetPhoto" title="details" class="method-name">setPhoto</a>
+        (<span class="var-type">mixed</span>&nbsp;<span class="var-name">$type</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$photo</span>)
+        </div>
+				
+    <div class="method-definition">
+            <span class="method-result">void</span>
+        <a href="#methodsetURL" title="details" class="method-name">setURL</a>
+        (<span class="var-type">mixed</span>&nbsp;<span class="var-name">$url</span>, [<span class="var-type">mixed</span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">""</span>])
+        </div>
+</div>
+<hr />
+<A NAME='method_detail'></A>
+
+
+<a name="methodgetFileName" id="methodgetFileName"><!-- --></a>
+<div style="background='#ffffff'"><h4>
+<img src="../media/images/PublicMethod.gif" border="0" /> <strong class="method">Method getFileName</strong> (line <span class="linenumber">152</span>)
+ </h4> 
+<h4><i>void</i> <strong>getFileName(
+)</strong></h4>
+
+<!-- ========== Info from phpDoc block ========= -->
+		
+	<h4>Info</h4>
+	<ul>
+		</ul>
+</div>
+<a name="methodgetVCard" id="methodgetVCard"><!-- --></a>
+<div style="background='#eeeeee'"><h4>
+<img src="../media/images/PublicMethod.gif" border="0" /> <strong class="method">Method getVCard</strong> (line <span class="linenumber">140</span>)
+ </h4> 
+<h4><i>void</i> <strong>getVCard(
+)</strong></h4>
+
+<!-- ========== Info from phpDoc block ========= -->
+		
+	<h4>Info</h4>
+	<ul>
+		</ul>
+</div>
+<a name="methodsetAddress" id="methodsetAddress"><!-- --></a>
+<div style="background='#ffffff'"><h4>
+<img src="../media/images/PublicMethod.gif" border="0" /> <strong class="method">Method setAddress</strong> (line <span class="linenumber">100</span>)
+ </h4> 
+<h4><i>void</i> <strong>setAddress(
+[mixed
+$postoffice = ""], [mixed
+$extended = ""], [mixed
+$street = ""], [mixed
+$city = ""], [mixed
+$region = ""], [mixed
+$zip = ""], [mixed
+$country = ""], [mixed
+$type = "HOME;POSTAL"])</strong></h4>
+
+<!-- ========== Info from phpDoc block ========= -->
+		
+	<h4>Info</h4>
+	<ul>
+		</ul>
+</div>
+<a name="methodsetBirthday" id="methodsetBirthday"><!-- --></a>
+<div style="background='#eeeeee'"><h4>
+<img src="../media/images/PublicMethod.gif" border="0" /> <strong class="method">Method setBirthday</strong> (line <span class="linenumber">96</span>)
+ </h4> 
+<h4><i>void</i> <strong>setBirthday(
+mixed
+$date)</strong></h4>
+
+<!-- ========== Info from phpDoc block ========= -->
+		
+	<h4>Info</h4>
+	<ul>
+		</ul>
+</div>
+<a name="methodsetEmail" id="methodsetEmail"><!-- --></a>
+<div style="background='#ffffff'"><h4>
+<img src="../media/images/PublicMethod.gif" border="0" /> <strong class="method">Method setEmail</strong> (line <span class="linenumber">125</span>)
+ </h4> 
+<h4><i>void</i> <strong>setEmail(
+mixed
+$address)</strong></h4>
+
+<!-- ========== Info from phpDoc block ========= -->
+		
+	<h4>Info</h4>
+	<ul>
+		</ul>
+</div>
+<a name="methodsetFormattedName" id="methodsetFormattedName"><!-- --></a>
+<div style="background='#eeeeee'"><h4>
+<img src="../media/images/PublicMethod.gif" border="0" /> <strong class="method">Method setFormattedName</strong> (line <span class="linenumber">86</span>)
+ </h4> 
+<h4><i>void</i> <strong>setFormattedName(
+mixed
+$name)</strong></h4>
+
+<!-- ========== Info from phpDoc block ========= -->
+		
+	<h4>Info</h4>
+	<ul>
+		</ul>
+</div>
+<a name="methodsetLabel" id="methodsetLabel"><!-- --></a>
+<div style="background='#ffffff'"><h4>
+<img src="../media/images/PublicMethod.gif" border="0" /> <strong class="method">Method setLabel</strong> (line <span class="linenumber">112</span>)
+ </h4> 
+<h4><i>void</i> <strong>setLabel(
+[mixed
+$postoffice = ""], [mixed
+$extended = ""], [mixed
+$street = ""], [mixed
+$city = ""], [mixed
+$region = ""], [mixed
+$zip = ""], [mixed
+$country = ""], [mixed
+$type = "HOME;POSTAL"])</strong></h4>
+
+<!-- ========== Info from phpDoc block ========= -->
+		
+	<h4>Info</h4>
+	<ul>
+		</ul>
+</div>
+<a name="methodsetName" id="methodsetName"><!-- --></a>
+<div style="background='#eeeeee'"><h4>
+<img src="../media/images/PublicMethod.gif" border="0" /> <strong class="method">Method setName</strong> (line <span class="linenumber">90</span>)
+ </h4> 
+<h4><i>void</i> <strong>setName(
+[mixed
+$family = ""], [mixed
+$first = ""], [mixed
+$additional = ""], [mixed
+$prefix = ""], [mixed
+$suffix = ""])</strong></h4>
+
+<!-- ========== Info from phpDoc block ========= -->
+		
+	<h4>Info</h4>
+	<ul>
+		</ul>
+</div>
+<a name="methodsetNote" id="methodsetNote"><!-- --></a>
+<div style="background='#ffffff'"><h4>
+<img src="../media/images/PublicMethod.gif" border="0" /> <strong class="method">Method setNote</strong> (line <span class="linenumber">129</span>)
+ </h4> 
+<h4><i>void</i> <strong>setNote(
+mixed
+$note)</strong></h4>
+
+<!-- ========== Info from phpDoc block ========= -->
+		
+	<h4>Info</h4>
+	<ul>
+		</ul>
+</div>
+<a name="methodsetPhoneNumber" id="methodsetPhoneNumber"><!-- --></a>
+<div style="background='#eeeeee'"><h4>
+<img src="../media/images/PublicMethod.gif" border="0" /> <strong class="method">Method setPhoneNumber</strong> (line <span class="linenumber">73</span>)
+ </h4> 
+<h4><i>void</i> <strong>setPhoneNumber(
+mixed
+$number, [mixed
+$type = ""])</strong></h4>
+
+<!-- ========== Info from phpDoc block ========= -->
+		
+	<h4>Info</h4>
+	<ul>
+		</ul>
+</div>
+<a name="methodsetPhoto" id="methodsetPhoto"><!-- --></a>
+<div style="background='#ffffff'"><h4>
+<img src="../media/images/PublicMethod.gif" border="0" /> <strong class="method">Method setPhoto</strong> (line <span class="linenumber">82</span>)
+ </h4> 
+<h4><i>void</i> <strong>setPhoto(
+mixed
+$type, mixed
+$photo)</strong></h4>
+
+<!-- ========== Info from phpDoc block ========= -->
+		
+	<h4>Info</h4>
+	<ul>
+		</ul>
+</div>
+<a name="methodsetURL" id="methodsetURL"><!-- --></a>
+<div style="background='#eeeeee'"><h4>
+<img src="../media/images/PublicMethod.gif" border="0" /> <strong class="method">Method setURL</strong> (line <span class="linenumber">133</span>)
+ </h4> 
+<h4><i>void</i> <strong>setURL(
+mixed
+$url, [mixed
+$type = ""])</strong></h4>
+
+<!-- ========== Info from phpDoc block ========= -->
+		
+	<h4>Info</h4>
+	<ul>
+		</ul>
+</div>
+<script type="text/javascript">tp1.addTabPage( document.getElementById( "tabPage2" ) );</script></div>
+<div class="tab-page" id="iVars">
+<h2 class="tab">Inherited Variables</h2>
+<script type="text/javascript">tp1.addTabPage( document.getElementById( "iVars" ) );</script>
+<!-- =========== VAR INHERITED SUMMARY =========== -->
+<A NAME='var_inherited_summary'><!-- --></A>
+<h3>Inherited Class Variable Summary</h3>
+
+	</div>
+<div class="tab-page" id="iMethods">
+<h2 class="tab">Inherited Methods</h2>
+<script type="text/javascript">tp1.addTabPage( document.getElementById( "iMethods" ) );</script>
+<!-- =========== INHERITED METHOD SUMMARY =========== -->
+<A NAME='functions_inherited'><!-- --></A>
+<h3>Inherited Method Summary</h3>
+
+	</div>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+
+setupAllTabs();
+
+//]]>
+</script>
+	<div id="credit">
+		<hr />
+		Documentation generated on Mon, 21 Jun 2004 23:58:43 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.2.3</a>
+	</div>
+</body>
+</html>
