@@ -182,6 +182,8 @@ if ($cancel == 'Annuler')
  */
 if ($action == 'create')
 {
+  $nbligne=0;
+  
   print "<form action=\"$PHP_SELF?type=$type\" method=\"post\">\n";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">\n";
   print '<input type="hidden" name="type" value="'.$type.'">'."\n";
@@ -253,7 +255,7 @@ else
 
 
 	      print_fiche_titre('Fiche '.$types[$product->type].' : '.$product->ref, $mesg);
-      
+		  
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      print "<tr>";
 	      print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
@@ -270,7 +272,12 @@ else
 	      print "<tr><td>Libellé</td><td>$product->libelle</td>";
 	      print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
 	      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
-	      print '<td valign="top" rowspan="3">';
+          if ($product->type == 1) {
+          	$nblignefour=4;
+          } else {
+          	$nblignefour=3;
+          } 
+	      print '<td valign="top" rowspan="'.$nblignefour.'">';
 	      print 'Fournisseurs [<a href="fiche.php?id='.$id.'&amp;action=ajout_fourn">Ajouter</a>]';
 
 	      $sql = "SELECT s.nom, s.idp";
