@@ -38,5 +38,6 @@ create table llx_adherent
   email           varchar(255),
   fk_user_author  integer NOT NULL,
   fk_user_valid   integer NOT NULL,
+  datefin         datetime NOT NULL, -- date de fin de validité de la cotisation
   note            text
 );
