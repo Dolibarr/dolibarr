@@ -21,29 +21,28 @@
  */
 require("./pre.inc.php");
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-
-if (!$user->rights->telephonie->lire)
-  accessforbidden();
+if (!$user->rights->telephonie->lire) accessforbidden();
 
 llxHeader('','Telephonie - Statistiques - Commerciaux');
 
 /*
- * Sécurité accés client
+ *
+ *
+ *
  */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
 
-/*
- * Mode Liste
- *
- *
- *
- */
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/index.php';
+$head[$h][1] = "Global";
+$hselected = $h;
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/mensuel.php';
+$head[$h][1] = "Mensuel";
+$h++;
+
+dolibarr_fiche_head($head, $hselected, "Commerciaux");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
@@ -75,7 +74,7 @@ if ($result)
       print "<tr $bc[$var]>";
 
       print '<td width="50%" valign="top">';
-      print '<a href="index.php?commid='.$row[3];
+      print '<a href="commercial.php?commid='.$row[3];
       print '">'.$row[2]." ". $row[1].'</a></td><td align="center">'.$row[0].'</td></tr>';
 	  
       $i++;
@@ -93,8 +92,9 @@ print '</td>';
 
 print '</td><td valign="top" width="70%">';
 
-print '<img src="./graphcommandeweek.php?commid='.$_GET["commid"].'"><br /><br />';
-print '<img src="./graphcommandemonth.php?commid='.$_GET["commid"].'"><br /><br />';
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/lignes/commandes.hebdomadaire.png" alt="Commandes de ligne par mois" title="Lignes Actives"><br /><br />'."\n";
+
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/lignes/commandes.mensuels.png" alt="Commandes de ligne par mois" title="Lignes Actives"><br /><br />'."\n";
 
 print '</td></tr>';
 
