@@ -68,27 +68,32 @@ if ($pos == '/')
 define('DOL_URL_ROOT', $pos);
 //define('DOL_URL_ROOT', $dolibarr_main_url_root);
 
+
 require (DOL_DOCUMENT_ROOT."/conf/conf.class.php");
-/*
- * Doit figurer aprés l'inclusion de conf.class.php pour overider certaines variables, à terme conf.class.php devra etre un fichier qui ne sera pas modifié par l'utilisateur
- */
 $conf = new Conf();
+
+
+// Definition des caractéristiques de la base de données
 if (!strlen(getenv("LLX_DBNAME")))
 {
+  $conf->db->type = $dolibarr_main_db_type;
   $conf->db->host = $dolibarr_main_db_host;
   $conf->db->name = $dolibarr_main_db_name;
   $conf->db->user = $dolibarr_main_db_user;
   $conf->db->pass = $dolibarr_main_db_pass;
 }
-
+// Si type non défini (pour compatibilité avec ancienne install), on
+// travail avec mysql
+if (! $conf->db->type) { $conf->db->type = 'mysql'; }
+    
+    
 // A terme cette constante sera définie dans la base
 define('MAIN_DB_PREFIX','llx_');
 
-require (DOL_DOCUMENT_ROOT ."/lib/mysql.lib.php");
+require (DOL_DOCUMENT_ROOT ."/lib/".$conf->db->type.".lib.php");
 require (DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
 require (DOL_DOCUMENT_ROOT ."/html.form.class.php");
 require DOL_DOCUMENT_ROOT ."/user.class.php";
-//require "Smarty.class.php";
 
 
 $db = new DoliDb();
@@ -100,9 +105,9 @@ clearstatcache();
 // Verification du login.
 // Cette verification est faite pour chaque accès. Après l'authentification,
 // l'objet $user est initialisée. Notament $user->id, $user->login et $user->nom, $user->prenom
-// TODO : Stocker les infos de $user en session persistente php et ajouter recup dans le fetch
+// \todo : Stocker les infos de $user en session persistente php et ajouter recup dans le fetch
 //        depuis la sessions pour ne pas avoir a acceder a la base a chaque acces de page.
-// TODO : Utiliser $user->id pour stocker l'id de l'auteur dans les tables plutot que $_SERVER["REMOTE_USER"]
+// \todo : Utiliser $user->id pour stocker l'id de l'auteur dans les tables plutot que $_SERVER["REMOTE_USER"]
 
 if (!empty ($_SERVER["REMOTE_USER"]))
 {
@@ -494,7 +499,12 @@ function top_menu($head, $title="", $target="")
    */
   print '<div class="tmenu">'."\n";
 
-  print '<a class="tmenu" href="'.DOL_URL_ROOT.'/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Home").'</a>';
+  // Sommet menu de gauche, lien accueil
+  $class="tmenu"; $id="";
+  if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "accueil") { $class="tmenu"; $id="sel"; }
+  elseif (ereg("^".DOL_URL_ROOT."\/[^\\\/]+$",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/user\/",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/admin\/",$_SERVER["PHP_SELF"])) { $class="tmenu"; $id="sel"; }
+
+  print '<a class="tmenu" id="'.$id.'" href="'.DOL_URL_ROOT.'/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Home").'</a>';
 
   if (!defined(MAIN_MENU_BARRETOP))
     {
@@ -563,6 +573,8 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
   
   if ($addzonerecherche)
     {    
+      print '<div class="blockvmenupair">';
+
       if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
 	{
 	  $langs->load("companies");
@@ -590,6 +602,8 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
 	  $langs->load("products");
 	  printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/',$langs->trans("Products")."/".$langs->trans("Services"),'products','sall');
 	}                  
+
+      print '</div>';
     }
   
   /*
@@ -631,7 +645,6 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
  */
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
-  print '<div class="vblockmenupair">';
   print '<form action="'.$urlaction.'" method="post">';
   print '<a class="vmenu" href="'.$urlobject.'">'.$title.'</a><br>';
   print '<input type="hidden" name="mode" value="search">';
@@ -639,7 +652,6 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
   print '<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
   print '<input type="submit" class="flat" value="go">';
   print "</form>\n";
-  print "</div>\n";
 }
 
 
