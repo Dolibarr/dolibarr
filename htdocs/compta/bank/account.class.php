@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,8 @@ class Account {
 
   var $bank;
   var $label;
-
   var $courant;
-
+  var $clos;
   var $code_banque;
   var $code_guichet;
   var $number;
@@ -85,6 +84,7 @@ class Account {
       $sql .= ",cle_rib='".$this->cle_rib."'";
       $sql .= ",bic='".$this->bic."'";
       $sql .= ",courant = ".$this->courant;
+      $sql .= ",clos = ".$this->clos;
 
       $sql .= " WHERE rowid = $this->id";
       
@@ -109,7 +109,7 @@ class Account {
   Function fetch($id)
   {
     $this->id = $id; 
-    $sql = "SELECT rowid, label, bank, number, courant, code_banque,code_guichet,cle_rib FROM llx_bank_account";
+    $sql = "SELECT rowid, label, bank, number, courant, clos, code_banque,code_guichet,cle_rib FROM llx_bank_account";
     $sql .= " WHERE rowid  = ".$id;
 
     $result = $this->db->query($sql);
@@ -120,10 +120,10 @@ class Account {
 	  {
 	    $obj = $this->db->fetch_object($result , 0);
 	    
-	    $this->bank    = $obj->bank;
-	    $this->label   = $obj->label;
-	    $this->courant = $obj->courant;
-
+	    $this->bank         = $obj->bank;
+	    $this->label        = $obj->label;
+	    $this->courant      = $obj->courant;
+	    $this->clos         = $obj->clos;
 	    $this->code_banque  = $obj->code_banque;
 	    $this->code_guichet = $obj->code_guichet;
 	    $this->number       = $obj->number;
