@@ -44,3 +44,4 @@ create table llx_co_fa
 );
 
 alter table c_paiement rename llx_c_paiement ;
+alter table c_propalst rename llx_c_propalst ;
