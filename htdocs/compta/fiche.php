@@ -25,6 +25,7 @@ require("../contact.class.php");
 require("../lib/webcal.class.php");
 require("../cactioncomm.class.php");
 require("../actioncomm.class.php");
+require("../facture.class.php");
 
 /*
  * Sécurité accés client
@@ -239,7 +240,7 @@ if ($socid > 0)
       {
 	print '<table class="border" width="100%" cellspacing="0" cellpadding="1">';
 	$var=!$var;
-	$sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
+	$sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df, f.paye as paye, f.fk_statut as statut, f.rowid as facid ";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND s.idp = ".$objsoc->idp." ORDER BY f.datef DESC";
 	
 	if ( $db->query($sql) )
@@ -248,7 +249,7 @@ if ($socid > 0)
 	    if ($num > 0)
 	      {
 		print "<tr $bc[$var]>";
-		print "<td colspan=\"4\"><a href=\"facture.php?socidp=$objsoc->idp\">liste des factures ($num)</td></tr>";
+		print "<td colspan=\"4\"><a href=\"facture.php?socidp=$objsoc->idp\">Liste des factures ($num)</td></tr>";
 	      }
 	    
 	    while ($i < $num && $i < 5)
@@ -266,9 +267,9 @@ if ($socid > 0)
 		    print "<TD align=\"right\"><b>!!!</b></TD>\n";
 		  }
 		print "<TD align=\"right\">".number_format($objp->amount, 2, ',', ' ')."</TD>\n";
-		$paye[1] = "payée";
-		$paye[0] = "<b>impayée</b>";
-		print "<TD align=\"center\">".$paye[$objp->paye]."</TD>\n";
+
+        $fac = new Facture($db);
+		print "<TD align=\"center\">".($fac->LibStatut($objp->paye,$objp->statut))."</TD>\n";
 		print "</TR>\n";
 		$i++;
 	      }

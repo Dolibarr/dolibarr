@@ -429,16 +429,7 @@ class Facture
    */
   Function get_libstatut()
     {
-		if (! $this->paye)
-		  {
-		    if ($this->statut == 0) return 'Brouillon (à valider)';
-		    if ($this->statut == 3) return 'Annulée';
-			return 'Validée (à payer)';
-		  }
-		else
-		  {
-		    return 'Payée';
-		  }
+		return $this->LibStatut($this->paye,$this->statut);
     }
 
   /**
@@ -845,6 +836,7 @@ class Facture
 	return -1;
       }
   }
+
   /**
    * RODO TODO
    *
@@ -853,6 +845,23 @@ class Facture
     {      
 
     }
-  
+
+  /**
+   * Renvoi un libellé du statut
+   *
+   */
+  Function LibStatut($paye,$statut)
+    {
+		if (! $paye)
+		  {
+		    if ($statut == 0) return 'Brouillon (à valider)';
+		    if ($statut == 3) return 'Annulée';
+			return 'Validée (à payer)';
+		  }
+		else
+		  {
+		    return 'Payée';
+    	  }
+    }
 }
 ?>
