@@ -56,11 +56,20 @@ function llxHeader($head = "") {
 
   $menu->add("/fourn/index.php3", "Fournisseurs");
 
-  $menu->add("/product/", "Produits");
+  if ($conf->produit->enabled ) 
+    {
+      $menu->add("/product/", "Produits");
+    }
 
-  $menu->add("/service/", "Services");
+  if ($conf->service->enabled ) 
+    {
+      $menu->add("/service/", "Services");
+    }
 
-  $menu->add("/adherents/", "Adherents");
+  if ($conf->adherent->enabled ) 
+    {
+      $menu->add("/adherents/", "Adherents");
+    }
 
   $menu->add("/compta/dons/", "Dons");
 
@@ -77,8 +86,10 @@ function llxHeader($head = "") {
       $menu->add_submenu("/compta/voyage/reduc.php3","Reduc");
     }
 
-
-  $menu->add("/domain/", "Domaines");
+  if ($conf->domaine->enabled ) 
+    {
+      $menu->add("/domain/", "Domaines");
+    }
 
   /*
    *
