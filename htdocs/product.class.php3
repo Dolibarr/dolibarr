@@ -47,16 +47,25 @@ class Product
    */
   Function create($user) 
     {
+      if (strlen($this->price)==0)
+	{
+	  $this->price = 0;
+	}
+      $sql = "INSERT INTO llx_product (datec, fk_user_author, fk_product_type, price)";
+      $sql .= " VALUES (now(),".$user->id.",$this->type, " . ereg_replace(",",".",$this->price) . ")";
 
-      $sql = "INSERT INTO llx_product (datec, fk_user_author, fk_product_type) VALUES (now(),".$user->id.",$this->type)";
-      
       if ($this->db->query($sql) )
 	{
 	  $id = $this->db->last_insert_id();
 	  
-	  if ( $this->update($id, $user) )
+	  if ($id > 0)
 	    {
-	      return $id;
+	      $this->id = $id;
+	      $this->_log_price($user);
+	      if ( $this->update($id, $user) )
+		{
+		  return $id;
+		}
 	    }
 	}
       else
@@ -64,6 +73,58 @@ class Product
 	  print $this->db->error() . ' in ' . $sql;
 	}
   }
+  /*
+   *
+   */
+  Function _log_price($user) 
+    {
+
+      $sql = "REPLACE INTO llx_product_price ";
+      $sql .= " SET date_price= now()";
+      $sql .= " ,fk_product = ".$this->id;
+      $sql .= " ,fk_user_author = ".$user->id;
+      $sql .= " ,price = ".$this->price;
+      $sql .= " ,envente = ".$this->envente;
+      $sql .= " ,tva_tx = ".$this->tva_tx;
+      
+      if ($this->db->query($sql) )
+	{
+	      return 1;	      
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	}
+  }
+  /*
+   *
+   *
+   */
+  Function update_price($id, $user)
+    {
+      if (strlen(trim($this->price)) > 0 )
+	{
+	  $sql = "UPDATE llx_product ";
+	  $sql .= " SET price = " . ereg_replace(",",".",$this->price);	  
+	  $sql .= " WHERE rowid = " . $id;
+	  
+	  if ( $this->db->query($sql) )
+	    {
+	      $this->_log_price($user);
+	      return 1;
+	    }
+	  else
+	    {
+	      print $this->db->error() . ' in ' . $sql;
+	      return -1;
+	    }
+	}
+      else
+	{
+	  $this->mesg_error = "Prix saisi invalide.";
+	  return -2;
+	}
+    }
 
   /*
    *
@@ -77,7 +138,6 @@ class Product
 	  $sql = "UPDATE llx_product ";
 	  $sql .= " SET label = '" . trim($this->libelle) ."'";
 	  $sql .= ",ref = '" . trim($this->ref) ."'";
-	  $sql .= ",price = " . ereg_replace(",",".",$this->price);
 	  $sql .= ",tva_tx = " . $this->tva_tx ;
 	  $sql .= ",envente = " . $this->envente ;
 	  $sql .= ",description = '" . trim($this->description) ."'";

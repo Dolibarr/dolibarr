@@ -112,6 +112,32 @@ if ($HTTP_POST_VARS["action"] == 'update' &&
       $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
     }
 }
+
+if ($HTTP_POST_VARS["action"] == 'update_price' && 
+    $cancel <> 'Annuler' && 
+    ( $user->rights->produit->modifier || $user->rights->produit->creer))
+{
+  $product = new Product($db);
+  $result = $product->fetch($id);
+  $product->price = $HTTP_POST_VARS["price"];
+
+  if ( $product->update_price($id, $user) > 0 )
+    {
+      $action = '';
+      $mesg = 'Fiche mise à jour';
+    }
+  else
+    {
+      $action = 'edit_price';
+      $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+    }
+}
+
+
+if ($cancel == 'Annuler')
+{
+  $action = '';
+}
 /*
  *
  *
@@ -131,7 +157,7 @@ if ($action == 'create')
   print '<tr><td>Taux TVA</td><TD>';
   $html = new Form($db);
   print $html->select_tva("tva_tx");
-  print ' %</td></tr>';    
+  print '</td></tr>';    
   print "<tr><td valign=\"top\">Description</td><td>";
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
@@ -221,8 +247,27 @@ else
 
 	  print "</table>";
 	}
+
+      if ($action == 'edit_price' && $user->rights->produit->creer)
+	{
+	  print '<hr><div class="titre">Edition de la fiche '.$types[$product->type].' : '.$product->ref.'</div><br>';
+
+	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	  print '<input type="hidden" name="action" value="update_price">';
+	  
+	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4"><tr>';
+
+	  print '<tr><td width="20%">Prix de vente</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
+
+	  print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
+	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+	  print '</table>';
+	  print '</form>';
+	}    
+
+
     
-      if ($action == 'edit')
+      if ($action == 'edit' && $user->rights->produit->creer)
 	{
 	  print '<hr><div class="titre">Edition de la fiche '.$types[$product->type].' : '.$product->ref.'</div><br>';
 
@@ -230,14 +275,15 @@ else
 	  print '<input type="hidden" name="action" value="update">';
 	  
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4"><tr>';
-	  print '<td width="20%">Référence</td><td><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
-	  print '<td>Libellé</td><td><input name="libelle" size="40" value="'.$product->label.'"></td></tr>';
-	  print '<tr><td>Prix de vente</td><TD><input name="price" size="10" value="'.$product->price.'"></td></tr>';    
-	  print '<tr><td>Taux TVA</td><TD>';
+	  print '<td width="20%">Référence</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
+	  print '<td>Libellé</td><td colspan="2"><input name="libelle" size="40" value="'.$product->label.'"></td></tr>';
+
+	  print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td></tr>';
+	  print '<tr><td>Taux TVA</td><td colspan="2">';
 	  $html = new Form($db);
 	  print $html->select_tva("tva_tx", $product->tva_tx);
 	  print '</td></tr>';
-	  print '<tr><td>Statut</td><TD>';
+	  print '<tr><td>Statut</td><td colspan="2">';
 	  print '<select name="statut">';
 	  if ($product->envente)
 	    {
@@ -250,14 +296,14 @@ else
 	      print '<option value="0" SELECTED>Hors Vente</option>';
 	    }
 	  print '</td></tr>';
-	  print "<tr><td valign=\"top\">Description</td><td>";
+	  print '<tr><td valign="top">Description</td><td colspan="2">';
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $product->description;
 	  print "</textarea></td></tr>";
 
 	  if ($product->type == 1)
 	    {
-	      print '<tr><td>Durée</td><TD><input name="duration_value" size="6" maxlength="5" value="'.$product->duration_value.'">';
+	      print '<tr><td>Durée</td><td colspan="2"><input name="duration_value" size="6" maxlength="5" value="'.$product->duration_value.'">';
 	      switch ($product->duration_unit) 
 		{
 		case "d":
@@ -294,7 +340,7 @@ else
 	      print '</td></tr>';
 	    }
 
-	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer">&nbsp;';
+	  print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
 	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
 	  print '</table>';
 	  print '</form>';
@@ -313,15 +359,25 @@ else
 /* ************************************************************************** */
 
 print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
-print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
-
-if ($action == 'create' || $action == 'edit')
+if ($action == '')
+{
+  if ($user->rights->produit->modifier || $user->rights->produit->creer)
+    {
+      print '<td width="20%" align="center">[<a href="fiche.php3?action=edit_price&id='.$id.'">Changer le prix</a>]</td>';
+    }
+  else
+    {
+      print '<td width="20%" align="center">-</td>';    
+    }
+}
+else
 {
   print '<td width="20%" align="center">-</td>';
 }
-else
+print '<td width="20%" align="center">-</td>';
+print '<td width="20%" align="center">-</td>';
+
+if ($action == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
@@ -331,6 +387,10 @@ else
     {
       print '<td width="20%" align="center">-</td>';    
     }
+}
+else
+{
+  print '<td width="20%" align="center">-</td>';
 }
 print '<td width="20%" align="center">-</td>';    
 print '</table><br>';
