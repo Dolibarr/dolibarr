@@ -1141,7 +1141,7 @@ class Facture
   function demande_prelevement($user)
   {
     dolibarr_syslog("Facture::DemandePrelevement");
-    if ($this->statut > 0 && $this->paye == 0 &&  && $this->mode_reglement == 3)
+    if ($this->statut > 0 && $this->paye == 0 &&  $this->mode_reglement == 3)
       {	  
 	$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."prelevement_facture_demande";
 	$sql .= " WHERE fk_facture=".$this->id;
