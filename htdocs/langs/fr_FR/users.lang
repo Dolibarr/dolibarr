@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - users
 UserCard=Fiche utilisateur
 ContactCard=Fiche contact
+GroupCard=Fiche groupe
 NoContactCard=Pas de fiche parmi les contacts
 Permission=Droit
 Permissions=Droits
@@ -20,6 +21,8 @@ Administrator=Administrateur
 DefaultRights=Permissions par défaut
 DefaultRightsDesc=Définissez ici les permissions par defaut, c'est à dire les permissions qui seront attribuées automatiquement à un nouvel utilisateur lors de sa création.
 DolibarrUsers=Utilisateurs Dolibarr
-ListOfGroups=Liste des groupes
 LastName=Nom
 FirstName=Prénom
+ListOfGroups=Liste des groupes
+NewGroup=Nouveau groupe
+CreateGroup=Créér le groupe
