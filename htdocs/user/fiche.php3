@@ -180,7 +180,82 @@ else
 	  print '</table>';
 	  print "</form>\n";  
 	}
-      
+
+
+      if ($request == 'perms')
+	{
+	  /*
+	   * Droits
+	   */
+
+      print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
+    
+      print '<tr><td width="25%" valign="top">Nom</td>';
+      print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
+      print '<td width="25%" valign="top">Prénom</td>';
+      print '<td width="25%" class="valeur">'.$fuser->prenom.'</td></tr>';
+
+      print '<tr><td valign="top" colspan="2">';
+	  print '<table>';
+	  $sql = "SELECT r.id, r.libelle, r.module FROM llx_rights_def as r ORDER BY r.id ASC";
+
+	  if ($db->query($sql))
+	    {
+	      $num = $db->num_rows();
+	      $i = 0;
+	      $var = True;
+	      while ($i < $num)
+		{
+		  $obj = $db->fetch_object($i);
+		  if ($oldmod <> $obj->module)
+		    {
+		      $oldmod = $obj->module;
+		      $var = !$var;
+		    }
+		  print '<tr '. $bc[$var].'><td><a href="fiche.php3?id='.$id.'&request=perms&subaction=addrights&rights='.$obj->id.'">Ajouter</a></td><td>';
+		  print $obj->libelle . '</td>';
+		  print '<td><a href="fiche.php3?id='.$id.'&request=perms&subaction=delrights&rights='.$obj->id.'">Supprimer</a></td></tr>';
+		  $i++;
+		}
+	    }
+	  print '</table>';
+
+	  print '</td><td colspan="2" valign="top">';
+	  /*
+	   * Droits
+	   */
+	  print '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
+	  $sql = "SELECT r.libelle, r.module FROM llx_rights_def as r, llx_user_rights as ur";
+	  $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.id ASC";
+	  $var = True;
+	  if ($db->query($sql))
+	    {
+	      $num = $db->num_rows();
+	      $i = 0;
+	      while ($i < $num)
+		{
+		  $obj = $db->fetch_object($i);
+		  if ($oldmod <> $obj->module)
+		    {
+		      $oldmod = $obj->module;
+		      $var = !$var;
+		    }
+		  
+		  print "<tr $bc[$var]><td>".$obj->libelle . '</td></tr>';
+		  $i++;
+		}
+	    }
+	  print '</table>';
+	  print '</td></tr>';
+	  print '<tr><td align="center" colspan="4"><a href="fiche.php3?id='.$id.'">ok</a></td></tr></table>';
+	}
+      else
+	{
+
+
+      /* 
+       * Affichage
+       */      
 
       print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
     
@@ -332,34 +407,6 @@ else
 	  print '</table>';
 	}
      
-      if ($request == 'perms')
-	{
-	  /*
-	   * Droits
-	   */
-	  print '<table>';
-	  $sql = "SELECT r.id, r.libelle, r.module FROM llx_rights_def as r ORDER BY r.id ASC";
-
-	  if ($db->query($sql))
-	    {
-	      $num = $db->num_rows();
-	      $i = 0;
-	      $var = True;
-	      while ($i < $num)
-		{
-		  $obj = $db->fetch_object($i);
-		  if ($oldmod <> $obj->module)
-		    {
-		      $oldmod = $obj->module;
-		      $var = !$var;
-		    }
-		  print '<tr '. $bc[$var].'><td><a href="fiche.php3?id='.$id.'&request=perms&subaction=addrights&rights='.$obj->id.'">Ajouter</a></td><td>';
-		  print $obj->libelle . '</td>';
-		  print '<td><a href="fiche.php3?id='.$id.'&request=perms&subaction=delrights&rights='.$obj->id.'">Supprimer</a></td></tr>';
-		  $i++;
-		}
-	    }
-	  print '</table>';
 	}
        
     }
