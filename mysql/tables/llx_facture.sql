@@ -23,6 +23,7 @@ create table llx_facture
 (
   rowid               integer AUTO_INCREMENT PRIMARY KEY,
   facnumber           varchar(50)        NOT NULL,
+  increment           varchar(10),
   fk_soc              integer            NOT NULL,
   datec               datetime,  -- date de creation de la facture
   datef               date,      -- date de la facture
@@ -39,7 +40,8 @@ create table llx_facture
   fk_user_author      integer,   -- createur de la propale
   fk_user_valid       integer,   -- valideur de la propale
   fk_projet           integer,   -- projet auquel est associé la facture
-  fk_cond_reglement   integer,   -- condition de reglement
+  fk_cond_reglement   integer,   -- condition de reglement (30 jours, fin de mois ...)
+  fk_mode_reglement   integer,   -- mode de reglement (Virement, Prélèvement)
   date_lim_reglement  date,      -- date limite de reglement
   note                text,
   fk_export_compta    integer DEFAULT 0 NOT NULL,
