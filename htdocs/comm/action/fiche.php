@@ -116,7 +116,7 @@ if ($_POST["action"] == 'add_action')
 	      
 	      if ($_POST["actionid"] == 5)
 		{
-		  $libellecal = "Rendez-vous avec ".$contact->fullname;
+		  $libellecal = $langs->trans("TaskRDVWith",$contact->fullname);
 		  $libellecal .= "\n" . $actioncomm->libelle;
 		}
 	      else
@@ -283,7 +283,7 @@ if ($_GET["action"] == 'create')
        * Click to dial
        *
        */
-      if (defined("MAIN_MODULE_CLICKTODIAL") && MAIN_MODULE_CLICKTODIAL==1)
+      if ($conf->clicktodial->enabled)
 	{
 	  $user->fetch_clicktodial();
 
@@ -298,10 +298,12 @@ if ($_GET["action"] == 'create')
 	      print "\n</script>\n";
 	    }
 	}
+
       /*
        *
        *
        */
+
       print_titre ($langs->trans("AddAction"));
       print "<br>";
       
@@ -350,12 +352,12 @@ if ($_GET["action"] == 'create')
 	{
 	  print '<input type="hidden" name="percentage" value="0">';
 	  print '<input type="hidden" name="todo" value="on">';
-	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>To do / 0%</td></tr>';
+	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("ToDo").' / 0%</td></tr>';
 	}
       elseif ($_GET["afaire"] == 2)
 	{
 	  print '<input type="hidden" name="percentage" value="100">';
-	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>Done / 100%</td></tr>';
+	  print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td>'.$langs->trans("Done").' / 100%</td></tr>';
 	} else 
 	  {
 	    print '<tr><td width="10%">'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td><input type="text" name="percentage" value="0%"></td></tr>';
