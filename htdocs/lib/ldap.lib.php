@@ -23,9 +23,18 @@
  */
 
  /**
-  * connection au serveur ldap
+  * Page-level DocBlock
+  * @package ldap.lib
+	* @version 1.9
 	*
 	*/
+
+/**
+ * connection au serveur ldap
+ *
+ * @access public
+ * @return resource
+ */
 
 Function dolibarr_ldap_connect()
 {
@@ -36,6 +45,10 @@ Function dolibarr_ldap_connect()
 
 /**
  * bind au serveur ldap
+ *
+ * @access public
+ *	@param resource $ds
+ * @return bool
  *
  */
 
@@ -51,6 +64,10 @@ Function dolibarr_ldap_bind($ds)
 
 /**
  * unbind du serveur ldap
+ *
+ * @access public
+ *	@param resource $ds
+ * @return bool
  *
  */
 
@@ -68,10 +85,16 @@ Function dolibarr_ldap_unbind($ds)
  * cette fonction permet de verifier la version du
  * protocole du serveur ldap
  *
+ * @access public
+ *	@param resource $ds
+ * @return mixed
+ *
  */
 
 Function dolibarr_ldap_getversion($ds)
 {
+	$version = 0;
+
 	ldap_get_option($ds, LDAP_OPT_PROTOCOL_VERSION, $version);
 
   return $version;
@@ -82,6 +105,11 @@ Function dolibarr_ldap_getversion($ds)
  *
  * cette fonction permet de modifier la version du
  * protocole du serveur ldap
+ *
+ * @access public
+ *	@param resource $ds
+ *	@param integer $version
+ * @return bool
  *
  */
 
@@ -97,6 +125,11 @@ Function dolibarr_ldap_setversion($ds,$version)
  *
  * cette fonction permet d'enlever les accents d'une chaine
  * avant de l'envoyer au serveur ldap
+ *
+ * @access public
+ *	@param string $str
+ * @return string
+ *
  */
 
 Function ldap_unacc($str)
