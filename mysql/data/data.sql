@@ -389,14 +389,14 @@ insert into llx_c_effectif (id,libelle) values (5,  '100 - 500');
 insert into llx_c_effectif (id,libelle) values (6,  '> 500');
 
 delete from llx_c_paiement;
-insert into llx_c_paiement (id,libelle,type) values (0, '-', 3);
-insert into llx_c_paiement (id,libelle,type) values (1, 'TIP', 1);
-insert into llx_c_paiement (id,libelle,type) values (2, 'Virement', 2);
-insert into llx_c_paiement (id,libelle,type) values (3, 'Prélèvement', 1);
-insert into llx_c_paiement (id,libelle,type) values (4, 'Liquide', 0);
-insert into llx_c_paiement (id,libelle,type) values (5, 'Paiement en ligne', 0);
-insert into llx_c_paiement (id,libelle,type) values (6, 'Carte Bancaire', 1);
-insert into llx_c_paiement (id,libelle,type) values (7, 'Chèque', 2);
+insert into llx_c_paiement (id,code,libelle,type) values (0, '',    '-', 3);
+insert into llx_c_paiement (id,code,libelle,type) values (1, 'TIP', 'TIP', 1);
+insert into llx_c_paiement (id,code,libelle,type) values (2, 'VIR', 'Virement', 2);
+insert into llx_c_paiement (id,code,libelle,type) values (3, 'PRE', 'Prélèvement', 1);
+insert into llx_c_paiement (id,code,libelle,type) values (4, 'LIQ', 'Liquide', 0);
+insert into llx_c_paiement (id,code,libelle,type) values (5, 'VAD', 'Paiement en ligne', 0);
+insert into llx_c_paiement (id,code,libelle,type) values (6, 'CB',  'Carte Bancaire', 1);
+insert into llx_c_paiement (id,code,libelle,type) values (7, 'CHQ', 'Chèque', 2);
 
 delete from llx_c_propalst;
 insert into llx_c_propalst (id,label) values (0, 'Brouillon');

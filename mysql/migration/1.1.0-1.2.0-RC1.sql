@@ -65,6 +65,18 @@ alter table c_pays           rename llx_c_pays ;
 alter table c_stcomm         rename llx_c_stcomm ;
 alter table c_typent         rename llx_c_typent ;
 
+alter table llx_c_paiement add code varchar(6) after id;
+
+delete from llx_c_paiement;
+insert into llx_c_paiement (id,code,libelle,type) values (0, '',    '-', 3);
+insert into llx_c_paiement (id,code,libelle,type) values (1, 'TIP', 'TIP', 1);
+insert into llx_c_paiement (id,code,libelle,type) values (2, 'VIR', 'Virement', 2);
+insert into llx_c_paiement (id,code,libelle,type) values (3, 'PRE', 'Prélèvement', 1);
+insert into llx_c_paiement (id,code,libelle,type) values (4, 'LIQ', 'Liquide', 0);
+insert into llx_c_paiement (id,code,libelle,type) values (5, 'VAD', 'Paiement en ligne', 0);
+insert into llx_c_paiement (id,code,libelle,type) values (6, 'CB',  'Carte Bancaire', 1);
+insert into llx_c_paiement (id,code,libelle,type) values (7, 'CHQ', 'Chèque', 2);
+
 
 create table llx_birthday_alert
 (
