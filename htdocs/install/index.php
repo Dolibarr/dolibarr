@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,7 +56,9 @@ else
 if (!file_exists($conf))
 {
   print "<br /><br />Le fichier de configuration <b>conf.php</b> n'existe pas !<br />";
-  print "Vous devez créer un fichier <b>htdocs/conf/conf.php</b> et donner les droits d'écriture dans celui-ci au serveur Apache.<br />";
+  print "Vous devez créer un fichier <b>htdocs/conf/conf.php</b> et donner les droits d'écriture dans celui-ci au serveur Apache.<br /><br />";
+
+  print 'Corrigez le problème et <a href="index.php">rechargez la page</a>';
 
   $err++;
 }
