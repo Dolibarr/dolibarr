@@ -1,4 +1,4 @@
-
+alter table llx_user add egroupware_id integer;
 alter table llx_societe add siret     varchar(14) after siren;
 alter table llx_societe add ape       varchar(4) after siret;
 alter table llx_societe add tva_intra varchar(20) after ape;
