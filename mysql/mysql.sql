@@ -408,6 +408,15 @@ create table llx_rights_def
 );
 
 
+create table llx_facture_tva_sum
+(
+  fk_facture    integer NOT NULL,
+  amount        real  NOT NULL,
+  tva_tx        real  NOT NULL,
+
+  KEY(fk_facture)
+);
+
 create table llx_deplacement
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -652,6 +661,14 @@ create table llx_groupart
 );
 
 
+create table llx_boxes_def
+(
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  name        varchar(255) NOT NULL,
+  file        varchar(255) NOT NULL,
+  note        text
+);
+
 create table llx_chargesociales
 (
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
@@ -856,14 +873,6 @@ create table llx_adherent_type
   mail_valid       text -- mail envoye a la validation
 );
 
-create table llx_boxes_def
-(
-  rowid       integer AUTO_INCREMENT PRIMARY KEY,
-  name        varchar(255) NOT NULL,
-  file        varchar(255) NOT NULL,
-  note        text
-);
-
 create table llx_adherent_options_label
 (
   name             varchar(64) PRIMARY KEY, -- nom de l'attribut
@@ -1017,15 +1026,8 @@ insert into llx_action_def (rowid,titre,description,objet_type) VALUES (1,'Valid
 insert into llx_action_def (rowid,titre,description,objet_type) VALUES (2,'Validation facture','Déclenché lors de la validation d\'une facture','facture');
 
 delete from llx_boxes_def;
-insert into llx_boxes_def (name, file) values ('Factures','box_factures.php');
-insert into llx_boxes_def (name, file) values ('Factures impayées','box_factures_imp.php');
-insert into llx_boxes_def (name, file) values ('Propales','box_propales.php');
-insert into llx_boxes_def (name, file) values ('Derniers clients','box_clients.php');
 
 delete from llx_boxes;
-insert into llx_boxes (box_id, position) values (4,0);
-insert into llx_boxes (box_id, position) values (1,0);
-insert into llx_boxes (box_id, position) values (3,0);
 insert into llx_const(name, value, type, note) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation');
 
 insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2003','chaine','Année de départ');
@@ -1033,17 +1035,10 @@ insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2003',
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_THEME','yellow','chaine','Thème par défaut');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
 
-insert into llx_const(name, value, type) values ('FAC_PDF_FAX','01 02 03 04 05','chaine');
-insert into llx_const(name, value, type) values ('FAC_PDF_SIRET','123 456 789','chaine');
-insert into llx_const(name, value, type) values ('FAC_PDF_INTITULE','Dolibarr','chaine');
-insert into llx_const(name, value, type) values ('FAC_PDF_SIREN','123 456 789 123','chaine');
-insert into llx_const(name, value, type) values ('FAC_PDF_TEL','05 04 03 02 01','chaine');
-insert into llx_const(name, value, type) values ('FAC_PDF_ADRESSE','1 quai Martin\n56400 Auray','texte');
-
 
 insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
 
-insert into llx_const(name, value, type) values ('FACTURE_ADDON','pluton','chaine');
+
 
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage du formulaire de recherche des sociétés dans la barre de gauche');
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage du formulaire de recherche des contacts dans la barre de gauche');
