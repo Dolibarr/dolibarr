@@ -107,8 +107,15 @@ function top_menu($head) {
 
 
   print '<TD width="15%" class="menu" align="center">';
-  print '<A class="menu" href="/product/">Produits</A></TD>';
-  print '<td width="15%" class="menu" align="center">';
+  if ($conf->produit->enabled ) 
+    {
+      print '<A class="menu" href="/product/">Produits</a>';
+    }
+  else
+    {
+      print '-';
+    }
+  print '</td><td width="15%" class="menu" align="center">';
   if ($conf->webcal->enabled) {
     print '<a class="menu" href="'.$conf->webcal->url.'">Calendrier</a>';
   };

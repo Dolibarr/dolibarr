@@ -33,17 +33,20 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("/societe.php", "Sociétés","company");
-  $menu->add_submenu("../soc.php3?&action=create", "Nouvelle société");
+  if ($conf->societe ) 
+    {
+      $menu->add("/societe.php", "Sociétés","company");
+      $menu->add_submenu("../soc.php3?&action=create", "Nouvelle société");
+    }
 
   if ($conf->commercial ) 
     {
       $menu->add("/comm/index.php3", "Commercial");
+
+      $menu->add_submenu("/comm/clients.php3", "Clients");
+
+      $menu->add_submenu("/comm/propal.php3", "Propales");
     }
-
-  $menu->add_submenu("/comm/clients.php3", "Clients");
-
-  $menu->add_submenu("/comm/propal.php3", "Propales");
 
   if ($user->compta > 0) 
     {
@@ -56,8 +59,6 @@ function llxHeader($head = "") {
     {
       $menu->add("/fichinter/", "Fiches d'intervention");
     }
-
-  $menu->add("/fourn/index.php3", "Fournisseurs");
 
   if ($conf->produit->enabled ) 
     {
@@ -75,6 +76,8 @@ function llxHeader($head = "") {
     }
 
   $menu->add("/compta/dons/", "Dons");
+
+  $menu->add("/fourn/index.php3", "Fournisseurs");
 
   $menu->add("/user/", "Utilisateurs");
 

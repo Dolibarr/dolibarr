@@ -66,44 +66,53 @@ $sql = "SELECT c.amount, cc.libelle";
 $sql .= " FROM llx_chargesociales as c, c_chargesociales as cc";
 $sql .= " WHERE c.fk_type = cc.id AND c.paye=0";
 
-if ( $db->query($sql) ) {
+if ( $db->query($sql) ) 
+{
   $num = $db->num_rows();
-  if ($num) {
-    print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-    print "<TR class=\"liste_titre\">";
-    print "<TD colspan=\"2\">Charges à payer</td>";
-    print "</TR>\n";
-    $i = 0;
-
-    while ($i < $num) {
-      $obj = $db->fetch_object( $i);
-      $var = !$var;
-      print "<tr $bc[$var]>";
-      print '<td>'.$obj->libelle.'</td>';
-      print '<td align="right">'.price($obj->amount).'</td>';
-      print '</tr>';
-      $i++;
+  if ($num)
+    {
+      print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+      print "<TR class=\"liste_titre\">";
+      print "<TD colspan=\"2\">Charges à payer</td>";
+      print "</TR>\n";
+      $i = 0;
+      
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var = !$var;
+	  print "<tr $bc[$var]>";
+	  print '<td>'.$obj->libelle.'</td>';
+	  print '<td align="right">'.price($obj->amount).'</td>';
+	  print '</tr>';
+	  $i++;
+	}
+      print '</table><br>';
     }
-    print '</table><br>';
-  }
-} else {
+}
+else
+{
   print $db->error();
 }
 /*
  * Propales
  */
-print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-print "<TR class=\"liste_titre\">";
-print '<td colspan="2">'.translate("Propositions commerciales").'</td>';
-print "</TR>\n";
-
-$sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 2";
-if (valeur($sql)) {
-  $var=!$var;
-  print "<tr $bc[$var]><td><a href=\"propal.php3?viewstatut=2\">A facturer</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
+if ($user->comm > 0 && $conf->commercial ) 
+{
+  print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+  print "<TR class=\"liste_titre\">";
+  print '<td colspan="2">'.translate("Propositions commerciales").'</td>';
+  print "</TR>\n";
+  
+  $sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 2";
+  if (valeur($sql))
+    {
+      $var=!$var;
+      print "<tr $bc[$var]><td><a href=\"propal.php3?viewstatut=2\">A facturer</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
+    }
+  
+  print "</table><br>";
 }
-
-print "</table><br>";
 /*
  * Factures
  */

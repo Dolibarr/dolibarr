@@ -49,7 +49,10 @@ function llxHeader($head = "") {
   $menu->add("/compta/facture.php3","Factures");
   $menu->add_submenu("paiement.php3","Paiements");
 
-  $menu->add("/compta/propal.php3","Propales");
+  if ($user->comm > 0 && $conf->commercial ) 
+    {
+      $menu->add("/compta/propal.php3","Propales");
+    }
 
   $menu->add("charges/index.php3","Charges");
   $menu->add_submenu("sociales/","Prest. Sociales");
