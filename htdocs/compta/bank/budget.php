@@ -26,12 +26,6 @@ llxHeader();
 /*
  *
  *
- *           TODO attention des sommes positives sont a consideres
- *
- *
- *           exemple remboursement de frais de gestion par la banque
- *
- *
  */
 
 if ($bid == 0)
@@ -123,10 +117,10 @@ else
 	  print "<td align=\"right\">".strftime("%d %B %Y",$objp->do)."</TD>\n";
 	  
 	  print "<td><a href=\"ligne.php?rowid=$objp->rowid\">$objp->label</a></td>";
-	  print "<td align=\"right\">".price(abs($objp->amount))."</td><td>&nbsp;</td>";
+	  print "<td align=\"right\">".price(0 - $objp->amount)."</td><td>&nbsp;</td>";
 	  print "</tr>";
 	  $i++;
-	  $total = $total + $objp->amount;
+	  $total = $total + (0 - $objp->amount);
 	}
       $db->free();
       print "<tr><td colspan=\"2\" align=\"right\">Total</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>".MAIN_MONNAIE."</td></tr>";
