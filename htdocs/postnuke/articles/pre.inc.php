@@ -32,19 +32,19 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/boutique/livre/", "Livres");
+  $menu->add(DOL_URL_ROOT."/boutique/livre/", "Livres");
 
-  $menu->add("/boutique/auteur/", "Auteurs");
+  $menu->add(DOL_URL_ROOT."/boutique/auteur/", "Auteurs");
 
-  $menu->add("/boutique/editeur/", "Editeurs");
+  $menu->add(DOL_URL_ROOT."/boutique/editeur/", "Editeurs");
 
-  $menu->add("/product/categorie/", "Catégories");
+  $menu->add(DOL_URL_ROOT."/product/categorie/", "Catégories");
 
-  $menu->add("/product/promotion/", "Promotions");
+  $menu->add(DOL_URL_ROOT."/product/promotion/", "Promotions");
 
   if (defined("MAIN_MODULE_POSTNUKE") && MAIN_MODULE_POSTNUKE)
     {
-      $menu->add("/postnuke/", "Editorial");
+      $menu->add(DOL_URL_ROOT."/postnuke/", "Editorial");
     }
 
   left_menu($menu->liste);
