@@ -111,7 +111,7 @@ create table llx_c_forme_juridique
 )type=innodb;
 
 
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (0, 0,'Non renseignée');
+insert into llx_c_forme_juridique (rowid,fk_pays, code, libelle) values (0, 0, 0,'Non renseignée');
 
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,11,'Artisan Commerçant');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,12,'Commerçant');
@@ -163,16 +163,18 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,92,'Associa
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,93,'Fondation');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,99,'Autre personne morale de droit privé');
 
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 1,'Indépendant');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 2,'SC - Coopérative');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 2,'SCRL - Coopérative à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 3,'SPRL - Société à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 4,'SA - Société Anonyme');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,52,'Société en nom collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,53,'Société en commandite');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,71,'Administration publique');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,91,'Syndicat de propriétaires');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,93,'Fondations');
+
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,100,'Indépendant');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,101,'SC - Coopérative');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,102,'SCRL - Coopérative à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,103,'SPRL - Société à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,104,'SA - Société Anonyme');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,105,'Société en nom collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,106,'Société en commandite');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,107,'Administration publique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,108,'Syndicat de propriétaires');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,109,'Fondations');
+
 
 
 
@@ -265,7 +267,7 @@ create table llx_c_departements
 
 ALTER TABLE llx_c_departements ADD FOREIGN KEY (fk_region) REFERENCES llx_c_regions (code_region);
 
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (  0,0,0,'0',0,'-');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (101,1,  1,'97105',3,'Guadeloupe');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (102,1,  2,'97209',3,'Martinique');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (103,1,  3,'97302',3,'Guyane');

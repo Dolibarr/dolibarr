@@ -38,6 +38,8 @@ class Societe {
   var $url;
   var $siren;
   var $forme_juridique_id;
+  var $forme_juridique_code;
+  var $forme_juridique;
   var $client;
   var $note;
   var $fournisseur;
@@ -117,7 +119,6 @@ class Societe {
     $sql .= ",client = '" . $this->client ."'";
     $sql .= ",fournisseur = '" . $this->fournisseur ."'";
     $sql .= " WHERE idp = '" . $id ."';";
-    
     if ($this->db->query($sql)) 
       {
 
@@ -141,7 +142,7 @@ class Societe {
       $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
       $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique, s.fk_effectif";
       $sql .= ", e.libelle as effectif, e.id as effectif_id";
-      $sql .= ", s.fk_forme_juridique as forme_juridique_id, fj.libelle as forme_juridique";
+      $sql .= ", s.fk_forme_juridique as forme_juridique_id, fj.code as forme_juridique_code, fj.libelle as forme_juridique";
       $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm";
       $sql .= ", p.libelle as pays";
       $sql .= ", st.libelle as stcomm";
@@ -154,7 +155,7 @@ class Societe {
       $sql .= " AND s.fk_stcomm = st.id";
       $sql .= " AND s.fk_effectif = e.id";
       $sql .= " AND s.fk_pays = p.rowid";
-      $sql .= " AND s.fk_forme_juridique = fj.code";
+      $sql .= " AND s.fk_forme_juridique = fj.rowid";
       $result = $this->db->query($sql);
 
       if ($result)
@@ -197,7 +198,8 @@ class Societe {
 	      $this->effectif_id    = $obj->effectif_id;
 
 	      $this->forme_juridique_id  = $obj->forme_juridique_id;
-	      $this->forme_juridique  = $obj->forme_juridique;
+	      $this->forme_juridique_code= $obj->forme_juridique_code;
+	      $this->forme_juridique     = $obj->forme_juridique;
 
 	      $this->prefix_comm = $obj->prefix_comm;
 	      

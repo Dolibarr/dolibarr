@@ -211,7 +211,7 @@ insert into llx_c_pays (rowid,libelle,code) values (25, 'Cameroun',       'CM');
 --
 -- Regions
 --
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (  0,0,0,'0',0,'-');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
 -- Regions de France
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (101,1,  1,'97105',3,'Guadeloupe');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (102,1,  2,'97209',3,'Martinique');
@@ -247,8 +247,8 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 --
 -- Departements/Cantons/Provinces
 --
--- Departements de France
 insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,0,'0',0,'-','-');
+-- Departements de France
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'01','01053',5,'AIN','Ain');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (22,'02','02408',5,'AISNE','Aisne');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (83,'03','03190',5,'ALLIER','Allier');
@@ -409,7 +409,7 @@ insert into llx_c_propalst (id,label) values (4, 'Facturée');
 --
 -- Formes juridiques
 --
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (0, 0,'Non renseignée');
+insert into llx_c_forme_juridique (rowid, fk_pays, code, libelle) values (0, 0, 0,'Non renseignée');
 
 -- Pour la France: Extrait de http://www.insee.fr/fr/nom_def_met/nomenclatures/cj/cjniveau2.htm
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,11,'Artisan Commerçant');
