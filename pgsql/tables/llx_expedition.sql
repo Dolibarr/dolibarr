@@ -27,14 +27,14 @@ create table llx_expedition
   tms                   timestamp,
   ref                   varchar(30) NOT NULL,
   fk_commande           integer,
-  date_creation         timestamp,              -- date de creation
-  date_valid            timestamp,              -- date de validation
+  date_creation         timestamp without time zone,              -- date de creation
+  date_valid            timestamp without time zone,              -- date de validation
   date_expedition       date,                  -- date de l'expedition
   fk_user_author        integer,               -- createur
   fk_user_valid         integer,               -- valideur
   fk_entrepot           integer,
   fk_expedition_methode integer,
-  fk_statut             smallint  default 0,
+  fk_statut             smallint  DEFAULT 0,
   note                  text,
   model_pdf             varchar(50),
 

@@ -22,8 +22,8 @@
 
 create table llx_c_typent
 (
-  id        SERIAL PRIMARY KEY,
-	code      varchar(12) unique not null,
+  id        SERIAL      PRIMARY KEY,
+	code      varchar(12) UNIQUE NOT NULL,
   libelle   varchar(30),
-	active    smallint default 1 not null
+	active    smallint DEFAULT 1 NOT NULL
 );

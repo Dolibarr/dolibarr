@@ -24,8 +24,8 @@
 create table llx_c_propalst
 (
   id              smallint    PRIMARY KEY,
-  code            varchar(12)  UNIQUE NOT NULL,
+  code            varchar(12) UNIQUE NOT NULL,
   label           varchar(30),
-  active          tinyint default 1  NOT NULL
+  active          tinyint DEFAULT 1  NOT NULL
 )type=innodb;
 

@@ -26,10 +26,10 @@ create table llx_commandedet
   fk_product     integer,
   label          varchar(255),
   description    text,
-  tva_tx         real default 19.6, -- taux tva
-  qty		 real,              -- quantité
-  remise_percent real default 0,    -- pourcentage de remise
-  remise         real default 0,    -- montant de la remise
+  tva_tx         real DEFAULT 19.6, -- taux tva
+  qty            real,              -- quantité
+  remise_percent real DEFAULT 0,    -- pourcentage de remise
+  remise         real DEFAULT 0,    -- montant de la remise
   subprice       real,              -- prix avant remise
   price          real               -- prix final
 )type=innodb;

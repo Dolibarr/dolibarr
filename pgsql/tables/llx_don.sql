@@ -26,9 +26,9 @@ create table llx_don
   rowid           SERIAL PRIMARY KEY,
   tms             timestamp,
   fk_statut       smallint NOT NULL DEFAULT 0,-- etat du don promesse/valid
-  datec           timestamp,         -- date de création de l'enregistrement
-  datedon         timestamp,         -- date du don/promesse
-  amount          real default 0,
+  datec           timestamp without time zone,         -- date de création de l'enregistrement
+  datedon         timestamp without time zone,         -- date du don/promesse
+  amount          real DEFAULT 0,
   fk_paiement     integer,
   prenom          varchar(50),
   nom             varchar(50),
@@ -38,7 +38,7 @@ create table llx_don
   ville           varchar(50),
   pays            varchar(50),
   email           varchar(255),
-  public          smallint NOT NULL DEFAULT 1, -- le don est-il public (0,1)
+  public          smallint DEFAULT 1 NOT NULL, -- le don est-il public (0,1)
   fk_don_projet   integer NOT NULL, -- projet auquel est fait le don
   fk_user_author  integer NOT NULL,
   fk_user_valid   integer NOT NULL,

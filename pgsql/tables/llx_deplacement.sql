@@ -24,10 +24,10 @@
 create table llx_deplacement
 (
   rowid           SERIAL PRIMARY KEY,
-  datec           timestamp,
+  datec           timestamp without time zone NOT NULL,
   tms             timestamp,
-  dated           timestamp,
-  fk_user	  integer NOT NULL,
+  dated           timestamp without time zone,
+  fk_user	        integer NOT NULL,
   fk_user_author  integer,
   type            smallint NOT NULL,
   km              smallint,

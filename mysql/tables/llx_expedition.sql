@@ -33,7 +33,7 @@ create table llx_expedition
   fk_user_valid         integer,               -- valideur
   fk_entrepot           integer,
   fk_expedition_methode integer,
-  fk_statut             smallint  default 0,
+  fk_statut             smallint  DEFAULT 0,
   note                  text,
   model_pdf             varchar(50),
 

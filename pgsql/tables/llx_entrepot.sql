@@ -24,11 +24,11 @@
 create table llx_entrepot
 (
   rowid           SERIAL PRIMARY KEY,
-  datec           timestamp,
+  datec           timestamp without time zone,
   tms             timestamp,
   label           varchar(255) NOT NULL,
   description     text,
-  statut          smallint default 1, -- 1 ouvert, 0 fermé
+  statut          smallint DEFAULT 1, -- 1 ouvert, 0 fermé
   fk_user_author  integer
 );
 

@@ -22,10 +22,10 @@
 
 create table llx_c_pays
 (
-  rowid    SERIAL PRIMARY KEY,
-	code     varchar(6) unique not null,
-  libelle  varchar(25) not null,
-  active   smallint default 1  NOT NULL
+  rowid    SERIAL      PRIMARY KEY,
+	code     varchar(6)  UNIQUE NOT NULL,
+  libelle  varchar(25)        NOT NULL,
+  active   smallint DEFAULT 1 NOT NULL
 );
 
 

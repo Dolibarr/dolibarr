@@ -26,7 +26,7 @@ create table llx_deplacement
   datec           datetime NOT NULL,
   tms             timestamp,
   dated           datetime,
-  fk_user	  integer NOT NULL,
+  fk_user	        integer NOT NULL,
   fk_user_author  integer,
   type            smallint NOT NULL,
   km              smallint,

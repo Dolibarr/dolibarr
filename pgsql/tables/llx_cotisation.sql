@@ -25,10 +25,10 @@ create table llx_cotisation
 (
   rowid           SERIAL PRIMARY KEY,
   tms             timestamp,
-  datec           timestamp,
+  datec           timestamp without time zone,
   fk_adherent     integer,
-  dateadh         timestamp,
+  dateadh         timestamp without time zone,
   cotisation      real,
-  fk_bank         integer default NULL,
+  fk_bank         integer DEFAULT NULL,
   note            text
 );

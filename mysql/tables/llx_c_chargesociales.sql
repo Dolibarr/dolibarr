@@ -25,7 +25,7 @@ create table llx_c_chargesociales
 (
   id          integer PRIMARY KEY,
   libelle     varchar(80),
-  deductible  smallint NOT NULL DEFAULT 0,
+  deductible  smallint DEFAULT 0 NOT NULL,
   active      tinyint DEFAULT 1  NOT NULL
 )type=innodb;
 

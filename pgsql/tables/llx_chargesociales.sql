@@ -25,13 +25,9 @@
 create table llx_chargesociales
 (
   rowid      SERIAL PRIMARY KEY,
-  date_ech   timestamp NOT NULL, -- date d'echeance
-  date_pai   timestamp, -- date de paiements
   libelle    varchar(80),
-  fk_type    integer,
-  amount     real     default 0 NOT NULL,
-  paye       smallint default 0 NOT NULL,
-  periode    date
+  deductible smallint DEFAULT 0 NOT NULL,
+  active     smallint DEFAULT 0 NOT NULL
 );
 
 

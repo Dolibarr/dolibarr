@@ -28,7 +28,7 @@ create table llx_entrepot
   tms             timestamp,
   label           varchar(255) NOT NULL,
   description     text,
-  statut          tinyint default 1, -- 1 ouvert, 0 fermé
+  statut          tinyint DEFAULT 1, -- 1 ouvert, 0 fermé
   fk_user_author  integer
 )type=innodb;
 

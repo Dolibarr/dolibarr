@@ -28,5 +28,5 @@ create table llx_expedition_methode
   code             varchar(30) NOT NULL,
   libelle          varchar(50) NOT NULL,
   description      text,
-  statut           smallint default 0
+  statut           smallint DEFAULT 0
 );

@@ -25,7 +25,7 @@
 create table llx_domain
 (
   rowid           SERIAL PRIMARY KEY,
-  datec           timestamp,
+  datec           timestamp without time zone,
   label           varchar(255),
   note            text
 );

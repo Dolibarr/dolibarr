@@ -29,6 +29,6 @@ create table llx_c_regions
   cheflieu    varchar(7),
   tncc        integer,
   nom         varchar(50),
-  active      tinyint default 1 NOT NULL
+  active      tinyint DEFAULT 1 NOT NULL
 )type=innodb;
 

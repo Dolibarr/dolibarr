@@ -22,9 +22,9 @@
 
 create table llx_c_propalst
 (
-  id              SERIAL PRIMARY KEY,
-	code            varchar(12) unique not null,
+  id              SERIAL      PRIMARY KEY,
+	code            varchar(12) UNIQUE NOT NULL,
   label           varchar(30),
-	active          integer default 1 not null
+	active          integer DEFAULT 1  NOT NULL
 );
 

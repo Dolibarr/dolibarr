@@ -26,7 +26,7 @@ create table llx_commande
   tms              timestamp,
   fk_soc           integer,
   fk_soc_contact   integer,
-  fk_projet        integer default 0,     -- projet auquel est rattache la commande
+  fk_projet        integer DEFAULT 0,     -- projet auquel est rattache la commande
   ref              varchar(30) NOT NULL,  -- propal number
   date_creation    datetime,              -- date de creation 
   date_valid       datetime,              -- date de validation

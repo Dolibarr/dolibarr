@@ -26,9 +26,9 @@
 create table llx_compta
 (
   rowid             SERIAL PRIMARY KEY,
-  datec             timestamp,
+  datec             timestamp without time zone,
   datev             date,           -- date de valeur
-  amount            real NOT NULL default 0,
+  amount            real DEFAULT 0 NOT NULL,
   label             varchar(255),
   fk_compta_account integer,
   fk_user_author    integer,

@@ -22,8 +22,8 @@
 create table llx_expeditiondet
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
-  fk_expedition     integer not null,
-  fk_commande_ligne integer not null,
+  fk_expedition     integer NOT NULL,
+  fk_commande_ligne integer NOT NULL,
   qty               real,              -- quantité
 
   key(fk_expedition),

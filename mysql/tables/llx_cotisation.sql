@@ -27,6 +27,6 @@ create table llx_cotisation
   fk_adherent     integer,
   dateadh         datetime,
   cotisation      real,
-  fk_bank         int(11) default NULL,
+  fk_bank         int(11) DEFAULT NULL,
   note            text
 )type=innodb;

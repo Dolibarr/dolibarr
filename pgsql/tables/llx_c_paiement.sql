@@ -35,7 +35,7 @@ create table llx_c_paiement
 	code			 varchar(6),
   libelle    varchar(30),
   type       smallint,
-	active     smallint default 1 not null
+	active     smallint DEFAULT 1 not null
 );
 
 

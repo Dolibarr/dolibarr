@@ -24,9 +24,9 @@
 create table llx_c_forme_juridique
 (
   rowid      serial PRIMARY KEY,
-	code       varchar(12) unique not null,
-  fk_pays    integer not null,
+	code       varchar(12) UNIQUE NOT NULL,
+  fk_pays    integer NOT NULL,
   libelle    varchar(255),
-  active     smallint default 1 not null
+  active     smallint DEFAULT 1 NOT NULL
 );
 

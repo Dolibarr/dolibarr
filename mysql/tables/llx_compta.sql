@@ -25,12 +25,12 @@ create table llx_compta
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   datec             datetime,
   datev             date,           -- date de valeur
-  amount            real NOT NULL default 0,
+  amount            real DEFAULT 0 NOT NULL ,
   label             varchar(255),
   fk_compta_account integer,
   fk_user_author    integer,
   fk_user_valid     integer,
-  valid             tinyint default 0,
+  valid             tinyint DEFAULT 0,
   note              text
 
 )type=innodb;
