@@ -27,6 +27,7 @@ require("../actioncomm.class.php");
 
 llxHeader();
 $user->getrights('propale');
+$user->getrights('commande');
 $user->getrights('projet');
 
 if ($sortorder == "") {
@@ -266,16 +267,24 @@ if ($socid > 0) {
      *
      */
     print '<br><table id="actions" cellspadding="3" cellspacing="0" width="100%"><tr>';
-    print '<td align="center" width="20%">-</td>';
+
     if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
       {
-	print "<td align=\"center\"><a href=\"addpropal.php?socidp=$objsoc->idp&action=create\">Créer une proposition</a></td>";
+	print "<td align=\"center\"><a href=\"addpropal.php?socidp=$objsoc->idp&amp;action=create\">Créer une proposition</a></td>";
       }
     else
       {
 	print '<td align="center" width="20%">-</td>';
       }
     print '<td align="center" width="20%">-</td>';
+    if (defined("MAIN_MODULE_COMMANDE") && MAIN_MODULE_COMMANDE && $user->rights->commande->creer)
+      {
+	print '<td align="center" width="20%"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->idp.'&amp;action=create">Créer une commande</a></td>';
+      }
+    else
+      {
+	print '<td align="center" width="20%">-</td>';
+      }
 
     print '<td align="center" width="20%"><a href="../projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a></td>';
     print '<td align="center" width="20%">-</td>';  
