@@ -106,13 +106,16 @@ class MenuLeft {
              * Menu HOME
              */
             if ($mainmenu == 'home') {
-                $newmenu->add(DOL_URL_ROOT."/user/index.php?leftmenu=users", $langs->trans("Users"));
+                $langs->load("users");
+                $newmenu->add(DOL_URL_ROOT."/user/index.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"));
         
                 if($user->admin)
                 {
-                  $langs->load("users");
                   $langs->load("admin");
+                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/index.php", $langs->trans("ListOfUsers"));
                   if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/fiche.php?action=create", $langs->trans("NewUser"));
+                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/index.php", $langs->trans("ListOfGroups"));
+                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/fiche.php?action=create", $langs->trans("NewGroup"));
                   
                   $newmenu->add(DOL_URL_ROOT."/admin/index.php?leftmenu=setup", $langs->trans("Setup"));
                   if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/index.php", $langs->trans("GlobalSetup"));
@@ -268,7 +271,7 @@ class MenuLeft {
                 if ($conf->don->enabled)
                 {
                   $langs->load("donations");
-                  $newmenu->add(DOL_URL_ROOT."/compta/dons/index.php?leftmenu=donations",$langs->trans("Donations"));
+                  $newmenu->add(DOL_URL_ROOT."/compta/dons/index.php?leftmenu=donations&mainmenu=",$langs->trans("Donations"));
                 }
                 
                 if ($conf->deplacement->enabled)
