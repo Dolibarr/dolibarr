@@ -125,9 +125,9 @@ if ($sortfield == "")
   $sortfield="a.datea";
 }
 
-$sql = "SELECT s.nom as societe, s.idp as socidp,a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact, a.note ";
+$sql = "SELECT s.nom as societe, s.idp as socidp,a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact, a.note, a.percent as percent";
 $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_societe as s, llx_user as u";
-$sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid AND a.percent = 100";
+$sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
 
 if ($type)
 {
@@ -156,20 +156,21 @@ if ( $db->query($sql) )
       $societe = new Societe($db);
       $societe->fetch($socid);
       
-      print_barre_liste("Liste des actions commerciales effectuées sur " . $societe->nom, $page, $PHP_SELF,'',$sortfield,$sortorder,'',$num);
+      print_barre_liste("Liste des actions commerciales réalisées ou à faire sur " . $societe->nom, $page, $PHP_SELF,'',$sortfield,$sortorder,'',$num);
     }
   else
     {      
-      print_barre_liste("Liste des actions commerciales", $page, $PHP_SELF,'',$sortfield,$sortorder,'',$num);
+      print_barre_liste("Liste des actions commerciales réalisées ou à faire", $page, $PHP_SELF,'',$sortfield,$sortorder,'',$num);
     }
   $i = 0;
   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print '<TR class="liste_titre">';
   print '<TD colspan="4">Date</TD>';
-  print '<TD>Société</a></td>';
-  print '<TD>Action</a></TD>';
-  print '<td>Contact</a></TD>';
-  print "<td>Commentaires</td><td align=\"right\">Auteur</TD>";
+  print '<TD>Avancement</TD>';
+  print '<TD>Action</TD>';
+  print '<TD>Société</td>';
+  print '<td>Contact</TD>';
+  print "<td>Commentaires</td><td>Auteur</TD>";
   print "</TR>\n";
       $var=True;
       while ($i < min($num,$limit)) {
@@ -181,36 +182,40 @@ if ( $db->query($sql) )
 	
 	if ($oldyear == strftime("%Y",$obj->da) )
 	  {
-	    print '<td align="center">&nbsp;</td>';
+	    print '<td>&nbsp;</td>';
 	  }
 	else
 	  {
-	    print "<TD>" .strftime("%Y",$obj->da)."</TD>\n"; 
+	    print "<TD width=\"30\">" .strftime("%Y",$obj->da)."</TD>\n"; 
 	    $oldyear = strftime("%Y",$obj->da);
 	  }
 	
 	if ($oldmonth == strftime("%Y%b",$obj->da) )
 	  {
-	    print '<td align="center">&nbsp;</td>';
+	    print '<td width=\"20\">&nbsp;</td>';
 	  }
 	else
 	  {
-	    print "<TD>" .strftime("%b",$obj->da)."</TD>\n"; 
+	    print "<TD width=\"20\">" .strftime("%b",$obj->da)."</TD>\n"; 
 	    $oldmonth = strftime("%Y%b",$obj->da);
 	  }
 	
-	print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
-	print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
+	print "<TD width=\"20\">" .strftime("%d",$obj->da)."</TD>\n"; 
+	print "<TD width=\"30\">" .strftime("%H:%M",$obj->da)."</TD>\n";
+    if ($obj->percent < 100) {
+    	print "<TD align=\"center\">".$obj->percent."%</TD>";
+	}
+	else {
+		print "<TD align=\"center\"><b>réalisé</b></TD>";
+	}
+	print '<TD><a href="fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
 	
-	print '<TD width="20%">';
-	
+	print '<TD>';
 	print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socidp.'">'.$obj->societe.'</A></TD>';
-	
-	print '<TD width="30%"><a href="fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
 	/*
 	 * Contact
 	 */
-	print '<td width="30%">';
+	print '<td>';
 	if ($obj->fk_contact)
 	  {
 	    $cont = new Contact($db);
@@ -226,7 +231,7 @@ if ( $db->query($sql) )
 	 *
 	 */
 	print '<td>'.substr($obj->note, 0, 20).' ...</td>';
-	print "<TD align=\"right\" width=\"20%\">$obj->code</TD>\n";
+	print "<TD>$obj->code</TD>\n";
 	
 	print "</TR>\n";
 	$i++;
