@@ -724,6 +724,49 @@ class Propal
 	  return -1;
 	}
     }
+
+
+  /*
+   * Information sur l'objet
+   *
+   */
+  Function info($id) 
+    {
+      $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec";
+
+      $sql .= " FROM ".MAIN_DB_PREFIX."propal as c";
+      $sql .= " WHERE c.rowid = $id";
+      
+      if ($this->db->query($sql)) 
+	{
+	  if ($this->db->num_rows()) 
+	    {
+	      $obj = $this->db->fetch_object($result , 0);
+
+	      $this->id                = $obj->rowid;
+
+	      $cuser = new User($this->db, $obj->fk_user);
+	      $cuser->fetch();
+	      $this->user_creation     = $cuser;
+
+	      $muser = new User($this->db, $obj->fk_user_modif);
+	      $muser->fetch();
+	      $this->user_modification = $muser;
+
+	      $this->date_creation     = $obj->datec;
+	      $this->date_modification = $obj->tms;
+
+	    }
+	  $this->db->free();
+
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+    }
+
+
 }  
 
 class PropaleLigne  
