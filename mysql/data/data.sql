@@ -31,6 +31,11 @@ insert into llx_boxes_def (name, file) values ('Factures','box_factures.php');
 insert into llx_boxes_def (name, file) values ('Factures impayées','box_factures_imp.php');
 insert into llx_boxes_def (name, file) values ('Propales','box_propales.php');
 insert into llx_boxes_def (name, file) values ('Derniers clients','box_clients.php');
+
+delete from llx_boxes;
+insert into llx_boxes (box_id, position) values (4,0);
+insert into llx_boxes (box_id, position) values (1,0);
+insert into llx_boxes (box_id, position) values (3,0);
 --
 -- Constantes de configuration
 --
