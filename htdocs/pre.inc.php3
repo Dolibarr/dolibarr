@@ -34,6 +34,8 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
+  $menu->add("/societe.php", "Sociétés");
+
   $menu->add("/comm/index.php3", "Commercial");
 
   $menu->add_submenu("/comm/clients.php3", "Clients");

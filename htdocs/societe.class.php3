@@ -40,6 +40,7 @@ class Societe {
 
     $this->db = $DB;
     $this->id = $id;
+    $this->client = 0;
     $this->fournisseur = 0;
     return 1;
   }
@@ -69,14 +70,6 @@ class Societe {
    *
    */
   Function update($id) {
-    /*
-     * Force au statut de fournisseur si ce n'est pas un client
-     * sinon l'entreprise disparait de toutes les listes
-     */
-    if ($this->client == 0 )
-      {
-	$this->fournisseur = 1;
-      }
 
     $sql = "UPDATE societe ";
     $sql .= " SET nom = '" . trim($this->nom) ."'";
