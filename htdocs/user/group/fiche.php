@@ -222,9 +222,9 @@ else
 	  
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
-	  print_liste_field_titre($langs->trans("LastName"),"index.php","name","","","",$sortfield);
-	  print_liste_field_titre($langs->trans("FirstName"),"index.php","firstname","","","",$sortfield);
-	  print_liste_field_titre($langs->trans("Code"),"index.php","code","","","",$sortfield);
+	  print '<td>'.$langs->trans("LastName").'</td>';
+	  print '<td>'.$langs->trans("FirstName").'</td>';
+	  print '<td>'.$langs->trans("Code").'</td>';
 	  print "<td>-</td></tr>\n";
 	  $var=True;
 	  while ($i < $num)
