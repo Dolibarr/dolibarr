@@ -22,6 +22,11 @@
  *
  */
 
+ /**
+  * connection au serveur ldap
+	*
+	*/
+
 Function dolibarr_ldap_connect()
 {
   $ldapconnect = ldap_connect(LDAP_SERVER_HOST);
@@ -29,6 +34,10 @@ Function dolibarr_ldap_connect()
   return $ldapconnect;
 }
 
+/**
+ * bind au serveur ldap
+ *
+ */
 
 Function dolibarr_ldap_bind($ds)
 {
@@ -40,6 +49,10 @@ Function dolibarr_ldap_bind($ds)
   return $ldapbind;
 }
 
+/**
+ * unbind du serveur ldap
+ *
+ */
 
 Function dolibarr_ldap_unbind($ds)
 {
@@ -49,6 +62,13 @@ Function dolibarr_ldap_unbind($ds)
   return $ldapunbind;
 }
 
+/**
+ * verification de la version du serveur ldap
+ *
+ * cette fonction permet de verifier la version du
+ * protocole du serveur ldap
+ *
+ */
 
 Function dolibarr_ldap_getversion($ds)
 {
@@ -57,6 +77,13 @@ Function dolibarr_ldap_getversion($ds)
   return $version;
 }
 
+/**
+ * changement de la version du serveur ldap
+ *
+ * cette fonction permet de modifier la version du
+ * protocole du serveur ldap
+ *
+ */
 
 Function dolibarr_ldap_setversion($ds,$version)
 {
@@ -65,6 +92,12 @@ Function dolibarr_ldap_setversion($ds,$version)
   return $ldapsetversion;
 }
 
+/**
+ * suppression des accents d'une chaîne
+ *
+ * cette fonction permet d'enlever les accents d'une chaine
+ * avant de l'envoyer au serveur ldap
+ */
 
 Function ldap_unacc($str)
 {
