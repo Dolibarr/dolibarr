@@ -69,8 +69,9 @@ class Societe {
   function Societe($DB, $id=0)
   {
     global $config;
-    $this->creation_bit = 0;
     $this->db = $DB;
+    $this->creation_bit = 0;
+
     $this->id = $id;
     $this->client = 0;
     $this->fournisseur = 0;
@@ -92,58 +93,81 @@ class Societe {
 
     $this->mod_codeclient = new $var;
 
-
     $this->codeclient_modifiable = $this->mod_codeclient->modifiable;
 
     return 1;
   }
 
   /**
-   *    \brief  Crée la societe en base
-   *    \param  user    Utilisateur qui demande la création
+   *    \brief      Crée la societe en base
+   *    \param      user        Objet utilisateur qui demande la création
+   *    \return     0 si ok, < 0 si erreur
    */
 	 
   function create($user='')
   {
+    global $langs;
+    
+    $this->nom=trim($this->nom);
+    
+    $this->db->begin();
 
     $result = $this->verify();
-
-    if ($result == 0)
-      {
-
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat) ";
-	$sql .= " VALUES ('".trim($this->nom)."', now(), now(), '".$user->id."');";
-	
-	if ($this->db->query($sql) )
-	  {
-	    $this->id = $this->db->last_insert_id();
-	  }
-	
-	$this->creation_bit = 1;
-
-	$result = $this->update($this->id);
-
-	return $result;
-      }
-    else
-      {
-	return -1;
-      }      
+    
+    if ($result >= 0)
+    {
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat) ";
+        $sql .= " VALUES ('".addslashes($this->nom)."', now(), now(), '".$user->id."')";
+        
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            $this->id = $this->db->last_insert_id();
+            
+            $this->creation_bit = 1;
+            
+            $result = $this->update($this->id);
+            
+            $this->db->commit();
+            return $result;
+        }
+        else
+        {
+            if ($this->db->errno() == $this->db->ERROR_DUPLICATE)
+            {
+                $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
+            }
+            else {
+        		dolibarr_syslog("Societe::Create echec insert sql=$sql");
+            }
+            $this->db->rollback();
+            return -2;
+        }      
+    
+    }
+    else {
+        $this->db->rollback();
+   		dolibarr_syslog("Societe::Create echec verify sql=$sql");
+        return -1;
+    }
     
   }
 
 
   /**
-   *    \brief  Verification lors de la modification
+   *    \brief      Verification lors de la modification
+   *    \return     0 si ok, < 0 en cas d'erreur
    */
    
   function verify()
   {
+    $this->nom=trim($this->nom);
+
     $result = 0;
-    $this->error_message = "";
-    if (strlen(trim($this->nom)) == 0)
+
+    if (! $this->nom)
       {
-	$this->error_message = "Le nom de la société ne peut être vide.\n";
+	$this->error = "Le nom de la société ne peut être vide.\n";
 	$result = -2;
       }
 
@@ -158,44 +182,66 @@ class Societe {
 	  {
 	    if ($rescode == -1)
 	      {
-		$this->error_message .= "La syntaxe du code client est incorrecte.\n";
+		$this->error .= "La syntaxe du code client est incorrecte.\n";
 	      }
 	    
 	    if ($rescode == -2)
 	      {
-		$this->error_message .= "Vous devez saisir un code client.\n";
+		$this->error .= "Vous devez saisir un code client.\n";
 	      }
 	    
 	    if ($rescode == -3)
 	      {
-		$this->error_message .= "Ce code client est déjà utilisé.\n";
+		$this->error .= "Ce code client est déjà utilisé.\n";
 	      }
 	    
 	    $result = -3;
 	  }
-      }
-
-	
+	  
+    }
 
     return $result;
   }
 
   /**
-   *    \brief  Mise a jour des paramètres de la société
-   *    \param  id      id societe
-   *    \param  user    Utilisateur qui demande la mise à jour
+   *    \brief      Mise a jour des paramètres de la société
+   *    \param      id      id societe
+   *    \param      user    Utilisateur qui demande la mise à jour
+   *    \return     0 si ok, < 0 si erreur
    */
 	 
   function update($id, $user='')
   {
+    global $langs;
+    
     dolibarr_syslog("Societe::Update");
+
+    $this->capital=trim($this->capital);
+    $this->nom=trim($this->nom);
+    $this->adresse=trim($this->adresse);
+    $this->cp=trim($this->cp);
+    $this->ville=trim($this->ville);
+    $this->departement_id=trim($this->departement_id);
+    $this->pays_id=trim($this->pays_id);
+    $this->tel=trim($this->tel);
+    $this->fax=trim($this->fax);
+    $this->url=trim($this->url);
+    $this->siren=trim($this->siren);
+    $this->siret=trim($this->siret);
+    $this->ape=trim($this->ape);
+    $this->prefix_comm=trim($this->prefix_comm);
+    $this->tva_intra=trim($this->tva_intra);
+    $this->capital=trim($this->capital);
+    $this->effectif_id=trim($this->effectif_id);
+    $this->forme_juridique_code=trim($this->forme_juridique_code);
+    
     $result = $this->verify();
 
     if ($result == 0)
       {
 	dolibarr_syslog("Societe::Update verify ok");
 
-	if (strlen(trim($this->capital)) == 0)
+	if (strlen($this->capital) == 0)
 	  {
 	    $this->capital = 0;
 	  }
@@ -205,17 +251,14 @@ class Societe {
 	$this->fax = ereg_replace(" ","",$this->fax);
 	$this->fax = ereg_replace("\.","",$this->fax);
 	
-	
 	/*
 	 * \todo simpliste pour l'instant mais remplit 95% des cas à améliorer
 	 */
 	if ($this->departement_id == -1 && $this->pays_id == 1)
 	  {
-	    if (strlen(trim($this->cp)) == 5)
+	    if (strlen($this->cp) == 5)
 	      {
-		$depid = departement_rowid($this->db, 
-					   substr(trim($this->cp),0,2), 
-					   $this->pays_id);
+		$depid = departement_rowid($this->db, substr($this->cp,0,2), $this->pays_id);
 		if ($depid > 0)
 		  {
 		    $this->departement_id = $depid;
@@ -228,44 +271,42 @@ class Societe {
 	 * sinon il est impossible de vider les champs
 	 */
 
-	
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
-	$sql .= " SET nom = '" . addslashes(trim($this->nom)) ."'"; // Champ obligatoire
+	$sql .= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
 	
+	$sql .= ",address = '" . addslashes($this->adresse) ."'";
 	
-	$sql .= ",address = '" . addslashes(trim($this->adresse)) ."'";
+	if ($this->cp)
+	  { $sql .= ",cp = '" . $this->cp ."'"; }
 	
-	if (trim($this->cp))
-	  { $sql .= ",cp = '" . trim($this->cp) ."'"; }
+	if ($this->ville)
+	  { $sql .= ",ville = '" . addslashes($this->ville) ."'"; }
 	
-	if (trim($this->ville))
-	  { $sql .= ",ville = '" . addslashes(trim($this->ville)) ."'"; }
-	
-	if (trim($this->departement_id)) 
+	if ($this->departement_id) 
 	  { $sql .= ",fk_departement = '" . $this->departement_id ."'"; }
 	
-	if (trim($this->pays_id))
+	if ($this->pays_id)
 	  { $sql .= ",fk_pays = '" . $this->pays_id ."'"; }
 	      
-	$sql .= ",tel = '" . trim($this->tel) ."'"; 	
-	$sql .= ",fax = '" . trim($this->fax) ."'"; 	
-	$sql .= ",url = '" . trim($this->url) ."'"; 	
-	$sql .= ",siren = '" . trim($this->siren) ."'"; 	
-	$sql .= ",siret = '" . trim($this->siret) ."'"; 	
-	$sql .= ",ape = '" . trim($this->ape) ."'"; 
+	$sql .= ",tel = '" . $this->tel ."'"; 	
+	$sql .= ",fax = '" . $this->fax ."'"; 	
+	$sql .= ",url = '" . $this->url ."'"; 	
+	$sql .= ",siren = '" . $this->siren ."'"; 	
+	$sql .= ",siret = '" . $this->siret ."'"; 	
+	$sql .= ",ape = '" . $this->ape ."'"; 
 
-	if (trim($this->prefix_comm)) 
-	  { $sql .= ",prefix_comm = '" . trim($this->prefix_comm) ."'"; }
-	if (trim($this->tva_intra)) 
-	  { $sql .= ",tva_intra = '" . trim($this->tva_intra) ."'"; }
-	if (trim($this->capital))  
-	  { $sql .= ",capital = '" . trim($this->capital) ."'"; }
-	if (trim($this->effectif_id))  
-	  { $sql .= ",fk_effectif = '" . trim($this->effectif_id) ."'"; }
+	if ($this->prefix_comm) 
+	  { $sql .= ",prefix_comm = '" . $this->prefix_comm ."'"; }
+	if ($this->tva_intra) 
+	  { $sql .= ",tva_intra = '" . $this->tva_intra ."'"; }
+	if ($this->capital)  
+	  { $sql .= ",capital = '" . $this->capital ."'"; }
+	if ($this->effectif_id)  
+	  { $sql .= ",fk_effectif = '" . $this->effectif_id ."'"; }
 	
-	if (trim($this->forme_juridique_code))
+	if ($this->forme_juridique_code)
 	  { 
-	    $sql .= ",fk_forme_juridique = '".trim($this->forme_juridique_code)."'";
+	    $sql .= ",fk_forme_juridique = '".$this->forme_juridique_code."'";
 	  }
 	
 	$sql .= ",client = " . $this->client;
@@ -304,7 +345,7 @@ class Societe {
 	    if ($this->db->errno() == $this->db->ERROR_DUPLICATE)
 	      {
 		// Doublon
-		$this->error_message = "Erreur, le prefix '".$this->prefix_comm."' existe déjà vous devez en choisir un autre";
+		$this->error = $langs->trans("ErrorPrefixAlreadyExists",$this->prefix_comm);
 		$result =  -1;
 	      }
 	    else
@@ -467,7 +508,7 @@ class Societe {
 	  }
 	else
 	  {
-	    $this->error_message .= "Impossible de supprimer les contacts.\n";
+	    $this->error .= "Impossible de supprimer les contacts.\n";
 	    dolibarr_syslog("Societe::Delete erreur -1");
 	  }
 
@@ -480,7 +521,7 @@ class Societe {
 	  }
 	else
 	  {
-	    $this->error_message .= "Impossible de supprimer le RIB.\n";
+	    $this->error .= "Impossible de supprimer le RIB.\n";
 	    dolibarr_syslog("Societe::Delete erreur -2");
 	  }
 	  	  
@@ -493,7 +534,7 @@ class Societe {
 	  }
 	else
 	  {
-	    $this->error_message .= "Impossible de supprimer la société.\n";
+	    $this->error .= "Impossible de supprimer la société.\n";
 	    dolibarr_syslog("Societe::Delete erreur -3");
 	  }
 

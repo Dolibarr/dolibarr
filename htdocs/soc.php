@@ -47,27 +47,27 @@ $soc = new Societe($db);
 
 if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 {
-  $soc->nom                   = $_POST["nom"];
-  $soc->adresse               = $_POST["adresse"];
-  $soc->cp                    = $_POST["cp"];
-  $soc->ville                 = $_POST["ville"];
-  $soc->pays_id               = $_POST["pays_id"];
-  $soc->departement_id        = $_POST["departement_id"];
-  $soc->tel                   = $_POST["tel"];
-  $soc->fax                   = $_POST["fax"];
+  $soc->nom                   = stripslashes($_POST["nom"]);
+  $soc->adresse               = stripslashes($_POST["adresse"]);
+  $soc->cp                    = stripslashes($_POST["cp"]);
+  $soc->ville                 = stripslashes($_POST["ville"]);
+  $soc->pays_id               = stripslashes($_POST["pays_id"]);
+  $soc->departement_id        = stripslashes($_POST["departement_id"]);
+  $soc->tel                   = stripslashes($_POST["tel"]);
+  $soc->fax                   = stripslashes($_POST["fax"]);
   $soc->url                   = ereg_replace( "http://", "", $_POST["url"] );
-  $soc->siren                 = $_POST["siren"];
-  $soc->siret                 = $_POST["siret"];
-  $soc->ape                   = $_POST["ape"];
-  $soc->prefix_comm           = $_POST["prefix_comm"];
-  $soc->code_client           = $_POST["code_client"];
-  $soc->codeclient_modifiable = $_POST["codeclient_modifiable"];
-  $soc->capital               = $_POST["capital"];
-  $soc->tva_intra             = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
-  $soc->forme_juridique_code  = $_POST["forme_juridique_code"];
-  $soc->effectif_id           = $_POST["effectif_id"];
-  $soc->client                = $_POST["client"];
-  $soc->fournisseur           = $_POST["fournisseur"];
+  $soc->siren                 = stripslashes($_POST["siren"]);
+  $soc->siret                 = stripslashes($_POST["siret"]);
+  $soc->ape                   = stripslashes($_POST["ape"]);
+  $soc->prefix_comm           = stripslashes($_POST["prefix_comm"]);
+  $soc->code_client           = stripslashes($_POST["code_client"]);
+  $soc->codeclient_modifiable = stripslashes($_POST["codeclient_modifiable"]);
+  $soc->capital               = stripslashes($_POST["capital"]);
+  $soc->tva_intra             = stripslashes($_POST["tva_intra_code"] . $_POST["tva_intra_num"]);
+  $soc->forme_juridique_code  = stripslashes($_POST["forme_juridique_code"]);
+  $soc->effectif_id           = stripslashes($_POST["effectif_id"]);
+  $soc->client                = stripslashes($_POST["client"]);
+  $soc->fournisseur           = stripslashes($_POST["fournisseur"]);
 
   if ($_POST["action"] == 'update')
     {
@@ -77,7 +77,7 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 	  $soc->id = $_GET["socid"];
 	  // doublon sur le prefix comm
 	  $no_reload = 1;
-	  $mesg = $soc->error_message;//"Erreur, le prefix '".$soc->prefix_comm."' existe déjà vous devez en choisir un autre";
+	  $mesg = $soc->error;//"Erreur, le prefix '".$soc->prefix_comm."' existe déjà vous devez en choisir un autre";
 	  $_GET["action"]= "edit";
 	}
       else
@@ -149,10 +149,10 @@ if ($_GET["action"] == 'create')
       print_titre($langs->trans("NewCompany"));
       print "<br>\n";
       
-      if ($soc->error_message)
+      if ($soc->error)
 	{
 	  print '<div class="errormessage">';
-	  print nl2br($soc->error_message);
+	  print nl2br($soc->error);
 	  print '</div>';
 	}
 
@@ -164,7 +164,7 @@ if ($_GET["action"] == 'create')
       
       print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
       print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
-      print stripslashes($soc->adresse);
+      print $soc->adresse;
       print '</textarea></td></tr>';
       
       print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"></td>';
@@ -237,10 +237,10 @@ elseif ($_GET["action"] == 'edit')
 	  $soc->fetch($_GET["socid"]);
 	}
 
-      if ($soc->error_message)
+      if ($soc->error)
 	{
-	  print '<div class="errormessage">';
-	  print $soc->error_message;
+	  print '<div class="error">';
+	  print $soc->error;
 	  print '</div>';
 	}
 
@@ -250,7 +250,7 @@ elseif ($_GET["action"] == 'edit')
 
       print '<table class="border" width="100%">';
 
-      print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="40" name="nom" value="'.stripslashes($soc->nom).'"></td>';
+      print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td>';
       print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
 
       print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
@@ -398,10 +398,10 @@ else
     }
   
 
-  if ($soc->error_message)
+  if ($soc->error)
     {
       print '<div class="errormessage">';
-      print $soc->error_message;
+      print $soc->error;
       print '</div>';
     }
 
