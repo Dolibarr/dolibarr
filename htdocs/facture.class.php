@@ -1134,12 +1134,63 @@ class Facture
 	}
     }
 
+  /**
+   * \brief     Créé une demande de prélèvement
+   * \param     user         utilisateur créant la demande
+   */
+  function demande_prelevement($user)
+  {
+    dolibarr_syslog("Facture::DemandePrelevement");
+    if ($this->statut > 0 && $this->paye == 0 &&  && $this->mode_reglement == 3)
+      {	  
+	$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."prelevement_facture_demande";
+	$sql .= " WHERE fk_facture=".$this->id;
+	$sql .= " AND traite = 0";
+	
+	if ( $this->db->query( $sql) )
+	  {
+	    $row = $this->db->fetch_row();
+	    
+	    if ($row[0] == 0)
+	      {		
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture_demande";
+		$sql .= " (fk_facture, date_demande, fk_user_demande)";
+		$sql .= " VALUES (".$this->id.",now(),".$user->id.")";
+		
+		if ( $this->db->query( $sql) )
+		  {
+		    return 0;
+		  }
+		else
+		  {
+		    dolibarr_syslog("Facture::DemandePrelevement Erreur");
+		    return -1;
+		  }
+	      }
+	    else
+	      {
+		dolibarr_syslog("Facture::DemandePrelevement Impossible de créer une demande, demande déja en cours");
+	      }
+	  }
+	else
+	  {
+	    dolibarr_syslog("Facture::DemandePrelevement Erreur -2");
+	    return -2;
+	  }
+      }
+    else
+      {
+	dolibarr_syslog("Facture::DemandePrelevement Impossible de créer une demande, etat facture incompatible");
+	return -3;
+      }
+  }
 }
 
 
 
-/*! \class FactureLigne
-		\brief Classe permettant la gestion des lignes de factures
+/*!
+  \class FactureLigne
+  \brief Classe permettant la gestion des lignes de factures
 */
 
 class FactureLigne
