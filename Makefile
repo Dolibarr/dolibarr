@@ -20,6 +20,9 @@
 # General Makefile
 #
 
+DATE=`date +%Y%m%d`
+
 tar:
-	tar --exclude-from tar.exclude -cvvf dolibarr.tar .
+	tar --exclude-from tar.exclude -cvvf dolibarr-$(DATE).tar .
+	gzip dolibarr-$(DATE).tar
 
