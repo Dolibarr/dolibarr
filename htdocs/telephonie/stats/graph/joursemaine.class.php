@@ -66,11 +66,8 @@ class GraphJoursemaine extends GraphBrouzouf{
 	    $i++;
 	  }
       }
-
-    if ($num > 0)
-      {        
-	$this->GraphMakeGraph($jour_semaine_nb,array('Lun','Mar','Mer','Jeu','Ven','Sam','Dim'));
-      }
+        
+    $this->GraphMakeGraph($jour_semaine_nb,array('Lun','Mar','Mer','Jeu','Ven','Sam','Dim'));
   }
 
 }

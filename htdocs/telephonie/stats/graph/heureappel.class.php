@@ -38,7 +38,7 @@ class GraphHeureAppel extends GraphBrouzouf
     $this->barcolor = "blue";
   }
 
-  Function GraphDraw($g)
+  Function GraphDraw()
   {
 
     $sql = "SELECT ".$this->db->pdate("date")." as date, duree";
