@@ -100,6 +100,8 @@ if ($_GET["commid"])
 
  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/clients.hebdomadaire.png" alt="Commandes de lignes par semaine" title="Lignes Actives"><br /><br />'."\n";
 
+ print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/clientsmoyenne.hebdomadaire.png" alt="Commandes de lignes par semaine" title="Lignes Actives"><br /><br />'."\n";
+
  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/lignes.commandes.hebdomadaire.png" alt="Commandes de lignes par semaine" title="Lignes Actives"><br /><br />'."\n"; 
 
  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/'.$comm->id.'/lignes.commandes.mensuels.png" alt="Commandes de ligne par mois" title="Lignes Actives"><br /><br />'."\n";
