@@ -104,11 +104,10 @@ if ($result) {
     print "<td>".strftime("%d&nbsp;%b&nbsp;%y&nbsp;%H:%M",$objp->date_depart)."<br>\n";
     print "".strftime("%d %b %y %H:%M",$objp->date_arrivee)."</TD>\n";
 
-    print "<td>$objp->depart<br>$objp->arrivee</td>";
+    print "<td>$objp->depart - $objp->arrivee</td>";
 
     print "<td align=\"right\">".price($objp->amount)."</TD>\n";
     print "<td align=\"right\">".price($objp->reduction)."</TD>\n";
-
 
     
     print "<td align=\"right\"><small>".francs($objp->amount)."</small></TD>\n";
