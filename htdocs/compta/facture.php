@@ -136,17 +136,20 @@ if ($action == 'add_paiement')
   $paiement->num_paiement = $HTTP_POST_VARS["num_paiement"];
   $paiement->note         = $HTTP_POST_VARS["note"];
 
-  $paiement->create();
+  $paiement_id = $paiement->create();
 
   $action = '';
 
   $fac = new Facture($db);
   $fac->fetch($HTTP_POST_VARS["facid"]);
+  $fac->fetch_client();
 
-  $label = "Réglement facture ".$fac->ref;
+  $label = "Réglement facture ";
 
   $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
-  $acc->addline($datepaye, $paiementid, $label, $amount, $num_paiement);
+  $bank_line_id = $acc->addline($datepaye, $paiementid, $label, $amount, $num_paiement);
+  $acc->add_url_line($bank_line_id, $fac->id, DOL_URL_ROOT.'/compta/facture.php?facid=', $fac->ref);
+  $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);
 }
 /*
  *
