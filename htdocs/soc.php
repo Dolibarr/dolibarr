@@ -52,6 +52,9 @@ if ($action == 'add')
   $soc->capital    = $HTTP_POST_VARS["capital"];
   $soc->tva_intra  = $HTTP_POST_VARS["tva_intra_code"] . $HTTP_POST_VARS["tva_intra_num"];
 
+  $soc->forme_juridique_id  = $HTTP_POST_VARS["forme_juridique_id"];
+  $soc->effectif_id  = $HTTP_POST_VARS["effectif_id"];
+
   $soc->client   = $client;
   $soc->fournisseur = $fournisseur;
 
@@ -78,7 +81,8 @@ if ($action == 'update')
   $soc->capital    = $HTTP_POST_VARS["capital"];
   $soc->tva_intra  = $HTTP_POST_VARS["tva_intra_code"] . $HTTP_POST_VARS["tva_intra_num"];
 
-
+  $soc->forme_juridique_id  = $HTTP_POST_VARS["forme_juridique_id"];
+  $soc->effectif_id  = $HTTP_POST_VARS["effectif_id"];
   $soc->client = $client;
   $soc->fournisseur = $fournisseur;
 
@@ -93,6 +97,7 @@ llxHeader();
 
 if ($action == 'create') 
 {
+  $soc = new Societe($db);
   print '<div class="titre">Nouvelle société (prospect, client, fournisseur)</div><br>';
   print '<form action="soc.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
@@ -116,6 +121,15 @@ if ($action == 'create')
   print '<tr><td>Ape</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td>';
   print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
   
+  print '<tr><td>Forme juridique</td><td colspan="3">';
+  $html = new Form($db);
+  print $html->select_array("forme_juridique_id",$soc->forme_juridique_array(), $soc->forme_juridique, 0, 1);
+  print '</td></tr>';
+  
+  print '<tr><td>Effectif</td><td colspan="3">';
+  print $html->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
+  print '</td></tr>';
+
   print '<tr><td colspan="2">Numéro de TVA Intracommunautaire</td><td colspan="2">';
   
   print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
@@ -168,6 +182,16 @@ elseif ($action == 'edit')
 
       print '<tr><td>Ape</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td>';
       print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
+
+
+      print '<tr><td>Forme juridique</td><td colspan="3">';
+      $html = new Form($db);
+      print $html->select_array("forme_juridique_id",$soc->forme_juridique_array(), $soc->forme_juridique_id,0,1);
+      print '</td></tr>';
+
+      print '<tr><td>Effectif</td><td colspan="3">';
+      print $html->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
+      print '</td></tr>';
 
       print '<tr><td colspan="2">Numéro de TVA Intracommunautaire</td><td colspan="2">';
 
@@ -262,8 +286,8 @@ else
   
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$soc->nom.'</td></tr>';
-  print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
-  print '<tr><td>CP</td><td colspan="3">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
+  print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($soc->adresse).'&nbsp;';
+  print '<br>'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
   
   print '<tr><td>Tel</td><td>'.$soc->tel.'</td>';
   print '<td>Fax</td><td>'.$soc->fax.'</td></tr>';
@@ -272,8 +296,12 @@ else
   print '<tr><td>Siren</td><td><a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;</td>';
 
   print '<td>Siret</td><td>'.$soc->siret.'</td></tr>';
+
   print '<tr><td>Ape</td><td>'.$soc->ape.'</td>';
   print '<td>Capital</td><td>'.$soc->capital.' '.MAIN_MONNAIE.'</td></tr>';
+
+  print '<tr><td>Forme juridique</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
+  print '<tr><td>Effectif</td><td colspan="3">'.$soc->effectif.'</td></tr>';
 
   print '<tr><td colspan="2">Numéro de TVA Intracommunautaire</td><td colspan="2">';
   print $soc->tva_intra;
@@ -283,8 +311,7 @@ else
   print '<br></div>';
   /*
    *
-   */
-  
+   */  
   print '<div class="tabsAction">';
 
   print '<a class="tabAction" href="soc.php?socid='.$socid.'&action=edit">Editer</a>';
