@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
  * $Source$
  */
 
-/*!
+/**
   \file       htdocs/compta/prelevement/index.php
   \brief      Prelevement
   \version    $Revision$
@@ -36,7 +37,7 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
-print_titre($langs->trans("Prélèvements"));
+print_titre($langs->trans("StandingOrders"));
 
 print '<br>';
 
@@ -59,9 +60,9 @@ if ($result)
   $var=True;
 
   print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td>Bon</td><td>Date</td>';
-  print '<td align="right">Montant</td>';
+  print '<td align="right">'.$langs->trans("Amount").'</td>';
   print '</tr>';
 
   while ($i < $num)
@@ -75,7 +76,7 @@ if ($result)
 
       print '<td>'.strftime("%d/%m/%Y %H:%M",$obj->datec)."</td>\n";
 
-      print '<td align="right">'.price($obj->amount)." euros</td>\n";
+      print '<td align="right">'.price($obj->amount)." ".$conf->monnaie</td>\n";
 
       print "</tr>\n";
       $i++;
@@ -85,10 +86,11 @@ if ($result)
 }
 else 
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 print '</td><td valign="top" width="70%">';
+
 /*
  * Factures
  *
