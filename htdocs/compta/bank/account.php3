@@ -106,8 +106,8 @@ if ($account)
    */
   print "<TR class=\"liste_titre\">";
   print "<td>Date</td><td>Type</td><td>Description</TD>";
-  print '<td align="right"><input type="text" name="req_debit" size="6"></TD>';
-  print '<td align="right"><input type="text" name="req_credit" size="6"></TD>';
+  print '<td align="right"><input type="text" name="req_debit" class="flat" size="6"></TD>';
+  print '<td align="right"><input type="text" name="req_credit" class="flat" size="6"></TD>';
   print "<td align=\"right\">-</TD>";
   print "<td align=\"right\">-</td>";
   print '<td align="right"><input type="submit"></td>';
