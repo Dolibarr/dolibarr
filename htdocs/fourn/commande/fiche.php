@@ -436,9 +436,11 @@ if ($_GET["id"] > 0)
       if ($commande->statut == 0 && $user->rights->fournisseur->commande->creer) 
 	{
 	  $sql = "SELECT p.rowid,p.label,p.ref,p.price ";
+	  $sql .=" , pf.price";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."product as p ";
-	  $sql .= " , ".MAIN_DB_PREFIX."product_fournisseur as pf ";
+	  $sql .= " , ".MAIN_DB_PREFIX."product_fournisseur_price as pf ";
 	  $sql .= " WHERE p.rowid = pf.fk_product AND pf.fk_soc = ".$commande->fourn_id;
+	  $sql .= " AND quantity = 1";
 	  $sql .= " ORDER BY p.ref ";
 	  if ( $db->query($sql) )
 	    {
@@ -470,18 +472,6 @@ if ($_GET["id"] > 0)
 	  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
 	  print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
 	  print '<td>&nbsp;</td><td>&nbsp;</td>'."</tr>\n";
-
-	  /*
-	  print "<tr $bc[$var]>".'<td colspan="2"><textarea name="desc" cols="60" rows="1"></textarea></td>';
-	  print '<td align="center">';
-	  print $html->select_tva("tva_tx",$conf->defaulttx);
-	  print '</td>';
-	  print '<td align="center"><input type="text" name="qty" value="1" size="2"></td>';
-	  print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
-	  print '<td align="right"><input type="text" name="pu" size="8"></td>';
-
-	  print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
-	  */
 
 	  $var=!$var;
 	  print "<tr $bc[$var]>".'<td colspan="3"><select name="p_idprod">'.$opt.'</select></td>';
