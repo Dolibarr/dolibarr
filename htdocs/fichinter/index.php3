@@ -33,35 +33,43 @@ $db = new Db();
 
 if ($sortorder == "")
 {
-  $sortorder="ASC";
+  $sortorder="DESC";
 }
 if ($sortfield == "")
 {
   $sortfield="f.datei";
 }
 
+if ($page == -1) { $page = 0 ; }
 
-print_titre("Liste des fiches d'intervention");
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+
+print_barre_liste("Liste des fiches d'intervention", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder);
 
 $sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
 $sql .= " FROM llx_societe as s, llx_fichinter as f ";
 $sql .= " WHERE f.fk_soc = s.idp ";
 
-if ($user->societe_id > 0) {
+if ($user->societe_id > 0)
+{
   $sql .= " AND s.idp = " . $user->societe_id;
 }
 
-$sql .= " ORDER BY $sortfield DESC ;";
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit ,$offset);
 
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
   print "<TR class=\"liste_titre\">";
-  print "<TD>Num</TD>";
-  print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
-  print "<TD>Date</TD>";
+  print_liste_field_titre_new ("Num",$PHP_SELF,"f.ref","","&socidp=$socidp",'width="15%"',$sortfield);
+  print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","","&socidp=$socidp",'',$sortfield);
+  print_liste_field_titre_new ("Date",$PHP_SELF,"f.datei","","&socidp=$socidp",'',$sortfield);
   print '<TD align="center">Durée</TD>';
   print '<TD align="center">Statut</TD><td>&nbsp;</td>';
   print "</TR>\n";
