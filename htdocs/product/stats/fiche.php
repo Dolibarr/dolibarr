@@ -19,14 +19,12 @@
  * $Source$
  *
  */
-
 require("./pre.inc.php");
 require("../../propal.class.php3");
 require("../../graph.class.php");
 
 llxHeader();
 
-$db = new Db();
 $mesg = '';
 
 /*

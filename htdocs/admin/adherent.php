@@ -28,8 +28,6 @@ if (!$user->admin)
   exit;
 }
 
-$db = new Db();
-
 // positionne la variable pour le test d'affichage de l'icone
 
 $main_use_mailman = MAIN_USE_MAILMAN;

@@ -24,8 +24,6 @@ llxHeader();
 
 print_titre("Configuration Mysql");
 
-$db = new Db();
-
 print '<table border="0" cellpadding="3" cellspacing="1">';
 
 $sql = "SHOW VARIABLES";

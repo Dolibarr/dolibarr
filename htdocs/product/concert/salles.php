@@ -24,7 +24,6 @@ require("./pre.inc.php");
 
 llxHeader();
 
-$db = new Db();
 if ($sortfield == "") {
   $sortfield="lower(lc.nom)";
 }

@@ -26,7 +26,6 @@ require("../../graph.class.php");
 
 llxHeader();
 
-$db = new Db();
 $mesg = '';
 
 /*

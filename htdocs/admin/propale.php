@@ -29,8 +29,6 @@ if (!$user->admin)
   exit;
 }
 
-$db = new Db();
-
 if ($action == 'set')
 {
   $sql = "INSERT INTO llx_propal_model_pdf (nom) VALUES ('".$value."')";

@@ -29,7 +29,6 @@ if (! strlen(DB_NAME_OSC))
   print "Non dispo";
   llxFooter();
 }
-$db = new Db();
 
 if ($sortfield == "") {
   $sortfield="lower(p.label),p.price";

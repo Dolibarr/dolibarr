@@ -24,8 +24,6 @@ require("./pre.inc.php");
 
 llxHeader();
 
-$db = new Db();
-
 print_barre_liste("Liste des tables", $page, $PHP_SELF);
 
 $sql = "SELECT name, loaded FROM llx_sqltables";

@@ -22,8 +22,6 @@
 
 require("./pre.inc.php3");
 
-$db = new Db();
-
 if ($sortfield == "")
 {
   $sortfield="c";

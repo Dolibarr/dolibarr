@@ -26,8 +26,6 @@ require("../boutique/editeur/editeur.class.php");
 require("../boutique/auteur/auteur.class.php");
 require("../product/promotion/promotion.class.php");
 
-$db = new Db();
-
 llxHeader();
 
 print_barre_liste("Mise a jour de tous les livres", $page, $PHP_SELF);

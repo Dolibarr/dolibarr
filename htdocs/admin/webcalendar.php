@@ -30,8 +30,6 @@ if (!$user->admin)
   exit;
 }
 
-$db = new Db();
-
 $def = array();
 
 // positionne la variable pour le test d'affichage de l'icone

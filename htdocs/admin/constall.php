@@ -30,8 +30,6 @@ print '<TD>Nom</TD>';
 print '<TD>Valeur</TD>';
 print "</TR>\n";
 
-$db = new Db();
-
 $sql = "SELECT rowid, name, value, type, note FROM llx_const ORDER BY name ASC";
 $result = $db->query($sql);
 if ($result) 
