@@ -23,20 +23,66 @@ require("../../../main.inc.php");
 require(DOL_DOCUMENT_ROOT."/bargraph.class.php");
 
 function llxHeader($head = "", $urlp = "") {
-  global $langs;
-  
-  /*
-   *
-   *
-   */
+  global $user, $conf, $langs;
+
   top_menu($head);
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/comm/propal.php", "Propositions");
+  $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
 
-  $menu->add("index.php", $langs->trans("Statistics"));
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
 
+  $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("Prospects"));
+
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
+
+
+  $menu->add(DOL_URL_ROOT."/comm/action/index.php", $langs->trans("Actions"));
+
+
+  if ($conf->propal->enabled && $user->rights->propale->lire)
+    {
+      $langs->load("propal");
+      $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
+      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=0", $langs->trans("PropalsDraft"));
+      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=1", $langs->trans("PropalsOpened"));
+      $menu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/", $langs->trans("Statistics"));
+    }
+
+  if ($conf->contrat->enabled)
+    {
+      $langs->load("contracts");
+      $menu->add(DOL_URL_ROOT."/contrat/index.php", $langs->trans("Contracts"));
+    }
+
+  if ($conf->commande->enabled ) 
+    {
+      $langs->load("orders");
+      $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
+    }
+
+  if ($conf->fichinter->enabled ) 
+    {
+      $menu->add(DOL_URL_ROOT."/fichinter/index.php", "Fiches d'intervention");
+    }
+
+  if ($conf->produit->enabled || $conf->service->enabled)
+    {
+      $langs->load("products");
+      $chaine="";
+	  if ($conf->produit->enabled) { $chaine.=$langs->trans("Products"); }
+	  if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
+	  if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
+      $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
+    }
+
+  if ($conf->projet->enabled ) 
+    {
+      $langs->load("projects");
+	  $menu->add(DOL_URL_ROOT."/projet/index.php", $langs->trans("Projects"));
+	}
+	
   left_menu($menu->liste);
 }
 ?>

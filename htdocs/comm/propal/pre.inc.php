@@ -52,8 +52,8 @@ function llxHeader($head = "", $urlp = "") {
     {
       $langs->load("propal");
       $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
-      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=0", $langs->trans("Drafts"));
-      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=1", $langs->trans("Opened"));
+      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=0", $langs->trans("PropalsDraft"));
+      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=1", $langs->trans("PropalsOpened"));
       $menu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/", $langs->trans("Statistics"));
     }
 
