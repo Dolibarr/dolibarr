@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ function llxHeader($head = "") {
 	{
 	  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", "Nouvelle société");
 	}
-      $menu->add_submenu(DOL_URL_ROOT."/contact.php", "Contacts");
+      $menu->add_submenu(DOL_URL_ROOT."/contact/index.php", "Contacts");
     }
 
   if ($conf->commercial->enabled ) 
@@ -125,6 +125,8 @@ function llxHeader($head = "") {
     {
       $menu->add(DOL_URL_ROOT."/postnuke/articles/index.php", "Editorial");
     }
+
+  $menu->add(DOL_URL_ROOT."/rapport/", "Rapports");
 
   $menu->add(DOL_URL_ROOT."/user/index.php", "Utilisateurs");
 
