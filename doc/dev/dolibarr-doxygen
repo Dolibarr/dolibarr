@@ -20,7 +20,7 @@ STRIP_FROM_INC_PATH    =
 SHORT_NAMES            = NO
 JAVADOC_AUTOBRIEF      = NO
 MULTILINE_CPP_IS_BRIEF = NO
-DETAILS_AT_TOP         = NO
+DETAILS_AT_TOP         = YES
 INHERIT_DOCS           = YES
 DISTRIBUTE_GROUP_DOC   = NO
 TAB_SIZE               = 2
@@ -67,12 +67,17 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = htdocs/lib \
-                         htdocs/lib/jabber \
-                         htdocs/lib/vcard
+INPUT                  = htdocs
 FILE_PATTERNS          = *.php
-RECURSIVE              = NO
-EXCLUDE                = 
+RECURSIVE              = YES
+EXCLUDE                = mysql \
+                         pgsql \
+                         misc \
+                         CVS \
+                         documents \
+                         scripts \
+                         htdocs/theme \
+                         htdocs/includes/pear
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXAMPLE_PATH           = 
