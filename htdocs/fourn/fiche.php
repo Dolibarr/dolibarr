@@ -23,10 +23,10 @@
  */
 
 /**
-        \file       htdocs/fourn/fiche.php
-		\ingroup    fournisseur, facture
-		\brief      Page de fiche fournisseur
-		\version    $Revision$
+   \file       htdocs/fourn/fiche.php
+   \ingroup    fournisseur, facture
+   \brief      Page de fiche fournisseur
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -268,23 +268,23 @@ if ( $societe->fetch($socid) )
   print '</div>';
 
   /*
-   * Boutons Actions
+   *
+   * Barre d'actions
+   *
    */
   
   print '<div class="tabsAction">';
 
-  if ($conf->commande->enabled) {
-    $langs->load("orders");
-    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddOrder").'</a>';
-  }
-  
-  if ($conf->facture->enabled) {
-    $langs->load("bills");
-    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddBill").'</a>';
-  }
+  if ($user->fournisseur->commande->creer)
+    {
+      $langs->load("orders");
+      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddOrder").'</a>';
+    }
+
+  $langs->load("bills");
+  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddBill").'</a>';
   
   print '</div>';
-    
 
   /*
    *
@@ -304,6 +304,7 @@ if ( $societe->fetch($socid) )
   $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $societe->id  ORDER by p.datec";
   $result = $db->query($sql);
   $i = 0 ; $num = $db->num_rows();
+
   while ($i < $num)
     {
       $obj = $db->fetch_object();
