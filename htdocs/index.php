@@ -32,7 +32,6 @@ print "<br>";
  *
  */
 $user->getrights('');
-//$db = new Db();
 
 $sql = "SELECT b.rowid, b.box_id, d.file FROM llx_boxes as b, llx_boxes_def as d WHERE b.box_id = d.rowid";
 $result = $db->query($sql);
@@ -66,13 +65,11 @@ for ($ii=0, $ni=sizeof($boxes); $ii<$ni; $ii++)
     {
       print "</tr>\n";
     }
-
 }
 
 print "</table>";
 
 $db->close();
-
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
