@@ -23,9 +23,9 @@
  *
  */
 
-/*!
-    \file       htdocs/comm/mailing.php
-    \brief      Page pour faire des mailing
+/**     \file       htdocs/comm/mailing.php
+        \brief      Page pour faire des mailing
+        \todo       A virer quand remplacer completement par ecrans en /comm/mailing
 */
 
 require("./pre.inc.php");
@@ -45,6 +45,7 @@ require("./propal_model_pdf.class.php");
 require("../propal.class.php");
 require("../actioncomm.class.php");
 require("../lib/CMailFile.class.php");
+require("../html.formmail.class.php");
 
 /*
  * Sécurité accés client
@@ -71,7 +72,7 @@ if ($_GET["action"] != 'mailing')
 {	
   print $langs->trans("MailingDesc")."<br><br>";
     
-  $form = new Form($db);	    
+  $formmail = new FormMail($db);	    
 
   print "<form method=\"post\" action=\"mailing.php?action=mailing\" name=\"mailing\">";
   
@@ -88,7 +89,7 @@ if ($_GET["action"] != 'mailing')
   print "</table>";
   
   // Affiche la partie mail topic + message + file
-  $form->mail_topicmessagefile(1,1,1,$defaultmessage);
+  $formmail->mail_topicmessagefile(1,1,1,$defaultmessage);
 
   print "<br><center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("Send")."\"></center>\n";
 

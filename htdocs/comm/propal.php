@@ -153,7 +153,7 @@ if ($_GET["action"] == 'modif' && $user->rights->propale->creer)
 
 }
 
-if ($_POST["addligne"] == 'Ajouter' && $user->rights->propale->creer) 
+if ($_POST["addligne"] == $langs->trans("Add") && $user->rights->propale->creer) 
 {
   /*
    *  Ajout d'une ligne produit dans la propale
@@ -167,7 +167,7 @@ if ($_POST["addligne"] == 'Ajouter' && $user->rights->propale->creer)
     }
 } 
 
-if ($_POST["addproduct"] == 'Ajouter' && $user->rights->propale->creer) 
+if ($_POST["addproduct"] == $langs->trans("Add") && $user->rights->propale->creer) 
 {
   /*
    *  Ajout d'une ligne produit dans la propale
@@ -619,9 +619,10 @@ if ($_GET["propalid"])
 		  $filepath[1] = $_FILES['addedfile']['tmp_name'];
 		  $filename[1] = $_FILES['addedfile']['name'];
 		  $mimetype[1] = $_FILES['addedfile']['type'];
-		  $replyto = $_POST["replytoname"]. " <".$_POST["replytomail"].">";
+	      $from = $_POST["fromname"] . " <".$_POST["frommail"] .">";
+	      $replyto = $_POST["replytoname"]. " <".$_POST["replytomail"].">";
 	      
-		  $mailfile = new CMailFile($subject,$_POST["sendto"],$replyto,$_POST["message"],$filepath,$mimetype,$filename,$sendtocc);
+		  $mailfile = new CMailFile($subject,$_POST["sendto"],$from,$_POST["message"],$filepath,$mimetype,$filename,$sendtocc);
 	      
 		  if (! $mailfile->sendfile() )
 		    {	       
@@ -797,32 +798,28 @@ if ($_GET["propalid"])
 	      print '<input type="hidden" name="max_file_size" value="2000000">';
 
 	      print_titre("Envoyer la propale par mail");
-          $form=new Form($db);
 
-	      // Formulaire envoi mail
-	      print '<table class="border" width="100%">';
-	      // Destinataire
-	      print "<tr><td width=\"180\">Destinataire</td>";
-	      print "<td colspan=\"6\" align=\"left\"><input size=\"50\" name=\"sendto\" value=\"" . ucfirst(strtolower($obj->firstname)) . " " .  ucfirst(strtolower($obj->name)) . " <$obj->email>\"></td></tr>";
+	      // Créé l'objet formulaire mail
+	      include_once("../html.formmail.class.php");
+	      $formmail = new FormMail($db);	    
+	      $formmail->fromname = $user->fullname;
+	      $formmail->frommail = $user->email;
+          $formmail->withfrom=1;
+//          $formmail->withto=array_merge(array("&nbsp;"),$soc->contact_email_array());
+          $formmail->withto=ucfirst(strtolower($obj->firstname)) . " " .  ucfirst(strtolower($obj->name)) . " <$obj->email>";
+          $formmail->withcc=1;
+          $formmail->withtopic=1;
+          $formmail->withfile=1;
+	      $formmail->withbody=1;
+          // Tableau des substitutions
+          $formmail->substit["__PROPREF__"]=$propal->ref;
+          // Tableau des paramètres complémentaires
+          $formmail->param["action"]="send";
+          $formmail->param["models"]="propal_send";
+          $formmail->param["propalid"]=$propal->id;
+          $formmail->param["returnurl"]=DOL_URL_ROOT."/comm/propal.php?propalid=$propal->id";
 
-	      // CC
-	      print '<tr><td>Copie à</td>';
-	      print '<td colspan="6" align="left"><input size="50" name="sendtocc"></td></tr>';
-
-	      // Sender
-/*
-	      print "<tr><td>Expediteur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
-	      print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
-	      print "<td>$replytomail</td></tr>";
-	      print "<tr><td valign=\"top\">Joindre un fichier en plus de la propale<br>(conditions générales de ventes ...)</td><td colspan=\"6\"><input type=\"file\" name=\"addedfile\" size=\"40\" maxlength=\"80\"></td></tr>";
-
-	      print "<tr><td valign=\"top\">Message</td><td colspan=\"6\"><textarea rows=\"5\" cols=\"40\" name=\"message\">$message</textarea></td></tr>";
-	      print "</table>";
-*/
-$form->mail_topicmessagefile(0,1,1,$message);
-
-	      print "<input type=\"submit\" value=\"".$langs->trans("Send")."\">";
-	      print "</form>";
+          $formmail->show_form();
 	    }
 	  
 	}

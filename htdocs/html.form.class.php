@@ -872,53 +872,6 @@ class Form
     }
   }
 
-  /*
-   *    \brief  Affiche la partie de formulaire pour saisie d'un mail
-   *    \param  withtopic   1 pour proposer à la saisie le sujet
-   *    \param  withbody    1 pour proposer à la saisie le corps du message
-   *    \param  withfile    1 pour proposer à la saisie l'ajout d'un fichier joint
-   */
-  function mail_topicmessagefile($withtopic=1,$withbody=1,$withfile=1,$defaultbody) {
-    global $langs;
-
-    $langs->load("other");
-
-    print "<table class=\"border\" width=\"100%\">";
-
-    // Topic
-    if ($withtopic)
-      {
-	print "<tr>";
-	print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
-	print "<td>";
-	print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"\">";
-	print "</td></tr>";
-      }
-    
-    // Message
-    if ($withbody)
-      {
-	print "<tr>";
-	print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
-	print "<td>";
-	print "<textarea rows=\"8\" cols=\"72\" name=\"message\">";
-	print $defaultbody;
-	print "</textarea>";
-	print "</td></tr>";
-      }
-    	
-    // Si fichier joint
-    if ($withfile)
-      {
-	print "<tr>";
-	print "<td width=\"180\">".$langs->trans("MailFile")."</td>";
-	print "<td>";
-	print "<input type=\"file\" name=\"addedfile\" value=\"".$langs->trans("Upload")."\"/>";
-	print "</td></tr>";
-      }
-    
-    print "</table>";
-  }
 }
 
 ?>

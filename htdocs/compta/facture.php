@@ -22,8 +22,7 @@
  *
  */
 
-/**
-	    \file       htdocs/compta/facture.php
+/**	    \file       htdocs/compta/facture.php
 		\ingroup    facture
 		\brief      Page de création d'une facture
 		\version    $Revision$
@@ -348,7 +347,6 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
       
       if (is_readable($file))
 	{
-	  
 	  if ($_POST["sendto"]) {
 	    // Le destinataire a été fourni via le champ libre
 	    $sendto = $_POST["sendto"];
@@ -376,7 +374,8 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 		$actionmsg2="Relance Facture par mail";
 	      }
 	      $message = $_POST["message"];
-	      $replyto = $_POST["replytoname"] . " <".$_POST["replytomail"] .">";
+	      $from = $_POST["fromname"] . " <".$_POST["frommail"] .">";
+	      $replyto = $_POST["replytoname"]. " <".$_POST["replytomail"].">";
 
 	      $filepath[0] = $file;
 	      $filename[0] = $fac->ref.".pdf";
@@ -384,10 +383,9 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 	      $filepath[1] = $_FILES['addedfile']['tmp_name'];
 	      $filename[1] = $_FILES['addedfile']['name'];
 	      $mimetype[1] = $_FILES['addedfile']['type'];
-	      $replyto = $_POST["replytoname"]. " <".$_POST["replytomail"].">";
 	      
 	      // Envoi de la facture
-	      $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath, $mimetype,$filename,$sendtocc);
+	      $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath, $mimetype,$filename,$sendtocc);
 
 	      if ( $mailfile->sendfile() )
 		{		  
@@ -397,7 +395,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 	
 		  if (! $db->query($sql) )
 		    {
-		      dolibarr_print_error($db->error());
+		      dolibarr_print_error($db);
 		    }
 		  else
 		    {
@@ -1331,108 +1329,67 @@ else
 	      print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr></table></form></p>';
 	    }
 
+
 	  /*
-	   *
+	   * Affiche formulaire mail
 	   *
 	   */
 	  if ($_GET["action"] == 'presend')
 	    {
+	      print '<br>';
 	      print_titre("Envoyer la facture par mail");
 
-	      $langs->load("other");
-	      
-	      $replytoname = $user->fullname;
-	      $from_name = $replytoname;
+	      // Créé l'objet formulaire mail
+	      include_once("../html.formmail.class.php");
+	      $formmail = new FormMail($db);	    
+	      $formmail->fromname = $user->fullname;
+	      $formmail->frommail = $user->email;
+          $formmail->withfrom=1;
+          $formmail->withto=array_merge(array("&nbsp;"),$soc->contact_email_array());
+          $formmail->withcc=1;
+          $formmail->withtopic=1;
+          $formmail->withfile=1;
+	      $formmail->withbody=1;
+          // Tableau des substitutions
+          $formmail->substit["__FACREF__"]=$fac->ref;
+          // Tableau des paramètres complémentaires du post
+          $formmail->param["action"]="send";
+          $formmail->param["models"]="facture_send";
+          $formmail->param["facid"]=$fac->id;
+          $formmail->param["returnurl"]=DOL_URL_ROOT."/compta/facture.php?facid=$fac->id";
 
-	      $replytomail = $user->email;
-	      $from_mail = $replytomail;
-	    
-	      $form = new Form($db);
-
-	      print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
-	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-	      print '<input type="hidden" name="action" value="send">';
-	      print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
-	      print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
-	      print "<br>\n";
-	    
-	      // From
-	      print "<table class=\"border\" width=\"100%\">\n";
-	      print "  <tr><td width=\"180\">".$langs->trans("MailFrom")."</td><td>$from_name".($from_mail?" &lt;$from_mail&gt;":"")."</td></tr>\n";
-	      print "  <tr><td>".$langs->trans("MailReply")."</td><td>$replytoname".($replytomail?" &lt;$replytomail&gt;":"");
-	      print "</td></tr>\n";
+          $formmail->show_form();
           
-	      // To
-	      print '  <tr><td width=\"180\">'.$langs->trans("MailTo").'</td><td>';
-	      $form->select_array("receiver",$soc->contact_email_array());
-	      print " ".$langs->trans("or")." <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>\n";
-
-	      // CC
-	      print '  <tr><td width=\"180\">'.$langs->trans("MailCC").'</td><td>';
-	      print "<input size=\"30\" name=\"sendtocc\"></td></tr>\n";
-
-	      // File
-	      print "  <tr><td valign=\"top\">" . $langs->trans("MailFile"). "</td><td><input type=\"file\" name=\"addedfile\" size=\"40\" maxlength=\"80\"></td></tr>\n";
-
-	      print "</table>";
-
-	      // Topic + Message
-	      $defaultmessage="Veuillez trouver ci-joint la facture $fac->ref\n\nCordialement\n\n";
-	      $form->mail_topicmessagefile(0,1,0,$defaultmessage);
-	    
-	      print "<br><center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("Send")."\"></center>\n";
-
-	      print "</form>\n";
+          print '<br>';
 	    }
 
 	  if ($_GET["action"] == 'prerelance')
 	    {
+	      print '<br>';
 	      print_titre("Envoyer une relance par mail");
 
-	      $langs->load("other");
+	      // Créé l'objet formulaire mail
+	      include_once("../html.formmail.class.php");
+	      $formmail = new FormMail($db);	    
+	      $formmail->fromname = $user->fullname;
+	      $formmail->frommail = $user->email;
+          $formmail->withfrom=1;
+          $formmail->withto=array_merge(array("&nbsp;"),$soc->contact_email_array());
+          $formmail->withcc=1;
+          $formmail->withtopic=1;
+          $formmail->withfile=1;
+	      $formmail->withbody=1;
+          // Tableau des substitutions
+          $formmail->substit["__FACREF__"]=$fac->ref;
+          // Tableau des paramètres complémentaires
+          $formmail->param["action"]="relance";
+          $formmail->param["models"]="facture_relance";
+          $formmail->param["facid"]=$fac->id;
+          $formmail->param["returnurl"]=DOL_URL_ROOT."/compta/facture.php?facid=$fac->id";
 
-	      $replytoname = $user->fullname;
-	      $from_name = $replytoname;
+          $formmail->show_form();
 
-	      $replytomail = $user->email;
-	      $from_mail = $replytomail;
-	    
-	      $form = new Form($db);	    
-
-	      print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"".$_SERVER["PHP_SELF"]."\">\n";
-	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-	      print '<input type="hidden" name="action" value="relance">';
-	      print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
-	      print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
-	      print '<br>';
-	    
-	      // From
-	      print "<table class=\"border\" width=\"100%\">\n";
-	      print "  <tr><td width=\"180\">".$langs->trans("MailFrom")."</td><td>$from_name".($from_mail?" &lt;$from_mail&gt;":"")."</td></tr>\n";
-	      print "  <tr><td>".$langs->trans("MailReply")."</td><td>$replytoname".($replytomail?" &lt;$replytomail&gt;":"");
-	      print "</td></tr>\n";
-          
-	      // To
-	      print '  <tr><td width=\"180\">'.$langs->trans("MailTo").'</td><td>';
-	      $form->select_array("receiver",$soc->contact_email_array());
-	      print " ".$langs->trans("or")." <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>\n";
-
-	      // CC
-	      print '  <tr><td width=\"180\">'.$langs->trans("MailCC").'</td><td>';
-	      print "<input size=\"30\" name=\"sendtocc\"></td></tr>\n";
-
-	      // File
-	      print "  <tr><td valign=\"top\">" . $langs->trans("MailFile"). "</td><td><input type=\"file\" name=\"addedfile\" size=\"40\" maxlength=\"80\"></td></tr>\n";
-
-	      print "</table>";
-
-	      // Topic + Message
-	      $defaultmessage="Nous apportons à votre connaissance que la facture ".$fac->ref." ne semble toujours pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n";
-	      $form->mail_topicmessagefile(0,1,0,$defaultmessage);
-	    
-	      print "<br><center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("Send")."\"></center>\n";
-
-	      print "</form\n";	
+          print '<br>';
 	    }
 	
 	  /*
