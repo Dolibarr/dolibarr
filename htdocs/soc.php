@@ -69,7 +69,14 @@ if ($action == 'update')
   $soc->tel = $tel;
   $soc->fax = $fax;
   $soc->url = ereg_replace( "http://", "", $url );
-  $soc->siren = $siren;
+
+  $soc->siren      = $HTTP_POST_VARS["siren"];
+  $soc->siret      = $HTTP_POST_VARS["siret"];
+  $soc->ape        = $HTTP_POST_VARS["ape"];
+  $soc->capital    = $HTTP_POST_VARS["capital"];
+  $soc->tva_intra  = $HTTP_POST_VARS["tva_intra_code"] . $HTTP_POST_VARS["tva_intra_num"];
+
+
   $soc->client = $client;
   $soc->fournisseur = $fournisseur;
 
@@ -126,7 +133,7 @@ elseif ($action == 'edit')
       print '<form action="soc.php?socid='.$socid.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
 
-      print '<table class="border" cellpadding="3" cellspacing="0">';
+      print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
       print '<tr><td>Nom</td><td><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
       print '<tr><td valign="top">Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft">';
       print $soc->adresse;
@@ -135,11 +142,25 @@ elseif ($action == 'edit')
       print '<tr><td>CP</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
       print 'Ville&nbsp;<input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
       
-      print '<tr><td>Tel</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td></tr>';
-      print '<tr><td>Fax</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
-      print '<tr><td>Web</td><td>http://<input type="text" name="url" value="'.$soc->url.'"></td></tr>';
+      print '<tr><td>Téléphone</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
+      print '<td>Fax</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
+      print '<tr><td>Web</td><td colspan="3">http://<input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
       
-      print '<tr><td>Siren</td><td><input type="text" name="siren" value="'.$soc->siren.'"></td></tr>';
+      print '<tr><td>Siren</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
+      print '<td>Siret</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
+
+      print '<tr><td>Ape</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td>';
+      print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
+
+      print '<tr><td colspan="2">Numéro de TVA Intracommunautaire</td><td colspan="2">';
+
+      print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
+      print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
+      print '<br>Vous pouvez vérifier ce numéro sur ce <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htmsite" target="_blank">site</a>';
+      print '</td></tr>';
+
+
+
       
       print '<tr><td>Client</td><td><select name="client">';
       print_oui_non($soc->client);
@@ -174,6 +195,11 @@ else
   print '<tr><td>Web</td><td colspan="3"><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
   
   print '<tr><td>Siren</td><td colspan="3"><a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;</td></tr>';
+
+
+  print '<tr><td colspan="2">Numéro de TVA Intracommunautaire</td><td colspan="2">';
+  print $soc->tva_intra;
+  print '</td></tr>';
 
   if ($soc->client)
     {
