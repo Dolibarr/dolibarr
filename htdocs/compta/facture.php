@@ -31,6 +31,8 @@
 require("./pre.inc.php");
 
 $user->getrights('facture');
+$user->getrights('banque');
+
 if (!$user->rights->facture->lire)
   accessforbidden();
 
