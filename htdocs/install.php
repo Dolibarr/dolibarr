@@ -58,20 +58,29 @@ if ($action == "set")
       $conf->db->pass = $dolibarr_main_db_pass;
       $db = new Db();
 
-      $sql = "REPLACE INTO llx_const SET name = 'FAC_OUTPUTDIR', value='".$dolibarr_main_document_root."/document', visible=0, type='chaine'";
+      $sql[0] = "REPLACE INTO llx_const SET name = 'FAC_OUTPUTDIR', value='".$dolibarr_main_document_root."/document', visible=0, type='chaine'";
 
-      if ($db->query($sql))
+      $sql[1] = "REPLACE INTO llx_const SET name = 'FAC_OUTPUT_URL', value='".$dolibarr_main_url_root."/document', visible=0, type='chaine'";
+
+      $sql[2] = "REPLACE INTO llx_const SET name = 'PROPALE_OUTPUTDIR', value='".$dolibarr_main_document_root."/document', visible=0, type='chaine'";
+
+      $sql[3] = "REPLACE INTO llx_const SET name = 'PROPALE_OUTPUT_URL', value='".$dolibarr_main_url_root."/document', visible=0, type='chaine'";
+
+      $result = 0;
+      for ($i=0; $i < sizeof($sql);$i++)
 	{
-
-	  $sql = "REPLACE INTO llx_const SET name = 'FAC_OUTPUT_URL', value='".$dolibarr_main_url_root."/document', visible=0, type='chaine'";
-
-	  if ($db->query($sql))
+      
+	  if ($db->query($sql[$i]))
 	    {
-
-	      print "- connexion réussie à la base de données<br>";
-
-	      print '<a href="'.$dolibarr_main_url_root .'/">Go !</a>';
+	      print "-- requete sql $i<br>";
+	      $result++;
 	    }
+	}
+
+      if ($result == sizeof($sql))
+	{
+	  print "- connexion réussie à la base de données<br>";
+	  print '<a href="'.$dolibarr_main_url_root .'/">Go !</a>';
 	}
       else
 	{
