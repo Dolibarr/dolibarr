@@ -527,17 +527,17 @@ else
 
       print '<div class="tabsAction">';
       
-      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">'.$langs->trans("SalesRepresentative").'</a>';
+      print '<a class="butAction" href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">'.$langs->trans("SalesRepresentative").'</a>';
 
-      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">'.$langs->trans("ParentCompany").'</a>';
+      print '<a class="butAction" href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">'.$langs->trans("ParentCompany").'</a>';
 
-      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+      print '<a class="butAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
       
-      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+      print '<a class="butAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 
       if ($user->rights->societe->supprimer)
 	{	  
-	  print '<a class="butDelete" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+	  print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 
 	}
       print '</div>';
