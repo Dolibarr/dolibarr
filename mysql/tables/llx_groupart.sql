@@ -27,6 +27,7 @@ create table llx_groupart
   tms             timestamp,
   nom		  varchar(64),
   groupart        enum("artiste","groupe") NOT NULL,
+  description     text NOT NULL,
   fk_user_author  integer
 );
 
