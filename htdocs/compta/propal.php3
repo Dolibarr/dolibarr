@@ -39,13 +39,16 @@ $db = new Db();
 if ($action == 'setstatut')
 {
   /*
-   *  Cloture de la propale
+   *  Classée la facture comme facturée
    */
   $propal = new Propal($db);
   $propal->id = $propalid;
   $propal->cloture($user->id, $statut, $note);
 
-} elseif ( $action == 'delete' ) {
+}
+
+if ( $action == 'delete' )
+ {
   $sql = "DELETE FROM llx_propal WHERE rowid = $propalid;";
   if ( $db->query($sql) ) {
 
@@ -63,6 +66,7 @@ if ($action == 'setstatut')
   $propalid = 0;
   $brouillon = 1;
 }
+
 /*
  *
  * Mode fiche
@@ -100,9 +104,9 @@ if ($propalid)
             
       $color1 = "#e0e0e0";
 
-      print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
+      print '<table border="1" cellspacing="0" cellpadding="2" width="100%">';
 
-      print '<tr><td>'.translate("Company").'</td><td colspan="2"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+      print '<tr><td>Société</td><td colspan="2"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print "<td valign=\"top\" width=\"50%\" rowspan=\"8\">Note :<br>". nl2br($obj->note)."</td></tr>";
       //
 
@@ -146,9 +150,9 @@ if ($propalid)
        *
        */
       print "<tr><td>PDF</a></td>";
-      $file = $conf->propal->outputdir. "/$obj->ref/$obj->ref.pdf";
+      $file = PROPALE_OUTPUTDIR. "/$obj->ref/$obj->ref.pdf";
       if (file_exists($file)) {
-	print '<td colspan="2"><a href="'.$conf->propal->outputurl.'/'.$obj->ref.'/'.$obj->ref.'.pdf">'.$obj->ref.'.pdf</a></td></tr>';
+	print '<td colspan="2"><a href="'.PROPALE_OUTPUT_URL.'/'.$obj->ref.'/'.$obj->ref.'.pdf">'.$obj->ref.'.pdf</a></td></tr>';
       }
       print '</tr>';
       /*
@@ -161,19 +165,20 @@ if ($propalid)
 
       print "</table>";
 
-      if ($action == 'statut') {
-	print "<form action=\"$PHP_SELF?propalid=$propalid\" method=\"post\">";
-	print "<input type=\"hidden\" name=\"action\" value=\"setstatut\">";
-	print "<select name=\"statut\">";
-	print "<option value=\"2\">Signée";
-	print "<option value=\"3\">Non Signée";
-	print '</select>';
-	print '<br><textarea cols="60" rows="6" wrap="soft" name="note">';
-	print $obj->note . "\n----------\n";
-	print '</textarea><br><input type="submit" value="Valider">';
-	print "</form>";
-      }
-
+      if ($action == 'statut')
+	{
+	  print "<form action=\"$PHP_SELF?propalid=$propalid\" method=\"post\">";
+	  print "<input type=\"hidden\" name=\"action\" value=\"setstatut\">";
+	  print "<select name=\"statut\">";
+	  print "<option value=\"2\">Signée";
+	  print "<option value=\"3\">Non Signée";
+	  print '</select>';
+	  print '<br><textarea cols="60" rows="6" wrap="soft" name="note">';
+	  print $obj->note . "\n----------\n";
+	  print '</textarea><br><input type="submit" value="Valider">';
+	  print "</form>";
+	}
+      
 
       print "<table width=\"100%\" cellspacing=2>";
       /*
@@ -183,40 +188,63 @@ if ($propalid)
       /*
        * Factures associees
        */
-      $sql = "SELECT f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.rowid as facid, f.author, f.paye";
+      $sql = "SELECT f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
       $sql .= " FROM llx_facture as f, llx_fa_pr as fp WHERE fp.fk_facture = f.rowid AND fp.fk_propal = $propalid";
 
       $result = $db->query($sql);
-      if ($result) {
-	$num = $db->num_rows();
-	$i = 0; $total = 0;
-	print "<br><b>Facture(s) associée(s)</b><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-	print "<tr>";
-	print "<td>Num</td>";
-	print "<td>Date</td>";
-	print "<td>Auteur</td>";
-	print "<td align=\"right\">Prix</TD>";
-	print "</TR>\n";
-
-	$var=True;
-	while ($i < $num) {
-	  $objp = $db->fetch_object( $i);
-	  $var=!$var;
-	  print "<TR bgcolor=\"#e0e0e0\">";
-	  print "<TD><a href=\"../compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a>";
-	  if ($objp->paye) { print " (<b>pay&eacute;e</b>)"; } 
-	  print "</TD>\n";
-	  print "<TD>".strftime("%d %B %Y",$objp->df)."</TD>\n";
-	  print "<TD>$objp->author</TD>\n";
-	  print '<TD align="right">'.price($objp->amount).'</TD>';
-	  print "</tr>";
-	  $total = $total + $objp->amount;
-	  $i++;
+      if ($result)
+	{
+	  $num = $db->num_rows();
+	  $i = 0; $total = 0;
+	  print "<br>";
+	  if ($num > 1)
+	    {
+	      print_titre("Factures associées");
+	    }
+	  else
+	    {
+	      print_titre("Facture associée");
+	    }
+	  print '<table border="1" width="100%" cellspacing="0" cellpadding="3">';
+	  print "<tr>";
+	  print "<td>Num</td>";
+	  print "<td>Date</td>";
+	  print "<td>Auteur</td>";
+	  print '<td align="right">Prix</td>';
+	  print "</tr>\n";
+	  
+	  $var=True;
+	  while ($i < $num)
+	    {
+	      $objp = $db->fetch_object( $i);
+	      $var=!$var;
+	      print "<TR bgcolor=\"#e0e0e0\">";
+	      print "<TD><a href=\"../compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a>";
+	      if ($objp->paye)
+		{ 
+		  print " (<b>pay&eacute;e</b>)";
+		} 
+	      print "</TD>\n";
+	      print "<TD>".strftime("%d %B %Y",$objp->df)."</td>\n";
+	      if ($objp->fk_user_author <> $user->id)
+		{
+		  $fuser = new User($db, $objp->fk_user_author);
+		  $fuser->fetch();
+		  print "<td>".$fuser->fullname."</td>\n";
+		}
+	      else
+		{
+		  print "<td>".$user->fullname."</td>\n";
+		}
+	      print '<TD align="right">'.price($objp->amount).'</TD>';
+	      print "</tr>";
+	      $total = $total + $objp->amount;
+	      $i++;
+	    }
+	  print "<tr><td align=\"right\" colspan=\"4\">Total : <b>$total</b> Euros HT</td></tr>\n";
+	  print "</table>";
+	  $db->free();
 	}
-	print "<tr><td align=\"right\" colspan=\"4\">Total : <b>$total</b> Euros HT</td></tr>\n";
-	print "</table>";
-	$db->free();
-      }
       print "</table>";
       /*
        * Actions
@@ -226,7 +254,7 @@ if ($propalid)
 
       if ($obj->statut == 2)
 	{
-	  print '<td bgcolor="#e0e0e0" align="center" width=\"25%\">';
+	  print '<td bgcolor="#e0e0e0" align="center" width="25%">';
 	  print "<a href=\"facture.php3?propalid=$propalid&action=create\">Emettre une facture</td>";
 	}
       else
