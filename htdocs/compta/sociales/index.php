@@ -22,6 +22,13 @@
  */
 require("./pre.inc.php");
 
+$user->getrights('facture');
+$user->getrights('compta');
+
+if (!$user->admin && !$user->rights->compta->charges)
+  accessforbidden();
+
+
 llxHeader();
 
 function valeur($sql)
@@ -75,9 +82,16 @@ print_titre("Charges sociales $year");
 
 print "<br>\n";
 
+//if ($filtre) {
+//    print_titre("Filtre : ".$_GET["filtrelib"]);
+//    print "<br>\n";
+//}
+
 print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print "<tr class=\"liste_titre\">";
 print '<td>';
+print_liste_field_titre("Num",$PHP_SELF,"id");
+print '</td><td>';
 print_liste_field_titre("Echéance/Date",$PHP_SELF,"de");
 print '</td><td>';
 print_liste_field_titre("Période",$PHP_SELF,"periode");
@@ -93,7 +107,7 @@ print '</td><td>&nbsp;</td>';
 print "</tr>\n";
 
 
-$sql = "SELECT s.rowid as id, c.libelle as type, s.amount,".$db->pdate("s.date_ech")." as de, s.date_pai, s.libelle, s.paye,".$db->pdate("s.periode")." as periode,".$db->pdate("s.date_pai")." as dp";
+$sql = "SELECT s.rowid as id, s.fk_type as type, c.libelle as type_lib, s.amount,".$db->pdate("s.date_ech")." as de, s.date_pai, s.libelle, s.paye,".$db->pdate("s.periode")." as periode,".$db->pdate("s.date_pai")." as dp";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id";
 if ($year > 0)
@@ -104,7 +118,20 @@ if ($filtre) {
     $filtre=ereg_replace(":","=",$filtre);
     $sql .= " AND $filtre";
 }
-$sql .= " ORDER BY lower(s.date_ech) DESC";
+if ($_GET["sortfield"]) {
+    $sql .= " ORDER BY ".$_GET["sortfield"];    
+}
+else {
+    $sql .= " ORDER BY lower(s.date_ech)";
+}
+if ($_GET["sortorder"]) {
+    $sql .= " ".$_GET["sortorder"];
+}
+else {
+    $sql .= " DESC";
+}
+
+
 
 if ( $db->query($sql) )
 {
@@ -117,6 +144,7 @@ if ( $db->query($sql) )
 
       $var = !$var;
       print "<tr $bc[$var]>";
+      print '<td width="80"><a href="charges.php?id='.$obj->id.'">'.$obj->id.'</a></td>';
       print '<td>'.strftime("%d %b %y",$obj->de).'</td>';
       print '<td>';
       if ($obj->periode) {
@@ -125,7 +153,7 @@ if ( $db->query($sql) )
       	print '&nbsp;';
       }
       print '</td>';
-      print '<td>'.$obj->type.'</td><td>'.$obj->libelle.'</td>';
+      print '<td>'.$obj->type_lib.'</td><td>'.$obj->libelle.'</td>';
       print '<td align="right">'.price($obj->amount).'</td>';
       
       if ($obj->paye)
@@ -143,7 +171,7 @@ if ( $db->query($sql) )
 }
 else
 {
-  print $db->error();
+  print "Error :".$db->error()." - $sql";
 }
 
 /*
@@ -152,6 +180,7 @@ else
  */
 print '<tr class="form"><form method="post" action="index.php">';
 print '<input type="hidden" name="action" value="add">';
+print '<td>&nbsp;</td>';
 print '<td><input type="text" size="8" name="date"> YYYYMMDD</td>';
 print '<td>&nbsp;</td>';
 
