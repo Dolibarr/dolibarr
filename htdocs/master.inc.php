@@ -107,7 +107,8 @@ $db = new DoliDb();
 $user = new User($db);
 
 
-define('FPDF_PATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/');   // Pour utiliser une autre version de fpdf
+// Pour utiliser une autre version de fpdf, définir la constante FPDF_PATH
+if (! defined(FPDF_PATH)) { define('FPDF_PATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/'); }
 define('FPDF_FONTPATH', FPDF_PATH . 'font/');
 // \todo mettre cet include uniquement sur les éléments qui manipulent du PDF
 require_once(FPDF_PATH . "fpdf.php");
