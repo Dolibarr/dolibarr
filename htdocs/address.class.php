@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,18 @@
  * $Source$
  *
  */
+
+/**
+        \file       htdocs/address.class.php
+        \brief      Fichier de la classe des adresses postales
+        \version    $Revision$
+*/
+
+
+/**     \class      Address
+	    \brief      Classe permettant la gestion des adresses postales
+	    \todo       Classe non utilisée. L'implémenter dans les objets qui gèrent des adresses
+*/
 
 class Address {
 
