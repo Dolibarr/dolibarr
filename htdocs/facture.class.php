@@ -768,6 +768,23 @@ class Facture
 	return -1;
       }
   }
+  /** 
+   * Renvoie la sommes des paiements
+   *
+   */
+  Function getSommePaiement()
+  {
+    $sql = "SELECT sum(amount) FROM llx_paiement WHERE fk_facture = ".$this->id;
+    if ($this->db->query($sql))
+      {
+	$row = $this->db->fetch_row(0);
+	return $row[0];
+      }
+    else
+      {
+	return -1;
+      }
+  }
   /**
    * RODO TODO
    *
