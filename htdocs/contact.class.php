@@ -213,7 +213,7 @@ class Contact
     {
 
       $sql = "UPDATE llx_socpeople SET ";
-      $sql .= " birthday='".$this->db->idate($this->birthday)."'";
+      $sql .= " birthday='".$this->birthday)."'";
       $sql .= " WHERE idp=$id";
 
       $result = $this->db->query($sql);
@@ -233,7 +233,7 @@ class Contact
    */
   Function fetch($id, $user=0) 
     {
-      $sql = "SELECT c.idp, c.fk_soc, c.name, c.firstname, c.email, phone, phone_perso, phone_mobile, jabberid, ".$this->db->pdate('c.birthday') ." as birthday, c.note, poste";
+      $sql = "SELECT c.idp, c.fk_soc, c.name, c.firstname, c.email, phone, phone_perso, phone_mobile, jabberid, c.birthday, c.birthday_alert, c.note, poste";
       $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
       $sql .= " WHERE c.idp = $id";
       
@@ -265,7 +265,7 @@ class Contact
 	      $this->mail           = $obj->email;
 
 	      $this->birthday       = $obj->birthday;
-	      $this->birthday_alert = "";
+	      $this->birthday_alert = $obj->birthday_alert;
 	      $this->note           = $obj->note;
 	    }
 	  $this->db->free();
