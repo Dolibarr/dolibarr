@@ -46,7 +46,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des contacts",$page, $PHP_SELF);
+print_barre_liste("Liste des contacts",$page, $PHP_SELF,"",$sortfield,$sortorder);
 
 
 /*
@@ -99,10 +99,13 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
   print "<TR class=\"liste_titre\">";
-  print "<TD>Nom</TD>";
-  print "<TD>Prénom</TD><td>";
+  print "<TD>";
+  print_liste_field_titre("Nom",$PHP_SELF,"lower(p.name)", $begin);
+  print "</td><td>";
+  print_liste_field_titre("Prénom",$PHP_SELF,"lower(p.firstname)", $begin);
+  print "</td><td>";
   print_liste_field_titre("Société",$PHP_SELF,"lower(s.nom)", $begin);
   print "</td><TD>email</TD>";
   print '<TD>Téléphone</TD><td>&nbsp;</td>';
@@ -119,7 +122,7 @@ if ($result)
       print "<TD>$obj->name</TD>";
       print "<TD>$obj->firstname</TD>";
       
-      print '<TD><a href="contact.php3?socid='.$obj->idp.'"><img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
+      print '<TD><a href="contact.php3?socid='.$obj->idp.'"><img src="/theme/'.$conf->theme.'/img/filter.png" border="0" alt="filtrer"></a>&nbsp;';
       print "<a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
       
       print '<td><a href="action/fiche.php3?action=create&actionid=4&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
