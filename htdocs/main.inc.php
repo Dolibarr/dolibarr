@@ -501,8 +501,9 @@ function llxFooter($foot='')
 
   print '<p id="powered-by-dolibarr">';
   print '<a href="http://savannah.gnu.org/bugs/?group_id=1915">Bug report</a>&nbsp;';
-  print '<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>&nbsp;'.$foot.'</p>';
-
+  //  print '<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>&nbsp;'.$foot.'</p>';
+  // Suppression temporaire du footer
+  print '<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a></p>';
   print "</body></html>";
 }
 
