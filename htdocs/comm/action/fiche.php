@@ -20,7 +20,7 @@
  * $Source$
  */
  
-/*!
+/**
 	    \file       htdocs/comm/action/fiche.php
         \ingroup    commercial
 		\brief      Page de la fiche action commercial
@@ -256,34 +256,7 @@ if ($_GET["action"] == 'create')
       print_duree_select("duree");
       print '</td></tr>';
 
-      // Lien avec calendrier si module activé
-        if ($conf->webcal->enabled) {
-            if ($conf->webcal->syncro != 'never')
-            {
-                $langs->load("other");
-                if (! $user->webcal_login)
-                {
-                    print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td>';
-                    print '<td><input type="checkbox" disabled name="todo_webcal">';
-                    print ' '.$langs->trans("ErrorWebcalLoginNotDefined","<a href=\"/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
-                    print '</td>';
-                    print '</tr>';
-                }
-                else
-                {
-                    if ($conf->webcal->syncro == 'always')
-                    {
-                        print '<input type="hidden" name="todo_webcal" value="on">';
-                    }
-                    else
-                    {
-                        print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td>';
-                        print '<td><input type="checkbox" name="todo_webcal"'.(($conf->webcal->syncro=='always' || $conf->webcal->syncro=='yesbydefault')?' checked':'').'></td>';
-                        print '</tr>';
-                    }
-                }
-            }
-        }
+      add_row_for_webcal_link();
         
       print '<tr><td valign="top">'.$langs->trans("Comment").'</td><td>';
       print '<textarea cols="60" rows="6" name="todo_note"></textarea></td></tr>';
@@ -375,12 +348,7 @@ if ($_GET["action"] == 'create')
       }
       print '</td></tr>';
 
-      // Lien avec calendrier si module activé
-      if ($conf->webcal->enabled)
-	{
-	  $langs->load("other");
-	  print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td><td><input type="checkbox" name="todo_webcal"></td></tr>';
-	}
+      add_row_for_webcal_link();
 
       // Description
       print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
@@ -520,4 +488,47 @@ if ($_GET["id"])
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+
+
+/**
+        \brief      Ajoute une ligne de tableau a 2 colonnes pour avoir l'option webcalendar
+*/
+function add_row_for_webcal_link()
+{
+    global $conf,$langs,$user;
+    
+    // Lien avec calendrier si module activé
+    if ($conf->webcal->enabled) {
+        if ($conf->webcal->syncro != 'never')
+        {
+            $langs->load("other");
+            if (! $user->webcal_login)
+            {
+                print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td>';
+                print '<td><input type="checkbox" disabled name="todo_webcal">';
+                print ' '.$langs->trans("ErrorWebcalLoginNotDefined","<a href=\"/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
+                print '</td>';
+                print '</tr>';
+            }
+            else
+            {
+                if ($conf->webcal->syncro == 'always')
+                {
+                    print '<input type="hidden" name="todo_webcal" value="on">';
+                }
+                else
+                {
+                    print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td>';
+                    print '<td><input type="checkbox" name="todo_webcal"'.(($conf->webcal->syncro=='always' || $conf->webcal->syncro=='yesbydefault')?' checked':'').'></td>';
+                    print '</tr>';
+                }
+            }
+        }
+    }
+}
+
+
 ?>
+
+
