@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,7 +86,7 @@ class Deplacement
    */
   Function fetch ($id)
     {    
-      $sql = "SELECT rowid, fk_user, km, fk_soc,".$this->db->pdate("dated")." as dated";
+      $sql = "SELECT fk_user, km, fk_soc,".$this->db->pdate("dated")." as dated";
       $sql .= " FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = $id";
 
       $result = $this->db->query($sql) ;
@@ -94,13 +95,18 @@ class Deplacement
 	{
 	  $result = $this->db->fetch_array();
 
-	  $this->id       = $result["rowid"];
+	  $this->id       = $id;
+
 	  $this->date     = $result["dated"];
 	  $this->userid   = $result["fk_user"];
 	  $this->socid    = $result["fk_soc"];
 	  $this->km       = $result["km"];
 	  return 1;
 	}
+    else {
+	  print $this->db->error();
+	  print "<br>".$sql;
+    }
     }
   /*
    *

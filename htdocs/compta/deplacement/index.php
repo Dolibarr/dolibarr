@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +37,9 @@ llxHeader();
  * Liste
  *
  */
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+$page=$_GET["page"];
 
 if ($sortorder == "")
 {
@@ -70,30 +74,30 @@ if ( $db->query($sql) )
   print_barre_liste("Liste des déplacements", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
   $i = 0;
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-  print "<TR class=\"liste_titre\">";
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+  print "<tr class=\"liste_titre\">";
   print_liste_field_titre_new ("Date",$PHP_SELF,"d.dated","","&socidp=$socidp",'',$sortfield);
   print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","","&socidp=$socidp",'',$sortfield);
-  print '<TD align="center">Utilisateur</TD>';
+  print '<td align="center">Utilisateur</TD>';
+  print "</tr>\n";
 
-  print "</TR>\n";
   $var=True;
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print '<td><a href="fiche.php?id='.$objp->rowid.'">'.strftime("%d %B %Y",$objp->dd).'</a></td>';
+      print "<tr $bc[$var]>";
+      print '<td><a href="fiche.php?id='.$objp->rowid.'">'.dolibarr_print_date($objp->dd).'</a></td>';
       print '<td><a href="/comm/fiche.php?socid='.$objp->idp.'">'.$objp->nom."</a></td>\n";
 
-      print '<TD align="center">'.$objp->firstname.' '.$objp->name.'</td>';
+      print '<td align="center">'.$objp->firstname.' '.$objp->name.'</td>';
 
-      print "</TR>\n";
+      print "</tr>\n";
       
       $i++;
     }
   
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else

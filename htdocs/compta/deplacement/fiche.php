@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,31 +24,31 @@ require("./pre.inc.php");
 
 $mesg = '';
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == "yes")
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 {
   $deplacement = new Deplacement($db);
-  $deplacement->delete($id);
+  $deplacement->delete($_GET["id"]);
   Header("Location: index.php");
 }
 
 
-if ($HTTP_POST_VARS["action"] == 'add' && $HTTP_POST_VARS["cancel"] <> 'Annuler')
+if ($_POST["action"] == 'add' && $_POST["cancel"] <> 'Annuler')
 {
   $deplacement = new Deplacement($db);
 
   $deplacement->date = mktime(12, 1 , 1, 
-			      $HTTP_POST_VARS["remonth"], 
-			      $HTTP_POST_VARS["reday"], 
-			      $HTTP_POST_VARS["reyear"]);
+			      $_POST["remonth"], 
+			      $_POST["reday"], 
+			      $_POST["reyear"]);
   
-  $deplacement->km = $HTTP_POST_VARS["km"];
-  $deplacement->socid = $HTTP_POST_VARS["socid"];
-  $deplacement->userid = $user->id; //$HTTP_POST_VARS["km"];
+  $deplacement->km = $_POST["km"];
+  $deplacement->socid = $_POST["soc_id"];
+  $deplacement->userid = $user->id; //$_POST["km"];
   $id = $deplacement->create($user);
 
-  if ($id > 0)
+  if ($_POST["id"])
     {
-      Header ( "Location: fiche.php?id=$id");
+      Header ( "Location: fiche.php?id=".$_POST["id"]);
     }
   else
     {
@@ -55,23 +56,23 @@ if ($HTTP_POST_VARS["action"] == 'add' && $HTTP_POST_VARS["cancel"] <> 'Annuler'
     }
 }
 
-if ($HTTP_POST_VARS["action"] == 'update' && $HTTP_POST_VARS["cancel"] <> 'Annuler')
+if ($_POST["action"] == 'update' && $_POST["cancel"] <> 'Annuler')
 {
   $deplacement = new Deplacement($db);
-  $result = $deplacement->fetch($id);
+  $result = $deplacement->fetch($_POST["id"]);
 
   $deplacement->date = mktime(12, 1 , 1, 
-			      $HTTP_POST_VARS["remonth"], 
-			      $HTTP_POST_VARS["reday"], 
-			      $HTTP_POST_VARS["reyear"]);
+			      $_POST["remonth"], 
+			      $_POST["reday"], 
+			      $_POST["reyear"]);
   
-  $deplacement->km     = $HTTP_POST_VARS["km"];
+  $deplacement->km     = $_POST["km"];
 
   $result = $deplacement->update($user);
 
   if ($result > 0)
     {
-      Header ( "Location: fiche.php?id=$id");
+      Header ( "Location: fiche.php?id=".$_POST["id"]);
     }
   else
     {
@@ -87,21 +88,27 @@ llxHeader();
  *
  */
 $html = new Form($db);
-if ($action == 'create')
+if ($_GET["action"] == 'create')
 {
   print "<form action=\"fiche.php\" method=\"post\">\n";
   print '<input type="hidden" name="action" value="add">';
-  print '<input type="hidden" name="socid" value="'.$socid.'">';
+
   print '<div class="titre">Nouveau déplacement</div><br>';
       
-  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
   print '<tr><td width="20%">Personne</td><td>'.$user->fullname.'</td></tr>';    
+
+  print "<tr>";
+  print '<td>Société visitée</td><td>';
+  print $html->select_societes();
+  print '</td></tr>';
+
   print "<tr>";
   print '<td>Date du déplacement</td><td>';
   print $html->select_date();
   print '</td></tr>';
 
-  print '<tr><td>Kilomètres</td><TD><input name="km" size="10" value=""></td></tr>';
+  print '<tr><td>Kilomètres</td><td><input name="km" size="10" value=""></td></tr>';
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer">&nbsp;';
   print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
   print '</table>';
@@ -109,57 +116,54 @@ if ($action == 'create')
 }
 else
 {
-  if ($id)
+  if ($_GET["id"])
     {
       $deplacement = new Deplacement($db);
-      $result = $deplacement->fetch($id);
+      $result = $deplacement->fetch($_GET["id"]);
 
       if ( $result )
 	{ 
     
 	  /*
-	   * Confirmation de la suppression de l'adhérent
+	   * Confirmation de la suppression du déplacement
 	   *
 	   */
 	  
-	  if ($action == 'delete')
+	  if ($_GET["action"] == 'delete')
 	    {
 	      
-	      print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
-	      print '<input type="hidden" name="action" value="confirm_delete">';
-	      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-	      
-	      print '<tr><td colspan="3">Supprimer ce déplacement</td></tr>';	      
-	      print '<tr><td class="delete">Etes-vous sur de vouloir supprimer ce déplacement ?</td><td class="delete">';
-	      $htmls = new Form($db);
-	      
-	      $htmls->selectyesno("confirm","no");
-	      
-	      print "</td>\n";
-	      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
-	      print '</table>';
-	      print "</form>\n";  
+            print_fiche_titre("Suppression déplacement ",$message);
+            print '<br>';
+
+            $html = new Form($db);
+            $html->form_confirm("fiche.php?id=".$_GET["id"],"Supprimer ce déplacement","Etes-vous sûr de vouloir supprimer ce déplacement ?","confirm_delete");
 	    }
 
 
-	  if ($action == 'edit')
+	  if ($_GET["action"] == 'edit')
 	    {
-	      print_fiche_titre('Fiche déplacement : '.$product->ref, $mesg);
+	      print_fiche_titre('Fiche déplacement', $mesg);
 	      
-	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	      print "<form action=\"fiche.php\" method=\"post\">\n";
 	      print '<input type="hidden" name="action" value="update">';
+	      print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 	            
-	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 
 	      $soc = new Societe($db);
 	      $soc->fetch($deplacement->socid);
+
 	      print '<tr><td width="20%">Personne</td><td>'.$user->fullname.'</td></tr>';    
-	      print '<tr><td width="20%">Société visitée</td><td>'.$soc->nom_url.'</td></tr>';    
+
+          print "<tr>";
+          print '<td>Société visitée</td><td>';
+          print $html->select_societes($soc->id);
+          print '</td></tr>';
+        
 	      print '<tr><td>Date du déplacement</td><td>';
 	      print $html->select_date($deplacement->date);
-	      print strftime("%A %d %B %Y",$deplacement->date);
 	      print '</td></tr>';
-	      print '<tr><td>Kilomètres</td><td><input name="km" size="10" value="'.$deplacement->km.'"> '.$deplacement->km.'</td></tr>';
+	      print '<tr><td>Kilomètres</td><td><input name="km" size="10" value="'.$deplacement->km.'"></td></tr>';
 
 	      print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer">&nbsp;';
 	      print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
@@ -168,18 +172,17 @@ else
 	    } 
 	  else
 	    {
-	      print_fiche_titre('Fiche déplacement : '.$product->ref, $mesg);
+	      print_fiche_titre('Fiche déplacement', $mesg);
       
-	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-
 	      $soc = new Societe($db);
 	      $soc->fetch($deplacement->socid);
+
+	      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	      print '<tr><td width="20%">Personne</td><td>'.$user->fullname.'</td></tr>';    
 	      print '<tr><td width="20%">Société visitée</td><td>'.$soc->nom_url.'</td></tr>';    
 	      print '<tr><td>Date du déplacement</td><td>';
-	      print strftime("%A %d %B %Y",$deplacement->date);
+	      print dolibarr_print_date($deplacement->date);
 	      print '</td></tr>';
-	      
 	      print '<tr><td>Kilomètres</td><td>'.$deplacement->km.'</td></tr>';    
 	      print "</table>";
 	    }
@@ -187,32 +190,27 @@ else
 	}
       else
 	{
-	  print "Error";
+	  print "Error:".$db->error();
 	}
     }
 }
-/* ************************************************************************** */
-/*                                                                            */ 
-/* Barre d'action                                                             */ 
-/*                                                                            */ 
-/* ************************************************************************** */
 
-print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
-print '<td width="20%" align="center">-</td>';
 
-if ($action == 'create')
+/*
+ * Barre d'actions
+ *
+ */
+print '<br>';
+
+print '<div class="tabsAction">';
+
+if ($_GET["action"] != 'create')
 {
-  print '<td width="20%" align="center">-</td>';
+  print '<a class="tabAction" href="fiche.php?action=edit&id='.$_GET["id"].'">Editer</a>';
+  print '<a class="tabAction" href="fiche.php?action=delete&id='.$_GET["id"].'">Supprimer</a>';
 }
-else
-{
-  print '<td width="20%" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
-}
-print '<td width="20%" align="center">-</td>';
 
-print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">[<a href="fiche.php?action=delete&id='.$id.'">Supprimer</a>]</td>';
-print '</table><br>';
+print '</div>';
 
 $db->close();
 
