@@ -64,13 +64,14 @@ class Service {
    *
    *
    */
-  Function update($id, $userid) {
+  Function update($id, $user) {
 
     $sql = "UPDATE llx_service ";
     $sql .= " SET label = '" . trim($this->libelle) ."'";
     $sql .= ",ref = '" . trim($this->ref) ."'";
     $sql .= ",price = " . $this->price ;
-    $sql .= ",fk_user_modif = " . $userid ;
+    $sql .= ",description = '" . trim($this->description) ."'";
+    $sql .= ",fk_user_modif = " . $user->id ;
 
     $sql .= " WHERE rowid = " . $id;
 
@@ -133,7 +134,7 @@ class Service {
    */
   Function fetch($id) {
 
-    $sql = "SELECT s.ref,s.label,s.price,s.tms,s.debut_comm,s.fin_comm,";
+    $sql = "SELECT s.ref,s.label,s.price,s.tms,s.debut_comm,s.fin_comm,s.description,";
     $sql .= $this->db->pdate("s.debut_comm") . ' as debut_epoch,';
     $sql .= $this->db->pdate("s.fin_comm") . ' as fin_epoch';
     $sql .= " FROM llx_service as s";
@@ -149,6 +150,8 @@ class Service {
 	$this->ref = $obj->ref;
 	$this->libelle = $obj->label;
 	$this->price = $obj->price;
+	$this->description = $obj->description;
+
 	$this->tms = $obj->tms;
 
 	$this->debut = $obj->debut_comm;
