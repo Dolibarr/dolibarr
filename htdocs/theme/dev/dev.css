@@ -22,7 +22,7 @@ body
 {
   background: #dcdad5; 
   margin: 0px;
-  font-family: sans-serif; font-size: 0.8em;
+  font-family: sans-serif; font-size: 0.7em;
 }
 
 /*
@@ -34,7 +34,7 @@ div.tabs
   margin: 0em;
   padding: 0em 0em;
   text-align: left;
- font-family: sans-serif; font-size: 0.8em;
+ font-family: sans-serif; font-size: 0.7em;
 
   }
 
@@ -271,12 +271,12 @@ tr.box_titre {
 tr.box_pair { 
               background: #dfdfdf; 
               border-bottom: 1px solid #000000;
-              font-size: 0.7em;
+              font-size: 0.6em;
               }
 
 tr.box_impair {
                 border-bottom: 1px solid #000000;
-                font-size: 0.7em;
+                font-size: 0.6em;
                 }
 
 tr.fiche { 
@@ -302,10 +302,10 @@ td.valid {
            font-weight: bold; }
 
 td.small { 
-           font-size: 0.7em; }
+           font-size: 0.6em; }
 
 tr.nonpayed { 
-              font-size: 0.7em;
+              font-size: 0.6em;
               font-weight: bold; }
 /*
  *
@@ -324,7 +324,7 @@ p#powered-by-dolibarr a {
 	border: 1px solid black;
 	text-decoration: none;
 	color: black;
-	font-size: 0.8em;
+	font-size: 0.7em;
 	padding-right: 5px;
 	padding-left: 5px;
 }
