@@ -51,6 +51,7 @@ class modLdap extends DolibarrModules
     $this->name = "Ldap";
     $this->family = "technic";
     $this->description = "Synchronisation Ldap";
+    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_LDAP";
     $this->const_config = MAIN_MODULE_LDAP;
     $this->special = 1;

@@ -54,6 +54,7 @@ class modProjet extends DolibarrModules
     $this->family = "projects";
     $this->name = "Projets";
     $this->description = "Gestion des projets";
+    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_PROJET";
     $this->const_config = MAIN_MODULE_PROJET;
 

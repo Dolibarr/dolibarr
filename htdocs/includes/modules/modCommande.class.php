@@ -55,6 +55,7 @@ class modCommande extends DolibarrModules
     $this->family = "crm";
     $this->name = "Commande";
     $this->description = "Gestion des commandes";
+    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_COMMANDE";
     $this->const_config = MAIN_MODULE_COMMANDE;
     $this->special = 0;

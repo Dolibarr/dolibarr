@@ -52,6 +52,7 @@ class modExpedition extends DolibarrModules
     $this->family = "crm";
     $this->name = "Expedition";
     $this->description = "Gestion des expéditions";
+    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_EXPEDITION";
     $this->const_config = MAIN_MODULE_EXPEDITION;
     $this->special = 0;

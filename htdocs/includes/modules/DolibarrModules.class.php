@@ -314,5 +314,21 @@ class DolibarrModules
         }
     }
 
+    /**  \brief     Retourne la version du module.
+     *              Pour les modules à l'état 'experimental', retourne la traduction de 'experimental'
+     *              Pour les modules 'dolibarr', retourne la version de Dolibarr
+     *              Pour les autres modules, retourne la version du module
+     *   \return    string      Nom du module traduit
+     */
+    function getVersion()
+    {
+        global $langs;
+        $langs->load("admin");
+
+        if ($this->version == 'experimental') return $langs->trans("Experimental");
+        elseif ($this->version == 'dolibarr') return DOL_VERSION;
+        elseif ($this->version) return $this->version;
+        else return $langs->trans("Unknown");
+    }
 }
 ?>

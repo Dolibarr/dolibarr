@@ -55,6 +55,7 @@ class modFacture extends DolibarrModules
     $this->family = "financial";
     $this->name = "Factures";
     $this->description = "Gestion des factures";
+    $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_FACTURE";
     $this->const_config = MAIN_MODULE_FACTURE;
     $this->special = 0;

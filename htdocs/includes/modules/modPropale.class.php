@@ -54,6 +54,7 @@ class modPropale extends DolibarrModules
     $this->family = "crm";
     $this->name = "Propositions commerciales";
     $this->description = "Gestion des propositions commerciales";
+    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_PROPALE";
     $this->const_config = MAIN_MODULE_PROPALE;
     $this->special = 0;

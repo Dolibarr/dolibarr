@@ -54,6 +54,7 @@ class modBoutique extends DolibarrModules
     $this->family = "products";
     $this->name = "Boutique";
     $this->description = "Gestion des boutiques";
+    $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_BOUTIQUE";
     $this->const_config = MAIN_MODULE_BOUTIQUE;
     $this->special = 0;

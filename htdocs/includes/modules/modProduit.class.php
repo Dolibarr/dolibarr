@@ -54,6 +54,7 @@ class modProduit extends DolibarrModules
     $this->family = "products";
     $this->name = "Produit";
     $this->description = "Gestion des produits";
+    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_PRODUIT";
     $this->const_config = MAIN_MODULE_PRODUIT;
     $this->special = 0;

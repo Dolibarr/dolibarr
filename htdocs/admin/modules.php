@@ -146,6 +146,7 @@ print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Family")."</td>\n";
 print "  <td>".$langs->trans("Module")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
+print "  <td align=\"center\">".$langs->trans("Version")."</td>\n";
 print "  <td align=\"center\">".$langs->trans("Activated")."</td>\n";
 print "  <td align=\"center\">".$langs->trans("Action")."</td>\n";
 print "  <td>&nbsp;</td>\n";
@@ -214,7 +215,7 @@ foreach ($orders as $key => $value)
     $const_value = $objMod->const_config;
 
     if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
-        print "<tr class=\"liste_titre\">\n  <td colspan=\"6\"></td>\n</tr>\n";
+        print "<tr class=\"liste_titre\">\n  <td colspan=\"7\"></td>\n</tr>\n";
         $atleastoneforfamily=0;
     }
 
@@ -240,6 +241,8 @@ foreach ($orders as $key => $value)
         print $objMod->getName();
         print "</td>\n  <td>";
         print $objMod->getDesc();
+        print "</td>\n  <td align=\"center\">";
+        print $objMod->getVersion();
         print "</td>\n  <td align=\"center\">";
 
         if ($const_value == 1)

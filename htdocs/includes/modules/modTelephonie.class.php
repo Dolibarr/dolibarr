@@ -50,7 +50,8 @@ class modTelephonie extends DolibarrModules
 
     $this->family = "technic";
     $this->name = "Telephonie";
-    $this->description = "Gestion de la Telephonie (experimental)";
+    $this->description = "Gestion de la Telephonie";
+    $this->version = 'experimental';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_TELEPHONIE";
     $this->const_config = MAIN_MODULE_TELEPHONIE;
     $this->special = 1;

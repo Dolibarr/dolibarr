@@ -23,11 +23,11 @@
  *
  */
 
-/*!     \defgroup   banque     Module banque
+/**     \defgroup   banque     Module banque
         \brief      Module pour gérer la tenue d'un compte bancaire et rapprochements
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modBanque.class.php
         \ingroup    banque
         \brief      Fichier de description et activation du module Banque
@@ -35,7 +35,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modBanque
+/**     \class      modBanque
 		\brief      Classe de description et activation du module Banque
 */
 
@@ -54,6 +54,7 @@ class modBanque extends DolibarrModules
     $this->family = "financial";
     $this->name = "Banque";
     $this->description = "Gestion des comptes financiers de type Comptes bancaires ou postaux";
+    $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_BANQUE";
     $this->const_config = MAIN_MODULE_BANQUE;
 

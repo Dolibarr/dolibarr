@@ -54,6 +54,7 @@ class modCommercial extends DolibarrModules
     $this->family = "crm";
     $this->name = "Commercial";
     $this->description = "Gestion commercial";
+    $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_COMMERCIAL";
     $this->const_config = MAIN_MODULE_COMMERCIAL;
     $this->special = 0;

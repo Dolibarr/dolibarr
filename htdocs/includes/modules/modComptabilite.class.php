@@ -54,6 +54,7 @@ class modComptabilite extends DolibarrModules
     $this->family = "financial";
     $this->name = "Comptabilite";
     $this->description = "Gestion sommaire de comptabilité";
+    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_COMPTABILITE";
     $this->const_config = MAIN_MODULE_COMPTABILITE;
 

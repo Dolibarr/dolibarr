@@ -52,6 +52,7 @@ class modStock extends DolibarrModules
     $this->family = "products";
     $this->name = "Stock produits";
     $this->description = "Gestion des stocks";
+    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_STOCK";
     $this->const_config = MAIN_MODULE_STOCK;
     $this->special = 0;

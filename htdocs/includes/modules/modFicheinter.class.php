@@ -54,6 +54,7 @@ class modFicheinter  extends DolibarrModules
     $this->family = "crm";
     $this->name = "Fiche d'intervention";
     $this->description = "Gestion des fiches d'intervention";
+    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_FICHEINTER";
     $this->const_config = MAIN_MODULE_FICHEINTER;
     $this->special = 0;

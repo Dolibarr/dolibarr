@@ -54,6 +54,7 @@ class modService extends DolibarrModules
     $this->family = "products";
     $this->name = "Service";
     $this->description = "Gestion des services";
+    $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_SERVICE";
     $this->const_config = MAIN_MODULE_SERVICE;
 
