@@ -156,6 +156,12 @@ if ($HTTP_POST_VARS["action"] == "set")
    */
   if ($error == 0)
     {
+	  // Defini $dolibarr_...
+	  if (file_exists($conf))
+		{
+  		include($conf);
+		}
+
       require ($dolibarr_main_document_root . "/lib/mysql.lib.php");
       require ($dolibarr_main_document_root . "/conf/conf.class.php");
 
@@ -166,13 +172,12 @@ if ($HTTP_POST_VARS["action"] == "set")
 	  $conf->db->name = "mysql";
 	  $conf->db->user = isset($HTTP_POST_VARS["db_user_root"])?$HTTP_POST_VARS["db_user_root"]:"";
 	  $conf->db->pass = isset($HTTP_POST_VARS["db_user_pass"])?$HTTP_POST_VARS["db_user_pass"]:"";
+	  //print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->pass;
 	  $db = new DoliDb();
 	  
 	  $sql = "INSERT INTO user ";
 	  $sql .= "(Host,User,password)";
 	  $sql .= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_user',password('$dolibarr_main_db_pass'))";
-	  
-	  $db->query($sql);
 	  
 	  $sql = "INSERT INTO db ";
 	  $sql .= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
@@ -194,7 +199,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 		}
 	      else
 		{
-		print "<tr><td>Création de l'utilisateur : $dolibarr_main_db_user</td><td>ERREUR</td></tr>";
+		print "<tr><td>Création de l'utilisateur : $dolibarr_main_db_user</td><td>ERREUR ".$db->error()."</td></tr>";
 	      }
 	    }
 	  
@@ -229,7 +234,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 	      //
 	      // Connexion base existante
 	      // 
-	      print "<tr><td>Connexion réussie à la base : $dolibarr_main_db_name</td><td>OK</td></tr>";
+	      print "<tr><td>Connexion à la base : $dolibarr_main_db_name</td><td>OK</td></tr>";
 	      
 	      $ok = 1 ;
 	    }
@@ -238,7 +243,6 @@ if ($HTTP_POST_VARS["action"] == "set")
 	      //
 	      // Création de la base
 	      //
-	      
 	      print "<tr><td>Echec de connexion à la base : $dolibarr_main_db_name</td><td>Warning</td></tr>";
 	      print '<tr><td colspan="2">Création de la base : '.$dolibarr_main_db_name.'</td></tr>';
 	      

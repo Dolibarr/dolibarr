@@ -21,7 +21,7 @@
  *
  */
 include("./inc.php");
-pHeader("Fichier de configuration","etape4");
+pHeader("Création des objets de la base","etape4");
 
 $etape = 2;
 
@@ -51,7 +51,7 @@ if ($HTTP_POST_VARS["action"] == "set")
   $ok = 0;
   if ($db->connected == 1)
     {
-      print "<tr><td>Connexion réussie au serveur : $dolibarr_main_db_host</td><td>OK</td></tr>";
+      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host</td><td>OK</td></tr>";
       $ok = 1 ;
     }
   else
@@ -113,7 +113,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 	      
 	      if ($db->query($buffer))
 		{
-		  print "<td>OK</td></tr>";
+		  //print "<td>OK</td></tr>";
 		}
 	      else
 		{
@@ -125,7 +125,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 		  else
 		    {
 		      print "<tr><td>Création de la table $name</td>";
-		      print "<td>ERREUR ".$db->errno()."</td></tr>";
+		      print "<td>ERREUR ".$db->errno()." ".$db->error()."</td></tr>";
 		      $error++;
 		    }
 		}
@@ -136,7 +136,7 @@ if ($HTTP_POST_VARS["action"] == "set")
       
       if ($error == 0)
 	{
-	  print '<tr><td colspan="2">Création des tables réussie</td></tr>';
+	  print '<tr><td>Création des tables et clés primaires</td><td>OK</td></tr>';
 	  $ok = 1;
 	}
     }
@@ -169,13 +169,13 @@ if ($HTTP_POST_VARS["action"] == "set")
 		    }
 		  else
 		    {
-		      $ok = 0;
 		      if ($db->errno() == 1062)
 			{
 			  // print "<tr><td>Insertion ligne : $buffer</td><td>Déja existante</td></tr>";
 			}
 		      else
 			{
+		      $ok = 0;
 			  print "Erreur SQL ".$db->errno()." sur requete '$buffer': ".$db->error()."<br>";
 			}
 		    }
@@ -191,6 +191,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 	}
       else
 	{
+	  print "<td>ERREUR</td></tr>";
 	  $ok = 1 ;
 	}
     }
