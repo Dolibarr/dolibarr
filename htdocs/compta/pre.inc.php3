@@ -46,6 +46,8 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
+  $menu->add("/comm/clients.php3", "Clients");
+
   $menu->add("/compta/dons/","Dons");
 
   $menu->add("/compta/facture.php3","Factures");
