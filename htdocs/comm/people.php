@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +37,33 @@ if ($sortorder == "")
 
 if ($action == 'create_user') 
 {
-  $nuser = new User($db);
-  $contact = new Contact($db);
-  $nuser->nom = $contact->nom;
-  $nuser->prenom = $contact->prenom;
-  $result = $contact->fetch($contactid);
-  $nuser->create_from_contact($contact);
+    // Recuperation contact actuel
+    $contact = new Contact($db);
+    $result = $contact->fetch($_GET["contactid"]);
+    
+    // Creation user
+    $nuser = new User($db);
+    $nuser->nom = $contact->nom;
+    $nuser->prenom = $contact->prenom;
+    $nuser->create_from_contact($contact);
+}
+
+if ($action == 'update') 
+{
+    // Recuperation contact actuel
+    $contact = new Contact($db);
+    $contact->fetch($_POST["contactid"]);
+
+    // Modification contact
+    $contact->nom = $_POST["name"];
+    $contact->prenom = $_POST["firstname"];
+    $contact->poste = $_POST["poste"];
+    $contact->phone = $_POST["phone"];
+    $contact->fax = $_POST["fax"];
+    $contact->email = $_POST["email"];
+    $contact->note = $_POST["note"];
+
+    $contact->update($_POST["contactid"]);
 }
 
 /*
