@@ -95,33 +95,37 @@ if ($socidp)
   $sql .= " AND s.idp = $socidp"; 
 }
 
-if ( $db->query($sql) ) {
+if ( $db->query($sql) )
+{
   $num = $db->num_rows();
   $i = 0;
   print '<p><TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
   
-  print "<TR bgcolor=\"#e0e0e0\">";
+  print '<TR class="liste_titre">';
   print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
   print "<TD>Réf</TD><td>Titre</td>";
   print "</TR>\n";
 
-  while ($i < $num) {
-    $objp = $db->fetch_object( $i);
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object( $i);
     
-    $var=!$var;
-    print "<TR $bc[$var]>";
-    print "<TD><a href=\"../fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
-    print "<TD><a href=\"fiche.php3?id=$objp->projectid\">$objp->ref</a></TD>\n";
-    print "<TD><a href=\"fiche.php3?id=$objp->projectid\">$objp->title</a></TD>\n";
-    print "<td>&nbsp;</td>";
-    print "</TR>\n";
+      $var=!$var;
+      print "<TR $bc[$var]>";
+      print "<TD><a href=\"../fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
+      print "<TD><a href=\"fiche.php3?id=$objp->projectid\">$objp->ref</a></TD>\n";
+      print "<TD><a href=\"fiche.php3?id=$objp->projectid\">$objp->title</a></TD>\n";
+      print "<td>&nbsp;</td>";
+      print "</TR>\n";
     
-    $i++;
-  }
-
+      $i++;
+    }
+  
   print "</TABLE>";
   $db->free();
-} else {
+}
+else
+{
   print $db->error();
 }
 
