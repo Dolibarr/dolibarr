@@ -1,5 +1,5 @@
 -- ===========================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -135,9 +135,9 @@ values (18,10,'Picasso','Myriam','01 40 15 03 18','01 40 15 06 18','dev@lafrere.
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (19,11,'Beethoven','John','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (18,11,'Dumas','Elisabeth','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+values (22,11,'Dumas','Elisabeth','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (18,10,'','Joséphine','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+values (21,10,'','Joséphine','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 --
 --
 -- Produits
