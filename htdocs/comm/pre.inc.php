@@ -35,13 +35,15 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add(DOL_URL_ROOT."/comm/clients.php", "Clients");
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php", "Contacts");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", "Contacts");
 
-  $menu->add(DOL_URL_ROOT."/comm/prospect/", "Prospects");
+  $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", "Prospects");
+
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", "Contacts");
 
   $menu->add(DOL_URL_ROOT."/comm/action/index.php", "Actions");
 
-  if ($user->rights->propale->lire)
+  if ($conf->propal->enabled && $user->rights->propale->lire)
     {
       $menu->add(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
       $menu->add_submenu("propal.php?viewstatut=0", "Brouillons");
@@ -56,20 +58,18 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add(DOL_URL_ROOT."/commande/index.php", "Commandes");
     }
 
-
   if ($conf->fichinter->enabled ) 
     {
       $menu->add(DOL_URL_ROOT."/fichinter/index.php", "Fiches d'intervention");
     }
 
-  if ($conf->produit->enabled )
+  if ($conf->produit->enabled || $conf->service->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/product/index.php", "Produits");
-    }
-
-  if ($conf->service->enabled ) 
-    {
-      $menu->add(DOL_URL_ROOT."/product/index.php", "Services");	# Pour l'instant product et service partagent le meme rep.
+	  $chaine="";
+	  if ($conf->produit->enabled) { $chaine.="Produits"; }
+	  if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
+	  if ($conf->service->enabled) { $chaine.="Services"; }
+      $menu->add(DOL_URL_ROOT."/product/index.php", "Produits/Services");
     }
 
   if ($conf->projet->enabled ) 
