@@ -30,6 +30,7 @@ require("./pre.inc.php");
 
 $langs->load("companies");
 $langs->load("products");
+$langs->load("admin");
 
 
 if (!$user->admin)
