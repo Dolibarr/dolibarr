@@ -59,9 +59,9 @@ if ($HTTP_POST_VARS["action"] == 'add_action')
       $actioncomm->date = $db->idate(mktime($HTTP_POST_VARS["heurehour"],
 					    $HTTP_POST_VARS["heuremin"],
 					    0,
-					    $HTTP_POST_VARS["remonth"],
-					    $HTTP_POST_VARS["reday"],
-					    $HTTP_POST_VARS["reyear"])
+					    $HTTP_POST_VARS["acmonth"],
+					    $HTTP_POST_VARS["acday"],
+					    $HTTP_POST_VARS["acyear"])
 				     );
       if ($HTTP_POST_VARS["actionid"] == 5) 
 	{
@@ -191,7 +191,8 @@ if ($_GET["action"] == 'create')
       print '<a href="../fiche.php?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
       print '<tr><td width="10%">Contact</td><td width="40%">'.$contact->fullname.'</td></tr>';
       print '<tr><td width="10%">Date</td><td width="40%">';
-      print_date_select();
+      $html= new Form($db);
+      $html->select_date('','ac');
       print '</td></tr>';
       print '<tr><td width="10%">Heure</td><td width="40%">';
       print_heure_select("heure",8,20);
@@ -364,22 +365,19 @@ if ($id)
   /*
    *
    */
-  print '<br><table id="actions" border="1" cellspadding="3" cellspacing="0" width="100%"><tr>';
-  print '<td align="center" width="20%">';
-  if ($action=='edit')
+  print '<br><div class="tabsAction">';
+
+  if ($_GET["action"] == 'edit')
     {
-      print '<a href="fiche.php?id='.$act->id.'">Annuler</a></td>';
+      print '<a class="tabAction" href="fiche.php?id='.$act->id.'">Annuler</a>';
     }
   else
     {
-      print '<a href="fiche.php?action=edit&id='.$act->id.'">Editer</a></td>';
+      print '<a class="tabAction" href="fiche.php?action=edit&id='.$act->id.'">Editer</a>';
     }
-  print '<td align="center" width="20%">-</td>';
-  print '<td align="center" width="20%">-</td>';
-  print '<td align="center" width="20%">-</td>';
-  print '<td align="center" width="20%">';
-  print '<a href="fiche.php?action=delete&id='.$act->id.'">Supprimer</a></td>';
-  print '</table>';
+
+  print '<a class="tabAction" href="fiche.php?action=delete&id='.$act->id.'">Supprimer</a>';
+  print '</div>';
 }
 
 $db->close();
