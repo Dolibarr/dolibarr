@@ -41,7 +41,7 @@ if ($action == 'add' && $account)
     }
   else
     {
-      $amount = - $_POST["credit"];
+      $amount = - $_POST["debit"];
     }
   
   $dateop = $_POST["dateoy"].$_POST["dateo"];
