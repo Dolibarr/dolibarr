@@ -228,6 +228,7 @@ class LigneTel {
       $sql .= " , fk_user_creat, fk_user_commande";
       $sql .= " , fk_contrat ";
       $sql .= " , fk_commercial_suiv, fk_commercial_sign";
+      $sql .= " , pdfdetail";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as tl";
 
       if ($id > 0)
@@ -275,7 +276,7 @@ class LigneTel {
 		}
 
 	      $this->note               = stripslashes($obj->note);
-
+	      $this->pdfdetail          = $obj->pdfdetail;
 	      $result = 1;
 	    }
 	  else
