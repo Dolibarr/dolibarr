@@ -56,12 +56,20 @@ function facture_pdf_create($db, $facid)
 
       $obj = new $classname($db);
 
-      return $obj->write_pdf_file($facid);
+      if ( $obj->write_pdf_file($facid) > 0)
+	{
+	  return 1;
+	}
+      else
+	{
+	  print "Erreur";
+	  return 0;
+	}
     }
   else
     {
-      return 0;
       print "Erreur FACTURE_ADDON_PDF non définit !";
+      return 0;
     }
 }
 
