@@ -115,8 +115,12 @@ if (strlen($stcomm)) {
   $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
-if (strlen($begin)) {
-  $sql .= " AND s.nom like '$begin%'";
+if (strlen($_GET["search_nom"])) {
+  $sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
+}
+
+if (strlen($_GET["search_ville"])) {
+  $sql .= " AND s.ville LIKE '%".$_GET["search_ville"]."%'";
 }
 
 if ($socname)
@@ -152,6 +156,18 @@ if ($result)
   print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville",$params);
   print '</td><td colspan="2" align="center">'.$langs->trans("Cards").'</td>';
   print "</tr>\n";
+
+  print '<form method="get" action="societe.php">';
+  print '<tr class="liste_titre">';
+  print '<td valign="right">';
+  print '<input type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
+  print '</td>';
+  print '<td valign="right">';
+  print '<input type="text" name="search_ville" value="'.$_GET["search_ville"].'">';
+  print '</td><td colspan="2"><input type="submit"></td>';
+  print "</tr>\n";
+
+
   $var=True;
 
   while ($i < min($num,$conf->liste_limit))
