@@ -27,6 +27,7 @@ require("../facture.class.php");
 
 llxHeader();
 
+$id = $_GET["id"];
 $mesg = '';
 
 /*
@@ -107,10 +108,10 @@ $html = new Form($db);
  */
 if ($action == 'create')
 {
-  print "<form action=\"$PHP_SELF?type=$type\" method=\"post\">\n";
+  print "<form action=\"$PHP_SELF?type=".$_POST["type"]."\" method=\"post\">\n";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">\n";
-  print '<input type="hidden" name="type" value="'.$type.'">'."\n";
-  print '<div class="titre">Nouveau '.$types[$type].'</div><br>'."\n";
+  print '<input type="hidden" name="type" value="'.$_POST["type"].'">'."\n";
+  print '<div class="titre">Nouveau</div><br>'."\n";
       
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
   print "<tr>";
@@ -123,7 +124,7 @@ if ($action == 'create')
   print "<tr><td valign=\"top\">Description</td><td>";
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
-  if ($type == 1)
+  if ($_POST["type"] == 1)
     {
         // Si contrat de type service
       print '<tr><td>Durée</td><td><input name="duration_value" size="6" value="'.$product->duree.'">';
@@ -162,11 +163,6 @@ else
 	  print '</tr><tr>';	
 	  if ($contrat->factureid)
 	    {
-    	  // Si contrat lié à une facture
-    	  $facturedet = new FactureLigne($db);
-    	  $facturedet->fetch($contrat->facturedetid);
-          $date_start=$facturedet->date_start;
-	      $date_end=$facturedet->date_end;
 	      print '<td>Société</td><td>'.$contrat->societe->nom_url.'</td>';
 	      print '<td>Facture</td><td><a href="../compta/facture.php?facid='.$contrat->factureid.'">Facture</td>';
 	    }
@@ -187,6 +183,14 @@ else
       print "</td></tr>\n";
 	  if ($request == 'miseenservice')
 	    {
+    	  // Si contrat lié à une ligne de facture, on recherche date debut et fin de la ligne
+    	  if ($contrat->facturedetid) {
+    	    $facturedet = new FactureLigne($db);
+    	    $facturedet->fetch($contrat->facturedetid);
+            $date_start=$facturedet->date_start;
+	        $date_end=$facturedet->date_end;
+    	  }
+
           // Si date_start et date_end ne sont pas connues de la ligne de facture, on les
           // definit à une valeur par défaut en fonction de la durée définie pour le service.
           if (! $date_start) { $date_start=mktime(); }
