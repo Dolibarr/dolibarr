@@ -141,7 +141,7 @@ if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer)
     }
 }
 
-if ($action == 'deleteline' && $user->rights->commande->creer) 
+if ($_GET["action"] == 'deleteline' && $user->rights->commande->creer) 
 {
   $commande = new Commande($db);
   $commande->fetch($_GET["id"]);
