@@ -21,11 +21,14 @@
 
 create table llx_propaldet
 (
-  rowid         integer AUTO_INCREMENT PRIMARY KEY,
-  fk_propal     integer,
-  fk_product    integer,
-  description   text,
-  qty		smallint,
-  price         real,
-  tva_tx        real default 19.6
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  fk_propal      integer,
+  fk_product     integer,
+  description    text,
+  tva_tx         real default 19.6, -- taux tva
+  qty		 real,              -- quantité
+  remise_percent real default 0,    -- pourcentage de remise
+  remise         real default 0,    -- montant de la remise
+  subprice       real,              -- prix avant remise
+  price          real               -- prix final
 );

@@ -25,7 +25,10 @@ create table llx_facturedet
   fk_facture      integer NOT NULL,
   fk_product      integer,
   description     text,
-  price           real default 0,
-  qty             smallint,
-  tva_taux        real default 19.6
+  tva_taux       real default 19.6, -- taux tva
+  qty		 real,              -- quantité
+  remise_percent real default 0,    -- pourcentage de remise
+  remise         real default 0,    -- montant de la remise
+  subprice       real,              -- prix avant remise
+  price          real               -- prix final
 );
