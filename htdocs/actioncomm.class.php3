@@ -27,16 +27,12 @@ class ActionComm
 
   var $date;
   var $type;
-
   var $priority;
-
   var $user;
   var $author;
-
   var $societe;
   var $contact;
   var $note;
-
   var $percent;
 
 
@@ -56,7 +52,7 @@ class ActionComm
   Function add($author)
     {
       $sql = "INSERT INTO llx_actioncomm (datea, fk_action, fk_soc, fk_user_author, fk_user_action, fk_contact, percent, note,priority) ";
-      $sql .= " VALUES ('$this->date',$this->type,$this->societe, $author->id,";
+      $sql .= " VALUES ('$this->date', $this->type, $this->societe, $author->id,";
       $sql .= $this->user->id . ", $this->contact, $this->percent, '$this->note', $this->priority);";
       
       if ($this->db->query($sql) )
@@ -74,9 +70,8 @@ class ActionComm
    *
    */
   Function fetch($id)
-    {
-      
-      $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note,c.libelle, fk_soc, fk_user_author, fk_contact ";
+    {      
+      $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture ";
       $sql .= "FROM llx_actioncomm as a, c_actioncomm as c WHERE a.id=$id AND a.fk_action=c.id;";
 
       if ($this->db->query($sql) )
@@ -95,6 +90,13 @@ class ActionComm
 	      $this->author->id = $obj->fk_user_author;
 	      
 	      $this->contact->id = $obj->fk_contact;
+
+	      $this->fk_facture = $obj->fk_facture;
+
+	      if ($this->fk_facture)
+		{
+		  $this->objet_url = '<a href="'. DOL_URL_ROOT . '/compta/facture.php3?facid='.$this->fk_facture.'">Facture</a>';
+		}
 	      
 	      $this->db->free();
 	    }
