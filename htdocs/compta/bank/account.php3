@@ -42,13 +42,15 @@ if ($account) {
     } else {
     $amount = - $debit ;
     }
+
+    $dateop = "$dateoy" . "$dateo";
     
     if ($num_chq) {
       $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account)";
-      $sql .= " VALUES (now(), $dateo, '$label', $amount,'$author',$num_chq,$account)";
+      $sql .= " VALUES (now(), $dateop, '$label', $amount,'$author',$num_chq,$account)";
     } else {
       $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author,fk_account)";
-      $sql .= " VALUES (now(), $dateo, '$label', $amount,'$author',$account)";
+      $sql .= " VALUES (now(), $dateop, '$label', $amount,'$author',$account)";
     }
 
     $result = $db->query($sql);
@@ -160,7 +162,8 @@ if ($account) {
 	    print "<tr><td align=\"right\" colspan=\"4\">Total :</td>";
 	    print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td><td></td><td align=\"right\"><small>".francs($total - $objp->amount)."</small></td></tr>\n";
 	    print "<tr>";
-	    print "<td><input name=\"dateo\" type=\"text\" size=8 maxlength=8></td>";
+	    print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
+	    print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
 	    print "<td>CHQ<input name=\"num_chq\" type=\"text\" size=4>&nbsp;-";
 	    print "<input name=\"label\" type=\"text\" size=40></td>";
 	    print "<td><input name=\"debit\" type=\"text\" size=8></td>";
@@ -218,7 +221,8 @@ if ($account) {
     print "<tr><td align=\"right\" colspan=\"4\">Total :</td>";
     print "<td align=\"right\"><b>".price($total)."</b></td><td align=\"right\">".francs($total)."</td></tr>\n";
     print "<tr>";
-    print "<td><input name=\"dateo\" type=\"text\" size=8 maxlength=8></td>";
+    print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
+    print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
     print "<td>CHQ<input name=\"num_chq\" type=\"text\" size=4>&nbsp;-";
     print "<input name=\"label\" type=\"text\" size=40></td>";
     print "<td><input name=\"debit\" type=\"text\" size=8></td>";
@@ -227,8 +231,6 @@ if ($account) {
     print "</tr><tr><td colspan=\"2\">Format : YYYYMMDD - 20010826</td><td>0000.00</td>";
 
     print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
-
-
 
   }
 
@@ -261,15 +263,12 @@ if ($account) {
     while ($i < $num) {
       $objp = $db->fetch_object( $i);
 
-
       print "<tr><td>$objp->label</td><td>$objp->bank</td><td>$objp->number</td></tr>";
-
 
       $i++;
     }
     $db->free();
   }
-
 
   $acc = new Account($db);
 
