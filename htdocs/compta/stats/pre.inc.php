@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,28 +23,30 @@
 require("../../main.inc.php");
 
 function llxHeader($head = "") {
-  /*
-   *
-   *
-   */
-  top_menu($head);
+	global $conf;
 
-  $menu = new Menu();
-
-  /*
-   * Sécurité accés client
-   */
-
-  $menu->add("index.php","Chiffre d'affaire");
-
-  $menu->add_submenu("cumul.php","Cumuls");
-  $menu->add_submenu("prev.php","Prévisionnel");
-  $menu->add_submenu("comp.php","Comparatif");
-  $menu->add_submenu("exercices.php","Exercices");
-  $menu->add_submenu("casoc.php","Par société");
-  $menu->add_submenu("cabyuser.php","Par utilisateur");
-
-  left_menu($menu->liste);
+	/*
+	*
+	*
+	*/
+	top_menu($head);
+	
+	$menu = new Menu();
+	
+	$menu->add(DOL_URL_ROOT."/compta/resultat/","Résultat / Exercice");
+	
+	$menu->add("index.php","Chiffre d'affaire");
+	
+	$menu->add_submenu("cumul.php","Cumulé");
+	if ($conf->propal->enabled) {
+		$menu->add_submenu("prev.php","Prévisionnel");
+		$menu->add_submenu("comp.php","Transformé");
+	}
+	$menu->add_submenu("exercices.php","Exercices");
+	$menu->add_submenu("casoc.php","Par société");
+	$menu->add_submenu("cabyuser.php","Par utilisateur");
+	
+	left_menu($menu->liste);
 }
 
 ?>
