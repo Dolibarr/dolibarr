@@ -36,15 +36,6 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
-
-if ($action == 'del')
-{
-  print_titre("Suppression de la société");
-
-  $soc = new Societe($db);
-  $soc->delete($socid);
-}
-
 if ($action == 'add')
 {
   $soc = new Societe($db);
@@ -165,40 +156,22 @@ elseif ($action == 'edit')
       print '</form>';
     }
 } else {
-
-
-  if ($action != "del")
-    {
-      print_titre("Fiche société");
-      
-      $soc = new Societe($db);
-      $soc->id = $socid;
-      $soc->fetch($socid);
-      
-      print "
-<SCRIPT language=\"JavaScript\">
-<!--
-function Delete(socid)
-{
- var where_to= confirm(\"Voulez vous vraiment supprimer cette société ?\");
-
- if (where_to == true)
- {
-  window.location.replace(\"$dolibarr_main_url_root/soc.php?socid=\"+socid+\"&action=del\");
- }
-}
-//-->
-</SCRIPT>
-";
-      
-      print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
-      print '<tr><td width="20%">Nom</td><td class="valeur">'.$soc->nom.'</td></tr>';
-      print '<tr><td valign="top">Adresse</td><td class="valeur">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
-      print '<tr><td>CP</td><td class="valeur">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
-      
-      print '<tr><td>Tel</td><td class="valeur">'.$soc->tel.'</td></tr>';
-      print '<tr><td>Fax</td><td class="valeur">'.$soc->fax.'</td></tr>';
-      print '<tr><td>Web</td><td><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
+  
+  
+  print_titre("Fiche société");
+  
+  $soc = new Societe($db);
+  $soc->id = $socid;
+  $soc->fetch($socid);
+  
+  print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+  print '<tr><td width="20%">Nom</td><td class="valeur">'.$soc->nom.'</td></tr>';
+  print '<tr><td valign="top">Adresse</td><td class="valeur">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
+  print '<tr><td>CP</td><td class="valeur">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
+  
+  print '<tr><td>Tel</td><td class="valeur">'.$soc->tel.'</td></tr>';
+  print '<tr><td>Fax</td><td class="valeur">'.$soc->fax.'</td></tr>';
+  print '<tr><td>Web</td><td><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
   
   print '<tr><td>Siren</td><td>'.$soc->siren.'&nbsp;</td></tr>';
   
@@ -232,7 +205,7 @@ function Delete(socid)
 
   
   print '<td width="20%" align="center">[<a href="soc.php?socid='.$socid.'&action=edit">Editer</a>]</td>';
-  print '<td width="20%" align="center">[<a href="#" Onclick="javascript:Delete('.$socid.')">Supprimer</a>]</td>';
+  print '<td width="20%" align="center">-</td>';
   print '<td width="20%" align="center">-</td>';
   print '<td width="20%" align="center">-</td>';
   print '<td width="20%" align="center">[<a href="societe/notify/fiche.php?socid='.$socid.'">Notifications</a>]</td>';
@@ -267,8 +240,6 @@ function Delete(socid)
 	    }
 	}
     }
-    }
-  
 }
 
 $db->close();

@@ -96,7 +96,8 @@ class Societe {
 
   /*
    * Suppression d'une societe. 
-   * TODO: il faut ajouter la suppression du répertoire de la societe
+   * TODO: Cette fonction n'est pas utilisée.. 
+   * Attente des contraintes d'intégrité dans MySql
    */
   Function delete($id)
     {
@@ -125,7 +126,6 @@ class Societe {
 	closedir($current_dir);
 	rmdir(${dir});
       } 
-
 
       if (file_exists ($docdir))
 	{

@@ -1,7 +1,3 @@
-2003-09-12  Brian Fraval  <brian@fraval.org>
-
-	* Ajout de la suppression d'une société, avec confirmation.
-	
 2003-09-12  Rodolphe Quiédeville  <rq@quiedeville.org>
 	
 	* Correction DOL_URL_ROOT dans fourn/contact.php sur l'image
