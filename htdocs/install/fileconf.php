@@ -170,9 +170,9 @@ $dolibarr_main_db_host = "localhost";
 <!-- moi-->
 <td valign="top" class="label">Choix de la base de données</td>
 
-<td> <select name='db_type'>
-<option value='mysql'>MySql</option>
-<option value='pgsql'>PostgreSQL</option>
+<td class="label"><select name='db_type'>
+<option value='mysql'<?php echo (!$dolibarr_main_db_type||$dolibarr_main_db_type=='mysql')?" selected":"" ?>>MySql</option>
+<option value='pgsql'<?php echo ($dolibarr_main_db_type=='pgsql')?" selected":"" ?>>PostgreSQL</option>
 </select>
 &nbsp;
 
@@ -184,7 +184,7 @@ document.write('<input type = "button" name = "valide" value="confirmer" onclick
 
 -->
 
-<td valign="comment">Nom de la base de donnée qui est soit MySql par défaut ou alors PostgreSql.</td>
+<td class="comment">Type de la base de donnée (MySql par défaut ou alors PostgreSql).</td>
 
 </tr>
 
