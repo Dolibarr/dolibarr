@@ -239,6 +239,7 @@ if ($account) {
     print '<option value="DEP">DEP';
     print '<option value="TIP">TIP';
     print '<option value="PRE">PRE';
+    print '<option value="VIR">VIR';
     print '</select></td>';
     print "<td><input name=\"num_chq\" type=\"text\" size=4>";
     print "<input name=\"label\" type=\"text\" size=40></td>";
