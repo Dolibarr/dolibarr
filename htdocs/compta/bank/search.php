@@ -1,6 +1,7 @@
 <?PHP
 /********************************************************************************
  * Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,10 +25,11 @@
 require("./pre.inc.php");
 require("./bank.lib.php");
 
-$user->getrights('compta');
+$user->getrights('banque');
 
-if (!$user->admin && !$user->rights->compta->bank)
+if (!$user->rights->banque->lire)
   accessforbidden();
+
 
 llxHeader();
 
@@ -38,49 +40,55 @@ if ($vline) {
 }
 
 print_titre("Recherche écriture bancaire");
+print '<br>';
 
-print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
-print "<TR class=\"liste_titre\">";
+print "<tr class=\"liste_titre\">";
 print "<td>Date</td><td>Description</TD>";
 print "<td align=\"right\">Debit</TD>";
 print "<td align=\"right\">Credit</TD>";
-print "<td align=\"right\">Type</TD>";
-print "<td align=\"right\">Compte</td>";
-print "</TR>\n";
+print "<td align=\"center\">Type</TD>";
+print "<td align=\"left\">Compte</td>";
+print "</tr>\n";
 ?>
 
 <form method="post" action="search.php">
-<? print "<tr $bc[1]>"; ?>
-<td></td>
+<tr class="liste_titre">
+<td>&nbsp;</td>
 <td>
-<input type="text" name="description">
+<input type="text" name="description" size="40" value=<?php echo $description ?>>
 </td>
-<td>
-<input type="text" name="credit">
+<td align="right">
+<input type="text" name="debit" size="6" value=<?php echo $debit ?>>
 </td>
-<td>
+<td align="right">
+<input type="text" name="credit" size="6" value=<?php echo $credit ?>>
+</td>
+<td align="center">
 <select name="type">
-<option value="%">%
-<option value="CHQ">CHQ
-<option value="CB">CB
-<option value="VIR">VIR
-<option value="PRE">PRE
+<option value="%">Toutes</option>
+<option value="CHQ">CHQ</option>
+<option value="CB">CB</option>
+<option value="VIR">VIR</option>
+<option value="PRE">PRE</option>
 </select>
 </td>
-<td colspan="2">
+<td align="left">
 <input type="submit" value="Chercher">
 </td>
 </tr>
 <?PHP
+
+// Compte le nombre total d'écritures
 $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."bank";
-if ($account) { $sql .= " WHERE fk_account=$account"; }
+if ($account) { $sql .= " WHERE b.fk_account=$account"; }
 if ( $db->query($sql) )
 {
   $nbline = $db->result (0, 0);
   $db->free();    
 }
   
+// Defini la liste des catégories dans $options
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
 $result = $db->query($sql);
 if ($result) {
@@ -95,17 +103,24 @@ if ($result) {
     $db->free();
 }
 
-$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account, b.fk_type";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank as b "; 
-$sql .= " WHERE fk_type like '" . $type . "'";
+$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account, b.fk_type, ba.label as labelaccount";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba";
+$sql .= " WHERE b.fk_account=ba.rowid";
+
+$sql .= " AND fk_type like '" . $type . "'";
 
 $si=0;
 
-if ($credit) {
+$debit = ereg_replace(',','.',$debit);
+$credit = ereg_replace(',','.',$credit);
+if (is_numeric($debit)) {
   $si++;
-  $sqlw[$si] .= " b.amount " . $credit;
+  $sqlw[$si] .= " b.amount = " . -$debit;
 }
-
+if (is_numeric($credit)) {
+  $si++;
+  $sqlw[$si] .= " b.amount = " . $credit;
+}
 if ($description) {
   $si++;
   $sqlw[$si] .= " b.label like '%" . $description . "%'";
@@ -144,20 +159,26 @@ if ($result)
 	print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
       }
     
-    print "<td align=\"right\">".$obj->fktype."</TD>\n";
+    print "<td align=\"center\">".$objp->fk_type."</TD>\n";
 
       
-    print "<td align=\"right\"><small>".$objp->fk_account."</small></TD>\n";
+    print "<td align=\"left\"><small>".$objp->labelaccount."</small></TD>\n";
     print "</tr>";
     
     $i++;
   }
+
   $db->free();
 } else {
-  print $db->error() .'<div class="div.titre">' . $sql .'</div';
+  print $db->error() .' <div class="div.titre">' . $sql .'</div>';
 }
 
 print "</table>";
+
+if (! $num) {
+print "Aucune réponse trouvée.";
+}
+
 
 $db->close();
 
