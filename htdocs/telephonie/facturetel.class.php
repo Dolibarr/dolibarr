@@ -37,7 +37,7 @@ class FactureTel {
    */
   function fetch($id)
     {
-      $sql = "SELECT rowid, ligne, date, cout_vente, cout_vente_remise";
+      $sql = "SELECT rowid, ligne, date, cout_vente, cout_vente_remise, fk_facture";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
       $sql .= " WHERE tf.rowid = ".$id;
 
@@ -53,6 +53,7 @@ class FactureTel {
 	      $this->ligne             = $obj->ligne;
 	      $this->cout_vente        = $obj->cout_vente;
 	      $this->cout_vente_remise = $obj->cout_vente_remise;
+	      $this->fk_facture        = $obj->fk_facture;
 
 	      $result = 0;
 	    }
