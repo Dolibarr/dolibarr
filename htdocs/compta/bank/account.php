@@ -169,7 +169,8 @@ if ($account > 0)
    *
    */  
   $mesg='';
-  $nbpage=round($total_lines/$viewline)+($total_lines % $viewline > 0?1:0);  // Nombre de page total
+  
+  $nbpage=floor($total_lines/$viewline)+($total_lines % $viewline > 0?1:0);  // Nombre de page total
   if ($limitsql > $viewline)
     {
       $mesg.='<a href="account.php?account='.$acct->id.'&amp;page='.($page+1).'">'.img_previous().'</a>';
