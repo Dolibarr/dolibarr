@@ -51,12 +51,15 @@ if ($action == 'update') {
  *
  *
  */
-if ($action == 'create') {
+if ($action == 'create')
+{
 
   print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+
+  print '<div class="titre">Nouveau produit</div><br>';
       
-  print 'Nouveau produit<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
   print "<tr>";
   print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Libellé</td><td><input name="libelle" size="40" value=""></td></tr>';
@@ -69,55 +72,74 @@ if ($action == 'create') {
   print '</form>';
       
 
-} else {
-  if ($id) {
+}
+else
+{
+  if ($id)
+    {
 
-    $product = new Product($db);
-    $result = $product->fetch($id);
+      $product = new Product($db);
+      $result = $product->fetch($id);
 
-    if ( $result ) { 
-      print '<div class="titre">Fiche produit : '.$product->ref.'</div>';
+      if ( $result )
+	{ 
+	  print '<div class="titre">Fiche produit : '.$product->ref.'</div><br>';
       
-      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-      print "<tr>";
-      print "<td>Référence</td><td>$product->ref</td></tr>\n";
-      print "<td>Libellé</td><td>$product->label</td></tr>\n";
-      print '<tr><td>Prix</td><TD>'.price($product->price).'</td></tr>';    
-      print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
-      print "</table>";
-    }
+	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	  print "<tr>";
+	  print "<td>Référence</td><td>$product->ref</td></tr>\n";
+	  print "<td>Libellé</td><td>$product->label</td></tr>\n";
+	  print '<tr><td>Prix</td><TD>'.price($product->price).'</td></tr>';    
+	  print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
+	  print "</table>";
+	}
     
+      if ($action == 'edit')
+	{
+	  print '<hr><div class="titre">Edition de la fiche produit : '.$product->ref.'</div><br>';
 
-    if ($action == 'edit') {
-      print "<hr><form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
-      print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-      
-      print 'Edition de la fiche produit<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-      print "<tr>";
-      print '<td>Référence</td><td><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
-      print '<td>Libellé</td><td><input name="libelle" size="40" value="'.$product->label.'"></td></tr>';
-      print '<tr><td>Prix</td><TD><input name="price" size="10" value="'.$product->price.'"></td></tr>';    
-      print "<tr><td valign=\"top\">Description</td><td>";
-      print '<textarea name="desc" rows="8" cols="50">';
-      print $product->description;
-      print "</textarea></td></tr>";
-      print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer"></td></tr>';
-      print '</table>';
-      print '</form>';
-    }    
-  } else {
-    print "Error";
-  }
+	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	  print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+	  
+	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	  print "<tr>";
+	  print '<td>Référence</td><td><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
+	  print '<td>Libellé</td><td><input name="libelle" size="40" value="'.$product->label.'"></td></tr>';
+	  print '<tr><td>Prix</td><TD><input name="price" size="10" value="'.$product->price.'"></td></tr>';    
+	  print "<tr><td valign=\"top\">Description</td><td>";
+	  print '<textarea name="desc" rows="8" cols="50">';
+	  print $product->description;
+	  print "</textarea></td></tr>";
+	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer"></td></tr>';
+	  print '</table>';
+	  print '</form>';
+	}    
+    }
+  else
+    {
+      print "Error";
+    }
 }
 
+/* ************************************************************************** */
+/*                                                                            */ 
+/* Barre d'action                                                             */ 
+/*                                                                            */ 
+/* ************************************************************************** */
 
 print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
 
-print '<td width="20%" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
-
+if ($action == 'create')
+{
+  print '<td width="20%" align="center">-</td>';
+}
+else
+{
+  print '<td width="20%" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+}
 print '<td width="20%" align="center">-</td>';    
 print '</table><br>';
 
