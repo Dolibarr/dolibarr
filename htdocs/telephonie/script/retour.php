@@ -154,5 +154,3 @@ Function import_file($db,$dir,$file)
 
   return $error;
 }
-
-

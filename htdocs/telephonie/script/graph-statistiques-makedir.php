@@ -69,8 +69,6 @@ if (is_array($dirs))
     }
 }
 
-
-
 $base_dir = DOL_DATA_ROOT.'/graph/telephonie/lignes/';
 
 for ($i = 0 ; $i < 10 ; $i++)
@@ -94,19 +92,6 @@ for ($i = 0 ; $i < 10 ; $i++)
     }  
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 function create_dir($dir)
 {
   if (! file_exists($dir))
@@ -115,10 +100,6 @@ function create_dir($dir)
       if (! @mkdir($dir, 0755))
 	{
 	  print  "Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
-	}
-      else
-	{
-	  print $dir ." créé\n";
 	}
     }	
 }
