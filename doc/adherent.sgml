@@ -24,6 +24,15 @@
 
   </sect>
 
+  <sect id="adh-classe">
+    <p>
+      Classes PHP utilisées pour ce module :
+      <list>
+	<item>adherent.class.php</item>
+      </list>
+      
+  </sect>
+
 
 </chapt>
 <!--
