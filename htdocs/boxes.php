@@ -40,14 +40,21 @@ class infoBox
 
 	for ($j=0, $m=sizeof($contents[$i]); $j<$m; $j++)
 	  {
+	    print "<td";
+	    if (strlen($contents[$i][$j]['align']) > 0)
+	      {
+		print ' align="'. $contents[$i][$j]['align'].'"';
+	      }
+	    print'>';
+
 	    if (strlen($contents[$i][$j]['url']) > 0)
 	      {
-		print '<td><a href="'.$contents[$i][$j]['url'].'">';
+		print '<a href="'.$contents[$i][$j]['url'].'">';
 		print $contents[$i][$j]['text'] . "</a></td>";
 	      }
 	    else
 	      {
-		print "<td>".$contents[$i][$j]['text'] . "</td>";
+		print $contents[$i][$j]['text'] . "</td>";
 	      }
 	  }
 	print '</tr>';
