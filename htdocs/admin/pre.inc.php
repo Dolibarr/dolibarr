@@ -41,7 +41,10 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu("sqltables.php", "Tables");
 
-  $menu->add("osc-languages.php", "OSC Languages");
+  if (DB_NAME_OSC)
+    {
+      $menu->add("osc-languages.php", "OSC Languages");
+    }
 
   left_menu($menu->liste);
 }
