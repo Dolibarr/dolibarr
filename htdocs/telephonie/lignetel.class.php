@@ -318,6 +318,28 @@ class LigneTel {
 	}
     }
 
+  /**
+   * Change le statut de la ligne en a commander
+   *
+   */
+  function set_a_commander($user)
+  {
+    if ($this->statut == -1)
+      {
+	$this->set_statut( $user, 1, $datea, $commentaire);
+      }
+  }
+  /**
+   * Change le statut de la ligne en En attente
+   *
+   */
+  function set_en_attente($user)
+  {
+    if ($this->statut == 1)
+      {
+	$this->set_statut($user, -1, $datea, $commentaire);
+      }
+  }
 
   /**
    * Change le statut de la ligne
@@ -372,7 +394,6 @@ class LigneTel {
 
 	$this->db->query($sql);
       }
-
 
     
     $sql = "SELECT distinct statut, count(*) FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne GROUP BY statut";
