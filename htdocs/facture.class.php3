@@ -47,17 +47,19 @@ class Facture {
    *
    */
 
-  Function Facture($DB, $soc_idp="", $facid="") {
-    $this->db = $DB ;
-    $this->socidp = $soc_idp;
-    $this->products = array();
-    $this->db_table = "llx_facture";
-    $this->amount = 0;
-    $this->remise = 0;
-    $this->tva = 0;
-    $this->total = 0;
-    $this->propalid = 0;
-    $this->id = $facid;
+  Function Facture($DB, $soc_idp="", $facid="")
+    {
+      $this->db = $DB ;
+      $this->socidp = $soc_idp;
+      $this->products = array();
+      $this->db_table = "llx_facture";
+      $this->amount = 0;
+      $this->remise = 0;
+      $this->tva = 0;
+      $this->total = 0;
+      $this->propalid = 0;
+      $this->projetid = 0;
+      $this->id = $facid;
   }
   /*
    *
