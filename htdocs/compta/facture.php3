@@ -20,6 +20,11 @@
  *
  */
 require("./pre.inc.php3");
+
+$user->getrights('facture');
+if (!$user->rights->produit->lire)
+  accessforbidden();
+
 require("../facture.class.php3");
 require("../lib/CMailFile.class.php3");
 require("../paiement.class.php");
@@ -29,8 +34,6 @@ require("./bank/account.class.php");
 require("../contrat/contrat.class.php");
 
 llxHeader();
-
-$db = new Db();
 
 /*
  * Sécurité accés client
@@ -130,7 +133,7 @@ if ($action == 'deleteline')
   $result = $fac->deleteline($rowid);
 }
 
-if ($action == 'delete') 
+if ($action == 'delete' && $user->rights->facture->supprimer) 
 {
   $fac = new Facture($db);
   $fac->delete($facid);
@@ -681,7 +684,7 @@ else
 	  {
 	    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
 	
-	    if ($obj->statut == 0) 
+	    if ($obj->statut == 0 && $user->rights->facture->supprimer)
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
 	      } 
@@ -716,7 +719,7 @@ else
 		print "<td align=\"center\" width=\"25%\">-</td>";
 	      }
 	    
-	    if ($obj->statut == 0) 
+	    if ($obj->statut == 0 && $obj->total > 0) 
 	      {
 		print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=valid\">Valider</a>]</td>";
 	      }
@@ -942,50 +945,45 @@ else
       {
 	$page = 0 ;
       }
-    $limit = $conf->liste_limit;
-    $offset = $limit * $page ;
 
-    if ($sortorder == "")
+    if ($user->rights->facture->lire)
       {
-	$sortorder="DESC";
-      }
-    if ($sortfield == "")
-      {
-	$sortfield="f.datef";
-      }
+	$limit = $conf->liste_limit;
+	$offset = $limit * $page ;
 
-    $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid, f.fk_statut";
-    $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
-  
-    if ($socidp)
-      {
-	$sql .= " AND s.idp = $socidp";
-      }
-  
-    if ($month > 0)
-      {
-	$sql .= " AND date_format(f.datef, '%m') = $month";
-      }
+	if ($sortorder == "")
+	  $sortorder="DESC";
 
-    if ($filtre)
-      {
-	$filtrearr = split(",", $filtre);
-	foreach ($filtrearr as $fil)
+	if ($sortfield == "")
+	  $sortfield="f.datef";
+
+	$sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid, f.fk_statut";
+	$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
+	
+	if ($socidp)
+	  $sql .= " AND s.idp = $socidp";
+	
+	if ($month > 0)
+	  $sql .= " AND date_format(f.datef, '%m') = $month";
+	
+	if ($filtre)
 	  {
-	    $filt = split(":", $fil);
-	    $sql .= " AND " . $filt[0] . " = " . $filt[1];
+	    $filtrearr = split(",", $filtre);
+	    foreach ($filtrearr as $fil)
+	      {
+		$filt = split(":", $fil);
+		$sql .= " AND " . $filt[0] . " = " . $filt[1];
+	      }
 	  }
+	
+	if ($year > 0)
+	  $sql .= " AND date_format(f.datef, '%Y') = $year";
+	
+	$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
+	$sql .= $db->plimit($limit + 1,$offset);
+	
+	$result = $db->query($sql);
       }
-
-    if ($year > 0)
-      {
-	$sql .= " AND date_format(f.datef, '%Y') = $year";
-      }
-  
-    $sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
-    $sql .= $db->plimit($limit + 1,$offset);
-
-    $result = $db->query($sql);
     if ($result)
       {
 	$num = $db->num_rows();
