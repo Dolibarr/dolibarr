@@ -103,34 +103,83 @@ class BonPrelevement
    */
   function set_credite()
   {
-    $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement ";
-    $sql .= " SET credite = 1";
-    $sql .= " WHERE rowid=".$this->id;
-      
-    $result=$this->db->query($sql);
-    if ($result)
+    $error == 0;
+
+    if ($this->db->query("BEGIN"))
       {
-	/**
-	 *
-	 *
+
+
+	$sql = " UPDATE ".MAIN_DB_PREFIX."prelevement ";
+	$sql .= " SET credite = 1";
+	$sql .= " WHERE rowid=".$this->id;
+      
+	$result=$this->db->query($sql);
+	if (! $result)
+	  {
+	    dolibarr_syslog("bon-prelevment::set_credite Erreur 1");
+	    $error++;
+	  }
+
+	if ($error == 0)
+	  {
+	    /**
+	     *
+	     *
+	     *
+	     */
+	    $facs = array();
+	    $facs = $this->_get_list_factures();
+	    
+	    for ($i = 0 ; $i < sizeof($facs) ; $i++)
+	      {	    
+		$fac = new Facture($this->db);
+		
+		/* Tag la facture comme impayée */
+		dolibarr_syslog("RejetPrelevement::Create set_payed fac ".$facs[$i]);
+		$fac->set_payed($facs[$i]);
+	      }
+	  }
+
+	if ($error == 0)
+	  {
+	    /*
+	     * Change le statut des lignes de factures
+	     */
+
+	    $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_facture ";
+	    $sql .= " SET statut = 1";
+	    $sql .= " WHERE fk_prelevement=".$this->id;
+	    
+	    $result=$this->db->query($sql);
+	    if (!$result)
+	      {
+		dolibarr_syslog("bon-prelevment::set_credite Erreur 3");
+		$error++;
+	      }
+	  }
+
+	/*
+	 * Fin de la procédure
 	 *
 	 */
-	$facs = array();
-	$facs = $this->_get_list_factures();
-	
-	for ($i = 0 ; $i < sizeof($facs) ; $i++)
-	  {	    
-	    $fac = new Facture($this->db);
-
-	    /* Tag la facture comme impayée */
-	    dolibarr_syslog("RejetPrelevement::Create set_payed fac ".$facs[$i]);
-	    $fac->set_payed($facs[$i]);
+	if ($error == 0)
+	  {
+	    $this->db->query("COMMIT");
+	    return 0;
 	  }
+	else
+	  {
+	    $this->db->query("ROLLBACK");
+	    dolibarr_syslog("bon-prelevment::set_credite ROLLBACK ");
+	    return -1;
+	  }
+	
+	
       }
     else
       {
-	dolibarr_syslog("bon-prelevment::Fetch Erreur ");
-	dolibarr_syslog($sql);
+	
+	dolibarr_syslog("bon-prelevment::set_credite Ouverture transaction SQL impossible ");
 	return -2;
       }
   }
