@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,9 +18,6 @@
  * $Id$
  * $Source$
  *
- *
- * $viewall
- *
  */
 require("./pre.inc.php3");
 
@@ -31,11 +28,10 @@ $db = new Db();
 
 if ($action == 'add')
 {
-  $author = $GLOBALS["REMOTE_USER"];
+  $dateo = $reyear."-".$remonth."-".$reday;
 
-  $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author,fk_account)";
-  $sql .= " VALUES (now(), $dateo, '$label', (0 - $amount),'$author',$account_from)";
-
+  $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, fk_user_author,fk_account, fk_type)";
+  $sql .= " VALUES (now(), '$dateo', '$label', (0 - $amount),$user->id,$account_from, 'VIR')";
 
   $result = $db->query($sql);
   if (!$result)
@@ -44,8 +40,8 @@ if ($action == 'add')
       print "<p>$sql";
     }
 
-  $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author,fk_account)";
-  $sql .= " VALUES (now(), $dateo, '$label', $amount,'$author',$account_to)";
+  $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, fk_user_author,fk_account, fk_type)";
+  $sql .= " VALUES (now(), '$dateo', '$label', $amount,$user->id, $account_to, 'VIR')";
 
 
   $result = $db->query($sql);
@@ -58,11 +54,11 @@ if ($action == 'add')
 
 print_titre("Virement");
 
-print "<form method=\"post\" action=\"$PHP_SELF?viewall=$viewall&vline=$vline&account=$account\">";
+print "<form method=\"post\" action=\"$PHP_SELF\">";
 
-print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+print '<input type="hidden" name="action" value="add">';
 
-print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="2">';
 print "<tr><td>De</td><td>Vers</td><td>Date</td><td>Libelle</td><td>Montant</td></tr>";
 print "<tr><td>";
 print "<select name=\"account_from\">";
@@ -81,7 +77,7 @@ if ($result)
 	$i++;
       }
 }
-print "</select></td><td>";
+print "</select></td><td>\n";
 
 print "<select name=\"account_to\">";
 $sql = "SELECT rowid, label FROM llx_bank_account";
@@ -99,14 +95,16 @@ if ($result)
 	$i++;
       }
 }
-print "</select></td>";
+print "</select></td>\n";
 
-print "<td><input name=\"dateo\" type=\"text\" size=8 maxlength=8></td>";
+print "<td>";
+print_date_select();
+print "</td>\n";
 print "<td><input name=\"label\" type=\"text\" size=40></td>";
 print "<td><input name=\"amount\" type=\"text\" size=8></td>";
-print "</tr><tr><td colspan=\"2\">Format : YYYYMMDD - 20010826</td><td colspan=\"2\">0000.00</td></tr>";
 
-print '<tr><td colspan="4" align="center"><input type="submit" value="ajouter"</td></tr>';
+
+print '<tr><td colspan="5" align="center"><input type="submit" value="ajouter"</td></tr>';
 
 print "</table></form>";
 
