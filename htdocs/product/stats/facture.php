@@ -22,9 +22,15 @@
 
 require("./pre.inc.php");
 
-llxHeader();
-
 $mesg = '';
+
+if ($user->societe_id > 0)
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
+
+llxHeader();
 
 /*
  *
@@ -73,6 +79,10 @@ if ($_GET["id"])
       $sql = "SELECT distinct(f.rowid), s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as d WHERE f.fk_soc = s.idp";
       $sql .= " AND d.fk_facture = f.rowid AND d.fk_product =".$product->id;
+      if ($socid)
+	{
+	  $sql .= " AND f.fk_soc = $socid";
+	}
       $sql .= " ORDER BY $sortfield $sortorder ";
       $sql .= $db->plimit( $limit ,$offset);
 

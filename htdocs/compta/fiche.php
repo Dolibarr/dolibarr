@@ -30,10 +30,11 @@ require("../facture.class.php");
 /*
  * Sécurité accés client
  */
+$socid = $_GET["socid"];
 if ($user->societe_id > 0)
 {
-    $action = '';
-    $socid = $user->societe_id;
+  $action = '';
+  $socid = $user->societe_id;
 }
 
 $user->getrights('facture');
@@ -130,17 +131,15 @@ if ($mode == 'search')
 
 }
 
-
-
 /*
  *
  * Mode fiche
  *
  */
-if ($_GET["socid"] > 0)
+if ($socid > 0)
 {
     $societe = new Societe($db);
-    $societe->fetch($_GET["socid"], $to);  // si $to='next' ajouter " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
+    $societe->fetch($socid, $to);  // si $to='next' ajouter " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
 
     /*
      * Affichage onglets

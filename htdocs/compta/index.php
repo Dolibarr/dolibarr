@@ -79,42 +79,47 @@ print "</table></form>";
 
 
 
-if ($conf->facture->enabled) {
-/*
- * Factures brouillons
- */
-    
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
-
-if ( $db->query($sql) )
+if ($conf->facture->enabled)
 {
-  $num = $db->num_rows();
-  $i = 0;
-
-  if ($num)
+  /*
+   * Factures brouillons
+   */
+  
+  $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
+  
+  if ($socidp)
     {
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td colspan="2">Factures brouillons</td></tr>';
-      $var = True;
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object( $i);
-	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td width="92"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
-	  print '<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
-	  $i++;
-	}
-      
-      print "</table><br>";
+      $sql .= " AND f.fk_soc = $socidp";
     }
-}
-else
-{
-  print $sql;
-}
-
+  
+  if ( $db->query($sql) )
+    {
+      $num = $db->num_rows();
+      $i = 0;
+      
+      if ($num)
+	{
+	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<tr class="liste_titre">';
+	  print '<td colspan="2">Factures brouillons</td></tr>';
+	  $var = True;
+	  while ($i < $num)
+	    {
+	      $obj = $db->fetch_object( $i);
+	      $var=!$var;
+	      print '<tr '.$bc[$var].'><td width="92"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
+	      print '<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
+	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	      $i++;
+	    }
+	  
+	  print "</table><br>";
+	}
+    }
+  else
+    {
+      print $sql;
+    }  
 }
 
 if ($conf->compta->enabled) {
@@ -238,53 +243,57 @@ if ($user->comm > 0 && $conf->commercial->enabled )
 }
 
 
-if ($conf->facture->enabled) {
-
-/*
- * Factures impayées
- *
- */
-
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc, sum(pf.amount) as am";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
-$sql .= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
-$sql .= " GROUP BY f.facnumber";   
-
-if ( $db->query($sql) )
+if ($conf->facture->enabled)
 {
-  $num = $db->num_rows();
-  $i = 0;
-
-  if ($num)
+  
+  /*
+   * Factures impayées
+   *
+   */
+  
+  $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc, sum(pf.amount) as am";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
+  $sql .= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
+  if ($socidp)
     {
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-      print '<tr class="liste_titre"><td colspan="2">Factures clients impayées</td><td align="right">Montant TTC</td><td align="right">Reçu</td></tr>';
-      $var = True;
-	  $total = $totalam = 0;
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object( $i);
-	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>';
-	  print '&nbsp;<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-	  print '<td align="right">'.price($obj->total_ttc).'</td>';
-	  print '<td align="right">'.price($obj->am).'</td></tr>';
-	  $total +=  $obj->total_ttc;
-	  $totalam +=  $obj->am;
-	  $i++;
-	}
-      $var=!$var;
-      print '<tr '.$bc[$var].'><td colspan="2" align="left">Reste à encaisser : '.price($total-$totalam).'</td><td align="right">'.price($total).'</td><td align="right">'.price($totalam).'</td></tr>';
-      print "</table><br>";
+      $sql .= " AND f.fk_soc = $socidp";
     }
-  $db->free();
-}
-else
-{
-  print $sql;
-}
-
+  $sql .= " GROUP BY f.facnumber";   
+  
+  if ( $db->query($sql) )
+    {
+      $num = $db->num_rows();
+      $i = 0;
+      
+      if ($num)
+	{
+	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<tr class="liste_titre"><td colspan="2">Factures clients impayées</td><td align="right">Montant TTC</td><td align="right">Reçu</td></tr>';
+	  $var = True;
+	  $total = $totalam = 0;
+	  while ($i < $num)
+	    {
+	      $obj = $db->fetch_object( $i);
+	      $var=!$var;
+	      print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>';
+	      print '&nbsp;<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
+	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+	      print '<td align="right">'.price($obj->total_ttc).'</td>';
+	      print '<td align="right">'.price($obj->am).'</td></tr>';
+	      $total +=  $obj->total_ttc;
+	      $totalam +=  $obj->am;
+	      $i++;
+	    }
+	  $var=!$var;
+	  print '<tr '.$bc[$var].'><td colspan="2" align="left">Reste à encaisser : '.price($total-$totalam).'</td><td align="right">'.price($total).'</td><td align="right">'.price($totalam).'</td></tr>';
+	  print "</table><br>";
+	}
+      $db->free();
+    }
+  else
+    {
+      print $sql;
+    }  
 }
 
 
