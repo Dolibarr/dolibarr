@@ -1078,7 +1078,7 @@ class Adherent
       {
 	if ($listes==''){
 	  $lists=explode(',',ADHERENT_MAILMAN_LISTS);
-	  if (defined("ADHERENT_MAILMAN_LISTS_cotisant") && ADHERENT_MAILMAN_LISTS !=''){
+	  if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT !=''){
 	    $lists=array_merge ($lists,explode(',',ADHERENT_MAILMAN_LISTS_COTISANT));
 	  }
 	}else{
