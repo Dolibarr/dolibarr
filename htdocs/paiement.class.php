@@ -122,12 +122,12 @@ class Paiement
 		  {
 		    $facid = $key;
 		    $value = trim($value);
-		    $amount = round(ereg_replace(",",".",$value), 2);
+		    $amount = ereg_replace(",",".",round($value, 2));
 		    
 		    if (is_numeric($amount) && $amount > 0)
 		      {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
-			$sql .= " VALUES (".$facid.",". $this->id.",". $amount.")";
+			$sql .= " VALUES ('".$facid."','". $this->id."','". $amount."')";
 			if (! $this->db->query($sql) )
 			  {
 			    $sql_err++;
