@@ -60,7 +60,6 @@ function verif_rib($code_banque , $code_guichet , $num_compte , $cle, $iban)
 
       $rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678923456789");
 
-      print $rib;      
       // Separation du rib en 3 groupes de 7 + 1 groupe de 2.
       // Multiplication de chaque groupe par les coef du tableau
       for ($i=0, $s=0; $i<3; $i++)
