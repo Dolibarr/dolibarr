@@ -31,10 +31,13 @@ class CommandeMethodeTableur
 
   function CommandeMethodeTableur ($DB, $USER=0, $fourn=0)
   {
+    dolibarr_syslog("CommandeMethodeTableur::CommandeMethodeTableur");
+
+
     $this->nom = "Méthode Tableur joint";
     $this->db = $DB;
     $this->user = $USER;
-    $this->fournisseur = $fourn;
+    $this->fourn = $fourn;
   }
 
   function info()
@@ -44,6 +47,8 @@ class CommandeMethodeTableur
 
   function Create()
   {
+    dolibarr_syslog("CommandeMethodeTableur::Create Fournisseur id : ".$this->fourn->id);
+    dolibarr_syslog("CommandeMethodeTableur::Create Fournisseur email : ".$this->fourn->email_commande);
 
     $this->date = time();
 
@@ -51,23 +56,25 @@ class CommandeMethodeTableur
 
     $fname = DOL_DATA_ROOT ."/telephonie/ligne/commande/".$this->datef.".xls";
 
-    if (strlen(trim($this->fournisseur->email_commande)) == 0)
+    if (strlen(trim($this->fourn->email_commande)) == 0)
       {
-	return -3;
+	$res = -3;
       }
 
     if (file_exists($fname))
       {
-	return 2;
+	$res = 2 ;
       }
     else
       {
 	$res = $this->CreateFile($fname);
 	$res = $res + $this->LogSql();
 	$res = $res + $this->MailFile($fname);
-
-	return $res;
       }
+
+    dolibarr_syslog("CommandeMethodeTableur::CommandeMethodeTableur Return $res");
+
+    return $res;
   }
   /**
    *
@@ -80,6 +87,7 @@ class CommandeMethodeTableur
     $sql = "SELECT l.ligne";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
     $sql .= " WHERE l.statut = 2";
+    $sql .= " AND l.fk_fournisseur =".$this->fourn->id;
     
     $result = $this->db->query($sql);
 
@@ -90,17 +98,16 @@ class CommandeMethodeTableur
 
     $subject = "Commande de Lignes";
 
-    $sendto = $this->fournisseur->email_commande;
+    $sendto = $this->fourn->email_commande;
 
     $from = TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC;
 
     $message = "Bonjour,\n\nVeuillez trouver ci-joint notre dernière commande.\n\n";
-    $message .= "Nous avons à ce jour $num ligne(s) commandée(s) pour lesquelles nous attendons la confirmation de présélection.\n\n\n";
-    $message .= "\n\nCordialement,\n\n";
+    $message .= "Nous avons à ce jour $num ligne(s) commandée(s) pour lesquelles nous attendons la confirmation de présélection.\n";
+    $message .= "\nCordialement,\n\n";
 
     $message .= "-- \n";
     $message .= $this->user->fullname."\n";
-
 
     $mailfile = new DolibarrMail($subject,
 				 $sendto,
@@ -113,9 +120,17 @@ class CommandeMethodeTableur
 			   array("application/msexcel"),
 			   array($this->datef.".xls"));
 
+
+
+    $mailfile->write_to_file();
+
     if ( $mailfile->sendfile() )
       {
 	return 0;
+      }
+    else
+      {
+	dolibarr_syslog("CommandeMethodeTableur::MailFile Erreur send");
       }
 
   }
@@ -125,7 +140,7 @@ class CommandeMethodeTableur
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_commande";
     $sql .= " (datec, fk_user_creat, fk_fournisseur, filename)";
-    $sql .= " VALUES (now(),".$this->user->id.",".$this->fournisseur->id.",'".$this->datef.".xls')";
+    $sql .= " VALUES (now(),".$this->user->id.",".$this->fourn->id.",'".$this->datef.".xls')";
 
     $result = $this->db->query($sql);
 
@@ -139,7 +154,6 @@ class CommandeMethodeTableur
 
   function CreateFile($fname)
   {
-
     $ligne = new LigneTel($db);
 
     $workbook = &new writeexcel_workbook($fname);
@@ -154,7 +168,7 @@ class CommandeMethodeTableur
     $worksheet->set_column('D:D', 9);
     $worksheet->set_column('E:E', 16);
     $worksheet->set_column('F:F', 18);   
-    $worksheet->set_column('G:G', 20);
+    $worksheet->set_column('G:G', 24);
     
     $formatcc =& $workbook->addformat();
     $formatcc->set_align('center');
@@ -182,8 +196,10 @@ class CommandeMethodeTableur
 
     $ligneids = array();
     
-    $sqlall = "SELECT s.nom, s.idp as socid, l.ligne, f.nom as fournisseur, l.statut, l.rowid";
-    $sqlall .= " , comm.name, comm.firstname, l.remise";
+    $sqlall = "SELECT s.nom, s.idp as socid, f.nom as fournisseur";
+    $sqlall .= ", l.ligne, l.statut, l.rowid, l.remise";
+    $sqlall .= ",".$this->db->pdate("l.date_commande") . " as date_commande";
+    $sqlall .= " , comm.name, comm.firstname";
     $sqlall .= " FROM ".MAIN_DB_PREFIX."societe as s";
     $sqlall .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
     $sqlall .= " , ".MAIN_DB_PREFIX."societe as r";
@@ -192,6 +208,7 @@ class CommandeMethodeTableur
     $sqlall .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
     $sqlall .= " AND l.fk_soc_facture = r.idp ";
     $sqlall .= " AND l.fk_commercial = comm.rowid ";
+    $sqlall .= " AND f.rowid =".$this->fourn->id;
     /*
      *
      */
@@ -262,7 +279,7 @@ class CommandeMethodeTableur
       }
     else 
       {
-	print $this->db->error() . ' ' . $sql;
+	dolibarr_syslog("CommandeMethodeTableur::CreateFile Erreur SQL 1");
       }
 
     /*
@@ -272,8 +289,10 @@ class CommandeMethodeTableur
     
     $sql = $sqlall;
 
-    $sql .= "AND l.statut > 0 AND l.statut <> 1 AND l.statut <> 4";
-    $sql .= " ORDER BY l.statut ASC";
+    //    $sql .= "AND l.statut > 0 AND l.statut <> 1 AND l.statut <> 4";
+    // Modification on ajoute au fichier seulement les lignes en commandes
+    $sql .= " AND l.statut = 2";
+    $sql .= " ORDER BY l.date_commande ASC";
     
     $result = $this->db->query($sql);
 
@@ -286,8 +305,7 @@ class CommandeMethodeTableur
 	    $obj = $this->db->fetch_object($i);	
 	    
 	    $jj = $i + $j + 2;
-	    $k = $jj + 1;
-	    
+  
 	    $soc = new Societe($this->db);
 	    $soc->fetch($obj->socid);
 
@@ -300,9 +318,8 @@ class CommandeMethodeTableur
 	    $worksheet->write_string($jj, 4,  "Oui", $formatcc);
 
 	    $worksheet->write($jj, 5,  "", $formatccb);
-	    $worksheet->write($jj, 6,  "", $formatccb);
+	    $worksheet->write($jj, 6,  "Commandée le ".strftime("%d/%m/%y",$obj->date_commande), $formatccb);
 	    
-	    array_push($ligneids, $obj->rowid);
 
 	    $i++;
 	  }
@@ -311,32 +328,32 @@ class CommandeMethodeTableur
       }
     else 
       {
-	print $this->db->error() . ' ' . $sql;
+	dolibarr_syslog("CommandeMethodeTableur::CreateFile Erreur SQL 2");
       }
+   
+    $workbook->close();
 
 
     /*
-     *
+     * Modifie le statut des lignes commandées
      *
      */
 
     foreach ($ligneids as $lid)
       {
-
 	$lint = new LigneTel($this->db);
 	$lint->fetch_by_id($lid);
 	if ($lint->statut == 1)
 	  {
 	    $lint->set_statut($this->user, 2);
 	  }
+
 	if ($lint->statut == 4)
 	  {
 	    $lint->set_statut($this->user, 5);
 	  }
       }
 
-    
-    $workbook->close();
 
 
     return 0;

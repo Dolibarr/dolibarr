@@ -46,7 +46,7 @@ class CommandeMethodeText
   {
     $this->date = time();
 
-    $this->datef = "commande-".strftime("%d%b%y-%HH%M", $this->date);
+    $this->datef = "ndi-".strftime("%d%b%y-%HH%M", $this->date);
 
     $fname = DOL_DATA_ROOT ."/telephonie/ligne/commande/".$this->datef.".txt";
 
