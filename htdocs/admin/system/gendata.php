@@ -67,6 +67,7 @@ if ($action == 'facture')
 	{
 	  print "- facture $id ok";
 	  $test = rand(0,1);
+	  $test = 1;
 	  if ($test > 0)
 	    {
 	      $facture->set_valid($id, $user);
