@@ -373,8 +373,8 @@ create table llx_entrepot
   tms             timestamp,
   label           varchar(255),
   description     text,
+  statut          tinyint default 1, -- 1 ouvert, 0 fermé
   fk_user_author  integer
-
 );
 
 
@@ -831,20 +831,26 @@ create table llx_pointmort
 
 create table llx_product
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  datec           datetime,
-  tms             timestamp,
-  ref             varchar(15) UNIQUE,
-  label           varchar(255),
-  description     text,
-  price           double,
-  tva_tx          double default 19.6,
-  fk_user_author  integer,
-  envente         tinyint default 1,
-  nbvente         integer default 0,
-  fk_product_type integer default 0,
-  duration        varchar(6)
+  rowid              integer AUTO_INCREMENT PRIMARY KEY,
+  datec              datetime,
+  tms                timestamp,
+  ref                varchar(15) UNIQUE,
+  label              varchar(255),
+  description        text,
+  price              double,
+  tva_tx             double default 19.6,
+  fk_user_author     integer,
+  envente            tinyint default 1,
+  nbvente            integer default 0,
+  fk_product_type    integer default 0,
+  duration           varchar(6),
+  stock_propale      integer default 0,
+  stock_commande     integer default 0,
+  seuil_stock_alerte integer default 0
+
 );
+
+
 
 
 create table llx_propal
@@ -855,6 +861,7 @@ create table llx_propal
   fk_projet       integer default 0,     -- projet auquel est rattache la propale
   ref             varchar(30) NOT NULL,  -- propal number
   datec           datetime,              -- date de creation 
+  fin_validite    datetime,              -- date de fin de validite
   date_valid      datetime,              -- date de validation
   date_cloture    datetime,              -- date de cloture
   datep           date,                  -- date de la propal
@@ -940,8 +947,6 @@ create table llx_product_stock
   fk_product      integer NOT NULL,
   fk_entrepot     integer NOT NULL,
   reel            integer,  -- stock réel
-  commande        integer,  -- stock commande
-  proposition     integer,  -- stock proposition commerciale
 
   key(fk_product),
   key(fk_entrepot)
@@ -1020,6 +1025,49 @@ create table llx_adherent_options_label
   name             varchar(64) PRIMARY KEY, -- nom de l'attribut
   tms              timestamp,
   label            varchar(255) NOT NULL -- label correspondant a l'attribut
+);
+
+create table llx_expedition_methode
+(
+  rowid            integer PRIMARY KEY,
+  tms              timestamp,
+  code             varchar(30) NOT NULL,
+  libelle          varchar(50) NOT NULL,
+  description      text,
+  statut           tinyint default 0
+);
+
+create table llx_expedition
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  tms                   timestamp,
+  ref                   varchar(30) NOT NULL,
+  fk_commande           integer,
+  date_creation         datetime,              -- date de creation 
+  date_valid            datetime,              -- date de validation
+  date_expedition       date,                  -- date de l'expedition
+  fk_user_author        integer,               -- createur
+  fk_user_valid         integer,               -- valideur
+  fk_entrepot           integer,
+  fk_expedition_methode integer,
+  fk_statut             smallint  default 0,
+  note                  text,
+  model_pdf             varchar(50),
+
+  UNIQUE INDEX (ref),
+  key(fk_expedition_methode),
+  key(fk_commande)
+);
+
+create table llx_expeditiondet
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  fk_expedition     integer not null,
+  fk_commande_ligne integer not null,
+  qty               real,              -- quantité
+
+  key(fk_expedition),
+  key(fk_commande_ligne)
 );
 
 create table llx_sqltables
