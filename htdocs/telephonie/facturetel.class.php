@@ -41,12 +41,13 @@ class FactureTel {
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";
       $sql .= " WHERE tf.rowid = ".$id;
 
+      $resql = $this->db->query($sql);
 
-      if ($this->db->query($sql))
+      if ($resql)
 	{
-	  if ($this->db->num_rows())
+	  if ($this->db->num_rows($resql))
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object($resql);
 
 	      $this->id                = $obj->rowid;
 	      $this->ligne             = $obj->ligne;
@@ -61,7 +62,7 @@ class FactureTel {
 	      $result = -2;
 	    }
 
-	  $this->db->free();
+	  $this->db->free($resql);
 	}
       else
 	{
@@ -85,7 +86,6 @@ class FactureTel {
     $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture";
     $sql .= " SET ";
     $sql .= " fk_facture = $facid ";
-
     $sql .= " WHERE rowid = $this->id";
 
     if ( $this->db->query($sql) )
@@ -104,15 +104,17 @@ class FactureTel {
 
   function get_comm_min_date($date)
   {
-    $sql = "SELECT ".$this->db->pdate("min(date)")." FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-    $sql .= " WHERE ligne = '".$this->ligne."' and EXTRACT(YEAR_MONTH FROM date) = $date";
+    $sql = "SELECT ".$this->db->pdate("min(date)");
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+    $sql .= " WHERE ligne = '".$this->ligne."' and date_format(date,'%Y%m') = '$date'";
 
+    $resql = $this->db->query($sql);
 
-    if ($this->db->query($sql))
+    if ($resql)
       {
-	if ($this->db->num_rows())
+	if ($this->db->num_rows($resql))
 	  {
-	    $row = $this->db->fetch_row(0);
+	    $row = $this->db->fetch_row($resql);
 	
 	    return $row[0];
 	  }
@@ -125,12 +127,13 @@ class FactureTel {
     $sql = "SELECT ".$this->db->pdate("max(date)")." FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
     $sql .= " WHERE ligne = '".$this->ligne."' and EXTRACT(YEAR_MONTH FROM date) = $date";
 
+    $resql = $this->db->query($sql);
 
-    if ($this->db->query($sql))
+    if ($resql)
       {
-	if ($this->db->num_rows())
+	if ($this->db->num_rows($resql))
 	  {
-	    $row = $this->db->fetch_row(0);
+	    $row = $this->db->fetch_row($resql);
 	
 	    return $row[0];
 	  }
