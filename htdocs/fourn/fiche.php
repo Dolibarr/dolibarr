@@ -27,9 +27,6 @@ require("../contact.class.php");
 $langs->load("bills");
 $langs->load("companies");
 
-
-llxHeader();
-
 $socid = $_GET["socid"];
 /*
  * Sécurité accés client
@@ -49,6 +46,13 @@ $societe = new Societe($db);
 
 if ( $societe->fetch($socid) )
 {
+
+  $addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
+  $addons[0][1] = $societe->nom;
+
+
+  llxHeader('','Fiche Fournisseur : '.$societe->nom, $addons);
+
     /*
      * Affichage onglets
      */
