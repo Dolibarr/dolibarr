@@ -30,7 +30,8 @@ function loginFunction()
   /**
    * Change the HTML output so that it fits to your
    * application.     */
-  print '<html><head><title>Dolibarr Authentification</title>';
+  print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+  print "\n<html><head><title>Dolibarr Authentification</title>";
   print '<style type="text/css">
   body {
     font-size:14px;
@@ -79,6 +80,7 @@ function loginFunction()
 	color:blue;
   }
   </style>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
   </head><body>
   <div class="main">
   <div class="header">';
