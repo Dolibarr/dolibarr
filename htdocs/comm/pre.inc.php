@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@ function llxHeader($head = "", $urlp = "") {
   $menu->add(DOL_URL_ROOT."/comm/clients.php", "Clients");
 
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php", "Contacts");
+
+  $menu->add(DOL_URL_ROOT."/comm/prospect/", "Prospects");
 
   $menu->add(DOL_URL_ROOT."/comm/action/index.php", "Actions");
 
