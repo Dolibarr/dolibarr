@@ -28,6 +28,11 @@ create table llx_entrepot
   tms             timestamp,
   label           varchar(255) NOT NULL,
   description     text,
+  lieu            varchar(64),       -- résumé lieu situation
+  address         varchar(255),
+  cp              varchar(10),
+  ville           varchar(50),
+  fk_pays         integer DEFAULT 0,
   statut          tinyint DEFAULT 1, -- 1 ouvert, 0 fermé
   fk_user_author  integer
 )type=innodb;
