@@ -217,7 +217,7 @@ if ($socid > 0)
 
     if ($conf->projet->enabled && $user->rights->projet->creer)
       {
-	print '<a class="tabAction" href="../projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a>';
+	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a>';
       }
     print '</div>';
 
