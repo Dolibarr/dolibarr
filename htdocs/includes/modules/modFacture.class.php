@@ -77,30 +77,49 @@ class modFacture extends DolibarrModules
     $this->const[0][0] = "FAC_PDF_INTITULE";
     $this->const[0][1] = "chaine";
     $this->const[0][2] = "Facture Dolibarr";
+    $this->const[0][4] = 1;
 
     $this->const[1][0] = "FAC_PDF_ADRESSE";
     $this->const[1][1] = "texte";
     $this->const[1][2] = "Adresse";
+    $this->const[1][4] = 1;
 
     $this->const[2][0] = "FAC_PDF_TEL";
     $this->const[2][1] = "chaine";
     $this->const[2][2] = "02 97 42 42 42";
+    $this->const[2][4] = 1;
 
     $this->const[3][0] = "FAC_PDF_FAX";
     $this->const[3][1] = "chaine";
     $this->const[3][2] = "02 97 00 00 00";
+    $this->const[3][4] = 1;
 
-    $this->const[4][0] = "FAC_PDF_INTITULE2";
+    $this->const[4][0] = "FAC_PDF_MEL";
     $this->const[4][1] = "chaine";
-    $this->const[4][2] = "";
+    $this->const[4][2] = "02 97 00 00 00";
+    $this->const[4][4] = 1;
 
-    $this->const[5][0] = "FACTURE_ADDON_PDF";
+    $this->const[5][0] = "FAC_PDF_WWW";
     $this->const[5][1] = "chaine";
-    $this->const[5][2] = "bulot";
+    $this->const[5][2] = "www.masociete.com";
+    $this->const[5][4] = 1;
 
-    $this->const[6][0] = "FACTURE_ADDON";
+    $this->const[6][0] = "FAC_PDF_LOGO";
     $this->const[6][1] = "chaine";
-    $this->const[6][2] = "pluton";
+    $this->const[6][2] = "/documents/logo/mylogo.png";
+    $this->const[6][4] = 1;
+
+    $this->const[7][0] = "FACTURE_ADDON_PDF";
+    $this->const[7][1] = "chaine";
+    $this->const[7][2] = "bulot";
+
+    $this->const[7][0] = "FACTURE_ADDON";
+    $this->const[7][1] = "chaine";
+    $this->const[7][2] = "pluton";
+
+    $this->const[8][0] = "FAC_FORCE_DATE_VALIDATION";
+    $this->const[8][1] = "yesno";
+    $this->const[8][2] = "0";
 
     // Boites
     $this->boxes = array();

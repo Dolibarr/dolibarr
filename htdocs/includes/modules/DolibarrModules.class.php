@@ -101,7 +101,7 @@ class DolibarrModules
             $type   = $this->const[$key][1];
             $val    = $this->const[$key][2];
             $note   = $this->const[$key][3];
-            $visible= $this->const[$key][4]||'0';
+            $visible= $this->const[$key][4];
 
             $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."const WHERE name ='".$name."'";
 
@@ -112,16 +112,18 @@ class DolibarrModules
 
                 if ($row[0] == 0)
                 {
-                    // Si non trouve // '$visible'
-                    if (strlen($note)){
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible) VALUES ('$name','$type','$val','$note',0);";
-                    }elseif (strlen($val))
+                    if (! $visible) $visible='0';
+                    if (strlen($note))
                     {
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible) VALUES ('$name','$type','$val',0);";
+                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible) VALUES ('$name','$type','$val','$note','$visible');";
+                    }
+                    elseif (strlen($val))
+                    {
+                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible) VALUES ('$name','$type','$val','$visible');";
                     }
                     else
                     {
-                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible) VALUES ('$name','$type',0);";
+                        $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible) VALUES ('$name','$type','$visible');";
                     }
 
                     if (! $this->db->query($sql) )
