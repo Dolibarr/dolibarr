@@ -18,15 +18,10 @@
 -- $Id$
 -- $Source$
 --
-drop table if exists llx_bank_url;
-drop table if exists llx_entrepot;
-drop table if exists llx_product_stock;
-drop table if exists llx_stock;
-drop table if exists llx_stock_mouvement;
+
+drop table if exists llx_co_fa;
 
 drop table if exists llx_co_pr;
-drop table if exists llx_commande;
-drop table if exists llx_commandedet;
 
 drop table if exists llx_c_actioncomm;
 
@@ -74,6 +69,10 @@ drop table if exists llx_bank_categ;
 
 drop table if exists llx_bank_class;
 
+drop table if exists llx_bank_url;
+
+drop table if exists llx_birthday_alert;
+
 drop table if exists llx_bookmark;
 
 drop table if exists llx_boxes;
@@ -83,6 +82,10 @@ drop table if exists llx_boxes_def;
 drop table if exists llx_chargesociales;
 
 drop table if exists llx_contrat;
+
+drop table if exists llx_commande;
+
+drop table if exists llx_commandedet;
 
 drop table if exists llx_compta;
 
@@ -105,6 +108,14 @@ drop table if exists llx_don;
 drop table if exists llx_don_projet;
 
 drop table if exists llx_editeur;
+
+drop table if exists llx_entrepot;
+
+drop table if exists llx_expedition;
+
+drop table if exists llx_expedition_methode;
+
+drop table if exists llx_expeditiondet;
 
 drop table if exists llx_fa_pr;
 
@@ -148,6 +159,8 @@ drop table if exists llx_product_fournisseur;
 
 drop table if exists llx_product_price;
 
+drop table if exists llx_product_stock;
+
 drop table if exists llx_projet;
 
 drop table if exists llx_propal;
@@ -169,6 +182,10 @@ drop table if exists llx_soc_events;
 drop table if exists llx_soc_recontact;
 
 drop table if exists llx_socstatutlog ;
+
+drop table if exists llx_stock;
+
+drop table if exists llx_stock_mouvement;
 
 drop table if exists llx_sqltables;
 
