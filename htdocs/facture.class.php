@@ -55,7 +55,7 @@ class Facture
     {
       $this->db = $DB ;
       $this->socidp = $soc_idp;
-      $this->products = array();
+      $this->products = array();        // Tableau de lignes de factures
       $this->db_table = MAIN_DB_PREFIX."facture";
       $this->amount = 0;
       $this->remise = 0;
@@ -146,7 +146,7 @@ class Facture
 	    }
 
 	  /*
-	   * Produits
+	   * Produits/services
 	   *
 	   */
 	  for ($i = 0 ; $i < sizeof($this->products) ; $i++)
@@ -160,7 +160,10 @@ class Facture
 					      $this->products_qty[$i], 
 					      $prod->tva_tx, 
 					      $this->products[$i], 
-					      $this->products_remise_percent[$i]);
+					      $this->products_remise_percent[$i],
+					      $this->products_date_start[$i],
+					      $this->products_date_end[$i]
+					      );
 
 
 	      if ( $result_insert < 0)
@@ -212,13 +215,12 @@ class Facture
     }
 
   /**
-   * Recupére l'objet facture
-   *
+   * Recupére l'objet facture et ses lignes de factures
    *
    */
   Function fetch($rowid, $societe_id=0)
     {
-      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent,".$this->db->pdate("f.datef")."as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.rowid as cond_regl_id, c.libelle, c.libelle_facture, f.note, f.paye, f.fk_statut, f.fk_user_author";
+      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent,".$this->db->pdate("f.datef")." as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.rowid as cond_regl_id, c.libelle, c.libelle_facture, f.note, f.paye, f.fk_statut, f.fk_user_author";
       $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."cond_reglement as c";
       $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
       
@@ -266,7 +268,7 @@ class Facture
 	       * Lignes
 	       */
 
-	      $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise, l.remise_percent, l.subprice";
+	      $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise, l.remise_percent, l.subprice, ".$this->db->pdate("l.date_start")." as date_start,".$this->db->pdate("l.date_end")." as date_end";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = ".$this->id;
 	
 	      $result = $this->db->query($sql);
@@ -287,6 +289,8 @@ class Facture
 		      $faclig->remise         = $objp->remise;
 		      $faclig->remise_percent = $objp->remise_percent;
 		      $faclig->produit_id     = $objp->fk_product;
+		      $faclig->date_start     = $objp->date_start;
+		      $faclig->date_end       = $objp->date_end;
 		      $this->lignes[$i] = $faclig;
 		      $i++;
 		    }
@@ -518,29 +522,33 @@ class Facture
 	  return $result;
 	}
     }
+
   /**
-   * Ajoute un produit dans la facture
+   * Ajoute un produit dans l'objet facture
    *
    */
-  Function add_product($idproduct, $qty, $remise_percent)
+  Function add_product($idproduct, $qty, $remise_percent, $datestart='', $dateend='')
     {
       if ($idproduct > 0)
 	{
-	  $i = sizeof($this->products);
-	  $this->products[$i] = $idproduct;
+	  $i = sizeof($this->products);     // On recupere nb de produit deja dans tableau products
+	  $this->products[$i] = $idproduct; // On ajoute a la suite
 	  if (!$qty)
 	    {
 	      $qty = 1 ;
 	    }
 	  $this->products_qty[$i] = $qty;
 	  $this->products_remise_percent[$i] = $remise_percent;
+	  if ($datestart) { $this->products_date_start[$i] = $datestart; }
+	  if ($dateend)   { $this->products_date_end[$i] = $dateend; }
 	}
     }
+
   /**
-   * Ajoute une ligne de facture
+   * Ajoute une ligne de facture (associé à aucun produit/servcie prédéfini)
    *
    */
-  Function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
+  Function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='')
     {
       if ($this->brouillon)
 	{
@@ -557,9 +565,14 @@ class Facture
 	      $price = $pu - $remise;
 	    }
 
-	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise)";
-	  $sql .= " VALUES ($facid, '".addslashes($desc)."', $price, $qty, $txtva, $fk_product, $remise_percent, $subprice, $remise) ;";
-
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end)";
+	  $sql .= " VALUES ($facid, '".addslashes($desc)."', $price, $qty, $txtva, $fk_product, $remise_percent, $subprice, $remise, ";
+	  if ($datestart) { $sql.= "'$datestart', "; }
+	  else { $sql.=" null, "; }
+	  if ($dateend) { $sql.= "'$dateend' "; }
+	  else { $sql.=" null "; }
+      $sql.=")";
+     
 	  if ( $this->db->query( $sql) )
 	    {
 	      $this->updateprice($facid);
@@ -574,9 +587,9 @@ class Facture
     }
   /**
    * Mets à jour une ligne de facture
-   *
+   * Retourne 0 si erreur
    */
-  Function updateline($rowid, $desc, $pu, $qty, $remise_percent=0)
+  Function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='')
     {
       if ($this->brouillon)
 	{
@@ -597,10 +610,21 @@ class Facture
 	      $remise_percent=0;
 	    }
 
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc',price=$price,subprice=$subprice,remise=$remise,remise_percent=$remise_percent,qty=$qty WHERE rowid = $rowid ;";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc',price=$price,subprice=$subprice,remise=$remise,remise_percent=$remise_percent,qty=$qty";
+  	  if ($datestart) { $sql.= ",date_start='$datestart'"; }
+	  else { $sql.=",date_start=null"; }
+	  if ($dateend) { $sql.= ",date_end='$dateend'"; }
+	  else { $sql.=",date_end=null"; }
+	  $sql .= " WHERE rowid = $rowid ;";
 	  $result = $this->db->query( $sql);
+      if ($result) {
+	    $this->updateprice($this->id);
+	  }
+	  else {
+	    print "Erreur : ".$this->db->error()."<br>".$sql; 
+	  }
+      return $result;
 
-	  $this->updateprice($this->id);
 	}
     }
   /**

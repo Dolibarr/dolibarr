@@ -44,10 +44,14 @@ if ($user->societe_id > 0)
   $action = '';
   $socidp = $user->societe_id;
 }
+
+// Nombre de ligne pour choix de produit/service prédéfinis
+$NBLINES=4;
+
+
 /*
  *
  */ 
-
 if ($_POST["action"] == 'classin') 
 {
   $facture = new Facture($db);
@@ -85,11 +89,21 @@ if ($_POST["action"] == 'add')
 
       if (!$_POST["propalid"] && !$_POST["commandeid"]) 
 	{      
-	  $facture->add_product($_POST["idprod1"],$_POST["qty1"],$_POST["remise_percent1"]);
-	  $facture->add_product($_POST["idprod2"],$_POST["qty2"],$_POST["remise_percent2"]);
-	  $facture->add_product($_POST["idprod3"],$_POST["qty3"],$_POST["remise_percent3"]);
-	  $facture->add_product($_POST["idprod4"],$_POST["qty4"],$_POST["remise_percent4"]);
-	  
+	      for ($i = 1 ; $i <= $NBLINES ; $i++)
+		{
+            if ($_POST["idprod${i}"]) {
+                $startday='';
+                $endday='';
+                if ($_POST["date_start${i}year"] && $_POST["date_start${i}month"] && $_POST["date_start${i}day"]) {
+        	        $startday=$_POST["date_start${i}year"].'-'.$_POST["date_start${i}month"].'-'.$_POST["date_start${i}day"];
+        	    }
+                if ($_POST["date_end${i}year"] && $_POST["date_end${i}month"] && $_POST["date_end${i}day"]) {
+        	        $endday=$_POST["date_end${i}year"].'-'.$_POST["date_end${i}month"].'-'.$_POST["date_end${i}day"];
+                }
+        	    $facture->add_product($_POST["idprod${i}"],$_POST["qty${i}"],$_POST["remise_percent${i}"],$startday,$endday);
+                
+            }
+        }	  
 	  $facid = $facture->create($user);
 
 	  if ($facid)
@@ -217,24 +231,47 @@ if ($action == 'addligne' && $user->rights->facture->creer)
 {
   $fac = new Facture($db);
   $fac->fetch($facid);
+  $datestart='';
+  $dateend='';
+  if ($_POST["date_startyear"] && $_POST["date_startmonth"] && $_POST["date_startday"]) {
+    $datestart=$_POST["date_startyear"].'-'.$_POST["date_startmonth"].'-'.$_POST["date_startday"];
+  }
+  if ($_POST["date_endyear"] && $_POST["date_endmonth"] && $_POST["date_endday"]) {
+    $dateend=$_POST["date_endyear"].'-'.$_POST["date_endmonth"].'-'.$_POST["date_endday"];
+  }
   $result = $fac->addline($facid,
-			  $_POST["desc"],
-			  $_POST["pu"],
-			  $_POST["qty"],
-			  $_POST["tva_tx"],
-			  0,
-			  $_POST["remise_percent"]);
+    $_POST["desc"],
+    $_POST["pu"],
+    $_POST["qty"],
+    $_POST["tva_tx"],
+    0,
+    $_POST["remise_percent"],
+    $datestart,
+    $dateend
+    );
 }
 
 if ($action == 'updateligne' && $user->rights->facture->creer) 
 {
   $fac = new Facture($db,"",$facid);
   $fac->fetch($facid);
+  $datestart='';
+  $dateend='';
+  if ($_POST["date_startyear"] && $_POST["date_startmonth"] && $_POST["date_startday"]) {
+    $datestart=$_POST["date_startyear"].'-'.$_POST["date_startmonth"].'-'.$_POST["date_startday"];
+  }
+  if ($_POST["date_endyear"] && $_POST["date_endmonth"] && $_POST["date_endday"]) {
+    $dateend=$_POST["date_endyear"].'-'.$_POST["date_endmonth"].'-'.$_POST["date_endday"];
+  }
+
   $result = $fac->updateline($rowid,
 			     $_POST["desc"],
 			     $_POST["price"],
 			     $_POST["qty"],
-			     $_POST["remise_percent"]);
+			     $_POST["remise_percent"],
+			     $datestart,
+			     $dateend
+			     );
 }
 
 if ($action == 'deleteline' && $user->rights->facture->creer) 
@@ -496,12 +533,26 @@ if ($_GET["action"] == 'create')
 		}
 	      	      
 	      print '<table class="noborder" cellspacing="0">';
-	      print '<tr><td>Services/Produits prédéfinis</td><td>Quan.</td><td>Remise</td></tr>';
-	      for ($i = 1 ; $i < 5 ; $i++)
+	      print '<tr><td>Services/Produits prédéfinis</td><td>Quan.</td><td>Remise</td><td> &nbsp; &nbsp; </td>';
+          if ($conf->service->enabled) {
+              print '<td>Si produit de type service à durée limitée</td></tr>';
+	      }
+	      for ($i = 1 ; $i <= $NBLINES ; $i++)
 		{
 		  print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
 		  print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
-		  print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0"> %</td></tr>';
+		  print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0">%</td>';
+		  print '<td>&nbsp;</td>';
+		  // Si le module service est actif, on propose des dates de début et fin à la ligne
+          if ($conf->service->enabled) {
+            print '<td>';
+		    print 'Du ';
+ 	        print $html->select_date('',"date_start$i",0,0,1);
+		    print ' au ';
+		    print $html->select_date('',"date_end$i",0,0,1);
+            print '</td>';
+		  }
+		  print "</tr>\n";
 		}	      	      
 
 	      print '</table>';
@@ -542,7 +593,7 @@ if ($_GET["action"] == 'create')
 	  /*
 	   *
 	   */	  
-	  print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
+	  print '<tr><td colspan="3" align="center"><input type="submit" name="bouton" value="Créer brouillon"></td></tr>';
 	  print "</form>\n";
 	  print "</table>\n";
 
@@ -810,10 +861,9 @@ else
 	 * Lignes de factures
 	 *
 	 */
-	
-	$sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice";
+	$sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice, ".$db->pdate("l.date_start")." as date_start, ".$db->pdate("l.date_end")." as date_end ";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = $fac->id ORDER BY l.rowid";
-	
+
 	$result = $db->query($sql);
 	if ($result)
 	  {
@@ -841,12 +891,16 @@ else
 		print "<TR $bc[$var]>";
 		if ($objp->fk_product > 0)
 		  {
-		    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
+		    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a>';
+            if ($objp->date_start) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
+		    print '</td>';
 		  }
 		else
 		  {
-		print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
-		  }
+            print "<td>".stripslashes(nl2br($objp->description));
+            if ($objp->date_start) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
+            print "</td>\n";
+          }
 
 		print '<TD align="right">'.$objp->tva_taux.' %</TD>';
 		print '<TD align="right">'.price($objp->subprice)."</td>\n";
@@ -859,7 +913,7 @@ else
 		  {
 		    print '<td>&nbsp;</td>';
 		  }
-		print '<TD align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
+		print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
 	    
 	    // Icone d'edition et suppression		  
 		if ($fac->statut == 0  && $user->rights->facture->creer) 
@@ -877,6 +931,7 @@ else
 		  }
 		print "</tr>";
 	  
+	    // Update ligne de facture
 		if ($action == 'editline' && $rowid == $objp->rowid)
 		  {
 		    print "<form action=\"$PHP_SELF?facid=$fac->id\" method=\"post\">";
@@ -884,12 +939,24 @@ else
 		    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 		    print "<tr $bc[$var]>";
 		    print '<td><textarea name="desc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
-		    print '<td>&nbsp;</td>';
+    	    print '<td align="right">';
+    	    //print $html->select_tva("tva_tx",$objp->tva_taux);
+    	    print "$objp->tva_taux %";    // Taux tva dépend du produit, donc on ne doit pas pouvoir le changer ici
+    	    print '</td>';
 		    print '<td align="right"><input size="8" type="text" name="price" value="'.price($objp->subprice).'"></td>';
-		    print '<td align="right"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></TD>';
+		    print '<td align="right"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></td>';
 		    print '<td align="right"><input size="3" type="text" name="remise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
 		    print '<td align="center" colspan="3"><input type="submit" value="Enregistrer"></td>';
 		    print '</tr>' . "\n";
+            if ($conf->service->enabled) {
+                print "<tr $bc[$var]>";
+    		    print '<td colspan="8">Si produit de type service à durée limitée: Du ';
+     	        print $html->select_date($objp->date_start,"date_start",0,0,$objp->date_start?0:1);
+    		    print ' au ';
+    		    print $html->select_date($objp->date_end,"date_end",0,0,$objp->date_end?0:1);
+    		    print '</td>';
+    		    print '</tr>' . "\n";
+            }
 		    print "</form>\n";
 		  }
 		
@@ -902,7 +969,7 @@ else
 	  } 
 	else
 	  {
-	    print $db->error();
+	    print "Erreur : ".$db->error()."<br>".$sql;
 	  }
 	
 	/*
@@ -933,10 +1000,19 @@ else
 	    print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
 	    print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
 	    print '<td align="center" colspan="3"><input type="submit" value="Ajouter"></td></tr>';
-
+        if ($conf->service->enabled) {
+    	    print '<tr>';
+    	    print '<td colspan="8">Si produit de type service à durée limitée: Du ';
+     	    print $html->select_date('',"date_start",0,0,1);
+    		print ' au ';
+    		print $html->select_date('',"date_end",0,0,1);
+    		print '</td>';
+        }
+        print '</tr>';
 	    print "</form>";
 	  }
-	print "</table>";
+	print "</table>\n";
+
 	/*
 	 * Fin Ajout ligne
 	 *

@@ -84,8 +84,12 @@ Class pdf_crabe {
                     $codeproduitservice="";
                     $pdf->SetXY (11, $curY );
                     if (defined("FACTURE_CODEPRODUITSERVICE") && FACTURE_CODEPRODUITSERVICE) {
-                        // Affiche code produit
-                        $codeproduitservice=" (".$fac->lignes[$i]->produit_id.")";
+                        // Affiche code produit si ligne associée à un code produit
+                        $codeproduitservice=" (Code produit ".$fac->lignes[$i]->produit_id.")";
+                    }
+                    if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end) {
+                        // Affichage durée si il y en a une
+                        $codeproduitservice=" (Du ".dolibarr_print_date($fac->lignes[$i]->date_start)." au ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
                     }
                     $pdf->MultiCell(118, 5, $fac->lignes[$i]->desc."$codeproduitservice", 0, 'J');
 
@@ -104,9 +108,9 @@ Class pdf_crabe {
                     $pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'R');
 
                     // Remise sur ligne
-                    $pdf->SetXY (161, $curY);
+                    $pdf->SetXY (163, $curY);
                     if ($fac->lignes[$i]->remise_percent) {
-                        $pdf->MultiCell(10, 5, $fac->lignes[$i]->remise_percent."%", 0, 'C');
+                        $pdf->MultiCell(10, 5, $fac->lignes[$i]->remise_percent."%", 0, 'R');
                     }
 
                     // Total HT
