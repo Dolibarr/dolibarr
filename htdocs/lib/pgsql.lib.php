@@ -471,10 +471,13 @@ class DoliDb
 		\return id
 */
 
-  function last_insert_id()
+  function last_insert_id($tab)
     {
-			return pg_last_oid($this->results);
-    }
+			$result = pg_query($this->db,"select max(rowid) from ".$tab." ;");
+			$nbre=pg_num_rows($result);
+			$row = pg_fetch_result($result,0,0);
+			return $row;
+     }
 
 /*!
 		\brief obtient le nombre de lignes affectées dans la précédente opération.

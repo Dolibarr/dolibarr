@@ -484,8 +484,8 @@ class User
 	{
 	  if ($this->db->num_rows()) 
 	    {
-	      $obj = $this->db->fetch_object($result , 0);
-	      
+	      //$obj = $this->db->fetch_object($result , 0);
+	      $obj = $this->db->fetch_object($result);
 	      $this->id = $obj->rowid;
 	      $this->nom = stripslashes($obj->name);
 	      $this->prenom = stripslashes($obj->firstname);
@@ -579,8 +579,8 @@ class User
    */
   function create()
     {
-      $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login'";
-
+        $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login';";
+				//$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->email';";
       if ($this->db->query($sql)) 
 	{
 	  $num = $this->db->num_rows();
@@ -593,16 +593,23 @@ class User
 	    }
 	  else
 	    {            
-	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec, login) values (now(),'$this->login')";
+				$sql = "insert into ".MAIN_DB_PREFIX."user (datec,login,email)
+				values(now(),'$this->login','$this->email');";
 	      if ($this->db->query($sql))
 		{
-		  if ($this->db->affected_rows()) 
+		  /*if ($this->db->affected_rows()) 
 		    {
 		      $this->id = $this->db->last_insert_id();
 		      $this->update();
 		      $this->set_default_rights();
 		      return $this->id;      
-		    }
+		    }*/ // ce code pose probleme en postgres il est remplace par le bloc ci dessous
+				// fonctionne autant en postgres que mysql
+				$table =  "".MAIN_DB_PREFIX."user";
+				$this->id = $this->db->last_insert_id($table);
+				$this->set_default_rights();
+				$this->update();
+				return $this->id;
 		}
 	      else
 		{
@@ -614,7 +621,7 @@ class User
 	{
     	  dolibarr_print_error($this->db);
 	}
-    }
+    } //fin function
 
   /**
    * \brief     Créé en base un utilisateur depuis l'objetc contact
@@ -629,7 +636,6 @@ class User
 
       $this->login = strtolower(substr($contact->prenom, 0, 3)) . strtolower(substr($contact->nom, 0, 3));
 
-			
       $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login'";
 
       if ($this->db->query($sql)) 
@@ -719,12 +725,18 @@ class User
    */
   function update()
     {
-      $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login' AND rowid <> $this->id";
+		
+      $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login' AND rowid <> $this->id;";
+		 
 
+		 	$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='bennybe' AND
+			email = '$this->id';";
+			
       if ($this->db->query($sql)) 
 	{
 	  $num = $this->db->num_rows();
 	  $this->db->free();
+		
 
 	  if ($num) 
 	    {
@@ -747,7 +759,8 @@ class User
 	      $sql .= ", module_compta = 1";
 	      $sql .= ", code = '$this->code'";
 	      $sql .= ", note = '$this->note'";
-	      $sql .= " WHERE rowid = $this->id";
+	      $sql .= " WHERE rowid = $this->id;";
+				
 	      
 	      $result = $this->db->query($sql);
 	      

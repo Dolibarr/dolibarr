@@ -21,13 +21,36 @@
  */
 require("./pre.inc.php");
 
+//include "/home/vegeta/www/dolibarr/htdocs/conf/conf.php";
+// ici comme ça j'ai la style sheet!
+
+/*$conf = "../../conf/conf.php";
+if (file_exists($conf))
+{
+ include($conf);
+}*/
+
+	include_once $dolibarr_main_document_root."/lib/${dolibarr_main_db_type}.lib.php";
+	
+ 
+
 if (!$user->admin)
   accessforbidden();
-
-
+	
 llxHeader();
 
-print_titre("Configuration Mysql");
+if($dolibarr_main_db_type=="mysql")
+{
+ 	print_titre("Configuration MySql");
+  $sql = "SHOW VARIABLES";
+	$base=1;
+}
+else
+{
+	print_titre("Configuration Pgsql");
+	$sql = "select name,setting from pg_settings;";
+	$base=2;
+}
 
 print '<br>';
 print '<table class="noborder" cellpadding="3" cellspacing="1">';
@@ -36,7 +59,6 @@ print '<td>Propriétés&nbsp;du&nbsp;serveur</td>';
 print '<td>Valeur</td>';
 print "</tr>\n";
 
-$sql = "SHOW VARIABLES";
 
 $result = $db->query($sql);
 if ($result) 
@@ -49,7 +71,10 @@ if ($result)
       $objp = $db->fetch_object( $i);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td>'.$objp->Variable_name.'</td><td>'.$objp->Value.'</td>';
+			if($base==1)
+      	print '<td>'.$objp->Variable_name.'</td><td>'.$objp->Value.'</td>';
+			else
+			  print '<td>'.$objp->name.'</td><td>'.$objp->setting.'</td>';
       print '</tr>';
 
       $i++;

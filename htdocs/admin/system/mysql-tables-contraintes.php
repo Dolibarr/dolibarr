@@ -20,24 +20,42 @@
  * $Source$
  */
 require("./pre.inc.php");
+include_once $dolibarr_main_document_root."/lib/${dolibarr_main_db_type}.lib.php";
 
 if (!$user->admin)
   accessforbidden();
 
 
 llxHeader();
-
+if($dolibarr_main_db_type=="mysql")
+{
 print_titre("Tables Mysql - Contraintes");
-
+$sql = "SHOW TABLE STATUS";
+$base=1;
+}
+else
+{
+print_titre("Tables PostreSql - Contraintes");
+$sql = "select conname,contype from  pg_constraint;";
+$base=2;
+}
 print '<br>';
 print '<table class="noborder" cellpadding="4" cellspacing="1">';
 print '<tr class="liste_titre">';
+if($base==1)
+{
 print '<td>Tables</td>';
 print '<td>'.$langs->trans("Type").'</td>';
 print '<td>Contraintes</td>';
+}
+else
+{
+ print '<td>Contraintes</td>';
+ print '<td>Type de la contrainte</td>';
+}
 print "</tr>\n";
 
-$sql = "SHOW TABLE STATUS";
+
 
 $result = $db->query($sql);
 if ($result) 

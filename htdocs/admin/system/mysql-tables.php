@@ -20,10 +20,12 @@
  * $Source$
  */
 require("./pre.inc.php");
+include_once $dolibarr_main_document_root."/lib/${dolibarr_main_db_type}.lib.php";
 
 if (!$user->admin)
   accessforbidden();
 
+	
 
 if ($_GET["action"] == 'convert')
 {
@@ -31,8 +33,11 @@ if ($_GET["action"] == 'convert')
 }
 
 llxHeader();
-
-print_titre("Tables Mysql");
+	
+if($dolibarr_main_db_type=="mysql")
+{
+ 	
+ print_titre("Tables Mysql");
 
 print '<br>';
 print '<table class="noborder" cellpadding="4" cellspacing="1">';
@@ -83,7 +88,46 @@ if ($result)
       $i++;
     }
 }
-print '</table>';
 
+}
+else
+{
+print_titre("Tables Mysql");
+print '<br>';
+print '<table class="noborder" cellpadding="4" cellspacing="1">';
+print '<tr class="liste_titre">';
+print '<td>Nom de la table</td>';
+print '<td>Nombre de tuples lu</td>';
+print '<td>Nb index fetcher.</td>';
+print '<td>Nbre de tuples inserer</td>';
+print '<td>Nbre de tuple modifier</td>';
+print '<td>Nbre de tuple supprimer</td>';
+print "</tr>\n";
+$sql = "select relname,seq_tup_read,idx_tup_fetch,n_tup_ins,n_tup_upd,n_tup_del
+				from pg_stat_user_tables;";
+				
+$result = $db->query($sql);
+if ($result) 
+{
+  $num = $db->num_rows();
+  $var=True;
+  $i=0;
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($i);
+      $var=!$var;
+      print "<TR $bc[$var]>";
+			print '<td align="right">'.$row[0].'</td>';
+      print '<td align="right">'.$row[1].'</td>';
+      print '<td align="right">'.$row[2].'</td>';
+      print '<td align="right">'.$row[3].'</td>';
+      print '<td align="right">'.$row[4].'</td>';
+			print '<td align="right">'.$row[5].'</td>';
+			print '</tr>';
+      $i++;
+		}
+}
+print '</table>';
+}
 llxFooter();
 ?>
