@@ -35,3 +35,6 @@ PasswordChangedAndSentTo=Mot de passe changé et envoyé à %s
 MenuUsersAndGroups=Utilisateurs & Groupes
 LastGroupsCreated=Les derniers groupes créés
 LastUsersCreated=Les %s derniers utilisateurs créés
+ShowGroup=Afficher groupe
+ShowUser=Afficher utilisateur
+NonAffectedUsers=Utilisateurs non affectés au groupe
