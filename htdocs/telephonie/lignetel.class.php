@@ -59,8 +59,7 @@ class LigneTel {
     $sql .= " fk_fournisseur = $this->fournisseur, ";
     $sql .= " fk_commercial = $this->commercial, ";
     $sql .= " fk_concurrent = $this->concurrent, ";
-    $sql .= " note =  '$this->note',";
-    $sql .= " remise = '$this->remise'";
+    $sql .= " note =  '$this->note'";
     $sql .= " WHERE rowid = $this->id";
 
     if ( $this->db->query($sql) )
@@ -98,6 +97,69 @@ class LigneTel {
 	return 0;
       }
   }
+  /*
+   *
+   *
+   */
+  function SetRemise($user, $remise, $comment)
+  {
+    $remise = ereg_replace(",",".", $remise);
+
+    if (strlen(trim($remise)) <> 0 && is_numeric($remise))
+      {
+
+	if (!$this->db->begin())
+	  {
+	    dolibarr_syslog("LigneTel::SetRemise Error -5");
+	    $error++;
+	  }
+
+	if (!$error)
+	  {
+	    
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_societe_ligne_remise";
+	    $sql .= " (tms, fk_ligne, remise,  fk_user, comment)";
+	    $sql .= " VALUES (now(),";
+	    $sql .= " $this->id,'$remise',$user->id, '$comment')";
+	    
+	    if (! $this->db->query($sql) )
+	      {
+		dolibarr_syslog("LigneTel::SetRemise Error -3");
+		$error++;
+	      }
+	  }
+	
+	if (!$error)
+	  {
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+	    $sql .= " SET remise = '$remise'";
+	    $sql .= " WHERE rowid = $this->id";
+	    
+	    if (! $this->db->query($sql) )
+	      {
+		dolibarr_syslog("LigneTel::SetRemise Error -4");
+		$error++;
+	      }
+	  }
+	
+	if (!$error)
+	  {
+	    $this->db->commit();
+	    return 0;
+	  }
+	else
+	  {
+	    $this->db->rollback();
+	    return -1;
+	  }
+      }
+    else
+      {
+	dolibarr_syslog("LigneTel::SetRemise Error -2");
+	return -2;
+      }
+  }
+	
   /*
    *
    *
