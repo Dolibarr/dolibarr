@@ -23,9 +23,9 @@
 create table llx_c_accountingsystem
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  fk_pays         integer NOT NULL,
-  type            varchar(20) NOT NULL,
+  fk_pays         integer      NOT NULL,
+  pcg_version     varchar(12)  NOT NULL,
+  pcg_type        varchar(20)  NOT NULL,
   label           varchar(128) NOT NULL,
-  account_format  varchar(20) NOT NULL,
-  account_format2 varchar(20) NOT NULL
+  account_number  varchar(20)  NOT NULL
 )type=innodb;
