@@ -81,7 +81,7 @@ if ( $db->query($sql) )
 	}
       elseif($obj->enservice == 2)
 	{
-	  print "En service</td>";
+	  print "Cloturé</td>";
 	}
       else
 	{
