@@ -291,8 +291,9 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
   if ($user->rights->facture->supprimer ) 
     {
       $fac = new Facture($db);
-      $fac->delete($_POST["facid"]);
+      $fac->delete($_GET["facid"]);
       $_GET["facid"] = 0 ;
+      Header("Location: facture.php");
     }
 }
 
