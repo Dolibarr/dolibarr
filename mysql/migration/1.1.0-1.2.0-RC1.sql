@@ -13,6 +13,11 @@ alter table llx_societe add fk_user_modif integer;
 alter table llx_socpeople add civilite smallint;
 alter table llx_socpeople add fk_user_modif integer;
 
+
+alter table llx_paiement add tms timestamp after datec;
+alter table llx_paiement add fk_user_creat integer;
+alter table llx_paiement add fk_user_modif integer;
+
 alter table llx_propal add fin_validite datetime ;
 
 alter table llx_entrepot add statut tinyint default 1;
