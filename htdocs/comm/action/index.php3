@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,19 +15,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 require("./pre.inc.php3");
-
 
 require("../../contact.class.php3");
 require("../../lib/webcal.class.php3");
 require("../../cactioncomm.class.php3");
 require("../../actioncomm.class.php3");
 
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
 
 llxHeader();
-$db = new Db();
 
+$db = new Db();
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
@@ -40,35 +47,36 @@ $offset = $limit * $page ;
  *
  *
  */
-if ($action=='delete_action') {
+if ($action=='delete_action')
+{
   $actioncomm = new ActionComm($db);
   $actioncomm->delete($actionid);
 }
 /*
  *
- *
- *
  */
-if ($action=='add_action') {
+if ($action=='add_action')
+{
   $contact = new Contact($db);
   $contact->fetch($contactid);
 
-
   $actioncomm = new ActionComm($db);
 
-  if ($actionid == 5) {
-    $actioncomm->date = $db->idate(mktime($heurehour,$heuremin,0,$remonth,$reday,$reyear));
-  } else {
+  if ($actionid == 5)
+    {
+      $actioncomm->date = $db->idate(mktime($heurehour,$heuremin,0,$remonth,$reday,$reyear));
+    }
+  else
+    {
     $actioncomm->date = $date;
-  }
+    }
   $actioncomm->type = $actionid;
   $actioncomm->contact = $contactid;
-
+  
   $actioncomm->societe = $socid;
   $actioncomm->note = $note;
 
   $actioncomm->add($user);
-
 
   $societe = new Societe($db);
   $societe->fetch($socid);
@@ -102,7 +110,6 @@ if ($action=='add_action') {
   $webcal->add($user, $todo->date, $societe->nom, $libelle);
   
 }
-
 
 
 /*
@@ -154,7 +161,9 @@ $sql .= " WHERE a.fk_soc = $socid AND c.id=a.fk_action AND a.fk_user_author = u.
    print $db->error() . '<br>' . $sql;
  }
 
-} else {
+}
+else
+{
 
   print_barre_liste("Liste des actions commerciales effectuées",$page, $PHP_SELF);
 

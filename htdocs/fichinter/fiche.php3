@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -434,11 +434,11 @@ $sql .= " FROM societe as s, llx_fichinter as f ";
 $sql .= " WHERE f.fk_soc = s.idp ";
 if ($socidp)
 {
-  $sql .= "AND s.idp = $socidp";
+  $sql .= " AND s.idp = $socidp";
 }
 if ($fichinter > 0)
 {
-  $sql .= "AND s.idp = $fichinter->societe_id";
+  $sql .= " AND s.idp = $fichinter->societe_id";
 }
 
 $sql .= " ORDER BY f.datei DESC ;";

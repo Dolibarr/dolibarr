@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,24 @@
  */
 require("./pre.inc.php3");
 
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
+
 llxHeader();
 $db = new Db();
-if ($sortorder == "") {
+
+if ($sortorder == "")
+{
   $sortorder="ASC";
 }
-if ($sortfield == "") {
+if ($sortfield == "")
+{
   $sortfield="p.name";
 }
 
@@ -48,29 +60,32 @@ print_barre_liste("Liste des contacts",$page, $PHP_SELF);
 $sql = "SELECT s.idp, s.nom,  st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
 $sql .= "FROM societe as s, socpeople as p, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
 
-if (strlen($stcomm)) 
+if (strlen($stcomm))  // statut commercial
 {
   $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
-if (strlen($begin)) 
+if (strlen($begin)) // filtre sur la premiere lettre du nom
 {
   $sql .= " AND upper(p.name) like '$begin%'";
 }
 
-if ($contactname) {
-  $sql .= " AND lower(p.name) like '%".strtolower($contactname)."%'";
+if ($contactname) // acces a partir du module de recherche
+{
+  $sql .= " AND ( lower(p.name) like '%".strtolower($contactname)."%' OR lower(p.firstname) like '%".strtolower($contactname)."%') ";
   $sortfield = "lower(p.name)";
   $sortorder = "ASC";
 }
 
-if ($socid) {
+if ($socid) 
+{
   $sql .= " AND s.idp = $socid";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
 $result = $db->query($sql);
+
 if ($result) 
 {
   $num = $db->num_rows();
@@ -111,7 +126,14 @@ if ($result)
       
       print '<td><a href="action/fiche.php3?action=create&actionid=1&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
       
-      print "<TD><a href=\"addpropal.php3?socidp=$obj->idp&setcontact=$obj->cidp&action=create\">[Propal]</A></td>\n";
+      if ($user->societe_id == 0) 
+	{
+	  print "<TD><a href=\"addpropal.php3?socidp=$obj->idp&setcontact=$obj->cidp&action=create\">[Propal]</A></td>\n";
+	}
+      else
+	{
+	  print "<td>&nbsp;</td>";
+	}
       print "</TR>\n";
       $i++;
     }
