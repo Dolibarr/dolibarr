@@ -47,7 +47,7 @@ Source Location: /ldap.lib.php<br /><br />
 </div><br /><br />
 
 <h2>Page Details:</h2>
-Page-level DocBlock<br /><br /><br /><br />
+librairie contenant les fonctions pour acceder a un  serveur ldap<br /><br /><br /><br />
 <h4>Tags:</h4>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
@@ -62,7 +62,7 @@ Page-level DocBlock<br /><br /><br /><br />
 <br />
   <hr />
 	<a name="functiondolibarr_ldap_bind"></a>
-	<h3>dolibarr_ldap_bind <span class="smalllinenumber">[line 55]</span></h3>
+	<h3>dolibarr_ldap_bind <span class="smalllinenumber">[line 57]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -95,7 +95,7 @@ resource $ds)</code>
 	</div>
   <hr />
 	<a name="functiondolibarr_ldap_connect"></a>
-	<h3>dolibarr_ldap_connect <span class="smalllinenumber">[line 39]</span></h3>
+	<h3>dolibarr_ldap_connect <span class="smalllinenumber">[line 41]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -120,7 +120,7 @@ resource $ds)</code>
 	</div>
   <hr />
 	<a name="functiondolibarr_ldap_getversion"></a>
-	<h3>dolibarr_ldap_getversion <span class="smalllinenumber">[line 94]</span></h3>
+	<h3>dolibarr_ldap_getversion <span class="smalllinenumber">[line 93]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -129,7 +129,7 @@ resource $ds)</code>
     </td></tr></table>
     </td></tr></table><br />
 
-		verification de la version du serveur ldap<br /><br /><p>cette fonction permet de verifier la version du  protocole du serveur ldap</p><br /><br /><br />
+		verification de la version du serveur ldap<br /><br /><br /><br />
 <h4>Tags:</h4>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
@@ -153,7 +153,7 @@ resource $ds)</code>
 	</div>
   <hr />
 	<a name="functiondolibarr_ldap_setversion"></a>
-	<h3>dolibarr_ldap_setversion <span class="smalllinenumber">[line 116]</span></h3>
+	<h3>dolibarr_ldap_setversion <span class="smalllinenumber">[line 112]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -162,7 +162,7 @@ resource $ds, integer $version)</code>
     </td></tr></table>
     </td></tr></table><br />
 
-		changement de la version du serveur ldap<br /><br /><p>cette fonction permet de modifier la version du  protocole du serveur ldap</p><br /><br /><br />
+		changement de la version du serveur ldap<br /><br /><br /><br />
 <h4>Tags:</h4>
 <div class="tags">
 <table border="0" cellspacing="0" cellpadding="0">
@@ -190,8 +190,41 @@ resource $ds, integer $version)</code>
     	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
 	</div>
   <hr />
+	<a name="functiondolibarr_ldap_unacc"></a>
+	<h3>dolibarr_ldap_unacc <span class="smalllinenumber">[line 129]</span></h3>
+	<div class="function">
+    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
+    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
+		<code>string dolibarr_ldap_unacc(
+string $str)</code>
+    </td></tr></table>
+    </td></tr></table><br />
+
+		permet d'enlever les accents d'une chaine  avant de l'envoyer au serveur ldap<br /><br /><br /><br />
+<h4>Tags:</h4>
+<div class="tags">
+<table border="0" cellspacing="0" cellpadding="0">
+  <tr>
+    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
+  </tr>
+</table>
+</div>
+    <br /><br />
+	
+
+    		<h4>Parameters</h4>
+    <table border="0" cellspacing="0" cellpadding="0">
+		      <tr>
+        <td class="type">string&nbsp;&nbsp;</td>
+        <td><b>$str</b>&nbsp;&nbsp;</td>
+        <td></td>
+      </tr>
+				</table>
+    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
+	</div>
+  <hr />
 	<a name="functiondolibarr_ldap_unbind"></a>
-	<h3>dolibarr_ldap_unbind <span class="smalllinenumber">[line 74]</span></h3>
+	<h3>dolibarr_ldap_unbind <span class="smalllinenumber">[line 76]</span></h3>
 	<div class="function">
     <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
     <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
@@ -222,43 +255,10 @@ resource $ds)</code>
 				</table>
     	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
 	</div>
-  <hr />
-	<a name="functionldap_unacc"></a>
-	<h3>ldap_unacc <span class="smalllinenumber">[line 135]</span></h3>
-	<div class="function">
-    <table width="90%" border="0" cellspacing="0" cellpadding="1"><tr><td class="code_border">
-    <table width="100%" border="0" cellspacing="0" cellpadding="2"><tr><td class="code">
-		<code>string ldap_unacc(
-string $str)</code>
-    </td></tr></table>
-    </td></tr></table><br />
-
-		suppression des accents d'une chaîne<br /><br /><p>cette fonction permet d'enlever les accents d'une chaine  avant de l'envoyer au serveur ldap</p><br /><br /><br />
-<h4>Tags:</h4>
-<div class="tags">
-<table border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td><b>access:</b>&nbsp;&nbsp;</td><td>public</td>
-  </tr>
-</table>
-</div>
-    <br /><br />
-	
-
-    		<h4>Parameters</h4>
-    <table border="0" cellspacing="0" cellpadding="0">
-		      <tr>
-        <td class="type">string&nbsp;&nbsp;</td>
-        <td><b>$str</b>&nbsp;&nbsp;</td>
-        <td></td>
-      </tr>
-				</table>
-    	<div class="top">[ <a href="#top">Top</a> ]</div><br /><br />
-	</div>
 
         <div class="credit">
 		    <hr />
-		    Documentation generated on Sat, 19 Jun 2004 01:21:43 +0200 by <a href="http://www.phpdoc.org">phpDocumentor 1.2.3</a>
+		    Documentation generated on Sat, 19 Jun 2004 02:10:45 +0200 by <a href="http://www.phpdoc.org">phpDocumentor 1.2.3</a>
 	      </div>
       </td></tr></table>
     </td>

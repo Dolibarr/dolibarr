@@ -23,7 +23,9 @@
  */
 
  /**
-  * Page-level DocBlock
+  * librairie contenant les fonctions pour acceder a un
+	* serveur ldap
+	*
   * @package ldap.lib
 	* @version 1.9
 	*
@@ -47,7 +49,7 @@ Function dolibarr_ldap_connect()
  * bind au serveur ldap
  *
  * @access public
- *	@param resource $ds
+ * @param resource $ds
  * @return bool
  *
  */
@@ -66,7 +68,7 @@ Function dolibarr_ldap_bind($ds)
  * unbind du serveur ldap
  *
  * @access public
- *	@param resource $ds
+ * @param resource $ds
  * @return bool
  *
  */
@@ -82,11 +84,8 @@ Function dolibarr_ldap_unbind($ds)
 /**
  * verification de la version du serveur ldap
  *
- * cette fonction permet de verifier la version du
- * protocole du serveur ldap
- *
  * @access public
- *	@param resource $ds
+ * @param resource $ds
  * @return mixed
  *
  */
@@ -103,12 +102,9 @@ Function dolibarr_ldap_getversion($ds)
 /**
  * changement de la version du serveur ldap
  *
- * cette fonction permet de modifier la version du
- * protocole du serveur ldap
- *
  * @access public
- *	@param resource $ds
- *	@param integer $version
+ * @param resource $ds
+ * @param integer $version
  * @return bool
  *
  */
@@ -121,18 +117,16 @@ Function dolibarr_ldap_setversion($ds,$version)
 }
 
 /**
- * suppression des accents d'une chaîne
- *
- * cette fonction permet d'enlever les accents d'une chaine
+ * permet d'enlever les accents d'une chaine
  * avant de l'envoyer au serveur ldap
  *
  * @access public
- *	@param string $str
+ * @param string $str
  * @return string
  *
  */
 
-Function ldap_unacc($str)
+Function dolibarr_ldap_unacc($str)
 {
   $stu = ereg_replace("é","e",$str);
   $stu = ereg_replace("è","e",$stu);
