@@ -19,6 +19,7 @@
  * $Source$
  */
 require("./pre.inc.php");
+require (DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
@@ -105,40 +106,34 @@ print '</table></form>';
 
 print '</td></tr></table>';
 
+print '<a href="ldap.php?action=test">test</a><br>';
 
-if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $test)
+if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test')
 {
-  $ds = ldap_connect(LDAP_SERVER_HOST);
+  $ds = dolibarr_ldap_connect();
 
   if ($ds)
     {
-      $connect = "ok";
+      print "connect ok<br>";
 
       //ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
-      if ($pass)
+
+      $ldapbind = dolibarr_ldap_bind($ds);
+      if ($ldapbind)
 	{
-	  $ldapbind=ldap_bind($ds, $dn, $pass);
+	  print "bind ok<br>";
 	}
       else
 	{
-	  $ldapbind=ldap_bind($ds, $dn);
-	  if ($ldapbind)
-	    {
-	      $bind = "ok";
-	    }
-	  else
-	    {
-	      $bind = "erreur";
-	    }
+	  print "bind erreur<br>";
 	}
+      ldap_close($ds);
     }
   else
     {
-      $connect = "erreur";
+      print "connect erreur<br>";
     }
 }
-
-
 
 $db->close();
 
