@@ -18,11 +18,10 @@
  * $Id$
  * $Source$
  */
-require($GLOBALS["DOCUMENT_ROOT"]."/main.inc.php3");
+require("../main.inc.php3");
 
-function llxHeader($head = "", $urlp = "") {
-  global $user, $conf;
-
+function llxHeader($head = "", $urlp = "")
+{
   /*
    *
    *
@@ -31,7 +30,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/user/", "Utilisateurs");
+  $menu->add(DOL_URL_ROOT."/user/", "Utilisateurs");
 
   if($user->admin)
     {
