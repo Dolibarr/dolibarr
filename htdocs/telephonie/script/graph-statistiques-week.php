@@ -33,7 +33,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.week.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/resiliation.week.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/rejet.week.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/clients/clients.week.class.php");
+
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/clients/clientsmoyenne.week.class.php");
 
 $error = 0;
@@ -73,6 +73,9 @@ $graph->GraphMakeGraph();
 /*
 /***********************************************************************/
 
+require_once DOL_DOCUMENT_ROOT."/telephonie/stats/clients/clients.week.class.php";
+require_once DOL_DOCUMENT_ROOT."/telephonie/stats/clients/clients.month.class.php";
+
 $file = $img_root . "lignes/commandes.mensuels.png";
 if ($verbose) print "Graph : Lignes commandes$file\n";
 $graph = new GraphLignesCommandes($db, $file);
@@ -93,6 +96,11 @@ $graph->GraphMakeGraph();
 
 $file = $img_root . "commercials/clients.hebdomadaire.png";
 $graph = new GraphClientsWeek($db, $file);
+$graph->width = 400;
+$graph->GraphMakeGraph();
+
+$file = $img_root . "commercials/clients.mensuel.png";
+$graph = new GraphClientsMonth($db, $file);
 $graph->width = 400;
 $graph->GraphMakeGraph();
 
