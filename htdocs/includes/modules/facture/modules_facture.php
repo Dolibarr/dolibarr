@@ -23,7 +23,7 @@
  *
  */
 
-/*!	    \file       htdocs/includes/modules/facture/modules_facture.php
+/**	    \file       htdocs/includes/modules/facture/modules_facture.php
 		\ingroup    facture
 		\brief      Fichier contenant la classe mère de generation des factures en PDF
 		            et la classe mère de numérotation des factures
@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis ca
 
 
 
-/*!	    \class  ModelePDFFactures
+/**	    \class  ModelePDFFactures
 		\brief  Classe mère des modèles de facture
 */
 
@@ -43,7 +43,7 @@ class ModelePDFFactures extends FPDF
 {
     var $error='';
 
-   /*! 
+   /** 
         \brief Renvoi le dernier message d'erreur de création de facture
     */
     function pdferror()
@@ -54,7 +54,7 @@ class ModelePDFFactures extends FPDF
 }
 
 
-/*!	\class ModeleNumRefFactures
+/**	\class ModeleNumRefFactures
 	\brief  Classe mère des modèles de numérotation des références de facture
 */
 
@@ -62,7 +62,7 @@ class ModeleNumRefFactures
 {
     var $error='';
 
-    /*!     \brief      Renvoi la description par defaut du modele de numérotation
+    /**     \brief      Renvoi la description par defaut du modele de numérotation
      *      \return     string      Texte descripif
      */
     function info()
@@ -72,7 +72,7 @@ class ModeleNumRefFactures
         return $langs->trans("NoDescription");
     }
 
-    /*!     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numérotation
      *      \return     string      Example
      */
     function getExample()
@@ -82,7 +82,7 @@ class ModeleNumRefFactures
         return $langs->trans("NoExample");
     }
 
-   /*! 
+   /** 
         \brief Renvoi le dernier message d'erreur de création de facture
     */
     function numreferror()
@@ -93,10 +93,11 @@ class ModeleNumRefFactures
 }
 
 
-/*!
-  \brief      Crée un facture sur disque en fonction du modèle de FACTURE_ADDON_PDF
-  \param	    db  		objet base de donnée
-  \param	    facid		id de la facture à créer
+/**
+    \brief      Crée un facture sur disque en fonction du modèle de FACTURE_ADDON_PDF
+    \param	    db  		objet base de donnée
+    \param	    facid		id de la facture à créer
+    \param	    message		message
 */
 function facture_pdf_create($db, $facid, $message="")
 {
@@ -193,11 +194,12 @@ ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lignes[$i]->
 }
 
 
-/*!
+/**
 		\brief      Renvoie la référence de facture suivante non utilisée en fonction du module 
 		            de numérotation actif défini dans FACTURE_ADDON
-		\param	    soc  		objet societe
-		\return     string      reference libre pour la facture
+		\param	    soc  		            objet societe
+        \param      prefixe_additionnel     prefixe additionnel
+		\return     string                  reference libre pour la facture
 */
 function facture_get_num($soc, $prefixe_additionnel='')
 {
