@@ -58,6 +58,7 @@ class Client extends Societe {
     $sql = "SELECT rowid, facnumber";
     $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
     $sql .= " WHERE f.fk_soc = ".$this->id;
+    $sql .= " ORDER BY datef DESC";
     
     $result = $this->db->query($sql) ;
     $i = 0;
