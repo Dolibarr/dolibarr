@@ -20,21 +20,27 @@
  * $Source$
  */
  
-/* $num
- * $rel
- * $ve
- */
+/*!
+	    \file       htdocs/compta/bank/releve.php
+        \ingroup    banque
+		\brief      Page d'affichage d'un relevé
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("companies");
+
 
 if (!$user->rights->banque->lire)
   accessforbidden();
+
 
 if ($_GET["action"] == 'dvnext')
 {
   $ac = new Account($db);
   $ac->datev_next($_GET["dvid"]);
 }
-
 
 if ($_GET["action"] == 'dvprev')
 {
@@ -50,13 +56,10 @@ llxHeader();
 $acct = new Account($db);
 $acct->fetch($_GET["account"]);
 
-
 if (! isset($_GET["num"]))
 {
   /*
-   *
    * Vue liste tous relevés confondus
-   *
    *
    */
   if ($page == -1) { $page = 0 ; }
@@ -81,7 +84,7 @@ if (! isset($_GET["num"]))
       print_barre_liste("Relevés bancaires, compte : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>", $page, "releve.php","&amp;account=$account",$sortfield,$sortorder,'',$numrows);
       print '<br>';
       
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+      print '<table class="noborder" width="100%">';
       print "<tr class=\"liste_titre\">";
       print "<td>Relevé</td></tr>";
 
@@ -157,12 +160,12 @@ else
 
   print "<form method=\"post\" action=\"releve.php\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
+  print '<table class="border" width="100%">';
   print "<tr class=\"liste_titre\">";
-  print '<td>Date Ope</td><td>Valeur</td><td>'.$langs->trans("Type").'</td><td width="30%">'.$langs->trans("Description").'</td>';
-  print '<td align="right">Debit</td>';
-  print '<td align="right">Credit</td>';
-  print '<td align="right">Solde</td>';
+  print '<td>Date Ope</td><td>Date Valeur</td><td>'.$langs->trans("Type").'</td><td width="30%">'.$langs->trans("Description").'</td>';
+  print '<td align="right">'.$langs->trans("Debit").'</td>';
+  print '<td align="right">'.$langs->trans("Credit").'</td>';
+  print '<td align="right">'.$langs->trans("Solde").'</td>';
   print '<td>&nbsp;</td>';
   print "</tr>\n";
  
@@ -189,8 +192,10 @@ else
       $var=True;  
       $numrows = $db->num_rows();
       $i = 0; 
-      print "<tr><td colspan=\"3\"><a href=\"releve.php?num=$num&amp;ve=1&amp;rel=$rel&amp;account=".$acct->id."\">Vue etendue</a></td>";
-      print "<td align=\"right\" colspan=\"2\">&nbsp;</td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
+
+      // Ligne Solde début releve
+      print "<tr><td colspan=\"4\"><a href=\"releve.php?num=$num&amp;ve=1&amp;rel=$rel&amp;account=".$acct->id."\">Vue etendue</a></td>";
+      print "<td align=\"right\" colspan=\"2\"><b>".$langs->trans("Solde initial")." :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
 
       while ($i < $numrows)
 	{
@@ -266,8 +271,10 @@ else
 	}
       $db->free();
     }
-  print "<tr><td align=\"right\" colspan=\"3\">Total :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td colspan=\"3\">&nbsp;</td></tr>";
-  print "<tr><td align=\"right\" colspan=\"5\"><b>Solde :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
+  // Ligne Total
+  print "<tr><td align=\"right\" colspan=\"4\">".$langs->trans("Total")." :</td><td align=\"right\">".price($totald)."</td><td align=\"right\">".price($totalc)."</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
+  // Ligne Solde
+  print "<tr><td align=\"right\" colspan=\"4\">&nbsp;</td><td align=\"right\" colspan=\"2\"><b>".$langs->trans("Solde final")." :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
   print "</table></form>\n";
   
 }
