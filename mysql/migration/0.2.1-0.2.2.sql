@@ -4,3 +4,4 @@
 --
 
 alter table llx_product add nbvente integer default 0;
+alter table llx_product add envente tinyint default 1;
