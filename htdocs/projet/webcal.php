@@ -19,17 +19,22 @@
  * $Source$
  *
  */
+
+/*!	\file webcal.php
+		\brief  Page générant 2 frames, une pour le menu Dolibarr, l'autre pour l'affichage du calendrier
+		\author	Laurent Destailleur
+		\version $Revision$
+*/
+
 require("./pre.inc.php");
+
 
 $url=PHPWEBCALENDAR_URL;
 
 print "
 <html>
 <head>
-<meta name=\"robots\" content=\"index,follow\">
-<meta name=\"description\" content=\"Site Web personnel - Laurent Destailleur (CV, Développements...)\">
-<meta name=\"keywords\" content=\"destailleur, laurent, page, accueil, ancien, ISEN, awstats, awmess, awban, awadmin, utilkit, universal, domotic, sendmess, getmess, destailleur\">
-<title>Site Web personnel - Laurent Destailleur</title>
+<title>Dolibarr frame for Webcalendar</title>
 </head>
 
 <frameset rows=\"28,*\" border=0 framespacing=0 frameborder=0>
@@ -45,17 +50,11 @@ print "
 <noframes>
 <body>
 	<br><center>
-	Bienvenue sur le site Web personnel de Laurent Destailleur.<br>
-	CV, Documents, Développements, Photos...<br>
-	<br>
-
-	Malheureusement, votre navigateur est trop vieux pour visualiser ce site.<br>
+	Malheureusement, votre navigateur est trop vieux pour visualiser cette zone.<br>
 	Il vous faut un navigateur gérant les frames.<br>
 	</center>
 </body>
 </noframes>
-
-<!-- QJIXRKPI -->
 
 </html>
 ";
