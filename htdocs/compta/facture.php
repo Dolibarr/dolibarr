@@ -1053,9 +1053,9 @@ else
 	      } 
 
 	    // Envoyer
-	    if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer)
+	    if ($fac->statut == 1 && $user->rights->facture->envoyer)
 	      {
-		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=presend\">Envoyer</a>";
+	        print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=presend\">Envoyer</a>";
 	      }
 	    
 	    // Envoyer une relance
