@@ -96,6 +96,7 @@ class pdfdetail_standard {
 		  $this->pdf->ligne_ville = $soca->ville;
 		}
 
+	      $this->pdf->AliasNbPages();
 	      $this->pdf->Open();
 
 	      $this->pdf->SetTitle($fac->ref);
@@ -111,22 +112,6 @@ class pdfdetail_standard {
 
 	      $this->pdf->tab_top = 53;
 	      $this->pdf->tab_height = 222;
-
-	      /*
-	       * Nombre de page
-	       */
-
-	      $sql = "SELECT t.ligne";
-	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as t ";
-	      $sql .= " WHERE t.ligne = ".$this->ligne;
-	      $sql .= " AND date_format(date,'%Y%m') = ".$this->year.$this->month;
-	      
-	      if ( $this->db->query($sql) )
-		{
-		  $num = $this->db->num_rows();
-
-		  $this->pdf->nombre_pages = ((ceil($num / 214)) + 1);
-		}
 
 	      /*
 	       *
@@ -166,8 +151,7 @@ class pdfdetail_standard {
 
 	      $sql = "SELECT count(*) as cc, sum(t.cout_vente) as cout_vente, sum(t.duree) as duree, t.dest";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as t ";
-	      $sql .= " WHERE t.ligne = ".$this->ligne;
-	      $sql .= " AND date_format(date,'%Y%m') = ".$this->year.$this->month;
+	      $sql .= " WHERE t.fk_telephonie_facture =".$factel->id;
 	      $sql .= " GROUP BY t.dest";
 	      $sql .= " ORDER BY cout_vente DESC";
 	      $sql .= " LIMIT 10";
@@ -177,10 +161,9 @@ class pdfdetail_standard {
 	      if ( $resql )
 		{
 		  $num = $this->db->num_rows($resql);
-
-		  $this->pdf->SetFont('Arial','', 9);
-		  
 		  $i = 0;
+
+		  $this->pdf->SetFont('Arial','', 9);		  
 		  $var = 0;
 		  $line_height = 4;
 
@@ -238,6 +221,11 @@ class pdfdetail_standard {
 		      $i++;
 		    }
 		}
+	      else
+		{
+		  dolibarr_syslog("Erreur SQl");
+		  dolibarr_syslog($this->db->error());
+		}
 	      /*
 	       * Appels les plus important
 	       *
@@ -266,8 +254,7 @@ class pdfdetail_standard {
 
 	      $sql = "SELECT count(*) as cc, sum(t.cout_vente) as cout_vente, sum(t.duree) as duree, t.numero, t.dest";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as t ";
-	      $sql .= " WHERE t.ligne = ".$this->ligne;
-	      $sql .= " AND date_format(date,'%Y%m') = ".$this->year.$this->month;
+	      $sql .= " WHERE fk_telephonie_facture =".$factel->id;
 	      $sql .= " GROUP BY t.numero";
 	      $sql .= " ORDER BY cout_vente DESC";
 	      $sql .= " LIMIT 10";
@@ -357,7 +344,7 @@ class pdfdetail_standard {
 	      
 	      $graph->Add($p1);
 
-	      $file_graph = "/tmp/graph".$this->ligne.".jpg";
+	      $file_graph = "/tmp/graph".$factel->ligne.".jpg";
 
 	      $handle = $graph->Stroke($file_graph);
 
@@ -370,20 +357,19 @@ class pdfdetail_standard {
 	       *
 	       */
 
-	      $sql = "SELECT t.ligne, ".$this->db->pdate("t.date")." as pdate , t.numero, t.dest, t.duree, t.cout_vente";
+	      $sql = "SELECT t.ligne, ".$this->db->pdate("t.date")." as pdate";
+	      $sql .= " , t.numero, t.dest, t.duree, t.cout_vente";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as t ";
-	      $sql .= " WHERE t.ligne = ".$this->ligne;
-	      $sql .= " AND date_format(date,'%Y%m') = ".$this->year.$this->month;
-	      
-	      if ( $this->db->query($sql) )
+	      $sql .= " WHERE fk_telephonie_facture =".$factel->id;
+	      $sql .= " ORDER BY t.date ASC";
+	
+	      $resql = $this->db->query($sql) ;
+      
+	      if ( $resql )
 		{
-		  $num = $this->db->num_rows();
+		  $num = $this->db->num_rows($resql);
 
-		  /*
-		   *
-		   */  
 		  $this->pdf->AddPage();
-
 		  
 		  $i = 0;
 		  $var = 1;
@@ -471,6 +457,10 @@ class pdfdetail_standard {
 		      $this->inc++;
 		    }
 		}
+	      else
+		{
+		  dolibarr_syslog("Erreur lecture des communications");
+		}
 
 	      /*
 	       *
@@ -489,18 +479,18 @@ class pdfdetail_standard {
 		}
 
 
-	      return 1;
+	      return 0;
 	    }
 	  else
 	    {
 	      $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
-	      return 0;
+	      return -1;
 	    }
 	}
       else
 	{
             $this->error="Erreur: FAC_OUTPUTDIR non défini !";
-            return 0;
+            return -2;
 	}
     }
 }
