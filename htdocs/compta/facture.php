@@ -175,62 +175,6 @@ if ($HTTP_POST_VARS["action"] == 'add')
 /*
  *
  */
-if ($action == 'add_paiement')
-{
-  $datepaye = $db->idate(mktime(12, 0 , 0, $HTTP_POST_VARS["remonth"], $HTTP_POST_VARS["reday"], $HTTP_POST_VARS["reyear"]));
-
-  $paiement = new Paiement($db);
-
-  $paiement->facid        = $HTTP_POST_VARS["facid"];
-  $paiement->datepaye     = $datepaye;
-  $paiement->amount       = $HTTP_POST_VARS["amount"];
-  $paiement->author       = $HTTP_POST_VARS["author"];
-  $paiement->paiementid   = $HTTP_POST_VARS["paiementid"];
-  $paiement->num_paiement = $HTTP_POST_VARS["num_paiement"];
-  $paiement->note         = $HTTP_POST_VARS["note"];
-
-  //A ne pas mélanger avec paiementid !
-  $paiement_id = $paiement->create();
-
-  $action = '';
-
-  $fac = new Facture($db);
-  $fac->fetch($HTTP_POST_VARS["facid"]);
-  $fac->fetch_client();
-
-  $label = "Règlement facture";
- 
-  //On ajoute une ligne dans la table llx_bank pour qu'ensuite on puisse rapprocher le compte !
-  $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
-  //paiementid est correct, il contient "CHQ ou VIR par exemple"
-  $bank_line_id = $acc->addline($datepaye, $paiementid, $label, $amount, $num_paiement);
-
-  // TODO
-  // Mise a jour fk_bank dans llx_paiement
-  // $acc->update_fk_bank($paiement_id,$bank_line_id);
-
-  $acc->add_url_line($bank_line_id, $fac->id, DOL_URL_ROOT.'/compta/facture.php?facid=', $fac->ref);
-  $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);
-}
-/*
- *
- */
-if ($action == 'del_paiement' && $user->rights->facture->paiement)
-{
-  $paiement = new Paiement($db);
-  $paiement->id = $paiementid;
-  $paiement->delete();
-
-  $action = '';
-  //Attention: bug 18.01.2004 on oublie d'effacer la ligne correspondante dans llx_bank !
-
-  $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
-  //paiementid est correct, il contient "CHQ ou VIR par exemple"
-  $acc->deleteline($paiementid);
-}
-/*
- *
- */
 
 if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] == yes && $user->rights->facture->valider)
 {
@@ -767,8 +711,10 @@ else
 	  /*
 	   * Paiements
 	   */
-	$sql = "SELECT ".$db->pdate("datep")." as dp, p.amount, c.libelle as paiement_type, p.num_paiement, p.rowid";
-	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c WHERE p.fk_facture = ".$fac->id." AND p.fk_paiement = c.id";
+	$sql = "SELECT ".$db->pdate("datep")." as dp, pf.amount,";
+	$sql .= "c.libelle as paiement_type, p.num_paiement, p.rowid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
+	$sql .= " WHERE pf.fk_facture = ".$fac->id." AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid";
 	
 	$result = $db->query($sql);
 	if ($result)
@@ -777,26 +723,18 @@ else
 	    $i = 0; $total = 0;
 	    echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 	    print '<tr class="liste_titre"><td>Date</td><td>Type</td>';
-	    print "<td align=\"right\">Montant</TD><td>&nbsp;</td>";
-	    if (! $fac->paye)
-	      {
-		print "<td>&nbsp;</td>";
-	      }
-	    print "</TR>\n";
+	    print "<td align=\"right\">Montant</TD><td>&nbsp;</td></tr>";
     
 	    $var=True;
 	    while ($i < $num)
 	      {
 		$objp = $db->fetch_object( $i);
 		$var=!$var;
-		print "<TR $bc[$var]>";
-		print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+		print "<TR $bc[$var]><td>";
+		print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_file().'</a>';
+		print "&nbsp;".strftime("%d %B %Y",$objp->dp)."</TD>\n";
 		print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
 		print '<td align="right">'.price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
-		if (! $fac->paye && $user->rights->facture->paiement)
-		  {
-		    print '<td><a href="facture.php?facid='.$fac->id.'&amp;action=del_paiement&amp;paiementid='.$objp->rowid.'">'.img_delete().'</a>';
-		  }
 		print "</tr>";
 		$total = $total + $objp->amount;
 		$i++;
@@ -807,10 +745,10 @@ else
 		print "<tr><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>$_MONNAIE</td></tr>\n";
 		print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($fac->total_ttc)."</td><td bgcolor=\"#d0d0d0\">$_MONNAIE</td></tr>\n";
 		
-		$resteapayer = price($fac->total_ttc - $total);
+		$resteapayer = abs($fac->total_ttc - $total);
 
 		print "<tr><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
-		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($fac->total_ttc - $total)."</b></td><td bgcolor=\"#f0f0f0\">$_MONNAIE</td></tr>\n";
+		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">$_MONNAIE</td></tr>\n";
 	      }
 	    print "</table>";
 	    $db->free();
