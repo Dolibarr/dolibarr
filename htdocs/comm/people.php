@@ -117,7 +117,7 @@ if ($socid > 0)
       print $db->error();
     }
   
-  print "<P><table width=\"100%\" cellspacing=0 border=1 cellpadding=2>";
+  print "<P><table class=tablefuser width=\"100%\" cellspacing=0 border=1 cellpadding=2>";
   
   print "<tr><td><b>Prénom Nom</b></td>";
   print "<td><b>Poste</b></td><td><b>Tel</b></td>";
@@ -168,7 +168,7 @@ if ($socid > 0)
     {
       print "<form method=\"post\" action=\"people.php?socid=$socid\">";
       print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-      print "<table border=0>";
+      print "<table class=tablefuser border=0>";
       print "<tr><td>Nom</td><td><input name=\"name\" type=\"text\" size=\"20\" maxlength=\"80\"></td>";
       print "<td>Prenom</td><td><input name=\"firstname\" type=\"text\" size=\"15\" maxlength=\"80\"></td></tr>";
       print "<tr><td>Poste</td><td colspan=\"3\"><input name=\"poste\" type=\"text\" size=\"50\" maxlength=\"80\"></td></tr>";
@@ -199,7 +199,7 @@ if ($socid > 0)
       print "<form method=\"post\" action=\"people.php?socid=$socid\">";
       print '<input type="hidden" name="action" value="update">';
       print "<input type=\"hidden\" name=\"contactid\" value=\"$contactid\">";
-      print '<br><table border="1" cellpadding="4" cellspacing="0">';
+      print '<br><table class=tablefuser border="1" cellpadding="4" cellspacing="0">';
       print "<tr><td>Nom</td><td><input name=\"name\" type=\"text\" size=\"20\" maxlength=\"80\" value=\"$obj->name\"></td>";
       print "<td>Prenom</td><td><input name=\"firstname\" type=\"text\" size=\"15\" maxlength=\"80\" value=\"$obj->firstname\"></td></tr>";
       print "<tr><td>Poste</td><td colspan=\"3\"><input name=\"poste\" type=\"text\" size=\"50\" maxlength=\"80\" value=\"$obj->poste\"></td></tr>";

@@ -69,7 +69,7 @@ if ($action == 'create')
   print "<form action=\"propal.php?socidp=$socidp\" method=\"post\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   
-  print '<table border="1" cellspacing="0" cellpadding="3" width="100%">';
+  print '<table class=tablefsoc border="1" cellspacing="0" cellpadding="3" width="100%">';
   
   print '<tr><td>Société</td><td><a href="fiche.php?socid='.$socidp.'">'.$objsoc->nom.'</a></td>';
   
