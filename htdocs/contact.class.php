@@ -69,7 +69,7 @@ class Contact
       }
   }
   /*
-   *
+   * Mise à jour des infos
    *
    */
   Function update($id)
@@ -99,7 +99,7 @@ class Contact
 	{
 	  ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 
-	  $ldapbind=dolibarr_ldap_bind($ds);
+	  $ldapbind = dolibarr_ldap_bind($ds);
       
 	  if ($ldapbind)
 	    {
@@ -122,15 +122,20 @@ class Contact
 	      
 	      //$info["homePostalAddress"] = "AdressePersonnelle\nVIlle";
 
-	      $info["street"] = "street";
-	      $info["postalCode"] = "postalCode";
-	      $info["postalAddress"] = "postalAddress";
+	      //$info["street"] = "street";
+	      //$info["postalCode"] = "postalCode";
+	      //$info["postalAddress"] = "postalAddress";
 
 	      $info["objectclass"] = "inetOrgPerson";
 	      
 	      // add data to directory
-	      $r = @ldap_delete($ds, "cn=".$this->old_firstname." ".$this->old_name.", dc=rodo, dc=lan");
-	      $r = ldap_add($ds, "cn=".$info["cn"].", dc=rodo, dc=lan", $info);
+	      $dn = "cn=".$this->old_firstname." ".$this->old_name.", ".LDAP_SERVER_DN ;
+
+	      $r = @ldap_delete($ds, $dn);
+
+	      $dn = "cn=".$info["cn"].", ".LDAP_SERVER_DN ;
+
+	      $r = ldap_add($ds, $dn, $info);
 	    }
 	  else
 	    {
@@ -214,14 +219,12 @@ class Contact
 	{
 	  ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 
-	  $ldapbind=dolibarr_ldap_bind($ds);
+	  $ldapbind = dolibarr_ldap_bind($ds);
       
 	  if ($ldapbind)
 	    {	      
 	      // delete from ldap directory
 	      $dn = "cn=".$this->old_firstname." ".$this->old_name.", ".LDAP_SERVER_DN ;
-
-	      print $dn;
 
 	      $r = ldap_delete($ds, $dn);
 	    }
