@@ -26,9 +26,22 @@
  */
 require ("../../master.inc.php");
 
+$verbose = 0;
+
+for ($i = 1 ; $i < sizeof($argv) ; $i++)
+{
+  if ($argv[$i] == "-v")
+    {
+      $verbose = 1;
+    }
+  if ($argv[$i] == "--verbose")
+    {
+      $verbose = 1;
+    }
+}
+
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
@@ -92,7 +105,7 @@ if (is_array($dirs))
 	    }
 	  else
 	    {
-	      print $dir ." créé\n";
+	      if ($verbose) print $dir ." créé\n";
 	    }
 	}	
     }
@@ -104,7 +117,7 @@ if (is_array($dirs))
 /***********************************************************************/
 
 $file = $img_root . "lignes/lignes.actives.png";
-print "Graph : Lignes actives$file\n";
+if ($verbose) print "Graph : Lignes actives$file\n";
 $graph = new GraphLignesActives($db, $file);
 $graph->GraphMakeGraph();
 
@@ -115,7 +128,7 @@ $graph->GraphMakeGraph();
 /***********************************************************************/
 
 $file = $img_root . "ca/ca.mensuel.png";
-print "Graph : Chiffre d'affaire mensuel $file\n";
+if ($verbose) print "Graph : Chiffre d'affaire mensuel $file\n";
 $graphca = new GraphCa($db, $file);
 $graphca->GraphDraw();
 
@@ -126,12 +139,11 @@ $graphca->GraphDraw();
 /*
 /************************************************************************/
 
-print "\nGraph ca moyen\n";
+if ($verbose) print "\nGraph ca moyen\n";
 
 $file = $img_root . "ca/gain_moyen_par_client.png";
 $graphgain = new GraphCaMoyen ($db, $file);
-
-$graphgain->show_console = 1 ;
+$graphgain->show_console = 0 ;
 $graphgain->GraphDraw();
 
 /*************************************************************************/
@@ -151,7 +163,7 @@ if ($db->query($sql))
   $jour_semaine_duree = array();
 
   $num = $db->num_rows();
-  print "$num lignes de comm a traiter\n";
+  if ($verbose) print "$num lignes de comm a traiter\n";
   $i = 0;
 
   while ($i < $num)
@@ -175,7 +187,6 @@ if ($db->query($sql))
 $file = $img_root . "communications/heure_appel_nb.png";
 $graphha = new GraphHeureAppel ($db, $file);
 $graphha->GraphDraw($heure_appel_nb);
-
 
 $file = $img_root . "communications/joursemaine_nb.png";
 $graphha = new GraphJourSemaine ($db, $file);
@@ -204,14 +215,14 @@ for ($i = 1 ; $i < 4 ; $i++)
 
 function repart_comm($db, $year = 0, $month = 0)
 {
-  print "Répartition des communications\n";
+  if ($verbose) print "Répartition des communications\n";
 
   $sql = "SELECT duree, numero";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
 
   if ($year && $month)
     {
-      print "Répartition des communications pour $month/$year\n";
+      if ($verbose) print "Répartition des communications pour $month/$year\n";
       $month = substr("00".$month, -2);
       $sql .= " WHERE date_format(date,'%Y%m') = '$year$month'";
     }
@@ -406,14 +417,14 @@ $file = $img_root . "communications/duree.png";
 $graphgain = new GraphBar ($db, $file);
 $graphgain->show_console = 0 ;
 $graphgain->titre = "Nb minutes (milliers)";
-print $graphgain->titre."\n";
+if ($verbose) print $graphgain->titre."\n";
 $graphgain->GraphDraw($file, $kilomindurees, $labels);
 
 $file = $img_root . "communications/nbappelsparligne.png";
 $graphgain = new GraphBar ($db, $file);
 $graphgain->show_console = 0 ;
 $graphgain->titre = "Nb appels moyen par ligne";
-print $graphgain->titre."\n";
+if ($verbose) print $graphgain->titre."\n";
 $graphgain->barcolor = "pink";
 $graphgain->GraphDraw($file, $nbappels_ligne, $labels);
 
@@ -421,7 +432,7 @@ $file = $img_root . "communications/dureemoyenne.png";
 $graphgain = new GraphBar ($db, $file);
 $graphgain->show_console = 0 ;
 $graphgain->titre = "Durée moyenne d'un appel";
-print $graphgain->titre."\n";
+if ($verbose) print $graphgain->titre."\n";
 $graphgain->barcolor = "yellow";
 $graphgain->GraphDraw($file, $durees_moyenne, $labels);
 
@@ -429,7 +440,7 @@ $file = $img_root . "communications/nombre.png";
 $graphgain = new GraphBar ($db, $file);
 $graphgain->show_console = 0 ;
 $graphgain->titre = "Nombres d'appel mensuels";
-print $graphgain->titre."\n";
+if ($verbose) print $graphgain->titre."\n";
 $graphgain->GraphDraw($file, $nombres, $labels);
 
 /**********************************************************************/
@@ -454,7 +465,7 @@ if ($db->query($sql))
   $gain_moyen = array();
 
   $num = $db->num_rows();
-  print "$num lignes de comm a traiter\n";
+  if ($verbose) print "$num lignes de comm a traiter\n";
   $i = 0;
 
   while ($i < $num)
@@ -474,33 +485,33 @@ if ($db->query($sql))
 $file = $img_root . "/factures/ca_mensuel.png";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Chiffre d'affaire par mois en euros HT";
-print $graph->titre."\n";
+if ($verbose) print $graph->titre."\n";
 $graph->GraphDraw($file, $cout_vente, $labels);
 
 $file = $img_root . "/factures/facture_moyenne.png";
 $graph = new GraphBar ($db, $file, $labels);
 $graph->titre = "Facture moyenne";
-print $graph->titre."\n";
+if ($verbose) print $graph->titre."\n";
 $graph->barcolor = "blue";
 $graph->GraphDraw($file, $cout_vente_moyen, $labels);
 
 $file = $img_root . "/factures/gain_mensuel.png";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Gain par mois en euros HT";
-print $graph->titre."\n";
+if ($verbose) print $graph->titre."\n";
 $graph->GraphDraw($file, $gain, $labels);
 
 $file = $img_root . "/factures/gain_moyen.png";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Gain moyen par facture par mois";
-print $graph->titre."\n";
+if ($verbose) print $graph->titre."\n";
 $graph->barcolor = "blue";
 $graph->GraphDraw($file, $gain_moyen, $labels);
 
 $file = $img_root . "/factures/nb_facture.png";
 $graph = new GraphBar ($db, $file);
 $graph->titre = "Nb de facture mois";
-print $graph->titre."\n";
+if ($verbose) print $graph->titre."\n";
 $graph->barcolor = "yellow";
 $graph->GraphDraw($file, $nb_factures, $labels);
 
@@ -513,14 +524,14 @@ repart($db);
 
 function repart($db, $year = 0, $month = 0)
 {
-  print "Répartition des factures\n";
+  if ($verbose) print "Répartition des factures\n";
 
   $sql = "SELECT cout_vente, gain";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture";
 
   if ($year && $month)
     {
-      print "Répartition des factures pour $month/$year\n";
+      if ($verbose) print "Répartition des factures pour $month/$year\n";
       $month = substr("00".$month, -2);
       $sql .= " WHERE date_format(date,'%Y%m') = '$year$month'";
     }
