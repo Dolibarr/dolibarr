@@ -390,7 +390,7 @@ else
 
             if ($user->id <> $_GET["id"] && $user->admin)
             {
-                print '<a class="tabAction" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
+                print '<a class="butDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
             }
 
             print "</div>\n";
@@ -401,8 +401,8 @@ else
              * Droits
              */
             print '<table width="100%" class="noborder">';
-            print '<tr class="liste_titre"><td>'.$langs->trans("Permissions").'</td><td>'.$langs->trans("Module").'</td></tr>';
-            $sql = "SELECT r.libelle, r.module, r.perms FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
+            print '<tr class="liste_titre"><td>'.$langs->trans("Module").'</td><td>'.$langs->trans("Permissions").'</td></tr>';
+            $sql = "SELECT r.libelle, r.module, r.perms, r.subperms FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
             $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.module, r.id ASC";
             $var = True;
             if ($db->query($sql))
@@ -410,18 +410,27 @@ else
                 $num = $db->num_rows();
                 $i = 0;
                 while ($i < $num)
-		  {
+                {
                     $obj = $db->fetch_object($i);
                     if ($oldmod <> $obj->module)
-		      {
+                    {
                         $oldmod = $obj->module;
                         $var = !$var;
-		      }
-		    print '<tr '. $bc[$var].'>';
-		    print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td>';
-		    print '</tr>';
+                    }
+                    if (! $obj->perms) {
+                        // Si droit selon modèle simple
+                        print "<tr $bc[$var]><td>".$obj->module."</td><td>".$obj->libelle . "</td></tr>\n";
+                    } else {
+                        // Si droit selon nouveau modèle (avec sous niveaux de droits)
+                        //$alpha = "user->rights->".$obj->perms."->".$obj->subperms;
+                        //print "$alpha ".$$alpha;
+                        //if ($$alpha)
+                        //{
+                            print "<tr $bc[$var]><td>".$obj->module."</td><td>".$obj->perms." - ".$obj->subperms."</td></tr>\n";
+                        //}
+                    }
                     $i++;
-		  }
+                }
             }
             print "</table>\n";
             print "<br>\n";
