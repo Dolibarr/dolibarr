@@ -59,8 +59,15 @@ if ($action == 'facture')
       $facture->note           = '';
       $facture->cond_reglement = 1;
       $facture->remise_percent = rand(0,50);
-      
-      $facture->add_product($productsid[rand(1, sizeof($productsid)-1)],rand(1,11));
+
+      $prand = rand(1,20);
+      for ($p = 0 ; $p < $prand ; $p++)
+	{
+	  $pidrand = rand(1, sizeof($productsid)-1);
+	  $facture->add_product($productsid[rand(1, sizeof($productsid)-1)],rand(1,11));
+	  print "Ajout produit ".$productsid[$pidrand]."<br>";
+
+	}     
 
       $id = $facture->create($user);
       if ($id)
@@ -105,13 +112,7 @@ else
 	      $contact->nom = "Nom aléa ".time();
 	      if ( $contact->create($user) )
 		{
-		  $prand = rand(1,20);
-		  print "-- génère $prand contact<br>";
-		  for ($p = 0 ; $p < $rand ; $p++)
-		    {
-		      $pidrand = rand(1, sizeof($productsid)-1);
-		      print "Ajout produit ".$productsid[$pidrand]."<br>";
-		    }
+
 		}
 	    }
 	}
