@@ -44,7 +44,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
 {
 
   $adh = new Adherent($db);
-      
+  $adh->statut      = -1;
   $adh->prenom      = $prenom;
   $adh->nom         = $nom;  
   $adh->societe     = $societe;
@@ -56,6 +56,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
   $adh->pays        = $pays;
   $adh->typeid      = $type;
   $adh->commentaire = $HTTP_POST_VARS["comment"];
+  $adh->morphy      = $HTTP_POST_VARS["morphy"];
   
   if ($adh->create($user->id) ) 
     {	  
@@ -72,6 +73,12 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
   $adh = new Adherent($db);
   $adh->delete($rowid);
   Header("Location: liste.php");
+}
+
+if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  $adh = new Adherent($db, $rowid);
+  $adh->validate($user->id);
 }
 
 
@@ -111,6 +118,14 @@ if ($action == 'create') {
   print "<tr><td>Type</td><td>";
   $htmls->select_array("type",  $adht->liste_array());
   print "</td></tr>";
+
+  $morphys["phy"] = "Physique";
+  $morphys["mor"] = "Morale";
+
+  print "<tr><td>Personne</td><td>";
+  $htmls->select_array("morphy",  $morphys);
+  print "</td></tr>";
+
 
   print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td>';  
   
@@ -162,14 +177,18 @@ if ($rowid > 0)
   print "<form action=\"$PHP_SELF\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
-  print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td>';
-
+  print "<tr><td>Type</td><td class=\"valeur\">$adh->type</td>";
   print '<td valign="top" width="50%">Commentaires</tr>';
 
-  print '<tr><td>Nom</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
-  
+  print '<tr><td>Personne</td><td class="valeur">'.$adh->morphy.'&nbsp;</td>';
+
   print '<td rowspan="11" valign="top" width="50%">';
   print nl2br($adh->commentaire).'&nbsp;</td></tr>';
+
+  print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
+
+  print '<tr><td>Nom</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
+  
 
   print '<tr><td>Société</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
   print '<tr><td>Adresse</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
@@ -195,11 +214,10 @@ if ($rowid > 0)
        * Case 2
        */
       
-      if ($adh->statut == 1 && $resteapayer > 0) 
+      if ($adh->statut == -1) 
 	{
-	  print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php3?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
+	  print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$rowid&action=valid\">Valider l'adhésion</a>]</td>";
 	}
-      
       else
 	{
 	  print "<td align=\"center\" width=\"25%\">-</td>";
@@ -212,18 +230,9 @@ if ($rowid > 0)
       /*
        * Case 4
        */
-      if ($adh->statut == 0) 
-	{
-	  print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=delete\">Supprimer</a>]</td>";
-	}
-      elseif ($adh->statut == 2)
-    {
-      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=set_encaisse\">Encaisser</a>]</td>";
-    }
-      else
-	{
-	  print "<td align=\"center\" width=\"25%\">-</td>";
-	}
+
+      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=delete\">Supprimer</a>]</td>";
+
 
       print "</tr></table></form><p>";
     }
@@ -286,7 +295,14 @@ if ($rowid > 0)
   print '<tr><td colspan="3">Nouvelle adhésion</td></tr>';
 
   print "<tr><td>Date de cotisation</td><td>";
-  print_date_select($adh->datefin + (3600*24));
+  if ($adh->datefin > 0)
+    {
+      print_date_select($adh->datefin + (3600*24));
+    }
+  else
+    {
+      print_date_select();
+    }
   print "</td><td>&nbsp;</td></tr>";
   print "<tr><td>Mode de paiement</td><td>\n";
   
@@ -322,6 +338,32 @@ if ($rowid > 0)
       
       print "</td>";
       print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '</table>';
+      print "</form>";  
+    }
+
+
+  /*
+   * Confirmation de la validation
+   *
+   */
+
+  if ($action == 'valid')
+    {
+
+      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">';
+      print '<input type="hidden" name="action" value="confirm_valid">';
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+      
+      print '<tr><td colspan="3">Valider un adhérent</td></tr>';
+      
+      print '<tr><td class="valid">Etes-vous sur de vouloir valider cet adhérent ?</td><td class="valid">';
+      $htmls = new Form($db);
+      
+      $htmls->selectyesno("confirm","no");
+      
+      print "</td>";
+      print '<td class="valid" align="center"><input type="submit" value="Confirmer"</td></tr>';
       print '</table>';
       print "</form>";  
     }

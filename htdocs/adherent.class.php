@@ -43,10 +43,11 @@ class Adherent
    *
    *
    */
-  Function Adherent($DB, $soc_idp="") 
+  Function Adherent($DB, $id='') 
     {
       $this->db = $DB ;
-      $this->statut = 0;
+      $this->id = $id;
+      $this->statut = -1;
     }
   /*
    *
@@ -336,6 +337,37 @@ class Adherent
 	return 0;
       }    
   }
+
+
+
+  /*
+   * Validation
+   *
+   *
+   */
+  Function validate($userid) 
+    {
+      
+      $sql = "UPDATE llx_adherent SET ";
+      $sql .= "statut=1";
+      $sql .= ",fk_user_valid=".$userid;
+
+      $sql .= " WHERE rowid = $this->id";
+      
+      $result = $this->db->query($sql);
+      
+      if ($result) 
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error();
+	  print "<h2><br>$sql<br></h2>";
+	  return 0;
+	}  
+    }
+
 
 }
 ?>
