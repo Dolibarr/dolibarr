@@ -112,37 +112,19 @@ print "</DIV><P>";
  *
  *
  */
-if ($mode == 'search') 
-{
-  if ($mode-search == 'soc')
-    {
-      $sql = "SELECT s.idp FROM societe as s, c_stcomm as st ";
-      $sql .= " WHERE s.fk_stcomm = st.id AND s.datea IS NOT NULL";
-
-      if ($socname) 
-	{
-	  $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
-	  $sortfield = "lower(s.nom)";
-	  $sortorder = "ASC";
-	}
+if ($mode == 'search') {
+  if ($mode-search == 'soc') {
+    $sql = "SELECT s.idp FROM societe as s ";
+    $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
+  }
       
- 
-      $result = $db->query($sql);
-      if ($result) 
-	{
-	  if ( $db->num_rows() == 1) 
-	    {
-	      $obj = $db->fetch_object(0);
-	      $socid = $obj->idp;
-	    }
-	  $db->free();
-	}
+  if ( $db->query($sql) ) {
+    if ( $db->num_rows() == 1) {
+      $obj = $db->fetch_object(0);
+      $socid = $obj->idp;
     }
-  else 
-    {
-
-    }
-
+    $db->free();
+  }
 }
 
 

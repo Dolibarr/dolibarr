@@ -1,0 +1,104 @@
+%
+% header.tex
+%
+% $Id$
+% $Source$
+\documentclass[a4paper]{article}
+\usepackage{fancyhdr, hhline}
+\usepackage[francais]{layout}
+%
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+%
+%
+\newcommand{\aquatre}{
+
+  	\setlength{\topmargin}{0pt}
+	\setlength{\textheight}{21cm}
+
+  	\setlength{\headheight}{30pt}
+
+	\setlength{\headsep}{30pt}
+
+  	\setlength{\parindent}{1cm}
+	\setlength{\parskip}{0.2cm}
+
+	\setlength{\oddsidemargin}{0pt}
+  	\setlength{\evensidemargin}{0pt}
+
+	\setlength{\textwidth}{480pt}
+
+
+	\setlength{\marginparwidth}{0pt}
+	\setlength{\marginparsep}{0pt}
+}
+% Definitions des commandes
+%
+\cfoot{}
+%
+% Debut du document
+%
+\aquatre
+
+%\lhead{\begin{tabular}{|p{9cm}p{6cm}}\textsf{{\LARGE Lolix SA}}
+%&\\\textsf{8, rue de Valois} & \textsf{T\'el : +33 1 40 15 03 18}
+%\\\textsf{75001 Paris} & \textsf{Fax : +33 1 40 15 06 18}
+%\\\textsf{SIREN : 432073666} &\\\end{tabular}}
+
+\lhead{\textsf{{\LARGE Societe SA}}\\\textsf{Travaillons Libre}\\http://www.www.com/}
+
+\renewcommand{\headrulewidth}{1.0pt}
+\pagestyle{fancy}
+%
+% Redefinition des font en type 1 (voir page 218)
+%
+\renewcommand{\sfdefault}{phv}
+\renewcommand{\rmdefault}{ptm}
+\renewcommand{\ttdefault}{pcr}
+
+\begin{document}
+%\layout
+\begin{flushright}
+\begin{tabular}{p{220pt}|p{220pt}|}
+\hhline{~-}
+Societe SA                                        & \\
+SA au capital de 40 000 euros                   & \textbf{\Large #SOCIETE#} \\
+R.C.S. : Paris B 999 999 999                    & {\large #DESTINATAIRE#} \\
+                                                & {\large #ADRESSE1#} \\
+8 rue de Valois, 75001 Paris                    & {\large #ADRESSE2#} \\
+Tél (33) 1 01 01 01 01 - Fax (33) 1 01 01 01 18 & {\large #VILLE#} \\
+email : email@eamil.com                         & \\
+\hhline{~-}
+\end{tabular}
+\end{flushright}
+
+\begin{center}
+\begin{tabular}{c}
+\\
+\\
+\textbf{\LARGE PROPOSITION COMMERCIALE}
+\\
+\\
+\end{tabular}
+\end{center}
+
+\begin{flushleft}
+\begin{tabular}{p{9cm}}
+\\
+Proposition numéro : \textbf{#NUMPROPALE#} \\
+\end{tabular}
+\end{flushleft}
+
+\large{}
+
+\begin{center}
+
+\begin{tabular}{|p{2cm}|p{7cm}|p{2cm}|p{2cm}|p{2cm}|}
+\hline
+\multicolumn{1}{|c|}{\textbf{Réf}} & 
+\multicolumn{1}{|c|}{\textbf{Désignation}} &
+\multicolumn{1}{|c|}{\textbf{Qté}} & 
+\multicolumn{1}{|r|}{\textbf{P.U.}} &
+\multicolumn{1}{|r|}{\textbf{Total}} \\
+\hline
+

@@ -24,12 +24,19 @@ require("./pre.inc.php3");
 llxHeader();
 print '<table border="1" cellpadding="3" cellspacing="0">';
 
-print '<tr><td colspan="2">Database</td></tr>';
-
+print '<tr><td  bgcolor="#e0e0e0" colspan="2">Database</td></tr>';
 print '<tr><td>host</td><td>' . $conf->db->host . '</td></tr>';
-print '<tr><td>user</td><td>' . $conf->db->user . '</td></tr>';
-print '<tr><td>pass</td><td>' . $conf->db->pass . '</td></tr>';
+print '<tr><td>user</td><td>' . $conf->db->user . '&nbsp;</td></tr>';
+print '<tr><td>pass</td><td>' . $conf->db->pass . '&nbsp;</td></tr>';
 print '<tr><td>Database name</td><td>' . $conf->db->name . '</td></tr>';
+
+
+print '<tr><td bgcolor="#e0e0e0" colspan="2">Propale</td></tr>';
+print '<tr><td>templates</td><td>' . $conf->propal->templatesdir . '</td></tr>';
+print '<tr><td>output dir</td><td>' . $conf->propal->outputdir . '</td></tr>';
+print '<tr><td>output url</td><td>' . $conf->propal->outputurl . '</td></tr>';
+
+
 
 print '</table>';
 

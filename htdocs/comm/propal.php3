@@ -26,17 +26,17 @@ require("../lib/CMailFile.class.php3");
  *  Modules optionnels
  */
 require("projet/project.class.php3");
+require("./propal.class.php3");
 /*
  *
  */
 
-$author = $GLOBALS["REMOTE_USER"];
-
 llxHeader();
+
 print "<table width=\"100%\">";
 print "<tr><td>Propositions commerciales</td>";
 if ($socidp) {
-print "<td align=\"right\"><a href=\"addpropal.php3?socidp=$socidp&action=create\">Nouvelle Propal</a></td>";
+print "<td bgcolor=\"#e0e0e0\" align=\"center\">[<a href=\"addpropal.php3?socidp=$socidp&action=create\">Nouvelle Propal</a>]</td>";
 }
 print "<td align=\"right\"><a href=\"propal.php3\">Liste</a></td>";
 print "<td align=\"right\"><a href=\"/compta/prev.php3\">CA Prévisionnel</a></td>";
@@ -65,8 +65,13 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 if ($action == 'setstatut') {
-  $sql = "UPDATE llx_propal SET fk_statut = $statut, note = '$note' WHERE rowid = $propalid";
-  $result = $db->query($sql);
+  /*
+   *  Cloture de la propale
+   */
+  $propal = new Propal($db);
+  $propal->id = $propalid;
+  $propal->cloture($user->id, $statut, $note);
+
 } elseif ( $action == 'delete' ) {
   $sql = "DELETE FROM llx_propal WHERE rowid = $propalid;";
   if ( $db->query($sql) ) {
@@ -88,17 +93,15 @@ if ($action == 'setstatut') {
 
 if ($propalid) {
   if ($valid == 1) {
-    $sql = "SELECT p.fk_soc, p.fk_projet,p.price, p.ref,".$db->pdate("p.datep")." as dp, p.author";
+    $sql = "SELECT p.fk_soc, p.fk_projet,p.price, p.ref,".$db->pdate("p.datep")." as dp";
     $sql .= " FROM llx_propal as p WHERE p.rowid = $propalid";
     
     if ( $db->query($sql) ) {
       $obj = $db->fetch_object( 0 );
 
-      $sql = "UPDATE llx_propal SET fk_statut = 1 WHERE rowid = $propalid;";
-      if (! $db->query($sql) ) {
-	print $db->error();
-      }
-
+      $propal = new Propal($db);
+      $propal->id = $propalid;
+      $propal->valid($user->id);
     } else {
       print $db->error();
     }
@@ -106,15 +109,9 @@ if ($propalid) {
   /*
    *
    */
-  $sql = "SELECT s.nom, s.idp, p.price, p.fk_projet,p.remise, p.tva, p.total, p.ref,".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst, p.author, p.note, x.firstname, x.name, x.fax, x.phone, x.email";
+  $sql = "SELECT s.nom, s.idp, p.price, p.fk_projet,p.remise, p.tva, p.total, p.ref,".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst, p.note, x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture";
   $sql .= " FROM societe as s, llx_propal as p, c_propalst as c, socpeople as x";
   $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = $propalid";
-
-
-  /*  $sql = "SELECT s.nom, s.idp, p.price, p.remise, p.tva, p.total, p.ref,".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst, p.author, p.note, x.firstname, x.name, x.fax, x.phone, x.email";
-   *  $sql .= " FROM societe as s, llx_propal as p, c_propalst as c";
-   *  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.rowid = $propalid";
-   */
 
   $result = $db->query($sql);
 
@@ -154,7 +151,10 @@ if ($propalid) {
       /*
        *
        */
-      print "<tr><td>Auteur</td><td colspan=\"2\">$obj->author</td>";
+      print '<tr><td>Auteur</td><td colspan="2">';
+      $author = new User($db, $obj->fk_user_author);
+      $author->fetch('');
+      print $author->fullname.'</td>';
 
       $totalht = $obj->price - $obj->remise ;
 
@@ -195,7 +195,7 @@ if ($propalid) {
 	print "<option value=\"3\">Non Signée";
 	print '</select>';
 	print '<br><textarea cols="60" rows="6" wrap="soft" name="note">';
-	print $obj->note . "\n--------------------------\n";
+	print $obj->note . "\n----------\n";
 	print '</textarea><br><input type="submit" value="Valider">';
 	print "</form>";
       }
@@ -366,16 +366,16 @@ if ($propalid) {
       print "<b>Documents générés</b><br>";
       print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=3>";
 
-      $file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/propal/$obj->ref/$obj->ref.pdf";
+      $file = $conf->propal->outputdir. "/$obj->ref/$obj->ref.pdf";
       if (file_exists($file)) {
 	print "<tr><td>Propale PDF</a></td><td><a href=\"../../doc/propal/$obj->ref/$obj->ref.pdf\">$obj->ref.pdf</a></td></tr>";
       }  
-      $file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/propal/$obj->ref/$obj->ref.ps";
+      $file = $conf->propal->outputdir . "/$obj->ref/$obj->ref.ps";
       if (file_exists($file)) {
 	print "<tr><td>Propale Postscript</a></td><td><a href=\"../../doc/propal/$obj->ref/$obj->ref.ps\">$obj->ref.ps</a></td>";
 	print "</tr>";
       }
-      print "<tr><td colspan=\"2\">(<a href=\"../../doc/propal/$obj->ref/\">liste...</a>)</td></tr>";
+      print '<tr><td colspan="2">(<a href="'.$conf->propal->outputurl.'/'.$obj->ref.'">liste...</a>)</td></tr>';
 
       $file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/propale/$obj->ref/FAX-$obj->ref.ps";  
       if (file_exists($file)) {
@@ -446,6 +446,24 @@ if ($propalid) {
       print "Num rows = " . $db->num_rows();
       print "<p><b>$sql";
     }
+
+    $validor = new User($db, $obj->fk_user_valid);
+    $validor->fetch('');
+    $cloturor = new User($db, $obj->fk_user_cloture);
+    $cloturor->fetch('');
+
+    print '<table cellspacing=0 border=1 cellpadding=3>';
+    print '<tr><td>&nbsp;</td><td>Nom</td><td>Date</td></tr>';
+    print '<tr><td>Création</td><td>'.$author->fullname.'</td>';
+    print '<td>'.$obj->datec.'</td></tr>';
+
+    print '<tr><td>Validation</td><td>'.$validor->fullname.'&nbsp;</td>';
+    print '<td>'.$obj->date_valid.'&nbsp;</td></tr>';
+
+    print '<tr><td>Cloture</td><td>'.$cloturor->fullname.'&nbsp;</td>';
+    print '<td>'.$obj->date_cloture.'&nbsp;</td></tr>';
+
+    print '</table>';
 
   } else {
     print $db->error();

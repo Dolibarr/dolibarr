@@ -49,7 +49,7 @@ print "</tr>";
 print "</table>";
 
 if ($action == 'add') {
-  $propal = new Propal($socidp);
+  $propal = new Propal($db, $socidp);
 
   $propal->remise = $remise;
   $propal->datep = $db->idate(mktime(12, 1 , 1, $pmonth, $pday, $pyear));
@@ -67,24 +67,27 @@ if ($action == 'add') {
   $propal->add_product($idprod3);
   $propal->add_product($idprod4);
   
-  $sqlok = $propal->create($db);
+  $id = $propal->create();
   
   /*
    *
    *   Generation
    *
    */
-  if ($sqlok) {
+  if ($id) {
     print "<hr><b>Génération du PDF</b><p>";
 
-    $command = "export DBI_DSN=\"".$GLOBALS["DBI"]."\" ";
-    $command .= " ; ../../scripts/propal-tex.pl --propal=$propalid --pdf --gljroot=" . $GLOBALS["GLJ_ROOT"] ;
+    //$DBI = "dbi:mysql:dbname=lolixdev:host=espy:user=rodo";
 
-    //$command .= " ; ../../scripts/fax-tex.pl --propal=$propalid --gljroot=" . $GLOBALS["GLJ_ROOT"] ;
+    $gljroot = "/home/www/dolibarr/dolibarr/htdocs";
+
+    $command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name.":host=localhost\" ";
+    $command .= " ; ./propal-tex.pl --propal=".$id ." --pdf --output=".$conf->propal->outputdir;
+    $command .= " --templates=".$conf->propal->templatesdir;
 
     $output = system($command);
     print "<p>command : $command<br>";
-
+    print $output;
   } else {
     print $db->error();
   }
@@ -158,8 +161,8 @@ if ($action == 'create') {
     print "</select></td></tr>";
     
     print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-    $author = $GLOBALS["REMOTE_USER"];
-    print "<tr><td>Auteur</td><td><input type=\"hidden\" name=\"author\" value=\"$author\">$author</td></tr>";
+
+    print '<tr><td>Auteur</td><td>'.$user->fullname.'</td></tr>';
     print "<tr><td>Num</td><td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
     /*
      *

@@ -22,6 +22,7 @@
 
 class Propal {
   var $id;
+  var $db;
   var $socidp;
   var $contactid;
   var $projetidp;
@@ -34,7 +35,8 @@ class Propal {
 
   var $price;
 
-  Function Propal($soc_idp="") {
+  Function Propal($DB, $soc_idp="") {
+    $this->db = $DB ;
     $this->socidp = $soc_idp;
     $this->products = array();
   }
@@ -50,7 +52,7 @@ class Propal {
    *
    *
    */
-  Function create($db) {
+  Function create() {
     /*
      *  Total des produits a ajouter
      */
@@ -61,9 +63,9 @@ class Propal {
     }
     $sql = substr($sql, 0, strlen($sql)-1) . ");";
 
-    if ( $db->query($sql) ) {
-      $cprice = $db->result(0, 0);
-      $db->free();
+    if ( $this->db->query($sql) ) {
+      $cprice = $this->db->result(0, 0);
+      $this->db->free();
     }
     /*
      *  Calcul TVA, Remise
@@ -78,25 +80,28 @@ class Propal {
     $sql .= " VALUES ($this->socidp, $this->contactid, $cprice, $this->remise, $tva, $total, $this->datep, now(), '$this->ref', $this->author, '$this->note')";
     $sqlok = 0;
       
-    if ( $db->query($sql) ) {
+    if ( $this->db->query($sql) ) {
+
+      $this->id = $this->db->last_insert_id();
+
       $sql = "SELECT rowid FROM llx_propal WHERE ref='$this->ref';";
-      if ( $db->query($sql) ) { 
+      if ( $this->db->query($sql) ) { 
 	/*
 	 *  Insertion du detail des produits dans la base
 	 */
-	if ( $db->num_rows() ) {
-	  $propalid = $db->result( 0, 0);
-	  $db->free();
+	if ( $this->db->num_rows() ) {
+	  $propalid = $this->db->result( 0, 0);
+	  $this->db->free();
 	    
 	  for ($i = 0 ; $i < sizeof($this->products) ; $i++) {
-	    $prod = new Product($db, $this->products[$i]);
+	    $prod = new Product($this->db, $this->products[$i]);
 	    $prod->fetch();
 
 	    $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, price) VALUES ";
 	    $sql .= " ($propalid,". $this->products[$i].", $prod->price) ; ";
 
-	    if (! $db->query($sql) ) {
-	      print $sql . '<br>' . $db->error() .'<br>';
+	    if (! $this->db->query($sql) ) {
+	      print $sql . '<br>' . $this->db->error() .'<br>';
 	    }
 	  }
 	  /*
@@ -104,23 +109,22 @@ class Propal {
 	   */
 	  if ($this->projetidp) {
 	    $sql = "UPDATE llx_propal SET fk_projet=$this->projetidp WHERE ref='$this->ref';";
-	    $db->query($sql);
+	    $this->db->query($sql);
 	  }
 	}	  
       } else {
-	print $db->error() . '<b><br>'.$sql;
+	print $this->db->error() . '<b><br>'.$sql;
       }
     } else {
-      print $db->error() . '<b><br>'.$sql;
+      print $this->db->error() . '<b><br>'.$sql;
     }
-    return 1;
+    return $this->id;
   }
   /*
    *
    *
    *
    */
-
   Function fetch($db, $rowid) {
 
     $sql = "SELECT ref,price,".$db->pdate(datep)."as dp FROM llx_propal WHERE rowid=$rowid;";
@@ -140,6 +144,45 @@ class Propal {
       print $db->error();
     }    
   }
+  /*
+   *
+   *
+   *
+   */
+  Function valid($userid) {
+    $sql = "UPDATE llx_propal SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
+    $sql .= " WHERE rowid = $this->id;";
+    
+    if ($this->db->query($sql) ) {
+      return 1;
+    } else {
+      print $this->db->error() . ' in ' . $sql;
+    }
+  }
+  /*
+   *
+   *
+   *
+   */
+  Function cloture($userid, $statut, $note) {
+    $sql = "UPDATE llx_propal SET fk_statut = $statut, note = '$note', date_cloture=now(), fk_user_cloture=$userid";
+
+    $sql .= " WHERE rowid = $this->id;";
+    
+    if ($this->db->query($sql) ) {
+      return 1;
+    } else {
+      print $this->db->error() . ' in ' . $sql;
+    }
+  }
+
+
+
+
+
+
+
+
 }    
 ?>
     

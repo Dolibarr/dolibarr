@@ -42,7 +42,7 @@ class Conf {
 
 class PropalConf {
   Function PropalConf() {
-    $this->templatesdir = "/home/www/dolibarr/dolibarr/templates";
+    $this->templatesdir = "/home/www/dolibarr/dolibarr/templates/propal/default";
     $this->outputdir    = "/home/www/dolibarr/dolibarr/htdocs/document/propal";
     /*
      * Without ended slash
