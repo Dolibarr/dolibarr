@@ -1,16 +1,17 @@
 #!/usr/bin/perl
-#-------------------------------------------------------------------------
+#----------------------------------------------------------------------------
 # \file         build/makepack-dolibarr.pl
-# \brief        Generateur de packages (tgz, zip, rpm, deb, exe)
+# \brief        Package builder (tgz, zip, rpm, deb, exe)
 # \version      $Revision$
-# \author       (c) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
-#-------------------------------------------------------------------------
+# \author       (c)2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+#----------------------------------------------------------------------------
 
 use Cwd;
 
 $PROJECT="dolibarr";
 $MAJOR="2";
 $MINOR="0";
+$BUILD="0";
 $RPMSUBVERSION="1";
 
 @LISTETARGET=("TGZ","ZIP","RPM","DEB","EXE");   # Possible packages
@@ -25,11 +26,12 @@ $RPMSUBVERSION="1";
 "makensis.exe"=>"NSIS"
 );
 
-$FILENAMETGZ="$PROJECT-$MAJOR.$MINOR";
-$FILENAMEZIP="$PROJECT-$MAJOR.$MINOR";
-$FILENAMERPM="$PROJECT-$MAJOR.$MINOR-$RPMSUBVERSION";
-$FILENAMEDEB="$PROJECT-$MAJOR.$MINOR";
-$FILENAMEEXE="$PROJECT-$MAJOR.$MINOR";
+$FILENAME="$PROJECT";
+$FILENAMETGZ="$PROJECT-$MAJOR.$MINOR.$BUILD";
+$FILENAMEZIP="$PROJECT-$MAJOR.$MINOR.$BUILD";
+$FILENAMERPM="$PROJECT-$MAJOR.$MINOR.$BUILD-$RPMSUBVERSION";
+$FILENAMEDEB="$PROJECT-$MAJOR.$MINOR.$BUILD";
+$FILENAMEEXE="$PROJECT-$MAJOR.$MINOR.$BUILD";
 if (-d "/usr/src/redhat") {
     # redhat
     $RPMDIR="/usr/src/redhat";
@@ -89,11 +91,11 @@ if (! $TEMP || ! -d $TEMP) {
 $BUILDROOT="$TEMP/buildroot";
 
 
-my $copyalreadydone=0;
+my $copyalreadydone=1;
 my $batch=0;
 
 print "Makepack version $VERSION\n";
-print "Building package for $PROJECT $MAJOR.$MINOR\n";
+print "Building package for $PROJECT $MAJOR.$MINOR.$BUILD\n";
 
 for (0..@ARGV-1) {
 	if ($ARGV[$_] =~ /^-*target=(\w+)/i)    { $target=$1; $batch=1; }
@@ -268,7 +270,9 @@ if ($nboftargetok) {
     	if ($target eq 'EXE') {
     		unlink "$FILENAMEEXE.exe";
     		print "Compress into $FILENAMEEXE.exe by $FILENAMEEXE.nsi...\n";
-    		$ret=`"$REQUIREMENTTARGET{$target}" /X"SetCompressor bzip2" "$SOURCE\\build\\exe\\$FILENAMEEXE.nsi"`;
+    		$command="\"$REQUIREMENTTARGET{$target}\" /DMUI_VERSION_DOT=$MAJOR.$MINOR.$BUILD /X\"SetCompressor bzip2\" \"$SOURCE\\build\\exe\\$FILENAME.nsi\"";
+            print "$command\n";
+    		$ret=`$command`;
     		print "Move $FILENAMEEXE.exe to $SOURCE/build/$FILENAMEEXE.exe\n";
     		rename("$SOURCE\\build\\exe\\$FILENAMEEXE.exe","$SOURCE/build/$FILENAMEEXE.exe");
     		next;

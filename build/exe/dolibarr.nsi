@@ -5,8 +5,7 @@
 
 
 !define MUI_PROD "Dolibarr" ;Define your own software name here
-!define MUI_VERSION_DOT "2.0" ;Define your own software version here
-!define MUI_VERSION_NODOT "20" ;Define your own software version here
+#!define MUI_VERSION_DOT "2.0" ;Define your own software version here
 !define MUI_PUBLISHER "Rodolphe Quiedeville, Laurent Destailleur"
 !define MUI_URL "http://dolibarr.com"
 !define MUI_COMMENTS "Thanks for using Dolibarr"
