@@ -38,17 +38,17 @@ all: $(DOC).pdf $(DOC).html
 %.tex:	%.sgml $(FRPAGES)
 	$(DEBIANDOC2LATEX) $(HOPTIONS) $<
 
-%.ps:	%.sgml $(FRPAGES)
+%.ps:	$(FRPAGES)
 	$(DEBIANDOC2PS) $(OPTIONS) $<
 
-%.pdf:	%.sgml
+%.pdf:	$(FRPAGES)
 	$(DEBIANDOC2PDF) $(OPTIONS) $<
 
-%.html: %.sgml $(FRPAGES)
+%.html: $(FRPAGES)
 	$(DEBIANDOC2HTML) $(HOPTIONS) $<
 
 put:
-	$(RSYNC) $(ROPT) $(RSSH) dolibarr-user.html rodolphe.quiedeville.org:/home/www/rodolphe.quiedeville.org/htdocs/projets/dolibarr/doc
+	$(RSYNC) $(ROPT) $(RSSH) *pdf dolibarr-user.html rodolphe.quiedeville.org:/home/www/rodolphe.quiedeville.org/htdocs/projets/dolibarr/doc
 
 clean:
 	rm -f *pdf *ps *out *tpt
