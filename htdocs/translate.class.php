@@ -122,9 +122,24 @@ class Translate {
      */
 		 
     function trans($str, $param1='', $param2='', $param3='') {
+        return $this->transnoentities($str,htmlentities($param1),htmlentities($param2),htmlentities($param3));
+    }
+
+    /**
+     *  \brief       Retourne la version traduite du texte passé en paramètre
+     *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
+     *               et si toujours pas trouvé, il est retourné tel quel
+     *  \param       str         chaine a traduire
+     *  \param       param1      chaine de param1
+     *  \param       param2      chaine de param1
+     *  \param       param3      chaine de param1
+     *  \return      string      chaine traduite
+     */
+		 
+    function transnoentities($str, $param1='', $param2='', $param3='') {
         if ($this->tab_translate[$str]) {
             // Si la traduction est disponible
-            return sprintf($this->tab_translate[$str],htmlentities($param1),htmlentities($param2),htmlentities($param3));
+            return sprintf($this->tab_translate[$str],$param1,$param2,$param3);
         }
         return $str;
     }

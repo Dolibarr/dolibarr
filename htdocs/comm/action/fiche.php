@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,10 @@
  */
  
 /**
-   \file       htdocs/comm/action/fiche.php
-   \ingroup    commercial
-   \brief      Page de la fiche action commercial
-   \version    $Revision$
+        \file       htdocs/comm/action/fiche.php
+        \ingroup    commercial
+        \brief      Page de la fiche action commercial
+        \version    $Revision$
 */
  
 require("./pre.inc.php");
@@ -546,7 +546,7 @@ function add_row_for_webcal_link()
             {
                 print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td>';
                 print '<td><input type="checkbox" disabled name="todo_webcal">';
-                print ' '.$langs->trans("ErrorWebcalLoginNotDefined","<a href=\"/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
+                print ' '.$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
                 print '</td>';
                 print '</tr>';
             }
