@@ -49,23 +49,10 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
-function valeur($sql) 
-{
-  global $db;
-  if ( $db->query($sql) ) 
-    {
-      if ( $db->num_rows() ) 
-	{
-	  $valeur = $db->result(0,0);
-	}
-      $db->free();
-    }
-  return $valeur;
-}
-/*
- *
- */
 
+/*
+ * Actions
+ */
 
 if ($_GET["action"] == 'add_bookmark')
 {
@@ -88,12 +75,15 @@ if ($_GET["action"] == 'del_bookmark')
 }
 
 
+/*
+ * Affichage page
+ */
+
 print_titre("Espace commercial");
 
 print '<table border="0" width="100%">';
 
 print '<tr><td valign="top" width="30%">';
-
 
 
 /*
