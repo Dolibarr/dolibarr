@@ -328,7 +328,7 @@ class Propal
 	       * Lignes
 	       */
 
-	      $sql = "SELECT d.qty, p.description, p.ref, p.price, d.tva_tx, p.rowid";
+	      $sql = "SELECT d.qty, p.description, p.ref, p.price, d.tva_tx, p.rowid, p.label";
 	      $sql .= " FROM llx_propaldet as d, llx_product as p";
 	      $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = p.rowid";
 	
@@ -342,6 +342,7 @@ class Propal
 		    {
 		      $objp              = $this->db->fetch_object($i);
 		      $ligne             = new PropaleLigne();
+		      $ligne->libelle    = stripslashes($objp->label);
 		      $ligne->desc       = stripslashes($objp->description);
 		      $ligne->qty        = $objp->qty;
 		      $ligne->ref        = $objp->ref;
