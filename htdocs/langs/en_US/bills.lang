@@ -24,6 +24,7 @@ BillStatusNotPayed=Not payed
 ErrorVATIntraNotConfigured=Intracommunautary VAT number not yet defined
 ErrorNoPaiementModeConfigured=No paiment mode yet defined
 ErrorCreateBankAccount=Creat a bank account then go to Setup panel of Bill module to define paiement modes
+ErrorBillNotFound=Bill does not exists
 BillFrom=From
 BillTo=To
 AmountInCurrency=Amount in

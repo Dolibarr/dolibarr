@@ -24,6 +24,7 @@ BillStatusNotPayed=Impayée
 ErrorVATIntraNotConfigured=Numéro de TVA intracommunautaire pas encore configuré
 ErrorNoPaiementModeConfigured=Aucun mode de règlement défini
 ErrorCreateBankAccount=Créer un compte bancaire puis aller dans la Configuration du module facture pour définir les modes de règlement
+ErrorBillNotFound=Facture inexistante
 BillFrom=Émetteur
 BillTo=Adressé à
 AmountInCurrency=Montants exprimés en
