@@ -81,7 +81,7 @@ print "</td><td>Réf</td><td>";
 print_liste_field_titre("Société",$PHP_SELF,"s.nom");
 print "</td></tr>\n";
 
-$sql = "SELECT s.nom, s.idp, p.rowid as projectid, p.ref, p.title,".$db->pdate("p.dateo")." as do";
+$sql = "SELECT s.nom, s.idp, p.rowid as projectid, p.ref, p.title, s.client,".$db->pdate("p.dateo")." as do";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";
 $sql .= " WHERE p.fk_soc = s.idp";
 
@@ -104,7 +104,14 @@ if ( $db->query($sql) )
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php?id=$objp->projectid\">$objp->title</a></TD>\n";
       print "<TD><a href=\"fiche.php?id=$objp->projectid\">$objp->ref</a></TD>\n";
-      print "<TD><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
+      if ($obj->client == 1)
+	{
+	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+	}
+      else
+	{
+	  print '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+	}
       print "</tr>\n";
     
       $i++;
