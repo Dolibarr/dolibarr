@@ -267,7 +267,7 @@ function top_menu($head)
   print '<TABLE class="topbarre" width="100%">';
 
   print "<tr>";
-  print '<td width="15%" class="menu" align="center"><A class="menu" href="/">Accueil</A></TD>';
+  print '<td width="15%" class="menu" align="center"><A class="menu" href="'.DOL_URL_ROOT.'/">Accueil</A></TD>';
 
   if (!defined(MAIN_MENU_BARRETOP))
   {
