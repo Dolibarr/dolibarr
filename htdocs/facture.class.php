@@ -578,14 +578,16 @@ class Facture
 	  /*
 	   * On crée les contrats de services automatiquement si
 	   * l'option CONTRACT_AUTOCREATE_FROM_BILL est active
-       * (Cas ou les contrats sont implicites comme lors de ventes de services en lignes)
+	   * (Cas ou les contrats sont implicites comme lors de ventes de services en lignes)
 	   */      
-      if ($conf->contrat->enabled) {
-          if (defined("CONTRACT_AUTOCREATE_FROM_BILL") && CONTRACT_AUTOCREATE_FROM_BILL == "1") {
-        	  $contrat = new Contrat($this->db);
-        	  $contrat->create_from_facture($rowid, $user, $soc->id);
-            }
-        }
+	  if ($conf->contrat->enabled)
+	    {
+	      if (defined("CONTRACT_AUTOCREATE_FROM_BILL") && CONTRACT_AUTOCREATE_FROM_BILL == "1")
+		{
+		  $contrat = new Contrat($this->db);
+		  $contrat->create_from_facture($rowid, $user, $soc->id);
+		}
+	    }
         
 	  /*
 	   * Notify
