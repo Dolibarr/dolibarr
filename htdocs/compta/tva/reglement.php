@@ -24,18 +24,6 @@ require("../../tva.class.php3");
 
 /*
  *
- *
- */
-
-function pt ($db, $sql, $date)
-{
-  global $bc; 
-
-
-}
-
-/*
- *
  */
 
 llxHeader();
@@ -48,7 +36,7 @@ print_titre("Réglements TVA");
 
 $sql = "SELECT amount, date_format(f.datev,'%d-%M-%Y') as dm";
 $sql .= " FROM llx_tva as f ";
-$sql .= " Order  BY dm DESC";
+$sql .= " ORDER  BY dm DESC";
 
 $result = $db->query($sql);
 if ($result)
@@ -72,7 +60,6 @@ if ($result)
       $total = $total + $obj->amount;
       
       print "<TD align=\"right\">".price($obj->amount)."</TD>";
-      print "<td align=\"right\">".$total."</td>\n";
       print "</TR>\n";
       
       $i++;
