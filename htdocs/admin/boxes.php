@@ -53,7 +53,7 @@ if ($_GET["action"] == 'add')
 
 if ($_GET["action"] == 'delete')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=$rowid";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["rowid"];
 
   $result = $db->query($sql);
 }
@@ -130,7 +130,7 @@ if ($result)
             print '<td width="50" align="center">';
             if (! $boxes[$position][$obj->rowid])
             {
-                print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;action=add&pos='.$position.'">Ajouter</a>';
+                print '<a href="boxes.php?rowid='.$obj->rowid.'&amp;action=add&pos='.$position.'">Ajouter</a>';
             }
             else
             {
@@ -173,7 +173,7 @@ if ($result)
       $obj = $db->fetch_object( $i);
 
       print '<tr '.$bc[$var].'><td width="200">'.$obj->name.'</td><td width="200">' . $pos_name[$obj->position] . '</td><td width="50" align="center">';
-      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;action=delete">'.img_delete().'</a>';
+      print '<a href="boxes.php?rowid='.$obj->rowid.'&amp;action=delete">'.img_delete().'</a>';
       print '</td></tr>';
       $i++;
     }
