@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -234,15 +234,6 @@ else
 /* ************************************************************************** */
 
 print "<br><div class=\"tabsAction\">\n";
-
-if ($_GET["action"] == '')
-{
-  if ($user->rights->produit->modifier || $user->rights->produit->creer)
-    {
-      print '<a class="tabAction" href="../fiche.php?action=edit&amp;id='.$product->id.'">Editer</a>';
-    }
-
-}
 
 print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=correction">Correction stock</a>';
 print '</div>';
