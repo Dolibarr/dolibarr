@@ -32,19 +32,8 @@ function llxHeader($head = "", $urlp = "") {
   $menu = new Menu();
 
   $menu->add("index.php", "Configuration");
-  $menu->add_submenu("modules.php", "Modules");
 
-
-
-  if(defined("MAIN_MODULE_ADHERENT") && MAIN_MODULE_ADHERENT)
-    {
-      $menu->add_submenu("adherent.php", "Gestion des Adhérents");
-    }
-
-  if(defined("MAIN_MODULE_WEBCALENDAR") && MAIN_MODULE_WEBCALENDAR)
-    {
-      $menu->add_submenu("webcalendar.php", "Calendrier");
-    }
+  $menu->add("modules.php", "Modules");
 
   $menu->add("boxes.php", "Boites");
 
