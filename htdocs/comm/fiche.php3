@@ -151,11 +151,7 @@ if ($socid > 0) {
 	print "<td align=\"center\"><a href=\"index.php?socidp=$objsoc->idp&action=add_bookmark\">[Bookmark]</a></td>";
 	if ($user->rights->projet->creer)
 	  print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
-	if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
-	  {
-	    if ($user->rights->propale->creer)
-	      print "<td align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">[Propal]</a></td>";
-	  }
+
 	if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
 	  {
 	    print "<td align=\"center\"><a href=\"../fichinter/fiche.php3?socidp=$objsoc->idp&action=create\">[Intervention]</a></td>";
@@ -270,6 +266,26 @@ if ($socid > 0) {
      */
     print "</td></tr>";
     print "</table>\n";
+    /*
+     *
+     *
+     */
+    print '<table border="1" cellspadding="3" cellspacing="0" width="100%"><tr>';
+    print '<td align="center" width="20%">-</td>';
+    if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
+      {
+	print "<td align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">Créer une proposition</a></td>";
+      }
+    else
+      {
+	print '<td align="center" width="20%">-</td>';
+      }
+    print '<td align="center" width="20%">-</td>';
+
+    print '<td align="center" width="20%"><a href="projet/fiche.php3?socidp='.$socid.'&action=create">Créer un projet</a></td>';
+    print '<td align="center" width="20%">-</td>';  
+    print '</tr></table>';
+
     /*
      *
      *
