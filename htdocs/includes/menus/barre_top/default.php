@@ -51,7 +51,7 @@ if (strstr($GLOBALS["SCRIPT_URL"],DOL_URL_ROOT.'/compta/'))
   print '<TD width="15%" class="menusel" align="center">';
   if ($user->compta > 0)
     {
-      print '<A class="menusel" href="/compta/">Compta</A></TD>';
+      print '<A class="menusel" href="'.DOL_URL_ROOT.'/compta/">Compta</A></TD>';
     } 
   else
     {
@@ -64,7 +64,7 @@ else
   print '<TD width="15%" class="menu" align="center">';
   if ($user->compta > 0)
     {
-      print '<A class="menu" href="/compta/">Compta</A></TD>';
+      print '<A class="menu" href="'.DOL_URL_ROOT.'/compta/">Compta</A></TD>';
     } 
   else
     {
@@ -75,14 +75,15 @@ else
 print '<TD width="15%" class="menu" align="center">';
 if ($conf->produit->enabled ) 
 {
-  print '<A class="menu" href="/product/">Produits</a>';
+  print '<A class="menu" href="'.DOL_URL_ROOT.'/product/">Produits</a>';
 }
 else
 {
   print '-';
 }
 print '</td><td width="15%" class="menu" align="center">';
-if ($conf->webcal->enabled) {
+if ($conf->webcal->enabled)
+{
   print '<a class="menu" href="'.$conf->webcal->url.'">Calendrier</a>';
 };
 print '&nbsp;</TD>';
