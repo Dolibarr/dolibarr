@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,12 +45,25 @@ class Account
     
     return 1;
   }
+
   /*
-   *
+   * Efface une entree dans la table llx_bank
+   */
+
+  Function deleteline($rowid) {
+    $sql = "DELETE FROM llx_bank WHERE rowid=$rowid";
+    $result = $this->db->query($sql);
+    if ($result) {
+      $sql = "DELETE FROM llx_bank_class WHERE lineid=$rowid";
+      $result = $this->db->query($sql);
+    }
+  }
+  /*
+   * Ajoute une entree dans la table llx_bank
    *
    */
 
-  Function addline($date, $oper, $label, $amount, $num_chq="")
+  Function addline($date, $oper, $label, $amount, $num_chq="",$categorie='')
   {
     if ($this->rowid)
       {
@@ -83,10 +97,22 @@ class Account
 
 	if ($this->db->query($sql))
 	  {
-	    return 1;
+	    $rowid = $this->db->last_insert_id();
+	    if ($categorie)
+	      {
+		$sql = "INSERT INTO llx_bank_class (lineid, fk_categ) VALUES ($rowid, $categorie)";
+		$result = $this->db->query($sql);
+		if ($result){
+		  return $rowid;
+		}else{
+		  return '';
+		}
+	      }
+	    return $rowid;
 	  }
 	else
 	  {
+	    return '';
 	    print $this->db->error();
 	    print "<br>$sql";
 	  }
