@@ -58,7 +58,7 @@ if ($result)
   print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.prenom\">Prenom</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.nom\">Nom</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.societe\">Société</a></td>\n";
   print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=DESC&sortfield=d.datefin\">Date Cotisation</a></td>\n";
   print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.email\">Email</a></td>\n";
-  print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.libelle\">Type</a></td>\n";
+  print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=t.libelle\">Type</a></td>\n";
   print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.morphy\">Personne</a></td>\n";
   print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.statut\">Statut</a></td>\n";
   print "<td>Action</td>\n";
