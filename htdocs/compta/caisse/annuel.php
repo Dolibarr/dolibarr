@@ -109,7 +109,7 @@ print '</tr>';
 print '<tr class="liste_titre">';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="right">Dépenses</td><td align="right">Recettes</td>';
+  print '<td align="right">Recettes</td><td align="right">Dépenses</td>';
 }
 print '</tr>';
 
