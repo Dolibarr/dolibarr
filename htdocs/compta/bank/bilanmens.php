@@ -36,7 +36,7 @@ if ($user->societe_id > 0)
 }
 
 print_titre("Bilan mensuel Entrées/Sorties pour ce compte bancaire");
-
+print '<br>';
 
 # Le bilan est basé sur lx_bank (car doit inclure les transactions sans facture)
 # plutot que sur llx_paiement + llx_paiementfourn
@@ -82,7 +82,7 @@ if ($db->query($sql))
 }
 
 
-print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="4">';
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td rowspan=2>Mois</td>';
 
 $year_current = strftime("%Y",time());
@@ -106,13 +106,15 @@ print '</tr>';
 print '<tr class="liste_titre">';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 { 
-  print '<td align="center">Débits</td><td align="center">Crédits</td>';
+  print '<td align="right">Débits</td><td align="right">Crédits</td>';
 }
 print '</tr>';
 
+$var=True;
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
-  print '<tr>';
+  $var=!$var;
+  print '<tr '.$bc[$var].'>';
   print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
   for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
@@ -138,10 +140,11 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
   print '</tr>';
 }
 
-print "<tr><td><b>Total annuel</b></td>";
+$var=!$var;
+print "<tr ".$bc[$var]."><td><b>Total annuel</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="right">'.$totsorties[$annee].'</td><td align="right">'.$totentrees[$annee].'</td>';
+  print '<td align="right"><b>'.price($totsorties[$annee]).'</b></td><td align="right"><b>'.price($totentrees[$annee]).'</b></td>';
 }
 print "</tr>\n";
 
