@@ -41,7 +41,7 @@ if ($user->societe_id > 0)
  *
  */	
 
-if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] == yes && $user->rights->commande->valider)
+if ($HTTP_POST_VARS["action"] == 'confirm_cloture' && $HTTP_POST_VARS["confirm"] == yes)
 {
   $commande = new Commande($db);
   $commande->fetch($_GET["id"]);
@@ -76,6 +76,22 @@ if ($id > 0)
       /*
        *   Commande
        */
+
+	  
+      /*
+       * Confirmation de la validation
+       *
+       */
+      if ($_GET["action"] == 'cloture')
+	{
+	  $html->form_confirm("$PHP_SELF?id=$id","Cloturer la commande","Etes-vous sûr de cloturer cette commande ?","confirm_cloture");
+	}
+      
+      
+      /*
+       *
+       */
+
       print '<form method="post" action="fiche.php">';
       print '<input type="hidden" name="action" value="create">';
       print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
@@ -213,6 +229,12 @@ if ($id > 0)
 	  print '<td colspan="3">';
 	  $html->select_array("entrepot_id",$entrepot->list_array());
 	  print '</td></tr>';
+
+	  print '<tr><td width="20%">Méthode</td>';
+	  print '<td colspan="3">';
+	  $html->select_array("entrepot_id",$entrepot->list_array());
+	  print '</td></tr>';
+
 	  print '<tr><td colspan="4" align="center"><input type="submit" value="Créer"></td></tr>';
 	}
       print "</table>";
@@ -232,7 +254,7 @@ if ($id > 0)
 		  $sql = "SELECT e.label as entrepot, ps.reel, p.label ";
 		  $sql .= " FROM llx_entrepot as e, llx_product_stock as ps, llx_product as p";
 		  $sql .= " WHERE e.rowid = ps.fk_entrepot AND ps.fk_product = p.rowid AND ps.fk_product = $key";
-		  $sql .= " AND reel < $value";
+		  $sql .= " AND e.statut = 1 AND reel < $value";
 		      
 		  $result = $db->query($sql);
 		  if ($result)
@@ -266,7 +288,7 @@ if ($id > 0)
 	  print '<td align="center" width="20%">-</td>';
 	  print '<td align="center" width="20%">-</td>';
 	    
-	  if ($user->rights->expedition->valider && $reste_a_livrer_total == 0)
+	  if ($user->rights->expedition->valider && $reste_a_livrer_total == 0 && $commande->statut < 3)
 	    {
 	      print '<td align="center" width="20%"><a href="commande.php?id='.$_GET["id"].'&amp;action=cloture">Clôturer</a></td>';
 	    }
