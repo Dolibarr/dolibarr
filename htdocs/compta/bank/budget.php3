@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 
@@ -38,12 +38,13 @@ $db = new Db();
  *
  */
 
-if ($bid == 0) {
+if ($bid == 0)
+{
   /*
    *   Liste
    */
-  print "<b>Budgets</b>";
-
+  print_titre("Budgets");
+  
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";
   echo '<td>Description</TD><td>Nb</td><td colspan=\"2\">Total</td><td>Moyenne</td>';
@@ -54,45 +55,55 @@ if ($bid == 0) {
   $sql .= " WHERE d.rowid=l.lineid AND c.rowid = l.fk_categ GROUP BY c.label, c.rowid ORDER BY c.label";
   
   $result = $db->query($sql);
-  if ($result) {
-    $num = $db->num_rows();
-    $i = 0; $total = 0;
-    
-    $var=True;
-    while ($i < $num) {
-      $objp = $db->fetch_object( $i);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td><a href=\"$PHP_SELF?bid=$objp->rowid\">$objp->label</a></td>";
-      print "<td>$objp->nombre</td>";
-      print "<td align=\"right\">".price(abs($objp->somme))."</td>";
-      print "<td align=\"right\"><small>".francs(abs($objp->somme))."&nbsp;FF</small></td>";
-      print "<td align=\"right\">".price(abs($objp->somme / $objp->nombre))."</td>";
-      print "</tr>";
-      $i++;
-      $total = $total + abs($objp->somme);
+  if ($result)
+    {
+      $num = $db->num_rows();
+      $i = 0; $total = 0;
+      
+      $var=True;
+      while ($i < $num)
+	{
+	  $objp = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<tr $bc[$var]>";
+	  print "<td><a href=\"$PHP_SELF?bid=$objp->rowid\">$objp->label</a></td>";
+	  print "<td>$objp->nombre</td>";
+	  print "<td align=\"right\">".price(abs($objp->somme))."</td>";
+	  print "<td align=\"right\"><small>".francs(abs($objp->somme))."&nbsp;FF</small></td>";
+	  print "<td align=\"right\">".price(abs($objp->somme / $objp->nombre))."</td>";
+	  print "</tr>";
+	  $i++;
+	  $total = $total + abs($objp->somme);
+	}
+      $db->free();
+
+      print '<tr><td colspan="2" align="right">Total</td>';
+      print '<td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
+      print "<tr><td colspan=\"3\" align=\"right\"><small>soit en francs</td><td align=\"right\"><small>".francs($total)."</td></tr>\n";
     }
-    $db->free();
-    print "<tr><td colspan=\"2\" align=\"right\">Total</td><td align=\"right\"><b>".price($total)."</b></td></tr>";
-    print "<tr><td colspan=\"3\" align=\"right\"><small>soit en francs</td><td align=\"right\"><small>".francs($total)."</td></tr>\n";
-  } else {
-    print $db->error();
-  }
+  else
+    {
+      print $db->error();
+    }
   print "</table>";
 
-} else {
+}
+else
+{
   /*
    *  Vue
    */
   $sql = "SELECT label FROM llx_bank_categ WHERE rowid=$bid";
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() ) {
-      $budget_name = $db->result(0,0);
+  if ( $db->query($sql) )
+    {
+      if ( $db->num_rows() )
+	{
+	  $budget_name = $db->result(0,0);
+	}
+      $db->free();
     }
-    $db->free();
-  }
-
-  print "<b>Budget : $budget_name</b>";
+  
+  print_titre("Budget : $budget_name");
 
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";
@@ -104,33 +115,37 @@ if ($bid == 0) {
   $sql .= " WHERE d.rowid=l.lineid AND l.fk_categ=$bid ORDER by d.dateo DESC";
   
   $result = $db->query($sql);
-  if ($result) {
-    $num = $db->num_rows();
-    $i = 0; $total = 0;
-    
-    $var=True;
-    while ($i < $num) {
-      $objp = $db->fetch_object( $i);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td align=\"right\">".strftime("%d %B %Y",$objp->do)."</TD>\n";
-
-      print "<td><a href=\"ligne.php3?rowid=$objp->rowid\">$objp->label</a></td>";
-      print "<td align=\"right\">".price(abs($objp->amount))."</td>";
-      print "<td align=\"right\"><small>".francs(abs($objp->amount))."</small></td>";
-
-      print "</tr>";
-      $i++;
-      $total = $total + $objp->amount;
+  if ($result)
+    {
+      $num = $db->num_rows();
+      $i = 0; $total = 0;
+      
+      $var=True;
+      while ($i < $num)
+	{
+	  $objp = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<tr $bc[$var]>";
+	  print "<td align=\"right\">".strftime("%d %B %Y",$objp->do)."</TD>\n";
+	  
+	  print "<td><a href=\"ligne.php3?rowid=$objp->rowid\">$objp->label</a></td>";
+	  print "<td align=\"right\">".price(abs($objp->amount))."</td>";
+	  print "<td align=\"right\"><small>".francs(abs($objp->amount))."</small></td>";
+	  
+	  print "</tr>";
+	  $i++;
+	  $total = $total + $objp->amount;
+	}
+      $db->free();
+      print "<tr><td colspan=\"2\" align=\"right\">Total</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>euros</td></tr>";
+      print "<tr><td colspan=\"2\" align=\"right\"><small>soit</td><td align=\"right\"><small>".francs(abs($total))."</td><td><small>francs</small></tr>\n";
     }
-    $db->free();
-    print "<tr><td colspan=\"2\" align=\"right\">Total</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>euros</td></tr>";
-    print "<tr><td colspan=\"2\" align=\"right\"><small>soit</td><td align=\"right\"><small>".francs(abs($total))."</td><td><small>francs</small></tr>\n";
-  } else {
-    print $db->error();
+  else
+    {
+      print $db->error();
   }
   print "</table>";
-
+  
 }
 
 

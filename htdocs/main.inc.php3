@@ -19,7 +19,6 @@
  * $Source$
  *
  */
-
 require ($GLOBALS["DOCUMENT_ROOT"]."/conf/conf.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/lib/mysql.lib.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/lib/functions.inc.php3");
@@ -28,6 +27,7 @@ require ($GLOBALS["DOCUMENT_ROOT"]."/user.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/menu.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/societe.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/rtplang.class.php");
+
 
 $conf = new Conf();
 

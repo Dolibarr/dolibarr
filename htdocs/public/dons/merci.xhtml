@@ -14,17 +14,35 @@
       </p>
 
       <p>
-	Merci pour votre soutient
+	Merci pour votre soutien.
       </p>
-      <!-- Paiement en ligne -->
-      <!--
-      <form action="pay.php" method="post">
-	<script language="php">
-	  require("code_valid.php");
-	</script>
-	<input type="submit" value="Valider" />
-      </form>
-      -->
+
+      <table id="formulaire">
+	<tr id="prenom">
+	  <script language="php">
+	    print stripslashes($don->prenom);
+	  </script>
+	</tr>
+	
+	<tr id="nom">
+	    <script language="php">
+	    print stripslashes($don->nom);
+	  </script>
+	</tr>
+
+	<tr id="societe">
+	    <script language="php">
+	    print stripslashes($don->societe);
+	  </script>
+	</tr>
+
+	<tr id="montant">
+	  <script language="php">
+	    print stripslashes($don->amount);
+	  </script>
+	</tr>
+      </table>
+
     </div>    
   </body>  
 </html>
