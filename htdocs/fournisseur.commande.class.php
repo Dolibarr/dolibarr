@@ -71,11 +71,11 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 
       $sql .= " WHERE c.rowid = ".$id;
 
-      $result = $this->db->query($sql) ;
+      $resql = $this->db->query($sql) ;
       
-      if ( $result )
+      if ( $resql )
 	{
-	  $obj = $this->db->fetch_object();
+	  $obj = $this->db->fetch_object($resql);
 	  
 	  $this->id                  = $obj->rowid;
 	  $this->ref                 = $obj->ref;
@@ -95,20 +95,25 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 	  $this->facturee            = $obj->facture;
 	  $this->projet_id           = $obj->fk_projet;
 
-	  $this->db->free();
+	  $this->db->free($resql);
 	  
 	  if ($this->statut == 0)
 	    {
 	      $this->brouillon = 1;
 	    }
-	  return 0;
+
+	  $result = 0;
+
 	}
       else
 	{
 	  dolibarr_syslog("CommandeFournisseur::Fetch Error $sql");
 	  dolibarr_syslog("CommandeFournisseur::Fetch Error ".$this->db->error());
-	  return -1;
+	  $result = -1;
 	}
+
+      return $result ;
+
     }
   /**
    * Log
