@@ -336,9 +336,9 @@ if ($socid > 0) {
        *
        */
       print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
-      print '<tr class="liste_titre"><td>Actions à faire</a></td></tr>';
+      print '<tr class="liste_titre"><td>Actions à faire</td><td align="right"> [<a href="action/fiche.php3?action=create&socid='.$socid.'&afaire=1">Nouvelle action</a>]</td></tr>';
       print '<tr>';
-      print '<td valign="top">';
+      print '<td colspan="2" valign="top">';
 
       $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
       $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u ";
@@ -376,11 +376,14 @@ if ($socid > 0) {
 
 	  print '<td width="10%">&nbsp;</td>';
 
-	  if ($obj->propalrowid) {
-	    print '<td width="40%"><a href="propal.php3?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
-	  } else {
-	    print '<td width="40%">'.$obj->libelle.'</td>';
-	  }
+	  if ($obj->propalrowid)
+	    {
+	      print '<td width="40%"><a href="propal.php3?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+	    }
+	  else
+	    {
+	      print '<td width="40%"><a href="action/fiche.php3?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+	    }
 	  /*
 	   * Contact pour cette action
 	   *
