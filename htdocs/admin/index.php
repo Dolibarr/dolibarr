@@ -91,15 +91,38 @@ if ($_GET["action"] == 'edit')
   print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
   $langs->load("companies");
-  print '<tr class="impair"><td width="50%">'.$langs->trans("ProfIdSiret").'</td><td>';
-  print '<input name="siret" size="20" value="' . MAIN_INFO_SIRET . '"></td></tr>';
 
-  print '<tr class="pair"><td width="50%">'.$langs->trans("ProfIdSiren").'</td><td>';
-  print '<input name="siren" size="20" value="' . MAIN_INFO_SIREN . '"></td></tr>';
+  // Recupere code pays
+  $code_pays=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
+  $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
+  $sql .= " WHERE rowid = ".MAIN_INFO_SOCIETE_PAYS;
+  $result=$db->query($sql);
+  if ($result) {
+    $obj = $db->fetch_object();
+    if ($obj->code) $code_pays=$obj->code;
+  }
+  else {
+    dolibarr_print_error($db);
+  }
+  
+  if ($langs->transcountry("ProfId1",$code_pays) != '-')
+  {
+      print '<tr class="impair"><td width="50%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
+      print '<input name="siret" size="20" value="' . MAIN_INFO_SIRET . '"></td></tr>';
+  }
+  
+  if ($langs->transcountry("ProfId2",$code_pays) != '-')
+  {
+      print '<tr class="pair"><td width="50%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
+      print '<input name="siren" size="20" value="' . MAIN_INFO_SIREN . '"></td></tr>';
+  }
 
-  print '<tr class="impair"><td width="50%">'.$langs->trans("ProfIdApe").'</td><td>';
-  print '<input name="ape" size="20" value="' . MAIN_INFO_APE . '"></td></tr>';
-
+  if ($langs->transcountry("ProfId3",$code_pays) != '-')
+  {
+      print '<tr class="impair"><td width="50%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
+      print '<input name="ape" size="20" value="' . MAIN_INFO_APE . '"></td></tr>';
+  }
+  
   print '<tr class="pair"><td width="50%">'.$langs->trans("TVAIntra").'</td><td>';
   print '<input name="tva" size="20" value="' . MAIN_INFO_TVAINTRA . '"></td></tr>';
 
@@ -136,15 +159,37 @@ else
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-  print '<tr class="impair"><td width="50%">'.$langs->trans("ProfIdSiret").'</td><td>';
-  print MAIN_INFO_SIRET . '</td></tr>';
-
-  print '<tr class="pair"><td width="50%">'.$langs->trans("ProfIdSiren").'</td><td>';
-  print MAIN_INFO_SIREN . '</td></tr>';
-
-  print '<tr class="impair"><td width="50%">'.$langs->trans("ProfIdApe").'</td><td>';
-  print MAIN_INFO_APE . '</td></tr>';
-
+  // Recupere code pays
+  $code_pays=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
+  $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
+  $sql .= " WHERE rowid = ".MAIN_INFO_SOCIETE_PAYS;
+  $result=$db->query($sql);
+  if ($result) {
+    $obj = $db->fetch_object();
+    if ($obj->code) $code_pays=$obj->code;
+  }
+  else {
+    dolibarr_print_error($db);
+  }
+  
+  if ($langs->transcountry("ProfId1",$code_pays) != '-')
+  {
+    print '<tr class="impair"><td width="50%">'.$langs->transcountry("ProfId1",$code_pays).'</td><td>';
+    print MAIN_INFO_SIRET . '</td></tr>';
+  }
+  
+  if ($langs->transcountry("ProfId2",$code_pays) != '-')
+  {
+    print '<tr class="pair"><td width="50%">'.$langs->transcountry("ProfId2",$code_pays).'</td><td>';
+    print MAIN_INFO_SIREN . '</td></tr>';
+  }
+  
+  if ($langs->transcountry("ProfId3",$code_pays) != '-')
+  {
+    print '<tr class="impair"><td width="50%">'.$langs->transcountry("ProfId3",$code_pays).'</td><td>';
+    print MAIN_INFO_APE . '</td></tr>';
+  }
+  
   print '<tr class="pair"><td>'.$langs->trans("TVAIntra").'</td><td>' . MAIN_INFO_TVAINTRA . '</td></tr>';
 
   print '</table><br>';
