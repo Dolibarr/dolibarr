@@ -50,6 +50,7 @@ class pdf_soleil extends ModelePDFFicheinter
     */
   function write_pdf_file($id)
     {
+      global $conf;
 
       $fich = new Fichinter($this->db,"",$id);
       if ($fich->fetch($id))
