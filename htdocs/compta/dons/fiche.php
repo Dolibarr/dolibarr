@@ -267,6 +267,10 @@ if ($rowid > 0 && $action == 'edit')
     {
       print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=valid_promesse\">Valider la promesse</a>]</td>";
     }
+  elseif ($don->statut == 3)
+    {
+      print "<td align=\"center\" width=\"25%\">[<a href=\"formulaire/".DONS_FORM."?rowid=$don->id\">Formulaire</a>]</td>";
+    }
   else
     {
       print "<td align=\"center\" width=\"25%\">-</td>";
