@@ -154,16 +154,15 @@ class Account
 		if ($result){
 		  return $rowid;
 		}else{
-		  return '';
+		  //return '';	On ne quitte pas avec erreur car insertion dans bank_class peut echouer alors que insertion dans bank ok
 		}
 	      }
 	    return $rowid;
 	  }
 	else
 	  {
+	    print $this->db->error().' in '.$sql;
 	    return '';
-	    print $this->db->error();
-	    print "<br>$sql";
 	  }
       }
   }
