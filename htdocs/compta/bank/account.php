@@ -385,7 +385,7 @@ Function _print_lines($db,$sql, $acct)
 	      else
 		{
 		  //Xavier DUTOIT : Ajout d'un lien pour modifier la ligne
-		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">$objp->label</a>&nbsp;";
+		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">$objp->label</a>";
 		  /*
 		   * Ajout les liens
 		   */
