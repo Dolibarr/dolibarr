@@ -91,22 +91,22 @@ if ($action == 'update') {
  */
 if ($action == 'generate') {
   if ($id) {
-    print "<hr><b>Génération du PDF</b><p>";
+
 
     //$DBI = "dbi:mysql:dbname=lolixdev:host=espy:user=rodo";
-
-    $gljroot = "/home/www/dolibarr/dolibarr/htdocs";
 
     $command = 'export LC_TIME=fr_FR ; export DBI_DSN="dbi:'.$conf->db->type.':dbname='.$conf->db->name.':host='.$conf->db->host.'"';
 
     $command .= " ; ./tex-fichinter.pl --fichinter=".$id ;
-    $command .= " --pdf --ps";
+    $command .= " --pdf --ps -vv --html";
     $command .= " --output="    .$conf->fichinter->outputdir;
     $command .= " --templates=" .$conf->fichinter->templatesdir;
 
     $output = system($command);
-    print "<p>command : <b>$command<br>";
     print $output;
+
+    print "<p>command : <b>$command<br>";
+
   } else {
     print $db->error();
   }
@@ -375,18 +375,23 @@ if ($id) {
   print nl2br($fichinter->note);
   print '</td></tr>';
 
-  print '<tr><td>Documents</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'">liste...</a>';
+  print '<tr><td>Documents</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'">liste...</a></td></tr>';
 
   $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.pdf";
   if (file_exists($file)) {
     
-    print '<br>PDF : <a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.pdf">'.$fichinter->ref.'.pdf</a>';
+    print '<tr><td>PDF</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.pdf">'.$fichinter->ref.'.pdf</a></td></tr>';
   }
   $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.ps";
-  if (file_exists($file)) {
-    
-    print '<br>PS : <a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.ps">'.$fichinter->ref.'.ps</a><br>';
+  if (file_exists($file)) {    
+    print '<tr><td>PS</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.ps">'.$fichinter->ref.'.ps</a></td></tr>';
   }
+
+  $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.tex";
+  if (file_exists($file)) {    
+    print '<tr><td>tex</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.tex">'.$fichinter->ref.'.tex</a></td></tr>';
+  }
+
 
   print '</td></tr>';
 

@@ -154,7 +154,6 @@ function print_duree_select($prefix) {
 }
 
 function price($amount) {
-
   return number_format($amount, 2, '.', ' ');
   //return sprintf("%.2f", $amount);
 }

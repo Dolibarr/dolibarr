@@ -359,29 +359,31 @@ if ($action == 'create') {
     $result = $db->query($sql);
     if ($result) {
       $num = $db->num_rows();
-      $i = 0; $total = 0;
-      print "<p><b>Proposition(s) commerciale(s) associée(s)</b>";
-      print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
-      print "<TR class=\"liste_titre\">";
-      print "<td>Num</td>";
-      print "<td>Date</td>";
-      print "<td align=\"right\">Prix</TD>";
-      print "</TR>\n";
+      if ($num) {
+	$i = 0; $total = 0;
+	print "<p><b>Proposition(s) commerciale(s) associée(s)</b>";
+	print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
+	print "<TR class=\"liste_titre\">";
+	print "<td>Num</td>";
+	print "<td>Date</td>";
+	print "<td align=\"right\">Prix</TD>";
+	print "</TR>\n";
     
-      $var=True;
-      while ($i < $num) {
-	$objp = $db->fetch_object( $i);
-	$var=!$var;
-	print "<TR $bc[$var]>";
-	print "<TD><a href=\"propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-	print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-	print '<TD align="right">'.price($objp->price).'</TD>';
-	print "</tr>";
-	$total = $total + $objp->price;
-	$i++;
+	$var=True;
+	while ($i < $num) {
+	  $objp = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<TR $bc[$var]>";
+	  print "<TD><a href=\"propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+	  print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+	  print '<TD align="right">'.price($objp->price).'</TD>';
+	  print "</tr>";
+	  $total = $total + $objp->price;
+	  $i++;
+	}
+	print "<tr><td align=\"right\" colspan=\"3\">Total : <b>".price($total)."</b> $_MONNAIE HT</td></tr>\n";
+	print "</table>";
       }
-      print "<tr><td align=\"right\" colspan=\"3\">Total : <b>".price($total)."</b> $_MONNAIE HT</td></tr>\n";
-      print "</table>";
     } else {
       print $db->error();
     }

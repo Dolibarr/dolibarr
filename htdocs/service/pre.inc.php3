@@ -36,6 +36,8 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add("/service/index.php3", "Services");
 
+  $menu->add_submenu("/service/fiche.php3?action=create", "Nouveau");
+
   $menu->add("/comm/index.php3", "Clients");
 
   $menu->add("/fourn/index.php3", "Fournisseurs");

@@ -131,14 +131,14 @@ if ($action == 'create') {
     print '</table>';
 
 
-    print '<br><table width="100%" border="1" cellspacing="0" cellpadding="0">';
+    print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
 
-    print '<td width="20%">Barre d\'action</td>';
+    print '<td width="20%" align="center">-</td>';
 
-    print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+    print '<td width="20%" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
 
-    print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=datedeb&id='.$id.'">Date de debut</a>]</td>';
-    print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=datefin&id='.$id.'">Date de fin</a>]</td>';
+    print '<td width="20%" align="center">[<a href="fiche.php3?action=datedeb&id='.$id.'">Date de debut</a>]</td>';
+    print '<td width="20%" align="center">[<a href="fiche.php3?action=datefin&id='.$id.'">Date de fin</a>]</td>';
     print '<td width="20%" align="center">-</td>';
 
     print '</table><br>';

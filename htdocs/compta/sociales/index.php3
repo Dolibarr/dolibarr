@@ -55,7 +55,7 @@ if ($action == 'del_bookmark') {
   $result = $db->query($sql);
 }
 
-print_titre("Charges $year");
+print_titre("Charges sociales $year");
 
 /*
  *
@@ -64,7 +64,9 @@ print_titre("Charges $year");
 
 print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print "<TR class=\"liste_titre\">";
-print '<td>Echeance</td><td>Période</td><TD colspan="2">Charges</td><td align="right">Montant</td><td>&nbsp;</td>';
+print '<td>Echeance</td><td>Période</td><td colspan="2">';
+print_liste_field_titre("Charges",$PHP_SELF,"c.libelle");
+print '</td><td align="right">Montant</td><td>&nbsp;</td>';
 print "</TR>\n";
 
 

@@ -34,26 +34,28 @@ Sys::Syslog::openlog($0, 'pid', 'daemon');
 
 
 
-my($debug, $verbose, $bgcolor, $idfiche, $do_fax, $do_pdf, $do_ps, 
-   $templatesdir, $outputdir) = (0,0);
+my($html, $debug, $verbose, $idfiche, $do_pdf, $do_ps, $templatesdir, $outputdir) = (0,0);
 
 exit unless GetOptions("fichinter=i"    =>\$idfiche,
-		       "fax"         =>\$do_fax,
 		       "templates=s" =>\$templatesdir,
 		       "output=s" =>\$outputdir,
 		       "ps"          =>\$do_ps,
 		       "pdf"         =>\$do_pdf,
+		       "html"         =>\$html,
 		       "v+"          =>\$verbose);
 
 Sys::Syslog::syslog('info', 'Start Fiche Inter '.$idfiche);
 Sys::Syslog::syslog('info', '['.$idfiche.'] Start');
 my $DEBUG = 1;
 
+
+
 my $mdir = "$outputdir";
 unless (-d $mdir) {
     mkdir($mdir,0777) || die "cannot mkdir " . $mdir . ": $!";
 }
 print "Output in : $outputdir\n" if $verbose > 1;
+print "<br>\n" if ($verbose > 1 && $html);
 #
 #
 # Fetch datas
@@ -94,6 +96,7 @@ if ( $sth->execute ) {
 }
 
 $outputdir .= "/".$numfiche;
+
 Sys::Syslog::syslog('info', '['.$idfiche.'] Outputdir : ' . $outputdir);
 unless (-d $outputdir) {
     print "Make dir : $outputdir\n" if $verbose > 1;
@@ -101,6 +104,7 @@ unless (-d $outputdir) {
 }
 
 print "Output in : $outputdir\n" if $verbose > 1;
+print "<br>\n" if ($verbose > 1 && $html);
 #
 # Decoupage de l'adresse en 2 lignes
 #
@@ -114,6 +118,7 @@ if (/^(.*)\n(.*)/) {
     print "|$adresse2|\n";
 }
 print "|$address|\n";
+print "<br>\n" if ($verbose > 1 && $html);
 
 #
 #
@@ -166,10 +171,7 @@ while (<FH>)  {
 }
 close (FH);
 print FC "\n";
-while ($line < 15) {
-    print FC "\\\\\n";
-    $line++;
-}
+
 
 #
 # Footer
@@ -188,42 +190,44 @@ while (<FH>)  {
 }
 close (FH);
 
-
-#
-#
-#
-
-
 close (FC);
 
 $dbh->disconnect if $dbh;
 #
-system("cd $outputdir/ ; recode -d iso8859-1..ltex < $numfiche.tex > recode-$numfiche.tex"); 
+#
+# Generation des documents 
 #
 #
-print "Generate dvi file<br>\n";
-system("cd $outputdir/ ; latex recode-$numfiche.tex "); 
-#
-#
-#
+if (-r "$outputdir/$numfiche.tex" ) {
 
-
-
-
-print "<p>Generate pdf file<br>\n";
-system("cd $outputdir/ ; pdflatex recode-$numfiche.tex > /dev/null");
-system("cd $outputdir/ ; mv recode-$numfiche.pdf $numfiche.pdf > /dev/null");
-
-print "Generate ps file\n";
-system("cd $outputdir/ ; dvips recode-$numfiche.dvi -o $numfiche.ps ");
-
-#
-# $outputdir/$numfiche.tex
-#
-if ($do_fax) {
-    print "Generate fax file\n";
-    system("gs -q -sDEVICE=tiffg3 -dNOPAUSE -sOutputFile=$outputdir/$numfiche.%03d $outputdir/$numfiche.ps </dev/null");
+    system("cd $outputdir/ ; recode -d iso8859-1..ltex < $numfiche.tex > recode-$numfiche.tex"); 
 }
-Sys::Syslog::syslog('info', 'End propale '.$idfiche);
+#
+#
+if (-r "$outputdir/recode-$numfiche.tex") {
+    print "Generate dvi file\n";
+    system("cd $outputdir/ ; latex recode-$numfiche.tex "); 
+}
+#
+#
+#
+
+
+print "<p>Generate pdf file\n";
+if (-r "$outputdir/recode-$numfiche.tex") {
+    system("cd $outputdir/ ; pdflatex recode-$numfiche.tex > /dev/null");
+}
+
+if (-r "$outputdir/recode-$numfiche.tex") {
+    system("cd $outputdir/ ; mv recode-$numfiche.pdf $numfiche.pdf > /dev/null");
+}
+
+if (-r "$outputdir/recode-$numfiche.dvi") {
+    print "Generate ps file\n";
+    system("cd $outputdir/ ; dvips recode-$numfiche.dvi -o $numfiche.ps ");
+}
+
+
+Sys::Syslog::syslog('info', 'End ficheinter '.$idfiche);
 Sys::Syslog::closelog();
 
