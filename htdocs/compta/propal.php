@@ -21,6 +21,12 @@
  */
 require("./pre.inc.php");
 
+$user->getrights('facture');
+$user->getrights('propale');
+if (!$user->rights->propale->lire)
+  accessforbidden();
+
+
 require("../lib/CMailFile.class.php");
 /*
  *  Modules optionnels
@@ -108,7 +114,7 @@ if ($propalid)
             
       $color1 = "#e0e0e0";
 
-      print '<table border="1" cellspacing="0" cellpadding="2" width="100%">';
+      print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
 
       print '<tr><td>Société</td><td colspan="2"><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print "<td valign=\"top\" width=\"50%\" rowspan=\"9\">Note :<br>". nl2br($obj->note)."</td></tr>";
@@ -209,7 +215,7 @@ if ($propalid)
 	    {
 	      print_titre("Facture associée");
 	    }
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="3">';
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<tr>";
 	  print "<td>Numéro</td>";
 	  print "<td>Date</td>";
@@ -253,30 +259,31 @@ if ($propalid)
       /*
        * Actions
        */
-      if ($obj->statut <> 4)
+      if ($obj->statut <> 4 && $user->societe_id == 0)
 	{  
-	  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+	  print '<p><table id="actions" width="100%" cellspacing="4" cellpadding="4"><tr>';
 	  
-	  if ($obj->statut == 2)
+	  if ($obj->statut == 2 && $user->rights->facture->creer)
 	    {
-	      print '<td bgcolor="#e0e0e0" align="center" width="25%">';
+	      print '<td width="20%">';
 	      print "<a href=\"facture.php?propalid=$propalid&action=create\">Emettre une facture</td>";
 	    }
 	  else
 	    {
-	      print '<td align="center" width="25%">-</td>';
+	      print '<td width="20%">-</td>';
 	    }
 	  
-	  print '<td align="center" width="25%">-</td>';
-	  print '<td align="center" width="25%">-</td>';
+	  print '<td width="20%">-</td>';
+	  print '<td width="20%">-</td>';
+	  print '<td width="20%">-</td>';
 	  
 	  if ($obj->statut == 2 && $num_fac_asso)
 	    {
-	      print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=setstatut&statut=4\">Facturée</a>]</td>";
+	      print "<td width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=setstatut&statut=4\">Facturée</a>]</td>";
 	    }
 	  else	
 	    {
-	      print '<td align="center" width="25%">-</td>';
+	      print '<td width="20%">-</td>';
 	    }
 	  print "</tr></table>";
 	}
