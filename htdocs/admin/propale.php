@@ -31,6 +31,44 @@ if (!$user->admin)
 
 $db = new Db();
 
+if ($action == 'set')
+{
+  $sql = "INSERT INTO llx_propal_model_pdf (nom) VALUES ('".$value."')";
+
+  if ($db->query($sql))
+    {
+
+    }
+}
+if ($action == 'del')
+{
+  $sql = "DELETE FROM llx_propal_model_pdf WHERE nom='".$value."'";
+
+  if ($db->query($sql))
+    {
+
+    }
+}
+
+
+$def = array();
+
+$sql = "SELECT nom FROM llx_propal_model_pdf";
+if ($db->query($sql))
+{
+  $i = 0;
+  while ($i < $db->num_rows())
+    {
+      $array = $db->fetch_array($i);
+      array_push($def, $array[0]);
+      $i++;
+    }
+}
+else
+{
+  print $db->error();
+}
+
 // positionne la variable pour le test d'affichage de l'icone
 
 $propale_addon_var_pdf = PROPALE_ADDON_PDF;
@@ -59,8 +97,8 @@ print '<table border="1" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Info</td>';
-print '<td align="center">Activé</td>';
-print '<td>&nbsp;</td>';
+print '<td align="center" colspan="2">Actif</td>';
+print '<td align="center" colspan="2">Défaut</td>';
 print "</TR>\n";
 
 clearstatcache();
@@ -81,6 +119,23 @@ while (($file = readdir($handle))!==false)
       $obj = new $classname();
       
       print $obj->description;
+
+      print '</td><td align="center">';
+
+      if (in_array($name, $def))
+	{
+	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	  print "</td><td>\n";
+	  print '<a href="propale.php?action=del&value='.$name.'">désactiver</a>';
+	}
+      else
+	{
+	  print "&nbsp;";
+	  print "</td><td>\n";
+	  print '<a href="propale.php?action=set&value='.$name.'">activer</a>';
+	}
+
+
 
       print '</td><td align="center">';
 
