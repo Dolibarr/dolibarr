@@ -143,8 +143,8 @@ if ($action == 'create')
 
   print '<form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
-  print '<table cellspacing="0" cellpadding="3" border="1" width="100%">';
-  print "<tr $bc[1]>".'<td>Société :</td>';
+  print '<table class="border" cellspacing="0" cellpadding="3" border="1" width="100%">';
+  print '<tr><td>Société :</td>';
 
   print '<td><select name="socidp">';
 
@@ -174,19 +174,19 @@ if ($action == 'create')
   print '</select></td>';
   print "<td>Commentaires :</td></tr>";
 
-  print "<tr $bc[1]>".'<td>Numéro :</td><td><input name="facnumber" type="text"></td>';
+  print '<tr><td>Numéro :</td><td><input name="facnumber" type="text"></td>';
 
   print '<td rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="30" rows="6"></textarea></td></tr>';
 
-  print "<tr $bc[1]>".'<td>Libellé :</td><td><input size="30" name="libelle" type="text"></td></tr>';
+  print "<tr>".'<td>Libellé :</td><td><input size="30" name="libelle" type="text"></td></tr>';
 
-  print "<tr $bc[1]>".'<td>Date :</td><td>';
+  print "<tr>".'<td>Date :</td><td>';
   $html->select_date();
   print '</td></tr>';
   
-  print "<tr $bc[1]><td>Auteur :</td><td>".$user->fullname."</td></tr>";
-
+  print '<tr><td>Auteur :</td><td>'.$user->fullname.'</td></tr>';
   print "</table><br>";
+
   print '<table cellspacing="0" cellpadding="3" border="1" width="100%">';
   print "<tr $bc[1]>".'<td>&nbsp;</td><td>Libellé</td><td align="center">P.U.</td><td align="center">Qty</td><td align="center">Tx TVA</td></tr>';
 
@@ -218,8 +218,8 @@ if ($action == 'create')
   $html->select_tva("tauxtva4");
   print '</td></tr>';
 
-  print "<tr $bc[1]>".'<td colspan="5" align="center"><input type="submit" value="Enregistrer"></td></tr>';
   print "</table>";
+  print '<p align="center"><input type="submit" value="Enregistrer"></p>';
   print "</form>";
   
 }
@@ -261,7 +261,7 @@ else
 	  print "<form action=\"$PHP_SELF?facid=$obj->rowid\" method=\"post\">";
 	  print '<input type="hidden" name="action" value="update">';
     
-	  print '<table cellspacing="0" border="1" width="100%">';
+	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
 	  print "<tr $bc[1]><td width=\"20%\">Société :</td>";
 	
 	  print '<td width="20%">'.stripslashes($obj->socnom);
@@ -350,7 +350,7 @@ else
 	  /*
 	   *   Facture
 	   */
-	  print '<table border="1" cellspacing="0" cellpadding="2" width="100%">';
+	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
 	  print "<tr $bc[1]><td>Société</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$obj->socidp\">$obj->socnom</a></b></td>";
 	  print "<td align=\"right\"><a href=\"index.php?socidp=$obj->socidp\">Autres factures</a></td>\n";
 	  print "</tr>";
@@ -387,7 +387,7 @@ else
 	      $num = $db->num_rows();
 	      $i = 0; $total = 0;
 
-	      echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="3">';
+	      echo '<table border="1" width="100%" cellspacing="0" cellpadding="3">';
 	      print "<TR class=\"liste_titre\">";
 	      print "<td>Date</td>";
 	      print "<td>Type</td>";
@@ -428,7 +428,7 @@ else
 	   * Lignes
 	   *
 	   */	  
-	  print '<p><table border="1" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<p><table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
 	  print '<tr class="liste_titre"><td class="small">Libellé</td><td align="center" class="small">P.U. HT</td><td align="center" class="small">Qty</td><td align="center" class="small">Total HT</td>';
 	  print '<td align="center" class="small">Taux TVA</td>';
 	  print '<td align="center" class="small">TVA</td>';
@@ -455,7 +455,7 @@ else
        *
        */
 
-      print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr $bc[1]>";
+      print '<p><table id="actions" width="100%" cellspacing="0" cellpadding="4"><tr>';
   
       if ($obj->statut == 0 && $user->societe_id == 0)
 	{
