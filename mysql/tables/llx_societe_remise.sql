@@ -28,7 +28,7 @@ create table llx_societe_remise
   fk_soc          integer NOT NULL,
   tms             timestamp,
   datec	          datetime,                            -- creation date
-  fk_user_auhtor  integer,                             -- utilisateur qui a créé l'info
+  fk_user_author  integer,                             -- utilisateur qui a créé l'info
   remise_client   real           default 0,            -- remise systématique pour le client
   note            text
 
