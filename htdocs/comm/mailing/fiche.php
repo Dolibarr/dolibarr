@@ -33,9 +33,6 @@ $langs->load("mails");
 $message = '';
 
 
-llxHeader("","","Fiche Mailing");
-
-
 // Action envoi mailing pour tous
 if ($_GET["action"] == 'sendall')
 {
@@ -197,6 +194,9 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
   $action = '';
 }
 
+
+
+llxHeader("","","Fiche Mailing");
 
 
 /*
