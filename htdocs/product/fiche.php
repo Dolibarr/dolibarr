@@ -203,6 +203,8 @@ else
 
       if ( $result )
 	{ 
+	  if ($action <> 'edit' && $action <> 're-edit')
+	    {
 	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr class="liste_titre">';
 	  print '<form action="liste.php?type='.$product->type.'" method="post">';
@@ -269,7 +271,7 @@ else
 
       if ($action == 'edit_price' && $user->rights->produit->creer)
 	{
-	  print '<hr><div class="titre">Edition de la fiche '.$types[$product->type].' : '.$product->ref.'</div><br>';
+	  print '<hr><div class="titre">Nouveau prix</div><br>';
 
 	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update_price">';
@@ -283,12 +285,12 @@ else
 	  print '</table>';
 	  print '</form>';
 	}    
-
+	}
 
     
       if (($action == 'edit' || $action == 're-edit') && $user->rights->produit->creer)
 	{
-	  print '<hr><div class="titre">Edition de la fiche '.$types[$product->type].' : '.$product->ref.'</div><br>';
+	  print_fiche_titre('Edition de la fiche '.$types[$product->type].' : '.$product->ref, $mesg);
 
 	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update">';
@@ -297,7 +299,6 @@ else
 	  print "<tr>".'<td width="20%">Référence</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
 	  print '<td>Libellé</td><td colspan="2"><input name="libelle" size="40" value="'.$product->label.'"></td></tr>';
 
-	  print "<tr>".'<td>Prix de vente</td><td>'.price($product->price).'</td></tr>';
 	  print "<tr>".'<td>Taux TVA</td><td colspan="2">';
 	  $html = new Form($db);
 	  print $html->select_tva("tva_tx", $product->tva_tx);
@@ -363,7 +364,7 @@ else
 	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
 	  print '</table>';
 	  print '</form>';
-	}    
+	}
     }
   else
     {
