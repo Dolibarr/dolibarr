@@ -13,8 +13,8 @@
 -------------------------------------------------------------------------------
 
 
-Contents
---------
+Table des matières
+------------------
 
      1.        Installation
      1.1.      Récupérer les sources
@@ -26,8 +26,12 @@ Contents
      2.        Mise à jour
      2.1.      Mise à jour de la base de données
 
-     3.        Facturation
-     3.1.      Créer une facture
+     3.        Propositions commerciales
+     3.1.      Créer une proposition commerciale
+     3.2.      Modèles de proposition
+
+     4.        Facturation
+     4.1.      Créer une facture
 
 
 -------------------------------------------------------------------------------
@@ -132,13 +136,39 @@ Contents
 -------------------------------------------------------------------------------
 
 
-3. Facturation
+3. Propositions commerciales
+----------------------------
+
+     Propositions commerciales
+
+
+3.1. Créer une proposition commerciale
+--------------------------------------
+
+     La création d'une proposition commerciale se fait à partir de la fiche
+     client dans la partie commercial.  Le lien permettant cela se trouve
+     en haut à gauche sur la fiche, sous la barre de menu général.
+
+
+3.2. Modèles de proposition
+---------------------------
+
+     Dolibarr sait gérer plusieurs modèles de propositions.  Vous pouvez
+     créer vous même vos modèles il vous suffit pour cela de connaitre tout
+     de même le php.  Pour les détails reportez-vous à la documentation du
+     développeur.
+
+
+-------------------------------------------------------------------------------
+
+
+4. Facturation
 --------------
 
      Module de facturation.
 
 
-3.1. Créer une facture
+4.1. Créer une facture
 ----------------------
 
      La création d'une facture se fait à partir de la fiche client dans la

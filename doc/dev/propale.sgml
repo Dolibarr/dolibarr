@@ -8,7 +8,10 @@
   
   <sect id="prop-modele">Modèles
     <p>
-      Deux modèles de proposition sont fournit avec Dolibarr, mais vous pouvez en créer autant que vous le souhaitez. Pour cela il vous suffit de créer une nouvelle classe dans un fichier dont le nom doit être de la forme pdf_propale_MISC.modules.php où MISC est une chaine de caractère de votre choix. Une fois ce fichier créer la classe qu'il définit doit se nommer pdf_propale_MISC.
+      Deux modèles de proposition sont fournit avec Dolibarr, mais vous pouvez en créer autant que vous le souhaitez. Pour cela il vous suffit de créer une nouvelle classe dans un fichier dont le nom doit être de la forme pdf_propale_MISC.modules.php où MISC est une chaine de caractère de votre choix. Une fois ce fichier créé la classe qu'il définit doit se nommer pdf_propale_MISC.
+    </p>
+    <p>
+      Le nom (MISC) ne doit pas dépasser 50 caractères.
     </p>
   </sect>
 
