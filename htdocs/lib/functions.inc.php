@@ -173,6 +173,17 @@ Function img_edit($alt = "Modifier")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit.png" border="0" alt="'.$alt.'" title="Modifier">';
 }
 
+Function img_phone_in($alt = "Modifier")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+Function img_phone_out($alt = "Modifier")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call_out.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+
 Function img_alerte($alt = "Alerte")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/alerte.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
@@ -984,8 +995,7 @@ function tab_count($basename,$bc1,$bc2,$ftc) {
   print "</tr>\n";
   
   $db->free();
-  
-  
+    
   $sql="SELECT count(*) AS nbsoc from logsoc";
   
   $result = $db->query($sql);
