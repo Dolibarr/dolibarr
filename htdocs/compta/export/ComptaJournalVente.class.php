@@ -82,46 +82,34 @@ class ComptaJournalVente  {
 	  $sql .= " WHERE f.rowid = l.fk_facture ";
 	  $sql .= " AND s.idp = f.fk_soc";
 	  $sql .= " AND f.fk_statut = 1 ";
-	  
 	  $sql .= " AND l.fk_code_ventilation <> 0 ";
-	  
-	  $sql .= " AND l.fk_export_compta <> 0";
-	  
+	  $sql .= " AND l.fk_export_compta <> 0";	  
 	  $sql .= " AND c.rowid = l.fk_code_ventilation";
-
 	  $sql .= " AND date_format(f.datef,'%Y%m') = '".$date."'";
 	  
-	  $sql .= " ORDER BY date_format(f.datef,'%Y%m%d') ASC";
+	  $sql .= " ORDER BY date_format(f.datef,'%Y%m%d') ASC, f.rowid, l.rowid";
 	  
-
 	  $oldate = '';
-	  
-	  if ($this->db->query($sql))
+	  $oldfac = '';
+
+	  $resql = $this->db->query($sql);
+
+	  if ($resql)
 	    {
-	      $num = $this->db->num_rows();
+	      $num = $this->db->num_rows($resql);
 	      $i = 0; 
 	      $var = True;
 	      $journ = 'VE';
 	      $hligne = 5;
 
+	      $wc = array(0,14,6,16,16,90,16,12,4,16);
+
 	      while ($i < $num)
 		{
-		  $obj = $this->db->fetch_object();
+		  $obj = $this->db->fetch_object($resql);
 
 		  if ($oldate <> strftime("%d%m%Y",$obj->dp))
 		    {
-
-		      if ($oldate <> '')
-			{
-			  $pdf->SetFont('Arial','B',9);
-
-			  $pdf->cell(143,$hligne,'');
-
-			  $pdf->cell(16,$hligne,'Total : ',0,0,'R');
-			  $pdf->cell(18,$hligne,$total_debit,0,0,'R');
-			  $pdf->cell(18,$hligne,$total_credit,0,0,'R');
-			  $pdf->ln();
-			}
 
 		      $journal = "Journal $journ du ".strftime('%A, %e %B %G',$obj->dp);
 		      $total_credit = 0 ;
@@ -133,19 +121,16 @@ class ComptaJournalVente  {
 
 		      $pdf->SetFont('Arial','',9);
 
-		      $pdf->cell(16,$hligne,'Date');
+		      $pdf->cell($wc[1],$hligne,'Date');
+		      $pdf->cell($wc[2],$hligne,'');
+		      $pdf->cell($wc[3],$hligne,'Compte');
+		      $pdf->cell($wc[4],$hligne,'Tiers');
+		      $pdf->cell($wc[5],$hligne,'Libellé');
+		      $pdf->cell($wc[6],$hligne,'Facture');
+		      $pdf->cell($wc[7],$hligne,'Montant',0,0,'R');
+		      $pdf->cell($wc[8],$hligne,'');
+		      $pdf->cell($wc[9],$hligne,'Echeance',0,0,'R');
 
-		      $pdf->cell(20,$hligne,'N Facture');
-
-		      $pdf->cell(20,$hligne,'Tiers');
-
-		      $pdf->cell(87,$hligne,'Libellé');
-
-		      $pdf->cell(16,$hligne,'Echeance',0,0,'R');
-
-		      $pdf->cell(18,$hligne,'Débit',0,0,'R');
-
-		      $pdf->cell(18,$hligne,'Crédit',0,0,'R');
 		      $pdf->ln();
 
 		      $oldate = strftime("%d%m%Y",$obj->dp);
@@ -156,6 +141,9 @@ class ComptaJournalVente  {
 		   */
 		  $socnom = $obj->nom;
 		  $libelle = "Facture";
+		  $amount = abs($obj->amount);
+		  $price = abs(price($obj->price));
+		  $tva = abs($obj->tva);
 
 		  if (strlen($obj->nom) > 31)
 		  {
@@ -166,84 +154,55 @@ class ComptaJournalVente  {
 
 		  if ($obj->amount >= 0)
 		    {
-		      $credit = '';
-		      $debit = abs($obj->amount);
-		      $total_debit = $total_debit + $debit;
+		      $d = "D";
+		      $c = "C";
 		    }
 		  else
 		    {
-		      $credit = abs($obj->amount);
-		      $debit = '';
-		      $total_credit = $total_credit + $credit;
-		      $libelle = "Rejet Prélèvement";
+		      $d = "C";
+		      $c = "D";
 		    }
 
-		  $pdf->cell(16,$hligne,strftime('%d%m%y',$obj->dp));
-
-		  $pdf->cell(20,$hligne,$obj->facnumber);
-
-		  $pdf->cell(20,$hligne,'41100000');
-
-		  $pdf->cell(87,$hligne,$socnom .' '.$libelle);
-
-		  /* Echeance */
-
-		  $pdf->cell(16,$hligne,strftime('%d%m%y',$obj->dp),0,0,'R');
-
-		  $pdf->cell(18,$hligne,$credit,0,0,'R');
-
-		  $pdf->cell(18,$hligne,$debit,0,0,'R');
-
-		  $pdf->ln();
-
-		  /*
-		   *
-		   *
-		   */
-
-		  if ($obj->amount >= 0)
+		  if ($oldfac <> $obj->facid)
 		    {
-		      $credit = abs($obj->amount);
-		      $debit = '';
-		      $total_credit = $total_credit + $credit;
+		      $oldfac = $obj->facid;
+
+		      $pdf->cell($wc[1],$hligne,strftime('%d%m%y',$obj->dp));
+		      $pdf->cell($wc[2],$hligne,'VE');
+		      $pdf->cell($wc[3],$hligne,'4110000');
+		      $pdf->cell($wc[4],$hligne,$obj->code_compta);
+		      $pdf->cell($wc[5],$hligne,$socnom .' '.$libelle);
+		      $pdf->cell($wc[6],$hligne,$obj->facnumber);
+		      $pdf->cell($wc[7],$hligne,$amount,0,0,'R');
+		      $pdf->cell($wc[8],$hligne,$d);
+		      $pdf->cell($wc[9],$hligne,strftime('%d%m%y',$obj->dp),0,0,'R');
+		      $pdf->ln();
+		      
+		      $pdf->cell($wc[1],$hligne,strftime('%d%m%y',$obj->dp));
+		      $pdf->cell($wc[2],$hligne,'VE');
+		      $pdf->cell($wc[3],$hligne,'4457119');
+		      $pdf->cell($wc[4],$hligne,'');
+		      $pdf->cell($wc[5],$hligne,$socnom .' '.$libelle);
+		      $pdf->cell($wc[6],$hligne,$obj->facnumber);
+		      $pdf->cell($wc[7],$hligne,$tva,0,0,'R');
+		      $pdf->cell($wc[8],$hligne,$c);
+		      $pdf->cell($wc[9],$hligne,strftime('%d%m%y',$obj->dp),0,0,'R');
+		      $pdf->ln();
 		    }
-		  else
-		    {
-		      $credit = '';
-		      $debit = abs($obj->amount);
-		      $total_debit = $total_debit + $debit;
-		    }
 
-		  $pdf->cell(16,$hligne,strftime('%d%m%y',$obj->dp));
-
-		  $pdf->cell(20,$hligne,$obj->facnumber);
-
-		  $pdf->cell(20,$hligne,'5122000');
-
-		  $pdf->cell(87,$hligne,$socnom . ' '.$libelle);
-
-		  /* Echeance */
-
-		  $pdf->cell(16,$hligne,strftime('%d%m%y',$obj->dp),0,0,'R');
-
-		  $pdf->cell(18,$hligne,$credit,0,0,'R');
-
-		  $pdf->cell(18,$hligne,$debit,0,0,'R');
-
+		  $pdf->cell($wc[1],$hligne,strftime('%d%m%y',$obj->dp));
+		  $pdf->cell($wc[2],$hligne,'VE');
+		  $pdf->cell($wc[3],$hligne,$obj->numero);
+		  $pdf->cell($wc[4],$hligne,'');
+		  $pdf->cell($wc[5],$hligne,$socnom .' '.$libelle);
+		  $pdf->cell($wc[6],$hligne,$obj->facnumber);
+		  $pdf->cell($wc[7],$hligne,$price,0,0,'R');
+		  $pdf->cell($wc[8],$hligne,$c);
+		  $pdf->cell($wc[9],$hligne,strftime('%d%m%y',$obj->dp),0,0,'R');
 		  $pdf->ln();
 
 		  $i++; 
 		}
-
-
-	      $pdf->SetFont('Arial','B',9);
-	      
-	      $pdf->cell(143,$hligne,'');
-	      
-	      $pdf->cell(16,$hligne,'Total : ',0,0,'R');
-	      $pdf->cell(18,$hligne,$total_debit,0,0,'R');
-	      $pdf->cell(18,$hligne,$total_credit,0,0,'R');
-	      $pdf->ln();
 	  	      
 	      /*
 	       *
@@ -254,23 +213,22 @@ class ComptaJournalVente  {
 	      
 	      $pdf->Output($file);
 
-
-	      return 1;
+	      $result = 0;
 	    }
 	  else
 	    {
-	      $this->error="";
-	      return 0;
+	      $result -1;
 	    }
 	}
       else
 	{
-	  $this->error="Erreur: FAC_OUTPUTDIR non défini !";
-	  return 0;
+	  $result = -2;
 	}
+
+      return $result;
+
     }
   /*
-   *
    *
    *
    */
