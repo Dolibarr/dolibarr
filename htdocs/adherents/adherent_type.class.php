@@ -1,0 +1,216 @@
+<?PHP
+/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ *
+ */
+
+class AdherentType
+{
+  var $id;
+  var $libelle;
+  var $statut;
+  var $cotisation;  // Soumis à la cotisation
+  var $errorstr;
+  var $mail_valid; // mail envoye lors de la validation
+  var $commentaire; // commentaire
+  var $vote; // droit de vote ?
+  /*
+   *
+   *
+   */
+  Function AdherentType($DB, $soc_idp="") 
+    {
+      $this->db = $DB ;
+      $this->statut = 1;
+    }
+  /*
+   *
+   *
+   *
+   */
+  Function print_error_list()
+  {
+    $num = sizeof($this->errorstr);
+    for ($i = 0 ; $i < $num ; $i++)
+      {
+	print "<li>" . $this->errorstr[$i];
+      }
+  }
+  /*
+   *
+   *
+   */
+  /*
+   * Création
+   *
+   *
+   */
+  Function create($userid) 
+    {
+      /*
+       *  Insertion dans la base
+       */
+
+      $sql = "INSERT INTO llx_adherent_type (statut)";
+      $sql .= " VALUES ($this->statut)";
+      
+      $result = $this->db->query($sql);
+      
+      if ($result) 
+	{
+	  $this->id = $this->db->last_insert_id();
+	  return $this->update();
+	}
+      else
+	{
+	  print $this->db->error();
+	  print "<h2><br>$sql<br></h2>";
+	  return 0;
+	}  
+    }
+
+  /*
+   * Mise à jour
+   *
+   *
+   */
+  Function update() 
+    {
+      
+      $sql = "UPDATE llx_adherent_type SET ";
+      $sql .= "libelle = '".$this->libelle ."'";
+      $sql .= ",statut=".$this->statut;
+      $sql .= ",cotisation='".$this->cotisation."'";
+      $sql .= ",note='".$this->commentaire."'";
+      $sql .= ",vote='".$this->vote."'";
+      $sql .= ",mail_valid='".$this->mail_valid."'";
+
+      $sql .= " WHERE rowid = $this->id";
+      
+      $result = $this->db->query($sql);
+      
+      if ($result) 
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error();
+	  print "<h2><br>$sql<br></h2>";
+	  return 0;
+	}  
+    }
+
+  /*
+   * Suppression
+   *
+   */
+  Function delete($rowid)
+
+  {
+    
+    $sql = "DELETE FROM llx_adherent_type WHERE rowid = $rowid";
+
+    if ( $this->db->query( $sql) )
+      {
+	if ( $this->db->affected_rows() )
+	  {
+	    return 1;
+	  }
+	else
+	  {
+	    return 0;
+	  }
+      }
+    else
+      {
+	print "Err : ".$this->db->error();
+	return 0;
+      }    
+  }
+  /*
+   * Fetch
+   *
+   *
+   */
+  Function fetch($rowid)
+  {
+    $sql = "SELECT *";
+    $sql .= " FROM llx_adherent_type as d";
+    $sql .= " WHERE d.rowid = $rowid";
+
+    if ( $this->db->query( $sql) )
+      {
+	if ($this->db->num_rows())
+	  {
+
+	    $obj = $this->db->fetch_object(0);
+
+	    $this->id             = $obj->rowid;
+	    $this->libelle        = $obj->libelle;
+	    $this->statut         = $obj->statut;
+	    $this->cotisation     = $obj->cotisation;
+	    $this->mail_valid     = $obj->mail_valid;
+	    $this->commentaire    = $obj->note;
+	    $this->vote    = $obj->vote;
+	  }
+      }
+    else
+      {
+	print $this->db->error();
+      }
+    
+  }
+  /*
+   *
+   *
+   *
+   */
+  Function liste_array()
+    {
+      $projets = array();
+
+      $sql = "SELECT rowid, libelle FROM llx_adherent_type";
+      
+      if ($this->db->query($sql) )
+	{
+	  $nump = $this->db->num_rows();
+
+	  if ($nump)
+	    {
+	      $i = 0;
+	      while ($i < $nump)
+		{
+		  $obj = $this->db->fetch_object($i);
+	      
+		  $projets[$obj->rowid] = $obj->libelle;
+		  $i++;
+		}
+	    }
+	  return $projets;
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+      
+    }
+
+}
+?>

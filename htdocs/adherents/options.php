@@ -20,15 +20,9 @@
  * $Source$
  *
  */
-require($GLOBALS["DOCUMENT_ROOT"]."/adherents/pre.inc.php");
-//require("../adherent.class.php");
-//require("../adherent_type.class.php");
-require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
-//require("../cotisation.class.php");
-//require("../paiement.class.php");
+require("./pre.inc.php");
+require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 
-
-//$db = new Db();
 $adho = new AdherentOptions($db);
 $form = new Form($db);
 

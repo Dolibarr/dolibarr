@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require($GLOBALS["DOCUMENT_ROOT"]."/main.inc.php3");
+require("../main.inc.php3");
 
 function llxHeader($head = "") {
   global $user, $conf;

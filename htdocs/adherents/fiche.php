@@ -20,13 +20,13 @@
  * $Source$
  *
  */
-require($GLOBALS["DOCUMENT_ROOT"]."/adherents/pre.inc.php");
-require($GLOBALS["DOCUMENT_ROOT"]."/adherent.class.php");
-require($GLOBALS["DOCUMENT_ROOT"]."/adherent_type.class.php");
-require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
-require($GLOBALS["DOCUMENT_ROOT"]."/cotisation.class.php");
-require($GLOBALS["DOCUMENT_ROOT"]."/paiement.class.php");
-require($GLOBALS["DOCUMENT_ROOT"]."/adherents/XML-RPC.functions.php");
+require("./pre.inc.php");
+require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
+require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
+require(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
+require(DOL_DOCUMENT_ROOT."/paiement.class.php");
+require(DOL_DOCUMENT_ROOT."/adherents/XML-RPC.functions.php");
 
 //$db = new Db();
 $adho = new AdherentOptions($db);

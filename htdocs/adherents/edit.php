@@ -19,10 +19,10 @@
  * $Source$
  *
  */
-require($GLOBALS["DOCUMENT_ROOT"]."/adherents/pre.inc.php");
-require("../adherent.class.php");
-require("../adherent_type.class.php");
-require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
+require("./pre.inc.php");
+require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
+require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 
 //$db = new Db();
 $adho = new AdherentOptions($db);

@@ -21,14 +21,8 @@
  *
  */
 require("./pre.inc.php");
-require($GLOBALS["DOCUMENT_ROOT"]."/adherent.class.php");
-require($GLOBALS["DOCUMENT_ROOT"]."/adherent_type.class.php");
-//require($GLOBALS["DOCUMENT_ROOT"]."/cotisation.class.php");
-//require($GLOBALS["DOCUMENT_ROOT"]."/paiement.class.php");
-
-
-//$db = new Db();
-
+require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 
 if ($HTTP_POST_VARS["action"] == 'add' && $user->admin) 
 {
