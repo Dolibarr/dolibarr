@@ -764,7 +764,7 @@ else
         $h = 0;
         
         $head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
-        $head[$h][1] = $langs->trans("Bill")." : $fac->ref";
+        $head[$h][1] = $langs->trans("CardBill");
         $hselected = $h;
         $h++;
         $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
@@ -777,7 +777,7 @@ else
         $head[$h][1] = $langs->trans("Info");
         $h++;      
         
-        dolibarr_fiche_head($head, $hselected, $soc->nom);
+        dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
 
   	  
 	  /*

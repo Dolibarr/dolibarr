@@ -21,7 +21,7 @@
  *
  */
 
-/*! \file htdocs/compta/facture/info.php
+/*!     \file       htdocs/compta/facture/info.php
         \ingroup    facture
 		\brief      Page des informations d'une facture
 		\version    $Revision$
@@ -48,7 +48,7 @@ $soc->fetch($facture->socidp);
 $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$facture->id;
-$head[$h][1] = $langs->trans("Bill")." : $facture->ref";
+$head[$h][1] = $langs->trans("CardBill");
 $h++;
 $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$facture->id;
 $head[$h][1] = $langs->trans("Apercu");
@@ -61,7 +61,7 @@ $head[$h][1] = $langs->trans("Info");
 $hselected = $h;
 $h++;      
 
-dolibarr_fiche_head($head, $hselected, $soc->nom);
+dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $facture->ref");
 
 
 print '<table width="100%"><tr><td>';

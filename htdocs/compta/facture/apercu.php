@@ -22,7 +22,7 @@
  *
  */
 
-/*!	\file htdocs/compta/facture/apercu.php
+/*!	    \file       htdocs/compta/facture/apercu.php
 		\ingroup    facture
 		\brief      Page de l'onglet aperçu d'une facture
 		\version    $Revision$
@@ -71,7 +71,7 @@ if ($_GET["facid"] > 0)
       $h = 0;
       
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
-      $head[$h][1] = $langs->trans("Bill")." : $fac->ref";
+      $head[$h][1] = $langs->trans("CardBill");
       $h++;
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
       $head[$h][1] = $langs->trans("Apercu");
@@ -84,7 +84,7 @@ if ($_GET["facid"] > 0)
       $head[$h][1] = $langs->trans("Info");
       $h++;      
       
-      dolibarr_fiche_head($head, $hselected, $soc->nom);
+      dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $fac->ref");
 
       
       /*

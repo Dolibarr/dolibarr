@@ -1,6 +1,7 @@
 # Dolibarr language file - en_US - bills
 Bill=Bill
 Bills=Bills
+CardBill=Bill card
 Payment=Payment
 Payments=Payments
 PaymentMode=Payment mode

@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - bills
 Bill=Facture
 Bills=Factures
+CardBill=Fiche facture
 Payment=Paiement
 Payments=Paiements
 PaymentMode=Mode de paiement

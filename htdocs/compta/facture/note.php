@@ -21,7 +21,7 @@
  *
  */
 
-/*! \file htdocs/compta/facture/note.php
+/*!     \file       htdocs/compta/facture/note.php
         \ingroup    facture
         \brief      Fiche de notes sur une facture
 		\version    $Revision$
@@ -76,7 +76,7 @@ if ($_GET["facid"])
       $h=0;
       
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$facture->id;
-      $head[$h][1] = $langs->trans("Bill")." : $facture->ref";
+      $head[$h][1] = $langs->trans("CardBill");
       $h++;
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$facture->id;
       $head[$h][1] = $langs->trans("Apercu");
@@ -89,10 +89,10 @@ if ($_GET["facid"])
       $head[$h][1] = $langs->trans("Info");
       $h++;
 
-      dolibarr_fiche_head($head, $hselected, $soc->nom);
+      dolibarr_fiche_head($head, $hselected, $langs->trans("Bill")." : $facture->ref");
                   
 	  
-      print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
+      print '<table class="border" width="100%">';
       
       print '<tr><td>'.$langs->trans("Company").'</td><td>';
       if ($societe->client == 1)

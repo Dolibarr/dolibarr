@@ -21,7 +21,7 @@
  *
  */
 
-/*! \file htdocs/compta/facture/fiche-rec.php
+/*!     \file       htdocs/compta/facture/fiche-rec.php
         \ingroup    facture
 		\brief      Page d'affichage d'une facture récurrent
 		\version    $Revision$
@@ -103,7 +103,7 @@ if ($_GET["action"] == 'create')
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="facid" value="'.$facture->id.'">';
       
-      print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="border" width="100%">';
       
       $facture->fetch_client();
 
@@ -149,7 +149,7 @@ if ($_GET["action"] == 'create')
 	  $num = $db->num_rows();
 	  $i = 0; $total = 0;
 	  
-	  echo '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
+	  echo '<table border="0" width="100%">';
 	  if ($num)
 	    {
 	      print "<tr class=\"liste_titre\">";
@@ -272,7 +272,7 @@ else
 	  /*
 	   *   Facture
 	   */
-	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
+	  print '<table class="border" width="100%">';
 	  print "<tr><td>Client</td>";
 	  print "<td colspan=\"3\">";
 	  print '<b><a href="../fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
@@ -312,7 +312,7 @@ else
 	 */
 	print_titre("Produits");
 	      
-	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>Produit</td>';
 	print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	
@@ -347,7 +347,7 @@ else
 	 */
 	if ($user->societe_id == 0 && $fac->paye == 0)
 	  {
-	    print '<p><table id="actions" width="100%" cellspacing="0" cellpadding="4"><tr>';
+	    print '<p><table id="actions" width="100%"><tr>';
 	
 	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
 	      {
