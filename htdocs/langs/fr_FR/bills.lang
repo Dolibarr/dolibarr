@@ -61,3 +61,4 @@ RemainderToTake=Reste à encaisser
 CreateDraft=Créer brouillon
 SendBillRef=Envoi facture %s
 SendReminderBillRef=Relance facture %s
+File=Fichier
