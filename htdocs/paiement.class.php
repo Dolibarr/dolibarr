@@ -189,12 +189,13 @@ class Paiement
 	      }
 	  }
 
-	if ( $total > 0 && $sql_err == 0 )
+	if ( $total <> 0 && $sql_err == 0 ) // On accepte les montants négatifs
 	  {
 	    if ($no_commit == 0)
 	      {
 		$this->db->commit();
 	      }
+	    dolibarr_syslog("Paiement::Create Ok Total = $total");
 	    return $this->id;
 	  }
 	else
@@ -203,6 +204,7 @@ class Paiement
 	      {
 		$this->db->rollback();
 	      }
+	    dolibarr_syslog("Paiement::Create Erreur");
 	    return -1;
 	  }
 	
