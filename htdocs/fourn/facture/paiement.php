@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Christophe Combelles <ccomb@free.fr>
+ * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,14 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/comm/propal/note.php
+        \ingroup    propale
+        \brief      Fiche d'information sur une proposition commerciale
+		\version    $Revision$
+*/
+
+
 require("./pre.inc.php");
 require("./paiementfourn.class.php");
 
@@ -91,15 +99,15 @@ if ($action == 'create')
       print_titre("Émettre un paiement");
       print '<form action="paiement.php?facid='.$facid.'" method="post">';
       print '<input type="hidden" name="action" value="add">';
-      print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
+      print '<table class="border" width="100%">';
 
-      print "<tr class=\"liste_titre\"><td colspan=\"3\">Facture</td>";
+      print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("Bill")."</td>";
 
-      print '<tr><td>Numéro :</td><td colspan="2">';
+      print '<tr><td>'.$langs->trans("Ref").' :</td><td colspan="2">';
       print '<a href="fiche.php?facid='.$facid.'">'.$obj->facnumber.'</a></td></tr>';
-      print "<tr><td>Société :</td><td colspan=\"2\">$obj->nom</td></tr>";
+      print "<tr><td>".$langs->trans("Company")." :</td><td colspan=\"2\">$obj->nom</td></tr>";
 
-      print "<tr><td>Montant :</td><td colspan=\"2\">".price($obj->total_ttc)." euros TTC</td></tr>";
+      print "<tr><td>".$langs->trans("Amount")." :</td><td colspan=\"2\">".price($obj->total_ttc)." euros TTC</td></tr>";
 
       $sql = "SELECT sum(p.amount) FROM ".MAIN_DB_PREFIX."paiementfourn as p WHERE p.fk_facture_fourn = $facid;";
       $result = $db->query($sql);
@@ -118,7 +126,7 @@ if ($action == 'create')
       
       $html = new Form($db);
 
-      print "<tr><td>Date :</td><td>";
+      print "<tr><td>".$langs->trans("Date")." :</td><td>";
       $html->select_date();
       print "</td>";
 
@@ -126,7 +134,7 @@ if ($action == 'create')
 
       print "<input type=\"hidden\" name=\"author\" value=\"$author\">\n";
 
-      print "<tr><td>Type :</td><td><select name=\"paiementid\">\n";
+      print "<tr><td>".$langs->trans("Type")." :</td><td><select name=\"paiementid\">\n";
 
       $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY id";
   
@@ -162,7 +170,7 @@ if ($action == 'create')
 	      print '<option value="'.$objopt->rowid.'"';
 	      if (defined("FACTURE_RIB_NUMBER") && FACTURE_RIB_NUMBER == $objopt->rowid)
 		{
-		  print ' SELECTED';
+		  print ' selected';
 		}
 	      print '>'.$objopt->label.'</option>';
 	      $i++;
@@ -172,7 +180,7 @@ if ($action == 'create')
       print "</td></tr>\n";
 
       print "<tr><td valign=\"top\">Reste à payer :</td><td><b>".price($total - $sumpayed)."</b> euros TTC</td></tr>\n";
-      print "<tr><td valign=\"top\">Montant :</td><td><input name=\"amount\" type=\"text\" value=\"".($total - $sumpayed)."\"></td></tr>\n";
+      print "<tr><td valign=\"top\">".$langs->trans("Amount")." :</td><td><input name=\"amount\" type=\"text\" value=\"".($total - $sumpayed)."\"></td></tr>\n";
       print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
       print "</form>\n";
       print "</table>\n";
@@ -212,13 +220,13 @@ if ($action == '') {
 
       print_barre_liste("Paiements", $page, "paiement.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+      print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
-      print "<td>Facture</td>";
-      print "<td>Société</td>";
-      print "<td>Date</td>";
+      print '<td>'.$langs->trans("Bill").'</td>';
+      print '<td>'.$langs->trans("Company").'</td>';
+      print '<td>'.$langs->trans("Date").'</td>';
       print '<td>'.$langs->trans("Type").'</td>';
-      print '<td align="right">Montant</td>';
+      print '<td align="right">'.$langs->trans("Amount").'</td>';
       print "<td>&nbsp;</td></tr>";
     
       while ($i < min($num,$limit))
@@ -229,8 +237,8 @@ if ($action == '') {
 	  print "<td><a href=\"fiche.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
 	  print '<td>'.$objp->nom.'</td>';
 	  print "<td>".strftime("%d %B %Y",$objp->dp)."</td>\n";
-	  print "<td>$objp->paiement_type $objp->num_paiement</TD>\n";
-	  print '<td align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';	
+	  print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
+	  print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';	
 	  print "</tr>";
 	  $i++;
 	}
