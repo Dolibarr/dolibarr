@@ -52,7 +52,7 @@ class modWebcalendar extends DolibarrModules
 
     $this->family = "projects";
     $this->name = "Webcalendar";
-    $this->description = "Gestion de l'outil Webcalendar";
+    $this->description = "Interfaçage avec le calendrier Webcalendar";
     $this->const_name = "MAIN_MODULE_WEBCALENDAR";
     $this->const_config = MAIN_MODULE_WEBCALENDAR;
     $this->special = 0;
