@@ -28,7 +28,7 @@ require("../commande/commande.class.php");
 llxHeader("","../");
 
 $projet = new Project($db);
-$projet->fetch($id);
+$projet->fetch($_GET["id"]);
 
 $h=0;
 $head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;

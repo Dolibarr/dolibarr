@@ -99,7 +99,7 @@ if ($_GET["action"] == 'create')
    */
 
   $projet = new Project($db);
-  $projet->fetch($id);
+  $projet->fetch($_GET["id"]);
   $projet->societe->fetch($projet->societe->id);
   
   $h=0;
