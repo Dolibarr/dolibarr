@@ -22,18 +22,46 @@ require("./pre.inc.php");
 
 llxHeader();
 
-print_titre("Configuration Dolibarr");
+print_titre("Constantes de configuration Dolibarr");
 
 print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<TR class="liste_titre">';
+print '<TD>Nom</TD>';
+print '<TD>Valeur</TD>';
+print '<TD>Type</TD>';
+print '<TD>Note</TD>';
+print "<TD>Action</TD>";
+print "</TR>\n";
 
 $db = new Db();
+$form = new Form($db);
 
-if ($HTTP_POST_VARS["action"] == 'update')
+if ($HTTP_POST_VARS["action"] == 'update' || $HTTP_POST_VARS["action"] == 'add')
 {
 
-  $sql = "UPDATE llx_const set value = '".$HTTP_POST_VARS["constvalue"]."' where rowid=".$HTTP_POST_VARS["rowid"].";";
+  if ($HTTP_POST_VARS["consttype"] == 0){
+    $sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."', type='yesno'";
+  }else{
+    $sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."'";
+  }
+
 
   $result = $db->query($sql);
+  if (!$result)
+    {
+      print $db->error();
+    }
+}
+
+if ($action == 'delete')
+{
+  $sql = "DELETE FROM llx_const WHERE rowid='$rowid'";
+
+  $result = $db->query($sql);
+  if (!$result)
+    {
+      print $db->error();
+    }
 }
 
 $sql = "SELECT rowid, name, value, type, note FROM llx_const";
@@ -42,54 +70,67 @@ if ($result)
 {
   $num = $db->num_rows();
   $i = 0;
-  
+  $var=True;
+
   while ($i < $num)
     {
       $obj = $db->fetch_object( $i);
+      $var=!$var;
 
-      print '<tr><td>'.$obj->name.'</td><td>' . $obj->value . '</td><td>';
+      print '<form action="'.$PHP_SELF.'" method="POST">';
+      print '<input type="hidden" name="action" value="update">';
+      print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+      print '<input type="hidden" name="constname" value="'.$obj->name.'">';
 
-      if ($rowid == $obj->rowid && $action == 'edit')
+      print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
+
+      print '<td>';
+      if ($obj->type == 'yesno')
 	{
-	  print '<form action="'.$PHP_SELF.'" method="POST">';
-	  print '<input type="hidden" name="action" value="update">';
-	  print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-
-	  if ($obj->type == 'yesno')
-	    {
-	      print '<select name="constvalue">';
-	      
-	      if ($obj->value == "1")
-		{
-		  print '<option value="0">non</option>';
-		  print '<option value="1" SELECTED>oui</option>';
-		}
-	      else
-		{
-		  print '<option value="0" SELECTED>non</option>';
-		  print '<option value="1">oui</option>';
-		}
-	      print '</select>';
-	    }
-	  else
-	    {
-	      print '<input type="text" name="constvalue" value="'.stripslashes($obj->value).'">';
-	    }
-
-	  print '<input type="submit">';
-	  print '</form>';
+	  $form->selectyesnonum('constvalue',$obj->value);
+	  print '</td><td>';
+	  $form->select_array('consttype',array('yesno','texte'),0);
 	}
-      else 
+      else
 	{
-	  print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&action=edit">edit</a>';
+	  print '<input type="text" size="15" name="constvalue" value="'.stripslashes($obj->value).'">';
+	  print '</td><td>';
+	  $form->select_array('consttype',array('yesno','texte'),1);
 	}
+      print '</td><td>';
 
-      print '</td></tr>';
-      print '<tr><td colspan="3">'.stripslashes(nl2br($obj->note)).'</td></tr>';
+      print '<input type="text" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
+      print '</td><td>';
+      print '<input type="Submit" value="Update" name="Button"><BR>';
+      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&action=delete">Delete</a>';
+      print "</td></tr>\n";
+
+      print '</form>';
       $i++;
     }
 }
+$var=!$var;
 
+print '<form action="'.$PHP_SELF.'" method="POST">';
+print '<input type="hidden" name="action" value="add">';
+
+print "<tr $bc[$var] class=value><td><input type=\"text\" size=\"15\" name=\"constname\" value=\"\"></td>\n";
+
+print '<td>';
+print '<input type="text" size="15" name="constvalue" value="">';
+print '</td><td>';
+
+$form->select_array('consttype',array('yesno','texte'),1);
+print '</td><td>';
+
+print '<input type="text" size="15" name="constnote" value="">';
+print '</td><td>';
+
+print '<input type="Submit" value="Add" name="Button"><BR>';
+print "</td>\n";
+print '</form>';
+	
+print '</tr>';
 
 print '</table>';
 

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (c) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +32,7 @@ class User {
   var $email;
   var $admin;
   var $login;
+  var $pass;
   var $comm;
   var $compta;
   var $webcal_login;
@@ -56,9 +58,9 @@ class User {
   Function fetch($login='')
     {
 
-    $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.module_comm, u.module_compta, u.login, u.webcal_login, u.note";
-    $sql .= " FROM llx_user as u";
-
+      //$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.module_comm, u.module_compta, u.login, u.pass, u.webcal_login, u.note";
+      //$sql .= " FROM llx_user as u";
+      $sql = "SELECT * FROM llx_user as u";
     if ($this->id) {
       $sql .= " WHERE u.rowid = $this->id";
     } else {
@@ -171,6 +173,9 @@ class User {
 	      $sql .= ", login = '$this->login'";
 	      $sql .= ", email = '$this->email'";
 	      $sql .= ", admin = $this->admin";
+	      $sql .= ", webcal_login = '$this->webcal_login'";
+	      $sql .= ", module_comm = $this->comm";
+	      $sql .= ", module_compta = $this->compta";
 	      $sql .= ", note = '$this->note'";
 	      $sql .= " WHERE rowid = $this->id";
 	      
@@ -210,7 +215,7 @@ class User {
 	{
 	  $sqlpass = $password;
 	}
-
+      $this->pass=$password;
       $sql = "UPDATE llx_user SET pass = '".$sqlpass."'";
       $sql .= " WHERE rowid = $this->id";
       

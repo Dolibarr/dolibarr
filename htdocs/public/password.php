@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (c) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2002 Jean-Louis Bergamo<jlb@j1b.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +20,7 @@
  * $Source$
  */
 
-require("../main.inc.php3");
+require($GLOBALS["DOCUMENT_ROOT"]."/main.inc.php3");
 
 
 $db = new Db();
@@ -49,7 +50,7 @@ if ($result)
 
 	  $user->id = 1;
 
-	  $user->password("admin");
+	  $user->password("admin",$conf->password_encrypted);
 
 	  print "Compte admin/admin créé";
 	}

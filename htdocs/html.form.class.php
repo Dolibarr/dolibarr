@@ -168,7 +168,19 @@ class Form {
       }
     print '</select>';
   }
-
+  /*
+   *
+   * Checkbox
+   *
+   */
+  Function checkbox($name,$checked=0,$value=1)
+    {
+      if ($checked==1){
+	print "<input type=\"checkbox\" name=\"$name\" value=\"fixe\" checked />\n";
+      }else{
+	print "<input type=\"checkbox\" name=\"$name\" value=\"fixe\" />\n";
+      }
+    }
 }
 
 ?>

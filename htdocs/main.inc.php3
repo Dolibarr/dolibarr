@@ -196,11 +196,11 @@ Function left_menu($menu)
       
     }
 
-  if (MAIN_SEARCHFORM_SOCIETE or MAIN_SEARCHFORM_CONTACT)
+  if (defined(MAIN_SEARCHFORM_SOCIETE) or defined(MAIN_SEARCHFORM_CONTACT))
     {
       print '<tr><td class="barre" valign="top" align="right">';
 
-      if (MAIN_SEARCHFORM_SOCIETE)
+      if (defined(MAIN_SEARCHFORM_SOCIETE) && MAIN_SEARCHFORM_SOCIETE > 0)
 	{
 	  print '<A class="menu" href="/comm/clients.php3">Societes</A>';
 	  print '<form action="/comm/clients.php3">';
@@ -211,7 +211,7 @@ Function left_menu($menu)
 	  print '</form>';
 	}
       
-      if (MAIN_SEARCHFORM_CONTACT)
+      if (defined(MAIN_SEARCHFORM_CONTACT) && MAIN_SEARCHFORM_CONTACT > 0)
 	{
 	  print '<A class="menu" href="/comm/contact.php3">Contacts</A>';
 	  print '<form action="/comm/contact.php3">';
