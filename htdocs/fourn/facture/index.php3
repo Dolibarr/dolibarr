@@ -103,7 +103,7 @@ if ($socid > 0) {
    */
   print_barre_liste("Liste des factures", $page, $PHP_SELF);
 
-  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.amount, fac.paye, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid";
+  $sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.amount, fac.paye, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid";
   $sql .= " FROM societe as s, llx_facture_fourn as fac ";
   $sql .= " WHERE fac.fk_soc = s.idp";
 
@@ -135,7 +135,7 @@ if ($socid > 0) {
 
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php3?facid=$obj->facid\">$obj->libelle</A></td>\n";
-      print "<TD><a href=\"fiche.php3?socid=$obj->facid\">$obj->nom</A></td>\n";
+      print "<TD><a href=\"../fiche.php3?socid=$obj->socid\">$obj->nom</A></td>\n";
       print '<TD align="right">'.price($obj->amount).'</TD>';
 
       print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";

@@ -21,10 +21,12 @@
 create table llx_product
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  datec           datetime,
+  tms             timestamp,
   ref             varchar(15),
   label           varchar(255),
   description     text,
   price           smallint,
-  duration        varchar(32)
+  fk_user_author  integer
 );
 

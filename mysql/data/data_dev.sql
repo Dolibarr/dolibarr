@@ -129,23 +129,23 @@ values (41,4,'Alix','Victor','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net'
 --
 delete from llx_product;
 
-insert into llx_product (ref, label, description, price, duration)
-values ('CRRJ452M','Câble Réseaux RJ45 2m','Câble Réseaux RJ45 2m',10,'1 mois');
+insert into llx_product (ref, label, description, price)
+values ('CRRJ452M','Câble Réseaux RJ45 2m','Câble Réseaux RJ45 2m',10);
 
-insert into llx_product (ref, label, description, price, duration)
-values ('3COMSW8','Switch Cisco 8 ports 100Mbits','Switch Cisco 8 ports 100Mbits',1000,'1 mois');
+insert into llx_product (ref, label, description, price)
+values ('3COMSW8','Switch Cisco 8 ports 100Mbits','Switch Cisco 8 ports 100Mbits',1000);
 
-insert into llx_product (ref, label, description, price, duration)
-values ('ALPH','Station Alpha Serie 3w','Configuration Alpha',9750,'1 mois');
+insert into llx_product (ref, label, description, price)
+values ('ALPH','Station Alpha Serie 3w','Configuration Alpha',9750);
 
-insert into llx_product (ref, label, description, price, duration)
-values ('HUB8-10','Hub 8 ports 10Mbits','Hub 8 ports',750,'1 mois');
+insert into llx_product (ref, label, description, price)
+values ('HUB8-10','Hub 8 ports 10Mbits','Hub 8 ports',750);
 
-insert into llx_product (ref, label, description, price, duration)
-values ('PB-16','Pan. Brass. 16','Panneau de brassage extensible, incluant 1 barre de 16 prises',650,'1 mois');
+insert into llx_product (ref, label, description, price)
+values ('PB-16','Pan. Brass. 16','Panneau de brassage extensible, incluant 1 barre de 16 prises',650);
 
-insert into llx_product (ref, label, description, price, duration)
-values ('PB-32','Pan. Brass. 32','Panneau de brassage extensible, incluant 2 barres de 16 prises',1200,'1 mois');
+insert into llx_product (ref, label, description, price)
+values ('PB-32','Pan. Brass. 32','Panneau de brassage extensible, incluant 2 barres de 16 prises',1200);
 
 --
 --

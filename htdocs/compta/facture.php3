@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 require("./pre.inc.php3");
@@ -211,29 +211,26 @@ if ($action == 'create') {
     } else {
       print $db->error();
     }
+
+    print_titre("Facture : ".$obj->facnumber);
   
     print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
-    print "<tr>";
-    print '<td><div class="titre">Facture : '.$obj->facnumber.'</div></td>';
-    print "<td align=\"right\"><a href=\"facture.php3?socidp=$obj->socidp\">Autres factures de $obj->socnom</a></td>\n";
-    print "</tr>";
     print "<tr><td width=\"50%\">";
     /*
      *   Facture
      */
     print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
-    print "<tr><td>Société</td><td colspan=\"2\"><b><a href=\"fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td></tr>";
+    print "<tr><td>Société</td><td colspan=\"3\"><b><a href=\"fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td></tr>";
 
-    print "<tr><td>date</td><td colspan=\"2\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
-    print "<tr><td>Auteur</td><td colspan=\"2\">$obj->author</td>";
-    print "<tr><td>Statut</td><td align=\"center\" colspan=\"2\">$obj->statut</td>";
-    print "<tr><td>Paye</td><td align=\"center\" colspan=\"2\" bgcolor=\"#f0f0f0\"><b>".$yn[$obj->paye]."</b></td>";
+    print "<tr><td>Date</td><td colspan=\"3\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
+    print "<tr><td>Auteur</td><td colspan=\"3\">$obj->author</td>";
   
-    print "<tr><td>Montant</td><td align=\"right\"><b>".price($obj->amount)."</b></td><td>euros HT</td></tr>";
-    print "<tr><td>TVA</td><td align=\"right\">".tva($obj->amount)."</td><td>euros</td></tr>";
-    print "<tr><td>Total</td><td align=\"right\">".price($obj->total)."</td><td>euros TTC</td></tr>";
+    print '<tr><td>Montant</td><td align="right" colspan="2"><b>'.price($obj->amount).'</b></td><td>euros HT</td></tr>';
+    print '<tr><td>TVA</td><td align="right" colspan="2">'.tva($obj->amount).'</td><td>euros</td></tr>';
+    print '<tr><td>Total</td><td align="right" colspan="2">'.price($obj->total).'</td><td>euros TTC</td></tr>';
 
-    print "</tr>";
+    print '<tr><td>Statut</td><td align="center">'.$obj->statut.'</td>';
+    print "<td>Paye</td><td align=\"center\" bgcolor=\"#f0f0f0\"><b>".$yn[$obj->paye]."</b></td></tr>";
     print "</table>";
   
     print "</td><td valign=\"top\">";
@@ -251,7 +248,7 @@ if ($action == 'create') {
       $num = $db->num_rows();
       $i = 0; $total = 0;
       print "<p><b>Paiements</b>";
-      echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="3">';
+      echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
       print "<TR class=\"liste_titre\">";
       print "<td>Date</td>";
       print "<td>Type</td>";
@@ -270,14 +267,16 @@ if ($action == 'create') {
 	$total = $total + $objp->amount;
 	$i++;
       }
-      print "<tr><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>$_MONNAIE</td></tr>\n";
-      print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($obj->total)."</td><td bgcolor=\"#d0d0d0\">$_MONNAIE</td></tr>\n";
 
-      $resteapayer = $obj->total - $total;
+      if ($obj->paye == 0) {
+	print "<tr><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>$_MONNAIE</td></tr>\n";
+	print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($obj->total)."</td><td bgcolor=\"#d0d0d0\">$_MONNAIE</td></tr>\n";
+	
+	$resteapayer = $obj->total - $total;
 
-      print "<tr><td colspan=\"2\" align=\"right\">Reste a payer :</td>";
-      print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">$_MONNAIE</td></tr>\n";
-
+	print "<tr><td colspan=\"2\" align=\"right\">Reste a payer :</td>";
+	print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">$_MONNAIE</td></tr>\n";
+      }
       print "</table>";
       $db->free();
     } else {

@@ -88,7 +88,7 @@ if ($action == 'add') {
 
 llxHeader();
 
-print_titre("Nouvelle proposition commerciale pour <b><a href=\"index.php3?socid=$socidp\">$objsoc->nom</a></b>");
+print_titre("Nouvelle proposition commerciale");
 
 
 /*
@@ -132,6 +132,7 @@ if ($action == 'create') {
     $smonth = 1;
     $syear = date("Y", time());
     print '<table border="0">';
+    print '<tr><td>Société</td><td><a href="index.php3?socid='.$socidp.'">'.$objsoc->nom.'</a></td></tr>';
     print "<tr><td>Date</td><td>";
     $cday = date("d", time());
     print "<select name=\"pday\">";    
