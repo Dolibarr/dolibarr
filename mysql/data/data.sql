@@ -123,18 +123,6 @@ INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_FROM','adhere
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MENU_BARRETOP','default.php','chaine','Module commande');
 
 --
--- Modules
---
-
-INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_COMMANDE','0','yesno',0);
-INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_PROPALE', '0','yesno',0);
-INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_FACTURE', '0','yesno',0);
-INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_DON',     '0','yesno',0);
-INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_ADHERENT','0','yesno',0);
-
-INSERT INTO llx_const (name,value,type,visible) VALUES ('BOUTIQUE_LIVRE','0','yesno',0);
-INSERT INTO llx_const (name,value,type,visible) VALUES ('BOUTIQUE_ALBUM','0','yesno',0);
---
 -- Constantes 
 --
 
