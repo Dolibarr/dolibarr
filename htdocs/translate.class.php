@@ -58,10 +58,10 @@ class Translate {
     */
 		
     function Load($domain = "main") {
-        if ($this->tab_loaded[$domain]) { return; }   # Ce fichier est deja chargé
+      if ($this->tab_loaded[$domain]) { return; }   // Ce fichier est deja chargé
 
-        $scandir    = $this->dir."/".$this->defaultlang;    # Repertoire de traduction
-        $scandiralt = $this->dir."/fr_FR";                  # Repertoire alternatif
+      $scandir    = $this->dir."/".$this->defaultlang;    // Repertoire de traduction
+      $scandiralt = $this->dir."/fr_FR";                  // Repertoire alternatif
     
         $file_lang =  $scandir . "/$domain.lang";
         if (! is_file($file_lang)) {
@@ -82,7 +82,7 @@ class Translate {
                     }
                 }
                 fclose($fp);
-                $this->tab_loaded[$domain]=1;   # Marque ce fichier comme chargé
+                $this->tab_loaded[$domain]=1;   // Marque ce fichier comme chargé
             }
 
         }
@@ -114,7 +114,7 @@ class Translate {
     function trans($str, $param1='', $param2='', $param3='') {
         if ($this->tab_translate[$str]) {
             // Si la traduction est disponible
-            return sprintf($this->tab_translate[$str],$param1,$param2,$param2);
+            return sprintf($this->tab_translate[$str],$param1,$param2,$param3);
         }
         return $str;
     }
