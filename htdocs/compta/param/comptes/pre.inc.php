@@ -29,12 +29,12 @@
 require("../../../main.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/compta/comptacompte.class.php';
 
+$user->getrights('banque');
+
 function llxHeader($head = "", $title="", $help_url='')
 {
   global $user, $langs;
-  
-  $user->getrights('banque');
-  
+    
   top_menu($head, $title);
 
   $menu = new Menu();
