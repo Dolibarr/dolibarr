@@ -27,7 +27,7 @@ require ($GLOBALS["DOCUMENT_ROOT"]."/user.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/menu.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/societe.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/html.form.class.php");
-require ($GLOBALS["DOCUMENT_ROOT"]."/rtplang.class.php");
+require ($GLOBALS["DOCUMENT_ROOT"]."/translate.class.php");
 require ($GLOBALS["DOCUMENT_ROOT"]."/boxes.php");
 require ($GLOBALS["DOCUMENT_ROOT"]."/address.class.php");
 require ($GLOBALS["DOCUMENT_ROOT"]."/includes/fpdf/fpdf.php");
@@ -191,8 +191,9 @@ if (defined("BOUTIQUE_ALBUM"))
 /*
  */
 if(!isset($application_lang))
+{
   $application_lang = "fr";
-
+}
 $rtplang = new rtplang($GLOBALS["DOCUMENT_ROOT"]."/langs", "en", "en", $application_lang);
 $rtplang->debug=1;
 /*
