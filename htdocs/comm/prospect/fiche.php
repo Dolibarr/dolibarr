@@ -199,6 +199,8 @@ if ($socid > 0)
       }
     print '</div>';
 
+	print '<br>';
+	
     /*
      *
      * Liste des contacts
