@@ -104,19 +104,24 @@ div.fiche
  *   Menu superieur et 1ere ligne tableau
  */
 
-.menu { 
-        background: #DDDDDD; 
-        font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
-        color: #000000; 
-        text-decoration: none;
+.menu 
+{ 
+  background: #ccccb3; 
+  font-weight: bold; 
+  font-size: 12px;
+  color: #000000; 
+  text-decoration: none;
 }
+
 .menusel
 { 
-    background: #DDDDDD;
-    font-size: 12px; font-weight: bold; 
-    color: #000000; 
-    text-decoration: none;
+  background: #777799; 
+  font-weight: bold;
+  font-size: 12px;
+  color: #221166;
+  text-decoration: none;
 }
+
 
 a.tmenu
 {
@@ -445,22 +450,6 @@ div.leftmenu {
                }
 
 
-
-.menu 
-{ 
-  background: #ccccb3; 
-  font-weight: bold; 
-  font-size: 0.95em;
-  color: #000000; 
-  text-decoration: none }
-
-.menusel
-{ 
-  background: #bbbb88; 
-  font-weight: bold;
-  font-size: 0.95em;
-  color: #000000; 
-  text-decoration: none }
 
 .alerte
 { 

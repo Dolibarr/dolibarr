@@ -123,9 +123,10 @@ table.topbarre
 }
 .menusel
 { 
-    background: #a8bdc0;
-    font-size: 12px; font-weight: bold; 
-    color: #000000; 
+    background: #7699A9;
+    font-size: 12px;
+    font-weight: bold; 
+    color: #f0f0ff; 
     text-decoration: none;
 }
 
