@@ -33,6 +33,7 @@ create table llx_societe
   address         varchar(255),                        -- company adresse
   cp              varchar(10),                         -- zipcode
   ville           varchar(50),                         -- town
+  fk_departement  integer        default 0,            --
   fk_pays         integer        default 0,            --
   tel             varchar(20),                         -- phone number
   fax             varchar(20),                         -- fax number
