@@ -969,9 +969,8 @@ else
 	
 	  print "</td></tr>";
 	
-	  print "<tr><td height=\"10\">".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td>";
+	  print "<tr><td height=\"10\">".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td></tr>";
   
-
   	  print '<tr><td height=\"10\">'.$langs->trans("GlobalDiscount").'</td>';
 	  if ($fac->brouillon == 1 && $user->rights->facture->creer) 
 	    {
@@ -983,7 +982,6 @@ else
 	    }
 	  else {
 	      print '<td colspan="3">'.$fac->remise_percent.' %</td>';
-	    
 	    }
       print '</tr>';
       
@@ -995,7 +993,9 @@ else
 	  print '<td>'.$conf->monnaie.'</td></tr>';
 	  print '<tr><td height=\"10\">'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
 	  print '<td>'.$conf->monnaie.'</td></tr>';
+
 	  print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.($fac->get_libstatut()).'</td></tr>';
+
 	  if ($fac->note)
 	    {
 	      print '<tr><td colspan="4">'.$langs->trans("Note").' : '.nl2br($fac->note)."</td></tr>";
@@ -1020,17 +1020,17 @@ else
 	  $result = $db->query($sql);
 	  if ($result)
 	    {
-	      $num_lignes = $db->num_rows();
+	      $num_lignes = $db->num_rows($result);
 	      $i = 0; $total = 0;
 	    
-	      echo '<table class="noborder" width="100%">';
+	      print '<table class="noborder" width="100%">';
 	      if ($num_lignes)
 		{
 		  print "<tr class=\"liste_titre\">";
 		  print '<td width="54%">'.$langs->trans("Description").'</td>';
 		  print '<td width="8%" align="right">'.$langs->trans("VAT").'</td>';
 		  print '<td width="12%" align="right">'.$langs->trans("PriceUHT").'</td>';
-		  print '<td width="8%" align="right">'.$langs->trans("Quantity").'</td>';
+		  print '<td width="8%" align="right">'.$langs->trans("Qty").'</td>';
 		  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
 		  print '<td width="10%" align="right">'.$langs->trans("AmountHT").'</td>';
 		  print '<td>&nbsp;</td><td>&nbsp;</td>';
@@ -1039,7 +1039,7 @@ else
 	      $var=True;
 	      while ($i < $num_lignes)
 		{
-		  $objp = $db->fetch_object();
+		  $objp = $db->fetch_object($result);
 		  $var=!$var;
 		  print "<tr $bc[$var]>";
 		  if ($objp->fk_product > 0)
@@ -1047,7 +1047,7 @@ else
 		      print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
         	  if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
         	  else print img_object($langs->trans("ShowProduct"),"product");
-		      print '</a> <a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a>';
+		      print ' '.stripslashes(nl2br($objp->description)).'</a>';
 		      if ($objp->date_start && $objp->date_end) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
 		      if ($objp->date_start && ! $objp->date_end) { print " (A partir du ".dolibarr_print_date($objp->date_start).")"; }
 		      if (! $objp->date_start && $objp->date_end) { print " (Jusqu'au ".dolibarr_print_date($objp->date_end).")"; }
@@ -1145,15 +1145,19 @@ else
 	      print '<td width="54%">'.$langs->trans("Description").'</td>';
 	      print '<td width="8%" align="right">'.$langs->trans("VAT").'</td>';
 	      print '<td width="12%" align="right">'.$langs->trans("PriceUHT").'</td>';
-	      print '<td width="8%" align="right">'.$langs->trans("Quantity").'</td>';
-	      print '<td width="8%" align="right">'.$langs->trans("Dscount").'</td>';
+	      print '<td width="8%" align="right">'.$langs->trans("Qty").'</td>';
+	      print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
 	      print '<td>&nbsp;</td>';
 	      print '<td>&nbsp;</td>';
 	      print '<td>&nbsp;</td>';
 	      print "</tr>\n";
 	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 	      print '<input type="hidden" name="action" value="addligne">';
-	      print '<tr><td><textarea name="desc" cols="60" rows="2"></textarea></td>';
+
+	      $var=!$var;
+
+	      print '<tr '.$bc[$var].'>';
+	      print '<td><textarea name="desc" cols="60" rows="2"></textarea></td>';
 	      print '<td align="right">';
 	      print $html->select_tva("tva_tx",$conf->defaulttx);
 	      print '</td>';
@@ -1162,12 +1166,12 @@ else
 	      print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
 	      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 	      if ($conf->service->enabled) {
-		print '<tr>';
-		print '<td colspan="8">Si produit de type service à durée limitée: Du ';
-		print $html->select_date('',"date_start",0,0,1);
-    		print ' au ';
-    		print $html->select_date('',"date_end",0,0,1);
-    		print '</td>';
+            print '<tr '.$bc[$var].'>';
+            print '<td colspan="8">Si produit de type service à durée limitée: Du ';
+            print $html->select_date('',"date_start",0,0,1);
+            print ' au ';
+            print $html->select_date('',"date_end",0,0,1);
+            print '</td>';
 	      }
 	      print '</tr>';
 	      print "</form>";
@@ -1315,7 +1319,7 @@ else
 	   * Liste des actions propres à la facture
 	   *
 	   */
-	  $sql = "SELECT id, ".$db->pdate("a.datea")." as da,  a.note, code ";
+	  $sql = "SELECT id, ".$db->pdate("a.datea")." as da, a.note, code";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."user as u ";
 	  $sql .= " WHERE a.fk_user_author = u.rowid ";
 	  $sql .= " AND a.fk_action in (9,10) ";
@@ -1325,7 +1329,7 @@ else
 	  $result = $db->query($sql);
 	  if ($result)
 	    {
-	      $num = $db->num_rows();
+	      $num = $db->num_rows($result);
 	      if ($num)
 		{
 		  print_titre($langs->trans("ActionsOnBill"));
@@ -1338,10 +1342,10 @@ else
 		  $var=True;
 		  while ($i < $num)
 		    {
-		      $objp = $db->fetch_object();
+		      $objp = $db->fetch_object($result);
 		      $var=!$var;
 		      print "<tr $bc[$var]>";
-		      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.$objp->id.'</a></td>';
+		      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowTask"),"task").' '.$objp->id.'</a></td>';
 		      print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
 		      print '<td>'.stripslashes($objp->note).'</td>';
 		      print '<td>'.$objp->code.'</td>';
