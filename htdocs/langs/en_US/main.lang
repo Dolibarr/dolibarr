@@ -1,8 +1,8 @@
 # Dolibarr language file - en_US - main
 charset="iso-8859-1"
-Error=Error
-ErrorForbidden=Access is forbidden
-ErrorFileDoesNotExists=File %s does not exists
+Error=Fout
+ErrorForbidden=De toegang is verboden
+ErrorFileDoesNotExists=Dien %s niet bestaat in
 yes=yes
 Yes=Yes
 no=no
