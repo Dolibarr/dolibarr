@@ -1212,18 +1212,22 @@ else
 	  /*
 	   * Documents générés
 	   *
+	   * Le fichier de facture détaillée est de la forme
+	   * 
+	   * REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
+	   *
 	   */
 
 	  $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 	  $facref = str_replace($forbidden_chars,"_",$fac->ref);
 	  $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
-      $filedetail = $conf->facture->dir_output . "/" . $facref . "/" . $facref . "-detail.pdf";
-      $relativepath = "${facref}/${facref}.pdf";
-      $relativepathdetail = "${facref}/${facref}-detail.pdf";
 
-      $var=true;
-             
-	  print "<table width=\"100%\"><tr><td width=\"50%\" valign=\"top\">";
+	  $relativepath = "${facref}/${facref}.pdf";
+	  $relativepathdetail = "${facref}/${facref}-detail.pdf";
+	  
+	  $var=true;
+      
+	  print '<table width="100%"><tr><td width="50%" valign="top">';
 
 	  if (file_exists($file))
 	    {
@@ -1247,9 +1251,9 @@ else
 		    {
 		      print "<tr $bc[$var]><td>Facture détaillée</td>";
 		      
-		      print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$fac->ref.'-detail.pdf</a></td>';		  
-		      print '<td align="right">'.filesize($filedetail). ' bytes</td>';
-		      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedetail)).'</td>';
+		      print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$file.'</a></td>';		  
+		      print '<td align="right">'.filesize($dir.$file). ' bytes</td>';
+		      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($dir.$file)).'</td>';
 		      print '</tr>';
 		    }
 		}
