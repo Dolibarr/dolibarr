@@ -349,20 +349,33 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 2,'972','97209',3,'MARTINIQUE','Martinique');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 3,'973','97302',3,'GUYANE','Guyane');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 4,'974','97411',3,'REUNION','Réunion');
--- Province de Belgique
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','01053',1,'ANVERS','Anvers');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (203,'02','02408',3,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'03','03190',2,'BRABANT-WALLON','Brabant-Wallon');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'04','04070',1,'BRABANT-FLAMAND','Brabant-Flamand');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'05','05061',1,'FLANDRE-OCCIDENTALE','Flandre-Occidentale');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'06','06088',1,'FLANDRE-ORIENTALE','Flandre-Orientale');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'07','07186',2,'HAINAUT','Hainaut');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'08','08105',2,'LIEGE','Liège');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'09','09105',1,'LIMBOURG','Limbourg');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) VALUES (202,'10','10387',2,'LUXEMBOURG','Luxembourg');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) VALUES (201,'11','11069',2,'NAMUR','Namur');
 
- 
+--
+-- Provinces de Belgique - en Francais
+--
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','',1,'ANVERS','Anvers');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (203,'02','',3,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'03','',2,'BRABANT-WALLON','Brabant-Wallon');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'04','',1,'BRABANT-FLAMAND','Brabant-Flamand');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'05','',1,'FLANDRE-OCCIDENTALE','Flandre-Occidentale');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'06','',1,'FLANDRE-ORIENTALE','Flandre-Orientale');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'07','',2,'HAINAUT','Hainaut');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'08','',2,'LIEGE','Liège');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'09','',1,'LIMBOURG','Limbourg');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) VALUES (202,'10','',2,'LUXEMBOURG','Luxembourg');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) VALUES (201,'11','',2,'NAMUR','Namur');
+
+--
+-- Provinces de Belgique - en Néerlandais
+--
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','',1,'ANTWERP','Antwerp');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (203,'02','',3,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'04','',1,'VLAMS-BRABANT','Vlams-Brabant');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'05','',1,'WEST-VLANDEREN','West-Vlanderen');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'06','',1,'OOST-VLANDEREN','Oost-Vlanderen');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'09','',1,'LIMBURG','Limburg');
+
+
 --
 -- Effectif des sociétés
 --
