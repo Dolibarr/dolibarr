@@ -226,7 +226,7 @@ if (!$error)
 	  
 	  if (!$error)
 	    {
-	      if ($ligne->isfacturable == 1)
+	      if ($ligne->facturable == 1)
 		{
 		  $facturable = 'oui';
 		}
@@ -235,7 +235,7 @@ if (!$error)
 		  $facturable = 'non';
 		}
 	      
-	      $sql = "INSERT INTO llx_telephonie_facture";
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_facture";
 	      $sql .= " (fk_ligne, ligne, date, isfacturable, fk_batch)";
 	      $sql .= " VALUES (".$ligne->id.",";
 	      $sql .= " '$ligne->numero','".$year."-".$month."-01'";
@@ -243,7 +243,7 @@ if (!$error)
 	      
 	      if ($db->query($sql))
 		{
-		  $facid = $db->last_insert_id("llx_telephonie_facture");
+		  $facid = $db->last_insert_id(MAIN_DB_PREFIX."telephonie_facture");
 		}
 	      else
 		{
