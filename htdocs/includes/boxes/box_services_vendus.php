@@ -25,8 +25,8 @@ $info_box_head[] = array('text' => "Les 5 derniers services vendus");
 
 $info_box_contents = array();
 
-$sql = "SELECT s.nom,s.idp";
-$sql .= " FROM llx_societe as s, llx_contrat as c WHERE s.idp = c.fk_soc";  
+$sql = "SELECT s.nom,s.idp, p.libelle";
+$sql .= " FROM llx_societe as s, llx_contrat as c, llx_product as p WHERE s.idp = c.fk_soc AND c.fk_product = p.rowid";  
 $sql .= " ORDER BY c.tms DESC ";
 /*
  * Il faudrait ajouter un datec à cette table
@@ -48,6 +48,10 @@ if ($result)
       
       $info_box_contents[$i][0] = array('align' => 'left',
 					'text' => $objp->nom,
+					'url' => DOL_URL_ROOT."/comm/fiche.php3?socid=".$objp->idp);
+
+      $info_box_contents[$i][1] = array('align' => 'left',
+					'text' => $objp->libelle,
 					'url' => DOL_URL_ROOT."/comm/fiche.php3?socid=".$objp->idp);
 
       $i++;
