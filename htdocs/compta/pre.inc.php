@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,9 +21,10 @@
  *
  */
 
-/**     \file   	htdocs/compta/pre.inc.php
-        \ingroup    compta
-        \brief  	Fichier gestionnaire du menu compta
+/**   
+      \file   	htdocs/compta/pre.inc.php
+      \ingroup    compta
+      \brief  	Fichier gestionnaire du menu compta
 */
 
 require("../main.inc.php");
@@ -70,10 +71,10 @@ function llxHeader($head = "", $title="", $help_url='')
 	{
 	  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
 	}
-
+      
       $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"));
     }
-   
+  
     
   // Les dépenses
   if ($conf->fournisseur->enabled)
@@ -114,7 +115,7 @@ function llxHeader($head = "", $title="", $help_url='')
 
   if ($conf->prelevement->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/prelevement/","Bon prélèv.");
+      $menu->add(DOL_URL_ROOT."/compta/prelevement/","Prélèvements");
     }
 
   $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
