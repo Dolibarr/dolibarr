@@ -93,7 +93,31 @@ if ( $db->query($sql) )
       $total += $obj->total_ttc;
 
       dolibarr_syslog("factures-impayees-commerciaux: ".$obj->email);
-      $i++;
+      $i++;      
+    }
+
+  /* On répète le code c'est mal */
+  dolibarr_syslog("factures-impayees-commerciaux: send mail to $oldemail");
+  $subject = "[Dolibarr] Liste des factures impayées";
+  $sendto = $oldemail;
+  $from = $oldemail;
+  
+  $allmessage = "Liste des factures impayées à ce jour\n";
+  $allmessage .= "Cette liste ne comporte que les factures des sociétés dont vous êtes référencés comme commercial.\n";
+  $allmessage .= "\n";
+  $allmessage .= $message;
+  $allmessage .= "\n";
+  $allmessage .= "Total = ".price($total)."\n";
+  
+  $mail = new DolibarrMail($subject,
+			   $sendto,
+			   $from,
+			   $allmessage);
+  
+  $mail->errors_to = $errorsto;                 
+  
+  if ( $mail->sendfile() )
+    {
       
     }
 }
