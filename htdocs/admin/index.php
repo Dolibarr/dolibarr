@@ -41,6 +41,12 @@ print '<tr><td>templates</td><td>' . $conf->propal->templatesdir . '</td></tr>';
 print '<tr><td>output dir</td><td>' . $conf->propal->outputdir . '</td></tr>';
 print '<tr><td>output url</td><td>' . $conf->propal->outputurl . '</td></tr>';
 
+print '<tr class="list_sep"><td bgcolor="#e0e0e0" colspan="2">Facture</td></tr>';
+print '<tr><td>templates</td><td>' . $conf->facture->templatesdir . '</td></tr>';
+print '<tr><td>output dir</td><td>' . $conf->facture->outputdir . '</td></tr>';
+print '<tr><td>output url</td><td>' . $conf->facture->outputurl . '</td></tr>';
+
+
 if ($conf->fichinter->enabled) {
   print '<tr><td bgcolor="#e0e0e0" colspan="2">Fiche d\'intervention</td></tr>';
   print '<tr><td>templates</td><td>' . $conf->fichinter->templatesdir . '</td></tr>';
@@ -67,7 +73,7 @@ print '</table>';
 
 $db = new Db();
 
-?> <a href="phpinfo.php3">phpinfo</a> <?PHP
+?> <a href="phpinfo.php">phpinfo</a> <?PHP
 
 llxFooter();
 ?>
