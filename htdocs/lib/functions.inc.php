@@ -1332,11 +1332,10 @@ Function departement_rowid($db,$code, $pays_id)
   $sql .= " WHERE c.code_departement=". $code;
   $sql .= " AND c.fk_region = r.code_region";
   $sql .= " AND r.fk_pays =".$pays_id;
-      print $sql . " " . $num;
+
   if ($db->query($sql))
     {
       $num = $db->num_rows();
-      print $sql . " " . $num;
       if ($num)
 	{
 	  $obj = $db->fetch_object(0);
