@@ -80,7 +80,10 @@ if ($action == 'update' && !$cancel) {
   $livre->editeurid = $editeurid;
   $livre->description = $desc;
 
-  $livre->update($id, $user);
+  if (!$livre->update($id, $user))
+    {
+      $action = 'edit';
+    }
 }
 
 if ($action == 'updateosc') {
@@ -156,10 +159,23 @@ else
 	      print "<tr>";
 	      print '<td width="20%">Référence</td><td><input name="ref" size="20" value="'.$livre->ref.'"></td>';
 	      print "<td valign=\"top\">Description</td></tr>";
-	      print '<td>Titre</td><td><input name="titre" size="40" value="'.$livre->titre.'"></td>';
-	      print '<td valign="top" width="50%" rowspan="5"><textarea name="desc" rows="14" cols="60">';
+
+	  print "<tr><td>Statut</td><td>$livre->status_text";
+	  if ($livre->status == 0)
+	    {
+	      print '<br><a href="fiche.php?id='.$id.'&status=1&action=status">Changer</a>';
+	    }
+	  else
+	    {
+	      print '<br><a href="fiche.php?id='.$id.'&status=0&action=status">Changer</a>';
+	    }
+	  print "</td>\n";
+
+	      print '<td valign="top" width="50%" rowspan="6"><textarea name="desc" rows="14" cols="60">';
 	      print $livre->description;
 	      print "</textarea></td></tr>";
+
+	      print '<tr><td>Titre</td><td><input name="titre" size="40" value="'.$livre->titre.'"></td></tr>';
 
 	      print '<tr><td>Année</td><TD><input name="annee" size="6" maxlenght="4" value="'.$livre->annee.'"></td></tr>';
 	      print '<tr><td>Prix</td><TD><input name="price" size="10" value="'.price($livre->price).'"></td></tr>';    
