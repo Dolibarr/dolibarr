@@ -61,7 +61,7 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 
   if ($_POST["action"] == 'update')
     {
-      $soc->update($socid);
+      $soc->update($_GET["socid"]);
     }
   if ($_POST["action"] == 'add')
     {
