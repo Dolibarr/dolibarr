@@ -27,5 +27,7 @@ create table llx_telephonie_fournisseur (
   email_commande  varchar(255),
 
   commande_active tinyint default 0, 
+  commande_bloque tinyint default 0, 
+
   class_commande  varchar(25)        -- nom de la classe utilisée pour la commande
 )type=innodb;
