@@ -23,7 +23,7 @@ require("./pre.inc.php3");
 
 llxHeader();
 
-print "<b>Dolibarr ".DOL_VERSION."</b><br>";
+print_fiche_titre( "Dolibarr ".DOL_VERSION,'<a href="about.php">A propos</a>');
 
 print 'Connecté en tant que : <b>' . $user->prenom . ' ' . $user->nom .'</b> ['.$user->code.']';
 print "<br>";
@@ -53,7 +53,7 @@ print '<table width="100%">';
  
 for ($ii=0, $ni=sizeof($boxes); $ii<$ni; $ii++)
 {
-  if ($ii / 3 == 0)
+  if ($ii % 2 == 0)
     {
       print "<tr>\n";
     }
