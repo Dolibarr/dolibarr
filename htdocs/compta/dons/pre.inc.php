@@ -20,6 +20,7 @@
  *
  */
 require("../../main.inc.php3");
+require("../../projetdon.class.php");
 
 $libelle[0] = "Promesses non validées";
 $libelle[1] = "Promesses validées";
