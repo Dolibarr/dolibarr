@@ -115,7 +115,7 @@ function llxHeader($head = "", $title="", $help_url='')
     }
 
 
-  $menu->add(DOL_URL_ROOT."/compta/ventilation.php",$langs->trans("Ventilation"));
+  $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
 
   if ($user->rights->compta->ventilation->param)
     $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));
