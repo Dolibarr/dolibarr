@@ -140,9 +140,10 @@ if ($modulepart)
     if ($modulepart == 'prelevement')
     {
         $user->getrights('prelevement');
-
-	$accessallowed=1;
-	    
+        if ($user->rights->prelevement->lire)
+	  {
+	    $accessallowed=1;
+	  }
         $original_file=DOL_DATA_ROOT.'/prelevement/bon/'.$original_file;
     }
 
