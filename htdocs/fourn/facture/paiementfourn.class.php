@@ -30,7 +30,7 @@ class PaiementFourn
   var $amount;
   var $accountid;
   var $author;
-  var $paiementid; // numero du paiement dans le cas ou une facture paye +ieur fois
+  var $paiementid;		// Cette variable contient le type de paiement, 7 pour CHQ, etc... (nom pas tres bien choisi)
   var $num_paiement;
   var $note;
   var $societe;
@@ -63,10 +63,53 @@ class PaiementFourn
 
     if (isset($result))
       {
-	$label = "Facture $this->facnumber - $this->societe";
-	$sql = "INSERT INTO llx_bank (datec, dateo, amount, author, label, fk_account)";
-	$sql .= " VALUES (now(), '$this->datepaye', '$this->amount', '$this->author', '$label', '$this->accountid')";
+		$this->id = $this->db->last_insert_id();
+
+		$label = "Règlement facture $this->facnumber - $this->societe";
+
+	// Portion de code qui mériterait de se baser sur la table des types 
+	// de paiement, mais comme cette portion est aussi en dur dans l'ajout
+	// des factures clients, je fais pareil pour les factures fournisseurs
+    switch ($this->paiementid)
+      {
+      case 1:
+        $this->paiementid = 'TIP';
+        break;
+      case 2:
+        $this->paiementid = 'VIR';
+        break;
+      case 3:
+        $this->paiementid = 'PRE';
+        break;
+      case 4:
+        $this->paiementid = 'LIQ';
+        break;
+      case 5:
+        $this->paiementid = 'WWW';
+        break;
+      case 6:
+        $this->paiementid = 'CB';
+        break;
+      case 7:
+        $this->paiementid = 'CHQ';
+        break;
+      }
+
+	$sql = "INSERT INTO llx_bank (datec, dateo, amount, author, label, fk_type, fk_account, num_chq)";
+	$sql .= " VALUES (now(), '$this->datepaye', -$this->amount, '$this->author', '$label', '$this->paiementid', '$this->accountid', '$this->num_paiement')";
 	$result = $this->db->query($sql);
+
+	// Pour l'instant ce code n'est pas actif et n'est pas nécessaire.
+	// Je l'activerais (Eldy) si besoin de retrouver le lien entre une transaction bancaire
+	// et la facture générée se fait sentir (fonction futures ?):
+	// Mise a jour fk_bank dans llx_paiement_fourn
+   	//if ($result) {   
+ 	//	$this->bankid = $this->db->last_insert_id();
+	//
+	//	$sql = "UPDATE llx_paiementfourn SET fk_bank=$this->bankid WHERE rowid=$this->id";
+	//	$result = $this->db->query($sql);
+	//}
+
       }
     else
       {
