@@ -872,7 +872,7 @@ class Product
         // \todo A faire
 
         // Crée fichier en taille origine
-        doliMoveFileUpload($files['tmp_name'], $dir . $files['name']))
+        doliMoveFileUpload($files['tmp_name'], $dir . $files['name']);
     }
   }
 
