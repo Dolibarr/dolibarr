@@ -57,7 +57,7 @@ create table llx_societe
   rubrique        varchar(255),                        -- champ rubrique libre
   fk_user_creat   integer,                             -- utilisateur qui a créé l'info
   fk_user_modif   integer,                             -- utilisateur qui a modifié l'info
-  remise_client   real,                                -- remise systématique pour le client
+  remise_client   real           default 0,            -- remise systématique pour le client
 
   UNIQUE INDEX(prefix_comm)
 )type=innodb;
