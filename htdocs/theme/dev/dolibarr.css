@@ -21,7 +21,7 @@
 
 BODY 
 {
-  background: #e0ebeb; 
+  background: #ebebeb; 
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none 
 }
@@ -33,26 +33,26 @@ a {
     text-decoration: none; 
     }
 
+.menu 
+{ 
+  background: #cbcbcb;
+  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
+  color: #202020; 
+  text-decoration: none }
+
 a.leftmenu 
 { 
-  background: #b3cccc;
+  background: #ebebeb;
   font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
   color: #202020; 
   }
 
-.menu 
-{ 
-  background: #b3cccc; 
-  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
-  color: #000000; 
-  text-decoration: none }
-
 
 .submenu 
 { 
-  background: #b3cccc; 
+  background: #ebebeb;
   font-family: Helvetica, Verdana; font-size: 14px;
-  color: #000000; 
+  color: #202020; 
   text-decoration: none }
 
 
@@ -60,10 +60,15 @@ a.leftmenu
  *   Barre de gauche
  */
 
+table.leftmenu
+{ 
+
+ }
+
 TD.barre 
 { 
   border: 1px solid #000000;
-  background: #b3cccc;
+  background: #ebebeb;
   font-family: Helvetica, Verdana; font-size: 14px; 
   color: #000000; 
   text-decoration: none }

@@ -78,7 +78,7 @@ function top_menu($head) {
    *
    */
 
-  print '<TABLE border="0" width="100%" bgcolor="#000000" cellspacing="0" cellpadding="0">';
+  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="0">';
   print '<tr><td>';
   print '<TABLE border="0" width="100%" cellspacing="1" cellpadding="2">';
 
@@ -143,16 +143,14 @@ function left_menu($menu)
    * Colonne de gauche
    *
    */
-  print '<TABLE border="0" width="100%" bgcolor="#000000" cellspacing="0" cellpadding="0">';
-  print '<tr><td>';
-  print '<TABLE border="0" width="100%" cellspacing="1" cellpadding="4">';
+  print '<TABLE class="leftmenu" border="0" width="100%" cellspacing="1" cellpadding="4">';
 
 
   for ($i = 0 ; $i < sizeof($menu) ; $i++) 
     {
 
       print "<TR><TD class=\"barre\" valign=\"top\">";
-      print '<A class="menu" href="'.$menu[$i][0].'">'.$menu[$i][1].'</a>';
+      print '<A class="leftmenu" href="'.$menu[$i][0].'">'.$menu[$i][1].'</a>';
 
       for ($j = 2 ; $j < sizeof($menu[$i]) - 1 ; $j = $j +2) 
 	{
@@ -180,7 +178,7 @@ function left_menu($menu)
   print '</form>';
   print '</td></tr>';
 
-  print '</table></td></tr></table>';
+  print '</table>';
   /*
    *
    *
