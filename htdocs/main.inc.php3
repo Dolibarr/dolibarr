@@ -29,7 +29,6 @@ if (! include ("conf/conf.php"))
 
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
 
-/* On traitera plus tard le https */
 if (strtolower(substr($dolibarr_main_url_root, 0, 7)) == 'http://')
 {
   $uri = substr($dolibarr_main_url_root, 7);
