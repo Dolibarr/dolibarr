@@ -36,6 +36,7 @@ class Account {
   Function Account($DB, $rowid=0) {
     global $config;
 
+    $this->clos = 0;
     $this->db = $DB;
     $this->rowid = $rowid;
     
