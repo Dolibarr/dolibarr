@@ -40,36 +40,25 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-
-
-llxHeader();
-
 /******************************************************************************/
 /*                   Fin des  Actions                                         */
 /******************************************************************************/
 
-/****************************************************************************
- *                                                                          *
- *                                                                          *
- *                                                                          *
- *                                                                          *
- ****************************************************************************/
+llxHeader();
 
-if ($sortfield == "")
+if ($_GET["sortfield"] == "")
 {
   $sortfield="e.rowid";
 }
-if ($sortorder == "")
+if ($_GET["sortorder"] == "")
 {
   $sortorder="DESC";
 }
 
-if ($page == -1) { $page = 0 ; }
-
 $limit = $conf->liste_limit;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+$offset = $limit * $_GET["page"] ;
+$pageprev = $_GET["page"] - 1;
+$pagenext = $_GET["page"] + 1;
 
 $sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition" ;
 $sql .= " FROM llx_expedition as e ";
@@ -91,17 +80,14 @@ $sql .= $db->plimit($limit + 1,$offset);
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
-  print_barre_liste("Expeditions", $page, $PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
-  
+  print_barre_liste("Expeditions", $_GET["page"], $PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
   
   $i = 0;
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
   
   print '<TR class="liste_titre">';
   
   print_liste_field_titre_new ("Réf",$PHP_SELF,"p.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
-  
-  print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp",'width="30%"',$sortfield);
   
   print_liste_field_titre_new ("Date",$PHP_SELF,"c.date_expedition","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
   
@@ -113,46 +99,45 @@ if ( $db->query($sql) )
     {
       $objp = $db->fetch_object( $i);
       
-	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
-	  print "<TD><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      
-	  
-	  $now = time();
-	  $lim = 3600 * 24 * 15 ;
-	  
-	  if ( ($now - $objp->date_expedition) > $lim && $objp->statutid == 1 )
-	    {
-	      print "<td><b> &gt; 15 jours</b></td>";
-	    }
-	  else
-	    {
-	      print "<td>&nbsp;</td>";
-	    }
-	  
-	  print "<TD align=\"right\">";
-	  $y = strftime("%Y",$objp->date_expedition);
-	  $m = strftime("%m",$objp->date_expedition);
-	  
-	  print strftime("%d",$objp->date_expedition)."\n";
-	  print " <a href=\"propal.php?year=$y&amp;month=$m\">";
-	  print strftime("%B",$objp->date_expedition)."</a>\n";
-	  print " <a href=\"propal.php?year=$y\">";
-	  print strftime("%Y",$objp->date_expedition)."</a></TD>\n";      
-	  
-	  print "<td align=\"center\">$objp->statut</TD>\n";
-	  print "</TR>\n";
-	  
-	  $i++;
+      $var=!$var;
+      print "<TR $bc[$var]>";
+      print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
+      
+      $now = time();
+      $lim = 3600 * 24 * 15 ;
+      
+      if ( ($now - $objp->date_expedition) > $lim && $objp->statutid == 1 )
+	{
+	  print "<td><b> &gt; 15 jours</b></td>";
 	}
-            
-      print "</table>";
-      $db->free();
+      else
+	{
+	  print "<td>&nbsp;</td>";
+	}
+	  
+      print "<TD align=\"right\">";
+      $y = strftime("%Y",$objp->date_expedition);
+      $m = strftime("%m",$objp->date_expedition);
+      
+      print strftime("%d",$objp->date_expedition)."\n";
+      print " <a href=\"propal.php?year=$y&amp;month=$m\">";
+      print strftime("%B",$objp->date_expedition)."</a>\n";
+      print " <a href=\"propal.php?year=$y\">";
+      print strftime("%Y",$objp->date_expedition)."</a></TD>\n";      
+      
+      print '<td align="center">'.$objp->statut.'</td>';
+      print "</tr>\n";
+      
+      $i++;
     }
-  else
-    {
-      print $db->error();
-    }
+  
+  print "</table>";
+  $db->free();
+}
+else
+{
+  print $db->error();
+}
 
 $db->close();
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
