@@ -22,8 +22,6 @@
 require("../../main.inc.php3");
 
 function llxHeader($head = "", $urlp = "") {
-  global $user, $conf;
-
   /*
    *
    *
@@ -36,16 +34,11 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu(DOL_URL_ROOT."/comm/action/?time=today", "Aujourd'hui");
 
-
-
   $menu->add(DOL_URL_ROOT."/comm/clients.php3", "Clients");
 
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php3", "Contacts");
 
   $menu->add(DOL_URL_ROOT."/comm/propal.php3", "Propales");
-
-  $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php3?viewstatut=0", "Brouillons");
-  $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php3?viewstatut=1", "Ouvertes");
 
   $menu->add(DOL_URL_ROOT."/comm/projet/", "Projets");
 
