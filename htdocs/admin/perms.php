@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/perms.php
+/**
+    	\file htdocs/admin/perms.php
 		\brief      Page d'administration/configuration des permissions par defaut
 		\version    $Revision$
 */
@@ -46,6 +47,8 @@ if ($_GET["action"] == 'remove')
   $db->query($sql);
 }
 
+
+
 llxHeader();
 
 print_titre($langs->trans("DefaultRights"));
@@ -53,10 +56,32 @@ print_titre($langs->trans("DefaultRights"));
 print "<br>".$langs->trans("DefaultRightsDesc")."<br><br>\n";
 
 
-print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%">';
+print '<table class="noborder" width="100%">';
 
-# Affiche lignes des constantes
 
+// Charge les modules soumis a permissions
+$dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
+$handle=opendir($dir);
+$modules = array();
+while (($file = readdir($handle))!==false)
+{
+    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod' && substr($file, strlen($file) - 10) == '.class.php')
+    {
+        $modName = substr($file, 0, strlen($file) - 10);
+
+        if ($modName)
+        {
+            include_once("../includes/modules/$file");
+            $objMod = new $modName($db);
+            if ($objMod->rights_class) {
+                $modules[$objMod->rights_class]=$objMod;
+                //print "modules[".$objMod->rights_class."]=$objMod;";
+            }
+        }
+    }
+}
+
+// Affiche lignes des permissions
 $sql = "SELECT r.id, r.libelle, r.module, r.bydefault FROM ".MAIN_DB_PREFIX."rights_def as r";
 $sql .= " WHERE type <> 'a'";
 $sql .= " ORDER BY r.id ASC";
@@ -85,7 +110,8 @@ if ($result)
 	}
 
       print '<tr '. $bc[$var].'>';
-      print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td><td align="center">';
+      print '<td>'.(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle) . '</td>';
+      print '<td>'.$modules[$obj->module]->getName(). '</td><td align="center">';
       if ($obj->bydefault == 1)
 	{
 
