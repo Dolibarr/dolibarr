@@ -25,7 +25,7 @@ function facture_get_num($objsoc=0)
 { 
   global $db;
 
-  $sql = "SELECT count(*) FROM llx_facture";
+  $sql = "SELECT count(*) FROM llx_facture WHERE fk_statut > 0";
 
   if ( $db->query($sql) ) 
     {

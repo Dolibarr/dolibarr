@@ -179,7 +179,7 @@ if ($action == 'create')
 	  while ($i < $num)
 	    {
 	      $objp = $db->fetch_object( $i);
-	      $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
+	      $opt .= "<option value=\"$objp->rowid\">[$objp->ref] ".substr($objp->label,0,40)."</option>\n";
 	      $i++;
 	    }
 	}
@@ -193,11 +193,12 @@ if ($action == 'create')
   print_titre("Services/Produits");
     
   print '<table border="1" cellspacing="0">';
-  
+  print '<tr><td>Produit</td><td>Quan.</td><td>Remise</td></tr>';
   for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
     {
       print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
-      print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td></tr>';
+      print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td>';
+      print '<td><input type="text" size="3" name="remise'.$i.'" value="0"> %</td></tr>';
     }
   
   print "</table>";

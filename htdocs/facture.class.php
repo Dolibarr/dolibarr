@@ -118,6 +118,9 @@ class Facture
 	{
 	  $this->id = $this->db->last_insert_id();
 
+	  $sql = "UPDATE llx_facture SET facnumber='(PROV".$this->id.")' WHERE rowid=".$this->id;
+	  $this->db->query($sql);
+
 	  if ($this->id && $this->propalid)
 	    {
 	      $sql = "INSERT INTO llx_fa_pr (fk_facture, fk_propal) VALUES (".$this->id.",".$this->propalid.")";
@@ -342,13 +345,15 @@ class Facture
    * Valide la facture
    *
    */
-  Function set_valid($rowid, $user)
+  Function set_valid($rowid, $user, $soc)
     {
       if ($this->brouillon)
 	{
 	  $action_notify = 2; // ne pas modifier cette valeur
 
-	  $sql = "UPDATE llx_facture set fk_statut = 1, fk_user_valid = $user->id WHERE rowid = $rowid ;";
+	  $numfa = facture_get_num($soc); // définit dans includes/modules/facture
+
+	  $sql = "UPDATE llx_facture set facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id WHERE rowid = $rowid ;";
 	  $result = $this->db->query( $sql);
 
 	  /*
@@ -411,10 +416,10 @@ class Facture
 	}
     }
   /**
-   * Supprime une ligne de la facture
+   * Ajoute une ligne de facture
    *
    */
-  Function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL')
+  Function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL', $remise_percent=0)
     {
       if ($this->brouillon)
 	{
@@ -422,10 +427,17 @@ class Facture
 	    {
 	      $qty=1;
 	    }
+	  $remise = 0;
+	  $price = round(ereg_replace(",",".",$pu), 2);
+	  $subprice = $price;
+	  if (trim(strlen($remise_percent)) > 0)
+	    {
+	      $remise = round(($pu * $remise_percent / 100), 2);
+	      $price = $pu - $remise;
+	    }
 
-	  $pu = round(ereg_replace(",",".",$pu), 2);
-	  $sql = "INSERT INTO llx_facturedet (fk_facture,description,price,qty,tva_taux, fk_product)";
-	  $sql .= " VALUES ($facid, '$desc', $pu, $qty, $txtva, $fk_product) ;";
+	  $sql = "INSERT INTO llx_facturedet (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise)";
+	  $sql .= " VALUES ($facid, '$desc', $price, $qty, $txtva, $fk_product, $remise_percent, $subprice, $remise) ;";
 
 	  if ( $this->db->query( $sql) )
 	    {
@@ -442,7 +454,7 @@ class Facture
    * Mets à jour une ligne de facture
    *
    */
-  Function updateline($rowid, $desc, $pu, $qty)
+  Function updateline($rowid, $desc, $pu, $qty, $remise_percent=0)
     {
       if ($this->brouillon)
 	{
@@ -450,8 +462,20 @@ class Facture
 	    {
 	      $qty=1;
 	    }
-	  $pu = round(ereg_replace(",",".",$pu), 2);
-	  $sql = "UPDATE llx_facturedet set description='$desc',price=$pu,qty=$qty WHERE rowid = $rowid ;";
+	  $remise = 0;
+	  $price = round(ereg_replace(",",".",$pu), 2);
+	  $subprice = $price;
+	  if (trim(strlen($remise_percent)) > 0)
+	    {
+	      $remise = round(($pu * $remise_percent / 100), 2);
+	      $price = $pu - $remise;
+	    }
+	  else
+	    {
+	      $remise_percent=0;
+	    }
+
+	  $sql = "UPDATE llx_facturedet set description='$desc',price=$price,subprice=$subprice,remise=$remise,remise_percent=$remise_percent,qty=$qty WHERE rowid = $rowid ;";
 	  $result = $this->db->query( $sql);
 
 	  $this->updateprice($this->id);

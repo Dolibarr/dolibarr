@@ -85,10 +85,11 @@ if ($HTTP_POST_VARS["action"] == 'add')
 		{
 		  $result = $facture->addline($facid,
 					      addslashes($prop->lignes[$i]->libelle),
-					      $prop->lignes[$i]->price,
+					      $prop->lignes[$i]->subprice,
 					      $prop->lignes[$i]->qty,
 					      $prop->lignes[$i]->tva_tx,
-					      $prop->lignes[$i]->product_id);
+					      $prop->lignes[$i]->product_id,
+					      $prop->lignes[$i]->remise_percent);
 		}
 	    }
 	  else
@@ -154,7 +155,9 @@ if ($action == 'valid' && $user->rights->facture->valider)
 {
   $fac = new Facture($db);
   $fac->fetch($facid);
-  $result = $fac->set_valid($facid, $user);
+  $soc = new Societe($db);
+  $soc->fetch($fac->socidp);
+  $result = $fac->set_valid($facid, $user, $soc);
   if ($result)
     {
      facture_pdf_create($db, $facid);
@@ -184,7 +187,9 @@ if ($action == 'addligne' && $user->rights->facture->creer)
 			  $HTTP_POST_VARS["desc"],
 			  $HTTP_POST_VARS["pu"],
 			  $HTTP_POST_VARS["qty"],
-			  $HTTP_POST_VARS["tva_tx"]);
+			  $HTTP_POST_VARS["tva_tx"],
+			  "NULL",
+			  $HTTP_POST_VARS["remise_percent"]);
 }
 
 if ($action == 'updateligne' && $user->rights->facture->creer) 
@@ -194,7 +199,8 @@ if ($action == 'updateligne' && $user->rights->facture->creer)
   $result = $fac->updateline($rowid,
 			     $HTTP_POST_VARS["desc"],
 			     $HTTP_POST_VARS["price"],
-			     $HTTP_POST_VARS["qty"]);
+			     $HTTP_POST_VARS["qty"],
+			     $HTTP_POST_VARS["remise_percent"]);
 }
 
 if ($action == 'deleteline' && $user->rights->facture->creer) 
@@ -327,8 +333,6 @@ if ($action == 'create')
 	  $soc = new Societe($db);
 	  $soc->fetch($obj->idp);
        
-	  $numfa = facture_get_num($soc); // définit dans includes/modules/facture
-	
 	  print '<form action="'.$PHP_SELF.'" method="post">';
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="socid" value="'.$obj->idp.'">' ."\n";
@@ -349,8 +353,8 @@ if ($action == 'create')
 	  print_date_select(time());
 
 	  print "</td></tr>";
-	  print "<tr><td>Numéro :</td><td> <input name=\"facnumber\" type=\"text\" value=\"$numfa\"></td></tr>";
-	  
+	  print "<tr><td>Numéro :</td><td>Provisoire</td></tr>";
+	  print '<input name="facnumber" type="hidden" value="provisoire">';
 	  print "<tr><td>Conditions de réglement :</td><td>";
 	  $sql = "SELECT rowid, libelle FROM llx_cond_reglement ORDER BY sortorder";
 	  $result = $db->query($sql);
@@ -624,8 +628,8 @@ else
 	 *
 	 */
 	
-	$sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux";
-	$sql .= " FROM llx_facturedet as l WHERE l.fk_facture = $facid";
+	$sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice";
+	$sql .= " FROM llx_facturedet as l WHERE l.fk_facture = $facid ORDER BY l.rowid";
 	
 	$result = $db->query($sql);
 	if ($result)
@@ -637,10 +641,11 @@ else
 	    if ($num)
 	      {
 		print "<TR class=\"liste_titre\">";
-		print '<td width="62%">Description</td>';
-		print '<td width="8%" align="center">Tva Tx</td>';
+		print '<td width="54%">Description</td>';
+		print '<td width="8%" align="center">Tva</td>';
 		print '<td width="8%" align="center">Quantité</td>';
-		print '<td width="12%" align="right">Montant</TD>';
+		print '<td width="8%" align="right">Remise</td>';
+		print '<td width="12%" align="right">P.U.</td>';
 		print '<td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
 		print "</TR>\n";
 	      }
@@ -660,7 +665,15 @@ else
 		  }
 		print '<TD align="center">'.$objp->tva_taux.' %</TD>';
 		print '<TD align="center">'.$objp->qty.'</TD>';
-		print '<TD align="right">'.price($objp->price)."</TD>\n";
+		if ($objp->remise_percent > 0)
+		  {
+		    print '<td align="right">'.$objp->remise_percent." %</td>\n";
+		  }
+		else
+		  {
+		    print '<td>&nbsp;</td>';
+		  }
+		print '<TD align="right">'.price($objp->subprice)."</td>\n";
 		if ($fac->statut == 0) 
 		  {
 		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=deleteline&rowid='.$objp->rowid.'">del</a></td>';
@@ -678,9 +691,10 @@ else
 		    print '<input type="hidden" name="action" value="updateligne">';
 		    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 		    print "<TR $bc[$var]>";
-		    print '<TD colspan="2"><textarea name="desc" cols="60" rows="3">'.stripslashes($objp->description).'</textarea></TD>';
+		    print '<TD colspan="2"><textarea name="desc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></TD>';
 		    print '<TD align="center"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></TD>';
-		    print '<TD align="right"><input size="8" type="text" name="price" value="'.price($objp->price).'"></TD>';
+		    print '<TD align="right"><input size="3" type="text" name="remise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
+		    print '<TD align="right"><input size="8" type="text" name="price" value="'.price($objp->subprice).'"></td>';
 		    print '<td align="right" colspan="2"><input type="submit" value="Enregistrer"></td>';
 		    print '</tr>' . "\n";
 		    print "</form>\n";
@@ -707,19 +721,21 @@ else
 	    print "<form action=\"$PHP_SELF?facid=$facid\" method=\"post\">";
 	    //	    echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="1">';
 	    print "<TR class=\"liste_titre\">";
-	    print '<td width="62%">Description</td>';
-	    print '<td width="8%" align="center">Tva Tx</td>';
+	    print '<td width="54%">Description</td>';
+	    print '<td width="8%" align="center">Tva</td>';
 	    print '<td width="8%" align="center">Quantité</td>';
-	    print '<td width="12%" align="right">Montant</TD>';
+	    print '<td width="8%" align="right">Remise</td>';
+	    print '<td width="12%" align="right">P.U.</TD>';
 	    print '<td>&nbsp;</td>';
 	    print '<td>&nbsp;</td>';
 	    print "</TR>\n";
 	    print '<input type="hidden" name="action" value="addligne">';
-	    print '<tr><td><textarea name="desc" cols="60" rows="3"></textarea></td>';
+	    print '<tr><td><textarea name="desc" cols="60" rows="2"></textarea></td>';
 	    print '<td align="center">';
 	    print $html->select_tva("tva_tx");
 	    print '</td>';
-	    print '<td align="center"><input type="text" name="qty" size="2"></td>';
+	    print '<td align="center"><input type="text" name="qty" value="1" size="2"></td>';
+	    print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
 	    print '<td align="right"><input type="text" name="pu" size="8"></td>';
 
 	    print '<td align="center" colspan="3"><input type="submit" value="Ajouter"></td></tr>';
@@ -811,83 +827,65 @@ else
 	 * Documents générés
 	 *
 	 */
-
-	print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
-	print_titre("Documents");
-	print '<table width="100%" cellspacing="0" border="1" cellpadding="3">';
-	
 	$file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
 	
 	if (file_exists($file))
 	  {
+	    print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
+	    print_titre("Documents");
+	    print '<table width="100%" cellspacing="0" border="1" cellpadding="3">';
+	    
 	    print "<tr $bc[0]><td>Facture PDF</a></td>";
 	    print '<td><a href="'.FAC_OUTPUT_URL."/".$fac->ref."/".$fac->ref.'.pdf">'.$fac->ref.'.pdf</a></td>';
 	    print '<td align="right">'.filesize($file). ' bytes</td>';
 	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	    print '</tr>';
-	  }  
-	
-	$file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".ps";
-	
-	if (file_exists($file))
-	  {
-	    print "<tr $bc[0]><td>Facture Postscript</a></td>";
-	    print '<td><a href="'.FAC_OUTPUT_URL."/".$fac->ref."/".$fac->ref.'.ps">'.$fac->ref.'.ps</a></td>';
-	    print '<td align="right">'.filesize($file). ' bytes</td>';
-	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-	    print '</tr>';
+	           	
+	    print "</table>\n";
+	    print '</td><td valign="top" width="50%">';
+	    print_titre("Actions");
+	    /*
+	     * Liste des actions
+	     *
+	     */
+	    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
+	    $sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $facid";
 	    
-	    
-	  }
-	
-	print "</table>\n";
-	print '</td><td valign="top" width="50%">';
-	print_titre("Actions");
-	/*
-	 * Liste des actions
-	 *
-	 */
-	$sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-	$sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $facid";
-	
-	$result = $db->query($sql);
-	if ($result)
-	  {
-	    $num = $db->num_rows();
-	    if ($num)
+	    $result = $db->query($sql);
+	    if ($result)
 	      {
-		$i = 0; $total = 0;
-		print '<TABLE border="1" cellspacing="0" cellpadding="4" width="100%">';
-		print "<TR $bc[$var]>";
-		print "<td>Date</td>";
-		print "<td>Action</td>";
-		print "</TR>\n";
-		
-		$var=True;
-		while ($i < $num)
+		$num = $db->num_rows();
+		if ($num)
 		  {
-		    $objp = $db->fetch_object( $i);
-		    $var=!$var;
-		    print "<tr $bc[$var]>";
-		    print "<td>".strftime("%d %B %Y",$objp->da)."</TD>\n";
-		    print '<td>'.stripslashes($objp->note).'</TD>';
-		    print "</tr>";
-		    $i++;
+		    $i = 0; $total = 0;
+		    print '<table border="1" cellspacing="0" cellpadding="4" width="100%">';
+		    print "<tr $bc[$var]><td>Date</td><td>Action</td></tr>\n";
+		    
+		    $var=True;
+		    while ($i < $num)
+		      {
+			$objp = $db->fetch_object( $i);
+			$var=!$var;
+			print "<tr $bc[$var]>";
+			print "<td>".strftime("%d %B %Y",$objp->da)."</TD>\n";
+			print '<td>'.stripslashes($objp->note).'</TD>';
+			print "</tr>";
+			$i++;
+		      }
+		    print "</table>";
 		  }
-		print "</table>";
 	      }
+	    else
+	      {
+		print $db->error();
+	      }
+	    
+	    /*
+	     *
+	     *
+	     */
+	    print "</td></tr></table>";
 	  }
-	else
-	  {
-	    print $db->error();
-	  }
-	
-	/*
-	 *
-	 *
-	 */
-	print "</td></tr></table>";
-	
 	/*
 	 *
 	 *

@@ -50,7 +50,7 @@ class Propal
    *
    *
    */
-  Function add_product($idproduct, $qty)
+  Function add_product($idproduct, $qty, $remise_percent=0)
     {
       if ($idproduct > 0)
 	{
@@ -61,22 +61,30 @@ class Propal
 	      $qty = 1 ;
 	    }
 	  $this->products_qty[$i] = $qty;
+	  $this->products_remise_percent[$i] = $remise_percent;
 	}
     }
   /*
    *
    *
    */
-  Function insert_product($idproduct, $qty)
+  Function insert_product($idproduct, $qty, $remise_percent=0)
     {
       if ($this->statut == 0)
 	{
 	  $prod = new Product($this->db, $idproduct);
 	  if ($prod->fetch($idproduct) > 0)
 	    {
+	      $price = $prod->price;
+	      $subprice = $prod->price;
+	      if ($remise_percent > 0)
+		{
+		  $remise = round(($prod->price * $remise_percent / 100), 2);
+		  $price = $prod->price - $remise;
+		}
 	  
-	      $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx, description) VALUES ";
-	      $sql .= " (".$this->id.",". $idproduct.",". $qty.",". $prod->price.",".$prod->tva_tx.",'".addslashes($prod->label)."') ; ";
+	      $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
+	      $sql .= " (".$this->id.",". $idproduct.",". $qty.",". $price.",".$prod->tva_tx.",'".addslashes($prod->label)."',$remise_percent, $subprice)";
 	  
 	      if ($this->db->query($sql) )
 		{
@@ -197,13 +205,12 @@ class Propal
 		      $prod = new Product($this->db, $this->products[$i]);
 		      $prod->fetch($this->products[$i]);
 		    
-		      $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx) VALUES ";
-		      $sql .= " ($propalid,".$this->products[$i].",".$this->products_qty[$i].",$prod->price,$prod->tva_tx);";
-		    
-		      if (! $this->db->query($sql) )
-			{
-			  print $sql . '<br>' . $this->db->error() .'<br>';
-			}
+		      //$sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx) VALUES ";
+		      //$sql .= " ($propalid,".$this->products[$i].",".$this->products_qty[$i].",$prod->price,$prod->tva_tx);";
+
+		      $this->insert_product($this->products[$i], 
+					    $this->products_qty[$i], 
+					    $this->products_remise_percent[$i]);
 		    }
 		  /*
 		   *
@@ -328,9 +335,9 @@ class Propal
 	       * Lignes
 	       */
 
-	      $sql = "SELECT d.qty, p.description, p.ref, p.price, d.tva_tx, p.rowid, p.label";
+	      $sql = "SELECT p.rowid, p.label, p.description, p.ref, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice";
 	      $sql .= " FROM llx_propaldet as d, llx_product as p";
-	      $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = p.rowid";
+	      $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = p.rowid ORDER by d.rowid ASC";
 	
 	      $result = $this->db->query($sql);
 	      if ($result)
@@ -340,16 +347,20 @@ class Propal
 		  
 		  while ($i < $num)
 		    {
-		      $objp              = $this->db->fetch_object($i);
-		      $ligne             = new PropaleLigne();
-		      $ligne->libelle    = stripslashes($objp->label);
-		      $ligne->desc       = stripslashes($objp->description);
-		      $ligne->qty        = $objp->qty;
-		      $ligne->ref        = $objp->ref;
-		      $ligne->tva_tx     = $objp->tva_tx;
-		      $ligne->price      = $objp->price;
-		      $ligne->product_id = $objp->rowid;
-		      $this->lignes[$i]  = $ligne;
+		      $objp                  = $this->db->fetch_object($i);
+
+		      $ligne                 = new PropaleLigne();
+		      $ligne->libelle        = stripslashes($objp->label);
+		      $ligne->desc           = stripslashes($objp->description);
+		      $ligne->qty            = $objp->qty;
+		      $ligne->ref            = $objp->ref;
+		      $ligne->tva_tx         = $objp->tva_tx;
+		      $ligne->subprice          = $objp->subprice;
+		      $ligne->remise_percent = $objp->remise_percent;
+		      $ligne->price          = $objp->price;
+		      $ligne->product_id     = $objp->rowid;
+
+		      $this->lignes[$i]      = $ligne;
 		      $i++;
 		    }
 	    

@@ -92,8 +92,9 @@ if ($action == 'add')
     {
       $xid = "idprod".$i;
       $xqty = "qty".$i;
+      $xremise = "remise".$i;
 
-      $propal->add_product($$xid,$$xqty);
+      $propal->add_product($$xid,$$xqty,$$xremise);
     }
   
   $id = $propal->create();
@@ -146,7 +147,7 @@ if ($HTTP_POST_VARS["action"] == 'addligne' && $user->rights->propale->creer)
     {
       $propal = new Propal($db);
       $propal->fetch($propalid);
-      $propal->insert_product($HTTP_POST_VARS["idprod"], $HTTP_POST_VARS["qty"]);
+      $propal->insert_product($HTTP_POST_VARS["idprod"], $HTTP_POST_VARS["qty"], $HTTP_POST_VARS["remise"]);
     }
 } 
 
@@ -292,8 +293,8 @@ if ($propalid)
 	  /*
 	   *
 	   */
-	  print '<tr><td>Remise</td><td align="right">'.price($propal->remise).' euros</td>';
-	  print '<td>&nbsp;</td><td align="right">'.price($propal->remise_percent).' %</td></tr>';
+	  print '<tr><td>Remise</td><td align="right">'.$propal->remise_percent.' %</td>';
+	  print '<td>&nbsp;</td><td align="right">'.price($propal->remise).' euros</td></tr>';
 	  /*
 	   *
 	   */
@@ -329,15 +330,6 @@ if ($propalid)
 	   *
 	   *
 	   */
-	  if ($propal->brouillon == 1)
-	    {
-	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
-	      print '<input type="hidden" name="action" value="setremise">';
-	      print '<table class="tablefsoc" cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
-	      print '<input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">%';
-	      print '<input type="submit" value="Appliquer">';
-	      print '</td></tr></table></form>';
-	    }
 
 	  /*
 	   * Produits
@@ -347,14 +339,14 @@ if ($propalid)
 	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<TR class=\"liste_titre\">";
 	  print "<td>Réf</td><td>Produit</td>";
-	  print '<td align="right">Prix</td><td align="center">Tva</td><td align="center">Qté.</td>';
+	  print '<td align="center">Tva</td><td align="center">Qté.</td><td align="right">Remise</td><td align="right">P.U.</td>';
 	  if ($propal->statut == 0)
 	    {
 	      print "<td>&nbsp;</td>";
 	    }
 	  print "</TR>\n";
 
-	  $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.tva_tx";
+	  $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.tva_tx, pt.remise_percent, pt.subprice";
 	  $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
 	  
 	  $result = $db->query($sql);
@@ -370,11 +362,12 @@ if ($propalid)
 		  $objp = $db->fetch_object( $i);
 		  $var=!$var;
 		  print "<TR $bc[$var]>";
-		  print "<TD>[$objp->ref]</TD>\n";
+		  print "<td>[$objp->ref]</td>\n";
 		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.$objp->product.'</td>';
-		  print "<TD align=\"right\">".price($objp->price)."</TD>";
 		  print '<td align="center">'.$objp->tva_tx.' %</td>';
 		  print "<td align=\"center\">".$objp->qty."</td>\n";
+		  print '<td align="right">'.$objp->remise_percent.' %</td>';
+		  print '<td align="right">'.price($objp->subprice).'</td>';
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
 		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&ligne='.$objp->rowid.'&action=del_ligne">Supprimer</a></td>';
@@ -389,11 +382,10 @@ if ($propalid)
 		}
 	    }
 
-	  $sql = "SELECT pt.rowid, pt.description, pt.price, pt.qty, pt.tva_tx";
+	  $sql = "SELECT pt.rowid, pt.description, pt.price, pt.qty, pt.tva_tx, pt.remise_percent";
 	  $sql .= " FROM llx_propaldet as pt WHERE pt.fk_propal = $propalid AND pt.fk_product = 0";
 	  
-	  $result = $db->query($sql);
-	  if ($result) 
+	  if ($db->query($sql)) 
 	    {
 	      $num = $db->num_rows();
 	      $i = 0;	     
@@ -403,9 +395,10 @@ if ($propalid)
 		  $var=!$var;
 		  print "<TR $bc[$var]><td>&nbsp;</td>\n";
 		  print '<td>'.$objp->description.'</td>';
-		  print "<TD align=\"right\">".price($objp->price)."</td>";
 		  print '<td align="center">'.$objp->tva_tx.' %</td>';
 		  print "<td align=\"center\">".$objp->qty."</td>\n";
+		  print '<td align="center">'.$objp->remise_percent.' %</td>';
+		  print "<TD align=\"right\">".price($objp->price)."</td>";
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
 		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&ligne='.$objp->rowid.'&action=del_ligne">Supprimer</a></td>';
@@ -432,7 +425,7 @@ if ($propalid)
 		      while ($i < $num)
 			{
 			  $objp = $db->fetch_object( $i);
-			  $opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
+			  $opt .= "<option value=\"$objp->rowid\">[$objp->ref] ".substr($objp->label,0,40)."</option>\n";
 			  $i++;
 			}
 		    }
@@ -444,7 +437,7 @@ if ($propalid)
 		}
 
 	      /*
-	       * Produits génériques
+	       * Produits
 	       *
 	       */
 	      $var=!$var;
@@ -453,17 +446,25 @@ if ($propalid)
 	      print '<tr '.$bc[$var].'>';
 	      print '<td>&nbsp;</td>';
 	      print '<td><input type="text" size="28" name="np_desc"></td>';
-	      print '<td align="right"><input type="text" size="6" name="np_price"></td><td align="center">';
+	      print '<td align="center">';
 	      print $html->select_tva("np_tva_tx") . '</td>';
 	      print '<td align="center"><input type="text" size="3" value="1" name="np_qty"></td>';
+	      print '<td align="right"><input type="text" size="3" value="0" name="np_remise"> %</td>';
+	      print '<td align="right"><input type="text" size="6" name="np_price"></td>';
 	      print '<td align="center"><input type="submit" value="Ajouter"></td>';
 	      print '</tr></form>';
 
+	      /*
+	       * Produits génériques
+	       *
+	       */
 	      $var=!$var;
 	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
 	      print '<input type="hidden" name="action" value="addligne">';
-	      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"3\"><select name=\"idprod\">$opt</select></td>";
+	      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"2\"><select name=\"idprod\">$opt</select></td>";
 	      print '<td align="center"><input type="text" size="3" name="qty" value="1"></td>';
+	      print '<td align="right"><input type="text" size="3" name="remise" value="0"> %</td>';
+	      print '<td>&nbsp;</td>';
 	      print '<td align="center"><input type="submit" value="Ajouter"></td>';
 	      print "</tr>\n";
 	      print '</form>';
@@ -473,12 +474,22 @@ if ($propalid)
 
 	  print "</table>";
 
+	  if ($propal->brouillon == 1)
+	    {
+	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
+	      print '<input type="hidden" name="action" value="setremise">';
+	      print '<table class="tablefsoc" cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
+	      print '<input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">%';
+	      print '<input type="submit" value="Appliquer">';
+	      print '</td></tr></table></form>';
+	    }
+
 	  /*
 	   * Actions
 	   */
 	  if ($obj->statut < 2)
 	    {
-	      print "<p><TABLE class=\"tableab\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+	      print "<br><table class=\"tableab\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
 	  
 	      if ($obj->statut == 0)
 		{
