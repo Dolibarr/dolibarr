@@ -336,26 +336,37 @@ class Facture
   Function updateprice($facid)
     {
 
-      $sql = "SELECT sum(price*qty) FROM llx_facturedet WHERE fk_facture = $facid;";
+      $sql = "SELECT price, qty, tva_taux FROM llx_facturedet WHERE fk_facture = $facid;";
   
       $result = $this->db->query($sql);
 
       if ($result)
 	{
-	  if ($this->db->num_rows() )
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  $totalht = 0;
+	  $totaltva = 0;
+	  while ($i < $num)	  
 	    {
-	      $row = $this->db->fetch_row();
-	      $totalht = $row[0];
-	    }
+	      $obj = $this->db->fetch_object($i);
 
-	  $tva = tva($totalht);
-	  $total = $totalht + $tva;
+	      $totalht = $totalht + ($obj->qty * $obj->price);
+	      $totaltva = $totaltva + tva($obj->qty * $obj->price, $obj->tva_taux);
+	      $i++;
+	    }
+	  $this->db->free();
+
+	  $total = $totalht + $totaltva;
 	  
-	  $sql = "UPDATE llx_facture SET amount = $totalht, tva=$tva, total=$total";
+	  $sql = "UPDATE llx_facture SET amount = $totalht, tva=$totaltva, total=$total";
 	  $sql .= " WHERE rowid = $facid ;";
 	  
 	  $result = $this->db->query($sql);
 	  
+	}
+      else
+	{
+	  print "Error";
 	}
     }
 
@@ -365,16 +376,8 @@ class Facture
    *
    */
   Function pdf()
-    {
+    {      
 
-      
-      print "<hr><b>Génération du PDF</b><p>";
-      
-      $command = "export DBI_DSN=\"".$GLOBALS["DBI"]."\" ";
-      $command .= " ; ../../scripts/facture-tex.pl --facture=$facid --pdf --ps"  ;
-      
-      $output = system($command);
-      print "<p>command : $command<br>";
     }
   
 }
