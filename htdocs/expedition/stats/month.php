@@ -22,7 +22,6 @@
 
 require("./pre.inc.php");
 require("../expedition.class.php");
-require("../../graph.class.php");
 require("./expeditionstats.class.php");
 
 llxHeader();
@@ -34,25 +33,21 @@ $mesg = '';
  *
  */
 
+print_fiche_titre('Statistiques expeditions '.$_GET["year"], $mesg);
+
 $stats = new ExpeditionStats($db);
-
-$year = $_GET["year"];
-
-print_fiche_titre('Statistiques expeditions '.$year, $mesg);
 
 $dir = DOL_DOCUMENT_ROOT;
 
-////////////////////////
+$data = $stats->getNbExpeditionByMonth($_GET["year"]);
 
-$data = $stats->getNbExpeditionByMonth($year);
+$filev = "/document/images/expedition-".$_GET["year"].".png";
 
-$filev = "/document/images/expedition-$year.png";
-
-$px = new Graph();
+$px = new BarGraph($data);
+$px->SetMaxValue($px->GetMaxValue());
 $px->SetWidth(600);
 $px->SetHeight(280);
-$px->SetYLabel("Nombre de expedition");
-$px->draw($dir.$filev, $data, $year);
+$px->draw($dir.$filev, $data, $_GET["year"]);
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td align="center">Nombre d\'expédition par mois</td>';
