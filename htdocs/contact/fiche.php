@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,7 @@ if ($_POST["action"] == 'add')
 
   $contact->name         = $_POST["name"];
   $contact->firstname    = $_POST["firstname"];
+	$contact->civilite_id	 = $_POST["civilite_id"];
   $contact->poste        = $_POST["poste"];
   $contact->address      = $_POST["adresse"];
   $contact->cp           = $_POST["cp"];
@@ -72,6 +74,7 @@ if ($action == 'update')
   $contact->socid         = $_POST["socid"];
   $contact->name          = $_POST["name"];
   $contact->firstname     = $_POST["firstname"];
+	$contact->civilite_id		= $_POST["civilite_id"];
   $contact->poste         = $_POST["poste"];
 
   $contact->address       = $_POST["adresse"];
@@ -87,11 +90,11 @@ if ($action == 'update')
   $contact->jabberid      = $_POST["jabberid"];
 
   $result = $contact->update($_POST["contactid"], $user);
-  
+
   $error = $contact->error;
 }
 
-if ($action == 'create_user') 
+if ($action == 'create_user')
 {
   $nuser = new User($db);
   $contact = new Contact($db);
@@ -107,6 +110,7 @@ if ($action == 'create_user')
  */
 
 llxHeader();
+$form = new Form($db);
 
 /*
  * Onglets
@@ -140,7 +144,7 @@ if ($_GET["socid"] > 0)
   $objsoc->fetch($_GET["socid"]);
 }
 
-if ($_GET["action"] == 'create') 
+if ($_GET["action"] == 'create')
 {
   print_fiche_titre ("Création d'un nouveau contact");
 
@@ -153,6 +157,10 @@ if ($_GET["action"] == 'create')
       print '<tr><td>Société</td><td colspan="5">'.$objsoc->nom.'</td>';
       print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
     }
+
+	print '<tr><td>Titre</td><td colspan="3">';
+	print	$form->select_civilite($contact->civilite_id);
+	print '</td></tr>';
 
   print '<tr><td>Nom</td><td><input name="name" type="text" size="20" maxlength="80"></td>';
   print '<td>Prenom</td><td><input name="firstname" type="text" size="15" maxlength="80"></td>';
@@ -198,6 +206,10 @@ elseif ($_GET["action"] == 'edit')
       print '<tr><td>Société</td><td colspan="5">'.$objsoc->nom.'</td>';
       print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
     }
+
+	print '<tr><td>Titre</td><td colspan="3">';
+	print	$form->select_civilite($contact->civilite_id);
+	print '</td></tr>';
 
   print '<tr><td>Nom</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
   print '<td>Prénom</td><td><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td>';
@@ -248,7 +260,10 @@ else
       print '<tr><td>Société : '.$objsoc->nom_url.'</td></tr>';
     }
 
+  print '<tr><td valign="top">Titre : '.$contact->civilite."<br>";
+
   print '<tr><td valign="top">Nom : '.$contact->name.' '.$contact->firstname ."<br>";
+
 
   if ($contact->poste)
     print 'Poste : '.$contact->poste ."<br>";
