@@ -223,8 +223,8 @@ class Propal
 		{
 		  $obj = $this->db->fetch_object($i);
 
-		  $totalht = $totalht + $obj->price;
-		  $totaltva = tva($totalht, $obj->tva_tx);
+		  $totalht = $totalht + ($obj->qty * $obj->price);
+		  $totaltva = $totaltva + (tva(($obj->qty * $obj->price), $obj->tva_tx));
 		  $i++;
 		}
 
