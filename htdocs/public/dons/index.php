@@ -64,18 +64,26 @@ if ($conf->don->enabled)
       
       if ($don->check($conf->don->minimum))
 	{
-	  $return = $don->create(0);
+	  $ref_commande = $don->create(0);
 	  
-	  if ($return)
+	  if ($ref_commande)
 	    {
 	      $a = setlocale("LC_TIME", "FRENCH");
 	      $date_limite = strftime("%A %d %B %Y",time() + (3 * 7 * 24 * 3600));
 
 	      include ("mail.php");
 
+	      include ("mail_moderator.php");
+
 	      mail($don->email, $subject, $body, "From: contact@eucd.info");
 
+	      mail($conf->don->email_moderator, $subject_moderator, $body_moderator);
+
 	      require("merci.php");
+	    }
+	  else
+	    {
+	      print "Erreur : can't insert value in db";
 	    }
 	}
       else
