@@ -21,14 +21,38 @@
  */
 
 $info_box_head = array();
-$info_box_head[] = array('text' => "Propales");
+$info_box_head[] = array('text' => "5 dernières propositions");
 
 $info_box_contents = array();
-$info_box_contents[0] = array('align' => 'center',
-			      'text' => "factures0");
 
-$info_box_contents[1] = array('align' => 'center',
-			      'text' => "factures1");
+$sql = "SELECT s.nom,s.idp,p.ref,".$db->pdate("p.datep")." as dp,p.rowid";
+$sql .= " FROM llx_societe as s,llx_propal as p WHERE p.fk_soc = s.idp";  
+$sql .= " ORDER BY p.datep DESC, p.ref DESC ";
+$sql .= $db->plimit(5, 0);
+
+$result = $db->query($sql);
+
+if ($result) 
+{
+  $num = $db->num_rows();
+    
+  $i = 0;
+    
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object( $i);
+      
+      $info_box_contents[$i][0] = array('align' => 'center',
+					'text' => $objp->ref,
+					'url' => DOL_URL_ROOT."/comm/propal.php3?propalid=".$objp->rowid);
+
+      $info_box_contents[$i][1] = array('align' => 'center',
+					'text' => $objp->nom,
+					'url' => DOL_URL_ROOT."/comm/propal.php3?propalid=".$objp->rowid);
+      $i++;
+    }
+}
+
 
 new infoBox($info_box_head, $info_box_contents);
 

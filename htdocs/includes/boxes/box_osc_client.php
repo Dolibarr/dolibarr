@@ -39,7 +39,7 @@ if ($result)
     {
       $objp = $db->fetch_object( $i);
       
-      $info_box_contents[$i] = array('align' => 'center',
+      $info_box_contents[$i][0] = array('align' => 'center',
 				     'text' => $objp->cus,
 				     'url' => "/boutique/client/");
       $i++;
