@@ -400,7 +400,7 @@ function loginfunction()
 }
 
 /*!
-		\brief acces interdit
+		\brief Affiche message erreur de type acces interdit
 */
 
 function accessforbidden()
@@ -409,6 +409,32 @@ function accessforbidden()
   print "Accés interdit";
   llxFooter();
   exit(0);
+}
+
+/*!
+		\brief Affiche message erreur system avec toutes les informations pour faciliter le diagnostique et la remontée des bugs
+*/
+
+function dolibarr_print_error($db='',$msg='')
+{
+  print "Dolibarr a détectée une erreur technique.<br>\n";
+  print "Voici les informations qui pourront aider au diagnostique:<br><br>\n";
+
+  print "<b>Serveur:</b>".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
+  print "<b>URL sollicitée:</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
+  print "<b>Paramètres:</b> ".$_SERVER["QUERY_STRING"]."<br>\n";;
+  print "<b>URL d'origine:</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
+  
+  if ($db) {
+    print "<br>\n";
+    print "<b>Requete dernier acces en base:</b> ".$db->lastquery()."<br>\n";
+    print "<b>Code retour dernier acces en base:</b> ".$db->errno()."<br>\n";
+    print "<b>Information sur le dernier accès en base:</b> ".$db->error()."<br>\n";
+  }
+  if ($msg) {
+    print "Message: $msg<br>\n" ;
+  }
+  exit;
 }
 
 /*!
