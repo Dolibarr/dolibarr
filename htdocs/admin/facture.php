@@ -19,7 +19,6 @@
  * $Source$
  */
 require("./pre.inc.php");
-require("../includes/modules/facture/modules_facture.php");
 
 llxHeader();
 
