@@ -179,6 +179,12 @@ a.tab:hover {
   text-decoration: none;
 }
 
+a.tabimage {
+  	   color: #436976;
+  	   text-decoration: none;
+  	   white-space: nowrap;
+}
+
 
 /*
  *   Case actions
