@@ -70,7 +70,7 @@ class Propal {
     /*
      *  Calcul TVA, Remise
      */
-    $totalht = $cprice - $remise;
+    $totalht = $cprice - $this->remise;
     $tva = tva($totalht);
     $total = $totalht + $tva;
     /*
