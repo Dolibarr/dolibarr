@@ -21,6 +21,10 @@
  */
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
+
 if ($action == 'nbprod' && $user->admin)
 {
   $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PROPALE_NEW_FORM_NB_PRODUCT', value='".$value."', visible=0";
@@ -35,12 +39,6 @@ if ($action == 'nbprod' && $user->admin)
 
 llxHeader();
 
-if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
 
 if ($action == 'set')
 {
