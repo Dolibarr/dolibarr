@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copytight (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +70,7 @@ if ($action == 'add' && $account)
 if ($action == 'del' && $account && $user->rights->banque->modifier)
 {
   $acct=new Account($db,$account);
-  $acct->deleteline($rowid);
+  $acct->deleteline($_GET[$rowid]);
 }
 
 /***********************************************************************************
