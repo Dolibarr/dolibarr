@@ -33,8 +33,6 @@ function llxHeader($head = "", $urlp = "")
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/comm/clients.php3", "Clients");
-
   $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
 
   /*
@@ -56,6 +54,5 @@ function llxHeader($head = "", $urlp = "")
 
   left_menu($menu->liste);
 }
-
 
 ?>
