@@ -81,7 +81,7 @@ if ($result)
   while ($i < $num)
     {
       $row = $db->fetch_row($result);
-      $cgs[$row[0]] = $row[1] . ' ' . $row[2];
+      $cgs[$row[0]] = '['.$row[0].'] '.$row[1] . ' ' . $row[2];
       $i++;
     }
 }
