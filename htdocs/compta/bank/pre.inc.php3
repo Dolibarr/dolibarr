@@ -23,7 +23,7 @@
 require("../../main.inc.php3");
 require("./account.class.php3");
 function llxHeader($head = "") {
-  global $user, $conf;
+  global $user, $conf, $account;
 
   /*
    *
@@ -45,7 +45,7 @@ function llxHeader($head = "") {
 
     while ($i < $num) {
       $objp = $db->fetch_object($i);
-      $menu->add_submenu("index.php3?account=" . $objp->rowid,  $objp->label);
+      $menu->add_submenu("account.php3?account=" . $objp->rowid,  $objp->label);
 
       $i++;
     }
@@ -54,7 +54,7 @@ function llxHeader($head = "") {
 
   $menu->add("index.php3","Bank");
 
-  $menu->add_submenu("rappro.php3","Rappro");
+  $menu->add_submenu("rappro.php3?account=$account","Rappro");
   $menu->add_submenu("budget.php3","Budgets");
   $menu->add_submenu("bilan.php3","Bilan");
   $menu->add_submenu("virement.php3","Virement");

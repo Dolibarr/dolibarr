@@ -82,8 +82,8 @@ if ($account) {
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";
   print "<td>Date</td><td>Description</TD>";
-  print "<td align=\"right\"><a href=\"$PHP_SELF?vue=debit\">Debit</a></TD>";
-  print "<td align=\"right\"><a href=\"$PHP_SELF?vue=credit\">Credit</a></TD>";
+  print "<td align=\"right\"><a href=\"$PHP_SELF?vue=debit&account=$account\">Debit</a></TD>";
+  print "<td align=\"right\"><a href=\"$PHP_SELF?vue=credit&account=$account\">Credit</a></TD>";
   print "<td align=\"right\">Solde</TD>";
   print "<td align=\"right\">Francs</td>";
   print "</TR>\n";

@@ -79,7 +79,7 @@ if ($result) {
 
     $var=!$var;
     print "<tr $bc[$var]>";
-    print "<form method=\"post\" action=\"$PHP_SELF\">";
+    print '<form method="post" action="'.$PHP_SELF.'?account='.$account.'">';
     print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
     print "<input type=\"hidden\" name=\"rowid\" value=\"$objp->rowid\">";
 
