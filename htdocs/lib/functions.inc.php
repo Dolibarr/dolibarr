@@ -344,7 +344,7 @@ function dolibarr_print_phone($phone)
 */
 function img_actions($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Rendez-vous");
   }
@@ -356,7 +356,7 @@ function img_actions($alt = "default")
 */
 function img_file($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Show");
   }
@@ -368,7 +368,7 @@ function img_file($alt = "default")
 */
 function img_file_new($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Show");
   }
@@ -380,7 +380,7 @@ function img_file_new($alt = "default")
 */
 function img_pdf($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Show");
   }
@@ -392,7 +392,7 @@ function img_pdf($alt = "default")
 */
 function img_edit_add($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Add");
   }
@@ -403,7 +403,7 @@ function img_edit_add($alt = "default")
 */
 function img_edit_remove($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Remove");
   }
@@ -415,7 +415,7 @@ function img_edit_remove($alt = "default")
 */
 function img_edit($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Modify");
   }
@@ -427,7 +427,7 @@ function img_edit($alt = "default")
 */
 function img_delete($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Delete");
   }
@@ -439,7 +439,7 @@ function img_delete($alt = "default")
 */
 function img_disable($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Disable");
   }
@@ -450,8 +450,12 @@ function img_disable($alt = "default")
 /*!
   \brief Affiche logo info
 */
-function img_info($alt = "Informations")
+function img_info($alt = "default")
 {
+  if ($alt=="default") {
+    global $langs;
+    $alt=$langs->trans("Informations");
+  }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/info.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
@@ -460,7 +464,7 @@ function img_info($alt = "Informations")
 */
 function img_warning($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Show");
   }
@@ -472,7 +476,7 @@ function img_warning($alt = "default")
 */
 function img_alerte($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Alert");
   }
@@ -484,7 +488,7 @@ function img_alerte($alt = "default")
 */
 function img_phone_in($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Modify");
   }
@@ -496,7 +500,7 @@ function img_phone_in($alt = "default")
 */
 function img_phone_out($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Modify");
   }
@@ -508,7 +512,7 @@ function img_phone_out($alt = "default")
 */
 function img_next($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Next");
   }
@@ -520,7 +524,7 @@ function img_next($alt = "default")
 */
 function img_previous($alt = "default")
 {
-  if ($alt="default") {
+  if ($alt=="default") {
     global $langs;
     $alt=$langs->trans("Previous");
   }
