@@ -29,5 +29,5 @@ create table llx_entrepot
   description     text,
   fk_user_author  integer
 
-) type=ISAM;
+);
 

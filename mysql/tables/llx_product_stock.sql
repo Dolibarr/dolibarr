@@ -25,10 +25,12 @@ create table llx_product_stock
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
   fk_product      integer NOT NULL,
-  fk_stock        integer NOT NULL,
-  value           integer,
+  fk_entrepot     integer NOT NULL,
+  reel            integer,  -- stock réel
+  commande        integer,  -- stock commande
+  proposition     integer,  -- stock proposition commerciale
 
   key(fk_product),
-  key(fk_stock)
+  key(fk_entrepot)
 );
 

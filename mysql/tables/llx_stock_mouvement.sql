@@ -26,12 +26,12 @@ create table llx_stock_mouvement
   tms             timestamp,
   datem           datetime,
   fk_product      integer NOT NULL,
-  fk_stock        integer NOT NULL,
+  fk_entrepot     integer NOT NULL,
   value           integer,
   type_mouvement  smallint,
   fk_user_author  integer,
 
   key(fk_product),
-  key(fk_stock)
+  key(fk_entrepot)
 );
 
