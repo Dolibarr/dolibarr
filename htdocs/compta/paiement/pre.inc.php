@@ -33,11 +33,11 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
+  $menu->add("liste.php","Liste");
+
   $menu->add("../facture.php","Factures");
 
-  $menu->add_submenu("../paiement.php","Paiements");
-
-  $menu->add(DOL_URL_ROOT."/compta/stats/","Chiffre d'affaire");
+  $menu->add_submenu("liste.php","Paiements");
 
   left_menu($menu->liste);
 }
