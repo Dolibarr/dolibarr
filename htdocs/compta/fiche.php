@@ -194,7 +194,7 @@ if ($socid > 0)
     if ($user->societe_id == 0)
       {
 	$head[$h][0] = DOL_URL_ROOT."/index.php?socidp=$societe->id&action=add_bookmark";
-	$head[$h][1] = '<img border="0" src="/theme/'.$conf->theme.'/img/bookmark.png" alt="Bookmark" title="Bookmark">';
+	$head[$h][1] = '<img border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/bookmark.png" alt="Bookmark" title="Bookmark">';
 	$head[$h][2] = 'image';
       }
     dolibarr_fiche_head($head, $hselected, $societe->nom);
