@@ -114,7 +114,7 @@ create table llx_paiement_facture
 
 insert into llx_const(name, value, type, note) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document');
 
-update llx_societe set fk_forme_juridique=0 where fk_forme_juridique >= 54
+update llx_societe set fk_forme_juridique=0 where fk_forme_juridique >= 54;
 
 
 drop table llx_c_forme_juridique;
