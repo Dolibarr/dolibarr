@@ -93,7 +93,7 @@ class GraphBarAcc extends DolibarrGraph {
     
     $graph->xaxis->SetTickLabels($labels);
 
-    $graph->xaxis->title->Set("généré le ".strftime("%d/%b/%y %H:%M:%S", time()));
+    $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
     
     // Display the graph
     
