@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,8 +46,7 @@ class modCommercial extends DolibarrModules
     $this->boxes[0][0] = "Derniers clients";
     $this->boxes[0][1] = "box_clients.php";
     $this->boxes[1][0] = "Derniers prospects enregistrés";
-    $this->boxes[1][1] = "box_propects.php";
-
+    $this->boxes[1][1] = "box_prospect.php";
   }
   /** initialisation du module
    *
