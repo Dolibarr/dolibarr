@@ -3,7 +3,6 @@
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,15 +22,28 @@
  * $Source$
  */
 
+/*!
+	    \file       htdocs/html.form.class.php
+		\brief      Fichier de la classe des fonctions prédéfinie de composants html
+		\version    $Revision$
+*/
+
+
+/*! \class Form
+		\brief Classe permettant la génération de composants html
+*/
+
 class Form
 {
   var $db;
   var $errorstr;
   
-
+  /*
+   * \brief     Constructeur
+   * \param     DB      handler d'accès base de donnée
+   */
   function Form($DB)
   {
-    
     $this->db = $DB;
     
     return 1;
@@ -47,6 +59,9 @@ class Form
    */
   function select_departement($selected='',$htmlname='departement_id')
   {
+    global $conf,$langs;
+    $langs->load("dict");
+
     // On recherche les départements/cantons/province active d'une region et pays actif
     $sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM ";
     $sql .= MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
@@ -55,44 +70,47 @@ class Form
     $sql .= "ORDER BY code_pays, code ASC";
     
     if ($this->db->query($sql))
-      {
-    print '<select name="'.$htmlname.'">';
-	$num = $this->db->num_rows();
-	$i = 0;
-	if ($num)
-	  {
-	    $pays='';
-	    while ($i < $num)
-	      {
-		$obj = $this->db->fetch_object( $i);
-		if ($obj->code == 0) {
-		  print '<option value="0">&nbsp;</option>';
-		}
-		else {
-		  if ($pays == '' || $pays != $obj->libelle_pays) {
-		    // Affiche la rupture
-		    print '<option value="-1">----- '.$obj->libelle_pays." -----</option>\n";
-		    $pays=$obj->libelle_pays;   
-		  }
-		  
-		  if ($selected > 0 && $selected == $obj->rowid)
-		    {
-		      print '<option value="'.$obj->code.'" selected>['.$obj->code.'] '.$obj->nom.'</option>';
-		    }
-		  else
-		    {
-		      print '<option value="'.$obj->code.'">['.$obj->code.'] '.$obj->nom.'</option>';
-		    }
-		}
-		$i++;
-	      }
-	  }
-    print '</select>';
-      }
-    else {
-      dolibarr_print_error($this->db);
+    {
+        print '<select name="'.$htmlname.'">';
+        $num = $this->db->num_rows();
+        $i = 0;
+        if ($num)
+        {
+            $pays='';
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object( $i);
+                if ($obj->code == 0) {
+                    print '<option value="0">&nbsp;</option>';
+                }
+                else {
+                    if ($pays == '' || $pays != $obj->libelle_pays) {
+                        // Affiche la rupture
+                        print '<option value="-1">----- '.$obj->libelle_pays." -----</option>\n";
+                        $pays=$obj->libelle_pays;
+                    }
+    
+                    if ($selected > 0 && $selected == $obj->rowid)
+                    {
+                        print '<option value="'.$obj->rowid.'" selected>';
+                    }
+                    else
+                    {
+                        print '<option value="'.$obj->rowid.'">';
+                    }
+                    # Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                    print '['.$obj->code.'] '.($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+                    print '</option>';
+                }
+                $i++;
+            }
+        }
+        print '</select>';
     }
-  }
+    else {
+        dolibarr_print_error($this->db);
+    }
+ }
   
   /*
    * \brief     Retourne la liste déroulante des regions actives dont le pays est actif
@@ -103,6 +121,9 @@ class Form
    */
   function select_region($selected='',$htmlname='region_id')
   {
+    global $conf,$langs;
+    $langs->load("dict");
+
     $sql = "SELECT r.rowid, r.code_region as code, r.nom as libelle, r.active, p.libelle as libelle_pays FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p";
     $sql .= " WHERE r.fk_pays=p.rowid AND r.active = 1 and p.active = 1 ORDER BY libelle_pays, libelle ASC";
 
@@ -147,37 +168,53 @@ class Form
   }
 
   /*
-   * \brief     Retourne la liste déroulante des pays actifs
-   *
+   * \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
+   * \param     selected    code pays pré-sélectionné
+   * \param     htmlname    nom de la liste deroulante
    */
   function select_pays($selected='',$htmlname='pays_id')
   {
-    $sql = "SELECT rowid, libelle, active FROM ".MAIN_DB_PREFIX."c_pays";
-    $sql .= " WHERE active = 1 ORDER BY libelle ASC;";
-
+    global $conf,$langs;
+    $langs->load("dict");
+    
+    $sql = "SELECT rowid, libelle, code, active FROM ".MAIN_DB_PREFIX."c_pays";
+    $sql .= " WHERE active = 1";
+    $sql .= " ORDER BY libelle ASC;";
+    
     if ($this->db->query($sql))
-      {
-    print '<select name="'.$htmlname.'">';
-	$num = $this->db->num_rows();
-	$i = 0;
-	if ($num)
-	  {
-	    while ($i < $num)
-	      {
-		$obj = $this->db->fetch_object( $i);
-		if ($selected == $obj->rowid)
-		  {
-		    print '<option value="'.$obj->rowid.'" selected>'.$obj->libelle.'</option>';
-		  }
-		else
-		  {
-		    print '<option value="'.$obj->rowid.'">'.$obj->libelle.'</option>';
-		  }
-		    $i++;
-	      }
-	  }
-    print '</select>';
-      }
+    {
+        print '<select name="'.$htmlname.'">';
+        $num = $this->db->num_rows();
+        $i = 0;
+        if ($num)
+        {
+            $foundselected=false;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object( $i);
+                if ($selected > 0 && $selected == $obj->rowid)
+                {
+                    $foundselected=true;
+                    print '<option value="'.$obj->rowid.'" selected>';
+                }
+                else
+                {
+                    print '<option value="'.$obj->rowid.'">';
+                }
+                # Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                print ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                if ($obj->code) { print ' ('.$obj->code.')'; }
+                print '</option>';
+                $i++;
+            }
+        }
+        print '</select>';
+        return 0;
+    }
+    else {
+        dolibarr_print_error($this->db);
+        return 1;
+    }
   }
 
 
@@ -324,45 +361,48 @@ class Form
 
 
   /*
-   * Retourne la liste déroulante des civilite actives
-   *
+   *    \brief  Retourne la liste déroulante des civilite actives
+   *    \param  selected    civilite pré-sélectionnée
    */
 
   function select_civilite($selected='')
   {
-    global $conf;
+    global $conf,$langs;
+    $langs->load("dict");
     
     $sql = "SELECT rowid, code, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
     $sql .= " WHERE active = 1";
-    $sql .= " AND lang='".$conf->langage."'";
-
+    
     if ($this->db->query($sql))
-      {
-    print '<select name="civilite_id">';
-	$num = $this->db->num_rows();
-	$i = 0;
-	if ($num)
-	  {
-	    while ($i < $num)
-	      {
-		$obj = $this->db->fetch_object( $i);
-		if ($selected == $obj->rowid)
-		  {
-		    print '<option value="'.$obj->code.'" selected>'.$obj->civilite.'</option>';
-		  }
-		else
-		  {
-		    print '<option value="'.$obj->code.'">'.$obj->civilite.'</option>';
-		  }
-		$i++;
-	      }
-	  }
-    print '</select>';
-      }
+    {
+        print '<select name="civilite_id">';
+        $num = $this->db->num_rows();
+        $i = 0;
+        if ($num)
+        {
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object( $i);
+                if ($selected == $obj->rowid)
+                {
+                    print '<option value="'.$obj->code.'" selected>';
+                }
+                else
+                {
+                    print '<option value="'.$obj->code.'">';
+                }
+                # Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                print ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->civilite!='-'?$obj->civilite:''));
+                print '</option>';
+                $i++;
+            }
+        }
+        print '</select>';
+    }
     else {
-          dolibarr_print_error($this->db);
-      }
-
+        dolibarr_print_error($this->db);
+    }
+    
   }
 
   /*
@@ -370,57 +410,65 @@ class Form
    * avec un affichage avec rupture sur le pays
    *
    */
-    function select_forme_juridique($selected='')
+  function select_forme_juridique($selected='')
+  {
+    global $conf,$langs;
+    $langs->load("dict");
+
+    // On recherche les formes juridiques actives des pays actifs
+    $sql = "SELECT f.rowid, f.code as code , f.libelle as nom, f.active, p.libelle as libelle_pays, p.code as code_pays FROM llx_c_forme_juridique as f, llx_c_pays as p";
+    $sql .= " WHERE f.fk_pays=p.rowid";
+    $sql .= " AND f.active = 1 AND p.active = 1 ORDER BY code_pays, code ASC";
+    
+    if ($this->db->query($sql))
     {
-      // On recherche les formes juridiques actives des pays actifs
-      $sql = "SELECT f.rowid, f.code as code , f.libelle as nom, f.active, p.libelle as libelle_pays, p.code as code_pays FROM llx_c_forme_juridique as f, llx_c_pays as p";
-      $sql .= " WHERE f.fk_pays=p.rowid";
-      $sql .= " AND f.active = 1 AND p.active = 1 ORDER BY code_pays, code ASC";
-      
-      if ($this->db->query($sql))
+        print '<select name="forme_juridique_code">';
+        $num = $this->db->num_rows();
+        $i = 0;
+        if ($num)
         {
-      print '<select name="forme_juridique_code">';
-	  $num = $this->db->num_rows();
-	  $i = 0;
-	  if ($num)
+            $pays='';
+            while ($i < $num)
             {
-	      $pays='';
-	      while ($i < $num)
-                {
-		  $obj = $this->db->fetch_object( $i);
-		  if ($obj->code == 0) {
-		    print '<option value="0">&nbsp;</option>';
-		  }
-		  else {
-		    if ($pays == '' || $pays != $obj->libelle_pays) {
-		      // Affiche la rupture
-		      print '<option value="0">----- '.$obj->libelle_pays." -----</option>\n";
-		      $pays=$obj->libelle_pays;   
-		    }
-		    
-		    if ($selected > 0 && $selected == $obj->code)
-		      {
-			print '<option value="'.$obj->code.'" selected>['.$obj->code.'] '.$obj->nom.'</option>';
-		      }
-		    else
-		      {
-			print '<option value="'.$obj->code.'">['.$obj->code.'] '.$obj->nom.'</option>';
-		      }
-		  }
-		  $i++;
+                $obj = $this->db->fetch_object( $i);
+                if ($obj->code == 0) {
+                    print '<option value="0">&nbsp;</option>';
                 }
+                else {
+                    if ($pays == '' || $pays != $obj->libelle_pays) {
+                        // Affiche la rupture
+                        print '<option value="0">----- '.$obj->libelle_pays." -----</option>\n";
+                        $pays=$obj->libelle_pays;
+                    }
+    
+                    if ($selected > 0 && $selected == $obj->code)
+                    {
+                        print '<option value="'.$obj->code.'" selected>';
+                    }
+                    else
+                    {
+                        print '<option value="'.$obj->code.'">';
+                    }
+                    # Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                    print '['.$obj->code.'] '.($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+                    print '</option>';
+                }
+                $i++;
             }
-      print '</select>';
-      }
-      else {
-          dolibarr_print_error($this->db);
-      }
+        }
+        print '</select>';
     }
+    else {
+        dolibarr_print_error($this->db);
+    }
+  }
   
   /*
-   *
-   *
-   *
+   *    \brief  Affiche formulaire de demande de confirmation
+   *    \param  page        page
+   *    \param  title       title
+   *    \param  question    question
+   *    \param  action      action
    */
   function form_confirm($page, $title, $question, $action)
   {
