@@ -42,7 +42,7 @@ llxHeader();
 
 print '<div class="tabs">';
 print '<a href="fiche.php?id='.$_GET["id"].'" id="active" class="tab">Paiement</a>';
-print '<a class="tab" href="info.php?id='.$_GET["id"].'">'.img_info().'</a>';
+print '<a class="tab" href="info.php?id='.$_GET["id"].'">Info</a>';
 print '</div>';
 
 print '<div class="tabBar">';
@@ -112,8 +112,9 @@ if ($db->query($sql))
 	  $objp = $db->fetch_object($i);
 	  $var=!$var;
 	  
-	  print "<tr $bc[$var]>";	  
-	  print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
+	  print "<tr $bc[$var]>";
+	  print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_file().'</a>';
+	  print ' <a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
 	  print "</a></td>\n";
 	  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">' . $objp->nom.'</a></td>';
 	  print "<td align=\"right\">".price($objp->amount)."</td>";  
