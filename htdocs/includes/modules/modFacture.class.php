@@ -59,7 +59,7 @@ class modFacture
     $const[6][1] = "chaine";
     $const[7][0] = "FACTURE_ADDON_PDF";
     $const[7][1] = "chaine";
-    $const[7][2] = "tourteau";
+    $const[7][2] = "bulot";
 
     foreach ($const as $key => $value)
       {
