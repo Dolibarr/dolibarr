@@ -20,7 +20,18 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/contrat/contrat.class.php
+        \ingroup    contrat
+		\brief      Fichier de la classe des contrats
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("products");
+
 
 llxHeader();
 
@@ -75,20 +86,22 @@ if ( $db->query($sql) )
 
   print_barre_liste("Liste des contrats", $page, "index.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+  print '<table class="noborder" width="100%">';
 
   print '<tr class="liste_titre">';
   print '<td>';
-  print_liste_field_titre("Numéro","index.php", "c.rowid");
+  print_liste_field_titre($langs->trans("Ref"),"index.php", "c.rowid");
   print "</td><td>";
   print_liste_field_titre($langs->trans("Label"),"index.php", "p.label");
   print "</td><td>";
-  print_liste_field_titre("Société","index.php", "s.nom");
+  print_liste_field_titre($langs->trans("Company"),"index.php", "s.nom");
   print '</td><td align="center">';
   print_liste_field_titre($langs->trans("Status"),"index.php", "c.enservice");
   print '</td>';
   print '</td><td align="center">';
   print_liste_field_titre("Date Fin","index.php", "c.fin_validite");
+  print '</td><td align="center">';
+  print_liste_field_titre($langs->trans("Action"),"index.php", "c.next");
   print '</td>';
   print "</tr>\n";
     
@@ -109,23 +122,23 @@ if ( $db->query($sql) )
       if ($obj->enservice == 1)
 	{
         if (! $obj->fin_validite || $obj->fin_validite >= $now) {
-      	  $class = "normal";
-    	  $statut="En service";
+      	  $class = 'normal';
+    	  $statut= $langs->trans("ContractStatusRunning");
         }
         else {            
-      	  $class = "error";
-    	  $statut="<b>En service</b>, ".img_warning()."  expiré";
+      	  $class = 'error';
+    	  $statut= $langs->trans("ContractStatusRunning").', '.img_warning().' '.$langs->trans("ContractStatusExpired");
         }
 	}
       elseif($obj->enservice == 2)
 	{
    	  $class = "normal";
-	  $statut= "Cloturé";
+	  $statut= $langs->trans("Closed");
 	}
       else
 	{
   	  $class = "warning";
-	  $statut= "A mettre en service";
+	  $statut= $langs->trans("ContractStatusToRun");
 	}
     print "<td align=\"center\" class=\"$class\">";
     print "$statut";
@@ -139,6 +152,10 @@ if ( $db->query($sql) )
         print "&nbsp;";   
     }
     print "</td>\n";
+    
+    print '<td>';
+    // \todo Créer action "Renouveler"
+    print '</td>';    
 
     print "</tr>\n";
     $i++;
@@ -150,7 +167,7 @@ if ( $db->query($sql) )
 }
 else
 {
-  print $db->error() . "<br>" .$sql;
+  dolibarr_print_error($db);
 }
 
 

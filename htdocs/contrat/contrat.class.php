@@ -21,16 +21,27 @@
  *
  */
 
+/*!
+	    \file       htdocs/contrat/contrat.class.php
+        \ingroup    contrat
+		\brief      Fichier de la classe des contrats
+		\version    $Revision$
+*/
+
+
+/*! \class Contrat
+		\brief Classe permettant la gestion des contrats
+*/
+
 class Contrat
 {
   var $id;
   var $db;
 
-  /*
-   * Initialisation
-   *
+  /**
+   *    \brief  Constructeur de la classe
+   *    \param  DB          handler accès base de données
    */
-
   function Contrat($DB)
   {
     $this->db = $DB ;
@@ -82,9 +93,10 @@ class Contrat
     $result = $this->db->query($sql) ;
     if (!$result)
       {
-	    print $this->db->error() . "<br>" . $sql;
+      dolibarr_print_error($this->db);
       }
   }
+
   /*
    *
    *
@@ -97,6 +109,7 @@ class Contrat
 
     $result = $this->db->query($sql) ;
   }
+
   /*
    *
    *
@@ -109,6 +122,7 @@ class Contrat
 
     $result = $this->db->query($sql) ;
   }
+
   /*
    *
    *
@@ -146,11 +160,12 @@ class Contrat
 	}
       else
 	{
-	  print $this->db->error();
+      dolibarr_print_error($this->db);
 	}
 
       return $result;
   }
+
   /*
    * Crée autant de contrats que de lignes de facture, pour une facture donnée
    *
@@ -185,7 +200,7 @@ class Contrat
 		  if (! $this->db->query($sql))
 		    {
 		      dolibarr_syslog("Contrat::create_from_facture - 10");
-		      print "Erreur : ".$this->db->error()."<br>".$sql;
+		      dolibarr_print_error($this->db,"Contrat::create_from_facture - 10");
 		    }
 		}
 	    }
@@ -197,15 +212,12 @@ class Contrat
       else
 	{
 	  dolibarr_syslog("Contrat::create_from_facture - 20");
-	  print $this->db->error();
+      dolibarr_print_error($this->db,"Contrat::create_from_facture - 20");
 	}
       
       return $result;
     }
-  /*
-   *
-   *
-   */
-  
+
+ 
 }
 ?>
