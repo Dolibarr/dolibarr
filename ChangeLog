@@ -1,12 +1,15 @@
 2003-10-06  Eric Seigne  <erics@rycks.com>
 	* Bug dans l'url des  a href de compta/resultat/index.php qui fait
-	des liens absolus et non relatifs
+	des liens absolus et non relatifs.
 
 	* amélioration de la classe societe: pour la création d'un préfixe
 	d'entreprise  on a  un  soucis  si l'entreprise  porte  le nom  de
 	l'fournisseur  par exemple  ... prefix  calculé  = "l'"  et ça  ça
 	buggue.  Une  petite  perl   regexpt  pour  virer  les  signes  de
-	ponctuation et ça roule.
+	ponctuation et ça roule. 
+
+	* fichier htdocs/fourn/people.php:  modification des tables (ajout
+	du préfix llx_ qui manquait).
 
 2003-09-23 Rodolphe Quiédeville <rq@quiedeville.org>
 
