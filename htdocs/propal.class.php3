@@ -194,41 +194,59 @@ class Propal
    *
    *
    */
-  Function update_price($rowid) {
-    /*
-     *  Remise
-     */
-    $sql = "SELECT remise FROM llx_propal WHERE rowid = $rowid";
-    if ( $this->db->query($sql) ) {
-      $remise = $this->db->result(0, 0);
-      $this->db->free();
-    
-      
-      /*
-       *  Total des produits a ajouter
-       */
-      $sql = "SELECT sum(price * qty) FROM llx_propaldet WHERE fk_propal = $rowid";
-      if ( $this->db->query($sql) ) {
-	$cprice = $this->db->result(0, 0);
-	$this->db->free();
-	
-	/*
-	 *  Calcul TVA, Remise
-	 */
-	$totalht = $cprice - $this->remise;
-	$tva = tva($totalht);
-	$total = $totalht + $tva;
-	/*
-	 *
-	 */
-	$sql = "UPDATE llx_propal set price=$cprice, tva=$tva, total=$total WHERE rowid = $rowid";
-	if ( $this->db->query($sql) ) {
-	  
-	}
-      }
-    }
+  Function update_price($rowid)
+    {
+      $totalht=0;
+      $totaltva=0;
+      $totalttc=0;
 
-  }
+      /*
+       *  Remise
+       */
+      $sql = "SELECT remise FROM llx_propal WHERE rowid = $rowid";
+      if ( $this->db->query($sql) )
+	{
+	  $remise = $this->db->result(0, 0);
+	  $this->db->free();
+	  
+      
+	  /*
+	   *  Total des produits a ajouter
+	   */
+	  $sql = "SELECT price, qty, tva_tx FROM llx_propaldet WHERE fk_propal = $rowid";
+	  if ( $this->db->query($sql) )
+	    {
+	      $num = $this->db->num_rows();
+	      $i = 0;
+
+	      while ($i < $num)
+		{
+		  $obj = $this->db->fetch_object($i);
+
+		  $totalht = $totalht + $obj->price;
+		  $totaltva = tva($totalht, $obj->tva_tx);
+		  $i++;
+		}
+
+	      $this->db->free();
+	      
+	      /*
+	       *  Calcul TVA, Remise
+	       */
+	      $totalht = $totalht - $this->remise;
+	      $totalttc = $totalht + $totaltva;
+	      /*
+	       *
+	       */
+	      $sql = "UPDATE llx_propal set price=$totalht, tva=$totaltva, total=$totalttc WHERE rowid = $rowid";
+	      if (! $this->db->query($sql) )
+		{
+		  print "Erreur mise à jour du prix<p>".$sql;
+		}
+	    }
+	}
+      
+    }
 
   /*
    *
@@ -238,7 +256,7 @@ class Propal
   Function fetch($rowid)
     {
 
-      $sql = "SELECT ref,total,price,remise,fk_soc,".$this->db->pdate(datep)."as dp ";
+      $sql = "SELECT ref,total,price,remise,tva,fk_soc,".$this->db->pdate(datep)."as dp ";
       $sql .= " FROM llx_propal WHERE rowid=$rowid;";
 
       if ($this->db->query($sql) )
@@ -255,6 +273,7 @@ class Propal
 	      $this->remise    = $obj->remise;
 	      $this->total     = $obj->total;
 	      $this->total_ht  = $obj->price;
+	      $this->total_tva = $obj->tva;
 	      $this->total_ttc = $obj->total;
 	      $this->socidp = $obj->fk_soc;
 	      $this->lignes = array();
@@ -357,6 +376,44 @@ class Propal
 	{
 	  print $this->db->error() . ' in ' . $sql;
 	}
+    }
+  /*
+   *
+   *
+   */
+  Function liste_array ($brouillon=0)
+    {
+      $ga = array();
+
+      $sql = "SELECT rowid, ref FROM llx_propal";
+      if ($brouillon = 1)
+	{
+	  $sql .= " WHERE fk_statut = 0";
+	}
+      
+      $sql .= " ORDER BY datep DESC";
+      
+      if ($this->db->query($sql) )
+	{
+	  $nump = $this->db->num_rows();
+	  
+	  if ($nump)
+	    {
+	      $i = 0;
+	      while ($i < $nump)
+		{
+		  $obj = $this->db->fetch_object($i);
+		  
+		  $ga[$obj->rowid] = $obj->ref;
+		  $i++;
+		}
+	    }
+	  return $ga;
+	}
+      else
+	{
+	  print $this->db->error();
+	}      
     }
 }  
 
