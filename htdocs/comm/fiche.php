@@ -148,16 +148,16 @@ if ($socid > 0)
       {
 
 	print "<td align=\"center\"><a href=\"../compta/fiche.php?socid=$objsoc->idp\">Compta</a></td>";
-	print "<td align=\"center\"><a href=\"docsoc.php?socid=$objsoc->idp\">Documents</a></td>";
-	print "<td align=\"center\"><a href=\"index.php?socidp=$objsoc->idp&action=add_bookmark\">[Bookmark]</a></td>";
-	if ($user->rights->projet->creer)
-	  print "<td align=\"center\"><a href=\"../projet/fiche.php?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
+	print "<td align=\"center\">[<a href=\"docsoc.php?socid=$objsoc->idp\">Documents</a>]</td>";
+	print "<td align=\"center\">[<a href=\"index.php?socidp=$objsoc->idp&action=add_bookmark\">Bookmark</a>]</td>";
+	if ($conf->projet->enabled && $user->rights->projet->creer)
+	  print "<td align=\"center\">[<a href=\"../projet/fiche.php?socidp=$objsoc->idp&action=create\">Projet</a>]</td>";
 
 	if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
 	  {
-	    print "<td align=\"center\"><a href=\"../fichinter/fiche.php?socidp=$objsoc->idp&action=create\">[Intervention]</a></td>";
+	    print "<td align=\"center\">[<a href=\"../fichinter/fiche.php?socidp=$objsoc->idp&action=create\">Intervention</a>]</td>";
 	  }
-	print "<td><a href=\"../socnote.php?socid=$objsoc->idp\">Notes</a></td>";
+	print "<td>[<a href=\"../socnote.php?socid=$objsoc->idp\">Notes</a>]</td>";
 	print "<td align=\"center\">[<a href=\"../soc.php?socid=$objsoc->idp&action=edit\">Editer</a>]</td></tr>";
       }
     print "</table>";
@@ -313,7 +313,7 @@ if ($socid > 0)
      */
     print '<br><table id="actions" cellspadding="3" cellspacing="0" width="100%"><tr>';
 
-    if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
+    if ($conf->propal->enabled && defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
       {
 	print "<td align=\"center\"><a href=\"addpropal.php?socidp=$objsoc->idp&amp;action=create\">Créer une proposition</a></td>";
       }
@@ -322,7 +322,7 @@ if ($socid > 0)
 	print '<td align="center" width="20%">-</td>';
       }
     print '<td align="center" width="20%">-</td>';
-    if (defined("MAIN_MODULE_COMMANDE") && MAIN_MODULE_COMMANDE && $user->rights->commande->creer)
+    if ($conf->commande->enabled && defined("MAIN_MODULE_COMMANDE") && MAIN_MODULE_COMMANDE && $user->rights->commande->creer)
       {
 	print '<td align="center" width="20%"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->idp.'&amp;action=create">Créer une commande</a></td>';
       }
@@ -330,7 +330,7 @@ if ($socid > 0)
       {
 	print '<td align="center" width="20%">-</td>';
       }
-    if ($user->rights->projet->creer)
+    if ($conf->projet->enabled && $user->rights->projet->creer)
       {
 	print '<td align="center" width="20%"><a href="../projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a></td>';
       }
