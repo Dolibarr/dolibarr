@@ -68,13 +68,13 @@ print '<tr><td valign="top" width="33%">';
 /*
  *
  */
+print '<form method="post" action="facture.php">';
 print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
 print "<TR class=\"liste_titre\">";
 print '<td colspan="2">Rechercher une facture</td></tr>';
-print '<form method="post" action="facture.php">';
 print "<tr $bc[1]><td>";
-print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
-print "</form></table><br>";
+print 'Num. : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="Rechercher" class="flat"></td></tr>';
+print "</table></form><br>";
 
 /*
  * Propales à facturer
