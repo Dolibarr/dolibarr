@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -155,17 +155,15 @@ if ($_GET["action"] == 'password' && $user->admin)
 }
 
 
-llxHeader();
-
-
-/* ************************************************************************** */
-/*                                                                            */
-/* Affichage fiche en mode création                                           */
-/*                                                                            */
-/* ************************************************************************** */
+llxHeader('','Fiche Utilisateur');
 
 if ($action == 'create')
 {
+  /* ************************************************************************** */
+  /*                                                                            */
+  /* Affichage fiche en mode création                                           */
+  /*                                                                            */
+  /* ************************************************************************** */  
 
   print_titre($langs->trans("NewUser"));
 
@@ -212,15 +210,14 @@ if ($action == 'create')
   print "</form>";
   print "</table>\n";
 }
-
-
-/* ************************************************************************** */
-/*                                                                            */
-/* Visu et edition                                                            */
-/*                                                                            */
-/* ************************************************************************** */
 else
 {
+  /* ************************************************************************** */
+  /*                                                                            */
+  /* Visu et edition                                                            */
+  /*                                                                            */
+  /* ************************************************************************** */
+  
   if ($_GET["id"])
     {
       $fuser = new User($db, $_GET["id"]);
@@ -273,9 +270,7 @@ else
 	  /*
 	   * Ecran ajout/suppression permission
 	   */
-	  
 	  print '<table class="noborder" width="100%">';
-	  
 	  
 	  // Droits existant
 	  print "<tr>".'<td valign="top" colspan="2">';
@@ -337,13 +332,14 @@ else
 		  $i++;
                 }
             }
-      else {
-        dolibarr_print_error($db); 
-      }
+	  else
+	    {
+	      dolibarr_print_error($db); 
+	    }
 	  print '</table>';
 	  print '</td></tr>';
         }
-	
+      
 	
       if ($_GET["action"] != 'perms' && $_GET["action"] != 'edit')
 	{
@@ -357,12 +353,13 @@ else
 	  print '<td width="50%" class="valeur">'.$fuser->nom.'</td>';
 	  print '<td align="center" valign="middle" width="25%" rowspan="8">';
 	  if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
-	  {
-	        print '<img src="'.DOL_URL_ROOT.'/image.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
-	  }
-	  else {
-	        print '<img src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
-	  }
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/image.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
+	    }
+	  else
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
+	    }
 	  print '</td></tr>';
 
 	  print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
@@ -428,8 +425,8 @@ else
             
 	  print "</div>\n";
 
-      if ($message) { print $message; }
-
+	  if ($message) { print $message; }
+	  
 	  /*
 	   * Barre d'actions
 	   *
@@ -462,7 +459,7 @@ else
       if ($_GET["action"] == 'edit' && $user->admin)
         {
 
-      print '<form action="fiche.php?id='.$fuser->id.'" method="post">';
+	  print '<form action="fiche.php?id='.$fuser->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="update">';
 	  print '<table width="100%" class="border">';
 
@@ -470,14 +467,15 @@ else
 	  print '<td width="50%" class="valeur"><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td>';
 	  print '<td align="center" valign="middle" width="25%" rowspan="6">';
 	  if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
-	  {
-	        print '<img src="'.DOL_URL_ROOT.'/image.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
-	  }
-	  else {
-	        print '<img src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
-	  }
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/image.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
+	    }
+	  else
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
+	    }
 	  print '</td></tr>';
-
+	  
 	  print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
 	  print '<td><input size="30" type="text" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
 
@@ -502,7 +500,7 @@ else
 	    }
 
 	  print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
-	  print "<textarea name=\"note\" rows=\"10\" cols=\"40\">";
+	  print '<textarea name="note" rows="10" cols="40">';
 	  print $fuser->note;
 	  print "</textarea></td></tr>";
 
@@ -515,10 +513,8 @@ else
 
 	  print '</table><br>';
 	  print '</form>';
-
-
+	  
         }
-
     }
 
 }
