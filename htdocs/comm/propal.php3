@@ -367,68 +367,74 @@ if ($propalid)
 	  /*
 	   * Actions
 	   */
-	  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+	  if ($obj->statut < 2)
+	    {
+	      print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
 	  
-	  if ($obj->statut == 0)
-	    {
-	      print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=delete\">Supprimer</a>]</td>";
-	    }
-	  else
-	    {
-	      if ($obj->statut == 1)
+	      if ($obj->statut == 0)
 		{
-		  print "<td bgcolor=\"#e0e0e0\" align=center>[<a href=\"$PHP_SELF?propalid=$propalid&action=statut\">Cloturer</a>]</td>";
+		  print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=delete\">Supprimer</a>]</td>";
+		}
+	      else
+		{
+		  if ($obj->statut == 1)
+		    {
+		      print "<td bgcolor=\"#e0e0e0\" align=center>[<a href=\"$PHP_SELF?propalid=$propalid&action=statut\">Cloturer</a>]</td>";
+		    }
+		  else
+		    {
+		      print "<td align=\"center\" width=\"25%\">-</td>";
+		    }
+		} 
+	      /*
+	       *
+	       */
+	      if ($obj->statut < 2)
+		{
+		  print '<td align="center" width="25%">[<a href="'.$PHP_SELF."?propalid=$propalid&action=pdf\">Générer</a>]</td>";
 		}
 	      else
 		{
 		  print "<td align=\"center\" width=\"25%\">-</td>";
 		}
-	    } 
-	  /*
-	   *
-	   */
-	  if ($obj->statut < 2)
-	    {
-	      print '<td align="center" width="25%">[<a href="'.$PHP_SELF."?propalid=$propalid&action=pdf\">Générer</a>]</td>";
-	    }
-	  else
-	    {
-	      print "<td align=\"center\" width=\"25%\">-</td>";
-	    }
 	    
-	  /*
-	   *
-	   */
-	  if ($obj->statut == 1)
-	    {
-	      $file = PROPALE_OUTPUTDIR. "/$obj->ref/$obj->ref.pdf";
-	      if (file_exists($file))
+	      /*
+	       *
+	       */
+	      if ($obj->statut == 1)
 		{
-		  print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">";
-		  print "[<a href=\"$PHP_SELF?propalid=$propalid&action=presend\">Envoyer la proposition</a>]</td>";
+		  $file = PROPALE_OUTPUTDIR. "/$obj->ref/$obj->ref.pdf";
+		  if (file_exists($file))
+		    {
+		      print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">";
+		      print "[<a href=\"$PHP_SELF?propalid=$propalid&action=presend\">Envoyer la proposition</a>]</td>";
+		    }
+		  else
+		    {
+		      print '<td bgcolor="#e0e0e0" align="center" width="25%">! Propale non generee !</td>';
+		    }
 		}
 	      else
 		{
-		print '<td bgcolor="#e0e0e0" align="center" width="25%">! Propale non generee !</td>';
+		  print "<td align=\"center\" width=\"25%\">-</td>";
 		}
+	      /*
+	       * 
+	       */
+	      if ($obj->statut == 0)
+		{
+		  print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
+		}
+	      elseif ($obj->statut == 1)
+		{
+		  print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=modif\">Modifier</a>]</td>";
+		}
+	      else
+		{
+		  print "<td align=\"center\" width=\"25%\">-</td>";
+		}
+	      print "</tr></table>";
 	    }
-	  else
-	    {
-	      print "<td align=\"center\" width=\"25%\">-</td>";
-	    }
-	  /*
-	   * 
-	   */
-	  if ($obj->statut == 0)
-	    {
-	      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
-	    }
-	  else
-	    {
-	      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=modif\">Modifier</a>]</td>";
-
-	    }
-	  print "</tr></table>";
 	  /*
 	   *
 	   */
