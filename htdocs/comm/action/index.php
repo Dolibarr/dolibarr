@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,8 +22,7 @@
  *
  */
 
-/*!
-	    \file       htdocs/comm/action/index.php
+/**	    \file       htdocs/comm/action/index.php
         \ingroup    commercial
 		\brief      Page accueil des actions commerciales
 		\version    $Revision$
@@ -77,12 +76,12 @@ $sql = "SELECT s.nom as societe, s.idp as socidp, s.client, a.id,".$db->pdate("a
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
 
-if ($type)
+if ($_GET["type"])
 {
-  $sql .= " AND c.id = $type";
+  $sql .= " AND c.id = ".$_GET["type"];
 }
 
-if ($time == "today")
+if ($_GET["time"] == "today")
 {
   $sql .= " AND date_format(a.datea, '%d%m%Y') = ".strftime("%d%m%Y",time());
 }
