@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../main.inc.php3");
+require($GLOBALS["DOCUMENT_ROOT"]."/main.inc.php3");
 
 function llxHeader($head = "") {
   global $user, $conf;
@@ -44,7 +44,7 @@ function llxHeader($head = "") {
       $menu->add("fiche.php?action=create","Nouvel adhérent");
     }
 
-
+  $menu->add("/public/adherents/","Espace adherents public");
 
   $menu->add("cotisations.php","Cotisations");
 

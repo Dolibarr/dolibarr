@@ -33,9 +33,9 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("","Non adherent");
+  $menu->add("/public/adherents/","Non adherent");
   $menu->add_submenu("new.php","Inscription");
-  $menu->add("","Adherents");
+  $menu->add("/public/adherents/","Adherents");
   $menu->add_submenu("priv_edit.php","Edition de sa fiche");
   $menu->add_submenu("priv_liste.php","Liste des adherents");
   /*
