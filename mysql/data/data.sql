@@ -35,6 +35,7 @@ insert into llx_boxes_def (name, file) values ('Propales','box_propales.php');
 --
 -- Constantes de configuration
 --
+insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2001','chaine','Année de départ');
 insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
 
 insert into llx_const(name, value, type) values ('FACTURE_ADDON','venus','chaine');
