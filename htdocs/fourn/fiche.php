@@ -62,7 +62,7 @@ if ( $societe->fetch($socid) )
   $addons[0][1] = $societe->nom;
 
 
-  llxHeader('','Fiche Fournisseur : '.$societe->nom, $addons);
+  llxHeader('',$langs->trans("SupplierCard").' : '.$societe->nom, $addons);
 
     /*
      * Affichage onglets
@@ -121,7 +121,7 @@ if ( $societe->fetch($socid) )
    *
    *
    */
-  print '<table width="100%" cellspacing="0" cellpadding="2">';
+  print '<table width="100%">';
   print '<tr><td valign="top" width="50%">';
   /*
    *
@@ -146,10 +146,11 @@ if ( $societe->fetch($socid) )
    *
    */
   if ($conf->produit->enabled || $conf->service->enabled) {
+      $langs->load("products");
       print '<table class="border" width="100%">';
       $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/product/liste.php?fourn_id='.$societe->id.'">Liste des produits et services</td></tr>';
+	  print '<td><a href="'.DOL_URL_ROOT.'/product/liste.php?fourn_id='.$societe->id.'">'.$langs->trans("ProductsAndServices").'</td></tr>';
       print '</table><br>';
   }
 
@@ -172,7 +173,7 @@ if ( $societe->fetch($socid) )
 	{
       print '<table class="border" width="100%">';
 	  print "<tr $bc[$var]>";
-	  print "<td colspan=\"2\"><a href=\"commande/liste.php?socid=$societe->id\">Dernières commandes ($num)</td></tr>";
+	  print "<td colspan=\"2\"><a href=\"commande/liste.php?socid=$societe->id\">".$langs->trans("LastOrders",$num)."</td></tr>";
 	}
       while ($i < $num && $i < 5)
 	{
@@ -212,9 +213,13 @@ if ( $societe->fetch($socid) )
    * Liste des factures associées
    *
    */
+  $langs->load("bills");
+  
+  $max=5;
+  
   $sql  = "SELECT p.rowid,p.libelle,p.facnumber,".$db->pdate("p.datef")." as df, total_ttc as amount, paye";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as p WHERE p.fk_soc = $societe->id";
-  $sql .= " ORDER BY p.datef DESC LIMIT 4";
+  $sql .= " ORDER BY p.datef";
   if ( $db->query($sql) )
     {
       $var=!$var;
@@ -224,9 +229,11 @@ if ( $societe->fetch($socid) )
 	{
       print '<table class="border" width="100%">';
 	  print "<tr $bc[$var]>";
-	  print "<td colspan=\"4\"><a href=\"facture/index.php?socid=$societe->id\">Dernières factures fournisseurs ($num)</td></tr>";
+	  print "<td colspan=\"4\">";
+	  print "<table class=\"noborder\" width=\"100%\"><tr><td>".$langs->trans("LastSuppliersBills",min($num,$max))."</td><td align=\"right\"><a href=\"facture/index.php?socid=$societe->id\">".$langs->trans("AllBills")." (".$num.")</td></tr></table>";
+	  print "</td></tr>";
 	}
-      while ($i < $num && $i < 5)
+      while ($i < $num && $i < $max)
 	{
 	  $obj = $db->fetch_object();
       $var=!$var;
@@ -234,7 +241,7 @@ if ( $societe->fetch($socid) )
 	  print "<tr $bc[$var]>";
 	  print '<td>';
 	  print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
-	  print $obj->facnumber.'</a> '.substr($obj->libelle,0,40).'...</td>';	    
+	  print img_object($langs->trans("ShowBill"),"bill")." ".$obj->facnumber.'</a> '.substr($obj->libelle,0,40).'...</td>';	    
 	  print "<td align=\"right\" width=\"80\">".dolibarr_print_date($obj->df)."</td>";
 	  print '<td align="right">'.$obj->amount.'</td>';
       $fac = new FactureFourn($db);

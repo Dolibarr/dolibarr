@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -416,7 +416,7 @@ else
 	   */
 	  print '<table class="border" width="100%">';
 	  print "<tr><td>".$langs->trans("Company")."</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$fac->socidp\">$fac->socnom</a></b></td>";
-	  print "<td align=\"right\"><a href=\"index.php?socid=$fac->socidp\">Autres factures</a></td>\n";
+	  print "<td align=\"right\"><a href=\"index.php?socid=$fac->socidp\">".$langs->trans("OtherBills")."</a></td>\n";
 	  print "</tr>";
 	  print '<tr><td>'.$langs->trans("Date")."</td><td colspan=\"4\">".dolibarr_print_date($fac->datep,"%A %d %B %Y")."</td></tr>\n";
 	  print '<tr><td>'.$langs->trans("Label").'</td><td colspan="4">';

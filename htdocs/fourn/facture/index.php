@@ -155,8 +155,8 @@ if ($result)
       $var=!$var;
       
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?facid=$obj->facid\">".img_file()."</a>\n";
-      print "&nbsp;<a href=\"fiche.php?facid=$obj->facid\">$obj->facnumber</a></td>\n";
+      print "<td><a href=\"fiche.php?facid=$obj->facid\">".img_object($langs->trans("ShowBill"),"bill")."</a>\n";
+      print " <a href=\"fiche.php?facid=$obj->facid\">$obj->facnumber</a></td>\n";
       print "<td>".strftime("%d %b %Y",$obj->datef)."</td>\n";
       print '<td>'.stripslashes("$obj->libelle").'</td>';
       print '<td>';
