@@ -26,6 +26,7 @@ require("../paiement.class.php");
 require("../project.class.php3");
 require("../propal.class.php3");
 require("./bank/account.class.php");
+require("../contrat/contrat.class.php");
 
 llxHeader();
 
