@@ -376,21 +376,40 @@ class Product
    */
   Function add_fournisseur($user, $id_fourn, $ref_fourn) 
     {
+      $sql = "SELECT count(*) FROM llx_product_fournisseur WHERE fk_product = $this->id AND fk_soc = $id_fourn";
 
-      $sql = "INSERT INTO llx_product_fournisseur ";
-      $sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
-      $sql .= " VALUES (now(), $this->id, $id_fourn, '$ref_fourn', $user->id)";
-      
       if ($this->db->query($sql) )
 	{
-	  return 1;	      
+	  $row = $this->db->fetch_row(0);
+	  $this->db->free();
+	  if ($row[0] == 0)
+	    {
+
+	      $sql = "INSERT INTO llx_product_fournisseur ";
+	      $sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
+	      $sql .= " VALUES (now(), $this->id, $id_fourn, '$ref_fourn', $user->id)";
+	      
+	      if ($this->db->query($sql) )
+		{
+		  return 1;	      
+		}
+	      else
+		{
+		  print $this->db->error() . ' in ' . $sql;
+		  return -1;
+		}
+	    }
+	  else
+	    {
+	      return -2;
+	    }
 	}
       else
 	{
 	  print $this->db->error() . ' in ' . $sql;
-	  return -1;
+	  return -3;
 	}
-  }
+    }
   /*
    *
    *
