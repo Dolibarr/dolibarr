@@ -122,9 +122,8 @@ if ($conf->facture->enabled)
 	    {
 	      $obj = $db->fetch_object();
 	      $var=!$var;
-	      print '<tr '.$bc[$var].'><td width="92"><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").'</a> ';
-	      print '<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	      print '<tr '.$bc[$var].'><td width="92"><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
+	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("Showcompany"),"company").' '.$obj->nom.'</a></td></tr>';
 	      $i++;
 	    }
 	  
@@ -243,9 +242,8 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	    {
 	      $var=!$var;
 	      $obj = $db->fetch_object();
-	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")."</a>";
-	      print " <a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
-	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>';
+	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td></tr>';
 	      $i++;
 	    }
 	  print "</table><br>";
@@ -293,10 +291,8 @@ if ($conf->facture->enabled)
 	      if ($i < 20)
 		{
 		  $var=!$var;
-		  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").'</a>';
-		  print ' <a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").'</a>';
-		  print ' <a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+		  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
+		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->nom.'</a></td>';
 		  print '<td align="right">'.price($obj->total).'</td>';
 		  print '<td align="right">'.price($obj->total_ttc).'</td>';
 		  print '<td align="right">'.price($obj->am).'</td></tr>';
@@ -371,10 +367,8 @@ if ($conf->facture->enabled) {
     	    {
     	      $obj = $db->fetch_object($result);
     	      $var = !$var;
-        	  print '<tr '.$bc[$var].'><td width="20%"><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").'</a>';
-    	      print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-    		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
-	    	  print ' <a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+        	  print '<tr '.$bc[$var].'><td width="20%"><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
+    		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a></td>';
 		      print '<td align="right">'.price($obj->total_ht).'</td>';
               print '<td align="right">'.price($obj->total_ttc).'</td>';
     	      print '</tr>';
