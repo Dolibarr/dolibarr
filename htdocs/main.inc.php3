@@ -417,15 +417,17 @@ Function left_menu($menu)
  */
 function llxFooter($foot='') 
 {
-  print "</TD></TR>";
+  print "</td></tr>";
   /*
    *
    */
-  print "</TABLE>\n";
-  print "<div>";
-  print '[<a href="http://savannah.gnu.org/bugs/?group_id=1915">Bug report</a>]&nbsp;';
-  print '[<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>]&nbsp;'.$foot.'</div>';
-  print "</BODY></HTML>";
+  print "</table>\n";
+
+  print '<p id="powered-by-dolibarr">';
+  print '<a href="http://savannah.gnu.org/bugs/?group_id=1915">Bug report</a>&nbsp;';
+  print '<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>&nbsp;'.$foot.'</p>';
+
+  print "</body></html>";
 }
 
 
