@@ -30,7 +30,7 @@
 
 require("./pre.inc.php");
 
-Header("Location: liste.php");
+Header("Location: liste.php?".$_SERVER["QUERY_STRING"]);
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
