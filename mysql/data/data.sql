@@ -22,6 +22,12 @@
 -- Valeurs pour les bases de langues francaises
 --
 
+
+insert into llx_const(name, value) values ('DONS_FORM','fsfe.fr.php');
+
+insert into llx_const(name, value) values ('MAIN_SEARCHFORM_SOCIETE','1');
+insert into llx_const(name, value) values ('MAIN_SEARCHFORM_CONTACT','1');
+
 delete from c_chargesociales;
 insert into c_chargesociales (id,libelle,deductible) values ( 1, 'Allocations familiales',1);
 insert into c_chargesociales (id,libelle,deductible) values ( 2, 'GSG Deductible',1);
