@@ -1,4 +1,14 @@
-2003-09-23  Rodolphe Quiédeville  <rq@quiedeville.org>
+2003-10-06  Eric Seigne  <erics@rycks.com>
+	* Bug dans l'url des  a href de compta/resultat/index.php qui fait
+	des liens absolus et non relatifs
+
+	* amélioration de la classe societe: pour la création d'un préfixe
+	d'entreprise  on a  un  soucis  si l'entreprise  porte  le nom  de
+	l'fournisseur  par exemple  ... prefix  calculé  = "l'"  et ça  ça
+	buggue.  Une  petite  perl   regexpt  pour  virer  les  signes  de
+	ponctuation et ça roule.
+
+2003-09-23 Rodolphe Quiédeville <rq@quiedeville.org>
 
 	* Modification de la numérotation des factures, le numéro est
 	attribué lors de la validation désormais
