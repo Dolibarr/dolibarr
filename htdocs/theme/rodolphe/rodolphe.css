@@ -223,7 +223,8 @@ tr.liste_titre {
                  background: #cacaca; 
                  border: 1px solid #000000;
                  font-weight: bold;
-                 text-decoration: none }
+                 text-decoration: none;
+                 white-space: nowrap }
 
 tr.pair	{ 
           background: #dfdfdf; 

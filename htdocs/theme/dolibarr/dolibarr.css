@@ -207,7 +207,7 @@ tr.liste_titre {
                  font-size: 0.9em;
                  font-weight: bold;
                  border: 1px solid #8CACBB; 
-
+                 white-space: nowrap;
                  }
 
 tr.pair	{ 

@@ -281,6 +281,7 @@ tr.liste_titre {
                  font-family: Helvetica, Verdana;
                  font-size: 1.0em;
                  font-weight: bold;
+                 white-space: nowrap;
                  }
 
 tr.pair { 
