@@ -169,13 +169,16 @@ class LigneTel {
     if (strlen(trim($this->numero)) == 10)
       {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_societe_ligne";
-	$sql .= " (fk_soc, fk_client_comm, ligne, fk_soc_facture, fk_fournisseur, note, remise, fk_commercial, statut, fk_user_creat, fk_concurrent, fk_contrat)";
+	$sql .= " (datec,fk_soc, fk_client_comm, ligne, fk_soc_facture, fk_fournisseur, note, remise, fk_commercial, statut, fk_user_creat, fk_concurrent, fk_contrat)";
 	$sql .= " VALUES (";
-	$sql .= " $this->client,$this->client_comm,'$this->numero',$this->client_facture,$this->fournisseur, '$this->note','$this->remise',$this->commercial, -1,$user->id, $this->concurrent, $this->contrat)";
+	$sql .= "now(),$this->client,$this->client_comm,'$this->numero',$this->client_facture,$this->fournisseur, '$this->note','$this->remise',$this->commercial, -1,$user->id, $this->concurrent, $this->contrat)";
 	
 	if ( $this->db->query($sql) )
 	  {
 	    $this->id = $this->db->last_insert_id();
+
+	    $this->SetRemise($user, $this->remise, 'Remise initiale');
+
 	    return 0;
 	  }
 	else
