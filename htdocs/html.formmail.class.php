@@ -92,8 +92,10 @@ class FormMail
    *    \brief  Affiche la partie de formulaire pour saisie d'un mail en fonction des propriétés
    */
   function show_form() {
-    global $langs;
+    global $conf, $langs, $user;
+
     $langs->load("other");
+    $langs->load("mails");
     
     $form=new Form($DB);
 
