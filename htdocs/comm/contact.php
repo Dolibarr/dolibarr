@@ -36,6 +36,7 @@ llxHeader();
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 $page=$_GET["page"];
+
 $socid=$_GET["socid"];
 $type=$_GET["type"];
 
@@ -49,9 +50,9 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
-$page=$_GET["page"];
+
+
+
 
 if ($sortorder == "")
 {
@@ -61,7 +62,7 @@ if ($sortfield == "")
 {
   $sortfield="p.name";
 }
-$page=$_GET["page"];
+
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -131,33 +132,6 @@ if ($result)
   $num = $db->num_rows();
   
   print_barre_liste("Liste des contacts $label",$page, "contact.php", "&amp;type=$type",$sortfield,$sortorder,"",$num);
-  
-  print "<div align=\"center\">";
-  
-  print "| <A href=\"contact.php?type=$type&page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
-  for ($i = 65 ; $i < 91; $i++) {
-    print "<A href=\"contact.php?type=$type&begin=" . chr($i) . "&stcomm=$stcomm\" class=\"T3\">";
-    
-    if ($begin == chr($i) )
-      {
-	print  "<b>-&gt;" . chr($i) . "&lt;-</b>" ; 
-      }
-    else
-      {
-	print  chr($i)  ; 
-      } 
-    print "</A> | ";
-  }
-  print "</div>";
-  
-  if ($sortorder == "DESC")
-    {
-      $sortorder="ASC";
-    }
-  else
-    {
-      $sortorder="DESC";
-  }
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
