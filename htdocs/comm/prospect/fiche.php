@@ -36,7 +36,7 @@ llxHeader();
 /*
  *
  */
-$socid = $_GET["id"];
+$socid = isset($_GET["id"])?$_GET["id"]:$_GET["socid"];		// Fonctionne si on passe id ou socid
 /*
  * Sécurité si un client essaye d'accéder à une autre fiche que la sienne
  */
