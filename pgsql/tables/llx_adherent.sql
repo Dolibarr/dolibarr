@@ -1,4 +1,6 @@
 -- ===================================================================
+-- Copyright (C) 2004	   Benoit Mortiero <benoit.mortier@opensides.be>
+--
 -- $Id$
 -- $Source$
 --
@@ -29,6 +31,7 @@ create table llx_adherent
   statut           smallint NOT NULL DEFAULT 0,
   public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
   fk_adherent_type smallint,
+  morphy           CHAR(3) CHECK (morphy ('mor','phy')) NOT NULL, -- personne morale / personne physique
   datevalid        timestamp,   -- date de validation
   datec            timestamp,  -- date de creation
   prenom           varchar(50),
@@ -42,7 +45,9 @@ create table llx_adherent
   login            varchar(50) NOT NULL,      -- login utilise pour editer sa fiche
   pass             varchar(50),      -- pass utilise pour editer sa fiche
   naiss            date,             -- date de naissance
+  photo            varchar(255),     -- url vers la photo de l'adherent
   fk_user_author   integer NOT NULL,
+  fk_user_mod      integer NOT NULL,
   fk_user_valid    integer NOT NULL,
   datefin          timestamp NOT NULL, -- date de fin de validité de la cotisation
   note             text

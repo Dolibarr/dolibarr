@@ -1,5 +1,7 @@
--- ============================================================================
--- Copyright (C) 2004 Benoit mortier <benoit;mortier@opensides.be>
+-- ========================================================================
+-- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
+-- Copyright (C) 2004	   Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,18 +17,16 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- ============================================================================
-
-create table llx_album
+-- $Id$
+-- $Source$
+--
+-- ========================================================================
+create table llx_c_chargesociales
 (
-  rowid           serial PRIMARY KEY,
-  osc_id          integer NOT NULL,
-  tms             timestamp,
-  ref		  varchar(12),
-  title		  varchar(64),
-  annee		  smallint,
-  description     text,
-  collectif       smallint,
-  fk_user_author  integer
+  id          SERIAL PRIMARY KEY,
+  libelle     varchar(80),
+  deductible  smallint NOT NULL default 0
 );
+
+
 

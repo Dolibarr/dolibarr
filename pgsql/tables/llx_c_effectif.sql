@@ -1,5 +1,8 @@
--- ============================================================================
--- Copyright (C) 2004 Benoit mortier <benoit;mortier@opensides.be>
+-- ========================================================================
+-- Copyright (C) 2004	   Benoit Mortier <benoit.mortier@opensides.be>
+--
+-- $Id$
+-- $Source$
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,18 +18,11 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- ============================================================================
+-- ========================================================================
 
-create table llx_album
+create table llx_c_effectif
 (
-  rowid           serial PRIMARY KEY,
-  osc_id          integer NOT NULL,
-  tms             timestamp,
-  ref		  varchar(12),
-  title		  varchar(64),
-  annee		  smallint,
-  description     text,
-  collectif       smallint,
-  fk_user_author  integer
+  id SERIAL PRIMARY KEY,
+  libelle varchar(30)
 );
 

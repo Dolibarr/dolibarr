@@ -24,7 +24,7 @@
 
 create table llx_adherent_options_label
 (
-  name             SERIAL PRIMARY KEY, -- nom de l'attribut
+  name             varchar(64) PRIMARY KEY, -- nom de l'attribut
   tms              timestamp,
   label            varchar(255) NOT NULL -- label correspondant a l'attribut
 );
