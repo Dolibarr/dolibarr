@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# Copyright (C) 2000-2002 Rodolphe Quiedeville
+# Copyright (C) 2000-2003 Rodolphe Quiedeville
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,44 +22,30 @@
 
 use strict;
 use DBI;
-use Lolix::Conf;
 use Getopt::Long;
  Getopt::Long::Configure("bundling");
 
 
-my $gljroot = $ENV{"GLJROOT"};
+my($outputdir, $templatesdir, $debug, $verbose, $bgcolor, $idfacture, $do_fax, $do_pdf, $do_ps, $html) = (0,0);
 
-my($debug, $verbose, $bgcolor, $idfacture, $do_fax, $do_pdf, $do_ps, $html) = (0,0);
+exit unless GetOptions("facture=i"   =>\$idfacture,
+		       "fax"         =>\$do_fax,
+		       "html"        =>\$html,
+		       "templates=s" =>\$templatesdir,
+		       "output=s"    =>\$outputdir,
+		       "ps"          =>\$do_ps,
+		       "pdf"         =>\$do_pdf,
+		       "v+"          =>\$verbose);
 
-exit unless GetOptions("facture=i"  =>\$idfacture,
-		       "gljroot=s"  =>\$gljroot,
-		       "fax"        =>\$do_fax,
-		       "html"       =>\$html,
-		       "ps"         =>\$do_ps,
-		       "pdf"        =>\$do_pdf,
-		       "v+"         =>\$verbose);
-
-unless ($gljroot) { print "Missing ENV var: GLJROOT is not defined\n"; exit 0; }
 unless (defined $ENV{"DBI_DSN"}) { print "Missing ENV var: DBI_DSN is not defined\n"; exit 0; }
 
 #
 #
 #
 
-my $templatesdir = $gljroot . "/scripts/templates/facture";
-my $outputdir = $gljroot . "/www-sys/doc/facture/";
-
-my  $mdir = "$gljroot/www-sys/doc";
-unless (-d $mdir) {
-    mkdir($mdir,0777) || die "cannot mkdir " . $mdir . ": $!";
+unless (-d $outputdir) {
+    mkdir($outputdir,0777) || die "cannot mkdir " . $outputdir . ": $!";
 }
-$mdir = "$outputdir";
-unless (-d $mdir) {
-    mkdir($mdir,0777) || die "cannot mkdir " . $mdir . ": $!";
-}
-
-my (%CONF) = Lolix::Conf::GetAllConf($gljroot . "/conf/config", 0);
-my @countries = Lolix::Conf::GetCountries($gljroot . "/conf/config", 0);
 
 #
 # Fetch datas
@@ -72,15 +58,17 @@ print "<br>" if ($verbose && $html);
 
 my $dbh = DBI->connect() || die $DBI::errstr ; # We use env var DBI_DSN to connect to DB
 
-my $sql = "SELECT f.rowid, f.facnumber, s.nom, f.amount, f.remise, f.tva, f.total, f.datef, s.c_nom, s.c_prenom, p.ref as propalref, s.ville, s.cp, s.address";
-$sql .= " FROM llx_facture as f, societe as s, llx_propal as p, llx_fa_pr as pf ";
-$sql .= " WHERE s.idp = f.fk_soc AND pf.fk_facture = f.rowid AND pf.fk_propal = p.rowid AND f.rowid = $idfacture";
+my $sql = "SELECT f.rowid, f.facnumber, s.nom, f.amount, f.remise, f.tva, f.total, f.datef, s.ville, s.cp, s.address";
+$sql .= " FROM llx_facture as f, societe as s ";
+$sql .= " WHERE s.idp = f.fk_soc AND f.rowid = $idfacture";
 
 my $sth = $dbh->prepare("$sql") || die $dbh->errstr ;
 
-if ( $sth->execute ) {
+if ( $sth->execute )
+{
 
-    while (my $hsr = $sth->fetchrow_hashref ) {
+    while (my $hsr = $sth->fetchrow_hashref )
+    {
 	$numfacture   = $hsr->{"facnumber"};
 	$societe      = $hsr->{"nom"};
 	$remiseht     = $hsr->{"remise"};
@@ -99,13 +87,15 @@ if ( $sth->execute ) {
 
     }
     $sth->finish;
-} else {
+}
+else
+{
     print "db error\n";
 }
 #
 #
 #
-$outputdir .= $numfacture;
+$outputdir .= "/" . $numfacture;
 
 print "outputdir is $outputdir\n" if $verbose ;
 print "<br>" if ($verbose && $html); 
@@ -159,24 +149,27 @@ close (FH);
 
 my ($qty, $ref, $pu, $pricep, $label);
 #
-$sql = "SELECT p.price, pr.ref, pr.label, pr.description";
-$sql .= " FROM llx_propaldet as p, llx_product as pr, llx_fa_pr as fp";
-$sql .= " WHERE p.fk_propal = fp.fk_propal AND p.fk_product = pr.rowid AND fp.fk_facture = $idfacture";
+$sql = "SELECT l.price, l.qty, l.description";
+$sql .= " FROM llx_facturedet as l";
+$sql .= " WHERE l.fk_facture = $idfacture";
 
 
 $sth = $dbh->prepare("$sql") || die $dbh->errstr ;
-if ( $sth->execute ) {
-    while (my $hsr = $sth->fetchrow_hashref ) {
+if ( $sth->execute )
+{
+    while (my $hsr = $sth->fetchrow_hashref )
+    {
 	$label = $hsr->{"label"};
 	$ref = $hsr->{"ref"};
-	$societe = $hsr->{"nom"};	
-	$qty = 1 ;
+	$societe = $hsr->{"nom"};
+	$qty = $hsr->{"qty"};
 	
 	$pu     = sprintf("%.2f", $hsr->{"price"});
-	$pricep = sprintf("%.2f", $hsr->{"price"});
+	$pricep = sprintf("%.2f", $hsr->{"price"} * $qty);
 	
 	open (FB, "<$bodyfilename") || die "can't open $bodyfilename: $!";	
-	while (<FB>)  {
+	while (<FB>) 
+	{
 	    s|\#LABEL\#|$hsr->{"description"}|g;
 	    s|\#QTY\#|$qty|g;
 	    s|\#REF\#|$ref|g;
@@ -188,7 +181,9 @@ if ( $sth->execute ) {
     }
     
     $sth->finish;
-} else {
+}
+else
+{
     print "** ERROR\n";
     print "<br>" if ( $html); 
 }
