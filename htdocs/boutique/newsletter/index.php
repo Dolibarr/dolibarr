@@ -44,22 +44,31 @@ $sql .= " FROM llx_newsletter";
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
  
-if ( $db->query($sql) ) {
+if ( $db->query($sql) )
+{
   $num = $db->num_rows();
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Nom",$PHP_SELF, "e.nom");
+  print_liste_field_titre("Sujet",$PHP_SELF, "email_subject");
   print "</td>";
+  print '<td align="center">Statut</td>';
+  print '<td align="center">Nb envois</td>';
   print "</TR>\n";
   $var=True;
-  while ($i < $num) {
-    $objp = $db->fetch_object( $i);
-    $var=!$var;
-    print "<TR $bc[$var]>";
-    print "<TD width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->email_subject</a></TD>\n";
-    print "</TR>\n";
-    $i++;
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object( $i);
+      $var=!$var;
+      print "<TR $bc[$var]>";
+
+      print '<td><a href="fiche.php?id='.$objp->rowid.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche"></a>&nbsp;';
+
+      print "<a href=\"fiche.php?id=$objp->rowid\">$objp->email_subject</a></TD>\n";
+      print '<TD align="center">'.$objp->status.'</td>';
+      print '<TD align="center">'.$objp->nbsent.'</td>';
+      print "</TR>\n";
+      $i++;
   }
   print "</TABLE>";
   $db->free();
