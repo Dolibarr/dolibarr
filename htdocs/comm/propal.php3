@@ -21,6 +21,10 @@
  */
 require("./pre.inc.php3");
 
+$user->getrights('propale');
+if (!$user->rights->propale->lire)
+  accessforbidden();
+
 require("../lib/CMailFile.class.php3");
 /*
  *  Modules optionnels
@@ -40,7 +44,6 @@ if ($user->societe_id > 0)
   $action = '';
   $socidp = $user->societe_id;
 }
-$user->getrights('propale');
 
 llxHeader();
 
