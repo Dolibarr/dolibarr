@@ -295,7 +295,7 @@ if ($propalid) {
 	    }
 	  print "</TR>\n";
 
-	  $sql = "SELECT pt.rowid,p.label as product, p.ref, pt.price, pt.qty";
+	  $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid";
 	  $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
 	  
 	  $result = $db->query($sql);
@@ -312,7 +312,7 @@ if ($propalid) {
 		  $var=!$var;
 		  print "<TR $bc[$var]>";
 		  print "<TD>[$objp->ref]</TD>\n";
-		  print "<TD>$objp->product</TD>\n";
+		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php3?id='.$objp->prodid.'">'.$objp->product.'</td>';
 		  print "<TD align=\"right\">".price($objp->price)."</TD><td align=\"center\">".$objp->qty."</td>\n";
 		  if ($obj->statut == 0)
 		    {
