@@ -234,30 +234,61 @@ foreach my $file (keys %filelist) {
     		s/^double/real/i;
     		s/(\s*)double/${1}real/i;
     
-    		# Ignore "unique key(xx, yy)"  (key on double fields not supported by postgres)
-    		next if (/unique key\s*\(\w+\s*,\s*\w+\)/i);
-    		next if (/unique index\s*\(\w+\s*,\s*\w+\)/i);
-    
-    		if (/\bkey\b/i && !/^\s+primary key\s+/i) {
-    			s/KEY(\s+)[^(]*(\s+)/$1 UNIQUE $2/i;		 # hack off name of the non-primary key
+    		# unique key(field1,field2)
+    		if (/unique key\s*\((\w+\s*,\s*\w+)\)/i) {
+    		    s/unique key\s*\((\w+\s*,\s*\w+)\)/UNIQUE\($1\)/i;
+                $create_sql.=$_;
+    		    next;
+    		}
+    		# unique index(field1,field2)
+    		if (/unique index\s*\((\w+\s*,\s*\w+)\)/i) {
+                s/unique index\s*\((\w+\s*,\s*\w+)\)/UNIQUE\($1\)/i;
+                $create_sql.=$_;
+    		    next;
     		}
     
-            # unique index(field)
+            # unique key [name] (field)
+            if (/unique key\s*(\w*)\s*\((\w+)\)/i) {
+                s/unique key\s*(\w*)\s*\((\w+)\)/UNIQUE\($2\)/i;
+                my $idxname=($1?"$1":"idx_${table}_$2");
+                $create_sql.=$_;
+                $create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
+                next;
+            }
+            # unique index [name] (field)
             if (/unique index\s*(\w*)\s*\((\w+)\)/i) {
-                $create_index .= "CREATE INDEX ".($1?"$1":"idx_$2")." ON $table ($2);\n";
+                s/unique index\s*(\w*)\s*\((\w+)\)/UNIQUE\($2\)/i;
+                my $idxname=($1?"$1":"idx_${table}_$2");
+                $create_sql.=$_;
+                $create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
+                next;
+            }
+            # unique (field) et unique (field1, field2 ...)
+            if (/unique\s*\(([\w,\s]+)\)/i) {
+                s/unique\s*\(([\w,\s]+)\)/UNIQUE\($1\)/i;
+                my $idxname="idx_${table}_$1";
+                $idxname =~ s/\W/_/g;
+                $create_sql.=$_;
+                $create_index .= "CREATE INDEX $idxname ON $table ($1);\n";
                 next;
             }
             
             # index(field)
             if (/index\s*(\w*)\s*\((\w+)\)/i) {
-                $create_index .= "CREATE INDEX ".($1?"$1":"idx_$2")." ON $table ($2);\n";
+                my $idxname=($1?"$1":"idx_${table}_$2");
+                $create_index .= "CREATE INDEX $idxname ON $table ($2);\n";
                 next;
             }
-
+            
+            # primary key
+    		if (/\bkey\b/i && !/^\s+primary key\s+/i) {
+    			s/KEY(\s+)[^(]*(\s+)/$1 UNIQUE $2/i;		 # hack off name of the non-primary key
+    		}
+    
             # key(xxx)
             if (/key\s*\((\w+)\)/i) {
-                #$create_index .= "CREATE INDEX ${table}_$1 ON $table ($1);\n";
-                $create_index .= "CREATE INDEX idx_$1 ON $table ($1);\n";
+                my $idxname="idx_${table}_$1";
+                $create_index .= "CREATE INDEX $idxname ON $table ($1);\n";
                 next;
             }
             
