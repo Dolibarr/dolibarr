@@ -28,13 +28,17 @@ if ($user->societe_id > 0) accessforbidden();
 
 llxHeader('','Statistiques prélèvements');
 
+/*
+ *
+ * Stats générales
+ *
+ */
+
 print_titre("Statistiques prélèvements");
 
 
-$sql = "SELECT sum(f.total_ttc)";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
-$sql .= " , ".MAIN_DB_PREFIX."facture as f";
-$sql .= " WHERE pf.fk_facture = f.rowid";
+$sql = "SELECT sum(pl.amount)";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 
 if ($db->query($sql))
 {
@@ -52,11 +56,9 @@ if ($db->query($sql))
  * Stats
  *
  */
-$sql = "SELECT sum(f.total_ttc), pf.statut";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
-$sql .= " , ".MAIN_DB_PREFIX."facture as f";
-$sql .= " WHERE pf.fk_facture = f.rowid";
-$sql .= " GROUP BY pf.statut";
+$sql = "SELECT sum(pl.amount), pl.statut";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql .= " GROUP BY pl.statut";
 
 if ($db->query($sql))
 {
@@ -71,8 +73,9 @@ if ($db->query($sql))
   $var=True;
 
   $st[0] = "En attente";
-  $st[1] = "Crédité";
-  $st[2] = "Rejeté";
+  $st[1] = "En attente";
+  $st[2] = "Crédité";
+  $st[3] = "Rejeté";
   
   while ($i < $num)
     {
@@ -85,28 +88,105 @@ if ($db->query($sql))
       
       print '</td><td align="right">';	  
       print round($row[0]/$total*100,2)." %";	  
-      print '</td>';
-      
-      print "</tr>\n";
+      print '</td></tr>';
       
       $var=!$var;
       $i++;
     }
 
-      print "<tr $bc[$var]>".'<td align="right">Total';
-      print '</td><td align="right">';	  
-      print price($total);	        
-      print '</td><td align="right">&nbsp;';
-      print '</td>';
-      
-      print "</tr>\n";
+  print "<tr $bc[$var]>".'<td align="right">Total';
+  print '</td><td align="right">';	  
+  print price($total);	        
+  print '</td><td align="right">&nbsp;</td>';
+  print "</tr></table>";
+  $db->free();
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}  
+/*
+ *
+ * Stats sur les rejets
+ *
+ */
+print '<br />';
+print_titre("Statistiques des rejets de prélèvements");
 
+
+$sql = "SELECT sum(pl.amount), count(pl.amount)";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql .= " WHERE pl.statut = 3";
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $i = 0;
   
-  print "</table>";
+  if ( $num > 0 )
+    {
+      $row = $db->fetch_row();	
+      $total = $row[0];
+      $nbtotal = $row[1];
+    }
+}
+
+/*
+ * Stats sur les rejets
+ *
+ */
+$sql = "SELECT sum(pl.amount), count(pl.amount), pr.motif";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+$sql .= " WHERE pl.statut = 3";
+$sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
+$sql .= " GROUP BY pr.motif";
+
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $i = 0;
+  
+  print"\n<!-- debut table -->\n";
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre">';
+  print '<td>Statut</td><td align="center">Nombre</td>';
+  print '<td align="right">% en nombre</td><td align="right">Montant</td><td align="right">% en montant</td></tr>';
+  
+  $var=True;
+
+  require_once DOL_DOCUMENT_ROOT."/compta/prelevement/rejet-prelevement.class.php";
+  $Rejet = new RejetPrelevement($db, $user);
+  
+  while ($i < $num)
+    {
+      $row = $db->fetch_row();	
+      
+      print "<tr $bc[$var]><td>";
+      print $Rejet->motifs[$row[2]]; 
+
+      print '</td><td align="center">'.$row[1];
+
+      print '</td><td align="right">';	  
+      print round($row[1]/$nbtotal*100,2)." %";
+
+      print '</td><td align="right">';	  
+      print price($row[0]);
+
+      print '</td><td align="right">';	  
+      print round($row[0]/$total*100,2)." %";
 
 
+      print '</td></tr>';
+      
+      $var=!$var;
+      $i++;
+    }
 
-
+  print "<tr $bc[$var]>".'<td align="right">Total</td><td align="center">'.$nbtotal.'</td>';
+  print '<td>&nbsp;</td><td align="right">';	  
+  print price($total);	        
+  print '</td><td align="right">&nbsp;</td>';
+  print "</tr></table>";
   $db->free();
 }
 else 
