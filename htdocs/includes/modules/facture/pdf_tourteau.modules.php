@@ -266,6 +266,10 @@ Class pdf_tourteau {
 	      
 	    }
 	}
+      else
+	{
+	  print "FAC_OUTPUTDIR non définit !";
+	}
     }
 }
 
