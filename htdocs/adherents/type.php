@@ -238,7 +238,7 @@ if ($rowid > 0 && $action == 'edit')
   print '<td valign="top" width="75%" class="valeur">';
   print nl2br($adht->commentaire).'&nbsp;</td></tr>';
 
-  print '<tr><td valign="top">Mail d\'acceuil</td>';
+  print '<tr><td valign="top">Mail d\'accueil</td>';
 
   print '<td valign="top" width="75%" class="valeur">';
   print nl2br($adht->mail_valid).'&nbsp;</td></tr>';
@@ -272,7 +272,7 @@ if ($rowid > 0 && $action == 'edit')
   print '<tr><td valign="top">Commentaires :</td><td>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\">".$adht->commentaire."</textarea></td></tr>";
 
-  print '<tr><td valign="top">Mail d\'acceuil :</td><td>';
+  print '<tr><td valign="top">Mail d\'accueil :</td><td>';
   print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\">".$adht->mail_valid."</textarea></td></tr>";
 
   print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"</td></tr>';
