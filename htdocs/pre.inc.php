@@ -130,11 +130,11 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/postnuke/articles/", "Editorial");
     }
 
-  $menu->add(DOL_URL_ROOT."/user/", "Utilisateurs");
+  $menu->add(DOL_URL_ROOT."/user/index.php", "Utilisateurs");
 
   if ($user->admin)
     {      
-      $menu->add(DOL_URL_ROOT."/admin/", "Configuration");
+      $menu->add(DOL_URL_ROOT."/admin/index.php", "Configuration");
     }
 
   /*
