@@ -194,13 +194,11 @@ else
 			      "confirm_approve");
 	}
       
-      print_titre("Mailing");
-      
       print '<table class="border" width="100%">';
       
       print '<tr><td width="20%">'.$langs->trans("MailTitle").'</td><td colspan="3">'.$mil->titre.'</td></tr>';
       
-      print '<tr><td width="20%">'.$langs->trans("MailSender").'</td><td>'.htmlentities($mil->email_from).'</td>';
+      print '<tr><td width="20%">'.$langs->trans("MailFrom").'</td><td>'.htmlentities($mil->email_from).'</td>';
       print '<td>'.$langs->trans("EMail").'</td><td>'.htmlentities($mil->email_from).'</td></tr>';
       
       //print '<tr><td width="20%">Réponse</td><td>'.htmlentities($mil->email_replyto).'</td></tr>';

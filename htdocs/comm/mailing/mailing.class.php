@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +21,15 @@
  *
  */
 
-
-
-
-/*! \class Mailing
-
+/**     \file       htdocs/comm/mailing/mailing.class.php
+        \brief      Fichier de la classe de gestion des mailings
+        \version    $Revision$
 */
 
+
+/**     \class      Mailing
+	    \brief      Classe permettant la gestion des mailings
+*/
 class Mailing
 {
   var $id;
@@ -157,7 +160,7 @@ class Mailing
 
   /**
    * \brief     Valide le mailing
-   * \param     userid      id de l'utilisateur qui valide
+   * \param     user      objet user qui valide
    */
   function valid($user)
     {
@@ -181,7 +184,7 @@ class Mailing
 
   /**
    * \brief     Approuve le mailing
-   * \param     userid      id de l'utilisateur qui valide
+   * \param     user      objet user qui approuve
    */
   function approve($user)
     {
@@ -204,7 +207,7 @@ class Mailing
 
   /**
    * \brief     Supprime le mailing
-   * \param     rowid      id  à supprimer
+   * \param     rowid      id du mailing à supprimer
    */
   function delete($rowid)
   {
