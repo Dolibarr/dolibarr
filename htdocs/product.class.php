@@ -877,56 +877,101 @@ class Product
   }
 
   /**
-   *
-   *
+   *    \brief      Affiche la première photo du produit
+   *    \param      sdir    Répertoire à scanner
+   *    \param      size    0=taille origine, 1 taille vignette
    */
-  function show_photo($sdir)
+  function show_photo($sdir,$size=0)
   {
-    $photo = '';
     $pdir = get_exdir($this->id) . $this->id ."/photos/";
     $dir = $sdir . '/'. $pdir;
-
+    
     if ( file_exists($dir))
-      {
-	$handle=opendir($dir);
-	
-	while (($file = readdir($handle))!==false)
-	  {
-	    if (is_file($dir.$file))
-	      {
-		$photo = $file;
-	      }
-	  }
-	
-	if (strlen($photo))
-	  {
-	    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
-	  }
-      }
+    {
+        $handle=opendir($dir);
+    
+        while (($file = readdir($handle))!==false)
+        {
+            $photo='';
+            if (is_file($dir.$file)) $photo = $file;
+    
+            if ($photo)
+            {
+                if ($size == 1) {
+                    // On determine nom du fichier vignette
+                    $photo_vignette='';
+                    if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs)) {
+                        $photo_vignette=eregi_replace($regs[0],'',$photo)."_small".$regs[0];
+                    }
+                    print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" alt="Taille origine" target="_blank">';
+                    
+                    // Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
+                    if ($photo_vignette && is_file($photo_vignette)) {
+                        print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo_vignette).'">';
+                    }
+                    else {
+                        print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+                    }
+
+                    print '</a>';
+                }
+    
+                if ($size == 0)
+                    print '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+    
+                break;
+            }
+        }
+    }
   }
 
   /**
-   * Je sais c'est sale mais le besoin est urgent ;-)
-   *
+   *    \brief      Affiche toutes les photos du produit
+   *    \param      sdir    Répertoire à scanner
+   *    \param      size    0=taille origine, 1 taille vignette
    */
-  function show_photos($sdir)
+  function show_photos($sdir,$size=0)
   {
-    $photo = '';
     $pdir = get_exdir($this->id) . $this->id ."/photos/";
     $dir = $sdir . '/'. $pdir;
+    
+    if ( file_exists($dir))
+    {
+        $handle=opendir($dir);
+    
+        while (($file = readdir($handle))!==false)
+        {
+            $photo='';
+            if (is_file($dir.$file)) $photo = $file;
+    
+            if ($photo)
+            {
+                if ($size == 1) {
+                    // On determine nom du fichier vignette
+                    $photo_vignette='';
+                    if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs)) {
+                        $photo_vignette=eregi_replace($regs[0],'',$photo)."_small".$regs[0];
+                    }
+                    print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" alt="Taille origine" target="_blank">';
 
-    $handle=opendir($dir);
+                    // Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
+                    if ($photo_vignette && is_file($photo_vignette)) {
+                        print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo_vignette).'">';
+                    }
+                    else {
+                        print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+                    }
 
-    while (($file = readdir($handle))!==false)
-      {
-	if (is_file($dir.$file))
-	  {
-	    $photo = $file;
-	    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'"><br />';
-	  }
-      }
-
-
+                    print '</a>';
+                }
+    
+                if ($size == 0)
+                    print '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+    
+                print '&nbsp;';
+            }
+        }
+    }
   }
 
 }

@@ -147,7 +147,7 @@ if ($_GET["id"])
        */
       if ($_GET["id"] && $_GET["action"]=='')
 	{
-	  print $product->show_photos($conf->produit->dir_output);
+	  print $product->show_photos($conf->produit->dir_output,1);
 	}
 
       print "<br></div>\n";
