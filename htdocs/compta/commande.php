@@ -69,8 +69,14 @@ if ($_GET["id"] > 0)
       $author = new User($db);
       $author->id = $commande->user_author_id;
       $author->fetch();
-	  
-      print_titre("Commande : ".$commande->ref);
+
+
+      $head[0][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+      $head[0][1] = "Commande : $commande->ref";
+      $h = 1;
+      $a = 0;
+
+      dolibarr_fiche_head($head, $a);	 
       
       /*
        *   Commande
@@ -198,34 +204,6 @@ if ($_GET["id"] > 0)
 	  print $db->error();
 	}
       print '</table>';
-      /*
-       * Barre d'actions
-       */
-
-      if ($user->societe_id == 0 && !$commande->facturee)
-	{
-	  print '<p><table id="actions" width="100%"><tr>';
-
-	  print '<td align="center" width="20%">';
-	  print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">Facturer</a>';
-	  print '</td>';
-	  print '<td align="center" width="20%">-</td>';
-	  print '<td align="center" width="20%">-</td>';
-	  if (!$commande->facturee)
-	    {
-	      print '<td align="center" width="20%">';
-	      print '<a href="'.DOL_URL_ROOT.'/compta/commande.php?action=facturee&amp;id='.$commande->id.'">Classer comme facturée</a>';
-	      print '</td>';
-	    }
-	  else
-	    {
-	      print '<td align="center" width="20%">-</td>';
-	    }
-	  print '<td align="center" width="20%">-</td>';
-	  
-	  print "</tr></table>";
-	}
-      print "<p>\n";
       
       /*
        * Documents générés
@@ -253,16 +231,19 @@ if ($_GET["id"] > 0)
 	   */
 	  print "</td></tr></table>";
 	}
-	  /*
-	   * Factures associees
-	   */
-	  $sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."co_fa as fp WHERE fp.fk_facture = f.rowid AND fp.fk_commande = ".$commande->id;
+      /*
+       * Factures associees
+       */
+      $sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."co_fa as fp WHERE fp.fk_facture = f.rowid AND fp.fk_commande = ".$commande->id;
+      
+      if ($db->query($sql) )
+	{
+	  $num_fac_asso = $db->num_rows();
+	  $i = 0; $total = 0;
 
-	  if ($db->query($sql) )
+	  if ($num_fac_asso > 0)
 	    {
-	      $num_fac_asso = $db->num_rows();
-	      $i = 0; $total = 0;
 	      print "<br>";
 	      if ($num_fac_asso > 1)
 		{
@@ -307,18 +288,38 @@ if ($_GET["id"] > 0)
 		}
 	      print "<tr><td align=\"right\" colspan=\"4\">Total : <b>$total</b> Euros HT</td></tr>\n";
 	      print "</table>";
-	      $db->free();
 	    }
-	  else
-	    {
-	      print $db->error();
-	    }
+	  $db->free();
+	}
+      else
+	{
+	  print $db->error();
+	}
       /*
        *
        *
        */
-
+      print '</div>';
+      /*
+       * Barre d'actions
+       */
       
+      if ($user->societe_id == 0 && !$commande->facturee)
+	{
+	  print "<br><div class=\"tabsAction\">\n";
+	 
+	  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">Facturer</a>';
+
+	  if (!$commande->facturee && $num_fac_asso)
+	    {
+
+	      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/compta/commande.php?action=facturee&amp;id='.$commande->id.'">Classer comme facturée</a>';
+
+	    }
+	  print '</div>';
+	}
+
+	  
     }
   else
     {
