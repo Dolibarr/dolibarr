@@ -51,7 +51,12 @@ $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."charge
 $sql .= " WHERE s.fk_type = c.id";
 if ($year > 0)
 {
-    $sql .= " AND date_format(s.date_ech, '%Y') = $year";
+    $sql .= " AND (";
+    // Si period renseigné on l'utilise comme critere de date, sinon on prend date échéance,
+    // ceci afin d'etre compatible avec les cas ou la période n'etait pas obligatoire
+    $sql .= "   (s.periode is not null and date_format(s.periode, '%Y') = $year) ";
+    $sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = $year)";
+    $sql .= ")";
 }
 $sql .= " GROUP BY lower(c.libelle) ASC";
 

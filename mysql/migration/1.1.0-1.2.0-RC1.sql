@@ -443,3 +443,5 @@ create table llx_cash
 
 
 update llx_bank set datev=dateo where datev is null;
+
+update llx_chargesociales set periode=date_ech where periode is null or periode = '0000-00-00';

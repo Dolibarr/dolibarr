@@ -52,13 +52,22 @@ function valeur($sql)
 
 if ($action == 'add')
 {
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, amount) ";
-  $sql .= " VALUES (".$_POST["type"].",'".addslashes($_POST["libelle"])."','".$_POST["date"]."','".$_POST["amount"]."');";
+  if (! $_POST["date"] || ! $_POST["periode"] || ! $_POST["amount"]) {
+    $mesg="<div class=\"error\">Erreur: Tous les champs date et montant doivent etre renseignés avec une valeur non vide.</div>";
+  }
+  else {
 
-  if (! $db->query($sql) )
-    {
-      print $db->error();
-    }
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, periode, amount) ";
+      $sql .= " VALUES (".$_POST["type"].",'".addslashes($_POST["libelle"])."','".$_POST["date"]."','".$_POST["periode"]."','".$_POST["amount"]."');";
+    
+      if (! $db->query($sql) )
+        {
+          print $db->error();
+        }
+      else {
+        $mesg="<div class=\"ok\">La charge a été ajoutée.</div>";
+      }
+  }
 }
 
 /*
@@ -84,8 +93,11 @@ $filtre=$_GET["filtre"];
  */
 
 print_titre("Charges sociales $year");
-
 print "<br>\n";
+
+if ($mesg) {
+    print "$mesg<br>";
+}
 
 //if ($filtre) {
 //    print_titre("Filtre : ".$_GET["filtrelib"]);
@@ -100,7 +112,7 @@ print '</td>';
 print '<td>';
 print_liste_field_titre("Echéance",$PHP_SELF,"de");
 print '</td><td>';
-print '&nbsp;';
+print_liste_field_titre("Période",$PHP_SELF,"periode");
 print '</td><td align="left">';
 print_liste_field_titre("Type",$PHP_SELF,"type");
 print '</td><td align="left">';
@@ -118,7 +130,12 @@ $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."charge
 $sql .= " WHERE s.fk_type = c.id";
 if ($year > 0)
 {
-    $sql .= " AND date_format(s.periode, '%Y') = $year";
+    $sql .= " AND (";
+    // Si period renseigné on l'utilise comme critere de date, sinon on prend date échéance,
+    // ceci afin d'etre compatible avec les cas ou la période n'etait pas obligatoire
+    $sql .= "   (s.periode is not null and date_format(s.periode, '%Y') = $year) ";
+    $sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = $year)";
+    $sql .= ")";
 }
 if ($filtre) {
     $filtre=ereg_replace(":","=",$filtre);
@@ -184,11 +201,11 @@ else
  * Forumalaire d'ajout d'une charge
  *
  */
-print '<tr class="form"><form method="post" action="index.php">';
+print '<tr class="form" valign="top"><form method="post" action="index.php">';
 print '<input type="hidden" name="action" value="add">';
 print '<td>&nbsp;</td>';
-print '<td><input type="text" size="8" name="date"> YYYYMMDD</td>';
-print '<td>&nbsp;</td>';
+print '<td><input type="text" size="8" name="date"><br>YYYYMMDD</td>';
+print '<td><input type="text" size="8" name="periode"><br>YYYYMMDD</td>';
 
 print '<td align="left"><select name="type">';
 
