@@ -33,10 +33,13 @@ print_titre("Stocks");
 print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td valign="top" width="30%">';
 
-$sql = "SELECT e.label, e.rowid FROM llx_entrepot as e";
-$sql .= " ORDER BY e.label DESC ";
+$sql = "SELECT e.label, e.rowid, e.statut FROM llx_entrepot as e";
+$sql .= " ORDER BY e.statut DESC ";
 $sql .= $db->plimit(15 ,0);
 $result = $db->query($sql) ;
+
+$statuts[0] = "Fermé";
+$statuts[1] = "Ouvert";
 
 if ($result)
 {
@@ -55,8 +58,9 @@ if ($result)
 	{
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></TD>\n";
+	  print "<tr $bc[$var]>";
+	  print "<td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td>\n";
+	  print '<td align="right">'.$statuts[$objp->statut].'</td>';
 	  print "</tr>\n";
 	  $i++;
 	}
