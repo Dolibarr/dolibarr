@@ -113,9 +113,45 @@ if ($socid > 0)
   $societe = new Societe($db, $socid);
   $result = $societe->fetch($socid);  
 
+  /* TODO Finir verification PagesJaunes
+   * print '<form action="http://www.pagesjaunes.fr/pj.cgi" method="post" target="_blank">';
+   * print '<input type="hidden" name="FRM_NOM" value="'.$societe->nom.'">';
+   * print '<input type="hidden" name="FRM_LOCALITE" value="'.$societe->ville.'">';
+   * print '<input type="submit">';
+   * print '</form>';
+   */
+
   if ($result)
     {
 
+      $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
+      $head[0][1] = "Fiche société";
+      $h = 1;
+      
+      $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
+      $head[$h][1] = 'Fiche prospect';
+      $h++;
+      
+      if ($soc->fournisseur)
+	{
+	  $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
+	  $head[$h][1] = 'Fiche fournisseur';
+	  $h++;
+	}
+      $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
+      $head[$h][1] = 'Note';      
+      $h++;
+      if ($user->societe_id == 0)
+	{
+	  $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
+	  $head[$h][1] = 'Documents';
+	  $h++;
+	}
+
+      $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
+      $head[$h][1] = 'Notifications';
+
+      dolibarr_fiche_head($head, 1);
 
     /*
      *
@@ -124,14 +160,8 @@ if ($socid > 0)
 
     print "<tr><td><div class=\"titre\">Fiche prospect : $societe->nom</div></td>";
 
-    if ($user->societe_id == 0)
-      {
-	print "<td align=\"center\">[<a href=\"docsoc.php?socid=$objsoc->id\">Documents</a>]</td>";
-	print "<td align=\"center\">[<a href=\"index.php?socidp=$objsoc->id&action=add_bookmark\">Bookmark</a>]</td>";
-
-	print "<td>[<a href=\"../socnote.php?socid=$objsoc->id\">Notes</a>]</td>";
-	print "<td align=\"center\">[<a href=\"../../soc.php?socid=$objsoc->id&action=edit\">Editer</a>]</td></tr>";
-      }
+    print "<td align=\"center\">[<a href=\"index.php?socidp=$societe->id&action=add_bookmark\">Bookmark</a>]</td>";
+          
     print "</table>";
     /*
      *
@@ -163,7 +193,7 @@ if ($socid > 0)
 	print "<tr><td>Rubrique</td><td colspan=\"3\">$societe->rubrique</td></tr>";
       }
 
-    print "</table>";
+    print "</table></div>";
 
     /*
      *

@@ -73,29 +73,39 @@ $soc = new Societe($db);
 $soc->id = $socid;
 if ( $soc->fetch($socid) ) 
 {
-  $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$_GET["socid"];
+  $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
   $head[0][1] = "Fiche société";
   $h = 1;
   if ($soc->client==1)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
+      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id;
       $head[$h][1] = 'Fiche client';
       $h++;
     }
 
   if ($soc->client==2)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$socid;
+      $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$soc->id;
       $head[$h][1] = 'Fiche prospect';
       $h++;
     }
   if ($soc->fournisseur)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
+      $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id;
       $head[$h][1] = 'Fiche fournisseur';
       $h++;
     }
-
+  $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
+  $head[$h][1] = 'Note';
+  $h++;
+  
+  if ($user->societe_id == 0)
+    {
+      $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$soc->id;
+      $head[$h][1] = 'Documents';
+      $h++;
+    }
+      
   $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
   $head[$h][1] = 'Notifications';
 
