@@ -309,40 +309,30 @@ if ($socid > 0)
      * Barre d'action
      *
      */
-    print '<br><table id="actions" cellspadding="3" cellspacing="0" width="100%"><tr>';
+
+    print '<br><div class="tabsAction">';
 
     if ($conf->propal->enabled && defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
       {
-	print "<td align=\"center\"><a href=\"addpropal.php?socidp=$objsoc->idp&amp;action=create\">Créer une proposition</a></td>";
+	print '<a class="tabAction" href="addpropal.php?socidp='.$objsoc->idp.'&amp;action=create">Créer une proposition</a>';
       }
-    else
-      {
-	print '<td align="center" width="20%">-</td>';
-      }
-    print '<td align="center" width="20%">-</td>';
+
     if ($conf->commande->enabled && defined("MAIN_MODULE_COMMANDE") && MAIN_MODULE_COMMANDE && $user->rights->commande->creer)
       {
-	print '<td align="center" width="20%"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->idp.'&amp;action=create">Créer une commande</a></td>';
+	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->idp.'&amp;action=create">Créer une commande</a>';
       }
-    else
-      {
-	print '<td align="center" width="20%">-</td>';
-      }
+
     if ($conf->projet->enabled && $user->rights->projet->creer)
       {
-	print '<td align="center" width="20%"><a href="../projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a></td>';
-      }
-    else
-      {
-	print '<td align="center" width="20%">-</td>';  
+	print '<a class="tabAction" href="../projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a>';
       }
 
     if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
       {
-	print '<td align="center" width="20%"><a href="../fichinter/fiche.php?socidp='.$objsoc->idp.'&amp;action=create">Intervention</a></td>';
+	print '<a class="tabAction" href="../fichinter/fiche.php?socidp='.$objsoc->idp.'&amp;action=create">Intervention</a>';
       }
-
-    print '</tr></table><br>';
+    
+    print '</div>';
 
     /*
      *
