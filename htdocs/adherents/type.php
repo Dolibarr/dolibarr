@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,45 +27,43 @@ require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 
 if ($_POST["action"] == 'add' && $user->admin) 
 {
+    if ($_POST["button"] != "Annuler") {
+        $adht = new AdherentType($db);
+          
+        $adht->libelle     = $_POST["libelle"];
+        $adht->cotisation  = $_POST["cotisation"];
+        $adht->commentaire = $_POST["comment"];
+        $adht->mail_valid  = $_POST["mail_valid"];
+        $adht->vote        = $_POST["vote"];
 
-  $adht = new AdherentType($db);
-      
-  $adht->libelle     = $_POST["libelle"];
-  $adht->cotisation  = $_POST["cotisation"];
-  $adht->commentaire = $_POST["comment"];
-  $adht->mail_valid  = $_POST["mail_valid"];
-  $adht->vote        = $_POST["vote"];
-
-  if ($adht->create($user->id) ) 
-    {	  
-      Header("Location: type.php");
+        if ($_POST["libelle"]) { $adht->create($user->id); }
     }
+    Header("Location: type.php");
 }
 
 if ($_POST["action"] == 'update' && $user->admin) 
 {
-
-  $adht = new AdherentType($db);
-  $adht->id          = $rowid;
-  $adht->libelle     = $_POST["libelle"];
-  $adht->cotisation  = $_POST["cotisation"];
-  $adht->commentaire = $_POST["comment"];
-  $adht->mail_valid  = $_POST["mail_valid"];
-  $adht->vote        = $_POST["vote"];
-
-  if ($adht->update($user->id) ) 
-    {	  
-      Header("Location: type.php");
-    }
+    if ($_POST["button"] != "Annuler") {
+        $adht = new AdherentType($db);
+        $adht->id          = $_POST["rowid"];;
+        $adht->libelle     = $_POST["libelle"];
+        $adht->cotisation  = $_POST["cotisation"];
+        $adht->commentaire = $_POST["comment"];
+        $adht->mail_valid  = $_POST["mail_valid"];
+        $adht->vote        = $_POST["vote"];
+        
+        $adht->update($user->id);
+    }	  
+    Header("Location: type.php");
 }
 
-if ($action == 'delete')
+if ($_GET["action"] == 'delete')
 {
   $adh = new Adherent($db);
   $adh->delete($rowid);
   Header("Location: liste.php");
 }
-if ($action == 'commentaire')
+if ($_GET["action"] == 'commentaire')
 {
   $don = new Don($db);
   $don->set_commentaire($rowid,$_POST["commentaire"]);
@@ -75,7 +74,8 @@ if ($action == 'commentaire')
 
 llxHeader();
 
-print_titre("Configuration");
+print_titre("Configuration des types d'adhérents");
+print '<br>';
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -92,24 +92,24 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<table class=\"noborder\" cellspacing=\"0\" cellpadding=\"3\">";
   
-  print '<TR class="liste_titre">';
+  print '<tr class="liste_titre">';
   print "<td>Id</td>";
   print "<td>Libellé</td><td>Cotisation ?</td><td>Vote ?</td><td>&nbsp;</td>";
-  print "</TR>\n";
+  print "</tr>\n";
   
   $var=True;
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD>".$objp->rowid."</td>\n";
-      print '<TD>'.$objp->libelle.'</TD>';
-      print '<TD>'.$objp->cotisation.'</TD>';
-      print '<TD>'.$objp->vote.'</TD>';
-      print '<TD><a href="type.php?action=edit&rowid='.$objp->rowid.'">Editer</TD>';
+      print "<tr $bc[$var]>";
+      print "<td>".$objp->rowid."</td>\n";
+      print '<td>'.$objp->libelle.'</td>';
+      print '<td align="center">'.$objp->cotisation.'</td>';
+      print '<td align="center">'.$objp->vote.'</td>';
+      print '<td><a href="type.php?action=edit&rowid='.$objp->rowid.'">'.img_edit().'</td>';
       print "</tr>";
       $i++;
     }
@@ -140,28 +140,13 @@ else
 /* ************************************************************************** */
 
 
-if ($action == 'create') {
+if ($_GET["action"] == 'create') {
 
-  /*
-   * $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
-   *  $sql .= " FROM societe as s, ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp";
-   *  $sql .= " AND f.rowid = $facid";
-
-   *  $result = $db->query($sql);
-   *  if ($result) {
-   *    $num = $db->num_rows();
-   *    if ($num) {
-   *      $obj = $db->fetch_object( 0);
-   *
-   *      $total = $obj->total;
-   *    }
-   *  }
-
-  */
-  
   print_titre("Nouveau type");
+  print '<br>';
+  
   print "<form action=\"$PHP_SELF\" method=\"post\">";
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+  print '<table cellspacing="0" class="border" width="100%" cellpadding="3">';
   
   print '<input type="hidden" name="action" value="add">';
 
@@ -183,7 +168,9 @@ if ($action == 'create') {
   print '<tr><td valign="top">Mail d\'accueil :</td><td>';
   print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\"></textarea></td></tr>";
 
-  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" name="button" value="Enregistrer"> &nbsp;';
+  print '<input type="submit" name="button" value="Annuler"></td></tr>';
+
   print "</form>\n";
   print "</table>\n";
   
@@ -194,41 +181,22 @@ if ($action == 'create') {
 /* Edition de la fiche                                                        */
 /*                                                                            */
 /* ************************************************************************** */
-if ($rowid > 0 && $action == 'edit')
+if ($_GET["rowid"] > 0 && $_GET["action"] == 'edit')
 {
 
   $adht = new AdherentType($db);
-  $adht->id = $rowid;
-  $adht->fetch($rowid);
+  $adht->id = $_GET["rowid"];
+  $adht->fetch($_GET["rowid"]);
 
   print_titre("Edition de la fiche");
-  print "<form action=\"$PHP_SELF\" method=\"post\">";
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-
-  print '<tr><td>Libellé</td><td class="valeur">'.$adht->libelle.'&nbsp;</td></tr>';
-  print '<tr><td>Soumis à cotisation</td><td class="valeur">'.$adht->cotisation.'&nbsp;</td></tr>';
-
-  print '<tr><td>Droit de vote</td><td class="valeur">'.$adht->vote.'&nbsp;</td></tr>';
-
-  print '<tr><td valign="top">Commentaires</td>';
-  print '<td valign="top" width="75%" class="valeur">';
-  print nl2br($adht->commentaire).'&nbsp;</td></tr>';
-
-  print '<tr><td valign="top">Mail d\'accueil</td>';
-
-  print '<td valign="top" width="75%" class="valeur">';
-  print nl2br($adht->mail_valid).'&nbsp;</td></tr>';
-
-  print "</table>\n";
-
+  print '<br>';
   
   /*
    *
    *
-   *
    */
-  print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">';
-  print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+  print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$_GET["rowid"].'">';
+  print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
   print '<input type="hidden" name="action" value="update">';
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
@@ -251,7 +219,9 @@ if ($rowid > 0 && $action == 'edit')
   print '<tr><td valign="top">Mail d\'accueil :</td><td>';
   print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\">".$adht->mail_valid."</textarea></td></tr>";
 
-  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"</td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"> &nbsp;';
+  print '<input type="submit" name="button" value="Annuler"></td></tr>';
+
   print '</table>';
   print "</form>";
   

@@ -26,7 +26,8 @@ require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 
-$adho = new AdherentOptions($db);
+$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+$rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 
 /* 
  * Enregistrer les modifs
@@ -91,6 +92,7 @@ llxHeader();
 if ($rowid)
 {
 
+  $adho = new AdherentOptions($db);
   $adh = new Adherent($db);
   $adh->id = $rowid;
   $adh->fetch($rowid);

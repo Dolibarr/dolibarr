@@ -33,6 +33,7 @@ $adho = new AdherentOptions($db);
 $errmsg='';
 
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+$rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 
 
 if ($_POST["action"] == 'sendinfo')
@@ -94,12 +95,51 @@ if ($_POST["action"] == 'cotisation')
 if ($_POST["action"] == 'add')
 {
     $type=$_POST["type"];
+    $nom=$_POST["nom"];
+    $prenom=$_POST["prenom"];
+    $societe=$_POST["societe"];
+    $adresse=$_POST["adresse"];
+    $cp=$_POST["cp"];
+    $ville=$_POST["ville"];
+    $naiss=$_POST["pays"];
+    $email=$_POST["email"];
+    $login=$_POST["login"];
+    $pass=$_POST["pass"];
+    $naiss=$_POST["naiss"];
+    $naiss=$_POST["photo"];
+    $naiss=$_POST["note"];
+    $comment=$_POST["comment"];
+    $morphy=$_POST["morphy"];
+
+    $adh = new Adherent($db);
+    $adh->prenom      = $prenom;
+    $adh->nom         = $nom;
+    $adh->societe     = $societe;
+    $adh->adresse     = $adresse;
+    $adh->cp          = $cp;
+    $adh->ville       = $ville;
+    $adh->email       = $email;
+    $adh->login       = $login;
+    $adh->pass        = $pass;
+    $adh->naiss       = $naiss;
+    $adh->photo       = $photo;
+    $adh->note        = $note;
+    $adh->pays        = $pays;
+    $adh->typeid      = $type;
+    $adh->commentaire = $comment;
+    $adh->morphy      = $morphy;
+    foreach($_POST as $key => $value){
+        if (ereg("^options_",$key)){
+            $adh->array_options[$key]=$_POST[$key];
+        }
+    }
+
+    // Test validite des paramètres
     if(!isset($type) || $type==''){
         $error+=1;
         $errmsg .="Le type d'adhérent n'est pas renseigné. Vous devez configurer les types d'adhérents avant de pouvoir les ajouter.<br>\n";
     }
-    $login=$_POST["login"];
-    // test si le login existe deja
+    // Test si le login existe deja
     if(!isset($login) || $login==''){
         $error+=1;
         $errmsg .="Login vide. Veuillez en positionner un<br>\n";
@@ -134,34 +174,10 @@ if ($_POST["action"] == 'add')
     if (isset($public)){
         $public=1;
     }else{
-    $public=0;
-}
-if (!$error){
-    // email a peu pres correct et le login n'existe pas
-    $adh = new Adherent($db);
-    $adh->statut      = -1;
-    $adh->prenom      = $prenom;
-    $adh->nom         = $nom;
-    $adh->societe     = $societe;
-    $adh->adresse     = $adresse;
-    $adh->cp          = $cp;
-    $adh->ville       = $ville;
-    $adh->email       = $email;
-    $adh->login       = $login;
-    $adh->pass        = $pass;
-    $adh->naiss       = $naiss;
-    $adh->photo       = $photo;
-    $adh->note        = $note;
-    $adh->pays        = $pays;
-    $adh->typeid      = $type;
-    $adh->commentaire = $_POST["comment"];
-    $adh->morphy      = $_POST["morphy"];
-
-    foreach($_POST as $key => $value){
-        if (ereg("^options_",$key)){
-            $adh->array_options[$key]=$_POST[$key];
-        }
+        $public=0;
     }
+    if (!$error){
+        // email a peu pres correct et le login n'existe pas
     if ($adh->create($user->id) )
     {
         if ($cotisation > 0)
@@ -195,7 +211,7 @@ if (!$error){
                 }
             }
         }
-        Header("Location: liste.php");
+        Header("Location: liste.php?statut=-1");
     }
 }
 }
@@ -206,6 +222,9 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
     $adh->delete($rowid);
     Header("Location: liste.php");
 }
+
+llxHeader();
+
 
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes)
 {
@@ -251,8 +270,6 @@ if ($_POST["action"] == 'confirm_resign' && $_POST["confirm"] == yes)
         $errmsg.="echec de la suppression de l'utilisateur aux abonnements: ".$adh->errostr."<BR>\n";
     }
 }
-
-llxHeader();
 
 if ($_POST["action"] == 'confirm_add_glasnost' && $_POST["confirm"] == yes)
 {
@@ -349,11 +366,6 @@ if ($action == 'create') {
     print '<td valign="top" rowspan="13"><textarea name="comment" wrap="soft" cols="40" rows="25"></textarea></td></tr>';
 
     print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td></tr>';
-
-
-
-
-
     print '<tr><td>Nom</td><td><input type="text" name="nom" size="40"></td></tr>';
     print '<tr><td>Societe</td><td><input type="text" name="societe" size="40"></td></tr>';
     print '<tr><td>Adresse</td><td>';

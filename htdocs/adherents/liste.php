@@ -31,6 +31,7 @@ llxHeader();
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 $page=$_GET["page"];
+$statut=isset($_GET["statut"])?$_GET["statut"]:1;
 
 if ($sortorder == "") {  $sortorder="ASC"; }
 if ($sortfield == "") {  $sortfield="d.nom"; }
@@ -42,15 +43,16 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (! isset($_GET["statut"]))
-{
-  $statut = 1 ;
-}
-
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin";
 $sql .= " , d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
+$sql .= " WHERE d.fk_adherent_type = t.rowid ";
+if ($_GET["type"]) {
+    $sql.=" AND t.rowid=".$_GET["type"];
+}
+if (isset($_GET["statut"])) {
+    $sql.=" AND d.statut = $statut";
+}
 if ( $_POST["action"] == 'search')
 {
   if (isset($_POST['search']) && $_POST['search'] != ''){
@@ -66,17 +68,27 @@ if ($result)
   $i = 0;
   
   $titre="Liste des adhérents";
-  if (isset($_GET["statut"]) && $_GET["statut"] == -1) { $titre="Liste des adhérents à valider"; }
-  if (isset($_GET["statut"]) && $_GET["statut"] == 1) { $titre="Liste des adhérents valides"; }
-  if (isset($_GET["statut"]) && $_GET["statut"] == 0) { $titre="Liste des adhérents résiliés"; }
+  if (isset($_GET["statut"])) {
+    if ($statut == -1) { $titre="Liste des adhérents à valider"; }
+    if ($statut == 1) { $titre="Liste des adhérents valides"; }
+    if ($statut == 0) { $titre="Liste des adhérents résiliés"; }
+  }
+  elseif ($_POST["action"] == 'search') {
+      $titre="Liste des adhérents répondant aux critères";
+  }
 
-  print_barre_liste($titre, $page, $PHP_SELF, "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+  if ($_GET["type"]) {
+      $objp = $db->fetch_object(0);
+      $titre.=" (".$objp->type.")";
+  }
+
+  print_barre_liste($titre, $page, $PHP_SELF, "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
+
   print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
 
   print '<tr class="liste_titre">';
 
   print '<td>';
-  //  print_liste_field_titre("Prenom",$PHP_SELF,"d.prenom","&page=$page&statut=$statut");
   print_liste_field_titre("Prenom Nom / Société",$PHP_SELF,"d.nom","&page=$page&statut=$statut");
   print "</td>\n";
 
@@ -106,8 +118,11 @@ if ($result)
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object($i);
-
+      if ($_GET["type"] && $i==0) { # Fetch deja fait
+      } else {
+        $objp = $db->fetch_object($i);
+      }
+      
       $adh=new Adherent($db);
       
       $var=!$var;
@@ -161,10 +176,9 @@ if ($result)
   print "</table><br>\n";
   print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
   
-  print '<tr>';
-  print '<td align="right">';
-  print_fleche_navigation($page,$PHP_SELF,"&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",1);
-  print '</td>';
+  print_barre_liste("", $page, $PHP_SELF, "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
+
+//  print_fleche_navigation($page,$PHP_SELF,"&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",1);
   print "</table><br>\n";
 
 }

@@ -48,7 +48,7 @@ $AdherentsResilies=array();
 $Cotisants=array();
 
 # Liste les adherents
-$sql = "SELECT count(*) as somme , t.libelle, d.statut FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
+$sql = "SELECT count(*) as somme , t.rowid, t.libelle, d.statut FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid GROUP BY t.libelle, d.statut";
 
 $result = $db->query($sql);
@@ -60,7 +60,7 @@ if ($result)
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
-      $AdherentsAll[$objp->libelle]+=$objp->somme; 
+      $AdherentsAll[$objp->libelle]=$objp->rowid; 
       if ($objp->statut == -1) { $AdherentsAValider[$objp->libelle]=$objp->somme; }
       if ($objp->statut == 1) { $Adherents[$objp->libelle]=$objp->somme; }
       if ($objp->statut == 0) { $AdherentsResilies[$objp->libelle]=$objp->somme; }
@@ -97,11 +97,11 @@ $SommeD=0;
 foreach ($AdherentsAll as $key=>$value){
   $var=!$var;
   print "<tr $bc[$var]>";
-  print '<td><a href="liste.php">'.$key.'</a></TD>';
-  print '<td align="right">'.$AdherentsAValider[$key].'</TD>';
-  print '<td align="right">'.$Adherents[$key].'</TD>';
-  print '<td align="right">'.$Cotisants[$key].'</TD>';
-  print '<td align="right">'.$AdherentsResilies[$key].'</TD>';
+  print '<td><a href="liste.php?type='.$AdherentsAll[$key].'">'.$key.'</a></td>';
+  print '<td align="right">'.$AdherentsAValider[$key].'</td>';
+  print '<td align="right">'.$Adherents[$key].'</td>';
+  print '<td align="right">'.$Cotisants[$key].'</td>';
+  print '<td align="right">'.($AdherentsResilies[$key]?$AdherentsResilies[$key]:0).'</td>';
   print "</tr>\n";
   $SommeA+=$AdherentsAValider[$key];
   $SommeB+=$Adherents[$key];
@@ -121,7 +121,8 @@ print "</table>";
 
 print '<br>';
 
-print '<form action="liste.php" method="post" name="action" value="search">';
+// Formulaire recherche adhérent
+print '<form action="liste.php" method="post">';
 print '<input type="hidden" name="action" value="search">';
 print '<table class="noborder" cellspacing="0" cellpadding="3">';
 print '<tr class="liste_titre">';
@@ -136,8 +137,6 @@ print 'Nom/Prénom <input type="text" name="search" class="flat" size="20">';
 print '&nbsp; <input class="flat" type="submit" value="Chercher">';
 print '</td></tr>';
 print "</table></form>";
-
-
 
 
 $db->close();
