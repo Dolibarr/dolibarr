@@ -72,8 +72,8 @@ Class pdf_paiement {
             
       $pdf->Text(11,$this->tab_top + 6,'Facture');
       
-      $pdf->line(50, $this->tab_top, 50, $this->tab_top + $this->tab_height + 10);
-      $pdf->Text(52, $this->tab_top + 6,'Date');
+      $pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
+      $pdf->Text(42, $this->tab_top + 6,'Date');
       $pdf->line(80, $this->tab_top, 80, $this->tab_top + $this->tab_height + 10);
       $pdf->Text(82, $this->tab_top + 6,'Type paiement');      
 
@@ -99,10 +99,10 @@ Class pdf_paiement {
 	  $pdf->SetFillColor(220,220,220);
 
 	  $pdf->SetXY (10, $this->tab_top + 10 + ($i * $this->line_height) );
-	  $pdf->MultiCell(40, $this->line_height, $lines[$j][0], 0, 'J', 0);
+	  $pdf->MultiCell(30, $this->line_height, $lines[$j][0], 0, 'J', 0);
 	  
-	  $pdf->SetXY (50, $this->tab_top + 10 + ($i * $this->line_height) );
-	  $pdf->MultiCell(30, $this->line_height, $lines[$j][1], 0, 'J', 0);
+	  $pdf->SetXY (40, $this->tab_top + 10 + ($i * $this->line_height) );
+	  $pdf->MultiCell(40, $this->line_height, $lines[$j][1], 0, 'J', 0);
 
 	  $pdf->SetXY (80, $this->tab_top + 10 + ($i * $this->line_height) );
 	  $pdf->MultiCell(40, $this->line_height, $lines[$j][2], 0, 'J', 0);
@@ -139,7 +139,7 @@ Class pdf_paiement {
       $sql = "SELECT ".$this->db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber";
       $sql .=", f.rowid as facid, c.libelle as paiement_type, p.num_paiement";
       $sql .= " FROM llx_paiement as p, llx_facture as f, c_paiement as c";
-      $sql .= " WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id ORDER BY p.rowid DESC";
+      $sql .= " WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id ORDER BY p.datep ASC";
       $result = $this->db->query($sql);
 
       if ($result)
