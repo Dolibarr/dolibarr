@@ -43,17 +43,16 @@ class GraphAppelsDureeMoyenne extends GraphBrouzouf{
   Function GraphDraw()
   {
     $num = 0;
+
+    $sql = "SELECT date_format(td.date,'%Y%m'), sum(td.duree), count(td.duree)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as td";
     
     if ($this->client == 0 && $this->contrat == 0)
       {
-	$sql = "SELECT date_format(date,'%Y%m'), sum(duree), count(duree)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-	$sql .= " GROUP BY date_format(date,'%Y%m') ASC ";
+	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
       }
     elseif ($this->client > 0 && $this->contrat == 0)
       {
-	$sql = "SELECT date_format(td.date,'%Y%m'), sum(td.duree), count(td.duree)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as td";
 	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
 
 	$sql .= " WHERE td.ligne = s.ligne";
@@ -62,8 +61,7 @@ class GraphAppelsDureeMoyenne extends GraphBrouzouf{
       }
     elseif ($this->client == 0 && $this->contrat > 0)
       {
-	$sql = "SELECT date_format(td.date,'%Y%m'), sum(td.duree), count(td.duree)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as td";
+
 	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
 
 	$sql .= " WHERE td.ligne = s.ligne";
