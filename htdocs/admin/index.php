@@ -21,6 +21,10 @@
  */
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
+
 if ($HTTP_POST_VARS["action"] == 'update')
 {
   dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$HTTP_POST_VARS["nom"]);
@@ -41,7 +45,7 @@ if ($_GET["action"] == 'edit')
   print '<form method="post" action="'.$PHP_SELF.'">';
   print '<input type="hidden" name="action" value="update">';
 
-  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+  print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr class="liste_titre"><td colspan="2">Informations sur la société ou association</td></tr>';
 
   print '<tr class="impair"><td>Nom de la société/association</td><td>';
@@ -57,8 +61,8 @@ if ($_GET["action"] == 'edit')
 else
 {
 
-  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr class="liste_titre"><td colspan="2">Informations sur la société ou association</td></tr>';
+  print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+  print '<tr class="liste_titre"><td>Informations sur la société/association</td><td>Valeur</td></tr>';
   print '<tr class="impair"><td width="50%">Nom de la société/association</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
   print '<tr class="pair"><td>Numéro de tva intracommunautaire</td><td>' . MAIN_INFO_TVAINTRA . '</td></tr>';
   print '</table><br>';

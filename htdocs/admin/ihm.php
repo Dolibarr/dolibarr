@@ -21,6 +21,10 @@
  */
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
+
 if ($HTTP_POST_VARS["action"] == 'update')
 {
   dolibarr_set_const($db, "MAIN_THEME",$HTTP_POST_VARS["main_theme"]);
@@ -41,7 +45,7 @@ if ($_GET["action"] == 'edit')
   print '<form method="post" action="'.$PHP_SELF.'">';
   print '<input type="hidden" name="action" value="update">';
 
-  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+  print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr class="liste_titre"><td>Nom</td><td>Valeur</td></tr>';
 
   print '<tr class="impair"><td>Thème</td>';
@@ -76,7 +80,7 @@ if ($_GET["action"] == 'edit')
 else
 {
 
-  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+  print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr class="liste_titre"><td>Nom</td><td>Valeur</td></tr>';
   print '<tr class="impair"><td width="50%">Thème</td><td>' . MAIN_THEME . '</td></tr>';
   print '<tr class="pair"><td>Longueur maximum des listes</td><td>' . SIZE_LISTE_LIMIT . '</td></tr>';

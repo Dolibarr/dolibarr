@@ -21,6 +21,10 @@
  */
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
+
 llxHeader();
 
 print_titre("Configuration autre (Dolibarr version ".DOL_VERSION.")");
@@ -28,7 +32,7 @@ print_titre("Configuration autre (Dolibarr version ".DOL_VERSION.")");
 //print_r(get_defined_constants());
 print "<br>\n";
 
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 print '<TR class="liste_titre">';
 print '<TD>Nom</TD>';
 print '<TD>Valeur</TD>';
@@ -103,7 +107,7 @@ if ($result)
 	}
       elseif ($obj->type == 'texte')
 	{
-	  print '<textarea name="constvalue" cols="35" rows="5"wrap="soft">';
+	  print '<textarea name="constvalue" cols="35" rows="5" wrap="soft">';
 	  print $obj->value;
 	  print "</textarea>\n";
 	  print '</td><td>';

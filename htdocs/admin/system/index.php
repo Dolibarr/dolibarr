@@ -34,27 +34,37 @@
 //include_once("../../allpre.inc.php");
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
+
 llxHeader();
 
 print_titre("Résumé des informations systèmes Dolibarr");
 
 print "<br>\n";
 
-print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">Dolibar</td></tr>\n";
 print "<tr $bc[1]><td width=\"140\">Version</td><td>" . DOL_VERSION . "</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
 
-print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">OS</td></tr>\n";
-print "<tr $bc[1]><td width=\"140\">Version</td><td>".get_cfg_var("System")."</td></tr>\n";
+// Récupère la version de l'OS
+ob_start(); 
+phpinfo();
+$chaine = ob_get_contents(); 
+ob_end_clean(); 
+eregi('System </td><td class="v">([^\/]*)</td>',$chaine,$reg);
+print "<tr $bc[1]><td width=\"140\">Version</td><td>".$reg[1]."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
 
-print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">Serveur Web</td></tr>\n";
 print "<tr $bc[1]><td width=\"140\">Version</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
 print "<tr $bc[0]><td>document root</td><td>" . DOL_DOCUMENT_ROOT . "</td></tr>\n";
@@ -62,7 +72,7 @@ print '</table>';
 
 print "<br>\n";
 
-print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">PHP</td></tr>\n";
 print "<tr $bc[1]><td width=\"140\">Version</td><td>".phpversion()."</td></tr>\n";
 print "<tr $bc[0]><td>Liaison Web-PHP</td><td>".php_sapi_name()."</td></tr>\n";
@@ -70,13 +80,23 @@ print '</table>';
 
 print "<br>\n";
 
-print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">Base de données</td></tr>\n";
-print "<tr $bc[1]><td width=\"140\">type</td><td>" . $conf->db->type . "</td></tr>\n";
-print "<tr $bc[0]><td>host</td><td>" . $conf->db->host . "</td></tr>\n";
-print "<tr $bc[1]><td>user</td><td>" . $conf->db->user . "&nbsp;</td></tr>\n";
-print "<tr $bc[0]><td>pass</td><td>" . $conf->db->pass . "&nbsp;</td></tr>\n";
+$sql = "SHOW VARIABLES LIKE 'version'";
+$result = $db->query($sql);
+if ($result)  
+{
+  $row = $db->fetch_row();
+}
+print "<tr $bc[0]><td>Version</td><td>" . $row[1] . "</td></tr>\n";
+print "<tr $bc[1]><td width=\"140\">Type</td><td>" . $conf->db->type . "</td></tr>\n";
+print "<tr $bc[0]><td>Host</td><td>" . $conf->db->host . "</td></tr>\n";
+print "<tr $bc[1]><td>User</td><td>" . $conf->db->user . "&nbsp;</td></tr>\n";
+print "<tr $bc[0]><td>Pass</td><td>" . $conf->db->pass . "&nbsp;</td></tr>\n";
 print "<tr $bc[1]><td>Database name</td><td>" . $conf->db->name . "</td></tr>\n";
+
+
+
 print '</table>';
 
 

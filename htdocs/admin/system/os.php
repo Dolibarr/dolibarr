@@ -20,9 +20,27 @@
  */
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
+
 llxHeader();
 
-print "TODO";
+print_titre("OS");
+
+print "<br>\n";
+
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print "<tr class=\"liste_titre\"><td>Paramètre</td><td>Valeur</td></tr>\n";
+// Récupère la version de l'OS
+ob_start(); 
+phpinfo();
+$chaine = ob_get_contents(); 
+ob_end_clean(); 
+eregi('System </td><td class="v">([^\/]*)</td>',$chaine,$reg);
+print "<tr $bc[1]><td width=\"140\"><b>Version</b></td><td>".$reg[1]."</td></tr>\n";
+print '</table>';
+
 
 llxFooter();
 ?>

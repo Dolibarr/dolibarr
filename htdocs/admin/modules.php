@@ -21,6 +21,9 @@
  */
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
 //
 // TODO mettre cette section dans la base de données
 //
@@ -80,8 +83,9 @@ if (!$user->admin)
 
 print_titre("Modules");
 
-print '<table class="border" cellpadding="3" cellspacing="0">';
-print '<TR class="liste_titre">';
+print '<br>';
+print '<table class="noborder" cellpadding="3" cellspacing="0">';
+print '<tr class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Info</td>';
 print '<td align="center">Activé</td>';
@@ -124,9 +128,12 @@ while (($file = readdir($handle))!==false)
 }
 
 sort($orders);
+$var=True;
 
 foreach ($orders as $key => $value)
 {
+  $var=!$var;
+	
   $modName = $modules[$orders[$key]];
 
   if ($modName)
@@ -137,7 +144,7 @@ foreach ($orders as $key => $value)
   $const_name = $objMod->const_name;
   $const_value = $objMod->const_config;
   
-  print '<tr class="pair"><td>';
+  print "<tr $bc[$var]><td>";
   echo $objMod->name;
   print "</td><td>\n";
   print $objMod->description;

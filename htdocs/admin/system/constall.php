@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +21,20 @@
  */
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
+
 llxHeader();
 
 print_titre("Liste de tous les paramètres de configuration Dolibarr");
 
-print '<table border="1" cellpadding="3" cellspacing="0">';
-print '<TR class="liste_titre">';
-print '<TD>Nom</TD>';
-print '<TD>Valeur</TD>';
-print "</TR>\n";
+print '<br>';
+print '<table class="noborder" cellpadding="3" cellspacing="0">';
+print '<tr class="liste_titre">';
+print '<td>Paramètre</td>';
+print '<td>Valeur</td>';
+print "</tr>\n";
 
 $sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const ORDER BY name ASC";
 $result = $db->query($sql);
@@ -43,7 +49,7 @@ if ($result)
       $obj = $db->fetch_object( $i);
       $var=!$var;
 
-      print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
+      print "<tr $bc[$var]><td>$obj->name</td>\n";
 
       print '<td>';
       print $obj->value;

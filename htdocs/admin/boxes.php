@@ -20,6 +20,10 @@
  */
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
+
 llxHeader();
 
 print_titre("Boites affichées");
@@ -58,10 +62,12 @@ $boxes = array();
 
 $pos[0] = "Homepage";
 
-print '<table class="border" cellpadding="3" cellspacing="0">';
+print '<table class="noborder" cellpadding="3" cellspacing="0">';
 
 $sql = "SELECT b.rowid, b.box_id, b.position, d.name FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d where b.box_id = d.rowid";
 $result = $db->query($sql);
+$var=True;
+
 if ($result) 
 {
   $num = $db->num_rows();
@@ -69,10 +75,11 @@ if ($result)
   
   while ($i < $num)
     {
+      $var = ! $var;
       $obj = $db->fetch_object( $i);
 
-      print '<tr class="pair"><td>'.$obj->name.'</td><td>' . $pos[$obj->position] . '</td><td>';
-      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;action=delete">Supprimer</a>';
+      print '<tr '.$bc[$var].'><td width="200">'.$obj->name.'</td><td width="200">' . $pos[$obj->position] . '</td><td width="50" align="center">';
+      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;action=delete">'.img_delete().'</a>';
       array_push($boxes, $obj->box_id);
       print '</td></tr>';
       $i++;
@@ -87,10 +94,12 @@ print '</table>';
  */
 print "<p>";
 print_titre("Boites disponibles");
-print '<table class="border" cellpadding="3" cellspacing="0">';
+print '<table class="noborder" cellpadding="3" cellspacing="0">';
 
 $sql = "SELECT rowid, name, file FROM ".MAIN_DB_PREFIX."boxes_def";
 $result = $db->query($sql);
+$var=True;
+
 if ($result) 
 {
   $num = $db->num_rows();
@@ -98,9 +107,10 @@ if ($result)
   
   while ($i < $num)
     {
+      $var = ! $var;
       $obj = $db->fetch_object( $i);
 
-      print '<tr class="pair"><td>'.$obj->name.'</td><td>' . $obj->file . '</td><td align="center">';
+      print '<tr '.$bc[$var].'><td width="200">'.$obj->name.'</td><td width="200">' . $obj->file . '</td><td width="50" align="center">';
 
       /*
 

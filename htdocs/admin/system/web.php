@@ -20,9 +20,24 @@
  */
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
+
 llxHeader();
 
-print "TODO";
+print_titre("Serveur Web");
+
+print "<br>\n";
+
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print "<tr class=\"liste_titre\"><td colspan=\"2\">Serveur Web</td></tr>\n";
+print "<tr $bc[1]><td width=\"140\">Version</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
+print "<tr $bc[0]><td>Nom du serveur virtuel</td><td>" . $_SERVER["SERVER_NAME"] . "</td></tr>\n";
+print "<tr $bc[1]><td width=\"140\">IP</td><td>".$_SERVER["SERVER_ADDR"]."</td></tr>\n";
+print "<tr $bc[0]><td>Port</td><td>" . $_SERVER["SERVER_PORT"] . "</td></tr>\n";
+print "<tr $bc[1]><td width=\"140\">Racine du serveur</td><td>".$_SERVER["DOCUMENT_ROOT"]."</td></tr>\n";
+print '</table>';
 
 llxFooter();
 ?>
