@@ -209,7 +209,7 @@ class Societe {
 	      $this->ville =  stripslashes($obj->ville);
 	      
 	      $this->url = $obj->url;
-	      $this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id.'">'.$obj->nom.'</a>';
+
 	      $this->tel = $obj->tel;
 	      $this->fax = $obj->fax;
 	      
@@ -227,6 +227,8 @@ class Societe {
 	      
 	      $this->client = $obj->client;
 	      $this->fournisseur = $obj->fournisseur;
+	      
+	      $this->nom_url = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">'.$obj->nom.'</a>';
 
 	      $this->rubrique = $obj->rubrique;
 	      
