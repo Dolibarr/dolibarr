@@ -21,6 +21,14 @@
  * $Source$
  *
  */
+
+/**
+        \file       htdocs/install/etape4.php
+        \brief      Demande le login et mode de passe de l'administrateur Dolibarr
+        \version    $Revision$
+*/
+
+
 include_once("./inc.php");
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
@@ -60,7 +68,7 @@ $ok = 0;
 if ($db->ok == 1)
 {
   
-  print '<tr><td>'.$langs->trans("Login").' :</td><td>';
+  print '<tr><td>'.$langs->trans("DolibarrAdminLogin").' :</td><td>';
   print '<input name="login"></td></tr>';
   print '<tr><td>'.$langs->trans("Password").' :</td><td>';
   print '<input type="password" name="pass"></td></tr>';
