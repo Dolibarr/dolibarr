@@ -26,6 +26,21 @@
 $yn[0] = "non";
 $yn[1] = "oui";
 
+Function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0)
+{
+  $sql = "REPLACE INTO llx_const SET name = '$name', value='$value', visible=$visible, type='$type'";
+
+  if ($db->query($sql))
+    {
+      return 1;
+    }
+  else
+    {
+      return 0;
+    }
+
+}
+
 Function dolibarr_print_object_info($object)
 {
   print "Créé par  : " . $object->user_creation->fullname . '<br>';
