@@ -32,7 +32,7 @@ class GraphLignesCommandesWeek extends GraphBarAcc {
     $this->client = 0;
     $this->titre = "Commandes Lignes par semaine";
 
-    $this->barcolor = "green";
+    $this->barcolor = "blue";
     $this->showframe = true;
   }
 
