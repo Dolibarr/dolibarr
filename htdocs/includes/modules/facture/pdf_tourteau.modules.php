@@ -60,6 +60,7 @@ Class pdf_tourteau {
 	      $pdf->AddPage();
 
 	      $pdf->SetTitle($fac->ref);
+	      $pdf->SetSubject("Facture");
 	      $pdf->SetCreator("Dolibarr ".DOL_VERSION);
 	      $pdf->SetAuthor($user->fullname);
 	      

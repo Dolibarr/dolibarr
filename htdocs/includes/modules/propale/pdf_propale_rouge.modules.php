@@ -61,7 +61,8 @@ Class pdf_propale_rouge
 	      $pdf->Open();
 	      $pdf->AddPage();
 
-	      $pdf->SetTitle($fac->ref);
+	      $pdf->SetTitle($propale->ref);
+	      $pdf->SetSubject("Proposition commerciale");
 	      $pdf->SetCreator("Dolibarr ".DOL_VERSION);
 	      $pdf->SetAuthor($user->fullname);
 
