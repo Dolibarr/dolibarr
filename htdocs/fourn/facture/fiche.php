@@ -160,7 +160,7 @@ if ($action == 'create' or $action == 'copy')
       
   print '<form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
-  print '<table class="border" cellspacing="0" cellpadding="3" border="1" width="100%">';
+  print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
   print '<tr><td>Société :</td>';
 
   print '<td><select name="socidp">';
@@ -318,11 +318,11 @@ else
 	   *
 	   */	  
 	  print "<p><form action=\"$PHP_SELF?facid=$obj->rowid&amp;action=add_ligne\" method=\"post\">";
-	  print '<table border="1" cellspacing="0" cellpadding="2" width="100%">';
-	  print '<tr class="liste_titre"><td class="small">Libellé</td><td align="center" class="small">P.U. HT</td><td align="center" class="small">Qty</td><td align="center" class="small">Total HT</td>';
-	  print '<td align="center" class="small">Taux TVA</td>';
-	  print '<td align="center" class="small">TVA</td>';
-	  print '<td align="right" class="small">Total TTC</td><td>&nbsp;</td></tr>';
+	  print '<table class="noborder" cellspacing="0" cellpadding="2" width="100%">';
+	  print '<tr class="liste_titre"><td>Libellé</td><td align="center">P.U. HT</td><td align="center">Qty</td><td align="center">Total HT</td>';
+	  print '<td align="center">Taux TVA</td>';
+	  print '<td align="center">TVA</td>';
+	  print '<td align="right">Total TTC</td><td>&nbsp;</td></tr>';
 	  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 	    {
 	      print "<tr $bc[1]>".'<td>'.$fac->lignes[$i][0]."</td>";
@@ -333,7 +333,7 @@ else
 	      print '<td align="center">'.price($fac->lignes[$i][5])."</td>";  
 	      print '<td align="right">'.price($fac->lignes[$i][6])."</td>";
 	      print '<td align="center">';
-	      print '<a href="fiche.php?facid='.$facid.'&amp;action=del_ligne&amp;ligne_id='.$fac->lignes[$i][7].'">Supprimer</a></td>';
+	      print '<a href="fiche.php?facid='.$facid.'&amp;action=del_ligne&amp;ligne_id='.$fac->lignes[$i][7].'">'.img_delete().'</a></td>';
 	      print '</tr>';
 	    }
 
@@ -473,17 +473,17 @@ else
 	   *
 	   */	  
 	  print '<p><table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-	  print '<tr class="liste_titre"><td class="small">Libellé</td><td align="center" class="small">P.U. HT</td><td align="center" class="small">Qty</td><td align="center" class="small">Total HT</td>';
-	  print '<td align="center" class="small">Taux TVA</td>';
-	  print '<td align="center" class="small">TVA</td>';
-	  print '<td align="right" class="small">Total TTC</td></tr>';
+	  print '<tr class="liste_titre"><td>Libellé</td><td align="center">P.U. HT</td><td align="center">Qantité</td><td align="center">Total HT</td>';
+	  print '<td align="center">Taux TVA</td>';
+	  print '<td align="center">TVA</td>';
+	  print '<td align="right">Total TTC</td></tr>';
 	  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 	    {
 	      print "<tr $bc[1]>".'<td>'.$fac->lignes[$i][0]."</td>";
 	      print '<td align="center">'.price($fac->lignes[$i][1])."</td>";
 	      print '<td align="center">'.$fac->lignes[$i][3]."</td>";  
 	      print '<td align="center">'.price($fac->lignes[$i][4])."</td>";  
-	      print '<td align="center">'.$fac->lignes[$i][2]."</td>";  
+	      print '<td align="center">'.$fac->lignes[$i][2]." %</td>";  
 	      print '<td align="center">'.price($fac->lignes[$i][5])."</td>";  
 	      print '<td align="right">'.price($fac->lignes[$i][6])."</td>";  
 
@@ -522,7 +522,7 @@ else
 	    }
 	}
  
-      if ($obj->statut == 1 && round($resteapayer) == 0 && $obj->paye == 0  && $user->societe_id == 0)
+      if ($obj->statut == 1 && price($resteapayer) <= 0 && $obj->paye == 0  && $user->societe_id == 0)
 	{
 	  print "<a class=\"tabAction\" href=\"fiche.php?facid=$facid&amp;action=payed\">Classer 'Payée'</a>";
 	}
