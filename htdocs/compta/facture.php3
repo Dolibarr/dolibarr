@@ -47,9 +47,15 @@ if ($action == 'addligne')
   $result = $fac->addline($facid,$HTTP_POST_VARS["desc"],$HTTP_POST_VARS["pu"],$HTTP_POST_VARS["qty"]);
 }
 
+if ($action == 'updateligne') 
+{
+  $fac = new Facture($db,"",$facid);
+  $result = $fac->updateline($rowid,$HTTP_POST_VARS["desc"],$HTTP_POST_VARS["price"],$HTTP_POST_VARS["qty"]);
+}
+
 if ($action == 'deleteline') 
 {
-  $fac = new Facture($db);
+  $fac = new Facture($db,"",$facid);
   $fac->id = $facid;
   $result = $fac->deleteline($rowid);
 }
@@ -353,7 +359,7 @@ else
 	print "<TR class=\"liste_titre\">";
 	print "<td>Date</td>";
 	print '<td align="center">Quantité</td>';
-	print '<td align="right">Montant</TD><td>&nbsp;</td>';
+	print '<td align="right">Montant</TD><td>&nbsp;</td><td>&nbsp;</td>';
 	print "</TR>\n";
     
 	$var=True;
@@ -367,8 +373,24 @@ else
 	  if ($obj->statut == 0) 
 	    {
 	      print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=deleteline&rowid='.$objp->rowid.'">del</a></td>';
+	      print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=editline&rowid='.$objp->rowid.'">edit</a></td>';
 	    }
 	  print "</tr>";
+
+	  if ($action == 'editline' && $rowid == $objp->rowid)
+	    {
+	      print "<form action=\"$PHP_SELF?facid=$facid\" method=\"post\">";
+	      print '<input type="hidden" name="action" value="updateligne">';
+	      print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+	      print "<TR $bc[$var]>";
+	      print '<TD><textarea name="desc" cols="60" rows="3">'.stripslashes($objp->description).'</textarea></TD>';
+	      print '<TD align="center"><input type="text" name="qty" value="'.$objp->qty.'"></TD>';
+	      print '<TD align="right"><input type="text" name="price" value="'.price($objp->price).'"></TD>';
+	      print '<td colspan="2"><input type="submit"></td>';
+	      print '</tr>' . "\n";
+	      print "</form>\n";
+	    }
+
 	  $total = $total + ($objp->qty * $objp->price);
 	  $i++;
 	}
