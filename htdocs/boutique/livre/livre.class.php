@@ -63,7 +63,7 @@ class Livre {
 	if ($this->db->query($sql) )
 	  {
 
-	    $sql = "insert into ".DB_NAME_OSC.".products_description (products_name, products_description, products_url, products_id, language_id) values ('".trim($this->titre)."', '".trim($this->description)."', '', $idosc, '1')";
+	    $sql = "insert into ".DB_NAME_OSC.".products_description (products_name, products_description, products_url, products_id, language_id) values ('".trim($this->titre)."', '".trim($this->description)."', '', $idosc, '".OSC_LANGUAGE_ID."')";
 	    
 	    if ($this->db->query($sql) )	    
 	      {
