@@ -94,60 +94,61 @@ class Contact
 	  print $this->db->error() . '<br>' . $sql;
 	}
 
-      $ds = dolibarr_ldap_connect();
-
-      if ($ds)
+      if (define('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
 	{
-	  ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+	  $ds = dolibarr_ldap_connect();
 
-	  $ldapbind = dolibarr_ldap_bind($ds);
-      
-	  if ($ldapbind)
+	  if ($ds)
 	    {
-	      $info["cn"] = utf8_encode($this->firstname." ".$this->name);
-	      $info["sn"] = utf8_encode($this->name);
-
-	      if ($this->email)
-		$info["rfc822Mailbox"] = $this->email;
+	      ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 	      
-	      if ($this->phone_pro)
-		$info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
-
-	      if ($this->phone_mobile)
-		$info["mobile"] = dolibarr_print_phone($this->phone_mobile);
-	      	      
-	      if ($this->phone_perso)
-		$info["homePhone"] = dolibarr_print_phone($this->phone_perso);
-
-	      if ($this->poste)
-		$info["title"] = utf8_encode($this->poste);
+	      $ldapbind = dolibarr_ldap_bind($ds);
 	      
-	      //$info["homePostalAddress"] = "AdressePersonnelle\nVIlle";
-	      //$info["street"] = "street";
-	      //$info["postalCode"] = "postalCode";
-	      //$info["postalAddress"] = "postalAddress";
-
-	      $info["objectclass"] = "inetOrgPerson";
-	      
-	      // add data to directory
-	      $dn = utf8_encode("cn=".$this->old_firstname." ".$this->old_name).", ".LDAP_SERVER_DN ;
-
-	      $r = @ldap_delete($ds, $dn);
-
-	      $dn = "cn=".$info["cn"].", ".LDAP_SERVER_DN ;
-
-	      if (! ldap_add($ds, $dn, $info))
+	      if ($ldapbind)
 		{
-		  print ldap_errno();
+		  $info["cn"] = utf8_encode($this->firstname." ".$this->name);
+		  $info["sn"] = utf8_encode($this->name);
+		  
+		  if ($this->email)
+		    $info["rfc822Mailbox"] = $this->email;
+		  
+		  if ($this->phone_pro)
+		    $info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
+		  
+		  if ($this->phone_mobile)
+		    $info["mobile"] = dolibarr_print_phone($this->phone_mobile);
+		  
+		  if ($this->phone_perso)
+		    $info["homePhone"] = dolibarr_print_phone($this->phone_perso);
+		  
+		  if ($this->poste)
+		    $info["title"] = utf8_encode($this->poste);
+		  
+		  //$info["homePostalAddress"] = "AdressePersonnelle\nVIlle";
+		  //$info["street"] = "street";
+		  //$info["postalCode"] = "postalCode";
+		  //$info["postalAddress"] = "postalAddress";
+		  
+		  $info["objectclass"] = "inetOrgPerson";
+		  
+		  // add data to directory
+		  $dn = utf8_encode("cn=".$this->old_firstname." ".$this->old_name).", ".LDAP_SERVER_DN ;
+		  
+		  $r = @ldap_delete($ds, $dn);
+		  
+		  $dn = "cn=".$info["cn"].", ".LDAP_SERVER_DN ;
+		  
+		  if (! ldap_add($ds, $dn, $info))
+		    {
+		      print ldap_errno();
+		    }
 		}
+	      else
+		{
+		  echo "LDAP bind failed...";
+		}	 
+	      ldap_close($ds);
 	    }
-	  else
-	    {
-	      echo "LDAP bind failed...";
-	    }
-	  
-
-	  ldap_close($ds);
 	}
       else
 	{
@@ -156,6 +157,29 @@ class Contact
       
       return $result;
     }
+
+  /*
+   * Mise à jour des infos persos
+   *
+   */
+  Function update_perso($id, $user=0)
+    {
+
+      $sql = "UPDATE llx_socpeople SET ";
+      $sql .= " birthday='".$db->idate($this->birthday)."'";
+      $sql .= " WHERE idp=$id";
+
+      $result = $this->db->query($sql);
+
+      if (!$result) 
+	{
+	  print $this->db->error() . '<br>' . $sql;
+	}
+      
+      return $result;
+    }
+
+
   /*
    *
    *
@@ -241,28 +265,29 @@ class Contact
 	  print $this->db->error() . '<br>' . $sql;
 	}
 
-      $ds = dolibarr_ldap_connect();
-
-      if ($ds)
+      if (define('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
 	{
-	  ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
-
-	  $ldapbind = dolibarr_ldap_bind($ds);
+	  $ds = dolibarr_ldap_connect();
       
-	  if ($ldapbind)
-	    {	      
-	      // delete from ldap directory
-	      $dn = utf8_encode("cn=".$this->old_firstname." ".$this->old_name.", ".LDAP_SERVER_DN) ;
-
-	      $r = @ldap_delete($ds, $dn);
-	    }
-	  else
+	  if ($ds)
 	    {
-	      echo "LDAP bind failed...";
+	      ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+	      
+	      $ldapbind = dolibarr_ldap_bind($ds);
+	      
+	      if ($ldapbind)
+		{	      
+		  // delete from ldap directory
+		  $dn = utf8_encode("cn=".$this->old_firstname." ".$this->old_name.", ".LDAP_SERVER_DN) ;
+		  
+		  $r = @ldap_delete($ds, $dn);
+		}
+	      else
+		{
+		  echo "LDAP bind failed...";
+		}	      	      
+	      ldap_close($ds);
 	    }
-	  
-
-	  ldap_close($ds);
 	}
       else
 	{
