@@ -68,8 +68,8 @@ class modCommande extends DolibarrModules
     $this->config_page_url = "commande.php";
 
     // Dépendances
-    $this->depends = array();
-    $this->requiredby = array();
+    $this->depends = array("modSociete");
+    $this->requiredby = array("modExpedition");
 
     // Constantes
     $this->const = array();
