@@ -137,7 +137,7 @@ class Facture
   Function fetch($rowid)
     {
 
-      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.remise,".$this->db->pdate("f.datef")."as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.libelle, f.note, f.paye";
+      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.remise,".$this->db->pdate("f.datef")."as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.libelle, f.note, f.paye, f.fk_statut";
       $sql .= " FROM llx_facture as f, llx_cond_reglement as c";
       $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
       
@@ -147,21 +147,28 @@ class Facture
 	    {
 	      $obj = $this->db->fetch_object(0);
 	      
-	      $this->id        = $rowid;
-	      $this->datep     = $obj->dp;
-	      $this->date      = $obj->df;
-	      $this->ref       = $obj->facnumber;
-	      $this->total_ht  = $obj->amount;
-	      $this->total_tva = $obj->tva;
-	      $this->total_ttc = $obj->total;
-	      $this->paye      = $obj->paye;
-	      $this->remise    = $obj->remise;
-	      $this->socidp    = $obj->fk_soc;
+	      $this->id                 = $rowid;
+	      $this->datep              = $obj->dp;
+	      $this->date               = $obj->df;
+	      $this->ref                = $obj->facnumber;
+	      $this->total_ht           = $obj->amount;
+	      $this->total_tva          = $obj->tva;
+	      $this->total_ttc          = $obj->total;
+	      $this->paye               = $obj->paye;
+	      $this->remise             = $obj->remise;
+	      $this->socidp             = $obj->fk_soc;
+	      $this->statut             = $obj->fk_statut;
 	      $this->date_lim_reglement = $obj->dlr;
-	      $this->cond_reglement = $obj->libelle;
-	      $this->projetid  = $obj->fk_projet;
-	      $this->note      = stripslashes($obj->note);
-	      $this->lignes    = array();
+	      $this->cond_reglement     = $obj->libelle;
+	      $this->projetid           = $obj->fk_projet;
+	      $this->note               = stripslashes($obj->note);
+	      $this->lignes             = array();
+
+	      if ($this->statut == 0)
+		{
+		  $this->brouillon = 1;
+		}
+
 	      $this->db->free();
 
 	      /*
@@ -298,51 +305,54 @@ class Facture
    */
   Function set_valid($rowid, $user)
     {
-      $action_notify = 2; // ne pas modifier cette valeur
-
-      $sql = "UPDATE llx_facture set fk_statut = 1, fk_user_valid = $user->id WHERE rowid = $rowid ;";
-      $result = $this->db->query( $sql);
-
-      /*
-       * Notify
-       *
-       */
-      $filepdf = FAC_OUTPUTDIR . "/" . $this->ref . "/" . $this->ref . ".pdf";
-
-      $mesg = "La facture ".$this->ref." a été validée.\n";
-      
-      $notify = New Notify($this->db);
-      $notify->send($action_notify, $this->socidp, $mesg, "facture", $rowid, $filepdf);
-      /*
-       * Update Stats
-       *
-       */
-      $sql = "SELECT fk_product FROM llx_facturedet WHERE fk_facture = ".$this->id;
-      $sql .= " AND fk_product IS NOT NULL";
-
-      $result = $this->db->query($sql);
-
-      if ($result)
+      if ($this->brouillon)
 	{
-	  $num = $this->db->num_rows();
-	  $i = 0;
-	  while ($i < $num)	  
-	    {
-	      $obj = $this->db->fetch_object($i);
+	  $action_notify = 2; // ne pas modifier cette valeur
 
-	      $sql = "UPDATE llx_product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
-	      $db2 = $this->db->clone();
-	      $result = $db2->query($sql);
-	      $i++;
+	  $sql = "UPDATE llx_facture set fk_statut = 1, fk_user_valid = $user->id WHERE rowid = $rowid ;";
+	  $result = $this->db->query( $sql);
+
+	  /*
+	   * Notify
+	   *
+	   */
+	  $filepdf = FAC_OUTPUTDIR . "/" . $this->ref . "/" . $this->ref . ".pdf";
+	  
+	  $mesg = "La facture ".$this->ref." a été validée.\n";
+	  
+	  $notify = New Notify($this->db);
+	  $notify->send($action_notify, $this->socidp, $mesg, "facture", $rowid, $filepdf);
+	  /*
+	   * Update Stats
+	   *
+	   */
+	  $sql = "SELECT fk_product FROM llx_facturedet WHERE fk_facture = ".$this->id;
+	  $sql .= " AND fk_product IS NOT NULL";
+	  
+	  $result = $this->db->query($sql);
+	  
+	  if ($result)
+	    {
+	      $num = $this->db->num_rows();
+	      $i = 0;
+	      while ($i < $num)	  
+		{
+		  $obj = $this->db->fetch_object($i);
+		  
+		  $sql = "UPDATE llx_product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
+		  $db2 = $this->db->clone();
+		  $result = $db2->query($sql);
+		  $i++;
+		}
 	    }
-	}
-      /*
-       * Contrats
-       */      
-      $contrat = new Contrat($this->db);
-      $contrat->create_from_facture($this->id, $user, $this->socidp);
+	  /*
+	   * Contrats
+	   */      
+	  $contrat = new Contrat($this->db);
+	  $contrat->create_from_facture($this->id, $user, $this->socidp);
       
-      return $result;
+	  return $result;
+	}
     }
   /*
    *
@@ -350,12 +360,15 @@ class Facture
    */
   Function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL')
     {
-      $sql = "INSERT INTO llx_facturedet (fk_facture,description,price,qty,tva_taux, fk_product)";
-      $sql .= " VALUES ($facid, '$desc', $pu, $qty, $txtva, $fk_product) ;";
-
-      if ( $this->db->query( $sql) )
+      if ($this->brouillon)
 	{
-	  $this->updateprice($facid);
+	  $sql = "INSERT INTO llx_facturedet (fk_facture,description,price,qty,tva_taux, fk_product)";
+	  $sql .= " VALUES ($facid, '$desc', $pu, $qty, $txtva, $fk_product) ;";
+
+	  if ( $this->db->query( $sql) )
+	    {
+	      $this->updateprice($facid);
+	    }
 	}
     }
   /*
@@ -364,10 +377,13 @@ class Facture
    */
   Function updateline($rowid, $desc, $pu, $qty)
     {
-      $sql = "UPDATE llx_facturedet set description='$desc',price=$pu,qty=$qty WHERE rowid = $rowid ;";
-      $result = $this->db->query( $sql);
+      if ($this->brouillon)
+	{
+	  $sql = "UPDATE llx_facturedet set description='$desc',price=$pu,qty=$qty WHERE rowid = $rowid ;";
+	  $result = $this->db->query( $sql);
 
-      $this->updateprice($this->id);
+	  $this->updateprice($this->id);
+	}
     }
   /*
    *
@@ -375,10 +391,13 @@ class Facture
    */
   Function deleteline($rowid)
     {
-      $sql = "DELETE FROM llx_facturedet WHERE rowid = $rowid;";
-      $result = $this->db->query( $sql);
+      if ($this->brouillon)
+	{
+	  $sql = "DELETE FROM llx_facturedet WHERE rowid = $rowid;";
+	  $result = $this->db->query( $sql);
 
-      $this->updateprice($this->id);
+	  $this->updateprice($this->id);
+	}
     }
   /*
    *
