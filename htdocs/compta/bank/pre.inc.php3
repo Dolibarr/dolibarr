@@ -22,7 +22,8 @@
 
 require("../../main.inc.php3");
 require("./account.class.php3");
-function llxHeader($head = "") {
+function llxHeader($head = "")
+{
   global $user, $conf, $account;
 
   /*
@@ -39,19 +40,21 @@ function llxHeader($head = "") {
   $db = new Db();
   $sql = "SELECT rowid, label FROM llx_bank_account";
   $result = $db->query($sql);
-  if ($result) {
+  if ($result)
+    {
 
-    $num = $db->num_rows();
-    $i = 0; 
+      $num = $db->num_rows();
+      $i = 0; 
 
-    while ($i < $num) {
-      $objp = $db->fetch_object($i);
-      $menu->add("account.php3?account=" . $objp->rowid,  $objp->label);
-      $menu->add_submenu("releve.php3?account=" . $objp->rowid ,"Relevés");
-      $menu->add_submenu("rappro.php3?account=".$objp->rowid,"Rappro");
-      $i++;
+      while ($i < $num) 
+	{
+	  $objp = $db->fetch_object($i);
+	  $menu->add("account.php3?account=" . $objp->rowid,  $objp->label);
+	  $menu->add_submenu("releve.php3?account=" . $objp->rowid ,"Relevés");
+	  $menu->add_submenu("rappro.php3?account=".$objp->rowid,"Rappro");
+	  $i++;
+	}
     }
-  }
   $db->close;
 
   $menu->add("index.php3","Bank");
