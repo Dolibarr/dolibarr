@@ -22,9 +22,11 @@ require("./pre.inc.php");
 
 llxHeader();
 
-include_once "PEAR/Info.php";
-$info = new PEAR_Info();
-$info->getConfig();
+print "TODO";
+
+//include_once "PEAR/Info.php";
+//$info = new PEAR_Info();
+//$info->getConfig();
 
 llxFooter();
 ?>

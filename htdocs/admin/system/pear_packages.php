@@ -20,12 +20,14 @@
  */
 require("./pre.inc.php");
 
-require_once "PEAR/Info.php";
+//require_once "PEAR/Info.php";
 
 llxHeader();
 
-$info = new PEAR_Info();
-$info->getPackages();
+print "TODO";
+
+//$info = new PEAR_Info();
+//$info->getPackages();
 
 llxFooter();
 ?>
