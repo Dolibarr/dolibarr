@@ -130,7 +130,7 @@ Class pdf_bernique {
 		      $account = new Account($this->db);
 		      $account->fetch(FACTURE_RIB_NUMBER);
 		      
-		      $pdf->SetXY (10, 46);		  
+		      $pdf->SetXY (10, 49);  
 		      $pdf->SetFont('Arial','U',8);
 		      $pdf->MultiCell(40, 4, "Coordonnées bancaires", 0, 'L', 0);
 		      $pdf->SetFont('Arial','',8);
