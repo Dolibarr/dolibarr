@@ -64,11 +64,15 @@ class ActionComm
     }
 
   /**
-   *    \brief      Ajout d'une action en base
+   *    \brief      Ajout d'une action en base (et eventuellement dans webcalendar)
    *    \param      author      auteur de la creation de l'action
+   *    \param      webcal      ressource webcalendar: 0=on oublie webcal, 1=on ajoute une entrée générique dans webcal, objet=ajout de l'objet dans webcal
+   *    \return     int         id de l'action créée
    */
-  function add($author)
+  function add($author, $webcal=0)
     {
+      global $conf;
+      
       if (! $this->contact)
 	{
 	  $this->contact = 0;
@@ -92,13 +96,32 @@ class ActionComm
       
       if ($this->db->query($sql) )
 	{
-	    return 1;
+        $idaction = $this->db->last_insert_id();
+        
+        if ($conf->webcal->enabled) {
+            if (is_object($webcal))
+            {
+                // Ajoute entrée dans webcal
+                $result=$webcal->add($author,$webcal->date,$webcal->texte,$webcal->desc);
+                if ($result < 0) {
+                    $this->error="Echec insertion dans webcal ".$webcal->error;   
+                }
+            }
+            else if ($webcal == 1)
+            {
+                // \todo On ajoute une entrée générique, pour l'instant pas utilisé
+                   
+            }
+        }
+
+	    return $idaction;
 	}
       else
 	{
 	    dolibarr_print_error($this->db);
         return -1;
 	}
+
     }
 
   /**

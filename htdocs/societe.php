@@ -20,12 +20,17 @@
  * $Source$
  */
  
+/*!
+	    \file       htdocs/societe.php
+        \ingroup    societe
+		\brief      Page des societes
+		\version    $Revision$
+*/
+ 
 require("./pre.inc.php");
 require("./contact.class.php");
-require("./lib/webcal.class.php");
 require("./cactioncomm.class.php");
 require("./actioncomm.class.php");
-
 
 $langs->load("companies");
 $langs->load("customers");
