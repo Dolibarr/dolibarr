@@ -132,6 +132,8 @@ if ( $resql )
 }
 dolibarr_syslog(sizeof($contrats) ." contrats a vérifier"); 
 
+$error = 0;
+
 foreach ($contrats as $contrat)
 {
 
@@ -153,16 +155,19 @@ foreach ($contrats as $contrat)
 	  if ($objp->fk_client_comm <> $contrat->fk_client_comm)
 	    {
 	      dolibarr_syslog("Erreur fk_client_comm contrat ".$contrat->rowid." ligne ".$objp->rowid);
+	      $error++;
 	    }
 	  
 	  if ($objp->fk_soc <> $contrat->fk_soc)
 	    {
 	      dolibarr_syslog("Erreur fk_soc contrat ".$contrat->rowid." ligne ".$objp->rowid);
+	      $error++;
 	    }
 
 	  if ($objp->fk_soc_facture <> $contrat->fk_soc_facture)
 	    {
 	      dolibarr_syslog("Erreur fk_soc_facture contrat ".$contrat->rowid." ligne ".$objp->rowid);
+	      $error++;
 	    }
 	  $i++;
 	}            
@@ -173,4 +178,5 @@ foreach ($contrats as $contrat)
       dolibarr_syslog("Erreur SQL");
     }
 }
+dolibarr_syslog($error ." erreurs trouvées"); 
 ?>
