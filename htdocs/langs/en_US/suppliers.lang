@@ -1,2 +1,4 @@
 # Dolibarr language file - en_US - suppliers
 Suppliers=Suppliers
+AddSupplier=Add a supplier
+SupplierRemoved=Supplier removed

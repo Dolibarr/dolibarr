@@ -32,6 +32,7 @@ require("./pre.inc.php");
 require("../../propal.class.php");
 
 $langs->load("products");
+$langs->load("bills");
 
 $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
@@ -107,8 +108,8 @@ if ($_GET["id"])
       print '<div class="formsearch">';
       print '<form action="../liste.php" method="post">';
       print '<input type="hidden" name="type" value="'.$product->type.'">';
-      print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"> &nbsp;';
-      print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
+      print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"> &nbsp;';
+      print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
       print '</form></div>';
 
       
@@ -138,19 +139,19 @@ if ($_GET["id"])
 	  dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
 	      
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="3"><tr>';
+      print '<table class="border" width="100%"><tr>';
       print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
       print '<td>'.$langs->trans("Statistics").'</td></tr>';
       print "<tr><td>".$langs->trans("Label")."</td><td>$product->libelle</td>";
       print '<td valign="top" rowspan="2">';
       print '<a href="propal.php?id='.$product->id.'">Propositions commerciales</a> : '.$product->count_propale($socid);
       print "<br>Proposé à <b>".$product->count_propale_client($socid)."</b> clients";
-      print '<br><a href="facture.php?id='.$product->id.'">Factures</a> : '.$product->count_facture($socid);
+      print '<br><a href="facture.php?id='.$product->id.'">'.$langs->trans("Bills").'</a> : '.$product->count_facture($socid);
       print '</td></tr>';
-      print '<tr><td>Prix actuel</td><td>'.price($product->price).'</td></tr>';
+      print '<tr><td>'.$langs->trans("CurrentPrice").'</td><td>'.price($product->price).'</td></tr>';
       print "</table>";
 
-      print '<br><table class="border" width="100%" cellspacing="0" cellpadding="3">';
+      print '<br><table class="border" width="100%">';
       print '<tr class="liste_titre"><td width="50%" colspan="2" align="center">Nombre de ventes<br>sur les 12 derniers mois</td>';
       print '<td align="center" width="50%" colspan="2">Nombre de pièces vendues</td></tr>';
       print '<tr><td align="center" colspan="2">';
@@ -163,22 +164,22 @@ if ($_GET["id"])
       print '</td></tr><tr>';
       if (file_exists($filenbvente) && filemtime($filenbvente))
 	{
-	  print '<td>Généré le '.dolibarr_print_date(filemtime($filenbvente),"%d %b %Y %H:%M:%S").'</td>';
+	  print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($filenbvente),"%d %b %Y %H:%M:%S")).'</td>';
 	}
       else
 	{
 	  print '<td>'.$langs->trans("ChartNotGenerated").'</td>';
 	}
-      print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">Re-calculer</a>]</td>';
+      print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.$langs->trans("ReCalculate").'</a>]</td>';
       if (file_exists($filenbpiece) && filemtime($filenbpiece))
 	{
-	  print '<td>Généré le '.dolibarr_print_date(filemtime($filenbpiece),"%d %b %Y %H:%M:%S").'</td>';
+	  print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($filenbpiece),"%d %b %Y %H:%M:%S")).'</td>';
 	}
       else
 	{
 	  print '<td>'.$langs->trans("ChartNotGenerated").'</td>';
 	}
-      print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">Re-calculer</a>]</td></tr>';
+      print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.$langs->trans("ReCalculate").'</a>]</td></tr>';
       print '<tr><td colspan="4">Statistiques effectuées sur les factures payées uniquement</td></tr>';
       
       print '<tr class="liste_titre"><td width="50%" colspan="2" align="center">Nombre de propositions commerciales<br>sur les 12 derniers mois</td>';
@@ -193,22 +194,22 @@ if ($_GET["id"])
       print '</td></tr><tr>';
       if (file_exists($filenbpropal) && filemtime($filenbpropal))
 	{
-	  print '<td>Généré le '.dolibarr_print_date(filemtime($filenbpropal),"%d %b %Y %H:%M:%S").'</td>';
+	  print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($filenbpropal),"%d %b %Y %H:%M:%S")).'</td>';
 	}
       else
 	{
 	  print '<td>'.$langs->trans("ChartNotGenerated").'</td>';
 	}
-      print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">Re-calculer</a>]</td>';
+      print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.$langs->trans("ReCalculate").'</a>]</td>';
       if (file_exists($filenbpiece) && filemtime($filenbpiece33))
 	{
-	  print '<td>Généré le '.dolibarr_print_date(filemtime($filenbpiece),"%d %b %Y %H:%M:%S").'</td>';
+	  print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($filenbpiece),"%d %b %Y %H:%M:%S")).'</td>';
 	}
       else
 	{
 	  print '<td>'.$langs->trans("ChartNotGenerated").'</td>';
 	}
-      print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">Re-calculer</a>]</td></tr>';
+      print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.$langs->trans("ReCalculate").'</a>]</td></tr>';
 
       print '</table><br>';
 

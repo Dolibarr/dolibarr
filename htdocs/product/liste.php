@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/product/liste.php
+        \ingroup    product
+		\brief      Page liste des produits ou services
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 $user->getrights('produit');
 
@@ -33,6 +41,7 @@ if (!$user->rights->produit->lire)
  *
  *
  */
+
 $type=$_GET["type"];
 
 $page = $_GET["page"];
@@ -124,8 +133,8 @@ if ($result)
       if (isset($envente) && $envente == 0)
     {
       if (isset($_POST["type"]) || isset($_GET["type"])) {
-        if ($type) { $texte = $langs->trans("ProductsNotOnSell"); }
-        else { $texte = $langs->trans("ServicesNotOnSell"); }
+        if ($type) { $texte = $langs->trans("ServicesNotOnSell"); }
+        else { $texte = $langs->trans("ProductsNotOnSell"); }
       } else {
         $texte = $langs->trans("ProductsAndServicesNotOnSell");
       }
@@ -134,8 +143,8 @@ if ($result)
     {
       $envente=1;
       if (isset($_POST["type"]) || isset($_GET["type"])) {
-        if ($type) { $texte = $langs->trans("ProductsOnSell"); }
-        else { $texte = $langs->trans("ServicesOnSell"); }
+        if ($type) { $texte = $langs->trans("ServicesOnSell"); }
+        else { $texte = $langs->trans("ProductsOnSell"); }
       } else {
         $texte = $langs->trans("ProductsAndServicesOnSell");
       }
@@ -152,21 +161,21 @@ if ($result)
       print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id&amp;type=$type", $sortfield, $sortorder,'',$num);
     }
 
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+  print '<table class="noborder" width="100%">';
 
   print "<tr class=\"liste_titre\"><td>";
   print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente&amp;type=$type&fourn_id=$fourn_id");
   print "</td><td>";
   print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&type=$type&fourn_id=$fourn_id");
   print "</td><td align=\"right\">";
-  print_liste_field_titre("Prix de vente","liste.php", "p.price","&envente=$envente&type=$type&fourn_id=$fourn_id");
+  print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price","&envente=$envente&type=$type&fourn_id=$fourn_id");
   print "</td></tr>\n";
   
   print '<tr class="liste_titre">';
   print '<form action="liste.php?type='.$type.'" method="post">';
-  print '<td><input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
+  print '<td><input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"></td>';
   print '</form><form action="liste.php" method="post">';
-  print '<td><input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go"></td>';
+  print '<td><input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"></td>';
   print '</form><td>&nbsp;</td></tr>';
   
   

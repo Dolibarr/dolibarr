@@ -1,2 +1,4 @@
 # Dolibarr language file - fr_FR - suppliers
 Suppliers=Fournisseurs
+AddSupplier=Ajouter un fournisseur
+SupplierRemoved=Founisseur supprimé

@@ -107,6 +107,7 @@ Filter=Filtre
 RemoveFilter=Supprimer le filtre
 ChartGenerated=Graphiques générés
 ChartNotGenerated=Graphique non généré
+GeneratedOnGénéré le %s
 Duration=Durée
 Summary=Résumé
 NotYetAvailable=Pas encore disponible

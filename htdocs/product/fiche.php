@@ -183,7 +183,7 @@ if ($_GET["action"] == 'remove_fourn')
       if ($product->remove_fournisseur($user, $_GET["id_fourn"]) > 0)
 	{
 	  $_GET["action"] = '';
-	  $mesg = 'Founisseur supprimé';
+	  $mesg = $langs->trans("SupplierRemoved");
 	}
       else
 	{
@@ -249,7 +249,7 @@ if ($_GET["action"] == 'create')
   if ($_GET["type"]==1) { print $langs->trans("NewService"); }
   print '</div><br>'."\n";
       
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+  print '<table class="border" width="100%">';
   print '<tr>';
   print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$product->ref.'">';
   if ($_error == 1)
@@ -258,7 +258,7 @@ if ($_GET["action"] == 'create')
     }
   print '</td></tr>';
   print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
-  print '<tr><td>Prix de vente</td><TD><input name="price" size="10" value="'.$product->price.'"></td></tr>';    
+  print '<tr><td>'.$langs->trans("SellingPrice").'</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
  
   $langs->load("bills");
   print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
@@ -358,7 +358,7 @@ else
 	      print '<td width="40%">';
 	      if ($product->envente)
 		{
-		  print "En vente";
+		  print $langs->trans("OnSell");
 		}
 	      else
 		{
@@ -366,7 +366,7 @@ else
 		}
 	      print '</td></tr>';
 	      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
-	      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
+	      print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';
 	      if ($product->type == 0)
 		{
 		  $nblignefour=4;
@@ -398,7 +398,7 @@ else
 		      print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
 		      print '<td align="right">';
 		      print '<a href="fiche.php?id='.$product->id.'&amp;action=remove_fourn&amp;id_fourn='.$objp->idp.'">';
-		      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td></tr>';
+		      print img_disable($langs->trans("Remove")).'</a></td></tr>';
 		      $i++;
 		    }
 		  print '</table>';
@@ -433,14 +433,14 @@ else
 
 	      if ($product->type == 1)
 		{
-		  print '<tr><td>'.$langs->trans("Duration").'</td><TD>'.$product->duration_value.'&nbsp;';
+		  print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
 
 		  if ($product->duration_value > 1)
   	      {
-            $dur=array("d"=>"Days","w","Weeks","m","Months","y"=>"Years");
+            $dur=array("d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
 		  }
           else {
-            $dur=array("d"=>"Day","w","Week","m","Month","y"=>"Year");
+            $dur=array("d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
           }
           print $langs->trans($dur[$product->duration_unit])."&nbsp;";
 
@@ -476,7 +476,9 @@ else
        */
       if ($_GET["action"] == 'ajout_fourn' && $user->rights->produit->creer)
 	{
-	  print_titre ("Ajouter un fournisseur");
+	  $langs->load("suppliers");
+	  
+	  print_titre($langs->trans("AddSupplier"));
 	  print '<form action="fiche.php?id='.$product->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="add_fourn">';
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
@@ -510,12 +512,9 @@ else
     /*
      * Fiche en mode edition
      */
-    
       if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && $user->rights->produit->creer)
 	{
-
 	  print_fiche_titre('Edition de la fiche '.$types[$product->type].' : '.$product->ref, $mesg);
-
 
 	  print "<form action=\"fiche.php\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update">';
@@ -619,7 +618,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
   $htmls = new Form($db);
   $propal = New Propal($db);
 
-  print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
+  print '<table width="100%" class="noborder">';
   if($user->rights->propale->creer)
     {
       print "<tr>".'<td width="50%" valign="top">';
@@ -639,13 +638,13 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	{
 	  $num = $db->num_rows();
 	  $i = 0;
-	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="noborder" width="100%">';
 	  $var=True;      
 	  while ($i < $num)
 	    {
 	      $objp = $db->fetch_object($i);	  
 	      $var=!$var;
-	      print "<TR $bc[$var]>";
+	      print "<tr $bc[$var]>";
 	      print "<td><a href=\"../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
 	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
 	      print "<td>". strftime("%d %b",$objp->dp)."</td>\n";
@@ -676,7 +675,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	    {
 	      print '<form method="POST" action="fiche.php?id='.$product->id.'">';
 	      print '<input type="hidden" name="action" value="addinpropal">';
-	      print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
+	      print '<table class="border" width="100%">';
 	      print "<tr>".'<td>Autres Propositions</td><td>';
 	      $htmls->select_array("propalid", $otherprop);
 	      print '</td><td>';
@@ -711,7 +710,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	{
 	  $num = $db->num_rows();
 	  $i = 0;
-	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="noborder" width="100%">';
 	  $var=True;      
 	  while ($i < $num)
 	    {
@@ -738,7 +737,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	}
       else
 	{
-	  print $db->error() . "<br>" . $sql;
+	  dolibarr_print_error($db);
 	}
       print '</td><td width="50%" valign="top">';
       print '</td></tr></table>';

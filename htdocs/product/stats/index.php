@@ -52,13 +52,13 @@ if ($db->query($sql))
 }
 $db->free();
 
-print_fiche_titre('Statistiques produits et services', $mesg);
+print_fiche_titre($langs->trans("ProductsAndServicesStatistics"), $mesg);
 print '<br>';
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print '<table class="noborder" width="100%">';
 
-print "<tr class=\"liste_titre\">";
-print "<td>Résumé</td><td>Valeur</TD>";
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Summary").'</td><td>'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 
 $var=True;
@@ -127,7 +127,7 @@ if ($db->query($sql))
 	}
 }
 else {
-	print $db->error()." $sql";	
+	dolibarr_print_error($db);	
 }
 print "</table>\n";
 $db->free();

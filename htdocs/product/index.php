@@ -20,8 +20,17 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/product/index.php
+        \ingroup    product
+		\brief      Page accueil des produits et services
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 $user->getrights('produit');
+
 
 $langs->load("products");
 
@@ -30,15 +39,16 @@ if (!$user->rights->produit->lire)
   accessforbidden();
 
 
-if ($action == 'update')
+
+if ($_POST["action"] == 'update')
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET description='$desc' where rowid = $rowid";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET description='".$_POST["desc"]."' where rowid = ".$_POST["rowid"];
   $db->query($sql);
 }
 
 
 /*
- *
+ * Affichage page accueil
  *
  */
 
@@ -53,7 +63,7 @@ print '</form></div>';
 
 print_titre($langs->trans("ProductsAndServices"));
 
-print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
+print '<table border="0" width="100%">';
 
 print '<tr><td valign="top" width="30%">';
 
