@@ -29,7 +29,7 @@ print_titre ("Abonnement de réduction");
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
 print "<TR class=\"liste_titre\">";
 print "<td>Date</td><td>Description</TD>";
-print "<td align=\"right\"><a href=\"$PHP_SELF?vue=credit\">Montant</a></TD>";
+print "<td align=\"right\"><a href=\"reduc.php?vue=credit\">Montant</a></TD>";
 print "</TR>\n";
 
 

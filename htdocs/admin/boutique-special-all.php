@@ -28,7 +28,7 @@ require("../product/promotion/promotion.class.php");
 
 llxHeader();
 
-print_barre_liste("Mise a jour de tous les livres", $page, $PHP_SELF);
+print_barre_liste("Mise a jour de tous les livres", $page, "boutique-special-all.php");
 
 $sql = "SELECT l.rowid FROM ".MAIN_DB_PREFIX."livre as l";
   

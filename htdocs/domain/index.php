@@ -61,7 +61,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."domain ORDER BY label ASC";
 $result = $db->query($sql);
 if ($result) {
 
-  print "<form method=\"post\" action=\"$PHP_SELF?viewall=$viewall&vline=$vline&account=$account\">";
+  print "<form method=\"post\" action=\"index.php?viewall=$viewall&vline=$vline&account=$account\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";

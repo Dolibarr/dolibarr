@@ -36,7 +36,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des Auteurs", $page, $PHP_SELF);
+print_barre_liste("Liste des Auteurs", $page, "index.php");
 
 $sql = "SELECT e.rowid, e.nom FROM ".MAIN_DB_PREFIX."auteur as e";
   
@@ -48,7 +48,7 @@ if ( $db->query($sql) ) {
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Nom",$PHP_SELF, "e.nom");
+  print_liste_field_titre("Nom","index.php", "e.nom");
   print "</td>";
   print "</TR>\n";
   $var=True;

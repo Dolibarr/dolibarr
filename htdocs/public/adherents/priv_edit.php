@@ -112,18 +112,18 @@ if ($action == 'update')
 	      {	  
 		$adh->send_an_email($email,$conf->adherent->email_edit,$conf->adherent->email_edit_subject);
 		//Header("Location: fiche.php?rowid=$adh->id&action=edit");
-		Header("Location: $PHP_SELF");
+		Header("Location: priv_edit.php");
 	      }
 	  }
 	}else{
-	  Header("Location: $PHP_SELF");
+	  Header("Location: priv_edit.php");
 	}
       }
     }
   else
     {
       //Header("Location: fiche.php?rowid=$rowid&action=edit");
-      Header("Location: $PHP_SELF");
+      Header("Location: priv_edit.php");
     }
 }
 
@@ -201,7 +201,7 @@ if (isset($user->login)){
 
   print "<hr>";
 
-  print "<form action=\"$PHP_SELF\" method=\"post\">";
+  print "<form action=\"priv_edit.php\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
   print "<input type=\"hidden\" name=\"action\" value=\"update\">";

@@ -64,7 +64,7 @@ llxHeader();
 if ($action == 'create')
 {
 
-  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+  print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
   print '<input type="hidden" name="action" value="add">';
 
   print '<div class="titre">Nouvel Auteur</div><br>';
@@ -99,7 +99,7 @@ else
 	  if ($action == 'delete')
 	    {
 	      
-	      print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
+	      print '<form method="post" action="fiche.php?id='.$id.'">';
 	      print '<input type="hidden" name="action" value="confirm_delete">';
 	      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 	      
@@ -126,7 +126,7 @@ else
 	    {
 	      print '<div class="titre">Edition de la fiche Auteur : '.$auteur->nom.'</div><br>';
 	      
-	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	      print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
 	      print '<input type="hidden" name="action" value="update">';
 	      
 	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';

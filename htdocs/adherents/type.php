@@ -145,7 +145,7 @@ if ($_GET["action"] == 'create') {
   print_titre("Nouveau type");
   print '<br>';
   
-  print "<form action=\"$PHP_SELF\" method=\"post\">";
+  print "<form action=\"type.php\" method=\"post\">";
   print '<table cellspacing="0" class="border" width="100%" cellpadding="3">';
   
   print '<input type="hidden" name="action" value="add">';

@@ -54,7 +54,7 @@ if ($action == 'update' && !$cancel) {
 if ($action == 'create')
 {
 
-  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+  print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
   print '<input type="hidden" name="action" value="add">';
 
   print '<div class="titre">Nouvel Editeur</div><br>';
@@ -82,7 +82,7 @@ else
 	    {
 	      print '<div class="titre">Edition de la fiche Editeur : '.$editeur->titre.'</div><br>';
 	      
-	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	      print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
 	      print '<input type="hidden" name="action" value="update">';
 	      
 	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';

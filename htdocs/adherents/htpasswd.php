@@ -52,7 +52,7 @@ if ($result)
   $i = 0;
   
   print "<BR><DIV class=\"titre\">Export au format htpasswd des login des adhérents</DIV><BR>\n";
-  //print_barre_liste("Export au format htpasswd des login des adhérents", $page, $PHP_SELF, "");
+  //print_barre_liste("Export au format htpasswd des login des adhérents", $page, "htpasswd.php", "");
   print "<HR>\n";
   while ($i < $num)
     {

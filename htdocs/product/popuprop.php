@@ -37,16 +37,16 @@ $offset = $limit * $page ;
 
 llxHeader();
 
-print_barre_liste("Liste des produits par popularité dans les propositions commerciales", $page, $PHP_SELF);
+print_barre_liste("Liste des produits par popularité dans les propositions commerciales", $page, "popurop.php");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print "<TR class=\"liste_titre\"><td>";
-print_liste_field_titre("Réf",$PHP_SELF, "p.ref");
+print_liste_field_titre("Réf","popurop.php", "p.ref");
 print "</td><td>";
-print_liste_field_titre("Libellé",$PHP_SELF, "p.label");
+print_liste_field_titre("Libellé","popurop.php", "p.label");
 print "</td><TD align=\"center\">";
-print_liste_field_titre("Nb. de proposition",$PHP_SELF, "c");
+print_liste_field_titre("Nb. de proposition","popurop.php", "c");
 print "</td></TR>\n";
 
 $sql = "select p.rowid, p.label, p.ref, count(*) as c from ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p where p.rowid = pd.fk_product group by (p.rowid)";

@@ -75,7 +75,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."voyage as b ORDER BY b.date_depart ASC";
 $result = $db->query($sql);
 if ($result) {
 
-  print "<form method=\"post\" action=\"$PHP_SELF?viewall=$viewall&vline=$vline&account=$account\">";
+  print "<form method=\"post\" action=\"index.php?viewall=$viewall&vline=$vline&account=$account\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";
@@ -106,7 +106,7 @@ if ($result) {
 
     print "<td align=\"right\">".price($objp->amount)."</TD>\n";
     print "<td align=\"right\">".price($objp->reduction)."</TD>\n";
-    print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid\">[Del]</a></td>";    
+    print "<td align=\"center\"><a href=\"index.php?action=del&rowid=$objp->rowid\">[Del]</a></td>";    
     print "</tr>";
 
 

@@ -36,7 +36,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des clients", $page, $PHP_SELF);
+print_barre_liste("Liste des clients", $page, "index.php");
 
 $sql = "SELECT c.customers_id, c.customers_lastname, c.customers_firstname, c.customers_email_address, c.customers_newsletter";
 $sql .= " FROM ".DB_NAME_OSC.".customers as c";
@@ -49,9 +49,9 @@ if ( $db->query($sql) )
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Prénom",$PHP_SELF, "c.customers_firstname");
+  print_liste_field_titre("Prénom","index.php", "c.customers_firstname");
   print "</td><td>";
-  print_liste_field_titre("Nom",$PHP_SELF, "c.customers_lastname");
+  print_liste_field_titre("Nom","index.php", "c.customers_lastname");
   print '</td><td>Email</td><td align="center">Newsletter</td>';
   print "</TR>\n";
   $var=True;

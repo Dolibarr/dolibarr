@@ -37,7 +37,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des notifications", $page, $PHP_SELF);
+print_barre_liste("Liste des notifications", $page, "index.php");
 
 $sql = "SELECT c.customers_id, c.customers_lastname, c.customers_firstname, p.products_name, p.products_id";
 $sql .= " FROM ".DB_NAME_OSC.".products_notifications as n,".DB_NAME_OSC.".products_description as p";
@@ -53,7 +53,7 @@ if ( $db->query($sql) )
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Client",$PHP_SELF, "c.customers_lastname");
+  print_liste_field_titre("Client","index.php", "c.customers_lastname");
   print "</td>";
   print "<td>Produit</td>";
   print "</TR>\n";

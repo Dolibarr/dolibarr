@@ -37,7 +37,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des produits suivis", $page, $PHP_SELF);
+print_barre_liste("Liste des produits suivis", $page, "produits.php");
 
 $sql = "SELECT p.products_name, p.products_id, count(p.products_id) as nb";
 $sql .= " FROM ".DB_NAME_OSC.".products_notifications as n,".DB_NAME_OSC.".products_description as p";

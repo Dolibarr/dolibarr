@@ -36,7 +36,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des Newsletter", $page, $PHP_SELF);
+print_barre_liste("Liste des Newsletter", $page, "index.php");
 
 $sql = "SELECT rowid, email_subject, email_from_name, email_from_email, email_replyto, email_body, target, sql_target, status, date_send_request, date_send_begin, date_send_end, nbsent";
 $sql .= " FROM ".MAIN_DB_PREFIX."newsletter";
@@ -49,7 +49,7 @@ if ( $db->query($sql) )
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Sujet",$PHP_SELF, "email_subject");
+  print_liste_field_titre("Sujet","index.php", "email_subject");
   print "</td>";
   print '<td align="center">Statut</td>';
   print '<td align="center">Nb envois</td>';

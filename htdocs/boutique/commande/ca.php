@@ -37,7 +37,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des commandes", $page, $PHP_SELF);
+print_barre_liste("Liste des commandes", $page, "ca.php");
 
 print '<p><TABLE border="0" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Description</td>';

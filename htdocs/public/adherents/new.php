@@ -147,7 +147,7 @@ print '<li> Les champs Commencant par un <FONT COLOR="red">*</FONT> sont obligat
 print '<li> Les champs Commencant par un <FONT COLOR="blue">*</FONT> seront affiche sur la liste publique des membres. Si vous ne souhaite pas cela <b>DECOCHEZ</b> la case public ci dessous'; 
 print "<li> Les login et password vous serviront a editer vos coordonnees ulterieurement<BR>\n";
 print "</ul><BR>\n";
-print "<form action=\"$PHP_SELF\" method=\"POST\">\n";
+print "<form action=\"new.php\" method=\"POST\">\n";
 print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
 print '<input type="hidden" name="action" value="add">';

@@ -707,6 +707,7 @@ class Facture
 	  $this->total_tva      = $calculs[1];
 	  $this->total_ttc      = $calculs[2];
 	  $tvas                 = $calculs[5];
+
 	  /*
 	   *
 	   */

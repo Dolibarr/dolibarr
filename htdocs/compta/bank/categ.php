@@ -51,7 +51,7 @@ if ($action == 'add')
 }
 
 print_titre("Catégories");
-print "<form method=\"post\" action=\"$PHP_SELF\">";
+print '<form method="post" action="categ.php">';
 print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
 print '<tr class="liste_titre">';

@@ -123,7 +123,7 @@ if ($action == 'create') {
     }
   }
   print_titre("Saisir un don");
-  print "<form action=\"$PHP_SELF\" method=\"post\">";
+  print "<form action=\"fiche.php\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
@@ -200,7 +200,7 @@ if ($rowid > 0 && $action == 'edit')
   $don->fetch($rowid);
 
   print_titre("Traitement du don");
-  print "<form action=\"$PHP_SELF\" method=\"post\">";
+  print "<form action=\"fiche.php\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
   print "<tr $bc[1]><td>Date du don</td><td>";
@@ -263,7 +263,7 @@ if ($rowid > 0 && $action == 'edit')
     }
   elseif ($don->statut == 0)
     {
-      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=valid_promesse\">Valider la promesse</a>]</td>";
+      print "<td align=\"center\" width=\"25%\">[<a href=\"fiche.php?rowid=$don->id&action=valid_promesse\">Valider la promesse</a>]</td>";
     }
   elseif ($don->statut == 3)
     {
@@ -296,11 +296,11 @@ if ($rowid > 0 && $action == 'edit')
    */
   if ($don->statut == 0) 
     {
-      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=delete\">Supprimer</a>]</td>";
+      print "<td align=\"center\" width=\"25%\">[<a href=\"fiche.php?rowid=$don->id&action=delete\">Supprimer</a>]</td>";
     }
   elseif ($don->statut == 2)
     {
-      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=set_encaisse\">Encaisser</a>]</td>";
+      print "<td align=\"center\" width=\"25%\">[<a href=\"fiche.php?rowid=$don->id&action=set_encaisse\">Encaisser</a>]</td>";
     }
   else
     {
@@ -314,7 +314,7 @@ if ($rowid > 0 && $action == 'edit')
 /*                                                                            */
 /* ************************************************************************** */
 
-  print "<form action=\"$PHP_SELF\" method=\"post\">";
+  print "<form action=\"fiche.php\" method=\"post\">";
   print '<input type="hidden" name="action" value="commentaire">';
   print '<input type="hidden" name="rowid" value="'.$don->id.'">';
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';

@@ -46,7 +46,7 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Liste des adhérents", $page, $PHP_SELF, "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+  print_barre_liste("Liste des adhérents", $page, "priv_liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
   print '<TR class="liste_titre">';
@@ -55,19 +55,19 @@ if ($result)
   print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.prenom\">Prenom</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.nom\">Nom</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.societe\">Société</a></td>\n";
 
   print "<td>";
-  print_liste_field_titre("Date naissance",$PHP_SELF,"naiss","&page=$page");
+  print_liste_field_titre("Date naissance","priv_liste.php","naiss","&page=$page");
   print "</td>\n";
 
   print "<td>";
-  print_liste_field_titre("Email",$PHP_SELF,"email","&page=$page");
+  print_liste_field_titre("Email","priv_liste.php","email","&page=$page");
   print "</td>\n";
 
   print "<td>";
-  print_liste_field_titre("CP",$PHP_SELF,"cp","&page=$page");
+  print_liste_field_titre("CP","priv_liste.php","cp","&page=$page");
   print "</td>\n";
 
   print "<td>";
-  print_liste_field_titre("Vile",$PHP_SELF,"ville","&page=$page");
+  print_liste_field_titre("Vile","priv_liste.php","ville","&page=$page");
   print "</td>\n";
 
   print "<td>Photo</td>\n";

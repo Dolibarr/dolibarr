@@ -44,7 +44,7 @@ $form = '<form action="index.php">'.
 '<input type="submit" class="flat" value="go"></form>';
 
 
-print_barre_liste("Liste des vignettes manquantes", $page, $PHP_SELF, "", $sortfield, $sortorder, $form);
+print_barre_liste("Liste des vignettes manquantes", $page, "vignettes.php", "", $sortfield, $sortorder, $form);
 
 $sql = "SELECT l.rowid, l.title, l.oscid, l.ref, l.status FROM ".MAIN_DB_PREFIX."livre as l";
 
@@ -62,9 +62,9 @@ if ( $db->query($sql) )
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Réf.",$PHP_SELF, "l.ref");
+  print_liste_field_titre("Réf.","vignettes.php", "l.ref");
   print "</td><td>";
-  print_liste_field_titre("Titre",$PHP_SELF, "l.title");
+  print_liste_field_titre("Titre","vignettes.php", "l.title");
   print "</td>";
   print '<td colspan="3">&nbsp;</td>';
   print "</TR>\n";

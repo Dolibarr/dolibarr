@@ -169,7 +169,7 @@ if ($socid > 0)
 		  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($upload_dir."/".$file)).'</td>';
 		  
 		  print '<td>';
-		  echo '<a href="'.$PHP_SELF.'?socid='.$socid.'&action=delete&urlfile='.urlencode($file).'">Delete</a>';
+		  echo '<a href="docsoc.php?socid='.$socid.'&action=delete&urlfile='.urlencode($file).'">Delete</a>';
 		  print "</td></tr>\n";
 		}
 	    }
