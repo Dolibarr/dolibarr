@@ -25,7 +25,7 @@ FILE=dolibarr-0.1.6
 tar:
 	rm -f dolibarr-*.tar.gz*
 	mkdir $(FILE)
-	mv * $(FILE)
+	mv doc/ htdocs/ mysql/ misc/ COPY* http* INSTALL scripts/ templates/ $(FILE)
 	tar --exclude-from $(FILE)/tar.exclude -cvvf $(FILE).tar $(FILE)
 	gzip $(FILE).tar
 	md5sum $(FILE).tar.gz > $(FILE).tar.gz.md5sum
