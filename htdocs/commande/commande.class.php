@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -350,8 +350,8 @@ class Commande
 	      $price = $pu - $remise;
 	    }
 
-	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."commandedet (fk_commande,label,description,price,qty,tva_tx, fk_product, remise_percent, subprice, remise)";
-	  $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "', $price, $qty, $txtva, $fk_product, $remise_percent, $subprice, $remise) ;";
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."commandedet (fk_commande,label,description,fk_product, price,qty,tva_tx, remise_percent, subprice, remise)";
+	  $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", $qty, $txtva, $remise_percent,".ereg_replace(",",".",$subprice).",".ereg_replace(",",".", $remise).") ;";
 
 	  if ( $this->db->query( $sql) )
 	    {
@@ -652,7 +652,13 @@ class Commande
       /*
        *
        */
-      $sql = "UPDATE ".MAIN_DB_PREFIX."commande set amount_ht='$totalht', total_ht='$totalht', tva='$totaltva', total_ttc='$totalttc', remise='$total_remise' WHERE rowid = $this->id";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."commande set";
+      $sql .= "  amount_ht ='".ereg_replace(",",".",$totalht)."'";
+      $sql .= ", total_ht  ='".ereg_replace(",",".",$totalht)."'";
+      $sql .= ", tva       ='".ereg_replace(",",".",$totaltva)."'";
+      $sql .= ", total_ttc ='".ereg_replace(",",".",$totalttc)."'";
+      $sql .= ", remise    ='".ereg_replace(",",".",$total_remise)."'";
+      $sql .= " WHERE rowid = $this->id";
       if ( $this->db->query($sql) )
 	{
 	  return 1;
