@@ -50,19 +50,67 @@ class Account
    * Efface une entree dans la table llx_bank
    */
 
-  Function deleteline($rowid) {
+  Function deleteline($rowid)
+  {
+    $sql = "DELETE FROM llx_bank_class WHERE lineid=$rowid";
+    $result = $this->db->query($sql);
+
     $sql = "DELETE FROM llx_bank WHERE rowid=$rowid";
     $result = $this->db->query($sql);
-    if ($result) {
-      $sql = "DELETE FROM llx_bank_class WHERE lineid=$rowid";
-      $result = $this->db->query($sql);
-    }
+
+    $sql = "DELETE FROM llx_bank_url WHERE fk_bank=$rowid";
+    $result = $this->db->query($sql);
+  }
+  /*
+   *
+   *
+   */
+  Function add_url_line($line_id, $url_id, $url, $label)
+  {
+    $sql = "INSERT INTO llx_bank_url (fk_bank, url_id, url, label)";
+    $sql .= " VALUES ($line_id, $url_id, '$url', '$label')";
+
+    if ($this->db->query($sql))
+      {
+	$rowid = $this->db->last_insert_id();
+	
+	return $rowid;
+      }
+    else
+      {
+	return '';
+	print $this->db->error();
+	print "<br>$sql";
+      }
+  }
+  /*
+   *
+   */
+  Function get_url($line_id)
+  {
+    $lines = array();
+    $sql = "SELECT fk_bank, url_id, url, label FROM llx_bank_url WHERE fk_bank = $line_id";
+    $result = $this->db->query($sql);
+
+    if ($result)
+      {
+	$i = 0;
+	$num = $this->db->num_rows();
+	while ($i < $num)
+	  {
+	    $obj = $this->db->fetch_object($result, $i);
+	    $lines[$i][0] = $obj->url;
+	    $lines[$i][1] = $obj->url_id;
+	    $lines[$i][2] = $obj->label;
+	    $i++;
+	  }
+	return $lines;
+      }
   }
   /*
    * Ajoute une entree dans la table llx_bank
    *
    */
-
   Function addline($date, $oper, $label, $amount, $num_chq="",$categorie='')
   {
     if ($this->rowid)
