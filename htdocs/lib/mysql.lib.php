@@ -178,7 +178,7 @@ class DoliDb
      \return	    resource
   */
   
-  function clone()
+  function dbclone()
   {
     $db2 = new DoliDb("", "", "", "", "");
     $db2->db = $this->db;

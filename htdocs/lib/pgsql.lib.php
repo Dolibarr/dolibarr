@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
- * Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
@@ -167,7 +167,7 @@ class DoliDb
         \return	resource
     */
     
-    function clone()
+    function dbclone()
     {
         $db2 = new DoliDb("", "", "", "", "");
         $db2->db = $this->db;
