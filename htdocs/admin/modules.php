@@ -116,6 +116,15 @@ $modules["MAIN_MODULE_EXTERNAL_RSS"][4] = "modExternalRss";
 
 if ($action == 'set' && $user->admin)
 {
+  Activate($value);
+
+  Header("Location: modules.php");
+}
+
+function Activate($value)
+{
+  global $db, $modules;
+
   $sql = "REPLACE INTO llx_const SET name = '".$value."', value='1', visible = 0";
 
   if ($db->query($sql))
@@ -129,15 +138,19 @@ if ($action == 'set' && $user->admin)
 	  include("../includes/modules/$file");
 	  $objMod = new $modName($db);
 	  $objMod->init();
-
-	  Header("Location: modules.php");
 	}
     }
+
+  for ($i = 0; $i < sizeof($objMod->depends); $i++)
+    {
+      Activate($objMod->depends[$i]);
+    }
+    
 }
 
 if ($action == 'reset' && $user->admin)
 {
-  $sql = "REPLACE INTO llx_const SET name = '".$value."', value='0', visible = 0";
+  $sql = "DELETE FROM llx_const WHERE name = '".$value."'";
 
   if ($db->query($sql))
     {
@@ -150,10 +163,9 @@ if ($action == 'reset' && $user->admin)
 	  include("../includes/modules/$file");
 	  $objMod = new $modName($db);
 	  $objMod->remove();
-
-	  Header("Location: modules.php");
 	}
     }
+  Header("Location: modules.php");
 }
 
 $db->close();
