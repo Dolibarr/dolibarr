@@ -9,3 +9,5 @@
 - load       Charge les données minimales définit dans data/data.sql
 
 - mysql.sql  Génère un fichier unique sql pour l'installation
+
+- mysql-BE.sql Génère un fichier unique sql pour l'installation avec des données Belges
