@@ -74,7 +74,7 @@ if ($user->societe_id)
   $sql .= " AND s.idp = " .$user->societe_id;
 }
 
-if ($socname)
+if ($_GET["socname"])
 {
   $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
   $sortfield = "lower(s.nom)";
