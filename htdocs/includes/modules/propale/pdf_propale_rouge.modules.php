@@ -21,7 +21,8 @@
  *
  */
 
-Class pdf_propale_rouge {
+Class pdf_propale_rouge
+{
 
   Function pdf_propale_rouge($db=0)
     { 
@@ -64,7 +65,7 @@ Class pdf_propale_rouge {
 	      /*
 	       */
 	      $tab_top = 100;
-	      $tab_height = 110;	      
+	      $tab_height = 150;
 	      /*
 	       *
 	       */  
@@ -79,8 +80,9 @@ Class pdf_propale_rouge {
 	      $iniY = $pdf->GetY();
 	      $curY = $pdf->GetY();
 	      $nexY = $pdf->GetY();
+	      $nblignes = sizeof($propale->lignes);
 
-	      for ($i = 0 ; $i < sizeof($propale->lignes) ; $i++)
+	      for ($i = 0 ; $i < $nblignes ; $i++)
 		{
 
 		  $curY = $nexY;
@@ -96,7 +98,7 @@ Class pdf_propale_rouge {
 		  $pdf->MultiCell(20, 5, $propale->lignes[$i]->ref, 0, 'C');
 
 		  $pdf->SetXY (133, $curY );		  
-		  $pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_taux, 0, 'C');
+		  $pdf->MultiCell(10, 5, $propale->lignes[$i]->tva_tx, 0, 'C');
 		  
 		  $pdf->SetXY (145, $curY );
 		  $pdf->MultiCell(10, 5, $propale->lignes[$i]->qty, 0, 'C');
@@ -110,7 +112,7 @@ Class pdf_propale_rouge {
 		  
 		  $pdf->line(10, $curY, 200, $curY );
 
-		  if ($nexY > 220)
+		  if ($nexY > 240 && $i < $nblignes - 1)
 		    {
 		      $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 		      $pdf->AddPage();
@@ -125,35 +127,37 @@ Class pdf_propale_rouge {
 	      /*
 	       *
 	       */
-	      $tab2_top = 212;
-	      $tab2_height = 24;
-	      $pdf->SetFont('Arial','', 12);
+	      $tab2_top = 254;
+	      $tab2_lh = 7;
+	      $tab2_height = $tab2_lh * 3;
+
+	      $pdf->SetFont('Arial','', 11);
 	      
 	      $pdf->Rect(132, $tab2_top, 68, $tab2_height);
 	      
-	      $pdf->line(132, $tab2_top + $tab2_height - 24, 200, $tab2_top + $tab2_height - 24 );
-	      $pdf->line(132, $tab2_top + $tab2_height - 16, 200, $tab2_top + $tab2_height - 16 );
-	      $pdf->line(132, $tab2_top + $tab2_height - 8, 200, $tab2_top + $tab2_height - 8 );
+	      $pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*3), 200, $tab2_top + $tab2_height - ($tab2_lh*3) );
+	      $pdf->line(132, $tab2_top + $tab2_height - ($tab2_lh*2), 200, $tab2_top + $tab2_height - ($tab2_lh*2) );
+	      $pdf->line(132, $tab2_top + $tab2_height - $tab2_lh, 200, $tab2_top + $tab2_height - $tab2_lh );
 	      
 	      $pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
 	      
 	      $pdf->SetXY (132, $tab2_top + 0);
-	      $pdf->MultiCell(42, 8, "Total HT", 0, 'R', 0);
+	      $pdf->MultiCell(42, $tab2_lh, "Total HT", 0, 'R', 0);
 	      
-	      $pdf->SetXY (132, $tab2_top + 8);
-	      $pdf->MultiCell(42, 8, "Total TVA", 0, 'R', 0);
+	      $pdf->SetXY (132, $tab2_top + $tab2_lh);
+	      $pdf->MultiCell(42, $tab2_lh, "Total TVA", 0, 'R', 0);
 	      
-	      $pdf->SetXY (132, $tab2_top + 16);
-	      $pdf->MultiCell(42, 8, "Total TTC", 1, 'R', 1);
+	      $pdf->SetXY (132, $tab2_top + ($tab2_lh*2));
+	      $pdf->MultiCell(42, $tab2_lh, "Total TTC", 1, 'R', 1);
 	      
 	      $pdf->SetXY (174, $tab2_top + 0);
-	      $pdf->MultiCell(26, 8, price($propale->total_ht), 0, 'R', 0);
+	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_ht), 0, 'R', 0);
 	      
-	      $pdf->SetXY (174, $tab2_top + 8);
-	      $pdf->MultiCell(26, 8, price($propale->total_tva), 0, 'R', 0);
+	      $pdf->SetXY (174, $tab2_top + $tab2_lh);
+	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_tva), 0, 'R', 0);
 	      
-	      $pdf->SetXY (174, $tab2_top + 16);
-	      $pdf->MultiCell(26, 8, price($propale->total_ttc), 1, 'R', 1);
+	      $pdf->SetXY (174, $tab2_top + ($tab2_lh*2));
+	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_ttc), 1, 'R', 1);
 	      
 	      /*
 	       *
@@ -168,23 +172,24 @@ Class pdf_propale_rouge {
   Function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
 
-      $pdf->SetFont('Arial','',12);
+      $pdf->SetFont('Arial','',11);
             
       $pdf->Text(30,$tab_top + 5,'Désignation');
       
-      $pdf->line(132, $tab_top, 132, $nexY);
+      $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
       $pdf->Text(134,$tab_top + 5,'TVA');
       
-      $pdf->line(144, $tab_top, 144, $nexY);
+      $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
       $pdf->Text(147,$tab_top + 5,'Qté');
       
-      $pdf->line(156, $tab_top, 156, $nexY);
+      $pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
       $pdf->Text(160,$tab_top + 5,'P.U.');
       
-      $pdf->line(174, $tab_top, 174, $nexY);
+      $pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
       $pdf->Text(187,$tab_top + 5,'Total');
       
-      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
+      //      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
+      $pdf->Rect(10, $tab_top, 190, $tab_height);
 
 
       $pdf->SetTextColor(0,0,0);
@@ -243,7 +248,7 @@ Class pdf_propale_rouge {
       
       
       $pdf->SetTextColor(200,0,0);
-      $pdf->SetFont('Arial','B',14);
+      $pdf->SetFont('Arial','B',12);
       $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $propale->date));
       $pdf->Text(11, 94, "Proposition commerciale : ".$propale->ref);
       
