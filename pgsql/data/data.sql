@@ -158,9 +158,9 @@ insert into llx_const (name, value, type) values ('FAC_PDF_INTITULE','Facture','
 insert into llx_const (name, value, type) values ('FAC_PDF_MEL','facture@societe.com','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_WWW','http://www.societe.com','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_LOGO','/htdocs/documents/logo','chaine');
-insert into llx_const (name, value, type) values ('FAC_CAPITAL_EURO','18600','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_TVA_INTRA','BE 443 698 678','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_RCS','634 674','chaine');
+insert into llx_const (name, value, type) values ('FAC_CAPITAL_EURO','0','chaine');
+insert into llx_const (name, value, type) values ('FAC_PDF_TVA_INTRA','','chaine');
+insert into llx_const (name, value, type) values ('FAC_PDF_RCS','','chaine');
 
 --
 -- Propales
@@ -236,6 +236,7 @@ insert into llx_c_typent (id,libelle) values (100, 'Autres');
 --
 
 delete from llx_c_pays;
+insert into llx_c_pays (rowid,libelle,code) values (0, '-',               '');
 insert into llx_c_pays (rowid,libelle,code) values (1, 'France',          'FR');
 insert into llx_c_pays (rowid,libelle,code) values (2, 'Belgique',        'BE');
 insert into llx_c_pays (rowid,libelle,code) values (2, 'Belgie',	        'BE');
@@ -542,16 +543,27 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,107,'GIE  -
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,109,'GEIE - Groupement européen d\'intérêt économique');
 
 --
--- Formules de politesses
+-- Civilites
 --
 
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (1, 2, 'Madame', 1);
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (2, 2, 'Mevrouw', 1);
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (3, 2, 'Monsieur', 1);
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (4, 2, 'Meneer', 1);
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (5, 2, 'Mademoiselle', 1);
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (6, 2, 'Juffrouw', 1);
-insert into llx_c_civilite (rowid, fk_pays, civilite, active) values (7, 2, 'Maître', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (1 , 'MME', 'fr_FR', 0, 'Madame', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (3 , 'MR',  'fr_FR', 0, 'Monsieur', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (5 , 'MLE', 'fr_FR', 0, 'Mademoiselle', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (7 , 'MTRE','fr_FR', 0, 'Maître', 1);
+
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (21, 'MME', 'fr_BE', 0, 'Madame', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (23, 'MR',  'fr_BE', 0, 'Monsieur', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (25, 'MLE', 'fr_BE', 0, 'Mademoiselle', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (27, 'MTRE','fr_BE', 0, 'Maître', 1);
+
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (32, 'MME', 'nl_BE', 0, 'Mevrouw', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (34, 'MR',  'nl_BE', 0, 'Meneer', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (36, 'MLE', 'nl_BE', 0, 'Juffrouw', 1);
+
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (41, 'MME', 'en_US', 0, 'Madam', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (43, 'MR',  'en_US', 0, 'Mister', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (45, 'MLE', 'en_US', 0, 'Misses', 1);
+
 
 --
 -- Descriptif du plan comptable FR PCG99-ABREGE

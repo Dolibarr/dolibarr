@@ -402,8 +402,8 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'07','',2,'HAINAUT','Hainaut');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'08','',2,'LIEGE','Liège');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'09','',1,'LIMBOURG','Limbourg');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) VALUES (202,'10','',2,'LUXEMBOURG','Luxembourg');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) VALUES (201,'11','',2,'NAMUR','Namur');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'10','',2,'LUXEMBOURG','Luxembourg');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'11','',2,'NAMUR','Namur');
 
 --
 -- Provinces de Belgique - en Néerlandais
