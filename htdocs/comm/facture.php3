@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 
@@ -68,7 +68,7 @@ if ($action == 'add') {
 } elseif ($action == 'create') {
 
   $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
-  $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
+  $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
 
   $sql .= " AND p.rowid = $propalid";
 
@@ -161,7 +161,7 @@ if ($action == 'add') {
   print "</tr>\n";
   
   $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
-  $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp ORDER BY f.datec DESC ";
+  $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp ORDER BY f.datec DESC ";
         
   if ( $db->query($sql) ) {
     $num = $db->num_rows();
@@ -214,7 +214,7 @@ if ($action == 'add') {
 if ($facid) {
 
   $sql = "SELECT s.nom,s.idp, f.amount, f.facnumber, f.rowid";
-  $sql .= " FROM societe as s, llx_facture as f  WHERE f.fk_soc = s.idp";
+  $sql .= " FROM llx_societe as s, llx_facture as f  WHERE f.fk_soc = s.idp";
   $sql .= " AND f.rowid = $facid";
 
   $result = $db->query($sql);

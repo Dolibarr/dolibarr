@@ -25,7 +25,7 @@ require("./propal.class.php3");
 
 $db = new Db();
 
-$sql = "SELECT s.nom, s.idp, s.prefix_comm FROM societe as s WHERE s.idp = $socidp;";
+$sql = "SELECT s.nom, s.idp, s.prefix_comm FROM llx_societe as s WHERE s.idp = $socidp;";
 
 $result = $db->query($sql);
 if ($result) 

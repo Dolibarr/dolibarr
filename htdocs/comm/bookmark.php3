@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 require("./pre.inc.php3");
 
@@ -30,20 +30,22 @@ if ($sortfield == "") {
   $sortfield="idp";
 }
 
-
-
 $yn["t"] = "oui";
 $yn["f"] = "non";
 $ynn["1"] = "oui";
 $ynn["0"] = "non";
 
-if ($action == 'add') {
+if ($action == 'add')
+{
   $sql = "INSERT INTO llx_bookmark (fk_soc, dateb, author) VALUES ($socidp, now(),'". $GLOBALS["REMOTE_USER"]."');";
-  if (! $db->query($sql) ) {
-    print $db->error();
-  }
+  if (! $db->query($sql) )
+    {
+      print $db->error();
+    }
 }
-if ($action == 'delete') {
+
+if ($action == 'delete')
+{
   $sql = "DELETE FROM  llx_bookmark WHERE rowid=$bid AND author = '". $GLOBALS["REMOTE_USER"]."'";
   $result = $db->query($sql);
 }
@@ -58,21 +60,25 @@ $pagenext = $page + 1;
 print '<div class="titre">Bookmark</div>';
  
 $sql = "SELECT s.idp, s.nom, ".$db->pdate("b.dateb")." as dateb, st.libelle as stcomm, b.rowid as bid, b.author";
-$sql .= " FROM societe as s, c_stcomm as st, llx_bookmark as b";
+$sql .= " FROM llx_societe as s, c_stcomm as st, llx_bookmark as b";
 $sql .= " WHERE b.fk_soc = s.idp AND s.fk_stcomm = st.id AND s.datea is not null";
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
 
-if ( $db->query($sql) ) {
+if ( $db->query($sql) )
+{
   $num = $db->num_rows();
   $i = 0;
 
-  if ($sortorder == "DESC") {
-    $sortorder="ASC";
-  } else {
-    $sortorder="DESC";
-  }
+  if ($sortorder == "DESC")
+    {
+      $sortorder="ASC";
+    }
+  else
+    {
+      $sortorder="DESC";
+    }
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR bgcolor=\"orange\">";
   print "<TD>&nbsp;</TD>";
@@ -86,32 +92,38 @@ if ( $db->query($sql) ) {
   print "<TD>&nbsp;</TD>";
   print "</TR>\n";
   $var=True;
-  while ($i < $num) {
-    $obj = $db->fetch_object( $i);
-    
-    $var=!$var;
-    $bc1="bgcolor=\"#90c090\"";
-    $bc2="bgcolor=\"#b0e0b0\"";
-    if (!$var) {
-      $bc=$bc1;
-    } else {
-      $bc=$bc2;
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object( $i);
+      
+      $var=!$var;
+      $bc1="bgcolor=\"#90c090\"";
+      $bc2="bgcolor=\"#b0e0b0\"";
+      if (!$var)
+	{
+	  $bc=$bc1;
+	}
+      else
+	{
+	  $bc=$bc2;
+	}
+      print "<TR $bc>";
+      print "<TD>" . ($i + 1 + ($limit * $page)) . "</TD>";
+      print "<TD align=\"center\"><b>$obj->idp</b></TD>";
+      print "<TD><a href=\"index.php3?socid=$obj->idp\">$obj->nom</A></TD>\n";
+      
+      print "<TD align=\"center\">$obj->stcomm</TD>\n";
+      print "<TD>$obj->author</TD>\n";
+      print "<td>".strftime("%d %b %Y %H:%M", $obj->dateb) ."</td>";
+      print "<TD>[<a href=\"$PHP_SELF?action=delete&bid=$obj->bid\">Delete</A>]</TD>\n";
+      print "</TR>\n";
+      $i++;
     }
-    print "<TR $bc>";
-    print "<TD>" . ($i + 1 + ($limit * $page)) . "</TD>";
-    print "<TD align=\"center\"><b>$obj->idp</b></TD>";
-    print "<TD><a href=\"index.php3?socid=$obj->idp\">$obj->nom</A></TD>\n";
-
-    print "<TD align=\"center\">$obj->stcomm</TD>\n";
-    print "<TD>$obj->author</TD>\n";
-    print "<td>".strftime("%d %b %Y %H:%M", $obj->dateb) ."</td>";
-    print "<TD>[<a href=\"$PHP_SELF?action=delete&bid=$obj->bid\">Delete</A>]</TD>\n";
-    print "</TR>\n";
-    $i++;
-  }
   print "</TABLE>";
   $db->free();
-} else {
+}
+else
+{
   print $db->error();
 }
 
