@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,15 +22,15 @@
  *
  */
 
-/*!	\file htdocs/includes/modules/propale/pdf_propale_bleu.modules.php
+/**	    \file       htdocs/includes/modules/propale/pdf_propale_bleu.modules.php
 		\ingroup    propale
 		\brief      Fichier de la classe permettant de générer les propales au modèle Bleu
 		\version    $Revision$
 */
 
 
-/*!	\class pdf_propale_bleu
-		\brief  Classe permettant de générer les propales au modèle Bleu
+/**	    \class      pdf_propale_bleu
+		\brief      Classe permettant de générer les propales au modèle Bleu
 */
 
 class pdf_propale_bleu extends ModelePDFPropales
@@ -53,7 +53,7 @@ class pdf_propale_bleu extends ModelePDFPropales
   */
   function pdferror() 
   {
-      return $this->error();
+      return $this->error;
   }
   
   

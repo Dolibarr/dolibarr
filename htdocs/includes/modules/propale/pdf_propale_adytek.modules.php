@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,15 +22,15 @@
  *
  */
 
-/*!	\file htdocs/includes/modules/propale/pdf_propale_adytek.modules.php
+/**	    \file       htdocs/includes/modules/propale/pdf_propale_adytek.modules.php
 		\ingroup    propale
 		\brief      Fichier de la classe permettant de générer les propales au modèle Adytek
 		\version    $Revision$
 */
 
 
-/*!	\class pdf_propale_adytek
-		\brief  Classe permettant de générer les propales au modèle Adytek
+/**	    \class      pdf_propale_adytek
+		\brief      Classe permettant de générer les propales au modèle Adytek
 */
 
 class pdf_propale_adytek extends ModelePDFPropales
@@ -53,7 +53,7 @@ class pdf_propale_adytek extends ModelePDFPropales
   */
   function pdferror() 
   {
-      return $this->error();
+      return $this->error;
   }
   
   
@@ -222,6 +222,7 @@ class pdf_propale_adytek extends ModelePDFPropales
 
 	      $pdf->Output($file);
 
+          return 1;
 	    }
 	}
     }
@@ -273,17 +274,30 @@ class pdf_propale_adytek extends ModelePDFPropales
 
    function _pagehead(&$pdf, $propale)
     {
- //insertion de la variable FAC_PDF_INTITULE        FAC_PDF_MEL           FAC_PDF_WWW           FAC_PDF_LOGO
+        global $langs;
 
       $tab4_top = 60;
       $tab4_hl = 6;
       $tab4_sl = 4;
       $ligne = 2;
-      if (defined("FAC_PDF_LOGO"))
-      {
-        $pdf->SetXY(10,5);
-        $pdf->Image(FAC_PDF_LOGO, 10, 5,45.0, 25.0, 'PNG');
-      }
+
+        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
+        {
+            $pdf->SetXY(10,5);
+            if (file_exists(FAC_PDF_LOGO)) {
+                $pdf->Image(FAC_PDF_LOGO, 10, 5,45.0, 25.0, 'PNG');
+            }
+            else {
+                $pdf->SetTextColor(200,0,0);
+                $pdf->SetFont('Arial','B',8);
+                $pdf->MultiCell(80, 3, $langs->trans("ErrorLogoFileNotFound",FAC_PDF_LOGO), 0, 'L');
+                $pdf->MultiCell(80, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
+            }
+        }
+        else if (defined("FAC_PDF_INTITULE"))
+        {
+            $pdf->MultiCell(80, 6, FAC_PDF_INTITULE, 0, 'L');
+        }
 
       $pdf->SetDrawColor(192,192,192);
       $pdf->line(9, 5, 200, 5 );
