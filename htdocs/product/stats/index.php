@@ -39,14 +39,24 @@ if ($db->query($sql))
   $row = $db->fetch_row(0);
   $nbproduct = $row[0];
 }
+$db->free();
+$sql = "SELECT count(*) FROM llx_product WHERE envente = 0";
+if ($db->query($sql))
+{
+  $row = $db->fetch_row(0);
+  $nbhv = $row[0];
+}
+$db->free();
 
 print_fiche_titre('Statistiques produit', $mesg);
       
 print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 print "<tr>";
-print '<td width="20%">Nb de produit dans le catalogue</td>';
+print '<td width="40%">Nb de produit dans le catalogue</td>';
 print '<td>'.$nbproduct.'</td></tr>';
-
+print "<tr>";
+print '<td width="40%">Nb de produit dans le catalogue qui ne sont pas en vente</td>';
+print '<td>'.$nbhv.'</td></tr>';
 print '</table>';
 
 $db->close();
