@@ -28,7 +28,9 @@ create table llx_adherent
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
   fk_adherent_type smallint,
-  datec            datetime,
+  morphy           enum('mor','phy') NOT NULL, -- personne morale / personne physique
+  datevalid        datetime,  -- date de validation
+  datec            datetime,  -- date de creation
   prenom           varchar(50),
   nom              varchar(50),
   societe          varchar(50),
@@ -38,6 +40,7 @@ create table llx_adherent
   pays             varchar(50),
   email            varchar(255),
   fk_user_author   integer NOT NULL,
+  fk_user_mod      integer NOT NULL,
   fk_user_valid    integer NOT NULL,
   datefin          datetime NOT NULL, -- date de fin de validité de la cotisation
   note             text

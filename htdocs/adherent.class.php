@@ -32,6 +32,7 @@ class Adherent
   var $ville;
   var $pays;
   var $typeid;
+  var $morphy;
   var $email;
   var $public;
   var $commentaire;
@@ -200,6 +201,7 @@ class Adherent
       $sql .= ",email='".$this->email."'";
       $sql .= ",statut=".$this->statut;
       $sql .= ",fk_adherent_type=".$this->typeid;
+      $sql .= ",morphy='".$this->morphy."'";
 
       $sql .= " WHERE rowid = $this->id";
       
@@ -257,7 +259,7 @@ class Adherent
    */
   Function fetch($rowid)
   {
-    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.fk_adherent_type";
+    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.fk_adherent_type, d.morphy";
     $sql .= ",".$this->db->pdate("d.datefin")." as datefin";
     $sql .= " FROM llx_adherent as d";
     $sql .= " WHERE d.rowid = $rowid";
@@ -283,6 +285,7 @@ class Adherent
 	    $this->pays           = stripslashes($obj->pays);
 	    $this->datefin        = $obj->datefin;
 	    $this->commentaire    = stripslashes($obj->note);
+	    $this->cp             = $obj->morphy;
 	  }
       }
     else

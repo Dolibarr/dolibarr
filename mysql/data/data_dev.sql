@@ -52,8 +52,8 @@ delete from llx_user;
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,admin,webcal_login)
 values ('Quiedeville','Rodolphe','RQ','rodo','CRnN0Tam/s7z.',1,1,1,'rodo');
 
-insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
-values ('demo','demo','DEMO','demo','demo',1,0,'demo');
+insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login,admin)
+values ('demo','demo','DEMO','demo','demo',1,0,'demo',1);
 
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
 values ('demo1','demo1','DM1','demo1','demo',1,0,'demo1');

@@ -36,7 +36,7 @@ $pagenext = $page + 1;
 
 
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin";
-$sql .= " , d.email, t.libelle as type";
+$sql .= " , d.email, t.libelle as type, d.morphy";
 $sql .= " FROM llx_adherent as d, llx_adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
@@ -55,6 +55,7 @@ if ($result)
   print "<td>Date</td>";
   print "<td>Email</td>";
   print "<td>Type</td>";
+  print "<td>Personne</td>";
   print "</TR>\n";
     
   $var=True;
@@ -67,6 +68,7 @@ if ($result)
       print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->datefin)."</a></td>\n";
       print "<TD>$objp->email</TD>\n";
       print "<TD>$objp->type</TD>\n";
+      print "<TD>$objp->morphy</TD>\n";
       print "</tr>";
       $i++;
     }
