@@ -76,7 +76,7 @@ if ($result)
 
       print '<td>'.strftime("%d/%m/%Y %H:%M",$obj->datec)."</td>\n";
 
-      print '<td align="right">'.price($obj->amount)." ".$conf->monnaie</td>\n";
+      print '<td align="right">'.price($obj->amount)." ".$conf->monnaie."</td>\n";
 
       print "</tr>\n";
       $i++;

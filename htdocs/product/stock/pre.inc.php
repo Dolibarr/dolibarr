@@ -42,7 +42,7 @@ function llxHeader($head = "", $urlp = "", $title="")
 
   $menu->add_submenu(DOL_URL_ROOT."/product/stock/fiche.php?action=create", $langs->trans("NewWarehouse"));
 
-  $menu->add(DOL_URL_ROOT."/product/stock/mouvement.php", "Mouvements");
+  $menu->add(DOL_URL_ROOT."/product/stock/mouvement.php", $langs->trans("Movements"));
 
   left_menu($menu->liste);
 

@@ -67,7 +67,7 @@ function llxHeader($head = "", $urlp = "", $title="")
       $menu->add(DOL_URL_ROOT."/product/osc-liste.php", "Osc");
       $menu->add_submenu(DOL_URL_ROOT."/product/osc-liste.php?reqstock=epuise", "Produits Epuisés");
             
-      $menu->add(DOL_URL_ROOT."/product/osc-reviews.php", "Critiques");
+      $menu->add(DOL_URL_ROOT."/product/osc-reviews.php", $langs->trans("Criticals"));
       
       $menu->add_submenu(DOL_URL_ROOT."/product/osc-productsbyreviews.php", "Meilleurs produits");
       

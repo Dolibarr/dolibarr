@@ -183,7 +183,7 @@ class MenuLeft {
                 {
                   $langs->load("contracts");
                   $newmenu->add(DOL_URL_ROOT."/contrat/index.php?leftmenu=contracts", $langs->trans("Contracts"));
-                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/liste.php", "Liste");
+                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/liste.php", $langs->trans("List"));
                   if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/enservice.php", "En service");
                 }
                 
@@ -193,7 +193,7 @@ class MenuLeft {
                   $newmenu->add(DOL_URL_ROOT."/commande/index.php?leftmenu=orders", $langs->trans("Orders"));
                   if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/liste.php", $langs->trans("List"));
                   if ($conf->expedition->enabled) {
-                      if ($leftmenu=="orders") $newmenu->add(DOL_URL_ROOT."/expedition/", "Expeditions");
+                      if ($leftmenu=="orders") $newmenu->add(DOL_URL_ROOT."/expedition/", $langs->trans("Sendings"));
                   }
                   if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/stats/", $langs->trans("Statistics"));
                 }
@@ -281,15 +281,15 @@ class MenuLeft {
                 
                 if ($conf->compta->enabled)
                 {
-                  $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges","Charges");
-                  if ($leftmenu=="charges") $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php","Prest. Sociales");
+                  $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges",$langs->trans("Charges"));
+                  if ($leftmenu=="charges") $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"));
                 }
                 
                 if ($conf->compta->enabled && $conf->compta->tva && $user->societe_id == 0)
                 {
                   $newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=vat",$langs->trans("VAT"));
-                  if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/reglement.php","Réglements",1);
-                  if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/fiche.php?action=create","Nouveau réglement",1);
+                  if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/reglement.php",$langs->trans("Payments"),1);
+                  if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/fiche.php?action=create",$langs->trans("NewPayment"),1);
                 }
                 
                 if ($conf->compta->enabled) {
@@ -312,7 +312,7 @@ class MenuLeft {
                 
                 if ($conf->prelevement->enabled)
                 {
-                    $newmenu->add(DOL_URL_ROOT."/compta/prelevement/index.php?leftmenu=withdraw",$langs->trans("Withdrawls"));
+                    $newmenu->add(DOL_URL_ROOT."/compta/prelevement/index.php?leftmenu=withdraw",$langs->trans("StandingOrders"));
                     if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php","Bons");
                     if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php","Demandes");
                 }
@@ -320,21 +320,21 @@ class MenuLeft {
                 // Bilan, résultats
                 $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca&mainmenu=accountancy","Résultats / CA");
         
-            	if ($leftmenu==ca) $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca","Résultat / Exercice",1);
-                if ($leftmenu==ca) $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php?leftmenu=ca","Détail client/fourn.",2);
-                if ($leftmenu==ca) $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/compteres.php?leftmenu=ca","Compte de résultat",2);
-                if ($leftmenu==ca) $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/bilan.php?leftmenu=ca","Bilan",2);
+            	if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca","Résultat / Exercice",1);
+                if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php?leftmenu=ca","Détail client/fourn.",2);
+                if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/compteres.php?leftmenu=ca","Compte de résultat",2);
+                if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/bilan.php?leftmenu=ca","Bilan",2);
             	
-            	if ($leftmenu==ca) $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca","Chiffre d'affaire",1);
+            	if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca","Chiffre d'affaire",1);
             	
-            	if ($leftmenu==ca) $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cumul.php?leftmenu=ca","Cumulé",2);
+            	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cumul.php?leftmenu=ca","Cumulé",2);
             	if ($conf->propal->enabled) {
-            		if ($leftmenu==ca) $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/prev.php?leftmenu=ca","Prévisionnel",2);
-            		if ($leftmenu==ca) $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/comp.php?leftmenu=ca","Transformé",2);
+            		if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/prev.php?leftmenu=ca","Prévisionnel",2);
+            		if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/comp.php?leftmenu=ca","Transformé",2);
             	}
-            	if ($leftmenu==ca) $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/exercices.php?leftmenu=ca",$langs->trans("Evolution"),2);
-            	if ($leftmenu==ca) $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php?leftmenu=ca",$langs->trans("ByCompanies"),2);
-            	if ($leftmenu==ca) $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2);
+            	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/exercices.php?leftmenu=ca",$langs->trans("Evolution"),2);
+            	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php?leftmenu=ca",$langs->trans("ByCompanies"),2);
+            	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2);
             }
         
         
@@ -374,7 +374,7 @@ class MenuLeft {
                 {
                   $newmenu->add(DOL_URL_ROOT."/product/stock/", $langs->trans("Stock"));
                   $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/fiche.php?action=create", $langs->trans("NewWarehouse"));
-                  $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/mouvement.php", "Mouvements");
+                  $newmenu->add_submenu(DOL_URL_ROOT."/product/stock/mouvement.php", $langs->trans("Movements"));
                 }
             }
         
