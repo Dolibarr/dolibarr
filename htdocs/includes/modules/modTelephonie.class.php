@@ -20,22 +20,22 @@
  *
  */
 
-/*! 
-  \defgroup   telephonie  Module telephonie
-  \brief      Module pour gérer la téléphonie
+/**
+        \defgroup   telephonie  Module telephonie
+        \brief      Module pour gérer la téléphonie
 */
 
-/*!
-  \file       htdocs/includes/modules/modTelephonie.class.php
-  \ingroup    telephonie
-  \brief      Fichier de description et activation du module de Téléphonie
+/**
+        \file       htdocs/includes/modules/modTelephonie.class.php
+        \ingroup    telephonie
+        \brief      Fichier de description et activation du module de Téléphonie
 */
 
 include_once "DolibarrModules.class.php";
 
-/*!
-  \class modTelephonie
-  \brief Classe de description et activation du module Telephonie
+/**
+        \class      modTelephonie
+        \brief      Classe de description et activation du module Telephonie
 */
 
 class modTelephonie extends DolibarrModules
@@ -57,6 +57,7 @@ class modTelephonie extends DolibarrModules
     $this->const_name = "MAIN_MODULE_TELEPHONIE";
     $this->const_config = MAIN_MODULE_TELEPHONIE;
     $this->special = 1;
+    $this->picto='phoning';
 
     // Dir
     $this->dirs = array();
@@ -184,7 +185,7 @@ class modTelephonie extends DolibarrModules
 
   }
 
-  /*!
+  /**
     \brief      Fonction appelée lors de la désactivation d'un module.
     Supprime de la base les constantes, boites et permissions du module.
    */

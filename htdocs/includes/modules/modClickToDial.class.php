@@ -21,20 +21,22 @@
  *
  */
 
-/**   \defgroup   telephonie  Module Click to Dial
-      \brief      Module pour gérer l'appel automatique
+/**
+        \defgroup   telephonie  Module Click to Dial
+        \brief      Module pour gérer l'appel automatique
 */
 
 /**
-      \file       htdocs/includes/modules/modClickToDial.class.php
-      \ingroup    telephonie
+        \file       htdocs/includes/modules/modClickToDial.class.php
+        \ingroup    telephonie
+        \brief      Fichier de description et activation du module de click to Dial
 */
 
 include_once "DolibarrModules.class.php";
 
 /** 
-  \class modClickToDial
-  \brief Classe de description et activation du module de Click to Dial
+        \class      modClickToDial
+        \brief      Classe de description et activation du module de Click to Dial
 */
 
 class modClickToDial extends DolibarrModules
@@ -56,6 +58,7 @@ class modClickToDial extends DolibarrModules
     $this->const_name = "MAIN_MODULE_CLICKTODIAL";
     $this->const_config = MAIN_MODULE_CLICKTODIAL;
     $this->special = 1;
+    $this->picto='phoning';
 
     // Dir
     $this->dirs = array();
