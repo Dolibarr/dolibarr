@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2000,2001 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
  *
  * $Id$
  * $Source$
