@@ -1,6 +1,8 @@
 # Dolibarr language file - fr_FR - bills
 Bill=Facture
 Bills=Factures
+BillsCustomers=Factures clients
+BillsSuppliers=Factures fournisseurs
 CardBill=Fiche facture
 Payment=Paiement
 Payments=Paiements
