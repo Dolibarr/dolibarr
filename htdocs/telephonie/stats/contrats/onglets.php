@@ -20,7 +20,7 @@
  *
  */
 $h = 0;
-$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/lignes/index.php';
+$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/contrats/index.php';
 $head[$h][1] = "Global";
 $h++;
 
