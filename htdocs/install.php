@@ -70,7 +70,8 @@ if ($HTTP_POST_VARS["action"] == "set")
 	    {
 	      print "<tr><td>Le dossier ".$HTTP_POST_VARS["main_dir"]."/document n'existe pas !<p>";
 	      print "- Vous devez créer le dossier : <b>".$HTTP_POST_VARS["main_dir"]."/document</b> et permettre au serveur web d'écrire dans celui-ci";
-	      print "</td><td>Erreur</td></tr>";
+	      print '</td><td bgcolor="red">Erreur</td></tr>';
+	      $error++;
 	    }
 	  else
 	    {
@@ -91,7 +92,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 		    {
 		      if (! @mkdir($dir[$i], 0755))
 			{
-			  print "<tr><td>Impossible de créer : ".$dir[$i]."</td><td>Erreur</td></tr>";
+			  print "<tr><td>Impossible de créer : ".$dir[$i]."</td><td bgcolor=\"red\">Erreur</td></tr>";
 			  $error++;
 			}
 		      else
