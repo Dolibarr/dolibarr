@@ -24,7 +24,7 @@
 function propale_pdf_create($db, $facid)
 {
   
-  $dir = $GLOBALS["DOCUMENT_ROOT"]."/includes/modules/propale/";
+  $dir = DOL_DOCUMENT_ROOT."/includes/modules/propale/";
 
   if (defined("PROPALE_ADDON_PDF"))
     {
