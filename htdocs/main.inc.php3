@@ -43,6 +43,7 @@ if ($pos == '/')
   $pos = '';
 }
 define('DOL_URL_ROOT', $pos);
+//define('DOL_URL_ROOT', $dolibarr_main_url_root);
 
 require (DOL_DOCUMENT_ROOT."/conf/conf.class.php3");
 /*
@@ -65,7 +66,6 @@ require (DOL_DOCUMENT_ROOT ."/translate.class.php");
 require (DOL_DOCUMENT_ROOT ."/boxes.php");
 require (DOL_DOCUMENT_ROOT ."/address.class.php");
 require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf.php");
-require (DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
 define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/font/');
 
@@ -106,15 +106,43 @@ $db->close();
 /*
  * Inclusion de librairies dépendantes de paramètres de conf
  */
-
-if (defined("FACTURE_ADDON"))
+if (defined("MAIN_MODULE_FACTURE") && MAIN_MODULE_FACTURE)
 {
-  require(DOL_DOCUMENT_ROOT ."/includes/modules/facture/".FACTURE_ADDON."/".FACTURE_ADDON.".modules.php");
+  require (DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
+
+  if (defined("FACTURE_ADDON"))
+    {
+      require(DOL_DOCUMENT_ROOT ."/includes/modules/facture/".FACTURE_ADDON."/".FACTURE_ADDON.".modules.php");
+    }
+
+  if (defined("FACTURE_ADDON_PDF"))
+    {
+      require(DOL_DOCUMENT_ROOT ."/includes/modules/facture/pdf_".FACTURE_ADDON_PDF.".modules.php");
+    }
 }
 
-if (defined("FACTURE_ADDON_PDF"))
+if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
 {
-  require(DOL_DOCUMENT_ROOT ."/includes/modules/facture/pdf_".FACTURE_ADDON_PDF.".modules.php");
+  require (DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
+
+  if (defined("PROPALE_ADDON"))
+    {
+      require(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON."/".PROPALE_ADDON.".modules.php");
+    }
+
+  if (defined("PROPALE_ADDON_PDF"))
+    {
+      require(DOL_DOCUMENT_ROOT ."/includes/modules/propale/pdf_".PROPALE_ADDON_PDF.".modules.php");
+    }
+
+  if (! defined("PROPALE_OUTPUTDIR"))
+    {
+      define('PROPALE_OUTPUTDIR', DOL_DOCUMENT_ROOT . "/document/propale/");
+    }
+  if (! defined("PROPALE_OUTPUT_URL"))
+    {
+      define('PROPALE_OUTPUT_URL', "/document/propale");
+    }
 }
 
 // Modification de quelques variable de conf en fonction des Constantes
@@ -257,6 +285,8 @@ function top_menu($head)
   //  print "<HTML><HEAD>";
   print $head;
   //  print '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">';
+  //  print '<BASE href="'.DOL_URL_ROOT.'/">';
+
   print '<LINK REL="stylesheet" TYPE="text/css" HREF="'.DOL_URL_ROOT.'/'.$conf->css.'">';
   print "\n";
   if (defined("MAIN_TITLE"))
