@@ -72,25 +72,65 @@ print '<tr><td valign="top" width="30%">';
 
 print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
 print "<TR class=\"liste_titre\">";
-print "<td colspan=\"2\">Propositions commerciales</td>";
-print "</TR>\n";
+print "<td colspan=\"2\">Recherche</td></tr>";
+print '<form method="post" action="propal.php3">';
+print "<tr $bc[1]><td>";
+print 'Réf. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
+print "</form></table><br>";
 
-$sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 0";
-if (valeur($sql))
+
+
+$sql = "SELECT p.rowid, p.ref";
+$sql .= " FROM llx_propal as p";
+$sql .= " WHERE p.fk_statut = 0";
+
+if ( $db->query($sql) )
 {
-  $var=!$var;
-  print "<tr $bc[$var]><td><a href=\"propal.php3?viewstatut=0\">Brouillons</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
+  $num = $db->num_rows();
+  $i = 0;
+  if ($num > 0 )
+    {
+      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print "<TR class=\"liste_titre\">";
+      print "<td colspan=\"2\">Propositions commerciales brouillons</td></tr>";
+      
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<tr $bc[$var]><td><a href=\"propal.php3?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
+	  $i++;
+	}
+      print "</table><br>";
+    }
 }
 
-$sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 1";
-if (valeur($sql))
+$sql = "SELECT p.rowid, p.ref";
+$sql .= " FROM llx_propal as p";
+$sql .= " WHERE p.fk_statut = 1";
+
+if ( $db->query($sql) )
 {
-  $var=!$var;
-  print "<tr $bc[$var]><td><a href=\"propal.php3?viewstatut=1\">Ouvertes</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
+  $num = $db->num_rows();
+  $i = 0;
+  if ($num > 0 )
+    {
+      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print "<TR class=\"liste_titre\">";
+      print "<td colspan=\"2\">Propositions commerciales ouvertes</td></tr>";
+      
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<tr $bc[$var]><td><a href=\"propal.php3?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
+	  $i++;
+	}
+      print "</table><br>";
+    }
 }
 
 
-print "</table><br>";
 /*
  *
  *
