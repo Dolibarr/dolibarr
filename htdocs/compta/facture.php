@@ -468,7 +468,7 @@ if ($_GET["action"] == 'create')
 	       */
 	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p ";
 	      $sql .= " WHERE envente = 1";
-	      $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
+	      $sql .= " ORDER BY p.nbvente DESC LIMIT ".$conf->liste_limit;
 	      if ( $db->query($sql) )
 		{
 		  $opt = "<option value=\"0\" SELECTED></option>";
@@ -1284,7 +1284,7 @@ else
 	
 	$sql .= " ORDER BY $sortfield $sortorder, f.rowid DESC ";
 	
-	$sql .= $db->plimit($limit + 1,$offset);
+	$sql .= $db->plimit($limit,$offset);
 	
 	$result = $db->query($sql);
       }
@@ -1305,8 +1305,10 @@ else
 	print '</td><td align="right">';
 	print_liste_field_titre("Montant HT",$PHP_SELF,"f.total","","&amp;socidp=$socidp");
 	print '</td><td align="right">';
-	print_liste_field_titre("Montant TTC",$PHP_SELF,"f.totalttc","","&amp;socidp=$socidp");
-	print '</td><td align="right">Reçu</td>';
+	print_liste_field_titre("Montant TTC",$PHP_SELF,"f.total_ttc","","&amp;socidp=$socidp");
+	print '</td><td align="right">';
+	print_liste_field_titre("Reçu",$PHP_SELF,"am","","&amp;socidp=$socidp");
+	print '</td>';
 	print '<td align="center">Status</td>';
 	print "</tr>\n";
       
