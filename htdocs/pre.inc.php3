@@ -42,7 +42,7 @@ function llxHeader($head = "") {
 
   $menu->add("/compta/", "Comptabilité");
 
-  $menu->add_submenu("/compta/", "Factures");
+  $menu->add_submenu("/compta/facture.php3", "Factures");
 
   if ($conf->fichinter->enabled ) {
 

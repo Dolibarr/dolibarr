@@ -23,16 +23,30 @@
 -- de données, mieux on peut tester l'appli.
 -- ===========================================================================
 delete from llx_tva;
-insert into llx_tva (datep, datev, amount) values ('2001-11-11','2001-10-1',1960);
+insert into llx_tva (datep, datev, amount) values ('2001-11-11','2001-10-01', 1960.00);
+insert into llx_tva (datep, datev, amount) values ('2001-04-11','2001-01-01', 2000.00);
 
 delete from llx_facture_fourn;
+
 insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
 values ('LOL-509',1,'2001-05-09','2001-05-09',1,1000,0,196,1196,1,NULL,NULL,'');
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+values ('LOL-510',1,'2001-09-09','2001-09-09',1,100,0,19.6,119.6,1,NULL,NULL,'');
 
 insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
 values ('02-1-YHGT',2,now(),'2002-01-01',1,100,0,19.6,119.6,1,NULL,NULL,'');
+
 insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
 values ('02-5-YHGT',2,now(),'2002-05-01',1,1000,0,196,1196,1,NULL,NULL,'');
+
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+values ('02-10-YHGT',2,now(),'2002-10-01',1,1000,0,196,1196,1,NULL,NULL,'');
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+values ('02-11-YHGT',2,now(),'2002-11-01',1,1000,0,196,1196,1,NULL,NULL,'');
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+values ('02-12-YHGT',2,now(),'2002-12-01',1,1000,0,196,1196,1,NULL,NULL,'');
+
+
 
 delete from llx_user;
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,admin,webcal_login)

@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,18 +15,42 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 require("./pre.inc.php3");
 
 llxHeader();
-
-print 'Utilisateur : ' . $user->prenom . ' ' . $user->nom .' ['.$user->code.']';
-
 ?>
-<p>
-On verra plus tard ce que l'on pourra mettre sur cette belle page ;-)
-<?PHP
+    <h3>Dolibarr</h3>
+    <?PHP print 'Utilisateur : <b>' . $user->prenom . ' ' . $user->nom .'</b> ['.$user->code.']';?>
 
+    <br><br>
+      
+    <style type="text/css">
+      td.dash { border: 1px dashed #c0C0C0; }
+    </style>
+
+    <table width="100%" cellspacing="3">
+	<tr>
+	  <td width="50%" class="dash">
+	    <a href="/comm/">Commercial</a>
+	    <ul>
+	      <li><a href="/comm/propal.php3">Propositions commerciales</a>
+	    </ul>
+	  </td>
+	  <td width="50%" class="dash">
+	    <a href="/compta">Compta</a>
+	    <ul>
+	      <li><a href="/compta/resultat/">Résultat</A>
+	      <li><a href="/compta/tva/">TVA</A>
+	    </ul>
+	  </td>
+	</tr>
+
+    </table>
+<?PHP
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
 

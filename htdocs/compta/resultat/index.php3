@@ -65,7 +65,7 @@ if ($result) {
       $var=!$var;
             
       print "<TR $bc[$var]><td>&nbsp</td>";
-      print "<td>Facture <a href=\"/compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a> $objp->nom</TD>\n";
+      print "<td>Factures <a href=\"/compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a> $objp->nom</TD>\n";
       
       print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
       
@@ -82,6 +82,8 @@ if ($result) {
 }
 print '<tr><td colspan="3" align="right">'.price($total).'</td></tr>';
 /*
+ * Frais, factures fournisseurs.
+ *
  *
  */
 $sql = "SELECT s.nom,sum(f.amount) as amount";
@@ -92,11 +94,10 @@ if ($year > 0) {
 $sql .= " GROUP BY s.nom ASC";
 
 print '<tr><td colspan="4">Frais</td></tr>';
-
+$subtotal = 0;
 $result = $db->query($sql);
 if ($result) {
   $num = $db->num_rows();
-    
   $i = 0;
   
   if ($num > 0) {
@@ -106,11 +107,12 @@ if ($result) {
       $var=!$var;
             
       print "<TR $bc[$var]><td>&nbsp</td>";
-      print "<td>Facture <a href=\"/compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a> $objp->nom</TD>\n";
+      print "<td>Factures <a href=\"/compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a> $objp->nom</TD>\n";
       
       print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
       
       $total = $total - $objp->amount;
+      $subtotal = $subtotal + $objp->amount;
       print "<TD align=\"right\">".price($total)."</TD>\n";
       
       print "</TR>\n";
@@ -121,7 +123,7 @@ if ($result) {
 } else {
   print $db->error();
 }
-print '<tr><td colspan="3" align="right">'.price($total).'</td></tr>';
+print '<tr><td colspan="3" align="right">'.price($subtotal).'</td></tr>';
 
 /*
  * Charges sociales

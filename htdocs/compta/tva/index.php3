@@ -101,7 +101,7 @@ $db = new Db();
 
 $tva = new Tva($db);
 
-print "Solde :" . price($tva->solde());
+print "Solde :" . price($tva->solde($year));
 
 if ($year == 0 ) {
   $year_current = strftime("%Y",time());
@@ -127,7 +127,8 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
   print "<td>&nbsp;</td>\n";
   print "</TR>\n";
   $var=True;
-  $total = 0;
+  $total = 0;  $subtotal = 0;
+  $i=0;
   for ($m = 1 ; $m < 13 ; $m++ ) {
     $var=!$var;
     print "<TR $bc[$var]>";
@@ -141,11 +142,17 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
     
     $diff = $x_coll - $x_paye;
     $total = $total + $diff;
+    $subtotal = $subtotal + $diff;
     
     print "<td align=\"right\">".price($diff)."</td>\n";
     print "</TR>\n";
     
     $i++;
+    if ($i > 2) {
+      print '<tr><td align="right" colspan="3">Sous total :</td><td align="right">'.price($subtotal).'</td>';
+      $i = 0;
+      $subtotal = 0;
+    }
   }
   print '<tr><td align="right" colspan="3">Total :</td><td align="right"><b>'.price($total).'</b></td>';
   print "</TABLE>";

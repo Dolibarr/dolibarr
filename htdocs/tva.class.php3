@@ -23,17 +23,13 @@
  * La tva collectée n'est calculée que sur les factures payées.
  *
  *
- *
- *
- *
- *
- *
  */
 class Tva {
   var $db;
-
   var $note;
-
+  /*
+   * Initialistation automatique de la classe
+   */
   Function Tva($DB) {
     global $config;
 
@@ -41,7 +37,11 @@ class Tva {
     
     return 1;
   }
-
+  /*
+   * Hum la fonction s'appelle 'Solde' elle doit a mon avis
+   * calcluer le solde de TVA, non ?
+   *
+   */
   Function solde($year = 0) {
     
     $payee = $this->tva_sum_payee($year);
@@ -50,11 +50,10 @@ class Tva {
     $solde = $payee - $collectee;
 
     return $solde;
-
   }
   /*
    * Tva collectée
-   *
+   * Total de la TVA des factures emises par la societe.
    *
    */
   Function tva_sum_collectee($year = 0) {
@@ -63,7 +62,7 @@ class Tva {
     $sql .= " FROM llx_facture as f WHERE f.paye = 1";
 
     if ($year) {
-      $sql .= " AND f.datef >= '$y-01-01' AND f.datef <= '$y-12-31' ";
+      $sql .= " AND f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
     }
 
     $result = $this->db->query($sql);
@@ -85,7 +84,7 @@ class Tva {
   }
   /*
    * Tva payée
-   *
+   * Total de la TVA payee aupres de qui de droit
    *
    */
   Function tva_sum_payee($year = 0) {
@@ -94,7 +93,7 @@ class Tva {
     $sql .= " FROM llx_tva as f";
 
     if ($year) {
-      $sql .= " WHERE f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";
+      $sql .= " WHERE f.datev >= '$year-01-01' AND f.datev <= '$year-12-31' ";
     }
 
     $result = $this->db->query($sql);
@@ -115,8 +114,5 @@ class Tva {
     } 
   }
 }
-/*
- * $Id$
- * $Source$
- */
+
 ?>
