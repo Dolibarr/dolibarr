@@ -96,7 +96,7 @@ class ModeleNumRefFactures
 		\param	    db  		objet base de donnée
 		\param	    facid		id de la facture à créer
 */
-function facture_pdf_create($db, $facid)
+function facture_pdf_create($db, $facid, $message="")
 {
   global $langs;
   $langs->load("bills");
@@ -112,6 +112,8 @@ function facture_pdf_create($db, $facid)
       require_once($dir.$file);
 
       $obj = new $classname($db);
+
+      $obj->message = $message;
 
       if ( $obj->write_pdf_file($facid) > 0)
 	{
