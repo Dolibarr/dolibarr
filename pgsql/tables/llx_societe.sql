@@ -35,6 +35,7 @@ create table llx_societe
   address        varchar(255),                        -- company adresse
   cp             varchar(10),                         -- zipcode
   ville          varchar(50),                         -- town
+  fk_departement integer        default 0,            --
   fk_pays        integer        default 0,            --
   tel            varchar(20),                         -- phone number
   fax            varchar(20),                         -- fax number
@@ -42,7 +43,12 @@ create table llx_societe
   fk_secteur     integer        default 0,            --
   fk_effectif    integer        default 0,            --
   fk_typent      integer        default 0,            --
+  fk_forme_juridique integer       default 0,         -- forme juridique INSEE
   siren	         varchar(9),                          --
+  siret           varchar(14),                        -- numero de siret
+  ape             varchar(4),                         -- code ape
+  tva_intra       varchar(20),                        -- tva intracommunautaire
+  capital         real,                               -- capital de la société
   description    text,                                --
   fk_stcomm      smallint       default 0,            -- commercial statut
   note           text,                                --
@@ -50,6 +56,9 @@ create table llx_societe
   prefix_comm    varchar(5),                          -- prefix commercial
   client         smallint       default 0,            -- client oui/non
   fournisseur    smallint       default 0             -- fournisseur oui/non
+  rubrique        varchar(255),                       -- champ rubrique libre
+  fk_user_creat   integer,                       -- utilisateur qui a créé l'info
+  fk_user_modif   integer,                       -- utilisateur qui a modifié l'info
 );
 
 create unique index llx_societe_prefix_comm on llx_societe(prefix_comm);

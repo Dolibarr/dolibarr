@@ -24,18 +24,25 @@
 
 create table llx_socpeople
 (
-  idp         SERIAL PRIMARY KEY,
-  datec       timestamp,
-  fk_soc      integer,
-  name        varchar(50),
-  firstname   varchar(50),
-  address     varchar(255),
-  poste       varchar(80),
-  phone       varchar(30),
-  fax         varchar(30),
-  email       varchar(255),
-  fk_user     integer default 0,
-  note        text
+  idp         	SERIAL PRIMARY KEY,
+  datec       	timestamp,
+  tms		timestamp,
+  fk_soc      	integer,
+  civilite	smallint,           -- 1 M, 2 Mme, 3 Mlle
+  name        	varchar(50),
+  firstname   	varchar(50),
+  address     	varchar(255),
+  birthday      date,
+  poste       	varchar(80),
+  phone       	varchar(30),
+  phone_perso	varchar(30),
+  phone_mobile	varchar(30),
+  fax         	varchar(30),
+  email       	varchar(255),
+  jabberid	varchar(255),
+  fk_user     	integer default 0, -- user qui a créé l'enregistrement
+  fk_user_modif integer,
+  note        	text
 );
 
 CREATE INDEX llx_socpeople_fk_soc ON llx_socpeople(fk_soc);
