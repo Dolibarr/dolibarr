@@ -1,0 +1,26 @@
+	Base de données :
+	
+	Vous trouverez un fichier Makefile dans le repertoire mysql/
+qui contient toutes les commandes pour créer la base, les tables et
+les données de bases.
+
+	'make create' crée la base de données 'dolibarr' vous pouvez
+changer le nom de la base avec la commande 'make create
+BASE=autrenom', pensez a executer 'make create' avec un utilisateur
+ayant les droits de création de base. Les droits sur la base sont créés
+en même temps, si vous souhaitez les changer vous pouvez éditer le
+fichier Makefile.
+
+
+	'make table' crée les tables
+
+	'make load' charge les donnees nécessaire dans les tables de
+constantes.
+
+	'make dev' charge un ensemble de données de test, cette étapes
+est facultative
+
+
+	Une fois les 3 commandes (make create, make table et make
+load) passées votre base de donnees est prêtes a etre utilisée.
+
