@@ -27,6 +27,7 @@ create table llx_facture_fourn
   fk_soc     integer NOT NULL,
   datec      datetime,  -- date de creation de la facture
   datef      date,      -- date de la facture
+  libelle    varchar(255),
   paye       smallint default 0 NOT NULL,
   amount     real     default 0 NOT NULL,
   remise     real     default 0,
