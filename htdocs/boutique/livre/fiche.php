@@ -22,11 +22,10 @@
 
 require("./pre.inc.php");
 
-llxHeader();
-
 $db = new Db();
 
-if ($action == 'add') {
+if ($action == 'add')
+{
   $livre = new Livre($db);
 
   $livre->titre = $titre;
@@ -44,6 +43,15 @@ if ($action == 'addga')
   $livre = new Livre($db);
   $livre->linkga($id, $coauteurid);
 }
+
+if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == "yes")
+{
+  $livre = new Livre($db);
+  $livre->fetch($id);
+  $livre->delete();
+  Header("Location: index.php");
+}
+
 
 if ($action == 'linkcat')
 {
@@ -76,7 +84,8 @@ if ($action == "status")
     }
 }
 
-if ($action == 'update' && !$cancel) {
+if ($action == 'update' && !$cancel)
+{
   $livre = new Livre($db);
 
   $livre->titre = $titre;
@@ -97,7 +106,8 @@ if ($action == 'update' && !$cancel) {
     }
 }
 
-if ($action == 'updateosc') {
+if ($action == 'updateosc')
+{
   $livre = new Livre($db);
   $result = $livre->fetch($id);
 
@@ -108,6 +118,9 @@ if ($action == 'updateosc') {
  *
  *
  */
+
+llxHeader();
+
 if ($action == 'create')
 {
 
@@ -158,6 +171,33 @@ else
 	{ 
 	  $htmls = new Form($db);
 	  $auteurs = $livre->liste_auteur();
+
+
+	  /*
+	   * Confirmation de la suppression de l'adhérent
+	   *
+	   */
+	  
+	  if ($action == 'delete')
+	    {
+	      
+	      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">';
+	      print '<input type="hidden" name="action" value="confirm_delete">';
+	      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+	      
+	      print '<tr><td colspan="3">Supprimer le livre</td></tr>';	      
+	      print '<tr><td class="delete">Etes-vous sur de vouloir supprimer cet ouvrage ?</td><td class="delete">';
+	      $htmls = new Form($db);
+	      
+	      $htmls->selectyesno("confirm","no");
+	      
+	      print "</td>\n";
+	      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+	      print '</table>';
+	      print "</form>\n";  
+	    }
+	  
+
 
 	  if ($action == 'edit')
 	    {
@@ -318,7 +358,7 @@ print '<td width="20%" align="center">-</td>';
 //print '<td width="20%" align="center">[<a href="fiche.php?action=updateosc&id='.$id.'">Update Osc</a>]</td>';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';    
+print '<td width="20%" align="center">[<a href="fiche.php?action=delete&id='.$id.'">Supprimer</a>]</td>';
 print '</table><br>';
 
 $db->close();
