@@ -122,15 +122,7 @@ function llxHeader($head = "", $title="", $help_url='')
   if ($user->rights->compta->ventilation->param)
     $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));
 
-  if (! $user->compta) 
-    {
-      $menu->clear();
-      $menu->add(DOL_URL_ROOT."/",$langs->trans("Home"));
-    }
 
-  /*
-   *
-   */
   left_menu($menu->liste, $help_url);
 }
 

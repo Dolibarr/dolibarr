@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,9 @@
  *
  */
 
-/**
-    \file   	htdocs/compta/param/pre.inc.php
-    \ingroup    compta
-    \brief  	Fichier gestionnaire du menu paramétrage de la compta
+/**     \file   	htdocs/compta/param/pre.inc.php
+        \ingroup    compta
+        \brief  	Fichier gestionnaire du menu paramétrage de la compta
 */
 
 require("../../main.inc.php");
@@ -43,11 +42,6 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add_submenu(DOL_URL_ROOT."/compta/param/comptes/liste.php","Comptes généraux");
 
-  if (! $user->compta) 
-    {
-      $menu->clear();
-      $menu->add(DOL_URL_ROOT."/",$langs->trans("Home"));
-    }
 
   left_menu($menu->liste, $help_url);
 }

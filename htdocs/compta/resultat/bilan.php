@@ -19,6 +19,12 @@
  * $Source$
  *
  */
+
+/**     \file   	htdocs/compta/resultat/pre.inc.php
+        \ingroup    compta
+        \brief  	Fichier gestionnaire du menu paramétrage de la compta
+*/
+
 require("./pre.inc.php");
 require("../../tva.class.php");
 require("../../chargesociales.class.php");
