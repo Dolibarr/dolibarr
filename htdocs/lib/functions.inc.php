@@ -156,6 +156,10 @@ Function img_pdf($alt = "Voir")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/pdf.png" border="0" alt="'.$alt.'">';
 }
 
+Function img_warning($alt = "Voir")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/warning.png" border="0" alt="'.$alt.'">';
+}
 
 Function img_delete($alt = "Supprimer")
 {
