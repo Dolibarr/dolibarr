@@ -39,45 +39,64 @@ if ($user->societe_id > 0)
 
 print_titre("Chiffres d'affaires en euros HT");
 
-print "<table width=\"100%\">";
-print "<tr><td valign=\"top\">";
 
 $sql = "SELECT sum(f.amount) as amount , date_format(f.datef,'%Y-%m') as dm";
 $sql .= " FROM llx_facture as f WHERE f.paye = 1";
+
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
 }
 $sql .= " GROUP BY dm DESC";
 
-pt($db, $sql,"Par mois");
-
-print "</td><td valign=\"top\">";
-
-$sql = "SELECT sum(f.amount) as amount, month(f.datef) as dm";
-$sql .= " FROM llx_facture as f WHERE f.paye = 1";
-if ($socidp)
-{
-  $sql .= " AND f.fk_soc = $socidp";
+$result = $db->query($sql);
+if ($result) {
+  $num = $db->num_rows();
+  $i = 0; 
+  $var=True;
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($i);
+      $cum[$row[1]] = $row[0];
+      $i++;
+    }
 }
-$sql .= " GROUP BY dm";
-
-pt($db, $sql,"Mois cumulés");
 
 
-print "<P>";
 
-$sql = "SELECT sum(f.amount) as amount, year(f.datef) as dm";
-$sql .= " FROM llx_facture as f WHERE f.paye = 1";
-if ($socidp)
+print '<table width="100%" border="1">';
+print '<tr class="liste_titre"><td></td>';
+
+for ($annee = 2001 ; $annee < 2006 ; $annee++)
 {
-  $sql .= " AND f.fk_soc = $socidp";
+  print '<td align="center" width="14%">'.$annee.'</td>';
 }
-$sql .= " GROUP BY dm DESC";
+print '</tr>';
+for ($mois = 1 ; $mois < 13 ; $mois++)
+{
 
-pt($db, $sql,"Année");
+  print '<tr>';
+  print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
+  for ($annee = 2001 ; $annee < 2006 ; $annee++)
+    {
+      print '<td align="right">&nbsp;';
+      $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
+      if ($cum[$case]>0)
+	{
+	  print price($cum[$case]);
+	}
+      print "</td>";
+    }
 
-print "</td></tr></table>";
+  print '</tr>';
+}
+
+
+  //pt($db, $sql,"Par mois");
+
+
+
+print "</table>";
 
 $db->close();
 
@@ -90,8 +109,7 @@ llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</e
 
 function pt ($db, $sql, $date)
 {
-  $bc[0]="class=\"pair\"";
-  $bc[1]="class=\"impair\"";
+  global $bc;
 
   $result = $db->query($sql);
   if ($result) {
