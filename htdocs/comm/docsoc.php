@@ -177,6 +177,10 @@ if ($socid > 0)
 
 	  closedir($handle);
 	}
+      else
+	{
+	  print "<p>Impossible d'ouvrir : <b>$upload_dir</b>";
+	}
     }
   else
     {
