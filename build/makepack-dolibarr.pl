@@ -91,47 +91,57 @@ $BUILDROOT="$TEMP/buildroot";
 
 my $copyalreadydone=0;
 
-# Choose package targets
-#-----------------------
 print "Makepack version $VERSION\n";
 print "Building package for $PROJECT $MAJOR.$MINOR\n";
-my $found=0;
-my $NUM_SCRIPT;
-while (! $found) {
-	my $cpt=0;
-	printf(" %d - %3s    (%s)\n",$cpt,"All","Need ".join(",",values %REQUIREMENTTARGET));
-	foreach my $target (@LISTETARGET) {
-		$cpt++;
-		printf(" %d - %3s    (%s)\n",$cpt,$target,"Need ".$REQUIREMENTTARGET{$target});
-	}
 
-	# On demande de choisir le fichier à passer
-	print "Choose one package number or several separated with space: ";
-	$NUM_SCRIPT=<STDIN>; 
-	chomp($NUM_SCRIPT);
-	if ($NUM_SCRIPT =~ s/-//g) {
-		# Do not do copy	
-		$copyalreadydone=1;
-	}
-	if ($NUM_SCRIPT !~ /^[0-$cpt\s]+$/)
-	{
-		print "This is not a valid package number list.\n";
-		$found = 0;
-	}
-	else
-	{
-		$found = 1;
-	}
+for (0..@ARGV-1) {
+	if ($ARGV[$_] =~ /^-*target=(\w+)/i)    { $target=$1; }
 }
-print "\n";
-if ($NUM_SCRIPT) {
-	foreach my $num (split(/\s+/,$NUM_SCRIPT)) {
-		$CHOOSEDTARGET{$LISTETARGET[$num-1]}=1;
-	}
+
+# Choose package targets
+#-----------------------
+if ($target) {
+    $CHOOSEDTARGET{uc($target)}=1;
 }
 else {
-	foreach my $key (@LISTETARGET) {
-	    $CHOOSEDTARGET{$key}=1;
+    my $found=0;
+    my $NUM_SCRIPT;
+    while (! $found) {
+    	my $cpt=0;
+    	printf(" %d - %3s    (%s)\n",$cpt,"All","Need ".join(",",values %REQUIREMENTTARGET));
+    	foreach my $target (@LISTETARGET) {
+    		$cpt++;
+    		printf(" %d - %3s    (%s)\n",$cpt,$target,"Need ".$REQUIREMENTTARGET{$target});
+    	}
+    
+    	# On demande de choisir le fichier à passer
+    	print "Choose one package number or several separated with space: ";
+    	$NUM_SCRIPT=<STDIN>; 
+    	chomp($NUM_SCRIPT);
+    	if ($NUM_SCRIPT =~ s/-//g) {
+    		# Do not do copy	
+    		$copyalreadydone=1;
+    	}
+    	if ($NUM_SCRIPT !~ /^[0-$cpt\s]+$/)
+    	{
+    		print "This is not a valid package number list.\n";
+    		$found = 0;
+    	}
+    	else
+    	{
+    		$found = 1;
+    	}
+    }
+    print "\n";
+    if ($NUM_SCRIPT) {
+    	foreach my $num (split(/\s+/,$NUM_SCRIPT)) {
+    		$CHOOSEDTARGET{$LISTETARGET[$num-1]}=1;
+    	}
+    }
+    else {
+    	foreach my $key (@LISTETARGET) {
+    	    $CHOOSEDTARGET{$key}=1;
+        }
     }
 }
 
