@@ -37,7 +37,7 @@ EXTRACT_STATIC         = NO
 EXTRACT_LOCAL_CLASSES  = YES
 EXTRACT_LOCAL_METHODS  = NO
 HIDE_UNDOC_MEMBERS     = YES
-HIDE_UNDOC_CLASSES     = YES
+HIDE_UNDOC_CLASSES     = NO
 HIDE_FRIEND_COMPOUNDS  = NO
 HIDE_IN_BODY_DOCS      = NO
 INTERNAL_DOCS          = NO
@@ -78,11 +78,12 @@ EXCLUDE                = mysql \
                          scripts \
                          htdocs/theme \
                          htdocs/images \
-                         htdocs/includes/pear
-                         htdocs/includes/php_writeexcel
+                         htdocs/includes/fpdf \
+                         htdocs/includes/pear \
+                         htdocs/includes/php_writeexcel \
                          htdocs/includes/phplot
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       = 
+EXCLUDE_PATTERNS       =
 EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = 
 EXAMPLE_RECURSIVE      = NO
