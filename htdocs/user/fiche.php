@@ -194,6 +194,7 @@ else
     {
         $fuser = new User($db, $_GET["id"]);
         $fuser->fetch();
+	$fuser->getrights();
 
         /*
          * Affichage onglets
@@ -234,91 +235,91 @@ else
 
         if ($_GET["action"] == 'perms')
         {
-            if ($message) { print "$message<br>"; }
-
-            /*
-             * Ecran ajout/suppression permission
-             */
-
-            print '<table class="noborder" width="100%">';
-
-
-            // Droits existant
-            print "<tr>".'<td valign="top" colspan="2">';
-            print '<table width="100%" class="noborder">';
-            print '<tr class="liste_titre"><td>'.$langs->trans("AvailableRights").'</td><td>'.$langs->trans("Module").'</td><td>&nbsp</td></tr>';
-            $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r ORDER BY r.module, r.id ASC";
-
-            if ($db->query($sql))
+	  if ($message) { print "$message<br>"; }
+	  
+	  /*
+	   * Ecran ajout/suppression permission
+	   */
+	  
+	  print '<table class="noborder" width="100%">';
+	  
+	  
+	  // Droits existant
+	  print "<tr>".'<td valign="top" colspan="2">';
+	  print '<table width="100%" class="noborder">';
+	  print '<tr class="liste_titre"><td>'.$langs->trans("AvailableRights").'</td><td>'.$langs->trans("Module").'</td><td>&nbsp</td></tr>';
+	  $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r ORDER BY r.module, r.id ASC";
+	  
+	  if ($db->query($sql))
             {
-                $num = $db->num_rows();
-                $i = 0;
-                $var = True;
-                while ($i < $num)
+	      $num = $db->num_rows();
+	      $i = 0;
+	      $var = True;
+	      while ($i < $num)
                 {
-                    $obj = $db->fetch_object($i);
-                    if ($oldmod <> $obj->module)
+		  $obj = $db->fetch_object($i);
+		  if ($oldmod <> $obj->module)
                     {
-                        $oldmod = $obj->module;
-                        $var = !$var;
+		      $oldmod = $obj->module;
+		      $var = !$var;
                     }
-                    print '<tr '. $bc[$var].'>';
-                    print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td>';
-                    print '<td><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">'.img_edit_add().'</a></td>';
-                    print '</tr>';
-
-                    $i++;
+		  print '<tr '. $bc[$var].'>';
+		  print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td>';
+		  print '<td><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">'.img_edit_add().'</a></td>';
+		  print '</tr>';
+		  
+		  $i++;
                 }
             }
-            print '</table>';
-
-            print '</td><td colspan="2" valign="top">';
-
-            // Droits possédés
-            print '<table class="noborder" width="100%">';
-            print '<tr class="liste_titre"><td>&nbsp</td><td>'.$langs->trans("OwnedRights").'</td><td>'.$langs->trans("Module").'</td></tr>';
-            $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
-            $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.module, r.id ASC";
-            $var = True;
-            if ($db->query($sql))
+	  print '</table>';
+	  
+	  print '</td><td colspan="2" valign="top">';
+	  
+	  // Droits possédés
+	  print '<table class="noborder" width="100%">';
+	  print '<tr class="liste_titre"><td>&nbsp</td><td>'.$langs->trans("OwnedRights").'</td><td>'.$langs->trans("Module").'</td></tr>';
+	  $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
+	  $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.module, r.id ASC";
+	  $var = True;
+	  if ($db->query($sql))
             {
-                $num = $db->num_rows();
-                $i = 0;
-                while ($i < $num)
+	      $num = $db->num_rows();
+	      $i = 0;
+	      while ($i < $num)
                 {
-                    $obj = $db->fetch_object($i);
-                    if ($oldmod <> $obj->module)
+		  $obj = $db->fetch_object($i);
+		  if ($oldmod <> $obj->module)
                     {
-                        $oldmod = $obj->module;
-                        $var = !$var;
+		      $oldmod = $obj->module;
+		      $var = !$var;
                     }
-
-                    print "<tr $bc[$var]>";
-                    print '<td align="right"><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=delrights&amp;rights='.$obj->id.'">'.img_edit_remove().'</a></td>';
-                    print "<td>".$obj->libelle . '</td><td>'.$obj->module . '</td>';
-                    print '</tr>';
-                    $i++;
+		  
+		  print "<tr $bc[$var]>";
+		  print '<td align="right"><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=delrights&amp;rights='.$obj->id.'">'.img_edit_remove().'</a></td>';
+		  print "<td>".$obj->libelle . '</td><td>'.$obj->module . '</td>';
+		  print '</tr>';
+		  $i++;
                 }
             }
-            print '</table>';
-            print '</td></tr>';
+	  print '</table>';
+	  print '</td></tr>';
         }
-
-
+	
+	
         if ($_GET["action"] != 'perms' && $_GET["action"] != 'edit')
-        {
+	  {
             /*
              * Fiche en mode visu
              */
-
+	    
             print '<table class="border" width="100%">';
-
+	    
             print "<tr>".'<td width="25%" valign="top">'.$langs->trans("LastName").'</td>';
             print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
             print '<td width="25%" valign="top">'.$langs->trans("FirstName").'</td>';
             print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
             print "</tr>\n";
-
+	    
             print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Login").'</td>';
             print '<td width="25%" class="valeur">'.$fuser->login.'</td>';
             print '<td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
@@ -400,7 +401,7 @@ else
              */
             print '<table width="100%" class="noborder">';
             print '<tr class="liste_titre"><td>'.$langs->trans("Permissions").'</td><td>'.$langs->trans("Module").'</td></tr>';
-            $sql = "SELECT r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
+            $sql = "SELECT r.libelle, r.module, r.perms FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
             $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.module, r.id ASC";
             $var = True;
             if ($db->query($sql))
@@ -408,23 +409,25 @@ else
                 $num = $db->num_rows();
                 $i = 0;
                 while ($i < $num)
-                {
+		  {
                     $obj = $db->fetch_object($i);
                     if ($oldmod <> $obj->module)
-                    {
+		      {
                         $oldmod = $obj->module;
                         $var = !$var;
-                    }
-
-                    print "<tr $bc[$var]><td>".$obj->libelle . '</td><td>'.$obj->module."</td></tr>\n";
+		      }
+		    $fac = 'facture';
+		    $bac = "lire";
+		    $alpha = $fuser->rights->$fac->$bac; //"user->rights->".$obj->perms;
+                    print "<tr $bc[$var]><td>".$alpha . '</td><td>'.$$alpha." ".$fuser->rights->facture->lire."</td></tr>\n";
                     $i++;
-                }
+		  }
             }
             print "</table>\n";
             print "<br>\n";
-
-        }
-
+	    
+	  }
+	
         /*
          * Fiche en mode edition
          */
