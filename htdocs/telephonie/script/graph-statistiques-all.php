@@ -30,6 +30,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/ProcessGraphContrats.class.ph
 $childrenTotal = 10;
 $childrenNow = 0;
 $clientPerChild = 0;
+$contratPerChild = 0;
 
 $sql = "SELECT max(s.idp)";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -53,9 +54,8 @@ if ($db->query($sql))
 
 
 
-while ( $childrenNow < $childrenTotal )
+while ( $childrenNow < (2 * $childrenTotal) )
 {
- 
   $pid = pcntl_fork();
   
   if ( $pid == -1 )
@@ -68,10 +68,16 @@ while ( $childrenNow < $childrenTotal )
     }
   else
     {
-      $process = new ProcessGraphClients( $childrenNow, $clientPerChild );
-      $process->go();
-      $process = new ProcessGraphContrats( $childrenNow, $contratPerChild );
-      $process->go();
+      if ($childrenNow < 10)
+	{
+	  $process = new ProcessGraphClients( $childrenNow, $clientPerChild );
+	  $process->go();
+	}
+      if ($childrenNow >= 10)
+	{
+	  $process = new ProcessGraphContrats( ($childrenNow - 10), $contratPerChild );
+	  $process->go();
+	}
       die();
     }  
 }
