@@ -48,36 +48,37 @@ table.noborder td {
                     border: 0px  }
 
 table#actions {
-                 border-collapse: collapse;
-                 border: 1px ridge }
+                border-collapse: collapse;
+                border: 0px;
+                }
 
 table#actions td {
-                    border-collapse: collapse;
-                    border: 1px ridge }
-
+                   border-collapse: collapse;
+                   border-bottom: 1px ridge #666633;
+                   border-right: 1px ridge #666633;
+                   border-left: 1px ridge white; 
+                   border-top: 1px ridge white;
+                   text-align: center;
+}
 /*
  *
  */
-
 a { 
     text-decoration: none;
     font-weight: bold;
-    color: #000000;
-    }
+    color: #000000; }
 
 a:hover {     text-decoration: underline;  }
 
 td.menu { 
           border-right: 1px solid #000000;
           border-bottom: 1px solid #000000;
-          font-size: 0.95em;
-          }
+          font-size: 0.95em; }
 
 td.menusel { 
              border-right: 1px solid #000000;
              border-bottom: 1px solid #000000;
-             font-size: 0.95em;
-             }
+             font-size: 0.95em; }
 
 td.border { 
             border-top: 1px solid #000000;
