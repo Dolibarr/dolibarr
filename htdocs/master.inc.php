@@ -196,6 +196,9 @@ if (defined("MAIN_MODULE_COMMERCIAL"))
 if (defined("MAIN_MODULE_COMPTABILITE"))
 {
   $conf->compta->enabled=MAIN_MODULE_COMPTABILITE;
+  $conf->compta->dir_output=DOL_DATA_ROOT."/rapport";
+  $conf->compta->dir_images=DOL_DOCUMENT_ROOT."/images/rapport";
+  $conf->compta->url_images=DOL_URL_ROOT."/images/rapport";
 }
 if (defined("MAIN_MODULE_BANQUE"))
 {

@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+ 
+/**     \file       htdocs/compta/paiement/fiche.php
+		\ingroup    facture
+		\brief      Onglet paiement d'un paiement
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 
@@ -35,8 +42,12 @@ $year = $_GET["year"];
 
 require("../../includes/modules/rapport/pdf_paiement.class.php");
 
-$dir = DOL_DOCUMENT_ROOT."/document/rapport/";
+$dir = $conf->compta->dir_output;
 
+
+/*
+ * Action générer fichier rapport paiements
+ */
 if ($_POST["action"] == 'gen')
 {
   $rap = new pdf_paiement($db);
@@ -49,10 +60,10 @@ llxHeader();
 
 
 /*
- *
+ * Affichage liste des paiements
  *
  */
-print_titre("Rapport paiements (EN COURS DE DEVELOPPEMENT)");
+print_titre("Rapport paiements");
 
 print '<form method="post" action="rapport.php?year='.$year.'">';
 print '<input type="hidden" name="action" value="gen">';
@@ -100,7 +111,7 @@ for ($formyear = $syear - 2; $formyear < $syear +1 ; $formyear++)
     }
 }
 print "</select>\n";
-print '<input type="submit" value="Générer">';
+print '<input type="submit" value="'.$langs->trans("Create").'">';
 print '</form>';
 
 clearstatcache();
@@ -118,15 +129,18 @@ while (($file = readdir($handle))!==false)
 if ($year)
 {
   $handle=opendir($dir.'/'.$year);
-  
-  print '<table width="100%" id="wiborder">';
-  print '<tr><td>Rapport</td><td align="right">Taille</td><td align="right">Date de génération</td></tr>';
+  print '<br>';
+  print '<table width="100%" class="noborder">';
+  print '<tr class="liste_titre"><td>Rapport</td><td align="right">'.$langs->trans("Size").'</td><td align="right">'.$langs->trans("Date").'</td></tr>';
+  $var=true;
   while (($file = readdir($handle))!==false)
     {
       if (substr($file, 0, 8) == 'paiement')
 	{
+	  $var=!$var;
 	  $tfile = $dir . '/'.$year.'/'.$file;
-	  print '<tr><td><a href="'.DOL_URL_ROOT.'/document/rapport/'.$year.'/'.$file.'">'.$file.'</a></td>';
+	  $relativepath = $year.'/'.$file;
+	  print "<tr $bc[$var]>".'<td><a href="/document.php?modulepart=facture_paiement&file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
 	  print '<td align="right">'.filesize($tfile). ' bytes</td>';
 	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($tfile)).'</td></tr>';
 	}
