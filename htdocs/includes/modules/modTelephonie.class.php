@@ -107,6 +107,13 @@ class modTelephonie extends DolibarrModules
     $this->rights[4][2] = 'w'; // type de la permission (déprécié à ce jour)
     $this->rights[4][3] = 0; // La permission est-elle une permission par défaut
 
+    $this->rights[5][0] = 145; // id de la permission
+    $this->rights[5][1] = 'Configurer les fournisseurs'; // libelle de la permission
+    $this->rights[5][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[5][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[5][4] = 'fournisseur'; // La permission est-elle une permission par défaut
+    $this->rights[5][5] = 'config'; // La permission est-elle une permission par défaut
+
     // Dir
     $this->dirs[0] = DOL_DATA_ROOT . "/telephonie/" ;
     $this->dirs[1] = DOL_DATA_ROOT . "/telephonie/ligne/" ;	  
