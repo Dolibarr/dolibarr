@@ -72,15 +72,26 @@ else
     }
 }
 
-print '<TD width="15%" class="menu" align="center">';
+if (strstr($GLOBALS["SCRIPT_URL"],DOL_URL_ROOT.'/product/'))
+{
+  $class = "menusel";
+}
+else
+{
+  $class = "menu";
+}
+
+print '<TD width="15%" class="'.$class.'" align="center">';
 if ($conf->produit->enabled ) 
 {
-  print '<A class="menu" href="'.DOL_URL_ROOT.'/product/">Produits</a>';
+  print '<A class="'.$class.'" href="'.DOL_URL_ROOT.'/product/?type=0">Produits</a>';
 }
 else
 {
   print '-';
 }
+
+
 print '</td><td width="15%" class="menu" align="center">';
 
 if(defined("MAIN_MODULE_WEBCALENDAR") && MAIN_MODULE_WEBCALENDAR)
