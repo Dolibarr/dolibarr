@@ -218,7 +218,7 @@ if ($action == 'create')
        *
        */
       $factures = $projet->get_facture_list();
-
+      $total = 0;
       if (sizeof($factures)>0 && is_array($factures))
 	{
 	  print_titre('Listes des factures associées au projet');
