@@ -31,7 +31,6 @@ if ($sortorder == "")
 
 if ($action == 'add') 
 {
-
   $email = trim($email);
 
   if (strlen(trim($name)) + strlen(trim($firstname)) > 0) 
@@ -66,6 +65,16 @@ if ($action == 'update')
     }
 }
 
+if ($action == 'create_user') 
+{
+  $nuser = new User($db);
+  $contact = new Contact($db);
+  $nuser->nom = $contact->nom;
+  $nuser->prenom = $contact->prenom;
+  $result = $contact->fetch($contactid);
+  $nuser->create_from_contact($contact);
+}
+
 /*
  *
  *
@@ -78,15 +87,8 @@ if ($socid > 0)
 
   $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.cp,s.ville, s.note FROM llx_societe as s, c_stcomm as st ";
   $sql .= " WHERE s.fk_stcomm=st.id";
+  $sql .= " AND s.idp = $socid";
 
-  if ($to == 'next') 
-    {
-      $sql .= " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
-    } 
-  else
-    {
-      $sql .= " AND s.idp = $socid";
-    }
 
   $result = $db->query($sql);
 
@@ -105,7 +107,7 @@ if ($socid > 0)
 
       if ($objsoc->note)
 	{
-	  print "<table border=0 width=\"100%\" cellspacing=0 bgcolor=#e0e0e0>";
+	  print '<table border=0 width="100%" cellspacing="0">';
 	  print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
 	  print "</table>";
 	}
@@ -122,7 +124,7 @@ if ($socid > 0)
   print "<td><b>Poste</b></td><td><b>Tel</b></td>";
   print "<td><b>Fax</b></td><td><b>Email</b></td>";
   
-  $sql = "SELECT p.name, p.firstname, p.poste, p.phone, p.fax, p.email ";
+  $sql = "SELECT p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.fk_user ";
   $sql .= " FROM llx_socpeople as p WHERE p.fk_soc = $objsoc->idp";
   
   if ($contactid) 
@@ -133,17 +135,11 @@ if ($socid > 0)
   $sql .= "   ORDER by p.datec";
   $result = $db->query($sql);
   $i = 0 ; $num = $db->num_rows(); $tag = True;
+
   while ($i < $num) 
     {
       $obj = $db->fetch_object( $i);
-      if ($tag) 
-	{
-	  print "<tr bgcolor=\"e0e0e0\">";
-	}
-      else
-	{
-	  print "<tr>";
-	}
+      print "<tr>";
       print "<td>$obj->firstname $obj->name</td>";
       print "<td>$obj->poste&nbsp;</td>";
       print "<td>$obj->phone&nbsp;</td>";
@@ -153,6 +149,19 @@ if ($socid > 0)
       $i++;
       $tag = !$tag;
     }
+  if ($contactid)
+    {
+      if ($obj->fk_user)
+	{
+	  print '<tr><td>Login</td><td colspan="4"><a href="'.DOL_URL_ROOT.'/user/fiche.php3?id='.$obj->fk_user.'">Fiche</a></td></tr>';
+	}
+      else
+	{
+	  print '<tr><td>Login</td><td colspan="3">Pas de compte</td>';
+	  print '<td align="center"><a href="people.php3?contactid='.$contactid.'&socid='.$socid.'&action=create_user">Créer un compte</td></tr>';
+	}
+    }
+
   print "</table>";
   
   
@@ -267,15 +276,12 @@ if ($socid > 0)
     }
   print "</table>";
 
-
-
-
 } 
 else 
 {  
   print "Error";
 }
-$db->free();
+
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");

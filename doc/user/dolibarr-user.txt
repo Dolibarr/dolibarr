@@ -16,27 +16,17 @@
 Table des matières
 ------------------
 
-     1.        Installation
-     1.1.      Récupérer les sources
-     1.2.      Pré-requis
-     1.3.      Base de données
-     1.4.      Apache
-     1.5.      Dolibarr
+     1.        Propositions commerciales
+     1.1.      Créer une proposition commerciale
+     1.2.      Modèles de proposition
 
-     2.        Mise à jour
-     2.1.      Mise à jour de la base de données
+     2.        Facturation
+     2.1.      Facture
+     2.2.      Paiements
 
-     3.        Propositions commerciales
-     3.1.      Créer une proposition commerciale
-     3.2.      Modèles de proposition
-
-     4.        Facturation
-     4.1.      Facture
-     4.2.      Paiements
-
-     5.        Produits
-     5.1.      Aspect général
-     5.2.      Spécificités des services
+     3.        Produits
+     3.1.      Aspect général
+     3.2.      Spécificités des services
 
      A.        Fichier de conf Apache
      A.1.      Fichier de config pour `Apache 1.3' + `mod_auth_mysql'
@@ -47,114 +37,13 @@ Table des matières
 -------------------------------------------------------------------------------
 
 
-1. Installation
----------------
-
-     Installation de Dolibarr.  Cette documentation est valable à partir de
-     la version 0.1.3 de Dolibarr.
-
-
-1.1. Récupérer les sources
---------------------------
-
-     Récupérer les sources sur http://rodolphe.quiedeville.org/
-     (http://rodolphe.quiedeville.org/projets/dolibarr/dl/?M=D)
-
-     Les sources se présentent sous la forme d'un fichier tar compressé
-     avec gzip.
-
-
-1.2. Pré-requis
----------------
-
-     Liste des logiciels à installer pour faire fonctionner Dolibarr :
-
-        * php4
-
-        * php4-mysql
-
-        * php4-curl (pour la partie gestion des adhérents)
-
-        * Apache
-
-        * libapache-mod-auth-mysql
-
-
-1.3. Base de données
---------------------
-
-     1- créer une base de données mysql appelée 'dolibarr' (vous pouvez
-     changer le nom, dans ce cas remplacer dans la suite des commandes
-     'dolibarr' par le nom de votre base de données)
-
-     `# mysqladmin create dolibarr'
-
-     2- charger la base en exécutant :
-
-     `# mysql dolibarr < mysql/mysql.sql'
-
-
-1.4. Apache
------------
-
-     Pour configurer Apache : un fichier httpd.conf.dist est fournit avec
-     les sources, vous pouvez vous en servir pour configurer votre serveur,
-     il est prévu pour que vous ayez juste à ajouter une régle Include dans
-     votre fichier principal `httpd.conf'.
-
-
-1.5. Dolibarr
--------------
-
-     Créer un répertoire appelé `document' dans le répertoire `htdocs' des
-     sources et affectez les droits d'écriture dans ce répertoire à
-     l'utilisateur exécutant le serveur web.
-
-     Créer un fichier `conf/conf.php' et donnez les droits d'écriture dans
-     ce fichier à l'utilisateur exécutant le serveur web.
-
-     Pour configurer Dolibarr accéder à la page /install.php, pour vous
-     logger utlisez le login admin avec le mot de passe admin.
-
-     Une fois les valeurs enregistrés, si les controles sont correctes vous
-     n'avez qu'a cliquer sur le lien, 'phase finale de configuration'.
-
-
--------------------------------------------------------------------------------
-
-
-2. Mise à jour
---------------
-
-     Certaines action sont nécessaires lors de la mise à jour de Dolibarr
-     vers une version plus récente des sources.
-
-
-2.1. Mise à jour de la base de données
---------------------------------------
-
-     Il peut être nécessaire de faire des modifications sur la structure
-     et/ou les données contenues dans la base Mysql lors de la mise à jour
-     de Dolibarr.  Pour cela des scripts sont fournis dans le répertoire
-     `mysql/migration/'.  Il se présente sous la forme a.b.c-e.d.f.sql, les
-     trois premiers numéros indique la version de départ et les 3 suivants
-     la version que vous souhaitez atteindre.  Si vous passez par exemple
-     de la version 0.1.3 à la version 0.1.6 il vous faudra appliquer les
-     patchs 0.1.3-0.1.4.sql, 0.1.4-0.1.5.sql et 0.1.5-0.1.6.sql si un patch
-     n'éxiste pas d'une version à une autre c'est qu'il n'y a pas eu de
-     modification de base.
-
-
--------------------------------------------------------------------------------
-
-
-3. Propositions commerciales
+1. Propositions commerciales
 ----------------------------
 
      Propositions commerciales
 
 
-3.1. Créer une proposition commerciale
+1.1. Créer une proposition commerciale
 --------------------------------------
 
      La création d'une proposition commerciale se fait à partir de la fiche
@@ -162,7 +51,7 @@ Table des matières
      en haut à gauche sur la fiche, sous la barre de menu général.
 
 
-3.2. Modèles de proposition
+1.2. Modèles de proposition
 ---------------------------
 
      Dolibarr sait gérer plusieurs modèles de propositions.  Vous pouvez
@@ -174,23 +63,23 @@ Table des matières
 -------------------------------------------------------------------------------
 
 
-4. Facturation
+2. Facturation
 --------------
 
      Module de facturation.
 
 
-4.1. Facture
+2.1. Facture
 ------------
 
-4.1.1. Créer une facture
+2.1.1. Créer une facture
 ------------------------
 
      La création d'une facture se fait à partir de la fiche client dans la
      partie comptable.  Le lien permettant cela se trouve en haut à gauche
      sur la fiche, sous la barre de menu générale.
 
-4.1.2. Supprimer une facture
+2.1.2. Supprimer une facture
 ----------------------------
 
      Pour supprimer une facture il vous faut ouvrir la fiche de celle-ci.
@@ -199,24 +88,24 @@ Table des matières
      toutes les données s'y afférant.  Une facture supprimée ne peut pas
      être récupérée.
 
-4.1.3. Modifier une facture
+2.1.3. Modifier une facture
 ---------------------------
 
      Pour modifier une facture il vous faut ouvrir la fiche de celle-ci.
      Une facture ne peut être modifiée que si celle-ci est à l'état de
      brouillon.
 
-4.1.4. Cycle de vie d'une facture
+2.1.4. Cycle de vie d'une facture
 ---------------------------------
 
-4.1.4.1. Brouillon
+2.1.4.1. Brouillon
 ------------------
 
      Lors de sa création une facture est considéré dans l'état de
      brouillon, dans cet état il n'st possible que de "Valider" ou de
      supprimer" une facture.
 
-4.1.4.2. Validée
+2.1.4.2. Validée
 ----------------
 
      Une facture validée est une facture qui a été vérifiée par les
@@ -227,31 +116,31 @@ Table des matières
      un paiement', 'Effectuer une relance', 'Classer comme payée' une fois
      l'intégralité des paiements étant égale au total TTC de la facture.
 
-4.1.4.3. Payée
+2.1.4.3. Payée
 --------------
 
      L'état ultime de la facture qui nous remplit tous de joie.  La seule
      action possible sur une facture payée est la consultation de celle-ci.
 
 
-4.2. Paiements
+2.2. Paiements
 --------------
 
-4.2.1. Création (émission)
+2.2.1. Création (émission)
 --------------------------
 
      La création d'un paiement s'effectue depuis la fiche de la facture
      correspondante.  La création n'est possible que si et seulement si la
      facture n'est pas dans l'état 'Payée'.
 
-4.2.2. Suppression
+2.2.2. Suppression
 ------------------
 
      La suppression d'un paiement s'effectue depuis la fiche de la facture
      correspondante.  La suppression n'est possible que si et seulement si
      la facture n'est pas dans l'état 'Payée'.
 
-4.2.3. Modification
+2.2.3. Modification
 -------------------
 
      La modification d'un paiement n'est pas possible vous devez pour cela
@@ -261,7 +150,7 @@ Table des matières
 -------------------------------------------------------------------------------
 
 
-5. Produits
+3. Produits
 -----------
 
      Tout élément vendu dans Dolibarr est considéré comme un produit.  Les
@@ -272,14 +161,14 @@ Table des matières
      support inclue forcément une durée.
 
 
-5.1. Aspect général
+3.1. Aspect général
 -------------------
 
      La création d'un produit s'effectue depuis le menu gauche de
      l'application, pour cela il vous faut être dans la section produit.
 
 
-5.2. Spécificités des services
+3.2. Spécificités des services
 ------------------------------
 
 

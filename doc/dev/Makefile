@@ -43,7 +43,8 @@ all: $(DOC).pdf $(DOC).html
 	$(DEBIANDOC2PS) $(OPTIONS) $<
 
 $(DOC).pdf: $(FRPAGES)
-	$(DEBIANDOC2PDF) $(OPTIONS) $(DOC).sgml
+#$(DEBIANDOC2PDF) $(OPTIONS) $(DOC).sgml
+	linuxdoc --backend=latex -o pdf dolidev.sgml
 
 %.html: %.sgml $(FRPAGES)
 	$(DEBIANDOC2HTML) $(HOPTIONS) $<
@@ -52,4 +53,5 @@ put:
 	$(RSYNC) $(ROPT) $(RSSH) dolibarr-dev.html rodolphe.quiedeville.org:/home/www/www.dolibarr.com/htdocs/documentation
 
 clean:
-	rm -f *pdf *ps
+	rm -f *pdf *pslinuxdoc --backend=latex -o pdf dolidev.sgml
+

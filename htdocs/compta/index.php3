@@ -79,14 +79,48 @@ print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top" width="33%">';
 
+/*
+ * Propales à facturer
+ */
+if ($user->comm > 0 && $conf->commercial ) 
+{
+  $sql = "SELECT p.rowid, p.ref, s.nom FROM llx_propal as p, llx_societe as s";
+  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = 2";
+  if ($socidp)
+    {
+      $sql .= " AND p.fk_soc = $socidp";
+    }
+
+  if ( $db->query($sql) ) 
+    {
+      $num = $db->num_rows();
+      if ($num)
+	{
+	  $i = 0;
+	  print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+	  print "<TR class=\"liste_titre\">";
+	  print '<td colspan="2">'.translate("Propositions comm. à facturer").'</td>';
+	  print "</TR>\n";
+  
+	  while ($i < $num)
+	    {
+	      $var=!$var;
+	      $obj = $db->fetch_object($i);
+	      print "<tr $bc[$var]><td><a href=\"propal.php3?propalid=$obj->rowid\">$obj->ref</a></td><td align=\"right\">".$obj->nom."</td></tr>";
+	      $i++;
+	    }
+	  print "</table><br>";
+	}
+    }
+}
+
+/*
+ * Charges a payer
+ *
+ */
 if ($user->societe_id == 0)
 {
-
-
-  /*
-   * Charges a payer
-   *
-   */
+ 
   $sql = "SELECT c.amount, cc.libelle";
   $sql .= " FROM llx_chargesociales as c, c_chargesociales as cc";
   $sql .= " WHERE c.fk_type = cc.id AND c.paye=0";
@@ -119,29 +153,6 @@ if ($user->societe_id == 0)
     {
       print $db->error();
     }
-}
-/*
- * Propales à facturer
- */
-if ($user->comm > 0 && $conf->commercial ) 
-{
-  print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-  print "<TR class=\"liste_titre\">";
-  print '<td colspan="2">'.translate("Propositions commerciales").'</td>';
-  print "</TR>\n";
-  
-  $sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 2";
-  if ($socidp)
-    {
-      $sql .= " AND fk_soc = $socidp";
-    }
-  if (valeur($sql))
-    {
-      $var=!$var;
-      print "<tr $bc[$var]><td><a href=\"propal.php3?viewstatut=2\">A facturer</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
-    }
-  
-  print "</table><br>";
 }
 /*
  * Factures impayées

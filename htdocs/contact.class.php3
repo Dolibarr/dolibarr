@@ -50,7 +50,7 @@ class Contact
   Function fetch($id) 
     {
 
-      $sql = "SELECT c.idp, c.idp, c.name, c.firstname";
+      $sql = "SELECT c.idp, c.fk_soc, c.name, c.firstname, c.email";
       $sql .= " FROM llx_socpeople as c";
       $sql .= " WHERE c.idp = $id";
       
@@ -65,11 +65,12 @@ class Contact
 	      $this->id = $obj->idp;
 	      $this->nom = $obj->name;
 	      $this->prenom = $obj->firstname;
-	      
+	      $this->societeid = $obj->fk_soc;
 	      $this->fullname = $this->prenom . ' ' . $this->nom;
 	      
 	      $this->code = $obj->code;
 	      $this->email = $obj->email;
+	      $this->mail = $obj->email;
 	    }
 
 	  $this->db->free();

@@ -255,32 +255,34 @@ if ($propalid)
       /*
        * Actions
        */
-      print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
-  
-
-      if ($obj->statut == 2)
-	{
-	  print '<td bgcolor="#e0e0e0" align="center" width="25%">';
-	  print "<a href=\"facture.php3?propalid=$propalid&action=create\">Emettre une facture</td>";
-	}
-      else
-	{
-	  print '<td align="center" width="25%">-</td>';
-	}
-      
-      print "<td align=\"center\" width=\"25%\">-</td>";
-      print "<td align=\"center\" width=\"25%\">-</td>";
-
-
-      if ($obj->statut == 2)
-	{
-	  print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=setstatut&statut=4\">Facturée</a>]</td>";
-	}
-      else	
-	{
+      if ($obj->statut <> 4)
+	{  
+	  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+	  
+	  if ($obj->statut == 2)
+	    {
+	      print '<td bgcolor="#e0e0e0" align="center" width="25%">';
+	      print "<a href=\"facture.php3?propalid=$propalid&action=create\">Emettre une facture</td>";
+	    }
+	  else
+	    {
+	      print '<td align="center" width="25%">-</td>';
+	    }
+	  
 	  print "<td align=\"center\" width=\"25%\">-</td>";
+	  print "<td align=\"center\" width=\"25%\">-</td>";
+	  
+
+	  if ($obj->statut == 2)
+	    {
+	      print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=setstatut&statut=4\">Facturée</a>]</td>";
+	    }
+	  else	
+	    {
+	      print "<td align=\"center\" width=\"25%\">-</td>";
+	    }
+	  print "</tr></table>";
 	}
-      print "</tr></table>";
       /*
        *
        */

@@ -34,9 +34,11 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+$user->getrights('facture');
+
 llxHeader();
 
-$db = new Db();
+
 
 
 if ($action=='add_action') {
@@ -53,7 +55,6 @@ if ($action=='add_action') {
   $actioncomm->note = $note;
 
   $actioncomm->add($user);
-
 
   $societe = new Societe($db);
   $societe->fetch($socid);

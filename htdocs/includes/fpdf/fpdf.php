@@ -1038,7 +1038,7 @@ function _begindoc()
 {
 	//Start document
 	$this->state=1;
-	$this->_out('%PDF-1.3');
+	$this->_out('%PDF-1.4');
 }
 
 function _putpages()

@@ -175,7 +175,26 @@ class Tva
   /*
    *
    */
+  Function add_payement($datep, $datev, $amount)
+    {
+      $sql = "INSERT INTO llx_tva (datep, datev, amount) ";
+      $sql .= " VALUES ('".$this->db->idate($datep)."',";
+      $sql .= "'".$this->db->idate($datev)."'," . ereg_replace(",",".",$amount) .")";
 
+      $result = $this->db->query($sql);
+
+      if ($result)
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error()."<br>".$sql;
+	  return -1;
+	} 
+
+
+    }
 }
 
 ?>
