@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -103,23 +103,43 @@ function UnActivate($value)
 $db->close();
 
 
-llxHeader();
+llxHeader("","","Admin");
+
+if (!$_GET["spe"])
+{
+    $hselected = 0;
+}
+else
+{
+    $hselected = 1;
+}
+
+$h = 0;
+$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?spe=0";
+$head[$h][1] = $langs->trans("ModulesCommon");
+
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?spe=1";
+$head[$h][1] = $langs->trans("ModulesSpecial");
+$h++;
+
+dolibarr_fiche_head($head, $hselected, $langs->trans("Modules"));
 
 
 if (!$_GET["spe"])
 {
-    print_titre($langs->trans("ModulesCommon"));
     print "<br>".$langs->trans("ModulesDesc")."<br>\n";
 }
 else
 {
-    print_titre($langs->trans("ModulesSpecial"));
     print "<br>".$langs->trans("ModulesSpecialDesc")."<br>\n";
 }
 
 
+
 print '<br>';
-print '<table class="noborder">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Family").'</td>';
 print '<td>'.$langs->trans("Module").'</td>';
@@ -197,15 +217,22 @@ foreach ($orders as $key => $value)
     }
 
     if((!$objMod->special && !$_GET["spe"] ) or ($objMod->special && $_GET["spe"]))
-    {
+      {
         $atleastoneforfamily=1;
         $var=!$var;
         
         print "<tr $bc[$var]>";
-
+	
         print "<td class='body'>";
-        if ($family!=$oldfamily) { print '<div class="titre">'.$familylib[$family].'</div></td>'; $oldfamily=$family; }
-        else { print '&nbsp;'; }
+        if ($family!=$oldfamily)
+	  { 
+	    print '<div class="titre">'.$familylib[$family].'</div>';
+	    $oldfamily=$family;
+	  }
+        else
+	  { 
+	    print '&nbsp;';
+	  }
         print "</td>";
         print "<td>";
         print $objMod->name;
@@ -214,19 +241,19 @@ foreach ($orders as $key => $value)
         print '</td><td align="center">';
 
         if ($const_value == 1)
-        {
-            print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-        }
+	  {
+	    print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	  }
         else
-        {
+	  {
             print "&nbsp;";
-        }
-
+	  }
+	
         print '</td><td align="center">';
-
+	
 
         if ($const_value == 1)
-        {
+	  {
             print '<a href="modules.php?action=reset&amp;value='.$modName.'&amp;spe='.$_GET["spe"].'">'.$langs->trans("Disable").'</a></td>';
 
 
@@ -235,42 +262,40 @@ foreach ($orders as $key => $value)
                 if (is_array($objMod->config_page_url)) {
                     print '<td>';
                     $i=0;
-                    foreach ($objMod->config_page_url as $page) {
-                        if ($i++) { print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;'; }
-                        else { print '<a href="'.$page.'">'.$langs->trans("Setup").'</a>&nbsp;'; }
-                    }
+                    foreach ($objMod->config_page_url as $page) 
+		      {
+                        if ($i++)
+			  {
+			    print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;'; 
+			  }
+                        else
+			  {
+			    print '<a href="'.$page.'">'.$langs->trans("Setup").'</a>&nbsp;'; 
+			  }
+		      }
                     print '</td>';
-                } else {
-                    print '<td><a href="'.$objMod->config_page_url.'">'.$langs->trans("Setup").'</a></td>';
                 }
+		else
+		  {
+                    print '<td><a href="'.$objMod->config_page_url.'">'.$langs->trans("Setup").'</a></td>';
+		  }
             }
             else
-            {
+	      {
                 print "<td>&nbsp;</td>";
-            }
-
+	      }
+	    
         }
         else
-        {
-            print '<a href="modules.php?action=set&value='.$modName.'&amp;spe='.$_GET["spe"].'">'.$langs->trans("Activate").'</a></td><td>&nbsp;</td>';
-        }
-
+	  {
+            print '<a href="modules.php?action=set&amp;value='.$modName.'&amp;spe='.$_GET["spe"].'">'.$langs->trans("Activate").'</a></td><td>&nbsp;</td>';
+	  }
+	
         print '</tr>';
     }
-
+    
 }
-print "</table>";
-
-
-if ($_GET["spe"])
-{
-    print '<br><a href="./modules.php?spe=0">'.$langs->trans("ModulesCommon").'</a>';
-}
-else
-{
-    print '<br><a href="./modules.php?spe=1">'.$langs->trans("ModulesSpecial").'</a>';
-}
-
+print "</table></div>";
 
 llxFooter();
 ?>
