@@ -95,7 +95,7 @@ if ($sortfield == "")
 }
 
 
-$sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.total_ht, fac.paye, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid, fac.facnumber";
+$sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.total_ht, fac.total_ttc, fac.paye, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid, fac.facnumber";
 $sql .= " FROM llx_societe as s, llx_facture_fourn as fac ";
 $sql .= " WHERE fac.fk_soc = s.idp";
 
@@ -124,12 +124,20 @@ if ($result)
   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print '<TR class="liste_titre">';
   print '<TD>Numéro</TD>';
-  print '<TD>Date</TD>';
-  print '<TD>Libellé</TD><td>';
+  print '<TD>';
+  print_liste_field_titre("Date",$PHP_SELF,"fac.datef");
+  print '</TD>';
+  print '<TD>Libellé</TD>';
+  print '<td>';
   print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-  print '</td><TD align="right">';
-  print_liste_field_titre("Montant",$PHP_SELF,"fac.total_ht");
-  print '</td><td align="center">Payé</td>';
+  print '</td>';
+  print '<TD align="right">';
+  print_liste_field_titre("Montant HT",$PHP_SELF,"fac.total_ht");
+  print '</td>';
+  print '<TD align="right">';
+  print_liste_field_titre("Montant TTC",$PHP_SELF,"fac.total_ttc");
+  print '</td>';
+  print '<td align="center">Payé</td>';
   print "</TR>\n";
   $var=True;
   while ($i < $num)
@@ -140,12 +148,12 @@ if ($result)
       
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php?facid=$obj->facid\">$obj->facnumber</A></td>\n";
-      print "<TD><a href=\"fiche.php?facid=$obj->facid\">".strftime("%d %b %Y",$obj->datef)."</A></td>\n";
-      print '<TD><a href="fiche.php?facid='.$obj->facid.'">'.stripslashes("$obj->libelle").'</A></td>';
+      print "<TD>".strftime("%d %b %Y",$obj->datef)."</td>\n";
+      print '<TD>'.stripslashes("$obj->libelle").'</td>';
       print "<TD><a href=\"../fiche.php?socid=$obj->socid\">$obj->nom</A></td>\n";
       print '<TD align="right">'.price($obj->total_ht).'</TD>';
-
-      print '<TD align="center">'.$yn[$obj->paye].'</TD>';
+	  print '<TD align="right">'.price($obj->total_ttc).'</TD>';
+      print '<TD align="center">'.($obj->paye||$obj->total_ht==0?"":"<a class=\"impayee\" href=\"\">").($obj->total_ht==0?"brouillon":$yn[$obj->paye]).($obj->paye||$obj->total_ht==0?"":"</a>").'</TD>';
 
 
       print "</TR>\n";
