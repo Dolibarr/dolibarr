@@ -28,12 +28,11 @@
 $sapi_type = php_sapi_name();
 if (substr($sapi_type, 0, 3) == 'cgi') 
 {
-  echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+  echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer ce script en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
   exit;
 }
 
 require ("../../htdocs/master.inc.php");
-
 
 $error = 0;
 
@@ -60,12 +59,10 @@ if ( $db->query($sql) )
 
       dolibarr_syslog("candidat-desactive: desactivation CV ".$obj->idp);
 
-      /*
       $cv = new Cv($db);
       $cv->id = $_GET["id"];
       $cv->fetch();
       $cv->deactivate();
-      */
       $i++;     
     }
 }
