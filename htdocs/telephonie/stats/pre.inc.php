@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ require(DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 $user->getrights('telephonie');
 
 function llxHeader($head = "", $title="") {
-  global $user;
+  global $user, $conf;
 
   /*
    *
@@ -39,7 +39,7 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/client/index.php", "Clients");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/contrat/", "Contrats");
+  $menu->add(DOL_URL_ROOT."/telephonie/contrat/index.php", "Contrats");
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
 
@@ -56,9 +56,7 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/fournisseurs.php", "Fournisseurs");
-
-
+  $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/", "Fournisseurs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/statca/", "Chiffre d'affaire");
 
