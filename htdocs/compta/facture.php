@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
  * Copyright (C) 2004 Laurent Destailleur <eldy@users.sourceforge.net>
  *
@@ -331,7 +331,7 @@ if ($action == 'send')
 
 	      $sendto = htmlentities($sendto);
 	      
-	      $sql = "INSERT INTO llx_actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '9' ,'$fac->socidp' ,'Envoyée à $sendto','$fac->id','$sendtoid','$user->id', 'Envoi Facture par mail',100);";
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '9' ,'$fac->socidp' ,'Envoyée à $sendto','$fac->id','$sendtoid','$user->id', 'Envoi Facture par mail',100);";
 
 	      if (! $db->query($sql) )
 		{
@@ -391,14 +391,14 @@ if ($_GET["action"] == 'create')
   if ($propalid)
     {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.remise_percent, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
-      $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
       $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";      
       $sql .= " AND p.rowid = $propalid";
     }
   else
     {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp ";
-      $sql .= "FROM llx_societe as s ";
+      $sql .= "FROM ".MAIN_DB_PREFIX."societe as s ";
       $sql .= "WHERE s.idp = ".$_GET["socidp"];      
     }
 
@@ -443,7 +443,7 @@ if ($_GET["action"] == 'create')
 	  print "<tr><td>Numéro :</td><td>Provisoire</td></tr>";
 	  print '<input name="facnumber" type="hidden" value="provisoire">';
 	  print "<tr><td>Conditions de réglement :</td><td>";
-	  $sql = "SELECT rowid, libelle FROM llx_cond_reglement ORDER BY sortorder";
+	  $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."cond_reglement ORDER BY sortorder";
 	  $result = $db->query($sql);
 	  $conds=array();
 	  if ($result)
@@ -499,7 +499,7 @@ if ($_GET["action"] == 'create')
 	       * Liste des elements
 	       *
 	       */
-	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p ";
+	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p ";
 	      $sql .= " WHERE envente = 1";
 	      $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
 	      if ( $db->query($sql) )
@@ -540,7 +540,7 @@ if ($_GET["action"] == 'create')
 	   */
 	  if ($_GET["propalid"] == 0 && $_GET["commandeid"] == 0)
 	    {
-	      $sql = "SELECT r.rowid, r.titre, r.amount FROM llx_facture_rec as r";
+	      $sql = "SELECT r.rowid, r.titre, r.amount FROM ".MAIN_DB_PREFIX."facture_rec as r";
 	      $sql .= " WHERE r.fk_soc = ".$soc->id;
 	      if ( $db->query($sql) )
 		{
@@ -585,7 +585,7 @@ if ($_GET["action"] == 'create')
 	      print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	      
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
-	      $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
 	      $sql .= " ORDER BY pt.rowid ASC";
 	      $result = $db->query($sql);
 	      if ($result) 
@@ -606,7 +606,7 @@ if ($_GET["action"] == 'create')
 		    }
 		}
 	      $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty, pt.remise_percent";
-	      $sql .= " FROM llx_propaldet as pt  WHERE  pt.fk_propal = $propalid AND pt.fk_product = 0";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt  WHERE  pt.fk_propal = $propalid AND pt.fk_product = 0";
 	      $sql .= " ORDER BY pt.rowid ASC";
 	      if ($db->query($sql)) 
 		{
@@ -646,7 +646,7 @@ if ($_GET["action"] == 'create')
 	      print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	      
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.subprice, pt.qty, p.rowid as prodid, pt.remise_percent";
-	      $sql .= " FROM llx_commandedet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_commande = ".$commande->id;
+	      $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_commande = ".$commande->id;
 	      $sql .= " ORDER BY pt.rowid ASC";
 	      $result = $db->query($sql);
 	      if ($result) 
@@ -762,7 +762,7 @@ else
 	   * Paiements
 	   */
 	$sql = "SELECT ".$db->pdate("datep")." as dp, p.amount, c.libelle as paiement_type, p.num_paiement, p.rowid";
-	$sql .= " FROM llx_paiement as p, c_paiement as c WHERE p.fk_facture = ".$fac->id." AND p.fk_paiement = c.id";
+	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c WHERE p.fk_facture = ".$fac->id." AND p.fk_paiement = c.id";
 	
 	$result = $db->query($sql);
 	if ($result)
@@ -852,7 +852,7 @@ else
 	 */
 	
 	$sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice";
-	$sql .= " FROM llx_facturedet as l WHERE l.fk_facture = $fac->id ORDER BY l.rowid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = $fac->id ORDER BY l.rowid";
 	
 	$result = $db->query($sql);
 	if ($result)
@@ -1088,7 +1088,7 @@ else
 	     *
 	     */
 	    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-	    $sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $fac->id";
+	    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $fac->id";
 	    
 	    $result = $db->query($sql);
 	    if ($result)
@@ -1206,7 +1206,7 @@ else
 	 */
 	
 	$sql = "SELECT ".$db->pdate("p.datep")." as dp, p.price, p.ref, p.rowid as propalid";
-	$sql .= " FROM llx_propal as p, llx_fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $fac->id";
+	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $fac->id";
   
 	$result = $db->query($sql);
 	if ($result)
@@ -1281,7 +1281,7 @@ else
 	  $sortfield="f.datef";
 
 	$sql = "SELECT s.nom,s.idp,f.facnumber,f.total,f.total_ttc,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid, f.fk_statut, sum(p.amount) as am";
-	$sql .= " FROM llx_societe as s,llx_facture as f left join llx_paiement as p on f.rowid=p.fk_facture WHERE f.fk_soc = s.idp";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement as p on f.rowid=p.fk_facture WHERE f.fk_soc = s.idp";
 	
 	if ($socidp)
 	  $sql .= " AND s.idp = $socidp";
