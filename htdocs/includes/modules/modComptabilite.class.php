@@ -90,7 +90,8 @@ class modComptabilite extends DolibarrModules
 		 "$isq (92,'Créer modifier les charges',NULL,NULL,'compta','w',0);",
 		 "$isq (93,'Supprimer les charges','compta',NULL,NULL,'d',0);",
 		 "$isq (95,'Lire CA, bilans, résultats','compta',NULL,NULL,'r',1);",
-		 "$isq (96,'Paramétrer la ventilation','compta','ventilation','param','r',1);",
+		 "$isq (96,'Paramétrer la ventilation','compta','ventilation','param','r',0);",
+		 "$isq (97,'Ventiler les lignes de facture','compta','ventiler',NULL,'r',0);"
 		 );
     
     return $this->_init($sql);
