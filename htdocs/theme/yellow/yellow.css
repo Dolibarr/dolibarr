@@ -37,6 +37,7 @@ table.border {
                border: 2px white ridge; }
 
 table.border td {
+                  border-collapse: collapse;
                   border: 2px white ridge; }
 
 table.noborder {
@@ -48,17 +49,18 @@ table.noborder td {
                     border: 0px  }
 
 table#actions {
-                border-collapse: collapse;
                 border: 0px;
+                cell-spacing: 1em;
+                
                 }
 
 table#actions td {
-                   border-collapse: collapse;
-                   border-bottom: 1px ridge #666633;
-                   border-right: 1px ridge #666633;
+                   border-bottom: 1px ridge black;
+                   border-right: 1px ridge black;
                    border-left: 1px ridge white; 
                    border-top: 1px ridge white;
                    text-align: center;
+                   padding: 0.2em;
 }
 /*
  *
