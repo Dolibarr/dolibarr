@@ -28,6 +28,8 @@ print '<table border="1" cellpadding="3" cellspacing="0">';
 
 print '<tr><td>css</td><td>' . $conf->css . '</td></tr>';
 print '<tr><td>theme</td><td>' . $conf->theme . '</td></tr>';
+print '<tr><td>document root</td><td>' . $DOCUMENT_ROOT . '</td></tr>';
+
 
 print '<tr><td bgcolor="#e0e0e0" colspan="2">Database</td></tr>';
 print '<tr><td>type</td><td>' . $conf->db->type . '</td></tr>';
