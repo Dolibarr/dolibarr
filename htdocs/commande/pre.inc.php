@@ -37,6 +37,8 @@ function llxHeader($head = "", $title="", $help_url='')
   $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
   $menu->add_submenu(DOL_URL_ROOT."/commande/liste.php", "Liste");
 
+  $menu->add(DOL_URL_ROOT."/expedition/", "Expeditions");
+
   $menu->add(DOL_URL_ROOT."/commande/stats/", "Statistiques");
 
   left_menu($menu->liste, $help_url);
