@@ -62,7 +62,7 @@ class BonPrelevement
    */
   function Fetch($rowid)
   {
-    $sql = "SELECT p.rowid, p.ref, p.amount, p.note";
+    $sql = "SELECT p.rowid, p.ref, p.amount, p.note, p.credite";
     $sql .= ",".$this->db->pdate("p.datec")." as dc";
 
     $sql .= " FROM ".MAIN_DB_PREFIX."prelevement as p";
@@ -80,6 +80,7 @@ class BonPrelevement
 	    $this->amount             = $obj->amount;
 	    $this->note               = stripslashes($obj->note);
 	    $this->datec              = $obj->dc;
+	    $this->credite            = $obj->credite;
 	    
 	    return 0;
 	  }
@@ -96,6 +97,85 @@ class BonPrelevement
 	return -2;
       }
   }
+  /**
+   *
+   *
+   */
+  function set_credite()
+  {
+    $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement ";
+    $sql .= " SET credite = 1";
+    $sql .= " WHERE rowid=".$this->id;
+      
+    $result=$this->db->query($sql);
+    if ($result)
+      {
+	/**
+	 *
+	 *
+	 *
+	 */
+	$facs = array();
+	$facs = $this->_get_list_factures();
+	
+	for ($i = 0 ; $i < sizeof($facs) ; $i++)
+	  {	    
+	    $fac = new Facture($this->db);
+
+	    /* Tag la facture comme impayée */
+	    dolibarr_syslog("RejetPrelevement::Create set_payed fac ".$facs[$i]);
+	    $fac->set_payed($facs[$i]);
+	  }
+      }
+    else
+      {
+	dolibarr_syslog("bon-prelevment::Fetch Erreur ");
+	dolibarr_syslog($sql);
+	return -2;
+      }
+  }
+
+  /**
+   *    \brief      Recupére la liste des factures concernées
+   *    \param      rowid       id de la facture a récupérer
+   *    \param      societe_id  id de societe
+   */
+  function _get_list_factures()
+    {
+      $arr = array();
+      /*
+       * Renvoie toutes les factures présente
+       * dans un bon de prélèvement
+       */
+      
+      $sql = "SELECT f.rowid as facid";
+      $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
+      $sql .= " WHERE pf.fk_prelevement = ".$this->id;
+
+      $result=$this->db->query($sql);
+      if ($result)
+	{
+	  $num = $this->db->num_rows();
+
+	  if ($num)
+	    {
+	      $i = 0;
+	      while ($i < $num)
+		{
+		  $row = $this->db->fetch_row();
+		  $arr[$i] = $row[0];
+		  $i++;
+		}
+	    }
+	  $this->db->free();
+	}
+      else
+	{
+	  dolibarr_syslog("Prelevement Erreur");
+	}
+
+      return $arr;
+    }
 
   /*
    *
