@@ -53,8 +53,11 @@ class User
   var $admin;
   var $login;
   var $pass;
+  var $datec;
+  var $datem;
   var $societe_id;
   var $webcal_login;
+ 
   var $errorstr;
   var $userpref_limite_liste;
   var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
@@ -543,6 +546,7 @@ class User
         
     }
 
+
   /**
    *    \brief      Charge un objet user avec toutes ces caractéristiques depuis un login
    *    \param      login   login a charger
@@ -551,9 +555,9 @@ class User
   function fetch($login='')
     {
       
-      //$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.module_comm, u.module_compta, u.login, u.pass, u.webcal_login, u.note";
-      //$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-      $sql = "SELECT * FROM ".MAIN_DB_PREFIX."user as u";
+      $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note";
+      $sql .= ", ".$this->db->pdate("u.datec")." datec, ".$this->db->pdate("u.tms")." datem";
+      $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
       if ($this->id)
 	{
 	  $sql .= " WHERE u.rowid = $this->id";
@@ -574,18 +578,18 @@ class User
 	      $this->nom = stripslashes($obj->name);
 	      $this->prenom = stripslashes($obj->firstname);
 	      
-	      $this->note = stripslashes($obj->note);
-	      
 	      $this->fullname = $this->prenom . ' ' . $this->nom;
-	      $this->admin = $obj->admin;
-	      $this->webcal_login = $obj->webcal_login;
 	      $this->code = $obj->code;
-	      $this->email = $obj->email;
-	      
-	      $this->contact_id = $obj->fk_socpeople;
-	      
 	      $this->login = $obj->login;
 	      $this->pass  = $obj->pass;
+	      $this->email = $obj->email;
+	      $this->admin = $obj->admin;
+	      $this->contact_id = $obj->fk_socpeople;
+	      $this->note = stripslashes($obj->note);
+	      
+	      $this->datec  = $obj->datec;
+	      $this->datem  = $obj->datem;
+
 	      $this->webcal_login = $obj->webcal_login;
 	      
 	      $this->societe_id = $obj->fk_societe;

@@ -22,10 +22,9 @@
  * $Source$
  */
 
-/**
-   \file       htdocs/user/fiche.php
-   \brief      Onglet user et permissions de la fiche utilisateur
-   \version    $Revision$
+/**     \file       htdocs/user/fiche.php
+        \brief      Onglet user et permissions de la fiche utilisateur
+        \version    $Revision$
 */
 
 
@@ -328,33 +327,43 @@ else
 	    
 	  print '<table class="border" width="100%">';
 	    
-	  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-	  print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
-	  print '<td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-	  print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
+	  print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
+	  print '<td colspan="2" width="50%" class="valeur">'.$fuser->nom.'</td>';
+	  print '<td align=center valign=top width="50%" rowspan="8">';
+	  if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
+	  {
+	        print '<img src="'.DOL_URL_ROOT.'/image.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
+	  }
+	  else {
+	        print '<img src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
+	  }
+	  print '</td></tr>';
+
+	  print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
+	  print '<td colspan="2" width="50%" class="valeur">'.$fuser->prenom.'</td>';
 	  print "</tr>\n";
 	    
-	  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Login").'</td>';
-	  print '<td width="25%" class="valeur">'.$fuser->login.'</td>';
-	  print '<td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
-	  print '<td width="25%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
+	  print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
+	  print '<td colspan="2" width="50%" class="valeur">'.$fuser->login.'</td></tr>';
+
+	  print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
+	  print '<td colspan="2" width="50%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
 	  print "</tr>\n";
             
-	  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
-	  print '<td colspan="3" class="valeur">'.yn($fuser->admin).'</td>';
+	  print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
+	  print '<td colspan="2" class="valeur">'.yn($fuser->admin).'</td>';
 	  print "</tr>\n";
 
-	  if ($fuser->societe_id > 0)
-	    {
-	      $societe = new Societe($db);
-	      $societe->fetch($fuser->societe_id);
-	      print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Company").'</td>';
-	      print '<td colspan="3">'.$societe->nom.'&nbsp;</td>';
-	      print "</tr>\n";
-	    }
+	  print '<tr><td width="25%" valign="top">'.$langs->trans("DateCreation").'</td>';
+	  print '<td colspan="2" class="valeur">'.dolibarr_print_date($fuser->datec).'</td>';
+	  print "</tr>\n";
+
+	  print '<tr><td width="25%" valign="top">'.$langs->trans("DateModification").'</td>';
+	  print '<td colspan="2" class="valeur">'.dolibarr_print_date($fuser->datem).'</td>';
+	  print "</tr>\n";
 
 	  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("ContactCard").'</td>';
-	  print '<td colspan="3" valign="top">';
+	  print '<td>';
 	  if ($fuser->contact_id)
             {
 	      print '<a href="../contact/fiche.php?id='.$fuser->contact_id.'">'.$langs->trans("ContactCard").'</a>';
@@ -365,6 +374,16 @@ else
             }
 	  print '</td>';
 	  print "</tr>\n";
+	  
+
+	  if ($fuser->societe_id > 0)
+	    {
+	      $societe = new Societe($db);
+	      $societe->fetch($fuser->societe_id);
+	      print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Company").'</td>';
+	      print '<td colspan="3">'.$societe->nom.'&nbsp;</td>';
+	      print "</tr>\n";
+	    }
 
 	  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Note").'</td>';
 	  print '<td colspan="3" class="valeur">'.nl2br($fuser->note).'&nbsp;</td>';
@@ -418,16 +437,16 @@ else
         {
 	  print '<form action="fiche.php?id='.$fuser->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="update">';
-	  print '<table wdith="100%" class="border">';
+	  print '<table width="100%" class="border">';
 
 	  print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
 	  print '<td><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td></tr>';
 
 	  print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
-	  print '<td><input size="20" type="text" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
+	  print '<td><input size="30" type="text" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
 
 	  print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';
-	  print '<td><input size="10" maxlength="8" type="text" name="login" value="'.$fuser->login.'"></td></tr>';
+	  print '<td><input size="12" maxlength="8" type="text" name="login" value="'.$fuser->login.'"></td></tr>';
 
 	  print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
 	  print '<td><input size="30" type="text" name="email" value="'.$fuser->email.'"></td></tr>';
