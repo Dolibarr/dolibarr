@@ -20,22 +20,7 @@
  * $Source$
  *
  */
-?>
-<html>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=iso8859-1">
-<link rel="stylesheet" type="text/css" href="./default.css">
-<title>Dolibarr Install</title>
-</head>
-<body>
-<div class="main">
- <div class="main-inside">
-
-<?PHP
 include("./inc.php");
-$etape = 5;
-print "<h2>Installation de Dolibarr - Etape $etape/$etapes</h2>";
-
 $success=0;
 
 $conf = "../conf/conf.php";
@@ -48,8 +33,23 @@ require ($dolibarr_main_document_root . "/conf/conf.class.php");
 
 if ($HTTP_POST_VARS["action"] == "set")
 {
-  umask(0);
-  print '<h2>Base de donnée</h2>';
+  if ($HTTP_POST_VARS["pass"] <> $HTTP_POST_VARS["pass_verif"])
+    {
+      Header("Location: etape4.php?error=1");
+    }
+
+  if (strlen(trim($HTTP_POST_VARS["pass"])) == 0)
+    {
+      Header("Location: etape4.php?error=2");
+    }
+
+  if (strlen(trim($HTTP_POST_VARS["login"])) == 0)
+    {
+      Header("Location: etape4.php?error=3");
+    }
+
+
+  pHeader("Fin de l'installation","etape5");
 
   print '<table cellspacing="0" cellpadding="4" border="1" width="100%">';
   $error=0;
@@ -87,22 +87,9 @@ if ($HTTP_POST_VARS["action"] == "set")
 ?>
 <br>
 
-<div class="main">
-<div class="main-inside">
 <?PHP
 print "Votre système est maintenant configuré, il ne vous reste plus qu'a sélectionner les modules que vous souhaitez utiliser. Pour cela cliquer sur l'url ci-dessous : <br>";
 print '<a href="'.$dolibarr_main_url_root .'/admin/modules.php">Configurer les modules</a>';
-?>
-</div>
-</div>
 
-</div>
-</div>
-<?PHP
-if ($success == 1)
-{
-
-}
+pFooter(1);
 ?>
-</body>
-</html>

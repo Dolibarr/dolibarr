@@ -20,20 +20,10 @@
  * $Source$
  *
  */
-?>
-<html>
-<head>
-<meta http-equiv="content-type" content="text/html; charset=iso8859-1">
-<link rel="stylesheet" type="text/css" href="./default.css">
-<title>Dolibarr Install</title>
-</head>
-<body>
-<div class="main">
- <div class="main-inside">
-<?PHP
 include("./inc.php");
+pHeader("Fichier de configuration","etape4");
+
 $etape = 2;
-print "<h2>Installation de Dolibarr - Etape $etape/$etapes</h2>";
 
 $conf = "../conf/conf.php";
 if (file_exists($conf))
@@ -45,7 +35,6 @@ require ($dolibarr_main_document_root . "/conf/conf.class.php");
 
 if ($HTTP_POST_VARS["action"] == "set")
 {
-  umask(0);
   print '<h2>Base de donnée</h2>';
 
   print '<table cellspacing="0" cellpadding="4" border="0" width="100%">';
@@ -63,127 +52,206 @@ if ($HTTP_POST_VARS["action"] == "set")
   if ($db->connected == 1)
     {
       print "<tr><td>Connexion réussie au serveur : $dolibarr_main_db_host</td><td>OK</td></tr>";
-
+      $ok = 1 ;
+    }
+  else
+    {
+      print "<tr><td>Erreur lors de la création de : $dolibarr_main_db_name</td><td>ERREUR</td></tr>";
+    }
+  /***************************************************************************************
+   *
+   *
+   */
+  if ($ok)
+    {
       if($db->database_selected == 1)
 	{
-	  print "<tr><td>Connexion réussie à la base : $dolibarr_main_db_name</td><td>OK</td></tr>";
-
-	  $ok = 1 ;
-	  
-	  //$result = $db->list_tables($dolibarr_main_db_name);
-	  //if ($result)
-	  //{
-	  //    while ($row = $db->fetch_row())
-	  //	{
-	  //	  print "Table : $row[0]<br>\n";
- 	  //	}
-	  //}
-
-	  // Création des tables
-	  $dir = "../../mysql/tables/";
-	  
-	  $handle=opendir($dir);
-	  
-	  while (($file = readdir($handle))!==false)
-	    {
-	      if (substr($file, strlen($file) - 4) == '.sql' && 
-		  substr($file,0,4) == 'llx_')
-		{
-		  $name = substr($file, 0, strlen($file) - 4);
-		  print "<tr><td>Création de la table $name</td>";
-		  $buffer = '';
-		  $fp = fopen($dir.$file,"r");
-		  if ($fp)
-		    {
-		      while (!feof ($fp))
-			{
-			  $buffer .= fgets($fp, 4096);
-			}
-		      fclose($fp);
-		    }
-		  
-		  if ($db->query($buffer))
-		    {
-		      print "<td>OK</td></tr>";
-		    }
-		  else
-		    {
-			  if ($db->errno() == 1050) {
-		      print "<td>Déjà existante</td></tr>";
-			  }
-			  else {
-		      print "<td>ERREUR ".$db->errno()."</td></tr>";
-		      $error++;
-		      }
-		    }
-		}
-	      
-	    }
-	  closedir($handle);
-	  
-	  //
-	  // Données
-	  //
-	  $dir = "../../mysql/data/";
-	  $file = "data.sql";
-
-	  $fp = fopen($dir.$file,"r");
-	  if ($fp)
-	    {
-	      while (!feof ($fp))
-		{
-		  $buffer = fgets($fp, 4096);
-
-		  if (strlen(trim(ereg_replace("--","",$buffer))))
-		    {
-		      if ($db->query($buffer))
-			{
-			  $ok = 1;
-			}
-		      else
-			{
-			  $ok = 0;
-			  if ($db->errno() == 1062) {
-			  	// print "<tr><td>Insertion ligne : $buffer</td><td>Déja existante</td></tr>";
-			  }
-			  else {
-			  	print "Erreur SQL ".$db->errno()." sur requete '$buffer'<br>";
-			  }
-			}
-		    }
-		}
-	      fclose($fp);
-	    }
-	  
-	  print "<tr><td>Chargement des données de base</td>";
-	  if ($ok)
-	    {	  
-	      print "<td>OK</td></tr>";
-	    }
-	  else
-	    {
-	      $ok = 1 ;
-	    }
-
+	  dolibarr_syslog("Connexion réussie à la base : $dolibarr_main_db_name");
 	}
       else
 	{
-	  print "<tr><td>Erreur lors de la création de : $dolibarr_main_db_name</td><td>ERREUR</td></tr>";
+	  $ok = 0 ;
 	}
-
     }
+  /***************************************************************************************
+   *
+   *
+   */
+  if ($ok)
+    {
+      $ok = 0;
+      //$result = $db->list_tables($dolibarr_main_db_name);
+      //if ($result)
+      //{
+      //    while ($row = $db->fetch_row())
+      //	{
+      //	  print "Table : $row[0]<br>\n";
+      //	}
+      //}
+      
+      // Création des tables
+      $dir = "../../mysql/tables/";
+	  
+      $handle=opendir($dir);
+      $table_exists = 0;
+      while (($file = readdir($handle))!==false)
+	{
+	  if (substr($file, strlen($file) - 4) == '.sql' && substr($file,0,4) == 'llx_')
+	    {
+	      $name = substr($file, 0, strlen($file) - 4);
+	      //print "<tr><td>Création de la table $name</td>";
+	      $buffer = '';
+	      $fp = fopen($dir.$file,"r");
+	      if ($fp)
+		{
+		  while (!feof ($fp))
+		    {
+		      $buffer .= fgets($fp, 4096);
+		    }
+		  fclose($fp);
+		}
+	      
+	      if ($db->query($buffer))
+		{
+		  print "<td>OK</td></tr>";
+		}
+	      else
+		{
+		  if ($db->errno() == 1050)
+		    {
+		      //print "<td>Déjà existante</td></tr>";
+		      $table_exists = 1;
+		    }
+		  else
+		    {
+		      print "<tr><td>Création de la table $name</td>";
+		      print "<td>ERREUR ".$db->errno()."</td></tr>";
+		      $error++;
+		    }
+		}
+	    }
+	  
+	}
+      closedir($handle);
+      
+      if ($error == 0)
+	{
+	  print '<tr><td colspan="2">Création des tables réussie</td></tr>';
+	  $ok = 1;
+	}
+    }
+  /***************************************************************************************
+   *
+   *
+   *
+   *
+   ***************************************************************************************/
+  if ($ok == 1)
+    {
+      //
+      // Données
+      //
+      $dir = "../../mysql/data/";
+      $file = "data.sql";
+      
+      $fp = fopen($dir.$file,"r");
+      if ($fp)
+	{
+	  while (!feof ($fp))
+	    {
+	      $buffer = fgets($fp, 4096);
+	      
+	      if (strlen(trim(ereg_replace("--","",$buffer))))
+		{
+		  if ($db->query($buffer))
+		    {
+		      $ok = 1;
+		    }
+		  else
+		    {
+		      $ok = 0;
+		      if ($db->errno() == 1062)
+			{
+			  // print "<tr><td>Insertion ligne : $buffer</td><td>Déja existante</td></tr>";
+			}
+		      else
+			{
+			  print "Erreur SQL ".$db->errno()." sur requete '$buffer'<br>";
+			}
+		    }
+		}
+	    }
+	  fclose($fp);
+	}
+      
+      print "<tr><td>Chargement des données de base</td>";
+      if ($ok)
+	{	  
+	  print "<td>OK</td></tr>";
+	}
+      else
+	{
+	  $ok = 1 ;
+	}
+    }
+
+
+  /***************************************************************************************
+   *
+   *
+   *
+   *
+   ***************************************************************************************/
+  if ($ok == 1)
+    {
+      /*
+       *
+       *
+       */
+      
+      $sql[0] = "REPLACE INTO llx_const SET name = 'FAC_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/facture', visible=0, type='chaine'";
+      
+      $sql[1] = "REPLACE INTO llx_const SET name = 'FAC_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/facture', visible=0, type='chaine'";
+      
+      $sql[2] = "REPLACE INTO llx_const SET name = 'PROPALE_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/propale', visible=0, type='chaine'";
+      
+      $sql[3] = "REPLACE INTO llx_const SET name = 'PROPALE_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/propale', visible=0, type='chaine'";
+      
+      $sql[4] = "REPLACE INTO llx_const SET name = 'FICHEINTER_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/ficheinter', visible=0, type='chaine'";
+      
+      $sql[5] = "REPLACE INTO llx_const SET name = 'FICHEINTER_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/ficheinter', visible=0, type='chaine'";
+      
+      $sql[6] = "REPLACE INTO llx_const SET name = 'SOCIETE_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/societe', visible=0, type='chaine'";
+      
+      $sql[7] = "REPLACE INTO llx_const SET name = 'SOCIETE_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/societe', visible=0, type='chaine'";
+      $result = 0;
+      
+      for ($i=0; $i < sizeof($sql);$i++)
+	{
+	  if ($db->query($sql[$i]))
+	    {
+	      $result++;
+	    }
+	}
+      
+      if ($result == sizeof($sql))
+	{
+	  if ($error == 0)
+	    {	  
+	      $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");		  
+	    }
+	}
+    }
+  /***************************************************************************************
+   *
+   *
+   *
+   *
+   ***************************************************************************************/
+
   print '</table>';
 
   $db->close();
 }
+pFooter(!$ok);
 ?>
-</div>
-</div>
-<div class="barrebottom">
-<form action="etape3.php" method="POST">
-<input type="hidden" name="action" value="set">
-<input type="submit" value="Etape suivante ->">
-</form>
-</div>
-</body>
-</html>

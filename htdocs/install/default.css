@@ -60,7 +60,7 @@ div.soustitre {
 div.main {           
            background: #dcdcd3;
            text-align: left;
-           border:  1px solid #8CACBB;           
+           border:  1px solid #8CACBB;
            }
 
 div.main-inside {
@@ -69,6 +69,15 @@ div.main-inside {
                   margin-bottom: 50px;
                   margin-top: 10px;
                   }
+
+
+div.error {
+            font-size: 1.3em;
+            padding: 10px;
+            margin-top: 10px;
+            border:  1px solid red;
+            }
+
 
 
 div.barrebottom {
