@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,28 +21,32 @@
  */
 require("./pre.inc.php");
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
-
-if ($_GET["action"] == "create")
-{
-  $ct = new CommandeTableur($db, $user);
-  $ct->create();
-}
-
-llxHeader("","Telephonie - Commande - Archives");
-
 /*
  * Sécurité accés client
  */
 if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
+  accessforbidden();
+
+
+llxHeader("","Telephonie - Commande - Archives");
 
 /* ***************************************** */
+$page = $_GET["page"];
+$sortorder = $_GET["sortorder"];
+$sortfield = $_GET["sortfield"];
+
+if ($sortorder == "") {
+  $sortorder="DESC";
+}
+if ($sortfield == "") {
+  $sortfield="c.datec";
+}
+
+if ($page == -1) { $page = 0 ; }
+
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
 
 $sql = "SELECT c.filename, u.name, u.firstname, f.nom,".$db->pdate("c.datec"). " as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commande as c";
@@ -50,12 +54,7 @@ $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= " ,".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE c.fk_user_creat = u.rowid AND c.fk_fournisseur = f.rowid";
 
-if ($_GET["search_ligne"])
-{
-  $sql .= " AND l.ligne LIKE '%".$_GET["search_ligne"]."%'";
-}
-
-$sql .= " ORDER BY c.datec DESC";//$sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -63,23 +62,13 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Commandes archives", $page, "liste.php", "", $sortfield, $sortorder, '', $num);
+  print_barre_liste("Commandes archives", $page, "archives.php", "", $sortfield, $sortorder, '', $num);
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td valign="center">Date</td>';
   print '<td>Utilisateur</td>';
   print '<td>Fournisseur</td>';
   print '<td>Fichier</td>';
-
-  print "</tr>\n";
-
-  /*  print '<tr class="liste_titre">';
-  print '<form action="liste.php" method="GET">';
-  print '<td><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="20"></td>';
-
-  print '<td><input type="submit" value="Chercher"></td>';
-  print '</form>';
-  */
   print '</tr>';
 
   $var=True;
@@ -110,8 +99,6 @@ else
 {
   dolibarr_print_error($db);
 }
-
-/* ******************************************** */
 
 $db->close();
 
