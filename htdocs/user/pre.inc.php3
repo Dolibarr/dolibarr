@@ -32,7 +32,11 @@ function llxHeader($head = "", $urlp = "") {
   $menu = new Menu();
 
   $menu->add("/user/", "Utilisateurs");
-  $menu->add_submenu("fiche.php3?&action=create","Nouvel utilisateur");
+
+  if($user->admin)
+    {
+      $menu->add_submenu("fiche.php3?&action=create","Nouvel utilisateur");
+    }
 
   $menu->add("/info.php3", "Configuration");
 
