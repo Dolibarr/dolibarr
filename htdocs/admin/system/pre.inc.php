@@ -36,6 +36,10 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add("pear.php", "Pear");
 
+  $menu->add("const.php", "Constantes");
+
+  $menu->add_submenu("constall.php", "Tout voir");
+
   $menu->add("phpinfo.php", "phpinfo");
 
   $menu->add_submenu("phpinfo.php?what=conf", "Conf");
