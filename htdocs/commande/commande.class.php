@@ -124,7 +124,9 @@ class Commande
 		  
 		  // Recuperation de la nouvelle reference
 		  $objMod = new $modName($this->db);
-		  $num = $objMod->commande_get_num();
+		  $soc = new Societe($this->db);
+		  $soc->fetch($this->soc_id);
+		  $num = $objMod->commande_get_num($soc);
 
 		  $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
 		  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
