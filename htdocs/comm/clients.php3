@@ -36,15 +36,7 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-
 $db = new Db();
-
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-if ($sortfield == "") {
-  $sortfield="nom";
-}
 
 if ($action=='add_action') {
   /*
@@ -186,8 +178,17 @@ if ($user->societe_id)
 if ($socname)
 {
   $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
-  $sortfield = "s.datec";
-  $sortorder = "DESC";
+  $sortfield = "lower(s.nom)";
+  $sortorder = "ASC";
+}
+
+if ($sortorder == "")
+{
+  $sortorder="DESC";
+}
+if ($sortfield == "")
+{
+  $sortfield="s.datec";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit +1, $offset);
