@@ -254,51 +254,59 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
 if ($action == 'send')
 {
   $fac = new Facture($db,"",$facid);
-  $fac->fetch($facid);
 
-  $soc = new Societe($db, $fac->socidp);
-
-  $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
-
-  if (file_exists($file))
+  if ( $fac->fetch($facid) )
     {
+      $soc = new Societe($db, $fac->socidp);
 
-      $sendto = $soc->contact_get_email($HTTP_POST_VARS["destinataire"]);
-      $sendtoid = $HTTP_POST_VARS["destinataire"];
-
-      if (strlen($sendto))
+      $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
+      
+      if (file_exists($file))
 	{
+	  $sendto = $soc->contact_get_email($HTTP_POST_VARS["destinataire"]);
+	  $sendtoid = $HTTP_POST_VARS["destinataire"];
 	  
-	  $subject = "Facture $fac->ref";
-	  $message = "Veuillez trouver ci-joint la facture $fac->ref\n\nCordialement\n\n";
-	  $filename = "$fac->ref.pdf";
-
-	  $replyto = $HTTP_POST_VARS["replytoname"] . " <".$HTTP_POST_VARS["replytomail"] .">";
-
-	  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$file, "application/pdf", $filename);
-
-	  if ( $mailfile->sendfile() )
-	    {
-
-	      $sendto = htmlentities($sendto);
+	  if (strlen($sendto))
+	    {	  
+	      $subject = "Facture $fac->ref";
+	      $message = "Veuillez trouver ci-joint la facture $fac->ref\n\nCordialement\n\n";
+	      $filename = $fac->ref.".pdf";
 	      
-	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '9' ,'$fac->socidp' ,'Envoyée à $sendto','$fac->id','$sendtoid','$user->id', 'Envoi Facture par mail',100);";
-
-	      if (! $db->query($sql) )
+	      $replyto = $HTTP_POST_VARS["replytoname"] . " <".$HTTP_POST_VARS["replytomail"] .">";
+	      
+	      $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$file, "application/pdf", $filename);
+	      
+	      if ( $mailfile->sendfile() )
 		{
-		  print $db->error();
-		  print "<p>$sql</p>";
-		}	      	      	      
+		  
+		  $sendto = htmlentities($sendto);
+		  
+		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '9' ,'$fac->socidp' ,'Envoyée à $sendto','$fac->id','$sendtoid','$user->id', 'Envoi Facture par mail',100);";
+		  
+		  if (! $db->query($sql) )
+		    {
+		      print $db->error();
+		      print "<p>$sql</p>";
+		    }	      	      	      
+		}
+	      else
+		{
+		  print "<b>!! erreur d'envoi<br>$sendto<br>$replyto<br>$filename";
+		}	  
 	    }
 	  else
 	    {
-	      print "<b>!! erreur d'envoi<br>$sendto<br>$replyto<br>$filename";
-	    }	  
+	      dolibarr_syslog("Le mail du destinataire est vide");
+	    }
 	}
       else
 	{
-	  print "Can't get email $sendto";
+	  dolibarr_syslog("Le fichier PDF n'existe pas");
 	}
+    }
+  else
+    {
+      dolibarr_syslog("Impossible de lire la facture");
     }
 }
 /*
