@@ -35,8 +35,9 @@ llxHeader();
 
 $db = new Db();
 
-if ($action == 'note') {
-  $sql = "UPDATE societe SET note='$note' WHERE idp=$socid";
+if ($action == 'note')
+{
+  $sql = "UPDATE llx_societe SET note='$note' WHERE idp=$socid";
   $result = $db->query($sql);
 }
 
@@ -47,7 +48,7 @@ if ($action == 'stcomm') {
     $result = @$db->query($sql);
 
     if ($result) {
-      $sql = "UPDATE societe SET fk_stcomm=$stcommid WHERE idp=$socid";
+      $sql = "UPDATE llx_societe SET fk_stcomm=$stcommid WHERE idp=$socid";
       $result = $db->query($sql);
     } else {
       $errmesg = "ERREUR DE DATE !";
@@ -77,7 +78,7 @@ $pagenext = $page + 1;
  */
 if ($mode == 'search') {
   if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM societe as s ";
+    $sql = "SELECT s.idp FROM llx_societe as s ";
     $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
   }
       
@@ -109,7 +110,7 @@ if ($mode == 'search') {
 
   print_barre_liste("Liste des fournisseurs",$page, $PHP_SELF);
 
-  $sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
+  $sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM llx_societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
 
   if (strlen($stcomm)) {
     $sql .= " AND s.fk_stcomm=$stcomm";

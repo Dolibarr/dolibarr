@@ -194,7 +194,7 @@ if ($action == 'send')
 
 	      $sendto = htmlentities($sendto);
 	      
-	      $sql = "INSERT INTO actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label) VALUES (now(), 9 ,$fac->socidp ,'Envoyée à $sendto',$fac->id, $sendtoid, $user->id, 'Envoi Facture par mail');";
+	      $sql = "INSERT INTO llx_actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label) VALUES (now(), 9 ,$fac->socidp ,'Envoyée à $sendto',$fac->id, $sendtoid, $user->id, 'Envoi Facture par mail');";
 
 	      if (! $db->query($sql) )
 		{
@@ -644,7 +644,7 @@ else
 	 *
 	 */
 	$sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-	$sql .= " FROM actioncomm as a WHERE a.fk_soc = $obj->socidp AND a.fk_action = 9 AND a.fk_facture = $facid";
+	$sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $obj->socidp AND a.fk_action = 9 AND a.fk_facture = $facid";
 	
 	$result = $db->query($sql);
 	if ($result)
@@ -781,23 +781,35 @@ else
     $limit = $conf->liste_limit;
     $offset = $limit * $page ;
 
+    if ($sortorder == "")
+      {
+	$sortorder="DESC";
+      }
+    if ($sortfield == "")
+      {
+	$sortfield="f.datef";
+      }
+
     print_barre_liste("Factures",$page,$PHP_SELF);
 
     $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
     $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
   
-    if ($socidp) {
-      $sql .= " AND s.idp = $socidp";
-    }
+    if ($socidp)
+      {
+	$sql .= " AND s.idp = $socidp";
+      }
   
-    if ($month > 0) {
-      $sql .= " AND date_format(f.datef, '%m') = $month";
-    }
-    if ($year > 0) {
-      $sql .= " AND date_format(f.datef, '%Y') = $year";
-    }
+    if ($month > 0)
+      {
+	$sql .= " AND date_format(f.datef, '%m') = $month";
+      }
+    if ($year > 0)
+      {
+	$sql .= " AND date_format(f.datef, '%Y') = $year";
+      }
   
-    $sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
+    $sql .= " ORDER BY $sortfield $sortorder ";
     $sql .= $db->plimit( $limit ,$offset);
 
     $result = $db->query($sql);
@@ -807,9 +819,11 @@ else
       $i = 0;
       print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
       print '<TR class="liste_titre">';
-      print "<TD>Num&eacute;ro</TD><td>";
+      print '<TD>Num&eacute;ro</TD>';
+      print '<td>';
       print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-      print "</td><TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
+      print '</td><TD align="right">Date</TD>';
+      print '<TD align="right">Montant</TD>';
       print '<td>&nbsp;</td>';
       print "</TR>\n";
     

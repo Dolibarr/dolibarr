@@ -75,7 +75,7 @@ if ($action == 'recontact')
 
 if ($action == 'note')
 {
-  $sql = "UPDATE societe SET note='$note' WHERE idp=$socid";
+  $sql = "UPDATE llx_societe SET note='$note' WHERE idp=$socid";
   $result = $db->query($sql);
 }
 
@@ -89,7 +89,7 @@ if ($action == 'stcomm')
       
       if ($result)
 	{
-	  $sql = "UPDATE societe SET fk_stcomm=$stcommid WHERE idp=$socid";
+	  $sql = "UPDATE llx_societe SET fk_stcomm=$stcommid WHERE idp=$socid";
 	  $result = $db->query($sql);
 	}
       else
@@ -100,7 +100,7 @@ if ($action == 'stcomm')
   
   if ($actioncommid)
     {
-      $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
+      $sql = "INSERT INTO llx_actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
       $result = @$db->query($sql);
       
       if (!$result)
@@ -120,7 +120,7 @@ if ($mode == 'search')
 {
   if ($mode-search == 'soc')
     {
-      $sql = "SELECT s.idp FROM societe as s ";
+      $sql = "SELECT s.idp FROM llx_societe as s ";
       $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
     }
   
@@ -154,7 +154,7 @@ if ($socid > 0)
   $societe = new Societe($db, $socid);
   
 
-  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
+  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM llx_societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
   $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
 
   if ($to == 'next')
@@ -233,7 +233,7 @@ if ($socid > 0)
     print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"1\">";
     $var=!$var;
     $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
-    $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND s.idp = $objsoc->idp ORDER BY f.datef DESC";
+    $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND s.idp = $objsoc->idp ORDER BY f.datef DESC";
     if ( $db->query($sql) ) {
       $num = $db->num_rows(); $i = 0; 
       if ($num > 0) {
@@ -378,7 +378,7 @@ if ($socid > 0)
        *
        */
       $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-      $sql .= " FROM actioncomm as a, c_actioncomm as c, llx_user as u ";
+      $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u ";
       $sql .= " WHERE a.fk_soc = $objsoc->idp ";
       $sql .= " AND u.rowid = a.fk_user_author";
       $sql .= " AND c.id=a.fk_action ";
