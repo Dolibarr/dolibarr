@@ -206,10 +206,10 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->ri
     }
 }
 
-if ($action == 'payed' && $user->rights->facture->paiement) 
+if ($_GET["action"] == 'payed' && $user->rights->facture->paiement) 
 {
   $fac = new Facture($db);
-  $result = $fac->set_payed($facid);
+  $result = $fac->set_payed($_GET["facid"]);
 }
 
 if ($action == 'canceled' && $user->rights->facture->paiement) 
