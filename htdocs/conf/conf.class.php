@@ -86,11 +86,17 @@ class DbConf {
  SetEnv LLX_DBNAME dolibarr
 */
 
+/*
+ * Ce bloc de code, casse l'authentification par Pear::Auth !!
+ * La conf est positionnée dans conf.php les virtualhost ne sont
+ * pas encore valide
+ *
     $this->type = getenv("LLX_DBTYPE");
     $this->host = getenv("LLX_DBHOST");
     $this->user = getenv("LLX_DBUSER");
     $this->pass = getenv("LLX_DBPASS");
     $this->name = getenv("LLX_DBNAME");
+*/
 
   }
 
