@@ -26,7 +26,7 @@ require("./lib.inc.php");
 function propals ($db, $year, $month) {
   global $bc;
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-  $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
+  $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
   $sql .= " AND c.id in (1,2)";
   $sql .= " AND date_format(p.datep, '%Y') = $year ";
   $sql .= " AND round(date_format(p.datep, '%m')) = $month ";
@@ -97,57 +97,66 @@ function factures ($db, $year, $month, $paye) {
   global $bc;
 
   $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
-  $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye = $paye";
+  $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye = $paye";
   $sql .= " AND date_format(f.datef, '%Y') = $year ";
   $sql .= " AND round(date_format(f.datef, '%m')) = $month ";
   $sql .= " ORDER BY f.datef DESC ";
 
   $result = $db->query($sql);
-  if ($result) {
-    $num = $db->num_rows();
-    if ($num > 0) {
-      $i = 0;
-      print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-      print "<TR bgcolor=\"orange\"><td colspan=\"3\"><b>Factures</b></td></tr>";
-      print "<TR bgcolor=\"orange\">";
-      print "<TD>Societe</td>";
-      print "<TD>Num</TD>";
-      print "<TD align=\"right\">Date</TD>";
-      print "<TD align=\"right\">Montant</TD>";
-      print "<TD align=\"right\">Payé</TD>";
-      print "</TR>\n";
-      $var=True;
-      while ($i < $num) {
-	$objp = $db->fetch_object( $i);
-	$var=!$var;
-	print "<TR $bc[$var]>";
-	print "<TD><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></TD>\n";
-	print "<TD><a href=\"../facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
-	if ($objp->df > 0 ) {
-	  print "<TD align=\"right\">".strftime("%d %B %Y",$objp->df)."</TD>\n";
-	} else {
-	  print "<TD align=\"right\"><b>!!!</b></TD>\n";
+  if ($result)
+    {
+      $num = $db->num_rows();
+      if ($num > 0)
+	{
+	  $i = 0;
+	  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+	  print "<TR bgcolor=\"orange\"><td colspan=\"3\"><b>Factures</b></td></tr>";
+	  print "<TR bgcolor=\"orange\">";
+	  print "<TD>Societe</td>";
+	  print "<TD>Num</TD>";
+	  print "<TD align=\"right\">Date</TD>";
+	  print "<TD align=\"right\">Montant</TD>";
+	  print "<TD align=\"right\">Payé</TD>";
+	  print "</TR>\n";
+	  $var=True;
+	  while ($i < $num)
+	    {
+	      $objp = $db->fetch_object( $i);
+	      $var=!$var;
+	      print "<TR $bc[$var]>";
+	      print "<TD><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></TD>\n";
+	      print "<TD><a href=\"../facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
+	      if ($objp->df > 0 )
+		{
+		  print "<TD align=\"right\">".strftime("%d %B %Y",$objp->df)."</TD>\n";
+		}
+	      else
+		{
+		  print "<TD align=\"right\"><b>!!!</b></TD>\n";
+		}
+	      
+	      print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
+	      
+	      $payes[1] = "oui";
+	      $payes[0] = "<b>non</b>";
+	      	      
+	      print "<TD align=\"right\">".$payes[$objp->paye]."</TD>\n";
+	      print "</TR>\n";
+	      
+	      $total = $total + $objp->amount;
+	      
+	      $i++;
+	    }
+	  print "<tr><td colspan=\"3\" align=\"right\"><b>Total ~ ".francs($total)." FF HT</b></td>";
+	  print "<td  align=\"right\"><b>Total : ".price($total)."</b></td><td></td></tr>";
+	  print "</TABLE>";
+	  $db->free();
 	}
-	
-	print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
-	
-	$payes[1] = "oui";
-	$payes[0] = "<b>non</b>";
-	
-	
-	print "<TD align=\"right\">".$payes[$objp->paye]."</TD>\n";
-	print "</TR>\n";
-	
-	$total = $total + $objp->amount;
-	
-	$i++;
-      }
-      print "<tr><td colspan=\"3\" align=\"right\"><b>Total ~ ".francs($total)." FF HT</b></td>";
-      print "<td  align=\"right\"><b>Total : ".price($total)."</b></td><td></td></tr>";
-      print "</TABLE>";
-      $db->free();
     }
-  }
+  else
+    {
+      print $db->error();
+    }
 }
 
 

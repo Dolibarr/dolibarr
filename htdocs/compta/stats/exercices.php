@@ -67,7 +67,7 @@ function propals ($db, $year, $month) {
     $var=!$var;
     print "<TR $bc[$var]>";
     
-    print "<TD><a href=\"comp.php3?socidp=$objp->idp\">$objp->nom</a></TD>\n";
+    print "<TD><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></TD>\n";
     
     print "<TD><a href=\"../comm/propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
     
@@ -121,7 +121,7 @@ function factures ($db, $year, $month, $paye) {
 	$objp = $db->fetch_object( $i);
 	$var=!$var;
 	print "<TR $bc[$var]>";
-	print "<TD><a href=\"comp.php3?socidp=$objp->idp\">$objp->nom</a></TD>\n";
+	print "<TD><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></TD>\n";
 	print "<TD><a href=\"facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
 	if ($objp->df > 0 ) {
 	  print "<TD align=\"right\">".strftime("%d %B %Y",$objp->df)."</TD>\n";
@@ -182,7 +182,7 @@ function pt ($db, $sql, $year) {
 
       if ($obj->sum > 0) {
 	print "<TR $bc[$var]>";
-	print "<td><a href=\"comp.php3?details=1&year=$year&month=$obj->dm\">";
+	print "<td><a href=\"comp.php?details=1&year=$year&month=$obj->dm\">";
 	print strftime("%B",mktime(12,0,0,$obj->dm, 1, $year))."</TD>\n";
 	print "<TD align=\"right\">".price($obj->sum)."</TD>\n";
 	
