@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,16 @@
  *
  */
 require("./pre.inc.php3");
+
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socidp = $user->societe_id;
+}
+
 
 llxHeader();
 
@@ -61,41 +71,47 @@ print_titre(translate("Espace compta"));
 print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top" width="33%">';
-/*
- * Charges a payer
- *
- */
-$sql = "SELECT c.amount, cc.libelle";
-$sql .= " FROM llx_chargesociales as c, c_chargesociales as cc";
-$sql .= " WHERE c.fk_type = cc.id AND c.paye=0";
 
-if ( $db->query($sql) ) 
+if ($user->societe_id == 0)
 {
-  $num = $db->num_rows();
-  if ($num)
+
+
+  /*
+   * Charges a payer
+   *
+   */
+  $sql = "SELECT c.amount, cc.libelle";
+  $sql .= " FROM llx_chargesociales as c, c_chargesociales as cc";
+  $sql .= " WHERE c.fk_type = cc.id AND c.paye=0";
+  
+  if ( $db->query($sql) ) 
     {
-      print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-      print "<TR class=\"liste_titre\">";
-      print "<TD colspan=\"2\">Charges à payer</td>";
-      print "</TR>\n";
-      $i = 0;
-      
-      while ($i < $num)
+      $num = $db->num_rows();
+      if ($num)
 	{
-	  $obj = $db->fetch_object( $i);
-	  $var = !$var;
-	  print "<tr $bc[$var]>";
-	  print '<td>'.$obj->libelle.'</td>';
-	  print '<td align="right">'.price($obj->amount).'</td>';
-	  print '</tr>';
-	  $i++;
+	  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+	  print "<TR class=\"liste_titre\">";
+	  print "<TD colspan=\"2\">Charges à payer</td>";
+	  print "</TR>\n";
+	  $i = 0;
+	  
+	  while ($i < $num)
+	    {
+	      $obj = $db->fetch_object( $i);
+	      $var = !$var;
+	      print "<tr $bc[$var]>";
+	      print '<td>'.$obj->libelle.'</td>';
+	      print '<td align="right">'.price($obj->amount).'</td>';
+	      print '</tr>';
+	      $i++;
+	    }
+	  print '</table><br>';
 	}
-      print '</table><br>';
     }
-}
-else
-{
-  print $db->error();
+  else
+    {
+      print $db->error();
+    }
 }
 /*
  * Propales
@@ -108,6 +124,10 @@ if ($user->comm > 0 && $conf->commercial )
   print "</TR>\n";
   
   $sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 2";
+  if ($socidp)
+    {
+      $sql .= " AND fk_soc = $socidp";
+    }
   if (valeur($sql))
     {
       $var=!$var;
@@ -125,6 +145,10 @@ print '<td colspan="2">'.translate("Bills").'</td>';
 print "</TR>\n";
 
 $sql = "SELECT facnumber, rowid FROM llx_facture WHERE paye = 0";
+if ($socidp)
+{
+  $sql .= " AND fk_soc = $socidp";
+}
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
@@ -204,41 +228,45 @@ if ( $result ) {
  *
  */
 
+
 /*
  * Charges a payer
  *
  */
-$sql = "SELECT ff.amount, ff.libelle";
-$sql .= " FROM llx_facture_fourn as ff";
-$sql .= " WHERE ff.paye=0";
-
-if ( $db->query($sql) ) 
+if ($user->societe_id == 0)
 {
-  $num = $db->num_rows();
-  if ($num)
+  $sql = "SELECT ff.amount, ff.libelle";
+  $sql .= " FROM llx_facture_fourn as ff";
+  $sql .= " WHERE ff.paye=0";
+  
+  if ( $db->query($sql) ) 
     {
-      print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
-      print '<TR class="liste_titre">';
-      print '<TD colspan="2">Charges à payer</td>';
-      print "</TR>\n";
-      $i = 0;
-      
-      while ($i < $num)
+      $num = $db->num_rows();
+      if ($num)
 	{
-	  $obj = $db->fetch_object( $i);
-	  $var = !$var;
-	  print "<tr $bc[$var]>";
-	  print '<td>'.$obj->libelle.'</td>';
-	  print '<td align="right">'.price($obj->amount).'</td>';
-	  print '</tr>';
-	  $i++;
+	  print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<TR class="liste_titre">';
+	  print '<TD colspan="2">Charges à payer</td>';
+	  print "</TR>\n";
+	  $i = 0;
+	  
+	  while ($i < $num)
+	    {
+	      $obj = $db->fetch_object( $i);
+	      $var = !$var;
+	      print "<tr $bc[$var]>";
+	      print '<td>'.$obj->libelle.'</td>';
+	      print '<td align="right">'.price($obj->amount).'</td>';
+	      print '</tr>';
+	      $i++;
 	}
-      print '</table><br>';
+	  print '</table><br>';
+	}
     }
-}
-else
-{
-  print $db->error();
+  else
+    {
+      print $db->error();
+    }
 }
 
 print '</td><td width="40%">&nbsp;</td></tr>';

@@ -22,15 +22,18 @@
 require("./pre.inc.php3");
 require("../contact.class.php3");
 
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socidp = $user->societe_id;
+}
 
 llxHeader();
+
 $db = new Db();
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-if ($sortfield == "") {
-  $sortfield="nom";
-}
 
 if ($action == 'note') {
   $sql = "UPDATE societe SET note='$note' WHERE idp=$socid";
@@ -86,27 +89,34 @@ if ($mode == 'search') {
     $db->free();
   }
 }
-/*
- *
- * Mode fiche
- *
- *
- */  
-if ($socid > 0) {
 
-} else {
   /*
    * Mode Liste
    *
    *
    *
    */
+
+  if ($sortorder == "")
+    {
+      $sortorder="ASC";
+    }
+  if ($sortfield == "")
+    {
+      $sortfield="nom";
+    }
+
+
   print_barre_liste("Liste des fournisseurs",$page, $PHP_SELF);
 
   $sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
 
   if (strlen($stcomm)) {
     $sql .= " AND s.fk_stcomm=$stcomm";
+  }
+
+  if ($socidp) {
+    $sql .= " AND s.idp=$socidp";
   }
 
   if (strlen($begin)) {
@@ -159,7 +169,7 @@ if ($socid > 0) {
   } else {
     print $db->error();
   }
-}
+
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
