@@ -1,4 +1,6 @@
 -- ========================================================================
+-- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+--
 -- $Id$
 -- $Source$
 --
@@ -18,9 +20,9 @@
 --
 -- ========================================================================
 
-create table c_effectif
+create table llx_c_effectif
 (
-  id integer PRIMARY KEY,
+  id      integer PRIMARY KEY,
   libelle varchar(30)
 );
 

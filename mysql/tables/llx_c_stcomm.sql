@@ -1,4 +1,6 @@
 -- ========================================================================
+-- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+--
 -- $Id$
 -- $Source$
 --
@@ -18,8 +20,9 @@
 --
 -- ========================================================================
 
-create table c_typent
+create table c_stcomm
 (
-  id        integer PRIMARY KEY,
-  libelle   varchar(30)
+  id       integer PRIMARY KEY,
+  libelle  varchar(30)
 );
+

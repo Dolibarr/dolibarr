@@ -1,6 +1,5 @@
 -- ========================================================================
--- $Id$
--- $Source$
+-- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,13 +15,17 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
+-- $Id$
+-- $Source$
+--
 -- ========================================================================
 
-create table c_pays
+create table llx_c_chargesociales
 (
-  id       integer PRIMARY KEY,
-  libelle  varchar(25),
-  code     char(2)      NOT NULL
+  id          integer PRIMARY KEY,
+  libelle     varchar(80),
+  deductible  smallint NOT NULL default 0
 );
+
 
 
