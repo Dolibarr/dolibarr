@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,8 +22,7 @@
  *
  */
 
-/*!
-	    \file       htdocs/comm/fiche.php
+/**	    \file       htdocs/comm/fiche.php
         \ingroup    commercial
 		\brief      Onglet client de la fiche societe
 		\version    $Revision$
@@ -242,14 +241,14 @@ if ($_socid > 0)
   print '<tr><td>';
   print $langs->trans("CustomerDiscount").'</td><td>'.$objsoc->remise_client."&nbsp;%</td>";
   print '<td colspan="2"><a href="remise.php?id='.$objsoc->id.'">';
-  print img_edit("Modifier la remise");
+  print img_edit($langs->trans("Modify"));
   print "</a>";
   print '</td>';
   
   print '<tr><td colspan="2">Remise exceptionnelles';
   print '</td>';
   print '<td colspan="2"><a href="remx.php?id='.$objsoc->id.'">';
-  print img_edit("Modifier la remise");
+  print img_edit($langs->trans("Modify"));
   print "</a>";
   print '</td></tr>';
   
@@ -262,126 +261,149 @@ if ($_socid > 0)
    */
   print "</td>\n";
   
-  //if ($conf->propal->enabled) {
-  
     print '<td valign="top" width="50%">';
-
+    
+    // Nbre max d'éléments des petites listes
+    $MAXLIST=4;
+    
     /*
-     *
-     * Propales
-     *
+     * Dernieres propales
      */
-    $var = true;
-    print '<table class="border" width="100%">';
-    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
-    $sql .= " AND s.idp = ".$objsoc->id." ORDER BY p.datep DESC";
-
-    if ( $db->query($sql) )
-      {
-	$num = $db->num_rows();
-	if ($num >0 )
-	  {
-	    print "<tr $bc[$var]><td colspan=\"4\"><a href=\"propal.php?socidp=$objsoc->id\">Liste des propales ($num)</td></tr>";
-	    $var=!$var;
-	  }
-	$i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
-	while ($i < $num && $i < 2)
-	  {
-	    $objp = $db->fetch_object();
-	    print "<tr $bc[$var]>";
-	    print "<td><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a>\n";
-	    if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
-	      {
-		print " <b>&gt; 15 jours</b>";
-	      }
-	    print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</td>\n";
-	    print '<td align="right" width="120">'.price($objp->price).'</td>';
-	    print '<td width="100" align="center">'.$objp->statut.'</td></tr>';
-	    $var=!$var;
-	    $i++;
-	  }
-	$db->free();
-      }
-    else {
-        dolibarr_print_error($db);
+    if ($conf->propal->enabled)
+    {
+        print '<table class="border" width="100%">';
+    
+        $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
+        $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
+        $sql .= " AND s.idp = ".$objsoc->id;
+        $sql .= " ORDER BY p.datep DESC";
+    
+        if ( $db->query($sql) )
+        {
+            $var=true;
+            $num = $db->num_rows();
+            if ($num >0 )
+            {
+                print "<tr $bc[$var]>";
+                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastPropals",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/comm/propal.php?socidp='.$objsoc->id.'">'.$langs->trans("AllPropals").' ('.$num.')</td></tr></table></td>';
+                print '</tr>';
+                $var=!$var;
+            }
+            $i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
+            while ($i < $num && $i < $MAXLIST)
+            {
+                $objp = $db->fetch_object();
+                print "<tr $bc[$var]>";
+                print "<td><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a>\n";
+                if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
+                {
+                    print " <b>&gt; 15 jours</b>";
+                }
+                print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</td>\n";
+                print '<td align="right" width="120">'.price($objp->price).'</td>';
+                print '<td width="100" align="center">'.$objp->statut.'</td></tr>';
+                $var=!$var;
+                $i++;
+            }
+            $db->free();
+        }
+        else {
+            dolibarr_print_error($db);
+        }
+        print "</table>";
     }
-
+    
     /*
-     * Commandes
-     * Que si le module est actif !
+     * Dernieres commandes
      */
-    if($conf->commande->enabled) {
-      print '<table class="border" width="100%">';
-      $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.total_ht, p.ref, ".$db->pdate("p.date_commande")." as dp";
-      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p WHERE p.fk_soc = s.idp ";
-      $sql .= " AND s.idp = $objsoc->id ORDER BY p.date_commande DESC";
-      
-      if ( $db->query($sql) )
-	{
-	  $num = $db->num_rows();
-	  if ($num >0 )
-	    {
-	      print "<tr $bc[$var]>";
-	      print '<td colspan="4"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socidp='.$objsoc->id.'">Liste des commandes ('.$num.')</td></tr>';
-	    }
-	  $i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
-	  while ($i < $num && $i < 2)
-	    {
-	      $objp = $db->fetch_object();
-	      $var=!$var;
-	      print "<tr $bc[$var]>";
-	      print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->propalid.'">'.$objp->ref."</a>\n";
-	      if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
-		{
-		  print " <b>&gt; 15 jours</b>";
-		}
-	      print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-	      print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
-	      print '<td align="center" width="100">'.$objp->statut.'</td></tr>';
-	      $i++;
-	    }
-	  $db->free();
-	}    
+    if($conf->commande->enabled)
+    {
+        print '<table class="border" width="100%">';
+    
+        $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.total_ht, p.ref, ".$db->pdate("p.date_commande")." as dp";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p";
+        $sql .= " WHERE p.fk_soc = s.idp ";
+        $sql .= " AND s.idp = $objsoc->id";
+        $sql .= " ORDER BY p.date_commande DESC";
+    
+        if ( $db->query($sql) )
+        {
+            $var=true;
+            $num = $db->num_rows();
+            if ($num >0 )
+            {
+                print "<tr $bc[$var]>";
+                print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socidp='.$objsoc->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td></tr></table></td>';
+                print '</tr>';
+            }
+            $i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
+            while ($i < $num && $i < $MAXLIST)
+            {
+                $objp = $db->fetch_object();
+                $var=!$var;
+                print "<tr $bc[$var]>";
+                print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->propalid.'">'.$objp->ref."</a>\n";
+                if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
+                {
+                    print " <b>&gt; 15 jours</b>";
+                }
+                print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</td>\n";
+                print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
+                print '<td align="center" width="100">'.$objp->statut.'</td></tr>';
+                $i++;
+            }
+            $db->free();
+        }
+        print "</table>";
     }
+    
     /*
-     *
-     * Liste des projets associés
-     *
+     * Derniers projets associés
      */
-    $sql  = "SELECT p.rowid,p.title,p.ref,".$db->pdate("p.dateo")." as do";
-    $sql .= " FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $objsoc->id";
-    if ( $db->query($sql) ) {
-      print "<table class=\"border\" cellspacing=0 width=100% cellpadding=\"1\">";
-      $i = 0 ; 
-      $num = $db->num_rows();
-      if ($num > 0) {
-	$tag = !$tag; print "<tr $bc[$tag]>";
-	print "<td colspan=\"2\"><a href=\"../projet/index.php?socidp=$objsoc->id\">liste des projets ($num)</td></tr>";
-      }
-      while ($i < $num && $i < 5) {
-	$obj = $db->fetch_object();
-	$tag = !$tag;
-	print "<tr $bc[$tag]>";
-	print '<td><a href="../projet/fiche.php?id='.$obj->rowid.'">'.$obj->title.'</a></td>';
-
-	print "<td align=\"right\">".$obj->ref ."</td></tr>";
-	$i++;
-      }
-      $db->free();
-      print "</table>";
+    if ($conf->projet->enabled)
+    {
+        print '<table class="border" width=100%>';
+    
+        $sql  = "SELECT p.rowid,p.title,p.ref,".$db->pdate("p.dateo")." as do";
+        $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
+        $sql .= " WHERE p.fk_soc = $objsoc->id";
+        $sql .= " ORDER BY p.dateo DESC";
+    
+        if ( $db->query($sql) ) {
+            $var=true;
+            $i = 0 ;
+            $num = $db->num_rows();
+            if ($num > 0) {
+                print "<tr $bc[$var]>";
+                print '<td colspan="2"><table width="100%" class="noborder"><tr><td>'.$langs->trans("LastProjects",($num<=$MAXLIST?"":$MAXLIST)).'</td><td align="right"><a href="'.DOL_URL_ROOT.'/projet/index.php?socidp='.$objsoc->id.'">'.$langs->trans("AllProjects").' ('.$num.')</td></tr></table></td>';
+                print '</tr>';
+            }
+            while ($i < $num && $i < $MAXLIST) {
+                $obj = $db->fetch_object();
+                $var = !$var;
+                print "<tr $bc[$var]>";
+                print '<td><a href="../projet/fiche.php?id='.$obj->rowid.'">'.$obj->title.'</a></td>';
+    
+                print "<td align=\"right\">".$obj->ref ."</td></tr>";
+                $i++;
+            }
+            $db->free();
+        }
+        else
+        {
+            dolibarr_print_error($db);
+        }
+        print "</table>";
     }
-    else
-      {
-        dolibarr_print_error($db);
-    }
-
+    
     /*
      *
      *
      */
     print "</td></tr>";
     print "</table></div>\n";
+    
     
     /*
      * Barre d'action
@@ -446,10 +468,11 @@ if ($_socid > 0)
 	 * Liste des contacts
 	 *
 	 */
-	if (defined("MAIN_MODULE_CLICKTODIAL") && MAIN_MODULE_CLICKTODIAL==1)
+	if ($conf->clicktodial->enabled)
 	  {
 	    $user->fetch_clicktodial(); // lecture des infos de clicktodial
 	  }
+
 	print '<table class="noborder" width="100%">';
 	
 	print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
@@ -461,7 +484,8 @@ if ($_socid > 0)
 	
 	$sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note ";
 	$sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-	$sql .= " WHERE p.fk_soc = $objsoc->id  ORDER by p.datec";
+	$sql .= " WHERE p.fk_soc = $objsoc->id";
+	$sql .= " ORDER by p.datec";
 
 	$result = $db->query($sql);
 	$i = 0 ; $num = $db->num_rows(); $tag = True;
