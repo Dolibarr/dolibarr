@@ -407,7 +407,7 @@ else
 	  $h = 1;
 	  $a = 0;
 	  
-	  dolibarr_fiche_head($head, $a);	  
+	  dolibarr_fiche_head($head, $a, $soc->nom);	  
 
 	  /*
 	   * Confirmation de la suppression de la commande

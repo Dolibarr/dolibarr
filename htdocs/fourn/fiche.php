@@ -69,7 +69,7 @@ if ( $societe->fetch($socid) )
     {
         $hselected=$h;
         $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
-        $head[$h][1] = 'Fiche fournisseur';
+        $head[$h][1] = 'Fournisseur';
         $h++;
     }
     if ($conf->produit->enabled) {
@@ -78,7 +78,7 @@ if ( $societe->fetch($socid) )
         $h++;
     }
         
-    dolibarr_fiche_head($head, $hselected);
+    dolibarr_fiche_head($head, $hselected, $societe->nom);
 
   /*
    *

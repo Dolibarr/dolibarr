@@ -152,13 +152,13 @@ if ($_GET["socid"] > 0)
   if ($objsoc->fournisseur)
     {
       $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objsoc->id;
-      $head[$h][1] = 'Fiche fournisseur';
+      $head[$h][1] = 'Fournisseur';
       $h++;
     }
   
   if ($conf->compta->enabled) {
     $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;
-    $head[$h][1] = 'Fiche compta';
+    $head[$h][1] = 'Comptabilité';
     $h++;
   }
 
@@ -204,7 +204,7 @@ if ($_GET["socid"] > 0)
     print $objsoc->nom;
     print '</td></tr>';
     print "<tr><td valign=\"top\">Adresse</td><td colspan=\"3\">".nl2br($objsoc->adresse)."<br>".$objsoc->cp." ".$objsoc->ville." ".$objsoc->pays."</td></tr>";
-    print "<tr><td>Téléphone</td><td> $objsoc->tel&nbsp;</td><td>Fax</td><td>$objsoc->fax&nbsp;</td></tr>";
+    print '<tr><td>Téléphone</td><td>'.dolibarr_print_phone($objsoc->tel).'&nbsp;</td><td>Fax</td><td>'.dolibarr_print_phone($objsoc->fax).'&nbsp;</td></tr>';
     print "<tr><td>Web</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
 
     print "<tr><td>Siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";

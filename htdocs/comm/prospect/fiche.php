@@ -71,9 +71,10 @@ if ($socid > 0)
 
   if ($result)
     {
-      $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
-      $head[0][1] = "Fiche société";
-      $h = 1;
+      $h=0;
+      $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
+      $head[$h][1] = "Fiche société";
+      $h++;
       
       $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
       $head[$h][1] = 'Prospect';
@@ -105,18 +106,17 @@ if ($socid > 0)
       $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
       $head[$h][1] = 'Notifications';
 
-      dolibarr_fiche_head($head, 1);
+      dolibarr_fiche_head($head, 1, $societe->nom);
 
-    print_titre("Fiche prospect : $societe->nom");
     /*
      *
      *
      */
     print '<table width="100%" border="0">';
     print '<tr><td valign="top">';
-    print '<table class="border" cellspacing="0" border="1" width="100%">';
+    print '<table class="border" cellspacing="0" cellpadding="3" border="1" width="100%">';
 
-    print "<tr><td>Téléphone</td><td>".dolibarr_print_phone($societe->tel)."&nbsp;</td><td>fax</td><td>".dolibarr_print_phone($societe->fax)."&nbsp;</td></tr>";
+    print "<tr><td>Téléphone</td><td align=\"center\">".dolibarr_print_phone($societe->tel)."&nbsp;</td><td>fax</td><td align=\"center\">".dolibarr_print_phone($societe->fax)."&nbsp;</td></tr>";
     print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($societe->address)."<br>$societe->cp $societe->ville</td></tr>";
 
     print '<tr><td>Siret</td><td>'.$societe->siret.'</td>';
@@ -174,7 +174,7 @@ if ($socid > 0)
 	$num = $db->num_rows();
 	if ($num >0 )
 	  {
-	    print "<tr $bc[$var]><td colspan=\"4\"><a href=\"../propal.php?socidp=$societe->id\">Liste des propales ($num)</td></tr>";
+	    print "<tr $bc[$var]><td colspan=\"4\"><a href=\"../propal.php?socidp=$societe->id\">Liste des propositions commerciales ($num)</td></tr>";
 	    $var=!$var;
 	  }
 	$i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
@@ -182,7 +182,9 @@ if ($socid > 0)
 	  {
 	    $objp = $db->fetch_object( $i);
 	    print "<tr $bc[$var]>";
-	    print "<td><a href=\"../propal.php?propalid=$objp->propalid\">$objp->ref</a>\n";
+	    print "<td><a href=\"../propal.php?propalid=$objp->propalid\">";
+	    print img_file();
+	    print "</a>&nbsp;<a href=\"../propal.php?propalid=$objp->propalid\">$objp->ref</a>\n";
 	    if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
 	      {
 		print " <b>&gt; 15 jours</b>";
@@ -207,6 +209,7 @@ if ($socid > 0)
      * Barre d'action
      *
      */
+
     print '<div class="tabsAction">';
 
     if ($conf->propal->enabled && defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
@@ -220,7 +223,7 @@ if ($socid > 0)
       }
     print '</div>';
 
-	print '<br>';
+    print '<br>';
 	
     /*
      *

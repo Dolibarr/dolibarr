@@ -208,7 +208,7 @@ if ($socid > 0)
 	$head[$h][1] = '<img border="0" src="/theme/'.$conf->theme.'/img/bookmark.png" alt="Bookmark" title="Bookmark">';
 	$head[$h][2] = 'image';
       }
-    dolibarr_fiche_head($head, $hselected);
+    dolibarr_fiche_head($head, $hselected, $objsoc->nom);
 
     /*
      *
@@ -223,7 +223,7 @@ if ($socid > 0)
     print '<table class="border" cellpadding="2" cellspacing="0" width="100%">';
     print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$objsoc->nom.'</td></tr>';
     print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($objsoc->adresse)."<br>$objsoc->cp $objsoc->ville</td></tr>";
-    print '<tr><td>Tel</td><td>'.$objsoc->tel.'&nbsp;</td><td>Fax</td><td>'.$objsoc->fax.'&nbsp;</td></tr>';
+    print '<tr><td>Tél</td><td>'.$objsoc->tel.'&nbsp;</td><td>Fax</td><td>'.$objsoc->fax.'&nbsp;</td></tr>';
     print "<tr><td>Web</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
 
     print '<tr><td>Siren</td><td><a href="http://www.societe.com/cgi-bin/recherche?rncs='.$objsoc->siren.'">'.$objsoc->siren.'</a>&nbsp;</td>';
@@ -350,8 +350,6 @@ if ($socid > 0)
         print "<a class=\"tabAction\" href=\"deplacement/fiche.php?socid=$objsoc->idp&action=create\">Créer Déplacement</a>";
     }
 
-    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create">Ajouter un contact</a>';
-
     print '</div>';
     print "<br>\n";
 
@@ -462,16 +460,20 @@ if ($socid > 0)
                 print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
 
                 print '<td width="10%">&nbsp;</td>';
-
-        	      if ($obj->propalrowid)
-        		{
-        		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
-        		}
-        	      else
-        		{
-        		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
-        		}
-
+		print '<td width="40%">';
+		if ($obj->propalrowid)
+		  {
+		    print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">';
+		    print img_file().'</a>&nbsp;';
+		    print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+		  }
+		else
+		  {
+		    print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">';
+		    print img_file().'</a>&nbsp;';
+		    print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+		  }
+		
                 /*
                  * Contact pour cette action
                  *
