@@ -36,7 +36,11 @@ function llxHeader($head = "") {
   if ($conf->societe ) 
     {
       $menu->add("/societe.php", "Sociétés","company");
-      $menu->add_submenu("../soc.php3?&action=create", "Nouvelle société");
+
+      if ($user->admin)
+	{
+	  $menu->add_submenu("../soc.php3?&action=create", "Nouvelle société");
+	}
     }
 
   if ($conf->commercial ) 
