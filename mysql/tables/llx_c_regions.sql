@@ -57,3 +57,4 @@ insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (83,'63113',1,'
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (91,'34172',2,'Languedoc-Roussillon');
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (93,'13055',0,'Provence-Alpes-Côte d\'Azur');
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (94,'2A004',0,'Corse');
+
