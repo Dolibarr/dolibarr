@@ -41,6 +41,7 @@ function llxHeader($head = "") {
 
   $menu->add("/compta/dons/","Dons");
   $menu->add_submenu("fiche.php?action=create","Saisir un don");
+  $menu->add_submenu("liste.php","Liste complète");
 
   $menu->add("/compta/bank/index.php3","Bank");
 
