@@ -81,6 +81,14 @@ if ($_GET["facid"])
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$facture->id;
       $head[$h][1] = $langs->trans("Apercu");
       $h++;
+
+      if ($facture->mode_reglement == 3)
+	{
+	  $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$facture->id;
+	  $head[$h][1] = $langs->trans("Prélèvement");
+	  $h++;
+	}
+      
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$facture->id;
       $head[$h][1] = $langs->trans("Note");
       $hselected = $h;
@@ -106,50 +114,52 @@ if ($_GET["facid"])
       print '<a href="'.$url.'">'.$soc->nom.'</a></td>';
       print '<td>'.$langs->trans("Status").'</td><td align="center"><b>'.$facture->statut_libelle.'</b></td></tr>';
 
-	  print '<tr><td>Date</td><td>'.strftime("%A %d %B %Y",$facture->date);
-	  if ($facture->fin_validite)
-	    {
-	      print " (".strftime("%d %B %Y",$facture->fin_validite).")";
-	    }
-	  print '</td>';
+      print '<tr><td>Date</td><td>'.strftime("%A %d %B %Y",$facture->date);
+      if ($facture->fin_validite)
+	{
+	  print " (".strftime("%d %B %Y",$facture->fin_validite).")";
+	}
+      print '</td>';
+      
+      print '<td>'.$langs->trans("Author").'</td><td>';
+      $author = new User($db, $facture->user_author);
+      $author->fetch('');
+      print $author->fullname.'</td></tr>';
+      
+      print '<tr><td valign="top" colspan="4">Note :</td></tr>';
 
-	  print '<td>'.$langs->trans("Author").'</td><td>';
-	  $author = new User($db, $facture->user_author);
-	  $author->fetch('');
-	  print $author->fullname.'</td></tr>';
-
-	  print '<tr><td valign="top" colspan="4">Note :<br>'. nl2br($facture->note)."</td></tr>";
-	  
-	  if ($_GET["action"] == 'edit')
-	    {
-	      print '<form method="post" action="note.php?facid='.$facture->id.'">';
-	      print '<input type="hidden" name="action" value="update">';
-	      print '<tr><td valign="top" colspan="4"><textarea name="note" cols="80" rows="8">'.$facture->note."</textarea></td></tr>";
-	      print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
-	      print '</form>';
-	    }
-
-	  print "</table>";
-
+      print '<tr><td valign="top" colspan="4">'.nl2br($facture->note)."</td></tr>";
+      
+      if ($_GET["action"] == 'edit')
+	{
+	  print '<form method="post" action="note.php?facid='.$facture->id.'">';
+	  print '<input type="hidden" name="action" value="update">';
+	  print '<tr><td valign="top" colspan="4"><textarea name="note" cols="80" rows="8">'.$facture->note."</textarea></td></tr>";
+	  print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+	  print '</form>';
+	}
+      
+      print "</table>";
+      
       print "<br>";
+      
 
-
-	  /*
-	   * Actions
-	   */
-	  print '</div>';
-	  print '<div class="tabsAction">';
-	  
-	  if ($user->rights->facture->creer && $_GET["action"] <> 'edit')
-	    {
-	      print "<a class=\"tabAction\" href=\"note.php?facid=$facture->id&amp;action=edit\">".$langs->trans('Edit')."</a>";
-	    }
-	  
-	  print "</div>";
-
-
+      /*
+       * Actions
+       */
+      print '</div>';
+      print '<div class="tabsAction">';
+      
+      if ($user->rights->facture->creer && $_GET["action"] <> 'edit')
+	{
+	  print "<a class=\"tabAction\" href=\"note.php?facid=$facture->id&amp;action=edit\">".$langs->trans('Edit')."</a>";
+	}
+      
+      print "</div>";
+      
+      
     }
-
+  
 }
 $db->close();
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
