@@ -1,7 +1,7 @@
 <?PHP
-/* Copyright (C) 2003 Brian Fraval <brian@fraval.org>
- * Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * 
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Brian Fraval <brian@fraval.org>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -198,12 +198,9 @@ elseif ($action == 'edit')
   /*
    *
    */
-
-
   
   print '<br><table class="tableab" width="100%" border="1" cellspacing="0" cellpadding="3">';
 
-  
   print '<td width="20%" align="center">[<a href="soc.php?socid='.$socid.'&action=edit">Editer</a>]</td>';
   print '<td width="20%" align="center">-</td>';
   print '<td width="20%" align="center">-</td>';
@@ -214,32 +211,6 @@ elseif ($action == 'edit')
 /*
  *
  */
-
-  clearstatcache();
-  umask(0);
-  
-  $docdir = SOCIETE_OUTPUTDIR . "/$socid";
-  $url = SOCIETE_OUTPUT_URL . "/$socid";
-
-  if (file_exists ($docdir))
-    {
-      print '<a href="'.$url.'">Documents</a>';
-    }
-  else
-    {
-
-      if (! @mkdir ($docdir, 0775))
-	{
-	  print "<p>Impossible de créer ".$docdir;
-	}
-      else
-	{
-	  if (file_exists ($docdir))
-	    {
-	      print '<a href="'.$url.'">Documents</a>';
-	    }
-	}
-    }
 }
 
 $db->close();
