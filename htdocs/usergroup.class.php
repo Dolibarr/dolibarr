@@ -298,15 +298,27 @@ class UserGroup
 	 
   function delete()
   {
+    $this->db->begin();
+    
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
+    $sql .= " WHERE fk_usergroup = ".$this->id;
+    $this->db->query($sql);
+
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
+    $sql .= " WHERE fk_usergroup = ".$this->id;
+    $this->db->query($sql);
+
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup";
     $sql .= " WHERE rowid = ".$this->id;
     $result=$this->db->query($sql);
     if ($result) 
     {
+        $this->db->commit();
 	    return 1;
     }
     else
     {
+        $this->db->rollback();
         dolibarr_print_error($this->db);
 	    return -1;
     }
