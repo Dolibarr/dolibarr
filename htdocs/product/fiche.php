@@ -238,7 +238,7 @@ else
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      print "<tr>";
 	      print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
-	      print '<td>';
+	      print '<td width="40%">';
 	      if ($product->envente)
 		{
 		  print "En vente";
@@ -314,7 +314,7 @@ else
 	      print '<hr><div class="titre">Nouveau prix</div><br>';
 	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	      print '<input type="hidden" name="action" value="update_price">';
-	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      print '<tr><td width="20%">Prix de vente</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
 	      print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
 	      print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
@@ -330,7 +330,7 @@ else
 	      print_titre ("Ajouter un founisseur");
 	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	      print '<input type="hidden" name="action" value="add_fourn">';
-	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4"><tr>';
+	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
 	      print '<td>Fournisseurs</td><td><select name="id_fourn">';
 
 	      $sql = "SELECT s.idp, s.nom, s.ville FROM llx_societe as s WHERE s.fournisseur=1";	     
@@ -364,7 +364,7 @@ else
 	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update">';
 	  
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>".'<td width="20%">Référence</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
 	  print '<td>Libellé</td><td colspan="2"><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
@@ -545,7 +545,7 @@ if ($id && $action == '' && $product->envente)
 	    {
 	      print '<form method="POST" action="fiche.php?id='.$id.'">';
 	      print '<input type="hidden" name="action" value="addinpropal">';
-	      print '<table border="1" width="100%" cellpadding="3" cellspacing="0">';
+	      print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
 	      print "<tr>".'<td>Autres Propositions</td><td>';
 	      $htmls->select_array("propalid", $otherprop);
 	      print '</td><td>';
