@@ -22,63 +22,176 @@
  */
 require("./pre.inc.php");
 
-$acts[0] = "add";
-$acts[1] = "delete";
-$actl[0] = "Activer";
-$actl[1] = "Désactiver";
-
-$active = 1;
-
-// Mettre ici tous les caractéristiques des dictionnaires editables
-
-// Nom des tables des dictionnaires
-$tabid[1] = "llx_c_forme_juridique";
-$tabid[2] = "llx_c_departements";
-$tabid[3] = "llx_c_regions";
-$tabid[4] = "llx_c_pays";
-$tabid[5] = "llx_c_civilite";
-
-// Libellé des dictionnaires
-$tabnom[1] = "Formes juridiques";
-$tabnom[2] = "Départements/Provinces/Cantons";
-$tabnom[3] = "Régions";
-$tabnom[4] = "Pays";
-$tabnom[5] = "Titres de civilité";
-
-// Requete pour extraction des données des dictionnaires
-$tabsql[1] = "SELECT f.code, f.libelle, p.libelle as pays, f.active FROM llx_c_forme_juridique as f, llx_c_pays as p WHERE f.fk_pays=p.rowid";
-$tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, p.libelle as pays, d.active FROM llx_c_departements as d, llx_c_regions as r, llx_c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
-$tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, p.libelle as pays, r.active FROM llx_c_regions as r, llx_c_pays as p WHERE r.fk_pays=p.rowid";
-$tabsql[4] = "SELECT rowid, code, libelle, active FROM llx_c_pays";
-$tabsql[5] = "SELECT c.rowid AS rowid, c.civilite AS libelle, c.active FROM llx_c_civilite AS c, llx_c_pays AS p WHERE c.fk_pays = p.rowid";
-
-// Tri par defaut
-$tabsqlsort[1]="p.rowid, code ASC";
-$tabsqlsort[2]="p.rowid, code ASC";
-$tabsqlsort[3]="p.rowid, code ASC";
-$tabsqlsort[4]="code ASC";
-$tabsqlsort[5]="libelle ASC";
- 
-// Champs à afficher
-$tabfield[1] = "code,libelle,pays";
-$tabfield[2] = "code,libelle,pays";
-$tabfield[3] = "code,libelle,pays";
-$tabfield[4] = "code,libelle";
-$tabfield[5] = "libelle";
-
-
+$langs->load("admin");
 
 if (! $user->admin)
 accessforbidden();
 
 
-if ($_GET["action"] == 'delete')
+$acts[0] = "activate";
+$acts[1] = "disable";
+$actl[0] = $langs->trans("Activate");
+$actl[1] = $langs->trans("Disable");
+
+$active = 1;
+
+
+// Cette page est une page d'édition générique des dictionnaires de données
+// Mettre ici tous les caractéristiques des dictionnaires
+
+// Nom des tables des dictionnaires
+$tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
+$tabname[2] = MAIN_DB_PREFIX."c_departements";
+$tabname[3] = MAIN_DB_PREFIX."c_regions";
+$tabname[4] = MAIN_DB_PREFIX."c_pays";
+$tabname[5] = MAIN_DB_PREFIX."c_civilite";
+$tabname[6] = MAIN_DB_PREFIX."c_actioncomm";
+
+// Libellé des dictionnaires
+$tablib[1] = $langs->trans("DictionnaryCompanyType");
+$tablib[2] = $langs->trans("DictionnaryCanton");
+$tablib[3] = $langs->trans("DictionnaryRegion");
+$tablib[4] = $langs->trans("DictionnaryCountry");
+$tablib[5] = $langs->trans("DictionnaryCivility");
+$tablib[6] = $langs->trans("DictionnaryActions");
+
+// Requete pour extraction des données des dictionnaires
+$tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM llx_c_forme_juridique as f, llx_c_pays as p WHERE f.fk_pays=p.rowid";
+$tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, r.nom as region, p.libelle as pays, d.active FROM llx_c_departements as d, llx_c_regions as r, llx_c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid and r.active=1 and p.active=1";
+$tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, p.libelle as pays, r.active FROM llx_c_regions as r, llx_c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
+$tabsql[4] = "SELECT rowid   as rowid, code, libelle, active FROM llx_c_pays";
+$tabsql[5] = "SELECT c.rowid as rowid, c.civilite AS libelle, c.active FROM llx_c_civilite AS c, llx_c_pays AS p WHERE c.fk_pays = p.rowid";
+$tabsql[6] = "SELECT a.id    as rowid, a.libelle AS libelle, a.type, a.lang AS lang, a.active FROM llx_c_actioncomm AS a";
+
+// Tri par defaut
+$tabsqlsort[1]="pays, code ASC";
+$tabsqlsort[2]="pays, code ASC";
+$tabsqlsort[3]="pays, code ASC";
+$tabsqlsort[4]="libelle ASC";
+$tabsqlsort[5]="c.libelle ASC";
+$tabsqlsort[6]="lang ASC, a.type ASC";
+ 
+// Nom des champs en resultat de select pour affichage du dictionnaire
+$tabfield[1] = "code,libelle,pays";
+$tabfield[2] = "code,libelle,region,pays";   // "code,libelle,region,pays"
+$tabfield[3] = "code,libelle,pays";
+$tabfield[4] = "code,libelle";
+$tabfield[5] = "libelle";
+$tabfield[6] = "libelle,type,lang";
+
+// Nom des champs dans la table pour insertion d'un enregistrement
+$tabfieldinsert[1] = "code,libelle,fk_pays";
+$tabfieldinsert[2] = "code_departement,nom,fk_region";
+$tabfieldinsert[3] = "code_region,nom,fk_pays";
+$tabfieldinsert[4] = "code,libelle";
+$tabfieldinsert[5] = "civilite";
+$tabfieldinsert[6] = "libelle,type,lang";
+
+// Nom du rowid si le champ n'est pas de type autoincrément
+$tabrowid[1] = "";
+$tabrowid[2] = "";
+$tabrowid[3] = "";
+$tabrowid[4] = "rowid";
+$tabrowid[5] = "rowid";
+$tabrowid[6] = "id";
+
+
+$msg='';
+
+if ($_POST["actionadd"]) {
+    
+    $listfield=split(',',$tabfield[$_POST["id"]]);
+
+    // Verifie que tous les champs sont renseignés
+    $ok=1;
+    foreach ($listfield as $f => $value) {
+        if (! isset($_POST[$value]) || $_POST[$value]=='') {
+            $ok=0;
+            $msg.="Le champ '".$listfield[$f]."' n'est pas renseigné.<br>";
+        }
+    }
+    // Autres verif
+    if (isset($_POST["code"]) && $_POST["code"]=='0') {
+        $ok=0;
+        $msg.="Le Code ne peut avoir la valeur 0<br>";
+    }
+    if (isset($_POST["pays"]) && $_POST["pays"]=='0') {
+        $ok=0;
+        $msg.="Le Pays n'a pas été choisi<br>";
+    }
+    
+    // Si verif ok, on ajoute la ligne
+    if ($ok) {
+        if ($tabrowid[$_POST["id"]]) {
+            // Recupere id libre pour insertion
+            $newid=0;
+            $sql = "SELECT max(".$tabrowid[$_POST["id"]].") newid from ".$tabname[$_POST["id"]];
+            $result = $db->query($sql);
+            if ($result)
+            {
+                $obj = $db->fetch_object(0);
+                $newid=($obj->newid + 1);
+                        
+            } else {
+                dolibarr_print_error($db);
+            }
+        }
+    
+        // Add new entry
+        $sql = "INSERT INTO ".$tabname[$_POST["id"]]." (";
+        if ($tabrowid[$_POST["id"]]) $sql.= $tabrowid[$_POST["id"]].",";
+        $sql.= $tabfieldinsert[$_POST["id"]];
+        $sql.=",active)";
+        $sql.= " VALUES(";
+        // Ajoute valeur des champs
+        if ($tabrowid[$_POST["id"]]) $sql.= $newid.",";
+        $i=0;
+        foreach ($listfield as $f => $value) {
+            if ($i) $sql.=",";
+            $sql.="'".$_POST[$value]."'";
+            $i++;
+        }
+        $sql.=",1)";
+
+        $result = $db->query($sql);
+        if (!$result)
+        {
+            if ($db->errno() == $db->ERROR_DUPLICATE) {
+                $msg="Une entrée pour cette clé existe déjà<br>";
+            }
+            else {
+                dolibarr_print_error($db);
+            }
+        }
+    }
+
+    $_GET["id"]=$_POST["id"];       // Force affichage dictionnaire en cours d'edition
+}
+
+if ($_GET["action"] == 'delete')       // delete
 {
+    if ($tabrowid[$_GET["id"]]) $rowidcol.= $tabrowid[$_GET["id"]];
+    else $rowidcold.= "rowid";
+
+    $sql = "DELETE from ".$tabname[$_GET["id"]]." WHERE $rowidcol=".$_GET["rowid"];
+
+    $result = $db->query($sql);
+    if (!$result)
+    {
+        dolibarr_print_error($db);
+    }
+}
+
+if ($_GET["action"] == $acts[0])       // activate
+{
+    if ($tabrowid[$_GET["id"]]) $rowidcol.= $tabrowid[$_GET["id"]];
+    else $rowidcold.= "rowid";
+
     if ($_GET["rowid"] >0) {
-        $sql = "UPDATE ".$tabid[$_GET["id"]]." SET active = 0 WHERE rowid=".$_GET["rowid"];
+        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE $rowidcol=".$_GET["rowid"];
     }
     elseif ($_GET["code"] >0) {
-        $sql = "UPDATE ".$tabid[$_GET["id"]]." SET active = 0 WHERE code=".$_GET["code"];
+        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE code=".$_GET["code"];
     }
 
     $result = $db->query($sql);
@@ -87,9 +200,18 @@ if ($_GET["action"] == 'delete')
         print $db->error();
     }
 }
-if ($_GET["action"] == 'add')
+
+if ($_GET["action"] == $acts[1])       // disable
 {
-    $sql = "UPDATE ".$tabid[$_GET["id"]]." SET active = 1 WHERE rowid=".$_GET["rowid"];
+    if ($tabrowid[$_GET["id"]]) $rowidcol.= $tabrowid[$_GET["id"]];
+    else $rowidcold.= "rowid";
+
+    if ($_GET["rowid"] >0) {
+        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE $rowidcol=".$_GET["rowid"];
+    }
+    elseif ($_GET["code"] >0) {
+        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE code=".$_GET["code"];
+    }
 
     $result = $db->query($sql);
     if (!$result)
@@ -102,10 +224,15 @@ if ($_GET["action"] == 'add')
 
 llxHeader();
 
+
 if ($_GET["id"])
 {
     print_titre($langs->trans("DictionnarySetup"));
     print '<br>';
+
+    if ($msg) {
+        print $msg.'<br>';
+    }
 
     // Complète requete recherche valeurs avec critere de tri
     $sql=$tabsql[$_GET["id"]];
@@ -125,36 +252,69 @@ if ($_GET["id"])
     print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 
     // Ligne d'ajout
-    if ($tabid[$_GET["id"]]) {
-        print_titre($tabnom[$_GET["id"]]);
+    if ($tabname[$_GET["id"]]) {
+        print_titre($tablib[$_GET["id"]]);
         $var=False;
         $fieldlist=split(',',$tabfield[$_GET["id"]]);
         print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 
+        print '<form action="dict.php" method="post">';
+        print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+
+        // Ligne de titre d'ajout
         print '<tr class="liste_titre">';
         foreach ($fieldlist as $field => $value) {
+            // Determine le nom du champ par rapport aux noms possibles
+            // dans les dictionnaires de données
+            $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
+            if ($fieldlist[$field]=='lang')    $valuetoshow=$langs->trans("Language");
+            if ($fieldlist[$field]=='type')    $valuetoshow=$langs->trans("Type");
+            if ($fieldlist[$field]=='code')    $valuetoshow=$langs->trans("Code");
+            if ($fieldlist[$field]=='libelle') $valuetoshow=$langs->trans("Label");
+            if ($fieldlist[$field]=='pays')    $valuetoshow=$langs->trans("Country");
             print '<td>';
-            print ucfirst($fieldlist[$field]);
+            print $valuetoshow;
             print '</td>';
         }
         print '<td>&nbsp;</td>';
+        print '<td>&nbsp;</td>';
         print '</td>';
 
+        // Ligne d'ajout
         print "<tr $bc[$var] class=\"value\">";
+        $html = new Form($db);
         foreach ($fieldlist as $field => $value) {
             if ($fieldlist[$field] == 'pays') {
-                $html = new Form($db);
                 print '<td>';
-                $html->select_pays();
+                $html->select_pays('','pays');
+                print '</td>';
+            }
+            elseif ($fieldlist[$field] == 'region') {
+                print '<td>';
+                $html->select_region('','region');
+                print '</td>';
+            }
+            elseif ($fieldlist[$field] == 'lang') {
+                print '<td>';
+                $html->select_lang(MAIN_LANG_DEFAULT,'lang');
+                print '</td>';
+            }
+            elseif ($fieldlist[$field] == 'type') {
+                print '<td>';
+                print 'user<input type="hidden" name="type" value="user">';
                 print '</td>';
             }
             else {
                 print '<td><input type="text" value="" name="'.$fieldlist[$field].'"></td>';
             }
         }
-        print '<td colspan=2><input type="submit" name="Ajouter" value="'.$langs->trans("Add").'"></td>';
+        print '<td colspan=3><input type="submit" name="actionadd" value="'.$langs->trans("Add").'"></td>';
         print "</tr>";
+
         print '<tr><td colspan="'.(count($fieldlist)+2).'"></td></tr>';
+
+        print '</form>';
+
     }
 
     // Affiche table des valeurs
@@ -165,18 +325,29 @@ if ($_GET["id"])
         $var=False;
         if ($num)
         {
+            // Ligne de titre
             print '<tr class="liste_titre">';
             foreach ($fieldlist as $field => $value) {
+                // Determine le nom du champ par rapport aux noms possibles
+                // dans les dictionnaires de données
+                $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
+                if ($fieldlist[$field]=='lang')    $valuetoshow=$langs->trans("Language");
+                if ($fieldlist[$field]=='type')    $valuetoshow=$langs->trans("Type");
+                if ($fieldlist[$field]=='code')    $valuetoshow=$langs->trans("Code");
+                if ($fieldlist[$field]=='libelle') $valuetoshow=$langs->trans("Label");
+                if ($fieldlist[$field]=='pays')    $valuetoshow=$langs->trans("Country");
+                // Affiche nom du champ
                 print '<td>';
-                print_liste_field_titre(ucfirst($fieldlist[$field]),"dict.php",$fieldlist[$field],"&id=".$_GET["id"]);
+                print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"]);
                 print '</td>';
             }
             print '<td>';
-            print_liste_field_titre("Activer/Désactiver","dict.php","active","&id=".$_GET["id"]);
+            print_liste_field_titre($langs->trans("Activate")."/".$langs->trans("Disable"),"dict.php","active","&id=".$_GET["id"]);
             print '</td>';
+            print '<td>&nbsp;</td>';
             print '</tr>';
 
-
+            // Lignes de valeurs
             while ($i < $num)
             {
                 $obj = $db->fetch_object($i);
@@ -185,23 +356,38 @@ if ($_GET["id"])
                 print "<tr $bc[$var] class=\"value\">";
 
                 foreach ($fieldlist as $field => $value) {
-                    print '<td>'.$obj->$fieldlist[$field].'</td>';
+                    $valuetoshow=$obj->$fieldlist[$field];
+                    if ($valuetoshow=='all') {
+                        $valuetoshow=$langs->trans('All');
+                    }
+                    print '<td>'.$valuetoshow.'</td>';
+
                 }
                 print '<td>';
-                if ($obj->code) {
+
+                // Est-ce une entrée du dictionnaire qui peut etre désactivée ?
+                $iserasable=1;  // Oui par defaut
+                if (isset($obj->code) && ($obj->code == '0' || $obj->code == '')) $iserasable=0;
+                if ($obj->type && $obj->type == 'system') $iserasable=0;
+
+                if ($iserasable) {
                     print '<a href="'."dict.php".'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$obj->rowid.'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
                 } else {
-                    print '<a href="'."dict.php".'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$obj->rowid.'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+                    print $langs->trans("AlwaysActive");
                 }
                 print "</td>";
-
+                if ($iserasable) {
+                    print '<td><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$obj->rowid.'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=delete"'.img_delete().'</a></td>';
+                } else {
+                    print '<td>&nbsp;</td>';   
+                }
                 print "</tr>\n";
                 $i++;
             }
         }
     }
     else {
-        print "Erreur : $sql : ".$db->error();
+        dolibarr_print_error($db);
     }
 
     print '</table>';
@@ -211,8 +397,8 @@ else
     print_titre($langs->trans("DictionnarySetup"));
     print '<br>';
 
-    foreach ($tabid as $i => $value) {
-        print '<a href="dict.php?id='.$i.'">'.$tabnom[$i].'</a> (Table '.$tabid[$i].')<br>';
+    foreach ($tabname as $i => $value) {
+        print '<a href="dict.php?id='.$i.'">'.$tablib[$i].'</a> (Table '.$tabname[$i].')<br>';
     }
 }
 
