@@ -128,11 +128,6 @@ if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
       require(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON."/".PROPALE_ADDON.".modules.php");
     }
 
-  if (defined("PROPALE_ADDON_PDF"))
-    {
-      require(DOL_DOCUMENT_ROOT ."/includes/modules/propale/pdf_".PROPALE_ADDON_PDF.".modules.php");
-    }
-
   if (! defined("PROPALE_OUTPUTDIR"))
     {
       define('PROPALE_OUTPUTDIR', DOL_DOCUMENT_ROOT . "/document/propale/");
