@@ -809,7 +809,6 @@ if ($_GET["propalid"])
 	      $formmail->fromname = $user->fullname;
 	      $formmail->frommail = $user->email;
           $formmail->withfrom=1;
-//          $formmail->withto=array_merge(array("&nbsp;"),$soc->contact_email_array());
           $formmail->withto=ucfirst(strtolower($obj->firstname)) . " " .  ucfirst(strtolower($obj->name)) . " <$obj->email>";
           $formmail->withcc=1;
           $formmail->withtopic=1;

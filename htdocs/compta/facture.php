@@ -1385,13 +1385,18 @@ else
 	      print '<br>';
 	      print_titre("Envoyer une relance par mail");
 
+	      $liste[0]="&nbsp;";
+	      foreach ($soc->contact_email_array() as $key=>$value) {
+	        $liste[$key]=$value; 
+	      }
+	      
 	      // Créé l'objet formulaire mail
 	      include_once("../html.formmail.class.php");
 	      $formmail = new FormMail($db);	    
 	      $formmail->fromname = $user->fullname;
 	      $formmail->frommail = $user->email;
           $formmail->withfrom=1;
-          $formmail->withto=array_merge(array("&nbsp;"),$soc->contact_email_array());
+          $formmail->withto=$liste;
           $formmail->withcc=1;
           $formmail->withtopic=1;
           $formmail->withfile=1;
