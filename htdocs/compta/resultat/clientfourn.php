@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +24,12 @@ require("./pre.inc.php");
 require("../../tva.class.php");
 require("../../chargesociales.class.php");
 
-/*
- *
- */
+$langs->load("bills");
+
 $user->getrights('compta');
 if (!$user->rights->compta->resultat->lire)
   accessforbidden();
+
 
 llxHeader();
 
@@ -93,7 +93,7 @@ if ($result) {
       $var=!$var;
             
       print "<tr $bc[$var]><td>&nbsp</td>";
-      print "<td>Factures  <a href=\"../facture.php?socidp=$objp->idp\">$objp->nom</td>\n";
+      print "<td>".$langs->trans("Factures")." <a href=\"../facture.php?socidp=$objp->idp\">$objp->nom</td>\n";
       
       print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
       print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
