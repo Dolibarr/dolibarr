@@ -26,7 +26,7 @@ create table llx_socpeople
   datec          datetime,
   tms            timestamp,
   fk_soc         integer,
-  civilite       smallint,           -- 1 M, 2 Mme, 3 Mlle
+  civilite       varchar(6),
   name           varchar(50),
   firstname      varchar(50),
   address        varchar(255),
