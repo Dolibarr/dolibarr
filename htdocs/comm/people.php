@@ -22,6 +22,12 @@
 require("./pre.inc.php");
 require("../contact.class.php");
 
+$user->getrights('propale');
+$user->getrights('fichinter');
+$user->getrights('commande');
+$user->getrights('projet');
+
+
 if ($sortorder == "") 
 {
   $sortfield="lower(s.nom)";

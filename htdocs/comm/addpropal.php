@@ -22,6 +22,12 @@
 require("./pre.inc.php");
 require("./propal_model_pdf.class.php");
 
+$user->getrights('propale');
+$user->getrights('fichinter');
+$user->getrights('commande');
+$user->getrights('projet');
+
+
 if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php"))
 {
   require(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php");
