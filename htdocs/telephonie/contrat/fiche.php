@@ -52,6 +52,37 @@ if ($_POST["action"] == 'add')
   
 }
 
+if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
+{
+  $contrat = new TelephonieContrat($db);
+  $contrat->id = $_GET["id"];
+
+  $contrat->client_comm    = $_POST["client_comm"];
+  $contrat->client         = $_POST["client"];
+  $contrat->client_facture = $_POST["client_facture"];
+  $contrat->fournisseur    = $_POST["fournisseur"];
+  $contrat->commercial     = $_POST["commercial"];
+  $contrat->concurrent     = $_POST["concurrent"];
+  $contrat->note           = $_POST["note"];
+  $contrat->mode_paiement  = $_POST["mode_paiement"];
+
+  $contrat->commercial_suiv_id  = $_POST["commercial_suiv"];
+
+  if ( $contrat->update($user) == 0)
+    {
+      $action = '';
+      $mesg = 'Fiche mise à jour';
+      Header("Location: fiche.php?id=".$contrat->id);
+    }
+  else
+    {
+      $action = 're-edit';
+      $mesg = 'Fiche non mise à jour !' . "<br>" . $entrepot->mesg_error;
+    }
+}
+
+
+
 if ($_POST["action"] == 'addcontact')
 {
   $ligne = new LigneTel($db);
@@ -82,35 +113,6 @@ if ($_GET["action"] == 'delcontact')
   if ( $ligne->del_contact($_GET["contact_id"]) )
     {
       Header("Location: fiche.php?id=".$ligne->id);
-    }
-}
-
-
-if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
-{
-  $ligne = new LigneTel($db);
-  $ligne->id = $_GET["id"];
-
-  $ligne->numero         = $_POST["numero"];
-  $ligne->client_comm    = $_POST["client_comm"];
-  $ligne->client         = $_POST["client"];
-  $ligne->client_facture = $_POST["client_facture"];
-  $ligne->fournisseur    = $_POST["fournisseur"];
-  $ligne->commercial     = $_POST["commercial"];
-  $ligne->concurrent     = $_POST["concurrent"];
-  $ligne->remise         = $_POST["remise"];
-  $ligne->note           = $_POST["note"];
-
-  if ( $ligne->update($user) )
-
-    {
-      $action = '';
-      $mesg = 'Fiche mise à jour';
-    }
-  else
-    {
-      $action = 're-edit';
-      $mesg = 'Fiche non mise à jour !' . "<br>" . $entrepot->mesg_error;
     }
 }
 
@@ -542,7 +544,7 @@ else
 
 	      print_fiche_titre('Edition du contrat', $mesg);
 	      
-	      print "<form action=\"fiche.php?id=$ligne->id\" method=\"post\">\n";
+	      print '<form action="fiche.php?id='.$contrat->id.'" method="post">';
 	      print '<input type="hidden" name="action" value="update">';
 	      
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -552,6 +554,8 @@ else
 
 	      $client_comm = new Societe($db, $contrat->client_comm_id);
 	      $client_comm->fetch($contrat->client_comm_id);
+
+	      print '<input type="hidden" name="client_comm" value="'.$client_comm->id.'">';
 
 	      print '<tr><td width="20%">Client</td><td>';
 	      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_comm->id.'">';
@@ -619,6 +623,46 @@ else
 		}
 	      
 	      print '</select></td></tr>';
+
+	      /*
+	       *
+	       */
+	      print '<tr><td width="20%">Mode de réglement</td>';
+	      print '<td colspan="2">';
+
+	      if ($user->rights->telephonie->contrat->paiement)
+		{
+		  print '<select name="mode_paiement">'."\n";
+	      	     
+		  if ($contrat->mode_paiement == 'pre')
+		    {
+		      print '<option value="pre" SELECTED>Prélèvement</option>';
+		      print '<option value="vir">Virement</option>';
+		    }
+		  else
+		    {
+		      print '<option value="pre">Prélèvement</option>';
+		      print '<option value="vir" SELECTED>Virement</option>';
+		    }
+		  print '</select>';
+		}
+	      else
+		{		  
+		  print '<input type="hidden" name="mode_paiement" value="'.$contrat->mode_paiement.'">';
+
+		  if ($contrat->mode_paiement == 'pre')
+		    {
+		      print 'Prélèvement';
+		    }
+		  else
+		    {
+		      print 'Virement';
+		    }
+		}
+
+
+	      print '</td></tr>';
+
 	      
 	      /*
 	       * Commercial
