@@ -50,6 +50,11 @@ if ($action == "set")
 	  include ("conf/conf.php");
 	}
 
+      if (! file_exists("conf/conf.class.php3"))
+	{
+	  copy("conf/conf.class.php3.sample","conf/conf.class.php3");
+	}
+
       print "<tr><td>Configuration enregistrée</td><td>OK</td>";
 
       print '<tr><td colspan="2">Test des répertoires</td></tr>';
