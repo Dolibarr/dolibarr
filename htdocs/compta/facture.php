@@ -795,7 +795,7 @@ else
 		print '<td align="right">'.price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
 		if (! $fac->paye && $user->rights->facture->paiement)
 		  {
-		    print '<td><a href="facture.php?facid='.$fac->id.'&amp;action=del_paiement&amp;paiementid='.$objp->rowid.'">Del</a>';
+		    print '<td><a href="facture.php?facid='.$fac->id.'&amp;action=del_paiement&amp;paiementid='.$objp->rowid.'">'.img_delete().'</a>';
 		  }
 		print "</tr>";
 		$total = $total + $objp->amount;
