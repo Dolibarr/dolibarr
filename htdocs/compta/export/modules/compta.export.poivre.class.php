@@ -264,7 +264,7 @@ class ComptaExportPoivre
 
 	    $page->write_string($j,4, stripslashes($linep[$i][3])." ".stripslashes($linep[$i][6])); // 
 	    $page->write_string($j,5, $linep[$i][7]);                  // Numéro de facture
-	    $page->write($j,6, ereg_replace(",",".",round($linep[$i][5], 2)));  // Montant de la ligne
+	    $page->write($j,6, ereg_replace(",",".",round(abs($linep[$i][5]), 2)));  // Montant de la ligne
 	    $page->write_string($j,7,$debit);
 	
 	    $j++;
@@ -276,7 +276,7 @@ class ComptaExportPoivre
 	    $page->write_string($j,3, $linep[$i][2]);
 	    $page->write_string($j,4, stripslashes($linep[$i][3])." ".stripslashes($linep[$i][6])); // 
 	    $page->write_string($j,5, $linep[$i][7]);                  // Numéro de facture
-	    $page->write($j,6, ereg_replace(",",".",round($linep[$i][5], 2)));  // Montant de la ligne
+	    $page->write($j,6, ereg_replace(",",".",round(abs($linep[$i][5]), 2)));  // Montant de la ligne
 	    $page->write_string($j,7, $credit);
 	
 	    $j++;
