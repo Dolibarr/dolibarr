@@ -1093,22 +1093,24 @@ class Facture
 
 
   /**
-   * \brief     Mets à jour les commentaires
-   * \param     note        note
+   *    \brief      Mets à jour les commentaires
+   *    \param      note        note
+   *    \return     int         <0 si erreur, >0 si ok
    */
   function update_note($note)
     {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET note = '$note'";
-      $sql .= " WHERE rowid =". $this->id;
-      
-      if ($this->db->query($sql) )
-	{
-	  return 1;
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	}
+        $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET note = '".addslashes($note)."'";
+        $sql .= " WHERE rowid =". $this->id;
+        
+        if ($this->db->query($sql) )
+        {
+            $this->note = "$note";
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
     }
 
   /*
