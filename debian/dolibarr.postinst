@@ -1,0 +1,124 @@
+#! /bin/sh
+# postinst script for dolibarr
+#
+# see: dh_installdeb(1)
+
+set -e
+
+# summary of how this script can be called:
+#        * <postinst> `configure' <most-recently-configured-version>
+#        * <old-postinst> `abort-upgrade' <new version>
+#        * <conflictor's-postinst> `abort-remove' `in-favour' <package>
+#          <new-version>
+#        * <deconfigured's-postinst> `abort-deconfigure' `in-favour'
+#          <failed-install-package> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see /usr/share/doc/packaging-manual/
+
+. /usr/share/debconf/confmodule
+db_version 2.0
+
+case "$1" in
+	configure)
+		config="/etc/dolibarr/apache.conf"
+
+		# Get the web server type.
+		db_get "dolibarr/webserver"
+		webserver="$RET"
+		case $webserver in
+			Apache)		webservers="apache" ;;
+			Apache-SSL)	webservers="apache-ssl" ;;
+			Both)		webservers="apache apache-ssl" ;;
+			*)		webservers="" ;;
+		esac
+		. /usr/share/wwwconfig-common/php.get
+		. /usr/share/wwwconfig-common/apache-run.get
+		# Set up web server.
+		for server in $webservers ; do
+			trustuser=$wwwuser
+			includefile="/etc/dolibarr/apache.conf"
+			. /usr/share/wwwconfig-common/apache-include_all.sh
+			test "$status" = "uncomment" -o "$status" = "include" && restart="$server $restart"
+			for index in index.php; do
+				. /usr/share/wwwconfig-common/apache-index_all.sh
+				test "$status" = "added" && restart="$server $restart"
+			done
+		done
+
+		chown -R www-data.www-data /usr/share/dolibarr
+
+		#
+		# Pear
+		#
+		if [ ! -f /usr/bin/php ] ; then ln -s /usr/bin/php4 /usr/bin/php ; fi
+		pear install Archive_Tar || true
+		pear install Console_Getopt || true
+		pear install PEAR || true
+		pear install Auth || true
+		pear install DB || true
+
+		#
+		# Database
+		#
+		db_get "dolibarr/db/setup/skip"
+		if [ "$RET" = "false" ] ; then
+			db_get "dolibarr/db/host"
+			dbserver="$RET"
+			db_get "dolibarr/db/name"
+			dbname="$RET"
+			db_get "dolibarr/db/admin/name"
+			dbadmin="$RET"
+			db_get "dolibarr/db/admin/password"
+			dbadmpass="$RET"
+			db_get "dolibarr/db/user/name"
+			dbuser="$RET"
+			db_get "dolibarr/db/user/password"
+			dbpass="$RET"
+			dbtype="mysql"
+			# User may have choosen to continue anyway
+			# with the configuration, so:
+			if [ "$dbtype" = "mysql" ] ; then
+				. /usr/share/wwwconfig-common/${dbtype}-createuser.sh
+				. /usr/share/wwwconfig-common/${dbtype}-createdb.sh
+				echo $error
+			fi
+			sqlfile=/usr/lib/dolibarr/mysql.sql
+			perl -pi -e "s/'admin','admin'/'$dbuser','$dbpass'/" $sqlfile
+			. /usr/share/wwwconfig-common/${dbtype}-exec.sh
+		fi
+
+		perl -pi -e "s/Auth_MySQL_DB.*/Auth_MySQL_DB '$dbname'/" /etc/dolibarr/apache.conf
+		perl -pi -e "s/Auth_MySQL_Username_Field.*/Auth_MySQL_Username_Field '$dbuser'/" /etc/dolibarr/apache.conf
+		perl -pi -e "s/Auth_MySQL_Password_Field.*/Auth_MySQL_Password_Field '$dbpass'/" /etc/dolibarr/apache.conf
+
+		if grep DBHOST /usr/share/dolibarr/conf/conf.php > /dev/null
+		then
+		    perl -pi -e "s/DBHOST/$dbserver/" /usr/share/dolibarr/conf/conf.php
+		    perl -pi -e "s/DBNAME/$dbname/" /usr/share/dolibarr/conf/conf.php
+		    perl -pi -e "s/DBUSER/$dbuser/" /usr/share/dolibarr/conf/conf.php
+		    perl -pi -e "s/DBPASS/$dbpass/" /usr/share/dolibarr/conf/conf.php
+		fi
+
+		# Reset passwords
+		db_reset "dolibarr/db/user/password"
+
+		servers="apache-ssl apache mysql"
+		. /usr/share/wwwconfig-common/restart.sh
+
+	;;
+
+	abort-upgrade|abort-remove|abort-deconfigure)
+
+	;;
+
+	*)
+		echo "postinst called with unknown argument \`$1'" >&2
+		exit 0
+	;;
+esac
+
+db_stop
+
+#DEBHELPER#
+
+exit 0
