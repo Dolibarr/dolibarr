@@ -32,7 +32,7 @@ $compta_mode = defined("COMPTA_MODE")?COMPTA_MODE:"RECETTES-DEPENSES";
 
 if ($action == 'setcomptamode')
 {
-  $compta_mode = $HTTP_POST_VARS["compta_mode"];
+  $compta_mode = $_POST["compta_mode"];
   if (! dolibarr_set_const($db, "COMPTA_MODE",$compta_mode)) { print $db->error(); }
 }
 
@@ -41,9 +41,9 @@ $form = new Form($db);
 $typeconst=array('yesno','texte','chaine');
 
 
-if ($HTTP_POST_VARS["action"] == 'update' || $HTTP_POST_VARS["action"] == 'add')
+if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
-	if (! dolibarr_set_const($db, $HTTP_POST_VARS["constname"],$HTTP_POST_VARS["constvalue"],$typeconst[$HTTP_POST_VARS["consttype"]],0,isset($HTTP_POST_VARS["constnote"])?$HTTP_POST_VARS["constnote"]:''));
+	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:''));
 	{
 	  	print $db->error();
 	}
