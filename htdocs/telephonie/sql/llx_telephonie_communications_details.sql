@@ -1,5 +1,6 @@
 
 create table llx_telephonie_communications_details (
+  fk_ligne         integer,
   ligne            varchar(255) NOT NULL,
   date             datetime,
   numero           varchar(255),
