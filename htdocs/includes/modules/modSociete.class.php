@@ -42,11 +42,6 @@ class modSociete extends DolibarrModules
 
     $this->const = array();
     $this->boxes = array();
-
-    $this->boxes[0][0] = "Derniers clients";
-    $this->boxes[0][1] = "box_clients.php";
-
-
   }
   /*
    *
