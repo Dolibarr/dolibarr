@@ -444,7 +444,7 @@ function top_menu($head, $title="")
  *
  *
  */
-Function left_menu($menu, $help_url='') 
+Function left_menu($menu, $help_url='', $form_search='') 
 {
   global $user, $conf, $rtplang;
 
@@ -507,6 +507,17 @@ Function left_menu($menu, $help_url='')
     }
 
   /*
+   * Formulaire de recherche
+   */
+
+  if (strlen($form_search) > 0)
+    {
+      print '<tr><td class="barre" align="right">';
+      print $form_search;
+      print '</td></tr>';
+    }
+
+  /*
    * Lien vers l'aide en ligne
    */
 
@@ -515,7 +526,6 @@ Function left_menu($menu, $help_url='')
       define('MAIN_AIDE_URL','http://www.dolibarr.com/documentation/dolibarr-user.html');
       print '<tr><td class="barre"><a target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">Aide</a></td></tr>';
     }
-
   /*
    *
    *
