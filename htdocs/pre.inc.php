@@ -57,7 +57,7 @@ function llxHeader($head = "") {
 
   if ($conf->compta->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/compta/", "Comptabilité");
+      $menu->add(DOL_URL_ROOT."/compta/index.php", "Comptabilité");
 
       if ($user->rights->facture->lire)
 	$menu->add_submenu(DOL_URL_ROOT."/compta/facture.php", "Factures");
@@ -65,23 +65,23 @@ function llxHeader($head = "") {
 
   if ($conf->fichinter->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/fichinter/", "Fiches d'intervention");
+      $menu->add(DOL_URL_ROOT."/fichinter/index.php", "Fiches d'intervention");
     }
 
   if ($conf->produit->enabled )
     {
-      $menu->add(DOL_URL_ROOT."/product/", "Produits");
+      $menu->add(DOL_URL_ROOT."/product/index.php", "Produits");
 
       if ($conf->boutique->enabled)
 	{
 	  if ($conf->boutique->livre->enabled)
 	    {
-	      $menu->add_submenu(DOL_URL_ROOT."/boutique/livre/", "Livres");
+	      $menu->add_submenu(DOL_URL_ROOT."/boutique/livre/index.php", "Livres");
 	    }
 	  
 	  if ($conf->boutique->album->enabled)
 	    {
-	      $menu->add_submenu(DOL_URL_ROOT."/product/album/", "Albums");
+	      $menu->add_submenu(DOL_URL_ROOT."/product/album/index.php", "Albums");
 	    }
 	}
     }
@@ -117,12 +117,12 @@ function llxHeader($head = "") {
 
   if ($conf->domaine->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/domain/", "Domaines");
+      $menu->add(DOL_URL_ROOT."/domain/index.php", "Domaines");
     }
 
   if (defined("MAIN_MODULE_POSTNUKE") && MAIN_MODULE_POSTNUKE)
     {
-      $menu->add(DOL_URL_ROOT."/postnuke/articles/", "Editorial");
+      $menu->add(DOL_URL_ROOT."/postnuke/articles/index.php", "Editorial");
     }
 
   $menu->add(DOL_URL_ROOT."/user/index.php", "Utilisateurs");
