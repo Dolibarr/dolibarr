@@ -73,7 +73,7 @@ class Form {
   }
 
 
-  Function select_date($set_time='')
+  Function select_date($set_time='', $h = 0, $m = 0)
   {
     if (! $set_time)
       {
@@ -98,7 +98,9 @@ class Form {
     $cday = date("d", $set_time);
     $cmonth = date("n", $set_time);
     $syear = date("Y", $set_time);
-    
+    $shour = date("H", $set_time);
+    $smin = date("i", $set_time);
+
     print "<select name=\"reday\">";    
     
     for ($day = 1 ; $day < $sday + 32 ; $day++) 
@@ -130,7 +132,7 @@ class Form {
       }
     print "</select>";
     
-    print "<select name=\"reyear\">";
+    print '<select name="reyear">';
     
     for ($year = $syear - 2; $year < $syear + 5 ; $year++)
       {
@@ -145,6 +147,50 @@ class Form {
       }
     print "</select>\n";
   
+    if ($h)
+      {
+	print '<select name="rehour">';
+    
+	for ($hour = 0; $hour < 24 ; $hour++)
+	  {
+	    if (strlen($hour) < 2)
+	      {
+		$hour = "0" . $hour;
+	      }
+	    if ($hour == $shour)
+	      {
+		print "<option value=\"$hour\" SELECTED>$hour";
+	      }
+	    else
+	      {
+		print "<option value=\"$hour\">$hour";
+	      }
+	  }
+	print "</select>H\n";
+
+	if ($m)
+	  {
+	    print '<select name="remin">';
+	    
+	    for ($min = 0; $min < 60 ; $min++)
+	      {
+		if (strlen($min) < 2)
+		  {
+		    $min = "0" . $min;
+		  }
+		if ($min == $smin)
+		  {
+		    print "<option value=\"$min\" SELECTED>$min";
+		  }
+		else
+		  {
+		    print "<option value=\"$min\">$min";
+		  }
+	      }
+	    print "</select>M\n";
+	  }
+	
+      }
   }
   /*
    *
