@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,14 +197,14 @@ if ($action == 'create')
   if ($propalid)
     {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.remise_percent, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
-      $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
       $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";      
       $sql .= " AND p.rowid = $propalid";
     }
   else
     {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp ";
-      $sql .= "FROM llx_societe as s ";
+      $sql .= "FROM ".MAIN_DB_PREFIX."societe as s ";
       $sql .= "WHERE s.idp = $socidp";      
     }
 
@@ -274,7 +274,7 @@ if ($action == 'create')
 	       * Liste des elements
 	       *
 	       */
-	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p ";
+	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p ";
 	      $sql .= " WHERE envente = 1";
 	      $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
 	      if ( $db->query($sql) )
@@ -329,7 +329,7 @@ if ($action == 'create')
 	      print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	      
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
-	      $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
 	      $sql .= " ORDER BY pt.rowid ASC";
 	      $result = $db->query($sql);
 	      if ($result) 
@@ -350,7 +350,7 @@ if ($action == 'create')
 		    }
 		}
 	      $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty, pt.remise_percent";
-	      $sql .= " FROM llx_propaldet as pt  WHERE  pt.fk_propal = $propalid AND pt.fk_product = 0";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt  WHERE  pt.fk_propal = $propalid AND pt.fk_product = 0";
 	      $sql .= " ORDER BY pt.rowid ASC";
 	      if ($db->query($sql)) 
 		{
@@ -518,7 +518,7 @@ else
 	  echo '<br><table border="0" width="100%" cellspacing="0" cellpadding="3">';	  
 
 	  $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-	  $sql .= " FROM llx_commandedet as l WHERE l.fk_commande = $id ORDER BY l.rowid";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l WHERE l.fk_commande = $id ORDER BY l.rowid";
 	  
 	  $result = $db->query($sql);
 	  if ($result)
@@ -607,7 +607,7 @@ else
 	 */
 	if ($commande->statut == 0 && $user->rights->commande->creer) 
 	  {
-	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p ";
+	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p ";
 	      $sql .= " WHERE envente = 1";
 	      $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
 	      if ( $db->query($sql) )
@@ -732,7 +732,7 @@ else
 	 * Liste des expéditions
 	 */
 	$sql = "SELECT e.rowid,e.ref,".$db->pdate("e.date_expedition")." as de";
-	$sql .= " FROM llx_expedition as e";
+	$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 	$sql .= " WHERE e.fk_commande = ". $commande->id;
 	    
 	$result = $db->query($sql);
@@ -768,7 +768,7 @@ else
 	 * Liste des factures
 	 */
 	$sql = "SELECT f.rowid,f.facnumber,".$db->pdate("f.datef")." as df";
-	$sql .= " FROM llx_facture as f, llx_co_fa as cf";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."co_fa as cf";
 	$sql .= " WHERE f.rowid = cf.fk_facture AND cf.fk_commande = ". $commande->id;
 	    
 	$result = $db->query($sql);
