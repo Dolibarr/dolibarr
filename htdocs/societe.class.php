@@ -187,12 +187,17 @@ class Societe {
     
     if (trim($this->code_client))
       {   
+	// Attention check_codeclient peut modifier le code 
+	// suivant le module utilisé
 
 	$this->check_codeclient();
 
 	$sql .= ", code_client = '". $this->code_client ."'";
 
-	$this->get_codecompta();
+	// Attention check_codecompta peut modifier le code 
+	// suivant le module utilisé
+
+	$this->check_codecompta();
 
 	$sql .= ", code_compta = '". $this->code_compta ."'";
       }
@@ -823,7 +828,7 @@ class Societe {
    *
    * A ce jour seul la génération automatique est implémentée
    */
-  function get_codecompta()
+  function check_codecompta()
   {
     if (defined('CODECOMPTA_ADDON') && strlen(CODECOMPTA_ADDON) > 0)
       {
