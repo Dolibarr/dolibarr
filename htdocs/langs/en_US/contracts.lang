@@ -1,0 +1,6 @@
+# Dolibarr language file - en_US - contracts
+LastContracts=Last %s modifed contracts
+ContractStatus=Contract status
+ContractStatusNotRunning=Not running
+ContractStatusRunning=Running
+ContractStatusClosed=Closed

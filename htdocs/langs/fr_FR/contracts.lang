@@ -1,0 +1,6 @@
+# Dolibarr language file - fr_FR - contracts
+LastContracts=Les %s derniers contrats modifiés
+ContractStatus=Statut du contrat
+ContractStatusNotRunning=Hors service
+ContractStatusRunning=En service
+ContractStatusClosed=Clôturé
