@@ -146,7 +146,7 @@ class Paiement
 	
 	$total = ereg_replace(",",".",$total);
 
-	if ($total > 0)
+	if ($total <> 0) /* On accepte les montants négatifs pour les rejets de prélèvement */
 	  {
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
 	    $sql .= " VALUES (now(), $this->datepaye, '$total', $this->paiementid, '$this->num_paiement', '$this->note', $user->id)";
