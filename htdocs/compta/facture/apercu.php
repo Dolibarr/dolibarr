@@ -239,7 +239,6 @@ if ($_GET["facid"] > 0)
     }
 }  
 
-  print 'xxxxxxxxxximg src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($relativepathimage).'"';
 if (file_exists($fileimage))
 {	  
   print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($relativepathimage).'">';
