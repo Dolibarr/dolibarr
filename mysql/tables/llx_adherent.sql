@@ -44,6 +44,8 @@ create table llx_adherent
   email            varchar(255),
   login            varchar(50), -- login utilise pour editer sa fiche
   pass             varchar(50), -- pass utilise pour editer sa fiche
+  annif            date, -- date d'anniversaire
+  photo		   varchar(255), -- url vers la photo de l'adherent
   fk_user_author   integer NOT NULL,
   fk_user_mod      integer NOT NULL,
   fk_user_valid    integer NOT NULL,
