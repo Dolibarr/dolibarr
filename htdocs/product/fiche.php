@@ -279,8 +279,6 @@ else
 	      print '</td></form></tr></table>';
 	      print '<br>';
           
-	      print($mesg);
-
 	      $head[0][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
 	      $head[0][1] = 'Fiche';
 	      
@@ -290,9 +288,8 @@ else
 	      $head[2][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
 	      $head[2][1] = 'Statistiques';
 
-
 	      dolibarr_fiche_head($head, 0, 'Fiche '.$types[$product->type].' : '.$product->ref);
-	      	      
+	      print($mesg);    	      
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      print "<tr>";
 	      print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';

@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,10 @@ $mesg = '';
  *
  */
 
-if ($id)
+if ($_GET["id"])
 {
   $product = new Product($db);
-  $result = $product->fetch($id);
+  $result = $product->fetch($_GET["id"]);
   
   if ( $result )
     { 
@@ -42,14 +42,14 @@ if ($id)
       
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
       print '<td width="20%">Référence</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
-      print '<td><a href="fiche.php?id='.$id.'">Statistiques</a></td></tr>';
+      print '<td><a href="fiche.php?id='.$product->id.'">Statistiques</a></td></tr>';
       print "<tr><td>Libellé</td><td>$product->libelle</td>";
       print '<td valign="top" rowspan="2">';
       print "Propositions commerciales : ".$product->count_propale();
       print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
       print "<br>Factures : ".$product->count_facture();
       print '</td></tr>';
-      print '<tr><td>Prix de vente</td><TD>'.price($product->price).'</td></tr>';
+      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td></tr>';
       print "</table>";
 
       if ($page == -1)
@@ -68,11 +68,11 @@ if ($id)
 	  $sortfield="f.datef";
 	}
       
-      print_barre_liste("Factures",$page,$PHP_SELF,"&amp;id=$id",$sortfield,$sortorder);
+      print_barre_liste("Factures",$page,$PHP_SELF,"&amp;id=$product->id",$sortfield,$sortorder);
       
       $sql = "SELECT distinct(f.rowid), s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as d WHERE f.fk_soc = s.idp";
-      $sql .= " AND d.fk_facture = f.rowid AND d.fk_product =".$id;
+      $sql .= " AND d.fk_facture = f.rowid AND d.fk_product =".$product->id;
       $sql .= " ORDER BY $sortfield $sortorder ";
       $sql .= $db->plimit( $limit ,$offset);
 

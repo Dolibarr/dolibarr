@@ -22,6 +22,10 @@
 require("../../main.inc.php");
 require(DOL_DOCUMENT_ROOT."/bargraph.class.php");
 
+$types[0] = "produit";
+$types[1] = "service";
+
+
 function llxHeader($head = "", $urlp = "")
 {
   global $user, $conf;
