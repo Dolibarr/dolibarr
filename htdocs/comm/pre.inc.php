@@ -87,8 +87,11 @@ function llxHeader($head = "", $title = "")
       $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
     }
 
+  if ($user->rights->mailing->lire)
+    {
       $langs->load("mails");
       $menu->add(DOL_URL_ROOT."/comm/mailing/", $langs->trans("EMailings"));
+    }
 
   if ($conf->fichinter->enabled ) 
     {
@@ -100,18 +103,18 @@ function llxHeader($head = "", $title = "")
     {
       $langs->load("products");
       $chaine="";
-	  if ($conf->produit->enabled) { $chaine.=$langs->trans("Products"); }
-	  if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
-	  if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
+      if ($conf->produit->enabled) { $chaine.=$langs->trans("Products"); }
+      if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
+      if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
       $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
     }
-
+  
   if ($conf->projet->enabled ) 
     {
       $langs->load("projects");
-	  $menu->add(DOL_URL_ROOT."/projet/index.php", $langs->trans("Projects"));
-	}
-	
+      $menu->add(DOL_URL_ROOT."/projet/index.php", $langs->trans("Projects"));
+    }
+  
   left_menu($menu->liste);
 }
 ?>
