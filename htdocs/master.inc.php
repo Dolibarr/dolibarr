@@ -184,7 +184,7 @@ if (defined("MAIN_MODULE_SOCIETE"))
 {
   $conf->societe->enabled=MAIN_MODULE_SOCIETE; 
   $conf->societe->dir_output=DOL_DATA_ROOT."/societe";
-  if (defined(SOCIETE_OUTPUTDIR) && SOCIETE_OUTPUTDIR) { $conf->societe->dir_output=SOCIETE_OUTPUTDIR; }
+  if (defined(SOCIETE_OUTPUTDIR) && SOCIETE_OUTPUTDIR) { $conf->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
   $conf->societe->dir_images=DOL_DOCUMENT_ROOT."/images/societe";
   $conf->societe->url_images=DOL_URL_ROOT."/images/societe";
   require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
@@ -216,6 +216,10 @@ if (defined("MAIN_MODULE_FOURNISSEUR"))
 if (defined("MAIN_MODULE_FICHEINTER"))
 {
   $conf->fichinter->enabled=MAIN_MODULE_FICHEINTER;
+  $conf->fichinter->dir_output=DOL_DATA_ROOT."/ficheinter";
+  if (defined(FICHEINTER_OUTPUTDIR) && FICHEINTER_OUTPUTDIR) { $conf->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par défaut
+  $conf->fichinter->dir_images=DOL_DOCUMENT_ROOT."/images/ficheinter";
+  $conf->fichinter->url_images=DOL_URL_ROOT."/images/ficheinter";
   require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 }
 if (defined("MAIN_MODULE_ADHERENT"))
@@ -292,29 +296,20 @@ if (defined("MAIN_MODULE_WEBCALENDAR"))
 if (defined("MAIN_MODULE_FACTURE"))
 {
   $conf->facture->enabled=MAIN_MODULE_FACTURE;
-  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
   $conf->facture->dir_output=DOL_DATA_ROOT."/facture";
+  if (defined(FAC_OUTPUTDIR) && FAC_OUTPUTDIR) { $conf->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par défaut
   $conf->facture->dir_images=DOL_DOCUMENT_ROOT."/images/facture";
   $conf->facture->url_images=DOL_URL_ROOT."/images/facture";
+  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 }
 if (defined("MAIN_MODULE_PROPALE"))
 {
   $conf->propal->enabled=MAIN_MODULE_PROPALE;
-  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
   $conf->propale->dir_output=DOL_DATA_ROOT."/propale";
+  if (defined(PROPALE_OUTPUTDIR) && PROPALE_OUTPUTDIR) { $conf->propale->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
   $conf->propale->dir_images=DOL_DOCUMENT_ROOT."/images/propale";
   $conf->propale->url_images=DOL_URL_ROOT."/images/propale";
-
-  // \todo modifier le code des propales pour utiliser $conf->propale->dir_output au lieu de la constante
-  if (! defined("PROPALE_OUTPUTDIR"))
-    {
-      define('PROPALE_OUTPUTDIR', DOL_DOCUMENT_ROOT . "/document/propale");
-      $conf->propale->dir_output=DOL_DOCUMENT_ROOT . "/document/propale";
-    }
-  if (! defined("PROPALE_OUTPUT_URL"))
-    {
-      define('PROPALE_OUTPUT_URL', "/document/propale");
-    }
+  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
 
   if (!defined("PROPALE_NEW_FORM_NB_PRODUCT"))
     {
