@@ -24,7 +24,7 @@ if ($user->rights->facture->lire)
 {
 
   $info_box_head = array();
-  $info_box_head[] = array('text' => "Les 5 dernières factures enregistrées");
+  $info_box_head[] = array('text' => "Les 5 dernières factures clients enregistrées");
 
   $info_box_contents = array();
 
