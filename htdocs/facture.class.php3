@@ -57,6 +57,7 @@ class Facture
       $this->db_table = "llx_facture";
       $this->amount = 0;
       $this->remise = 0;
+      $this->remise_percent = 0;
       $this->tva = 0;
       $this->total = 0;
       $this->propalid = 0;
@@ -112,8 +113,8 @@ class Facture
       $tva = tva($totalht);
       $total = $totalht + $tva;
       
-      $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, tva, total, datef, note, fk_user_author,fk_projet, fk_cond_reglement, date_lim_reglement) ";
-      $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $tva, $total,".$this->db->idate($this->date).",'$this->note',$user->id, $this->projetid, $this->cond_reglement,".$this->db->idate($datelim).")";      
+      $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, remise_percent, tva, total, datef, note, fk_user_author,fk_projet, fk_cond_reglement, date_lim_reglement) ";
+      $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $this->remise_percent, $tva, $total,".$this->db->idate($this->date).",'$this->note',$user->id, $this->projetid, $this->cond_reglement,".$this->db->idate($datelim).")";      
       if ( $this->db->query($sql) )
 	{
 	  $this->id = $this->db->last_insert_id();
@@ -158,7 +159,7 @@ class Facture
   Function fetch($rowid)
     {
 
-      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.remise,".$this->db->pdate("f.datef")."as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.libelle, f.note, f.paye, f.fk_statut";
+      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.remise,f.remise_percent,".$this->db->pdate("f.datef")."as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.libelle, f.note, f.paye, f.fk_statut";
       $sql .= " FROM llx_facture as f, llx_cond_reglement as c";
       $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
       
@@ -177,6 +178,7 @@ class Facture
 	      $this->total_ttc          = $obj->total;
 	      $this->paye               = $obj->paye;
 	      $this->remise             = $obj->remise;
+	      $this->remise_percent     = $obj->remise_percent;
 	      $this->socidp             = $obj->fk_soc;
 	      $this->statut             = $obj->fk_statut;
 	      $this->date_lim_reglement = $obj->dlr;
@@ -456,12 +458,22 @@ class Facture
 	  $i = 0;
 	  $totalht = 0;
 	  $totaltva = 0;
+	  $totalremise = 0;
 	  while ($i < $num)	  
 	    {
 	      $obj = $this->db->fetch_object($i);
 
-	      $totalht = $totalht + ($obj->qty * $obj->price);
-	      $totaltva = $totaltva + tva($obj->qty * $obj->price, $obj->tva_taux);
+	      $lprice = $obj->qty * $obj->price;
+
+	      if ($this->remise_percent > 0)
+		{
+		  $lremise = ($lprice * $this->remise_percent / 100);
+		  $total_remise = $total_remise + $lremise;
+		  $lprice = $lprice - $lremise;
+		}
+
+	      $totalht = $totalht + $lprice;
+	      $totaltva = $totaltva + tva($lprice, $obj->tva_taux);
 	      $i++;
 	    }
 	  $this->db->free();
@@ -480,6 +492,33 @@ class Facture
 	}
     }
   /*
+   *
+   *
+   */
+  Function set_remise($user, $remise)
+    {
+      if ($user->rights->facture->creer)
+	{
+
+	  $this->remise_percent = $remise ;
+
+	  $sql = "UPDATE llx_facture SET remise_percent = ".ereg_replace(",",".",$remise);
+	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+	  
+	  if ($this->db->query($sql) )
+	    {
+	      $this->updateprice($this->id);
+	      return 1;
+	    }
+	  else
+	    {
+	      print $this->db->error() . ' in ' . $sql;
+	      return 0;
+	    }
+	}
+  }
+  /*
+   *
    *
    *
    */

@@ -105,6 +105,15 @@ if ($action == 'payed' && $user->rights->facture->paiement)
   $result = $fac->set_payed($facid);
 }
 
+if ($HTTP_POST_VARS["action"] == 'setremise' && $user->rights->facture->creer) 
+{
+  $fac = new Facture($db);
+  $fac->fetch($facid);
+
+  $fac->set_remise($user, $HTTP_POST_VARS["remise"]);
+} 
+
+
 if ($action == 'addligne' && $user->rights->facture->creer) 
 {
   $fac = new Facture($db);
@@ -156,6 +165,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
     {
       $facture->amount = $HTTP_POST_VARS["amount"];
       $facture->remise = $HTTP_POST_VARS["remise"];
+      $facture->remise_percent = $HTTP_POST_VARS["remise_percent"];
       
       $facture->add_product($HTTP_POST_VARS["idprod1"],$HTTP_POST_VARS["qty1"]);
       $facture->add_product($HTTP_POST_VARS["idprod2"],$HTTP_POST_VARS["qty2"]);
@@ -166,6 +176,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
     }
   else
     {
+      $facture->remise_percent = $HTTP_POST_VARS["remise_percent"];
       $facture->amount   = $HTTP_POST_VARS["amount"];
       $facture->remise   = $remise;
       $facture->propalid = $HTTP_POST_VARS["propalid"];
@@ -291,7 +302,7 @@ if ($action == 'create')
 
   if ($propalid)
     {
-      $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
+      $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.remise_percent, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
       $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c";
       $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";      
       $sql .= " AND p.rowid = $propalid";
@@ -364,11 +375,12 @@ if ($action == 'create')
 	  
 	  if ($propalid)
 	    {
-	      $amount = ($obj->price - $obj->remise);
-	      print '<input type="hidden" name="amount"   value="'.$amount.'">';
-	      print '<input type="hidden" name="total"    value="'.$obj->total.'">';
-	      print '<input type="hidden" name="remise"   value="'.$obj->remise.'">';
-	      print '<input type="hidden" name="tva"      value="'.$obj->tva.'">';
+	      $amount = ($obj->price);
+	      print '<input type="hidden" name="amount"   value="'.$amount.'">'."\n";
+	      print '<input type="hidden" name="total"    value="'.$obj->total.'">'."\n";
+	      print '<input type="hidden" name="remise"   value="'.$obj->remise.'">'."\n";
+	      print '<input type="hidden" name="remise_percent"   value="'.$obj->remise_percent.'">'."\n";
+	      print '<input type="hidden" name="tva"      value="'.$obj->tva.'">'."\n";
 	      print '<input type="hidden" name="propalid" value="'.$propalid.'">';
 	      
 	      print '<tr><td>Proposition</td><td colspan="2">'.$obj->ref.'</td></tr>';
@@ -498,7 +510,14 @@ else
 	print "<td>Date limite de réglement : " . strftime("%d %B %Y",$fac->date_lim_reglement) ."</td></tr>";
 	print "<tr><td>Auteur</td><td colspan=\"3\">$author->fullname</td>";
 
-	print '<td rowspan="4" valign="top">';
+	if ($fac->remise_percent > 0)
+	  {
+	    print '<td rowspan="5" valign="top">';
+	  }
+	else
+	  {
+	    print '<td rowspan="4" valign="top">';
+	  }
 
 	$_MONNAIE="euros";
        
@@ -564,6 +583,14 @@ else
 	print '<tr><td>Montant</td>';
 	print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
 	print '<td>euros HT</td></tr>';
+
+	if ($fac->remise_percent > 0)
+	  {
+	    print '<tr><td>Remise</td>';
+	    print '<td align="right" colspan="2">'.$fac->remise_percent.'</td>';
+	    print '<td>%</td></tr>';
+	  }
+
 	print '<tr><td>TVA</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
 	print '<td>euros</td></tr>';
 	print '<tr><td>Total</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
@@ -573,7 +600,18 @@ else
 	    print '<tr><td colspan="5">Note : '.nl2br($obj->note)."</td></tr>";
 	  }
 
-	print "</table><br>";		
+	print "</table><br>";
+
+	if ($fac->brouillon == 1)
+	  {
+	    print '<form action="facture.php3?facid='.$facid.'" method="post">';
+	    print '<input type="hidden" name="action" value="setremise">';
+	    print '<table cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
+	    print '<input type="text" name="remise" size="3" value="'.$fac->remise_percent.'">%';
+	    print '<input type="submit" value="Appliquer">';
+	    print '</td></tr></table></form>';
+	  }
+
 	/*
 	 * Lignes de factures
 	 *
