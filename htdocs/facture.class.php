@@ -1,8 +1,8 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,8 @@
  *
  */
 
-/*!	\file       htdocs/facture.class.php
+/**
+    	\file       htdocs/facture.class.php
 		\ingroup    facture
 		\brief      Fichier de la classe des factures clients
 		\version    $Revision$
@@ -291,11 +292,12 @@ class Facture
 	  $sql .= " AND f.fk_soc = ".$societe_id;
 	}
 
-      if ($this->db->query($sql) )
+    $result=$this->db->query($sql);
+    if ($result)
 	{
-	  if ($this->db->num_rows())
+	  if ($this->db->num_rows($result))
 	    {
-	      $obj = $this->db->fetch_object();
+	      $obj = $this->db->fetch_object($result);
 	      
 	      $this->id                 = $rowid;
 	      $this->datep              = $obj->dp;
@@ -335,15 +337,15 @@ class Facture
 	      $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise, l.remise_percent, l.subprice, ".$this->db->pdate("l.date_start")." as date_start,".$this->db->pdate("l.date_end")." as date_end";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = ".$this->id;
 	
-	      $result = $this->db->query($sql);
-	      if ($result)
+	      $result2 = $this->db->query($sql);
+	      if ($result2)
 		{
 		  $num = $this->db->num_rows();
 		  $i = 0; $total = 0;
 		  
 		  while ($i < $num)
 		    {
-		      $objp = $this->db->fetch_object($result);
+		      $objp = $this->db->fetch_object($result2);
 		      $faclig = new FactureLigne($this->db);
 		      $faclig->desc           = stripslashes($objp->description);
 		      $faclig->qty            = $objp->qty;
@@ -379,7 +381,7 @@ class Facture
 	{
 	  //dolibarr_print_error($this->db);
 	  dolibarr_syslog("Erreur Facture::Fetch rowid=$rowid Erreur dans fetch de la facture");
-	}    
+	}
     }
 
   /**

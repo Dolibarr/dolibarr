@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@
  *
  */
 
-/*!	    \file       htdocs/compta/facture.php
+/**
+	    \file       htdocs/compta/facture.php
 		\ingroup    facture
 		\brief      Page de création d'une facture
 		\version    $Revision$
@@ -220,7 +221,7 @@ if ($_POST["action"] == 'add')
  *
  */
 
-if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->rights->facture->valider)
+if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == "yes" && $user->rights->facture->valider)
 {
   $fac = new Facture($db);
   $fac->fetch($_GET["facid"]);
@@ -771,13 +772,16 @@ else
 /*                                                                             */
 /* *************************************************************************** */
 {
+
   if ($_GET["facid"] > 0)
     {      
       $fac = New Facture($db);
       if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
-	{	  
+	{
+
 	  $soc = new Societe($db, $fac->socidp);
 	  $soc->fetch($fac->socidp);
+
 	  $author = new User($db);
 	  $author->id = $fac->user_author;
 	  $author->fetch();
@@ -1574,9 +1578,8 @@ else
 	  $sql .= " f.rowid DESC ";
 	
 	  $sql .= $db->plimit($limit+1,$offset);
-	
+
 	  $result = $db->query($sql);
-	}
 
       if ($result)
 	{
@@ -1589,7 +1592,7 @@ else
 	    }
 	  
 	  print_barre_liste("Factures client".($socidp?" $soc->nom":""),$page,"facture.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
-	  
+
 	  $i = 0;
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
@@ -1629,7 +1632,7 @@ else
 
 	      while ($i < min($num,$limit))
 		{
-		  $objp = $db->fetch_object();
+		  $objp = $db->fetch_object($result);
 		  $var=!$var;
 
 		  print "<tr $bc[$var]>";
@@ -1720,6 +1723,9 @@ else
 	{
 	  dolibarr_print_error($db);
 	}    
+
+	}
+
     }
   
 }
