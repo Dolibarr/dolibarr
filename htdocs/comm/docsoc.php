@@ -24,37 +24,30 @@ llxHeader();
 
 $db = new Db();
 
+$upload_dir = SOCIETE_DOCUMENT_DIR . "/" . $socid . "/";
 
-function do_upload ($socid) {
-  global $uploadfile, $uploadfile_size;
+function do_upload ($socid)
+{
+  global $upload_dir;
   global $local_file, $error_msg;
 
-  if ( $uploadfile == "none" )
+  if (! is_dir($upload_dir))
     {
-      $error_msg = "You did not specify a file for uploading.";
-      return;
-    }
-  if ( $uploadfile_size > 2000000 )
-    {
-      $error_msg = "Sorry, your file is too large.";
-      return;
-    }
-
-  $soc_dir = SOCIETE_DOCUMENT_DIR . "/" . $socid;
-
-  if (! is_dir($soc_dir))
-    {
-      mkdir($soc_dir);
+      mkdir($upload_dir, 0755);
     }
 
 
-  $upload_dir = "/tmp";
-
-  $local_file = SOCIETE_DOCUMENT_DIR . "/" . $socid . "/";
-
-  move_uploaded_file ( $userfile, $local_file );
-
-  print $HTTP_POST_FILES['uploadfile']['name'];
+  if (move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . $_FILES['userfile']['name']))
+    {
+      print "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; 
+           avec succ&egrave;s. Voici plus d'informations :\n";
+      //print_r($_FILES);
+    }
+  else
+    {
+      echo "Le fichier n'a pas été téléchargé";
+      // print_r($_FILES);
+    }
 
 }
 
@@ -62,6 +55,12 @@ if ( $error_msg )
 { 
   echo "<B>$error_msg</B><BR><BR>";
 }
+if ($action=='delete')
+{
+  $file = $upload_dir . urldecode($urlfile);
+  dol_delete_file($file);
+}
+
 if ( $sendit ) 
 {
   do_upload ($socid);
@@ -78,7 +77,7 @@ if ($socid > 0)
 {
   $societe = new Societe($db, $socid);
   
-  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
+  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM llx_societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
   $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
 
 
@@ -100,7 +99,6 @@ if ($socid > 0)
       print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
       
       print "<tr><td><div class=\"titre\">Fiche client : $objsoc->nom</div></td>";
-      print "<td align=\"center\"><a href=\"index.php3?socidp=$objsoc->idp&action=add_bookmark\">[Bookmark]</a></td>";
       print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
       print "<td align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">[Propal]</a></td>";
       print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
@@ -122,15 +120,14 @@ if ($socid > 0)
       
       print "<tr><td>siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
       print "<td>prefix</td><td>";
-      if ($objsoc->prefix_comm) {
-	print $objsoc->prefix_comm;
-      } else {
-	print "[<a href=\"$PHP_SELF?socid=$objsoc->idp&action=attribute_prefix\">Attribuer</a>]";
-      }
+      if ($objsoc->prefix_comm)
+	{
+	  print $objsoc->prefix_comm;
+	} else {
+	  print "[<a href=\"$PHP_SELF?socid=$objsoc->idp&action=attribute_prefix\">Attribuer</a>]";
+	}
       
       print "</td></tr>";
-      
-      print "<tr><td>Site</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
       
       print "</table>";
       
@@ -143,15 +140,39 @@ if ($socid > 0)
       
       echo '<FORM NAME="userfile" ACTION="docsoc.php?socid='.$socid.'" ENCTYPE="multipart/form-data" METHOD="POST">';
       
-      print '<INPUT TYPE="HIDDEN" NAME="MAX_FILE_SIZE" VALUE="2000000">';
+      print '<input type="hidden" name="max_file_size" value="2000000">';
       print '<input type="file"   name="userfile" size="40" maxlength="80">';
-      print '<BR><BR>';
-      print '<INPUT TYPE="SUBMIT" VALUE="Upload File!" NAME="sendit">';
-      print '<INPUT TYPE="SUBMIT" VALUE="Cancel" NAME="cancelit"><BR>';
+      print '<BR>';
+      print '<input type="submit" value="Upload File!" name="sendit">';
+      print '<input type="submit" value="Cancel" name="cancelit"><BR>';
       print '</FORM>';
-      
 
-      
+      clearstatcache();
+
+      $handle=opendir($upload_dir);
+
+      print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
+
+      while (($file = readdir($handle))!==false)
+	{
+	  if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+	    {
+	      print '<tr><td>';
+	      echo '<a href="/document/societe/'.$socid.'/'.$file.'">'.$file.'</a>';
+	      print "</td>\n";
+	      
+	      print '<td align="right">'.filesize($upload_dir."/".$file). ' bytes</td>';
+	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($upload_dir."/".$file)).'</td>';
+
+	      print '<td>';
+	      echo '<a href="'.$PHP_SELF.'?socid='.$socid.'&action=delete&urlfile='.urlencode($file).'">Delete</a>';
+	      print "</td></tr>\n";
+	   }
+	}
+
+      print "</table>";
+
+      closedir($handle);
 
 
 
