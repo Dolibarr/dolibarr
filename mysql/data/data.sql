@@ -68,6 +68,9 @@ insert into c_stcomm (id,libelle) values ( 1, 'A contacter');
 insert into c_stcomm (id,libelle) values ( 2, 'Contact en cours');
 insert into c_stcomm (id,libelle) values ( 3, 'Contactée');
 
+--
+-- Types d'entreprise
+--
 delete from c_typent;
 insert into c_typent (id,libelle) values (  0, 'Indifférent');
 insert into c_typent (id,libelle) values (  1, 'Start-up');
@@ -76,6 +79,9 @@ insert into c_typent (id,libelle) values (  3, 'PME/PMI');
 insert into c_typent (id,libelle) values (  4, 'Administration');
 insert into c_typent (id,libelle) values (100, 'Autres');
 
+--
+-- Pays
+--
 delete from c_pays;
 insert into c_pays (id,libelle,code) values (0, 'France',          'FR');
 insert into c_pays (id,libelle,code) values (2, 'Belgique',        'BE');
@@ -102,6 +108,9 @@ insert into c_pays (id,libelle,code) values (23, 'Sénégal',        'SN');
 insert into c_pays (id,libelle,code) values (24, 'Argentine',      'AR');
 insert into c_pays (id,libelle,code) values (25, 'Cameroun',       'CM');
 
+--
+-- Effectif des sociétés
+--
 delete from c_effectif;
 insert into c_effectif (id,libelle) values (0,  'Non spécifié');
 insert into c_effectif (id,libelle) values (1,  '1 - 5');
@@ -127,6 +136,7 @@ insert into c_propalst (id,label) values (1, 'Ouverte');
 insert into c_propalst (id,label) values (2, 'Signée');
 insert into c_propalst (id,label) values (3, 'Non Signée');
 insert into c_propalst (id,label) values (4, 'Facturée');
+
 
 --
 -- Utilisateur
