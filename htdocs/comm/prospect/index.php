@@ -69,9 +69,9 @@ if ($conf->propal->enabled)
  *
  */  
 
-$sql = "SELECT count(*) as cc, st.libelle";
+$sql = "SELECT count(*) as cc, st.libelle, st.id";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
-$sql .= " WHERE s.fk_stcomm = st.id AND s.client=2 GROUP BY st.libelle";
+$sql .= " WHERE s.fk_stcomm = st.id AND s.client=2 GROUP BY st.libelle, st.id";
 
 if ( $db->query($sql) )
 {
@@ -86,7 +86,7 @@ if ( $db->query($sql) )
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
-	  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->libelle."</a></td><td>".$obj->cc."</td></tr>";
+	  print "<tr $bc[$var]><td><a href=\"prospects.php?page=0&amp;stcomm=".$obj->id."\">".$obj->libelle."</a></td><td>".$obj->cc."</td></tr>";
 	  $i++;
 	}
       print "</table><br>";
