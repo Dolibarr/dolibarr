@@ -227,7 +227,7 @@ class User {
 	  if ($this->db->affected_rows()) 
 	    {
 	      $mesg = "Login : $this->login\nMot de passe : $password\n";
-	      $mesg .= "URL :$HTTP_HOST";
+	      $mesg .= "URL  : http://". $GLOBALS["HTTP_HOST"];
 	      if (mail($this->email, "Mot de passe Dolibarr", $mesg))
 		{
 		  return 1;
