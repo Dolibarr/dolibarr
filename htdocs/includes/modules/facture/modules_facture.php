@@ -31,12 +31,15 @@ Renvoie le numéro de facture sous la forme, F-PR-030202, où PR est le préfixe co
 
 function pluton_get_num_explain()
 {
-
   return '
 Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la douzième facture ayant le numéro 12.';
-
 }
 
+function jupiter_get_num_explain()
+{
+  return '
+Système de numérotation mensuel sous la forme FA030712, qui correspond à la 12ème facture du mois de Juillet 2003';
+}
 
 function facture_pdf_create($db, $facid)
 {
