@@ -127,7 +127,7 @@ class Bookmark4u
       // TODO rendre la base et la table générique
 
       $sql = "INSERT INTO bookmark4u.bk4u_passwd (user, passwd, name, email, logincnt,rdate)";
-      $sql .= " VALUES ('$user->login',password('$user->pass'),'$user->firstname $user->name','$user->email',0,now());";
+      $sql .= " VALUES ('$user->login',password('$user->pass'),'$user->fullname','$user->email',0,now());";
       if ($this->db->query($sql))
 	{
 	  if ($this->db->affected_rows()) 
