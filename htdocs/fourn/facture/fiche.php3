@@ -185,7 +185,7 @@ if ($action == 'create') {
 
   if ($facid > 0) {
 
-    $sql = "SELECT s.nom as socnom, s.idp as socidp, f.facnumber, f.amount, f.total, ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.note, f.libelle";
+    $sql = "SELECT s.nom as socnom, s.idp as socidp, f.facnumber, f.amount, f.tva, f.total, ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.note, f.libelle";
     $sql .= " FROM societe as s,llx_facture_fourn as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
 
     $result = $db->query( $sql);
@@ -217,7 +217,7 @@ if ($action == 'create') {
     print "<tr><td>Auteur</td><td colspan=\"3\">$obj->author&nbsp;</td>";
   
     print "<tr><td>Montant</td><td align=\"right\"><b>".price($obj->amount)."</b></td><td>euros HT</td></tr>";
-    print "<tr><td>TVA</td><td align=\"right\">".tva($obj->amount)."</td><td>euros</td></tr>";
+    print "<tr><td>TVA</td><td align=\"right\">".price($obj->tva)."</td><td>euros</td></tr>";
     print "<tr><td>Total</td><td align=\"right\">".price($obj->total)."</td><td>euros TTC</td></tr>";
 
     print "<tr><td>Statut</td><td align=\"center\">$obj->statut</td>";
