@@ -30,12 +30,15 @@ require("./pre.inc.php");
 
 $langs->load("admin");
 
-if (!$user->admin)
-  accessforbidden();
+if (!$user->admin) accessforbidden();
 
 if ($_GET["action"] == "set")
 {
-  dolibarr_set_const($db, $_GET["name"], $_GET["value"], $type='chaine');
+  for ($i = 1 ; $i < 2 ; $i++)
+    {
+      dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"], $type='chaine');
+    }
+
   Header("Location: index.php");
 }
 
@@ -44,7 +47,7 @@ if ($_GET["action"] == "set")
  *
  *
  */
-llxHeader('','Téléphonie -  Configuration');
+llxHeader('','Téléphonie - Configuration');
 print_titre("Configuration du module de Téléphonie");
 
 print "<br>";
@@ -54,18 +57,21 @@ print "<br>";
  *
  */
 print_titre("Emails");
-print '<form method="post" action="propale.php?action=nbprod">';
+print '<form method="post" action="index.php?action=set">';
 print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Valeur</td><td>&nbsp;</td><td>&nbsp;</td>';
 print "</tr>\n";
 
-print '<tr class="pair"><td>';
-print 'Nombre de ligne produits</td><td align="center">';
-print '<input size="3" type="text" name="value" value="'.TELEPHONIE_EMAIL_FACTURATION_EMAIL.'">';
 
-print '</td><td><input type="submit" value="changer"></td></tr>';
+print '<tr class="pair"><td>';
+print 'Marge minimale</td><td align="center">';
+print '<input type="hidden" name="nom1" value="TELEPHONIE_MARGE_MINI">';
+print '<input type="text"   name="value1" value="'.TELEPHONIE_MARGE_MINI.'" size="3" >';
+
+print '</td><td>&nbsp;</td></tr>';
+
 
 
 print '<tr class="pair"><td>';
@@ -142,8 +148,8 @@ print '</td><td>TELEPHONIE_GROUPE_COMMERCIAUX_ID</td></tr>';
 
 /* ***************************************** */
 
-print '</table></form>';
-
+print '</table>';
+print '</form>';
 
 $db->close();
 
