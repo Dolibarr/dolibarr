@@ -1,0 +1,91 @@
+/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ *
+ * $Id$
+ * $Source$
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ */
+
+BODY 
+{
+  background: #ebebe0; 
+  font-family: Helvetica, Verdana; font-size: 12px; 
+  text-decoration: none 
+}
+/*
+ *   Menu superieur
+ */
+.menu 
+{ 
+  background: #ccccb3; 
+  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
+  color: #000000; 
+  text-decoration: none }
+
+.submenu 
+{ 
+  background: #ccccb3; 
+  font-family: Helvetica, Verdana; font-size: 14px;
+  color: #000000; 
+  text-decoration: none }
+
+
+/*
+ *   Barre de gauche
+ */
+
+TD.barre 
+{ 
+  background: #ccccb3;
+  font-family: Helvetica, Verdana; font-size: 14px; 
+  color: #000000; 
+  text-decoration: none }
+
+TD.barre_select 
+{ 
+  background: #ccccb3; 
+  color: #000000 
+  }
+
+
+
+DIV.titre 
+{ 
+  font-family: Helvetica, Verdana; font-size: 16px; font-weight: bold; 
+  color: #666633; 
+  text-decoration: none }
+/*
+ *
+ */
+TR.liste_titre  
+{ 
+  background: #999966; 
+  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
+  text-decoration: none }
+
+TR.pair	        
+{ 
+  background: #ccccb3; 
+  font-family: Helvetica, Verdana; font-size: 12px; 
+  text-decoration: none }
+
+TR.impair	
+{ 
+  background: #eeeecc; 
+  font-family: Helvetica, Verdana; font-size: 12px; 
+  text-decoration: none }
+
+
