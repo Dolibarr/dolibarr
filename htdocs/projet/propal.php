@@ -19,6 +19,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/projet/propal.php
+        \ingroup    projet propale
+		\brief      Page des propositions commerciales par projet
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../propal.class.php");
 require("../facture.class.php");

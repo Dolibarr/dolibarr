@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/projet/index.php
+        \ingroup    projet
+		\brief      Page d'accueil du module projet
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $langs->load("projects");

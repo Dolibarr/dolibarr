@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/projet/commandes.php
+        \ingroup    projet commande
+		\brief      Page des commandes par projet
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../propal.class.php");
 require("../facture.class.php");

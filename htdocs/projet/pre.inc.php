@@ -20,6 +20,12 @@
  *
  */
 
+/*! \file htdocs/projet/pre.inc.php
+        \ingroup    projet
+		\brief      Fichier de gestion du menu gauche du module projet
+		\version    $Revision$
+*/
+
 require ("../main.inc.php");
 require("./project.class.php");
 

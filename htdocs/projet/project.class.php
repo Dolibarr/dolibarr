@@ -20,6 +20,17 @@
  *
  */
 
+/*! \file htdocs/projet/project.class.php
+        \ingroup    projet
+		\brief      Fichier de la classe de gestion des projets
+		\version    $Revision$
+*/
+
+
+/*! \class Project
+        \brief      Classe de gestion des projets
+*/
+
 class Project {
   var $id;
   var $db;
