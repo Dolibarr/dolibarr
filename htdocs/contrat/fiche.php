@@ -553,9 +553,9 @@ else
 		  print '<td align="right">'.price($objp->subprice)."</td>\n";
 		  if ($contrat->statut == 0  && $objp->statut == 0 && $user->rights->contrat->creer) 
 		    {
-		      print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
-		      print img_edit();
-		      print '</a></td>';
+		      //		      print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+		      //		      print img_edit();
+		      //		      print '</a></td>';
 		      print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
 		      print img_delete();
 		      print '</a></td>';
