@@ -149,6 +149,18 @@ insert into llx_const (name, value, type) values ('OSC_LANGUAGE_ID','1','chaine'
 insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
 
 --
+-- Factures
+--
+
+insert into llx_const (name, value, type) values ('FAC_PDF_INTITULE','Facture','chaine');
+insert into llx_const (name, value, type) values ('FAC_PDF_MEL','facture@societe.com','chaine');
+insert into llx_const (name, value, type) values ('FAC_PDF_WWW','http://www.societe.com','chaine');
+insert into llx_const (name, value, type) values ('FAC_PDF_LOGO','/htdocs/documents/logo','chaine');
+insert into llx_const (name, value, type) values ('FAC_CAPITAL_EURO','18600','chaine');
+insert into llx_const (name, value, type) values ('FAC_PDF_TVA_INTRA','BE 443 698 678','chaine');
+insert into llx_const (name, value, type) values ('FAC_PDF_RCS','634 674','chaine');
+
+--
 -- Types de charges
 --
 
@@ -623,3 +635,4 @@ insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, label
 insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, label, account_number) VALUES (100,1,'PCG99-ABREGE','XXXXXX','Reprises sur provisions pour risques  ','786');
 insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, label, account_number) VALUES (101,1,'PCG99-ABREGE','XXXXXX','Reprises sur provisions  ','787');
 insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, label, account_number) VALUES (102,1,'PCG99-ABREGE','XXXXXX','Transferts de charges','79');
+
