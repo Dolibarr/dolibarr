@@ -48,9 +48,15 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add("/fichinter/", "Fiches d'intervention");
     }
 
-  $menu->add("/product/", "Produits");
+  if ($conf->produit->enabled )
+    {
+      $menu->add("/product/", "Produits");
+    }
 
-  $menu->add("/service/", "Services");
+  if ($conf->service->enabled ) 
+    {
+      $menu->add("/service/", "Services");
+    }
 
   $menu->add("projet/", "Projets");
 
