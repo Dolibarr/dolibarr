@@ -73,7 +73,7 @@ class Entrepot
 
 	  if ($this->db->query($sql) )
 	    {
-	      $id = $this->db->last_insert_id();	      
+	      $id = $this->db->last_insert_id(MAIN_DB_PREFIX."entrepot");	      
 	      if ($id > 0)
 		{
 		  $this->id = $id;

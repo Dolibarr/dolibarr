@@ -266,7 +266,7 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
       
       if ( $this->db->query($sql) )
 	{
-	  $this->id = $this->db->last_insert_id();
+	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande_fournisseur");
 
 	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 	  if ($this->db->query($sql))

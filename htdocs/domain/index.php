@@ -24,32 +24,6 @@ require("./pre.inc.php");
 
 llxHeader();
 
-if ($action == 'add') {
-
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc, reduction) ";
-  $sql .= " VALUES ('$date_depart','$date_arrivee',$amount,'$depart','$arrivee',$reducid, $reduc);";
-
-  $result = $db->query($sql);
-  if ($result) {
-    $rowid = $db->last_insert_id();
-
-  } else {
-    print $db->error();
-    print "<p>$sql";
-  }
-
-}
-if ($action == 'del') {
-  /*  $sql = "DELETE FROM ".MAIN_DB_PREFIX."voyage WHERE rowid = $rowid";
-   *$result = $db->query($sql);
-   */
-}
-
-if ($vline) {
-  $viewline = $vline;
-} else {
-  $viewline = 20;
-}
 
 
 print_titre("Noms de domaines internet");

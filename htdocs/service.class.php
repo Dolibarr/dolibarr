@@ -52,13 +52,14 @@ class Service {
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."service (datec, fk_user_author) VALUES (now(), ".$user->id.")";
 
     if ($this->db->query($sql) ) {
-      $id = $this->db->last_insert_id();
+      $id = $this->db->last_insert_id(MAIN_DB_PREFIX."service");
 
       if ( $this->update($id, $user) ) {
 	return $id;
       }
     } else {
       print $this->db->error() . ' in ' . $sql;
+      return -1;
     }
   }
 	

@@ -213,7 +213,7 @@ class Contrat
       $sql .= ",".$this->db->idate($this->date_contrat) .")";
       if ($this->db->query($sql))
 	{
-	  $this->id = $this->db->last_insert_id();
+	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."contrat");
 	  $result = 0 ;
 	}
       else

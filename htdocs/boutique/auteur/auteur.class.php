@@ -53,7 +53,7 @@ class Auteur {
 
     if ($this->db->query($sql) )
       {
-	$id = $this->db->last_insert_id();
+	$id = $this->db->last_insert_id(MAIN_DB_PREFIX."auteur");
 
 	if ( $this->update($id, $user) )
 	  {

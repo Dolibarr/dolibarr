@@ -57,7 +57,7 @@ class Livre {
 
     if ($this->db->query($sql) )
       {
-	$idosc = $this->db->last_insert_id();
+	$idosc = $this->db->last_insert_id(DB_NAME_OSC.".products");
 
 	$sql = "INSERT INTO ".DB_NAME_OSC.".products_to_categories (products_id, categories_id) VALUES ($idosc, 0)";
 
@@ -73,7 +73,7 @@ class Livre {
 	    
 		if ($this->db->query($sql) )
 		  {
-		    $id = $this->db->last_insert_id();
+		    $id = $this->db->last_insert_id(MAIN_DB_PREFIX."livre");
 		    
 		    if ( $this->update($id, $user) )
 		      {

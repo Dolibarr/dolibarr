@@ -156,7 +156,7 @@ class BonPrelevement
 
 	if ($this->db->query($sql))
 	  {
-	    $ligne_id = $this->db->last_insert_id();
+	    $ligne_id = $this->db->last_insert_id(MAIN_DB_PREFIX."prelevement_lignes");
 	    $result = 0;
 	  }
 	else

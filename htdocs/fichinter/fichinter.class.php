@@ -85,7 +85,7 @@ class Fichinter
     $result=$this->db->query($sql);
     if ($result)
       {
-        return $this->db->last_insert_id();    
+        return $this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");    
       }
     else
       {

@@ -78,7 +78,7 @@ class ComptaCompte
 		  $result = $this->db->query($sql);
 		  if ( $result )
 		    {
-		      $id = $this->db->last_insert_id();
+		      $id = $this->db->last_insert_id(MAIN_DB_PREFIX."compta_compte_generaux");
 		      
 		      if ($id > 0)
 			{

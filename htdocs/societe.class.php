@@ -121,7 +121,7 @@ class Societe {
         $result=$this->db->query($sql);
         if ($result)
 	  {
-            $this->id = $this->db->last_insert_id();
+            $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
             
             $this->creation_bit = 1;
             

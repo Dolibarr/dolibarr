@@ -71,9 +71,9 @@ class PaiementFourn
     
     $result = $this->db->query($sql);
 
-    if (isset($result))
+    if ($result)
       {
-	$this->id = $this->db->last_insert_id();
+	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."paiementfourn");
 	
 	$label = "Règlement facture $this->facnumber - $this->societe";
 	
@@ -89,7 +89,7 @@ class PaiementFourn
 	// Mise a jour fk_bank dans llx_paiement_fourn
 	if ($result)
 	  {   
-	    $this->bankid = $this->db->last_insert_id();
+	    $this->bankid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank");
 	  
 	    $sql = "UPDATE ".MAIN_DB_PREFIX."paiementfourn SET fk_bank=$this->bankid WHERE rowid=$this->id";
 	    $result = $this->db->query($sql);

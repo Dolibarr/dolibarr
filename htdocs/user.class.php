@@ -523,7 +523,8 @@ class User
 		{
 		  if ($this->db->affected_rows()) 
 		    {
-		      $this->id = $this->db->last_insert_id();
+              $table =  "".MAIN_DB_PREFIX."user";
+		      $this->id = $this->db->last_insert_id($table);
 		      $this->admin = 0;
 		      $this->update();
 		      

@@ -110,7 +110,7 @@ class ComptaExportPoivre
 	
 	if ($this->db->query($sql))
 	  {
-	    $ecid = $this->db->last_insert_id();
+	    $ecid = $this->db->last_insert_id(MAIN_DB_PREFIX."export_compta");
 	  }
 	else
 	  {
@@ -124,7 +124,7 @@ class ComptaExportPoivre
       {
 	dolibarr_syslog("ComptaExportPoivre::Export ref : $ref");
 
-	$this->id = $this->db->last_insert_id();
+	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."export_compta");
 
 	$fxname = DOL_DATA_ROOT."/compta/export/".$ref.".xls";
 

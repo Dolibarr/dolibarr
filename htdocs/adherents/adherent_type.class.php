@@ -20,14 +20,14 @@
  *
  */
 
-/*!	\file htdocs/adherents/adherent_type.class.php
+/**	\file htdocs/adherents/adherent_type.class.php
         \ingroup    adherent
 		\brief      Fichier de la classe gérant les types d'adhérents
 		\author     Rodolphe Quiedeville
 		\version    $Revision$
 */
 
-/*! \class AdherentType
+/** \class AdherentType
 		\brief      Classe gérant les types d'adhérents
 */
 
@@ -43,7 +43,7 @@ class AdherentType
   var $commentaire; /**< commentaire */
   var $vote;				/** droit de vote ? */
 
-/*!
+/**
 		\brief AdherentType
 		\param DB				handler accès base de données
 */
@@ -54,7 +54,7 @@ class AdherentType
       $this->statut = 1;
     }
 
-/*!
+/**
 		\brief print_error_list
 */
 
@@ -67,7 +67,7 @@ class AdherentType
       }
   }
 
-/*!
+/**
 		\brief fonction qui permet de créer le status de l'adhérent
 		\param userid			userid de l'adhérent
 */
@@ -85,13 +85,11 @@ class AdherentType
 
       if ($result)
 	{
-	  $this->id = $this->db->last_insert_id();
+	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent_type");
 	  return $this->update();
 	}
       else
 	{
-	  print $this->db->error();
-	  print "<h2><br>$sql<br></h2>";
 	  return 0;
 	}
     }
@@ -123,7 +121,7 @@ class AdherentType
 	}
     }
 
-/*!
+/**
 		\brief fonction qui permet de supprimer le status de l'adhérent
 		\param rowid
 */
@@ -151,7 +149,7 @@ class AdherentType
       }
   }
 
-	/*!
+	/**
 		\brief fonction qui permet de récupérer le status de l'adhérent
 		\param rowid
 */

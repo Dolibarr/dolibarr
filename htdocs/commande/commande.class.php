@@ -224,7 +224,7 @@ class Commande
       
       if ( $this->db->query($sql) )
 	{
-	  $this->id = $this->db->last_insert_id();
+	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."commande");
 
 	  /*
 	   *  Insertion des produits dans la base

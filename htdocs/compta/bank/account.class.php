@@ -88,15 +88,13 @@ class Account
 
     if ($this->db->query($sql))
       {
-	$rowid = $this->db->last_insert_id();
+	$rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_url");
 	
 	return $rowid;
       }
     else
       {
 	return '';
-	print $this->db->error();
-	print "<br>$sql";
       }
   }
   /*
@@ -165,7 +163,7 @@ class Account
 
 	if ($this->db->query($sql))
 	  {
-	    $rowid = $this->db->last_insert_id();
+	    $rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank");
 	    if ($categorie)
 	      {
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ('$rowid', '$categorie')";
@@ -214,7 +212,7 @@ class Account
 	{
 	  if ($this->db->affected_rows()) 
 	    {
-	      $this->id = $this->db->last_insert_id();
+	      $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_account");
 	      if ( $this->update() )
 		{
 		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, label, amount, fk_account,datev,dateo,fk_type,rappro) ";

@@ -132,7 +132,7 @@ class Bookmark4u
 	{
 	  if ($this->db->affected_rows()) 
 	    {
-	      $this->uid = $this->db->last_insert_id();
+	      $this->uid = $this->db->last_insert_id("bookmark4u.bk4u_passwd");
 	      
 	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark4u_login";
 	      $sql .= " (fk_user, bk4u_uid)";

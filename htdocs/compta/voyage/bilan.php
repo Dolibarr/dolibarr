@@ -33,7 +33,7 @@ if ($action == 'add') {
 
   $result = $db->query($sql);
   if ($result) {
-    $rowid = $db->last_insert_id();
+    $rowid = $db->last_insert_id(MAIN_DB_PREFIX."voyage");
 
   } else {
     print $db->error();

@@ -246,7 +246,7 @@ class Propal
       if ( $this->db->query($sql) )
 	{
 
-	  $this->id = $this->db->last_insert_id();
+	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."propal");
 	  
 	  $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal WHERE ref='$this->ref';";
 	  if ( $this->db->query($sql) ) 

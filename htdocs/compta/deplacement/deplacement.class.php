@@ -47,7 +47,7 @@ class Deplacement
       $result = $this->db->query($sql);
       if ($result)
 	{
-	  $this->id = $this->db->last_insert_id();
+	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."deplacement");
 	  if ( $this->update($user) ) 
 	    {
 	      return $this->id;

@@ -110,7 +110,7 @@ class FactureFourn
 
     if ( $this->db->query($sql) )
       {
-	$this->id = $this->db->last_insert_id();
+	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn");
 
 	for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 	  {	 
@@ -119,7 +119,7 @@ class FactureFourn
 	    $sql .= " VALUES ($this->id);";
 	    if ($this->db->query($sql) ) 
 	      {
-		$idligne = $this->db->last_insert_id();
+		$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn_det");
 
 		$this->updateline($idligne,
 				    $this->lignes[$i][0],
@@ -301,7 +301,7 @@ class FactureFourn
     $sql .= " VALUES ($this->id);";
     if ($this->db->query($sql) ) 
       {
-	$idligne = $this->db->last_insert_id();
+	$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_fourn_det");
 	
 	$this->updateline($idligne, $desc, $pu, $tauxtva, $qty);
       }

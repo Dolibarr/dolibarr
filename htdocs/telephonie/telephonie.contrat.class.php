@@ -60,7 +60,7 @@ class TelephonieContrat {
     
     if ( $this->db->query($sql) )
       {
-	$this->id = $this->db->last_insert_id();
+	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."telephonie_contrat");
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_contrat";
 	$sql .= " SET ref='".substr("00000000".$this->id,-8)."'";

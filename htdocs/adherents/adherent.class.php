@@ -301,7 +301,7 @@ class Adherent
 
       if ($result)
 	{
-	  $this->id = $this->db->last_insert_id();
+	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
 	  return $this->update();
 	}
       else

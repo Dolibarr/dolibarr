@@ -196,7 +196,7 @@ class Don
       
       if ($result) 
 	{
-	  return $this->db->last_insert_id();
+	  return $this->db->last_insert_id(MAIN_DB_PREFIX."don");
 	}
       else
 	{

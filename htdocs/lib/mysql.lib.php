@@ -485,11 +485,12 @@ class DoliDb
   }
     
   /**
-     \brief      Obtient l'id genéré par le dernier INSERT.
-     \return     id
+     \brief     Récupère l'id genéré par le dernier INSERT.
+     \param     tab     Nom de la table concernée par l'insert. Ne sert pas sous MySql mais requis pour compatibilité avec Postgresql
+     \return    int     id
   */
     
-  function last_insert_id()
+  function last_insert_id($tab)
   {
     return mysql_insert_id($this->db);
   }

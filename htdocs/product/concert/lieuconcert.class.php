@@ -45,7 +45,7 @@ class LieuConcert {
 	    
     if ($this->db->query($sql) )
       {
-	$id = $this->db->last_insert_id();
+	$id = $this->db->last_insert_id(MAIN_DB_PREFIX."lieu_concert");
 	
 	if ( $this->update($id, $user) )
 	  {

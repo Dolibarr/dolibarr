@@ -57,7 +57,7 @@ class Project {
     
       if ($this->db->query($sql) ) 
 	{
-	  return $this->db->last_insert_id();
+	  return $this->db->last_insert_id(MAIN_DB_PREFIX."projet");
 	}
       else
 	{

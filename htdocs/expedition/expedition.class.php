@@ -78,7 +78,7 @@ class Expedition
       
       if ( $this->db->query($sql) )
 	{
-	  $this->id = $this->db->last_insert_id();
+	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."expedition");
 
 	  /*
 	   *

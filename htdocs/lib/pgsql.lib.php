@@ -492,8 +492,9 @@ class DoliDb
     }
     
     /**
-        \brief      Obtient l'id genéré par le dernier INSERT.
-        \return 	id
+        \brief      Récupère l'id genéré par le dernier INSERT.
+        \param      tab     Nom de la table concernée par l'insert
+        \return     int     id
     */
     
     function last_insert_id($tab)

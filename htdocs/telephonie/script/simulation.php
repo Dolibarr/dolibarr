@@ -36,7 +36,7 @@ $sql .= " 'Simulation du $date')";
 
 if ( $db->query($sql) )
 {
-  $simid = $db->last_insert_id();
+  $simid = $db->last_insert_id(MAIN_DB_PREFIX."telephonie_simul");
 }
 print "Simulation : $simid\n";
 /*******************************************************************************

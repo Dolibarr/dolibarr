@@ -52,7 +52,6 @@ class Facture
   var $total;
   var $note;
   var $paye;
-  var $db_table;
   var $propalid;
   var $projetid;
   var $prefixe_facture;
@@ -68,7 +67,7 @@ class Facture
       $this->db = $DB ;
       $this->socidp = $soc_idp;
       $this->products = array();        // Tableau de lignes de factures
-      $this->db_table = MAIN_DB_PREFIX."facture";
+      
       $this->amount = 0;
       $this->remise = 0;
       $this->remise_percent = 0;
@@ -172,7 +171,7 @@ class Facture
       $tva = tva($totalht);
       $total = $totalht + $tva;
 
-      $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, remise_percent";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture (facnumber, fk_soc, datec, amount, remise, remise_percent";
       $sql .= ", datef, note, fk_user_author,fk_projet";
       $sql .= ", fk_cond_reglement, fk_mode_reglement, date_lim_reglement) ";
 
@@ -182,7 +181,7 @@ class Facture
       $sql .= ",".$this->cond_reglement.",".$this->mode_reglement.",".$this->db->idate($datelim).")";      
       if ( $this->db->query($sql) )
 	{
-	  $this->id = $this->db->last_insert_id();
+	  $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture");
 
 	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET facnumber='(PROV".$this->id.")' WHERE rowid=".$this->id;
 	  $this->db->query($sql);

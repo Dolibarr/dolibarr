@@ -46,7 +46,7 @@ class Groupart {
 
       {
 
-	$id = $this->db->last_insert_id();
+	$id = $this->db->last_insert_id(MAIN_DB_PREFIX."groupart");
 	
 	if ( $this->update($id, $user) )
 	  {

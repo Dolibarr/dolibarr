@@ -175,7 +175,7 @@ if (!$error)
 	       
       if (!$error)
 	{
-	  $sql = "INSERT INTO llx_telephonie_facture";
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_facture";
 	  $sql .= " (fk_ligne, ligne, date)";
 	  
 	  $sql .= " VALUES (".$ligne->id.",";
@@ -183,7 +183,7 @@ if (!$error)
 	  	  
 	  if ($db->query($sql))
 	    {
-	      $facid = $db->last_insert_id();
+	      $facid = $db->last_insert_id(MAIN_DB_PREFIX."telephonie_facture");
 	    }
 	  else
 	    {

@@ -83,7 +83,7 @@ class TelephonieService {
     
     if ( $this->db->query($sql) )
       {
-	$this->id = $this->db->last_insert_id();
+	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."telephonie_service");
 	return 0;
       }
     else

@@ -97,7 +97,7 @@ class ActionComm
       
       if ($this->db->query($sql) )
 	{
-        $idaction = $this->db->last_insert_id();
+        $idaction = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm");
         
         if ($conf->webcal->enabled) {
             if (is_object($webcal))

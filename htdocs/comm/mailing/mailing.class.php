@@ -107,7 +107,7 @@ class Mailing
       $result=$this->db->query($sql);
       if ($result)
 	{
-	  $this->id = $this->db->last_insert_id($result);
+	  $this->id = $this->db->last_insert_id($this->db_table);
 
       if ($this->update() > 0)
       {

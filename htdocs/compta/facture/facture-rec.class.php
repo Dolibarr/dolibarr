@@ -90,7 +90,7 @@ class FactureRec
 	  $sql .= " VALUES ('$this->titre', '$facsrc->socidp', now(), '$facsrc->amount', '$facsrc->remise', '$facsrc->remise_percent', '$this->note','$user->id', '$facsrc->projetid', '$facsrc->cond_reglement_id')";      
 	  if ( $this->db->query($sql) )
 	    {
-	      $this->id = $this->db->last_insert_id();
+	      $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_rec");
 	      	      	      
 	      /*
 	       * Produits
