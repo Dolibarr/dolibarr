@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2000,2001 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2000-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -416,8 +416,11 @@ function francs($euros)
 {
   return price($euros * 6.55957);
 }
-function tva($euros, $taux=0.196)
+
+function tva($euros, $taux=19.6)
 {
+  $taux = $taux / 100 ;
+
   return sprintf("%01.2f",($euros * $taux));
 }
 function inctva($euros, $taux=1.196)
