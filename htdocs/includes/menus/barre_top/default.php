@@ -82,11 +82,11 @@ else
   print '-';
 }
 print '</td><td width="15%" class="menu" align="center">';
-if ($conf->webcal->enabled)
+
+if(defined("MAIN_MODULE_WEBCALENDAR") && MAIN_MODULE_WEBCALENDAR)
 {
-  print '<a class="menu" href="'.$conf->webcal->url.'">Calendrier</a>';
+  print '<a class="menu" href="'. PHPWEBCALENDAR_URL .'">Calendrier</a>';
 };
 print '&nbsp;</TD>';
-
 
 ?>

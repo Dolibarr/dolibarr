@@ -105,11 +105,13 @@ class WebcalConf
     {
       $this->enabled = 1;
 
-      $this->url = "http://webcalendar.lafrere.lan/";
+      $this->url = PHPWEBCALENDAR_URL;
 
       $this->db = new DbConf();
-      $this->db->user = "webcal";
-      $this->db->name = "webcal";    
+      $this->db->host = PHPWEBCALENDAR_HOST;
+      $this->db->user = PHPWEBCALENDAR_USER;
+      $this->db->pass = PHPWEBCALENDAR_PASS;
+      $this->db->name = PHPWEBCALENDAR_DBNAME;    
     }
 }
 

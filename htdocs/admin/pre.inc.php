@@ -49,6 +49,16 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add_submenu("fichinter.php", "Fiches d'intervention");
     }
 
+  if(defined("MAIN_MODULE_WEBCALENDAR") && MAIN_MODULE_WEBCALENDAR)
+    {
+      $menu->add_submenu("webcalendar.php", "Calendrier");
+    }
+
+  if(defined("MAIN_MODULE_EXTERNAL_RSS") && MAIN_MODULE_EXTERNAL_RSS)
+    {
+      $menu->add_submenu("external_rss.php", "Syndication");
+    }
+
 
   $menu->add("boxes.php", "Boites");
 

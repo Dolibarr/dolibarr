@@ -104,6 +104,16 @@ $modules["MAIN_MODULE_POSTNUKE"][1] = "MAIN_MODULE_POSTNUKE";
 $modules["MAIN_MODULE_POSTNUKE"][2] = MAIN_MODULE_POSTNUKE;
 $modules["MAIN_MODULE_POSTNUKE"][3] = "Module de gestion de postnuke";
 
+$modules["MAIN_MODULE_WEBCALENDAR"][0] = "Module Webcalendar";
+$modules["MAIN_MODULE_WEBCALENDAR"][1] = "MAIN_MODULE_WEBCALENDAR";
+$modules["MAIN_MODULE_WEBCALENDAR"][2] = MAIN_MODULE_WEBCALENDAR;
+$modules["MAIN_MODULE_WEBCALENDAR"][3] = "Module de gestion du calendrier";
+
+$modules["MAIN_MODULE_EXTERNAL_RSS"][0] = "Module de syndication externe";
+$modules["MAIN_MODULE_EXTERNAL_RSS"][1] = "MAIN_MODULE_EXTERNAL_RSS";
+$modules["MAIN_MODULE_EXTERNAL_RSS"][2] = MAIN_MODULE_EXTERNAL_RSS;
+$modules["MAIN_MODULE_EXTERNAL_RSS"][3] = "Module de gestion de syndication de sites externes";
+
 if ($action == 'set')
 {
   $sql = "REPLACE INTO llx_const SET name = '".$value."', value='1', visible = 0";
