@@ -36,6 +36,8 @@ create table llx_bank_account
   bic            varchar(10),
   iban_prefix    varchar(5),
   domiciliation  varchar(50),
+  proprio        varchar(60),
+  adresse_proprio varchar(255),
   courant        smallint default 0 not null,
   clos           smallint default 0 not null
 );
