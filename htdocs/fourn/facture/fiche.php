@@ -469,7 +469,7 @@ else
 		  print "<tr $bc[$var]>";
 		  print "<td>".strftime("%d %B %Y",$objp->dp)."</td>\n";
 		  print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
-		  print "<td align=\"right\">".price($objp->amount)."</td><td>".MAIN_MONNAIE."</td>\n";
+		  print "<td align=\"right\">".price($objp->amount)."</td><td>".$conf->monnaie."</td>\n";
 
 		  if ($fac->statut == 1 && $fac->paye == 0 && $user->societe_id == 0)
 		    {
@@ -483,14 +483,14 @@ else
 		  $total = $total + $objp->amount;
 		  $i++;
 		}
-	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td$tdsup>".MAIN_MONNAIE."</td></tr>\n";
+	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td$tdsup>".$conf->monnaie."</td></tr>\n";
 	      
 
 	      if ($fac->statut > 0)
 		{
 		  $resteapayer = abs($fac->total_ttc - $total);	      
 		  print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
-		  print '<td align="right"><b>'.price($resteapayer)."</b></td><td$tdsup>".MAIN_MONNAIE."</td>";
+		  print '<td align="right"><b>'.price($resteapayer)."</b></td><td$tdsup>".$conf->monnaie."</td>";
 		  print "</tr>\n";
 		}
 	      

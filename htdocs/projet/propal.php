@@ -109,7 +109,7 @@ if (sizeof($propales)>0 && is_array($propales))
   
   print '<tr><td>'.$i.' propales</td><td>&nbsp;</td>';
   print '<td align="right">Total : '.price($total).'</td>';
-  print '<td align="left">'.MAIN_MONNAIE.' HT</td></tr></table>';
+  print '<td align="left">'.$conf->monnaie.' HT</td></tr></table>';
 }
 
 $db->close();

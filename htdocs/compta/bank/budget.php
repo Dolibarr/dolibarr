@@ -128,11 +128,11 @@ else
 	  $total = $total + (0 - $objp->amount);
 	}
       $db->free();
-      print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("Total")."</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>".MAIN_MONNAIE."</td></tr>";
+      print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("Total")."</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>".$conf->monnaie."</td></tr>";
     }
   else
     {
-      print $db->error();
+      dolibarr_print_error($db);
   }
   print "</table>";
   

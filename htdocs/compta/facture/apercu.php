@@ -211,7 +211,7 @@ if ($_GET["facid"] > 0)
       
       print '<tr><td height=\"10\">'.$langs->trans("AmountHT").'</td>';
       print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-      print '<td>'.MAIN_MONNAIE.' HT</td></tr>';
+      print '<td>'.$conf->monnaie.' HT</td></tr>';
                 
       print "</table><br>";
 	  

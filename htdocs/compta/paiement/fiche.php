@@ -88,7 +88,7 @@ print $langs->trans("Date").' : '.strftime("%d %B %Y",$paiement->date)."<br>";
 
 print $langs->trans("Type").' : '.$paiement->type_libelle."<br>";
 
-print $langs->trans("Amount").' : '.$paiement->montant."&nbsp;".MAIN_MONNAIE."<br>";
+print $langs->trans("Amount").' : '.$paiement->montant."&nbsp;".$conf->monnaie."<br>";
 
 print '</td></tr>';
 print "</table>";

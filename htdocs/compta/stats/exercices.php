@@ -41,7 +41,7 @@ $mode='recettes';
 if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
 
 
-print_titre("Comparatif CA année en cours avec année précédente (".MAIN_MONNAIE." HT, ".$mode.")");
+print_titre("Comparatif CA année en cours avec année précédente (".$conf->monnaie." HT, ".$mode.")");
 print "<br>\n";
 
 

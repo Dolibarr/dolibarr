@@ -623,7 +623,7 @@ class pdf_crabe extends ModelePDFFactures
     */
    function _pagefoot(&$pdf, $fac)
     {
-        global $langs;
+        global $langs, $conf;
         $langs->load("main");
         $langs->load("bills");
         $langs->load("companies");
@@ -633,7 +633,7 @@ class pdf_crabe extends ModelePDFFactures
 
         if (MAIN_INFO_CAPITAL) {
             $pdf->SetY(-$footy);
-            $pdf->MultiCell(190, 3,"SARL au Capital de " . MAIN_INFO_CAPITAL." ".MAIN_MONNAIE." - " . MAIN_INFO_RCS." - Identifiant professionnel: " . MAIN_INFO_SIREN , 0, 'C');
+            $pdf->MultiCell(190, 3,"SARL au Capital de " . MAIN_INFO_CAPITAL." ".$conf->monnaie." - " . MAIN_INFO_RCS." - Identifiant professionnel: " . MAIN_INFO_SIREN , 0, 'C');
             $footy-=3;
         }
 

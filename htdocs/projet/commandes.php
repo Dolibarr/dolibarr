@@ -111,7 +111,7 @@ if (sizeof($commandes)>0 && is_array($commandes))
   
   print '<tr><td>'.$i.' commandes</td><td>&nbsp;</td>';
   print '<td align="right">'.$langs->trans("TotalHT").': '.price($total).'</td>';
-  print '<td align="right">'.MAIN_MONNAIE.'</td></tr>';
+  print '<td align="right">'.$conf->monnaie.'</td></tr>';
   print "</table>";
 }    
 

@@ -108,18 +108,18 @@ print '</table><br>';
 	      $facture->fetch($factures[$i]);
 	      
 	      $var=!$var;
-	      print "<TR $bc[$var]>";
-	      print "<TD><a href=\"../compta/facture.php?facid=$facture->id\">$facture->ref</a></TD>\n";	      
+	      print "<tr $bc[$var]>";
+	      print "<td><a href=\"../compta/facture.php?facid=$facture->id\">$facture->ref</a></td>\n";	      
 	      print '<td>'.strftime("%d %B %Y",$facture->date).'</td>';	      
-	      print '<TD align="right">'.price($facture->total_ht).'</td><td>&nbsp;</td></tr>';
+	      print '<td align="right">'.price($facture->total_ht).'</td><td>&nbsp;</td></tr>';
 	      
 	      $total = $total + $facture->total_ht;
 	    }
 	  
 	  print '<tr><td>'.$i.' factures</td><td>&nbsp;</td>';
-	  print '<td align="right">Total : '.price($total).'</td>';
-	  print '<td align="left">'.MAIN_MONNAIE.' HT</td></tr>';
-	  print "</TABLE>";
+	  print '<td align="right">'.$langs->trans("Total").' : '.price($total).'</td>';
+	  print '<td align="left">'.$conf->monnaie.' HT</td></tr>';
+	  print "</table>";
 	}
 
 $db->close();

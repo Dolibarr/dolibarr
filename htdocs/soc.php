@@ -150,7 +150,7 @@ if ($_GET["action"] == 'create')
       print '<td>'.$langs->trans('ProfIdSiret').'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
 
       print '<tr><td>'.$langs->trans('ProfIdApe').'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td>';
-      print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
+      print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
   
       print '<tr><td>Forme juridique</td><td colspan="3">';
       $form->select_forme_juridique($soc->forme_juridique_code);
@@ -242,7 +242,7 @@ elseif ($_GET["action"] == 'edit')
       print '<td>'.$langs->trans('ProfIdSiret').'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
 
       print '<tr><td>'.$langs->trans('ProfIdApe').'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td>';
-      print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
+      print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
 
       print '<tr><td>Forme juridique</td><td colspan="3">';
       $form->select_forme_juridique($soc->forme_juridique_code);
@@ -359,7 +359,7 @@ else
   print '<td>'.$langs->trans('ProfIdSiret').'</td><td>'.$soc->siret.'</td></tr>';
 
   print '<tr><td>'.$langs->trans('ProfIdApe').'</td><td>'.$soc->ape.'</td>';
-  print '<td>Capital</td><td>'.$soc->capital.' '.MAIN_MONNAIE.'</td></tr>';
+  print '<td>Capital</td><td>'.$soc->capital.' '.$conf->monnaie.'</td></tr>';
 
   print '<tr><td>Forme juridique</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
   print '<tr><td>Effectif</td><td colspan="3">'.$soc->effectif.'</td></tr>';

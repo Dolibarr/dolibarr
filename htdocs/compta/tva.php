@@ -55,9 +55,9 @@ function pt ($db, $sql, $date) {
       
       $i++;
     }
-    print "<tr><td align=\"right\">".$langs->trans("TotalHT").":</td><td align=\"right\"><b>".price($total)."</b></td><td>".MAIN_MONNAIE."</td></tr>";
+    print "<tr><td align=\"right\">".$langs->trans("TotalHT").":</td><td align=\"right\"><b>".price($total)."</b></td><td>".$conf->monnaie."</td></tr>";
     
-    print "</TABLE>";
+    print "</table>";
     $db->free();
   }
 }

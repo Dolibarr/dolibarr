@@ -39,7 +39,7 @@ if ($user->societe_id > 0)
 $mode='recettes';
 if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
 
-print_titre("Chiffre d'affaire (".MAIN_MONNAIE." HT, ".$mode.")");
+print_titre("Chiffre d'affaire (".$conf->monnaie." HT, ".$mode.")");
 
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";

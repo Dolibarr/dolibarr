@@ -884,7 +884,7 @@ else
 		  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_file().'</a>';
 		  print "&nbsp;".strftime("%d %B %Y",$objp->dp)."</td>\n";
 		  print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
-		  print '<td align="right">'.price($objp->amount)."</td><td>".MAIN_MONNAIE."</td>\n";
+		  print '<td align="right">'.price($objp->amount)."</td><td>".$conf->monnaie."</td>\n";
 		  print "</tr>";
 		  $totalpaye += $objp->amount;
 		  $i++;
@@ -892,13 +892,13 @@ else
 
 	      if ($fac->paye == 0)
 		{
-		  print "<tr><td colspan=\"2\" align=\"right\">Total déjà payé:</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".MAIN_MONNAIE."</td></tr>\n";
+		  print "<tr><td colspan=\"2\" align=\"right\">Total déjà payé:</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$conf->monnaie."</td></tr>\n";
 		  print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" style=\"border: 1px solid;\">".price($fac->total_ttc)."</td><td>".MAIN_MONNAIE."</td></tr>\n";
 		
 		  $resteapayer = $fac->total_ttc - $totalpaye;
 
 		  print "<tr><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
-		  print "<td align=\"right\" style=\"border: 1px solid;\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td>".MAIN_MONNAIE."</td></tr>\n";
+		  print "<td align=\"right\" style=\"border: 1px solid;\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td>".$conf->monnaie."</td></tr>\n";
 		}
 	      print "</table>";
 	      $db->free();
@@ -916,12 +916,12 @@ else
 
 	  print '<tr><td height=\"10\">'.$langs->trans("AmountHT").'</td>';
 	  print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-	  print '<td>'.MAIN_MONNAIE.' HT</td></tr>';
+	  print '<td>'.$conf->monnaie.' HT</td></tr>';
 
 	  print '<tr><td height=\"10\">'.$langs->trans("VAT").'</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
-	  print '<td>'.MAIN_MONNAIE.'</td></tr>';
+	  print '<td>'.$conf->monnaie.'</td></tr>';
 	  print '<tr><td height=\"10\">'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
-	  print '<td>'.MAIN_MONNAIE.' TTC</td></tr>';
+	  print '<td>'.$conf->monnaie.' TTC</td></tr>';
 	  print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.($fac->get_libstatut()).'</td></tr>';
 	  if ($fac->note)
 	    {
@@ -1452,7 +1452,7 @@ else
 		      $total = $total + $objp->price;
 		      $i++;
 		    }
-		  print "<tr><td align=\"right\" colspan=\"3\">".$langs->trans("TotalHT").": <b>".price($total)."</b> ".MAIN_MONNAIE."</td></tr>\n";
+		  print "<tr><td align=\"right\" colspan=\"3\">".$langs->trans("TotalHT").": <b>".price($total)."</b> ".$conf->monnaie."</td></tr>\n";
 		  print "</table>";
 		}
 	    } else {

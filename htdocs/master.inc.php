@@ -33,6 +33,7 @@
 define('DOL_VERSION','1.2.0-DEV');
 
 define_syslog_variables();
+clearstatcache();
 
 ini_set('mbstring.func_overload','0');
 
@@ -50,8 +51,7 @@ else
 
 if (! isset($dolibarr_main_db_type))
 {	
-  $dolibarr_main_db_type='mysql';
-  //exit('Erreur la variale $dolibarr_main_db_type n\'est pas définie dans le fichier de configuration');
+  $dolibarr_main_db_type='mysql';   // Pour compatibilité avec anciennes configs, si non défini, on prend 'mysql'
 }
 
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
@@ -73,10 +73,11 @@ if ($pos == '/')
 define('DOL_URL_ROOT', $pos);
 //define('DOL_URL_ROOT', $dolibarr_main_url_root);
 
-require (DOL_DOCUMENT_ROOT."/conf/conf.class.php");
+
 /*
- * Doit figurer aprés l'inclusion de conf.class.php pour overider certaines variables, à terme conf.class.php devra etre un fichier qui ne sera pas modifié par l'utilisateur
+ * Initialisation de l'objet $conf
  */
+require_once(DOL_DOCUMENT_ROOT."/conf/conf.class.php");
 $conf = new Conf();
 if (!strlen(getenv("LLX_DBNAME")))
 {
@@ -86,41 +87,32 @@ if (!strlen(getenv("LLX_DBNAME")))
   $conf->db->pass = $dolibarr_main_db_pass;
   $conf->db->type = $dolibarr_main_db_type;
 }
+if (! $conf->db->type) { $conf->db->type = 'mysql'; }   // Pour compatibilité avec anciennes configs, si non défini, on prend 'mysql'
+define('MAIN_DB_PREFIX','llx_');                        // A terme cette constante sera définie dans $conf
 
-
-// Si type non défini (pour compatibilité avec ancienne install), on
-// travail avec mysql
-if (! $conf->db->type) { $conf->db->type = 'mysql'; }
-
-
-// A terme cette constante sera définie dans la base
-define('MAIN_DB_PREFIX','llx_');
-
-require (DOL_DOCUMENT_ROOT ."/lib/".$conf->db->type.".lib.php");
-require (DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
-require (DOL_DOCUMENT_ROOT ."/html.form.class.php");
-require (DOL_DOCUMENT_ROOT ."/user.class.php");
+/*
+ * Chargement des includes principaux
+ */
+require_once(DOL_DOCUMENT_ROOT ."/lib/".$conf->db->type.".lib.php");
+require_once(DOL_DOCUMENT_ROOT ."/user.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
+require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/boxes.php");
+require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/address.class.php");
 
 
 $db = new DoliDb();
 $user = new User($db);
 
-clearstatcache();
-
-
-require (DOL_DOCUMENT_ROOT ."/product.class.php");
-require (DOL_DOCUMENT_ROOT ."/menu.class.php");
-require (DOL_DOCUMENT_ROOT ."/societe.class.php");
-require (DOL_DOCUMENT_ROOT ."/boxes.php");
-require (DOL_DOCUMENT_ROOT ."/address.class.php");
-require (DOL_DOCUMENT_ROOT ."/notify.class.php");
-require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf152/fpdf.php");
-
+// \todo mettre ces includes uniquement sur les éléments qui manipulent du PDF
+require_once(DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf152/fpdf.php");
 define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/font/');
+
 
 /*
  * Definition de toutes les Constantes globales d'environnement
- *
  */
 $sql = "SELECT name, value FROM ".MAIN_DB_PREFIX."const";
 $result = $db->query($sql);
@@ -152,9 +144,8 @@ if (strlen($conf->langage) <= 3) {
     $conf->langage = strtolower($conf->langage)."_".strtoupper($conf->langage);
 }
 setlocale(LC_ALL, $conf->langage);
-//setlocale(LC_TIME, $conf->language);
 
-require (DOL_DOCUMENT_ROOT ."/translate.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
 $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
 
 
@@ -184,6 +175,7 @@ if (defined("MAIN_MODULE_EXPEDITION"))
 if (defined("MAIN_MODULE_SOCIETE"))
 {
   $conf->societe->enabled=MAIN_MODULE_SOCIETE; 
+  require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
 }
 if (defined("MAIN_MODULE_COMMERCIAL"))
 {
@@ -212,7 +204,7 @@ if (defined("MAIN_MODULE_FOURNISSEUR"))
 if (defined("MAIN_MODULE_FICHEINTER"))
 {
   $conf->fichinter->enabled=MAIN_MODULE_FICHEINTER;
-  require (DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
+  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 }
 if (defined("MAIN_MODULE_ADHERENT"))
 {
@@ -224,6 +216,7 @@ if (defined("MAIN_MODULE_PRODUIT"))
   $conf->produit->dir_ouput=DOL_DATA_ROOT."/documents/produit";
   $conf->produit->dir_images=DOL_DOCUMENT_ROOT."/images/produit";
   $conf->produit->url_images=DOL_URL_ROOT."/images/produit";
+  require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 }
 if (defined("MAIN_MODULE_SERVICE"))
 {
@@ -231,6 +224,7 @@ if (defined("MAIN_MODULE_SERVICE"))
   $conf->service->dir_ouput=DOL_DATA_ROOT."/documents/produit";
   $conf->service->dir_images=DOL_DOCUMENT_ROOT."/images/produit";
   $conf->service->url_images=DOL_URL_ROOT."/images/produit";
+  require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 }
 if (defined("MAIN_MODULE_STOCK"))
 {
@@ -280,7 +274,7 @@ if (defined("MAIN_MODULE_WEBCALENDAR"))
 if (defined("MAIN_MODULE_FACTURE"))
 {
   $conf->facture->enabled=MAIN_MODULE_FACTURE;
-  require (DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
+  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
   $conf->facture->dir_ouput=DOL_DATA_ROOT."/documents/facture";
   $conf->facture->dir_images=DOL_DOCUMENT_ROOT."/images/facture";
   $conf->facture->url_images=DOL_URL_ROOT."/images/facture";
@@ -288,12 +282,12 @@ if (defined("MAIN_MODULE_FACTURE"))
 if (defined("MAIN_MODULE_PROPALE"))
 {
   $conf->propal->enabled=MAIN_MODULE_PROPALE;
-  require (DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
+  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
   $conf->propale->dir_ouput=DOL_DATA_ROOT."/documents/propale";
   $conf->propale->dir_images=DOL_DOCUMENT_ROOT."/images/propale";
   $conf->propale->url_images=DOL_URL_ROOT."/images/propale";
 
-  // \todo a virer car remplacé par $conf->propale->dir_ouput
+  // \todo modifier le code des propales pour utiliser $conf->propale->dir_ouput au lieu de la constante
   if (! defined("PROPALE_OUTPUTDIR"))
     {
       define('PROPALE_OUTPUTDIR', DOL_DOCUMENT_ROOT . "/document/propale");
@@ -314,21 +308,19 @@ if (defined("MAIN_MODULE_PROPALE"))
 /*
  * Modification de quelques variable de conf en fonction des Constantes
  */
-
 if (defined("MAIN_MONNAIE")) {
 	$conf->monnaie=MAIN_MONNAIE;
 }
 else {
 	$conf->monnaie='euros';	
-	define("MAIN_MONNAIE",'euros');		// TODO Virer cette ligne et remplacer dans le code le MAIN_MONNAIE par $conf->monnaie
 }
 
 /*
  * Option du module Compta: Defini le mode de calcul du CA
  */
-$conf->compta->mode = 'RECETTES-DEPENSES';	// Par défaut
+$conf->compta->mode = 'RECETTES-DEPENSES';	    // Par défaut
 if (defined("COMPTA_MODE")) {
-	$conf->compta->mode = RECETTES-DEPENSES; 		// Peut etre 'CREANCES-DETTES' pour un CA en creances-dettes
+	$conf->compta->mode = RECETTES-DEPENSES; 	// Peut etre 'CREANCES-DETTES' pour un CA en creances-dettes
 }
 
 /* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
@@ -341,10 +333,10 @@ $conf->compta->tva=1;
  * Option du module Facture
  */
 if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') {
-	$conf->defaulttx='0';		# Taux par défaut des factures clients
+	$conf->defaulttx='0';		// Taux par défaut des factures clients
 }
 else {
-	$conf->defaulttx='';		# Pas de taux par défaut des factures clients, le premier sera pris
+	$conf->defaulttx='';		// Pas de taux par défaut des factures clients, le premier sera pris
 }
 
 /*

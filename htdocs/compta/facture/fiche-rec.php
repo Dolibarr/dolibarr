@@ -292,14 +292,14 @@ else
 	  
 	print "</td></tr>";
 	
-	print '<tr><td>Montant</td>';
+	print '<tr><td>'.$langs->trans("Amount").'</td>';
 	print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-	print '<td>'.MAIN_MONNAIE.' HT</td></tr>';
+	print '<td>'.$conf->monnaie.' HT</td></tr>';
 
-	print '<tr><td>TVA</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
-	print '<td>'.MAIN_MONNAIE.'</td></tr>';
+	print '<tr><td>'.$langs->trans("VAT").'</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
+	print '<td>'.$conf->monnaie.'</td></tr>';
 	print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
-	print '<td>'.MAIN_MONNAIE.'</td></tr>';
+	print '<td>'.$conf->monnaie.'</td></tr>';
 	if ($fac->note)
 	  {
 	    print '<tr><td colspan="5">Note : '.nl2br($fac->note)."</td></tr>";

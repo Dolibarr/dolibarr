@@ -320,15 +320,15 @@ if ($id > 0)
       // Ligne de 3 colonnes
       print '<tr><td>'.$langs->trans("AmountHT").'</td>';
       print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
-      print '<td>'.MAIN_MONNAIE.'</td>';
+      print '<td>'.$conf->monnaie.'</td>';
       print '<td rowspan="4" valign="top">'.$langs->trans("Note").' :</td></tr>';
 
 
 
       print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
-      print '<td>'.MAIN_MONNAIE.'</td></tr>';
+      print '<td>'.$conf->monnaie.'</td></tr>';
       print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
-      print '<td>'.MAIN_MONNAIE.'</td></tr>';
+      print '<td>'.$conf->monnaie.'</td></tr>';
       if ($commande->note)
 	{
 	  print '<tr><td colspan="3">Note : '.nl2br($commande->note)."</td></tr>";

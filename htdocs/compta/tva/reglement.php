@@ -65,7 +65,7 @@ if ($result)
       $i++;
     }
   print "<tr class=\"total\"><td align=\"right\">".$langs->trans("TotalHT").":</td>";
-  print "<td align=\"right\"><b>".price($total)."</b></td><td>".MAIN_MONNAIE."</td></tr>";
+  print "<td align=\"right\"><b>".price($total)."</b></td><td>".$conf->monnaie."</td></tr>";
   
   print "</table>";
   $db->free();
