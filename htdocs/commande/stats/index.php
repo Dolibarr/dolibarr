@@ -20,6 +20,15 @@
  * $Source$
  *
  */
+
+/**
+	    \file       htdocs/commande/stats/index.php
+        \ingroup    commande
+		\brief      Page des stats commandes
+		\version    $Revision$
+*/
+
+
 require("./pre.inc.php");
 require("../commande.class.php");
 require("./commandestats.class.php");
@@ -44,7 +53,11 @@ $stats = new CommandeStats($db, $socidp);
 
 $year = strftime("%Y", time());
 $data = $stats->getNbCommandeByMonthWithPrevYear($year);
-$filev = "/document/images/nbcommande2year.png";
+
+if (! is_dir($conf->commande->dir_images)) { mkdir($conf->commande->dir_images); }
+
+$filename = $conf->commande->dir_images."/nbcommande2year-$year.png";
+$fileurl = $conf->commande->url_images."/nbcommande2year-$year.png";
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
@@ -53,17 +66,17 @@ if (! $mesg) {
     $px->SetWidth(450);
     $px->SetHeight(280);
     $px->SetYLabel("Nombre de commande");
-    $px->draw(DOL_DOCUMENT_ROOT.$filev, $data, $year);
+    $px->draw($filename, $data, $year);
 }      
 $rows = $stats->getNbByYear();
 $num = sizeof($rows);
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr><td align="center">Année</td><td width="10%">Nb de commande</td><td align="center">Somme des commandes</td>';
+print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
+print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%">Nb de commande</td><td align="center">Somme des commandes</td>';
 print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
 print 'Nombre de commande par mois<br>';
 if ($mesg) { print $mesg; }
-else { print '<img src="'.DOL_URL_ROOT.$filev.'" alt="Graphique nombre de commande">'; }
+else { print '<img src="'.$fileurl.'" alt="Nombre de commande par mois">'; }
 print '</td></tr>';
 $i = 0;
 while (list($key, $value) = each ($rows))

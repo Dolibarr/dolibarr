@@ -20,7 +20,16 @@
  * $Source$
  *
  */
+
+/**
+	    \file       htdocs/compta/facture/stats/index.php
+        \ingroup    facture
+		\brief      Page des stats factures
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
 /*
  * Sécurité accés client
  */
@@ -31,17 +40,17 @@ if ($user->societe_id > 0)
 }
 
 llxHeader();
-/*
- *
- *
- */
 
 print_fiche_titre('Statistiques factures', $mesg);
 
 $stats = new FactureStats($db, $socidp);
 $year = strftime("%Y", time());
 $data = $stats->getNbByMonthWithPrevYear($year);
-$filev = "/document/images/nbfacture2year-$year.png";
+
+if (! is_dir($conf->facture->dir_images)) { mkdir($conf->facture->dir_images); }
+
+$filename = $conf->facture->dir_images."/nbfacture2year-$year.png";
+$fileurl = $conf->facture->url_images."/nbfacture2year-$year.png";
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
@@ -50,7 +59,7 @@ if (! $mesg) {
     $px->SetLegend(array($year - 1, $year));
     $px->SetWidth(450);
     $px->SetHeight(280);
-    $px->draw(DOL_DOCUMENT_ROOT.$filev, $data, $year);
+    $px->draw($filename, $data, $year);
 }
       
 $sql = "SELECT count(*), date_format(datef,'%Y') as dm, sum(total) FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0 ";
@@ -63,12 +72,12 @@ if ($db->query($sql))
 {
   $num = $db->num_rows();
 
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr><td align="center">Année</td><td width="10%">Nb de facture</td><td align="center">Somme des factures</td>';
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
+  print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%">Nb de facture</td><td align="center">Somme des factures</td>';
   print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-  print 'Nombre de facture par mois<br>';
+  print 'Nombre de factures par mois<br>';
   if ($mesg) { print $mesg; }
-  else { print '<img src="'.DOL_URL_ROOT.$filev.'" alt="Graphique nombre de commande">'; }
+  else { print '<img src="'.$fileurl.'" alt="Nombre de factures par mois">'; }
   print '</td></tr>';
   $i = 0;
   while ($i < $num)
@@ -86,7 +95,7 @@ if ($db->query($sql))
 }
 else
 {
-  print "Erreur : $sql";
+  dolibarr_print_error($db);
 }
 
 

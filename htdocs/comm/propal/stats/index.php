@@ -20,21 +20,29 @@
  * $Source$
  *
  */
+
+/**
+	    \file       htdocs/comm/propal/stats/index.php
+        \ingroup    propale
+		\brief      Page des stats propositions commerciales
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("./propalestats.class.php");
 
 llxHeader();
-/*
- *
- *
- */
 
 print_fiche_titre('Statistiques propositions commerciales', $mesg);
 
 $stats = new PropaleStats($db);
 $year = strftime("%Y", time());
 $data = $stats->getNbByMonthWithPrevYear($year);
-$filev = "/document/images/nbpropale2year-$year.png";
+
+if (! is_dir($conf->propale->dir_images)) { mkdir($conf->propale->dir_images); }
+
+$filename = $conf->propale->dir_images."/nbpropale2year-$year.png";
+$fileurl = $conf->propale->url_images."/nbpropale2year-$year.png";
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
@@ -43,8 +51,7 @@ if (! $mesg) {
     $px->SetLegend(array($year - 1, $year));
     $px->SetWidth(450);
     $px->SetHeight(280);
-    
-    $px->draw(DOL_DOCUMENT_ROOT.$filev, $data, $year);
+    $px->draw($filename, $data, $year);
 }
 
 $sql = "SELECT count(*), date_format(datep,'%Y') as dm, sum(price)  FROM ".MAIN_DB_PREFIX."propal WHERE fk_statut > 0 GROUP BY dm DESC ";
@@ -52,12 +59,12 @@ if ($db->query($sql))
 {
   $num = $db->num_rows();
 
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
   print '<tr><td align="center">Année</td><td width="10%">Nb de proposition</td><td align="center">Somme des propositions</td>';
   print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
   print 'Nombre de proposition par mois<br>';
   if ($mesg) { print "$mesg"; }
-  else { print '<img src="'.DOL_URL_ROOT.$filev.'" alt="Graphique nombre de commande">'; }
+  else { print '<img src="'.$fileurl.'" alt="Nombre de proposition par mois">'; }
   print '</td></tr>';
   $i = 0;
   while ($i < $num)

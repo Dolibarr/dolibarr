@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,13 @@
  *
  */
 
+/**
+	    \file       htdocs/expedition/stats/month.php
+        \ingroup    commande
+		\brief      Page des stats expeditions par mois
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../expedition.class.php");
 require("./expeditionstats.class.php");
@@ -28,31 +36,26 @@ llxHeader();
 
 $mesg = '';
 
-/*
- *
- *
- */
-
 print_fiche_titre('Statistiques expeditions '.$_GET["year"], $mesg);
 
 $stats = new ExpeditionStats($db);
-
-$dir = DOL_DOCUMENT_ROOT;
-
 $data = $stats->getNbExpeditionByMonth($_GET["year"]);
 
-$filev = "/document/images/expedition-".$_GET["year"].".png";
+if (! is_dir($conf->expedition->dir_images)) { mkdir($conf->expedition->dir_images); }
+
+$filename = $conf->expedition->dir_images."/expedition$year.png";
+$fileurl = $conf->expedition->url_images."/expedition$year.png";
 
 $px = new BarGraph($data);
 $px->SetMaxValue($px->GetMaxValue());
 $px->SetWidth(600);
 $px->SetHeight(280);
-$px->draw($dir.$filev, $data, $_GET["year"]);
+$px->draw($filename, $data, $_GET["year"]);
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print '<tr><td align="center">Nombre d\'expédition par mois</td>';
 print '<td align="center">';
-print '<img src="'.DOL_URL_ROOT.$filev.'">';
+print '<img src="'.$fileurl.'">';
 print '</td></tr>';
 print '</table>';
 

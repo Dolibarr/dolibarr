@@ -21,6 +21,13 @@
  *
  */
 
+/**
+	    \file       htdocs/comm/propal/stats/month.php
+        \ingroup    propale
+		\brief      Page des stats propositions commerciales par mois
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("./propalestats.class.php");
 
@@ -29,7 +36,7 @@ llxHeader();
 $year = isset($_GET["year"])?$_GET["year"]:date("Y",time());
 
 $mesg = '<a href="month.php?year='.($year - 1).'">'.img_previous().'</a> ';
-$mesg.= "Année $year";
+$mesg.= $langs->trans("Year")." $year";
 $mesg.= ' <a href="month.php?year='.($year + 1).'">'.img_next().'</a>';
 
 /*
@@ -39,12 +46,13 @@ $mesg.= ' <a href="month.php?year='.($year + 1).'">'.img_next().'</a>';
 
 print_fiche_titre('Statistiques des propositions commerciales', $mesg);
 
-$dir = DOL_DOCUMENT_ROOT;
-
 $stats = new PropaleStats($db);
 $data = $stats->getNbByMonth($year);
 
-$filev = "/document/images/propale$year.png";
+if (! is_dir($conf->propale->dir_images)) { mkdir($conf->propale->dir_images); }
+
+$filename = $conf->propale->dir_images."/propale$year.png";
+$fileurl = $conf->propale->url_images."/propale$year.png";
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
@@ -52,8 +60,7 @@ if (! $mesg) {
     $px->SetMaxValue($px->GetMaxValue());
     $px->SetWidth(500);
     $px->SetHeight(280);
-    
-    $px->draw($dir.$filev, $data, $year);
+    $px->draw($filename, $data, $year);
 }
 
 $res = $stats->getAmountByMonth($year);
@@ -65,17 +72,17 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
 
-$file_amount = "/document/images/propalamount$year.png";
+$filename_amount = $conf->propale->dir_images."/propaleamount$year.png";
+$fileurl_amount = $conf->propale->url_images."/propaleamount$year.png";
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
 if (! $mesg) {
-    $px->SetYLabel("Montant");
+    $px->SetYLabel($langs->trans("AmountTotal"));
     $px->SetMaxValue($px->GetAmountMaxValue());
     $px->SetWidth(500);
     $px->SetHeight(250);
-    
-    $px->draw($dir.$file_amount, $data, $year);
+    $px->draw($filename_amount, $data, $year);
 }
 $res = $stats->getAverageByMonth($year);
 
@@ -85,33 +92,35 @@ for ($i = 1 ; $i < 13 ; $i++)
 {
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
-$file_avg = "/document/images/propalaverage$year.png";
+
+$filename_avg = $conf->propale->dir_images."/propalaverage$year.png";
+$fileurl_avg = $conf->propale->url_images."/propalaverage$year.png";
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
 if (! $mesg) {
-    $px->SetYLabel("Montant moyen");
+    $px->SetYLabel($langs->trans("AmountAverage"));
     $px->SetMaxValue($px->GetAmountMaxValue());
     $px->SetWidth(500);
     $px->SetHeight(250);
-    $px->draw($dir.$file_avg, $data, $year);
+    $px->draw($filename_avg, $data, $year);
 }
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print '<tr><td align="center">Nombre par mois</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
-else { print '<img src="'.DOL_URL_ROOT.$filev.'">'; }
+else { print '<img src="'.$fileurl.'">'; }
 print '</td></tr>';
-print '<tr><td align="center">Sommes</td>';
+print '<tr><td align="center">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
-else { print '<img src="'.DOL_URL_ROOT.$file_amount.'">'; }
+else { print '<img src="'.$fileurl_amount.'">'; }
 print '</td></tr>';
-print '<tr><td align="center">Montant moyen</td>';
+print '<tr><td align="center">'.$langs->trans("AmountAverage").'</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
-else { print '<img src="'.DOL_URL_ROOT.$file_avg.'">'; }
+else { print '<img src="'.$fileurl_avg.'">'; }
 print '</td></tr></table>';
 
 $db->close();

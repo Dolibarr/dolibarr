@@ -21,6 +21,13 @@
  *
  */
 
+/**
+	    \file       htdocs/compta/facture/stats/month.php
+        \ingroup    facture
+		\brief      Page des stats factures par mois
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 /*
@@ -37,23 +44,18 @@ llxHeader();
 $year = isset($_GET["year"])?$_GET["year"]:date("Y",time());
 
 $mesg = '<a href="month.php?year='.($year - 1).'">'.img_previous().'</a> ';
-$mesg.= "Année $year";
+$mesg.= $langs->trans("Year")." $year";
 $mesg.= ' <a href="month.php?year='.($year + 1).'">'.img_next().'</a>';
 
-/*
- *
- *
- */
-
 print_fiche_titre('Statistiques des factures '.$year, $mesg);
-
-
-$dir = DOL_DOCUMENT_ROOT;
 
 $stats = new FactureStats($db, $socidp);
 $data = $stats->getNbByMonth($year);
 
-$filev = "/document/images/facture$year.png";
+if (! is_dir($conf->facture->dir_images)) { mkdir($conf->facture->dir_images); }
+
+$filename = $conf->facture->dir_images."/facture$year.png";
+$fileurl = $conf->facture->url_images."/facture$year.png";
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
@@ -61,7 +63,7 @@ if (! $mesg) {
     $px->SetMaxValue($px->GetMaxValue());
     $px->SetWidth(500);
     $px->SetHeight(280);
-    $px->draw($dir.$filev, $data, $year);
+    $px->draw($filename, $data, $year);
 }
 
 $res = $stats->getAmountByMonth($year);
@@ -73,16 +75,17 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
 
-$file_amount = "/document/images/factureamount$year.png";
+$filename_amount = $conf->facture->dir_images."/factureamount$year.png";
+$fileurl_amount = $conf->facture->url_images."/factureamount$year.png";
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
 if (! $mesg) {
-    $px->SetYLabel("Montant");
+    $px->SetYLabel($langs->trans("AmountTotal"));
     $px->SetMaxValue($px->GetAmountMaxValue());
     $px->SetWidth(500);
     $px->SetHeight(250);
-    $px->draw($dir.$file_amount, $data, $year);
+    $px->draw($filename_amount, $data, $year);
 }
 $res = $stats->getAverageByMonth($year);
 
@@ -92,32 +95,35 @@ for ($i = 1 ; $i < 13 ; $i++)
 {
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
-$file_avg = "/document/images/factureaverage$year.png";
+
+$filename_avg = $conf->facture->dir_images."/factureaverage$year.png";
+$fileurl_avg = $conf->facture->url_images."/factureaverage$year.png";
+
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
 if (! $mesg) {
-    $px->SetYLabel("Montant moyen");
+    $px->SetYLabel($langs->trans("AmountAverage"));
     $px->SetMaxValue($px->GetAmountMaxValue());
     $px->SetWidth(500);
     $px->SetHeight(250);
-    $px->draw($dir.$file_avg, $data, $year);
+    $px->draw($filename_avg, $data, $year);
 }
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print '<tr><td align="center">Nombre par mois</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
-else { print '<img src="'.DOL_URL_ROOT.$filev.'">'; }
+else { print '<img src="'.$fileurl.'">'; }
 print '</td></tr>';
-print '<tr><td align="center">Sommes</td>';
+print '<tr><td align="center">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
-else { print '<img src="'.DOL_URL_ROOT.$file_amount.'">'; }
+else { print '<img src="'.$fileurl_amount.'">'; }
 print '</td></tr>';
-print '<tr><td align="center">Montant moyen</td>';
+print '<tr><td align="center">'.$langs->trans("AmountAverage").'</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
-else { print '<img src="'.DOL_URL_ROOT.$file_avg.'">'; }
+else { print '<img src="'.$fileurl_avg.'">'; }
 print '</td></tr></table>';
 
 $db->close();

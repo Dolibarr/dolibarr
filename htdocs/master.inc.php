@@ -170,10 +170,16 @@ if (defined("MAIN_MODULE_EXTERNALRSS"))
 if (defined("MAIN_MODULE_COMMANDE"))
 {
   $conf->commande->enabled=MAIN_MODULE_COMMANDE;
+  $conf->commande->dir_ouput=DOL_DATA_ROOT."/documents/commande";
+  $conf->commande->dir_images=DOL_DOCUMENT_ROOT."/images/commande";
+  $conf->commande->url_images=DOL_URL_ROOT."/images/commande";
 }
 if (defined("MAIN_MODULE_EXPEDITION"))
 {
   $conf->expedition->enabled=MAIN_MODULE_EXPEDITION;
+  $conf->expedition->dir_ouput=DOL_DATA_ROOT."/documents/expedition";
+  $conf->expedition->dir_images=DOL_DOCUMENT_ROOT."/images/expedition";
+  $conf->expedition->url_images=DOL_URL_ROOT."/images/expedition";
 }
 if (defined("MAIN_MODULE_SOCIETE"))
 {
@@ -205,8 +211,8 @@ if (defined("MAIN_MODULE_FOURNISSEUR"))
 }
 if (defined("MAIN_MODULE_FICHEINTER"))
 {
-  require (DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
   $conf->fichinter->enabled=MAIN_MODULE_FICHEINTER;
+  require (DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 }
 if (defined("MAIN_MODULE_ADHERENT"))
 {
@@ -215,10 +221,16 @@ if (defined("MAIN_MODULE_ADHERENT"))
 if (defined("MAIN_MODULE_PRODUIT"))
 {
   $conf->produit->enabled=MAIN_MODULE_PRODUIT;
+  $conf->produit->dir_ouput=DOL_DATA_ROOT."/documents/produit";
+  $conf->produit->dir_images=DOL_DOCUMENT_ROOT."/images/produit";
+  $conf->produit->url_images=DOL_URL_ROOT."/images/produit";
 }
 if (defined("MAIN_MODULE_SERVICE"))
 {
   $conf->service->enabled=MAIN_MODULE_SERVICE;
+  $conf->service->dir_ouput=DOL_DATA_ROOT."/documents/produit";
+  $conf->service->dir_images=DOL_DOCUMENT_ROOT."/images/produit";
+  $conf->service->url_images=DOL_URL_ROOT."/images/produit";
 }
 if (defined("MAIN_MODULE_STOCK"))
 {
@@ -269,16 +281,23 @@ if (defined("MAIN_MODULE_FACTURE"))
 {
   $conf->facture->enabled=MAIN_MODULE_FACTURE;
   require (DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
+  $conf->facture->dir_ouput=DOL_DATA_ROOT."/documents/facture";
+  $conf->facture->dir_images=DOL_DOCUMENT_ROOT."/images/facture";
+  $conf->facture->url_images=DOL_URL_ROOT."/images/facture";
 }
 if (defined("MAIN_MODULE_PROPALE"))
 {
   $conf->propal->enabled=MAIN_MODULE_PROPALE;
-
   require (DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
-  
+  $conf->propale->dir_ouput=DOL_DATA_ROOT."/documents/propale";
+  $conf->propale->dir_images=DOL_DOCUMENT_ROOT."/images/propale";
+  $conf->propale->url_images=DOL_URL_ROOT."/images/propale";
+
+  // \todo a virer car remplacé par $conf->propale->dir_ouput
   if (! defined("PROPALE_OUTPUTDIR"))
     {
-      define('PROPALE_OUTPUTDIR', DOL_DOCUMENT_ROOT . "/document/propale/");
+      define('PROPALE_OUTPUTDIR', DOL_DOCUMENT_ROOT . "/document/propale");
+      $conf->propale->dir_ouput=DOL_DOCUMENT_ROOT . "/document/propale";
     }
   if (! defined("PROPALE_OUTPUT_URL"))
     {

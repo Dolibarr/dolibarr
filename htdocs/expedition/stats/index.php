@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,19 +20,23 @@
  * $Source$
  *
  */
+
+/**
+	    \file       htdocs/expedition/stats/index.php
+        \ingroup    expedition
+		\brief      Page des stats expeditions
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../expedition.class.php");
 
 llxHeader();
-/*
- *
- *
- */
 
 print_fiche_titre('Statistiques expéditions', $mesg);
       
-print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr><td align="center">Année</td><td width="40%" align="center">Nb d\'expédition</td></tr>';
+print '<table class="border" width="100%">';
+print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="40%" align="center">Nb d\'expédition</td></tr>';
 
 $sql = "SELECT count(*), date_format(date_expedition,'%Y') as dm FROM ".MAIN_DB_PREFIX."expedition WHERE fk_statut > 0 GROUP BY dm DESC ";
 if ($db->query($sql))
