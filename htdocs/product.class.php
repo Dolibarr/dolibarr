@@ -112,7 +112,6 @@ class Product
 		{
 		  $this->price = 0;
 		}
-	      $this->price = round($this->price, 2);
 	      
 	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product (datec, fk_user_author, fk_product_type, price)";
 	      $sql .= " VALUES (now(),".$user->id.",$this->type, " . ereg_replace(",",".",$this->price) . ")";
