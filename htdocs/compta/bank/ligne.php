@@ -56,12 +56,18 @@ if ($action == 'update')
 $result = $db->query($sql);
 }
 
-if ($action == 'type')
+if ($HTTP_POST_VARS["action"] == 'type')
 {
-  $author = $GLOBALS["REMOTE_USER"];
   $sql = "update llx_bank set fk_type='$value' where rowid = $rowid;";
   $result = $db->query($sql);
 }
+
+if ($HTTP_POST_VARS["action"] == 'num_releve')
+{
+  $sql = "update llx_bank set num_releve=$num_rel where rowid = $rowid;";
+  $result = $db->query($sql);
+}
+
 
 
 $sql = "SELECT rowid, label FROM llx_bank_categ;";
@@ -137,7 +143,7 @@ if ($result)
       print "<select name=\"cat1\">$options";
       
       print "</select>&nbsp;";
-      print "<input type=\"submit\" value=\"add\"></td>";
+      print "<input type=\"submit\" value=\"Ajouter\"></td>";
       print "</tr>";
       
       print "</form><form method=\"post\" action=\"$PHP_SELF?rowid=$objp->rowid\">";
@@ -174,8 +180,15 @@ if ($result)
       print '<option value="DEP">Dépôt';
       
       print "</select><input type=\"submit\" value=\"update\"></td>";
+      print "</tr></form>";
+
+      print "<form method=\"post\" action=\"$PHP_SELF?rowid=$objp->rowid\">";
+      print '<input type="hidden" name="action" value="num_releve">';
+      print "<tr $bc[$var]><td>Relevé</td><td colspan=\"5\">";
+      print '<input name="num_rel" value="'.$objp->num_releve.'">';
+      print "<input type=\"submit\" value=\"Mettre à jour\"></td>";
       print "</tr>";
-      
+
       print "</form>";
       
       
