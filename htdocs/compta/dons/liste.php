@@ -30,12 +30,13 @@
 
 require("./pre.inc.php");
 
+$langs->load("donations");
 
 llxHeader();
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
-$statut=$_GET["statut"];
+$statut=isset($_GET["statut"])?$_GET["statut"]:"-1";
 $page=$_GET["page"];
 
 if ($sortorder == "") {  $sortorder="DESC"; }
@@ -51,9 +52,9 @@ $pagenext = $page + 1;
 $sql = "SELECT d.rowid, ".$db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d left join ".MAIN_DB_PREFIX."don_projet as p";
 $sql .= " ON p.rowid = d.fk_don_projet WHERE 1 = 1";
-if (isset($_GET["statut"]))
+if ($statut >= 0)
 {
-  $sql .= " AND d.fk_statut = ".$_GET["statut"];
+  $sql .= " AND d.fk_statut = ".$statut;
 }
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
@@ -63,23 +64,25 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  if (strlen($statut))
+  if ($statut >= 0)
     {
       print_barre_liste($libelle[$statut], $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
     }
   else 
     {
-      print_barre_liste("Dons", $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+      print_barre_liste($langs->trans("Donation"), $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
     }
   print "<table class=\"noborder\" width=\"100%\">";
 
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Firstname"),"liste.php","d.prenom","&page=$page&statut=$statut");
-  print_liste_field_titre($langs->trans("Name"),"liste.php","d.nom","&page=$page&statut=$statut");
-  print_liste_field_titre($langs->trans("Company"),"liste.php","d.societe","&page=$page&statut=$statut");
-  print_liste_field_titre($langs->trans("Date"),"liste.php","d.datedon","&page=$page&statut=$statut");
-  print_liste_field_titre($langs->trans("Project"),"liste.php","","&page=$page&statut=$statut");
-  print_liste_field_titre($langs->trans("Amount"),"liste.php","d.amount","&page=$page&statut=$statut","",'align="right"');
+  print_liste_field_titre($langs->trans("Firstname"),"liste.php","d.prenom","&page=$page&statut=$statut","","",$sortfield);
+  print_liste_field_titre($langs->trans("Name"),"liste.php","d.nom","&page=$page&statut=$statut","","",$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"liste.php","d.societe","&page=$page&statut=$statut","","",$sortfield);
+  print_liste_field_titre($langs->trans("Date"),"liste.php","d.datedon","&page=$page&statut=$statut","","",$sortfield);
+  if ($conf->projet->enabled) {
+    print_liste_field_titre($langs->trans("Project"),"liste.php","projet","&page=$page&statut=$statut","","",$sortfield);
+  }
+  print_liste_field_titre($langs->trans("Amount"),"liste.php","d.amount","&page=$page&statut=$statut","",'align="right"',$sortfield);
   print '<td>&nbsp;</td>';
   print "</tr>\n";
     
@@ -93,7 +96,9 @@ if ($result)
       print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->nom)."</a></td>\n";
       print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".stripslashes($objp->societe)."</a></td>\n";
       print "<td><a href=\"fiche.php?rowid=$objp->rowid\">".strftime("%d %B %Y",$objp->datedon)."</a></td>\n";
-      print "<td>$objp->projet</td>\n";
+      if ($conf->projet->enabled) {
+          print "<td>$objp->projet</td>\n";
+      }
       print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';
 
       print "</tr>";

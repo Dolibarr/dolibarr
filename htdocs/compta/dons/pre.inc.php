@@ -21,7 +21,7 @@
  *
  */
 
-/*!	\file htdocs/compta/dons/pre.inc.php
+/*!	    \file       htdocs/compta/dons/pre.inc.php
         \ingroup    don
 		\brief      Fichier gestionnaire du menu de gauche de l'espace dons
 		\version    $Revision$
@@ -30,29 +30,29 @@
 require("../../main.inc.php");
 require("../../projetdon.class.php");
 
-$libelle[0] = "Promesses non validées";
-$libelle[1] = "Promesses validées";
-$libelle[2] = "Dons payés";
-$libelle[3] = "Dons encaissés";
+$langs->load("donations");
+
+$libelle[0] = $langs->trans("PromisesNotValid");
+$libelle[1] = $langs->trans("PromisesValid");
+$libelle[2] = $langs->trans("DonationsPayed");
+$libelle[3] = $langs->trans("DonationsReceived");
 
 
 function llxHeader($head = "") {
   global $user, $conf, $langs;
 
-  /*
-   *
-   *
-   */
+  $langs->load("donations");
+
   top_menu($head);
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/compta/dons/","Dons");
-  $menu->add_submenu("fiche.php?action=create","Saisir un don");
-  $menu->add_submenu("liste.php",$langs->trans("List"));
-  $menu->add_submenu("stats.php",$langs->trans("Statistics"));
+  $menu->add(DOL_URL_ROOT."/compta/dons/",$langs->trans("Donations"));
+  $menu->add_submenu(DOL_URL_ROOT."/compta/dons/fiche.php?action=create",$langs->trans("AddDonation"));
+  $menu->add_submenu(DOL_URL_ROOT."/compta/dons/liste.php",$langs->trans("List"));
+  $menu->add_submenu(DOL_URL_ROOT."/compta/dons/stats.php",$langs->trans("Statistics"));
 
-  $menu->add(DOL_URL_ROOT."/compta/bank/index.php","Banque");
+  $menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("Bank"));
 
   left_menu($menu->liste);
 

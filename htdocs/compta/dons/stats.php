@@ -30,6 +30,8 @@
 
 require("./pre.inc.php");
 
+$langs->load("donations");
+
 llxHeader();
 
 
@@ -56,7 +58,7 @@ if ($result)
   print '<table class="border">';
 
   print "<tr $bc[1]>";
-  print '<td>Nombre de dons</td><td align="right">'.$num.'</td></tr>';
+  print '<td>'.$langs->trans("DonationsNumber").'</td><td align="right">'.$num.'</td></tr>';
   print "<tr $bc[0]>".'<td>'.$langs->trans("Total").'</td><td align="right">'.price($total).'</td>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Average").'</td><td align="right">'.price($total / ($num?$num:1)).'</td>';
   print "</tr>";
@@ -65,7 +67,7 @@ if ($result)
 }
 else
 {
-  pdolibarr_print_error($db);
+  dolibarr_print_error($db);
 }
 
 

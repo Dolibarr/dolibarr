@@ -21,16 +21,19 @@
  *
  */
 
-/*!	\file htdocs/compta/dons/fiche.php
+/*!	    \file       htdocs/compta/dons/fiche.php
 		\ingroup    don
 		\brief      Page de fiche de don
 		\version    $Revision$
 */
 
-require("./pre.inc.php");
-require("../../don.class.php");
-require("../../paiement.class.php");
+require_once("./pre.inc.php");
+require_once("../../don.class.php");
+require_once("../../paiement.class.php");
+require_once("../../html.form.class.php");
 
+$langs->load("donations");
+$langs->load("bills");
 
 
 $mesg="";
@@ -158,53 +161,53 @@ llxHeader();
 
 if ($_GET["action"] == 'create') {
 
-  print_titre("Saisir un don");
+  print_titre($langs->trans("AddDonation"));
 
   print '<form action="fiche.php" method="post">';
   print '<table class="border" width="100%">';
   
   print '<input type="hidden" name="action" value="add">';
   
-  print "<tr $bc[1]>".'<td>Date du don</td><td>';
+  print "<tr $bc[1]>".'<td>'.$langs->trans("Date").'</td><td>';
   print_date_select();
   print '</td>';
   
   print '<td rowspan="12" valign="top">'.$langs->trans("Comments").' :<br>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
-  print "<tr $bc[1]><td>Mode de paiement</td><td>\n";
+  print "<tr $bc[1]><td>".$langs->trans("PaymentMode")."</td><td>\n";
   
   $paiement = new Paiement($db);
 
-  $paiement->select("modepaiement","crédit");
+  $paiement->select("modepaiement","CRDT");
 
   print "</td></tr>\n";
 
-  print "<tr $bc[1]><td>".$langs->trans("Project")."</td><td><select name=\"projetid\">\n";
-  $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."don_projet ORDER BY rowid";
-  if ($db->query($sql))
-    {
-      $num = $db->num_rows();
-      $i = 0; 
-      while ($i < $num) 
-	{
-	  $objopt = $db->fetch_object();
-	  print "<option value=\"$objopt->rowid\">$objopt->libelle</option>\n";
-	  $i++;
-	}    
-    }
-  else
-    {
-      dolibarr_print_error($db);
-    }
-  print "</select><br>";
-  print "</td></tr>\n";
-
-  print "<tr $bc[1]><td>Don public</td><td><select name=\"public\">\n";
+  if ($conf->projet->enabled) {
+      // Si module projet actif
+      print "<tr $bc[1]><td>".$langs->trans("Project")."</td><td><select name=\"projetid\">\n";
+      $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."don_projet ORDER BY rowid";
+      if ($db->query($sql))
+        {
+          $num = $db->num_rows();
+          $i = 0; 
+          while ($i < $num) 
+    	{
+    	  $objopt = $db->fetch_object();
+    	  print "<option value=\"$objopt->rowid\">$objopt->libelle</option>\n";
+    	  $i++;
+    	}    
+        }
+      else
+        {
+          dolibarr_print_error($db);
+        }
+      print "</select><br>";
+      print "</td></tr>\n";
+  }
   
-  print '<option value="1">oui</option>';
-  print '<option value="0">non</option>';
-
-  print "</select><br>";
+  print "<tr $bc[1]><td>".$langs->trans("PublicDonation")."</td><td>";
+  $html=new Form($db);
+  $html->selectyesno("public",1,1);
   print "</td></tr>\n";
 
   $langs->load("companies");
@@ -237,7 +240,13 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
   $don->id = $_GET["rowid"];
   $don->fetch($_GET["rowid"]);
 
-  print_titre("Traitement du don");
+  $h=0;
+  $head[$h][0] = DOL_URL_ROOT."/compta/dons/fiche.php?rowid=".$_GET["rowid"];
+  $head[$h][1] = $langs->trans("Donation");
+  $hselected=$h;
+  $h++;
+  
+  dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").": ".$_GET["rowid"]);
 
   print '<form action="fiche.php" method="post">';
   print '<table class="border" width="100%">';
@@ -245,7 +254,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
   print '<input type="hidden" name="action" value="update">';
   print '<input type="hidden" name="rowid" value="'.$don->id.'">';
   
-  print "<tr $bc[1]>".'<td>Date du don</td><td>';
+  print "<tr $bc[1]>".'<td>'.$langs->trans("Date").'</td><td>';
   print_date_select($don->date);
   print '</td>';
   
@@ -272,11 +281,11 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
   print "</select><br>";
   print "</td></tr>\n";
 
-  print "<tr $bc[1]><td>Don public</td><td><select name=\"public\">\n";
-  print '<option value="1">oui</option>';
-  print '<option value="0">non</option>';
-  print "</select><br>";
-  print "</td></tr>\n";
+  print "<tr $bc[1]><td>".$langs->trans("PublicDonation")."</td><td>";
+  $html=new Form($db);
+  $html->selectyesno("public",1,1);
+  print "</td>";
+  print "</tr>\n";
 
   $langs->load("companies");
   print "<tr $bc[1]>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$don->societe.'"></td></tr>';
@@ -289,16 +298,17 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
   print "<tr $bc[1]>".'<td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40" value="'.$don->email.'"></td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Amount").'</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> euros</td></tr>';
 
-  print "<tr $bc[1]><td>Mode de paiement</td><td>\n";
+  print "<tr $bc[1]><td>".$langs->trans("PaymentMode")."</td><td>\n";
   $paiement = new Paiement($db);
-  $paiement->select("modepaiement","crédit");
+  $paiement->select("modepaiement","CRDT");
   print "</td></tr>\n";
 
   print "<tr $bc[1]>".'<td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
 
   print "</table>\n";
-  print "</form>\n";
+  print "</form><br>\n";
 
+  print "</div>\n";
 }
 
 
@@ -315,20 +325,30 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
   $don->id = $_GET["rowid"];
   $don->fetch($_GET["rowid"]);
 
-  print_titre("Traitement du don");
+
+  $h=0;
+  $head[$h][0] = DOL_URL_ROOT."/compta/dons/fiche.php?rowid=".$_GET["rowid"];
+  $head[$h][1] = $langs->trans("Donation");
+  $hselected=$h;
+  $h++;
+  
+  dolibarr_fiche_head($head, $hselected, $langs->trans("Ref").": ".$_GET["rowid"]);
+
   print "<form action=\"fiche.php\" method=\"post\">";
   print '<table class="border" width="100%">';
   
-  print "<tr $bc[1]><td>Date du don</td><td>";
+  print "<tr $bc[1]><td>".$langs->trans("Date")."</td><td>";
   print strftime("%d %B %Y",$don->date);
   print "</td>";
   
   print '<td rowspan="12" valign="top" width="50%">'.$langs->trans("Comments").' :<br>';
   print nl2br($don->commentaire).'</td></tr>';
 
-  print "<tr $bc[1]>".'<td>Projet</td><td>'.$don->projet.'</td></tr>';
-
-  print "<tr $bc[1]><td>Don public</td><td>";
+  if ($conf->project->enabled) {
+    print "<tr $bc[1]>".'<td>'.$langs->trans("Project").'</td><td>'.$don->projet.'</td></tr>';
+  }
+  
+  print "<tr $bc[1]><td>".$langs->trans("PublicDonation")."</td><td>";
 
   print $yn[$don->public];
   print "</td></tr>\n";
@@ -344,20 +364,22 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
   print "<tr $bc[1]>".'<td>'.$langs->trans("Amount").'</td><td>'.price($don->amount).' euros</td></tr>';
   if ($don->statut == 1)
     {
-      print "<tr $bc[1]><td>Mode de paiement</td><td>";
+      print "<tr $bc[1]><td>".$langs->trans("PaymentMode")."</td><td>";
       $paiement = new Paiement($db);
-      $paiement->select("modepaiement","crédit", $don->modepaiementid);
+      $paiement->select("modepaiement","CRDT", $don->modepaiementid);
       print "</td></tr>\n";
     }
   else 
     {
-      print "<tr $bc[1]><td>Mode de paiement</td><td>";
+      print "<tr $bc[1]><td>".$langs->trans("PaymentMode")."</td><td>";
       print $don->modepaiement;
       print "</td></tr>\n";
     }
 
   print "</table>\n";
-  print "</form>\n";
+  print "</form><br>\n";
+  
+  print "</div>";
   
 
     /*
@@ -368,33 +390,30 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
     print '<a class="tabAction" href="fiche.php?action=edit&rowid='.$don->id.'">'.$langs->trans('Edit').'</a>';
 	
-    if ($don->statut == 1 && $resteapayer > 0) 
-    {
-      print "<a class=\"tabAction\" href=\"paiement.php?facid=$facid&action=create\">Emettre un paiement</a>";
-    }
-
     if ($don->statut == 0)
     {
-      print "<a class=\"tabAction\" href=\"fiche.php?rowid=$don->id&action=valid_promesse\">Valider la promesse</a>";
-    }
- 
-    if ($don->statut == 3)
-    {
-      print "<a class=\"tabAction\" href=\"formulaire/".DONS_FORM."?rowid=$don->id\">Formulaire</a>";
+      print "<a class=\"tabAction\" href=\"fiche.php?rowid=$don->id&action=valid_promesse\">".$langs->trans("Valid")."</a>";
     }
 
-    if ($don->statut == 1 && abs($resteapayer == 0) && $don->paye == 0) 
+    // \todo Gérer action émettre paiement
+    if ($don->statut == 1 && $resteapayer > 0) 
     {
-      print "<a class=\"tabAction\" href=\"fiche.php?rowid=$don->id&action=set_payed\">Classé payé</a>";
+      print "<a class=\"tabAction\" href=\"paiement.php?facid=$facid&action=create\">".$langs->trans("DoPayment")."</a>";
+    }
+
+    if ($don->statut == 1 && abs($resteapayer) == 0 && $don->paye == 0) 
+    {
+      print "<a class=\"tabAction\" href=\"fiche.php?rowid=$don->id&action=set_payed\">".$langs->trans("ClassifyPayed")."</a>";
+    }
+
+    if ($don->statut == 2 || $don->statut == 3)
+    {
+      print "<a class=\"tabAction\" href=\"formulaire/".DONS_FORM."?rowid=$don->id\">".$langs->trans("Form")."</a>";
     }
 
     if ($don->statut == 0) 
     {
       print "<a class=\"tabAction\" href=\"fiche.php?rowid=$don->id&action=delete\">".$langs->trans("Delete")."</a>";
-    }
-    if ($don->statut == 2)
-    {
-      print "<a class=\"tabAction\" href=\"fiche.php?rowid=$don->id&action=set_encaisse\">Encaisser</a>";
     }
 
     print "</div><br>";

@@ -21,7 +21,7 @@
  *
  */
 
-/*!	\file htdocs/compta/dons/index.php
+/*!	    \file       htdocs/compta/dons/index.php
 		\ingroup    don
 		\brief      Page accueil espace don
 		\version    $Revision$
@@ -29,10 +29,11 @@
 
 require("./pre.inc.php");
 
+$langs->load("donations");
 
 llxHeader();
 
-$sql = "SELECT sum(d.amount) as somme , d.fk_statut FROM ".MAIN_DB_PREFIX."don as d GROUP BY d.fk_statut";
+$sql = "SELECT count(d.rowid) as nb, sum(d.amount) as somme , d.fk_statut FROM ".MAIN_DB_PREFIX."don as d GROUP BY d.fk_statut order by d.fk_statut";
 
 $result = $db->query($sql);
 
@@ -45,31 +46,43 @@ if ($result)
       $objp = $db->fetch_object($result);
 
       $somme[$objp->fk_statut] = $objp->somme;
+      $nb[$objp->fk_statut] = $objp->nb;
       $i++;
     }
   $db->free();
+} else {
+    dolibarr_print_error($db);   
 }
 
-print_titre("Dons");
+print_titre($langs->trans("Donations"));
 
-print '<table class="noborder">';
+print '<table class="noborder" width="50%">';
 print '<tr class="liste_titre">';
-print "<td>&nbsp;</td>";
-print "<td>Somme</td>";
+print '<td>'.$langs->trans("Status").'</td>';
+print '<td align="right">'.$langs->trans("Number").'</td>';
+print '<td align="right">'.$langs->trans("Amount").'</td>';
 print "</tr>\n";
 
 $var=True;
 
-for ($i = 0 ; $i < 4 ; $i++)
+for ($i = 0 ; $i < 3 ; $i++)
 {
   $var=!$var;
   print "<tr $bc[$var]>";
   print '<td><a href="liste.php?statut='.$i.'">'.$libelle[$i].'</a></td>';
+  print '<td align="right">'.$nb[$i].'</td>';
   print '<td align="right">'.price($somme[$i]).'</td>';
+  $totalnb += $nb[$i];
   $total += $somme[$i];
   print "</tr>";
 }
-print "<tr $bc[0]>".'<td>'.$langs->trans("Total").'</td><td align="right">'.price($total).'</td></tr>';
+
+$var=!$var;
+print "<tr $bc[$var]>";
+print '<td>'.$langs->trans("Total").'</td>';
+print '<td align="right">'.$totalnb.'</td>';
+print '<td align="right">'.price($total).'</td>';
+print '</tr>';
 print "</table>";
 
 
