@@ -1,4 +1,6 @@
 -- ========================================================================
+-- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+--
 -- $Id$
 -- $Source$
 --
@@ -21,5 +23,6 @@
 create table c_actioncomm
 (
   id         integer PRIMARY KEY,
-  libelle    varchar(30)
+  libelle    varchar(30),
+  todo       tinyint
 );

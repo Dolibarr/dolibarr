@@ -21,7 +21,7 @@
  */
 
 require("./pre.inc.php3");
-require("../../societe.class.php3");
+
 require("./project.class.php3");
 require("../propal.class.php3");
 
@@ -30,9 +30,6 @@ print "<table width=\"100%\">";
 print "<tr><td>Projets</td>";
 
 print "</table>";
-
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
 
 $db = new Db();
 
@@ -43,15 +40,10 @@ if ($sortorder == "") {
   $sortorder="ASC";
 }
 
-$yn["t"] = "oui";
-$yn["f"] = "non";
 
 if ($page == -1) { $page = 0 ; }
 $limit = 26;
 $offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
 
 if ($action == 'create') {
 
@@ -87,8 +79,8 @@ if ($action == 'create') {
    *
    */
   $propales = array();
-  $projet = new Project();
-  $projet->fetch($db, $id);
+  $projet = new Project($db);
+  $projet->fetch($id);
 
   print '<table border=1 cellpadding="1" cellspacing="0">';
   print '<tr><td>Société</td><td></td></tr>';
@@ -97,7 +89,7 @@ if ($action == 'create') {
   print '<tr><td>Titre</td><td>'.$projet->title.'</td></tr>';
   print '</table>';
   
-  $propales = $projet->get_propal_list($db);
+  $propales = $projet->get_propal_list();
 
   if (sizeof($propales)>0 && is_array($propales)) {
 
@@ -112,8 +104,8 @@ if ($action == 'create') {
     print '</TR>';
 
     for ($i = 0; $i<sizeof($propales);$i++){
-      $propale = new Propal();
-      $propale->fetch($db, $propales[$i]);
+      $propale = new Propal($db);
+      $propale->fetch($propales[$i]);
 
       $var=!$var;
       print "<TR $bc[$var]>";
@@ -129,8 +121,7 @@ if ($action == 'create') {
     }
 
     print '<tr><td>'.$i.' propales</td>';
-    print '<td align="right"><small>Soit : '.francs($total).' FF HT</small></td>';
-    print '<td colspan="1" align="right"><b>Total : '.price($total).'</b></td>';
+    print '<td colspan="2" align="right"><b>Total : '.price($total).'</b></td>';
     print '<td align="left"><b>Euros HT</b></td></tr>';
     print "</TABLE>";
 

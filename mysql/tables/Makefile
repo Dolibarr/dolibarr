@@ -54,7 +54,7 @@ create:
 	$(MYSQL) $(BASE) < societe.sql
 	$(MYSQL) $(BASE) < socpeople.sql
 	$(MYSQL) $(BASE) < socstatutlog.sql
-	$(MYSQL) $(BASE) < llx_todocomm.sql
+
 
 drop:
 	$(MYSQL) $(BASE) < drop.sql

@@ -32,12 +32,12 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/comm/index.php3", "Clients");
+  $menu->add("/comm/clients.php3", "Clients");
 
   $menu->add_submenu("../soc.php3?&action=create", "Nouvelle société");
   $menu->add_submenu("contact.php3", "Contacts");
 
-  $menu->add("actioncomm.php3", "Actions");
+  $menu->add("/comm/action/", "Actions");
 
   $menu->add("/comm/propal.php3", "Propales");
 

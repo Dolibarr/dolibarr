@@ -22,7 +22,7 @@
 
 require("pre.inc.php3");
 
-require("./societe.class.php3");
+
 llxHeader();
 $db = new Db();
 if ($sortorder == "") {
@@ -104,7 +104,7 @@ if ($action == 'create') {
 
   $soc = new Societe($db);
   $soc->id = $socid;
-  $soc->fetch();
+  $soc->fetch($socid);
 
   print '<form action="soc.php3?socid='.$socid.'" method="post">';
   print '<input type="hidden" name="action" value="update">';

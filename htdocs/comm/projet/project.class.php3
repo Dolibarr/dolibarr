@@ -23,12 +23,13 @@
 
 class Project {
   var $id;
+  var $db;
   var $ref;
   var $title;
   var $socidp;
 
-  Function Project() {
-
+  Function Project($DB) {
+    $this->db = $DB;
   }
   /*
    *
@@ -36,14 +37,14 @@ class Project {
    *
    */
 
-  Function create($db, $creatorid) {
+  Function create($creatorid) {
 
     $sql = "INSERT INTO llx_projet (ref, title, fk_soc, fk_user_creat) ";
     $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, $creatorid) ;";
     
-    if (!$db->query($sql) ) 
+    if (!$this->db->query($sql) ) 
       {
-	print '<b>'.$sql.'</b><br>'.$db->error();
+	print '<b>'.$sql.'</b><br>'.$this->db->error();
 	
 	}
     
@@ -54,22 +55,22 @@ class Project {
    *
    */
 
-  Function fetch($db, $rowid) {
+  Function fetch($rowid) {
 
     $sql = "SELECT title, ref FROM llx_projet WHERE rowid=$rowid;";
 
-    if ($db->query($sql) ) {
-      if ($db->num_rows()) {
-	$obj = $db->fetch_object(0);
+    if ($this->db->query($sql) ) {
+      if ($this->db->num_rows()) {
+	$obj = $this->db->fetch_object(0);
 
 	$this->id = $rowid;
 	$this->ref = $obj->ref;
 	$this->title = $obj->title;
 
-	$db->free();
+	$this->db->free();
       }
     } else {
-      print $db->error();
+      print $this->db->error();
     }
   }
   /*
@@ -77,29 +78,29 @@ class Project {
    *
    *
    */
-  Function get_propal_list($db) {
+  Function get_propal_list() {
     $propales = array();
     $sql = "SELECT rowid FROM llx_propal WHERE fk_projet=$this->id;";
 
-    if ($db->query($sql) ) {
-      $nump = $db->num_rows();
+    if ($this->db->query($sql) ) {
+      $nump = $this->db->num_rows();
       if ($nump) {
 	$i = 0;
 	while ($i < $nump) {
-	  $obj = $db->fetch_object($i);
+	  $obj = $this->db->fetch_object($i);
 
 	  $propales[$i] = $obj->rowid;
 
 	  $i++;
 	}
-	$db->free();
+	$this->db->free();
 	/*
 	 *  Retourne un tableau contenant la liste des propales associees
 	 */
 	return $propales;
       }
     } else {
-      print $db->error() . '<br>' .$sql;
+      print $this->db->error() . '<br>' .$sql;
     }
 
 

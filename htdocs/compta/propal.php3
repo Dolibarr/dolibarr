@@ -117,7 +117,8 @@ if ($propalid) {
       print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
       print "<tr><td>Société</td><td><a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</a></td><td align=\"right\"><a href=\"propal.php3?socidp=$obj->idp\">Autres propales</a></td>";
-      print "<td valign=\"top\" width=\"50%\" rowspan=\"9\">Note :<br>". nl2br($obj->note)."</td></tr>";
+      print "<td valign=\"top\" width=\"50%\" rowspan=\"8\">Note :<br>". nl2br($obj->note)."</td></tr>";
+      //
 
       print '<tr><td>date</td><td colspan="2">'.strftime("%A %d %B %Y",$obj->dp).'</td></tr>';
 
@@ -191,7 +192,7 @@ if ($propalid) {
 	$num = $db->num_rows();
 	$i = 0; $total = 0;
 	print "<p><b>Produits</b><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-	print "<TR class=\"liste_titre\">";
+	print "<TR bgcolor=\"orange\">";
 	print "<td>Réf</td><td>Produit</td>";
 	print "<td align=\"right\">Prix</TD><td align=\"center\">Qté.</td>";
 	print "</TR>\n";
@@ -214,7 +215,44 @@ if ($propalid) {
       /*
        *
        */
-      print "</td></tr>";
+      print "</td><td valign=\"top\" width=\"50%\">";
+      /*
+       * Factures associees
+       */
+      $sql = "SELECT f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.rowid as facid, f.author, f.paye";
+      $sql .= " FROM llx_facture as f, llx_fa_pr as fp WHERE fp.fk_facture = f.rowid AND fp.fk_propal = $propalid";
+
+      $result = $db->query($sql);
+      if ($result) {
+	$num = $db->num_rows();
+	$i = 0; $total = 0;
+	print "<p><b>Facture(s) associée(s)</b><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+	print "<tr>";
+	print "<td>Num</td>";
+	print "<td>Date</td>";
+	print "<td>Auteur</td>";
+	print "<td align=\"right\">Prix</TD>";
+	print "</TR>\n";
+
+	$var=True;
+	while ($i < $num) {
+	  $objp = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<TR bgcolor=\"#e0e0e0\">";
+	  print "<TD><a href=\"../compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a>";
+	  if ($objp->paye) { print " (<b>pay&eacute;e</b>)"; } 
+	  print "</TD>\n";
+	  print "<TD>".strftime("%d %B %Y",$objp->df)."</TD>\n";
+	  print "<TD>$objp->author</TD>\n";
+	  print "<TD align=\"right\">$objp->amount</TD>\n";
+	  print "</tr>";
+	  $total = $total + $objp->amount;
+	  $i++;
+	}
+	print "<tr><td align=\"right\" colspan=\"4\">Total : <b>$total</b> Euros HT</td></tr>\n";
+	print "</table>";
+	$db->free();
+      }
       print "</table>";
       /*
        * Actions

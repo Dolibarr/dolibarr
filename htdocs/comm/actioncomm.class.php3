@@ -26,26 +26,39 @@ class ActionComm {
 
   var $date;
   var $type;
+
+  var $priority;
+
   var $user;
+  var $author;
+
   var $societe;
   var $contact;
   var $note;
 
+  var $percent;
+
+
   Function ActionComm($db) {
     $this->db = $db;
+    $this->societe = new Societe($db);
+
   }
   /*
    *
    *
    *
    */
-  Function add($user) {
-    $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, fk_user_author, fk_contact, note) ";
-    $sql .= " VALUES ('$this->date',$this->type,$this->societe, $user->id, $this->contact,'$this->note')";
+  Function add($author) {
+    $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, fk_user_author, fk_user_action, fk_contact, percent, note,priority) ";
+    $sql .= " VALUES ('$this->date',$this->type,$this->societe, $author->id,";
+    $sql .= $this->user->id . ", $this->contact, $this->percent, '$this->note', $this->priority);";
 
     if ($this->db->query($sql) ) {
 
 
+    } else {
+      print $this->db->error() . "<br>" . $sql;
     }
   }
   /*
@@ -55,17 +68,19 @@ class ActionComm {
    */
   Function fetch($id) {
 
-    $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note,c.libelle ";
+    $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note,c.libelle, fk_soc ";
     $sql .= "FROM actioncomm as a, c_actioncomm as c WHERE a.id=$id AND a.fk_action=c.id;";
 
     if ($this->db->query($sql) ) {
       if ($this->db->num_rows()) {
 	$obj = $this->db->fetch_object(0);
 
-	$this->id = $obj->rowid;
+	$this->id = $id;
 	$this->type = $obj->libelle;
 	$this->date = $obj->da;
 	$this->note =$obj->note;
+
+	$this->societe->id = $obj->fk_soc;
 
 	$this->db->free();
       }
@@ -73,6 +88,18 @@ class ActionComm {
       print $this->db->error();
     }    
   }
+  /*
+   *
+   *
+   *
+   */
+  Function delete($id) {
+
+    $sql = "DELETE FROM actioncomm WHERE id=$id;";
+
+    if ($this->db->query($sql) ) {
+
+    }
+  }
 }    
 ?>
-    

@@ -27,17 +27,6 @@ if ($sortorder == "") {
   $sortorder="ASC";
 }
 
-$active["1"] = "Offres en ligne";
-$active["-1"] = "Moderation";
-$active["-2"] = "Refusées";
-$active["0"] = "Rédaction";
-$active["-3"] = "Désactivées";
-$active["-4"] = "Supprimées";
-
-$yn["t"] = "oui";
-$yn["f"] = "non";
-$deacmeth["b"] = "robots";
-
 if ($action == 'add') {
 
   $email = trim($email);
@@ -47,7 +36,7 @@ if ($action == 'add') {
     $sql .= " VALUES (now(),$socid,'$name','$firstname','$poste','$phone','$fax','$email')";
     $result = $db->query($sql);
     if ($result) {
-      Header("Location: index.php3?socid=$socid");
+      Header("Location: fiche.php3?socid=$socid");
     }
   }
 }
@@ -89,19 +78,6 @@ if ($socid > 0) {
   if ($result) {
     $objsoc = $db->fetch_object( 0);
 
-
-    print "<DIV align=\"center\">";
-    print "<A href=\"$PHP_SELF?page=$pageprev\">&lt;-Prev</A>\n| ";
-    for ($i = 65 ; $i < 91; $i++) {
-      print "<A href=\"index.php3?begin=" . chr($i) . "\" class=\"T3\">" . chr($i)  . "</A> | ";
-    }
-    print " <A href=\"$PHP_SELF?socid=$objsoc->idp&to=next\">Next-&gt;</A>\n";
-    print "</DIV>";
-
-    $dac = strftime("%Y-%m-%d %H:%M", time());
-    if ($errmesg) {
-      print "<b>$errmesg</b><br>";
-    }
     /*
      *
      *
@@ -113,22 +89,7 @@ if ($socid > 0) {
     print "<td bgcolor=\"#e0E0E0\" align=\"center\">[<a href=\"people.php3?socid=$socid&action=addcontact\">Ajouter un contact</a>]</td>";
     print '</td></tr></table>';
 
-    print "<hr>";
-    print "<table width=\"100%\" border=0><tr>\n";
-    print "<td valign=\"top\">";
-    print "tel : $objsoc->tel<br>";
-    print "fax : $objsoc->fax<br>";
-    print "$objsoc->cp $objsoc->ville<br>";
-    if ($objsoc->url) {
-      print "<a href=\"http://$objsoc->url\">$objsoc->url</a><br>";
-    }
 
-    print "</td>\n";
-    print "<td valign=\"top\"><table border=0 width=\"100%\" cellspacing=0 bgcolor=#e0e0e0>";
-    print "<tr><td>Créée le</td><td align=center><b>" . strftime("%d %b %Y %H:%M", $objsoc->dc) . "</b></td></tr>";
-
-    print "</table></td></tr>\n";
-    print "</table>";
 
     /*
      *

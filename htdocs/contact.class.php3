@@ -75,8 +75,5 @@ class Contact {
 
 
 }
-/*
- * $Id$
- * $Source$
- */
+
 ?>

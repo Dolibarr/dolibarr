@@ -19,11 +19,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-
-require ("../../main.inc.php3");
+require("../../main.inc.php3");
 
 function llxHeader($head = "", $urlp = "") {
-  global $conf, $user;
+  global $user, $conf;
 
   /*
    *
@@ -33,7 +32,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/comm/index.php3", "Clients");
+  $menu->add("/comm/clients.php3", "Clients");
 
   $menu->add_submenu("/soc.php3?&action=create", "Nouvelle société");
   $menu->add_submenu("/comm/contact.php3", "Contacts");

@@ -4,7 +4,6 @@
 -- $Id$
 -- $Source$
 --
---
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 2 of the License, or
@@ -27,11 +26,24 @@ create table actioncomm
   id             integer AUTO_INCREMENT PRIMARY KEY,
   datea          datetime,         -- action date
   fk_action      integer,
+
+  label          varchar(50),  -- libelle de l'action
+
   fk_soc         integer,
-  author         varchar(30),
+  fk_contact     integer default 0,
+
+  fk_user_action integer,      -- id de la personne qui doit effectuer l'action
   fk_user_author integer,
-  fk_contact     integer,
+
+  priority       smallint,
+
+  percent        smallint,
+
   note           text,
   propalrowid    integer
 );
+
+--create table llx_todocomm
+
+
 

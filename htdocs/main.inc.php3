@@ -70,14 +70,14 @@ function top_menu($head) {
 
   print '<TD width="15%" class="menu" align="center">';
   if ($user->comm > 0) {
-    print '<A class="menu" href="../comm/">Commercial</A></TD>';
+    print '<A class="menu" href="/comm/">Commercial</A></TD>';
   } else {
     print '-';
   }
 
   print '<TD width="15%" class="menu" align="center">';
   if ($user->compta > 0) {
-    print '<A class="menu" href="../compta/">Compta</A></TD>';
+    print '<A class="menu" href="/compta/">Compta</A></TD>';
   } else {
     print '-';
   }
@@ -127,7 +127,7 @@ function left_menu($menu) {
   }
 
   print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
-  print '<A class="menu" href="/comm/index.php3">Societes</A>';
+  print '<A class="menu" href="/comm/clients.php3">Societes</A>';
   print '<form action="/comm/index.php3">';
   print '<input type="hidden" name="mode" value="search">';
   print '<input type="hidden" name="mode-search" value="soc">';

@@ -23,9 +23,6 @@
 require("./pre.inc.php3");
 
 llxHeader();
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
-
 
 $db = new Db();
 if ($sortfield == "") {
@@ -42,14 +39,10 @@ if ($action == 'update') {
   $db->query($sql);
 }
 
-$yn["t"] = "oui";
-$yn["f"] = "non";
 
 if ($page == -1) { $page = 0 ; }
-$limit = 26;
+$limit = $conf->liste_limit;
 $offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 print '<div class="titre">Liste des produits</div>';
 
@@ -63,7 +56,7 @@ print '<div class="titre">Liste des produits</div>';
    $num = $db->num_rows();
    $i = 0;
    print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-   print "<TR bgcolor=\"orange\">";
+   print "<TR class=\"liste_titre\">";
    print "<TD>Réf</TD>";
    print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Nom</a></td>";
    print "<TD align=\"right\">Prix</TD>";
