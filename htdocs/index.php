@@ -54,7 +54,11 @@ print "<br>\n";
  */
 $user->getrights('');
 
-$sql = "SELECT b.rowid, b.box_id, d.file FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d WHERE b.box_id = d.rowid";
+$sql  = "SELECT b.rowid, b.box_id, d.file";
+$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
+$sql .= " WHERE b.box_id = d.rowid";
+$sql .= " AND position = 0";                    // 0 = valeur pour la page accueil
+$sql .= " ORDER BY box_order";
 $result = $db->query($sql);
 if ($result) 
 {
@@ -67,6 +71,9 @@ if ($result)
       $boxes[$j] = "includes/boxes/".$obj->file;
       $j++;
     }
+}
+else {
+    dolibarr_print_error($db);
 }
 
 print '<table width="100%">';
