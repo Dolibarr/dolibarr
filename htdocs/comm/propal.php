@@ -640,17 +640,13 @@ if ($_GET["propalid"])
 	  if (file_exists($file))
 	    {
 	      print "<tr $bc[0]><td>PDF</td>";
-	      print '<td><a href="'.PROPALE_OUTPUT_URL.'/'.$propal->ref.'/'.$propal->ref.'.pdf">'.$propal->ref.'.pdf</a></td>';
+
+	      $encfile = urlencode($file);
+
+	      print '<td><a href="'.DOL_URL_ROOT . '/document.php?file='.$encfile.'">'.$propal->ref.'.pdf</a></td>';
+
 	      print '<td align="right">'.filesize($file). ' bytes</td>';
-	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
-	    }  
-	  $file = PROPALE_OUTPUTDIR . "/$propal->ref/$propal->ref-entete.pdf";
-	  if (file_exists($file))
-	    {
-	      print "<tr $bc[0]><td>PDF</td>";
-	      print '<td><a href="'.PROPALE_OUTPUT_URL.'/'.$propal->ref.'/'.$propal->ref.'-entete.pdf">'.$propal->ref.'-entete.pdf</a></td>';
-	      print '<td align="right">'.filesize($file). ' bytes</td>';
-	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
+	      print '<td align="right">'.strftime("%d %B %Y %H:%M:%S",filemtime($file)).'</td></tr>';
 	    }  
 	  /*
 	   *
