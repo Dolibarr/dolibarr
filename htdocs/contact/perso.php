@@ -20,9 +20,20 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/contact/perso.php
+        \ingroup    companies
+		\brief      Onglet informations personnelles d'un contact
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../contact.class.php");
 require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
+
+$langs->load("companies");
+
 
 if ($_POST["action"] == 'update') 
 {
@@ -31,7 +42,7 @@ if ($_POST["action"] == 'update')
 
   if ($_POST["birthdayyear"]) {
     if ($_POST["birthdayyear"]<=1970 && $_SERVER["WINDIR"]) {
-        # windows mktime does not support negative date timestamp so birthday is not support for old persons
+        # windows mktime does not support negative date timestamp so birthday is not supported for old persons
         $contact->birthday = $_POST["birthdayyear"].'-'.$_POST["birthdaymonth"].'-'.$_POST["birthdayday"];
         //array_push($error,"Windows ne sachant pas gérer des dates avant 1970, les dates de naissance avant cette date ne seront pas sauvegardées");
     } else {
@@ -50,22 +61,34 @@ if ($_POST["action"] == 'update')
  */
 llxHeader();
 
-print '<div class="tabs">';
-print '<a class="tab" href="fiche.php?id='.$_GET["id"].'">Général</a>';
-print '<a class="tab" href="perso.php?id='.$_GET["id"].'" id="active">Informations personnelles</a>';
-print '<a class="tab" href="vcard.php?id='.$_GET["id"].'">VCard</a>';
-print '<a class="tab" href="info.php?id='.$_GET["id"].'">Info</a>';
-print '</div>';
-print '<div class="tabBar">';
+$contact = new Contact($db);
+$contact->fetch($_GET["id"], $user);
+
+
+$h=0;
+$head[$h][0] = DOL_URL_ROOT.'fiche.php?id='.$_GET["id"];
+$head[$h][1] = "Général";
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'perso.php?id='.$_GET["id"];
+$head[$h][1] = 'Informations personnelles';
+$hselected=$h;
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'vcard.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("VCard");
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'info.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Info");
+$h++;
+
+dolibarr_fiche_head($head, $hselected, $contact->firstname.' '.$contact->name);
+
 
 if ($_GET["action"] == 'edit') 
 {
   // Fiche info perso en mode edition
- 
-  $contact = new Contact($db);
-  $contact->fetch($_GET["id"], $user);
-
-  print_fiche_titre ("Contact : ". $contact->firstname.' '.$contact->name);
 
   print '<form method="post" action="perso.php?id='.$_GET["id"].'">';
   print '<input type="hidden" name="action" value="update">';
@@ -76,12 +99,12 @@ if ($_GET["action"] == 'edit')
       $objsoc = new Societe($db);
       $objsoc->fetch($contact->socid);
 
-      print 'Société : '.$objsoc->nom_url.'<br>';
+      print $langs->trans("Company").' : '.$objsoc->nom_url.'<br>';
     }
 
-  print 'Nom : '.$contact->name.' '.$contact->firstname ."<br>";
+  print $langs->trans("Name").' : '.$contact->name.' '.$contact->firstname ."<br>";
 
-  print '<table class="border" cellpadding="3" celspacing="0" border="0" width="100%">';
+  print '<table class="border" width="100%">';
 
   $html = new Form($db);
 
@@ -96,14 +119,14 @@ if ($_GET["action"] == 'edit')
   print '<td>Alerte : ';
   if ($contact->birthday_alert)
     {
-      print '<input type="checkbox" name="birthday_alert" checked></td></tr>';
+      print '<input type="checkbox" name="birthday_alert" checked></td>';
     }
   else
     {
-      print '<input type="checkbox" name="birthday_alert"></td></tr>';
+      print '<input type="checkbox" name="birthday_alert"></td>';
     }
 
-  print "</table>";
+  print "</tr></table>";
 
   print '<div class="FicheSubmit"><input type="submit" value="'.$langs->trans("Save").'">';
 
@@ -115,18 +138,14 @@ else
    * Visualisation de la fiche
    *
    */
+    print '<table width="100%"><tr><td>';
     
-  $contact = new Contact($db);
-  $contact->fetch($_GET["id"], $user);
-  
-  print_fiche_titre ("Contact : ". $contact->firstname.' '.$contact->name);
-
   if ($contact->socid > 0)
     {
       $objsoc = new Societe($db);
       $objsoc->fetch($contact->socid);
 
-      print 'Société : '.$objsoc->nom_url.'<br>';
+      print $langs->trans("Company").' : '.$objsoc->nom_url.'<br>';
     }
 
   if ($contact->birthday && $contact->birthday > 0) {
@@ -137,7 +156,12 @@ else
     else
       print ' (alerte anniversaire inactive)<br>';
   }
+  else {
+    print 'Date de naissance : '.$langs->trans("Unknown")."<br>";
+  }
+  
   print "<br>";
+  print "</table>";
 
   print "</div>";
 
@@ -148,12 +172,11 @@ else
       
       print '<a class="tabAction" href="perso.php?id='.$_GET["id"].'&amp;action=edit">'.$langs->trans('Edit').'</a>';    
 
-      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=deleteWARNING">'.$langs->trans('Delete').'</a>';
-      
       print "</div>";      
     }
 }
-  $db->close();
+
+$db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

@@ -136,34 +136,49 @@ if ($_POST["action"] == 'update')
 llxHeader();
 $form = new Form($db);
 
+
+/*
+ * Onglets
+ */
+if ($_GET["id"] > 0)
+{
+    # Si edition contact deja existant
+
+    $contact = new Contact($db);
+    $contact->fetch($_GET["id"], $user);
+
+
+    $h=0;
+    $head[$h][0] = DOL_URL_ROOT.'fiche.php?id='.$_GET["id"];
+    $head[$h][1] = "Général";
+    $hselected=$h;
+    $h++;
+    
+    $head[$h][0] = DOL_URL_ROOT.'perso.php?id='.$_GET["id"];
+    $head[$h][1] = 'Informations personnelles';
+    $h++;
+    
+    $head[$h][0] = DOL_URL_ROOT.'vcard.php?id='.$_GET["id"];
+    $head[$h][1] = $langs->trans("VCard");
+    $h++;
+    
+    $head[$h][0] = DOL_URL_ROOT.'info.php?id='.$_GET["id"];
+    $head[$h][1] = $langs->trans("Info");
+    $h++;
+    
+    dolibarr_fiche_head($head, $hselected, $contact->firstname.' '.$contact->name);
+}
+
+
 /*
  * Confirmation de la suppression du contact
  *
  */
 if ($_GET["action"] == 'delete')
-    {
-         $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],"Supprimer le contact","Êtes-vous sûr de vouloir supprimer ce contact&nbsp;?","confirm_delete");
-    }
-
-
-
-/*
- * Onglets
- */
-print '<div class="tabs">';
-if ($_GET["id"] > 0)
 {
-    # Si edition contact deja existant
-    print '<a href="fiche.php?id='.$_GET["id"].'" id="active" class="tab">Général</a>';
-    print '<a href="perso.php?id='.$_GET["id"].'" class="tab">Informations personnelles</a>';
-    print '<a class="tab" href="vcard.php?id='.$_GET["id"].'">VCard</a>';
-    print '<a class="tab" href="info.php?id='.$_GET["id"].'">Info</a>';
+    $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],"Supprimer le contact","Êtes-vous sûr de vouloir supprimer ce contact&nbsp;?","confirm_delete");
+    print '<br>';
 }
-else {
-    print '<a href="'.$_SERVER["PHP_SELF"].'?socid='.$_GET["socid"].'&amp;action=create" id="active" class="tab">Général</a>';
-}
-print '</div>';
-
 
 // Affiche les erreurs
 if (sizeof($error))
@@ -173,8 +188,6 @@ if (sizeof($error))
   print '<br><br></div>';
 }
 
-
-print '<div class="tabBar">';
 
 if ($_GET["socid"] > 0)
 {
@@ -203,7 +216,7 @@ if ($_GET["action"] == 'create')
       print '</td></tr>';
   }
 
-  print '<tr><td>Titre</td><td colspan="5">';
+  print '<tr><td>'.$langs->trans("Title").'</td><td colspan="5">';
   print $form->select_civilite($obj->civilite);
   print '</td></tr>';
 
@@ -239,11 +252,7 @@ if ($_GET["action"] == 'create')
 elseif ($_GET["action"] == 'edit') 
 {
   // Fiche en mode edition
-  print '<br>';
     
-  $contact = new Contact($db);
-  $contact->fetch($_GET["id"], $user);
-
   print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
   print '<input type="hidden" name="action" value="update">';
   print '<input type="hidden" name="contactid" value="'.$contact->id.'">';
@@ -300,12 +309,6 @@ else
    *
    */
     
-  $contact = new Contact($db);
-  $contact->fetch($_GET["id"], $user);
-
-  print_fiche_titre ($langs->trans("Contact")." : ". $contact->firstname.' '.$contact->name);
-
-
   print '<table class="noborder" width="100%">';
 
   if ($contact->socid > 0)

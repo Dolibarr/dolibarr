@@ -36,25 +36,40 @@ $langs->load("company");
 
 llxHeader();
 
-print '<div class="tabs">';
-print '<a class="tab" href="fiche.php?id='.$_GET["id"].'">Général</a>';
-print '<a class="tab" href="perso.php?id='.$_GET["id"].'">Informations personnelles</a>';
-print '<a class="tab" href="vcard.php?id='.$_GET["id"].'">VCard</a>';
-print '<a class="tab" href="info.php?id='.$_GET["id"].'" id="active">Info</a>';
-print '</div>';
-print '<div class="tabBar">';
+
+$contact = new Contact($db);
+$contact->fetch($_GET["id"], $user);
+
+
+$h=0;
+$head[$h][0] = DOL_URL_ROOT.'fiche.php?id='.$_GET["id"];
+$head[$h][1] = "Général";
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'perso.php?id='.$_GET["id"];
+$head[$h][1] = 'Informations personnelles';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'vcard.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("VCard");
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'info.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Info");
+$hselected=$h;
+$h++;
+
+dolibarr_fiche_head($head, $hselected, $contact->firstname.' '.$contact->name);
 
 /*
  * Visualisation de la fiche
  *
  */
 
-$contact = new Contact($db);
-$contact->fetch($_GET["id"], $user);
+print '<table width="100%"><tr><td>';
 $contact->info($_GET["id"]);
+print '</td></tr></table>';
   
-print_fiche_titre ($langs->trans("Contact")." : ". $contact->firstname.' '.$contact->name);
-
 if ($contact->socid > 0)
 {
   $objsoc = new Societe($db);
