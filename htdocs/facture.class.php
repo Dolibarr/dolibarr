@@ -176,7 +176,7 @@ class Facture
 
 	      if ( $result_insert < 0)
 		{
-    	  dolibarr_print_error($this->db);
+		  dolibarr_print_error($this->db);
 		}
 	    }
 	  /*
@@ -590,8 +590,22 @@ class Facture
 	  $remise = 0;
 	  $_price = $pu;
 	  $subprice = $pu;
+	  
+	  $remise_percent = trim($remise_percent);
 
-	  if (trim(strlen($remise_percent)) > 0)
+	  if ($this->socidp)
+	    {
+	      $soc = new Societe($this->db);
+	      $soc->fetch($this->socidp);
+	      $remise_client = $soc->remise_client;
+	      if ($remise_client > $remise_percent)
+		{
+		  $remise_percent = $remise_client ;
+		}
+	    }
+
+
+	  if ($remise_percent > 0)
 	    {
 	      $remise = ($pu * $remise_percent / 100);
 	      $_price = ($pu - $remise);
