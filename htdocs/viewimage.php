@@ -25,7 +25,7 @@ $original_file = urldecode($_GET["file"]);
 
 $filename = basename ($original_file);
 
-$filename = "/home/www/dolibarr/documents/facture/297459847084/297459847084.pdf.png";
+//$filename = "/home/www/dolibarr/documents/facture/297459847084/297459847084.pdf.png";
 
 
 header('Content-type: image/png');
