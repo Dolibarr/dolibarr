@@ -29,13 +29,16 @@
  
 require("./pre.inc.php");
 
-$langs->load("company");
-$langs->load("commercial");
-
 require("../../contact.class.php");
-require("../../lib/webcal.class.php");
 require("../../cactioncomm.class.php");
 require("../../actioncomm.class.php");
+if ($conf->webcal->enabled) {
+    require("../../lib/webcal.class.php");
+}
+
+$langs->load("companies");
+$langs->load("commercial");
+$langs->load("other");
 
 
 /*
@@ -87,31 +90,54 @@ if ($_POST["action"] == 'add_action')
     $actioncomm->societe = isset($_POST["socid"])?$_POST["socid"]:0;
     $actioncomm->contact = isset($_POST["contactid"])?$_POST["contactid"]:0;
     $actioncomm->note = $_POST["note"];
-    
-    $actioncomm->add($user);
      
-      if ($conf->webcal && $todo_webcal == 'on')
-	{
-	  $webcal = new Webcal();
+    // On definit la ressource webcal si le module webcal est actif
+    $webcal=0;
+    if ($conf->webcal->enabled && $_POST["todo_webcal"] == 'on')
+    {
+        $webcal = new Webcal();
 
-	  $webcal->heure = $heurehour . $heuremin . '00';
-	  $webcal->duree = ($dureehour * 60) + $dureemin;
-    
-	  if ($_POST["actionid"] == 5)
-	    {
-	      $libelle = "Rendez-vous avec ".$contact->fullname;
-	      $libelle .= "\n" . $actioncomm->libelle;
-	    }
-	  else
-	    {
-	      $libelle = $actioncomm->libelle;
-	    }
-	  
-	  $webcal->add($user, $actioncomm->date, $societe->nom, $libelle);
-	}
+        if (! $webcal->localdb->ok) {
+            // Si la creation de l'objet n'as pu se connecter
+            $error="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user."). L'option de mise a jour Webcalendar a été ignorée.";
+            $webcal=-1;
+        }
+        else
+        {
+            $webcal->heure = $heurehour . $heuremin . '00';
+            $webcal->duree = ($dureehour * 60) + $dureemin;
+            
+            if ($_POST["actionid"] == 5)
+            {
+              $libelle = "Rendez-vous avec ".$contact->fullname;
+              $libelle .= "\n" . $actioncomm->libelle;
+            }
+            else
+            {
+              $libelle = $actioncomm->libelle;
+            }
+            
+            $webcal->date=$actioncomm->date;
+            $webcal->texte=$societe->nom;
+            $webcal->desc=$libelle;
+        }
+    }
 
-    Header("Location: ".$_POST["from"]);
+    // On crée l'action (avec ajout eventuel dans webcal si défini)
+    $idaction=$actioncomm->add($user, $webcal);
 
+    if ($idaction > 0) {
+        if ($webcal >= 0) {
+            // Si pas de module webcal ou si pas d'erreur avec
+            Header("Location: ".$_POST["from"]);
+        }
+        else {
+            // Si erreur dans module webcal
+            $_GET["id"]=$idaction;
+        }
+    } else {
+        dolibarr_print_error($db);        
+    }
   } else {
     
     print "Le type d'action n'a pas été choisi";
@@ -224,6 +250,13 @@ if ($_GET["action"] == 'create')
       print_duree_select("duree");
       print '</td></tr>';
 
+      // Lien avec calendrier si module activé
+      if ($conf->webcal->enabled)
+	{
+	  $langs->load("other");
+	  print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td><td><input type="checkbox" name="todo_webcal"></td></tr>';
+	}
+
       print '<tr><td valign="top">'.$langs->trans("Comment").'</td><td>';
       print '<textarea cols="60" rows="6" name="todo_note"></textarea></td></tr>';
       print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';  
@@ -292,29 +325,29 @@ if ($_GET["action"] == 'create')
       // Date
       print '<tr><td width="10%">'.$langs->trans("Date").'</td><td width="40%">';
       if ($_GET["afaire"] == 1)
-    	{
-            print $html->select_date('','ac');
-						print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
+      {
+            $html->select_date('','ac');
+            print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
             print_heure_select("heure",8,20);
             print '</td></tr>';
       } 
-			else if ($_GET["afaire"] == 2) 
+	  else if ($_GET["afaire"] == 2) 
 			{
-            print $html->select_date('','ac',1,1);
-						print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
-        		print_heure_select("heure",8,20);
-        		print '</td></tr>';
+            $html->select_date('','ac',1,1);
+            print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
+            print_heure_select("heure",8,20);
+            print '</td></tr>';
       } 
-			else 
-			{
-            print $html->select_date('','ac',1,1);
-						print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
-        		print_heure_select("heure",8,20);
-        		print '</td></tr>';
+      else 
+	  {
+            $html->select_date('','ac',1,1);
+            print '<tr><td width="10%">'.$langs->trans("Hour").'</td><td width="40%">';
+            print_heure_select("heure",8,20);
+            print '</td></tr>';
       }
       print '</td></tr>';
 
-      // Lien avec celendrier si module activé
+      // Lien avec calendrier si module activé
       if ($conf->webcal->enabled)
 	{
 	  $langs->load("other");
@@ -341,6 +374,10 @@ if ($_GET["action"] == 'create')
  */
 if ($_GET["id"])
 {
+    if ($error) { 
+        print '<font class="error">'.$error.'</font><br><br>';
+    }
+
     $act = new ActionComm($db);
     $act->fetch($_GET["id"]);
     
@@ -369,7 +406,7 @@ if ($_GET["id"])
     }
   
   if ($_GET["action"] == 'edit')
-    {      
+    {
       // Fiche action en mode edition
       print '<form action="fiche.php" method="post">';
       print '<input type="hidden" name="action" value="update">';

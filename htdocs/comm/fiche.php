@@ -20,9 +20,16 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/comm/fiche.php
+        \ingroup    commercial
+		\brief      Page de la fiche commercial
+		\version    $Revision$
+*/
+ 
 require("./pre.inc.php");
 require("../contact.class.php");
-require("../lib/webcal.class.php");
 require("../cactioncomm.class.php");
 require("../actioncomm.class.php");
 
@@ -412,7 +419,7 @@ if ($_socid > 0)
        * Liste des contacts
        *
        */
-      print '<table class="noborder" width="100%" cellspacing="1" cellpadding="2">';
+      print '<table class="noborder" width="100%">';
 
       print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("LastName").'</td>';
       print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
@@ -463,11 +470,10 @@ if ($_socid > 0)
       print "<p />";
 
       /*
-       *
        *      Listes des actions a faire
        *
        */
-      print '<table width="100%" cellspacing=0 class="noborder" cellpadding=2>';
+      print '<table width="100%" class="noborder">';
       print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right"> <a href="action/fiche.php?action=create&socid='.$objsoc->id.'&afaire=1">'.$langs->trans("AddActionToDo").'</a></td></tr>';
       print '<tr>';
       print '<td colspan="2" valign="top">';
@@ -480,7 +486,7 @@ if ($_socid > 0)
       $sql .= " ORDER BY a.datea DESC, a.id DESC";
 
       if ( $db->query($sql) ) {
-	print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
+	print "<table width=\"100%\" class=\"noborder\">\n";
 
 	$i = 0 ; $num = $db->num_rows();
 	while ($i < $num) {
@@ -503,7 +509,7 @@ if ($_socid > 0)
 	  if ($oldmonth == strftime("%Y%b",$obj->da) ) 
 		{
 	    //print '<td align="center">|</td>';
-			print "<td align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
+		print "<td align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
 	  } 
 		else 
 		{
