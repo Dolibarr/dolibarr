@@ -34,7 +34,7 @@ if ($vline) {
 print_titre("Recherche compte bancaire");
 
 print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
 print "<TR class=\"liste_titre\">";
 print "<td>Date</td><td>Description</TD>";
 print "<td align=\"right\">Debit</TD>";
@@ -63,21 +63,16 @@ print "</TR>\n";
 </select>
 </td>
 <td colspan="2">
-<input type="submit">
+<input type="submit" value="Chercher">
 </td>
 </tr>
 <?PHP
 $sql = "SELECT count(*) FROM llx_bank";
 if ($account) { $sql .= " WHERE fk_account=$account"; }
-if ( $db->query($sql) ) {
+if ( $db->query($sql) )
+{
   $nbline = $db->result (0, 0);
-  $db->free();
-    
-  if ($nbline > $viewline ) {
-    $limit = $nbline - $viewline ;
-  } else {
-    $limit = $viewline;
-  }
+  $db->free();    
 }
   
 $sql = "SELECT rowid, label FROM llx_bank_categ;";
@@ -93,10 +88,6 @@ if ($result) {
     }
     $db->free();
 }
-
-
-if ($viewall) { $nbline=0; }
-
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account, b.fk_type";
 $sql .= " FROM llx_bank as b "; 
@@ -118,11 +109,12 @@ for ($i = 1 ; $i <= $si; $i++) {
  $sql .= " AND " . $sqlw[$i];
 }
 
-
 $sql .= " ORDER BY b.dateo ASC";
 
 $result = $db->query($sql);
-if ($result) {
+
+if ($result)
+{
   $var=True;  
   $num = $db->num_rows();
   $i = 0;   
@@ -135,17 +127,16 @@ if ($result) {
     print "<tr $bc[$var]>";
     print "<td>".strftime("%d %b %y",$objp->do)."</TD>\n";
       
-    if ($objp->num_chq) {
-      print "<td>CHQ $objp->num_chq - $objp->label</td>";
-    } else {
-      print "<td>$objp->label</td>";
-    }
+    print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">$objp->label</a>&nbsp;";
     
-    if ($objp->amount < 0) {
-      print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
-    } else {
-      print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
-    }
+    if ($objp->amount < 0)
+      {
+	print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
+      }
+    else
+      {
+	print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
+      }
     
     print "<td align=\"right\">".$obj->fktype."</TD>\n";
 
