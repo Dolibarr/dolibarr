@@ -1,9 +1,10 @@
 <?PHP
 
-if ($action == "set")
+if ($HTTP_POST_VARS["action"] == "set")
 {
+  print '<h2>Enregistrement des valeurs</h2>';
+
   print '<table cellspacing="0" cellpadding="4" border="1">';
-  print '<tr><td colspan="2">Enregistrement des valeurs</td></tr>';
   $error=0;
   $fp = fopen("conf/conf.php", "w");
   if($fp)
@@ -190,7 +191,8 @@ else
 <?PHP print "Répertoire d'installation"; ?>
 </td><td><input type="text" size="60" value="<?PHP print $dolibarr_main_document_root ?>" name="main_dir">
 <br>
-Sans le slash "/" à la fin
+Sans le slash "/" à la fin<br>
+exemple : /var/www/dolibarr/htdocs
 </td>
 </tr>
 <tr>
