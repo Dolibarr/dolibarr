@@ -68,6 +68,7 @@ if ($_GET["action"] == 'edit')
 	}
       
     }
+  print '</select>';
   print '<input type="hidden" name="action" value="update">';
   print '</td></tr>';
 
