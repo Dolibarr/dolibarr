@@ -29,68 +29,6 @@ llxHeader();
 $user->getrights('propale');
 $user->getrights('projet');
 
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-if ($sortfield == "") {
-  $sortfield="nom";
-}
-
-
-if ($action == 'attribute_prefix') {
-  $societe = new Societe($db, $socid);
-  $societe->attribute_prefix($db, $socid);
-}
-
-if ($action == 'recontact') {
-  $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $GLOBALS["REMOTE_USER"]."')";
-  $result = $db->query($sql);
-}
-
-if ($action == 'stcomm') {
-  if ($stcommid <> 'null' && $stcommid <> $oldstcomm) {
-    $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
-    $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $GLOBALS["REMOTE_USER"] . "')";
-    $result = @$db->query($sql);
-
-    if ($result) {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=$socid";
-      $result = $db->query($sql);
-    } else {
-      $errmesg = "ERREUR DE DATE !";
-    }
-  }
-
-  if ($actioncommid) {
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
-    $result = @$db->query($sql);
-
-    if (!$result) {
-      $errmesg = "ERREUR DE DATE !";
-    }
-  }
-}
-
-/*
- * Recherche
- *
- *
- */
-if ($mode == 'search') {
-  if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
-    $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
-  }
-      
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() == 1) {
-      $obj = $db->fetch_object(0);
-      $socid = $obj->idp;
-    }
-    $db->free();
-  }
-}
 /*
  *
  */
@@ -153,16 +91,7 @@ if ($socid > 0)
 
       dolibarr_fiche_head($head, 1);
 
-    /*
-     *
-     */
-    print '<table class="noborder" width="100%" border="0" cellspacing="1">';
-
-    print "<tr><td><div class=\"titre\">Fiche prospect : $societe->nom</div></td>";
-
-    print "<td align=\"center\">[<a href=\"index.php?socidp=$societe->id&action=add_bookmark\">Bookmark</a>]</td>";
-          
-    print "</table>";
+    print_titre("Fiche prospect : $societe->nom");
     /*
      *
      *
@@ -171,17 +100,18 @@ if ($socid > 0)
     print '<tr><td valign="top">';
     print '<table class="border" cellspacing="0" border="1" width="100%">';
 
-    print "<tr><td>Type</td><td> $societe->typent</td><td>Effectif</td><td>$societe->effectif</td></tr>";
     print "<tr><td>Téléphone</td><td> $societe->tel&nbsp;</td><td>fax</td><td>$societe->fax&nbsp;</td></tr>";
-    print "<tr><td>Ville</td><td colspan=\"3\">".nl2br($societe->address)."<br>$societe->cp $societe->ville</td></tr>";
+    print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($societe->address)."<br>$societe->cp $societe->ville</td></tr>";
 
-    print "<tr><td>siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$societe->siren\">$societe->siren</a>&nbsp;</td>";
+    print "<tr><td>Siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$societe->siren\">$societe->siren</a>&nbsp;</td>";
     print "<td>APE</td><td>";
     print $societe->ape;
     print "</td></tr>";
 
     print '<tr><td>Siret</td><td>'.$societe->siret.'</td>';
     print '<td>Capital</td><td>'.$societe->capital.'</td></tr>';
+
+    print "<tr><td>Type</td><td> $societe->typent</td><td>Effectif</td><td>$societe->effectif</td></tr>";
 
     if ($societe->url)
       {
@@ -192,6 +122,8 @@ if ($socid > 0)
       {
 	print "<tr><td>Rubrique</td><td colspan=\"3\">$societe->rubrique</td></tr>";
       }
+
+    print "<tr><td>Forme juridique</td><td colspan=\"3\">$societe->forme_juridique</td></tr>";
 
     print "</table></div>";
 
@@ -245,81 +177,48 @@ if ($socid > 0)
      *
      */
     print "</td></tr>";
-    print "</table>\n";
+    print "</table>\n</div>\n";
     /*
      * Barre d'action
      *
      */
-    print '<br><table id="actions" cellspadding="3" cellspacing="0" width="100%"><tr>';
+    print '<div class="tabsAction">';
 
     if ($conf->propal->enabled && defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
       {
-	print "<td align=\"center\"><a href=\"addpropal.php?socidp=$societe->id&amp;action=create\">Créer une proposition</a></td>";
+	print '<a class="tabAction" href="addpropal.php?socidp='.$societe->id.'&amp;action=create">Créer une proposition</a>';
       }
-    else
-      {
-	print '<td align="center" width="20%">-</td>';
-      }
-    print '<td align="center" width="20%">-</td>';
-
-
-    print '<td align="center" width="20%">-</td>';
 
     if ($conf->projet->enabled && $user->rights->projet->creer)
       {
-	print '<td align="center" width="20%"><a href="../projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a></td>';
+	print '<a class="tabAction" href="../projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a>';
       }
-    else
-      {
-	print '<td align="center" width="20%">-</td>';  
-      }
-
-
-
-    print '</tr></table><br>';
+    print '</div>';
 
     /*
      *
-     *
+     * Liste des contacts
      *
      */
-    if ($action == 'changevalue') {
-      print "<HR noshade>";
-      print "<form action=\"index.php?socid=$societe->id\" method=\"post\">";
-      print "<input type=\"hidden\" name=\"action\" value=\"cabrecrut\">";
-      print "Cette société est un cabinet de recrutement : ";
-      print "<select name=\"selectvalue\">";
-      print "<option value=\"\">";
-      print "<option value=\"t\">Oui";
-      print "<option value=\"f\">Non";
-      print "</select>";
-      print "<input type=\"submit\" value=\"Mettre &agrave; jour\">";
-      print "</form>\n";
-    } else {
-      /*
-       *
-       * Liste des contacts
-       *
-       */
-      print '<table width="100%" cellspacing="1" border="0" cellpadding="2">';
+    print '<table width="100%" cellspacing="1" border="0" cellpadding="2">';
 
-      print '<tr class="liste_titre"><td>Pr&eacute;nom Nom</td>';
-      print '<td>Poste</td><td>T&eacute;l</td>';
-      print "<td>Fax</td><td>Email</td>";
-      print "<td align=\"center\"><a href=\"../contact/fiche.php?socid=$societe->id&action=create\">Ajouter</a></td></tr>";
+    print '<tr class="liste_titre"><td>Pr&eacute;nom Nom</td>';
+    print '<td>Poste</td><td>T&eacute;l</td>';
+    print "<td>Fax</td><td>Email</td>";
+    print "<td align=\"center\"><a href=\"../../contact/fiche.php?socid=$societe->id&action=create\">Ajouter</a></td></tr>";
     
-      $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $societe->id  ORDER by p.datec";
-      $result = $db->query($sql);
-      $i = 0 ; $num = $db->num_rows(); $tag = True;
-      while ($i < $num)
-	{
+    $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $societe->id  ORDER by p.datec";
+    $result = $db->query($sql);
+    $i = 0 ; $num = $db->num_rows(); $tag = True;
+    while ($i < $num)
+      {
 	$obj = $db->fetch_object( $i);
 	$var = !$var;
 	print "<tr $bc[$var]>";
-
+	
 	print '<td>';
-
-	print '<a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->id.'&socid='.$societe->id.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+	
+	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actionid=5&amp;contactid='.$obj->idp.'&amp;socid='.$societe->id.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
 	if ($obj->note)
 	  {
@@ -327,11 +226,11 @@ if ($socid > 0)
 	  }
 	print "</td>";
 	print "<td>$obj->poste&nbsp;</td>";
-	print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->id.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
-	print '<td><a href="action/fiche.php?action=create&actionid=2&contactid='.$obj->id.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
-	print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->id.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
+	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->id.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
+	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=2&contactid='.$obj->id.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
+	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=4&contactid='.$obj->id.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
 	print "<td align=\"center\">";
-	print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->id\">";
+	print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?action=edit&amp;id='.$obj->idp.'">';
 	print img_edit();
 	print '</a></td>';
 	print "</tr>\n";
@@ -369,12 +268,15 @@ if ($socid > 0)
 	  $obj = $db->fetch_object( $i);
 	  print "<tr $bc[$var]>";
 
-	  if ($oldyear == strftime("%Y",$obj->da) ) {
-	    print '<td align="center">|</td>';
-	  } else {
-	    print "<TD align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
+	  if ($oldyear == strftime("%Y",$obj->da) )
+	    {
+	      print '<td align="center">|</td>';
+	    } 
+	  else 
+	    {
+	    print '<td align="center">' .strftime("%Y",$obj->da)."</TD>\n"; 
 	    $oldyear = strftime("%Y",$obj->da);
-	  }
+	    }
 
 	  if ($oldmonth == strftime("%Y%b",$obj->da) ) {
 	    print '<td align="center">|</td>';
@@ -394,7 +296,7 @@ if ($socid > 0)
 	    }
 	  else
 	    {
-	      print '<td width="40%"><a href="action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+	      print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
 	    }
 	  /*
 	   * Contact pour cette action
@@ -480,11 +382,11 @@ if ($socid > 0)
 	      
 	      if ($obj->propalrowid)
 		{
-		  print '<td width="40%"><a href="propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
 		}
 	      else
 		{
-		  print '<td width="40%"><a href="action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
 		}
 	      /*
 	       * Contact pour cette action
@@ -494,7 +396,7 @@ if ($socid > 0)
 		{
 		  $contact = new Contact($db);
 		  $contact->fetch($obj->fk_contact);
-		  print '<td width="40%"><a href="people.php?socid='.$societe->id.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.$contact->fullname.'</a></td>';
 		}
 	      else
 		{
@@ -520,7 +422,7 @@ if ($socid > 0)
        * Notes sur la societe
        *
        */
-      if ($societe->note)
+      if (strlen(trim($societe->note)))
 	{
 	  print '<table border="1" width="100%" cellspacing="0" bgcolor="#e0e0e0">';
 	  print "<tr><td>".nl2br($societe->note)."</td></tr>";
@@ -532,11 +434,15 @@ if ($socid > 0)
        *
        */
 
+
+    } 
+  else
+    {
+      print $db->error() . "<br>" . $sql;
     }
-  } else {
-    print $db->error() . "<br>" . $sql;
-  }
-} else {
+}
+else
+{
   print "Erreur";
 }
 $db->close();
