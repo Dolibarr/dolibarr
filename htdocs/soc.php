@@ -143,7 +143,6 @@ elseif ($action == 'edit')
 
   if ($socid)
     {
-
       $soc = new Societe($db);
       $soc->id = $socid;
       $soc->fetch($socid);
@@ -174,31 +173,30 @@ elseif ($action == 'edit')
 
       print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
       print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
-      print '<br>Vous pouvez vérifier ce numéro sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la commission européenne';
+
       print '</td></tr>';
 
       print '<tr><td>Prospect / Client</td><td><select name="client">';
       if ($soc->client == 2)
 	{
-	  print '<option value="2" SELECTED>Prospect'; 
-	  print '<option value="1">Client'; 
-	  print '<option value="0">Ni client, ni prospect'; 
+	  print '<option value="2" SELECTED>Prospect</option>';
+	  print '<option value="1">Client</option>';
+	  print '<option value="0">Ni client, ni prospect</option>';
 	}
-      if ($soc->client == 1)
+      elseif ($soc->client == 1)
 	{
-	  print '<option value="2">Prospect'; 
-	  print '<option value="1" SELECTED>Client'; 
-	  print '<option value="0">Ni client, ni prospect'; 
+	  print '<option value="2">Prospect</option>'; 
+	  print '<option value="1" SELECTED>Client</option>'; 
+	  print '<option value="0">Ni client, ni prospect</option>'; 
 	}
       else
 	{
-	  print '<option value="2">Prospect'; 
-	  print '<option value="1">Client'; 
-	  print '<option value="0" SELECTED>Ni client, ni prospect'; 
+	  print '<option value="2">Prospect</option>';
+	  print '<option value="1">Client</option>';
+	  print '<option value="0" SELECTED>Ni client, ni prospect</option>';
 	}
 
-
-	  print '</select></td>';
+      print '</select></td>';
 
       print '<td>Fournisseur</td><td><select name="fournisseur">';
       print_oui_non($soc->fournisseur);
@@ -209,6 +207,9 @@ elseif ($action == 'edit')
       print '<tr><td align="center" colspan="4"><input type="submit" value="Mettre à jour"></td></tr>';
       print '</table>';
       print '</form>';
+
+      print 'Astuce : Vous pouvez vérifier le numéro de TVA intra communautaire sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la commission européenne';
+
     }
 }
 else
