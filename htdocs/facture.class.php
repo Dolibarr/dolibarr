@@ -1217,11 +1217,14 @@ class Facture
 	    if ($row[0] == 0)
 	      {		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture_demande";
-		$sql .= " (fk_facture, date_demande, fk_user_demande, code_banque, code_guichet, number)";
-		$sql .= " VALUES (".$this->id.",now(),".$user->id."";
+		$sql .= " (fk_facture, amount, date_demande, fk_user_demande, code_banque, code_guichet, number, cle_rib)";
+		$sql .= " VALUES (".$this->id;
+		$sql .= ",'".ereg_replace(",",".",$this->total_ttc)."'";
+		$sql .= ",now(),".$user->id."";
 		$sql .= ",'".$soc->bank_account->code_banque."'";
 		$sql .= ",'".$soc->bank_account->code_guichet."'";
-		$sql .= ",'".$soc->bank_account->number."')";
+		$sql .= ",'".$soc->bank_account->number."'";
+		$sql .= ",'".$soc->bank_account->cle_rib."')";
 		
 		if ( $this->db->query( $sql) )
 		  {
