@@ -225,6 +225,23 @@ create table llx_livre_to_auteur
 
 alter table  llx_livre_to_auteur add unique key (fk_livre, fk_auteur);
 
+create table llx_contrat
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  tms             timestamp,
+  enservice       tinyint,
+  mise_en_service datetime,
+  fin_validite    datetime,
+  date_cloture    datetime,
+  fk_soc          integer NOT NULL,
+  fk_product      integer NOT NULL,
+  fk_facture      integer NOT NULL default 0,
+  fk_user_author  integer NOT NULL,
+  fk_user_mise_en_service integer NOT NULL,
+  fk_user_cloture integer NOT NULL
+);
+
+
 create table llx_fichinter
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -693,7 +710,8 @@ create table llx_product
   tva_tx          double default 19.6,
   fk_user_author  integer,
   envente         tinyint default 1,
-  nbvente         integer default 0
+  nbvente         integer default 0,
+  fk_product_type integer default 0
 );
 
 
@@ -1013,15 +1031,6 @@ INSERT INTO llx_const(name, value, type) VALUES ('OSC_CATALOG_URL','http://osc.l
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_FROM','adherents@domain.com','chaine','From des mails');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MENU_BARRETOP','default.php','chaine','Module commande');
 
-
-INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_COMMANDE','0','yesno',0);
-INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_PROPALE', '0','yesno',0);
-INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_FACTURE', '0','yesno',0);
-INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_DON',     '0','yesno',0);
-INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_ADHERENT','0','yesno',0);
-
-INSERT INTO llx_const (name,value,type,visible) VALUES ('BOUTIQUE_LIVRE','0','yesno',0);
-INSERT INTO llx_const (name,value,type,visible) VALUES ('BOUTIQUE_ALBUM','0','yesno',0);
 
 delete from c_chargesociales;
 insert into c_chargesociales (id,libelle,deductible) values ( 1, 'Allocations familiales',1);
