@@ -14,6 +14,7 @@ RebuildPDF=Regénérer le PDF
 VAT=TVA
 VATRate=Taux TVA
 Amount=Montant
+BillStatus=Statut de la facture
 BillStatusDraft=Brouillon (à valider)
 BillStatusPayed=Payée
 BillStatusCanceled=Abandonnée
