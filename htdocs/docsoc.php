@@ -152,11 +152,19 @@ if ($socid > 0)
       if (defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 	{
 	  echo '<form name="userfile" action="docsoc.php?socid='.$socid.'" enctype="multipart/form-data" METHOD="POST">';      
+
+      print '<table class="noborder" width="100%">';
+      print '<tr><td width="50%" valign="top">';
+
 	  print '<input type="hidden" name="max_file_size" value="2000000">';
 	  print '<input type="file"   name="userfile" size="40" maxlength="80">';
 	  print '<br>';
 	  print '<input type="submit" value="'.$langs->trans("Upload").'" name="sendit"> &nbsp; ';
 	  print '<input type="submit" value="'.$langs->trans("Cancel").'" name="cancelit"><br>';
+
+      print "</td></tr>";
+      print "</table>";
+
 	  print '</form>';
 	}
       else
@@ -197,7 +205,7 @@ if ($socid > 0)
 	}
       else
 	{
-	  print "<p>Impossible d'ouvrir : <b>".$upload_dir."</b>";
+	  print "Impossible d'ouvrir : <b>".$upload_dir."</b>";
 	}
     }
   else
