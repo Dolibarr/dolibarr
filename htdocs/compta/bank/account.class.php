@@ -129,7 +129,8 @@ class Account
    * Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
    *
    */
-  function addline($date, $oper, $label, $amount, $num_chq='', $categorie='',$user)
+  // FIXME  function addline($date, $oper, $label, $amount, $num_chq='', $categorie='',$user)
+  function addline($date, $oper, $label, $amount, $num_chq='', $categorie='')
   {
     if ($this->rowid)
       {
