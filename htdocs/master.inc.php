@@ -177,7 +177,6 @@ $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
  * Activation des modules
  * et inclusion de librairies dépendantes
  */
-define(MAIN_MODULE_DEPLACEMENT,1);      // \todo    A virer quand module déplacement dispo
 if (defined("MAIN_MODULE_DEPLACEMENT"))
 {
   $conf->deplacement->enabled=MAIN_MODULE_DEPLACEMENT;
