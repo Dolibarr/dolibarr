@@ -38,8 +38,3 @@ create table llx_telephonie_societe_ligne_statut (
 
 )type=innodb;
 
-ALTER TABLE llx_telephonie_societe_ligne_statut ADD INDEX (fk_ligne);
-ALTER TABLE llx_telephonie_societe_ligne_statut ADD INDEX (fk_user);
-
-ALTER TABLE llx_telephonie_societe_ligne_statut ADD FOREIGN KEY (fk_ligne) REFERENCES llx_telephonie_societe_ligne(rowid);
-ALTER TABLE llx_telephonie_societe_ligne_statut ADD FOREIGN KEY (fk_user) REFERENCES llx_user(rowid);
