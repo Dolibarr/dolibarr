@@ -132,7 +132,7 @@ if ( $societe->fetch($socid) )
   print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax).'&nbsp;</td></tr>';
   print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
-  print '</table>';
+  print '</table><br>';
   /*
    *
    */
@@ -257,7 +257,7 @@ if ( $societe->fetch($socid) )
    *
    */
   print '</td></tr>';
-  print '</table>' . "<br>\n";
+  print '</table>' . "\n";
   print '</div>';
 
   /*
