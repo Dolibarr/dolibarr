@@ -223,7 +223,7 @@ if ( $db->query($sql) )
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_file()."</a>&nbsp;";
+	  print "<td width=\"40%\"><a href=\"action/fiche.php?id=$obj->id\">".img_file()."</a>&nbsp;";
 	  print "<a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
 	  print "<td>".strftime("%d %b %Y",$obj->da)."</td>";
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->sname.'</a></td>';
@@ -252,33 +252,41 @@ if ($socidp)
 { 
   $sql .= " AND s.idp = $socidp"; 
 }
-$sql .= " ORDER BY a.datea DESC";
+$sql .= " ORDER BY a.datea ASC";
 
 if ( $db->query($sql) ) 
 {
   $num = $db->num_rows();
-
-  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-  print '<tr class="liste_titre"><td colspan="4">Actions à faire</td></tr>';
-  $var = true;
-  $i = 0;
-
-  while ($i < $num ) 
+  if ($num > 0)
+    { 
+      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+      print '<tr class="liste_titre"><td colspan="4">Actions à faire</td></tr>';
+      $var = true;
+      $i = 0;
+      
+      while ($i < $num ) 
 	{
 	  $obj = $db->fetch_object($i);
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_file()."</a>&nbsp;";
+	  print "<td width=\"40%\"><a href=\"action/fiche.php?id=$obj->id\">".img_file()."</a>&nbsp;";
 	  print "<a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
-	  print "<td>".strftime("%d %b %Y",$obj->da)."</td>";
+	
+	  print '<td>'. strftime("%d %b %Y",$obj->da);
+          if (date("U",$obj->da) < time())
+          {
+	    print img_warning();
+          }
+	  print "</td>";
+
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->sname.'</a></td>';
 	  $i++;
 	}
-  // TODO Ajouter rappel pour "il y a des contrats à mettre en service"
-  // TODO Ajouter rappel pour "il y a des contrats qui arrivent à expiration"
-  print "</table><br>";
-
+      // TODO Ajouter rappel pour "il y a des contrats à mettre en service"
+      // TODO Ajouter rappel pour "il y a des contrats qui arrivent à expiration"
+      print "</table><br>";
+    }
   $db->free();
 } 
 else
