@@ -48,11 +48,8 @@ if ($action == 'add')
 if ($action == 'update') 
 {
   if (strlen(trim($name)) + strlen(trim($firstname)) > 0) 
-    {
-    
+    {    
       $contact = new Contact($db);
-
-
       $contact->name = $name;
       $contact->firstname = $firstname;
       $contact->poste = $poste;
@@ -101,14 +98,7 @@ if ($socid > 0)
        *
        *
        */
-      print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
-      print "<tr><td><a href=\"fiche.php3?socid=$objsoc->idp\">$objsoc->nom</a></td>";
-      print "<td align=\"center\"><a href=\"socnote.php3?socid=$socid\">Notes</a></big></td>";
-      
-      print "<td align=\"center\">[<a href=\"people.php3?socid=$socid&action=addcontact\">Ajouter un contact</a>]</td>";
-      print '</td></tr></table>';
-      
-    
+      print_fiche_titre ("Societe <a href=\"fiche.php3?socid=$objsoc->idp\">$objsoc->nom</a>");
       /*
        *
        */
@@ -201,30 +191,30 @@ if ($socid > 0)
       print "<form method=\"post\" action=\"people.php3?socid=$socid\">";
       print '<input type="hidden" name="action" value="update">';
       print "<input type=\"hidden\" name=\"contactid\" value=\"$contactid\">";
-      print "<table border=0>";
-      print "<tr><td>Numéro</td><td>$obj->idp</td>";
+      print '<br><table border="1" cellpadding="4" cellspacing="0">';
       print "<tr><td>Nom</td><td><input name=\"name\" type=\"text\" size=\"20\" maxlength=\"80\" value=\"$obj->name\"></td>";
       print "<td>Prenom</td><td><input name=\"firstname\" type=\"text\" size=\"15\" maxlength=\"80\" value=\"$obj->firstname\"></td></tr>";
       print "<tr><td>Poste</td><td colspan=\"3\"><input name=\"poste\" type=\"text\" size=\"50\" maxlength=\"80\" value=\"$obj->poste\"></td></tr>";
       print "<tr><td>Tel</td><td><input name=\"phone\" type=\"text\" size=\"18\" maxlength=\"80\" value=\"$obj->phone\"></td>";
       print "<td>Fax</td><td><input name=\"fax\" type=\"text\" size=\"18\" maxlength=\"80\" value=\"$obj->fax\"></td></tr>";
       print "<tr><td>Email</td><td colspan=\"3\"><input name=\"email\" type=\"text\" size=\"50\" maxlength=\"80\" value=\"$obj->email\"></td></tr>";
-      print '<tr><td valign="top">Note</td><td colspan="3"><textarea wrap="soft" cols="40" rows="10" name="note">'.$obj->note.'</textarea></td></tr>';
+      print '<tr><td valign="top">Note</td><td colspan="3"><textarea wrap="soft" cols="40" rows="6" name="note">'.$obj->note.'</textarea></td></tr>';
+      print '<tr><td align="center" colspan="5"><input type="submit" value="Modifier"></td></tr>';
+
       print "</table>";
-      print "<input type=\"submit\" value=\"Modifier\">";
       print "</form>";
     }
   
   /*
    *
    *
-   */
-  if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
-    {
-      print "<p>";
-      print_titre("Fiche d'intervention");
-    }
-  /*
+   *
+   *if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
+   * {
+   *   print "<p>";
+   *   print_titre("Fiche d'intervention");
+   * }
+   *
    *
    *
    */
