@@ -52,6 +52,8 @@ function llxHeader($head = "", $urlp = "")
       $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create","Nouvelle");
     }
 
+  $menu->add(DOL_URL_ROOT."/product/liste.php?type=0","Produits");
+
   left_menu($menu->liste);
 }
 

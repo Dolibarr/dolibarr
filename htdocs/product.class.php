@@ -370,5 +370,30 @@ class Product
 
       return $this->_get_stats($sql);
     }
+  /*
+   *
+   *
+   */
+  Function add_fournisseur($user, $id_fourn, $ref_fourn) 
+    {
+
+      $sql = "INSERT INTO llx_product_fournisseur ";
+      $sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
+      $sql .= " VALUES (now(), $this->id, $id_fourn, '$ref_fourn', $user->id)";
+      
+      if ($this->db->query($sql) )
+	{
+	  return 1;	      
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	  return -1;
+	}
+  }
+  /*
+   *
+   *
+   */
 }
 ?>

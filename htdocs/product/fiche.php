@@ -91,6 +91,21 @@ if ($HTTP_POST_VARS["action"] == 'addinfacture' &&
   $mesg .= '<a href="../compta/facture.php?facid='.$facture->id.'">'.$facture->ref.'</a>';
 }
 
+if ($HTTP_POST_VARS["action"] == 'add_fourn')
+{
+  $product = new Product($db);
+  if( $product->fetch($id) )
+    {
+      if ($product->add_fournisseur($user, $HTTP_POST_VARS["id_fourn"], $HTTP_POST_VARS["ref_fourn"]))
+	{
+	  $action = '';
+	  $mesg = 'Founisseur ajouté';
+	}
+    }
+
+}
+
+
 if ($HTTP_POST_VARS["action"] == 'update' && 
     $cancel <> 'Annuler' && 
     ( $user->rights->produit->modifier || $user->rights->produit->creer))
@@ -233,9 +248,31 @@ else
 	      print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
 	      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
 	      print '<td valign="top" rowspan="4">';
-	      print "Propositions commerciales : ".$product->count_propale();
-	      print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
-	      print "<br>Factures : ".$product->count_facture();
+	      print 'Fournisseurs [<a href="fiche.php?id='.$id.'&action=ajout_fourn">Ajouter</a>]';
+
+	      $sql = "SELECT s.nom, s.idp";
+	      $sql .= " FROM llx_societe as s, llx_product_fournisseur as pf";
+	      $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product =$id";
+	      $sql .= " ORDER BY lower(s.nom)";
+	      
+	      if ( $db->query($sql) )
+		{
+		  $num = $db->num_rows();
+		  $i = 0;
+		  print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+		  $var=True;      
+		  while ($i < $num)
+		    {
+		      $objp = $db->fetch_object( $i);	  
+		      $var=!$var;
+		      print "<TR $bc[$var]>";
+		      print '<td>'.$objp->nom.'</td></tr>';
+		      $i++;
+		    }
+		  print '</table>';
+		  $db->free();
+		}
+
 	      print '</td></tr>';
 
 	      print "<tr>".'<td>Taux TVA</td><TD>'.$product->tva_tx.' %</td></tr>';
@@ -265,7 +302,6 @@ else
 		    }
 		  print '</td></tr>';
 		}
-
 	      print "</table>";
 	    }
 
@@ -280,7 +316,40 @@ else
 	      print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
 	      print '</table>';
 	      print '</form>';
+	    }
+	  /*
+	   * Ajouter un fournisseur
+	   *
+	   */
+	  if ($action == 'ajout_fourn' && $user->rights->produit->creer)
+	    {
+	      print_titre ("Ajouter un founisseur");
+	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	      print '<input type="hidden" name="action" value="add_fourn">';
+	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4"><tr>';
+	      print '<td>Fournisseurs</td><td><select name="id_fourn">';
+
+	      $sql = "SELECT s.idp, s.nom, s.ville FROM llx_societe as s WHERE s.fournisseur=1";	     
+	      $sql .= " ORDER BY lower(s.nom)";
+
+	      if ($db->query($sql))
+		{
+		  $num = $db->num_rows();
+		  $i = 0;		  		  
+		  while ($i < $num)
+		    {
+		      $obj = $db->fetch_object( $i);
+		      print '<option value="'.$obj->idp.'">'.$obj->nom . " (".$obj->ville.")";
+		      $i++;
+		    }
+		}
+	      print '</select></td><td>Référence</td><td><input name="ref_fourn" size="25" value=""></td></tr>';
+	      print '<tr><td colspan="4" align="center"><input type="submit" value="Enregistrer">&nbsp;';
+	      print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+	      print '</table>';
+	      print '</form>';
 	    }    
+
 	}
 
     
@@ -422,11 +491,10 @@ if ($id && $action == '' && $product->envente)
     {
       print "<tr>".'<td width="50%" valign="top">';
       print_titre("Ajouter à ma proposition") . '</td>';
-      if($user->rights->propale->creer)
-	{
-	  print '<td width="50%" valign="top">';
-	  print_titre("Ajouter aux autres propositions") . '</td>';
-	}
+
+      print '<td width="50%" valign="top">';
+      print_titre("Ajouter aux autres propositions") . '</td>';
+
       print '</tr>';
       print "<tr>".'<td width="50%" valign="top">';
       $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.ref,".$db->pdate("p.datep")." as dp";

@@ -61,8 +61,7 @@ function llxHeader($head = "", $urlp = "", $title="")
       $menu->add(DOL_URL_ROOT."/product/categorie/", "Catégories");
     }      
     
-  // La notion de service est abandonnée pour le moment 
-  //  $menu->add(DOL_URL_ROOT."/service/index.php", "Services");
+  $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
 
   $menu->add("stats/", "Statistiques");
   $menu->add_submenu("popuprop.php", "Popularité");
