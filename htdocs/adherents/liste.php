@@ -149,7 +149,7 @@ if ($result)
   
   print '<TR>';
   print '<TD align="right">';
-  print_fleche_navigation($page,$PHP_SELF,"&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",0);
+  print_fleche_navigation($page,$PHP_SELF,"&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",1);
   print '</TD>';
   print "</table><BR>\n";
 

@@ -153,7 +153,7 @@ if ($result)
   print "<TD align=\"right\">".price($total)."</TD>\n";
   //  print "<TD>&nbsp;</TD>\n";
   print "<TD align=\"right\">";
-  print_fleche_navigation($page,$PHP_SELF,"&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+  print_fleche_navigation($page,$PHP_SELF,"&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",1);
   print "</TD>\n";
 
   print "</TR>\n";
