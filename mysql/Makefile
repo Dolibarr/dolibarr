@@ -1,3 +1,4 @@
+#
 # Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 # Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
 #
@@ -36,7 +37,7 @@
 #
 # **********************************************************************
 
-MYSQL=mysql 
+SQL=mysql 
 BASE=dolibarr
 OPTIONS=
 
@@ -56,14 +57,15 @@ show:
 	&& make show BASE=$(BASE) OPTIONS=$(OPTIONS)
 
 drop:
-	$(MYSQL) $(OPTIONS) $(BASE) < drop.sql
+	cd tables \
+	&& make drop
 
 table:
 	cd tables \
 	&& make create BASE=$(BASE) OPTIONS=$(OPTIONS)
 
 load:
-	$(MYSQL) $(OPTIONS) $(BASE) < data/data.sql
+	$(SQL) $(OPTIONS) $(BASE) < data/data.sql
 
 dev:
 	cd data \
@@ -78,31 +80,31 @@ fulldev: drop table load dev
 dropall: dropdb droppriv
 
 droppriv:
-	$(MYSQL) $(OPTIONS) mysql -e "delete from db where Db='$(BASE)' ; "
+	$(SQL) $(OPTIONS) $(SQL) -e "delete from db where Db='$(BASE)' ; "
 
 dropdb:
-	$(MYSQL) $(OPTIONS) mysql -f -e "drop database if exists $(BASE) ; "
+	$(SQL) $(OPTIONS) $(SQL) -f -e "drop database if exists $(BASE) ; "
 
 
 
 create: drop createdb createpriv
 
 createdb:
-	$(MYSQL) $(OPTIONS) mysql -e "create database $(BASE) ; "
+	$(SQL) $(OPTIONS) mysql -e "create database $(BASE) ; "
 
 createpriv:
-	$(MYSQL) $(OPTIONS) mysql -e "insert into db (Host, Db) values ('localhost', '$(BASE)') ; "
-	$(MYSQL) $(OPTIONS) mysql -e "update db set select_priv     = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) $(OPTIONS) mysql -e "update db set insert_priv     = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) $(OPTIONS) mysql -e "update db set update_priv     = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) $(OPTIONS) mysql -e "update db set delete_priv     = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) $(OPTIONS) mysql -e "update db set create_priv     = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) $(OPTIONS) mysql -e "update db set drop_priv       = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) $(OPTIONS) mysql -e "update db set grant_priv      = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) $(OPTIONS) mysql -e "update db set references_priv = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) $(OPTIONS) mysql -e "update db set index_priv      = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) $(OPTIONS) mysql -e "update db set alter_priv      = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) $(OPTIONS) mysql -e "flush privileges ; "
+	$(SQL) $(OPTIONS) mysql -e "insert into db (Host, Db) values ('localhost', '$(BASE)') ; "
+	$(SQL) $(OPTIONS) mysql -e "update db set select_priv     = 'Y'  where db='$(BASE)' ; "
+	$(SQL) $(OPTIONS) mysql -e "update db set insert_priv     = 'Y'  where db='$(BASE)' ; "
+	$(SQL) $(OPTIONS) mysql -e "update db set update_priv     = 'Y'  where db='$(BASE)' ; "
+	$(SQL) $(OPTIONS) mysql -e "update db set delete_priv     = 'Y'  where db='$(BASE)' ; "
+	$(SQL) $(OPTIONS) mysql -e "update db set create_priv     = 'Y'  where db='$(BASE)' ; "
+	$(SQL) $(OPTIONS) mysql -e "update db set drop_priv       = 'Y'  where db='$(BASE)' ; "
+	$(SQL) $(OPTIONS) mysql -e "update db set grant_priv      = 'Y'  where db='$(BASE)' ; "
+	$(SQL) $(OPTIONS) mysql -e "update db set references_priv = 'Y'  where db='$(BASE)' ; "
+	$(SQL) $(OPTIONS) mysql -e "update db set index_priv      = 'Y'  where db='$(BASE)' ; "
+	$(SQL) $(OPTIONS) mysql -e "update db set alter_priv      = 'Y'  where db='$(BASE)' ; "
+	$(SQL) $(OPTIONS) mysql -e "flush privileges ; "
 
 
 
