@@ -19,6 +19,7 @@
  * $Id$
  * $Source$
  */
+ 
 require("./pre.inc.php");
 require (DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
@@ -55,13 +56,12 @@ if (!$user->admin)
   llxfooter();
   exit;
 }
-/*
- *
- */
+/**
+  *
+  */
+
 print_titre("Configuration de ldap");
-/*
- *
- */
+
 print '<table class="noborder" width="100%" cellpadding="3" cellspacing="0">';
 print '<tr>';
 print '<td width="50%" valign="top">';
@@ -109,6 +109,10 @@ print '<tr><td><input type="submit" value="changer"></td></tr>';
 print '</table></form>';
 
 print '</td></tr></table>';
+
+/**
+  *
+  */
 
 print '<a href="ldap.php?action=test">test de connection</a><br>';
 
