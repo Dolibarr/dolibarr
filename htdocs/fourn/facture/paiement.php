@@ -88,7 +88,7 @@ if ($action == 'create')
 
 	  $total = $obj->total_ttc;
 
-      print_titre("Emettre un paiement");
+      print_titre("Émettre un paiement");
       print '<form action="paiement.php?facid='.$facid.'" method="post">';
       print '<input type="hidden" name="action" value="add">';
       print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
@@ -107,7 +107,7 @@ if ($action == 'create')
 	$sumpayed = $db->result(0,0);
 	$db->free();
       }
-      print '<tr><td>Déjà payé</td><td colspan="2"><b>'.price($sumpayed).'</b> euros TTC</td></tr>';
+      print '<tr><td>Déjà payé :</td><td colspan="2"><b>'.price($sumpayed).'</b> euros TTC</td></tr>';
 
       print "<tr class=\"liste_titre\"><td colspan=\"3\">Paiement</td>";
 
@@ -147,7 +147,7 @@ if ($action == 'create')
       print "<td rowspan=\"4\">";
       print '<textarea name="comment" wrap="soft" cols="40" rows="10"></textarea></td></tr>';
 
-      print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Num du cheque ou virement</em></td></tr>\n";
+      print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>N° du chèque ou du virement</em></td></tr>\n";
 
       print "<tr><td>Compte à débiter :</td><td><select name=\"accountid\"><option value=\"\">-</option>\n";
       $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account ORDER BY rowid";
@@ -172,7 +172,7 @@ if ($action == 'create')
       print "</td></tr>\n";
 
       print "<tr><td valign=\"top\">Reste à payer :</td><td><b>".price($total - $sumpayed)."</b> euros TTC</td></tr>\n";
-      print "<tr><td valign=\"top\">Montant :</td><td><input name=\"amount\" type=\"text\"></td></tr>\n";
+      print "<tr><td valign=\"top\">Montant :</td><td><input name=\"amount\" type=\"text\" value=\"".price($total - $sumpayed)."\"></td></tr>\n";
       print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
       print "</form>\n";
       print "</table>\n";
