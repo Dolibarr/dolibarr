@@ -24,10 +24,9 @@
 /*!
 	    \file       htdocs/compta/bank/virement.php
         \ingroup    banque
-		\brief      Page de siasie d'un virement
+		\brief      Page de saisie d'un virement
 		\version    $Revision$
 */
-
 
 require("./pre.inc.php");
 require("./bank.lib.php");
@@ -53,7 +52,7 @@ if ($_POST["action"] == 'add')
   if ($label && $amount) {
 
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
-      $sql .= " VALUES (now(), now(), '$dateo', '$label', (0 - $amount),$user->id, ".$_POST["account_from"].", 'VIR')";
+      $sql .= " VALUES (now(), '$dateo', '$dateo', '$label', (0 - $amount),$user->id, ".$_POST["account_from"].", 'VIR')";
     
       $result = $db->query($sql);
       if (!$result)
@@ -62,7 +61,7 @@ if ($_POST["action"] == 'add')
         }
     
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
-      $sql .= " VALUES (now(), now(), '$dateo', '$label', $amount,$user->id, ".$_POST["account_to"].", 'VIR')";
+      $sql .= " VALUES (now(), '$dateo', '$dateo', '$label', $amount,$user->id, ".$_POST["account_to"].", 'VIR')";
     
       $result = $db->query($sql);
       if ($result)
