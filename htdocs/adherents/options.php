@@ -20,7 +20,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherents/pre.inc.php");
 //require("../adherent.class.php");
 //require("../adherent_type.class.php");
 require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
@@ -33,49 +33,39 @@ $adho = new AdherentOptions($db);
 
 if ($HTTP_POST_VARS["action"] == 'add' && $user->admin) 
 {
-
-  //$adho->libelle     = $HTTP_POST_VARS["attrname"];
-  //$adho->cotisation  = $HTTP_POST_VARS["cotisation"];
-  //$adho->commentaire = $HTTP_POST_VARS["comment"];
-  if (preg_match("/^\w[a-zA-Z0-9-]*$/",$_POST['attrname'])){
+  // type et taille non encore pris en compte => varchar(255)
+  if (isset($_POST["attrname"]) && preg_match("/^\w[a-zA-Z0-9-]*$/",$_POST['attrname'])){
     $adho->create($_POST['attrname']);
+  }
+  if (isset($_POST['label'])){
+    $adho->create_label($_POST['attrname'],$_POST['label']);
   }
   Header("Location: $PHP_SELF");
 }
 
 if ($HTTP_POST_VARS["action"] == 'update' && $user->admin) 
 {
-
-  //  $adho->libelle     = $HTTP_POST_VARS["libelle"];
-  //  $adho->cotisation  = $HTTP_POST_VARS["cotisation"];
-  //  $adho->commentaire = $HTTP_POST_VARS["comment"];
-  
-  //  if ($adho->update($user->id) ) 
+  //if ($adho->update($user->id) ) 
   //    {	  
   //    }
+  if (isset($_POST['label'])){
+    $adho->update_label($_POST['attrname'],$_POST['label']);
+  }
   Header("Location: $PHP_SELF");
  
 }
 
-if ($_POST["action"] == 'delete' && $user->admin)
+if ($action == 'delete' && $user->admin)
 {
-  if(isset($_POST["attrname"])){
-    $adho->delete($_POST["attrname"]);
+  if(isset($attrname) && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
+    $adho->delete($attrname);
   }
   Header("Location: $PHP_SELF");
 }
-if ($action == 'commentaire')
-{
-  $don = new Don($db);
-  $don->set_commentaire($rowid,$HTTP_POST_VARS["commentaire"]);
-  $action = "edit";
-}
-
-
 
 llxHeader();
 
-print_titre("Champs optionnels");
+print_titre("Configuration des champs optionnels");
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -84,7 +74,7 @@ print_titre("Champs optionnels");
 /* ************************************************************************** */
 
 $array_options=$adho->fetch_name_optionals();
-
+$array_label=$adho->fetch_name_optionals_label();
 if (sizeof($array_options)>0) 
 {
   print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">";
@@ -92,7 +82,7 @@ if (sizeof($array_options)>0)
   print '<TR class="liste_titre">';
   print "<td>Libelle</td>";
   print "<td>Nom de l'attribut</td>";
-  print "<td>type</td><td>&nbsp;</td>";
+  print "<td>type</td><td>&nbsp;</td><td>&nbsp;</td>";
   print "</TR>\n";
   
   $var=True;
@@ -100,10 +90,11 @@ if (sizeof($array_options)>0)
     {
       $var=!$var;
       print "<TR $bc[$var]>";
-      print "<TD>&nbsp;</td>\n";
+      print "<TD>".$adho->attribute_label[$key]."&nbsp;</td>\n";
       print "<TD>$key</td>\n";
       print "<TD>$value</TD>\n";
       print "<TD><a href=\"$PHP_SELF?action=edit&attrname=$key\">Editer</TD>\n";
+      print "<TD><a href=\"$PHP_SELF?action=delete&attrname=$key\">Supprimer</TD>\n";
       print "</tr>";
       //      $i++;
     }
@@ -140,7 +131,7 @@ print "</tr></table></form><p>";
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Création d'une fiche don                                                   */
+/* Création d'un champ optionnel                                              */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,10 +144,10 @@ if ($action == 'create') {
   
   print '<input type="hidden" name="action" value="add">';
 
-  print '<tr><td>Libellé</td><td><input type="text" name="libelle" size="40"></td></tr>';  
+  print '<tr><td>Libellé</td><td><input type="text" name="label" size="40"></td></tr>';  
   print '<tr><td>Nom de l\'attribut (pas d\'espace et uniquement des carateres alphanumeriques)</td><td><input type="text" name="attrname" size="40"></td></tr>';  
 
-  print '<tr><td>Type</td><td>';
+  print '<tr><td>Type (non pris en compte)</td><td>';
 
   print '<select name="type">';
   print '<option value="varchar">chaine</option>';
@@ -176,7 +167,7 @@ if ($action == 'create') {
 } 
 /* ************************************************************************** */
 /*                                                                            */
-/* Edition de la fiche                                                        */
+/* Edition d'un champ optionnel                                               */
 /*                                                                            */
 /* ************************************************************************** */
 if (isset($attrname) && $attrname != '' && $action == 'edit')
@@ -186,7 +177,7 @@ if (isset($attrname) && $attrname != '' && $action == 'edit')
   print "<form action=\"$PHP_SELF\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
-  print '<tr><td>Libellé</td><td class="valeur">&nbsp;</td></tr>';
+  print '<tr><td>Libellé</td><td class="valeur">'.$adho->attribute_label[$attrname].'&nbsp;</td></tr>';
   print '<tr><td>Nom de l\'attribut</td><td class="valeur">'.$attrname.'&nbsp;</td></tr>';
   print '<tr><td>Type</td><td class="valeur">'.$adho->attribute_name[$attrname].'&nbsp;</td></tr>';
 
@@ -194,18 +185,16 @@ if (isset($attrname) && $attrname != '' && $action == 'edit')
 
   
   /*
-   *
-   *
-   *
+   * formulaire d'edition
    */
   print '<form method="post" action="'.$PHP_SELF.'?attrname='.$attrname.'">';
   print '<input type="hidden" name="attrname" value="'.$attrname.'">';
   print '<input type="hidden" name="action" value="update">';
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
-  print '<tr><td>Libellé</td><td class="valeur"><input type="text" name="libelle" size="40" value=" "></td></tr>';  
+  print '<tr><td>Libellé</td><td class="valeur"><input type="text" name="label" size="40" value="'.$adho->attribute_label[$attrname].'"></td></tr>';  
   print '<tr><td>Nom de l\'attribut</td><td class="valeur">'.$attrname.'&nbsp;</td></tr>';
-  print '<tr><td>Type</td><td class="valeur"><input type="text" name="type" size="40" value="'.$adho->attribute_name[$attrname].'"></td></tr>';
+  print '<tr><td>Type (non pris en compte)</td><td class="valeur"><input type="text" name="type" size="40" value="'.$adho->attribute_name[$attrname].'"></td></tr>';
   print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"</td></tr>';
   print '</table>';
   print "</form>";

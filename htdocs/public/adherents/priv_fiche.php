@@ -21,14 +21,15 @@
  *
  */
 require("./pre.inc.php");
-require("../../adherent.class.php");
-require("../../adherent_type.class.php");
-require("../../cotisation.class.php");
-require("../../paiement.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherent.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherent_type.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/cotisation.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/paiement.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
 
 
 $db = new Db();
-
+$adho = new AdherentOptions($db);
 
 llxHeader();
 
@@ -36,13 +37,16 @@ llxHeader();
 /*                                                                            */
 /* Edition de la fiche                                                        */
 /*                                                                            */
-/* ************************************************************************** */
+/*************************************************************************** */
+// fetch optionals attributes and labels
+$adho->fetch_optionals();
 if ($rowid > 0)
 {
 
   $adh = new Adherent($db);
   $adh->id = $rowid;
   $adh->fetch($rowid);
+  $adh->fetch_optionals($rowid);
 
   print_titre("Fiche adhérent de $adh->prenom $adh->nom");
 
@@ -70,6 +74,9 @@ if ($rowid > 0)
   if (isset($adh->photo) && $adh->photo !=''){
     print '<tr><td>URL Photo</td><td class="valeur">'."<A HREF=\"$adh->photo\"><IMG SRC=\"$adh->photo\"></A>".'&nbsp;</td></tr>';
   }
+  //  foreach($adho->attribute_label as $key=>$value){
+  //    print "<tr><td>$value</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
+  //  }
   print '</table>';
 
 

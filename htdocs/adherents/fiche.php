@@ -20,15 +20,16 @@
  * $Source$
  *
  */
-require("./pre.inc.php");
-require("../adherent.class.php");
-require("../adherent_type.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherents/pre.inc.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherent.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherent_type.class.php");
 require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
-require("../cotisation.class.php");
-require("../paiement.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/cotisation.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/paiement.class.php");
 
 
 $db = new Db();
+$adho = new AdherentOptions($db);
 
 if ($HTTP_POST_VARS["action"] == 'cotisation') 
 {
@@ -91,7 +92,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] =
   $adh = new Adherent($db, $rowid);
   $adh->validate($user->id);
   $adh->fetch($rowid);
-  $mesg=preg_replace("/%INFO%/","Prenom : $adh->prenom\nNom : $adh->nom\nSociete = $adh->societe\nAdresse = $adh->adresse\nCode Postal : $adh->cp\nVille : $adh->ville\nPays : $adh->pays\nEmail : $adh->email\nLogin : $adh->login\nPassword : $adh->pass\nNote : $adh->note",$conf->adherent->email_valid);
+  $mesg=preg_replace("/%INFO%/","Prenom : $adh->prenom\nNom : $adh->nom\nSociete = $adh->societe\nAdresse = $adh->adresse\nCode Postal : $adh->cp\nVille : $adh->ville\nPays : $adh->pays\nEmail : $adh->email\nLogin : $adh->login\nPassword : $adh->pass\nNote : $adh->note\n\nServeur : http://$SERVER_NAME/public/adherents/",$conf->adherent->email_valid);
   mail($adh->email,"Vos coordonnees sur http://$SERVER_NAME/",$mesg);
 }
 
@@ -100,7 +101,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] 
   $adh = new Adherent($db, $rowid);
   $adh->resiliate($user->id);
   $adh->fetch($rowid);
-  $mesg=preg_replace("/%INFO%/","Prenom : $adh->prenom\nNom : $adh->nom\nSociete = $adh->societe\nAdresse = $adh->adresse\nCode Postal : $adh->cp\nVille : $adh->ville\nPays : $adh->pays\nEmail : $adh->email\nLogin : $adh->login\nPassword : $adh->pass\nNote : $adh->note",$conf->adherent->email_resil);
+  $mesg=preg_replace("/%INFO%/","Prenom : $adh->prenom\nNom : $adh->nom\nSociete = $adh->societe\nAdresse = $adh->adresse\nCode Postal : $adh->cp\nVille : $adh->ville\nPays : $adh->pays\nEmail : $adh->email\nLogin : $adh->login\nPassword : $adh->pass\nNote : $adh->note\n\nServeur : http://$SERVER_NAME/public/adherents/",$conf->adherent->email_resil);
   mail($adh->email,"Vos coordonnees sur http://$SERVER_NAME/",$mesg);
 }
 
@@ -113,7 +114,8 @@ llxHeader();
 /*                                                                            */
 /* ************************************************************************** */
 
-
+// fetch optionals attributes and labels
+$adho->fetch_optionals();
 if ($action == 'create') {
 
   $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
@@ -129,8 +131,9 @@ if ($action == 'create') {
       $total = $obj->total;
     }
   }
-  $adho = new AdherentOptions($db);
-  $myattr=$adho->fetch_name_optionals();
+  //  $adho = new AdherentOptions($db);
+
+  //$myattr=$adho->fetch_name_optionals();
 
   print_titre("Nouvel adhérent");
   print "<form action=\"$PHP_SELF\" method=\"post\">\n";
@@ -173,8 +176,8 @@ if ($action == 'create') {
   print '<tr><td>Password</td><td><input type="text" name="pass" size="40"></td></tr>';
   print '<tr><td>Date de Naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="10"></td></tr>';
   print '<tr><td>Url photo</td><td><input type="text" name="photo" size="40"></td></tr>';
-  foreach($myattr as $key){
-    print "<tr><td>$key</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
+  foreach($adho->attribute_label as $key=>$value){
+    print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
   }
 
   print "<tr><td>Date de cotisation</td><td>\n";
@@ -208,7 +211,7 @@ if ($rowid > 0)
   $adh->id = $rowid;
   $adh->fetch($rowid);
   $adh->fetch_optionals($rowid);
-  $myattr=$adh->fetch_name_optionals();
+  //$myattr=$adh->fetch_name_optionals();
 
   print_titre("Edition de la fiche adhérent");
 
@@ -327,8 +330,8 @@ if ($rowid > 0)
 
   //  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   //  print '<tr><td colspan="2">Champs optionnels</td></tr>';
-  foreach($myattr as $key){
-    print "<tr><td>$key</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
+  foreach($adho->attribute_label as $key=>$value){
+    print "<tr><td>$value</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
   }
   print "</table>\n";
 

@@ -33,6 +33,11 @@ class AdherentOptions
    * ces champs
    */
   var $attribute_name;
+  /*
+   * Tableau contenant le nom des champs en clef et le label de ces
+   * champs en value
+   */
+  var $attribute_label;
 
   var $errorstr;
   /*
@@ -45,6 +50,7 @@ class AdherentOptions
       $this->id = $id;
       $this->errorstr = array();
       $this->attribute_name = array();
+      $this->attribute_label = array();
     }
   /*
    * Print error_list
@@ -110,19 +116,45 @@ class AdherentOptions
     /*
      *  Insertion dans la base
      */
-    $sql = "ALTER TABLE llx_adherent_options ";
-    $sql .= " ADD $attrname $type($length)";
+    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
+      $sql = "ALTER TABLE llx_adherent_options ";
+      $sql .= " ADD $attrname $type($length)";
       
-    if ($this->db->query($sql)) 
-      {
-	return 1;
-      }
-    else
-      {
-	print $this->db->error();
-	print "<h2><br>$sql<br></h2>";
-	return 0;
-      }  
+      if ($this->db->query($sql)) 
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error();
+	  print "<h2><br>$sql<br></h2>";
+	  return 0;
+	}  
+    }else{
+      return 0;
+    }
+  }
+
+  Function create_label($attrname,$label='') {
+    /*
+     *  Insertion dans la base
+     */
+    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
+      $sql = "INSERT INTO llx_adherent_options_label SET ";
+      $escaped_label=mysql_escape_string($label);
+      $sql .= " name='$attrname',label='$escaped_label' ";
+      
+      if ($this->db->query($sql)) 
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error();
+	  print "<h2><br>$sql<br></h2>";
+	  return 0;
+	}  
+    }
   }
 
   /*
@@ -130,20 +162,48 @@ class AdherentOptions
    *
    */
   Function delete($attrname)
-
   {
-    $sql = "ALTER TABLE llx_adherent_options DROP COLUMN $attrname";
+    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
+      $sql = "ALTER TABLE llx_adherent_options DROP COLUMN $attrname";
+      
+      if ( $this->db->query( $sql) )
+	{
+	  return $this->delete_label($attrname);
+	}
+      else
+	{
+	  print "Err : ".$this->db->error();
+	  print "<h2><br>$sql<br></h2>";
+	  return 0;
+	}
+    }else{
+      return 0;
+    }
 
-    if ( $this->db->query( $sql) )
-      {
-	return 1;
-      }
-    else
-      {
-	print "Err : ".$this->db->error();
-	print "<h2><br>$sql<br></h2>";
-	return 0;
-      }
+  }
+
+  /*
+   * Suppression d'un label
+   *
+   */
+  Function delete_label($attrname)
+  {
+    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
+      $sql = "DELETE FROM llx_adherent_options_label WHERE name='$attrname'";
+      
+      if ( $this->db->query( $sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print "Err : ".$this->db->error();
+	  print "<h2><br>$sql<br></h2>";
+	  return 0;
+	}
+    }else{
+      return 0;
+    }
 
   }
 
@@ -152,23 +212,61 @@ class AdherentOptions
    *
    */
   Function update($attrname,$type='varchar',$length=255)
-
   {
-    $sql = "ALTER TABLE llx_adherent_options MODIFY COLUMN $attrname $type($length)";
+    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
+      $sql = "ALTER TABLE llx_adherent_options MODIFY COLUMN $attrname $type($length)";
+      
+      if ( $this->db->query( $sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print "Err : ".$this->db->error();
+	  print "<h2><br>$sql<br></h2>";
+	  return 0;
+	}
+    }else{
+      return 0;
+    }
 
-    if ( $this->db->query( $sql) )
-      {
-	return 1;
-      }
-    else
-      {
-	print "Err : ".$this->db->error();
-	print "<h2><br>$sql<br></h2>";
-	return 0;
-      }
+  }
+
+  /*
+   * Modification d'un label
+   *
+   */
+  Function update_label($attrname,$label='')
+  {
+    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
+      $escaped_label=mysql_escape_string($label);
+      $sql = "REPLACE INTO llx_adherent_options_label SET name='$attrname',label='$escaped_label'";
+      
+      if ( $this->db->query( $sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print "Err : ".$this->db->error();
+	  print "<h2><br>$sql<br></h2>";
+	  return 0;
+	}
+    }else{
+      return 0;
+    }
 
   }
   
+  /*
+   * fetch optional attribute name and optional attribute label
+   */
+  Function fetch_optionals()
+    {
+      $this->fetch_name_optionals();
+      $this->fetch_name_optionals_label();
+    }
+
   /*
    * fetch optional attribute name
    */
@@ -191,6 +289,35 @@ class AdherentOptions
 	    }
 	  }
 	return $array_name_options;
+      }else{
+	return array();
+      }
+    }else{
+      print $this->db->error();
+      return array() ;
+    }
+    
+  }
+
+  /*
+   * fetch optional attribute name and its label
+   */
+  Function fetch_name_optionals_label()
+  {
+    $array_name_label=array();
+    $sql = "SELECT name,label FROM llx_adherent_options_label";
+
+    if ( $this->db->query( $sql) )
+      {
+      if ($this->db->num_rows())
+	{
+	while ($tab = $this->db->fetch_object())
+	  {
+	    // we can add this attribute to adherent object
+	    $array_name_label[$tab->name]=stripslashes($tab->label);
+	    $this->attribute_label[$tab->name]=stripslashes($tab->label);
+	  }
+	return $array_name_label;
       }else{
 	return array();
       }

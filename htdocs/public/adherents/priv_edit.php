@@ -20,10 +20,13 @@
  *
  */
 require("./pre.inc.php");
-require("../../adherent.class.php");
-require("../../adherent_type.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherent.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherent_type.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
 
 $db = new Db();
+$adho = new AdherentOptions($db);
+
 $errmsg='';
 $num=0;
 $error=0;
@@ -99,10 +102,14 @@ if ($action == 'update')
 	      $public=0;
 	    }
 	    $adh->public      = $public;
-	    
+	    foreach($_POST as $key => $value){
+	      if (ereg("^options_",$key)){
+		$adh->array_options[$key]=$_POST[$key];
+	      }
+	    }
 	    if ($adh->update($user->id) ) 
 	      {	  
-		$mesg=preg_replace("/%INFO%/","Prenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note",$conf->adherent->email_edit);
+		$mesg=preg_replace("/%INFO%/","Prenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note\n\nServeur : http://$SERVER_NAME/public/adherents/",$conf->adherent->email_edit);
 		mail($email,"Vos coordonnees sur http://$SERVER_NAME/",$mesg);
 		
 		//Header("Location: fiche.php?rowid=$adh->id&action=edit");
@@ -129,6 +136,9 @@ if (isset($_SERVER["REMOTE_USER"])){
   $adh = new Adherent($db);
   $adh->login = $_SERVER["REMOTE_USER"];
   $adh->fetch_login($_SERVER["REMOTE_USER"]);
+  $adh->fetch_optionals($adh->id);
+  // fetch optionals attibutes
+  $adho->fetch_optionals();
 
   $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
   $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
@@ -184,6 +194,10 @@ if (isset($_SERVER["REMOTE_USER"])){
   }else{
     print '<tr><td>Profil public ?</td><td> Non </td></tr>';
   }
+  foreach($adho->attribute_label as $key=>$value){
+    print "<tr><td>$value</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
+  }
+
   print "</table>\n";
 
   print "<hr>";
@@ -234,6 +248,9 @@ if (isset($_SERVER["REMOTE_USER"])){
     print '<tr><td>Profil public ?</td><td><input type="checkbox" name="public" checked></td></tr>';
   }else{
     print '<tr><td>Profil public ?</td><td><input type="checkbox" name="public"></td></tr>';
+  }
+  foreach($adho->attribute_label as $key=>$value){
+    print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
   }
   print '<tr><td colspan="2" align="center">';
   print '<input type="submit" name="bouton" value="Enregistrer">&nbsp;';

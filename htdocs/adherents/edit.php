@@ -19,12 +19,13 @@
  * $Source$
  *
  */
-require("./pre.inc.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherents/pre.inc.php");
 require("../adherent.class.php");
 require("../adherent_type.class.php");
 require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
 
 $db = new Db();
+$adho = new AdherentOptions($db);
 
 /* 
  * Enregistrer les modifs
@@ -92,7 +93,10 @@ if ($rowid)
   $adh = new Adherent($db);
   $adh->id = $rowid;
   $adh->fetch($rowid);
+  // fetch optionals value
   $adh->fetch_optionals($rowid);
+  // fetch optionals attributes and labels
+  $adho->fetch_optionals();
 
   $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
   $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
@@ -135,9 +139,9 @@ if ($rowid)
   print '<tr><td>Password</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
   print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
   print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
-  $myattr=$adh->fetch_name_optionals();
-  foreach($myattr as $key){
-    print "<tr><td>$key</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
+  //  $adho->fetch_optionals();
+  foreach($adho->attribute_label as $key=>$value){
+    print "<tr><td>$value</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
   }
 
   print "</table>\n";
@@ -186,8 +190,10 @@ if ($rowid)
   print '<tr><td>Password</td><td><input type="text" name="pass" size="40" value="'.$adh->pass.'"></td></tr>';
   print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$adh->naiss.'"></td></tr>';
   print '<tr><td>URL photo</td><td><input type="text" name="photo" size="40" value="'.$adh->photo.'"></td></tr>';
-  foreach($myattr as $key){
-    print "<tr><td>$key</td><td><input type=\"text\" name=\"options_$key\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
+  //  $myattr=$adho->fetch_name_optionals();
+  foreach($adho->attribute_label as $key=>$value){
+    //  foreach($myattr as $key){
+    print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
   }
   print '<tr><td colspan="2" align="center">';
   print '<input type="submit" name="bouton" value="Enregistrer">&nbsp;';

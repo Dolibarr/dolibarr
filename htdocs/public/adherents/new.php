@@ -20,13 +20,15 @@
  *
  */
 require("./pre.inc.php");
-require("../../adherent.class.php");
-require("../../adherent_type.class.php");
-require("../../cotisation.class.php");
-require("../../paiement.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherent.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherent_type.class.php");
+//require($GLOBALS["DOCUMENT_ROOT"]."/cotisation.class.php");
+//require($GLOBALS["DOCUMENT_ROOT"]."/paiement.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
 
 
 $db = new Db();
+$adho = new AdherentOptions($db);
 $errmsg='';
 $num=0;
 $error=0;
@@ -88,6 +90,11 @@ if ($HTTP_POST_VARS["action"] == 'add')
     $adh->commentaire = $HTTP_POST_VARS["comment"];
     $adh->morphy      = $HTTP_POST_VARS["morphy"];
     
+    foreach($_POST as $key => $value){
+      if (ereg("^options_",$key)){
+	$adh->array_options[$key]=$_POST[$key];
+      }
+    }
     if ($adh->create($user->id) ) 
       {	  
 	if ($cotisation > 0)
@@ -95,7 +102,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	    $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
 	  }
 	// Envoi d'un Email de confirmation au nouvel adherent
-	$mesg=preg_replace("/%INFO%/","Prenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note",$conf->adherent->email_new);
+	$mesg=preg_replace("/%INFO%/","Prenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass1\nNote : $note\n\nServeur : http://$SERVER_NAME/public/adherents/",$conf->adherent->email_new);
 	//$mesg="Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\n\nPrenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\nhttp://$SERVER_NAME/adherents/private/edit.php\n\n";
 	mail($email,"Votre adhesion sur http://$SERVER_NAME/",$mesg);
 	Header("Location: new.php?action=added");
@@ -112,6 +119,8 @@ llxHeader();
 /*                                                                            */
 /* ************************************************************************** */
 
+// fetch optionals attributes and labels
+$adho->fetch_optionals();
 
 if (isset($action) && $action== 'added'){
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
@@ -170,7 +179,9 @@ print '<tr><td><FONT COLOR="red">*</FONT> Password (a entrer 2 fois)</td><td><in
 print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$naiss.'"></td></tr>';
 print '<tr><td><FONT COLOR="blue">*</FONT> URL Photo</td><td><input type="text" name="photo" size="40" value="'.$photo.'"></td></tr>';
 print '<tr><td>Profil public ?</td><td><input type="checkbox" name="public" checked></td></tr>';
-
+foreach($adho->attribute_label as $key=>$value){
+  print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
+}
 print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
 print "</form>\n";
 print "</table>\n";
