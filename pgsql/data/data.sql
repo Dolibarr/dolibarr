@@ -72,9 +72,12 @@ insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_
 insert into llx_const (name, value, type, note, visible) values ('MAIN_THEME','yellow','chaine','Thème par défaut',0);
 insert into llx_const (name, value, type, note, visible) values ('SIZE_LISTE_LIMIT','20','chaine','Taille des listes',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_BARRETOP','default.php','chaine','Module de gestion de la barre de menu du haut',0);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_LANG_DEFAULT','fr','chaine','Langue par défaut pour les écrans Dolibarr',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_LANG_DEFAULT','fr_FR','chaine','Langue par défaut pour les écrans Dolibarr',0);
+
+
 insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage formulaire de recherche des Contacts dans la barre de gauche',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage formulaire de recherche des Sociétés dans la barre de gauche',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_PRODUITSERVICE','1','yesno','Affichage formulaire de recherche des Produits et Services dans la barre de gauche',0);
 
 --
 -- Dons
@@ -157,7 +160,7 @@ insert into llx_const (name, value, type) values ('FAC_OUTPUT_URL','/htdocs/docu
 insert into llx_const (name, value, type) values ('FAC_PDF_INTITULE','Facture','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_MEL','facture@societe.com','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_WWW','http://www.societe.com','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_LOGO','/htdocs/documents/logo','chaine');
+insert into llx_const (name, value, type) values ('FAC_PDF_LOGO','/documents/logo','chaine');
 insert into llx_const (name, value, type) values ('FAC_CAPITAL_EURO','0','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_TVA_INTRA','','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_RCS','','chaine');
@@ -197,15 +200,15 @@ insert into llx_c_chargesociales (id,libelle,deductible) values ( 3, 'GSG/CRDS N
 --
 
 delete from llx_c_actioncomm;
-insert into llx_c_actioncomm (id,libelle) values ( 0, '-');
-insert into llx_c_actioncomm (id,libelle) values ( 1, 'Appel Téléphonique');
-insert into llx_c_actioncomm (id,libelle) values ( 2, 'Envoi Fax');
-insert into llx_c_actioncomm (id,libelle) values ( 3, 'Envoi Proposition');
-insert into llx_c_actioncomm (id,libelle) values ( 4, 'Envoi Email');
-insert into llx_c_actioncomm (id,libelle) values ( 5, 'Prendre Rendez-vous');
-insert into llx_c_actioncomm (id,libelle) values ( 9, 'Envoi Facture');
-insert into llx_c_actioncomm (id,libelle) values (10, 'Relance effectuée');
-insert into llx_c_actioncomm (id,libelle) values (11, 'Clôture');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 0, 'all',   'system', '-');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 1, 'fr_FR', 'system', 'Appel Téléphonique');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 2, 'fr_FR', 'system', 'Envoi Fax');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 3, 'fr_FR', 'system', 'Envoi Proposition');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 4, 'fr_FR', 'system', 'Envoi Email');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 5, 'fr_FR', 'system', 'Prendre rendez-vous');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 9, 'fr_FR', 'system', 'Envoi Facture');
+insert into llx_c_actioncomm (id, lang, type, libelle) values (10, 'fr_FR', 'system', 'Relance effectuée');
+insert into llx_c_actioncomm (id, lang, type, libelle) values (11, 'fr_FR', 'system', 'Clôture');
 
 --
 --
@@ -453,7 +456,7 @@ insert into llx_c_effectif (id,libelle) values (5,  '100 - 500');
 insert into llx_c_effectif (id,libelle) values (6,  '> 500');
 
 delete from llx_c_paiement;
-insert into llx_c_paiement (id,code,libelle,type) values (0, '-', 3);
+insert into llx_c_paiement (id,code,libelle,type) values (0, '',		'-', 3);
 insert into llx_c_paiement (id,code,libelle,type) values (1, 'TIP', 'TIP', 1);
 insert into llx_c_paiement (id,code,libelle,type) values (2, 'VIR', 'Virement', 2);
 insert into llx_c_paiement (id,code,libelle,type) values (3, 'PRE', 'Prélèvement', 1);
