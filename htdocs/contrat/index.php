@@ -31,6 +31,7 @@
 require("./pre.inc.php");
 
 $langs->load("products");
+$langs->load("companies");
 
 
 llxHeader();
