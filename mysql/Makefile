@@ -80,6 +80,6 @@ createpriv:
 
 
 mysql.sql: $(TABLES) data/data.sql
-	find tables/ -name "*sql" | xargs cat | grep -v ^-- > mysql.sql
+	find tables/ -name "*sql" | xargs cat | grep -v ^-- | cut -d "-" -f 1 > mysql.sql
 	cat data/data.sql | grep -v ^-- >> mysql.sql
 	cvs commit mysql.sql
