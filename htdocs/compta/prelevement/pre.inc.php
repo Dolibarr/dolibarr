@@ -42,6 +42,7 @@ function llxHeader($head = "", $title="", $help_url='')
     {
       $menu->add(DOL_URL_ROOT."/compta/prelevement/","Prélèvements");
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php","Bons");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/rejets.php","Rejets");
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/stats.php","Statistiques");
 
       $menu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php","Demandes");
