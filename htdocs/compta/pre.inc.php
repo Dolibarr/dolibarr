@@ -22,9 +22,9 @@
  */
 
 /*!
-	    \file   	htdocs/compta/pre.inc.php
-  	    \ingroup    compta
-  	    \brief  	Fichier gestionnaire du menu compta
+  \file   	htdocs/compta/pre.inc.php
+  \ingroup    compta
+  \brief  	Fichier gestionnaire du menu compta
 */
 
 require("../main.inc.php");
@@ -32,7 +32,7 @@ require("../main.inc.php");
 function llxHeader($head = "", $title="", $help_url='')
 {
   global $user, $conf, $langs;
-  
+
   $user->getrights('banque');
   
   top_menu($head, $title);
@@ -113,6 +113,12 @@ function llxHeader($head = "", $title="", $help_url='')
     {
       $menu->add(DOL_URL_ROOT."/compta/prelevement/","Bon prélèv.");
     }
+
+
+  $menu->add(DOL_URL_ROOT."/compta/ventilation.php",$langs->trans("Ventilation"));
+
+  if ($user->rights->compta->ventilation->param)
+    $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));
 
   if (! $user->compta) 
     {
