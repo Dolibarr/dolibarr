@@ -180,6 +180,76 @@ class Product
 	  return 0;
 	}
     }
+  /*
+   *
+   *
+   */
 
+  Function _get_stats($sql)
+    {
+      $result = $this->db->query($sql) ;
+
+      if ( $result )
+	{
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  while ($i < $num)
+	    {
+	      $arr = $this->db->fetch_array($i);
+	      $ventes[$arr[1]] = $arr[0];
+	      $i++;
+	    }
+	}
+
+      $year = strftime('%Y',time());
+      $month = strftime('%m',time());
+      $result = array();
+
+      for ($j = 0 ; $j < 12 ; $j++)
+	{
+	  $idx=ucfirst(strftime("%b",mktime(12,0,0,$month,1,$year)));
+	  if (isset($ventes[$year . $month]))
+	    {
+	      $result[$j] = array($idx, $ventes[$year . $month]);
+	    }
+	  else
+	    {
+	      $result[$j] = array($idx,0);
+	    }
+
+	  $month = "0".($month - 1);
+	  if (strlen($month) == 3)
+	    {
+	      $month = substr($month,1);
+	    }
+	  if ($month == 0)
+	    {
+	      $month = 12;
+	      $year = $year - 1;
+	    }
+	}
+      return array_reverse($result);
+
+    }
+
+  Function get_nb_vente()
+    {
+      $sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
+      $sql .= " FROM llx_facturedet as d, llx_facture as f";
+      $sql .= " WHERE f.rowid = d.fk_facture and f.paye = 1 and d.fk_product =".$this->id;
+      $sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
+
+      return $this->_get_stats($sql);
+    }
+
+  Function get_num_vente()
+    {
+      $sql = "SELECT count(*), date_format(f.datef, '%Y%m') ";
+      $sql .= " FROM llx_facturedet as d, llx_facture as f";
+      $sql .= " WHERE f.rowid = d.fk_facture and f.paye = 1 and d.fk_product =".$this->id;
+      $sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
+
+      return $this->_get_stats($sql);
+    }
 }
 ?>
