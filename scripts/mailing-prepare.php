@@ -56,13 +56,12 @@ if ( $db->query($sql) )
       dolibarr_syslog("mailing-prepare: mailing $row[0]");
       dolibarr_syslog("mailing-prepare: mailing module $row[1]");
 
-      require DOL_DOCUMENT_ROOT.'/comm/mailing/modules/'.$row[1].'.modules.php';
+      require DOL_DOCUMENT_ROOT.'/includes/modules/mailings/'.$row[1].'.modules.php';
 
       $classname = "mailing_".$row[1];
 
-      $obj = new $classname;
-
-      $obj->prepare_cible($db, $row[0]);
+      $obj = new $classname($db);
+      $obj->add_to_target($row[0]);
 
       $i++;
       

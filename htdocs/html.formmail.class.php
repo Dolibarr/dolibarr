@@ -134,7 +134,7 @@ class FormMail
         if ($this->withtoreadonly) {
             print (! is_array($this->withto) && ! is_numeric($this->withto))?$this->withto:"";
         } else {
-            print "<input size=\"30\" name=\"sendto\" value=\"".(! is_array($this->withto)?$this->withto:"")."\">";
+            print "<input size=\"30\" name=\"sendto\" value=\"".(! is_array($this->withto) && ! is_numeric($this->withto)?$this->withto:"")."\">";
             if (is_array($this->withto))
             {
                 print " ".$langs->trans("or")." ";

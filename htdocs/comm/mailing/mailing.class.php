@@ -33,7 +33,8 @@
 class Mailing
 {
   var $id;
-
+  var $error;
+  
   /**
    *    \brief  Constructeur de la classe
    *    \param  DB          handler accès base de données
@@ -55,49 +56,83 @@ class Mailing
   /**
    *    \brief      Création du mailing
    *    \param      user object utilisateur qui crée
+   *    \return     -1 si erreur, >0 sinon
    *
    */
   function create($user)
     {
+      global $langs;
+        
       dolibarr_syslog("Mailing::Create");
+
+      $this->db->begin();
+
+      $this->from=trim($this->from);
+      $this->titre=trim($this->titre);
+
+      if (! $this->from)
+	{
+	  $this->error = $langs->trans("ErrorMailFromRequired");
+      return -1;
+	}
+
       $sql = "INSERT INTO ".$this->db_table;
       $sql .= " (date_creat, fk_user_creat)";
       $sql .= " VALUES (now(), ".$user->id.")";
 
-      if (strlen(trim($this->titre)) == 0)
+      if (! $this->titre)
 	{
-	  $this->titre = "Sans titre";
+	  $this->titre = $langs->trans("NoTitle");
 	}
 
-      if ( $this->db->query($sql) )
+      $result=$this->db->query($sql);
+      if ($result)
 	{
-	  $this->id = $this->db->last_insert_id();
-	  
-	  return $this->update();
+	  $this->id = $this->db->last_insert_id($result);
+
+      if ($this->update() > 0)
+      {
+        $this->db->commit();
+      }
+	  else
+	  {
+	    $this->db->rollback();
+        $this->error=$langs->trans("ErrorUnknown");
+	    return -1;
+	  }
+
+	  return $this->id;
 	}
       else
 	{
+      $this->db->rollback();
+      
 	  dolibarr_syslog("Mailing::Create Erreur -1");
+	  $this->error=$langs->trans("UnknownError");
 	  return -1;
 	}
+
     }
     
   /**
-   *    \brief     Update les infos du mailing
+   *    \brief      Update les infos du mailing
+   *    \return     < 0 si erreur, > 0 si ok
    */
   function update()
     {
       dolibarr_syslog("Mailing::Update");
 
       $sql = "UPDATE ".MAIN_DB_PREFIX."mailing ";
-      $sql .= " SET titre = '".$this->titre."'";
-      $sql .= " , sujet = '".$this->sujet."'";
-      $sql .= " , body = '".$this->body."'";
+      $sql .= " SET titre = '".addslashes($this->titre)."'";
+      $sql .= " , sujet = '".addslashes($this->sujet)."'";
+      $sql .= " , body = '".addslashes($this->body)."'";
+      $sql .= " , email_from = '".$this->from."'";
       $sql .= " WHERE rowid = ".$this->id;
 
-      if ($this->db->query($sql) )
+      $result=$this->db->query($sql);
+      if ($result)
 	{
-	  return 0;
+	  return 1;
 	}
       else
 	{
@@ -211,15 +246,17 @@ class Mailing
 
 
   /**
-   *    \brief     Supprime le mailing
-   *    \param     rowid      id du mailing à supprimer
+   *    \brief      Supprime le mailing
+   *    \param      rowid       id du mailing à supprimer
+   *    \return     int         1 en cas de succès
    */
   function delete($rowid)
   {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."mailing";
-    $sql .= " WHERE fk_facture = ".$rowid;
+    $sql .= " WHERE rowid = ".$rowid;
     
     $this->db->query($sql);
+    return 1;
   }
   
 }
