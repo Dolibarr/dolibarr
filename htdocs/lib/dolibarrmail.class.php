@@ -220,7 +220,7 @@ class DolibarrMail
     if (count($this->filename_list))
       {
 	$out = $out . "--".$this->boundary . "\n";
-	$out = $out . "Content-Type: text/plain; charset=\"iso-8859-15\"\n";
+	$out = $out . 'Content-Type: text/plain; charset="iso-8859-15"'."\n";
 	$out = $out . "Content-Disposition: inline\n\n";
       }
     else
