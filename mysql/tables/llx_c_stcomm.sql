@@ -20,7 +20,7 @@
 --
 -- ========================================================================
 
-create table c_stcomm
+create table llx_c_stcomm
 (
   id       integer PRIMARY KEY,
   libelle  varchar(30)
