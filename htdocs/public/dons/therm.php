@@ -25,20 +25,60 @@ if (file_exists ($thermlib))
 {
   include($thermlib);
 
-  /*
-   * Read Values
+  if (1)
+    {
+
+
+      $dons_file = "/var/run/dolibarr.don.eucd";
+
+      /*
+       * Read Values
+       */
+      
+      if (file_exists ($dons_file))
+	{
+	  
+	  $fp = fopen($dons_file, 'r' );
+	  
+	  
+	  if ($fp)
+	    {
+	      $intentValue = fgets( $fp, 10 );
+	      $pendingValue = fgets( $fp, 10 );
+	      $actualValue = fgets( $fp, 10 );
+	      fclose( $fp ); 
+	    }
+	  
+	}
+      
+    }
+  else
+    {
+
+
+
+      /*
+       * Read Values
+       */
+      
+      $conf = new Conf();
+      $dbt = new Db();
+      $dontherm = new Don($dbt);
+      
+      $actualValue = $dontherm->sum_actual();
+      $pendingValue = $dontherm->sum_pending();
+      $intentValue = $dontherm->sum_intent();
+
+      $dbt->close();
+    }
+
+
+  /* 
+   * Graph thermometer
    */
-
-  $conf = new Conf();
-  $dbt = new Db();
-  $dontherm = new Don($dbt);
-
-  $actualValue = $dontherm->sum_actual();
-  $pendingValue = $dontherm->sum_pending();
-  $intentValue = $dontherm->sum_intent();
- 
+  
   print moneyMeter($actualValue, $pendingValue, $intentValue);
 
-  $dbt->close();
+
 }
 ?>
