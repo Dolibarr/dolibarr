@@ -93,7 +93,7 @@ function llxHeader($head = "") {
     {
       $menu->add("resultat/","Résultats");
 
-      $menu->add("bank/index.php3","Bank");
+      $menu->add("bank/index.php3","Banque");
     }
 
 
