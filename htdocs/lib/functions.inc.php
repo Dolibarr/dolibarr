@@ -28,7 +28,7 @@
 		\author Rodolphe Quiedeville
 		\author	Jean-Louis Bergamo
 		\author	Laurent Destailleur
-		\version 1.2.
+		\version $Revision$
 
 		Ensemble de fonctions de base de dolibarr sous forme d'include
 */
@@ -210,40 +210,52 @@ function dolibarr_print_phone($phone)
 
 function img_file($alt = "Voir")
 {
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/file.png" border="0" alt="'.$alt.'">';
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/file.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 function img_file_new($alt = "Voir")
 {
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/filenew.png" border="0" alt="'.$alt.'">';
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/filenew.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 
 function img_pdf($alt = "Voir")
 {
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/pdf.png" border="0" alt="'.$alt.'">';
-}
-
-function img_warning($alt = "Voir")
-{
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/warning.png" border="0" alt="'.$alt.'">';
-}
-
-function img_delete($alt = "Supprimer")
-{
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/delete.png" border="0" alt="'.$alt.'" title="Supprimer">';
-}
-
-function img_info($alt = "Informations")
-{
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/info.png" border="0" alt="'.$alt.'" title="Informations">';
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/pdf.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 
 function img_edit($alt = "Modifier")
 {
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit.png" border="0" alt="'.$alt.'" title="Modifier">';
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
+
+function img_delete($alt = "Supprimer")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+function img_disable($alt = "Désactiver")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/disable.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+
+function img_warning($alt = "Voir")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/warning.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+function img_info($alt = "Informations")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/info.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+function img_alerte($alt = "Alerte")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/alerte.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
 
 function img_phone_in($alt = "Modifier")
 {
@@ -255,11 +267,6 @@ function img_phone_out($alt = "Modifier")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call_out.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-
-function img_alerte($alt = "Alerte")
-{
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/alerte.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-}
 
 
 function img_next($alt = "Suivant")
@@ -823,6 +830,7 @@ function print_fleche_navigation($page,$file,$options='', $nextpage)
     }
 }
 
+
 /*!
 		\brief fonction servant a afficher un menu déroulant avec oui ou non
 		\param	value
@@ -841,6 +849,37 @@ function print_oui_non($value)
       print '<option value="0" selected>non';
       print '<option value="1">oui';
     }
+}
+
+/*!
+		\brief fonction servant a afficher un menu déroulant sur le type de paiement
+		\param	value
+		\remarks value peut avoir la valeur 0 ou 1
+*/
+
+function print_type_paiement_select($db,$nomselect,$value=-1)
+{
+  print "<select name=\"$nomselect\">";
+
+  $sql  = "SELECT tp.code, tp.libelle";
+  $sql .= " FROM ".MAIN_DB_PREFIX."c_paiement as tp";
+  if ($value >= 0)
+    {
+    $sql.="WHERE type = $value";
+    }
+  $sql.=" ORDER by tp.libelle";
+  if ( $db->query($sql) ) {
+        $i=0;
+        $num = $db->num_rows();
+        while ($i < $num)
+    	  {
+            $obj = $db->fetch_object( $i);
+            print "<option value=\"$obj->code\">$obj->libelle</option>";
+            $i++;
+        }
+
+    }
+  print "</select>\n";
 }
 
 /*!
@@ -913,7 +952,7 @@ function print_date_select($set_time='')
     {
       if ($year == $syear)
 	{
-	  print "<option value=\"$year\" SELECTED>$year";
+	  print "<option value=\"$year\" selected>$year";
 	}
       else
 	{
@@ -972,6 +1011,7 @@ function print_duree_select($prefix)
     }
   print "</select>\n";  
 }
+
 
 /*!
 		\brief fonction qui retourne un montant monétaire formaté
