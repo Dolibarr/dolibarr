@@ -412,7 +412,7 @@ if ($socid > 0) {
        *
        */
       print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
-      print '<tr class="liste_titre"><td><a href="action/index.php3?socid='.$socid.'">Actions effectuées</a></td></tr>';
+      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$socid.'">Actions effectuées</a></td></tr>';
       print '<tr>';
       print '<td valign="top">';
 
