@@ -84,7 +84,7 @@ if ( $db->query($sql) )
       $var=!$var;
       print "<TR $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->rowid.'">'.strftime("%d %B %Y",$objp->dd).'</a></td>';
-      print "<TD><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
+      print '<td><a href="/comm/fiche.php?socid='.$objp->idp.'">'.$objp->nom."</a></td>\n";
 
       print '<TD align="center">'.$objp->firstname.' '.$objp->name.'</td>';
 
