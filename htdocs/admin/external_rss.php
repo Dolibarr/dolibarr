@@ -55,13 +55,13 @@ if ($action == 'save')
 }
 
 
-  /*
-   * Affichage du formulaire de saisie
-   */
+/*
+ * Affichage du formulaire de saisie
+ */
   
-  print_fiche_titre("Configuration du lien vers un site syndiqué", $mesg);
+print_fiche_titre("Configuration du lien vers un site syndiqué", $mesg);
   
-  print "\n<p align=\"justify\">Attention, pour la récupération des données au format RSS, les urls en https ne marchent pas pour l'instant. </p>
+print "\n<p align=\"justify\">Attention, pour la récupération des données au format RSS, les urls en https ne marchent pas pour l'instant. </p>
 <p>Exemples:
  <ul>
   <li>WikiApril / http://wiki.april.org / http://wiki.april.org/RecentChanges?format=rss (et tous les sites phpwiki)</li>
@@ -92,22 +92,34 @@ if ($action == 'save')
   <td><input type=\"text\" name=\"external_rss_urlrss_0\" value=\"" . @constant("EXTERNAL_RSS_URLRSS_" . $i) . "\" size=\"45\"></td>
 </tr>
 <tr>
-<td colspan=\"2\"><input type=\"submit\" name=\"envoyer\" value=\"Enregistrer\"></td>
+<td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"envoyer\" value=\"Enregistrer\"></td>
 </tr>\n";
   }
 
-  clearstatcache();
-  
-  print "</table>
-<input type=\"hidden\" name=\"action\" value=\"save\"></td>
-</form>\n";
-
+print "</table><input type=\"hidden\" name=\"action\" value=\"save\"></form>";
 
 /*
  *
  *
  */
 
+print_titre("Résultat du fetch");
+
+// à modifier si on a plus d'un module RSS externe !
+if (defined("MAIN_MODULE_EXTERNAL_RSS") && MAIN_MODULE_EXTERNAL_RSS)
+{
+  print '<a href="'.EXTERNAL_RSS_URL_0.'">'.EXTERNAL_RSS_TITLE_0.'</a><br><br>';
+  require_once("../includes/magpierss/rss_fetch.inc");
+
+  $rss = fetch_rss( EXTERNAL_RSS_URLRSS_0 );
+  
+  foreach ($rss->items as $item)
+    {
+      $href = $item['link'];
+      $title = $item['title'];
+      print '<a href="'.$href.'">'.$title.'</a><br>';
+    }
+}
 
 $db->close();
 
