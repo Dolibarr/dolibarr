@@ -3,6 +3,8 @@ NewCompany=Nieuwe bedrijf (vooruitzicht, klant, leverancier)
 Company=Bedrijf
 Companies=Bedrijven
 Name=Naam
+LastName=Naam
+FirstName=Voornaam
 Surname=De familienaam
 Address=Het adres
 State=Provincie
@@ -21,3 +23,5 @@ Prospect=Vooruitzicht
 Customer=Klant
 Supplier=Leverancier
 CompanyList=Bedrijven lijst
+AddContact=Voeg contact toe
+

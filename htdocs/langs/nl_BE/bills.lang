@@ -3,6 +3,7 @@ Bill=Factuur
 Bills=Factuuren
 ClassifyPayed=Classificeer 'Betaalde'
 ClassifyCanceled=Classificeer 'Verlaten'
+CreateBill=Creëer Factuur
 Send=Stuur
 SendRemind=Stuur Herinnering
 DoPaiement=Doe Betaling
