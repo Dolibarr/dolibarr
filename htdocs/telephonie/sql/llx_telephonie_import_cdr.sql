@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,14 +21,14 @@
 -- ========================================================================
 
 create table llx_telephonie_import_cdr (
-  ligne     int,
-  client    varchar(255),
-  date      varchar(255),
-  heure     varchar(255),
-  num       varchar(255),
-  dest      varchar(255),
-  dureetext varchar(255),
-  tarif     varchar(255),
-  montant   real,
-  duree     integer
+  idx       integer,
+  ligne     varchar(255) NOT NULL,
+  date      varchar(255) NOT NULL,
+  heure     varchar(255) NOT NULL,
+  num       varchar(255) NOT NULL,
+  dest      varchar(255) NOT NULL,
+  dureetext varchar(255) NOT NULL,
+  tarif     varchar(255) NOT NULL,
+  montant   real  NOT NULL,
+  duree     integer  NOT NULL
 )type=innodb;
