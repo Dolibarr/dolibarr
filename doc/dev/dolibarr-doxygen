@@ -83,7 +83,7 @@ EXCLUDE                = mysql \
                          htdocs/includes/php_writeexcel \
                          htdocs/includes/phplot
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       =
+EXCLUDE_PATTERNS       = */CVS/Base/*
 EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = 
 EXAMPLE_RECURSIVE      = NO
