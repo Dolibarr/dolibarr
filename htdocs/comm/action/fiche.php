@@ -56,12 +56,12 @@ if ($HTTP_POST_VARS["action"] == 'add_action')
       $actioncomm->priority = 2;
       $actioncomm->type = $HTTP_POST_VARS["actionid"];
       
-      $actioncomm->date = $db->idate(mktime($HTTP_POST_VARS["achour"],
-					    $HTTP_POST_VARS["acmin"],
+      $actioncomm->date = $db->idate(mktime($HTTP_POST_VARS["heurehour"],
+					    $HTTP_POST_VARS["heuremin"],
 					    0,
-					    $HTTP_POST_VARS["acmonth"],
-					    $HTTP_POST_VARS["acday"],
-					    $HTTP_POST_VARS["acyear"])
+					    $HTTP_POST_VARS["remonth"],
+					    $HTTP_POST_VARS["reday"],
+					    $HTTP_POST_VARS["reyear"])
 				     );
       if ($HTTP_POST_VARS["actionid"] == 5) 
 	{
