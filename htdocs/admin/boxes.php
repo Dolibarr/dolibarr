@@ -24,8 +24,6 @@ llxHeader();
 
 print_titre("Boites affichées");
 
-$db = new Db();
-
 if ($HTTP_POST_VARS["action"] == 'add')
 {
 

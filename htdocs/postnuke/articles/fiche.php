@@ -23,8 +23,6 @@
 require("./pre.inc.php");
 require("./pnarticle.class.php");
 
-$db = new Db();
-
 
 if ($action == 'update' && !$cancel)
 {

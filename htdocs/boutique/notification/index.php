@@ -25,7 +25,6 @@ require("./pre.inc.php");
 
 llxHeader();
 
-$db = new Db();
 if ($sortfield == "") {
   $sortfield="lower(c.customers_lastname)";
 }

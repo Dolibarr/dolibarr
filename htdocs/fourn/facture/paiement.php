@@ -22,8 +22,6 @@
 require("./pre.inc.php3");
 require("./paiementfourn.class.php");
 
-$db = new Db();
-
 /*
  * Sécurité accés client
  */

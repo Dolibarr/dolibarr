@@ -20,12 +20,9 @@
  * $Source$
  *
  */
-
 require("./pre.inc.php");
 
 llxHeader();
-
-$db = new Db();
 
 if ($action == 'addga') {
   $client = new Client($db);

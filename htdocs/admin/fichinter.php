@@ -29,8 +29,6 @@ if (!$user->admin)
   exit;
 }
 
-$db = new Db();
-
 // positionne la variable pour le test d'affichage de l'icone
 
 $ficheinter_addon_var_pdf = FICHEINTER_ADDON_PDF;

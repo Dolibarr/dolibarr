@@ -33,8 +33,6 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-$db = new Db();
-
 if ($action == 'note')
 {
   $sql = "UPDATE societe SET note='$note' WHERE idp=$socid";

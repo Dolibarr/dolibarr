@@ -35,7 +35,6 @@ print '<TD>Note</TD>';
 print "<TD>Action</TD>";
 print "</TR>\n";
 
-$db = new Db();
 $form = new Form($db);
 $typeconst=array('yesno','texte','chaine');
 if ($user->admin)

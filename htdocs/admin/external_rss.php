@@ -30,8 +30,6 @@ if (!$user->admin)
   exit;
 }
 
-$db = new Db();
-
 $def = array();
 
 // positionne la variable pour le nombre de rss externes
