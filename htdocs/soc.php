@@ -60,6 +60,7 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
   $soc->siret                = $_POST["siret"];
   $soc->ape                  = $_POST["ape"];
   $soc->prefix_comm          = $_POST["prefix_comm"];
+  $soc->code_client          = $_POST["code_client"];
   $soc->capital              = $_POST["capital"];
   $soc->tva_intra            = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
   $soc->forme_juridique_code = $_POST["forme_juridique_code"];
@@ -77,6 +78,10 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 	  $no_reload = 1;
 	  $mesg = "Erreur, le prefix '".$soc->prefix_comm."' existe déjà vous devez en choisir un autre";
 	  $_GET["action"]= "edit";
+	}
+      else
+	{
+	  Header("Location: soc.php?socid=".$_GET["socid"]);
 	}
 	
     }
@@ -139,6 +144,7 @@ if ($_GET["action"] == 'create')
 
       print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel"></td>';
       print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax"></td></tr>';
+      print '<tr><td>'.$langs->trans('Code client').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15"></td></tr>';
       print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input size="40" type="text" name="url"></td></tr>';
 
       print '<tr><td>'.$langs->trans('ProfIdSiren').'</td><td><input type="text" name="siren"></td>';
@@ -218,6 +224,9 @@ elseif ($_GET["action"] == 'edit')
 
       print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
       print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
+
+      print '<tr><td>'.$langs->trans('Code client').'</td><td colspan="3"><input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15"></td></tr>';
+
       print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
       
       print '<tr><td>'.$langs->trans('ProfIdSiren').'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
@@ -322,6 +331,12 @@ else
 
   print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
   print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
+
+  print '<tr><td>';
+  print $langs->trans('Code client').'</td><td colspan="3">';
+  print $soc->code_client;
+  print '</td></tr>';
+
   print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
   if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
   print '</td></tr>';
