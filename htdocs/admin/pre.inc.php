@@ -32,6 +32,9 @@ function llxHeader($head = "", $urlp = "") {
   $menu = new Menu();
 
   $menu->add("index.php", "Dolibarr");
+
+  $menu->add("const.php", "Constantes");
+
   $menu->add("mysql.php", "Mysql");
 
   left_menu($menu->liste);
