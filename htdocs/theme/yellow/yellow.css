@@ -16,9 +16,7 @@
  *
  * $Id$
  * $Source$
- *
  */
-
 body 
 {
   background: #ebebe0; 
@@ -40,27 +38,22 @@ a {
 
 a:hover {     text-decoration: underline;  }
 
-td.menu
-{ 
-  border-right: 1px solid #000000;
-  border-bottom: 1px solid #000000;
-  }
+td.menu { 
+          border-right: 1px solid #000000;
+          border-bottom: 1px solid #000000;
+          }
 
-td.menusel
-{ 
-  border-right: 1px solid #000000;
-  border-bottom: 1px solid #000000;
-  }
+td.menusel { 
+             border-right: 1px solid #000000;
+             border-bottom: 1px solid #000000;
+             }
 
-
-td.border
-{ 
-  border-top: 1px solid #000000;
-  border-right: 1px solid #000000;
-  border-bottom: 1px solid #000000;
-  border-left: 1px solid #000000;
- }
-
+td.border { 
+            border-top: 1px solid #000000;
+            border-right: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+            border-left: 1px solid #000000;
+            }
 
 .menu 
 { 
@@ -76,7 +69,6 @@ td.border
   color: #000000; 
   text-decoration: none }
 
-
 .submenu 
 { 
   background: #ccccb3; 
@@ -84,88 +76,87 @@ td.border
   color: #000000; 
   text-decoration: none }
 
+a.normal{ font-weight: normal } 
+a.impayee { font-weight: bold }
 
 /*
  *   Barre de gauche
  */
 
-a.normal{ font-weight: normal } 
-a.impayee { font-weight: bold }
-
-a.leftmenu 
-{ 
-  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
-  color: #202020; 
+a.leftmenu { 
+             font-family: Helvetica, Verdana; 
+             font-size: 1.0em; 
+             font-weight: bold; 
+             color: #202020; 
   }
 
-td.barre 
-{ 
-  border-right: 1px solid #000000;
-  border-bottom: 1px solid #000000;
-  background: #ccccb3;
-  font-family: Helvetica, Verdana; font-size: 1.0em; 
-  color: #000000; 
-  text-decoration: none }
+td.barre { 
+           border-right: 1px solid #000000;
+           border-bottom: 1px solid #000000;
+           background: #ccccb3;
+           font-family: Helvetica, Verdana;
+           font-size: 1.0em; 
+           color: #000000; 
+           text-decoration: none }
 
-td.barre_select 
-{ 
-  background: #ccccb3; 
-  color: #000000 
-  }
+td.barre_select { 
+                  background: #ccccb3; 
+                  color: #000000 
+                  }
 
-
-
-div.titre 
-{ 
-  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
-  color: #666633; 
-  text-decoration: none }
+div.titre { 
+            font-family: Helvetica, Verdana; 
+            font-size: 1.0em; 
+            font-weight: bold; 
+            color: #666633; 
+            text-decoration: none }
 /*
  *
  */
-tr.liste_titre  
-{ 
-  background: #BBBB88; 
-  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold;
-  }
+tr.liste_titre { 
+                 background: #BBBB88; 
+                 font-family: Helvetica, Verdana;
+                 font-size: 1.0em;
+                 font-weight: bold;
+                 }
 
-tr.pair
-{ 
-  background: #dcdcb3; 
-  font-family: Helvetica, Verdana; font-size: 1.0em; 
-  }
+tr.pair { 
+          background: #dcdcb3; 
+          font-family: Helvetica, Verdana; 
+          font-size: 1.0em; 
+          }
 
-tr.impair	
-{ 
-  background: #eeeecc; 
-  font-family: Helvetica, Verdana; font-size: 1.0em; 
-  }
+tr.impair { 
+            background: #eeeecc; 
+            font-family: Helvetica, Verdana;
+            font-size: 1.0em; 
+            }
 /*
  *
  */
 
-tr.box_titre
-{ 
+tr.box_titre { 
+               font-family: Helvetica, Verdana;
+               font-size: 1.0em;
+               font-weight: bold;
+               }
 
-  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold;
-  }
+tr.box_pair { 
+              background: #dcdcb3; 
+              font-family: Helvetica, Verdana; 
+              font-size: 0.9em; 
+              }
 
-tr.box_pair
-{ 
-  background: #dcdcb3; 
-  font-family: Helvetica, Verdana; font-size: 0.9em; 
-  }
+tr.box_impair { 
+                background: #eeeecc; 
+                font-family: Helvetica, Verdana;
+                font-size: 0.9em; 
+                }
 
-tr.box_impair	
-{ 
-  background: #eeeecc; 
-  font-family: Helvetica, Verdana; font-size: 0.9em; 
-  }
-
-tr.fiche
-{ 
-  font-family: Helvetica, Verdana; font-size: 0.6em; 
-  }
+tr.fiche { 
+           font-family: Helvetica, Verdana;
+           font-size: 0.6em; 
+           }
 
 /*
  *
@@ -181,27 +172,23 @@ td.valeur
   font-weight: bold;
   }
 
-td.delete
-{ 
-  background: red;
-  font-weight: bold;
-  }
+td.delete { 
+            background: red;
+            font-weight: bold;
+            }
 
-td.valid
-{ 
-  background: pink;
-  font-weight: bold;
-  }
+td.valid { 
+           background: pink;
+           font-weight: bold;
+           }
 
-td.small
-{ 
-  font-size: 0.8em;
-   }
+td.small { 
+           font-size: 0.8em;
+           }
 
-tr.nonpayed
-{ 
-  font-size: 0.9em; font-weight: bold;
-  }
+tr.nonpayed { 
+              font-size: 0.9em; font-weight: bold;
+              }
 
 
 p#powered-by-dolibarr {
