@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier DUTOIT        <doli@sydesy.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,8 +22,8 @@
  * $Source$
  *
  */
-
-/*!
+ 
+/**
         \file       htdocs/compta/bank/ligne.php
         \ingroup    compta
 		\brief      Page édition d'une écriture bancaire
@@ -35,10 +35,16 @@ require("./pre.inc.php");
 if (!$user->rights->banque->modifier)
   accessforbidden();
 
+$langs->load("banks");
+
 llxHeader();
 
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 
+
+/*
+ * Actions
+ */
 if ($_GET["action"] == 'dvnext')
 {
   $ac = new Account($db);
@@ -51,8 +57,6 @@ if ($_GET["action"] == 'dvprev')
   $ac = new Account($db);
   $ac->datev_previous($_GET["rowid"]);
 }
-
-
 
 if ($_POST["action"] == 'confirm_delete_categ' && $_POST["confirm"] == "yes")
 {
@@ -79,12 +83,12 @@ if ($_POST["action"] == 'class')
     }
 }
 
-if ($_POST["action"] == $langs->trans("Update"))
+if ($_POST["action"] == "update")
 {
   // Avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
   if (!empty($_POST['amount']))
   {
-    $sql = "SELECT b.rappro FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=$rowid";
+    $sql = "SELECT b.rappro FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=".$rowid;
     $result = $db->query($sql);
     if ($result)
     {
@@ -94,13 +98,16 @@ if ($_POST["action"] == $langs->trans("Update"))
       $objp = $db->fetch_object($result);
       if ($objp->rappro)
         die ("Vous ne pouvez pas modifier une écriture déjà rapprochée");
-      $sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='".$_POST["label"]."' , dateo = '".$_POST["date"]."', amount='$amount' WHERE rowid = $rowid;";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='".$_POST["label"]."', dateo = '".$_POST["date"]."', amount='$amount' WHERE rowid = $rowid;";
     }
   }
   else 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='".$_POST["label"]."' WHERE rowid = $rowid;";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='".$_POST["label"]."', dateo = '".$_POST["date"]."' WHERE rowid = $rowid;";
 
-$result = $db->query($sql);
+    $result = $db->query($sql);
+    if (! $result) {
+        dolibarr_print_error($db);
+    }
 }
 
 if ($_POST["action"] == 'type')
@@ -115,6 +122,8 @@ if ($_POST["action"] == 'num_releve')
   $result = $db->query($sql);
 }
 
+
+// On initialise la liste des categories
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
 $result = $db->query($sql);
 if ($result)
@@ -133,7 +142,7 @@ if ($result)
 }
 
 
-print_titre("Edition de la ligne");
+print_titre("Edition de l'écriture bancaire");
 
 
 if ($_GET["action"] == 'delete_categ')
@@ -145,15 +154,8 @@ if ($_GET["action"] == 'delete_categ')
 $var=False;
 
 print '<table class="border" width="100%">';
-print "<tr $bc[$var]>";
-print '<td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td>';
-print "<td align=\"right\">".$langs->trans("Debit")."</td>";
-print "<td align=\"right\">".$langs->trans("Credit")."</td>";
-print "<td align=\"center\">Releve</td>";
-print "<td align=\"center\">".$langs->trans("Author")."</td>";
-print "</tr>\n";
 
-$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.author, b.num_chq, b.fk_type, fk_account";
+$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.fk_user_author, b.num_chq, b.fk_type, fk_account";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=$rowid";
 $sql .= " ORDER BY dateo ASC";
 $result = $db->query($sql);
@@ -169,36 +171,48 @@ if ($result)
       $acct->fetch($objp->fk_account);
       $account = $acct->id;
 
-      print "<tr $bc[$var]>";
-      print "<td>".strftime("%d %b %Y",$objp->do)."</td>\n";
-      print "<td>$objp->label</td>";
-      if ($objp->amount < 0)
-	{
-	  print "<td align=\"right\">".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
-	}
-      else
-	{
-	  print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</td>\n";
-	}
-    
-      print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;ve=1&amp;account=$account\">$objp->num_releve</a></td>";
-      print "<td align=\"center\">$objp->author</td>";      
-      print "</tr>";
-      
-      print "<tr $bc[$var]>";
-      print '<td>'.$langs->trans("DateValue").'</td><td colspan="4">'.strftime("%d %b %Y",$objp->dv)."</td>\n";
-      
+      // Account
+      print "<tr><td>".$langs->trans("Account")."</td><td colspan=\"3\"><a href=\"account.php?account=$account\">".$acct->label."</a></td></tr>";
+
+      print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+      print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+
+      // Date
+      if (! $objp->rappro)
+      {
+        print "<tr><td>".$langs->trans("Date")."</td><td colspan=\"3\">";
+        print '<input name="date" value="'.strftime("%Y%m%d",$objp->do).'">';
+        print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
+        print "</tr>";
+      }
+
+      // Value date
+      print "<tr>";
+      print '<td>'.$langs->trans("DateValue").'</td><td colspan="2">'.strftime("%d %b %Y",$objp->dv)."</td>\n";
       print '<td><a href="ligne.php?action=dvprev&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
       print img_previous() . "</a> ";
       print '<a href="ligne.php?action=dvnext&amp;account='.$_GET["account"].'&amp;rowid='.$objp->rowid.'">';
       print img_next() ."</a></td>";
-
       print '</tr>';
 
-      print "<tr $bc[$var]><td>".$langs->trans("Account")."</td><td colspan=\"5\"><a href=\"account.php?account=$account\">".$acct->label."</a></td></tr>";
+      // Description
+      print "<tr><td>".$langs->trans("Label")."</td><td colspan=\"3\">";
+      print '<input name="label" value="'.$objp->label.'">';
+      print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
+      print "</tr>";
 
-      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"5\">";
-      
+      // Amount
+      if (! $objp->rappro)
+      {
+        print "<tr><td>".$langs->trans("Amount")."</td><td colspan=\"3\">";
+        print '<input name="amount" value="'.price($objp->amount).'">';
+        print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
+        print "</tr>";
+      }
+
+      print "</form>";
+
+      print "<tr><td>".$langs->trans("Type")."</td><td colspan=\"3\">";
       print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
       print '<input type="hidden" name="action" value="type">';
       print '<select name="value">';
@@ -209,65 +223,46 @@ if ($result)
       print '<option value="DEP"'.($objp->fk_type == 'DEP'?' selected':'').'>Dépôt</option>';
       print "</select>";
       print $objp->num_chq?" - $objp->num_chq":'';
-      print "<input type=\"submit\" value=\"".$langs->trans("Update")."\">";
+      print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\">";
       print "</form>";
-
       print "</td></tr>";
-
-      print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
-      print "<input type=\"hidden\" name=\"action\" value=\"".$langs->trans("Update")."\">";
     
-      print "<tr $bc[$var]><td>".$langs->trans("Label")."</td><td colspan=\"5\">";
-      print '<input name="label" value="'.$objp->label.'">';
-      print "<input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
-      print "</tr>";
-      
-      if (!$objp->rappro)
-      {
-        print "<tr $bc[$var]><td>".$langs->trans("Date")."</td><td colspan=\"5\">";
-        print '<input name="date" value="'.strftime("%Y%m%d",$objp->do).'">';
-        print "<input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
-        print "</tr>";
-        print "<tr $bc[$var]><td>".$langs->trans("Amount")."</td><td colspan=\"5\">";
-        print '<input name="amount" value="'.price($objp->amount).'">';
-        print "<input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
-        print "</tr>";
-      }
-      print "</form>";
-      
       print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
       print '<input type="hidden" name="action" value="num_releve">';
-      print "<tr $bc[$var]><td>Relevé</td><td colspan=\"5\">";
+      print "<tr><td>".$langs->trans("AccountStatement")."</td><td colspan=\"3\">";
       print '<input name="num_rel" value="'.$objp->num_releve.'">';
-      print "<input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
+      print "&nbsp; <input type=\"submit\" value=\"".$langs->trans("Update")."\"></td>";
       print "</tr>";
-
       print "</form>";
 
-      // Categorie
-      print "<form method=\"post\" action=\"ligne.php?rowid=$rowid&amp;account=$account\">";
-      print "<input type=\"hidden\" name=\"action\" value=\"class\">";
-
-      print "<tr $bc[$var]><td>".$langs->trans("Category")."</td><td colspan=\"5\">";
-      print "<select name=\"cat1\">$options";
-      print "</select>&nbsp;";
-      print '<input type="submit" value="'.$langs->trans("Add").'"></td>';
+      // Author
+      print "<tr><td>".$langs->trans("Author")."</td>";
+      $author=new User($db,$objp->fk_user_author);
+      $author->fetch();
+      print "<td colspan=\"3\">".$author->fullname."</td>";      
       print "</tr>";
-      
-      print "</form>";
-            
+
       $i++;
     }
   $db->free();
 }
 print "</table>";
 
-print "<br>Classé dans:<br>";
+print '<br>';
+
+
+// Liste les categories
 
 print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\">";
-print '<td colspan="3">'.$langs->trans("Description").'</td>';
-print "</tr>\n";
+
+print "<form method=\"post\" action=\"ligne.php?rowid=$rowid&amp;account=$account\">";
+print "<input type=\"hidden\" name=\"action\" value=\"class\">";
+print "<tr class=\"liste_titre\"><td>".$langs->trans("Categories")."</td><td colspan=\"2\">";
+print "<select name=\"cat1\">$options";
+print "</select>&nbsp;";
+print '<input type="submit" value="'.$langs->trans("Add").'"></td>';
+print "</tr>";
+print "</form>";
 
 $sql = "SELECT c.label, c.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c WHERE a.lineid=$rowid AND a.fk_categ = c.rowid ";

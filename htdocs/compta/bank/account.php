@@ -205,7 +205,7 @@ if ($account > 0)
     }
 
   print '<tr class="liste_titre">';
-  print '<td>Date Ope</td><td>Valeur</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td>';
+  print '<td>'.$langs->trans("Date").'</td><td>Valeur</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td>';
   print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td><td align="right">Solde</td>';
   print '<td align="center">'.$langs->trans("AccountStatement").'</td></tr>';
 
@@ -281,11 +281,11 @@ if ($account > 0)
       print "<td align=\"left\" colspan=\"8\"><b>Saisie d'une transaction hors facture</b></td></tr>";
       print '<tr>';
       print '<td><small>YYYY MMDD</small></td><td colspan="2">&nbsp;</td><td>'.$langs->trans("Description").'</td><td align=right>0000.00</td><td align=right>0000.00</td>';
-      print '<td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td>';
+      print '<td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
       print '</tr>';
       print '<tr>';
-      print '<td nowrap><input name="dateoy" type="text" size="2" value="'.strftime("%Y",time()).'" maxlength="4">';
-      print '<input name="dateo" type="text" size="2" maxlength="4"></td>';
+      print '<td nowrap><input name="dateoy" class="flat" type="text" size="2" value="'.strftime("%Y",time()).'" maxlength="4">';
+      print '<input name="dateo" class="flat" type="text" size="2" maxlength="4"></td>';
       print '<td colspan="2"><select name="operation">';
       print '<option value="CB">CB';
       print '<option value="CHQ">CHQ';
@@ -293,12 +293,12 @@ if ($account > 0)
       print '<option value="TIP">TIP';
       print '<option value="PRE">PRE';
       print '<option value="VIR">VIR';
-      print '</select><input name="num_chq" type="text" size="4"></td>';
+      print '</select><input name="num_chq" class="flat" type="text" size="4"></td>';
       print '<td>';
-      print '<input name="label" type="text" size="40"></td>';
+      print '<input name="label" class="flat" type="text" size="40"></td>';
 
-      print '<td align=right><input name="debit" type="text" size="8"></td>';
-      print '<td align=right><input name="credit" type="text" size="8"></td>';
+      print '<td align=right><input name="debit" class="flat" type="text" size="6"></td>';
+      print '<td align=right><input name="credit" class="flat" type="text" size="6"></td>';
       print "<td colspan=\"2\" align=\"center\">";
       print "<select name=\"cat1\">$options</select>";
       print '</td></tr>';
@@ -313,7 +313,7 @@ if ($account > 0)
 }
 else
 {
-  print "Erreur : numéro de compte inexistant";
+  print $langs->trans("ErrorBankAccountNotFound");
 }
 
 $db->close();
@@ -351,8 +351,8 @@ function _print_lines($db,$sql,$acct)
 		}
 		  
 	      print "<tr $bc[$var]>";
-	      print "<td>".strftime("%d %b %y",$objp->do)."</td>\n";
-	      print "<td>".strftime("%d/%m/%y",$objp->dv)."</td>\n";
+	      print "<td>".dolibarr_print_date($objp->do,"%d/%m/%y")."</td>\n";
+	      print "<td>".dolibarr_print_date($objp->dv,"%d/%m/%y")."</td>\n";
 	      print "<td>".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
 		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">$objp->label</a>";
 		  /*
