@@ -94,7 +94,7 @@ Function dolibarr_print_object_info($object)
 {
   print "Créé par  : " . $object->user_creation->fullname . '<br>';
   print "Date de création : " . strftime("%A %d %B %Y %H:%M:%S",$object->date_creation) . '<br>';
-  print "Modifié par  : " . '<br>';
+  print "Modifié par  : " . $object->user_modification->fullname . '<br>';
   print "Date de modification : " . strftime("%A %d %B %Y %H:%M:%S",$object->date_modification) . '<br>';
 }
 
