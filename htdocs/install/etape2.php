@@ -21,7 +21,18 @@
  *
  */
 
+/**
+        \file       htdocs/install/etape2.php
+        \brief      Crée les tables, clés primaires, clés étrangères, index et fonctions en base puis charge les données de référence
+        \version    $Revision$
+*/
+
 include_once("./inc.php");
+
+
+// Cette page peut etre longue. On augmente le délai par défaut de 30 à 60.
+set_time_limit(60);    // Ne fonctionne que si on est pas en safe_mode
+
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
 $langs->defaultlang=$setuplang;
