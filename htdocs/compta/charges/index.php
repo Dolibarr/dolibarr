@@ -20,13 +20,23 @@
  * $Source$
  *
  */
+
+/*!
+        \file       htdocs/compta/charges/index.php
+        \ingroup    compta
+		\brief      Page liste des charges
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 llxHeader();
 
 $user->getrights('compta');
+
 if (!$user->admin && !$user->rights->compta->charges)
   accessforbidden();
+
 
 $year=$_GET["year"];
 $filtre=$_GET["filtre"];
@@ -35,12 +45,12 @@ if (! $year) { $year=date("Y", time()); }
 print_fiche_titre("Charges",($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> Année $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
 
 print "<br>";
-print '<table class="noborder" cellspacing="0" cellpadding="4" width="100%">';
+print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print "<td>Groupe</td>";
-print "<td align=\"right\">Nb</td>";
-print "<td align=\"right\">Montant TTC</td>";
-print "<td align=\"right\">Montant Payé</td>";
+print "<td>".$langs->trans("Group")."</td>";
+print "<td align=\"right\">".$langs->trans("Nb")."</td>";
+print "<td align=\"right\">".$langs->trans("AmountTTC")."</td>";
+print "<td align=\"right\">".$langs->trans("Payed")."</td>";
 print "</tr>\n";
 
 /*
@@ -77,7 +87,7 @@ if ( $db->query($sql) )
     $i++;
   }
 } else {
-  print "<tr><td>".$db->error()."</td></tr>";
+  dolibarr_print_error($db);
 }
 
 /*
@@ -91,6 +101,9 @@ if ($year > 0)
 }
 
 if ( $db->query($sql) ) {
+
+  $langs->load("compta");
+  
   $num = $db->num_rows();
   $i = 0;
 
@@ -98,7 +111,7 @@ if ( $db->query($sql) ) {
     $obj = $db->fetch_object();
     $var = !$var;
     print "<tr $bc[$var]>";
-    print '<td>Factures founisseurs</td>';
+    print '<td>'.$langs->trans("BillsForSuppliers").'</td>';
     print '<td align="right">'.$obj->nb.'</td>';
     print '<td align="right">'.price($obj->total).'</td>';
     print '<td align="right">'.price($obj->totalpaye).'</td>';
@@ -106,7 +119,7 @@ if ( $db->query($sql) ) {
     $i++;
   }
 } else {
-  print "<tr><td>".$db->error()."</td></tr>";
+    dolibarr_print_error($db);
 }
 
 print "</table><br>";

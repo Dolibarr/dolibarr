@@ -6,3 +6,7 @@ OptionModeTrue=Option Recettes-Dépenses
 OptionModeVirtual=Option Créances-Dettes
 OptionModeTrueDesc=Dans ce mode, le CA est calculé sur la base des factures payées.\nLa validité des chiffres n'est donc assurée que si la tenue de la comptabilité passe rigoureusement par des entrées/sorties sur les comptes via des factures.\nRemarque, dans cette version, Dolibarr utilise la date de passage de la facture à l'état 'Validé' et non la date de passage à l'état 'Payé'.
 OptionModeVirtualDesc=Dans ce mode, le CA est calculé sur la base des factures validées. Qu'elles soient ou non payés, dès lors qu'elles sont dues, elles apparaissent dans le résultat.
+BillsForSuppliers=Factures des fournisseurs
+Balance=Balance
+Debit=Débit
+Credit=Crédit
