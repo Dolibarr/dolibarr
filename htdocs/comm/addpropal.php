@@ -152,7 +152,7 @@ if ($action == 'create')
   if ($numprojet==0)
     {
 	print 'Cette societe n\'a pas de projet.<br>';
-	print '<a href=projet/fiche.php?socidp='.$socidp.'&action=create>Créer un projet</a>';
+	print '<a href=../projet/fiche.php?socidp='.$socidp.'&action=create>Créer un projet</a>';
     }
   print '</td>';
   print '<td>Modèle</td>';
