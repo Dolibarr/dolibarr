@@ -27,10 +27,10 @@ create table llx_ventes
   rowid         SERIAL PRIMARY KEY,
   fk_soc        integer NOT NULL,
   fk_product    integer NOT NULL,
-  dated         timestamp,         -- date debut
-  datef         timestamp,         -- date fin
+  dated         timestamp without time zone, -- date debut
+  datef         timestamp without time zone, -- date fin
   price         real,
-  author	varchar(30),
+  author        varchar(30),
   active        smallint DEFAULT 0 NOT NULL,
   note          varchar(255)
 );

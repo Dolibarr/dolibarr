@@ -32,7 +32,7 @@ create table llx_todocomm
   fk_user_author integer,      -- id auteur de l'action
   fk_soc         integer,      -- id de la societe auquel est rattachee l'action
   fk_contact     integer,      -- id du contact sur laquelle l'action 
-                               --    doit etre effectuee
+                               -- doit etre effectuee
   note           text
 )type=innodb;
 

@@ -31,12 +31,12 @@ create table llx_user
   firstname     varchar(50),
   code          varchar(4),
   email         varchar(255),
-  admin         smallint default 0,
+  admin         smallint DEFAULT 0,
   webcal_login  varchar(25),
-  module_comm   smallint default 1,
-  module_compta smallint default 1,
-  fk_societe    integer default 0,
-  fk_socpeople  integer default 0,
+  module_comm   smallint DEFAULT 1,
+  module_compta smallint DEFAULT 1,
+  fk_societe    integer DEFAULT 0,
+  fk_socpeople  integer DEFAULT 0,
   note          text,
 
   UNIQUE INDEX(login)

@@ -27,9 +27,9 @@ create table llx_societe_remise
   rowid           serial	PRIMARY KEY,
   fk_soc          integer NOT NULL,
   tms             timestamp,
-  datec	          timestamp,                            -- creation date
+  datec	          timestamp without time zone,         -- creation date
   fk_user_author  integer,                             -- utilisateur qui a créé l'info
-  remise_client   real           default 0,            -- remise systématique pour le client
+  remise_client   real DEFAULT 0,                      -- remise systématique pour le client
   note            text
 );
 

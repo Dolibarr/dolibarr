@@ -26,7 +26,7 @@ create table llx_rights_def
   id            integer PRIMARY KEY,
   libelle       varchar(255),
   module        varchar(12),
-  type		CHAR CHECK (type IN ('r','w','m','d','a')),
-  bydefault     smallint default 0
+  type          CHAR CHECK (type IN ('r','w','m','d','a')),
+  bydefault     smallint DEFAULT 0
 );
 

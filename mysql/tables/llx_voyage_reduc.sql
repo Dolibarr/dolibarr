@@ -27,7 +27,7 @@ create table llx_voyage_reduc
   datev           date,           -- date de valeur
   date_debut      date,           -- date operation
   date_fin        date,
-  amount          real NOT NULL default 0,
+  amount          real NOT NULL DEFAULT 0,
   label           varchar(255),
   numero          varchar(255),
   fk_type         smallint,       -- Train, Avion, Bateaux

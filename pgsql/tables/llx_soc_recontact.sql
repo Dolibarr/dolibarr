@@ -28,6 +28,6 @@ create table llx_soc_recontact
 (
   rowid      SERIAL PRIMARY KEY,
   fk_soc     integer,
-  datere     timestamp,
+  datere     timestamp without time zone,
   author     varchar(15)
 );

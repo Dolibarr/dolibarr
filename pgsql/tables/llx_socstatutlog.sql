@@ -25,7 +25,7 @@
 create table llx_socstatutlog
 (
   id          SERIAL PRIMARY KEY,
-  datel       timestamp,
+  datel       timestamp without time zone,
   fk_soc      integer,
   fk_statut   integer,
   author      varchar(30)

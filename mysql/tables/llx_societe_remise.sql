@@ -29,7 +29,7 @@ create table llx_societe_remise
   tms             timestamp,
   datec	          datetime,                            -- creation date
   fk_user_author  integer,                             -- utilisateur qui a créé l'info
-  remise_client   real           default 0,            -- remise systématique pour le client
+  remise_client   real           DEFAULT 0,            -- remise systématique pour le client
   note            text
 
 )type=innodb;

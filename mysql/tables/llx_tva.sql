@@ -26,7 +26,7 @@ create table llx_tva
   tms             timestamp,
   datep           date,           -- date de paiement
   datev           date,           -- date de valeur
-  amount          real NOT NULL default 0,
+  amount          real NOT NULL DEFAULT 0,
   label           varchar(255),
   note            text
 )type=innodb;

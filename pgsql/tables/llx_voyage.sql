@@ -25,23 +25,18 @@
 create table llx_voyage
 (
   rowid           SERIAL PRIMARY KEY,
-  datec           timestamp,
-  dateo           date,                    -- date operation
-  date_depart     timestamp,                -- date du voyage
-  date_arrivee    timestamp,                -- date du voyage
-  amount          real NOT NULL default 0, -- prix du billet
-  reduction       real NOT NULL default 0, -- montant de la reduction obtenue
+  datec           timestamp without time zone,
+
+  dateo           date,                          -- date operation
+  date_depart     timestamp without time zone,   -- date du voyage
+  date_arrivee    timestamp without time zone,   -- date du voyage
+  amount          real NOT NULL DEFAULT 0,       -- prix du billet
+  reduction       real NOT NULL DEFAULT 0,       -- montant de la reduction obtenue
   depart          varchar(255),
   arrivee         varchar(255),
-  fk_type         smallint,                -- Train, Avion, Bateaux
+  fk_type         smallint,                      -- Train, Avion, Bateaux
   fk_reduc        integer,
-  distance        integer,                 -- distance en kilometre
-  dossier         varchar(50),             -- numero de dossier
+  distance        integer,                       -- distance en kilometre
+  dossier         varchar(50),                   -- numero de dossier
   note            text
 );
-
--- insert into llx_voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc) 
--- values ('2002-04-21 12:05','2002-04-21 15:25',26.8,'Paris','Auray',1);
-
--- insert into llx_voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc) 
--- values ('2002-04-23 15:42','2002-04-23 19:10',26.8,'Auray','Paris',1);

@@ -33,8 +33,8 @@ create table llx_voyage
   dateo           date,                    -- date operation
   date_depart     datetime,                -- date du voyage
   date_arrivee    datetime,                -- date du voyage
-  amount          real NOT NULL default 0, -- prix du billet
-  reduction       real NOT NULL default 0, -- montant de la reduction obtenue
+  amount          real NOT NULL DEFAULT 0, -- prix du billet
+  reduction       real NOT NULL DEFAULT 0, -- montant de la reduction obtenue
   depart          varchar(255),
   arrivee         varchar(255),
   fk_type         smallint,                -- Train, Avion, Bateaux

@@ -24,10 +24,10 @@
 
 create table llx_soc_events
 (
-  rowid         SERIAL PRIMARY KEY,
-  fk_soc        int          NOT NULL,            --
-  dateb	        timestamp    NOT NULL,            -- begin date
-  datee	        timestamp    NOT NULL,            -- end date
+  rowid         SERIAL PRIMARY KEY,                   -- public id
+  fk_soc        int NOT NULL,            
+  dateb	        timestamp without time zone NOT NULL, -- begin date
+  datee	        timestamp without time zone NOT NULL, -- end date
   title         varchar(100) NOT NULL,
   url           varchar(255),
   description   text

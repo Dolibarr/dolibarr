@@ -38,7 +38,7 @@ create table llx_socpeople
   fax            varchar(30),
   email          varchar(255),
   jabberid       varchar(255),
-  fk_user        integer default 0, -- user qui a créé l'enregistrement
+  fk_user        integer DEFAULT 0, -- user qui a créé l'enregistrement
   fk_user_modif  integer,
   note           text
 )type=innodb;
