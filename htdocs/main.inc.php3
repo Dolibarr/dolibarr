@@ -148,10 +148,6 @@ if (defined("MAIN_MODULE_FACTURE") && MAIN_MODULE_FACTURE)
 if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
 {
   require (DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
-
-  if (defined("PROPALE_ADDON"))
-    if (is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php"))
-      require(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php");
   
   if (! defined("PROPALE_OUTPUTDIR"))
     {
