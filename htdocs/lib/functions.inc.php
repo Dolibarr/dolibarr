@@ -26,6 +26,27 @@
 $yn[0] = "non";
 $yn[1] = "oui";
 
+Function dolibarr_fiche_head($links, $active=0)
+{
+  print '<div class="tabs">';
+
+  for ($i = 0 ; $i < sizeof($links) ; $i++)
+    {
+      if ($i == $active)
+	{
+	  print '<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>';
+	}
+      else
+	{
+	  print '<a class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>';
+	}
+    }
+
+  print '</div>';
+  print '<div class="tabBar"><br>';
+}
+
+
 Function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0)
 {
   $sql = "REPLACE INTO llx_const SET name = '$name', value='$value', visible=$visible, type='$type'";
