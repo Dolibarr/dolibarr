@@ -230,11 +230,9 @@ if ($propalid) {
 	  print "<td align=\"center\" width=\"25%\">-</td>";
 	}
       } 
-      if ($obj->statut == 2) {
-	print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\"><a href=\"facture.php3?propalid=$propalid&action=create\">Emettre une facture</td>";
-      } else {
-	print "<td align=\"center\" width=\"25%\">-</td>";
-      }
+
+      print "<td align=\"center\" width=\"25%\">-</td>";
+
       if ($obj->statut == 1) {
 	$file = $conf->propal->outputdir. "/$obj->ref/$obj->ref.pdf";
 	if (file_exists($file)) {
