@@ -24,6 +24,10 @@ drop table if exists llx_product_stock;
 drop table if exists llx_stock;
 drop table if exists llx_stock_mouvement;
 
+drop table if exists llx_co_pr;
+drop table if exists llx_commande;
+drop table if exists llx_commandedet;
+
 drop table if exists c_actioncomm;
 
 drop table if exists c_chargesociales;
