@@ -215,7 +215,7 @@ Class pdf_propale_jaune
 	{
 	  $pdf->SetTextColor(0,0,200);
 	  $pdf->SetFont('Arial','B',14);
-	  $pdf->MultiCell(60, 8, FAC_PDF_INTITULE, 0, 'L');
+	  $pdf->MultiCell(76, 8, FAC_PDF_INTITULE, 0, 'L');
 	}
       
       $pdf->SetTextColor(70,70,170);
@@ -223,19 +223,19 @@ Class pdf_propale_jaune
 	{
 	  $pdf->SetX(12);
 	  $pdf->SetFont('Arial','',12);
-	  $pdf->MultiCell(40, 5, FAC_PDF_ADRESSE);
+	  $pdf->MultiCell(76, 5, FAC_PDF_ADRESSE);
 	}
       if (defined("FAC_PDF_TEL"))
 	{
 	  $pdf->SetX(12);
 	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(40, 5, "Tél : ".FAC_PDF_TEL);
+	  $pdf->MultiCell(76, 5, "Tél : ".FAC_PDF_TEL);
 	}  
       if (defined("FAC_PDF_SIREN"))
 	{
 	  $pdf->SetX(12);
 	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(40, 5, "SIREN : ".FAC_PDF_SIREN);
+	  $pdf->MultiCell(76, 5, "SIREN : ".FAC_PDF_SIREN);
 	}  
       $pdf->rect(10, 40, 80, 40);      
 
