@@ -648,7 +648,6 @@ if ($propalid)
 	   *
 	   */
 	  print "</td><td valign=\"top\" width=\"50%\">";
-	  print_titre("Propale envoyée");
 	  /*
 	   *
 	   */
@@ -659,21 +658,28 @@ if ($propalid)
 	    {
 	      $num = $db->num_rows();
 	      $i = 0; $total = 0;
-	      print "<TABLE class=\"tablefsoc\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-	      print "<tr><td>Date</td><td>Auteur</td></TR>\n";
-	      
-	      while ($i < $num)
+
+	      if ($num > 0)
 		{
-		  $objp = $db->fetch_object( $i);
-		  print "<TR><TD>".strftime("%d %B %Y %H:%M:%S",$objp->da)."</TD>\n";
-		  $authoract = new User($db);
-		  $authoract->id = $objp->fk_user_author;
-		  $authoract->fetch('');
-		  print "<TD>$authoract->code</TD></tr>\n";
-		  print "<tr><td colspan=\"2\">$objp->note</td></tr>";
-		  $i++;
+		  print_titre("Propale envoyée");
+
+		  print "<TABLE class=\"tablefsoc\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+		  print "<tr><td>Date</td><td>Auteur</td></TR>\n";
+	      
+
+		  while ($i < $num)
+		    {
+		      $objp = $db->fetch_object( $i);
+		      print "<TR><TD>".strftime("%d %B %Y %H:%M:%S",$objp->da)."</TD>\n";
+		      $authoract = new User($db);
+		      $authoract->id = $objp->fk_user_author;
+		      $authoract->fetch('');
+		      print "<TD>$authoract->code</TD></tr>\n";
+		      print "<tr><td colspan=\"2\">$objp->note</td></tr>";
+		      $i++;
+		    }
+		  print "</table>";
 		}
-	      print "</table>";
 	      $db->free();
 	    }
 	  else
