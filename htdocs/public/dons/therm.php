@@ -25,53 +25,17 @@ if (file_exists ($thermlib))
 {
   include($thermlib);
 
-  $posten_file = "/var/www/www.eucd.info/htdocs/posten.txt";
-  $totaal_file = "/var/www/www.eucd.info/htdocs/totaal.txt";
-
-
   /*
    * Read Values
    */
 
-  if (file_exists ($posten_file))
-    {
-      if (file_exists ($totaal_file))
-	{
-
-	  /* lees posten uit file */
-	  $fp = fopen($posten_file, 'r' );
-	  
-	  
-	  if ($fp)
-	    {
-	      $post_donaties = fgets( $fp, 10 );
-	      $post_sponsoring = fgets( $fp, 10 );
-	      $post_intent = fgets( $fp, 10 );
-	      fclose( $fp ); 
-	    }
-	  
-	  /* lees posten uit file  */
-	  $fp = fopen( $totaal_file, 'r' );
-	  if ($fp)
-	    {
-	      $totaal_ontvangen = fgets( $fp, 10 );
-	      $totaal_pending = fgets( $fp, 10 );
-	      fclose( $fp ); 
-	    }
-	}
-    }
-  
-  /* 
-   * Graph thermometer
-   */
-
   $conf = new Conf();
   $db = new Db();
-  $don = new Don($db);
+  $dontherm = new Don($db);
 
-  $actualValue = $don->sum_actual();
-  $pendingValue = $don->sum_pending();
-  $intentValue = $don->sum_intent();
+  $actualValue = $dontherm->sum_actual();
+  $pendingValue = $dontherm->sum_pending();
+  $intentValue = $dontherm->sum_intent();
  
   print moneyMeter($actualValue, $pendingValue, $intentValue);
 
