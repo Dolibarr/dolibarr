@@ -30,7 +30,7 @@ create table llx_c_regions
   active      tinyint default 1
 )type=innodb;
 
-
+insert into llx_c_regions (rowid,code_region,cheflieu,tncc,nom) values (0,0,'0',0,'-');
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (01,'97105',3,'Guadeloupe');
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (02,'97209',3,'Martinique');
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (03,'97302',3,'Guyane');

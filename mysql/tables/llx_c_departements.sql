@@ -36,6 +36,9 @@ create table llx_c_departements
 
 ALTER TABLE llx_c_departements ADD FOREIGN KEY (fk_region)  REFERENCES llx_c_regions (code_region);
 
+insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom)
+values (0,0,0,'0',0,'-','-');
+
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom)
 values (82,'01','01053',5,'AIN','Ain');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom)
