@@ -21,9 +21,29 @@
  *
  */
 
+/*!	\file boxes.php
+		\brief  Fichier de la classe boxes
+		\author Rodolphe Qiedeville
+		\author	Laurent Destailleur
+		\version $Revision$
+*/
+
+
+
+/*! \class infoBox
+		\brief      Classe permettant la gestion des boxes sur une page
+        \remarks    Cette classe est utilisé par les fichiers includes/boxes/box_xxx.php
+                    qui sont les modules de boites
+*/
+
 class infoBox 
 {
 
+  /*!
+   *    \brief      Constructeur de la classe
+   *    \param      $head       tableau des entetes de colonnes
+   *    \param      $contents   tableau des lignes
+   */
   function infoBox($head, $contents)
   {
     $var = true;
