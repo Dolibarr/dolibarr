@@ -134,6 +134,11 @@ if ($type)
   $sql .= " AND c.id = $type";
 }
 
+if ($time == "today")
+{
+  $sql .= " AND date_format(a.datea, '%d%m%Y') = ".strftime("%d%m%Y",time());
+}
+
 if ($socid) 
 {
   $sql .= " AND s.idp = $socid";
