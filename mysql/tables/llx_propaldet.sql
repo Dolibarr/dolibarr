@@ -26,6 +26,6 @@ create table llx_propaldet
   fk_product    integer,
   description   text,
   qty		smallint,
-  price         real
+  price         real,
   tva_tx        real default 19.6
 );
