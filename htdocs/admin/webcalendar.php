@@ -52,6 +52,10 @@ if ($action == 'save')
 	print "<p>ok bien enregistré</p>\n";
 	print "<p>dans quelques jours je rajoute un test de connexion à la base de données de webcal pour être certain que tout est OK</p>\n";
 	define("PHPWEBCALENDAR_URL",  $phpwebcalendar_url);
+	define("PHPWEBCALENDAR_HOST",  $phpwebcalendar_host);
+	define("PHPWEBCALENDAR_URL",  $phpwebcalendar_dbname);
+	define("PHPWEBCALENDAR_URL",  $phpwebcalendar_user);
+	define("PHPWEBCALENDAR_URL",  $phpwebcalendar_pass);
       }
     else
       print "erreur d'enregistement !";
