@@ -359,14 +359,12 @@ a.tab:hover {
   text-decoration: none;
 }
 
+a.tabimage {
+    color: #436976;
+    text-decoration: none;
+    white-space: nowrap;
+}
 
-
-/*
- *   Menu superieur
- */
-table.topbarre { 
-                 cell-spacing: 0;
-                 }
 
 /*
  *   Case actions
