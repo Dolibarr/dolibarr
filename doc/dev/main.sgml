@@ -38,6 +38,13 @@
       </p>
     </sect1>
 
+    <sect1 id="main-quote">Attributs dans les balises HTML
+      <p>
+	Tous les attributs dans les balises HTML doivent être quottés
+	avec des doubles quote.
+      </p>
+    </sect1>
+
   </sect>
   
 
