@@ -151,8 +151,6 @@ if ($socid > 0)
 	print "<td align=\"center\"><a href=\"../compta/fiche.php?socid=$objsoc->idp\">Compta</a></td>";
 	print "<td align=\"center\">[<a href=\"docsoc.php?socid=$objsoc->idp\">Documents</a>]</td>";
 	print "<td align=\"center\">[<a href=\"index.php?socidp=$objsoc->idp&action=add_bookmark\">Bookmark</a>]</td>";
-	if ($conf->projet->enabled && $user->rights->projet->creer)
-	  print "<td align=\"center\">[<a href=\"../projet/fiche.php?socidp=$objsoc->idp&action=create\">Projet</a>]</td>";
 
 	print "<td>[<a href=\"../socnote.php?socid=$objsoc->idp\">Notes</a>]</td>";
 	print "<td align=\"center\">[<a href=\"../soc.php?socid=$objsoc->idp&action=edit\">Editer</a>]</td></tr>";
@@ -395,7 +393,10 @@ if ($socid > 0)
 	print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
 	print '<td><a href="action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
 	print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
-	print "<td align=\"center\"><a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">Modifier</a></td>";
+	print "<td align=\"center\">";
+	print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
+	print img_edit();
+	print '</a></td>';
 	print "</tr>\n";
 	$i++;
 	$tag = !$tag;
@@ -502,7 +503,7 @@ if ($socid > 0)
 
       if ( $db->query($sql) )
 	{
-	  print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
+	  print '<table width="100%" cellspacing="0" border="0" cellpadding="2">';
 	  
 	  $i = 0 ; 
 	  $num = $db->num_rows();
@@ -577,17 +578,17 @@ if ($socid > 0)
 	  print $db->error();
 	}
       print "</td></tr></table>";
-      
-
-
       /*
        *
        * Notes sur la societe
        *
        */
-      print '<table border="1" width="100%" cellspacing="0" bgcolor="#e0e0e0">';
-      print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
-      print "</table>";
+      if ($objsoc->note)
+	{
+	  print '<table border="1" width="100%" cellspacing="0" bgcolor="#e0e0e0">';
+	  print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
+	  print "</table>";
+	}
       /*
        *
        *
