@@ -100,7 +100,7 @@ if ($socid > 0)
        *
        *
        */
-      print_fiche_titre ("Societe <a href=\"fiche.php3?socid=$objsoc->idp\">$objsoc->nom</a>");
+      print_fiche_titre ("Contact société : <a href=\"fiche.php3?socid=$objsoc->idp\">$objsoc->nom</a>");
       /*
        *
        */
