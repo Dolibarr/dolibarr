@@ -671,8 +671,10 @@ class User
 	{
 	  if ($this->db->affected_rows()) 
 	    {
-	      $mesg = "Login : $this->login\nMot de passe : $password\n";
-	      $mesg .= "URL  : http://". $GLOBALS["HTTP_HOST"] . DOL_URL_ROOT;
+	      $mesg = "Votre mot de passe pour accéder à Dolibarr a été changé :\n\n";
+	      $mesg .= "Login        : $this->login\n";
+	      $mesg .= "Mot de passe : $password\n\n";
+	      $mesg .= "Adresse      : ".substr($GLOBALS["SCRIPT_URI"],0,strlen($GLOBALS["SCRIPT_URI"]) - 14);
 	      if (mail($this->email, "Mot de passe Dolibarr", $mesg))
 		{
 		  return 1;
