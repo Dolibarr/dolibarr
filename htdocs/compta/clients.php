@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -34,6 +34,11 @@ require("../actioncomm.class.php");
 if ($conf->webcal->enabled) {
     require("../lib/webcal.class.php");
 }
+
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
 
 $langs->load("companies");
 
@@ -226,11 +231,11 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print '<table class="noborder" width="100%">';
+  print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","","",'valign="center"');
   print '<td>'.$langs->trans("Company").'</td>';
-  print "<td align=\"center\">Préfix</td><td colspan=\"2\">&nbsp;</td></tr>\n";
+  print "<td align=\"center\">Préfix</td></tr>\n";
 
   $var=True;
 
@@ -244,15 +249,6 @@ if ($result)
       print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
       print "<td>".$obj->ville."&nbsp;</td>\n";
       print "<td align=\"center\">$obj->prefix_comm&nbsp;</td>\n";
-
-      if ($user->societe_id == 0)
-	{
-	  print "<td align=\"center\"><a href=\"facture.php?socidp=$obj->idp&action=create\">Facturer <img src='".DOL_URL_ROOT."/theme/".$conf->theme."/img/filenew.png' border=\"0\" alt=\"Nouvelle facture\"></A></td>\n";
-	}
-      else
-	{
-	  print "<td>&nbsp;</td>\n";
-	}
       print "</tr>\n";
       $i++;
     }
