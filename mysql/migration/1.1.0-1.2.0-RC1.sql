@@ -123,7 +123,7 @@ insert into llx_const(name, value, type, note, visible) values ('MAIN_UPLOAD_DOC
 insert into llx_const(name, value, type, note, visible) values ('MAIN_SEARCHFORM_PRODUITSERVICE','1','yesno','Affichage formulaire de recherche des Produits et Services dans la barre de gauche',0);
 delete from llx_const where name = 'COMPTA_BANK_FACTURES';
 
-
+update llx_bank set fk_type = 'VAD' where fk_type = 'WWW';
 
 alter table llx_socpeople change civilite civilite varchar(6);
 
