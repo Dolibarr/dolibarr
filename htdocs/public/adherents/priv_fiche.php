@@ -28,7 +28,7 @@ require($GLOBALS["DOCUMENT_ROOT"]."/paiement.class.php");
 require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
 
 
-$db = new Db();
+//$db = new Db();
 $adho = new AdherentOptions($db);
 
 llxHeader();

@@ -691,7 +691,8 @@ class Adherent
 	$mdpass=md5($this->pass);
 	$htpass=crypt($this->pass,initialiser_sel());
 	$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->prenom." ".$this->nom."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
-      $mydb=new Db('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
+	//      $mydb=new Db('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
+      $mydb=new DoliDb('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
       $result = $mydb->query($query);
       
       if ($result) 
@@ -721,7 +722,7 @@ class Adherent
 	  defined('MAIN_SPIP_DB') && MAIN_SPIP_DB != ''
 	  ){
 	$query = "DELETE FROM spip_auteurs WHERE login='".$this->login."'";
-	$mydb=new Db('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
+	$mydb=new DoliDb('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
 	$result = $mydb->query($query);
       
 	if ($result) 
@@ -751,7 +752,7 @@ class Adherent
 	  defined('MAIN_SPIP_DB') && MAIN_SPIP_DB != ''
 	  ){
 	$query = "SELECT login FROM spip_auteurs WHERE login='".$this->login."'";
-	$mydb=new Db('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
+	$mydb=new DoliDb('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
 	$result = $mydb->query($query);
       
 	if ($result) 

@@ -68,7 +68,11 @@ if ($user->admin)
     }
 }
 
-$sql = "SELECT rowid, name, value, type, note FROM llx_const WHERE visible = 1 ORDER BY name ASC";
+if ($all==1){
+  $sql = "SELECT rowid, name, value, type, note FROM llx_const ORDER BY name ASC";
+}else{
+  $sql = "SELECT rowid, name, value, type, note FROM llx_const WHERE visible = 1 ORDER BY name ASC";
+}
 $result = $db->query($sql);
 if ($result) 
 {

@@ -54,7 +54,7 @@ if (!isset($annee)){
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin, adresse,cp,ville,pays, t.libelle as type";
 $sql .= " , d.email";
 $sql .= " FROM llx_adherent as d, llx_adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1";
+$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1 AND datefin > now()";
 $sql .= " ORDER BY d.rowid ASC ";
 
 $result = $db->query($sql);

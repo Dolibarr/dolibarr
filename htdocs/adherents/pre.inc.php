@@ -38,7 +38,7 @@ function llxHeader($head = "") {
   $menu->add_submenu("liste.php?statut=-1","Adhésions à valider");
 
   $menu->add_submenu("liste.php?statut=0","Adhésions résiliées");
-
+  $menu->add_submenu("cartes/carte.php","Cartes d'adhérents");
   if ($user->admin)
     {
       $menu->add("fiche.php?action=create","Nouvel adhérent");
@@ -55,6 +55,7 @@ function llxHeader($head = "") {
       $menu->add("index.php","Configuration");
       $menu->add_submenu("type.php","Type d'adhérent");
       $menu->add_submenu("options.php","Champs optionnels");
+      $menu->add_submenu("/admin/adherent.php","Constantes");
     }
 
   left_menu($menu->liste);

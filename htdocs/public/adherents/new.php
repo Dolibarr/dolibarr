@@ -27,7 +27,7 @@ require($GLOBALS["DOCUMENT_ROOT"]."/adherent_type.class.php");
 require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
 
 
-$db = new Db();
+//$db = new Db();
 $adho = new AdherentOptions($db);
 $errmsg='';
 $num=0;
@@ -135,6 +135,10 @@ if ($errmsg != ''){
 }
 
 print_titre("Nouvel adhérent");
+if (defined("ADH_TEXT_NEW_ADH") && ADH_TEXT_NEW_ADH !=''){
+  print ADH_TEXT_NEW_ADH;
+  print "<BR>\n";
+}
 print '<ul>';
 print '<li> Les champs Commencant par un <FONT COLOR="red">*</FONT> sont obligatoire';
 print '<li> Les champs Commencant par un <FONT COLOR="blue">*</FONT> seront affiche sur la liste publique des membres. Si vous ne souhaite pas cela <b>DECOCHEZ</b> la case public ci dessous'; 
