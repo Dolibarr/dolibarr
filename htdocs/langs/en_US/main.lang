@@ -66,6 +66,7 @@ Code=Code
 Type=Type
 Language=Language
 Note=Note
+CurrentNote=Current note
 Label=Label
 Info=Info
 Family=Family
