@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
         \file       htdocs/commande/pre.inc.php
         \ingroup    commandes
 		\brief      Gestionnaire du menu commandes
@@ -46,7 +46,7 @@ function llxHeader($head = "", $title="", $help_url='')
   $menu->add_submenu(DOL_URL_ROOT."/commande/liste.php", $langs->trans("List"));
 
   if ($conf->expedition->enabled) {
-    $menu->add(DOL_URL_ROOT."/expedition/", "Expeditions");
+    $menu->add(DOL_URL_ROOT."/expedition/", $langs->trans("Sendings"));
   }
   
   $menu->add(DOL_URL_ROOT."/commande/stats/", $langs->trans("Statistics"));
