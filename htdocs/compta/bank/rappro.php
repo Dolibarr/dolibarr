@@ -28,10 +28,18 @@ if (!$user->admin && !$user->rights->compta->bank)
 
 llxHeader();
 
+/*
+ * Action rapprochement
+ */
 if ($action == 'rappro')
 {
   if ($num_releve > 0) {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set rappro=$rappro, num_releve=$num_releve WHERE rowid=$rowid";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set rappro=$rappro, num_releve=$num_releve";
+    if ($rappro) {
+        # Si on fait un rapprochement, le user de rapprochement est inclus dans l'update
+        $sql .= ", fk_user_rappro=".$user->id;
+    }
+    $sql .= " WHERE rowid=$rowid";
     $result = $db->query($sql);
     if ($result) {
       if ($cat1 && $rappro) {
@@ -44,6 +52,10 @@ if ($action == 'rappro')
     }
   }
 }
+
+/*
+ * Action suppression ecriture
+ */
 if ($action == 'del') {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=$rowid";
   $result = $db->query($sql);
@@ -67,6 +79,10 @@ if ($result) {
   $db->free();
 }
 
+
+/*
+ * Affichage page
+ */
 $sql = "SELECT max(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE fk_account=$account";
 if ( $db->query($sql) )
 {
