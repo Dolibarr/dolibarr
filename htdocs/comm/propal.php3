@@ -80,12 +80,8 @@ if ($action == 'add')
    */
   if ($id) 
     {
-      propale_pdf_create($db, $id);
+      propale_pdf_create($db, $id, $HTTP_POST_VARS["modelpdf"]);
       $propalid = $id;
-    }
-  else
-    {
-      print $db->error();
     }
 }
 
