@@ -21,9 +21,6 @@
  */
 require("../main.inc.php");
 
-$types[0] = "produit";
-$types[1] = "service";
-
 function llxHeader($head = "", $urlp = "")
 {
   global $user, $conf;
@@ -37,6 +34,7 @@ function llxHeader($head = "", $urlp = "")
   $menu = new Menu();
 
   $menu->add(DOL_URL_ROOT."/contrat/index.php", "Contrats");
+  $menu->add_submenu(DOL_URL_ROOT."/contrat/liste.php", "Liste");
   $menu->add_submenu(DOL_URL_ROOT."/contrat/enservice.php", "En service");
 
   left_menu($menu->liste);

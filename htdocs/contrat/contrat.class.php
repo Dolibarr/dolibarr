@@ -85,10 +85,10 @@ class Contrat
         $date_end = mktime(date("H",$date_start), date("i",$date_start), 0, $month, $day, $year);
     }
 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET enservice = 1";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 1";
     $sql .= " , mise_en_service = ".$this->db->idate($date_start).", fk_user_mise_en_service = ".$user->id;
     $sql .= " , fin_validite = ". $this->db->idate($date_end);
-    $sql .= " WHERE rowid = ".$this->id . " AND enservice = 0";
+    $sql .= " WHERE rowid = ".$this->id . " AND statut = 0";
 
     $result = $this->db->query($sql) ;
     if (!$result)
@@ -96,6 +96,35 @@ class Contrat
       dolibarr_print_error($this->db);
       }
   }
+  
+  /*
+   *
+   *
+   *
+   */
+  function active_line($user, $line_id, $date)
+  {
+    // statut actif : 4
+
+    $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 4";
+    $sql .= " , date_ouverture = '".$this->db->idate($date)."', fk_user_ouverture = ".$user->id;
+    $sql .= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3) ";
+
+    $result = $this->db->query($sql) ;
+
+    if ($result)
+      {
+	return 0;
+      }
+    else
+      {
+
+	print $sql;
+	return -1;
+      }
+  }
+
+
 
   /*
    *    \brief      Cloture un contrat
@@ -104,9 +133,9 @@ class Contrat
    */
   function cloture($user)
   {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET enservice = 2";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 2";
     $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
-    $sql .= " WHERE rowid = ".$this->id . " AND enservice = 1";
+    $sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
 
     $result = $this->db->query($sql) ;
   }
@@ -118,9 +147,9 @@ class Contrat
    */
   function annule($user)
   {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET enservice = 0";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET statut = 0";
     $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
-    $sql .= " WHERE rowid = ".$this->id . " AND enservice = 1";
+    $sql .= " WHERE rowid = ".$this->id . " AND statut = 1";
 
     $result = $this->db->query($sql) ;
   }
@@ -131,10 +160,10 @@ class Contrat
    */ 
   function fetch ($id)
   {    
-      $sql = "SELECT rowid, enservice, fk_soc, fk_product, ".$this->db->pdate("mise_en_service")." as datemise";
-      $sql .= ", fk_user_mise_en_service, ".$this->db->pdate("date_cloture")." as datecloture";
-      $sql .= ", ".$this->db->pdate("fin_validite")." as datefin";
-      $sql .= ", fk_user_cloture, fk_facture, fk_facturedet";
+      $sql = "SELECT rowid, statut, fk_soc, ".$this->db->pdate("mise_en_service")." as datemise";
+      $sql .= ", fk_user_mise_en_service, ".$this->db->pdate("date_contrat")." as datecontrat";
+      $sql .= " , fk_user_author";
+      $sql .= ", fk_commercial_signature, fk_commercial_suivi ";
       $sql .= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = $id";
 
       $result = $this->db->query($sql) ;
@@ -144,17 +173,20 @@ class Contrat
 	  $result = $this->db->fetch_array();
 
 	  $this->id                = $result["rowid"];
-	  $this->enservice         = $result["enservice"];
+	  $this->statut         = $result["statut"];
 	  $this->factureid         = $result["fk_facture"];
 	  $this->facturedetid      = $result["fk_facturedet"];
 	  $this->mise_en_service   = $result["datemise"];
 	  $this->date_fin_validite = $result["datefin"];
-	  $this->date_cloture      = $result["datecloture"];
+	  $this->date_contrat      = $result["datecontrat"];
+
+	  $this->user_author_id = $result["fk_user_author"];
+
+	  $this->commercial_signature_id = $result["fk_commercial_signature"];
+	  $this->commercial_suivi_id = $result["fk_commercial_suivi"];
 
 	  $this->user_service->id = $result["fk_user_mise_en_service"];
 	  $this->user_cloture->id = $result["fk_user_cloture"];
-
-	  $this->product->fetch($result["fk_product"]);
 
 	  $this->societe->fetch($result["fk_soc"]);
 
@@ -167,6 +199,33 @@ class Contrat
 
       return $result;
   }
+
+  /*
+   *
+   *
+   *
+   */
+  function create($user)
+    {
+      
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (datec,fk_soc, fk_user_author, fk_commercial_signature, fk_commercial_suivi, date_contrat)";
+      $sql .= " VALUES (now(),".$this->soc_id.",".$user->id.",".$this->commercial_id.",".$this->commercial_id;
+      $sql .= ",".$this->db->idate($this->date_contrat) .")";
+      if ($this->db->query($sql))
+	{
+	  $this->id = $this->db->last_insert_id();
+	  $result = 0 ;
+	}
+      else
+	{
+	  $result = 1;
+	  dolibarr_syslog("Contrat::create_from_facture - 10");
+	  dolibarr_print_error($this->db,"Contrat::create_from_facture - 10");
+	}
+ 
+      return $result;
+    }
+
 
   /*
    *    \brief      Crée autant de contrats que de lignes de facture, pour une facture donnée
@@ -220,6 +279,88 @@ class Contrat
       return $result;
     }
 
+  /**
+   * Ajoute une ligne de commande
+   *
+   */
+  function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
+  {
+    $qty = ereg_replace(",",".",$qty);
+    $pu = ereg_replace(",",".",$pu);
+    
+    if (strlen(trim($desc)))
+      {
+	if (strlen(trim($qty))==0)
+	  {
+	    $qty=1;
+	  }
+	
+	if ($fk_product > 0)
+	  {
+	    $prod = new Product($this->db, $fk_product);
+	    if ($prod->fetch($fk_product) > 0)
+	      {
+		$label = $prod->libelle;
+		$pu    = $prod->price;
+		$txtva = $prod->tva_tx;
+	      }
+	  }
+	
+	
+	$remise = 0;
+	$price = round(ereg_replace(",",".",$pu), 2);
+	$subprice = $price;
+	if (trim(strlen($remise_percent)) > 0)
+	  {
+	    $remise = round(($pu * $remise_percent / 100), 2);
+	    $price = $pu - $remise;
+	  }
+	
+	/*
+	 * Insertion dans la base
+	 */	
+
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet ";
+	$sql .= "(fk_contrat,label,description,fk_product, price_ht,qty,tva_tx, remise_percent, subprice, remise)";
+	$sql .= " VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."') ;";
+	
+	/*
+	 * Retour
+	 */
+
+	if ( $this->db->query( $sql) )
+	  {
+	    //$this->update_price();
+	    return 0;
+	  }
+	else
+	  {
+	    dolibarr_print_error($this->db);
+	    return -1;
+	  }
+      }
+  }
+
+  /** 
+   * Supprime une ligne du contrat
+   *
+   */
+  function delete_line($idligne)
+    {
+
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet WHERE rowid =".$idligne;
+      
+      if ($this->db->query($sql) )
+	{
+	  //$this->update_price();
+	  
+	  return 0;
+	}
+      else
+	{
+	  return 1;
+	}
+    }
 
   /**
    *    \brief      Retourne le libellé du statut du contrat

@@ -53,103 +53,46 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-
-if ($page == -1) { $page = 0 ; }
-
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
-
-if ($sortfield == "")
-{
-  $sortfield="c.tms";
-}
-
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
+print_barre_liste("Contrats", $page, "index.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
 
-$sql = "SELECT c.rowid as cid, c.enservice, ".$db->pdate("c.fin_validite")." as fin_validite, c.fin_validite-sysdate() as delairestant, p.label, p.rowid as pid, s.nom, s.idp as sidp";
-$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
-$sql .= " WHERE c.fk_soc = s.idp AND c.fk_product = p.rowid";
-if ($socid > 0)
-{
-  $sql .= " AND s.idp = $socid";
-}
-$sql .= " ORDER BY $sortfield $sortorder, delairestant";
-$sql .= $db->plimit($limit + 1 ,$offset);
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr><td width="30%" valign="top">Légende<br />';
+print '<img src="./statut0.png" border="0" alt="statut">&nbsp;Statut initial<br />';
+print '<img src="./statut1.png" border="0" alt="statut">&nbsp;A commander<br />';
+print '<img src="./statut2.png" border="0" alt="statut">&nbsp;Commandé chez le fournisseur<br />';
+print '<img src="./statut3.png" border="0" alt="statut">&nbsp;Activé chez le fournisseur<br />';
+print '<img src="./statut4.png" border="0" alt="statut">&nbsp;Activé chez le client<br />';
+
+print '</td><td width="70%" valign="top">';
+
+$sql = "SELECT cd.rowid as cid, cd.statut, cd.label, cd.fk_contrat ";
+$sql .= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
+$sql .= " WHERE cd.statut IN (0,3)";
+$sql .= " ORDER BY cd.tms DESC";
 
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
 
-
-  print_barre_liste("Liste des contrats", $page, "index.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
-
   print '<table class="noborder" width="100%">';
 
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"index.php", "c.rowid","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Label"),"index.php", "p.label","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Company"),"index.php", "s.nom","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"index.php", "c.enservice","","",'align="center"',$sortfield);
-  print_liste_field_titre("Date Fin","index.php", "c.fin_validite","","",'align="center"',$sortfield);
-  print '<td>'.$langs->trans("Action").'</td>';
+  print '<tr class="liste_titre"><td>Service</td>';
   print "</tr>\n";
     
-  $now=mktime();
   $var=True;
-  while ($i < min($num,$limit))
+  while ($i < $num)
     {
       $obj = $db->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$obj->cid\">";
-      print img_file();
-      print "</a>&nbsp;<a href=\"fiche.php?id=$obj->cid\">$obj->cid</a></td>\n";
-      print "<td><a href=\"../product/fiche.php?id=$obj->pid\">$obj->label</a></td>\n";
-      print "<td><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></td>\n";
 
-      // Affiche statut contrat
-      if ($obj->enservice == 1)
-	{
-        if (! $obj->fin_validite || $obj->fin_validite >= $now) {
-      	  $class = 'normal';
-    	  $statut= $langs->trans("ContractStatusRunning");
-        }
-        else {            
-      	  $class = 'error';
-    	  $statut= $langs->trans("ContractStatusRunning").', '.img_warning().' '.$langs->trans("ContractStatusExpired");
-        }
-	}
-      elseif($obj->enservice == 2)
-	{
-   	  $class = "normal";
-	  $statut= $langs->trans("Closed");
-	}
-      else
-	{
-  	  $class = "warning";
-	  $statut= $langs->trans("ContractStatusToRun");
-	}
-    print "<td align=\"center\" class=\"$class\">";
-    print "$statut";
-	print "</td>";
-	
-	print "<td align=\"center\">";
-    if ($obj->enservice > 0) {
-        print dolibarr_print_date($obj->fin_validite);
-    }
-    else {
-        print "&nbsp;";   
-    }
-    print "</td>\n";
-    
-    print '<td>';
-    // \todo Créer action "Renouveler"
-    print '</td>';    
+      print "<td>";
+      print '<img src="./statut'.$obj->statut.'.png" border="0" alt="statut"></a>&nbsp;';
+      print "</a>&nbsp;<a href=\"fiche.php?id=$obj->fk_contrat\">$obj->label</a></td>\n";
+
+
 
     print "</tr>\n";
     $i++;
@@ -164,6 +107,7 @@ else
   dolibarr_print_error($db);
 }
 
+print '</td></tr></table>';
 
 $db->close();
 
