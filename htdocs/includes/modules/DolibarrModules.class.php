@@ -132,6 +132,32 @@ class DolibarrModules
 	    $err++;
 	  }
       }
+    /*
+     * Définit les permissions associées au module activé
+     *
+     */
+    if (is_array($this->rights))
+      {
+	foreach ($this->rights as $key => $value)
+	  {
+	    $r_id    = $this->rights[$key][0];
+	    $r_desc  = $this->rights[$key][1];
+	    $r_type  = $this->rights[$key][2];
+	    $r_def   = $this->rights[$key][3];
+	    $r_modul = $this->rights_class;
+	    
+
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
+	    $sql .= " (id, libelle, module, type, bydefault)";
+	    $sql .= " VALUES ";
+	    $sql .= "(".$r_id.",'".$r_desc."','".$r_modul."','".$r_type."',".$r_def.");";
+    
+	    if ( $this->db->query($sql) )
+	      {
+	      }
+
+	  }
+      }
 
     /*
      * Créé les répertoires
