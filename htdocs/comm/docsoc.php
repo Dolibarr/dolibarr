@@ -24,11 +24,12 @@ llxHeader();
 
 $db = new Db();
 
-$upload_dir = SOCIETE_OUTPUTDIR . "/" . $socid . "/";
+$upload_dir = SOCIETE_OUTPUTDIR . "/" . $socid ;
 
 if (! is_dir($upload_dir))
 {
-  mkdir($upload_dir);
+  umask(0);
+  mkdir($upload_dir, 0755);
 }
 
 function do_upload ($socid)
@@ -36,7 +37,7 @@ function do_upload ($socid)
   global $upload_dir;
   global $local_file, $error_msg;
 
-  if (move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . $_FILES['userfile']['name']))
+  if (move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
     {
       print "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; 
            avec succ&egrave;s.\n";
@@ -56,7 +57,7 @@ if ( $error_msg )
 }
 if ($action=='delete')
 {
-  $file = $upload_dir . urldecode($urlfile);
+  $file = $upload_dir . "/" . urldecode($urlfile);
   dol_delete_file($file);
 }
 
