@@ -196,8 +196,8 @@ if ($socid > 0)
      */
 
     print '<table width="100%" border="0"><tr>';
-    print "<td valign=\"top\">";
-    print "<table cellspacing=\"0\" border=\"1\" width=\"100%\">";
+    print '<tr><td valign="top">';
+    print '<table class="border" cellspacing="0" width="100%">';
     print '<tr><td>Tel</td><td>'.$objsoc->tel.'&nbsp;</td><td>Fax</td><td>'.$objsoc->fax.'&nbsp;</td></tr>';
     print '<tr><td>Ville</td><td colspan="3">'.nl2br($objsoc->address)."<br>$objsoc->cp $objsoc->ville</td></tr>";
 
@@ -229,7 +229,7 @@ if ($socid > 0)
      */
     if ($user->rights->facture->lire)
       {
-	print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"1\">";
+	print '<table class="border" width="100%" cellspacing="0" cellpadding="1">';
 	$var=!$var;
 	$sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
 	$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND s.idp = $objsoc->idp ORDER BY f.datef DESC";
