@@ -24,8 +24,11 @@ require("../../don.class.php");
 require("../../conf/conf.class.php");
 
 $conf = new Conf();
-
-conf->db->type = $dolibarr_main_db_type;
+$conf->db->type = $dolibarr_main_db_type;
+$conf->db->host = $dolibarr_main_db_host;
+$conf->db->name = $dolibarr_main_db_name;
+$conf->db->user = $dolibarr_main_db_user;
+$conf->db->pass = $dolibarr_main_db_pass;
 
 // Si type non défini (pour compatibilité avec ancienne install), on
 // travail avec mysql
@@ -36,7 +39,8 @@ require("../../lib/.$dolibarr_main_db_type.lib.php");
 if ($conf->don->enabled)
 {
 
-  $db = new DoliDb();
+  $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
+
   $don = new Don($db);
       
   $don->projetid    = $_POST["projetid"];

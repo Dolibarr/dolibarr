@@ -51,9 +51,11 @@ class ProcessGraphClients
   
   function ProcessGraphClients( $ident , $cpc)
   {
+    global $conf;
+
     $this->ident = $ident;
     $this->cpc = $cpc;
-    $this->db = new DoliDb('','','','','',1);
+    $this->db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,1);
   }
   
   function go()

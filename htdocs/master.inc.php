@@ -107,7 +107,7 @@ require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/address.class.php");
 
 
-$db = new DoliDb();
+$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
 $user = new User($db);
 
 

@@ -63,15 +63,10 @@ class DoliDb
         \param		name		nom de la database
         \return		int			1 en cas de succès, 0 sinon
     */
-    function DoliDb($type = 'pgsql', $host = '', $user = '', $pass = '', $name = '')
+    function DoliDb($type='pgsql', $host, $user, $pass, $name='')
     {
         global $conf;
         $this->transaction_opened=0;
-    
-        if (! $host) $host = $conf->db->host;
-        if (! $user) $user = $conf->db->user;
-        if (! $pass) $pass = $conf->db->pass;
-        if (! $name) $name = $conf->db->name;
     
         //print "Name DB: $host,$user,$pass,$name<br>";
         if (! $host)

@@ -22,7 +22,14 @@
 
 
 $conf = new Conf();
-$db = new DoliDb();
+$conf->db->type = $dolibarr_main_db_type;
+$conf->db->host = $dolibarr_main_db_host;
+$conf->db->name = $dolibarr_main_db_name;
+$conf->db->user = $dolibarr_main_db_user;
+$conf->db->pass = $dolibarr_main_db_pass;
+
+$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
+
 $a = setlocale(LC_TIME, "fr_FR");
 $sql = "SELECT ".$db->pdate("d.datedon")." as datedon, d.nom, d.prenom, d.amount, d.public, d.societe";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d";

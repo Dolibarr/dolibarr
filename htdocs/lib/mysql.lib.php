@@ -71,33 +71,19 @@ class DoliDb
         );  
   
   /**
-     \brief      Ouverture d'une connection vers le serveur et éventuellement une database.
-     \param	    type		type de base de données (mysql ou pgsql)
+     \brief     Ouverture d'une connection vers le serveur et éventuellement une database.
+     \param     type		type de base de données (mysql ou pgsql)
      \param	    host		addresse de la base de données
      \param	    user		nom de l'utilisateur autorisé
      \param	    pass		mot de passe
      \param	    name		nom de la database
-     \return        int			1 en cas de succès, 0 sinon
+     \return    int			1 en cas de succès, 0 sinon
   */
-  function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '', $newlink=0)
+  function DoliDb($type='mysql', $host, $user, $pass, $name='', $newlink=0)
   {
     global $conf;
     $this->transaction_opened=0;
     
-    if (! $host) $host = $conf->db->host;
-    if (! $user) $user = $conf->db->user;
-    if (! $pass) $pass = $conf->db->pass;
-    if (! $name) $name = $conf->db->name;
-    
-    //print "Name DB: $host,$user,$pass,$name<br>";
-    if (! $host)
-    {
-    	$this->connected = 0;
-    	$this->ok = 0;
-    	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters");
-        return $this->ok;
-    }
-
     // Essai connexion serveur
     $this->db = $this->connect($host, $user, $pass, $newlink);
     
