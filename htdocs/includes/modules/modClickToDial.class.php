@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,18 +21,18 @@
  *
  */
 
-/*!   \defgroup   telephonie  Module Click to Dial
+/**   \defgroup   telephonie  Module Click to Dial
       \brief      Module pour gérer l'appel automatique
 */
 
-/*!
+/**
       \file       htdocs/includes/modules/modClickToDial.class.php
       \ingroup    telephonie
 */
 
 include_once "DolibarrModules.class.php";
 
-/*! 
+/** 
   \class modClickToDial
   \brief Classe de description et activation du module de Click to Dial
 */
@@ -84,6 +85,8 @@ class modClickToDial extends DolibarrModules
   {
     global $conf;
 
+    $sql = array();
+    
     return $this->_init($sql);
   }
 
