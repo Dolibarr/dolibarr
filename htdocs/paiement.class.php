@@ -65,7 +65,7 @@ class Paiement
       }
     else
       {
-	print "$sql";
+		print $this->db->error() ."<br>".$sql;
       }  
   }
   /*
