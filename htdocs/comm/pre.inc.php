@@ -28,12 +28,13 @@
 */
 
 require("../main.inc.php");
-$user->getrights();
-$langs->load("companies");
 
 
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf, $langs;
+
+  $user->getrights();
+  $langs->load("companies");
 
   top_menu($head);
 
