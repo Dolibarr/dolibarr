@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,13 +22,13 @@
  */
 
 /*!
-	    \file   	htdocs/fourn/facture/pre.inc.php
-  	    \ingroup    fournisseur,facture
-  	    \brief  	Fichier gestionnaire du menu factures fournisseurs
+  \file       htdocs/fourn/facture/pre.inc.php
+  \ingroup    fournisseur,facture
+  \brief      Fichier gestionnaire du menu factures fournisseurs
 */
 
 require("../../main.inc.php");
-
+require(DOL_DOCUMENT_ROOT."/fournisseur.facture.class.php");
 
 function llxHeader($head = "", $title = "", $addons='') {
   global $user, $conf, $langs;

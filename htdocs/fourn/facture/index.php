@@ -30,7 +30,6 @@
 
 require("./pre.inc.php");
 require("../../contact.class.php");
-require("../../facturefourn.class.php");
 
 llxHeader();
 
@@ -47,7 +46,7 @@ if ($user->societe_id > 0)
 
 if ($_GET["action"] == 'delete')
 {
-  $fac = new FactureFourn($db);
+  $fac = new FactureFournisseur($db);
   $fac->delete($_GET["facid"]);
   
   $facid = 0 ;
@@ -185,7 +184,7 @@ if ($result)
   print "</tr>\n";
   print '</form>';
 
-  $fac = new FactureFourn($db);
+  $fac = new FactureFournisseur($db);
 
   $var=true;
   while ($i < min($num,$limit))

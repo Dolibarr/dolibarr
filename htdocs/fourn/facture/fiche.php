@@ -31,7 +31,6 @@
 
 require("./pre.inc.php");
 require("./paiementfourn.class.php");
-require("../../facturefourn.class.php");
 
 $langs->load("bills");
 $langs->load("companies");
@@ -54,7 +53,7 @@ $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
 if ($_GET["action"] == 'valid') 
 {
-  $facturefourn=new FactureFourn($db);
+  $facturefourn=new FactureFournisseur($db);
   $facturefourn->fetch($_GET["facid"]);
   
   $facturefourn->set_valid($user->id);
@@ -62,7 +61,7 @@ if ($_GET["action"] == 'valid')
 
 if ($_GET["action"] == 'payed')
 {
-  $facturefourn=new FactureFourn($db);
+  $facturefourn=new FactureFournisseur($db);
   $facturefourn->fetch($_GET["facid"]);
   
   $facturefourn->set_payed($user->id);
@@ -70,7 +69,7 @@ if ($_GET["action"] == 'payed')
 
 if($_GET["action"] == 'deletepaiement')
 {
-  $facfou = new FactureFourn($db);
+  $facfou = new FactureFournisseur($db);
   $facfou->fetch($_GET["facid"]);
   if ($facfou->statut == 1 && $facfou->paye == 0 && $user->societe_id == 0)
     {
@@ -117,7 +116,7 @@ if ($_POST["action"] == 'add')
       $db->begin();
       
       // Creation facture
-      $facfou = new FactureFourn($db);
+      $facfou = new FactureFournisseur($db);
     
       $facfou->number  = $_POST["facnumber"];
       $facfou->socid   = $_POST["socidp"];
@@ -162,7 +161,7 @@ if ($_POST["action"] == 'add')
 
 if ($_GET["action"] == 'del_ligne')
 {
-  $facfou = new FactureFourn($db,"",$_GET["facid"]);
+  $facfou = new FactureFournisseur($db,"",$_GET["facid"]);
 
   $facfou->deleteline($_GET["ligne_id"]);
 
@@ -171,7 +170,7 @@ if ($_GET["action"] == 'del_ligne')
 
 if ($_GET["action"] == 'add_ligne')
 {
-  $facfou = new FactureFourn($db,"", $_GET["facid"]);
+  $facfou = new FactureFournisseur($db,"", $_GET["facid"]);
 
   $facfou->addline($_POST["label"], $_POST["amount"], $_POST["tauxtva"], $_POST["qty"]);
   
@@ -197,7 +196,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
 {
   if ($_GET["action"] == 'copy')
     {
-      $fac_ori = new FactureFourn($db);
+      $fac_ori = new FactureFournisseur($db);
       $fac_ori->fetch($_GET["facid"]);
     }
   print_titre($langs->trans("NewBill"));
@@ -292,7 +291,7 @@ else
   if ($_GET["facid"] > 0)
     {
 
-      $fac = new FactureFourn($db);
+      $fac = new FactureFournisseur($db);
       $fac->fetch($_GET["facid"]);
 
       if ($_GET["action"] == "edit")

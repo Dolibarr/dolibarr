@@ -31,7 +31,6 @@
 
 require("./pre.inc.php");
 require("../contact.class.php");
-require("../facturefourn.class.php");
 
 $langs->load("suppliers");
 $langs->load("bills");
@@ -227,16 +226,17 @@ if ( $societe->fetch($socid) )
       $num = $db->num_rows();
       if ($num > 0)
 	{
-      print '<table class="border" width="100%">';
+	  print '<table class="border" width="100%">';
 	  print "<tr $bc[$var]>";
 	  print "<td colspan=\"4\">";
 	  print "<table class=\"noborder\" width=\"100%\"><tr><td>".$langs->trans("LastSuppliersBills",min($num,$max))."</td><td align=\"right\"><a href=\"facture/index.php?socid=$societe->id\">".$langs->trans("AllBills")." (".$num.")</td></tr></table>";
 	  print "</td></tr>";
 	}
+      
       while ($i < $num && $i < $max)
 	{
 	  $obj = $db->fetch_object();
-      $var=!$var;
+	  $var=!$var;
       
 	  print "<tr $bc[$var]>";
 	  print '<td>';
@@ -244,7 +244,7 @@ if ( $societe->fetch($socid) )
 	  print img_object($langs->trans("ShowBill"),"bill")." ".$obj->facnumber.'</a> '.substr($obj->libelle,0,40).'...</td>';	    
 	  print "<td align=\"right\" width=\"80\">".dolibarr_print_date($obj->df)."</td>";
 	  print '<td align="right">'.$obj->amount.'</td>';
-      $fac = new FactureFourn($db);
+	  $fac = new FactureFournisseur($db);
 	  print '<td align="center">'.$fac->LibStatut($obj->paye,$obj->statut).'</td>';
 	  print "</tr>";
 	  $i++;
