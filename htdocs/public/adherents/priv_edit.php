@@ -84,7 +84,9 @@ if ($action == 'update')
 	    $adh->cp          = $cp;
 	    $adh->ville       = $HTTP_POST_VARS["ville"];
 	    $adh->email       = $HTTP_POST_VARS["email"];
-	    $adh->login       = $HTTP_POST_VARS["login"];
+	    // interdiction de la modif du login adherent
+	    //	    $adh->login       = $HTTP_POST_VARS["login"];
+	    $adh->login       = $adh->login;
 	    $adh->pass        = $HTTP_POST_VARS["pass"];
 	    $adh->naiss       = $HTTP_POST_VARS["naiss"];
 	    $adh->photo       = $HTTP_POST_VARS["photo"];
@@ -238,7 +240,8 @@ if (isset($_SERVER["REMOTE_USER"])){
   print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="6" value="'.$adh->cp.'"> <input type="text" name="ville" size="20" value="'.$adh->ville.'"></td></tr>';
   print '<tr><td>Pays</td><td><input type="text" name="pays" size="40" value="'.$adh->pays.'"></td></tr>';
   print '<tr><td>Email</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
-  print '<tr><td>Login</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
+  print '<tr><td>Login</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
+  //  print '<tr><td>Login</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
   print '<tr><td>Password</td><td><input type="text" name="pass" size="40" value="'.$adh->pass.'"></td></tr>';
   print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$adh->naiss.'"></td></tr>';
   print '<tr><td>URL photo</td><td><input type="text" name="photo" size="40" value="'.$adh->photo.'"></td></tr>';
