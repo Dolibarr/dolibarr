@@ -59,9 +59,8 @@ alter table c_typent         rename llx_c_typent ;
 create table llx_paiement_facture
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  fk_facture      integer,
   fk_paiement     integer,
+  fk_facture      integer,
   
-  unique key (fk_facture,fk_paiement)
+  unique key (fk_paiement,fk_facture)
 );
-
