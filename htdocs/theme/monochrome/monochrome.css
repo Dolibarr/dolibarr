@@ -26,6 +26,15 @@ body
   color: #dddddd;  
   font-family: Helvetica, Verdana, sans-serif;
   font-size: small;
+  scrollbar-3dlight-color : #999999;
+  scrollbar-arrow-color : #999999;
+  scrollbar-base-color : #666666;
+  scrollbar-darkshadow-color : Black;
+  scrollbar-face-color : #666666;
+  scrollbar-highlight-color : #999999;
+  scrollbar-shadow-color : #999999;
+  scrollbar-track-color : #8B8B8B;
+  
 }
 /*
  *   Menu superieur
@@ -150,14 +159,14 @@ a.leftmenu {
   }
 
 td.barre { 
-           background: #444444 url(img/menu_background.jpg) top left repeat-y;
+           background: #444444 url(img/barre_background.jpg) bottom left no-repeat;
            font-size: 1.0em;  
            color: #dddddd;
            text-decoration: none;
            border-top: 1px ridge #aaaaaa;
            border-right:  1px solid #888888;
            border-bottom: 1px ridge #aaaaaa;
-           border-left:   1px solid #666666;                      
+           border-left:   1px solid #999999;                      
            }
 
 
