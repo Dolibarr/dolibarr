@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,15 +20,18 @@
  *
  */
 
-/*! \file htdocs/projet/project.class.php
-        \ingroup    projet
-		\brief      Fichier de la classe de gestion des projets
-		\version    $Revision$
+
+/*!
+  \file htdocs/projet/project.class.php
+  \ingroup    projet
+  \brief      Fichier de la classe de gestion des projets
+  \version    $Revision$
 */
 
 
-/*! \class Project
-        \brief      Classe de gestion des projets
+/*! 
+  \class Project
+  \brief      Classe de gestion des projets
 */
 
 class Project {
@@ -40,10 +43,10 @@ class Project {
   var $societe;
 
   function Project($DB)
-    {
-      $this->db = $DB;
-      $this->societe = new Societe($DB);
-    }
+  {
+    $this->db = $DB;
+    $this->societe = new Societe($DB);
+  }
   /*
    *
    *
