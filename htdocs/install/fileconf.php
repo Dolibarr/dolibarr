@@ -2,6 +2,8 @@
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Sebastien DiCintio   <sdicintio@ressource-toi.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +27,7 @@ include("./inc.php");
 pHeader("Fichier de configuration","etape1");
 
 $conf = "../conf/conf.php";
+
 
 if (is_readable($conf))
 {
@@ -82,8 +85,9 @@ if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 	// ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
 	if (eregi('php$',$_SERVER["SCRIPT_FILENAME"]) || eregi('php\.exe$',$_SERVER["SCRIPT_FILENAME"])) {
 		$dolibarr_main_document_root=$_SERVER["DOCUMENT_ROOT"];
-		if (! eregi('\/dolibarr\/htdocs$',$dolibarr_main_document_root)) {
-			$dolibarr_main_document_root.="/dolibarr/htdocs";
+		//print $dolibarr_main_document_root;
+		if (! eregi('\/dolibarr/htdocs$',$dolibarr_main_document_root)) {
+			$dolibarr_main_document_root.="dolibarr/htdocs";
 		}
 	}
 	else {
@@ -111,7 +115,8 @@ exemples :<br>
 </td><td  class="label" valign="top"><input type="text" size="60" value="
 <?PHP
 
-print ereg_replace("htdocs","documents",$dolibarr_main_document_root);
+//print ereg_replace("htdocs","documents",$dolibarr_main_document_root);
+print $dolibarr_main_document_root."/documents";
 ?>
 " name="main_data_dir">
 </td><td class="comment">
@@ -165,12 +170,19 @@ $dolibarr_main_db_host = "localhost";
 <!-- moi-->
 <td valign="top" class="label">Choix de la base de données</td>
 
+<td> <select name='db_type'>
+<option value='mysql'>MySql</option>
+<option value='pgsql'>PostgreSQL</option>
+</select>
+&nbsp;
 
-<td> <select name="db_type">
-		<option value="<?PHP print $dolibarr_main_db_type ?>">Mysql</option>
-		<option value="<?PHP print $dolibarr_main_db_type ?>">PostgreSql</option>
-	  </select>
-</td>
+
+<!--
+<SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
+
+document.write('<input type = "button" name = "valide" value="confirmer" onclick="alert(this.form.elements[\'db_type\'].options[this.form.elements[\'db_type\'].selectedIndex].value);" >')
+
+-->
 
 <td valign="comment">Nom de la base de donnée qui est soit MySql par défaut ou alors PostgreSql.</td>
 
@@ -178,8 +190,9 @@ $dolibarr_main_db_host = "localhost";
 
 <br>
 <td valign="top" class="label">Serveur</td>
-
 <td valign="top" class="label"><input type="text" name="db_host" value="<?PHP print $dolibarr_main_db_host ?>"></td>
+<input type="hidden" name="base" value="<?PHP print $test_base?>">
+
 <td class="comment">Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web</div></td>
 
 </tr>

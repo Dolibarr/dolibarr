@@ -1,6 +1,8 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Sebastien DiCintio   <sdicintio@ressource-toi.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +30,13 @@ if (file_exists($conf))
 {
   include($conf);
 }
-require ($dolibarr_main_document_root . "/lib/mysql.lib.php");
+
+
+if($dolibarr_main_db_type == "mysql")
+			require ($dolibarr_main_document_root . "/lib/mysql.lib.php");		
+else
+      require ($dolibarr_main_document_root . "/lib/pgsql.lib.php");
+			
 require ($dolibarr_main_document_root . "/conf/conf.class.php");
 
 if ($HTTP_POST_VARS["action"] == "set")

@@ -1,6 +1,8 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +23,7 @@
  *
  */
 
-include_once("../lib/mysql.lib.php");
+
 include_once("./inc.php");
 
 pHeader("Fichier de configuration","etape2");
@@ -86,7 +88,7 @@ if ($_POST["action"] == "set")
 
 			fputs($fp, '$dolibarr_main_db_type="'.$_POST["db_type"].'";');
       fputs($fp,"\n");
-			
+						
       fputs($fp, '?>');
       fclose($fp);
 
@@ -101,7 +103,19 @@ if ($_POST["action"] == "set")
 	  $error = 1;
 	}
     }
-
+		
+		if($dolibarr_main_db_type == "mysql")
+		{
+			include_once("../lib/mysql.lib.php");
+			$choix=1;
+		}
+		else
+		{
+		  include_once("../lib/pgsql.lib.php");
+			$choix=2;
+		}
+		
+			
   /***************************************************************************
    *
    * Creation des répertoires
@@ -198,15 +212,19 @@ if ($_POST["action"] == "set")
       if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 	{
 	  dolibarr_syslog ("Creation de l'utilisateur : ".$dolibarr_main_db_user);
-
+		
 	  $conf = new Conf();
 	  $conf->db->host = $dolibarr_main_db_host;
-	  $conf->db->name = "mysql";
-	  $conf->db->user = isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
-	  $conf->db->pass = isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
+		$conf->db->name = $dolibarr_main_db_name;
+	  //$conf->db->name = "mysql";
+	  //$conf->db->user = isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
+	  //$conf->db->pass = isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
+		$conf->db->user = "postgres"; 
+		$conf->db->pass = "postgres";
 	  //print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->pass;
 	  $db = new DoliDb();
-	  
+	  if($choix==1)
+		{
 	  $sql = "INSERT INTO user ";
 	  $sql .= "(Host,User,password)";
 	  $sql .= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_user',password('$dolibarr_main_db_pass'))";
@@ -240,6 +258,21 @@ if ($_POST["action"] == "set")
 	    }
 	  
 	  $db->close();	  
+		} //choix==1
+		else 
+		{		
+			$nom = $dolibarr_main_db_user;
+			$con=pg_connect("host=localhost dbname=dolibarr user=postgres");
+			$query_str = "create user \"$nom\" with password '".$dolibarr_main_db_pass."';";
+			//print $query_str;			
+			$ret = pg_query($con,$query_str);
+			if ($ret)
+			  print "<tr><td>Création de l'utilisateur:\"$nom\"</td><td>OK</td></tr>";
+			else
+			 print "<tr><td>Création de l'utilisateur:\"$nom\"</td><td>ERREUR</td></tr>";			
+			 		
+		}
+		
 	}
             
       // Tentative accès serveur et base par le user admin dolibarr
@@ -250,7 +283,7 @@ if ($_POST["action"] == "set")
       $conf->db->user = $dolibarr_main_db_user;
       $conf->db->pass = $dolibarr_main_db_pass;
 	  //print $conf->db->host.",".$conf->db->name.",".$conf->db->user.",".$conf->db->pass;
-	  $db = new DoliDb();
+	    $db = new DoliDb();
       $ok = 1;
       
 	  if ($db->connected == 1)
@@ -279,12 +312,15 @@ if ($_POST["action"] == "set")
 	      //
 	      // Création de la base
 	      //
+				
 	      print "<tr><td>Echec de connexion à la base : $dolibarr_main_db_name</td><td>Warning</td></tr>";
 	      print '<tr><td colspan="2">Création de la base : '.$dolibarr_main_db_name.'</td></tr>';
 	      
 	      $conf = new Conf();
 	      $conf->db->host = $dolibarr_main_db_host;
-	      $conf->db->name = "mysql";
+	      //$conf->db->name = "mysql";
+				$conf->db->name = $dolibarr_main_db_name;
+				//$conf->db->user = "seb";
 	      $conf->db->user = isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
 	      $conf->db->pass = isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
 
