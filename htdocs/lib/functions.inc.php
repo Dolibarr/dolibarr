@@ -223,6 +223,9 @@ function dolibarr_print_object_info($object)
   if (isset($object->user_validation))
     print "Validé par  : " . $object->user_validation->fullname . '<br>';
 
+  if (isset($object->user_cloture))
+    print "Cloturé par  : " . $object->user_cloture->fullname . '<br>';
+
 }
 
 /*!
