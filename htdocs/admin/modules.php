@@ -40,14 +40,14 @@ if ($_GET["action"] == 'set' && $user->admin)
 {
   Activate($_GET["value"]);
 
-  Header("Location: modules.php");
+  Header("Location: modules.php?spe=".$_GET["spe"]);
 }
 
 if ($_GET["action"] == 'reset' && $user->admin)
 {
   UnActivate($_GET["value"]);
 
-  Header("Location: modules.php");
+  Header("Location: modules.php?spe=".$_GET["spe"]);
 }
 
 
@@ -110,9 +110,17 @@ if (!$user->admin)
   exit;
 }
 
-print_titre($langs->trans("Modules"));
+if (!$_GET["spe"])
+{
+  print_titre($langs->trans("Modules"));
+  print "<br>".$langs->trans("ModulesDesc")."<br>\n";
+}
+else
+{
+  print_titre($langs->trans("Modules Speciaux"));
+}
 
-print "<br>".$langs->trans("ModulesDesc")."<br>\n";
+
 
 print '<br>';
 print '<table class="noborder" cellpadding="3" cellspacing="0">';
@@ -191,6 +199,10 @@ foreach ($orders as $key => $value)
 
   if ($oldfamily && $family!=$oldfamily) { print '<tr class="liste_titre"><td colspan="6"></td></tr>'; }
   
+  if((!$objMod->special && !$_GET["spe"] ) or ($objMod->special && $_GET["spe"]))
+    {
+
+
   print "<tr $bc[$var]>";
 
   print "<td class='body'>";
@@ -217,7 +229,7 @@ foreach ($orders as $key => $value)
   
   if ($const_value == 1)
     {
-      print '<a href="modules.php?action=reset&value='.$modName.'">'.$langs->trans("Disable").'</a></td>';
+      print '<a href="modules.php?action=reset&amp;value='.$modName.'&amp;spe='.$_GET["spe"].'">'.$langs->trans("Disable").'</a></td>';
       
       
       if ($objMod->config_page_url)
@@ -242,13 +254,19 @@ foreach ($orders as $key => $value)
     }
   else
     {
-      print '<a href="modules.php?action=set&value='.$modName.'">'.$langs->trans("Activate").'</a></td><td>&nbsp;</td>';
+      print '<a href="modules.php?action=set&value='.$modName.'&amp;spe='.$_GET["spe"].'">'.$langs->trans("Activate").'</a></td><td>&nbsp;</td>';
     }
   
   print '</tr>';
+    }
   
 }
 print "</table>";
+
+if(!$_GET["spe"] )
+{
+  print '<br><a href="./modules.php?spe=1">Modules spéciaux</a>';
+}
 
 llxFooter();
 ?>
