@@ -75,6 +75,7 @@ class Facture
       $this->projetid = 0;
       $this->id = $facid;
       $this->prefixe_facture = ''; // utilisé dans le module de numérotation saturne
+      $this->remise_exceptionnelle = 0;
   }
   
   /**
@@ -113,6 +114,26 @@ class Facture
 	  $this->db->free();
 	}
       $datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
+      /*
+       * Lecture de la remise exceptionnelle
+       *
+       */
+      $sql  = "SELECT rc.amount_ht";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
+      $sql .= " WHERE rc.fk_soc =". $this->socidp;
+      $sql .= " AND fk_facture IS NULL";
+      
+      if ( $this->db->query($sql) )
+	{
+	  $nurmx = $this->db->num_rows();
+	  
+	  if ($nurmx > 0)
+	    {
+	      $row = $this->db->fetch_row();
+	      $this->remise_exceptionnelle = $row[0];
+	    }
+	  $this->db->free();
+	}      
       /*
        *  Insertion dans la base
        */
@@ -216,6 +237,28 @@ class Facture
 	   *
 	   *
 	   */
+
+	  if ($this->remise_exceptionnelle > 0)
+	    {
+	      $result_insert = $this->addline($this->id, 
+					      addslashes("Remise exceptionnelle"),
+					      (0 - $this->remise_exceptionnelle),
+					      1,
+					      '19.6');
+
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
+	      $sql .= " SET fk_facture = $this->id WHERE fk_facture IS NULL";
+	      $this->db->query( $sql) ; 
+
+	    }
+
+
+	  /*
+	   *
+	   *
+	   *
+	   */
+
 	  $this->updateprice($this->id);	  
 	  return $this->id;
 	}
@@ -404,10 +447,20 @@ class Facture
 	      
 		  if ($this->db->query( $sql) )
 		    {
-		      $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture WHERE rowid = $rowid AND fk_statut = 0;";
+		      /*
+		       * On repositionne la remise
+		       */
+		      $sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
+		      $sql .= " SET fk_facture = NULL WHERE fk_facture = $rowid";
 		      
 		      if ($this->db->query( $sql) )
 			{
+			  
+			  $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture WHERE rowid = $rowid AND fk_statut = 0;";
+
+			  $this->db->query( $sql) ; 
+
+
 			  return 1;
 			}
 		      else
