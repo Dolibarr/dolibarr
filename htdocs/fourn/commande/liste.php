@@ -54,8 +54,6 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-
-
 /*
  * Mode Liste
  *
@@ -63,14 +61,30 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datea")." as datea";
+$sql = "SELECT s.idp, s.nom, ".$db->pdate("cf.date_commande")." as dc";
 $sql .= " ,cf.rowid,cf.ref, cf.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s ";
 $sql .= " , ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 $sql .= " WHERE cf.fk_soc = s.idp ";
 
-if ($socidp) {
-  $sql .= " AND s.idp=$socidp";
+if ($socid)
+{
+  $sql .= " AND s.idp=".$_GET["socid"];
+}
+
+if (strlen($_GET["statut"]))
+{
+  $sql .= " AND fk_statut =".$_GET["statut"];
+}
+
+if (strlen($_GET["search_ref"]))
+{
+  $sql .= " AND cf.ref LIKE '%".$_GET["search_ref"]."%'";
+}
+
+if (strlen($_GET["search_nom"]))
+{
+  $sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -93,9 +107,17 @@ if ($result)
   print '<table class="liste">';
   print '<tr class="liste_titre"><td>Réf</td>';
   print_liste_field_titre("Société","index.php","s.nom");
-
-  print "<td>Ville</td>";
+  print '<td>Date</td>';
   print "</tr>\n";
+
+  print '<tr class="liste_titre">';
+  print '<form action="liste.php" method="GET">';
+  print '<td><input type="text" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
+  print '<td><input type="text" name="search_nom" value="'.$_GET["search_nom"].'"><input type="submit"></td>';
+  print '<td>&nbsp;';
+  print '</form>';
+  print '</td></tr>';
+
   $var=True;
 
   while ($i < min($num,$conf->liste_limit))
@@ -108,7 +130,17 @@ if ($result)
       print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.$obj->ref.'</a></td>'."\n";
       print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">'.img_file().'</a>';
       print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>'."\n";
-      print "<td>".$obj->ville."</td>\n";       
+
+      print "<td align=\"right\" width=\"100\">";
+	  if ($obj->dc)
+	    {
+	      print dolibarr_print_date($obj->dc);
+	    }
+	  else
+	    {
+	      print "-";
+	    }
+	  print '</td>';
       print "</tr>\n";
       $i++;
     }
