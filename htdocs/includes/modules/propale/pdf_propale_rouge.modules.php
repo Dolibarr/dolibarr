@@ -224,24 +224,24 @@ Class pdf_propale_rouge
 	{
 	  $pdf->SetTextColor(0,0,200);
 	  $pdf->SetFont('Arial','B',14);
-	  $pdf->MultiCell(60, 8, FAC_PDF_INTITULE, 0, 'L');
+	  $pdf->MultiCell(76, 8, FAC_PDF_INTITULE, 0, 'L');
 	}
       
       $pdf->SetTextColor(70,70,170);
       if (defined("FAC_PDF_ADRESSE"))
 	{
 	  $pdf->SetFont('Arial','',12);
-	  $pdf->MultiCell(40, 5, FAC_PDF_ADRESSE);
+	  $pdf->MultiCell(76, 5, FAC_PDF_ADRESSE);
 	}
       if (defined("FAC_PDF_TEL"))
 	{
 	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(40, 5, "Tél : ".FAC_PDF_TEL);
+	  $pdf->MultiCell(76, 5, "Tél : ".FAC_PDF_TEL);
 	}  
       if (defined("FAC_PDF_SIREN"))
 	{
 	  $pdf->SetFont('Arial','',10);
-	  $pdf->MultiCell(40, 5, "SIREN : ".FAC_PDF_SIREN);
+	  $pdf->MultiCell(76, 5, "SIREN : ".FAC_PDF_SIREN);
 	}  
       
       if (defined("FAC_PDF_INTITULE2"))
@@ -258,10 +258,10 @@ Class pdf_propale_rouge
       $pdf->SetFont('Arial','B',12);
       $propale->fetch_client();
       $pdf->SetXY(102,42);
-      $pdf->MultiCell(66,5, $propale->client->nom);
+      $pdf->MultiCell(96,5, $propale->client->nom);
       $pdf->SetFont('Arial','B',11);
       $pdf->SetXY(102,47);
-      $pdf->MultiCell(66,5, $propale->client->adresse . "\n" . $propale->client->cp . " " . $propale->client->ville);
+      $pdf->MultiCell(96,5, $propale->client->adresse . "\n" . $propale->client->cp . " " . $propale->client->ville);
       $pdf->rect(100, 40, 100, 40);
       
       
