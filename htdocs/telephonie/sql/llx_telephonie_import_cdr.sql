@@ -30,5 +30,6 @@ create table llx_telephonie_import_cdr (
   dureetext varchar(255) NOT NULL,
   tarif     varchar(255) NOT NULL,
   montant   real  NOT NULL,
-  duree     integer  NOT NULL
+  duree     integer  NOT NULL,
+  fichier   varchar(255) NOT NULL
 )type=innodb;
