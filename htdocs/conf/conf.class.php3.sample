@@ -35,7 +35,20 @@ class Conf {
     $this->years = 2001;
 
     $this->mode = 1 ;
+
+    $this->propal = new PropalConf();
   }  
+}
+
+class PropalConf {
+  Function PropalConf() {
+    $this->templatesdir = "/home/www/dolibarr/dolibarr/templates";
+    $this->outputdir    = "/home/www/dolibarr/dolibarr/htdocs/document/propal";
+    /*
+     * Without ended slash
+     */
+    $this->outputurl    = "/document/propal";
+  }
 }
 
 class DbConf {
