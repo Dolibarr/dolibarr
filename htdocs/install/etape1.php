@@ -109,15 +109,7 @@ if ($_POST["action"] == "set")
   
   if ($error == 0)
     {
-    /*
-        $dir[0] = "$datadir/facture";
-        $dir[1] = "$datadir/propale";
-        $dir[2] = "$datadir/societe";
-        $dir[3] = "$datadir/ficheinter";
-        $dir[4] = "$datadir/produit";
-        $dir[5] = "$datadir/rapport";
-        $dir[6] = "$datadir/images";
-*/
+    
 	$dir[0] = "$main_data_dir/facture";
         $dir[1] = "$main_data_dir/propale";
         $dir[2] = "$main_data_dir/societe";
