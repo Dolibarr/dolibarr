@@ -60,6 +60,7 @@ div.vmenu
   margin-right: 10px;
   padding: 0px;
   padding-bottom: 6px;
+  width: 160px;
 }
 
 a
@@ -95,7 +96,7 @@ a.login
 {
   position: absolute;
   right: 27px;
-  top: 9px;
+  top: 1px;
   padding:2px;
   text-decoration:none;
   color:white;

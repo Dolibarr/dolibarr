@@ -223,7 +223,7 @@ function left_menu($menu_array, $help_url='', $form_search='')
 {
   global $user, $conf, $langs;
 
-  print '<div class="vmenuplusfiche" width="158">'."\n";
+  print '<div class="vmenuplusfiche">'."\n";
 
   // Colonne de gauche
   print "\n<!-- Debut left vertical menu -->\n";
