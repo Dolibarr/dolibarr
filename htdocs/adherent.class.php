@@ -592,6 +592,12 @@ class Adherent
 	    $err+=1;
 	  }
 	}
+      if (defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1)
+	{
+	  if(!$this->add_to_glasnost()){
+	    $err+=1;
+	  }
+	}
       if ($err>0){
 	// error
 	return 0;
@@ -615,6 +621,12 @@ class Adherent
 	    $err+=1;
 	  }
 	}
+      if (defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1)
+	{
+	  if(!$this->del_to_glasnost()){
+	    $err+=1;
+	  }
+	}
       if ($err>0){
 	// error
 	return 0;
@@ -623,6 +635,168 @@ class Adherent
       }
     }
 
+  /*
+   * Rajoute cet utilisateur au serveur glasnost
+   *
+   */
+  Function add_to_glasnost()
+    {
+      if (defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1 && 
+	  defined('MAIN_GLASNOST_SERVEUR') && MAIN_GLASNOST_SERVEUR != '' &&
+	  defined('MAIN_GLASNOST_USER') && MAIN_GLASNOST_USER != '' &&
+	  defined('MAIN_GLASNOST_PASS') && MAIN_GLASNOST_PASS != ''
+	  ){
+	// application token is not useful here
+	$applicationtoken='';
+	list($success, $response) = 
+	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+			 '/RPC2', 
+			 'callGateway',
+			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/authentication"),
+			       XMLRPC_prepare('getUserIdAndToken'),
+			       XMLRPC_prepare(array("glasnost://".MAIN_GLASNOST_SERVEUR."/authentication","$applicationtoken",MAIN_GLASNOST_USER,MAIN_GLASNOST_PASS))
+			       )
+			 );
+	if ($success){
+	  $userid=$response[0];
+	  $usertoken=$response[1];
+	}else{
+	  return 0;
+	}
+
+	list($success,$response)=
+	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+			 '/RPC2', 
+			 'callGateway',
+			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/people"),
+			       XMLRPC_prepare('addObject'),
+			       XMLRPC_prepare(array(
+						    "glasnost://".MAIN_GLASNOST_SERVEUR."/people",
+						    "$applicationtoken",
+						    $usertoken,
+						    array(
+							  '__thingCategory__'=>'object',
+							  '__thingName__'=>  'Person',
+							  'firstName'=>$this->prenom,
+							  'lastName'=>$this->nom,
+							  'login'=>$this->login,
+							  'email'=>$this->email
+							  )
+						    )
+					      )
+			       )
+			 );
+	if ($success){
+	  $personid=$response[0];
+	}else{
+	  return 0;
+	}
+	return 1;
+      }else{
+	return 0;
+      }
+    }
+
+  /*
+   * efface cet utilisateur du serveur glasnost
+   *
+   */
+  Function del_to_glasnost()
+    {
+      if (defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1 && 
+	  defined('MAIN_GLASNOST_SERVEUR') && MAIN_GLASNOST_SERVEUR != '' &&
+	  defined('MAIN_GLASNOST_USER') && MAIN_GLASNOST_USER != '' &&
+	  defined('MAIN_GLASNOST_PASS') && MAIN_GLASNOST_PASS != ''
+	  ){
+	// application token is not useful here
+	$applicationtoken='';
+	list($success, $response) = 
+	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+			 '/RPC2', 
+			 'callGateway',
+			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/authentication"),
+			       XMLRPC_prepare('getUserIdAndToken'),
+			       XMLRPC_prepare(array("glasnost://".MAIN_GLASNOST_SERVEUR."/authentication","$applicationtoken",MAIN_GLASNOST_USER,MAIN_GLASNOST_PASS))
+			       )
+			 );
+	if ($success){
+	  $userid=$response[0];
+	  $usertoken=$response[1];
+	}else{
+	  return 0;
+	}
+	// recuperation du personID
+	list($success,$response)=
+	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+			 '/RPC2', 
+			 'callGateway',
+			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/people"),
+			       XMLRPC_prepare('getObjectByLogin'),
+			       XMLRPC_prepare(array(
+						    "glasnost://".MAIN_GLASNOST_SERVEUR."/people",
+						    "$applicationtoken",
+						    $usertoken,
+						    $this->login
+						    )
+					      )
+			       )
+			 );
+	if ($success){
+	  $personid=$response['id'];
+	}else{
+	  return 0;
+	}
+	if (defined('MAIN_GLASNOST_DEFAULT_GROUPID') && MAIN_GLASNOST_DEFAULT_GROUPID != ''){
+	  // recuperation des personne de ce groupe
+	  list($success,$response)=
+	    XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+			 '/RPC2', 
+			   'callGateway',
+			   array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/groups"),
+				 XMLRPC_prepare('getObject'),
+				 XMLRPC_prepare(array(
+						      "glasnost://".MAIN_GLASNOST_SERVEUR."/groups",
+						      "$applicationtoken",
+						      $usertoken,
+						      MAIN_GLASNOST_DEFAULT_GROUPID
+						      )
+						)
+				 )
+			   );
+	  if ($success){
+	    $groupids=$response['membersSet'];
+	  }else{
+	    return 0;
+	  }
+	  // TODO faire la verification que le user n'est pas dans ce
+	  // groupe par defaut. si il y ai il faut l'effacer et
+	  // modifier le groupe
+	}
+	// suppression du personID
+	list($success,$response)=
+	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+			 '/RPC2', 
+			 'callGateway',
+			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/people"),
+			       XMLRPC_prepare('deleteObject'),
+			       XMLRPC_prepare(array(
+						    "glasnost://".MAIN_GLASNOST_SERVEUR."/people",
+						    "$applicationtoken",
+						    $usertoken,
+						    $personid
+						    )
+					      )
+			       )
+			 );
+	if ($success){
+	  return 1;
+	}else{
+	  return 0;
+	}
+      }else{
+	return 0;
+      }
+    }
   /*
    *
    *

@@ -26,7 +26,7 @@ require($GLOBALS["DOCUMENT_ROOT"]."/adherent_type.class.php");
 require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
 require($GLOBALS["DOCUMENT_ROOT"]."/cotisation.class.php");
 require($GLOBALS["DOCUMENT_ROOT"]."/paiement.class.php");
-
+require($GLOBALS["DOCUMENT_ROOT"]."/adherents/XML-RPC.functions.php");
 
 $db = new Db();
 $adho = new AdherentOptions($db);
@@ -137,21 +137,31 @@ if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] 
       // error
       $errmsg="echec du rajout de l'utilisateur aux mailing-lists";
     }
-  
-  /*
-  if ($conf->adherent->use_mailman == 1)
-    {
-      foreach ($conf->adherent->mailman_lists as $key)
-	{
-	  $adh->del_to_mailman($adh->email,$key,$conf->adherent->mailman_dir);
-	}
-    }
-  */
 }
-
 
 llxHeader();
 
+if ($HTTP_POST_VARS["action"] == 'confirm_add_glasnost' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  $adh = new Adherent($db, $rowid);
+  $adh->fetch($rowid);
+  define("XMLRPC_DEBUG", 1);
+  $adh->add_to_glasnost();
+  if(defined('MAIN_DEBUG') && MAIN_DEBUG == 1){
+    XMLRPC_debug_print();
+  }
+}
+
+if ($HTTP_POST_VARS["action"] == 'confirm_del_glasnost' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  $adh = new Adherent($db, $rowid);
+  $adh->fetch($rowid);
+  define("XMLRPC_DEBUG", 1);
+  $adh->del_to_glasnost();
+  if(defined('MAIN_DEBUG') && MAIN_DEBUG == 1){
+    XMLRPC_debug_print();
+  }
+}
 /* ************************************************************************** */
 /*                                                                            */
 /* Création d'une fiche                                                       */
@@ -170,6 +180,7 @@ if ($errmsg != ''){
 $adho->fetch_optionals();
 if ($action == 'create') {
 
+  /*
   $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
   $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
   $sql .= " AND f.rowid = $facid";
@@ -183,6 +194,7 @@ if ($action == 'create') {
       $total = $obj->total;
     }
   }
+  */
   //  $adho = new AdherentOptions($db);
 
   //$myattr=$adho->fetch_name_optionals();
@@ -344,6 +356,55 @@ if ($rowid > 0)
       print "</form>\n";  
     }
 
+  /*
+   * Confirmation de l'ajout dans glasnost
+   *
+   */
+
+  if ($action == 'add_glasnost')
+    {
+
+      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">';
+      print '<input type="hidden" name="action" value="confirm_add_glasnost">';
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+      
+      print '<tr><td colspan="3">Valider un adhérent</td></tr>';
+      
+      print '<tr><td class="valid">Etes-vous sur de vouloir ajouter cet adhérent dans glasnost ?</td><td class="valid">';
+      $htmls = new Form($db);
+      
+      $htmls->selectyesno("confirm","no");
+      
+      print "</td>\n";
+      print '<td class="valid" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '</table>';
+      print "</form>\n";  
+    }
+
+  /*
+   * Confirmation de la suppression dans glasnost
+   *
+   */
+
+  if ($action == 'del_glasnost')
+    {
+
+      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">';
+      print '<input type="hidden" name="action" value="confirm_del_glasnost">';
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+      
+      print '<tr><td colspan="3">Valider un adhérent</td></tr>';
+      
+      print '<tr><td class="delete">Etes-vous sur de vouloir effacer cet adhérent de glasnost ?</td><td class="delete">';
+      $htmls = new Form($db);
+      
+      $htmls->selectyesno("confirm","no");
+      
+      print "</td>\n";
+      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '</table>';
+      print "</form>\n";  
+    }
 
   print "<form action=\"$PHP_SELF\" method=\"post\">\n";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
@@ -390,13 +451,13 @@ if ($rowid > 0)
   if ($user->admin)
     {
   
-      print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>\n";
+      print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr class=\"barreBouton\">\n";
       
       /*
        * Case 1
        */
       
-      print '<td align="center" width="25%">[<a href="edit.php?rowid='.$adh->id.'">Editer</a>]</td>';
+      print '<td align="center" width="15%" class=\"bouton\">[<a href="edit.php?rowid='.$adh->id.'">Editer</a>]</td>';
       
       /*
        * Case 2
@@ -404,29 +465,45 @@ if ($rowid > 0)
       
       if ($adh->statut < 1) 
 	{
-	  print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$rowid&action=valid\">Valider l'adhésion</a>]</td>\n";
+	  print "<td align=\"center\" width=\"15%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$rowid&action=valid\">Valider l'adhésion</a>]</td>\n";
 	}
       else
 	{
-	  print "<td align=\"center\" width=\"25%\">-</td>\n";
+	  print "<td align=\"center\" width=\"15%\" class=\"bouton\">-</td>\n";
 	}
       /*
        * Case 3
        */
       if ($adh->statut == 1) 
 	{
-	  print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$rowid&action=resign\">Résilier l'adhésion</a>]</td>\n";
+	  print "<td align=\"center\" width=\"15%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$rowid&action=resign\">Résilier l'adhésion</a>]</td>\n";
 	}
       else
 	{
-	  print "<td align=\"center\" width=\"25%\">-</td>\n";
+	  print "<td align=\"center\" width=\"15%\" class=\"bouton\">-</td>\n";
 	}
       
       /*
        * Case 4
        */
 
-      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=delete\">Supprimer</a>]</td>\n";
+      print "<td align=\"center\" width=\"15%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=delete\">Supprimer</a>]</td>\n";
+
+      if (defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1){
+	define("XMLRPC_DEBUG", 1);
+	/*
+	 * Case 5
+	 */
+	print "<td align=\"center\" width=\"20%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>]</td>\n";
+	
+	
+	/*
+	 * Case 6
+	 */
+	
+	print "<td align=\"center\" width=\"20%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>]</td>\n";
+      }
+
 
 
       print "</tr></table></form><p>\n";
