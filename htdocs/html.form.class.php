@@ -562,10 +562,15 @@ class Form
 	}
 
     }
-  /**
-   * Affiche un select à partir d'un tableau
-   *
-   */
+    
+    /*!
+    		\brief Affiche un select à partir d'un tableau
+    		\param	nom de la zone select
+    		\param	tableau de key+valeur
+    		\param	key présélectionnée
+    		\param	1 si il faut un valeur "-" dans la liste, 0 sinon
+    		\param	1 pour affiche la key dans la valeur "[key] value"
+    */
   Function select_array($name, $array, $id='', $empty=0, $key_libelle=0)
     {
       print '<select name="'.$name.'">';
