@@ -26,6 +26,10 @@ class Retourbplc
   var $db;
 
   var $ipclient;
+  var $montant;
+  var $num_compte;
+  var $ref_commande;
+  var $num_contrat;
   var $num_transaction;
   var $date_transaction;
   var $heure_transaction;
@@ -49,30 +53,228 @@ class Retourbplc
   Function insertdb()
   {
 
-    $sql = "INSERT INTO transaction_bplc";
-    $sql .= " (  ipclient, num_transaction, date_transaction, heure_transaction, num_autorisation, cle_acceptation, code_retour, ref_commande)";
-    $sql .= " VALUES ('$this->ipclient','$this->num_transaction','$this->date_transaction','$this->heure_transaction','$this->num_autorisation','$this->cle_acceptation','$this->code_retour','$this->ref_commande')";
+    if ($this->check_key($this->cle_acceptation))
+      {
 
-    $result = $this->db->query($sql);
-      
-    if ($result) 
-      {
-	return 1;
-      }
-    else
-      {
-	print $this->db->error();
-	print "<h2><br>$sql<br></h2>";
-	return 0;
-      }         
+	$sql = "INSERT INTO transaction_bplc";
+	$sql .= " (ipclient, 
+                   num_transaction, 
+                   date_transaction, 
+                   heure_transaction, 
+                   num_autorisation, 
+                   cle_acceptation, 
+                   code_retour, 
+                   ref_commande)";
+    
+	$sql .= " VALUES ('$this->ipclient',
+                          '$this->num_transaction',
+                          '$this->date_transaction',
+                          '$this->heure_transaction',
+                          '$this->num_autorisation',
+                          '$this->cle_acceptation',
+                          '$this->code_retour',
+                          '$this->ref_commande')";
+
+	$result = $this->db->query($sql);
+	
+	if ($result) 
+	  {
+	    return 1;
+	  }
+	else
+	  {
+	    print $this->db->error();
+	    print "<h2><br>$sql<br></h2>";
+	    return 0;
+	  }         
+      } 
   }
-
-
   /*
    *
    *
    *
    */
+  Function check_key($key)
+  {
 
+    $A = $this->montant;
+    $B = $this->num_contrat;
+    $C = $this->num_transaction;
+    $D = $this->ref_commande;
+    $E = $this->num_compte;
+
+    /*
+     * Etape 1
+     *
+     */
+    $A1 = $A . $E;
+    $B1 = $B . $E;
+    $C1 = $C . $E;
+    $D1 = $D . $E;
+
+    $map = range(0, 9);
+
+    $L1= $this->cle_luhn($A1, $map);
+
+    $L2= $this->cle_luhn($B1, $map);
+
+    $L3= $this->cle_luhn($C1, $map);
+
+    $L4= $this->cle_luhn($D1, $map);
+    /*
+     * Etape 2
+     *
+     */
+
+    $N1 = $L1 . $L2 . $L3 . $L4;
+    $N0 = $L1 + $L2 + $L3 + $L4;
+
+    $C5 = $this->corres($N0);
+    /*
+     * Comparaison
+     *
+     */
+
+    if ($key == $this->calcul_pos($N1,$N0, $C5))
+      {
+	return 1;
+      }
+    else 
+      {
+	return 0;
+      }
+  }
+  /*
+   *
+   *
+   */
+  Function corres($value)
+  {
+    $map[0] = 0;
+
+    for ($i = 65 ; $i < 91 ; $i++)
+      {
+	$map[$i-64] = chr($i);
+      }
+
+    for ($i = 0 ; $i < 10 ; $i++)
+      {
+	$map[27+$i] = $i;
+      }
+
+    return $map[$value];
+
+  }
+  /*
+   *
+   *
+   *
+   *
+   */
+  Function cle_luhn($cle, $map)
+  {
+    $buffer = $this->array_reverse($cle);
+ 
+    $totalVal = 0;
+    $flip = 1;
+ 
+    reset ($buffer);
+
+    while (list($key, $posVal) = each ($buffer))
+      {
+
+	if (!isset($map[$posVal])){
+	  return FALSE;
+	}
+
+	$posVal = $map[$posVal];
+
+	if ( $flip = !$flip)
+	  {
+	    $posVal *= 2;
+	  }
+      
+	while ($posVal>0)
+	  {
+	    $totalVal += $posVal % 10;
+	    $posVal = floor($posVal / 10);
+	  }
+    }
+
+    return substr($totalVal, strlen($totalVal)-1, 1);
+  }
+  /*
+   * Postion de C5 dans N0
+   *
+   *
+   */
+  Function calcul_pos($N1, $N0, $C5)
+  {
+    if ($N0 >= 0 && $N0 <= 6)
+      {
+	/* clé = 2 premiers de N0 . C5 . 2 derniers de N0 */
+
+	$cle = substr($N1,0,2) . $C5 . substr($N1,2,2);
+
+      }
+    elseif ($N0 >= 7 && $N0 <= 14)
+      {
+	/* clé = 4 premiers de N0 . C5 */
+
+	$cle = substr($N1,0,4) . $C5;
+
+      }
+    elseif ($N0 >= 15 && $N0 <= 21)
+      {
+	/* clé = premier de N1 . C5 . 3 derniers de N1 */
+
+	$cle = substr($N1,0,1) . $C5 . substr($N1,1,3);
+
+      }
+    elseif ($N0 >= 22 && $N0 <= 29)
+      {
+	/* clé = C5 . 4 derniers de N1 */
+
+	$cle = $C5 . substr($N1,0,4);
+
+      }
+    elseif ($N0 >= 30 && $N0 <= 36)
+      {
+	/* clé = 3 premiers de N1 . C5 . dernier de N1 */
+
+	$cle = substr($N1,0,3) . $C5 . substr($N1,1,1);
+
+      }
+    else
+      {
+	$cle = "ERREUR";
+      }
+
+    return $cle;
+
+  }
+  /*
+   * Retournement du tableau
+   *
+   *
+   */
+  Function array_reverse($string)
+  {
+
+    $len = strlen($string);
+
+    $i = $len;
+    $j = 0;
+    $rever = array();
+    while ($i > 0)
+      {
+	$rever[$j]= substr($string, $i-1, 1);
+	$i = $i - 1;
+	$j = $j + 1;
+      }
+
+
+    return $rever;
+  }
 }
 ?>

@@ -21,6 +21,7 @@
 
 class Account {
   var $rowid;
+
   var $bank;
   var $label;
 
@@ -40,40 +41,117 @@ class Account {
     
     return 1;
   }
+  /*
+   *
+   *
+   */
+  /*
+   *
+   *
+   *
+   */
+  Function create()
+    {
+      $sql = "INSERT INTO llx_bank_account (datec, label) values (now(),'$this->label');";
+      if ($this->db->query($sql))
+	{
+	  if ($this->db->affected_rows()) 
+	    {
+	      $this->id = $this->db->last_insert_id();
+	      $this->update();
+	      return $this->id;      
+	    }
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+    }
+  /*
+   *
+   *
+   */
 
-  Function fetch($id) {
+  Function update()
+    {      
+      $sql = "UPDATE llx_bank_account SET ";
+
+      $sql .= " bank = '" .$this->bank ."'";
+      $sql .= ",label = '".$this->label ."'";
+
+      $sql .= ",code_banque='".$this->code_banque."'";
+      $sql .= ",code_guichet='".$this->code_guichet."'";
+      $sql .= ",number='".$this->number."'";
+      $sql .= ",cle_rib='".$this->cle_rib."'";
+      $sql .= ",bic='".$this->bic."'";
+      $sql .= ",courant = ".$this->courant;
+
+      $sql .= " WHERE rowid = $this->id";
+      
+      $result = $this->db->query($sql);
+	      
+      if ($result) 
+	{
+	  if ($this->db->affected_rows()) 
+	    {
+	      return 1;		      
+	    }		  
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+    }
+  /*
+   *
+   *
+   */
+  Function fetch($id)
+  {
     $this->id = $id; 
-    $sql = "SELECT rowid, label, bank, number, courant FROM llx_bank_account";
+    $sql = "SELECT rowid, label, bank, number, courant, code_banque,code_guichet,cle_rib FROM llx_bank_account";
     $sql .= " WHERE rowid  = ".$id;
 
     $result = $this->db->query($sql);
 
-    if ($result) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object($result , 0);
+    if ($result)
+      {
+	if ($this->db->num_rows())
+	  {
+	    $obj = $this->db->fetch_object($result , 0);
+	    
+	    $this->bank    = $obj->bank;
+	    $this->label   = $obj->label;
+	    $this->courant = $obj->courant;
 
-	$this->bank = $obj->bank;
-	$this->label = $obj->label;
-	$this->number = $obj->number;
-	$this->courant = $obj->courant;
+	    $this->code_banque  = $obj->code_banque;
+	    $this->code_guichet = $obj->code_guichet;
+	    $this->number       = $obj->number;
+	    $this->cle_rib      = $obj->cle_rib;
+	  }
+	$this->db->free();
       }
-      $this->db->free();
-    }
   }
-
-  Function solde() {
+  /*
+   *
+   *
+   */
+  Function solde()
+  {
     $sql = "SELECT sum(amount) FROM llx_bank WHERE fk_account=$this->id AND dateo <=" . $this->db->idate(time() );
 
     $result = $this->db->query($sql);
 
-    if ($result) {
-      if ($this->db->num_rows()) {
-	$solde = $this->db->result(0,0);
+    if ($result)
+      {
+	if ($this->db->num_rows())
+	  {
+	    $solde = $this->db->result(0,0);
 
-	return $solde;
+	    return $solde;
+	  }
+	$this->db->free();
       }
-      $this->db->free();
-    }
   }
 
 

@@ -23,14 +23,16 @@
 <form action="bplc.php" method="post">
 
 <input type="hidden" name="CHAMP105" value="80.64.52.12">
-<input type="hidden" name="CHAMP901" value="590165">
-<input type="hidden" name="CHAMP902" value="20021222">
+<input type="hidden" name="CHAMP901" value="7654321">
+<input type="hidden" name="CHAMP902" value="20202022">
 <input type="hidden" name="CHAMP903" value="023252">
 <input type="hidden" name="CHAMP904" value="05423252">
-<input type="hidden" name="CHAMP905" value="Y2154">
+<input type="hidden" name="CHAMP905" value="Y4768">
 <input type="hidden" name="CHAMP906" value="0000">
 
-<input type="hidden" name="CHAMP200" value="0000DGFEZ2">
+<input type="hidden" name="CHAMP002" value="1234567890">
+<input type="hidden" name="CHAMP200" value="123456789012345">
+<input type="hidden" name="CHAMP201" value="200">
 
 <input type="submit" value="Test Retour">
 </form>

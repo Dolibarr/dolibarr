@@ -23,12 +23,14 @@
 create table llx_bank_account
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  datec          datetime,
+  tms            timestamp,
   label          varchar(30),
   bank           varchar(255),
-  number         varchar(255),
 
   code_banque    varchar(7),
   code_guichet   varchar(6),
+  number         varchar(255),
   cle_rib        varchar(5),
   bic            varchar(10),
 

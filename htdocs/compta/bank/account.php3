@@ -28,62 +28,80 @@
 require("./pre.inc.php3");
 
 require("./bank.lib.php3");
-llxHeader();
+
 $db = new Db();
 
-
-
-if ($account) {
-
-  if ($action == 'add') {
-    $author = $GLOBALS["REMOTE_USER"];
-    if ($credit > 0) {
-      $amount = $credit ;
-    } else {
-    $amount = - $debit ;
-    }
-
-    $dateop = "$dateoy" . "$dateo";
+if ($HTTP_POST_VARS["action"] == 'add' && $account)
+{
     
-    if ($num_chq) {
+  if ($credit > 0)
+    {
+      $amount = $credit ;
+    }
+  else
+    {
+      $amount = - $debit ;
+    }
+  
+  $dateop = "$dateoy" . "$dateo";
+  
+  if ($num_chq)
+    {
       $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
       $sql .= " VALUES (now(), $dateop, '$label', $amount,'$author',$num_chq,$account,'$operation')";
-    } else {
+    }
+  else
+    {
       $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author,fk_account,fk_type)";
       $sql .= " VALUES (now(), $dateop, '$label', $amount,'$author',$account,'$operation')";
     }
-
-    $result = $db->query($sql);
-    if ($result) {
+  
+  $result = $db->query($sql);
+  if ($result)
+    {
       $rowid = $db->last_insert_id();
-      if ($cat1) {
-	$sql = "INSERT INTO llx_bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
-	$result = $db->query($sql);
-      }
-    } else {
+      if ($cat1)
+	{
+	  $sql = "INSERT INTO llx_bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
+	  $result = $db->query($sql);
+	}
+      Header("Location: $PHP_SELF?account=$account");
+    }
+  else
+    {
       print $db->error();
       print "<p>$sql";
     }
-    
-  }
-  if ($action == 'del') {
-    bank_delete_line($db, $rowid);
-  }
+  
+}
+if ($action == 'del' && $account)
+{
+  bank_delete_line($db, $rowid);
+}
 
-  if ($vline) {
-    $viewline = $vline;
-  } else {
-    $viewline = 20;
-  }
 
-  print "<b>Bank</b> - <a href=\"$PHP_SELF\">Reload</a>&nbsp;-";
+llxHeader();
+
+if ($account)
+{
+
+  if ($vline)
+    {
+      $viewline = $vline;
+    }
+  else
+    {
+      $viewline = 20;
+    }
+
+  print "<b>Bank</b> - &nbsp;-";
   print "<a href=\"$PHP_SELF?viewall=1&account=$account\">Voir tout</a>";
   
   print "<form method=\"post\" action=\"$PHP_SELF?viewall=$viewall&vline=$vline&account=$account\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";
-  print "<td>Date</td><td>chq</td><td>Description</TD>";
+  print "<td>Date</td><td>Type</td><td>Description</TD>";
   print "<td align=\"right\">Debit</TD>";
   print "<td align=\"right\">Credit</TD>";
   print "<td align=\"right\">Solde</TD>";
@@ -93,30 +111,36 @@ if ($account) {
   
   $sql = "SELECT count(*) FROM llx_bank";
   if ($account) { $sql .= " WHERE fk_account=$account"; }
-  if ( $db->query($sql) ) {
-    $nbline = $db->result (0, 0);
-    $db->free();
+  if ( $db->query($sql) )
+    {
+      $nbline = $db->result (0, 0);
+      $db->free();
     
-    if ($nbline > $viewline ) {
-      $limit = $nbline - $viewline ;
-    } else {
-      $limit = $viewline;
+      if ($nbline > $viewline )
+	{
+	  $limit = $nbline - $viewline ;
+	}
+      else
+	{
+	  $limit = $viewline;
+	}
     }
-  }
   
   $sql = "SELECT rowid, label FROM llx_bank_categ;";
   $result = $db->query($sql);
-  if ($result) {
-    $var=True;  
-    $num = $db->num_rows();
-    $i = 0;
-    $options = "<option value=\"0\" SELECTED></option>";
-    while ($i < $num) {
-      $obj = $db->fetch_object($i);
-      $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
+  if ($result)
+    {
+      $var=True;  
+      $num = $db->num_rows();
+      $i = 0;
+      $options = "<option value=\"0\" SELECTED></option>";
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object($i);
+	  $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
+	}
+      $db->free();
     }
-    $db->free();
-  }
   
   
   if ($viewall) { $nbline=0; }
@@ -128,128 +152,157 @@ if ($account) {
 
   $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
   $sql .= " FROM llx_bank as b "; if ($account) { $sql .= " WHERE fk_account=$account"; }
-  if ($vue) {
-    if ($vue == 'credit') {
-      $sql .= " AND b.amount >= 0 ";
-    } else {
-      $sql .= " AND b.amount < 0 ";
-  }
-  }
+  if ($vue)
+    {
+      if ($vue == 'credit')
+	{
+	  $sql .= " AND b.amount >= 0 ";
+	}
+      else
+	{
+	  $sql .= " AND b.amount < 0 ";
+	}
+    }
   $sql .= " ORDER BY b.dateo ASC";
   
   $result = $db->query($sql);
-  if ($result) {
-    $var=True;  
-    $num = $db->num_rows();
-    $i = 0; $total = 0;
-  
-    $sep = 0;
-  
-    while ($i < $num) {
-      $objp = $db->fetch_object( $i);
-      $total = $total + $objp->amount;
-      $time = time();
-      if ($i > ($nbline - $viewline)) {
+  if ($result)
+    {
+      $var=True;  
+      $num = $db->num_rows();
+      $i = 0; $total = 0;
+      
+      $sep = 0;
+      
+      while ($i < $num)
+	{
+	  $objp = $db->fetch_object( $i);
+	  $total = $total + $objp->amount;
+	  $time = time();
+	  if ($i > ($nbline - $viewline))
+	    {
 
-	if (!$psol) {
-	  print "<tr $bc[$var]><td colspan=\"4\">&nbsp;</td>";
-	  print "<td align=\"right\">".price($total)."</b></td>";
-	  print "<td align=\"right\">".francs($total)."</td>\n";
-	  print '<td colspan="2">&nbsp;</td></tr>';
-	  $psol = 1;
+	      if (!$psol)
+		{
+		  print "<tr $bc[$var]><td colspan=\"4\">&nbsp;</td>";
+		  print "<td align=\"right\">".price($total)."</b></td><td>&nbsp;</td>";
+		  print "<td align=\"right\">".francs($total)."</td>\n";
+		  print '<td colspan="2">&nbsp;</td></tr>';
+		  $psol = 1;
+		  
+		}
+	      else
+		{
+		  $var=!$var;
 
-	} else {
-	  $var=!$var;
+		  if ($objp->do > $time && !$sep)
+		    {
+		      $sep = 1 ;
+		      print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
+		      print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td>";
+		      print "<td>&nbsp;</td>";
+		      print '<td align="right"><small>'.francs($total - $objp->amount).'</small></td>';
+		      print '</tr><tr>';
+		      print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
+		      print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
+		      print '<td></td>';
+		      print "<td>CHQ<input name=\"num_chq\" type=\"text\" size=4>&nbsp;-";
+		      print "<input name=\"label\" type=\"text\" size=40></td>";
+		      print "<td><input name=\"debit\" type=\"text\" size=8></td>";
+		      print "<td><input name=\"credit\" type=\"text\" size=8></td>";
+		      print "<td colspan=\"3\" align=\"center\"><select name=\"cat1\">$options</select></td>";
+		      print "</tr><tr><td colspan=\"3\"><small>YYYYMMDD</small></td><td>0000.00</td>";
+		      print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
+		    }
+		  
+		  print "<tr $bc[$var]>";
+		  print "<td>".strftime("%d %b %y",$objp->do)."</TD>\n";
+		  print "<td>".$objp->fk_type."</TD>\n";
+		  
+		  if ($objp->num_chq)
+		    {
+		      print "<td>CHQ $objp->num_chq - $objp->label</td>";
+		    }
+		  else
+		    {
+		      print "<td>$objp->label&nbsp;</td>";
+		    }
 
-	  if ($objp->do > $time && !$sep) {
-	    $sep = 1 ;
-	    print "<tr><td align=\"right\" colspan=\"5\">Total :</td>";
-	    print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td>";
-	    print "<td></td>";
-	    print '<td align="right"><small>'.francs($total - $objp->amount).'</small></td>';
-	    print '</tr><tr>';
-	    print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
-	    print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
-	    print '<td></td>';
-	    print "<td>CHQ<input name=\"num_chq\" type=\"text\" size=4>&nbsp;-";
-	    print "<input name=\"label\" type=\"text\" size=40></td>";
-	    print "<td><input name=\"debit\" type=\"text\" size=8></td>";
-	    print "<td><input name=\"credit\" type=\"text\" size=8></td>";
-	    print "<td colspan=\"3\" align=\"center\"><select name=\"cat1\">$options</select></td>";
-	    print "</tr><tr><td colspan=\"3\"><small>YYYYMMDD</small></td><td>0000.00</td>";
-	    print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
-	  }
+		  if ($objp->amount < 0)
+		    {
+		      print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
+		    }
+		  else
+		    {
+		      print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
+		    }
+		  
+		  if ($total > 0)
+		    {
+		      print "<td align=\"right\">".price($total)."</TD>\n";
+		    }
+		  else
+		    {
+		      print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
+		    }
 
-	  print "<tr $bc[$var]>";
-	  print "<td>".strftime("%d %b %y",$objp->do)."</TD>\n";
-	  print "<td>".$objp->fk_type."</TD>\n";
-
-	  if ($objp->num_chq) {
-	    print "<td>CHQ $objp->num_chq - $objp->label</td>";
-	  } else {
-	    print "<td>$objp->label&nbsp;</td>";
-	  }
-
-	  if ($objp->amount < 0) {
-	    print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
-	  } else {
-	    print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
-	  }
-	
-	  if ($total > 0) {
-	    print "<td align=\"right\">".price($total)."</TD>\n";
-	  } else {
-	    print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
-	  }
-
-	  if ($objp->rappro) {
-	    print "<td align=\"center\"><a href=\"releve.php3?num=$objp->num_releve&account=$account\">$objp->num_releve</a></td>";
-	  } else {
-	    print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid&account=$account\">[Del]</a></td>";
-	  }
-
-	  print "<td align=\"right\"><small>".francs($objp->amount)."</small></TD>\n";
-
-	  print "</tr>";
-
+		  if ($objp->rappro)
+		    {
+		      print "<td align=\"center\"><a href=\"releve.php3?num=$objp->num_releve&account=$account\">$objp->num_releve</a></td>";
+		    }
+		  else
+		    {
+		      print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid&account=$account\">[Del]</a></td>";
+		    }
+		  
+		  print "<td align=\"right\"><small>".francs($objp->amount)."</small></TD>\n";
+		  
+		  print "</tr>";
+		  
+		}
+	    }
+	  
+	  
+	  $i++;
 	}
-      }
-
-
-      $i++;
+      $db->free();
     }
-    $db->free();
-  }
+  /*
+   * Opérations futures
+   *
+   */
+  if ($sep)
+    {
+      print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
+      print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td><td align=\"right\">".francs($total)."</td></tr>\n";
+    }
+  else
+    {
 
-  if ($sep) {
-    print "<tr><td align=\"right\" colspan=\"5\">Total :</td>";
-    print "<td align=\"right\"><b>".price($total)."</b></td><td align=\"right\">".francs($total)."</td></tr>\n";
-  } else {
-
-    print "<tr><td align=\"right\" colspan=\"5\">Total :</td>";
-    print "<td align=\"right\"><b>".price($total)."</b></td><td align=\"right\">".francs($total)."</td></tr>\n";
-    print "<tr>";
-    print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
-    print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
-    print "<td>";
-
-    print '<select name="operation">';
-    print '<option value="CB">CB';
-    print '<option value="CHQ">CHQ';
-    print '<option value="DEP">DEP';
-    print '<option value="TIP">TIP';
-    print '<option value="PRE">PRE';
-    print '<option value="VIR">VIR';
-    print '</select></td>';
-    print "<td><input name=\"num_chq\" type=\"text\" size=4>";
-    print "<input name=\"label\" type=\"text\" size=40></td>";
-    print "<td><input name=\"debit\" type=\"text\" size=8></td>";
-    print "<td><input name=\"credit\" type=\"text\" size=8></td>";
-    print "<td colspan=\"2\" align=\"center\"><select name=\"cat1\">$options</select></td>";
-    print '</tr><tr><td colspan="2"><small>YYYYMMDD</small></td><td>0000.00</td>';
-
-    print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
-
+      print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
+      print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td><td align=\"right\">".francs($total)."</td></tr>\n";
+      print "<tr>";
+      print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
+      print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
+      print "<td>";
+      
+      print '<select name="operation">';
+      print '<option value="CB">CB';
+      print '<option value="CHQ">CHQ';
+      print '<option value="DEP">DEP';
+      print '<option value="TIP">TIP';
+      print '<option value="PRE">PRE';
+      print '<option value="VIR">VIR';
+      print '</select></td>';
+      print "<td><input name=\"num_chq\" type=\"text\" size=4>";
+      print "<input name=\"label\" type=\"text\" size=40></td>";
+      print "<td><input name=\"debit\" type=\"text\" size=8></td>";
+      print "<td><input name=\"credit\" type=\"text\" size=8></td>";
+      print "<td colspan=\"3\" align=\"center\"><select name=\"cat1\">$options</select></td>";
+      print '</tr><tr><td colspan="2"><small>YYYYMMDD</small></td><td>0000.00</td>';
+      
+      print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
+      
   }
 
   print "</table></form>";

@@ -25,14 +25,6 @@ require("./bank.lib.php3");
 llxHeader();
 $db = new Db();
 
-if ($action == 'add')
-{
-  $author = $GLOBALS["REMOTE_USER"];
-  
-  $sql = "INSERT INTO llx_bank_account (label, number, bank) VALUES ('$label','$number','$bank')";
-  $result = $db->query($sql);
-}
-
 print_titre("Configuration");
 
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
@@ -55,7 +47,7 @@ if ($result) {
     $objp = $db->fetch_object( $i);
 
 
-    print "<tr><td>$objp->rowid</td><td>$objp->label</td><td>$objp->bank</td><td>$objp->number</td></tr>";
+    print "<tr><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td><td>$objp->bank</td><td>$objp->number</td></tr>";
 
 
     $i++;
@@ -63,16 +55,27 @@ if ($result) {
   $db->free();
 }
 print "</table>";
-echo '<br><br>';
-print "<form method=\"post\" action=\"$PHP_SELF?viewall=$viewall&vline=$vline\">";
-print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-echo '<tr><td>Label&nbsp;:&nbsp;<input type="text" name="label"></td>';
-echo '<td>Bank&nbsp;:&nbsp;<input type="text" name="bank"></td>';
-echo '<td>Number&nbsp;:&nbsp;<input type="text" name="number"></td>';
-echo '<td><input type="submit" value="ajouter"></td></tr>';
 
-print "</table></form>";
+
+print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+
+/*
+ * Case 1
+ */
+
+print "<td align=\"center\" width=\"25%\">";
+print '<a href="fiche.php?action=create">Nouveau compte</a></td>';	
+/*
+ * Case 2
+ */
+
+print "<td align=\"center\" width=\"25%\">-</td>";
+print "<td align=\"center\" width=\"25%\">-</td>";
+print "<td align=\"center\" width=\"25%\">-</td>";
+
+print "</table>";
+
+
 
 
 $db->close();
