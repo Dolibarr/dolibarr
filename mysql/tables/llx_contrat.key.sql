@@ -21,11 +21,11 @@
 --
 -- ============================================================================
 
---
---
-ALTER TABLE llx_contrat ADD INDEX (fk_soc);
-ALTER TABLE llx_contrat ADD INDEX (fk_user_author);
---
---
+-- Supprimme orhpelins pour permettre montée de la clé
+DELETE llx_contrat FROM llx_contrat LEFT JOIN llx_societe ON llx_contrat.fk_soc = llx_societe.idp WHERE llx_societe.idp IS NULL;
+
+ALTER TABLE llx_contrat ADD INDEX idx_contrat_fk_soc (fk_soc);
+ALTER TABLE llx_contrat ADD INDEX idx_contrat_fk_user_author (fk_user_author);
+
 ALTER TABLE llx_contrat ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
 ALTER TABLE llx_contrat ADD FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
