@@ -566,12 +566,10 @@ class Facture
 	      $remise = ($pu * $remise_percent / 100);
 	      $_price = ($pu - $remise);
 	    }
-	  print $_price;
 
 	  /* Formatage des prix */
 	  $_price    = ereg_replace(",",".",$_price);
 	  $subprice  = ereg_replace(",",".",$subprice);
-	  print $_price;
 	  
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end)";
 	  $sql .= " VALUES ($facid, '".addslashes($desc)."','$price','$qty','$txtva',$fk_product,'$remise_percent','$subprice','$remise', ";
