@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,9 +21,10 @@
  *
  */
 
-/**     \file   	htdocs/fourn/commande/pre.inc.php
-        \ingroup    compta
-        \brief  	Fichier gestionnaire du menu commandes fournisseurs
+/**    
+       \file   	htdocs/fourn/commande/pre.inc.php
+       \ingroup    compta
+       \brief  	Fichier gestionnaire du menu commandes fournisseurs
 */
 
 require("../../main.inc.php");
@@ -42,13 +43,14 @@ function llxHeader($head = "", $title = "")
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
-
-  $menu->add(DOL_URL_ROOT."/fourn/commande/", $langs->trans("Orders"));
-  $menu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php", $langs->trans("List"));
+  $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
+  $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
 
   $langs->load("bills");
   $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
+
+  $menu->add(DOL_URL_ROOT."/fourn/commande/", $langs->trans("Orders"));
+  $menu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php", $langs->trans("List"));
 
   left_menu($menu->liste);
 }
