@@ -38,60 +38,64 @@ class GraphBar extends DolibarrGraph {
   {
     // Create the graph. These two calls are always required
 
-    $height = 240;
-    $width = 320;
-
-    if ($this->width <> $width && $this->width > 0)
-      $width = $this->width;
-
-    if ($this->height <> $height && $this->height > 0)
-      $height = $this->height;
-
-    $graph = new Graph($width, $height,"auto");    
-    $graph->SetScale("textlin");
-
-    $graph->yaxis->scale->SetGrace(20);
-
-    $graph->SetFrame($this->showframe);
-    
-    $graph->img->SetMargin(40,20,20,40);
-    
-    if ($this->type == 'LinePlot')
+    if (sizeof($datas) && sizeof($labels))
       {
-	$b2plot = new LinePlot($datas);
+
+	$height = 240;
+	$width = 320;
+
+	if ($this->width <> $width && $this->width > 0)
+	  $width = $this->width;
+
+	if ($this->height <> $height && $this->height > 0)
+	  $height = $this->height;
+
+	$graph = new Graph($width, $height,"auto");    
+	$graph->SetScale("textlin");
+
+	$graph->yaxis->scale->SetGrace(20);
+
+	$graph->SetFrame($this->showframe);
+    
+	$graph->img->SetMargin(40,20,20,40);
+    
+	if ($this->type == 'LinePlot')
+	  {
+	    $b2plot = new LinePlot($datas);
+	  }
+	else
+	  {
+	    $b2plot = new BarPlot($datas);
+	  }
+
+	$b2plot->SetFillColor($this->barcolor);
+    
+	$graph->xaxis->scale->SetGrace(20);
+
+	$LabelAngle = 45;
+	if ($this->LabelAngle <> $LabelAngle && $this->LabelAngle > 0)
+	  $LabelAngle = $this->LabelAngle;
+
+	$graph->xaxis->SetLabelAngle($LabelAngle);
+
+	$graph->xaxis->SetFont(FF_VERDANA,FS_NORMAL,8);
+    
+	$graph->Add($b2plot);
+    
+	$graph->title->Set($this->titre);
+    
+	$graph->title->SetFont(FF_VERDANA,FS_NORMAL);
+
+	$graph->yaxis->title->SetFont(FF_FONT2);
+	$graph->xaxis->title->SetFont(FF_FONT1);
+    
+	$graph->xaxis->SetTickLabels($labels);
+    
+	// Display the graph
+    
+	$graph->img->SetImgFormat("png");
+	$graph->Stroke($file);
       }
-    else
-      {
-	$b2plot = new BarPlot($datas);
-      }
-
-    $b2plot->SetFillColor($this->barcolor);
-    
-    $graph->xaxis->scale->SetGrace(20);
-
-    $LabelAngle = 45;
-    if ($this->LabelAngle <> $LabelAngle && $this->LabelAngle > 0)
-      $LabelAngle = $this->LabelAngle;
-
-    $graph->xaxis->SetLabelAngle($LabelAngle);
-
-    $graph->xaxis->SetFont(FF_VERDANA,FS_NORMAL,8);
-    
-    $graph->Add($b2plot);
-    
-    $graph->title->Set($this->titre);
-    
-    $graph->title->SetFont(FF_VERDANA,FS_NORMAL);
-
-    $graph->yaxis->title->SetFont(FF_FONT2);
-    $graph->xaxis->title->SetFont(FF_FONT1);
-    
-    $graph->xaxis->SetTickLabels($labels);
-    
-    // Display the graph
-    
-    $graph->img->SetImgFormat("png");
-    $graph->Stroke($file);
   }
 }   
 ?>
