@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,12 +37,15 @@ if ($user->societe_id > 0)
 if ($action == 'add') {
   $paiementfourn = new PaiementFourn($db);
 
-  $paiementfourn->facid        = $facid;  
-  $paiementfourn->datepaye     = $db->idate(mktime(12, 0 , 0, 
+  $paiementfourn->facid        = $facid;
+  $paiementfourn->facnumber    = $facnumber;
+  $paiementfourn->datepaye     = $db->idate(mktime(12, 0 , 0,
 					      $HTTP_POST_VARS["remonth"], 
 					      $HTTP_POST_VARS["reday"], 
 					      $HTTP_POST_VARS["reyear"])); 
   $paiementfourn->amount       = $amount;
+  $paiementfourn->accountid    = $accountid;
+  $paiementfourn->societe      = $societe;
   $paiementfourn->author       = $author;
   $paiementfourn->paiementid   = $paiementid;
   $paiementfourn->num_paiement = $num_paiement;
@@ -53,7 +57,6 @@ if ($action == 'add') {
     }
 
   $action = '';
-
 }
 
 /*
@@ -138,6 +141,28 @@ if ($action == 'create')
 
       print "<td rowspan=\"4\">";
       print '<textarea name="comment" wrap="soft" cols="40" rows="10"></textarea></td></tr>';
+
+      print "<tr><td>Compte à débiter :</td><td><select name=\"accountid\"><option value=\"\">-</option>\n";
+      $sql = "SELECT rowid, label FROM llx_bank_account ORDER BY rowid";
+      $result = $db->query($sql);
+      if ($result)
+	{
+	  $num = $db->num_rows();
+	  $i = 0; 
+	  while ($i < $num)
+	    {
+	      $objopt = $db->fetch_object( $i);
+	      print '<option value="'.$objopt->rowid.'"';
+	      if (defined("FACTURE_RIB_NUMBER") && FACTURE_RIB_NUMBER == $objopt->rowid)
+		{
+		  print ' SELECTED';
+		}
+	      print '>'.$objopt->label.'</option>';
+	      $i++;
+	    }
+	}
+      print "</select>";
+      print "</td></tr>\n";
 
       print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Num du cheque ou virement</em></td></tr>\n";
       print "<tr><td valign=\"top\">Reste à payer :</td><td><b>".price($total - $sumpayed)."</b> euros TTC</td></tr>\n";

@@ -25,12 +25,15 @@ class PaiementFourn
   var $id;
   var $db;
   var $facid;
+  var $facnumber;
   var $datepaye;
   var $amount;
+  var $accountid;
   var $author;
   var $paiementid; // numero du paiement dans le cas ou une facture paye +ieur fois
   var $num_paiement;
   var $note;
+  var $societe;
   /*
    *
    *
@@ -54,16 +57,16 @@ class PaiementFourn
     $this->amount = ereg_replace(",",".",$this->amount);
     
     $sql = "INSERT INTO llx_paiementfourn (fk_facture_fourn, datec, datep, amount, fk_user_author, fk_paiement, num_paiement, note)";
-    $sql .= " VALUES ($this->facid, now(), $this->datepaye,$this->amount, $user->id, $this->paiementid, '$this->num_paiement', '$this->note')";
+    $sql .= " VALUES ('$this->facid', now(), '$this->datepaye', '$this->amount', '$user->id', '$this->paiementid', '$this->num_paiement', '$this->note')";
     
     $result = $this->db->query($sql);
-    
-    if ($result) 
+
+    if (isset($result))
       {
 	$label = "Facture $this->facnumber - $this->societe";
-	$sql = "INSERT INTO llx_bank (datec, dateo, amount, author, label)";
-	$sql .= " VALUES (now(), $this->datepaye, $this->amount,'$this->author', '$this->label')";
-	//$result = $this->db->query($sql);
+	$sql = "INSERT INTO llx_bank (datec, dateo, amount, author, label, fk_account)";
+	$sql .= " VALUES (now(), '$this->datepaye', '$this->amount', '$this->author', '$label', '$this->accountid')";
+	$result = $this->db->query($sql);
       }
     else
       {
