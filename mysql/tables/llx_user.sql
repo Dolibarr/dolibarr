@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@ create table llx_user
   module_comm   smallint default 1,
   module_compta smallint default 1,
   fk_societe    integer default 0,
+  fk_socpeople  integer default 0,
   note          text,
 
   UNIQUE INDEX(login)
