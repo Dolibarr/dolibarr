@@ -61,8 +61,22 @@ class BarGraph extends Graph
   Function draw($file, $data, $title='')
   {
     $this->prepare($file, $data, $title);
+    
+    if (substr($this->MaxValue,0,1) == 1)
+      {
+	$this->graph->SetNumVertTicks(10);
+      }
+    elseif (substr($this->MaxValue,0,1) == 2)
+      {
+	$this->graph->SetNumVertTicks(4);
+      }
+    else
+      {
+	$this->graph->SetNumVertTicks(substr($this->MaxValue,0,1));
+      }
+    
 
-    //Draw it
+
     $this->graph->DrawGraph();
   }
 }
