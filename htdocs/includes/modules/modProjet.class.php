@@ -20,7 +20,7 @@
  *
  */
 
-class modFicheinter
+class modProjet
 {
 
   /*
@@ -28,7 +28,7 @@ class modFicheinter
    *
    */
 
-  Function modFicheinter($DB)
+  Function modProjet($DB)
   {
     $this->db = $DB ;
   }
@@ -43,23 +43,21 @@ class modFicheinter
     /*
      *  Activation du module
      */
-
     /*
      * Permissions
      */
     $sql = array(
-		 "INSERT INTO llx_rights_def VALUES (60,'Tous les droits sur les fiches d\'intervention','ficheinter','a',0);",
-		 "INSERT INTO llx_rights_def VALUES (61,'Lire les fiches d\'intervention','ficheinter','r',1);",
-		 "INSERT INTO llx_rights_def VALUES (62,'Créer modifier les fiches d\'intervention','ficheinter','w',0);",
-		 "INSERT INTO llx_rights_def VALUES (64,'Supprimer les fiches d\'intervention','ficheinter','d',0);"
+		 "insert into llx_rights_def values (40,'Tous les droits sur les projets','projet','a',0);",
+		 "insert into llx_rights_def values (41,'Lire les projets','projet','r',1);",
+		 "insert into llx_rights_def values (42,'Créer modifier les projets','projet','w',0);",
+		 //"insert into llx_rights_def values (43,'Modifier les projets d\'autrui','projet','m',0);",
+		 "insert into llx_rights_def values (44,'Supprimer les projets','projet','d',0);"
 		 );
-    //"INSERT INTO llx_rights_def VALUES (63,'Modifier les fiches d\'intervention d\'autrui','ficheinter','m',0);",
+    
     for ($i = 0 ; $i < sizeof($sql) ; $i++)
       {
 	$this->db->query($sql[$i]);
       }
-
-
   }
   /*
    *
@@ -67,9 +65,8 @@ class modFicheinter
    */
   Function remove()
   {
-    $sql = "DELETE FROM llx_rights_def WHERE module = 'ficheinter';";
+    $sql = "DELETE FROM llx_rights_def WHERE module = 'projet';";
     $this->db->query($sql);
-
   }
 }
 ?>

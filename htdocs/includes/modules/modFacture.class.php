@@ -99,8 +99,8 @@ class modFacture
     $sql[0] = "insert into llx_rights_def values (10,'Tous les droits sur les factures','facture','a',0);";
     $sql[1] = "insert into llx_rights_def values (11,'Lire les factures','facture','r',1);";
     $sql[2] = "insert into llx_rights_def values (12,'Créer modifier les factures','facture','w',0);";
-    $sql[3] = "insert into llx_rights_def values (13,'Modifier les factures d\'autrui','facture','m',0);";
-    $sql[4] = "insert into llx_rights_def values (14,'Supprimer les factures','facture','d',0);";
+    //    $sql[3] = "insert into llx_rights_def values (13,'Modifier les factures d\'autrui','facture','m',0);";
+    $sql[3] = "insert into llx_rights_def values (14,'Supprimer les factures','facture','d',0);";
     
     for ($i = 0 ; $i < sizeof($sql) ; $i++)
       {
