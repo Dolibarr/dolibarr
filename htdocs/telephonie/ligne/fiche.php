@@ -35,16 +35,17 @@ $s = strftime("%S",$dt);
 if ($_POST["action"] == 'add')
 {
   $ligne = new LigneTel($db);
-  $ligne->contrat        = $_POST["contrat"];
-  $ligne->numero         = $_POST["numero"];
-  $ligne->client_comm    = $_POST["client_comm"];
-  $ligne->client         = $_POST["client"];
-  $ligne->client_facture = $_POST["client_facture"];
-  $ligne->fournisseur    = $_POST["fournisseur"];
-  $ligne->commercial     = $_POST["commercial"];
-  $ligne->concurrent     = $_POST["concurrent"];
-  $ligne->remise         = $_POST["remise"];
-  $ligne->note           = $_POST["note"];
+  $ligne->contrat         = $_POST["contrat"];
+  $ligne->numero          = $_POST["numero"];
+  $ligne->client_comm     = $_POST["client_comm"];
+  $ligne->client          = $_POST["client"];
+  $ligne->client_facture  = $_POST["client_facture"];
+  $ligne->fournisseur     = $_POST["fournisseur"];
+  $ligne->commercial_sign = $_POST["commercial_sign"];
+  $ligne->commercial_suiv = $_POST["commercial_suiv"];
+  $ligne->concurrent      = $_POST["concurrent"];
+  $ligne->remise          = $_POST["remise"];
+  $ligne->note            = $_POST["note"];
 
   if ( $ligne->create($user) == 0)
     {
@@ -217,13 +218,8 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
   $ligne->id = $_GET["id"];
 
   $ligne->numero         = $_POST["numero"];
-  $ligne->client_comm    = $_POST["client_comm"];
-  $ligne->client         = $_POST["client"];
-  $ligne->client_facture = $_POST["client_facture"];
   $ligne->fournisseur    = $_POST["fournisseur"];
-  $ligne->commercial     = $_POST["commercial"];
   $ligne->concurrent     = $_POST["concurrent"];
-  $ligne->remise         = $_POST["remise"];
   $ligne->note           = $_POST["note"];
 
   if ( $ligne->update($user) )
@@ -355,8 +351,13 @@ elseif ($_GET["action"] == 'create' && $_GET["contratid"] > 0)
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="contrat" value="'.$contrat->id.'">'."\n";
 	  print '<input type="hidden" name="client_comm" value="'.$socc->id.'">'."\n";
+	  print '<input type="hidden" name="commercial_suiv" value="'.$contrat->commercial_suiv_id.'">'."\n";
+	  print '<input type="hidden" name="commercial_sign" value="'.$contrat->commercial_sign_id.'">'."\n";
 	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+
+	  print '<tr><td width="20%">Contrat</td><td colspan="2">'.$contrat->ref_url.'</a></td></tr>';
+
 	  print '<tr><td width="20%">Client</td><td >';  
 	  print $socc->nom;
 	  print '</td></tr>';
@@ -411,70 +412,42 @@ elseif ($_GET["action"] == 'create' && $_GET["contratid"] > 0)
 	  print '</td></tr>';
 	  
 	  /*
-	   * Commercial
+	   * Concurrents
 	   */
 	  
-      print '<tr><td width="20%">Commercial</td><td >';
-      $ff = array();
-      $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
-      if ( $db->query( $sql) )
-	{
-	  $num = $db->num_rows();
-	  if ( $num > 0 )
+	  print '<tr><td width="20%">Fournisseur précédent</td><td >';
+	  $ff = array();
+	  $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_concurrents ORDER BY rowid ";
+	  if ( $db->query( $sql) )
 	    {
-	      $i = 0;
-	      while ($i < $num)
+	      $num = $db->num_rows();
+	      if ( $num > 0 )
 		{
-		  $row = $db->fetch_row($i);
-		  $ff[$row[0]] = $row[1] . " " . $row[2];
-		  $i++;
+		  $i = 0;
+		  while ($i < $num)
+		    {
+		      $row = $db->fetch_row($i);
+		      $ff[$row[0]] = $row[1];
+		      $i++;
+		    }
 		}
+	      $db->free();
+	      
 	    }
-	  $db->free();
+	  $form->select_array("concurrent",$ff,$ligne->concurrent);
+	  print '</td></tr>';
 	  
-	}
-      
-      $form->select_array("commercial",$ff,$ligne->commercial);
-      
-      print '</td></tr>';
-      
-      /*
-       * Concurrents
-       */
-      
-      print '<tr><td width="20%">Fournisseur précédent</td><td >';
-      $ff = array();
-      $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_concurrents ORDER BY rowid ";
-      if ( $db->query( $sql) )
-	{
-	  $num = $db->num_rows();
-	  if ( $num > 0 )
-	    {
-	      $i = 0;
-	      while ($i < $num)
-		{
-		  $row = $db->fetch_row($i);
-		  $ff[$row[0]] = $row[1];
-		  $i++;
-		}
-	    }
-	  $db->free();
+	  print '<tr><td width="20%">Remise LMN</td><td><input name="remise" size="3" maxlength="2" value="'.$ligne->remise.'">&nbsp;%</td></tr>'."\n";
 	  
-	}
-      $form->select_array("concurrent",$ff,$ligne->concurrent);
-      print '</td></tr>';
-      
-      print '<tr><td width="20%">Remise LMN</td><td><input name="remise" size="3" maxlength="2" value="'.$ligne->remise.'">&nbsp;%</td></tr>'."\n";
-      
-      print '<tr><td width="20%" valign="top">Note</td><td>'."\n";
-      print '<textarea name="note" rows="4" cols="50">'."\n";
-      print stripslashes($ligne->note);
-      print '</textarea></td></tr>'."\n";
-      
-      print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>'."\n";
-      print '</table>'."\n";
-      print '</form>';
-
+	  print '<tr><td width="20%" valign="top">Note</td><td>'."\n";
+	  print '<textarea name="note" rows="4" cols="50">'."\n";
+	  print stripslashes($ligne->note);
+	  print '</textarea></td></tr>'."\n";
+	  
+	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>'."\n";
+	  print '</table>'."\n";
+	  print '</form>';
+	  
 	}
       
     }
@@ -624,11 +597,26 @@ else
 	      print '<tr><td width="20%">Remise LMN</td><td>'.$ligne->remise.'&nbsp;%</td>';
 	      print '<td><a href="remises.php?id='.$ligne->id.'">historique</a></td></tr>';
 
-	      $commercial = new User($db, $ligne->commercial_id);
-	      $commercial->fetch();
+	      $commercial_suiv = new User($db, $ligne->commercial_suiv_id);
+	      $commercial_suiv->fetch();
 
 	      print '<tr><td width="20%">Commercial</td>';
-	      print '<td colspan="2">'.$commercial->fullname.'</td></tr>';
+	      print '<td>'.$commercial_suiv->fullname.'</td>';
+	      print '<td>Signé par : ';
+
+
+	      if ($ligne->commercial_suiv_id <> $ligne->commercial_sign_id)
+		{
+		  $commercial_sign = new User($db, $ligne->commercial_sign_id);
+		  $commercial_sign->fetch();
+		  
+		  print $commercial_sign->fullname.'</td></tr>';
+		}
+	      else
+		{
+		  print $commercial_suiv->fullname.'</td></tr>';
+		}
+
 
 	      print '<tr><td width="20%">Concurrent précédent</td>';
 	      print '<td colspan="2">'.$ligne->print_concurrent_nom().'</td></tr>';
@@ -676,7 +664,12 @@ else
 		}
 	  
 	      /* Fin Contacts */
-
+	      if ($ligne->note)
+		{
+		  print '<tr><td width="20%" valign="top">Note</td><td colspan="2">'."\n";
+		  print nl2br($ligne->note);
+		  print '</td></tr>'."\n";
+		}
 
 	      print "</table><br />";
 
@@ -835,36 +828,6 @@ else
 
 	      print '</td></tr>';
 	  
-	      print "\n".'<tr><td width="20%">Commercial</td><td>';
-	      print '<select name="commercial">';
-	  
-	      $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
-	      if ( $db->query( $sql) )
-		{
-		  $num = $db->num_rows();
-		  if ( $num > 0 )
-		    {
-		      $i = 0;
-		      while ($i < $num)
-			{
-			  $row = $db->fetch_row($i);
-			  print '<option value="'.$row[0] .'"';
-			  if ($row[0] == $ligne->commercial_id)
-			    {
-			      print " SELECTED";
-			    }
-			  print '>'.$row[1]." ".$row[2];
-
-
-			  $i++;
-			}
-		    }
-		  $db->free();	      
-		}
-	  
-	      print '</select></td></tr>';
-
-
 	      /*
 	       * Commercial
 	       */
@@ -906,6 +869,7 @@ else
 
 	      print '<tr><td width="20%" valign="top">Note</td><td>';
 	      print '<textarea name="note" rows="4" cols="50">';
+	      print nl2br($ligne->note);
 	      print "</textarea></td></tr>";
 	  
 	      print '<tr><td align="center" colspan="2"><input type="submit" value="Mettre à jour">';
@@ -1126,7 +1090,10 @@ if ($_GET["action"] == '')
   print "<a class=\"tabAction\" href=\"fiche.php?action=contact&amp;id=$ligne->id\">".$langs->trans("Contact")."</a>";
     }
 
-  print "<a class=\"tabAction\" href=\"fiche.php?action=editremise&amp;id=$ligne->id\">".$langs->trans("Changer la remise")."</a>";
+  if ( $user->rights->telephonie->ligne_activer && $ligne->statut < 4)
+    {
+      print "<a class=\"tabAction\" href=\"fiche.php?action=editremise&amp;id=$ligne->id\">".$langs->trans("Changer la remise")."</a>";
+    }
 
   if ( $user->rights->telephonie->ligne_activer && $ligne->statut == -1)
     {
