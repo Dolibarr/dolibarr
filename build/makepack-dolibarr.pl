@@ -199,6 +199,7 @@ if ($nboftargetok) {
     	$ret=`cp -pr "$SOURCE" "$BUILDROOT"`;
     }
     print "Clean $BUILDROOT\n";
+    $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
     $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
     $ret=`rm -fr $BUILDROOT/$PROJECT/build`;
     $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db`;
