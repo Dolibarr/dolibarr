@@ -38,6 +38,8 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php", "Contacts");
 
+  $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", "Prospects");
+
   $menu->add(DOL_URL_ROOT."/comm/propal.php", "Propales");
 
   $menu->add(DOL_URL_ROOT."/projet/index.php", "Projets");
