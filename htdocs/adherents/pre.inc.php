@@ -46,6 +46,9 @@ function llxHeader($head = "") {
 
   $menu->add("/public/adherents/","Espace adherents public");
 
+  $menu->add("index.php","Export");
+  $menu->add_submenu("htpasswd.php","Format htpasswd");
+
   $menu->add("index.php","Comptabilite");
   $menu->add_submenu("cotisations.php","Cotisations");
   $menu->add_submenu("/compta/bank/","Bank");
