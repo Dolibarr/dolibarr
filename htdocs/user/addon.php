@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +19,12 @@
  * $Id$
  * $Source$
  */
+
+/*!
+	    \file       htdocs/user/addon.php
+		\brief      Onglet addon de la fiche utilisateur
+		\version    $Revision$
+*/
 
 require("./pre.inc.php");
 require_once DOL_DOCUMENT_ROOT."/bookmark4u.class.php";
@@ -78,16 +85,15 @@ if ($_GET["id"])
   $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
   $head[$h][1] = $langs->trans("Addons");
   $hselected=$h;
-
   $h++;
   
-  dolibarr_fiche_head($head, $hselected, $fuser->nom." ".$fuser->prenom);
+  dolibarr_fiche_head($head, $hselected, $fuser->fullname);
   
   /*
    * Fiche en mode visu
    */
   
-  print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
+  print '<table class="border" width="100%">';
   
   print "<tr>".'<td width="25%" valign="top">'.$langs->trans("LastName").'</td>';
   print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';

@@ -23,7 +23,7 @@
 
 /*!
 	    \file       htdocs/user/fiche.php
-		\brief      Page de la fiche utilisateur
+		\brief      Onglet user et permissions de la fiche utilisateur
 		\version    $Revision$
 */
 
@@ -425,11 +425,9 @@ else
 
         }
 
-        /* ************************************************************************** */
-        /*                                                                            */
-        /* Edition                                                                    */
-        /*                                                                            */
-        /* ************************************************************************** */
+        /*
+         * Fiche en mode edition
+         */
         if ($_GET["action"] == 'edit' && $user->admin)
         {
             print '<form action="fiche.php?id='.$fuser->id.'" method="post">';
@@ -474,7 +472,7 @@ else
 
             print "<tr>".'<td align="center" colspan="2"><input value="'.$langs->trans("Save").'" type="submit"></td></tr>';
 
-            print '</table>';
+            print '</table><br>';
             print '</form>';
         }
 

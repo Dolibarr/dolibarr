@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+ 
+/*!
+        \file       htdocs/user/index.php
+        \brief      Page d'accueil de la gestion des utilisateurs
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $langs->load("users");
@@ -28,8 +35,9 @@ $langs->load("users");
 llxHeader();
 
 
-$sortfield=$_GET["sortfield"];
-$sortorder=$_GET["sortorder"];
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
 
 print_titre($langs->trans("ListOfUsers"));
@@ -43,47 +51,45 @@ else { $sql.="u.name"; }
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
-  $i = 0;
-  
-  print "<br>";
-  
-  print "<table class=\"noborder\" width=\"100%\">";
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("LastName"),"index.php","name");
-  print_liste_field_titre($langs->trans("FirstName"),"index.php","firstname");
-  print_liste_field_titre($langs->trans("Login"),"index.php","login");
-  print_liste_field_titre($langs->trans("Code"),"index.php","code");
-  print "</tr>\n";
-  $var=True;
-  while ($i < $num)
+    $num = $db->num_rows();
+    $i = 0;
+
+    print "<br>";
+
+    print "<table class=\"noborder\" width=\"100%\">";
+    print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("LastName"),"index.php","name","","","",$sortfield);
+    print_liste_field_titre($langs->trans("FirstName"),"index.php","firstname","","","",$sortfield);
+    print_liste_field_titre($langs->trans("Login"),"index.php","login","","","",$sortfield);
+    print_liste_field_titre($langs->trans("Code"),"index.php","code","","","",$sortfield);
+    print "</tr>\n";
+    $var=True;
+    while ($i < $num)
     {
-      $obj = $db->fetch_object( $i);
-      $var=!$var;
-      
-      print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?id='.$obj->rowid.'">';
-      print img_file();
-      print '</a>&nbsp;'.ucfirst($obj->name).'</TD>';
-      print '<td>'.ucfirst($obj->firstname).'</td>';
-      if ($obj->login)
-	{
-	  print '<td><a href="fiche.php?id='.$obj->rowid.'">'.$obj->login.'</a></td>';
-	}
-      else
-	{
-	  print '<td><a class="impayee" href="fiche.php?id='.$obj->rowid.'">Inactif</a></td>';
-	}        
-      print '<td>'.$obj->code.'</TD>';
-      print "</tr>\n";
-      $i++;
+        $obj = $db->fetch_object( $i);
+        $var=!$var;
+
+        print "<tr $bc[$var]>";
+        print '<td>'.ucfirst($obj->name).'</td>';
+        print '<td>'.ucfirst($obj->firstname).'</td>';
+        if ($obj->login)
+        {
+            print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_file().' '.$obj->login.'</a></td>';
+        }
+        else
+        {
+            print '<td><a class="impayee" href="fiche.php?id='.$obj->rowid.'">'.img_file().' Inactif</a></td>';
+        }
+        print '<td>'.$obj->code.'</td>';
+        print "</tr>\n";
+        $i++;
     }
-  print "</table>";
-  $db->free();
+    print "</table>";
+    $db->free();
 }
-else 
+else
 {
-  print $db->error();
+    dolibarr_print_error($db);
 }
 
 $db->close();
