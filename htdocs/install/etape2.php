@@ -38,7 +38,7 @@ if($dolibarr_main_db_type == "mysql")
 }
 else
 {
-      require ($dolibarr_main_document_root . "/lib/pgsql.lib.php";
+      require ($dolibarr_main_document_root . "/lib/pgsql.lib.php");
       require ($dolibarr_main_document_root . "/lib/grant.postgres.php");
 			$choix=2;
 }
