@@ -448,130 +448,182 @@ class Societe {
 	 
   function delete($id)
     {
-      $sql = "DELETE from ".MAIN_DB_PREFIX."societe ";
-      $sql .= " WHERE idp = " . $id .";";
+      dolibarr_syslog("Societe::Delete");
+      $sqr = 0;
 
-      if (! $this->db->query($sql))
-	{
-	  dolibarr_print_error($this->db);
-	}
-
-      // Suppression du répertoire document
-      $docdir = SOCIETE_OUTPUTDIR . "/$id";
-
-      // Cette fonction permet de supprimer le répertoire de la societe
-      // Meme s'il contient des documents.
-      function deldir($dir)
-	{
-	  $current_dir = opendir($dir);
-	  while($entryname = readdir($current_dir))
+      if ( $this->db->query("BEGIN") )
+	{	  
+	  $sql = "DELETE from ".MAIN_DB_PREFIX."socpeople ";
+	  $sql .= " WHERE fk_soc = " . $id .";";
+	  
+	  if ($this->db->query($sql))
 	    {
-	      if(is_dir("$dir/$entryname") and ($entryname != "." and $entryname!=".."))
-		{
-		  deldir("${dir}/${entryname}");
-		}
-	      elseif($entryname != "." and $entryname!="..")
-		{
-		  unlink("${dir}/${entryname}");
-		}
+	      $sqr++;
 	    }
-	  closedir($current_dir);
-	  rmdir(${dir});
-	} 
-      
-      if (file_exists ($docdir))
-	{
-	  deldir($docdir);
-	}
-    }
+	  else
+	    {
+	      $this->error_message .= "Impossible de supprimer les contacts.\n";
+	      dolibarr_syslog("Societe::Delete erreur -1");
+	    }
 
+	  $sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib ";
+	  $sql .= " WHERE fk_soc = " . $id .";";
+
+	  if ($this->db->query($sql))
+	    {
+	      $sqr++;
+	    }
+	  else
+	    {
+	      $this->error_message .= "Impossible de supprimer le RIB.\n";
+	      dolibarr_syslog("Societe::Delete erreur -2");
+	    }
+	  	  
+	  $sql = "DELETE from ".MAIN_DB_PREFIX."societe ";
+	  $sql .= " WHERE idp = " . $id .";";
+	
+	  if ($this->db->query($sql))
+	    {
+	      $sqr++;
+	    }
+	  else
+	    {
+	      $this->error_message .= "Impossible de supprimer la société.\n";
+	      dolibarr_syslog("Societe::Delete erreur -3");
+	    }
+
+
+	  if ($sqr == 3)
+	    {
+	      $this->db->query("COMMIT");
+
+	      // Suppression du répertoire document
+	      $docdir = SOCIETE_OUTPUTDIR . "/$id";
+	      	      
+	      if (file_exists ($docdir))
+		{
+		  $this->deldir($docdir);
+		}
+
+	      return 0;
+	    }
+	  else
+	    {
+	      $this->db->query("ROLLBACK");
+	      return -1;
+	    }
+	}	  
+
+    }
+  /*
+   * Cette fonction permet de supprimer le répertoire de la societe
+   * Meme s'il contient des documents.
+   */
+  function deldir($dir)
+  {
+    $current_dir = opendir($dir);
+
+    while($entryname = readdir($current_dir))
+      {
+	if(is_dir("$dir/$entryname") and ($entryname != "." and $entryname!=".."))
+	  {
+	    deldir("${dir}/${entryname}");
+	  }
+	elseif($entryname != "." and $entryname!="..")
+	  {
+	    unlink("${dir}/${entryname}");
+	  }
+      }
+    closedir($current_dir);
+    rmdir(${dir});
+  } 
+  
   /**
    * \brief     Retournes les factures impayées de la société
    * \return    array   tableau des id de factures impayées
    *
    */
-	 
   function factures_impayes()
-    {
-      $facimp = array();
-      /*
-       * Lignes
-       */      
-      $sql = "SELECT f.rowid";
-      $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = '".$this->id . "'";
-      $sql .= " AND f.fk_statut = '1' AND f.paye = '0'";
-
-      if ($this->db->query($sql))
-	{
-	  $num = $this->db->num_rows();
-	  $i = 0;
-	  
-	  while ($i < $num)
-	    {
-	      $objp = $this->db->fetch_object();
-	      $array_push($facimp, $objp->rowid);
-	      $i++;
-	      print $i;
-	    }
-	  
-	  $this->db->free();
-	} 
+  {
+    $facimp = array();
+    /*
+     * Lignes
+     */      
+    $sql = "SELECT f.rowid";
+    $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = '".$this->id . "'";
+    $sql .= " AND f.fk_statut = '1' AND f.paye = '0'";
+    
+    if ($this->db->query($sql))
+      {
+	$num = $this->db->num_rows();
+	$i = 0;
+	
+	while ($i < $num)
+	  {
+	    $objp = $this->db->fetch_object();
+	    $array_push($facimp, $objp->rowid);
+	    $i++;
+	    print $i;
+	  }
+	
+	$this->db->free();
+      } 
       return $facimp;
-    }
+  }
 
   /**
    *    \brief      Attribut le prefix de la société en base
    *
    */
-	 
+  
   function attribute_prefix()
-    {
-      $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp = '$this->id'";
-      if ( $this->db->query( $sql) )
-	{
-	  if ( $this->db->num_rows() )
-	    {
-	      $nom = preg_replace("/[[:punct:]]/","",$this->db->result(0,0));
-	      $this->db->free();
-	      
-	      $prefix = $this->genprefix($nom,4);
-      
-	      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
-	      if ( $this->db->query( $sql) )
-		{
-		  if ( $this->db->result(0, 0) )
-		    {
-		      $this->db->free();
-		    }
-		  else
-		    {
-		      $this->db->free();
-
-		      $sql = "UPDATE ".MAIN_DB_PREFIX."societe set prefix_comm='$prefix' WHERE idp='$this->id'";
-		      
-		      if ( $this->db->query( $sql) )
-			{
-			  
-			}
-		      else
-			{
-        	  dolibarr_print_error($this->db);
-			}
-		    }
-		}
-	      else
-		{
+  {
+    $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp = '$this->id'";
+    if ( $this->db->query( $sql) )
+      {
+	if ( $this->db->num_rows() )
+	  {
+	    $nom = preg_replace("/[[:punct:]]/","",$this->db->result(0,0));
+	    $this->db->free();
+	    
+	    $prefix = $this->genprefix($nom,4);
+	    
+	    $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
+	    if ( $this->db->query( $sql) )
+	      {
+		if ( $this->db->result(0, 0) )
+		  {
+		    $this->db->free();
+		  }
+		else
+		  {
+		    $this->db->free();
+		    
+		    $sql = "UPDATE ".MAIN_DB_PREFIX."societe set prefix_comm='$prefix' WHERE idp='$this->id'";
+		    
+		    if ( $this->db->query( $sql) )
+		      {
+			
+		      }
+		    else
+		      {
+			dolibarr_print_error($this->db);
+		      }
+		  }
+	      }
+	    else
+	      {
 	        dolibarr_print_error($this->db);
-	  	}
-	    }
-	}
-      else
-	{
+	      }
+	  }
+      }
+    else
+      {
 	  dolibarr_print_error($this->db);
-	}
-      return $prefix;
-    }
-
+      }
+    return $prefix;
+  }
+  
   /**
    *    \brief      Génère le préfix de la société
    *    \param      nom         nom de la société
