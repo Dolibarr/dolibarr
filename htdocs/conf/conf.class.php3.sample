@@ -93,6 +93,23 @@ class DbConf {
     $this->user = "";
     $this->pass = "";
     $this->name = "dolibarr";
+/*
+ * If you want to activate virtualhosting you need tou use these lines and add 
+ * this to your pache virtualhost file
+ SetEnv LLX_DBTYPE mysql
+ SetEnv LLX_DBHOST localhost
+ SetEnv LLX_DBUSER user
+ SetEnv LLX_DBPASS pass
+ SetEnv LLX_DBNAME dolibarr
+*/
+/*
+    $this->type = getenv("LLX_DBTYPE");
+    $this->host = getenv("LLX_DBHOST");
+    $this->user = getenv("LLX_DBUSER");
+    $this->pass = getenv("LLX_DBPASS");
+    $this->name = getenv("LLX_DBNAME");
+*/
+
   }
 }
 /*
