@@ -233,11 +233,32 @@ if ($result)
     }
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
+
   print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","","",'valign="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Code compta"),"clients.php","s.code_compta","","",'align="left"',$sortfield);
   print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","","",'valign="center"',$sortfield);
   print_liste_field_titre($langs->trans("Code client"),"clients.php","s.code_client","","",'align="center"',$sortfield);
-  print_liste_field_titre($langs->trans("Code compta"),"clients.php","s.code_compta","","",'align="center"',$sortfield);
+
   print "</tr>\n";
+
+  // Lignes des champs de filtre
+  print '<form method="GET" action="clients.php">';
+  print '<tr class="liste_titre">';
+
+  print '<td valign="right">';
+  print '<input class="fat" type="text" name="search_nom" value="'.$search_nom.'"></td>';
+
+  print '<td valign="left">';
+  print '<input class="fat" type="text" size="10" name="search_compta" value="'.$search_compta.'">';
+  print '</td>';
+
+  print '<td colspan="2" align="center">';
+  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
+  print '&nbsp; <input type="submit" class="button" name="button_removefilter" value="'.$langs->trans("RemoveFilter").'">';
+  print '</td>';
+  print "</tr>\n";
+  print '</form>';
+
 
   $var=True;
 
@@ -248,10 +269,14 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print "<td><a href=\"fiche.php?socid=$obj->idp\">\n";
+      print img_file();
+      print "&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
+
       print "<td>".$obj->ville."&nbsp;</td>\n";
       print "<td align=\"center\">$obj->code_client&nbsp;</td>\n";
-      print "<td align=\"center\">$obj->code_compta&nbsp;</td>\n";
+
       print "</tr>\n";
       $i++;
     }
