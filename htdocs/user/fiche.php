@@ -195,7 +195,7 @@ else
 	  print '<td width="25%" class="valeur">'.$fuser->prenom.'</td></tr>';
 
 	  print "<tr>".'<td valign="top" colspan="2">';
-	  print '<table width="100%" border="0" cellpadding="2" cellspacing="0">';
+	  print '<table width="100%" class="noborder" cellpadding="2" cellspacing="0">';
 	  $sql = "SELECT r.id, r.libelle, r.module FROM llx_rights_def as r ORDER BY r.id ASC";
 
 	  if ($db->query($sql))
@@ -211,9 +211,9 @@ else
 		      $oldmod = $obj->module;
 		      $var = !$var;
 		    }
-		  print '<tr '. $bc[$var].'><td><a href="fiche.php?id='.$id.'&request=perms&subaction=addrights&rights='.$obj->id.'">Ajouter</a></td><td>';
+		  print '<tr '. $bc[$var].'><td><a href="fiche.php?id='.$id.'&amp;request=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">Ajouter</a></td><td>';
 		  print $obj->libelle . '</td>';
-		  print '<td><a href="fiche.php?id='.$id.'&request=perms&subaction=delrights&rights='.$obj->id.'">Supprimer</a></td></tr>';
+		  print '<td><a href="fiche.php?id='.$id.'&amp;request=perms&amp;subaction=delrights&amp;rights='.$obj->id.'">Supprimer</a></td></tr>';
 		  $i++;
 		}
 	    }
@@ -223,7 +223,7 @@ else
 	  /*
 	   * Droits
 	   */
-	  print '<table class="noborder" width="100%" border="0" cellpadding="2" cellspacing="0">';
+	  print '<table class="noborder" width="100%" cellpadding="2" cellspacing="0">';
 	  $sql = "SELECT r.libelle, r.module FROM llx_rights_def as r, llx_user_rights as ur";
 	  $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.id ASC";
 	  $var = True;
@@ -256,7 +256,7 @@ else
        * Affichage
        */      
 
-      print '<table class="border" width="100%" border="1" cellpadding="3" cellspacing="0">';
+      print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
     
       print "<tr>".'<td width="25%" valign="top">Nom</td>';
       print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
@@ -268,7 +268,7 @@ else
       /*
        * Droits
        */
-      print '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
+      print '<table width="100%" class="noborder" cellpadding="0" cellspacing="0">';
       $sql = "SELECT r.libelle, r.module FROM llx_rights_def as r, llx_user_rights as ur";
       $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.id ASC";
       $var = True;
@@ -307,7 +307,7 @@ else
       print "<tr>".'<td width="25%" valign="top">';
       if ($fuser->contact_id)
 	{
-	  print '<a href="../comm/people.php?contactid='.$fuser->contact_id.'&socid='.$fuser->societe_id.'">Fiche contact</a>';
+	  print '<a href="../comm/people.php?contactid='.$fuser->contact_id.'&amp;socid='.$fuser->societe_id.'">Fiche contact</a>';
 	}
       else
 	{
@@ -325,7 +325,7 @@ else
 
       if ($user->admin) 
 	{
-	  print '<td width="20%" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
+	  print '<td width="20%" align="center">[<a href="fiche.php?action=edit&amp;id='.$id.'">Editer</a>]</td>';
 	}
       else
 	{
@@ -335,7 +335,7 @@ else
 
       if ($user->id == $id or $user->admin)
 	{
-	  print '<td width="20%" align="center">[<a href="fiche.php?action=password&id='.$id.'">Nouveau mot de passe</a>]</td>';
+	  print '<td width="20%" align="center">[<a href="fiche.php?action=password&amp;id='.$id.'">Nouveau mot de passe</a>]</td>';
 	}
       else 
 	{
@@ -344,7 +344,7 @@ else
 
       if ($user->admin)
 	{
-	  print '<td width="20%" align="center">[<a href="fiche.php?request=perms&id='.$id.'">Permissions</a>]</td>';
+	  print '<td width="20%" align="center">[<a href="fiche.php?request=perms&amp;id='.$id.'">Permissions</a>]</td>';
 	}
       else
 	{
@@ -354,7 +354,7 @@ else
 
       if ($user->admin && $user->id <> $id)
 	{
-	  print '<td width="20%" align="center">[<a href="fiche.php?request=delete&id='.$id.'">Supprimer</a>]</td>';
+	  print '<td width="20%" align="center">[<a href="fiche.php?request=delete&amp;id='.$id.'">Supprimer</a>]</td>';
 	}
       else
 	{	  
@@ -411,8 +411,6 @@ else
     }
   
 }
-
-
 
 $db->close();
 
