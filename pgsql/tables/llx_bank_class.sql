@@ -1,4 +1,6 @@
 -- ===================================================================
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+--
 -- $Id$
 -- $Source$
 --
@@ -23,3 +25,5 @@ create table llx_bank_class
   lineid   SERIAL,
   fk_categ integer not null
 );
+
+create index llx_bank_class_lineid on llx_bank_class(lineid);
