@@ -34,7 +34,7 @@ $user->getrights('banque');
 $langs->load("bills");
 
 if (!$user->rights->facture->lire) accessforbidden();
-if (!$user->rights->compta->ventiler) accessforbidden();
+if (!$user->rights->compta->ventilation->creer) accessforbidden();
 /*
  * Sécurité accés client
  */

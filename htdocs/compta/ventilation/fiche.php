@@ -31,9 +31,9 @@ require("./pre.inc.php");
 
 $mesg = '';
 
-if (!$user->rights->compta->ventiler) accessforbidden();
+if (!$user->rights->compta->ventilation->creer) accessforbidden();
 
-if ($_POST["action"] == 'ventil' && $user->rights->compta->ventiler)
+if ($_POST["action"] == 'ventil' && $user->rights->compta->ventilation->creer)
 {
   $sql = " UPDATE ".MAIN_DB_PREFIX."facturedet";
   $sql .= " SET fk_code_ventilation = ".$_POST["codeventil"];
@@ -85,15 +85,16 @@ if($_GET["id"])
   $sql .= " WHERE f.rowid = l.fk_facture AND f.fk_statut = 1 AND l.rowid = ".$_GET["id"];
    
   $result = $db->query($sql);
+
   if ($result)
     {
-      $num_lignes = $db->num_rows();
+      $num_lignes = $db->num_rows($result);
       $i = 0; 
       
       if ($num_lignes)
 	{
 	  
-	  $objp = $db->fetch_object();
+	  $objp = $db->fetch_object($result);
 
 
 	  if($objp->fk_code_ventilation == 0)
@@ -143,7 +144,7 @@ if($_GET["id"])
 }
 else
 {
-  print "Error";
+  print "Error ID incorrect";
 }
 
 $db->close();
