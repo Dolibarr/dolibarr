@@ -36,6 +36,8 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add("/boutique/client/", "Clients");
 
+  $menu->add("/boutique/commande/", "Commandes");
+
   $menu->add("/boutique/notification/", "Notifications");
 
   $menu->add_submenu("/boutique/notification/produits.php", "Produits");
