@@ -86,7 +86,7 @@ if ($socid > 0)
 	  $h++;
 	}
       
-      if ($soc->fournisseur)
+      if ($societe->fournisseur)
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
 	  $head[$h][1] = 'Fiche fournisseur';
@@ -102,7 +102,7 @@ if ($socid > 0)
 	  $h++;
 	}
 
-      $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
+      $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
       $head[$h][1] = 'Notifications';
 
       dolibarr_fiche_head($head, 1);
