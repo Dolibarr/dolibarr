@@ -70,7 +70,10 @@ class Don
 	print "<li>" . $this->errorstr[$i];
       }
   }
-
+  /*
+   *
+   *
+   */
   Function check($minimum=0) 
     {
       $err = 0;

@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,6 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 
 class Fichinter {
@@ -29,87 +29,102 @@ class Fichinter {
   var $date;
   var $duree;
   var $note;
+  var $projet_id;
 
-
-  Function Fichinter($DB, $soc_idp="") {
-    $this->db = $DB ;
-    $this->socidp = $soc_idp;
-    $this->products = array();
-  }
-
-  Function add_product($idproduct) {
-    if ($idproduct > 0) {
-      $i = sizeof($this->products);
-      $this->products[$i] = $idproduct;
+  Function Fichinter($DB, $soc_idp="")
+    {
+      $this->db = $DB ;
+      $this->socidp = $soc_idp;
+      $this->products = array();
     }
-  }
+
+  Function add_product($idproduct)
+    {
+      if ($idproduct > 0)
+	{
+	  $i = sizeof($this->products);
+	  $this->products[$i] = $idproduct;
+	}
+    }
   /*
    *
    *
    *
    */
-  Function create() {
-    /*
-     *  Insertion dans la base
-     */
+  Function create()
+    {
+      /*
+       *  Insertion dans la base
+       */
     if (!strlen($this->duree)) { $this->duree = 0; }
 
-    $sql = "INSERT INTO llx_fichinter (fk_soc, datei, datec, ref, fk_user_author, note, duree) ";
-    $sql .= " VALUES ($this->socidp, $this->date, now(), '$this->ref', $this->author, '$this->note', $this->duree)";
+    $sql = "INSERT INTO llx_fichinter (fk_soc, datei, datec, ref, fk_user_author, note, duree, fk_projet) ";
+    $sql .= " VALUES ($this->socidp, $this->date, now(), '$this->ref', $this->author, '$this->note', $this->duree, $this->projet_id)";
     $sqlok = 0;
       
-    if (! $this->db->query($sql) ) {
-      print $this->db->error() . '<b><br>'.$sql;
-    }
-    return $this->db->last_insert_id();
-  }
-  /*
-   *
-   *
-   *
-   */
-  Function update($id) {
-    /*
-     *  Insertion dans la base
-     */
-    $sql = "UPDATE llx_fichinter SET ";
-    $sql .= " datei = $this->date,";
-    $sql .= " note  = '$this->note',";
-    $sql .= " duree = $this->duree";
-    $sql .= " WHERE rowid = $id";
-      
-    if (! $this->db->query($sql) ) {
-
-      print $this->db->error() . '<b><br>'.$sql;
-    }
-    return 1;
-  }
-  /*
-   *
-   *
-   *
-   */
-  Function fetch($rowid) {
-
-    $sql = "SELECT ref,note,fk_statut,duree,".$this->db->pdate(datei)."as di FROM llx_fichinter WHERE rowid=$rowid;";
-
-    if ($this->db->query($sql) ) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object(0);
-
-	$this->id = $rowid;
-	$this->date = $obj->di;
-	$this->duree = $obj->duree;
-	$this->ref = $obj->ref;
-	$this->note = $obj->note;
-	$this->statut = $obj->fk_statut;
-
-	$this->db->free();
+    if (! $this->db->query($sql) )
+      {
+	print $this->db->error() . '<b><br>'.$sql;
       }
-    } else {
-      print $this->db->error();
-    }    
-  }
+    return $this->db->last_insert_id();
+    }
+  /*
+   *
+   *
+   *
+   */
+  Function update($id)
+    {
+      /*
+       *  Insertion dans la base
+       */
+      $sql = "UPDATE llx_fichinter SET ";
+      $sql .= " datei = $this->date,";
+      $sql .= " note  = '$this->note',";
+      $sql .= " duree = $this->duree";
+      $sql .= ", fk_projet = $this->projet_id";
+      $sql .= " WHERE rowid = $id";
+      
+      if (! $this->db->query($sql) )
+	{
+	
+	  print $this->db->error() . '<b><br>'.$sql;
+	}
+      return 1;
+    }
+  /*
+   *
+   *
+   *
+   */
+  Function fetch($rowid)
+    {
+      
+      $sql = "SELECT ref,note,fk_soc,fk_statut,duree,".$this->db->pdate(datei)."as di, fk_projet FROM llx_fichinter WHERE rowid=$rowid;";
+      
+      if ($this->db->query($sql) )
+	{
+	  if ($this->db->num_rows())
+	    {
+	      $obj = $this->db->fetch_object(0);
+	      
+	      $this->id         = $rowid;
+	      $this->date       = $obj->di;
+	      $this->duree      = $obj->duree;
+	      $this->ref        = $obj->ref;
+	      $this->note       = $obj->note;
+	      $this->societe_id = $obj->fk_soc;
+	      $this->projet_id  = $obj->fk_projet;
+	      $this->statut     = $obj->fk_statut;
+	      
+	      $this->db->free();
+	    }
+	}
+      else
+	{
+	  print $this->db->error();
+	}    
+    }
   /*
    *
    *

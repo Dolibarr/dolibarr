@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 
@@ -78,32 +78,76 @@ class Project {
    *
    *
    */
-  Function get_propal_list() {
-    $propales = array();
-    $sql = "SELECT rowid FROM llx_propal WHERE fk_projet=$this->id;";
+  Function get_propal_list()
+    {
+      $propales = array();
+      $sql = "SELECT rowid FROM llx_propal WHERE fk_projet=$this->id;";
+      
+      if ($this->db->query($sql) )
+	{
+	  $nump = $this->db->num_rows();
+	  if ($nump)
+	    {
+	      $i = 0;
+	      while ($i < $nump)
+		{
+		  $obj = $this->db->fetch_object($i);
+	      
+		  $propales[$i] = $obj->rowid;
 
-    if ($this->db->query($sql) ) {
-      $nump = $this->db->num_rows();
-      if ($nump) {
-	$i = 0;
-	while ($i < $nump) {
-	  $obj = $this->db->fetch_object($i);
-
-	  $propales[$i] = $obj->rowid;
-
-	  $i++;
+		  $i++;
+		}
+	      $this->db->free();
+	      /*
+	       *  Retourne un tableau contenant la liste des propales associees
+	       */
+	      return $propales;
+	    }
 	}
-	$this->db->free();
-	/*
-	 *  Retourne un tableau contenant la liste des propales associees
-	 */
-	return $propales;
-      }
-    } else {
-      print $this->db->error() . '<br>' .$sql;
+      else
+	{
+	  print $this->db->error() . '<br>' .$sql;
+	}      
     }
+  /*
+   *
+   *
+   *
+   */
+  Function liste_array($id_societe='')
+    {
+      $projets = array();
 
+      $sql = "SELECT rowid, title FROM llx_projet";
 
-  }
+      if (isset($id_societe))
+	{
+	  $sql .= " WHERE fk_soc = $id_societe";
+	}
+      
+      if ($this->db->query($sql) )
+	{
+	  $nump = $this->db->num_rows();
+
+	  if ($nump)
+	    {
+	      $i = 0;
+	      while ($i < $nump)
+		{
+		  $obj = $this->db->fetch_object($i);
+	      
+		  $projets[$obj->rowid] = $obj->title;
+		  $i++;
+		}
+	    }
+	  return $projets;
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+      
+    }
+  
 }
 ?>

@@ -284,8 +284,13 @@ function print_oui_non($value)
  *
  *
  */
-function print_date_select()
+function print_date_select($set_time='')
 {
+  if (! isset($set_time))
+    {
+      $set_time = time();
+    }
+
   $strmonth[1] = "Janvier";
   $strmonth[2] = "F&eacute;vrier";
   $strmonth[3] = "Mars";
@@ -300,8 +305,8 @@ function print_date_select()
   $strmonth[12] = "D&eacute;cembre";
     
   $smonth = 1;
-  $syear = date("Y", time());
-  $cday = date("d", time());
+  $syear = date("Y", $set_time);
+  $cday = date("d", $set_time);
 
   print "<select name=\"reday\">";    
 
@@ -317,9 +322,9 @@ function print_date_select()
 	}
     }
 
-
   print "</select>";
-  $cmonth = date("n", time());
+
+  $cmonth = date("n", $set_time);
   print "<select name=\"remonth\">";    
   for ($month = $smonth ; $month < $smonth + 12 ; $month++)
     {
@@ -425,7 +430,8 @@ function gljftime($format,$timestamp) {
 }
 
 
-function gljPrintTitle($title, $ispage, $page=0, $parm=0) {
+function gljPrintTitle($title, $ispage, $page=0, $parm=0)
+{
 
   $pageprev = $page - 1;
   $pagenext = $page + 1;
@@ -435,31 +441,43 @@ function gljPrintTitle($title, $ispage, $page=0, $parm=0) {
   print "<b>$title</b></td><td align=\"right\">$basec <b>Page $pagenext</b>";
   print "</td>";
 
-  if ($ispage) {
+  if ($ispage)
+    {
 
-    print "</tr>";
-    print "<tr><td>";
-    if ($page > 0) {
-      print "<A href=\"".$GLOBALS["PHP_SELF"]."?page=$pageprev&$parm\"><- ".$GLOBALS["_PAGE_PREV"]."</A>";
+      print "</tr>";
+      print "<tr><td>";
+      if ($page > 0)
+	{
+	  print "<A href=\"".$GLOBALS["PHP_SELF"]."?page=$pageprev&$parm\"><- ".$GLOBALS["_PAGE_PREV"]."</A>";
+	}
+      print "</td>\n";
+      print "<td align=\"right\"><A href=\"".$GLOBALS["PHP_SELF"]."?&page=$pagenext&$parm\">$_PAGE_NEXT -></A>\n";
     }
-    print "</td>\n";
-    print "<td align=\"right\"><A href=\"".$GLOBALS["PHP_SELF"]."?&page=$pagenext&$parm\">$_PAGE_NEXT -></A>\n";
-  }
 
   print "</tr></table>";
 };
+/*
+ *
+ *
+ */
+function gljActiveSoc($db, $socidp)
+{
 
-function gljActiveSoc($db, $socidp) {
-
-  if ($db) {
-    $sql = "UPDATE societe set datea = " . time() . " WHERE idp= " . $socidp ; 
-    $result = $db->query($sql);
-    if (!$result) {
-      return 1;
+  if ($db)
+    {
+      $sql = "UPDATE societe set datea = " . time() . " WHERE idp= " . $socidp ; 
+      $result = $db->query($sql);
+      if (!$result)
+	{
+	  return 1;
+	}
+      return 0;
     }
-    return 0;
-  }
 }
+/*
+ *
+ *
+ */
 function gljChangeSocAlias($db, $socidp, $alias) {
 
   if ($db) {

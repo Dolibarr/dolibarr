@@ -30,7 +30,7 @@ class Form {
       $this->db = $DB;
 
       return 1;
-  }
+    }
   /*
    *
    *
@@ -80,6 +80,42 @@ class Form {
 	  print $this->db->error();
 	}
 
+    }
+  /*
+   *
+   *
+   */
+  Function select_array($name, $array, $id='')
+    {
+      print '<select name="'.$name.'">';
+      
+      $i = 0;
+
+      if (strlen($id))
+	{	    	      
+	  reset ($array);
+	  while (list($key, $value) = each ($array))
+	    {
+	      print "<option value=\"$key\" ";
+	      if ($id == $key)
+		{
+		  print "SELECTED";
+		}
+	      print ">$value</option>\n";	      
+	    }
+	}
+      else
+	{
+	  while (list($key, $value) = each ($array) )
+	    {
+	      print "<option value=\"$key\" ";
+	      print ">$value</option>\n";
+	    }
+	
+	}
+
+      print "</select>";
+    
     }
   /*
    * Renvoie la chaîne de caractère décrivant l'erreur
