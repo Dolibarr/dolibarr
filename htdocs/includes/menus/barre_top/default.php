@@ -28,7 +28,7 @@ if ($conf->commercial->enabled)   $nbofentries++;
 if ($conf->adherent->enabled)     $nbofentries++;
 if ($conf->compta->enabled) $nbofentries++; 
 if ($conf->produit->enabled || $conf->service->enabled) $nbofentries++; 
-if ($conf->webcalendar->enabled)   $nbofentries++; 
+if ($conf->webcal->enabled)   $nbofentries++; 
 
 print '<table cellpadding="0" cellspacing="0" width="100%"><tr>';
 
@@ -83,7 +83,7 @@ else
       print '</td>';
     }
     
-    if ($conf->webcalendar->enabled)
+    if ($conf->webcal->enabled)
     {
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "webcalendar") { $class="menusel"; }

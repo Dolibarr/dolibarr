@@ -52,13 +52,17 @@ function llxHeader($head = "", $title="") {
       $menu->add(DOL_URL_ROOT."/compta/dons/","Dons");
     }
 
-  $menu->add(DOL_URL_ROOT."/compta/facture.php","Factures");
-  $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php","Paiements");
-  if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR) {
-    $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
-  }
-  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/","Statistiques");
-
+  if ($conf->facture->enabled)
+    {
+      $menu->add(DOL_URL_ROOT."/compta/facture.php","Factures");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php","Paiements");
+      if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR) {
+        $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
+      }
+      $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/","Statistiques");
+    }
+   
+    
   // Les dépenses
 
   $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
@@ -87,11 +91,7 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/compta/stats/","CA / Résultats");
 
-  if ($user->compta > 0) 
-    {
-
-    } 
-  else 
+  if (! $user->compta) 
     {
       $menu->clear();
       $menu->add(DOL_URL_ROOT."/","Accueil");      

@@ -123,8 +123,7 @@ class WebcalConf
 {
   Function WebcalConf()
     {
-      $this->enabled = 1;
-
+      $this->enabled = 0;
       $this->url = defined("PHPWEBCALENDAR_URL")?PHPWEBCALENDAR_URL:"";
 
       $this->db = new DbConf();
@@ -143,7 +142,7 @@ class FactureConf
 {
   Function FactureConf()
     {
-      $this->enabled = 1;
+      $this->enabled = 0;
     }
 }
 

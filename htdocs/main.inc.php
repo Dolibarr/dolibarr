@@ -163,7 +163,7 @@ require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf152/fpdf.php");
 define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/font/');
 
 /*
- * Definition de toutes les Constantes globales d'environement
+ * Definition de toutes les Constantes globales d'environnement
  *
  */
 $sql = "SELECT name, value FROM ".MAIN_DB_PREFIX."const";
@@ -291,10 +291,11 @@ if (defined("MAIN_MODULE_POSTNUKE"))
 }
 if (defined("MAIN_MODULE_WEBCALENDAR"))
 {
-  $conf->webcalendar->enabled=MAIN_MODULE_WEBCALENDAR;
+  $conf->webcal->enabled=MAIN_MODULE_WEBCALENDAR;
 }
 if (defined("MAIN_MODULE_FACTURE"))
 {
+  $conf->facture->enabled=MAIN_MODULE_FACTURE;
   require (DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
   if (defined("FACTURE_ADDON"))
@@ -305,6 +306,7 @@ if (defined("MAIN_MODULE_FACTURE"))
     if (is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/facture/pdf_".FACTURE_ADDON_PDF.".modules.php"))
       require(DOL_DOCUMENT_ROOT ."/includes/modules/facture/pdf_".FACTURE_ADDON_PDF.".modules.php");
 }
+
 if (defined("MAIN_MODULE_PROPALE"))
 {
   $conf->propal->enabled=MAIN_MODULE_PROPALE;
