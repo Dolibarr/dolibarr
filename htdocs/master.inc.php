@@ -358,11 +358,12 @@ else {
 }
 
 /*
- * Option du module Compta: Defini le mode de calcul du CA
+ * Option du module Compta: Defini le mode de calcul des etats comptables (CA,...)
  */
-$conf->compta->mode = 'RECETTES-DEPENSES';	    // Par défaut
-if (defined("COMPTA_MODE")) {
-	$conf->compta->mode = RECETTES-DEPENSES; 	// Peut etre 'CREANCES-DETTES' pour un CA en creances-dettes
+$conf->compta->mode = 'RECETTES-DEPENSES';  // Par défaut
+if (defined("COMPTA_MODE") && COMPTA_MODE) {
+	// Peut etre 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
+    $conf->compta->mode = COMPTA_MODE;
 }
 
 /* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
