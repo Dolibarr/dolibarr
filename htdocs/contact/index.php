@@ -89,9 +89,14 @@ if (strlen($_GET["userid"]))  // statut commercial
   $sql .= " WHERE p.fk_user=".$_GET["userid"];
 }
 
-if (strlen($_GET["begin"])) // filtre sur la premiere lettre du nom
+if (strlen($_GET["search_nom"])) // filtre sur la premiere lettre du nom
 {
-  $sql .= " WHERE upper(p.name) like '".$_GET["begin"]."%'";
+  $sql .= " WHERE upper(p.name) like '%".$_GET["search_nom"]."%'";
+}
+
+if (strlen($_GET["search_prenom"])) // filtre sur la premiere lettre du nom
+{
+  $sql .= " WHERE upper(p.firstname) like '%".$_GET["search_prenom"]."%'";
 }
 
 if ($contactname)
@@ -122,33 +127,9 @@ if ($result)
 
   print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$_GET["begin"].'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
 
-  print "<div align=\"center\">";
 
-  print "| <A href=\"index.php?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
-  for ($ij = 65 ; $ij < 91; $ij++) {
-    print "<A href=\"index.php?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
-    
-    if ($_GET["begin"] == chr($ij) )
-      {
-	print  "<b>&gt;" . chr($ij) . "&lt;</b>" ; 
-      } 
-    else
-      {
-	print  chr($ij);
-      } 
-    print "</A> | ";
-  }
-  print "</div>";
-  
-  if ($sortorder == "DESC") 
-    {
-      $sortorder="ASC";
-    } 
-  else
-    {
-      $sortorder="DESC";
-    }
-  print '<table class="noborder" width="100%">';
+  print '<p><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+
   print '<tr class="liste_titre"><td>';
   print_liste_field_titre($langs->trans("Lastname"),"index.php","lower(p.name)", $begin);
   print "</td><td>";
@@ -170,6 +151,22 @@ if ($result)
     }
 
   print "</tr>\n";
+
+
+
+  print '<form method="get" action="index.php">';
+  print '<tr class="liste_titre">';
+  print '<td valign="right">';
+  print '<input type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
+  print '</td>';
+  print '<td valign="right">';
+  print '<input type="text" name="search_prenom" value="'.$_GET["search_prenom"].'">';
+  print '</td><td colspan="2"><input type="submit"></td><td>&nbsp;</td></tr>';
+
+
+
+
+
   $var=True;
   while ($i < min($num,$limit))
     {
@@ -227,6 +224,111 @@ else
 {
   dolibarr_print_error($db);
 }
+
+
+/*
+ * PhProjekt
+ *
+ *
+ */
+
+if (2==1 && strlen($_GET["search_nom"]) OR strlen($_GET["search_prenom"]))
+{
+
+
+  $sortfield = "p.nachname";
+  $sortorder = "ASC";
+  
+  $sql = "SELECT p.vorname, p.nachname, p.firma, p.email";
+  $sql .= " FROM phprojekt.contacts as p";
+  $sql .= " WHERE upper(p.nachname) like '%".$_GET["search_nom"]."%'";
+
+
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1, $offset);
+
+
+$result = $db->query($sql);
+
+if ($result) 
+{
+  $num = $db->num_rows();
+  $i = 0;
+ 
+  print '<p><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>';
+  print_liste_field_titre("Nom","projekt.php","lower(p.name)", $begin);
+  print "</td><td>";
+  print_liste_field_titre("Prénom","projekt.php","lower(p.firstname)", $begin);
+  print "</td><td>";
+  print_liste_field_titre("Société","projekt.php","lower(s.nom)", $begin);
+  print '</td>';
+
+  print '<td>Téléphone</td>';
+
+  if ($_GET["view"] == 'phone')
+    {
+      print '<td>Portable</td>';
+      print '<td>Fax</td>';
+    }
+  else
+    {
+      print '<td>email</td>';
+    }
+
+  print "</tr>\n";
+  $var=True;
+  while ($i < min($num,$limit))
+    {
+      $obj = $db->fetch_object( $i);
+    
+      $var=!$var;
+
+      print "<tr $bc[$var]>";
+
+      print '<td valign="center">';
+      print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">';
+      print img_file();
+      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.$obj->nachname.'</a></td>';
+      print '<td>'.$obj->vorname.'</td>';
+      
+      print '<td>';
+      print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=$obj->idp\">$obj->firma</A></td>\n";
+      
+      
+      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
+
+      if ($_GET["view"] == 'phone')
+	{      
+	  print '<td>'.dolibarr_print_phone($obj->phone_mobile).'&nbsp;</td>';
+      
+	  print '<td>'.dolibarr_print_phone($obj->fax).'&nbsp;</td>';
+	}
+      else
+	{
+	  print '<td><a href="mailto:'.$obj->email.'">'.$obj->email.'</a>&nbsp;';
+	  if (!valid_email($obj->email))
+	    {
+	      print "Email Invalide !";
+	    }
+	  print '</td>';
+	}
+
+      print "</tr>\n";
+      $i++;
+    }
+  print "</table>";
+  $db->free();
+}
+else
+{
+  print $db->error();
+  print "<br>".$sql;
+}
+}
+
+
+
+
 
 $db->close();
 
