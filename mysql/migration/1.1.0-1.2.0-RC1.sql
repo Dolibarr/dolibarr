@@ -229,6 +229,18 @@ create table llx_societe_remise
 )type=innodb;
 
 
+create table llx_societe_remise_except
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_soc          integer NOT NULL,
+  datec           datetime,
+  amount_ht       real NOT NULL,
+  fk_user         integer NOT NULL,
+  fk_facture      integer,
+  description     text
+
+)type=innodb;
+
 create table llx_contact_facture
 (
   idp          integer AUTO_INCREMENT PRIMARY KEY,
