@@ -49,7 +49,8 @@ td.menu {
 
 
 .menu { 
-        background: #b3cccc; 
+	font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal; font-weight: bold; font-variant: normal; 
+        background: #FFCCFF; 
         font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
         color: #000000; 
         text-decoration: none }
@@ -57,8 +58,8 @@ td.menu {
 
 .submenu 
 { 
-  background: #b3cccc; 
-  font-family: Helvetica, Verdana; font-size: 14px;
+  background: ##FFCCFF; 
+  font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 12px; font-style: normal; font-weight: bold; font-variant: normal; 
   color: #000000; 
   text-decoration: none }
 
@@ -79,14 +80,14 @@ a.leftmenu
 td.barre { 
            border-right: 1px solid #000000;
            border-bottom: 1px solid #000000;
-           background: #b3cccc;
+           background: #FFCCFF;
            font-family: Helvetica, Verdana; font-size: 14px; 
            color: #000000; 
            text-decoration: none }
 
 
 td.barre_select { 
-                  background: #b3cccc; 
+                  background: #FFCCFF; 
                   color: #000000 
   }
 
@@ -101,24 +102,24 @@ div.titre {
  */
 TR.liste_titre  
 { 
-  background: #669999; 
+  background: #FF00CC; 
   font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
   text-decoration: none }
 TR.liste_sep
 { 
-  background: #669999; 
+  background: #FF00CC; 
   font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
   text-decoration: none }
 
 TR.pair	        
 { 
-  background: #b3cccc; 
+  background: #FFCC66; 
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none }
 
 TR.impair	
 { 
-  background: #cceeee; 
+  background: #FFFFCC; 
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none }
 
