@@ -43,7 +43,7 @@ $societe = new Societe($db);
 
 if ( $societe->fetch($socid) )
 {
-  $head[0][0] = 'soc.php?socid='.$societe->id;
+  $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
   $head[0][1] = "Fiche société";
   $h = 1;
 
@@ -58,7 +58,7 @@ if ( $societe->fetch($socid) )
 
   dolibarr_fiche_head($head, $a);
 
-  print_titre("Fiche fournisseur : $societe->nom");
+  print_titre($societe->nom);
 
   /*
    *
@@ -70,8 +70,8 @@ if ( $societe->fetch($socid) )
    *
    */
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr><td>Tél</td><td>'.$societe->tel.'&nbsp;</td><td>fax</td><td>'.$societe->fax.'&nbsp;</td></tr>';
-  print '<tr><td>Adresse</td><td colspan="3">'.nl2br($societe->address).'<br>'.$societe->cp.' '.$societe->ville.'</td></tr>';
+  print '<tr><td>Tél</td><td>'.dolibarr_print_phone($societe->tel).'&nbsp;</td><td>fax</td><td>'.dolibarr_print_phone($societe->fax).'&nbsp;</td></tr>';
+  print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($societe->adresse).'<br>'.$societe->cp.' '.$societe->ville.'</td></tr>';
 
   print '</table>';
   /*
