@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -115,7 +116,7 @@ if ($mode == 'search')
 {
   if ($mode-search == 'soc')
     {
-      $sql = "SELECT s.idp FROM llx_societe as s ";
+      $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
       $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
     }
   
@@ -239,7 +240,7 @@ if ($socid > 0)
 	print '<table class="border" width="100%" cellspacing="0" cellpadding="1">';
 	$var=!$var;
 	$sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
-	$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND s.idp = ".$objsoc->idp." ORDER BY f.datef DESC";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND s.idp = ".$objsoc->idp." ORDER BY f.datef DESC";
 	
 	if ( $db->query($sql) )
 	  {
@@ -287,7 +288,7 @@ if ($socid > 0)
      *
      */
     $sql  = "SELECT p.rowid,p.title,p.ref,".$db->pdate("p.dateo")." as do";
-    $sql .= " FROM llx_projet as p WHERE p.fk_soc = $objsoc->idp";
+    $sql .= " FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $objsoc->idp";
     if ( $db->query($sql) ) {
       print "<table border=1 cellspacing=0 width=100% cellpadding=\"1\">";
       $i = 0 ; 
@@ -348,7 +349,7 @@ if ($socid > 0)
       print "<td><b>Fax</b></td><td><b>Email</b></td>";
       print "<td><a href=\"../comm/people.php?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
     
-      $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM llx_socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
+      $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
       $result = $db->query($sql);
       $i = 0 ; $num = $db->num_rows(); 
 

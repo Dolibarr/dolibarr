@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,7 +57,7 @@ $pagenext = $page + 1;
  */
 if ($mode == 'search') {
   if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM llx_societe as s ";
+    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
     $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
   }
       
@@ -79,7 +80,7 @@ if ($mode == 'search') {
 print_barre_liste("Liste des societes", $page, $PHP_SELF);
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur";
-$sql .= " FROM llx_societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id";
 
 if ($user->societe_id > 0) {
   $sql .= " AND s.idp = " . $user->societe_id;
