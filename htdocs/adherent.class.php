@@ -60,6 +60,18 @@ class Adherent
       // les champs optionnels sont vides
       $this->array_options=array();
     }
+
+  /*
+   * function envoyant un email au destinataire (recipient) avec le text fourni en parametre.
+   * La particularite de cette focntion est de remplacer certains champs par leur valeur pour l'adherent
+   * en l'occurrence :
+   * %prenom% : est remplace par le prenom
+   * %nom% : est remplace par nom
+   */
+  Function send_an_email($recipients,$text)
+    {
+      
+    }
   /*
    *
    *
