@@ -134,8 +134,16 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->produit->dir_output.'/'.$original_file;
+    }
 
-	dolibarr_syslog($original_file);
+    // Wrapping pour les prelevement
+    if ($modulepart == 'prelevement')
+    {
+        $user->getrights('prelevement');
+
+	$accessallowed=1;
+	    
+        $original_file=DOL_DATA_ROOT.'/prelevement/bon/'.$original_file;
     }
 
     // Wrapping pour les graph telephonie
