@@ -9,6 +9,7 @@
     <!entity ch-commande    system "commande.sgml">
     <!entity ch-expedition  system "expedition.sgml">
     <!entity ch-produit	    system "produit.sgml">
+    <!entity ch-theme	    system "theme.sgml">
 ]
 >
 <debiandoc>
@@ -34,6 +35,7 @@
     &ch-constantes;
     &ch-propale;
     &ch-produit;
+    &ch-theme;
 
   </book>
   
