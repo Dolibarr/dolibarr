@@ -233,7 +233,7 @@ create table llx_contact_facture
 (
   idp          integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc       integer NOT NULL,
-  fk_contact   integer NOT NULL,   -- point sur llx_socpeople
+  fk_contact   integer NOT NULL,
 
   UNIQUE (fk_soc, fk_contact)
 )type=innodb;
