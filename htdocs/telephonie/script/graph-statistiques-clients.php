@@ -31,8 +31,6 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
 
-
-
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/ca.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/gain.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/heureappel.class.php");
@@ -46,6 +44,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
 
 $error = 0;
 
+$img_root = DOL_DATA_ROOT."/graph/telephonie/";
 
 /***********************************************************************/
 /*
@@ -91,12 +90,12 @@ foreach ($clients as $client)
 {
   print ".";
 
-  /*
+  
   $file = $img_root . "client/".substr($client,0,1)."/".$client."/graphca.png";
   $graphca = new GraphCa($db, $file);
   $graphca->client = $client;
   $graphca->GraphDraw();
-  */
+  
 
   $file = $img_root . "client/".substr($client,0,1)."/".$client."/graphgain.png";
   $file = "/dev/null";
@@ -117,8 +116,7 @@ foreach ($clients as $client)
   $sql .= ",'".ereg_replace(",",".",$marge)."')";
   $db->query($sql);
 
-  /*
-
+  
   $file = $img_root . "client/".substr($client,0,1)."/".$client."/graphappelsdureemoyenne.png";
 
   $graphgain = new GraphAppelsDureeMoyenne ($db, $file);
@@ -133,7 +131,6 @@ foreach ($clients as $client)
   $graphx->show_console = 0 ;
   $graphx->Graph();
 
-  */
 }
 print "\n";
 ?>
