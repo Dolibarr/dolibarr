@@ -146,10 +146,10 @@ if ($action == 'create')
 
     print '<table class="border" width="100%">';
 
-    print '<tr><td valign="top" width="20%">'.$langs->trans("FirstName").'</td>';
+    print '<tr><td valign="top" width="20%">'.$langs->trans("Firstname").'</td>';
     print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
 
-    print "<tr>".'<td valign="top">'.$langs->trans("LastName").'</td>';
+    print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
     print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
 
     print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';
@@ -314,9 +314,9 @@ else
 	    
             print '<table class="border" width="100%">';
 	    
-            print "<tr>".'<td width="25%" valign="top">'.$langs->trans("LastName").'</td>';
+            print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
             print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
-            print '<td width="25%" valign="top">'.$langs->trans("FirstName").'</td>';
+            print '<td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
             print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
             print "</tr>\n";
 	    
@@ -437,10 +437,10 @@ else
             print '<input type="hidden" name="action" value="update">';
             print '<table wdith="100%" class="border">';
 
-            print "<tr>".'<td valign="top">'.$langs->trans("LastName").'</td>';
+            print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
             print '<td><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td></tr>';
 
-            print "<tr>".'<td valign="top">'.$langs->trans("FirstName").'</td>';
+            print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
             print '<td><input size="20" type="text" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
 
             print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';

@@ -434,7 +434,7 @@ if ($_socid > 0)
        */
       print '<table class="noborder" width="100%">';
 
-      print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("LastName").'</td>';
+      print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
       print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
       print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
       print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id."&amp;action=create\">".$langs->trans("AddContact")."</a></td>";

@@ -226,9 +226,9 @@ if ( $societe->fetch($socid) )
    */
   $langs->load("companies");
 
-  print '<br><table class="noborder" cellspacing="0" cellpadding="2" width="100%">';
+  print '<br><table class="noborder" width="100%">';
 
-  print '<tr class="liste_titre"><td><b>'.$langs->trans("FirstName").' '.$langs->trans("LastName").'</b></td>';
+  print '<tr class="liste_titre"><td><b>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</b></td>';
   print '<td><b>Poste</b></td><td><b>'.$langs->trans("Tel").'</b></td>';
   print "<td><b>".$langs->trans("Fax")."</b></td><td><b>".$langs->trans("EMail")."</b></td>";
   print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a></td></tr>";

@@ -42,7 +42,7 @@ print_barre_liste("Liste des commandes", $page, "ca.php");
 
 print '<table class="noborder" cellspacing="0" cellpadding="3">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td>';
-print '<td align="right">'.$langs->trans("LastName").'</td></tr>';
+print '<td align="right">'.$langs->trans("Lastname").'</td></tr>';
 
 $sql = "SELECT sum(t.value) as value";
 $sql .= " FROM ".DB_NAME_OSC.".orders_total as t";

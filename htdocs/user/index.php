@@ -58,8 +58,8 @@ if ($result)
 
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("LastName"),"index.php","name","","","",$sortfield);
-    print_liste_field_titre($langs->trans("FirstName"),"index.php","firstname","","","",$sortfield);
+    print_liste_field_titre($langs->trans("Lastname"),"index.php","name","","","",$sortfield);
+    print_liste_field_titre($langs->trans("Firstname"),"index.php","firstname","","","",$sortfield);
     print_liste_field_titre($langs->trans("Login"),"index.php","login","","","",$sortfield);
     print_liste_field_titre($langs->trans("Code"),"index.php","code","","","",$sortfield);
     print "</tr>\n";

@@ -380,7 +380,7 @@ if ($action == 'create') {
     print '<td valign="top" rowspan="13"><textarea name="comment" wrap="soft" cols="40" rows="25"></textarea></td></tr>';
 
     print '<tr><td>'.$langs->trans("Firstname").'*</td><td><input type="text" name="prenom" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("LastName").'*</td><td><input type="text" name="nom" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" size="40"></td></tr>';
     print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40"></td></tr>';
     print '<tr><td>'.$langs->trans("Address").'</td><td>';
     print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
@@ -531,7 +531,7 @@ if ($rowid > 0)
 
     print '<tr><td width="15%">'.$langs->trans("Firstname").'*</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
 
-    print '<tr><td>'.$langs->trans("LastName").'*</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Lastname").'*</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
 
     print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';

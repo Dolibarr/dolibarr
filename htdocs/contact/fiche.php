@@ -221,7 +221,7 @@ if ($_GET["action"] == 'create')
   print $form->select_civilite($obj->civilite);
   print '</td></tr>';
 
-  print '<tr><td>'.$langs->trans("LastName").'</td><td><input name="name" type="text" size="20" maxlength="80"></td>';
+  print '<tr><td>'.$langs->trans("Lastname").'</td><td><input name="name" type="text" size="20" maxlength="80"></td>';
   print '<td>'.$langs->trans("Firstname").'</td><td><input name="firstname" type="text" size="15" maxlength="80"></td>';
 
   print '<td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td></tr>';

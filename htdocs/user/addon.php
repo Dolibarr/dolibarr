@@ -95,9 +95,9 @@ if ($_GET["id"])
   
   print '<table class="border" width="100%">';
   
-  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("LastName").'</td>';
+  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
   print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
-  print '<td width="25%" valign="top">'.$langs->trans("FirstName").'</td>';
+  print '<td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
   print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
   print "</tr>\n";
   

@@ -112,7 +112,7 @@ if ($id)
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
       print "<tr>";
       print '<td width="20%">Frais d\'expéditions</td><td width="80%">'.price($commande->total_ot_shipping).' EUR</td></tr>';
-      print '<td width="20%">'.$langs->trans("LastName").'</td><td width="80%">'.price($commande->total_ot_total).' EUR</td></tr>';
+      print '<td width="20%">'.$langs->trans("Lastname").'</td><td width="80%">'.price($commande->total_ot_total).' EUR</td></tr>';
       print "</table>";
 
       

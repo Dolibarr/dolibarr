@@ -213,7 +213,7 @@ if ($_GET["action"] == 'create') {
   $langs->load("companies");
   print "<tr $bc[1]>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40"></td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40"></td></tr>';
-  print "<tr $bc[1]>".'<td>'.$langs->trans("LastName").'</td><td><input type="text" name="nom" size="40"></td></tr>';
+  print "<tr $bc[1]>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40"></td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Address").'</td><td>';
   print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
@@ -290,7 +290,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
   $langs->load("companies");
   print "<tr $bc[1]>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$don->societe.'"></td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40" value="'.$don->prenom.'"></td></tr>';
-  print "<tr $bc[1]>".'<td>'.$langs->trans("LastName").'</td><td><input type="text" name="nom" size="40" value="'.$don->nom.'"></td></tr>';
+  print "<tr $bc[1]>".'<td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40" value="'.$don->nom.'"></td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Address").'</td><td>';
   print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.$don->adresse.'</textarea></td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8" value="'.$don->cp.'"> <input type="text" name="ville" size="40" value="'.$don->ville.'"></td></tr>';
@@ -356,7 +356,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
 
   print "<tr $bc[1]>".'<td>'.$langs->trans("Company").'</td><td>'.$don->societe.'</td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Firstname").'</td><td>'.$don->prenom.'</td></tr>';
-  print "<tr $bc[1]>".'<td>'.$langs->trans("LastName").'</td><td>'.$don->nom.'</td></tr>';
+  print "<tr $bc[1]>".'<td>'.$langs->trans("Lastname").'</td><td>'.$don->nom.'</td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Address").'</td><td>'.nl2br($don->adresse).'</td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>'.$don->cp.' '.$don->ville.'</td></tr>';
   print "<tr $bc[1]>".'<td>'.$langs->trans("Country").'</td><td>'.$don->pays.'</td></tr>';
