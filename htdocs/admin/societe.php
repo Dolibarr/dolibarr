@@ -72,18 +72,18 @@ llxHeader();
  *
  */
 
-print_titre("Configuration du module Sociétés");
+print_titre($langs->trans("CompanySetup"));
 
 print "<br>";
 
-print_titre("Module de vérification des codes client");
+print_titre($langs->trans("CustomerCodeChecker"));
 
-print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">\n";
+print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
-print "  <td>Nom</td>\n";
-print "  <td>Info</td>\n";
-print "  <td align=\"center\">Activé</td>\n";
-print "  <td>&nbsp;</td>\n";
+print '  <td>'.$langs->trans("Name").'</td>';
+print '  <td>'.$langs->trans("Description").'</td>';
+print '  <td align="center">'.$langs->trans("Activated").'</td>';
+print '  <td>&nbsp;</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -92,6 +92,7 @@ $dir = "../includes/modules/societe/";
 $handle = opendir($dir);
 if ($handle)
 {
+  $var = true;
   while (($file = readdir($handle))!==false)
     {
       if (substr($file, 0, 15) == 'mod_codeclient_' && substr($file, -3) == 'php')
@@ -101,11 +102,8 @@ if ($handle)
 	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
 
 	  $modCodeClient = new $file;
-	  if($pair == "pair")
-	    $pair = "impair";
-	  else
-	    $pair = "pair";
-	  print "<tr class=\"$pair\">\n  <td width=\"140\">".$modCodeClient->nom."</td>\n  <td>";
+	  $var = !$var;
+	  print "<tr ".$bc[$var].">\n  <td width=\"140\">".$modCodeClient->nom."</td>\n  <td>";
 	  print $modCodeClient->info();
 	  print "</td>\n";
 	  
@@ -119,7 +117,7 @@ if ($handle)
 	    {
 
 	      print '<td>&nbsp;</td>';
-	      print '<td align="center"><a href="societe.php?action=setcodeclient&amp;value='.$file.'">activer</a></td>';
+	      print '<td align="center"><a href="societe.php?action=setcodeclient&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
 	    }
 	  
 	  print '</tr>';
@@ -131,13 +129,13 @@ print '</table>';
 
 print "<br>";
 
-print_titre("Module de gestion des compta");
+print_titre($langs->trans("AccountCodeManager"));
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>Info</td>';
-print '<td align="center">Activé</td>';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center">'.$langs->trans("Activated").'</td>';
 print '<td>&nbsp;</td>';
 print "</tr>\n";
 
@@ -147,6 +145,7 @@ $dir = "../includes/modules/societe/";
 $handle = opendir($dir);
 if ($handle)
 {
+  $var = true;
   while (($file = readdir($handle))!==false)
     {
       if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php')
@@ -156,8 +155,9 @@ if ($handle)
 	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
 
 	  $modCodeCompta = new $file;
+	  $var = !$var;
 
-	  print '<tr class="pair"><td width="140">'.$modCodeCompta->nom."</td><td>\n";
+	  print '<tr '.$bc[$var].'><td width="140">'.$modCodeCompta->nom."</td><td>\n";
 	  print $modCodeCompta->info();
 	  print '</td>';
 	  
@@ -170,7 +170,7 @@ if ($handle)
 	  else
 	    {
 	      print '<td>&nbsp;</td>';
-	      print '<td align="center"><a href="societe.php?action=setcodecompta&amp;value='.$file.'">activer</a></td>';
+	      print '<td align="center"><a href="societe.php?action=setcodecompta&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
 
 	    }
 	  

@@ -133,8 +133,12 @@ CompanyInfo=Company/foundation informations
 CompanyIds=Company/Foundation identities
 CompanyName=Company/foundation name
 CompanyCurrency=Company/foundation currency
+##### Company setup #####
+CompanySetup=Companies module setup
+CustomerCodeChecker=Module for checking customer's code
+AccountCodeManager=Module for managing accountancy code
 ##### Webcal setup #####
-WebCal Setup=Webcalendar link setup
+WebCalSetup=Webcalendar link setup
 WebCalSyncro=Add Dolibarr Event to WebCalendar
 WebCalAllways=Always, no asking
 WebCalYesByDefault=On demand (yes by default)
@@ -149,9 +153,9 @@ WebCalTestOk=Connection to server '%s' on database '%s' with user '%s' successfu
 WebCalTestKo1=Connection to server '%s' succeed but database '%s' could not be reached.
 WebCalTestKo2=Connection to server '%s' with user '%s' failed.
 ##### Clicktodial setup #####
-ClickToDialSetup=Click To Dial setup
+ClickToDialSetup=Click To Dial module setup
 ##### LDAP setup ####
 LDAPSetup=LDAP Setup
 LDAPServer=LDAP Server
 ##### Propal #####
-PropalSetup=Commercial proposals setup
+PropalSetup=Commercial proposals module setup

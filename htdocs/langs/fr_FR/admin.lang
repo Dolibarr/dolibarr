@@ -133,6 +133,10 @@ CompanyInfo=Informations sur la société ou association
 CompanyIds=Identifiants de la société ou association
 CompanyName=Nom/Enseigne de la société/association
 CompanyCurrency=Devise de la société/association
+##### Company setup #####
+CompanySetup=Configuration du module Sociétés
+CustomerCodeChecker=Module de controle des codes clients
+AccountCodeManager=Module de gestion des codes compta
 ##### Webcal setup #####
 WebCalSetup=Configuration du lien vers le calendrier Webcalendar
 WebCalSyncro=Intégrer les évênements Dolibarr dans WebCalendar
@@ -149,9 +153,9 @@ WebCalTestOk=La connection au serveur '%s' sur la base '%s' par le user '%s' a r
 WebCalTestKo1=La connection au serveur '%s' a réussi mais la base '%s' n'a pu être accédée.
 WebCalTestKo2=La connection au serveur '%s' par le user '%s' à échoué.
 ##### Clicktodial setup #####
-ClickToDialSetup=Configuration du click to dial
+ClickToDialSetup=Configuration du module Click To Dial
 ##### LDAP setup #####
-LDAPSetup=Configuration LDAP
+LDAPSetup=Configuration du module LDAP
 LDAPServer=Serveur LDAP
 ##### Propal #####
 PropalSetup=Configuration du module Propositions Commerciales
