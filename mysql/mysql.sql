@@ -68,9 +68,9 @@ create table llx_societe
   client         smallint       default 0,            -- client oui/non
   fournisseur    smallint       default 0,            -- fournisseur oui/non
 
-  UNIQUE INDEX(prefix_comm),
-)
-type=INNODB;
+  UNIQUE INDEX(prefix_comm)
+);
+
 
 create table llx_socstatutlog
 (
@@ -474,8 +474,7 @@ create table llx_tva
   amount          real NOT NULL default 0,
   label           varchar(255),
   note            text
-)
-type=INNODB;-- ===================================================================
+);
 
 create table llx_domain
 (
@@ -687,11 +686,8 @@ create table llx_facture
   note               text,
 
   UNIQUE INDEX (facnumber),
-  INDEX fksoc (fk_soc),
-  FOREIGN KEY (fk_soc)
-    REFERENCES llx_societe(idp) ON DELETE NO ACTION ON UPDATE NO ACTION
-)
-type=INNODB;-- ===================================================================
+  INDEX fksoc (fk_soc)
+);
 
 create table llx_facturedet
 (
