@@ -28,10 +28,6 @@ Class pdf_paiement {
       $this->db = $db;
       $this->description = "Liste des paiements";
 
-      $this->dir = DOL_DOCUMENT_ROOT."/document/rapport/";
-
-      $this->file = $this->dir . "paiements" . ".pdf";
-
       $this->url = DOL_URL_ROOT."/document/rapport/" . "paiements" . ".pdf";
 
       $this->tab_top = 30;
@@ -120,17 +116,32 @@ Class pdf_paiement {
 	}
     }
 
-  Function write_pdf_file()
+  Function write_pdf_file($_dir, $month, $year)
     {
-      if (! file_exists($this->dir))
+      if (! file_exists($_dir))
 	{
 	  umask(0);
-	  if (! mkdir($this->dir, 0755))
+	  if (! mkdir($_dir, 0755))
 	    {
-	      print "Impossible de créer $this->dir !";
+	      print "Impossible de créer $_dir !";
 	      die;
 	    }
 	}
+      $_dir = $_dir . '/' . $year . '/';
+      if (! file_exists($_dir))
+	{
+	  umask(0);
+	  if (! mkdir($_dir, 0755))
+	    {
+	      print "Impossible de créer $_dir !";
+	      die;
+	    }
+	}
+
+      $month = substr("0".$month, strlen("0".$month)-2,2);
+      $_file = $_dir . "paiements-$month-$year" . ".pdf";
+
+
       
       $pdf = new FPDF('P','mm','A4');
       $pdf->Open();
@@ -142,7 +153,9 @@ Class pdf_paiement {
       $sql = "SELECT ".$this->db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber";
       $sql .=", f.rowid as facid, c.libelle as paiement_type, p.num_paiement";
       $sql .= " FROM llx_paiement as p, llx_facture as f, c_paiement as c";
-      $sql .= " WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id ORDER BY p.datep ASC";
+      $sql .= " WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id";
+      $sql .= " AND date_format(p.datep, '%m%Y') = " . $month.$year;
+      $sql .= " ORDER BY p.datep ASC";
       $result = $this->db->query($sql);
 
       if ($result)
@@ -172,6 +185,12 @@ Class pdf_paiement {
 	  $pages++;
 	}
 
+      if ($pages == 0)
+	{
+	  // force à générer au moins une page si le rapport ne contient aucune ligne
+	  $pages = 1;
+	}
+
       for ($i = 0 ; $i < $pages ; $i++)
 	{
 	  $pdf->AddPage();
@@ -182,7 +201,7 @@ Class pdf_paiement {
        *
        */
       
-      $pdf->Output($this->file);      
+      $pdf->Output($_file);      
     }
 
 }
