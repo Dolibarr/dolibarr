@@ -207,7 +207,7 @@ if ($_GET["id"] > 0)
 	  print '<p><table id="actions" width="100%"><tr>';
 
 	  print '<td align="center" width="20%">';
-	  print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'">Facturer</a>';
+	  print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">Facturer</a>';
 	  print '</td>';
 	  print '<td align="center" width="20%">-</td>';
 	  print '<td align="center" width="20%">-</td>';
