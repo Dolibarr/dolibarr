@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@ create table llx_entrepot
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   datec           datetime,
   tms             timestamp,
-  label           varchar(255),
+  label           varchar(255) NOT NULL,
   description     text,
   statut          tinyint default 1, -- 1 ouvert, 0 fermé
   fk_user_author  integer
