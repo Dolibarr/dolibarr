@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
  *
  */
 
-/*!
-	    \file       htdocs/compta/deplacement/fiche.php
+/**	    \file       htdocs/compta/deplacement/fiche.php
 		\brief      Page fiche d'un déplacement
 */
 
@@ -214,7 +213,7 @@ print '<div class="tabsAction">';
 if ($_GET["action"] != 'create')
 {
   print '<a class="tabAction" href="fiche.php?action=edit&id='.$_GET["id"].'">'.$langs->trans('Edit').'</a>';
-  print '<a class="tabAction" href="fiche.php?action=delete&id='.$_GET["id"].'">'.$langs->trans('Delete').'</a>';
+  print '<a class="butDelete" href="fiche.php?action=delete&id='.$_GET["id"].'">'.$langs->trans('Delete').'</a>';
 }
 
 print '</div>';
