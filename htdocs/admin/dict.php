@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ $tabnom[1] = "Formes juridiques";
 $tabnom[2] = "Départements/Provinces/Cantons";
 $tabnom[3] = "Régions";
 $tabnom[4] = "Pays";
-$tabnom[5] = "Formules de Politesses";
+$tabnom[5] = "Titres de civilité";
 
 $tabsql[1] = "SELECT f.code, f.libelle, p.libelle as pays, f.active FROM llx_c_forme_juridique as f, llx_c_pays as p WHERE f.fk_pays=p.rowid ORDER BY p.rowid, f.active DESC, code ASC";
 $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, p.libelle as pays, d.active FROM llx_c_departements as d, llx_c_regions as r, llx_c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid ORDER BY p.rowid, d.active DESC, code ASC";
