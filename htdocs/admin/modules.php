@@ -237,9 +237,9 @@ foreach ($orders as $key => $value)
 	  }
         print "</td>\n";
         print "  <td>";
-        print $objMod->name;
+        print $objMod->getName();
         print "</td>\n  <td>";
-        print $objMod->description;
+        print $objMod->getDesc();
         print "</td>\n  <td align=\"center\">";
 
         if ($const_value == 1)
@@ -256,7 +256,8 @@ foreach ($orders as $key => $value)
 
         if ($const_value == 1)
 	  {
-            print "<a href=\"modules.php?action=reset&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Disable") . "</a></td>\n";
+            // Module actif
+            print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Disable") . "</a></td>\n";
 
 
             if ($objMod->config_page_url)
@@ -290,7 +291,8 @@ foreach ($orders as $key => $value)
         }
         else
 	  {
-            print "<a href=\"modules.php?action=set&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Activate") . "</a></td>\n  <td>&nbsp;</td>\n";
+            // Module non actif
+            print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=set&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Activate") . "</a></td>\n  <td>&nbsp;</td>\n";
 	  }
 	
         print "</tr>\n";

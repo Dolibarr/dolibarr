@@ -271,6 +271,8 @@ class DolibarrModules
     function getName()
     {
         global $langs;
+        $langs->load("admin");
+
         if ($langs->trans("Module".$this->numero."Name") != ("Module".$this->numero."Name"))
         {
             // Si traduction du nom du module existe
@@ -291,6 +293,8 @@ class DolibarrModules
     function getDesc()
     {
         global $langs;
+        $langs->load("admin");
+
         if ($langs->trans("Module".$this->numero."Desc") != ("Module".$this->numero."Desc"))
         {
             // Si traduction de la description du module existe
