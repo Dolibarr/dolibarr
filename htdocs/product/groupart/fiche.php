@@ -19,31 +19,26 @@
  * $Source$
  *
  */
-
 require("./pre.inc.php");
 
 llxHeader();
 
-if ($action == 'add') {
+if ($action == 'add')
+{
   $groupart = new Groupart($db);
-
   $groupart->nom = $nom;
-
   $id = $groupart->create($user);
 }
 
 if ($action == 'update') {
   $groupart = new Groupart($db);
-
   $groupart->nom = $nom;
-
   $groupart->update($id, $user);
 }
 
 if ($action == 'updateosc') {
   $groupart = new Groupart($db);
   $result = $groupart->fetch($id);
-
   $groupart->updateosc($user);
 }
 

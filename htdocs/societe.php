@@ -33,10 +33,7 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-
 llxHeader();
-
-$db = new Db();
 
 if ($sortorder == "") {
   $sortorder="ASC";

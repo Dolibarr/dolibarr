@@ -19,16 +19,16 @@
  * $Source$
  *
  */
-
 require("./pre.inc.php");
 
 llxHeader();
 
-$db = new Db();
-if ($sortfield == "") {
+if ($sortfield == "")
+{
   $sortfield="lower(g.nom)";
 }
-if ($sortorder == "") {
+if ($sortorder == "")
+{
   $sortorder="ASC";
 }
 

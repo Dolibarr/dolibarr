@@ -22,7 +22,6 @@
 
 require("./pre.inc.php3");
 
-$db = new Db();
 $form = new Form($db);
 
 if ($subaction == 'addrights' && $user->admin)

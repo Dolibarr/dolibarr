@@ -29,7 +29,6 @@ if ($user->societe_id > 0)
 }
 
 llxHeader();
-$db = new Db();
 
 if ($HTTP_POST_VARS["action"] == 'add')
 {

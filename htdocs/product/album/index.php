@@ -19,7 +19,6 @@
  * $Source$
  *
  */
-
 require("./pre.inc.php");
 
 llxHeader();
