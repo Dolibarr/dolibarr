@@ -54,41 +54,40 @@ print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top" width="30%">';
 
-if ($conf->propal->enabled) {
-	print '<form method="post" action="propal.php">';
-	print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
-	print '<tr class="liste_titre"><td colspan="2">Rechercher une proposition</td></tr>';
-	print "<tr $bc[1]><td>";
-	print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
-	print "</table></form><br>\n";
-
-	$sql = "SELECT p.rowid, p.ref";
-	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
-	$sql .= " WHERE p.fk_statut = 0";
-	
-	if ( $db->query($sql) )
+if ($conf->propal->enabled) 
+{
+  print '<form method="post" action="propal.php">';
+  print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+  print '<tr class="liste_titre"><td colspan="2">Rechercher une proposition</td></tr>';
+  print "<tr $bc[1]><td>";
+  print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
+  print "</table></form><br>\n";
+  
+  $sql = "SELECT p.rowid, p.ref";
+  $sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
+  $sql .= " WHERE p.fk_statut = 0";
+  
+  if ( $db->query($sql) )
+    {
+      $num = $db->num_rows();
+      $i = 0;
+      if ($num > 0 )
 	{
-	  $num = $db->num_rows();
-	  $i = 0;
-	  if ($num > 0 )
+	  print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+	  print "<TR class=\"liste_titre\">";
+	  print "<td colspan=\"2\">Propositions commerciales brouillons</td></tr>";
+	  
+	  while ($i < $num)
 	    {
-	      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
-	      print "<TR class=\"liste_titre\">";
-	      print "<td colspan=\"2\">Propositions commerciales brouillons</td></tr>";
-	      
-	      while ($i < $num)
-		{
-		  $obj = $db->fetch_object( $i);
-		  $var=!$var;
-		  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
-		  $i++;
-		}
-	      print "</table><br>";
+	      $obj = $db->fetch_object( $i);
+	      $var=!$var;
+	      print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
+	      $i++;
 	    }
+	  print "</table><br>";
 	}
+    }
 }
-
-
 
 /*
  * Actions commerciales a faire
@@ -119,7 +118,7 @@ if ( $db->query($sql) )
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td>";
-	  print "<td><a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
+	  print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id."\">$obj->libelle $obj->label</a></td>";
 	  print '<td><a href="fiche.php?id='.$obj->idp.'">'.$obj->sname.'</a></td>';
 	  $i++;
 	}
