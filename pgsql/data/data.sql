@@ -176,14 +176,14 @@ insert into llx_const (name, value, type) values ('PROPALE_OUTPUT_URL','/htdocs/
 -- Ficheinter
 --
 
-insert into llx_const (name, value, type) values ('FICHEINTER_OUTPUT_DIR','/htdocs/document/ficheinter','chaine');
-insert into llx_const (name, value, type) values ('FICHERINTER_OUTPUT_URL','/htdocs/document/ficheinter','chaine');
+insert into llx_const (name, value, type) values ('FICHEINTER_OUTPUTDIR','/htdocs/document/ficheinter','chaine');
+insert into llx_const (name, value, type) values ('FICHEINTER_OUTPUT_URL','/htdocs/document/ficheinter','chaine');
 
 --
 -- société
 --
 
-insert into llx_const (name, value, type) values ('SOCIETE_OUTPUT_DIR','/htdocs/document/societe','chaine');
+insert into llx_const (name, value, type) values ('SOCIETE_OUTPUTDIR','/htdocs/document/societe','chaine');
 insert into llx_const (name, value, type) values ('SOCIETE_OUTPUT_URL','/htdocs/document/societe','chaine');
 
 --
