@@ -29,7 +29,6 @@ Class pdf_bulot {
       $this->description = "Modèle de facture avec remise et infos réglement";
     }
 
-
   Function write_pdf_file($facid)
     {
       global $user;
@@ -53,7 +52,6 @@ Class pdf_bulot {
 	  
 	  if (file_exists($dir))
 	    {
-
 	      $pdf=new FPDF('P','mm','A4');
 	      $pdf->Open();
 	      $pdf->AddPage();
@@ -105,7 +103,6 @@ Class pdf_bulot {
 		  $total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
 		  $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
 
-
 		  if ($nexY > 200 && $i < $nblignes - 1)
 		    {
 		      $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
@@ -118,75 +115,11 @@ Class pdf_bulot {
 		  
 		}
 	      $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
-	      /*
-	       *
-	       */
-	      
-	      $tab2_top = 212;
-	      $tab2_height = 28;
-	      $pdf->SetFont('Arial','', 11);
-	      
-	      //	      $pdf->Rect(132, $tab2_top, 68, $tab2_height);
-	      //	      $pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
-	      
-	      //	      $pdf->line(132, $tab2_top + $tab2_height - 21, 200, $tab2_top + $tab2_height - 21 );
-	      //	      $pdf->line(132, $tab2_top + $tab2_height - 14, 200, $tab2_top + $tab2_height - 14 );
-	      //	      $pdf->line(132, $tab2_top + $tab2_height - 7, 200, $tab2_top + $tab2_height - 7 );
-	      
-	      $pdf->SetXY (132, $tab2_top + 0);
-	      $pdf->MultiCell(42, 8, "Total HT", 0, 'R', 0);
-	      
-	      $pdf->SetXY (132, $tab2_top + 7);
-	      $pdf->MultiCell(42, 8, "Remise", 0, 'R', 0);
-	      
-	      $pdf->SetXY (132, $tab2_top + 14);
-	      $pdf->MultiCell(42, 8, "Total HT aprés remise", 0, 'R', 0);
 
-	      $pdf->SetXY (132, $tab2_top + 21);
-	      $pdf->MultiCell(42, 8, "Total TVA", 0, 'R', 0);
-
-	      $pdf->SetXY (132, $tab2_top + 28);
-	      $pdf->MultiCell(42, 8, "Total TTC", 1, 'R', 1);
-	      
-	      $pdf->SetXY (174, $tab2_top + 0);
-	      $pdf->MultiCell(26, 8, price($fac->total_ht + $fac->remise), 0, 'R', 0);
+	      $this->_tableau_tot($pdf, $fac);
 	  
-	      $pdf->SetXY (174, $tab2_top + 7);
-	      $pdf->MultiCell(26, 8, price($fac->remise), 0, 'R', 0);
-	  
-	      $pdf->SetXY (174, $tab2_top + 14);
-	      $pdf->MultiCell(26, 8, price($fac->total_ht), 0, 'R', 0);
+	      $this->_tableau_compl($pdf, $fac);	      
 
-	      $pdf->SetXY (174, $tab2_top + 21);
-	      $pdf->MultiCell(26, 8, price($fac->total_tva), 0, 'R', 0);
-
-	      $pdf->SetXY (174, $tab2_top + 28);
-	      $pdf->MultiCell(26, 8, price($fac->total_ttc), 1, 'R', 1);
-	  
-	      /*
-	       *
-	       */
-	      
-	      $tab3_top = 240;
-	      $tab3_height = 18;
-	      $tab3_width = 60;
-	      
-	      $pdf->Rect(10, $tab3_top, $tab3_width, $tab3_height);
-	      
-	      $pdf->line(10, $tab3_top + 6, $tab3_width+10, $tab3_top + 6 );
-	      $pdf->line(10, $tab3_top + 12, $tab3_width+10, $tab3_top + 12 );
-	      
-	      $pdf->line(30, $tab3_top, 30, $tab3_top + $tab3_height );
-	      
-	      $pdf->SetFont('Arial','',8);
-	      $pdf->SetXY (10, $tab3_top - 6);
-	      $pdf->MultiCell(60, 6, "Informations complémentaires", 0, 'L', 0);
-	      $pdf->SetXY (10, $tab3_top );
-	      $pdf->MultiCell(20, 6, "Réglé le", 0, 'L', 0);
-	      $pdf->SetXY (10, $tab3_top + 6);
-	      $pdf->MultiCell(20, 6, "Chèque N°", 0, 'L', 0);
-	      $pdf->SetXY (10, $tab3_top + 12);
-	      $pdf->MultiCell(20, 6, "Banque", 0, 'L', 0);
 	      /*
 	       *
 	       */
@@ -227,6 +160,8 @@ Class pdf_bulot {
 	      $pdf->Close();
 	      
 	      $pdf->Output($file);
+
+	      return 1;
 	    }
 	  else
 	    {
@@ -243,6 +178,74 @@ Class pdf_bulot {
    *
    *
    */
+  Function _tableau_compl(&$pdf, $fac)
+    {
+      $tab3_top = 240;
+      $tab3_height = 18;
+      $tab3_width = 60;
+      
+      $pdf->Rect(10, $tab3_top, $tab3_width, $tab3_height);
+      
+      $pdf->line(10, $tab3_top + 6, $tab3_width+10, $tab3_top + 6 );
+      $pdf->line(10, $tab3_top + 12, $tab3_width+10, $tab3_top + 12 );
+      
+      $pdf->line(30, $tab3_top, 30, $tab3_top + $tab3_height );
+      
+      $pdf->SetFont('Arial','',8);
+      $pdf->SetXY (10, $tab3_top - 6);
+      $pdf->MultiCell(60, 6, "Informations complémentaires", 0, 'L', 0);
+      $pdf->SetXY (10, $tab3_top );
+      $pdf->MultiCell(20, 6, "Réglé le", 0, 'L', 0);
+      $pdf->SetXY (10, $tab3_top + 6);
+      $pdf->MultiCell(20, 6, "Chèque N°", 0, 'L', 0);
+      $pdf->SetXY (10, $tab3_top + 12);
+      $pdf->MultiCell(20, 6, "Banque", 0, 'L', 0);
+    }
+
+  Function _tableau_tot(&$pdf, $fac)
+    {
+      $tab2_top = 212;
+      $tab2_height = 28;
+      $pdf->SetFont('Arial','', 11);
+      
+      //	      $pdf->Rect(132, $tab2_top, 68, $tab2_height);
+      //	      $pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
+      
+      //	      $pdf->line(132, $tab2_top + $tab2_height - 21, 200, $tab2_top + $tab2_height - 21 );
+      //	      $pdf->line(132, $tab2_top + $tab2_height - 14, 200, $tab2_top + $tab2_height - 14 );
+      //	      $pdf->line(132, $tab2_top + $tab2_height - 7, 200, $tab2_top + $tab2_height - 7 );
+      
+      $pdf->SetXY (132, $tab2_top + 0);
+      $pdf->MultiCell(42, 8, "Total HT", 0, 'R', 0);
+      
+      $pdf->SetXY (132, $tab2_top + 7);
+      $pdf->MultiCell(42, 8, "Remise", 0, 'R', 0);
+      
+      $pdf->SetXY (132, $tab2_top + 14);
+      $pdf->MultiCell(42, 8, "Total HT aprés remise", 0, 'R', 0);
+      
+      $pdf->SetXY (132, $tab2_top + 21);
+      $pdf->MultiCell(42, 8, "Total TVA", 0, 'R', 0);
+      
+      $pdf->SetXY (132, $tab2_top + 28);
+      $pdf->MultiCell(42, 8, "Total TTC", 1, 'R', 1);
+      
+      $pdf->SetXY (174, $tab2_top + 0);
+      $pdf->MultiCell(26, 8, price($fac->total_ht + $fac->remise), 0, 'R', 0);
+      
+      $pdf->SetXY (174, $tab2_top + 7);
+      $pdf->MultiCell(26, 8, price($fac->remise), 0, 'R', 0);
+      
+      $pdf->SetXY (174, $tab2_top + 14);
+      $pdf->MultiCell(26, 8, price($fac->total_ht), 0, 'R', 0);
+      
+      $pdf->SetXY (174, $tab2_top + 21);
+      $pdf->MultiCell(26, 8, price($fac->total_tva), 0, 'R', 0);
+      
+      $pdf->SetXY (174, $tab2_top + 28);
+      $pdf->MultiCell(26, 8, price($fac->total_ttc), 1, 'R', 1);
+    }
+
   Function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
       $pdf->SetFont('Arial','',12);
