@@ -136,7 +136,8 @@ if (defined("MAIN_MODULE_FACTURE") && MAIN_MODULE_FACTURE)
 
   if (defined("FACTURE_ADDON"))
     {
-      require(DOL_DOCUMENT_ROOT ."/includes/modules/facture/".FACTURE_ADDON."/".FACTURE_ADDON.".modules.php");
+      if (is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/facture/".FACTURE_ADDON."/".FACTURE_ADDON.".modules.php"))
+	  require(DOL_DOCUMENT_ROOT ."/includes/modules/facture/".FACTURE_ADDON."/".FACTURE_ADDON.".modules.php");
     }
 
   if (defined("FACTURE_ADDON_PDF"))
