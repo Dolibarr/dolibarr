@@ -31,7 +31,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("index.php", "Dolibarr");
+  $menu->add("index.php", "Configuration");
   $menu->add_submenu("modules.php", "Modules");
 
   if(defined("MAIN_MODULE_FACTURE") && MAIN_MODULE_FACTURE)
