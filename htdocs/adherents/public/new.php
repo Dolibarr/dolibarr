@@ -58,8 +58,9 @@ if ($HTTP_POST_VARS["action"] == 'add')
     }
 }
 
-//llxHeader();
+llxHeader();
 // Header
+/*
 print "<HTML><HEAD>";
 print '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">';
 print '<LINK REL="stylesheet" TYPE="text/css" HREF="/'.$conf->css.'">';
@@ -75,7 +76,7 @@ print '<BODY TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGI
 print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
 
 print '<tr><td valign="top" align="right">';
-
+*/
 /* ************************************************************************** */
 /*                                                                            */
 /* Création d'une fiche                                                       */
