@@ -124,10 +124,19 @@ print "<TR class=\"liste_titre\">";
 print '<td colspan="2">'.translate("Bills").'</td>';
 print "</TR>\n";
 
-$sql = "SELECT count(*) FROM llx_facture WHERE paye = 0";
-if (valeur($sql)) {
-  $var=!$var;
-  print "<tr $bc[$var]><td><a href=\"facture.php3\">Non payées</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
+$sql = "SELECT facnumber, rowid FROM llx_facture WHERE paye = 0";
+if ( $db->query($sql) )
+{
+  $num = $db->num_rows();
+  $i = 0;
+
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object( $i);
+      $var=!$var;
+      print '<tr '.$bc[$var].'><td><a href="facture.php3?facid='.$obj->rowid.'">'.$obj->facnumber."</td></tr>";
+      $i++;
+  }
 }
 
 print "</table><br>";
