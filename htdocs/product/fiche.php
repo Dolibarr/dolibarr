@@ -34,9 +34,8 @@ if (!$user->rights->produit->lire)
   accessforbidden();
 }
 
-llxHeader("","","Fiche produit");
 
-if ($_POST["action"] == 'add')
+if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 {
   $product = new Product($db);
 
@@ -52,15 +51,54 @@ if ($_POST["action"] == 'add')
   $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
 
   $id = $product->create($user);
-  $action = '';
+  Header("Location: fiche.php?id=$id");
 }
 
-if ($action == 'addinpropal')
+if ($_POST["action"] == 'update' && 
+    $_POST["cancel"] <> 'Annuler' && 
+    ( $user->rights->produit->modifier || $user->rights->produit->creer))
+{
+  $product = new Product($db);
+  if ($product->fetch($_GET["id"]))
+    {
+
+      $product->ref                = $_POST["ref"];
+      $product->libelle            = $_POST["libelle"];
+      $product->price              = $_POST["price"];
+      $product->tva_tx             = $_POST["tva_tx"];
+      $product->description        = $_POST["desc"];
+      $product->envente            = $_POST["statut"];
+      $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+      $product->duration_value = $_POST["duration_value"];
+      $product->duration_unit = $_POST["duration_unit"];
+      
+      if ($product->check())
+	{
+	  if ($product->update($_GET["id"], $user))
+	    {
+	      $action = '';
+	      $mesg = 'Fiche mise à jour';
+	    }
+	  else
+	    {
+	      $action = 're-edit';
+	      $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+	    }
+	}
+      else
+	{
+	  $action = 're-edit';
+	  $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+	}
+    }
+}
+
+if ($_POST["action"] == 'addinpropal')
 {
   $propal = New Propal($db);
 
   $propal->fetch($_POST["propalid"]);
-  $result =  $propal->insert_product($id, $_POST["qty"], $_POST["remise_percent"]);
+  $result =  $propal->insert_product($_GET["id"], $_POST["qty"], $_POST["remise_percent"]);
   if ( $result < 0)
     {
       $mesg = "erreur $result";
@@ -126,45 +164,6 @@ if ($_GET["action"] == 'remove_fourn')
     }
 }
 
-if ($_POST["action"] == 'update' && 
-    $cancel <> 'Annuler' && 
-    ( $user->rights->produit->modifier || $user->rights->produit->creer))
-{
-  $product = new Product($db);
-  if ($product->fetch($id))
-    {
-
-      $product->ref                = $_POST["ref"];
-      $product->libelle            = $_POST["libelle"];
-      $product->price              = $_POST["price"];
-      $product->tva_tx             = $_POST["tva_tx"];
-      $product->description        = $_POST["desc"];
-      $product->envente            = $_POST["statut"];
-      $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
-      $product->duration_value = $_POST["duration_value"];
-      $product->duration_unit = $_POST["duration_unit"];
-      
-      if ($product->check())
-	{
-	  if (  $product->update($id, $user))
-	    {
-	      $action = '';
-	      $mesg = 'Fiche mise à jour';
-	    }
-	  else
-	    {
-	      $action = 're-edit';
-	      $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
-	    }
-	}
-      else
-	{
-	  $action = 're-edit';
-	  $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
-	}
-    }
-}
-
 if ($_POST["action"] == 'update_price' && 
     $_POST["cancel"] <> 'Annuler' && 
     ( $user->rights->produit->modifier || $user->rights->produit->creer))
@@ -190,7 +189,14 @@ if ($cancel == 'Annuler')
 {
   $action = '';
 }
+
+
+llxHeader("","","Fiche produit");
+
 /*
+ * Création du produit
+ *
+ *
  *
  *
  */
@@ -198,10 +204,10 @@ if ($_GET["action"] == 'create')
 {
   $nbligne=0;
   
-  print "<form action=\"fiche.php?type=$type\" method=\"post\">\n";
+  print '<form action="fiche.php?type='.$_GET["type"].'" method="post">';
   print "<input type=\"hidden\" name=\"action\" value=\"add\">\n";
-  print '<input type="hidden" name="type" value="'.$type.'">'."\n";
-  print '<div class="titre">Nouveau '.$types[$type].'</div><br>'."\n";
+  print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
+  print '<div class="titre">Nouveau '.$types[$_GET["type"]].'</div><br>'."\n";
       
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr>';
