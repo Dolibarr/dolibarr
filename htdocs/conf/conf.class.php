@@ -41,6 +41,7 @@ class Conf
       $this->service   = new ServiceConf();
       $this->adherent  = new AdherentConf();
       $this->domaine   = new DomaineConf();
+      $this->don       = new DonConf();
       
       $this->readonly   = 0;
       $this->voyage     = 0;
@@ -84,13 +85,13 @@ class DbConf {
  SetEnv LLX_DBPASS pass
  SetEnv LLX_DBNAME dolibarr
 */
-/*
+
     $this->type = getenv("LLX_DBTYPE");
     $this->host = getenv("LLX_DBHOST");
     $this->user = getenv("LLX_DBUSER");
     $this->pass = getenv("LLX_DBPASS");
     $this->name = getenv("LLX_DBNAME");
-*/
+
   }
 
   /** return the dsn according to the pear syntax
@@ -141,7 +142,7 @@ class DonConf
 {
   Function DonConf()
     {
-      $this->enabled = 0;
+      $this->enabled = 1;
       
       /* Paiement en ligne */
 
