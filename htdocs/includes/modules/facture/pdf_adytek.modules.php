@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -23,7 +23,7 @@
  */
 
 /*!	\file htdocs/includes/modules/facture/pdf_adytek.modules.php
-        \ingroup    facture
+		\ingroup    facture
 		\brief      Fichier de la classe permettant de générer les factures au modèle Adytek
 		\author	    Laurent Destailleur
 		\version    $Revision$

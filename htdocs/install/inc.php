@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004 Sebastien DiCintio   <sdicintio@ressource-toi.org>
@@ -66,7 +66,7 @@ function dolibarr_syslog($message)
 {
   define_syslog_variables();
 
-  openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les PHP
+  openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les php
   
   syslog(LOG_WARNING, $message);
 

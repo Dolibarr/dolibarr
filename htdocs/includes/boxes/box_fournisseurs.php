@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004 Destailleur Laurent <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify

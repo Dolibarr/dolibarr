@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -29,8 +29,8 @@
 
 
 /*! \file htdocs/includes/modules/modFacture.class.php
-        \ingroup    facture
-        \brief      Fichier de la classe de description et activation du module Facture
+		\ingroup    facture
+		\brief      Fichier de la classe de description et activation du module Facture
 */
 
 include_once "DolibarrModules.class.php";

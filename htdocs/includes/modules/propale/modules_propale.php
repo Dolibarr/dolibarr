@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -23,16 +23,16 @@
  */
 
 /*!	\file htdocs/includes/modules/propale/modules_propale.php
-	\ingroup    propale
-	\brief      Fichier contenant la classe mère de generation des propales en PDF
+		\ingroup    propale
+		\brief      Fichier contenant la classe mère de generation des propales en PDF
 	            et la classe mère de numérotation des propales
-	\version    $Revision$
+		\version    $Revision$
 */
 
 
 
 /*!	\class ModelePDFPropales
-        \brief  Classe mère des modèles de propale
+		\brief  Classe mère des modèles de propale
 */
 
 class ModelePDFPropales extends FPDF

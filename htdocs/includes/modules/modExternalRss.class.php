@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -34,7 +34,7 @@
 include_once "DolibarrModules.class.php";
 
 /*! \class modExternalRss
-        \brief      Classe de description et activation du module ExternalRss
+		\brief      Classe de description et activation du module ExternalRss
 */
 
 class modExternalRss extends DolibarrModules

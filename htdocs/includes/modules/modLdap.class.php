@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -34,7 +34,7 @@
 include_once "DolibarrModules.class.php";
 
 /*! \class modLdap
-        \brief      Classe de description et activation du module Ldap
+		\brief      Classe de description et activation du module Ldap
 */
 
 class modLdap extends DolibarrModules

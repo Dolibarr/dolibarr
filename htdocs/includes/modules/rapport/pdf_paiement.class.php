@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  */
 
 /*!	\file htdocs/includes/modules/rapport/pdf_paiement.class.php
-        \ingroup    banque
+		\ingroup    banque
 		\brief      Fichier de la classe permettant de générer les rapports de paiement
 		\version    $Revision$
 */

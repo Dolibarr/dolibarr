@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -36,7 +36,7 @@
 include_once "DolibarrModules.class.php";
 
 /*! \class modPropale
-        \brief      Classe de description et activation du module Propale
+		\brief      Classe de description et activation du module Propale
 */
 
 class modPropale extends DolibarrModules

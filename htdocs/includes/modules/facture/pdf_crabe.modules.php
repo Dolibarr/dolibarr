@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
 */
 
 /*!	\file htdocs/includes/modules/facture/pdf_crabe.modules.php
-        \ingroup    facture
+		\ingroup    facture
 		\brief      Fichier de la classe permettant de générer les factures au modèle Crabe
 		\author	    Laurent Destailleur
 		\version    $Revision$

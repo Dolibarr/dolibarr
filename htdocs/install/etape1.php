@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
@@ -66,7 +66,7 @@ if ($_POST["action"] == "set")
 
 		clearstatcache();
 
-		fwrite($fp, '<?PHP');
+		fwrite($fp, '<?php');
 		fputs($fp,"\n");
 
 		fputs($fp, '$dolibarr_main_url_root="'.$_POST["main_url"].'";');
@@ -391,6 +391,6 @@ if ($_POST["action"] == "set")
 }
 ?>
 </table>
-<?PHP
+<?php
 pFooter($err);
 ?>

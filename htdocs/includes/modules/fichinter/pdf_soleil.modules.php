@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  */
 
 /*!	\file htdocs/includes/modules/fichinter/pdf_soleil.modules.php
-        \ingroup    ficheinter
+		\ingroup    ficheinter
 		\brief      Fichier de la classe permettant de générer les fiches d'intervention au modèle Soleil
 		\version    $Revision$
 */

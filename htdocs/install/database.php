@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,7 +63,7 @@ else
 <td valign="top">
 <?php print "Répertoire d'installation"; ?>
 </td><td valign="top"><input type="text" size="60" value="
-<?PHP
+<?php
 
 if(strlen($dolibarr_main_url_root) == 0)
 {
@@ -84,7 +84,7 @@ exemple : /var/www/dolibarr/htdocs
 <tr class="bg1">
 <td valign="top">
 URL Racine</td><td valign="top"><input type="text" size="60" name="main_url" value="
-<?PHP 
+<?php 
 if(strlen($dolibarr_main_url_root) == 0)
 {
   $dolibarr_main_url_root = substr($_SERVER["SCRIPT_URI"],0,strlen($_SERVER["SCRIPT_URI"])-9);
@@ -104,26 +104,26 @@ exemples :
 <tr>
 <td colspan="3" align="center"><h2>Base de données<h2></td>
 </tr>
-<?PHP
+<?php
 if (!isset($dolibarr_main_db_host))
 {
 $dolibarr_main_db_host = "localhost";
 }
 ?>
 <tr class="bg1">
-<td valign="top">Serveur</td><td valign="top"><input type="text" name="db_host" value="<?PHP print $dolibarr_main_db_host ?>"></td>
+<td valign="top">Serveur</td><td valign="top"><input type="text" name="db_host" value="<?php print $dolibarr_main_db_host ?>"></td>
 <td><div class="comment">Nom du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web</div></td>
 </tr>
 
 <tr class="bg2">
-<td>Nom de la base de données</td><td valign="top"><input type="text" name="db_name" value="<?PHP print $dolibarr_main_db_name ?>"></td>
+<td>Nom de la base de données</td><td valign="top"><input type="text" name="db_name" value="<?php print $dolibarr_main_db_name ?>"></td>
 <td><div class="comment">Nom de votre base de données</div></td>
 </tr>
 
 <tr class="bg1">
 <td valign="top">Login</td>
 <td>
-<input type="text" name="db_user" value="<?PHP print $dolibarr_main_db_user ?>">
+<input type="text" name="db_user" value="<?php print $dolibarr_main_db_user ?>">
 </td><td><div class="comment">Laisser vide si vous vous connectez en anonymous</div>
 </td>
 </tr>
@@ -131,7 +131,7 @@ $dolibarr_main_db_host = "localhost";
 <tr class="bg2">
 <td valign="top">Mot de passe</td>
 <td>
-<input type="text" name="db_pass" value="<?PHP print $dolibarr_main_db_pass ?>">
+<input type="text" name="db_pass" value="<?php print $dolibarr_main_db_pass ?>">
 </td><td><div class="comment">Laisser vide si vous vous connectez en anonymous</div>
 </td>
 </tr>

@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -38,7 +38,7 @@ else
   $fp = @fopen("$conf", "w");
   if($fp)
     {
-      @fwrite($fp, '<?PHP');
+      @fwrite($fp, '<?php');
       @fputs($fp,"\n");
       @fputs($fp,"?>");
       fclose($fp);
@@ -77,7 +77,7 @@ if ($err == 0)
 <td valign="top" class="label">
 <?php print "Répertoire d'installation"; ?>
 </td><td  class="label" valign="top"><input type="text" size="60" value="
-<?PHP
+<?php
 
 if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
@@ -113,7 +113,7 @@ exemples :<br>
 <td valign="top" class="label">
 <?php print "Répertoire contenant les documents générés"; ?>
 </td><td  class="label" valign="top"><input type="text" size="60" value="
-<?PHP
+<?php
 
 //print ereg_replace("htdocs","document",$dolibarr_main_document_root);
 print $dolibarr_main_document_root."/document";
@@ -131,7 +131,7 @@ exemples :<br>
 <tr>
 <td valign="top" class="label">
 URL Racine</td><td valign="top" class="label"><input type="text" size="60" name="main_url" value="
-<?PHP 
+<?php 
 if(strlen($main_url) > 0)
   $dolibarr_main_url_root=$main_url;
 if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
@@ -160,7 +160,7 @@ exemples :<br>
 <tr>
 <td colspan="3" align="center"><h2>Base de données Dolibarr<h2></td>
 </tr>
-<?PHP
+<?php
 if (!isset($dolibarr_main_db_host))
 {
 $dolibarr_main_db_host = "localhost";
@@ -190,8 +190,8 @@ document.write('<input type = "button" name = "valide" value="confirmer" onclick
 
 <br>
 <td valign="top" class="label">Serveur</td>
-<td valign="top" class="label"><input type="text" name="db_host" value="<?PHP print $dolibarr_main_db_host ?>"></td>
-<input type="hidden" name="base" value="<?PHP print $test_base?>">
+<td valign="top" class="label"><input type="text" name="db_host" value="<?php print $dolibarr_main_db_host ?>"></td>
+<input type="hidden" name="base" value="<?php print $test_base?>">
 
 <td class="comment">Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web</div></td>
 
@@ -200,21 +200,21 @@ document.write('<input type = "button" name = "valide" value="confirmer" onclick
 <tr>
 <td class="label">Nom de la base de données</td>
 
-<td class="label" valign="top"><input type="text" name="db_name" value="<?PHP print $dolibarr_main_db_name ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_name" value="<?php print $dolibarr_main_db_name ?>"></td>
 <td class="comment">Nom de la base de données Dolibarr (sera créée si nécessaire)</td>
 </tr>
 
 <tr class="bg1">
 <td class="label" valign="top">Login</td>
 
-<td class="label"><input type="text" name="db_user" value="<?PHP print isset($dolibarr_main_db_user)?$dolibarr_main_db_user:'' ?>"></td>
+<td class="label"><input type="text" name="db_user" value="<?php print isset($dolibarr_main_db_user)?$dolibarr_main_db_user:'' ?>"></td>
 <td class="comment">Login de l'administrateur de la base de données Dolibarr. Laisser vide si vous vous connectez en anonymous</td>
 </tr>
 
 <tr>
 <td class="label" valign="top">Mot de passe</td>
 
-<td class="label"><input type="text" name="db_pass" value="<?PHP print isset($dolibarr_main_db_pass)?$dolibarr_main_db_pass:'' ?>"></td>
+<td class="label"><input type="text" name="db_pass" value="<?php print isset($dolibarr_main_db_pass)?$dolibarr_main_db_pass:'' ?>"></td>
 <td class="comment">Mot de passe de l'administrateur de la base de données Dolibarr. Laisser vide si vous vous connectez en anonymous</td>
 </tr>
 
@@ -231,20 +231,20 @@ document.write('<input type = "button" name = "valide" value="confirmer" onclick
 
 <tr>
 <td class="label" valign="top">Login</td>
-<td class="label" valign="top"><input type="text" name="db_user_root" value="<?PHP if(isset($db_user_root)) print $db_user_root; ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_user_root" value="<?php if(isset($db_user_root)) print $db_user_root; ?>"></td>
 <td class="label"><div class="comment">Login de l'utilisateur ayant les droits de création de la base de données, inutile si votre base est déjà créée (comme lorsque vous êtes chez un hébergeur). Laisser vide si vous vous connectez en anonymous</div>
 </td>
 </tr>
 
 <tr>
 <td class="label" valign="top">Mot de passe</td>
-<td class="label" valign="top"><input type="text" name="db_pass_root" value="<?PHP if(isset($db_pass_root)) print $db_pass_root; ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_pass_root" value="<?php if(isset($db_pass_root)) print $db_pass_root; ?>"></td>
 <td class="label"><div class="comment">Laisser vide si l'utilisateur n'a pas de mot de passe</div>
 </td>
 </tr>
 
 </table>
-<?PHP
+<?php
 }
 pFooter($err);
 ?>

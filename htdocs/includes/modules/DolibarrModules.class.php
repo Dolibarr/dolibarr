@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
@@ -23,12 +23,12 @@
  */
 
 /*! \file htdocs/includes/modules/DolibarrModules.class.php
-        \brief      Fichier de description et activation des modules Dolibarr
+		\brief      Fichier de description et activation des modules Dolibarr
 */
 
 
 /*! \class DolibarrModules
-        \brief      Classe mère des classes de description et activation des modules Dolibarr
+		\brief      Classe mère des classes de description et activation des modules Dolibarr
 */
 class DolibarrModules
 {

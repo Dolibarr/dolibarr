@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -28,7 +28,7 @@ pHeader("Bienvenu dans Dolibarr", "licence");
 <p>
 Nous avons fait en sorte que l'installation soit le plus simple possible, vous n'avez qu'à suivre les étapes une à une.
 
-<?PHP
+<?php
 
 pFooter();
 

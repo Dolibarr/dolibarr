@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
@@ -95,7 +95,7 @@ if ($_POST["action"] == "set")
 ?>
 <br>
 
-<?PHP
+<?php
 print "Votre système est maintenant installé.<br>";
 print "Il vous reste à le configurer selon vos besoins (Choix de l'apparence, des fonctionnalités, etc...). Pour cela, cliquez sur le lien ci-dessous:<br>";
 

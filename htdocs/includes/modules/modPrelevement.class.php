@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@
 include_once "DolibarrModules.class.php";
 
 /*! \class modPrelevement
-        \brief      Classe de description et activation du module Prelevement
+		\brief      Classe de description et activation du module Prelevement
 */
 
 class modPrelevement extends DolibarrModules

@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
@@ -35,7 +35,7 @@
 include_once "DolibarrModules.class.php";
 
 /*! \class modCaisse
-        \brief      Classe de description et activation du module Caisse
+		\brief      Classe de description et activation du module Caisse
 */
 
 class modCaisse extends DolibarrModules

@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,7 +22,7 @@
  */
 
 /*!	\file htdocs/includes/modules/propale/pdf_propale_adytek.modules.php
-        \ingroup    propale
+		\ingroup    propale
 		\brief      Fichier de la classe permettant de générer les propales au modèle Adytek
 		\version    $Revision$
 */
