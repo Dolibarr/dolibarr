@@ -38,7 +38,7 @@ Renvoie le numéro de facture sous une forme numérique simple, la première factur
 function jupiter_get_num_explain()
 {
   return '
-Système de numérotation mensuel sous la forme FA030712, qui correspond à la 12ème facture du mois de Juillet 2003';
+Système de numérotation mensuel sous la forme 20030712, qui correspond à la 12ème facture du mois de Juillet 2003';
 }
 
 function facture_pdf_create($db, $facid)
