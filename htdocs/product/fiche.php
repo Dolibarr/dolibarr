@@ -270,7 +270,7 @@ else
 		      $objp = $db->fetch_object( $i);	  
 		      $var=!$var;
 		      print "<TR $bc[$var]>";
-		      print '<td>'.$objp->nom.'</td></tr>';
+		      print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td></tr>';
 		      $i++;
 		    }
 		  print '</table>';
