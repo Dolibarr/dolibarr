@@ -28,6 +28,7 @@ create table llx_socpeople
   name         varchar(50),
   firstname    varchar(50),
   address      varchar(255),
+  birthday     date,
   poste        varchar(80),
   phone        varchar(30),
   phone_perso  varchar(30),
