@@ -40,12 +40,12 @@ $main_use_spip_auto = ADHERENT_USE_SPIP_AUTO;
 $typeconst=array('yesno','texte','chaine');
 $var=True;
 
-if ($HTTP_POST_VARS["action"] == 'update' || $HTTP_POST_VARS["action"] == 'add')
+if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
-  if (isset($HTTP_POST_VARS["consttype"]) && $HTTP_POST_VARS["consttype"] != ''){
-    $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."', type='".$typeconst[$HTTP_POST_VARS["consttype"]]."',visible=0";
+  if (isset($_POST["consttype"]) && $_POST["consttype"] != ''){
+    $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$_POST["constvalue"]."',note='".$_POST["constnote"]."', type='".$typeconst[$_POST["consttype"]]."',visible=0";
   }else{
-    $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."',visible=0";
+    $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$_POST["constvalue"]."',note='".$_POST["constnote"]."',visible=0";
   }
   
   if ($db->query($sql))
@@ -89,21 +89,15 @@ llxHeader();
  */
 
 print_titre("Gestion des adhérents : Configurations de parametres");
+print "<br>";
 
 /*
  * Mailman
  */
-print '<table class="noborder" cellpadding="3" cellspacing="0">';
-print "<tr $bc[$var] class=value><td>Mailman</td><td>Système de mailing listes";
-print '</td><td align="center">';
-
 if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
 {
-  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-  print "</td><td>\n";
-  print '<a href="'.$PHP_SELF.'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">désactiver</a>';
-  print '</td></tr>';
-  print '</table>';
+  $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+  $lien.='<a href="'.$PHP_SELF.'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">désactiver</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_MAILMAN_LISTS',
 		    'ADHERENT_MAILMAN_LISTS_COTISANT',
@@ -112,65 +106,48 @@ if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
 		    'ADHERENT_MAILMAN_UNSUB_URL',
 		    'ADHERENT_MAILMAN_URL'
 		    );
+  print_fiche_titre("Mailman - Système de mailing listes",$lien);
   form_constantes($constantes);
 }
 else
 {
-  print "&nbsp;";
-  print "</td><td>\n";
-  print '<a href="'.$PHP_SELF.'?action=set&value=1&name=ADHERENT_USE_MAILMAN">activer</a>';
-  print '</td></tr>';
-  print '</table>';
+  $lien='<a href="'.$PHP_SELF.'?action=set&value=1&name=ADHERENT_USE_MAILMAN">activer</a>';
+  print_fiche_titre("Mailman - Système de mailing listes",$lien);
 }
 
-print "<HR><BR>\n";
+print "<hr>\n";
 
 /*
  * Gestion banquaire
  */
-print '<table class="noborder" cellpadding="3" cellspacing="0">';
-print "<tr $bc[$var] class=value><td>Gestion Banquaire</td><td>Gestion banquaire des adherents";
-print '</td><td align="center">';
-
 if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE == 1)
 {
-  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-  print "</td><td>\n";
-  print '<a href="'.$PHP_SELF.'?action=unset&value=0&name=ADHERENT_BANK_USE">désactiver</a>';
-  print '</td></tr>';
-  print '</table>';
+  $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+  $lien.='<a href="'.$PHP_SELF.'?action=unset&value=0&name=ADHERENT_BANK_USE">désactiver</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_BANK_USE_AUTO',
 		    'ADHERENT_BANK_ACCOUNT',
 		    'ADHERENT_BANK_CATEGORIE'
 		    );
+  print_fiche_titre("Gestion banquaire des adherents",$lien);
   form_constantes($constantes);
 }
 else
 {
-  print "&nbsp;";
-  print "</td><td>\n";
-  print '<a href="'.$PHP_SELF.'?action=set&value=1&name=ADHERENT_BANK_USE">activer</a>';
-  print '</td></tr>';
-  print '</table>';
+  $lien='<a href="'.$PHP_SELF.'?action=set&value=1&name=ADHERENT_BANK_USE">activer</a>';
+  print_fiche_titre("Gestion banquaire des adherents",$lien);
 }
 
-print "<HR><BR>\n";
+print "<hr>\n";
+
 /*
  * Spip
  */
 $var=!$var;
-print '<table class="noborder" cellpadding="3" cellspacing="0">';
-print "<tr $bc[$var] class=value><td>Spip</td><td>Système de publication en ligne";
-print '</td><td align="center">';
-
 if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP == 1)
 {
-  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-  print "</td><td>\n";
-  print '<a href="'.$PHP_SELF.'?action=unset&value=0&name=ADHERENT_USE_SPIP">désactiver</a>';
-  print '</td></tr>';
-  print '</table>';
+  $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+  $lien.='<a href="'.$PHP_SELF.'?action=unset&value=0&name=ADHERENT_USE_SPIP">désactiver</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_USE_SPIP_AUTO',
 		    'ADHERENT_SPIP_SERVEUR',
@@ -178,59 +155,45 @@ if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP == 1)
 		    'ADHERENT_SPIP_USER',
 		    'ADHERENT_SPIP_PASS'
 		    );
+  print_fiche_titre("SPIP - Système de publication en ligne",$lien);
   form_constantes($constantes);
 }
 else
 {
-  print "&nbsp;";
-  print "</td><td>\n";
-  print '<a href="'.$PHP_SELF.'?action=set&value=1&name=ADHERENT_USE_SPIP">activer</a>';
-  print '</td></tr>';
-  print '</table>';
+  $lien='<a href="'.$PHP_SELF.'?action=set&value=1&name=ADHERENT_USE_SPIP">activer</a>';
+  print_fiche_titre("SPIP - Système de publication en ligne",$lien);
 }
 
-print "<HR><BR>\n";
+print "<hr>\n";
+
 /*
  * Glasnost
  */
 $var=!$var;
-print '<table class="noborder" cellpadding="3" cellspacing="0">';
-print "<tr $bc[$var] class=value><td>Glasnost</td><td>Système de vote en ligne";
-print '</td><td align="center">';
-
 if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST == 1)
 {
-  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-  print "</td><td>\n";
-  print '<a href="'.$PHP_SELF.'?action=unset&value=0&name=ADHERENT_USE_GLASNOST">désactiver</a>';
-  print '</td></tr>';
-  print '</table>';
+  $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+  $lien.='<a href="'.$PHP_SELF.'?action=unset&value=0&name=ADHERENT_USE_GLASNOST">désactiver</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_USE_GLASNOST_AUTO',
 		    'ADHERENT_GLASNOST_SERVEUR',
 		    'ADHERENT_GLASNOST_USER',
 		    'ADHERENT_GLASNOST_PASS'
 		    );
+  print_fiche_titre("Glasnost - Système de vote en ligne",$lien);
   form_constantes($constantes);
 }
 else
 {
-  print "&nbsp;";
-  print "</td><td>\n";
-  print '<a href="'.$PHP_SELF.'?action=set&value=1&name=ADHERENT_USE_GLASNOST">activer</a>';
-  print '</td></tr>';
-  print '</table>';
+  $lien='<a href="'.$PHP_SELF.'?action=set&value=1&name=ADHERENT_USE_GLASNOST">activer</a>';
+  print_fiche_titre("Glasnost - Système de vote en ligne",$lien);
 }
 
-print "<HR><BR>\n";
+print "<hr>\n";
 $var=!$var;
 /*
  * Edition des varibales globales non rattache a un theme specifique 
  */
-print '<table class="noborder" cellpadding="3" cellspacing="0">';
-print "<tr $bc[$var] class=value><td>Variables globales</td><td>Variables globales non rattachées a un thème";
-print '</td></tr>';
-print '</table>';
 $constantes=array('ADHERENT_TEXT_NEW_ADH',
 		  'ADHERENT_MAIL_COTIS_SUBJECT',
 		  'ADHERENT_MAIL_COTIS',
@@ -248,10 +211,14 @@ $constantes=array('ADHERENT_TEXT_NEW_ADH',
 		  'ADHERENT_CARD_FOOTER_TEXT',
 		  'ADHERENT_ETIQUETTE_TYPE'
 		  );
+print_fiche_titre("Autres variables globales");
 form_constantes($constantes);
 
+
 $db->close();
+
 llxFooter();
+
 
 function form_constantes($tableau){
   // Variables globales

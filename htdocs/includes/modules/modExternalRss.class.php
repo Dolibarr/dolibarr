@@ -35,11 +35,14 @@ class modExternalRss extends DolibarrModules
     $this->db = $DB ;
     $this->numero = 320;
 
-    $this->family = "hr";
-    $this->name = "Syndication";
-    $this->description = "Module de gestion de syndication de sites externes";
+    $this->family = "technic";
+    $this->name = "Syndication RSS";
+    $this->description = "Ajout de files d'informations RSS dans les écrans Dolibarr";
     $this->const_name = "MAIN_MODULE_EXTERNALRSS";
     $this->const_config = MAIN_MODULE_EXTERNALRSS;
+
+    // Config pages
+    $this->config_page_url = array("external_rss.php");
 
     // Dépendances
     $this->depends = array();
@@ -50,7 +53,7 @@ class modExternalRss extends DolibarrModules
     /*
      * Boites
      */
-    $this->boxes[0][0] = "Syndication";
+    $this->boxes[0][0] = "Informations externes RSS";
     $this->boxes[0][1] = "box_external_rss.php";
 
   }

@@ -65,9 +65,8 @@ if ($action == 'save')
   
 print_fiche_titre("Configuration du lien vers un site syndiqué", $mesg);
   
-print "\n<div class=\"titre\"><p align=\"justify\">Attention, pour la récupération des données au format RSS, les urls en https ne marchent pas pour l'instant. </p>
-<p>Exemples:
- <ul>
+print "\n<p align=\"justify\">Attention, pour la récupération des données au format RSS, les urls en https ne marchent pas pour l'instant. </p>
+Exemples:<ul>
   <li>WikiApril / http://wiki.april.org / http://wiki.april.org/RecentChanges?format=rss (et tous les sites phpwiki)</li>
   <li>LinuxFR / http://linuxfr.org / http://www.linuxfr.org/backend.rss</li>
   <li>WikiInterneRycks / ../wiki / ../wiki/RecentChanges?format=rss (ne marche pas, je suis en https et en plus y a un apache_auth)</li>
@@ -75,15 +74,15 @@ print "\n<div class=\"titre\"><p align=\"justify\">Attention, pour la récupérati
   <li>Parinux / http://parinux.org/ / http://parinux.org/backend.rss</li>
   <li>Docs d'AbulÉdu / http://docs.abuledu.org / http://docs.abuledu.org/backend.php3 (et tous les sites spip)</li>
  </ul>
-</p></div>
+ 
 <form name=\"externalrssconfig\" action=\"" . $_SERVER['SCRIPT_NAME'] . "\" method=\"post\">
-<table border=\"1\" cellpadding=\"3\" cellspacing=\"0\">\n";
+<table class=\"border\" cellpadding=\"3\" cellspacing=\"0\">\n";
 
 // Pour l'instant on fait un seul RSS externe, mais c'est sans soucis qu'on passe à plus !
 // ptet définir une variable pour NBMAX_RSS_EXTERNE ... modifier en fonction le fichier
 // ../pre.inc.php
 for($i = 0; $i < $nbexternalrss; $i++) {
-  print "<tr class=\"pair\">
+  print "<tr class=\"liste_titre\">
   <th colspan=\"2\">Syndication du site numéro " . ($i+1) . "</th>
 </tr>
 <tr>
