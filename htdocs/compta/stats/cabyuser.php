@@ -84,8 +84,8 @@ if ($result)
   if ($num > 0)
     {
       $i = 0;
-      print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-      print "<TR class=\"liste_titre\">";
+      print "<p><table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+      print "<tr class=\"liste_titre\">";
       print "<td>Utilisateur</td>";
       print '<td align="right">Montant</TD><td align="right">Pourcentage</td>';
       print "</tr>\n";
@@ -94,7 +94,7 @@ if ($result)
 	{
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
-	  print "<TR $bc[$var]>";
+	  print "<tr $bc[$var]>";
 	  
 	  print "<td>$objp->firstname $objp->name</td>\n";
 	  print '<td align="right">'.price($objp->ca).'</td>';
@@ -102,7 +102,7 @@ if ($result)
 	  print "</tr>\n";
 	  $i++;
 	}
-      print "</TABLE>";
+      print "</table>";
     }
   $db->free();
 }

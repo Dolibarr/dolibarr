@@ -87,27 +87,27 @@ if ($result)
   if ($num > 0)
     {
       $i = 0;
-      print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-      print "<TR class=\"liste_titre\">";
-      print "<TD>Société</td>";
-      print '<TD align="right">Montant</TD><td align="right">Pourcentage</td>';
+      print "<p><table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+      print "<tr class=\"liste_titre\">";
+      print "<td>Société</td>";
+      print '<td align="right">Montant</TD><td align="right">Pourcentage</td>';
       print "<td>&nbsp;</td></tr>\n";
       $var=True;
       while ($i < $num)
 	{
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
-	  print "<TR $bc[$var]>";
+	  print "<tr $bc[$var]>";
 	  
-	  print "<TD><a href=\"../fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
-	  print '<TD align="right">'.price($objp->ca).'</td>';
+	  print "<td><a href=\"../fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
+	  print '<td align="right">'.price($objp->ca).'</td>';
 	  print '<td align="right">'.price(100 / $catotal * $objp->ca).'%</td>';
-	  print "<td align=\"center\"><a href=\"../facture.php?socidp=$objp->idp\">Voir les factures</a></TD>\n";
+	  print "<td align=\"center\"><a href=\"../facture.php?socidp=$objp->idp\">Voir les factures</a></td>\n";
 
-	  print "</TR>\n";
+	  print "</tr>\n";
 	  $i++;
 	}
-      print "</TABLE>";
+      print "</table>";
     }
   $db->free();
 }
