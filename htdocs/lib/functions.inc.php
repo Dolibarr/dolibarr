@@ -537,60 +537,7 @@ function loginfunction()
 {
   print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
   print "\n<html><head><title>Dolibarr Authentification</title>";
-  print '<style type="text/css">
-  body {
-    font-size:14px;
-    font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
-    background-color: #cac8c0;
-    margin-left: 30%;
-    margin-right: 30%;
-    margin-top: 10%;
-    margin-bottom: 1%;
-  }
-  div.main {
-    background-color: white;
-    text-align: left;
-    border: solid black 1px;
-  }
-  div.main-inside {
-    background-color: white;
-    padding-left: 20px;
-    padding-right: 50px;
-    text-align: center;
-    margin-bottom: 50px;
-    margin-top: 30px;
-  }
-  div.footer {
-	background-color: #dcdff4;
-	font-size: 10px;
-	border-top: solid black 1px;
-	padding-left: 5px;
-        text-align: center;
-  }
-  div.header {
-	background-color: #dcdff4;
-	border-bottom: solid black 1px;
-	padding-left: 5px;
-        text-align: center;
-  }
-  div.footer p {
-	margin: 0px;
-  }
-  a:link,a:visited,a:active {
-	text-decoration:none;
-	color:blue;
-  }
-  a:hover {
-	text-decoration:underline;
-	color:blue;
-  }
-  </style>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-15">
-  <script language="javascript">
-  function donnefocus(){
-   document.identification.username.focus();
-  }
-  </script>
+  print '<link rel="stylesheet" type="text/css" href="./login.css">
   </head>
   <body onload="donnefocus();">
   <div class="main">
