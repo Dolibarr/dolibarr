@@ -278,19 +278,20 @@ class MenuLeft {
                 // Déplacements
                 if ($conf->deplacement->enabled)
                 {
-                  $newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=deplacement", "Déplacement");
+                    $langs->load("trips");
+                  $newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=deplacement&mainmenu=accountancy", $langs->trans("Trips"));
                 }
                 
                 // Charges
                 if ($conf->compta->enabled)
                 {
-                  $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges",$langs->trans("Charges"));
+                  $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges&mainmenu=accountancy",$langs->trans("Charges"));
                   if ($leftmenu=="charges") $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"));
                 }
                 
                 if ($conf->compta->enabled && $conf->compta->tva && $user->societe_id == 0)
                 {
-                  $newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=vat",$langs->trans("VAT"));
+                  $newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=vat&mainmenu=accountancy",$langs->trans("VAT"));
                   if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/reglement.php",$langs->trans("Payments"),1);
                   if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/fiche.php?action=create",$langs->trans("NewPayment"),1);
                 }
