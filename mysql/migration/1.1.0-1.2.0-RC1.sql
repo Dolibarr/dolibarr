@@ -5,6 +5,9 @@
 -- sans AUCUNE erreur ni warning
 -- ;
 
+
+alter table llx_boxes add box_order smallint default 0 NOT NULL;
+
 alter table llx_user drop column module_comm;
 alter table llx_user drop column module_compta;
 
