@@ -162,24 +162,28 @@ class Paiement
 		    $value = trim($value);
 		    $amount = ereg_replace(",",".",round($value, 2));
 		    
-		    if (is_numeric($amount) && $amount > 0)
+		    if (is_numeric($amount) && $amount <> 0)
 		      {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
 			$sql .= " VALUES ('".$facid."','". $this->id."','". $amount."')";
 
 			if (! $this->db->query($sql) )
 			  {
-			    dolibarr_print_error($this->db);
+			    dolibarr_syslog("Paiement::Create Erreur INSERT dans paiement_facture ".$facid);
 		    
 			    $sql_err++;
 			  }
+		      }
+		    else
+		      {
+			dolibarr_syslog("Paiement::Create Montant non numérique");
 		      }
 		  }
 	      
 	      }
 	    else
 	      {
-		dolibarr_print_error($this->db);
+		dolibarr_syslog("Paiement::Create Erreur INSERT dans paiement");
 		$sql_err++;
 	      }
 	  }
