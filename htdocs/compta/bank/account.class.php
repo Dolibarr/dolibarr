@@ -117,6 +117,9 @@ class Account
 
   Function update()
     {      
+      if (strlen($this->label)==0)
+	$this->label = "???";
+
       $sql = "UPDATE llx_bank_account SET ";
 
       $sql .= " bank = '" .$this->bank ."'";
