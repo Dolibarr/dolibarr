@@ -105,6 +105,7 @@ if ($action == 'payed')
 if ($action == 'addligne') 
 {
   $fac = new Facture($db);
+  $fac->fetch($facid);
   $result = $fac->addline($facid,
 			  $HTTP_POST_VARS["desc"],
 			  $HTTP_POST_VARS["pu"],
@@ -115,13 +116,17 @@ if ($action == 'addligne')
 if ($action == 'updateligne') 
 {
   $fac = new Facture($db,"",$facid);
-  $result = $fac->updateline($rowid,$HTTP_POST_VARS["desc"],$HTTP_POST_VARS["price"],$HTTP_POST_VARS["qty"]);
+  $fac->fetch($facid);
+  $result = $fac->updateline($rowid,
+			     $HTTP_POST_VARS["desc"],
+			     $HTTP_POST_VARS["price"],
+			     $HTTP_POST_VARS["qty"]);
 }
 
 if ($action == 'deleteline') 
 {
   $fac = new Facture($db,"",$facid);
-  $fac->id = $facid;
+  $fac->fetch($facid);
   $result = $fac->deleteline($rowid);
 }
 
@@ -366,6 +371,51 @@ if ($action == 'create')
 	print "</form>\n";
 	print "</table>\n";
 	
+	if (! $propalid)
+	  {
+	    /*
+	     *
+	     * Liste des elements
+	     *
+	     */
+	    $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p ";
+	    $sql .= " WHERE envente = 1";
+	    $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
+	    if ( $db->query($sql) )
+	      {
+		$opt = "<option value=\"0\" SELECTED></option>";
+		if ($result)
+		  {
+		    $num = $db->num_rows();	$i = 0;	
+		    while ($i < $num)
+		      {
+			$objp = $db->fetch_object( $i);
+			$opt .= "<option value=\"$objp->rowid\">[$objp->ref] $objp->label : $objp->price</option>\n";
+			$i++;
+		      }
+		  }
+		$db->free();
+	      }
+	    else
+	      {
+		print $db->error();
+	      }
+	    
+	    print_titre("Services/Produits");
+	    	    
+	    print '<table border="1" cellspacing="0">';
+	    
+	    for ($i = 1 ; $i < 5 ; $i++)
+	      {
+		print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
+		print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td></tr>';
+	      }
+	    
+	    print "<tr><td align=\"right\" colspan=\"2\">Remise : <input size=\"6\" name=\"remise\" value=\"0\"></td></tr>\n";    
+	    
+	    print "</table>";
+	    
+	  }
       }
     } 
   else 
