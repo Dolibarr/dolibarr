@@ -21,7 +21,7 @@
  *
  */
 
-require_once(DOL_DOCUMENT_ROOT.'/compta/export/ComptaJournalPaiementPdf.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/export/ComptaJournalPdf.class.php');
 
 class ComptaJournalPaiement  {
 
@@ -31,18 +31,19 @@ class ComptaJournalPaiement  {
     }
 
 
-  function GeneratePdf()
+  function GeneratePdf($user, $excid, $excref)
     {
-      global $user;
-
       $date = strftime("%Y%m",time());
 
       $dir = DOL_DATA_ROOT."/compta/export/";
-      $file = $dir . "JournalPaiement".$date . ".pdf";
+      $file = $dir . "JournalPaiement".$excref . ".pdf";
+
+      $grand_total_debit = 0;
+      $grand_total_credit = 0;
 
       if (file_exists($dir))
 	{
-	  $pdf = new ComptaJournalPaiementPdf('P','mm','A4');
+	  $pdf = new ComptaJournalPdf('P','mm','A4');
 	  $pdf->AliasNbPages();
 
 	  $pdf->Open();
@@ -84,7 +85,9 @@ class ComptaJournalPaiement  {
 	  $sql .= " AND f.fk_soc = s.idp";
 	  $sql .= " AND p.statut = 1 ";
 	  $sql .= " AND pf.fk_facture = f.rowid";
-	  $sql .= " AND date_format(datep,'%Y%m') = '".$date."'";
+
+	  $sql .= " AND p.fk_export_compta = ".$excid;
+
 	  $sql .= " ORDER BY date_format(p.datep,'%Y%m%d') ASC, s.nom ASC";
 
 	  $oldate = '';
@@ -116,7 +119,7 @@ class ComptaJournalPaiement  {
 			  $pdf->ln();
 			}
 
-		      $journal=" Journal $journ du ".strftime('%A, %e %B %G',$obj->dp);
+		      $journal = "Journal $journ du ".strftime('%A, %e %B %G',$obj->dp);
 		      $total_credit = 0 ;
 		      $total_debit = 0 ;
 		      $pdf->SetFont('Arial','B',10);
@@ -162,12 +165,14 @@ class ComptaJournalPaiement  {
 		      $credit = '';
 		      $debit = abs($obj->amount);
 		      $total_debit = $total_debit + $debit;
+		      $grand_total_debit = $grand_total_debit + $debit;
 		    }
 		  else
 		    {
 		      $credit = abs($obj->amount);
 		      $debit = '';
 		      $total_credit = $total_credit + $credit;
+		      $grand_total_credit = $grand_total_credit + $credit;
 		      $libelle = "Rejet Prélèvement";
 		    }
 
@@ -175,7 +180,7 @@ class ComptaJournalPaiement  {
 
 		  $pdf->cell(20,$hligne,$obj->facnumber);
 
-		  $pdf->cell(20,$hligne,'41100000');
+		  $pdf->cell(20,$hligne,'4110000');
 
 		  $pdf->cell(87,$hligne,$socnom .' '.$libelle);
 
@@ -199,12 +204,14 @@ class ComptaJournalPaiement  {
 		      $credit = abs($obj->amount);
 		      $debit = '';
 		      $total_credit = $total_credit + $credit;
+		      $grand_total_credit = $grand_total_credit + $credit;
 		    }
 		  else
 		    {
 		      $credit = '';
 		      $debit = abs($obj->amount);
 		      $total_debit = $total_debit + $debit;
+		      $grand_total_debit = $grand_total_debit + $debit;
 		    }
 
 		  $pdf->cell(16,$hligne,strftime('%d%m%y',$obj->dp));
@@ -227,7 +234,25 @@ class ComptaJournalPaiement  {
 
 		  $i++; 
 		}
-	  	      
+
+	      $pdf->SetFont('Arial','B',9);
+	      
+	      $pdf->cell(143,$hligne,'');
+	      
+	      $pdf->cell(16,$hligne,'Total : ',0,0,'R');
+	      $pdf->cell(18,$hligne,$total_debit,0,0,'R');
+	      $pdf->cell(18,$hligne,$total_credit,0,0,'R');
+	      $pdf->ln();
+	      /*
+	       *
+	       */	  	      
+	      $pdf->cell(143,$hligne,'');
+	      
+	      $pdf->cell(16,$hligne,'Grand Total : ',0,0,'R');
+	      $pdf->cell(18,$hligne,$grand_total_debit,0,0,'R');
+	      $pdf->cell(18,$hligne,$grand_total_credit,0,0,'R');
+	      $pdf->ln();
+
 	      /*
 	       *
 	       *

@@ -31,12 +31,12 @@ class ComptaJournalVente  {
     }
 
 
-  function GeneratePdf($user)
+  function GeneratePdf($user, $excid, $excref)
     {
       $date = strftime("%Y%m",time());
 
       $dir = DOL_DATA_ROOT."/compta/export/";
-      $file = $dir . "JournalVente".$date . ".pdf";
+      $file = $dir . "JournalVente".$excref . ".pdf";
 
       if (file_exists($dir))
 	{
@@ -85,7 +85,8 @@ class ComptaJournalVente  {
 	  $sql .= " AND l.fk_code_ventilation <> 0 ";
 	  $sql .= " AND l.fk_export_compta <> 0";	  
 	  $sql .= " AND c.rowid = l.fk_code_ventilation";
-	  $sql .= " AND date_format(f.datef,'%Y%m') = '".$date."'";
+
+	  $sql .= " AND l.fk_export_compta = ".$excid;
 	  
 	  $sql .= " ORDER BY date_format(f.datef,'%Y%m%d') ASC, f.rowid, l.rowid";
 	  
@@ -156,11 +157,22 @@ class ComptaJournalVente  {
 		    {
 		      $d = "D";
 		      $c = "C";
+
+		      $credit = '';
+		      $debit = $amount;
+		      $total_debit = $total_debit + $debit;
+		      $grand_total_debit = $grand_total_debit + $debit;
+
 		    }
 		  else
 		    {
 		      $d = "C";
 		      $c = "D";
+
+		      $credit = $amount;
+		      $debit = '';
+		      $total_credit = $total_credit + $credit;
+		      $grand_total_credit = $grand_total_credit + $credit;
 		    }
 
 		  if ($oldfac <> $obj->facid)
