@@ -21,7 +21,7 @@
  */
 
 /*!	\file adherent_type.class.php
-		\brief Classe gérant les types d'adhérents
+		\brief Fichier de la classe gérant les types d'adhérents
 		\author Rodolphe Quiedeville
 		\version $Revision$
 */

@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,16 +22,20 @@
  *
  */
 
-/**
- * Classe de gestion des proposition commerciales
- *
- *
- * @since PHP 4.2.0
- * @author Rodolphe Quiedeville <rodolphe@quiedeville.org>,
- * @author Éric Seigne <eric.seigne@ryxeo.com>
- * @see http://www.dolibarr.com/
- */
 
+/*!	\file propal.class.php
+		\brief  Fichier de la classe des propales
+		\author Rodolphe Qiedeville
+		\author	Eric Seigne
+		\author	Laurent Destailleur
+		\version $Revision$
+*/
+
+
+
+/*! \class Propal
+		\brief Classe permettant la gestion des propales
+*/
 
 class Propal
 {

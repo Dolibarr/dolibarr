@@ -22,7 +22,7 @@
  */
 
 /*!	\file adherent_options.class.php
-		\brief Classe de gestion de la table des champs optionels adhérents
+		\brief Fichier de la classe de gestion de la table des champs optionels adhérents
 		\author Rodolphe Quiedville
 		\author	Jean-Louis Bergamo
 		\version $Revision$

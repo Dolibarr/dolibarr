@@ -23,14 +23,14 @@
  */
 
 /*!	\file adherent.class.php
-		\brief Classe permettant la gestion d'un adhérent
+		\brief Fichier de la classe permettant la gestion d'un adhérent
 		\author Rodolphe Qiedeville
 		\author	Jean-Louis Bergamo
 		\author	Laurent Destailleur
 		\version $Revision$
 */
 
-/*! \class adherent.class.php
+/*! \class Adherent
 		\brief Classe permettant la gestion d'un adhérent
 */
 

@@ -21,13 +21,18 @@
  *
  */
 
-/**
- * Gestion des factures
- *
- * @author Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * @author Laurent Destailleur  <eldy@users.sourceforge.net>
- * @see http://www.dolibarr.com/
- */
+/*!	\file facture.class.php
+		\brief  Fichier de la classe des factures
+		\author Rodolphe Qiedeville
+		\author	Laurent Destailleur
+		\version $Revision$
+*/
+
+
+
+/*! \class Facture
+		\brief Classe permettant la gestion des factures
+*/
 
 class Facture
 {

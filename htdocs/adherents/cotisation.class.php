@@ -21,7 +21,7 @@
  */
 
 /*!	\file cotisation.class.php
-		\brief Classe permettant de gèrer les cotisations
+		\brief Fichier de la classe permettant de gèrer les cotisations
 		\author Rodolphe Quiedeville
 		\version $Revision$
 */

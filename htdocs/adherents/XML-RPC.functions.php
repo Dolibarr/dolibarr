@@ -1,36 +1,32 @@
 <?php
 /*
-An XML-RPC implementation by Keith Devens, version 2.5c.
-http://www.keithdevens.com/software/xmlrpc/
-
-Release history available at:
-http://www.keithdevens.com/software/xmlrpc/history/
-
-This code is Open Source, released under terms similar to the Artistic License.
-Read the license at http://www.keithdevens.com/software/license/
-
-Note: this code requires version 4.1.0 or higher of PHP.
-
-Adaptation pour fonctionnner en PHP 5.0
-
-*/
-/*
+ * An XML-RPC implementation by Keith Devens, version 2.5c.
+ * http://www.keithdevens.com/software/xmlrpc/
+ * 
+ * Release history available at:
+ * http://www.keithdevens.com/software/xmlrpc/history/
+ * 
+ * This code is Open Source, released under terms similar to the Artistic License.
+ * Read the license at http://www.keithdevens.com/software/license/
+ * 
+ * Note: this code requires version 4.1.0 or higher of PHP.
+ * 
+ * Adaptation pour fonctionnner en PHP 5.0
+ * 
  * $Id$
  * $Source$
  *
  */
 
 /*!	\file XML-RPC.functions.php
-		\brief Fonction XLM-RPC pour dolibarr
+		\brief  Fichier de gestion XML-RPC pour dolibarr
 		\author Keith Devens
 		\author Jean-Louis Bergamo
 		\auhtor Laurent Destailleur
 		\version $Revision$
 */
 
-/*! \class XML
-		\brief Fonction XLM-RPC pour dolibarr
-*/
+
 
 function & XML_serialize(&$data, $level = 0, $prior_key = NULL){
 	#assumes a hash, keys are the variable names
@@ -87,6 +83,10 @@ function & XML_serialize(&$data, $level = 0, $prior_key = NULL){
 	}
 }
 
+
+/*! \class XML
+		\brief Class XML
+*/
 class XML {
 	var $parser; /**< a reference to the XML parser */
 	var $document; /**< the entire XML structure built up so far */

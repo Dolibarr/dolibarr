@@ -59,7 +59,7 @@
 //require_once('fpdf.php');
 
 /*!	\file PDF_card.class.php
-		\brief Classe afin d'éditer au format PDF des étiquettes au format Avery ou personnalisé
+		\brief  Fichier de la classe permettant d'éditer au format PDF des étiquettes au format Avery ou personnalisé
 		\author Steve Dillon
 		\author	Laurent Passebecq
 		\author	Rodolphe Quiedville
