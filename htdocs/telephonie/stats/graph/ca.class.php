@@ -31,6 +31,7 @@ class GraphCa extends GraphBrouzouf
     $this->file = $file;
 
     $this->client = 0;
+    $this->contrat = 0;
     $this->titre = "Chiffre d'affaire (euros HT)";
 
     $this->barcolor = "green";
@@ -39,16 +40,14 @@ class GraphCa extends GraphBrouzouf
 
   Function GraphDraw()
   {
-    $ligne = new LigneTel($this->db);
-    
-    if ($this->client == 0)
+    if ($this->client == 0 && $this->contrat == 0)
       {
 	$sql = "SELECT date, sum(gain), sum(cout_vente), sum(fourn_montant)";
 	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture";   
 	$sql .= " WHERE fk_facture is not null";    
 	$sql .= " GROUP BY date ASC";
       }
-    else
+    elseif ($this->client > 0 && $this->contrat == 0)
       {
 	$sql = "SELECT date, sum(gain), sum(cout_vente), sum(fourn_montant)";
 	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture";   
@@ -58,7 +57,17 @@ class GraphCa extends GraphBrouzouf
 	$sql .= " AND s.fk_client_comm = ".$this->client;
 	$sql .= " GROUP BY date ASC";
       }
-    
+    elseif ($this->client == 0 && $this->contrat > 0)
+      {
+	$sql = "SELECT tf.date, sum(tf.gain), sum(tf.cout_vente), sum(tf.fourn_montant)";
+	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";   
+	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
+	$sql .= " WHERE tf.fk_facture is not null";
+	$sql .= " AND s.rowid = tf.fk_ligne";
+	$sql .= " AND s.fk_contrat = ".$this->contrat;
+	$sql .= " GROUP BY tf.date ASC";
+      }
+
     if ($this->db->query($sql))
       {
 	$num = $this->db->num_rows();
