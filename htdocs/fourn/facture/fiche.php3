@@ -157,7 +157,7 @@ if ($action == 'create')
   print '<td><select name="socidp">';
 
   $sql = "SELECT s.nom, s.prefix_comm, s.idp";
-  $sql .= " FROM societe as s WHERE s.fournisseur = 1 ORDER BY s.nom ASC";
+  $sql .= " FROM llx_societe as s WHERE s.fournisseur = 1 ORDER BY s.nom ASC";
 
   if ( $db->query($sql) )
     {
@@ -239,7 +239,7 @@ else
       $fac->fetch($facid);
 
       $sql = "SELECT s.nom as socnom, s.idp as socidp, f.facnumber, f.amount, f.tva, f.total, ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.note, f.libelle, f.rowid";
-      $sql .= " FROM societe as s,llx_facture_fourn as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
+      $sql .= " FROM llx_societe as s,llx_facture_fourn as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
 
       $result = $db->query( $sql);
       

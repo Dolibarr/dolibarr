@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +15,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 require("./pre.inc.php3");
 
 $db = new Db();
-if ($sortorder == "") {
+if ($sortorder == "")
+{
   $sortfield="lower(s.nom)";
   $sortorder="ASC";
 }
@@ -75,7 +76,7 @@ $pagenext = $page + 1;
 
 if ($socid > 0) {
 
-  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.cp,s.ville, s.note FROM societe as s, c_stcomm as st ";
+  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.cp,s.ville, s.note FROM llx_societe as s, c_stcomm as st ";
   $sql .= " WHERE s.fk_stcomm=st.id";
 
   if ($to == 'next') {
@@ -95,7 +96,7 @@ if ($socid > 0) {
      */
     print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"3\">\n";
     print "<tr><td><div class=\"titre\">Contacts pour la société : <a href=\"fiche.php3?socid=$objsoc->idp\">$objsoc->nom</a></div></td>";
-    print "<td bgcolor=\"#e0E0E0\" align=\"center\">[<a href=\"people.php3?socid=$socid&action=addcontact\">Ajouter un contact</a>]</td>";
+    print "<td align=\"center\">[<a href=\"people.php3?socid=$socid&action=addcontact\">Ajouter un contact</a>]</td>";
     print '</td></tr></table>';
 
     print "<hr>";
@@ -109,8 +110,7 @@ if ($socid > 0) {
     }
 
     print "</td>\n";
-    print "<td valign=\"top\"><table border=0 width=\"100%\" cellspacing=0 bgcolor=#e0e0e0>";
-    print "<tr><td>Créée le</td><td align=center><b>" . strftime("%d %b %Y %H:%M", $objsoc->dc) . "</b></td></tr>";
+    print "<td valign=\"top\"><table border=0 width=\"100%\" cellspacing=0>";
 
     print "</table></td></tr>\n";
     print "</table>";
@@ -120,13 +120,10 @@ if ($socid > 0) {
      */
 
     
-    print "<table border=0 width=\"100%\" cellspacing=0 bgcolor=#e0e0e0>";
+    print "<table border=0 width=\"100%\" cellspacing=0>";
     print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
     print "</table>";
 
-    $bc1="bgcolor=\"#c0f0c0\"";
-    $bc3="bgcolor=\"#90c090\"";
-    $bc2="bgcolor=\"#b0e0b0\"";    
   } else {
     print $db->error();
   }
@@ -145,23 +142,23 @@ if ($socid > 0) {
   }
   $sql .= "   ORDER by p.datec";
   $result = $db->query($sql);
-  $i = 0 ; $num = $db->num_rows(); $tag = True;
-  while ($i < $num) {
-    $obj = $db->fetch_object( $i);
-    if ($tag) {
-      print "<tr bgcolor=\"e0e0e0\">";
-    } else {
-      print "<tr>";
+  $i = 0 ; $num = $db->num_rows(); $var = True;
+
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object( $i);
+      $var != $var;
+      print "<tr $bc[$var]>";
+
+      print "<td>$obj->firstname $obj->name</td>";
+      print "<td>$obj->poste&nbsp;</td>";
+      print "<td>$obj->phone&nbsp;</td>";
+      print "<td>$obj->fax&nbsp;</td>";
+      print "<td><a href=\"mailto:$obj->email\">$obj->email</a>&nbsp;</td>";
+      print "</tr>\n";
+      $i++;
+      $tag = !$tag;
     }
-    print "<td>$obj->firstname $obj->name</td>";
-    print "<td>$obj->poste&nbsp;</td>";
-    print "<td>$obj->phone&nbsp;</td>";
-    print "<td>$obj->fax&nbsp;</td>";
-    print "<td><a href=\"mailto:$obj->email\">$obj->email</a>&nbsp;</td>";
-    print "</tr>\n";
-    $i++;
-    $tag = !$tag;
-  }
   print "</table>";
 
 

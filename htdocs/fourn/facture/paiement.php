@@ -69,7 +69,7 @@ if ($action == 'create')
 {
 
   $sql = "SELECT s.nom,s.idp, f.amount, f.total_ttc, f.facnumber";
-  $sql .= " FROM societe as s, llx_facture_fourn as f WHERE f.fk_soc = s.idp";
+  $sql .= " FROM llx_societe as s, llx_facture_fourn as f WHERE f.fk_soc = s.idp";
   $sql .= " AND f.rowid = $facid";
 
   $result = $db->query($sql);

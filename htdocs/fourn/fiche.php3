@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 require("./pre.inc.php3");
@@ -58,7 +58,7 @@ if ($action == 'recontact')
 }
 
 if ($action == 'note') {
-  $sql = "UPDATE societe SET note='$note' WHERE idp=$socid";
+  $sql = "UPDATE llx_societe SET note='$note' WHERE idp=$socid";
   $result = $db->query($sql);
 }
 
@@ -69,7 +69,7 @@ if ($action == 'stcomm') {
     $result = @$db->query($sql);
 
     if ($result) {
-      $sql = "UPDATE societe SET fk_stcomm=$stcommid WHERE idp=$socid";
+      $sql = "UPDATE llx_societe SET fk_stcomm=$stcommid WHERE idp=$socid";
       $result = $db->query($sql);
     } else {
       $errmesg = "ERREUR DE DATE !";
@@ -93,7 +93,7 @@ if ($action == 'stcomm') {
  */
 if ($mode == 'search') {
   if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM societe as s ";
+    $sql = "SELECT s.idp FROM llx_societe as s ";
     $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
   }
       
@@ -114,7 +114,7 @@ if ($mode == 'search') {
 if ($socid > 0) {
   $societe = new Societe($db, $socid);
   
-  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
+  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM llx_societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
   $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
 
   if ($to == 'next') {

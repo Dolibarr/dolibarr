@@ -44,7 +44,7 @@ print "<TD align=\"center\">Montant</TD><td align=\"right\">Solde</td>";
 print "</TR>\n";
 
 $sql = "SELECT s.nom,sum(f.amount) as amount";
-$sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp"; 
+$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp"; 
 if ($year > 0) {
   $sql .= " AND date_format(f.datef, '%Y') = $year";
 }  
@@ -87,7 +87,7 @@ print '<tr><td colspan="3" align="right">'.price($total).'</td></tr>';
  *
  */
 $sql = "SELECT s.nom,sum(f.amount) as amount";
-$sql .= " FROM societe as s,llx_facture_fourn as f WHERE f.fk_soc = s.idp"; 
+$sql .= " FROM llx_societe as s,llx_facture_fourn as f WHERE f.fk_soc = s.idp"; 
 if ($year > 0) {
   $sql .= " AND date_format(f.datef, '%Y') = $year";
 }  

@@ -66,7 +66,7 @@ if ($mode == 'search')
 {
   if ($mode-search == 'soc')
     {
-      $sql = "SELECT s.idp FROM societe as s ";
+      $sql = "SELECT s.idp FROM llx_societe as s ";
       $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
     }
       
@@ -98,7 +98,7 @@ if ($sortfield == "")
 
 
 $sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.total_ht, fac.paye, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid, fac.facnumber";
-$sql .= " FROM societe as s, llx_facture_fourn as fac ";
+$sql .= " FROM llx_societe as s, llx_facture_fourn as fac ";
 $sql .= " WHERE fac.fk_soc = s.idp";
 
 if ($socid)
