@@ -22,7 +22,7 @@
 
 create table llx_c_pays
 (
-  id       integer PRIMARY KEY,
+  rowid    integer PRIMARY KEY,
   libelle  varchar(25),
   code     char(2)      NOT NULL
 )type=innodb;
