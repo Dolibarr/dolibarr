@@ -41,6 +41,7 @@ function fichinter_pdf_create($db, $facid)
   else
     {
       return 0;
+      print "FICHEINTER_ADDON_PDF n'est pas définit";
     }
 }
 
