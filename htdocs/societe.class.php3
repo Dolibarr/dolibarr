@@ -253,7 +253,7 @@ class Societe {
     {
       $contact_email = array();
 
-      $sql = "SELECT idp, email, name, firstname FROM socpeople WHERE fk_soc = $this->id";
+      $sql = "SELECT idp, email, name, firstname FROM llx_socpeople WHERE fk_soc = $this->id";
       
       if ($this->db->query($sql) )
 	{
@@ -285,7 +285,7 @@ class Societe {
   Function contact_get_email($rowid)
     {
 
-      $sql = "SELECT idp, email, name, firstname FROM socpeople WHERE idp = $rowid";
+      $sql = "SELECT idp, email, name, firstname FROM llx_socpeople WHERE idp = $rowid";
       
       if ($this->db->query($sql) )
 	{
