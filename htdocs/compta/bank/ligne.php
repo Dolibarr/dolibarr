@@ -151,7 +151,7 @@ if ($result)
 	  print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
 	}
     
-      print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&ve=1\">$objp->num_releve</a></td>";
+      print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;ve=1&amp;account=$account\">$objp->num_releve</a></td>";
       print "<td align=\"center\">$objp->author</td>";      
       print "</tr>";
       
