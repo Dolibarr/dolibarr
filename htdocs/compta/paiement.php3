@@ -67,25 +67,28 @@ if ($action == 'add') {
       $total = $obj->total;
 
       print_titre("Emettre un paiement");
-      print "<form action=\"$PHP_SELF\" method=\"post\">";
+      print '<form action="facture.php3?id='.$facid.'" method="post">';
+      print '<input type="hidden" name="action" value="add_paiement">';
       print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-      print "<tr bgcolor=\"#f0f0f0\"><td colspan=\"3\">Facture</td>";
 
-      print "<tr bgcolor=\"#e0e0e0\"><td>Numéro :</td><td>$obj->facnumber</td></tr>";
-      print "<tr bgcolor=\"#e0e0e0\"><td>Société :</td><td>$obj->nom</td></tr>";
+      print "<tr class=\"liste_titre\"><td colspan=\"3\">Facture</td>";
 
-      print "<tr bgcolor=\"#e0e0e0\"><td>Montant :</td><td>".price($obj->total)." euros TTC</td></tr>";
+      print "<tr><td>Numéro :</td><td colspan=\"2\">$obj->facnumber</td></tr>";
+      print "<tr><td>Société :</td><td colspan=\"2\">$obj->nom</td></tr>";
+
+      print "<tr><td>Montant :</td><td colspan=\"2\">".price($obj->total)." euros TTC</td></tr>";
+
       $sql = "SELECT sum(p.amount) FROM llx_paiement as p WHERE p.fk_facture = $facid;";
       $result = $db->query($sql);
       if ($result) {
 	$sumpayed = $db->result(0,0);
 	$db->free();
       }
-      print '<tr><td>Déjà payé</td><td><b>'.price($sumpayed).'</b> euros TTC</td></tr>';
+      print '<tr><td>Déjà payé</td><td colspan=\"2\"><b>'.price($sumpayed).'</b> euros TTC</td></tr>';
 
-      print "<tr bgcolor=\"#f0f0f0\"><td colspan=\"3\">Paiement</td>";
+      print "<tr class=\"liste_titre\"><td colspan=\"3\">Paiement</td>";
 
-      print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+
       print "<input type=\"hidden\" name=\"facid\" value=\"$facid\">";
       print "<input type=\"hidden\" name=\"facnumber\" value=\"$obj->facnumber\">";
       print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
@@ -138,7 +141,7 @@ if ($action == 'add') {
       print "</select></td>";
 
       print "<td rowspan=\"5\">Commentaires :<br>";
-      print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
+      print '<textarea name="comment" wrap="soft" cols="40" rows="10"></textarea></td></tr>';
 
       $author = $GLOBALS["REMOTE_USER"];
       print "<input type=\"hidden\" name=\"author\" value=\"$author\">\n";
@@ -162,7 +165,7 @@ if ($action == 'add') {
       print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Num du cheque ou virement</em></td></tr>\n";
       print "<tr><td valign=\"top\">&nbsp;</td><td>Reste à payer : <b>".price($total - $sumpayed)."</b> euros TTC</td></tr>\n";
       print "<tr><td valign=\"top\">Montant :</td><td><input name=\"amount\" type=\"text\"></td></tr>\n";
-      print "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>\n";
+      print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer"></td></tr>';
       print "</form>\n";
       print "</table>\n";
 
