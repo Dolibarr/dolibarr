@@ -33,11 +33,11 @@ require("./pre.inc.php");
 $langs->load("companies");
 $langs->load("bills");
 
-require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
-require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
-require(DOL_DOCUMENT_ROOT."/adherents/XML-RPC.functions.php");
-require(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/XML-RPC.functions.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 $adho = new AdherentOptions($db);
 $errmsg='';
