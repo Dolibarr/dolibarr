@@ -86,7 +86,7 @@ if ( $db->query( $sql) )
 
       $var=!$var;
       print "<TR $bc[$var]>";
-      print '<TD colspan="3" align="right">A payer : '.number_format($total_apayer,2,'.',' ').' euros</TD></tr>;'
+      print '<TD colspan="3" align="right">A payer : '.number_format($total_apayer,2,'.',' ').' euros</TD></tr>';
 
       $var=!$var;
       print "<TR $bc[$var]>";
