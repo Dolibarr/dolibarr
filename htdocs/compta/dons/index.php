@@ -60,8 +60,10 @@ for ($i = 0 ; $i < 4 ; $i++)
   print "<TR $bc[$var]>";
   print '<TD><a href="liste.php?statut='.$i.'">'.$libelle[$i].'</a></TD>';
   print '<TD align="right">'.price($somme[$i]).'</TD>';
+  $total += $somme[$i];
   print "</tr>";
 }
+print '<tr><td>Total</td><td align="right">'.price($total).'</TD></tr>';
 print "</table>";
 
 
