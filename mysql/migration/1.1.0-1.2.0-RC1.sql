@@ -7,6 +7,8 @@ alter table llx_societe add rubrique varchar(255);
 
 alter table llx_societe add fk_forme_juridique integer default 0 after fk_typent;
 
+alter table llx_societe add fk_departement integer default 0 after ville;
+
 alter table llx_societe add fk_user_creat integer;
 alter table llx_societe add fk_user_modif integer;
 
@@ -88,9 +90,6 @@ create table llx_paiement_facture
 
 insert into llx_const(name, value, type, note) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document');
 
-
-
-
 create table llx_c_forme_juridique
 (
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
@@ -99,8 +98,6 @@ create table llx_c_forme_juridique
   active     tinyint default 1
 
 )type=innodb;
-
-
 
 --
 -- Formes juridiques
