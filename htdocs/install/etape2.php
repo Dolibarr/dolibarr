@@ -176,7 +176,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 			}
 		      else
 			{
-			  print "Erreur SQL ".$db->errno()." sur requete '$buffer'<br>";
+			  print "Erreur SQL ".$db->errno()." sur requete '$buffer': ".$db->error()."<br>";
 			}
 		    }
 		}
