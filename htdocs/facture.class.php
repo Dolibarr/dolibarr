@@ -54,10 +54,12 @@ class Facture
   var $projetid;
 
   /**
-   * Initialisation de la classe
-   *
+   *    \brief Constructeur de la classe
+   *    \param[in]  $DB         handler accès base de données
+   *    \param[in]  $soc_idp    id societe ("" par defaut)
+   *    \param[in]  $soc_idp    id facture ("" par defaut)
    */
-  Function Facture($DB, $soc_idp="", $facid="")
+  function Facture($DB, $soc_idp="", $facid="")
     {
       $this->db = $DB ;
       $this->socidp = $soc_idp;
@@ -72,12 +74,13 @@ class Facture
       $this->projetid = 0;
       $this->id = $facid;
   }
+  
   /**
-   * Création la facture
-   *
+   * \brief Création de la facture en base
+   *    \param      User       object utilisateur qui crée
    *
    */
-  Function create($user)
+  function create($user)
     {
       /* On positionne en mode brouillon la facture */
       $this->brouillon = 1;
@@ -174,7 +177,7 @@ class Facture
 
 	      if ( $result_insert < 0)
 		{
-		  print $sql . '<br>' . $this->db->error() .'<br>';
+    	  dolibarr_print_error($this->db);
 		}
 	    }
 	  /*
@@ -202,7 +205,7 @@ class Facture
 		  
 		  if ( $result_insert < 0)
 		    {
-		      print $sql . '<br>' . $this->db->error() .'<br>';
+        	  dolibarr_print_error($this->db);
 		    }
 		}
 	    }
@@ -224,7 +227,7 @@ class Facture
    * Recupére l'objet facture et ses lignes de factures
    *
    */
-  Function fetch($rowid, $societe_id=0)
+  function fetch($rowid, $societe_id=0)
     {
       $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent,".$this->db->pdate("f.datef")." as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.rowid as cond_regl_id, c.libelle, c.libelle_facture, f.note, f.paye, f.fk_statut, f.fk_user_author";
       $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."cond_reglement as c";
@@ -307,27 +310,24 @@ class Facture
 		} 
 	      else
 		{
-		  print $this->db->error();
-		  return -1;
+    	  dolibarr_print_error($this->db);
 		}
 	    }
 	  else
 	    {
-	      print "Error";
-	      return -2;
+    	  dolibarr_print_error($this->db);
 	    }
 	}
       else
 	{
-	  print $this->db->error();
-	  return -3;
+	  dolibarr_print_error($this->db);
 	}    
     }
   /**
    * Recupére l'objet client lié à la facture
    *
    */
-  Function fetch_client()
+  function fetch_client()
     {
       $client = new Societe($this->db);
       $client->fetch($this->socidp);
@@ -338,7 +338,7 @@ class Facture
    *
    *
    */
-  Function valid($userid, $dir)
+  function valid($userid, $dir)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
 
@@ -352,15 +352,15 @@ class Facture
 	}
       else
 	{
-	  print $this->db->error() . ' in ' . $sql;
+	  dolibarr_print_error($this->db);
 	}
     }
   /**
-   * Class la facture
-   *
+   * Classe la facture
+   *    \param  cat_id      id de la catégorie dans laquelle classer la facture
    *
    */
-  Function classin($cat_id)
+  function classin($cat_id)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_projet = $cat_id";
       $sql .= " WHERE rowid = $this->id;";
@@ -371,7 +371,7 @@ class Facture
 	}
       else
 	{
-	  print $this->db->error() . ' in ' . $sql;
+	  dolibarr_print_error($this->db);
 	}
     }
 
@@ -379,7 +379,7 @@ class Facture
    * Supprime la facture
    *
    */
-  Function delete($rowid)
+  function delete($rowid)
     {
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_tva_sum WHERE fk_facture = $rowid;";
 
@@ -406,33 +406,28 @@ class Facture
 			}
 		      else
 			{
-			  print "Err : ".$this->db->error();
-			  return -1;
+        	  dolibarr_print_error($this->db);
 			}
 
 		    }
 		  else
 		    {
-		      print "Err : ".$this->db->error();
-		      return -2;
+        	  dolibarr_print_error($this->db);
 		    }
 		}
 	      else
 		{
-		  print "Err : ".$this->db->error();
-		  return -3;
+    	  dolibarr_print_error($this->db);
 		}
 	    }
 	  else
 	    {
-	      print "Err : ".$this->db->error();
-	      return -4;
+    	  dolibarr_print_error($this->db);
 	    }
 	}
       else
 	{
-	  print "Err : ".$this->db->error();
-	  return -5;
+	  dolibarr_print_error($this->db);
 	}
     }
 
@@ -440,7 +435,7 @@ class Facture
    * Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
    *
    */
-  Function get_libstatut()
+  function get_libstatut()
     {
 		return $this->LibStatut($this->paye,$this->statut);
     }
@@ -449,7 +444,7 @@ class Facture
    * Tag la facture comme payée complètement
    *
    */
-  Function set_payed($rowid)
+  function set_payed($rowid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture set paye=1 WHERE rowid = $rowid ;";
       $return = $this->db->query( $sql);
@@ -458,7 +453,7 @@ class Facture
    * Tag la facture comme paiement commencée
    *
    */
-  Function set_paiement_started($rowid)
+  function set_paiement_started($rowid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_statut=2 WHERE rowid = $rowid ;";
       $return = $this->db->query( $sql);
@@ -467,7 +462,7 @@ class Facture
    * Tag la facture comme abandonnée
    *
    */
-  Function set_canceled($rowid)
+  function set_canceled($rowid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_statut=3 WHERE rowid = $rowid ;";
       $return = $this->db->query( $sql);
@@ -476,7 +471,7 @@ class Facture
    * Tag la facture comme validée et valide la facture
    *
    */
-  Function set_valid($rowid, $user, $soc)
+  function set_valid($rowid, $user, $soc)
     {
       if ($this->brouillon)
 	{
@@ -496,7 +491,9 @@ class Facture
 
 	  $result = $this->db->query( $sql);
 
-	  if (! $result) { print "Err : ".$this->db->error(); return -1; }
+	  if (! $result) {
+	    	  dolibarr_print_error($this->db);
+        }
      
 	  /*
 	   * Notify
@@ -545,7 +542,7 @@ class Facture
    * Ajoute un produit dans l'objet facture
    *
    */
-  Function add_product($idproduct, $qty, $remise_percent, $datestart='', $dateend='')
+  function add_product($idproduct, $qty, $remise_percent, $datestart='', $dateend='')
     {
       if ($idproduct > 0)
 	{
@@ -566,7 +563,7 @@ class Facture
    * Ajoute une ligne de facture (associé à aucun produit/service prédéfini)
    *
    */
-  Function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='')
+  function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='')
     {
       if ($this->brouillon)
 	{
@@ -604,8 +601,7 @@ class Facture
 	    }
 	  else
 	    {
-	      print "Erreur facture.class fonction addline : ".$this->db->error()."<br>$sql<br>";
-	      return -1;
+    	  dolibarr_print_error($this->db);
 	    }
 	}
     }
@@ -613,7 +609,7 @@ class Facture
    * Mets à jour une ligne de facture
    * Retourne 0 si erreur
    */
-  Function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='')
+  function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='')
     {
       if ($this->brouillon)
 	{
@@ -653,7 +649,7 @@ class Facture
 	    $this->updateprice($this->id);
 	  }
 	  else {
-	    print "Erreur : ".$this->db->error()."<br>".$sql; 
+        dolibarr_print_error($this->db);
 	  }
       return $result;
 
@@ -663,7 +659,7 @@ class Facture
    * Supprime une ligne
    *
    */
-  Function deleteline($rowid)
+  function deleteline($rowid)
     {
       if ($this->brouillon)
 	{
@@ -677,7 +673,7 @@ class Facture
    * Mise à jour des sommes de la facture
    *
    */
-  Function updateprice($facid)
+  function updateprice($facid)
     {
       include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
       $err=0;
@@ -741,7 +737,7 @@ class Facture
 		      
 		      if (! $this->db->query($sql) )
 			{
-			  print "$sql<br>";
+        	  dolibarr_print_error($this->db);
 			  $err++;
 			}
 		    }
@@ -776,7 +772,7 @@ class Facture
    * Applique une remise
    *
    */
-  Function set_remise($user, $remise)
+  function set_remise($user, $remise)
     {
       if ($user->rights->facture->creer)
 	{
@@ -793,7 +789,7 @@ class Facture
 	    }
 	  else
 	    {
-	      print $this->db->error() . ' in ' . $sql;
+    	  dolibarr_print_error($this->db);
 	      return 0;
 	    }
 	}
@@ -803,7 +799,7 @@ class Facture
    *
    *
    */
-  Function send_relance($destinataire, $replytoname, $replytomail, $user)
+  function send_relance($destinataire, $replytoname, $replytomail, $user)
     {
       $soc = new Societe($this->db, $this->socidp);
 
@@ -842,8 +838,7 @@ class Facture
 		  
 		  if (! $this->db->query($sql) )
 		    {
-		      print $this->db->error();
-		      print "<p>$sql</p>";
+        	  dolibarr_print_error($this->db);
 		    }	      	      	      
 		}
 	      else
@@ -861,7 +856,7 @@ class Facture
    * Renvoie la liste des sommes de tva
    *
    */
-  Function getSumTva()
+  function getSumTva()
   {
     $sql = "SELECT amount, tva_tx FROM ".MAIN_DB_PREFIX."facture_tva_sum WHERE fk_facture = ".$this->id;
     if ($this->db->query($sql))
@@ -887,7 +882,7 @@ class Facture
    * Renvoie la sommes des paiements deja effectués
    * Utilisé entre autre par certains modèles de factures
    */
-  Function getSommePaiement()
+  function getSommePaiement()
   {
     $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."paiement_facture WHERE fk_facture = ".$this->id;
     if ($this->db->query($sql))
@@ -902,10 +897,10 @@ class Facture
   }
 
   /**
-   * RODO TODO
+   * \todo RODO
    *
    */
-  Function pdf()
+  function pdf()
     {      
 
     }
@@ -914,7 +909,7 @@ class Facture
    * Renvoi un libellé du statut
    *
    */
-  Function LibStatut($paye,$statut)
+  function LibStatut($paye,$statut)
     {
 		if (! $paye)
 		  {
@@ -933,7 +928,7 @@ class Facture
    * Mets à jour les commentaires
    *
    */
-  Function update_note($note)
+  function update_note($note)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET note = '$note'";
       $sql .= " WHERE rowid =". $this->id;
@@ -944,7 +939,7 @@ class Facture
 	}
       else
 	{
-	  print $this->db->error() . ' in ' . $sql;
+	  dolibarr_print_error($this->db);
 	  return -1;
 	}
     }
@@ -953,7 +948,7 @@ class Facture
    * Information sur l'objet
    *
    */
-  Function info($id) 
+  function info($id) 
     {
       $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec";
       $sql .= ", fk_user_author, fk_user_valid";
@@ -984,7 +979,7 @@ class Facture
 	}
       else
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
 	}
     }
 
@@ -992,7 +987,7 @@ class Facture
 
 class FactureLigne
 {
-  Function FactureLigne($DB)
+  function FactureLigne($DB)
     {
         $this->db= $DB ;
     }
@@ -1001,7 +996,7 @@ class FactureLigne
    * Recupére l'objet ligne de facture
    *
    */
-  Function fetch($rowid, $societe_id=0)
+  function fetch($rowid, $societe_id=0)
     {
       $sql = "SELECT fk_product, description, price, qty, rowid, tva_taux, remise, remise_percent, subprice, ".$this->db->pdate("date_start")." as date_start,".$this->db->pdate("date_end")." as date_end";
       $sql .= " FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$rowid;
@@ -1023,7 +1018,7 @@ class FactureLigne
 	      $i++;
 	  }
 	  else {
-	      print "Erreur ".$this->db->error()."<br>".$sql; 
+    	  dolibarr_print_error($this->db);
 	  }
 	  $this->db->free();
     }
