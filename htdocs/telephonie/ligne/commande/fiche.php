@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,25 +27,38 @@ $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
 
-if ($_GET["action"] == "create")
+if ($user->rights->telephonie->ligne_commander)
 {
-
-  $fourntel = new FournisseurTelephonie($db,1);
-  if ( $fourntel->fetch() == 0)
+  if ($_GET["action"] == "create" && $_GET["fournid"] > 0)
     {
-      $ct = new CommandeTableur($db, $user, $fourntel);
-      
-      $result = $ct->create();
-      
+
+      $fourn = new FournisseurTelephonie($db);
+
+      $result = $fourn->fetch($_GET["fournid"]);
+
       if ($result == 0)
 	{
-	  Header("Location: archives.php");
+	  $result = $fourn->CreateCommande($user);
 	}
-      elseif ($result == -3)
+      
+      /*
+	$fourntel = new FournisseurTelephonie($db,1);
+	if ( $fourntel->fetch(1) == 0)
 	{
-	  /* Erreur */
-	  $mesg_erreur = "Email fournisseur non définit"; 
+	$ct = new CommandeTableur($db, $user, $fourntel);
+	
+	$result = $ct->create();
+	
+	if ($result == 0)
+	{
+	Header("Location: archives.php");
 	}
+	elseif ($result == -3)
+	{
+	$mesg_erreur = "Email fournisseur non définit"; 
+	}
+	}
+      */
     }
 }
 
@@ -63,38 +76,61 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-if ($sortfield == "") {
-  $sortfield="s.nom";
-}
-
 /*
- * Recherche
+ * Mode Liste
+ *
  *
  *
  */
-if ($mode == 'search') {
-  if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
-    $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
-  }
-      
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() == 1) {
-      $obj = $db->fetch_object(0);
-      $socid = $obj->idp;
+
+$sql = "SELECT count(l.ligne), f.rowid, f.nom";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= ",".MAIN_DB_PREFIX."telephonie_fournisseur as f";
+$sql .= ",".MAIN_DB_PREFIX."societe as sf";
+$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid AND l.statut IN (1,4) ";
+$sql .= " AND l.fk_soc_facture = sf.idp";
+$sql .= " GROUP BY f.rowid, f.nom ASC";
+
+$result = $db->query($sql);
+if ($result)
+{
+  $num = $db->num_rows();
+  $i = 0;
+  
+  print_barre_liste("Commande", $page, "liste.php", "", $sortfield, $sortorder, '', $num);
+
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>Fournisseur</td>';
+  print '<td align="center">Nb Lignes</td><td>&nbsp;</td>';
+  print "</tr>\n";
+
+  $var=True;
+
+  $ligne = new LigneTel($db);
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row();
+      $var=!$var;
+
+      print "<tr $bc[$var]>";
+      print '<td>'.$row[2].'</td>';
+      print '<td align="center">'.$row[0]."</td>\n";
+
+      print '<td>';
+      print '<a class="tabAction" href="fiche.php?action=create&amp;fournid='.$row[1].'">Créer la commande</a>';
+      print "</td>\n";
+      print "</tr>\n";
+      $i++;
     }
-    $db->free();
-  }
+  print "</table><br />";
+  $db->free();
 }
-
-if ($page == -1) { $page = 0 ; }
-
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
 
 /*
  * Mode Liste
@@ -109,7 +145,7 @@ $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
 $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid AND l.statut IN (1,4) ";
 $sql .= " AND l.fk_soc_facture = sf.idp";
-$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= " ORDER BY s.nom ASC ";
 
 $result = $db->query($sql);
 if ($result)
@@ -117,8 +153,6 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Commande", $page, "liste.php", "", $sortfield, $sortorder, '', $num);
-
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td valign="center">Ligne';
   print '</td><td align="center">Statut</td><td>Client';
@@ -155,12 +189,6 @@ else
   print $db->error() . ' ' . $sql;
 }
 
-if ($num > 0)
-{
-  print "<br>\n<div class=\"tabsAction\">\n";
-  print '<a class="tabAction" href="fiche.php?action=create">Créer la commande</a>';
-  print '</div>';
-}
 
 $db->close();
 
