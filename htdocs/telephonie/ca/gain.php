@@ -93,7 +93,7 @@ else
   print $db->error() . ' ' . $sql;
 }
 
-//print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph=ca/gain_moyen_par_client.png" alt="Gain moyen par client"><br /><br />';
+//print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=ca/gain_moyen_par_client.png" alt="Gain moyen par client"><br /><br />';
 
 print '</td></tr>';
 print '</table>';

@@ -68,11 +68,11 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">'."\
 
 print '<tr><td width="50%" valign="top">';
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/communications/heure_appel_nb.png" alt="Heure appel"><br /><br />';
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/heure_appel_nb.png" alt="Heure appel"><br /><br />';
 
 print '</td><td valign="top" width="50%">';
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/communications/joursemaine_nb.png" alt="Jour de la semaine"><br /><br />';
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/joursemaine_nb.png" alt="Jour de la semaine"><br /><br />';
 
 print '</td></tr>';
 

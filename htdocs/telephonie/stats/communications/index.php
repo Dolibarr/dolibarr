@@ -67,13 +67,13 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">'."\
 
 print '<tr><td width="50%" valign="top">'."\n";
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/communications/duree.png" alt="Duree Moyenne"><br /><br />'."\n";
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/duree.png" alt="Duree Moyenne"><br /><br />'."\n";
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/communications/dureemoyenne.png" alt="Duree Moyenne"><br /><br />'."\n";
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/dureemoyenne.png" alt="Duree Moyenne"><br /><br />'."\n";
 
 print '</td><td valign="top" width="50%">'."\n";
 
-print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/communications/nbappelsparligne.png" alt="Duree Moyenne"><br /><br />';
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/nbappelsparligne.png" alt="Duree Moyenne"><br /><br />';
 
 print '</td></tr>';
 
