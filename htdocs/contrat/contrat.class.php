@@ -101,6 +101,18 @@ class Contrat
   /*
    *
    *
+   */
+  Function annule($user)
+  {
+    $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET enservice = 0";
+    $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
+    $sql .= " WHERE rowid = ".$this->id . " AND enservice = 1";
+
+    $result = $this->db->query($sql) ;
+  }
+  /*
+   *
+   *
    */ 
   Function fetch ($id)
   {    
@@ -127,6 +139,7 @@ class Contrat
 	  $this->user_cloture->id = $result["fk_user_cloture"];
 
 	  $this->product->fetch($result["fk_product"]);
+
 	  $this->societe->fetch($result["fk_soc"]);
 
 	  $this->db->free();
