@@ -33,7 +33,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/comm/index.php3", "Clients");
+  $menu->add("/comm/clients.php3", "Clients");
 
   $menu->add_submenu("/comm/contact.php3", "Contacts");
 

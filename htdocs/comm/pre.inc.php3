@@ -34,7 +34,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add("/comm/clients.php3", "Clients");
 
-  $menu->add_submenu("contact.php3", "Contacts");
+  $menu->add_submenu("/comm/contact.php3", "Contacts");
 
   $menu->add("/comm/action/", "Actions");
 
