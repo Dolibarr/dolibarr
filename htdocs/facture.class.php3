@@ -269,13 +269,27 @@ class Facture
       $sql = "UPDATE llx_facture set paye = 1 WHERE rowid = $rowid ;";
       $return = $this->db->query( $sql);
     }
-
+  /*
+   *
+   *
+   */
   Function set_valid($rowid, $userid)
     {
-      global $conf;
+      $action_notify = 2; // ne pas modifier cette valeur
 
       $sql = "UPDATE llx_facture set fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid ;";
       $result = $this->db->query( $sql);
+
+      /*
+       * Notify
+       *
+       */
+      $filepdf = FAC_OUTPUTDIR . "/" . $this->ref . "/" . $this->ref . ".pdf";
+
+      $mesg = "La facture ".$this->ref." a été validée.\n";
+      
+      $notify = New Notify($this->db);
+      $notify->send($action_notify, $mesg, $filepdf);
 
       return $result;
     }
