@@ -606,8 +606,8 @@ create table llx_facturedet
   fk_product      integer,
   description     text,
   price           real default 0,
-  qty             smallint
-
+  qty             smallint,
+  tva_taux        real default 19.6
 );
 
 create table llx_paiement
@@ -798,7 +798,9 @@ create table llx_livre
   description     text,
   prix            decimal(15,4),
   fk_editeur      integer,
-  fk_user_author  integer
+  fk_user_author  integer,
+
+  UNIQUE(ref)
 );
 
 
@@ -807,7 +809,7 @@ create table llx_auteur
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   oscid           integer NOT NULL,
   tms             timestamp,
-  nom		  varchar(32),
+  nom		  varchar(255),
   fk_user_author  integer
 );
 
@@ -816,8 +818,32 @@ create table llx_editeur
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   oscid           integer NOT NULL,
   tms             timestamp,
-  nom		  varchar(32),
+  nom		  varchar(255),
   fk_user_author  integer
+);
+
+
+create table llx_newsletter
+(
+  rowid              integer AUTO_INCREMENT PRIMARY KEY,
+  datec              datetime,
+  tms                timestamp,
+  email_subject      varchar(32) NOT NULL,
+  email_from_name    varchar(255) NOT NULL,
+  email_from_email   varchar(255) NOT NULL,
+  email_replyto      varchar(255) NOT NULL,
+  email_body         text,
+  target             smallint,
+  sql_target         text,
+  status             smallint NOT NULL DEFAULT 0,
+  date_send_request  datetime,   -- debut de l'envoi demandé
+  date_send_begin    datetime,   -- debut de l'envoi
+  date_send_end      datetime,   -- fin de l'envoi
+  nbsent             integer,    -- nombre de mails envoyés
+  nberror            integer,    -- nombre de mails envoyés
+  fk_user_author     integer,
+  fk_user_valid      integer
+  fk_user_modif      integer
 );
 
 
