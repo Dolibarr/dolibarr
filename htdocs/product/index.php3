@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,19 +22,19 @@
 
 require("./pre.inc.php3");
 
-llxHeader();
-
 $db = new Db();
-if ($sortfield == "") {
+if ($sortfield == "")
+{
   $sortfield="lower(p.label),p.price";
 }
-if ($sortorder == "") {
+if ($sortorder == "")
+{
   $sortorder="ASC";
 }
 
 
-if ($action == 'update') {
-
+if ($action == 'update')
+{
   $sql = "UPDATE llx_product SET description='$desc' where rowid = $rowid";
   $db->query($sql);
 }
@@ -44,39 +44,59 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
+llxHeader();
 
 print_barre_liste("Liste des produits", $page, $PHP_SELF);
 
+print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+
+print "<TR class=\"liste_titre\"><td>";
+print_liste_field_titre("Réf",$PHP_SELF, "p.ref");
+print "</td><td>";
+print_liste_field_titre("Libellé",$PHP_SELF, "p.label");
+print "</td><TD align=\"right\">Prix de vente</TD>";
+print "</TR>\n";
+
+print '<tr class="liste_titre">';
+print '<form action="index.php3" method="post">';
+print '<td><input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
+print '</form><form action="index.php3" method="post">';
+print '<td><input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go"></td>';
+print '</form><td>&nbsp;</td></tr>';
+
 $sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p";
-  
+
+if ($HTTP_POST_VARS["sref"])
+{
+  $sql .= " WHERE lower(p.ref) like '%".strtolower($HTTP_POST_VARS["sref"])."%'";
+}
+if ($HTTP_POST_VARS["snom"])
+{
+  $sql .= " WHERE lower(p.label) like '%".strtolower($HTTP_POST_VARS["snom"])."%'";
+}
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
  
-if ( $db->query($sql) ) {
+if ( $db->query($sql) )
+{
   $num = $db->num_rows();
   $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Réf",$PHP_SELF, "p.ref");
-  print "</td><td>";
-  print_liste_field_titre("Libellé",$PHP_SELF, "p.label");
-  print "</td><TD align=\"right\">Prix de vente</TD>";
-  print "</TR>\n";
+
   $var=True;
-  while ($i < $num) {
-    $objp = $db->fetch_object( $i);
-    $var=!$var;
-    print "<TR $bc[$var]>";
-    print "<TD><a href=\"fiche.php3?id=$objp->rowid\">$objp->ref</a></TD>\n";
-    print "<TD>$objp->label</TD>\n";
-    print '<TD align="right">'.price($objp->price).'</TD>';
-    print "</TR>\n";
-    $i++;
-  }
-  print "</TABLE>";
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object( $i);
+      $var=!$var;
+      print "<TR $bc[$var]>";
+      print "<TD><a href=\"fiche.php3?id=$objp->rowid\">$objp->ref</a></TD>\n";
+      print "<TD>$objp->label</TD>\n";
+      print '<TD align="right">'.price($objp->price).'</TD>';
+      print "</TR>\n";
+      $i++;
+    }
   $db->free();
 }
-
+print "</table>";
 
 $db->close();
 
