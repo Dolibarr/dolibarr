@@ -37,9 +37,10 @@ create table llx_societe
   tel             varchar(20),                         -- phone number
   fax             varchar(20),                         -- fax number
   url             varchar(255),                        --
-  fk_secteur      integer        default 0,            --
-  fk_effectif     integer        default 0,            --
-  fk_typent       integer        default 0,            --
+  fk_secteur         integer        default 0,         --
+  fk_effectif        integer        default 0,         --
+  fk_typent          integer        default 0,         --
+  fk_forme_juridique integer        default 0,         -- forme juridique INSEE
   siren	          varchar(9),                          -- siren ou RCS
   siret           varchar(14),                         -- numero de siret
   ape             varchar(4),                          -- code ape
