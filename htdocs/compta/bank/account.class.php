@@ -52,11 +52,16 @@ class Account
   Function addline($date, $oper, $label, $amount, $num_chq="")
   {
     $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
-    $sql .= " VALUES (now(), $date, '$label', $amount,'$author',$num_chq,$this->rowid,'$operation')";
+    $sql .= " VALUES (now(), $date, '$label', $amount,'$author','$num_chq', $this->rowid, '$operation')";
 
     if ($this->db->query($sql))
       {
 	return 1;
+      }
+    else
+      {
+	print $this->db->error();
+	print "<br>$sql";
       }
   }
 

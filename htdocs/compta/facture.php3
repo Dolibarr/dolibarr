@@ -45,23 +45,26 @@ if ($user->societe_id > 0)
 
 if ($action == 'add_paiement')
 {
-  $datepaye = $db->idate(mktime(12, 0 , 0, $remonth, $reday, $reyear));
+  $datepaye = $db->idate(mktime(12, 0 , 0, $HTTP_POST_VARS["remonth"], $HTTP_POST_VARS["reday"], $HTTP_POST_VARS["reyear"]));
 
   $paiement = new Paiement($db);
 
-  $paiement->facid        = $facid;  
+  $paiement->facid        = $HTTP_POST_VARS["facid"];
   $paiement->datepaye     = $datepaye;
-  $paiement->amount       = $amount;
-  $paiement->author       = $author;
-  $paiement->paiementid   = $paiementid;
-  $paiement->num_paiement = $num_paiement;
-  $paiement->note         = $note;
+  $paiement->amount       = $HTTP_POST_VARS["amount"];
+  $paiement->author       = $HTTP_POST_VARS["author"];
+  $paiement->paiementid   = $HTTP_POST_VARS["paiementid"];
+  $paiement->num_paiement = $HTTP_POST_VARS["num_paiement"];
+  $paiement->note         = $HTTP_POST_VARS["note"];
 
   $paiement->create();
 
   $action = '';
 
-  $label = "Réglement facture N°";
+  $fac = new Facture($db);
+  $fac->fetch($HTTP_POST_VARS["facid"]);
+
+  $label = "Réglement facture ".$fac->ref;
 
   $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
   $acc->addline($datepaye, $paiementid, $label, $amount, $num_paiement);
