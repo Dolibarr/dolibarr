@@ -60,17 +60,10 @@ insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2003',
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_THEME','yellow','chaine','Thème par défaut');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
 
-insert into llx_const(name, value, type) values ('FAC_PDF_FAX','01 02 03 04 05','chaine');
-insert into llx_const(name, value, type) values ('FAC_PDF_SIRET','123 456 789','chaine');
-insert into llx_const(name, value, type) values ('FAC_PDF_INTITULE','Dolibarr','chaine');
-insert into llx_const(name, value, type) values ('FAC_PDF_SIREN','123 456 789 123','chaine');
-insert into llx_const(name, value, type) values ('FAC_PDF_TEL','05 04 03 02 01','chaine');
-insert into llx_const(name, value, type) values ('FAC_PDF_ADRESSE','1 quai Martin\n56400 Auray','texte');
-
 
 insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
 
-insert into llx_const(name, value, type) values ('FACTURE_ADDON','pluton','chaine');
+
 
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage du formulaire de recherche des sociétés dans la barre de gauche');
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage du formulaire de recherche des contacts dans la barre de gauche');
