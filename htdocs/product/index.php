@@ -36,47 +36,18 @@ if ($action == 'update')
  *
  */
 
-if ($page < 0) { 
-  $page = 0 ; }
+llxHeader();
 
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
-  
-if ($sortfield == "") {
-  $sortfield="p.tms"; }
-     
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
+print_titre("Produits et services");
+
+print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+
+print '<tr><td valign="top" width="30%">';
+
   
 $sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p";
-
-if ($HTTP_POST_VARS["sall"])
-{
-  $sql .= " WHERE lower(p.ref) like '%".strtolower($sall)."%'";
-  $sql .= " OR lower(p.label) like '%".strtolower($sall)."%'";
-}
-else
-{
-  if (strlen($type) == 0)
-    {
-      $type = 0;
-    }
-
-  $sql .= " WHERE p.fk_product_type = $type";
-  if ($sref)
-    {
-      $sql .= " AND lower(p.ref) like '%".strtolower($sref)."%'";
-    }
-  if ($snom)
-    {
-      $sql .= " AND lower(p.label) like '%".strtolower($snom)."%'";
-    }
-}
-
-$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit($limit + 1 ,$offset);
+$sql .= " ORDER BY p.datec DESC ";
+$sql .= $db->plimit(15 ,0);
 $result = $db->query($sql) ;
 
 if ($result)
@@ -85,62 +56,46 @@ if ($result)
 
   $i = 0;
   
-  if ($num == 1)
+  if ($num > 0)
     {
-      $objp = $db->fetch_object($i);
-      Header("Location: fiche.php3?id=$objp->rowid");
+      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+
+      print '<tr class="liste_titre"><td colspan="2">Derniers produits et services</td></tr>';
+    
+      $var=True;
+      while ($i < $num)
+	{
+	  $objp = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<TR $bc[$var]>";
+	  print "<TD><a href=\"fiche.php3?id=$objp->rowid\">$objp->ref</a></TD>\n";
+	  print "<TD>$objp->label</TD></tr>\n";
+	  $i++;
+	}
+      $db->free();
+
+      print "</table>";
     }
-  
-  llxHeader();
-
-  if ($ref || $snom || $sall)
-    {
-      print_barre_liste("Recherche d'un produit ou service", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
-    }
-  else
-    {
-      print_barre_liste("Liste des ".$types[$type]."s", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
-    }
-
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-
-  print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Réf",$PHP_SELF, "p.ref");
-  print "</td><td>";
-  print_liste_field_titre("Libellé",$PHP_SELF, "p.label");
-  print "</td><TD align=\"right\">Prix de vente</TD>";
-  print "</TR>\n";
-  
-  print '<tr class="liste_titre">';
-  print '<form action="index.php?type='.$type.'" method="post">';
-  print '<td><input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
-  print '</form><form action="index.php" method="post">';
-  print '<td><input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go"></td>';
-  print '</form><td>&nbsp;</td></tr>';
-  
-  
-  $var=True;
-  while ($i < min($num,$limit))
-    {
-      $objp = $db->fetch_object( $i);
-      $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php3?id=$objp->rowid\">$objp->ref</a></TD>\n";
-      print "<TD>$objp->label</TD>\n";
-      print '<TD align="right">'.price($objp->price).'</TD>';
-      print "</TR>\n";
-      $i++;
-    }
-  $db->free();
-
-  print "</table>";
-
 }
 else
 {
   print $db->error() . "<br>" .$sql;
 }
 
+print '</td><td valign="top" width="30%">';
+
+print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td colspan="2">Hors vente</td></tr>';
+print "<TR $bc[0]>";
+print '<td><a href="liste.php?type=0&envente=0">Produits hors vente</a></td></tr>';
+print "<TR $bc[1]>";
+print '<td><a href="liste.php?type=1&envente=0">Services hors vente</a></td></tr></table>';
+
+print '</td><td valign="top" width="30%">';
+print '&nbsp';
+print "</td>";
+
+print '</tr></table>';
 
 $db->close();
 
