@@ -1,6 +1,7 @@
 <!DOCTYPE debiandoc public "-//DebianDoc//DTD DebianDoc//EN"
 [
     <!entity ch-installation system "installation.sgml">
+    <!entity ch-update system "update.sgml">
     <!entity ch-facture	system "facture.sgml">
 ]
 >
@@ -21,6 +22,7 @@
     <toc sect>
 
     &ch-installation;
+    &ch-update;
     &ch-facture;
 
   </book>
