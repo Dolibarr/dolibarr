@@ -34,7 +34,6 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-
 llxHeader();
 
 $db = new Db();
@@ -189,7 +188,6 @@ if ($socid > 0)
       {
 	print "<td align=\"center\"><a href=\"../comm/fiche.php3?socid=$objsoc->idp\">Commercial</a></td>";
 	print "<td align=\"center\"><a href=\"bookmark.php3?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
-	print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
 	print "<td>[<a href=\"facture.php3?action=create&socidp=$objsoc->idp\">".translate("Facture")."</a>]</td>";
 	print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
 	print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
@@ -203,10 +201,10 @@ if ($socid > 0)
     print '<table width="100%" border="0"><tr>';
     print "<td valign=\"top\">";
     print "<table cellspacing=\"0\" border=\"1\" width=\"100%\">";
-    print '<tr class="fiche"><td>Tel</td><td>'.$objsoc->tel.'&nbsp;</td><td>Fax</td><td>'.$objsoc->fax.'&nbsp;</td></tr>';
-    print '<tr class="fiche"><td>Ville</td><td colspan="3">'.nl2br($objsoc->address)."<br>$objsoc->cp $objsoc->ville</td></tr>";
+    print '<tr><td>Tel</td><td>'.$objsoc->tel.'&nbsp;</td><td>Fax</td><td>'.$objsoc->fax.'&nbsp;</td></tr>';
+    print '<tr><td>Ville</td><td colspan="3">'.nl2br($objsoc->address)."<br>$objsoc->cp $objsoc->ville</td></tr>";
 
-    print '<tr class="fiche"><td>siren</td><td><a href="http://www.societe.com/cgi-bin/recherche?rncs='.$objsoc->siren.'">'.$objsoc->siren.'</a>&nbsp;</td>';
+    print '<tr><td>siren</td><td><a href="http://www.societe.com/cgi-bin/recherche?rncs='.$objsoc->siren.'">'.$objsoc->siren.'</a>&nbsp;</td>';
     print "<td>prefix</td><td>";
     if ($objsoc->prefix_comm)
       {
@@ -219,7 +217,7 @@ if ($socid > 0)
 
     print "</td></tr>";
 
-    print "<tr class=\"fiche\"><td>Site</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
+    print "<tr><td>Site</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
 
     print "</table>";
 
