@@ -99,7 +99,7 @@ class Commande
 		  $objMod = new $modName($this->db);
 		  $num = $objMod->commande_get_num();
 
-		  $sql = "UPDATE llx_commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+		  $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
 		  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 		  
 		  if ($this->db->query($sql) )
@@ -134,7 +134,7 @@ class Commande
       if ($user->rights->commande->valider)
 	{
 
-	  $sql = "UPDATE llx_commande SET fk_statut = 3";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 3";
 	  $sql .= " WHERE rowid = $this->id AND fk_statut > 0 ;";
 	  
 	  if ($this->db->query($sql) )
@@ -157,7 +157,7 @@ class Commande
       if ($user->rights->commande->valider)
 	{
 
-	  $sql = "UPDATE llx_commande SET fk_statut = -1";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = -1";
 	  $sql .= " WHERE rowid = $this->id AND fk_statut = 1 ;";
 	  
 	  if ($this->db->query($sql) )
@@ -190,7 +190,7 @@ class Commande
 	  $this->projetid = 0;
 	}
       
-      $sql = "INSERT INTO llx_commande (fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source) ";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande (fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source) ";
       $sql .= " VALUES ($this->soc_id, now(), $user->id, $this->projetid, ".$this->db->idate($this->date_commande).", $this->source)";
       
       if ( $this->db->query($sql) )
@@ -218,13 +218,13 @@ class Commande
 	   *
 	   */
 
-	  $sql = "UPDATE llx_commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 	  if ($this->db->query($sql))
 	    {
 
 	      if ($this->id && $this->propale_id)
 		{
-		  $sql = "INSERT INTO llx_co_pr (fk_commande, fk_propale) VALUES (".$this->id.",".$this->propale_id.")";
+		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."co_pr (fk_commande, fk_propale) VALUES (".$this->id.",".$this->propale_id.")";
 		  $this->db->query($sql);
 		}
 	      /*
@@ -287,7 +287,7 @@ class Commande
 	      $price = $p_price - $remise;
 	    }
 
-	  $sql = "INSERT INTO llx_commandedet (fk_commande, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."commandedet (fk_commande, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
 	  $sql .= " ('".$this->id."', '$p_product_id','". $p_qty."','". $price."','".$p_tva_tx."',''".addslashes($p_desc)."','$remise_percent', '$subprice') ; ";
 	  
 	  if ($this->db->query($sql) )
@@ -344,7 +344,7 @@ class Commande
 	      $price = $pu - $remise;
 	    }
 
-	  $sql = "INSERT INTO llx_commandedet (fk_commande,label,description,price,qty,tva_tx, fk_product, remise_percent, subprice, remise)";
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."commandedet (fk_commande,label,description,price,qty,tva_tx, fk_product, remise_percent, subprice, remise)";
 	  $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "', $price, $qty, $txtva, $fk_product, $remise_percent, $subprice, $remise) ;";
 
 	  if ( $this->db->query( $sql) )
@@ -386,7 +386,7 @@ class Commande
     {
       $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva";
       $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture";
-      $sql .= " FROM llx_commande as c";
+      $sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
       $sql .= " WHERE c.rowid = $id";
 
       $result = $this->db->query($sql) ;
@@ -418,7 +418,7 @@ class Commande
 	  /*
 	   * Propale associée
 	   */
-	  $sql = "SELECT fk_propale FROM llx_co_pr WHERE fk_commande = ".$this->id;
+	  $sql = "SELECT fk_propale FROM ".MAIN_DB_PREFIX."co_pr WHERE fk_commande = ".$this->id;
 	  if ($this->db->query($sql) )
 	    {
 	      if ($this->db->num_rows())
@@ -448,11 +448,11 @@ class Commande
 
     if ($only_product==1)
       {
-	$sql .= " FROM llx_commandedet as l LEFT JOIN llx_product as p ON (p.rowid = l.fk_product) WHERE l.fk_commande = ".$this->id." AND p.fk_product_type <> 1 ORDER BY l.rowid";
+	$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l LEFT JOIN ".MAIN_DB_PREFIX."product as p ON (p.rowid = l.fk_product) WHERE l.fk_commande = ".$this->id." AND p.fk_product_type <> 1 ORDER BY l.rowid";
       }
     else
       {
-	$sql .= " FROM llx_commandedet as l WHERE l.fk_commande = $this->id ORDER BY l.rowid";	  
+	$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l WHERE l.fk_commande = $this->id ORDER BY l.rowid";	  
       }
 
     $result = $this->db->query($sql);
@@ -494,7 +494,7 @@ class Commande
     $this->livraisons = array();
 
     $sql = "SELECT fk_product, sum(ed.qty)";
-    $sql .= " FROM llx_expeditiondet as ed, llx_commande as c, llx_commandedet as cd";
+    $sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."commandedet as cd";
     $sql .=" WHERE ed.fk_commande_ligne = cd .rowid AND cd.fk_commande = c.rowid";
     $sql .= " AND cd.fk_commande =" .$this->id;
     $sql .= " GROUP BY fk_product ";
@@ -520,7 +520,7 @@ class Commande
    */
   Function nb_expedition()
   {
-    $sql = "SELECT count(*) FROM llx_expedition as e";
+    $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."expedition as e";
     $sql .=" WHERE e.fk_commande = $this->id";
 
     $result = $this->db->query($sql);
@@ -540,7 +540,7 @@ class Commande
     {
       if ($this->statut == 0)
 	{
-	  $sql = "DELETE FROM llx_commandedet WHERE rowid = $idligne";
+	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet WHERE rowid = $idligne";
 	  
 	  if ($this->db->query($sql) )
 	    {
@@ -565,7 +565,7 @@ class Commande
 
 	  $remise = ereg_replace(",",".",$remise);
 
-	  $sql = "UPDATE llx_commande SET remise_percent = ".$remise;
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET remise_percent = ".$remise;
 	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 	  
 	  if ($this->db->query($sql) )
@@ -586,7 +586,7 @@ class Commande
    */
   Function classer_facturee()
     {
-      $sql = "UPDATE llx_commande SET facture = 1";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET facture = 1";
       $sql .= " WHERE rowid = ".$this->id." AND fk_statut > 0 ;";
       
       if ($this->db->query($sql) )
@@ -610,7 +610,7 @@ class Commande
       /*
        *  Liste des produits a ajouter
        */
-      $sql = "SELECT price, qty, tva_tx FROM llx_commandedet WHERE fk_commande = $this->id";
+      $sql = "SELECT price, qty, tva_tx FROM ".MAIN_DB_PREFIX."commandedet WHERE fk_commande = $this->id";
       if ( $this->db->query($sql) )
 	{
 	  $num = $this->db->num_rows();
@@ -639,7 +639,7 @@ class Commande
       /*
        *
        */
-      $sql = "UPDATE llx_commande set amount_ht=$totalht, total_ht=$totalht, tva=$totaltva, total_ttc=$totalttc, remise=$total_remise WHERE rowid = $this->id";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."commande set amount_ht=$totalht, total_ht=$totalht, tva=$totaltva, total_ttc=$totalttc, remise=$total_remise WHERE rowid = $this->id";
       if ( $this->db->query($sql) )
 	{
 	  return 1;
@@ -675,7 +675,7 @@ class Commande
 	      $remise_percent=0;
 	    }
 
-	  $sql = "UPDATE llx_commandedet SET description='$desc',price=$price,subprice=$subprice,remise=$remise,remise_percent=$remise_percent,qty=$qty WHERE rowid = $rowid ;";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET description='$desc',price=$price,subprice=$subprice,remise=$remise,remise_percent=$remise_percent,qty=$qty WHERE rowid = $rowid ;";
 	  if ( $this->db->query( $sql) )
 	    {
 	      $this->update_price($this->id);
@@ -698,19 +698,19 @@ class Commande
 
     $this->db->begin();
 
-    $sql = "DELETE FROM llx_commandedet WHERE fk_commande = $this->id ;";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet WHERE fk_commande = $this->id ;";
     if (! $this->db->query($sql) ) 
       {
 	$err++;
       }
 
-    $sql = "DELETE FROM llx_commande WHERE rowid = $this->id;";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande WHERE rowid = $this->id;";
     if (! $this->db->query($sql) ) 
       {
 	$err++;
       }
 
-    $sql = "DELETE FROM llx_co_pr WHERE fk_commande = $this->id;";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."co_pr WHERE fk_commande = $this->id;";
     if (! $this->db->query($sql) ) 
       {
 	$err++;
@@ -733,7 +733,7 @@ class Commande
    */
   Function classin($cat_id)
     {
-      $sql = "UPDATE llx_commande SET fk_projet = $cat_id";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_projet = $cat_id";
       $sql .= " WHERE rowid = $this->id;";
       
       if ($this->db->query($sql) )

@@ -43,7 +43,7 @@ print "</table></form>\n";
 /*
  * Commandes à valider
  */
-$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
 if ($socidp)
 {
@@ -75,7 +75,7 @@ if ( $db->query($sql) )
 /*
  * Commandes à traiter
  */
-$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 1";
 if ($socidp)
 {
@@ -113,7 +113,7 @@ print '</td><td valign="top" width="70%">';
 /*
  * 
  */
-$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 2 ";
 if ($socidp)
 {
@@ -144,7 +144,7 @@ if ( $db->query($sql) )
 /*
  * Commandes à traiter
  */
-$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut > 2 ";
 if ($socidp)
 {

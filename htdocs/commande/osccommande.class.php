@@ -65,7 +65,7 @@ class OscCommande {
   {
     $ga = array();
 
-    $sql = "SELECT a.rowid, a.title FROM llx_album as a, llx_album_to_groupart as l";
+    $sql = "SELECT a.rowid, a.title FROM ".MAIN_DB_PREFIX."album as a, ".MAIN_DB_PREFIX."album_to_groupart as l";
     $sql .= " WHERE a.rowid = l.fk_album AND l.fk_groupart = ".$this->id;
     $sql .= " ORDER BY a.title";
 

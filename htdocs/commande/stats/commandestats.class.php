@@ -52,7 +52,7 @@ class CommandeStats
   Function getNbCommandeByMonth($year)
   {
     $result = array();
-    $sql = "SELECT date_format(date_commande,'%m') as dm, count(*)  FROM llx_commande";
+    $sql = "SELECT date_format(date_commande,'%m') as dm, count(*)  FROM ".MAIN_DB_PREFIX."commande";
     $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
     if ($this->socidp)
       {
@@ -96,7 +96,7 @@ class CommandeStats
   Function getNbByYear()
   {
     $result = array();
-    $sql = "SELECT date_format(date_commande,'%Y') as dm, count(*), sum(total_ht)  FROM llx_commande WHERE fk_statut > 0";
+    $sql = "SELECT date_format(date_commande,'%Y') as dm, count(*), sum(total_ht)  FROM ".MAIN_DB_PREFIX."commande WHERE fk_statut > 0";
     if ($this->socidp)
       {
 	$sql .= " AND fk_soc = ".$this->socidp;
@@ -124,7 +124,7 @@ class CommandeStats
   Function getCommandeAmountByMonth($year)
   {
     $result = array();
-    $sql = "SELECT date_format(date_commande,'%m') as dm, sum(total_ht)  FROM llx_commande";
+    $sql = "SELECT date_format(date_commande,'%m') as dm, sum(total_ht)  FROM ".MAIN_DB_PREFIX."commande";
     $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
     if ($this->socidp)
       {
@@ -160,7 +160,7 @@ class CommandeStats
   Function getCommandeAverageByMonth($year)
   {
     $result = array();
-    $sql = "SELECT date_format(date_commande,'%m') as dm, avg(total_ht)  FROM llx_commande";
+    $sql = "SELECT date_format(date_commande,'%m') as dm, avg(total_ht)  FROM ".MAIN_DB_PREFIX."commande";
     $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
     if ($this->socidp)
       {

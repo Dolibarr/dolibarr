@@ -52,7 +52,7 @@ $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 
 $sql = "SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht,".$db->pdate("c.date_commande")." as date_commande, c.fk_statut" ;
-$sql .= " FROM llx_societe as s, llx_commande as c WHERE c.fk_soc = s.idp";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c WHERE c.fk_soc = s.idp";
 
 if ($socidp)
 { 
