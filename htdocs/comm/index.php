@@ -71,14 +71,11 @@ print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td valign="top" width="30%">';
 
 print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-print "<TR class=\"liste_titre\">";
-print "<td colspan=\"2\">Recherche une proposition</td></tr>";
+print '<tr class="liste_titre"><td colspan="2">Rechercher une proposition</td></tr>';
 print '<form method="post" action="propal.php3">';
 print "<tr $bc[1]><td>";
-print 'Réf. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
-print "</form></table><br>";
-
-
+print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
+print "</form></table><br>\n";
 
 $sql = "SELECT p.rowid, p.ref";
 $sql .= " FROM llx_propal as p";
