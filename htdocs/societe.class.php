@@ -190,7 +190,7 @@ class Societe {
 
       $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm";
       $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
-      $sql .= ", s.siret, s.capital, s.ape, s.tva_intra";
+      $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, rubrique";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 
       $sql .= " WHERE s.idp = ".$this->id;
@@ -227,6 +227,8 @@ class Societe {
 	      
 	      $this->client = $obj->client;
 	      $this->fournisseur = $obj->fournisseur;
+
+	      $this->rubrique = $obj->rubrique;
 	      
 	      $this->note = $obj->note;
 
