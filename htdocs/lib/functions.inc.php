@@ -102,7 +102,9 @@ function dolibarr_fiche_head($links, $active=0, $title='')
 
   if (strlen($title))
     {
-      print '<a class="tabTitle">'.$title.'</a>';
+        $limittitle=30;
+        if (strlen($title) > $limittitle) print '<a class="tabTitle">'.substr($title,0,$limittitle).'...</a>';
+        else print '<a class="tabTitle">'.$title.'</a>';
     }
 
   for ($i = 0 ; $i < sizeof($links) ; $i++)
