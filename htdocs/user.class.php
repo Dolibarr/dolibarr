@@ -55,6 +55,7 @@ class User
   var $admin;
   var $login;
   var $pass;
+  var $lang;
   var $datec;
   var $datem;
   var $societe_id;
@@ -94,7 +95,6 @@ class User
 	 
   function fetch($login='')
     {
-      
       $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note, u.fk_societe, u.fk_socpeople";
       $sql .= ", ".$this->db->pdate("u.datec")." as datec, ".$this->db->pdate("u.tms")." as datem";
       $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -126,7 +126,8 @@ class User
 	      $this->admin = $obj->admin;
 	      $this->contact_id = $obj->fk_socpeople;
 	      $this->note = stripslashes($obj->note);
-	      
+	      $this->lang = 'fr_FR';    // \todo Gérer la langue par défaut d'un utilisateur Dolibarr
+	      	      
 	      $this->datec  = $obj->datec;
 	      $this->datem  = $obj->datem;
 
@@ -209,10 +210,6 @@ class User
             // Ajout des droits induits
             if ($subperms) $whereforadd.=" OR (module='$module' AND perms='$perms' AND subperms='lire')";
             if ($perms)    $whereforadd.=" OR (module='$module' AND perms='lire' AND subperms IS NULL)";
-
-            // Pour compatibilité, si lowid = 0, on est en mode ajout de tout
-            // \todo A virer quand sera géré par l'appelant
-            if (substr($rid,-1,1) == 0) $whereforadd="module='$module'";
         }
         else {
             // Where pour la liste des droits à ajouter
@@ -306,10 +303,6 @@ class User
             // Suppression des droits induits
             if ($subperms=='lire') $wherefordel.=" OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
             if ($perms=='lire')    $wherefordel.=" OR (module='$module')";
-
-            // Pour compatibilité, si lowid = 0, on est en mode suppression de tout
-            // \todo A virer quand sera géré par l'appelant
-            if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
         }
         else {
             // Where pour la liste des droits à supprimer
