@@ -1,5 +1,6 @@
 #
 # Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+# Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -26,14 +27,14 @@ all:	show
 
 create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_actioncomm.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < c_actioncomm.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < c_chargesociales.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < c_effectif.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < c_paiement.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < c_pays.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < c_propalst.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < c_stcomm.sql
-	$(MYSQL) $(OPTIONS) $(BASE) < c_typent.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_c_actioncomm.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_c_chargesociales.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_c_effectif.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_c_paiement.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_c_pays.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_c_propalst.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_c_stcomm.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_c_typent.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_adherent.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_adherent_type.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_adherent_options.sql
@@ -90,6 +91,9 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_product_price.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_propal_model_pdf.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_rights_def.sql
+#ajout tabes oubliees 2004.01.31
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_co_fa.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_co_pr.sql
 
 show:
 	$(MYSQL) $(OPTIONS) $(BASE) -e 'show tables'
