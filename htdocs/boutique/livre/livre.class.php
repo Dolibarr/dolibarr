@@ -30,6 +30,7 @@ class Livre {
   var $annee;
   var $editeurid;
   var $titre;
+  var $image;
   var $description;
   var $price ;
   var $status ;
@@ -525,6 +526,7 @@ class Livre {
 	    $result = $this->db->fetch_array();
 	    
 	    $this->status = $result["products_status"];
+	    $this->image  = $result["products_image"];
 
 	    if ($this->status)
 	      {
