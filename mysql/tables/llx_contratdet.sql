@@ -52,11 +52,3 @@ create table llx_contratdet
   commentaire           text
 
 )type=innodb;
---
---
-ALTER TABLE llx_contratdet ADD INDEX (fk_contrat);
-ALTER TABLE llx_contratdet ADD INDEX (fk_product);
---
---
-ALTER TABLE llx_contratdet ADD FOREIGN KEY (fk_contrat) REFERENCES llx_contrat (rowid);
-ALTER TABLE llx_contratdet ADD FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
