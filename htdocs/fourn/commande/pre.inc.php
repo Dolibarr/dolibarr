@@ -47,6 +47,9 @@ function llxHeader($head = "", $title = "")
   $menu->add(DOL_URL_ROOT."/fourn/commande/", $langs->trans("Orders"));
   $menu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php", $langs->trans("List"));
 
+  $langs->load("bills");
+  $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", $langs->trans("Bills"));
+
   left_menu($menu->liste);
 }
 
