@@ -77,7 +77,9 @@ class modTelephonie extends DolibarrModules
     $sql = array(
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (140,'Tous les droits sur la telephonie','telephonie','a',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (141,'Consulter la telephonie','telephonie','r',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (142,'Configurer la telephonie','telephonie','w',0);");
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (142,'Commander les lignes','telephonie','w',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (143,'Activer une ligne','telephonie','w',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (144,'Configurer la telephonie','telephonie','w',0);");
     
     /*
      * Documents
