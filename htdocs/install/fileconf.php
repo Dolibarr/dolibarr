@@ -162,6 +162,21 @@ $dolibarr_main_db_host = "localhost";
 }
 ?>
 <tr>
+<!-- moi-->
+<td valign="top" class="label">Choix de la base de données</td>
+
+
+<td> <select name="db_type">
+		<option value="<?PHP print $dolibarr_main_db_type ?>">Mysql</option>
+		<option value="<?PHP print $dolibarr_main_db_type ?>">PostgreSql</option>
+	  </select>
+</td>
+
+<td valign="comment">Nom de la base de donnée qui est soit MySql par défaut ou alors PostgreSql.</td>
+
+</tr>
+
+<br>
 <td valign="top" class="label">Serveur</td>
 
 <td valign="top" class="label"><input type="text" name="db_host" value="<?PHP print $dolibarr_main_db_host ?>"></td>

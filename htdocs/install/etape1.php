@@ -84,6 +84,9 @@ if ($_POST["action"] == "set")
       fputs($fp, '$dolibarr_main_db_pass="'.$_POST["db_pass"].'";');
       fputs($fp,"\n");
 
+			fputs($fp, '$dolibarr_main_db_type="'.$_POST["db_type"].'";');
+      fputs($fp,"\n");
+			
       fputs($fp, '?>');
       fclose($fp);
 
