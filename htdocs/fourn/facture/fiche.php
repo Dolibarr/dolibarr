@@ -489,7 +489,7 @@ else
 	  print '<td align="center" width="20%">-</td>';
 	}
  
-      if ($obj->statut == 1 && abs($resteapayer == 0) && $obj->paye == 0  && $user->societe_id == 0)
+      if ($obj->statut == 1 && abs(round($resteapayer == 0)) && $obj->paye == 0  && $user->societe_id == 0)
 	{
 	  print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=payed\">Classer 'Payée'</a></td>";
 	}
