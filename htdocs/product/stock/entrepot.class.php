@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +43,12 @@ class Entrepot
    */
   Function create($user) 
     {
+	  // Si libelle non defini, erreur
+	  if ($this->libelle == '') {
+  		  $this->mesg_error = "Libellé obligatoire";
+		  return 0;
+	  }
+	  
       if ($this->db->query("BEGIN") )
 	{
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author)";
