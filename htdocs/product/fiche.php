@@ -530,12 +530,15 @@ else
 	   */
 	  if ($_GET["action"] == 'ajout_photo' && $user->rights->produit->creer  && $product->isproduct)
 	    {
+	      $product->add_photo($conf->produit->dir_output);
+
 	      $langs->load("suppliers");
 	  
 	      print_titre($langs->trans("AddPhoto"));
-	      print '<form action="fiche.php?id='.$product->id.'" method="post">';
-	      print '<input type="hidden" name="action" value="add_fourn">';
-	      print '<input type="hidden" name="id" value="'.$product->id.'">';
+
+	      print '<form name="userfile" action="fiche.php?id='.$product->id.'" enctype="multipart/form-data" METHOD="POST">';      
+	      print '<input type="hidden" name="max_file_size" value="2000000">';
+
 	      print '<table class="border" width="100%"><tr>';
 	      print '<td>'.$langs->trans("File").'</td>';
 	      print '<td><input type="file" name="photofile"></td></tr>';
