@@ -152,13 +152,8 @@ class modFacture extends DolibarrModules
     // Permissions
     $this->remove();
 
-    $this->rights[0][0] = 10;
-    $this->rights[0][1] = 'Tous les droits sur les factures';
-    $this->rights[0][2] = 'a';
-    $this->rights[0][3] = 0;
-
     $this->rights[1][0] = 11;
-    $this->rights[1][1] = 'Consulter les factures';
+    $this->rights[1][1] = 'Lire les factures';
     $this->rights[1][2] = 'a';
     $this->rights[1][3] = 0;
     $this->rights[1][4] = 'lire';
@@ -176,7 +171,7 @@ class modFacture extends DolibarrModules
     $this->rights[3][4] = 'valider';
 
     $this->rights[4][0] = 15;
-    $this->rights[4][1] = 'Envoyer les factures aux clients';
+    $this->rights[4][1] = 'Envoyer les factures';
     $this->rights[4][2] = 'a';
     $this->rights[4][3] = 0;
     $this->rights[4][4] = 'envoyer';

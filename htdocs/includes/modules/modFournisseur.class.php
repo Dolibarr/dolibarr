@@ -87,16 +87,6 @@ class modFournisseur extends DolibarrModules
   {
     $this->remove();
 
-    $this->rights[0][0] = 170; // id de la permission
-    $this->rights[0][1] = 'Tous les droits sur les fournisseurs'; // libelle de la permission
-    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
-
-    $this->rights[1][0] = 180; // id de la permission
-    $this->rights[1][1] = 'Tous les droits sur les commandes fournisseurs'; // libelle de la permission
-    $this->rights[1][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[1][3] = 0; // La permission est-elle une permission par défaut
-
     $this->rights[2][0] = 181;
     $this->rights[2][1] = 'Lire les commandes fournisseur';
     $this->rights[2][2] = 'r';

@@ -102,11 +102,6 @@ class modPropale extends DolibarrModules
     // Permissions et valeurs par défaut
     $this->remove();
 
-    $this->rights[0][0] = 20; // id de la permission
-    $this->rights[0][1] = 'Tous les droits sur les propositions commerciales'; // libelle de la permission
-    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
-
     $this->rights[1][0] = 21; // id de la permission
     $this->rights[1][1] = 'Lire les propositions commerciales'; // libelle de la permission
     $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
@@ -114,7 +109,7 @@ class modPropale extends DolibarrModules
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 22; // id de la permission
-    $this->rights[2][1] = 'Créer modifier les propositions commerciales'; // libelle de la permission
+    $this->rights[2][1] = 'Créer/modifier les propositions commerciales'; // libelle de la permission
     $this->rights[2][2] = 'w'; // type de la permission (déprécié à ce jour)
     $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[2][4] = 'creer';

@@ -129,11 +129,6 @@ class modAdherent extends DolibarrModules
     // Permissions
     $this->remove();
 
-    $this->rights[0][0] = 70; // id de la permission
-    $this->rights[0][1] = 'Tous les droits sur les adherents'; // libelle de la permission
-    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
-
     $this->rights[1][0] = 71; // id de la permission
     $this->rights[1][1] = 'Lire les fiche adherents'; // libelle de la permission
     $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
@@ -141,22 +136,22 @@ class modAdherent extends DolibarrModules
     $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 72; // id de la permission
-    $this->rights[2][1] = 'Créer modifier des adherents'; // libelle de la permission
+    $this->rights[2][1] = 'Créer/modifier les adherents'; // libelle de la permission
     $this->rights[2][2] = 'w'; // type de la permission (déprécié à ce jour)
     $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[2][4] = 'creer';
 
-    $this->rights[3][0] = 73; // id de la permission
-    $this->rights[3][1] = 'Modifier les adherents'; // libelle de la permission
-    $this->rights[3][2] = 'm'; // type de la permission (déprécié à ce jour)
+    $this->rights[3][0] = 74; // id de la permission
+    $this->rights[3][1] = 'Supprimer les adherents'; // libelle de la permission
+    $this->rights[3][2] = 'd'; // type de la permission (déprécié à ce jour)
     $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[3][4] = 'modifier';
+    $this->rights[3][4] = 'supprimer';
 
-    $this->rights[4][0] = 74; // id de la permission
-    $this->rights[4][1] = 'Supprimer les adherents'; // libelle de la permission
-    $this->rights[4][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[4][0] = 75; // id de la permission
+    $this->rights[4][1] = 'Configurer les types et caractéristiques des adherents'; // libelle de la permission
+    $this->rights[4][2] = 'w'; // type de la permission (déprécié à ce jour)
     $this->rights[4][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[4][4] = 'supprimer';
+    $this->rights[4][4] = 'configurer';
 
     // Dir
     $this->dirs[0] = $conf->adherent->dir_output;

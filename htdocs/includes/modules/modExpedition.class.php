@@ -87,11 +87,6 @@ class modExpedition extends DolibarrModules
     // Permissions
     $this->remove();
 
-    $this->rights[0][0] = 100; // id de la permission
-    $this->rights[0][1] = 'Tous les droits sur les expeditions'; // libelle de la permission
-    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
-
     $this->rights[1][0] = 101;
     $this->rights[1][1] = 'Lire les expeditions';
     $this->rights[1][2] = 'r';

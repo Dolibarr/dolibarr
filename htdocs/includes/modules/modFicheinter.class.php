@@ -89,25 +89,23 @@ class modFicheinter  extends DolibarrModules
     // Permissions
     $this->remove();
 
-    $this->rights[0][0] = 60;
-    $this->rights[0][1] = 'Tous les droits sur les fiches d\'intervention';
-    $this->rights[0][2] = 'a';
-    $this->rights[0][3] = 0;
-
     $this->rights[1][0] = 61;
     $this->rights[1][1] = 'Lire les fiches d\'intervention';
     $this->rights[1][2] = 'r';
     $this->rights[1][3] = 1;
+    $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 62;
-    $this->rights[2][1] = 'Créer modifier les fiches d\'intervention';
+    $this->rights[2][1] = 'Créer/modifier les fiches d\'intervention';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
+    $this->rights[2][4] = 'creer';
 
     $this->rights[3][0] = 64;
     $this->rights[3][1] = 'Supprimer les fiches d\'intervention';
     $this->rights[3][2] = 'd';
     $this->rights[3][3] = 0;
+    $this->rights[3][4] = 'supprimer';
 
     return $this->_init($sql);
   }

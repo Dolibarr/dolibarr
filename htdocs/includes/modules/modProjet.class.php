@@ -82,11 +82,6 @@ class modProjet extends DolibarrModules
     // Permissions
     $this->remove();
 
-    $this->rights[0][0] = 40; // id de la permission
-    $this->rights[0][1] = 'Tous les droits sur les projets'; // libelle de la permission
-    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
-
     $this->rights[1][0] = 41; // id de la permission
     $this->rights[1][1] = 'Lire les projets'; // libelle de la permission
     $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
