@@ -311,7 +311,7 @@ print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
 
-if ($action == 'create')
+if ($action == 'create' || $action == 'edit')
 {
   print '<td width="20%" align="center">-</td>';
 }
