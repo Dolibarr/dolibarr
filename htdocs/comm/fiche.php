@@ -146,7 +146,7 @@ if ($_socid > 0)
   $h = 0;
   
   $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id;
-  $head[$h][1] = "Fiche société";
+  $head[$h][1] = $langs->trans("Company");
   $h++;
   
   if ($objsoc->client==1)
