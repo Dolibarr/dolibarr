@@ -37,13 +37,15 @@ function valeur($sql)
     }
   return $valeur;
 }
+
+
 /*
  *
  */
 
 if ($action == 'add')
 {
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech,amount) ";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, amount) ";
   $sql .= " VALUES ($type,'$libelle','$date',$amount);";
 
   if (! $db->query($sql) )
@@ -52,22 +54,38 @@ if ($action == 'add')
     }
 }
 
-print_titre("Charges sociales $year");
+if ($_GET["action"] == 'del')
+{
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."chargesociales where rowid='".$_GET["id"]."'";
+
+  if (! $db->query($sql) )
+    {
+      print $db->error();
+    }
+}
+
+if ($_GET["action"] == 'edit')
+{
+	print "La modification est le paiement des charges n'est pas encore disponible.\nSeule leur saisie est possible, sans interaction avec le compte pour l'instant.\n";
+}
+
+
 
 /*
- *
- *
+ *  Affichage liste et formulaire des charges.
  */
 
-print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-print "<TR class=\"liste_titre\">";
-print '<td>Echeance</td><td>Période</td><td colspan="2">';
-print_liste_field_titre("Charges",$PHP_SELF,"c.libelle");
-print '</td><td align="right">Montant</td><td colspan="2">&nbsp;</td>';
-print "</TR>\n";
+print_titre("Charges sociales $year");
+
+print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+print "<tr class=\"liste_titre\">";
+print '<td>Echeance/Date</td><td>Période</td><td colspan="2" align="left">';
+print_liste_field_titre("Libellé",$PHP_SELF,"c.libelle");
+print '</td><td align="right">Montant</td><td align="center">Payé</td><td>&nbsp;</td>';
+print "</tr>\n";
 
 
-$sql = "SELECT c.libelle as nom, s.amount,".$db->pdate("s.date_ech")." as de, s.date_pai, s.libelle, s.paye,".$db->pdate("s.periode")." as periode,".$db->pdate("s.date_pai")." as dp";
+$sql = "SELECT s.rowid as id, c.libelle as nom, s.amount,".$db->pdate("s.date_ech")." as de, s.date_pai, s.libelle, s.paye,".$db->pdate("s.periode")." as periode,".$db->pdate("s.date_pai")." as dp";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id";
 if ($year > 0)
@@ -87,16 +105,24 @@ if ( $db->query($sql) )
       $var = !$var;
       print "<tr $bc[$var]>";
       print '<td>'.strftime("%d %b %y",$obj->de).'</td>';
-      print '<td><a href="index.php?year='.strftime("%Y",$obj->periode).'">'.strftime("%Y",$obj->periode).'</a></td>';
+      print '<td>';
+      if ($obj->periode) {
+      	print '<a href="index.php?year='.strftime("%Y",$obj->periode).'">'.strftime("%Y",$obj->periode).'</a>';
+      } else {
+      	print '&nbsp;';
+      }
+      print '</td>';
       print '<td>'.$obj->nom.'</td><td>'.$obj->libelle.'</td>';
       print '<td align="right">'.price($obj->amount).'</td>';
       
       if ($obj->paye)
 	{
-	  print '<td colspan="2">'.strftime("%d/%m/%y",$obj->dp).'</td>';
+	  print '<td align="center">'.strftime("%d/%m/%y",$obj->dp).'</td>';
+	  print '<td>&nbsp;</td>';
 	} else {
-	  print '<td><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
-	  print '<td><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
+	  print '<td align="center">Non</td>';
+	  print '<td align="center"><a href="'.$PHP_SELF.'?action=edit&id='.$obj->id.'">'.img_edit().'</a>';
+	  print ' &nbsp; <a href="'.$PHP_SELF.'?action=del&id='.$obj->id.'">'.img_delete().'</a></td>';
 	}
       print '</tr>';
       $i++;
@@ -113,9 +139,10 @@ else
  */
 print '<tr class="form"><form method="post" action="index.php">';
 print '<input type="hidden" name="action" value="add">';
-print '<td><input type="text" size="8" name="date"></td>';
+print '<td><input type="text" size="8" name="date"> YYYYMMDD</td>';
+print '<td>&nbsp;</td>';
 
-print '<td colspan="2" align="right"><select name="type">';
+print '<td colspan="2" align="left"><select name="type">';
 
 
 $sql = "SELECT c.id, c.libelle as nom FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
@@ -135,10 +162,12 @@ if ( $db->query($sql) )
 }
 print '</select>';
 
-print '<input type="text" size="20" name="libelle"></td><td></td>';
+print '<input type="text" size="20" name="libelle"></td>';
 print '<td align="right"><input type="text" size="6" name="amount"></td>';
+print '<td>&nbsp;</td>';
 
-print '<tr><td><input type="submit"></form></td>';
+print '<td><input type="submit" value="Ajouter"></form></td>';
+print '</tr>';
 
 print '</table>';
 
