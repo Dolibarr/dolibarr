@@ -126,6 +126,14 @@ class RejetPrelevement
 	      dolibarr_syslog("RejetPrelevement::Create Erreur creation paiement facture ".$facs[$i]);
 	    }       
   
+	  /* Valide le paiement */
+
+	  if ($pai->valide() <> 0)
+	    {
+	      $error++;
+	      dolibarr_syslog("RejetPrelevement::Create Erreur validation du paiement");
+	    }
+
 	  /* Tag la facture comme impayée */
 	  dolibarr_syslog("RejetPrelevement::Create set_unpayed fac ".$fac->ref);
 	  $fac->set_unpayed($facs[$i]);
