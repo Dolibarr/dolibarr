@@ -29,7 +29,7 @@
 */
 
 require("pre.inc.php");
-
+$user->getrights('societe');
 $langs->load("companies");
  
 
@@ -103,9 +103,34 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
     }
 }
 
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->creer)
+{
+  $soc = new Societe($db);
+  $soc->fetch($_GET["socid"]);
+  $result = $soc->delete($_GET["socid"]);
+ 
+  if ($result == 0)
+    {
+      llxHeader();
+      print "Société $soc->nom supprimée de la base";
+      llxFooter();
+      exit ;
+    }
+  else
+    {
+      $no_reload = 1;
+      $_GET["action"]='';
+    }
+}
+
+/**
+ *
+ *
+ *
+ *
+ */
 
 llxHeader();
-
 
 $form = new Form($db);
 
@@ -297,9 +322,12 @@ elseif ($_GET["action"] == 'edit')
 }
 else
 {
-  $soc = new Societe($db);
-  $soc->id = $_GET["socid"];
-  $soc->fetch($_GET["socid"]);
+  if ($no_reload <> 1)
+    {      
+      $soc = new Societe($db);
+      $soc->id = $_GET["socid"];
+      $soc->fetch($_GET["socid"]);
+    }
 
   $head[0][0] = 'soc.php?socid='.$soc->id;
   $head[0][1] = $langs->trans("Company");
@@ -350,7 +378,25 @@ else
   /*
    * Fiche société en mode visu
    */
+  $html = new Form($db);
+  /*
+   * Confirmation de la suppression de la facture
+   *
+   */
+  if ($_GET["action"] == 'delete')
+    {
+      $html->form_confirm("soc.php?socid=".$soc->id,"Supprimer la société","Etes-vous sûr de vouloir supprimer cette société et tous ses contacts associés ?","confirm_delete");
+      print "<br />\n";
+    }
   
+
+  if ($soc->error_message)
+    {
+      print '<div class="errormessage">';
+      print $soc->error_message;
+      print '</div>';
+    }
+
   print '<table class="border" width="100%">';
   print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>'.$soc->nom.'</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
 
@@ -396,13 +442,21 @@ else
   /*
    *
    */  
-  print '<div class="tabsAction">';
+  if ($_GET["action"] == '')
+    {
 
-  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+      print '<div class="tabsAction">';
+      
+      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+      
+      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 
-  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
-  
-  print '</div>';
+      if ($user->rights->societe->creer)
+	{	  
+	  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+	}
+      print '</div>';
+    }
 /*
  *
  */
