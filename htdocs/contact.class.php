@@ -72,7 +72,7 @@ class Contact
    * Mise à jour des infos
    *
    */
-  Function update($id)
+  Function update($id, $user=0)
     {
       $this->email = trim($this->email);
 
@@ -84,6 +84,8 @@ class Contact
       $sql .= ", phone = '$this->phone_pro'";
       $sql .= ", phone_perso = '$this->phone_perso'";
       $sql .= ", phone_mobile = '$this->phone_mobile'";
+      $sql .= ", jabberid = '$this->jabberid'";
+      $sql .= ", birthday = '".$this->db->idate($this->birthday)."'";
       $sql .= " WHERE idp=$id";
 
       $result = $this->db->query($sql);
@@ -91,6 +93,20 @@ class Contact
       if (!$result) 
 	{
 	  print $this->db->error() . '<br>' . $sql;
+	}
+
+      if ($user )
+	{
+	  if ( $this->birthday_alert == "on")
+	    {
+	      $sql = "REPLACE INTO llx_birthday_alert SET fk_user =$user->id, fk_contact=$id";
+	      $result = $this->db->query($sql);
+	    }
+	  else
+	    {
+	      $sql = "DELETE FROM llx_birthday_alert WHERE fk_user =$user->id AND fk_contact=$id";
+	      $result = $this->db->query($sql);
+	    }
 	}
 
       $ds = dolibarr_ldap_connect();
@@ -103,22 +119,23 @@ class Contact
       
 	  if ($ldapbind)
 	    {
-	      $info["cn"] = ldap_unacc($this->firstname." ".$this->name);
-	      $info["sn"] = ldap_unacc($this->name);
+	      $info["cn"] = utf8_encode($this->firstname." ".$this->name);
+	      $info["sn"] = utf8_encode($this->name);
+
 	      if ($this->email)
 		$info["rfc822Mailbox"] = $this->email;
 	      
 	      if ($this->phone_pro)
-		$info["telephoneNumber"] = $this->phone_pro;
-	      	      
-	      if ($this->phone_perso)
-		$info["homePhone"] = $this->phone_perso;
-
-	      if ($this->poste)
-		$info["title"] = $this->poste;
+		$info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
 
 	      if ($this->phone_mobile)
-		$info["mobile"] = $this->phone_mobile;
+		$info["mobile"] = dolibarr_print_phone($this->phone_mobile);
+	      	      
+	      if ($this->phone_perso)
+		$info["homePhone"] = dolibarr_print_phone($this->phone_perso);
+
+	      if ($this->poste)
+		$info["title"] = utf8_encode($this->poste);
 	      
 	      //$info["homePostalAddress"] = "AdressePersonnelle\nVIlle";
 	      //$info["street"] = "street";
@@ -128,13 +145,16 @@ class Contact
 	      $info["objectclass"] = "inetOrgPerson";
 	      
 	      // add data to directory
-	      $dn = ldap_unacc("cn=".$this->old_firstname." ".$this->old_name).", ".LDAP_SERVER_DN ;
+	      $dn = utf8_encode("cn=".$this->old_firstname." ".$this->old_name).", ".LDAP_SERVER_DN ;
 
 	      $r = @ldap_delete($ds, $dn);
 
 	      $dn = "cn=".$info["cn"].", ".LDAP_SERVER_DN ;
 
-	      $r = ldap_add($ds, $dn, $info);
+	      if (! ldap_add($ds, $dn, $info))
+		{
+		  print ldap_errno();
+		}
 	    }
 	  else
 	    {
@@ -155,11 +175,10 @@ class Contact
    *
    *
    */
-  Function fetch($id) 
+  Function fetch($id, $user=0) 
     {
-
-      $sql = "SELECT c.idp, c.fk_soc, c.name, c.firstname, c.email, phone, phone_perso, phone_mobile";
-      $sql .= " FROM llx_socpeople as c";
+      $sql = "SELECT c.idp, c.fk_soc, c.name, c.firstname, c.email, phone, phone_perso, phone_mobile, jabberid, ".$this->db->pdate('c.birthday') ." as birthday, c.note, poste";
+      $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
       $sql .= " WHERE c.idp = $id";
       
       $result = $this->db->query($sql);
@@ -176,24 +195,44 @@ class Contact
 	      $this->nom       = $obj->name;
 	      $this->prenom    = $obj->firstname;
 	      $this->societeid = $obj->fk_soc;
+	      $this->poste     = $obj->poste;
 	      $this->fullname  = $this->firstname . ' ' . $this->name;
 	      
-	      $this->phone_pro    = $obj->phone;
-	      $this->phone_perso  = $obj->phone_perso;
-	      $this->phone_mobile = $obj->phone_mobile;
+	      $this->phone_pro      = dolibarr_print_phone($obj->phone);
+	      $this->phone_perso    = dolibarr_print_phone($obj->phone_perso);
+	      $this->phone_mobile   = dolibarr_print_phone($obj->phone_mobile);
 
+	      $this->code           = $obj->code;
+	      $this->email          = $obj->email;
+	      $this->jabberid       = $obj->jabberid;
+	      $this->mail           = $obj->email;
 
-	      $this->code = $obj->code;
-	      $this->email = $obj->email;
-	      $this->mail = $obj->email;
+	      $this->birthday       = $obj->birthday;
+	      $this->birthday_alert = "";
+	      $this->note           = $obj->note;
 	    }
-
 	  $this->db->free();
-	  
-	} 
-      else 
-	{
-	  print $this->db->error();
+
+	  if ($user)
+	    {
+	      $sql = "SELECT fk_user";
+	      $sql .= " FROM llx_birthday_alert";
+	      $sql .= " WHERE fk_user = $user->id AND fk_contact = $id";
+	      
+	      if ($this->db->query($sql)) 
+		{
+		  if ($this->db->num_rows())
+		    {
+		      $obj = $this->db->fetch_object($result , 0);
+		      
+		      $this->birthday_alert = 1;
+		    } 
+		  else 
+		    {
+		      print $this->db->error();
+		    }
+		}
+	    }
 	}
     }
   /*
@@ -223,9 +262,9 @@ class Contact
 	  if ($ldapbind)
 	    {	      
 	      // delete from ldap directory
-	      $dn = "cn=".$this->old_firstname." ".$this->old_name.", ".LDAP_SERVER_DN ;
+	      $dn = utf8_encode("cn=".$this->old_firstname." ".$this->old_name.", ".LDAP_SERVER_DN) ;
 
-	      $r = ldap_delete($ds, $dn);
+	      $r = @ldap_delete($ds, $dn);
 	    }
 	  else
 	    {
