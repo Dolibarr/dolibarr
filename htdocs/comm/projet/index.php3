@@ -102,7 +102,9 @@ if ( $db->query($sql) )
   print '<p><TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
   
   print '<TR class="liste_titre">';
-  print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
+  print "<TD>";
+  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+  print "</td>";
   print "<TD>Réf</TD><td>Titre</td>";
   print "</TR>\n";
 
@@ -115,7 +117,6 @@ if ( $db->query($sql) )
       print "<TD><a href=\"../fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
       print "<TD><a href=\"fiche.php3?id=$objp->projectid\">$objp->ref</a></TD>\n";
       print "<TD><a href=\"fiche.php3?id=$objp->projectid\">$objp->title</a></TD>\n";
-      print "<td>&nbsp;</td>";
       print "</TR>\n";
     
       $i++;
