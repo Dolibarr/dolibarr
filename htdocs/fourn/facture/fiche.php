@@ -544,19 +544,19 @@ else
 	{
 	  if ($_GET["action"] != "edit")
 	    {
-	      print '<a class="tabAction" href="index.php?facid='.$fac->id.'&amp;action=delete">Supprimer</a>';
+	      print '<a class="tabAction" href="index.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 	    }
 	}
       elseif ($fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
 	{
-	  print '<a class="tabAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">Émettre un paiement</a>';
+	  print '<a class="tabAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("DoPaiement").'</a>';
 	}
       
       if ($fac->statut == 0 && $user->societe_id == 0)    
 	{
 	  if ($_GET["action"] == "edit")
 	    {
-	      print '<a class="tabAction" href="fiche.php?facid='.$fac->id.'">Abandonner</a>';
+	      print '<a class="tabAction" href="fiche.php?facid='.$fac->id.'">'.$langs->trans("Cancel").'</a>';
 	    }
 	  else
 	    {
