@@ -21,7 +21,8 @@
  */
 require("../main.inc.php3");
 
-function llxHeader($head = "", $urlp = "") {
+function llxHeader($head = "", $urlp = "")
+{
   global $user, $conf;
 
   /*
@@ -32,32 +33,28 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/product/index.php3", "Produits");
+  $menu->add(DOL_URL_ROOT."/product/index.php3", "Produits");
 
   $menu->add_submenu("fiche.php3?&action=create","Nouveau produit");
 
-  $menu->add_submenu("osc-liste.php", "Osc");
-  $menu->add_submenu("osc-liste.php?reqstock=epuise", "Produits Epuisés");
+  if (defined("MAIN_MODULE_BOUTIQUE") && MAIN_MODULE_BOUTIQUE)
+    {
+
+      $menu->add_submenu("osc-liste.php", "Osc");
+      $menu->add_submenu("osc-liste.php?reqstock=epuise", "Produits Epuisés");
 
 
-  $menu->add("osc-reviews.php", "Critiques");
+      $menu->add("osc-reviews.php", "Critiques");
 
-  $menu->add_submenu("osc-productsbyreviews.php", "Meilleurs produits");
+      $menu->add_submenu("osc-productsbyreviews.php", "Meilleurs produits");
 
-  $menu->add("/product/album/", "Albums");
-  $menu->add("/product/groupart/", "Groupes/Artistes");
-
-  $menu->add("/product/categorie/", "Catégories");
-
-  $menu->add("/service/index.php3", "Services");
-
-  $menu->add("/comm/clients.php3", "Clients");
-
-  $menu->add("/fourn/index.php3", "Fournisseurs");
-
-  $menu->add_submenu("/soc.php3?&action=create","Nouvelle sociétée");
-  $menu->add_submenu("contact.php3","Contacts");
-
+      $menu->add(DOL_URL_ROOT."/product/album/", "Albums");
+      $menu->add(DOL_URL_ROOT."/product/groupart/", "Groupes/Artistes");
+      
+      $menu->add(DOL_URL_ROOT."/product/categorie/", "Catégories");
+    }      
+     
+  $menu->add(DOL_URL_ROOT."/service/index.php3", "Services");
 
   left_menu($menu->liste);
   /*
