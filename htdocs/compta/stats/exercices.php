@@ -181,7 +181,7 @@ function pt ($db, $sql, $year) {
 
       if ($obj->sum > 0) {
 	print "<TR $bc[$var]>";
-	print "<td><a href=\"comp.php?details=1&year=$year&month=$obj->dm\">";
+	print "<td>";
 	print strftime("%B",mktime(12,0,0,$obj->dm, 1, $year))."</TD>\n";
 	print "<TD align=\"right\">".price($obj->sum)."</TD>\n";
 	
