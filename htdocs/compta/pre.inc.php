@@ -65,22 +65,22 @@ function llxHeader($head = "", $title="") {
 
   if ($conf->compta->tva && $user->societe_id == 0)
     {
-      $menu->add("tva/index.php","TVA");
+      $menu->add(DOL_URL_ROOT."/compta/tva/index.php","TVA");
     }
-  $menu->add("charges/index.php","Charges");
+  $menu->add(DOL_URL_ROOT."/compta/charges/index.php","Charges");
 
 
 
   // Vision des recettes-dépenses
 
-  $menu->add("bank/","Banques");
+  $menu->add(DOL_URL_ROOT."/compta/bank/","Banques");
 
   if ($user->societe_id == 0)
     {
       $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisse");
     }
 
-  $menu->add("stats/","CA / Résultats");
+  $menu->add(DOL_URL_ROOT."/compta/stats/","CA / Résultats");
 
   if ($user->compta > 0) 
     {
