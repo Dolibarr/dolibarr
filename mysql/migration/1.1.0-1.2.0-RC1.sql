@@ -5,6 +5,10 @@
 -- sans AUCUNE erreur ni warning
 -- ;
 
+alter table llx_paiement add statut smallint DEFAULT 0 NOT NULL ;
+alter table llx_facture add fk_export_compta integer DEFAULT 0 NOT NULL ;
+alter table llx_paiement add fk_export_compta integer DEFAULT 0 NOT NULL ;
+
 alter table llx_rights_def add perms varchar(255) after module;
 alter table llx_rights_def add subperms varchar(255) after perms;
 
