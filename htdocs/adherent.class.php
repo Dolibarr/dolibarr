@@ -39,6 +39,9 @@ class Adherent
   var $statut;
   var $login;
   var $pass;
+  var $naiss;
+  var $photo;
+  var $public;
 
   var $errorstr;
   /*
@@ -50,6 +53,8 @@ class Adherent
       $this->db = $DB ;
       $this->id = $id;
       $this->statut = -1;
+      // l'adherent n'est pas public par defaut
+      $this->public = 0;
     }
   /*
    *
@@ -215,6 +220,9 @@ class Adherent
       $sql .= ",email='".$this->email."'";
       $sql .= ",login='".$this->login."'";
       $sql .= ",pass='".$this->pass."'";
+      $sql .= ",naiss='".$this->naiss."'";
+      $sql .= ",photo='".$this->photo."'";
+      $sql .= ",public='".$this->public."'";
       $sql .= ",statut=".$this->statut;
       $sql .= ",fk_adherent_type=".$this->typeid;
       $sql .= ",morphy='".$this->morphy."'";
@@ -275,7 +283,7 @@ class Adherent
    */
   Function fetch($rowid)
   {
-    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.login, d.pass, d.fk_adherent_type, d.morphy, t.libelle as type";
+    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.login, d.pass, d.naiss, d.photo, d.fk_adherent_type, d.morphy, t.libelle as type";
     $sql .= ",".$this->db->pdate("d.datefin")." as datefin";
     $sql .= " FROM llx_adherent as d, llx_adherent_type as t";
     $sql .= " WHERE d.rowid = $rowid AND d.fk_adherent_type = t.rowid";
@@ -291,6 +299,7 @@ class Adherent
 	    $this->typeid         = $obj->fk_adherent_type;
 	    $this->type           = $obj->type;
 	    $this->statut         = $obj->statut;
+	    $this->public         = $obj->public;
 	    $this->date           = $obj->datedon;
 	    $this->prenom         = stripslashes($obj->prenom);
 	    $this->nom            = stripslashes($obj->nom);
@@ -301,6 +310,8 @@ class Adherent
 	    $this->email          = stripslashes($obj->email);
 	    $this->login          = stripslashes($obj->login);
 	    $this->pass           = stripslashes($obj->pass);
+	    $this->naiss          = stripslashes($obj->naiss);
+	    $this->photo          = stripslashes($obj->photo);
 	    $this->pays           = stripslashes($obj->pays);
 	    $this->datefin        = $obj->datefin;
 	    $this->commentaire    = stripslashes($obj->note);

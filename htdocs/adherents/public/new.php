@@ -29,6 +29,7 @@ require("../../paiement.class.php");
 $db = new Db();
 $errmsg='';
 $num=0;
+$error=0;
 
 if ($HTTP_POST_VARS["action"] == 'add') 
 {
@@ -38,11 +39,38 @@ if ($HTTP_POST_VARS["action"] == 'add')
   if ($result) {
     $num = $db->num_rows();
   }
-  
-  if (isset($email) && $email != '' && ereg('@',$email) && !$num){
+  if (!isset($nom) || !isset($prenom) || $prenom=='' || $nom==''){
+    $error+=1;
+    $errmsg .="Nom et Prenom obligatoires<BR>\n";
+  }
+  if (!isset($email) || $email == '' || !ereg('@',$email)){
+    $error+=1;
+    $errmsg .="Adresse Email invalide<BR>\n";
+  }
+  if ($num !=0){
+    $error+=1;
+    $errmsg .="Login deja utilise. Veuillez en changer<BR>\n";
+  }
+  if (!isset($pass1) || !isset($pass2) || $pass1 == '' || $pass2 == '' || $pass1!=$pass2){
+    $error+=1;
+    $errmsg .="Password invalide<BR>\n";
+  }
+  if (isset($naiss) && $nais !=''){
+    if (!ereg("^\d\d\d\d\-\d\d\-\d\d",$naiss)){
+      $error+=1;
+      $errmsg .="Date de naissance invalide (Format AAAA-MM-JJ)<BR>\n";
+    }
+  }
+  if (isset($public)){
+    $public=1;
+  }else{
+    $public=0;
+  }
+  if (!$error){
     // email a peu pres correct et le login n'existe pas
     $adh = new Adherent($db);
     $adh->statut      = -1;
+    $adh->public      = $public;
     $adh->prenom      = $prenom;
     $adh->nom         = $nom;  
     $adh->societe     = $societe;
@@ -51,7 +79,9 @@ if ($HTTP_POST_VARS["action"] == 'add')
     $adh->ville       = $ville;
     $adh->email       = $email;
     $adh->login       = $login;
-    $adh->pass        = $pass;
+    $adh->pass        = $pass1;
+    $adh->naiss       = $naiss;
+    $adh->photo       = $photo;
     $adh->note        = $note;
     $adh->pays        = $pays;
     $adh->typeid      = $type;
@@ -69,13 +99,6 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	mail($email,"Votre adhesion sur http://$SERVER_NAME/",$mesg);
 	Header("Location: new.php?action=added");
       }
-  }else{
-    if ($num !=0){
-      $errmsg .="Login deja utilise. Veuillez en changer<BR>\n";
-    }
-    if (!isset($email) || $email == '' || !ereg('@',$email)){
-      $errmsg .="Adresse Email invalide<BR>\n";
-    }
   }
 }
 
@@ -90,14 +113,25 @@ llxHeader();
 
 
 if (isset($action) && $action== 'added'){
-  print "<FONT COLOR=\"blue\">Nouvel Adhérent ajouté. En attente de validation</FONT><BR>\n";
+  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+  print "<tr><td><FONT COLOR=\"blue\">Nouvel Adhérent ajouté. En attente de validation</FONT></td></tr>\n";
+  print '</table>';
 }
 if ($errmsg != ''){
-  print "<FONT COLOR=\"red\">$errmsg</FONT>\n";
+  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+  
+  print '<th>Erreur dans le formulaire</th>';
+  print "<tr><td class=\"delete\"><b>$errmsg</b></td></tr>\n";
+  //  print "<FONT COLOR=\"red\">$errmsg</FONT>\n";
+  print '</table>';
 }
 
 print_titre("Nouvel adhérent");
-print "Les login et password vous serviront a editer vos coordonnees ulterieurement<BR>\n";
+print '<ul>';
+print '<li> Les champs Commencant par un <FONT COLOR="red">*</FONT> sont obligatoire';
+print '<li> Les champs Commencant par un <FONT COLOR="blue">*</FONT> seront affiche sur la liste publique des membres. Si vous ne souhaite pas cela <b>DECOCHEZ</b> la case public ci dessous'; 
+print "<li> Les login et password vous serviront a editer vos coordonnees ulterieurement<BR>\n";
+print "</ul><BR>\n";
 print "<form action=\"$PHP_SELF\" method=\"post\">\n";
 print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
@@ -119,19 +153,22 @@ print "<tr><td>Personne</td><td>\n";
 $htmls->select_array("morphy",  $morphys);
 print "</td>\n";
 
-print '<td valign="top" rowspan="11"><textarea name="comment" wrap="soft" cols="40" rows="25">'.$comment.'</textarea></td></tr>';
+print '<td valign="top" rowspan="14"><textarea name="comment" wrap="soft" cols="40" rows="25">'.$comment.'</textarea></td></tr>';
 
-print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40" value="'.$prenom.'"></td></tr>';  
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> Prénom</td><td><input type="text" name="prenom" size="40" value="'.$prenom.'"></td></tr>';  
 
-print '<tr><td>Nom</td><td><input type="text" name="nom" size="40" value="'.$nom.'"></td></tr>';
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> Nom</td><td><input type="text" name="nom" size="40" value="'.$nom.'"></td></tr>';
 print '<tr><td>Societe</td><td><input type="text" name="societe" size="40" value="'.$societe.'"></td></tr>';
 print '<tr><td>Adresse</td><td>';
 print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.$adresse.'</textarea></td></tr>';
 print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="8" value="'.$cp.'"> <input type="text" name="ville" size="40" value="'.$ville.'"></td></tr>';
 print '<tr><td>Pays</td><td><input type="text" name="pays" size="40" value="'.$pays.'"></td></tr>';
-print '<tr><td>Email</td><td><input type="text" name="email" size="40" value="'.$email.'"></td></tr>';
-print '<tr><td>Login</td><td><input type="text" name="login" size="40" value="'.$login.'"></td></tr>';
-print '<tr><td>Password</td><td><input type="text" name="pass" size="40" value="'.$pass.'"></td></tr>';
+print '<tr><td><FONT COLOR="red">*</FONT> <FONT COLOR="blue">*</FONT> Email</td><td><input type="text" name="email" size="40" value="'.$email.'"></td></tr>';
+print '<tr><td><FONT COLOR="red">*</FONT> Login</td><td><input type="text" name="login" size="40" value="'.$login.'"></td></tr>';
+print '<tr><td><FONT COLOR="red">*</FONT> Password (a entrer 2 fois)</td><td><input type="password" name="pass1" size="40"><BR><input type="password" name="pass2" size="40"></td></tr>';
+print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$naiss.'"></td></tr>';
+print '<tr><td><FONT COLOR="blue">*</FONT> URL Photo</td><td><input type="text" name="photo" size="40" value="'.$photo.'"></td></tr>';
+print '<tr><td>Profil public ?</td><td><input type="checkbox" name="public" checked></td></tr>';
 
 print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
 print "</form>\n";

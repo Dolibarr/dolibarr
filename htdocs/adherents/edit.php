@@ -48,6 +48,8 @@ if ($action == 'update')
       $adh->email       = $HTTP_POST_VARS["email"];
       $adh->login       = $HTTP_POST_VARS["login"];
       $adh->pass        = $HTTP_POST_VARS["pass"];
+      $adh->naiss       = $HTTP_POST_VARS["naiss"];
+      $adh->photo       = $HTTP_POST_VARS["photo"];
       $adh->date        = mktime(12, 0 , 0, $remonth, $reday, $reyear);
       $adh->note        = $HTTP_POST_VARS["note"];
       $adh->pays        = $HTTP_POST_VARS["pays"];
@@ -104,7 +106,7 @@ if ($rowid)
   print '<td valign="top" width="50%">Commentaires</td></tr>';
 
   print '<tr><td>Personne</td><td class="valeur">'.$adh->morphy.'&nbsp;</td>';
-  print '<td rowspan="10" valign="top" width="50%">';
+  print '<td rowspan="15" valign="top" width="50%">';
   print nl2br($adh->commentaire).'&nbsp;</td></tr>';
 
   print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
@@ -118,6 +120,8 @@ if ($rowid)
   print '<tr><td>Email</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
   print '<tr><td>Login</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
   print '<tr><td>Password</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
+  print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
+  print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
 
   print "</table>\n";
 
@@ -146,7 +150,7 @@ if ($rowid)
   $htmls->select_array("morphy",  $morphys, $adh->morphy);
   print "</td>";
 
-  print '<td rowspan="13" valign="top">';
+  print '<td rowspan="15" valign="top">';
   print '<textarea name="comment" wrap="soft" cols="40" rows="15">'.$adh->commentaire.'</textarea></td></tr>';
   
   print '<tr><td width="15%">Prénom</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td></tr>';
@@ -162,6 +166,8 @@ if ($rowid)
   print '<tr><td>Email</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
   print '<tr><td>Login</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
   print '<tr><td>Password</td><td><input type="text" name="pass" size="40" value="'.$adh->pass.'"></td></tr>';
+  print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$adh->naiss.'"></td></tr>';
+  print '<tr><td>URL photo</td><td><input type="text" name="photo" size="40" value="'.$adh->photo.'"></td></tr>';
   print '<tr><td colspan="2" align="center">';
   print '<input type="submit" name="bouton" value="Enregistrer">&nbsp;';
   print '<input type="submit" value="Annuler">';

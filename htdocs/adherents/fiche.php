@@ -55,6 +55,8 @@ if ($HTTP_POST_VARS["action"] == 'add')
   $adh->email       = $email;
   $adh->login       = $login;
   $adh->pass        = $pass;
+  $adh->naiss       = $naiss;
+  $adh->photo       = $photo;
   $adh->note        = $note;
   $adh->pays        = $pays;
   $adh->typeid      = $type;
@@ -137,7 +139,7 @@ if ($action == 'create') {
   $htmls->select_array("morphy",  $morphys);
   print "</td>\n";
   
-  print '<td valign="top" rowspan="11"><textarea name="comment" wrap="soft" cols="40" rows="25"></textarea></td></tr>';
+  print '<td valign="top" rowspan="13"><textarea name="comment" wrap="soft" cols="40" rows="25"></textarea></td></tr>';
 
   print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td></tr>';  
   
@@ -154,6 +156,8 @@ if ($action == 'create') {
   print '<tr><td>Email</td><td><input type="text" name="email" size="40"></td></tr>';
   print '<tr><td>Login</td><td><input type="text" name="login" size="40"></td></tr>';
   print '<tr><td>Password</td><td><input type="text" name="pass" size="40"></td></tr>';
+  print '<tr><td>Date de Naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="10"></td></tr>';
+  print '<tr><td>Url photo</td><td><input type="text" name="photo" size="40"></td></tr>';
 
   print "<tr><td>Date de cotisation</td><td>\n";
   print_date_select();
@@ -274,7 +278,7 @@ if ($rowid > 0)
 
   print '<tr><td>Personne</td><td class="valeur">'.$adh->morphy.'&nbsp;</td>';
 
-  print '<td rowspan="11" valign="top" width="50%">';
+  print '<td rowspan="13" valign="top" width="50%">';
   print nl2br($adh->commentaire).'&nbsp;</td></tr>';
 
   print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
@@ -289,6 +293,8 @@ if ($rowid > 0)
   print '<tr><td>Email</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
   print '<tr><td>Login</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
   print '<tr><td>Pass</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
+  print '<tr><td>Date de Naissance</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
+  print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
 
   print "</table>\n";
 
