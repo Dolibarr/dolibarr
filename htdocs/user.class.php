@@ -84,219 +84,9 @@ class User
       return 1;
   }
 
-  /**
-   *    \brief      Ajoute un droit a l'utilisateur
-   *    \param      rid        id du droit à ajouter
-   */
-	 
-  function addrights($rid)
-    {
-      if (strlen($rid) == 2)
-	{
-	  $topid = substr($rid,0,1);
-	  $lowid = substr($rid,1,1);
-	}
-
-      if (strlen($rid) == 3)
-	{
-	  $topid = substr($rid,0,2);
-	  $lowid = substr($rid,2,1);
-	}
-
-      if ($lowid == 1)
-	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rid";
-		
-		$this->db->query($sql);
-		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
-	  
-		//$sql = "UPDATE ".MAIN_DB_PREFIX."user_rights SET fk_user = $this->id fk_id = $rid";
-		
-		if ($this->db->query($sql))
-	    {
-	    }
-	}
-      
-      if ($lowid > 1)
-	{
-
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rid";
-		
-		$this->db->query($sql);
-		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
-
-		//$sql = "UPDATE ".MAIN_DB_PREFIX."user_rights SET fk_user = $this->id fk_id = $rid";
-		
-	  if ($this->db->query($sql))
-	    {
-	    }
-	  $nid = $topid . "1";
-		
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
-		
-		$this->db->query($sql);
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
-	  
-	  if ($this->db->query($sql))
-	    {
-	      
-	    }
-	  else
-	    {
-    	  dolibarr_print_error($this->db);
-	    }
-	}
-      
-      if ($lowid == 0)
-	{
-	  for ($i = 1 ; $i < 10 ; $i++)
-	    {
-	      $nid = $topid . "$i";
-
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
-				
-				$this->db->query($sql);
-	
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
-	      
-				if ($this->db->query($sql))
-		{
-		  
-		}
-	      else
-		{
-    	  dolibarr_print_error($this->db);
-		}
-	    }
-	}
-      
-      
-      return 1;
-    }
-
 
   /**
-   *    \brief      Retire un droit a l'utilisateur
-   *    \param      rid        id du droit à retirer
-   */
-	 
-  function delrights($rid)
-    {
-
-      if (strlen($rid) == 2)
-	{
-	  $topid = substr($rid,0,1);
-	  $lowid = substr($rid,1,1);
-	}
-
-      if (strlen($rid) == 3)
-	{
-	  $topid = substr($rid,0,2);
-	  $lowid = substr($rid,2,1);
-	}
-
-      if ($lowid > 1)
-	{
-	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rid";
-	  if ($this->db->query($sql))
-	    {
-	    }
-	}
-      
-      if ($lowid == 1)
-	{
-	  $fid = $topid . "0";
-	  $lid = $topid . "9";
-	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id >= $fid AND fk_id <= $lid";
-	  if ($this->db->query($sql))
-	    {
-	      
-	    }
-	  else
-	    {
-	      print $sql;
-	    }
-	}
-      
-      if ($lowid == 0)
-	{
-	  for ($i = 1 ; $i < 10 ; $i++)
-	    {
-	      $nid = $topid . "$i";
-	      $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
-	      if ($this->db->query($sql))
-		{
-		  
-		}
-	      else
-		{
-		  print $sql;
-		}
-	    }
-	}
-            
-      return 1;
-    }
-
-  /**
-   *    \brief      Charge dans l'objet user, la liste des permissions auquels l'utilisateur a droit
-   *    \param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
-   */
-	 
-  function getrights($module='')
-    {
-      if ($this->all_permissions_are_loaded)
-      {
-        // Si les permissions ont déja été chargé pour ce user, on quitte
-        return;
-      }
-
-      /*
-       * Récupération des droits
-       */
-      $sql = "SELECT r.module, r.perms, r.subperms ";
-      $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as u, ".MAIN_DB_PREFIX."rights_def as r";
-      $sql .= " WHERE r.id = u.fk_id AND u.fk_user= $this->id AND r.perms IS NOT NULL";
-      if ($this->db->query($sql))
-	{
-	  $num = $this->db->num_rows();
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $row = $this->db->fetch_row();
-
-	      if (strlen($row[1]) > 0)
-		{
-
-		  if (strlen($row[2]) > 0)
-		    {
-		      $this->rights->$row[0]->$row[1]->$row[2] = 1;
-		    }
-		  else
-		    {
-		      $this->rights->$row[0]->$row[1] = 1;
-		    }
-
-		}
-	      $i++;
-	    }
-	}
-
-        if ($module == '')
-        {
-          // Si module etait non defini, alors on a tout chargé, on peut donc considérer
-          // que les droits sont en cache (car tous chargés) pour cet instance de user
-          $this->all_permissions_are_loaded=1;
-        }
-        
-    }
-
-
-  /**
-   *    \brief      Charge un objet user avec toutes ces caractéristiques depuis un login
+   *    \brief      Charge un objet user avec toutes ces caractéristiques depuis un id ou login
    *    \param      login   login a charger
    */
 	 
@@ -370,45 +160,244 @@ class User
 	    }
 	  $this->page_param_url = $page_param_url;
 	}
-
-
+ 
   }
-
+  
   /**
-   *    \brief  Efface de la base, un utilisateur
+   *    \brief      Ajoute un droit a l'utilisateur
+   *    \param      rid         id du droit à ajouter
+   *    \return     int         > 0 si ok, < 0 si erreur
    */
 	 
-  function delete()
+    function addrights($rid)
     {
-      if ($this->contact_id) 
+        if (strlen($rid) == 2)
+        {
+            $topid = substr($rid,0,1);
+            $lowid = substr($rid,1,1);
+        }
+    
+        if (strlen($rid) == 3)
+        {
+            $topid = substr($rid,0,2);
+            $lowid = substr($rid,2,1);
+        }
+    
+        if ($lowid == 1)
+        {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rid";
+            $this->db->query($sql);
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
+            if ($this->db->query($sql))
+            {
+            }
+        }
+    
+        if ($lowid > 1)
+        {
+    
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rid";
+            $this->db->query($sql);
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
+            if ($this->db->query($sql))
+            {
+            }
+    
+            $nid = $topid . "1";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
+            $this->db->query($sql);
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
+            if ($this->db->query($sql))
+            {
+    
+            }
+            else
+            {
+                dolibarr_print_error($this->db);
+            }
+        }
+    
+        if ($lowid == 0)
+        {
+            for ($i = 1 ; $i < 10 ; $i++)
+            {
+                $nid = $topid . "$i";
+    
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
+                $this->db->query($sql);
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
+                if ($this->db->query($sql))
+                {
+    
+                }
+                else
+                {
+                    dolibarr_print_error($this->db);
+                }
+            }
+        }
+    
+        return 1;
+    }
+
+
+  /**
+   *    \brief      Retire un droit a l'utilisateur
+   *    \param      rid        id du droit à retirer
+   *    \return     int         > 0 si ok, < 0 si erreur
+   */
+	 
+    function delrights($rid)
+    {
+        if (strlen($rid) == 2)
+        {
+            $topid = substr($rid,0,1);
+            $lowid = substr($rid,1,1);
+        }
+    
+        if (strlen($rid) == 3)
+        {
+            $topid = substr($rid,0,2);
+            $lowid = substr($rid,2,1);
+        }
+    
+        if ($lowid > 1)
+        {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rid";
+            if ($this->db->query($sql))
+            {
+            }
+        }
+    
+        if ($lowid == 1)
+        {
+            $fid = $topid . "0";
+            $lid = $topid . "9";
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id >= $fid AND fk_id <= $lid";
+            if ($this->db->query($sql))
+            {
+    
+            }
+            else
+            {
+                dolibarr_print_error($this->db);
+            }
+        }
+    
+        if ($lowid == 0)
+        {
+            for ($i = 1 ; $i < 10 ; $i++)
+            {
+                $nid = $topid . "$i";
+                $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
+                if ($this->db->query($sql))
+                {
+    
+                }
+                else
+                {
+                    dolibarr_print_error($this->db);
+                }
+            }
+        }
+    
+        return 1;
+    }
+
+  /**
+   *    \brief      Charge dans l'objet user, la liste des permissions auxquels l'utilisateur a droit
+   *    \param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
+   */
+	 
+  function getrights($module='')
+    {
+      if ($this->all_permissions_are_loaded)
+      {
+        // Si les permissions ont déja été chargé pour ce user, on quitte
+        return;
+      }
+
+      /*
+       * Récupération des droits
+       */
+      $sql = "SELECT r.module, r.perms, r.subperms ";
+      $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as u, ".MAIN_DB_PREFIX."rights_def as r";
+      $sql .= " WHERE r.id = u.fk_id AND u.fk_user= $this->id AND r.perms IS NOT NULL";
+      if ($this->db->query($sql))
 	{
-
-	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."user WHERE rowid = $this->id";
-  
-	  $result = $this->db->query($sql);
-
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user = 0 WHERE idp = $this->contact_id";
-	    
-	  if ($this->db->query($sql)) 
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  while ($i < $num)
 	    {
-	      
+	      $row = $this->db->fetch_row();
+
+	      if (strlen($row[1]) > 0)
+		{
+
+		  if (strlen($row[2]) > 0)
+		    {
+		      $this->rights->$row[0]->$row[1]->$row[2] = 1;
+		    }
+		  else
+		    {
+		      $this->rights->$row[0]->$row[1] = 1;
+		    }
+
+		}
+	      $i++;
 	    }
 	}
-      else
-	{
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."user SET login = '' WHERE rowid = $this->id";
+
+        if ($module == '')
+        {
+          // Si module etait non defini, alors on a tout chargé, on peut donc considérer
+          // que les droits sont en cache (car tous chargés) pour cet instance de user
+          $this->all_permissions_are_loaded=1;
+        }
+        
+    }
+
+
+  /**
+   *    \brief      Désactive un utilisateur
+   */
+	 
+    function disable()
+    {
+        // Désactive utilisateur
+        $sql = "UPDATE ".MAIN_DB_PREFIX."user SET login = '' WHERE rowid = $this->id";
+        $result = $this->db->query($sql);
+    }
   
-	  $result = $this->db->query($sql);
-	}
-
-      $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id";
-
-      if ($this->db->query($sql)) 
-	{
-	    
-	}
-
-  }
+  
+  /**
+   *    \brief      Supprime complètement un utilisateur
+   */
+	 
+    function delete()
+    {
+        // Supprime droits
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id";
+        if ($this->db->query($sql))
+        {
+    
+        }
+    
+        // Si contact, supprime lien
+        if ($this->contact_id)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user = null WHERE idp = $this->contact_id";
+            if ($this->db->query($sql))
+            {
+    
+            }
+        }
+    
+        // Supprime utilisateur
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."user WHERE rowid = $this->id";
+        $result = $this->db->query($sql);
+    }
+  
 
   /**
    *        \brief      Crée un utilisateur en base
@@ -667,6 +656,7 @@ class User
 	}
     }
 
+
   /**
    * \brief     Renvoie la dernière erreur fonctionnelle de manipulation de l'objet
    * \return    string      chaine erreur
@@ -676,10 +666,10 @@ class User
     {
       return $this->error;
     }
+
   
   /**
-   * Lecture des infos de click to dial
-   *
+   *    \brief      Lecture des infos de click to dial
    */
   function fetch_clicktodial()
     {
@@ -715,9 +705,9 @@ class User
 	  print $this->db->error();
 	}
     }
+
   /**
-   * Mise à jour des infos de click to dial
-   *
+   *    \brief      Mise à jour des infos de click to dial
    */
   function update_clicktodial()
     {
@@ -746,8 +736,10 @@ class User
 	}
     }
 
+
   /**
-   *    \brief  Ajoute l'utilisateur dans un groupe
+   *    \brief      Ajoute l'utilisateur dans un groupe
+   *    \param      group       id du groupe
    */
 
   function SetInGroup($group)
@@ -766,7 +758,8 @@ class User
     }
 
   /**
-   *    \brief  Ajoute l'utilisateur dans un groupe
+   *    \brief      Retire l'utilisateur d'un groupe
+   *    \param      group       id du groupe
    */
 
   function RemoveFromGroup($group)
