@@ -40,7 +40,6 @@ if (!$user->admin)
 if ($_POST["action"] == 'nbprod')
 {
   dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$value);
-	
   Header("Location: propale.php");
 }
 
@@ -287,16 +286,21 @@ print "</table>\n<br>";
  *
  */
 print_titre("Formulaire de création");
-print "<form method=\"post\" action=\"propale.php?action=nbprod\">\n";
-print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print "  <td>Nom</td>\n";
-print "  <td>Valeur</td>\n  <td>&nbsp;</td>\n";
-print "</tr>\n";
-print "<tr class=\"pair\">\n  <td>";
-print "Nombre de ligne produits</td>\n  <td align=\"center\">";
-print "<input size=\"3\" type=\"text\" name=\"value\" value=\"".PROPALE_NEW_FORM_NB_PRODUCT."\">";
-print "</td>\n  <td><input type=\"submit\" value=\"changer\"></td>\n</tr>\n</table>\n</form>\n";
+print "<form method=\"post\" action=\"propale.php\">
+<input type=\"hidden\" name=\"action\" value=\"nbprod\">
+<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">
+<tr class=\"liste_titre\">
+  <td>Nom</td>
+  <td>Valeur</td>
+  <td>&nbsp;</td>
+</tr>
+<tr class=\"pair\">
+  <td>Nombre de ligne produits</td>
+  <td align=\"center\"><input size=\"3\" type=\"text\" name=\"value\" value=\"".PROPALE_NEW_FORM_NB_PRODUCT."\"></td>
+  <td><input type=\"submit\" value=\"changer\"></td>
+</tr>
+</table>
+</form>\n";
 
 $db->close();
 
