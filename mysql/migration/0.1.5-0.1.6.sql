@@ -1,0 +1,22 @@
+
+--
+-- Mise à jour de la version 0.1.5 à 0.1.6
+--
+
+create table llx_notify
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  tms             timestamp,
+  datec           date,           -- date de paiement
+  fk_action       integer NOT NULL,
+  fk_soc          integer NOT NULL,
+  fk_contact      integer NOT NULL
+);
+
+create table llx_action_def
+(
+  rowid           integer NOT NULL PRIMARY KEY,
+  tms             timestamp,
+  titre           varchar(255) NOT NULL,
+  description     text
+);
