@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,16 +21,15 @@
  *
  */
 
-/*!
-  \file       htdocs/paiement.class.php
-  \ingroup    facture
-  \brief      Fichier de la classe des paiement de factures clients
-  \version    $Revision$
+/**     \file       htdocs/paiement.class.php
+        \ingroup    facture
+        \brief      Fichier de la classe des paiement de factures clients
+        \version    $Revision$
 */
 
 
-/*! \class Paiement
-  	\brief Classe permettant la gestion des paiements des factures clients
+/**     \class      Paiement
+  	    \brief      Classe permettant la gestion des paiements des factures clients
 */
 
 class Paiement 
@@ -42,9 +41,10 @@ class Paiement
   var $amount;
   var $author;
   var $paiementid; 		// Type de paiement. Stocké dans fk_paiement 
-                                // de llx_paiement qui est lié aux types de 
-                                //paiement de llx_c_paiement
-  var $num_paiement;	        // Numéro du CHQ, VIR, etc...
+                        // de llx_paiement qui est lié aux types de 
+                        //paiement de llx_c_paiement
+  var $num_paiement;	// Numéro du CHQ, VIR, etc...
+  var $bank_account;    // Id compte bancaire du paiement
   var $note;
   // fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
   // fk_paiement dans llx_paiement_facture est le rowid du paiement
@@ -69,10 +69,11 @@ class Paiement
   function fetch($id) 
     {
       $sql = "SELECT p.rowid,".$this->db->pdate("p.datep")." as dp, p.amount, p.statut";
-      $sql .=", c.libelle as paiement_type, p.num_paiement";
-      $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
+      $sql .=", c.libelle as paiement_type, p.num_paiement, b.fk_account";
+      $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c ";
+      $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid ";
       $sql .= " WHERE p.fk_paiement = c.id";
-      $sql .=" AND p.rowid = ".$id;      
+      $sql .= " AND p.rowid = ".$id;
 
       if ($this->db->query($sql)) 
 	{
@@ -83,6 +84,7 @@ class Paiement
 	      $this->id             = $obj->rowid;
 	      $this->date           = $obj->dp;
 	      $this->numero         = $obj->num_paiement;
+	      $this->bank_account   = $obj->fk_account;
 
 	      $this->montant        = $obj->amount;
 	      $this->note           = $obj->note;
