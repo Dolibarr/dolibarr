@@ -28,6 +28,7 @@ require ($GLOBALS["DOCUMENT_ROOT"]."/menu.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/societe.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/html.form.class.php");
 require ($GLOBALS["DOCUMENT_ROOT"]."/rtplang.class.php");
+require ($GLOBALS["DOCUMENT_ROOT"]."/boxes.php");
 
 $conf = new Conf();
 
