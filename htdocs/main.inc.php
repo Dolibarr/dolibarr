@@ -355,9 +355,8 @@ function top_menu($head, $title="")
     }
   print "\n";
 
-
-  print "</HEAD>\n";
-  print '<BODY TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">';
+  print "</head>\n";
+  print '<body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" marginheight="0" marginwidth="0">';
 
   /*
    * Mise à jour entre 2 versions
@@ -373,7 +372,6 @@ function top_menu($head, $title="")
       print "</table>";
     }
 
-  
   /*
    * Barre superieure
    *
@@ -385,13 +383,13 @@ function top_menu($head, $title="")
   print '<td width="15%" class="menu" align="center"><A class="menu" href="'.DOL_URL_ROOT.'/">Accueil</A></TD>';
 
   if (!defined(MAIN_MENU_BARRETOP))
-  {
-    define("MAIN_MENU_BARRETOP","default.php");
-  }
+    {
+      define("MAIN_MENU_BARRETOP","default.php");
+    }
 
   require(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".MAIN_MENU_BARRETOP);
 
-  print '<TD width="15%" class="menu" align="center">'.strftime(" %d %B - %H:%M",time()).'</TD>';
+  print '<td width="15%" class="menu" align="center">'.strftime(" %d %B - %H:%M",time()).'</TD>';
 
   print '<td width="10%" class="menu" align="center"><a href="'.DOL_URL_ROOT.'/user/logout.php" title="logout">'.$user->login.'</a></td>';
   print '</tr>';
@@ -414,7 +412,7 @@ function top_menu($head, $title="")
  *
  *
  */
-Function left_menu($menu) 
+Function left_menu($menu, $help_url='') 
 {
   global $user, $conf, $rtplang;
 
@@ -475,12 +473,22 @@ Function left_menu($menu)
 	}
       print '</td></tr>';
     }
-  print '</table>';
+
+  /*
+   * Lien vers l'aide en ligne
+   */
+
+  if (strlen($help_url) > 0)
+    {
+      define('MAIN_AIDE_URL','http://www.dolibarr.com/documentation/dolibarr-user.html');
+      print '<tr><td class="barre"><a target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">Aide</a></td></tr>';
+    }
 
   /*
    *
    *
    */
+  print '</table>';
   print '</td><td valign="top" width="85%" colspan="6">';
 
 
