@@ -21,20 +21,32 @@
  */
 require("./pre.inc.php");
 
-$user->getrights('facture');
 $user->getrights('compta');
 
 if (!$user->admin && !$user->rights->compta->charges)
   accessforbidden();
 
 require("../../chargesociales.class.php");
-//require("../../paiement_charge.class.php");
 require("../bank/account.class.php");
 
 llxHeader();
 
 
 $chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
+
+
+/* *************************************************************************** */
+/*                                                                             */
+/* Action Classer Payé                                                         */
+/*                                                                             */
+/* *************************************************************************** */
+if ($_GET["action"] == 'payed')
+{
+  $cha = new ChargeSociales($db);
+  $result = $cha->set_payed($chid);
+}
+	
+
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -160,19 +172,19 @@ if ($chid > 0)
 	    print "<div class=\"tabsAction\">\n";
 
 	    // Supprimer
-	    if ($cha->paye == 0 && $user->rights->facture->supprimer)
+	    if ($cha->paye == 0 && $totalpaye <=0 && $user->rights->compta->charges)
 	      {
 		print "<a class=\"tabAction\" href=\"$PHP_SELF?id=$cha->id&amp;action=delete\">Supprimer</a>";
 	      } 
 
 	    // Emettre paiement 
-	    if ($cha->paye == 0 && $user->rights->facture->paiement)
+	    if ($cha->paye == 0 && round($resteapayer) > 0 && $user->rights->compta->charges)
 	      {
 		print "<a class=\"tabAction\" href=\"../paiement_charge.php?id=$cha->id&amp;action=create\">Emettre paiement</a>";
 	      }
 	    
 	    // Classer 'payé'
-	    if ($cha->paye == 0 && $user->rights->facture->paiement)
+	    if ($cha->paye == 0 && round($resteapayer) <=0 && $user->rights->compta->charges)
 	      {
 		print "<a class=\"tabAction\" href=\"$PHP_SELF?id=$cha->id&amp;action=payed\">Classer 'Payée'</a>";
 	      }
@@ -180,12 +192,6 @@ if ($chid > 0)
 	    print "</div>";
     }
 
-	if ($_GET["action"] == 'payed')
-	  {
-    	print "Cette fonction n'a pas encore été implémentée";
-
-	  }
-	
   }
   else
   {
