@@ -42,7 +42,7 @@ class infoBox
 	  {
 	    if (strlen($contents[$i][$j]['url']) > 0)
 	      {
-		print '<td><a href="'.$contents[$i]['url'].'">';
+		print '<td><a href="'.$contents[$i][$j]['url'].'">';
 		print $contents[$i][$j]['text'] . "</a></td>";
 	      }
 	    else
