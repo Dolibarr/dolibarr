@@ -86,14 +86,35 @@ class modExpedition extends DolibarrModules
     // Permissions
     $this->remove();
 
-    $sql = array(
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (100,'Tous les droits sur les expeditions','expedition','a',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (101,'Lire les expeditions','expedition','r',1);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (102,'Créer modifier les expeditions','expedition','w',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (104,'Valider les expeditions','expedition','d',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (109,'Supprimer les expeditions','expedition','d',0);",
-		 );
-    
+    $sql = array();
+
+    $this->rights[0][0] = 100; // id de la permission
+    $this->rights[0][1] = 'Tous les droits sur les expeditions'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[1][0] = 101;
+    $this->rights[1][1] = 'Lire les expeditions';
+    $this->rights[1][2] = 'r';
+    $this->rights[1][3] = 1;
+
+    $this->rights[2][0] = 102;
+    $this->rights[2][1] = 'Créer modifier les expeditions';
+    $this->rights[2][2] = 'w';
+    $this->rights[2][3] = 0;
+
+    $this->rights[3][0] = 104;
+    $this->rights[3][1] = 'Valider les expeditions';
+    $this->rights[3][2] = 'd';
+    $this->rights[3][3] = 0;    
+
+    $this->rights[4][0] = 109;
+    $this->rights[4][1] = 'Supprimer les expeditions';
+    $this->rights[4][2] = 'd';
+    $this->rights[4][3] = 0;
+
+    $sql = array();
+
     return $this->_init($sql);
   }
 

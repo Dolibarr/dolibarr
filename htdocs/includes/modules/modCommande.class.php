@@ -3,6 +3,7 @@
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,15 +90,34 @@ class modCommande extends DolibarrModules
   {
     // Permissions
     $this->remove();
-		 
-    $sql = array(
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (80,'Tous les droits sur les commandes','commande','a',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (81,'Lire les commandes','commande','r',1);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (82,'Créer modifier les commandes','commande','w',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (84,'Valider les commandes','commande','d',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (89,'Supprimer les commandes','commande','d',0);",
-		 );
-    
+
+    $this->rights[0][0] = 80; // id de la permission
+    $this->rights[0][1] = 'Tous les droits sur les commandes'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[1][0] = 81;
+    $this->rights[1][1] = 'Lire les commandes';
+    $this->rights[1][2] = 'r';
+    $this->rights[1][3] = 1;
+
+    $this->rights[2][0] = 82;
+    $this->rights[2][1] = 'Créer modifier les commandes';
+    $this->rights[2][2] = 'w';
+    $this->rights[2][3] = 0;
+
+    $this->rights[3][0] = 84;
+    $this->rights[3][1] = 'Valider les commandes';
+    $this->rights[3][2] = 'd';
+    $this->rights[3][3] = 0;    
+
+    $this->rights[4][0] = 89;
+    $this->rights[4][1] = 'Supprimer les commandes';
+    $this->rights[4][2] = 'd';
+    $this->rights[4][3] = 0;
+
+    $sql = array();
+
     return $this->_init($sql);
   }
 
