@@ -155,10 +155,47 @@ insert into llx_c_forme_juridique (code, libelle) values (99,'Autre personne mor
 
 update llx_paiement set author = null where author = '';
 
+drop table llx_c_pays;
+
+create table llx_c_pays
+(
+  rowid    integer PRIMARY KEY,
+  libelle  varchar(25),
+  code     char(2)      NOT NULL
+)type=innodb;
+
+insert into llx_c_pays (rowid,libelle,code) values (0, '-',               '');
+insert into llx_c_pays (rowid,libelle,code) values (1, 'France',          'FR');
+insert into llx_c_pays (rowid,libelle,code) values (2, 'Belgique',        'BE');
+insert into llx_c_pays (rowid,libelle,code) values (3, 'Italie',          'IT');
+insert into llx_c_pays (rowid,libelle,code) values (4, 'Espagne',         'ES');
+insert into llx_c_pays (rowid,libelle,code) values (5, 'Allemagne',       'DE');
+insert into llx_c_pays (rowid,libelle,code) values (6, 'Suisse',          'CH');
+insert into llx_c_pays (rowid,libelle,code) values (7, 'Royaume uni',     'GB');
+insert into llx_c_pays (rowid,libelle,code) values (8, 'Irlande',         'IE');
+insert into llx_c_pays (rowid,libelle,code) values (9, 'Chine',           'CN');
+insert into llx_c_pays (rowid,libelle,code) values (10, 'Tunisie',        'TN');
+insert into llx_c_pays (rowid,libelle,code) values (11, 'Etats Unis',     'US');
+insert into llx_c_pays (rowid,libelle,code) values (12, 'Maroc',          'MA');
+insert into llx_c_pays (rowid,libelle,code) values (13, 'Algérie',        'DZ');
+insert into llx_c_pays (rowid,libelle,code) values (14, 'Canada',         'CA');
+insert into llx_c_pays (rowid,libelle,code) values (15, 'Togo',           'TG');
+insert into llx_c_pays (rowid,libelle,code) values (16, 'Gabon',          'GA');
+insert into llx_c_pays (rowid,libelle,code) values (17, 'Pays Bas',       'NL');
+insert into llx_c_pays (rowid,libelle,code) values (18, 'Hongrie',        'HU');
+insert into llx_c_pays (rowid,libelle,code) values (19, 'Russie',         'RU');
+insert into llx_c_pays (rowid,libelle,code) values (20, 'Suède',          'SE');
+insert into llx_c_pays (rowid,libelle,code) values (21, 'Côte d\'Ivoire', 'CI');
+insert into llx_c_pays (rowid,libelle,code) values (23, 'Sénégal',        'SN');
+insert into llx_c_pays (rowid,libelle,code) values (24, 'Argentine',      'AR');
+insert into llx_c_pays (rowid,libelle,code) values (25, 'Cameroun',       'CM');
+
+
 create table llx_c_regions
 (
   rowid       integer AUTO_INCREMENT UNIQUE,
   code_region integer PRIMARY KEY,
+  fk_pays     integer default 1,
   cheflieu    varchar(7),
   tncc        integer,
   nom         varchar(50),
