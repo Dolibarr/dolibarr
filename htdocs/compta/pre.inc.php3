@@ -57,17 +57,7 @@ function llxHeader($head = "") {
       $menu->add("charges/index.php3","Charges");
       $menu->add_submenu("sociales/","Prest. Sociales");
     }
-  $menu->add("ca.php3","Chiffre d'affaire");
-
-  if ($user->societe_id == 0) 
-    {
-      $menu->add_submenu("cumul.php","Cumuls");
-      $menu->add_submenu("prev.php3","Prévisionnel");
-      $menu->add_submenu("comp.php3","Comparatif");
-      $menu->add_submenu("exercices.php3","Exercices");
-      $menu->add_submenu("casoc.php3","Par société");
-    }
-
+  $menu->add("stats/","Chiffre d'affaire");
 
   if ($conf->compta->tva && $user->societe_id == 0)
     {
