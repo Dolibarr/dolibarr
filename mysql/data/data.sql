@@ -53,6 +53,13 @@ insert into llx_boxes (box_id, position) values (3,0);
 --
 -- Constantes de configuration
 --
+insert into llx_const(name, value, type, note) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation');
+
+insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2003','chaine','Année de départ');
+
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_THEME','yellow','chaine','Thème par défaut');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
+
 insert into llx_const(name, value, type) values ('FAC_PDF_FAX','01 02 03 04 05','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_SIRET','123 456 789','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_INTITULE','Dolibarr','chaine');
@@ -60,7 +67,6 @@ insert into llx_const(name, value, type) values ('FAC_PDF_SIREN','123 456 789 12
 insert into llx_const(name, value, type) values ('FAC_PDF_TEL','05 04 03 02 01','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_ADRESSE','1 quai Martin\n56400 Auray','texte');
 
-insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2003','chaine','Année de départ');
 
 insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
 
@@ -73,8 +79,7 @@ insert into llx_const(name, value, type, note) values ('COMPTA_ONLINE_PAYMENT_BP
 
 insert into llx_const(name, value, type, note) values ('COMPTA_BANK_FACTURES','1','yesno','Menu factures dans la partie bank');
 
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_THEME','yellow','chaine','theme principal');
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
+
 --
 -- Mail Adherent
 --
