@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (c) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (c) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -48,13 +48,21 @@ class BarGraph extends Graph
     $this->data = $data;
     
     include_once(DOL_DOCUMENT_ROOT."/includes/phplot/phplot.php");
-    
+
     $this->bgcolor = array(235,235,224);
     //$this->bgcolor = array(235,235,200);
     $this->bordercolor = array(235,235,224);
     $this->datacolor = array(array(204,204,179),
 			     array(187,187,136),
 			     array(235,235,224));
+
+    
+    $color_file = DOL_DOCUMENT_ROOT."/theme/".$conf->theme."/graph-color.php";
+    if (is_readable($color_file))
+      {
+	include($color_file);
+	$this->bgcolor = $theme_bgcolor;
+      }
     
     $this->precision_y = 0;
 
