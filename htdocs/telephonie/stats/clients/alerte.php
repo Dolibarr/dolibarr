@@ -45,7 +45,19 @@ $h++;
 
 dolibarr_fiche_head($head, $hselected, "Clients");
 
-print "Clients dont la marge est inférieure à 20 %";
+if ($_GET["marge"] > 0)
+{
+  $marge = $_GET["marge"];
+}
+else
+{
+  $marge = TELEPHONIE_MARGE_MINI;
+}
+print '<form method="get" action="alerte.php">';
+print "Clients dont la marge est inférieure à ";
+
+print '<input type="text"  name="marge" value="'.$marge.'" size="3" >';
+print '%<input type="submit"></form>';
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
@@ -55,7 +67,7 @@ $sql = "SELECT nom, ca, gain, cout, marge, idp";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_client_stats";
 $sql .= " , " .MAIN_DB_PREFIX."societe";
 $sql .= " WHERE idp = fk_client_comm";
-$sql .= " AND marge < 20";
+$sql .= " AND marge < ". $marge;
 $sql .= " GROUP BY marge DESC";
 
 if ($db->query($sql))
