@@ -1,0 +1,13 @@
+# Dolibarr language file - en_US - stocks
+WarehouseCard=Warehouse card
+Warehouse=Warehouse
+NewWarehouse=New warehouse
+WarehouseOpened=Warehouse opened
+WarehouseClosed=Warehouse closed
+Stock=Stock
+Stocks=Stocks
+Movement=Movement
+Movements=Movements
+CorrectStock=Correct stock
+ListOfStockMovements=List of stock movements
+ErrorWarehouseLabelRequired=Warehouse label is required

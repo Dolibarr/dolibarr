@@ -21,7 +21,8 @@
  *
  */
 
-/**     \file       htdocs/product/stock/fiche.php
+/**
+        \file       htdocs/product/stock/fiche.php
         \ingroup    stock
         \brief      Page fiche entrepot
         \version    $Revision$
@@ -30,6 +31,7 @@
 require("./pre.inc.php");
 
 $langs->load("products");
+$langs->load("stocks");
 
 
 $mesg = '';
@@ -38,15 +40,21 @@ $mesg = '';
 
 if ($_POST["action"] == 'add')
 {
-  $entrepot = new Entrepot($db);
-
-  $entrepot->ref         = $_POST["ref"];
-  $entrepot->libelle     = $_POST["libelle"];
-  $entrepot->description = $_POST["desc"];
-  $entrepot->statut      = $_POST["statut"];
-
-  $id = $entrepot->create($user);
-  Header("Location: fiche.php?id=$id");
+    $entrepot = new Entrepot($db);
+    
+    $entrepot->ref         = trim($_POST["ref"]);
+    $entrepot->libelle     = trim($_POST["libelle"]);
+    $entrepot->description = trim($_POST["desc"]);
+    $entrepot->statut      = $_POST["statut"];
+    
+    if ($entrepot->libelle) {
+        $id = $entrepot->create($user);
+        Header("Location: fiche.php?id=$id");
+    }
+    else {
+        $mesg="<div class='error'>".$langs->trans("ErrorWarehouseLabelRequired")."</div>"; 
+        $_GET["action"]="create";   // Force retour sur page création
+    }
 }
 
 if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
@@ -77,7 +85,9 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
 }
 
 
-llxHeader("","","Fiche entrepôt");
+
+llxHeader("","",$langs->trans("WarehouseCard"));
+
 
 if ($_GET["cancel"] == $langs->trans("Cancel"))
 {
@@ -96,7 +106,11 @@ if ($_GET["action"] == 'create')
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="type" value="'.$type.'">'."\n";
   print_titre($langs->trans("NewWarehouse"));
-      
+  
+  if ($mesg) {
+    print $mesg;
+  }
+  
   print '<table class="border" width="100%">';
   print '<tr><td width="20%">'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value=""></td></tr>';
   print '<tr><td width="20%" valign="top">'.$langs->trans("Description").'</td><td>';

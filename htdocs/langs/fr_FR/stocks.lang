@@ -1,0 +1,13 @@
+# Dolibarr language file - fr_FR - stocks
+WarehouseCard=Fiche entrepôt
+Warehouse=Entrepôt
+NewWarehouse=Nouvel entrepôt
+WarehouseOpened=Entrepôt ouvert
+WarehouseClosed=Entrepôt fermé
+Stock=Stock
+Stocks=Stocks
+Movement=Mouvement
+Movements=Mouvements
+CorrectStock=Corriger stock
+ListOfStockMovements=Liste des mouvements de stock
+ErrorWarehouseLabelRequired=Le libellé de l'entrepôt est obligatoire
