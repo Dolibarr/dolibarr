@@ -39,28 +39,28 @@ function llxHeader($head = "") {
   $menu = new Menu();
 
 
-  $menu->add("index.php",$langs->trans("Members"));
-  $menu->add_submenu("fiche.php?action=create",$langs->trans("NewMember"));
-  $menu->add_submenu("liste.php?statut=-1","Adhésions à valider");
-  $menu->add_submenu("liste.php?statut=1","Adhérents à ce jour");
-  $menu->add_submenu("liste.php?statut=0","Adhésions résiliées");
+  $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Members"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/fiche.php?action=create",$langs->trans("NewMember"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1",$langs->trans("MenuMembersToValidate"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1",$langs->trans("MenuMembersUpToDate"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=0",$langs->trans("MenuMembersResiliated"));
 
   $menu->add(DOL_URL_ROOT."/public/adherents/","Espace adherents public");
 
-  $menu->add("index.php","Export");
-  $menu->add_submenu("htpasswd.php","Format htpasswd");
-  $menu->add_submenu("cartes/carte.php","Cartes d'adhérents");
-  $menu->add_submenu("cartes/etiquette.php","Etiquettes d'adhérents");
+  $menu->add(DOL_URL_ROOT."/adherents/index.php","Export");
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php","Format htpasswd");
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php","Cartes d'adhérents");
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php","Etiquettes d'adhérents");
 
   $langs->load("compta");
-  $menu->add("index.php",$langs->trans("Accountancy"));
-  $menu->add_submenu("cotisations.php","Cotisations");
+  $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Accountancy"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/cotisations.php",$langs->trans("Subscriptions"));
   $langs->load("banks");
   $menu->add_submenu(DOL_URL_ROOT."/compta/bank/",$langs->trans("Banks"));
 
-  $menu->add("index.php",$langs->trans("Setup"));
-  $menu->add_submenu("type.php",$langs->trans("MembersTypes"));
-  $menu->add_submenu("options.php",$langs->trans("MembersAttributes"));
+  $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Setup"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/type.php",$langs->trans("MembersTypes"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/options.php",$langs->trans("MembersAttributes"));
 
   left_menu($menu->liste);
 

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,8 @@
  *
  */
 
-/*! \file htdocs/adherents/cartes/pre.inc.php
+/**
+        \file       htdocs/adherents/cartes/pre.inc.php
         \ingroup    adherent
 		\brief      Fichier de gestion du menu gauche du module adherent
 		\version    $Revision$
@@ -29,41 +31,34 @@
 require("../../main.inc.php");
 
 function llxHeader($head = "") {
-  global $user, $conf;
+  global $user, $conf, $langs;
 
-
-  /*
-   *
-   *
-   */
   top_menu($head);
 
   $menu = new Menu();
 
-  $menu->add("index.php","Adherents");
-  $menu->add_submenu("liste.php?statut=1","Adhérents à ce jour");
-  $menu->add_submenu("liste.php?statut=-1","Adhésions à valider");
+  $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Members"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/fiche.php?action=create",$langs->trans("NewMember"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1",$langs->trans("MenuMembersToValidate"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1",$langs->trans("MenuMembersUpToDate"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=0",$langs->trans("MenuMembersResiliated"));
 
-  $menu->add_submenu("liste.php?statut=0","Adhésions résiliées");
-  $menu->add_submenu("cartes/carte.php","Cartes d'adhérents");
-  if ($user->admin)
-    {
-      $menu->add("fiche.php?action=create","Nouvel adhérent");
-    }
+  $menu->add(DOL_URL_ROOT."/public/adherents/","Espace adherents public");
 
-  $menu->add("/public/adherents/","Espace adherents public");
+  $menu->add(DOL_URL_ROOT."/adherents/index.php","Export");
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php","Format htpasswd");
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php","Cartes d'adhérents");
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php","Etiquettes d'adhérents");
 
-  $menu->add("index.php","Comptabilite");
-  $menu->add_submenu("cotisations.php","Cotisations");
-  $menu->add_submenu("/compta/bank/","Bank");
+  $langs->load("compta");
+  $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Accountancy"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/cotisations.php",$langs->trans("Subscriptions"));
+  $langs->load("banks");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/",$langs->trans("Bank"));
 
-  if ($user->admin)
-    {
-      $menu->add("index.php","Configuration");
-      $menu->add_submenu("type.php","Type d'adhérent");
-      $menu->add_submenu("options.php","Champs optionnels");
-      $menu->add_submenu("/admin/adherent.php","Constantes");
-    }
+  $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Setup"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/type.php",$langs->trans("MembersTypes"));
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/options.php",$langs->trans("MembersAttributes"));
 
   left_menu($menu->liste);
 

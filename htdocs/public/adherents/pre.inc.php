@@ -22,12 +22,10 @@
 
 require("../../main.inc.php");
 
-function llxHeader($head = "") {
-  global $user, $conf;
-  /*
-   *
-   *
-   */
+function llxHeader($head = "")
+{
+  global $user, $conf, $langs;
+
   top_menu($head);
 
   $menu = new Menu();
@@ -37,30 +35,8 @@ function llxHeader($head = "") {
   $menu->add(DOL_URL_ROOT."/public/adherents/","Adherents");
   $menu->add_submenu("priv_edit.php","Edition de sa fiche");
   $menu->add_submenu("priv_liste.php","Liste des adherents");
-  /*
-  $menu->add_submenu("liste.php?statut=1","Adhérents à ce jour");
-  $menu->add_submenu("liste.php?statut=-1","Adhésions à valider");
 
-  $menu->add_submenu("liste.php?statut=0","Adhésions résiliées");
-
-  if ($user->admin)
-    {
-      $menu->add("fiche.php?action=create","Nouvel adhérent");
-    }
-
-
-
-  $menu->add("cotisations.php","Cotisations");
-
-  if ($user->admin)
-    {
-      $menu->add("type.php","Configuration");
-    }
-  */
   left_menu($menu->liste);
-
-  // remplacement de la barre de gauche
-  //  print '</td><td valign="top" width="85%" colspan="6">';
 
 }
 
