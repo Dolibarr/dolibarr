@@ -134,14 +134,14 @@ foreach my $target (keys %CHOOSEDTARGET) {
         print "Test requirement for target $target: Search '$req'... ";
         $ret=`"$req" 2>&1`;
         $coderetour=$?; $coderetour2=$coderetour>>8;
-        if ($coderetour != 0 && $coderetour2 == 1 && $PROGPATH) { 
+        if ($coderetour != 0 && ($coderetour2 == 1 || $coderetour2 == 127) && $PROGPATH) { 
             # If error not found, we try in PROGPATH
             $ret=`"$PROGPATH/$ALTERNATEPATH{$req}/$req\" 2>&1`;
             $coderetour=$?; $coderetour2=$coderetour>>8;
             $REQUIREMENTTARGET{$target}="$PROGPATH/$ALTERNATEPATH{$req}/$req";
         }    
 
-        if ($coderetour == 0 || $coderetour2 > 1 || $ret =~ /Usage/) {
+        if ($coderetour == 0 || ($coderetour2 > 1 && $coderetour2 < 127) || $ret =~ /Usage/) {
             # Pas erreur ou erreur autre que programme absent
             print " Found ".$REQUIREMENTTARGET{$target}."\n";
         } else {
@@ -154,82 +154,94 @@ foreach my $target (keys %CHOOSEDTARGET) {
 
 print "\n";
 
-# Update buildroot
-#-----------------
-my $copyalreadydone=1;
-if (! $copyalreadydone) {
-	print "Delete directory $BUILDROOT\n";
-	$ret=`rm -fr "$BUILDROOT"`;
-
-	mkdir "$BUILDROOT";
-	print "Copy $SOURCE into $BUILDROOT\n";
-	mkdir "$BUILDROOT";
-	$ret=`cp -pr "$SOURCE" "$BUILDROOT"`;
-}
-print "Clean $BUILDROOT\n";
-$ret=`rm -fr $BUILDROOT/$PROJECT/document`;
-$ret=`rm -fr $BUILDROOT/$PROJECT/build`;
-$ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db`;
-$ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
-rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
-
-
-# Build package for each target
-#------------------------------
+# Check if there is at least on target to build
+#----------------------------------------------
+$nboftargetok=0;
 foreach $target (keys %CHOOSEDTARGET) {
     if ($CHOOSEDTARGET{$target} < 0) { next; }
+    $nboftargetok++;
+}
 
-    print "\nBuild pack for target $target\n";
+if ($nboftarget) {
+
+    # Update buildroot
+    #-----------------
+    my $copyalreadydone=1;
+    if (! $copyalreadydone) {
+    	print "Delete directory $BUILDROOT\n";
+    	$ret=`rm -fr "$BUILDROOT"`;
     
-	if ($target eq 'TGZ') {
-		unlink $FILENAMETGZ.tgz;
-		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory="$BUILDROOT" -czvf $FILENAMETGZ.tgz $FILENAMETGZ`;
-		print "Move $FILENAMETGZ.tgz to $SOURCE/build/$FILENAMETGZ.tgz\n";
-		rename("$BUILDROOT/$FILENAMETGZ.tgz","$SOURCE/build/$FILENAMETGZ.tgz");
-		next;
-	}	
-
-	if ($target eq 'ZIP') {
-		unlink $FILENAMEZIP.zip;
-		print "Compress $FILENAMETGZ into $FILENAMEZIP.zip...\n";
- 		chdir("$BUILDROOT");
-        #print "cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*\n";
-        #$ret=`cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
-		$ret=`7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
-		print "Move $FILENAMEZIP.zip to $SOURCE/build/$FILENAMEZIP.zip\n";
-		rename("$BUILDROOT/$FILENAMEZIP.zip","$SOURCE/build/$FILENAMEZIP.zip");
-		next;
-	}
-
-	if ($target eq 'RPM') {
-		$BUILDFIC="$FILENAMETGZ.spec";
-		unlink $FILENAMETGZ.tgz;
-		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory="$BUILDROOT" -czvf $FILENAMETGZ.tgz $FILENAMETGZ`;
-		print "Move $FILENAMETGZ.tgz to $SOURCE/build/$FILENAMETGZ.tgz\n";
-		rename("$BUILDROOT/$FILENAMETGZ.tgz","$TEMP/$FILENAMETGZ.tgz");
-
-		print "Launch RPM build (rpm --clean -ba $SOURCE/build/rpm/${BUILDFIC})\n";
-		$ret=`rpm --clean -ba $SOURCE/build/rpm/${BUILDFIC}`;
-	
-		print "Move /usr/src/RPM/RPMS/noarch/${FILENAMERPM}.noarch.rpm into $SOURCE/build/${FILENAMERPM}.noarch.rpm\n";
-		rename("/usr/src/RPM/RPMS/noarch/${FILENAMERPM}.noarch.rpm","$SOURCE/build/${FILENAMERPM}.noarch.rpm");
-		next;
-	}
-	
-	if ($target eq 'DEB') {
-        print "Automatic build for DEB is not yet supported.\n";
+    	mkdir "$BUILDROOT";
+    	print "Copy $SOURCE into $BUILDROOT\n";
+    	mkdir "$BUILDROOT";
+    	$ret=`cp -pr "$SOURCE" "$BUILDROOT"`;
     }
+    print "Clean $BUILDROOT\n";
+    $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
+    $ret=`rm -fr $BUILDROOT/$PROJECT/build`;
+    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db`;
+    $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
+    rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
     
-	if ($target eq 'EXE') {
-		unlink "$FILENAMEEXE.exe";
-		print "Compress into $FILENAMEEXE.exe by $FILENAMEEXE.nsi...\n";
-		$ret=`"$REQUIREMENTTARGET{$target}" /X"SetCompressor bzip2" "$SOURCE\\build\\exe\\$FILENAMEEXE.nsi"`;
-		print "Move $FILENAMEEXE.exe to $SOURCE/build/$FILENAMEEXE.exe\n";
-		rename("$SOURCE\\build\\exe\\$FILENAMEEXE.exe","$SOURCE/build/$FILENAMEEXE.exe");
-		next;
-	}
+    
+    # Build package for each target
+    #------------------------------
+    foreach $target (keys %CHOOSEDTARGET) {
+        if ($CHOOSEDTARGET{$target} < 0) { next; }
+    
+        print "\nBuild pack for target $target\n";
+        
+    	if ($target eq 'TGZ') {
+    		unlink $FILENAMETGZ.tgz;
+    		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
+    		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory="$BUILDROOT" -czvf $FILENAMETGZ.tgz $FILENAMETGZ`;
+    		print "Move $FILENAMETGZ.tgz to $SOURCE/build/$FILENAMETGZ.tgz\n";
+    		rename("$BUILDROOT/$FILENAMETGZ.tgz","$SOURCE/build/$FILENAMETGZ.tgz");
+    		next;
+    	}	
+    
+    	if ($target eq 'ZIP') {
+    		unlink $FILENAMEZIP.zip;
+    		print "Compress $FILENAMETGZ into $FILENAMEZIP.zip...\n";
+     		chdir("$BUILDROOT");
+            #print "cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*\n";
+            #$ret=`cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
+    		$ret=`7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
+    		print "Move $FILENAMEZIP.zip to $SOURCE/build/$FILENAMEZIP.zip\n";
+    		rename("$BUILDROOT/$FILENAMEZIP.zip","$SOURCE/build/$FILENAMEZIP.zip");
+    		next;
+    	}
+    
+    	if ($target eq 'RPM') {
+    		$BUILDFIC="$FILENAMETGZ.spec";
+    		unlink $FILENAMETGZ.tgz;
+    		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
+    		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory="$BUILDROOT" -czvf $FILENAMETGZ.tgz $FILENAMETGZ`;
+    		print "Move $FILENAMETGZ.tgz to $SOURCE/build/$FILENAMETGZ.tgz\n";
+    		rename("$BUILDROOT/$FILENAMETGZ.tgz","$TEMP/$FILENAMETGZ.tgz");
+    
+    		print "Launch RPM build (rpm --clean -ba $SOURCE/build/rpm/${BUILDFIC})\n";
+    		$ret=`rpm --clean -ba $SOURCE/build/rpm/${BUILDFIC}`;
+    	
+    		print "Move /usr/src/RPM/RPMS/noarch/${FILENAMERPM}.noarch.rpm into $SOURCE/build/${FILENAMERPM}.noarch.rpm\n";
+    		rename("/usr/src/RPM/RPMS/noarch/${FILENAMERPM}.noarch.rpm","$SOURCE/build/${FILENAMERPM}.noarch.rpm");
+    		next;
+    	}
+    	
+    	if ($target eq 'DEB') {
+            print "Automatic build for DEB is not yet supported.\n";
+        }
+        
+    	if ($target eq 'EXE') {
+    		unlink "$FILENAMEEXE.exe";
+    		print "Compress into $FILENAMEEXE.exe by $FILENAMEEXE.nsi...\n";
+    		$ret=`"$REQUIREMENTTARGET{$target}" /X"SetCompressor bzip2" "$SOURCE\\build\\exe\\$FILENAMEEXE.nsi"`;
+    		print "Move $FILENAMEEXE.exe to $SOURCE/build/$FILENAMEEXE.exe\n";
+    		rename("$SOURCE\\build\\exe\\$FILENAMEEXE.exe","$SOURCE/build/$FILENAMEEXE.exe");
+    		next;
+    	}
+    
+    }
 
 }
 
