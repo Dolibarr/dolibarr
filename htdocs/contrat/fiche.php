@@ -35,6 +35,7 @@ require("../facture.class.php");
 $langs->load("products");
 $langs->load("companies");
 $langs->load("bills");
+$langs->load("contracts");
 
 llxHeader();
 

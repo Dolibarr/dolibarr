@@ -29,8 +29,8 @@
 */
 
 
-/*! \class Contrat
-		\brief Classe permettant la gestion des contrats
+/*!     \class      Contrat
+		\brief      Classe permettant la gestion des contrats
 */
 
 class Contrat
@@ -39,8 +39,8 @@ class Contrat
   var $db;
 
   /**
-   *    \brief  Constructeur de la classe
-   *    \param  DB          handler accès base de données
+   *    \brief      Constructeur de la classe
+   *    \param      DB          handler accès base de données
    */
   function Contrat($DB)
   {
@@ -52,9 +52,9 @@ class Contrat
   }
 
   /*
-   * Modifie date de mise en service d'un contrat
-   * Si la duree est renseignée, date_start=date_start et date_end=date_start+duree
-   * sinon date_start=date_start et date_end=date_end
+   *    \brief      Modifie date de mise en service d'un contrat
+   *                Si la duree est renseignée, date_start=date_start et date_end=date_start+duree
+   *                sinon date_start=date_start et date_end=date_end
    */
   function mise_en_service($user, $date_start, $duree=0, $date_end)
   {
@@ -98,7 +98,8 @@ class Contrat
   }
 
   /*
-   *
+   *    \brief      Cloture un contrat
+   *    \param      user    objet User qui cloture
    *
    */
   function cloture($user)
@@ -111,7 +112,8 @@ class Contrat
   }
 
   /*
-   *
+   *    \brief      Annule un contrat
+   *    \param      user    objet User qui annule
    *
    */
   function annule($user)
@@ -124,8 +126,8 @@ class Contrat
   }
 
   /*
-   *
-   *
+   *    \brief      Charge de la base les données du contrat
+   *    \param      id      id du contrat à charger
    */ 
   function fetch ($id)
   {    
@@ -167,7 +169,7 @@ class Contrat
   }
 
   /*
-   * Crée autant de contrats que de lignes de facture, pour une facture donnée
+   *    \brief      Crée autant de contrats que de lignes de facture, pour une facture donnée
    *
    */
   function create_from_facture($factureid, $user, $socid)
@@ -218,6 +220,30 @@ class Contrat
       return $result;
     }
 
- 
+
+  /**
+   *    \brief      Retourne le libellé du statut du contrat
+   *    \return     string      Libellé
+   */
+  function get_libstatut()
+    {
+		return $this->LibStatut($this->statut);
+    }
+
+  /**
+   *    \brief      Renvoi le libellé d'un statut donné
+   *    \param      statut      id statut
+   *    \return     string      Libellé
+   */
+    function LibStatut($statut)
+    {
+        global $langs;
+        $langs->load("contracts");
+
+        if ($statut == 0) { return $langs->trans("ContractStatusNotRunning"); }
+        if ($statut == 1) { return $langs->trans("ContractStatusRunning"); }
+        if ($statut == 2) { return $langs->trans("ContractStatusClosed"); }
+    }
+
 }
 ?>
