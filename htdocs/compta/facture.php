@@ -1503,7 +1503,10 @@ else
 	    $sortfield="f.datef";
 
 	  $sql = "SELECT s.nom,s.idp,f.facnumber,f.total,f.total_ttc,".$db->pdate("f.datef")." as df, f.paye as paye, f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture WHERE f.fk_soc = s.idp";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+	  $sql .= ",".MAIN_DB_PREFIX."facture as f";
+	  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
+	  $sql .= " WHERE f.fk_soc = s.idp";
 	
 	  if ($socidp)
 	    $sql .= " AND s.idp = $socidp";
@@ -1521,6 +1524,16 @@ else
 		}
 	    }
 	
+	  if ($_GET["search_ref"])
+	    {
+	      $sql .= " AND f.facnumber like '%".$_GET["search_ref"]."%'";
+	    }
+
+	  if ($_GET["search_societe"])
+	    {
+	      $sql .= " AND s.nom like '%".$_GET["search_societe"]."%'";
+	    }
+
 	  if ($year > 0)
 	    $sql .= " AND date_format(f.datef, '%Y') = $year";
 
@@ -1568,18 +1581,16 @@ else
 	  print "</tr>\n";
 
 	  // Lignes des champs de filtre
-	  print '<form method="post" action="societe.php">';
+	  print '<form method="get" action="facture.php">';
 	  print '<tr class="liste_titre">';
 	  print '<td valign="right">';
-	  print '<input class="fat" size="10" type="text" name="search_ref" value="'.$search_ref.'">';
+	  print '<input class="fat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'">';
 	  print '</td><td>&nbsp;</td>';
 	  print '<td valign="right">';
-	  print '<input class="fat" type="text" name="search_societe" value="'.$search_societe.'">';
-	  print '</td><td>';
-	  print '<input class="fat" type="text" name="search_societe" value="'.$search_societe.'">';
+	  print '<input class="fat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
+	  print '</td><td>&nbsp;';
 	  print '</td><td>&nbsp;</td><td colspan="2" align="center">';
 	  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
-	  print '&nbsp; <input type="submit" class="button" name="button_removefilter" value="'.$langs->trans("RemoveFilter").'">';
 	  print '</td>';
 	  print "</tr>\n";
 	  print '</form>';
