@@ -164,9 +164,12 @@ if ( $soc->fetch($soc->id) )
    */
 
   print '<table class="border"width="100%">';
-  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td>'.$soc->nom.'</td></tr>';
-  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>'.nl2br($soc->adresse).'&nbsp;</td></tr>';
-  print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>'.$soc->cp.' / '.$soc->ville.'</td></tr>';
+  
+  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td colspan="3">'.$soc->nom.'</td></tr>';
+  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
+
+  print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
+  print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
 
   print '</table><br></div>';
 

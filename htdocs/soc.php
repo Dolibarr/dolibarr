@@ -197,6 +197,9 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 
       }
       if ($step==2 || ! defined(COMPANY_CREATE_TWO_STEPS)) {
+
+          print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
+
             if (defined(COMPANY_CREATE_TWO_STEPS)) {
               print '<tr><td width="140">'.$langs->trans('Country').'</td><td colspan="3">';
               print $soc->pays;
@@ -225,7 +228,6 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel"></td>';
           print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax"></td></tr>';
           
-          print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
           print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
     
           print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td><input type="text" name="siren" size="15" maxlength="9" value="'.$soc->siren.'"></td>';
@@ -302,9 +304,20 @@ elseif ($_GET["action"] == 'edit')
 
       print '<table class="border" width="100%">';
 
-      print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td>';
-      print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
+      print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td></tr>';
 
+      print '<tr><td>'.$langs->trans('CustomerCode').'</td><td>';
+      if ($soc->codeclient_modifiable == 1)
+      {
+        print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
+      }
+      else
+      {
+        print $soc->code_client;
+      }
+      print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td>';
+      print '</tr>';
+    
       print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
       print $soc->adresse;
       print '</textarea></td></tr>';
@@ -323,42 +336,30 @@ elseif ($_GET["action"] == 'edit')
       print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
       print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
 
-      print '<tr><td>'.$langs->trans('CustomerCode').'</td><td>';
-
-      if ($soc->codeclient_modifiable == 1)
-	{
-	  print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
-	}
-      else
-	{
-	  print $soc->code_client;
-	}
-
-      print '<td>'.$langs->trans("Type").'</td><td>';
-      $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id);
-      print '</td></tr>';
-
       print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
       
       print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
       print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
 
       print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td><td colspan="2">&nbsp;</td></tr>';
+
+      print '<tr><td>'.$langs->trans('TVAIntra').'</td><td colspan="3">';
+      print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
+      print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
+      print '  '.$langs->trans("VATIntraCheckableOnEUSite");
+      print '</td></tr>';
+
       print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
 
       print '<tr><td>Forme juridique</td><td colspan="3">';
       $form->select_forme_juridique($soc->forme_juridique_code,0);
       print '</td></tr>';
 
-      print '<tr><td>Effectif</td><td colspan="3">';
+      print '<tr><td>'.$langs->trans("Type").'</td><td>';
+      $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id);
+      print '</td>';
+      print '<td>Effectif</td><td>';
       $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
-      print '</td></tr>';
-
-      print '<tr><td>'.$langs->trans('TVAIntra').'</td><td colspan="3">';
-
-      print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
-      print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
-
       print '</td></tr>';
 
       print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td><select name="client">';
@@ -375,9 +376,6 @@ elseif ($_GET["action"] == 'edit')
 
       print '</table>';
       print '</form>';
-
-      print 'Astuce : Vous pouvez vérifier le numéro de TVA intra communautaire sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la commission européenne';
-
     }
 }
 else
@@ -457,7 +455,13 @@ else
 
   print '<table class="border" width="100%">';
 
-  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>'.$soc->nom.'</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
+  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$soc->nom.'</td></tr>';
+
+  print '<tr><td>';
+  print $langs->trans('CustomerCode').'</td><td width="20%">';
+  print $soc->code_client;
+  if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+  print '</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
 
   print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
 
@@ -468,15 +472,6 @@ else
 
   print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
   print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
-
-  print '<tr><td>';
-  print $langs->trans('CustomerCode').'</td><td colspan="3">';
-  print $soc->code_client;
-  if ($soc->check_codeclient() <> 0)
-    {
-      print "Code incorrect";
-    }
-  print '</td></tr>';
 
   print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
   if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
@@ -500,19 +495,18 @@ else
         print $soc->siren;
   }
   print '</td>';
-
   print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td>'.$soc->siret.'</td></tr>';
 
   print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td>'.$soc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
 
-  print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$soc->capital.' '.$conf->monnaie.'</td></tr>';
-
-  print '<tr><td>Forme juridique</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
-  print '<tr><td>Effectif</td><td colspan="3">'.$soc->effectif.'</td></tr>';
-
   print '<tr><td>'.$langs->trans('TVAIntra').'</td><td colspan="3">';
   print $soc->tva_intra;
   print '</td></tr>';
+
+  print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$soc->capital.' '.$conf->monnaie.'</td></tr>';
+
+  print '<tr><td>Forme juridique</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
+  print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>Effectif</td><td>'.$soc->effectif.'</td></tr>';
 
   print '<tr><td><a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit() ."</a>&nbsp;";
   print $langs->trans('RIB').'</td><td colspan="3">';
