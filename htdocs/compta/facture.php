@@ -1347,6 +1347,12 @@ else
        *                      Mode Liste                                         *
        *                                                                         *
        ***************************************************************************/
+      $page=$_GET["page"];
+      $sortorder=$_GET["sortorder"];
+      $sortfield=$_GET["sortfield"];
+      $month=$_GET["month"];
+      $year=$_GET["year"];
+      
       if ($page == -1)
 	{
 	  $page = 0 ;
@@ -1409,7 +1415,7 @@ else
 	  print_barre_liste("Factures clients",$page,$_SERVER["PHP_SELF"],"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 	  $i = 0;
-	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 	  print '<tr class="liste_titre">';
 	  print '<td>';
 	  print_liste_field_titre("Numéro",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socidp=$socidp");
