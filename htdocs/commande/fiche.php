@@ -146,6 +146,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->commande->creer)
   $commande = new Commande($db);
   $commande->fetch($_GET["id"]);
   $result = $commande->delete_line($_GET["lineid"]);
+  Header("Location: fiche.php?id=".$_GET["id"]);
 }
 
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->rights->commande->valider)
@@ -244,7 +245,7 @@ if ($_GET["action"] == 'create')
 	  print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
 	  
 	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
-      $html->select_date();
+	  $html->select_date();
 	  print "</td></tr>";
 
 	  print '<tr><td>'.$langs->trans("Ref").' :</td><td>Provisoire</td></tr>';
@@ -413,7 +414,7 @@ else
 
 
 	  $head[0][0] = DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
-	  $head[0][1] = $langs->trans("Order").": $commande->ref";
+	  $head[0][1] = $langs->trans("Order")." : $commande->ref";
 	  $h = 1;
 	  $a = 0;
 	  
@@ -426,6 +427,7 @@ else
 	  if ($_GET["action"] == 'delete')
 	    {
 	      $html->form_confirm("fiche.php?id=$id","Supprimer la commande","Etes-vous sûr de vouloir supprimer cette commande ?","confirm_delete");
+	      print "<br />\n";
 	    }
 	  
 	  /*
@@ -436,6 +438,7 @@ else
 	    {
 	      //$numfa = commande_get_num($soc);
 	      $html->form_confirm("fiche.php?id=$id","Valider la commande","Etes-vous sûr de vouloir valider cette commande ?","confirm_valid");
+	      print "<br />\n";
 	    }
 	  /*
 	   * Confirmation de l'annulation
@@ -444,6 +447,7 @@ else
 	  if ($_GET["action"] == 'annuler')
 	    {
 	      $html->form_confirm("fiche.php?id=$id",$langs->trans("Cancel"),"Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
+	      print "<br />\n";
 	    }
 
 	  /*
@@ -581,7 +585,7 @@ else
 		      print '<td>&nbsp;</td>';
 		    }
 		  print '<td align="right">'.price($objp->subprice)."</td>\n";
-		  if ($commande->statut == 0  && $user->rights->commande->creer) 
+		  if ($commande->statut == 0  && $user->rights->commande->creer && $_GET["action"] == '') 
 		    {
 		      print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 		      print img_edit();
@@ -624,7 +628,7 @@ else
 	 * Ajouter une ligne
 	 *
 	 */
-	if ($commande->statut == 0 && $user->rights->commande->creer) 
+	if ($commande->statut == 0 && $user->rights->commande->creer && $_GET["action"] == '') 
 	  {
 	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p ";
 	      $sql .= " WHERE envente = 1";
@@ -687,13 +691,13 @@ else
 
 	print '</div>';
 
-	if ($user->societe_id == 0 && $commande->statut < 3)
+	if ($user->societe_id == 0 && $commande->statut < 3 && $_GET["action"] == '')
 	  {
 	    print '<div class="tabsAction">';
 	
 	    if ($conf->expedition->enabled && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
 	      {
-		print '<a class="tabAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET["id"].'">'.$langs->trans("Send").'</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET["id"].'">'.$langs->trans("Send").'</a>';
 	      }
 	  
 	    
@@ -701,13 +705,13 @@ else
 	      {
 		if ($user->rights->commande->valider)
 		  {
-		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
+		    print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
 		  }
 	      }
 	    
 	    if ($commande->statut == 0 && $user->rights->commande->supprimer)
 	      {
-		print '<a class="butDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+		print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 	      } 
 	    
 	    if ($commande->statut == 1)
@@ -715,7 +719,7 @@ else
     		$nb_expedition = $commande->nb_expedition();
     		if ($user->rights->commande->valider && $nb_expedition == 0)
     		  {
-    		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans("Cancel").'</a>';
+    		    print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans("Cancel").'</a>';
     		  }
 	      }
 
@@ -804,8 +808,8 @@ else
 	 *
 	 */
 	$file = $conf->commande->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
-    $relativepath = $commande->ref."/".$commande->ref.".pdf";
-	
+	$relativepath = $commande->ref."/".$commande->ref.".pdf";
+    
 	$var=true;
 	
 	if (file_exists($file))
