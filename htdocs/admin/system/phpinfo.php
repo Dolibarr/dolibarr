@@ -60,7 +60,7 @@ $chaine = eregi_replace('<hr />','',$chaine);
 $chaine = eregi_replace('</body></html>','',$chaine);
 $chaine = eregi_replace('body, td, th, h1, h2 {font-family: sans-serif;}','',$chaine);
 
-print "<center>$chaine</center>\n";
+print "$chaine\n";	// Ne pas centrer la réponse php car certains tableau du bas très large rendent ceux du haut complètement à droite
 print "<br>\n";
 
 llxfooter();
