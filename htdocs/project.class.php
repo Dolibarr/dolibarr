@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,16 +21,16 @@
  *
  */
 
-/**
-    	\file       htdocs/project.class.php
-		\ingroup    projet
-		\brief      Fichier de la classe de gestion des projets
-		\version    $Revision$
+/*!
+  \file       htdocs/project.class.php
+  \ingroup    projet
+  \brief      Fichier de la classe de gestion des projets
+  \version    $Revision$
 */
 
-
-/**     \class      Project
-		\brief      Classe permettant la gestion des projets
+/*!
+  \class      Project
+  \brief      Classe permettant la gestion des projets
 */
 
 class Project {
@@ -44,26 +44,26 @@ class Project {
    *    \brief  Constructeur de la classe
    *    \param  DB          handler accès base de données
    */
-  function Project($DB) {
+  function Project($DB)
+  {
     $this->db = $DB;
   }
-	
+  
   /*
    *    \brief      Crée un projet en base
-   *    \param      creatorid   id utilisateur qui crée
+   *    \param      user id utilisateur qui crée
    */
 
-  function create($creatorid) {
-
+  function create($user)
+  {
+    
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat) ";
-    $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, $creatorid) ;";
+    $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, ".$user->id.") ;";
     
     if (!$this->db->query($sql) ) 
       {
-	print '<b>'.$sql.'</b><br>'.$this->db->error();
-	
-	}
-    
+	print '<b>'.$sql.'</b><br>'.$this->db->error();	
+      }    
   }
 	
   /*
@@ -71,26 +71,32 @@ class Project {
    *    \param      rowid       id du projet à charger
    */
 
-  function fetch($rowid) {
+  function fetch($rowid)
+  {
+    
+    $sql = "SELECT title, ref FROM ".MAIN_DB_PREFIX."projet";
+    $sql .= " WHERE rowid=".$rowid;
 
-    $sql = "SELECT title, ref FROM ".MAIN_DB_PREFIX."projet WHERE rowid=$rowid;";
-
-    if ($this->db->query($sql) ) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object();
-
-	$this->id = $rowid;
-	$this->ref = $obj->ref;
-	$this->title = $obj->title;
-
-	$this->db->free();
+    $resql = $this->db->query($sql);
+    if ($resql)
+      {
+	if ($this->db->num_rows($resql))
+	  {
+	    $obj = $this->db->fetch_object($resql);
+	    
+	    $this->id = $rowid;
+	    $this->ref = $obj->ref;
+	    $this->title = $obj->title;
+	    
+	    $this->db->free($resql);
+	  }
       }
-    } else {
-      print $this->db->error();
-    }
+    else
+      {
+	print $this->db->error();
+      }
   }
 	
-
   /*
    *
    *
@@ -135,7 +141,6 @@ class Project {
    *
    *
    */
-	 
   function liste_array($id_societe='')
     {
       $projets = array();
@@ -170,6 +175,5 @@ class Project {
 	}
       
     }
-
 }
 ?>
