@@ -115,27 +115,10 @@ if ($user->societe_id > 0)
  *********************************************************************************/  
 if ($socid > 0)
 {
-  // On récupère id societe (courant ou suivant ou précédent)
-  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."c_typent as t, ".MAIN_DB_PREFIX."c_effectif as e ";
-  $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
-  if ($to == 'next') {
-    $sql .= " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
-  } elseif ($to == 'prev') {
-    $sql .= " AND s.idp < $socid ORDER BY idp DESC LIMIT 1";
-  } else {
-    $sql .= " AND s.idp = $socid";
-  }
-
-  $result = $db->query($sql);
-
-  if ($result)
-    {
-      $resp = $db->fetch_object(0);
-
       // On recupere les donnees societes par l'objet
       $objsoc = new Societe($db);
-      $objsoc->id=$resp->idp;
-      $objsoc->fetch($resp->idp);
+      $objsoc->id=$socid;
+      $objsoc->fetch($socid,$to);
 
       $dac = strftime("%Y-%m-%d %H:%M", time());
       if ($errmesg)
@@ -144,21 +127,54 @@ if ($socid > 0)
 	}
 
     /*
-     *
+     * Affichage onglets
      */
-      $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id;
-      $head[0][1] = "Fiche société";
-      $h = 1;
-      
-      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?id='.$objsoc->id;
-      $head[$h][1] = 'Fiche client';
-      $h++;
+    $h = 0;
 
-      if ($conf->compta->enabled) {
-          $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;
-          $head[$h][1] = 'Fiche compta';
-          $h++;
-      }
+    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$socid;
+    $head[$h][1] = "Fiche société";
+    $h++;
+
+    if ($objsoc->client==1)
+    {
+        $hselected=$h;
+        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
+        $head[$h][1] = 'Fiche client';
+        $h++;
+    }
+    if ($objsoc->client==2)
+    {
+        $hselected=$h;
+        $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$socid;
+        $head[$h][1] = 'Fiche prospect';
+        $h++;
+    }
+    if ($objsoc->fournisseur)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
+        $head[$h][1] = 'Fiche fournisseur';
+        $h++;
+    }
+
+    if ($conf->compta->enabled) {
+        $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid;
+        $head[$h][1] = 'Fiche compta';
+        $h++;
+    }
+
+    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$socid;
+    $head[$h][1] = 'Note';
+    $h++;
+
+    if ($user->societe_id == 0)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$socid;
+        $head[$h][1] = 'Documents';
+        $h++;
+    }
+
+    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$socid;
+    $head[$h][1] = 'Notifications';
 
       if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
 	{
@@ -166,28 +182,8 @@ if ($socid > 0)
 	  $head[$h][1] = 'Fiche catalogue';
 	  $h++;
 	}
-      
-      if ($soc->fournisseur)
-	{
-	  $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objsoc->id;
-	  $head[$h][1] = 'Fiche fournisseur';
-	  $h++;
-	}
-      $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
-      $head[$h][1] = 'Note';      
-      $h++;
-      
-      if ($user->societe_id == 0)
-	{
-	  $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$objsoc->id;
-	  $head[$h][1] = 'Documents';
-	  $h++;
-	}
 
-      $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
-      $head[$h][1] = 'Notifications';
-
-      dolibarr_fiche_head($head, 1);
+    dolibarr_fiche_head($head, $hselected);
 
     /*
      *
@@ -640,9 +636,7 @@ if ($socid > 0)
   } else {
     print $db->error() . "<br>" . $sql;
   }
-} else {
-  print "Erreur";
-}
+
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
