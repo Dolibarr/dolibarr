@@ -58,28 +58,37 @@ function llxHeader($head = "") {
       $menu->add("/compta/propal.php3","Propales");
     }
 
-  $menu->add("charges/index.php3","Charges");
-  $menu->add_submenu("sociales/","Prest. Sociales");
+  /*
+   * Sécurité accés client
+   */
+  if ($user->societe_id == 0) 
+    {
 
+      $menu->add("charges/index.php3","Charges");
+      $menu->add_submenu("sociales/","Prest. Sociales");
+    }
   $menu->add("ca.php3","Chiffres d'affaires");
 
-  $menu->add_submenu("prev.php3","Prévisionnel");
-  $menu->add_submenu("comp.php3","Comparatif");
-  $menu->add_submenu("exercices.php3","Exercices");
-
+  if ($user->societe_id == 0) 
+    {
+      $menu->add_submenu("prev.php3","Prévisionnel");
+      $menu->add_submenu("comp.php3","Comparatif");
+      $menu->add_submenu("exercices.php3","Exercices");
+    }
   $menu->add_submenu("casoc.php3","Par société");
-  //  $menu->add_submenu("pointmort.php3","Point mort");
 
-  if ($conf->compta->tva)
+
+  if ($conf->compta->tva && $user->societe_id == 0)
     {
       $menu->add("tva/index.php3","TVA");
     }
 
-  $menu->add("resultat/","Résultats");
+  if ($user->societe_id == 0) 
+    {
+      $menu->add("resultat/","Résultats");
 
-
-
-  $menu->add("bank/index.php3","Bank");
+      $menu->add("bank/index.php3","Bank");
+    }
 
   if ($conf->voyage) 
     {
