@@ -46,9 +46,13 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
   $soc->tel            = $_POST["tel"];
   $soc->fax            = $_POST["fax"];
   $soc->url            = ereg_replace( "http://", "", $_POST["url"] );
-  $soc->siren          = $_POST["siren"];
+
+  /* $soc->siren          = $_POST["siren"]; */
+
   $soc->siret          = $_POST["siret"];
-  $soc->ape            = $_POST["ape"];
+
+  /* $soc->ape            = $_POST["ape"]; */
+
   $soc->capital        = $_POST["capital"];
   $soc->tva_intra      = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
 
@@ -101,11 +105,12 @@ if ($action == 'create')
 
   print '<tr><td>Web</td><td colspan="3">http://<input size="40" type="text" name="url"></td></tr>';
 
-  print '<tr><td>Siren</td><td><input type="text" name="siren"></td>';
+  print '<tr>';
 
-  print '<td>Siret</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
+  print '<td>Registre de Commerce</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
 
   print '<tr>';
+
   print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
 
   print '<tr><td>Forme juridique</td><td colspan="3">';
@@ -169,13 +174,14 @@ elseif ($action == 'edit')
       print '<tr><td>Téléphone</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
       print '<td>Fax</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
       print '<tr><td>Web</td><td colspan="3">http://<input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
-      
-      print '<tr><td>Siren</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
-      print '<td>Siret</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
 
       print '<tr>';
-      print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
 
+      print '<td>Registre de Commerce</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
+
+      print '<tr>';
+
+      print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
 
       print '<tr><td>Forme juridique</td><td colspan="3">';
       $html = new Form($db);
@@ -202,9 +208,9 @@ elseif ($action == 'edit')
 	}
       elseif ($soc->client == 1)
 	{
-	  print '<option value="2">Prospect</option>'; 
-	  print '<option value="1" SELECTED>Client</option>'; 
-	  print '<option value="0">Ni client, ni prospect</option>'; 
+	  print '<option value="2">Prospect</option>';
+	  print '<option value="1" SELECTED>Client</option>';
+	  print '<option value="0">Ni client, ni prospect</option>';
 	}
       else
 	{
@@ -218,7 +224,7 @@ elseif ($action == 'edit')
       print '<td>Fournisseur</td><td><select name="fournisseur">';
       print_oui_non($soc->fournisseur);
       print '</select>';
-      
+
       print '</td></tr>';
       
       print '<tr><td align="center" colspan="4"><input type="submit" value="Mettre à jour"></td></tr>';
@@ -295,11 +301,12 @@ else
   if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
   print '</td></tr>';
   
-  print '<tr><td>Siren</td><td><a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;</td>';
+  print '<tr>';
 
-  print '<td>Siret</td><td>'.$soc->siret.'</td></tr>';
+  print '<td>Registre de Commerce</td><td>'.$soc->siret.'</td></tr>';
 
   print '<tr>';
+
   print '<td>Capital</td><td>'.$soc->capital.' '.MAIN_MONNAIE.'</td></tr>';
 
   print '<tr><td>Forme juridique</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
@@ -320,7 +327,6 @@ else
 
   print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create">Ajouter un contact</a>';
   
-  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$socid.'">Notifications</a>';
   print '</div>';
 /*
  *
