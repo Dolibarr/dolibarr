@@ -860,15 +860,73 @@ class Product
    *
    *
    */
-  function add_photo($sdir)
+  function add_photo($sdir, $files)
   {
+
     $dir = $sdir .'/'. get_exdir($this->id) . $this->id ."/";
+
+    $dir .= "photos/";
 
     if (! file_exists($dir))
       {
 	dolibarr_syslog("Product Create $dir");
 	create_exdir($dir);
       }	
+
+    if ( file_exists($dir))
+      {
+	if (doliMoveFileUpload($files['tmp_name'], $dir . $files['name']))
+	  {
+	    
+	  }
+      }
+  }
+  /**
+   *
+   *
+   */
+  function show_photo($sdir)
+  {
+    $photo = '';
+    $pdir = get_exdir($this->id) . $this->id ."/photos/";
+    $dir = $sdir . '/'. $pdir;
+
+    $handle=opendir($dir);
+
+    while (($file = readdir($handle))!==false)
+      {
+	if (is_file($dir.$file))
+	  {
+	    $photo = $file;
+	  }
+      }
+
+    if (strlen($photo))
+      {
+	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+      }
+  }
+  /**
+   * Je sais c'est sale mais le besoin est urgent ;-)
+   *
+   */
+  function show_photos($sdir)
+  {
+    $photo = '';
+    $pdir = get_exdir($this->id) . $this->id ."/photos/";
+    $dir = $sdir . '/'. $pdir;
+
+    $handle=opendir($dir);
+
+    while (($file = readdir($handle))!==false)
+      {
+	if (is_file($dir.$file))
+	  {
+	    $photo = $file;
+	    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'"><br />';
+	  }
+      }
+
 
   }
 
