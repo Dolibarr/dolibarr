@@ -73,13 +73,13 @@ if ($action == 'update')
 
 llxHeader();
 
-if ($socid > 0) 
+if ($_GET["socid"] > 0) 
 {
 
   $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.cp,s.ville, s.note";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
   $sql .= " WHERE s.fk_stcomm=st.id";
-  $sql .= " AND s.idp = $socid";
+  $sql .= " AND s.idp = ".$_GET["socid"];
 
 
   $result = $db->query($sql);
