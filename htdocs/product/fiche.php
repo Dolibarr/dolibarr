@@ -851,7 +851,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
                 print "</table>";
             }
             else {
-                print $langs->trans("NoBills");   
+                print $langs->trans("NoDraftBills");   
             }
             $db->free($result);
         }
@@ -902,7 +902,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
                 print "</table>";
             }
             else {
-                print $langs->trans("NoOtherBills");
+                print $langs->trans("NoOtherDraftBills");
             }
             $db->free($result);
         }
