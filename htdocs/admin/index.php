@@ -57,11 +57,10 @@ if ($_GET["action"] == 'edit')
   print $form->select_pays(MAIN_INFO_SOCIETE_PAYS);
   print '</td></tr>';
 
-
-  print '<tr class="pair"><td width="50%">Numéro de tva intracommunautaire</td><td>';
+  print '<tr class="impair"><td width="50%">Numéro de tva intracommunautaire</td><td>';
   print '<input name="tva" size="20" value="' . MAIN_INFO_TVAINTRA . '"></td></tr>';
 
-  print '<tr class="impair"><td colspan="2">';
+  print '<tr class="pair"><td colspan="2" align="center">';
   print '<input type="submit" value="Enregistrer"></td></tr>';
   print '</table></form>';
 }
@@ -76,7 +75,7 @@ else
   print $form->pays_name(MAIN_INFO_SOCIETE_PAYS);
   print '</td></tr>';
 
-  print '<tr class="pair"><td>Numéro de tva intracommunautaire</td><td>' . MAIN_INFO_TVAINTRA . '</td></tr>';
+  print '<tr class="impair"><td>Numéro de tva intracommunautaire</td><td>' . MAIN_INFO_TVAINTRA . '</td></tr>';
   print '</table><br>';
 
   print '<div class="tabsAction">';
