@@ -345,7 +345,7 @@ else
 	  echo '<br><table border="0" width="100%" cellspacing="0" cellpadding="3">';	  
 
 	  $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande, ed.qty as qty_livre";
-	  $sql .= " FROM llx_commandedet as cd , llx_expeditiondet as ed";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed";
 	  $sql .= " WHERE ed.fk_expedition = $id AND cd.rowid = ed.fk_commande_ligne ";
 	  
 	  $result = $db->query($sql);
@@ -456,7 +456,7 @@ else
 	 *
 	 */
 	$sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande, ed.qty as qty_livre, e.ref";
-	$sql .= " FROM llx_commandedet as cd , llx_expeditiondet as ed, llx_expedition as e";
+	$sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
 	$sql .= " WHERE cd.fk_commande = $expedition->commande_id AND e.rowid <> $expedition->id AND cd.rowid = ed.fk_commande_ligne AND ed.fk_expedition = e.rowid";
 	$sql .= " ORDER BY cd.fk_product";
 	$result = $db->query($sql);
@@ -525,7 +525,7 @@ else
 	     *
 	     */
 	    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-	    $sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $commande->socidp AND a.fk_action in (9,10) AND a.fk_commande = $id";
+	    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = $commande->socidp AND a.fk_action in (9,10) AND a.fk_commande = $id";
 	    
 	    $result = $db->query($sql);
 	    if ($result)

@@ -96,14 +96,14 @@ class modFacture extends DolibarrModules
      * Permissions
      */
     $sql = array(
-		 "insert into llx_rights_def values (10,'Tous les droits sur les factures','facture','a',0);",
-		 "insert into llx_rights_def values (11,'Lire les factures','facture','r',1);",
-		 "insert into llx_rights_def values (12,'Créer modifier les factures','facture','w',0);",
-		 //"insert into llx_rights_def values (13,'Modifier les factures d\'autrui','facture','m',0);",
-		 "insert into llx_rights_def values (14,'Valider les factures','facture','d',0);",
-		 "insert into llx_rights_def values (15,'Envoyer les factures aux clients','facture','d',0);",
-		 "insert into llx_rights_def values (16,'Emettre des paiements sur les factures','facture','d',0);",
-		 "insert into llx_rights_def values (19,'Supprimer les factures','facture','d',0);"
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (10,'Tous les droits sur les factures','facture','a',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (11,'Lire les factures','facture','r',1);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (12,'Créer modifier les factures','facture','w',0);",
+		 //"insert into ".MAIN_DB_PREFIX."rights_def values (13,'Modifier les factures d\'autrui','facture','m',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (14,'Valider les factures','facture','d',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (15,'Envoyer les factures aux clients','facture','d',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (16,'Emettre des paiements sur les factures','facture','d',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (19,'Supprimer les factures','facture','d',0);"
 		 );
     
     return $this->_init($sql);
@@ -115,7 +115,7 @@ class modFacture extends DolibarrModules
   Function remove()
   {
     $sql = array(
-		 "DELETE FROM llx_rights_def WHERE module = 'facture';"
+		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'facture';"
 		 );
 
     return $this->_remove($sql);

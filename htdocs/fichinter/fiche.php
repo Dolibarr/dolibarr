@@ -34,7 +34,7 @@ if ($user->societe_id > 0)
 
 if ($socidp)
 {
-  $sql = "SELECT s.nom, s.idp, s.prefix_comm FROM llx_societe as s WHERE s.idp = $socidp;";
+  $sql = "SELECT s.nom, s.idp, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s WHERE s.idp = $socidp;";
 
   $result = $db->query($sql);
   if ($result)
@@ -115,7 +115,7 @@ if ($action == 'create')
     {
       $numpr = "FI-" . $objsoc->prefix_comm . "-" . strftime("%y%m%d", time());
       
-      $sql = "SELECT count(*) FROM llx_propal WHERE ref like '$numpr%'";
+      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal WHERE ref like '$numpr%'";
       
       if ( $db->query($sql) )
 	{
@@ -201,7 +201,7 @@ if ($action == 'create')
       print '<tr><td valign="top">Projet</td><td><select name="projetidp">';
       print '<option value="0"></option>';
       
-      $sql = "SELECT p.rowid, p.title FROM llx_projet as p WHERE p.fk_soc = $socidp";
+      $sql = "SELECT p.rowid, p.title FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $socidp";
       
       if ( $db->query($sql) )
 	{

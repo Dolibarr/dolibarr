@@ -46,7 +46,7 @@ class DolibarrModules
     $err = 0;
 
 
-    $sql = "REPLACE INTO llx_const SET name = '".$this->const_name."', value='1', visible = 0";
+    $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '".$this->const_name."', value='1', visible = 0";
 
     if (!$this->db->query($sql))
       {
@@ -58,14 +58,14 @@ class DolibarrModules
 	$titre = $this->boxes[$key][0];
 	$file  = $this->boxes[$key][1];
 
-	$sql = "SELECT count(*) FROM llx_boxes_def WHERE name ='".$titre."'";
+	$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."boxes_def WHERE name ='".$titre."'";
 
 	if ( $this->db->query($sql) )
 	  {
 	    $row = $this->db->fetch_row($sql);	    
 	    if ($row[0] == 0)
 	      {
-		$sql = "insert into llx_boxes_def (name, file) values ('".$titre."','".$file."')";
+		$sql = "insert into ".MAIN_DB_PREFIX."boxes_def (name, file) values ('".$titre."','".$file."')";
 		if (! $this->db->query($sql) )
 		  {
 		    $err++;
@@ -85,7 +85,7 @@ class DolibarrModules
 	$val  = $this->const[$key][2];
 	$note = $this->const[$key][3];
 
-	$sql = "SELECT count(*) FROM llx_const WHERE name ='".$name."'";
+	$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."const WHERE name ='".$name."'";
 
 	if ( $this->db->query($sql) )
 	  {
@@ -94,14 +94,14 @@ class DolibarrModules
 	    if ($row[0] == 0)
 	      {
 		if (strlen($note)){
-		    $sql = "INSERT INTO llx_const (name,type,value,note) VALUES ('".$name."','".$type."','".$val."','$note')";
+		    $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note) VALUES ('".$name."','".$type."','".$val."','$note')";
 		}elseif (strlen($val))
 		  {
-		    $sql = "INSERT INTO llx_const (name,type,value) VALUES ('".$name."','".$type."','".$val."')";
+		    $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value) VALUES ('".$name."','".$type."','".$val."')";
 		  }
 		else
 		  {
-		    $sql = "INSERT INTO llx_const (name,type) VALUES ('".$name."','".$type."')";
+		    $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type) VALUES ('".$name."','".$type."')";
 		  }
 
 		if (! $this->db->query($sql) )
@@ -146,7 +146,7 @@ class DolibarrModules
   {
     $err = 0;
 
-    $sql = "DELETE FROM llx_const WHERE name = '".$this->const_name."'";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."'";
 
     if (!$this->db->query($sql))
       {
@@ -170,7 +170,7 @@ class DolibarrModules
 	$titre = $this->boxes[$key][0];
 	$file  = $this->boxes[$key][1];
 
-	$sql = "DELETE FROM llx_boxes_def WHERE file = '".$file."'";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def WHERE file = '".$file."'";
 	if (! $this->db->query($sql) )
 	  {
 	    $err++;

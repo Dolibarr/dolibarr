@@ -60,7 +60,7 @@ class Fichinter
        */
     if (!strlen($this->duree)) { $this->duree = 0; }
 
-    $sql = "INSERT INTO llx_fichinter (fk_soc, datei, datec, ref, fk_user_author, note, duree, fk_projet) ";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, note, duree, fk_projet) ";
     $sql .= " VALUES ($this->socidp, $this->date, now(), '$this->ref', $this->author, '$this->note', $this->duree, $this->projet_id)";
     $sqlok = 0;
       
@@ -85,7 +85,7 @@ class Fichinter
       /*
        *  Insertion dans la base
        */
-      $sql = "UPDATE llx_fichinter SET ";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
       $sql .= " datei = $this->date";
       $sql .= ", note  = '$this->note'";
       $sql .= ", duree = $this->duree";
@@ -107,7 +107,7 @@ class Fichinter
   Function get_new_num($prefix_comm)
     {
       
-      $sql = "SELECT max(ref) FROM llx_fichinter WHERE ref like 'FI-".$prefix_comm."-%'";
+      $sql = "SELECT max(ref) FROM ".MAIN_DB_PREFIX."fichinter WHERE ref like 'FI-".$prefix_comm."-%'";
       
       if ($this->db->query($sql) )
 	{
@@ -144,7 +144,7 @@ class Fichinter
   Function fetch($rowid)
     {
       
-      $sql = "SELECT ref,note,fk_soc,fk_statut,duree,".$this->db->pdate(datei)."as di, fk_projet FROM llx_fichinter WHERE rowid=$rowid;";
+      $sql = "SELECT ref,note,fk_soc,fk_statut,duree,".$this->db->pdate(datei)."as di, fk_projet FROM ".MAIN_DB_PREFIX."fichinter WHERE rowid=$rowid;";
       
       if ($this->db->query($sql) )
 	{
@@ -182,7 +182,7 @@ class Fichinter
 
       $this->fetch($this->id);
 
-      $sql = "UPDATE llx_fichinter SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
       $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
     
       if ($this->db->query($sql) )

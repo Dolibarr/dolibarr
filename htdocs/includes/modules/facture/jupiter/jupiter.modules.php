@@ -29,7 +29,7 @@ function facture_get_num($objsoc=0)
   $date = strftime("%Y%m", time());
   $num=0;
   
-  $sql = "SELECT max(0+substring(facnumber,8)) FROM llx_facture";
+  $sql = "SELECT max(0+substring(facnumber,8)) FROM ".MAIN_DB_PREFIX."facture";
   $sql .= " WHERE facnumber like '$prefix".$date."%'";
 
   if ( $db->query($sql) ) 

@@ -61,7 +61,7 @@ $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 
 $sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut" ;
-$sql .= " FROM llx_expedition as e ";
+$sql .= " FROM ".MAIN_DB_PREFIX."expedition as e ";
 $sql_add = " WHERE ";
 if ($socidp)
 { 

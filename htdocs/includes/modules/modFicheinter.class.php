@@ -62,10 +62,10 @@ class modFicheinter  extends DolibarrModules
      * Permissions
      */
     $sql = array(
-		 "INSERT INTO llx_rights_def VALUES (60,'Tous les droits sur les fiches d\'intervention','ficheinter','a',0);",
-		 "INSERT INTO llx_rights_def VALUES (61,'Lire les fiches d\'intervention','ficheinter','r',1);",
-		 "INSERT INTO llx_rights_def VALUES (62,'Créer modifier les fiches d\'intervention','ficheinter','w',0);",
-		 "INSERT INTO llx_rights_def VALUES (64,'Supprimer les fiches d\'intervention','ficheinter','d',0);"
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (60,'Tous les droits sur les fiches d\'intervention','ficheinter','a',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (61,'Lire les fiches d\'intervention','ficheinter','r',1);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (62,'Créer modifier les fiches d\'intervention','ficheinter','w',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (64,'Supprimer les fiches d\'intervention','ficheinter','d',0);"
 		 );
 
     return $this->_init($sql);
@@ -76,7 +76,7 @@ class modFicheinter  extends DolibarrModules
    */
   Function remove()
   {
-    $sql = array("DELETE FROM llx_rights_def WHERE module = 'ficheinter';");
+    $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'ficheinter';");
 
     return $this->_remove($sql);
   }

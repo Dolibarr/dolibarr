@@ -128,11 +128,11 @@ class modAdherent extends DolibarrModules
      * Permissions
      */
     $sql = array(
-		 "insert into llx_rights_def values (70,'Tous les droits sur les adherents','adherent','a',0);",
-		 "insert into llx_rights_def values (71,'Lire les fiche adherents','adherent','r',1);",
-		 "insert into llx_rights_def values (72,'Créer modifier des adherents','adherent','w',0);",
-		 "insert into llx_rights_def values (73,'Modifier les adherents','adherent','m',0);",
-		 "insert into llx_rights_def values (74,'Supprimer les adherents','adherent','d',0);"
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (70,'Tous les droits sur les adherents','adherent','a',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (71,'Lire les fiche adherents','adherent','r',1);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (72,'Créer modifier des adherents','adherent','w',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (73,'Modifier les adherents','adherent','m',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (74,'Supprimer les adherents','adherent','d',0);"
 		 );
     
     return $this->_init($sql);
@@ -144,7 +144,7 @@ class modAdherent extends DolibarrModules
   Function remove()
   {
     $sql = array(
-		 "DELETE FROM llx_rights_def WHERE module = 'adherent';"
+		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'adherent';"
 		 );
 
     return $this->_remove($sql);

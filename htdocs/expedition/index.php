@@ -40,7 +40,7 @@ print "</table></form>\n";
 /*
  * Expeditions à valider
  */
-$sql = "SELECT e.rowid, e.ref, s.nom, s.idp, c.ref as commande_ref, c.rowid as commande_id FROM llx_expedition as e, llx_societe as s, llx_commande as c";
+$sql = "SELECT e.rowid, e.ref, s.nom, s.idp, c.ref as commande_ref, c.rowid as commande_id FROM ".MAIN_DB_PREFIX."expedition as e, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 $sql .= " WHERE e.fk_commande = c.rowid AND c.fk_soc = s.idp AND e.fk_statut = 0";
 if ($socidp)
 {
@@ -74,7 +74,7 @@ if ( $db->query($sql) )
 /*
  * Commandes à traiter
  */
-$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 1";
 if ($socidp)
 {
@@ -113,7 +113,7 @@ print '</td><td valign="top" width="70%">';
 /*
  * Commandes en traitement
  */
-$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 2";
 if ($socidp)
 {
@@ -147,7 +147,7 @@ if ( $db->query($sql) )
 /*
  * Expeditions à valider
  */
-$sql = "SELECT e.rowid, e.ref, s.nom, s.idp, c.ref as commande_ref, c.rowid as commande_id FROM llx_expedition as e, llx_societe as s, llx_commande as c";
+$sql = "SELECT e.rowid, e.ref, s.nom, s.idp, c.ref as commande_ref, c.rowid as commande_id FROM ".MAIN_DB_PREFIX."expedition as e, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 $sql .= " WHERE e.fk_commande = c.rowid AND c.fk_soc = s.idp AND e.fk_statut = 1";
 if ($socidp)
 {

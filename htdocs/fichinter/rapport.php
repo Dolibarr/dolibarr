@@ -50,7 +50,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $sql = "SELECT s.nom,s.idp, f.note, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
-$sql .= " FROM llx_societe as s, llx_fichinter as f ";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f ";
 $sql .= " WHERE f.fk_soc = s.idp";
 
 

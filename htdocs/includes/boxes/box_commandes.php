@@ -28,7 +28,7 @@ if ($user->rights->commande->lire)
   $info_box_contents = array();
 
   $sql = "SELECT s.nom,s.idp,p.ref,".$db->pdate("p.date_commande")." as dp,p.rowid";
-  $sql .= " FROM llx_societe as s, llx_commande as p WHERE p.fk_soc = s.idp";  
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p WHERE p.fk_soc = s.idp";  
   if($user->societe_id)
     {
       $sql .= " AND s.idp = $user->societe_id";

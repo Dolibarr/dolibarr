@@ -27,7 +27,7 @@ llxHeader();
 if ($action == 'add') {
   $author = $GLOBALS["REMOTE_USER"];
 
-  $sql = "INSERT INTO llx_voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc, reduction) ";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc, reduction) ";
   $sql .= " VALUES ('$date_depart','$date_arrivee',$amount,'$depart','$arrivee',$reducid, $reduc);";
 
   $result = $db->query($sql);
@@ -41,7 +41,7 @@ if ($action == 'add') {
 
 }
 if ($action == 'del') {
-  /*  $sql = "DELETE FROM llx_voyage WHERE rowid = $rowid";
+  /*  $sql = "DELETE FROM ".MAIN_DB_PREFIX."voyage WHERE rowid = $rowid";
    *$result = $db->query($sql);
    */
 }
@@ -57,7 +57,7 @@ print_titre("Noms de domaines internet");
 
 
 $sql = "SELECT label ";
-$sql .= " FROM llx_domain ORDER BY label ASC";
+$sql .= " FROM ".MAIN_DB_PREFIX."domain ORDER BY label ASC";
 
 $result = $db->query($sql);
 if ($result) {

@@ -72,16 +72,16 @@ class modPropale extends DolibarrModules
      * Permissions et valeurs par défaut
      */
     $sql = array(
-		 "insert into llx_rights_def values (20,'Tous les droits sur les propositions commerciales','propale','a',0);",
-		 "insert into llx_rights_def values (21,'Lire les propositions commerciales','propale','r',1);",
-		 "insert into llx_rights_def values (22,'Créer modifier les propositions commerciales','propale','w',0);",
-		 "insert into llx_rights_def values (24,'Valider les propositions commerciales','propale','d',0);",
-		 "insert into llx_rights_def values (25,'Envoyer les propositions commerciales aux clients','propale','d',0);",
-		 "insert into llx_rights_def values (26,'Clôturer les propositions commerciales','propale','d',0);",
-		 "insert into llx_rights_def values (27,'Supprimer les propositions commerciales','propale','d',0);",
-		 "REPLACE INTO llx_propal_model_pdf SET nom = '".$this->const[0][2]."'",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (20,'Tous les droits sur les propositions commerciales','propale','a',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (21,'Lire les propositions commerciales','propale','r',1);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (22,'Créer modifier les propositions commerciales','propale','w',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (24,'Valider les propositions commerciales','propale','d',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (25,'Envoyer les propositions commerciales aux clients','propale','d',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (26,'Clôturer les propositions commerciales','propale','d',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (27,'Supprimer les propositions commerciales','propale','d',0);",
+		 "REPLACE INTO ".MAIN_DB_PREFIX."propal_model_pdf SET nom = '".$this->const[0][2]."'",
 		 );
-    //"insert into llx_rights_def values (23,'Modifier les propositions commerciales d\'autrui','propale','m',0);",
+    //"insert into ".MAIN_DB_PREFIX."rights_def values (23,'Modifier les propositions commerciales d\'autrui','propale','m',0);",
     
     return $this->_init($sql);
 
@@ -93,7 +93,7 @@ class modPropale extends DolibarrModules
   Function remove()
   {
     $sql = array(
-		 "DELETE FROM llx_rights_def WHERE module = 'propale';"
+		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'propale';"
 		 );
 
     return $this->_remove($sql);

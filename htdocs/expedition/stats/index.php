@@ -33,7 +33,7 @@ print_fiche_titre('Statistiques expéditions', $mesg);
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td align="center">Année</td><td width="40%" align="center">Nb d\'expédition</td></tr>';
 
-$sql = "SELECT count(*), date_format(date_expedition,'%Y') as dm FROM llx_expedition WHERE fk_statut > 0 GROUP BY dm DESC ";
+$sql = "SELECT count(*), date_format(date_expedition,'%Y') as dm FROM ".MAIN_DB_PREFIX."expedition WHERE fk_statut > 0 GROUP BY dm DESC ";
 if ($db->query($sql))
 {
   $num = $db->num_rows();

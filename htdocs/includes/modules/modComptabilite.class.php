@@ -57,8 +57,8 @@ class modComptabilite extends DolibarrModules
      * Permissions
      */    
     $sql = array(
-		 "insert into llx_rights_def values (92,'Gestion charges','compta','a',1);",
-		 "insert into llx_rights_def values (93,'Gestion resultat','compta','a',1);",		 
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (92,'Gestion charges','compta','a',1);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (93,'Gestion resultat','compta','a',1);",		 
 		 );
     
     return $this->_init($sql);
@@ -69,7 +69,7 @@ class modComptabilite extends DolibarrModules
    */
   Function remove()
   {
-    $sql = array("DELETE FROM llx_rights_def WHERE module = 'compta';");
+    $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'compta';");
 
     return $this->_remove($sql);
   }

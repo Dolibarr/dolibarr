@@ -27,7 +27,7 @@ if ($user->rights->produit->lire)
   $info_box_contents = array();
 
   $sql = "SELECT p.label, p.rowid, p.price";
-  $sql .= " FROM llx_product as p";
+  $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
   $sql .= " ORDER BY p.datec DESC";
   $sql .= $db->plimit(5, 0);
   

@@ -26,7 +26,7 @@ $info_box_head[] = array('text' => "Les 5 derniers produits/services contractés"
 $info_box_contents = array();
 
 $sql = "SELECT s.nom,s.idp, p.label, c.rowid";
-$sql .= " FROM llx_societe as s, llx_contrat as c, llx_product as p WHERE s.idp = c.fk_soc AND c.fk_product = p.rowid";  
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p WHERE s.idp = c.fk_soc AND c.fk_product = p.rowid";  
 if($user->societe_id)
 {
   $sql .= " AND s.idp = $user->societe_id";

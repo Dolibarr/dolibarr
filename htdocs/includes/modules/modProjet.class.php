@@ -58,11 +58,11 @@ class modProjet extends DolibarrModules
      * Permissions
      */
     $sql = array(
-		 "insert into llx_rights_def values (40,'Tous les droits sur les projets','projet','a',0);",
-		 "insert into llx_rights_def values (41,'Lire les projets','projet','r',1);",
-		 "insert into llx_rights_def values (42,'Créer modifier les projets','projet','w',0);",
-		 //"insert into llx_rights_def values (43,'Modifier les projets d\'autrui','projet','m',0);",
-		 "insert into llx_rights_def values (44,'Supprimer les projets','projet','d',0);"
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (40,'Tous les droits sur les projets','projet','a',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (41,'Lire les projets','projet','r',1);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (42,'Créer modifier les projets','projet','w',0);",
+		 //"insert into ".MAIN_DB_PREFIX."rights_def values (43,'Modifier les projets d\'autrui','projet','m',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (44,'Supprimer les projets','projet','d',0);"
 		 );
     
     return $this->_init($sql);
@@ -73,7 +73,7 @@ class modProjet extends DolibarrModules
    */
   Function remove()
   {
-    $sql = array("DELETE FROM llx_rights_def WHERE module = 'projet';");
+    $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'projet';");
 
     return $this->_remove($sql);
   }

@@ -107,7 +107,7 @@ class PaiementFourn
    	//if ($result) {   
  	//	$this->bankid = $this->db->last_insert_id();
 	//
-	//	$sql = "UPDATE llx_paiementfourn SET fk_bank=$this->bankid WHERE rowid=$this->id";
+	//	$sql = "UPDATE ".MAIN_DB_PREFIX."paiementfourn SET fk_bank=$this->bankid WHERE rowid=$this->id";
 	//	$result = $this->db->query($sql);
 	//}
 

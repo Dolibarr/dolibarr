@@ -32,7 +32,7 @@ Class mod_propale_ivoire
     { 
       global $db;
       
-      $sql = "SELECT count(*) FROM llx_propal";
+      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal";
       
       if ( $db->query($sql) ) 
 	{

@@ -63,7 +63,7 @@ class Expedition
       $this->user = $user;
       $this->db->begin();
 
-      $sql = "INSERT INTO llx_expedition (date_creation, fk_user_author, date_expedition, fk_commande, fk_entrepot) ";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition (date_creation, fk_user_author, date_expedition, fk_commande, fk_entrepot) ";
       $sql .= " VALUES (now(), $user->id, ".$this->db->idate($this->date_expedition).",$this->commande_id, $this->entrepot_id)";
       
       if ( $this->db->query($sql) )
@@ -75,7 +75,7 @@ class Expedition
 	   *
 	   */
 
-	  $sql = "UPDATE llx_expedition SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 	  if ($this->db->query($sql))
 	    {
 
@@ -98,7 +98,7 @@ class Expedition
 	       *
 	       *
 	       */
-	      $sql = "UPDATE llx_commande SET fk_statut = 2 WHERE rowid=".$this->commande_id;
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 2 WHERE rowid=".$this->commande_id;
 	      if (! $this->db->query($sql))
 		{
 		  $error++;
@@ -154,7 +154,7 @@ class Expedition
 	$error++;
       }
 
-    $sql = "INSERT INTO llx_expeditiondet (fk_expedition, fk_commande_ligne, qty)";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."expeditiondet (fk_expedition, fk_commande_ligne, qty)";
     $sql .= " VALUES ($this->id,".$commande_ligne_id.",".$qty.")";
     
     if (! $this->db->query($sql) )
@@ -176,7 +176,7 @@ class Expedition
     {
       $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande, e.fk_entrepot";
       $sql .= ", ".$this->db->pdate("e.date_expedition")." as date_expedition ";
-      $sql .= " FROM llx_expedition as e";
+      $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
       $sql .= " WHERE e.rowid = $id";
 
       $result = $this->db->query($sql) ;
@@ -217,7 +217,7 @@ class Expedition
       if ($user->rights->expedition->valider)
 	{
 	  
-	  $sql = "UPDATE llx_expedition SET ref='EXP".$this->id."', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='EXP".$this->id."', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
 	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 		  
 	  if ($this->db->query($sql) )
@@ -256,7 +256,7 @@ class Expedition
 	      $price = $p_price - $remise;
 	    }
 
-	  $sql = "INSERT INTO llx_commandedet (fk_commande, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."commandedet (fk_commande, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
 	  $sql .= " (".$this->id.", $p_product_id,". $p_qty.",". $price.",".$p_tva_tx.",'". addslashes($p_desc) ."',$remise_percent, $subprice) ; ";
 	  
 	  if ($this->db->query($sql) )
@@ -302,7 +302,7 @@ class Expedition
     {
       if ($this->statut == 0)
 	{
-	  $sql = "DELETE FROM llx_commandedet WHERE rowid = $idligne";
+	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet WHERE rowid = $idligne";
 	  
 	  if ($this->db->query($sql) )
 	    {
@@ -324,10 +324,10 @@ class Expedition
   {
     $this->db->begin();
 
-    $sql = "DELETE FROM llx_expeditiondet WHERE fk_expedition = $this->id ;";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."expeditiondet WHERE fk_expedition = $this->id ;";
     if ( $this->db->query($sql) ) 
       {
-	$sql = "DELETE FROM llx_expedition WHERE rowid = $this->id;";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition WHERE rowid = $this->id;";
 	if ( $this->db->query($sql) ) 
 	  {
 	    $this->db->commit();
@@ -352,7 +352,7 @@ class Expedition
    */
   Function classin($cat_id)
     {
-      $sql = "UPDATE llx_commande SET fk_projet = $cat_id";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_projet = $cat_id";
       $sql .= " WHERE rowid = $this->id;";
       
       if ($this->db->query($sql) )

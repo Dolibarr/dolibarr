@@ -125,7 +125,7 @@ if ($_GET["id"] > 0)
       echo '<table class="liste" width="100%" cellspacing="0" cellpadding="3">';	  
 
       $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-      $sql .= " FROM llx_commandedet as l LEFT JOIN llx_product as p ON (p.rowid = l.fk_product) WHERE l.fk_commande = ".$commande->id." AND p.fk_product_type <> 1 ORDER BY l.rowid";
+      $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l LEFT JOIN ".MAIN_DB_PREFIX."product as p ON (p.rowid = l.fk_product) WHERE l.fk_commande = ".$commande->id." AND p.fk_product_type <> 1 ORDER BY l.rowid";
 	  
       $result = $db->query($sql);
       if ($result)
@@ -239,7 +239,7 @@ if ($_GET["id"] > 0)
 	      if ($value > 0)
 		{
 		  $sql = "SELECT e.label as entrepot, ps.reel, p.label ";
-		  $sql .= " FROM llx_entrepot as e, llx_product_stock as ps, llx_product as p";
+		  $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps, ".MAIN_DB_PREFIX."product as p";
 		  $sql .= " WHERE e.rowid = ps.fk_entrepot AND ps.fk_product = p.rowid AND ps.fk_product = $key";
 		  $sql .= " AND e.statut = 1 AND reel < $value";
 		      
@@ -294,7 +294,7 @@ if ($_GET["id"] > 0)
        *
        */
       $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande, ed.qty as qty_livre, e.ref, e.rowid as expedition_id";
-      $sql .= " FROM llx_commandedet as cd , llx_expeditiondet as ed, llx_expedition as e";
+      $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
       $sql .= " WHERE cd.fk_commande = ".$commande->id." AND cd.rowid = ed.fk_commande_ligne AND ed.fk_expedition = e.rowid";
       $sql .= " ORDER BY cd.fk_product";
       $result = $db->query($sql);

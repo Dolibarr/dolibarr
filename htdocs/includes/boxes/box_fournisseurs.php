@@ -26,7 +26,7 @@ $info_box_head[] = array('text' => "Les 5 derniers fournisseurs enregistrés");
 $info_box_contents = array();
 
 $sql = "SELECT s.nom,s.idp";
-$sql .= " FROM llx_societe as s WHERE s.fournisseur = 1";  
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur = 1";  
 if ($user->societe_id > 0)
 {
   $sql .= " AND s.idp = $user->societe_id";

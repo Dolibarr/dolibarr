@@ -26,7 +26,7 @@ $info_box_head[] = array('text' => "Les 20 derniers ouvrages");
 $info_box_contents = array();
 
 $sql = "SELECT l.ref, l.title, l.rowid";
-$sql .= " FROM llx_livre as l ";
+$sql .= " FROM ".MAIN_DB_PREFIX."livre as l ";
 $sql .= " ORDER BY l.date_ajout DESC ";
 $sql .= $db->plimit(20, 0);
 

@@ -57,9 +57,9 @@ class modBanque extends DolibarrModules
      * Permissions
      */    
     $sql = array(
-		 "insert into llx_rights_def values (111,'Lire les comptes','banque','a',1);",
-		 "insert into llx_rights_def values (112,'Modifier les comptes','banque','a',0);",
-		 "insert into llx_rights_def values (113,'Configurer les comptes','banque','a',0);",		 
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (111,'Lire les comptes','banque','a',1);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (112,'Modifier les comptes','banque','a',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (113,'Configurer les comptes','banque','a',0);",		 
 		 );
     
     return $this->_init($sql);
@@ -70,7 +70,7 @@ class modBanque extends DolibarrModules
    */
   Function remove()
   {
-    $sql = array("DELETE FROM llx_rights_def WHERE module = 'banque';");
+    $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'banque';");
 
     return $this->_remove($sql);
   }

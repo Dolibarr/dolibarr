@@ -28,7 +28,7 @@ if ($user->rights->facture->lire)
   $info_box_contents = array();
 
   $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
-  $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye=0 AND fk_statut = 1";  
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.paye=0 AND fk_statut = 1";  
   if($user->societe_id)
     {
       $sql .= " AND s.idp = $user->societe_id";

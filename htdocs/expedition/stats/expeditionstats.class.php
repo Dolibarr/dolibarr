@@ -35,7 +35,7 @@ class ExpeditionStats
   Function getNbExpeditionByYear()
   {
     $result = array();
-    $sql = "SELECT date_format(date_expedition,'%Y') as dm, count(*)  FROM llx_expedition GROUP BY dm DESC WHERE fk_statut > 0";
+    $sql = "SELECT date_format(date_expedition,'%Y') as dm, count(*)  FROM ".MAIN_DB_PREFIX."expedition GROUP BY dm DESC WHERE fk_statut > 0";
     if ($this->db->query($sql))
       {
 	$num = $this->db->num_rows();
@@ -58,7 +58,7 @@ class ExpeditionStats
   Function getNbExpeditionByMonth($year)
   {
     $result = array();
-    $sql = "SELECT date_format(date_expedition,'%m') as dm, count(*)  FROM llx_expedition";
+    $sql = "SELECT date_format(date_expedition,'%m') as dm, count(*)  FROM ".MAIN_DB_PREFIX."expedition";
     $sql .= " WHERE date_format(date_expedition,'%Y') = $year AND fk_statut > 0";
     $sql .= " GROUP BY dm DESC";
 
