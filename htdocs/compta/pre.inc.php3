@@ -93,20 +93,14 @@ function llxHeader($head = "") {
       $menu->add("bank/index.php3","Bank");
     }
 
-  if ($conf->voyage) 
-    {
-      $menu->add("voyage/index.php3","Voyages");
-
-      $menu->add_submenu("voyage/index.php3","Voyages");
-      $menu->add_submenu("voyage/reduc.php3","Reduc");
-    }
 
   $menu->add("/fourn/index.php3", "Fournisseurs");
 
-  $menu->add("ligne.php3","Compta");
-  $menu->add_submenu("ligne.php3","Lignes");
-  $menu->add_submenu("config.php3","Configuration");
-
+  /*
+   *  $menu->add("ligne.php3","Compta");
+   *  $menu->add_submenu("ligne.php3","Lignes");
+   *  $menu->add_submenu("config.php3","Configuration");
+   */
 
   if ($user->compta > 0) 
     {

@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 require("../../main.inc.php3");
@@ -34,7 +34,6 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add("/comm/clients.php3", "Clients");
 
-  $menu->add_submenu("/soc.php3?&action=create", "Nouvelle société");
   $menu->add_submenu("/comm/contact.php3", "Contacts");
 
   $menu->add("/comm/action/", "Actions");
@@ -43,10 +42,6 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu("/comm/propal.php3?viewstatut=0", "Brouillons");
   $menu->add_submenu("/comm/propal.php3?viewstatut=1", "Ouvertes");
-
-  $menu->add("/product/", "Produits");
-
-  $menu->add("/service/", "Services");
 
   $menu->add("/comm/projet/", "Projets");
 
