@@ -22,6 +22,7 @@
 require("./pre.inc.php");
 require("../commande.class.php");
 require("../../graph.class.php");
+require("./commandestats.class.php");
 
 llxHeader();
 /*
@@ -30,14 +31,29 @@ llxHeader();
  */
 
 print_fiche_titre('Statistiques commandes', $mesg);
-      
-print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr><td>Année</td><td width="40%">Nb de commande</td><td>Somme des commandes</td></tr>';
 
+$stats = new CommandeStats($db);
+$year = strftime("%Y", time());
+$data = $stats->getNbCommandeByMonthWithPrevYear($year);
+$filev = "/document/images/nbcommande2year.png";
+
+$px = new Graph($data);
+$px->SetMaxValue($px->GetMaxValue());
+$px->SetWidth(450);
+$px->SetHeight(280);
+$px->SetYLabel("Nombre de commande");
+$px->draw(DOL_DOCUMENT_ROOT.$filev, $data, $year);
+      
 $sql = "SELECT count(*), date_format(date_commande,'%Y') as dm, sum(total_ht)  FROM llx_commande WHERE fk_statut > 0 GROUP BY dm DESC ";
 if ($db->query($sql))
 {
   $num = $db->num_rows();
+
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr><td>Année</td><td width="10%">Nb de commande</td><td>Somme des commandes</td>';
+  print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
+  print '<img src="'.DOL_URL_ROOT.$filev.'" alt="Graphique nombre de commande">';
+  print '</td></tr>';
   $i = 0;
   while ($i < $num)
     {
@@ -45,13 +61,18 @@ if ($db->query($sql))
       $nbproduct = $row[0];
       $year = $row[1];
       print "<tr>";
-      print '<td><a href="month.php?year='.$year.'">'.$year.'</a></td><td>'.$nbproduct.'</td><td>'.price($row[2]).'</td></tr>';
+      print '<td><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td><td>'.price($row[2]).'</td></tr>';
       $i++;
     }
-}
-$db->free();
 
-print '</table>';
+  print '</table>';
+  $db->free();
+}
+else
+{
+  print "Erreur";
+}
+
 
 $db->close();
 
