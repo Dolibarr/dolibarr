@@ -44,20 +44,18 @@ $dir = DOL_DOCUMENT_ROOT;
 
 ////////////////////////
 
-$res = $stats->getNbCommandeByMonth($year);
+$data = $stats->getNbCommandeByMonth($year);
 
-$data = array();
-
-for ($i = 1 ; $i < 13 ; $i++)
-{
-  $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
-}
 
 $filev = "/document/images/commande.png";
 
 $px = new Graph();
+$px->SetWidth(450);
+$px->SetHeight(280);
 $px->SetYLabel("Nombre de commande");
 $px->draw($dir.$filev, $data, $year);
+
+/////
 
 $res = $stats->getCommandeAmountByMonth($year);
 
