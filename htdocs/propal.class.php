@@ -108,13 +108,27 @@ class Propal
    *
    *
    */
-  Function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6)
+  Function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6, $remise_percent=0)
     {
       if ($this->statut == 0)
 	{
+	  if (strlen(trim($p_qty)) == 0)
+	    {
+	      $p_qty = 1;
+	    }
+
 	  $p_price = ereg_replace(",",".",$p_price);
-	  $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx, description) VALUES ";
-	  $sql .= " (".$this->id.", 0,". $p_qty.",". $p_price.",".$p_tva_tx.",'".$p_desc."') ; ";
+
+	  $price = $p_price;
+	  $subprice = $p_price;
+	  if ($remise_percent > 0)
+	    {
+	      $remise = round(($p_price * $remise_percent / 100), 2);
+	      $price = $p_price - $remise;
+	    }
+
+	  $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
+	  $sql .= " (".$this->id.", 0,". $p_qty.",". $price.",".$p_tva_tx.",'".$p_desc."',$remise_percent, $subprice) ; ";
 	  
 	  if ($this->db->query($sql) )
 	    {
