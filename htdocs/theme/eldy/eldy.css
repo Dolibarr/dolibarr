@@ -1,4 +1,4 @@
-/* Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,11 +42,11 @@ a:hover   { font: helvetica, verdana, arial, sans-serif; font-weight: bold; colo
 input     { font: helvetica, verdana, arial, sans-serif; }
 textarea  { font: helvetica, verdana, arial, sans-serif; }
 .button  {
+    font: 12px helvetica, verdana, arial, sans-serif;
 	font-size: 100%;
 	border: 1px solid #ccd7e0;
 	background-image : url(/theme/eldy/img/button_bg.gif);
 	background-position : bottom;
-    font: 12px helvetica, verdana, arial, sans-serif;
 }
 
 
@@ -115,7 +115,8 @@ table.topbarre
 	cell-spacing: 0;
 }
 
-.menu { 
+.menu
+{ 
     background: #b3c5cc; 
     font-size: 12px; 
     color: #000000; 
@@ -124,8 +125,8 @@ table.topbarre
 .menusel
 { 
     background: #7699A9;
-    font-size: 12px;
     font-weight: bold; 
+    font-size: 12px;
     color: #f0f0ff; 
     text-decoration: none;
 }
@@ -133,7 +134,7 @@ table.topbarre
 a.tmenu
 {
   color: #234046;
-  padding: 0em 1.5em;
+  padding: 0em 1em;
   margin: 0em 0em 1.5em 0em;
   border: 1px solid #b3c5cc;
   font-weight:bold;
@@ -143,7 +144,7 @@ a.tmenu#sel
 { 
   color: #234046;
   background: #dee7ec;
-  padding: 0em 1.5em;
+  padding: 0em 1em;
   margin: 0em 0em 1.5em 0em;
   border: 1px solid #8CACBB;
 }
@@ -151,7 +152,7 @@ a.tmenu:hover
 {
   color: #234046;
   background: #dee7ec;
-  padding: 0em 1.5em;
+  padding: 0em 1em;
   margin: 0em 0em 1.5em 0em;
   border: 1px solid #8CACBB;
   text-decoration: none;
@@ -160,11 +161,11 @@ a.tmenu:hover
 a.login
 {
   position: absolute;
-  right: 27px;
+  right: 24px;
   top: 3px;
 
   color: #234046;
-  padding: 0em 1.5em;
+  padding: 0em 1em;
   margin: 0em 0em 1.5em 0em;
   border: 1px solid #b3c5cc;
   font-weight:bold;
@@ -678,6 +679,7 @@ p#powered-by-dolibarr {
 	margin: 0;
 	padding: 0;
 	bottom: 2px;
+	font-size: 10px;
 	left: 0px;
 	z-index: 2;
 }
