@@ -38,6 +38,8 @@ if ($HTTP_POST_VARS["action"] == 'add')
   $account->bic           = $HTTP_POST_VARS["bic"];
   $account->iban_prefix   = $HTTP_POST_VARS["iban_prefix"];
   $account->domiciliation = $HTTP_POST_VARS["domiciliation"];
+  $account->solde         = $HTTP_POST_VARS["solde"];
+  $account->date_solde    = mktime(12,0,0,$HTTP_POST_VARS["remonth"],$HTTP_POST_VARS["reday"],$HTTP_POST_VARS["reyear"]);
 
   $id = $account->create($user->id);
 }
@@ -73,8 +75,8 @@ if ($action == 'update')
 
 if ($action == 'create')
 {
+  print_titre("Nouveau compte bancaire");
 
-  print '<div class="titre">Nouveau compte bancaire</div><br>';
   print '<p><form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="clos" value="0">';
@@ -107,6 +109,16 @@ if ($action == 'create')
   print "<textarea name=\"domiciliation\" rows=\"5\" cols=\"40\">";
   //  print $user->description;
   print "</textarea></td></tr>";
+
+  print '<tr><td valign="top">Solde</td>';
+  print '<td colspan="3"><input size="30" type="text" name="solde" value="0.00"></td></tr>';
+
+  print '<tr><td valign="top">Date Solde</td>';
+  print '<td colspan="3">'; $now=time();
+  print '<input type="text" size="2" maxlength="2" name="reday" value="'.strftime("%d",$now).'">/';
+  print '<input type="text" size="2" maxlength="2" name="remonth" value="'.strftime("%m",$now).'">/';
+  print '<input type="text" size="4" maxlength="4" name="reyear" value="'.strftime("%Y",$now).'">';
+  print '</td></tr>';
   
   print '<tr><td align="center" colspan="4"><input value="Enregistrer" type="submit"></td></tr>';
   print '</form>';
