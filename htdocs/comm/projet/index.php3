@@ -25,12 +25,12 @@ $db = new Db();
  */
 if ($action == 'create') {
 
-  $pro = new Project();
+  $pro = new Project($db);
   $pro->socidp = $socidp;
   $pro->ref = $ref;
   $pro->title = $title;
 
-  $pro->create($db, $user->id);
+  $pro->create( $user->id);
 }
 
 

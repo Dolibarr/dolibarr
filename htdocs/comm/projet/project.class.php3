@@ -37,18 +37,19 @@ class Project {
    *
    */
 
-  Function create($creatorid) {
+  Function create($creatorid) 
+    {
 
-    $sql = "INSERT INTO llx_projet (ref, title, fk_soc, fk_user_creat) ";
-    $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, $creatorid) ;";
+      $sql = "INSERT INTO llx_projet (ref, title, fk_soc, fk_user_creat) ";
+      $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, $creatorid) ;";
     
-    if (!$this->db->query($sql) ) 
-      {
-	print '<b>'.$sql.'</b><br>'.$this->db->error();
-	
+      if (!$this->db->query($sql) ) 
+	{
+	  print '<b>'.$sql.'</b><br>'.$this->db->error();
+	  
 	}
     
-  }
+    }
   /*
    *
    *

@@ -38,7 +38,7 @@ create table llx_fichinter
 
   fk_statut       smallint  default 0,
 
-  duree           integer,
+  duree           real,
 
   note            text,
 

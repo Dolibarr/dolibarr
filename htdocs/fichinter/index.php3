@@ -59,7 +59,7 @@ if ( $db->query($sql) ) {
     print "<TD><a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
     print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
     print "<TD>$objp->fk_statut</TD>\n";
-    
+    print '<TD align="center"><a href="fiche.php3?socidp='.$objp->idp.'&action=create">[Fiche Inter]</A></td>';    
     print "</TR>\n";
     
     $i++;

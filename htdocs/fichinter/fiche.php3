@@ -35,8 +35,7 @@ if ($result) {
   }
   $db->free();
 }
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
+
 
 llxHeader();
 /*
@@ -56,6 +55,9 @@ if ($action == 'add') {
 
   $fichinter->date = $db->idate(mktime(12, 1 , 1, $pmonth, $pday, $pyear));
 
+  $fichinter->socidp = $socidp;
+  $fichinter->duree = $duree;
+
   $fichinter->projetidp = $projetidp;
 
   $fichinter->author = $user->id;
@@ -64,6 +66,23 @@ if ($action == 'add') {
   $fichinter->ref = $ref;
 
   $id = $fichinter->create();
+}
+if ($action == 'update') {
+  $fichinter = new Fichinter($db);
+
+  $fichinter->date = $db->idate(mktime(12, 1 , 1, $pmonth, $pday, $pyear));
+
+  $fichinter->socidp = $socidp;
+  $fichinter->duree = $duree;
+
+  $fichinter->projetidp = $projetidp;
+
+  $fichinter->author = $user->id;
+  $fichinter->note = $note;
+
+  $fichinter->ref = $ref;
+
+  $fichinter->update($id);
 }
 /*
  *
@@ -78,7 +97,7 @@ if ($action == 'generate') {
 
     $gljroot = "/home/www/dolibarr/dolibarr/htdocs";
 
-    $command = 'export DBI_DSN="dbi:'.$conf->db->type.':dbname='.$conf->db->name.':host='.$conf->db->host.'"';
+    $command = 'export LC_TIME=fr_FR ; export DBI_DSN="dbi:'.$conf->db->type.':dbname='.$conf->db->name.':host='.$conf->db->host.'"';
 
     $command .= " ; ./tex-fichinter.pl --fichinter=".$id ;
     $command .= " --pdf --ps";
@@ -93,11 +112,16 @@ if ($action == 'generate') {
   }
 }
 /*
+ *
  * Mode creation
  * Creation d'une nouvelle propale
  *
  */
 if ($action == 'create') {
+
+  print_titre("Création d'une fiche d'intervention");
+
+
   if ( $objsoc->prefix_comm ) {
 
     $numpr = "FI-" . $objsoc->prefix_comm . "-" . strftime("%y%m%d", time());
@@ -130,6 +154,9 @@ if ($action == 'create') {
     $smonth = 1;
     $syear = date("Y", time());
     print '<table border="1" cellspadding="3" cellspacing="0" width="100%">';
+
+    print "<tr><td>Société</td><td><b>".$objsoc->nom."</td></tr>";
+
     print "<tr><td>Date</td><td>";
     $cday = date("d", time());
     print "<select name=\"pday\">";    
@@ -162,6 +189,7 @@ if ($action == 'create') {
     print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
     print "<tr><td>Numéro</td><td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
+    print "<tr><td>Durée (en jours)</td><td><input name=\"duree\"></td></tr>\n";
 
     /*
      *
@@ -188,7 +216,7 @@ if ($action == 'create') {
     print '</select>';
     if ($numprojet==0) {
       print 'Cette société n\'a pas de projet.&nbsp;';
-      print '<a href=projet/fiche.php3?socidp='.$socidp.'&action=create>Créer un projet</a>';
+      print '<a href=/comm/projet/fiche.php3?socidp='.$socidp.'&action=create>Créer un projet</a>';
     }
     print '</td></tr>';
 
@@ -210,6 +238,119 @@ if ($action == 'create') {
   }
 }
 /*
+ *
+ * Mode update
+ * Mise a jour de la fiche d'intervention
+ *
+ */
+if ($action == 'edit') {
+
+  $fichinter = new Fichinter($db);
+  $fichinter->fetch($id);
+
+  print_titre("Mettre à jour Fiche d'intervention");
+
+    
+  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">";
+  
+  $strmonth[1] = "Janvier";
+  $strmonth[2] = "F&eacute;vrier";
+  $strmonth[3] = "Mars";
+  $strmonth[4] = "Avril";
+  $strmonth[5] = "Mai";
+  $strmonth[6] = "Juin";
+  $strmonth[7] = "Juillet";
+  $strmonth[8] = "Ao&ucirc;t";
+  $strmonth[9] = "Septembre";
+  $strmonth[10] = "Octobre";
+  $strmonth[11] = "Novembre";
+  $strmonth[12] = "D&eacute;cembre";
+  
+  $smonth = 1;
+  $syear = date("Y", time());
+  print '<table border="1" cellspadding="3" cellspacing="0" width="100%">';
+  print "<tr><td>Date</td><td>";
+  $cday = date("d", time());
+  print "<select name=\"pday\">";    
+  for ($day = 1 ; $day < $sday + 32 ; $day++) {
+    if ($day == $cday) {
+      print "<option value=\"$day\" SELECTED>$day";
+    } else {
+      print "<option value=\"$day\">$day";
+    }
+  }
+  print "</select>";
+  $cmonth = date("n", time());
+  print "<select name=\"pmonth\">";    
+  for ($month = $smonth ; $month < $smonth + 12 ; $month++) {
+    if ($month == $cmonth) {
+      print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
+    } else {
+      print "<option value=\"$month\">" . $strmonth[$month];
+    }
+  }
+  print "</select>";
+  
+  print "<select name=\"pyear\">";
+    
+  for ($year = $syear ; $year < $syear + 5 ; $year++) {
+    print "<option value=\"$year\">$year";
+  }
+  print "</select></td></tr>";
+  
+  print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+  
+  print '<tr><td>Numéro</td><td>'.$fichinter->ref.'</td></tr>';
+  print '<tr><td>Durée (en jours)</td><td><input name="duree" value="'.$fichinter->duree.'"></td></tr>';
+  
+  /*
+   *
+   * Projet associé
+   *
+   */
+  print '<tr><td valign="top">Projet</td><td><select name="projetidp">';
+  print '<option value="0"></option>';
+  
+  $sql = "SELECT p.rowid, p.title FROM llx_projet as p WHERE p.fk_soc = $socidp";
+    
+  if ( $db->query($sql) ) {
+    $i = 0 ;
+    $numprojet = $db->num_rows();
+    while ($i < $numprojet) {
+      $projet = $db->fetch_object($i);
+      print "<option value=\"$projet->rowid\">$projet->title</option>";
+      $i++;
+    }
+    $db->free();
+  } else {
+    print $db->error();
+  }
+  print '</select>';
+  if ($numprojet==0) {
+    print 'Cette société n\'a pas de projet.&nbsp;';
+    print '<a href=/comm/projet/fiche.php3?socidp='.$socidp.'&action=create>Créer un projet</a>';
+  }
+  print '</td></tr>';
+
+
+  print '<tr><td valign="top">Commentaires</td>';
+  print '<td><textarea name="note" wrap="soft" cols="60" rows="15">';
+  print $fichinter->note;
+  print '</textarea>';
+  print '</td></tr>';
+
+  print '<tr><td colspan="2" align="center">';
+  print "<input type=\"submit\" value=\"Enregistrer\">";
+  print '</td></tr>';
+  print "</table>";  
+    
+  print "</form>";
+    
+  print "<hr noshade>";
+
+}
+
+/*
  * Mode Fiche 
  * Affichage de la fiche d'intervention
  *
@@ -221,27 +362,18 @@ if ($id) {
   $fichinter = new Fichinter($db);
   $fichinter->fetch($id);
 
+  print_titre("Fiche d'intervention");
+
   print '<table border="1" cellspadding="3" cellspacing="0" width="100%">';
   print '<tr><td width="20%">Date</td><td>'.strftime("%A %d %B %Y",$fichinter->date).'</td></tr>';
     
   print '<tr><td>Numéro</td><td>'.$fichinter->ref.'</td></tr>';
-
+  print '<tr><td>Durée</td><td>'.$fichinter->duree.'</td></tr>';
   print '<tr><td valign="top">Projet</td><td>&nbsp;</td></tr>';
-
-
   print '<tr><td valign="top">Commentaires</td>';
   print "<td>";
   print nl2br($fichinter->note);
   print '</td></tr>';
-
-  if ($fichinter->statut == 0) {
-
-    print '<tr><td valign="top">Action</td><td><a href="fiche.php3?id='.$id.'&action=valid">Valider</a></td></tr>';
-
-  }
-
-  print '<tr><td valign="top">Action</td><td><a href="fiche.php3?id='.$id.'&action=generate">Génération du pdf</a></td></tr>';
-
 
   print '<tr><td>Documents</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'">liste...</a>';
 
@@ -259,7 +391,35 @@ if ($id) {
   print '</td></tr>';
 
   print "</table>";  
-    
+
+
+  print '<br><table border="1" cellspadding="3" cellspacing="0" width="100%"><tr>';
+
+  if ($fichinter->statut == 0) {
+
+
+    print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=edit">Mettre à jour</a></td>';
+    print '<td align="center" width="20%">-</td>';
+
+    print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=generate">Génération du pdf</a></td>';
+    print '<td align="center" width="20%">-</td>';
+
+    print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=valid">Valider</a></td>';
+
+  } else {
+    print '<td align="center" width="20%">-</td>';
+    print '<td align="center" width="20%">-</td>';
+    print '<td align="center" width="20%">-</td>';
+    print '<td align="center" width="20%">-</td>';
+    print '<td align="center" width="20%">-</td>';
+  }
+
+  print '</tr></table>';
+
+
+
+
+
 }
 
 /*
@@ -276,11 +436,11 @@ if ( $db->query($sql) ) {
   $num = $db->num_rows();
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR bgcolor=\"orange\">";
+  print "<TR class=\"liste_titre\">";
   print "<TD>Num</TD>";
-  print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
+  print "<TD>Société</td>";
   print "<TD>Date</TD>";
-  print "<TD>Statut</TD>";
+  print "<TD>Statut</TD><td>&nbsp;</td>";
   print "</TR>\n";
   $var=True;
   while ($i < $num) {
@@ -288,9 +448,11 @@ if ( $db->query($sql) ) {
     $var=!$var;
     print "<TR $bc[$var]>";
     print "<TD><a href=\"fiche.php3?id=$objp->fichid\">$objp->ref</a></TD>\n";
-    print "<TD><a href=\"../comm/index.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
+    print "<TD><a href=\"/comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
     print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
     print "<TD>$objp->fk_statut</TD>\n";
+
+    print '<TD align="center"><a href="fiche.php3?socidp='.$objp->idp.'&action=create">[Fiche Inter]</A></td>';
     
     print "</TR>\n";
     
