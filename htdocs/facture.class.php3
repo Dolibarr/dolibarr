@@ -414,7 +414,63 @@ class Facture
 	  print "Error";
 	}
     }
+  /*
+   *
+   *
+   */
+  Function send_relance($destinataire, $replytoname, $replytomail, $user)
+    {
+      $soc = new Societe($this->db, $this->socidp);
 
+      $file = FAC_OUTPUTDIR . "/" . $this->ref . "/" . $this->ref . ".pdf";
+
+      if (file_exists($file))
+	{
+
+	  $sendto = $soc->contact_get_email($destinataire);
+	  $sendtoid = $destinataire;
+	  
+	  if (strlen($sendto))
+	    {
+	      
+	      $subject = "Relance facture $this->ref";
+	      $message = "Nous apportons à votre connaissance que la facture $this->ref n'a toujours pas été réglée.\n\nCordialement\n\n";
+	      $filename = "$this->ref.pdf";
+	      
+	      $replyto = $replytoname . " <".$replytomail .">";
+	      
+	      $mailfile = new CMailFile($subject,
+					$sendto,
+					$replyto,
+					$message,
+					$file, 
+					"application/pdf", 
+					$filename);
+	      
+	      if ( $mailfile->sendfile() )
+		{
+		  
+		  $sendto = htmlentities($sendto);
+		  
+		  $sql = "INSERT INTO llx_actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), 10 ,$this->socidp ,'Relance envoyée à $sendto',$this->id, $sendtoid, $user->id, 'Relance Facture par mail',100);";
+		  
+		  if (! $this->db->query($sql) )
+		    {
+		      print $this->db->error();
+		      print "<p>$sql</p>";
+		    }	      	      	      
+		}
+	      else
+		{
+		  print "<b>!! erreur d'envoi<br>$sendto<br>$replyto<br>$filename";
+		}	  
+	    }
+	  else
+	    {
+	      print "Can't get email $sendto";
+	    }
+	}      
+    }
   /*
    *
    * Génération du PDF
