@@ -24,13 +24,19 @@ class Graph
   var $db;
   var $errorstr;
 
+  /**
+   * Initialisation
+   *
+   */
 
   Function Graph($data=array())
   {
     $this->data = $data;
     
     include_once(DOL_DOCUMENT_ROOT."/includes/phplot/phplot.php");
+
     $this->bgcolor = array(235,235,224);
+    //$this->bgcolor = array(235,235,200);
     $this->bordercolor = array(235,235,224);
     $this->datacolor = array(array(204,204,179),
 			     array(187,187,136),
@@ -44,9 +50,8 @@ class Graph
     return 1;
   }
   
-  /*
-   *
-   *
+  /**
+   * Dessine le graphique
    *
    */
   Function draw($file, $data, $title='')
@@ -75,7 +80,8 @@ class Graph
 	  {
 	    $res = $max % $i;
 	    $cal = $max / $i;
-	    if ($res == 0 && $cal <= 10)
+	    
+	    if ($res == 0 && $cal <= 11)
 	      {
 		$nts[$j] = $cal;
 		$j++;
@@ -98,6 +104,8 @@ class Graph
 
     $graph->SetDataColors($this->datacolor, $this->bordercolor);
 
+    $graph->SetYGridLabelType("data");
+
     $graph->SetOutputFile($file);
 
     //Set some data
@@ -119,12 +127,13 @@ class Graph
     //$graph->SetDrawDataLabels('1');
     //$graph->SetLabelScalePosition('1');
 
-    if (isset($this->MaxValue))
+    $graph->SetVertTickPosition('plotleft');
+
+    $graph->SetMarginsPixels(100,50,10,30);
+
+    if (isset($this->Legend))
       {
-	$graph->SetVertTickPosition('plotleft');
-    
-	$graph->SetMarginsPixels(40,50,30,30);
-	$graph->SetLegend(array('2002','2003'));
+	$graph->SetLegend($this->Legend);
 	$graph->SetLegendWorld(12,$this->MaxValue);
       }
 
@@ -148,6 +157,11 @@ class Graph
     $this->width = $w;
   }
 
+  Function SetLegend($legend)
+  {
+    $this->Legend = $legend;
+  }
+
   Function SetMaxValue($max)
   {
     $this->MaxValue = $max;
@@ -158,15 +172,11 @@ class Graph
     $this->height = $h;
   }
 
-  Function SetLegend()
-  {
-
-  }
-
   Function GetMaxValue()
   {
     $k = 0;
     $vals = array();
+
     $nblines = sizeof($this->data);
     $nbvalues = sizeof($this->data[0]) - 1;
 
@@ -181,6 +191,30 @@ class Graph
     rsort($vals);
     return $vals[0];
   }
+
+  Function GetAmountMaxValue()
+  {
+
+    $max = ceil($this->GetMaxValue());
+    $size = strlen("$max");
+    if (substr($max,0,1) == 9)
+      {
+	$res = 1;
+      }
+    else
+      {
+	$size = $size - 1;
+	$res = substr($max,0,1) + 1;
+      }
+
+    for ($i = 0 ; $i < $size ; $i++)
+      {
+	$res .= "0";
+      }
+
+	return ($res - 2);
+  }
+
 }
 
 ?>
