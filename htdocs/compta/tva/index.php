@@ -102,12 +102,6 @@ llxHeader();
 
 $tva = new Tva($db);
 
-$textprevyear="<a href=\"$PHP_SELF?year=" . ($year-1) . "\">Année précédente (" . ($year-1) . ")</a>";
-// On n'affiche pas "Année suivante" si c'est dans le futur !
-if($year < strftime("%Y",time()))
-  $textnextyear=" - <a href=\"$PHP_SELF?year=" . ($year+1) . "\">Année suivante (" . ($year+1) . ")</a>";
-print_titre( "<table border=\"0\" width=\"100%\"><tr><td nowrap>TVA Solde : " . price($tva->solde($year)) . " euros </td><td align=\"right\">$textprevyear $textnextyear</td></tr></table>");
-
 if ($year == 0 ) {
   $year_current = strftime("%Y",time());
   //$year_start = $conf->years;
@@ -116,6 +110,12 @@ if ($year == 0 ) {
   $year_current = $year;
   $year_start = $year;
 }
+
+$textprevyear="<a href=\"$PHP_SELF?year=" . ($year_current-1) . "\">Année précédente (" . ($year_current-1) . ")</a>";
+// On n'affiche pas "Année suivante" si c'est dans le futur !
+if(($year < strftime("%Y",time())) && ($year != 0))
+  $textnextyear=" - <a href=\"$PHP_SELF?year=" . ($year_current+1) . "\">Année suivante (" . ($year_current+1) . ")</a>";
+print_titre( "<table border=\"0\" width=\"100%\"><tr><td nowrap>TVA Solde : " . price($tva->solde($year)) . " euros </td><td align=\"right\">$textprevyear $textnextyear</td></tr></table>");
 
 echo '<table width="100%">';
 echo '<tr><td width="50%" valign="top">TVA collectée</td>';
