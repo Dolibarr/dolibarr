@@ -26,89 +26,79 @@ llxHeader();
 
 $db = new Db();
 
-if ($action == 'add') {
-  $editeur = new Editeur($db);
-
-  $editeur->nom = $nom;
-
-  $id = $editeur->create($user);
-}
-
 if ($action == 'addga') {
-  $editeur = new Editeur($db);
+  $client = new Client($db);
 
-  $editeur->linkga($id, $ga);
+  $client->linkga($id, $ga);
 }
 
 
 if ($action == 'update' && !$cancel) {
-  $editeur = new Editeur($db);
+  $client = new Client($db);
 
-  $editeur->nom = $nom;
+  $client->nom = $nom;
 
-  $editeur->update($id, $user);
+  $client->update($id, $user);
 }
 
 /*
  *
  *
  */
-if ($action == 'create')
-{
 
-  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
-  print '<input type="hidden" name="action" value="add">';
-
-  print '<div class="titre">Nouvel Editeur</div><br>';
-      
-  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-  print "<tr>";
-  print '<td>Nom</td><td><input name="nom" size="40" value=""></td></tr>';
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
-  print '</table>';
-  print '</form>';
-      
-
-}
-else
-{
   if ($id)
     {
 
-      $editeur = new Editeur($db);
-      $result = $editeur->fetch($id);
+      $client = new Client($db);
+      $result = $client->fetch($id);
 
       if ( $result )
 	{ 
-	  if ($action == 'edit')
-	    {
-	      print '<div class="titre">Edition de la fiche Editeur : '.$editeur->titre.'</div><br>';
-	      
-	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
-	      print '<input type="hidden" name="action" value="update">';
-	      
-	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-	      print "<tr>";
-	      print '<td width="20%">Nom</td><td><input name="nom" size="40" value="'.$editeur->nom.'"></td>';
 
-
-	      print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer">&nbsp;<input type="submit" value="Annuler" name="cancel"></td></tr>';
-	      
-	      print '</form>';
-
-	      print '</table><hr>';
-	      
-	    }    
-
-	  print '<div class="titre">Fiche Editeur : '.$editeur->titre.'</div><br>';
+	  print '<div class="titre">Fiche Client : '.$client->name.'</div><br>';
 
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print '<td width="20%">Nom</td><td width="30%">'.$editeur->nom.'</td></tr>';
+	  print '<td width="20%">Nom</td><td width="80%">'.$client->name.'</td></tr>';
 	  print "</table>";
 
 
-
+	  /*
+	   * Commandes
+	   *
+	   */
+	  $sql = "SELECT orders_id, customers_id,".$db->pdate("date_purchased")." as date_purchased";
+	  $sql .= " FROM ".DB_NAME_OSC.".orders";
+	  $sql .= " WHERE customers_id = " . $client->id;
+	  
+	  if ( $db->query($sql) )
+	    {
+	      $num = $db->num_rows();
+	      $i = 0;
+	      print '<p><TABLE border="0" width="50%" cellspacing="0" cellpadding="4">';
+	      print "<TR class=\"liste_titre\"><td>Commandes</td>";
+	      print "</tr>\n";
+	      $var=True;
+	      while ($i < $num) {
+		$objp = $db->fetch_object( $i);
+		$var=!$var;
+		print "<TR $bc[$var]>";
+		
+		print '<td><a href="/boutique/commande/fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche"></a>&nbsp;';
+		
+		print "<a href=\"/boutique/commande/fiche.php?id=$objp->orders_id\">".strftime("%d %B %Y",$objp->date_purchased)."</a></TD>\n";
+		
+		print "</TR>\n";
+		$i++;
+	      }
+	      print "</TABLE>";
+	      $db->free();
+	    }
+	  else
+	    {
+	      print $db->error();
+	    }
+	  
 	}
       else
 	{
@@ -121,7 +111,7 @@ else
     {
       print "Error";
     }
-}
+
 
 /* ************************************************************************** */
 /*                                                                            */ 
@@ -133,15 +123,7 @@ print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
-
-if ($action == 'create')
-{
-  print '<td width="20%" align="center">-</td>';
-}
-else
-{
-  print '<td width="20%" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
-}
+print '<td width="20%" align="center">-</td>';    
 print '<td width="20%" align="center">-</td>';    
 print '</table><br>';
 
