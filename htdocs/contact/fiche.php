@@ -25,6 +25,9 @@ require("./pre.inc.php");
 require("../contact.class.php");
 require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
+$langs->load("company");
+
+
 $error = array();
 
 
@@ -172,16 +175,22 @@ if ($_GET["action"] == 'create')
 
   if ($_GET["socid"] > 0)
     {
-      print '<tr><td>Société</td><td colspan="5">'.$objsoc->nom.'</td>';
+      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="5">'.$objsoc->nom.'</td>';
       print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
+      print '</td></tr>';
     }
+  else {
+      print '<tr><td>'.$langs->trans("Company").'</td><td colspan="5">';
+      print $form->select_societes('','socid');
+      print '</td></tr>';
+  }
 
   print '<tr><td>Titre</td><td colspan="5">';
   print $form->select_civilite($obj->civilite);
   print '</td></tr>';
 
-  print '<tr><td>Nom</td><td><input name="name" type="text" size="20" maxlength="80"></td>';
-  print '<td>Prenom</td><td><input name="firstname" type="text" size="15" maxlength="80"></td>';
+  print '<tr><td>'.$langs->trans("LastName").'</td><td><input name="name" type="text" size="20" maxlength="80"></td>';
+  print '<td>'.$langs->trans("FirstName").'</td><td><input name="firstname" type="text" size="15" maxlength="80"></td>';
 
   print '<td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td></tr>';
 
@@ -189,14 +198,14 @@ if ($_GET["action"] == 'create')
 
   print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
 
-  print '<tr><td>Adresse</td><td colspan="3"><input name="adresse" type="text" size="50" maxlength="80"></td>';
+  print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="adresse" type="text" size="50" maxlength="80"></td>';
 
   print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td></tr>';
 
-  print '<tr><td>CP Ville</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="cp" type="text" size="20" maxlength="80"></td>';
+  print '<tr><td>'.$langs->trans("Company").' / '.$langs->trans("Town").'</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="cp" type="text" size="20" maxlength="80"></td>';
 
-  print '<td>Fax</td><td><input name="fax" type="text" size="18" maxlength="80"></td></tr>';
-  print '<tr><td>Email</td><td colspan="5"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
+  print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80"></td></tr>';
+  print '<tr><td>'.$langs->trans("Email").'</td><td colspan="5"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
 
   print '<tr><td>Jabberid</td><td colspan="5"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
 
@@ -204,7 +213,7 @@ if ($_GET["action"] == 'create')
 //  print $form->select_date('','birthday',0,0,1);
 //  print '</td></tr>';
 
-  print '<tr><td>Note</td><td colspan="5"><textarea name="note" cols="60" rows="3"></textarea></td></tr>';
+  print '<tr><td>'.$langs->trans("Note").'</td><td colspan="5"><textarea name="note" cols="60" rows="3"></textarea></td></tr>';
   print '<tr><td align="center" colspan="6"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
   print "</table>";
   print "</form>";
