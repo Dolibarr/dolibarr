@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/product/fiche.php
         \ingroup    product
 		\brief      Page de la fiche produit
@@ -177,7 +177,7 @@ if ($_POST["action"] == 'add_fourn' && $_POST["cancel"] <> $langs->trans("Cancel
       if ($product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]) > 0)
 	{
 	  $action = '';
-	  $mesg = 'Founisseur ajouté';
+	  $mesg = $langs->trans("SupplierAdded");
 	}
       else
 	{
@@ -265,7 +265,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$product->ref.'">';
   if ($_error == 1)
     {
-      print "Cette référence existe déjà";
+      print $langs->trans("RefAlreadyExists");
     }
   print '</td></tr>';
   print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
@@ -282,7 +282,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print '<option value="0" selected>'.$langs->trans("NotOnSell").'</option>';
   print '</td></tr>';
   
-  if ($_GET["type"] == 0 && defined("MAIN_MODULE_STOCK"))
+  if ($_GET["type"] == 0 && $conf->stick->enabled)
     {
       print "<tr>".'<td>Seuil stock</td><td colspan="2">';
       print '<input name="seuil_stock_alerte" size="4" value="0">';
@@ -331,14 +331,6 @@ else
 	      /*
 	       *  En mode visu
 	       */
-	      
-	      // Zone recherche
-	      print '<div class="formsearch">';
-	      print '<form action="liste.php" method="post">';
-	      print '<input type="hidden" name="type" value="'.$product->type.'">';
-	      print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"> &nbsp;';
-	      print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
-	      print '</form></div>';
 	      
 	      $h=0;
           
@@ -623,28 +615,22 @@ print "\n<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] == '')
 {
-  if ($product->type == 0 && $user->rights->produit->commander && $num_fournisseur == 1)
+    if ($product->type == 0 && $user->rights->produit->commander && $num_fournisseur == 1)
     {
-      print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">'.$langs->trans("Commander").'</a>';
+        print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">'.$langs->trans("Commander").'</a>';
     }
-
-
-
-
-  if ( $user->rights->produit->creer)
+    if ( $user->rights->produit->creer)
     {
-      print '<a class="tabAction" href="fiche.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("UpdatePrice").'</a>';
+        print '<a class="tabAction" href="fiche.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("UpdatePrice").'</a>';
     }
-
-  if ( $user->rights->produit->creer)
+    if ( $user->rights->produit->creer)
     {
-      print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
+        print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
     }
-}
-
-if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
-{
-  print '<a class="tabAction" href="stock/product.php?id='.$product->id.'&amp;action=correction">Correction stock</a>';
+    if ($product->type == 0 && $conf->stock->enabled)
+    {
+        print '<a class="tabAction" href="stock/product.php?id='.$product->id.'&amp;action=correction">Correction stock</a>';
+    }
 }
 
 print "\n</div>\n";
@@ -683,7 +669,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	      $objp = $db->fetch_object($i);	  
 	      $var=!$var;
 	      print "<tr $bc[$var]>";
-	      print "<td><a href=\"../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+	      print "<td><a href=\"../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></td>\n";
 	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
 	      print "<td>". strftime("%d %b",$objp->dp)."</td>\n";
 	      print '<form method="POST" action="fiche.php?id='.$product->id.'">';
@@ -755,8 +741,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	      $objp = $db->fetch_object( $i);
 	      
 	      $var=!$var;
-	      print "<TR $bc[$var]>";
-	      print "<td><a href=\"../compta/facture.php?facid=$objp->factureid\">$objp->facnumber</a></TD>\n";
+	      print "<tr $bc[$var]>";
+	      print "<td><a href=\"../compta/facture.php?facid=$objp->factureid\">$objp->facnumber</a></td>\n";
 	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      	 
 	      print "<td>". strftime("%d %b",$objp->df)."</td>\n";
 	      print '<form method="POST" action="fiche.php?id='.$product->id.'">';

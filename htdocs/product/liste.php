@@ -52,13 +52,8 @@ if ($page < 0) {
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
   
-if ($sortfield == "") {
-  $sortfield="p.ref"; }
-     
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
+if (! $sortfield) $sortfield="p.ref";
+if (! $sortorder) $sortorder="DESC";
 
 if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
     $sref="";
@@ -73,7 +68,7 @@ if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
 
 $title=$langs->trans("ProductsAndServices");
 
-$sql = "SELECT p.rowid, p.label, p.price, p.ref";
+$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 
 if ($_GET["fourn_id"] > 0)
@@ -89,11 +84,11 @@ if ($_POST["mode"] == 'search')
 }
 else
 {
-  if (strlen($type) == 0)
+  $sql .= " WHERE 1=1";
+  if (isset($_GET["type"]) || isset($_POST["type"]))
     {
-      $type = 0;
+      $sql .= " AND p.fk_product_type = ".(isset($_GET["type"])?$_GET["type"]:$_POST["type"]);
     }
-  $sql .= " WHERE p.fk_product_type = ".$type;
   if ($sref)
     {
       $sql .= " AND p.ref like '%".$sref."%'";
@@ -123,34 +118,41 @@ $result = $db->query($sql) ;
 
 if ($result)
 {
-  $num = $db->num_rows();
-
-  $i = 0;
+    $num = $db->num_rows();
+    
+    $i = 0;
   
-  if ($num == 1 && (isset($_POST["sall"]) or $snom or $sref))
+    if ($num == 1 && (isset($_POST["sall"]) or $snom or $sref))
     {
-      $objp = $db->fetch_object($i);
-      Header("Location: fiche.php?id=$objp->rowid");
+        $objp = $db->fetch_object($i);
+        Header("Location: fiche.php?id=$objp->rowid");
     }
-  
-      if (isset($envente) && $envente == 0)
-    {
-      if (isset($_POST["type"]) || isset($_GET["type"])) {
-        if ($type) { $texte = $langs->trans("ServicesNotOnSell"); }
-        else { $texte = $langs->trans("ProductsNotOnSell"); }
-      } else {
-        $texte = $langs->trans("ProductsAndServicesNotOnSell");
-      }
+    
+    if (isset($_GET["envente"]) || isset($_POST["envente"])) {
+        $envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
     }
-      else
+    else {
+        $envente=1;
+    }
+    
+    if (! $envente)
     {
-      $envente=1;
-      if (isset($_POST["type"]) || isset($_GET["type"])) {
-        if ($type) { $texte = $langs->trans("ServicesOnSell"); }
-        else { $texte = $langs->trans("ProductsOnSell"); }
-      } else {
-        $texte = $langs->trans("ProductsAndServicesOnSell");
-      }
+        if (isset($_GET["type"]) || isset($_POST["type"])) {
+            $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
+            if ($type) { $texte = $langs->trans("ServicesNotOnSell"); }
+            else { $texte = $langs->trans("ProductsNotOnSell"); }
+        } else {
+            $texte = $langs->trans("ProductsAndServicesNotOnSell");
+        }
+    }
+    else
+    {
+        if (isset($_POST["type"]) || isset($_GET["type"])) {
+            if ($type) { $texte = $langs->trans("ServicesOnSell"); }
+            else { $texte = $langs->trans("ProductsOnSell"); }
+        } else {
+            $texte = $langs->trans("ProductsAndServicesOnSell");
+        }
     }
 
   llxHeader("","",$texte);
@@ -200,8 +202,9 @@ if ($result)
       $var=!$var;
       print "<tr $bc[$var]><td>";
       print "<a href=\"fiche.php?id=$objp->rowid\">";
-      print img_file();
-      print "</a>&nbsp;";
+	  if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
+	  else print img_object($langs->trans("ShowProduct"),"product");
+      print "</a> ";
       print "<a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
       print "<td>$objp->label</td>\n";
       print '<td align="right">'.price($objp->price).'</td>';

@@ -53,18 +53,24 @@ if ($_POST["action"] == 'update')
 
 llxHeader("","",$langs->trans("ProductsAndServices"));
 
-print '<div class="formsearch"><form action="liste.php" method="post">';
-print '<input type="hidden" name="type" value="'.$product->type.'">';
-print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="button" type="submit" value="'.$langs->trans("Go").'">';
-print ' &nbsp; ';
-print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="button" type="submit" value="'.$langs->trans("Go").'">';
-print '</form></div>';
-
 print_titre($langs->trans("ProductsAndServices"));
 
 print '<table border="0" width="100%">';
 
 print '<tr><td valign="top" width="30%">';
+
+/*
+ * Zone recherche produit/service
+ */
+print '<form method="post" action="liste.php">';
+print '<table class="noborder" width="100%">';
+print "<tr class=\"liste_titre\">";
+print '<td colspan="3">'.$langs->trans("Search").'</td></tr>';
+print "<tr $bc[0]><td>";
+print $langs->trans("Ref").' :</td><td><input class="flat" type="text" size="20" name="sf_ref"></td><td><input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
+print "<tr $bc[0]><td>";
+print $langs->trans("Label").':</td><td><input class="flat" type="text" size="20" name="snom"></td><td><input class="button" type="submit" value="'.$langs->trans("Search").'"></td></tr>';
+print "</table></form><br>";
 
 
 /*
@@ -140,7 +146,8 @@ if ($result)
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  print "<td><a href=\"fiche.php?id=$objp->rowid\">";
-	  print img_file();
+	  if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
+	  else print img_object($langs->trans("ShowProduct"),"product");
 	  print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
 	  print "<td>$objp->label</td>";
 	  print "<td>".$typeprodser[$objp->fk_product_type]."</td>";

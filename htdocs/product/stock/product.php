@@ -102,16 +102,6 @@ if ($_GET["id"])
   
   if ( $product->fetch($_GET["id"]))
     {
-
-        // Zone recherche
-        print '<div class="formsearch">';
-        print '<form action="liste.php" method="post">';
-        print '<input type="hidden" name="type" value="'.$product->type.'">';
-        print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"> &nbsp;';
-        print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
-        print '</form></div>';
-        
-        
         $h=0;
         
         $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
@@ -145,7 +135,7 @@ if ($_GET["id"])
       
       print '<table class="border" width="100%">';
       print "<tr>";
-      print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
+      print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%">'.$product->ref.'</td>';
       print '<td width="40%">';
       if ($product->envente)
 	{
@@ -194,9 +184,9 @@ if ($_GET["id"])
        *
        */
       print '<br><table class="border" width="100%">';
-      print '<tr class="liste_titre"><td width="40%">Entrepôt</td><td width="60%">Valeur du stock</td></tr>';
+      print '<tr class="liste_titre"><td width="40%">'.$langs->trans("Warehouse").'</td><td width="60%">Valeur du stock</td></tr>';
       $sql = "SELECT e.rowid, e.label, ps.reel FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps";
-      $sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = $product->id";
+      $sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = ".$product->id;
       $sql .= " ORDER BY lower(e.label)";
       
       if ($db->query($sql))
@@ -227,9 +217,10 @@ if ($_GET["id"])
       print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
       print '<input type="hidden" name="action" value="correct_stock">';
       print '<table class="border" width="100%"><tr>';
-      print '<td width="20%">Entrepôt</td><td width="20%"><select name="id_entrepot">';
+      print '<td width="20%">'.$langs->trans("Warehouse").'</td><td width="20%"><select name="id_entrepot">';
       
-      $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e WHERE statut = 1";    
+      $sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
+      $sql .= " WHERE statut = 1";    
       $sql .= " ORDER BY lower(e.label)";
       
       if ($db->query($sql))
@@ -265,9 +256,10 @@ if ($_GET["id"])
       print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
       print '<input type="hidden" name="action" value="transfert_stock">';
       print '<table class="border" width="100%"><tr>';
-      print '<td width="20%">Source</td><td width="20%"><select name="id_entrepot_source">';
+      print '<td width="20%">'.$langs->trans("Source").'</td><td width="20%"><select name="id_entrepot_source">';
       
-      $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e WHERE statut = 1";    
+      $sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
+      $sql .= " WHERE statut = 1";    
       $sql .= " ORDER BY lower(e.label)";
       
       if ($db->query($sql))
@@ -283,9 +275,10 @@ if ($_GET["id"])
 	}
       print '</select></td>';
 
-      print '<td width="20%">Destination</td><td width="20%"><select name="id_entrepot_destination">';
+      print '<td width="20%">'.$langs->trans("Target").'</td><td width="20%"><select name="id_entrepot_destination">';
       
-      $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e WHERE statut = 1";    
+      $sql  = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";
+      $sql .= " WHERE statut = 1";    
       $sql .= " ORDER BY lower(e.label)";
       
       if ($db->query($sql))
@@ -317,7 +310,7 @@ if ($_GET["id"])
       print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
       print '<input type="hidden" name="action" value="create_stock">';
       print '<table class="border" width="100%"><tr>';
-      print '<td width="20%">Entrepôt</td><td width="40%"><select name="id_entrepot">';
+      print '<td width="20%">'.$langs->trans("Warehouse").'</td><td width="40%"><select name="id_entrepot">';
       
       $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";    
       $sql .= " ORDER BY lower(e.label)";

@@ -89,14 +89,6 @@ if ($_GET["id"])
 	   *  En mode visu
 	   */
 	  
-	  // Zone recherche
-	  print '<div class="formsearch">';
-	  print '<form action="liste.php" method="post">';
-	  print '<input type="hidden" name="type" value="'.$product->type.'">';
-	  print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"> &nbsp;';
-	  print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
-	  print '</form></div>';
-	      
 	  $h=0;
 	  
 	  $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
@@ -136,9 +128,8 @@ if ($_GET["id"])
 
 	  print($mesg);
 	  print '<table class="border" width="100%">';
-	  print "<tr>";
-	  print '<td width="20%">'.$langs->trans("Ref").'</td><td width="30%">'.$product->ref.'</td>';
-	  print '<td width="20%">';
+	  print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">'.$product->ref.'</td></tr>';
+	  print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
 	  if ($product->envente)
 	    {
 	      print $langs->trans("OnSell");
@@ -163,7 +154,7 @@ if ($_GET["id"])
 	  print $langs->trans("Suppliers").'</td>';
 	  print '<td>'.$langs->trans("Ref").'</td>';
 	  print '<td align="center">'.$langs->trans("Qty").'</td>';
-	  print '<td align="right">Prix d\'achat</td>';
+	  print '<td align="right">'.$langs->trans("BuiingPrice").'</td>';
 	  print '</tr>';
 	      
 	  $sql = "SELECT s.nom, s.idp, pf.ref_fourn, pfp.price, pfp.quantity";

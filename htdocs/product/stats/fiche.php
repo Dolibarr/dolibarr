@@ -109,15 +109,7 @@ if ($_GET["id"])
 	  $mesg = $langs->trans("ChartGenerated");
 	}
 
-      // Zone recherche
-      print '<div class="formsearch">';
-      print '<form action="../liste.php" method="post">';
-      print '<input type="hidden" name="type" value="'.$product->type.'">';
-      print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"> &nbsp;';
-      print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
-      print '</form></div>';
-
-      
+    
       $h=0;
       
       $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
@@ -133,7 +125,7 @@ if ($_GET["id"])
           if ($conf->stock->enabled)
             {
                 $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-                $head[$h][1] = 'Stock';
+                $head[$h][1] = $langs->trans('Stock');
                 $h++;
             }
 
@@ -154,9 +146,10 @@ if ($_GET["id"])
 
 	      
       print '<table class="border" width="100%"><tr>';
-      print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
+      print '<td width="20%">'.$langs->trans("Ref").'</td>';
+      print '<td width="40%">'.$product->ref.'</td>';
       print '<td>'.$langs->trans("Statistics").'</td></tr>';
-      print "<tr><td>".$langs->trans("Label")."</td><td>$product->libelle</td>";
+      print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
       print '<td valign="top" rowspan="2">';
       // Propals
       if ($conf->propal->enabled) {

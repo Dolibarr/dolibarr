@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 20004     Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/product/price.php
         \ingroup    product
 		\brief      Page de la fiche produit
@@ -57,15 +57,6 @@ llxHeader("","","Prix");
 
 $product = new Product($db);
 $result = $product->fetch($_GET["id"]);
-
-
-// Zone recherche
-print '<div class="formsearch">';
-print '<form action="liste.php" method="post">';
-print '<input type="hidden" name="type" value="'.$product->type.'">';
-print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"> &nbsp;';
-print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
-print '</form></div>';
 
 
 $h=0;

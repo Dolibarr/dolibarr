@@ -24,7 +24,7 @@
 
 /**     \file       htdocs/product/popuprop.php
 		\ingroup    propal, produit
-		\brief      Liste des produits par popularité
+		\brief      Liste des produits/services par popularité
 		\version    $Revision$
 */
 
@@ -63,7 +63,7 @@ if ( $db->query($sql) )
     $afficher_pagesuivante = -1;
 }
 
-print_barre_liste("Liste des produits par popularité", $page, "popuprop.php","","","","",$afficher_pagesuivante);
+print_barre_liste("Liste des produits et services par popularité", $page, "popuprop.php","","","","",$afficher_pagesuivante);
 
 print '<table class="noborder" width="100%">';
 
@@ -73,8 +73,9 @@ print_liste_field_titre($langs->trans("Label"),"popuprop.php", "p.label","","","
 print_liste_field_titre("Nb. de proposition","popuprop.php", "c","","",'align="right"',$sortfield);
 print "</tr>\n";
 
-$sql = "select p.rowid, p.label, p.ref, count(*) as c from ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p where p.rowid = pd.fk_product group by (p.rowid)";
-
+$sql  = "SELECT p.rowid, p.label, p.ref, fk_product_type, count(*) as c";
+$sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p";
+$sql .= " WHERE p.rowid = pd.fk_product group by (p.rowid)";
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
 
@@ -90,7 +91,11 @@ if ( $db->query($sql) )
       $objp = $db->fetch_object( $i);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
+      print "<td><a href=\"fiche.php?id=$objp->rowid\">";
+	  if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
+	  else print img_object($langs->trans("ShowProduct"),"product");
+      print "</a> ";
+      print "<a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
       print "<td>$objp->label</td>\n";
       print '<td align="right">'.$objp->c.'</td>';
       print "</tr>\n";

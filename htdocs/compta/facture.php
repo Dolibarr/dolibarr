@@ -245,7 +245,7 @@ if ($_GET["action"] == 'payed' && $user->rights->facture->paiement)
 if ($_POST["action"] == 'setremise' && $user->rights->facture->creer) 
 {
   $fac = new Facture($db);
-  $fac->fetch($facid);
+  $fac->fetch($_GET["facid"]);
 
   $fac->set_remise($user, $_POST["remise"]);
 } 
@@ -839,7 +839,7 @@ else
 	if ($fac->mode_reglement == 3)
 	  {
 	    $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
-	    $head[$h][1] = $langs->trans("Prélèvement");
+	    $head[$h][1] = $langs->trans("StandingOrder");
 	    $h++;
 	  }
 
@@ -859,7 +859,7 @@ else
 	   */
 	  if ($_GET["action"] == 'delete')
 	    {
-	      $html->form_confirm($_SERVER["PHP_SELF"]."?facid=$fac->id","Supprimer la facture","Etes-vous sûr de vouloir supprimer cette facture ?","confirm_delete");
+	      $html->form_confirm($_SERVER["PHP_SELF"]."?facid=$fac->id",$langs->trans("DeleteBill"),$langs->trans("ConfirmDeleteBill"),"confirm_delete");
 	    }
 
 	  /*
@@ -971,18 +971,30 @@ else
 	
 	  print "<tr><td height=\"10\">".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td>";
   
-	  print '<tr><td height=\"10\">Remise globale</td>';
-	  print '<td align="right" colspan="2">'.$fac->remise_percent.'</td>';
-	  print '<td>%</td></tr>';
 
+  	  print '<tr><td height=\"10\">'.$langs->trans("GlobalDiscount").'</td>';
+	  if ($fac->brouillon == 1 && $user->rights->facture->creer) 
+	    {
+	      print '<form action="facture.php?facid='.$fac->id.'" method="post">';
+	      print '<input type="hidden" name="action" value="setremise">';
+	      print '<td colspan="3"><input type="text" name="remise" size="3" value="'.$fac->remise_percent.'">% ';
+	      print '<input type="submit" value="'.$langs->trans("Modify").'"></td>';
+	      print '</form>';
+	    }
+	  else {
+	      print '<td colspan="3">'.$fac->remise_percent.' %</td>';
+	    
+	    }
+      print '</tr>';
+      
 	  print '<tr><td height=\"10\">'.$langs->trans("AmountHT").'</td>';
 	  print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-	  print '<td>'.$conf->monnaie.' HT</td></tr>';
+	  print '<td>'.$conf->monnaie.'</td></tr>';
 
 	  print '<tr><td height=\"10\">'.$langs->trans("VAT").'</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
 	  print '<td>'.$conf->monnaie.'</td></tr>';
 	  print '<tr><td height=\"10\">'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
-	  print '<td>'.$conf->monnaie.' TTC</td></tr>';
+	  print '<td>'.$conf->monnaie.'</td></tr>';
 	  print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.($fac->get_libstatut()).'</td></tr>';
 	  if ($fac->note)
 	    {
@@ -994,22 +1006,16 @@ else
 
 	  print "</table><br>";
 
-	  if ($fac->brouillon == 1 && $user->rights->facture->creer) 
-	    {
-	      print '<form action="facture.php?facid='.$fac->id.'" method="post">';
-	      print '<input type="hidden" name="action" value="setremise">';
-	      print '<table class="border"><tr><td>Remise</td><td align="right">';
-	      print '<input type="text" name="remise" size="3" value="'.$fac->remise_percent.'">%';
-	      print '<input type="submit" value="'.$langs->trans("Save").'">';
-	      print '</td></tr></table></form>';
-	    }
-
 	  /*
 	   * Lignes de factures
 	   *
 	   */
-	  $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice, ".$db->pdate("l.date_start")." as date_start, ".$db->pdate("l.date_end")." as date_end ";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = $fac->id ORDER BY l.rowid";
+	  $sql  = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice,";
+	  $sql .= $db->pdate("l.date_start")." as date_start, ".$db->pdate("l.date_end")." as date_end, ";
+      $sql .= " p.fk_product_type";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l LEFT JOIN ".MAIN_DB_PREFIX."product p ON l.fk_product=p.rowid";
+	  $sql .= " WHERE l.fk_facture = ".$fac->id;
+	  $sql .= " ORDER BY l.rowid";
 
 	  $result = $db->query($sql);
 	  if ($result)
@@ -1025,7 +1031,7 @@ else
 		  print '<td width="8%" align="right">'.$langs->trans("VAT").'</td>';
 		  print '<td width="12%" align="right">P.U. HT</td>';
 		  print '<td width="8%" align="right">'.$langs->trans("Quantity").'</td>';
-		  print '<td width="8%" align="right">Remise</td>';
+		  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
 		  print '<td width="10%" align="right">'.$langs->trans("AmountHT").'</td>';
 		  print '<td>&nbsp;</td><td>&nbsp;</td>';
 		  print "</tr>\n";
@@ -1038,7 +1044,10 @@ else
 		  print "<tr $bc[$var]>";
 		  if ($objp->fk_product > 0)
 		    {
-		      print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a>';
+		      print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+        	  if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
+        	  else print img_object($langs->trans("ShowProduct"),"product");
+		      print '</a> <a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a>';
 		      if ($objp->date_start && $objp->date_end) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
 		      if ($objp->date_start && ! $objp->date_end) { print " (A partir du ".dolibarr_print_date($objp->date_start).")"; }
 		      if (! $objp->date_start && $objp->date_end) { print " (Jusqu'au ".dolibarr_print_date($objp->date_end).")"; }
@@ -1121,7 +1130,7 @@ else
 	    } 
 	  else
 	    {
-	      dolibarr_print_error($db->error());
+	      dolibarr_print_error($db);
 	    }
 	
 	  /*

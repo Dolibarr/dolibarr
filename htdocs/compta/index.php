@@ -116,7 +116,7 @@ if ($conf->facture->enabled)
 	{
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
-	  print '<td colspan="2">Factures brouillons ('.$num.')</td></tr>';
+	  print '<td colspan="2">'.$langs->trans("DraftBills").' ('.$num.')</td></tr>';
 	  $var = True;
 	  while ($i < $num && $i < 20)
 	    {
