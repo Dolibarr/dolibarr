@@ -28,6 +28,9 @@
 */
 
 require("../main.inc.php");
+$user->getrights();
+$langs->load("companies");
+
 
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf, $langs;
@@ -37,6 +40,11 @@ function llxHeader($head = "", $urlp = "") {
   $menu = new Menu();
 
   $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
+
+  if ($user->rights->societe->creer)
+    {
+      $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=c", $langs->trans("MenuNewCustomer"));
+    }
 
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
 
