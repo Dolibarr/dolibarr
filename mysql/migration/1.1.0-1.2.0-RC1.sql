@@ -156,9 +156,45 @@ insert into llx_c_forme_juridique (code, libelle) values (92,'Association loi 19
 insert into llx_c_forme_juridique (code, libelle) values (93,'Fondation');
 insert into llx_c_forme_juridique (code, libelle) values (99,'Autre personne morale de droit privé');
 
-
 update llx_paiement set author = null where author = '';
 
+create table llx_c_regions
+(
+  rowid       integer AUTO_INCREMENT UNIQUE,
+  code_region integer PRIMARY KEY,
+  cheflieu    varchar(7),
+  tncc        integer,
+  nom         varchar(50),
+  active      tinyint default 1
+)type=innodb;
+
+
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (01,'97105',3,'Guadeloupe');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (02,'97209',3,'Martinique');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (03,'97302',3,'Guyane');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (04,'97411',3,'Réunion');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (11,'75056',1,'Île-de-France');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (21,'51108',0,'Champagne-Ardenne');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (22,'80021',0,'Picardie');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (23,'76540',0,'Haute-Normandie');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (24,'45234',2,'Centre');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (25,'14118',0,'Basse-Normandie');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (26,'21231',0,'Bourgogne');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (31,'59350',2,'Nord-Pas-de-Calais');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (41,'57463',0,'Lorraine');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (42,'67482',1,'Alsace');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (43,'25056',0,'Franche-Comté');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (52,'44109',4,'Pays de la Loire');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (53,'35238',0,'Bretagne');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (54,'86194',2,'Poitou-Charentes');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (72,'33063',1,'Aquitaine');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (73,'31555',0,'Midi-Pyrénées');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (74,'87085',2,'Limousin');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (82,'69123',2,'Rhône-Alpes');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (83,'63113',1,'Auvergne');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (91,'34172',2,'Languedoc-Roussillon');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (93,'13055',0,'Provence-Alpes-Côte d\'Azur');
+insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (94,'2A004',0,'Corse');
 
 create table llx_c_departements
 (
@@ -377,41 +413,3 @@ values (03,'973','97302',3,'GUYANE','Guyane');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom)
 values (04,'974','97411',3,'REUNION','Réunion');
 
-
-create table llx_c_regions
-(
-  rowid       integer AUTO_INCREMENT UNIQUE,
-  code_region integer PRIMARY KEY,
-  cheflieu    varchar(7),
-  tncc        integer,
-  nom         varchar(50),
-  active      tinyint default 1
-)type=innodb;
-
-
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (01,'97105',3,'Guadeloupe');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (02,'97209',3,'Martinique');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (03,'97302',3,'Guyane');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (04,'97411',3,'Réunion');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (11,'75056',1,'Île-de-France');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (21,'51108',0,'Champagne-Ardenne');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (22,'80021',0,'Picardie');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (23,'76540',0,'Haute-Normandie');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (24,'45234',2,'Centre');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (25,'14118',0,'Basse-Normandie');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (26,'21231',0,'Bourgogne');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (31,'59350',2,'Nord-Pas-de-Calais');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (41,'57463',0,'Lorraine');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (42,'67482',1,'Alsace');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (43,'25056',0,'Franche-Comté');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (52,'44109',4,'Pays de la Loire');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (53,'35238',0,'Bretagne');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (54,'86194',2,'Poitou-Charentes');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (72,'33063',1,'Aquitaine');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (73,'31555',0,'Midi-Pyrénées');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (74,'87085',2,'Limousin');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (82,'69123',2,'Rhône-Alpes');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (83,'63113',1,'Auvergne');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (91,'34172',2,'Languedoc-Roussillon');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (93,'13055',0,'Provence-Alpes-Côte d\'Azur');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (94,'2A004',0,'Corse');
