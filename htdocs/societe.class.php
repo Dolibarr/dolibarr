@@ -144,7 +144,7 @@ class Societe {
 	$result = -2;
       }
 
-    if ($this->codeclient_modifiable)
+    if ($this->codeclient_modifiable == 1)
       {
 	// On ne vérifie le code client que si celui-ci est modifiable
 	// Si il n'est pas modifiable il n'est pas mis à jour lors de l'update
