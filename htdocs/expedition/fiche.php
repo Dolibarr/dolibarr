@@ -420,8 +420,7 @@ else
 		  }
 
 	      }
-
-	    print "</tr></table>";
+	    print "</div>";
 	  }
 	print "<p>\n";
 
