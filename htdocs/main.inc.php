@@ -503,8 +503,8 @@ Function left_menu($menu, $help_url='', $form_search='')
 
       if (defined("MAIN_MODULE_PRODUIT") && MAIN_MODULE_PRODUIT > 0)
 	{
-	  print '<form action="'.DOL_URL_ROOT.'/product/liste.php" method="post"><br>';
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/product/">Produits</A>';
+	  print '<form action="'.DOL_URL_ROOT.'/product/liste.php" method="post">';
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/product/">Produits</A><br>';
 	  print '<input type="text" class="flat" name="sall" size="10">&nbsp;';
 	  print '<input type="submit" class="flat" value="go">';
 	  print "</form>\n";
