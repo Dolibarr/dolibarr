@@ -1,4 +1,4 @@
--- ========================================================================
+-- ============================================================================
 -- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -17,13 +17,23 @@
 --
 -- $Id$
 -- $Source$
--- ========================================================================
+--
+-- ============================================================================
 
-create table llx_c_civilite
-(
-  rowid       serial PRIMARY KEY,
-  code        varchar(6) UNIQUE NOT NULL,
-  civilite    varchar(50),
-  active      smallint DEFAULT 1 NOT NULL
-);
+CREATE OR REPLACE FUNCTION UNIX_TIMESTAMP(TIMESTAMP WITHOUT TIME ZONE)
+RETURNS BIGINT
+LANGUAGE SQL
+IMMUTABLE STRICT
+AS 'SELECT EXTRACT(EPOCH FROM $1)::bigint;';
 
+CREATE OR REPLACE FUNCTION UNIX_TIMESTAMP(TIMESTAMP WITH TIME ZONE)
+RETURNS BIGINT
+LANGUAGE SQL
+IMMUTABLE STRICT
+AS 'SELECT EXTRACT(EPOCH FROM $1)::bigint;';
+ 
+CREATE OR REPLACE FUNCTION FROM_UNIXTIME(BIGINT, VARCHAR)
+RETURNS TIMESTAMP WITH TIME ZONE
+LANGUAGE SQL
+IMMUTABLE STRICT
+AS 'SELECT TIMESTAMP WITH TIME ZONE \'epoch\' + $1 * interval \'1 second\';';
