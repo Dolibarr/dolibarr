@@ -22,7 +22,7 @@
  */
 
 /*!
-	    \file       htdocs/stock/pre.inc.php
+	    \file       htdocs/product/stock/pre.inc.php
         \ingroup    stock
 		\brief      Fichier gestionnaire du menu gauche de stocks
 		\version    $Revision$

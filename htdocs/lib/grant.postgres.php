@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2004      Sebastien Di Cintio  <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,11 +22,11 @@
  *
  */
 
-/*!	\file htdocs/lib/grantpostgres.php
-		\brief effectue les GRANT sur toutes les tables 
-		\author Sebastien Di Cintio
-		\author	Benoit Mortier
-		\version $Revision$
+/*!	\file htdocs/lib/grant.postgres.php
+		\brief      effectue les GRANT sur toutes les tables 
+		\author     Sebastien Di Cintio
+		\author	    Benoit Mortier
+		\version    $Revision$
 		
 */
 

@@ -22,7 +22,7 @@
  */
 
 /*!
-	    \file       htdocs/product/product.php
+	    \file       htdocs/product/stats/fiche.php
         \ingroup    product
 		\brief      Page des stats produits
 		\version    $Revision$
