@@ -26,9 +26,10 @@ class FactureStats extends Stats
 {
   var $db ;
 
-  Function FactureStats($DB)
+  Function FactureStats($DB, $socidp=0)
     {
       $this->db = $DB;
+      $this->socidp = $socidp;
     }
 
 
@@ -40,6 +41,10 @@ class FactureStats extends Stats
   {
     $sql = "SELECT date_format(datef,'%m') as dm, count(*)  FROM llx_facture";
     $sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
+    if ($this->socidp)
+      {
+	$sql .= " AND fk_soc = ".$this->socidp;
+      }
     $sql .= " GROUP BY dm DESC";
     
     return $this->_getNbByMonth($year, $sql);
@@ -64,6 +69,10 @@ class FactureStats extends Stats
   {
     $sql = "SELECT date_format(datef,'%m') as dm, sum(total)  FROM llx_facture";
     $sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
+    if ($this->socidp)
+      {
+	$sql .= " AND fk_soc = ".$this->socidp;
+      }
     $sql .= " GROUP BY dm DESC";
 
     return $this->_getAmountByMonth($year, $sql);
@@ -76,6 +85,10 @@ class FactureStats extends Stats
   {
     $sql = "SELECT date_format(datef,'%m') as dm, avg(total) FROM llx_facture";
     $sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
+    if ($this->socidp)
+      {
+	$sql .= " AND fk_soc = ".$this->socidp;
+      }
     $sql .= " GROUP BY dm DESC";
     return $this->_getAverageByMonth($year, $sql);
 
