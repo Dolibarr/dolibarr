@@ -55,11 +55,11 @@ class Cotisation
   var $projet;
   var $errorstr;
 
-/*!
-		\brief Cotisation
-		\param DB				base de données
-		\param soc_idp
-*/
+    /*!
+    		\brief Cotisation
+    		\param DB				base de données
+    		\param soc_idp
+    */
 
 	function Cotisation($DB, $soc_idp="")
     {
@@ -67,8 +67,8 @@ class Cotisation
       $this->modepaiementid = 0;
     }
 
+
   /*
-   *
    *
    *
    */
@@ -196,9 +196,8 @@ class Cotisation
 	}
       else
 	{
-	  print $this->db->error();
-	  print "<h2><br>$sql<br></h2>";
-	  return 0;
+	    dolibarr_print_error($this->db);
+	    return 0;
 	}  
     }
 
@@ -239,16 +238,15 @@ class Cotisation
 	}
       else
 	{
-	  print $this->db->error();
-	  print "<h2><br>$sql<br></h2>";
-	  return 0;
+	    dolibarr_print_error($this->db);
+	    return 0;
 	}  
     }
 
-/*!
-		\brief fonction qui permet de supprimer le don
-		\param rowid
-*/
+    /*!
+    		\brief fonction qui permet de supprimer le don
+    		\param rowid
+    */
 
   function delete($rowid)
 
@@ -269,15 +267,15 @@ class Cotisation
       }
     else
       {
-	print "Err : ".$this->db->error();
-	return 0;
+	    dolibarr_print_error($this->db);
+	    return 0;
       }
   }
 
-/*!
-		\brief fonction qui permet de récupèrer le don
-		\param rowid
-*/
+    /*!
+    		\brief fonction qui permet de récupèrer le don
+    		\param rowid
+    */
 
   function fetch($rowid)
   {
@@ -320,11 +318,11 @@ class Cotisation
 
   }
 
-/*!
-		\brief fonction qui permet de valider la promesse de don
-		\param	rowid
-		\param 	userid			userid de l'adhérent
-*/
+    /*!
+    		\brief fonction qui permet de valider la promesse de don
+    		\param	rowid
+    		\param 	userid			userid de l'adhérent
+    */
 
   function valid_promesse($rowid, $userid)
   {
@@ -344,16 +342,16 @@ class Cotisation
       }
     else
       {
-	print "Err : ".$this->db->error();
-	return 0;
+	    dolibarr_print_error($this->db);
+	    return 0;
       }
   }
 
-/*!
-		\brief fonction qui permet de mettre le don comme payé
-		\param	rowid
-		\param	modedepaiement
-*/
+    /*!
+    		\brief  fonction qui permet de définir la cotisation comme payée
+    		\param	rowid           rowid de la cotisation
+    		\param	modedepaiement  mode de paiement
+    */
 
 	function set_paye($rowid, $modepaiement='')
   {
@@ -378,16 +376,16 @@ class Cotisation
       }
     else
       {
-	print "Err : ".$this->db->error();
-	return 0;
+	    dolibarr_print_error($this->db);
+	    return 0;
       }
   }
 
-/*!
-		\brief fonction qui permet de mettre un commentaire sur le don
-		\param	rowid
-		\param	commentaire
-*/
+    /*!
+    		\brief fonction qui permet de mettre un commentaire sur le don
+    		\param	rowid
+    		\param	commentaire
+    */
 
   function set_commentaire($rowid, $commentaire='')
   {
@@ -408,15 +406,15 @@ class Cotisation
       }
     else
       {
-	print "Err : ".$this->db->error();
-	return 0;
+	    dolibarr_print_error($this->db);
+	    return 0;
       }
   }
 
-/*!
-		\brief fonction qui permet de mettre le don comme encaissé
-		\param	rowid
-*/
+    /*!
+    		\brief fonction qui permet de mettre le don comme encaissé
+    		\param	rowid
+    */
 
 	function set_encaisse($rowid)
   {
@@ -436,8 +434,8 @@ class Cotisation
       }
     else
       {
-	print "Err : ".$this->db->error();
-	return 0;
+	    dolibarr_print_error($this->db);
+	    return 0;
       }
   }
 
@@ -459,6 +457,7 @@ class Cotisation
 
       }
   }
+  
   /* Paiement recu en attente d'encaissement
    * 
    *

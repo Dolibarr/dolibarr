@@ -19,6 +19,13 @@
  * $Id$
  * $Source$
  */
+
+/*! \file htdocs/compta/bank/config.php
+        \ingroup    banque
+		\brief      Page de configuration des comptes bancaires
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("./bank.lib.php");
 
@@ -35,9 +42,9 @@ print '<br>';
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
 print "<tr class=\"liste_titre\">";
-print "<td>id</td><td>Label</td><td>Description</TD>";
-print "<td align=\"left\">Number</a></TD>";
-print "<td align=\"center\">Clos</a></TD>";
+print "<td>id</td><td>Label</td><td>".$langs->trans("Description")."</td>";
+print "<td align=\"left\">".$langs->trans("Number")."</a></td>";
+print "<td align=\"center\">Clos</a></td>";
 print "</tr>\n";
 
 $sql = "SELECT rowid, label,number,bank,clos from ".MAIN_DB_PREFIX."bank_account";
@@ -56,7 +63,8 @@ if ($result)
     $objp = $db->fetch_object( $i);
 
     $var=!$var;
-    print "<tr $bc[$var]><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td><td>$objp->bank&nbsp;</td><td>$objp->number&nbsp;</td><td align=\"center\">".$yn[$objp->clos]."</td></tr>";
+    print "<tr $bc[$var]><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td>";
+    print "<td>$objp->bank&nbsp;</td><td>$objp->number&nbsp;</td><td align=\"center\">".$yn[$objp->clos]."</td></tr>";
 
     $i++;
   }
