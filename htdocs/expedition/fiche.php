@@ -321,22 +321,22 @@ else
 	  print '<td width="30%">';
 	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  
-	  print '<td width="50%">';
+	  print '<td width="20%">Auteur</td><td width="30%">'.$author->fullname.'</td>';
 
-	  print "</td></tr>";
+	  print "</tr>";
 	  
 	  print "<tr><td>Commande</td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.$commande->ref."</a></td>\n";
-
+	  print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
 	  print "<tr><td>Date</td>";
 	  print "<td>".strftime("%A %d %B %Y",$expedition->date)."</td>\n";
 
-	  print '<td width="50%">';
-	  print "</td></tr>";
+	  $entrepot = new Entrepot($db);
+	  $entrepot->fetch($expedition->entrepot_id);
 
-	  print "<tr><td>Auteur</td><td>$author->fullname</td>";
-	
-	  print "</table>";
+	  print '<td width="20%">Entrepôt</td><td>'.$entrepot->libelle.'</td></tr>';
+
+	  print "</table>\n";
 	  	  
 	  /*
 	   * Lignes 
