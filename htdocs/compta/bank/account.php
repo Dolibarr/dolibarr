@@ -27,71 +27,49 @@ require("./pre.inc.php");
 if (!$user->rights->banque->lire)
   accessforbidden();
 
-
-$account=isset($_GET["account"])?isset($_GET["account"]):$HTTP_POST_VARS["account"];
-$vline=isset($_GET["vline"])?isset($_GET["vline"]):$HTTP_POST_VARS["vline"];
-$action=isset($_GET["action"])?isset($_GET["action"]):$HTTP_POST_VARS["action"];
-
+$account=isset($_GET["account"])?$_GET["account"]:$_POST["account"];
+$vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
+$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+$page=isset($_GET["page"])?$_GET["page"]:0;
 
 if ($action == 'add' && $account)
 {    
-  if ($credit > 0)
+
+  if ($_POST["credit"] > 0)
     {
-      $amount = $credit ;
+      $amount = $_POST["credit"];
     }
   else
     {
-      $amount = - $debit ;
+      $amount = - $_POST["credit"];
     }
   
-  $dateop = "$dateoy" . "$dateo";
+  $dateop = $_POST["dateoy"].$_POST["dateo"];
+  $operation=$_POST["operation"];
+  $label=$_POST["label"];
+  $operation=$_POST["operation"];
+  $num_chq=$_POST["num_chq"];
+  $cat1=$_POST["cat1"];
+
   $acct=new Account($db,$account);
 
-  $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq,$cat1);
+  $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1);
+
+  //print "<p>Account: insertid=$insertid - " . $action . " : ".$_GET["account"] . " - " . $_POST["account"]." - ".$account."</p>\n";
 
   if ($insertid == '')
     {
-      print "<p> Probleme d'insertion : ".$db->error();
+      print "Erreur: Probleme d'insertion : ".$db->error();
     }
   else
     {
-      Header("Location: $PHP_SELF?account=" . $acct->id);
+      Header("Location: $PHP_SELF?account=" . $account);
     }
-    /*
-  if ($num_chq)
-    {
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
-      $sql .= " VALUES (now(), '$dateop', '$label', '$amount','$author','$num_chq','$account','$operation')";
-    }
-  else
-    {
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, label, amount, author,fk_account,fk_type)";
-      $sql .= " VALUES (now(), '$dateop', '$label', '$amount','$author','$account','$operation')";
-    }
-  
-  $result = $db->query($sql);
-  if ($result)
-    {
-      $rowid = $db->last_insert_id();
-      if ($cat1)
-	{
-	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
-	  $result = $db->query($sql);
-	}
-      Header("Location: $PHP_SELF?account=$account");
-    }
-  else
-    {
-      print $db->error();
-      print "<p>$sql";
-    }
-    */
 }
 if ($action == 'del' && $account && $user->rights->banque->modifier)
 {
   $acct=new Account($db,$account);
   $acct->deleteline($rowid);
-  //bank_delete_line($db, $rowid);
 }
 
 /***********************************************************************************
@@ -102,7 +80,7 @@ if ($action == 'del' && $account && $user->rights->banque->modifier)
 
 llxHeader();
 
-//print "<p>Account: " . $account . "o" . $account . "</p>\n";
+//print "<p>Page: $page - Account: " . $_GET["account"] . " - " . $HTTP_POST_VARS["account"]."</p>\n";
 
 if ($account > 0)
 {
@@ -144,6 +122,10 @@ if ($account > 0)
       $sql_rech = " AND lower(b.label) like '%".strtolower($HTTP_POST_VARS["req_desc"])."%'";
       $mode_search = 1;
     }
+  else 
+    {
+  	  $mode_search = 0;
+    }
   /*
    *
    *
@@ -183,7 +165,7 @@ if ($account > 0)
       $page = 0;
       $limitsql = $nbline;
     }
-  //print "$viewline $nbline $limitsql";
+  //print "$page $viewline $nbline $limitsql";
 
   /*
    * Formulaire de recherche
@@ -204,9 +186,9 @@ if ($account > 0)
       print '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).'"><img alt="Page suivante" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
     }
   print '</td>';
-  print '<td>&nbsp;</td><td><input type="text" name="req_desc" value="'.$HTTP_POST_VARS["req_desc"].'" size="24"></TD>';
-  print '<td align="right"><input type="text" name="req_debit" size="6"></TD>';
-  print '<td align="right"><input type="text" name="req_credit" size="6"></TD>';
+  print '<td>&nbsp;</td><td><input type="text" name="req_desc" value="'.$HTTP_POST_VARS["req_desc"].'" size="40"></TD>';
+  print '<td align="right"><input type="text" name="req_debit" value="'.$HTTP_POST_VARS["req_debit"].'" size="6"></TD>';
+  print '<td align="right"><input type="text" name="req_credit" value="'.$HTTP_POST_VARS["req_credit"].'" size="6"></TD>';
   print '<td align="center"><input type="submit" value="Chercher"></td>';
   print '<td align="center">';
   if ($user->rights->banque->modifier)
@@ -235,6 +217,7 @@ if ($account > 0)
   print '<td>Date</td><td>Type</td><td>Description</td>';
   print '<td align="right">Débit</td><td align="right">Crédit</td><td align="right">Solde</td>';
   print '<td align="center">Relevé</td></tr>';
+
   // DEBUG
   // print "<tr><td>$nbline</td><td>$viewline</td><td>total_lines $total_lines</td><td>limitsql $limitsql</td></tr>";
       
@@ -331,7 +314,7 @@ llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</e
  */
 Function _print_lines($db,$sql,$acct)
 {
-  global $bc, $nbline, $viewline, $user;
+  global $bc, $nbline, $viewline, $user, $page;
   $var=True;  
   $num = $db->num_rows();
   $i = 0; $total = 0;
