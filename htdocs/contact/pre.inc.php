@@ -44,8 +44,5 @@ function llxHeader($head = "", $urlp = "") {
   $menu->add(DOL_URL_ROOT."/contact/index.php?view=mail", "Emails");
 
   left_menu($menu->liste);
-
 }
-
-
 ?>
