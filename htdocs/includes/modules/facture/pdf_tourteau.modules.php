@@ -33,7 +33,7 @@ Class pdf_tourteau {
 
   Function write_pdf_file($facid)
     {
-
+      global $user;
       $fac = new Facture($this->db,"",$facid);
       $fac->fetch($facid);  
 
@@ -58,6 +58,10 @@ Class pdf_tourteau {
 	      $pdf=new FPDF('P','mm','A4');
 	      $pdf->Open();
 	      $pdf->AddPage();
+
+	      $pdf->SetTitle($fac->ref);
+	      $pdf->SetCreator("Dolibarr ".DOL_VERSION);
+	      $pdf->SetAuthor($user->fullname);
 	      
 	      $pdf->SetXY(10,5);
 	      if (defined("FAC_PDF_INTITULE"))
@@ -262,9 +266,10 @@ Class pdf_tourteau {
 	      $pdf->SetFont('Arial','',9);
 	      $pdf->SetXY(10, 265);
 	      $pdf->MultiCell(190, 5, "Accepte le réglement des sommes dues par chèques libellés à mon nom en ma qualité de Membre d'une Association de Gestion agréée par l'Administration Fiscale.", 0, 'J');
+
+	      $pdf->Close();
 	      
 	      $pdf->Output($file);
-	      
 	    }
 	  else
 	    {
