@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001 Fabien Seisen <seisen@linuxfr.org>
- * Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * $Id$
  * $Source$
@@ -24,14 +24,9 @@
 class DoliDb {
   var $db, $results, $ok;
 
-
-
   Function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '') 
     {
-
       //      print "Name DB : $host, $user, $pass, $name<br>";
-
-
       global $conf; 
       
       if ($host == '')
@@ -53,24 +48,33 @@ class DoliDb {
 	{
 	  $name = $conf->db->name;
 	}
-
-
-		
+	
       $this->db = $this->connect($host, $user, $pass);
       
-      if (! $this->db)
+      if ($this->db)
+	{
+	  $this->connected = 1;
+	}
+      else
 	{
 	  print "Db->Db() raté<br>\n";
-	  $this->ok = 0;
+	  $this->connected = 1;
 	  return 0;
 	}
       
       $ret = $this->select_db($name);
       
-      $this->ok = 1;
-
+      if ($ret == 1)
+	{
+	  $this->database_selected = 1;
+	  $this->ok = 1;
+	}
+      else
+	{
+	  $this->database_selected = 0;
+	  $this->ok = 0;
+	}
       return $ret;
-
     }
   /*
    *
@@ -90,6 +94,20 @@ class DoliDb {
   /*
    *
    */  
+  Function create_db($database)
+  {
+    if (mysql_create_db ($database, $this->db))
+      {
+	return 1;
+      }
+    else
+      {
+	return 0;
+      }
+  }
+  /*
+   *
+   */
   Function clone()
     {
       $db2 = new DoliDb("", "", "", "", "");
