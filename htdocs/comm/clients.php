@@ -102,6 +102,25 @@ if ($result)
 
   print_barre_liste("Liste des clients", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
 
+  print '<div align="center">';
+
+  print "| <A href=\"$PHP_SELF?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
+  for ($ij = 65 ; $ij < 91; $ij++) {
+    print "<A href=\"$PHP_SELF?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
+    
+    if ($_GET["begin"] == chr($ij) )
+      {
+	print  "<b>&gt;" . chr($ij) . "&lt;</b>" ; 
+      } 
+    else
+      {
+	print  chr($ij);
+      } 
+    print "</A> | ";
+  }
+  print "</div>";
+
+
   $i = 0;
   
   if ($sortorder == "DESC")
@@ -128,7 +147,9 @@ if ($result)
       $var=!$var;
 
       print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print '<td><a href="fiche.php?socid='.$obj->idp.'">';
+      print img_file();
+      print "</a>&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
       print "<TD>".$obj->ville."&nbsp;</TD>\n";
       print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
 
