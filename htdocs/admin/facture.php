@@ -25,6 +25,20 @@ if (!$user->admin)
   accessforbidden();
 
 
+#if ($HTTP_POST_VARS["action"] == 'update')
+#{
+#  dolibarr_set_const($db, "FAC_PDF_INTITULE2",$HTTP_POST_VARS["nom2"]);
+#  dolibarr_set_const($db, "FAC_PDF_INTITULE",$HTTP_POST_VARS["nom"]);
+#  dolibarr_set_const($db, "FAC_PDF_ADRESSE",$HTTP_POST_VARS["adresse"]);
+#  dolibarr_set_const($db, "FAC_PDF_TEL",$HTTP_POST_VARS["tel"]);
+#  dolibarr_set_const($db, "FAC_PDF_FAX",$HTTP_POST_VARS["fax"]);
+#  dolibarr_set_const($db, "FAC_PDF_SIREN",$HTTP_POST_VARS["siren"]);
+#  dolibarr_set_const($db, "FAC_PDF_SIRET",$HTTP_POST_VARS["siret"]);
+#
+#  Header("Location: $PHP_SELF");
+#}
+
+
 llxHeader();
 
 
@@ -60,8 +74,10 @@ $dir = "../includes/modules/facture/";
 
 print_titre("Configuration du module Factures");
 
+/*
+ *  Module numérotation
+ */
 print "<br>";
-
 print_titre("Module de numérotation des factures");
 
 print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
@@ -110,10 +126,11 @@ while (($file = readdir($handle))!==false)
 closedir($handle);
 
 print '</table>';
-/*
- * PDF
- */
 
+/*
+ *  PDF
+ */
+print '<br>';
 print_titre("Modèles de facture pdf");
 
 print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
@@ -169,10 +186,10 @@ print '</table>';
 
 
 /*
- *
+ *  Modes de règlement
  *
  */
-
+print '<br>';
 print_titre( "Mode de règlement à afficher sur les factures");
 
 print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
@@ -181,12 +198,12 @@ print '<form action="'.$PHP_SELF.'" method="post">';
 print '<input type="hidden" name="action" value="setribchq">';
 print '<tr class="liste_titre">';
 print '<td>Mode règlement à proposer</td>';
-print '<td><input type="submit" value="Modifier"></td>';
+print '<td align="right"><input type="submit" value="Modifier"></td>';
 print "</tr>\n";
 print '<tr '.$bc[True].'>';
 print "<td>Proposer paiement par RIB sur le compte</td>";
 print "<td>";
-$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
+$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account where clos = 0";
 $var=True;
 if ($db->query($sql))
 {
@@ -212,7 +229,7 @@ if ($db->query($sql))
 		}
 		print "</select>";
 	} else {
-		print "<i>Aucun compte bancaire encore créé</i>";
+		print "<i>Aucun compte bancaire actif créé</i>";
 	}
 }
 print "</td></tr>";
@@ -220,7 +237,7 @@ print "</td></tr>";
 print '<tr '.$bc[False].'>';
 print "<td>Proposer paiement par chèque à l'ordre et adresse du titulaire du compte</td>";
 print "<td>";
-$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
+$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account where clos = 0";
 $var=True;
 if ($db->query($sql))
 {
@@ -246,7 +263,7 @@ if ($db->query($sql))
 	}
 	print "</select>";
   } else {
-		print "<i>Aucun compte bancaire actif encore créé</i>";
+		print "<i>Aucun compte bancaire actif créé</i>";
   }
 }
 print "</td></tr>";
@@ -256,9 +273,9 @@ print "</table>";
 $db->close();
 
 /*
- * Repertoire
+ *  Repertoire
  */
-
+print '<br>';
 print_titre("Chemins d'accés aux documents");
 
 print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
@@ -271,18 +288,18 @@ print "</table>";
 
 
 /*
- * Options fiscale
+ *  Options fiscale
  */
-
+print '<br>';
 print_titre("Options fiscales de facturation de la TVA");
 
 print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
 print '<form action="'.$PHP_SELF.'" method="post">';
 print '<input type="hidden" name="action" value="settvaoption">';
-print '<TR class="liste_titre">';
+print '<tr class="liste_titre">';
 print '<td>Option</td><td>Description</td>';
-print '<td><input type="submit" value="Modifier"></td>';
-print "</TR>\n";
+print '<td align="right"><input type="submit" value="Modifier"></td>';
+print "</tr>\n";
 print "<tr ".$bc[True]."><td width=\"140\"><input type=\"radio\" name=\"optiontva\" value=\"reel\"".($facture_tva_option != "franchise"?" checked":"")."> Option réel</td>";
 print "<td colspan=\"2\">L'option 'réel' est la plus courante. Elle est à destination des entreprises et professions libérales.\nChaque produits/service vendu est soumis à la TVA (Dolibarr propose le taux standard par défaut à la création d'une facture). Cette dernière est récupérée l'année suivante suite à la déclaration TVA pour les produits/services achetés et est reversée à l'état pour les produits/services vendus.</td></tr>\n";
 print "<tr ".$bc[False]."><td width=\"140\"><input type=\"radio\" name=\"optiontva\" value=\"franchise\"".($facture_tva_option == "franchise"?" checked":"")."> Option franchise</td>";
