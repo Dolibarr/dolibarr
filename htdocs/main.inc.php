@@ -511,6 +511,7 @@ Function left_menu($menu, $help_url='')
  */
 function llxFooter($foot='') 
 {
+  global $dolibarr_auto_user;
   print "</td></tr>";
   /*
    *
