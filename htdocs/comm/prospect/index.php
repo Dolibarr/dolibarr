@@ -175,7 +175,7 @@ $sql = "SELECT s.nom, s.idp";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE  s.fk_stcomm = 1";
 $sql .= " ORDER BY s.tms ASC";
-$sql .= $db->plimit(5, 0);
+$sql .= $db->plimit(15, 0);
 
 if ( $db->query($sql) )
 {
