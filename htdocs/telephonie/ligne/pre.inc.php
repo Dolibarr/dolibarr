@@ -46,7 +46,10 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/liste.php", "Liste");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/fiche.php?action=create", "Nouvelle ligne");
+
+  if ($user->rights->telephonie->ligne->creer)
+    $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/fiche.php?action=create", "Nouvelle ligne");
+
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/listecommande.php", "En commande");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/communications.php", "Communications");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/groupe.php", "Groupes");

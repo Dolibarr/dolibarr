@@ -44,6 +44,8 @@ function llxHeader($head = "", $title="") {
   $menu->add(DOL_URL_ROOT."/telephonie/client/index.php", "Clients");
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
+  if ($user->rights->telephonie->ligne->creer)
+    $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/fiche.php?action=create", "Nouvelle ligne");
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commandes");
 
