@@ -223,7 +223,7 @@ if ($socid > 0) {
 	  print " <b>&gt; 15 jours</b>";
 	}
 	print "</td><TD align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-	print "<TD align=\"right\">".price($objp->price - $objp->remise)."</TD>\n";
+	print "<TD align=\"right\">".price($objp->price)."</TD>\n";
 	print "<TD align=\"center\">$objp->statut</TD></tr>\n";
 	$i++;
       }
