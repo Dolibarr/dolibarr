@@ -85,7 +85,7 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastGroupsCreated").'</td></tr>';
+  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastGroupsCreated").'</td></tr>';
   $var = true;
   $i = 0;
 
@@ -97,7 +97,7 @@ if ( $db->query($sql) )
 	  print "<tr $bc[$var]>";
 	  print "<td><a href=\"".DOL_URL_ROOT."/user/group/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowGroup"),"group")."</a>&nbsp;";
 	  print "<a href=\"".DOL_URL_ROOT."/user/group/fiche.php?id=$obj->rowid\">$obj->nom</a></td>";
-	  print "<td width=\"100\" align=\"center\">".dolibarr_print_date($obj->datec,"%d %b %Y")."</td>";
+	  print "<td width=\"120\" align=\"center\">".dolibarr_print_date($obj->datec,"%d %b %Y")."</td>";
       print '</tr>';
 	  $i++;
 	}
@@ -125,7 +125,7 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td></tr>';
+  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastUsersCreated",min($num,$max)).'</td></tr>';
   $var = true;
   $i = 0;
 
@@ -137,7 +137,7 @@ if ( $db->query($sql) )
 	  print "<tr $bc[$var]>";
 	  print "<td><a href=\"".DOL_URL_ROOT."/user/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowUser"),"user")."</a>&nbsp;";
 	  print "<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=$obj->rowid\">$obj->firstname $obj->name</a></td>";
-	  print "<td width=\"100\" align=\"center\">".strftime("%d %b %Y",$obj->datec)."</td>";
+	  print "<td width=\"120\" align=\"center\">".strftime("%d %b %Y",$obj->datec)."</td>";
       print '</tr>';
 	  $i++;
 	}
