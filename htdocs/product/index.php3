@@ -20,13 +20,12 @@
  *
  */
 require("./pre.inc.php3");
+$user->getrights('produit');
 
 if (strlen($type) == 0)
 {
-$type = 0;
+  $type = 0;
 }
-
-$db = new Db();
 
 if ($action == 'update')
 {
@@ -34,46 +33,62 @@ if ($action == 'update')
   $db->query($sql);
 }
 
-if ($page == -1) { 
-  $page = 0 ; 
+/*
+ *
+ *
+ */
+
+
+  if ($page == -1) { 
+    $page = 0 ; 
+  }
+
+  $limit = $conf->liste_limit;
+  $offset = $limit * $page ;
+  
+  if ($sortfield == "")
+    {
+      $sortfield="p.tms";
+    }
+  if ($sortorder == "")
+    {
+      $sortorder="DESC";
+    }
+  
+  $sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p";
+  $sql .= " WHERE p.fk_product_type = $type";
+  if ($sref)
+    {
+      $sql .= " AND lower(p.ref) like '%".strtolower($sref)."%'";
+    }
+  if ($snom)
+    {
+      $sql .= " AND lower(p.label) like '%".strtolower($snom)."%'";
+    }
+
+if ($user->rights->produit->lire == 0)
+{
+  // sécurité
+  $sql .= " AND 1 = 2";
 }
 
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
 
-if ($sortfield == "")
-{
-  $sortfield="p.tms";
-}
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
+  $sql .= " ORDER BY $sortfield $sortorder ";
+  $sql .= $db->plimit($limit + 1 ,$offset);
+  $result = $db->query($sql) ;
 
-$sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p";
-$sql .= " WHERE p.fk_product_type = $type";
-if ($sref)
-{
-  $sql .= " AND lower(p.ref) like '%".strtolower($sref)."%'";
-}
-if ($snom)
-{
-  $sql .= " AND lower(p.label) like '%".strtolower($snom)."%'";
-}
-$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit($limit + 1 ,$offset);
- 
-if ( $db->query($sql) )
+if ($result)
 {
   $num = $db->num_rows();
-  $i = 0;
 
+  $i = 0;
+  
   if ($num == 1)
     {
       $objp = $db->fetch_object($i);
       Header("Location: fiche.php3?id=$objp->rowid");
     }
-
+  
   llxHeader();
 
   print_barre_liste("Liste des ".$types[$type]."s", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
