@@ -43,6 +43,7 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
       $menu->add_submenu("propal.php?viewstatut=0", "Brouillons");
       $menu->add_submenu("propal.php?viewstatut=1", "Ouvertes");
+      $menu->add_submenu("./propal/stats/", "Statistiques");
     }
 
   if ($conf->commande->enabled ) 
