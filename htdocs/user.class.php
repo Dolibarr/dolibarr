@@ -359,6 +359,18 @@ class User
 		    $this->rights->banque->configurer = 1;
 		}
 
+	      if ($module == 'caisse' or $module == '')
+		{
+		  if ($obj->fk_id == 131)
+		    $this->rights->caisse->lire = 1;
+
+		  if ($obj->fk_id == 132)
+		    $this->rights->caisse->modifier = 1;
+
+		  if ($obj->fk_id == 133)
+		    $this->rights->caisse->configurer = 1;
+		}
+
 	      if ($module == 'societe' or $module == '')
 		{
 		  if ($obj->fk_id == 121)
