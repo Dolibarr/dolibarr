@@ -40,7 +40,7 @@ function do_upload ($socid)
   if (move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . $_FILES['userfile']['name']))
     {
       print "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; 
-           avec succ&egrave;s. Voici plus d'informations :\n";
+           avec succ&egrave;s.\n";
       //print_r($_FILES);
     }
   else
@@ -98,9 +98,9 @@ if ($socid > 0)
        */
       print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
       
-      print "<tr><td><div class=\"titre\">Fiche client : $objsoc->nom</div></td>";
-      print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
-      print "<td align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">[Propal]</a></td>";
+      print "<tr><td><div class=\"titre\">Documents associés à l'entreprise : $objsoc->nom</div></td>";
+      print "<td align=\"center\"><a href=\"/comm/fiche.php3?socid=$objsoc->idp\">Commercial</a></td>";
+      print "<td align=\"center\"><a href=\"/compta/fiche.php3?socid=$objsoc->idp\">Compta</a></td>";
       print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
       print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
       print "</tr></table>";
