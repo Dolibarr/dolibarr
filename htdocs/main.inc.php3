@@ -344,7 +344,7 @@ function top_menu($head)
 
   print '<TD width="15%" class="menu" align="center">'.strftime(" %d %B - %H:%M",time()).'</TD>';
 
-  print '<td width="10%" class="menu" align="center"><a href="user/logout.php" title="logout">'.$user->login.'</a></td>';
+  print '<td width="10%" class="menu" align="center"><a href="'.DOL_URL_ROOT.'/user/logout.php" title="logout">'.$user->login.'</a></td>';
   print '</tr>';
 
   //    print '</table>';
