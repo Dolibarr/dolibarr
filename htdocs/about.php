@@ -52,7 +52,7 @@ Informations :
 
 
 <li>
-Les tâches en cours de réalisation sur Dolibarr sont consultable dans le <a target="blank" href="http://savannah.nongnu.org/pm/task.php?group_id=1915&group_project_id=0&func=browse&advsrch=0&set=open">gestionnaire de projet</a> sur Savannah.
+Les tâches en cours de réalisation sur Dolibarr sont consultable dans le <a target="blank" href="http://savannah.nongnu.org/pm/task.php?group_id=1915&amp;group_project_id=0&amp;func=browse&amp;advsrch=0&amp;set=open">gestionnaire de projet</a> sur Savannah.
 </li>
 
 <li>
