@@ -1,7 +1,7 @@
 <?php
 /* ***************************************************************************
- * Copyright (C) 2001 Eric Seigne         <erics@rycks.com>
- * Copyright (C) 2004 Destailleur Laurent <eldy@users.sourceforge.net>
+ * Copyright (C) 2001      Eric Seigne         <erics@rycks.com>
+ * Copyright (C) 2004-2005 Destailleur Laurent <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,17 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * ************************************************************************* */
 
-/*!	\file htdocs/translate.class.php
-		\brief  Fichier de la classe de traduction
-		\author	Laurent Destailleur
-		\version $Revision$
+/**
+    	\file       htdocs/translate.class.php
+		\brief      Fichier de la classe de traduction
+		\author	    Laurent Destailleur
+		\version    $Revision$
 */
 
 
-/*! \class Translate
-		\brief Classe permettant de gérer les traductions
+/** 
+        \class      Translate
+		\brief      Classe permettant de gérer les traductions
 */
 
 class Translate {
@@ -39,9 +41,9 @@ class Translate {
     var $debug;
 
     /**
-     *    \brief     Constructeur de la classe
-     *    \param     dir             repertoire racine des fichiers de traduction
-     *    \param     defaultlang     langue par defaut à utiliser
+     *  \brief      Constructeur de la classe
+     *  \param      dir             repertoire racine des fichiers de traduction
+     *  \param      defaultlang     langue par defaut à utiliser
      */
 		
     function Translate($dir = "", $defaultlang = "") {
@@ -51,11 +53,11 @@ class Translate {
         $this->tab_translate = array();
     }
 
-    /*!
-				\brief  Charge en mémoire le tableau de traduction pour un domaine particulier
-                Si le domaine est deja chargé, la fonction ne fait rien
-        \param  domain      Nom du domain (fichier lang) à charger
-    */
+    /**
+	 *  \brief      Charge en mémoire le tableau de traduction pour un domaine particulier
+     *              Si le domaine est deja chargé, la fonction ne fait rien
+     *  \param      domain      Nom du domain (fichier lang) à charger
+     */
 		
     function Load($domain = "main") {
       if ($this->tab_loaded[$domain]) { return; }   // Ce fichier est deja chargé
@@ -89,10 +91,10 @@ class Translate {
 
     }
 
-    /*!     
-    		\brief      Retourne la liste des domaines chargées en memoire
-            \return     array       Tableau des domaines chargées
-    */
+    /**     
+     *	\brief      Retourne la liste des domaines chargées en memoire
+     *  \return     array       Tableau des domaines chargées
+     */
 		
     function list_domainloaded() {
         return join(",",array_keys($this->tab_loaded));
@@ -120,9 +122,9 @@ class Translate {
     }
 
     /**
-    *  \brief       Retourne la liste des langues disponibles
-    *  \return      array     list of languages
-    */
+     *  \brief       Retourne la liste des langues disponibles
+     *  \return      array     list of languages
+     */
 		
     function get_available_languages()
     {
@@ -138,14 +140,13 @@ class Translate {
     }
     
     /**
-    *  \brief       Expédie le header correct et retourne le début de la page html
-    *  [en]         Send header and return a string of html start page
-    *  \return      string      html header avec charset
-    */
+     *  \brief       Expédie le header correct et retourne le début de la page html
+     *  [en]         Send header and return a string of html start page
+     *  \return      string      html header avec charset
+     */
 		
     function lang_header()
     {
-    
         $charset = "iso-8859-1";
     
         //header("Content-Type: text/html; charset=$charset");
