@@ -21,6 +21,19 @@
  *
  */
 
+/**
+	    \file       htdocs/includes/menus/barre_top/default.php
+		\brief      Gestionnaire par défaut du menu du haut
+		\version    $Revision$
+
+        \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
+        \remarks    Toutes les entrées de menu a faire apparaitre dans la barre du 
+        \remarks    du haut doit etre affichée par <a class="tmenu" href="lien">Nom</a>
+        \remarks    On peut éventuellement ajouter l'attribut id="sel" dans la balise <a>
+        \remarks    quand il s'agit de l'entrée du menu qui est sélectionné.
+*/
+
+
 if ($conf->commercial->enabled)
 {
   $langs->load("commercial");

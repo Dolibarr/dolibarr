@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004          Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,24 +21,24 @@
  *
  */
 
-print '<table cellpadding=0 cellspacing=0 width="100%"><tr>';
+/**
+	    \file       htdocs/includes/menus/barre_top/esprit.php
+		\brief      Gestionnaire du menu du haut spécialisé vente de CD/livres
+		\version    $Revision$
 
-print '<td width="25%" align="center">';
+        \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
+        \remarks    Toutes les entrées de menu a faire apparaitre dans la barre du 
+        \remarks    du haut doit etre affichée par <a class="tmenu" href="lien">Nom</a>
+        \remarks    On peut éventuellement ajouter l'attribut id="sel" dans la balise <a>
+        \remarks    quand il s'agit de l'entrée du menu qui est sélectionné.
+*/
 
-print '<a href="/boutique/livre/">livres</a></td>';
+print '<a class="tmenu" href="/boutique/livre/">livres</a>';
 
-print '<td width="25%" align="center">';
+print '<a class="tmenu" href="/boutique/client/">clients</a>';
 
-print '<a href="/boutique/client/">clients</a></td>';
+print '<a class="tmenu" href="/product/critiques/">critiques</a>';
 
-print '<td width="25%" align="center">';
-
-print '<a href="/product/critiques/">critiques</a></td>';
-
-print '</td><td width="25%" align="center">';
-
-print '<a href="/product/categorie/">catégories</a></td>';
-
-print '</tr></table>';
+print '<a class="tmenu" href="/product/categorie/">catégories</a>';
 
 ?>

@@ -22,7 +22,7 @@
 
 /**
 	    \file       htdocs/includes/menus/barre_left/default.php
-		\brief      Gestionnaire du menu de gauche
+		\brief      Gestionnaire par défaut du menu de gauche
 		\version    $Revision$
 */
 

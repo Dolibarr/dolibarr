@@ -22,16 +22,20 @@
 
 /**
 	    \file       htdocs/includes/menus/barre_left/eldy.php
-		\brief      Gestionnaire du menu de gauche
+		\brief      Gestionnaire par défaut du menu du gauche
 		\version    $Revision$
+
+        \remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
+        \remarks    A l'aide d'un objet $newmenu=new Menu() et des méthode add et add_submenu,
+        \remarks    définir la liste des entrées menu à faire apparaitre.
+        \remarks    En fin de code, mettre la ligne $menu=$newmenu->liste.
+        \remarks    Ce qui est définir dans un tel gestionnaire sera alors prioritaire sur
+        \remarks    les définitions de menu des fichiers pre.inc.php
 */
 
-// Ce gestionnaire de menu écrase le tableau $menu pour le définir selon
-// ces propres règles prioritairement aux définitions des fichiers pre.inc.php
 
 $newmenu = new Menu();
 
-$newmenu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
 
 /*
 $class="";
@@ -49,6 +53,10 @@ else
     }
 
 print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Fournisseur").'</a>';
+
+$newmenu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
+$newmenu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
+
 */
 
 //$menu=$newmenu->liste;
