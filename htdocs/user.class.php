@@ -592,6 +592,7 @@ class User
 
   /**
    *    \brief     Change le mot de passe d'un utilisateur et l'envoie par mail
+   *    \param     user            Object user de l'utilisateur qui fait la modification
    *    \param     password        Nouveau mot de passe (généré par defaut si non communiqué)
    *    \param     isencrypted     0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
    *    \return    int             <0 si erreur, 0 si changement ok mais envoi mail ko, 1 si ok

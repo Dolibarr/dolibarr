@@ -22,9 +22,9 @@
  */
 
 /*!
-        \file       htdocs/compta/index.php
+        \file       htdocs/compta/param/comptes/index.php
         \ingroup    compta
-		\brief      Page acceuil zone comptabilité
+		\brief      Page acceuil zone parametrages
 		\version    $Revision$
 */
 

@@ -212,7 +212,7 @@ function top_menu($head, $title="", $target="")
 
 /**
  *  \brief      Affiche barre de menu gauche
- *  \param      menu            Objet du menu gauche
+ *  \param      menu_array      Tableau des entrée de menu
  *  \param      help_url        Url pour le lien aide ('' par defaut)
  *  \param      form_search     Formulaire de recherche permanant supplémentaire
  */

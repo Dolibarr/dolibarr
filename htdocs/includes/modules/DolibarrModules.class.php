@@ -222,7 +222,7 @@ class DolibarrModules
 
     /**     \brief      Fonction de désactivation. Supprime de la base les constantes et boites du module
      *      \param      array_sql       tableau de requete sql a exécuter à la désactivation
-     *      \reutnr     int             0 si erreur, 1 si ok
+     *      \return     int             0 si erreur, 1 si ok
      */
     function _remove($array_sql)
     {

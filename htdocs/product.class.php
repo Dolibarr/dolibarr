@@ -21,15 +21,17 @@
  *
  */
 
-/*!	\file       htdocs/product.class.php
+/**
+    	\file       htdocs/product.class.php
 		\ingroup    produit
 		\brief      Fichier de la classe des produits prédéfinis
 		\version    $Revision$
 */
 
 
-/*! \class Product
-		\brief Classe permettant la gestion des produits prédéfinis
+/**
+        \class      Product
+		\brief      Classe permettant la gestion des produits prédéfinis
 */
 
 class Product
@@ -237,10 +239,11 @@ class Product
   }
 
   /**
-   * \brief Modifie le prix d'achat pour un fournisseur
-   * \param fourn_id    id du fournisseur
-   * \param qty         quantite pour lequel le prix est valide
-   * \param buyprice       prix d'achat
+   *    \brief  Modifie le prix d'achat pour un fournisseur
+   *    \param  id_fourn        Id du fournisseur
+   *    \param  qty             Quantite pour lequel le prix est valide
+   *    \param  buyprice        Prix d'achat
+   *    \param  user            Objet user de l'utilisateur qui modifie
    *
    */
   function update_buyprice($id_fourn, $qty, $buyprice, $user) 

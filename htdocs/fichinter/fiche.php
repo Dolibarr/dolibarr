@@ -20,7 +20,7 @@
  * $Source$
  */
 
-/** 	\file       htdocs/ficheinter.php
+/** 	\file       htdocs/fichinter/fiche.php
 		\brief      Fichier fiche intervention
 		\ingroup    ficheinter
 		\version    $Revision$

@@ -57,7 +57,7 @@ class Menu {
      *  \brief      Ajoute une entrée de menu
      *  \param      url         Url a suivre sur le clic
      *  \param      titre       Libelle menu à afficher
-     *  \level      niveau      Niveau du menu à ajouter
+     *  \param      level       Niveau du menu à ajouter
      */
     function add($url, $titre, $level=0)
     {
@@ -71,7 +71,7 @@ class Menu {
      *  \brief      Ajoute une entrée de menu de niveau inférieur
      *  \param      url         Url a suivre sur le clic
      *  \param      titre       Libelle menu à afficher
-     *  \level      niveau      Niveau du menu à ajouter
+     *  \param      level       Niveau du menu à ajouter
      */
     function add_submenu($url, $titre, $level=1)
     {

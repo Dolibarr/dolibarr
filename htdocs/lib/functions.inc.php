@@ -290,11 +290,10 @@ function dolibarr_print_object_info($object)
 }
 
 /**
-  \brief    Formatage du telephone
+  \brief    Formatage des numéros de telephone en fonction du format d'un pays
   \param	phone			Numéro de telephone à formater
-  \return   phone			Numéro de téléphone formaté
-  \remarks  Ne tient pas en compte le format belge 02/211 34 83
-  \remarks  Formattage automatique des numero non formates
+  \param	country			Pays selon lequel formatter
+  \return   string			Numéro de téléphone formaté
 */
 function dolibarr_print_phone($phone,$country="FR")
 {

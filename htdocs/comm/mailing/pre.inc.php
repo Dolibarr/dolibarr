@@ -21,9 +21,8 @@
  *
  */
 
-/**     \file       htdocs/comm/mailling/pre.inc.php
-        \ingroup    commercial
-        \brief      Fichier de gestion du menu gauche de l'espace commercial mailing
+/**     \file       htdocs/comm/mailing/pre.inc.php
+        \brief      Fichier de gestion du menu gauche de l'espace mailing
         \version    $Revision$
 */
 

@@ -132,7 +132,7 @@ class Translate {
     /**
      *  \brief       Retourne la version traduite du texte passé en paramètre complété du code pays
      *  \param       str            chaine a traduire
-     *  \param       country_code   code pays (FR, ...)
+     *  \param       countrycode    code pays (FR, ...)
      *  \return      string         chaine traduite
      */
 

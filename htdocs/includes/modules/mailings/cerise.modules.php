@@ -36,7 +36,7 @@
  *
  */
 
-/**   	\file       htdocs/includes/modules/mailings/poire.modules.php
+/**   	\file       htdocs/includes/modules/mailings/cerise.modules.php
 		\ingroup    mailing
 		\brief      Fichier de la classe permettant de générer la liste de destinataires Cerise
 		\version    $Revision$
