@@ -94,7 +94,7 @@ if ($_POST["action"] == 'add' && $user->admin)
     if ($id) {
       if (isset($_POST['password']) && trim($_POST['password']))
 	{
-	  $edituser->password(trim($_POST['password']),$conf->password_encrypted);
+	  $edituser->password($user,trim($_POST['password']),$conf->password_encrypted);
 	}
     
       Header("Location: fiche.php?id=$id");
@@ -128,8 +128,8 @@ if ($_POST["action"] == 'update' && $user->admin)
     }
     if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='' )
     {
-        $ret=$edituser->password($password,$conf->password_encrypted);
-        if ($ret > 0) {
+        $ret=$edituser->password($user,$password,$conf->password_encrypted);
+        if ($ret < 0) {
             $message='<div class="error">'.$edituser->error.'</div>';
         }
     }
