@@ -59,6 +59,7 @@ if ($action == 'update')
     if ($result)
     {
       $var=True;  
+      $amount = str_replace(' ','',$_POST['amount']);
       $num = $db->num_rows();
       $objp = $db->fetch_object( 0);
       if ($objp->rappro)
