@@ -43,6 +43,8 @@ data:
 dev:
 	$(MYSQL) $(BASE) < data/data_dev.sql
 
+fulldev: droptable table load dev
+
 droptable:
 	cd tables \
 	&& make drop
