@@ -79,6 +79,7 @@ create table llx_paiement_facture
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_paiement     integer,
   fk_facture      integer,
+  amount          real default 0,
   
   unique key (fk_paiement,fk_facture)
 );
