@@ -36,16 +36,19 @@ if (! strlen($num))
    *
    *
    */
-  print "<b>Releves bancaires</b>";
 
-  print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="2">';
-  print "<TR class=\"liste_titre\">";
-  print "<td>Date</td>";
+  if ($page == -1) { $page = 0 ; }
 
-  print "</TR>\n";
- 
+  $limit = $conf->liste_limit;
+  $offset = $limit * $page ;
+  $pageprev = $page - 1;
+  $pagenext = $page + 1;
+
+
   $sql = "SELECT distinct(b.num_releve) as numr";
   $sql .= " FROM llx_bank as b WHERE fk_account = $account ORDER BY numr DESC";
+  $sql .= $db->plimit($limit + 1,$offset);
+
   $result = $db->query($sql);
 
   if ($result)
@@ -54,15 +57,23 @@ if (! strlen($num))
       $numrows = $db->num_rows();
       $i = 0; 
       
-      while ($i < $numrows)
+      print_barre_liste("Relevés bancaires", $page, $PHP_SELF,"&account=$account",$sortfield,$sortorder,'',$numrows);
+
+      print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="2">';
+      print "<TR class=\"liste_titre\">";
+      print "<td>Date</td></tr>";
+
+
+      while ($i < min($numrows,$limit))
 	{
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
 	  print "<tr $bc[$var]><td><a href=\"$PHP_SELF?num=$objp->numr&account=$account\">$objp->numr</a></td></tr>\n";
 	  $i++;
 	}
-    }
   print "</table>";
+    }
+
 
 }
 else
@@ -200,8 +211,6 @@ else
   print "<tr><td align=\"right\" colspan=\"5\"><b>Solde :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
   print "</table></form>";
   
-  print "<a href=\"bank/categ.php3\">Edit Categories</a>";
-  print " <a href=\"bank/categories.php3\">Categories</a>";
 }
 $db->close();
 
