@@ -240,6 +240,8 @@ if ($mainmenu) {
         }
         
         $newmenu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilations"));
+        $newmenu->add_submenu(DOL_URL_ROOT."/compta/ventilation/liste.php",$langs->trans("A ventiler"));
+        $newmenu->add_submenu(DOL_URL_ROOT."/compta/ventilation/lignes.php",$langs->trans("Ventilées"));
         if ($user->rights->compta->ventilation->param) {
             $newmenu->add_submenu(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));
         }
