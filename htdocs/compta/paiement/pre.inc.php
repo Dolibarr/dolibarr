@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,16 +21,12 @@
  *
  */
 require("../../main.inc.php");
+$langs->load("bills");
 
-function llxHeader($head = "") {
-  global $user, $conf, $langs;
+function llxHeader($head = "", $title="") {
+  global $user, $langs;
 
-
-  /*
-   *
-   *
-   */
-  top_menu($head);
+  top_menu($head, $title);
 
   $menu = new Menu();
 
@@ -38,7 +34,7 @@ function llxHeader($head = "") {
 
   $menu->add("rapport.php","Rapports");
 
-  $menu->add("../facture.php",$langs->trans("Bills"));
+  $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
 
   $menu->add_submenu("liste.php",$langs->trans("Payments"));
   $menu->add_submenu("avalider.php",$langs->trans("A valider"));

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,10 +22,10 @@
  */
  
 /**
-	    \file       htdocs/compta/paiement/liste.php
-        \ingroup    compta
-		\brief      Page liste des paiements des factures clients
-		\version    $Revision$
+   \file       htdocs/compta/paiement/liste.php
+   \ingroup    compta
+   \brief      Page liste des paiements des factures clients
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -43,33 +43,33 @@ if ($user->societe_id > 0)
  * Affichage
  */
 
-llxHeader();
+llxHeader('',$langs->trans("ListPayment"));
 
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
-
-if ($page == -1)
-  $page = 0 ;
-  
+ 
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
   
-$sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount, p.statut";
-$sql .=", c.libelle as paiement_type, p.num_paiement";
-$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
+$sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount";
+$sql .=", p.statut, p.num_paiement";
+$sql .=", c.libelle as paiement_type";
+$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
+$sql .= " , ".MAIN_DB_PREFIX."c_paiement as c";
 $sql .= " WHERE p.fk_paiement = c.id";
 
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit( $limit +1 ,$offset);
-$result = $db->query($sql);
 
-if ($result)
+$resql = $db->query($sql);
+
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0; 
   $var=True;
   
@@ -86,7 +86,7 @@ if ($result)
   
   while ($i < min($num,$limit))
     {
-      $objp = $db->fetch_object($result);
+      $objp = $db->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_file().' '.$objp->rowid.'</td>';
@@ -101,11 +101,10 @@ if ($result)
 	}
       else
 	{
-	  print "-";
+	  print img_tick();
 	}
 
-      print '</td>';	
-      print "</tr>";
+      print '</td></tr>';
       $i++;
     }
   print "</table>";
