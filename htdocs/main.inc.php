@@ -286,6 +286,11 @@ if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
   $conf->fichinter->enabled=MAIN_MODULE_FICHEINTER;
 }
 
+if (defined("MAIN_MODULE_COMMANDE") && MAIN_MODULE_COMMANDE)
+{
+  $conf->commande->enabled=MAIN_MODULE_COMMANDE;
+}
+
 if (defined("MAIN_MODULE_ADHERENT"))
 {
   $conf->adherent->enabled=MAIN_MODULE_ADHERENT;
