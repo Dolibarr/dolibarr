@@ -23,10 +23,9 @@
 
 create table llx_c_pays
 (
-  rowid    integer PRIMARY KEY,
-  lang     varchar(8)   default 'all' not null,
-  libelle  varchar(25)  NOT NULL,
-  code     char(2)      NOT NULL,
+  rowid    integer     PRIMARY KEY,
+  code     varchar(6)  UNIQUE NOT NULL,
+  libelle  varchar(25)        NOT NULL,
   active   tinyint default 1  NOT NULL
 )type=innodb;
 

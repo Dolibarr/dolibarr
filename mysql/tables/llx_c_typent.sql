@@ -23,7 +23,8 @@
 
 create table llx_c_typent
 (
-  id        integer PRIMARY KEY,
-  lang      varchar(8) default 'all' not null,
-  libelle   varchar(30)
+  id        integer      PRIMARY KEY,
+  code      varchar(12)  UNIQUE NOT NULL,
+  libelle   varchar(30),
+  active    tinyint default 1  NOT NULL
 )type=innodb;

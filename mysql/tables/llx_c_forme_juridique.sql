@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,11 +23,11 @@
 
 create table llx_c_forme_juridique
 (
-  rowid      integer AUTO_INCREMENT PRIMARY KEY,
-  fk_pays    integer NOT NULL,
-  code       integer UNIQUE,
+  rowid      integer       AUTO_INCREMENT PRIMARY KEY,
+  code       varchar(12)   UNIQUE NOT NULL,
+  fk_pays    integer       NOT NULL,
   libelle    varchar(255),
-  active     tinyint default 1
+  active     tinyint default 1  NOT NULL
 
 )type=innodb;
 

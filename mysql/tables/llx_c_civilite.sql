@@ -1,6 +1,6 @@
 -- ========================================================================
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
--- Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004 Benoit Mortier      <benoit.mortier@opensides.be>
+-- Copyright (C) 2004 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,10 +22,9 @@
 
 create table llx_c_civilite
 (
-  rowid       integer PRIMARY KEY,
-  lang        varchar(8) default 'all' not null,
-  code        varchar(6),
+  rowid       integer    PRIMARY KEY,
+  code        varchar(6) UNIQUE NOT NULL,
   civilite	  varchar(50),
-  active      tinyint default 1
+  active      tinyint default 1  NOT NULL
 )type=innodb;
 

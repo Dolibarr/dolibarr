@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004           Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- $Id$
 -- $Source$
@@ -23,11 +24,11 @@
 create table llx_c_regions
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
-  code_region integer UNIQUE,
+  code_region integer UNIQUE NOT NULL,
   fk_pays     integer NOT NULL,
   cheflieu    varchar(7),
   tncc        integer,
   nom         varchar(50),
-  active      tinyint default 1
+  active      tinyint default 1 NOT NULL
 )type=innodb;
 

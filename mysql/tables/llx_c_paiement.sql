@@ -29,11 +29,11 @@
 
 create table llx_c_paiement
 (
-  id         integer PRIMARY KEY,
-  lang       varchar(8) default 'all' not null,
-  code       varchar(6),
+  id         integer     PRIMARY KEY,
+  code       varchar(6)  UNIQUE NOT NULL,
   libelle    varchar(30),
-  type       smallint	
+  type       smallint,	
+  active     tinyint default 1  NOT NULL
 )type=innodb;
 
 

@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- $Id$
 -- $Source$
@@ -22,14 +23,14 @@
 
 create table llx_c_departements
 (
-  rowid       integer AUTO_INCREMENT PRIMARY KEY,
-  code_departement char(3),
+  rowid       integer         AUTO_INCREMENT PRIMARY KEY,
+  code_departement varchar(6) NOT NULL,
   fk_region   integer,
   cheflieu    varchar(7),
   tncc        integer,
   ncc         varchar(50),
   nom         varchar(50),
-  active      tinyint default 1,
+  active      tinyint default 1  NOT NULL,
 
   key (fk_region)
 )type=innodb;

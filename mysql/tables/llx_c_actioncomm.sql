@@ -23,10 +23,10 @@
 
 create table llx_c_actioncomm
 (
-  id         integer PRIMARY KEY,
-  lang       varchar(8) default 'all' not null,
+  id         integer     PRIMARY KEY,
+  code       varchar(12)  UNIQUE NOT NULL,
   type       varchar(10) default 'system' not null,
-  libelle    varchar(30) not null,
-  active     tinyint default 1,
+  libelle    varchar(30) NOT NULL,
+  active     tinyint default 1  NOT NULL,
   todo       tinyint
 )type=innodb;
