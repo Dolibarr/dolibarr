@@ -41,16 +41,16 @@ if ($_POST["action"] == 'add')
   $action = '';
 }
 
-if ($_POST["action"] == 'update' && $cancel <> 'Annuler')
+if ($_POST["action"] == 'update' && $_POST["cancel"] <> 'Annuler')
 {
   $entrepot = new Entrepot($db);
-  if ($entrepot->fetch($id))
+  if ($entrepot->fetch($_GET["id"]))
     {
       $entrepot->libelle     = $_POST["libelle"];
       $entrepot->description = $_POST["desc"];
       $entrepot->statut      = $_POST["statut"];
       
-      if ( $entrepot->update($id, $user))
+      if ( $entrepot->update($_GET["id"], $user))
 	{
 	  $action = '';
 	  $mesg = 'Fiche mise à jour';
@@ -77,6 +77,11 @@ if ($cancel == 'Annuler')
  * Affichage
  *
  */
+/*
+ * Création
+ *
+ */
+
 if ($_GET["action"] == 'create')
 {
   print "<form action=\"fiche.php\" method=\"post\">\n";
@@ -99,12 +104,12 @@ if ($_GET["action"] == 'create')
 }
 else
 {
-  if ($id)
+  if ($_GET["id"])
     {
-      if ($action <> 're-edit')
+      if ($_GET["action"] <> 're-edit')
 	{
 	  $entrepot = new Entrepot($db);
-	  $result = $entrepot->fetch($id);
+	  $result = $entrepot->fetch($_GET["id"]);
 	}
 
       if ( $result )
@@ -125,11 +130,11 @@ else
 	}
 
     
-      if (($action == 'edit' || $action == 're-edit') && 1)
+      if (($_GET["action"] == 'edit' || $action == 're-edit') && 1)
 	{
 	  print_fiche_titre('Edition de la fiche entrepot', $mesg);
 
-	  print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
+	  print "<form action=\"fiche.php?id=$entrepot->id\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update">';
 	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -177,7 +182,7 @@ if ($action == '' && ($user->rights->produit->modifier || $user->rights->produit
 
 if ($action == '')
 {
-  print "<a class=\"tabAction\" href=\"fiche.php?action=edit&id=$id\">Editer</a>";
+  print "<a class=\"tabAction\" href=\"fiche.php?action=edit&id=$entrepot->id\">Editer</a>";
 }
 
 print "</div>";
