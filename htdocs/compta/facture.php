@@ -723,9 +723,15 @@ else
 	  $author = new User($db);
 	  $author->id = $fac->user_author;
 	  $author->fetch();
-	  
-	  print_titre("Facture : ".$fac->ref);
 
+
+	  $head[0][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+	  $head[0][1] = "Facture : $fac->ref";
+	  $h = 1;
+	  $a = 0;
+
+	  dolibarr_fiche_head($head, $a);
+  	  
 	  /*
 	   * Confirmation de la suppression de la facture
 	   *
@@ -1017,7 +1023,7 @@ else
 	 * Fin Ajout ligne
 	 *
 	 */
-
+	print '</div>';
 	if ($user->societe_id == 0 && $_GET["action"] <> 'valid')
 	  {
 	    print "<br><div class=\"tabsAction\">\n";
