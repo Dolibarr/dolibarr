@@ -18,3 +18,5 @@ MailTopic=Subject
 MailText=Message
 MailFile=Attach a file
 AddTrip=Add trip
+Tools=Tools
+NewMailing=New mailing

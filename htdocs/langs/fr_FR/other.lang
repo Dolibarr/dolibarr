@@ -18,3 +18,5 @@ MailTopic=Sujet
 MailText=Message
 MailFile=Joindre un fichier
 AddTrip=Créer déplacement
+Tools=Outils
+NewMailing=Nouveau mailing
