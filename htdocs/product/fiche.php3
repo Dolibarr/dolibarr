@@ -46,6 +46,8 @@ if ($action == 'add')
   $product->tva_tx      = $HTTP_POST_VARS["tva_tx"];
   $product->type        = $HTTP_POST_VARS["type"];
   $product->description = $HTTP_POST_VARS["desc"];
+  $product->duration_value = $HTTP_POST_VARS["duration_value"];
+  $product->duration_unit = $HTTP_POST_VARS["duration_unit"];
 
   $id = $product->create($user);
   $action = '';
@@ -78,7 +80,9 @@ if ($action == 'addinfacture')
   $mesg .= '<a href="../compta/facture.php3?facid='.$facture->id.'">'.$facture->ref.'</a>';
 }
 
-if ($HTTP_POST_VARS["action"] == 'update' && $cancel <> 'Annuler' && ( $user->rights->produit->modifier || $user->rights->produit->creer))
+if ($HTTP_POST_VARS["action"] == 'update' && 
+    $cancel <> 'Annuler' && 
+    ( $user->rights->produit->modifier || $user->rights->produit->creer))
 {
   $product = new Product($db);
 
