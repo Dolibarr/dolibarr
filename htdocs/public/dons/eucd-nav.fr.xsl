@@ -2,7 +2,8 @@
 <!DOCTYPE xsl:stylesheet [<!ENTITY nbsp "&#160;">]>
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-
+  <!-- Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> -->
+  <!-- $Id$ -->
 
   <xsl:template match="/html[@lang='fr']/body/div[@class='main']/form/table[@id='formulaire']">
     <table cellpadding="4" cellspacing="0">
@@ -14,7 +15,7 @@
     </p>
 
 
-    <p>Nous vous adresserons ensuite un <a
+    <p align="justify">Nous vous adresserons ensuite un <a
 	href="http://france.fsfeurope.org/donations/formulaire.fr.html">formulaire</a>
 	vous permettant de bénéficier d'une déduction d'impôts. Selon
 	l'<a
@@ -30,6 +31,9 @@
 
   </xsl:template> 
 
+
+
+
   <xsl:template match="/html[@lang='fr']/body/div[@class='main']/form/table/tr[@id='projet']">
     <input type="hidden" name="projetid" value="1" />
   </xsl:template> 
@@ -42,20 +46,55 @@
       <td class="valeur">
 	<xsl:apply-templates select="@*|node()"/>
       </td>
+      <td class="titre">
+	Date
+      </td>
     </tr>
   </xsl:template> 
 
-  <xsl:template match="/html[@lang='fr']/body/div[@class='main']/form/table/tr[@id='nom']">
+  <xsl:template match="table/tr[@id='nom']">
     <tr>
       <td class="titre">
-	Nom Prénom
+	Nom 
       </td>
       <td class="valeur">
 	<xsl:apply-templates select="@*|node()"/>
       </td>
+      <td class="titre">
+	Name 
+      </td>
     </tr>
   </xsl:template>
   
+  <xsl:template match="table/tr[@id='prenom']">
+    <tr>
+      <td class="titre">
+	Prénom
+      </td>
+      <td class="valeur">
+	<xsl:apply-templates select="@*|node()"/>
+      </td>
+      <td class="titre">
+	Firstname 
+      </td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="table/tr[@id='societe']">
+    <tr>
+      <td class="titre">
+	Société
+      </td>
+      <td class="valeur">
+	<xsl:apply-templates select="@*|node()"/>
+      </td>
+      <td class="titre">
+	Company 
+      </td>
+    </tr>
+  </xsl:template>
+
+
   <xsl:template match="/html[@lang='fr']/body/div[@class='main']/form/table/tr[@id='adresse']">
     <tr>
       <td class="titre">
@@ -63,6 +102,9 @@
       </td>
       <td class="valeur">
 	<xsl:apply-templates select="@*|node()"/>
+      </td>
+      <td class="titre">
+	Address 
       </td>
     </tr>
   </xsl:template>
@@ -75,11 +117,14 @@
       <td class="valeur">
 	<xsl:apply-templates select="@*|node()"/>
       </td>
+      <td class="titre">
+	Postal code 
+      </td>
     </tr>
   </xsl:template>
 
 
-  <xsl:template match="/html[@lang='fr']/body/div[@class='main']/form/table/tr[@id='ville']">
+  <xsl:template match="table/tr[@id='ville']">
     <tr>
       <td class="titre">
 	Ville
@@ -87,16 +132,36 @@
       <td class="valeur">
 	<xsl:apply-templates select="@*|node()"/>
       </td>
+      <td class="titre">
+	Town 
+      </td>
     </tr>
   </xsl:template>
 
-  <xsl:template match="/html[@lang='fr']/body/div[@class='main']/form/table/tr[@id='email']">
+  <xsl:template match="table/tr[@id='pays']">
+    <tr>
+      <td class="titre">
+	Pays
+      </td>
+      <td class="valeur">
+	<xsl:apply-templates select="@*|node()"/>
+      </td>
+      <td class="titre">
+	Country 
+      </td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="table/tr[@id='email']">
     <tr>
       <td class="titre">
 	Email
       </td>
       <td class="valeur">
 	<xsl:apply-templates select="@*|node()"/>
+      </td>
+      <td class="titre">
+	Email 
       </td>
     </tr>
   </xsl:template>
@@ -107,20 +172,29 @@
 	Montant
       </td>
       <td class="valeur">
-	<xsl:apply-templates select="@*|node()"/> euros
+	<xsl:apply-templates select="@*|node()"/>,00 euros
+      </td>
+      <td class="titre">
+	Amount 
       </td>
     </tr>
   </xsl:template>
 
   <xsl:template match="/html[@lang='fr']/body/div[@class='main']/form/table/tr[@id='public']">
     <tr>
-      <td valign="top" class="titre">Don public</td>
+      <td valign="top" class="titre">
+	Don public
+      </td>
       <td class="valeur">
 	<xsl:apply-templates select="@*|node()"/>
 	<div class="commentaire">
-	  Acceptez-vous que votre don soit public et que vos noms
-	  et prénoms soient affichés dans la liste des donateurs ?
+	  Acceptez-vous vos noms
+	  et prénoms soient affichés dans la liste des <a href="donateurs.php">donateurs</a> ?<br />
+	  Do you allow us to list your name, firstaname or company name on the donations list ?
 	</div>
+      </td>
+      <td valign="top" class="titre">
+	Don public
       </td>
     </tr>    
   </xsl:template> 
@@ -130,9 +204,11 @@
       <td valign="top" class="titre">
 	Commentaire
       </td>
-
       <td valign="top" class="valeur">
 	<xsl:apply-templates select="@*|node()"/>
+      </td>
+      <td valign="top" class="titre">
+	Comment
       </td>      
     </tr>
   </xsl:template> 
