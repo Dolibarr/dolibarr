@@ -660,7 +660,8 @@ create table llx_product
   ref             varchar(15) UNIQUE,
   label           varchar(255),
   description     text,
-  price           smallint,
+  price           double,
+  tva_tx          double,
   fk_user_author  integer
 );
 
@@ -715,8 +716,10 @@ create table llx_propaldet
   rowid         integer AUTO_INCREMENT PRIMARY KEY,
   fk_propal     integer,
   fk_product    integer,
+  description   text,
   qty		smallint,
   price         real
+  tva_tx        real default 19.6
 );
 
 create table llx_don_projet
