@@ -21,10 +21,6 @@
  */
 require("./pre.inc.php");
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
-
 llxHeader('','Compta - Export');
 /*
  * Sécurité accés client
@@ -35,24 +31,19 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-if ($sortorder == "") {
-  $sortorder="DESC";
-}
-if ($sortfield == "") {
-  $sortfield="ec.date_export";
-}
 
 /*
- * Recherche
  *
  *
  */
 
-if ($page == -1) { $page = 0 ; }
+$page = $_GET["page"];
+$sortorder = $_GET["sortorder"];
+$sortfield = $_GET["sortfield"];
 
 $offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+if ($sortorder == "") $sortorder="DESC";
+if ($sortfield == "") $sortfield="ec.date_export";
 
 /*
  * Mode Liste
@@ -79,8 +70,6 @@ if ($result)
   print '<tr class="liste_titre">';
 
   print_liste_field_titre($langs->trans("Ref"),"liste.php","ec.ref");
-
-  print '<td>Client facturé</td>';
 
   print "</tr>\n";
 
