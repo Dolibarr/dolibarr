@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,6 +125,8 @@ if ( $soc->fetch($socid) )
 
   print '</table><br></div>';
 
+  print "\n";
+
   /*
    *
    */
@@ -136,7 +139,7 @@ if ( $soc->fetch($socid) )
       $sortfield="c.name";
     }
 
-  print '<table width="100%" border="0" cellspacing="0" cellpadding="3">';
+  print '<table width="100%" class="noborder" cellspacing="0" cellpadding="3">';
   print '<tr class="liste_titre">';
   print_liste_field_titre_new ("Contact",$PHP_SELF,"c.name","","&socid=$socid",'',$sortfield);
   print_liste_field_titre_new ("Action",$PHP_SELF,"a.titre","","&socid=$socid",'',$sortfield);
