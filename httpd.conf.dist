@@ -7,10 +7,10 @@
 #
 <VirtualHost dolibarr.lafrere.lan>
   ServerAdmin webmaster.fr@lolix.org
-  DocumentRoot /spare/home/www/dolibarr/dolibarr/htdocs
+  DocumentRoot /home/www/dolibarr/dolibarr/htdocs
   ServerName dolibarr.lafrere.lan
-  ErrorLog  /spare/home/www/dolibarr/logs/error.log
-  CustomLog /spare/home/www/dolibarr/logs/access.log combined
+  ErrorLog  /home/www/dolibarr/logs/error.log
+  CustomLog /home/www/dolibarr/logs/access.log combined
 
   ErrorDocument 401 /public/error-401.html
 
@@ -21,13 +21,27 @@
     Deny from all
 
     AuthType 				Basic
-    Auth_MySQL_Authoritative		on
+
+    # N'utilisez la ligne suivante que si vous utilisez aussi
+    # le module d'authentification basé sur postgresql
+    #Auth_MySQL_Authoritative		on
+    
+    # Utilisez les lignes suivantes si le serveur Apache ne 
+    # peut se logger en anonymous (ce qui est conseillé ;-)
+    #AuthMySQL_DefaultHost <host>
+    #AuthMySQL_DefaultUser <user>
+    #AuthMySQL_DefaultPass <pass>
+
     Auth_MySQL_DB 			dolibarr
     Auth_MySQL_Password_Table 		llx_user
     Auth_MySQL_Username_Field 		login
     Auth_MySQL_Password_Field 		pass
-    Auth_MySQL_Encryption_Types 	Plaintext Crypt_DES
-#    Auth_MySQL_Encrypted_Passwords 	off
+
+    # Pour l'instant les pass sont enregistrés en clair
+    # le stockage crypté est dans la TODO
+
+    Auth_MySQL_Encrypted_Passwords 	off
+
     AuthName        			"Dolibarr"
 
     require valid-user
@@ -60,8 +74,7 @@
     Auth_MySQL_Password_Table 		llx_adherent
     Auth_MySQL_Username_Field 		login
     Auth_MySQL_Password_Field 		pass
-    Auth_MySQL_Encryption_Types 	Plaintext Crypt_DES
-#    Auth_MySQL_Encrypted_Passwords 	off
+    Auth_MySQL_Encrypted_Passwords 	off
     AuthName        			"Adherents"
 
     require valid-user
