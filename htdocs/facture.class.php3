@@ -272,7 +272,7 @@ class Facture {
 
       if (! is_dir ("$dir"))
 	{
-	  if (! mkdir ("$dir"))
+	  if (! mkdir ("$dir", 755))
 	    {
 	      print $dir;
 	    }
