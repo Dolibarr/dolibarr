@@ -40,6 +40,11 @@ if ($HTTP_POST_VARS["action"] == 'cotisation')
 
   if ($cotisation > 0)
     {     
+      // rajout du nouveau cotisant dans les listes qui vont bien
+      //      if (defined("MAIN_MAILMAN_LISTS_COTISANT") && MAIN_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == "0000-00-00 00:00:00"){
+      if (defined("MAIN_MAILMAN_LISTS_COTISANT") && MAIN_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == 0){
+	$adh->add_to_mailman(MAIN_MAILMAN_LISTS_COTISANT);
+      }
       $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
       if (defined("MAIN_MAIL_COTIS") && defined("MAIN_MAIL_COTIS_SUBJECT")){
 	$adh->send_an_email($adh->email,MAIN_MAIL_COTIS,MAIN_MAIL_COTIS_SUBJECT);

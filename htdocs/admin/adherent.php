@@ -105,6 +105,9 @@ if (defined("MAIN_USE_MAILMAN") && MAIN_USE_MAILMAN == 1)
   print '</table>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('MAIN_MAILMAN_LISTS',
+		    'MAIN_MAILMAN_LISTS_COTISANT',
+		    'MAIN_MAILMAN_ADMINPW',
+		    'MAIN_MAILMAN_SERVER',
 		    'MAIN_MAILMAN_UNSUB_URL',
 		    'MAIN_MAILMAN_URL'
 		    );

@@ -110,7 +110,7 @@ class Adherent
 		      $this->cp,
 		      $this->ville,
 		      $this->pays,
-			$this->email,
+		      $this->email,
 		      $this->naiss,
 		      $this->photo,
 		      $this->login,
@@ -1006,11 +1006,15 @@ class Adherent
    *
    *
    */
-  Function add_to_mailman()
+  Function add_to_mailman($listes='')
   {
     if (defined("MAIN_MAILMAN_URL") && MAIN_MAILMAN_URL != '' && defined("MAIN_MAILMAN_LISTS") && MAIN_MAILMAN_LISTS != '')
       {
-	$lists=explode(',',MAIN_MAILMAN_LISTS);
+	if ($listes ==''){
+	  $lists=explode(',',MAIN_MAILMAN_LISTS);
+	}else{
+	  $lists=explode(',',$listes);
+	}
 	foreach ($lists as $list)
 	  {
 	    // on remplace dans l'url le nom de la liste ainsi
@@ -1018,12 +1022,16 @@ class Adherent
 	    $patterns = array (
 			       '/%LISTE%/',
 			       '/%EMAIL%/',
-			       '/%PASS%/'
+			       '/%PASS%/',
+			       '/%ADMINPW%/',
+			       '/%SERVER%/'
 			       );
 	    $replace = array (
 			      $list,
 			      $this->email,
-			      $this->pass
+			      $this->pass,
+			      MAIN_MAILMAN_ADMINPW,
+			      MAIN_MAILMAN_SERVER
 			      );
 	    $curl_url = preg_replace ($patterns, $replace, MAIN_MAILMAN_URL);
 		  
@@ -1061,11 +1069,15 @@ class Adherent
 
 
 
-  Function del_to_mailman()
+  Function del_to_mailman($listes='')
   {
     if (defined("MAIN_MAILMAN_UNSUB_URL") && MAIN_MAILMAN_UNSUB_URL != '' && defined("MAIN_MAILMAN_LISTS") && MAIN_MAILMAN_LISTS != '')
       {
-	$lists=explode(',',MAIN_MAILMAN_LISTS);
+	if ($listes==''){
+	  $lists=explode(',',MAIN_MAILMAN_LISTS);
+	}else{
+	  $lists=explode(',',$listes);
+	}
 	foreach ($lists as $list)
 	  {
 	    // on remplace dans l'url le nom de la liste ainsi
@@ -1073,12 +1085,16 @@ class Adherent
 	    $patterns = array (
 			       '/%LISTE%/',
 			       '/%EMAIL%/',
-			       '/%PASS%/'
+			       '/%PASS%/',
+			       '/%ADMINPW%/',
+			       '/%SERVER%/'
 			       );
 	    $replace = array (
 			      $list,
 			      $this->email,
-			      $this->pass
+			      $this->pass,
+			      MAIN_MAILMAN_ADMINPW,
+			      MAIN_MAILMAN_SERVER
 			      );
 	    $curl_url = preg_replace ($patterns, $replace, MAIN_MAILMAN_UNSUB_URL);
 	    
