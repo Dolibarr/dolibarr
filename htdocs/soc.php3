@@ -214,10 +214,16 @@ elseif ($action == 'edit')
   else
     {
       
-      @mkdir ($docdir);
-      if (file_exists ($docdir))
+      if (! @mkdir ($docdir))
 	{
-	  print '<a href="'.$url.'">Documents</a>';
+	  print "<p>Impossible de créer ".$docdir;
+	}
+      else
+	{
+	  if (file_exists ($docdir))
+	    {
+	      print '<a href="'.$url.'">Documents</a>';
+	    }
 	}
     }
 }
