@@ -74,14 +74,35 @@ if ($_GET["action"] == 'edit')
 
   print '<tr class="pair"><td width="50%">Longueur maximum des listes</td><td><input name="size_liste_limit" size="20" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
 
-  print '<tr class="impair"><td width="50%">Gestionnaire du menu du haut</td><td><input name="main_menu_barretop" size="20" value="' . MAIN_MENU_BARRETOP . '"></td></tr>';
+  print '<tr class="impair"><td width="50%">Gestionnaire du menu du haut</td>';
+  print '<td><select name="main_menu_barretop">';
+  $dir = "../includes/menus/barre_top/";
+  $handle=opendir($dir);
+  while (($file = readdir($handle))!==false)
+    {
+      if (is_file($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+	{
+      $filelib=eregi_replace('\.php$','',$file);
+	  if ($file == MAIN_MENU_BARRETOP)
+	    {
+	        print '<option value="'.$file.'" selected>'.$filelib.'</option>';
+	    }
+	  else
+	    {
+	      print '<option value="'.$file.'">'.$filelib.'</option>';
+	    }
+	}
+      
+    }
+  print '</select>';
+  print '</td></tr>';
 
+  print '</table><br>';
+  
   print '<div class="tabsAction">';
-  print '<tr class="pair"><td colspan="2"><input class="tabAction" type="submit" value="Enregistrer"></td></tr>';
+  print '<input class="tabAction" type="submit" value="Enregistrer">';
   print '</div>';
 
-  print '</table>';
-  
   print '</form>';
 }
 else
@@ -91,7 +112,10 @@ else
   print '<tr class="liste_titre"><td>Nom</td><td>Valeur</td></tr>';
   print '<tr class="impair"><td width="50%">Thème</td><td>' . MAIN_THEME . '</td></tr>';
   print '<tr class="pair"><td>Longueur maximum des listes</td><td>' . SIZE_LISTE_LIMIT . '</td></tr>';
-  print '<tr class="impair"><td width="50%">Gestionnaire du menu du haut</td><td>' . MAIN_MENU_BARRETOP . '</td></tr>';
+  print '<tr class="impair"><td width="50%">Gestionnaire du menu du haut</td><td>';
+  $filelib=eregi_replace('\.php$','',MAIN_MENU_BARRETOP);
+  print $filelib;
+  print '</td></tr>';
   print '</table><br>';
 
   print '<div class="tabsAction">';
