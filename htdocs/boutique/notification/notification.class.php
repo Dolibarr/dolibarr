@@ -37,7 +37,7 @@ class Editeur {
    */
   Function create($user) {
 
-    $sql = "INSERT INTO llx_editeur (fk_user_author) VALUES (".$user->id.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."editeur (fk_user_author) VALUES (".$user->id.")";
     
     if ($this->db->query($sql) )
       {
@@ -59,7 +59,7 @@ class Editeur {
   {
     $ga = array();
 
-    $sql = "SELECT rowid, nom FROM llx_editeur ORDER BY nom";
+    $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."editeur ORDER BY nom";
 
     if ($this->db->query($sql) )
       {
@@ -92,7 +92,7 @@ class Editeur {
   Function update($id, $user)
   {
 
-    $sql = "UPDATE llx_editeur ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."editeur ";
     $sql .= " SET nom = '" . trim($this->nom) ."'";
 
     $sql .= " WHERE rowid = " . $id;
@@ -110,7 +110,7 @@ class Editeur {
    */
   Function fetch ($id) {
     
-    $sql = "SELECT rowid, nom FROM llx_editeur WHERE rowid = $id";
+    $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."editeur WHERE rowid = $id";
 
     $result = $this->db->query($sql) ;
 
@@ -144,7 +144,7 @@ class Editeur {
 
     $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = $idosc";
 	      
-    $sql = "DELETE FROM llx_livre WHERE rowid = $id";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."livre WHERE rowid = $id";
 	    
     
   }

@@ -34,7 +34,7 @@ if ($action == 'add')
 
   if (strlen(trim($name)) + strlen(trim($firstname)) > 0) 
     {
-      $sql = "INSERT INTO llx_socpeople (datec, fk_soc,name, firstname, poste, phone,fax,email) ";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc,name, firstname, poste, phone,fax,email) ";
       $sql .= " VALUES (now(),$socid,'$name','$firstname','$poste','$phone','$fax','$email')";
       $result = $db->query($sql);
       if ($result) 
@@ -125,7 +125,7 @@ if ($socid > 0)
   print "<td><b>Fax</b></td><td><b>Email</b></td>";
   
   $sql = "SELECT p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.fk_user ";
-  $sql .= " FROM llx_socpeople as p WHERE p.fk_soc = $objsoc->idp";
+  $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $objsoc->idp";
   
   if ($contactid) 
     {
@@ -188,7 +188,7 @@ if ($socid > 0)
   if ($action == 'editcontact') 
     {
       $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
-      $sql .= " FROM llx_socpeople as p WHERE p.idp = $contactid";
+      $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.idp = $contactid";
       $result = $db->query($sql);
       $num = $db->num_rows();
 

@@ -46,7 +46,7 @@ $form = '<form action="index.php">'.
 
 print_barre_liste("Liste des Livres", $page, $PHP_SELF, "", $sortfield, $sortorder, $form);
 
-$sql = "SELECT l.rowid, l.title, l.oscid, l.ref, l.status FROM llx_livre as l";
+$sql = "SELECT l.rowid, l.title, l.oscid, l.ref, l.status FROM ".MAIN_DB_PREFIX."livre as l";
 
 if ($searchvalue)
 {

@@ -25,7 +25,7 @@ $conf = new Conf();
 $db = new DoliDb();
 $a = setlocale(LC_TIME, "fr_FR");
 $sql = "SELECT ".$db->pdate("d.datedon")." as datedon, d.nom, d.prenom, d.amount, d.public, d.societe";
-$sql .= " FROM llx_don as d";
+$sql .= " FROM ".MAIN_DB_PREFIX."don as d";
 $sql .= " WHERE d.fk_don_projet = 1 AND d.fk_statut in (2, 3) ORDER BY d.datedon DESC";
 
 if ( $db->query( $sql) )

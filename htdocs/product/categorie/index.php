@@ -60,7 +60,7 @@ if ($id)
   if ($numprod)
     {
 
-      $sql = "SELECT l.rowid, l.title, l.oscid, l.ref, l.status FROM llx_livre as l";
+      $sql = "SELECT l.rowid, l.title, l.oscid, l.ref, l.status FROM ".MAIN_DB_PREFIX."livre as l";
       $sql .= " WHERE l.oscid in $wc";
 
       if ( $db->query($sql) )

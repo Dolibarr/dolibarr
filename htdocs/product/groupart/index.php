@@ -40,7 +40,7 @@ $offset = $limit * $page ;
 
 print_barre_liste("Liste des Artistes/Groupes", $page, $PHP_SELF);
 
-$sql = "SELECT g.rowid, g.nom, groupart FROM llx_groupart as g";
+$sql = "SELECT g.rowid, g.nom, groupart FROM ".MAIN_DB_PREFIX."groupart as g";
   
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);

@@ -78,7 +78,7 @@ if($return)
 
       $don_id = strstr($retbplc->ref_commande, 0, strlen($retbplc->ref_commande) -2);
 
-      // 5 correspond au paiement en ligne voir table c_paiement
+      // 5 correspond au paiement en ligne voir table llx_c_paiement
 
       $don->set_paye($don_id, 5); 
 

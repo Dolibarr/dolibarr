@@ -65,7 +65,7 @@ class Album {
 	    if ($this->db->query($sql) )	    
 	      {
 
-		$sql = "INSERT INTO llx_album (osc_id, fk_user_author) VALUES ($idosc, ".$user->id.")";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."album (osc_id, fk_user_author) VALUES ($idosc, ".$user->id.")";
 	    
 		if ($this->db->query($sql) )
 		  {
@@ -109,7 +109,7 @@ class Album {
   Function linkga($id, $gaid)
   {
 
-    $sql = "INSERT INTO llx_album_to_groupart (fk_album, fk_groupart) values ($id, $gaid)";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."album_to_groupart (fk_album, fk_groupart) values ($id, $gaid)";
 
     if ( $this->db->query($sql) ) {
       return 1;
@@ -125,7 +125,7 @@ class Album {
   {
     $ga = array();
 
-    $sql = "SELECT g.rowid, g.nom FROM llx_groupart as g, llx_album_to_groupart as l";
+    $sql = "SELECT g.rowid, g.nom FROM ".MAIN_DB_PREFIX."groupart as g, ".MAIN_DB_PREFIX."album_to_groupart as l";
     $sql .= " WHERE g.rowid = l.fk_groupart AND l.fk_album = ".$this->id;
     $sql .= " ORDER BY g.nom";
 
@@ -232,7 +232,7 @@ class Album {
 	$this->annee = 0;
       }
 
-    $sql = "UPDATE llx_album ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."album ";
     $sql .= " SET title = '" . trim($this->titre) ."'";
     $sql .= ", ref = '" . trim(strtoupper($this->ref)) ."'";
     $sql .= ", annee = " . $this->annee ;
@@ -253,7 +253,7 @@ class Album {
    */
   Function fetch ($id) {
     
-    $sql = "SELECT rowid, ref, annee, osc_id, title, description FROM llx_album WHERE rowid = $id";
+    $sql = "SELECT rowid, ref, annee, osc_id, title, description FROM ".MAIN_DB_PREFIX."album WHERE rowid = $id";
 
     $result = $this->db->query($sql) ;
 
@@ -311,7 +311,7 @@ class Album {
 
     $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = $idosc";
 	      
-    $sql = "DELETE FROM llx_album WHERE rowid = $id";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."album WHERE rowid = $id";
 	    
     
   }

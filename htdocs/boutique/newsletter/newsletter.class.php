@@ -48,7 +48,7 @@ class Newsletter {
    */
   Function create($user) {
 
-    $sql = "INSERT INTO llx_newsletter (fk_user_author, datec, nbsent) VALUES (".$user->id.",now(), 0)";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."newsletter (fk_user_author, datec, nbsent) VALUES (".$user->id.",now(), 0)";
     
     if ($this->db->query($sql) )
       {
@@ -76,7 +76,7 @@ class Newsletter {
 
     $this->target_sql = $this->build_sql($this->target);
 
-    $sql = "UPDATE llx_newsletter ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."newsletter ";
     $sql .= " SET email_subject = '" . trim($this->email_subject) ."'";
     $sql .= ", email_from_name = '" . trim($this->email_from_name) ."'";
     $sql .= ", email_from_email = '" . trim($this->email_from_email) ."'";
@@ -100,7 +100,7 @@ class Newsletter {
   Function fetch ($id) {
     
     $sql = "SELECT rowid, email_subject, email_from_name, email_from_email, email_replyto, email_body, target, sql_target, status, date_send_request,".$this->db->pdate("date_send_begin")." as date_send_begin,".$this->db->pdate("date_send_end")." as date_send_end, nbsent, nberror";
-    $sql .= " FROM llx_newsletter WHERE rowid=$id";
+    $sql .= " FROM ".MAIN_DB_PREFIX."newsletter WHERE rowid=$id";
 
     $result = $this->db->query($sql) ;
 
@@ -140,7 +140,7 @@ class Newsletter {
   {
     $ga = array();
 
-    $sql = "SELECT rowid, nom FROM llx_editeur ORDER BY nom";
+    $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."editeur ORDER BY nom";
 
     if ($this->db->query($sql) )
       {
@@ -172,7 +172,7 @@ class Newsletter {
    */
   Function validate($user) {
 
-    $sql = "UPDATE llx_newsletter SET status=1, fk_user_valid = $user->id WHERE rowid = $this->id";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."newsletter SET status=1, fk_user_valid = $user->id WHERE rowid = $this->id";
     $return = $this->db->query($sql) ;
 
   }
@@ -182,7 +182,7 @@ class Newsletter {
    */
   Function send($user) {
 
-    $sql = "UPDATE llx_newsletter SET status=2, date_send_request=now() WHERE rowid = $this->id";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."newsletter SET status=2, date_send_request=now() WHERE rowid = $this->id";
     $return = $this->db->query($sql) ;
 
   }
@@ -209,7 +209,7 @@ class Newsletter {
    */
   Function delete() {
 
-    $sql = "DELETE FROM llx_newsletter WHERE rowid = $this->id ";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."newsletter WHERE rowid = $this->id ";
     $return = $this->db->query($sql) ;
 
   }

@@ -49,7 +49,7 @@ print "</td><TD align=\"center\">";
 print_liste_field_titre("Nb. de proposition",$PHP_SELF, "c");
 print "</td></TR>\n";
 
-$sql = "select p.rowid, p.label, p.ref, count(*) as c from llx_propaldet as pd, llx_product as p where p.rowid = pd.fk_product group by (p.rowid)";
+$sql = "select p.rowid, p.label, p.ref, count(*) as c from ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p where p.rowid = pd.fk_product group by (p.rowid)";
 
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);

@@ -39,7 +39,7 @@ if ($_POST["action"] == 'add')
     $error+=1;
     $errmsg .="Login $login vide. Veuillez en positionner un<BR>\n";
   }
-  $sql = "SELECT login FROM llx_adherent WHERE login='".$login."';";
+  $sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$login."';";
   $result = $db->query($sql);
   if ($result) {
     $num = $db->num_rows();

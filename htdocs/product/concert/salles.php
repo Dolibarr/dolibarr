@@ -38,7 +38,7 @@ $offset = $limit * $page ;
 
 print_barre_liste("Liste des concerts", $page, $PHP_SELF);
 
-$sql = "SELECT lc.rowid, lc.nom, lc.ville FROM llx_lieu_concert as lc";
+$sql = "SELECT lc.rowid, lc.nom, lc.ville FROM ".MAIN_DB_PREFIX."lieu_concert as lc";
   
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);

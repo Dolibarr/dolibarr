@@ -41,7 +41,7 @@ class Concert {
   Function create($user) 
   {
     
-    $sql = "INSERT INTO llx_concert (fk_user_author) VALUES (".$user->id.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."concert (fk_user_author) VALUES (".$user->id.")";
 	    
     if ($this->db->query($sql) )
       {
@@ -67,7 +67,7 @@ class Concert {
   Function update($id, $user)
  {
 
-    $sql = "UPDATE llx_concert ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."concert ";
     $sql .= " SET date_concert = '" . $this->date ."'";
     $sql .= ", fk_groupart = '" . $this->groupartid ."'";
     $sql .= ", fk_lieu_concert = '" . $this->lieuid ."'";
@@ -89,7 +89,7 @@ class Concert {
   Function fetch ($id) {
     
     $sql = "SELECT rowid,".$this->db->pdate("date_concert")." as dc, description, fk_groupart, fk_lieu_concert";
-    $sql .= " FROM llx_concert WHERE rowid = $id";
+    $sql .= " FROM ".MAIN_DB_PREFIX."concert WHERE rowid = $id";
 
     $result = $this->db->query($sql) ;
 
@@ -123,7 +123,7 @@ class Concert {
   {
     $ga = array();
 
-    $sql = "SELECT g.rowid, g.nom FROM llx_groupart as g, llx_album_to_groupart as l";
+    $sql = "SELECT g.rowid, g.nom FROM ".MAIN_DB_PREFIX."groupart as g, ".MAIN_DB_PREFIX."album_to_groupart as l";
     $sql .= " WHERE g.rowid = l.fk_groupart AND l.fk_album = ".$this->id;
     $sql .= " ORDER BY g.nom";
 

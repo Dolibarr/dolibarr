@@ -41,7 +41,7 @@ class LieuConcert {
   Function create($user) 
   {
     
-    $sql = "INSERT INTO llx_lieu_concert (fk_user_author) VALUES (".$user->id.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."lieu_concert (fk_user_author) VALUES (".$user->id.")";
 	    
     if ($this->db->query($sql) )
       {
@@ -67,7 +67,7 @@ class LieuConcert {
   Function update($id, $user)
   {
 
-    $sql = "UPDATE llx_lieu_concert ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."lieu_concert ";
     $sql .= " SET nom = '" . trim($this->nom) ."'";
     $sql .= ",ville = '" . trim($this->ville) ."'";
     $sql .= ",description = '" . trim($this->description) ."'";
@@ -87,7 +87,7 @@ class LieuConcert {
    */
   Function fetch ($id) {
     
-    $sql = "SELECT rowid, nom, ville, description FROM llx_lieu_concert WHERE rowid = $id";
+    $sql = "SELECT rowid, nom, ville, description FROM ".MAIN_DB_PREFIX."lieu_concert WHERE rowid = $id";
 
     $result = $this->db->query($sql) ;
 
@@ -126,7 +126,7 @@ class LieuConcert {
   {
     $ga = array();
 
-    $sql = "SELECT rowid, nom, ville, description FROM llx_lieu_concert";
+    $sql = "SELECT rowid, nom, ville, description FROM ".MAIN_DB_PREFIX."lieu_concert";
     $sql .= " ORDER BY ville, nom"; 
     if ($this->db->query($sql) )
       {

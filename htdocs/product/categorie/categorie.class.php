@@ -43,7 +43,7 @@ class Categorie {
    */
   Function create($user) {
 
-    $sql = "INSERT INTO llx_album (osc_id, fk_user_author) VALUES ($idosc, ".$user->id.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."album (osc_id, fk_user_author) VALUES ($idosc, ".$user->id.")";
     
     if ($this->db->query($sql) )
       {
@@ -68,7 +68,7 @@ class Categorie {
   Function linkga($id, $gaid)
   {
 
-    $sql = "INSERT INTO llx_album_to_groupart (fk_album, fk_groupart) values ($id, $gaid)";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."album_to_groupart (fk_album, fk_groupart) values ($id, $gaid)";
 
     if ( $this->db->query($sql) ) {
       return 1;
@@ -194,7 +194,7 @@ class Categorie {
   Function update($id, $user)
  {
 
-    $sql = "UPDATE llx_album ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."album ";
     $sql .= " SET title = '" . trim($this->titre) ."'";
     $sql .= ",description = '" . trim($this->description) ."'";
 
@@ -247,7 +247,7 @@ class Categorie {
 
     $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = $idosc";
 	      
-    $sql = "DELETE FROM llx_album WHERE rowid = $id";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."album WHERE rowid = $id";
 	    
     
   }

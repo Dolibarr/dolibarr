@@ -82,7 +82,7 @@ print_liste_field_titre("Société",$PHP_SELF,"s.nom");
 print "</td></tr>\n";
 
 $sql = "SELECT s.nom, s.idp, p.rowid as projectid, p.ref, p.title,".$db->pdate("p.dateo")." as do";
-$sql .= " FROM llx_societe as s, llx_projet as p";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";
 $sql .= " WHERE p.fk_soc = s.idp";
 
 if ($socidp)

@@ -81,7 +81,7 @@ class Promotion {
    */
   Function update($id, $user)
   {
-    $sql = "UPDATE llx_album ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."album ";
     $sql .= " SET title = '" . trim($this->titre) ."'";
     $sql .= ",description = '" . trim($this->description) ."'";
 
@@ -168,7 +168,7 @@ class Promotion {
 
     $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = $idosc";
 	      
-    $sql = "DELETE FROM llx_album WHERE rowid = $id";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."album WHERE rowid = $id";
 	    
     
   }

@@ -27,7 +27,7 @@ if (!$user->rights->produit->lire)
 
 if ($action == 'update')
 {
-  $sql = "UPDATE llx_product SET description='$desc' where rowid = $rowid";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET description='$desc' where rowid = $rowid";
   $db->query($sql);
 }
 
@@ -47,7 +47,7 @@ print '<tr><td valign="top" width="30%">';
 /*
  * Produits en ventes et hors vente
  */
-$sql = "SELECT count(*), fk_product_type FROM llx_product as p WHERE envente = 0 GROUP BY fk_product_type";
+$sql = "SELECT count(*), fk_product_type FROM ".MAIN_DB_PREFIX."product as p WHERE envente = 0 GROUP BY fk_product_type";
 if ($db->query($sql))
 {
   $num = $db->num_rows();
@@ -78,7 +78,7 @@ print '</td><td valign="top" width="70%">';
 /*
  * Derniers produits
  */
-$sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p WHERE envente=1";
+$sql = "SELECT p.rowid, p.label, p.price, p.ref FROM ".MAIN_DB_PREFIX."product as p WHERE envente=1";
 $sql .= " ORDER BY p.datec DESC ";
 $sql .= $db->plimit(15 ,0);
 $result = $db->query($sql) ;

@@ -93,7 +93,7 @@ if ($id)
 	  print 'Fournisseurs [<a href="../fiche.php?id='.$id.'&amp;action=ajout_fourn">Ajouter</a>]';
 	  
 	  $sql = "SELECT s.nom, s.idp";
-	  $sql .= " FROM llx_societe as s, llx_product_fournisseur as pf";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 	  $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product =$id";
 	  $sql .= " ORDER BY lower(s.nom)";
 	  
@@ -127,7 +127,7 @@ if ($id)
        */
       print '<br><table class="border" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre"><td width="40%">Entrepôt</td><td width="60%">Valeur du stock</td></tr>';
-      $sql = "SELECT e.rowid, e.label, ps.reel FROM llx_entrepot as e, llx_product_stock as ps";
+      $sql = "SELECT e.rowid, e.label, ps.reel FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps";
       $sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = $product->id";
       $sql .= " ORDER BY lower(e.label)";
       
@@ -161,7 +161,7 @@ if ($id)
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
       print '<td width="20%">Entrepôt</td><td width="20%"><select name="id_entrepot">';
       
-      $sql = "SELECT e.rowid, e.label FROM llx_entrepot as e WHERE statut = 1";    
+      $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e WHERE statut = 1";    
       $sql .= " ORDER BY lower(e.label)";
       
       if ($db->query($sql))
@@ -200,7 +200,7 @@ if ($id)
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
       print '<td width="20%">Entrepôt</td><td width="40%"><select name="id_entrepot">';
       
-      $sql = "SELECT e.rowid, e.label FROM llx_entrepot as e";    
+      $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";    
       $sql .= " ORDER BY lower(e.label)";
       
       if ($db->query($sql))

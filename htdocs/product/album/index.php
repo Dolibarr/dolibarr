@@ -41,7 +41,7 @@ $offset = $limit * $page ;
 
 print_barre_liste("Liste des albums", $page, $PHP_SELF);
 
-$sql = "SELECT a.rowid, a.title, a.osc_id FROM llx_album as a";
+$sql = "SELECT a.rowid, a.title, a.osc_id FROM ".MAIN_DB_PREFIX."album as a";
   
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);

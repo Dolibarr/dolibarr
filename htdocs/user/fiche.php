@@ -199,7 +199,7 @@ else
 
 	  print "<tr>".'<td valign="top" colspan="2">';
 	  print '<table width="100%" class="noborder" cellpadding="2" cellspacing="0">';
-	  $sql = "SELECT r.id, r.libelle, r.module FROM llx_rights_def as r ORDER BY r.id ASC";
+	  $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r ORDER BY r.id ASC";
 
 	  if ($db->query($sql))
 	    {
@@ -227,7 +227,7 @@ else
 	   * Droits
 	   */
 	  print '<table class="noborder" width="100%" cellpadding="2" cellspacing="0">';
-	  $sql = "SELECT r.id, r.libelle, r.module FROM llx_rights_def as r, llx_user_rights as ur";
+	  $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
 	  $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.id ASC";
 	  $var = True;
 	  if ($db->query($sql))
@@ -279,7 +279,7 @@ else
        * Droits
        */
       print '<table width="100%" class="noborder" cellpadding="0" cellspacing="0">';
-      $sql = "SELECT r.libelle, r.module FROM llx_rights_def as r, llx_user_rights as ur";
+      $sql = "SELECT r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
       $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.id ASC";
       $var = True;
       if ($db->query($sql))

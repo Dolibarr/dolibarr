@@ -37,13 +37,13 @@ class MouvementStock
       if ($this->db->begin($transaction) )
 	{
 	  
-	  $sql = "INSERT INTO llx_stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
 	  $sql .= " VALUES (now(), $product_id, $entrepot_id, $qty, $type, $user->id)";
 	  
 	  if ($this->db->query($sql))
 	    {
 
-	      $sql = "UPDATE llx_product_stock SET reel = reel + $qty WHERE fk_entrepot = $entrepot_id AND fk_product = $product_id";
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + $qty WHERE fk_entrepot = $entrepot_id AND fk_product = $product_id";
 
 	      if ($this->db->query($sql))
 		{

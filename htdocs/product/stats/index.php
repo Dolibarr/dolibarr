@@ -34,7 +34,7 @@ print_fiche_titre('Statistiques commandes', $mesg);
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td>Année</td><td width="40%">Nb de commande</td><td>Somme des commandes</td></tr>';
 
-$sql = "SELECT count(*), date_format(date_commande,'%Y') as dm, sum(total_ht)  FROM llx_commande WHERE fk_statut > 0 GROUP BY dm DESC ";
+$sql = "SELECT count(*), date_format(date_commande,'%Y') as dm, sum(total_ht)  FROM ".MAIN_DB_PREFIX."commande WHERE fk_statut > 0 GROUP BY dm DESC ";
 if ($db->query($sql))
 {
   $num = $db->num_rows();

@@ -41,7 +41,7 @@ class Project {
 
   Function create($creatorid) 
     {
-      $sql = "INSERT INTO llx_projet (ref, title, fk_soc, fk_user_creat, dateo) ";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, dateo) ";
       $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, $creatorid, now()) ;";
     
       if (!$this->db->query($sql) ) 
@@ -56,7 +56,7 @@ class Project {
    */
   Function update() 
     {
-      $sql = "UPDATE llx_projet ";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."projet ";
       $sql .= " SET ref = '$this->ref', title = '$this->title'";
       $sql .= " WHERE rowid = $this->id";
 
@@ -71,14 +71,14 @@ class Project {
    */
   Function delete() 
     {
-      $sql = "DELETE FROM llx_projet WHERE rowid = $this->id";
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."projet WHERE rowid = $this->id";
 
       if ($this->db->query($sql) ) 
 	{
-	  $sql = "UPDATE llx_propal SET fk_projet = 0 WHERE fk_projet = $this->id";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_projet = 0 WHERE fk_projet = $this->id";
 	  if ($this->db->query($sql) ) 
 	    {
-	      $sql = "UPDATE llx_facture SET fk_projet = 0 WHERE fk_projet = $this->id";
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_projet = 0 WHERE fk_projet = $this->id";
 
 	      if ($this->db->query($sql) ) 
 		{
@@ -95,7 +95,7 @@ class Project {
   Function fetch($rowid)
     {
       
-      $sql = "SELECT fk_soc, title, ref FROM llx_projet WHERE rowid=$rowid;";
+      $sql = "SELECT fk_soc, title, ref FROM ".MAIN_DB_PREFIX."projet WHERE rowid=$rowid;";
       
       if ($this->db->query($sql) )
 	{
@@ -124,7 +124,7 @@ class Project {
   Function get_propal_list()
     {
       $propales = array();
-      $sql = "SELECT rowid FROM llx_propal WHERE fk_projet=$this->id;";
+      $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal WHERE fk_projet=$this->id;";
       
       if ($this->db->query($sql) )
 	{
@@ -160,7 +160,7 @@ class Project {
   Function get_facture_list()
     {
       $factures = array();
-      $sql = "SELECT rowid FROM llx_facture WHERE fk_projet=$this->id;";
+      $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE fk_projet=$this->id;";
       
       if ($this->db->query($sql) )
 	{
@@ -196,7 +196,7 @@ class Project {
   Function get_commande_list()
     {
       $commandes = array();
-      $sql = "SELECT rowid FROM llx_commande WHERE fk_projet=$this->id;";
+      $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande WHERE fk_projet=$this->id;";
       
       if ($this->db->query($sql) )
 	{

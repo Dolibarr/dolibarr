@@ -37,7 +37,7 @@ $ynn["0"] = "non";
 
 if ($action == 'add')
 {
-  $sql = "INSERT INTO llx_bookmark (fk_soc, dateb, author) VALUES ($socidp, now(),'". $GLOBALS["REMOTE_USER"]."');";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, author) VALUES ($socidp, now(),'". $GLOBALS["REMOTE_USER"]."');";
   if (! $db->query($sql) )
     {
       print $db->error();
@@ -46,7 +46,7 @@ if ($action == 'add')
 
 if ($action == 'delete')
 {
-  $sql = "DELETE FROM  llx_bookmark WHERE rowid=$bid AND author = '". $GLOBALS["REMOTE_USER"]."'";
+  $sql = "DELETE FROM  ".MAIN_DB_PREFIX."bookmark WHERE rowid=$bid AND author = '". $GLOBALS["REMOTE_USER"]."'";
   $result = $db->query($sql);
 }
 

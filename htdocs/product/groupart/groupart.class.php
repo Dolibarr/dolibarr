@@ -40,7 +40,7 @@ class Groupart {
    */
   Function create($user) {
 
-    $sql = "INSERT INTO llx_groupart (fk_user_author) VALUES (".$user->id.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."groupart (fk_user_author) VALUES (".$user->id.")";
 
     if ($this->db->query($sql) )
 
@@ -67,7 +67,7 @@ class Groupart {
   Function update($id, $user)
  {
 
-    $sql = "UPDATE llx_groupart ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."groupart ";
     $sql .= " SET nom = '" . trim($this->nom) ."'";
     $sql .= " , description = '" . trim($this->desc) ."'";
     $sql .= " , groupart = '" . trim($this->grar) ."'";
@@ -86,7 +86,7 @@ class Groupart {
    */
   Function fetch ($id) {
     
-    $sql = "SELECT rowid, nom, groupart, description FROM llx_groupart WHERE rowid = $id";
+    $sql = "SELECT rowid, nom, groupart, description FROM ".MAIN_DB_PREFIX."groupart WHERE rowid = $id";
 
     $result = $this->db->query($sql) ;
 
@@ -113,7 +113,7 @@ class Groupart {
   {
     $ga = array();
 
-    $sql = "SELECT a.rowid, a.title FROM llx_album as a, llx_album_to_groupart as l";
+    $sql = "SELECT a.rowid, a.title FROM ".MAIN_DB_PREFIX."album as a, ".MAIN_DB_PREFIX."album_to_groupart as l";
     $sql .= " WHERE a.rowid = l.fk_album AND l.fk_groupart = ".$this->id;
     $sql .= " ORDER BY a.title";
 
@@ -163,7 +163,7 @@ class Groupart {
   {
     $ga = array();
 
-    $sql = "SELECT rowid, nom FROM llx_groupart ORDER BY nom";
+    $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."groupart ORDER BY nom";
 
     if ($this->db->query($sql) )
       {
@@ -204,7 +204,7 @@ class Groupart {
 
     $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = $idosc";
 	      
-    $sql = "DELETE FROM llx_album WHERE rowid = $id";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."album WHERE rowid = $id";
 	    
     
   }

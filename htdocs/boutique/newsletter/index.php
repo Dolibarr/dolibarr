@@ -39,7 +39,7 @@ $offset = $limit * $page ;
 print_barre_liste("Liste des Newsletter", $page, $PHP_SELF);
 
 $sql = "SELECT rowid, email_subject, email_from_name, email_from_email, email_replyto, email_body, target, sql_target, status, date_send_request, date_send_begin, date_send_end, nbsent";
-$sql .= " FROM llx_newsletter";
+$sql .= " FROM ".MAIN_DB_PREFIX."newsletter";
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
  

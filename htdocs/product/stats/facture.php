@@ -71,7 +71,7 @@ if ($id)
       print_barre_liste("Factures",$page,$PHP_SELF,"&amp;id=$id",$sortfield,$sortorder);
       
       $sql = "SELECT distinct(f.rowid), s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
-      $sql .= " FROM llx_societe as s,llx_facture as f, llx_facturedet as d WHERE f.fk_soc = s.idp";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."facturedet as d WHERE f.fk_soc = s.idp";
       $sql .= " AND d.fk_facture = f.rowid AND d.fk_product =".$id;
       $sql .= " ORDER BY $sortfield $sortorder ";
       $sql .= $db->plimit( $limit ,$offset);

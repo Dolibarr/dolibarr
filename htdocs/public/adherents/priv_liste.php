@@ -34,9 +34,9 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "select rowid,prenom,nom, societe, cp,ville,email,naiss,photo from llx_adherent where statut=1 ORDER BY  $sortfield $sortorder ". $db->plimit($conf->liste_limit, $offset);
+$sql = "select rowid,prenom,nom, societe, cp,ville,email,naiss,photo from ".MAIN_DB_PREFIX."adherent where statut=1 ORDER BY  $sortfield $sortorder ". $db->plimit($conf->liste_limit, $offset);
 //$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, cp, ville, d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
-//$sql .= " FROM llx_adherent as d, llx_adherent_type as t";
+//$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 //$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
 //$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 

@@ -40,7 +40,7 @@ print_barre_liste("Liste des concerts", $page, $PHP_SELF);
 
 //$sql = "SELECT c.rowid, c.date_concert as dc, ga.nom, lc.nom as lieu, lc.ville";
 $sql = "SELECT c.rowid, c.date_concert as dc, c.fk_groupart, c.fk_lieu_concert, ga.nom, lc.nom as lieu, lc.ville";
-$sql .= " FROM llx_concert as c, llx_groupart as ga, llx_lieu_concert as lc";
+$sql .= " FROM ".MAIN_DB_PREFIX."concert as c, ".MAIN_DB_PREFIX."groupart as ga, ".MAIN_DB_PREFIX."lieu_concert as lc";
 $sql .= " WHERE c.fk_groupart = ga.rowid AND c.fk_lieu_concert = lc.rowid";
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);

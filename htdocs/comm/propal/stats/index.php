@@ -43,7 +43,7 @@ $px->SetHeight(280);
 
 $px->draw(DOL_DOCUMENT_ROOT.$filev, $data, $year);
       
-$sql = "SELECT count(*), date_format(datep,'%Y') as dm, sum(price)  FROM llx_propal WHERE fk_statut > 0 GROUP BY dm DESC ";
+$sql = "SELECT count(*), date_format(datep,'%Y') as dm, sum(price)  FROM ".MAIN_DB_PREFIX."propal WHERE fk_statut > 0 GROUP BY dm DESC ";
 if ($db->query($sql))
 {
   $num = $db->num_rows();

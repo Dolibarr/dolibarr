@@ -46,7 +46,7 @@ class Entrepot
       if ($this->db->query("BEGIN") )
 	{
 
-	  $sql = "INSERT INTO llx_entrepot (datec, fk_user_author)";
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author)";
 	  $sql .= " VALUES (now(),".$user->id.")";
 
 	  if ($this->db->query($sql) )
@@ -82,7 +82,7 @@ class Entrepot
     {
       if (strlen(trim($this->libelle)))
 	{
-	  $sql = "UPDATE llx_entrepot ";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
 	  $sql .= " SET label = '" . trim($this->libelle) ."'";
 	  $sql .= ",description = '" . trim($this->description) ."'";
 	  $sql .= ",statut = " . $this->statut ;
@@ -112,7 +112,7 @@ class Entrepot
   Function fetch ($id)
     {    
       $sql = "SELECT rowid, label, description, statut";
-      $sql .= " FROM llx_entrepot WHERE rowid = $id";
+      $sql .= " FROM ".MAIN_DB_PREFIX."entrepot WHERE rowid = $id";
 
       $result = $this->db->query($sql) ;
 
@@ -143,7 +143,7 @@ class Entrepot
   {
     $liste = array();
 
-    $sql = "SELECT rowid, label FROM llx_entrepot WHERE statut = 1";
+    $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."entrepot WHERE statut = 1";
 
       $result = $this->db->query($sql) ;
       $i = 0;

@@ -27,7 +27,7 @@ if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/module
   require(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php");
 }
 
-$sql = "SELECT s.nom, s.idp, s.prefix_comm FROM llx_societe as s WHERE s.idp = $socidp;";
+$sql = "SELECT s.nom, s.idp, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s WHERE s.idp = $socidp;";
 
 $result = $db->query($sql);
 if ($result) 
@@ -54,7 +54,7 @@ if ($action == 'create')
   $obj = PROPALE_ADDON;
   $modPropale = new $obj;
   $numpr = $modPropale->propale_get_num();
-  $sql = "SELECT count(*) FROM llx_propal WHERE ref like '$numpr%'";
+  $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal WHERE ref like '$numpr%'";
 
   if ( $db->query($sql) )
     {
@@ -92,7 +92,7 @@ if ($action == 'create')
    *
    */
   print "<tr><td>Contact</td><td><select name=\"contactidp\">\n";
-  $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email FROM llx_socpeople as p WHERE p.fk_soc = $socidp";
+  $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $socidp";
   
   if ( $db->query($sql) )
     {
@@ -131,7 +131,7 @@ if ($action == 'create')
   print '<tr><td valign="top">Projet</td><td><select name="projetidp">';
   print '<option value="0"></option>';
   
-  $sql = "SELECT p.rowid, p.title FROM llx_projet as p WHERE p.fk_soc = $socidp";
+  $sql = "SELECT p.rowid, p.title FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $socidp";
   
   if ( $db->query($sql) )
     {
@@ -168,7 +168,7 @@ if ($action == 'create')
    * Liste des elements
    *
    */
-  $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p ";
+  $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p ";
   $sql .= " WHERE envente = 1";
   $sql .= " ORDER BY ref DESC";
   if ( $db->query($sql) )

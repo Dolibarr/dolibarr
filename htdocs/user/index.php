@@ -26,7 +26,7 @@ llxHeader();
 print_titre("Liste des utilisateurs");
 
 $sql = "SELECT u.rowid, u.name, u.firstname, u.code, u.login, u.module_comm, u.module_compta";
-$sql .= " FROM llx_user as u";
+$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql .= " ORDER BY u.name";
 
 $result = $db->query($sql);

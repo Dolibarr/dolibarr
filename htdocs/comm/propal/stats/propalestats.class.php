@@ -38,7 +38,7 @@ class PropaleStats extends Stats
    */
   Function getNbByMonth($year)
   {
-    $sql = "SELECT date_format(datep,'%m') as dm, count(*)  FROM llx_propal";
+    $sql = "SELECT date_format(datep,'%m') as dm, count(*)  FROM ".MAIN_DB_PREFIX."propal";
     $sql .= " WHERE date_format(datep,'%Y') = $year AND fk_statut > 0";
     $sql .= " GROUP BY dm DESC";
     
@@ -51,7 +51,7 @@ class PropaleStats extends Stats
    */
   Function getNbByYear()
   {
-    $sql = "SELECT date_format(datep,'%Y') as dm, count(*) FROM llx_propal GROUP BY dm DESC WHERE fk_statut > 0";
+    $sql = "SELECT date_format(datep,'%Y') as dm, count(*) FROM ".MAIN_DB_PREFIX."propal GROUP BY dm DESC WHERE fk_statut > 0";
 
     return $this->_getNbByYear($sql);
   }
@@ -61,7 +61,7 @@ class PropaleStats extends Stats
    */
   Function getAmountByMonth($year)
   {
-    $sql = "SELECT date_format(datep,'%m') as dm, sum(price)  FROM llx_propal";
+    $sql = "SELECT date_format(datep,'%m') as dm, sum(price)  FROM ".MAIN_DB_PREFIX."propal";
     $sql .= " WHERE date_format(datep,'%Y') = $year AND fk_statut > 0";
     $sql .= " GROUP BY dm DESC";
 
@@ -73,7 +73,7 @@ class PropaleStats extends Stats
    */
   Function getAverageByMonth($year)
   {
-    $sql = "SELECT date_format(datep,'%m') as dm, avg(price)  FROM llx_propal";
+    $sql = "SELECT date_format(datep,'%m') as dm, avg(price)  FROM ".MAIN_DB_PREFIX."propal";
     $sql .= " WHERE date_format(datep,'%Y') = $year AND fk_statut > 0";
     $sql .= " GROUP BY dm DESC";
 

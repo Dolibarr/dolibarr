@@ -27,7 +27,7 @@ if (!$user->rights->produit->lire)
 
 if ($action == 'update')
 {
-  $sql = "UPDATE llx_product SET description='$desc' where rowid = $rowid";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET description='$desc' where rowid = $rowid";
   $db->query($sql);
 }
 
@@ -51,11 +51,11 @@ if ($sortorder == "")
 }
   
 $sql = "SELECT p.rowid, p.label, p.price, p.ref";
-$sql .= " FROM llx_product as p";
+$sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 
 if ($fourn_id > 0)
 {
-  $sql .= ", llx_product_fournisseur as pf";
+  $sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
 
 if ($HTTP_POST_VARS["sall"])

@@ -274,7 +274,7 @@ else
 	      print 'Fournisseurs [<a href="fiche.php?id='.$id.'&amp;action=ajout_fourn">Ajouter</a>]';
 
 	      $sql = "SELECT s.nom, s.idp";
-	      $sql .= " FROM llx_societe as s, llx_product_fournisseur as pf";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 	      $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product =$id";
 	      $sql .= " ORDER BY lower(s.nom)";
 	      
@@ -372,7 +372,7 @@ else
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
 	      print '<td>Fournisseurs</td><td><select name="id_fourn">';
 
-	      $sql = "SELECT s.idp, s.nom, s.ville FROM llx_societe as s WHERE s.fournisseur=1";	     
+	      $sql = "SELECT s.idp, s.nom, s.ville FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur=1";	     
 	      $sql .= " ORDER BY lower(s.nom)";
 
 	      if ($db->query($sql))
@@ -559,7 +559,7 @@ if ($id && $action == '' && $product->envente)
       print '</tr>';
       print "<tr>".'<td width="50%" valign="top">';
       $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.ref,".$db->pdate("p.datep")." as dp";
-      $sql .= " FROM llx_societe as s, llx_propal as p";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
       $sql .=" WHERE p.fk_soc = s.idp AND p.fk_statut = 0 AND p.fk_user_author = ".$user->id;
       $sql .= " ORDER BY p.datec DESC, tms DESC";
       
@@ -629,7 +629,7 @@ if ($id && $action == '' && $product->envente)
       print '</td></tr>';
       print "<tr>".'<td width="50%" valign="top">';
       $sql = "SELECT s.nom, s.idp, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
-      $sql .= " FROM llx_societe as s, llx_facture as f";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
       $sql .=" WHERE f.fk_soc = s.idp AND f.fk_statut = 0 AND f.fk_user_author = ".$user->id;
       $sql .= " ORDER BY f.datec DESC, f.rowid DESC";
       

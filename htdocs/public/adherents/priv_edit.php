@@ -46,7 +46,7 @@ if ($action == 'update')
 
 	  // test some values
 	  // test si le login existe deja
-	  $sql = "SELECT rowid,login FROM llx_adherent WHERE login='$login';";
+	  $sql = "SELECT rowid,login FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login';";
 	  $result = $db->query($sql);
 	  if ($result) {
 	    $num = $db->num_rows();
@@ -140,7 +140,7 @@ if (isset($_SERVER["REMOTE_USER"])){
   $adho->fetch_optionals();
 
   $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
-  $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
+  $sql .= " FROM societe as s, ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp";
   $sql .= " AND f.rowid = $facid";
 
   $result = $db->query($sql);

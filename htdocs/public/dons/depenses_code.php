@@ -26,7 +26,7 @@ $conf = new Conf();
 $db = new DoliDb();
 $a = setlocale(LC_TIME, "fr_FR");
 $sql = "SELECT ".$db->pdate("f.datef")." as datef, s.nom, f.total, f.note, f.paye";
-$sql .= " FROM llx_facture_fourn as f, llx_societe as s";
+$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE f.fk_soc = s.idp ORDER BY f.datef DESC";
 
 if ( $db->query( $sql) )

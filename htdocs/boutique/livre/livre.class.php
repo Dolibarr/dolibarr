@@ -69,7 +69,7 @@ class Livre {
 	    if ($this->db->query($sql) )	    
 	      {
 
-		$sql = "INSERT INTO llx_livre (oscid, fk_user_author, date_ajout) VALUES ($idosc, ".$user->id.", now())";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."livre (oscid, fk_user_author, date_ajout) VALUES ($idosc, ".$user->id.", now())";
 	    
 		if ($this->db->query($sql) )
 		  {
@@ -113,7 +113,7 @@ class Livre {
   Function linkga($id, $gaid)
   {
 
-    $sql = "INSERT INTO llx_livre_to_auteur (fk_livre, fk_auteur) values ($id, $gaid)";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."livre_to_auteur (fk_livre, fk_auteur) values ($id, $gaid)";
 
     if ( $this->db->query($sql) )
       {      
@@ -132,7 +132,7 @@ class Livre {
   {
     $ga = array();
 
-    $sql = "SELECT a.rowid, a.nom FROM llx_auteur as a, llx_livre_to_auteur as l";
+    $sql = "SELECT a.rowid, a.nom FROM ".MAIN_DB_PREFIX."auteur as a, ".MAIN_DB_PREFIX."livre_to_auteur as l";
     $sql .= " WHERE a.rowid = l.fk_auteur AND l.fk_livre = ".$this->id;
     $sql .= " ORDER BY a.nom";
 
@@ -165,7 +165,7 @@ class Livre {
   Function auteur_unlink($auteur_id)
   {
 
-    $sql = "DELETE FROM llx_livre_to_auteur ";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."livre_to_auteur ";
 
     $sql .= " WHERE fk_livre=".$this->id;
     $sql .= " AND fk_auteur=".$auteur_id;
@@ -289,7 +289,7 @@ class Livre {
 
     if ( $this->db->query($sql) )
       {
-	$sql = "UPDATE llx_livre ";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."livre ";
 	$sql .= " SET status = ".$status;
 	$sql .= " WHERE rowid = " . $this->id;
 	
@@ -442,7 +442,7 @@ class Livre {
 	$this->annee = 0;
       }
 
-    $sql = "UPDATE llx_livre ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."livre ";
     $sql .= " SET title = '" . trim($this->titre) ."'";
     $sql .= ", ref = '" . trim($this->ref) ."'";
     $sql .= ", prix = " . ereg_replace(",",".",$this->price)."";
@@ -469,7 +469,7 @@ class Livre {
    */
   Function fetch ($id, $oscid=0) {
     
-    $sql = "SELECT rowid, fk_editeur, ref, prix, annee, oscid, title, description, frais_de_port FROM llx_livre";
+    $sql = "SELECT rowid, fk_editeur, ref, prix, annee, oscid, title, description, frais_de_port FROM ".MAIN_DB_PREFIX."livre";
     if ($id)
       {
 	$sql .= " WHERE rowid = $id";
@@ -561,7 +561,7 @@ class Livre {
     $result = $this->db->query($sql) ;
     $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = ".$this->oscid;
     $result = $this->db->query($sql) ;
-    $sql = "DELETE FROM llx_livre WHERE rowid = ".$this->id;
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."livre WHERE rowid = ".$this->id;
     $result = $this->db->query($sql) ;
   }
 

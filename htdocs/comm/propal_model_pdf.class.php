@@ -38,7 +38,7 @@ class Propal_Model_Pdf {
     {
       $projets = array();
 
-      $sql = "SELECT nom FROM llx_propal_model_pdf";
+      $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."propal_model_pdf";
 
       if ($this->db->query($sql) )
 	{

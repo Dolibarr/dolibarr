@@ -33,7 +33,7 @@ print_titre("Stocks");
 print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td valign="top" width="30%">';
 
-$sql = "SELECT e.label, e.rowid, e.statut FROM llx_entrepot as e";
+$sql = "SELECT e.label, e.rowid, e.statut FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql .= " ORDER BY e.statut DESC ";
 $sql .= $db->plimit(15 ,0);
 $result = $db->query($sql) ;
