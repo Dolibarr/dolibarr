@@ -175,7 +175,7 @@ if ($action == 'pdf')
   commande_pdf_create($db, $_GET["id"]);
 } 
 
-llxHeader('','Fiche commande','ch-commande.html');
+llxHeader('','Fiche commande','Commande');
 
 
 
