@@ -45,7 +45,6 @@ if ($user->societe_id > 0)
 
 llxHeader("","Accueil Compta");
 
-
 /*
  * Actions
  */
@@ -235,19 +234,19 @@ print '</td><td valign="top" width="70%">';
 if ($conf->commande->enabled && $user->rights->commande->lire)
 {
   $langs->load("orders");
-
-  $sql = "SELECT sum(f.total) as tot_fht,sum(f.total_ttc) as tot_fttc, p.rowid, p.ref, s.nom, s.idp, p.total_ht, p.total_ttc
-			FROM ".MAIN_DB_PREFIX."commande AS p, llx_societe AS s
-			LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid
-			LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON co_fa.fk_facture = f.rowid
-			WHERE p.fk_soc = s.idp
-					AND p.fk_statut >=1
-					AND p.facture =0
-			GROUP BY p.rowid";
+  
+  $sql = "SELECT sum(f.total) as tot_fht,sum(f.total_ttc) as tot_fttc";
+  $sql .= " ,s.nom, s.idp, p.rowid, p.ref, p.total_ht, p.total_ttc";
+  $sql .= " FROM ".MAIN_DB_PREFIX."commande AS p, llx_societe AS s";
+  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid";
+  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON co_fa.fk_facture = f.rowid";
+  $sql .= " WHERE p.fk_soc = s.idp";
   if ($socidp)
     {
       $sql .= " AND p.fk_soc = $socidp";
     }
+  $sql .= " AND p.fk_statut >=1	AND p.facture =0";
+  $sql .= " GROUP BY p.rowid";
 
   $resql = $db->query($sql);
 
@@ -260,7 +259,7 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	  print '<table class="noborder" width="100%">';
 	  print "<tr class=\"liste_titre\">";
 	  print '<td colspan="2">'.$langs->trans("OrdersToBill").' ('.$num.')</td>';
-	  print '<td align="right">'.$langs->trans("AmountHT").'</td><td align="right">'.$langs->trans("AmountTTC").'</td><td align="right">&nbsp;</td></tr>';
+	  print '<td align="right">'.$langs->trans("AmountHT").'</td><td align="right">'.$langs->trans("AmountTTC").'</td></tr>';
 	  $var = True;
 	  $tot_ht=0;
 	  $tot_ttc=0;
@@ -330,7 +329,7 @@ if ($conf->facture->enabled)
 	    {
 	      $obj = $db->fetch_object($resql);
 
-	      if ($i < 20)
+	      if ($i < 10)
 		{
 		  $var=!$var;
 		  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->facnumber.'</a></td>';
@@ -345,7 +344,9 @@ if ($conf->facture->enabled)
 	      $i++;
 	    }
 	  $var=!$var;
+
 	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; ('.$langs->trans("RemainderToTake").': '.price($total_ttc-$totalam).')</i></td><td align="right"><i>'.price($total)."</i></td><td align=\"right\"><i>".price($total_ttc)."</i></td><td align=\"right\"><i>".price($totalam)."</i></td></tr>";
+
 	  print "</table><br>";
 	}
       $db->free($resql);
