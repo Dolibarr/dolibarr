@@ -695,7 +695,9 @@ if ($_GET["propalid"])
 
 		{
 		  print "<tr><td>Commande rattachée : ";
-		  print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a>";
+		  print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">';
+		  print img_file();
+		  print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a>";
 		  print "</td></tr>\n";
 		}
 	      else
