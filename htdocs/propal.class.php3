@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
  *
  */
 
-class Propal {
+class Propal
+{
   var $id;
   var $db;
   var $socidp;
@@ -36,26 +37,80 @@ class Propal {
 
   var $price;
 
-  Function Propal($DB, $soc_idp="") {
-    $this->db = $DB ;
-    $this->socidp = $soc_idp;
-    $this->products = array();
+  Function Propal($DB, $soc_idp="")
+    {
+      $this->db = $DB ;
+      $this->socidp = $soc_idp;
+      $this->products = array();
   }
   /*
    *
    *
    *
    */
-  Function add_product($idproduct, $qty) {
-    if ($idproduct > 0) {
-      $i = sizeof($this->products);
-      $this->products[$i] = $idproduct;
-      if (!$qty) {
-	$qty = 1 ;
-      }
-      $this->products_qty[$i] = $qty;
+  Function add_product($idproduct, $qty)
+    {
+      if ($idproduct > 0)
+	{
+	  $i = sizeof($this->products);
+	  $this->products[$i] = $idproduct;
+	  if (!$qty)
+	    {
+	      $qty = 1 ;
+	    }
+	  $this->products_qty[$i] = $qty;
+	}
     }
-  }
+  /*
+   *
+   *
+   */
+  Function insert_product($idproduct, $qty)
+    {
+      if ($this->statut == 0)
+	{
+	  $prod = new Product($this->db, $idproduct);
+	  $prod->fetch($idproduct);
+	  
+	  $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price) VALUES ";
+	  $sql .= " (".$this->id.",". $idproduct.",". $qty.", $prod->price) ; ";
+	  
+	  if ($this->db->query($sql) )
+	    {
+	      
+	      $this->update_price($this->id);
+	      
+	      return 1;
+	    }
+	  else
+	    {
+	      return 0;
+	    }
+	}
+    }
+  /*
+   *
+   *
+   */
+  Function delete_product($idligne)
+    {
+      if ($this->statut == 0)
+	{
+	  $sql = "DELETE FROM llx_propaldet WHERE rowid = $idligne";
+	  
+	  if ($this->db->query($sql) )
+	    {
+	      
+	      $this->update_price($this->id);
+	      
+	      return 1;
+	    }
+	  else
+	    {
+	      return 0;
+	    }
+	}
+    }
   /*
    *
    *
@@ -171,6 +226,7 @@ class Propal {
 	  
 	      $this->id = $rowid;
 	      $this->datep = $obj->dp;
+	      $this->date = $obj->dp;
 	      $this->ref = $obj->ref;
 	      $this->price = $obj->price;
 	      $this->remise = $obj->remise;
