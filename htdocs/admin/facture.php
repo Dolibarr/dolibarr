@@ -73,7 +73,7 @@ if ($action == 'setpdf')
 
 $dir = "../includes/modules/facture/";
 
-print_titre("Module de facture");
+print_titre("Module de numérotation");
 
 print '<table border="1" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre">';
