@@ -31,9 +31,6 @@ qui lui sont fait ouvrent  droit à une réduction d'impôt. Vous pourrez
 en bénéficier grâce au reçu[4]  qui vous sera adressé dès reception du
 montant promis de #amount euros.
 
-Nous nous  permettrons de vous  rappeler votre promesse  quelque jours
-avant son échéance du #(date + 3 semaine).
-
 [1] EUCD.INFO: http://eucd.info/
 [2] Directive du 22 mai 2001:
     http://europa.eu.int/smartapi/cgi/sga_doc?smartapi!celexapi!prod!CELEXnumdoc&lg=fr&numdoc=32001L0029&model=guichett
