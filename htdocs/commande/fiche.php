@@ -687,11 +687,6 @@ else
 	  {
 	    print '<div class="tabsAction">';
 	
-	    if ($commande->statut == 0 && $user->rights->commande->supprimer)
-	      {
-		print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-	      } 
-	    
 	    if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
 	      {
 		print '<a class="tabAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET["id"].'">Expédier</a>';
@@ -706,18 +701,23 @@ else
 		  }
 	      }
 	    
+	    if ($commande->statut == 0 && $user->rights->commande->supprimer)
+	      {
+		print '<a class="butDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+	      } 
+	    
 	    if ($commande->statut == 1)
 	      {
-		$nb_expedition = $commande->nb_expedition();
-		if ($user->rights->commande->valider && $nb_expedition == 0)
-		  {
-		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans("Cancel").'</a>';
-		  }
+    		$nb_expedition = $commande->nb_expedition();
+    		if ($user->rights->commande->valider && $nb_expedition == 0)
+    		  {
+    		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans("Cancel").'</a>';
+    		  }
 	      }
 
 	    print "</div>";
 	  }
-	print "<p>\n";
+	print "<br>\n";
 
 
 	print '<table width="100%" cellspacing="2"><tr><td width="50%" valign="top">';
@@ -754,7 +754,7 @@ else
 	  }
 	else
 	  {
-	    print $db->error();
+	    dolibarr_print_error($db);
 	  }
 	print "&nbsp;</td><td>";
 	
@@ -791,7 +791,7 @@ else
 	  }
 	else
 	  {
-	    print $db->error();
+	    dolibarr_print_error($db);
 	  }
 	print "&nbsp;</td></tr></table>";
 
@@ -799,7 +799,10 @@ else
 	 * Documents générés
 	 *
 	 */
-	$file = FAC_OUTPUTDIR . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
+	$file = $conf->commande->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
+    $relativepath = $commande->ref."/".$commande->ref.".pdf";
+	
+	$var=true;
 	
 	if (file_exists($file))
 	  {
@@ -807,8 +810,8 @@ else
 	    print_titre("Documents");
 	    print '<table width="100%" class="border">';
 	    
-	    print "<tr $bc[0]><td>Commande PDF</td>";
-	    print '<td><a href="'.FAC_OUTPUT_URL."/".$commande->ref."/".$commande->ref.'.pdf">'.$commande->ref.'.pdf</a></td>';
+	    print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
+        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
 	    print '<td align="right">'.filesize($file). ' bytes</td>';
 	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	    print '</tr>';
@@ -822,17 +825,18 @@ else
 	 */
 	if ($_GET["action"] == 'classer')
 	  {	    
-	    print '<p><form method="post" action="fiche.php?id='.$commande->id.'">';
+	    print '<br><form method="post" action="fiche.php?id='.$commande->id.'">';
 	    print '<input type="hidden" name="action" value="classin">';
 	    print '<table class="border">';
-	    print '<tr><td>Projet</td><td>';
+	    print '<tr><td>'.$langs->trans("Project").'</td><td>';
 	    
 	    $proj = new Project($db);
 	    $html->select_array("projetid",$proj->liste_array($commande->soc_id));
 	    
 	    print "</td></tr>";
-	    print '<tr><td colspan="2" align="center"><input type="submit" value="Envoyer"></td></tr></table></form>';
+	    print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr></table></form>';
 	  }
+
 	/*
 	 *
 	 *
