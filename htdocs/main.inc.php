@@ -368,8 +368,11 @@ function top_menu($head, $title="")
   print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
   print '<link rel="author" title="Equipe de développement" href="http://www.dolibarr.com/dev.fr.html">'."\n";
 
-  print '<link rel="stylesheet" TYPE="text/css" HREF="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
-  print '<link rel="stylesheet" TYPE="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
+  print '<link rel="stylesheet" type="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
+
+  print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+  // TODO implementer les alternate css
+  //  print '<link rel="alternate styleSheet" type="text/css" title="yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
 
   if (strlen($title) > 0)
     {
