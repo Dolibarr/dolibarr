@@ -51,7 +51,7 @@ install: build
 	chmod -R 644 debian/dolibarr/usr/share/dolibarr
 	find debian/dolibarr/usr/share/dolibarr -type d | xargs chmod 755
 
-	find debian/dolibarr -name CVS | xargs rm -fr
+	find debian/dolibarr \( -name CVS -o -name .cvsignore \) | xargs rm -fr
 
 	mkdir -p debian/dolibarr/usr/lib/dolibarr
 	install --mode=444 mysql/mysql.sql debian/dolibarr/usr/lib/dolibarr/mysql.sql
