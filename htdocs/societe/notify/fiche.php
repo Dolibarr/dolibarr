@@ -89,9 +89,9 @@ if ( $soc->fetch($socid) )
       print '-';
     }
   print '</td><td align="center">';
-  if ($soc->fournisseur)
+  if ($soc->client)
     {
-      print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php3?socid='.$socid.'">Fiche fournisseur</a>';
+      print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php3?socid='.$socid.'">Fiche compta</a>';
     }
   else
     {
@@ -132,9 +132,10 @@ if ( $soc->fetch($socid) )
       $var=True;
       while ($i < $num)
 	{
+	  $var = !$var;
 	  $obj = $db->fetch_object( $i);
 	  
-	  print '<tr><td>'.$obj->firstname . " ".$obj->name.'</td>';
+	  print '<tr '.$bc[$var].'><td>'.$obj->firstname . " ".$obj->name.'</td>';
 	  print '<td>'.$obj->titre.'</td>';
 	  print '<td><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">Supprimer</a>';
 	  $i++;
