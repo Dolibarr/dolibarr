@@ -35,6 +35,8 @@ require("../../contact.class.php");
 require("../../cactioncomm.class.php");
 require("../../actioncomm.class.php");
 
+$langs->load("companies");
+
 
 /*
  * Sécurité accés client
@@ -45,14 +47,10 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-llxHeader();
 
-
-/*
- *
- *  Affichage liste des actions
- *
- */
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
@@ -65,6 +63,16 @@ if ($sortfield == "")
 {
   $sortfield="a.datea";
 }
+
+
+llxHeader();
+
+
+/*
+ *
+ *  Affichage liste des actions
+ *
+ */
 
 $sql = "SELECT s.nom as societe, s.idp as socidp, s.client, a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact, a.note, a.percent as percent";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
@@ -108,10 +116,11 @@ if ( $db->query($sql) )
   print '<tr class="liste_titre">';
   print '<td colspan="4">'.$langs->trans("Date").'</td>';
   print '<td>Avancement</td>';
-  print '<td>Action</td>';
-  print '<td>Société</td>';
-  print '<td>Contact</Td>';
-  print "<td>".$langs->trans("Comments")."</td><td>".$langs->trans("Author")."</td>";
+  print '<td>'.$langs->trans("Action").'</td>';
+  print '<td>'.$langs->trans("Company").'</td>';
+  print '<td>'.$langs->trans("Contact").'</td>';
+  print '<td>'.$langs->trans("Comments").'</td>';
+  print '<td>'.$langs->trans("Author").'</td>';
   print "</tr>\n";
   $var=true;
   while ($i < min($num,$limit))
