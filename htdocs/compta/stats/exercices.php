@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,77 +44,8 @@ if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
 print_titre("Comparatif CA année en cours avec année précédente (".MAIN_MONNAIE." HT, ".$mode.")");
 print "<br>\n";
 
-function propals ($db, $year, $month) {
-  global $bc;
-  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
-  $sql .= " AND c.id in (1,2)";
-  $sql .= " AND date_format(p.datep, '%Y') = $year ";
-  $sql .= " AND round(date_format(p.datep, '%m')) = $month ";
-
-
-  $sql .= " ORDER BY p.fk_statut";
-
-  $result = $db->query($sql);
-  $num = $db->num_rows();
-  $i = 0;
-  print '<p><table class="border" width="100%" cellspacing="0" cellpadding="4">';
-  print "<TR bgcolor=\"#e0e0e0\"><td colspan=\"3\"><b>Propal</b></td></tr>";
-
-  $oldstatut = -1;
-  $subtotal = 0;
-  while ($i < $num) {
-    $objp = $db->fetch_object( $i);
-
-    if ($objp->statut <> $oldstatut ) {
-      $oldstatut = $objp->statut;
-      
-      if ($i > 0) {
-	print "<tr><td align=\"right\" colspan=\"4\">Total : <b>".price($subtotal)."</b></td>\n";
-	print "<td align=\"left\">Euros HT</td></tr>\n";
-      }
-      $subtotal = 0;
-
-      print "<TR bgcolor=\"#e0e0e0\">";
-      print "<TD>Societe</td>";
-      print "<TD>Réf</TD>";
-      print "<TD align=\"right\">Date</TD>";
-      print "<TD align=\"right\">Prix</TD>";
-      print "<TD align=\"center\">Statut</TD>";
-      print "</TR>\n";
-      $var=True;
-    }
-  
-    $var=!$var;
-    print "<TR $bc[$var]>";
-    
-    print "<TD><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></TD>\n";
-    
-    print "<TD><a href=\"../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-    
-    print "<TD align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-    
-    print "<TD align=\"right\">".price($objp->price)."</TD>\n";
-    print "<TD align=\"center\">$objp->statut</TD>\n";
-    print "</TR>\n";
-    
-    $total = $total + $objp->price;
-    $subtotal = $subtotal + $objp->price;
-    
-    $i++;
-  }
-  print "<tr><td align=\"right\" colspan=\"4\">Total : <b>".price($subtotal)."</b></td>\n";
-  print "<td align=\"left\">Euros HT</td></tr>\n";
-  print "<tr>";
-  print "<td colspan=\"2\" align=\"right\"><b>Total : ".price($total)."</b></td>";
-  print "<td align=\"left\"><b>Euros HT</b></td></tr>";
-  print "</table>";
-  $db->free();
-
-}
-
-
-function factures ($db, $year, $month, $paye) {
+function factures ($db, $year, $month, $paye)
+{
   global $bc;
 
   $sql = "SELECT s.nom, s.idp, f.facnumber, f.total as amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
@@ -292,6 +223,7 @@ function ppt ($db, $year, $socidp)
   print "<TR class=\"liste_titre\">";
   print "<TD>Mois</TD>";
   print "<TD align=\"right\">Montant</TD>";
+  print '<td align="right">Cumul</TD>';
   print "</TR>\n";
 
   $var = 1 ;
@@ -304,6 +236,7 @@ function ppt ($db, $year, $socidp)
       print "<TR $bc[$var]>";
       print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
       print "<TD align=\"right\">".price($delta)."</TD>\n";
+      print "<TD align=\"right\">".price($deltat)."</TD>\n";
       print "</TR>\n";
     }
 
