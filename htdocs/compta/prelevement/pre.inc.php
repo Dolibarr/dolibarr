@@ -44,11 +44,17 @@ function llxHeader($head = "", $title="", $help_url='')
       $langs->load("banks");
 
       $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste.php",$langs->trans("List"));
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php",$langs->trans("Receipts"));
+      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste.php",$langs->trans("List"));
+      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste_factures.php","Factures");
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/rejets.php",$langs->trans("Rejects"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/facturesrejets.php","Factures Rejetées");
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/stats.php",$langs->trans("Statistics"));
+
+      if ($user->admin)
+	{
+	  $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Config"));
+	}
+
 
       $menu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("Demandes"));
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrderToProcess"));
