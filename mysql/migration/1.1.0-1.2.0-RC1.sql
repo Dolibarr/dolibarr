@@ -54,6 +54,9 @@ alter table llx_bank_account add adresse_proprio varchar(255) after proprio ;
 alter table llx_paiement add fk_bank integer NOT NULL after note ;
 alter table llx_paiementfourn add fk_bank integer NOT NULL after note ;
 
+alter table llx_birthday_alert rename llx_user_alert ;
+alter table llx_user_alert add type integer after rowid;
+update llx_user_alert set type=1 where type is null;
 
 alter table c_paiement rename llx_c_paiement ;
 alter table c_propalst rename llx_c_propalst ;
