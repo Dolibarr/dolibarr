@@ -320,16 +320,40 @@ insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,pe
 --
 -- Dumping data for table `llx_bank`
 --
-
 INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
-VALUES (now(),'2002-01-14','2002-01-14',20,'Liquide',1,NULL,NULL,'CB',NULL,NULL,1,NULL,NULL);
-
+VALUES (now(),'2002-01-13','2002-01-13',4000,'Dépôt liquide',1,1,1,'DEP',200201,NULL,1,NULL,NULL);
 INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
-VALUES (now(),'2002-02-14','2002-02-14',23.2,'Essence',1,NULL,NULL,'CB',NULL,NULL,1,NULL,NULL);
-
+VALUES (now(),'2002-01-14','2002-01-14',-20,'Liquide',1,1,1,'CB',200201,NULL,1,NULL,NULL);
 INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
-VALUES (now(),'2002-02-15','2002-02-15',53.32,'Cartouches imprimante',1,NULL,NULL,'CB',NULL,NULL,1,NULL,NULL);
-
+VALUES (now(),'2002-02-14','2002-02-14',-23.2,'Essence',1,1,1,'CB',200201,NULL,1,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-02-15','2002-02-15',-53.32,'Cartouches imprimante',1,1,1,'CB',200202,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-02-17','2002-02-17',-100,'Liquide',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-02-18','2002-02-18',-153.32,'Restaurant',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-02-20','2002-02-20',-1532,'Réparation climatisation',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-02-21','2002-02-21',-100,'Liquide',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-02-22','2002-02-22',-46,'Timbres postes',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-03-02','2002-03-02',-60,'Liquide',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-03-02','2002-03-02',-25.66,'Essence',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-03-03','2002-03-03',-60,'Liquide',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-03-04','2002-03-04',-15.2,'Café',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-03-06','2002-03-06',-12.3,'Péage',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-03-06','2002-03-06',-25.3,'Péage',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-03-06','2002-03-06',-9.6,'Tickets de bus',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
+INSERT INTO llx_bank (datec, datev, dateo, amount, label, fk_account, fk_user_author, fk_user_rappro, fk_type, num_releve, num_chq, rappro, note, author) 
+VALUES (now(),'2002-03-13','2002-03-13',-10,'Liquide',1,1,NULL,'CB',NULL,NULL,0,NULL,NULL);
 -- MySQL dump 9.09
 --
 -- Host: localhost    Database: dolibarr
