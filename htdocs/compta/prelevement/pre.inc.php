@@ -21,10 +21,10 @@
  *
  */
 
-/*!
-  \file       htdocs/compta/prelevement/pre.inc.php
-  \ingroup    prelevement
-  \brief      Fichier gestionnaire du menu prelevement
+/**
+    \file       htdocs/compta/prelevement/pre.inc.php
+    \ingroup    prelevement
+    \brief      Fichier gestionnaire du menu prelevement
 */
 
 require("../../main.inc.php");
@@ -41,17 +41,18 @@ function llxHeader($head = "", $title="", $help_url='')
 
   if ($conf->prelevement->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrder"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste.php","Liste");
+      $langs->load("banks");
 
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php","Bons");
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/rejets.php","Rejets");
+      $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrders"));
+      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste.php",$langs->trans("List"));
+      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php",$langs->trans("Receipts"));
+      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/rejets.php",$langs->trans("Rejects"));
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/facturesrejets.php","Factures Rejetées");
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/stats.php",$langs->trans("Statistics"));
 
-      $menu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php","Demandes");
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php","A Traiter");
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandestraitees.php","Traitées");
+      $menu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("Demandes"));
+      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrderToProcess"));
+      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandestraitees.php",$langs->trans("StandingOrderProcessed"));
     }
 
   $langs->load("bills");

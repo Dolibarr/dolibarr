@@ -22,3 +22,5 @@ BankAccountOwner=Account owner name
 BankAccountOwnerAddress=Account owner address
 NewBankAccount=New bank account
 CreateAccount=Create account
+StandingOrderToProcess=To process
+StandingOrderProcessed=Processed

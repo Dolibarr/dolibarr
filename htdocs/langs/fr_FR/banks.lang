@@ -22,3 +22,5 @@ BankAccountOwner=Nom du propriétaire du compte
 BankAccountOwnerAddress=Adresse du propriétaire du compte
 NewBankAccount=Nouveau compte bancaire
 CreateAccount=Créer compte
+StandingOrderToProcess=A traiter
+StandingOrderProcessed=Traités

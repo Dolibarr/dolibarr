@@ -268,17 +268,20 @@ class MenuLeft {
                   if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"),2);
                 }
                 
+                // Dons
                 if ($conf->don->enabled)
                 {
                   $langs->load("donations");
                   $newmenu->add(DOL_URL_ROOT."/compta/dons/index.php?leftmenu=donations&mainmenu=",$langs->trans("Donations"));
                 }
                 
+                // Déplacements
                 if ($conf->deplacement->enabled)
                 {
                   $newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=deplacement", "Déplacement");
                 }
                 
+                // Charges
                 if ($conf->compta->enabled)
                 {
                   $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges",$langs->trans("Charges"));
@@ -310,11 +313,15 @@ class MenuLeft {
 
                 }
                 
+                // Prélèvements
                 if ($conf->prelevement->enabled)
                 {
                     $newmenu->add(DOL_URL_ROOT."/compta/prelevement/index.php?leftmenu=withdraw",$langs->trans("StandingOrders"));
-                    if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php","Bons");
-                    if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php","Demandes");
+                    if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php",$langs->trans("Receipts"));
+                    if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/rejets.php",$langs->trans("Rejects"));
+                    if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/stats.php",$langs->trans("Statistics"));
+                    if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php",$langs->trans("StandingOrderToProcess"));
+                    if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandestraitees.php",$langs->trans("StandingOrderProcessed"));
                 }
                
                 // Bilan, résultats
