@@ -40,7 +40,7 @@ $offset = $limit * $page ;
 
 if ($sortfield == "")
 {
-  $sortfield="c.date_fin_validite";
+  $sortfield="c.fin_validite";
 }
 
 if ($sortorder == "")
