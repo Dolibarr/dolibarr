@@ -40,32 +40,32 @@ if ($user->societe_id > 0)
 /*
  *
  */	
-if ($HTTP_POST_VARS["action"] == 'classin') 
+if ($_POST["action"] == 'classin') 
 {
   $commande = new Commande($db);
   $commande->fetch($_GET["id"]);
-  $commande->classin($HTTP_POST_VARS["projetid"]);
+  $commande->classin($_POST["projetid"]);
 }
 /*
  *
  */	
-if ($HTTP_POST_VARS["action"] == 'add') 
+if ($_POST["action"] == 'add') 
 {
-  $datecommande = mktime(12, 0 , 0, $HTTP_POST_VARS["remonth"], $HTTP_POST_VARS["reday"], $HTTP_POST_VARS["reyear"]); 
+  $datecommande = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]); 
 
   $commande = new Commande($db);
 
-  $commande->soc_id         = $HTTP_POST_VARS["soc_id"];
+  $commande->soc_id         = $_POST["soc_id"];
   $commande->date_commande  = $datecommande;      
-  $commande->note           = $HTTP_POST_VARS["note"];
-  $commande->source         = $HTTP_POST_VARS["source_id"];
-  $commande->projetid       = $HTTP_POST_VARS["projetid"];
-  $commande->remise_percent = $HTTP_POST_VARS["remise_percent"];
+  $commande->note           = $_POST["note"];
+  $commande->source         = $_POST["source_id"];
+  $commande->projetid       = $_POST["projetid"];
+  $commande->remise_percent = $_POST["remise_percent"];
   
-  $commande->add_product($HTTP_POST_VARS["idprod1"],$HTTP_POST_VARS["qty1"],$HTTP_POST_VARS["remise_percent1"]);
-  $commande->add_product($HTTP_POST_VARS["idprod2"],$HTTP_POST_VARS["qty2"],$HTTP_POST_VARS["remise_percent2"]);
-  $commande->add_product($HTTP_POST_VARS["idprod3"],$HTTP_POST_VARS["qty3"],$HTTP_POST_VARS["remise_percent3"]);
-  $commande->add_product($HTTP_POST_VARS["idprod4"],$HTTP_POST_VARS["qty4"],$HTTP_POST_VARS["remise_percent4"]);
+  $commande->add_product($_POST["idprod1"],$_POST["qty1"],$_POST["remise_percent1"]);
+  $commande->add_product($_POST["idprod2"],$_POST["qty2"],$_POST["remise_percent2"]);
+  $commande->add_product($_POST["idprod3"],$_POST["qty3"],$_POST["remise_percent3"]);
+  $commande->add_product($_POST["idprod4"],$_POST["qty4"],$_POST["remise_percent4"]);
   
   $commande_id = $commande->create($user);
   
@@ -79,49 +79,49 @@ if ($HTTP_POST_VARS["action"] == 'add')
  */
 
 
-if ($HTTP_POST_VARS["action"] == 'setremise' && $user->rights->commande->creer) 
+if ($_POST["action"] == 'setremise' && $user->rights->commande->creer) 
 {
   $commande = new Commande($db);
   $commande->fetch($id);
 
-  $commande->set_remise($user, $HTTP_POST_VARS["remise"]);
+  $commande->set_remise($user, $_POST["remise"]);
 } 
 
-if ($HTTP_POST_VARS["action"] == 'addligne' && $user->rights->commande->creer) 
+if ($_POST["action"] == 'addligne' && $user->rights->commande->creer) 
 {
   $commande = new Commande($db);
   $commande->fetch($_GET["id"]);
 
-  if ($HTTP_POST_VARS["p_idprod"] > 0)
+  if ($_POST["p_idprod"] > 0)
     {
       $result = $commande->addline("DESC",
-				   $HTTP_POST_VARS["pu"],
-				   $HTTP_POST_VARS["pqty"],
-				   $HTTP_POST_VARS["tva_tx"],
-				   $HTTP_POST_VARS["p_idprod"],
-				   $HTTP_POST_VARS["premise"]);
+				   $_POST["pu"],
+				   $_POST["pqty"],
+				   $_POST["tva_tx"],
+				   $_POST["p_idprod"],
+				   $_POST["premise"]);
     }
   else
     {
-      $result = $commande->addline($HTTP_POST_VARS["desc"],
-				   $HTTP_POST_VARS["pu"],
-				   $HTTP_POST_VARS["qty"],
-				   $HTTP_POST_VARS["tva_tx"],
+      $result = $commande->addline($_POST["desc"],
+				   $_POST["pu"],
+				   $_POST["qty"],
+				   $_POST["tva_tx"],
 				   0,
-				   $HTTP_POST_VARS["remise_percent"]);
+				   $_POST["remise_percent"]);
     }
 }
 
-if ($HTTP_POST_VARS["action"] == 'updateligne' && $user->rights->commande->creer) 
+if ($_POST["action"] == 'updateligne' && $user->rights->commande->creer) 
 {
   $commande = new Commande($db,"",$_GET["id"]);
   if ($commande->fetch($_GET["id"]) )
     {
-      $result = $commande->update_line($HTTP_POST_VARS["elrowid"],
-				       $HTTP_POST_VARS["eldesc"],
-				       $HTTP_POST_VARS["elprice"],
-				       $HTTP_POST_VARS["elqty"],
-				       $HTTP_POST_VARS["elremise_percent"]);
+      $result = $commande->update_line($_POST["elrowid"],
+				       $_POST["eldesc"],
+				       $_POST["elprice"],
+				       $_POST["elqty"],
+				       $_POST["elremise_percent"]);
     }
   else
     {
@@ -136,7 +136,7 @@ if ($action == 'deleteline' && $user->rights->commande->creer)
   $result = $commande->delete_line($_GET["lineid"]);
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] == yes && $user->rights->commande->valider)
+if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->rights->commande->valider)
 {
   $commande = new Commande($db);
   $commande->fetch($_GET["id"]);
@@ -145,14 +145,14 @@ if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] =
   $result = $commande->valid($user);
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_cancel' && $HTTP_POST_VARS["confirm"] == yes && $user->rights->commande->valider)
+if ($_POST["action"] == 'confirm_cancel' && $_POST["confirm"] == yes && $user->rights->commande->valider)
 {
   $commande = new Commande($db);
   $commande->fetch($_GET["id"]);
   $result = $commande->cancel($user);
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
 {
   if ($user->rights->commande->supprimer ) 
     {
@@ -218,7 +218,7 @@ if ($action == 'create')
 	  $soc = new Societe($db);
 	  $soc->fetch($obj->idp);
        
-	  print '<form action="'.$PHP_SELF.'" method="post">';
+	  print '<form action="fiche.php" method="post">';
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="soc_id" value="'.$soc->id.'">' ."\n";
 	  print '<input type="hidden" name="remise_percent" value="0">';
@@ -415,7 +415,7 @@ else
 	   */
 	  if ($_GET["action"] == 'delete')
 	    {
-	      $html->form_confirm("$PHP_SELF?id=$id","Supprimer la commande","Etes-vous sûr de vouloir supprimer cette commande ?","confirm_delete");
+	      $html->form_confirm("fiche.php?id=$id","Supprimer la commande","Etes-vous sûr de vouloir supprimer cette commande ?","confirm_delete");
 	    }
 	  
 	  /*
@@ -425,7 +425,7 @@ else
 	  if ($_GET["action"] == 'valid')
 	    {
 	      //$numfa = commande_get_num($soc);
-	      $html->form_confirm("$PHP_SELF?id=$id","Valider la commande","Etes-vous sûr de vouloir valider cette commande ?","confirm_valid");
+	      $html->form_confirm("fiche.php?id=$id","Valider la commande","Etes-vous sûr de vouloir valider cette commande ?","confirm_valid");
 	    }
 	  /*
 	   * Confirmation de l'annulation
@@ -433,7 +433,7 @@ else
 	   */
 	  if ($_GET["action"] == 'annuler')
 	    {
-	      $html->form_confirm("$PHP_SELF?id=$id","Annuler la commande","Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
+	      $html->form_confirm("fiche.php?id=$id","Annuler la commande","Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
 	    }
 
 	  /*
@@ -570,10 +570,10 @@ else
 		  print '<td align="right">'.price($objp->subprice)."</td>\n";
 		  if ($commande->statut == 0  && $user->rights->commande->creer) 
 		    {
-		      print '<td align="right"><a href="'.$PHPSELF.'?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+		      print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 		      print img_edit();
 		      print '</a></td>';
-		      print '<td align="right"><a href="'.$PHPSELF.'?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+		      print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
 		      print img_delete();
 		      print '</a></td>';
 		    }
@@ -585,7 +585,7 @@ else
 		  
 		  if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
 		    {
-		      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">";
+		      print "<form action=\"fiche.php?id=$id\" method=\"post\">";
 		      print '<input type="hidden" name="action" value="updateligne">';
 		      print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
 		      print "<tr $bc[$var]>";
@@ -636,7 +636,7 @@ else
 		  print $db->error();
 		}
 
-	    print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">";
+	    print "<form action=\"fiche.php?id=$id\" method=\"post\">";
 	    print "<tr class=\"liste_titre\">";
 	    print '<td width="54%">Description</td>';
 	    print '<td width="8%" align="center">Tva</td>';
@@ -814,9 +814,9 @@ else
 	 *
 	 *
 	 */
-	if ($action == 'classer')
+	if ($_GET["action"] == 'classer')
 	  {	    
-	    print "<p><form method=\"post\" action=\"$PHP_SELF?id=$id\">\n";
+	    print '<p><form method="post" action="fiche.php?id='.$commande->id.'">';
 	    print '<input type="hidden" name="action" value="classin">';
 	    print '<table cellspacing="0" class="border" cellpadding="3">';
 	    print '<tr><td>Projet</td><td>';
