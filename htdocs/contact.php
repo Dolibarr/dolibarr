@@ -57,7 +57,7 @@ $offset = $limit * $page ;
 
 
 $sql = "SELECT s.idp, s.nom,  st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
-$sql .= " FROM llx_societe as s, llx_socpeople as p, c_stcomm as st";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."socpeople as p, ".MAIN_DB_PREFIX."c_stcomm as st";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
 
 if (strlen($stcomm))  // statut commercial
