@@ -51,7 +51,7 @@ class modSociete extends DolibarrModules
 
     $this->family = "crm";
     $this->name = "Module societe";
-    $this->description = "Module société";
+    $this->description = "Gestion des sociétés et contacts";
     $this->const_name = "MAIN_MODULE_SOCIETE";
     $this->const_config = MAIN_MODULE_SOCIETE;
 
