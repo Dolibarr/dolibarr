@@ -215,7 +215,7 @@ class Fichinter
 	  $mesg = "La fiche d'intervention ".$this->ref." a été validée.\n";
 
 	  $notify = New Notify($this->db);
-	  $notify->send($action_notify, $this->societe_id, $mesg, $filepdf);
+	  $notify->send($action_notify, $this->societe_id, $mesg, "ficheinter", $this->id, $filepdf);
 
 	  return 1;
 	}

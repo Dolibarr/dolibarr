@@ -289,7 +289,7 @@ class Facture
       $mesg = "La facture ".$this->ref." a été validée.\n";
       
       $notify = New Notify($this->db);
-      $notify->send($action_notify, $this->socidp, $mesg, $filepdf);
+      $notify->send($action_notify, $this->socidp, $mesg, "facture", $rowid, $filepdf);
 
       return $result;
     }
