@@ -778,7 +778,10 @@ class Societe {
     $this->rib();
     return $this->bank_account->verif();
   }
-
+  /**
+   * Renvoie 0 si ok
+   *
+   */
   function check_codeclient()
   {
     if (defined('CODECLIENT_ADDON') && strlen(CODECLIENT_ADDON) > 0)
@@ -792,7 +795,10 @@ class Societe {
 
 	return $mod->verif($this->db, $this->code_client);
       }
-
+    else
+      {
+	return 0;
+      }
   }
 }
 
