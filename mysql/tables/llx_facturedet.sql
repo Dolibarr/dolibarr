@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -30,5 +31,7 @@ create table llx_facturedet
   remise_percent  real default 0,    -- pourcentage de remise
   remise          real default 0,    -- montant de la remise
   subprice        real,              -- prix avant remise
-  price           real               -- prix final
+  price           real,              -- prix final
+  date_start      datetime,          -- date debut si service
+  date_end        datetime           -- date fin si service
 )type=innodb;
