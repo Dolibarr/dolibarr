@@ -54,6 +54,16 @@ td.border {
             border-left: 1px solid #000000;
             }
 
+div.menus { 
+            background: #eeeecc; 
+            color: #bbbb88;
+            border-top:    1px dashed #ccccb3;
+            border-right:  1px dashed #ccccb3;
+            border-bottom: 1px dashed #ccccb3;
+            border-left:   1px dashed #ccccb3;
+            }
+
+
 .menu { 
         background: #b3cccc; 
         font-size: 0.9em; font-weight: bold; 
