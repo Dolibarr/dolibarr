@@ -20,8 +20,6 @@
  *
  */
 
-require ($GLOBALS["DOCUMENT_ROOT"]."/html.form.class.php");
-
 class Paiement 
 {
   var $id;
