@@ -122,11 +122,8 @@ if ($conf->propal->enabled) {
 /*
  * Commandes à valider
  */
-if ($conf->commande->enabled) {
-    print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-    print '<tr class="liste_titre">';
-    print '<td colspan="2">'.translate("Commandes à valider").'</td></tr>';
-
+if ($conf->commande->enabled)
+{
     $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
     $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
     if ($socidp)
@@ -139,19 +136,22 @@ if ($conf->commande->enabled) {
       $num = $db->num_rows();
       if ($num)
         {
+	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<tr class="liste_titre">';
+	  print '<td colspan="2">'.translate("Commandes à valider").'</td></tr>';
           $i = 0;
           $var = False;
           while ($i < $num)
-    	{
-    	  $obj = $db->fetch_object($i);
-    	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"../commande/fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
-    	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
-    	  $i++;
-    	  $var=!$var;
-    	}
+	    {
+	      $obj = $db->fetch_object($i);
+	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"../commande/fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	      $i++;
+	      $var=!$var;
+	    }
+	  print "</table><br>";     
         }
     }
-    print "</table><br>";
 }
 
 /*
