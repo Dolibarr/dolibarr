@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -120,6 +120,15 @@ Class pdf_crabe {
 	  
 	      $this->_tableau_compl($pdf, $fac);	      
 
+	      if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER)) {
+			  $pdf->SetXY (10, 228);  
+		      $pdf->SetTextColor(200,0,0);
+			  $pdf->SetFont('Arial','B',8);
+			  $pdf->MultiCell(90, 3, "Aucun mode de règlement défini.",0,'L',0); 
+ 			  $pdf->MultiCell(90, 3, "Créer un compte bancaire puis aller dans la Configuration du module facture pour définir les modes de règlement.",0,'L',0); 
+		      $pdf->SetTextColor(0,0,0);
+		  }
+
 	      /*
 	       * Propose mode règlement par CHQ
 	       */
@@ -235,9 +244,23 @@ Class pdf_crabe {
       $pdf->SetXY (132, $tab2_top + 0);
       $pdf->MultiCell(42, $tab2_hl, "Total HT", 0, 'R', 0);
 
+	  // Affiche la mention TVA non applicable selon option
+      $pdf->SetXY (10, $tab2_top + 0);
 	  if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') {
-	  	$pdf->SetXY (10, $tab2_top + 0);
 	  	$pdf->MultiCell(100, $tab2_hl, "* TVA non applicable art-293B du CGI", 0, 'L', 0);
+	  }
+	  // Affiche le numéro de TVA intracommunautaire
+	  if (defined("MAIN_INFO_TVAINTRA")) {
+	  	if (MAIN_INFO_TVAINTRA == 'MAIN_INFO_TVAINTRA') {
+	      $pdf->SetTextColor(200,0,0);
+		  $pdf->SetFont('Arial','B',8);
+		  $pdf->MultiCell(90, 3, "Numéro de TVA intracommunautaire pas encore configuré.",0,'L',0); 
+		  $pdf->MultiCell(90, 3, "Aller dans la Configuration générale pour le définir ou l'effacer.",0,'L',0); 
+	      $pdf->SetTextColor(0,0,0);
+	  	}
+	  	elseif (MAIN_INFO_TVAINTRA != '') {
+	      $pdf->MultiCell(190, 5, "Numéro de TVA intracommunautaire : ".MAIN_INFO_TVAINTRA, 0, 'L');
+		}
 	  }
 
       $pdf->SetXY (174, $tab2_top + 0);
@@ -265,7 +288,7 @@ Class pdf_crabe {
 	}
 
       $pdf->SetXY (132, $tab2_top + $tab2_hl * $index);
-      $pdf->MultiCell(42, $tab2_hl, "*Total TVA", 0, 'R', 0);
+      $pdf->MultiCell(42, $tab2_hl, "Total TVA", 0, 'R', 0);
 
       $pdf->SetXY (174, $tab2_top + $tab2_hl * $index);
       $pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
