@@ -64,7 +64,7 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++)
     
       print "</td><td>$acc->bank</td><td>$acc->number</td>";
     
-      print '</td><td align="right">'.price($solde).'</td><td>&nbsp;</td></tr>';
+      print '<td align="right">'.price($solde).'</td><td>&nbsp;</td></tr>';
   
       $total += $solde;
     }
