@@ -40,6 +40,7 @@ $modules["MAIN_MODULE_COMPTABILITE"][0] = "Module comptabilité";
 $modules["MAIN_MODULE_COMPTABILITE"][1] = "MAIN_MODULE_COMPTABILITE";
 $modules["MAIN_MODULE_COMPTABILITE"][2] = MAIN_MODULE_COMPTABILITE;
 $modules["MAIN_MODULE_COMPTABILITE"][3] = "Module comptabilité";
+$modules["MAIN_MODULE_COMPTABILITE"][4] = "modComptabilite";
 
 $modules["MAIN_MODULE_COMMANDE"][0] = "Module commande";
 $modules["MAIN_MODULE_COMMANDE"][1] = "MAIN_MODULE_COMMANDE";
@@ -75,6 +76,7 @@ $modules["MAIN_MODULE_FOURNISSEUR"][0] = "Module fournisseur";
 $modules["MAIN_MODULE_FOURNISSEUR"][1] = "MAIN_MODULE_FOURNISSEUR";
 $modules["MAIN_MODULE_FOURNISSEUR"][2] = MAIN_MODULE_FOURNISSEUR;
 $modules["MAIN_MODULE_FOURNISSEUR"][3] = "Module de gestion des fournisseurs";
+$modules["MAIN_MODULE_FOURNISSEUR"][4] = "modFournisseur";
 
 $modules["MAIN_MODULE_FICHEINTER"][0] = "Module fiche intervention";
 $modules["MAIN_MODULE_FICHEINTER"][1] = "MAIN_MODULE_FICHEINTER";
