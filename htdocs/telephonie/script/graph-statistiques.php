@@ -42,6 +42,8 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camoyen.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/appelsdureemoyenne.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbmensuel.class.php");
 
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/actives.class.php");
+
 $error = 0;
 
 $datetime = time();
@@ -71,6 +73,7 @@ $dirs[2] = DOL_DATA_ROOT."/graph/telephonie/communications/";
 $dirs[3] = DOL_DATA_ROOT."/graph/telephonie/factures/";
 $dirs[4] = DOL_DATA_ROOT."/graph/telephonie/ca/";
 $dirs[5] = DOL_DATA_ROOT."/graph/telephonie/client/";
+$dirs[6] = DOL_DATA_ROOT."/graph/telephonie/lignes/";
 
 $img_root = DOL_DATA_ROOT."/graph/telephonie/";
 
@@ -94,6 +97,17 @@ if (is_array($dirs))
 	}	
     }
 }
+/***********************************************************************/
+/*
+/* Lignes actives
+/*
+/***********************************************************************/
+
+$file = $img_root . "lignes/lignes.actives.png";
+print "Graph : Lignes actives$file\n";
+$graph = new GraphLignesActives($db, $file);
+$graph->GraphMakeGraph();
+
 /***********************************************************************/
 /*
 /* Chiffre d'affaire mensuel
