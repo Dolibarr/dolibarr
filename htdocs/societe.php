@@ -74,6 +74,11 @@ print_barre_liste("Liste des societes", $page, $PHP_SELF);
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur";
 $sql .= " FROM societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id";
 
+if ($user->societe_id > 0) {
+  $sql .= " AND s.idp = " . $user->societe_id;
+}
+
+
 if (strlen($stcomm)) {
   $sql .= " AND s.fk_stcomm=$stcomm";
 }
