@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +20,38 @@
  *
  */
 
-/**
-	    \file       htdocs/includes/menus/barre_top/eldy.php
-		\brief      Gestionnaire par défaut du menu du haut
+/**	    \file       htdocs/includes/menus/barre_top/eldy.php
+		\brief      Gestionnaire nommé eldy du menu du haut
 		\version    $Revision$
 
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
-        \remarks    Toutes les entrées de menu a faire apparaitre dans la barre du haut
-        \remarks    doit etre affichée par <a class="tmenu" href="...?mainmenu=...">...</a>
+        \remarks    Toutes les entrées de menu à faire apparaitre dans la barre du haut
+        \remarks    doivent être affichées par <a class="tmenu" href="...?mainmenu=...">...</a>
         \remarks    On peut éventuellement ajouter l'attribut id="sel" dans la balise <a>
-        \remarks    quand il s'agit de l'entrée du menu qui est sélectionné.
+        \remarks    quand il s'agit de l'entrée du menu qui est sélectionnée.
 */
 
+
+if ($conf->adherent->enabled)
+{
+  $langs->load("members");
+  
+  $class="";
+  if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "adherent")
+    {
+      $class='class="tmenu" id="sel"';
+    }
+  elseif (ereg("^".DOL_URL_ROOT."\/adherents\/",$_SERVER["PHP_SELF"]))
+    {
+      $class='class="tmenu" id="sel"';
+    }
+  else
+    {
+      $class = 'class="tmenu"';
+    }
+
+  print '<a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members"'.($target?" target=$target":"").'>'.$langs->trans("Members").'</a>';
+}
 
 if ($conf->commercial->enabled)
 {
@@ -54,27 +73,6 @@ if ($conf->commercial->enabled)
 
   print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial"'.($target?" target=$target":"").'>'.$langs->trans("Commercial").'</a>';
 
-}
-
-if ($conf->adherent->enabled)
-{
-  $langs->load("members");
-  
-  $class="";
-  if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "adherent")
-    {
-      $class='class="tmenu" id="sel"';
-    }
-  elseif (ereg("^".DOL_URL_ROOT."\/adherents\/",$_SERVER["PHP_SELF"]))
-    {
-      $class='class="tmenu" id="sel"';
-    }
-  else
-    {
-      $class = 'class="tmenu"';
-    }
-
-  print '<a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members"'.($target?" target=$target":"").'>'.$langs->trans("Members").'</a>';
 }
 
 if ($conf->compta->enabled || $conf->banque->enabled || $conf->caisse->enabled)
