@@ -126,7 +126,7 @@ class Facture
       $total = $totalht + $tva;
 
       $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, remise_percent, datef, note, fk_user_author,fk_projet, fk_cond_reglement, date_lim_reglement) ";
-      $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $this->remise_percent, ".$this->db->idate($this->date).",'".addslashes($this->note)."',$user->id, $this->projetid, $this->cond_reglement,".$this->db->idate($datelim).")";      
+      $sql .= " VALUES ('$number','$socid', now(), '$totalht', '$remise','$this->remise_percent', ".$this->db->idate($this->date).",'".addslashes($this->note)."',$user->id, $this->projetid, $this->cond_reglement,".$this->db->idate($datelim).")";      
       if ( $this->db->query($sql) )
 	{
 	  $this->id = $this->db->last_insert_id();
@@ -567,7 +567,7 @@ class Facture
 	    }
 
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end)";
-	  $sql .= " VALUES ($facid, '".addslashes($desc)."', $price, $qty, $txtva, $fk_product, $remise_percent, $subprice, $remise, ";
+	  $sql .= " VALUES ($facid, '".addslashes($desc)."','$price','$qty','$txtva',$fk_product,'$remise_percent','$subprice','$remise', ";
 	  if ($datestart) { $sql.= "'$datestart', "; }
 	  else { $sql.=" null, "; }
 	  if ($dateend) { $sql.= "'$dateend' "; }
@@ -611,7 +611,7 @@ class Facture
 	      $remise_percent=0;
 	    }
 
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc',price=$price,subprice=$subprice,remise=$remise,remise_percent=$remise_percent,qty=$qty";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc',price='$price',subprice='$subprice',remise='$remise',remise_percent='$remise_percent',qty='$qty'";
   	  if ($datestart) { $sql.= ",date_start='$datestart'"; }
 	  else { $sql.=",date_start=null"; }
 	  if ($dateend) { $sql.= ",date_end='$dateend'"; }
@@ -685,7 +685,7 @@ class Facture
 	   *
 	   */
 
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET amount = $this->amount_ht, remise=$this->total_remise,  total=$this->total_ht, tva=$this->total_tva, total_ttc=$this->total_ttc";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET amount ='$this->amount_ht', remise='$this->total_remise', total='$this->total_ht', tva='$this->total_tva', total_ttc='$this->total_ttc'";
 	  $sql .= " WHERE rowid = $facid ;";
 	  
 	  if ( $this->db->query($sql) )
@@ -698,8 +698,8 @@ class Facture
 		  foreach ($tvas as $key => $value)
 		    {
 		      $sql = "REPLACE INTO ".MAIN_DB_PREFIX."facture_tva_sum SET fk_facture=".$this->id;
-		      $sql .= ", amount = ".$tvas[$key];
-		      $sql .= ", tva_tx=".$key;
+		      $sql .= ", amount = '".$tvas[$key]."'";
+		      $sql .= ", tva_tx='".$key."'";
 		      
 		      if (! $this->db->query($sql) )
 			{
