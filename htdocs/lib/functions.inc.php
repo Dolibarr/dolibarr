@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2000-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -550,8 +551,8 @@ function print_date_select($set_time='')
   $strmonth[11] = "Novembre";
   $strmonth[12] = "D&eacute;cembre";
     
-  $smonth = 1;
-  $sday = 1;
+  $smonth = 1; $endmonth = 12;
+  $sday = 1; $endday = 31;
 
   $cday = date("d", $set_time);
   $cmonth = date("n", $set_time);
@@ -559,11 +560,11 @@ function print_date_select($set_time='')
 
   print "<select name=\"reday\">";    
 
-  for ($day = 1 ; $day < $sday + 32 ; $day++) 
+  for ($day = 1 ; $day <= $endday ; $day++) 
     {
       if ($day == $cday)
 	{
-	  print "<option value=\"$day\" SELECTED>$day";
+	  print "<option value=\"$day\" selected>$day";
 	}
       else 
 	{
@@ -575,11 +576,11 @@ function print_date_select($set_time='')
 
 
   print "<select name=\"remonth\">";    
-  for ($month = $smonth ; $month < $smonth + 12 ; $month++)
+  for ($month = $smonth ; $month <= $endmonth ; $month++)
     {
       if ($month == $cmonth)
 	{
-	  print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
+	  print "<option value=\"$month\" selected>" . $strmonth[$month];
 	}
       else
 	{
