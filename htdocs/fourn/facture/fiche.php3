@@ -244,12 +244,12 @@ else
     print '<input type="hidden" name="action" value="update">';
     
     print '<table cellspacing="0" border="1" width="100%">';
-    print "<tr bgcolor=\"#e0e0e0\"><td>Société :</td>";
+    print "<tr bgcolor=\"#e0e0e0\"><td width=\"20%\">Société :</td>";
 
-    print '<td>'.stripslashes($obj->socnom);
+    print '<td width="20%">'.stripslashes($obj->socnom);
     print '</td>';
-    print '<td rowspan="6">Commentaires :<br>';
-    print '<textarea name="note" wrap="soft" cols="30" rows="15">';
+    print '<td rowspan="8" width="60%">Commentaires :<br>';
+    print '<textarea name="note" wrap="soft" cols="60" rows="30">';
     print stripslashes($obj->note);
     print '</textarea></td></tr>';
     
@@ -273,7 +273,7 @@ else
     print "</td></tr>";
     
     print "<tr><td>Auteur :</td><td>".$user->fullname."</td></tr>";
-    print "<tr><td colspan=\"3\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
+    print "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
     print "</form>";
     print "</table>";
 
