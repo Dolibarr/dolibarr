@@ -125,6 +125,7 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
   print "<TD align=\"right\">Collectée</TD>";
   print "<TD align=\"right\">Payée</TD>";
   print "<td>&nbsp;</td>\n";
+  print "<td>&nbsp;</td>\n";
   print "</TR>\n";
   $var=True;
   $total = 0;  $subtotal = 0;
@@ -145,21 +146,24 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
     $subtotal = $subtotal + $diff;
     
     print "<td align=\"right\">".price($diff)."</td>\n";
+    print "<td>&nbsp;</td>\n";
     print "</TR>\n";
     
     $i++;
     if ($i > 2) {
-      print '<tr><td align="right" colspan="3">Sous total :</td><td align="right">'.price($subtotal).'</td>';
+      print '<tr><td align="right" colspan="3">Sous total :</td><td align="right">'.price($subtotal).'</td><td align="right"><small>'.price($subtotal * 0.8).'</small></td>';
       $i = 0;
       $subtotal = 0;
     }
   }
   print '<tr><td align="right" colspan="3">Total :</td><td align="right"><b>'.price($total).'</b></td>';
+  print "<td>&nbsp;</td>\n";
   print "</TABLE>";
 
   echo '</td><td valign="top" width="50%">';
+
   /*
-   * Payée
+   * Réglée
    */
 
   print "<table width=\"100%\">";
