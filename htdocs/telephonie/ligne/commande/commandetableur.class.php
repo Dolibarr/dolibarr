@@ -44,7 +44,7 @@ class CommandeTableur
 
     $this->datef = "commande-".strftime("%d%b%y-%HH%M", $this->date);
 
-    $fname = DOL_DATA_ROOT ."/telephonie/ligne/commande/".$this->datef.".xls";
+    $fname = $conf->telephonie->dir_output . "/ligne/commande/".$this->datef.".xls";
 
     if (strlen(trim($this->fournisseur->email_commande)) == 0)
       {

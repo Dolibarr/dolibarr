@@ -94,7 +94,7 @@ if ($result)
 
       print "<td>".$obj->firstname . " ".$obj->name."</td>\n";
       print "<td>".$obj->nom."</td>\n";
-      $dir = DOL_DATA_ROOT . "/telephonie/ligne/commande/";
+      $dir = $conf->telephonie->dir_output . "/ligne/commande/";
 
       $encfile = urlencode($dir.$obj->filename);
       
