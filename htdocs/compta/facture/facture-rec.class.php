@@ -94,7 +94,7 @@ class FactureRec
 
 		  
 		  $result_insert = $this->addline($this->id, 
-						  $facsrc->lignes[$i]->desc,
+						  addslashes($facsrc->lignes[$i]->desc),
 						  $facsrc->lignes[$i]->subprice,
 						  $facsrc->lignes[$i]->qty,
 						  $facsrc->lignes[$i]->tva_taux,

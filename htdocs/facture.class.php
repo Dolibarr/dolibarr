@@ -174,7 +174,7 @@ class Facture
 		    }
 		  
 		  $result_insert = $this->addline($this->id, 
-						  $_facrec->lignes[$i]->desc,
+						  addslashes($_facrec->lignes[$i]->desc),
 						  $_facrec->lignes[$i]->subprice,
 						  $_facrec->lignes[$i]->qty,
 						  $_facrec->lignes[$i]->tva_taux,
