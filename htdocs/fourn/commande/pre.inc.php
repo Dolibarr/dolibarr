@@ -21,6 +21,8 @@
  */
 require("../../main.inc.php");
 
+require_once DOL_DOCUMENT_ROOT."/fournisseur.commande.class.php";
+
 function llxHeader($head = "", $title = "")
 {
   global $user, $langs;
