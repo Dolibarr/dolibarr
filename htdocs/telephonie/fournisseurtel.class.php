@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,6 +62,7 @@ class FournisseurTelephonie {
     $sql .= " email_commande = '".$this->email_commande."'";
     $sql .= ", num_client = '".$this->num_client."'";
     $sql .= ", class_commande = '".$this->methode_commande."'";
+    $sql .= ", commande_bloque = '".$this->commande_bloque."'";
 
     $sql .= " WHERE rowid = ".$this->id;
 
@@ -80,7 +81,7 @@ class FournisseurTelephonie {
       $this->id = $id;
 
       $sql = "SELECT f.rowid, f.nom, f.email_commande, f.commande_active";
-      $sql .= ", f.class_commande";
+      $sql .= ", f.class_commande, f.commande_bloque";
       $sql .= ", f.num_client";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
       $sql .= " WHERE f.rowid = ".$this->id;
@@ -96,6 +97,7 @@ class FournisseurTelephonie {
 	      $this->email_commande  = $obj->email_commande;
 	      $this->commande_enable = $obj->commande_active;
 	      $this->class_commande  = $obj->class_commande;
+	      $this->commande_bloque = $obj->commande_bloque;
 
 	      return 0;
 	    }
