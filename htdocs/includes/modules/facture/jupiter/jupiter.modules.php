@@ -26,19 +26,19 @@ function facture_get_num($objsoc=0)
 
   $db = new Db();
 
-  $date = strftime("%y%m", time());
+  $date = strftime("%Y%m", time());
 
   $sql = "SELECT count(*) FROM llx_facture";
-  $sql .= " WHERE facnumber like 'FA".$date."%'";
+  $sql .= " WHERE facnumber like '".$date."%'";
   if ( $db->query($sql) ) 
     {
       $row = $db->fetch_row(0);
       
       $num = $row[0];
     }
-
+  $num++;
   //  return  "FA" . $date . substr("000".$num, strlen("000".$num)-4,4);
-  return  "FA" . $date . $num;
+  return  $date . $num;
 }
 
 ?>
