@@ -37,10 +37,11 @@ class Propal
 
   var $price;
 
-  Function Propal($DB, $soc_idp="")
+  Function Propal($DB, $soc_idp="", $propalid=0)
     {
       $this->db = $DB ;
       $this->socidp = $soc_idp;
+      $this->id = $propalid;
       $this->products = array();
       $this->remise = 0;
     }
@@ -453,6 +454,30 @@ class Propal
 	  else
 	    {
 	      print $this->db->error() . ' in ' . $sql;
+	    }
+	}
+  }
+  /*
+   *
+   *
+   *
+   */
+  Function set_pdf_model($user, $modelpdf)
+    {
+      if ($user->rights->propale->creer)
+	{
+
+	  $sql = "UPDATE llx_propal SET model_pdf = '$modelpdf'";
+	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+	  
+	  if ($this->db->query($sql) )
+	    {
+	      return 1;
+	    }
+	  else
+	    {
+	      print $this->db->error() . ' in ' . $sql;
+	      return 0;
 	    }
 	}
   }
