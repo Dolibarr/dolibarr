@@ -78,7 +78,7 @@ if (! $TEMP || ! -d $TEMP) {
     sleep 2;
     exit 2;
 } 
-$BUILDROOT.="$TEMP/buildroot";
+$BUILDROOT="$TEMP/buildroot";
 
 
 
