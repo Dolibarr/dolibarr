@@ -107,7 +107,8 @@ class FactureTel {
   {
     $sql = "SELECT ".$this->db->pdate("min(date)");
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-    $sql .= " WHERE ligne = '".$this->ligne."' and date_format(date,'%Y%m') = '$date'";
+    $sql .= " WHERE ligne = '".$this->ligne."'";
+    $sql .= " AND fk_telephonie_facture =".$this->id;
 
     $resql = $this->db->query($sql);
 
@@ -125,8 +126,10 @@ class FactureTel {
 
   function get_comm_max_date($date)
   {
-    $sql = "SELECT ".$this->db->pdate("max(date)")." FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-    $sql .= " WHERE ligne = '".$this->ligne."' and EXTRACT(YEAR_MONTH FROM date) = $date";
+    $sql = "SELECT ".$this->db->pdate("max(date)");
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+    $sql .= " WHERE ligne = '".$this->ligne."'";
+    $sql .= " AND fk_telephonie_facture =".$this->id;
 
     $resql = $this->db->query($sql);
 
