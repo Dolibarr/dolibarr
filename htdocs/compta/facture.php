@@ -615,6 +615,16 @@ else
 	  print "<tr><td>Date</td>";
 	  print "<td colspan=\"3\">".strftime("%A %d %B %Y",$fac->date)."</td>\n";
 	  print "<td>Date limite de réglement : " . strftime("%d %B %Y",$fac->date_lim_reglement) ."</td></tr>";
+
+	  print '<tr><td>Projet</td><td colspan="3">';
+	  if ($fac->projetid > 0)
+	    {
+	      $projet = New Project($db);
+	      $projet->fetch($fac->projetid);
+	      print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$fac->projetid.'">'.$projet->title.'</a>';
+	    }
+	  print "&nbsp;</td><td>Paiements</td></tr>";
+
 	  print "<tr><td>Auteur</td><td colspan=\"3\">$author->fullname</td>";
 	  
 	  if ($fac->remise_percent > 0)
@@ -637,11 +647,8 @@ else
 	  {
 	    $num = $db->num_rows();
 	    $i = 0; $total = 0;
-	    print "<b>Paiements</b>";
 	    echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-	    print "<TR class=\"liste_titre\">";
-	    print "<td>Date</td>";
-	    print "<td>Type</td>";
+	    print '<tr class="liste_titre"><td>Date</td><td>Type</td>';
 	    print "<td align=\"right\">Montant</TD><td>&nbsp;</td>";
 	    if (! $fac->paye)
 	      {
@@ -660,7 +667,7 @@ else
 		print '<td align="right">'.price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
 		if (! $fac->paye && $user->rights->facture->paiement)
 		  {
-		    print '<td><a href="facture.php?facid='.$facid.'&amp;action=del_paiement&paiementid='.$objp->rowid.'">Del</a>';
+		    print '<td><a href="facture.php?facid='.$facid.'&amp;action=del_paiement&amp;paiementid='.$objp->rowid.'">Del</a>';
 		  }
 		print "</tr>";
 		$total = $total + $objp->amount;
@@ -770,8 +777,8 @@ else
 		print '<TD align="right">'.price($objp->subprice)."</td>\n";
 		if ($fac->statut == 0  && $user->rights->facture->creer) 
 		  {
-		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&amp;action=deleteline&rowid='.$objp->rowid.'">del</a></td>';
-		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&amp;action=editline&rowid='.$objp->rowid.'">edit</a></td>';
+		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">del</a></td>';
+		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&amp;action=editline&amp;rowid='.$objp->rowid.'">edit</a></td>';
 		  }
 		else
 		  {
@@ -939,7 +946,7 @@ else
 	  {
 	    print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
 	    print_titre("Documents");
-	    print '<table width="100%" cellspacing="0" border="1" cellpadding="3">';
+	    print '<table width="100%" cellspacing="0" class="border" cellpadding="3">';
 	    
 	    print "<tr $bc[0]><td>Facture PDF</td>";
 	    print '<td><a href="'.FAC_OUTPUT_URL."/".$fac->ref."/".$fac->ref.'.pdf">'.$fac->ref.'.pdf</a></td>';
@@ -1166,16 +1173,16 @@ else
     if ($result)
       {
 	$num = $db->num_rows();
-	print_barre_liste("Factures",$page,$PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder,'',$num);
+	print_barre_liste("Factures",$page,$PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 	$i = 0;
 	print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 	print '<TR class="liste_titre">';
 	print '<TD>Num&eacute;ro</TD>';
 	print '<td>';
-	print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&socidp=$socidp");
+	print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
 	print '</td><TD align="right">';
-	print_liste_field_titre("Date",$PHP_SELF,"f.datef","","&socidp=$socidp");
+	print_liste_field_titre("Date",$PHP_SELF,"f.datef","","&amp;socidp=$socidp");
 	print '</td><TD align="right">Montant</TD>';
 	print '<td>&nbsp;</td>';
 	print "</TR>\n";
@@ -1216,7 +1223,7 @@ else
 		    $m = strftime("%m",$objp->df);
 		    
 		    print strftime("%d",$objp->df)."\n";
-		    print ' <a class="'.$class.'" href="facture.php?year='.$y.'&month='.$m.'">';
+		    print ' <a class="'.$class.'" href="facture.php?year='.$y.'&amp;month='.$m.'">';
 		    print strftime("%B",$objp->df)."</a>\n";
 		    print ' <a class="'.$class.' "href="facture.php?year='.$y.'">';
 		    print strftime("%Y",$objp->df)."</a></TD>\n";
