@@ -368,11 +368,13 @@ if ($propalid) {
 
       $file = $conf->propal->outputdir. "/$obj->ref/$obj->ref.pdf";
       if (file_exists($file)) {
-	print "<tr><td>Propale PDF</a></td><td><a href=\"../../doc/propal/$obj->ref/$obj->ref.pdf\">$obj->ref.pdf</a></td></tr>";
+	print "<tr><td>Propale PDF</a></td>";
+	print '<td><a href="'.$conf->propal->outputurl.'/'.$obj->ref.'/'.$obj->ref.'.pdf">'.$obj->ref.'.pdf</a></td></tr>';
       }  
-      $file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/propal/$obj->ref/$obj->ref.ps";
+      $file = $conf->propal->outputdir . "/$obj->ref/$obj->ref.ps";
       if (file_exists($file)) {
-	print "<tr><td>Propale Postscript</a></td><td><a href=\"../../doc/propal/$obj->ref/$obj->ref.ps\">$obj->ref.ps</a></td>";
+	print "<tr><td>Propale Postscript</a></td>";
+	print '<td><a href="'.$conf->propal->outputurl.'/'.$obj->ref.'/'.$obj->ref.'.ps">'.$obj->ref.'.s</a></td></tr>';
 	print "</tr>";
       }
       print '<tr><td colspan="2">(<a href="'.$conf->propal->outputurl.'/'.$obj->ref.'">liste...</a>)</td></tr>';
