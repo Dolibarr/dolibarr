@@ -267,7 +267,7 @@ if ($_socid > 0)
      *
      */
     $var = true;
-    print '<table class="noborder" width="100%" cellspacing="0" cellpadding="1">';
+    print '<table class="border" width="100%">';
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
     $sql .= " AND s.idp = ".$objsoc->id." ORDER BY p.datep DESC";
@@ -290,7 +290,7 @@ if ($_socid > 0)
 	      {
 		print " <b>&gt; 15 jours</b>";
 	      }
-	    print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+	    print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</td>\n";
 	    print '<td align="right" width="120">'.price($objp->price).'</td>';
 	    print '<td width="100" align="center">'.$objp->statut.'</td></tr>';
 	    $var=!$var;
@@ -299,13 +299,14 @@ if ($_socid > 0)
 	$db->free();
       }
     else {
-        print "Erreur ".$db->error()."<br>".$sql;    
+        dolibarr_print_error($db);
     }
+
     /*
      * Commandes
      *
      */
-    print '<table class="border" width="100%" cellspacing="0" cellpadding="1">';
+    print '<table class="border" width="100%">';
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.total_ht, p.ref, ".$db->pdate("p.date_commande")." as dp";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p WHERE p.fk_soc = s.idp ";
     $sql .= " AND s.idp = $objsoc->id ORDER BY p.date_commande DESC";
@@ -364,7 +365,7 @@ if ($_socid > 0)
       $db->free();
       print "</table>";
     } else {
-      print $db->error();
+        dolibarr_print_error($db);
     }
 
     /*
@@ -563,7 +564,7 @@ if ($_socid > 0)
 
 	$db->free();
       } else {
-	print $db->error();
+        dolibarr_print_error($db);
       }
       print "</td></tr></table>";
 
@@ -658,7 +659,7 @@ if ($_socid > 0)
 	}
       else
 	{
-	  print $db->error();
+        dolibarr_print_error($db);
 	}
       print "</td></tr></table>";
       /*
