@@ -44,3 +44,5 @@ values ('CC-2M','Compilo','Compilateur GCC',10,'1 mois');
 
 insert into llx_product (ref, label, description, price, duration)
 values ('CC-2M','Config Alpha','Configurations a base de proc alpha',1000,'1 mois');
+
+insert into llx_propal values (1,1,1,0,'PR-LO-020403','2002-04-03 13:44:04','2002-04-03 15:45:29',NULL,'2002-04-03',2,2,NULL,1,1010,0,197.96,1207.96,'');
