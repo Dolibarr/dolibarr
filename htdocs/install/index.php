@@ -21,11 +21,16 @@
  *
  */
 
+/**
+    \file       htdocs/install/index.php
+    \brief      Test si le fichier conf existe et si il n'existe pas, test la possibilité de le créer
+    \version    $Revision$
+*/
+
 include("./inc.php");
-pHeader("Bienvenu dans Dolibarr", "licence");
+pHeader("Bienvenu dans Dolibarr", "licence");   // Etape suivante = license
 
 
-print '<p>';
 print "Nous avons fait en sorte que l'installation soit le plus simple possible, vous n'avez qu'à suivre les étapes une à une.";
 
 
@@ -48,7 +53,6 @@ else
     }
 }
 
-
 if (!file_exists($conf))
 {
   print "<br /><br />Le fichier de configuration <b>conf.php</b> n'existe pas !<br />";
@@ -58,7 +62,6 @@ if (!file_exists($conf))
 }
 else
 {
-
   if (!is_writable("../conf/conf.php"))
     {
       print "<br /><br />Le fichier de configuration <b>conf.php</b> existe.<br />";
@@ -70,7 +73,7 @@ else
   else
     {
       print "<br /><br />Le fichier de configuration <b>conf.php</b> existe.<br />";
-      print "Le fichier <b>conf.php</b> est pas accessible en écriture<br /><br />Vous pouvez continuer";
+      print "Le fichier <b>conf.php</b> est accessible en écriture<br /><br />Vous pouvez continuer...";
 
     }
 }
