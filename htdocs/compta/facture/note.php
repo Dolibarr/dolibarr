@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,15 +123,16 @@ if ($_GET["facid"])
 	      print '</form>';
 	    }
 
-
 	  print "</table>";
+
+      print "<br>";
 
 
 	  /*
 	   * Actions
 	   */
 	  print '</div>';
-	  print '<p><div class="tabsAction">';
+	  print '<div class="tabsAction">';
 	  
 	  if ($user->rights->facture->creer && $_GET["action"] <> 'edit')
 	    {
