@@ -34,19 +34,17 @@ td.border { border: 1px solid #000000}
 
 <?PHP
 
-print_titre("Résultat $year");
+print_titre("Résultat");
 
 print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print '<TR class="liste_titre">';
 print '<td width="10%">&nbsp;</td><TD>Elément</TD>';
-print "<TD align=\"center\">Montant</TD><td align=\"right\">Solde</td>";
-print "</TR>\n";
+print "<TD align=\"right\">Montant</td>";
+print "</tr>\n";
 
 $sql = "SELECT s.nom,sum(f.amount) as amount";
 $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp"; 
-if ($year > 0) {
-  $sql .= " AND date_format(f.datef, '%Y') = $year";
-}  
+
 $sql .= " GROUP BY s.nom ASC";
 
 print '<tr><td colspan="4">Factures</td></tr>';
@@ -69,8 +67,6 @@ if ($result) {
       print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
       
       $total = $total + $objp->amount;
-      print "<TD align=\"right\">".price($total)."</TD>\n";
-      
       print "</TR>\n";
       $i++;
     }
@@ -85,11 +81,9 @@ print '<tr><td colspan="3" align="right">'.price($total).'</td></tr>';
  *
  *
  */
-$sql = "SELECT s.nom,sum(f.amount) as amount";
+$sql = "SELECT s.nom,sum(f.total_ht) as amount";
 $sql .= " FROM llx_societe as s,llx_facture_fourn as f WHERE f.fk_soc = s.idp"; 
-if ($year > 0) {
-  $sql .= " AND date_format(f.datef, '%Y') = $year";
-}  
+  
 $sql .= " GROUP BY s.nom ASC";
 
 print '<tr><td colspan="4">Frais</td></tr>';
@@ -112,8 +106,6 @@ if ($result) {
       
       $total = $total - $objp->amount;
       $subtotal = $subtotal + $objp->amount;
-      print "<TD align=\"right\">".price($total)."</TD>\n";
-      
       print "</TR>\n";
       $i++;
     }
@@ -134,9 +126,7 @@ print '<tr><td colspan="4">Prestations déductibles</td></tr>';
 $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
 $sql .= " FROM c_chargesociales as c, llx_chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id AND c.deductible=1";
-if ($year > 0) {
-  $sql .= " AND date_format(s.periode, '%Y') = $year";
-}
+
 $sql .= " GROUP BY c.libelle DESC";
 
 if ( $db->query($sql) ) {
@@ -153,7 +143,6 @@ if ( $db->query($sql) ) {
     print "<tr $bc[$var]><td>&nbsp</td>";
     print '<td>'.$obj->nom.'</td>';
     print '<td align="right">'.price($obj->amount).'</td>';
-    print "<TD align=\"right\">".price($total)."</TD>\n";
     print '</tr>';
     $i++;
   }
@@ -173,9 +162,7 @@ print '<tr><td colspan="4">Prestations NON déductibles</td></tr>';
 $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
 $sql .= " FROM c_chargesociales as c, llx_chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id AND c.deductible=0";
-if ($year > 0) {
-  $sql .= " AND date_format(s.periode, '%Y') = $year";
-}
+
 $sql .= " GROUP BY c.libelle DESC";
 
 if ( $db->query($sql) ) {
@@ -192,7 +179,6 @@ if ( $db->query($sql) ) {
     print "<tr $bc[$var]><td>&nbsp</td>";
     print '<td>'.$obj->nom.'</td>';
     print '<td align="right">'.price($obj->amount).'</td>';
-    print "<TD align=\"right\">".price($total)."</TD>\n";
     print '</tr>';
     $i++;
   }
