@@ -97,6 +97,7 @@ if ($_POST["action"] == 'update')
   $fichinter->ref = $_POST["ref"];
 
   $fichinter->update($_POST["id"]);
+  $_GET["id"]=$_POST["id"];      // Force raffraichissement sur fiche venant d'etre créée
 }
 
 /*
@@ -223,10 +224,9 @@ if ($_GET["action"] == 'create')
 	      $i++;
 	    }
 	  $db->free();
-	} else {
-	  dolibarr_print_error();
 	}
       print '</select>';
+
       if ($numprojet==0) {
 	print 'Cette société n\'a pas de projet.&nbsp;';
 	print '<a href='.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$socidp.'&action=create>Créer un projet</a>';
@@ -272,8 +272,11 @@ if ($_GET["action"] == 'edit')
 
   print_titre("Mettre à jour Fiche d'intervention");
 
-  print "<form action=\"fiche.php?id=$id\" method=\"post\">";
-  
+  print "<form action=\"fiche.php\" method=\"post\">";
+
+  print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+  print "<input type=\"hidden\" name=\"id\" value=\"".$_GET["id"]."\">";
+
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
   print "<tr><td>".$langs->trans("Date")."</td><td>";
   /*
@@ -282,8 +285,6 @@ if ($_GET["action"] == 'edit')
   print_date_select($fichinter->date);
 
   print "</select></td></tr>";
-  
-  print "<input type=\"hidden\" name=\"action\" value=\"update\">";
   
   print '<tr><td>Numéro</td><td>'.$fichinter->ref.'</td></tr>';
   print '<tr><td>Durée (en jours)</td><td><input name="duree" value="'.$fichinter->duree.'"></td></tr>';

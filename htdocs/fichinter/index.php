@@ -34,6 +34,8 @@ llxHeader();
  * Liste
  *
  */
+$sortorder=$_GET["sortorder"]?$_GET["sortorder"]:$_POST["sortorder"];
+$sortfield=$_GET["sortfield"]?$_GET["sortfield"]:$_POST["sortfield"];
 
 if ($sortorder == "")
 {
