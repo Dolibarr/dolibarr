@@ -96,29 +96,14 @@ else
 	  
 	  if ($action == 'delete')
 	    {
-	      
-	      print '<form method="post" action="fiche.php?id='.$id.'">';
-	      print '<input type="hidden" name="action" value="confirm_delete">';
-	      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-	      
-	      print '<tr><td colspan="3">Supprimer un éditeur</td></tr>';
-	      
-	      print '<tr><td class="delete">Etes-vous sur de vouloir supprimer cet éditeur ?</td><td class="delete">';
 	      $htmls = new Form($db);
-	      
-	      $htmls->selectyesno("confirm","no");
-	      
-	      print "</td>\n";
-	      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
-	      print '</table>';
-	      print "</form>\n";  
+          $htmls->form_confirm("fiche.php?id=$id","Supprimer un éditeur","Etes-vous sur de vouloir supprimer cet éditeur ?","confirm_delete");
 	    }
 	  
 	  /*
 	   * Edition de la fiche
 	   *
 	   */
-
 
 	  if ($action == 'edit')
 	    {
@@ -127,10 +112,9 @@ else
 	      print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
 	      print '<input type="hidden" name="action" value="update">';
 	      
-	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<table class="border" width="100%">';
 	      print "<tr>";
 	      print '<td width="20%">Nom</td><td width="80%"><input name="nom" size="40" value="'.$editeur->nom.'"></td>';
-
 
 	      print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'">&nbsp;<input type="submit" value="'.$langs->trans("Cancel").'" name="cancel"></td></tr>';
 	      
@@ -142,7 +126,7 @@ else
 
 	  print '<div class="titre">Fiche Editeur : '.$editeur->titre.'</div><br>';
 
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="border" width="100%">';
 	  print "<tr>";
 	  print '<td width="20%">Nom</td><td width="80%">'.$editeur->nom.'</td></tr>';
 

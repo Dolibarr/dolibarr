@@ -118,25 +118,10 @@ else
 	   * Confirmation de la suppression de la newsletter
 	   *
 	   */
-	  
 	  if ($action == 'delete')
 	    {
-	      
-	      print '<form method="post" action="fiche.php?id='.$id.'">';
-	      print '<input type="hidden" name="action" value="confirm_delete">';
-	      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-	      
-	      print '<tr><td colspan="3">Supprimer un éditeur</td></tr>';
-	      
-	      print '<tr><td class="delete">Etes-vous sur de vouloir supprimer cette newsletter ?</td><td class="delete">';
 	      $htmls = new Form($db);
-	      
-	      $htmls->selectyesno("confirm","no");
-	      
-	      print "</td>\n";
-	      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
-	      print '</table>';
-	      print "</form>\n";  
+          $htmls->form_confirm("fiche.php?id=$id","Supprimer une newsletter","Etes-vous sur de vouloir supprimer cet newsletter ?","confirm_delete");
 	    }
 
 	  /*
@@ -146,9 +131,7 @@ else
 	  if ($action == 'valid')
 	    {
 	      $htmls = new Form($db);
-	      $htmls->form_confirm('fiche.php?id='.$id,
-				   "Valider une newsletter",
-				   "Etes-vous sûr de vouloir valider cette newsletter ?");
+	      $htmls->form_confirm('fiche.php?id='.$id,"Valider une newsletter","Etes-vous sûr de vouloir valider cette newsletter ?");
 	    }
 	  /*
 	   *
@@ -159,7 +142,7 @@ else
 	      
 	      print '<form method="post" action="fiche.php?id='.$id.'">';
 	      print '<input type="hidden" name="action" value="confirm_send">';
-	      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+	      print '<table class="border" width="100%">';
 	      
 	      print '<tr><td colspan="3">Envoi de newsletter</td></tr>';
 	      
@@ -187,7 +170,7 @@ else
 	      print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
 	      print '<input type="hidden" name="action" value="update">';
 	      
-	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<table class="border">';
 
 	      print '<tr><td>Emetteur nom</td><td><input name="email_from_name" size="30" value="'.$newsletter->email_from_name.'"></td></tr>';
 	      print '<tr><td>Emetteur email</td><td><input name="email_from_email" size="40" value="'.$newsletter->email_from_email.'"></td></tr>';
@@ -214,7 +197,7 @@ else
 
 	  print '<div class="titre">Fiche Newsletter : '.$newsletter->titre.'</div><br>';
 
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="border" width="100%">';
 
 	  print '<tr><td width="20%">Emetteur nom</td><td>'.$newsletter->email_from_name.'</td></tr>';
 	  print '<tr><td width="20%">Emetteur email</td><td>'.$newsletter->email_from_email.'</td></tr>';
@@ -227,7 +210,7 @@ else
 	  if ($newsletter->status == 3)
 	    {
 	      print "<br />";
-	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<table class="border" width="100%">';
 
 	      print '<tr><td width="20%">Début de l\'envoi</td><td width="30%">'.strftime("%d %B %Y %H:%M:%S",$newsletter->date_send_begin).'</td>';
 	      print '<td width="20%">Nombre de mails envoyés</td><td width="30%">'.$newsletter->nbsent.'</td></tr>';

@@ -222,24 +222,10 @@ else
 	  
 	  if ($action == 'delete')
 	    {
-	      
-	      print '<form method="post" action="fiche.php?id='.$id.'">';
-	      print '<input type="hidden" name="action" value="confirm_delete">';
-	      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-	      
-	      print '<tr><td colspan="3">Supprimer le livre</td></tr>';	      
-	      print '<tr><td class="delete">Etes-vous sur de vouloir supprimer cet ouvrage ?</td><td class="delete">';
 	      $htmls = new Form($db);
-	      
-	      $htmls->selectyesno("confirm","no");
-	      
-	      print "</td>\n";
-	      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
-	      print '</table>';
-	      print "</form>\n";  
+          $htmls->form_confirm("fiche.php?id=$id","Supprimer un ouvrage","Etes-vous sur de vouloir supprimer cet ouvrage ?","confirm_delete");
 	    }
 	  
-
 
 	  if ($action == 'edit')
 	    {
@@ -248,7 +234,7 @@ else
 	      print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
 	      print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	      
-	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<table class="border" width="100%">';
 	      print "<tr>";
 	      print '<td width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$livre->ref.'"></td>';
 	      print '<td valign="top">'.$langs->trans("Description").'</td></tr>';
@@ -347,7 +333,7 @@ else
 
 	  print '<div class="titre">Fiche Livre : '.$livre->titre.'</div><br>';
 
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="border" width="100%">';
 	  print "<tr>";
 	  print '<td width="15%">'.$langs->trans("Ref").'</td><td width="20%">'.$livre->ref.'</td>';
 	  print '<td width="50%" valign="top">'.$langs->trans("Description").'</td>';
