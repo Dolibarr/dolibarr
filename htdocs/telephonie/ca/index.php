@@ -61,7 +61,7 @@ if ($db->query($sql))
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>Mois</td><td align="right">Chiffre d\'affaire</td>';
-  print '<td align="right">Gain</td><td align="right">Lignes</td>';
+  print '<td align="right">Gain</td><td align="right">Marge</td>';
   print "</tr>\n";
   $var=True;
 
@@ -74,7 +74,7 @@ if ($db->query($sql))
       print "<td>".substr($row[0],5,2)." ".substr($row[0],0,4)."</td>\n";
       print '<td align="right">'.price($row[1])." HT</td>\n";
       print '<td align="right">'.price($row[2])." HT</td>\n";
-      print '<td align="right">'.$row[3]."</td>\n";
+      print '<td align="right">'.round(($row[2]/$row[1])*100,2)." %</td>\n";
       print "</tr>\n";
       $i++;
     }
