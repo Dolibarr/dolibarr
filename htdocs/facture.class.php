@@ -572,7 +572,7 @@ class Facture
 	  $subprice  = ereg_replace(",",".",$subprice);
 	  
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise, date_start, date_end)";
-	  $sql .= " VALUES ($facid, '".addslashes($desc)."','$price','$qty','$txtva',$fk_product,'$remise_percent','$subprice','$remise', ";
+	  $sql .= " VALUES ($facid, '".addslashes($desc)."','$_price','$qty','$txtva',$fk_product,'$remise_percent','$subprice','$remise', ";
 
 	  if ($datestart) { $sql.= "'$datestart', "; }
 	  else { $sql.=" null, "; }
