@@ -26,6 +26,6 @@ create table llx_facturedet
   fk_product      integer,
   description     text,
   price           real default 0,
-  qty             smallint
-
+  qty             smallint,
+  tva_taux        real default 19.6
 );
