@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +15,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
-require("../main.inc.php3");
+require("../../main.inc.php3");
+require("../../projetdon.class.php");
 
-function llxHeader($head = "", $urlp = "") {
+$libelle[0] = "Promesses non validées";
+$libelle[1] = "Promesses validées";
+$libelle[2] = "Dons payés";
+$libelle[3] = "Dons encaissés";
+
+function llxHeader($head = "") {
   global $user, $conf;
 
 
@@ -33,10 +39,13 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/adherents/", "Adherents");
+  $menu->add("/compta/dons/","Dons");
+  $menu->add_submenu("fiche.php?action=create","Saisir un don");
+
+  $menu->add("/compta/bank/index.php3","Bank");
 
   left_menu($menu->liste);
-}
 
+}
 
 ?>
