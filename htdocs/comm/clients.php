@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/**
+	    \file       htdocs/comm/clients.php
+        \ingroup    commercial, societe
+		\brief      Liste des clients
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 /*
@@ -99,9 +107,9 @@ if ($result)
   $addu = "&amp;page=$page&amp;begin=$begin&amp;search_nom=".$_GET["search_nom"];
   print '<table class="liste">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Companies"),"clients.php","s.nom",$addu,"",'');
-  print_liste_field_titre($langs->trans("Code"),"clients.php","s.code_client",$addu,"",'');
-  print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$addu);
+  print_liste_field_titre($langs->trans("Companies"),"clients.php","s.nom",$addu,"","",$sortfield);
+  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client",$addu,"","",$sortfield);
+  print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$addu,"","",$sortfield);
   print "<td>&nbsp;</td></tr>\n";
 
   print '<form method="get" action="clients.php">';
@@ -110,7 +118,7 @@ if ($result)
   print '<input type="text" name="search_nom" value="'.stripslashes($_GET["search_nom"]).'">';
   print '</td><td valign="right">';
   print '<input type="text" name="search_code" value="'.$_GET["search_code"].'">';
-  print '</td><td colspan="2"><input type="submit">';
+  print '</td><td>&nbsp;</td><td align="center"><input type="submit" value="'.$langs->trans("Search").'">';
   print "</td>";
   print "</tr>\n";
 
@@ -128,7 +136,7 @@ if ($result)
       print "</a>&nbsp;<a href=\"fiche.php?socid=$obj->idp\">".stripslashes($obj->nom)."</A></td>\n";
       print "<td>".$obj->code_client."&nbsp;</td>\n";
       print "<td>".$obj->ville."&nbsp;</td>\n";
-      print '<td><a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';
+      print '<td align="center"><a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';
       print img_folder();
       print "</a></td></tr>\n";
       $i++;

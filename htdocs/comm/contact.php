@@ -21,6 +21,14 @@
  * $Source$
  *
  */
+
+/**
+    \file       htdocs/comm/contact.php
+    \ingroup    commercial
+    \brief      Liste des contacts
+    \version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $langs->load("companies");
@@ -133,7 +141,7 @@ if ($result)
   
   print_barre_liste("Liste des contacts $label",$page, "contact.php", "&amp;type=$type",$sortfield,$sortorder,"",$num);
   
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Lastname"),"contact.php","lower(p.name)", $begin,"&amp;type=$type");
   print_liste_field_titre($langs->trans("Firstname"),"contact.php","lower(p.firstname)", $begin,"&amp;type=$type");
@@ -150,8 +158,8 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.img_file();
-      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->name.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'&socid='.$obj->idp.'">'.img_file();
+      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->name.'</a></td>';
       print "<td>$obj->firstname</TD>";
       
       print '<td><a href="contact.php?type='.$type.'&socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0" alt="filtrer"></a>&nbsp;';

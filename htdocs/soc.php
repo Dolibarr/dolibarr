@@ -181,7 +181,7 @@ if ($_GET["action"] == 'create')
       print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel"></td>';
       print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax"></td></tr>';
       
-      print '<tr><td>'.$langs->trans('Code client').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
+      print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
       print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input size="40" type="text" name="url"></td></tr>';
 
       print '<tr><td>'.$langs->trans('ProfIdSiren').'</td><td><input type="text" name="siren"></td>';
@@ -271,7 +271,7 @@ elseif ($_GET["action"] == 'edit')
       print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
       print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
 
-      print '<tr><td>'.$langs->trans('Code client').'</td><td colspan="3">';
+      print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3">';
 
       if ($soc->codeclient_modifiable == 1)
 	{
@@ -416,7 +416,7 @@ else
   print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
 
   print '<tr><td>';
-  print $langs->trans('Code client').'</td><td colspan="3">';
+  print $langs->trans('CustomerCode').'</td><td colspan="3">';
   print $soc->code_client;
   if ($soc->check_codeclient() <> 0)
     {
