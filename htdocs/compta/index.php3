@@ -73,7 +73,7 @@ if ($action == 'del_bookmark')
  *
  *
  */
-print_titre(translate("Espace compta"));
+print_titre(translate("Accueil comptabilité"));
 
 print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
