@@ -1,4 +1,6 @@
 # Dolibarr language file - fr_FR - propal
+Prop=Proposition commerciale
+NewProp=Nouvelle proposition commerciale
 Prospect=Prospect
 ProspectList=Liste des prospects
 DeleteProp=Effacer une action

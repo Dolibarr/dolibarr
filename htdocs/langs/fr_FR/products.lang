@@ -7,6 +7,7 @@ NewProduct=Nouveau produit
 NewService=Nouveau service
 ProductCode=Code produit
 ServiceCode=Code service
+ProductOrService=Produit ou Service
 ProductsAndServices=Produits et Services
 ProductsAndServicesOnSell=Produits et Services en vente
 ProductsAndServicesNotOnSell=Produits et Services hors vente

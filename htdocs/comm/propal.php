@@ -402,10 +402,7 @@ if ($_GET["propalid"])
 	  print "<tr class=\"liste_titre\">";
 	  print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("ProductOrService").'</td>';
 	  print '<td align="center">'.$langs->trans("VAT").'</td><td align="center">'.$langs->trans("Qty").'</td><td align="center">Remise</td><td align="right">P.U.</td>';
-	  if ($propal->statut == 0)
-	    {
-	      print "<td>&nbsp;</td>";
-	    }
+      print "<td>&nbsp;</td>";
 	  print "</tr>\n";
 
 	  $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.tva_tx, pt.remise_percent, pt.subprice";
@@ -436,6 +433,9 @@ if ($_GET["propalid"])
 		      print img_delete();
 		      print '</a></td>';
 		    }
+		  else {
+		      print '<td>&nbsp;</td>'; 
+		  }
 		  print "</tr>";
 
 		  $i++;
@@ -445,13 +445,14 @@ if ($_GET["propalid"])
 	  $sql = "SELECT pt.rowid, pt.description, pt.price, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt WHERE pt.fk_propal = $propal->id AND pt.fk_product = 0";
 	  
-	  if ($db->query($sql)) 
+      $result = $db->query($sql);
+	  if ($result) 
 	    {
 	      $num = $db->num_rows();
 	      $i = 0;	     
 	      while ($i < $num) 
-		{
-		  $objp = $db->fetch_object();
+		    {
+		  $objp = $db->fetch_object($result);
 		  $var=!$var;
 		  print "<tr $bc[$var]><td>&nbsp;</td>\n";
 		  print '<td>'.$objp->description.'</td>';
@@ -467,36 +468,33 @@ if ($_GET["propalid"])
 		    }
 		  else
 		    {
-		      print '<td>-</td>';
+		      print '<td>&nbsp;</td>';
 		    }
 		  print "</tr>";
 		  $i++;
-		}
+		    }
 	    }
 
 	  if ($propal->statut == 0 && $user->rights->propale->creer)
 	    {
 	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p WHERE p.envente=1 ORDER BY p.nbvente DESC LIMIT 20";
-	      // RyXéo on a ORDER BY p.ref et pas de limit
 	      $result = $db->query($sql);
 		  if ($result)
 		    {
     		  $opt = "<option value=\"0\" selected></option>";
 		      $num = $db->num_rows();	$i = 0;	
 		      while ($i < $num)
-			{
+			    {
 			  $objp = $db->fetch_object($result);
 			  $opt .= "<option value=\"$objp->rowid\">[$objp->ref] ".substr($objp->label,0,40)."</option>\n";
 			  $i++;
-			}
-		    }
-		  $db->free();
-		}
-	      else
-		{
-		  dolibarr_print_error($db);
-		}
-
+			    }
+		      $db->free();
+    		}
+   	      else
+    		{
+    		  dolibarr_print_error($db);
+    		}
 
 	      /*
 	       * Ligne d'ajout de produits/services personalisé
@@ -518,17 +516,22 @@ if ($_GET["propalid"])
 	       * Ligne d'ajout de produits/services prédéfinis
 	       */
 	      $var=!$var;
-	      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"2\"><select name=\"idprod\">$opt</select></td>";
+	      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"2\"><select name=\"idprod\">".$opt."</select></td>";
 	      print '<td align="center"><input type="text" size="3" name="qty" value="1"></td>';
 	      print '<td align="center"><input type="text" size="3" name="remise" value="'.$societe->remise_client.'"> %</td>';
 	      print '<td>&nbsp;</td>';
 	      print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="addligne"></td>';
 	      print "</tr>\n";
 	    }
+
 	  print "</table>";
 	  print '</form><br>';
 
+      }
+
 	  print '</div>';
+
+
 
 	  /*
 	   * Barre d'actions
@@ -552,7 +555,7 @@ if ($_GET["propalid"])
 		{
 		  if ($user->rights->propale->creer)
 		    {
-		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=modif\">".$langs->trans("Save")."</a>";
+		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=modif\">".$langs->trans("Edit")."</a>";
 		    }
 		}
 
@@ -585,9 +588,6 @@ if ($_GET["propalid"])
 		    }
 		}
 
-	      print "</div>";
-	    }
-
           // Close
 	      if ($propal->statut != 0)
 		{
@@ -596,6 +596,10 @@ if ($_GET["propalid"])
 		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=statut\">".$langs->trans("Close")."</a>";
 		    }
 		} 
+
+	      print "</div>";
+
+	    }
 
 
 

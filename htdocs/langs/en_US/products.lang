@@ -7,6 +7,7 @@ NewProduct=New product
 NewService=New service
 ProductCode=Product code
 ServiceCode=Service code
+ProductOrService=Product or Service
 ProductsAndServices=Products and Services
 ProductsAndServicesOnSell=Products and Services on sell
 ProductsAndServicesNotOnSell=Products and Services out of sell
