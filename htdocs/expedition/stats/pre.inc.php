@@ -20,6 +20,7 @@
  *
  */
 require("../../main.inc.php");
+require("../../bargraph.class.php");
 
 function llxHeader($head = "", $urlp = "")
 {
