@@ -104,7 +104,7 @@ if ($action == 'stcomm')
 {
   if ($stcommid <> 'null' && $stcommid <> $oldstcomm)
     {
-      $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."socstatutlog (datel, fk_soc, fk_statut, author) ";
       $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $GLOBALS["REMOTE_USER"] . "')";
       $result = @$db->query($sql);
       
