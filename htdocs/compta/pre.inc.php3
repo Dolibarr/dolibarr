@@ -35,7 +35,7 @@ function llxHeader($head = "") {
 
   $menu->add("/compta/facture.php3","Factures");
   $menu->add_submenu("paiement.php3","Paiements");
-  $menu->add_submenu("fac.php3","admin fac");
+  //  $menu->add_submenu("fac.php3","admin fac");
 
   $menu->add("ca.php3","Chiffres d'affaires");
 
@@ -50,10 +50,17 @@ function llxHeader($head = "") {
 
   $menu->add("bank/index.php3","Bank");
 
-  $menu->add("voyage/index.php3","Voyages");
+  if ($conf->voyage) {
 
-  $menu->add_submenu("voyage/index.php3","Voyages");
-  $menu->add_submenu("voyage/reduc.php3","Reduc");
+    $menu->add("voyage/index.php3","Voyages");
+
+    $menu->add_submenu("voyage/index.php3","Voyages");
+    $menu->add_submenu("voyage/reduc.php3","Reduc");
+  }
+
+  $menu->add("ligne.php3","Compta");
+  $menu->add_submenu("ligne.php3","Lignes");
+  $menu->add_submenu("config.php3","Configuration");
 
   left_menu($menu->liste);
 

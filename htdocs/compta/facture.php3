@@ -25,7 +25,9 @@ llxHeader();
 
 $db = new Db();
 
-
+$yn[1] = "oui";
+$yn[0] = "<b>non</b>";
+	
 if ($action == 'valid') {
   $sql = "UPDATE llx_facture set fk_statut = 1 WHERE rowid = $facid ;";
   $result = $db->query( $sql);
@@ -461,9 +463,6 @@ if ($action == 'create') {
 	  }
 	
 	  print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
-	
-	  $yn[1] = "oui";
-	  $yn[0] = "<b>non</b>";
 	
 	  $total = $total + $objp->amount;
 	  $subtotal = $subtotal + $objp->amount;	  

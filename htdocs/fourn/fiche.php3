@@ -21,7 +21,6 @@
  */
 require("./pre.inc.php3");
 require("../contact.class.php3");
-require("../societe.class.php3");
 
 llxHeader();
 $db = new Db();
@@ -31,24 +30,10 @@ if ($sortorder == "") {
 if ($sortfield == "") {
   $sortfield="nom";
 }
-$bc[0]="bgcolor=\"#c0f0c0\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
-$bc2[0]="bgcolor=\"#c9f000\"";
-$bc2[1]="bgcolor=\"#b9e000\"";
-
-
-$yn["t"] = "oui";
-$yn["f"] = "non";
-$yn["1"] = "oui";
-$yn["0"] = "non";
-
-$deacmeth["b"] = "robots";
-$deacmeth["m"] = "manuelle";
 
 if ($action == 'attribute_prefix') {
   $societe = new Societe($db, $socid);
   $societe->attribute_prefix($db, $socid);
-  //$prefix_attrib = soc_attribute_prefix($db, $socid);
 }
 
 if ($action == 'recontact') {
@@ -85,12 +70,6 @@ if ($action == 'stcomm') {
     }
   }
 }
-if ($page == -1) { $page = 0 ; }
-$limit = 26;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
 
 /*
  * Recherche

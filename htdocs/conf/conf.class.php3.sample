@@ -46,6 +46,7 @@ class Conf {
 
     $this->css = "theme/dolibarr/dolibarr.css";
 
+    $this->voyage = 0;
   }  
 }
 

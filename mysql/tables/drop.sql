@@ -77,6 +77,10 @@ drop table if exists llx_bank_class;
 
 drop table if exists llx_bookmark;
 
+drop table if exists llx_compta;
+
+drop table if exists llx_compta_account;
+
 drop table if exists llx_fa_pr;
 
 drop table if exists llx_facture;

@@ -224,3 +224,8 @@ delete from llx_propal;
 delete from llx_propaldet;
 delete from llx_facture;
 delete from llx_paiement;
+
+
+delete from llx_compta_account;
+insert into llx_compta_account (datec, number, label, fk_user_author) values (now(),'431000','URSSAF',1);
+insert into llx_compta_account (datec, number, label, fk_user_author) values (now(),'654000','Clients',1);

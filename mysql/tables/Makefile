@@ -37,6 +37,8 @@ create:
 	$(MYSQL) $(BASE) < llx_bank_categ.sql
 	$(MYSQL) $(BASE) < llx_bank_class.sql
 	$(MYSQL) $(BASE) < llx_bookmark.sql
+	$(MYSQL) $(BASE) < llx_compta.sql
+	$(MYSQL) $(BASE) < llx_compta_account.sql
 	$(MYSQL) $(BASE) < llx_fa_pr.sql
 	$(MYSQL) $(BASE) < llx_facture.sql
 	$(MYSQL) $(BASE) < llx_facture_fourn.sql
