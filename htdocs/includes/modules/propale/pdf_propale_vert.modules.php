@@ -204,7 +204,7 @@ class pdf_propale_vert extends ModelePDFPropales
 	       */
 	      	      
 	      $pdf->Output($file);
-	  
+	  return 1;
 	    }
 	}
     }
