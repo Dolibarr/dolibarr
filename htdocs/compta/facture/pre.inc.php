@@ -47,10 +47,15 @@ function llxHeader($head = "", $title="", $help_url='') {
       $menu->add(DOL_URL_ROOT."/compta/dons/","Dons");
     }
 
-  $menu->add(DOL_URL_ROOT."/compta/facture.php","Factures");
-  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
-
+  if ($conf->don->enabled)
+    {
+  	$menu->add(DOL_URL_ROOT."/compta/facture.php","Factures");
+	$menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
+	}
+  if ($conf->contrat->enabled)
+    {
   $menu->add(DOL_URL_ROOT."/contrat/","Contrats");
+	}
 
   left_menu($menu->liste, $help_url);
 }
