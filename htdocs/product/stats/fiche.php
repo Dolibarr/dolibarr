@@ -65,20 +65,19 @@ if ($id)
 
       print_fiche_titre('Fiche produit : '.$product->ref, $mesg);
       
-      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-      print "<tr>";
+      print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
       print '<td width="20%">Référence</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
       print '<td>Statistiques</td></tr>';
-      print "<td>Libellé</td><td>$product->libelle</td>";
+      print "<tr><td>Libellé</td><td>$product->libelle</td>";
       print '<td valign="top" rowspan="2">';
       print "Propositions commerciales : ".$product->count_propale();
       print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
       print '<br><a href="facture.php?id='.$id.'">Factures</a> : '.$product->count_facture();
       print '</td></tr>';
-      print '<tr><td>Prix</td><TD>'.price($product->price).'</td></tr>';
+      print '<tr><td>Prix</td><td>'.price($product->price).'</td></tr>';
       print "</table>";
 
-      print '<br><table border="1" width="100%" cellspacing="0" cellpadding="4">';
+      print '<br><table class="border" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre"><td width="50%" colspan="2" align="center">Nombre de ventes<br>sur les 12 derniers mois</td>';
       print '<td align="center" width="50%" colspan="2">Nombre de pièces vendues</td></tr>';
       print '<tr><td align="center" colspan="2">';
@@ -90,9 +89,9 @@ if ($id)
       
       print '</td></tr><tr>';
       print '<td>Généré le '.strftime("%d %b %Y %H:%M:%S",filemtime($filev)).'</td>';
-      print '<td align="center">[<a href="fiche.php?id='.$id.'&action=recalcul">Re-calculer</a>]</td>';
+      print '<td align="center">[<a href="fiche.php?id='.$id.'&amp;action=recalcul">Re-calculer</a>]</td>';
       print '<td>Généré le '.strftime("%d %b %Y %H:%M:%S",filemtime($filev)).'</td>';
-      print '<td align="center">[<a href="fiche.php?id='.$id.'&action=recalcul">Re-calculer</a>]</td>';
+      print '<td align="center">[<a href="fiche.php?id='.$id.'&amp;action=recalcul">Re-calculer</a>]</td>';
       print '</tr></table>';
 
     }
