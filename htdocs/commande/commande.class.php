@@ -20,14 +20,24 @@
  *
  */
 
+/*!	\file htdocs/commande/commande.class.php
+		\ingroup    commande
+		\brief      Fichier des classes de commandes
+		\version    $Revision$
+*/
+
+
+/*!	\class Commande
+		\brief      Classe de gestion de commande
+*/
+
 class Commande 
 {
   var $db ;
   var $id ;
   var $brouillon;
-  /**
-   * Initialisation
-   *
+
+  /*!  \brief  Constructeur
    */
   function Commande($DB)
     {
@@ -47,9 +57,10 @@ class Commande
 
       $this->products = array();
     }
-  /**
-   * Créé la facture depuis une propale existante
-   *
+
+  /*!   \brief      Créé la facture depuis une propale existante
+        \param      user            Utilisateur qui crée
+        \param      propale_id      id de la propale qui sert de modèle
    */
   function create_from_propale($user, $propale_id)
     {
@@ -86,9 +97,9 @@ class Commande
       $this->propale_id = $propal->id;
       return $this->create($user);
     }
-  /**
-   * Valide la commande
-   *
+
+  /*!   \brief      Valide la commande
+        \param      user            Utilisateur qui valide
    */
   function valid($user)
     {
@@ -101,7 +112,16 @@ class Commande
 		{
 		  require_once DOL_DOCUMENT_ROOT ."/includes/modules/commande/".COMMANDE_ADDON.".php";
 		  
-		  $modName = COMMANDE_ADDON;
+		  // Definition du nom de module de numerotation de commande
+
+		  // \todo  Normer le nom des classes des modules de numérotation de ref de commande avec un nom du type NumRefCommandesXxxx
+		  //
+		  //$list=split("_",COMMANDE_ADDON);
+		  //$numrefname=$list[2];
+		  //$modName = "NumRefCommandes".ucfirst($numrefname);
+		  $modName=COMMANDE_ADDON;
+		  
+		  // Recuperation de la nouvelle reference
 		  $objMod = new $modName($this->db);
 		  $num = $objMod->commande_get_num();
 
@@ -115,7 +135,7 @@ class Commande
 		  else
 		    {
 		      $result = -1;
-		      print $this->db->error() . ' in ' . $sql;
+		      dolibarr_print_error($this->db);
 		    }
 		  
 		}
@@ -149,7 +169,7 @@ class Commande
 	    }
 	  else
 	    {
-	      print $this->db->error() . ' in ' . $sql;
+		      dolibarr_print_error($this->db);
 	    }
 	}
   }
@@ -172,7 +192,7 @@ class Commande
 	    }
 	  else
 	    {
-	      print $this->db->error() . ' in ' . $sql;
+		      dolibarr_print_error($this->db);
 	    }
 	}
   }
@@ -249,7 +269,7 @@ class Commande
 								 
 		  if ( $result_insert < 0)
 		    {
-		      print $sql . '<br>' . $this->db->error() .'<br>';
+		      dolibarr_print_error($this->db);
 		    }
 		}
 	      
@@ -266,7 +286,7 @@ class Commande
 	}
       else
 	{
-	  print $this->db->error() . '<b><br>'.$sql;
+      dolibarr_print_error($this->db);
 	  return 0;
 	}
     }
@@ -310,8 +330,7 @@ class Commande
 	    }
 	  else
 	    {
-	      print $this->db->error();
-	      print "<br>".$sql;
+	      dolibarr_print_error($this->db);
 	      return -2;
 	    }
 	}
@@ -360,7 +379,7 @@ class Commande
 	    }
 	  else
 	    {
-	      print "<br>$sql<br>".$this->db->error();
+	      dolibarr_print_error($this->db);
 	      return -1;
 	    }
 	}
@@ -437,15 +456,13 @@ class Commande
 	    }
 	  else
 	    {
-	      print $this->db->error();
-	      print "$sql";
+	      dolibarr_print_error($this->db);
 	      return -1;
 	    }
 	}
       else
 	{
-	  print $this->db->error();
-	  print "$sql";
+      dolibarr_print_error($this->db);
 	  return -1;
 	}
     }
@@ -589,7 +606,7 @@ class Commande
 	    }
 	  else
 	    {
-	      print $this->db->error() . ' in ' . $sql;
+	      dolibarr_print_error($this->db);
 	    }
 	}
     }
@@ -608,7 +625,7 @@ class Commande
 	}
       else
 	{
-	  print $this->db->error() . ' in ' . $sql;
+      dolibarr_print_error($this->db);
 	}
 
     }
@@ -701,7 +718,7 @@ class Commande
 	    }
 	  else
 	    {
-	      print "Erreur : $sql";
+	      dolibarr_print_error($this->db);
 	    }
 	}
     }
@@ -761,11 +778,15 @@ class Commande
 	}
       else
 	{
-	  print $this->db->error() . ' in ' . $sql;
+      dolibarr_print_error($this->db);
 	}
     }
 
 }
+
+/*!	\class CommandeLigne
+		\brief      Classe de gestion des lignes de commande
+*/
 
 class CommandeLigne
 {

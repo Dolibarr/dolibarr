@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/*!	\file htdocs/commande/fiche.php
+		\ingroup    commande
+		\brief      Fiche commande
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $langs->load("orders");
