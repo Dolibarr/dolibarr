@@ -53,19 +53,32 @@ if ($user->societe_id > 0)
 $mode='recettes';
 if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
 
-
-$title="Chiffre d'affaire (".$conf->monnaie." HT, ".$mode.")";
+if ($mode=='creances') {
+	$title="Chiffre d'affaire (".$conf->monnaie." HT, ".$mode.")";
+} else {
+	$title="Chiffre d'affaire (".$conf->monnaie." TTC, ".$mode.")";
+}
 $lien=($year_start?"<a href='index.php?year_start=".($year_start-1)."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."'>".img_next()."</a>":"");
 print_fiche_titre($title,$lien);
 
 print '<br>';
 
-$sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-$sql .= " WHERE f.fk_statut = 1";
-if ($conf->compta->mode != 'CREANCES-DETTES') { 
+if ($conf->compta->mode == 'CREANCES-DETTES') { 
+	$sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql .= " WHERE f.fk_statut = 1";
 	$sql .= " AND f.paye = 1";
+} else {
+/*	$sql = "SELECT sum(f.total) as amount, date_format(p.datep,'%Y-%m') as dm";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f ";
+	$sql .= "left join ".MAIN_DB_PREFIX."paiement as p ";
+	$sql .= "on f.rowid = p.fk_facture";*/
+	$sql = "SELECT sum(p.amount) as amount, date_format(p.datep,'%Y-%m') as dm";
+	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p ";
+	$sql .= "left join ".MAIN_DB_PREFIX."facture as f ";
+	$sql .= "on f.rowid = p.fk_facture";
 }
+
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
@@ -101,7 +114,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
   print '<td align="center">Delta</td>';
 }
 print '</tr>';
-
+$total_CA=0;
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
   $var=!$var;
@@ -114,7 +127,9 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
       $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
       $caseprev = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee-1));
 
-
+	  if ($annee == $year_current) {
+	  	$total_CA += $cum[$case];
+	  }
       // Valeur CA
 
       print '<td align="right">';
@@ -162,7 +177,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 print "<tr><td align=\"right\"><b>".$langs->trans("Total")." :</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print "<td align=\"right\"><b>".($total[$annee]?$total[$annee]:"&nbsp;")."</b></td>";
+  print "<td align=\"right\"><b>".($total[$annee]?price($total[$annee]):"&nbsp;")."</b></td>";
   
   // Pourcentage evol
   if ($total[$annee-1]) {
@@ -193,8 +208,100 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
   
 }
 print "</tr>\n";
-print "</table>";
+/* en mode recettes/dépenses, il faut compléter avec les montants facturés non réglés
+* et les propales signées mais pas facturées
+* en effet, en recettes-dépenses, on comptabilise lorsque le montant est sur le compte
+* donc il est intéressant d'avoir une vision de ce qui va arriver
+*/
+if ($conf->compta->mode != 'CREANCES-DETTES') { 
+/*
+* 
+* Facture non réglées
+* 
+*/
 
+  $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc, sum(pf.amount) as am";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
+  $sql .= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
+  if ($socidp)
+    {
+      $sql .= " AND f.fk_soc = $socidp";
+    }
+  $sql .= " GROUP BY f.facnumber,f.rowid,s.nom, s.idp, f.total_ttc";   
+  
+  if ( $db->query($sql) )
+    {
+      $num = $db->num_rows();
+      $i = 0;
+      
+      if ($num)
+	{
+	  $var = True;
+	  $total_ttc_Rac = $totalam_Rac = $total_Rac = 0;
+	  while ($i < $num)
+	    {
+	      $obj = $db->fetch_object();
+	      $total_ttc_Rac +=  $obj->total_ttc;
+	      $totalam_Rac +=  $obj->am;
+	      $i++;
+	    }
+	  $var=!$var;
+	  print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Facturé à encaisser : </i></td><td align=\"right\"><i>".price($total_ttc_Rac)."</i></td><td colspan=\"3\">&nbsp;</td></tr>";
+	  $total_CA +=$total_ttc_Rac;
+	}
+      $db->free();
+    }
+  else
+    {
+      dolibarr_print_error($db);
+    }  
+
+/*
+* 
+* Propales signées, et non facturées
+* 
+*/
+  $sql = "SELECT sum(f.total) as tot_fht,sum(f.total_ttc) as tot_fttc, p.rowid, p.ref, s.nom, s.idp, p.total_ht, p.total_ttc
+			FROM ".MAIN_DB_PREFIX."commande AS p, llx_societe AS s
+			LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid
+			LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON co_fa.fk_facture = f.rowid
+			WHERE p.fk_soc = s.idp
+					AND p.fk_statut >=1
+					AND p.facture =0";
+  if ($socidp)
+    {
+      $sql .= " AND f.fk_soc = $socidp";
+    }
+	$sql .= " GROUP BY p.rowid";
+
+  if ( $db->query($sql) )
+    {
+      $num = $db->num_rows();
+      $i = 0;
+      
+      if ($num)
+	{
+	  $var = True;
+	  $total_pr = 0;
+	  while ($i < $num)
+	    {
+	      $obj = $db->fetch_object();
+	      $total_pr +=  $obj->total_ttc-$obj->tot_fttc;
+	      $i++;
+	    }
+	  $var=!$var;
+	  print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Signé : </i></td><td align=\"right\"><i>".price($total_pr)."</i></td><td colspan=\"3\">&nbsp;</td></tr>";
+	  $total_CA += $total_pr;
+	}
+      $db->free();
+    }
+  else
+    {
+      dolibarr_print_error($db);
+    }  
+  print "<tr $bc[$var]><td align=\"right\" colspan=\"5\"><i>Total CA prévisionnel : </i></td><td align=\"right\"><i>".price($total_CA)."</i></td><td colspan=\"3\">&nbsp;</td></tr>";
+}
+print "</table>";
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
