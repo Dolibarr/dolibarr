@@ -155,9 +155,8 @@ class Societe {
       $sql .= " AND s.fk_effectif = e.id";
       $sql .= " AND s.fk_pays = p.rowid";
       $sql .= " AND s.fk_forme_juridique = fj.code";
-      $result = $this->db->query($sql);
 
-      if ($result)
+      if ($this->db->query($sql))
 	{
 	  if ($this->db->num_rows())
 	    {
@@ -222,14 +221,21 @@ class Societe {
 	      
 	      $this->note = $obj->note;
 
-	      return 1;
-	      
+	      return 1;	      
 	    }
+	  else
+	    {
+	      print "Aucun enregistrement trouvé<br>$sql";
+	      return -2;
+	    }
+
 	  $this->db->free();
 	}
       else
 	{
+	  /* Erreur select SQL */
 	  print $this->db->error();
+	  return -1;
 	}
   }
 
