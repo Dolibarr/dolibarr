@@ -99,20 +99,41 @@ class User
 
       if ($lowid == 1)
 	{
-	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
-	  if ($this->db->query($sql))
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rid";
+		
+		$this->db->query($sql);
+		
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
+	  
+		//$sql = "UPDATE ".MAIN_DB_PREFIX."user_rights SET fk_user = $this->id fk_id = $rid";
+		
+		if ($this->db->query($sql))
 	    {
 	    }
 	}
       
       if ($lowid > 1)
 	{
-	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rid";
+		
+		$this->db->query($sql);
+		
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
+
+		//$sql = "UPDATE ".MAIN_DB_PREFIX."user_rights SET fk_user = $this->id fk_id = $rid";
+		
 	  if ($this->db->query($sql))
 	    {
 	    }
 	  $nid = $topid . "1";
-	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
+		
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
+		
+		$this->db->query($sql);
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
+	  
 	  if ($this->db->query($sql))
 	    {
 	      
@@ -128,8 +149,14 @@ class User
 	  for ($i = 1 ; $i < 10 ; $i++)
 	    {
 	      $nid = $topid . "$i";
-	      $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
-	      if ($this->db->query($sql))
+
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
+				
+				$this->db->query($sql);
+	
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
+	      
+				if ($this->db->query($sql))
 		{
 		  
 		}
@@ -431,6 +458,7 @@ class User
    *    \brief      Charge un objet user avec toutes ces caractéristiques depuis un login
    *    \param      login   login a charger
    */
+	 
   function fetch($login='')
     {
       
@@ -509,6 +537,7 @@ class User
   /**
    *    \brief  Efface de la base, un utilisateur
    */
+	 
   function delete()
     {
       if ($this->contact_id) 
@@ -560,7 +589,7 @@ class User
 	    }
 	  else
 	    {            
-	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec, login) values (now(),'$this->login');";
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec, login) values (now(),'$this->login')";
 	      if ($this->db->query($sql))
 		{
 		  if ($this->db->affected_rows()) 
@@ -665,10 +694,15 @@ class User
       $i = 0;
       while ($i < $num)
 	{
-	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rd[$i])";
+	
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rd[$i]";
+		
+		$this->db->query($sql);
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rd[$i])";
+	
 	  if ($this->db->query($sql)) 
 	    {
-
 	    }
 	  $i++;
 	}
