@@ -35,7 +35,8 @@ $langs->load("bills");
 /*
  * Sécurité accés client
  */
-if ($user->societe_id > 0) accessforbidden();
+if (!$user->rights->prelevement->bons->lire) accessforbidden();
+
 
 llxHeader('','Bon de prélèvement');
 
@@ -76,12 +77,6 @@ if ($_GET["id"])
   if ($bon->fetch($_GET["id"]) == 0)
     {
       dolibarr_fiche_head($head, $hselected, 'Prélèvement : '. $bon->ref);
-
-      if ($_GET["action"] == 'credite')
-	{
-	  $html->form_confirm("fiche.php?id=".$bon->id,"Classer comme crédité","Etes-vous sûr de vouloir classer ce bon de prélèvement comme crédité sur votre compte bancaire ?","confirm_credite");
-	  print '<br />';
-	}
 
       print '<table class="border" width="100%">';
 
@@ -132,7 +127,6 @@ if ($_GET["id"])
 	    {
 	      print "Les fonctions <i>imagick</i> ne sont pas disponibles sur ce PHP";
 	    }
-
         }
 
       if (file_exists($fileimage))
