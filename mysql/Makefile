@@ -41,8 +41,8 @@ SQL=mysql
 BASE=dolibarr
 OPTIONS=
 
-#FIND=find
-FIND="c:/Program files/cygwin/bin/find"
+FIND=find
+#FIND="c:/Program files/cygwin/bin/find"
 
 
 TABLES=$(shell $(FIND) tables/ -name "*sql")
