@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -57,11 +57,8 @@ if ($action == 'stcomm') {
 
 
 if ($action == 'delete') {
-  $sql = "DELETE FROM llx_facture_fourn WHERE rowid = $facid;";
-
-  if (! $db->query( $sql) ) {
-    print $db->error();
-  }
+  $fac = new FactureFourn($db);
+  $fac->delete($facid);
 
   $facid = 0 ;
 }
@@ -79,19 +76,23 @@ $pagenext = $page + 1;
  *
  *
  */
-if ($mode == 'search') {
-  if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM societe as s ";
-    $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
-  }
-      
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() == 1) {
-      $obj = $db->fetch_object(0);
-      $socid = $obj->idp;
+if ($mode == 'search')
+{
+  if ($mode-search == 'soc')
+    {
+      $sql = "SELECT s.idp FROM societe as s ";
+      $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
     }
-    $db->free();
-  }
+      
+  if ( $db->query($sql) )
+    {
+      if ( $db->num_rows() == 1)
+	{
+	  $obj = $db->fetch_object(0);
+	  $socid = $obj->idp;
+	}
+      $db->free();
+    }
 }
 /*
  *
@@ -99,9 +100,12 @@ if ($mode == 'search') {
  *
  *
  */  
-if ($socid > 0) {
+if ($socid > 0)
+{
 
-} else {
+}
+else
+{
   /*
    * Mode Liste
    *
@@ -120,7 +124,7 @@ if ($socid > 0) {
     }
 
 
-  $sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.amount, fac.paye, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid";
+  $sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.amount, fac.paye, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid, fac.facnumber";
   $sql .= " FROM societe as s, llx_facture_fourn as fac ";
   $sql .= " WHERE fac.fk_soc = s.idp";
 
@@ -140,6 +144,7 @@ if ($socid > 0) {
       }
     print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
     print '<TR class="liste_titre">';
+    print "<TD>Numéro</TD><td>";
     print "<TD>Libelle</TD><td>";
     print_liste_field_titre("Société",$PHP_SELF,"s.nom");
     print '</td><TD align="right">Montant</TD>';
@@ -152,6 +157,7 @@ if ($socid > 0) {
       $var=!$var;
 
       print "<TR $bc[$var]>";
+      print "<TD><a href=\"fiche.php3?facid=$obj->facid\">$obj->facnumber</A></td>\n";
       print "<TD><a href=\"fiche.php3?facid=$obj->facid\">$obj->libelle</A></td>\n";
       print "<TD><a href=\"../fiche.php3?socid=$obj->socid\">$obj->nom</A></td>\n";
       print '<TD align="right">'.price($obj->amount).'</TD>';
