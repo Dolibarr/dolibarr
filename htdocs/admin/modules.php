@@ -166,10 +166,8 @@ print_titre("Modules");
 print '<table border="1" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td>';
-print '<td>Info</td>';
-print '<td align="center">Activé</td>';
-print '<td>&nbsp;</td>';
-print "</TR>\n";
+print '<td>Description</td><td align="center">Activé</td>';
+print '<td align="center">Action</td></tr>';
 
 foreach ($modules as $key => $value)
 {
