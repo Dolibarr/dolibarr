@@ -203,7 +203,7 @@ if ($_GET["id"] > 0)
 	} 
       else
 	{
-	  print $db->error();
+	  dolibarr_print_error($db);
 	}
       print '</table>';
       
@@ -211,16 +211,19 @@ if ($_GET["id"] > 0)
        * Documents générés
        *
        */
-      $file = FAC_OUTPUTDIR . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
-	
+	  $file = $conf->facture->dir_output . "/" . $commande->ref . "/" . $commande->ref . ".pdf";
+      $relativepath = $commande->ref."/".$commande->ref.".pdf";
+
+      $var=true;
+      	
       if (file_exists($file))
 	{
 	  print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
 	  print_titre("Documents");
-	  print '<table width="100%" cellspacing="0" class="border" cellpadding="3">';
+	  print '<table width="100%" class="border">';
 	  
-	  print "<tr $bc[0]><td>Commande PDF</td>";
-	  print '<td><a href="'.FAC_OUTPUT_URL."/".$commande->ref."/".$commande->ref.'.pdf">'.$commande->ref.'.pdf</a></td>';
+	  print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
+	  print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
 	  print '<td align="right">'.filesize($file). ' bytes</td>';
 	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	  print '</tr>';
@@ -255,7 +258,7 @@ if ($_GET["id"] > 0)
 		{
 		  print_titre("Facture associée");
 		}
-	      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<table class="border" width="100%">';
 	      print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Author").'</td>';
 	      print '<td align="right">'.$langs->trans("Price").'</td>';
 	      print "</tr>\n";
@@ -265,14 +268,14 @@ if ($_GET["id"] > 0)
 		{
 		  $objp = $db->fetch_object();
 		  $var=!$var;
-		  print "<TR bgcolor=\"#e0e0e0\">";
-		  print "<TD><a href=\"../compta/facture.php?facid=$objp->facid\">$objp->facnumber</a>";
+		  print "<tr bgcolor=\"#E0E0E0\">";
+		  print "<td><a href=\"../compta/facture.php?facid=$objp->facid\">$objp->facnumber</a>";
 		  if ($objp->paye)
 		    { 
 		      print " (<b>pay&eacute;e</b>)";
 		    } 
-		  print "</TD>\n";
-		  print "<TD>".strftime("%d %B %Y",$objp->df)."</td>\n";
+		  print "</td>\n";
+		  print "<td>".strftime("%d %B %Y",$objp->df)."</td>\n";
 		  if ($objp->fk_user_author <> $user->id)
 		    {
 		      $fuser = new User($db, $objp->fk_user_author);
