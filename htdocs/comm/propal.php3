@@ -345,7 +345,7 @@ if ($propalid)
 	  print "<TR class=\"liste_titre\">";
 	  print "<td>Réf</td><td>Produit</td>";
 	  print '<td align="right">Prix</td><td align="center">Tva</td><td align="center">Qté.</td>';
-	  if ($obj->statut == 0)
+	  if ($propal->statut == 0)
 	    {
 	      print "<td>&nbsp;</td>";
 	    }
