@@ -55,7 +55,7 @@ if ( $db->query( $sql) )
 	  print "<td>".stripslashes($objp->nom)."</TD>\n";
 	  	  
 	  print "<TD>".strftime("%d %B %Y",$objp->datef)."</td>\n";
-	  print '<TD align="right">'.number_format($objp->total,2,'.',' ').'<br>euros';
+	  print '<TD align="right">'.number_format($objp->total,2,'.','').'<br>euros';
 
 	  if ($obj->paye)
 	    {
