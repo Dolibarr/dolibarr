@@ -72,8 +72,11 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add(DOL_URL_ROOT."/product/index.php", "Services");	# Pour l'instant product et service partagent le meme rep.
     }
 
-  $menu->add(DOL_URL_ROOT."/projet/index.php", "Projets");
-
+  if ($conf->projet->enabled ) 
+    {
+	  $menu->add(DOL_URL_ROOT."/projet/index.php", "Projets");
+	}
+	
   left_menu($menu->liste);
 
 }
