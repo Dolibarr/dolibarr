@@ -21,78 +21,28 @@
  */
 require("./pre.inc.php");
 
-if ($HTTP_POST_VARS["action"] == 'changetheme')
-{
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'MAIN_THEME', value='".$HTTP_POST_VARS["theme"]."', visible=0";
-
-  if ($db->query($sql))
-    {
-
-    }
-  Header('Location: index.php');
-}
-
 if ($HTTP_POST_VARS["action"] == 'update')
 {
   dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$HTTP_POST_VARS["nom"]);
   dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$HTTP_POST_VARS["tva"]);
 
-  Header('Location: index.php');
+  Header("Location: $PHP_SELF");
 }
 
 
 llxHeader();
 
-print_titre("Configuration Dolibarr (version ".DOL_VERSION.")");
+print_titre("Configuration générale (Dolibarr version ".DOL_VERSION.")");
 
-print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>Nom</td><td>Valeur</td><td>Action</td>';
-print "</TR>\n";
-
-print '<tr class="pair"><td>Version</td><td>' . DOL_VERSION . '</td><td>&nbsp;</td></tr>';
-print '<tr class="impair"><td>Theme</td>';
-
-if ($_GET["action"] == 'modtheme')
-{
-  clearstatcache();
-  $dir = "../theme/";
-  $handle=opendir($dir);
-
-  print '<form method="post" action="index.php">';
-  print '<input type="hidden" name="action" value="changetheme">';
-  print '<td><select name="theme">';
-
-  while (($file = readdir($handle))!==false)
-    {
-      if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-	{
-	  if ($file == MAIN_THEME)
-	    {
-	      print '<option value="'.$file.'" SELECTED>'.$file;
-	    }
-	  else
-	    {
-	      print '<option value="'.$file.'">'.$file;
-	    }
-	}
-      
-    }
-  print '</td><td><input type="submit" value="Enregistrer"></td></form>';
-}
-else
-{
-  print '<td>' . $conf->theme . '</td><td><a href="index.php?action=modtheme">Changer</a></td></tr>';
-}
-print '</table><br>';
+print "<br>\n";
 
 if ($_GET["action"] == 'edit')
 {
-  print '<form method="post" action="index.php">';
+  print '<form method="post" action="'.$PHP_SELF.'">';
   print '<input type="hidden" name="action" value="update">';
 
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr class="liste_titre"><td colspan="3">Informations sur la société ou association</td></tr>';
+  print '<tr class="liste_titre"><td colspan="2">Informations sur la société ou association</td></tr>';
 
   print '<tr class="impair"><td>Nom de la société/association</td><td>';
   print '<input name="nom" value="'. MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
@@ -108,14 +58,14 @@ else
 {
 
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr class="liste_titre"><td colspan="3">Informations sur la société ou association</td></tr>';
+  print '<tr class="liste_titre"><td colspan="2">Informations sur la société ou association</td></tr>';
   print '<tr class="impair"><td width="50%">Nom de la société/association</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
   print '<tr class="pair"><td>Numéro de tva intracommunautaire</td><td>' . MAIN_INFO_TVAINTRA . '</td></tr>';
   print '</table><br>';
 
   print '<div class="tabsAction">';
 
-  print '<a class="tabAction" href="index.php?action=edit">Editer</a>';
+  print '<a class="tabAction" href="'.$PHP_SELF.'?action=edit">Editer</a>';
 
   print '</div>';
 

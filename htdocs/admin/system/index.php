@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,31 +19,66 @@
  * $Id$
  * $Source$
  */
-require("./pre.inc.php");
+
+// Choix du menu à garder fixe
+// Ceci va servir pour garder le menu fixe quelquesoit les liens cliqué
+// dans ce menu. Cela permet d'appeler des pages en dehors sans perdre
+// le menu qui nous intéresse.
+// ELDY: A finir
+//session_start();
+//$fix_top_menu="accueil";
+//$fix_left_menu="system";
+//session_register("fix_top_menu");
+//session_register("fix_left_menu");
+
+//include_once("../../allpre.inc.php");
+include_once("./pre.inc.php");
 
 llxHeader();
 
-print_titre("Configuration Dolibarr (version ".DOL_VERSION.")");
+print_titre("Résumé des informations systèmes Dolibarr");
 
-print '<table border="1" cellpadding="3" cellspacing="0">';
-print '<TR class="liste_titre">';
-print '<td>Nom</td><td>Valeur</td><td>Action</td>';
-print "</TR>\n";
+print "<br>\n";
 
-print "<tr $bc[1]><td>Version</td><td>" . DOL_VERSION . '</td><td>&nbsp;</td></tr>';
-print "<tr $bc[0]><td>css</td><td>" . $conf->css . '</td><td>&nbsp;</td></tr>';
-print "<tr $bc[1]><td>theme</td><td>" . $conf->theme . '</td><td>&nbsp;</td></tr>';
-print "<tr $bc[0]><td>document root</td><td>" . DOL_DOCUMENT_ROOT . '</td><td>&nbsp;</td></tr>';
-
-
-print '<tr class="liste_titre"><td colspan="3">Database</td></tr>';
-print "<tr $bc[1]><td>type</td><td>" . $conf->db->type . '</td><td>&nbsp;</td></tr>';
-print "<tr $bc[0]><td>host</td><td>" . $conf->db->host . '</td><td>&nbsp;</td></tr>';
-print "<tr $bc[1]><td>user</td><td>" . $conf->db->user . '&nbsp;</td><td>&nbsp;</td></tr>';
-print "<tr $bc[0]><td>pass</td><td>" . $conf->db->pass . '&nbsp;</td><td>&nbsp;</td></tr>';
-print "<tr $bc[1]><td>Database name</td><td>" . $conf->db->name . '</td><td>&nbsp;</td></tr>';
-
+print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+print "<tr class=\"liste_titre\"><td colspan=\"2\">Dolibar</td></tr>\n";
+print "<tr $bc[1]><td width=\"140\">Version</td><td>" . DOL_VERSION . "</td></tr>\n";
 print '</table>';
+
+print "<br>\n";
+
+print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+print "<tr class=\"liste_titre\"><td colspan=\"2\">OS</td></tr>\n";
+print "<tr $bc[1]><td width=\"140\">Version</td><td>".get_cfg_var("System")."</td></tr>\n";
+print '</table>';
+
+print "<br>\n";
+
+print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+print "<tr class=\"liste_titre\"><td colspan=\"2\">Serveur Web</td></tr>\n";
+print "<tr $bc[1]><td width=\"140\">Version</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
+print "<tr $bc[0]><td>document root</td><td>" . DOL_DOCUMENT_ROOT . "</td></tr>\n";
+print '</table>';
+
+print "<br>\n";
+
+print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+print "<tr class=\"liste_titre\"><td colspan=\"2\">PHP</td></tr>\n";
+print "<tr $bc[1]><td width=\"140\">Version</td><td>".phpversion()."</td></tr>\n";
+print "<tr $bc[0]><td>Liaison Web-PHP</td><td>".php_sapi_name()."</td></tr>\n";
+print '</table>';
+
+print "<br>\n";
+
+print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+print "<tr class=\"liste_titre\"><td colspan=\"2\">Base de données</td></tr>\n";
+print "<tr $bc[1]><td width=\"140\">type</td><td>" . $conf->db->type . "</td></tr>\n";
+print "<tr $bc[0]><td>host</td><td>" . $conf->db->host . "</td></tr>\n";
+print "<tr $bc[1]><td>user</td><td>" . $conf->db->user . "&nbsp;</td></tr>\n";
+print "<tr $bc[0]><td>pass</td><td>" . $conf->db->pass . "&nbsp;</td></tr>\n";
+print "<tr $bc[1]><td>Database name</td><td>" . $conf->db->name . "</td></tr>\n";
+print '</table>';
+
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

@@ -22,7 +22,9 @@
 require("./pre.inc.php");
 
 llxHeader();
-print "<div class=\"menus\">";
+
+ob_start(); 
+
 if ($what == 'conf')
 {
   phpinfo(INFO_CONFIGURATION);
@@ -39,6 +41,21 @@ else
 {
   phpinfo();
 }
-print "</div>";
+
+$chaine = ob_get_contents(); 
+ob_end_clean(); 
+
+# Nettoie la sortie php pour inclusion dans une page deja existante
+$chaine = eregi_replace('.*<style','<style',$chaine);
+$chaine = eregi_replace('<title>.*<body>','',$chaine);
+$chaine = eregi_replace('<title>.*<body>','',$chaine);
+$chaine = eregi_replace('a:link.*underline','',$chaine);
+$chaine = eregi_replace('table.*important; }','',$chaine);
+$chaine = eregi_replace('<hr />','',$chaine);
+$chaine = eregi_replace('</body></html>','',$chaine);
+
+print "$chaine\n";
+print "<br>\n";
+
 llxfooter();
 ?>

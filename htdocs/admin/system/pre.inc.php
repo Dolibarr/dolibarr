@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,21 +30,16 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("index.php", "System");
-  $menu->add_submenu("../modules.php", "Modules");
+  $menu->add("index.php", "Résumé");
 
-  $menu->add("mysql.php", "Mysql");
-  $menu->add_submenu("mysql-tables.php", "Tables");
-  $menu->add_submenu("mysql-tables-contraintes.php", "Tables Contraintes");
+  $menu->add(DOL_URL_ROOT."/about.php", "Dolibarr");
+  $menu->add_submenu("constall.php", "Tous&nbsp;les&nbsp;paramètres");
 
-  $menu->add("pear.php", "Pear");
-  $menu->add_submenu("pear_packages.php", "Paquets");
+  $menu->add("os.php", "OS");
 
-  $menu->add("const.php", "Constantes");
+  $menu->add("web.php", "Serveur Web");
 
-  $menu->add_submenu("constall.php", "Tout voir");
-
-  $menu->add("info.php", "phpinfo");
+  $menu->add("phpinfo.php", "Php");
 
   $menu->add_submenu("phpinfo.php?what=conf", "Conf");
 
@@ -51,7 +47,12 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu("phpinfo.php?what=modules", "Modules");
 
-  $menu->add(DOL_URL_ROOT."/admin/", "Configuration");
+  $menu->add("pear.php", "Pear");
+  $menu->add_submenu("pear_packages.php", "Paquets");
+
+  $menu->add("mysql.php", "Base de données");
+  $menu->add_submenu("mysql-tables.php", "Tables");
+  $menu->add_submenu("mysql-tables-contraintes.php", "Tables Contraintes");
 
   left_menu($menu->liste);
 }

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,30 +32,34 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("index.php", "Configuration");
+  $menu->add(DOL_URL_ROOT."/admin/index.php", "Configuration générale");
 
-  $menu->add("modules.php", "Modules");
+  $menu->add(DOL_URL_ROOT."/admin/const.php", "Configuration autre");
 
-  $menu->add("boxes.php", "Boites");
+  $menu->add(DOL_URL_ROOT."/admin/ihm.php", "IHM");
+
+  $menu->add(DOL_URL_ROOT."/admin/modules.php", "Modules");
+
+  $menu->add(DOL_URL_ROOT."/admin/boxes.php", "Boites");
 
   if(defined("MAIN_MODULE_EXTERNAL_RSS") && MAIN_MODULE_EXTERNAL_RSS)
     {
-      $menu->add_submenu("external_rss.php", "Syndication");
+      $menu->add_submenu(DOL_URL_ROOT."/admin/external_rss.php", "Syndication");
     }
 
   //$menu->add_submenu("sqltables.php", "Tables");
 
   if ($conf->boutique->enabled)
     {
-      $menu->add("boutique.php", "Boutique");
+      $menu->add(DOL_URL_ROOT."/admin/boutique.php", "Boutique");
 
       if (defined("DB_NAME_OSC"))
 	{
-	  $menu->add_submenu("osc-languages.php", "OSC Languages $toto");
+	  $menu->add_submenu(DOL_URL_ROOT."/admin/osc-languages.php", "OSC Languages $toto");
 	}      
     }
 
-  $menu->add("system/", "System");
+  $menu->add("system/", "Système");
 
   left_menu($menu->liste);
 }
