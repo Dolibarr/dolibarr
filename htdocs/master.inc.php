@@ -25,6 +25,8 @@
  */
 define('DOL_VERSION','1.2.0-DEV');
 
+define_syslog_variables();
+
 
 if (! @include_once("conf/conf.php"))
 {
