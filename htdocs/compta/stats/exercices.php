@@ -294,8 +294,6 @@ function ppt ($db, $year, $socidp)
 
 llxHeader();
 
-$db = new Db();
-
 /*
  * Sécurité accés client
  */

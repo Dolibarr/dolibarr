@@ -110,7 +110,7 @@ if ($HTTP_POST_VARS["action"] == "set")
       $conf->db->name = $dolibarr_main_db_name;
       $conf->db->user = $dolibarr_main_db_user;
       $conf->db->pass = $dolibarr_main_db_pass;
-      $db = new Db();
+      $db = new DoliDb();
 
       $sql[0] = "REPLACE INTO llx_const SET name = 'FAC_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/facture', visible=0, type='chaine'";
 

@@ -25,8 +25,6 @@ require("./pre.inc.php");
  *
  */
 
-$db = new Db();
-
 llxHeader();
 
 /*

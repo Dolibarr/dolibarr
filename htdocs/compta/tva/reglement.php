@@ -28,8 +28,6 @@ require("../../tva.class.php3");
 
 llxHeader();
 
-$db = new Db();
-
 $tva = new Tva($db);
 
 print_titre("Réglements TVA");

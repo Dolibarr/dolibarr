@@ -99,8 +99,6 @@ function pt ($db, $sql, $date) {
 
 llxHeader();
 
-$db = new Db();
-
 $tva = new Tva($db);
 
 print_titre( "TVA Solde : " . price($tva->solde($year)) . " euros");

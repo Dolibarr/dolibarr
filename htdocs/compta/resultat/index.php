@@ -33,7 +33,6 @@ td.border { border: 1px solid #000000}
 
 
 <?PHP
-$db = new Db();
 
 print_titre("Résultat $year");
 

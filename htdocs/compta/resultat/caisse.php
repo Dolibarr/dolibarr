@@ -25,8 +25,6 @@ require("./pre.inc.php3");
  *
  */
 
-$db = new Db();
-
 llxHeader();
 
 /*

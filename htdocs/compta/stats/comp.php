@@ -307,7 +307,6 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-$db = new Db();
 
 $cyear = strftime ("%Y", time());
 

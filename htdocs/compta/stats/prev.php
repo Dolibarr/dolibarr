@@ -76,7 +76,7 @@ function pt ($db, $sql, $title) {
 
 llxHeader();
 
-$db = new Db();
+
 if ($sortfield == "")
 {
   $sortfield="lower(p.label)";

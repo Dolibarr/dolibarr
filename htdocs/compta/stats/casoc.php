@@ -33,8 +33,6 @@ if ($user->societe_id > 0)
  */
 llxHeader();
 
-$db = new Db();
-
 print_titre("Chiffre d'affaire par société");
 
 /*

@@ -70,7 +70,7 @@ require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf.php");
 
 define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/font/');
 
-$db = new Db();
+$db = new DoliDb();
 
 $user = new User($db);
 
