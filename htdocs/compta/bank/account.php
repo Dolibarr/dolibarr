@@ -94,7 +94,8 @@ if ($account > 0)
     }
   $acct = new Account($db);
   $acct->fetch($account);
-  print_titre("Compte : " .$acct->label);
+  print_titre("Journal de trésorerie du compte : " .$acct->label);
+  print '<br>';
 
   // Chargement des categories dans $options
   $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
