@@ -485,7 +485,7 @@ function top_menu($head, $title="", $target="")
   global $PHP_SELF;
   $class="";
   if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "accueil") { $class="menusel"; }
-  elseif (ereg('^\/[^\\\/]+$',$PHP_SELF) || ereg('^\/user\/',$PHP_SELF) || ereg('^\/admin\/',$PHP_SELF)) { $class="menusel"; }
+  elseif (ereg("^".DOL_URL_ROOT."\/[^\\\/]+$",$PHP_SELF) || ereg("^".DOL_URL_ROOT."\/user\/",$PHP_SELF) || ereg("^".DOL_URL_ROOT."\/admin\/",$PHP_SELF)) { $class="menusel"; }
   print '<td width="200" class="menu"><table cellpadding=0 cellspacing=0 width="100%"><tr><td class="'.$class.'" align=center><a class="'.$class.'" href="'.DOL_URL_ROOT.'/index.php"'.($target?" target=$target":"").'>Accueil</a></td></tr></table></td>';
 
   // Sommet géré par gestionnaire de menu du haut
