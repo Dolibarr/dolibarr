@@ -1,4 +1,5 @@
 # Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+# Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -17,38 +18,62 @@
 # $Id$
 # $Source$
 #
-# General Makefile for Mysql database
+# **********************************************************************
+# Ce makefile permet d'initialiser la base de donnée de dolibarr en manuel.
+# Il n'est utile que si vous n'utilisez pas l'installateur automatique
+# accessible à http://localhost/dolibarr/install/
 #
+# Pour une installation manuelle, créer la base dolibarr puis faire:
+# make table
+# make load
+#
+# Ou bien, toujours après avoir créer la base dolibarr:
+# make mysql.sql
+# mysql dolibarr < mysql.sql
+#
+# Le script mysql.sql cotient tous le ordres sql pour créer la base
+# Tables + Index et Clés + Données
+#
+# **********************************************************************
 
 MYSQL=mysql 
 BASE=dolibarr
 OPTIONS=
 
-TABLES=$(shell find tables/ -name "*sql")
+FIND=find
+#FIND="c:/Program files/cygwin/bin/find"
+
+
+TABLES=$(shell $(FIND) tables/ -name "*sql")
+
 
 all:
 	cat README
+
 
 show:
 	cd tables \
 	&& make show BASE=$(BASE) OPTIONS=$(OPTIONS)
 
+drop:
+	$(MYSQL) $(OPTIONS) $(BASE) < drop.sql
+
 table:
 	cd tables \
 	&& make create BASE=$(BASE) OPTIONS=$(OPTIONS)
+
+load:
+	$(MYSQL) $(OPTIONS) $(BASE) < data/data.sql
 
 dev:
 	cd data \
 	&& make dev BASE=$(BASE) OPTIONS=$(OPTIONS)
 
 
+
+
 fulldev: drop table load dev
 
-drop:
-	$(MYSQL) $(OPTIONS) $(BASE) < drop.sql
-
-load:
-	$(MYSQL) $(OPTIONS) $(BASE) < data/data.sql
 
 dropall: dropdb droppriv
 
@@ -58,8 +83,9 @@ droppriv:
 dropdb:
 	$(MYSQL) $(OPTIONS) mysql -f -e "drop database if exists $(BASE) ; "
 
-create: drop createdb createpriv
 
+
+create: drop createdb createpriv
 
 createdb:
 	$(MYSQL) $(OPTIONS) mysql -e "create database $(BASE) ; "
@@ -79,6 +105,10 @@ createpriv:
 	$(MYSQL) $(OPTIONS) mysql -e "flush privileges ; "
 
 
-mysql.sql: $(TABLES) data/data.sql
-	find tables/ -name "*sql" | xargs cat | grep -v ^-- | cut -d "-" -f 1 > mysql.sql
+
+mysql.sql: $(TABLES) data/data.sql Makefile
+	echo "-- Fichier généré par make mysql.sql" > mysql.sql
+	echo "-- Contient les ordres de creation des tables + les clés + les données" >> mysql.sql
+	echo "-- ;" >> mysql.sql
+	$(FIND) tables/ -name "*sql" | xargs cat | grep -v "^--" | cut -d "-" -f 1 >> mysql.sql
 	cat data/data.sql | grep -v ^-- >> mysql.sql
