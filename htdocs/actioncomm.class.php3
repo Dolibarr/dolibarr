@@ -38,12 +38,12 @@ class ActionComm
 
   Function ActionComm($db) 
     {
-    $this->db = $db;
-    $this->societe = new Societe($db);
-    $this->author = new User($db);
-    $this->contact = new Contact($db);
-
-  }
+      $this->db = $db;
+      $this->societe = new Societe($db);
+      $this->author = new User($db);
+      $this->contact = new Contact($db);
+      
+    }
   /*
    *
    *
@@ -51,6 +51,10 @@ class ActionComm
    */
   Function add($author)
     {
+      if (!strlen($this->contact))
+	{
+	  $this->contact = 0;
+	}
       $sql = "INSERT INTO llx_actioncomm (datea, fk_action, fk_soc, fk_user_author, fk_user_action, fk_contact, percent, note,priority) ";
       $sql .= " VALUES ('$this->date', $this->type, $this->societe, $author->id,";
       $sql .= $this->user->id . ", $this->contact, $this->percent, '$this->note', $this->priority);";
@@ -120,5 +124,9 @@ class ActionComm
 	
       }
     }
+  /*
+   *
+   *
+   */
 }    
 ?>
