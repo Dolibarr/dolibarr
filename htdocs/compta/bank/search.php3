@@ -20,20 +20,10 @@
  *
  */
 
-/*
- *
- * $viewall
- *
- */
 require("./pre.inc.php3");
-
 require("./bank.lib.php3");
 llxHeader();
 $db = new Db();
-
-
-
-
 
 if ($vline) {
   $viewline = $vline;
@@ -101,13 +91,9 @@ if ($result) {
 
 if ($viewall) { $nbline=0; }
 
-/* Another solution
- * create temporary table solde type=heap select amount from llx_bank limit 100 ;
- * select sum(amount) from solde ;
- */
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account";
-$sql .= " FROM llx_bank as b "; if ($account) { $sql .= " WHERE fk_account=$account"; }
+$sql .= " FROM llx_bank as b "; 
 
 
 if ($credit) {
@@ -154,15 +140,9 @@ if ($result) {
 	print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
       }
       
-
-      
       print "<td align=\"right\"><small>".$objp->fk_account."</small></TD>\n";
-      
       print "</tr>";
-
-
     }
-
 
     $i++;
   }
@@ -173,7 +153,6 @@ if ($result) {
 
 
 print "</table>";
-
 
 
 $db->close();
