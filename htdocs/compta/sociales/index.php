@@ -94,8 +94,8 @@ if ( $db->query($sql) )
 	{
 	  print '<td colspan="2">'.strftime("%d/%m/%y",$obj->dp).'</td>';
 	} else {
-	  print '<td><img src="/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
-	  print '<td><img src="/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
+	  print '<td><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
+	  print '<td><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
 	}
       print '</tr>';
       $i++;
