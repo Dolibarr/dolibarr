@@ -67,6 +67,12 @@ if ($action == 'delete')
   $don->delete($rowid);
   Header("Location: liste.php?statut=0");
 }
+if ($action == 'commentaire')
+{
+  $don = new Don($db);
+  $don->set_commentaire($rowid,$HTTP_POST_VARS["commentaire"]);
+  $action = "edit";
+}
 if ($action == 'valid_promesse')
 {
   $don = new Don($db);
@@ -95,6 +101,13 @@ if ($action == 'set_encaisse')
 
 
 llxHeader();
+
+/* ************************************************************************** */
+/*                                                                            */
+/* Création d'une fiche don                                                   */
+/*                                                                            */
+/* ************************************************************************** */
+
 
 if ($action == 'create') {
 
@@ -182,7 +195,7 @@ if ($action == 'create') {
 } 
 /* ************************************************************************** */
 /*                                                                            */
-/*                                                                            */
+/* Edition de la fiche don                                                    */
 /*                                                                            */
 /* ************************************************************************** */
 if ($rowid > 0 && $action == 'edit')
@@ -295,6 +308,20 @@ if ($rowid > 0 && $action == 'edit')
     }
 
   print "</tr></table></form><p>";
+/* ************************************************************************** */
+/*                                                                            */
+/* Commentaire                                                                */
+/*                                                                            */
+/* ************************************************************************** */
+
+  print "<form action=\"$PHP_SELF\" method=\"post\">";
+  print '<input type="hidden" name="action" value="commentaire">';
+  print '<input type="hidden" name="rowid" value="'.$don->id.'">';
+  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+  print '<tr><td align="center">Commentaires</td></tr>';
+  print '<tr><td><textarea cols="60" rows="20" name="commentaire">'.$don->commentaire.'</textarea></td></tr>';
+  print '<tr><td align="center"><input type="submit" value="Enregistrer"></td></tr>';
+  print '</table></form>';
   
 }
 
