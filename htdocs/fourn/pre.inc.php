@@ -32,6 +32,7 @@ require("../main.inc.php");
 function llxHeader($head = "", $title="", $addons='') {
   global $user, $conf, $langs;
 
+  $langs->load("suppliers");
 
   top_menu($head, $title);
 
@@ -52,7 +53,7 @@ function llxHeader($head = "", $title="", $addons='') {
         // Sécurité accés client
         if ($user->societe_id == 0) 
         {
-          $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&type=f",$langs->trans("New"));
+          $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&type=f",$langs->trans("NewSupplier"));
         }
     }
 
@@ -68,7 +69,7 @@ function llxHeader($head = "", $title="", $addons='') {
       
       if ($user->societe_id == 0) 
 	{
-	  $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("New"));
+	  $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"));
 	}
       
       $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
@@ -76,6 +77,7 @@ function llxHeader($head = "", $title="", $addons='') {
   
   if ($conf->commande->enabled)
   {
+      $langs->load("orders");
       $menu->add_submenu(DOL_URL_ROOT."/fourn/commande/",$langs->trans("Orders"));
   }
 
