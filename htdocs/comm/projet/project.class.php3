@@ -42,16 +42,29 @@ class Project {
 
   Function create($creatorid) 
     {
-
       $sql = "INSERT INTO llx_projet (ref, title, fk_soc, fk_user_creat, dateo) ";
       $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, $creatorid, now()) ;";
     
       if (!$this->db->query($sql) ) 
 	{
-	  print '<b>'.$sql.'</b><br>'.$this->db->error();
-	  
-	}
-    
+	  print '<b>'.$sql.'</b><br>'.$this->db->error();	  
+	}    
+    }
+  /*
+   *
+   *
+   *
+   */
+  Function update() 
+    {
+      $sql = "UPDATE llx_projet ";
+      $sql .= " SET ref = '$this->ref', title = '$this->title'";
+      $sql .= " WHERE rowid = $this->id";
+
+      if (!$this->db->query($sql) ) 
+	{
+	  print '<b>'.$sql.'</b><br>'.$this->db->error();	  
+	}    
     }
   /*
    *

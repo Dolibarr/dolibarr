@@ -19,14 +19,23 @@
  * $Source$
  *
  */
-
 require("./pre.inc.php3");
 require("./project.class.php3");
 require("../propal.class.php3");
 
+$db = new Db();
+
+if ($HTTP_POST_VARS["action"] == 'update')
+{
+  $projet = new Project($db);
+  $projet->id = $id;
+  $projet->ref = $HTTP_POST_VARS["ref"];
+  $projet->title = $HTTP_POST_VARS["title"];
+  $projet->update();
+}
+
 llxHeader("","../");
 
-$db = new Db();
 
 if ($action == 'create')
 {
@@ -68,21 +77,21 @@ if ($action == 'create')
   $projet->fetch($id);
 
   $projet->societe->fetch($projet->societe->id);
-
   
   if ($action == 'edit')
     {  
+      print '<form method="post" action="fiche.php3?id='.$id.'">';
+      print '<input type="hidden" name="action" value="update">';
       print '<table border="1" cellpadding="4" cellspacing="0">';
-      print '<tr><td>Société</td><td>'.$projet->societe->nom.'</td></tr>';
-      
-      print '<tr><td>Ref</td><td>'.$projet->ref.'</td></tr>';
-      print '<tr><td>Titre</td><td>'.$projet->title.'</td></tr>';
-      print '</table>'; 
+      print '<tr><td>Société</td><td>'.$projet->societe->nom.'</td></tr>';      
+      print '<tr><td>Ref</td><td><input name="ref" value="'.$projet->ref.'"></td></tr>';
+      print '<tr><td>Titre</td><td><input name="title" value="'.$projet->title.'"></td></tr>';
+      print '</table><input type="submit" Value="Enregistrer"></form>';
     }
   else
     {
       print '<table border="1" cellpadding="4" cellspacing="0">';
-      print '<tr><td>Société</td><td>'.$projet->societe->nom.'</td></tr>';
+      print '<tr><td>Société</td><td><a href="../fiche.php3?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
       
       print '<tr><td>Ref</td><td>'.$projet->ref.'</td></tr>';
       print '<tr><td>Titre</td><td>'.$projet->title.'</td></tr>';
@@ -134,7 +143,14 @@ if ($action == 'create')
   
   print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
   
-  print "<td align=\"center\" width=\"25%\"><a href=\"fiche.php3?id=$id&action=edit\">Editer</a></td>";
+  if ($action == "edit")
+    {
+      print "<td align=\"center\" width=\"25%\"><a href=\"fiche.php3?id=$id\">Annuler</a></td>";
+    }
+  else
+    {
+      print "<td align=\"center\" width=\"25%\"><a href=\"fiche.php3?id=$id&action=edit\">Editer</a></td>";
+    }
   
   print "<td align=\"center\" width=\"25%\">-</td>";	  
   
