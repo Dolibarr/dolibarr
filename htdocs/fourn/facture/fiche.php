@@ -312,15 +312,20 @@ else
 	  print '<tr><td valign="top">'.$langs->trans("Ref").'</td><td valign="top">';
 	  print '<input name="facnumber" type="text" value="'.$fac->ref.'"></td>';
       
-	  print '<td rowspan="7" width="60%" valign="top">';
+	  print '<td rowspan="8" width="60%" valign="top">';
 	  print '<textarea name="note" wrap="soft" cols="60" rows="10">';
 	  print stripslashes($fac->note);
 	  print '</textarea></td></tr>';
 	  
 	  print '<tr><td valign="top">'.$langs->trans("Label").'</td><td>';
 	  print '<input size="30" name="libelle" type="text" value="'.stripslashes($fac->libelle).'"></td></tr>';      
-	  print '<tr><td>'.$langs->trans("AmountTTC").'</td>';
+
+	  print '<tr><td>'.$langs->trans("AmountHT").'</td>';
 	  print '<td valign="top">'.price($fac->total_ht).'</td></tr>';      
+
+	  print '<tr><td>'.$langs->trans("AmountTTC").'</td>';
+	  print '<td valign="top">'.price($fac->total_ttc).'</td></tr>';      
+
 	  print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	  
 	  print_date_select($fac->datep);
@@ -344,7 +349,9 @@ else
 	   * Lignes
 	   *
 	   */	  
-	  print "<p><form action=\"fiche.php?facid=$fac->id&amp;action=add_ligne\" method=\"post\">";
+	  print '<br>';
+	  
+	  print "<form action=\"fiche.php?facid=$fac->id&amp;action=add_ligne\" method=\"post\">";
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td>';
 	  print '<td align="center">P.U. HT</td>';
