@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,19 +47,19 @@ if ($action == 'add')
   $action = '';
 }
 
-if ($HTTP_POST_VARS["action"] == 'miseenservice')
+if ($_POST["action"] == 'miseenservice')
 {
   $contrat = new Contrat($db);
   $contrat->id = $id;
   $contrat->fetch($id);
   $contrat->mise_en_service($user, 
-			    mktime($HTTP_POST_VARS["rehour"],
-				   $HTTP_POST_VARS["remin"],
+			    mktime($_POST["rehour"],
+				   $_POST["remin"],
 				   0,
-				   $HTTP_POST_VARS["remonth"],
-				   $HTTP_POST_VARS["reday"],
-				   $HTTP_POST_VARS["reyear"]),
-			    $HTTP_POST_VARS["duration"]
+				   $_POST["remonth"],
+				   $_POST["reday"],
+				   $_POST["reyear"]),
+			    $_POST["duration"]
 			    );
 }
 
@@ -73,14 +74,14 @@ if ($action == 'update' && $cancel <> 'Annuler')
 {
   $product = new Product($db);
 
-  $product->ref = $HTTP_POST_VARS["ref"];
-  $product->libelle = $HTTP_POST_VARS["libelle"];
-  $product->price = $HTTP_POST_VARS["price"];
-  $product->tva_tx = $HTTP_POST_VARS["tva_tx"];
-  $product->description = $HTTP_POST_VARS["desc"];
-  $product->envente = $HTTP_POST_VARS["statut"];
-  $product->duration_value = $HTTP_POST_VARS["duration_value"];
-  $product->duration_unit = $HTTP_POST_VARS["duration_unit"];
+  $product->ref = $_POST["ref"];
+  $product->libelle = $_POST["libelle"];
+  $product->price = $_POST["price"];
+  $product->tva_tx = $_POST["tva_tx"];
+  $product->description = $_POST["desc"];
+  $product->envente = $_POST["statut"];
+  $product->duration_value = $_POST["duration_value"];
+  $product->duration_unit = $_POST["duration_unit"];
 
   if (  $product->update($id, $user))
     {
@@ -145,17 +146,8 @@ else
       
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print '<td width="20%">Service</td><td width="40%">'.$contrat->product->label_url.'</td>';
-	  print '<td colspan="2">';
-	  if ($contrat->enservice)
-	    {
-	      print "En service";
-	    }
-	  else
-	    {
-	      print "<b>Ce contrat n'est pas en service</b>";
-	    }
-	  print '</td></tr><tr>';	
+	  print '<td width="20%">Service</td><td colspan=4>'.($contrat->product->ref).' - '.($contrat->product->libelle).'</td>';
+	  print '</tr><tr>';	
 	  if ($contrat->factureid)
 	    {
 	      print '<td>Société</td><td>'.$contrat->societe->nom_url.'</td>';
@@ -166,6 +158,16 @@ else
 	      print '<td>Société</td><td colspan="4">'.$contrat->societe->nom_url.'</td></tr>';
 	    }
 
+	  print '<tr><td>Etat</td><td colspan="3">';
+	  if ($contrat->enservice)
+	    {
+	      print "En service";
+	    }
+	  else
+	    {
+	      print "<b>Ce contrat n'est pas en service</b>";
+	    }
+      print '</td></tr>';
 	  if ($request == 'miseenservice')
 	    {
 	      print '<form action="fiche.php?id='.$id.'" method="post">';
@@ -212,28 +214,19 @@ else
 /*                                                                            */ 
 /* ************************************************************************** */
 
-print '<br><table width="100%" id="actions" cellspacing="0" cellpadding="3">';
-print '<td width="20%" align="center">-</td>';
 
-if ($contrat->enservice)
+print '<br>';
+print '<div class="tabsAction">';
+
+if (! $contrat->enservice)
 {
-  print '<td width="20%" align="center">-</td>';
+    print '<a class="tabAction" href="fiche.php?request=miseenservice&id='.$id.'">Mise en service</a>';
 }
-else
+elseif ($contrat->enservice == 1)
 {
-  print '<td width="20%" align="center">[<a href="fiche.php?request=miseenservice&id='.$id.'">Mise en service</a>]</td>';
+    print '<a class="tabAction" href="fiche.php?action=cloture&id='.$id.'">Clôturer</a>';
 }
-print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
-if ($contrat->enservice == 1)
-{
-  print '<td width="20%" align="center">[<a href="fiche.php?action=cloture&id='.$id.'">Clôturer</a>]</td>';
-}
-else
-{
-  print '<td width="20%" align="center">-</td>';
-}
-print '</table><br>';
+print '</div>';
 
 $db->close();
 
