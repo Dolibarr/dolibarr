@@ -75,6 +75,7 @@ class modDolibarrModules
 	$name = $this->const[$key][0];
 	$type = $this->const[$key][1];
 	$val  = $this->const[$key][2];
+	$note = $this->const[$key][3];
 
 	$sql = "SELECT count(*) FROM llx_const WHERE name ='".$name."'";
 
@@ -84,7 +85,9 @@ class modDolibarrModules
 	    
 	    if ($row[0] == 0)
 	      {
-		if (strlen($val))
+		if (strlen($note)){
+		    $sql = "INSERT INTO llx_const (name,type,value,note) VALUES ('".$name."','".$type."','".$val."','$note')";
+		}elseif (strlen($val))
 		  {
 		    $sql = "INSERT INTO llx_const (name,type,value) VALUES ('".$name."','".$type."','".$val."')";
 		  }
