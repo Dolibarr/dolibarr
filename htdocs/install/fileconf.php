@@ -75,8 +75,10 @@ if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 ?>
 <td  class="label" valign="top"><input type="text" size="60" value="<?php print $dolibarr_main_document_root; ?>" name="main_dir">
 </td><td class="comment">
-Sans le slash "/" à la fin<br>
-exemples :<br>
+<?php
+print $langs->trans("WithNoSlashAtTheEnd")."<br>";
+print $langs->trans("Examples").":<br>";
+?>
 <li>/var/www/dolibarr/htdocs</li>
 <li>C:/wwwroot/dolibarr/htdocs</li>
 </td>
@@ -96,8 +98,11 @@ if(! isset($dolibarr_main_data_root) || strlen($dolibarr_main_data_root) == 0)
 ?>
 <td class="label" valign="top"><input type="text" size="60" value="<?php print $dolibarr_main_data_root; ?>" name="main_data_dir">
 </td><td class="comment">
-Sans le slash "/" à la fin. Il est recommandé de mettre ce répertoire en dehors du répertoire des pages web.<br>
-exemples :<br>
+<?php
+print $langs->trans("WithNoSlashAtTheEnd")."<br>";
+print "Il est recommandé de mettre ce répertoire en dehors du répertoire des pages web.<br>";
+print $langs->trans("Examples").":<br>";
+?>
 <li>/var/www/dolibarr/documents</li>
 <li>C:/wwwroot/dolibarr/documents</li>
 </td>
@@ -128,7 +133,9 @@ if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 print $dolibarr_main_url_root ;
 ?>">
 </td><td class="comment">
-exemples :<br> 
+<?php
+print $langs->trans("Examples").":<br>";
+?>
 <li>http://dolibarr.lafrere.net</li>
 <li>http://www.lafrere.net/dolibarr</li>
 </tr>
@@ -177,7 +184,7 @@ Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand 
 </tr>
 
 <tr>
-<td class="label">
+<td class="label" valign="top">
 <?php echo $langs->trans("DatabaseName"); ?>
 </td>
 
@@ -191,8 +198,7 @@ Nom de la base de données Dolibarr (sera créée si nécessaire)
 <td class="label" valign="top">
 <?php echo $langs->trans("Login"); ?>
 </td>
-
-<td class="label"><input type="text" name="db_user" value="<?php print isset($dolibarr_main_db_user)?$dolibarr_main_db_user:'' ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_user" value="<?php print isset($dolibarr_main_db_user)?$dolibarr_main_db_user:'' ?>"></td>
 <td class="comment">
 <?php echo $langs->trans("AdminLogin"); ?>
 </td>
@@ -202,8 +208,7 @@ Nom de la base de données Dolibarr (sera créée si nécessaire)
 <td class="label" valign="top">
 <?php echo $langs->trans("Password"); ?>
 </td>
-
-<td class="label"><input type="text" name="db_pass" value="<?php print isset($dolibarr_main_db_pass)?$dolibarr_main_db_pass:'' ?>"></td>
+<td class="label" valign="top"><input type="text" name="db_pass" value="<?php print isset($dolibarr_main_db_pass)?$dolibarr_main_db_pass:'' ?>"></td>
 <td class="comment">
 <?php echo $langs->trans("AdminPassword"); ?>
 </td>
