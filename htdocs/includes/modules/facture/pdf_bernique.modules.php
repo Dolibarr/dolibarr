@@ -132,7 +132,7 @@ Class pdf_bernique {
 		      
 		      $pdf->SetXY (10, 46);		  
 		      $pdf->SetFont('Arial','U',8);
-		      $pdf->MultiCell(40, 4, "Coordonnées bancaire", 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, "Coordonnées bancaires", 0, 'L', 0);
 		      $pdf->SetFont('Arial','',8);
 		      $pdf->MultiCell(40, 4, "Code banque : " . $account->code_banque, 0, 'L', 0);
 		      $pdf->MultiCell(40, 4, "Code guichet : " . $account->code_guichet, 0, 'L', 0);
