@@ -222,8 +222,14 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 {
   $langs->load("orders");
 
-  $sql = "SELECT p.rowid, p.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as p, ".MAIN_DB_PREFIX."societe as s";
-  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut >= 1 AND p.facture = 0";
+  $sql = "SELECT sum(f.total) as tot_fht,sum(f.total_ttc) as tot_fttc, p.rowid, p.ref, s.nom, s.idp, p.total_ht, p.total_ttc
+			FROM ".MAIN_DB_PREFIX."commande AS p, llx_societe AS s
+			LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid
+			LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON co_fa.fk_facture = f.rowid
+			WHERE p.fk_soc = s.idp
+					AND p.fk_statut >=1
+					AND p.facture =0
+			GROUP BY p.rowid";
   if ($socidp)
     {
       $sql .= " AND p.fk_soc = $socidp";
@@ -237,20 +243,30 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	  $i = 0;
 	  print '<table class="noborder" width="100%">';
 	  print "<tr class=\"liste_titre\">";
-	  print '<td colspan="2">'.$langs->trans("OrdersToBill").' ('.$num.')</td></tr>';
+	  print '<td colspan="2">'.$langs->trans("OrdersToBill").' ('.$num.')</td>';
+	  print '<td align="right">'.$langs->trans("AmountHT").'</td><td align="right">'.$langs->trans("AmountTTC").'</td><td align="right">&nbsp;</td></tr>';
 	  $var = True;
+	  $tot_ht=0;
+	  $tot_ttc=0;
 	  while ($i < $num)
 	    {
 	      $var=!$var;
 	      $obj = $db->fetch_object();
-	      print "<tr $bc[$var]>";
-	      print "<td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
-	      print "<a href=\"commande.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
-
-	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
-	      print '<a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
-	      $i++;
+		  if ($obj->total_ht-$obj->tot_fht) {
+			print "<tr $bc[$var]>";
+			print "<td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
+			print "<a href=\"commande.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
+	
+			print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
+			print '<a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+			print '<td align="right">'.price($obj->total_ht-$obj->tot_fht).'</td>';
+			print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td></tr>';
+			$tot_ht += $obj->total_ht-$obj->tot_fht;
+			$tot_ttc += $obj->total_ttc-$obj->tot_fttc;
+		  }
+			$i++;
 	    }
+	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; (Reste à facturer : '.price($tot_ttc).')</i></td><td align="right"><i>'.price($tot_ht)."</i></td><td align=\"right\"><i>".price($tot_ttc)."</i></td></tr>";
 	  print "</table><br>";
 	}
     }
