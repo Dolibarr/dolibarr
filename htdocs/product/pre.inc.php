@@ -68,8 +68,9 @@ function llxHeader($head = "", $urlp = "", $title="")
 
   $menu->add("stats/", "Statistiques");
   if ($conf->propal->enabled) {
-  $menu->add_submenu("popuprop.php", "Popularité");
-
+    $menu->add_submenu("popuprop.php", "Popularité");
+  }
+  
   if (defined("MAIN_MODULE_STOCK"))
     $menu->add("stock/", "Stock");
 
