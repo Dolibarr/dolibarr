@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +19,19 @@
  * $Id$
  * $Source$
  */
+
+/**
+    \file       htdocs/user/pre.inc.php
+    \brief      Gestionnaire menu fichier users
+    \version    $Revision$
+*/
+
 require("../main.inc.php");
 
 function llxHeader($head = "", $urlp = "")
 {
-  global $user;
+  global $user,$langs;
+
   /*
    *
    *
@@ -31,11 +40,11 @@ function llxHeader($head = "", $urlp = "")
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/user/", "Utilisateurs");
+  $menu->add(DOL_URL_ROOT."/user/", $langs->trans("Users"));
 
   if($user->admin)
     {
-      $menu->add_submenu("fiche.php?&amp;action=create","Nouvel utilisateur");
+      $menu->add_submenu("fiche.php?&amp;action=create", $langs->trans("NewUser"));
     }
 
 

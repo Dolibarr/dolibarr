@@ -67,13 +67,14 @@ SummarySystem=Résumé des informations systèmes Dolibarr
 SummaryConst=Liste de tous les paramètres de configuration Dolibarr
 SystemUpdate=Mise à jour du système
 SystemSuccessfulyUpdate=Votre système a été mis à jour correctement
-PermanentLeftSearchForm=Zone de recherche permanente du menu de gauche
-Skin=Thème visuel
-MaxSizeList=Longueur maximale des listes
+MenuNewUser=Nouvel utilisateur
 MenuTopManager=Gestionnaire du menu du haut
 MenuLeftManager=Gestionnaire du menu de gauche
+Skin=Thème visuel
+MaxSizeList=Longueur maximale des listes
 MessageOfDay=Message du jour
 DefaultLanguage=Langue par défaut à utiliser (code langue)
+PermanentLeftSearchForm=Zone de recherche permanente du menu de gauche
 SystemSuccessfulyUpdated=Votre système a été mis à jour avec succès
 ##### Webcal setup #####
 WebCalSetup=Configuration du lien vers le calendrier Webcalendar

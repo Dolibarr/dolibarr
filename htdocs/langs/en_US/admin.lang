@@ -67,12 +67,13 @@ SummarySystem=System information summary
 SummaryConst=List of all Dolibarr setup parameters
 SystemUpdate=System update
 SystemSuccessfulyUpdate=Your system has been updated successfuly
-PermanentLeftSearchForm=Permanent search form on left menu
-Skin=Skin theme
-MaxSizeList=Max length for list
+MenuNewUser=New user
 MenuTopManager=Top menu manager
 MenuLeftManager=Left menu manager
+Skin=Skin theme
+MaxSizeList=Max length for list
 MessageOfDay=Message of day
+PermanentLeftSearchForm=Permanent search form on left menu
 DefaultLanguage=Default language to use (language code)
 SystemSuccessfulyUpdated=Your sustem has been updated successfully
 ##### Webcal setup #####
