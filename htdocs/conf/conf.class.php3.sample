@@ -191,6 +191,10 @@ class ServiceConf {
 class AdherentConf {
   Function AdherentConf() {
     $this->enabled = 0;
+    $this->email_new = "Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\n\n%INFO%\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\nhttp://$SERVER_NAME/public/adherents/priv_edit.php\n\n";
+    $this->email_edit = "Voici le rappel des coordonnees que vous avez modifiees (toute information erronee entrainera la non validation de votre inscription) :\n\n%INFO%\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\nhttp://$SERVER_NAME/public/adherents/priv_edit.php\n\n";
+    $this->email_valid = "Votre adhesion vient d'etre validee. Voici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\n\n%INFO%\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\nhttp://$SERVER_NAME/public/adherents/priv_edit.php\n\n";
+    $this->email_resil = "Votre adhesion sur http://$SERVER_NAME/ vient d'etre resilie.\nNous esperons vous revoir bientot\n";
   }
 }
 /*
