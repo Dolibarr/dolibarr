@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,25 +118,42 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test'
 
   if ($ds)
     {
-      print "connection réussie<br>";
+      print "connection au serveur ldap réussie<br>";
 
-      ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
+      if ((dolibarr_ldap_getversion($ds) == 3)
+				{
+					print "Serveur ldap configuré en version 3<br>";
+				}
+				else
+				{
+					print "Serveur ldap configuré en version 2<br>";
+				}
 
-      $ldapbind = dolibarr_ldap_bind($ds);
+      $bind = dolibarr_ldap_bind($ds);
 
-      if ($ldapbind)
-	{
-	  print "connection au dn réussi<br>";
-	}
-      else
-	{
-	  print "connection au dn raté<br>";
-	}
-      ldap_close($ds);
+      if ($bind)
+				{
+	  			print "connection au dn $dn réussi<br>";
+				}
+      	else
+				{
+	  			print "connection au dn $dn raté<br>";
+				}
+
+				$unbind = dolibarr_ldap_unbind($ds)
+
+			if ($bind)
+				{
+	  			print "déconnection du dn $dn réussi<br>";
+				}
+      	else
+				{
+	  			print "déconnection du dn $dn raté<br>";
+				}
     }
-  else
+  	else
     {
-      print "connection échouée<br>";
+      print "connection au serveur ldap échouée<br>";
     }
 }
 
