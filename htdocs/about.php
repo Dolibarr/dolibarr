@@ -24,7 +24,6 @@ require("./pre.inc.php3");
 llxHeader();
 
 print_fiche_titre( "Dolibarr ".DOL_VERSION,'');
-
 ?>
 
 <p>
@@ -46,7 +45,7 @@ D'autres développeurs y contribuent activement :
 Informations :
 <ul>
 <li>
-<a target="blank" href="http://rodolphe.quiedeville.org/projets/dolibarr/">page officielle</a> du projet
+<a target="blank" href="http://www.dolibarr.com/">site officiel</a> du projet
 <li>
 <a target="blank" href="http://freshmeat.net/projects/dolibarr/">Page sur Freshmeat</a>
 
@@ -64,8 +63,16 @@ Si vous trouvez un bug sur Dolibarr vous pouvez en informer les développeurs sur
 Le code source de Dolibarr est consultable par l'<a target="blank" href="http://savannah.nongnu.org/cgi-bin/viewcvs/dolibarr/dolibarr/">interface web du cvs</a>.
 </li>
 </ul>
-<?php
 
+<p>
+Vente / Support
+<ul>
+<li>
+Liste des <a target="blank" href="http://www.dolibarr.com/revendeurs.fr.html">revendeurs agréés</a>
+</li>
+</ul>
+
+<?php
 llxFooter();
 ?>
 
