@@ -44,7 +44,7 @@ $sql .= " FROM llx_paiement as f";
 
 if ($socidp)
 {
-  $sql .= " AND f.fk_soc = $socidp";
+  $sql .= " WHERE f.fk_soc = $socidp";
 }
 $sql .= " GROUP BY dm DESC";
 
