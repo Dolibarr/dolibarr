@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
@@ -136,17 +136,41 @@ class modFacture extends DolibarrModules
     // Permissions
     $this->remove();
 
-    $sql = array(
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (10,'Tous les droits sur les factures','facture','a',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (11,'Lire les factures','facture','r',1);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (12,'Créer modifier les factures','facture','w',0);",
-		 //"INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (13,'Modifier les factures d\'autrui','facture','m',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (14,'Valider les factures','facture','d',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (15,'Envoyer les factures aux clients','facture','d',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (16,'Emettre des paiements sur les factures','facture','d',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (19,'Supprimer les factures','facture','d',0);"
-		 );
-    
+    $this->rights[0][0] = 10;
+    $this->rights[0][1] = 'Tous les droits sur les factures';
+    $this->rights[0][2] = 'a';
+    $this->rights[0][3] = 0;
+
+    $this->rights[1][0] = 11;
+    $this->rights[1][1] = 'Consulter les factures';
+    $this->rights[1][2] = 'a';
+    $this->rights[1][3] = 0;
+
+    $this->rights[2][0] = 11;
+    $this->rights[2][1] = 'Créer/modifier les factures';
+    $this->rights[2][2] = 'a';
+    $this->rights[2][3] = 0;
+
+    $this->rights[3][0] = 14;
+    $this->rights[3][1] = 'Valider les factures';
+    $this->rights[3][2] = 'a';
+    $this->rights[3][3] = 0;
+
+    $this->rights[4][0] = 15;
+    $this->rights[4][1] = 'Envoyer les factures aux clients';
+    $this->rights[4][2] = 'a';
+    $this->rights[4][3] = 0;
+
+    $this->rights[5][0] = 16;
+    $this->rights[5][1] = 'Emettre des paiements sur les factures';
+    $this->rights[5][2] = 'a';
+    $this->rights[5][3] = 0;
+
+    $this->rights[6][0] = 19;
+    $this->rights[6][1] = 'Supprimer les factures';
+    $this->rights[6][2] = 'a';
+    $this->rights[6][3] = 0;
+
     return $this->_init($sql);
   }
 
