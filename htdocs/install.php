@@ -108,5 +108,8 @@ Laissez vide si vous vous connectez en anonymous
 </tr>
 </table>
 </form>
+
+<a href="/">Go !</a>
+
 </body>
 </html>
