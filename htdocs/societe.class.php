@@ -283,7 +283,7 @@ class Societe {
 	}
       else
 	{
-	  dolibarr_print_error($this->db);
+	  dolibarr_syslog("Erreur Societe::Fetch");
 	  $result = -3;
 	}
 
