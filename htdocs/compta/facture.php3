@@ -17,7 +17,7 @@
  *
  * $Id$
  * $Source$
- *
+ * $tag$
  */
 require("./pre.inc.php3");
 require("../facture.class.php3");
@@ -271,7 +271,7 @@ if ($action == 'create')
 	print "<input type=\"hidden\" name=\"author\" value=\"$author\">";
 	print "<tr><td>Auteur :</td><td>".$user->fullname."</td>";
 
-	print '<td rowspan="4">';
+	print '<td rowspan="8" valign="top">';
 	print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
 
 	print "<tr><td>Date :</td><td>";
@@ -295,10 +295,10 @@ if ($action == 'create')
 	    print '<input type="hidden" name="tva"      value="'.$obj->tva.'">';
 	    print '<input type="hidden" name="propalid" value="'.$propalid.'">';
 	    
-	    print "<tr><td>Propal :</td><td>$obj->ref</td></tr>";
-	    print '<tr><td>Montant HT :</td><td>'.price($amount).'</td></tr>';
-	    print "<tr><td>TVA 19.6% :</td><td>".price($obj->tva)."</td></tr>";
-	    print "<tr><td>Total TTC :</td><td>".price($obj->total)."</td></tr>";	  
+	    print "<tr><td>Proposition</td><td>$obj->ref</td></tr>";
+	    print '<tr><td>Montant HT</td><td>'.price($amount).'</td></tr>';
+	    print "<tr><td>TVA</td><td>".price($obj->tva)."</td></tr>";
+	    print "<tr><td>Total TTC</td><td>".price($obj->total)."</td></tr>";	  
 	  }
 
 	
