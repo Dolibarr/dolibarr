@@ -152,13 +152,15 @@ else
 require (DOL_DOCUMENT_ROOT ."/product.class.php");
 require (DOL_DOCUMENT_ROOT ."/menu.class.php");
 require (DOL_DOCUMENT_ROOT ."/societe.class.php");
-require (DOL_DOCUMENT_ROOT ."/translate.class.php");
 require (DOL_DOCUMENT_ROOT ."/boxes.php");
 require (DOL_DOCUMENT_ROOT ."/address.class.php");
 require (DOL_DOCUMENT_ROOT ."/notify.class.php");
 require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf152/fpdf.php");
 
+
+
 define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/font/');
+
 /*
  * Definition de toutes les Constantes globales d'environement
  *
@@ -177,13 +179,32 @@ if ($result)
       $i++;
     }
 }
+
+/*
+ * Positionne le langage et localisation dans $conf->langage
+ * et charge l'objet de traduction
+ */
+if (! defined(MAIN_LANG_DEFAULT))
+{
+  define(MAIN_LANG_DEFAULT,"fr_FR");
+}
+$conf->langage=MAIN_LANG_DEFAULT;
+
+// On corrige $conf->language si il ne vaut pas le code long: fr_FR par exemple
+if (strlen($conf->language) <= 3) {
+    $conf->langage = strtolower($conf->langage)."_".strtoupper($conf->langage);
+}
+setlocale(LC_ALL, $conf->language);
+//setlocale(LC_TIME, $conf->language);
+
+require (DOL_DOCUMENT_ROOT ."/translate.class.php");
+$langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
+
+
+
 /*
  *
- *
  */
-
-//$db->close();
-
 if (defined("MAIN_NOT_INSTALLED"))
 {
   Header("Location: install.php");
@@ -390,20 +411,6 @@ if (defined("MAIN_MAIL_NEW_SUBJECT"))
 
 
 /*
- * Positionne le langage dans $conf->langage
- */
-if (! defined(MAIN_LANG_DEFAULT))
-{
-  define(MAIN_LANG_DEFAULT,"fr");
-}
-$conf->langage=MAIN_LANG_DEFAULT;
-$langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage, $conf->langage, $conf->langage);
-
-$lc=strtolower($conf->langage)."_".strtoupper($conf->langage);  // lc vaut fr_FR par exemple
-setlocale(LC_TIME, $lc);
-
-
-/*
  */
 $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
@@ -421,6 +428,7 @@ function top_menu($head, $title="", $target="")
   print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
   print "\n<html>";
 
+  $langs->load("main");
   print $langs->lang_header();
   print $head;
 

@@ -25,7 +25,7 @@
 require ("./main.inc.php");
 
 function llxHeader($head = "") {
-  global $user, $conf;
+  global $user, $conf, $langs;
   $user->getrights('societe');
 
   /*

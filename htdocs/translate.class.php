@@ -16,71 +16,40 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- * ***************************************************************************
- * File  : translate.class.php
- * Author  : Eric SEIGNE
- *           mailto:erics@rycks.com
- *           http://www.rycks.com/
- * Date    : 09/09/2001
- * Licence : GNU/GPL Version 2 ou plus
- * Modif : Rodolphe Quiedeville
- *
- * Description:
- * ------------
- *
- *
- *
- * @version    1.0
- * @author     Eric Seigne
- * @project    AbulEdu
- * @copyright  Eric Seigne 09/09/2001
- *
  * ************************************************************************* */
 
 Class Translate {
-    var $tab_langs;
+    var $tab_loaded;
     var $tab_translate;
-    var $file_lang;
-    /** Default language interface (isocode) */
-    var $defaultiso;
-    /** Source language (isocode) */
-    var $sourceiso;
-    /** This session language (isocode) */
-    var $sessioniso;
-    /** Where are languages files ? */
+
+    var $defaultlang;
     var $dir;
     var $debug;
 
-    //-------------------------------------------------
-    /** Constructor */
-    function Translate($dir = "", $sourceiso = "", $defaultiso = "", $sessioniso = "")
-    {
-        $this->tab_langs = array();
+    function Translate($dir = "", $defaultlang = "") {
+        $this->dir=$dir;
+        $this->defaultlang=$defaultlang;
+
         $this->tab_translate = array();
-        $this->file_lang = "";
-        $this->debug = 0;
-        $this->dir = $dir;
-        $this->sessioniso = $sessioniso;
-        $this->sourceiso = $sourceiso;
-        $this->defaultiso = $defaultiso;
+    }
+
     
-        if ($sessioniso == 'fr') {
-            // Français demandé, on ne fait rien
-            return;
+    function Load($domain = "main") {
+        if ($this->tab_loaded[$domain]) { return; }   # Ce fichier est deja chargé
+
+        $scandir    = $this->dir."/".$this->defaultlang;    # Repertoire de traduction
+        $scandiralt = $this->dir."/fr_FR";                  # Repertoire alternatif
+    
+        $file_lang =  $scandir . "/$domain.lang";
+        if (! is_file($file_lang)) {
+            $file_lang = $scandiralt . "/$domain.lang";
         }
-
-        //Si on a une langue par defaut
-        if(($this->defaultiso != "") && ($this->sessioniso == ""))
-        $this->file_lang = $this->dir . "/" . $this->defaultiso;
-        else if($this->sessioniso != "")
-        $this->file_lang = $this->dir . "/" . $this->sessioniso;
-
+        
         /* initialize tabs */
         $i = 0;
-        if(is_dir($this->dir)) {
-            $filet = $this->dir . "/" . $sessioniso;
-            //print "Ouverture fichier $filet";
-            if($fp = @fopen($filet,"rt")){
+        if(is_file($file_lang)) {
+            //print "Ouverture fichier $file_lang";
+            if($fp = @fopen($file_lang,"rt")){
                 $finded = 0;
                 while (($ligne = fgets($fp,4096)) && ($finded == 0)){
                     if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#") {
@@ -90,6 +59,7 @@ Class Translate {
                     }
                 }
                 fclose($fp);
+                $this->tab_loaded[$domain]=1;   # Marque ce fichier comme chargé
             }
 
         }
@@ -115,7 +85,7 @@ Class Translate {
         }
         return $str;
     }
-    
+
     /**
     *  Return the list of available languages
     *  [fr] Retourne la liste des langues disponibles

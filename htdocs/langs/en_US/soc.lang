@@ -1,0 +1,21 @@
+# Dolibarr language file - fr_FR - soc
+NewCompany=New company (prospect, customer, supplier)
+Company=Company
+Name=Name
+Surname=Surname
+Address=Addrese
+State=State
+Country=Country
+Phone=Phone
+Fax=Fax
+Zip=Zip Code
+Town=Town
+Web=Web
+ProfIdSiren=Professional ID
+ProfIdSiret=Professional ID
+ProfIdApe=APE
+TVAIntra=Intracommunautary VAT
+ProspectCustomer=Prospect / Customer
+Prospect=Prospect
+Customer=Customer
+Supplier=Supplier
