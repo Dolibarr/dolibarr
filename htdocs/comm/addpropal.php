@@ -233,7 +233,7 @@ if ($_GET["action"] == 'create')
       print_titre($titre);
         
       print '<table class="border">';
-      print '<tr><td>'.$lib.'</td><td>'.$langs->trans("Qty").'</td><td>Remise</td></tr>';
+      print '<tr><td>'.$lib.'</td><td>'.$langs->trans("Qty").'</td><td>'.$langs->trans("Discount").'</td></tr>';
       for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
         {
           print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';

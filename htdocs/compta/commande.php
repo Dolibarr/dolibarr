@@ -120,9 +120,9 @@ if ($_GET["id"] > 0)
       print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
       print '<td>'.$conf->monnaie.' HT</td>';
       
-      print '<td>Note</td></tr>';
+      print '<td>'.$langs->trans("Note").'</td></tr>';
       
-      print '<tr><td>Remise globale</td><td align="right">';
+      print '<tr><td>'.$langs->trans("GlobalDiscount").'</td><td align="right">';
       
       print $commande->remise_percent.' %</td><td>&nbsp;';
       
@@ -143,7 +143,7 @@ if ($_GET["id"] > 0)
        * Lignes de commandes
        *
        */
-      echo '<br><table border="0" width="100%" cellspacing="0" cellpadding="3">';	  
+      echo '<br><table border="0" width="100%">';	  
       
       $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
       $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l WHERE l.fk_commande =".$commande->id." ORDER BY l.rowid";
@@ -158,9 +158,9 @@ if ($_GET["id"] > 0)
 	    {
 	      print '<tr class="liste_titre">';
 	      print '<td width="54%">'.$langs->trans("Description").'</td>';
-	      print '<td width="8%" align="center">Tva</td>';
-	      print '<td width="8%" align="center">Quantité</td>';
-	      print '<td width="8%" align="right">Remise</td>';
+	      print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
+	      print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
+	      print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
 	      print '<td width="12%" align="right">P.U.</td>';
 	      print '<td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
 	      print "</tr>\n";

@@ -189,19 +189,19 @@ class pdf_propale_vert extends ModelePDFPropales
 	      $pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
 	      
 	      $pdf->SetXY (132, $tab2_top + 0);
-	      $pdf->MultiCell(42, $tab2_lh, "Total HT", 0, 'R', 0);
+	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalHT"), 0, 'R', 0);
 	      
 	      $pdf->SetXY (132, $tab2_top + $tab2_lh);
-	      $pdf->MultiCell(42, $tab2_lh, "Remise globale HT", 0, 'R', 0);
+	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("GlobalDiscount"), 0, 'R', 0);
 
 	      $pdf->SetXY (132, $tab2_top + $tab2_lh*2);
 	      $pdf->MultiCell(42, $tab2_lh, "Total HT après remise", 0, 'R', 0);
 
 	      $pdf->SetXY (132, $tab2_top + $tab2_lh*3);
-	      $pdf->MultiCell(42, $tab2_lh, "Total TVA", 0, 'R', 0);
+	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalVAT"), 0, 'R', 0);
 	      
 	      $pdf->SetXY (132, $tab2_top + ($tab2_lh*4));
-	      $pdf->MultiCell(42, $tab2_lh, "Total TTC", 1, 'R', 1);
+	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalTTC"), 1, 'R', 1);
 
 	      $pdf->SetXY (174, $tab2_top + 0);
 	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_ht + $propale->remise), 0, 'R', 0);
@@ -241,11 +241,11 @@ class pdf_propale_vert extends ModelePDFPropales
 
       $pdf->SetXY(132, $yt);
       $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-      $pdf->MultiCell(10,5,'TVA',0,'C');
+      $pdf->MultiCell(10,5,$langs->trans("VAT"),0,'C');
       
       $pdf->line(142, $tab_top, 142, $tab_top + $tab_height);
       $pdf->SetXY(142, $yt);
-      $pdf->MultiCell(8,5,'Qté',0,'C');
+      $pdf->MultiCell(8,5,$langs->trans("Qty"),0,'C');
       
       $pdf->line(150, $tab_top, 150, $tab_top + $tab_height);
       $pdf->SetXY(150, $yt);
@@ -253,11 +253,11 @@ class pdf_propale_vert extends ModelePDFPropales
       
       $pdf->line(166, $tab_top, 166, $tab_top + $tab_height);
       $pdf->SetXY(166, $yt);
-      $pdf->MultiCell(14,5,'Remise',0,'C');
+      $pdf->MultiCell(14,5,$langs->trans("Discount"),0,'C');
 
       $pdf->line(180, $tab_top, 180, $tab_top + $tab_height);
       $pdf->SetXY(180, $yt);
-      $pdf->MultiCell(20,5,'Total',0,'R');
+      $pdf->MultiCell(20,5,$langs->trans("Total"),0,'R');
       
       //      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
       $pdf->Rect(10, $tab_top, 190, $tab_height);

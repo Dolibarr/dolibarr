@@ -1144,9 +1144,9 @@ else
 	      print "<tr class=\"liste_titre\">";
 	      print '<td width="54%">'.$langs->trans("Description").'</td>';
 	      print '<td width="8%" align="right">'.$langs->trans("VAT").'</td>';
-	      print '<td width="12%" align="right">P.U. HT</TD>';
+	      print '<td width="12%" align="right">P.U. HT</td>';
 	      print '<td width="8%" align="right">'.$langs->trans("Quantity").'</td>';
-	      print '<td width="8%" align="right">Remise</td>';
+	      print '<td width="8%" align="right">'.$langs->trans("Dscount").'</td>';
 	      print '<td>&nbsp;</td>';
 	      print '<td>&nbsp;</td>';
 	      print '<td>&nbsp;</td>';

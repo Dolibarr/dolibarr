@@ -259,19 +259,19 @@ class pdf_bernique extends ModelePDFFactures  {
       
       
       $pdf->SetXY (132, $tab2_top + 0);
-      $pdf->MultiCell(42, $tab2_hl, "Total HT", 0, 'R', 0);
+      $pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalHT"), 0, 'R', 0);
       
       $pdf->SetXY (11, $tab2_top + $tab2_hl);
-      $pdf->MultiCell(42, $tab2_hl, "Remise ". $fac->remise_percent . " %", 0, 'L', 0);
+      $pdf->MultiCell(42, $tab2_hl, $langs->trans("Discount")." ". $fac->remise_percent . " %", 0, 'L', 0);
       
       $pdf->SetXY (132, $tab2_top + $tab2_hl * 2);
       $pdf->MultiCell(42, $tab2_hl, "Total HT aprés remise", 0, 'R', 0);
       
       $pdf->SetXY (132, $tab2_top + $tab2_hl * 3);
-      $pdf->MultiCell(42, $tab2_hl, "Total TVA", 0, 'R', 0);
+      $pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalVAT"), 0, 'R', 0);
       
       $pdf->SetXY (132, $tab2_top + $tab2_hl * 4);
-      $pdf->MultiCell(42, $tab2_hl, "Total TTC", 0, 'R', 1);
+      $pdf->MultiCell(42, $tab2_hl, $langs->trans("TotalTTC"), 0, 'R', 1);
       
       $pdf->SetXY (174, $tab2_top + 0);
       $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);

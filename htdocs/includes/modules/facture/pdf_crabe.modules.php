@@ -526,7 +526,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->Text(153, $tab_top + 5, $langs->trans("Qty"));
 
         $pdf->line(162, $tab_top, 162, $tab_top + $tab_height);
-        $pdf->Text(163, $tab_top + 5,'Remise');
+        $pdf->Text(163, $tab_top + 5,$langs->trans("Discount"));
 
         $pdf->line(177, $tab_top, 177, $tab_top + $tab_height);
         $pdf->Text(185, $tab_top + 5, $langs->trans("TotalHT"));

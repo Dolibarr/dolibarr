@@ -54,7 +54,7 @@ if ( $result )
       $h++;
       
       $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/remises.php?id=".$ligne->id;
-      $head[$h][1] = $langs->trans('Remises');
+      $head[$h][1] = $langs->trans('Discounts');
       $hselected=$h;
       $h++;
       
@@ -63,7 +63,7 @@ if ( $result )
       
       print_fiche_titre('Fiche Ligne', $mesg);
       
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+      print '<table class="border" width="100%">';
 
       print '<tr><td width="20%">Numéro</td><td colspan="2">'.dolibarr_print_phone($ligne->numero).'</td></tr>';
 	      	     
@@ -104,13 +104,13 @@ if ( $result )
 	}
 
       print '</table><br />';
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+      print '<table class="border" width="100%">';
 
       print '<tr class="liste_titre">';
       print '<td>Date</td>';
-      print '<td align="center">Remise</td>';
-      print '<td>Commentaire</td>';
-      print '<td>Utilisateur</td>';
+      print '<td align="center">'.$langs->trans("Discount").'</td>';
+      print '<td>'.$langs->trans("Comment").'</td>';
+      print '<td>'.$langs->trans("User").'</td>';
       print '</tr>';
 
       /* historique */

@@ -214,9 +214,9 @@ $html = new Form($db);
 		{
 		  print '<tr class="liste_titre">';
 		  print '<td width="54%">'.$langs->trans("Description").'</td>';
-		  print '<td width="8%" align="center">Tva</td>';
-		  print '<td width="8%" align="center">Quantité</td>';
-		  print '<td width="8%" align="right">Remise</td>';
+		  print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
+		  print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
+		  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
 		  print '<td width="12%" align="right">P.U.</td>';
 		  print '<td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
 		  print "</tr>\n";

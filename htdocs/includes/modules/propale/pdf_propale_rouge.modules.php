@@ -187,19 +187,19 @@ class pdf_propale_rouge extends ModelePDFPropales
 	      $pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
 	      
 	      $pdf->SetXY (132, $tab2_top + 0);
-	      $pdf->MultiCell(42, $tab2_lh, "Total HT", 0, 'R', 0);
+	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalHT"), 0, 'R', 0);
 	      
 	      $pdf->SetXY (132, $tab2_top + $tab2_lh);
-	      $pdf->MultiCell(42, $tab2_lh, "Remise HT", 0, 'R', 0);
+	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("Discount"), 0, 'R', 0);
 
 	      $pdf->SetXY (132, $tab2_top + $tab2_lh*2);
 	      $pdf->MultiCell(42, $tab2_lh, "Total HT après remise", 0, 'R', 0);
 
 	      $pdf->SetXY (132, $tab2_top + $tab2_lh*3);
-	      $pdf->MultiCell(42, $tab2_lh, "Total TVA", 0, 'R', 0);
+	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalVAT"), 0, 'R', 0);
 	      
 	      $pdf->SetXY (132, $tab2_top + ($tab2_lh*4));
-	      $pdf->MultiCell(42, $tab2_lh, "Total TTC", 1, 'R', 1);
+	      $pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalTTC"), 1, 'R', 1);
 
 	      $pdf->SetXY (174, $tab2_top + 0);
 	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_ht + $propale->remise), 0, 'R', 0);

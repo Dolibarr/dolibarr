@@ -347,7 +347,7 @@ if ($_GET["propalid"])
 	   */
 	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
 	    {
-	      print '<tr><td>Remise <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a></td>';
+	      print '<tr><td>'.$langs->trans("Discount").' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a></td>';
 	      print '<td align="right"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">%</td>';
 	      print '<td><input type="submit" value="'.$langs->trans("Save").'"></td>';
 

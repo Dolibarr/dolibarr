@@ -466,9 +466,9 @@ if ($id > 0)
 
 	  print "<tr class=\"liste_titre\">";
 	  print '<td colspan="2" width="54%">'.$langs->trans("Description").'</td>';
-	  print '<td width="8%" align="center">Tva</td>';
-	  print '<td width="8%" align="center">Quantité</td>';
-	  print '<td width="8%" align="right">Remise</td>';
+	  print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
+	  print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
+	  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
 	  print '<td width="12%" align="right">P.U.</TD>';
 	  print '<td>&nbsp;</td><td>&nbsp;</td>'."</tr>\n";
 

@@ -307,8 +307,8 @@ if ($_GET["action"] == 'create')
 		  dolibarr_print_error($db);
 		}
 	      	      
-	      print '<table class="noborder" cellspacing="0">';
-	      print '<tr><td>20 Produits les plus vendus</td><td>Quan.</td><td>Remise</td></tr>';
+	      print '<table class="noborder">';
+	      print '<tr><td>20 Produits les plus vendus</td><td>'.$langs->trans("Qty").'</td><td>'.$langs->trans("Discount").'</td></tr>';
 	      for ($i = 1 ; $i < 5 ; $i++)
 		{
 		  print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
@@ -336,7 +336,7 @@ if ($_GET["action"] == 'create')
 	      
 	      print '<table class="noborder" width="100%">';
 	      print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
-	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
+	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
 	      
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
@@ -502,7 +502,7 @@ else
 	  print '<td>'.$conf->monnaie.'</td>';
 	  print '<td rowspan="4" valign="top">'.$langs->trans("Note").' :</td></tr>';
 
-	  print '<tr><td>Remise globale</td><td align="right">';
+	  print '<tr><td>'.$langs->trans("GlobalDiscount").'</td><td align="right">';
 
 	  if ($commande->brouillon == 1 && $user->rights->commande->creer) 
 	    {

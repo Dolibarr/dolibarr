@@ -93,7 +93,7 @@ if ($result)
 
   print '<td align="right">Vente /sec</td><td align="right">Vente Fixe</td>';
   print '<td align="right">Achat /sec</td><td align="right">Achat Fixe</td>';
-  print '<td align="right">Remise</td>';
+  print '<td align="right">'.$langs->trans("Discount").'</td>';
   print "</tr>\n";
 
   print '<tr class="liste_titre">';

@@ -155,7 +155,7 @@ if ($_GET["propalid"])
        *
        */
 
-      print "<tr><td bgcolor=\"$color1\">Remise</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->remise)." euros</td></tr>";
+      print "<tr><td bgcolor=\"$color1\">".$langs->trans("Discount")."</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->remise)." euros</td></tr>";
 
       /*
        *
@@ -356,8 +356,8 @@ if ($_GET["propalid"])
     
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
-    print "<td>".$langs->trans("Ref")."</td><td>Produit</td>";
-    print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
+    print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>";
+    print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
     
     $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
     $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal =".$propal->id;
