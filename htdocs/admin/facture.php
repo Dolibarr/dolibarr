@@ -21,16 +21,12 @@
  */
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
+
 llxHeader();
 
-if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
-
-// positionne la variable pour le test d'affichage de l'icone
 
 $facture_addon_var = FACTURE_ADDON;
 $facture_addon_var_pdf = FACTURE_ADDON_PDF;
@@ -40,59 +36,23 @@ $facture_tva_option = FACTURE_TVAOPTION;
 
 if ($action == 'set')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FACTURE_ADDON', value='".$value."', visible=0, type='chaine'";
-
-  if ($db->query($sql))
-    {
-      // la constante qui a été lue en avant du nouveau set
-      // on passe donc par une variable pour avoir un affichage cohérent
-      $facture_addon_var = $value;
-    }
+  if (dolibarr_set_const($db, "FACTURE_ADDON",$value)) $facture_addon_var = $value;
 }
 
 if ($action == 'setribchq')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FACTURE_RIB_NUMBER', value='".$rib."', visible=0";
-
-  if ($db->query($sql))
-    {
-      // la constante qui a été lue en avant du nouveau set
-      // on passe donc par une variable pour avoir un affichage cohérent
-      $facture_rib_number_var = $rib;
-    }
-
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FACTURE_CHQ_NUMBER', value='".$chq."', visible=0";
-
-  if ($db->query($sql))
-    {
-      // la constante qui a été lue en avant du nouveau set
-      // on passe donc par une variable pour avoir un affichage cohérent
-      $facture_chq_number_var = $chq;
-    }
+  if (dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$rib)) $facture_rib_number_var = $rib;
+  if (dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$chq)) $facture_chq_number_var = $chq;
 }
 
 if ($action == 'setpdf')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FACTURE_ADDON_PDF', value='".$value."', visible=0";
-
-  if ($db->query($sql))
-    {
-      // la constante qui a été lue en avant du nouveau set
-      // on passe donc par une variable pour avoir un affichage cohérent
-      $facture_addon_var_pdf = $value;
-    }
+  if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$value)) $facture_addon_var_pdf = $value;
 }
 
 if ($action == 'settvaoption')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FACTURE_TVAOPTION', value='".$optiontva."', visible=0, type='chaine'";
-
-  if ($db->query($sql))
-    {
-      // la constante qui a été lue en avant du nouveau set
-      // on passe donc par une variable pour avoir un affichage cohérent
-      $facture_tva_option = $optiontva;
-    }
+  if (dolibarr_set_const($db, "FACTURE_TVAOPTION",$optiontva)) $facture_tva_option = $optiontva;
 }
 
 
@@ -100,10 +60,10 @@ $dir = "../includes/modules/facture/";
 
 print_titre("Module de numérotation des factures");
 
-print '<table border="1" cellpadding="3" cellspacing="0" width=\"100%\">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td>';
-print '<td>Info</td>';
+print '<td>Description</td>';
 print '<td align="center" width="60">Activé</td>';
 print '<td width="80">&nbsp;</td>';
 print "</TR>\n";
@@ -112,11 +72,13 @@ clearstatcache();
 
 $handle=opendir($dir);
 
+$var=True;
 while (($file = readdir($handle))!==false)
 {
   if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
     {
-      print '<tr class="pair"><td width=\"100\">';
+	  $var = !$var;
+      print '<tr '.$bc[$var].'><td width=\"100\">';
       echo "$file";
       print "</td><td>\n";
 
@@ -150,26 +112,28 @@ print '</table>';
 
 print_titre("Modèles de facture pdf");
 
-print '<table border="1" cellpadding="3" cellspacing="0" width=\"100%\">';
-print '<TR class="liste_titre">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
+print '<tr class="liste_titre">';
 print '<td>Nom</td>';
-print '<td>Info</td>';
+print '<td>Description</td>';
 print '<td align="center" width="60">Activé</td>';
 print '<td width="80">&nbsp;</td>';
-print "</TR>\n";
+print "</tr>\n";
 
 clearstatcache();
 
 $handle=opendir($dir);
 
+$var=True;
 while (($file = readdir($handle))!==false)
 {
   if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
     {
+	  $var = !$var;
       $name = substr($file, 4, strlen($file) -16);
       $classname = substr($file, 0, strlen($file) -12);
 
-      print '<tr class="pair"><td width=\"100\">';
+      print '<tr '.$bc[$var].'><td width=\"100\">';
       echo "$name";
       print "</td><td>\n";
       require_once($dir.$file);
@@ -207,25 +171,27 @@ print '</table>';
 
 print_titre( "Mode de règlement à afficher sur les factures");
 
-print '<table border="1" cellpadding="3" cellspacing="0" width=\"100%\">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
 
-print '<form action="facture.php" method="post">';
+print '<form action="'.$PHP_SELF.'" method="post">';
 print '<input type="hidden" name="action" value="setribchq">';
 print '<tr class="liste_titre">';
 print '<td>Mode règlement à proposer</td>';
 print '<td><input type="submit" value="Modifier"></td>';
 print "</tr>\n";
-print '<tr class="pair">';
+print '<tr '.$bc[True].'>';
 print "<td>Proposer paiement par RIB sur le compte</td>";
 print "<td><select name=\"rib\">";
 print '<option value="0">Ne pas afficher</option>';
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
+$var=True;
 if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
   while ($i < $num)
     {
+      $var=!$var;
       $row = $db->fetch_row($i);
 
       if ($facture_rib_number_var == $row[0])
@@ -241,17 +207,19 @@ if ($db->query($sql))
 }
 print "</select></td></tr>";
 
-print '<tr class="pair">';
+print '<tr '.$bc[False].'>';
 print "<td>Proposer paiement par chèque à l'ordre et adresse du titulaire du compte</td>";
 print "<td><select name=\"chq\">";
 print '<option value="0">Ne pas afficher</option>';
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
+$var=True;
 if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
   while ($i < $num)
     {
+      $var=!$var;
       $row = $db->fetch_row($i);
 
       if ($facture_chq_number_var == $row[0])
@@ -277,12 +245,12 @@ $db->close();
 
 print_titre("Chemins d'accés aux documents");
 
-print '<table border="1" cellpadding="3" cellspacing="0" width=\"100%\">';
-print '<TR class="liste_titre">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
+print '<tr class="liste_titre">';
 print '<td>Nom</td><td>Valeur</td>';
-print "</TR>\n";
-print '<tr class="pair"><td width=\"140\">Répertoire</td><td>'.FAC_OUTPUTDIR.'</td></tr>';
-print '<tr class="pair"><td width=\"140\">URL</td><td><a href="'.FAC_OUTPUT_URL.'">'.FAC_OUTPUT_URL.'</a></td></tr>';
+print "</tr>\n";
+print '<tr '.$bc[True].'><td width=\"140\">Répertoire</td><td>'.FAC_OUTPUTDIR.'</td></tr>';
+print '<tr '.$bc[False].'><td width=\"140\">URL</td><td><a href="'.FAC_OUTPUT_URL.'">'.FAC_OUTPUT_URL.'</a></td></tr>';
 print "</table>";
 
 
@@ -292,16 +260,16 @@ print "</table>";
 
 print_titre("Options fiscales de facturation de la TVA");
 
-print '<table border="1" cellpadding="3" cellspacing="0" width=\"100%\">';
-print '<form action="facture.php" method="post">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
+print '<form action="'.$PHP_SELF.'" method="post">';
 print '<input type="hidden" name="action" value="settvaoption">';
 print '<TR class="liste_titre">';
 print '<td>Option</td><td>Description</td>';
 print '<td><input type="submit" value="Modifier"></td>';
 print "</TR>\n";
-print "<tr class=\"pair\"><td width=\"140\"><input type=\"radio\" name=\"optiontva\" value=\"reel\"".($facture_tva_option != "franchise"?" checked":"")."> Option réel</td>";
+print "<tr ".$bc[True]."><td width=\"140\"><input type=\"radio\" name=\"optiontva\" value=\"reel\"".($facture_tva_option != "franchise"?" checked":"")."> Option réel</td>";
 print "<td colspan=\"2\">L'option 'réel' est la plus courante. Elle est à destination des entreprises et professions libérales.\nChaque produits/service vendu est soumis à la TVA (Dolibarr propose le taux standard par défaut à la création d'une facture). Cette dernière est récupérée l'année suivante suite à la déclaration TVA pour les produits/services achetés et est reversée à l'état pour les produits/services vendus.</td></tr>\n";
-print "<tr class=\"pair\"><td width=\"140\"><input type=\"radio\" name=\"optiontva\" value=\"franchise\"".($facture_tva_option == "franchise"?" checked":"")."> Option franchise</td>";
+print "<tr ".$bc[False]."><td width=\"140\"><input type=\"radio\" name=\"optiontva\" value=\"franchise\"".($facture_tva_option == "franchise"?" checked":"")."> Option franchise</td>";
 print "<td colspan=\"2\">L'option 'franchise' est utilisée par les particuliers ou professions libérales à titre occasionnel avec de petits chiffres d'affaires.\nChaque produits/service vendu est soumis à une TVA de 0 (Dolibarr propose le taux 0 par défaut à la création d'une facture cliente). Il n'y a pas de déclaration ou récupération de TVA, et les factures qui gèrent l'option affichent la mention obligatoire \"TVA non applicable - art-293B du CGI\".</td></tr>\n";
 print "</form>";
 print "</table>";
