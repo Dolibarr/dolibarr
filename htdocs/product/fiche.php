@@ -45,6 +45,7 @@ if ($action == 'add')
   $product->price          = $HTTP_POST_VARS["price"];
   $product->tva_tx         = $HTTP_POST_VARS["tva_tx"];
   $product->type           = $HTTP_POST_VARS["type"];
+  $product->envente        = $HTTP_POST_VARS["statut"];
   $product->description    = $HTTP_POST_VARS["desc"];
   $product->duration_value = $HTTP_POST_VARS["duration_value"];
   $product->duration_unit  = $HTTP_POST_VARS["duration_unit"];
@@ -59,7 +60,7 @@ if ($action == 'addinpropal')
   $propal = New Propal($db);
 
   $propal->fetch($HTTP_POST_VARS["propalid"]);
-  $result =  $propal->insert_product($id, $HTTP_POST_VARS["qty"]);
+  $result =  $propal->insert_product($id, $HTTP_POST_VARS["qty"], $HTTP_POST_VARS["remise_percent"]);
   if ( $result < 0)
     {
       $mesg = "erreur $result";
@@ -195,7 +196,13 @@ if ($action == 'create')
   $html = new Form($db);
   print $html->select_tva("tva_tx");
   print '</td></tr>';
-  if ($_GET["type"] == 0)
+  print '<tr><td>Statut</td><td>';
+  print '<select name="statut">';
+  print '<option value="1">En vente</option>';
+  print '<option value="0" SELECTED>Hors Vente</option>';
+  print '</td></tr>';
+  
+  if ($_GET["type"] == 0 && defined("MAIN_MODULE_STOCK"))
     {
       print "<tr>".'<td>Seuil stock</td><td colspan="2">';
       print '<input name="seuil_stock_alerte" size="4" value="0">';
@@ -292,23 +299,26 @@ else
 	      print '</td></tr>';
 
 	      print '<tr><td>Taux TVA</td><TD>'.$product->tva_tx.' %</td></tr>';
-	      print '<tr><td><a href="stock/product.php?id='.$product->id.'">Stock</a></td>';
-	      if ($product->no_stock)
+	      if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
 		{
-		  print "<td>Pas de définition de stock pour ce produit";
-		}
-	      else
-		{
-		  if ($product->stock_reel <= $product->seuil_stock_alerte)
+		  print '<tr><td><a href="stock/product.php?id='.$product->id.'">Stock</a></td>';
+		  if ($product->no_stock)
 		    {
-		      print '<td class="alerte">'.$product->stock_reel.' Seuil : '.$product->seuil_stock_alerte;
+		      print "<td>Pas de définition de stock pour ce produit";
 		    }
 		  else
 		    {
+		      if ($product->stock_reel <= $product->seuil_stock_alerte)
+			{
+			  print '<td class="alerte">'.$product->stock_reel.' Seuil : '.$product->seuil_stock_alerte;
+			}
+		      else
+			{
 		      print "<td>".$product->stock_reel;
+			}
 		    }
+		  print '</td></tr>';
 		}
-	      print '</td></tr>';
 	      print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
 
 	      if ($product->type == 1)
@@ -414,7 +424,7 @@ else
 	      print '<option value="0" SELECTED>Hors Vente</option>';
 	    }
 	  print '</td></tr>';
-	  if ($product->type == 0)
+	  if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
 	    {
 	      print "<tr>".'<td>Seuil stock</td><td colspan="2">';
 	      print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
@@ -520,8 +530,14 @@ else
   print '<td width="20%" align="center">-</td>';
 }
 print '<td width="20%" align="center">-</td>';    
-
-print '<td width="20%" align="center"><a href="stock/product.php?id='.$id.'&amp;action=correction">Correction stock</a></td>';
+if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
+{
+  print '<td width="20%" align="center"><a href="stock/product.php?id='.$id.'&amp;action=correction">Correction stock</a></td>';
+}
+else
+{
+  print '<td width="20%" align="center">-</td>';    
+}
 
 print '</table><br>';
 
@@ -564,7 +580,8 @@ if ($id && $action == '' && $product->envente)
 	      print '<form method="POST" action="fiche.php?id='.$id.'">';
 	      print '<input type="hidden" name="action" value="addinpropal">';
 	      print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
-	      print '<input type="text" name="qty" size="3" value="1">';
+	      print '<input type="text" name="qty" size="3" value="1">&nbsp;Rem.';
+	      print '<input type="text" name="remise_percent" size="3" value="0"> %';
 	      print " ".$product->stock_proposition;
 	      print '</td><td>';
 	      print '<input type="submit" value="Ajouter">';
@@ -591,7 +608,8 @@ if ($id && $action == '' && $product->envente)
 	      print "<tr>".'<td>Autres Propositions</td><td>';
 	      $htmls->select_array("propalid", $otherprop);
 	      print '</td><td>';
-	      print '<input type="text" name="qty" size="3" value="1">';
+	      print '<input type="text" name="qty" size="3" value="1">&nbsp;Rem.';
+	      print '<input type="text" name="remise_percent" size="3" value="0"> %';
 	      print '</td><td>';
 	      print '<input type="submit" value="Ajouter">';
 	      print '</td></tr>';
@@ -633,7 +651,8 @@ if ($id && $action == '' && $product->envente)
 	      print '<form method="POST" action="fiche.php?id='.$id.'">';
 	      print '<input type="hidden" name="action" value="addinfacture">';
 	      print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
-	      print '<input type="text" name="qty" size="3" value="1">';
+	      print '<input type="text" name="qty" size="3" value="1">&nbsp;Rem.';
+	      print '<input type="text" name="remise_percent" size="3" value="0"> %';
 	      print '</td><td>';
 	      print '<input type="submit" value="Ajouter">';
 	      print "</td>";
