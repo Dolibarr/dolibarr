@@ -26,7 +26,7 @@ div.body
   border-top:1px solid black;
   font-family:arial,tahoma,verdana,helvetica;
   font-size:12px;
-  background:white;
+  background: #dee7ec; 
 }
 
 div.tmenu
@@ -46,7 +46,7 @@ div.fiche
   display: block;
   float: none;
   position: absolute;
-/*  background: #dee7ec; */
+  background: #dee7ec; 
   top: 33px;
   left: 150px;
   margin-right: 10px;
@@ -131,13 +131,14 @@ img {vertical-align:text-top}
 div.blockvmenupair
 {
   padding: 3px;
-
+  border-bottom: thin solid #6495ed;
 }
 
 div.blockvmenuimpair
 {
 
   padding: 3px;
+  border-bottom: thin solid #6495ed;
 }
 
 a.vmenu
@@ -169,7 +170,6 @@ a.vmenu:hover
 a.vsmenu:hover
 {
   border-color:gray;
-  text-decoration: underline;
   color:black;
   }
 
@@ -177,7 +177,7 @@ a.vsmenu:hover
 
 table.liste
 {
-  border: small solid #000000;
+  border: blue small solid #000000;
   border-collapse: collapse;
   width: 100%;
   }
