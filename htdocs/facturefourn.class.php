@@ -310,12 +310,12 @@ class FactureFourn
     
     $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det ";
     $sql .= "SET description ='".$label."'";
-    $sql .= ", pu_ht = " . $puht;
-    $sql .= ", qty =".$qty;
-    $sql .= ", total_ht=".$totalht;
-    $sql .= ", tva=".$tva;
-    $sql .= ", tva_taux=".$tauxtva;
-    $sql .= ", total_ttc=".$totalttc;
+    $sql .= ", pu_ht = '$puht'";
+    $sql .= ", qty ='$qty'";
+    $sql .= ", total_ht='$totalht'";
+    $sql .= ", tva='$tva'";
+    $sql .= ", tva_taux='$tauxtva'";
+    $sql .= ", total_ttc='$totalttc'";
     
     $sql .= " WHERE rowid = $id";
     
@@ -382,7 +382,7 @@ class FactureFourn
 
 	  }
 	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET total_ht = $total_ht, total_tva = $total_tva, total_ttc = $total_ttc";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET total_ht = '$total_ht', total_tva = '$total_tva', total_ttc = '$total_ttc'";
 	$sql .= " WHERE rowid = $facid ;";
 
 	$result = $this->db->query($sql);	
