@@ -182,9 +182,9 @@ if ($_GET["action"] == 'create')
       print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax"></td></tr>';
       
       print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
-      print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input size="40" type="text" name="url"></td></tr>';
+      print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
 
-      print '<tr><td>'.$langs->trans('ProfIdSiren').'</td><td><input type="text" name="siren"></td>';
+      print '<tr><td>'.$langs->trans('ProfIdSiren').'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
       print '<td>'.$langs->trans('ProfIdSiret').'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
 
       print '<tr><td>'.$langs->trans('ProfIdApe').'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td>';
