@@ -118,8 +118,8 @@ class Adherent
 		      );
     $texttosend = preg_replace ($patterns, $replace, $text);
     $subjectosend = preg_replace ($patterns, $replace, $subject);
-    if (defined('MAIN_MAIL_FROM') && MAIN_MAIL_FROM != ''){
-	return mail($recipients,$subjectosend,$texttosend,"From: ".MAIN_MAIL_FROM."\nReply-To: ".MAIN_MAIL_FROM."\nX-Mailer: PHP/" . phpversion());
+    if (defined('ADHERENT_MAIL_FROM') && ADHERENT_MAIL_FROM != ''){
+	return mail($recipients,$subjectosend,$texttosend,"From: ".ADHERENT_MAIL_FROM."\nReply-To: ".ADHERENT_MAIL_FROM."\nX-Mailer: PHP/" . phpversion());
     }else{
       return mail($recipients,$subjectosend,$texttosend);
     }
@@ -600,7 +600,7 @@ class Adherent
     {
       $err=0;
       // mailman
-      if (defined("MAIN_USE_MAILMAN") && MAIN_USE_MAILMAN == 1)
+      if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
 	{
 	  if(!$this->add_to_mailman())
 	    {
@@ -609,8 +609,8 @@ class Adherent
 	}
       
       if ($adht->vote == 'yes' && 
-	  defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1 &&
-	  defined("MAIN_USE_GLASNOST_AUTO") && MAIN_USE_GLASNOST_AUTO ==1
+	  defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
+	  defined("ADHERENT_USE_GLASNOST_AUTO") && ADHERENT_USE_GLASNOST_AUTO ==1
 	  )
 	{
 	  if(!$this->add_to_glasnost()){
@@ -618,8 +618,8 @@ class Adherent
 	  }
 	}
       if (
-	  defined("MAIN_USE_SPIP") && MAIN_USE_SPIP ==1 &&
-	  defined("MAIN_USE_SPIP_AUTO") && MAIN_USE_SPIP_AUTO ==1
+	  defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
+	  defined("ADHERENT_USE_SPIP_AUTO") && ADHERENT_USE_SPIP_AUTO ==1
 	  )
 	{
 	  if(!$this->add_to_spip()){
@@ -643,15 +643,15 @@ class Adherent
     {
       $err=0;
       // mailman
-      if (defined("MAIN_USE_MAILMAN") && MAIN_USE_MAILMAN == 1)
+      if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
 	{
 	  if(!$this->del_to_mailman()){
 	    $err+=1;
 	  }
 	}
       if ($adht->vote == 'yes' && 
-	  defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1 &&
-	  defined("MAIN_USE_GLASNOST_AUTO") && MAIN_USE_GLASNOST_AUTO ==1
+	  defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
+	  defined("ADHERENT_USE_GLASNOST_AUTO") && ADHERENT_USE_GLASNOST_AUTO ==1
 	  )
 	{
 	  if(!$this->del_to_glasnost()){
@@ -659,8 +659,8 @@ class Adherent
 	  }
 	}
       if (
-	  defined("MAIN_USE_SPIP") && MAIN_USE_SPIP ==1 &&
-	  defined("MAIN_USE_SPIP_AUTO") && MAIN_USE_SPIP_AUTO ==1
+	  defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
+	  defined("ADHERENT_USE_SPIP_AUTO") && ADHERENT_USE_SPIP_AUTO ==1
 	  )
 	{
 	  if(!$this->del_to_spip()){
@@ -682,17 +682,17 @@ class Adherent
    */
   Function add_to_spip()
     {
-      if (defined("MAIN_USE_SPIP") && MAIN_USE_SPIP ==1 && 
-	  defined('MAIN_SPIP_SERVEUR') && MAIN_SPIP_SERVEUR != '' &&
-	  defined('MAIN_SPIP_USER') && MAIN_SPIP_USER != '' &&
-	  defined('MAIN_SPIP_PASS') && MAIN_SPIP_PASS != '' &&
-	  defined('MAIN_SPIP_DB') && MAIN_SPIP_DB != ''
+      if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 && 
+	  defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
+	  defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
+	  defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
+	  defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
 	  ){
 	$mdpass=md5($this->pass);
 	$htpass=crypt($this->pass,initialiser_sel());
 	$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->prenom." ".$this->nom."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
-	//      $mydb=new Db('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
-      $mydb=new DoliDb('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
+	//      $mydb=new Db('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
+      $mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
       $result = $mydb->query($query);
       
       if ($result) 
@@ -715,14 +715,14 @@ class Adherent
    */
   Function del_to_spip()
     {
-      if (defined("MAIN_USE_SPIP") && MAIN_USE_SPIP ==1 && 
-	  defined('MAIN_SPIP_SERVEUR') && MAIN_SPIP_SERVEUR != '' &&
-	  defined('MAIN_SPIP_USER') && MAIN_SPIP_USER != '' &&
-	  defined('MAIN_SPIP_PASS') && MAIN_SPIP_PASS != '' &&
-	  defined('MAIN_SPIP_DB') && MAIN_SPIP_DB != ''
+      if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 && 
+	  defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
+	  defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
+	  defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
+	  defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
 	  ){
 	$query = "DELETE FROM spip_auteurs WHERE login='".$this->login."'";
-	$mydb=new DoliDb('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
+	$mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
 	$result = $mydb->query($query);
       
 	if ($result) 
@@ -745,14 +745,14 @@ class Adherent
    */
   Function is_in_spip()
     {
-      if (defined("MAIN_USE_SPIP") && MAIN_USE_SPIP ==1 && 
-	  defined('MAIN_SPIP_SERVEUR') && MAIN_SPIP_SERVEUR != '' &&
-	  defined('MAIN_SPIP_USER') && MAIN_SPIP_USER != '' &&
-	  defined('MAIN_SPIP_PASS') && MAIN_SPIP_PASS != '' &&
-	  defined('MAIN_SPIP_DB') && MAIN_SPIP_DB != ''
+      if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 && 
+	  defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
+	  defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
+	  defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
+	  defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
 	  ){
 	$query = "SELECT login FROM spip_auteurs WHERE login='".$this->login."'";
-	$mydb=new DoliDb('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
+	$mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
 	$result = $mydb->query($query);
       
 	if ($result) 
@@ -782,20 +782,20 @@ class Adherent
    */
   Function add_to_glasnost()
     {
-      if (defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1 && 
-	  defined('MAIN_GLASNOST_SERVEUR') && MAIN_GLASNOST_SERVEUR != '' &&
-	  defined('MAIN_GLASNOST_USER') && MAIN_GLASNOST_USER != '' &&
-	  defined('MAIN_GLASNOST_PASS') && MAIN_GLASNOST_PASS != ''
+      if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 && 
+	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
+	  defined('ADHERENT_GLASNOST_USER') && ADHERENT_GLASNOST_USER != '' &&
+	  defined('ADHERENT_GLASNOST_PASS') && ADHERENT_GLASNOST_PASS != ''
 	  ){
 	// application token is not useful here
 	$applicationtoken='';
 	list($success, $response) = 
-	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
 			 '/RPC2', 
 			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/authentication"),
+			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication"),
 			       XMLRPC_prepare('getUserIdAndToken'),
-			       XMLRPC_prepare(array("glasnost://".MAIN_GLASNOST_SERVEUR."/authentication","$applicationtoken",MAIN_GLASNOST_USER,MAIN_GLASNOST_PASS))
+			       XMLRPC_prepare(array("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication","$applicationtoken",ADHERENT_GLASNOST_USER,ADHERENT_GLASNOST_PASS))
 			       )
 			 );
 	if ($success){
@@ -807,13 +807,13 @@ class Adherent
 	}
 
 	list($success,$response)=
-	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
 			 '/RPC2', 
 			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/people"),
+			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
 			       XMLRPC_prepare('addObject'),
 			       XMLRPC_prepare(array(
-						    "glasnost://".MAIN_GLASNOST_SERVEUR."/people",
+						    "glasnost://".ADHERENT_GLASNOST_SERVEUR."/people",
 						    "$applicationtoken",
 						    $usertoken,
 						    array(
@@ -847,20 +847,20 @@ class Adherent
    */
   Function del_to_glasnost()
     {
-      if (defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1 && 
-	  defined('MAIN_GLASNOST_SERVEUR') && MAIN_GLASNOST_SERVEUR != '' &&
-	  defined('MAIN_GLASNOST_USER') && MAIN_GLASNOST_USER != '' &&
-	  defined('MAIN_GLASNOST_PASS') && MAIN_GLASNOST_PASS != ''
+      if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 && 
+	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
+	  defined('ADHERENT_GLASNOST_USER') && ADHERENT_GLASNOST_USER != '' &&
+	  defined('ADHERENT_GLASNOST_PASS') && ADHERENT_GLASNOST_PASS != ''
 	  ){
 	// application token is not useful here
 	$applicationtoken='';
 	list($success, $response) = 
-	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
 			 '/RPC2', 
 			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/authentication"),
+			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication"),
 			       XMLRPC_prepare('getUserIdAndToken'),
-			       XMLRPC_prepare(array("glasnost://".MAIN_GLASNOST_SERVEUR."/authentication","$applicationtoken",MAIN_GLASNOST_USER,MAIN_GLASNOST_PASS))
+			       XMLRPC_prepare(array("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication","$applicationtoken",ADHERENT_GLASNOST_USER,ADHERENT_GLASNOST_PASS))
 			       )
 			 );
 	if ($success){
@@ -871,13 +871,13 @@ class Adherent
 	}
 	// recuperation du personID
 	list($success,$response)=
-	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
 			 '/RPC2', 
 			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/people"),
+			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
 			       XMLRPC_prepare('getObjectByLogin'),
 			       XMLRPC_prepare(array(
-						    "glasnost://".MAIN_GLASNOST_SERVEUR."/people",
+						    "glasnost://".ADHERENT_GLASNOST_SERVEUR."/people",
 						    "$applicationtoken",
 						    $usertoken,
 						    $this->login
@@ -891,19 +891,19 @@ class Adherent
 	  $this->errorstr=$response['faultString'];
 	  return 0;
 	}
-	if (defined('MAIN_GLASNOST_DEFAULT_GROUPID') && MAIN_GLASNOST_DEFAULT_GROUPID != ''){
+	if (defined('ADHERENT_GLASNOST_DEFAULT_GROUPID') && ADHERENT_GLASNOST_DEFAULT_GROUPID != ''){
 	  // recuperation des personne de ce groupe
 	  list($success,$response)=
-	    XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+	    XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
 			 '/RPC2', 
 			   'callGateway',
-			   array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/groups"),
+			   array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/groups"),
 				 XMLRPC_prepare('getObject'),
 				 XMLRPC_prepare(array(
-						      "glasnost://".MAIN_GLASNOST_SERVEUR."/groups",
+						      "glasnost://".ADHERENT_GLASNOST_SERVEUR."/groups",
 						      "$applicationtoken",
 						      $usertoken,
-						      MAIN_GLASNOST_DEFAULT_GROUPID
+						      ADHERENT_GLASNOST_DEFAULT_GROUPID
 						      )
 						)
 				 )
@@ -920,13 +920,13 @@ class Adherent
 	}
 	// suppression du personID
 	list($success,$response)=
-	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
 			 '/RPC2', 
 			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/people"),
+			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
 			       XMLRPC_prepare('deleteObject'),
 			       XMLRPC_prepare(array(
-						    "glasnost://".MAIN_GLASNOST_SERVEUR."/people",
+						    "glasnost://".ADHERENT_GLASNOST_SERVEUR."/people",
 						    "$applicationtoken",
 						    $usertoken,
 						    $personid
@@ -952,20 +952,20 @@ class Adherent
    */
   Function is_in_glasnost()
     {
-      if (defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1 && 
-	  defined('MAIN_GLASNOST_SERVEUR') && MAIN_GLASNOST_SERVEUR != '' &&
-	  defined('MAIN_GLASNOST_USER') && MAIN_GLASNOST_USER != '' &&
-	  defined('MAIN_GLASNOST_PASS') && MAIN_GLASNOST_PASS != ''
+      if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 && 
+	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
+	  defined('ADHERENT_GLASNOST_USER') && ADHERENT_GLASNOST_USER != '' &&
+	  defined('ADHERENT_GLASNOST_PASS') && ADHERENT_GLASNOST_PASS != ''
 	  ){
 	// application token is not useful here
 	$applicationtoken='';
 	list($success, $response) = 
-	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
 			 '/RPC2', 
 			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/authentication"),
+			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication"),
 			       XMLRPC_prepare('getUserIdAndToken'),
-			       XMLRPC_prepare(array("glasnost://".MAIN_GLASNOST_SERVEUR."/authentication","$applicationtoken",MAIN_GLASNOST_USER,MAIN_GLASNOST_PASS))
+			       XMLRPC_prepare(array("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication","$applicationtoken",ADHERENT_GLASNOST_USER,ADHERENT_GLASNOST_PASS))
 			       )
 			 );
 	if ($success){
@@ -976,13 +976,13 @@ class Adherent
 	}
 	// recuperation du personID
 	list($success,$response)=
-	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
 			 '/RPC2', 
 			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/people"),
+			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
 			       XMLRPC_prepare('getObjectByLogin'),
 			       XMLRPC_prepare(array(
-						    "glasnost://".MAIN_GLASNOST_SERVEUR."/people",
+						    "glasnost://".ADHERENT_GLASNOST_SERVEUR."/people",
 						    "$applicationtoken",
 						    $usertoken,
 						    $this->login
@@ -1008,10 +1008,10 @@ class Adherent
    */
   Function add_to_mailman($listes='')
   {
-    if (defined("MAIN_MAILMAN_URL") && MAIN_MAILMAN_URL != '' && defined("MAIN_MAILMAN_LISTS") && MAIN_MAILMAN_LISTS != '')
+    if (defined("ADHERENT_MAILMAN_URL") && ADHERENT_MAILMAN_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
       {
 	if ($listes ==''){
-	  $lists=explode(',',MAIN_MAILMAN_LISTS);
+	  $lists=explode(',',ADHERENT_MAILMAN_LISTS);
 	}else{
 	  $lists=explode(',',$listes);
 	}
@@ -1030,10 +1030,10 @@ class Adherent
 			      $list,
 			      $this->email,
 			      $this->pass,
-			      MAIN_MAILMAN_ADMINPW,
-			      MAIN_MAILMAN_SERVER
+			      ADHERENT_MAILMAN_ADMINPW,
+			      ADHERENT_MAILMAN_SERVER
 			      );
-	    $curl_url = preg_replace ($patterns, $replace, MAIN_MAILMAN_URL);
+	    $curl_url = preg_replace ($patterns, $replace, ADHERENT_MAILMAN_URL);
 		  
 	    $ch = curl_init();
 	    curl_setopt($ch, CURLOPT_URL,"$curl_url");
@@ -1071,10 +1071,10 @@ class Adherent
 
   Function del_to_mailman($listes='')
   {
-    if (defined("MAIN_MAILMAN_UNSUB_URL") && MAIN_MAILMAN_UNSUB_URL != '' && defined("MAIN_MAILMAN_LISTS") && MAIN_MAILMAN_LISTS != '')
+    if (defined("ADHERENT_MAILMAN_UNSUB_URL") && ADHERENT_MAILMAN_UNSUB_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
       {
 	if ($listes==''){
-	  $lists=explode(',',MAIN_MAILMAN_LISTS);
+	  $lists=explode(',',ADHERENT_MAILMAN_LISTS);
 	}else{
 	  $lists=explode(',',$listes);
 	}
@@ -1093,10 +1093,10 @@ class Adherent
 			      $list,
 			      $this->email,
 			      $this->pass,
-			      MAIN_MAILMAN_ADMINPW,
-			      MAIN_MAILMAN_SERVER
+			      ADHERENT_MAILMAN_ADMINPW,
+			      ADHERENT_MAILMAN_SERVER
 			      );
-	    $curl_url = preg_replace ($patterns, $replace, MAIN_MAILMAN_UNSUB_URL);
+	    $curl_url = preg_replace ($patterns, $replace, ADHERENT_MAILMAN_UNSUB_URL);
 	    
 	    $ch = curl_init();
 	    curl_setopt($ch, CURLOPT_URL,"$curl_url");

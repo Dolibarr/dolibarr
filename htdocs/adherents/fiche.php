@@ -41,13 +41,13 @@ if ($HTTP_POST_VARS["action"] == 'cotisation')
   if ($cotisation > 0)
     {     
       // rajout du nouveau cotisant dans les listes qui vont bien
-      //      if (defined("MAIN_MAILMAN_LISTS_COTISANT") && MAIN_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == "0000-00-00 00:00:00"){
-      if (defined("MAIN_MAILMAN_LISTS_COTISANT") && MAIN_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == 0){
-	$adh->add_to_mailman(MAIN_MAILMAN_LISTS_COTISANT);
+      //      if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == "0000-00-00 00:00:00"){
+      if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == 0){
+	$adh->add_to_mailman(ADHERENT_MAILMAN_LISTS_COTISANT);
       }
       $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
-      if (defined("MAIN_MAIL_COTIS") && defined("MAIN_MAIL_COTIS_SUBJECT")){
-	$adh->send_an_email($adh->email,MAIN_MAIL_COTIS,MAIN_MAIL_COTIS_SUBJECT);
+      if (defined("ADHERENT_MAIL_COTIS") && defined("ADHERENT_MAIL_COTIS_SUBJECT")){
+	$adh->send_an_email($adh->email,ADHERENT_MAIL_COTIS,ADHERENT_MAIL_COTIS_SUBJECT);
       }
     }
   $action = "edit";
@@ -387,7 +387,7 @@ if ($rowid > 0)
       
       print '<tr><td colspan="3">Valider un adhérent</td></tr>';
       
-      print '<tr><td class="valid">Etes-vous sur de vouloir ajouter cet adhérent dans glasnost ? (serveur : '.MAIN_GLASNOST_SERVEUR.')</td><td class="valid">';
+      print '<tr><td class="valid">Etes-vous sur de vouloir ajouter cet adhérent dans glasnost ? (serveur : '.ADHERENT_GLASNOST_SERVEUR.')</td><td class="valid">';
       $htmls = new Form($db);
       
       $htmls->selectyesno("confirm","no");
@@ -412,7 +412,7 @@ if ($rowid > 0)
       
       print '<tr><td colspan="3">Valider un adhérent</td></tr>';
       
-      print '<tr><td class="delete">Etes-vous sur de vouloir effacer cet adhérent de glasnost ? (serveur : '.MAIN_GLASNOST_SERVEUR.')</td><td class="delete">';
+      print '<tr><td class="delete">Etes-vous sur de vouloir effacer cet adhérent de glasnost ? (serveur : '.ADHERENT_GLASNOST_SERVEUR.')</td><td class="delete">';
       $htmls = new Form($db);
       
       $htmls->selectyesno("confirm","no");
@@ -437,7 +437,7 @@ if ($rowid > 0)
       
       print '<tr><td colspan="3">Valider un adhérent</td></tr>';
       
-      print '<tr><td class="valid">Etes-vous sur de vouloir ajouter cet adhérent dans spip ? (serveur : '.MAIN_SPIP_SERVEUR.')</td><td class="valid">';
+      print '<tr><td class="valid">Etes-vous sur de vouloir ajouter cet adhérent dans spip ? (serveur : '.ADHERENT_SPIP_SERVEUR.')</td><td class="valid">';
       $htmls = new Form($db);
       
       $htmls->selectyesno("confirm","no");
@@ -462,7 +462,7 @@ if ($rowid > 0)
       
       print '<tr><td colspan="3">Valider un adhérent</td></tr>';
       
-      print '<tr><td class="delete">Etes-vous sur de vouloir effacer cet adhérent de glasnost ? (serveur : '.MAIN_SPIP_SERVEUR.')</td><td class="delete">';
+      print '<tr><td class="delete">Etes-vous sur de vouloir effacer cet adhérent de glasnost ? (serveur : '.ADHERENT_SPIP_SERVEUR.')</td><td class="delete">';
       $htmls = new Form($db);
       
       $htmls->selectyesno("confirm","no");
@@ -561,7 +561,7 @@ if ($rowid > 0)
       
       print "</tr><tr class=\"barreBouton\">\n";
 
-      if ($adht->vote == 'yes' && defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1){
+      if ($adht->vote == 'yes' && defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1){
 	define("XMLRPC_DEBUG", 1);
      
 	/*
@@ -590,7 +590,7 @@ if ($rowid > 0)
 	print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>\n";
       }
 
-      if (defined("MAIN_USE_SPIP") && MAIN_USE_SPIP ==1){
+      if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1){
 	/*
 	 * Case 3 & 4
 	 */
