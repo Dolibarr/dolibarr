@@ -41,7 +41,7 @@ td.menu
 { 
   border-right: 1px solid #000000;
   border-bottom: 1px solid #000000;
- }
+  }
 
 td.border
 { 
@@ -58,6 +58,14 @@ td.border
   font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
   color: #000000; 
   text-decoration: none }
+
+.menusel
+{ 
+  background: #bbbb88; 
+  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
+  color: #000000; 
+  text-decoration: none }
+
 
 .submenu 
 { 
