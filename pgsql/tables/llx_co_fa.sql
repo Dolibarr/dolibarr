@@ -31,5 +31,5 @@ create table llx_co_fa
   "fk_facture"  integer NOT NULL
 );
 
-CREATE INDEX idx_fk_commande ON llx_co_fa (fk_commande);
-CREATE INDEX idx_fk_facture ON llx_co_fa (fk_facture);
+CREATE INDEX idx_llx_co_fa_fk_commande ON llx_co_fa (fk_commande);
+CREATE INDEX idx_llx_co_fa_fk_facture ON llx_co_fa (fk_facture);

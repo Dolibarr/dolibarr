@@ -45,4 +45,4 @@ create table llx_facture_rec
   "note"               text
 );
 
-CREATE INDEX fksoc ON llx_facture_rec (fk_soc);
+CREATE INDEX idx_facture_rec_fksoc ON llx_facture_rec (fk_soc);

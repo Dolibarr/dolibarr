@@ -34,6 +34,6 @@ create table llx_product_stock
   "reel"            integer          -- stock réel
 );
 
-CREATE INDEX idx_fk_product ON llx_product_stock (fk_product);
-CREATE INDEX idx_fk_entrepot ON llx_product_stock (fk_entrepot);
+CREATE INDEX idx_llx_product_stock_fk_product ON llx_product_stock (fk_product);
+CREATE INDEX idx_llx_product_stock_fk_entrepot ON llx_product_stock (fk_entrepot);
 

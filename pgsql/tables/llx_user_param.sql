@@ -32,5 +32,7 @@ create table llx_user_param
   "page"          varchar(255),
   "param"         varchar(64),
   "value"         varchar(255),
-  "UNIQUE" (fk_user,page,param)
+  UNIQUE(fk_user,page,param)
 );
+
+CREATE INDEX idx_llx_user_param_fk_user_page_param ON llx_user_param ();

@@ -33,5 +33,5 @@ create table llx_paiement_facture
   
 );
 
-CREATE INDEX idx_fk_paiement ON llx_paiement_facture (fk_paiement);
-CREATE INDEX idx_fk_facture ON llx_paiement_facture (fk_facture);
+CREATE INDEX idx_llx_paiement_facture_fk_paiement ON llx_paiement_facture (fk_paiement);
+CREATE INDEX idx_llx_paiement_facture_fk_facture ON llx_paiement_facture (fk_facture);

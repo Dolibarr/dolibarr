@@ -32,5 +32,7 @@ create table llx_so_gr
   rowid SERIAL PRIMARY KEY,
   "fk_soc"      integer,
   "fk_groupe"   integer,
-  "UNIQUE"(fk_soc, fk_groupe)
+  UNIQUE(fk_soc, fk_groupe)
 );
+
+CREATE INDEX idx_llx_so_gr_fk_soc__fk_groupe ON llx_so_gr ();

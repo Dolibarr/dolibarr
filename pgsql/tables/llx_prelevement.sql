@@ -41,5 +41,7 @@ create table llx_prelevement
   "date_credit"      timestamp,
   "fk_user_credit"   integer,
   
-  "UNIQUE"(ref)
+  UNIQUE(ref)
 );
+
+CREATE INDEX idx_llx_prelevement_ref ON llx_prelevement (ref);

@@ -36,6 +36,6 @@ create table llx_product_fournisseur
   "fk_user_author"  integer
 );
 
-CREATE INDEX idx_fk_product ON llx_product_fournisseur (fk_product);
-CREATE INDEX idx_fk_soc ON llx_product_fournisseur (fk_soc);
+CREATE INDEX idx_llx_product_fournisseur_fk_product ON llx_product_fournisseur (fk_product);
+CREATE INDEX idx_llx_product_fournisseur_fk_soc ON llx_product_fournisseur (fk_soc);
 

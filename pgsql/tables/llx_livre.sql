@@ -39,8 +39,9 @@ create table llx_livre
   "prix"            decimal(15,4),
   "fk_editeur"      integer,
   "fk_user_author"  integer,
-  "frais_de_port"   smallint DEFAULT 1
+  "frais_de_port"   smallint DEFAULT 1,
+  UNIQUE(ref)
 );
 
-CREATE INDEX idx_ref ON llx_livre (ref);
+CREATE INDEX idx_llx_livre_ref ON llx_livre (ref);
 

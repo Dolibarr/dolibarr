@@ -64,8 +64,9 @@ create table llx_societe
   "rubrique"           varchar(255),                        -- champ rubrique libre
   "fk_user_creat"      integer,                             -- utilisateur qui a créé l'info
   "fk_user_modif"      integer,                             -- utilisateur qui a modifié l'info
-  "remise_client"      real           DEFAULT 0            -- remise systématique pour le client
+  "remise_client"      real           DEFAULT 0,            -- remise systématique pour le client
+  UNIQUE(prefix_comm)
 );
 
-CREATE INDEX idx_prefix_comm ON llx_societe (prefix_comm);
+CREATE INDEX idx_llx_societe_prefix_comm ON llx_societe (prefix_comm);
 

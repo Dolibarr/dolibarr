@@ -37,6 +37,6 @@ create table llx_stock_mouvement
   "fk_user_author"  integer
 );
 
-CREATE INDEX idx_fk_product ON llx_stock_mouvement (fk_product);
-CREATE INDEX idx_fk_entrepot ON llx_stock_mouvement (fk_entrepot);
+CREATE INDEX idx_llx_stock_mouvement_fk_product ON llx_stock_mouvement (fk_product);
+CREATE INDEX idx_llx_stock_mouvement_fk_entrepot ON llx_stock_mouvement (fk_entrepot);
 

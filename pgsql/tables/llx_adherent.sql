@@ -55,8 +55,9 @@ create table llx_adherent
   "fk_user_mod"      integer NOT NULL,
   "fk_user_valid"    integer NOT NULL,
   "datefin"          timestamp, -- date de fin de validité de la cotisation
-  "note"             text
+  "note"             text,
  
+  UNIQUE(login)
 );
 
-CREATE INDEX idx_login ON llx_adherent (login);
+CREATE INDEX idx_llx_adherent_login ON llx_adherent (login);

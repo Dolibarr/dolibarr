@@ -33,5 +33,7 @@ create table llx_compta_compte_generaux
   "intitule"        varchar(255),
   "fk_user_author"  integer,
   "note"            text,
-  "UNIQUE"(numero)
+  UNIQUE(numero)
 );
+
+CREATE INDEX idx_llx_compta_compte_generaux_numero ON llx_compta_compte_generaux (numero);

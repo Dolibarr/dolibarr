@@ -38,7 +38,7 @@ create table llx_c_departements
   "active"           smallint DEFAULT 1  NOT NULL
 );
 
-CREATE INDEX idx_fk_region ON llx_c_departements (fk_region);
+CREATE INDEX idx_llx_c_departements_fk_region ON llx_c_departements (fk_region);
 
 
 

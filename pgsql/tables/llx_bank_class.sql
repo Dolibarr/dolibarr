@@ -29,4 +29,4 @@ create table llx_bank_class
   "fk_categ" integer NOT NULL
 );
 
-CREATE INDEX idx_lineid ON llx_bank_class (lineid);
+CREATE INDEX idx_llx_bank_class_lineid ON llx_bank_class (lineid);

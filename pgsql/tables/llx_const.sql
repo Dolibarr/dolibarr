@@ -36,7 +36,8 @@ create table llx_const
   "value"       text, -- max 65535 caracteres
   "type" varchar(6) CHECK (type IN ('yesno','texte','chaine')) ,
   "visible"     smallint DEFAULT 1 NOT NULL,
-  "note"        text
+  "note"        text,
+  UNIQUE(name)
 );
 
-CREATE INDEX idx_name ON llx_const (name);
+CREATE INDEX idx_llx_const_name ON llx_const (name);

@@ -46,7 +46,8 @@ create table llx_propal
   "tva"             real      DEFAULT 0,
   "total"           real      DEFAULT 0,
   "note"            text,
-  "model_pdf"       varchar(50)
+  "model_pdf"       varchar(50),
+  UNIQUE(ref)
 );
 
-CREATE INDEX idx_ref ON llx_propal (ref);
+CREATE INDEX idx_llx_propal_ref ON llx_propal (ref);

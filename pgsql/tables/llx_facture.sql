@@ -48,8 +48,9 @@ create table llx_facture
   "fk_cond_reglement"   integer,   -- condition de reglement (30 jours, fin de mois ...)
   "fk_mode_reglement"   integer,   -- mode de reglement (Virement, Prélèvement)
   "date_lim_reglement"  date,      -- date limite de reglement
-  "note"                text
+  "note"                text,
+  UNIQUE(facnumber)
 );
 
-CREATE INDEX idx_facnumber ON llx_facture (facnumber);
+CREATE INDEX idx_llx_facture_facnumber ON llx_facture (facnumber);
 CREATE INDEX fksoc ON llx_facture (fk_soc);

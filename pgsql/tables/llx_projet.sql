@@ -37,7 +37,8 @@ create table llx_projet
   "title"            varchar(255),
   "fk_user_resp"     integer,      -- responsable du projet
   "fk_user_creat"    integer,      -- createur du projet
-  "note"             text
+  "note"             text,
+  UNIQUE(ref)
 );
 
-CREATE INDEX idx_ref ON llx_projet (ref);
+CREATE INDEX idx_llx_projet_ref ON llx_projet (ref);

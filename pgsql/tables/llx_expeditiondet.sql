@@ -32,5 +32,5 @@ create table llx_expeditiondet
   "qty"               real              -- quantité
 );
 
-CREATE INDEX idx_fk_expedition ON llx_expeditiondet (fk_expedition);
-CREATE INDEX idx_fk_commande_ligne ON llx_expeditiondet (fk_commande_ligne);
+CREATE INDEX idx_llx_expeditiondet_fk_expedition ON llx_expeditiondet (fk_expedition);
+CREATE INDEX idx_llx_expeditiondet_fk_commande_ligne ON llx_expeditiondet (fk_commande_ligne);

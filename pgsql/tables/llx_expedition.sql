@@ -40,9 +40,10 @@ create table llx_expedition
   "fk_expedition_methode" integer,
   "fk_statut"             smallint  DEFAULT 0,
   "note"                  text,
-  "model_pdf"             varchar(50)
+  "model_pdf"             varchar(50),
+  UNIQUE(ref)
 );
 
-CREATE INDEX idx_ref ON llx_expedition (ref);
-CREATE INDEX idx_fk_expedition_methode ON llx_expedition (fk_expedition_methode);
-CREATE INDEX idx_fk_commande ON llx_expedition (fk_commande);
+CREATE INDEX idx_llx_expedition_ref ON llx_expedition (ref);
+CREATE INDEX idx_llx_expedition_fk_expedition_methode ON llx_expedition (fk_expedition_methode);
+CREATE INDEX idx_llx_expedition_fk_commande ON llx_expedition (fk_commande);

@@ -29,7 +29,8 @@ create table llx_bookmark4u_login
 (
   rowid SERIAL PRIMARY KEY,
   "fk_user"       integer,
-  "bk4u_uid"      integer
+  "bk4u_uid"      integer,
+  UNIQUE(fk_user)
 );
 
-CREATE INDEX idx_fk_user ON llx_bookmark4u_login (fk_user);
+CREATE INDEX idx_llx_bookmark4u_login_fk_user ON llx_bookmark4u_login (fk_user);

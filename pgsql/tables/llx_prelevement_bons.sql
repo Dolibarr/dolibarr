@@ -43,5 +43,7 @@ create table llx_prelevement_bons
   "date_credit"    timestamp,           -- date de crédit sur le compte
   "fk_user_credit" integer,            -- user qui a remonté l'info de crédit
   
-  "UNIQUE"(ref)
+  UNIQUE(ref)
 );
+
+CREATE INDEX idx_llx_prelevement_bons_ref ON llx_prelevement_bons (ref);

@@ -30,5 +30,7 @@ create table llx_usergroup_user
   rowid SERIAL PRIMARY KEY,
   "fk_user"       integer NOT NULL,
   "fk_usergroup"  integer NOT NULL,
-  "UNIQUE"(fk_user,fk_usergroup)
+  UNIQUE(fk_user,fk_usergroup)
 );
+
+CREATE INDEX idx_llx_usergroup_user_fk_user_fk_usergroup ON llx_usergroup_user ();
