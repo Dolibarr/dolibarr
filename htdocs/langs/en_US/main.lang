@@ -1,5 +1,8 @@
 # Dolibarr language file - en_US - main
 charset="iso-8859-1"
+Error=Error
+ErrorForbidden=Access is forbidden
+ErrorFileDoesNotExists=File %s does not exists
 yes=yes
 Yes=Yes
 no=no
@@ -56,7 +59,6 @@ Setup=Setup
 Alert=Alert
 Previous=Previous
 Next=Next
-ErrorForbidden=Access is forbidden
 Cards=Cards
 Date=Date
 Year=Year

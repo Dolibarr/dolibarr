@@ -1,5 +1,8 @@
 # Dolibarr language file - fr_FR - main
 charset="iso-8859-1"
+Error=Erreur
+ErrorForbidden=Accès non autorisé
+ErrorFileDoesNotExists=Le fichier %s n'existe pas
 yes=oui
 Yes=Oui
 no=non
@@ -56,7 +59,6 @@ Setup=Configuration
 Alert=Alerte
 Previous=Précédent
 Next=Suivant
-ErrorForbidden=Accès non autorisé
 Cards=Fiches
 Date=Date
 Year=Année
