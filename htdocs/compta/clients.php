@@ -54,6 +54,7 @@ if ($sortfield == "") {
   $sortfield="nom";
 }
 
+// \todo code encore utilisé ?
 if ($action=='add_action') {
   /*
    * Vient de actioncomm.php
@@ -224,7 +225,7 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td valign="center">';
   print_liste_field_titre("Société","clients.php","s.nom");
   print "</td><td>Ville</td>";
@@ -259,7 +260,7 @@ if ($result)
 }
 else
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 $db->close();
