@@ -23,7 +23,7 @@
 require ($GLOBALS["DOCUMENT_ROOT"]."/conf/conf.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/lib/mysql.lib.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/lib/functions.inc.php3");
-require ($GLOBALS["DOCUMENT_ROOT"]."/lib/product.class.php3");
+require ($GLOBALS["DOCUMENT_ROOT"]."/product.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/user.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/menu.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/societe.class.php3");
@@ -80,13 +80,14 @@ function top_menu($head) {
   }
 
 
-  print '<TD width="15%" class="menu" align="center">-</TD>';
   print '<TD width="15%" class="menu" align="center">';
+  print '<A class="menu" href="/product/">Produits</A></TD>';
+  print '<td width="15%" class="menu" align="center">';
   if ($conf->webcal->enabled) {
     print '<a class="menu" href="'.$conf->webcal->url.'">Calendrier</a>';
   };
   print '&nbsp;</TD>';
-  print '<TD width="15%" class="menu" align="center">'.strftime("%H:%M",time()).'</TD>';
+  print '<TD width="15%" class="menu" align="center">'.strftime(" %d %B %H:%M",time()).'</TD>';
 
   print '<TD width="10%" class="menu" align="center">'.$user->code.'</td>';
   print '</TR>';
