@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (c) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (c) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ class User {
   var $fullname;
   var $nom;
   var $prenom;
+  var $note;
   var $code;
   var $email;
   var $admin;
@@ -55,7 +56,7 @@ class User {
   Function fetch($login='')
     {
 
-    $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.module_comm, u.module_compta, u.login, u.webcal_login";
+    $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.module_comm, u.module_compta, u.login, u.webcal_login, u.note";
     $sql .= " FROM llx_user as u";
 
     if ($this->id) {
@@ -73,9 +74,11 @@ class User {
 	    $obj = $this->db->fetch_object($result , 0);
 
 	    $this->id = $obj->rowid;
-	    $this->nom = $obj->name;
-	    $this->prenom = $obj->firstname;
+	    $this->nom = stripslashes($obj->name);
+	    $this->prenom = stripslashes($obj->firstname);
 	    
+	    $this->note = stripslashes($obj->note);
+
 	    $this->fullname = $this->prenom . ' ' . $this->nom;
 	    $this->admin = $obj->admin;
 	    $this->webcal_login = $obj->webcal_login;
@@ -168,6 +171,7 @@ class User {
 	      $sql .= ", login = '$this->login'";
 	      $sql .= ", email = '$this->email'";
 	      $sql .= ", admin = $this->admin";
+	      $sql .= ", note = '$this->note'";
 	      $sql .= " WHERE rowid = $this->id";
 	      
 	      $result = $this->db->query($sql);

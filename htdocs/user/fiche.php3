@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ if ($HTTP_POST_VARS["action"] == 'add' && $user->admin)
   $edituser = new User($db,0);
 
   $edituser->nom    = $HTTP_POST_VARS["nom"];
+  $edituser->note   = $HTTP_POST_VARS["note"];
   $edituser->prenom = $HTTP_POST_VARS["prenom"];
   $edituser->login  = $HTTP_POST_VARS["login"];
   $edituser->email  = $HTTP_POST_VARS["email"];
@@ -46,6 +47,7 @@ if ($action == 'update' && $user->admin)
   $edituser->fetch();
 
   $edituser->nom = $nom;
+  $edituser->note   = $HTTP_POST_VARS["note"];
   $edituser->prenom = $prenom;
   $edituser->login = $login;
   $edituser->email = $email;
@@ -94,9 +96,8 @@ if ($action == 'create')
   print '<td class="valeur"><input size="30" type="text" name="login" value=""></td></tr>';
 
   
-  print '<tr><td valign="top">Description</td><td>';
-  print "<textarea name=\"desc\" rows=\"12\" cols=\"40\">";
-  print $user->description;
+  print '<tr><td valign="top">Note</td><td>';
+  print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
   print "</textarea></td></tr>";
       
   print '<tr><td align="center" colspan="2"><input value="Enregistrer" type="submit"></td></tr>';
@@ -134,6 +135,9 @@ else
       print '<td width="25%" valign="top">Administrateur</td>';
       print '<td width="25%">'.$yn[$fuser->admin].'</td></tr>';
       
+      print '<tr><td width="25%" valign="top">Note</td>';
+      print '<td colspan="3">'.nl2br($fuser->note).'&nbsp;</td></tr>';
+
       print '</table>';
 
       print '<br><table width="100%" border="1" cellspacing="0" cellpadding="2">';
@@ -185,8 +189,8 @@ else
 	  
 	  
 	  print '<tr><td valign="top">Description</td><td>';
-	  print "<textarea name=\"desc\" rows=\"12\" cols=\"40\">";
-	  print $fuser->description;
+	  print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
+	  print $fuser->note;
 	  print "</textarea></td></tr>";
 	  
 	  print '<tr><td align="center" colspan="2"><input value="Enregistrer" type="submit"></td></tr>';
