@@ -22,7 +22,7 @@
 require("../../main.inc.php3");
 
 function llxHeader($head = "") {
-  global $user, $conf;
+  global $conf;
 
 
   /*
@@ -36,7 +36,7 @@ function llxHeader($head = "") {
   $menu->add("/compta/facture.php3","Factures");
   $menu->add("../charges.php3","Charges");
 
-  $menu->add("../ca.php3","Chiffres d'affaires");
+  $menu->add(DOL_URL_ROOT."/compta/stats/","Chiffre d'affaire");
 
   if ($conf->compta->tva)
     {
