@@ -1,0 +1,28 @@
+<!DOCTYPE debiandoc public "-//DebianDoc//DTD DebianDoc//EN"
+[
+    <!entity ch-don		system "don.sgml">
+    <!entity ch-adherent	system "adherent.sgml">
+]
+>
+<debiandoc>
+
+  <book>
+
+    <titlepag>
+      
+      <title>Manuel d'utilisation Dolibarr</title>
+
+      <author>Rodolphe Quiédeville<email/rodolphe@quiedeville.org/
+      </author>
+
+      <version></version>
+
+    </titlepag>
+    <toc sect>
+
+    &ch-adherent;
+    &ch-don;
+
+ </book>
+
+</debiandoc>

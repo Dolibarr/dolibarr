@@ -19,26 +19,14 @@
 -- ===================================================================
 
 -- statut
--- 0 : non adherent
--- 1 : adherent
+-- 0 : actif
+-- 1 : inactif
 
-create table llx_adherent
+create table llx_adherent_type
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
-  fk_adherent_type smallint,
-  datec            datetime,
-  prenom           varchar(50),
-  nom              varchar(50),
-  societe          varchar(50),
-  adresse          text,
-  cp               varchar(30),
-  ville            varchar(50),
-  pays             varchar(50),
-  email            varchar(255),
-  fk_user_author   integer NOT NULL,
-  fk_user_valid    integer NOT NULL,
-  datefin          datetime NOT NULL, -- date de fin de validité de la cotisation
+  libelle          varchar(50),
   note             text
 );

@@ -1,0 +1,33 @@
+<!-- $Id$ -->
+<chapt id="adherent">Module de gestion des adherents
+
+  <p>
+    Ce module permet la gestion des adherents et des cotisation d'un association.
+  </p>
+
+  <sect id="adh-tables">Tables de la base de données
+    
+    <p>
+
+      Deux tables sont utilisées pour ce module.
+
+      <list>
+	<item>llx_adherent</item>
+	<item>llx_cotisation</item>
+      </list>
+    </p>
+  </sect>
+
+  <sect id="adh-statut">
+
+    Un adherent peut avoir plusieurs statuts differents ils sont.
+
+  </sect>
+
+
+</chapt>
+<!--
+Local Variables: ***
+mode: xml ***
+End: ***
+-->
