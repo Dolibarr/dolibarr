@@ -85,6 +85,7 @@ class Account {
       $sql .= ",number='".$this->number."'";
       $sql .= ",cle_rib='".$this->cle_rib."'";
       $sql .= ",bic='".$this->bic."'";
+      $sql .= ",domiciliation='".$this->domiciliation."'";
       $sql .= ",courant = ".$this->courant;
       $sql .= ",clos = ".$this->clos;
       $sql .= ",iban_prefix = '".$this->iban_prefix."'";
@@ -113,7 +114,7 @@ class Account {
   Function fetch($id)
   {
     $this->id = $id; 
-    $sql = "SELECT rowid, label, bank, number, courant, clos, code_banque,code_guichet,cle_rib,bic,iban_prefix FROM llx_bank_account";
+    $sql = "SELECT rowid, label, bank, number, courant, clos, code_banque,code_guichet,cle_rib,bic,iban_prefix,domiciliation FROM llx_bank_account";
     $sql .= " WHERE rowid  = ".$id;
 
     $result = $this->db->query($sql);
@@ -124,16 +125,17 @@ class Account {
 	  {
 	    $obj = $this->db->fetch_object($result , 0);
 	    
-	    $this->bank         = $obj->bank;
-	    $this->label        = $obj->label;
-	    $this->courant      = $obj->courant;
-	    $this->clos         = $obj->clos;
-	    $this->code_banque  = $obj->code_banque;
-	    $this->code_guichet = $obj->code_guichet;
-	    $this->number       = $obj->number;
-	    $this->cle_rib      = $obj->cle_rib;
-	    $this->bic          = $obj->bic;
-	    $this->iban_prefix  = $obj->iban_prefix;
+	    $this->bank          = $obj->bank;
+	    $this->label         = $obj->label;
+	    $this->courant       = $obj->courant;
+	    $this->clos          = $obj->clos;
+	    $this->code_banque   = $obj->code_banque;
+	    $this->code_guichet  = $obj->code_guichet;
+	    $this->number        = $obj->number;
+	    $this->cle_rib       = $obj->cle_rib;
+	    $this->bic           = $obj->bic;
+	    $this->domiciliation = $obj->domiciliation;
+	    $this->iban_prefix   = $obj->iban_prefix;
 	  }
 	$this->db->free();
       }
