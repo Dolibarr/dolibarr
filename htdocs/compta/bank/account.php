@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -215,7 +215,7 @@ if ($account > 0)
       print '<input type="hidden" name="account" value="' . $acct->id . '">';
     }
   print '<tr class="liste_titre">';
-  print '<td>Date</td><td>Type</td><td>Description</td>';
+  print '<td>Date Ope</td><td>Valeur</td><td>Type</td><td>Description</td>';
   print '<td align="right">Débit</td><td align="right">Crédit</td><td align="right">Solde</td>';
   print '<td align="center">Relevé</td></tr>';
 
@@ -227,7 +227,7 @@ if ($account > 0)
    * select sum(amount) from solde ;
    */
 
-  $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
+  $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
   $sql .= " FROM ".MAIN_DB_PREFIX."bank as b ";
   $sql .= " WHERE fk_account=".$acct->id;
 
@@ -267,11 +267,11 @@ if ($account > 0)
    */
   if ($user->rights->banque->modifier)
     {
-	  print "<tr><td colspan=\"7\">&nbsp;</td></tr>\n";
-	  print "<tr>";
-	  print "<td align=\"left\" colspan=\"7\"><b>Saisie d'une transaction hors facture</b></td></tr>";
-	  print '<tr>';
-	  print '<td><input name="dateoy" type="text" size="3" value="'.strftime("%Y",time()).'" maxlength="4">';
+      print "<tr><td colspan=\"7\">&nbsp;</td></tr>\n";
+      print "<tr>";
+      print "<td align=\"left\" colspan=\"7\"><b>Saisie d'une transaction hors facture</b></td></tr>";
+      print '<tr>';
+      print '<td><input name="dateoy" type="text" size="3" value="'.strftime("%Y",time()).'" maxlength="4">';
       print '<input name="dateo" type="text" size="3" maxlength="4"></td>';
       print '<td><select name="operation">';
       print '<option value="CB">CB';
@@ -280,20 +280,21 @@ if ($account > 0)
       print '<option value="TIP">TIP';
       print '<option value="PRE">PRE';
       print '<option value="VIR">VIR';
-	  print '</select><input name="num_chq" type="text" size="4"></td>';
-	  print '<td>';
+      print '</select><input name="num_chq" type="text" size="4"></td>';
+      print '<td>';
       print '<input name="label" type="text" size="40"></td>';
-	  print '<td align=right><input name="debit" type="text" size="8"></td>';
-	  print '<td align=right><input name="credit" type="text" size="8"></td>';
+
+      print '<td align=right><input name="debit" type="text" size="8"></td>';
+      print '<td align=right><input name="credit" type="text" size="8"></td>';
       print "<td colspan=\"2\" align=\"center\">";
       print "<select name=\"cat1\">$options</select>";
-      print "</td>";
-	  print '</tr>';
-	  print '<tr>';
-	  print '<td><small>YYYY MMDD</small></td><td>&nbsp;</td><td>Description</td><td align=right>0000.00</td><td align=right>0000.00</td>';
-	  print '<td colspan="2" align="center"><input type="submit" value="Ajouter"></td>';
-	  print '</tr>';
-	}
+      print '</td></tr>';
+      print '<tr>';
+      print '<td><small>YYYY MMDD</small></td><td>&nbsp;</td><td>Description</td><td align=right>0000.00</td><td align=right>0000.00</td>';
+      print '<td colspan="2" align="center"><input type="submit" value="Ajouter"></td>';
+      print '</tr>';
+    }
+
   print "</table>";
   if ($user->rights->banque->modifier)
     {
@@ -340,7 +341,8 @@ Function _print_lines($db,$sql,$acct)
 		}
 		  
 	      print "<tr $bc[$var]>";
-	      print "<td>".strftime("%d %b %y",$objp->do)."</TD>\n";
+	      print "<td>".strftime("%d %b %y",$objp->do)."</td>\n";
+	      print "<td>".strftime("%d/%m/%y",$objp->dv)."</td>\n";
 	      print "<td>".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</TD>\n";
 		  
 //	      if ($objp->num_chq)
