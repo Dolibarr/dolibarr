@@ -151,6 +151,7 @@ class MailingTargets
         }
 
         // Insère destinataires de cibles dans table
+        $j = 0;
         $num = sizeof($cibles);
         for ($i = 0 ; $i < $num ; $i++)
         {
@@ -164,19 +165,26 @@ class MailingTargets
             $sql .=  "'".$cibles[$i][3] ."',";
             $sql .=  "'".$cibles[$i][0] ."')";
             $result=$this->db->query($sql);
-            if (! $result && $this->db->errno() != DB_ERROR_RECORD_ALREADY_EXISTS)
+            if ($result)
             {
-                // Si erreur autre que doublon
-                dolibarr_syslog($this->db->error());
-                return -1;
+                $j++;
+            }
+            else
+            {
+                if ($this->db->errno() != DB_ERROR_RECORD_ALREADY_EXISTS)
+                {
+                    // Si erreur autre que doublon
+                    dolibarr_syslog($this->db->error());
+                    return -1;
+                }
             }
         }
 
-        dolibarr_syslog("mailing-prepare: mailing $num cibles ajoutées");
+        dolibarr_syslog("mailing-prepare: mailing $j cibles ajoutées");
 
         $this->update_nb($mailing_id);
 
-        return $num;
+        return $j;
     }
 
     /**
