@@ -308,7 +308,7 @@ if ($propalid)
 	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<TR class=\"liste_titre\">";
 	  print "<td>Réf</td><td>Produit</td>";
-	  print "<td align=\"right\">Prix</TD><td align=\"center\">Qté.</td>";
+	  print '<td align="right">Prix</td><td align="center">&nbsp;</td><td align="center">Qté.</td>';
 	  if ($obj->statut == 0)
 	    {
 	      print "<td>&nbsp;</td>";
@@ -333,7 +333,9 @@ if ($propalid)
 		  print "<TR $bc[$var]>";
 		  print "<TD>[$objp->ref]</TD>\n";
 		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php3?id='.$objp->prodid.'">'.$objp->product.'</td>';
-		  print "<TD align=\"right\">".price($objp->price)."</TD><td align=\"center\">".$objp->qty."</td>\n";
+		  print "<TD align=\"right\">".price($objp->price)."</TD>";
+		  print '<td>&nbsp;</td>';
+		  print "<td align=\"center\">".$objp->qty."</td>\n";
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
 		      print '<td align="center"><a href="propal.php3?propalid='.$propalid.'&ligne='.$objp->rowid.'&action=del_ligne">Supprimer</a></td>';
@@ -346,7 +348,6 @@ if ($propalid)
 
 		  $i++;
 		}
-
 	    }
 
 	  $sql = "SELECT pt.rowid, pt.description, pt.price, pt.qty";
@@ -357,14 +358,14 @@ if ($propalid)
 	    {
 	      $num = $db->num_rows();
 	      $i = 0;	     
-	      $var=True;
 	      while ($i < $num) 
 		{
 		  $objp = $db->fetch_object( $i);
 		  $var=!$var;
 		  print "<TR $bc[$var]><td>&nbsp;</td>\n";
 		  print '<td>'.$objp->description.'</td>';
-		  print "<TD align=\"right\">".price($objp->price)."</TD><td align=\"center\">".$objp->qty."</td>\n";
+		  print "<TD align=\"right\">".price($objp->price)."</td>";
+		  print "<td></td><td align=\"center\">".$objp->qty."</td>\n";
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
 		      print '<td align="center"><a href="propal.php3?propalid='.$propalid.'&ligne='.$objp->rowid.'&action=del_ligne">Supprimer</a></td>';
@@ -406,13 +407,15 @@ if ($propalid)
 	       * Produits génériques
 	       *
 	       */
+	      $html = new Form($db);
 	      $var=!$var;
 	      print '<form action="propal.php3?propalid='.$propalid.'" method="post">';
 	      print '<input type="hidden" name="action" value="addproduct">';
 	      print '<tr '.$bc[$var].'>';
 	      print '<td>&nbsp;</td>';
 	      print '<td><input type="text" size="28" name="np_desc"></td>';
-	      print '<td align="right"><input type="text" size="6" name="np_price"></td>';
+	      print '<td align="right"><input type="text" size="6" name="np_price"></td><td align="center">';
+	      print $html->select_tva("np_tva_tx") . '</td>';
 	      print '<td align="center"><input type="text" size="3" name="np_qty"></td>';
 	      print '<td align="center"><input type="submit" value="Ajouter"></td>';
 	      print '</tr></form>';
@@ -420,7 +423,7 @@ if ($propalid)
 	      $var=!$var;
 	      print '<form action="propal.php3?propalid='.$propalid.'" method="post">';
 	      print '<input type="hidden" name="action" value="addligne">';
-	      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"2\"><select name=\"idprod\">$opt</select></td>";
+	      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"3\"><select name=\"idprod\">$opt</select></td>";
 	      print '<td align="center"><input type="text" size="3" name="qty" value="1"></td>';
 	      print '<td align="center"><input type="submit" value="Ajouter"></td>';
 	      print "</tr>\n";
