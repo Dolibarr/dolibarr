@@ -99,11 +99,13 @@ class modPrelevement extends DolibarrModules
     $this->rights[1][1] = 'Consulter les prélèvements';
     $this->rights[1][2] = 'r';
     $this->rights[1][3] = 1;
+    $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 152;
     $this->rights[2][1] = 'Configurer les prélèvements';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;    
+    $this->rights[2][4] = 'configurer';
 
     // Dir
     $this->dirs[0] = $conf->prelevement->dir_output;
