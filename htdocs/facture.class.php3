@@ -146,7 +146,7 @@ class Facture {
 		      $faclig = new FactureLigne();
 		      $faclig->desc = stripslashes($objp->description);
 		      $faclig->qty  = $objp->qty;
-		      $faclig->price = price($objp->price);
+		      $faclig->price = $objp->price;
 		      $faclig->tva_taux = $objp->tva_taux;
 		      $this->lignes[$i] = $faclig;
 		      $i++;
