@@ -48,32 +48,29 @@ print_barre_liste("Liste des contacts",$page, $PHP_SELF);
 $sql = "SELECT s.idp, s.nom,  st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
 $sql .= "FROM societe as s, socpeople as p, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
 
-if (strlen($stcomm))  // statut commercial
+if (strlen($stcomm)) 
 {
   $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
-if (strlen($begin)) // filtre sur la premiere lettre du nom
+if (strlen($begin)) 
 {
   $sql .= " AND upper(p.name) like '$begin%'";
 }
 
-if ($contactname) // acces a partir du module de recherche
-{
-  $sql .= " AND ( lower(p.name) like '%".strtolower($contactname)."%' OR lower(p.firstname) like '%".strtolower($contactname)."%') ";
+if ($contactname) {
+  $sql .= " AND lower(p.name) like '%".strtolower($contactname)."%'";
   $sortfield = "lower(p.name)";
   $sortorder = "ASC";
 }
 
-if ($socid) 
-{
+if ($socid) {
   $sql .= " AND s.idp = $socid";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
 $result = $db->query($sql);
-
 if ($result) 
 {
   $num = $db->num_rows();
