@@ -21,7 +21,7 @@
  *
  */
 
-function facture_get_num($societe_prefix)
+function facture_get_num($objsoc=0)
 { 
 
   return  "FA-" . "-" .strftime("%y%m%d", time());
