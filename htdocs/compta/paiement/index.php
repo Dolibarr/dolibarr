@@ -115,7 +115,7 @@ if ($year)
 {
   $handle=opendir($dir.'/'.$year);
   
-  print '<table cellpadding="3" border="1" cellspacing="0">';
+  print '<table width="100%" id="wiborder">';
   print '<tr><td>Rapport</td><td>Taille</td><td>Date de génération</td></tr>';
   while (($file = readdir($handle))!==false)
     {
