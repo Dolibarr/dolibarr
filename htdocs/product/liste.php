@@ -53,8 +53,9 @@ if ($sortorder == "")
 $sql = "SELECT p.rowid, p.label, p.price, p.ref";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 
-if ($fourn_id > 0)
+if ($_GET["fourn_id"] > 0)
 {
+  $fourn_id = $_GET["fourn_id"];
   $sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
 
