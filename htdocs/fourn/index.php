@@ -90,85 +90,89 @@ if ($mode == 'search') {
   }
 }
 
-  /*
-   * Mode Liste
-   *
-   *
-   *
-   */
+/*
+ * Mode Liste
+ *
+ *
+ *
+ */
 
-  if ($sortorder == "")
+if ($sortorder == "")
+{
+  $sortorder="ASC";
+}
+if ($sortfield == "")
+{
+  $sortfield="nom";
+}
+
+
+print_barre_liste("Liste des fournisseurs",$page, $PHP_SELF);
+
+$sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM llx_societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
+
+if (strlen($stcomm)) {
+  $sql .= " AND s.fk_stcomm=$stcomm";
+}
+
+if ($socidp) {
+  $sql .= " AND s.idp=$socidp";
+}
+
+if (strlen($begin)) {
+  $sql .= " AND upper(s.nom) like '$begin%'";
+}
+
+if ($socname) {
+  $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
+  $sortfield = "lower(s.nom)";
+  $sortorder = "ASC";
+}
+
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
+
+$result = $db->query($sql);
+if ($result)
+{
+  $num = $db->num_rows();
+  $i = 0;
+  
+  if ($sortorder == "DESC") {
+    $sortorder="ASC";
+  } else {
+    $sortorder="DESC";
+  }
+  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print '<TR class="liste_titre"><td>';
+  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+  print "</td><TD>Ville</TD>";
+  print "<td colspan=\"2\">&nbsp;</td>";
+  print "</TR>\n";
+  $var=True;
+  while ($i < $num)
     {
-      $sortorder="ASC";
-    }
-  if ($sortfield == "")
-    {
-      $sortfield="nom";
-    }
-
-
-  print_barre_liste("Liste des fournisseurs",$page, $PHP_SELF);
-
-  $sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM llx_societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
-
-  if (strlen($stcomm)) {
-    $sql .= " AND s.fk_stcomm=$stcomm";
-  }
-
-  if ($socidp) {
-    $sql .= " AND s.idp=$socidp";
-  }
-
-  if (strlen($begin)) {
-    $sql .= " AND upper(s.nom) like '$begin%'";
-  }
-
-  if ($socname) {
-    $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
-    $sortfield = "lower(s.nom)";
-    $sortorder = "ASC";
-  }
-
-  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
-
-  $result = $db->query($sql);
-  if ($result) {
-    $num = $db->num_rows();
-    $i = 0;
-
-    if ($sortorder == "DESC") {
-      $sortorder="ASC";
-    } else {
-      $sortorder="DESC";
-    }
-    print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-    print '<TR class="liste_titre"><td>';
-    print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-    print "</td><TD>Ville</TD>";
-    print "<td colspan=\"2\">&nbsp;</td>";
-    print "</TR>\n";
-    $var=True;
-    while ($i < $num) {
       $obj = $db->fetch_object( $i);
-      
+	
       $var=!$var;
 
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
       print "<TD>".$obj->ville."</TD>\n";
-
+	
       print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
       
-      print '<td><a href="facture/fiche.php3?action=create&socid='.$obj->idp.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
+      print '<td><a href="facture/fiche.php3?action=create&socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
 
-      print "</TR>\n";
+      print "</tr>\n";
       $i++;
     }
-    print "</TABLE>";
-    $db->free();
-  } else {
-    print $db->error();
-  }
+  print "</table>";
+  $db->free();
+}
+else 
+{
+  print $db->error();
+}
 
 $db->close();
 

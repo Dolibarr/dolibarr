@@ -25,8 +25,6 @@ require("../contact.class.php3");
 
 llxHeader();
 
-$db = new Db();
-
 /*
  * Sécurité accés client
  */
@@ -152,7 +150,7 @@ if ($socid > 0) {
 
     print "<tr><td><div class=\"titre\">Fiche fournisseur : $objsoc->nom</div></td>";
 
-    print '<td><a href="facture/fiche.php3?action=create&socid='.$objsoc->idp.'">Nouvelle Facture <img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
+    print '<td><a href="facture/fiche.php3?action=create&socid='.$objsoc->idp.'">Nouvelle Facture <img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
 
     print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
 
