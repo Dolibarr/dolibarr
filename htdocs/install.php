@@ -66,7 +66,7 @@ if ($action == "set")
 
 	  if (! is_dir($HTTP_POST_VARS["main_dir"]."/document"))
 	    {
-	      print "<tr><td>Le dossier ".$HTTP_POST_VARS["main_dir"]." n'existe pas !<p>";
+	      print "<tr><td>Le dossier ".$HTTP_POST_VARS["main_dir"]."/document n'existe pas !<p>";
 	      print "- Vous devez créer le dossier : <b>".$HTTP_POST_VARS["main_dir"]."/document</b> et permettre au serveur web d'écrire dans celui-ci";
 	      print "</td><td>Erreur</td></tr>";
 	    }
