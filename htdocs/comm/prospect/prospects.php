@@ -34,6 +34,7 @@ if ($_GET["action"] == 'cstc')
   $db->query($sql);
 }
 
+dolibarr_user_page_param($db, $user, $_GET);
 
 /*
  * Sécurité accés client
@@ -44,6 +45,7 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
+$page = $user->page_param["page"];
 if ($page == -1) { $page = 0 ; }
 
 $offset = $conf->liste_limit * $page ;
@@ -62,9 +64,9 @@ if (strlen($stcomm))
   $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
-if (strlen($begin))
+if (strlen($user->page_param["begin"]))
 {
-  $sql .= " AND upper(s.nom) like '$begin%'";
+  $sql .= " AND upper(s.nom) like '".$user->page_param["begin"]."%'";
 }
 
 if ($user->societe_id)
@@ -79,15 +81,23 @@ if ($socname)
   $sortorder = "ASC";
 }
 
-if ($sortorder == "")
+if ($user->page_param["sortorder"] == '')
 {
-  $sortorder="DESC";
+  $sortorder="ASC";
 }
-if ($sortfield == "")
+else
+{
+  $sortorder=$user->page_param["sortorder"];
+}
+
+if ($user->page_param["sortfield"] == '')
 {
   $sortfield="s.nom";
 }
-
+else
+{
+  $sortfield=$user->page_param["sortfield"];
+}
 $sql .= " ORDER BY $sortfield $sortorder, s.nom ASC " . $db->plimit($conf->liste_limit +1, $offset);
 
 $result = $db->query($sql);
@@ -105,17 +115,17 @@ if ($result)
       llxHeader();
     }
 
-  $urladd="page=$page&amp;stcomm=$stcomm&amp;sortfield=$sortfield&amp;sortorder=$sortorder&amp;begin=$begin";
+  $urladd="page=$page&amp;stcomm=$stcomm";
 
-  print_barre_liste("Liste des prospects", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
+  print_barre_liste("Liste des prospects", $page, $PHP_SELF,"","","",'',$num);
 
   print '<div align="center">';
 
-  print "| <A href=\"$PHP_SELF?page=$pageprev&amp;stcomm=$stcomm&amp;sortfield=$sortfield&amp;sortorder=$sortorder\">*</A>\n| ";
+  print "| <A href=\"$PHP_SELF?page=$pageprev&amp;stcomm=$stcomm&amp;begin=%25\">*</A>\n| ";
   for ($ij = 65 ; $ij < 91; $ij++) {
     print "<A href=\"$PHP_SELF?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
     
-    if ($_GET["begin"] == chr($ij) )
+    if ($user->page_param["begin"] == chr($ij) )
       {
 	print  "<b>&gt;" . chr($ij) . "&lt;</b>" ; 
       } 

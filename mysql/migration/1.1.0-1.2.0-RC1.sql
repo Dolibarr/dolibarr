@@ -463,3 +463,13 @@ create table llx_c_ape
   active      tinyint default 1
 )type=innodb;
 
+
+create table llx_user_param
+(
+  fk_user       integer,
+  page          varchar(255),
+  param         varchar(255),
+  value         varchar(255),
+  UNIQUE (fk_user,page,param)
+)type=innodb;
+

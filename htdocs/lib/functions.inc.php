@@ -271,7 +271,59 @@ function doliMoveFileUpload($src_file, $dest_file)
   return move_uploaded_file($src_file, $file_name);
 }
 
+function dolibarr_user_page_param($db, &$user)
+{
+  foreach ($GLOBALS["_GET"] as $key=>$value)
+    { 
+      if ($key == "sortfield")
+	{
+	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
+	  $sql .= " SET fk_user =".$user->id;
+	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
+	  $sql .= " ,param='sortfield'";
+	  $sql .= " ,value='".urlencode($value)."'";
+	  
+	  $db->query($sql);
+	  $user->page_param["sortfield"] = $value;
+	}
 
+      //      print $key . "=".$value . "<br>";
+
+      if ($key == "sortorder")
+	{
+	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
+	  $sql .= " SET fk_user =".$user->id;
+	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
+	  $sql .= " ,param='sortorder'";
+	  $sql .= " ,value='".urlencode($value)."'";
+	  
+	  $db->query($sql);
+	  $user->page_param["sortorder"] = $value;
+	}
+      if ($key == "begin")
+	{
+	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
+	  $sql .= " SET fk_user =".$user->id;
+	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
+	  $sql .= " ,param='begin'";
+	  $sql .= " ,value='".$value."'";
+	  
+	  $db->query($sql);
+	  $user->page_param["begin"] = $value;
+	}
+      if ($key == "page")
+	{
+	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
+	  $sql .= " SET fk_user =".$user->id;
+	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
+	  $sql .= " ,param='page'";
+	  $sql .= " ,value='".$value."'";
+	  
+	  $db->query($sql);
+	  $user->page_param["page"] = $value;
+	}
+    }
+}
 
 function transcoS2L($zonein,$devise)
 { 

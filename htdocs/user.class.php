@@ -373,7 +373,7 @@ class User
    */
   Function fetch($login='')
     {
-
+      
       //$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.module_comm, u.module_compta, u.login, u.pass, u.webcal_login, u.note";
       //$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
       $sql = "SELECT * FROM ".MAIN_DB_PREFIX."user as u";
@@ -385,42 +385,64 @@ class User
 	{
 	  $sql .= " WHERE u.login = '$login'";
 	}
-  
-    $result = $this->db->query($sql);
+      
+      $result = $this->db->query($sql);
 
-    if ($result) 
-      {
-	if ($this->db->num_rows()) 
-	  {
-	    $obj = $this->db->fetch_object($result , 0);
+      if ($result) 
+	{
+	  if ($this->db->num_rows()) 
+	    {
+	      $obj = $this->db->fetch_object($result , 0);
+	      
+	      $this->id = $obj->rowid;
+	      $this->nom = stripslashes($obj->name);
+	      $this->prenom = stripslashes($obj->firstname);
+	      
+	      $this->note = stripslashes($obj->note);
+	      
+	      $this->fullname = $this->prenom . ' ' . $this->nom;
+	      $this->admin = $obj->admin;
+	      $this->webcal_login = $obj->webcal_login;
+	      $this->code = $obj->code;
+	      $this->email = $obj->email;
+	      
+	      $this->contact_id = $obj->fk_socpeople;
+	      
+	      $this->login = $obj->login;
+	      $this->pass  = $obj->pass;
+	      $this->webcal_login = $obj->webcal_login;
+	      
+	      $this->societe_id = $obj->fk_societe;
+	    }
+	  $this->db->free();
+	  
+	}
+      else
+	{
+	  print $this->db->error();
+	}
 
-	    $this->id = $obj->rowid;
-	    $this->nom = stripslashes($obj->name);
-	    $this->prenom = stripslashes($obj->firstname);
-	    
-	    $this->note = stripslashes($obj->note);
+      $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
+      $sql .= " WHERE fk_user = ".$this->id;
+      $sql .= " AND page = '".$GLOBALS["SCRIPT_URL"]."'";
 
-	    $this->fullname = $this->prenom . ' ' . $this->nom;
-	    $this->admin = $obj->admin;
-	    $this->webcal_login = $obj->webcal_login;
-	    $this->code = $obj->code;
-	    $this->email = $obj->email;
-	    
-	    $this->contact_id = $obj->fk_socpeople;
+      if ( $this->db->query($sql) );
+	{
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  $page_param_url = '';
+	  $this->page_param = array();
+	  while ($i < $num)
+	    {
+	      $obj = $this->db->fetch_object($i);
+	      $this->page_param[$obj->param] = $obj->value;
+	      $page_param_url .= $obj->param . "=".$obj->value."&amp;";
+	      $i++;
+	    }
+	  $this->page_param_url = $page_param_url;
+	}
 
-	    $this->login = $obj->login;
-	    $this->pass  = $obj->pass;
-	    $this->webcal_login = $obj->webcal_login;
-	    
-	    $this->societe_id = $obj->fk_societe;
-	  }
-	$this->db->free();
 
-      }
-    else
-      {
-	print $this->db->error();
-      }
   }
   /*
    *
