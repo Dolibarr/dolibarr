@@ -139,6 +139,9 @@ class Db {
   Function num_rows() {
     return mysql_num_rows($this->results);
   }
+  Function affected_rows() {
+    return mysql_affected_rows($this->results);
+  }
   Function num_fields() {
     return mysql_num_fields($this->results);
   }
