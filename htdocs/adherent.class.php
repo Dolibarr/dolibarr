@@ -43,6 +43,7 @@ class Adherent
   var $naiss;
   var $photo;
   var $public;
+  var $array_options;
 
   var $errorstr;
   /*
@@ -56,6 +57,8 @@ class Adherent
       $this->statut = -1;
       // l'adherent n'est pas public par defaut
       $this->public = 0;
+      // les champs optionnels sont vides
+      $this->array_options=array();
     }
   /*
    *
@@ -338,8 +341,64 @@ class Adherent
       }
     
   }
+  
+  /*
+   * fetch optional attribute
+   */
+  Function fetch_optionals($rowid)
+  {
+    $tab=array();
+    $sql = "SELECT *";
+    $sql .= " FROM llx_adherent_options";
+    $sql .= " WHERE adhid=$rowid";
+    
+    if ( $this->db->query( $sql) ){
+	if ($this->db->num_rows()){
+	  
+	  //$obj = $this->db->fetch_object(0);
+	  $tab = $this->db->fetch_array();
+	  
+	  foreach ($tab as $key => $value){
+	    if ($key != 'optid' && $key != 'tms' && $key != 'adhid'){
+	      // we can add this attribute to adherent object
+	      $this->array_options["options_$key"]=$value;
+	    }
+	  }
+	}
+    }else{
+      print $this->db->error();
+    }
+    
+  }
 
+  /*
+   * fetch optional attribute name
+   */
+  Function fetch_name_optionals()
+  {
+    $array_name_options=array();
+    $sql = "SHOW COLUMNS FROM llx_adherent_options";
 
+    if ( $this->db->query( $sql) ){
+      if ($this->db->num_rows()){
+	//$tab = $this->db->fetch_object();
+	//$array_name_options[]=$tab->Field;
+	while ($tab = $this->db->fetch_object()){
+	  if ($tab->Field != 'optid' && $tab->Field != 'tms' && $tab->Field != 'adhid'){
+	    // we can add this attribute to adherent object
+	    $array_name_options[]=$tab->Field;
+	  }
+	}
+	return $array_name_options;
+      }else{
+	return array();
+      }
+    }else{
+      print $this->db->error();
+      return array() ;
+    }
+    
+  }
   /*
    * Cotisation
    *

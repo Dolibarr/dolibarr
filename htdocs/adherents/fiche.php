@@ -123,6 +123,9 @@ if ($action == 'create') {
       $total = $obj->total;
     }
   }
+  $adh = new Adherent($db);
+  $myattr=$adh->fetch_name_optionals();
+
   print_titre("Nouvel adhérent");
   print "<form action=\"$PHP_SELF\" method=\"post\">\n";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
@@ -164,6 +167,9 @@ if ($action == 'create') {
   print '<tr><td>Password</td><td><input type="text" name="pass" size="40"></td></tr>';
   print '<tr><td>Date de Naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="10"></td></tr>';
   print '<tr><td>Url photo</td><td><input type="text" name="photo" size="40"></td></tr>';
+  foreach($myattr as $key){
+    print "<tr><td>$key</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
+  }
 
   print "<tr><td>Date de cotisation</td><td>\n";
   print_date_select();
@@ -195,6 +201,8 @@ if ($rowid > 0)
   $adh = new Adherent($db);
   $adh->id = $rowid;
   $adh->fetch($rowid);
+  $adh->fetch_optionals($rowid);
+  $myattr=$adh->fetch_name_optionals();
 
   print_titre("Edition de la fiche adhérent");
 
@@ -309,8 +317,14 @@ if ($rowid > 0)
   }
   print '&nbsp;</td></tr>';
 
-  print "</table>\n";
+  //  print "</table>\n";
 
+  //  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+  //  print '<tr><td colspan="2">Champs optionnels</td></tr>';
+  foreach($myattr as $key){
+    print "<tr><td>$key</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
+  }
+  print "</table>\n";
 
   if ($user->admin)
     {
