@@ -32,7 +32,9 @@ class GraphCommNbMensuel extends GraphBar{
     $this->file = $file;
     $this->showframe = true;
     $this->client = 0;
-    $this->titre = "Nombre de communication par mois";
+    $this->contrat = 0;
+    $this->ligne = 0;
+    $this->titre = "Nombre de communications";
 
     $this->barcolor = "bisque3";
 
@@ -52,17 +54,17 @@ class GraphCommNbMensuel extends GraphBar{
 
   Function GetDatas()
   {
-    if ($this->client == 0)
+    $sql = "SELECT date_format(td.date,'%Y%m'), count(*)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as td";
+
+    if ($this->client == 0 && $this->contrat == 0 && $this->ligne == 0)
       {
 
-	$sql = "SELECT date_format(date, '%Y%m'), count(*)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-	$sql .= " GROUP BY date_format(date, '%Y%m') ASC";
+	$sql .= " GROUP BY date_format(td.date, '%Y%m') ASC";
       }
-    else
+    elseif ($this->client > 0 && $this->contrat == 0 && $this->ligne == 0)
       {
-	$sql = "SELECT date_format(td.date,'%Y%m'), count(*)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as td";
+
 	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
 
 	$sql .= " WHERE td.ligne = s.ligne";
@@ -70,7 +72,24 @@ class GraphCommNbMensuel extends GraphBar{
 
 	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
       }    
+    elseif ($this->client == 0 && $this->contrat > 0 && $this->ligne == 0)
+      {
+	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
 
+	$sql .= " WHERE td.ligne = s.ligne";
+	$sql .= " AND s.fk_contrat = ".$this->contrat;
+
+	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
+      }
+    elseif ($this->client == 0 && $this->contrat == 0 && $this->ligne > 0)
+      {
+	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
+
+	$sql .= " WHERE td.ligne = s.ligne";
+	$sql .= " AND s.rowid = ".$this->ligne;
+
+	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
+      }
 
     if ($this->db->query($sql))
       {
