@@ -110,7 +110,12 @@ class RejetPrelevement
 	  $pai = new Paiement($this->db);
 
 	  $pai->amounts = array();
-	  $pai->amounts[$facs[$i]] = (0 - $fac->total_ttc);
+	  // On remplace la virgule éventuelle par un point sinon
+	  // certaines install de PHP renvoie uniquement la partie
+	  // entiere negative
+
+	  $tot = ereg_replace(",",".",$fac->total_ttc);
+	  $pai->amounts[$facs[$i]] = (0 - $tot);
 	  $pai->datepaye = $this->db->idate(time());
 	  $pai->paiementid = 3; // prélèvement
 	  $pai->num_paiement = "Rejet";
@@ -124,21 +129,6 @@ class RejetPrelevement
 	  /* Tag la facture comme impayée */
 	  dolibarr_syslog("RejetPrelevement::Create set_unpayed fac ".$fac->ref);
 	  $fac->set_unpayed($facs[$i]);
-
-	  /* Tag la ligne de prev comme rejetée
-
-	  $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_facture ";
-	  $sql .= " SET statut = 3";
-	  $sql .= " WHERE fk_prelevement_lignes=".$id;
-	  $sql .= " AND fk_facture = ".$facs[$i];
-	  
-	  if (! $this->db->query($sql))
-	    {
-	      dolibarr_syslog("RejetPrelevement::create Erreur 3");
-	      $error++;
-	    }
-	  
-	  */
 
 	  /* Envoi un email à l'emetteur de la demande de prev */
 	  $this->_send_email($fac);
