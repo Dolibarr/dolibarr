@@ -28,24 +28,25 @@ $types[1] = "service";
 
 function llxHeader($head = "", $urlp = "")
 {
-  global $user, $conf;
-
+  global $user, $conf, $langs;
+  $langs->load("products");
+  
   top_menu($head);
 
   $menu = new Menu();
 
   if ($conf->produit->enabled)
     {
-	  $menu->add(DOL_URL_ROOT."/product/index.php?type=0", "Produits");
-  	  $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=0","Liste");
-  	  $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0","Nouveau produit");
+	  $menu->add(DOL_URL_ROOT."/product/index.php?type=0", $langs->trans("Products"));
+  	  $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("List"));
+  	  $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
 	}
 	
   if ($conf->service->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/product/index.php?type=1", "Services");
-      $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=1","Liste");
-      $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=1","Nouveau service");
+      $menu->add(DOL_URL_ROOT."/product/index.php?type=1", $langs->trans("Services"));
+      $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=1", $langs->trans("List"));
+      $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=1", $langs->trans("NewService"));
     }
 
   if ($conf->boutique->enabled)
@@ -62,24 +63,28 @@ function llxHeader($head = "", $urlp = "")
       $menu->add(DOL_URL_ROOT."/product/album/", "Albums");
       $menu->add(DOL_URL_ROOT."/product/groupart/", "Groupes/Artistes");
       
-      $menu->add(DOL_URL_ROOT."/product/categorie/", "Catégories");
+      $menu->add(DOL_URL_ROOT."/product/categorie/", $langs->trans("Categories"));
     }      
     
-  $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
+  if ($conf->fournisseur->enabled) {
+      $langs->load("suppliers");
+      $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
+    }
 
   if ($conf->commande->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
+      $langs->load("orders");
+      $menu->add(DOL_URL_ROOT."/commande/", $langs->trans("Orders"));
 	}
 	
-  $menu->add(DOL_URL_ROOT."/product/stats/", "Statistiques");
+  $menu->add(DOL_URL_ROOT."/product/stats/", $langs->trans("Statistics"));
   if ($conf->propal->enabled) {
-    $menu->add_submenu(DOL_URL_ROOT."/product/popuprop.php", "Popularité");
+    $menu->add_submenu(DOL_URL_ROOT."/product/popuprop.php", $langs->trans("Popularity"));
   }
   
   if ($conf->stock->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/product/stock/", "Stock");
+      $menu->add(DOL_URL_ROOT."/product/stock/", $langs->trans("Stock"));
    	}
 
   left_menu($menu->liste);
