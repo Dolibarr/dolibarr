@@ -39,12 +39,12 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("/compta/dons/","Dons");
+  $menu->add(DOL_URL_ROOT."/compta/dons/","Dons");
   $menu->add_submenu("fiche.php?action=create","Saisir un don");
   $menu->add_submenu("liste.php","Liste complète");
   $menu->add_submenu("stats.php","Stats");
 
-  $menu->add("/compta/bank/index.php","Bank");
+  $menu->add(DOL_URL_ROOT."/compta/bank/index.php","Banque");
 
   left_menu($menu->liste);
 
