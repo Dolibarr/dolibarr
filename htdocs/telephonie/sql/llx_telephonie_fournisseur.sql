@@ -23,7 +23,9 @@
 create table llx_telephonie_fournisseur (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   nom             varchar(255),
+  num_client      varchar(255),
   email_commande  varchar(255),
+
   commande_active tinyint default 0, 
   class_commande  varchar(25)        -- nom de la classe utilisée pour la commande
 )type=innodb;
