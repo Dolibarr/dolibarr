@@ -257,7 +257,21 @@ if ($id)
     }
   print '</table>';
 
-  print '<p><p><a href="index.php3?action=delete_action&actionid='.$act->id.'">Supprimer</a>';
+  /*
+   *
+   */
+  print '<br><table border="1" cellspadding="3" cellspacing="0" width="100%"><tr>';
+
+  print '<td align="center" width="20%">-</td>';
+  print '<td align="center" width="20%">-</td>';
+  print '<td align="center" width="20%">-</td>';
+  print '<td align="center" width="20%">-</td>';
+  print '<td align="center" width="20%">';
+  print '<a href="index.php3?action=delete_action&actionid='.$act->id.'">Supprimer</a></td>';
+  print '</table>';
+
+
+
 }
 
 $db->close();
