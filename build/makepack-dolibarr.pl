@@ -162,11 +162,11 @@ foreach $target (keys %CHOOSEDTARGET) {
     $nboftargetok++;
 }
 
-if ($nboftarget) {
+if ($nboftargetok) {
 
     # Update buildroot
     #-----------------
-    my $copyalreadydone=1;
+    my $copyalreadydone=0;
     if (! $copyalreadydone) {
     	print "Delete directory $BUILDROOT\n";
     	$ret=`rm -fr "$BUILDROOT"`;
