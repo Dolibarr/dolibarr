@@ -35,7 +35,7 @@ $tabid[3] = "llx_c_regions";
 $tabid[4] = "llx_c_pays";
 
 $tabnom[1] = "Formes juridiques";
-$tabnom[2] = "Départements";
+$tabnom[2] = "Départements/Provinces/Cantons";
 $tabnom[3] = "Régions";
 $tabnom[4] = "Pays";
 

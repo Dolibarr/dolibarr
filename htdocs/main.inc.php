@@ -395,8 +395,7 @@ if (! defined(MAIN_LANG_DEFAULT))
   define(MAIN_LANG_DEFAULT,"fr");
 }
 $conf->langage=MAIN_LANG_DEFAULT;
-$rtplang = new rtplang(DOL_DOCUMENT_ROOT ."/langs", $conf->langage, $conf->langage, $conf->langage);
-$rtplang->debug=1;
+$langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage, $conf->langage, $conf->langage);
 
 $lc=strtolower($conf->langage)."_".strtoupper($conf->langage);  // lc vaut fr_FR par exemple
 setlocale(LC_TIME, $lc);
@@ -415,12 +414,12 @@ $bc[1]="class=\"pair\"";
 
 function top_menu($head, $title="") 
 {
-  global $user, $conf, $rtplang;
+  global $user, $conf, $langs;
 
   print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
   print "\n<html>";
 
-  print $rtplang->lang_header();
+  print $langs->lang_header();
 
   //  print "<HTML><HEAD>";
   print $head;

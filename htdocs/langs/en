@@ -1,3 +1,21 @@
 #do not change next line please !
-#{@"htmltagoption"=>"nothing","charset"=>"iso-8859-1","name"=>"English"}
-User=User
+charset="iso-8859-1"
+
+# Menus
+Société=Company
+
+# Fiches sociétés
+Adresse=Address
+Téléphone=Phone
+
+# Utilisateurs
+Auteur=Author
+Utilisateur=User
+
+# Autre
+Choisissez votre langue=Please choose your language
+Ajouter=Add
+Supprimer=Delete
+Factures=Bills
+Facture=Bill
+Payé=Payed

@@ -86,7 +86,7 @@ if ($action == 'create')
 
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr><td>Nom</td><td colspan="3"><input type="text" name="nom"></td></tr>';
-  print '<tr><td>Adresse</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
+  print '<tr><td>'.$langs->trans('Adresse').'</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
   print '<tr><td>CP</td><td><input size="6" type="text" name="cp">&nbsp;';
   print 'Ville&nbsp;<input type="text" name="ville"></td>';
 
@@ -98,8 +98,8 @@ if ($action == 'create')
   print $form->select_pays($soc->pays_id);
   print '</td></tr>';
 
-  print '<tr><td>Téléphone</td><td><input type="text" name="tel"></td>';
-  print '<td>Fax</td><td><input type="text" name="fax"></td></tr>';
+  print '<tr><td>'.$langs->trans('Téléphone').'</td><td><input type="text" name="tel"></td>';
+  print '<td>'.$langs->trans('Adresse').'</td><td><input type="text" name="fax"></td></tr>';
 
   print '<tr><td>Web</td><td colspan="3">http://<input size="40" type="text" name="url"></td></tr>';
 
@@ -158,7 +158,7 @@ elseif ($action == 'edit')
 
       print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
       print '<tr><td>Nom</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td></tr>';
-      print '<tr><td valign="top">Adresse</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft">';
+      print '<tr><td valign="top">'.$langs->trans('Adresse').'</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft">';
       print $soc->adresse;
       print '</textarea></td></tr>';
       
@@ -172,8 +172,8 @@ elseif ($action == 'edit')
       print $form->select_pays($soc->pays_id);
       print '</td></tr>';
 
-      print '<tr><td>Téléphone</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
-      print '<td>Fax</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
+      print '<tr><td>'.$langs->trans('Téléphone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
+      print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
       print '<tr><td>Web</td><td colspan="3">http://<input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
       
       print '<tr><td>Siren</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
@@ -286,16 +286,16 @@ else
   dolibarr_fiche_head($head, 0);
 
   /*
-   *
+   * Fiche société en mode visu
    */
   
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$soc->nom.'</td></tr>';
 
-  print "<tr><td valign=\"top\">Adresse</td><td colspan=\"3\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
+  print "<tr><td valign=\"top\">".$langs->trans('Adresse')."</td><td colspan=\"3\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
 
-  print '<tr><td>Téléphone</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
-  print '<td>Fax</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
+  print '<tr><td>'.$langs->trans('Téléphone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
+  print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
   print '<tr><td>Web</td><td colspan="3">';
   if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
   print '</td></tr>';

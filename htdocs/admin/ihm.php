@@ -100,9 +100,15 @@ if ($_GET["action"] == 'edit')
   print '</select>';
   print '</td></tr>';
 
-  print '<tr class="pair"><td width="50%">Langue par défaut à utiliser (fr, ...)</td><td>';
+  print '<tr class="pair"><td width="50%">Langue par défaut à utiliser (code langue)</td><td>';
   print '<select name="main_lang_default">';
-  print '<option value="fr" selected>fr (seul le français est géré pour l\'instant)</option>';
+  // On parcour le répertoire langs pour détecter les langues possibles
+  $handle=opendir(DOL_DOCUMENT_ROOT ."/langs");
+  while ($file = trim(readdir($handle))){
+	if($file != "." && $file != ".." && $file != "CVS") {
+      print '<option value="'.$file.'"'.(MAIN_LANG_DEFAULT==$file?'selected':'').'>'.$file.'</option>';
+    }
+  }
   print '</select>';
   print '</td></tr>';
 
@@ -128,7 +134,7 @@ else
   $filelib=eregi_replace('\.php$','',MAIN_MENU_BARRETOP);
   print $filelib;
   print '</td></tr>';
-  print '<tr class="pair"><td width="50%">Langue par défaut à utiliser (fr, en...)</td><td>' . MAIN_LANG_DEFAULT . '</td></tr>';
+  print '<tr class="pair"><td width="50%">Langue par défaut à utiliser (code langue)</td><td>' . MAIN_LANG_DEFAULT . '</td></tr>';
   print '<tr class="impair"><td>Afficher zone de recherche Contacts dans le menu gauche</td><td>' . (MAIN_SEARCHFORM_CONTACT?"oui":"non") . '</td></tr>';
   print '<tr class="pair"><td>Afficher zone de recherche Sociétés dans le menu gauche</td><td>' . (MAIN_SEARCHFORM_SOCIETE?"oui":"non") . '</td></tr>';
   print '</table><br>';

@@ -1,15 +1,5 @@
 #do not change next line please !
-#{@"htmltagoption"=>"nothing","charset"=>"iso-8859-1","name"=>"Français","translator_0"=>"Éric SEIGNE <erics@rycks.com>"}
-Please choose your language=Choisissez votre langue
-Add=Ajouter
-Commercial=Commercial
-Company=Société
-Date=Date
-Delete=Supprimer
-Bills=Factures
-Bill=Facture
-Propositions commerciales=Propositions commerciales
-Espace compta=Espace comptabilité
-Author=Auteur
-User=Utilisateur
-Payed=Payé
+charset="iso-8859-1"
+
+# Le fichier de langue pour le francais n'a pas besoin d'etre rempli pour l'instant
+# Sa presence suffit
