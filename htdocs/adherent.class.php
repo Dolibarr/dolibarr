@@ -281,6 +281,19 @@ class Adherent
    *
    *
    */
+  /* Fetch adherent corresponding to login passed in argument */
+  Function fetch_login($login){
+    $sql = "SELECT d.rowid FROM llx_adherent WHERE login='$login' LIMIT 1";
+    if ( $this->db->query( $sql) ){
+      if ($this->db->num_rows()){
+	$obj = $this->db->fetch_object(0);
+	fetch($obj->rowid);
+      }
+    }else{
+      print $this->db->error();
+    }
+  }
+  /* Fetch adherent corresponding to rowid passed in argument */
   Function fetch($rowid)
   {
     $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.login, d.pass, d.naiss, d.photo, d.fk_adherent_type, d.morphy, t.libelle as type";
