@@ -93,7 +93,7 @@ class DoliDb {
 					$this->connected = 1;
 					$this->ok = 1;
 				}
-	  	else
+	  	    else
 				{
 					$this->connected = 0;
 					$this->ok = 0;
@@ -101,29 +101,25 @@ class DoliDb {
 
 			// Si connexion serveur ok et si connexion base demandée, on essaie connexion base
 
-			if ($this->connected && $name)
-				{
-
-					if ($this->select_db($name) == 1)
-						{
-							$this->database_selected = 1;
-							$this->ok = 1;
-						}
-					else
-						{
-							$this->database_selected = 0;
-							$this->ok = 0;
-						}
-
-      	}
-      else
-				{
-					// Pas de selection de base demandée, mais tout est ok
-
-					$this->database_selected = 0;
-					$this->ok = 1;
-      	}
-
+            if ($this->connected && $name)
+            {
+            		if ($this->select_db($name) == 1)
+            			{
+            				$this->database_selected = 1;
+            				$this->ok = 1;
+            			}
+            		else
+            			{
+            				$this->database_selected = 0;
+            				$this->ok = 0;
+            			}
+            }
+            else
+            {
+            		// Pas de selection de base demandée, ok ou ko
+            		$this->database_selected = 0;
+            }
+            
       return $this->ok;
     }
 
@@ -458,7 +454,7 @@ class DoliDb {
 
   function last_insert_id()
     {
-      return mysql_insert_id();
+      return mysql_insert_id($this->db);
     }
 
 /*!
@@ -468,7 +464,7 @@ class DoliDb {
 
   function affected_rows()
     {
-      return mysql_affected_rows();
+      return mysql_affected_rows($this->db);
     }
 
 
