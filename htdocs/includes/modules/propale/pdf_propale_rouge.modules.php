@@ -38,7 +38,7 @@ Class pdf_propale_rouge {
 
 	  if (defined("PROPALE_OUTPUTDIR"))
 	    {
-	      $dir = PROPALE_OUTPUTDIR . "/" . $propale->ref . "/" ;
+	      $dir = PROPALE_OUTPUTDIR . "/" . $propale->ref ;
 	      umask(0);
 	      if (! file_exists($dir))
 		{
@@ -50,7 +50,7 @@ Class pdf_propale_rouge {
 	      print "PROPALE_OUTPUTDIR non définit !";
 	    }
 	  
-	  $file = $dir . $propale->ref . ".pdf";
+	  $file = $dir . "/" . $propale->ref . ".pdf";
 	  
 	  if (file_exists($dir))
 	    {
