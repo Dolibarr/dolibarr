@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/**     \file       htdocs/product/stock/liste.php
+        \ingroup    stock
+        \brief      Page liste des stocks
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 $user->getrights('produit');
 

@@ -19,6 +19,13 @@
  * $Source$
  *
  */
+
+/**	        \file       htdocs/telephonie/ligne/numdata.php
+	        \ingroup    telephonie
+	        \brief      Num data
+	        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 

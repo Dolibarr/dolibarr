@@ -22,7 +22,7 @@
  */
 
 /**     \file       htdocs/product/stock/mouvement.php
-        \group      stock
+        \ingroup    stock
         \brief      Page liste des mouvements de stocks
         \version    $Revision$
 */

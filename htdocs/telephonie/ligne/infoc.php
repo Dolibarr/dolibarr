@@ -20,6 +20,12 @@
  *
  */
 
+/**	        \file       htdocs/telephonie/ligne/infoc.php
+	        \ingroup    telephonie
+	        \brief      Lignes telephonie
+	        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $mesg = '';

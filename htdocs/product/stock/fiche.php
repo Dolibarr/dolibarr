@@ -22,7 +22,7 @@
  */
 
 /**     \file       htdocs/product/stock/fiche.php
-        \group      stock
+        \ingroup    stock
         \brief      Page fiche entrepot
         \version    $Revision$
 */

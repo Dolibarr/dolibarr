@@ -59,11 +59,6 @@ class DolibarrMail
   \param to
   \param from
   \param msg
-  \param filename_list
-  \param mimetype_list
-  \param mimefilename_list
-  \param addr_cc
-  \param addr_bcc
 */
 
   function DolibarrMail($subject, $to, $from, $msg)
@@ -213,10 +208,9 @@ class DolibarrMail
     fputs($fp, $message_comp);
     fclose($fp);
   }
+
   /**
     \brief permet d'ecrire le corps du message
-    \param msgtext
-    \param filename_list
   */
   
   function write_body()
@@ -264,8 +258,6 @@ class DolibarrMail
 
 /**
   \brief création des headers smtp
-  \param addr_from
-  \param addr_cc
 */
   
   function write_smtpheaders()

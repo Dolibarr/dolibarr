@@ -20,6 +20,17 @@
  *
  */
 
+/**	    \file       htdocs/product/stock/mouvementstock.class.php
+		\ingroup    stock
+		\brief      Fichier de la classe de gestion des mouvements de stocks
+		\version    $Revision$
+*/
+
+
+/**     \class      MouvementStock
+		\brief      Classe permettant la gestion des mouvements de stocks
+*/
+
 class MouvementStock
 {
 
@@ -27,6 +38,7 @@ class MouvementStock
     {
       $this->db = $DB;
     }
+
   /*
    *
    *

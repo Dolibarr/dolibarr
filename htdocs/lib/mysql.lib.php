@@ -395,7 +395,7 @@ class DoliDb
 /*!
 		\brief      Renvoie le nombre de lignes dans le
 		            resultat d'une requete SELECT
-		\seealso	affected_rows
+		\see    	affected_rows
 		\return     int		nombre de lignes
 */
 
@@ -407,7 +407,7 @@ class DoliDb
 /*!
 		\brief      Renvoie le nombre de lignes dans le
 		            resultat d'une requete INSERT, DELETE ou UPDATE
-		\seealso	num_rows
+		\see    	num_rows
 		\return     int		nombre de lignes
 */
 

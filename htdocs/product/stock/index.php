@@ -21,7 +21,8 @@
  *
  */
 
-/*! \file htdocs/product/stock/index.php
+/**     \file       htdocs/product/stock/index.php
+        \ingroup    stock
         \brief      Page accueil stocks produits
         \version    $Revision$
 */

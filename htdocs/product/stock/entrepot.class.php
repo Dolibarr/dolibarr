@@ -21,6 +21,17 @@
  *
  */
 
+/**	    \file       htdocs/product/stock/entrepot.class.php
+		\ingroup    stock
+		\brief      Fichier de la classe de gestion des entrepots
+		\version    $Revision$
+*/
+
+
+/**     \class      Entrepot
+		\brief      Classe permettant la gestion des entrepots
+*/
+
 class Entrepot
 {
   var $db ;

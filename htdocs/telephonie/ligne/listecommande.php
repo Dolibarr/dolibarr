@@ -19,6 +19,13 @@
  * $Source$
  *
  */
+
+/**	        \file       htdocs/telephonie/ligne/listecommande.php
+	        \ingroup    telephonie
+	        \brief      Liste commandes
+	        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 

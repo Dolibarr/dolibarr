@@ -19,6 +19,13 @@
  * $Source$
  *
  */
+
+/**	        \file       htdocs/telephonie/tarif/index.php
+	        \ingroup    telephonie
+	        \brief      Page accueil tarif telephonie
+	        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 

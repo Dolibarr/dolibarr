@@ -22,9 +22,8 @@
  *
  */
 
-/*!
-	    \file       htdocs/product/stock/product.php
-        \ingroup    product
+/**	    \file       htdocs/product/stock/product.php
+        \ingroup    stock
 		\brief      Page de la fiche produit
 		\version    $Revision$
 */
