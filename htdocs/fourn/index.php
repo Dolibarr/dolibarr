@@ -102,7 +102,7 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Liste des fournisseurs", $page, "index.php", "", $sortfield, $sortorder, '', $num);
+  print_barre_liste($langs->trans("ListOfSuppliers"), $page, "index.php", "", $sortfield, $sortorder, '', $num);
 
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
@@ -128,7 +128,7 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_file().'</a>';
+      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
       print "&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";
       print "<td>".$obj->ville."</td>\n";       
       print "<td>&nbsp;</td>\n";       

@@ -136,7 +136,7 @@ if ($result)
       $soc->fetch($socid);
   }
   
-  print_barre_liste("Factures fournisseur".($socid?" $soc->nom":""),$page,"index.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+  print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,"index.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
@@ -156,10 +156,12 @@ if ($result)
       
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?facid=$obj->facid\">".img_file()."</a>\n";
-      print "&nbsp;<a href=\"fiche.php?facid=$obj->facid\">$obj->facnumber</A></td>\n";
+      print "&nbsp;<a href=\"fiche.php?facid=$obj->facid\">$obj->facnumber</a></td>\n";
       print "<td>".strftime("%d %b %Y",$obj->datef)."</td>\n";
       print '<td>'.stripslashes("$obj->libelle").'</td>';
-      print "<td><a href=\"../fiche.php?socid=$obj->socid\">$obj->nom</A></td>\n";
+      print '<td>';
+      print '<a href="../fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
+      print '&nbsp;<a href="../fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a</td>';
       print '<td align="right">'.price($obj->total_ht).'</td>';
       print '<td align="right">'.price($obj->total_ttc).'</td>';
       // Affiche statut de la facture
