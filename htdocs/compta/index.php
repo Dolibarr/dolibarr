@@ -122,7 +122,7 @@ if ($conf->facture->enabled)
 	    {
 	      $obj = $db->fetch_object();
 	      $var=!$var;
-	      print '<tr '.$bc[$var].'><td width="92"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
+	      print '<tr '.$bc[$var].'><td width="92"><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").'</a> ';
 	      print '<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	      $i++;
@@ -196,7 +196,7 @@ if ( $db->query($sql) )
   if ($num)
     {
       print '<table class="noborder" width="100%">';
-      print "<tr class=\"liste_titre\"><td colspan=\"2\">Bookmark</td></tr>\n";
+      print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Bookmarks")."</td></tr>\n";
       $var = True;
       while ($i < $num)
 	{
@@ -204,8 +204,7 @@ if ( $db->query($sql) )
 	  $var = !$var;
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-	  print '<td align="right"><a href="index.php?action=del_bookmark&amp;bid='.$obj->bid.'">';
-	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" alt="Supprimer" border="0"></a></td>';
+	  print '<td align="right"><a href="index.php?action=del_bookmark&amp;bid='.$obj->bid.'">'.img_delete().'</a></td>';
 	  print '</tr>';
 	  $i++;
 	}
@@ -244,8 +243,8 @@ if ($conf->commande->enabled && $user->rights->commande->lire)
 	    {
 	      $var=!$var;
 	      $obj = $db->fetch_object();
-	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_file()."</a>";
-	      print "&nbsp;<a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
+	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")."</a>";
+	      print " <a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	      $i++;
 	    }
@@ -283,7 +282,8 @@ if ($conf->facture->enabled)
       if ($num)
 	{
 	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td colspan="2">Factures clients impayées ('.$num.')</td><td align="right">Montant HT</td><td align="right">Montant TTC</td><td align="right">Reçu</td></tr>';
+	  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsCustomersUnpayed").' ('.$num.')</td>';
+	  print '<td align="right">'.$langs->trans("AmountHT").'</td><td align="right">'.$langs->trans("AmountTTC").'</td><td align="right">'.$langs->trans("Received").'</td></tr>';
 	  $var = True;
 	  $total_ttc = $totalam = $total = 0;
 	  while ($i < $num)
@@ -293,9 +293,10 @@ if ($conf->facture->enabled)
 	      if ($i < 20)
 		{
 		  $var=!$var;
-		  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>';
-		  print '&nbsp;<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+		  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").'</a>';
+		  print ' <a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
+		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").'</a>';
+		  print ' <a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 		  print '<td align="right">'.price($obj->total).'</td>';
 		  print '<td align="right">'.price($obj->total_ttc).'</td>';
 		  print '<td align="right">'.price($obj->am).'</td></tr>';
@@ -306,8 +307,6 @@ if ($conf->facture->enabled)
 	      $i++;
 	    }
 	  $var=!$var;
-#	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").':</i></td><td align="right"><i>'.price($total)."</i></td><td align=\"right\"><i>".price($total_ttc)."</i></td><td align=\"right\"><i>".price($totalam)."</i></td></tr>";
-#	  print '<tr '.$bc[!$var].'><td colspan="3" align="left"><i>Reste à encaisser:</i></td><td align="right"><i>'.price($total_ttc-$totalam).'</i></td><td>&nbsp;</td></tr>';
 	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; (Reste à encaisser: '.price($total_ttc-$totalam).')</i></td><td align="right"><i>'.price($total)."</i></td><td align=\"right\"><i>".price($total_ttc)."</i></td><td align=\"right\"><i>".price($totalam)."</i></td></tr>";
 	  print "</table><br>";
 	}
@@ -325,7 +324,7 @@ $result = 0;
 if ( $result )
 {
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="2">Actions à faire</td>';
+  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("TasksToDo").'</td>';
   print "</tr>\n";
   $var = True;
   $i = 0;
@@ -349,36 +348,43 @@ if ($conf->facture->enabled) {
 
     if ($user->societe_id == 0)
     {
-      $sql = "SELECT ff.rowid, ff.facnumber, ff.libelle, ff.total_ttc";
-      $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
-      $sql .= " WHERE ff.paye=0";
+      $sql = "SELECT ff.rowid, ff.facnumber, ff.libelle, ff.total_ht, ff.total_ttc, s.nom, s.idp";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
+      $sql .= " WHERE s.idp = ff.fk_soc";
+      $sql .= " AND ff.paye=0";
       
-      if ( $db->query($sql) ) 
+      $result=$db->query($sql);
+      if ($result) 
         {
           $num = $db->num_rows();
           if ($num)
     	{
     	  print '<table class="noborder" width="100%">';
-          print '<tr class="liste_titre"><td colspan="2">Factures fournisseurs à payer ('.$num.')</td><td align="right">Montant TTC</td></tr>';
+          print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("BillsSuppliersUnpayed").' ('.$num.')</td>';
+          print '<td align="right">'.$langs->trans("AmountHT").'</td>';
+          print '<td align="right">'.$langs->trans("AmountTTC").'</td></tr>';
     	  print "</tr>\n";
     	  $i = 0;
     	  $var = True;
-    	  $total = $totalam = 0;
+    	  $total = $total_ttc = $totalam = 0;
     	  while ($i < $num)
     	    {
-    	      $obj = $db->fetch_object();
+    	      $obj = $db->fetch_object($result);
     	      $var = !$var;
-        	  print '<tr '.$bc[$var].'><td width="20%"><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_file().'</a>';
+        	  print '<tr '.$bc[$var].'><td width="20%"><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").'</a>';
     	      print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-    	      print '<td><a href="../fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->libelle.'</a></td>';
-    	      print '<td align="right">'.price($obj->total_ttc).'</td>';
+    		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
+	    	  print ' <a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+		      print '<td align="right">'.price($obj->total_ht).'</td>';
+              print '<td align="right">'.price($obj->total_ttc).'</td>';
     	      print '</tr>';
-        	  $total +=  $obj->total_ttc;
+        	  $total += $obj->total_ht;
+        	  $total_ttc +=  $obj->total_ttc;
         	  $totalam +=  $obj->am;
     	      $i++;
             }
           $var=!$var;
-          print '<tr '.$bc[$var].'><td colspan="2" align="left">Reste à payer : '.price($total-$totalam).'</td><td align="right">'.price($total).'</td></tr>';
+          print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; (Reste à payer : '.price($total_ttc-$totalam).')</td><td align="right">'.price($total).'</td><td align="right">'.price($total_ttc).'</td></tr>';
     	  print '</table><br>';
     	}
         }
