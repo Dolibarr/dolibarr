@@ -22,7 +22,7 @@
  *
  */
 
-/*!	\file ldap.lib.php
+/*!	\file htdocs/lib/ldap.lib.php
 		\brief Librairie contenant les fonctions pour accèder au serveur ldap.
 		\author Rodolphe Quiedeville.
 		\author	Benoit Mortier.

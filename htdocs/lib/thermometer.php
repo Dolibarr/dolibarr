@@ -21,14 +21,15 @@
  *
  */
 
- /*!	\file thermometer.php
-			\brief Classe permettant d'afficher un thermometre.
-			\author Rodolphe Quiedeville.
-			\author	Timothy Kanters.
-			\version $Revision$
+ /*! \file htdocs/lib/thermometer.php
+			\brief      Classe permettant d'afficher un thermometre.
+			\author     Rodolphe Quiedeville.
+			\author	    Timothy Kanters.
+			\version    $Revision$
 
 		Ensemble des fonctions permettant d'afficher un thermometre monetaire.
 */
+
 
 /*!
 		\brief permet d'afficher un thermometre monetaire.
@@ -37,8 +38,6 @@
 		\param intentValue
 		\return thermometer htmlLegenda
 */
-
-
 function moneyMeter($actualValue=0, $pendingValue=0, $intentValue=0)
 
 	/*

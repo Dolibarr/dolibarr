@@ -23,7 +23,7 @@
  *
  */
 
-/*!	\file functions.inc.php
+/*!	\file htdocs/lib/functions.inc.php
 		\brief Ensemble de fonctions de base de dolibarr sous forme d'include
 		\author Rodolphe Quiedeville
 		\author	Jean-Louis Bergamo

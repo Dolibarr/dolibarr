@@ -20,13 +20,14 @@
  *
  */
 
-/*!	\file price.lib.php
+/*!	\file htdocs/lib/price.lib.php
   \brief librairie contenant les fonctions pour calculer un prix.
   \author Rodolphe Quiedeville.
 		\version $Revision$
   
   Ensemble des fonctions permettant de calculer un prix.
 */
+
 
 /*!
   \brief permet de calculer un prix.

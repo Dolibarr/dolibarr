@@ -19,6 +19,14 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/boxes.php
+		\brief      Page d'admin des boites
+		\author     Rodolphe Qiedeville
+		\author	    Laurent Destailleur
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $langs->trans("admin");

@@ -20,7 +20,7 @@
  *
  */
 
-/*!	\file webcal.class.php
+/*!	\file htdocs/lib/webcal.class.php
 		\brief Classe permettant d'acceder a la database webcalendar.
 		\author Rodolphe Quiedeville.
 		\version $Revision$

@@ -18,7 +18,7 @@ to chunk_split
 */
 /* Note: if you don't have base64_encode on your sytem it will not work */
 
-/*!	\file CMailFile.class.php
+/*!	\file htdocs/lib/CMailFile.class.php
 		\brief Classe permettant d'envoyer des attachements par mail
 		\author Dan Potter.
 		\author	Eric Seigne
