@@ -40,7 +40,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add(DOL_URL_ROOT."/comm/propal.php", "Propales");
 
-  $menu->add(DOL_URL_ROOT."/comm/projet/", "Projets");
+  $menu->add(DOL_URL_ROOT."/projet/index.php", "Projets");
 
   left_menu($menu->liste);
 
