@@ -106,7 +106,7 @@ class Facture
 	{
 	  if ($this->db->num_rows())
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object();
 	      $cdr_nbjour = $obj->nbjour;
 	      $cdr_fdm = $obj->fdm;
 	    }
@@ -245,7 +245,7 @@ class Facture
 	{
 	  if ($this->db->num_rows())
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object();
 	      
 	      $this->id                 = $rowid;
 	      $this->datep              = $obj->dp;
@@ -291,7 +291,7 @@ class Facture
 		  
 		  while ($i < $num)
 		    {
-		      $objp = $this->db->fetch_object($i);
+		      $objp = $this->db->fetch_object($result);
 		      $faclig = new FactureLigne($this->db);
 		      $faclig->desc           = stripslashes($objp->description);
 		      $faclig->qty            = $objp->qty;
@@ -542,7 +542,7 @@ class Facture
 	      $i = 0;
 	      while ($i < $num)	  
 		{
-		  $obj = $this->db->fetch_object($i);
+		  $obj = $this->db->fetch_object($result);
 		  
 		  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
 		  $db2 = $this->db->clone();
@@ -746,7 +746,7 @@ class Facture
 	  $i = 0;
 	  while ($i < $num)	  
 	    {
-	      $obj = $this->db->fetch_object($i);
+	      $obj = $this->db->fetch_object($result);
 
 	      $products[$i][0] = $obj->price;
 	      $products[$i][1] = $obj->qty;
@@ -1024,7 +1024,7 @@ class Facture
 	{
 	  if ($this->db->num_rows()) 
 	    {
-	      $obj = $this->db->fetch_object($result , 0);
+	      $obj = $this->db->fetch_object($result);
 
 	      $this->id = $obj->rowid;
 
@@ -1086,7 +1086,7 @@ class FactureLigne
       $result = $this->db->query($sql);
       if ($result)
 	  {
-	      $objp = $this->db->fetch_object($i);
+	      $objp = $this->db->fetch_object($result);
 	      $this->desc           = stripslashes($objp->description);
 	      $this->qty            = $objp->qty;
 	      $this->price          = $objp->price;

@@ -123,7 +123,7 @@ if ($result)
   
   while ($i < $numr)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       define ("$objp->name", $objp->value);
       $i++;
     }
@@ -368,6 +368,7 @@ if (defined("MAIN_MAIL_NEW_SUBJECT"))
  */
 $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
-
+$yesno[0]="no";
+$yesno[1]="yes";
 
 ?>

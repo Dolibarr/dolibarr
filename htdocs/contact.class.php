@@ -343,7 +343,7 @@ class Contact
 	{
 	  if ($this->db->num_rows()) 
 	    {
-	      $obj = $this->db->fetch_object($result , 0);
+	      $obj = $this->db->fetch_object();
 
 	      $this->id             = $obj->idp;
 	      $this->civilite_id    = $obj->civilite_id;
@@ -386,7 +386,7 @@ class Contact
 	    {
 	      if ($this->db->num_rows()) 
 		{
-		  $uobj = $this->db->fetch_object($result , 0);
+		  $uobj = $this->db->fetch_object();
 		  
 		  $this->user_id = $uobj->rowid;
 		}
@@ -426,7 +426,7 @@ class Contact
 		{
 		  if ($this->db->num_rows())
 		    {
-		      $obj = $this->db->fetch_object($result , 0);
+		      $obj = $this->db->fetch_object();
 		      
 		      $this->birthday_alert = 1;
 		    } 
@@ -509,7 +509,7 @@ class Contact
 	{
 	  if ($this->db->num_rows()) 
 	    {
-	      $obj = $this->db->fetch_object($result , 0);
+	      $obj = $this->db->fetch_object();
 
 	      $this->id                = $obj->idp;
 

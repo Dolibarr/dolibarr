@@ -227,7 +227,7 @@ class Societe {
 	{
 	  if ($this->db->num_rows())
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object();
 
 	      $this->date_update = $obj->date_update;
 
@@ -375,7 +375,7 @@ class Societe {
 	  
 	  while ($i < $num)
 	    {
-	      $objp = $this->db->fetch_object($i);
+	      $objp = $this->db->fetch_object();
 	      $array_push($facimp, $objp->rowid);
 	      $i++;
 	      print $i;
@@ -534,7 +534,7 @@ class Societe {
       {
     	if ($this->db->num_rows())
     	  {
-    	    $obj = $this->db->fetch_object($result , 0);
+    	    $obj = $this->db->fetch_object($result);
     	    return $obj->nom;
     	  }
     	$this->db->free();
@@ -565,7 +565,7 @@ class Societe {
 	      $i = 0;
 	      while ($i < $nump)
 		{
-		  $obj = $this->db->fetch_object($i);
+		  $obj = $this->db->fetch_object();
 	      
 		  $contact_email[$obj->idp] = "$obj->firstname $obj->name &lt;$obj->email&gt;";
 		  $i++;
@@ -600,7 +600,7 @@ class Societe {
 	      $i = 0;
 	      while ($i < $nump)
 		{
-		  $obj = $this->db->fetch_object($i);
+		  $obj = $this->db->fetch_object();
 	      
 		  $contacts[$obj->idp] = "$obj->firstname $obj->name";
 		  $i++;
@@ -633,7 +633,7 @@ class Societe {
 	  if ($nump)
 	    {
 	      
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object();
 	      
 	      $contact_email = "$obj->firstname $obj->name <$obj->email>";
 
@@ -668,7 +668,7 @@ class Societe {
 	  
 	  while ($i < $num)
 	    {
-	      $objp = $this->db->fetch_object($i);
+	      $objp = $this->db->fetch_object();
 	      $effs[$objp->id] = $objp->libelle;
 	      $i++;
 	    }
@@ -698,7 +698,7 @@ class Societe {
 	
 	while ($i < $num)
 	  {
-	    $objp = $this->db->fetch_object($i);
+	    $objp = $this->db->fetch_object();
 	    $fj[$objp->code] = $objp->libelle;
 	    $i++;	  
 	  }

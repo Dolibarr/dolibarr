@@ -63,7 +63,7 @@ class Project {
 
     if ($this->db->query($sql) ) {
       if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object(0);
+	$obj = $this->db->fetch_object();
 
 	$this->id = $rowid;
 	$this->ref = $obj->ref;
@@ -95,7 +95,7 @@ class Project {
 	      $i = 0;
 	      while ($i < $nump)
 		{
-		  $obj = $this->db->fetch_object($i);
+		  $obj = $this->db->fetch_object();
 	      
 		  $propales[$i] = $obj->rowid;
 
@@ -140,7 +140,7 @@ class Project {
 	      $i = 0;
 	      while ($i < $nump)
 		{
-		  $obj = $this->db->fetch_object($i);
+		  $obj = $this->db->fetch_object();
 	      
 		  $projets[$obj->rowid] = $obj->title;
 		  $i++;

@@ -154,7 +154,7 @@ class Service {
 
     if ($result) {
       if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object($result , 0);
+	$obj = $this->db->fetch_object($result);
 
 	$this->id = $obj->rowid;
 	$this->ref = $obj->ref;

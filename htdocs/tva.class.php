@@ -80,7 +80,7 @@ class Tva
 	{
 	  if ($this->db->num_rows())
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object($result);
 	      return $obj->amount;
 	    }
 	  else
@@ -120,7 +120,7 @@ class Tva
 	{
 	  if ($this->db->num_rows())
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object($result);
 	      return $obj->amount;
 	    }
 	  else
@@ -161,7 +161,7 @@ class Tva
 	{
 	  if ($this->db->num_rows())
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object($result);
 	      return $obj->amount;
 	    }
 	  else

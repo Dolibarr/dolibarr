@@ -79,7 +79,7 @@ class Form
             $pays='';
             while ($i < $num)
             {
-                $obj = $this->db->fetch_object( $i);
+                $obj = $this->db->fetch_object();
                 if ($obj->code == 0) {
                     print '<option value="0">&nbsp;</option>';
                 }
@@ -138,7 +138,7 @@ class Form
 	    $pays='';
 	    while ($i < $num)
 	      {
-		$obj = $this->db->fetch_object( $i);
+		$obj = $this->db->fetch_object();
 		if ($obj->code == 0) {
 		  print '<option value="0">&nbsp;</option>';
 		}
@@ -194,7 +194,7 @@ class Form
             $foundselected=false;
             while ($i < $num)
             {
-                $obj = $this->db->fetch_object( $i);
+                $obj = $this->db->fetch_object();
                 if ($selected > 0 && $selected == $obj->rowid)
                 {
                     $foundselected=true;
@@ -275,7 +275,7 @@ class Form
 	  {
 	    while ($i < $num)
 	      {
-		$obj = $this->db->fetch_object( $i);
+		$obj = $this->db->fetch_object();
 		  if ($selected > 0 && $selected == $obj->idp)
 		    {
 		      print '<option value="'.$obj->idp.'" selected>'.$obj->nom.'</option>';
@@ -316,7 +316,7 @@ class Form
 	  {
 	    while ($i < $num)
 	      {
-  		  $obj = $this->db->fetch_object($i);
+  		  $obj = $this->db->fetch_object();
 
 		  if ($selected && $selected == $obj->idp)
 		    {
@@ -353,7 +353,7 @@ class Form
   
 	if ($num)
 	  {
-	    $obj = $this->db->fetch_object(0);
+	    $obj = $this->db->fetch_object();
 	    return $obj->libelle;
 	  }
 	else
@@ -389,7 +389,7 @@ class Form
         {
             while ($i < $num)
             {
-                $obj = $this->db->fetch_object( $i);
+                $obj = $this->db->fetch_object();
                 if ($selected == $obj->rowid)
                 {
                     print '<option value="'.$obj->code.'" selected>';
@@ -437,7 +437,7 @@ class Form
             $pays='';
             while ($i < $num)
             {
-                $obj = $this->db->fetch_object( $i);
+                $obj = $this->db->fetch_object();
                 if ($obj->code == 0) {
                     print '<option value="0">&nbsp;</option>';
                 }
@@ -484,7 +484,7 @@ class Form
     
     print '<form method="post" action="'.$page.'">';
     print '<input type="hidden" name="action" value="'.$action.'">';
-    print '<table cellspacing="0" class="border" width="100%" cellpadding="3">';
+    print '<table class="border" width="100%">';
     print '<tr><td colspan="3">'.$title.'</td></tr>';
     
     print '<tr><td class="valid">'.$question.'</td><td class="valid">';
@@ -829,10 +829,10 @@ class Form
 
 
   /*
-   *    \brief      Selection de oui/non en caractere
-   *    \param      name    nom du select
-   *    \param      value   valeur présélectionnée
-   *    \param      option  0 retourne yes/no, 1 retourne 1/0
+   *    \brief      Selection de oui/non en caractere (renvoi yes/no)
+   *    \param      name        nom du select
+   *    \param      value       valeur présélectionnée
+   *    \param      option      0 retourne yes/no, 1 retourne 1/0
    */
   function selectyesno($name,$value='',$option=0)
   {
@@ -857,8 +857,9 @@ class Form
   }
 	
   /*
-   *    \brief  Selection de oui/non en chiffre
-   *
+   *    \brief      Selection de oui/non en chiffre (renvoi 1/0)
+   *    \param      name        nom du select
+   *    \param      value       valeur présélectionnée
    */
   function selectyesnonum($name,$value='')
   {

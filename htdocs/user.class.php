@@ -503,7 +503,6 @@ class User
 	{
 	  if ($this->db->num_rows()) 
 	    {
-	      //$obj = $this->db->fetch_object($result , 0);
 	      $obj = $this->db->fetch_object($result);
 	      $this->id = $obj->rowid;
 	      $this->nom = stripslashes($obj->name);
@@ -546,7 +545,7 @@ class User
 	  $this->page_param = array();
 	  while ($i < $num)
 	    {
-	      $obj = $this->db->fetch_object($i);
+	      $obj = $this->db->fetch_object();
 	      $this->page_param[$obj->param] = $obj->value;
 	      $page_param_url .= $obj->param . "=".$obj->value."&amp;";
 	      $i++;

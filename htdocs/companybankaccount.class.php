@@ -147,7 +147,7 @@ class CompanyBankAccount
       {
 	if ($this->db->num_rows())
 	  {
-	    $obj = $this->db->fetch_object($result , 0);
+	    $obj = $this->db->fetch_object($result);
 	    
 	    $this->bank            = $obj->bank;
 	    $this->courant         = $obj->courant;

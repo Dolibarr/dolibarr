@@ -60,7 +60,7 @@ class Notify
 	  $i = 0;
 	  while ($i < $num)
 	    {
-	      $obj = $this->db->fetch_object( $i);
+	      $obj = $this->db->fetch_object($result);
 
 	      $sendto = $obj->firstname . " " . $obj->name . " <".$obj->email.">";
 

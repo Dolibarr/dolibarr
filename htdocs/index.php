@@ -49,7 +49,7 @@ if ($result)
   
   while ($j < $num)
     {
-      $obj = $db->fetch_object($j);
+      $obj = $db->fetch_object($result);
       $boxes[$j] = "includes/boxes/".$obj->file;
       $j++;
     }

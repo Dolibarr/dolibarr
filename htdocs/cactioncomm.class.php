@@ -43,7 +43,7 @@ class CActioncomm {
 	{
 	  if ($db->num_rows())
 	    {
-	      $obj = $db->fetch_object(0);
+	      $obj = $db->fetch_object();
 	      
 	      $this->id = $id;
 	      $this->libelle = $obj->libelle;
@@ -87,7 +87,7 @@ class CActioncomm {
 	    $i = 0;
 	    while ($i < $nump)
 	      {
-		$obj = $this->db->fetch_object($i);
+		$obj = $this->db->fetch_object();
 		
 		$ga[$obj->id] = $obj->libelle;
 		$i++;
@@ -117,7 +117,7 @@ class CActioncomm {
       {
     	if ($this->db->num_rows())
     	  {
-    	    $obj = $this->db->fetch_object($result , 0);
+    	    $obj = $this->db->fetch_object($result);
     	    return $obj->nom;
     	  }
     	$this->db->free();

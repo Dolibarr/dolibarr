@@ -313,7 +313,7 @@ class Propal
 	  
 	  while ($i < $num)
 	    {
-	      $obj = $this->db->fetch_object($i);
+	      $obj = $this->db->fetch_object();
 	      $products[$i][0] = $obj->price;
 	      $products[$i][1] = $obj->qty;
 	      $products[$i][2] = $obj->tva_tx;
@@ -366,7 +366,7 @@ class Propal
 	{
 	  if ($this->db->num_rows())
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object();
 	  
 	      $this->id             = $rowid;
 	      $this->datep          = $obj->dp;
@@ -417,7 +417,7 @@ class Propal
 		  
 		  while ($i < $num)
 		    {
-		      $objp                  = $this->db->fetch_object($i);
+		      $objp                  = $this->db->fetch_object();
 
 		      $ligne                 = new PropaleLigne();
 		      $ligne->libelle        = stripslashes($objp->label);
@@ -455,7 +455,7 @@ class Propal
 		  
 		  while ($j < $num)
 		    {
-		      $objp                  = $this->db->fetch_object($i);
+		      $objp                  = $this->db->fetch_object();
 		      $ligne                 = new PropaleLigne();
 		      $ligne->libelle        = stripslashes($objp->description);
 		      $ligne->desc           = stripslashes($objp->description);
@@ -686,7 +686,7 @@ class Propal
 	      $i = 0;
 	      while ($i < $nump)
 		{
-		  $obj = $this->db->fetch_object($i);
+		  $obj = $this->db->fetch_object();
 		  
 		  $ga[$obj->rowid] = $obj->ref;
 		  $i++;
@@ -720,7 +720,7 @@ class Propal
 	      $i = 0;
 	      while ($i < $nump)
 		{
-		  $obj = $this->db->fetch_object($i);
+		  $obj = $this->db->fetch_object();
 		  
 		  $ga[$i] = $obj->fk_commande;
 		  $i++;
@@ -799,7 +799,7 @@ class Propal
 	{
 	  if ($this->db->num_rows()) 
 	    {
-	      $obj = $this->db->fetch_object($result , 0);
+	      $obj = $this->db->fetch_object();
 
 	      $this->id                = $obj->rowid;
 

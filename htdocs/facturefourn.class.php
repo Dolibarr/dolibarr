@@ -163,7 +163,7 @@ class FactureFourn
 	{
 	  if ($this->db->num_rows())
 	    {
-	      $obj = $this->db->fetch_object(0);
+	      $obj = $this->db->fetch_object();
 	      
 	      $this->id      = $rowid;
 	      $this->datep   = $obj->df;
@@ -200,7 +200,7 @@ class FactureFourn
 		    {
 		      while ($i < $num)
 			{
-			  $obj = $this->db->fetch_object($i);
+			  $obj = $this->db->fetch_object();
 			  $this->lignes[$i][0] = stripslashes($obj->description);
 			  $this->lignes[$i][1] = $obj->pu_ht;
 			  $this->lignes[$i][2] = $obj->tva_taux;
