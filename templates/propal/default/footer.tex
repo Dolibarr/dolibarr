@@ -1,0 +1,49 @@
+%
+% footer.tex
+%
+% $Id$
+% $Source$
+
+\multicolumn{1}{|c|}{} & & \multicolumn{1}{|c|}{} & \multicolumn{1}{|r|}{} & \multicolumn{1}{|r|}{} \\ 
+\hline
+
+\multicolumn{2}{r}{} & \multicolumn{2}{r}{Remise H.T.}   & \multicolumn{1}{r}{#REMISEHT#} \\
+
+\multicolumn{2}{r}{} & \multicolumn{2}{r}{Total H.T.}    & \multicolumn{1}{r}{#TOTALHT#} \\
+\multicolumn{2}{r}{} & \multicolumn{2}{r}{\small{Soit en francs}} & \multicolumn{1}{r}{\small{#FRANCSHT#}} \\
+
+
+\multicolumn{2}{r}{} & \multicolumn{2}{r}{TVA à 19.60\%} & \multicolumn{1}{r}{#TVA#} \\
+
+%\cline{3-5}
+\hhline{~~===}
+\multicolumn{2}{r}{} & \multicolumn{2}{r}{{\large \textbf{Total en euros}}} & \multicolumn{1}{r}{{\large \textbf{#TOTALTTC#}}} \\
+\cline{3-5}
+%\cline{3-5}
+
+\multicolumn{2}{r}{} & \multicolumn{2}{r}{\small{Soit en francs}} & \multicolumn{1}{r}{\small{#FRANCSTTC#}} \\
+
+\end{tabular}
+\end{center}
+
+\begin{flushleft}
+\noindent
+
+Cette proposition est rédigée en euros, les sommes en francs sont données a titre indicatif et calculées sur le rapport 1 euro = 6.55957 francs.
+
+Conditions de r\'eglement : \textbf{\`a  r\'eception de facture}
+
+Cette proposition a une dur\'ee de validit\'e de 15 jours \`a compter de la date ci-dessous.
+
+\end{flushleft}
+
+\begin{flushright}
+\begin{tabular}{rlrr}
+\\
+\\
+\cline{2-2}
+\cline{4-4}
+ & Paris, le #DATE# & &  Rodolphe Qui\'edeville \\
+\end{tabular}
+\end{flushright}
+\end{document}
