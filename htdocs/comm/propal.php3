@@ -79,21 +79,8 @@ if ($action == 'add')
    */
   if ($id) 
     {
+      propale_pdf_create($db, $id);
 
-      //$gljroot = "/home/www/dolibarr/dolibarr/htdocs";
-
-      $command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name.":host=localhost\" ";
-      $command .= " ; ./propal-tex.pl --propal=".$id ." --pdf --ps --output=".$conf->propal->outputdir;
-      $command .= " --templates=".$conf->propal->templatesdir;
-      
-      $output = system($command);
-      //print "<p>command : $command<br>";
-      //print $output;
-
-      /*
-       * Renvoie directement sur la fiche
-       */
-      //Header("Location: propal.php3?propalid=$id");
       $propalid = $id;
     }
   else
@@ -102,6 +89,10 @@ if ($action == 'add')
     }
 }
 
+if ($action == 'pdf')
+{
+  propale_pdf_create($db, $propalid);
+}
 
 if ($action == 'setstatut') 
 {
@@ -306,9 +297,14 @@ if ($propalid) {
 	      print "<td align=\"center\" width=\"25%\">-</td>";
 	    }
 	  } 
-	  
-	  print "<td align=\"center\" width=\"25%\">-</td>";
-	  
+	  /*
+	   *
+	   */
+	  print '<td align="center" width="25%">[<a href="'.$PHP_SELF."?propalid=$propalid&action=pdf\">Générer</a>]</td>";
+	    
+	  /*
+	   *
+	   */
 	  if ($obj->statut == 1) {
 	    $file = $conf->propal->outputdir. "/$obj->ref/$obj->ref.pdf";
 	    if (file_exists($file)) {
@@ -381,23 +377,13 @@ if ($propalid) {
       print "<b>Documents générés</b><br>";
       print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=3>";
 
-      $file = $conf->propal->outputdir. "/$obj->ref/$obj->ref.pdf";
-      if (file_exists($file)) {
-	print "<tr><td>Propale PDF</a></td>";
-	print '<td><a href="'.$conf->propal->outputurl.'/'.$obj->ref.'/'.$obj->ref.'.pdf">'.$obj->ref.'.pdf</a></td></tr>';
-      }  
-      $file = $conf->propal->outputdir . "/$obj->ref/$obj->ref.ps";
-      if (file_exists($file)) {
-	print "<tr><td>Propale Postscript</a></td>";
-	print '<td><a href="'.$conf->propal->outputurl.'/'.$obj->ref.'/'.$obj->ref.'.ps">'.$obj->ref.'.s</a></td></tr>';
-	print "</tr>";
-      }
-      print '<tr><td colspan="2">(<a href="'.$conf->propal->outputurl.'/'.$obj->ref.'">liste...</a>)</td></tr>';
+      $file = PROPALE_OUTPUTDIR . "/$obj->ref/$obj->ref.pdf";
+      if (file_exists($file))
+	{
+	  print "<tr><td>Propale PDF</a></td>";
+	  print '<td><a href="'.PROPALE_OUTPUT_URL.'/'.$obj->ref.'/'.$obj->ref.'.pdf">'.$obj->ref.'.pdf</a></td></tr>';
+	}  
 
-      $file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/propale/$obj->ref/FAX-$obj->ref.ps";  
-      if (file_exists($file)) {
-	print "<tr><td><a href=\"../../doc/fax/\">FAX d'entete</a></td></tr>";
-      }
       print "</table>\n";
       /*
        *
