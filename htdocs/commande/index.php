@@ -23,7 +23,7 @@
 
 require("./pre.inc.php");
 
-llxHeader("", 'Commandes','ch-commande.html');
+llxHeader("", 'Commandes','Commande');
 
 print_titre("Commandes");
 
