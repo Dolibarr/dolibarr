@@ -68,8 +68,9 @@ create table llx_societe
   client         smallint       default 0,            -- client oui/non
   fournisseur    smallint       default 0,            -- fournisseur oui/non
 
-  UNIQUE INDEX(prefix_comm)
-);
+  UNIQUE INDEX(prefix_comm),
+)
+type=INNODB;
 
 create table llx_socstatutlog
 (
@@ -92,6 +93,7 @@ create table llx_socpeople
   phone       varchar(30),
   fax         varchar(30),
   email       varchar(255),
+  fk_user     integer default 0,
   note        text
 );
 
@@ -109,6 +111,14 @@ create table llx_transaction_bplc
   ref_commande      integer
 
 );
+
+create table llx_user_rights
+(
+  fk_user       integer NOT NULL,
+  fk_id         integer NOT NULL,
+  UNIQUE(fk_user,fk_id)
+);
+
 
 create table llx_todocomm
 (
@@ -382,10 +392,21 @@ create table llx_user
   module_comm   smallint default 1,
   module_compta smallint default 1,
   fk_societe    integer default 0,
+  fk_socpeople  integer default 0,
   note          text,
 
   UNIQUE INDEX(login)
 );
+
+create table llx_rights_def
+(
+  id            integer PRIMARY KEY,
+  libelle       varchar(255),
+  module        varchar(12),
+  type          enum('r','w','m','d','a'),
+  bydefault     tinyint default 0
+);
+
 
 create table llx_voyage
 (
@@ -453,7 +474,8 @@ create table llx_tva
   amount          real NOT NULL default 0,
   label           varchar(255),
   note            text
-);
+)
+type=INNODB;-- ===================================================================
 
 create table llx_domain
 (
@@ -664,8 +686,12 @@ create table llx_facture
   date_lim_reglement date,      -- date limite de reglement
   note               text,
 
-  UNIQUE INDEX (facnumber)
-);
+  UNIQUE INDEX (facnumber),
+  INDEX fksoc (fk_soc),
+  FOREIGN KEY (fk_soc)
+    REFERENCES llx_societe(idp) ON DELETE NO ACTION ON UPDATE NO ACTION
+)
+type=INNODB;-- ===================================================================
 
 create table llx_facturedet
 (
@@ -951,7 +977,6 @@ create table llx_paiementfourn
   num_paiement      varchar(50),       -- numéro de paiement (cheque)
   note              text
 );
-
 
 insert into llx_cond_reglement values (1,1,1, "A réception","Réception de facture",0,0);
 insert into llx_cond_reglement values (2,2,1, "30 jours","Réglement à 30 jours",0,30);
