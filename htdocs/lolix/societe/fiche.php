@@ -77,10 +77,10 @@ if ($_GET["action"] == 'edit')
       print '<td>'.$langs->trans("Fax").'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
       print '<tr><td>'.$langs->trans("web").'</td><td colspan="3">http://<input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
       
-      print '<tr><td>'.$langs->trans("ProfIdSiren").'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
-      print '<td>'.$langs->trans("ProfIdSiret").'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
+      print '<tr><td>'.$langs->transcountry("ProfId1",$soc->pays_code).'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
+      print '<td>'.$langs->transcountry("ProfId2",$soc->pays_code).'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
 
-      print '<tr><td>'.$langs->trans("ProfIdApe").'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td>';
+      print '<tr><td>'.$langs->transcountry("ProfId3",$soc->pays_code).'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td>';
       print '<td>'.$langs->trans("Capital").'</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
 
 

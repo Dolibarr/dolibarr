@@ -226,7 +226,7 @@ if ($_socid > 0)
   print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($objsoc->tel).'&nbsp;</td><td>Fax</td><td>'.dolibarr_print_phone($objsoc->fax).'&nbsp;</td></tr>';
   print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
   
-  print "<tr><td nowrap>".$langs->trans("ProfIdSiren")."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
+  print "<tr><td nowrap>".$langs->transcountry("ProfId1",$objsoc->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
   print '<td>'.$langs->trans("Prefix").'</td><td>';
   if ($objsoc->prefix_comm)
     {
