@@ -23,6 +23,7 @@ Table des matières
      2.        Facturation
      2.1.      Facture
      2.2.      Paiements
+     2.3.      Factures récurrentes
 
      3.        Produits
      3.1.      Aspect général
@@ -147,6 +148,24 @@ Table des matières
 
      La modification d'un paiement n'est pas possible vous devez pour cela
      supprimer le paiement puis en créer un nouveau.
+
+
+2.3. Factures récurrentes
+-------------------------
+
+     Cette fonctionnalité est apparue dans la version 1.1.0
+
+2.3.1. Créer une facture récurrente
+-----------------------------------
+
+     La création d'une facture récurrente s'effectue depuis une facture
+     validée qui sert de modèle.
+
+     Dans le formulaire de création si le _N.P._ contient une valeur cela
+     signifie que le prix du produit a changé depuis la création de la
+     facture qui sert de modèle.  Il faut alors indiquer si on souhaite
+     garder le prix de référence on si on crée la facture récurrente avec
+     le nouveau prix du produit.
 
 
 -------------------------------------------------------------------------------
