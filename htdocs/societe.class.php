@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2003 Brian Fraval <brian@fraval.org>
  * Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Eric Seigne <eric.seigne@ryxeo.com>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +60,7 @@ class Societe {
   Function create()
   {
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, client) ";
-    $sql .= " VALUES ('".trim($this->nom)."', now(), now(), $this->client);";
+    $sql .= " VALUES ('".trim($this->nom)."', now(), now(), '$this->client');";
 
     if ($this->db->query($sql) ) {
       $id = $this->db->last_insert_id();
@@ -91,8 +92,8 @@ class Societe {
     $sql .= ",address = '" . trim($this->adresse) ."'";
     $sql .= ",cp = '" . trim($this->cp) ."'";
     $sql .= ",ville = '" . trim($this->ville) ."'";
-    $sql .= ",fk_departement = " . $this->departement_id;
-    $sql .= ",fk_pays = " . $this->pays_id;
+    $sql .= ",fk_departement = '" . $this->departement_id ."'";
+    $sql .= ",fk_pays = '" . $this->pays_id ."'";
     $sql .= ",tel = '" . ereg_replace(" ","",$this->tel) ."'";
     $sql .= ",fax = '" . ereg_replace(" ","",$this->fax) ."'";
     $sql .= ",url = '" . trim($this->url) ."'";
@@ -100,12 +101,12 @@ class Societe {
     $sql .= ",siret = '" . trim($this->siret) ."'";
     $sql .= ",ape = '" . trim($this->ape) ."'";
     $sql .= ",tva_intra = '" . trim($this->tva_intra) ."'";
-    $sql .= ",capital = " . $this->capital;
-    $sql .= ",fk_effectif = " . $this->effectif_id ;
-    $sql .= ",fk_forme_juridique = " . $this->forme_juridique_id ;
-    $sql .= ",client = " . $this->client ;
-    $sql .= ",fournisseur = " . $this->fournisseur ;
-    $sql .= " WHERE idp = " . $id .";";
+    $sql .= ",capital = '" . $this->capital ."'";
+    $sql .= ",fk_effectif = '" . $this->effectif_id ."'";
+    $sql .= ",fk_forme_juridique = '" . $this->forme_juridique_id ."'";
+    $sql .= ",client = '" . $this->client ."'";
+    $sql .= ",fournisseur = '" . $this->fournisseur ."'";
+    $sql .= " WHERE idp = '" . $id ."';";
     
     if ($this->db->query($sql)) 
       {
@@ -138,7 +139,7 @@ class Societe {
       $sql .= ", ".MAIN_DB_PREFIX."c_pays as p";
       $sql .= ", ".MAIN_DB_PREFIX."c_forme_juridique as fj";
 
-      $sql .= " WHERE s.idp = ".$this->id;
+      $sql .= " WHERE s.idp = '".$this->id . "'";
       $sql .= " AND s.fk_effectif = e.id";
       $sql .= " AND s.fk_pays = p.rowid";
       $sql .= " AND s.fk_forme_juridique = fj.code";
@@ -259,8 +260,8 @@ class Societe {
        * Lignes
        */      
       $sql = "SELECT f.rowid";
-      $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = ".$this->id;
-      $sql .= " AND f.fk_statut = 1 AND f.paye = 0";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = '".$this->id . "'";
+      $sql .= " AND f.fk_statut = '1' AND f.paye = '0'";
 
       if ($this->db->query($sql))
 	{
@@ -287,7 +288,7 @@ class Societe {
 
   Function attribute_prefix()
     {
-      $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp = $this->id";
+      $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp = '$this->id'";
       if ( $this->db->query( $sql) )
 	{
 	  if ( $this->db->num_rows() )
@@ -308,7 +309,7 @@ class Societe {
 		    {
 		      $this->db->free();
 
-		      $sql = "UPDATE ".MAIN_DB_PREFIX."societe set prefix_comm='$prefix' WHERE idp=$this->id";
+		      $sql = "UPDATE ".MAIN_DB_PREFIX."societe set prefix_comm='$prefix' WHERE idp='$this->id'";
 		      
 		      if ( $this->db->query( $sql) )
 			{
@@ -341,7 +342,7 @@ class Societe {
   Function get_nom($id)
     {
 
-      $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp=$id;";
+      $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp='$id';";
       
       $result = $this->db->query($sql);
       
@@ -365,7 +366,7 @@ class Societe {
     {
       $contact_email = array();
 
-      $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = $this->id";
+      $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '$this->id'";
       
       if ($this->db->query($sql) )
 	{
@@ -398,7 +399,7 @@ class Societe {
     {
       $contacts = array();
 
-      $sql = "SELECT idp, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = $this->id";
+      $sql = "SELECT idp, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '$this->id'";
       
       if ($this->db->query($sql) )
 	{
@@ -430,7 +431,7 @@ class Societe {
   Function contact_get_email($rowid)
     {
 
-      $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE idp = $rowid";
+      $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE idp = '$rowid'";
       
       if ($this->db->query($sql) )
 	{
