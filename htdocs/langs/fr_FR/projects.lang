@@ -3,3 +3,5 @@ Project=Projet
 Projects=Projets
 NewProject=Nouveau projet
 AddProject=Créer projet
+DeleteAProject=Supprimer un projet
+ConfirmDeleteAProject=Etes-vous sur de vouloir supprimer ce projet ?
