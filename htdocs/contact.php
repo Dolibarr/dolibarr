@@ -145,6 +145,8 @@ if ($result) {
   print "</TABLE>";
   $db->free();
 } else {
+  print_barre_liste("Liste des contacts",$page, $PHP_SELF);
+
   print $db->error();
 }
 
