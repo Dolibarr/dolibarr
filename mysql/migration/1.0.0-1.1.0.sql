@@ -14,6 +14,7 @@ alter table llx_facturedet add remise_percent real default 0;
 alter table llx_facturedet add remise real default 0;
 alter table llx_facturedet add subprice real default 0;
 
+alter table llx_facturedet modify fk_product NOT NULL default 0;
 
 create table llx_product_fournisseur
 (
