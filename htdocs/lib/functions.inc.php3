@@ -222,7 +222,8 @@ function transcoS2L($zonein,$devise)
 
 
 
-function print_liste_field_titre($name, $file, $field, $begin="") {
+function print_liste_field_titre($name, $file, $field, $begin="")
+ {
   global $conf;
 
   print $name."&nbsp;";
@@ -233,7 +234,8 @@ function print_liste_field_titre($name, $file, $field, $begin="") {
 
 }
 
-function print_titre($titre) {
+function print_titre($titre)
+ {
   global $conf;
   print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
   print '<tr><td><div class="titre">'.$titre.'</div></td>';
@@ -243,7 +245,8 @@ function print_titre($titre) {
  *
  *
  */
-function print_barre_liste($titre,$page,$file,$options='') {
+function print_barre_liste($titre,$page,$file,$options='')
+ {
   global $conf;
   print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
 
@@ -381,43 +384,49 @@ function print_heure_select($prefix,$begin=1,$end=23) {
  *
  *
  */
-function print_duree_select($prefix) {
-  
+function print_duree_select($prefix)
+ {  
   print '<select name="'.$prefix.'hour">';
 
   print "<option value=\"0\">0";
   print "<option value=\"1\" SELECTED>1";
 
-  for ($hour = 2 ; $hour < 13 ; $hour++) {
-    print "<option value=\"$hour\">$hour";
-  }
+  for ($hour = 2 ; $hour < 13 ; $hour++)
+    {
+      print "<option value=\"$hour\">$hour";
+    }
   print "</select>&nbsp;H&nbsp;";
   print '<select name="'.$prefix.'min">';
-  for ($min = 0 ; $min < 55 ; $min=$min+5) {
-    print "<option value=\"$min\">$min";
-  }
+  for ($min = 0 ; $min < 55 ; $min=$min+5)
+    {
+      print "<option value=\"$min\">$min";
+    }
   print "</select>\n";  
 }
 
-function price($amount) {
+function price($amount)
+{
   return number_format($amount, 2, '.', ' ');
   //return sprintf("%.2f", $amount);
 }
 
 
-function francs($euros) {
+function francs($euros)
+{
   return price($euros * 6.55957);
 }
-function tva($euros) {
-  return sprintf("%01.2f",($euros * 0.196));
+function tva($euros, $taux=0.196)
+{
+  return sprintf("%01.2f",($euros * $taux));
 }
-function inctva($euros) {
-  return sprintf("%01.2f",($euros * 1.196));
+function inctva($euros, $taux=1.196)
+{
+  return sprintf("%01.2f",($euros * $taux));
 }
 
 
-function gljftime($format,$timestamp) {
-
+function gljftime($format,$timestamp)
+{
   $hour = substr($timestamp,11,2);
   $min = substr($timestamp,14,2);
   $sec = substr($timestamp,17,2);
