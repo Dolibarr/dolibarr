@@ -33,12 +33,12 @@
 
 class Translate {
 
+    var $dir;
+    var $defaultlang;
+
     var $tab_loaded=array();
     var $tab_translate=array();
 
-    var $defaultlang;
-    var $dir;
-    var $debug;
 
     /**
      *  \brief      Constructeur de la classe
@@ -49,47 +49,56 @@ class Translate {
     function Translate($dir = "", $defaultlang = "") {
         $this->dir=$dir;
         $this->defaultlang=$defaultlang;
-
-        $this->tab_translate = array();
     }
 
     /**
 	 *  \brief      Charge en mémoire le tableau de traduction pour un domaine particulier
      *              Si le domaine est deja chargé, la fonction ne fait rien
      *  \param      domain      Nom du domain (fichier lang) à charger
+     *  \param      alt         Charge le fichier alternatif meme si fichier dans la langue est trouvé
      */
 		
-    function Load($domain = "main") {
-      if ($this->tab_loaded[$domain]) { return; }   // Ce fichier est deja chargé
-
-      $scandir    = $this->dir."/".$this->defaultlang;    // Repertoire de traduction
-      $scandiralt = $this->dir."/fr_FR";                  // Repertoire alternatif
-    
+    function Load($domain,$alt=0)
+    {
+        if ($this->tab_loaded[$domain]) { return; }       // Le fichier de ce domaine est deja chargé
+        
+        // Repertoire de traduction
+        $scandir = $this->dir."/".$this->defaultlang;
         $file_lang =  $scandir . "/$domain.lang";
-        if (! is_file($file_lang)) {
+
+        if ($alt || ! is_file($file_lang)) {
+            // Repertoire de la langue alternative
+            if ($this->defaultlang != "en_US") $scandiralt = $this->dir."/en_US";   
+            else $scandiralt = $this->dir."/fr_FR";
             $file_lang = $scandiralt . "/$domain.lang";
+            $alt=1;
         }
         
-        /* initialize tabs */
         $i = 0;
         if(is_file($file_lang)) {
-            //print "Ouverture fichier $file_lang";
             if($fp = @fopen($file_lang,"rt")){
                 $finded = 0;
                 while (($ligne = fgets($fp,4096)) && ($finded == 0)){
                     if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#") {
                         $tab=split('=',$ligne,2);
                         //print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
-                        $this->tab_translate[$tab[0]]=trim($tab[1]);
+                        if (! $this->tab_translate[$tab[0]]) $this->tab_translate[$tab[0]]=trim($tab[1]);
                     }
                 }
                 fclose($fp);
-                $this->tab_loaded[$domain]=1;   // Marque ce fichier comme chargé
+
+                // Pour les langues aux fichiers parfois incomplets, on charge la langue alternative
+                if (! $alt && $this->defaultlang != "fr_FR" && $this->defaultlang != "en_US") {
+                    dolibarr_syslog("translate::load loading alternate translation file");
+                    $this->load($domain,1);
+                }
+
+                $this->tab_loaded[$domain]=1;           // Marque ce fichier comme chargé
             }
-
+        
         }
-
-    }
+        
+   }
 
     /**     
      *	\brief      Retourne la liste des domaines chargées en memoire
@@ -103,7 +112,8 @@ class Translate {
     
     /**
      *  \brief       Retourne la version traduite du texte passé en paramètre
-     *               Si il n'y a pas de correspondance pour ce texte, il est retourné tel quel
+     *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
+     *               et si toujours pas trouvé, il est retourné tel quel
      *  [en]         Return translated version of parameter string
      *  \param       str         original string to translate
      *  \param       param1      chaine de param1
@@ -127,7 +137,7 @@ class Translate {
 		
     function get_available_languages()
     {
-      // On parcour le répertoire langs pour détecter les langues dispo
+      // On parcour le répertoire langs pour détecter les langues disponibles
       $handle=opendir(DOL_DOCUMENT_ROOT ."/langs");
       $langs_available=array();
       while ($file = trim(readdir($handle))){
@@ -146,9 +156,11 @@ class Translate {
 		
     function lang_header()
     {
-        $charset = "iso-8859-1";
+        $this->load("main");
+        $charset=$this->trans("charset");
+        if (! $charset) $charset="iso-8859-1";
     
-        //header("Content-Type: text/html; charset=$charset");
+        header("Content-Type: text/html; charset=$charset");
         $texte .= "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$charset\">\n";
     
         return $texte;
