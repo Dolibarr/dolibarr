@@ -90,6 +90,7 @@ if ($_GET["action"] == 'edit')
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
+  $langs->load("companies");
   print '<tr class="impair"><td width="50%">'.$langs->trans("ProfIdSiret").'</td><td>';
   print '<input name="siret" size="20" value="' . MAIN_INFO_SIRET . '"></td></tr>';
 
