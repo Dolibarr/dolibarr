@@ -193,7 +193,7 @@ class CommunicationTelephonique {
     $sql .= " (ligne, date, numero, duree";
     $sql .= ", tarif_achat_temp, tarif_achat_fixe, tarif_vente_temp, tarif_vente_fixe";
     $sql .= ", cout_achat, cout_vente, remise,dest, fourn_montant";
-    $sql .= " , fichier_cdr, fk_fournisseur, fk_facture)";
+    $sql .= " , fichier_cdr, fk_fournisseur, fk_telephonie_facture)";
 
     $sql .= " VALUES (";
     $sql .= "'$this->ligne','".$db->idate($this->dateheure)."','$this->numero','$this->duree'";
@@ -207,6 +207,7 @@ class CommunicationTelephonique {
     if (! $db->query($sql))
       {
 	dolibarr_syslog("CommunicationTelephonique::logsql Erreur");
+	dolibarr_syslog("CommunicationTelephonique::logsql ".$db->error());
 	return 1;
       }
     else
