@@ -159,7 +159,7 @@ foreach ($modules as $key => $value)
 
   if ($const_value == 1)
     {
-      print '<img src="/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
     }
   else
     {
