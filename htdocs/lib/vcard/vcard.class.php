@@ -1,7 +1,7 @@
-<?PHP
+<?php
 /***************************************************************************
 
-PHP vCard class v2.0
+php vCard class v2.0
 (c) Kai Blankenhorn
 www.bitfolge.de/en
 kaib@bitfolge.de
@@ -40,7 +40,7 @@ function escape($string) {
 	return str_replace(";","\;",$string);
 }
 
-// taken from PHP documentation comments
+// taken from php documentation comments
 function quoted_printable_encode($input, $line_max = 76) {
 	$hex = array('0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F');
 	$lines = preg_split("/(?:\r\n|\r|\n)/", $input);
@@ -234,7 +234,7 @@ class vCard {
 			$text.= "$key:$value\r\n";
 		}
 		$text.= "REV:".date("Y-m-d")."T".date("H:i:s")."Z\r\n";
-		$text.= "MAILER:PHP vCard class by Kai Blankenhorn\r\n";
+		$text.= "MAILER:php vCard class by Kai Blankenhorn\r\n";
 		$text.= "END:VCARD\r\n";
 		return $text;
 	}
