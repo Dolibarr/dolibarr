@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -22,8 +22,8 @@
  */
 
 /*!
-	    \file       htdocs/actioncomm.class.php
-        \ingroup    commercial
+	  \file       htdocs/actioncomm.class.php
+    \ingroup    commercial
 		\brief      Fichier de la classe des actions commerciales
 		\version    $Revision$
 */

@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -30,7 +30,7 @@
 
 
 /*! \class Paiement
-  \brief Classe permettant la gestion des paiements des factures clients
+  	\brief Classe permettant la gestion des paiements des factures clients
 */
 
 class Paiement 
@@ -55,6 +55,7 @@ class Paiement
    *    \param  DB          handler accès base de données
    *    \param  soc_idp     id societe ("" par defaut)
    */
+	 
   function Paiement($DB, $soc_idp="") 
   {
     $this->db = $DB ;
@@ -64,6 +65,7 @@ class Paiement
    *    \brief      Recupére l'objet paiement
    *    \param      id       id du paiement a récupérer
    */
+	 
   function fetch($id) 
     {
       $sql = "SELECT p.rowid,".$this->db->pdate("p.datep")." as dp, p.amount";
@@ -106,6 +108,7 @@ class Paiement
    *    \param      user       object utilisateur qui crée
    *
    */
+	 
   function create($user)
   {
     $sql_err = 0;
@@ -187,6 +190,7 @@ class Paiement
    *
    *
    */
+	 
   function select($name, $filtre='', $id='')
   {
     $form = new Form($this->db);
@@ -211,6 +215,7 @@ class Paiement
    *
    *
    */
+	 
   function delete()
   {
     $sql = "DELETE FROM llx_paiement_facture WHERE fk_paiement = ".$this->id;
@@ -236,6 +241,7 @@ class Paiement
    * Mise a jour du lien entre le paiement et la ligne générée dans llx_bank
    *
    */
+	 
   function update_fk_bank($id_bank)
     {
     $sql = "UPDATE llx_paiement set fk_bank = ".$id_bank." where rowid = ".$this->id;
@@ -255,6 +261,7 @@ class Paiement
    *    \brief      Information sur l'objet
    *    \param      id      id du paiement dont il faut afficher les infos
    */
+	 
   function info($id) 
     {
       $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec, fk_user_creat, fk_user_modif";

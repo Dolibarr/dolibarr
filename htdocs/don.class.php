@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -21,9 +21,8 @@
  *
  */
 
-/*!
-	    \file       htdocs/don.class.php
-        \ingroup    don
+/*!	\file       htdocs/don.class.php
+		\ingroup    don
 		\brief      Fichier de la classe des dons
 		\version    $Revision$
 */

@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,18 +42,21 @@ class Retourbplc
   var $code_retour;
 
   var $ref_commande;
+	
   /*
    *   Initialisation des valeurs par défaut
    */
+	 
   function Retourbplc($db) 
   {
     $this->db = $db;
   }
-  /*
-   * Insertion dans la base de donnée de la transaction
-   *
+	
+  /**
+   * \brief  Insertion dans la base de donnée de la transaction
    *
    */
+	 
   function insertdb()
   {
 
@@ -90,11 +93,12 @@ class Retourbplc
 	return 0;
       }             
   }
-  /*
-   * Verification de la validitée de la clé
-   *
+	
+  /**
+   * \brief  Verification de la validitée de la clé
    *
    */
+	 
   function check_key($key)
   {
 
@@ -145,10 +149,12 @@ class Retourbplc
 	return 0;
       }
   }
-  /*
-   * Table de correspondance de l'algorithme de Luhn
+	
+  /**
+   * \brief  Table de correspondance de l'algorithme de Luhn
    *
    */
+	
   function corres($value)
   {
     $map[0] = 0;
@@ -166,11 +172,10 @@ class Retourbplc
     return $map[$value];
 
   }
-  /*
-   * Calcul de la cle de Luhn
-   *
-   *
-   *
+	
+  /**
+   * \brief  Calcul de la cle de Luhn
+   * 
    */
   function cle_luhn($cle, $map)
   {
@@ -204,11 +209,12 @@ class Retourbplc
 
     return substr($totalVal, strlen($totalVal)-1, 1);
   }
-  /*
-   * Postion de C5 dans N0
+  /**
+   * \brief Postion de C5 dans N0
    *
    *
    */
+	 
   function calcul_pos($N1, $N0, $C5)
   {
     if ($N0 >= 0 && $N0 <= 6)
@@ -254,11 +260,12 @@ class Retourbplc
     return $cle;
 
   }
-  /*
-   * Retournement du tableau
-   *
+	
+  /**
+   * \brief  Retournement du tableau
    *
    */
+	 
   function array_reverse($string)
   {
 
@@ -273,7 +280,6 @@ class Retourbplc
 	$i = $i - 1;
 	$j = $j + 1;
       }
-
 
     return $rever;
   }

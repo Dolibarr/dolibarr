@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -40,11 +40,13 @@ class Service {
     
     return 1;
   }
+	
   /*
    *
    *
    *
    */
+	 
   function create($user) {
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."service (datec, fk_user_author) VALUES (now(), ".$user->id.")";
@@ -59,11 +61,13 @@ class Service {
       print $this->db->error() . ' in ' . $sql;
     }
   }
+	
   /*
    *
    *
    *
    */
+	 
   function update($id, $user) {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."service ";
@@ -81,11 +85,13 @@ class Service {
       print $this->db->error() . ' in ' . $sql;
     }
   }
+	
   /*
    *
    *
    *
    */
+	 
   function start_comm($id, $user, $datedeb=0) {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."service ";
@@ -104,11 +110,13 @@ class Service {
       print $this->db->error() . ' in ' . $sql;
     }
   }
+	
   /*
    *
    *
    *
    */
+	 
   function stop_comm($id, $user, $datefin=0) {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."service ";
@@ -127,11 +135,13 @@ class Service {
       print $this->db->error() . ' in ' . $sql;
     }
   }
+	
   /*
    *
    *
    *
    */
+	 
   function fetch($id) {
 
     $sql = "SELECT s.ref,s.label,s.price,s.tms,s.debut_comm,s.fin_comm,s.description,";
@@ -170,8 +180,4 @@ class Service {
 
 
 }
-/*
- * $Id$
- * $Source$
- */
 ?>

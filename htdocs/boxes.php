@@ -32,8 +32,8 @@
 
 /*! \class infoBox
 		\brief      Classe permettant la gestion des boxes sur une page
-        \remarks    Cette classe est utilisé par les fichiers includes/boxes/box_xxx.php
-                    qui sont les modules de boites
+		\remarks    Cette classe est utilisé par les fichiers includes/boxes/box_xxx.php
+		\remarks    qui sont les modules de boites
 */
 
 class infoBox 

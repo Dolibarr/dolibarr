@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +31,7 @@ class Project {
   function Project($DB) {
     $this->db = $DB;
   }
+	
   /*
    *
    *
@@ -49,6 +50,7 @@ class Project {
 	}
     
   }
+	
   /*
    *
    *
@@ -73,11 +75,13 @@ class Project {
       print $this->db->error();
     }
   }
+	
   /*
    *
    *
    *
    */
+	 
   function get_propal_list()
     {
       $propales = array();
@@ -109,11 +113,13 @@ class Project {
 	  print $this->db->error() . '<br>' .$sql;
 	}      
     }
+		
   /*
    *
    *
    *
    */
+	 
   function liste_array($id_societe='')
     {
       $projets = array();

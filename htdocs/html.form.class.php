@@ -22,8 +22,7 @@
  * $Source$
  */
 
-/*!
-	    \file       htdocs/html.form.class.php
+/*!	\file       htdocs/html.form.class.php
 		\brief      Fichier de la classe des fonctions prédéfinie de composants html
 		\version    $Revision$
 */
@@ -38,10 +37,10 @@ class Form
   var $db;
   var $errorstr;
   
-  /*
-   * \brief     Constructeur
-   * \param     DB      handler d'accès base de donnée
-   */
+  /*!	\brief     Constructeur
+			\param     DB      handler d'accès base de donnée
+  */
+	
   function Form($DB)
   {
     $this->db = $DB;
@@ -57,6 +56,7 @@ class Form
    *            Ainsi les liens avec les départements se font sur un département
    *            independemment de nom som.
    */
+	 
   function select_departement($selected='',$htmlname='departement_id')
   {
     global $conf,$langs;
@@ -119,6 +119,7 @@ class Form
    *            Ainsi les liens avec les regions se font sur une region independemment
    *            de nom som.
    */
+	 
   function select_region($selected='',$htmlname='region_id')
   {
     global $conf,$langs;
@@ -173,6 +174,7 @@ class Form
    * \param     htmlname    nom de la liste deroulante
    * \todo      trier liste sur noms après traduction plutot que avant
    */
+	 
   function select_pays($selected='',$htmlname='pays_id')
   {
     global $conf,$langs;
@@ -223,6 +225,7 @@ class Form
    * \brief     Retourne la liste déroulante des langues disponibles
    * \param     
    */
+	 
   function select_lang($selected='',$htmlname='lang_id')
   {
     global $langs;
@@ -252,9 +255,10 @@ class Form
 
 
   /*
-   * Retourne la liste déroulante des sociétés
-   *
+   * \brief   Retourne la liste déroulante des sociétés
+   * \param
    */
+	 
   function select_societes($selected='',$htmlname='soc_id')
   {
     // On recherche les societes
@@ -291,9 +295,10 @@ class Form
   }
   
   /*
-   * Retourne la liste déroulante des contacts d'une société donnée
+   * \brief  Retourne la liste déroulante des contacts d'une société donnée
    *
    */
+	 
   function select_contacts($socid,$selected='',$htmlname='contactid')
   {
     // On recherche les societes
@@ -333,9 +338,10 @@ class Form
 
   
   /*
-   * Retourne le nom d'un pays
+   * \brief  Retourne le nom d'un pays
    * 
    */
+	 
   function pays_name($id)
   {
     $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."c_pays";
@@ -407,10 +413,10 @@ class Form
   }
 
   /*
-   * Retourne la liste déroulante des formes juridiques
-   * avec un affichage avec rupture sur le pays
+   * \brief  Retourne la liste déroulante des formes juridiques avec un affichage avec rupture sur le pays
    *
    */
+	 
   function select_forme_juridique($selected='')
   {
     global $conf,$langs;
@@ -471,6 +477,7 @@ class Form
    *    \param  question    question
    *    \param  action      action
    */
+	 
   function form_confirm($page, $title, $question, $action)
   {
     global $langs;
@@ -489,10 +496,12 @@ class Form
     print '</table>';
     print "</form>\n";  
   }
+	
   /*
-   *
+   * \brief selection du taux de tva
    *
    */
+	 
   function select_tva($name='', $defaulttx = '')
   {
     if (! strlen(trim($name)))
@@ -544,6 +553,7 @@ class Form
    * - La date du jour si set_time vaut ''
    * - Aucune date (champs vides) si set_time vaut -1
    */
+	 
   function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0)
   {
     if (! $set_time && ! $empty)
@@ -698,10 +708,12 @@ class Form
 	
       }
   }
+	
   /*
    *
    *
    */
+	 
   function select($name, $sql, $id='')
     {
 
@@ -755,6 +767,7 @@ class Form
     		\param	empty           1 si il faut un valeur "-" dans la liste, 0 sinon
     		\param	key_libelle     1 pour afficher la key dans la valeur "[key] value"
     */
+		
   function select_array($name, $array, $id='', $empty=0, $key_libelle=0)
     {
       print '<select name="'.$name.'">';
@@ -807,19 +820,19 @@ class Form
     
     }
   /*
-   * Renvoie la chaîne de caractère décrivant l'erreur
-   *
+   * \brief  Renvoie la chaîne de caractère décrivant l'erreur
    *
    */
+	 
   function error()
     {
       return $this->errorstr;
     }
   /*
-   *
-   * Yes/No
+   * \brief selection de oui/non en caractere
    *
    */
+	 
   function selectyesno($name,$value='')
   {
     global $langs;
@@ -838,11 +851,12 @@ class Form
       }
     print '</select>';
   }
+	
   /*
-   *
-   * Yes/No
+   * \brief selection de oui/non en chiffre
    *
    */
+	 
   function selectyesnonum($name,$value='')
   {
     global $langs;
@@ -861,11 +875,12 @@ class Form
       }
     print '</select>';
   }
+	
   /*
-   *
-   * Checkbox
+   * \brief Checkbox
    *
    */
+	 
   function checkbox($name,$checked=0,$value=1)
     {
       if ($checked==1){

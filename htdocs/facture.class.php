@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -23,9 +23,8 @@
  *
  */
 
-/*!
-	    \file       htdocs/facture.class.php
-        \ingroup    facture
+/*!	\file       htdocs/facture.class.php
+		\ingroup    facture
 		\brief      Fichier de la classe des factures clients
 		\version    $Revision$
 */

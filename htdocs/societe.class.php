@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -23,9 +23,8 @@
  *
  */
 
-/*!
-	    \file       htdocs/societe.class.php
-        \ingroup    societe
+/*!	\file       htdocs/societe.class.php
+		\ingroup    societe
 		\brief      Fichier de la classe des societes
 		\version    $Revision$
 */
@@ -61,6 +60,7 @@ class Societe {
    *    \param  DB     handler accès base de données
    *    \param  id     id societe (0 par defaut)
    */
+	 
   function Societe($DB, $id=0)
   {
     global $config;
@@ -79,6 +79,7 @@ class Societe {
    *    \brief  Crée la societe en base
    *    \param  user    Utilisateur qui demande la création
    */
+	 
   function create($user='')
   {
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat) ";
@@ -102,6 +103,7 @@ class Societe {
    *    \param  id      id societe
    *    \param  user    Utilisateur qui demande la mise à jour
    */
+	 
   function update($id,$user='')
   {
     if (strlen(trim($this->nom)) == 0)
@@ -196,6 +198,7 @@ class Societe {
    *    \brief      Recupére l'objet societe
    *    \param      socid       id de la société à charger en mémoire
    */
+	 
   function fetch($socid)
     {
       $this->id = $socid;
@@ -309,6 +312,7 @@ class Societe {
    * \brief     Suppression d'une societe de la base 
    * \todo      Cette fonction n'est pas utilisée. Attente des contraintes d'intégrité dans MySql
    */
+	 
   function delete($id)
     {
       $sql = "DELETE from ".MAIN_DB_PREFIX."societe ";
@@ -353,6 +357,7 @@ class Societe {
    * \return    array   tableau des id de factures impayées
    *
    */
+	 
   function factures_impayes()
     {
       $facimp = array();
@@ -385,6 +390,7 @@ class Societe {
    *    \brief      Attribut le prefix de la société en base
    *
    */
+	 
   function attribute_prefix()
     {
       $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp = '$this->id'";
@@ -440,6 +446,7 @@ class Societe {
    *    \param      mot         l'indice du mot à utiliser
    *
    */
+	 
   function genprefix($nom, $taille=4,$mot=0)
   {
     $retour = "";
@@ -468,6 +475,7 @@ class Societe {
    *    \brief     Définit la société comme un client
    *
    */
+	 
   function set_as_client()
     {
       if ($this->id)
@@ -486,6 +494,7 @@ class Societe {
    *    \param      user        utilisateur qui place la remise
    *
    */
+	 
   function set_remise_client($remise, $user)
     {
       if ($this->id)
@@ -513,6 +522,7 @@ class Societe {
    *    \param      id      id de la société recherchée
    *
    */
+	 
   function get_nom($id)
     {
 
@@ -539,6 +549,7 @@ class Societe {
    *    \brief      Renvoie la liste des contacts emails existant pour la société
    *    \return     array       tableau des contacts emails
    */
+	 
   function contact_email_array()
     {
       $contact_email = array();
@@ -573,6 +584,7 @@ class Societe {
    *    \brief      Renvoie la liste des contacts de cette société
    *    \return     array      tableau des contacts
    */
+	 
   function contact_array()
     {
       $contacts = array();
@@ -608,6 +620,7 @@ class Societe {
    *    \param      rowid       id du contact
    *    \return     string      email du contact
    */
+	 
   function contact_get_email($rowid)
     {
 
@@ -638,6 +651,7 @@ class Societe {
    *    \brief      Renvoie la liste des types d'effectifs possibles
    *    \return     array      tableau des types d'effectifs
    */
+	 
   function effectif_array()
     {
       $effs = array();
@@ -667,6 +681,7 @@ class Societe {
    *    \brief      Renvoie la liste des formes juridiques existantes
    *    \return     array      tableau des formes juridiques
    */
+	 
   function forme_juridique_array()
   {
     $fj = array();
@@ -691,7 +706,10 @@ class Societe {
       } 
     return $fj;
   }
-  
+	
+  /**
+   *    \brief      Affiche le rib
+   */  
   
   function display_rib()
   {

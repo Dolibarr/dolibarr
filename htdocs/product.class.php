@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -21,9 +21,8 @@
  *
  */
 
-/*!
-	    \file       htdocs/product.class.php
-        \ingroup    produit
+/*!	\file       htdocs/product.class.php
+		\ingroup    produit
 		\brief      Fichier de la classe des produits prédéfinis
 		\version    $Revision$
 */
@@ -53,6 +52,7 @@ class Product
    *    \param  DB          handler accès base de données
    *    \param  id          id produit (0 par defaut)
    */
+	 
   function Product($DB, $id=0)
     {
       $this->db = $DB;
@@ -64,6 +64,7 @@ class Product
    *    \brief  Vérifie que la référence produit est non null
    *    \return int         1 si ok, 0 sinon
    */
+	 
   function check()
     {
     $this->ref = ereg_replace("'","",stripslashes($this->ref));
@@ -90,6 +91,7 @@ class Product
    *    \brief  Insère le produit en base
    *    \param  user        utilisateur qui effectue l'insertion
    */
+	 
   function create($user) 
     {
       $this->ref = ereg_replace("'","",stripslashes($this->ref));
@@ -151,6 +153,7 @@ class Product
    *    \param  id          id du produit
    *    \param  user        utilisateur qui effectue l'insertion
    */
+	 
   function update($id, $user)
   {
     $this->ref = ereg_replace("\"","",stripslashes($this->ref));
@@ -189,6 +192,7 @@ class Product
    *    \brief  Ajoute un changement de prix en base dans l'historique des prix
    *    \param  user        utilisateur qui modifie le prix
    */
+	 
   function _log_price($user) 
     {
 
@@ -226,6 +230,7 @@ class Product
    *    \param  id          id du produit/service à modifier
    *    \param  user        utilisateur qui modifie le prix
    */
+	 
   function update_price($id, $user)
   {
     if (strlen(trim($this->price)) > 0 )
@@ -257,6 +262,7 @@ class Product
    *    \brief  Charge le produit/service en mémoire
    *    \param  id          id du produit/service à charger
    */
+	 
   function fetch ($id)
     {    
       $sql = "SELECT rowid, ref, label, description, price, tva_tx, envente, nbvente, fk_product_type, duration, seuil_stock_alerte";
@@ -326,6 +332,7 @@ class Product
    *    \param  socid       id societe
    *    \return int         nombre d'inclusion
    */
+	 
   function count_propale($socid=0)
     {
       $sql = "SELECT pd.fk_propal";
@@ -354,6 +361,7 @@ class Product
    *    \param  socid       id societe
    *    \return int         nombre d'inclusion
    */
+	 
   function count_propale_client($socid=0)
     {
       $sql = "SELECT pr.fk_soc";
@@ -382,6 +390,7 @@ class Product
    *    \param  socid       id societe
    *    \return int         nombre d'inclusion
    */
+	 
   function count_facture($socid=0)
     {
       $sql = "SELECT pd.fk_facture";
@@ -411,6 +420,7 @@ class Product
    *    \param  sql         requete a exécuter
    *    \return array       tableau ?
    */
+	 
   function _get_stats($sql)
     {
       $result = $this->db->query($sql) ;
@@ -463,6 +473,7 @@ class Product
    *    \param  socid       id societe
    *    \return array       nombre de vente par mois
    */
+	 
   function get_nb_vente($socid=0)
     {
       $sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
@@ -482,6 +493,7 @@ class Product
    *    \param  socid       id societe
    *    \return array       nombre de factures par mois
    */
+	 
   function get_num_vente($socid=0)
     {
       $sql = "SELECT count(*), date_format(f.datef, '%Y%m') ";
@@ -501,6 +513,7 @@ class Product
    *    \param  socid       id societe
    *    \return array       nombre de propales par mois
    */
+	 
   function get_num_propal($socid=0)
   {
       $sql = "SELECT count(*), date_format(p.datep, '%Y%m') ";
@@ -521,6 +534,7 @@ class Product
    *    \param  id_fourn    id du fournisseur
    *    \param  ref_fourn   reference chez le fournisseur
    */
+	 
   function add_fournisseur($user, $id_fourn, $ref_fourn) 
     {
       $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product_fournisseur WHERE fk_product = $this->id AND fk_soc = $id_fourn";
@@ -563,6 +577,7 @@ class Product
    *    \param  user        utilisateur qui défait le lien
    *    \param  id_fourn    id du fournisseur
    */
+	 
   function remove_fournisseur($user, $id_fourn) 
     {
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur ";
@@ -584,6 +599,7 @@ class Product
    *    \param  id_entrepot     id de l'entrepot
    *    \param  nbpiece         nombre de pieces
    */
+	 
   function create_stock($id_entrepot, $nbpiece)
   {
     
@@ -609,6 +625,7 @@ class Product
    *    \param  nbpiece         nombre de pieces
    *    \param  mouvement       0 = ajout, 1 = suppression
    */
+	 
   function correct_stock($user, $id_entrepot, $nbpiece, $mouvement)
   {
 
@@ -642,6 +659,7 @@ class Product
    *    \param  nbpiece         nombre de pieces
    *    \param  mouvement       0 = ajout, 1 = suppression
    */
+	 
   function ajust_stock($user, $id_entrepot, $nbpiece, $mouvement)
   {
     $op[0] = "+" . trim($nbpiece);

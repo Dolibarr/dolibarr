@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (c) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
@@ -41,7 +41,7 @@ class BarGraph extends Graph
     	if ($module == 'gd') { $isgdinstalled=1; }
 	}
 	if (! $isgdinstalled) {
-    	$this->errorstr="Erreur: Le module GD pour PHP ne semble pas disponible. Il est requis pour générer les graphiques.";
+    	$this->errorstr="Erreur: Le module GD pour php ne semble pas disponible. Il est requis pour générer les graphiques.";
     	return;
 	}
 

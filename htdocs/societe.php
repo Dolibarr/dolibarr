@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -19,6 +19,7 @@
  * $Id$
  * $Source$
  */
+ 
 require("./pre.inc.php");
 require("./contact.class.php");
 require("./lib/webcal.class.php");
@@ -34,6 +35,7 @@ $langs->load("suppliers");
 /*
  * Sécurité accés client
  */
+ 
 if ($user->societe_id > 0) 
 {
   $action = '';

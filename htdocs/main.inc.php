@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -212,6 +212,7 @@ function top_menu($head, $title="", $target="")
  *  \param      form_search     Formulaire de recherche permanant
  *  \param      author          Auteur de la page pour ajout en en-tete html
  */
+ 
 function left_menu($menu, $help_url='', $form_search='', $author='') 
 {
   global $user, $conf, $langs;
@@ -326,6 +327,7 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
  * \param   title           titre de la zone de recherche
  * \param   htmlinputname   nom du champ input du formulaire
  */
+ 
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
   print '<form action="'.$urlaction.'" method="post">';
@@ -342,6 +344,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
  * \brief   Impression du pied de page
  * \param   foot    Non utilisé
  */
+ 
 function llxFooter($foot='') 
 {
   global $dolibarr_auto_user;

@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -54,8 +54,10 @@ class Propal
   var $price;
 
 
-    /*! \brief  Constructeur
-    */
+    /** 
+		 * \brief  Constructeur
+     */
+		
   function Propal($DB, $soc_idp="", $propalid=0)
     {
       $this->db = $DB ;
@@ -66,7 +68,7 @@ class Propal
     }
 
 
-  /*!
+  /**
    * \brief     Ajout d'un produit dans la proposition, en memoire dans l'objet
    * \param     idproduct       id du produit à ajouter
    * \param     qty             quantité
@@ -74,6 +76,7 @@ class Propal
    * \return    void
    * \see       insert_product
    */
+	 
   function add_product($idproduct, $qty, $remise_percent=0)
     {
       if ($idproduct > 0)
@@ -97,6 +100,7 @@ class Propal
    * \return    int             0 en cas de succès
    * \see       add_product
    */
+	 
   function insert_product($idproduct, $qty, $remise_percent=0)
     {
       if ($this->statut == 0)
@@ -133,10 +137,12 @@ class Propal
 	    }
 	}
     }
+		
   /**
    *
    *
    */
+	 
   function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6, $remise_percent=0)
     {
       if ($this->statut == 0)
@@ -181,20 +187,24 @@ class Propal
 	    }
 	}
     }
+		
   /*
    *
    *
    */
+	 
   function fetch_client()
     {
       $client = new Societe($this->db);
       $client->fetch($this->socidp);
       $this->client = $client;
     }
+		
   /*
    *
    *
    */
+	 
   function delete_product($idligne)
     {
       if ($this->statut == 0)
@@ -213,11 +223,13 @@ class Propal
 	    }
 	}
     }
+		
   /**
    *
    *
    *
    */
+	 
   function create()
     {
       /*
@@ -279,11 +291,13 @@ class Propal
 	}
       return $this->id;
     }
+		
   /**
-   * Mets à jour le prix total de la proposition
+   * \brief  Mets à jour le prix total de la proposition
    *
    *
    */
+	 
   function update_price()
     {
       include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
@@ -332,11 +346,13 @@ class Propal
 	  return -1;
 	}
     }
+		
   /*
    * Lit les informations
    *
    *
    */
+	 
   function fetch($rowid)
     {
 
@@ -471,11 +487,13 @@ class Propal
 	  return 0;
 	}    
     }
+		
   /*
    *
    *
    *
    */
+	 
   function valid($user)
     {
       if ($user->rights->propale->valider)
@@ -495,11 +513,13 @@ class Propal
 	    }
 	}
   }
+	
   /**
-   * Définit une remise globale sur la proposition
+   * \brief  Définit une remise globale sur la proposition
    *
    *
    */
+	 
   function set_remise($user, $remise)
     {
       if ($user->rights->propale->creer)
@@ -521,11 +541,13 @@ class Propal
 	    }
 	}
     }
+		
   /*
    *
    *
    *
    */
+	 
   function set_pdf_model($user, $modelpdf)
     {
       if ($user->rights->propale->creer)
@@ -545,10 +567,12 @@ class Propal
 	    }
 	}
   }
+	
   /**
-   * Cloture de la proposition commerciale
+   * \brief  Cloture de la proposition commerciale
    *
    */
+	 
   function cloture($user, $statut, $note)
     {
       $this->statut = $statut;
@@ -586,10 +610,12 @@ class Propal
 	  print $this->db->error() . ' in ' . $sql;
 	}
     }
+		
   /**
-   * Créée une commande à partir de la proposition commerciale
+   * \brief Créée une commande à partir de la proposition commerciale
    *
    */
+	 
   function create_commande($user)
     {
       if ($this->statut == 2)
@@ -601,10 +627,12 @@ class Propal
 	  return 1;
 	}
     }
+		
   /**
    *
    *
    */
+	 
   function reopen($userid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 0";
@@ -620,10 +648,12 @@ class Propal
 	  print $this->db->error() . ' in ' . $sql;
 	}
     }
+		
   /**
    *
    *
    */
+	 
   function liste_array ($brouillon=0, $user='')
     {
       $ga = array();
@@ -669,10 +699,12 @@ class Propal
 	  print $this->db->error();
 	}      
     }
+		
   /**
-   * Renvoie un tableau contenant les numéros de commandes associées
+   * \brief Renvoie un tableau contenant les numéros de commandes associées
    *
    */
+	 
   function commande_liste_array ()
     {
       $ga = array();
@@ -701,10 +733,12 @@ class Propal
 	  print $this->db->error();
 	}      
     }
+		
   /*
    *
    *
    */
+	 
   function delete($user)
   {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = $this->id ;";
@@ -726,10 +760,12 @@ class Propal
 	return -1;
       }
   }
+	
   /**
-   * Mets à jour la note
+   * \brief Mets à jour la note
    *
    */
+	 
   function update_note($note)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET note = '$note'";
@@ -748,9 +784,10 @@ class Propal
 
 
   /*
-   * Information sur l'objet
+   * \brief Information sur l'objet
    *
    */
+	 
   function info($id) 
     {
       $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec";
