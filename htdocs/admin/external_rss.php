@@ -42,24 +42,24 @@ if ($action == 'save')
 {
   $sql = "REPLACE INTO llx_const SET name = 'EXTERNAL_RSS_URL_0', value='".$external_rss_url_0."', visible=0"; 
   $sql1 = "REPLACE INTO llx_const SET name = 'EXTERNAL_RSS_TITLE_0', value='".$external_rss_title_0."', visible=0";
- $sql2 = "REPLACE INTO llx_const SET name = 'EXTERNAL_RSS_URLRSS_0', value='".$external_rss_urlrss_0."', visible=0";
+  $sql2 = "REPLACE INTO llx_const SET name = 'EXTERNAL_RSS_URLRSS_0', value='".$external_rss_urlrss_0."', visible=0";
 
   if ($db->query($sql) && $db->query($sql1) && $db->query($sql2))
     {
       // la constante qui a été lue en avant du nouveau set
       // on passe donc par une variable pour avoir un affichage cohérent
-      print "ok bien enregistré";
+      $mesg =  "ok bien enregistré";
     }
   else
-    print "erreur d'enregistement !";
+    $mesg = "erreur d'enregistement !";
 }
-else {
+
 
   /*
    * Affichage du formulaire de saisie
    */
   
-  print_titre("Configuration du lien vers un site syndiqué");
+  print_fiche_titre("Configuration du lien vers un site syndiqué", $mesg);
   
   print "\n<p align=\"justify\">Attention, pour la récupération des données au format RSS, les urls en https ne marchent pas pour l'instant. </p>
 <p>Exemples:
@@ -101,7 +101,7 @@ else {
   print "</table>
 <input type=\"hidden\" name=\"action\" value=\"save\"></td>
 </form>\n";
-}
+
 
 /*
  *
