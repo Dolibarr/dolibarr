@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +30,7 @@ llxHeader();
 print_titre("Boites");
 
 print "<br>";
-print "Les boites sont des cartouches d'informations réduites qui s'affichent sur certaines pages. Vous pouvez choisir ou non d'activer ces cartouches en ciquant sur 'Ajouter' ou la poubelle pour les désactiver. ";
+print "Les boites sont des cartouches d'informations réduites qui s'affichent sur certaines pages. Vous pouvez choisir ou non d'activer ces cartouches en cliquant sur 'Ajouter' ou la poubelle pour les désactiver. ";
 print "Seules les boites en rapport avec un module actif sont présentées.<br>\n";
 
 
