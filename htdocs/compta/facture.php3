@@ -23,6 +23,7 @@ require("./pre.inc.php3");
 require("../facture.class.php3");
 require("../lib/CMailFile.class.php3");
 require("../paiement.class.php");
+require("./bank/account.class.php");
 
 llxHeader();
 
@@ -400,7 +401,7 @@ else
 		print "<TR $bc[$var]>";
 		print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
 		print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
-		print "<TD align=\"right\">".price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
+		print '<TD align="right">'.price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
 		print "</tr>";
 		$total = $total + $objp->amount;
 		$i++;
@@ -411,10 +412,10 @@ else
 		print "<tr><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>$_MONNAIE</td></tr>\n";
 		print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($obj->total)."</td><td bgcolor=\"#d0d0d0\">$_MONNAIE</td></tr>\n";
 		
-		$resteapayer = $obj->total - $total;
+		$resteapayer = price($obj->total - $total);
 
-		print "<tr><td colspan=\"2\" align=\"right\">Reste a payer :</td>";
-		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">$_MONNAIE</td></tr>\n";
+		print "<tr><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
+		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($obj->total - $total)."</b></td><td bgcolor=\"#f0f0f0\">$_MONNAIE</td></tr>\n";
 	      }
 	    print "</table>";
 	    $db->free();
@@ -533,7 +534,7 @@ else
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
 	      } 
-	    elseif ($obj->statut == 1 && $resteapayer > 0) 
+	    elseif ($obj->statut == 1 && abs($resteapayer) > 0) 
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=presend\">Envoyer</a>]</td>";
 	      }
@@ -551,7 +552,7 @@ else
 		print "<td align=\"center\" width=\"25%\">-</td>";
 	      }
 	    
-	    if ($obj->statut == 1 && abs($resteapayer == 0) && $obj->paye == 0) 
+	    if ($obj->statut == 1 && abs($resteapayer) == 0 && $obj->paye == 0) 
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=payed\">Classer 'Payée'</a>]</td>";
 	      }
@@ -580,9 +581,9 @@ else
 	 * Documents générés
 	 *
 	 */
-	print "<hr>";
+
 	print "<table width=\"100%\" cellspacing=2><tr><td width=\"60%\" valign=\"top\">";
-	print_titre("Documents générés");
+	print_titre("Documents");
 	print '<table width="100%" cellspacing="0" border="1" cellpadding="3">';
 	
 	$file = $conf->facture->outputdir . "/" . $obj->facnumber . "/" . $obj->facnumber . ".pdf";
@@ -609,7 +610,7 @@ else
 	    
 	    
 	  }
-	print '<tr $bc[0]><td colspan="4">(<a href="'.$conf->facture->outputurl.'/'.$facid.'/">liste...</a>)</td></tr>';  
+	print '<tr $bc[0]><td colspan="4">(<a href="'.$conf->facture->outputurl.'/'.$obj->facnumber.'/">liste...</a>)</td></tr>';  
 	
 	print "</table>\n";
 	print "</td>";
@@ -750,6 +751,13 @@ else
      *
      *
      */
+    if ($page == -1)
+      {
+	$page = 0 ;
+      }
+    $limit = $conf->liste_limit;
+    $offset = $limit * $page ;
+
     print_barre_liste("Factures",$page,$PHP_SELF);
 
     $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
@@ -767,7 +775,8 @@ else
     }
   
     $sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
-  
+    $sql .= $db->plimit( $limit ,$offset);
+
     $result = $db->query($sql);
     if ($result) {
       $num = $db->num_rows();
@@ -825,10 +834,6 @@ else
 	      print '<td>&nbsp;</td>';
 	    }
 	
-	  $total = $total + $objp->amount;
-	  $subtotal = $subtotal + $objp->amount;	  
-
-
 	  print "</TR>\n";
 	  $i++;
 	  $j++;
@@ -836,12 +841,7 @@ else
 	}
       }
       if ($i == 0) { $i=1; }  if ($j == 0) { $j=1; }
-      print "<tr><td></td><td>$j factures</td><td colspan=\"1\" align=\"right\">&nbsp;</td>";
-      print "<td align=\"right\">Sous Total :<b> ".price($subtotal)."</b></td>";
-      print '<td>&nbsp;</td></tr>';
-      print "<tr bgcolor=\"#d0d0d0\"><td></td><td>$i factures</td><td colspan=\"1\" align=\"right\">&nbsp;</td>";
-      print "<td align=\"right\"><b>Total <small>(euros HT)</small>: ".price($total)."</b></td>";
-      print '<td>&nbsp;</td></tr>';
+
       print "</TABLE>";
       $db->free();
     } else {
