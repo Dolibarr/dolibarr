@@ -52,6 +52,10 @@ if ($_GET["commid"])
   $head[$h][1] = "CA";
   $h++;
 
+  $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/lignes.php?commid='.$comm->id;
+  $head[$h][1] = "Lignes";
+  $h++;
+
   dolibarr_fiche_head($head, $hselected, "Commerciaux");
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
