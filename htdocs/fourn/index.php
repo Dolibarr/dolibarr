@@ -136,7 +136,7 @@ if ($socname) {
   $sortorder = "ASC";
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -157,21 +157,18 @@ if ($result)
   print '<tr class="liste_titre"><td valign="center">';
   print_liste_field_titre("Société",$PHP_SELF,"s.nom");
   print "</td><td>Ville</td>";
-  print "<td align=\"center\">Préfix</td><td>&nbsp;</td></tr>\n";
   print "</tr>\n";
   $var=True;
-  while ($i < $num)
+
+  while ($i < min($num,$conf->liste_limit))
     {
       $obj = $db->fetch_object($i);	
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";
+      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_file().'</a>';
+      print "&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";
       print "<td>".$obj->ville."</td>\n";       
-      print "<td align=\"center\">$obj->prefix_comm&nbsp;</td>\n";
-      
-      print '<td><a href="facture/fiche.php?action=create&amp;socid='.$obj->idp.'">Facturer <img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
-
       print "</tr>\n";
       $i++;
     }
