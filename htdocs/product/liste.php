@@ -23,30 +23,29 @@
 
 /*!
 	    \file       htdocs/product/liste.php
-        \ingroup    product
+        \ingroup    produit
 		\brief      Page liste des produits ou services
 		\version    $Revision$
 */
 
 require("./pre.inc.php");
-$user->getrights('produit');
 
 $langs->load("products");
+
+$user->getrights('produit');
 
 if (!$user->rights->produit->lire)
   accessforbidden();
 
 
-/*
- *
- *
- */
+$sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
+$snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
 
-$type=$_GET["type"];
+$type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
 
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = $_GET["page"];
-$sortfield = $_GET["sortfield"];
-$sortorder = $_GET["sortorder"];
 if ($page < 0) { 
   $page = 0 ; }
 
@@ -60,14 +59,19 @@ if ($sortorder == "")
 {
   $sortorder="DESC";
 }
-  
+
+if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
+    $sref="";
+    $snom="";
+}
+
 
 /*
  * Mode Liste
  *
  */
 
-$title=$langs->trans("Products and Services");
+$title=$langs->trans("ProductsAndServices");
 
 $sql = "SELECT p.rowid, p.label, p.price, p.ref";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -89,15 +93,14 @@ else
     {
       $type = 0;
     }
-
-  $sql .= " WHERE p.fk_product_type = $type";
-  if ($_POST["sref"])
+  $sql .= " WHERE p.fk_product_type = ".$type;
+  if ($sref)
     {
-      $sql .= " AND p.ref like '%".$_POST["sref"]."%'";
+      $sql .= " AND p.ref like '%".$sref."%'";
     }
-  if ($_POST["snom"])
+  if ($snom)
     {
-      $sql .= " AND p.label like '%".$_POST["snom"]."%'";
+      $sql .= " AND p.label like '%".$snom."%'";
     }
   if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
     {
@@ -124,7 +127,7 @@ if ($result)
 
   $i = 0;
   
-  if ($num == 1 && (isset($_POST["sall"]) or isset($_POST["snom"]) or isset($_POST["sref"])))
+  if ($num == 1 && (isset($_POST["sall"]) or $snom or $sref))
     {
       $objp = $db->fetch_object($i);
       Header("Location: fiche.php?id=$objp->rowid");
@@ -152,9 +155,9 @@ if ($result)
 
   llxHeader("","",$texte);
 
-  if ($_POST["sref"] || $_POST["snom"] || $_POST["sall"] || $_POST["search"])
+  if ($sref || $snom || $_POST["sall"] || $_POST["search"])
     {
-      print_barre_liste($texte, $page, "liste.php", "&sref=".$_POST["sref"]."&snom=".$_POST["snom"]."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
+      print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
     }
   else
     {
@@ -163,18 +166,31 @@ if ($result)
 
   print '<table class="noborder" width="100%">';
 
+  // Lignes des titres
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente&amp;type=$type&fourn_id=$fourn_id");
-  print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&type=$type&fourn_id=$fourn_id");
-  print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price","&envente=$envente&type=$type&fourn_id=$fourn_id","",'align=\"right\"');
+  print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente&amp;type=$type&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
+  print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&type=$type&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
+  print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price","&envente=$envente&type=$type&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
   print "</tr>\n";
   
+  // Lignes des champs de filtre
+  print '<form action="liste.php" method="post">';
+  print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+  print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
+  print '<input type="hidden" name="type" value="'.$type.'">';
   print '<tr class="liste_titre">';
-  print '<form action="liste.php?type='.$type.'" method="post">';
-  print '<td><input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"></td>';
-  print '</form><form action="liste.php" method="post">';
-  print '<td><input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'"></td>';
-  print '</form><td>&nbsp;</td></tr>';
+  print '<td>';
+  print '<input class="fat" type="text" name="sref" value="'.$sref.'">';
+  print '</td>';
+  print '<td valign="right">';
+  print '<input class="fat" type="text" name="snom" value="'.$snom.'">';
+  print '</td>';
+  print '<td align="center">';
+  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
+  print '&nbsp; <input type="submit" class="button" name="button_removefilter" value="'.$langs->trans("RemoveFilter").'">';
+  print '</td>';
+  print '</tr>';
+  print '</form>';
   
   
   $var=True;
