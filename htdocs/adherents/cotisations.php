@@ -21,10 +21,9 @@
  *
  */
 require("./pre.inc.php");
+require(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 llxHeader();
-
-//$db = new Db();
 
 if ($action == 'add') {
   $datepaye = $db->idate(mktime(12, 0 , 0, $pmonth, $pday, $pyear));
@@ -44,7 +43,53 @@ if ($action == 'add') {
   $action = '';
 
 }
-
+// Insertion de la cotisation dans le compte banquaire
+if ($HTTP_POST_VARS["action"] == '2bank' && $HTTP_POST_VARS["rowid"] !=''){
+  if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
+    $dateop=strftime("%Y%m%d",time());
+    $sql="SELECT cotisation FROM llx_cotisation WHERE rowid=".$HTTP_POST_VARS["rowid"]." ";
+    $result = $db->query($sql);
+    if ($result) 
+      {
+	$num = $db->num_rows();
+	if ($num>0)
+	  {
+	    $objp = $db->fetch_object(0);
+	    $amount=$objp->cotisation;
+	    $acct=new Account($db,ADHERENT_BANK_ACCOUNT);
+	    $insertid=$acct->addline($dateop, $HTTP_POST_VARS["operation"], $HTTP_POST_VARS["label"], $amount, $HTTP_POST_VARS["num_chq"],ADHERENT_BANK_CATEGORIE);
+	    if ($insertid == '')
+	      {
+		print "<p> Probleme d'insertion : ".$db->error();
+	      }
+	    else
+	      {
+		// met a jour la table cotisation
+		$sql="UPDATE llx_cotisation SET fk_bank=$insertid WHERE rowid=".$HTTP_POST_VARS["rowid"]." ";
+		$result = $db->query($sql);
+		if ($result) 
+		  {
+		    //Header("Location: $PHP_SELF");
+		  }
+		else
+		  {
+		   print "<p> Probleme d'insertion $sql : ".$db->error(); 
+		  }
+	      }
+	  }
+	else
+	  {
+	    print "<p>  Probleme SQL : $sql : ".$db->error(); 
+	  }
+      }
+    else
+      {
+	print "<p>  Probleme SQL : $sql : ".$db->error();
+      }
+	
+    
+  }
+}
 
 if ($sortorder == "") {  $sortorder="DESC"; }
 if ($sortfield == "") {  $sortfield="c.dateadh"; }
@@ -76,7 +121,7 @@ if ($result)
       $i++;
     }
 }
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
+$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh, c.fk_bank as bank, c.rowid as crowid";
 $sql .= " FROM llx_adherent as d, llx_cotisation as c";
 $sql .= " WHERE d.rowid = c.fk_adherent";
 if(isset($date_select) && $date_select != ''){
@@ -111,21 +156,27 @@ if ($result)
   print '<TR class="liste_titre">';
   //print "<td>Date</td>";
   print '<TD>';
-  print_liste_field_titre("Date",$PHP_SELF,"c.dateadh","&page=$page&statut=$statut");
+  print_liste_field_titre("Date<BR>",$PHP_SELF,"c.dateadh","&page=$page&statut=$statut");
   print "</TD>\n";
 
   //print "<td align=\"right\">Montant</TD>";
   print '<TD>';
-  print_liste_field_titre("Montant",$PHP_SELF,"c.cotisation","&page=$page&statut=$statut");
+  print_liste_field_titre("Montant<BR>",$PHP_SELF,"c.cotisation","&page=$page&statut=$statut");
   print "</TD>\n";
 
   //print "<td>Prenom Nom / Société</td>";
   print '<TD>';
   //  print_liste_field_titre("Prenom",$PHP_SELF,"d.prenom","&page=$page&statut=$statut");
-  print_liste_field_titre("Prenom Nom",$PHP_SELF,"d.nom","&page=$page&statut=$statut");
+  print_liste_field_titre("Prenom Nom<BR>",$PHP_SELF,"d.nom","&page=$page&statut=$statut");
   print " / Société";
   print "</TD>\n";
 
+  if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
+    print '<TD>';
+    //  print_liste_field_titre("Bank",$PHP_SELF,"c.fk_bank","&page=$page&statut=$statut");
+    print 'Bank<BR>(Type,Numéro,Libelle)';
+    print "</TD>\n";
+  }
   print "</TR>\n";
     
   $var=True;
@@ -144,6 +195,31 @@ if ($result)
       }else{
 	print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></TD>\n";
       }
+      if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
+	if ($objp->bank !='' ){
+	  print "<TD>Deposé</TD>";
+	}else{
+	  print "<TD>";
+	  print "<form method=\"post\" action=\"$PHP_SELF\">";
+	  print '<input type="hidden" name="action" value="2bank">';
+	  print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
+	  print '<select name="operation">';
+	  print '<option value="CHQ">CHQ';
+	  print '<option value="CB">CB';
+	  print '<option value="DEP">DEP';
+	  print '<option value="TIP">TIP';
+	  print '<option value="PRE">PRE';
+	  print '<option value="VIR">VIR';
+	  print '</select>';
+	  print '<input name="num_chq" type="text" size="6">&nbsp;-&nbsp;';
+	  print "<input name=\"label\" type=\"text\" size=20 value=\"Cotisation ".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." ".strftime("%Y",$objp->dateadh)."\" >\n";
+	  //	print "<td><input name=\"debit\" type=\"text\" size=8></td>";
+	  //	print "<td><input name=\"credit\" type=\"text\" size=8></td>";
+	  print '<input type="submit" value="ajouter">';
+	  print "</form>\n";
+	  print "</TD>\n";
+	}	  
+      }
       print "</tr>";
       $i++;
     }
@@ -152,7 +228,7 @@ if ($result)
   print "<TD>Total</TD>\n";
   print "<TD align=\"right\">".price($total)."</TD>\n";
   //  print "<TD>&nbsp;</TD>\n";
-  print "<TD align=\"right\">";
+  print "<TD align=\"right\" colspan=\"2\">";
   print_fleche_navigation($page,$PHP_SELF,"&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",1);
   print "</TD>\n";
 
