@@ -21,7 +21,6 @@
  */
 require("./pre.inc.php3");
 
-
 llxHeader();
 $db = new Db();
 if ($sortorder == "") {
@@ -65,7 +64,7 @@ print "</DIV><P>";
 $bc[1]="bgcolor=\"#90c090\"";
 $bc[0]="bgcolor=\"#b0e0b0\"";
 
-$sql = "SELECT s.idp, s.nom, cabrecrut, st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email ";
+$sql = "SELECT s.idp, s.nom,  st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email ";
 $sql .= "FROM societe as s, socpeople as p, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
 
 if (strlen($stcomm)) {
@@ -116,7 +115,7 @@ if ($result) {
 
     print "<TD>$obj->name</TD>";
     print "<TD>$obj->firstname</TD>";
-    print "<TD>$obj->email</TD>\n";
+    print "<TD>$obj->email&nbsp;</TD>\n";
     print "<TD><a href=\"index.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
     print '<TD align="center">'.$obj->stcomm.'</TD>';
     print "<TD><a href=\"addpropal.php3?socidp=$obj->idp&setcontact=$obj->cidp&action=create\">[Propal]</A></td>\n";
