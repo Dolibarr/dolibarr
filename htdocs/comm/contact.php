@@ -55,13 +55,16 @@ $offset = $limit * $page ;
 
 
 if ($type == "c") {
-  $label = " clients";
+	$label = " clients";
+	$urlfiche="fiche.php";
 }
 if ($type == "p") {
-  $label = " prospects";
+	$label = " prospects";
+	$urlfiche="prospect/fiche.php";
 }
 if ($type == "f") {
-  $label = " fournisseurs";
+	$label = " fournisseurs";
+	$urlfiche="fiche.php";
 }
 
 
@@ -137,7 +140,7 @@ if ($result)
     $sortorder="DESC";
   }
   
-  print '<p><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>';
   print_liste_field_titre("Nom",$PHP_SELF,"lower(p.name)", $begin);
   print "</td><td>";
@@ -161,7 +164,7 @@ if ($result)
       print "<TD>$obj->firstname</TD>";
       
       print '<TD><a href="contact.php?type='.$type.'&socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0" alt="filtrer"></a>&nbsp;';
-      print "<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print "<a href=\"".$urlfiche."?socid=$obj->idp\">$obj->nom</A></td>\n";
       
       print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
       
