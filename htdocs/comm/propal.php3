@@ -332,7 +332,7 @@ if ($propalid)
 	  if ($obj->statut == 0)
 	    {
 
-	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p ORDER BY p.ref";
+	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p ORDER BY p.nbvente DESC LIMIT 20";
 	      if ( $db->query($sql) )
 		{
 		  $opt = "<option value=\"0\" SELECTED></option>";
@@ -693,7 +693,7 @@ if ($propalid)
       print "</tr>\n";
       $var=True;
       
-      while ($i < $num)
+      while ($i < min($num,$limit))
 	{
 	  $objp = $db->fetch_object( $i);
 	  
