@@ -36,12 +36,7 @@ $langs->load("companies");
 $langs->load("orders");
 $langs->load("contracts");
 
-$user->getrights('propale');
-$user->getrights('fichinter');
-$user->getrights('commande');
-$user->getrights('projet');
-
-
+$user->getrights();
 
 llxHeader();
 
@@ -388,6 +383,11 @@ if ($_socid > 0)
     if ($conf->propal->enabled && $user->rights->propale->creer)
       {
 	print '<a class="tabAction" href="addpropal.php?socidp='.$objsoc->id.'&amp;action=create">Proposition</a>';
+      }
+
+    if ($user->rights->contrat->creer)
+      {
+	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contrat/fiche.php?socid='.$objsoc->id.'&amp;action=create">Contrat</a>';
       }
 
     if ($conf->commande->enabled && $user->rights->commande->creer)
