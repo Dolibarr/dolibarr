@@ -157,7 +157,7 @@ if ($action == 'create')
 	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 	  
 	  print '<TR class="liste_titre">';
-	  print '<td>Réf</td><td>Date</td><td align="right">Prix</td></tr>';
+	  print '<td width="15%">Réf</td><td width="25%">Date</td><td align="right">Prix</td></tr>';
 	  
 	  for ($i = 0; $i<sizeof($propales);$i++)
 	    {
@@ -175,22 +175,22 @@ if ($action == 'create')
 	    }
 	  
 	  print '<tr><td>'.$i.' propales</td>';
-	  print '<td align="right"><b>Total : '.price($total).'</b></td>';
-	  print '<td align="left"><b>'.MAIN_MONNAIE.' HT</b></td></tr></table>';
+	  print '<td align="right">Total : '.price($total).'</td>';
+	  print '<td align="left">'.MAIN_MONNAIE.' HT</td></tr></table>';
 	}
       /*
        * Commandes
        *
        */
       $commandes = $projet->get_commande_list();
-
+      $total = 0 ;
       if (sizeof($commandes)>0 && is_array($commandes))
 	{
 	  print_titre('Listes des commandes associées au projet');
 	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 	  
 	  print '<TR class="liste_titre">';
-	  print '<td>Réf</td><td>Date</td><td align="right">Prix</td></tr>';
+	  print '<td width="15%">Réf</td><td width="25%">Date</td><td align="right">Prix</td></tr>';
 	  
 	  for ($i = 0; $i<sizeof($commandes);$i++)
 	    {
@@ -207,8 +207,8 @@ if ($action == 'create')
 	    }
 	  
 	  print '<tr><td>'.$i.' commandes</td>';
-	  print '<td align="right"><b>Total : '.price($total).'</b></td>';
-	  print '<td align="left"><b>'.MAIN_MONNAIE.' HT</b></td></tr>';
+	  print '<td align="right">Total : '.price($total).'</td>';
+	  print '<td align="left">'.MAIN_MONNAIE.' HT</td></tr>';
 	  print "</table>";
 	}
     
@@ -222,10 +222,10 @@ if ($action == 'create')
       if (sizeof($factures)>0 && is_array($factures))
 	{
 	  print_titre('Listes des factures associées au projet');
-	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 	  
-	  print '<TR class="liste_titre">';
-	  print '<td>Réf</td><td>Date</td><td align="right">Prix</td></tr>';
+	  print '<tr class="liste_titre">';
+	  print '<td width="15%">Réf</td><td width="25%">Date</td><td align="right">Prix</td></tr>';
 	  
 	  for ($i = 0; $i<sizeof($factures);$i++)
 	    {
@@ -242,8 +242,8 @@ if ($action == 'create')
 	    }
 	  
 	  print '<tr><td>'.$i.' factures</td>';
-	  print '<td align="right"><b>Total : '.price($total).'</b></td>';
-	  print '<td align="left"><b>'.MAIN_MONNAIE.' HT</b></td></tr>';
+	  print '<td align="right">Total : '.price($total).'</td>';
+	  print '<td align="left">'.MAIN_MONNAIE.' HT</td></tr>';
 	  print "</TABLE>";
 	}
     }
