@@ -29,6 +29,7 @@ require("./pre.inc.php3");
 require("./bank.lib.php3");
 
 require("../../tva.class.php3");
+require("../../chargesociales.class.php3");
 
 llxHeader();
 $db = new Db();
@@ -89,6 +90,16 @@ $tva_solde = $tva->solde();
 $total = $total + $tva_solde;
 
 print '<tr><td colspan="3">TVA</td><td align="right">'.price($tva_solde).'</td><td>&nbsp;</td></tr>';
+/*
+ * TVA
+ */
+$chs = new ChargeSociales($db);
+
+$chs_a_payer = $chs->solde();
+
+$total = $total - $chs_a_payer;
+
+print '<tr><td colspan="3">URSSAF</td><td align="right">'.price($chs_a_payer).'</td><td>&nbsp;</td></tr>';
 /*
  *
  */
