@@ -19,6 +19,13 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/compta/bank/rappro.php
+		\ingroup    banque
+		\brief      Page de rapprochement bancaire
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $user->getrights('compta');
@@ -26,7 +33,9 @@ $user->getrights('compta');
 if (!$user->admin && !$user->rights->compta->bank)
   accessforbidden();
 
+
 llxHeader();
+
 
 /*
  * Action rapprochement
@@ -35,8 +44,7 @@ if ($_POST["action"] == 'rappro')
 {
   if ($_POST["num_releve"] > 0) {
 
-    $valrappro=$_POST["rappro"]=='yes'?1:0;
-
+    $valrappro=1;
     $sql = "UPDATE ".MAIN_DB_PREFIX."bank set rappro=$valrappro, num_releve=".$_POST["num_releve"];
     if ($_POST["rappro"]) {
         # Si on fait un rapprochement, le user de rapprochement est inclus dans l'update
@@ -48,12 +56,15 @@ if ($_POST["action"] == 'rappro')
 
     if ($result) {
       if ($cat1 && $_POST["action"]) {
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
-	$result = $db->query($sql);
+    	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
+    	$result = $db->query($sql);
       }
     } else {
       print dolibarr_print_error($db,$sql);
     }
+  }
+  else {
+    $msg="Erreur: Saisissez le relevé qui référence la transaction pour la rapprocher.";
   }
 }
 
@@ -84,9 +95,7 @@ if ($result) {
 }
 
 
-/*
- * Affichage page
- */
+// Recupère nom du dernier relevé
 $sql = "SELECT max(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE fk_account=".$_GET["account"];
 if ( $db->query($sql) )
 {
@@ -98,17 +107,20 @@ if ( $db->query($sql) )
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
+
+/*
+ * Affichage liste des transactions à rapprocher
+ */
 $acct = new Account($db);
 $acct->fetch($_GET["account"]);
 
-
-$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
+$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, ".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type as type";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rappro=0 AND fk_account=".$_GET["account"];
-$sql .= " ORDER BY dateo ASC LIMIT 10";
-
+$sql .= " ORDER BY dateo";
+$sql .= " ASC LIMIT ".$conf->liste_limit;
 
 $result = $db->query($sql);
 if ($result)
@@ -117,23 +129,28 @@ if ($result)
   $num = $db->num_rows();
 
   if ($num == 0) {
-	//print "<br>Pas ou plus de transactions saisies, en attente de rapprochement, pour ce compte bancaire.<br>";
-    header("Location: /compta/bank/account.php?account=".$account);
+    header("Location: /compta/bank/account.php?account=".$_GET["account"]);
     exit;
   }
   else {
 
-    print_titre('Rapprochement compte bancaire: <a href="account.php?account='.$account.'">'.$acct->label.'</a>');
+    print_titre('Rapprochement compte bancaire: <a href="account.php?account='.$_GET["account"].'">'.$acct->label.'</a>');
     print '<br>';
 
-	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+    if ($msg) {
+        print "$msg<br><br>";
+    }
+
+	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
-	print '<td>Date</td><td>'.$langs->trans("Description").'</td>';
-	print "<td align=\"right\">Debit</td>";
-	print "<td align=\"right\">Credit</td>";
-	print "<td align=\"center\">Releve</td>";
-	print '<td align="center" colspan="2">Rappro</td>';
-	print '<td align="center">&nbsp;</td>';
+	print '<td>Date Ope</td>';
+	print '<td>Date Valeur</td>';
+	print '<td>'.$langs->trans("Type").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td align="right">Debit</td>';
+	print '<td align="right">Credit</td>';
+	print '<td align="center" width="100">Releve<br>(Ex: YYYYMM)</td>';
+	print '<td align="center" width="100" colspan="2">'.$langs->trans("Action").'</td>';
 	print "</tr>\n";
   }
 
@@ -149,8 +166,10 @@ if ($result)
       print "<input type=\"hidden\" name=\"account\" value=\"".$_GET["account"]."\">";
       print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";
       
-      print "<td>".dolibarr_print_date($objp->do)."</td>\n";
-      print "<td>$objp->label</td>";
+      print '<td>'.dolibarr_print_date($objp->do).'</td>';
+      print '<td>'.dolibarr_print_date($objp->dv).'</td>';
+      print '<td>'.$objp->type.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
+      print '<td>'.$objp->label.'</td>';
 
       if ($objp->amount < 0)
 	{
@@ -158,20 +177,22 @@ if ($result)
 	}
       else
 	{
-	  print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
+	  print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</td>\n";
 	}
     
       if ($objp->do <= mktime() ) {
 	      print "<td align=\"center\">";
-	      print "<input name=\"num_releve\" type=\"text\" value=\"$last_releve\" size=\"8\" maxlength=\"6\"></td>";
-	      print "<td align=\"center\">";
-          $html=new Form($db);
-          $html->selectyesno("rappro","no");
+	      print "<input name=\"num_releve\" type=\"text\" value=\"\" size=\"8\">";
+          if ($options) {
+          	print "<br><select name=\"cat1\">$options";
+          	print "</select>";
+          }
 	      print "</td>";
-	      print "<td align=\"center\"><input type=\"submit\" value=\"".$langs->trans("Rapprocher")."\"></td>";
+	      print "<td align=\"center\"><input type=\"submit\" value=\"".$langs->trans("Rapprocher")."\">";
+          print "</td>";
 	  }
 	  else {
-	      print "<td align=\"right\" colspan=\"3\">";
+	      print "<td align=\"left\" colspan=\"2\">";
 		  print "Ecriture future. Ne peut pas encore être rapprochée.";
 		  print "</td>";
       }
@@ -184,7 +205,7 @@ if ($result)
 	{
 	  if ($user->rights->banque->modifier)
 	    {
-	      print "<td align=\"center\">";
+	      print '<td align="center" width="30">';
 	      if ($objp->do <= mktime() ) {
 	      	print "<a href=\"rappro.php?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id\">";
 	      	print img_delete();
@@ -202,15 +223,7 @@ if ($result)
 	}
 
       print "</tr>";
-      print "<tr $bc[$var]><td>&nbsp;</td><td>".$objp->fk_type.($objp->num_chq?" ".$objp->num_chq:"")."</td><td colspan=\"6\">";
-      if ($options) {
-      	print "<select name=\"cat1\">$options";
-      	print "</select>";
-      }
-      else {
-      	print "&nbsp;";
-      }
-      print "</td></tr>";
+
       print "</form>";
       $i++;
     }
@@ -221,7 +234,7 @@ if ($result)
 	}
 
 } else {
-    print "Erreur : ".$db->error()." : ".$sql."<br>\n";
+    dolibarr_print_error($db);
 }
 
 print '<br>Dernier relevé : <a href="releve.php?account='.$_GET["account"].'&amp;num='.$last_releve.'">'.$last_releve.'</a>';
