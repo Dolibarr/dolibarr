@@ -13,6 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * 
  *
  * $Id$
  * $Source$
@@ -20,7 +21,7 @@
 
 body {
   background: #EEEEEE; 
-  background-image: url("/theme/freelug/img/Image16gray.png")
+  background-image: url("/theme/freelug/img/background.png");
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none ;
 }

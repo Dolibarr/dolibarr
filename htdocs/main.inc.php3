@@ -42,7 +42,7 @@ if ($user->limite_liste <> $conf->liste_limit) {
   $conf->liste_limit = $user->limite_liste;
 }
 /*
- *
+ * Definition de toutes les Constantes globales d'envirronement
  *
  */
 $sql = "SELECT name, value FROM llx_const";
@@ -65,6 +65,22 @@ if ($result)
  *
  */
 $db->close();
+
+// Modification de quelques variable de conf en fonction des Constantes
+/*
+ * SIZE_LISTE_LIMIT : constante de taille maximale des listes
+ */
+if (defined("SIZE_LISTE_LIMIT"))
+{
+  $conf->liste_limit=SIZE_LISTE_LIMIT;
+}
+
+if (defined("MAIN_THEME"))
+{
+  $conf->theme=MAIN_THEME;
+  $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+}
+
 /*
  */
 if(!isset($application_lang))
@@ -91,19 +107,22 @@ function top_menu($head)
 
   print $rtplang->lang_header();
 
-  print "<HTML><HEAD>";
+  //  print "<HTML><HEAD>";
   print $head;
-  print '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">';
+  //  print '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">';
   print '<LINK REL="stylesheet" TYPE="text/css" HREF="/'.$conf->css.'">';
   print "\n";
-  print '<title>Dolibarr</title>';
+  if (defined("MAIN_TITLE")){
+    print "<title>".MAIN_TITLE."</title>";
+  }else{
+    print '<title>Dolibarr</title>';
+  }
   print "\n";
 
 
   print "</HEAD>\n";
-  
   print '<BODY TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">';
-
+  
   /*
    * Barre superieure
    *
