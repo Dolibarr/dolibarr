@@ -7,23 +7,11 @@
 
 class PDF_Indexes extends FPDF
 {
-  var $RefActive=0;        //Flag indicating that the index is being processed
-  var $ChangePage=0;       //Flag indicating that a page break has occurred
   var $Reference=array();  //Array containing the references
   var $col=0;              //Current column number
   var $NbCol;              //Total number of columns
   var $y0;                 //Top ordinate of columns
-  
-  function Header()
-  {
-    if($this->RefActive==1)
-      {
-        //Title of index pages
-        $this->SetFont('Arial','',15);
-        $this->Cell(0,5,'Index',0,1,'C');
-        $this->Ln();
-      }
-  }
+  var $IndexesName=array();  
   
   function Reference($txt, $index)
   {
@@ -46,43 +34,66 @@ class PDF_Indexes extends FPDF
 	$this->Reference[$index][]=array('t'=>$txt,'p'=>$this->PageNo());
       }
   }
+
+  function ReferenceNewPage()
+  {
+    $this->AddPage();
+    $this->SetFont('Arial','',15);
+    $this->SetXY(10,10);
+    $this->MultiCell(190,12, $this->IndexesName[$this->IndexName], 1 ,'C', 0);
+    $this->y0 = $this->GetY() + 2;
+    $this->SetY($this->y0);
+    $this->SetFontSize(8);
+  }
   
+  function ReferencePrintSection()
+  {
+    $this->SetY($this->GetY() + 2);
+
+    if ($this->GetY() > $this->YMax)
+      {
+	$this->ReferenceNewPage();
+      }
+
+    $this->SetFontSize(9);
+    $this->MultiCell(90, 4, $this->ReferenceCurrentSection ,0,1,'L');
+    $this->SetFontSize(8);
+  }
 
   function CreateReference($NbCol, $index)
   {
-    //    var_dump($this->Reference[$index]);
+    $this->YMax = 270;
+    $this->NbCol = $NbCol;
+    $this->SetCol(0);
+    $this->IndexName = $index;
+    // New Page
+    $this->ReferenceNewPage();
 
     //Initialization
-    $this->RefActive=1;
     $this->SetFontSize(8);
     
-    //New page
-    $this->AddPage();
-    
-    //Save the ordinate
-    $this->y0=$this->GetY();
-    $this->NbCol=$NbCol;
-    $size=sizeof($this->Reference[$index]);
-    $PageWidth=$this->w-$this->lMargin-$this->rMargin;
+    $size = sizeof($this->Reference[$index]);
+    $PageWidth = $this->w - $this->lMargin - $this->rMargin;
     $last = '';
-    for ($i=0;$i<$size;$i++)
-      {
-      
-	//Handles page break and new position
-	if ($this->ChangePage==1)
+    for ($i=0 ; $i < $size ; $i++)
+      {    
+	if ($this->GetY() > $this->YMax)
 	  {
-	    $this->ChangePage=0;
-	    $this->y0=$this->GetY()-$this->FontSize-1;
+	    $this->ReferenceNextCol();
+	  }
+	//
+	// Section Break
+	//  
+	if ($last <> $this->Reference[$index][$i]['t'][0])
+	  {
+	    $last = $this->Reference[$index][$i]['t'][0];
+	    $this->ReferenceCurrentSection = $last;
+	    $this->ReferencePrintSection();
 	  }
 	
 	//LibellLabel
 	if (is_array($this->Reference[$index][$i]['t']))
 	  {
-	    if ($last <> $this->Reference[$index][$i]['t'][0])
-	      {
-		$this->MultiCell(90, 4,$this->Reference[$index][$i]['t'][0],0,1,'L');
-		$last = $this->Reference[$index][$i]['t'][0];
-	      }
 	    $str= "  ".$this->Reference[$index][$i]['t'][1];
 	  }
 	else
@@ -108,9 +119,42 @@ class PDF_Indexes extends FPDF
 	$Largeur=$ColWidth-$strsize-$w;
 	$this->MultiCell($Largeur,$this->FontSize+1,$this->Reference[$index][$i]['p'],0,1,'R');
       }
-    $this->RefActive==0;
   }
-
+  
+  function SetCol($col)
+  {
+    //Set position on a column
+    $this->col=$col;
+    $x=$this->rMargin+$col*($this->w-$this->rMargin-$this->rMargin)/$this->NbCol;
+    $this->SetLeftMargin($x);
+    $this->SetX($x);
+  }
+  
+  function ReferenceNextCol()
+  {
+    if($this->col<$this->NbCol-1)
+      {
+	//Go to the next column
+	$this->SetCol($this->col+1);
+	$this->SetY($this->y0);
+	$this->ReferencePrintSection();
+	//Stay on the page
+	return false;
+      }
+    else
+      {
+	//Go back to the first column
+	$this->SetCol(0);
+	$this->ReferenceNewPage();
+	$this->ReferencePrintSection();
+	//Page break
+	return true;
+      }
+  }
+  /*
+   *
+   *
+   */
   function SortReference($index)
   {
     $ar = $this->Reference[$index];
@@ -145,41 +189,6 @@ class PDF_Indexes extends FPDF
       }
 
   }
-  
-  function SetCol($col)
-  {
-    //Set position on a column
-    $this->col=$col;
-    $x=$this->rMargin+$col*($this->w-$this->rMargin-$this->rMargin)/$this->NbCol;
-    $this->SetLeftMargin($x);
-    $this->SetX($x);
-  }
-  
-  function AcceptPageBreak()
-  {
-    if ($this->RefActive==1)
-      {
-	if($this->col<$this->NbCol-1)
-	  {
-	    //Go to the next column
-	    $this->SetCol($this->col+1);
-	    $this->SetY($this->y0);
-	    //Stay on the page
-	    return false;
-	  }
-	else
-	  {
-	    //Go back to the first column
-	    $this->SetCol(0);
-	    $this->ChangePage=1;
-	    //Page break
-	    return true;
-	  }
-      }
-    else
-      {
-        return true;
-      }
-  }
+
 }
 ?>
