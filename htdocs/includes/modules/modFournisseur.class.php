@@ -98,7 +98,7 @@ class modFournisseur extends DolibarrModules
 
     $this->rights[2][0] = 181;
     $this->rights[2][1] = 'Lire les commandes fournisseur';
-    $this->rights[2][2] = 'w';
+    $this->rights[2][2] = 'r';
     $this->rights[2][3] = 1;
     $this->rights[2][4] = 'commande';
     $this->rights[2][5] = 'lire';
@@ -133,7 +133,7 @@ class modFournisseur extends DolibarrModules
 
     $this->rights[7][0] = 186;
     $this->rights[7][1] = 'Clotûrer les commandes fournisseur';
-    $this->rights[7][2] = 'w';
+    $this->rights[7][2] = 'd';
     $this->rights[7][3] = 0;
     $this->rights[7][4] = 'commande';
     $this->rights[7][5] = 'cloturer';
