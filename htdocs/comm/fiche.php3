@@ -388,7 +388,7 @@ if ($socid > 0) {
 	  }
 	  /*
 	   */
-	  print '<td width="20%"><a href="../user.php3">'.$obj->code.'</a></td>';
+	  print '<td width="20%"><a href="../user/fiche.php3?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
 	  print "</tr>\n";
 	  $i++;
 	}
@@ -481,7 +481,7 @@ if ($socid > 0) {
 		}
 	      /*
 	       */
-	      print '<td width="20%"><a href="../user.php3">'.$obj->code.'</a></td>';
+	      print '<td width="20%"><a href="../user/fiche.php3?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
 	      print "</tr>\n";
 	      $i++;
 	    }
