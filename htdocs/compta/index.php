@@ -24,7 +24,7 @@
 /*!
         \file       htdocs/compta/index.php
         \ingroup    compta
-		\brief      Page acceuil zone comptabilité
+		\brief      Page accueil zone comptabilité
 		\version    $Revision$
 */
 
