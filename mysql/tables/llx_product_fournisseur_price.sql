@@ -32,13 +32,3 @@ create table llx_product_fournisseur_price
   fk_user         integer
 
 )type=innodb;
-
-ALTER TABLE llx_product_fournisseur_price ADD INDEX (fk_user);
-ALTER TABLE llx_product_fournisseur_price ADD INDEX (fk_soc);
-ALTER TABLE llx_product_fournisseur_price ADD INDEX (fk_product);
-
-ALTER TABLE llx_product_fournisseur_price ADD FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
-ALTER TABLE llx_product_fournisseur_price ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
-ALTER TABLE llx_product_fournisseur_price ADD FOREIGN KEY (fk_product) REFERENCES llx_product (rowid);
-
-

@@ -34,15 +34,3 @@ create table llx_societe_remise_except
   description     text
 
 )type=innodb;
-
-
-ALTER TABLE llx_societe_remise_except ADD INDEX (fk_user);
-ALTER TABLE llx_societe_remise_except ADD INDEX (fk_soc);
-ALTER TABLE llx_societe_remise_except ADD INDEX (fk_facture);
-
-ALTER TABLE llx_societe_remise_except ADD FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
-ALTER TABLE llx_societe_remise_except ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
-ALTER TABLE llx_societe_remise_except ADD FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
-
-
-
