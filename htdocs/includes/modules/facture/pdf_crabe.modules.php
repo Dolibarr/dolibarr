@@ -220,9 +220,10 @@ class pdf_crabe extends ModelePDFFactures
                         $account = new Account($this->db);
                         $account->fetch(FACTURE_CHQ_NUMBER);
 
-                        $pdf->SetXY (10, 228);
+                        $pdf->SetXY (10, 227);
                         $pdf->SetFont('Arial','B',8);
                         $pdf->MultiCell(90, 3, "Règlement par chèque à l'ordre de ".$account->proprio." envoyé à:",0,'L',0);
+                        $pdf->SetXY (10, 231);
                         $pdf->SetFont('Arial','',8);
                         $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
                     }
@@ -238,17 +239,45 @@ class pdf_crabe extends ModelePDFFactures
                         $account = new Account($this->db);
                         $account->fetch(FACTURE_RIB_NUMBER);
 
-                        $pdf->SetXY (10, 241);
+                        $this->marges['g']=10;
+                        
+                        $cury=242;
+                        $pdf->SetXY ($this->marges['g'], $cury);
                         $pdf->SetFont('Arial','B',8);
-                        $pdf->MultiCell(90, 3, "Règlement par virement sur le compte ci-dessous:", 0, 'L', 0);
+                        $pdf->MultiCell(90, 3, "Règlement par virement sur le compte bancaire suivant:", 0, 'L', 0);
+                        $cury+=4;
+                        $pdf->SetFont('Arial','B',6);
+                        $pdf->line($this->marges['g']+1, $cury, $this->marges['g']+1, $cury+10 );
+                        $pdf->SetXY ($this->marges['g'], $cury);
+                        $pdf->MultiCell(18, 3, "Code banque", 0, 'C', 0);
+                        $pdf->line($this->marges['g']+18, $cury, $this->marges['g']+18, $cury+10 );
+                        $pdf->SetXY ($this->marges['g']+18, $cury);
+                        $pdf->MultiCell(18, 3, "Code guichet", 0, 'C', 0);
+                        $pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
+                        $pdf->SetXY ($this->marges['g']+36, $cury);
+                        $pdf->MultiCell(24, 3, "Numéro compte", 0, 'C', 0);
+                        $pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
+                        $pdf->SetXY ($this->marges['g']+60, $cury);
+                        $pdf->MultiCell(13, 3, "Clé RIB", 0, 'C', 0);
+                        $pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
+                        
                         $pdf->SetFont('Arial','',8);
-                        $pdf->MultiCell(90, 3, "Code banque : " . $account->code_banque, 0, 'L', 0);
-                        $pdf->MultiCell(90, 3, "Code guichet : " . $account->code_guichet, 0, 'L', 0);
-                        $pdf->MultiCell(90, 3, "Numéro compte : " . $account->number, 0, 'L', 0);
-                        $pdf->MultiCell(90, 3, "Clé RIB : " . $account->cle_rib, 0, 'L', 0);
+                        $pdf->SetXY ($this->marges['g'], $cury+5);
+                        $pdf->MultiCell(18, 3, $account->code_banque, 0, 'C', 0);
+                        $pdf->SetXY ($this->marges['g']+18, $cury+5);
+                        $pdf->MultiCell(18, 3, $account->code_guichet, 0, 'C', 0);
+                        $pdf->SetXY ($this->marges['g']+36, $cury+5);
+                        $pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
+                        $pdf->SetXY ($this->marges['g']+60, $cury+5);
+                        $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
+         
+                        $pdf->SetXY ($this->marges['g'], $cury+12);
                         $pdf->MultiCell(90, 3, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
+                        $pdf->SetXY ($this->marges['g'], $cury+22);
                         $pdf->MultiCell(90, 3, "Prefix IBAN : " . $account->iban_prefix, 0, 'L', 0);
+                        $pdf->SetXY ($this->marges['g'], $cury+25);
                         $pdf->MultiCell(90, 3, "BIC : " . $account->bic, 0, 'L', 0);
+
                     }
                 }
 
@@ -441,10 +470,14 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
 
         $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+1));
+        $pdf->SetTextColor(0,0,60);
+        $pdf->SetFont('Arial','B', 9);
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalTTC"), 0, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+1));
         $pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 1);
+        $pdf->SetFont('Arial','', 9);
+        $pdf->SetTextColor(0,0,0);
 
         if ($deja_regle > 0)
         {
@@ -454,11 +487,15 @@ class pdf_crabe extends ModelePDFFactures
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+2));
             $pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
+            $pdf->SetTextColor(0,0,60);
+            $pdf->SetFont('Arial','B', 9);
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+3));
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Reste à payer", 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+3));
             $pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 1);
+            $pdf->SetFont('Arial','', 9);
+            $pdf->SetTextColor(0,0,0);
         }
     }
 
