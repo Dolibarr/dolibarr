@@ -1,5 +1,7 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,11 +53,10 @@ class DolibarrModules
   {
     // Insère les constantes
     $err = 0;
-    $sql_del = "delete from ".MAIN_DB_PREFIX."const where name = '".$this->const_name."';";
+    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."';";
 		$this->db->query($sql_del);
-		$sql ="insert into ".MAIN_DB_PREFIX."const (name,value,visible) values
+		$sql ="INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
 		('".$this->const_name."','1',0);";
-    //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '".$this->const_name."', value='1', visible = 0";
 
     if (!$this->db->query($sql))
       {
@@ -75,7 +76,7 @@ class DolibarrModules
 	    $row = $this->db->fetch_row($sql);	    
 	    if ($row[0] == 0)
 	      {
-		$sql = "insert into ".MAIN_DB_PREFIX."boxes_def (name, file) values ('".$titre."','".$file."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (name, file) VALUES ('".$titre."','".$file."')";
 		if (! $this->db->query($sql) )
 		  {
 		    $err++;

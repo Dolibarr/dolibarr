@@ -1,6 +1,8 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -76,10 +78,10 @@ class modBanque extends DolibarrModules
      */    
 		 $this->remove();
     $sql = array(
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (110,'Tous les droits sur les comptes bancaires','banque','a',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (111,'Lire les comptes','banque','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (112,'Créer modifier rapprocher transactions','banque','w',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (113,'Configurer les comptes (créer, gérer catégories)','banque','w',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (110,'Tous les droits sur les comptes bancaires','banque','a',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (111,'Lire les comptes','banque','r',1);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (112,'Créer modifier rapprocher transactions','banque','w',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (113,'Configurer les comptes (créer, gérer catégories)','banque','w',0);",
 		 );
     
     return $this->_init($sql);

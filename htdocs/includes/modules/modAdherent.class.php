@@ -2,6 +2,8 @@
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,11 +118,11 @@ class modAdherent extends DolibarrModules
      */
 		 $this->remove();
     $sql = array(
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (70,'Tous les droits sur les adherents','adherent','a',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (71,'Lire les fiche adherents','adherent','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (72,'Créer modifier des adherents','adherent','w',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (73,'Modifier les adherents','adherent','m',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (74,'Supprimer les adherents','adherent','d',0);"
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (70,'Tous les droits sur les adherents','adherent','a',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (71,'Lire les fiche adherents','adherent','r',1);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (72,'Créer modifier des adherents','adherent','w',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (73,'Modifier les adherents','adherent','m',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (74,'Supprimer les adherents','adherent','d',0);"
 		 );
     
     return $this->_init($sql);

@@ -1,6 +1,8 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,12 +81,12 @@ class modComptabilite extends DolibarrModules
      */    
 		 $this->remove();
     $sql = array(
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (90,'Tous les droits sur la compta','compta','a',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (91,'Lire les charges','compta','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (92,'Créer modifier les charges','compta','w',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (93,'Supprimer les charges','compta','d',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (90,'Tous les droits sur la compta','compta','a',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (91,'Lire les charges','compta','r',1);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (92,'Créer modifier les charges','compta','w',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (93,'Supprimer les charges','compta','d',0);",
 
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (95,'Lire CA, bilans, résultats','compta','r',1);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (95,'Lire CA, bilans, résultats','compta','r',1);",
 		 );
     
     return $this->_init($sql);

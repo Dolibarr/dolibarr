@@ -1,6 +1,8 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,18 +118,19 @@ class modFacture extends DolibarrModules
 
    /*!  \brief      Fonction d'activation. Insère en base les constantes, boites et permissions du module
     */
+		
   function init()
   {
 	  $this->remove();
     $sql = array(
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (10,'Tous les droits sur les factures','facture','a',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (11,'Lire les factures','facture','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (12,'Créer modifier les factures','facture','w',0);",
-		 //"insert into ".MAIN_DB_PREFIX."rights_def values (13,'Modifier les factures d\'autrui','facture','m',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (14,'Valider les factures','facture','d',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (15,'Envoyer les factures aux clients','facture','d',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (16,'Emettre des paiements sur les factures','facture','d',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (19,'Supprimer les factures','facture','d',0);"
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (10,'Tous les droits sur les factures','facture','a',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (11,'Lire les factures','facture','r',1);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (12,'Créer modifier les factures','facture','w',0);",
+		 //"INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (13,'Modifier les factures d\'autrui','facture','m',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (14,'Valider les factures','facture','d',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (15,'Envoyer les factures aux clients','facture','d',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (16,'Emettre des paiements sur les factures','facture','d',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (19,'Supprimer les factures','facture','d',0);"
 		 );
     
     return $this->_init($sql);
@@ -135,6 +138,7 @@ class modFacture extends DolibarrModules
 
    /*!  \brief      Fonction de désactivation. Supprime de la base les constantes, boites et permissions du module
     */
+		
   function remove()
   {
     $sql = array(

@@ -1,6 +1,8 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,10 +83,10 @@ class modProduit extends DolibarrModules
      */
 		$this->remove();
     $sql = array(
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (30,'Tous les droits sur les produits/services','produit','a',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (31,'Lire les produits/services','produit','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (32,'Créer modifier les produits/services','produit','w',0);",
-		 "insert INTO ".MAIN_DB_PREFIX."rights_def values (34,'Supprimer les produits/services','produit','d',0);"
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (30,'Tous les droits sur les produits/services','produit','a',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (31,'Lire les produits/services','produit','r',1);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (32,'Créer modifier les produits/services','produit','w',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (34,'Supprimer les produits/services','produit','d',0);"
 		 );
 
     return $this->_init($sql);

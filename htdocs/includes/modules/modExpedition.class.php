@@ -79,12 +79,12 @@ class modExpedition extends DolibarrModules
      */
 		 $this->remove();
     $sql = array(
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (100,'Tous les droits sur les expeditions','expedition','a',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (101,'Lire les expeditions','expedition','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (102,'Créer modifier les expeditions','expedition','w',0);",
-		 //"insert into ".MAIN_DB_PREFIX."rights_def values (83,'Modifier les expeditions d\'autrui','expedition','m',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (104,'Valider les expeditions','expedition','d',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (109,'Supprimer les expeditions','expedition','d',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (100,'Tous les droits sur les expeditions','expedition','a',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (101,'Lire les expeditions','expedition','r',1);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (102,'Créer modifier les expeditions','expedition','w',0);",
+		 //"INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (83,'Modifier les expeditions d\'autrui','expedition','m',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (104,'Valider les expeditions','expedition','d',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (109,'Supprimer les expeditions','expedition','d',0);",
 		 );
     
     return $this->_init($sql);

@@ -1,5 +1,7 @@
 <?PHP
 /* Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,7 +53,7 @@ class modCaisse extends DolibarrModules
 
     $this->family = "financial";
     $this->name = "Caisse";
-    $this->description = "Gestion des comptes fincanciers de type Caisses liquides (pas encore opérationnel)";
+    $this->description = "Gestion des comptes financiers de type Caisses liquides (pas encore opérationnel)";
     $this->const_name = "MAIN_MODULE_CAISSE";
     $this->const_config = MAIN_MODULE_CAISSE;
 
@@ -75,10 +77,10 @@ class modCaisse extends DolibarrModules
      */    
 		 $this->remove();
     $sql = array(
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (130,'Tous les droits sur les caisses','caisse','a',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (131,'Lire les caisses liquide','caisse','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (132,'Créer, supprimer transactions','caisse','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (133,'Configurer les caisses (créer, gérer catégories)','caisse','w',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (130,'Tous les droits sur les caisses','caisse','a',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (131,'Lire les caisses liquide','caisse','r',1);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (132,'Créer, supprimer transactions','caisse','r',1);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (133,'Configurer les caisses (créer, gérer catégories)','caisse','w',0);",
 		 );
     
     return $this->_init($sql);

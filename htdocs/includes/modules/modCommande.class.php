@@ -1,6 +1,8 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,14 +81,16 @@ class modCommande extends DolibarrModules
     /*
      * Permissions
      */
-		 $this->remove();
+		 
+		$this->remove();
+		 
     $sql = array(
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (80,'Tous les droits sur les commandes','commande','a',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (81,'Lire les commandes','commande','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (82,'Créer modifier les commandes','commande','w',0);",
-		 //"insert into ".MAIN_DB_PREFIX."rights_def values (83,'Modifier les commandes d\'autrui','commande','m',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (84,'Valider les commandes','commande','d',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (89,'Supprimer les commandes','commande','d',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (80,'Tous les droits sur les commandes','commande','a',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (81,'Lire les commandes','commande','r',1);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (82,'Créer modifier les commandes','commande','w',0);",
+		 //"INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (83,'Modifier les commandes d\'autrui','commande','m',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (84,'Valider les commandes','commande','d',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (89,'Supprimer les commandes','commande','d',0);",
 		 );
     
     return $this->_init($sql);
@@ -97,9 +101,7 @@ class modCommande extends DolibarrModules
    */
   function remove()
   {
-    $sql = array(
-
-		 );
+    $sql = array();
 
     return $this->_remove($sql);
 
