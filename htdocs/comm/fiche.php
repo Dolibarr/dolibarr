@@ -50,9 +50,9 @@ if ($sortfield == "") {
 }
 
 
-if ($action == 'attribute_prefix') {
-  $societe = new Societe($db, $socid);
-  $societe->attribute_prefix($db, $socid);
+if ($_GET["action"] == 'attribute_prefix') {
+  $societe = new Societe($db, $_GET["socid"]);
+  $societe->attribute_prefix($db, $_GET["socid"]);
 }
 
 if ($action == 'recontact') {
