@@ -149,8 +149,10 @@ if ($HTTP_POST_VARS["action"] == "set")
 
 	  if ($error == 0)
 	    {
+print '<div class="main">
+ <div class="main-inside">';
 	      print "Votre système est maintenant configuré, il ne vous reste plus qu'a sélectionner les modules que vous souhaitez utiliser. Pour cela cliquer sur l'url ci-dessous : <br>";
-	      print '<a href="'.$dolibarr_main_url_root .'/admin/modules.php">Configurer les modules</a>';
+	      print '<a href="'.$dolibarr_main_url_root .'/admin/modules.php">Configurer les modules</a></div></div>';
 	    }
 	}
       else
@@ -178,14 +180,82 @@ else
 
 ?>
 <html>
-<body bgcolor="#c0c0c0">
 <head>
+<style type="text/css">
+body {
+    font-size:14px;
+    font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
+    background-color: #cac8c0;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 5%;
+    margin-bottom: 5%;
+}
+
+div.main {
+    background-color: white;
+    text-align: left;
+    border: solid black 1px;
+}
+div.main-inside {
+    background-color: white;
+    padding-left: 20px;
+    padding-right: 50px;
+    text-align: center;
+    margin-bottom: 50px;
+    margin-top: 30px;
+}
+
+div.footer {
+	background-color: #dcdff4;
+	font-size: 10px;
+	border-top: solid black 1px;
+	padding-left: 5px;
+    text-align: center;
+}
+
+div.header {
+  background-color: #dcdff4;  
+  border-bottom: solid black 1px;
+  padding-left: 5px;
+  text-align: center;
+}
+
+div.footer p {
+	margin: 0px;
+}
+
+a:link,a:visited,a:active {
+	text-decoration:none;
+	color:blue;
+}
+a:hover {
+	text-decoration:underline;
+	color:blue;
+}
+
+a.comment {
+  text-decoration:none;
+ color:black;
+  font-size: 13px;
+}
+
+div.main-inside h2 {
+    font-size:18px;
+    font-weight: bold;
+    color: #990033;
+}
+
+</style>
 <title>Dolibarr Install</title>
 </head>
-<h2>Installation de dolibarr</h2>
+<body>
+<div class="main">
+ <div class="main-inside">
+<h2>Installation de Dolibarr</h2>
 <form action="install.php" method="POST">
 <input type="hidden" name="action" value="set">
-<table border="1" cellpadding="4" cellspacing="0">
+<table border="0" cellpadding="4" cellspacing="0">
 <tr>
 <td valign="top">
 <?PHP print "Répertoire d'installation"; ?>
@@ -220,23 +290,22 @@ exemples :
 <td valign="top">user</td>
 <td>
 <input type="text" name="db_user" value="<?PHP print $dolibarr_main_db_user ?>">
-<br>
-Laisser vide si vous vous connectez en anonymous
+<a class="comment">Laisser vide si vous vous connectez en anonymous</a>
 </td>
 </tr>
 <tr>
 <td valign="top">pass</td>
 <td>
 <input type="text" name="db_pass" value="<?PHP print $dolibarr_main_db_pass ?>">
-<br>
-Laisser vide si vous vous connectez en anonymous
+<a class="comment">Laisser vide si vous vous connectez en anonymous</a>
 </td>
 </tr>
 <tr>
-<td colspan="2" align="center"><input type="submit"></td>
+<td colspan="2" align="center"><input type="submit" value="Enregistrer"></td>
 </tr>
 </table>
 </form>
-
+</div>
+</div>
 </body>
 </html>
