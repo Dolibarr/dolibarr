@@ -31,6 +31,7 @@ create table llx_product
   price           double,
   tva_tx          double,
   fk_user_author  integer,
+  envente         tinyint default 1,
   nbvente         integer default 0
 );
 
