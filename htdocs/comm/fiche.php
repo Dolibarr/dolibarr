@@ -423,93 +423,108 @@ if ($_socid > 0)
      *
      *
      */
-    if ($action == 'changevalue') {
-      print "<hr noshade>";
-      print "<form action=\"index.php?socid=$objsoc->id\" method=\"post\">";
-      print "<input type=\"hidden\" name=\"action\" value=\"cabrecrut\">";
-      print "Cette société est un cabinet de recrutement : ";
-      print "<select name=\"selectvalue\">";
-      print "<option value=\"\">";
-      print "<option value=\"t\">Oui";
-      print "<option value=\"f\">Non";
-      print "</select>";
-      print "<input type=\"submit\" value=\"".$langs->trans("Valid")."\">";
-      print "</form>\n";
-    } else {
-      /*
-       *
-       * Liste des contacts
-       *
-       */
-      if (defined("MAIN_MODULE_CLICKTODIAL") && MAIN_MODULE_CLICKTODIAL==1)
-	{
-	  $user->fetch_clicktodial(); // lecture des infos de clicktodial
-	}
-      print '<table class="noborder" width="100%">';
+    if ($action == 'changevalue')
+      {
+	print "<hr noshade>";
+	print "<form action=\"index.php?socid=$objsoc->id\" method=\"post\">";
+	print "<input type=\"hidden\" name=\"action\" value=\"cabrecrut\">";
+	print "Cette société est un cabinet de recrutement : ";
+	print "<select name=\"selectvalue\">";
+	print "<option value=\"\">";
+	print "<option value=\"t\">Oui";
+	print "<option value=\"f\">Non";
+	print "</select>";
+	print "<input type=\"submit\" value=\"".$langs->trans("Valid")."\">";
+	print "</form>\n";
+      }
+    else
+      {
+	/*
+	 *
+	 * Liste des contacts
+	 *
+	 */
+	if (defined("MAIN_MODULE_CLICKTODIAL") && MAIN_MODULE_CLICKTODIAL==1)
+	  {
+	    $user->fetch_clicktodial(); // lecture des infos de clicktodial
+	  }
+	print '<table class="noborder" width="100%">';
+	
+	print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
+	print '<td>'.$langs->trans("Poste").'</td><td colspan="2">'.$langs->trans("Tel").'</td>';
+	print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
+	print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id."&amp;action=create\">".$langs->trans("AddContact")."</a></td>";
+	print '<td>&nbsp;</td>';
+	print "</tr>";
+	
+	$sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $objsoc->id  ORDER by p.datec";
+	$result = $db->query($sql);
+	$i = 0 ; $num = $db->num_rows(); $tag = True;
+	while ($i < $num)
+	  {
+	    $obj = $db->fetch_object();
+	    $var = !$var;
+	    print "<tr $bc[$var]>";
+	    
+	    print '<td>';
+	    print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
+	    print img_file();
+	    print '&nbsp;'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+	    
+	    if ($obj->note)
+	      {
+		print "<br>".nl2br($obj->note);
+	      }
+	    print "</td>";
+	    print "<td>$obj->poste&nbsp;</td>";
+	    print '<td>';
 
-      print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
-      print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
-      print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
-      print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id."&amp;action=create\">".$langs->trans("AddContact")."</a></td>";
-      print '<td>&nbsp;</td>';
-      print "</tr>";
-    
-      $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $objsoc->id  ORDER by p.datec";
-      $result = $db->query($sql);
-      $i = 0 ; $num = $db->num_rows(); $tag = True;
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object();
-	  $var = !$var;
-	  print "<tr $bc[$var]>";
-	  
-	  print '<td>';
-	  print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
-	  print img_file();
-	  print '&nbsp;'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
-	  
-	  if ($obj->note)
-	    {
-	      print "<br>".nl2br($obj->note);
-	    }
-	  print "</td>";
-	  print "<td>$obj->poste&nbsp;</td>";
-	  print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
-	  print '<td><a href="action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->fax).'</a>&nbsp;</td>';
-	  print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->email.'</a>&nbsp;</td>';
-	  
-	  print '<td align="center">';
-	  print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
-	  print img_edit();
-	  print '</a></td>';
-	  
-	  print '<td align="center"><a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">';
-	  print img_actions();
-	  print '</a></td>';
-	  
-	  print "</tr>\n";
-	  $i++;
-	  $tag = !$tag;
-	}
-      print "</table>";
-      
-      print "<br>";
-      
-      /*
-       *      Listes des actions a faire
-       *
-       */
-      print '<table width="100%" class="noborder">';
-      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right"> <a href="action/fiche.php?action=create&socid='.$objsoc->id.'&afaire=1">'.$langs->trans("AddActionToDo").'</a></td></tr>';
-      print '<tr>';
-      print '<td colspan="2" valign="top">';
-
-      $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-      $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-      $sql .= " WHERE a.fk_soc = $objsoc->id ";
-      $sql .= " AND u.rowid = a.fk_user_author";
-      $sql .= " AND c.id=a.fk_action AND a.percent < 100";
-      $sql .= " ORDER BY a.datea DESC, a.id DESC";
+	    /*
+	     * Lien click to dial
+	     */
+	    
+	    if (strlen($obj->phone) && $user->clicktodial_enabled == 1)
+	      {
+		print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&amp;socid='.$societe->id.'&amp;call='.$obj->phone.'">';
+		print img_phone_out("Appel émis") ;
+	      }
+	    print '</td><td>';
+	    print '<a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
+	    print '<td><a href="action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->fax).'</a>&nbsp;</td>';
+	    print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->email.'</a>&nbsp;</td>';
+	    
+	    print '<td align="center">';
+	    print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
+	    print img_edit();
+	    print '</a></td>';
+	    
+	    print '<td align="center"><a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">';
+	    print img_actions();
+	    print '</a></td>';
+	    
+	    print "</tr>\n";
+	    $i++;
+	    $tag = !$tag;
+	  }
+	print "</table>";
+	
+	print "<br>";
+	
+	/*
+	 *      Listes des actions a faire
+	 *
+	 */
+	print '<table width="100%" class="noborder">';
+	print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right"> <a href="action/fiche.php?action=create&socid='.$objsoc->id.'&afaire=1">'.$langs->trans("AddActionToDo").'</a></td></tr>';
+	print '<tr>';
+	print '<td colspan="2" valign="top">';
+	
+	$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+	$sql .= " WHERE a.fk_soc = $objsoc->id ";
+	$sql .= " AND u.rowid = a.fk_user_author";
+	$sql .= " AND c.id=a.fk_action AND a.percent < 100";
+	$sql .= " ORDER BY a.datea DESC, a.id DESC";
 
       if ( $db->query($sql) ) {
 	print "<table width=\"100%\" class=\"noborder\">\n";
