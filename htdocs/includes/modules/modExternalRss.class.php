@@ -57,10 +57,6 @@ class modExternalRss
    */
   Function remove()
   {
-    /*
-     *  Activation du module
-     */
-    
     $sql = "DELETE FROM llx_boxes_def WHERE file = 'box_external_rss.php';";
 
     if ( $this->db->query($sql) )
