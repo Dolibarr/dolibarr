@@ -22,7 +22,8 @@
  */
 require("../main.inc.php");
 
-function llxHeader($head = "", $title="") {
+function llxHeader($head = "", $title="", $help_url='')
+{
   global $user, $conf;
 
   /*
@@ -100,8 +101,7 @@ function llxHeader($head = "", $title="") {
       $menu->add(DOL_URL_ROOT."/","Accueil");      
     }
 
-  left_menu($menu->liste);
-
+  left_menu($menu->liste, $help_url);
 }
 
 ?>
