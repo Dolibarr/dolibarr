@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-define('DOL_VERSION','0.5.2');
+define('DOL_VERSION','0.5.1');
 
 if (! include ("conf/conf.php"))
 {
@@ -72,16 +72,40 @@ define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/font/');
 
 $db = new DoliDb();
 
-// PEAR
-@include "DB.php";
-@include "PEAR/Info.php";
-//$dbpear = new DB();
-//
-//
 $user = new User($db);
 
-$user->fetch($GLOBALS["REMOTE_USER"]);
-
+//XAVIER DUTOIT 18/09/2003 : si l'utilisateur n'est pas authentifié apache, on essaie pear Auth
+function loginFunction()
+{
+	/**
+	* Change the HTML output so that it fits to your
+	* application.     */
+    echo "<form method=\"post\" action=\"" . $_SERVER['PHP_SELF'] . "\">";
+    echo "Login: <input type=\"text\" name=\"username\">";
+    echo "<br/> Password: <input type=\"password\" name=\"password\">";
+    echo "<br /><input value='Login' type=\"submit\">";
+    echo "</form>";
+}
+if (!empty ($GLOBALS["REMOTE_USER"]))
+	$user->fetch($GLOBALS["REMOTE_USER"]);
+else
+{
+	require_once "Auth/Auth.php";
+	$params = array(
+	  "dsn" => $conf->db->getdsn (),
+	  "table" => "llx_user",
+	  "usernamecol" => "login",
+	  "passwordcol" => "pass",
+	  "cryptType" => "none",
+	  );
+	$a = new Auth("DB", $params, "loginFunction");
+    $a->start();
+    if ($a->getAuth()) { 
+		$user->fetch($a->getUsername());
+	}
+	else
+		die ("Veuillez vous authentifier");
+}
 /*
  * Definition de toutes les Constantes globales d'envirronement
  *
@@ -330,7 +354,7 @@ function top_menu($head)
 
   print '<TD width="15%" class="menu" align="center">'.strftime(" %d %B - %H:%M",time()).'</TD>';
 
-  print '<td width="10%" class="menu" align="center">'.$user->login.'</td>';
+  print '<td width="10%" class="menu" align="center"><a href="user/logout.php" title="logout">'.$user->login.'</a></td>';
   print '</tr>';
 
   //    print '</table>';
@@ -438,8 +462,8 @@ function llxFooter($foot='')
 
   print '<p id="powered-by-dolibarr">';
   print '<a href="http://savannah.gnu.org/bugs/?group_id=1915">Bug report</a>&nbsp;';
-  print '<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>&nbsp;</p>';
-  //  print '<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>&nbsp;'.$foot.'</p>';
+  print '<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>&nbsp;'.$foot.'</p>';
+
   print "</body></html>";
 }
 

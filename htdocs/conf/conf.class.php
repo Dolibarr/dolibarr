@@ -90,7 +90,13 @@ class DbConf {
     $this->pass = getenv("LLX_DBPASS");
     $this->name = getenv("LLX_DBNAME");
 */
+  }
 
+  /** return the dsn according to the pear syntax
+  */
+  function getdsn ()
+  {
+  	return ($this->type.'://'.$this->user.':'.$this->pass.'@'.$this->host.'/'.$this->name);
   }
 
 }
