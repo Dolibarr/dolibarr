@@ -284,12 +284,12 @@ class Propal
 	    }
 	  else
 	    {
-	      print $this->db->error() . '<b><br>'.$sql;
+    	  dolibarr_print_error($this->db);
 	    }
 	}
       else
 	{
-	  print $this->db->error() . '<b><br>'.$sql;
+	  dolibarr_print_error($this->db);
 	}
       return $this->id;
     }
@@ -439,7 +439,7 @@ class Propal
 		} 
 	      else
 		{
-		  print $this->db->error();
+    	  dolibarr_print_error($this->db);
 		}
 
 	      /*
@@ -478,14 +478,14 @@ class Propal
 		} 
 	      else
 		{
-		  print $this->db->error();
+    	  dolibarr_print_error($this->db);
 		}
 	    }
 	  return 1;
 	}
       else
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
 	  return 0;
 	}    
     }
@@ -510,7 +510,7 @@ class Propal
 	    }
 	  else
 	    {
-	      print $this->db->error() . ' in ' . $sql;
+    	  dolibarr_print_error($this->db);
 	      return -1;
 	    }
 	}
@@ -539,7 +539,7 @@ class Propal
 	    }
 	  else
 	    {
-	      print $this->db->error() . ' in ' . $sql;
+    	  dolibarr_print_error($this->db);
 	    }
 	}
     }
@@ -564,7 +564,7 @@ class Propal
 	    }
 	  else
 	    {
-	      print $this->db->error() . ' in ' . $sql;
+    	  dolibarr_print_error($this->db);
 	      return 0;
 	    }
 	}
@@ -579,11 +579,10 @@ class Propal
     {
       $this->statut = $statut;
 
-
       $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = $statut, note = '$note', date_cloture=now(), fk_user_cloture=$user->id";
       $sql .= " WHERE rowid = $this->id;";
       
-      if ($this->db->query($sql) )
+      if ($this->db->query($sql))
 	{
 	  if ($statut == 2)
 	    {
@@ -609,7 +608,7 @@ class Propal
 	}
       else
 	{
-	  print $this->db->error() . ' in ' . $sql;
+	  dolibarr_print_error($this->db);
 	}
     }
 		
@@ -647,59 +646,64 @@ class Propal
 	}
       else
 	{
-	  print $this->db->error() . ' in ' . $sql;
+	  dolibarr_print_error($this->db);
 	}
     }
+    
 		
   /**
-   *
-   *
+   *    \brief      Renvoi la liste des propal (éventuellement filtrée sur un user) dans un tableau
+   *    \param      brouillon       0=non brouillon, 1=brouillon
+   *    \param      user            Objet user de filtre
+   *    \return     int             -1 si erreur, tableau résultat si ok
    */
 	 
-  function liste_array ($brouillon=0, $user='')
+    function liste_array ($brouillon=0, $user='')
     {
-      $ga = array();
+        $ga = array();
+    
+        $sql = "SELECT rowid, ref FROM ".MAIN_DB_PREFIX."propal";
+    
+        if ($brouillon)
+        {
+            $sql .= " WHERE fk_statut = 0";
+            if ($user)
+            {
+                $sql .= " AND fk_user_author".$user;
+            }
+        }
+        else
+        {
+            if ($user)
+            {
+                $sql .= " WHERE fk_user_author".$user;
+            }
+        }
+    
+        $sql .= " ORDER BY datep DESC";
 
-      $sql = "SELECT rowid, ref FROM ".MAIN_DB_PREFIX."propal";
-      if ($brouillon = 1)
-	{
-	  $sql .= " WHERE fk_statut = 0";
-	  if ($user)
-	    {
-	      $sql .= " AND fk_user_author".$user;
-	    }
-	}
-      else
-	{
-	  if ($user)
-	    {
-	      $sql .= " WHERE fk_user_author".$user;
-	    }
-	}
-      
-      $sql .= " ORDER BY datep DESC";
-      
-      if ($this->db->query($sql) )
-	{
-	  $nump = $this->db->num_rows();
-	  
-	  if ($nump)
-	    {
-	      $i = 0;
-	      while ($i < $nump)
-		{
-		  $obj = $this->db->fetch_object();
-		  
-		  $ga[$obj->rowid] = $obj->ref;
-		  $i++;
-		}
-	    }
-	  return $ga;
-	}
-      else
-	{
-	  print $this->db->error();
-	}      
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            $nump = $this->db->num_rows($result);
+    
+            if ($nump)
+            {
+                $i = 0;
+                while ($i < $nump)
+                {
+                    $obj = $this->db->fetch_object($result);
+    
+                    $ga[$obj->rowid] = $obj->ref;
+                    $i++;
+                }
+            }
+            return $ga;
+        }
+        else
+        {
+            return -1;
+        }
     }
 		
   /**
@@ -732,7 +736,7 @@ class Propal
 	}
       else
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
 	}      
     }
 		
@@ -779,7 +783,7 @@ class Propal
 	}
       else
 	{
-	  print $this->db->error() . ' in ' . $sql;
+	  dolibarr_print_error($this->db);
 	  return -1;
 	}
     }
@@ -832,7 +836,7 @@ class Propal
 	}
       else
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
 	}
     }
 
