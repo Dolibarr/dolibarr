@@ -136,10 +136,16 @@ class Facture
 	      $prod = new Product($this->db, $this->products[$i]);
 	      $prod->fetch($this->products[$i]);
 
-	      $sql = "INSERT INTO llx_facturedet (fk_facture, fk_product, qty, price, tva_taux, description) VALUES ";
-	      $sql .= " ($this->id,".$this->products[$i].",".$this->products_qty[$i].",$prod->price,$prod->tva_tx,'".addslashes($prod->libelle)."');";
-	      
-	      if (! $this->db->query($sql) )
+	      $result_insert = $this->addline($this->id, 
+					      $prod->libelle,
+					      $prod->price,
+					      $this->products_qty[$i], 
+					      $prod->tva_tx, 
+					      $this->products[$i], 
+					      $this->products_remise_percent[$i]);
+
+
+	      if ( $result_insert < 0)
 		{
 		  print $sql . '<br>' . $this->db->error() .'<br>';
 		}
@@ -402,7 +408,7 @@ class Facture
    * Ajoute un produit dans la facture
    *
    */
-  Function add_product($idproduct, $qty)
+  Function add_product($idproduct, $qty, $remise_percent)
     {
       if ($idproduct > 0)
 	{
@@ -413,6 +419,7 @@ class Facture
 	      $qty = 1 ;
 	    }
 	  $this->products_qty[$i] = $qty;
+	  $this->products_remise_percent[$i] = $remise_percent;
 	}
     }
   /**

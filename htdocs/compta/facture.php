@@ -63,10 +63,10 @@ if ($HTTP_POST_VARS["action"] == 'add')
   
   if (!$HTTP_POST_VARS["propalid"]) 
     {      
-      $facture->add_product($HTTP_POST_VARS["idprod1"],$HTTP_POST_VARS["qty1"]);
-      $facture->add_product($HTTP_POST_VARS["idprod2"],$HTTP_POST_VARS["qty2"]);
-      $facture->add_product($HTTP_POST_VARS["idprod3"],$HTTP_POST_VARS["qty3"]);
-      $facture->add_product($HTTP_POST_VARS["idprod4"],$HTTP_POST_VARS["qty4"]);
+      $facture->add_product($HTTP_POST_VARS["idprod1"],$HTTP_POST_VARS["qty1"],$HTTP_POST_VARS["remise_percent1"]);
+      $facture->add_product($HTTP_POST_VARS["idprod2"],$HTTP_POST_VARS["qty2"],$HTTP_POST_VARS["remise_percent2"]);
+      $facture->add_product($HTTP_POST_VARS["idprod3"],$HTTP_POST_VARS["qty3"],$HTTP_POST_VARS["remise_percent3"]);
+      $facture->add_product($HTTP_POST_VARS["idprod4"],$HTTP_POST_VARS["qty4"],$HTTP_POST_VARS["remise_percent4"]);
       
       $facid = $facture->create($user);
     }
@@ -428,11 +428,12 @@ if ($action == 'create')
 		}
 	      	      
 	      print '<table border="0" cellspacing="0">';
-	      
+	      print '<tr><td>Produit</td><td>Quan.</td><td>Remise</td></tr>';
 	      for ($i = 1 ; $i < 5 ; $i++)
 		{
 		  print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
-		  print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td></tr>';
+		  print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
+		  print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0"> %</td></tr>';
 		}
 	      	      
 	      print '</table>';
