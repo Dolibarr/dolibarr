@@ -36,6 +36,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/actives.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.week.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/resiliation.week.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/rejet.week.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/clients/clients.week.class.php");
 
 $error = 0;
@@ -171,6 +172,16 @@ if ($db->query($sql))
 $file = $img_root . "lignes/resiliations.hebdomadaire.png";
 
 $graph = new GraphLignesResiliationWeek($db, $file);
+$graph->width = 400;
+$graph->GraphMakeGraph();
+/*****
+ *
+ *
+ *
+ */
+$file = $img_root . "lignes/rejets.hebdomadaire.png";
+
+$graph = new GraphLignesRejetWeek($db, $file);
 $graph->width = 400;
 $graph->GraphMakeGraph();
 ?>
