@@ -35,7 +35,7 @@ $year = strftime("%Y", time());
 $data = $stats->getNbByMonthWithPrevYear($year);
 $filev = "/document/images/nbpropale2year-$year.png";
 
-$px = new Graph($data);
+$px = new BarGraph($data);
 $px->SetMaxValue($px->GetMaxValue());
 $px->SetLegend(array($year - 1, $year));
 $px->SetWidth(450);

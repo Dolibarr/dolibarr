@@ -46,7 +46,7 @@ $data = $stats->getNbByMonth($year);
 
 $filev = "/document/images/propale$year.png";
 
-$px = new Graph($data);
+$px = new BarGraph($data);
 $px->SetMaxValue($px->GetMaxValue());
 $px->SetWidth(500);
 $px->SetHeight(280);
@@ -66,7 +66,7 @@ for ($i = 1 ; $i < 13 ; $i++)
 
 $file_amount = "/document/images/propalamount$year.png";
 
-$px = new Graph($data);
+$px = new BarGraph($data);
 $px->SetYLabel("Montant");
 $px->SetMaxValue($px->GetAmountMaxValue());
 $px->SetWidth(500);
@@ -83,7 +83,7 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
 $file_avg = "/document/images/propalaverage$year.png";
-$px = new Graph($data);
+$px = new BarGraph($data);
 $px->SetYLabel("Montant moyen");
 $px->SetMaxValue($px->GetAmountMaxValue());
 $px->SetWidth(500);
