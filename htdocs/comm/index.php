@@ -230,15 +230,15 @@ if ( $db->query($sql) )
   $i = 0;
   if ($num > 0 )
     {
-      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table border="0" cellspacing="0" cellpadding="4" width="100%">';
       print '<tr class="liste_titre"><td colspan="4">Propositions commerciales ouvertes</td></tr>';
       
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
-	  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td>";
-	  print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></TD>\n";      
+	  print "<tr $bc[$var]><td width=\"12%\"><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td>";
+	  print "<td width=\"30%\"><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
 	  print "<td align=\"right\">";
 	  print strftime("%d %B %Y",$obj->dp)."</td>\n";	  
 	  print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
@@ -279,8 +279,8 @@ if ( $db->query($sql) )
 	  
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-	  print "<td><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      
+	  print '<td width="12%"><a href="propal.php?propalid='.$objp->propalid.'">'.$objp->ref.'</a></td>';
+	  print "<td width=\"30%\"><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      
 	  
 	  $now = time();
 	  $lim = 3600 * 24 * 15 ;
