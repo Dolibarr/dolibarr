@@ -134,7 +134,6 @@ if (defined("MAIN_NOT_INSTALLED"))
   Header("Location: install.php");
 }
 
-
 /*
  * Inclusion de librairies dépendantes de paramètres de conf
  */
@@ -320,7 +319,7 @@ function top_menu($head, $title="")
   print "\n";
   if (strlen($title) > 0)
     {
-      print '<title>'.$title.'</title>';
+      print '<title>Dolibarr - '.$title.'</title>';
     }
   else
     {
@@ -338,13 +337,28 @@ function top_menu($head, $title="")
 
   print "</HEAD>\n";
   print '<BODY TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">';
+
+  /*
+   * Mise à jour entre 2 versions
+   *
+   */
+  
+  if (defined("MAIN_NEED_UPDATE"))
+    {
+      print '<table class="topbarre" width="100%">';
+      print "<tr><td>Votre système nécessite d'être mis à jour. ";
+      print "Pour cela ";
+      print 'cliquez sur <A href="'.DOL_URL_ROOT.'/admin/system/update.php">Mise à jour</A> !!</td></tr>';
+      print "</table>";
+    }
+
   
   /*
    * Barre superieure
    *
    */
 
-  print '<TABLE class="topbarre" width="100%">';
+  print '<table class="topbarre" width="100%">';
 
   print "<tr>";
   print '<td width="15%" class="menu" align="center"><A class="menu" href="'.DOL_URL_ROOT.'/">Accueil</A></TD>';
