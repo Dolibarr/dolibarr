@@ -36,19 +36,27 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
-print_titre($langs->trans("Demandes de prélèvement à traiter"));
+/*
+ *
+ */
 
-print '<br>';
+$page = $_GET["page"];
+$sortorder = $_GET["sortorder"];
+$sortfield = $_GET["sortfield"];
+
+if ($page == -1) $page = 0 ;
+
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+if ($sortorder == "") $sortorder="DESC";
+if ($sortfield == "") $sortfield="f.facnumber";
 
 /*
  * Demandes en attente
  *
  */
-
-
-if ($sortorder == "") $sortorder="DESC";
-
-if ($sortfield == "") $sortfield="f.facnumber";
 
 $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
@@ -75,6 +83,9 @@ if ( $db->query($sql) )
   
   if ($num)
     {
+      print_barre_liste("Demandes de prélèvement", $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+
+
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
       print '<td>Facture</td><td>Société</td></tr>';
