@@ -24,6 +24,206 @@
 //  return $texte;
 //}
 
+
+
+function transcoS2L($zonein,$devise)
+{ 
+  // Open source offert par <A HREF="mailto:alainfloch@free.fr?subject=chif2let">alainfloch@free.fr</A> 28/10/2001, sans garantie.
+  // début de la fonction de transcodification de somme en toutes lettres
+
+  /*  $zonein = "123,56";  
+   *  $devise = "E"; // préciser F si francs , sinon ce sera de l'euro
+   *  $r = transcoS2L($zonein,$devise); // appeler la fonction
+   *  echo "résultat   vaut $r<br>";
+   *  $zonelettresM =  strtoupper($r); // si vous voulez la même zone mais tout en majuscules
+   *  echo "résultat en Majuscules  vaut $zonelettresM<br>";
+   *  $zonein = "1,01";
+   *  $r = transcoS2L($zonein,$devise);
+   *  echo "résultat   vaut $r<br>";
+   */
+
+
+  if ($devise == "F")
+	{
+	  $unite_singulier = " franc ";
+	  $unite_pluriel = " francs ";
+	  $cent_singulier = " centime";
+	}
+  else
+    {
+      $unite_singulier = " euro ";
+      $unite_pluriel = " euros ";
+      $cent_singulier = " centime";
+    }
+
+  $arr1_99 = array("zéro","un","deux","trois",
+		   "quatre","cinq","six","sept",
+		   "huit","neuf","dix","onze","douze",
+		   "treize","quatorze","quinze","seize",
+		   "dix-sept","dix-huit","dix-neuf","vingt ");
+
+  $arr1_99[30] = "trente ";
+  $arr1_99[40] = "quarante ";
+  $arr1_99[50] = "cinquante ";
+  $arr1_99[60] = "soixante ";
+  $arr1_99[70] = "soixante-dix ";
+  $arr1_99[71] = "soixante et onze";
+  $arr1_99[80] = "quatre-vingts ";
+  $i = 22;
+  while ($i < 63) {// initialise la  table
+    $arr1_99[$i - 1] = $arr1_99[$i - 2]." et un";
+    $j = 0;
+    while ($j < 8) {
+      $k = $i + $j;
+      $arr1_99[$k] = $arr1_99[$i - 2].$arr1_99[$j + 2];
+      $j++;
+    }
+    $i = $i + 10;
+  } // fin initialise la table
+
+  $i = 12;
+  while ($i < 20) {// initialise la  table (suite)
+    $j = 60 + $i;
+    $arr1_99[$j] = "soixante-".$arr1_99[$i];
+    $i++;
+  } // fin initialise la  table (suite)
+
+  $i = 1;
+  while ($i < 20) {// initialise la  table (fin)
+    $j = 80 + $i;
+    $arr1_99[$j] = "quatre-vingt-".$arr1_99[$i];
+    $i++;
+  } // fin initialise la  table (fin)
+  echo "Pour une valeur en entrée = $zonein<br>"; //pour ceux qui ne croient que ce qu'ils voient !
+  // quelques petits controles s'imposent !! 
+  $valid = "[a-zA-Z\&\é\"\'\(\-\è\_\ç\à\)\=\;\:\!\*\$\^\<\>]";
+  if (ereg($valid,$zonein))
+    {
+      $r = "<b>la chaîne ".$zonein." n'est pas valide</b>";
+      return($r);
+    }
+  $zone = explode(" ",$zonein); // supprimer les blancs séparateurs
+  $zonein = implode("",$zone); // reconcatène la zone input
+  $zone = explode(".",$zonein); // supprimer les points séparateurs
+  $zonein = implode("",$zone); // reconcatène la zone input, ça c'est fort ! merci PHP
+  $virg = strpos($zonein,",",1); // à la poursuite de la virgule
+  $i = strlen($zonein); // et de la longueur de la zone input
+  if ($virg == 0) { // ya pas de virgule
+    if ($i > 7)
+      {
+	$r = "<b>la chaîne ".$zonein." est trop longue (maxi = 9 millions)</b>";
+	return($r);
+      }
+    $deb = 7 - $i;
+    $zoneanaly = substr($zonechiffres,0,$deb).$zonein.",00";
+  }
+  else
+    { //ya une virgule
+      $ti = explode(",",$zonein); // mettre de côté ce qu'il y a devant la virgule
+      $i = strlen($ti[0]); // en controler la longueur
+      $zonechiffres = "0000000,00";
+      if ($i > 7)
+	{
+	  $r = "<b>la chaîne ".$zonein." est trop longue (maxi = 9 millions,00)</b>";
+	  return($r);
+	}
+      $deb = 7 - $i;
+      $zoneanaly = substr($zonechiffres,0,$deb).$zonein;
+    }
+  $M= substr($zoneanaly,0,1);
+  if ($M != 0)
+    { // qui veut gagner des millions
+      $r =   $arr1_99[$M]." million";
+      if ($M ==1) $r =  $r." ";
+      else $r = $r."s ";
+      if (substr($zoneanaly,1,6)==0)
+	{
+	  if ($devise == 'F') $r = $r." de ";
+	  else $r = $r."d'";
+	}
+    }
+  $CM= substr($zoneanaly,1,1);
+  if ($CM == 1)
+    { // qui veut gagner des centaines de mille
+      $r = $r." cent ";
+    }
+ else
+   { // ya des centaines de mille
+	if ($CM > 1)
+	  {
+	    $r = $r. $arr1_99[$CM]." cent ";
+		}
+   } // fin du else ya des centaines de mille
+  $MM= substr($zoneanaly,2,2);
+  if (substr($zoneanaly,2,1)==0){ $MM = substr($zoneanaly,3,1);} // enlever le zéro des milliers cause indexation
+  if ($MM ==0 && $CM > 0)
+    {
+      $r = $r."mille ";
+    }
+  if ($MM != 0)
+    {
+      if ($MM == 80)
+	{
+	  $r = $r."quatre-vingt mille ";
+	}
+      else
+	{
+	  if ($MM > 1 )
+	    {
+	      $r = $r.$arr1_99[$MM]." mille ";
+	    }
+	  else
+	    {
+	      if ($CM == 0)	$r = $r." mille ";
+	      else
+		{
+		  $r = $r.$arr1_99[$MM]." mille ";
+		}
+	    }
+	}
+    }
+  $C2= substr($zoneanaly,5,2);
+  if (substr($zoneanaly,5,1)==0){ $C2 = substr($zoneanaly,6,1);} // enlever le zéro des centaines cause indexation
+  $C1= substr($zoneanaly,4,1);
+  if ($C2 ==0 && $C1 > 1)
+    {
+      $r = $r.$arr1_99[$C1]." cents ";
+    }
+  else
+    {
+      if ($C1 == 1) $r = $r." cent ";
+      else
+	{
+	  if ($C1 > 1) $r = $r.$arr1_99[$C1]." cent ";
+	}
+    }
+  if ($C2 != 0) 
+    {
+      $r = $r.$arr1_99[$C2];
+    }
+  if ($virg !=0)
+    {
+      if ($ti[0] > 1) $r = $r. $unite_pluriel; else $r = "un ".$unite_singulier;
+    }
+  else
+    {
+      if ($zonein > 1) $r = $r.$unite_pluriel; else $r = "un ".$unite_singulier;
+    }
+  $UN= substr($zoneanaly,8,2);
+  if ($UN != "00")
+    {
+      $cts = $UN;
+      if (substr($UN,0,1)==0){ $cts = substr($UN,1,1);} // enlever le zéro des centimes cause indexation
+      $r = $r." et ". $arr1_99[$cts].$cent_singulier;
+      if ($UN > 1) $r =$r."s"; // accorde au pluriel
+    }
+  $r1 = ltrim($r); // enleve quelques blancs possibles en début de zone
+  $r = ucfirst($r1); // met le 1er caractère en Majuscule, c'est + zoli
+  return($r); // retourne le résultat
+} // fin fonction transcoS2L
+
+
+
 function print_liste_field_titre($name, $file, $field, $begin="") {
   global $conf;
 
