@@ -46,23 +46,30 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
+
+
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
 if ($_POST["action"] == 'update' && $user->rights->facture->creer)
 {
+
+
   $facture = new Facture($db);
   $facture->fetch($_GET["facid"]);
   $facture->update_note($_POST["note"]);
-
 }
 
-llxHeader();
-$html = new Form($db);
 /******************************************************************************/
 /*                   Fin des  Actions                                         */
 /******************************************************************************/
+
+
+llxHeader();
+
+$html = new Form($db);
+
 
 if ($_GET["facid"])
 {
@@ -114,7 +121,7 @@ if ($_GET["facid"])
       print '<a href="'.$url.'">'.$soc->nom.'</a></td>';
       print '<td>'.$langs->trans("Status").'</td><td align="center"><b>'.$facture->statut_libelle.'</b></td></tr>';
 
-      print '<tr><td>Date</td><td>'.strftime("%A %d %B %Y",$facture->date);
+      print '<tr><td>'.$langs->trans("Date").'</td><td>'.strftime("%A %d %B %Y",$facture->date);
       if ($facture->fin_validite)
 	{
 	  print " (".strftime("%d %B %Y",$facture->fin_validite).")";
@@ -128,7 +135,7 @@ if ($_GET["facid"])
       
       print '<tr><td valign="top" colspan="4">'.$langs->trans("Note").' :</td></tr>';
 
-      print '<tr><td valign="top" colspan="4">'.nl2br($facture->note)."</td></tr>";
+      print '<tr><td valign="top" colspan="4">'.($facture->note?nl2br($facture->note):"&nbsp;")."</td></tr>";
       
       if ($_GET["action"] == 'edit')
 	{
