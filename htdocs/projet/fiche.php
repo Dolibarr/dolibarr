@@ -129,7 +129,7 @@ if ($action == 'create')
 
       if (sizeof($propales)>0 && is_array($propales))
 	{
-	  print_titre('Listes des propales associées au projet');
+	  print_titre('Listes des propositions commerciales associées au projet');
 	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 	  
 	  print '<TR class="liste_titre">';

@@ -40,7 +40,7 @@ function llxHeader($head = "", $urlp = "") {
 
   if ($user->rights->propale->lire)
     {
-      $menu->add(DOL_URL_ROOT."/comm/propal.php", "Propales");
+      $menu->add(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
       $menu->add_submenu("propal.php?viewstatut=0", "Brouillons");
       $menu->add_submenu("propal.php?viewstatut=1", "Ouvertes");
     }

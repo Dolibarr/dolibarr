@@ -45,7 +45,7 @@ function llxHeader($head = "", $title="") {
 
   if ($user->comm > 0 && $conf->commercial && MAIN_MODULE_PROPALE) 
     {
-      $menu->add(DOL_URL_ROOT."/compta/propal.php","Propales");
+      $menu->add(DOL_URL_ROOT."/compta/propal.php","Prop. commerciales");
     }
 
   $menu->add(DOL_URL_ROOT."/contrat/","Contrats");

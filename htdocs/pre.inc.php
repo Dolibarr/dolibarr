@@ -52,7 +52,7 @@ function llxHeader($head = "") {
       $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php", "Clients");
 
       if ($user->rights->propale->lire)
-	$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", "Propales");
+	$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
     }
 
   if ($conf->compta->enabled ) 
