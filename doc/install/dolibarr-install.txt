@@ -1,6 +1,6 @@
   Dolibarr Installation
   Rodolphe Quiédeville
-  $Id: dolibarr-install.sgml,v 1.4 2003/08/12 23:12:21
+  $Id: dolibarr-install.sgml,v 1.6 2003/08/30 23:11:01
   rodolphe Exp $
 
   Installation et mise à jour de Dolibarr
@@ -12,6 +12,7 @@
   1. Installation
      1.1 Récupérer les sources
      1.2 Pré-requis
+        1.2.1 Pear
      1.3 Base de données
      1.4 Apache
      1.5 Dolibarr
@@ -45,7 +46,37 @@
 
   ·  Apache
 
+     Pour la gestion de l'authentification, Dolibarr fonctionne soit
+     avec mod-auth-mysql soit avec Pear. Cette dernière est plus facile
+     à installer.
+
+  ·  Pear (package Auth)
+
   ·  libapache-mod-auth-mysql
+
+  [1m1.2.1.  Pear[0m
+
+  Pear est un ensemble de classes et d'outils pour les installer et les
+  mettre à jour. Les classes requises pour Dolibarr sont (par ordre
+  d'installation) :
+
+
+  ·  Archive_Tar
+
+
+  ·  Console_Getopt
+
+  ·  PEAR
+
+  ·  Auth
+
+  ·  DB
+
+  Pour installer un paquet Pear, exécutez en root '$ pear install <nom
+  du paquet>'.
+
+  Pour plus d'informations sur Pear et sa configuration, veuillez vous
+  reporter à son site officiel  <pear.php.net>.
 
   [1m1.3.  Base de données[0m
 
@@ -61,16 +92,22 @@
 
   2- charger la base en exécutant :
 
+
+
                # mysql dolibarr < mysql/mysql.sql
 
 
 
   [1m1.4.  Apache[0m
 
-  Pour configurer Apache : un fichier httpd.conf.dist est fournit avec
+  Pour configurer Apache : des fichier httpd.conf.dist est fournit avec
   les sources, vous pouvez vous en servir pour configurer votre serveur,
   il est prévu pour que vous ayez juste à ajouter une régle Include dans
   votre fichier principal httpd.conf.
+
+  Utilisez le fichier httpd.conf.dist pour l'authentification par Pear
+  (conseillé) et le fichier httpd.conf.dist.modauth pour utiliser mod-
+  auth-mysql.
 
   [1m1.5.  Dolibarr[0m
 
@@ -81,14 +118,14 @@
   Créer un fichier conf/conf.php et donnez les droits d'écriture dans ce
   fichier à l'utilisateur exécutant le serveur web.
 
-  Pour configurer Dolibarr accéder à la page
+  Pour configurer Dolibarr accédez à la page
 
 
        /install.php
 
 
 
-  , pour vous logger utlisez le login admin avec le mot de passe admin.
+  , pour vous logger utlisez le login [1madmin [22mavec le mot de passe [1madmin[22m.
 
   Si les contrôles sont corrects vous n'avez qu'à cliquer sur le lien,
   'Configurer les modules'.
@@ -96,6 +133,10 @@
   Une fois les modules configurés il ne reste plus qu'à définir les
   utilisateurs et leurs permissions respectives. Pour cela cliquer sur
   Accueil -> Utilisateurs
+
+  Il est fortement conseillé de supprimer le fichier install.php une
+  fois l'installation terminée. De même pensez à modifier le mot de
+  passe de l'utilisateur admin.
 
   [1m2.  Mise à jour[0m
 

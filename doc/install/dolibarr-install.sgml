@@ -9,7 +9,6 @@
  <name>Rodolphe Quiédeville</name>
 </author>
 <date>$Id$</date>
-
 <abstract>
 Installation et mise à jour de Dolibarr
 </abstract>
@@ -66,10 +65,10 @@ Installation et mise à jour de Dolibarr
 	</itemize>
 </p>
 <p>
-Pour installer un paquet Pear, exécuter en root '$ pear install &lt;nom du paquet&gt;'.
+Pour installer un paquet Pear, exécutez en root '$ pear install &lt;nom du paquet&gt;'.
 </p>
 	<p>
-	  Pour plus d'informations sur pear et sur sa configuration, veuillez vous reporter à son site officiel <url url="pear.php.net">.
+	  Pour plus d'informations sur Pear et sa configuration, veuillez vous reporter à son site officiel <url url="pear.php.net">.
 	</p>
     </sect2>
 </sect1>
@@ -140,6 +139,10 @@ Utilisez le fichier httpd.conf.dist pour l'authentification par Pear (conseillé)
 Une fois les modules configurés il ne reste plus qu'à définir les
 utilisateurs et leurs permissions respectives. Pour cela cliquer sur
 Accueil -> Utilisateurs
+</p>
+
+<p>
+Il est fortement conseillé de supprimer le fichier install.php une fois l'installation terminée. De même pensez à modifier le mot de passe de l'utilisateur admin.
 </p>
  </sect1>
 </sect>
