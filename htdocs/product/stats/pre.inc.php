@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,19 +20,24 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/product/stats/pre.inc.php
+        \ingroup    product,service
+		\brief      Fichier gestionnaire du menu gauche des statistiques de produits et services
+		\version    $Revision$
+*/
+
 require("../../main.inc.php");
 require(DOL_DOCUMENT_ROOT."/bargraph.class.php");
 
-$types[0] = "produit";
-$types[1] = "service";
 
-
-function llxHeader($head = "", $urlp = "")
+function llxHeader($head = "", $urlp = "", $title="")
 {
   global $user, $conf, $langs;
   $langs->load("products");
   
-  top_menu($head);
+  top_menu($head, $title);
 
   $menu = new Menu();
 
@@ -39,14 +45,21 @@ function llxHeader($head = "", $urlp = "")
     {
 	  $menu->add(DOL_URL_ROOT."/product/index.php?type=0", $langs->trans("Products"));
   	  $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("List"));
+
+      if ($user->societe_id == 0 && $user->rights->produit->creer)
+	{
   	  $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
 	}
+    }
 	
   if ($conf->service->enabled)
     {
       $menu->add(DOL_URL_ROOT."/product/index.php?type=1", $langs->trans("Services"));
       $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=1", $langs->trans("List"));
+      if ($user->societe_id == 0  && $user->rights->produit->creer)
+	{
       $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=1", $langs->trans("NewService"));
+    }
     }
 
   if ($conf->boutique->enabled)
@@ -78,9 +91,10 @@ function llxHeader($head = "", $urlp = "")
 	}
 	
   $menu->add(DOL_URL_ROOT."/product/stats/", $langs->trans("Statistics"));
-  if ($conf->propal->enabled) {
+  if ($conf->propal->enabled)
+    {
     $menu->add_submenu(DOL_URL_ROOT."/product/popuprop.php", $langs->trans("Popularity"));
-  }
+    }
   
   if ($conf->stock->enabled)
     {

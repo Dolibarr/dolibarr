@@ -22,7 +22,7 @@
  */
 
 /*!
-	    \file       htdocs/pre.inc.php
+	    \file       htdocs/product/pre.inc.php
         \ingroup    product,service
 		\brief      Fichier gestionnaire du menu gauche des produits et services
 		\version    $Revision$
@@ -36,10 +36,6 @@ function llxHeader($head = "", $urlp = "", $title="")
   global $user, $conf, $langs;
   $langs->load("products");
 
-  /*
-   *
-   *
-   */
   top_menu($head, $title);
 
   $menu = new Menu();
@@ -85,6 +81,12 @@ function llxHeader($head = "", $urlp = "", $title="")
       $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
     }
       
+  if ($conf->commande->enabled)
+    {
+      $langs->load("orders");
+      $menu->add(DOL_URL_ROOT."/commande/", $langs->trans("Orders"));
+	}
+	
   $menu->add(DOL_URL_ROOT."/product/stats/", $langs->trans("Statistics"));
   if ($conf->propal->enabled)
     {
