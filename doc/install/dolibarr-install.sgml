@@ -27,11 +27,11 @@ Installation et mise à jour de Dolibarr
 <p>
  Récupérer les sources sur <url url="http://www.dolibarr.com/">
 </p>
-
+  
     <p>
       Les sources se présentent sous la forme d'un fichier tar compressé avec gzip.
-    </p>
-</sect1>
+</p>
+</sect1> 
 
   
 <sect1>
@@ -49,13 +49,25 @@ Installation et mise à jour de Dolibarr
       <itemize>
 	<item>Pear (package Auth)</item>
 	<item>libapache-mod-auth-mysql</item>
-      </itemize>
-    </p>
-    <sect2>
-        <heading>Pear</heading>
-        <p>
-	  Pear est un ensemble de classes et des outils pour les installer et les mettre à jour. La classe utilisée dans Dolibarr est Auth.
-	</p>
+	</itemize>
+      </p>
+    
+        <sect2>
+	    <heading>Pear</heading>
+	    <p>
+	  Pear est un ensemble de classes et d'outils pour les installer et les mettre à jour. Les classes requises pour Dolibarr sont (par ordre d'installation) :
+
+      <itemize>
+	<item>Archive_Tar</item>
+	<item>Console_Getopt</item>
+	<item>PEAR</item>
+	<item>Auth</item>
+	<item>DB</item>
+	</itemize>
+</p>
+<p>
+Pour installer un paquet Pear, exécuter en root '$ pear install &lt;nom du paquet&gt;'.
+</p>
 	<p>
 	  Pour plus d'informations sur pear et sur sa configuration, veuillez vous reporter à son site officiel <url url="pear.php.net">.
 	</p>
@@ -91,11 +103,16 @@ Installation et mise à jour de Dolibarr
 <sect1>
 <heading>Apache</heading>
     <p>
-      Pour configurer Apache : un fichier httpd.conf.dist est fournit
+      Pour configurer Apache : des fichier httpd.conf.dist est fournit
       avec les sources, vous pouvez vous en servir pour configurer
       votre serveur, il est prévu pour que vous ayez juste à ajouter
       une régle Include dans votre fichier principal <file>httpd.conf</file>.
     </p>
+
+<p>
+Utilisez le fichier httpd.conf.dist pour l'authentification par Pear (conseillé) et le fichier httpd.conf.dist.modauth pour utiliser mod-auth-mysql.
+</p>
+
 </sect1>
 
 <sect1>
@@ -109,9 +126,9 @@ Installation et mise à jour de Dolibarr
     </p>
 
 <p>
- Pour configurer Dolibarr accéder à la page
+ Pour configurer Dolibarr accédez à la page
  <tscreen><verb>/install.php</verb></tscreen>, pour vous logger utlisez
- le login admin avec le mot de passe admin.
+ le login <bf>admin</bf> avec le mot de passe <bf>admin</bf>.
 </p>
 
 <p>
