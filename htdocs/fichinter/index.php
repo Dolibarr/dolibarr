@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 require("../contact.class.php3");
 
 if ($user->societe_id > 0)
@@ -82,7 +82,7 @@ if ( $db->query($sql) )
       $objp = $db->fetch_object( $i);
       $var=!$var;
       print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php3?id=$objp->fichid\">$objp->ref</a></TD>\n";
+      print "<TD><a href=\"fiche.php?id=$objp->fichid\">$objp->ref</a></TD>\n";
 
       print '<td><a href="index.php?socid='.$objp->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
       print "<a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
@@ -92,7 +92,7 @@ if ( $db->query($sql) )
 
       if ($user->societe_id == 0)
 	{
-	  print '<TD align="center"><a href="fiche.php3?socidp='.$objp->idp.'&action=create">[Fiche Inter]</A></td>';
+	  print '<TD align="center"><a href="fiche.php?socidp='.$objp->idp.'&action=create">[Fiche Inter]</A></td>';
 	}
       else
 	{
