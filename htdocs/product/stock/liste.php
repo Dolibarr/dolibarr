@@ -119,7 +119,7 @@ if ($result)
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Réf","liste.php", "p.ref","&envente=$envente&type=$type");
+  print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&envente=$envente&type=$type");
   print "</td><td>";
   print_liste_field_titre("Libellé","liste.php", "p.label","&envente=$envente&type=$type");
   print "</td><TD align=\"right\">Prix de vente</TD>";

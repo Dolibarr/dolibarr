@@ -280,7 +280,7 @@ else
 	      print '<tr class="liste_titre">';
 	      print '<form action="liste.php" method="post"><td>';
 		  print '<input type="hidden" name="type" value="'.$product->type.'">';
-	      print 'Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go">';
+	      print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go">';
 	      print '</td></form><form action="liste.php" method="post"><td>';
 	      print 'Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
 	      print '</td></form></tr></table>';
@@ -308,7 +308,7 @@ else
 	      print($mesg);
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      print "<tr>";
-	      print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
+	      print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%">'.$product->ref.'</td>';
 	      print '<td width="40%">';
 	      if ($product->envente)
 		{
@@ -455,7 +455,7 @@ else
 		    }
 
 	    }
-	  print '</select></td><td>Référence</td><td><input name="ref_fourn" size="25" value=""></td></tr>';
+	  print '</select></td><td>'.$langs->trans("Ref").'</td><td><input name="ref_fourn" size="25" value=""></td></tr>';
 	  print '<tr><td colspan="4" align="center"><input type="submit" value="Enregistrer">&nbsp;';
 	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
 	  print '</table>';
@@ -477,7 +477,7 @@ else
 	  print '<input type="hidden" name="action" value="update">';
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-	  print "<tr>".'<td width="20%">Référence</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
+	  print "<tr>".'<td width="20%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
 	  print '<td>Libellé</td><td colspan="2"><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
 	  print "<tr>".'<td>Taux TVA</td><td colspan="2">';

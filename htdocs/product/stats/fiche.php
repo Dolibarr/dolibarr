@@ -87,7 +87,7 @@ if ($_GET["id"])
       print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre">';
       print '<form action="liste.php?type='.$product->type.'" method="post"><td>';
-      print 'Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go">';
+      print $langs->trans("Ref").' : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go">';
       print '</td></form><form action="liste.php" method="post"><td>';
       print 'Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
       print '</td></form></tr></table>';

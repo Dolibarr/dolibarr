@@ -130,13 +130,13 @@ if ($result)
       print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id&amp;type=$type", $sortfield, $sortorder,'',$num);
     }
 
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
-  print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Réf","liste.php", "p.ref","&amp;envente=$envente&amp;type=$type&fourn_id=$fourn_id");
+  print "<tr class=\"liste_titre\"><td>";
+  print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente&amp;type=$type&fourn_id=$fourn_id");
   print "</td><td>";
   print_liste_field_titre("Libellé","liste.php", "p.label","&envente=$envente&type=$type&fourn_id=$fourn_id");
-  print "</td><TD align=\"right\">";
+  print "</td><td align=\"right\">";
   print_liste_field_titre("Prix de vente","liste.php", "p.price","&envente=$envente&type=$type&fourn_id=$fourn_id");
   print "</td></tr>\n";
   

@@ -42,7 +42,7 @@ print_barre_liste("Liste des produits par popularité dans les propositions comme
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print "<TR class=\"liste_titre\"><td>";
-print_liste_field_titre("Réf","popurop.php", "p.ref");
+print_liste_field_titre($langs->trans("Ref"),"popurop.php", "p.ref");
 print "</td><td>";
 print_liste_field_titre("Libellé","popurop.php", "p.label");
 print "</td><TD align=\"center\">";

@@ -49,7 +49,7 @@ $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
 
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\"><td>Réf";
+  print "<TR class=\"liste_titre\"><td>".$langs->trans("Ref");
   print '</td><TD align="center">Indice critiques</TD>';
   print '</td><td align="center">Quantité';
   print '</td><td align="center">Status</TD>';

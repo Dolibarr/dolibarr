@@ -67,12 +67,12 @@ if ($id)
 	{
 	  $num = $db->num_rows();
 	  $i = 0;
-	  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-	  print "<TR class=\"liste_titre\"><td>Réf.</td><td>";
+	  print "<p><table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+	  print "<tr class=\"liste_titre\"><td>".$langs->trans("Ref")."</td><td>";
 	  print_liste_field_titre("Titre","index.php", "l.title");
 	  print "</td>";
 	  print '<td colspan="3">&nbsp;</td>';
-	  print "</TR>\n";
+	  print "</tr>\n";
 	  $var=True;
 	  while ($i < $num)
 	    {

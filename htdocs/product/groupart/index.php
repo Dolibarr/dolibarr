@@ -48,9 +48,9 @@ $sql .= $db->plimit( $limit ,$offset);
 if ( $db->query($sql) ) {
   $num = $db->num_rows();
   $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<p><TABLE class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
   print "<TR class=\"liste_titre\"><td>";
-  print_liste_field_titre("Réf","index.php", "p.ref");
+  print_liste_field_titre($langs->trans("Ref"),"index.php", "p.ref");
   print "</td>";
   print "<td></td>";
   print "</TR>\n";

@@ -74,7 +74,7 @@ if ($action == 'create')
       
   print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
   print "<tr>";
-  print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
+  print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Titre</td><td><input name="titre" size="40" value=""></td></tr>';
   print '<tr><td>'.$langs->trans("Price").'</td><TD><input name="price" size="10" value=""></td></tr>';    
   print "<tr><td valign=\"top\">Description</td><td>";
@@ -104,7 +104,7 @@ else
       
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print '<td width="20%">Référence</td><td width="30%">'.$album->ref.'</td>';
+	  print '<td width="20%">'.$langs->trans("Ref").'</td><td width="30%">'.$album->ref.'</td>';
 	  print '<td width="50%" valign="top">Description</td></tr>';
 
 	  print "<tr><td>Statut</td><td>$album->status</td>\n";
@@ -132,7 +132,7 @@ else
 	      
 	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	      print "<tr>";
-	      print '<td width="20%">Référence</td><td><input name="ref" size="20" value="'.$album->ref.'"></td>';
+	      print '<td width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$album->ref.'"></td>';
 	      print "<td valign=\"top\">Description</td></tr>";
 
 	      print '<td>Titre</td><td><input name="titre" size="40" value="'.$album->titre.'"></td>';
