@@ -199,7 +199,7 @@ if ($action == 'create')
 	      
 	      $var=!$var;
 	      print "<TR $bc[$var]>";
-	      print "<TD><a href=\"../fiche.php?id=$commande->id\">$commande->ref</a></TD>\n";	      
+	      print "<TD><a href=\"../commande/fiche.php?id=$commande->id\">$commande->ref</a></TD>\n";	      
 	      print '<td>'.strftime("%d %B %Y",$commande->date).'</td>';	      
 	      print '<TD align="right">'.price($commande->total_ht).'</td></tr>';
 	      
