@@ -778,6 +778,22 @@ class Societe {
     $this->rib();
     return $this->bank_account->verif();
   }
+
+  function check_codeclient()
+  {
+    if (defined('CODECLIENT_ADDON') && strlen(CODECLIENT_ADDON) > 0)
+      {
+
+	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.CODECLIENT_ADDON.'.php';
+
+	$var = CODECLIENT_ADDON;
+
+	$mod = new $var;
+
+	return $mod->verif($this->db, $this->code_client);
+      }
+
+  }
 }
 
 ?>
