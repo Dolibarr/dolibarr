@@ -173,4 +173,4 @@ drop table if exists llx_voyage;
 
 drop table if exists llx_voyage_reduc;
 
-
+drop table if exists llx_facture_tva_sum;
