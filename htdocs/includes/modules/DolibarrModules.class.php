@@ -158,14 +158,14 @@ class DolibarrModules
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
                         $sql .= " (id, libelle, module, type, bydefault, perms, subperms)";
                         $sql .= " VALUES ";
-                        $sql .= "(".$r_id.",'".$r_desc."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."');";
+                        $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."','".$r_subperms."');";
                     }
                     else
                     {
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
                         $sql .= " (id, libelle, module, type, bydefault, perms)";
                         $sql .= " VALUES ";
-                        $sql .= "(".$r_id.",'".$r_desc."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."');";
+                        $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.",'".$r_perms."');";
                     }
                 }
                 else
@@ -173,13 +173,10 @@ class DolibarrModules
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."rights_def ";
                     $sql .= " (id, libelle, module, type, bydefault)";
                     $sql .= " VALUES ";
-                    $sql .= "(".$r_id.",'".$r_desc."','".$r_modul."','".$r_type."',".$r_def.");";
+                    $sql .= "(".$r_id.",'".addslashes($r_desc)."','".$r_modul."','".$r_type."',".$r_def.");";
                 }
 
-                if ( $this->db->query($sql) )
-                {
-                }
-
+                $this->db->query($sql);
             }
         }
 
