@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,19 +23,19 @@
 require ("../main.inc.php");
 require("./project.class.php");
 
-
-function llxHeader($head = "", $urlp = "") {
+function llxHeader($head = "", $title="", $help_url='')
+{
   /*
    *
    *
    */
-  top_menu($head);
+  top_menu($head, $title);
 
   $menu = new Menu();
 
   $menu->add(DOL_URL_ROOT."/projet/", "Projets");
 
-  left_menu($menu->liste);
+  left_menu($menu->liste, $help_url);
 }
 
 ?>
