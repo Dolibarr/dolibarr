@@ -37,6 +37,7 @@ create table llx_facture
   fk_user         integer,   -- createur de la facture
   fk_user_author  integer,   -- createur de la propale
   fk_user_valid   integer,   -- valideur de la propale
+  fk_projet       integer,   -- projet auquel est associé la facture
   note       text,
 
   UNIQUE INDEX (facnumber)
