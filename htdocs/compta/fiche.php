@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/*!	\file htdocs/compta/fiche.php
+		\ingroup    compta
+		\brief      Page de fiche compta
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../contact.class.php");
 require("../lib/webcal.class.php");
