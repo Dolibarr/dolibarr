@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,7 +25,7 @@ if (!$user->admin)
   accessforbidden();
 
 
-if ($HTTP_POST_VARS["action"] == 'nbprod')
+if ($_POST["action"] == 'nbprod')
 {
   dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$value);
 	
@@ -35,19 +35,19 @@ if ($HTTP_POST_VARS["action"] == 'nbprod')
 llxHeader();
 
 
-if ($action == 'set')
+if ($_GET["action"] == 'set')
 {
 
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES ('".$value."')";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES ('".$_GET["value"]."')";
 
   if ($db->query($sql))
     {
 
     }
 }
-if ($action == 'del')
+if ($_GET["action"] == 'del')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_model_pdf WHERE nom='".$value."'";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_model_pdf WHERE nom='".$_GET["value"]."'";
 
   if ($db->query($sql))
     {
