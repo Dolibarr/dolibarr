@@ -562,8 +562,8 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
       
       if (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
 	{
-	  print '<form action="'.DOL_URL_ROOT.'/comm/contact.php">';
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/contact.php">Contacts</A><br>';
+	  print '<form action="'.DOL_URL_ROOT.'/contact/index.php">';
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/contact/index.php">Contacts</A><br>';
 	  print '<input type="hidden" name="mode" value="search">';
 	  print '<input type="hidden" name="mode-search" value="contact">';
 	  print '<input type="text" class="flat" name="contactname" size="10">&nbsp;';
