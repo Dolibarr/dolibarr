@@ -33,11 +33,11 @@ function llxHeader($head = "", $urlp = "")
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/product/index.php3", "Produits");
+  $menu->add(DOL_URL_ROOT."/product/index.php3?type=0", "Produits");
 
   $menu->add_submenu("fiche.php3?&action=create","Nouveau produit");
 
-  $menu->add_submenu("popuprop.php", "Popularité");
+  $menu->add(DOL_URL_ROOT."/product/index.php3?type=1", "Services");
 
   if (defined("MAIN_MODULE_BOUTIQUE") && MAIN_MODULE_BOUTIQUE)
     {
@@ -60,6 +60,7 @@ function llxHeader($head = "", $urlp = "")
   //  $menu->add(DOL_URL_ROOT."/service/index.php3", "Services");
 
   $menu->add("stats/", "Statistiques");
+  $menu->add_submenu("popuprop.php", "Popularité");
 
   left_menu($menu->liste);
   /*
