@@ -287,6 +287,39 @@ class Societe {
    *
    *
    */
+  Function contact_array()
+    {
+      $contacts = array();
+
+      $sql = "SELECT idp, name, firstname FROM llx_socpeople WHERE fk_soc = $this->id";
+      
+      if ($this->db->query($sql) )
+	{
+	  $nump = $this->db->num_rows();
+
+	  if ($nump)
+	    {
+	      $i = 0;
+	      while ($i < $nump)
+		{
+		  $obj = $this->db->fetch_object($i);
+	      
+		  $contacts[$obj->idp] = "$obj->firstname $obj->name";
+		  $i++;
+		}
+	    }
+	  return $contacts;
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+      
+    }
+  /*
+   *
+   *
+   */
   Function contact_get_email($rowid)
     {
 
