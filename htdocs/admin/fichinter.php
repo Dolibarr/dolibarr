@@ -70,13 +70,13 @@ print "<br>";
 
 print_titre("Modèles de fiche d'intervention pdf");
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print '<TR class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>Info</td>';
-print '<td align="center">Activé</td>';
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Desc").'</td>';
+print '<td align="center">'.$langs->trans("Activated").'</td>';
 print '<td>&nbsp;</td>';
-print "</TR>\n";
+print "</tr>\n";
 
 clearstatcache();
 
@@ -110,7 +110,7 @@ while (($file = readdir($handle))!==false)
 
       print "</td><td>\n";
 
-      print '<a href="fichinter.php?action=setpdf&value='.$name.'">activer</a>';
+      print '<a href="fichinter.php?action=setpdf&value='.$name.'">'.$langs->trans("Activate").'</a>';
 
       print '</td></tr>';
     }
