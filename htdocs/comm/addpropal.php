@@ -69,7 +69,7 @@ if ($action == 'create')
   print "<form action=\"propal.php?socidp=$socidp\" method=\"post\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   
-  print '<table class="border" border="1" cellspacing="0" cellpadding="3" width="100%">';
+  print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
   
   print '<tr><td>Société</td><td><a href="fiche.php?socid='.$socidp.'">'.$objsoc->nom.'</a></td>';
   
@@ -81,7 +81,7 @@ if ($action == 'create')
   print "</td>";
   
   print '<td rowspan="4" colspan="2" valign="top">';
-  print '<textarea name="note" wrap="soft" cols="30" rows="10"></textarea>';
+  print '<textarea name="note" wrap="soft" cols="40" rows="6"></textarea>';
   
   print '<tr><td>Auteur</td><td>'.$user->fullname.'</td></tr>';
   print "<tr><td>Numéro</td><td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
@@ -192,7 +192,7 @@ if ($action == 'create')
   
   print_titre("Services/Produits");
     
-  print '<table border="1" cellspacing="0">';
+  print '<table class="border" cellspacing="0" cellpadding="3">';
   print '<tr><td>Produit</td><td>Quan.</td><td>Remise</td></tr>';
   for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
     {
