@@ -56,7 +56,7 @@ class mod_facture_saturne extends ModeleNumRefFactures
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
      */
-    function getNumRef($objsoc=0, $prefixe_additionnel='')
+    function getNumRef($objsoc=0, $prefixe_additionnel)
     { 
        
       $y = strftime("%y",time());
