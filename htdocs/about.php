@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -71,7 +71,7 @@ Le code source de Dolibarr est consultable par l'<a target="blank" href="http://
 Vente / Support
 <ul>
 <li>
-Liste des <a target="blank" href="http://www.dolibarr.com/revendeurs.fr.html">revendeurs agréés</a>
+Contactez Rodolphe Quiédeville sur <a target="blank" href="http://www.dolibarr.com/">www.dolibarr.com</a>
 </li>
 </ul>
 
