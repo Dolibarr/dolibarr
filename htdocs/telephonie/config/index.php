@@ -118,6 +118,7 @@ else
 }
 print '</td><td>TELEPHONIE_MODULE_GROUPES</td></tr>';
 
+/* ***************************************** */
 
 print '<tr class="pair"><td>Module NUMDATA</td>';
 print '<td align="center">';
@@ -131,6 +132,15 @@ else
 }
 print '</td><td>TELEPHONIE_MODULE_NUMDATA</td></tr>';
 
+/* ***************************************** */
+
+print '<tr class="pair"><td>Id Groupes des commerciaux</td>';
+print '<td align="center">';
+
+print TELEPHONIE_GROUPE_COMMERCIAUX_ID.'</td><td>-';
+print '</td><td>TELEPHONIE_GROUPE_COMMERCIAUX_ID</td></tr>';
+
+/* ***************************************** */
 
 print '</table></form>';
 
