@@ -206,6 +206,9 @@ else
             $h++;
         }
     
+	$head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
+	$head[$h][1] = $langs->trans("Addons");
+	$h++;
     
         dolibarr_fiche_head($head, $hselected, $fuser->nom." ".$fuser->prenom);
 
