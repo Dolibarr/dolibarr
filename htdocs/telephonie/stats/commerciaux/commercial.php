@@ -38,19 +38,18 @@ $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/index.php';
 $head[$h][1] = "Global";
 $h++;
 
-$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/mensuel.php';
-$head[$h][1] = "Mensuel";
-$h++;
-
 if ($_GET["commid"])
 {
   $comm = new User($db, $_GET["commid"]);
   $comm->fetch();
 
-
   $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/commercial.php?commid='.$comm->id;
   $head[$h][1] = $comm->fullname;
   $hselected = $h;
+  $h++;
+
+  $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/commerciaux/commercialca.php?commid='.$comm->id;
+  $head[$h][1] = "CA";
   $h++;
 
   dolibarr_fiche_head($head, $hselected, "Commerciaux");
