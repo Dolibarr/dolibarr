@@ -177,6 +177,18 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes && $user->r
   Header("Location: index.php");
 }
 
+if ($_POST["action"] == 'livraison' && $user->rights->fournisseur->commande->receptionner)
+{
+  $commande = new CommandeFournisseur($db);
+  $commande->fetch($_GET["id"]);
+
+  $date_liv = mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+
+  $result = $commande->Livraison($user, $date_liv, $_POST["type"]);
+  Header("Location: fiche.php?id=".$_GET["id"]);
+}
+
+
 /*
  * Créé une commande
  */
@@ -282,7 +294,7 @@ if ($_GET["id"] > 0)
        */
       if ($_GET["action"] == 'commande')
 	{
-	  $date_com = mktime(12,12,12,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+	  $date_com = mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 	  $html->form_confirm("fiche.php?id=".$commande->id."&amp;datecommande=".$date_com."&amp;methode=".$_POST["methodecommande"],
 			      "Envoi de la commande","Etes-vous sûr de vouloir confirmer cette commande en date du ".strftime("%d/%m/%Y",$date_com)." ?","confirm_commande");
 	  print '<br />';
@@ -674,6 +686,38 @@ if ($_GET["id"] > 0)
 	  print '<tr><td align="center" colspan="2"><input type="submit" name="Activer"></td></tr>';
 	  print '</table>';
 	  print '</form>';	  
+	}
+      /*
+       *
+       *
+       */
+      if ( $user->rights->fournisseur->commande->receptionner && ($commande->statut == 3 ||$commande->statut == 4 ))
+	{
+	  /**
+	   * Réceptionner
+	   */
+	  $form = new Form($db);
+	  
+	  print '<form action="fiche.php?id='.$commande->id.'" method="post">';
+	  print '<input type="hidden" name="action" value="livraison">';
+	  print '<table class="noborder" cellpadding="4" cellspacing="0">';
+	  print '<tr class="liste_titre"><td colspan="2">Réceptionner</td></tr>';
+	  print '<tr><td>Date de livraison</td><td>';
+	  print $form->select_date();
+	  print "</td></tr>\n";
+
+	  print "<tr><td>Livraison</td><td>\n";
+	  $liv = array();
+	  $liv['par'] = "Partielle";
+	  $liv['tot'] = "Totale";
+
+	  print $form->select_array("type",$liv);
+
+	  print '</td></tr>';
+	  print '<tr><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
+	  print '<tr><td align="center" colspan="2"><input type="submit" name="Activer"></td></tr>';
+	  print "</table>\n";
+	  print "</form>\n";	  
 	}
     }
   else
