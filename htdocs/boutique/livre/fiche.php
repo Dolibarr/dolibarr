@@ -201,6 +201,8 @@ else
 
 	      foreach ($auteurs as $key => $value)
 		{
+	      print '<a href="fiche.php?id='.$id.'&action=delauteur&auteurid='.$key.'">';
+	      print '<img src="/theme/'.$conf->theme.'/img/editdelete.png" height="16" width="16" alt="Supprimer" border="0"></a>&nbsp;';
 		  print '<a href="../auteur/fiche.php?id='.$key.'">'.$value."<br>\n";
 		}
 	      print "</td></tr>";
@@ -216,7 +218,7 @@ else
 	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	      print "<input type=\"hidden\" name=\"action\" value=\"addga\">";
 
-	      print "<tr><td>Auteur(s)</td><td>";
+	      print '<tr><td>Auteur(s)</td><td colspan="2">';
 	      $htmls->select_array("coauteurid",  $auteur->liste_array());
 	      print '&nbsp;<input type="submit" value="Ajouter"></td></tr>';
 	      print "</form>";
@@ -225,7 +227,7 @@ else
 	      print '<input type="hidden" name="action" value="linkcat">';
 
 	      $listecat = new Categorie($db);
-	      print '<td valign="top">Catégories</td><td>';
+	      print '<td valign="top">Catégories</td><td colspan="2">';
 	      $htmls->select_array("catid", $listecat->liste_array());
 	      print '&nbsp;<input type="submit" value="Ajouter"></td></tr>';
 	      print "</form>";
@@ -274,8 +276,6 @@ else
 
 	  foreach ($auteurs as $key => $value)
 	    {	      
-	      print '<a href="fiche.php?id='.$id.'&action=delauteur&auteurid='.$key.'">';
-	      print '<img src="/theme/'.$conf->theme.'/img/editdelete.png" height="16" width="16" alt="Supprimer" border="0"></a>&nbsp;';
 	      print '<a href="../auteur/fiche.php?id='.$key.'">';
 	      print $value."</a><br>\n";
 	    }
@@ -283,9 +283,6 @@ else
 	  print '<tr><td>Prix</td><TD>'.price($livre->price).'</td></tr>';    
 	  
 	  print "</table>";
-
-
-
 	}
       else
 	{
