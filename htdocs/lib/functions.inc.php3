@@ -237,9 +237,9 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="")
 
   print $name."&nbsp;";
   print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
-  print '<img src="/theme/'.$conf->theme.'/img/1downarrow.png" border="0"></a>';
+  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0"></a>';
   print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
-  print '<img src="/theme/'.$conf->theme.'/img/1uparrow.png" border="0"></a>';
+  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0"></a>';
 }
 
 function print_liste_field_titre_new($name, $file, $field, $begin="", $options="", $td="", $sortfield="")
@@ -260,9 +260,9 @@ function print_liste_field_titre_new($name, $file, $field, $begin="", $options="
     }
   print $name."&nbsp;";
   print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
-  print '<img src="/theme/'.$conf->theme.'/img/1downarrow.png" border="0"></a>';
+  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0"></a>';
   print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
-  print '<img src="/theme/'.$conf->theme.'/img/1uparrow.png" border="0"></a>';
+  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0"></a>';
   print "</td>";
 }
 
@@ -350,9 +350,9 @@ function print_fleche_navigation($page,$file,$options='')
   global $conf;
   if ($page > 0) 
     {
-      print '<a href="'.$file.'?page='.($page-1).$options.'"><img alt="Page précédente" src="/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
+      print '<a href="'.$file.'?page='.($page-1).$options.'"><img alt="Page précédente" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
     }
-  print '<a href="'.$file.'?page='.($page+1).$options.'"><img alt="Page suivante" src="/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
+  print '<a href="'.$file.'?page='.($page+1).$options.'"><img alt="Page suivante" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
 }
 /*
  *
