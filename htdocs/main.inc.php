@@ -346,7 +346,7 @@ function top_menu($head, $title="")
   //  print '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">';
   //  print '<BASE href="'.DOL_URL_ROOT.'/">';
 
-  print '<link rel="top" title="Accueil" href="'.DOL_URL_ROOT.'">';
+  print '<link rel="top" title="Accueil" href="'.DOL_URL_ROOT.'/">';
   //  print '<link rel="help" title="HowToUseWiki" href="HowToUseWiki">';
 
   print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
