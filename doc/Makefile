@@ -23,23 +23,25 @@ DEBIANDOC2PDF= debiandoc2pdf
 DEBIANDOC2HTML= debiandoc2html
 
 OPTIONS=-v -lfr_FR.ISO8859-1 -pa4
+HOPTIONS=-lfr_FR.ISO8859-1
 
 RSYNC=/usr/bin/rsync
 ROPT=-av
 RSSH=-e ssh
 
+FRPAGES = $(shell find * -regex '.*\.sgml' -print )
 
 all: $(DOC).ps $(DOC).pdf $(DOC).html
 
 
-%.ps:	%.sgml
+%.ps:	%.sgml $(FRPAGES)
 	$(DEBIANDOC2PS) $(OPTIONS) $<
 
 %.pdf:	%.sgml
 	$(DEBIANDOC2PDF) $(OPTIONS) $<
 
-%.html: %.sgml
-	$(DEBIANDOC2HTML) $(OPTIONS) $<
+%.html: %.sgml $(FRPAGES)
+	$(DEBIANDOC2HTML) $(HOPTIONS) $<
 
 put:
 	$(RSYNC) $(ROPT) $(RSSH) manual.html/* deb:/home/www/rodolphe.quiedeville.org/htdocs/projets/dolibarr/doc
