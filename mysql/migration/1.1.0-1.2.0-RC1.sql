@@ -485,3 +485,6 @@ create table llx_cash
   fk_type         varchar(4),
   note            text
 )type=innodb;
+
+
+update llx_bank set datev=dateo where datev is null;
