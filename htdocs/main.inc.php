@@ -564,7 +564,7 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
 
   if (strlen($form_search) > 0)
     {
-      print '<div>';
+      print '<div class="leftmenu">';
       print $form_search;
       print '</div>';
     }
