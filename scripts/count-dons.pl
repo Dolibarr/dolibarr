@@ -21,7 +21,7 @@
 #
 use DBI;
 
-my $dbh = DBI->connect() || die $DBI::errstr ;
+my $dbh = DBI->connect($ARGV[1]) || die $DBI::errstr ;
 
 my $sql = 'SELECT sum(amount) FROM llx_don WHERE fk_statut = ' .$ARGV[0];
 
