@@ -184,9 +184,9 @@ if ($_GET["action"] == 'create')
       print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
       print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
 
-          print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
-          print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
-          print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td><td colspan="2">&nbsp;</td></tr>';
+          print '<tr><td>'.$langs->transcountry('ProfIdSiren',$soc->pays_code).'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
+          print '<td>'.$langs->transcountry('ProfIdSiret',$soc->pays_code).'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
+          print '<tr><td>'.$langs->transcountry('ProfIdApe',$soc->pays_code).'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td><td colspan="2">&nbsp;</td></tr>';
 
           print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
   
