@@ -54,6 +54,7 @@ print "</tr>\n";
 
 $sql = "SELECT distinct l.fk_client_comm ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= " WHERE l.statut <> 7";
 
 if ($db->query($sql))
 {
@@ -78,6 +79,7 @@ else
 
 $sql = "SELECT count(*) ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= " WHERE l.statut <> 7";
 
 if ($db->query($sql))
 {
@@ -115,7 +117,9 @@ print "</table>";
  *
  */
 
-print '</td>';
+print '</td><td>';
+
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/commercials/clients.hebdomadaire.png" alt="Nouveaux clients par semaines" title="Nouveaux clients par semaine"><br /><br />'."\n";
 
 print '</td></tr>';
 
