@@ -39,7 +39,7 @@ td.menu {
 
 .menu { 
         background: #b3cccc; 
-        font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
+        font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
         color: #000000; 
         text-decoration: none }
 
@@ -47,7 +47,7 @@ td.menu {
 .submenu 
 { 
   background: #b3cccc; 
-  font-family: Helvetica, Verdana; font-size: 14px;
+  font-family: Helvetica, Verdana; font-size: 1.0em;
   color: #000000; 
   text-decoration: none }
 
@@ -62,7 +62,7 @@ a.impayee { font-weight: bold }
 a.leftmenu 
 { 
   font-family: Helvetica, Verdana; 
-  font-size: 14px; 
+  font-size: 1.0em; 
   font-weight: bold; 
   color: #202020; 
   }
@@ -72,7 +72,7 @@ td.barre {
            border-right: 1px solid #000000;
            border-bottom: 1px solid #000000;
            background: #b3cccc;
-           font-family: Helvetica, Verdana; font-size: 14px; 
+           font-family: Helvetica, Verdana; font-size: 1.0em; 
            color: #000000; 
            text-decoration: none }
 
@@ -85,7 +85,7 @@ td.barre_select {
 
 
 div.titre { 
-            font-family: Helvetica, Verdana; font-size: 16px; font-weight: bold; 
+            font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
             color: #336666; 
             text-decoration: none }
 /*
@@ -94,30 +94,30 @@ div.titre {
 TR.liste_titre  
 { 
   background: #669999; 
-  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
+  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold;
   text-decoration: none }
 TR.liste_sep
 { 
   background: #669999; 
-  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
+  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold;
   text-decoration: none }
 
 TR.pair	        
 { 
   background: #b3cccc; 
-  font-family: Helvetica, Verdana; font-size: 12px; 
+  font-family: Helvetica, Verdana; font-size: 1.0em; 
   text-decoration: none }
 
 TR.impair	
 { 
   background: #cceeee; 
-  font-family: Helvetica, Verdana; font-size: 12px; 
+  font-family: Helvetica, Verdana; font-size: 1.0em; 
   text-decoration: none }
 
 TR.barreBouton	
 { 
   background: #cceeee; 
-  font-family: Helvetica, Verdana; font-size: 12px; 
+  font-family: Helvetica, Verdana; font-size: 1.0em; 
   text-decoration: none 
 }
 
