@@ -79,6 +79,10 @@ if ($mode == 'search')
  * Mode Liste
  *
  */
+ 
+$sortorder = $_GET["sortorder"];
+$sortfield = $_GET["sortfield"];
+ 
 if ($sortorder == "")
 {
   $sortorder="DESC";
