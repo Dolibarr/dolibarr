@@ -20,17 +20,18 @@
  * $Id$
  * $Source$
  */
-
+ 
 /*!
-	    \file       htdocs/admin/modules.php
-        \brief      Page de configuration et activation des modules
-		\version    $Revision$
+    \file       htdocs/admin/modules.php
+    \brief      Page de configuration et activation des modules
+    \version    $Revision$
 */
 
 require("./pre.inc.php");
 
 if (!$user->admin)
-  accessforbidden();
+    accessforbidden();
+
 
 //
 // TODO mettre cette section dans la base de données
@@ -38,92 +39,87 @@ if (!$user->admin)
 
 if ($_GET["action"] == 'set' && $user->admin)
 {
-  Activate($_GET["value"]);
+    Activate($_GET["value"]);
 
-  Header("Location: modules.php?spe=".$_GET["spe"]);
+    Header("Location: modules.php?spe=".$_GET["spe"]);
 }
 
 if ($_GET["action"] == 'reset' && $user->admin)
 {
-  UnActivate($_GET["value"]);
+    UnActivate($_GET["value"]);
 
-  Header("Location: modules.php?spe=".$_GET["spe"]);
+    Header("Location: modules.php?spe=".$_GET["spe"]);
 }
 
 
 function Activate($value)
 {
-  global $db, $modules;
+    global $db, $modules;
 
-  $modName = $value;
+    $modName = $value;
 
-  // Activation du module
-  if ($modName)
+    // Activation du module
+    if ($modName)
     {
-      $file = $modName . ".class.php";
-      include_once("../includes/modules/$file");
-      $objMod = new $modName($db);
-      $objMod->init();
+        $file = $modName . ".class.php";
+        include_once("../includes/modules/$file");
+        $objMod = new $modName($db);
+        $objMod->init();
     }
 
-  // Activation des modules dont le module dépend
-  for ($i = 0; $i < sizeof($objMod->depends); $i++)
+    // Activation des modules dont le module dépend
+    for ($i = 0; $i < sizeof($objMod->depends); $i++)
     {
-      Activate($objMod->depends[$i]);
+        Activate($objMod->depends[$i]);
     }
 
 }
 
 function UnActivate($value)
 {
-  global $db, $modules;
+    global $db, $modules;
 
-  $modName = $value;
+    $modName = $value;
 
-  // Desactivation du module
-  if ($modName)
+    // Desactivation du module
+    if ($modName)
     {
-      $file = $modName . ".class.php";
-      include_once("../includes/modules/$file");
-      $objMod = new $modName($db);
-      $objMod->remove();
+        $file = $modName . ".class.php";
+        include_once("../includes/modules/$file");
+        $objMod = new $modName($db);
+        $objMod->remove();
     }
 
-  // Desactivation des modules qui dependent de lui
-  for ($i = 0; $i < sizeof($objMod->requiredby); $i++)
+    // Desactivation des modules qui dependent de lui
+    for ($i = 0; $i < sizeof($objMod->requiredby); $i++)
     {
-      UnActivate($objMod->requiredby[$i]);
+        UnActivate($objMod->requiredby[$i]);
     }
 
-  Header("Location: modules.php");
+    Header("Location: modules.php");
 }
 
 
 $db->close();
 
+
 llxHeader();
 
-if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
 
 if (!$_GET["spe"])
 {
-  print_titre($langs->trans("Modules"));
-  print "<br>".$langs->trans("ModulesDesc")."<br>\n";
+    print_titre($langs->trans("ModulesCommon"));
+    print "<br>".$langs->trans("ModulesDesc")."<br>\n";
 }
 else
 {
-  print_titre($langs->trans("Modules Speciaux"));
+    print_titre($langs->trans("ModulesSpecial"));
+    print "<br>".$langs->trans("ModulesSpecialDesc")."<br>\n";
 }
 
 
-
 print '<br>';
-print '<table class="noborder" cellpadding="3" cellspacing="0">';
+print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Family").'</td>';
 print '<td>'.$langs->trans("Module").'</td>';
@@ -142,30 +138,29 @@ $i = 0;
 $j = 0;
 while (($file = readdir($handle))!==false)
 {
-  if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
+    if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
     {
-      $modName = substr($file, 0, strlen($file) - 10);
+        $modName = substr($file, 0, strlen($file) - 10);
 
-      if ($modName)
-	{
-	  include_once("../includes/modules/$file");
-	  $objMod = new $modName($db);
+        if ($modName)
+        {
+            include_once("../includes/modules/$file");
+            $objMod = new $modName($db);
 
-	  if ($objMod->numero > 0)
-	    {
-	      $j = $objMod->numero;
-//	      $modules[$objMod->numero] = $modName;
-	    }
-	  else
-	    {
-	      $j = 1000 + $i;
-	    }
-	  $modules[$i] = $modName;
-	  $numero[$i] = $j;
-	  $orders[$i] = "$objMod->family"."_".$j;   // Tri par famille puis numero module
-	  $j++;
-	  $i++;
-	}
+            if ($objMod->numero > 0)
+            {
+                $j = $objMod->numero;
+            }
+            else
+            {
+                $j = 1000 + $i;
+            }
+            $modules[$i] = $modName;
+            $numero[$i] = $j;
+            $orders[$i] = "$objMod->family"."_".$j;   // Tri par famille puis numero module
+            $j++;
+            $i++;
+        }
     }
 }
 
@@ -184,89 +179,98 @@ $familylib=array(
 );
 foreach ($orders as $key => $value)
 {
-  $tab=split('_',$value);
-  $family=$tab[0]; $numero=$tab[1];
-  
-  $var=!$var;
-  $modName = $modules[$key];
-  if ($modName)
-    {
-      $objMod = new $modName($db);
-    }
-  
-  $const_name = $objMod->const_name;
-  $const_value = $objMod->const_config;
+    $tab=split('_',$value);
+    $family=$tab[0]; $numero=$tab[1];
 
-  if ($oldfamily && $family!=$oldfamily) { print '<tr class="liste_titre"><td colspan="6"></td></tr>'; }
-  
-  if((!$objMod->special && !$_GET["spe"] ) or ($objMod->special && $_GET["spe"]))
+    $modName = $modules[$key];
+    if ($modName)
     {
+        $objMod = new $modName($db);
+    }
+
+    $const_name = $objMod->const_name;
+    $const_value = $objMod->const_config;
+
+    if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
+        print '<tr class="liste_titre"><td colspan="6"></td></tr>';
+        $atleastoneforfamily=0;
+    }
+
+    if((!$objMod->special && !$_GET["spe"] ) or ($objMod->special && $_GET["spe"]))
+    {
+        $atleastoneforfamily=1;
+        $var=!$var;
+        
+        print "<tr $bc[$var]>";
+
+        print "<td class='body'>";
+        if ($family!=$oldfamily) { print '<div class="titre">'.$familylib[$family].'</div></td>'; $oldfamily=$family; }
+        else { print '&nbsp;'; }
+        print "</td>";
+        print "<td>";
+        print $objMod->name;
+        print "</td><td>\n";
+        print $objMod->description;
+        print '</td><td align="center">';
+
+        if ($const_value == 1)
+        {
+            print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+        }
+        else
+        {
+            print "&nbsp;";
+        }
+
+        print '</td><td align="center">';
 
 
-  print "<tr $bc[$var]>";
+        if ($const_value == 1)
+        {
+            print '<a href="modules.php?action=reset&amp;value='.$modName.'&amp;spe='.$_GET["spe"].'">'.$langs->trans("Disable").'</a></td>';
 
-  print "<td class='body'>";
-  if ($family!=$oldfamily) { print '<div class="titre">'.$familylib[$family].'</td>'; $oldfamily=$family; }
-  else { print '&nbsp;'; }
-  print "</td>";
-  print "<td>";
-  print $objMod->name;
-  print "</td><td>\n";
-  print $objMod->description;
-  print '</td><td align="center">';
-  
-  if ($const_value == 1)
-    {
-      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+
+            if ($objMod->config_page_url)
+            {
+                if (is_array($objMod->config_page_url)) {
+                    print '<td>';
+                    $i=0;
+                    foreach ($objMod->config_page_url as $page) {
+                        if ($i++) { print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;'; }
+                        else { print '<a href="'.$page.'">'.$langs->trans("Setup").'</a>&nbsp;'; }
+                    }
+                    print '</td>';
+                } else {
+                    print '<td><a href="'.$objMod->config_page_url.'">'.$langs->trans("Setup").'</a></td>';
+                }
+            }
+            else
+            {
+                print "<td>&nbsp;</td>";
+            }
+
+        }
+        else
+        {
+            print '<a href="modules.php?action=set&value='.$modName.'&amp;spe='.$_GET["spe"].'">'.$langs->trans("Activate").'</a></td><td>&nbsp;</td>';
+        }
+
+        print '</tr>';
     }
-  else
-    {
-      print "&nbsp;";
-    }
-  
-  print '</td><td align="center">';
-  
-  
-  if ($const_value == 1)
-    {
-      print '<a href="modules.php?action=reset&amp;value='.$modName.'&amp;spe='.$_GET["spe"].'">'.$langs->trans("Disable").'</a></td>';
-      
-      
-      if ($objMod->config_page_url)
-	{
-	  if (is_array($objMod->config_page_url)) {
-		print '<td>';
-		$i=0;
-		foreach ($objMod->config_page_url as $page) {
-	  		if ($i++) { print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;'; }
-	  		else { print '<a href="'.$page.'">'.$langs->trans("Setup").'</a>&nbsp;'; }
-	  	}
-	  	print '</td>';
-	  } else {
-	  	print '<td><a href="'.$objMod->config_page_url.'">'.$langs->trans("Setup").'</a></td>';
-	  }
-	}
-      else
-	{
-	  print "<td>&nbsp;</td>";
-	}
-      
-    }
-  else
-    {
-      print '<a href="modules.php?action=set&value='.$modName.'&amp;spe='.$_GET["spe"].'">'.$langs->trans("Activate").'</a></td><td>&nbsp;</td>';
-    }
-  
-  print '</tr>';
-    }
-  
+
 }
 print "</table>";
 
-if(!$_GET["spe"] )
+
+if ($_GET["spe"])
 {
-  print '<br><a href="./modules.php?spe=1">Modules spéciaux</a>';
+    print '<br><a href="./modules.php?spe=0">'.$langs->trans("ModulesCommon").'</a>';
 }
+else
+{
+    print '<br><a href="./modules.php?spe=1">'.$langs->trans("ModulesSpecial").'</a>';
+}
+
 
 llxFooter();
 ?>

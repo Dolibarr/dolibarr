@@ -104,9 +104,9 @@ if ($_GET["action"] == 'edit')
   print '<input type="hidden" name="action" value="update">';
   print '</td></tr>';
 
-  print '<tr class="pair"><td width="50%">Longueur maximum des listes</td><td><input name="size_liste_limit" size="20" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
+  print '<tr class="pair"><td width="50%">'.$langs->trans("MaxSizeList").'</td><td><input name="size_liste_limit" size="20" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
 
-  print '<tr class="impair"><td width="50%">Gestionnaire du menu du haut</td>';
+  print '<tr class="impair"><td width="50%">'.$langs->trans("MenuTopManager").'</td>';
   print '<td><select name="main_menu_barretop">';
   $dir = "../includes/menus/barre_top/";
   $handle=opendir($dir);
@@ -178,7 +178,7 @@ else
   $var=True;
   foreach ($searchform as $key => $value) {
     $var=!$var;
-    print '<tr '.$bc[$var].'"><td>'.$searchformtitle[$key].'</td><td>' . ($searchformconst[$key]?"oui":"non") . '</td></tr>';
+    print '<tr '.$bc[$var].'"><td>'.$searchformtitle[$key].'</td><td>' . ($searchformconst[$key]?$langs->trans("yes"):$langs->trans("no")) . '</td></tr>';
   }
   print '</table><br>';
 
