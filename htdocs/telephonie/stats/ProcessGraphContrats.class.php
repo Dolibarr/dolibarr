@@ -57,7 +57,7 @@ class ProcessGraphContrats
   
   function go($contrat_id = 0)
   {
-    if ($contrat_id = 0)
+    if ($contrat_id == 0)
       {
 	$min = $this->ident * $this->cpc;
 	$max = ($this->ident + 1 ) * $this->cpc;
@@ -75,13 +75,18 @@ class ProcessGraphContrats
      * Lecture des contrats
      *
      */
-    $sql = "SELECT c.rowid, count(l.ligne) as ligne";
+    $sql = "SELECT c.rowid";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as c";
-    $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-    $sql .= " WHERE l.fk_contrat = c.rowid ";
-    $sql .= " AND c.rowid >= ".$min;
-    $sql .= " AND c.rowid < ".$max;
-    $sql .= " GROUP BY c.rowid";
+
+    if ($contrat_id == 0)
+      {
+	$sql .= " WHERE c.rowid >= ".$min;
+	$sql .= " AND c.rowid < ".$max;
+      }
+    else
+      {
+	$sql .= " WHERE c.rowid = ".$min;
+      }
     
     if ($this->db->query($sql))
       {
@@ -95,7 +100,6 @@ class ProcessGraphContrats
 	    $obj = $this->db->fetch_object();	
 	    
 	    $contrats[$i] = $obj->rowid;
-	    
 	    $i++;
 	  }
       }
