@@ -34,8 +34,8 @@ print '<A class="menu" href="/product/categorie/">Catégories</a>';
 
 print '</td><td width="15%" class="menu" align="center">';
 
-print '-';
+print '<A class="menu" href="/boutique/notification/">Notification</a>';
 
-print '&nbsp;</TD>';
+print '</TD>';
 
 ?>
