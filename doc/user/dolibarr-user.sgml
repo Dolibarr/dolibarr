@@ -2,6 +2,7 @@
 [
     <!entity ch-installation system "installation.sgml">
     <!entity ch-update system "update.sgml">
+    <!entity ch-propale system "propale.sgml">
     <!entity ch-facture	system "facture.sgml">
 ]
 >
@@ -23,6 +24,7 @@
 
     &ch-installation;
     &ch-update;
+    &ch-propale;
     &ch-facture;
 
   </book>
