@@ -135,7 +135,7 @@ if ($socid)
 
   $sql = "SELECT a.id,".$db->pdate("a.datea")." as da, c.libelle, u.code, a.note, u.name, u.firstname, a.fk_contact ";
   $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u";
-  $sql .= " WHERE a.fk_soc = $socid AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
+  $sql .= " WHERE a.fk_soc = $socid AND c.id=a.fk_action AND a.fk_user_author = u.rowid AND a.percent = 100";
  
  if ($type)
    {
