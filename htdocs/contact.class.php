@@ -23,17 +23,18 @@
  */
 
 /*!
-	    \file       htdocs/contact.class.php
-        \ingroup    societe
-		\brief      Fichier de la classe des contacts
-		\version    $Revision$
+  \file       htdocs/contact.class.php
+  \ingroup    societe
+  \brief      Fichier de la classe des contacts
+  \version    $Revision$
 */
 
-require (DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
+require_once (DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
+
 
 
 /*! \class Contact
-		\brief      Classe permettant la gestion des contacts
+  \brief      Classe permettant la gestion des contacts
 */
 
 class Contact 
@@ -270,19 +271,22 @@ class Contact
    */
   function update_perso($id, $user=0)
     {
-      # Mis a jour contact
+      // Mis a jour contact
       $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET idp=$id ";
 
-      if ($this->birthday>0) {
-        if (eregi('\-',$this->birthday)) {
-            // Si date = chaine
-            $sql .= ", birthday='".$this->birthday."'";
-        }        
-        else {
-            // Si date = timestamp
-            $sql .= ", birthday=".$this->db->idate($this->birthday);
-        }
-      }
+      if ($this->birthday>0)
+	{
+	  if (eregi('\-',$this->birthday))
+	    {
+	      // Si date = chaine
+	      $sql .= ", birthday='".$this->birthday."'";
+	    }        
+	  else
+	    {
+	      // Si date = timestamp
+	      $sql .= ", birthday=".$this->db->idate($this->birthday);
+	    }
+	}
       $sql .= " WHERE idp=$id";
 
       $result = $this->db->query($sql);
@@ -291,14 +295,17 @@ class Contact
 	  print $this->db->error() . '<br>' . $sql;
 	}
       
-      # Mis a jour alerte birthday
-      if ($this->birthday_alert) {
-        $sql = "INSERT into ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
-        $sql.= "values (1,".$id.",".$user->id.")";
-      } else {
-        $sql = "DELETE from ".MAIN_DB_PREFIX."user_alert ";
-        $sql.= "where type=1 AND fk_contact=".$id." AND fk_user=".$user->id;
-      }
+      // Mis a jour alerte birthday
+      if ($this->birthday_alert)
+	{
+	  $sql = "INSERT into ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
+	  $sql.= "values (1,".$id.",".$user->id.")";
+	}
+      else
+	{
+	  $sql = "DELETE from ".MAIN_DB_PREFIX."user_alert ";
+	  $sql.= "where type=1 AND fk_contact=".$id." AND fk_user=".$user->id;
+	}
       $result = $this->db->query($sql);
       if (!$result) 
 	{
@@ -369,6 +376,24 @@ class Contact
 		  $uobj = $this->db->fetch_object($result , 0);
 		  
 		  $this->user_id = $uobj->rowid;
+		}
+	    }
+	  $this->db->free();
+
+
+	  $sql = "SELECT count(*) ";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."contact_facture";
+	  $sql .= " WHERE fk_contact = ". $_id;
+
+	  if ($this->db->query($sql))
+	    {
+	      if ($this->db->num_rows()) 
+		{
+		  $this->facturation = 1;
+		}
+	      else
+		{
+		  $this->facturation = 0;
 		}
 	    }
 	  $this->db->free();
