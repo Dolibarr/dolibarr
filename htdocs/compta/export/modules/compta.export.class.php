@@ -165,7 +165,7 @@ class ComptaExport
     $error += $this->ReadLines();
     $error += $this->ReadLinesPayment();
 
-    if (!$error && sizeof($this->linec) > 0)
+    if (!$error && (sizeof($this->linec) > 0 || sizeof($this->linep) > 0))
       {
 	include_once DOL_DOCUMENT_ROOT.'/compta/export/modules/compta.export.'.strtolower($this->classe_export).'.class.php';  
 
