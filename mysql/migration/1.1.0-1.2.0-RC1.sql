@@ -5,6 +5,8 @@ alter table llx_societe add tva_intra varchar(20) after ape;
 alter table llx_societe add capital real after tva_intra;
 alter table llx_societe add rubrique varchar(255);
 
+alter table llx_socpeople add civilite smallint;
+
 alter table llx_propal add fin_validite datetime ;
 
 alter table llx_entrepot add statut tinyint default 1;
