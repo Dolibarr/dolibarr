@@ -95,7 +95,7 @@ if ($action == 'create')
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="facid" value="'.$facid.'">';
       
-      print '<table cellspacing="0" cellpadding="3" border="1" width="100%">';
+      print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
       
       $facture->fetch_client();
 
@@ -141,7 +141,7 @@ if ($action == 'create')
 	  $num = $db->num_rows();
 	  $i = 0; $total = 0;
 	  
-	  echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+	  echo '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
 	  if ($num)
 	    {
 	      print "<TR class=\"liste_titre\">";
@@ -264,7 +264,7 @@ else
 	  /*
 	   *   Facture
 	   */
-	  print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
+	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
 	  print "<tr><td>Client</td>";
 	  print "<td colspan=\"3\">";
 	  print '<b><a href="../fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
@@ -339,69 +339,25 @@ else
 	 */
 	if ($user->societe_id == 0 && $fac->paye == 0)
 	  {
-	    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+	    print '<p><table id="actions" width="100%" cellspacing="0" cellpadding="4"><tr>';
 	
 	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
 	      } 
-	    elseif ($fac->statut == 1 && abs($resteapayer) > 0 && $user->rights->facture->envoyer) 
-	      {
-		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=presend\">Envoyer</a>]</td>";
-	      }
 	    else
 	      {
 		print "<td align=\"center\" width=\"25%\">-</td>";
 	      } 
 	    
-	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
-	      {
-		print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
-	      }
-	    else
-	      {
-		print "<td align=\"center\" width=\"25%\">-</td>";
-	      }
+
+	    print "<td align=\"center\" width=\"25%\">-</td>";
+
 	    
-	    if ($fac->statut == 1 && abs($resteapayer) == 0 && $fac->paye == 0) 
-	      {
-		if ($user->rights->facture->paiement)
-		  {
-		    print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=payed\">Classer 'Payée'</a>]</td>";
-		  }
-		else
-		  {
-		    print '<td align="center" width="25%">-</td>';
-		  }
-	      }
-	    elseif ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer) 
-	      {
-		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=prerelance\">Envoyer une relance</a>]</td>";
-	      }
-	    else
-	      {
-		print '<td align="center" width="25%">-</td>';
-	      }
-	    
-	    if ($fac->statut == 0 && $fac->total_ht > 0) 
-	      {
-		print '<td align="center" width="25%">-</td>';
-	      }
-	    elseif ($fac->statut == 1 && $fac->paye == 0)
-	      {
-		if ($user->rights->facture->creer)
-		  {
-		    print "<td align=\"center\" width=\"25%\"><a href=\"facture.php?facid=$facid&action=pdf\">Générer la facture</a></td>";
-		  }
-		else
-		  {
-		    print '<td align="center" width="25%">-</td>';
-		  }
-	      }
-	    else
-	      {
-		print '<td align="center" width="25%">-</td>';
-	      }
+
+	    print '<td align="center" width="25%">-</td>';	    
+	    print '<td align="center" width="25%">-</td>';
+
 	    print "</tr></table>";
 	  }
 	print "<p>\n";
@@ -409,112 +365,7 @@ else
 	/*
 	 *
 	 *
-	 */
-	if ($action == 'presend')
-	  {
-	    $replytoname = $user->fullname;
-	    $from_name = $replytoname;
-
-	    $replytomail = $user->email;
-	    $from_mail = $replytomail;
-	    
-	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$facid&action=send\">\n";
-	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
-	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
-	    
-	    print "<p><b>Envoyer la facture par mail</b>";
-	    print "<table cellspacing=0 border=1 cellpadding=3>";
-	    print '<tr><td>Destinataire</td><td colspan="5">';
-	    
-	    $form = new Form($db);	    
-	    $form->select_array("destinataire",$soc->contact_email_array());
-	    
-	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
-	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
-	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
-	    print "<td>$replytomail</td></tr></table>";
-	    
-	    print "<input type=\"submit\" value=\"Envoyer\"></form>";
-	  }
-
-	if ($action == 'prerelance')
-	  {
-	    $replytoname = $user->fullname;
-	    $from_name = $replytoname;
-
-	    $replytomail = $user->email;
-	    $from_mail = $replytomail;
-	    
-	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$facid\">\n";
-	    print '<input type="hidden" name="action" value="relance">';
-	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
-	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
-	    
-	    print_titre("Envoyer une relance");
-	    print "<table cellspacing=0 border=1 cellpadding=3>";
-	    print '<tr><td>Destinataire</td><td colspan="5">';
-	    
-	    $form = new Form($db);	    
-	    $form->select_array("destinataire",$soc->contact_email_array());
-	    
-	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
-	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
-	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
-	    print "<td>$replytomail</td></tr></table>";
-	    
-	    print "<input type=\"submit\" value=\"Envoyer\"></form>";
-	  }
-	
-	/*
-	 *   Propales
-	 */
-	
-	$sql = "SELECT ".$db->pdate("p.datep")." as dp, p.price, p.ref, p.rowid as propalid";
-	$sql .= " FROM llx_propal as p, llx_fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $facid";
-  
-	$result = $db->query($sql);
-	if ($result)
-	  {
-	    $num = $db->num_rows();
-	    if ($num)
-	      {
-		$i = 0; $total = 0;
-		print "<p>";
-		if ($num >1)
-		  {
-		    print_titre("Propositions commerciales associées");
-		  }
-		else
-		  {
-		    print_titre("Proposition commerciale associée");
-		  }
-
-		print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
-		print '<tr class="liste_titre">';
-		print "<td>Numéro</td>";
-		print "<td>Date</td>";
-		print '<td align="right">Prix</td>';
-		print "</TR>\n";
-		
-		$var=True;
-		while ($i < $num)
-		  {
-		    $objp = $db->fetch_object( $i);
-		    $var=!$var;
-		    print "<TR $bc[$var]>";
-		    print "<TD><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-		    print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-		    print '<TD align="right">'.price($objp->price).'</TD>';
-		    print "</tr>";
-		    $total = $total + $objp->price;
-		    $i++;
-		  }
-		print "<tr><td align=\"right\" colspan=\"3\">Total : <b>".price($total)."</b> ".MAIN_MONNAIE." HT</td></tr>\n";
-		print "</table>";
-	      }
-	  } else {
-	    print $db->error();
-	  }	
+	 */       
       }
     else
       {
