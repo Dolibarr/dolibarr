@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,6 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
  */
 require("./pre.inc.php3");
 
@@ -33,7 +32,8 @@ $db = new Db();
  *
  *
  */
-if ($action=='add_action') {
+if ($action=='add_action') 
+{
   $contact = new Contact($db);
   $contact->fetch($contactid);
   $societe = new Societe($db);
@@ -42,13 +42,16 @@ if ($action=='add_action') {
 
   $actioncomm = new ActionComm($db);
 
-  if ($actionid == 5) {
-    $actioncomm->date = $db->idate(mktime($heurehour,$heuremin,0,$remonth,$reday,$reyear));
-    $actioncomm->percent = 0;
-  } else {
-    $actioncomm->date = $date;
-    $actioncomm->percent = 100;
-  }
+  if ($actionid == 5) 
+    {
+      $actioncomm->date = $db->idate(mktime($heurehour,$heuremin,0,$remonth,$reday,$reyear));
+      $actioncomm->percent = 0;
+    }
+  else
+    {
+      $actioncomm->date = $date;
+      $actioncomm->percent = 100;
+    }
   $actioncomm->priority = 2;
   $actioncomm->type = $actionid;
   $actioncomm->contact = $contactid;
@@ -60,45 +63,56 @@ if ($action=='add_action') {
 
   $actioncomm->add($user);
 
-  if ($todo == 'on' ) {
+  if ($todo == 'on' )
+    {
 
-    $todo = new ActionComm($db);
-    $todo->type = 0;
-    $todo->date = $db->idate(mktime(12,0,0,$remonth, $reday, $reyear));
-
-    $todo->libelle = $todo_label;
-    $todo->priority = 2;
-    $todo->societe = $societe->id;
-    $todo->contact = $contactid;
-    
-    $todo->user = $user;
-
-    $todo->note = $todo_note;
-    
-    $todo->percent = 0;
-    
-    $todo->add($user);
-
-    if ($conf->webcal && $todo_webcal == 'on') {
-
-      $webcal = new Webcal();
-
-      $webcal->heure = $heurehour . $heuremin . '00';
-      $webcal->duree = ($dureehour * 60) + $dureemin;
-    
-      if ($actionid == 5) {
-	$libelle = "Rendez-vous avec ".$contact->fullname;
-	$libelle .= "\n" . $todo->libelle;
-      } else {
-	$libelle = $todo->libelle;
-      }
+      $todo = new ActionComm($db);
+      $todo->type = 0;
+      $todo->date = $db->idate(mktime(12,0,0,$remonth, $reday, $reyear));
       
-      $webcal->add($user, $todo->date, $societe->nom, $libelle);
-    }
+      $todo->libelle = $todo_label;
+      $todo->priority = 2;
+      $todo->societe = $societe->id;
+      $todo->contact = $contactid;
+      
+      $todo->user = $user;
+      
+      $todo->note = $todo_note;
+      
+      $todo->percent = 0;
+      
+      $todo->add($user);
+      
+      if ($conf->webcal && $todo_webcal == 'on')
+	{
+
+	  $webcal = new Webcal();
+
+	  $webcal->heure = $heurehour . $heuremin . '00';
+	  $webcal->duree = ($dureehour * 60) + $dureemin;
+    
+	  if ($actionid == 5)
+	    {
+	      $libelle = "Rendez-vous avec ".$contact->fullname;
+	      $libelle .= "\n" . $todo->libelle;
+	    }
+	  else
+	    {
+	      $libelle = $todo->libelle;
+	    }
+	  
+	  $webcal->add($user, $todo->date, $societe->nom, $libelle);
+	}
   }
 
   Header("Location: /comm/fiche.php3?socid=$socid");
 }
+
+/******************************************************************************/
+/*                                                                            */
+/*                  Fin des   Actions                                         */
+/*                                                                            */
+/******************************************************************************/
 
 llxHeader();
 /*
@@ -152,7 +166,6 @@ if ($action=='create' && $actionid && $contactid) {
       print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
   
       print '</form></table>';
-
     }
   /* 
    *
@@ -204,7 +217,8 @@ if ($action=='create' && $actionid && $contactid) {
  *
  *
  */
-if ($id) {
+if ($id)
+{
   $act = new ActionComm($db);
   $act->fetch($id);
 

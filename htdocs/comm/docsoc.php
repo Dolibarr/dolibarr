@@ -39,24 +39,16 @@ function do_upload () {
       $error_msg = "Sorry, your file is too large.";
       return;
     }
-  global $HTTP_POST_FILES;
-  $realname = $HTTP_POST_FILES['userfile']['name'];
-
-  print "$realname";
 
   $upload_dir = "/tmp";
   $local_file = "$upload_dir/TOTO";
 
-  if ( file_exists ( '$local_file' ) )
+  while ( file_exists ( '$local_file' ) )
     {
-      $seq = 1;
-      while ( file_exists ( "$upload_dir/$the_time$seq" ) )
-	{
-	  $seq++;
-	}
-      $local_file = "$upload_dir/$the_time$seq";
-    };
-
+      $seq++;
+      $local_file .= "$seq";  
+  }
+  
   print "$local_file";
 
   rename ( $uploadfile, $local_file );
@@ -157,7 +149,7 @@ if ($socid > 0) {
 
 
        <INPUT TYPE="HIDDEN" NAME="MAX_FILE_SIZE" VALUE="2000000">
-       <INPUT TYPE="FILE"   NAME="uploadfile" SIZE="24" MAXLENGTH="80">
+       <input type="file"   name="uploadfile" size="24" maxlength="80">
        <BR><BR>
        <INPUT TYPE="SUBMIT" VALUE="Upload File!" NAME="sendit">  
        <INPUT TYPE="SUBMIT" VALUE="Cancel" NAME="cancelit"><BR>

@@ -36,22 +36,6 @@ llxHeader();
 
 $db = new Db();
 
-if ($sortfield == "") {
-  $sortfield="lower(p.label)";
-}
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-
-$yn["t"] = "oui";
-$yn["f"] = "non";
-
-if ($page == -1) { $page = 0 ; }
-$limit = 26;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
 if ($action == 'setstatut') {
   /*
    *  Cloture de la propale
@@ -204,7 +188,7 @@ if ($propalid) {
       if ($result) {
 	$num = $db->num_rows();
 	$i = 0; $total = 0;
-	print "<p><b>Facture(s) associée(s)</b><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+	print "<br><b>Facture(s) associée(s)</b><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
 	print "<tr>";
 	print "<td>Num</td>";
 	print "<td>Date</td>";
@@ -237,38 +221,30 @@ if ($propalid) {
        */
       print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
   
-      if ($obj->statut == 0) {
-	print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=delete\">Supprimer</a>]</td>";
-      } else {
-	if ($obj->statut == 1) {
-	  print "<td bgcolor=\"#e0e0e0\" align=center>[<a href=\"$PHP_SELF?propalid=$propalid&action=statut\">Cloturer</a>]</td>";
-	} else {
+
+      if ($obj->statut == 2)
+	{
+	  print '<td bgcolor="#e0e0e0" align="center" width=\"25%\">';
+	  print "<a href=\"facture.php3?propalid=$propalid&action=create\">Emettre une facture</td>";
+	}
+      else
+	{
+	  print '<td align="center" width="25%">-</td>';
+	}
+      
+
+
+      print "<td align=\"center\" width=\"25%\">-</td>";
+
+
+      if ($obj->statut == 2)
+	{
+	  print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=setstatut&statut=4\">Facturée</a>]</td>";
+	}
+      else	
+	{
 	  print "<td align=\"center\" width=\"25%\">-</td>";
 	}
-      } 
-      if ($obj->statut == 2) {
-	print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\"><a href=\"facture.php3?propalid=$propalid&action=create\">Emettre une facture</td>";
-      } else {
-	print "<td align=\"center\" width=\"25%\">-</td>";
-      }
-      if ($obj->statut == 1) {
-	$file = $conf->propal->outputdir. "/$obj->ref/$obj->ref.pdf";
-	if (file_exists($file)) {
-	  print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">";
-	  print "[<a href=\"$PHP_SELF?propalid=$propalid&action=presend\">Envoyer la propale par mail</a>]</td>";
-	} else {
-	  print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">! Propale non generee !</td>";
-	}
-      } else {
-	print "<td align=\"center\" width=\"25%\">-</td>";
-      }
-      if ($obj->statut == 0) {
-	print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
-      } elseif ($obj->statut == 2) {
-	print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=setstatut&statut=4\">Facturée</a>]</td>";
-      } else	{
-	print "<td align=\"center\" width=\"25%\">-</td>";
-      }
       print "</tr></table>";
       /*
        *
@@ -325,6 +301,29 @@ if ($propalid) {
    *
    * 
    */
+
+  if ($sortfield == "")
+    {
+      $sortfield="lower(p.label)";
+    }
+  if ($sortorder == "")
+    {
+      $sortorder="ASC";
+    }
+
+  $yn["t"] = "oui";
+  $yn["f"] = "non";
+
+  if ($page == -1)
+    {
+      $page = 0 ;
+    }
+  $limit = 26;
+  $offset = $limit * $page ;
+  $pageprev = $page - 1;
+  $pagenext = $page + 1;
+
+
   print "<table width=\"100%\">";
   print "<tr><td><div class=\"titre\">Propositions commerciales</div></td>";
   print "</table>";

@@ -38,55 +38,6 @@ if ($result)
 }
 
 
-if ($action == 'add') {
-  $propal = new Propal($db, $socidp);
-
-  $propal->remise = $remise;
-  $propal->datep = $db->idate(mktime(12, 1 , 1, $pmonth, $pday, $pyear));
-
-  $propal->contactid = $contactidp;
-  $propal->projetidp = $projetidp;
-
-  $propal->author = $user->id;
-  $propal->note = $note;
-
-  $propal->ref = $ref;
-
-  $propal->add_product($idprod1,$qty1);
-  $propal->add_product($idprod2,$qty2);
-  $propal->add_product($idprod3,$qty3);
-  $propal->add_product($idprod4,$qty4);
-  
-  $id = $propal->create();
-  
-  /*
-   *
-   *   Generation
-   *
-   */
-  if ($id) 
-    {
-
-      //$gljroot = "/home/www/dolibarr/dolibarr/htdocs";
-
-      $command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name.":host=localhost\" ";
-      $command .= " ; ./propal-tex.pl --propal=".$id ." --pdf --ps --output=".$conf->propal->outputdir;
-      $command .= " --templates=".$conf->propal->templatesdir;
-      
-      $output = system($command);
-      //print "<p>command : $command<br>";
-      //print $output;
-
-      /*
-       * Renvoie directement sur la fiche
-       */
-      //Header("Location: propal.php3?propalid=$id");
-    }
-  else
-    {
-      print $db->error();
-    }
-}
 
 llxHeader();
 
@@ -283,51 +234,7 @@ if ($action == 'create') {
     print "Vous devez d'abord associer un prefixe commercial a cette societe" ;
   }
 }
-/*
- *
- * Liste des propales
- *
- */
-$sql = "SELECT s.nom,s.idp, p.price, p.ref,".$db->pdate("p.datep")." as dp, p.rowid as propalid, c.id as statut, c.label as lst";
-$sql .= " FROM societe as s, llx_propal as p, c_propalst as c ";
-$sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND s.idp = $socidp";
-$sql .= " ORDER BY p.datec DESC ;";
-  
-if ( $db->query($sql) ) {
-  $num = $db->num_rows();
-  $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\">";
-  print "<TD>Société</td>";
-  print "<TD>Num</TD>";
-  print "<TD>Statut</TD>";
-  print "<TD align=\"right\">Date</TD>";
-  print "<TD align=\"right\">Prix</TD><td>&nbsp;</td>";
-  print "</TR>\n";
-  $var=True;
-  while ($i < $num) {
-    $objp = $db->fetch_object( $i);
-    $var=!$var;
-    print "<TR $bc[$var]>";
-    print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
-    print "<TD><a href=\"propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-    print "<TD>$objp->lst</TD>\n";
-      
-    print "<TD align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-    print "<TD align=\"right\">".price($objp->price)."</TD><td>&nbsp;</td>\n";
-    print "</TR>\n";
-      
-    $total = $total + $objp->price;
-      
-    $i++;
-  }
-  print "<tr><td colspan=\"5\" align=\"right\"><b>Total : ".price($total)."</b></td><td>euros</td></tr>";
-  print "</TABLE>";
-  $db->free();
-} else {
-  print $db->error();
-  print "<p>$sql";
-}
+
 /*
  *
  */

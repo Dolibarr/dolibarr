@@ -35,7 +35,7 @@ print '<tr><td>pass</td><td>' . $conf->db->pass . '&nbsp;</td></tr>';
 print '<tr><td>Database name</td><td>' . $conf->db->name . '</td></tr>';
 
 
-print '<tr><td bgcolor="#e0e0e0" colspan="2">Propale</td></tr>';
+print '<tr class="list_sep"><td colspan="2">Propale</td></tr>';
 print '<tr><td>templates</td><td>' . $conf->propal->templatesdir . '</td></tr>';
 print '<tr><td>output dir</td><td>' . $conf->propal->outputdir . '</td></tr>';
 print '<tr><td>output url</td><td>' . $conf->propal->outputurl . '</td></tr>';

@@ -49,6 +49,8 @@ function llxHeader($head = "") {
   $menu->add("/compta/facture.php3","Factures");
   $menu->add_submenu("paiement.php3","Paiements");
 
+  $menu->add("/compta/propal.php3","Propales");
+
   $menu->add("charges/index.php3","Charges");
   $menu->add_submenu("sociales/","Prest. Sociales");
 
@@ -65,7 +67,7 @@ function llxHeader($head = "") {
 
   $menu->add("resultat/","Résultats");
 
-  $menu->add("/compta/propal.php3","Propales");
+
 
   $menu->add("bank/index.php3","Bank");
 

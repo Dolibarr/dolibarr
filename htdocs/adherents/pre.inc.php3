@@ -24,6 +24,7 @@ require("../main.inc.php3");
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf;
 
+
   /*
    *
    *
@@ -32,27 +33,9 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/comm/clients.php3", "Clients");
-
-  $menu->add_submenu("contact.php3", "Contacts");
-
-  $menu->add("/comm/action/", "Actions");
-
-  $menu->add("/comm/propal.php3", "Propales");
-
-  $menu->add_submenu("propal.php3?viewstatut=0", "Brouillons");
-  $menu->add_submenu("propal.php3?viewstatut=1", "Ouvertes");
-
-  $menu->add("/product/", "Produits");
-
-  $menu->add("/service/", "Services");
-
-  $menu->add("projet/", "Projets");
-
-  $menu->add("/comm/configuration/", "Configuration");
+  $menu->add("/adherents/", "Adherents");
 
   left_menu($menu->liste);
-
 }
 
 

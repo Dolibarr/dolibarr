@@ -176,7 +176,11 @@ class Facture {
 
 
     }
-
+  /*
+   *
+   *
+   *
+   */
   Function set_payed($rowid)
     {
       $sql = "UPDATE llx_facture set paye = 1 WHERE rowid = $rowid ;";

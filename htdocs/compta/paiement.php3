@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,29 +15,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
  *
  */
 require("./pre.inc.php3");
-
+require("../paiement.class.php");
 llxHeader();
 
 $db = new Db();
 
-
 if ($action == 'add') {
   $datepaye = $db->idate(mktime(12, 0 , 0, $pmonth, $pday, $pyear));
 
-  $sql = "INSERT INTO llx_paiement (fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note)";
-  $sql .= " VALUES ($facid, now(), $datepaye,$amount,'$author', $paiementid, '$num_paiement', '$note')";
-  $result = $db->query($sql);
-  if ($result) {
-    $label = "Facture $facnumber - $societe";
-    $sql = "INSERT INTO llx_bank (datec, dateo, amount, author, label)";
-    $sql .= " VALUES (now(), $datepaye, $amount,'$author', '$label')";
-      $result = $db->query($sql);
-  } else {
-    print "$sql";
-  }
+  $paiement = new Paiement($db);
+
+  $paiement->facid        = $facid;  
+  $paiement->datepaye     = $datepaye;
+  $paiement->amount       = $amount;
+  $paiement->author       = $author;
+  $paiement->paiementid   = $paiementid;
+  $paiement->num_paiement = $num_paiement;
+  $paiement->note         = $note;
+
+  $paiement->create();
+
   $action = '';
 
 } elseif ($action == 'create') {
@@ -65,20 +64,16 @@ if ($action == 'add') {
       print "<tr bgcolor=\"#e0e0e0\"><td>Numéro :</td><td>$obj->facnumber</td></tr>";
       print "<tr bgcolor=\"#e0e0e0\"><td>Société :</td><td>$obj->nom</td></tr>";
 
-      print "<tr bgcolor=\"#e0e0e0\"><td>Montant :</td><td align=\"right\">".price($obj->total)." euros TTC</td></tr>";
-
-
-      print "<tr bgcolor=\"#f0f0f0\"><td colspan=\"3\">Paiement</td>";
-
-
+      print "<tr bgcolor=\"#e0e0e0\"><td>Montant :</td><td>".price($obj->total)." euros TTC</td></tr>";
       $sql = "SELECT sum(p.amount) FROM llx_paiement as p WHERE p.fk_facture = $facid;";
       $result = $db->query($sql);
       if ($result) {
 	$sumpayed = $db->result(0,0);
 	$db->free();
       }
-      print '<tr><td>Déjà payé</td><td align="right">'.price($sumpayed).' euros TTC</td></tr>';
+      print '<tr><td>Déjà payé</td><td><b>'.price($sumpayed).'</b> euros TTC</td></tr>';
 
+      print "<tr bgcolor=\"#f0f0f0\"><td colspan=\"3\">Paiement</td>";
 
       print "<input type=\"hidden\" name=\"action\" value=\"add\">";
       print "<input type=\"hidden\" name=\"facid\" value=\"$facid\">";
@@ -133,7 +128,7 @@ if ($action == 'add') {
       print "</select></td>";
 
       print "<td rowspan=\"5\">Commentaires :<br>";
-      print "<textarea name=\"comment\" wrap=\"soft\" cols=\"30\" rows=\"15\"></textarea></td></tr>";
+      print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
 
       $author = $GLOBALS["REMOTE_USER"];
       print "<input type=\"hidden\" name=\"author\" value=\"$author\">\n";
@@ -155,8 +150,9 @@ if ($action == 'add') {
       print "</select><br>";
       print "</td></tr>\n";
       print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Num du cheque ou virement</em></td></tr>\n";
-      print "<tr><td valign=\"top\">Montant :</td><td>Reste à payer : ".price($total - $sumpayed)." euros TTC<br><input name=\"amount\" type=\"text\"></td></tr>\n";
-      print "<tr><td colspan=\"3\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>\n";
+      print "<tr><td valign=\"top\">&nbsp;</td><td>Reste à payer : <b>".price($total - $sumpayed)."</b> euros TTC</td></tr>\n";
+      print "<tr><td valign=\"top\">Montant :</td><td><input name=\"amount\" type=\"text\"></td></tr>\n";
+      print "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>\n";
       print "</form>\n";
       print "</table>\n";
 

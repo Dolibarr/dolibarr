@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +15,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
-require("../main.inc.php3");
+require("../../main.inc.php3");
 
-function llxHeader($head = "", $urlp = "") {
+function llxHeader($head = "") {
   global $user, $conf;
+
 
   /*
    *
@@ -32,28 +33,13 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/comm/clients.php3", "Clients");
+  $menu->add("/compta/dons/","Dons");
+  $menu->add_submenu("fiche.php?action=create","Saisir un don");
 
-  $menu->add_submenu("contact.php3", "Contacts");
-
-  $menu->add("/comm/action/", "Actions");
-
-  $menu->add("/comm/propal.php3", "Propales");
-
-  $menu->add_submenu("propal.php3?viewstatut=0", "Brouillons");
-  $menu->add_submenu("propal.php3?viewstatut=1", "Ouvertes");
-
-  $menu->add("/product/", "Produits");
-
-  $menu->add("/service/", "Services");
-
-  $menu->add("projet/", "Projets");
-
-  $menu->add("/comm/configuration/", "Configuration");
+  $menu->add("/compta/bank/index.php3","Bank");
 
   left_menu($menu->liste);
 
 }
-
 
 ?>
