@@ -92,7 +92,7 @@ class DoliDb {
    */  
   Function clone()
     {
-      $db2 = new Db("", "", "", "", "");
+      $db2 = new DoliDb("", "", "", "", "");
       $db2->db = $this->db;
       return $db2;
     }
