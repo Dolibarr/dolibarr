@@ -125,9 +125,8 @@ if ($_POST["action"] == 'addinfacture' &&
 		    $_POST["qty"], 
 		    $product->tva_tx, $product->id);
 
-  $action = '';
-  $mesg = 'Produit ajouté à la facture ';
-  $mesg .= '<a href="../compta/facture.php?facid='.$facture->id.'">'.$facture->ref.'</a>';
+  Header("Location: ../compta/facture.php?facid=".$facture->id);
+
 }
 
 if ($_POST["action"] == 'add_fourn' && $_POST["cancel"] <> 'Annuler')
@@ -657,7 +656,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	  $otherprop = $propal->liste_array(1, '<>'.$user->id);
 	  if (sizeof($otherprop))
 	    {
-	      print '<form method="POST" action="fiche.php?id='.$id.'">';
+	      print '<form method="POST" action="fiche.php?id='.$product->id.'">';
 	      print '<input type="hidden" name="action" value="addinpropal">';
 	      print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
 	      print "<tr>".'<td>Autres Propositions</td><td>';
@@ -703,9 +702,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	      print "<td><a href=\"../compta/facture.php?facid=$objp->factureid\">$objp->facnumber</a></TD>\n";
 	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      	 
 	      print "<td>". strftime("%d %B %Y",$objp->df)."</td>\n";
-	      print '<form method="POST" action="fiche.php">';
+	      print '<form method="POST" action="fiche.php?id='.$product->id.'">';
 	      print '<input type="hidden" name="action" value="addinfacture">';
-	      print '<input type="hidden" name="id" value="'.$product->id.'">';
 	      print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
 	      print '<input type="text" name="qty" size="3" value="1">&nbsp;Rem.';
 	      print '<input type="text" name="remise_percent" size="3" value="0"> %';
