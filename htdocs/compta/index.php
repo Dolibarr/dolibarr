@@ -233,11 +233,11 @@ if ($user->comm > 0 && $conf->commercial )
  * Factures impayées
  */
 
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
-if ($socidp)
-{
-  $sql .= " AND f.fk_soc = $socidp";
-}
+$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc, sum(pf.amount) as am";
+//$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s ";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
+$sql .= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
+$sql .= " GROUP BY f.facnumber";   
 
 if ( $db->query($sql) )
 {
@@ -247,7 +247,7 @@ if ( $db->query($sql) )
   if ($num)
     {
       print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-      print '<tr class="liste_titre"><td colspan="3">Factures impayées</td></tr>';
+      print '<tr class="liste_titre"><td colspan="3">Factures impayées</td><td>Reçu</td></tr>';
       $var = True;
       $total = 0;
       while ($i < $num)
@@ -257,11 +257,14 @@ if ( $db->query($sql) )
 	  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>';
 	  print '&nbsp;<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-	  print '<td align="right">'.price($obj->total_ttc).'</td></tr>';
-	  $total += $obj->total_ttc;
+	  print '<td align="right">'.price($obj->total_ttc).'</td>';
+	  print '<td align="right">'.price($obj->am).'</td></tr>';
+	  $total +=  $obj->total_ttc;
+	  $totalam +=  $obj->am;
 	  $i++;
 	}
-      print '<tr><td colspan="3" align="right">'.price($obj->total_ttc).'</td></tr>';
+      $var=!$var;
+      print '<tr '.$bc[$var].'><td colspan="2" align="left">Reste à encaisser : '.price($total-$totalam).'</td><td align="right">'.price($total).'</td><td align="right">'.price($totalam).'</td></tr>';
       print "</table><br>";
     }
   $db->free();
