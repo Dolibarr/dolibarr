@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,16 +22,19 @@
 
 create table llx_socpeople
 (
-  idp         integer AUTO_INCREMENT PRIMARY KEY,
-  datec       datetime,
-  fk_soc      integer,
-  name        varchar(50),
-  firstname   varchar(50),
-  address     varchar(255),
-  poste       varchar(80),
-  phone       varchar(30),
-  fax         varchar(30),
-  email       varchar(255),
-  fk_user     integer default 0,
-  note        text
+  idp          integer AUTO_INCREMENT PRIMARY KEY,
+  datec        datetime,
+  fk_soc       integer,
+  name         varchar(50),
+  firstname    varchar(50),
+  address      varchar(255),
+  poste        varchar(80),
+  phone        varchar(30),
+  phone_perso  varchar(30),
+  phone_mobile varchar(30),
+  fax          varchar(30),
+  email        varchar(255),
+  jabberid     varchar(255),
+  fk_user      integer default 0,
+  note         text
 );
