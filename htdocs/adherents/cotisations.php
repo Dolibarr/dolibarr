@@ -63,6 +63,7 @@ if(isset($date_select) && $date_select != ''){
 }
 $result = $db->query($sql);
 $Total=array();
+$Number=array();
 if ($result) 
 {
   $num = $db->num_rows();
@@ -71,6 +72,7 @@ if ($result)
     {
       $objp = $db->fetch_object( $i);
       $Total[strftime("%Y",$objp->dateadh)]+=price($objp->cotisation);
+      $Number[strftime("%Y",$objp->dateadh)]+=1;
       $i++;
     }
 }
@@ -93,12 +95,14 @@ if ($result)
   print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">\n";
   print '<TR class="liste_titre">';
   print "<td>Annee</td>";
+  print '<td align="right">Montant</TD>';
   print "<td align=\"right\">Montant</TD>";
+  print "<td align=\"right\">Moyenne</TD>\n";
   //  print "<td>Prenom Nom / Société</td>";
   print "</TR>\n";
   foreach ($Total as $key=>$value){
     $var=!$var;
-    print "<TR $bc[$var]><TD><A HREF=\"$PHP_SELF?statut=$statut&date_select=$key\">$key</A></TD><TD align=\"right\">".price($value)."</TD></TR>\n";
+    print "<TR $bc[$var]><TD><A HREF=\"$PHP_SELF?statut=$statut&date_select=$key\">$key</A></TD><TD align=\"right\">".price($value)."</TD><TD align=\"right\">".$Number[$key]."</TD><TD align=\"right\">".price($value/$Number[$key])."</TD></TR>\n";
   }
   print "</table><BR>\n";
 
