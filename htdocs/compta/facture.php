@@ -733,6 +733,7 @@ else
 	$sql .= "c.libelle as paiement_type, p.num_paiement, p.rowid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
 	$sql .= " WHERE pf.fk_facture = ".$fac->id." AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid";
+	$sql .= " ORDER BY dp DESC";
 	
 	$result = $db->query($sql);
 	if ($result)
