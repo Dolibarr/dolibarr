@@ -257,21 +257,34 @@ if ($_GET["action"] == 'create')
       print '</td></tr>';
 
       // Lien avec calendrier si module activé
-      if ($conf->webcal->enabled)
-	{
-	  $langs->load("other");
-	  print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td>';
-      if (! $user->webcal_login) {
-	    print '<td><input type="checkbox" disabled name="todo_webcal">';
-	    print ' '.$langs->trans("ErrorWebcalLoginNotDefined","<a href=\"/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
-	    print '</td>';
-      } else {
-	    print '<td><input type="checkbox" name="todo_webcal"></td>';
-	  }
-
-	  print '</tr>';
-	}
-
+        if ($conf->webcal->enabled) {
+            if ($conf->webcal->syncro != 'never')
+            {
+                $langs->load("other");
+                if (! $user->webcal_login)
+                {
+                    print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td>';
+                    print '<td><input type="checkbox" disabled name="todo_webcal">';
+                    print ' '.$langs->trans("ErrorWebcalLoginNotDefined","<a href=\"/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
+                    print '</td>';
+                    print '</tr>';
+                }
+                else
+                {
+                    if ($conf->webcal->syncro == 'always')
+                    {
+                        print '<input type="hidden" name="todo_webcal" value="on">';
+                    }
+                    else
+                    {
+                        print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td>';
+                        print '<td><input type="checkbox" name="todo_webcal"'.(($conf->webcal->syncro=='always' || $conf->webcal->syncro=='yesbydefault')?' checked':'').'></td>';
+                        print '</tr>';
+                    }
+                }
+            }
+        }
+        
       print '<tr><td valign="top">'.$langs->trans("Comment").'</td><td>';
       print '<textarea cols="60" rows="6" name="todo_note"></textarea></td></tr>';
       print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';  
