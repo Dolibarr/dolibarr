@@ -28,6 +28,10 @@
 */
 
 require("../../main.inc.php");
+$langs->load("orders");
+$langs->load("suppliers");
+$langs->load("companies");
+$user->getrights('fournisseur');
 
 require_once DOL_DOCUMENT_ROOT."/fournisseur.commande.class.php";
 
