@@ -45,7 +45,7 @@ if ($pos == '/')
 define('DOL_URL_ROOT', $pos);
 //define('DOL_URL_ROOT', $dolibarr_main_url_root);
 
-require (DOL_DOCUMENT_ROOT."/conf/conf.class.php3");
+require (DOL_DOCUMENT_ROOT."/conf/conf.class.php");
 /*
  * Doit figurer aprés l'inclusion de conf.class.php3 pour overider certaines variables, à terme conf.class.php3 devra etre un fichier qui ne sera pas modifié par l'utilisateur
  */
@@ -75,7 +75,8 @@ $user = new User($db);
 
 $user->fetch($GLOBALS["REMOTE_USER"]);
 
-if ($user->limite_liste <> $conf->liste_limit) {
+if ($user->limite_liste <> $conf->liste_limit)
+{
   $conf->liste_limit = $user->limite_liste;
 }
 /*

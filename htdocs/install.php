@@ -50,11 +50,6 @@ if ($action == "set")
 	  include ("conf/conf.php");
 	}
 
-      if (! file_exists("conf/conf.class.php3"))
-	{
-	  copy("conf/conf.class.php3.sample","conf/conf.class.php3");
-	}
-
       print "<tr><td>Configuration enregistrée</td><td>OK</td>";
 
       print '<tr><td colspan="2">Test des répertoires</td></tr>';
@@ -107,7 +102,7 @@ if ($action == "set")
 
       print '<tr><td colspan="2">test de connexion à la base de données</td></tr>';
       require ($dolibarr_main_document_root . "/lib/mysql.lib.php3");
-      require ($dolibarr_main_document_root . "/conf/conf.class.php3");
+      require ($dolibarr_main_document_root . "/conf/conf.class.php");
       $conf = new Conf();
       $conf->db->host = $dolibarr_main_db_host;
       $conf->db->name = $dolibarr_main_db_name;
