@@ -101,6 +101,8 @@ drop table if exists llx_facturedet;
 
 drop table if exists llx_facture_fourn;
 
+drop table if exists llx_facture_fourn_det;
+
 drop table if exists llx_fichinter;
 
 drop table if exists llx_groupart;
@@ -110,6 +112,8 @@ drop table if exists llx_lieu_concert ;
 drop table if exists llx_livre;
 
 drop table if exists llx_livre_to_auteur ;
+
+drop table if exists llx_newsletter;
 
 drop table if exists llx_paiement;
 
