@@ -35,28 +35,18 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-if ($sortfield == "") {
-  $sortfield="s.nom";
-}
-
 /*
  * Recherche
  *
  *
  */
 
-if ($page == -1) { $page = 0 ; }
-
 $offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+if ($sortorder == "") $sortorder="ASC";
+if ($sortfield == "") $sortfield="la.statut";
 
 /*
  * Mode Liste
- *
  *
  *
  */
@@ -90,10 +80,10 @@ if (strlen($_GET["statut"]))
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   
   $urladd= "&amp;statut=".$_GET["statut"];
@@ -128,7 +118,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object($resql);
       $var=!$var;
 
       print "<tr $bc[$var]><td>";
@@ -152,11 +142,11 @@ if ($result)
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else 
 {
-  print $db->error() . ' ' . $sql;
+  print $db->error($resql) . ' ' . $sql;
 }
 
 $db->close();
