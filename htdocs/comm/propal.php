@@ -118,7 +118,7 @@ if ($action == 'setstatut' && $user->rights->propale->cloturer)
    *  Cloture de la propale
    */
   $propal = new Propal($db);
-  $propal->id = $propalid;
+  $propal->fetch($propalid);
   $propal->cloture($user->id, $statut, $note);
 
 } 
@@ -129,7 +129,7 @@ if ($action == 'modif' && $user->rights->propale->creer)
    *  Repasse la propale en mode brouillon
    */
   $propal = new Propal($db);
-  $propal->id = $propalid;
+  $propal->fetch($propalid);
   $propal->reopen($user->id);
 
 }
@@ -142,7 +142,7 @@ if ($HTTP_POST_VARS["action"] == 'addligne' && $user->rights->propale->creer)
   if ($HTTP_POST_VARS["idprod"])
     {
       $propal = new Propal($db);
-      $propal->id = $propalid;
+      $propal->fetch($propalid);
       $propal->insert_product($HTTP_POST_VARS["idprod"], $HTTP_POST_VARS["qty"]);
     }
 } 
@@ -157,7 +157,7 @@ if ($HTTP_POST_VARS["action"] == 'addproduct' && $user->rights->propale->creer)
     {
 
       $propal = new Propal($db);
-      $propal->id = $propalid;
+      $propal->fetch($propalid);
       
       if (empty ($HTTP_POST_VARS["np_qty"]))
 	$HTTP_POST_VARS["np_qty"]=1;
@@ -172,7 +172,7 @@ if ($HTTP_POST_VARS["action"] == 'addproduct' && $user->rights->propale->creer)
 if ($HTTP_POST_VARS["action"] == 'setremise' && $user->rights->propale->creer) 
 {
   $propal = new Propal($db);
-  $propal->id = $propalid;
+  $propal->fetch($propalid);
   $propal->set_remise($user, $HTTP_POST_VARS["remise"]);
 } 
 
@@ -190,7 +190,7 @@ if ($action == 'del_ligne' && $user->rights->propale->creer)
    *  Supprime une ligne produit dans la propale
    */
   $propal = new Propal($db);
-  $propal->id = $propalid;
+  $propal->fetch($propalid);
   $propal->delete_product($ligne);
   
 }
