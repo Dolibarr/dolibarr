@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,8 +21,20 @@
  *
  */
 
+/**
+ * Classe de gestion des proposition commerciales
+ *
+ *
+ * @since PHP 4.2.0
+ * @author Rodolphe Quiedeville <rodolphe@quiedeville.org>, Éric Seigne <eric.seigne@ryxeo.com>
+ * @see http://www.dolibarr.com/
+ */
+
+
 class Propal
 {
+  // {{{ properties
+
   var $id;
   var $db;
   var $socidp;
@@ -35,8 +47,11 @@ class Propal
   var $products;
   var $products_qty;
   var $note;
-
   var $price;
+
+  // }}}
+
+  // {{{ constructor
 
   Function Propal($DB, $soc_idp="", $propalid=0)
     {
@@ -46,10 +61,16 @@ class Propal
       $this->products = array();
       $this->remise = 0;
     }
-  /*
-   *
-   *
-   *
+  // }}}
+  // {{{ add_product()
+  /**
+   * Ajout d'un produit dans la proposition
+   * 
+   * @access public
+   * @param integer $idproduct l'id du produit
+   * @param integer $qty quantité
+   * @param integer $remise_percent remise effectuée sur le produit
+   * @return void
    */
   Function add_product($idproduct, $qty, $remise_percent=0)
     {
@@ -65,9 +86,11 @@ class Propal
 	  $this->products_remise_percent[$i] = $remise_percent;
 	}
     }
-  /*
+  // }}}
+  /**
    *
    *
+   * @return integer
    */
   Function insert_product($idproduct, $qty, $remise_percent=0)
     {
@@ -685,6 +708,25 @@ class Propal
 	return -1;
       }
   }
+  /**
+   * Mets à jour la note
+   *
+   */
+  Function update_note($note)
+    {
+      $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET note = '$note'";
+      $sql .= " WHERE rowid = $this->id;";
+      
+      if ($this->db->query($sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	  return -1;
+	}
+    }
 }  
 
 class PropaleLigne  
