@@ -91,7 +91,7 @@ if (! $TEMP || ! -d $TEMP) {
 $BUILDROOT="$TEMP/buildroot";
 
 
-my $copyalreadydone=1;
+my $copyalreadydone=0;
 my $batch=0;
 
 print "Makepack version $VERSION\n";
@@ -242,7 +242,7 @@ if ($nboftargetok) {
     	}
     
     	if ($target eq 'RPM') {                 # Linux only
-    		$BUILDFIC="$FILENAMETGZ.spec";
+    		$BUILDFIC="$FILENAME.spec";
     		unlink $FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
     		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
