@@ -38,18 +38,17 @@ class GraphBar extends DolibarrGraph {
   {
     // Create the graph. These two calls are always required
 
+    $height = 240;
+    $width = 320;
+
+    if ($this->width <> $width && $this->width > 0)
+      $width = $this->width;
+    
+    if ($this->height <> $height && $this->height > 0)
+      $height = $this->height;
+
     if (sizeof($datas) && sizeof($labels))
       {
-
-	$height = 240;
-	$width = 320;
-
-	if ($this->width <> $width && $this->width > 0)
-	  $width = $this->width;
-
-	if ($this->height <> $height && $this->height > 0)
-	  $height = $this->height;
-
 	$graph = new Graph($width, $height,"auto");    
 	$graph->SetScale("textlin");
 
@@ -95,6 +94,34 @@ class GraphBar extends DolibarrGraph {
     
 	$graph->img->SetImgFormat("png");
 	$graph->Stroke($file);
+      }
+    else
+      {
+	// Setup a basic canvas we can work
+	$g = new CanvasGraph($width,$height,'auto');
+	$g->SetMargin(5,11,6,11);
+	$g->SetShadow();
+	$g->SetMarginColor("teal");
+	
+	// We need to stroke the plotarea and margin before we add the
+	// text since we otherwise would overwrite the text.
+	//$g->InitFrame();
+
+	// Draw a text box in the middle
+	$txt = "Données manquantes !";
+	$t = new Text($txt,ceil($width / 2),ceil($height/2));
+	$t->SetFont(FF_VERDANA, FS_BOLD, 10);
+	
+	// How should the text box interpret the coordinates?
+	$t->Align('center','top');
+	$t->SetBox("white","black","gray");	
+	$t->ParagraphAlign('center');
+	
+	// Stroke the text
+	$t->Stroke($g->img);
+	
+	// Stroke the graph
+	$g->Stroke($file);
       }
   }
 }   
