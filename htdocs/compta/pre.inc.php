@@ -115,7 +115,7 @@ function llxHeader($head = "", $title="", $help_url='')
 
   if ($conf->prelevement->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/prelevement/","Prélèvements");
+      $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("Withdrawls"));
     }
 
   $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
