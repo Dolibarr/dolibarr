@@ -26,5 +26,6 @@ create table llx_paiement_facture
   fk_facture      integer,
   amount          real default 0,
   
-  unique key (fk_paiement,fk_facture)
+  key (fk_paiement),
+  key (fk_facture)
 )type=innodb;
