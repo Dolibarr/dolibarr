@@ -191,10 +191,10 @@ if (! defined(MAIN_LANG_DEFAULT))
 $conf->langage=MAIN_LANG_DEFAULT;
 
 // On corrige $conf->language si il ne vaut pas le code long: fr_FR par exemple
-if (strlen($conf->language) <= 3) {
+if (strlen($conf->langage) <= 3) {
     $conf->langage = strtolower($conf->langage)."_".strtoupper($conf->langage);
 }
-setlocale(LC_ALL, $conf->language);
+setlocale(LC_ALL, $conf->langage);
 //setlocale(LC_TIME, $conf->language);
 
 require (DOL_DOCUMENT_ROOT ."/translate.class.php");
