@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,8 +122,8 @@ else
   print_titre('Releve num&eacute;ro '.$_GET["num"].' compte : <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>');
   
   print "<table border=0 width=100%><tr><td>&nbsp;</td>";
-  print "<td align=right><a href=\"$PHP_SELF?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">&lt;- prev</a>";
-  print "&nbsp;-&nbsp;<a href=\"$PHP_SELF?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">next -&gt;</a></td></tr></table>";
+  print "<td align=right><a href=\"$PHP_SELF?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">&lt;- Relevé précédent</a>";
+  print "&nbsp; - &nbsp;<a href=\"$PHP_SELF?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">Relevé suivant -&gt;</a></td></tr></table>";
   print "<form method=\"post\" action=\"$PHP_SELF\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
@@ -152,8 +153,8 @@ else
       $var=True;  
       $numrows = $db->num_rows();
       $i = 0; 
-      print "<tr><td colspan=\"3\"><a href=\"$PHP_SELF?num=".$_GET["num"]."&amp;ve=1&amp;rel=$rel&amp;account=".$acct->id."\">vue etendue</a></td>";
-      print "<td align=\"right\" colspan=\"2\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
+      print "<tr><td colspan=\"3\"><a href=\"$PHP_SELF?num=".$_GET["num"]."&amp;ve=1&amp;rel=$rel&amp;account=".$acct->id."\">Vue etendue</a></td>";
+      print "<td align=\"right\" colspan=\"2\">&nbsp;</td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
 
       while ($i < $numrows)
 	{
@@ -164,8 +165,8 @@ else
 	  print "<tr $bc[$var]>";
 	  
 	  print "<td>".strftime("%d %b %Y",$objp->do)."</TD>\n";
-	  print '<td>'.$objp->fk_type.'</td>';
-	  print "<td>$objp->num_chq $objp->label";
+	  print '<td>'.$objp->fk_type.' '.($objp->num_chq?$objp->num_chq:'').'</td>';
+	  print "<td>$objp->label";
 	  
 	  if ($ve)
 	    {
@@ -206,7 +207,9 @@ else
 	  
 	  if ($user->rights->banque->modifier)
 	    {
-	      print "<td align=\"center\">[<a href=\"ligne.php?rowid=$objp->rowid&amp;account=".$acct->id."\">edit</a>]</td>";
+	      print "<td align=\"center\"><a href=\"ligne.php?rowid=$objp->rowid&amp;account=".$acct->id."\">";
+	      print img_edit();
+	      print "</a></td>";
 	    }
 	  else
 	    {
