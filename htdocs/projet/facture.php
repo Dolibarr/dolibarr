@@ -24,6 +24,9 @@ require("../propal.class.php");
 require("../facture.class.php");
 require("../commande/commande.class.php");
 
+$user->getrights('projet');
+if (!$user->rights->projet->lire)
+  accessforbidden();
 
 llxHeader("","../");
 
