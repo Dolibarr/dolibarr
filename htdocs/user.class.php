@@ -1,5 +1,5 @@
 <?php
-/* Copyright (c) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (c) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (c) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -878,7 +878,7 @@ class User
    *    \return    int             <0 si erreur, 0 si changement ok mais envoi mail ko, 1 si ok
    */
 	 
-  function password($password='', $isencrypted = 0)
+  function password($user, $password='', $isencrypted = 0)
     {
         global $langs;
        
@@ -905,20 +905,29 @@ class User
 	{
 	  if ($this->db->affected_rows()) 
 	    {
-	      $mesg = "Votre mot de passe pour accéder à Dolibarr a été changé :\n\n";
-	      $mesg .= $langs->trans("Login")." : $this->login\n";
-	      $mesg .= $langs->trans("Password")." : $password\n\n";
-	      if (mail($this->email, $langs->trans("NewPassword"), $mesg))
-		{
-		    return 1;
-		}
-		else {
-		    $this->error=$langs->trans("ErrorFailtedToSendPassword");
-		    return 0;
-	    }
+
+	    $mesg .= "Bonjour,\n\n";
+	    $mesg .= "Votre mot de passe pour accéder à Dolibarr a été changé :\n\n";
+	    $mesg .= $langs->trans("Login")." : $this->login\n";
+	    $mesg .= $langs->trans("Password")." : $password\n\n";
+
+	    $mesg .= "Adresse      : http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT;
+	    $mesg .= "\n\n";
+	    $mesg .= "--\n";
+	    $mesg.= $user->fullname;
+
+	    if (mail($this->email, $langs->trans("SubjectNewPassword"), $mesg))
+	      {
+		return 1;
+	      }
+	    else
+	      {
+		$this->error=$langs->trans("ErrorFailtedToSendPassword");
+		return 0;
+	      }
 	    }
 	  else {
-	   	  return -2;
+	    return -2;
 	  }
 	}
       else
