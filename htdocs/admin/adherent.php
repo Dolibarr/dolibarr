@@ -20,8 +20,6 @@
  */
 require("./pre.inc.php");
 
-llxHeader();
-
 if (!$user->admin)
 {
   print "Forbidden";
@@ -33,29 +31,34 @@ $db = new Db();
 
 // positionne la variable pour le test d'affichage de l'icone
 
-$adh_use_mailman = ADH_USE_MAILMAN;
+$main_use_mailman = MAIN_USE_MAILMAN;
+$main_use_glasnost = MAIN_USE_GLASNOST;
+$main_use_glasnost_auto = MAIN_USE_GLASNOST_AUTO;
+$main_use_spip = MAIN_USE_SPIP;
+$main_use_spip_auto = MAIN_USE_SPIP_AUTO;
 
 
-if ($action == 'setmailman')
+if ($action == 'set')
 {
-  $sql = "REPLACE INTO llx_const SET name = 'ADH_USE_MAILMAN', value='".$value."', visible=0";
+  $sql = "REPLACE INTO llx_const SET name = '$name', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {
-      $adh_use_mailman = 1;
+      Header("Location: adherent.php");
     }
 }
 
-if ($action == 'unsetmailman')
+if ($action == 'unset')
 {
-  $sql = "DELETE FROM llx_const WHERE name = 'ADH_USE_MAILMAN'";
+  $sql = "DELETE FROM llx_const WHERE name = '$name'";
 
   if ($db->query($sql))
     {
-      $adh_use_mailman = 0;
+      Header("Location: adherent.php");
     }
 }
 
+llxHeader();
 
 /*
  * PDF
@@ -74,10 +77,9 @@ print "</TR>\n";
 
 
 print '<tr><td>Mailman</td><td>Système de mailing listes';
-
 print '</td><td align="center">';
 
-if ($adh_use_mailman == 1)
+if ($main_use_mailman == 1)
 {
   print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
 }
@@ -88,15 +90,117 @@ else
 
 print "</td><td>\n";
 
-if ($adh_use_mailman == 0)
+if ($main_use_mailman == 0)
 {
-  print '<a href="'.$PHP_SELF.'?action=setmailman&value=1">activer</a>';
+  print '<a href="'.$PHP_SELF.'?action=set&value=1&name=MAIN_USE_MAILMAN">activer</a>';
 }
 else
 {
-  print '<a href="'.$PHP_SELF.'?action=unsetmailman&value=0">désactiver</a>';
+  print '<a href="'.$PHP_SELF.'?action=unset&value=0&name=MAIN_USE_MAILMAN">désactiver</a>';
 }
 print '</td></tr>';
+
+print '<tr><td>Glasnost</td><td>Système de vote en ligne';
+print '</td><td align="center">';
+
+if ($main_use_glasnost == 1)
+{
+  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+}
+else
+{
+  print "&nbsp;";
+}
+
+print "</td><td>\n";
+
+if ($main_use_glasnost == 0)
+{
+  print '<a href="'.$PHP_SELF.'?action=set&value=1&name=MAIN_USE_GLASNOST">activer</a>';
+}
+else
+{
+  print '<a href="'.$PHP_SELF.'?action=unset&value=0&name=MAIN_USE_GLASNOST">désactiver</a>';
+}
+print '</td></tr>';
+
+
+print '<tr><td>Glasnost Auto</td><td>Inscription automatique dans Glasnost';
+print '</td><td align="center">';
+
+if (MAIN_USE_GLASNOST_AUTO == 1)
+{
+  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+}
+else
+{
+  print "&nbsp;";
+}
+
+print "</td><td>\n";
+
+if (MAIN_USE_GLASNOST == 0)
+{
+  print '<a href="'.$PHP_SELF.'?action=set&value=1&name=MAIN_USE_GLASNOST_AUTO">activer</a>';
+}
+else
+{
+  print '<a href="'.$PHP_SELF.'?action=unset&value=0&name=MAIN_USE_GLASNOST_AUTO">désactiver</a>';
+}
+print '</td></tr>';
+
+
+
+
+print '<tr><td>Spip</td><td>Système de publication';
+print '</td><td align="center">';
+
+if ($main_use_spip == 1)
+{
+  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+}
+else
+{
+  print "&nbsp;";
+}
+
+print "</td><td>\n";
+
+if ($main_use_spip == 0)
+{
+  print '<a href="'.$PHP_SELF.'?action=set&value=1&name=MAIN_USE_SPIP">activer</a>';
+}
+else
+{
+  print '<a href="'.$PHP_SELF.'?action=unset&value=0&name=MAIN_USE_SPIP">désactiver</a>';
+}
+print '</td></tr>';
+
+
+print '<tr><td>Spip Auto</td><td>Inscription automatique dans SPIP';
+print '</td><td align="center">';
+
+if ($main_use_spip_auto == 1)
+{
+  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+}
+else
+{
+  print "&nbsp;";
+}
+
+print "</td><td>\n";
+
+if ($main_use_spip_auto == 0)
+{
+  print '<a href="'.$PHP_SELF.'?action=set&value=1&name=MAIN_USE_SPIP_AUTO">activer</a>';
+}
+else
+{
+  print '<a href="'.$PHP_SELF.'?action=unset&value=0&name=MAIN_USE_SPIP_AUTO">désactiver</a>';
+}
+print '</td></tr>';
+
 
 
 print '</table>';
