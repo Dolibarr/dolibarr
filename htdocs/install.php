@@ -76,6 +76,7 @@ if ($action == "set")
 	      $dir[1] = $HTTP_POST_VARS["main_dir"]."/document/propale";
 	      $dir[2] = $HTTP_POST_VARS["main_dir"]."/document/societe";
 	      $dir[3] = $HTTP_POST_VARS["main_dir"]."/document/ficheinter";
+	      $dir[4] = $HTTP_POST_VARS["main_dir"]."/document/produit";
 
 	      for ($i = 0 ; $i < sizeof($dir) ; $i++)
 		{
