@@ -25,12 +25,6 @@ $user->getrights('produit');
 if (!$user->rights->produit->lire)
   accessforbidden();
 
-
-if (strlen($type) == 0)
-{
-  $type = 0;
-}
-
 if ($action == 'update')
 {
   $sql = "UPDATE llx_product SET description='$desc' where rowid = $rowid";
@@ -57,14 +51,28 @@ if ($sortorder == "")
 }
   
 $sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p";
-$sql .= " WHERE p.fk_product_type = $type";
-if ($sref)
+
+if ($HTTP_POST_VARS["sall"])
 {
-  $sql .= " AND lower(p.ref) like '%".strtolower($sref)."%'";
+  $sql .= " WHERE lower(p.ref) like '%".strtolower($sall)."%'";
+  $sql .= " OR lower(p.label) like '%".strtolower($sall)."%'";
 }
-if ($snom)
+else
 {
-  $sql .= " AND lower(p.label) like '%".strtolower($snom)."%'";
+  if (strlen($type) == 0)
+    {
+      $type = 0;
+    }
+
+  $sql .= " WHERE p.fk_product_type = $type";
+  if ($sref)
+    {
+      $sql .= " AND lower(p.ref) like '%".strtolower($sref)."%'";
+    }
+  if ($snom)
+    {
+      $sql .= " AND lower(p.label) like '%".strtolower($snom)."%'";
+    }
 }
 
 $sql .= " ORDER BY $sortfield $sortorder ";
