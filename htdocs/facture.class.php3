@@ -274,9 +274,9 @@ class Facture {
    *
    *
    */
-  Function addline($facid, $desc, $pu, $qty)
+  Function addline($facid, $desc, $pu, $qty, $txtva)
     {
-      $sql = "INSERT INTO llx_facturedet (fk_facture,description,price,qty) VALUES ($facid, '$desc', $pu, $qty) ;";
+      $sql = "INSERT INTO llx_facturedet (fk_facture,description,price,qty,tva_taux) VALUES ($facid, '$desc', $pu, $qty, $txtva) ;";
       $result = $this->db->query( $sql);
 
       $this->updateprice($facid);
