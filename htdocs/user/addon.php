@@ -121,7 +121,7 @@ if ($_GET["id"])
   
   if ($bk4u->uid == 0)
     {
-      print "Pas de login";
+      print $langs->trans("NoLogin");
     }
   else
     {

@@ -73,7 +73,7 @@ if ($action == 'create')
   $ga = new Groupart($db);
 
   print "<tr><td>Date</td><td>";
-  print_date_select();
+  $htmls->select_date();
   print "</td></tr>";
 
   print "<tr><td>Lieu</td><td>";

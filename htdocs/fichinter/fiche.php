@@ -258,6 +258,8 @@ if ($_GET["action"] == 'create')
 }
 
 
+$sel = new Form($db);
+
 /*
  *
  * Mode update
@@ -286,11 +288,7 @@ if ($_GET["action"] == 'edit')
 
   print '<table class="border" width="100%">';
   print "<tr><td>".$langs->trans("Date")."</td><td>";
-  /*
-   * set $reday, $remonth, $reyear
-   */
-  print_date_select($fichinter->date);
-
+  $sel->select_date($fichinter->date);
   print "</select></td></tr>";
   
   print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$fichinter->ref.'</td></tr>';
@@ -300,7 +298,6 @@ if ($_GET["action"] == 'edit')
       // Projet associé
       print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
     
-      $sel = new Form($db);
       $sel->select_array("projetidp",$listeprj,$fichinter->projet_id);
     
       if (sizeof($listeprj) == 0)

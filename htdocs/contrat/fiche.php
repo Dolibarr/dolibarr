@@ -251,13 +251,11 @@ if ($_GET["action"] == 'create')
 	    }
 	  print '</select></td></tr>';
 	  	  
-	  print "<tr><td>Date :</td><td>";
-	
-	  print_date_select(time());
-
+	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
+      $html->select_date();
 	  print "</td></tr>";
 
-	  print "<tr><td>Projet :</td><td>";
+	  print '<tr><td>'.$langs->trans("Project").' :</td><td>';
 	  $proj = new Project($db);
 	  $html->select_array("projetid",$proj->liste_array($soc->id),0,1);
 	  print "</td></tr>";

@@ -21,7 +21,8 @@
  *
  */
 
-/**	    \file       htdocs/comm/addpropal.php
+/**
+	    \file       htdocs/comm/addpropal.php
         \ingroup    propal
 		\brief      Page d'ajout d'une proposition commmercial
 		\version    $Revision$
@@ -49,6 +50,9 @@ if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/module
 llxHeader();
 
 print_titre($langs->trans("NewProp"));
+
+$form=new Form($db);
+
 
 /*
  *
@@ -93,7 +97,7 @@ if ($_GET["action"] == 'create')
   print '</tr>';
   
   print "<tr><td>".$langs->trans("Date")."</td><td>";
-  print_date_select();
+  $form->select_date();
   print "</td></tr>";
   
   print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';

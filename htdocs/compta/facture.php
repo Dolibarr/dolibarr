@@ -507,7 +507,7 @@ if ($_GET["action"] == 'create')
 	  print '<textarea name="note" wrap="soft" cols="60" rows="5"></textarea></td></tr>';	
 	  
 	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
-	  print_date_select(time());
+	  $html->select_date();
 	  print '</td></tr>';
 
 	  print '<tr><td>'.$langs->trans("Ref").' :</td><td>Provisoire</td></tr>';

@@ -380,14 +380,14 @@ else
             print "</tr>\n";
 
             print "<tr>".'<td width="25%" valign="top">'.$langs->trans("ContactCard").'</td>';
-            print '<td>';
+            print '<td class="valeur">';
             if ($fuser->contact_id)
             {
                 print '<a href="../contact/fiche.php?id='.$fuser->contact_id.'">'.$langs->trans("ContactCard").'</a>';
             }
             else
             {
-                print $langs->trans("NoContactCard");
+                print $langs->trans("ThisUserIsNot");
             }
             print '</td>';
             print "</tr>\n";

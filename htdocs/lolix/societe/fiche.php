@@ -89,8 +89,11 @@ if ($_GET["action"] == 'edit')
       print $html->select_array("forme_juridique_id",$soc->forme_juridique_array(), $soc->forme_juridique_id,0,1);
       print '</td></tr>';
 
-      print '<tr><td>Effectif</td><td colspan="3">';
-      print $html->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
+      print '<tr><td>'.$langs->trans("Type").'</td><td>';
+      $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id);
+      print '</td>';
+      print '<td>'.$langs->trans("Staff").'</td><td>';
+      $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
       print '</td></tr>';
 
       print '<input type="hidden" name="tva_intra_code" value="'.$soc->tva_intra_code.'">';
@@ -126,7 +129,8 @@ else
   print '<td>Siren</td><td><a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;</td></tr>';
   
   print '<tr><td>Forme juridique</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
-  print '<tr><td>Effectif</td><td>'.$soc->effectif.'</td>';
+
+  print '<tr><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td>';
   print '<td>Création</td><td>'.strftime("%d %B %Y",$soc->date_creation).'</td></tr>';
   
   print '<tr><td>Contact</td><td>'.$socdet->contact_nom.' '.$socdet->contact_email.'</td>';

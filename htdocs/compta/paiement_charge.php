@@ -134,6 +134,9 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
+$html=new Form($db);
+
+
 if ($fiche_erreur_message)
 {
   print "<div class=\"error\">$fiche_erreur_message</div><br>";
@@ -183,7 +186,7 @@ if ($_GET["action"] == 'create')
 	  print "<input type=\"hidden\" name=\"chid\" value=\"$chid\">";
 	  
 	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
-	  print_date_select();
+	  $html->select_date();
 	  print "</td>";
 	  print '<td>'.$langs->trans("Comments").'</td></tr>';
 	  
@@ -194,7 +197,7 @@ if ($_GET["action"] == 'create')
 	  $result = $db->query($sql);
 	  if ($result)
 	    {
-	      $num = $db->num_rows();
+	      $num = $db->num_rows($result);
 	      $i = 0; 
 	      while ($i < $num)
 		{

@@ -152,6 +152,8 @@ if ($_GET["action"] == 'set_encaisse')
 
 llxHeader();
 
+$html=new Form($db);
+
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -169,7 +171,7 @@ if ($_GET["action"] == 'create') {
   print '<input type="hidden" name="action" value="add">';
   
   print "<tr $bc[1]>".'<td>'.$langs->trans("Date").'</td><td>';
-  print_date_select();
+  $html->select_date();
   print '</td>';
   
   print '<td rowspan="12" valign="top">'.$langs->trans("Comments").' :<br>';
@@ -255,7 +257,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
   print '<input type="hidden" name="rowid" value="'.$don->id.'">';
   
   print "<tr $bc[1]>".'<td>'.$langs->trans("Date").'</td><td>';
-  print_date_select($don->date);
+  $html->select_date($don->date);
   print '</td>';
   
   print '<td rowspan="12" valign="top">'.$langs->trans("Comments").' :<br>';

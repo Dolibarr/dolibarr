@@ -327,9 +327,7 @@ else
 	  print '<td valign="top">'.price($fac->total_ttc).'</td></tr>';      
 
 	  print '<tr><td>'.$langs->trans("Date").'</td><td>';
-	  
-	  print_date_select($fac->datep);
-	  
+	  $html->select_date($fac->datep);
 	  print "</td></tr>";
 	  
 	  $authorfullname="&nbsp;";

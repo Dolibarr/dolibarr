@@ -127,8 +127,10 @@ class MenuTop {
             if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
             if ($conf->service->enabled) { $chaine.="Services"; }
         
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$chaine.'</a>';
-        
+            if ($user->rights->produit->lire)
+                print '<a '.$class.' href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$chaine.'</a>';
+            else
+                print '<font class="tmenudisabled">'.$chaine.'</font>';
         }
 
         // Supplier

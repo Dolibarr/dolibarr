@@ -167,6 +167,18 @@ a.tmenu:hover
   text-decoration: none;
 }
 
+font.tmenudisabled
+{
+  color: #93a5aa;
+  padding: 0em 1em;
+  margin: 0em 0em 1.5em 0em;
+  border: 1px solid #b3c5cc;
+  font-weight:bold;
+  font-size:12px;
+}
+
+/* Login */
+
 a.login
 {
   position: absolute;
@@ -202,20 +214,22 @@ img.login
  *   Barre de gauche
  */
 
-a.vmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:link        { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:visited     { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:active      { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:hover       { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+font.vmenudisabled  { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; color: #93a5aa; }
 
-a.vsmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:link       { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:visited    { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:active     { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:hover      { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+font.vsmenudisabled { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #93a5aa; margin: 1em 1em 1em 1em; }
 
-a.help:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:link         { font-size:11px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:visited      { font-size:11px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:active       { font-size:11px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:hover        { font-size:11px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 
 div.blockvmenupair
 {
@@ -255,6 +269,7 @@ div.help
     padding: 3px;
     margin: 1px 0px 0px 0px;
 }
+
 
 
 .flat  {
@@ -666,8 +681,8 @@ textarea
 
 td.valeur
 { 
-            font-weight: bold;
-            }
+  color: #001122;
+}
 
 td.delete { 
             background: red;

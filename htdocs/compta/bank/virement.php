@@ -38,6 +38,8 @@ if (!$user->rights->banque->modifier)
 
 llxHeader();
 
+$html=new Form($db);
+
 
 /*
  * Action ajout d'un virement
@@ -105,7 +107,7 @@ $result = $db->query($sql);
 if ($result)
 {
   $var=True;  
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
     $i = 0; $total = 0;
     
     while ($i < $num)
@@ -136,7 +138,7 @@ if ($result)
 print "</select></td>\n";
 
 print "<td>";
-print_date_select();
+$html->select_date();
 print "</td>\n";
 print '<td><input name="label" type="text" size="40"></td>';
 print '<td><input name="amount" type="text" size="8"></td>';

@@ -411,7 +411,7 @@ if ($action == 'create') {
     }
 
     print "<tr><td>Date de cotisation</td><td>\n";
-    print_date_select();
+    $htmls->select_date();
     print "</td></tr>\n";
     print '<tr><td>Mode de paiment</td><td>';
 
@@ -728,11 +728,11 @@ if ($rowid)
         print "<tr><td>Date de cotisation</td><td>\n";
         if ($adh->datefin > 0)
         {
-            print_date_select($adh->datefin + (3600*24));
+            $html->select_date($adh->datefin + (3600*24));
         }
         else
         {
-            print_date_select();
+            $html->select_date();
         }
         print "</td></tr>";
     

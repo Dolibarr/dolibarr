@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/compta/paiement.php
 		\ingroup    compta
 		\brief      Page de création d'un paiement
@@ -143,6 +143,9 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
+$html=new Form($db);
+
+
 if ($_GET["action"] == 'create') 
 {
   $facture = new Facture($db);
@@ -155,7 +158,7 @@ if ($_GET["action"] == 'create')
   $result = $db->query($sql);
   if ($result)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($result);
       if ($num)
 	{
 	  $obj = $db->fetch_object($result);
@@ -176,7 +179,7 @@ if ($_GET["action"] == 'create')
 	  print "<input type=\"hidden\" name=\"societe\" value=\"$obj->nom\">";
 	  
 	  print "<tr><td>".$langs->trans("Date")." :</td><td>";
-	  print_date_select();
+	  $html->select_date();
 	  print '</td>';
 	  print '<td>'.$langs->trans("Comments").'</td></tr>';
 	  
@@ -187,7 +190,7 @@ if ($_GET["action"] == 'create')
 	  $result = $db->query($sql);
 	  if ($result)
 	    {
-	      $num = $db->num_rows();
+	      $num = $db->num_rows($result);
 	      $i = 0; 
 	      while ($i < $num)
 		{

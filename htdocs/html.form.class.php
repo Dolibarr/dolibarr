@@ -23,16 +23,16 @@
  * $Source$
  */
 
-/*!
-  \file       htdocs/html.form.class.php
-  \brief      Fichier de la classe des fonctions prédéfinie de composants html
-  \version    $Revision$
+/**
+        \file       htdocs/html.form.class.php
+        \brief      Fichier de la classe des fonctions prédéfinie de composants html
+        \version    $Revision$
 */
 
 
-/*!
-  \class Form
-  \brief Classe permettant la génération de composants html
+/**
+        \class      Form
+        \brief      Classe permettant la génération de composants html
 */
 
 class Form
@@ -40,8 +40,9 @@ class Form
   var $db;
   var $errorstr;
   
-  /*!	\brief     Constructeur
-    \param     DB      handler d'accès base de donnée
+  /**
+    	\brief     Constructeur
+        \param     DB      handler d'accès base de donnée
   */
 	
   function Form($DB)
@@ -51,7 +52,7 @@ class Form
     return 1;
   }
   
-  /*
+  /**
    *    \brief      Retourne la liste déroulante des départements/province/cantons tout pays confondu ou pour un pays donné.
    *    \remarks    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
    *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrée pour
@@ -60,7 +61,7 @@ class Form
    *    \param      selected        code forme juridique a présélectionné
    *    \param      pays_code       0=liste tous pays confondus, sinon code du pays à afficher
    */
-	 
+
   function select_departement($selected='',$pays_code=0)
   {
     global $conf,$langs;
@@ -123,7 +124,7 @@ class Form
     }
   }
   
-  /*
+  /**
    *    \brief      Retourne la liste déroulante des regions actives dont le pays est actif
    *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrée pour
    *                un code donnée mais dans ce cas, le champ pays et lang diffère).
@@ -179,7 +180,7 @@ class Form
     }
   }
 
-  /*
+  /**
    *    \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
    *    \param     selected    code pays pré-sélectionné
    *    \param     htmlname    nom de la liste deroulante
@@ -232,7 +233,7 @@ class Form
   }
 
 
-  /*
+  /**
    *    \brief     Retourne la liste déroulante des langues disponibles
    *    \param     
    */
@@ -265,7 +266,7 @@ class Form
   }
 
 
-  /*
+  /**
    *    \brief   Retourne la liste déroulante des sociétés
    *    \param
    */
@@ -305,7 +306,7 @@ class Form
     }
   }
   
-  /*
+  /**
    *    \brief  Retourne la liste déroulante des contacts d'une société donnée
    *
    */
@@ -349,7 +350,7 @@ class Form
   }
   
   
-  /*
+  /**
    *    \brief      Retourne le nom d'un pays
    *    \param      id      id du pays
    */
@@ -377,7 +378,7 @@ class Form
 	
   }
 
-  /*
+  /**
    *    \brief      Retourne la liste déroulante des civilite actives
    *    \param      selected    civilite pré-sélectionnée
    */
@@ -423,7 +424,7 @@ class Form
     
   }
 
-  /*
+  /**
    *    \brief      Retourne la liste déroulante des formes juridiques tous pays confondu ou pour un pays donné.
    *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
    *    \param      selected        code forme juridique a présélectionné
@@ -490,7 +491,7 @@ class Form
     }
   }
   
-  /*
+  /**
    *    \brief  Affiche formulaire de demande de confirmation
    *    \param  page        page
    *    \param  title       title
@@ -517,7 +518,7 @@ class Form
     print "</form>\n";  
   }
 	
-  /*
+  /**
    *    \brief  Selection du taux de tva
    *
    */
@@ -565,7 +566,7 @@ class Form
     print '</select>';
   }
 
-  /*
+  /**
    *    \brief  Affiche zone de selection de date
    *            Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
    *            Les champs sont présélectionnées avec:
@@ -575,23 +576,25 @@ class Form
    */
   function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0)
   {
+    global $langs;
+    
     if (! $set_time && ! $empty)
       {
 	$set_time = time();
       }
 
-    $strmonth[1] = "Janvier";
-    $strmonth[2] = "F&eacute;vrier";
-    $strmonth[3] = "Mars";
-    $strmonth[4] = "Avril";
-    $strmonth[5] = "Mai";
-    $strmonth[6] = "Juin";
-    $strmonth[7] = "Juillet";
-    $strmonth[8] = "Ao&ucirc;t";
-    $strmonth[9] = "Septembre";
-    $strmonth[10] = "Octobre";
-    $strmonth[11] = "Novembre";
-    $strmonth[12] = "D&eacute;cembre";
+    $strmonth[1]  = $langs->trans("January");
+    $strmonth[2]  = $langs->trans("February");
+    $strmonth[3]  = $langs->trans("March");
+    $strmonth[4]  = $langs->trans("April");
+    $strmonth[5]  = $langs->trans("May");
+    $strmonth[6]  = $langs->trans("June");
+    $strmonth[7]  = $langs->trans("July");
+    $strmonth[8]  = $langs->trans("August");
+    $strmonth[9]  = $langs->trans("September");
+    $strmonth[10] = $langs->trans("October");
+    $strmonth[11] = $langs->trans("November");
+    $strmonth[12] = $langs->trans("December");
     
     // Analyse de la date de préselection
     if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$set_time,$reg)) {
@@ -727,7 +730,7 @@ class Form
       }
   }
 	
-  /*
+  /**
    *    \brief      Affiche liste déroulante
    *
    */
@@ -776,8 +779,8 @@ class Form
 
   }
     
-  /*!
-    \brief Affiche un select à partir d'un tableau
+  /**
+    \brief  Affiche un select à partir d'un tableau
     \param	name            nom de la zone select
     \param	array           tableau de key+valeur
     \param	id              key présélectionnée
@@ -819,10 +822,11 @@ class Form
 	    print ">$value</option>\n";
 	  }
       }
-        
+
     print "</select>";
   }
-  /*
+
+  /**
    *    \brief  Renvoie la chaîne de caractère décrivant l'erreur
    *
    */
@@ -833,8 +837,8 @@ class Form
   }
 
 
-  /*
-   *    \brief      Selection de oui/non en caractere (renvoi yes/no)
+  /**
+   *    \brief      Selection de oui/non en chaine (renvoie yes/no)
    *    \param      name        nom du select
    *    \param      value       valeur présélectionnée
    *    \param      option      0 retourne yes/no, 1 retourne 1/0
@@ -866,8 +870,8 @@ class Form
     print '</select>'."\n";
   }
 	
-  /*
-   *    \brief      Selection de oui/non en chiffre (renvoi 1/0)
+  /**
+   *    \brief      Selection de oui/non en chiffre (renvoie 1/0)
    *    \param      name        nom du select
    *    \param      value       valeur présélectionnée
    */
@@ -876,7 +880,7 @@ class Form
     $this->selectyesno($name,$value,1);
   }
 	
-  /*
+  /**
    *    \brief  Checkbox
    *
    */

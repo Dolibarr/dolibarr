@@ -209,31 +209,34 @@ if ($_socid > 0)
     print '<tr><td valign="top">';
     print '<table class="border" width="100%">';
 
-    print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="2">';
+    print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">';
     print $objsoc->nom;
-    print '</td><td align="center">'.$objsoc->code_client.'</td></tr>';
-    print "<tr><td valign=\"top\">".$langs->trans("Address")."</td><td colspan=\"3\">".nl2br($objsoc->adresse);
+    print '</td></tr>';
 
-    print '<br />'.$objsoc->cp." ".$objsoc->ville;
-    print '<br />'.$objsoc->pays.'</td></tr>';
+    print '<tr><td>';
+    print $langs->trans('CustomerCode').'</td><td>';
+    print $objsoc->code_client;
+    if ($objsoc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+    print '</td><td>'.$langs->trans('Prefix').'</td><td>'.$objsoc->prefix_comm.'</td></tr>';
+    
+    print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($objsoc->adresse)."</td></tr>";
 
-    print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($objsoc->tel).'&nbsp;</td><td>Fax</td><td>'.dolibarr_print_phone($objsoc->fax).'&nbsp;</td></tr>';
-    print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
+    print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$objsoc->cp."</td>";
+    print '<td>'.$langs->trans('Town').'</td><td>'.$objsoc->ville."</td></tr>";
+    
+    print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$objsoc->pays.'</td>';
 
-    print "<tr><td nowrap>".$langs->transcountry("ProfId1",$objsoc->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
-    print '<td>'.$langs->trans("Prefix").'</td><td>';
-    if ($objsoc->prefix_comm)
-    {
-        print $objsoc->prefix_comm;
-    }
-    else
-    {
-        print "[<a href=\"fiche.php?socid=$objsoc->id&action=attribute_prefix\">Attribuer</a>]";
-    }
+    print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($objsoc->tel).'</td>';
+    print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($objsoc->fax).'</td></tr>';
 
-    print "</td></tr>";
+    print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">".$objsoc->url."</a>&nbsp;</td></tr>";
 
-    print "<tr><td>".$langs->trans("Type")."</td><td> $objsoc->typent</td><td>Effectif</td><td>$objsoc->effectif</td></tr>";
+    print "<tr><td nowrap>".$langs->transcountry("ProfId1",$objsoc->pays_code)."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=".$objsoc->siren."\">".$objsoc->siren."</a>&nbsp;</td>";
+    print '<td>'.$langs->transcountry('ProfId2',$objsoc->pays_code).'</td><td>'.$objsoc->siret.'</td></tr>';
+
+    print '<tr><td>Forme juridique</td><td colspan="3">'.$objsoc->forme_juridique.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Type").'</td><td>'.$objsoc->typent.'</td><td>'.$langs->trans("Effectif").'</td><td>'.$objsoc->effectif.'</td></tr>';
+
     print '<tr><td nowrap>';
     print $langs->trans("CustomerDiscount").'</td><td>'.$objsoc->remise_client."&nbsp;%</td>";
     print '<td colspan="2"><a href="remise.php?id='.$objsoc->id.'">';

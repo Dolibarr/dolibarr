@@ -135,13 +135,13 @@ if ($socid > 0)
     print '<tr><td valign="top">';
     print '<table class="border" width="100%">';
 
-    print "<tr><td>".$langs->trans("Phone")."</td><td align=\"center\">".dolibarr_print_phone($societe->tel)."&nbsp;</td><td>fax</td><td align=\"center\">".dolibarr_print_phone($societe->fax)."&nbsp;</td></tr>";
+    print "<tr><td>".$langs->trans("Phone")."</td><td align=\"center\">".dolibarr_print_phone($societe->tel)."</td><td>".$langs->trans("Fax")."</td><td align=\"center\">".dolibarr_print_phone($societe->fax)."&nbsp;</td></tr>";
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->address)."<br>$societe->cp $societe->ville</td></tr>";
 
     print '<tr><td>Siret</td><td>'.$societe->siret.'</td>';
     print '<td>Capital</td><td>'.$societe->capital.'</td></tr>';
 
-    print "<tr><td>".$langs->trans("Type")."</td><td> $societe->typent</td><td>Effectif</td><td>$societe->effectif</td></tr>";
+    print '<tr><td>'.$langs->trans("Type")."</td><td>".$societe->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$societe->effectif.'</td></tr>';
 
     if ($societe->url)
       {
