@@ -325,13 +325,49 @@ class Livre {
 	    $liste_auteurs .= '<a href="">'.addslashes($auteur->nom)."</a>, ";
 	  }
       }
-    $desc .= 'Auteur';
 
     if (sizeof($auteurs)>1)
       {
-	$desc .= "s";
+	$desc .= 'Auteurs : <ul>';
+
+	reset($auteurs);
+	foreach ($auteurs as $key => $value)
+	  {
+	    $auteursid = $key;
+	    $auteur = new Auteur($this->db);
+	    $result = $auteur->fetch($auteursid);
+	    
+	    if ( $result )
+	      { 
+		$livraut = array();
+		$livraut = $auteur->liste_livre('oscid', 1);
+
+		$desc .= '<li>'.addslashes($auteur->nom);
+
+		if (sizeof($livraut) > 1)
+		  {
+		    
+		    $desc .= " : ";
+		    
+		    foreach ($livraut as $lakey => $lavalue)
+		      {
+			if ($lakey <> $this->oscid)
+			  {
+			    $desc .= '<a href="product_info.php?products_id='.$lakey.'">'.addslashes($lavalue) . "</a> ";
+			  }
+		      }
+		  }
+
+		$desc .= "</li>";
+	      }
+	  }
+	$desc .= "</ul>";
       }
-    $desc .= ' : ' . substr($liste_auteurs, 0, strlen($liste_auteurs) - 2);
+    else
+      {
+	$desc .= 'Auteur : ' . substr($liste_auteurs, 0, strlen($liste_auteurs) - 2);
+      }
+
 
     $desc .= '<br>Année de parution : '.$this->annee;
 
@@ -346,7 +382,7 @@ class Livre {
 
     $sql = "UPDATE ".DB_NAME_OSC.".products_description ";
 
-    $sql .= " SET products_name = '".$this->titre."'";
+    $sql .= " SET products_name = '".addslashes($this->titre)."'";
 
     $sql .= ", products_description = '$desc'";
 
