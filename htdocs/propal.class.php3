@@ -280,6 +280,8 @@ class Propal
 	      $this->lignes = array();
 	      $this->db->free();
 
+	      $this->ref_url = '<a href="'.DOL_URL_ROOT.'/comm/propal.php3?propalid='.$this->id.'">'.$this->ref.'</a>';
+
 	      /*
 	       * Lignes
 	       */
