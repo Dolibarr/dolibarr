@@ -465,9 +465,9 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,99,'Autre p
 -- Pour la Belgique
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 1,'Indépendant');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 2,'SC - Coopérative');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 2,'SCRL - Coopérative à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 3,'SPRL - Société à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 4,'SA - Société Anonyme');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 3,'SCRL - Coopérative à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 4,'SPRL - Société à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 5,'SA - Société Anonyme');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,52,'Société en nom collectif');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,53,'Société en commandite');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,71,'Administration publique');
