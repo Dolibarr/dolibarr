@@ -46,7 +46,7 @@ table.border {
                }
 
 table.border td {
-                  background: #444444 url(img/action_background.jpg) top left no-repeat;   
+                  background: #444444 url(img/menu_background.jpg) top left repeat-y;   
                   border-collapse: collapse; 
                   border-top: 1px solid #555555;
                   border-right: 1px solid #888888;
@@ -60,7 +60,7 @@ table.noborder {
                  border: 0px  }
 
 table.noborder td {
-                    background: #444444 url(img/pair_background.jpg) top left repeat;     
+                    background: #444444 url(img/noborder_background.jpg) top left no-repeat;     
                     border-collapse: collapse;
                     border: 0px  
                     border-top:    1px dashed #555555;
@@ -68,13 +68,13 @@ table.noborder td {
                     }
 
 table#actions {
-                background: #444444 url(img/action_background.jpg) top left no-repeat;
+                background: #444444 url(img/action_background.jpg) top left repeat-y;
                 border: 0px;
                 cell-spacing: 1em;
                 }
 
 table#actions td {
-                   background: #444444 url(img/action_background.jpg) top left no-repeat;
+                   background: #444444 url(img/action_background.jpg) top left repeat-y;
                    border-bottom: 1px ridge #bbbbbb;
                    border-right: 1px ridge #cccccc;
                    border-left: 1px ridge #999999; 
@@ -95,7 +95,7 @@ a {
 a:hover {     text-decoration: underline;    color: #ffffff; }
 
 td.menu { 
-          background: #444444 url(img/action_background.jpg) top left no-repeat;
+          background: #444444 url(img/menu_background.jpg) top left repeat-y;
           border-right: 1px solid #888888;
           border-bottom: 1px solid #777777;
           }
@@ -137,7 +137,7 @@ div.menus {
   color: #bbbbbb; 
   text-decoration: none }
 
-a.normal{ font-weight: normal; color: #dddddd;} 
+a.normal { font-weight: normal; color: #dddddd;} 
 a.impayee { font-weight: bold; color: #eeeeee;}
 
 /*
@@ -152,7 +152,7 @@ a.leftmenu {
   }
 
 td.barre { 
-           background: #444444 url(img/menu_background.jpg) top left no-repeat;
+           background: #444444 url(img/menu_background.jpg) top left repeat-y;
            font-family: Helvetica, Verdana;
            font-size: 1.0em;  
            color: #dddddd;
