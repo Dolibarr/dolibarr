@@ -288,40 +288,36 @@ class Facture
 
       if ( $this->db->query( $sql) )
 	{
-	  if ( $this->db->affected_rows() )
-	    {
-	      $sql = "DELETE FROM llx_fa_pr WHERE fk_facture = $rowid;";
+	  $sql = "DELETE FROM llx_fa_pr WHERE fk_facture = $rowid;";
 
+	  if ($this->db->query( $sql) )
+	    {
+	      $sql = "DELETE FROM llx_facturedet WHERE fk_facture = $rowid;";
+	      
 	      if ($this->db->query( $sql) )
 		{
-
-		  $sql = "DELETE FROM llx_facturedet WHERE fk_facture = $rowid;";
-
+		  $sql = "DELETE FROM llx_facture WHERE rowid = $rowid AND fk_statut = 0;";
+		  
 		  if ($this->db->query( $sql) )
 		    {
-		      $sql = "DELETE FROM llx_facture WHERE rowid = $rowid AND fk_statut = 0;";
-
-		      if ($this->db->query( $sql) )
-			{
-			  return 1;
-			}
-		      else
-			{
-			  print "Err : ".$this->db->error();
-			  return -1;
-			}
+		      return 1;
 		    }
 		  else
 		    {
 		      print "Err : ".$this->db->error();
-		      return -2;
+		      return -1;
 		    }
 		}
 	      else
 		{
 		  print "Err : ".$this->db->error();
-		  return -3;
+		  return -2;
 		}
+	    }
+	  else
+	    {
+	      print "Err : ".$this->db->error();
+	      return -3;
 	    }
 	}
       else
@@ -329,8 +325,6 @@ class Facture
 	  print "Err : ".$this->db->error();
 	  return -4;
 	}
-
-
     }
   /**
    * Tag la facture comme payée
@@ -481,6 +475,7 @@ class Facture
    */
   Function updateprice($facid)
     {
+      include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
       $err=0;
       $sql = "SELECT price, qty, tva_taux FROM llx_facturedet WHERE fk_facture = $facid;";
   
@@ -490,55 +485,34 @@ class Facture
 	{
 	  $num = $this->db->num_rows();
 	  $i = 0;
-	  $total_ht = 0;
-	  $amount = 0;
-	  $tva = array();
-	  $total_tva = 0;
-	  $total_remise = 0;
 	  while ($i < $num)	  
 	    {
 	      $obj = $this->db->fetch_object($i);
 
-	      $lprice = $obj->qty * $obj->price;
+	      $products[$i][0] = $obj->price;
+	      $products[$i][1] = $obj->qty;
+	      $products[$i][2] = $obj->tva_taux;
 
-	      $amount = $amount + $lprice;
-
-	      if ($this->remise_percent > 0)
-		{
-		  $lremise = ($lprice * $this->remise_percent / 100);
-		  $lprice = $lprice - $lremise;
-		  $total_remise = $total_remise + $lremise;
-		}
-
-	      $total_ht = $total_ht + $lprice;
-
-	      $ligne_tva = ($lprice * ($obj->tva_taux / 100));
-
-	      $tva[$obj->tva_taux] = $tva[$obj->tva_taux] + $ligne_tva;
 	      $i++;
 	    }
+
 	  $this->db->free();
-
 	  /*
-	   * Sommes et arrondis
+	   *
 	   */
-	 
-	  foreach ($tva as $key => $value)
-	    {
-	      $tva[$key] = round($tva[$key], 2);
-	      $total_tva = $total_tva + $tva[$key];
-	    }
+	  $calculs = calcul_price($products, $this->remise_percent);
 
-	  $total_ht  = round($total_ht, 2);
-	  $total_tva = round($total_tva, 2);
-
-	  $this->total_ttc = $total_ht + $total_tva;
-	  
+	  $this->total_remise   = $calculs[3];
+	  $this->amount_ht      = $calculs[4];
+	  $this->total_ht       = $calculs[0];
+	  $this->total_tva      = $calculs[1];
+	  $this->total_ttc      = $calculs[2];
+	  $tvas                 = $calculs[5];
 	  /*
 	   *
 	   */
 
-	  $sql = "UPDATE llx_facture SET amount = $amount, remise=$total_remise,  total=$total_ht, tva=$total_tva, total_ttc=$this->total_ttc";
+	  $sql = "UPDATE llx_facture SET amount = $this->amount_ht, remise=$this->total_remise,  total=$this->total_ht, tva=$this->total_tva, total_ttc=$this->total_ttc";
 	  $sql .= " WHERE rowid = $facid ;";
 	  
 	  if ( $this->db->query($sql) )
@@ -548,10 +522,10 @@ class Facture
 
 	      if ( $this->db->query($sql) )
 		{
-		  foreach ($tva as $key => $value)
+		  foreach ($tvas as $key => $value)
 		    {
 		      $sql = "REPLACE INTO llx_facture_tva_sum SET fk_facture=".$this->id;
-		      $sql .= ", amount = ".$tva[$key];
+		      $sql .= ", amount = ".$tvas[$key];
 		      $sql .= ", tva_tx=".$key;
 		      
 		      if (! $this->db->query($sql) )
