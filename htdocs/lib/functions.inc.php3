@@ -254,6 +254,14 @@ function print_titre($titre)
  *
  */
 
+function dol_delete_file($file)
+{
+  return unlink($file);
+}
+/*
+ *
+ *
+ */
 function block_access()
 {
   llxHeader();
