@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -98,6 +98,8 @@ alter table llx_editeur type=INNODB;
 alter table llx_fa_pr type=INNODB;
 
 alter table llx_facture type=INNODB;
+
+alter table llx_facture_tva_sum type=INNODB;
 
 alter table llx_facturedet type=INNODB;
 
