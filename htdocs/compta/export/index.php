@@ -30,11 +30,7 @@
 
 require("./pre.inc.php");
 
-llxHeader();
-
-print "Export Comptable";
-
-print '<br><a href="index.php?action=export">Export</a><br>';
+require("./ComptaJournalPaiement.class.php");
 
 if ($_GET["action"] == 'export')
 {
@@ -44,8 +40,21 @@ if ($_GET["action"] == 'export')
   $exc->Export();
 
   print $exc->error_message;
+
+  $jp= new ComptaJournalPaiement($db);
+  $jp->GeneratePdf();
+
 }
 
+llxHeader();
+
+print_titre("Export Comptable");
+
+print '<table border="0" width="100%">';
+
+print '<tr><td valign="top" width="30%">';
+
+print '<br><a href="index.php?action=export">Export</a><br>';
 
 $dir = DOL_DATA_ROOT."/compta/export/";
 
@@ -65,9 +74,6 @@ while (($file = readdir($handle))!==false)
     {
       print '<tr><td><a href="'.DOL_URL_ROOT.'/document.php?file='.$dir.$file.'&amp;type=text/plain">'.$file.'</a><td>';
 
-
-
-
       print '</tr>';
     }
 }
@@ -75,6 +81,38 @@ while (($file = readdir($handle))!==false)
 
 print "</table>";
 
+print '</td><td valign="top">';
+
+$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facturedet";
+$sql .= " WHERE fk_export_compta = 0";
+$result = $db->query($sql);
+if ($result)
+{
+  $row = $db->fetch_row($result);
+  $nbfac = $row[0];
+
+  $db->free($result);
+}
+
+$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."paiement";
+$sql .= " WHERE fk_export_compta = 0";
+
+$result = $db->query($sql);
+if ($result)
+{
+  $row = $db->fetch_row($result);
+  $nbp = $row[0];
+
+  $db->free($result);
+}
+
+print '<table class="noborder">';
+print '<tr class="liste_titre"><td>Type</td><td>Nb</td></tr>';
+print '<tr><td>Factures</td><td align="right">'.$nbfac.'</td></tr>';
+print '<tr><td>Paiements</td><td align="right">'.$nbp.'</td></tr>';
+print "</table>\n";
+
+print '</td></tr></table>';
 
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
