@@ -35,7 +35,7 @@ if (!$user->admin)
 
 $codeclient_addon_var = CODECLIENT_ADDON;
 
-if ($_GET["action"] == 'setmod')
+if ($_GET["action"] == 'setcodeclient')
 {
   if (dolibarr_set_const($db, "CODECLIENT_ADDON",$_GET["value"]))
     {
@@ -45,6 +45,22 @@ if ($_GET["action"] == 'setmod')
       Header("Location: societe.php");
     }
 }
+
+
+$codecompta_addon_var = CODECOMPTA_ADDON;
+
+if ($_GET["action"] == 'setcodecompta')
+{
+  if (dolibarr_set_const($db, "CODECOMPTA_ADDON",$_GET["value"]))
+    {
+      // la constante qui a été lue en avant du nouveau set
+      // on passe donc par une variable pour avoir un affichage cohérent
+      $codecompta_addon_var = $_GET["value"];
+      Header("Location: societe.php");
+    }
+}
+
+
 
 llxHeader();
 
@@ -99,8 +115,61 @@ if ($handle)
 	    }
 	  else
 	    {
-	      print "  <td>&nbsp;</td>\n";
-	      print "  <td align=\"center\"><a href=\"societe.php?action=setmod&amp;value=".$file."\">activer</a></td>\n";
+
+	      print '<td>&nbsp;</td>';
+	      print '<td align="center"><a href="societe.php?action=setcodeclient&amp;value='.$file.'">activer</a></td>';
+	    }
+	  
+	  print '</tr>';
+	}
+    }
+  closedir($handle);
+}
+print '</table>';
+
+print "<br>";
+
+print_titre("Module de gestion des compta");
+
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>Nom</td>';
+print '<td>Info</td>';
+print '<td align="center">Activé</td>';
+print '<td>&nbsp;</td>';
+print "</tr>\n";
+
+clearstatcache();
+
+$dir = "../includes/modules/societe/";
+$handle = opendir($dir);
+if ($handle)
+{
+  while (($file = readdir($handle))!==false)
+    {
+      if (substr($file, 0, 15) == 'mod_codecompta_' && substr($file, -3) == 'php')
+	{
+	  $file = substr($file, 0, strlen($file)-4);
+
+	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
+
+	  $modCodeCompta = new $file;
+
+	  print '<tr class="pair"><td width="140">'.$modCodeCompta->nom."</td><td>\n";
+	  print $modCodeCompta->info();
+	  print '</td>';
+	  
+	  if ($codecompta_addon_var == "$file")
+	    {
+	      print '<td align="center">';
+	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	      print '</td><td>&nbsp;</td>';
+	    }
+	  else
+	    {
+	      print '<td>&nbsp;</td>';
+	      print '<td align="center"><a href="societe.php?action=setcodecompta&amp;value='.$file.'">activer</a></td>';
+
 	    }
 	  
 	  print "</tr>\n";
@@ -109,6 +178,8 @@ if ($handle)
   closedir($handle);
 }
 print "</table>\n";
+
+
 
 $db->close();
 
