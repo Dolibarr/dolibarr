@@ -764,60 +764,46 @@ class Form
     		\param	name            nom de la zone select
     		\param	array           tableau de key+valeur
     		\param	id              key présélectionnée
-    		\param	empty           1 si il faut un valeur "-" dans la liste, 0 sinon
+    		\param	empty           1 si il faut un valeur " " dans la liste, 0 sinon
     		\param	key_libelle     1 pour afficher la key dans la valeur "[key] value"
     */
 		
   function select_array($name, $array, $id='', $empty=0, $key_libelle=0)
     {
-      print '<select name="'.$name.'">';
-      
-      $i = 0;
+        print '<select name="'.$name.'">';
+        
+        $i = 0;
+        
+        if (strlen($id)) {
+            if ($empty == 1)
+            {
+                $array[0] = "&nbsp;";
+            }
+            reset($array);
+        }
+        
+        while (list($key, $value) = each ($array))
+        {
+            print "<option value=\"$key\" ";
 
-      if (strlen($id))
-	{
-	  if ($empty == 1)
-	    {
-	      $array[0] = "-";
-	    }
-	  reset($array);
+            // Si il faut présélectionner une valeur
+            if ($id && $id == $key)
+            {
+                print "selected";
+            }
 
-	  while (list($key, $value) = each ($array))
-	    {
-	      print "<option value=\"$key\" ";
-	      if ($id == $key)
-		{
-		  print "selected";
-		}
-	      if ($key_libelle)
-		{
-		  print ">[$key] $value</option>\n";  
-		}
-	      else
-		{
-		  print ">$value</option>\n";
-		}
-	    }
-	}
-      else
-	{
-	  while (list($key, $value) = each ($array) )
-	    {
-	      print "<option value=\"$key\" ";
-	      if ($key_libelle)
-		{
-		  print ">[$key] $value</option>\n";  
-		}
-	      else
-		{
-		  print ">$value</option>\n";
-		}
-	    }
-	
-	}
-
-      print "</select>";
-    
+            if ($key_libelle)
+            {
+                print ">[$key] $value</option>\n";  
+            }
+            else
+            {
+                if ($value=="-") { $value="&nbsp;"; }
+                print ">$value</option>\n";
+            }
+        }
+        
+        print "</select>";
     }
   /*
    *    \brief  Renvoie la chaîne de caractère décrivant l'erreur
