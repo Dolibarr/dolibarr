@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +34,7 @@ llxHeader('','Telephonie - Statistiques - Lignes');
  *
  */
 
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/lignes/index.php';
-$head[$h][1] = "Global";
-$hselected = $h;
-$h++;
-
+include "./onglets.php";
 dolibarr_fiche_head($head, $hselected, "Lignes");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
