@@ -200,7 +200,7 @@ if ($socid > 0)
     print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">';
     print $objsoc->nom;
     print '</td></tr>';
-    print "<tr><td valign=\"top\">Adresse</td><td colspan=\"3\">".nl2br($objsoc->address)."<br>".$objsoc->cp." ".$objsoc->ville." ".$objsoc->pays."</td></tr>";
+    print "<tr><td valign=\"top\">Adresse</td><td colspan=\"3\">".nl2br($objsoc->adresse)."<br>".$objsoc->cp." ".$objsoc->ville." ".$objsoc->pays."</td></tr>";
     print "<tr><td>Téléphone</td><td> $objsoc->tel&nbsp;</td><td>Fax</td><td>$objsoc->fax&nbsp;</td></tr>";
     print "<tr><td>Web</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
 

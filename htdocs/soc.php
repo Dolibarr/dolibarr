@@ -286,7 +286,7 @@ else
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$soc->nom.'</td></tr>';
 
-  print "<tr><td valign=\"top\">Adresse</td><td colspan=\"3\">".nl2br($soc->address)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
+  print "<tr><td valign=\"top\">Adresse</td><td colspan=\"3\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
 
   print '<tr><td>Téléphone</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
   print '<td>Fax</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
