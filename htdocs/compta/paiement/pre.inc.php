@@ -22,6 +22,7 @@
  */
 require("../../main.inc.php");
 $langs->load("bills");
+$langs->load("compta");
 
 function llxHeader($head = "", $title="") {
   global $user, $langs;
