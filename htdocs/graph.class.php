@@ -25,8 +25,9 @@ class Graph
   var $errorstr;
 
 
-  Function Graph()
+  Function Graph($data=array())
   {
+    $this->data = $data;
     
     include_once(DOL_DOCUMENT_ROOT."/includes/phplot/phplot.php");
     $this->bgcolor = array(235,235,224);
@@ -56,7 +57,14 @@ class Graph
 
     $graph->SetPlotType('bars');
 
-    $graph->SetPlotAreaPixels(60, 10, $this->width-10, $this->height - 30) ;
+    if (isset($this->MaxValue))
+      {
+	$graph->SetPlotAreaWorld(0,0,12,$this->MaxValue);
+      }
+    else
+      {
+	$graph->SetPlotAreaPixels(60, 10, $this->width-10, $this->height - 30) ;
+      }
 
     $graph->SetBackgroundColor($this->bgcolor);
 
@@ -76,6 +84,21 @@ class Graph
     if (strlen($title))
       {
 	$graph->SetTitle = $title;
+      }
+
+    //    $graph->SetSkipBottomTick(1);
+
+    // Affiche les valeurs
+    //$graph->SetDrawDataLabels('1');
+    //$graph->SetLabelScalePosition('1');
+
+    if (isset($this->MaxValue))
+      {
+	$graph->SetVertTickPosition('plotleft');
+    
+	$graph->SetMarginsPixels(40,50,30,30);
+	$graph->SetLegend(array('2002','2003'));
+	$graph->SetLegendWorld(12,$this->MaxValue);
       }
 
     //Draw it
@@ -98,11 +121,39 @@ class Graph
     $this->width = $w;
   }
 
+  Function SetMaxValue($max)
+  {
+    $this->MaxValue = $max;
+  }
+
   Function SetHeight($h)
   {
     $this->height = $h;
   }
 
+  Function SetLegend()
+  {
+
+  }
+
+  Function GetMaxValue()
+  {
+    $k = 0;
+    $vals = array();
+    $nblines = sizeof($this->data);
+    $nbvalues = sizeof($this->data[0]) - 1;
+
+    for ($j = 0 ; $j < $nblines ; $j++)
+      {
+	for ($i = 0 ; $i < $nbvalues ; $i++)
+	  {
+	    $vals[$k] = $this->data[$j][$i+1];
+	    $k++;
+	  }
+      }
+    rsort($vals);
+    return $vals[0];
+  }
 }
 
 ?>
