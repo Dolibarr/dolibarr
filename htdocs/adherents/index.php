@@ -37,7 +37,7 @@ $var=True;
 
 
 $sql = "SELECT count(*) as somme , t.libelle FROM llx_adherent as d, llx_adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid  AND d.statut = 1 GROUP BY t.libelle";
+$sql .= " WHERE d.fk_adherent_type = t.rowid  AND statut = 1 GROUP BY t.libelle";
 
 $result = $db->query($sql);
 
