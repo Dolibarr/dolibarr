@@ -42,6 +42,7 @@ AddContact=Ajouter contact
 AddCompany=Ajouter sociétés
 DeleteACompany=Supprimer une société
 PersonalInformations=Informations personnelles
+AccountancyCode=Code comptable
 CustomerCode=Code client
 SupplierCode=Code fournisseur
 CustomerAccount=Compte client

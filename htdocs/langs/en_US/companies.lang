@@ -42,6 +42,7 @@ AddContact=Add new contact
 AddCompany=Add company
 DeleteACompany=Delete a company
 PersonalInformations=Personal data
+AccountancyCode=Code comptable
 CustomerCode=Customer code
 SupplierCode=Supplier code
 CustomerAccount=Customer account
