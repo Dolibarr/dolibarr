@@ -45,7 +45,7 @@ print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td valign="top" width="30%">';
 
   
-$sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p";
+$sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p WHERE envente=1";
 $sql .= " ORDER BY p.datec DESC ";
 $sql .= $db->plimit(15 ,0);
 $result = $db->query($sql) ;
