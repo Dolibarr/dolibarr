@@ -33,34 +33,34 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-if ($HTTP_POST_VARS["action"] == 'add' or $HTTP_POST_VARS["action"] == 'update')
+if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 {
   $soc = new Societe($db);
-  $soc->nom            = $HTTP_POST_VARS["nom"];
-  $soc->adresse        = $HTTP_POST_VARS["adresse"];
-  $soc->cp             = $HTTP_POST_VARS["cp"];
-  $soc->ville          = $HTTP_POST_VARS["ville"];
-  $soc->pays_id        = $HTTP_POST_VARS["pays_id"];
-  $soc->departement_id = $HTTP_POST_VARS["departement_id"];
-  $soc->tel            = $HTTP_POST_VARS["tel"];
-  $soc->fax            = $HTTP_POST_VARS["fax"];
-  $soc->url            = ereg_replace( "http://", "", $HTTP_POST_VARS["url"] );
-  $soc->siren          = $HTTP_POST_VARS["siren"];
-  $soc->siret          = $HTTP_POST_VARS["siret"];
-  $soc->ape            = $HTTP_POST_VARS["ape"];
-  $soc->capital        = $HTTP_POST_VARS["capital"];
-  $soc->tva_intra      = $HTTP_POST_VARS["tva_intra_code"] . $HTTP_POST_VARS["tva_intra_num"];
+  $soc->nom            = $_POST["nom"];
+  $soc->adresse        = $_POST["adresse"];
+  $soc->cp             = $_POST["cp"];
+  $soc->ville          = $_POST["ville"];
+  $soc->pays_id        = $_POST["pays_id"];
+  $soc->departement_id = $_POST["departement_id"];
+  $soc->tel            = $_POST["tel"];
+  $soc->fax            = $_POST["fax"];
+  $soc->url            = ereg_replace( "http://", "", $_POST["url"] );
+  $soc->siren          = $_POST["siren"];
+  $soc->siret          = $_POST["siret"];
+  $soc->ape            = $_POST["ape"];
+  $soc->capital        = $_POST["capital"];
+  $soc->tva_intra      = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
 
-  $soc->forme_juridique_id  = $HTTP_POST_VARS["forme_juridique_id"];
-  $soc->effectif_id         = $HTTP_POST_VARS["effectif_id"];
-  $soc->client              = $HTTP_POST_VARS["client"];
-  $soc->fournisseur         = $HTTP_POST_VARS["fournisseur"];
+  $soc->forme_juridique_id  = $_POST["forme_juridique_id"];
+  $soc->effectif_id         = $_POST["effectif_id"];
+  $soc->client              = $_POST["client"];
+  $soc->fournisseur         = $_POST["fournisseur"];
 
-  if ($HTTP_POST_VARS["action"] == 'update')
+  if ($_POST["action"] == 'update')
     {
       $soc->update($socid);
     }
-  if ($HTTP_POST_VARS["action"] == 'add')
+  if ($_POST["action"] == 'add')
     {
       $socid = $soc->create();
     }
@@ -237,13 +237,13 @@ else
   $head[0][0] = 'soc.php?socid='.$soc->id;
   $head[0][1] = "Fiche société";
   $h = 1;
+
   if ($soc->client==1)
     {
       $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id;
       $head[$h][1] = 'Fiche client';
       $h++;
     }
-
   if ($soc->client==2)
     {
       $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$soc->id;
@@ -256,6 +256,13 @@ else
       $head[$h][1] = 'Fiche fournisseur';
       $h++;
     }
+
+  if ($conf->compta->enabled) {
+      $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
+      $head[$h][1] = 'Fiche compta';
+      $h++;
+  }
+
   $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
   $head[$h][1] = 'Note';
   $h++;
@@ -278,10 +285,9 @@ else
   
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$soc->nom.'</td></tr>';
-  print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($soc->adresse).'&nbsp;';
-  print '<br>'.$soc->cp.'&nbsp;'.$soc->ville.'<br>'.$soc->pays.'</td></tr>';
 
-  
+  print "<tr><td valign=\"top\">Adresse</td><td colspan=\"3\">".nl2br($soc->address)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
+
   print '<tr><td>Téléphone</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
   print '<td>Fax</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
   print '<tr><td>Web</td><td colspan="3">';
@@ -309,11 +315,11 @@ else
    */  
   print '<div class="tabsAction">';
 
-  print '<a class="tabAction" href="soc.php?socid='.$socid.'&action=edit">Editer</a>';
+  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$socid.'&action=edit">Editer</a>';
 
-  print '<a class="tabAction" href="./contact/fiche.php?socid='.$socid.'&amp;action=create">Ajouter un contact</a>';
+  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create">Ajouter un contact</a>';
   
-  print '<a class="tabAction" href="societe/notify/fiche.php?socid='.$socid.'">Notifications</a>';
+  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$socid.'">Notifications</a>';
   print '</div>';
 /*
  *

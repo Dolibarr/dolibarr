@@ -74,9 +74,11 @@ $soc = new Societe($db);
 $soc->id = $socid;
 if ( $soc->fetch($socid) ) 
 {
+  
   $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
   $head[0][1] = "Fiche société";
   $h = 1;
+  
   if ($soc->client==1)
     {
       $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id;
@@ -96,6 +98,13 @@ if ( $soc->fetch($socid) )
       $head[$h][1] = 'Fiche fournisseur';
       $h++;
     }
+
+  if ($conf->compta->enabled) {
+      $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
+      $head[$h][1] = 'Fiche compta';
+      $h++;
+  }
+
   $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
   $head[$h][1] = 'Note';
   $h++;

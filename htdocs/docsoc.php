@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,9 +101,17 @@ if ($socid > 0)
 	  $head[$h][1] = 'Fiche fournisseur';
 	  $h++;
 	}
+
+      if ($conf->compta->enabled) {
+          $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;
+          $head[$h][1] = 'Fiche compta';
+          $h++;
+      }
+
       $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
       $head[$h][1] = 'Note';      
       $h++;
+
       if ($user->societe_id == 0)
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
