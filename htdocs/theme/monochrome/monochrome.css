@@ -22,23 +22,23 @@
 body 
 {
   margin: 0px;
-  background: #333333;
+  background: #555555;
   color: #dddddd;  
-  font-family: Helvetica, Verdana; 
+  font-family: Helvetica, Verdana, sans-serif;
+  font-size: small;
 }
 /*
  *   Menu superieur
  */
 table.topbarre { 
-                 cell-spacing: 0;
+                 border-top: 1px solid #999999;
                  }
 /*
  * Tables
  */
 table.border {
                background: #444444; 
-               border-collapse: collapse;
-               border: 2px white ridge; 
+               border-collapse: collapse; 
                border-top: 1px solid #999999;
                border-right: 1px solid #aaaaaa;
                border-bottom: 1px solid #aaaaaa;
@@ -46,7 +46,7 @@ table.border {
                }
 
 table.border td {
-                  background: #444444 url(img/menu_background.jpg) top left repeat-y;   
+                  background: #444444 url(img/border_background.jpg) no-repeat center right;   
                   border-collapse: collapse; 
                   border-top: 1px solid #555555;
                   border-right: 1px solid #888888;
@@ -61,16 +61,14 @@ table.noborder {
 
 table.noborder td {
                     background: #444444 url(img/noborder_background.jpg) top left no-repeat;     
-                    border-collapse: collapse;
-                    border: 0px  
+                    border-collapse: collapse;  
                     border-top:    1px dashed #555555;
                     border-bottom: 1px dashed #777777;
                     }
 
 table#actions {
-                background: #444444 url(img/action_background.jpg) top left repeat-y;
+                background: #555555;
                 border: 0px;
-                cell-spacing: 1em;
                 }
 
 table#actions td {
@@ -113,27 +111,28 @@ div.menus {
             border-right:  1px solid #888888;
             border-bottom: 1px solid #777777;
             border-left:   1px solid #666666;
-            */
             }
 
 .menu 
 { 
-  background: #444444; 
-  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
+  background: #444444;  
+  font-size: 1.0em; 
+  font-weight: bold; 
   color: #dddddd; 
   text-decoration: none }
 
 .menusel
 { 
-  background: #666666; 
-  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
+  background: #666666;  
+  font-size: 1.0em; 
+  font-weight: bold; 
   color: #eeeeee; 
   text-decoration: none }
 
 .submenu 
 { 
-  background: #444444; 
-  font-family: Helvetica, Verdana; font-size: 1.0em;
+  background: #444444;  
+  font-size: 1.0em;
   color: #bbbbbb; 
   text-decoration: none }
 
@@ -144,8 +143,7 @@ a.impayee { font-weight: bold; color: #eeeeee;}
  *   Barre de gauche
  */
 
-a.leftmenu { 
-             font-family: Helvetica, Verdana; 
+a.leftmenu {  
              font-size: 1.0em; 
              font-weight: bold; 
              color: #dddddd; 
@@ -153,23 +151,21 @@ a.leftmenu {
 
 td.barre { 
            background: #444444 url(img/menu_background.jpg) top left repeat-y;
-           font-family: Helvetica, Verdana;
            font-size: 1.0em;  
            color: #dddddd;
-           text-decoration: none 
-           border-top:    1px ridge #aaaaaa;
+           text-decoration: none;
+           border-top: 1px ridge #aaaaaa;
            border-right:  1px solid #888888;
            border-bottom: 1px ridge #aaaaaa;
            border-left:   1px solid #666666;                      
            }
 
 
-div.titre { 
-            font-family: Helvetica, Verdana; 
+div.titre {  
             font-size: 1.0em; 
             font-weight: bold; 
             color: #dddddd; 
-            text-decoration: none 
+            text-decoration: none;
             border-top: 1px dashed #777777;             
             border-bottom: 1px dashed #888888;
             }
@@ -186,23 +182,20 @@ div.titre {
          }
 
 tr.liste_titre { 
-                 background: #666666; 
-                 font-family: Helvetica, Verdana;
+                 background: #666666;  
                  font-size: 1.0em;
                  font-weight: bold;
                  color: #dddddd;
                  }
 
 tr.pair { 
-          background: #777777 url(img/pair_background.jpg) top left repeat; 
-          font-family: Helvetica, Verdana; 
+          background: #777777 url(img/pair_background.jpg) top left repeat;  
           font-size: 1.0em;
           color: #eeeeee; 
           }
 
 tr.impair { 
             background: #666666 url(img/impair_background.jpg) top left repeat; 
-            font-family: Helvetica, Verdana;
             font-size: 1.0em;
             color: #eeeeee;
             }
@@ -212,39 +205,33 @@ tr.impair {
  */
 
 tr.box_titre { 
-               font-family: Helvetica, Verdana;
                font-size: 1.0em;
                font-weight: bold;
                color: #dddddd;
                }
 
 tr.box_pair { 
-              background: #666666 url(img/pair_background.jpg) top left repeat; 
-              font-family: Helvetica, Verdana; 
+              background: #666666 url(img/pair_background.jpg) top left repeat;  
               font-size: 0.9em;              
               }
 
 tr.box_impair { 
                 background: #777777 url(img/impair_background.jpg) top left repeat; 
-                font-family: Helvetica, Verdana;
                 font-size: 0.9em; 
                 }
 
 tr.fiche { 
-           font-family: Helvetica, Verdana;
            font-size: 0.6em; 
            }
 
 /* stats */
 tr.total { 
           background: #444444; 
-          font-family: Helvetica, Verdana; 
           font-size: 1.0em;
           }
 
 tr.form { 
           background: #444444; 
-          font-family: Helvetica, Verdana; 
           font-size: 1.0em;
           }
 
@@ -269,7 +256,7 @@ td.delete {
             }
 
 td.valid { 
-           background: pink;
+           background: #A43500;
            font-weight: bold;
            }
 
