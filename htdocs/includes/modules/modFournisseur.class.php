@@ -150,12 +150,13 @@ class modFournisseur extends DolibarrModules
    */
   function remove()
   {
-    $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'fournisseur';");
+    $sql = array();
 
     return $this->_remove($sql);
   }
+
   /**
-   *
+   *    \brief      Fonction appelé par l'init (donc lors de l'activation d'un module)
    *
    */
   function load_datas()
@@ -171,27 +172,27 @@ class modFournisseur extends DolibarrModules
 	    $this->db->free();
 
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-	    $sql .= " (libelle) VALUES ('Courrier')";
+	    $sql .= " (code,libelle) VALUES ('OrderByMail','Courrier')";
 
 	    $this->db->query($sql);
 
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-	    $sql .= " (libelle) VALUES ('Fax')";
+	    $sql .= " (code,libelle) VALUES ('OrderByFax','Fax')";
 
 	    $this->db->query($sql);
 
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-	    $sql .= " (libelle) VALUES ('Mail')";
+	    $sql .= " (code,libelle) VALUES ('OrderByEMail','EMail')";
 
 	    $this->db->query($sql);
 
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-	    $sql .= " (libelle) VALUES ('Téléphone')";
+	    $sql .= " (code,libelle) VALUES ('OrderByPhone','Téléphone')";
 
 	    $this->db->query($sql);
 
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."c_methode_commande_fournisseur";
-	    $sql .= " (libelle) VALUES ('En ligne')";
+	    $sql .= " (code,libelle) VALUES ('OrderByWWW','En ligne')";
 
 	    $this->db->query($sql);
 	  }
