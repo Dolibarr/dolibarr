@@ -79,7 +79,7 @@ if ($_GET["action"] == 'del_bookmark')
  * Affichage page
  */
 
-print_titre("Espace commercial");
+print_titre($langs->trans("CommercialArea"));
 
 print '<table border="0" width="100%">';
 
@@ -136,7 +136,7 @@ if ($conf->propal->enabled) {
 		{
 		  $obj = $db->fetch_object();
 		  $var=!$var;
-		  print "<tr $bc[$var]><td><a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td><td>".$obj->nom."</td><td align=\"right\">".price($obj->price)."</td></tr>";
+		  print "<tr $bc[$var]><td><a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td><td>".$obj->nom."</td><td align=\"right\">".price($obj->price)."</td></tr>";
 		  $i++;
 		  $total += $obj->price;
 		}
@@ -174,7 +174,7 @@ if ($conf->commande->enabled)
           while ($i < $num)
 	    {
 	      $obj = $db->fetch_object();
-	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"../commande/fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	      $i++;
 	      $var=!$var;
@@ -364,8 +364,7 @@ if ($conf->contrat->enabled && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 	  while ($i < $num)
 	    {
 	      $obj = $db->fetch_object();
-	      print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".img_file()."</a>&nbsp;";
-	      print "<a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".$obj->ref."</a></td>";
+	      print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowContract","contract"))." ".$obj->ref."</a></td>";
 	      print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
 	      print "<td align=\"right\">".$contrat->LibStatut($obj->enservice)."</td></tr>\n";
 	      $var=!$var;
@@ -408,9 +407,8 @@ if ($conf->propal->enabled) {
 	  while ($i < $num)
 	    {
 	      $obj = $db->fetch_object();
-	      print "<tr $bc[$var]><td width=\"15%\"><a href=\"propal.php?propalid=".$obj->propalid."\">".img_file()."</a>&nbsp;";
-	      print "<a href=\"propal.php?propalid=".$obj->propalid."\">".$obj->ref."</a></td>";
-	      print "<td width=\"30%\"><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
+	      print "<tr $bc[$var]><td width=\"15%\"><a href=\"propal.php?propalid=".$obj->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td>";
+	      print "<td width=\"30%\"><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$obj->nom."</a></td>\n";      
 	      print "<td align=\"right\">";
 	      print strftime("%e %b %Y",$obj->dp)."</td>\n";	  
 	      print "<td align=\"right\">".price($obj->price)."</td></tr>\n";

@@ -295,7 +295,7 @@ if ($_socid > 0)
             {
                 $objp = $db->fetch_object();
                 print "<tr $bc[$var]>";
-                print "<td><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a>\n";
+                print "<td><a href=\"propal.php?propalid=$objp->propalid\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a>\n";
                 if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
                 {
                     print " <b>&gt; 15 jours</b>";
@@ -343,7 +343,7 @@ if ($_socid > 0)
                 $objp = $db->fetch_object();
                 $var=!$var;
                 print "<tr $bc[$var]>";
-                print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->propalid.'">'.$objp->ref."</a>\n";
+                print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->propalid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$objp->ref."</a>\n";
                 if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
                 {
                     print " <b>&gt; 15 jours</b>";

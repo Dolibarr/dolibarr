@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!	        \file       htdocs/commande/fiche.php
+/**	        \file       htdocs/commande/fiche.php
 	        \ingroup    commande
 	        \brief      Fiche commande
 	        \version    $Revision$
@@ -233,7 +233,7 @@ if ($_GET["action"] == 'create')
 	  print '<input type="hidden" name="soc_id" value="'.$soc->id.'">' ."\n";
 	  print '<input type="hidden" name="remise_percent" value="0">';
 
-	  print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<table class="border" width="100%">';
 	  
 	  print '<tr><td>'.$langs->trans("Customer").' :</td><td>'.$obj->nom.'</td>';
 	  print '<td class="border">'.$langs->trans("Comments").' :</td></tr>';
@@ -270,9 +270,9 @@ if ($_GET["action"] == 'create')
 	      print '<input type="hidden" name="tva"      value="'.$obj->tva.'">'."\n";
 	      print '<input type="hidden" name="propalid" value="'.$propalid.'">';
 	      
-	      print '<tr><td>Proposition</td><td colspan="2">'.$obj->ref.'</td></tr>';
-	      print '<tr><td>Montant HT</td><td colspan="2">'.price($amount).'</td></tr>';
-	      print '<tr><td>TVA</td><td colspan="2">'.price($obj->tva)."</td></tr>";
+	      print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2">'.$obj->ref.'</td></tr>';
+	      print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($amount).'</td></tr>';
+	      print '<tr><td>'.$langs->trans("VAT").'</td><td colspan="2">'.price($obj->tva)."</td></tr>";
 	      print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($obj->total)."</td></tr>";	  
 	    }	  
 	  else
@@ -304,7 +304,7 @@ if ($_GET["action"] == 'create')
 		}
 	      else
 		{
-		  print $db->error();
+		  dolibarr_print_error($db);
 		}
 	      	      
 	      print '<table class="noborder" cellspacing="0">';
@@ -323,7 +323,7 @@ if ($_GET["action"] == 'create')
 	  /*
 	   *
 	   */	  
-	  print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
+	  print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
 	  print "</form>\n";
 	  print "</table>\n";
 
@@ -332,11 +332,11 @@ if ($_GET["action"] == 'create')
 	      /*
 	       * Produits
 	       */
-	      print_titre("Produits");
+	      print_titre($langs->trans("Products"));
 	      
-	      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-	      print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>Produit</td>';
-	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
+	      print '<table class="noborder" width="100%">';
+	      print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
+	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
 	      
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
@@ -352,13 +352,14 @@ if ($_GET["action"] == 'create')
 		      $objp = $db->fetch_object();
 		      $var=!$var;
 		      print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
-		      print '<td>'.$objp->product.'</td>';
-		      print "<td align=\"right\">".price($objp->price)."</TD>";
+		      print '<td>'.img_object($langs->trans("ShowProduct"),"product").' '.$objp->product.'</td>';
+		      print "<td align=\"right\">".price($objp->price)."</td>";
 		      print '<td align="center">'.$objp->remise_percent.' %</td>';
 		      print "<td align=\"center\">".$objp->qty."</td></tr>\n";
 		      $i++;
 		    }
 		}
+
 	      $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty, pt.remise_percent";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt  WHERE  pt.fk_propal = $propalid AND pt.fk_product = 0";
 	      $sql .= " ORDER BY pt.rowid ASC";
@@ -371,7 +372,7 @@ if ($_GET["action"] == 'create')
 		      $objp = $db->fetch_object();
 		      $var=!$var;
 		      print "<tr $bc[$var]><td>&nbsp;</td>\n";
-		      print '<td>'.$objp->product.'</td>';
+		      print '<td>'.img_object($langs->trans("ShowProduct"),"product").' '.$objp->product.'</td>';
 		      print '<td align="right">'.price($objp->price).'</td>';
 		      print '<td align="center">'.$objp->remise_percent.' %</td>';
 		      print "<td align=\"center\">".$objp->qty."</td></tr>\n";
@@ -389,7 +390,7 @@ if ($_GET["action"] == 'create')
     } 
   else 
     {
-      print $db->error() . "<br>$sql";;
+      dolibarr_print_error($db);
     }
 } 
 else 
@@ -479,17 +480,20 @@ else
 
 	  print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';
 	
-	  print '<td>Projet : ';
-	  if ($commande->projet_id > 0)
-	    {
-	      $projet = New Project($db);
-	      $projet->fetch($commande->projet_id);
-	      print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$commande->projet_id.'">'.$projet->title.'</a>';
-	    }
-	  else
-	    {
-	      print '<a href="fiche.php?id='.$id.'&amp;action=classer">Classer la commande</a>';
-	    }
+      print '<td>';
+      if ($conf->projet->enabled) {
+    	  print $langs->trans("Project").' : ';
+    	  if ($commande->projet_id > 0)
+    	    {
+    	      $projet = New Project($db);
+    	      $projet->fetch($commande->projet_id);
+    	      print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$commande->projet_id.'">'.$projet->title.'</a>';
+    	    }
+    	  else
+    	    {
+    	      print '<a href="fiche.php?id='.$id.'&amp;action=classer">Classer la commande</a>';
+    	    }
+      }
 	  print "&nbsp;</td></tr>";
   
       // Ligne de 3 colonnes
@@ -561,14 +565,14 @@ else
 		  if ($objp->fk_product > 0)
 		    {
 		      print '<td>';
-		      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
+		      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.stripslashes(nl2br($objp->description)).'</a></td>';
 		    }
 		  else
 		    {
-		      print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
+		      print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
 		    }
-		  print '<td align="center">'.$objp->tva_tx.' %</TD>';
-		  print '<td align="center">'.$objp->qty.'</TD>';
+		  print '<td align="center">'.$objp->tva_tx.' %</td>';
+		  print '<td align="center">'.$objp->qty.'</td>';
 		  if ($objp->remise_percent > 0)
 		    {
 		      print '<td align="right">'.$objp->remise_percent." %</td>\n";
@@ -628,10 +632,11 @@ else
 	      $sql .= " ORDER BY p.nbvente DESC LIMIT 20";
 	      if ( $db->query($sql) )
 		{
-		  $opt = "<option value=\"0\" SELECTED></option>";
+		  $opt = "<option value=\"0\" selected></option>";
 		  if ($result)
 		    {
-		      $num = $db->num_rows();	$i = 0;	
+		      $num = $db->num_rows();
+		      $i = 0;	
 		      while ($i < $num)
 			{
 			  $objp = $db->fetch_object();
@@ -643,16 +648,16 @@ else
 		}
 	      else
 		{
-		  print $db->error();
+		  dolibarr_print_error($db);
 		}
 
 	    print "<form action=\"fiche.php?id=$id\" method=\"post\">";
 	    print "<tr class=\"liste_titre\">";
 	    print '<td width="54%">'.$langs->trans("Description").'</td>';
-	    print '<td width="8%" align="center">Tva</td>';
-	    print '<td width="8%" align="center">Quantité</td>';
-	    print '<td width="8%" align="right">Remise</td>';
-	    print '<td width="12%" align="right">P.U.</TD>';
+	    print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
+	    print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
+	    print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
+	    print '<td width="12%" align="right">P.U.</td>';
 	    print '<td>&nbsp;</td><td>&nbsp;</td>'."</tr>\n";
 	    print '<input type="hidden" name="action" value="addligne">';
 	    print "<tr $bc[$var]>".'<td><textarea name="desc" cols="60" rows="1"></textarea></td>';
@@ -687,9 +692,9 @@ else
 	  {
 	    print '<div class="tabsAction">';
 	
-	    if ($commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
+	    if ($conf->expedition->enabled && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
 	      {
-		print '<a class="tabAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET["id"].'">Expédier</a>';
+		print '<a class="tabAction" href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$_GET["id"].'">'.$langs->trans("Send").'</a>';
 	      }
 	  
 	    
@@ -720,7 +725,7 @@ else
 	print "<br>\n";
 
 
-	print '<table width="100%" cellspacing="2"><tr><td width="50%" valign="top">';
+	print '<table width="100%"><tr><td width="50%" valign="top">';
 	/*
 	 * Liste des expéditions
 	 */
@@ -737,7 +742,7 @@ else
 		print_titre("Expéditions");
 		$i = 0; $total = 0;
 		print '<table class="border" width="100%">';
-		print "<tr $bc[$var]><td>Expédition</td><td>Date</td></tr>\n";
+		print "<tr $bc[$var]><td>Expédition</td><td>".$langs->trans("Date")."</td></tr>\n";
 		
 		$var=True;
 		while ($i < $num)
@@ -771,10 +776,10 @@ else
 	    $num = $db->num_rows();
 	    if ($num)
 	      {
-		print_titre("Factures");
+		print_titre($langs->trans("Bills"));
 		$i = 0; $total = 0;
 		print '<table class="border" width="100%">';
-		print "<tr $bc[$var]><td>Facture</td><td>".$langs->trans("Date")."</td></tr>\n";
+		print "<tr $bc[$var]><td>".$langs->trans("Bill")."</td><td>".$langs->trans("Date")."</td></tr>\n";
 		
 		$var=True;
 		while ($i < $num)
@@ -807,7 +812,7 @@ else
 	if (file_exists($file))
 	  {
 
-	    print_titre("Documents");
+	    print_titre($langs->trans("Documents"));
 	    print '<table width="100%" class="border">';
 	    
 	    print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";

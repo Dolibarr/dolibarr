@@ -354,7 +354,7 @@ if ($_GET["propalid"])
 	    }
 	  else
 	    {
-	      print '<tr><td>Remise</td>';
+	      print '<tr><td>'.$langs->trans("Discount").'</td>';
 	      print '<td align="right">'.$propal->remise_percent.' %</td><td>&nbsp;</td>';
 	    }
 
@@ -393,7 +393,7 @@ if ($_GET["propalid"])
 	      print '</select>';
 	      print '</td></tr><tr><td>'.$langs->trans("Comments").' : <br><textarea cols="60" rows="6" wrap="soft" name="note">';
 	      print $obj->note;
-	      print '</textarea></td></tr><tr><td align="center"><input type="submit" value="Valider"></td>';
+	      print '</textarea></td></tr><tr><td align="center"><input type="submit" value="'.$langs->trans("Valid").'"></td>';
 	      print "</tr></table></form>";
 	    }
 
@@ -405,11 +405,11 @@ if ($_GET["propalid"])
 	  print '<table class="noborder" width="100%">';
 	  print "<tr class=\"liste_titre\">";
 	  print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("ProductOrService").'</td>';
-	  print '<td align="center">'.$langs->trans("VAT").'</td><td align="center">'.$langs->trans("Qty").'</td><td align="center">Remise</td><td align="right">P.U.</td>';
+	  print '<td align="center">'.$langs->trans("VAT").'</td><td align="center">'.$langs->trans("Qty").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="right">P.U.</td>';
       print "<td>&nbsp;</td>";
 	  print "</tr>\n";
 
-	  $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.tva_tx, pt.remise_percent, pt.subprice";
+	  $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, p.fk_product_type, pt.qty, p.rowid as prodid, pt.tva_tx, pt.remise_percent, pt.subprice";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propal->id";
 	  $sql .= " ORDER BY pt.rowid ASC";
 	  $result = $db->query($sql);
@@ -425,8 +425,11 @@ if ($_GET["propalid"])
 		  $objp = $db->fetch_object($result);
 		  $var=!$var;
 		  print "<tr $bc[$var]>";
-		  print "<td>[$objp->ref]</td>\n";
-		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.$objp->product.'</a></td>';
+		  print "<td>".$objp->ref."</td>\n";
+		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">';
+		  if ($objp->fk_product_type==0) print img_object($langs->trans("ShowProduct"),"product");
+		  if ($objp->fk_product_type==1) print img_object($langs->trans("ShowService"),"service");
+		  print ' '.$objp->product.'</a></td>';
 		  print '<td align="center">'.$objp->tva_tx.' %</td>';
 		  print "<td align=\"center\">".$objp->qty."</td>\n";
 		  print '<td align="center">'.$objp->remise_percent.' %</td>';
@@ -704,32 +707,20 @@ if ($_GET["propalid"])
 		$coms = $propal->commande_liste_array();
 		print '<br><table class="border" width="100%">';
 		
-		if ($nb_commande == 1)
-		  
-		  {
-		    print "<tr><td>Commande rattachée : ";
-		    print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[0].'">';
-		    print img_file();
-		    print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[0].'">'.$coms[0]."</a>";
-		    print "</td></tr>\n";
-		  }
-		else
-		  {
-		    print "<tr><td>Commandes rattachées</td></tr>\n";
+		    print "<tr><td>Commande(s) rattachée(s)</td></tr>\n";
 		    
 		    for ($i = 0 ; $i < $nb_commande ; $i++)
 		      {
 			print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a></td>\n";
 			print "</tr>\n";
 		      }
-		  }
+
 		print "</table>";
 	      }
 	  }
 
 
 
-	  //	  print '<a href="propal.php?propalid=$propalid&amp;action=commande\">Générer</a>";
 	  /*
 	   *
 	   */
@@ -895,7 +886,7 @@ else
   if ( $db->query($sql) )
     {
       $num = $db->num_rows();
-      print_barre_liste("Propositions commerciales", $page,"propal.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+      print_barre_liste($langs->trans("Proposals"), $page,"propal.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 
       $i = 0;
@@ -916,9 +907,7 @@ else
 	  $now = time();
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print '<td><a href="propal.php?propalid='.$objp->propalid.'">';
-	  print img_file();
-	  print "</a>&nbsp;<a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></td>\n";
+	  print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' '.$objp->ref."</a></td>\n";
 	  if ($objp->client == 1)
 	    {
 	      $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp;
@@ -928,7 +917,7 @@ else
 	      $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->idp;
 	    }
 
-	  print '<td><a href="'.$url.'">'.$objp->nom.'</a></td>';
+	  print '<td><a href="'.$url.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom.'</a></td>';
 
 	  if ( $now > $objp->dfv && $objp->dfv > 0 )
 	    {

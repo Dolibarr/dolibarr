@@ -20,8 +20,8 @@
  * $Source$
  *
  */
-
-/*!
+ 
+/**
         \file       htdocs/commande/index.php
         \ingroup    compta
 		\brief      Page acceuil zone comptabilité
@@ -77,8 +77,7 @@ if ( $db->query($sql) )
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
-	  print "<a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
@@ -111,8 +110,7 @@ if ( $db->query($sql) )
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_file()."</a>";
-	  print "&nbsp;<a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
