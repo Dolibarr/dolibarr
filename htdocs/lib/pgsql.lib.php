@@ -24,7 +24,8 @@
  *
  */
 
-/**	    \file       htdocs/lib/pgsql.lib.php
+/**
+	    \file       htdocs/lib/pgsql.lib.php
 		\brief      Fichier de la classe permettant de gérér la database de dolibarr.
 		\author     Fabien Seisen
 		\author     Rodolphe Quiedeville.
@@ -34,13 +35,16 @@
 		\version    $Revision$
 */
 
-/** 	\class DoliDb
-		\brief Classe permettant de gérér la database de dolibarr
+/**
+     	\class      DoliDb
+		\brief      Classe permettant de gérér la database de dolibarr
 */
 
 class DoliDb 
 {
     var $db;                      // Handler de base
+    var $type='pgsql';            // Nom du gestionnaire
+
     var $results;                 // Resultset de la dernière requete
     
     var $connected;               // 1 si connecté, 0 sinon
@@ -54,7 +58,7 @@ class DoliDb
         \brief      Ouverture d'une connection vers le serveur et une database.
         \param		type		type de base de données (mysql ou pgsql)
         \param		host		addresse de la base de données
-    		\param	    user		nom de l'utilisateur autorisé
+    	\param	    user		nom de l'utilisateur autorisé
         \param		pass		mot de passe
         \param		name		nom de la database
         \return		int			1 en cas de succès, 0 sinon

@@ -26,7 +26,8 @@
  *
  */
 
-/**	    \file       htdocs/lib/functions.inc.php
+/**
+	    \file       htdocs/lib/functions.inc.php
 		\brief      Ensemble de fonctions de base de dolibarr sous forme d'include
 		\author     Rodolphe Quiedeville
 		\author	    Jean-Louis Bergamo
@@ -624,12 +625,14 @@ function dolibarr_print_error($db='',$msg='')
     if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
     {
         print "<br>\n";
+        print "<b>Type gestionnaire de base de donnée:</b> ".$db->type."<br>\n";
         print "<b>Requete dernier acces en base:</b> ".$db->lastquery()."<br>\n";
         print "<b>Code retour dernier acces en base:</b> ".$db->errno()."<br>\n";
         print "<b>Information sur le dernier accès en base:</b> ".$db->error()."<br>\n";
     }
     else                            // Mode CLI   
     {
+        print "Type gestionnaire de base de donnée:\n".$db->type."\n";
         print "Requete dernier acces en base:\n".$db->lastquery()."\n";
         print "Code retour dernier acces en base:\n".$db->errno()."\n";
         print "Information sur le dernier accès en base:\n".$db->error()."\n";

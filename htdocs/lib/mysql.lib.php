@@ -40,6 +40,8 @@
 class DoliDb
 {
   var $db;                      // Handler de base
+  var $type='mysql';            // Nom du gestionnaire
+  
   var $results;                 // Resultset de la dernière requete
   
   var $connected;               // 1 si connecté, 0 sinon
