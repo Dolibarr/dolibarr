@@ -39,31 +39,31 @@ if ($user->societe_id > 0)
  *
  *
  */
-if ($HTTP_POST_VARS["action"] == 'add_action') 
+if ($_POST["action"] == 'add_action') 
 {
-  if ($contactid)
+  if ($_POST["contactid"])
     {
       $contact = new Contact($db);
-      $contact->fetch($contactid);
+      $contact->fetch($_POST["contactid"]);
     }
   $societe = new Societe($db);
-  $societe->fetch($socid);
+  $societe->fetch($_POST["socid"]);
 
-  if ($HTTP_POST_VARS["afaire"] <> 1)
+  if ($_POST["afaire"] <> 1)
     {
       $actioncomm = new ActionComm($db);
 
       $actioncomm->priority = 2;
-      $actioncomm->type = $HTTP_POST_VARS["actionid"];
+      $actioncomm->type = $_POST["actionid"];
       
-      $actioncomm->date = $db->idate(mktime($HTTP_POST_VARS["heurehour"],
-					    $HTTP_POST_VARS["heuremin"],
+      $actioncomm->date = $db->idate(mktime($_POST["heurehour"],
+					    $_POST["heuremin"],
 					    0,
-					    $HTTP_POST_VARS["acmonth"],
-					    $HTTP_POST_VARS["acday"],
-					    $HTTP_POST_VARS["acyear"])
+					    $_POST["acmonth"],
+					    $_POST["acday"],
+					    $_POST["acyear"])
 				     );
-      if ($HTTP_POST_VARS["actionid"] == 5) 
+      if ($_POST["actionid"] == 5) 
 	{
 	  $actioncomm->percent = 0;
 	}
@@ -72,12 +72,12 @@ if ($HTTP_POST_VARS["action"] == 'add_action')
 	  $actioncomm->percent = 100;
 	}
 
-      $actioncomm->contact = $contactid;
+      $actioncomm->contact = $_POST["contactid"];
       
       $actioncomm->user = $user;
       
-      $actioncomm->societe = $socid;
-      $actioncomm->note = $note;
+      $actioncomm->societe = $_POST["socid"];
+      $actioncomm->note = $_POST["note"];
       
       $actioncomm->add($user);
     }
@@ -86,7 +86,7 @@ if ($HTTP_POST_VARS["action"] == 'add_action')
     {
 
       $todo = new ActionComm($db);
-      $todo->type     = $HTTP_POST_VARS["nextactionid"];
+      $todo->type     = $_POST["nextactionid"];
       $todo->date     = $db->idate(mktime(12,0,0,$remonth, $reday, $reyear));
       $todo->libelle  = $todo_label;
       $todo->priority = 2;
@@ -119,10 +119,10 @@ if ($HTTP_POST_VARS["action"] == 'add_action')
 	}
   }
   //  Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=$socid");
-  Header("Location: ".$HTTP_POST_VARS["from"]);
+  Header("Location: ".$_POST["from"]);
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
 {
   $actioncomm = new ActionComm($db);
   $actioncomm->delete($id);
@@ -133,8 +133,8 @@ if ($action=='update')
 {
   $action = new Actioncomm($db);
   $action->fetch($id);
-  $action->percent     = $HTTP_POST_VARS["percent"];
-  $action->contact->id = $HTTP_POST_VARS["scontactid"];
+  $action->percent     = $_POST["percent"];
+  $action->contact->id = $_POST["scontactid"];
   $action->update();
 }
 
@@ -156,21 +156,23 @@ if ($_GET["action"] == 'create')
 {
 
   $caction = new CActioncomm($db);
-
+  
   if ($afaire <> 1)
     {
-      $caction->fetch($db, $actionid);
-
+      $caction->fetch($db, $_GET["actionid"]);
+      
       $contact = new Contact($db);
       $contact->fetch($_GET["contactid"]);
     }
   $societe = new Societe($db);
-  $societe->get_nom($socid);
-
-  print '<form action="'.$PHP_SELF.'?socid='.$socid.'" method="post">';
+  $societe->get_nom($_GET["socid"]);
+  
+  print '<form action="fiche.php?socid='.$_GET["socid"].'" method="post">';
   print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
   print '<input type="hidden" name="action" value="add_action">';
-  print '<input type="hidden" name="actionid" value="'.$actionid.'">'."\n";      
+  print '<input type="hidden" name="actionid" value="'.$_GET["actionid"].'">'."\n";      
+  print '<input type="hidden" name="contactid" value="'.$_GET["contactid"].'">';
+  print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
 
   /*
    * Rendez-vous
@@ -180,9 +182,6 @@ if ($_GET["action"] == 'create')
     {
 
       print '<input type="hidden" name="date" value="'.$db->idate(time()).'">'."\n";
-
-      print '<input type="hidden" name="contactid" value="'.$contactid.'">';
-      print '<input type="hidden" name="socid" value="'.$socid.'">';
       
       print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
 
@@ -213,21 +212,15 @@ if ($_GET["action"] == 'create')
    *
    */   
   else 
-    {
-
-
-      print '<input type="hidden" name="contactid" value="'.$contactid.'">';
-      print '<input type="hidden" name="socid" value="'.$socid.'">';
-      
+    {      
       if($afaire <> 1)
 	{
-
 	  print_titre ("Action effectuée");	  
 	  print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
 	  
 	  print '<tr><td width="10%">Action</td><td>'.$caction->libelle.'</td></tr>';
 	  print '<tr><td width="10%">Société</td><td width="40%">';
-	  print '<a href="../fiche.php?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
+	  print '<a href="../fiche.php?socid='.$_GET["socid"].'">'.$societe->nom.'</a></td></tr>';
 	  print '<tr><td width="10%">Contact</td><td width="40%">'.$contact->fullname.'</td></tr>';
 	  print '<td>Date</td><td>';
 	  print $html->select_date('','ac',1,1);
@@ -249,7 +242,7 @@ if ($_GET["action"] == 'create')
 	  print '<input type="hidden" name="todo" value="on">';
 	  print '<input type="hidden" name="afaire" value="1">';
 	  print '<tr><td width="10%">Société</td><td width="40%">';
-	  print '<a href="../fiche.php?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
+	  print '<a href="../fiche.php?socid='.$_GET["socid"].'">'.$societe->nom.'</a></td></tr>';
 	}
 
       print '<tr><td width="10%">Date</td><td width="40%">';
@@ -277,11 +270,11 @@ if ($_GET["action"] == 'create')
  *
  *
  */
-if ($id)
+if ($_GET["id"])
 {
   if ($action == 'delete')
     {
-      print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
+      print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
       print '<input type="hidden" name="action" value="confirm_delete">';
       print '<table id="actions" cellspacing="0" border="1" width="100%" cellpadding="3">';
       
@@ -309,7 +302,7 @@ if ($id)
   if ($_GET["action"] == 'edit')
     {      
       print_titre ("Edition de la fiche action");
-      print '<form action="fiche.php?id='.$id.'" method="post">';
+      print '<form action="fiche.php?id='.$_GET["id"].'" method="post">';
       print '<input type="hidden" name="action" value="update">';
       print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
       print '<tr><td width="20%">Type</td><td colspan="3">'.$act->type.'</td></tr>';
