@@ -46,13 +46,6 @@ insert into llx_action_def (rowid,titre,description,objet_type) values (1,'Valid
 insert into llx_action_def (rowid,titre,description,objet_type) values (2,'Validation facture','Déclenché lors de la validation d\'une facture','facture');
 
 --
--- Boites
---
-delete from llx_boxes_def;
-
-delete from llx_boxes;
-
---
 -- Constantes de configuration
 --
 insert into llx_const (name, value, type, note) values ('MAIN_MONNAIE','euros','chaine','Monnaie');
