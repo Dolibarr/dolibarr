@@ -21,33 +21,16 @@
  * $Id$
  * $Source$
  *
+ * Lots of code inspired from Dan Potter's CMailFile class
  */
 
-/* notes from Dan Potter:
-Sure. I changed a few other things in here too though. One is that I let
-you specify what the destination filename is (i.e., what is shows up as in
-the attachment). This is useful since in a web submission you often can't
-tell what the filename was supposed to be from the submission itself. I
-also added my own version of chunk_split because our production version of
-PHP doesn't have it. You can change that back or whatever though =).
-Finally, I added an extra "\n" before the message text gets added into the
-MIME output because otherwise the message text wasn't showing up.
-/*
-note: someone mentioned a command-line utility called 'mutt' that 
-can mail attachments.
-*/
-/* 
-If chunk_split works on your system, change the call to my_chunk_split
-to chunk_split 
-*/
-/* Note: if you don't have base64_encode on your sytem it will not work */
 
 /*!	\file htdocs/lib/CMailFile.class.php
   \brief Classe permettant d'envoyer des mail avec attachements, recriture de CMailFile
   \author Dan Potter.
-  \author	Eric Seigne
-  \author	Rodolphe Quiedeville
-  \author	Laurent Destailleur.
+  \author Eric Seigne
+  \author Rodolphe Quiedeville
+  \author Laurent Destailleur.
   \version $Revision$
 */
 
@@ -71,7 +54,7 @@ class DolibarrMail
   var $text_body;
   var $text_encoded;
   var $mime_headers;
-  var $mime_boundary = "--==================_846811060==_";
+  var $boundary;
   var $smtp_headers;
 
 /*!
@@ -87,18 +70,25 @@ class DolibarrMail
   \param addr_bcc
 */
 
-  // CMail("sujet","email_to","email_from","email_msg",tableau du path de fichiers,tableau de type mime,tableau de noms fichiers,"chaine cc")
   function DolibarrMail($subject, $to, $from, $msg)
     {
+      ini_set('mbstring.func_overload','0');
+
       $this->from = $from;
 
       $this->message = wordwrap($msg, 78);
+      $this->boundary= md5( uniqid("dolibarr") );
 
       $this->subject = $subject;
       $this->addr_to = $to;
+
+      $this->errors_to = $from;
+
       $this->addr_bcc = "";
       $this->addr_cc = "";
       $this->reply_to = "";
+
+      $this->filename_list = array();
 
       dolibarr_syslog("DolibarrMail::DolibarrMail");
       dolibarr_syslog("DolibarrMail::DolibarrMail to : ".$this->addr_to);
@@ -114,11 +104,11 @@ class DolibarrMail
 
   function PrepareFile($filename_list, $mimetype_list, $mimefilename_list)
   {
+    $this->filename_list = $filename_list;
+
     dolibarr_syslog("DolibarrMail::PrepareFile");
 
     $this->mime_headers="";
-
-    $this->smtp_headers = $this->write_smtpheaders();
 
     if (count($filename_list))
       {
@@ -128,7 +118,6 @@ class DolibarrMail
 						 $mimetype_list,
 						 $mimefilename_list);
       }
-    $this->text_body = $this->write_body($this->message, $filename_list);
   }
     
   /*!
@@ -149,19 +138,20 @@ class DolibarrMail
 	    $filename_list[$i] = $mimefilename_list[$i];
 	  }
 
-	$out = $out . "--" . $this->mime_boundary . "\n";
+	$out = $out . "--".$this->boundary . "\n";
 
 	if (! $mimetype_list[$i])
 	  { 
 	    $mimetype_list[$i] = "application/octet-stream"; 
 	  }
 
-	$out = $out . "Content-type: " . $mimetype_list[$i] . "; name=\"".$filename_list[$i]."\";\n";         
+	//$out = $out . "Content-type: " . $mimetype_list[$i] . "; name=\"".$filename_list[$i]."\";\n";         
+	$out = $out . "Content-type: " . $mimetype_list[$i]."\n";// . "; name=\"".$filename_list[$i]."\";\n";         
 	$out = $out . "Content-Transfer-Encoding: base64\n";
-	$out = $out . "Content-disposition: attachment; filename=\"".$filename_list[$i]."\"\n\n";
+	$out = $out . "Content-Disposition: attachment; filename=\"".$filename_list[$i]."\"\n\n";
 	$out = $out . $encoded . "\n";
       }
-    $out = $out . "--" . $this->mime_boundary . "--" . "\n";
+    $out = $out . "--".$this->boundary . "\n";
 
     return $out; 
     // added -- to notify email client attachment is done
@@ -174,12 +164,11 @@ class DolibarrMail
   
   function encode_file($sourcefile)
   {
-    //      print "<pre>on encode $sourcefile </pre>\n";
     if (is_readable($sourcefile))
       {
 	$fd = fopen($sourcefile, "r");
 	$contents = fread($fd, filesize($sourcefile));
-	$encoded = $this->my_chunk_split(base64_encode($contents));
+	$encoded = chunk_split(base64_encode($contents));
 	fclose($fd);
       }
     else
@@ -197,30 +186,62 @@ class DolibarrMail
   {
     dolibarr_syslog("DolibarrMail::sendfile");
 
-    $headers .= $this->smtp_headers . $this->mime_headers;
-    $message = $this->text_body . $this->text_encoded;
+    $this->smtp_headers = $this->write_smtpheaders();
 
-    return mail($this->addr_to,$this->subject,stripslashes($message),$headers);
+    $this->text_body = $this->write_body();
+
+    print nl2br($this->smtp_headers);
+    print nl2br($this->mime_headers);
+    print nl2br($this->text_body);
+
+    $headers = $this->smtp_headers . $this->mime_headers;
+    $message_comp = $this->text_body . $this->text_encoded;
+
+    $res = mail($this->addr_to,$this->subject,stripslashes($message_comp),$headers);
+
+    return $res; 
   }
-  
+  /*
+   *
+   *
+   */
+  function write_to_file()
+  {
+    dolibarr_syslog("DolibarrMail::write_to_file");
+
+    $this->smtp_headers = $this->write_smtpheaders();
+
+    $this->text_body = $this->write_body();
+
+    $headers = $this->smtp_headers . $this->mime_headers;
+    $message_comp = $this->text_body . $this->text_encoded;
+
+    $fp = fopen("/tmp/mail","w");
+    fputs($fp, $headers);
+    fputs($fp, $message_comp);
+    fclose($fp);
+  }
   /*!
-    \brief permet d'ecrire le body d'un message
+    \brief permet d'ecrire le corps du message
     \param msgtext
     \param filename_list
   */
   
-  function write_body($msgtext, $filename_list)
+  function write_body()
   {
-    if (count($filename_list))
+    $out = "\n";
+    if (count($this->filename_list))
       {
-	$out = "--" . $this->mime_boundary . "\n";
-	$out = $out . "Content-Type: text/plain; charset=\"iso-8859-15\"\n\n";
+	$out = $out . "--".$this->boundary . "\n";
+	$out = $out . "Content-Type: text/plain; charset=\"iso-8859-15\"\n";
+	$out = $out . "Content-Disposition: inline\n\n";
       }
     else
       {
 	dolibarr_syslog("DolibarrMail::write_body");
       }
-    $out = $out . $this->message . "\n";
+
+    $out = $out . $this->message . "\n\n";
     return $out;
   }
   
@@ -232,10 +253,9 @@ class DolibarrMail
   
   function write_mimeheaders($filename_list, $mimefilename_list)
   {
-    $out = "MIME-version: 1.0\n";
-    $out = $out . "Content-type: multipart/mixed; ";
-    $out = $out . "boundary=\"$this->mime_boundary\"\n";
-    $out = $out . "Content-transfer-encoding: 7BIT\n";
+    $out = "Mime-version: 1.0\n";
+    $out = $out . "Content-type: multipart/mixed; boundary=\"$this->boundary\"\n";
+    $out = $out . "Content-transfer-encoding: 8BIT\n";
 
     for($i = 0; $i < count($filename_list); $i++)
       {
@@ -244,7 +264,7 @@ class DolibarrMail
 	    $filename_list[$i] = $mimefilename_list[$i];
 	  }
 
-	$out = $out . "X-attachments: $filename_list[$i];\n\n";
+	//$out = $out . "X-attachments: $filename_list[$i];\n\n";
       }
 
     return $out;
@@ -269,49 +289,16 @@ class DolibarrMail
     if($this->reply_to != "")
       $out = $out . "Reply-To: ".$this->reply_to."\n";
     
+    if($this->errors_to != "")
+      $out = $out . "Errors-to: ".$this->errors_to."\n";
+
     $out = $out . "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
     $out = $out . "X-Sender: $this->from\n";
-    $out = $out . "Errors-to: $this->from\n";
+    
     
     return $out;
   }
 
-
-  /*!
-    \brief permet de diviser une chaine (RFC2045)
-    \param str
-    \remarks function chunk_split qui remplace celle de php si nécéssaire
-    \remarks 76 caractères par ligne, terminé par "\r\n"
-  */
-  
-  // usage - mimetype example "image/gif"
-  // $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);
-  // $mailfile->sendfile();
-  
-  // Splits a string by RFC2045 semantics (76 chars per line, end with \r\n).
-  // This is not in all PHP versions so I define one here manuall.
-  
-  function my_chunk_split($str)
-  {
-    $stmp = $str;
-    $len = strlen($stmp);
-    $out = "";
-    while ($len > 0)
-      {
-	if ($len >= 76)
-	  {
-	    $out = $out . substr($stmp, 0, 76) . "\r\n";
-	    $stmp = substr($stmp, 76);
-	    $len = $len - 76;
-	  }
-	else
-	  {
-	    $out = $out . $stmp . "\r\n";
-	    $stmp = ""; $len = 0;
-	  }
-      }
-    return $out;
-  }
 }
 // end script
 ?>
