@@ -64,7 +64,7 @@ class Product
 	  return 1;
 	}      
     }
-  /*
+  /**
    *
    *
    */
@@ -116,7 +116,44 @@ class Product
 	    }
 	}
   }
-  /*
+  /**
+   *
+   *
+   *
+   */
+  Function update($id, $user)
+  {
+
+      if (strlen(trim($this->libelle)) == 0)
+	{
+	  $this->libelle = 'LIBELLE MANQUANT';
+	}
+      
+      $sql = "UPDATE llx_product ";
+      $sql .= " SET label = '" . trim($this->libelle) ."'";
+      if (strlen(trim($this->ref)))
+	{
+	  $sql .= ",ref = '" . trim($this->ref) ."'";
+	}
+      $sql .= ",tva_tx = " . $this->tva_tx ;
+      $sql .= ",envente = " . $this->envente ;
+      $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte ;
+      $sql .= ",description = '" . trim($this->description) ."'";
+      $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
+      
+      $sql .= " WHERE rowid = " . $id;
+      
+      if ( $this->db->query($sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	}
+  }
+  /**
+   *
    *
    */
   Function _log_price($user) 
@@ -171,42 +208,7 @@ class Product
 	}
     }
 
-  /*
-   *
-   *
-   *
-   */
-  Function update($id, $user)
-    {
-      if (strlen(trim($this->ref)))
-	{
-	  $sql = "UPDATE llx_product ";
-	  $sql .= " SET label = '" . trim($this->libelle) ."'";
-	  $sql .= ",ref = '" . trim($this->ref) ."'";
-	  $sql .= ",tva_tx = " . $this->tva_tx ;
-	  $sql .= ",envente = " . $this->envente ;
-	  $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte ;
-	  $sql .= ",description = '" . trim($this->description) ."'";
-	  $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
-	  
-	  $sql .= " WHERE rowid = " . $id;
-	  
-	  if ( $this->db->query($sql) )
-	    {
-	      return 1;
-	    }
-	  else
-	    {
-	      print $this->db->error() . ' in ' . $sql;
-	    }
-	}
-      else
-	{
-	  $this->mesg_error = "Vous devez indiquer une référence";
-	  return 0;
-	}
-    }
-  /*
+  /**
    *
    *
    *
@@ -241,21 +243,25 @@ class Product
 	  $this->db->free();
 
 
-	  $sql = "SELECT sum(reel) as reel";
+	  $sql = "SELECT reel, fk_entrepot";
 	  $sql .= " FROM llx_product_stock WHERE fk_product = $id";
 	  $result = $this->db->query($sql) ;
 	  if ( $result )
 	    {
 	      $num = $this->db->num_rows();
+	      $i=0;
 	      if ($num > 0)
 		{
-		  $result = $this->db->fetch_array();
+		  while ($i < $num )
+		    {
+		      $row = $this->db->fetch_row($i);
+		      $this->stock_entrepot[$row[1]] = $row[0];
+
+		      $this->stock_reel = $this->stock_reel + $row[0];
+		      $i++;
+		    }
 
 		  $this->no_stock = 0;
-
-		  $this->stock_reel        = $result["reel"];
-		  $this->stock_proposition = $result["proposition"];
-		  $this->stock_commande    = $result["commande"];
 		}
 	      else
 		{
