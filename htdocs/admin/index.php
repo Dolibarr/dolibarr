@@ -22,7 +22,7 @@ require("./pre.inc.php");
 
 llxHeader();
 
-print_titre("Configuration Dolibarr");
+print_titre("Configuration Dolibarr (version ".DOL_VERSION.")");
 
 print '<table border="1" cellpadding="3" cellspacing="0">';
 
