@@ -732,18 +732,18 @@ else
 	  $author->fetch();
 
 
-	  $head[0][0] = DOL_URL_ROOT.$_SERVER["PHP_SELF"]."?facid=".$_GET["facid"];
+	  $head[0][0] = DOL_URL_ROOT.$_SERVER["PHP_SELF"]."?facid=".$fac->id;
 	  $head[0][1] = "Facture : $fac->ref";
 	  $h = 1;
 	  $a = 0;
 
-	  $head[$h][0] = DOL_URL_ROOT."/compta/facture/note.php?facid=".$_GET["facid"];
+	  $head[$h][0] = DOL_URL_ROOT."/compta/facture/note.php?facid=".$fac->id;
 	  $head[$h][1] = "Note";
 	  $h++;
 	  $a = 0;
 
-      $head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$facture->id;
-      $head[$h][1] = "Info";
+	  $head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$fac->id;
+	  $head[$h][1] = "Info";
 
 	  dolibarr_fiche_head($head, $a, $soc->nom);
   	  
@@ -943,10 +943,10 @@ else
 		  // Icone d'edition et suppression		  
 		  if ($fac->statut == 0  && $user->rights->facture->creer) 
 		    {
-		      print '<td align="right"><a href="'.$PHPSELF.'?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+		      print '<td align="right"><a href="facture.php?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 		      print img_edit();
 		      print '</a></td>';
-		      print '<td align="right"><a href="'.$PHPSELF.'?facid='.$fac->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
+		      print '<td align="right"><a href="facture.php?facid='.$fac->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
 		      print img_delete();
 		      print '</a></td>';
 		    }
