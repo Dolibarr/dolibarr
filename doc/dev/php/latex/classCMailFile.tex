@@ -9,7 +9,22 @@ Classe permettant d'envoyer des attachements par mail.
 \begin{CompactItemize}
 \item 
 \hyperlink{classCMailFile_a0}{CMail\-File} (\$subject, \$to, \$from, \$msg, \$filename\_\-list, \$mimetype\_\-list, \$mimefilename\_\-list, \$addr\_\-cc=\char`\"{}\char`\"{})
-\begin{CompactList}\small\item\em CMail\-File. \item\end{CompactList}\end{CompactItemize}
+\begin{CompactList}\small\item\em CMail\-File. \item\end{CompactList}\item 
+\hyperlink{classCMailFile_a1}{attach\_\-file} (\$filename\_\-list, \$mimetype\_\-list, \$mimefilename\_\-list)
+\begin{CompactList}\small\item\em permet d'attacher un fichier \item\end{CompactList}\item 
+\hyperlink{classCMailFile_a2}{encode\_\-file} (\$sourcefile)
+\begin{CompactList}\small\item\em permet d'encoder un fichier \item\end{CompactList}\item 
+\hypertarget{classCMailFile_a3}{
+\hyperlink{classCMailFile_a3}{sendfile} ()}
+\label{classCMailFile_a3}
+
+\begin{CompactList}\small\item\em permet d'envoyer un fichier \item\end{CompactList}\item 
+\hyperlink{classCMailFile_a4}{write\_\-body} (\$msgtext, \$filename\_\-list)
+\begin{CompactList}\small\item\em permet d'ecrire le body d'un message \item\end{CompactList}\item 
+\hyperlink{classCMailFile_a5}{write\_\-mimeheaders} (\$filename\_\-list, \$mimefilename\_\-list)
+\begin{CompactList}\small\item\em cr\'{e}ation des headers mime \item\end{CompactList}\item 
+\hyperlink{classCMailFile_a6}{write\_\-smtpheaders} (\$addr\_\-from, \$addr\_\-cc)
+\begin{CompactList}\small\item\em cr\'{e}ation des headers smtp \item\end{CompactList}\end{CompactItemize}
 
 
 \subsection{Description d\'{e}taill\'{e}e}
@@ -49,6 +64,111 @@ CMail\-File.
 
 
 D\'{e}finition \`{a} la ligne 64 du fichier CMail\-File.class.php.
+
+R\'{e}f\'{e}rences attach\_\-file(), write\_\-body(), write\_\-mimeheaders(), et write\_\-smtpheaders().
+
+\subsection{Documentation des fonctions membres}
+\hypertarget{classCMailFile_a1}{
+\index{CMailFile@{CMail\-File}!attach_file@{attach\_\-file}}
+\index{attach_file@{attach\_\-file}!CMailFile@{CMail\-File}}
+\subsubsection[attach\_\-file]{\setlength{\rightskip}{0pt plus 5cm}CMail\-File::attach\_\-file (\$ {\em filename\_\-list}, \$ {\em mimetype\_\-list}, \$ {\em mimefilename\_\-list})}}
+\label{classCMailFile_a1}
+
+
+permet d'attacher un fichier 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em filename\_\-list}]\item[{\em mimetype\_\-list}]\item[{\em mimefilename\_\-list}]\end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 83 du fichier CMail\-File.class.php.
+
+R\'{e}f\'{e}rences attach\_\-file(), et encode\_\-file().
+
+R\'{e}f\'{e}renc\'{e} par attach\_\-file(), et CMail\-File().\hypertarget{classCMailFile_a2}{
+\index{CMailFile@{CMail\-File}!encode_file@{encode\_\-file}}
+\index{encode_file@{encode\_\-file}!CMailFile@{CMail\-File}}
+\subsubsection[encode\_\-file]{\setlength{\rightskip}{0pt plus 5cm}CMail\-File::encode\_\-file (\$ {\em sourcefile})}}
+\label{classCMailFile_a2}
+
+
+permet d'encoder un fichier 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em sourcefile}]\end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 105 du fichier CMail\-File.class.php.
+
+R\'{e}f\'{e}rences encode\_\-file(), et my\_\-chunk\_\-split().
+
+R\'{e}f\'{e}renc\'{e} par attach\_\-file(), et encode\_\-file().\hypertarget{classCMailFile_a4}{
+\index{CMailFile@{CMail\-File}!write_body@{write\_\-body}}
+\index{write_body@{write\_\-body}!CMailFile@{CMail\-File}}
+\subsubsection[write\_\-body]{\setlength{\rightskip}{0pt plus 5cm}CMail\-File::write\_\-body (\$ {\em msgtext}, \$ {\em filename\_\-list})}}
+\label{classCMailFile_a4}
+
+
+permet d'ecrire le body d'un message 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em msgtext}]\item[{\em filename\_\-list}]\end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 135 du fichier CMail\-File.class.php.
+
+R\'{e}f\'{e}rences write\_\-body().
+
+R\'{e}f\'{e}renc\'{e} par CMail\-File(), et write\_\-body().\hypertarget{classCMailFile_a5}{
+\index{CMailFile@{CMail\-File}!write_mimeheaders@{write\_\-mimeheaders}}
+\index{write_mimeheaders@{write\_\-mimeheaders}!CMailFile@{CMail\-File}}
+\subsubsection[write\_\-mimeheaders]{\setlength{\rightskip}{0pt plus 5cm}CMail\-File::write\_\-mimeheaders (\$ {\em filename\_\-list}, \$ {\em mimefilename\_\-list})}}
+\label{classCMailFile_a5}
+
+
+cr\'{e}ation des headers mime 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em filename\_\-list}]\item[{\em mimefilename\_\-list}]\end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 153 du fichier CMail\-File.class.php.
+
+R\'{e}f\'{e}rences write\_\-mimeheaders().
+
+R\'{e}f\'{e}renc\'{e} par CMail\-File(), et write\_\-mimeheaders().\hypertarget{classCMailFile_a6}{
+\index{CMailFile@{CMail\-File}!write_smtpheaders@{write\_\-smtpheaders}}
+\index{write_smtpheaders@{write\_\-smtpheaders}!CMailFile@{CMail\-File}}
+\subsubsection[write\_\-smtpheaders]{\setlength{\rightskip}{0pt plus 5cm}CMail\-File::write\_\-smtpheaders (\$ {\em addr\_\-from}, \$ {\em addr\_\-cc})}}
+\label{classCMailFile_a6}
+
+
+cr\'{e}ation des headers smtp 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em addr\_\-from}]\item[{\em addr\_\-cc}]\end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 171 du fichier CMail\-File.class.php.
+
+R\'{e}f\'{e}rences write\_\-smtpheaders().
+
+R\'{e}f\'{e}renc\'{e} par CMail\-File(), et write\_\-smtpheaders().
 
 La documentation de cette classe a \'{e}t\'{e} g\'{e}n\'{e}r\'{e}e \`{a} partir du fichier suivant:\begin{CompactItemize}
 \item 

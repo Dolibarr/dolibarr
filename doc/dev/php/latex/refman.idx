@@ -1,140 +1,175 @@
 \indexentry{CMailFile@{CMailFile}|hyperpage}{5}
 \indexentry{CMailFile@{CMail\discretionary {-}{}{}File}!CMailFile@{CMailFile}|hyperpage}{6}
 \indexentry{CMailFile@{CMailFile}!CMailFile@{CMail\discretionary {-}{}{}File}|hyperpage}{6}
-\indexentry{DoliDb@{DoliDb}|hyperpage}{7}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!DoliDb@{DoliDb}|hyperpage}{8}
-\indexentry{DoliDb@{DoliDb}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{8}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!affected_rows@{affected\_\discretionary {-}{}{}rows}|hyperpage}{9}
-\indexentry{affected_rows@{affected\_\discretionary {-}{}{}rows}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{9}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!begin@{begin}|hyperpage}{9}
-\indexentry{begin@{begin}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{9}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!clone@{clone}|hyperpage}{9}
-\indexentry{clone@{clone}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{9}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!close@{close}|hyperpage}{9}
-\indexentry{close@{close}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{9}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!commit@{commit}|hyperpage}{9}
-\indexentry{commit@{commit}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{9}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!connect@{connect}|hyperpage}{10}
-\indexentry{connect@{connect}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{10}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!create_db@{create\_\discretionary {-}{}{}db}|hyperpage}{10}
-\indexentry{create_db@{create\_\discretionary {-}{}{}db}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{10}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!errno@{errno}|hyperpage}{10}
-\indexentry{errno@{errno}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{10}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!error@{error}|hyperpage}{11}
-\indexentry{error@{error}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{11}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!fetch_array@{fetch\_\discretionary {-}{}{}array}|hyperpage}{11}
-\indexentry{fetch_array@{fetch\_\discretionary {-}{}{}array}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{11}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!fetch_object@{fetch\_\discretionary {-}{}{}object}|hyperpage}{11}
-\indexentry{fetch_object@{fetch\_\discretionary {-}{}{}object}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{11}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!fetch_row@{fetch\_\discretionary {-}{}{}row}|hyperpage}{11}
-\indexentry{fetch_row@{fetch\_\discretionary {-}{}{}row}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{11}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!free@{free}|hyperpage}{11}
-\indexentry{free@{free}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{11}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!idate@{idate}|hyperpage}{12}
-\indexentry{idate@{idate}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{12}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!last_insert_id@{last\_\discretionary {-}{}{}insert\_\discretionary {-}{}{}id}|hyperpage}{12}
-\indexentry{last_insert_id@{last\_\discretionary {-}{}{}insert\_\discretionary {-}{}{}id}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{12}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!list_tables@{list\_\discretionary {-}{}{}tables}|hyperpage}{12}
-\indexentry{list_tables@{list\_\discretionary {-}{}{}tables}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{12}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!num_fields@{num\_\discretionary {-}{}{}fields}|hyperpage}{12}
-\indexentry{num_fields@{num\_\discretionary {-}{}{}fields}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{12}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!num_rows@{num\_\discretionary {-}{}{}rows}|hyperpage}{13}
-\indexentry{num_rows@{num\_\discretionary {-}{}{}rows}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{13}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!pconnect@{pconnect}|hyperpage}{13}
-\indexentry{pconnect@{pconnect}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{13}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!plimit@{plimit}|hyperpage}{13}
-\indexentry{plimit@{plimit}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{13}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!query@{query}|hyperpage}{13}
-\indexentry{query@{query}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{13}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!result@{result}|hyperpage}{14}
-\indexentry{result@{result}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{14}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!rollback@{rollback}|hyperpage}{14}
-\indexentry{rollback@{rollback}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{14}
-\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!select_db@{select\_\discretionary {-}{}{}db}|hyperpage}{14}
-\indexentry{select_db@{select\_\discretionary {-}{}{}db}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{14}
-\indexentry{Webcal@{Webcal}|hyperpage}{16}
-\indexentry{Webcal@{Webcal}!add@{add}|hyperpage}{16}
-\indexentry{add@{add}!Webcal@{Webcal}|hyperpage}{16}
-\indexentry{Webcal@{Webcal}!get_next_id@{get\_\discretionary {-}{}{}next\_\discretionary {-}{}{}id}|hyperpage}{16}
-\indexentry{get_next_id@{get\_\discretionary {-}{}{}next\_\discretionary {-}{}{}id}!Webcal@{Webcal}|hyperpage}{16}
-\indexentry{htdocs/lib/CMailFile.class.php@{htdocs/lib/CMailFile.class.php}|hyperpage}{19}
-\indexentry{htdocs/lib/functions.inc.php@{htdocs/lib/functions.inc.php}|hyperpage}{20}
-\indexentry{functions.inc.php@{functions.inc.php}!creer_pass_aleatoire@{creer\_\discretionary {-}{}{}pass\_\discretionary {-}{}{}aleatoire}|hyperpage}{22}
-\indexentry{creer_pass_aleatoire@{creer\_\discretionary {-}{}{}pass\_\discretionary {-}{}{}aleatoire}!functions.inc.php@{functions.inc.php}|hyperpage}{22}
-\indexentry{functions.inc.php@{functions.inc.php}!dol_delete_file@{dol\_\discretionary {-}{}{}delete\_\discretionary {-}{}{}file}|hyperpage}{22}
-\indexentry{dol_delete_file@{dol\_\discretionary {-}{}{}delete\_\discretionary {-}{}{}file}!functions.inc.php@{functions.inc.php}|hyperpage}{22}
-\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_del_const@{dolibarr\_\discretionary {-}{}{}del\_\discretionary {-}{}{}const}|hyperpage}{22}
-\indexentry{dolibarr_del_const@{dolibarr\_\discretionary {-}{}{}del\_\discretionary {-}{}{}const}!functions.inc.php@{functions.inc.php}|hyperpage}{22}
-\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_fiche_head@{dolibarr\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}head}|hyperpage}{22}
-\indexentry{dolibarr_fiche_head@{dolibarr\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}head}!functions.inc.php@{functions.inc.php}|hyperpage}{22}
-\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_print_ca@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}ca}|hyperpage}{23}
-\indexentry{dolibarr_print_ca@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}ca}!functions.inc.php@{functions.inc.php}|hyperpage}{23}
-\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_print_date@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}date}|hyperpage}{23}
-\indexentry{dolibarr_print_date@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}date}!functions.inc.php@{functions.inc.php}|hyperpage}{23}
-\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_print_object_info@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}object\_\discretionary {-}{}{}info}|hyperpage}{23}
-\indexentry{dolibarr_print_object_info@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}object\_\discretionary {-}{}{}info}!functions.inc.php@{functions.inc.php}|hyperpage}{23}
-\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_print_phone@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}phone}|hyperpage}{23}
-\indexentry{dolibarr_print_phone@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}phone}!functions.inc.php@{functions.inc.php}|hyperpage}{23}
-\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_set_const@{dolibarr\_\discretionary {-}{}{}set\_\discretionary {-}{}{}const}|hyperpage}{24}
-\indexentry{dolibarr_set_const@{dolibarr\_\discretionary {-}{}{}set\_\discretionary {-}{}{}const}!functions.inc.php@{functions.inc.php}|hyperpage}{24}
-\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_syslog@{dolibarr\_\discretionary {-}{}{}syslog}|hyperpage}{24}
-\indexentry{dolibarr_syslog@{dolibarr\_\discretionary {-}{}{}syslog}!functions.inc.php@{functions.inc.php}|hyperpage}{24}
-\indexentry{functions.inc.php@{functions.inc.php}!doliMoveFileUpload@{doliMoveFileUpload}|hyperpage}{24}
-\indexentry{doliMoveFileUpload@{doliMoveFileUpload}!functions.inc.php@{functions.inc.php}|hyperpage}{24}
-\indexentry{functions.inc.php@{functions.inc.php}!francs@{francs}|hyperpage}{24}
-\indexentry{francs@{francs}!functions.inc.php@{functions.inc.php}|hyperpage}{24}
-\indexentry{functions.inc.php@{functions.inc.php}!inctva@{inctva}|hyperpage}{25}
-\indexentry{inctva@{inctva}!functions.inc.php@{functions.inc.php}|hyperpage}{25}
-\indexentry{functions.inc.php@{functions.inc.php}!initialiser_sel@{initialiser\_\discretionary {-}{}{}sel}|hyperpage}{25}
-\indexentry{initialiser_sel@{initialiser\_\discretionary {-}{}{}sel}!functions.inc.php@{functions.inc.php}|hyperpage}{25}
-\indexentry{functions.inc.php@{functions.inc.php}!logfile@{logfile}|hyperpage}{25}
-\indexentry{logfile@{logfile}!functions.inc.php@{functions.inc.php}|hyperpage}{25}
-\indexentry{functions.inc.php@{functions.inc.php}!loginfunction@{loginfunction}|hyperpage}{25}
-\indexentry{loginfunction@{loginfunction}!functions.inc.php@{functions.inc.php}|hyperpage}{25}
-\indexentry{functions.inc.php@{functions.inc.php}!price@{price}|hyperpage}{26}
-\indexentry{price@{price}!functions.inc.php@{functions.inc.php}|hyperpage}{26}
-\indexentry{functions.inc.php@{functions.inc.php}!print_date_select@{print\_\discretionary {-}{}{}date\_\discretionary {-}{}{}select}|hyperpage}{26}
-\indexentry{print_date_select@{print\_\discretionary {-}{}{}date\_\discretionary {-}{}{}select}!functions.inc.php@{functions.inc.php}|hyperpage}{26}
-\indexentry{functions.inc.php@{functions.inc.php}!print_duree_select@{print\_\discretionary {-}{}{}duree\_\discretionary {-}{}{}select}|hyperpage}{26}
-\indexentry{print_duree_select@{print\_\discretionary {-}{}{}duree\_\discretionary {-}{}{}select}!functions.inc.php@{functions.inc.php}|hyperpage}{26}
-\indexentry{functions.inc.php@{functions.inc.php}!print_fiche_titre@{print\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}titre}|hyperpage}{26}
-\indexentry{print_fiche_titre@{print\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}titre}!functions.inc.php@{functions.inc.php}|hyperpage}{26}
-\indexentry{functions.inc.php@{functions.inc.php}!print_fleche_navigation@{print\_\discretionary {-}{}{}fleche\_\discretionary {-}{}{}navigation}|hyperpage}{27}
-\indexentry{print_fleche_navigation@{print\_\discretionary {-}{}{}fleche\_\discretionary {-}{}{}navigation}!functions.inc.php@{functions.inc.php}|hyperpage}{27}
-\indexentry{functions.inc.php@{functions.inc.php}!print_heure_select@{print\_\discretionary {-}{}{}heure\_\discretionary {-}{}{}select}|hyperpage}{27}
-\indexentry{print_heure_select@{print\_\discretionary {-}{}{}heure\_\discretionary {-}{}{}select}!functions.inc.php@{functions.inc.php}|hyperpage}{27}
-\indexentry{functions.inc.php@{functions.inc.php}!print_liste_field_titre@{print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre}|hyperpage}{27}
-\indexentry{print_liste_field_titre@{print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre}!functions.inc.php@{functions.inc.php}|hyperpage}{27}
-\indexentry{functions.inc.php@{functions.inc.php}!print_liste_field_titre_new@{print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre\_\discretionary {-}{}{}new}|hyperpage}{28}
-\indexentry{print_liste_field_titre_new@{print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre\_\discretionary {-}{}{}new}!functions.inc.php@{functions.inc.php}|hyperpage}{28}
-\indexentry{functions.inc.php@{functions.inc.php}!print_oui_non@{print\_\discretionary {-}{}{}oui\_\discretionary {-}{}{}non}|hyperpage}{28}
-\indexentry{print_oui_non@{print\_\discretionary {-}{}{}oui\_\discretionary {-}{}{}non}!functions.inc.php@{functions.inc.php}|hyperpage}{28}
-\indexentry{functions.inc.php@{functions.inc.php}!print_titre@{print\_\discretionary {-}{}{}titre}|hyperpage}{28}
-\indexentry{print_titre@{print\_\discretionary {-}{}{}titre}!functions.inc.php@{functions.inc.php}|hyperpage}{28}
-\indexentry{functions.inc.php@{functions.inc.php}!stat_print@{stat\_\discretionary {-}{}{}print}|hyperpage}{28}
-\indexentry{stat_print@{stat\_\discretionary {-}{}{}print}!functions.inc.php@{functions.inc.php}|hyperpage}{28}
-\indexentry{functions.inc.php@{functions.inc.php}!transcoS2L@{transcoS2L}|hyperpage}{29}
-\indexentry{transcoS2L@{transcoS2L}!functions.inc.php@{functions.inc.php}|hyperpage}{29}
-\indexentry{functions.inc.php@{functions.inc.php}!tva@{tva}|hyperpage}{29}
-\indexentry{tva@{tva}!functions.inc.php@{functions.inc.php}|hyperpage}{29}
-\indexentry{htdocs/lib/ldap.lib.php@{htdocs/lib/ldap.lib.php}|hyperpage}{30}
-\indexentry{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_bind@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}bind}|hyperpage}{30}
-\indexentry{dolibarr_ldap_bind@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}bind}!ldap.lib.php@{ldap.lib.php}|hyperpage}{30}
-\indexentry{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_connect@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}connect}|hyperpage}{30}
-\indexentry{dolibarr_ldap_connect@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}connect}!ldap.lib.php@{ldap.lib.php}|hyperpage}{30}
-\indexentry{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_getversion@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}getversion}|hyperpage}{31}
-\indexentry{dolibarr_ldap_getversion@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}getversion}!ldap.lib.php@{ldap.lib.php}|hyperpage}{31}
-\indexentry{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_setversion@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}setversion}|hyperpage}{31}
-\indexentry{dolibarr_ldap_setversion@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}setversion}!ldap.lib.php@{ldap.lib.php}|hyperpage}{31}
-\indexentry{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_unacc@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unacc}|hyperpage}{31}
-\indexentry{dolibarr_ldap_unacc@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unacc}!ldap.lib.php@{ldap.lib.php}|hyperpage}{31}
-\indexentry{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_unbind@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unbind}|hyperpage}{31}
-\indexentry{dolibarr_ldap_unbind@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unbind}!ldap.lib.php@{ldap.lib.php}|hyperpage}{31}
-\indexentry{htdocs/lib/mysql.lib.php@{htdocs/lib/mysql.lib.php}|hyperpage}{33}
-\indexentry{htdocs/lib/price.lib.php@{htdocs/lib/price.lib.php}|hyperpage}{34}
-\indexentry{price.lib.php@{price.lib.php}!calcul_price@{calcul\_\discretionary {-}{}{}price}|hyperpage}{34}
-\indexentry{calcul_price@{calcul\_\discretionary {-}{}{}price}!price.lib.php@{price.lib.php}|hyperpage}{34}
-\indexentry{htdocs/lib/thermometer.php@{htdocs/lib/thermometer.php}|hyperpage}{35}
-\indexentry{thermometer.php@{thermometer.php}!moneyMeter@{moneyMeter}|hyperpage}{35}
-\indexentry{moneyMeter@{moneyMeter}!thermometer.php@{thermometer.php}|hyperpage}{35}
-\indexentry{htdocs/lib/webcal.class.php@{htdocs/lib/webcal.class.php}|hyperpage}{36}
+\indexentry{CMailFile@{CMail\discretionary {-}{}{}File}!attach_file@{attach\_\discretionary {-}{}{}file}|hyperpage}{6}
+\indexentry{attach_file@{attach\_\discretionary {-}{}{}file}!CMailFile@{CMail\discretionary {-}{}{}File}|hyperpage}{6}
+\indexentry{CMailFile@{CMail\discretionary {-}{}{}File}!encode_file@{encode\_\discretionary {-}{}{}file}|hyperpage}{7}
+\indexentry{encode_file@{encode\_\discretionary {-}{}{}file}!CMailFile@{CMail\discretionary {-}{}{}File}|hyperpage}{7}
+\indexentry{CMailFile@{CMail\discretionary {-}{}{}File}!write_body@{write\_\discretionary {-}{}{}body}|hyperpage}{7}
+\indexentry{write_body@{write\_\discretionary {-}{}{}body}!CMailFile@{CMail\discretionary {-}{}{}File}|hyperpage}{7}
+\indexentry{CMailFile@{CMail\discretionary {-}{}{}File}!write_mimeheaders@{write\_\discretionary {-}{}{}mimeheaders}|hyperpage}{7}
+\indexentry{write_mimeheaders@{write\_\discretionary {-}{}{}mimeheaders}!CMailFile@{CMail\discretionary {-}{}{}File}|hyperpage}{7}
+\indexentry{CMailFile@{CMail\discretionary {-}{}{}File}!write_smtpheaders@{write\_\discretionary {-}{}{}smtpheaders}|hyperpage}{7}
+\indexentry{write_smtpheaders@{write\_\discretionary {-}{}{}smtpheaders}!CMailFile@{CMail\discretionary {-}{}{}File}|hyperpage}{7}
+\indexentry{DoliDb@{DoliDb}|hyperpage}{9}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!DoliDb@{DoliDb}|hyperpage}{10}
+\indexentry{DoliDb@{DoliDb}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{10}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!affected_rows@{affected\_\discretionary {-}{}{}rows}|hyperpage}{11}
+\indexentry{affected_rows@{affected\_\discretionary {-}{}{}rows}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{11}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!begin@{begin}|hyperpage}{11}
+\indexentry{begin@{begin}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{11}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!clone@{clone}|hyperpage}{11}
+\indexentry{clone@{clone}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{11}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!close@{close}|hyperpage}{11}
+\indexentry{close@{close}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{11}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!commit@{commit}|hyperpage}{11}
+\indexentry{commit@{commit}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{11}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!connect@{connect}|hyperpage}{12}
+\indexentry{connect@{connect}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{12}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!create_db@{create\_\discretionary {-}{}{}db}|hyperpage}{12}
+\indexentry{create_db@{create\_\discretionary {-}{}{}db}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{12}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!errno@{errno}|hyperpage}{12}
+\indexentry{errno@{errno}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{12}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!error@{error}|hyperpage}{13}
+\indexentry{error@{error}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{13}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!fetch_array@{fetch\_\discretionary {-}{}{}array}|hyperpage}{13}
+\indexentry{fetch_array@{fetch\_\discretionary {-}{}{}array}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{13}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!fetch_object@{fetch\_\discretionary {-}{}{}object}|hyperpage}{13}
+\indexentry{fetch_object@{fetch\_\discretionary {-}{}{}object}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{13}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!fetch_row@{fetch\_\discretionary {-}{}{}row}|hyperpage}{13}
+\indexentry{fetch_row@{fetch\_\discretionary {-}{}{}row}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{13}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!free@{free}|hyperpage}{13}
+\indexentry{free@{free}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{13}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!idate@{idate}|hyperpage}{14}
+\indexentry{idate@{idate}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{14}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!last_insert_id@{last\_\discretionary {-}{}{}insert\_\discretionary {-}{}{}id}|hyperpage}{14}
+\indexentry{last_insert_id@{last\_\discretionary {-}{}{}insert\_\discretionary {-}{}{}id}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{14}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!list_tables@{list\_\discretionary {-}{}{}tables}|hyperpage}{14}
+\indexentry{list_tables@{list\_\discretionary {-}{}{}tables}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{14}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!num_fields@{num\_\discretionary {-}{}{}fields}|hyperpage}{14}
+\indexentry{num_fields@{num\_\discretionary {-}{}{}fields}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{14}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!num_rows@{num\_\discretionary {-}{}{}rows}|hyperpage}{15}
+\indexentry{num_rows@{num\_\discretionary {-}{}{}rows}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{15}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!pconnect@{pconnect}|hyperpage}{15}
+\indexentry{pconnect@{pconnect}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{15}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!plimit@{plimit}|hyperpage}{15}
+\indexentry{plimit@{plimit}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{15}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!query@{query}|hyperpage}{15}
+\indexentry{query@{query}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{15}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!result@{result}|hyperpage}{16}
+\indexentry{result@{result}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{16}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!rollback@{rollback}|hyperpage}{16}
+\indexentry{rollback@{rollback}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{16}
+\indexentry{DoliDb@{Doli\discretionary {-}{}{}Db}!select_db@{select\_\discretionary {-}{}{}db}|hyperpage}{16}
+\indexentry{select_db@{select\_\discretionary {-}{}{}db}!DoliDb@{Doli\discretionary {-}{}{}Db}|hyperpage}{16}
+\indexentry{vCard@{vCard}|hyperpage}{18}
+\indexentry{vCard@{v\discretionary {-}{}{}Card}!setAddress@{setAddress}|hyperpage}{19}
+\indexentry{setAddress@{setAddress}!vCard@{v\discretionary {-}{}{}Card}|hyperpage}{19}
+\indexentry{vCard@{v\discretionary {-}{}{}Card}!setBirthday@{setBirthday}|hyperpage}{19}
+\indexentry{setBirthday@{setBirthday}!vCard@{v\discretionary {-}{}{}Card}|hyperpage}{19}
+\indexentry{vCard@{v\discretionary {-}{}{}Card}!setEmail@{setEmail}|hyperpage}{19}
+\indexentry{setEmail@{setEmail}!vCard@{v\discretionary {-}{}{}Card}|hyperpage}{19}
+\indexentry{vCard@{v\discretionary {-}{}{}Card}!setFormattedName@{setFormattedName}|hyperpage}{19}
+\indexentry{setFormattedName@{setFormattedName}!vCard@{v\discretionary {-}{}{}Card}|hyperpage}{19}
+\indexentry{vCard@{v\discretionary {-}{}{}Card}!setLabel@{setLabel}|hyperpage}{20}
+\indexentry{setLabel@{setLabel}!vCard@{v\discretionary {-}{}{}Card}|hyperpage}{20}
+\indexentry{vCard@{v\discretionary {-}{}{}Card}!setName@{setName}|hyperpage}{20}
+\indexentry{setName@{setName}!vCard@{v\discretionary {-}{}{}Card}|hyperpage}{20}
+\indexentry{vCard@{v\discretionary {-}{}{}Card}!setNote@{setNote}|hyperpage}{20}
+\indexentry{setNote@{setNote}!vCard@{v\discretionary {-}{}{}Card}|hyperpage}{20}
+\indexentry{vCard@{v\discretionary {-}{}{}Card}!setPhoneNumber@{setPhoneNumber}|hyperpage}{21}
+\indexentry{setPhoneNumber@{setPhoneNumber}!vCard@{v\discretionary {-}{}{}Card}|hyperpage}{21}
+\indexentry{vCard@{v\discretionary {-}{}{}Card}!setPhoto@{setPhoto}|hyperpage}{21}
+\indexentry{setPhoto@{setPhoto}!vCard@{v\discretionary {-}{}{}Card}|hyperpage}{21}
+\indexentry{vCard@{v\discretionary {-}{}{}Card}!setURL@{setURL}|hyperpage}{21}
+\indexentry{setURL@{setURL}!vCard@{v\discretionary {-}{}{}Card}|hyperpage}{21}
+\indexentry{Webcal@{Webcal}|hyperpage}{23}
+\indexentry{Webcal@{Webcal}!add@{add}|hyperpage}{23}
+\indexentry{add@{add}!Webcal@{Webcal}|hyperpage}{23}
+\indexentry{Webcal@{Webcal}!get_next_id@{get\_\discretionary {-}{}{}next\_\discretionary {-}{}{}id}|hyperpage}{23}
+\indexentry{get_next_id@{get\_\discretionary {-}{}{}next\_\discretionary {-}{}{}id}!Webcal@{Webcal}|hyperpage}{23}
+\indexentry{htdocs/lib/CMailFile.class.php@{htdocs/lib/CMailFile.class.php}|hyperpage}{25}
+\indexentry{CMailFile.class.php@{CMail\discretionary {-}{}{}File.class.php}!my_chunk_split@{my\_\discretionary {-}{}{}chunk\_\discretionary {-}{}{}split}|hyperpage}{26}
+\indexentry{my_chunk_split@{my\_\discretionary {-}{}{}chunk\_\discretionary {-}{}{}split}!CMailFile.class.php@{CMail\discretionary {-}{}{}File.class.php}|hyperpage}{26}
+\indexentry{htdocs/lib/functions.inc.php@{htdocs/lib/functions.inc.php}|hyperpage}{27}
+\indexentry{functions.inc.php@{functions.inc.php}!creer_pass_aleatoire@{creer\_\discretionary {-}{}{}pass\_\discretionary {-}{}{}aleatoire}|hyperpage}{29}
+\indexentry{creer_pass_aleatoire@{creer\_\discretionary {-}{}{}pass\_\discretionary {-}{}{}aleatoire}!functions.inc.php@{functions.inc.php}|hyperpage}{29}
+\indexentry{functions.inc.php@{functions.inc.php}!dol_delete_file@{dol\_\discretionary {-}{}{}delete\_\discretionary {-}{}{}file}|hyperpage}{29}
+\indexentry{dol_delete_file@{dol\_\discretionary {-}{}{}delete\_\discretionary {-}{}{}file}!functions.inc.php@{functions.inc.php}|hyperpage}{29}
+\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_del_const@{dolibarr\_\discretionary {-}{}{}del\_\discretionary {-}{}{}const}|hyperpage}{29}
+\indexentry{dolibarr_del_const@{dolibarr\_\discretionary {-}{}{}del\_\discretionary {-}{}{}const}!functions.inc.php@{functions.inc.php}|hyperpage}{29}
+\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_fiche_head@{dolibarr\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}head}|hyperpage}{29}
+\indexentry{dolibarr_fiche_head@{dolibarr\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}head}!functions.inc.php@{functions.inc.php}|hyperpage}{29}
+\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_print_ca@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}ca}|hyperpage}{30}
+\indexentry{dolibarr_print_ca@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}ca}!functions.inc.php@{functions.inc.php}|hyperpage}{30}
+\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_print_date@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}date}|hyperpage}{30}
+\indexentry{dolibarr_print_date@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}date}!functions.inc.php@{functions.inc.php}|hyperpage}{30}
+\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_print_object_info@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}object\_\discretionary {-}{}{}info}|hyperpage}{30}
+\indexentry{dolibarr_print_object_info@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}object\_\discretionary {-}{}{}info}!functions.inc.php@{functions.inc.php}|hyperpage}{30}
+\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_print_phone@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}phone}|hyperpage}{30}
+\indexentry{dolibarr_print_phone@{dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}phone}!functions.inc.php@{functions.inc.php}|hyperpage}{30}
+\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_set_const@{dolibarr\_\discretionary {-}{}{}set\_\discretionary {-}{}{}const}|hyperpage}{31}
+\indexentry{dolibarr_set_const@{dolibarr\_\discretionary {-}{}{}set\_\discretionary {-}{}{}const}!functions.inc.php@{functions.inc.php}|hyperpage}{31}
+\indexentry{functions.inc.php@{functions.inc.php}!dolibarr_syslog@{dolibarr\_\discretionary {-}{}{}syslog}|hyperpage}{31}
+\indexentry{dolibarr_syslog@{dolibarr\_\discretionary {-}{}{}syslog}!functions.inc.php@{functions.inc.php}|hyperpage}{31}
+\indexentry{functions.inc.php@{functions.inc.php}!doliMoveFileUpload@{doliMoveFileUpload}|hyperpage}{31}
+\indexentry{doliMoveFileUpload@{doliMoveFileUpload}!functions.inc.php@{functions.inc.php}|hyperpage}{31}
+\indexentry{functions.inc.php@{functions.inc.php}!francs@{francs}|hyperpage}{31}
+\indexentry{francs@{francs}!functions.inc.php@{functions.inc.php}|hyperpage}{31}
+\indexentry{functions.inc.php@{functions.inc.php}!inctva@{inctva}|hyperpage}{32}
+\indexentry{inctva@{inctva}!functions.inc.php@{functions.inc.php}|hyperpage}{32}
+\indexentry{functions.inc.php@{functions.inc.php}!initialiser_sel@{initialiser\_\discretionary {-}{}{}sel}|hyperpage}{32}
+\indexentry{initialiser_sel@{initialiser\_\discretionary {-}{}{}sel}!functions.inc.php@{functions.inc.php}|hyperpage}{32}
+\indexentry{functions.inc.php@{functions.inc.php}!logfile@{logfile}|hyperpage}{32}
+\indexentry{logfile@{logfile}!functions.inc.php@{functions.inc.php}|hyperpage}{32}
+\indexentry{functions.inc.php@{functions.inc.php}!loginfunction@{loginfunction}|hyperpage}{32}
+\indexentry{loginfunction@{loginfunction}!functions.inc.php@{functions.inc.php}|hyperpage}{32}
+\indexentry{functions.inc.php@{functions.inc.php}!price@{price}|hyperpage}{33}
+\indexentry{price@{price}!functions.inc.php@{functions.inc.php}|hyperpage}{33}
+\indexentry{functions.inc.php@{functions.inc.php}!print_date_select@{print\_\discretionary {-}{}{}date\_\discretionary {-}{}{}select}|hyperpage}{33}
+\indexentry{print_date_select@{print\_\discretionary {-}{}{}date\_\discretionary {-}{}{}select}!functions.inc.php@{functions.inc.php}|hyperpage}{33}
+\indexentry{functions.inc.php@{functions.inc.php}!print_duree_select@{print\_\discretionary {-}{}{}duree\_\discretionary {-}{}{}select}|hyperpage}{33}
+\indexentry{print_duree_select@{print\_\discretionary {-}{}{}duree\_\discretionary {-}{}{}select}!functions.inc.php@{functions.inc.php}|hyperpage}{33}
+\indexentry{functions.inc.php@{functions.inc.php}!print_fiche_titre@{print\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}titre}|hyperpage}{33}
+\indexentry{print_fiche_titre@{print\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}titre}!functions.inc.php@{functions.inc.php}|hyperpage}{33}
+\indexentry{functions.inc.php@{functions.inc.php}!print_fleche_navigation@{print\_\discretionary {-}{}{}fleche\_\discretionary {-}{}{}navigation}|hyperpage}{34}
+\indexentry{print_fleche_navigation@{print\_\discretionary {-}{}{}fleche\_\discretionary {-}{}{}navigation}!functions.inc.php@{functions.inc.php}|hyperpage}{34}
+\indexentry{functions.inc.php@{functions.inc.php}!print_heure_select@{print\_\discretionary {-}{}{}heure\_\discretionary {-}{}{}select}|hyperpage}{34}
+\indexentry{print_heure_select@{print\_\discretionary {-}{}{}heure\_\discretionary {-}{}{}select}!functions.inc.php@{functions.inc.php}|hyperpage}{34}
+\indexentry{functions.inc.php@{functions.inc.php}!print_liste_field_titre@{print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre}|hyperpage}{34}
+\indexentry{print_liste_field_titre@{print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre}!functions.inc.php@{functions.inc.php}|hyperpage}{34}
+\indexentry{functions.inc.php@{functions.inc.php}!print_liste_field_titre_new@{print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre\_\discretionary {-}{}{}new}|hyperpage}{35}
+\indexentry{print_liste_field_titre_new@{print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre\_\discretionary {-}{}{}new}!functions.inc.php@{functions.inc.php}|hyperpage}{35}
+\indexentry{functions.inc.php@{functions.inc.php}!print_oui_non@{print\_\discretionary {-}{}{}oui\_\discretionary {-}{}{}non}|hyperpage}{35}
+\indexentry{print_oui_non@{print\_\discretionary {-}{}{}oui\_\discretionary {-}{}{}non}!functions.inc.php@{functions.inc.php}|hyperpage}{35}
+\indexentry{functions.inc.php@{functions.inc.php}!print_titre@{print\_\discretionary {-}{}{}titre}|hyperpage}{35}
+\indexentry{print_titre@{print\_\discretionary {-}{}{}titre}!functions.inc.php@{functions.inc.php}|hyperpage}{35}
+\indexentry{functions.inc.php@{functions.inc.php}!stat_print@{stat\_\discretionary {-}{}{}print}|hyperpage}{35}
+\indexentry{stat_print@{stat\_\discretionary {-}{}{}print}!functions.inc.php@{functions.inc.php}|hyperpage}{35}
+\indexentry{functions.inc.php@{functions.inc.php}!transcoS2L@{transcoS2L}|hyperpage}{36}
+\indexentry{transcoS2L@{transcoS2L}!functions.inc.php@{functions.inc.php}|hyperpage}{36}
+\indexentry{functions.inc.php@{functions.inc.php}!tva@{tva}|hyperpage}{36}
+\indexentry{tva@{tva}!functions.inc.php@{functions.inc.php}|hyperpage}{36}
+\indexentry{htdocs/lib/jabber/class.jabber.php@{htdocs/lib/jabber/class.jabber.php}|hyperpage}{37}
+\indexentry{htdocs/lib/ldap.lib.php@{htdocs/lib/ldap.lib.php}|hyperpage}{38}
+\indexentry{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_bind@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}bind}|hyperpage}{38}
+\indexentry{dolibarr_ldap_bind@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}bind}!ldap.lib.php@{ldap.lib.php}|hyperpage}{38}
+\indexentry{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_connect@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}connect}|hyperpage}{38}
+\indexentry{dolibarr_ldap_connect@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}connect}!ldap.lib.php@{ldap.lib.php}|hyperpage}{38}
+\indexentry{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_getversion@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}getversion}|hyperpage}{39}
+\indexentry{dolibarr_ldap_getversion@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}getversion}!ldap.lib.php@{ldap.lib.php}|hyperpage}{39}
+\indexentry{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_setversion@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}setversion}|hyperpage}{39}
+\indexentry{dolibarr_ldap_setversion@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}setversion}!ldap.lib.php@{ldap.lib.php}|hyperpage}{39}
+\indexentry{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_unacc@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unacc}|hyperpage}{39}
+\indexentry{dolibarr_ldap_unacc@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unacc}!ldap.lib.php@{ldap.lib.php}|hyperpage}{39}
+\indexentry{ldap.lib.php@{ldap.lib.php}!dolibarr_ldap_unbind@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unbind}|hyperpage}{39}
+\indexentry{dolibarr_ldap_unbind@{dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unbind}!ldap.lib.php@{ldap.lib.php}|hyperpage}{39}
+\indexentry{htdocs/lib/mysql.lib.php@{htdocs/lib/mysql.lib.php}|hyperpage}{41}
+\indexentry{htdocs/lib/price.lib.php@{htdocs/lib/price.lib.php}|hyperpage}{42}
+\indexentry{price.lib.php@{price.lib.php}!calcul_price@{calcul\_\discretionary {-}{}{}price}|hyperpage}{42}
+\indexentry{calcul_price@{calcul\_\discretionary {-}{}{}price}!price.lib.php@{price.lib.php}|hyperpage}{42}
+\indexentry{htdocs/lib/thermometer.php@{htdocs/lib/thermometer.php}|hyperpage}{43}
+\indexentry{thermometer.php@{thermometer.php}!moneyMeter@{moneyMeter}|hyperpage}{43}
+\indexentry{moneyMeter@{moneyMeter}!thermometer.php@{thermometer.php}|hyperpage}{43}
+\indexentry{htdocs/lib/vcard/vcard.class.php@{htdocs/lib/vcard/vcard.class.php}|hyperpage}{44}
+\indexentry{htdocs/lib/webcal.class.php@{htdocs/lib/webcal.class.php}|hyperpage}{45}

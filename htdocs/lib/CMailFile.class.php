@@ -48,7 +48,7 @@ class CMailFile
   var $mime_boundary = "--==================_846811060==_";
   var $smtp_headers;
 
-	/*!
+/*!
 		\brief CMailFile
 		\param subject
 		\param to
@@ -73,6 +73,13 @@ class CMailFile
       }
     }
 
+/*!
+		\brief permet d'attacher un fichier
+		\param filename_list
+		\param mimetype_list
+		\param mimefilename_list
+*/
+
   function attach_file($filename_list,$mimetype_list,$mimefilename_list)
     {
       for ($i = 0; $i < count($filename_list); $i++) {
@@ -90,6 +97,11 @@ class CMailFile
       // added -- to notify email client attachment is done
     }
 
+/*!
+		\brief permet d'encoder un fichier
+		\param sourcefile
+*/
+
   function encode_file($sourcefile)
     {
       //      print "<pre> on encode $sourcefile </pre>\n";
@@ -102,14 +114,24 @@ class CMailFile
 	}
       return $encoded;
   }
-  
+
+/*!
+		\brief permet d'envoyer un fichier
+*/
+
   function sendfile()
     {
       $headers .= $this->smtp_headers . $this->mime_headers;
       $message = $this->text_body . $this->text_encoded;
       return mail($this->addr_to,$this->subject,stripslashes($message),$headers);
     }
-  
+
+/*!
+		\brief permet d'ecrire le body d'un message
+		\param msgtext
+		\param filename_list
+*/
+
   function write_body($msgtext, $filename_list)
     {
       if (count($filename_list))
@@ -121,7 +143,13 @@ class CMailFile
       $out = $out . $msgtext . "\n";
       return $out;
     }
-  
+
+/*!
+		\brief création des headers mime
+		\param filename_list
+		\param mimefilename_list
+*/
+
   function write_mimeheaders($filename_list, $mimefilename_list) {
     $out = "MIME-version: 1.0\n";
     $out = $out . "Content-type: multipart/mixed; ";
@@ -133,7 +161,13 @@ class CMailFile
     }
     return $out;
   }
-  
+
+/*!
+		\brief création des headers smtp
+		\param addr_from
+		\param addr_cc
+*/
+
   function write_smtpheaders($addr_from,$addr_cc)
     {
       $out = "From: $addr_from\n";
@@ -146,12 +180,20 @@ class CMailFile
     }
 }
 
+/*!
+		\brief permet de diviser une chaine (RFC2045)
+		\param str
+		\remarks function chunk_split qui remplace celle de php si nécéssaire
+		\remarks 76 caractères par ligne, terminé par "\r\n"
+*/
+
 // usage - mimetype example "image/gif"
 // $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);
 // $mailfile->sendfile();
 
 // Splits a string by RFC2045 semantics (76 chars per line, end with \r\n).
 // This is not in all PHP versions so I define one here manuall.
+
 function my_chunk_split($str)
 {
   $stmp = $str;

@@ -419,7 +419,9 @@ WARN_LOGFILE           =
 #INPUT                  = htdocs \
 #			 htdocs/lib
 
-INPUT			= htdocs/lib
+INPUT			= htdocs/lib \
+			  htdocs/lib/jabber \
+			  htdocs/lib/vcard
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 

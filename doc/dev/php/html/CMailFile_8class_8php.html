@@ -16,6 +16,10 @@
 <tr><td class="memItemLeft" nowrap align=right valign=top>class &nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classCMailFile.html">CMailFile</a></td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Classe permettant d'envoyer des attachements par mail.  <a href="classCMailFile.html#_details">Plus de détails...</a><br><br></td></tr>
+<tr><td colspan=2><br><h2>Fonctions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="CMailFile_8class_8php.html#a0">my_chunk_split</a> ($str)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">permet de diviser une chaine (RFC2045)  <a href="#a0"></a><br><br></td></tr>
 </table>
 <hr><a name="_details"></a><h2>Description détaillée</h2>
 Classe permettant d'envoyer des attachements par mail. 
@@ -26,7 +30,49 @@ Laurent Destailleur. </dd></dl>
 <dl compact><dt><b>Version:</b></dt><dd>1.2.</dd></dl>
 
 <p>
-Définition dans le fichier <a class="el" href="CMailFile_8class_8php-source.html">CMailFile.class.php</a>.<hr size="1"><address style="align: right;"><small>Généré le Fri Jul 16 00:31:07 2004 pour dolibarr par
+Définition dans le fichier <a class="el" href="CMailFile_8class_8php-source.html">CMailFile.class.php</a>.<hr><h2>Documentation des fonctions</h2>
+<a class="anchor" name="a0" doxytag="CMailFile.class.php::my_chunk_split" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> my_chunk_split           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>str</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+permet de diviser une chaine (RFC2045) 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>str</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>function chunk_split qui remplace celle de php si nécéssaire <p>
+76 caractères par ligne, terminé par "\r\n" </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="CMailFile_8class_8php-source.html#l00197">197</a> du fichier <a class="el" href="CMailFile_8class_8php-source.html">CMailFile.class.php</a>.
+<p>
+Référencé par <a class="el" href="CMailFile_8class_8php-source.html#l00105">CMailFile::encode_file()</a>.    </td>
+  </tr>
+</table>
+<hr size="1"><address style="align: right;"><small>Généré le Fri Jul 16 08:51:52 2004 pour dolibarr par
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.7 </small></address>
 </body>

@@ -23,6 +23,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 ***************************************************************************/
 
+/*!	\file vcard.class.php
+		\brief Classe permettant de créer un fichier vcard.
+		\author Kai Blankenhorn.
+		\version 2.0
+
+		Ensemble des fonctions permettant de créer un fichier vcard.
+*/
+
 
 function encode($string) {
 	return escape(quoted_printable_encode($string));
@@ -66,10 +74,22 @@ function quoted_printable_encode($input, $line_max = 76) {
 	return trim($output);
 }
 
+/*! \class vCard
+		\brief Classe permettant de créer un fichier vcard
+
+		Ensemble des fonctions permettant de créer un fichier vcard
+*/
+
 class vCard {
 	var $properties;
 	var $filename;
-	
+
+/*!
+		\brief mise en forme du numéro de télephone
+		\param	number		numéro de téléphone
+		\param	type
+*/
+
 	function setPhoneNumber($number, $type="") {
 	// type may be PREF | WORK | HOME | VOICE | FAX | MSG | CELL | PAGER | BBS | CAR | MODEM | ISDN | VIDEO or any senseful combination, e.g. "PREF;WORK;VOICE"
 		$key = "TEL";
@@ -77,38 +97,88 @@ class vCard {
 		$key.= ";ENCODING=QUOTED-PRINTABLE";
 		$this->properties[$key] = quoted_printable_encode($number);
 	}
-	
+
+/*!
+		\brief mise en forme de la photo
+		\param	type
+		\param	photo
+		\warning NON TESTE !
+*/
+
 	// UNTESTED !!!
 	function setPhoto($type, $photo) { // $type = "GIF" | "JPEG"
 		$this->properties["PHOTO;TYPE=$type;ENCODING=BASE64"] = base64_encode($photo);
 	}
-	
+
+/*!
+		\brief mise en forme du nom formaté
+		\param	name
+*/
+
 	function setFormattedName($name) {
 		$this->properties["FN"] = quoted_printable_encode($name);
 	}
-	
+
+/*!
+		\brief mise en forme du nom complet
+		\param	family
+		\param	first
+		\param	additional
+		\param	prefix
+		\param	suffix
+*/
+
 	function setName($family="", $first="", $additional="", $prefix="", $suffix="") {
 		$this->properties["N"] = "$family;$first;$additional;$prefix;$suffix";
 		$this->filename = "$first%20$family.vcf";
 		if ($this->properties["FN"]=="") $this->setFormattedName(trim("$prefix $first $additional $family $suffix"));
 	}
-	
+
+/*!
+		\brief mise en forme de l'anniversaire
+		\param	date
+*/
+
 	function setBirthday($date) { // $date format is YYYY-MM-DD
 		$this->properties["BDAY"] = $date;
 	}
-	
+
+/*!
+		\brief mise en forme de l'adresse
+		\param	postoffice
+		\param	extended
+		\param	street
+		\param	city
+		\param	region
+		\param	zip
+		\param	country
+		\param	type
+*/
+
 	function setAddress($postoffice="", $extended="", $street="", $city="", $region="", $zip="", $country="", $type="HOME;POSTAL") {
 	// $type may be DOM | INTL | POSTAL | PARCEL | HOME | WORK or any combination of these: e.g. "WORK;PARCEL;POSTAL"
 		$key = "ADR";
 		if ($type!="") $key.= ";$type";
 		$key.= ";ENCODING=QUOTED-PRINTABLE";
 		$this->properties[$key] = encode($name).";".encode($extended).";".encode($street).";".encode($city).";".encode($region).";".encode($zip).";".encode($country);
-		
+
 		if ($this->properties["LABEL;$type;ENCODING=QUOTED-PRINTABLE"] == "") {
 			//$this->setLabel($postoffice, $extended, $street, $city, $region, $zip, $country, $type);
 		}
 	}
-	
+
+/*!
+		\brief mise en forme du label
+		\param	postoffice
+		\param	extended
+		\param	street
+		\param	city
+		\param	region
+		\param	zip
+		\param	country
+		\param	type
+*/
+
 	function setLabel($postoffice="", $extended="", $street="", $city="", $region="", $zip="", $country="", $type="HOME;POSTAL") {
 		$label = "";
 		if ($postoffice!="") $label.= "$postoffice\r\n";
@@ -118,25 +188,45 @@ class vCard {
 		if ($city!="") $label.= "$city\r\n";
 		if ($region!="") $label.= "$region\r\n";
 		if ($country!="") $country.= "$country\r\n";
-		
+
 		$this->properties["LABEL;$type;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($label);
 	}
-	
+
+/*!
+		\brief mise en forme de l'email
+		\param	address
+*/
+
 	function setEmail($address) {
 		$this->properties["EMAIL;INTERNET"] = $address;
 	}
-	
+
+/*!
+		\brief mise en forme de la note
+		\param	note
+*/
+
 	function setNote($note) {
 		$this->properties["NOTE;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($note);
 	}
-	
+
+/*!
+		\brief mise en forme de l'url
+		\param	url
+		\param	type
+*/
+
 	function setURL($url, $type="") {
 	// $type may be WORK | HOME
 		$key = "URL";
 		if ($type!="") $key.= ";$type";
 		$this->properties[$key] = $url;
 	}
-	
+
+/*!
+		\brief permet d'obtenir une vcard
+*/
+
 	function getVCard() {
 		$text = "BEGIN:VCARD\r\n";
 		$text.= "VERSION:2.1\r\n";
@@ -148,7 +238,11 @@ class vCard {
 		$text.= "END:VCARD\r\n";
 		return $text;
 	}
-	
+
+/*!
+		\brief permet d'obtenir le nom de fichier
+*/
+
 	function getFileName() {
 		return $this->filename;
 	}

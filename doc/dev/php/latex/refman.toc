@@ -5,96 +5,121 @@
 \contentsline {section}{\numberline {2.1}dolibarr Liste des fichiers}{3}{section.2.1}
 \contentsline {chapter}{\numberline {3}dolibarr Documentation des classes}{5}{chapter.3}
 \contentsline {section}{\numberline {3.1}R\'{e}f\'{e}rence de la classe CMail\discretionary {-}{}{}File}{5}{section.3.1}
-\contentsline {subsection}{\numberline {3.1.1}Description d\'{e}taill\'{e}e}{5}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.1}Description d\'{e}taill\'{e}e}{6}{subsection.3.1.1}
 \contentsline {subsection}{\numberline {3.1.2}Documentation des contructeurs et destructeur}{6}{subsection.3.1.2}
 \contentsline {subsubsection}{\numberline {3.1.2.1}CMailFile}{6}{subsubsection.3.1.2.1}
-\contentsline {section}{\numberline {3.2}R\'{e}f\'{e}rence de la classe Doli\discretionary {-}{}{}Db}{7}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}Description d\'{e}taill\'{e}e}{8}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}Documentation des contructeurs et destructeur}{8}{subsection.3.2.2}
-\contentsline {subsubsection}{\numberline {3.2.2.1}DoliDb}{8}{subsubsection.3.2.2.1}
-\contentsline {subsection}{\numberline {3.2.3}Documentation des fonctions membres}{9}{subsection.3.2.3}
-\contentsline {subsubsection}{\numberline {3.2.3.1}affected\_\discretionary {-}{}{}rows}{9}{subsubsection.3.2.3.1}
-\contentsline {subsubsection}{\numberline {3.2.3.2}begin}{9}{subsubsection.3.2.3.2}
-\contentsline {subsubsection}{\numberline {3.2.3.3}clone}{9}{subsubsection.3.2.3.3}
-\contentsline {subsubsection}{\numberline {3.2.3.4}close}{9}{subsubsection.3.2.3.4}
-\contentsline {subsubsection}{\numberline {3.2.3.5}commit}{10}{subsubsection.3.2.3.5}
-\contentsline {subsubsection}{\numberline {3.2.3.6}connect}{10}{subsubsection.3.2.3.6}
-\contentsline {subsubsection}{\numberline {3.2.3.7}create\_\discretionary {-}{}{}db}{10}{subsubsection.3.2.3.7}
-\contentsline {subsubsection}{\numberline {3.2.3.8}errno}{11}{subsubsection.3.2.3.8}
-\contentsline {subsubsection}{\numberline {3.2.3.9}error}{11}{subsubsection.3.2.3.9}
-\contentsline {subsubsection}{\numberline {3.2.3.10}fetch\_\discretionary {-}{}{}array}{11}{subsubsection.3.2.3.10}
-\contentsline {subsubsection}{\numberline {3.2.3.11}fetch\_\discretionary {-}{}{}object}{11}{subsubsection.3.2.3.11}
-\contentsline {subsubsection}{\numberline {3.2.3.12}fetch\_\discretionary {-}{}{}row}{11}{subsubsection.3.2.3.12}
-\contentsline {subsubsection}{\numberline {3.2.3.13}free}{12}{subsubsection.3.2.3.13}
-\contentsline {subsubsection}{\numberline {3.2.3.14}idate}{12}{subsubsection.3.2.3.14}
-\contentsline {subsubsection}{\numberline {3.2.3.15}last\_\discretionary {-}{}{}insert\_\discretionary {-}{}{}id}{12}{subsubsection.3.2.3.15}
-\contentsline {subsubsection}{\numberline {3.2.3.16}list\_\discretionary {-}{}{}tables}{12}{subsubsection.3.2.3.16}
-\contentsline {subsubsection}{\numberline {3.2.3.17}num\_\discretionary {-}{}{}fields}{13}{subsubsection.3.2.3.17}
-\contentsline {subsubsection}{\numberline {3.2.3.18}num\_\discretionary {-}{}{}rows}{13}{subsubsection.3.2.3.18}
-\contentsline {subsubsection}{\numberline {3.2.3.19}pconnect}{13}{subsubsection.3.2.3.19}
-\contentsline {subsubsection}{\numberline {3.2.3.20}plimit}{13}{subsubsection.3.2.3.20}
-\contentsline {subsubsection}{\numberline {3.2.3.21}query}{14}{subsubsection.3.2.3.21}
-\contentsline {subsubsection}{\numberline {3.2.3.22}result}{14}{subsubsection.3.2.3.22}
-\contentsline {subsubsection}{\numberline {3.2.3.23}rollback}{14}{subsubsection.3.2.3.23}
-\contentsline {subsubsection}{\numberline {3.2.3.24}select\_\discretionary {-}{}{}db}{15}{subsubsection.3.2.3.24}
-\contentsline {section}{\numberline {3.3}R\'{e}f\'{e}rence de la classe Webcal}{16}{section.3.3}
-\contentsline {subsection}{\numberline {3.3.1}Description d\'{e}taill\'{e}e}{16}{subsection.3.3.1}
-\contentsline {subsection}{\numberline {3.3.2}Documentation des fonctions membres}{16}{subsection.3.3.2}
-\contentsline {subsubsection}{\numberline {3.3.2.1}add}{16}{subsubsection.3.3.2.1}
-\contentsline {subsubsection}{\numberline {3.3.2.2}get\_\discretionary {-}{}{}next\_\discretionary {-}{}{}id}{16}{subsubsection.3.3.2.2}
-\contentsline {chapter}{\numberline {4}dolibarr Documentation des fichiers}{19}{chapter.4}
-\contentsline {section}{\numberline {4.1}R\'{e}f\'{e}rence du fichier htdocs/lib/CMail\discretionary {-}{}{}File.class.php}{19}{section.4.1}
-\contentsline {subsection}{\numberline {4.1.1}Description d\'{e}taill\'{e}e}{19}{subsection.4.1.1}
-\contentsline {section}{\numberline {4.2}R\'{e}f\'{e}rence du fichier htdocs/lib/functions.inc.php}{20}{section.4.2}
-\contentsline {subsection}{\numberline {4.2.1}Description d\'{e}taill\'{e}e}{21}{subsection.4.2.1}
-\contentsline {subsection}{\numberline {4.2.2}Documentation des fonctions}{22}{subsection.4.2.2}
-\contentsline {subsubsection}{\numberline {4.2.2.1}creer\_\discretionary {-}{}{}pass\_\discretionary {-}{}{}aleatoire}{22}{subsubsection.4.2.2.1}
-\contentsline {subsubsection}{\numberline {4.2.2.2}dol\_\discretionary {-}{}{}delete\_\discretionary {-}{}{}file}{22}{subsubsection.4.2.2.2}
-\contentsline {subsubsection}{\numberline {4.2.2.3}dolibarr\_\discretionary {-}{}{}del\_\discretionary {-}{}{}const}{22}{subsubsection.4.2.2.3}
-\contentsline {subsubsection}{\numberline {4.2.2.4}dolibarr\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}head}{22}{subsubsection.4.2.2.4}
-\contentsline {subsubsection}{\numberline {4.2.2.5}dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}ca}{23}{subsubsection.4.2.2.5}
-\contentsline {subsubsection}{\numberline {4.2.2.6}dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}date}{23}{subsubsection.4.2.2.6}
-\contentsline {subsubsection}{\numberline {4.2.2.7}dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}object\_\discretionary {-}{}{}info}{23}{subsubsection.4.2.2.7}
-\contentsline {subsubsection}{\numberline {4.2.2.8}dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}phone}{23}{subsubsection.4.2.2.8}
-\contentsline {subsubsection}{\numberline {4.2.2.9}dolibarr\_\discretionary {-}{}{}set\_\discretionary {-}{}{}const}{24}{subsubsection.4.2.2.9}
-\contentsline {subsubsection}{\numberline {4.2.2.10}dolibarr\_\discretionary {-}{}{}syslog}{24}{subsubsection.4.2.2.10}
-\contentsline {subsubsection}{\numberline {4.2.2.11}doliMoveFileUpload}{24}{subsubsection.4.2.2.11}
-\contentsline {subsubsection}{\numberline {4.2.2.12}francs}{25}{subsubsection.4.2.2.12}
-\contentsline {subsubsection}{\numberline {4.2.2.13}inctva}{25}{subsubsection.4.2.2.13}
-\contentsline {subsubsection}{\numberline {4.2.2.14}initialiser\_\discretionary {-}{}{}sel}{25}{subsubsection.4.2.2.14}
-\contentsline {subsubsection}{\numberline {4.2.2.15}logfile}{25}{subsubsection.4.2.2.15}
-\contentsline {subsubsection}{\numberline {4.2.2.16}loginfunction}{26}{subsubsection.4.2.2.16}
-\contentsline {subsubsection}{\numberline {4.2.2.17}price}{26}{subsubsection.4.2.2.17}
-\contentsline {subsubsection}{\numberline {4.2.2.18}print\_\discretionary {-}{}{}date\_\discretionary {-}{}{}select}{26}{subsubsection.4.2.2.18}
-\contentsline {subsubsection}{\numberline {4.2.2.19}print\_\discretionary {-}{}{}duree\_\discretionary {-}{}{}select}{26}{subsubsection.4.2.2.19}
-\contentsline {subsubsection}{\numberline {4.2.2.20}print\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}titre}{27}{subsubsection.4.2.2.20}
-\contentsline {subsubsection}{\numberline {4.2.2.21}print\_\discretionary {-}{}{}fleche\_\discretionary {-}{}{}navigation}{27}{subsubsection.4.2.2.21}
-\contentsline {subsubsection}{\numberline {4.2.2.22}print\_\discretionary {-}{}{}heure\_\discretionary {-}{}{}select}{27}{subsubsection.4.2.2.22}
-\contentsline {subsubsection}{\numberline {4.2.2.23}print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre}{27}{subsubsection.4.2.2.23}
-\contentsline {subsubsection}{\numberline {4.2.2.24}print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre\_\discretionary {-}{}{}new}{28}{subsubsection.4.2.2.24}
-\contentsline {subsubsection}{\numberline {4.2.2.25}print\_\discretionary {-}{}{}oui\_\discretionary {-}{}{}non}{28}{subsubsection.4.2.2.25}
-\contentsline {subsubsection}{\numberline {4.2.2.26}print\_\discretionary {-}{}{}titre}{28}{subsubsection.4.2.2.26}
-\contentsline {subsubsection}{\numberline {4.2.2.27}stat\_\discretionary {-}{}{}print}{29}{subsubsection.4.2.2.27}
-\contentsline {subsubsection}{\numberline {4.2.2.28}transcoS2L}{29}{subsubsection.4.2.2.28}
-\contentsline {subsubsection}{\numberline {4.2.2.29}tva}{29}{subsubsection.4.2.2.29}
-\contentsline {section}{\numberline {4.3}R\'{e}f\'{e}rence du fichier htdocs/lib/ldap.lib.php}{30}{section.4.3}
-\contentsline {subsection}{\numberline {4.3.1}Description d\'{e}taill\'{e}e}{30}{subsection.4.3.1}
-\contentsline {subsection}{\numberline {4.3.2}Documentation des fonctions}{30}{subsection.4.3.2}
-\contentsline {subsubsection}{\numberline {4.3.2.1}dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}bind}{30}{subsubsection.4.3.2.1}
-\contentsline {subsubsection}{\numberline {4.3.2.2}dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}connect}{31}{subsubsection.4.3.2.2}
-\contentsline {subsubsection}{\numberline {4.3.2.3}dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}getversion}{31}{subsubsection.4.3.2.3}
-\contentsline {subsubsection}{\numberline {4.3.2.4}dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}setversion}{31}{subsubsection.4.3.2.4}
-\contentsline {subsubsection}{\numberline {4.3.2.5}dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unacc}{31}{subsubsection.4.3.2.5}
-\contentsline {subsubsection}{\numberline {4.3.2.6}dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unbind}{32}{subsubsection.4.3.2.6}
-\contentsline {section}{\numberline {4.4}R\'{e}f\'{e}rence du fichier htdocs/lib/mysql.lib.php}{33}{section.4.4}
-\contentsline {subsection}{\numberline {4.4.1}Description d\'{e}taill\'{e}e}{33}{subsection.4.4.1}
-\contentsline {section}{\numberline {4.5}R\'{e}f\'{e}rence du fichier htdocs/lib/price.lib.php}{34}{section.4.5}
-\contentsline {subsection}{\numberline {4.5.1}Description d\'{e}taill\'{e}e}{34}{subsection.4.5.1}
-\contentsline {subsection}{\numberline {4.5.2}Documentation des fonctions}{34}{subsection.4.5.2}
-\contentsline {subsubsection}{\numberline {4.5.2.1}calcul\_\discretionary {-}{}{}price}{34}{subsubsection.4.5.2.1}
-\contentsline {section}{\numberline {4.6}R\'{e}f\'{e}rence du fichier htdocs/lib/thermometer.php}{35}{section.4.6}
-\contentsline {subsection}{\numberline {4.6.1}Description d\'{e}taill\'{e}e}{35}{subsection.4.6.1}
-\contentsline {subsection}{\numberline {4.6.2}Documentation des fonctions}{35}{subsection.4.6.2}
-\contentsline {subsubsection}{\numberline {4.6.2.1}moneyMeter}{35}{subsubsection.4.6.2.1}
-\contentsline {section}{\numberline {4.7}R\'{e}f\'{e}rence du fichier htdocs/lib/webcal.class.php}{36}{section.4.7}
-\contentsline {subsection}{\numberline {4.7.1}Description d\'{e}taill\'{e}e}{36}{subsection.4.7.1}
+\contentsline {subsection}{\numberline {3.1.3}Documentation des fonctions membres}{6}{subsection.3.1.3}
+\contentsline {subsubsection}{\numberline {3.1.3.1}attach\_\discretionary {-}{}{}file}{6}{subsubsection.3.1.3.1}
+\contentsline {subsubsection}{\numberline {3.1.3.2}encode\_\discretionary {-}{}{}file}{7}{subsubsection.3.1.3.2}
+\contentsline {subsubsection}{\numberline {3.1.3.3}write\_\discretionary {-}{}{}body}{7}{subsubsection.3.1.3.3}
+\contentsline {subsubsection}{\numberline {3.1.3.4}write\_\discretionary {-}{}{}mimeheaders}{7}{subsubsection.3.1.3.4}
+\contentsline {subsubsection}{\numberline {3.1.3.5}write\_\discretionary {-}{}{}smtpheaders}{7}{subsubsection.3.1.3.5}
+\contentsline {section}{\numberline {3.2}R\'{e}f\'{e}rence de la classe Doli\discretionary {-}{}{}Db}{9}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}Description d\'{e}taill\'{e}e}{10}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Documentation des contructeurs et destructeur}{10}{subsection.3.2.2}
+\contentsline {subsubsection}{\numberline {3.2.2.1}DoliDb}{10}{subsubsection.3.2.2.1}
+\contentsline {subsection}{\numberline {3.2.3}Documentation des fonctions membres}{11}{subsection.3.2.3}
+\contentsline {subsubsection}{\numberline {3.2.3.1}affected\_\discretionary {-}{}{}rows}{11}{subsubsection.3.2.3.1}
+\contentsline {subsubsection}{\numberline {3.2.3.2}begin}{11}{subsubsection.3.2.3.2}
+\contentsline {subsubsection}{\numberline {3.2.3.3}clone}{11}{subsubsection.3.2.3.3}
+\contentsline {subsubsection}{\numberline {3.2.3.4}close}{11}{subsubsection.3.2.3.4}
+\contentsline {subsubsection}{\numberline {3.2.3.5}commit}{12}{subsubsection.3.2.3.5}
+\contentsline {subsubsection}{\numberline {3.2.3.6}connect}{12}{subsubsection.3.2.3.6}
+\contentsline {subsubsection}{\numberline {3.2.3.7}create\_\discretionary {-}{}{}db}{12}{subsubsection.3.2.3.7}
+\contentsline {subsubsection}{\numberline {3.2.3.8}errno}{13}{subsubsection.3.2.3.8}
+\contentsline {subsubsection}{\numberline {3.2.3.9}error}{13}{subsubsection.3.2.3.9}
+\contentsline {subsubsection}{\numberline {3.2.3.10}fetch\_\discretionary {-}{}{}array}{13}{subsubsection.3.2.3.10}
+\contentsline {subsubsection}{\numberline {3.2.3.11}fetch\_\discretionary {-}{}{}object}{13}{subsubsection.3.2.3.11}
+\contentsline {subsubsection}{\numberline {3.2.3.12}fetch\_\discretionary {-}{}{}row}{13}{subsubsection.3.2.3.12}
+\contentsline {subsubsection}{\numberline {3.2.3.13}free}{14}{subsubsection.3.2.3.13}
+\contentsline {subsubsection}{\numberline {3.2.3.14}idate}{14}{subsubsection.3.2.3.14}
+\contentsline {subsubsection}{\numberline {3.2.3.15}last\_\discretionary {-}{}{}insert\_\discretionary {-}{}{}id}{14}{subsubsection.3.2.3.15}
+\contentsline {subsubsection}{\numberline {3.2.3.16}list\_\discretionary {-}{}{}tables}{14}{subsubsection.3.2.3.16}
+\contentsline {subsubsection}{\numberline {3.2.3.17}num\_\discretionary {-}{}{}fields}{15}{subsubsection.3.2.3.17}
+\contentsline {subsubsection}{\numberline {3.2.3.18}num\_\discretionary {-}{}{}rows}{15}{subsubsection.3.2.3.18}
+\contentsline {subsubsection}{\numberline {3.2.3.19}pconnect}{15}{subsubsection.3.2.3.19}
+\contentsline {subsubsection}{\numberline {3.2.3.20}plimit}{15}{subsubsection.3.2.3.20}
+\contentsline {subsubsection}{\numberline {3.2.3.21}query}{16}{subsubsection.3.2.3.21}
+\contentsline {subsubsection}{\numberline {3.2.3.22}result}{16}{subsubsection.3.2.3.22}
+\contentsline {subsubsection}{\numberline {3.2.3.23}rollback}{16}{subsubsection.3.2.3.23}
+\contentsline {subsubsection}{\numberline {3.2.3.24}select\_\discretionary {-}{}{}db}{17}{subsubsection.3.2.3.24}
+\contentsline {section}{\numberline {3.3}R\'{e}f\'{e}rence de la classe v\discretionary {-}{}{}Card}{18}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}Description d\'{e}taill\'{e}e}{18}{subsection.3.3.1}
+\contentsline {subsection}{\numberline {3.3.2}Documentation des fonctions membres}{19}{subsection.3.3.2}
+\contentsline {subsubsection}{\numberline {3.3.2.1}setAddress}{19}{subsubsection.3.3.2.1}
+\contentsline {subsubsection}{\numberline {3.3.2.2}setBirthday}{19}{subsubsection.3.3.2.2}
+\contentsline {subsubsection}{\numberline {3.3.2.3}setEmail}{19}{subsubsection.3.3.2.3}
+\contentsline {subsubsection}{\numberline {3.3.2.4}setFormattedName}{20}{subsubsection.3.3.2.4}
+\contentsline {subsubsection}{\numberline {3.3.2.5}setLabel}{20}{subsubsection.3.3.2.5}
+\contentsline {subsubsection}{\numberline {3.3.2.6}setName}{20}{subsubsection.3.3.2.6}
+\contentsline {subsubsection}{\numberline {3.3.2.7}setNote}{21}{subsubsection.3.3.2.7}
+\contentsline {subsubsection}{\numberline {3.3.2.8}setPhoneNumber}{21}{subsubsection.3.3.2.8}
+\contentsline {subsubsection}{\numberline {3.3.2.9}setPhoto}{21}{subsubsection.3.3.2.9}
+\contentsline {subsubsection}{\numberline {3.3.2.10}setURL}{21}{subsubsection.3.3.2.10}
+\contentsline {section}{\numberline {3.4}R\'{e}f\'{e}rence de la classe Webcal}{23}{section.3.4}
+\contentsline {subsection}{\numberline {3.4.1}Description d\'{e}taill\'{e}e}{23}{subsection.3.4.1}
+\contentsline {subsection}{\numberline {3.4.2}Documentation des fonctions membres}{23}{subsection.3.4.2}
+\contentsline {subsubsection}{\numberline {3.4.2.1}add}{23}{subsubsection.3.4.2.1}
+\contentsline {subsubsection}{\numberline {3.4.2.2}get\_\discretionary {-}{}{}next\_\discretionary {-}{}{}id}{23}{subsubsection.3.4.2.2}
+\contentsline {chapter}{\numberline {4}dolibarr Documentation des fichiers}{25}{chapter.4}
+\contentsline {section}{\numberline {4.1}R\'{e}f\'{e}rence du fichier htdocs/lib/CMail\discretionary {-}{}{}File.class.php}{25}{section.4.1}
+\contentsline {subsection}{\numberline {4.1.1}Description d\'{e}taill\'{e}e}{25}{subsection.4.1.1}
+\contentsline {subsection}{\numberline {4.1.2}Documentation des fonctions}{26}{subsection.4.1.2}
+\contentsline {subsubsection}{\numberline {4.1.2.1}my\_\discretionary {-}{}{}chunk\_\discretionary {-}{}{}split}{26}{subsubsection.4.1.2.1}
+\contentsline {section}{\numberline {4.2}R\'{e}f\'{e}rence du fichier htdocs/lib/functions.inc.php}{27}{section.4.2}
+\contentsline {subsection}{\numberline {4.2.1}Description d\'{e}taill\'{e}e}{28}{subsection.4.2.1}
+\contentsline {subsection}{\numberline {4.2.2}Documentation des fonctions}{29}{subsection.4.2.2}
+\contentsline {subsubsection}{\numberline {4.2.2.1}creer\_\discretionary {-}{}{}pass\_\discretionary {-}{}{}aleatoire}{29}{subsubsection.4.2.2.1}
+\contentsline {subsubsection}{\numberline {4.2.2.2}dol\_\discretionary {-}{}{}delete\_\discretionary {-}{}{}file}{29}{subsubsection.4.2.2.2}
+\contentsline {subsubsection}{\numberline {4.2.2.3}dolibarr\_\discretionary {-}{}{}del\_\discretionary {-}{}{}const}{29}{subsubsection.4.2.2.3}
+\contentsline {subsubsection}{\numberline {4.2.2.4}dolibarr\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}head}{29}{subsubsection.4.2.2.4}
+\contentsline {subsubsection}{\numberline {4.2.2.5}dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}ca}{30}{subsubsection.4.2.2.5}
+\contentsline {subsubsection}{\numberline {4.2.2.6}dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}date}{30}{subsubsection.4.2.2.6}
+\contentsline {subsubsection}{\numberline {4.2.2.7}dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}object\_\discretionary {-}{}{}info}{30}{subsubsection.4.2.2.7}
+\contentsline {subsubsection}{\numberline {4.2.2.8}dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}phone}{30}{subsubsection.4.2.2.8}
+\contentsline {subsubsection}{\numberline {4.2.2.9}dolibarr\_\discretionary {-}{}{}set\_\discretionary {-}{}{}const}{31}{subsubsection.4.2.2.9}
+\contentsline {subsubsection}{\numberline {4.2.2.10}dolibarr\_\discretionary {-}{}{}syslog}{31}{subsubsection.4.2.2.10}
+\contentsline {subsubsection}{\numberline {4.2.2.11}doliMoveFileUpload}{31}{subsubsection.4.2.2.11}
+\contentsline {subsubsection}{\numberline {4.2.2.12}francs}{32}{subsubsection.4.2.2.12}
+\contentsline {subsubsection}{\numberline {4.2.2.13}inctva}{32}{subsubsection.4.2.2.13}
+\contentsline {subsubsection}{\numberline {4.2.2.14}initialiser\_\discretionary {-}{}{}sel}{32}{subsubsection.4.2.2.14}
+\contentsline {subsubsection}{\numberline {4.2.2.15}logfile}{32}{subsubsection.4.2.2.15}
+\contentsline {subsubsection}{\numberline {4.2.2.16}loginfunction}{33}{subsubsection.4.2.2.16}
+\contentsline {subsubsection}{\numberline {4.2.2.17}price}{33}{subsubsection.4.2.2.17}
+\contentsline {subsubsection}{\numberline {4.2.2.18}print\_\discretionary {-}{}{}date\_\discretionary {-}{}{}select}{33}{subsubsection.4.2.2.18}
+\contentsline {subsubsection}{\numberline {4.2.2.19}print\_\discretionary {-}{}{}duree\_\discretionary {-}{}{}select}{33}{subsubsection.4.2.2.19}
+\contentsline {subsubsection}{\numberline {4.2.2.20}print\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}titre}{34}{subsubsection.4.2.2.20}
+\contentsline {subsubsection}{\numberline {4.2.2.21}print\_\discretionary {-}{}{}fleche\_\discretionary {-}{}{}navigation}{34}{subsubsection.4.2.2.21}
+\contentsline {subsubsection}{\numberline {4.2.2.22}print\_\discretionary {-}{}{}heure\_\discretionary {-}{}{}select}{34}{subsubsection.4.2.2.22}
+\contentsline {subsubsection}{\numberline {4.2.2.23}print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre}{34}{subsubsection.4.2.2.23}
+\contentsline {subsubsection}{\numberline {4.2.2.24}print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre\_\discretionary {-}{}{}new}{35}{subsubsection.4.2.2.24}
+\contentsline {subsubsection}{\numberline {4.2.2.25}print\_\discretionary {-}{}{}oui\_\discretionary {-}{}{}non}{35}{subsubsection.4.2.2.25}
+\contentsline {subsubsection}{\numberline {4.2.2.26}print\_\discretionary {-}{}{}titre}{35}{subsubsection.4.2.2.26}
+\contentsline {subsubsection}{\numberline {4.2.2.27}stat\_\discretionary {-}{}{}print}{36}{subsubsection.4.2.2.27}
+\contentsline {subsubsection}{\numberline {4.2.2.28}transcoS2L}{36}{subsubsection.4.2.2.28}
+\contentsline {subsubsection}{\numberline {4.2.2.29}tva}{36}{subsubsection.4.2.2.29}
+\contentsline {section}{\numberline {4.3}R\'{e}f\'{e}rence du fichier htdocs/lib/jabber/class.jabber.php}{37}{section.4.3}
+\contentsline {subsection}{\numberline {4.3.1}Description d\'{e}taill\'{e}e}{37}{subsection.4.3.1}
+\contentsline {section}{\numberline {4.4}R\'{e}f\'{e}rence du fichier htdocs/lib/ldap.lib.php}{38}{section.4.4}
+\contentsline {subsection}{\numberline {4.4.1}Description d\'{e}taill\'{e}e}{38}{subsection.4.4.1}
+\contentsline {subsection}{\numberline {4.4.2}Documentation des fonctions}{38}{subsection.4.4.2}
+\contentsline {subsubsection}{\numberline {4.4.2.1}dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}bind}{38}{subsubsection.4.4.2.1}
+\contentsline {subsubsection}{\numberline {4.4.2.2}dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}connect}{39}{subsubsection.4.4.2.2}
+\contentsline {subsubsection}{\numberline {4.4.2.3}dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}getversion}{39}{subsubsection.4.4.2.3}
+\contentsline {subsubsection}{\numberline {4.4.2.4}dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}setversion}{39}{subsubsection.4.4.2.4}
+\contentsline {subsubsection}{\numberline {4.4.2.5}dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unacc}{39}{subsubsection.4.4.2.5}
+\contentsline {subsubsection}{\numberline {4.4.2.6}dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unbind}{40}{subsubsection.4.4.2.6}
+\contentsline {section}{\numberline {4.5}R\'{e}f\'{e}rence du fichier htdocs/lib/mysql.lib.php}{41}{section.4.5}
+\contentsline {subsection}{\numberline {4.5.1}Description d\'{e}taill\'{e}e}{41}{subsection.4.5.1}
+\contentsline {section}{\numberline {4.6}R\'{e}f\'{e}rence du fichier htdocs/lib/price.lib.php}{42}{section.4.6}
+\contentsline {subsection}{\numberline {4.6.1}Description d\'{e}taill\'{e}e}{42}{subsection.4.6.1}
+\contentsline {subsection}{\numberline {4.6.2}Documentation des fonctions}{42}{subsection.4.6.2}
+\contentsline {subsubsection}{\numberline {4.6.2.1}calcul\_\discretionary {-}{}{}price}{42}{subsubsection.4.6.2.1}
+\contentsline {section}{\numberline {4.7}R\'{e}f\'{e}rence du fichier htdocs/lib/thermometer.php}{43}{section.4.7}
+\contentsline {subsection}{\numberline {4.7.1}Description d\'{e}taill\'{e}e}{43}{subsection.4.7.1}
+\contentsline {subsection}{\numberline {4.7.2}Documentation des fonctions}{43}{subsection.4.7.2}
+\contentsline {subsubsection}{\numberline {4.7.2.1}moneyMeter}{43}{subsubsection.4.7.2.1}
+\contentsline {section}{\numberline {4.8}R\'{e}f\'{e}rence du fichier htdocs/lib/vcard/vcard.class.php}{44}{section.4.8}
+\contentsline {subsection}{\numberline {4.8.1}Description d\'{e}taill\'{e}e}{44}{subsection.4.8.1}
+\contentsline {section}{\numberline {4.9}R\'{e}f\'{e}rence du fichier htdocs/lib/webcal.class.php}{45}{section.4.9}
+\contentsline {subsection}{\numberline {4.9.1}Description d\'{e}taill\'{e}e}{45}{subsection.4.9.1}

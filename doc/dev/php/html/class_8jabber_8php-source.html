@@ -1,0 +1,1886 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<title>dolibarr: htdocs/lib/jabber/class.jabber.php Source File</title>
+<link href="doxygen.css" rel="stylesheet" type="text/css">
+</head><body>
+<!-- Généré par Doxygen 1.3.7 -->
+<div class="qindex"><a class="qindex" href="index.html">Page&nbsp;principale</a> | <a class="qindex" href="classes.html">Liste&nbsp;alphabétique</a> | <a class="qindex" href="annotated.html">Liste&nbsp;des&nbsp;classes</a> | <a class="qindex" href="files.html">Liste&nbsp;des&nbsp;fichiers</a> | <a class="qindex" href="functions.html">Membres&nbsp;de&nbsp;classe</a> | <a class="qindex" href="globals.html">Membres&nbsp;de&nbsp;fichier</a></div>
+<h1>htdocs/lib/jabber/class.jabber.php</h1><a href="class_8jabber_8php.html">Aller à la documentation de ce fichier.</a><pre class="fragment"><div>00001 &lt;?php
+00002 
+00003 <span class="comment">/***************************************************************************</span>
+00004 <span class="comment"></span>
+00005 <span class="comment">  Class.Jabber.PHP v0.4</span>
+00006 <span class="comment">  (c) 2002 Carlo "Gossip" Zottmann</span>
+00007 <span class="comment">  http://phpjabber.g-blog.net *** gossip@jabber.g-blog.net</span>
+00008 <span class="comment"></span>
+00009 <span class="comment">  The FULL documentation and examples for this software can be found at</span>
+00010 <span class="comment">  http://phpjabber.g-blog.net (not many doc comments in here, sorry)</span>
+00011 <span class="comment"></span>
+00012 <span class="comment">  last modified: 27.04.2003 13:01:53 CET</span>
+00013 <span class="comment"></span>
+00014 <span class="comment"> ***************************************************************************/</span>
+00015 
+00016 <span class="comment">/***************************************************************************</span>
+00017 <span class="comment"> *</span>
+00018 <span class="comment"></span>
+00019 <span class="comment"> *</span>
+00020 <span class="comment"> ***************************************************************************/</span>
+00021 
+00022 <span class="comment">/*</span>
+00023 <span class="comment">  Jabber::Connect()</span>
+00024 <span class="comment">  Jabber::Disconnect()</span>
+00025 <span class="comment">  Jabber::SendAuth()</span>
+00026 <span class="comment">  Jabber::AccountRegistration($reg_email {string}, $reg_name {string})</span>
+00027 <span class="comment"></span>
+00028 <span class="comment">  Jabber::Listen()</span>
+00029 <span class="comment">  Jabber::SendPacket($xml {string})</span>
+00030 <span class="comment"></span>
+00031 <span class="comment">  Jabber::RosterUpdate()</span>
+00032 <span class="comment">  Jabber::RosterAddUser($jid {string}, $id {string}, $name {string})</span>
+00033 <span class="comment">  Jabber::RosterRemoveUser($jid {string}, $id {string})</span>
+00034 <span class="comment">  Jabber::RosterExistsJID($jid {string})</span>
+00035 <span class="comment"></span>
+00036 <span class="comment">  Jabber::Subscribe($jid {string})</span>
+00037 <span class="comment">  Jabber::Unsubscribe($jid {string})</span>
+00038 <span class="comment"></span>
+00039 <span class="comment">  Jabber::CallHandler($message {array})</span>
+00040 <span class="comment">  Jabber::CruiseControl([$seconds {number}])</span>
+00041 <span class="comment"></span>
+00042 <span class="comment">  Jabber::SubscriptionApproveRequest($to {string})</span>
+00043 <span class="comment">  Jabber::SubscriptionDenyRequest($to {string})</span>
+00044 <span class="comment"></span>
+00045 <span class="comment">  Jabber::GetFirstFromQueue()</span>
+00046 <span class="comment">  Jabber::GetFromQueueById($packet_type {string}, $id {string})</span>
+00047 <span class="comment"></span>
+00048 <span class="comment">  Jabber::SendMessage($to {string}, $id {number}, $type {string}, $content {array}[, $payload {array}])</span>
+00049 <span class="comment">  Jabber::SendIq($to {string}, $type {string}, $id {string}, $xmlns {string}[, $payload {string}])</span>
+00050 <span class="comment">  Jabber::SendPresence($type {string}[, $to {string}[, $status {string}[, $show {string}[, $priority {number}]]]])</span>
+00051 <span class="comment"></span>
+00052 <span class="comment">  Jabber::SendError($to {string}, $id {string}, $error_number {number}[, $error_message {string}])</span>
+00053 <span class="comment"></span>
+00054 <span class="comment">  Jabber::TransportRegistrationDetails($transport {string})</span>
+00055 <span class="comment">  Jabber::TransportRegistration($transport {string}, $details {array})</span>
+00056 <span class="comment"></span>
+00057 <span class="comment">  Jabber::GetvCard($jid {string}[, $id {string}]) -- EXPERIMENTAL --</span>
+00058 <span class="comment"></span>
+00059 <span class="comment">  Jabber::GetInfoFromMessageFrom($packet {array})</span>
+00060 <span class="comment">  Jabber::GetInfoFromMessageType($packet {array})</span>
+00061 <span class="comment">  Jabber::GetInfoFromMessageId($packet {array})</span>
+00062 <span class="comment">  Jabber::GetInfoFromMessageThread($packet {array})</span>
+00063 <span class="comment">  Jabber::GetInfoFromMessageSubject($packet {array})</span>
+00064 <span class="comment">  Jabber::GetInfoFromMessageBody($packet {array})</span>
+00065 <span class="comment">  Jabber::GetInfoFromMessageError($packet {array})</span>
+00066 <span class="comment"></span>
+00067 <span class="comment">  Jabber::GetInfoFromIqFrom($packet {array})</span>
+00068 <span class="comment">  Jabber::GetInfoFromIqType($packet {array})</span>
+00069 <span class="comment">  Jabber::GetInfoFromIqId($packet {array})</span>
+00070 <span class="comment">  Jabber::GetInfoFromIqKey($packet {array})</span>
+00071 <span class="comment">  Jabber::GetInfoFromIqError($packet {array})</span>
+00072 <span class="comment"></span>
+00073 <span class="comment">  Jabber::GetInfoFromPresenceFrom($packet {array})</span>
+00074 <span class="comment">  Jabber::GetInfoFromPresenceType($packet {array})</span>
+00075 <span class="comment">  Jabber::GetInfoFromPresenceStatus($packet {array})</span>
+00076 <span class="comment">  Jabber::GetInfoFromPresenceShow($packet {array})</span>
+00077 <span class="comment">  Jabber::GetInfoFromPresencePriority($packet {array})</span>
+00078 <span class="comment"></span>
+00079 <span class="comment">  Jabber::AddToLog($string {string})</span>
+00080 <span class="comment">  Jabber::PrintLog()</span>
+00081 <span class="comment"></span>
+00082 <span class="comment">  MakeXML::AddPacketDetails($string {string}[, $value {string/number}])</span>
+00083 <span class="comment">  MakeXML::BuildPacket([$array {array}])</span>
+00084 <span class="comment">*/</span>
+00085 
+00095 <span class="keyword">class </span>Jabber
+00096 {
+00097   var $server;
+00098   var $port;
+00099   var $username;
+00100   var $password;
+00101   var $resource;
+00102   var $jid;
+00103 
+00104   var $connection;
+00105   var $delay_disconnect;
+00106 
+00107   var $stream_id;
+00108   var $roster;
+00109 
+00110   var $enable_logging;
+00111   var $log_array;
+00112   var $log_filename;
+00113   var $log_filehandler;
+00114 
+00115   var $iq_sleep_timer;
+00116   var $last_ping_time;
+00117 
+00118   var $packet_queue;
+00119   var $subscription_queue;
+00120 
+00121   var $iq_version_name;
+00122   var $iq_version_os;
+00123   var $iq_version_version;
+00124 
+00125   var $error_codes;
+00126 
+00127   var $connected;
+00128   var $keep_alive_id;
+00129   var $returned_keep_alive;
+00130   var $txnid;
+00131 
+00132   var $CONNECTOR;
+00133 
+00134 
+00135 
+00136   function Jabber()
+00137   {
+00138     $this-&gt;server       = <span class="stringliteral">"localhost"</span>;
+00139     $this-&gt;port         = <span class="stringliteral">"5222"</span>;
+00140 
+00141     $this-&gt;username       = <span class="stringliteral">"larry"</span>;
+00142     $this-&gt;password       = <span class="stringliteral">"curly"</span>;
+00143     $this-&gt;resource       = NULL;
+00144 
+00145     $this-&gt;enable_logging   = FALSE;
+00146     $this-&gt;log_array      = array();
+00147     $this-&gt;log_filename     = '';
+00148     $this-&gt;log_filehandler    = FALSE;
+00149 
+00150     $this-&gt;packet_queue     = array();
+00151     $this-&gt;subscription_queue = array();
+00152 
+00153     $this-&gt;iq_sleep_timer   = 1;
+00154     $this-&gt;delay_disconnect   = 1;
+00155 
+00156     $this-&gt;returned_keep_alive  = TRUE;
+00157     $this-&gt;txnid        = 0;
+00158 
+00159     $this-&gt;iq_version_name    = <span class="stringliteral">"Class.Jabber.PHP -- http://phpjabber.g-blog.net -- by Carlo 'Gossip' Zottmann, gossip@jabber.g-blog.net"</span>;
+00160     $this-&gt;iq_version_version = <span class="stringliteral">"0.4"</span>;
+00161     $this-&gt;iq_version_os    = $_SERVER['SERVER_SOFTWARE'];
+00162 
+00163     $this-&gt;connection_class   = <span class="stringliteral">"CJP_StandardConnector"</span>;
+00164 
+00165     $this-&gt;error_codes      = array(400 =&gt; <span class="stringliteral">"Bad Request"</span>,
+00166                       401 =&gt; <span class="stringliteral">"Unauthorized"</span>,
+00167                       402 =&gt; <span class="stringliteral">"Payment Required"</span>,
+00168                       403 =&gt; <span class="stringliteral">"Forbidden"</span>,
+00169                       404 =&gt; <span class="stringliteral">"Not Found"</span>,
+00170                       405 =&gt; <span class="stringliteral">"Not Allowed"</span>,
+00171                       406 =&gt; <span class="stringliteral">"Not Acceptable"</span>,
+00172                       407 =&gt; <span class="stringliteral">"Registration Required"</span>,
+00173                       408 =&gt; <span class="stringliteral">"Request Timeout"</span>,
+00174                       409 =&gt; <span class="stringliteral">"Conflict"</span>,
+00175                       500 =&gt; <span class="stringliteral">"Internal Server Error"</span>,
+00176                       501 =&gt; <span class="stringliteral">"Not Implemented"</span>,
+00177                       502 =&gt; <span class="stringliteral">"Remove Server Error"</span>,
+00178                       503 =&gt; <span class="stringliteral">"Service Unavailable"</span>,
+00179                       504 =&gt; <span class="stringliteral">"Remove Server Timeout"</span>,
+00180                       510 =&gt; <span class="stringliteral">"Disconnected"</span>);
+00181   }
+00182 
+00183 
+00184 
+00185   function Connect()
+00186   {
+00187     $this-&gt;_create_logfile();
+00188 
+00189     $this-&gt;CONNECTOR = <span class="keyword">new</span> $this-&gt;connection_class;
+00190 
+00191     <span class="keywordflow">if</span> ($this-&gt;CONNECTOR-&gt;OpenSocket($this-&gt;server, $this-&gt;port))
+00192     {
+00193       $this-&gt;SendPacket(<span class="stringliteral">"&lt;?xml version='1.0' encoding='UTF-8' ?"</span> . <span class="stringliteral">"&gt;\n"</span>);
+00194       $this-&gt;SendPacket(<span class="stringliteral">"&lt;stream:stream to='{$this-&gt;server}' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams'&gt;\n"</span>);
+00195 
+00196       sleep(2);
+00197 
+00198       <span class="keywordflow">if</span> ($this-&gt;_check_connected())
+00199       {
+00200         $this-&gt;connected = TRUE;  <span class="comment">// Nathan Fritz</span>
+00201         <span class="keywordflow">return</span> TRUE;
+00202       }
+00203       <span class="keywordflow">else</span>
+00204       {
+00205         $this-&gt;AddToLog(<span class="stringliteral">"ERROR: Connect() #1"</span>);
+00206         <span class="keywordflow">return</span> FALSE;
+00207       }
+00208     }
+00209     <span class="keywordflow">else</span>
+00210     {
+00211       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: Connect() #2"</span>);
+00212       <span class="keywordflow">return</span> FALSE;
+00213     }
+00214   }
+00215 
+00216 
+00217 
+00218   function Disconnect()
+00219   {
+00220     <span class="keywordflow">if</span> (is_int($this-&gt;delay_disconnect))
+00221     {
+00222       sleep($this-&gt;delay_disconnect);
+00223     }
+00224 
+00225     $this-&gt;SendPacket(<span class="stringliteral">"&lt;/stream:stream&gt;"</span>);
+00226     $this-&gt;CONNECTOR-&gt;CloseSocket();
+00227 
+00228     $this-&gt;_close_logfile();
+00229     $this-&gt;PrintLog();
+00230   }
+00231 
+00232 
+00233 
+00234   function SendAuth()
+00235   {
+00236     $this-&gt;auth_id  = <span class="stringliteral">"auth_"</span> . md5(time() . $_SERVER['REMOTE_ADDR']);
+00237 
+00238     $this-&gt;resource = ($this-&gt;resource != NULL) ? $this-&gt;resource : (<span class="stringliteral">"Class.Jabber.PHP "</span> . md5($this-&gt;auth_id));
+00239     $this-&gt;jid    = <span class="stringliteral">"{$this-&gt;username}@{$this-&gt;server}/{$this-&gt;resource}"</span>;
+00240 
+00241     <span class="comment">// request available authentication methods</span>
+00242     $payload  = <span class="stringliteral">"&lt;username&gt;{$this-&gt;username}&lt;/username&gt;"</span>;
+00243     $packet   = $this-&gt;SendIq(NULL, 'get', $this-&gt;auth_id, <span class="stringliteral">"jabber:iq:auth"</span>, $payload);
+00244 
+00245     <span class="comment">// was a result returned?</span>
+00246     <span class="keywordflow">if</span> ($this-&gt;GetInfoFromIqType($packet) == 'result' &amp;&amp; $this-&gt;GetInfoFromIqId($packet) == $this-&gt;auth_id)
+00247     {
+00248       <span class="comment">// yes, now check for auth method availability in descending order (best to worst)</span>
+00249 
+00250       <span class="keywordflow">if</span> (!function_exists(mhash))
+00251       {
+00252         $this-&gt;AddToLog(<span class="stringliteral">"ATTENTION: SendAuth() - mhash() is not available; screw 0k and digest method, we need to go with plaintext auth"</span>);
+00253       }
+00254 
+00255       <span class="comment">// auth_0k</span>
+00256       <span class="keywordflow">if</span> (function_exists(mhash) &amp;&amp; isset($packet['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['sequence'][0][<span class="stringliteral">"#"</span>]) &amp;&amp; isset($packet['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['token'][0][<span class="stringliteral">"#"</span>]))
+00257       {
+00258         <span class="keywordflow">return</span> $this-&gt;_sendauth_0k($packet['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['token'][0][<span class="stringliteral">"#"</span>], $packet['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['sequence'][0][<span class="stringliteral">"#"</span>]);
+00259       }
+00260       <span class="comment">// digest</span>
+00261       elseif (function_exists(mhash) &amp;&amp; isset($packet['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['digest']))
+00262       {
+00263         <span class="keywordflow">return</span> $this-&gt;_sendauth_digest();
+00264       }
+00265       <span class="comment">// plain text</span>
+00266       elseif ($packet['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['password'])
+00267       {
+00268         <span class="keywordflow">return</span> $this-&gt;_sendauth_plaintext();
+00269       }
+00270       <span class="comment">// dude, you're fucked</span>
+00271       {
+00272         $this-&gt;AddToLog(<span class="stringliteral">"ERROR: SendAuth() #2 - No auth method available!"</span>);
+00273         <span class="keywordflow">return</span> FALSE;
+00274       }
+00275     }
+00276     <span class="keywordflow">else</span>
+00277     {
+00278       <span class="comment">// no result returned</span>
+00279       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: SendAuth() #1"</span>);
+00280       <span class="keywordflow">return</span> FALSE;
+00281     }
+00282   }
+00283 
+00284 
+00285 
+00286   function AccountRegistration($reg_email = NULL, $reg_name = NULL)
+00287   {
+00288     $packet = $this-&gt;SendIq($this-&gt;server, 'get', 'reg_01', 'jabber:iq:register');
+00289 
+00290     <span class="keywordflow">if</span> ($packet)
+00291     {
+00292       $key = $this-&gt;GetInfoFromIqKey($packet);  <span class="comment">// just in case a key was passed back from the server</span>
+00293       unset($packet);
+00294 
+00295       $payload = <span class="stringliteral">"&lt;username&gt;{$this-&gt;username}&lt;/username&gt;</span>
+00296 <span class="stringliteral">            &lt;password&gt;{$this-&gt;password}&lt;/password&gt;</span>
+00297 <span class="stringliteral">            &lt;email&gt;$reg_email&lt;/email&gt;</span>
+00298 <span class="stringliteral">            &lt;name&gt;$reg_name&lt;/name&gt;\n"</span>;
+00299 
+00300       $payload .= ($key) ? <span class="stringliteral">"&lt;key&gt;$key&lt;/key&gt;\n"</span> : '';
+00301 
+00302       $packet = $this-&gt;SendIq($this-&gt;server, 'set', <span class="stringliteral">"reg_01"</span>, <span class="stringliteral">"jabber:iq:register"</span>, $payload);
+00303 
+00304       <span class="keywordflow">if</span> ($this-&gt;GetInfoFromIqType($packet) == 'result')
+00305       {
+00306         <span class="keywordflow">if</span> (isset($packet['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['registered'][0][<span class="charliteral">'#'</span>]))
+00307         {
+00308           $return_code = 1;
+00309         }
+00310         <span class="keywordflow">else</span>
+00311         {
+00312           $return_code = 2;
+00313         }
+00314 
+00315         <span class="keywordflow">if</span> ($this-&gt;resource)
+00316         {
+00317           $this-&gt;jid = <span class="stringliteral">"{$this-&gt;username}@{$this-&gt;server}/{$this-&gt;resource}"</span>;
+00318         }
+00319         <span class="keywordflow">else</span>
+00320         {
+00321           $this-&gt;jid = <span class="stringliteral">"{$this-&gt;username}@{$this-&gt;server}"</span>;
+00322         }
+00323 
+00324       }
+00325       elseif ($this-&gt;GetInfoFromIqType($packet) == 'error' &amp;&amp; isset($packet['iq'][<span class="charliteral">'#'</span>]['error'][0][<span class="charliteral">'#'</span>]))
+00326       {
+00327         <span class="comment">// "conflict" error, i.e. already registered</span>
+00328         <span class="keywordflow">if</span> ($packet['iq'][<span class="charliteral">'#'</span>]['error'][0][<span class="charliteral">'@'</span>]['code'] == '409')
+00329         {
+00330           $return_code = 1;
+00331         }
+00332         <span class="keywordflow">else</span>
+00333         {
+00334           $return_code = <span class="stringliteral">"Error "</span> . $packet['iq'][<span class="charliteral">'#'</span>]['error'][0][<span class="charliteral">'@'</span>]['code'] . <span class="stringliteral">": "</span> . $packet['iq'][<span class="charliteral">'#'</span>]['error'][0][<span class="charliteral">'#'</span>];
+00335         }
+00336       }
+00337 
+00338       <span class="keywordflow">return</span> $return_code;
+00339 
+00340     }
+00341     <span class="keywordflow">else</span>
+00342     {
+00343       <span class="keywordflow">return</span> 3;
+00344     }
+00345   }
+00346 
+00347 
+00348 
+00349   function SendPacket($xml)
+00350   {
+00351     $xml = trim($xml);
+00352 
+00353     <span class="keywordflow">if</span> ($this-&gt;CONNECTOR-&gt;WriteToSocket($xml))
+00354     {
+00355       $this-&gt;AddToLog(<span class="stringliteral">"SEND: $xml"</span>);
+00356       <span class="keywordflow">return</span> TRUE;
+00357     }
+00358     <span class="keywordflow">else</span>
+00359     {
+00360       $this-&gt;AddToLog('ERROR: SendPacket() #1');
+00361       <span class="keywordflow">return</span> FALSE;
+00362     }
+00363   }
+00364 
+00365 
+00366 
+00367   function Listen()
+00368   {
+00369     unset($incoming);
+00370 
+00371     <span class="keywordflow">while</span> ($line = $this-&gt;CONNECTOR-&gt;ReadFromSocket(4096))
+00372     {
+00373       $incoming .= $line;
+00374     }
+00375 
+00376     $incoming = trim($incoming);
+00377 
+00378     <span class="keywordflow">if</span> ($incoming != <span class="stringliteral">""</span>)
+00379     {
+00380       $this-&gt;AddToLog(<span class="stringliteral">"RECV: $incoming"</span>);
+00381     }
+00382 
+00383     <span class="keywordflow">if</span> ($incoming != <span class="stringliteral">""</span>)
+00384     {
+00385       $temp = $this-&gt;_split_incoming($incoming);
+00386 
+00387       <span class="keywordflow">for</span> ($a = 0; $a &lt; count($temp); $a++)
+00388       {
+00389         $this-&gt;packet_queue[] = $this-&gt;xmlize($temp[$a]);
+00390       }
+00391     }
+00392 
+00393     <span class="keywordflow">return</span> TRUE;
+00394   }
+00395 
+00396 
+00397 
+00398   function StripJID($jid = NULL)
+00399   {
+00400     preg_match(<span class="stringliteral">"/(.*)\/(.*)/Ui"</span>, $jid, $temp);
+00401     <span class="keywordflow">return</span> ($temp[1] != <span class="stringliteral">""</span>) ? $temp[1] : $jid;
+00402   }
+00403 
+00404 
+00405 
+00406   function SendMessage($to, $type = <span class="stringliteral">"normal"</span>, $<span class="keywordtype">id</span> = NULL, $content = NULL, $payload = NULL)
+00407   {
+00408     <span class="keywordflow">if</span> ($to &amp;&amp; is_array($content))
+00409     {
+00410       <span class="keywordflow">if</span> (!$id)
+00411       {
+00412         $id = $type . <span class="stringliteral">"_"</span> . time();
+00413       }
+00414 
+00415       $content = $this-&gt;_array_htmlspecialchars($content);
+00416 
+00417       $xml = <span class="stringliteral">"&lt;message to='$to' type='$type' id='$id'&gt;\n"</span>;
+00418 
+00419       <span class="keywordflow">if</span> ($content['subject'])
+00420       {
+00421         $xml .= <span class="stringliteral">"&lt;subject&gt;"</span> . $content['subject'] . <span class="stringliteral">"&lt;/subject&gt;\n"</span>;
+00422       }
+00423 
+00424       <span class="keywordflow">if</span> ($content['thread'])
+00425       {
+00426         $xml .= <span class="stringliteral">"&lt;thread&gt;"</span> . $content['thread'] . <span class="stringliteral">"&lt;/thread&gt;\n"</span>;
+00427       }
+00428 
+00429       $xml .= <span class="stringliteral">"&lt;body&gt;"</span> . $content['body'] . <span class="stringliteral">"&lt;/body&gt;\n"</span>;
+00430       $xml .= $payload;
+00431       $xml .= <span class="stringliteral">"&lt;/message&gt;\n"</span>;
+00432 
+00433 
+00434       <span class="keywordflow">if</span> ($this-&gt;SendPacket($xml))
+00435       {
+00436         <span class="keywordflow">return</span> TRUE;
+00437       }
+00438       <span class="keywordflow">else</span>
+00439       {
+00440         $this-&gt;AddToLog(<span class="stringliteral">"ERROR: SendMessage() #1"</span>);
+00441         <span class="keywordflow">return</span> FALSE;
+00442       }
+00443     }
+00444     <span class="keywordflow">else</span>
+00445     {
+00446       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: SendMessage() #2"</span>);
+00447       <span class="keywordflow">return</span> FALSE;
+00448     }
+00449   }
+00450 
+00451 
+00452 
+00453   function SendPresence($type = NULL, $to = NULL, $status = NULL, $show = NULL, $priority = NULL)
+00454   {
+00455     $xml = <span class="stringliteral">"&lt;presence"</span>;
+00456     $xml .= ($to) ? <span class="stringliteral">" to='$to'"</span> : '';
+00457     $xml .= ($type) ? <span class="stringliteral">" type='$type'"</span> : '';
+00458     $xml .= ($status || $show || $priority) ? <span class="stringliteral">"&gt;\n"</span> : <span class="stringliteral">" /&gt;\n"</span>;
+00459 
+00460     $xml .= ($status) ? <span class="stringliteral">" &lt;status&gt;$status&lt;/status&gt;\n"</span> : '';
+00461     $xml .= ($show) ? <span class="stringliteral">" &lt;show&gt;$show&lt;/show&gt;\n"</span> : '';
+00462     $xml .= ($priority) ? <span class="stringliteral">" &lt;priority&gt;$priority&lt;/priority&gt;\n"</span> : '';
+00463 
+00464     $xml .= ($status || $show || $priority) ? <span class="stringliteral">"&lt;/presence&gt;\n"</span> : '';
+00465 
+00466     <span class="keywordflow">if</span> ($this-&gt;SendPacket($xml))
+00467     {
+00468       <span class="keywordflow">return</span> TRUE;
+00469     }
+00470     <span class="keywordflow">else</span>
+00471     {
+00472       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: SendPresence() #1"</span>);
+00473       <span class="keywordflow">return</span> FALSE;
+00474     }
+00475   }
+00476 
+00477 
+00478 
+00479   function SendError($to, $<span class="keywordtype">id</span> = NULL, $error_number, $error_message = NULL)
+00480   {
+00481     $xml = <span class="stringliteral">"&lt;iq type='error' to='$to'"</span>;
+00482     $xml .= ($id) ? <span class="stringliteral">" id='$id'"</span> : '';
+00483     $xml .= <span class="stringliteral">"&gt;\n"</span>;
+00484     $xml .= <span class="stringliteral">" &lt;error code='$error_number'&gt;"</span>;
+00485     $xml .= ($error_message) ? $error_message : $this-&gt;error_codes[$error_number];
+00486     $xml .= <span class="stringliteral">"&lt;/error&gt;\n"</span>;
+00487     $xml .= <span class="stringliteral">"&lt;/iq&gt;"</span>;
+00488 
+00489     $this-&gt;SendPacket($xml);
+00490   }
+00491 
+00492 
+00493 
+00494   function RosterUpdate()
+00495   {
+00496     $roster_request_id = <span class="stringliteral">"roster_"</span> . time();
+00497 
+00498     $incoming_array = $this-&gt;SendIq(NULL, 'get', $roster_request_id, <span class="stringliteral">"jabber:iq:roster"</span>);
+00499 
+00500     <span class="keywordflow">if</span> (is_array($incoming_array))
+00501     {
+00502       <span class="keywordflow">if</span> ($incoming_array['iq'][<span class="charliteral">'@'</span>]['type'] == 'result'
+00503         &amp;&amp; $incoming_array['iq'][<span class="charliteral">'@'</span>]['<span class="keywordtype">id</span>'] == $roster_request_id
+00504         &amp;&amp; $incoming_array['iq'][<span class="charliteral">'#'</span>]['query'][<span class="charliteral">'0'</span>][<span class="charliteral">'@'</span>]['xmlns'] == <span class="stringliteral">"jabber:iq:roster"</span>)
+00505       {
+00506         $number_of_contacts = count($incoming_array['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['item']);
+00507         $this-&gt;roster = array();
+00508 
+00509         <span class="keywordflow">for</span> ($a = 0; $a &lt; $number_of_contacts; $a++)
+00510         {
+00511           $this-&gt;roster[$a] = array(  <span class="stringliteral">"jid"</span>     =&gt; strtolower($incoming_array['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['item'][$a][<span class="charliteral">'@'</span>]['jid']),
+00512                         <span class="stringliteral">"name"</span>      =&gt; $incoming_array['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['item'][$a][<span class="charliteral">'@'</span>]['name'],
+00513                         <span class="stringliteral">"subscription"</span>  =&gt; $incoming_array['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['item'][$a][<span class="charliteral">'@'</span>]['subscription'],
+00514                         <span class="stringliteral">"group"</span>     =&gt; $incoming_array['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['item'][$a][<span class="charliteral">'#'</span>]['group'][0][<span class="charliteral">'#'</span>]
+00515                       );
+00516         }
+00517 
+00518         <span class="keywordflow">return</span> TRUE;
+00519       }
+00520       <span class="keywordflow">else</span>
+00521       {
+00522         $this-&gt;AddToLog(<span class="stringliteral">"ERROR: RosterUpdate() #1"</span>);
+00523         <span class="keywordflow">return</span> FALSE;
+00524       }
+00525     }
+00526     <span class="keywordflow">else</span>
+00527     {
+00528       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: RosterUpdate() #2"</span>);
+00529       <span class="keywordflow">return</span> FALSE;
+00530     }
+00531   }
+00532 
+00533 
+00534 
+00535   function RosterAddUser($jid = NULL, $<span class="keywordtype">id</span> = NULL, $name = NULL)
+00536   {
+00537     $id = ($id) ? $id : <span class="stringliteral">"adduser_"</span> . time();
+00538 
+00539     <span class="keywordflow">if</span> ($jid)
+00540     {
+00541       $payload = <span class="stringliteral">"    &lt;item jid='$jid'"</span>;
+00542       $payload .= ($name) ? <span class="stringliteral">" name='"</span> . htmlspecialchars($name) . <span class="stringliteral">"'"</span> : '';
+00543       $payload .= <span class="stringliteral">"/&gt;\n"</span>;
+00544 
+00545       $packet = $this-&gt;SendIq(NULL, 'set', $<span class="keywordtype">id</span>, <span class="stringliteral">"jabber:iq:roster"</span>, $payload);
+00546 
+00547       <span class="keywordflow">if</span> ($this-&gt;GetInfoFromIqType($packet) == 'result')
+00548       {
+00549         $this-&gt;RosterUpdate();
+00550         <span class="keywordflow">return</span> TRUE;
+00551       }
+00552       <span class="keywordflow">else</span>
+00553       {
+00554         $this-&gt;AddToLog(<span class="stringliteral">"ERROR: RosterAddUser() #2"</span>);
+00555         <span class="keywordflow">return</span> FALSE;
+00556       }
+00557     }
+00558     <span class="keywordflow">else</span>
+00559     {
+00560       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: RosterAddUser() #1"</span>);
+00561       <span class="keywordflow">return</span> FALSE;
+00562     }
+00563   }
+00564 
+00565 
+00566 
+00567   function RosterRemoveUser($jid = NULL, $<span class="keywordtype">id</span> = NULL)
+00568   {
+00569     $id = ($id) ? $id : 'deluser_' . time();
+00570 
+00571     <span class="keywordflow">if</span> ($jid &amp;&amp; $id)
+00572     {
+00573       $packet = $this-&gt;SendIq(NULL, 'set', $<span class="keywordtype">id</span>, <span class="stringliteral">"jabber:iq:roster"</span>, <span class="stringliteral">"&lt;item jid='$jid' subscription='remove'/&gt;"</span>);
+00574 
+00575       <span class="keywordflow">if</span> ($this-&gt;GetInfoFromIqType($packet) == 'result')
+00576       {
+00577         $this-&gt;RosterUpdate();
+00578         <span class="keywordflow">return</span> TRUE;
+00579       }
+00580       <span class="keywordflow">else</span>
+00581       {
+00582         $this-&gt;AddToLog(<span class="stringliteral">"ERROR: RosterRemoveUser() #2"</span>);
+00583         <span class="keywordflow">return</span> FALSE;
+00584       }
+00585     }
+00586     <span class="keywordflow">else</span>
+00587     {
+00588       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: RosterRemoveUser() #1"</span>);
+00589       <span class="keywordflow">return</span> FALSE;
+00590     }
+00591   }
+00592 
+00593 
+00594 
+00595   function RosterExistsJID($jid = NULL)
+00596   {
+00597     <span class="keywordflow">if</span> ($jid)
+00598     {
+00599       <span class="keywordflow">if</span> ($this-&gt;roster)
+00600       {
+00601         <span class="keywordflow">for</span> ($a = 0; $a &lt; count($this-&gt;roster); $a++)
+00602         {
+00603           <span class="keywordflow">if</span> ($this-&gt;roster[$a]['jid'] == strtolower($jid))
+00604           {
+00605             <span class="keywordflow">return</span> $a;
+00606           }
+00607         }
+00608       }
+00609       <span class="keywordflow">else</span>
+00610       {
+00611         $this-&gt;AddToLog(<span class="stringliteral">"ERROR: RosterExistsJID() #2"</span>);
+00612         <span class="keywordflow">return</span> FALSE;
+00613       }
+00614     }
+00615     <span class="keywordflow">else</span>
+00616     {
+00617       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: RosterExistsJID() #1"</span>);
+00618       <span class="keywordflow">return</span> FALSE;
+00619     }
+00620   }
+00621 
+00622 
+00623 
+00624   function GetFirstFromQueue()
+00625   {
+00626     <span class="keywordflow">return</span> array_shift($this-&gt;packet_queue);
+00627   }
+00628 
+00629 
+00630 
+00631   function GetFromQueueById($packet_type, $<span class="keywordtype">id</span>)
+00632   {
+00633     $found_message = FALSE;
+00634 
+00635     foreach ($this-&gt;packet_queue as $key =&gt; $value)
+00636     {
+00637       <span class="keywordflow">if</span> ($value[$packet_type][<span class="charliteral">'@'</span>]['<span class="keywordtype">id</span>'] == $id)
+00638       {
+00639         $found_message = $value;
+00640         unset($this-&gt;packet_queue[$key]);
+00641 
+00642         <span class="keywordflow">break</span>;
+00643       }
+00644     }
+00645 
+00646     <span class="keywordflow">return</span> (is_array($found_message)) ? $found_message : FALSE;
+00647   }
+00648 
+00649 
+00650 
+00651   function CallHandler($packet = NULL)
+00652   {
+00653     $packet_type  = $this-&gt;_get_packet_type($packet);
+00654 
+00655     <span class="keywordflow">if</span> ($packet_type == <span class="stringliteral">"message"</span>)
+00656     {
+00657       $type   = $packet['message'][<span class="charliteral">'@'</span>]['type'];
+00658       $type   = ($type != <span class="stringliteral">""</span>) ? $type : <span class="stringliteral">"normal"</span>;
+00659       $funcmeth = <span class="stringliteral">"Handler_message_$type"</span>;
+00660     }
+00661     elseif ($packet_type == <span class="stringliteral">"iq"</span>)
+00662     {
+00663       $namespace  = $packet['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'@'</span>]['xmlns'];
+00664       $namespace  = str_replace(<span class="stringliteral">":"</span>, <span class="stringliteral">"_"</span>, $<span class="keyword">namespace</span>);
+00665       $funcmeth = <span class="stringliteral">"Handler_iq_$namespace"</span>;
+00666     }
+00667     elseif ($packet_type == <span class="stringliteral">"presence"</span>)
+00668     {
+00669       $type   = $packet['presence'][<span class="charliteral">'@'</span>]['type'];
+00670       $type   = ($type != <span class="stringliteral">""</span>) ? $type : <span class="stringliteral">"available"</span>;
+00671       $funcmeth = <span class="stringliteral">"Handler_presence_$type"</span>;
+00672     }
+00673 
+00674 
+00675     <span class="keywordflow">if</span> ($funcmeth != '')
+00676     {
+00677       <span class="keywordflow">if</span> (function_exists($funcmeth))
+00678       {
+00679         call_user_func($funcmeth, $packet);
+00680       }
+00681       elseif (method_exists($<span class="keyword">this</span>, $funcmeth))
+00682       {
+00683         call_user_func(array(&amp;$<span class="keyword">this</span>, $funcmeth), $packet);
+00684       }
+00685       <span class="keywordflow">else</span>
+00686       {
+00687         $this-&gt;Handler_NOT_IMPLEMENTED($packet);
+00688         $this-&gt;AddToLog(<span class="stringliteral">"ERROR: CallHandler() #1 - neither method nor function $funcmeth() available"</span>);
+00689       }
+00690     }
+00691   }
+00692 
+00693 
+00694 
+00695   function CruiseControl($seconds = -1)
+00696   {
+00697     $count = 0;
+00698 
+00699     <span class="keywordflow">while</span> ($count != $seconds)
+00700     {
+00701       $this-&gt;Listen();
+00702 
+00703       <span class="keywordflow">do</span> {
+00704         $packet = $this-&gt;GetFirstFromQueue();
+00705 
+00706         <span class="keywordflow">if</span> ($packet) {
+00707           $this-&gt;CallHandler($packet);
+00708         }
+00709 
+00710       } <span class="keywordflow">while</span> (count($this-&gt;packet_queue) &gt; 1);
+00711 
+00712       $count += 0.25;
+00713       usleep(250000);
+00714       
+00715       <span class="keywordflow">if</span> ($this-&gt;last_ping_time != date('H:i'))
+00716       {
+00717         <span class="comment">// Modified by Nathan Fritz</span>
+00718         <span class="keywordflow">if</span> ($this-&gt;returned_keep_alive == FALSE)
+00719         {
+00720           $this-&gt;connected = FALSE;
+00721           $this-&gt;AddToLog('EVENT: Disconnected');
+00722         }
+00723 
+00724         $this-&gt;returned_keep_alive = FALSE;
+00725         $this-&gt;keep_alive_id = 'keep_alive_' . time();
+00726         $this-&gt;SendPacket(<span class="stringliteral">"&lt;iq id='{$this-&gt;keep_alive_id}'/&gt;"</span>, 'CruiseControl');
+00727         <span class="comment">// **</span>
+00728 
+00729         $this-&gt;last_ping_time = date(<span class="stringliteral">"H:i"</span>);
+00730       }
+00731     }
+00732 
+00733     <span class="keywordflow">return</span> TRUE;
+00734   }
+00735 
+00736 
+00737 
+00738   function SubscriptionAcceptRequest($to = NULL)
+00739   {
+00740     <span class="keywordflow">return</span> ($to) ? $this-&gt;SendPresence(<span class="stringliteral">"subscribed"</span>, $to) : FALSE;
+00741   }
+00742 
+00743 
+00744 
+00745   function SubscriptionDenyRequest($to = NULL)
+00746   {
+00747     <span class="keywordflow">return</span> ($to) ? $this-&gt;SendPresence(<span class="stringliteral">"unsubscribed"</span>, $to) : FALSE;
+00748   }
+00749 
+00750 
+00751 
+00752   function Subscribe($to = NULL)
+00753   {
+00754     <span class="keywordflow">return</span> ($to) ? $this-&gt;SendPresence(<span class="stringliteral">"subscribe"</span>, $to) : FALSE;
+00755   }
+00756 
+00757 
+00758 
+00759   function Unsubscribe($to = NULL)
+00760   {
+00761     <span class="keywordflow">return</span> ($to) ? $this-&gt;SendPresence(<span class="stringliteral">"unsubscribe"</span>, $to) : FALSE;
+00762   }
+00763 
+00764 
+00765 
+00766   function SendIq($to = NULL, $type = 'get', $<span class="keywordtype">id</span> = NULL, $xmlns = NULL, $payload = NULL, $from = NULL)
+00767   {
+00768     <span class="keywordflow">if</span> (!preg_match(<span class="stringliteral">"/^(get|set|result|error)$/"</span>, $type))
+00769     {
+00770       unset($type);
+00771 
+00772       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: SendIq() #2 - type must be 'get', 'set', 'result' or 'error'"</span>);
+00773       <span class="keywordflow">return</span> FALSE;
+00774     }
+00775     elseif ($<span class="keywordtype">id</span> &amp;&amp; $xmlns)
+00776     {
+00777       $xml = <span class="stringliteral">"&lt;iq type='$type' id='$id'"</span>;
+00778       $xml .= ($to) ? <span class="stringliteral">" to='$to'"</span> : '';
+00779       $xml .= ($from) ? <span class="stringliteral">" from='$from'"</span> : '';
+00780       $xml .= <span class="stringliteral">"&gt;</span>
+00781 <span class="stringliteral">            &lt;query xmlns='$xmlns'&gt;</span>
+00782 <span class="stringliteral">              $payload</span>
+00783 <span class="stringliteral">            &lt;/query&gt;</span>
+00784 <span class="stringliteral">          &lt;/iq&gt;"</span>;
+00785 
+00786       $this-&gt;SendPacket($xml);
+00787       sleep($this-&gt;iq_sleep_timer);
+00788       $this-&gt;Listen();
+00789 
+00790       <span class="keywordflow">return</span> (preg_match(<span class="stringliteral">"/^(get|set)$/"</span>, $type)) ? $this-&gt;GetFromQueueById(<span class="stringliteral">"iq"</span>, $<span class="keywordtype">id</span>) : TRUE;
+00791     }
+00792     <span class="keywordflow">else</span>
+00793     {
+00794       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: SendIq() #1 - to, id and xmlns are mandatory"</span>);
+00795       <span class="keywordflow">return</span> FALSE;
+00796     }
+00797   }
+00798 
+00799 
+00800 
+00801   <span class="comment">// get the transport registration fields</span>
+00802   <span class="comment">// method written by Steve Blinch, http://www.blitzaffe.com </span>
+00803   function TransportRegistrationDetails($transport)
+00804   {
+00805     $this-&gt;txnid++;
+00806     $packet = $this-&gt;SendIq($transport, 'get', <span class="stringliteral">"reg_{$this-&gt;txnid}"</span>, <span class="stringliteral">"jabber:iq:register"</span>, NULL, $this-&gt;jid);
+00807 
+00808     <span class="keywordflow">if</span> ($packet)
+00809     {
+00810       $res = array();
+00811 
+00812       foreach ($packet['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>] as $element =&gt; $data)
+00813       {
+00814         <span class="keywordflow">if</span> ($element != 'instructions' &amp;&amp; $element != 'key')
+00815         {
+00816           $res[] = $element;
+00817         }
+00818       }
+00819 
+00820       <span class="keywordflow">return</span> $res;
+00821     }
+00822     <span class="keywordflow">else</span>
+00823     {
+00824       <span class="keywordflow">return</span> 3;
+00825     }
+00826   }
+00827   
+00828 
+00829 
+00830   <span class="comment">// register with the transport</span>
+00831   <span class="comment">// method written by Steve Blinch, http://www.blitzaffe.com </span>
+00832   function TransportRegistration($transport, $details)
+00833   {
+00834     $this-&gt;txnid++;
+00835     $packet = $this-&gt;SendIq($transport, 'get', <span class="stringliteral">"reg_{$this-&gt;txnid}"</span>, <span class="stringliteral">"jabber:iq:register"</span>, NULL, $this-&gt;jid);
+00836 
+00837     <span class="keywordflow">if</span> ($packet)
+00838     {
+00839       $key = $this-&gt;GetInfoFromIqKey($packet);  <span class="comment">// just in case a key was passed back from the server</span>
+00840       unset($packet);
+00841     
+00842       $payload = ($key) ? <span class="stringliteral">"&lt;key&gt;$key&lt;/key&gt;\n"</span> : '';
+00843       foreach ($details as $element =&gt; $value)
+00844       {
+00845         $payload .= <span class="stringliteral">"&lt;$element&gt;$value&lt;/$element&gt;\n"</span>;
+00846       }
+00847     
+00848       $packet = $this-&gt;SendIq($transport, 'set', <span class="stringliteral">"reg_{$this-&gt;txnid}"</span>, <span class="stringliteral">"jabber:iq:register"</span>, $payload);
+00849     
+00850       <span class="keywordflow">if</span> ($this-&gt;GetInfoFromIqType($packet) == 'result')
+00851       {
+00852         <span class="keywordflow">if</span> (isset($packet['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['registered'][0][<span class="charliteral">'#'</span>]))
+00853         {
+00854           $return_code = 1;
+00855         }
+00856         <span class="keywordflow">else</span>
+00857         {
+00858           $return_code = 2;
+00859         }
+00860       }
+00861       elseif ($this-&gt;GetInfoFromIqType($packet) == 'error')
+00862       {
+00863         <span class="keywordflow">if</span> (isset($packet['iq'][<span class="charliteral">'#'</span>]['error'][0][<span class="charliteral">'#'</span>]))
+00864         {
+00865           $return_code = <span class="stringliteral">"Error "</span> . $packet['iq'][<span class="charliteral">'#'</span>]['error'][0][<span class="charliteral">'@'</span>]['code'] . <span class="stringliteral">": "</span> . $packet['iq'][<span class="charliteral">'#'</span>]['error'][0][<span class="charliteral">'#'</span>];
+00866           $this-&gt;AddToLog('ERROR: TransportRegistration()');
+00867         }
+00868       }
+00869 
+00870       <span class="keywordflow">return</span> $return_code;
+00871     }
+00872     <span class="keywordflow">else</span>
+00873     {
+00874       <span class="keywordflow">return</span> 3;
+00875     }
+00876   }
+00877 
+00878 
+00879 
+00880   function GetvCard($jid = NULL, $<span class="keywordtype">id</span> = NULL)
+00881   {
+00882     <span class="keywordflow">if</span> (!$id)
+00883     {
+00884       $id = <span class="stringliteral">"vCard_"</span> . md5(time() . $_SERVER['REMOTE_ADDR']);
+00885     }
+00886 
+00887     <span class="keywordflow">if</span> ($jid)
+00888     {
+00889       $xml = <span class="stringliteral">"&lt;iq type='get' to='$jid' id='$id'&gt;</span>
+00890 <span class="stringliteral">            &lt;vCard xmlns='vcard-temp'/&gt;</span>
+00891 <span class="stringliteral">          &lt;/iq&gt;"</span>;
+00892 
+00893       $this-&gt;SendPacket($xml);
+00894       sleep($this-&gt;iq_sleep_timer);
+00895       $this-&gt;Listen();
+00896 
+00897       <span class="keywordflow">return</span> $this-&gt;GetFromQueueById(<span class="stringliteral">"iq"</span>, $<span class="keywordtype">id</span>);
+00898     }
+00899     <span class="keywordflow">else</span>
+00900     {
+00901       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: GetvCard() #1 - to and id are mandatory"</span>);
+00902       <span class="keywordflow">return</span> FALSE;
+00903     }
+00904   }
+00905 
+00906 
+00907 
+00908   function PrintLog()
+00909   {
+00910     <span class="keywordflow">if</span> ($this-&gt;enable_logging)
+00911     {
+00912       <span class="keywordflow">if</span> ($this-&gt;log_filehandler)
+00913       {
+00914         echo <span class="stringliteral">"&lt;h2&gt;Logging enabled, logged events have been written to the file {$this-&gt;log_filename}.&lt;/h2&gt;\n"</span>;
+00915       }
+00916       <span class="keywordflow">else</span>
+00917       {
+00918         echo <span class="stringliteral">"&lt;h2&gt;Logging enabled, logged events below:&lt;/h2&gt;\n"</span>;
+00919         echo <span class="stringliteral">"&lt;pre&gt;\n"</span>;
+00920         echo (count($this-&gt;log_array) &gt; 0) ? implode(<span class="stringliteral">"\n\n\n"</span>, $this-&gt;log_array) : "No logged events.";
+00921         echo <span class="stringliteral">"&lt;/pre&gt;\n"</span>;
+00922       }
+00923     }
+00924   }
+00925 
+00926 
+00927 
+00928   <span class="comment">// ======================================================================</span>
+00929   <span class="comment">// private methods</span>
+00930   <span class="comment">// ======================================================================</span>
+00931 
+00932 
+00933 
+00934   function _sendauth_0k($zerok_token, $zerok_sequence)
+00935   {
+00936     <span class="comment">// initial hash of password</span>
+00937     $zerok_hash = mhash(MHASH_SHA1, $this-&gt;password);
+00938     $zerok_hash = bin2hex($zerok_hash);
+00939 
+00940     <span class="comment">// sequence 0: hash of hashed-password and token</span>
+00941     $zerok_hash = mhash(MHASH_SHA1, $zerok_hash . $zerok_token);
+00942     $zerok_hash = bin2hex($zerok_hash);
+00943 
+00944     <span class="comment">// repeat as often as needed</span>
+00945     <span class="keywordflow">for</span> ($a = 0; $a &lt; $zerok_sequence; $a++)
+00946     {
+00947       $zerok_hash = mhash(MHASH_SHA1, $zerok_hash);
+00948       $zerok_hash = bin2hex($zerok_hash);
+00949     }
+00950 
+00951     $payload = <span class="stringliteral">"&lt;username&gt;{$this-&gt;username}&lt;/username&gt;</span>
+00952 <span class="stringliteral">          &lt;hash&gt;$zerok_hash&lt;/hash&gt;</span>
+00953 <span class="stringliteral">          &lt;resource&gt;{$this-&gt;resource}&lt;/resource&gt;"</span>;
+00954 
+00955     $packet = $this-&gt;SendIq(NULL, 'set', $this-&gt;auth_id, <span class="stringliteral">"jabber:iq:auth"</span>, $payload);
+00956 
+00957     <span class="comment">// was a result returned?</span>
+00958     <span class="keywordflow">if</span> ($this-&gt;GetInfoFromIqType($packet) == 'result' &amp;&amp; $this-&gt;GetInfoFromIqId($packet) == $this-&gt;auth_id)
+00959     {
+00960       <span class="keywordflow">return</span> TRUE;
+00961     }
+00962     <span class="keywordflow">else</span>
+00963     {
+00964       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: _sendauth_0k() #1"</span>);
+00965       <span class="keywordflow">return</span> FALSE;
+00966     }
+00967   }
+00968 
+00969 
+00970 
+00971   function _sendauth_digest()
+00972   {
+00973     $payload = <span class="stringliteral">"&lt;username&gt;{$this-&gt;username}&lt;/username&gt;</span>
+00974 <span class="stringliteral">          &lt;resource&gt;{$this-&gt;resource}&lt;/resource&gt;</span>
+00975 <span class="stringliteral">          &lt;digest&gt;"</span> . bin2hex(mhash(MHASH_SHA1, $this-&gt;stream_id . $this-&gt;password)) . <span class="stringliteral">"&lt;/digest&gt;"</span>;
+00976 
+00977     $packet = $this-&gt;SendIq(NULL, 'set', $this-&gt;auth_id, <span class="stringliteral">"jabber:iq:auth"</span>, $payload);
+00978 
+00979     <span class="comment">// was a result returned?</span>
+00980     <span class="keywordflow">if</span> ($this-&gt;GetInfoFromIqType($packet) == 'result' &amp;&amp; $this-&gt;GetInfoFromIqId($packet) == $this-&gt;auth_id)
+00981     {
+00982       <span class="keywordflow">return</span> TRUE;
+00983     }
+00984     <span class="keywordflow">else</span>
+00985     {
+00986       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: _sendauth_digest() #1"</span>);
+00987       <span class="keywordflow">return</span> FALSE;
+00988     }
+00989   }
+00990 
+00991 
+00992 
+00993   function _sendauth_plaintext()
+00994   {
+00995     $payload = <span class="stringliteral">"&lt;username&gt;{$this-&gt;username}&lt;/username&gt;</span>
+00996 <span class="stringliteral">          &lt;password&gt;{$this-&gt;password}&lt;/password&gt;</span>
+00997 <span class="stringliteral">          &lt;resource&gt;{$this-&gt;resource}&lt;/resource&gt;"</span>;
+00998 
+00999     $packet = $this-&gt;SendIq(NULL, 'set', $this-&gt;auth_id, <span class="stringliteral">"jabber:iq:auth"</span>, $payload);
+01000 
+01001     <span class="comment">// was a result returned?</span>
+01002     <span class="keywordflow">if</span> ($this-&gt;GetInfoFromIqType($packet) == 'result' &amp;&amp; $this-&gt;GetInfoFromIqId($packet) == $this-&gt;auth_id)
+01003     {
+01004       <span class="keywordflow">return</span> TRUE;
+01005     }
+01006     <span class="keywordflow">else</span>
+01007     {
+01008       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: _sendauth_plaintext() #1"</span>);
+01009       <span class="keywordflow">return</span> FALSE;
+01010     }
+01011   }
+01012 
+01013 
+01014 
+01015   function _listen_incoming()
+01016   {
+01017     unset($incoming);
+01018 
+01019     <span class="keywordflow">while</span> ($line = $this-&gt;CONNECTOR-&gt;ReadFromSocket(4096))
+01020     {
+01021       $incoming .= $line;
+01022     }
+01023 
+01024     $incoming = trim($incoming);
+01025 
+01026     <span class="keywordflow">if</span> ($incoming != <span class="stringliteral">""</span>)
+01027     {
+01028       $this-&gt;AddToLog(<span class="stringliteral">"RECV: $incoming"</span>);
+01029     }
+01030 
+01031     <span class="keywordflow">return</span> $this-&gt;xmlize($incoming);
+01032   }
+01033 
+01034 
+01035 
+01036   function _check_connected()
+01037   {
+01038     $incoming_array = $this-&gt;_listen_incoming();
+01039 
+01040     <span class="keywordflow">if</span> (is_array($incoming_array))
+01041     {
+01042       <span class="keywordflow">if</span> ($incoming_array[<span class="stringliteral">"stream:stream"</span>][<span class="charliteral">'@'</span>]['from'] == $this-&gt;server
+01043         &amp;&amp; $incoming_array[<span class="stringliteral">"stream:stream"</span>][<span class="charliteral">'@'</span>]['xmlns'] == <span class="stringliteral">"jabber:client"</span>
+01044         &amp;&amp; $incoming_array[<span class="stringliteral">"stream:stream"</span>][<span class="charliteral">'@'</span>][<span class="stringliteral">"xmlns:stream"</span>] == <span class="stringliteral">"http://etherx.jabber.org/streams"</span>)
+01045       {
+01046         $this-&gt;stream_id = $incoming_array[<span class="stringliteral">"stream:stream"</span>][<span class="charliteral">'@'</span>]['<span class="keywordtype">id</span>'];
+01047 
+01048         <span class="keywordflow">return</span> TRUE;
+01049       }
+01050       <span class="keywordflow">else</span>
+01051       {
+01052         $this-&gt;AddToLog(<span class="stringliteral">"ERROR: _check_connected() #1"</span>);
+01053         <span class="keywordflow">return</span> FALSE;
+01054       }
+01055     }
+01056     <span class="keywordflow">else</span>
+01057     {
+01058       $this-&gt;AddToLog(<span class="stringliteral">"ERROR: _check_connected() #2"</span>);
+01059       <span class="keywordflow">return</span> FALSE;
+01060     }
+01061   }
+01062 
+01063 
+01064 
+01065   function _get_packet_type($packet = NULL)
+01066   {
+01067     <span class="keywordflow">if</span> (is_array($packet))
+01068     {
+01069       reset($packet);
+01070       $packet_type = key($packet);
+01071     }
+01072 
+01073     <span class="keywordflow">return</span> ($packet_type) ? $packet_type : FALSE;
+01074   }
+01075 
+01076 
+01077 
+01078   function _split_incoming($incoming)
+01079   {
+01080     $temp = preg_split(<span class="stringliteral">"/&lt;(message|iq|presence|stream)/"</span>, $incoming, -1, PREG_SPLIT_DELIM_CAPTURE);
+01081     $array = array();
+01082 
+01083     <span class="keywordflow">for</span> ($a = 1; $a &lt; count($temp); $a = $a + 2)
+01084     {
+01085       $array[] = <span class="stringliteral">"&lt;"</span> . $temp[$a] . $temp[($a + 1)];
+01086     }
+01087 
+01088     <span class="keywordflow">return</span> $array;
+01089   }
+01090 
+01091 
+01092 
+01093   function _create_logfile()
+01094   {
+01095     <span class="keywordflow">if</span> ($this-&gt;log_filename != '' &amp;&amp; $this-&gt;enable_logging)
+01096     {
+01097       $this-&gt;log_filehandler = fopen($this-&gt;log_filename, <span class="charliteral">'w'</span>);
+01098     }
+01099   }
+01100 
+01101 
+01102 
+01103   function AddToLog($string)
+01104   {
+01105     <span class="keywordflow">if</span> ($this-&gt;enable_logging)
+01106     {
+01107       <span class="keywordflow">if</span> ($this-&gt;log_filehandler)
+01108       {
+01109         fwrite($this-&gt;log_filehandler, $string . <span class="stringliteral">"\n\n"</span>);
+01110       }
+01111       <span class="keywordflow">else</span>
+01112       {
+01113         $this-&gt;log_array[] = htmlspecialchars($string);
+01114       }
+01115     }
+01116   }
+01117 
+01118 
+01119 
+01120   function _close_logfile()
+01121   {
+01122     <span class="keywordflow">if</span> ($this-&gt;log_filehandler)
+01123     {
+01124       fclose($this-&gt;log_filehandler);
+01125     }
+01126   }
+01127 
+01128 
+01129 
+01130   <span class="comment">// _array_htmlspecialchars()</span>
+01131   <span class="comment">// applies htmlspecialchars() to all values in an array</span>
+01132 
+01133   function _array_htmlspecialchars($array)
+01134   {
+01135     <span class="keywordflow">if</span> (is_array($array))
+01136     {
+01137       foreach ($array as $k =&gt; $v)
+01138       {
+01139         <span class="keywordflow">if</span> (is_array($v))
+01140         {
+01141           $v = $this-&gt;_array_htmlspecialchars($v);
+01142         }
+01143         <span class="keywordflow">else</span>
+01144         {
+01145           $v = htmlspecialchars($v);
+01146         }
+01147       }
+01148     }
+01149 
+01150     <span class="keywordflow">return</span> $array;
+01151   }
+01152 
+01153 
+01154 
+01155   <span class="comment">// ======================================================================</span>
+01156   <span class="comment">// &lt;message/&gt; parsers</span>
+01157   <span class="comment">// ======================================================================</span>
+01158 
+01159 
+01160 
+01161   function GetInfoFromMessageFrom($packet = NULL)
+01162   {
+01163     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['message'][<span class="charliteral">'@'</span>]['from'] : FALSE;
+01164   }
+01165 
+01166 
+01167 
+01168   function GetInfoFromMessageType($packet = NULL)
+01169   {
+01170     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['message'][<span class="charliteral">'@'</span>]['type'] : FALSE;
+01171   }
+01172 
+01173 
+01174 
+01175   function GetInfoFromMessageId($packet = NULL)
+01176   {
+01177     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['message'][<span class="charliteral">'@'</span>]['<span class="keywordtype">id</span>'] : FALSE;
+01178   }
+01179 
+01180 
+01181 
+01182   function GetInfoFromMessageThread($packet = NULL)
+01183   {
+01184     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['message'][<span class="charliteral">'#'</span>]['thread'][0][<span class="charliteral">'#'</span>] : FALSE;
+01185   }
+01186 
+01187 
+01188 
+01189   function GetInfoFromMessageSubject($packet = NULL)
+01190   {
+01191     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['message'][<span class="charliteral">'#'</span>]['subject'][0][<span class="charliteral">'#'</span>] : FALSE;
+01192   }
+01193 
+01194 
+01195 
+01196   function GetInfoFromMessageBody($packet = NULL)
+01197   {
+01198     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['message'][<span class="charliteral">'#'</span>]['body'][0][<span class="charliteral">'#'</span>] : FALSE;
+01199   }
+01200 
+01201 
+01202 
+01203   function GetInfoFromMessageError($packet = NULL)
+01204   {
+01205     $error = preg_replace(<span class="stringliteral">"/^\/$/"</span>, <span class="stringliteral">""</span>, ($packet['message'][<span class="charliteral">'#'</span>]['error'][0][<span class="charliteral">'@'</span>]['code'] . <span class="stringliteral">"/"</span> . $packet['message'][<span class="charliteral">'#'</span>]['error'][0][<span class="charliteral">'#'</span>]));
+01206     <span class="keywordflow">return</span> (is_array($packet)) ? $error : FALSE;
+01207   }
+01208 
+01209 
+01210 
+01211   <span class="comment">// ======================================================================</span>
+01212   <span class="comment">// &lt;iq/&gt; parsers</span>
+01213   <span class="comment">// ======================================================================</span>
+01214 
+01215 
+01216 
+01217   function GetInfoFromIqFrom($packet = NULL)
+01218   {
+01219     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['iq'][<span class="charliteral">'@'</span>]['from'] : FALSE;
+01220   }
+01221 
+01222 
+01223 
+01224   function GetInfoFromIqType($packet = NULL)
+01225   {
+01226     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['iq'][<span class="charliteral">'@'</span>]['type'] : FALSE;
+01227   }
+01228 
+01229 
+01230 
+01231   function GetInfoFromIqId($packet = NULL)
+01232   {
+01233     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['iq'][<span class="charliteral">'@'</span>]['<span class="keywordtype">id</span>'] : FALSE;
+01234   }
+01235 
+01236 
+01237 
+01238   function GetInfoFromIqKey($packet = NULL)
+01239   {
+01240     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['iq'][<span class="charliteral">'#'</span>]['query'][0][<span class="charliteral">'#'</span>]['key'][0][<span class="charliteral">'#'</span>] : FALSE;
+01241   }
+01242 
+01243 
+01244 
+01245   function GetInfoFromIqError($packet = NULL)
+01246   {
+01247     $error = preg_replace(<span class="stringliteral">"/^\/$/"</span>, <span class="stringliteral">""</span>, ($packet['iq'][<span class="charliteral">'#'</span>]['error'][0][<span class="charliteral">'@'</span>]['code'] . <span class="stringliteral">"/"</span> . $packet['iq'][<span class="charliteral">'#'</span>]['error'][0][<span class="charliteral">'#'</span>]));
+01248     <span class="keywordflow">return</span> (is_array($packet)) ? $error : FALSE;
+01249   }
+01250 
+01251 
+01252 
+01253   <span class="comment">// ======================================================================</span>
+01254   <span class="comment">// &lt;presence/&gt; parsers</span>
+01255   <span class="comment">// ======================================================================</span>
+01256 
+01257 
+01258 
+01259   function GetInfoFromPresenceFrom($packet = NULL)
+01260   {
+01261     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['presence'][<span class="charliteral">'@'</span>]['from'] : FALSE;
+01262   }
+01263 
+01264 
+01265 
+01266   function GetInfoFromPresenceType($packet = NULL)
+01267   {
+01268     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['presence'][<span class="charliteral">'@'</span>]['type'] : FALSE;
+01269   }
+01270 
+01271 
+01272 
+01273   function GetInfoFromPresenceStatus($packet = NULL)
+01274   {
+01275     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['presence'][<span class="charliteral">'#'</span>]['status'][0][<span class="charliteral">'#'</span>] : FALSE;
+01276   }
+01277 
+01278 
+01279 
+01280   function GetInfoFromPresenceShow($packet = NULL)
+01281   {
+01282     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['presence'][<span class="charliteral">'#'</span>]['show'][0][<span class="charliteral">'#'</span>] : FALSE;
+01283   }
+01284 
+01285 
+01286 
+01287   function GetInfoFromPresencePriority($packet = NULL)
+01288   {
+01289     <span class="keywordflow">return</span> (is_array($packet)) ? $packet['presence'][<span class="charliteral">'#'</span>]['priority'][0][<span class="charliteral">'#'</span>] : FALSE;
+01290   }
+01291 
+01292 
+01293 
+01294   <span class="comment">// ======================================================================</span>
+01295   <span class="comment">// &lt;message/&gt; handlers</span>
+01296   <span class="comment">// ======================================================================</span>
+01297 
+01298 
+01299 
+01300   function Handler_message_normal($packet)
+01301   {
+01302     $from = $packet['message'][<span class="charliteral">'@'</span>]['from'];
+01303     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: Message (type normal) from $from"</span>);
+01304   }
+01305 
+01306 
+01307 
+01308   function Handler_message_chat($packet)
+01309   {
+01310     $from = $packet['message'][<span class="charliteral">'@'</span>]['from'];
+01311     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: Message (type chat) from $from"</span>);
+01312   }
+01313 
+01314 
+01315 
+01316   function Handler_message_groupchat($packet)
+01317   {
+01318     $from = $packet['message'][<span class="charliteral">'@'</span>]['from'];
+01319     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: Message (type groupchat) from $from"</span>);
+01320   }
+01321 
+01322 
+01323 
+01324   function Handler_message_headline($packet)
+01325   {
+01326     $from = $packet['message'][<span class="charliteral">'@'</span>]['from'];
+01327     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: Message (type headline) from $from"</span>);
+01328   }
+01329 
+01330 
+01331 
+01332   function Handler_message_error($packet)
+01333   {
+01334     $from = $packet['message'][<span class="charliteral">'@'</span>]['from'];
+01335     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: Message (type error) from $from"</span>);
+01336   }
+01337 
+01338 
+01339 
+01340   <span class="comment">// ======================================================================</span>
+01341   <span class="comment">// &lt;iq/&gt; handlers</span>
+01342   <span class="comment">// ======================================================================</span>
+01343 
+01344 
+01345 
+01346   <span class="comment">// application version updates</span>
+01347   function Handler_iq_jabber_iq_autoupdate($packet)
+01348   {
+01349     $from = $this-&gt;GetInfoFromIqFrom($packet);
+01350     $id   = $this-&gt;GetInfoFromIqId($packet);
+01351 
+01352     $this-&gt;SendError($from, $<span class="keywordtype">id</span>, 501);
+01353     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: jabber:iq:autoupdate from $from"</span>);
+01354   }
+01355 
+01356 
+01357 
+01358   <span class="comment">// interactive server component properties</span>
+01359   function Handler_iq_jabber_iq_agent($packet)
+01360   {
+01361     $from = $this-&gt;GetInfoFromIqFrom($packet);
+01362     $id   = $this-&gt;GetInfoFromIqId($packet);
+01363 
+01364     $this-&gt;SendError($from, $<span class="keywordtype">id</span>, 501);
+01365     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: jabber:iq:agent from $from"</span>);
+01366   }
+01367 
+01368 
+01369 
+01370   <span class="comment">// method to query interactive server components</span>
+01371   function Handler_iq_jabber_iq_agents($packet)
+01372   {
+01373     $from = $this-&gt;GetInfoFromIqFrom($packet);
+01374     $id   = $this-&gt;GetInfoFromIqId($packet);
+01375 
+01376     $this-&gt;SendError($from, $<span class="keywordtype">id</span>, 501);
+01377     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: jabber:iq:agents from $from"</span>);
+01378   }
+01379 
+01380 
+01381 
+01382   <span class="comment">// simple client authentication</span>
+01383   function Handler_iq_jabber_iq_auth($packet)
+01384   {
+01385     $from = $this-&gt;GetInfoFromIqFrom($packet);
+01386     $id   = $this-&gt;GetInfoFromIqId($packet);
+01387 
+01388     $this-&gt;SendError($from, $<span class="keywordtype">id</span>, 501);
+01389     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: jabber:iq:auth from $from"</span>);
+01390   }
+01391 
+01392 
+01393 
+01394   <span class="comment">// out of band data</span>
+01395   function Handler_iq_jabber_iq_oob($packet)
+01396   {
+01397     $from = $this-&gt;GetInfoFromIqFrom($packet);
+01398     $id   = $this-&gt;GetInfoFromIqId($packet);
+01399 
+01400     $this-&gt;SendError($from, $<span class="keywordtype">id</span>, 501);
+01401     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: jabber:iq:oob from $from"</span>);
+01402   }
+01403 
+01404 
+01405 
+01406   <span class="comment">// method to store private data on the server</span>
+01407   function Handler_iq_jabber_iq_private($packet)
+01408   {
+01409     $from = $this-&gt;GetInfoFromIqFrom($packet);
+01410     $id   = $this-&gt;GetInfoFromIqId($packet);
+01411 
+01412     $this-&gt;SendError($from, $<span class="keywordtype">id</span>, 501);
+01413     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: jabber:iq:private from $from"</span>);
+01414   }
+01415 
+01416 
+01417 
+01418   <span class="comment">// method for interactive registration</span>
+01419   function Handler_iq_jabber_iq_register($packet)
+01420   {
+01421     $from = $this-&gt;GetInfoFromIqFrom($packet);
+01422     $id   = $this-&gt;GetInfoFromIqId($packet);
+01423 
+01424     $this-&gt;SendError($from, $<span class="keywordtype">id</span>, 501);
+01425     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: jabber:iq:register from $from"</span>);
+01426   }
+01427 
+01428 
+01429 
+01430   <span class="comment">// client roster management</span>
+01431   function Handler_iq_jabber_iq_roster($packet)
+01432   {
+01433     $from = $this-&gt;GetInfoFromIqFrom($packet);
+01434     $id   = $this-&gt;GetInfoFromIqId($packet);
+01435 
+01436     $this-&gt;SendError($from, $<span class="keywordtype">id</span>, 501);
+01437     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: jabber:iq:roster from $from"</span>);
+01438   }
+01439 
+01440 
+01441 
+01442   <span class="comment">// method for searching a user database</span>
+01443   function Handler_iq_jabber_iq_search($packet)
+01444   {
+01445     $from = $this-&gt;GetInfoFromIqFrom($packet);
+01446     $id   = $this-&gt;GetInfoFromIqId($packet);
+01447 
+01448     $this-&gt;SendError($from, $<span class="keywordtype">id</span>, 501);
+01449     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: jabber:iq:search from $from"</span>);
+01450   }
+01451 
+01452 
+01453 
+01454   <span class="comment">// method for requesting the current time</span>
+01455   function Handler_iq_jabber_iq_time($packet)
+01456   {
+01457     $type = $this-&gt;GetInfoFromIqType($packet);
+01458     $from = $this-&gt;GetInfoFromIqFrom($packet);
+01459     $id   = $this-&gt;GetInfoFromIqId($packet);
+01460     $id   = ($id != <span class="stringliteral">""</span>) ? $id : <span class="stringliteral">"time_"</span> . time();
+01461 
+01462     <span class="keywordflow">if</span> ($type == 'get')
+01463     {
+01464       $payload = <span class="stringliteral">"&lt;utc&gt;"</span> . gmdate(<span class="stringliteral">"Ydm\TH:i:s"</span>) . <span class="stringliteral">"&lt;/utc&gt;</span>
+01465 <span class="stringliteral">            &lt;tz&gt;"</span> . date(<span class="stringliteral">"T"</span>) . <span class="stringliteral">"&lt;/tz&gt;</span>
+01466 <span class="stringliteral">            &lt;display&gt;"</span> . date(<span class="stringliteral">"Y/d/m h:i:s A"</span>) . <span class="stringliteral">"&lt;/display&gt;"</span>;
+01467 
+01468       $this-&gt;SendIq($from, 'result', $<span class="keywordtype">id</span>, <span class="stringliteral">"jabber:iq:time"</span>, $payload);
+01469     }
+01470 
+01471     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: jabber:iq:time (type $type) from $from"</span>);
+01472   }
+01473 
+01474 
+01475 
+01476   <span class="comment">// method for requesting version</span>
+01477   function Handler_iq_jabber_iq_version($packet)
+01478   {
+01479     $type = $this-&gt;GetInfoFromIqType($packet);
+01480     $from = $this-&gt;GetInfoFromIqFrom($packet);
+01481     $id   = $this-&gt;GetInfoFromIqId($packet);
+01482     $id   = ($id != <span class="stringliteral">""</span>) ? $id : <span class="stringliteral">"version_"</span> . time();
+01483 
+01484     <span class="keywordflow">if</span> ($type == 'get')
+01485     {
+01486       $payload = <span class="stringliteral">"&lt;name&gt;{$this-&gt;iq_version_name}&lt;/name&gt;</span>
+01487 <span class="stringliteral">            &lt;os&gt;{$this-&gt;iq_version_os}&lt;/os&gt;</span>
+01488 <span class="stringliteral">            &lt;version&gt;{$this-&gt;iq_version_version}&lt;/version&gt;"</span>;
+01489 
+01490       $this-&gt;SendIq($from, 'result', $<span class="keywordtype">id</span>, <span class="stringliteral">"jabber:iq:version"</span>, $payload);
+01491     }
+01492 
+01493     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: jabber:iq:version (type $type) from $from"</span>);
+01494   }
+01495 
+01496 
+01497 
+01498   <span class="comment">// keepalive method, added by Nathan Fritz</span>
+01499   function Handler_iq_($packet)
+01500   {
+01501     <span class="keywordflow">if</span> ($this-&gt;keep_alive_id == $this-&gt;GetInfoFromIqId($packet))
+01502     {
+01503       $this-&gt;returned_keep_alive = TRUE;
+01504       $this-&gt;AddToLog('EVENT: Keep-Alive returned, connection alive.');
+01505     }
+01506   }
+01507   
+01508   
+01509   
+01510   <span class="comment">// ======================================================================</span>
+01511   <span class="comment">// &lt;presence/&gt; handlers</span>
+01512   <span class="comment">// ======================================================================</span>
+01513 
+01514 
+01515 
+01516   function Handler_presence_available($packet)
+01517   {
+01518     $from = $this-&gt;GetInfoFromPresenceFrom($packet);
+01519 
+01520     $show_status = $this-&gt;GetInfoFromPresenceStatus($packet) . <span class="stringliteral">" / "</span> . $this-&gt;GetInfoFromPresenceShow($packet);
+01521     $show_status = ($show_status != <span class="stringliteral">" / "</span>) ? <span class="stringliteral">" ($addendum)"</span> : '';
+01522 
+01523     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: Presence (type: available) - $from is available $show_status"</span>);
+01524   }
+01525 
+01526 
+01527 
+01528   function Handler_presence_unavailable($packet)
+01529   {
+01530     $from = $this-&gt;GetInfoFromPresenceFrom($packet);
+01531 
+01532     $show_status = $this-&gt;GetInfoFromPresenceStatus($packet) . <span class="stringliteral">" / "</span> . $this-&gt;GetInfoFromPresenceShow($packet);
+01533     $show_status = ($show_status != <span class="stringliteral">" / "</span>) ? <span class="stringliteral">" ($addendum)"</span> : '';
+01534 
+01535     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: Presence (type: unavailable) - $from is unavailable $show_status"</span>);
+01536   }
+01537 
+01538 
+01539 
+01540   function Handler_presence_subscribe($packet)
+01541   {
+01542     $from = $this-&gt;GetInfoFromPresenceFrom($packet);
+01543     $this-&gt;SubscriptionAcceptRequest($from);
+01544     $this-&gt;RosterUpdate();
+01545 
+01546     $this-&gt;log_array[] = <span class="stringliteral">"&lt;b&gt;Presence:&lt;/b&gt; (type: subscribe) - Subscription request from $from, was added to \$this-&gt;subscription_queue, roster updated"</span>;
+01547   }
+01548 
+01549 
+01550 
+01551   function Handler_presence_subscribed($packet)
+01552   {
+01553     $from = $this-&gt;GetInfoFromPresenceFrom($packet);
+01554     $this-&gt;RosterUpdate();
+01555 
+01556     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: Presence (type: subscribed) - Subscription allowed by $from, roster updated"</span>);
+01557   }
+01558 
+01559 
+01560 
+01561   function Handler_presence_unsubscribe($packet)
+01562   {
+01563     $from = $this-&gt;GetInfoFromPresenceFrom($packet);
+01564     $this-&gt;SendPresence(<span class="stringliteral">"unsubscribed"</span>, $from);
+01565     $this-&gt;RosterUpdate();
+01566 
+01567     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: Presence (type: unsubscribe) - Request to unsubscribe from $from, was automatically approved, roster updated"</span>);
+01568   }
+01569 
+01570 
+01571 
+01572   function Handler_presence_unsubscribed($packet)
+01573   {
+01574     $from = $this-&gt;GetInfoFromPresenceFrom($packet);
+01575     $this-&gt;RosterUpdate();
+01576 
+01577     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: Presence (type: unsubscribed) - Unsubscribed from $from's presence"</span>);
+01578   }
+01579 
+01580 
+01581 
+01582   <span class="comment">// Added By Nathan Fritz</span>
+01583   function Handler_presence_error($packet)
+01584   {
+01585     $from = $this-&gt;GetInfoFromPresenceFrom($packet);
+01586     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: Presence (type: error) - Error in $from's presence"</span>);
+01587   }
+01588   
+01589   
+01590   
+01591   <span class="comment">// ======================================================================</span>
+01592   <span class="comment">// Generic handlers</span>
+01593   <span class="comment">// ======================================================================</span>
+01594 
+01595 
+01596 
+01597   <span class="comment">// Generic handler for unsupported requests</span>
+01598   function Handler_NOT_IMPLEMENTED($packet)
+01599   {
+01600     $packet_type  = $this-&gt;_get_packet_type($packet);
+01601     $from     = call_user_func(array(&amp;$<span class="keyword">this</span>, <span class="stringliteral">"GetInfoFrom"</span> . ucfirst($packet_type) . <span class="stringliteral">"From"</span>), $packet);
+01602     $id       = call_user_func(array(&amp;$<span class="keyword">this</span>, <span class="stringliteral">"GetInfoFrom"</span> . ucfirst($packet_type) . <span class="stringliteral">"Id"</span>), $packet);
+01603 
+01604     $this-&gt;SendError($from, $<span class="keywordtype">id</span>, 501);
+01605     $this-&gt;AddToLog(<span class="stringliteral">"EVENT: Unrecognized &lt;$packet_type/&gt; from $from"</span>);
+01606   }
+01607 
+01608 
+01609 
+01610   <span class="comment">// ======================================================================</span>
+01611   <span class="comment">// Third party code</span>
+01612   <span class="comment">// m@d pr0ps to the coders ;)</span>
+01613   <span class="comment">// ======================================================================</span>
+01614 
+01615 
+01616 
+01617   <span class="comment">// xmlize()</span>
+01618   <span class="comment">// (c) Hans Anderson / http://www.hansanderson.com/php/xml/</span>
+01619 
+01620   function xmlize($data)
+01621   {
+01622     $vals = $index = $array = array();
+01623     $parser = xml_parser_create();
+01624     xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
+01625     xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
+01626     xml_parse_into_struct($parser, $data, $vals, $index);
+01627     xml_parser_free($parser);
+01628 
+01629     $i = 0;
+01630 
+01631     $tagname = $vals[$i]['tag'];
+01632     $array[$tagname][<span class="charliteral">'@'</span>] = $vals[$i]['attributes'];
+01633     $array[$tagname][<span class="charliteral">'#'</span>] = $this-&gt;_xml_depth($vals, $i);
+01634 
+01635     <span class="keywordflow">return</span> $array;
+01636   }
+01637 
+01638 
+01639 
+01640   <span class="comment">// _xml_depth()</span>
+01641   <span class="comment">// (c) Hans Anderson / http://www.hansanderson.com/php/xml/</span>
+01642 
+01643   function _xml_depth($vals, &amp;$i)
+01644   {
+01645     $children = array();
+01646 
+01647     <span class="keywordflow">if</span> ($vals[$i]['value'])
+01648     {
+01649       array_push($children, trim($vals[$i]['value']));
+01650     }
+01651 
+01652     <span class="keywordflow">while</span> (++$i &lt; count($vals))
+01653     {
+01654       <span class="keywordflow">switch</span> ($vals[$i]['type'])
+01655       {
+01656         <span class="keywordflow">case</span> 'cdata':
+01657           array_push($children, trim($vals[$i]['value']));
+01658           <span class="keywordflow">break</span>;
+01659 
+01660         <span class="keywordflow">case</span> 'complete':
+01661           $tagname = $vals[$i]['tag'];
+01662           $size = <span class="keyword">sizeof</span>($children[$tagname]);
+01663           $children[$tagname][$size][<span class="charliteral">'#'</span>] = trim($vals[$i]['value']);
+01664           <span class="keywordflow">if</span> ($vals[$i]['attributes'])
+01665           {
+01666             $children[$tagname][$size][<span class="charliteral">'@'</span>] = $vals[$i]['attributes'];
+01667           }
+01668           <span class="keywordflow">break</span>;
+01669 
+01670         <span class="keywordflow">case</span> 'open':
+01671           $tagname = $vals[$i]['tag'];
+01672           $size = <span class="keyword">sizeof</span>($children[$tagname]);
+01673           <span class="keywordflow">if</span> ($vals[$i]['attributes'])
+01674           {
+01675             $children[$tagname][$size][<span class="charliteral">'@'</span>] = $vals[$i]['attributes'];
+01676             $children[$tagname][$size][<span class="charliteral">'#'</span>] = $this-&gt;_xml_depth($vals, $i);
+01677           }
+01678           <span class="keywordflow">else</span>
+01679           {
+01680             $children[$tagname][$size][<span class="charliteral">'#'</span>] = $this-&gt;_xml_depth($vals, $i);
+01681           }
+01682           <span class="keywordflow">break</span>;
+01683 
+01684         <span class="keywordflow">case</span> 'close':
+01685           <span class="keywordflow">return</span> $children;
+01686           <span class="keywordflow">break</span>;
+01687       }
+01688     }
+01689 
+01690     <span class="keywordflow">return</span> $children;
+01691   }
+01692 
+01693 
+01694 
+01695   <span class="comment">// TraverseXMLize()</span>
+01696   <span class="comment">// (c) acebone@f2s.com, a HUGE help!</span>
+01697 
+01698   function TraverseXMLize($array, $arrName = <span class="stringliteral">"array"</span>, $level = 0)
+01699   {
+01700     <span class="keywordflow">if</span> ($level == 0)
+01701     {
+01702       echo <span class="stringliteral">"&lt;pre&gt;"</span>;
+01703     }
+01704 
+01705     <span class="keywordflow">while</span> (list($key, $val) = @each($array))
+01706     {
+01707       <span class="keywordflow">if</span> (is_array($val))
+01708       {
+01709         $this-&gt;TraverseXMLize($val, $arrName . <span class="stringliteral">"["</span> . $key . <span class="stringliteral">"]"</span>, $level + 1);
+01710       }
+01711       <span class="keywordflow">else</span>
+01712       {
+01713         echo <span class="charliteral">'$'</span> . $arrName . <span class="charliteral">'['</span> . $key . '] = <span class="stringliteral">"' . $val . "</span>\<span class="stringliteral">"\n"</span>;
+01714       }
+01715     }
+01716 
+01717     <span class="keywordflow">if</span> ($level == 0)
+01718     {
+01719       echo <span class="stringliteral">"&lt;/pre&gt;"</span>;
+01720     }
+01721   }
+01722 }
+01723 
+01724 
+01725 
+01726 <span class="keyword">class </span>MakeXML <span class="keyword">extends</span> Jabber
+01727 {
+01728   var $nodes;
+01729 
+01730 
+01731   function MakeXML()
+01732   {
+01733     $nodes = array();
+01734   }
+01735 
+01736 
+01737 
+01738   function AddPacketDetails($string, $value = NULL)
+01739   {
+01740     <span class="keywordflow">if</span> (preg_match(<span class="stringliteral">"/\(([0-9]*)\)$/i"</span>, $string))
+01741     {
+01742       $string .= <span class="stringliteral">"/[\"#\"]"</span>;
+01743     }
+01744 
+01745     $temp = @explode(<span class="stringliteral">"/"</span>, $string);
+01746 
+01747     <span class="keywordflow">for</span> ($a = 0; $a &lt; count($temp); $a++)
+01748     {
+01749       $temp[$a] = preg_replace(<span class="stringliteral">"/^[@]{1}([a-z0-9_]*)$/i"</span>, <span class="stringliteral">"[\"@\"][\"\\1\"]"</span>, $temp[$a]);
+01750       $temp[$a] = preg_replace(<span class="stringliteral">"/^([a-z0-9_]*)\(([0-9]*)\)$/i"</span>, <span class="stringliteral">"[\"\\1\"][\\2]"</span>, $temp[$a]);
+01751       $temp[$a] = preg_replace(<span class="stringliteral">"/^([a-z0-9_]*)$/i"</span>, <span class="stringliteral">"[\"\\1\"]"</span>, $temp[$a]);
+01752     }
+01753 
+01754     $node = implode(<span class="stringliteral">""</span>, $temp);
+01755 
+01756     <span class="comment">// Yeahyeahyeah, I know it's ugly... get over it. ;)</span>
+01757     echo <span class="stringliteral">"\$this-&gt;nodes$node = \""</span> . htmlspecialchars($value) . <span class="stringliteral">"\";&lt;br/&gt;"</span>;
+01758     eval(<span class="stringliteral">"\$this-&gt;nodes$node = \""</span> . htmlspecialchars($value) . <span class="stringliteral">"\";"</span>);
+01759   }
+01760 
+01761 
+01762 
+01763   function BuildPacket($array = NULL)
+01764   {
+01765 
+01766     <span class="keywordflow">if</span> (!$array)
+01767     {
+01768       $array = $this-&gt;nodes;
+01769     }
+01770 
+01771     <span class="keywordflow">if</span> (is_array($array))
+01772     {
+01773       array_multisort($array, SORT_ASC, SORT_STRING);
+01774 
+01775       foreach ($array as $key =&gt; $value)
+01776       {
+01777         <span class="keywordflow">if</span> (is_array($value) &amp;&amp; $key == <span class="stringliteral">"@"</span>)
+01778         {
+01779           foreach ($value as $subkey =&gt; $subvalue)
+01780           {
+01781             $subvalue = htmlspecialchars($subvalue);
+01782             $text .= <span class="stringliteral">" $subkey='$subvalue'"</span>;
+01783           }
+01784 
+01785           $text .= <span class="stringliteral">"&gt;\n"</span>;
+01786 
+01787         }
+01788         elseif ($key == <span class="stringliteral">"#"</span>)
+01789         {
+01790           $text .= htmlspecialchars($value);
+01791         }
+01792         elseif (is_array($value))
+01793         {
+01794           <span class="keywordflow">for</span> ($a = 0; $a &lt; count($value); $a++)
+01795           {
+01796             $text .= <span class="stringliteral">"&lt;$key"</span>;
+01797 
+01798             <span class="keywordflow">if</span> (!$this-&gt;_preg_grep_keys(<span class="stringliteral">"/^@/"</span>, $value[$a]))
+01799             {
+01800               $text .= <span class="stringliteral">"&gt;"</span>;
+01801             }
+01802 
+01803             $text .= $this-&gt;BuildPacket($value[$a]);
+01804 
+01805             $text .= <span class="stringliteral">"&lt;/$key&gt;\n"</span>;
+01806           }
+01807         }
+01808         <span class="keywordflow">else</span>
+01809         {
+01810           $value = htmlspecialchars($value);
+01811           $text .= <span class="stringliteral">"&lt;$key&gt;$value&lt;/$key&gt;\n"</span>;
+01812         }
+01813       }
+01814 
+01815       <span class="keywordflow">return</span> $text;
+01816     }
+01817   }
+01818 
+01819 
+01820 
+01821   function _preg_grep_keys($pattern, $array)
+01822   {
+01823     <span class="keywordflow">while</span> (list($key, $val) = each($array))
+01824     {
+01825       <span class="keywordflow">if</span> (preg_match($pattern, $key))
+01826       {
+01827         $newarray[$key] = $val;
+01828       }
+01829     }
+01830     <span class="keywordflow">return</span> (is_array($newarray)) ? $newarray : FALSE;
+01831   }
+01832 }
+01833 
+01834 
+01835 
+01836 <span class="keyword">class </span>CJP_StandardConnector
+01837 {
+01838   var $active_socket;
+01839 
+01840   function OpenSocket($server, $port)
+01841   {
+01842     <span class="keywordflow">if</span> ($this-&gt;active_socket = fsockopen($server, $port))
+01843     {
+01844       socket_set_blocking($this-&gt;active_socket, 0);
+01845       socket_set_timeout($this-&gt;active_socket, 31536000);
+01846 
+01847       <span class="keywordflow">return</span> TRUE;
+01848     }
+01849     <span class="keywordflow">else</span>
+01850     {
+01851       <span class="keywordflow">return</span> FALSE;
+01852     }
+01853   }
+01854 
+01855 
+01856 
+01857   function CloseSocket()
+01858   {
+01859     <span class="keywordflow">return</span> fclose($this-&gt;active_socket);
+01860   }
+01861 
+01862 
+01863 
+01864   function WriteToSocket($data)
+01865   {
+01866     <span class="keywordflow">return</span> fwrite($this-&gt;active_socket, $data);
+01867   }
+01868 
+01869 
+01870 
+01871   function ReadFromSocket($chunksize)
+01872   {
+01873     set_magic_quotes_runtime(0);
+01874     $buffer = fread($this-&gt;active_socket, $chunksize);
+01875     set_magic_quotes_runtime(get_magic_quotes_gpc());
+01876 
+01877     <span class="keywordflow">return</span> $buffer;
+01878   }
+01879 }
+01880 
+01881 
+01882 
+01883 ?&gt;
+</div></pre><hr size="1"><address style="align: right;"><small>Généré le Fri Jul 16 08:51:52 2004 pour dolibarr par
+<a href="http://www.doxygen.org/index.html">
+<img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.7 </small></address>
+</body>
+</html>

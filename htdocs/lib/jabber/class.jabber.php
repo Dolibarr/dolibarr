@@ -83,6 +83,13 @@
 	MakeXML::BuildPacket([$array {array}])
 */
 
+/*!	\file class.jabber.php
+		\brief Classe permettant de se connecter à un serveur jabber.
+		\author Carlo "Gossip" Zottmann.
+		\version 0.4.
+
+		Ensemble des fonctions permettant de se connecter à un serveur jabber.
+*/
 
 
 class Jabber
