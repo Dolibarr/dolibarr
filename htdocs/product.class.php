@@ -855,5 +855,22 @@ class Product
 	  $this->ref_fourn          = $result["ref_fourn"];
 	}
     }
+
+  /**
+   *
+   *
+   */
+  function add_photo($sdir)
+  {
+    $dir = $sdir .'/'. get_exdir($this->id) . $this->id ."/";
+
+    if (! file_exists($dir))
+      {
+	dolibarr_syslog("Product Create $dir");
+	create_exdir($dir);
+      }	
+
+  }
+
 }
 ?>
