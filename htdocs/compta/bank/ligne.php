@@ -24,6 +24,13 @@ require("./pre.inc.php");
 
 llxHeader();
 
+if ($HTTP_POST_VARS["action"] == 'confirm_delete_categ' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  $sql = "DELETE FROM llx_bank_class WHERE lineid = $rowid AND fk_categ = $cat1";
+  $db->query($sql);
+}
+
+
 if ($action == 'class')
 {
   $sql = "DELETE FROM llx_bank_class WHERE lineid = $rowid AND fk_categ = $cat1";
@@ -91,6 +98,12 @@ if ($result)
       $i++;
     }
   $db->free();
+}
+
+if ($action == 'delete_categ')
+{
+  $html = new Form($db);
+  $html->form_confirm("$PHP_SELF?rowid=$rowid&amp;cat1=$fk_categ","Supprimer dans la catégorie","Etes-vous sûr de vouloir supprimer le classement dans la catégorie ?","confirm_delete_categ");
 }
 
 print_titre("Edition de la ligne");
@@ -213,7 +226,7 @@ print "<p>Classé dans</p>";
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print "<TR class=\"liste_titre\">";
-print '<td colspan="2">Description</td>';
+print '<td colspan="3">Description</td>';
 print "</TR>\n";
 
 $sql = "SELECT c.label, c.rowid";
@@ -234,6 +247,7 @@ if ($result)
       
       print "<td>$objp->label</td>";
       print "<td align=\"center\"><a href=\"budget.php?bid=$objp->rowid\">voir</a></td>";
+      print "<td align=\"center\"><a href=\"ligne.php?action=delete_categ&amp;rowid=$rowid&amp;fk_categ=$objp->rowid\">Supprimer</a></td>";
       print "</tr>";
 
       $i++;
