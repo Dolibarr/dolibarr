@@ -126,6 +126,10 @@ $graph = new GraphLignesCommandesWeek($db, $file);
 $graph->width = 400;
 $graph->GraphMakeGraph();
 
+$file = $img_root . "commercials/clients.hebdomadaire.png";
+$graph = new GraphClientsWeek($db, $file);
+$graph->width = 400;
+$graph->GraphMakeGraph();
 
 $sql = "SELECT distinct fk_commercial";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
@@ -151,7 +155,6 @@ if ($result)
       $graph = new GraphLignesCommandesWeek($db, $file);
       $graph->width = 400;
       $graph->GraphMakeGraph($row[0]);
-
 
       $file = $img_root . "commercials/".$row[0]."/clients.hebdomadaire.png";
       print "Graph : Lignes commandes$file\n";
