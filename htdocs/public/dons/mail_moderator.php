@@ -1,7 +1,7 @@
 <?PHP
-$subject = "EUCD.INFO Nouvelle promesse de don de $don->amount euros";
+$subject_moderator = "EUCD.INFO Nouvelle promesse de don de $don->amount euros";
 
-$body ="
+$body_moderator ="
 Une nouvelle promesse de don à valider :
 
 
