@@ -141,7 +141,7 @@ if ($socid > 0)
 	}
       else
 	{
-	  print "La gestion des fichiers associés est désactivé sur ce serveur";
+	  print "La gestion des fichiers associés est désactivée sur ce serveur";
 	}
       print '</div>';
 
