@@ -22,6 +22,42 @@
 
 require("./pre.inc.php");
 
+if ( $HTTP_POST_VARS["sendit"] )
+{
+  global $local_file, $error_msg;
+
+  $upload_dir = OSC_CATALOG_DIRECTORY."/images/";
+  
+  if (! is_dir($upload_dir))
+    {
+      umask(0);
+      mkdir($upload_dir, 0755);
+    }
+    
+  if (move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
+    {
+      print "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; avec succ&egrave;s.\n";
+      //print_r($_FILES);
+    }
+  else
+    {
+      echo "Le fichier n'a pas été téléchargé";
+      // print_r($_FILES);
+    }
+
+  if ($id or $oscid)
+    {
+      $livre = new Livre($db);
+      
+      if ($id)
+	{
+	  $result = $livre->fetch($id, 0);
+	  $livre->update_image($_FILES['userfile']['name']);
+	}
+    }
+}
+
+
 if ($action == 'add')
 {
   $livre = new Livre($db);
@@ -288,6 +324,15 @@ else
 	      $htmls->select_array("catid", $listecat->liste_array());
 	      print '&nbsp;<input type="submit" value="Ajouter"></td></tr>';
 	      print "</form>";
+	      print "</td></tr>\n";
+
+	      print '<td valign="top">Vignette</td><td colspan="2">';
+	      echo '<FORM NAME="userfile" ACTION="fiche.php?id='.$id.'" ENCTYPE="multipart/form-data" METHOD="POST">';      
+	      print '<input type="hidden" name="max_file_size" value="2000000">';
+	      print '<input type="file"   name="userfile" size="40" maxlength="80"><br>';
+	      print '<input type="submit" value="Upload File!" name="sendit">';
+	      print '<input type="submit" value="Annuler" name="cancelit"><BR>';
+	      print '</form>';
 	      print "</td></tr>\n";
 
 	      print '</table><hr>';
