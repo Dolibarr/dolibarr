@@ -464,3 +464,23 @@ create table llx_cash
 update llx_bank set datev=dateo where datev is null;
 
 update llx_chargesociales set periode=date_ech where periode is null or periode = '0000-00-00';
+
+
+
+create table llx_c_accountingsystem
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_pays         integer NOT NULL,
+  type            varchar(20) NOT NULL,
+  label           varchar(128) NOT NULL,
+  account_format  varchar(20) NOT NULL,
+  account_format2 varchar(20) NOT NULL
+)type=innodb;
+
+insert into llx_c_accountingsystem (rowid, fk_pays, type, label, account_format, account_format2) VALUES (1,1,'CASH','Caisse','530','\d');
+insert into llx_c_accountingsystem (rowid, fk_pays, type, label, account_format, account_format2) VALUES (2,1,'CASH','Caisse siège social','531','\d');
+
+insert into llx_c_accountingsystem (rowid, fk_pays, type, label, account_format, account_format2) VALUES (3,1,'BANK','Banque','512','\d');
+insert into llx_c_accountingsystem (rowid, fk_pays, type, label, account_format, account_format2) VALUES (4,1,'BANK','Banque - compte chèques postaux','514','\d');
+insert into llx_c_accountingsystem (rowid, fk_pays, type, label, account_format, account_format2) VALUES (5,1,'BANK','Autre organisme financier','518','\d');
+

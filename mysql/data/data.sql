@@ -484,3 +484,16 @@ INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (4, 2, 'Men
 INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (5, 2, 'Mademoiselle', 1);
 INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (6, 2, 'Juffrouw', 1);
 INSERT INTO llx_c_civilite (rowid, fk_pays, civilite, active) VALUES (7, 2, 'Maître', 1);
+
+
+--
+-- Descriptif des plans comptables
+--
+INSERT INTO llx_c_accountingsystem (rowid, fk_pays, type, label, account_format, account_format2) VALUES (1,1,'CASH','Caisse','530','\d');
+INSERT INTO llx_c_accountingsystem (rowid, fk_pays, type, label, account_format, account_format2) VALUES (2,1,'CASH','Caisse siège social','531','\d');
+
+INSERT INTO llx_c_accountingsystem (rowid, fk_pays, type, label, account_format, account_format2) VALUES (3,1,'BANK','Banque','512','\d');
+INSERT INTO llx_c_accountingsystem (rowid, fk_pays, type, label, account_format, account_format2) VALUES (4,1,'BANK','Banque - compte chèques postaux','514','\d');
+INSERT INTO llx_c_accountingsystem (rowid, fk_pays, type, label, account_format, account_format2) VALUES (5,1,'BANK','Autre organisme financier','518','\d');
+
+
