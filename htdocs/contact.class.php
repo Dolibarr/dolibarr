@@ -135,10 +135,10 @@ class Contact
 		    {
 		      $soc = new Societe($this->db);
 		      $soc->fetch($this->socid);
-		      $info["o"] = $soc->nom;
+		      $info["o"] = utf8_encode($soc->nom);
 		      if ($soc->ville)
 			{
-			  $info["l"] = $soc->ville;
+			  $info["l"] = utf8_encode($soc->ville);
 			}
 		    }
 		  
