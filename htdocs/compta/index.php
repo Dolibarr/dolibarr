@@ -79,10 +79,11 @@ print "</table></form>";
 
 
 
+if ($conf->facture->enabled) {
 /*
  * Factures brouillons
  */
-
+    
 $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
 
 if ( $db->query($sql) )
@@ -113,6 +114,10 @@ else
 {
   print $sql;
 }
+
+}
+
+if ($conf->compta->enabled) {
 
 /*
  * Charges a payer
@@ -154,6 +159,9 @@ if ($user->societe_id == 0)
     }
 }
 
+}
+
+
 /*
  * Bookmark
  *
@@ -192,10 +200,11 @@ if ( $db->query($sql) )
  */
 print '</td><td valign="top" width="70%">';
 
+
 /*
  * Commandes à facturer
  */
-if ($user->comm > 0 && $conf->commercial ) 
+if ($user->comm > 0 && $conf->commercial->enabled ) 
 {
   $sql = "SELECT p.rowid, p.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as p, ".MAIN_DB_PREFIX."societe as s";
   $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut >= 1 AND p.facture = 0";
@@ -228,6 +237,8 @@ if ($user->comm > 0 && $conf->commercial )
     }
 }
 
+
+if ($conf->facture->enabled) {
 
 /*
  * Factures impayées
@@ -274,6 +285,9 @@ else
   print $sql;
 }
 
+}
+
+
 $result = 0;
 if ( $result )
 {
@@ -297,6 +311,9 @@ else
 {
   print $db->error();
 }
+
+
+if ($conf->facture->enabled) {
 
 /*
  * Factures a payer
@@ -342,6 +359,9 @@ if ($user->societe_id == 0)
       print $db->error();
     }
 }
+
+}
+
 
 print '</td></tr>';
 
