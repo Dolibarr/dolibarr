@@ -381,7 +381,7 @@ class Propal
    *
    *
    */
-  Function liste_array ($brouillon=0)
+  Function liste_array ($brouillon=0, $user='')
     {
       $ga = array();
 
@@ -389,6 +389,17 @@ class Propal
       if ($brouillon = 1)
 	{
 	  $sql .= " WHERE fk_statut = 0";
+	  if ($user)
+	    {
+	      $sql .= " AND fk_user_author".$user;
+	    }
+	}
+      else
+	{
+	  if ($user)
+	    {
+	      $sql .= " WHERE fk_user_author".$user;
+	    }
 	}
       
       $sql .= " ORDER BY datep DESC";
