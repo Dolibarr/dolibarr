@@ -48,7 +48,7 @@ Dolibarr est développé par :
 D'autres développeurs y contribuent activement :
 <ul>
 <li><a target="blank" href="http://www.ipsyn.net">Jean-Louis Bergamo</a></li>
-<li><a target="blank" href="http://destailleur.fr/">Laurent Destailleur</a></li>
+<li><a target="blank" href="http://www.destailleur.fr/">Laurent Destailleur</a></li>
 <li>Eric Seigne</li>
 <li>Benoit Mortier</li>
 </ul>
