@@ -1,0 +1,9 @@
+# Dolibarr language file - fr_BE - orders
+OrdersArea=Espace commandes
+Order=Commande
+Orders=Commandes
+OrdersToValid=Commandes à valider
+OrdersToBill=Commandes à facturer
+OrdersInProcess=Commandes en traitement
+OrdersToProcess=Commandes à traiter
+SearchOrder=Rechercher une commande

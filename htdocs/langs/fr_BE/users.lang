@@ -1,0 +1,15 @@
+# Dolibarr language file - fr_BE - users
+UserCard=Fiche utilisateur
+ContactCard=Fiche contact
+NoContactCard=Pas de fiche parmi les contacts
+Permission=Droit
+Permissions=Droits
+SendNewPassword=Envoyer nouveau mot de passe
+AvailableRights=Permissions disponibles
+OwnedRights=Permissions détenues
+DisableUser=Désactiver utilisateur
+NewUser=Nouvel utilisateur
+CreateUser=Créer l'utilisateur
+LoginAlreadyExists=Ce login existe déjà
+ListOfUsers=Liste des utilisateurs
+Administrator=Administrateur
