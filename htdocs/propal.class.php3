@@ -76,7 +76,7 @@ class Propal
 	    {
 	  
 	      $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx, description) VALUES ";
-	      $sql .= " (".$this->id.",". $idproduct.",". $qty.",". $prod->price.",".$prod->tva_tx.",'".$prod->label."') ; ";
+	      $sql .= " (".$this->id.",". $idproduct.",". $qty.",". $prod->price.",".$prod->tva_tx.",'".addslashes($prod->label)."') ; ";
 	  
 	      if ($this->db->query($sql) )
 		{
