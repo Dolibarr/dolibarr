@@ -27,16 +27,17 @@ $db = new Db();
 
 print_titre("Gestion des adherents");
 
-print '<TABLE border="0" cellspacing="0" cellpadding="4">';
+print '<p><TABLE border="0" cellspacing="0" cellpadding="4">';
 print '<TR class="liste_titre">';
-print "<td>&nbsp;</td>";
-print "<td>Somme</td>";
+print "<td>Type</td>";
+print "<td>Nb</td>";
 print "</TR>\n";
 
 $var=True;
 
 
-$sql = "SELECT sum(d.amount) as somme , d.fk_statut FROM llx_don as d GROUP BY d.fk_statut";
+$sql = "SELECT count(*) as somme , t.libelle FROM llx_adherent as d, llx_adherent_type as t";
+$sql .= " WHERE d.fk_adherent_type = t.rowid  GROUP BY t.libelle";
 
 $result = $db->query($sql);
 
@@ -48,23 +49,19 @@ if ($result)
     {
       $objp = $db->fetch_object( $i);
 
-      $somme[$objp->fk_statut] = $objp->somme;
+      $var=!$var;
+      print "<TR $bc[$var]>";
+      print '<TD><a href="liste.php?statut='.$i.'">'.$objp->libelle.'</a></TD>';
+      print '<TD align="right">'.$objp->somme.'</TD>';
+
+      print "</tr>";
+
       $i++;
     }
   $db->free();
+
 }
 
-
-for ($i = 0 ; $i < 4 ; $i++)
-{
-  $var=!$var;
-  print "<TR $bc[$var]>";
-  print '<TD><a href="liste.php?statut='.$i.'">'.$libelle[$i].'</a></TD>';
-  print '<TD align="right">'.price($somme[$i]).'</TD>';
-  $total += $somme[$i];
-  print "</tr>";
-}
-print '<tr><td>Total</td><td align="right">'.price($total).'</TD></tr>';
 print "</table>";
 
 
