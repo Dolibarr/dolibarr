@@ -131,12 +131,13 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+  print '<TABLE class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<TR class="liste_titre">';
   print "<TD valign=\"center\">";
   print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-  print "</td><TD>Ville</TD>";
-  print "<TD align=\"center\">Préfix</td><td colspan=\"2\">&nbsp;</td>";
+  print "</td><td>";
+  print_liste_field_titre("Ville",$PHP_SELF,"s.ville");
+  print "</td>";
   print "</TR>\n";
   $var=True;
 
@@ -150,34 +151,8 @@ if ($result)
       print '<td><a href="fiche.php?socid='.$obj->idp.'">';
       print img_file();
       print "</a>&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
-      print "<TD>".$obj->ville."&nbsp;</TD>\n";
-      print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
-
-      if ($user->societe_id == 0)
-	{
-	  if ($user->rights->propale->creer)
-	    {
-	      print "<TD align=\"center\"><a href=\"addpropal.php?socidp=$obj->idp&action=create\">[Propal]</A></td>\n";
-	    }
-	  else
-	    {
-	      print "<td>&nbsp;</td>\n";
-	    }
-	  if ($conf->fichinter->enabled)
-	    {
-	      print "<TD align=\"center\"><a href=\"../fichinter/fiche.php?socidp=$obj->idp&action=create\">[Fiche Inter]</A></td>\n";
-	    }
-	  else
-	    {
-	      print "<TD>&nbsp;</TD>\n";
-	    }
-	}
-      else
-	{
-	  print "<TD>&nbsp;</TD>\n";
-	  print "<TD>&nbsp;</TD>\n";
-	}
-      print "</TR>\n";
+      print "<td>".$obj->ville."&nbsp;</td>\n";
+      print "</tr>\n";
       $i++;
     }
   print "</TABLE>";
