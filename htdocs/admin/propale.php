@@ -29,7 +29,7 @@ if ($_POST["action"] == 'nbprod')
 {
   dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$value);
 	
-  Header("Location: $PHP_SELF");
+  Header("Location: propale.php");
 }
 
 llxHeader();
@@ -139,7 +139,7 @@ if ($handle)
 	  else
 	    {
 		  print '<td>&nbsp;</td>';
-		  print '<td align="center"><a href="'.$PHP_SELF.'?action=setmod&amp;value='.$file.'">activer</a></td>';
+		  print '<td align="center"><a href="propale.php?action=setmod&amp;value='.$file.'">activer</a></td>';
 	    }
 	  
 	  print '</tr>';
@@ -244,6 +244,21 @@ while (($file = readdir($handle))!==false)
 closedir($handle);
 
 print '</table>';
+
+/*
+ *  Repertoire
+ */
+print '<br>';
+print_titre("Chemins d'accés aux documents");
+
+print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
+print '<tr class="liste_titre">';
+print '<td>Nom</td><td>Valeur</td>';
+print "</tr>\n";
+print '<tr '.$bc[True].'><td width=\"140\">Répertoire</td><td>'.PROPALE_OUTPUTDIR.'</td></tr>';
+print "</table><br>";
+
+
 
 /*
  *
