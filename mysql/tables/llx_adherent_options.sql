@@ -29,7 +29,9 @@ create table llx_adherent_options
 (
   optid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,
-  adhid            integer NOT NULL -- id de l'adherent auquel correspond ces attributs optionnel 
+  adhid            integer NOT NULL, -- id de l'adherent auquel correspond ces attributs optionnel 
 --  telfixe	   varchar(15),
 --  teljob	   varchar(15)
+
+  UNIQUE INDEX(adhid)
 );

@@ -234,7 +234,23 @@ class Adherent
       $sql .= " WHERE rowid = $this->id";
       
       $result = $this->db->query($sql);
-      
+    
+      if (!$result)
+	{
+	  print $this->db->error();
+	  print "<h2><br>$sql<br></h2>";
+	  return 0;
+	}
+      if(sizeof($this->array_options) > 0 ){
+	$sql = "REPLACE INTO llx_adherent_options SET adhid = $this->id";
+	foreach($this->array_options as $key => $value){
+	  // recupere le nom de l'attribut
+	  $attr=substr($key,8);
+	  $sql.=",$attr = '".$this->array_options[$key]."'";
+	}
+	$result = $this->db->query($sql);
+      }
+	
       if ($result) 
 	{
 	  return 1;
@@ -263,6 +279,14 @@ class Adherent
 	  {
 
 	    $sql = "DELETE FROM llx_cotisation WHERE fk_adherent = $rowid";
+	    if ( $this->db->query( $sql) )
+	      {
+		if ( $this->db->affected_rows() )
+		  {
+		    $result = 1;
+		  }
+	      }
+	    $sql = "DELETE FROM llx_adherent_options WHERE adhid = $rowid";
 	    if ( $this->db->query( $sql) )
 	      {
 		if ( $this->db->affected_rows() )
