@@ -21,7 +21,8 @@
  *
  */
 
-/**     \defgroup   stock     Module stock
+/**
+        \defgroup   stock     Module stock
         \brief      Module pour gérer la tenue de stocks produits
 */
 
@@ -33,7 +34,8 @@
 
 include_once "DolibarrModules.class.php";
 
-/** \class modStock
+/**
+        \class      modStock
 		\brief      Classe de description et activation du module Stock
 */
 
@@ -82,6 +84,41 @@ class modStock extends DolibarrModules
     */
   function init()
   {
+    $this->rights[0][0] = 1001;
+    $this->rights[0][1] = 'Lire les stocks';
+    $this->rights[0][2] = 'r';
+    $this->rights[0][3] = 1;
+    $this->rights[0][4] = 'lire';
+    $this->rights[0][5] = '';
+
+    $this->rights[1][0] = 1002;
+    $this->rights[1][1] = 'Créer/Modifier les stocks';
+    $this->rights[1][2] = 'w';
+    $this->rights[1][3] = 0;
+    $this->rights[1][4] = 'creer';
+    $this->rights[1][5] = '';
+
+    $this->rights[2][0] = 1003;
+    $this->rights[2][1] = 'Supprimer les stocks';
+    $this->rights[2][2] = 'd';
+    $this->rights[2][3] = 0;
+    $this->rights[2][4] = 'supprimer';
+    $this->rights[2][5] = '';
+
+    $this->rights[3][0] = 1004;
+    $this->rights[3][1] = 'Lire mouvements de stocks';
+    $this->rights[3][2] = 'r';
+    $this->rights[3][3] = 1;
+    $this->rights[3][4] = 'mouvement';
+    $this->rights[3][5] = 'lire';
+
+    $this->rights[4][0] = 1005;
+    $this->rights[4][1] = 'Créer/modifier mouvements de stocks';
+    $this->rights[4][2] = 'w';
+    $this->rights[4][3] = 0;
+    $this->rights[4][4] = 'mouvement';
+    $this->rights[4][5] = 'creer';
+
     $sql = array();
     
     return $this->_init($sql);
