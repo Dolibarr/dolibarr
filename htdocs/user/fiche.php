@@ -115,7 +115,7 @@ if ($action == 'create')
   print '<p><form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
 
-  print '<table class="tablefuser" border="1" cellpadding="3" cellspacing="0">';
+  print '<table class="border" border="1" cellpadding="3" cellspacing="0">';
 
   print "<tr>".'<td valign="top">Prénom</td>';
   print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
@@ -166,7 +166,7 @@ else
 	{
 	  print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
 	  print '<input type="hidden" name="action" value="confirm_delete">';
-	  print '<table class="tablefuser" cellspacing="0" border="1" width="100%" cellpadding="3">';
+	  print '<table class="border" cellspacing="0" border="1" width="100%" cellpadding="3">';
 	  
 	  print "<tr>".'<td colspan="3">Supprimer cet utilisateur</td></tr>';	      
 	  print "<tr>".'<td class="delete">Etes-vous sur de vouloir supprimer cet utilisateur ?</td><td class="delete">';
@@ -187,7 +187,7 @@ else
 	   * Droits
 	   */
 
-	  print '<table class="tablefuser" width="100%" border="1" cellpadding="3" cellspacing="0">';
+	  print '<table class="border" width="100%" border="0" cellpadding="3" cellspacing="0">';
 	  
 	  print "<tr>".'<td width="25%" valign="top">Nom</td>';
 	  print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
@@ -223,7 +223,7 @@ else
 	  /*
 	   * Droits
 	   */
-	  print '<table class="tablefuser" width="100%" border="0" cellpadding="2" cellspacing="0">';
+	  print '<table class="noborder" width="100%" border="0" cellpadding="2" cellspacing="0">';
 	  $sql = "SELECT r.libelle, r.module FROM llx_rights_def as r, llx_user_rights as ur";
 	  $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.id ASC";
 	  $var = True;
@@ -256,7 +256,7 @@ else
        * Affichage
        */      
 
-      print '<table class="tablefuser" width="100%" border="1" cellpadding="3" cellspacing="0">';
+      print '<table class="border" width="100%" border="1" cellpadding="3" cellspacing="0">';
     
       print "<tr>".'<td width="25%" valign="top">Nom</td>';
       print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
@@ -374,7 +374,7 @@ else
 	  print '<hr><div class="titre">Edition de l\'utilisateur</div><br>';
 	  print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
 	  print '<input type="hidden" name="action" value="update">';
-	  print '<table class="tablefuser" border="1" cellpadding="3" cellspacing="0">';
+	  print '<table class="border" border="1" cellpadding="3" cellspacing="0">';
 	  
 	  print "<tr>".'<td valign="top">Nom</td>';
 	  print '<td><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td></tr>';

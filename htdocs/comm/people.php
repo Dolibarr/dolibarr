@@ -168,15 +168,15 @@ if ($socid > 0)
     {
       print "<form method=\"post\" action=\"people.php?socid=$socid\">";
       print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-      print "<table class=\"tablefuser\" border=0>";
+      print "<table class=\"noborder\" border=0>";
       print "<tr><td>Nom</td><td><input name=\"name\" type=\"text\" size=\"20\" maxlength=\"80\"></td>";
       print "<td>Prenom</td><td><input name=\"firstname\" type=\"text\" size=\"15\" maxlength=\"80\"></td></tr>";
       print "<tr><td>Poste</td><td colspan=\"3\"><input name=\"poste\" type=\"text\" size=\"50\" maxlength=\"80\"></td></tr>";
       print "<tr><td>Tel</td><td><input name=\"phone\" type=\"text\" size=\"18\" maxlength=\"80\"></td>";
       print "<td>Fax</td><td><input name=\"fax\" type=\"text\" size=\"18\" maxlength=\"80\"></td></tr>";
       print "<tr><td>Email</td><td colspan=\"3\"><input name=\"email\" type=\"text\" size=\"50\" maxlength=\"80\"></td></tr>";
+      print "<tr><td align=\"center\" colspan=\"4\"><input type=\"submit\" value=\"Ajouter\"></td></tr>";
       print "</table>";
-      print "<input type=\"submit\" value=\"Ajouter\">";
       print "</form>";
     }
   /*
@@ -199,7 +199,7 @@ if ($socid > 0)
       print "<form method=\"post\" action=\"people.php?socid=$socid\">";
       print '<input type="hidden" name="action" value="update">';
       print "<input type=\"hidden\" name=\"contactid\" value=\"$contactid\">";
-      print '<br><table class="tablefuser" border="1" cellpadding="4" cellspacing="0">';
+      print '<br><table class="border" border="1" cellpadding="4" cellspacing="0">';
       print "<tr><td>Nom</td><td><input name=\"name\" type=\"text\" size=\"20\" maxlength=\"80\" value=\"$obj->name\"></td>";
       print "<td>Prenom</td><td><input name=\"firstname\" type=\"text\" size=\"15\" maxlength=\"80\" value=\"$obj->firstname\"></td></tr>";
       print "<tr><td>Poste</td><td colspan=\"3\"><input name=\"poste\" type=\"text\" size=\"50\" maxlength=\"80\" value=\"$obj->poste\"></td></tr>";
