@@ -64,7 +64,7 @@ $pagenext = $page + 1;
  */
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datea")." as datea";
-$sql .= " ,cf.rowid,cf.ref";
+$sql .= " ,cf.rowid,cf.ref, cf.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s ";
 $sql .= " , ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 $sql .= " WHERE cf.fk_soc = s.idp ";
@@ -104,7 +104,7 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.img_file().'</a>';
+      print '<td><img src="statut'.$obj->fk_statut.'.png">';
       print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.$obj->ref.'</a></td>'."\n";
       print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">'.img_file().'</a>';
       print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>'."\n";

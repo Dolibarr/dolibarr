@@ -39,7 +39,7 @@ print_barre_liste("Commandes fournisseurs", $page, "index.php", "", $sortfield, 
 print '<table class="noborder" width="100%">';
 print '<tr><td width="30%">';
 
-$sql = "SELECT count(cf.rowid)";
+$sql = "SELECT count(cf.rowid), fk_statut";
 $sql .= " ,cf.rowid,cf.ref";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s ";
 $sql .= " , ".MAIN_DB_PREFIX."commande_fournisseur as cf";
@@ -57,7 +57,7 @@ if ($result)
   $i = 0;
   
   print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre">Nb</td>';
+  print '<tr class="liste_titre"><td>Statut</td><td align="center">Nb</td>';
   print "</tr>\n";
   $var=True;
 
@@ -67,8 +67,8 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td>'.$row[0].'</td>';
-
+      print '<td><img src="statut'.$row[1].'.png"></td>';
+      print '<td align="center">'.$row[0].'</td>';
       print "</tr>\n";
       $i++;
     }
