@@ -148,8 +148,17 @@ else
 
       print '<br><table width="100%" border="1" cellspacing="0" cellpadding="2">';
 
-      print '<td width="25%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+      if ($user->admin) 
+	{
+	  print '<td width="25%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+	}
+      else
+	{
+	  print '<td width="25%" align="center">-</td>';
+	}
+
       print '<td width="25%" align="center">-</td>';
+
       print '<td width="25%" align="center">[<a href="fiche.php3?action=password&id='.$id.'">Nouveau mot de passe</a>]</td>';
       print '<td width="25%" align="center">-</td>';
       
