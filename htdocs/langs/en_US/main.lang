@@ -86,3 +86,5 @@ Ref=Ref.
 Comments=Comments
 ActionsDone=Actions Done
 ActionsToDo=Actions To Do
+Filter=Filter
+RemoveFilter=Remove filter
