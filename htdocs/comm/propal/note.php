@@ -77,14 +77,14 @@ if ($_GET["propalid"])
 	  $h = 1;
 	  $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
 	  $head[$h][1] = "Note";
-	  $a = 1;
+	  $hselected = 1;
 	  $h++;
 	  $head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
 	  $head[$h][1] = "Info";
 	   
-	  dolibarr_fiche_head($head, $a, $societe->nom);
+	  dolibarr_fiche_head($head, $hselected, $societe->nom);
                   	  
-	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
+	  print '<table class="border" width="100%">';
 	  
 	  print '<tr><td>Société</td><td>';
 	  if ($societe->client == 1)
@@ -123,7 +123,7 @@ if ($_GET["propalid"])
 
 
 	  print "</table>";
-
+      print '<br>';
 
 	  /*
 	   * Actions
