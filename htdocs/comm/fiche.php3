@@ -127,13 +127,15 @@ if ($socid > 0) {
 
   $result = $db->query($sql);
 
-  if ($result) {
-    $objsoc = $db->fetch_object(0);
+  if ($result)
+    {
+      $objsoc = $db->fetch_object(0);
 
-    $dac = strftime("%Y-%m-%d %H:%M", time());
-    if ($errmesg) {
-      print "<b>$errmesg</b><br>";
-    }
+      $dac = strftime("%Y-%m-%d %H:%M", time());
+      if ($errmesg)
+	{
+	  print "<b>$errmesg</b><br>";
+	}
 
     /*
      *
@@ -266,7 +268,6 @@ if ($socid > 0) {
      *
      */
     if ($action == 'changevalue') {
-
       print "<HR noshade>";
       print "<form action=\"index.php3?socid=$objsoc->idp\" method=\"post\">";
       print "<input type=\"hidden\" name=\"action\" value=\"cabrecrut\">";
@@ -284,26 +285,24 @@ if ($socid > 0) {
        * Liste des contacts
        *
        */
-      print '<table width="100%" cellspacing="0" border="0" cellpadding="0" bgcolor="#000000"><tr><td>';
-      
       print '<table width="100%" cellspacing="1" border="0" cellpadding="2">';
 
-      print "<tr class=\"liste_titre\"><td>Pr&eacute;nom Nom</td>";
-      print '<td><b>Poste</b></td><td>T&eacute;l</td>';
-      print "<td><b>Fax</b></td><td>Email</td>";
-      print "<td><a href=\"people.php3?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
+      print '<tr class="liste_titre"><td>Pr&eacute;nom Nom</td>';
+      print '<td>Poste</td><td>T&eacute;l</td>';
+      print "<td>Fax</td><td>Email</td>";
+      print "<td align=\"center\"><a href=\"people.php3?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
     
       $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
       $result = $db->query($sql);
       $i = 0 ; $num = $db->num_rows(); $tag = True;
-      while ($i < $num) {
+      while ($i < $num)
+	{
 	$obj = $db->fetch_object( $i);
 	$var = !$var;
 	print "<tr $bc[$var]>";
 
 	print '<td>';
-	//print '<a href="action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">';
-	//print '<img border="0" src="/theme/'.$conf->theme.'/img/filenew.png"></a>&nbsp;';
+
 	print '<a href="action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
 	if ($obj->note)
@@ -315,14 +314,14 @@ if ($socid > 0) {
 	print '<td><a href="action/fiche.php3?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
 	print '<td><a href="action/fiche.php3?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
 	print '<td><a href="action/fiche.php3?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
-	print "<td><a href=\"people.php3?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
+	print "<td align=\"center\"><a href=\"people.php3?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
 	print "</tr>\n";
 	$i++;
 	$tag = !$tag;
       }
       print "</table>";
-      print '</td></tr></table>';
-      print "\n<hr noshade size=1>\n";
+
+      print "<p />";
 
       /*
        *
