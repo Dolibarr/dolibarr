@@ -22,7 +22,7 @@
 
 require("./pre.inc.php");
 
-llxHeader('','Expéditions','',$form_search);
+llxHeader('','Expéditions','ch-expedition.html',$form_search);
 
 print_titre("Expeditions");
 
