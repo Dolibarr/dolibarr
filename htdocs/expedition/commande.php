@@ -228,7 +228,16 @@ if ($_GET["id"] > 0)
 	  $html->select_array("entrepot_id",$entrepot->list_array());
 	  print '</td></tr>';
 	  */
-	  print '<tr><td colspan="4" align="center"><input type="submit" value="Créer"></td></tr>';
+	  print '<tr><td colspan="4" align="center">';
+	  if (sizeof($entrepot->list_array()))
+	    {
+	      print '<input type="submit" value="Créer">';
+	    }
+	  else
+	    {
+	      print 'Aucun entrpôt définit, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">definissez en un</a>';
+	    }
+	  print '</td></tr>';
 	}
       print "</table>";
       print "</form>\n";
@@ -294,10 +303,10 @@ if ($_GET["id"] > 0)
       $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
       $sql .= " WHERE cd.fk_commande = ".$commande->id." AND cd.rowid = ed.fk_commande_ligne AND ed.fk_expedition = e.rowid";
       $sql .= " ORDER BY cd.fk_product";
-      $result = $db->query($sql);
-      if ($result)
+      $resql = $db->query($sql);
+      if ($resql)
 	{
-	  $num = $db->num_rows();
+	  $num = $db->num_rows($resql);
 	  $i = 0; $total = 0;
 	      
 	  if ($num)
@@ -313,7 +322,7 @@ if ($_GET["id"] > 0)
 	      $var=True;
 	      while ($i < $num)
 		{
-		  $objp = $db->fetch_object();
+		  $objp = $db->fetch_object($resql);
 		  print "<TR $bc[$var]>";
 		  if ($objp->fk_product > 0)
 		    {
