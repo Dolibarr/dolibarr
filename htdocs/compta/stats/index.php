@@ -20,11 +20,25 @@
  * $Source$
  *
  */
+
+/**
+        \file        htdocs/compta/stats/index.php
+        \brief       Page reporting CA
+        \version     $Revision$
+*/
+
 require("./pre.inc.php");
 
-/*
- *
- */
+$year_start=isset($_GET["year_start"])?$_GET["year_start"]:$_POST["year_start"];
+$year_current = strftime("%Y",time());
+if (! $year_start) {
+    $year_start = $year_current - 2;
+    $year_end = $year_current;
+}
+else {
+    $year_end=$year_start+2;   
+}
+
 
 llxHeader();
 
@@ -40,7 +54,10 @@ $mode='recettes';
 if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
 
 
-print_titre("Chiffre d'affaire (".$conf->monnaie." HT, ".$mode.")");
+$title="Chiffre d'affaire (".$conf->monnaie." HT, ".$mode.")";
+$lien=($year_start?"<a href='index.php?year_start=".($year_start-1)."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."'>".img_next()."</a>":"");
+print_fiche_titre($title,$lien);
+
 print '<br>';
 
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
@@ -70,20 +87,6 @@ if ($result)
 
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre"><td rowspan="2">'.$langs->trans("Month").'</td>';
-
-$year_current = strftime("%Y",time());
-$nbyears = 3;
-
-if ($year_current < (MAIN_START_YEAR + $nbyears))
-{
-  $year_start = MAIN_START_YEAR;
-  $year_end = (MAIN_START_YEAR + $nbyears - 1);
-}
-else
-{
-  $year_start = $year_current - ($nbyears + 1);
-  $year_end = $year_current ;
-}
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
