@@ -33,6 +33,7 @@ BillStatusCanceled=Abandonned
 BillStatusValidated=Validated (need to be payed)
 BillStatusStarted=Started
 BillStatusNotPayed=Not payed
+BillShortStatusDraft=Draft
 ErrorVATIntraNotConfigured=Intracommunautary VAT number not yet defined
 ErrorNoPaiementModeConfigured=No paiment mode yet defined
 ErrorCreateBankAccount=Creat a bank account then go to Setup panel of Bill module to define paiement modes
