@@ -75,11 +75,11 @@ if ($result)
         print '<td>'.ucfirst($obj->firstname).'</td>';
         if ($obj->login)
         {
-            print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_file().' '.$obj->login.'</a></td>';
+            print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a></td>';
         }
         else
         {
-            print '<td><a class="impayee" href="fiche.php?id='.$obj->rowid.'">'.img_file().' Inactif</a></td>';
+            print '<td><a class="impayee" href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' Inactif</a></td>';
         }
         print '<td>'.$obj->code.'</td>';
         print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"%d %b %Y").'</td>';

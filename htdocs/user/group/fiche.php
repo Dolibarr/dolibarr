@@ -33,6 +33,7 @@ $langs->load("users");
 
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
+
 /**
  *  Action ajout
  */
@@ -170,7 +171,7 @@ else
 
       $uss = array();
      
-      // On sélectionne les user qui ne sont pas déjà dans le groupe 
+      // On sélectionne les users qui ne sont pas déjà dans le groupe 
       $sql = "SELECT u.rowid, u.name, u.firstname, u.code ";
       $sql .= " FROM ".MAIN_DB_PREFIX."user as u ";
       $sql .= " LEFT JOIN llx_usergroup_user ug ON u.rowid = ug.fk_user";
@@ -201,7 +202,7 @@ else
 	  print '<form action="fiche.php?id='.$group->id.'" method="post">'."\n";
 	  print '<input type="hidden" name="action" value="adduser">';
 	  print '<table class="noborder" width="100%">'."\n";
-	  print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Users").'</td>'."\n";
+	  print '<tr class="liste_titre"><td width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
 	  print '<td>';
 	  print $form->select_array("user",$uss);
 	  print '</td><td align="left">';

@@ -73,7 +73,7 @@ if ($result)
   
   print "<table class=\"noborder\" width=\"100%\">";
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("LastName"),"index.php","g.nom","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Group"),"index.php","g.nom","","","",$sortfield);
   print_liste_field_titre($langs->trans("DateCreation"),"index.php","g.datec","","","",$sortfield);
   print "</tr>\n";
   $var=True;
@@ -83,7 +83,7 @@ if ($result)
       $var=!$var;
       
       print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_file().' '.$obj->nom.'</a></td>';
+      print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a></td>';
       print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"%d %b %Y").'</td>';
       print "</tr>\n";
       $i++;
