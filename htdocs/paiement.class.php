@@ -185,21 +185,21 @@ class Paiement
       }
   }
 
-  /*
-   *
-   *
-   *
+  /**
+   *    \brief      Affiche la liste des modes de paiement possible
+   *    \param      name        nom du champ select
+   *    \param      filtre      filtre sur un sens de paiement particulier, norme ISO (CRDT=Mode propre à un crédit, DBIT=mode propre à un débit)
+   *    \param      id          ???
    */
-	 
   function select($name, $filtre='', $id='')
   {
     $form = new Form($this->db);
 
-    if ($filtre == 'crédit')
+    if ($filtre == 'CRDT')
       {
 	$sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement WHERE type IN (0,2) ORDER BY libelle";
       }
-    elseif ($filtre == 'débit')
+    elseif ($filtre == 'DBIT')
       {
 	$sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement WHERE type IN (1,2) ORDER BY libelle";
       }
