@@ -233,7 +233,7 @@ class Contact
    */
   Function fetch($id, $user=0) 
     {
-      $sql = "SELECT c.idp, c.fk_soc, c.name, c.firstname, c.email, phone, phone_perso, phone_mobile, jabberid, c.birthday, c.birthday_alert, c.note, poste";
+      $sql = "SELECT c.idp, c.fk_soc, c.name, c.firstname, c.email, phone, phone_perso, phone_mobile, jabberid, c.birthday, c.note, poste";
       $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
       $sql .= " WHERE c.idp = $id";
       
