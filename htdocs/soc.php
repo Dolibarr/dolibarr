@@ -460,7 +460,7 @@ else
 
       print '<div class="tabsAction">';
       
-
+      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">Maison mère</a>';
 
       print '<a class="tabAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
       
@@ -468,9 +468,6 @@ else
 
       if ($user->rights->societe->supprimer)
 	{	  
-
-	  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">Maison mère</a>';
-
 	  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 
 	}
