@@ -20,15 +20,16 @@
  *
  */
 
-print '<input type="hidden" name="projetid" value="'.$HTTP_POST_VARS["projetid"].'">';
-print '<input type="hidden" name="nom"      value="'.$HTTP_POST_VARS["nom"].'">';
-print '<input type="hidden" name="adresse"  value="'.$HTTP_POST_VARS["adresse"].'">';
-print '<input type="hidden" name="cp"       value="'.$HTTP_POST_VARS["cp"].'">';
-print '<input type="hidden" name="ville"    value="'.$HTTP_POST_VARS["ville"].'">';
-print '<input type="hidden" name="date"     value="'.$HTTP_POST_VARS["date"].'">';
-print '<input type="hidden" name="public"   value="'.$HTTP_POST_VARS["public"].'">';
-print '<input type="hidden" name="email"    value="'.$HTTP_POST_VARS["email"].'">';
-print '<input type="hidden" name="montant"  value="'.$HTTP_POST_VARS["montant"].'">';
+print '<input type="hidden" name="projetid"    value="'.$HTTP_POST_VARS["projetid"].'">';
+print '<input type="hidden" name="nom"         value="'.$HTTP_POST_VARS["nom"].'">';
+print '<input type="hidden" name="adresse"     value="'.$HTTP_POST_VARS["adresse"].'">';
+print '<input type="hidden" name="cp"          value="'.$HTTP_POST_VARS["cp"].'">';
+print '<input type="hidden" name="ville"       value="'.$HTTP_POST_VARS["ville"].'">';
+print '<input type="hidden" name="date"        value="'.$HTTP_POST_VARS["date"].'">';
+print '<input type="hidden" name="public"      value="'.$HTTP_POST_VARS["public"].'">';
+print '<input type="hidden" name="email"       value="'.$HTTP_POST_VARS["email"].'">';
+print '<input type="hidden" name="montant"     value="'.$HTTP_POST_VARS["montant"].'">';
+print '<input type="hidden" name="commentaire" value="'.$HTTP_POST_VARS["commentaire"].'">';
 
 
 ?>

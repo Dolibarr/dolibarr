@@ -1,0 +1,31 @@
+#
+#
+# Sample httpd.public.conf for dolibarr
+#
+# $Id$
+# $Source$
+#
+<VirtualHost public-doli.lafrere.lan>
+  ServerAdmin webmaster.fr@lolix.org
+  DocumentRoot /spare/home/www/dolibarr/dolibarr/htdocs
+  ServerName public-doli.lafrere.lan
+  ErrorLog  /spare/home/www/dolibarr/logs/error.log
+  CustomLog /spare/home/www/dolibarr/logs/access.log combined
+
+  ErrorDocument 401 /public/error-401.html
+
+  <Location />
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Order deny,allow
+    Allow from all
+  </Location>
+
+  <Location /public/>
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Order deny,allow
+    Allow from all
+  </Location>
+
+</VirtualHost>

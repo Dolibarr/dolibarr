@@ -44,12 +44,14 @@ if ($result)
 	  $user = new User($db);
 
 	  $user->login = "admin";
-
+	  $user->admin = 1;
 	  $user->create();
 
 	  $user->id = 1;
 
 	  $user->password("admin");
+
+	  print "Compte admin/admin créé";
 	}
     }
 }

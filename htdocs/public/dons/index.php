@@ -24,69 +24,77 @@ require("../../don.class.php");
 require("../../lib/mysql.lib.php3");
 require("../../conf/conf.class.php3");
 
-if ($HTTP_POST_VARS["action"] == 'add')
+$conf = new Conf();
+
+if ($conf->don->enabled)
 {
 
-  $conf = new Conf();
-  $db = new Db();
-  $don = new Don($db);
-  
-  $don->projetid = $HTTP_POST_VARS["projetid"];
-  $don->date     = time();
-  $don->nom      = $HTTP_POST_VARS["nom"];
-  $don->adresse  = $HTTP_POST_VARS["adresse"];
-  $don->cp       = $HTTP_POST_VARS["cp"];
-  $don->ville    = $HTTP_POST_VARS["ville"];
-  $don->public   = $HTTP_POST_VARS["public"];
-  $don->email    = $HTTP_POST_VARS["email"];
-  $don->amount   = $HTTP_POST_VARS["montant"];
-  
-  
-  if ($don->check())
+  if ($HTTP_POST_VARS["action"] == 'add')
     {
-      require("valid.php");
-    }
-  else
-    {
-      require("erreur.php");
-    }
 
-
-}
-elseif ($HTTP_POST_VARS["action"] == 'valid')
-{
-  $conf = new Conf();
-  $db = new Db();
-  $don = new Don($db);
-  
-  $don->projetid = $HTTP_POST_VARS["projetid"];
-  $don->date     = time();
-  $don->nom      = $HTTP_POST_VARS["nom"];
-  $don->adresse  = $HTTP_POST_VARS["adresse"];
-  $don->cp       = $HTTP_POST_VARS["cp"];
-  $don->ville    = $HTTP_POST_VARS["ville"];
-  $don->public   = $HTTP_POST_VARS["public"];
-  $don->email    = $HTTP_POST_VARS["email"];
-  $don->amount   = $HTTP_POST_VARS["montant"];
-  
-  
-  if ($don->check())
-    {
-      $return = $don->create(0);
-
-      if ($return)
+      $db = new Db();
+      $don = new Don($db);
+      
+      $don->projetid    = $HTTP_POST_VARS["projetid"];
+      $don->date        = time();
+      $don->nom         = $HTTP_POST_VARS["nom"];
+      $don->adresse     = $HTTP_POST_VARS["adresse"];
+      $don->cp          = $HTTP_POST_VARS["cp"];
+      $don->ville       = $HTTP_POST_VARS["ville"];
+      $don->public      = $HTTP_POST_VARS["public"];
+      $don->email       = $HTTP_POST_VARS["email"];
+      $don->amount      = $HTTP_POST_VARS["montant"];
+      $don->commentaire = $HTTP_POST_VARS["commentaire"];
+      
+      
+      if ($don->check())
 	{
-	  require("merci.php");
+	  require("valid.php");
+	}
+      else
+	{
+	  require("erreur.php");
+	}     
+    }
+  elseif ($HTTP_POST_VARS["action"] == 'valid')
+    {
+
+      $db = new Db();
+      $don = new Don($db);
+  
+      $don->projetid = $HTTP_POST_VARS["projetid"];
+      $don->date     = time();
+      $don->nom      = $HTTP_POST_VARS["nom"];
+      $don->adresse  = $HTTP_POST_VARS["adresse"];
+      $don->cp       = $HTTP_POST_VARS["cp"];
+      $don->ville    = $HTTP_POST_VARS["ville"];
+      $don->public   = $HTTP_POST_VARS["public"];
+      $don->email    = $HTTP_POST_VARS["email"];
+      $don->amount   = $HTTP_POST_VARS["montant"];
+      $don->commentaire = $HTTP_POST_VARS["commentaire"];      
+      
+      if ($don->check())
+	{
+	  $return = $don->create(0);
+	  
+	  if ($return)
+	    {
+	      require("merci.php");
+	    }
+	}
+      else
+	{
+	  require("erreur.php");
 	}
     }
   else
     {
-      require("erreur.php");
+      require("don.php");
     }
 }
 else
 {
-require("don.php");
+  print "Cette fonctionnalité n'est pas activé sur ce site";
 }
 
 

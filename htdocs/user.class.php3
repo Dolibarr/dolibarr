@@ -124,6 +124,8 @@ class User {
 		{
 		  if ($this->db->affected_rows()) 
 		    {
+		      $this->id = $this->db->last_insert_id();
+		      $this->update();
 		      return 1;		      
 		    }
 		}

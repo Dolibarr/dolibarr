@@ -45,12 +45,8 @@ if ($action == 'add') {
 }
 
 
-if ($sortorder == "") {
-  $sortorder="DESC";
-}
-if ($sortfield == "") {
-  $sortfield="d.datedon";
-}
+if ($sortorder == "") {  $sortorder="DESC"; }
+if ($sortfield == "") {  $sortfield="d.datedon"; }
 
 if ($page == -1) { $page = 0 ; }
 
@@ -70,7 +66,7 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Dons", $page, $PHP_SELF);
+  print_barre_liste("Dons", $page, $PHP_SELF, "&statut=$statut");
   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
   print '<TR class="liste_titre">';
@@ -87,7 +83,7 @@ if ($result)
       $objp = $db->fetch_object( $i);
       $var=!$var;
       print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">$objp->nom</a></TD>\n";
+      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->nom)."</a></TD>\n";
       print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->datedon)."</a></td>\n";
       print "<TD>$objp->projet</TD>\n";
       print '<TD align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';
@@ -99,6 +95,7 @@ if ($result)
 }
 else
 {
+  print $sql;
   print $db->error();
 }
 

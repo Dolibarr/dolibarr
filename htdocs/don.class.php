@@ -34,7 +34,8 @@ class Don
   var $public;
   var $projetid;
   var $modepaiement;
-  var $note;
+  var $modepaiementid;
+  var $commentaire;
   var $statut;
 
   var $projet;
@@ -51,7 +52,7 @@ class Don
   Function Don($DB, $soc_idp="") 
     {
       $this->db = $DB ;
-      $this->modepaiement = 0;
+      $this->modepaiementid = 0;
     }
   /*
    *
@@ -126,7 +127,7 @@ class Don
       $this->date = $this->db->idate($this->date);
 
       $sql = "INSERT INTO llx_don (datec, amount, fk_paiement, nom, adresse, cp, ville, pays, public, fk_don_projet, note, fk_user_author, datedon)";
-      $sql .= " VALUES (now(), $this->amount, $this->modepaiement,'$this->nom','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, $this->projetid, '$this->note', $userid, '$this->date')";
+      $sql .= " VALUES (now(), $this->amount, $this->modepaiementid,'$this->nom','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, $this->projetid, '$this->commentaire', $userid, '$this->date')";
       
       $result = $this->db->query($sql);
       
@@ -176,9 +177,9 @@ class Don
    */
   Function fetch($rowid)
   {
-    $sql = "SELECT d.rowid, ".$this->db->pdate("d.datedon")." as datedon, d.nom, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.public, d.amount, d.fk_paiement";
-    $sql .= " FROM llx_don as d, llx_don_projet as p";
-    $sql .= " WHERE p.rowid = d.fk_don_projet AND d.rowid = $rowid";
+    $sql = "SELECT d.rowid, ".$this->db->pdate("d.datedon")." as datedon, d.nom, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.public, d.amount, d.fk_paiement, d.note, cp.libelle";
+    $sql .= " FROM llx_don as d, llx_don_projet as p, c_paiement as cp";
+    $sql .= " WHERE p.rowid = d.fk_don_projet AND cp.id = d.fk_paiement AND d.rowid = $rowid";
 
     if ( $this->db->query( $sql) )
       {
@@ -187,16 +188,18 @@ class Don
 
 	    $obj = $this->db->fetch_object(0);
 
-	    $this->date       = $obj->datedon;
-	    $this->nom        = $obj->nom;
-	    $this->statut     = $obj->fk_statut;
-	    $this->adresse    = $obj->adresse;
-	    $this->cp         = $obj->cp;
-	    $this->ville      = $obj->ville;
-	    $this->projet     = $obj->projet;
-	    $this->public     = $obj->public;
-	    $this->modepaiement = $obj->modepaiement;
-	    $this->amount     = $obj->amount;
+	    $this->date           = $obj->datedon;
+	    $this->nom            = stripslashes($obj->nom);
+	    $this->statut         = $obj->fk_statut;
+	    $this->adresse        = stripslashes($obj->adresse);
+	    $this->cp             = stripslashes($obj->cp);
+	    $this->ville          = stripslashes($obj->ville);
+	    $this->projet         = $obj->projet;
+	    $this->public         = $obj->public;
+	    $this->modepaiementid = $obj->fk_paiement;
+	    $this->modepaiement   = $obj->libelle;
+	    $this->amount         = $obj->amount;
+	    $this->commentaire    = stripslashes($obj->note);
 	  }
       }
     else
@@ -235,10 +238,15 @@ class Don
    * Classé comme payé, le don a été recu
    *
    */
-  Function set_paye($rowid)
+  Function set_paye($rowid, $modepaiement='')
   {
+    $sql = "UPDATE llx_don SET fk_statut = 2";
 
-    $sql = "UPDATE llx_don SET fk_statut = 2 WHERE rowid = $rowid AND fk_statut = 1;";
+    if ($modepaiement)
+      {
+	$sql .= ", fk_paiement=$modepaiement";
+      }
+    $sql .=  " WHERE rowid = $rowid AND fk_statut = 1;";
 
     if ( $this->db->query( $sql) )
       {

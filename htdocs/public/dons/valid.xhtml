@@ -38,31 +38,31 @@
 	  
 	  <tr id="nom">
 	    <script language="php">
-	      print $don->nom;
+	      print stripslashes($don->nom);
 	    </script>
 	  </tr>
 	  
 	  <tr id="adresse">
 	    <script language="php">
-	      print $don->adresse;
+	      print stripslashes($don->adresse);
 	    </script>
 	  </tr>
 	  
 	  <tr id="cp">
 	    <script language="php">
-	      print $don->cp;
+	      print stripslashes($don->cp);
 	    </script>
 	  </tr>
 
 	  <tr id="ville">
 	    <script language="php">
-	      print $don->ville;
+	      print stripslashes($don->ville);
 	    </script>
 	  </tr>
 	  
 	  <tr id="email">
 	    <script language="php">
-	      print $don->email;
+	      print stripslashes($don->email);
 	    </script>
 	  </tr>
 	  
@@ -74,7 +74,7 @@
 	  
 	  <tr id="commentaire">
 	    <script language="php">
-	      nl2br(print $don->note);
+	      nl2br(print stripslashes($don->commentaire));
 	    </script>	    
 	  </tr>
 

@@ -60,7 +60,7 @@ function llxHeader($head = "") {
       $menu->add("/fichinter/", "Fiches d'intervention");
     }
 
-  if ($conf->produit->enabled ) 
+  if ($conf->produit->enabled )
     {
       $menu->add("/product/", "Produits");
     }

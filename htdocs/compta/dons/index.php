@@ -63,14 +63,7 @@ for ($i = 0 ; $i < 4 ; $i++)
 {
   $var=!$var;
   print "<TR $bc[$var]>";
-  if ($somme[$i])
-    {
-      print '<TD><a href="liste.php?statut='.$i.'">'.$libelle[$i].'</a></TD>';
-    }
-  else
-    {
-      print '<TD>'.$libelle[$i].'</TD>';
-    }
+  print '<TD><a href="liste.php?statut='.$i.'">'.$libelle[$i].'</a></TD>';
   print '<TD align="right">'.price($somme[$i]).'</TD>';
   print "</tr>";
 }
