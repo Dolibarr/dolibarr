@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,41 +106,50 @@ class Facture {
    *
    *
    */
-  Function fetch($rowid) {
+  Function fetch($rowid)
+    {
 
-    $sql = "SELECT ref,price,remise,".$this->db->pdate(datep)."as dp FROM llx_facture WHERE rowid=$rowid;";
-
-    if ($this->db->query($sql) ) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object(0);
-
-	$this->id = $rowid;
-	$this->datep = $obj->dp;
-	$this->ref = $obj->ref;
-	$this->price = $obj->price;
-	$this->remise = $obj->remise;
-	
-	$this->db->free();
-      }
-    } else {
-      print $this->db->error();
-    }    
-  }
+      $sql = "SELECT ref,price,remise,".$this->db->pdate(datep)."as dp FROM llx_facture WHERE rowid=$rowid;";
+      
+      if ($this->db->query($sql) )
+	{
+	  if ($this->db->num_rows())
+	    {
+	      $obj = $this->db->fetch_object(0);
+	      
+	      $this->id = $rowid;
+	      $this->datep = $obj->dp;
+	      $this->ref = $obj->ref;
+	      $this->price = $obj->price;
+	      $this->remise = $obj->remise;
+	      
+	      $this->db->free();
+	    }
+	}
+      else
+	{
+	  print $this->db->error();
+	}    
+    }
   /*
    *
    *
    *
    */
-  Function valid($userid) {
-    $sql = "UPDATE llx_facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
-    $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-    
-    if ($this->db->query($sql) ) {
-      return 1;
-    } else {
-      print $this->db->error() . ' in ' . $sql;
+  Function valid($userid, $dir)
+    {
+      $sql = "UPDATE llx_facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
+      $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+      
+      if ($this->db->query($sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	}
     }
-  }
 
   /*
    * Suppression de la facture
@@ -159,7 +168,18 @@ class Facture {
 
 	      if ($this->db->query( $sql) )
 		{
-		  return 1;
+
+		  $sql = "DELETE FROM llx_facturedet WHERE fk_facture = $rowid;";
+
+		  if ($this->db->query( $sql) )
+		    {
+		      return 1;
+		    }
+		  else
+		    {
+		      print "Err : ".$this->db->error();
+		      return 0;
+		    }
 		}
 	      else
 		{
@@ -189,8 +209,73 @@ class Facture {
 
   Function set_valid($rowid, $userid)
     {
+      global $conf;
+
       $sql = "UPDATE llx_facture set fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid ;";
       $result = $this->db->query( $sql);
+
+      $dir = $conf->facture->outputdir . "/" . $rowid;
+
+      if (! is_dir ("$dir"))
+	{
+	  if (! mkdir ("$dir"))
+	    {
+	      print $dir;
+	    }
+	}
+    }
+  /*
+   *
+   *
+   */
+  Function addline($facid, $desc, $pu, $qty)
+    {
+      global $conf;
+
+      $sql = "INSERT INTO llx_facturedet (fk_facture,description,price,qty) VALUES ($facid, '$desc', $pu, $qty) ;";
+      $result = $this->db->query( $sql);
+
+      $this->updateprice($facid);
+    }
+  /*
+   *
+   *
+   */
+  Function deleteline($rowid)
+    {
+      $sql = "DELETE FROM llx_facturedet WHERE rowid = $rowid;";
+      $result = $this->db->query( $sql);
+
+      $this->updateprice($this->id);
+    }
+  /*
+   *
+   *
+   */
+  Function updateprice($facid)
+    {
+
+      $sql = "SELECT sum(price*qty) FROM llx_facturedet WHERE fk_facture = $facid;";
+  
+      $result = $this->db->query($sql);
+
+      if ($result)
+	{
+	  if ($this->db->num_rows() )
+	    {
+	      $row = $this->db->fetch_row();
+	      $totalht = $row[0];
+	    }
+
+	  $tva = tva($totalht);
+	  $total = $totalht + $tva;
+	  
+	  $sql = "UPDATE llx_facture SET amount = $totalht, tva=$tva, total=$total";
+	  $sql .= " WHERE rowid = $facid ;";
+	  
+	  $result = $this->db->query($sql);
+	  
+	}
     }
 
   /*
@@ -211,5 +296,5 @@ class Facture {
       print "<p>command : $command<br>";
     }
   
-}    
+}
 ?>

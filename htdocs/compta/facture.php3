@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +39,19 @@ if ($action == 'payed')
 {
   $fac = new Facture($db);
   $result = $fac->set_payed($facid);
+}
+
+if ($action == 'addligne') 
+{
+  $fac = new Facture($db);
+  $result = $fac->addline($facid,$HTTP_POST_VARS["desc"],$HTTP_POST_VARS["pu"],$HTTP_POST_VARS["qty"]);
+}
+
+if ($action == 'deleteline') 
+{
+  $fac = new Facture($db);
+  $fac->id = $facid;
+  $result = $fac->deleteline($rowid);
 }
 
 if ($action == 'delete') 
@@ -149,8 +162,11 @@ if ($action == 'create')
 	
 	print '<table cellspacing="0" border="1" width="100%">';
 	
-	print "<tr bgcolor=\"#e0e0e0\"><td>Société :</td><td>$obj->nom</td></tr>";
+	print "<tr bgcolor=\"#e0e0e0\"><td>Société :</td><td>$obj->nom</td>";
 	
+	print '<td rowspan="6">';
+	print '<textarea name="note" wrap="soft" cols="60" rows="15"></textarea></td></tr>';
+
 	if ($propalid)
 	  {
 	    $amount = ($obj->price - $obj->remise);
@@ -222,10 +238,11 @@ if ($action == 'create')
 	  }
 	print "</select></td></tr>";
 	print "<tr><td>Numéro :</td><td> <input name=\"facnumber\" type=\"text\" value=\"$numfa\"></td></tr>";
-	
-	print '<tr><td colspan="2">Commentaires :<br></td></tr>';
-	print '<tr><td colspan="2">';
-	print '<textarea name="note" wrap="soft" cols="60" rows="15"></textarea></td></tr>';
+
+
+	print '<tr><td>Désignation</td><td><textarea cols="40" rows="3"</textarea></td>';
+
+	print '<td><input type="text" size="8"</td></tr>';
 	
 	print "<tr><td colspan=\"3\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
 	print "</form>";
@@ -355,21 +372,82 @@ else
     print "</td></tr>";
     print "<tr><td>Note : ".nl2br($obj->note)."</td></tr>";
     print "</table>";
+    /*
+     * Lignes de factures
+     *
+     */
 
-    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+    $sql = "SELECT l.description, l.price, l.qty, l.rowid";
+    $sql .= " FROM llx_facturedet as l WHERE l.fk_facture = $facid";
+  
+    $result = $db->query($sql);
+    if ($result)
+      {
+	$num = $db->num_rows();
+	$i = 0; $total = 0;
+
+	echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+	print "<TR class=\"liste_titre\">";
+	print "<td>Date</td>";
+	print '<td align="center">Quantité</td>';
+	print '<td align="right">Montant</TD><td>&nbsp;</td>';
+	print "</TR>\n";
+    
+	$var=True;
+	while ($i < $num) {
+	  $objp = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<TR $bc[$var]>";
+	  print "<TD>".stripslashes(nl2br($objp->description))."</TD>\n";
+	  print '<TD align="center">'.$objp->qty.'</TD>';
+	  print '<TD align="right">'.price($objp->price)."</TD>\n";
+	  if ($obj->statut == 0) 
+	    {
+	      print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=deleteline&rowid='.$objp->rowid.'">del</a></td>';
+	    }
+	  print "</tr>";
+	  $total = $total + ($objp->qty * $objp->price);
+	  $i++;
+	}
+	
+	$db->free();
+	print "</table>";
+      } 
+    else
+      {
+	print $db->error();
+      }
+
     /*
      * Ajouter une ligne
      *
      */
     if ($obj->statut == 0) 
       {
-
+	print "<form action=\"$PHP_SELF?facid=$facid\" method=\"post\">";
+	echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="1">';
+	print "<TR class=\"liste_titre\">";
+	print "<td>Date</td>";
+	print "<td>Quantité</td>";
+	print "<td align=\"right\">Montant</TD>";
+	print "</TR>\n";
+	print '<input type="hidden" name="action" value="addligne">';
+	print '<tr><td><textarea name="desc" cols="60" rows="3"></textarea></td>';
+	print '<td><input type="text" name="qty" size="2"></td>';
+	print '<td><input type="text" name="pu" size="8"></td>';
+	print '</tr>';       
+	print '<tr><td align="center" colspan="3"><input type="submit"></td></tr>';
+	print "</table>";
+	print "</form>";
       }
+
     /*
      * Fin Ajout ligne
      *
      */
     
+    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+
     if ($obj->statut == 0) 
       {
 	print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
@@ -416,16 +494,31 @@ else
     print "<b>Documents générés</b><br>";
     print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=3>";
 
-    $file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/facture/$obj->facnumber/$obj->facnumber.pdf";
-    if (file_exists($file)) {
-      print "<tr><td>Propale PDF</a></td><td><a href=\"../../doc/facture/$obj->facnumber/$obj->facnumber.pdf\">$obj->facnumber.pdf</a></td></tr>";
-    }  
-    $file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/facture/$obj->facnumber/$obj->facnumber.ps";
-    if (file_exists($file)) {
-      print "<tr><td>Propale Postscript</a></td><td><a href=\"../../doc/facture/$obj->facnumber/$obj->facnumber.ps\">$obj->facnumber.ps</a></td>";
-      print "</tr>";
-    }
-    print "<tr><td colspan=\"2\">(<a href=\"../../doc/facture/$obj->facnumber/\">liste...</a>)</td></tr>";  
+    $file = $conf->facture->outputdir . "/" . $obj->facnumber . "/" . $obj->facnumber . ".pdf";
+
+
+    if (file_exists($file))
+      {
+	print "<tr><td>Propale PDF</a></td>";
+	print '<td><a href="'.$conf->facture->outputurl."/".$obj->facnumber."/".$obj->facnumber.'.pdf">'.$obj->facnumber.'.pdf</a></td>';
+      print '<td align="right">'.filesize($file). ' bytes</td>';
+      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+      print '</tr>';
+      }  
+    
+    $file = $conf->facture->outputdir . "/" . $obj->facnumber . "/" . $obj->facnumber . ".ps";
+
+    if (file_exists($file))
+      {
+	print "<tr><td>Propale Postscript</a></td>";
+	print '<td><a href="'.$conf->facture->outputurl."/".$obj->facnumber."/".$obj->facnumber.'.ps">'.$obj->facnumber.'.ps</a></td>';
+      print '<td align="right">'.filesize($file). ' bytes</td>';
+      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+      print '</tr>';
+
+
+      }
+    print '<tr><td colspan="2">(<a href="'.$conf->facture->outputurl.'/'.$facid.'/">liste...</a>)</td></tr>';  
 
     print "</table>\n</table>";
   
@@ -433,15 +526,17 @@ else
      * Generation de la facture
      *
      */
-    if ($action == 'pdf') {
-      print "<hr><b>Génération de la facture</b><br>";
-      $command = "export DBI_DSN=\"dbi:mysql:dbname=lolixfr\" ";
-      $command .= " ; ../../scripts/facture-tex.pl --html -vv --facture=$facid --pdf --gljroot=" . $GLOBALS["GLJ_ROOT"] ;
-    
-      $output = system($command);
-      print "<p>command :<br><small>$command</small><br>";
-      print "<p>output :<br><small>$output</small><br>";
-    } 
+    if ($action == 'pdf')
+      {
+	print "<hr><b>Génération de la facture</b><br>";
+	$command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name."\" ";
+	$command .= " ; ./tex-facture.pl --html -vv --facture=$facid --pdf --output=".$conf->facture->outputdir;
+	$command .= " --templates=".$conf->facture->templatesdir;
+	
+	$output = system($command);
+	print "<p>command :<br><small>$command</small><br>";
+	//print "<p>output :<br><small>$output</small><br>";
+      } 
 
 
     /*
