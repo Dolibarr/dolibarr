@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,7 @@ if ($action == 'add') {
   $email = trim($email);
 
   if (strlen(trim($name)) + strlen(trim($firstname)) > 0) {
-    $sql = "INSERT INTO socpeople (datec, fk_soc,name, firstname, poste, phone,fax,email) ";
+    $sql = "INSERT INTO llx_socpeople (datec, fk_soc,name, firstname, poste, phone,fax,email) ";
     $sql .= " VALUES (now(),$socid,'$name','$firstname','$poste','$phone','$fax','$email')";
     $result = $db->query($sql);
     if ($result) {
@@ -56,7 +57,7 @@ if ($action == 'update') {
 
     $email = trim($email);
 
-    $sql = "UPDATE socpeople set name='$name', firstname='$firstname', poste='$poste', phone='$phone',fax='$fax',email='$email', note='$note'";
+    $sql = "UPDATE llx_socpeople set name='$name', firstname='$firstname', poste='$poste', phone='$phone',fax='$fax',email='$email', note='$note'";
     $sql .= " WHERE idp=$contactid";
     $result = $db->query($sql);
     if ($result) {
@@ -134,7 +135,7 @@ if ($socid > 0) {
   print "<td><b>Fax</b></td><td><b>Email</b></td>";
 
   $sql = "SELECT p.name, p.firstname, p.poste, p.phone, p.fax, p.email ";
-  $sql .= " FROM socpeople as p WHERE p.fk_soc = $objsoc->idp";
+  $sql .= " FROM llx_socpeople as p WHERE p.fk_soc = $objsoc->idp";
 
   if ($contactid) {
     $sql .= " AND p.idp = $contactid";
@@ -183,7 +184,7 @@ if ($socid > 0) {
    */
   if ($action == 'editcontact') {
     $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
-    $sql .= " FROM socpeople as p WHERE p.idp = $contactid";
+    $sql .= " FROM llx_socpeople as p WHERE p.idp = $contactid";
     $result = $db->query($sql);
     $num = $db->num_rows();
     if ( $num >0 ) {
@@ -218,7 +219,7 @@ if ($socid > 0) {
 
 
   $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-  $sql .= " FROM actioncomm as a, c_actioncomm as c, llx_user as u ";
+  $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u ";
   $sql .= " WHERE a.fk_soc = $objsoc->idp ";
   $sql .= " AND u.rowid = a.fk_user_author";
   $sql .= " AND c.id=a.fk_action ";
