@@ -23,8 +23,8 @@
 
 function facture_get_num($objsoc=0)
 { 
+  global $db;
 
-  $db = new Db();
   $sql = "SELECT count(*) FROM llx_facture";
 
   if ( $db->query($sql) ) 

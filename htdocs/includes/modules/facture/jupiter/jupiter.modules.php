@@ -23,9 +23,7 @@
 
 function facture_get_num($objsoc=0)
 { 
-
-  $db = new Db();
-
+  global $db;
   $date = strftime("%Y%m", time());
 
   $sql = "SELECT count(*) FROM llx_facture";

@@ -23,8 +23,6 @@ require("./pre.inc.php");
 
 llxHeader();
 
-$db = new Db();
-
 print_titre("Statistiques");
 
 $sql = "SELECT d.amount";

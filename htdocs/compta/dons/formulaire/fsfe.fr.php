@@ -33,7 +33,6 @@ require("../../../projetdon.class.php");
 require("../../../don.class.php");
 
 setlocale(LC_TIME,"fr_FR");
-$db = new Db();
 
 $don = new Don($db);
 $don->id = $rowid;
