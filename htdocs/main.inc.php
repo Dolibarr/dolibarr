@@ -538,9 +538,17 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
       
       if (defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
 	{
-	  print '<form action="'.DOL_URL_ROOT.'/societe.php">';
+	  if (strstr($GLOBALS["SCRIPT_URL"], "/comm/prospect/"))
+	  {
+	    print '<form action="'.DOL_URL_ROOT.'/comm/prospect/prospects.php">';
+	  }
+	  else
+	  {
+	    print '<form action="'.DOL_URL_ROOT.'/societe.php">';
+	  }
 	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/clients.php">Societes</A><br>';
 	  print '<input type="hidden" name="mode" value="search">';
+	  print '<input type="hidden" name="page" value="0">';
 	  print '<input type="hidden" name="mode-search" value="soc">';
 	  print '<input type="text" name="socname" class="flat" size="10">&nbsp;';
 	  print '<input type="submit" class="flat" value="go">';
