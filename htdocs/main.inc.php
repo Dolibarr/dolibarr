@@ -330,7 +330,7 @@ function top_menu($head, $title="")
   //  print '<BASE href="'.DOL_URL_ROOT.'/">';
 
   print '<LINK REL="stylesheet" TYPE="text/css" HREF="'.DOL_URL_ROOT.'/'.$conf->css.'">';
-  print '<LINK REL="stylesheet" TYPE="text/css" media="print" HREF="'.DOL_URL_ROOT.'/print.css">';
+  print '<LINK REL="stylesheet" TYPE="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">';
   print "\n";
   if (strlen($title) > 0)
     {
