@@ -36,7 +36,10 @@
 
 class pdf_bulot extends ModelePDFFactures {
 
-  function pdf_bulot($db=0)
+    /**		\brief  Constructeur
+    		\param	db		handler accès base de donnée
+    */
+  function pdf_bulot($db)
     { 
       $this->db = $db;
       $this->description = "Modèle de facture avec remise et infos réglement";
@@ -51,15 +54,15 @@ class pdf_bulot extends ModelePDFFactures {
         $langs->load("bills");
         $langs->load("products");
 
-      $fac = new Facture($this->db,"",$facid);
-      $fac->fetch($facid);  
         if ($conf->facture->dir_output)
 	{
+			$fac = new Facture($this->db,"",$facid);
+			$fac->fetch($facid);  
 
 			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 			$facref = str_replace($forbidden_chars,"_",$fac->ref);
-			$dir = $conf->facture->dir_output . "/" . $facref . "/" ;
-			$file = $dir . $facref . ".pdf";
+			$dir = $conf->facture->dir_output . "/" . $facref;
+			$file = $dir . "/" . $facref . ".pdf";
 	  
 	  if (! file_exists($dir))
 	    {
@@ -188,20 +191,22 @@ class pdf_bulot extends ModelePDFFactures {
 	    }
 	  else
 	    {
-                    $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                     return 0;
 	    }
 	}
       else
 	{
-            $this->error="Erreur: FAC_OUTPUTDIR non défini !";
+            $this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
             return 0;
 	}
+        $this->error=$langs->trans("ErrorUnknown");
+        return 0;   // Erreur par defaut
     }
   /*
-   *
-   *
-   *
+    *   \brief      Affiche tableau des versement
+    *   \param      pdf     objet PDF
+    *   \param      fac     objet facture
    */
   function _tableau_compl(&$pdf, $fac)
     {
@@ -227,6 +232,12 @@ class pdf_bulot extends ModelePDFFactures {
       $pdf->MultiCell(20, 6, "Banque", 0, 'L', 0);
     }
 
+    /*
+    *   \brief      Affiche le total à payer
+    *   \param      pdf         objet PDF
+    *   \param      fac         objet facture
+    *   \param      deja_regle  montant deja regle
+    */
   function _tableau_tot(&$pdf, $fac)
     {
         global $langs;
@@ -302,7 +313,8 @@ class pdf_bulot extends ModelePDFFactures {
 	}
     }
   /*
-   *
+    *   \brief      Affiche la grille des lignes de factures
+    *   \param      pdf     objet PDF
    */
   function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
@@ -330,10 +342,9 @@ class pdf_bulot extends ModelePDFFactures {
       $pdf->line(10, $tab_top + 10, 200, $tab_top + 10 );
     }
   /*
-   *
-   *
-   *
-   *
+    *   \brief      Affiche en-tête facture
+    *   \param      pdf     objet PDF
+    *   \param      fac     objet facture
    */
   function _pagehead(&$pdf, $fac)
     {
@@ -393,7 +404,7 @@ class pdf_bulot extends ModelePDFFactures {
        */
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','',10);
-      $titre = "Montants exprimés en euros";
+      $titre = $langs->trans("AmountInCurrency")." ".$conf->monnaie;
       $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
       /*
        */

@@ -36,7 +36,10 @@
 
 class pdf_adytek extends ModelePDFFactures {
 
-  function pdf_adytek($db=0)
+    /**		\brief  Constructeur
+    		\param	db		handler accès base de donnée
+    */
+    function pdf_adytek($db)
     {
       $this->db = $db;
       $this->description = "Modèle de facture avec remise et infos réglement à la mode de chez nous";
@@ -50,15 +53,15 @@ class pdf_adytek extends ModelePDFFactures {
         $langs->load("bills");
         $langs->load("products");
 
+        if ($conf->facture->dir_output)
+        {
       $fac = new Facture($this->db,"",$facid);
       $fac->fetch($facid);
-        if ($conf->facture->dir_output)
-	{
 
 			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 			$facref = str_replace($forbidden_chars,"_",$fac->ref);
-			$dir = $conf->facture->dir_output . "/" . $facref . "/" ;
-			$file = $dir . $facref . ".pdf";
+			$dir = $conf->facture->dir_output . "/" . $facref;
+			$file = $dir . "/" . $facref . ".pdf";
 
 	  if (! file_exists($dir))
 	    {
@@ -99,6 +102,7 @@ class pdf_adytek extends ModelePDFFactures {
 	      $nexY = $pdf->GetY();
 	      $nblignes = sizeof($fac->lignes);
 
+                // Boucle sur les lignes de factures
 	      for ($i = 0 ; $i < $nblignes ; $i++)
 		{
 		  $curY = $nexY;
@@ -203,30 +207,28 @@ class pdf_adytek extends ModelePDFFactures {
       $pdf->SetLineWidth(0.5);
 
 
-//      $this->RoundedRect(100, 40, 100, 40, 3, 'DF');
-   //----
 
-/*J'ai ajouté une constante dans dolibarr : FAC_CAPITAL_EURO pour le capital de la societe
 
-     */
 
 	      $pdf->Close();
 
 	      $pdf->Output($file);
 
-	      return 1;
+                return 1;   // Pas d'erreur
 	    }
 	  else
 	    {
-                    $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                     return 0;
 	    }
 	}
       else
 	{
-            $this->error="Erreur: FAC_OUTPUTDIR non défini !";
+            $this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
             return 0;
 	}
+        $this->error=$langs->trans("ErrorUnknown");
+        return 0;   // Erreur par defaut
     }
   /*
    *
@@ -371,7 +373,8 @@ class pdf_adytek extends ModelePDFFactures {
 	}
     }
   /*
-   *
+    *   \brief      Affiche la grille des lignes de factures
+    *   \param      pdf     objet PDF
    */
   function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
@@ -399,29 +402,18 @@ class pdf_adytek extends ModelePDFFactures {
       $pdf->line(10, $tab_top + 10, 200, $tab_top + 10 );
     }
 
-  /*
-   *
-   *
-   *
-   *
-   */
-   function _pagefoot(&$pdf, $fac)
-{
-    $pdf->SetFont('Arial','I',8);
-    // FAC_PDF_ADRESSE  FAC_PDF_TEL  FAC_PDF_SIREN
-
-    $pdf->SetFont('Arial','',8);
-    $pdf->SetY(-13);
-    $pdf->MultiCell(190, 3, FAC_PDF_INTITULE . " - SARL au Capital de " . MAIN_INFO_CAPITAL . " - " . MAIN_INFO_RCS." " . MAIN_INFO_SIREN , 0, 'C');
-    $pdf->SetY(-10);
-    $pdf->MultiCell(190, 3, "N° TVA Intracommunautaire : " . MAIN_INFO_TVAINTRA  , 0, 'C');
-    $pdf->SetXY(-10,-10);
-    $pdf->MultiCell(10, 3, $pdf->PageNo().'/{nb}', 0, 'R');
-
-}
-
+    /*
+    *   \brief      Affiche en-tête facture
+    *   \param      pdf     objet PDF
+    *   \param      fac     objet facture
+    */
   function _pagehead(&$pdf, $fac)
     {
+        global $conf;
+        global $langs;
+        $langs->load("main");
+        $langs->load("bills");
+
       $tab4_top = 60;
       $tab4_hl = 6;
       $tab4_sl = 4;
@@ -436,8 +428,8 @@ class pdf_adytek extends ModelePDFFactures {
             else {
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(80, 3, "Logo file '".FAC_PDF_LOGO."' was not found", 0, 'L');
-                $pdf->MultiCell(80, 3, "Go to setup to change path.", 0, 'L');
+                $pdf->MultiCell(80, 3, $langs->trans("ErrorLogoFileNotFound",FAC_PDF_LOGO), 0, 'L');
+                $pdf->MultiCell(80, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
             }
         }
         else if (defined("FAC_PDF_INTITULE"))
@@ -524,14 +516,52 @@ class pdf_adytek extends ModelePDFFactures {
       $pdf->line(200, 94, 205, 94 );
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','',10);
-      $titre = "Montants exprimés en euros";
-      $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
+        $titre = $langs->trans("AmountInCurrency")." ".$conf->monnaie;
+        $pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
       /*
        */
 
     }
 
- //insertion de la variable FAC_PDF_INTITULE  FAC_PDF_MEL  FAC_PDF_WWW   FAC_PDF_LOGO  FAC_CAPITAL_EURO  FAC_PDF_TVA_INTRA    FAC_PDF_RCS
+  /*
+    *   \brief      Affiche le pied de page de la facture
+    *   \param      pdf     objet PDF
+    *   \param      fac     objet facture
+   */
+   function _pagefoot(&$pdf, $fac)
+{
+        global $langs, $conf;
+        $langs->load("main");
+        $langs->load("bills");
+        $langs->load("companies");
+
+        $footy=13;
+    $pdf->SetFont('Arial','',8);
+
+        if (MAIN_INFO_CAPITAL) {
+            $pdf->SetY(-$footy);
+            $pdf->MultiCell(190, 3,"SARL au Capital de " . MAIN_INFO_CAPITAL." ".$conf->monnaie." - " . MAIN_INFO_RCS." - Identifiant professionnel: " . MAIN_INFO_SIREN , 0, 'C');
+            $footy-=3;
+        }
+
+        // Affiche le numéro de TVA intracommunautaire
+        if (MAIN_INFO_TVAINTRA == 'MAIN_INFO_TVAINTRA') {
+            $pdf->SetY(-$footy);
+            $pdf->SetTextColor(200,0,0);
+            $pdf->SetFont('Arial','B',8);
+            $pdf->MultiCell(190, 3, $langs->trans("ErrorVATIntraNotConfigured"),0,'L',0);
+            $pdf->MultiCell(190, 3, $langs->trans("ErrorGoToGlobalSetup"),0,'L',0);
+            $pdf->SetTextColor(0,0,0);
+        }
+        elseif (MAIN_INFO_TVAINTRA != '') {
+            $pdf->SetY(-$footy);
+            $pdf->MultiCell(190, 3,  $langs->trans("TVAIntra")." : ".MAIN_INFO_TVAINTRA, 0, 'C');
+        }
+
+    $pdf->SetXY(-10,-10);
+    $pdf->MultiCell(10, 3, $pdf->PageNo().'/{nb}', 0, 'R');
+
+}
 
 }
 
