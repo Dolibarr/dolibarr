@@ -50,7 +50,8 @@ if ($action == 'addinpropal')
   $propal->insert_product($id, $HTTP_POST_VARS["qty"]);
 
   $action = '';
-  $mesg = 'Produit ajouté à la proposition '.$propal->ref;
+  $mesg = 'Produit ajouté à la proposition ';
+  $mesg .= '<a href="../comm/propal.php3?propalid='.$propal->id.'">'.$propal->ref.'</a>';
 }
 
 
