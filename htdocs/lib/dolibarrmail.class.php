@@ -84,7 +84,6 @@ class DolibarrMail
 
       $this->filename_list = array();
 
-      dolibarr_syslog("DolibarrMail::DolibarrMail");
       dolibarr_syslog("DolibarrMail::DolibarrMail to : ".$this->addr_to);
       dolibarr_syslog("DolibarrMail::DolibarrMail from : ".$this->from);
     }
@@ -99,8 +98,6 @@ class DolibarrMail
   function PrepareFile($filename_list, $mimetype_list, $mimefilename_list)
   {
     $this->filename_list = $filename_list;
-
-    dolibarr_syslog("DolibarrMail::PrepareFile");
 
     $this->mime_headers="";
 
@@ -178,7 +175,6 @@ class DolibarrMail
   
   function sendfile()
   {
-    dolibarr_syslog("DolibarrMail::sendfile");
 
     $this->smtp_headers = $this->write_smtpheaders();
 
@@ -187,7 +183,15 @@ class DolibarrMail
     $headers = $this->smtp_headers . $this->mime_headers;
     $message_comp = $this->text_body . $this->text_encoded;
 
-    $res = mail($this->addr_to,$this->subject,stripslashes($message_comp),$headers);
+    if ($this->errors_to)
+      {
+	dolibarr_syslog("DolibarrMail::sendfile errorsto ".$this->errors_to);
+	$res = mail($this->addr_to,$this->subject,stripslashes($message_comp),$headers,"-f".$this->errors_to);
+      }
+    else
+      {
+	$res = mail($this->addr_to,$this->subject,stripslashes($message_comp),$headers);
+      }
 
     return $res; 
   }
@@ -197,8 +201,6 @@ class DolibarrMail
    */
   function write_to_file()
   {
-    dolibarr_syslog("DolibarrMail::write_to_file");
-
     $this->smtp_headers = $this->write_smtpheaders();
 
     $this->text_body = $this->write_body();
@@ -279,8 +281,8 @@ class DolibarrMail
     if($this->reply_to != "")
       $out = $out . "Reply-To: ".$this->reply_to."\n";
     
-    if($this->errors_to != "")
-      $out = $out . "Errors-to: ".$this->errors_to."\n";
+    //    if($this->errors_to != "")
+    //$out = $out . "Errors-to: ".$this->errors_to."\n";
 
     $out = $out . "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
     $out = $out . "X-Sender: $this->from\n";
