@@ -573,16 +573,14 @@ if ($action == 'create')
 else 
 /* *************************************************************************** */
 /*                                                                             */
-/*                                                                             */
+/* Mode fiche                                                                  */
 /*                                                                             */
 /* *************************************************************************** */
 {
-  
-  if ($facid > 0)
-    {
-    
+  if ($_GET["facid"] > 0)
+    {      
       $fac = New Facture($db);
-      if ( $fac->fetch($facid, $user->societe_id) > 0)
+      if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
 	{	  
 	  $soc = new Societe($db, $fac->socidp);
 	  $soc->fetch($fac->socidp);
@@ -598,7 +596,7 @@ else
 	   */
 	  if ($action == 'delete')
 	    {
-	      $html->form_confirm("$PHP_SELF?facid=$facid","Supprimer la facture","Etes-vous sûr de vouloir supprimer cette facture ?","confirm_delete");
+	      $html->form_confirm("$PHP_SELF?facid=$fac->id","Supprimer la facture","Etes-vous sûr de vouloir supprimer cette facture ?","confirm_delete");
 	    }
 	  
 	  /*
@@ -608,7 +606,7 @@ else
 	  if ($action == 'valid')
 	    {
 	      $numfa = facture_get_num($soc);
-	      $html->form_confirm("$PHP_SELF?facid=$facid","Valider la facture","Etes-vous sûr de vouloir valider cette facture avec le numéro $numfa ?","confirm_valid");
+	      $html->form_confirm("$PHP_SELF?facid=$fac->id","Valider la facture","Etes-vous sûr de vouloir valider cette facture avec le numéro $numfa ?","confirm_valid");
 	    }
 
 	  /*
@@ -634,7 +632,7 @@ else
 	    }
 	  else
 	    {
-	      print '<a href="facture.php?facid='.$facid.'&amp;action=classer">Classer la facture</a>';
+	      print '<a href="facture.php?facid='.$fac->id.'&amp;action=classer">Classer la facture</a>';
 	    }
 	  print "&nbsp;</td><td>Paiements</td></tr>";
 
@@ -653,7 +651,7 @@ else
 	   * Paiements
 	   */
 	$sql = "SELECT ".$db->pdate("datep")." as dp, p.amount, c.libelle as paiement_type, p.num_paiement, p.rowid";
-	$sql .= " FROM llx_paiement as p, c_paiement as c WHERE p.fk_facture = $facid AND p.fk_paiement = c.id";
+	$sql .= " FROM llx_paiement as p, c_paiement as c WHERE p.fk_facture = $fac->id AND p.fk_paiement = c.id";
 	
 	$result = $db->query($sql);
 	if ($result)
@@ -680,7 +678,7 @@ else
 		print '<td align="right">'.price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
 		if (! $fac->paye && $user->rights->facture->paiement)
 		  {
-		    print '<td><a href="facture.php?facid='.$facid.'&amp;action=del_paiement&amp;paiementid='.$objp->rowid.'">Del</a>';
+		    print '<td><a href="facture.php?facid='.$fac->id.'&amp;action=del_paiement&amp;paiementid='.$objp->rowid.'">Del</a>';
 		  }
 		print "</tr>";
 		$total = $total + $objp->amount;
@@ -729,7 +727,7 @@ else
 
 	if ($fac->brouillon == 1 && $user->rights->facture->creer) 
 	  {
-	    print '<form action="facture.php?facid='.$facid.'" method="post">';
+	    print '<form action="facture.php?facid='.$fac->id.'" method="post">';
 	    print '<input type="hidden" name="action" value="setremise">';
 	    print '<table cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
 	    print '<input type="text" name="remise" size="3" value="'.$fac->remise_percent.'">%';
@@ -743,7 +741,7 @@ else
 	 */
 	
 	$sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice";
-	$sql .= " FROM llx_facturedet as l WHERE l.fk_facture = $facid ORDER BY l.rowid";
+	$sql .= " FROM llx_facturedet as l WHERE l.fk_facture = $fac->id ORDER BY l.rowid";
 	
 	$result = $db->query($sql);
 	if ($result)
@@ -790,10 +788,10 @@ else
 		print '<TD align="right">'.price($objp->subprice)."</td>\n";
 		if ($fac->statut == 0  && $user->rights->facture->creer) 
 		  {
-		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 		    print img_edit();
 		    print '</a></td>';
-		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
+		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$fac->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
 		    print img_delete();
 		    print '</a></td>';
 		  }
@@ -805,7 +803,7 @@ else
 	  
 		if ($action == 'editline' && $rowid == $objp->rowid)
 		  {
-		    print "<form action=\"$PHP_SELF?facid=$facid\" method=\"post\">";
+		    print "<form action=\"$PHP_SELF?facid=$fac->id\" method=\"post\">";
 		    print '<input type="hidden" name="action" value="updateligne">';
 		    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 		    print "<TR $bc[$var]>";
@@ -836,7 +834,7 @@ else
 	 */
 	if ($fac->statut == 0 && $user->rights->facture->creer) 
 	  {
-	    print "<form action=\"$PHP_SELF?facid=$facid\" method=\"post\">";
+	    print '<form action="facture.php?facid='.$fac->id.'" method="post">';
 	    //	    echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="1">';
 	    print "<TR class=\"liste_titre\">";
 	    print '<td width="54%">Description</td>';
@@ -871,11 +869,11 @@ else
 	
 	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
 	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=delete\">Supprimer</a></td>";
+		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=delete\">Supprimer</a></td>";
 	      } 
 	    elseif ($fac->statut == 1 && abs($resteapayer) > 0 && $user->rights->facture->envoyer) 
 	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=presend\">Envoyer</a></td>";
+		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=presend\">Envoyer</a></td>";
 	      }
 	    else
 	      {
@@ -884,7 +882,7 @@ else
 	    
 	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
 	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"paiement.php?facid=$facid&amp;action=create\">Emettre un paiement</a></td>";
+		print "<td align=\"center\" width=\"20%\"><a href=\"paiement.php?facid=$fac->id&amp;action=create\">Emettre un paiement</a></td>";
 	      }
 	    else
 	      {
@@ -895,7 +893,7 @@ else
 	      {
 		if ($user->rights->facture->paiement)
 		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=payed\">Classer 'Payée'</a></td>";
+		    print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a></td>";
 		  }
 		else
 		  {
@@ -904,7 +902,7 @@ else
 	      }
 	    elseif ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer) 
 	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=prerelance\">Envoyer une relance</a></td>";
+		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=prerelance\">Envoyer une relance</a></td>";
 	      }
 	    else
 	      {
@@ -913,7 +911,7 @@ else
 
 	    if ($fac->statut > 0)
 	      {
-		print '<td align="center" width="20%"><a href="facture/fiche-rec.php?facid='.$facid.'&amp;action=create">Récurrente</a></td>';
+		print '<td align="center" width="20%"><a href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">Récurrente</a></td>';
 	      }
 	    else
 	      {
@@ -924,7 +922,7 @@ else
 	      {
 		if ($user->rights->facture->valider)
 		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=valid\">Valider</a></td>";
+		    print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=valid\">Valider</a></td>";
 		  }
 		else
 		  {
@@ -935,7 +933,7 @@ else
 	      {
 		if ($user->rights->facture->creer)
 		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"facture.php?facid=$facid&amp;action=pdf\">Générer la facture</a></td>";
+		    print "<td align=\"center\" width=\"20%\"><a href=\"facture.php?facid=$fac->id&amp;action=pdf\">Générer la facture</a></td>";
 		  }
 		else
 		  {
@@ -977,7 +975,7 @@ else
 	     *
 	     */
 	    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-	    $sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $facid";
+	    $sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $fac->id";
 	    
 	    $result = $db->query($sql);
 	    if ($result)
@@ -1020,7 +1018,7 @@ else
 	 */
 	if ($action == 'classer')
 	  {	    
-	    print "<p><form method=\"post\" action=\"$PHP_SELF?facid=$facid\">\n";
+	    print "<p><form method=\"post\" action=\"$PHP_SELF?facid=$fac->id\">\n";
 	    print '<input type="hidden" name="action" value="classin">';
 	    print '<table cellspacing="0" class="border" cellpadding="3">';
 	    print '<tr><td>Projet</td><td>';
@@ -1043,7 +1041,7 @@ else
 	    $replytomail = $user->email;
 	    $from_mail = $replytomail;
 	    
-	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$facid&amp;action=send\">\n";
+	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$fac->id&amp;action=send\">\n";
 	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
 	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
 	    
@@ -1070,7 +1068,7 @@ else
 	    $replytomail = $user->email;
 	    $from_mail = $replytomail;
 	    
-	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$facid\">\n";
+	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$fac->id\">\n";
 	    print '<input type="hidden" name="action" value="relance">';
 	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
 	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
@@ -1095,7 +1093,7 @@ else
 	 */
 	
 	$sql = "SELECT ".$db->pdate("p.datep")." as dp, p.price, p.ref, p.rowid as propalid";
-	$sql .= " FROM llx_propal as p, llx_fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $facid";
+	$sql .= " FROM llx_propal as p, llx_fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $fac->id";
   
 	$result = $db->query($sql);
 	if ($result)
