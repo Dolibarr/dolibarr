@@ -356,7 +356,7 @@ if ($_GET["propalid"])
     
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
-    print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>";
+    print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Product").'</td>';
     print '<td align="right">'.$langs->trans("Price").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="center">'.$langs->trans("Qty").'</td></tr>';
     
     $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
