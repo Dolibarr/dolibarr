@@ -69,8 +69,7 @@ if ($_GET["id"])
 	rmdir(DOL_DOCUMENT_ROOT."/document/produits");
 
       // Création répertoire pour images générées
-      // TODO A CORRIGER
-      $conf->produit->dir_images = DOL_DATA_ROOT.'/graph/produits';
+      // $conf->produit->dir_images définit dans master.inc.php
 
       $dir = $conf->produit->dir_images."/".$product->id;
 
@@ -91,7 +90,6 @@ if ($_GET["id"])
       $filenbvente  = $dir . "/vente12mois.png";
       $filenbpiece  = $dir . "/vendu12mois.png";
         
-
       $px = new BarGraph();
       $mesg = $px->isGraphKo();
       if (! $mesg)
@@ -115,37 +113,37 @@ if ($_GET["id"])
       
       $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Card");
-	  $h++;
+      $h++;
 	  
       $head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Price");
-	  $h++;
-	  
-	  if($product->type == 0)
+      $h++;
+      
+      if($product->type == 0)
+	{
+	  if ($conf->stock->enabled)
 	    {
-	      if ($conf->stock->enabled)
-		{
-		  $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-		  $head[$h][1] = $langs->trans('Stock');
-		  $h++;
-		}
-
+	      $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+	      $head[$h][1] = $langs->trans('Stock');
+	      $h++;
+	    }
+	  
           if ($conf->fournisseur->enabled) {
-                $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
-                $head[$h][1] = $langs->trans("Suppliers");
-                $h++;
+	    $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+	    $head[$h][1] = $langs->trans("Suppliers");
+	    $h++;
           }
-      }
-
+	}
+      
       $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Statistics");
-	  $hselected=$h;
-	  $h++;
-	  
-	  
-	  dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
-
-	      
+      $hselected=$h;
+      $h++;
+      
+      
+      dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+      
+      
       print '<table class="border" width="100%"><tr>';
       print '<td width="20%">'.$langs->trans("Ref").'</td>';
       print '<td width="40%">'.$product->ref.'</td>';
@@ -153,21 +151,24 @@ if ($_GET["id"])
       print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
       print '<td valign="top" rowspan="2">';
       // Propals
-      if ($conf->propal->enabled) {
-        $langs->load("propal");
-        print '<a href="propal.php?id='.$product->id.'">'.$langs->trans("Proposals").'</a> : '.$product->count_propale($socid);
-        print " (Proposé à ".$product->count_propale_client($socid)." clients)<br>";
-      }
+      if ($conf->propal->enabled)
+	{
+	  $langs->load("propal");
+	  print '<a href="propal.php?id='.$product->id.'">'.$langs->trans("Proposals").'</a> : '.$product->count_propale($socid);
+	  print " (Proposé à ".$product->count_propale_client($socid)." clients)<br>";
+	}
       // Commande
-      if ($conf->commande->enabled) {
-        $langs->load("orders");
-        print '<a href="commande.php?id='.$product->id.'">'.$langs->trans("Orders").'</a> : '.$product->count_facture($socid)."<br>";
-      }
+      if ($conf->commande->enabled)
+	{
+	  $langs->load("orders");
+	  print '<a href="commande.php?id='.$product->id.'">'.$langs->trans("Orders").'</a> : '.$product->count_facture($socid)."<br>";
+	}
       // Factures
-      if ($conf->facture->enabled) {
-        $langs->load("bills");
-        print '<a href="facture.php?id='.$product->id.'">'.$langs->trans("Bills").'</a> : '.$product->count_facture($socid);
-      }
+      if ($conf->facture->enabled)
+	{
+	  $langs->load("bills");
+	  print '<a href="facture.php?id='.$product->id.'">'.$langs->trans("Bills").'</a> : '.$product->count_facture($socid);
+	}
       print '</td></tr>';
       print '<tr><td>'.$langs->trans("CurrentPrice").'</td><td>'.price($product->price).'</td></tr>';
       print "</table>";
@@ -235,8 +236,6 @@ if ($_GET["id"])
       print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.$langs->trans("ReCalculate").'</a>]</td></tr>';
 
       print '</table><br>';
-
-
 
     }
 }
