@@ -32,7 +32,7 @@ print 'Utilisateur : ' . $user->prenom . ' ' . $user->nom .' ['.$user->code.']';
 print "<ul>";
 print "<li><A href=\"../comm/\">Commercial</A>";
 print "<li><A href=\"../compta/\">Compta</A>";
-print "<li><A href=\"../stats/\">Stats</A></ul>";
+print "</ul>";
 
 
 
@@ -54,6 +54,7 @@ $db = new Db();
 if ($db->ok) {
 
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+
   print '<tr><td valign="top" width="50%">';
 
   print "<TABLE border=\"1\" cellspacing=\"0\" cellpadding=\"2\">";
@@ -78,7 +79,6 @@ if ($db->ok) {
     $var=!$var;
     print "<tr $bc[$var]><td><a href=\"compta/index.php3\">Factures en attente de paiement</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
   }
-
   print "</table><br>";
 
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
@@ -95,9 +95,8 @@ if ($db->ok) {
     print "<tr $bc[$var]><td><a href=\"comm/index.php3?stcomm=2\">Société en cours de contact</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
   }
 
-  print "</table><br>";
-
-
+  print '</table>';
+  print '</td></tr></table><br>';
 
 
   print '</td><td valign="top">';
@@ -118,7 +117,6 @@ if ($db->ok) {
   print "<input type=\"text\" name=\"contactname\" size=\"8\">&nbsp;";
   print "<input type=\"submit\" value=\"go\">";
   print '</form>';
-
 
   print '</td></tr>';
 
