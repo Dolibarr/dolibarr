@@ -107,12 +107,8 @@ if ($_GET["action"] == 'edit')
   print '</td></tr>';
 
   print '<tr class="pair"><td width="50%">Langue par défaut à utiliser (code langue)</td><td>';
-  $langs_available=$langs->get_available_languages();
-  print '<select name="main_lang_default">';
-  foreach ($langs_available as $lang) {
-          print '<option value="'.$lang.'"'.(MAIN_LANG_DEFAULT==$lang?'selected':'').'>'.$lang.'</option>';
-  }
-  print '</select>';
+  $html=new Form($db);
+  $html->select_lang(MAIN_LANG_DEFAULT,'main_lang_default');
   print '</td></tr>';
 
   print '<tr class="impair"><td width="50%">Afficher formulaire de recherche Contacts dans la barre de gauche</td><td><input name="main_searchform_contact" size="20" value="' . MAIN_SEARCHFORM_CONTACT . '"></td></tr>';
