@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,8 @@ function llxHeader($head = "", $title="") {
 
   $menu = new Menu();
 
+  // Les recettes
+
   $menu->add(DOL_URL_ROOT."/compta/clients.php", "Clients");
 
   if ($conf->don->enabled)
@@ -44,16 +47,21 @@ function llxHeader($head = "", $title="") {
   $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
   $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/","Statistiques");
 
-  if ($user->comm > 0 && $conf->commercial && $conf->propale->enabled) 
+  if ($user->comm > 0 && $conf->commercial->enabled && $conf->propal->enabled) 
     {
       $menu->add(DOL_URL_ROOT."/compta/propal.php","Prop. commerciales");
     }
 
   $menu->add(DOL_URL_ROOT."/contrat/","Contrats");
 
-  $menu->add("stats/","CA / Résultats");
+  // Les dépenses
 
-  $menu->add("bank/","Banques");
+  $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
+
+  if ($user->societe_id == 0)
+    {
+      $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Déplacement");
+    }
 
   if ($conf->compta->tva && $user->societe_id == 0)
     {
@@ -61,12 +69,18 @@ function llxHeader($head = "", $title="") {
     }
   $menu->add("charges/index.php","Charges");
 
+
+
+  // Vision des recettes-dépenses
+
+  $menu->add("bank/","Banques");
+
   if ($user->societe_id == 0)
     {
       $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisse");
-
-      $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
     }
+
+  $menu->add("stats/","CA / Résultats");
 
   if ($user->compta > 0) 
     {
@@ -76,11 +90,6 @@ function llxHeader($head = "", $title="") {
     {
       $menu->clear();
       $menu->add(DOL_URL_ROOT."/","Accueil");      
-    }
-
-  if ($user->societe_id == 0)
-    {
-      $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Déplacement");
     }
 
   left_menu($menu->liste);
