@@ -164,11 +164,11 @@ if ($result)
 
   print '<form action="contact.php?type='.$_GET["type"].'" method="GET">';
   print '<tr class="liste_titre">';
-  print '<td><input name="search_nom" size="12" value="'.$_GET["search_nom"].'"></td>';
-  print '<td><input name="search_prenom" size="12"  value="'.$_GET["search_prenom"].'"></td>';
-  print '<td><input name="search_societe" size="12"  value="'.$_GET["search_societe"].'"></td>';
+  print '<td><input class="flat" name="search_nom" size="12" value="'.$_GET["search_nom"].'"></td>';
+  print '<td><input class="flat" name="search_prenom" size="12"  value="'.$_GET["search_prenom"].'"></td>';
+  print '<td><input class="flat" name="search_societe" size="12"  value="'.$_GET["search_societe"].'"></td>';
   print '<td>&nbsp;</td>';
-  print '<td><input type="submit" value='.$langs->trans("Search").'></td>';
+  print '<td><input type="submit" class="button" value='.$langs->trans("Search").'></td>';
   print "</tr>\n";
   print '</form>';
 
