@@ -322,6 +322,9 @@ class FactureFourn
    */
   function updateline($id, $label, $puht, $tauxtva, $qty=1)
   {
+    $puht = ereg_replace(",",".",$puht);
+    $qty  = ereg_replace(",",".",$qty);
+
     if (is_numeric($puht) && is_numeric($qty))
       {
 	$totalht  = ($puht * $qty);
@@ -337,11 +340,11 @@ class FactureFourn
 	$sql .= ", tva_taux=" .ereg_replace(",",".",$tauxtva);
 	$sql .= ", total_ttc=".ereg_replace(",",".",$totalttc);
 	
-	$sql .= " WHERE rowid = $id";
+	$sql .= " WHERE rowid = ".$id;
 	
 	if (! $this->db->query($sql) )
 	  {
-    	  dolibarr_print_error($this->db);
+	    dolibarr_print_error($this->db);
 	  }
 
 	// Mise a jour prix facture
