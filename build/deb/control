@@ -1,0 +1,16 @@
+Source: dolibarr
+Section: web
+Priority: optional
+Maintainer: Loic Dachary (OuoU) <loic@debian.org>
+Build-Depends: debhelper (>> 4.0.0), 
+Standards-Version: 3.5.8
+
+Package: dolibarr
+Section: web
+Architecture: all
+Depends: apache, wwwconfig-common (>= 0.0.7), php4, php4-cgi, php4-mysql, php4-curl, php4-pear | libapache-mod-auth-mysql, debconf, perl
+Description: Company account management software.
+ Dolibarr is a small and simple Web interface with ERP and CRM
+ capabilities. It is designed for small companies and freelancers, and
+ can be used to deal with the bills and documentation required for
+ company management.

@@ -1,0 +1,89 @@
+#! /bin/sh
+# postrm script for dolibarr
+#
+# see: dh_installdeb(1)
+
+set -e
+
+# summary of how this script can be called:
+#        * <postrm> `remove'
+#        * <postrm> `purge'
+#        * <old-postrm> `upgrade' <new-version>
+#        * <new-postrm> `failed-upgrade' <old-version>
+#        * <new-postrm> `abort-install'
+#        * <new-postrm> `abort-install' <old-version>
+#        * <new-postrm> `abort-upgrade' <old-version>
+#        * <disappearer's-postrm> `disappear' <r>overwrit>r> <new-version>
+# for details, see /usr/share/doc/packaging-manual/
+
+. /usr/share/debconf/confmodule
+db_version 2.0
+db_get "dolibarr/webserver" || true
+webserver="$RET"
+
+# Allows us to loop and substitute in one pass
+case $webserver in
+	Apache)		webservers="apache" ;;
+	Apache-SSL)	webservers="apache-ssl" ;;
+	Both)		webservers="apache apache-ssl" ;;
+	*)		webservers="" ;;
+esac
+includefile=/etc/dolibarr/apache.conf
+
+case "$1" in
+	purge)
+		db_get "dolibarr/postrm"
+		if [ "$RET" = "true" ] ; then
+			# Get database configuration
+			db_get "dolibarr/db/user/name"
+			dbuser="$RET"
+			db_get "dolibarr/db/user/password"
+			dbpass="$RET"
+			db_get "dolibarr/db/host"
+			dbserver="$RET"
+			db_get "dolibarr/db/name"
+			dbname="$RET"
+			db_get "dolibarr/db/admin/name"
+			dbadmin="$RET"
+			db_get "dolibarr/db/admin/password"
+			dbadmpass="$RET"
+			dbtype="mysql"
+
+			. /usr/share/wwwconfig-common/${dbtype}-dropuser.sh
+			. /usr/share/wwwconfig-common/${dbtype}-dropdb.sh
+
+		fi
+
+		rm -rf /etc/dolibarr
+		for server in $webservers ; do
+			conffile="/etc/$server/httpd.conf"
+			. /usr/share/wwwconfig-common/apache-uninclude.sh
+			if [ "$status" = "purge" ] ;
+				then restart="$restart $server"
+			fi
+		done
+
+		servers="apache-ssl apache mysql"
+		. /usr/share/wwwconfig-common/restart.sh
+
+		for dir in /usr/share/dolibarr ; do
+			if [ -d ${dir} ] ; then rm -rf ${dir} ; fi
+		done
+
+		db_purge
+	;;
+	remove)
+	;;
+	upgrade)
+	;;
+	failed-upgrade|abort-install|abort-upgrade|disappear)
+	;;
+	*)
+		echo "postrm called with unknown argument \`$1'" >&2
+		exit 0
+	;;
+esac
+
+db_stop
+
+exit 0

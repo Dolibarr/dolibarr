@@ -1,0 +1,182 @@
+#! /bin/sh
+# postinst script for dolibarr
+#
+# see: dh_installdeb(1)
+
+set -e
+
+# summary of how this script can be called:
+#        * <postinst> `configure' <most-recently-configured-version>
+#        * <old-postinst> `abort-upgrade' <new version>
+#        * <conflictor's-postinst> `abort-remove' `in-favour' <package>
+#          <new-version>
+#        * <deconfigured's-postinst> `abort-deconfigure' `in-favour'
+#          <failed-install-package> <version> `removing'
+#          <conflicting-package> <version>
+# for details, see /usr/share/doc/packaging-manual/
+
+. /usr/share/debconf/confmodule
+db_version 2.0
+
+#
+# Description:	Verifies that the env module is loaded in the apache config file.
+# Needs:	$server the apache server to use,
+#			anything that matches /etc/$server/*.conf
+#
+env_enable()
+{
+    envverm="env_module"
+    if grep -e "^[[:space:]]*#[[:space:]]*LoadModule[[:space:]]\+$envverm" /etc/$server/httpd.conf > /dev/null 2>&1; then
+		# Uncommenting
+	sed -e "s#\([[:space:]]*\)\#[[:space:]]\+\(LoadModule $envverm\)#\1\2#" /etc/$server/httpd.conf > /etc/$server/httpd.conf.tmp
+	status=uncomment
+	if grep -e "^[[:space:]]*LoadModule[[:space:]]\+$envverm" /etc/$server/httpd.conf.tmp >/dev/null 2>&1; then
+			# Uncomment successful.
+	    cp /etc/$server/httpd.conf /etc/$server/httpd.conf.back >/dev/null 2>&1
+	    mv /etc/$server/httpd.conf.tmp /etc/$server/httpd.conf
+	else
+			# Uncomment unsuccessful.
+	    status=error
+	    rm /etc/$server/httpd.conf.tmp
+	fi
+    fi
+}
+
+set -x 
+
+case "$1" in
+	configure)
+		config="/etc/dolibarr/apache.conf"
+
+		# Get the web server type.
+		db_get "dolibarr/webserver"
+		webserver="$RET"
+		case $webserver in
+			Apache)		webservers="apache" ;;
+			Apache-SSL)	webservers="apache-ssl" ;;
+			Both)		webservers="apache apache-ssl" ;;
+			*)		webservers="" ;;
+		esac
+		. /usr/share/wwwconfig-common/php.get
+		# Set up web server.
+		for server in $webservers ; do
+			env_enable
+			typestr='application/x-httpd-php'
+			extension='.php3'
+			. /usr/share/wwwconfig-common/apache-addtype_all.sh
+		        . /usr/share/wwwconfig-common/apache-php.sh
+		        . /usr/share/wwwconfig-common/apache-run.get
+			trustuser=$webuser
+			#
+			# That may lead to problems if apache & apache-ssl do
+			# not have the same user/group.
+			#
+			chown -R $webuser.$webgroup /usr/share/dolibarr
+			includefile="/etc/dolibarr/apache.conf"
+			. /usr/share/wwwconfig-common/apache-include_all.sh
+			test "$status" = "uncomment" -o "$status" = "include" && restart="$server $restart"
+			for index in index.php; do
+				. /usr/share/wwwconfig-common/apache-index_all.sh
+				test "$status" = "added" && restart="$server $restart"
+			done
+		done
+
+		#
+		# Pear
+		#
+		if [ ! -f /usr/bin/php ] ; then ln -s /usr/bin/php4 /usr/bin/php ; fi
+		pear install Archive_Tar || true
+		pear install Console_Getopt || true
+		pear install PEAR || true
+		pear install Auth || true
+		pear install DB || true
+
+		#
+		# Database
+		#
+		db_get "dolibarr/db/setup/skip"
+		if [ "$RET" = "false" ] ; then
+			db_get "dolibarr/db/host"
+			dbserver="$RET"
+			db_get "dolibarr/db/name"
+			dbname="$RET"
+			db_get "dolibarr/db/admin/name"
+			dbadmin="$RET"
+			db_get "dolibarr/db/admin/password"
+			dbadmpass="$RET"
+			db_get "dolibarr/db/user/name"
+			dbuser="$RET"
+			db_get "dolibarr/db/user/password"
+			dbpass="$RET"
+			dbtype="mysql"
+			status=''
+			# User may have choosen to continue anyway
+			# with the configuration, so:
+			if [ "$dbtype" = "mysql" ] ; then
+				. /usr/share/wwwconfig-common/${dbtype}-createuser.sh
+				test "$error" && echo $error
+				. /usr/share/wwwconfig-common/${dbtype}-createdb.sh
+				test "$error" && echo $error
+			fi
+
+			if [ "$status" = "create" ] ; then
+			   sqlfile=/usr/lib/dolibarr/${dbtype}.sql
+			   perl -pi -e "s/'admin','admin'/'$dbuser','$dbpass'/" $sqlfile
+			   . /usr/share/wwwconfig-common/${dbtype}-exec.sh
+
+			   if [ -z "$error" ] ; then
+
+			      echo "Visit http://localhost/dolibarr/install.php to complete the installation"
+			   else
+			      echo $error
+			   fi
+			else
+			    #
+			    # This dangerous file should be removed
+			    # after the user visits install.php but this
+			    # is beyond the control of the script. By
+			    # removing it at this point we ensure that
+			    # it does not survive an upgrade of dolibarr.
+			    #
+			    rm -f /usr/share/dolibarr/install.php
+                        fi
+		fi
+
+		perl -pi -e "s/Auth_MySQL_DB.*/Auth_MySQL_DB '$dbname'/" /etc/dolibarr/apache.conf
+		perl -pi -e "s/Auth_MySQL_Username_Field.*/Auth_MySQL_Username_Field '$dbuser'/" /etc/dolibarr/apache.conf
+		perl -pi -e "s/Auth_MySQL_Password_Field.*/Auth_MySQL_Password_Field '$dbpass'/" /etc/dolibarr/apache.conf
+		perl -pi -e "s/DBNAME.*/DBNAME $dbname/" /etc/dolibarr/apache.conf
+		perl -pi -e "s/DBUSER.*/DBUSER $dbuser/" /etc/dolibarr/apache.conf
+		perl -pi -e "s/DBPASS.*/DBPASS $dbpass/" /etc/dolibarr/apache.conf
+
+		if grep DBHOST /usr/share/dolibarr/conf/conf.php > /dev/null
+		then
+		    perl -pi -e "s/DBHOST/$dbserver/" /usr/share/dolibarr/conf/conf.php
+		    perl -pi -e "s/DBNAME/$dbname/" /usr/share/dolibarr/conf/conf.php
+		    perl -pi -e "s/DBUSER/$dbuser/" /usr/share/dolibarr/conf/conf.php
+		    perl -pi -e "s/DBPASS/$dbpass/" /usr/share/dolibarr/conf/conf.php
+		fi
+
+		# Reset passwords
+		db_reset "dolibarr/db/user/password"
+
+		servers="apache-ssl apache mysql"
+		. /usr/share/wwwconfig-common/restart.sh
+
+	;;
+
+	abort-upgrade|abort-remove|abort-deconfigure)
+
+	;;
+
+	*)
+		echo "postinst called with unknown argument \`$1'" >&2
+		exit 0
+	;;
+esac
+
+db_stop
+
+#DEBHELPER#
+
+exit 0
