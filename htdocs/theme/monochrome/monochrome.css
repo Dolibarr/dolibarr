@@ -33,16 +33,43 @@ table.topbarre {
 /*
  * Tables
  */
-table#wiborder { 
-                 border-collapse:collapse; 
-                 }
+table.border {
+               background: #444444;
+               color: #eeeeee; 
+               border-collapse: collapse;
+               border: 2px white ridge; }
 
-table#wiborder td { 
-                    border: outset 1pt; 
-                    border-collapse:collapse; 
-                    padding: 3pt;
-                    }
+table.border td {
+                  border-collapse: collapse;
+                  border: 2px white ridge; }
 
+table.noborder {
+                 background: #444444;
+                 color: #eeeeee;
+                 border-collapse: collapse;
+                 border: 0px  }
+
+table.noborder td {
+                    border-collapse: collapse;
+                    border: 0px  }
+
+table#actions {
+                border: 0px;
+                cell-spacing: 1em;
+                
+                }
+
+table#actions td {
+                   border-bottom: 1px ridge black;
+                   border-right: 1px ridge black;
+                   border-left: 1px ridge white; 
+                   border-top: 1px ridge white;
+                   text-align: center;
+                   padding: 0.2em;
+}
+/*
+ *
+ */
 a { 
     text-decoration: none;
     font-weight: bold;
@@ -78,7 +105,6 @@ div.menus {
             border-bottom: 1px dashed #777777;
             border-left:   1px dashed #666666;
             }
-
 
 .menu 
 { 
@@ -147,7 +173,6 @@ div.titre {
             border-left:   1px dashed #666666;
                  }
 
-
 tr.liste_titre { 
                  background: #666666; 
                  font-family: Helvetica, Verdana;
@@ -161,10 +186,10 @@ tr.pair {
           font-family: Helvetica, Verdana; 
           font-size: 1.0em;
           color: #eeeeee;
-                           border-top:    1px dashed #555555;
-            border-right:  1px dashed #888888;
-            border-bottom: 1px dashed #777777;
-            border-left:   1px dashed #666666; 
+          border-top:    1px dashed #555555;
+          border-right:  1px dashed #888888;
+          border-bottom: 1px dashed #777777;
+          border-left:   1px dashed #666666; 
           }
 
 tr.impair { 
@@ -172,7 +197,7 @@ tr.impair {
             font-family: Helvetica, Verdana;
             font-size: 1.0em;
             color: #eeeeee;
-                             border-top:    1px dashed #555555;
+            border-top:    1px dashed #555555;
             border-right:  1px dashed #888888;
             border-bottom: 1px dashed #777777;
             border-left:   1px dashed #666666;
