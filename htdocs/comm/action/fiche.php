@@ -104,8 +104,8 @@ if ($_POST["action"] == 'add_action')
         }
         else
         {
-            $webcal->heure = $heurehour . $heuremin . '00';
-            $webcal->duree = ($dureehour * 60) + $dureemin;
+            $webcal->heure = $_POST["heurehour"] . $_POST["heuremin"] . '00';
+            $webcal->duree = ($_POST["dureehour"] * 60) + $_POST["dureemin"];
             
             if ($_POST["actionid"] == 5)
             {
