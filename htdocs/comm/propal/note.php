@@ -21,7 +21,7 @@
  */
 
 /**
-* Gestion d'une proposition commerciale
+* Fiche d'information sur une proposition commerciale
 * @package propale
 */
 
@@ -31,9 +31,7 @@ $user->getrights('propale');
 if (!$user->rights->propale->lire)
   accessforbidden();
 
-/*
- *  Modules optionnels
- */
+
 require("../../propal.class.php");
 /*
  * Sécurité accés client
@@ -78,10 +76,12 @@ if ($_GET["propalid"])
 	  $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
 	  $head[$h][1] = "Note";
 	  $a = 1;
-	  
-	  dolibarr_fiche_head($head, $a);
-                  
-	  
+	  $h++;
+	  $head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
+	  $head[$h][1] = "Info";
+	   
+	  dolibarr_fiche_head($head, $a, $societe->nom);
+                  	  
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
 	  
 	  print '<tr><td>Société</td><td>';
