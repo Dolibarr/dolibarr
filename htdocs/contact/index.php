@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
+ * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,7 @@ if ($user->societe_id > 0)
 llxHeader();
 
 
+$contactname=isset($_GET["contactname"])?$_GET["contactname"]:$_POST["contactname"];
 $page = $_GET["page"];
 $sortfield = $_GET["sortfield"];
 $sortorder = $_GET["sortorder"];
@@ -57,6 +59,7 @@ if ($_GET["view"] == 'recent') { $text="(Récents)"; }
 
 $titre = "Liste des contacts $text";
 
+
 /*
  *
  * Mode liste
@@ -79,11 +82,9 @@ if (strlen($_GET["begin"])) // filtre sur la premiere lettre du nom
   $sql .= " WHERE upper(p.name) like '".$_GET["begin"]."%'";
 }
 
-if (strlen($_GET["contactname"]) && $_GET["mode"] == "search") // acces a partir du module de recherche
+if ($contactname)
 {
-  $sql .= " WHERE ( lower(p.name) like '%".strtolower($_GET["contactname"])."%' OR lower(p.firstname) like '%".strtolower($_GET["contactname"])."%') ";
-  $sortfield = "lower(p.name)";
-  $sortorder = "ASC";
+  $sql .= " WHERE (p.name like '%".$contactname."%' OR p.firstname like '%".$contactname."%') ";
 }
 
 if ($socid) 
