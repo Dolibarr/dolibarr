@@ -405,9 +405,9 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 	    {
 	      $obj = $db->fetch_object($result);
 	      print "<tr $bc[$var]><td width=\"15%\"><a href=\"propal.php?propalid=".$obj->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td>";
-	      print "<td width=\"30%\"><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$obj->nom."</a></td>\n";      
+	      print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$obj->nom."</a></td>\n";      
 	      print "<td align=\"right\">";
-	      print strftime("%e %b %Y",$obj->dp)."</td>\n";	  
+	      print strftime("%d %b %Y",$obj->dp)."</td>\n";	  
 	      print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
 	      $var=!$var;
 	      $i++;
