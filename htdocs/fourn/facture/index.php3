@@ -41,38 +41,6 @@ if ($action == 'note')
   $result = $db->query($sql);
 }
 
-if ($action == 'stcomm')
-{
-  if ($stcommid <> 'null' && $stcommid <> $oldstcomm)
-    {
-      $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
-      $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $GLOBALS["REMOTE_USER"] . "')";
-      $result = @$db->query($sql);
-      
-      if ($result)
-	{
-	  $sql = "UPDATE societe SET fk_stcomm=$stcommid WHERE idp=$socid";
-	  $result = $db->query($sql);
-	}
-      else
-	{
-	  $errmesg = "ERREUR DE DATE !";
-	}
-    }
-  
-  if ($actioncommid)
-    {
-      $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
-      $result = @$db->query($sql);
-      
-      if (!$result)
-	{
-	  $errmesg = "ERREUR DE DATE !";
-	}
-    }
-}
-
-
 if ($action == 'delete')
 {
   $fac = new FactureFourn($db);
@@ -158,10 +126,12 @@ if ($result)
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print '<TR class="liste_titre">';
   print '<TD>Numéro</TD>';
+  print '<TD>Date</TD>';
   print '<TD>Libellé</TD><td>';
   print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-  print '</td><TD align="right">Montant</TD>';
-  print '<td align="center">Payé</td>';
+  print '</td><TD align="right">';
+  print_liste_field_titre("Montant",$PHP_SELF,"fac.total_ht");
+  print '</td><td align="center">Payé</td>';
   print "</TR>\n";
   $var=True;
   while ($i < $num)
@@ -172,7 +142,8 @@ if ($result)
       
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php3?facid=$obj->facid\">$obj->facnumber</A></td>\n";
-      print "<TD><a href=\"fiche.php3?facid=$obj->facid\">$obj->libelle</A></td>\n";
+      print "<TD><a href=\"fiche.php3?facid=$obj->facid\">".strftime("%d %b %Y",$obj->datef)."</A></td>\n";
+      print '<TD><a href="fiche.php3?facid='.$obj->facid.'">'.stripslashes("$obj->libelle").'</A></td>';
       print "<TD><a href=\"../fiche.php3?socid=$obj->socid\">$obj->nom</A></td>\n";
       print '<TD align="right">'.price($obj->total_ht).'</TD>';
 
