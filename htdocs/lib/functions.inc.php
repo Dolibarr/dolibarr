@@ -1321,4 +1321,38 @@ function initialiser_sel() {
   $htsalt = '$1$'.creer_pass_aleatoire();
 }
 
+
+/*
+ * Retourne le rowid d'un departement pas son code
+ *
+ */
+Function departement_rowid($db,$code, $pays_id)
+{
+  $sql = "SELECT c.rowid FROM ".MAIN_DB_PREFIX."c_departements as c,".MAIN_DB_PREFIX."c_regions as r";
+  $sql .= " WHERE c.code_departement=". $code;
+  $sql .= " AND c.fk_region = r.code_region";
+  $sql .= " AND r.fk_pays =".$pays_id;
+      print $sql . " " . $num;
+  if ($db->query($sql))
+    {
+      $num = $db->num_rows();
+      print $sql . " " . $num;
+      if ($num)
+	{
+	  $obj = $db->fetch_object(0);
+	  return  $obj->rowid;
+	}
+      else
+	{
+	  return 0;
+	}
+      $db->free();
+    }
+  else
+    {
+      return 0;
+    }
+}
+
+
 ?>
