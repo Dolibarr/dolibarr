@@ -55,39 +55,78 @@ if ($HTTP_POST_VARS["action"] == 'cotisation')
 
 if ($HTTP_POST_VARS["action"] == 'add') 
 {
-
-  $adh = new Adherent($db);
-  $adh->statut      = -1;
-  $adh->prenom      = $prenom;
-  $adh->nom         = $nom;  
-  $adh->societe     = $societe;
-  $adh->adresse     = $adresse;
-  $adh->cp          = $cp;
-  $adh->ville       = $ville;
-  $adh->email       = $email;
-  $adh->login       = $login;
-  $adh->pass        = $pass;
-  $adh->naiss       = $naiss;
-  $adh->photo       = $photo;
-  $adh->note        = $note;
-  $adh->pays        = $pays;
-  $adh->typeid      = $type;
-  $adh->commentaire = $HTTP_POST_VARS["comment"];
-  $adh->morphy      = $HTTP_POST_VARS["morphy"];
-  
-  foreach($_POST as $key => $value){
-    if (ereg("^options_",$key)){
-      $adh->array_options[$key]=$_POST[$key];
+  // test si le login existe deja
+  if(!isset($login) || $login==''){
+    $error+=1;
+    $errmsg .="Login vide. Veuillez en positionner un<BR>\n";
+  }
+  $sql = "SELECT login FROM llx_adherent WHERE login='$login';";
+  $result = $db->query($sql);
+  if ($result) {
+    $num = $db->num_rows();
+  }
+  if (!isset($nom) || !isset($prenom) || $prenom=='' || $nom==''){
+    $error+=1;
+    $errmsg .="Nom et Prenom obligatoires<BR>\n";
+  }
+  if (!isset($email) || $email == '' || !ereg('@',$email)){
+    $error+=1;
+    $errmsg .="Adresse Email invalide<BR>\n";
+  }
+  if ($num !=0){
+    $error+=1;
+    $errmsg .="Login deja utilise. Veuillez en changer<BR>\n";
+  }
+  if (!isset($pass) || $pass == '' ){
+    $error+=1;
+    $errmsg .="Password invalide<BR>\n";
+  }
+  if (isset($naiss) && $naiss !=''){
+    if (!preg_match("/^\d\d\d\d-\d\d-\d\d$/",$naiss)){
+      $error+=1;
+      $errmsg .="Date de naissance invalide (Format AAAA-MM-JJ)<BR>\n";
     }
   }
-  if ($adh->create($user->id) ) 
-    {	  
-      if ($cotisation > 0)
-	{     
-	  $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
-	}
-      Header("Location: liste.php");
+  if (isset($public)){
+    $public=1;
+  }else{
+    $public=0;
+  }
+  if (!$error){
+    // email a peu pres correct et le login n'existe pas
+    $adh = new Adherent($db);
+    $adh->statut      = -1;
+    $adh->prenom      = $prenom;
+    $adh->nom         = $nom;  
+    $adh->societe     = $societe;
+    $adh->adresse     = $adresse;
+    $adh->cp          = $cp;
+    $adh->ville       = $ville;
+    $adh->email       = $email;
+    $adh->login       = $login;
+    $adh->pass        = $pass;
+    $adh->naiss       = $naiss;
+    $adh->photo       = $photo;
+    $adh->note        = $note;
+    $adh->pays        = $pays;
+    $adh->typeid      = $type;
+    $adh->commentaire = $HTTP_POST_VARS["comment"];
+    $adh->morphy      = $HTTP_POST_VARS["morphy"];
+    
+    foreach($_POST as $key => $value){
+      if (ereg("^options_",$key)){
+	$adh->array_options[$key]=$_POST[$key];
+      }
     }
+    if ($adh->create($user->id) ) 
+      {	  
+	if ($cotisation > 0)
+	  {     
+	    $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
+	  }
+	Header("Location: liste.php");
+      }
+  }
 }
 
 if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
