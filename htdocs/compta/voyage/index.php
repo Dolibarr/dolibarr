@@ -107,9 +107,6 @@ if ($result) {
 
     print "<td align=\"right\">".price($objp->amount)."</TD>\n";
     print "<td align=\"right\">".price($objp->reduction)."</TD>\n";
-
-    
-    print "<td align=\"right\"><small>".francs($objp->amount)."</small></TD>\n";
     print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid\">[Del]</a></td>";    
     print "</tr>";
 
@@ -118,9 +115,6 @@ if ($result) {
   }
   $db->free();
 
-
-  print "<tr><td align=\"right\" colspan=\"2\">Total :</td>";
-  print "<td align=\"right\"><b>".price($total)."</b></td><td align=\"right\">".francs($total)."</td></tr>\n";
   print "<tr>";
   print "<td><input name=\"date_depart\" type=\"text\" size=16 maxlength=16><br>";
   print "<input name=\"date_arrivee\" type=\"text\" size=16 maxlength=16></td>";

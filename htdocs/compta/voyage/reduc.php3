@@ -30,7 +30,6 @@ print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
 print "<TR class=\"liste_titre\">";
 print "<td>Date</td><td>Description</TD>";
 print "<td align=\"right\"><a href=\"$PHP_SELF?vue=credit\">Montant</a></TD>";
-print "<td align=\"right\">Francs</td>";
 print "</TR>\n";
 
 
@@ -54,13 +53,8 @@ if ($result) {
 
     print "<tr $bc[$var]>";
     print "<td>".strftime("%d %b %y",$objp->debut)." au ".strftime("%d %b %y",$objp->fin)."</TD>\n";
-
     print "<td>$objp->label</td>";
-
     print "<td align=\"right\">".price($objp->amount)."</TD>\n";
-
-    print "<td align=\"right\"><small>".francs($objp->amount)."</small></TD>\n";
-    
     print "</tr>";
     
     $i++;
@@ -69,7 +63,7 @@ if ($result) {
 }
 
 print "<tr><td align=\"right\" colspan=\"2\">Total :</td>";
-print "<td align=\"right\"><b>".price($total)."</b></td><td align=\"right\">".francs($total)."</td></tr>\n";
+print "<td align=\"right\"><b>".price($total)."</b></td></tr>\n";
 
 
 print "</table>";
