@@ -91,6 +91,7 @@ if ($HTTP_POST_VARS["action"] == 'cotisation')
 
 if ($HTTP_POST_VARS["action"] == 'add') 
 {
+  $login=$_POST["login"];
   // test si le login existe deja
   if(!isset($login) || $login==''){
     $error+=1;
