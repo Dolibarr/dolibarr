@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -211,7 +212,7 @@ if ($_GET["action"] == 'create')
 	  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_facture = f.rowid";
 	  $sql .= " WHERE f.fk_soc = ".$facture->socidp;
 	  $sql .= " AND f.paye = 0";
-	  $sql .= " AND f.fk_statut > 0";// AND f.rowid <>".$_GET["facid"];
+	  $sql .= " AND f.fk_statut = 1";  // Statut=0 => non validée, Statut=2 => annulée
 	  $sql .= " GROUP BY f.facnumber";  
 
 	  if ($db->query($sql))
