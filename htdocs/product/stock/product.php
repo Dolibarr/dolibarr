@@ -104,38 +104,35 @@ if ($_GET["id"])
   
   if ( $product->fetch($_GET["id"]))
     {
-        $h=0;
-        
-        $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
-        $head[$h][1] = $langs->trans("Card");
-        $h++;
-        
-        $head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-        $head[$h][1] = $langs->trans("Price");
-        $h++;
-        
-        if($product->type == 0)
-        {
-            $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-            $head[$h][1] = $langs->trans("Stock");
-            $hselected=$h;
-            $h++;
-	    
-	    $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
-	    $head[$h][1] = 'Fournisseurs';
-	    $h++;
-        }
-	if ($conf->fournisseur->enabled) {
-	  $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
-	  $head[$h][1] = $langs->trans("Suppliers");
-	  $h++;
-	}
-	
-        $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-        $head[$h][1] = $langs->trans("Statistics");
-        $h++;
+      $h=0;
       
-        dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+      $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("Card");
+      $h++;
+      
+      $head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("Price");
+      $h++;
+      
+      if($product->type == 0)
+      {
+          $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+          $head[$h][1] = $langs->trans("Stock");
+          $hselected=$h;
+          $h++;
+      }
+      
+      if ($conf->fournisseur->enabled) {
+          $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+          $head[$h][1] = $langs->trans("Suppliers");
+          $h++;
+      }
+      
+      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("Statistics");
+      $h++;
+          
+      dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
       
       print($mesg);    	      
       
