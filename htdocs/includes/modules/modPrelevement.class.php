@@ -45,6 +45,8 @@ class modPrelevement extends DolibarrModules
     */
   function modPrelevement($DB)
   {
+    global $conf;
+    
     $this->db = $DB ;
     $this->numero = 57 ;
 
@@ -57,7 +59,7 @@ class modPrelevement extends DolibarrModules
 
     // Dir
     $this->dirs = array();
-    $this->data_directory = DOL_DATA_ROOT . "/prelevement/bon/";
+    $this->data_directory = $conf->prelevement->dir_output . "/bon";
 
     // Dépendances
     $this->depends = array();
@@ -102,8 +104,8 @@ class modPrelevement extends DolibarrModules
     $this->rights[2][3] = 0;    
 
     // Dir
-    $this->dirs[0] = DOL_DATA_ROOT . "/prelevement/" ;
-    $this->dirs[1] = DOL_DATA_ROOT . "/prelevement/bon" ;
+    $this->dirs[0] = $conf->prelevement->dir_output;
+    $this->dirs[1] = $conf->prelevement->dir_output."/bon" ;
 
     $sql = array();
     

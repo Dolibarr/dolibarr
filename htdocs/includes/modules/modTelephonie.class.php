@@ -122,12 +122,12 @@ class modTelephonie extends DolibarrModules
     $this->rights[6][5] = 'creer';
 
     // Dir
-    $this->dirs[0] = DOL_DATA_ROOT . "/telephonie/" ;
-    $this->dirs[1] = DOL_DATA_ROOT . "/telephonie/ligne/" ;	  
-    $this->dirs[2] = DOL_DATA_ROOT . "/telephonie/ligne/commande" ;	 
-    $this->dirs[3] = DOL_DATA_ROOT . "/telephonie/logs" ;
-    $this->dirs[4] = DOL_DATA_ROOT . "/telephonie/client" ;
-    $this->dirs[5] = DOL_DATA_ROOT . "/telephonie/rapports" ;
+    $this->dirs[0] = $conf->telephonie->dir_output;
+    $this->dirs[1] = $conf->telephonie->dir_output."/ligne";
+    $this->dirs[2] = $conf->telephonie->dir_output."/ligne/commande" ;	 
+    $this->dirs[3] = $conf->telephonie->dir_output."/logs" ;
+    $this->dirs[4] = $conf->telephonie->dir_output."/client" ;
+    $this->dirs[5] = $conf->telephonie->dir_output."/rapports" ;
     
     return $this->_init($sql);
 

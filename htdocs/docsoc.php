@@ -36,7 +36,9 @@ llxHeader();
 $mesg = "";
 $socid=$_GET["socid"];
 
-$upload_dir = SOCIETE_OUTPUTDIR . "/" . $socid ;
+if (! is_dir($conf->societe->dir_output)) { mkdir($conf->societe->dir_output); }
+
+$upload_dir = $conf->societe->dir_output . "/" . $socid ;
 
 if (! is_dir($upload_dir))
 {
