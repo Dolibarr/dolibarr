@@ -110,7 +110,7 @@ if ($db->query($sql))
   $num = $db->num_rows();
   
   $i = 0;
-
+  $total = 0;
   print '<br><table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print '<td>'.$langs->trans("Bill").'</td><td>'.$langs->trans("Company").'</td>';
@@ -131,15 +131,23 @@ if ($db->query($sql))
 	  print ' <a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
 	  print "</a></td>\n";
 	  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">' . $objp->nom.'</a></td>';
-	  print "<td align=\"right\">".price($objp->amount)."</td>";  
+	  print '<td align="right">'.price($objp->amount).'</td>';
 	  print "</tr>\n";
 	  if ($objp->paye == 1)
 	    {
 	      $allow_delete = 0;
 	    }
+	  $total = $total + $objp->amount;
 	  $i++;
 	}		        
     }
+  $var=!$var;
+  print "<tr $bc[$var]>";
+  print '<td>&nbsp;</td>';
+  print '<td align="right">Total</td>';
+  print '<td align="right">'.price($total).'</td>';  
+  print "</tr>\n";
+
   print "</table>\n";
   $db->free();	
 }
