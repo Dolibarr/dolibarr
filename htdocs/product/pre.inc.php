@@ -67,6 +67,7 @@ function llxHeader($head = "", $urlp = "", $title="")
   $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
 
   $menu->add("stats/", "Statistiques");
+  if ($conf->propal->enabled) {
   $menu->add_submenu("popuprop.php", "Popularité");
 
   if (defined("MAIN_MODULE_STOCK"))
