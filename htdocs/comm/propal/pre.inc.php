@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!     \file       htdocs/comm/propal/pre.inc.php
+/**    \file       htdocs/comm/propal/pre.inc.php
         \ingroup    propale
 		\brief      Fichier de gestion du menu gauche du module propale
 		\version    $Revision$
@@ -52,9 +52,9 @@ function llxHeader($head = "", $urlp = "") {
     {
       $langs->load("propal");
       $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
-      $menu->add_submenu("propal.php?viewstatut=0", $langs->trans("Drafts"));
-      $menu->add_submenu("propal.php?viewstatut=1", $langs->trans("Opened"));
-      $menu->add_submenu("./propal/stats/", $langs->trans("Statistics"));
+      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=0", $langs->trans("Drafts"));
+      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=1", $langs->trans("Opened"));
+      $menu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/", $langs->trans("Statistics"));
     }
 
   if ($conf->contrat->enabled)
