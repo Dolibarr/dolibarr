@@ -35,7 +35,7 @@ function do_upload ($socid)
   global $upload_dir;
   global $local_file, $error_msg;
 
-  if (move_uploaded_file($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
+  if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
     {
       print "Le fichier est valide, et a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; 
            avec succ&egrave;s.\n";
