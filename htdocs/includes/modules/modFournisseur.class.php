@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,11 @@
  *
  */
 
-/*!     \defgroup   fournisseur     Module fournisseur
+/**     \defgroup   fournisseur     Module fournisseur
         \brief      Module pour gérer des sociétés et contacts de type fournisseurs
 */
 
-/*!
+/**
         \file       htdocs/includes/modules/modFournisseur.class.php
         \ingroup    fournisseur
         \brief      Fichier de description et activation du module Fournisseur
@@ -34,7 +34,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modFournisseur
+/**     \class      modFournisseur
 		\brief      Classe de description et activation du module Fournisseur
 */
 
@@ -98,7 +98,7 @@ class modFournisseur extends DolibarrModules
     $this->rights[2][0] = 181;
     $this->rights[2][1] = 'Lire les commandes fournisseur';
     $this->rights[2][2] = 'w';
-    $this->rights[2][3] = 0;
+    $this->rights[2][3] = 1;
     $this->rights[2][4] = 'commande';
     $this->rights[2][5] = 'lire';
 
