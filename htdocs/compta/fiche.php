@@ -70,7 +70,7 @@ if ($action == 'attribute_prefix')
 if ($action == 'recontact')
 {
   $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
-  $sql = "INSERT INTO llx_soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $GLOBALS["REMOTE_USER"]."')";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $GLOBALS["REMOTE_USER"]."')";
   $result = $db->query($sql);
 }
 
@@ -84,7 +84,7 @@ if ($action == 'stcomm')
       
       if ($result)
 	{
-	  $sql = "UPDATE llx_societe SET fk_stcomm=$stcommid WHERE idp=$socid";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=$socid";
 	  $result = $db->query($sql);
 	}
       else
@@ -95,7 +95,7 @@ if ($action == 'stcomm')
   
   if ($actioncommid)
     {
-      $sql = "INSERT INTO llx_actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
       $result = @$db->query($sql);
       
       if (!$result)
@@ -148,7 +148,7 @@ if ($socid > 0)
 {
   $societe = new Societe($db, $socid);
   
-  $sql = "SELECT s.idp as idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM llx_societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
+  $sql = "SELECT s.idp as idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."c_typent as t, ".MAIN_DB_PREFIX."c_effectif as e ";
   $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
 
   if ($to == 'next')
@@ -393,7 +393,7 @@ if ($socid > 0)
        *
        */
       $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-      $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u ";
+      $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
       $sql .= " WHERE a.fk_soc = $objsoc->idp ";
       $sql .= " AND u.rowid = a.fk_user_author";
       $sql .= " AND c.id=a.fk_action ";
