@@ -77,11 +77,26 @@ class modPrelevement extends DolibarrModules
      * Permissions
      */    
     $this->remove();
-    $sql = array(
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (150,'Tous les droits sur les prélèvements','prelevement','a',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (151,'Consulter les prelevement','prélèvements','r',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (152,'Configurer les prelevement','prélèvements','w',0);");
-    
+
+    $this->rights = array();
+
+    $this->rights_class = 'prelevement';
+
+    $this->rights[0][0] = 150; // id de la permission
+    $this->rights[0][1] = 'Tous les droits sur les prélèvements'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[1][0] = 151;
+    $this->rights[1][1] = 'Consulter les prélèvements';
+    $this->rights[1][2] = 'r';
+    $this->rights[1][3] = 1;
+
+    $this->rights[2][0] = 152;
+    $this->rights[2][1] = 'Configurer les prélèvements';
+    $this->rights[2][2] = 'w';
+    $this->rights[2][3] = 0;    
+
     /*
      * Documents
      *
