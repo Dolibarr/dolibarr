@@ -790,7 +790,7 @@ else
 	$sortfield="f.datef";
       }
 
-    print_barre_liste("Factures",$page,$PHP_SELF);
+    print_barre_liste("Factures",$page,$PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder);
 
     $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
     $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
@@ -821,9 +821,10 @@ else
       print '<TR class="liste_titre">';
       print '<TD>Num&eacute;ro</TD>';
       print '<td>';
-      print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-      print '</td><TD align="right">Date</TD>';
-      print '<TD align="right">Montant</TD>';
+      print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&socidp=$socidp");
+      print '</td><TD align="right">';
+      print_liste_field_titre("Date",$PHP_SELF,"f.datef","","&socidp=$socidp");
+      print '</td><TD align="right">Montant</TD>';
       print '<td>&nbsp;</td>';
       print "</TR>\n";
     
