@@ -1,3 +1,12 @@
 # Dolibarr language file - nl_BE - products
 Products=Producten
 Services=Diensten
+Product=Product
+Service=Dienst
+ProductsAndServices=Producten en Diensten
+ProductsOnSell=Producten op verkoopt
+ProductsNotOnSell=Producten uit verkoopt
+ServicesOnSell=Diensten op verkoopt
+ServicesNotOnSell=Diensten uit verkoopt
+LastRecorded=Laste producten/diensten op verkoop geregistreerd
+
