@@ -283,7 +283,7 @@ div.formsearch
   display: block;
   float: none;
   clear: right;
-  background: #e0dde0;
+  background: #d0d4d7;
   top: 0px;
   left: 130px;
   padding: 4px; 
@@ -377,7 +377,7 @@ border: 1px white ridge;
 
 table.border td {
 border: 1px solid #6C7C8B;
-padding: 2px 3px;
+padding: 1px 2px;
 }
 
 table.noborder {
@@ -394,7 +394,7 @@ width: 100%;
 table.noborder td {
 border-collapse: collapse;
 border: 0px;
-padding: 1px 3px;
+padding: 1px 2px;
 }
 
 table#actions {
@@ -439,14 +439,24 @@ border-left: 1px solid #000000;
 }
 
 tr.pair	{ 
-background: #e2ebed; 
+background: #e6ebed; 
 font: helvetica, verdana, arial, sans-serif;
 }
+/*
+tr.pair:hover { 
+background: #c0c4c7;
+}
+*/
 
 tr.impair { 
-background: #c0d5dd;
+background: #d0d4d7;
 font: helvetica, verdana, arial, sans-serif;
 }
+/*
+tr.impair:hover { 
+background: #c0c4c7;
+}
+*/
 
 
 /*
@@ -465,12 +475,12 @@ white-space: nowrap;
 }
 
 tr.box_impair { 
-background: #e2ebed; 
+background: #e6ebed;
 font: 12px helvetica, verdana, arial, sans-serif;
 }
 
 tr.box_pair { 
-background: #c0d5dd;
+background: #d0d4d7;
 font: 12px helvetica, verdana, arial, sans-serif;
 }
 
