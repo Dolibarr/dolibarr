@@ -159,22 +159,19 @@ insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Raggos SARL','29233','Cléder','01 55 55 03 18','01 55 55 55 55',1);
 
 insert into llx_societe (nom,cp,ville,tel,fax,client)
-values ('Pruitosa','29870','Coat-Méal','01 55 55 03 18','01 55 55 55 55',1);
+values ('Pruitosa','29870','Coat-Méal','01 55 55 03 18','01 55 55 55 55',2);
 
 insert into llx_societe (nom,cp,ville,tel,fax,client)
-values ('Stratus','29120','Combrit','01 55 55 03 18','01 55 55 55 55',1);
+values ('Stratus','29120','Combrit','01 55 55 03 18','01 55 55 55 55',2);
+
+insert into llx_societe (nom,cp,ville,tel,fax,client,address)
+values ('Nimbus','29490','Guipavas','01 55 55 03 18','01 55 55 55 55',2,'15 rue des petites écuries');
 
 insert into llx_societe (nom,cp,ville,tel,fax,client)
-values ('Nimbus','29490','Guipavas','01 55 55 03 18','01 55 55 55 55',1);
-
-insert into llx_societe (nom,cp,ville,tel,fax,client)
-values ('Iono','22110','Rostrenen','01 55 55 03 18','01 55 55 55 55',1);
-
-
+values ('Iono','22110','Rostrenen','01 55 55 03 18','01 55 55 55 55',2);
 
 insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm,address)
 values ('Bolan',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',2,'CAL','104 Avenue de la Marne');
-
 
 insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm,address)
 values ('Travail Temporaire Boharssais',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',2,'TTBOH','125 Rue des moineaux');
