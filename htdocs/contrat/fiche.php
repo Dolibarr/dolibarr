@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -63,12 +63,20 @@ if ($_POST["action"] == 'miseenservice')
 			    );
 }
 
-if ($action == 'cloture')
+if ($_GET["action"] == 'cloture')
 {
   $contrat = new Contrat($db);
   $contrat->id = $id;
   $contrat->cloture($user);
 }
+
+if ($_GET["action"] == 'annule')
+{
+  $contrat = new Contrat($db);
+  $contrat->id = $id;
+  $contrat->annule($user);
+}
+
 
 if ($action == 'update' && $cancel <> 'Annuler')
 {
@@ -142,11 +150,15 @@ else
 
       if ( $result )
 	{ 
+	  $facture = new Facture($db);
+	  $facture->fetch($contrat->factureid);
+
+
 	  print_fiche_titre('Fiche contrat : '.$contrat->id, $mesg);
       
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print '<td width="20%">Service</td><td colspan=4>'.($contrat->product->ref).' - '.($contrat->product->libelle).'</td>';
+	  print '<td width="20%">Service</td><td colspan=4>'.($contrat->product->ref).' - '.($contrat->product->label_url).'</td>';
 	  print '</tr><tr>';	
 	  if ($contrat->factureid)
 	    {
@@ -224,7 +236,8 @@ if (! $contrat->enservice)
 }
 elseif ($contrat->enservice == 1)
 {
-    print '<a class="tabAction" href="fiche.php?action=cloture&id='.$id.'">Clôturer</a>';
+  print '<a class="tabAction" href="fiche.php?action=annule&id='.$id.'">Annuler</a>';
+  print '<a class="tabAction" href="fiche.php?action=cloture&id='.$id.'">Clôturer</a>';
 }
 print '</div>';
 
