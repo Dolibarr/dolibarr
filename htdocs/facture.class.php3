@@ -400,6 +400,7 @@ class Facture
     {
       if ($this->brouillon)
 	{
+	  $pu = ereg_replace(",",".",$pu);
 	  $sql = "INSERT INTO llx_facturedet (fk_facture,description,price,qty,tva_taux, fk_product)";
 	  $sql .= " VALUES ($facid, '$desc', $pu, $qty, $txtva, $fk_product) ;";
 
@@ -417,6 +418,7 @@ class Facture
     {
       if ($this->brouillon)
 	{
+	  $pu = ereg_replace(",",".",$pu);
 	  $sql = "UPDATE llx_facturedet set description='$desc',price=$pu,qty=$qty WHERE rowid = $rowid ;";
 	  $result = $this->db->query( $sql);
 
