@@ -264,7 +264,8 @@ class PDF_card extends FPDF {
     
     if ($this->_Avery_Name == "CARD") {
       $Tformat=$this->_Avery_Labels["CARD"];
-      $this->_Pointille($_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
+      //$this->_Pointille($_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
+      $this->_Croix($_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,10);
       if($Tformat['fond'] != '' and file_exists($Tformat['fond'])){
 	$this->image($Tformat['fond'],$_PosX,$_PosY,$this->_Width,$this->_Height);
       }
@@ -335,5 +336,26 @@ class PDF_card extends FPDF {
       }
     }
 
+  /*
+   * Fonction realisant une croix aux 4 coins des cartes
+   */
+  function _Croix($x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$taille=5)
+    {
+      $this->SetLineWidth($epaisseur);
+      $lg=$taille/2;
+      // croix haut gauche
+      $this->Line($x1,$y1-$lg,$x1,$y1+$lg);
+      $this->Line($x1-$lg,$y1,$x1+$lg,$y1);
+      // croix bas gauche
+      $this->Line($x1,$y2-$lg,$x1,$y2+$lg);
+      $this->Line($x1-$lg,$y2,$x1+$lg,$y2);
+      // croix haut droit
+      $this->Line($x2,$y1-$lg,$x2,$y1+$lg);
+      $this->Line($x2-$lg,$y1,$x2+$lg,$y1);
+      // croix bas droit
+      $this->Line($x2,$y2-$lg,$x2,$y2+$lg);
+      $this->Line($x2-$lg,$y2,$x2+$lg,$y2);
+
+    }
 }
 ?>
