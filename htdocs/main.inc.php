@@ -384,7 +384,7 @@ function top_menu($head, $title="")
   print '<table class="topbarre" width="100%">';
 
   print "<tr>";
-  print '<td width="15%" class="menu" align="center"><A class="menu" href="'.DOL_URL_ROOT.'/">Accueil</A></TD>';
+  print '<td width="15%" class="menu" align="center"><A class="menu" href="'.DOL_URL_ROOT.'/index.php">Accueil</A></TD>';
 
   if (!defined(MAIN_MENU_BARRETOP))
     {
