@@ -84,7 +84,7 @@ if ( $db->query($sql) )
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php?id=$obj->cid\">$obj->label</a></td>\n";
       print "<TD><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></TD>\n";
-      print '<td>'.strftime($obj->date_fin_validite).'</td>';
+      print '<td>'.strftime("%d %b %Y", $obj->date_fin_validite).'</td>';
       print '<td align="center">';
       if ($obj->enservice == 1)
 	{
