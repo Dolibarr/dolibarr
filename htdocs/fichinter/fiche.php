@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +33,9 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-if ($socidp)
+if ($_GET["socidp"])
 {
-  $sql = "SELECT s.nom, s.idp, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s WHERE s.idp = $socidp;";
+  $sql = "SELECT s.nom, s.idp, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s WHERE s.idp = ".$_GET["socidp"];
 
   $result = $db->query($sql);
   if ($result)
@@ -45,69 +46,77 @@ if ($socidp)
 	}
       $db->free();
     }
+  else {
+    dolibarr_print_error($db); 
+  }
 }
 
 llxHeader();
+
+
 /*
  * Traitements des actions
  *
  *
  */
 
-if ($action == 'valid')
+if ($_GET["action"] == 'valid')
 {
   $fichinter = new Fichinter($db);
-  $fichinter->id = $id;
+  $fichinter->id = $_GET["id"];
   $fichinter->valid($user->id, $conf->fichinter->outputdir);
 
 }
 
-if ($action == 'add')
+if ($_POST["action"] == 'add')
 {
   $fichinter = new Fichinter($db);
 
-  $fichinter->date = $db->idate(mktime(12, 1 , 1, $pmonth, $pday, $pyear));
-  $fichinter->socidp = $socidp;
-  $fichinter->duree = $duree;
-  $fichinter->projet_id = $projetidp;
+  $fichinter->date = $db->idate(mktime(12, 1 , 1, $_POST["pmonth"], $_POST["pday"], $_POST["pyear"]));
+  $fichinter->socidp = $_POST["socidp"];
+  $fichinter->duree = $_POST["duree"];
+  $fichinter->projet_id = $_POST["projetidp"];
   $fichinter->author = $user->id;
-  $fichinter->note = $note;
-  $fichinter->ref = $ref;
+  $fichinter->note = $_POST["note"];
+  $fichinter->ref = $_POST["ref"];
 
   $id = $fichinter->create();
+  $_GET["id"]=$id;      // Force raffraichissement sur fiche venant d'etre créée
 }
 
-if ($action == 'update')
+if ($_POST["action"] == 'update')
 {
   $fichinter = new Fichinter($db);
 
-  $fichinter->date = $db->idate(mktime(12, 1 , 1, $remonth, $reday, $reyear));
-  $fichinter->socidp = $socidp;
-  $fichinter->duree = $duree;
-  $fichinter->projet_id = $projetidp;
+  $fichinter->date = $db->idate(mktime(12, 1 , 1, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]));
+  $fichinter->socidp = $_POST["socidp"];
+  $fichinter->duree = $_POST["duree"];
+  $fichinter->projet_id = $_POST["projetidp"];
   $fichinter->author = $user->id;
-  $fichinter->note = $note;
-  $fichinter->ref = $ref;
+  $fichinter->note = $_POST["note"];
+  $fichinter->ref = $_POST["ref"];
 
-  $fichinter->update($id);
+  $fichinter->update($_POST["id"]);
 }
+
 /*
  *
  *   Generation du pdf
  *
  */
-if ($action == 'generate' && $id)
+if ($_GET["action"] == 'generate' && $_GET["id"])
 {
-  fichinter_pdf_create($db, $id);
+  fichinter_pdf_create($db, $_GET["id"]);
   $mesg = "PDF généré";
 }
+
 /*
  *
  * Mode creation
  * Creation d'une nouvelle fiche d'intervention
  *
  */
-if ($action == 'create')
+if ($_GET["action"] == 'create')
 {
   print_titre("Création d'une fiche d'intervention");
 
@@ -130,7 +139,7 @@ if ($action == 'create')
       $fix = new Fichinter($db);
       $numpr = $fix->get_new_num($objsoc->prefix_comm);
     
-      print "<form action=\"fiche.php?socidp=$socidp\" method=\"post\">";
+      print "<form action=\"fiche.php\" method=\"post\">";
       
       $strmonth[1] = "Janvier";
       $strmonth[2] = "F&eacute;vrier";
@@ -149,6 +158,7 @@ if ($action == 'create')
       $syear = date("Y", time());
       print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
       
+      print '<input type="hidden" name="socidp" value='.$_GET["socidp"].'>';
       print "<tr><td>Société</td><td><b>".$objsoc->nom."</td></tr>";
       
       print "<tr><td>Date</td><td>";
@@ -171,7 +181,7 @@ if ($action == 'create')
       for ($month = $smonth ; $month < $smonth + 12 ; $month++) {
 	if ($month == $cmonth)
 	  {
-	    print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
+	    print "<option value=\"$month\" selected>" . $strmonth[$month];
 	  }
 	else
 	  {
@@ -214,7 +224,7 @@ if ($action == 'create')
 	    }
 	  $db->free();
 	} else {
-	  print $db->error();
+	  dolibarr_print_error();
 	}
       print '</select>';
       if ($numprojet==0) {
@@ -239,17 +249,19 @@ if ($action == 'create')
       print "Vous devez d'abord associer un prefixe commercial a cette societe" ;
     }
 }
+
+
 /*
  *
  * Mode update
  * Mise a jour de la fiche d'intervention
  *
  */
-if ($action == 'edit')
+if ($_GET["action"] == 'edit')
 {
 
   $fichinter = new Fichinter($db);
-  $fichinter->fetch($id);
+  $fichinter->fetch($_GET["id"]);
 
   /*
    *   Initialisation de la liste des projets
@@ -263,7 +275,7 @@ if ($action == 'edit')
   print "<form action=\"fiche.php?id=$id\" method=\"post\">";
   
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-  print "<tr><td>Date</td><td>";
+  print "<tr><td>".$langs->trans("Date")."</td><td>";
   /*
    * set $reday, $remonth, $reyear
    */
@@ -302,7 +314,7 @@ if ($action == 'edit')
   print '</td></tr>';
 
   print '<tr><td colspan="2" align="center">';
-  print "<input type=\"submit\" value=\"Enregistrer\">";
+  print "<input type=\"submit\" value=\"".$langs->trans("Save")."\">";
   print '</td></tr>';
   print "</table>";  
     
@@ -342,58 +354,37 @@ if ($_GET["id"])
       print '</td></tr>';
       print "</table>";  
 
-      /*
-       *
-       */
-      print '<br><table class="border" cellpadding="3" cellspacing="0" width="100%"><tr>';
+
+    /*
+     * Barre d'actions
+     *
+     */
+    print '<br>';
+    print '<div class="tabsAction">';
 
       if ($user->societe_id == 0)
 	{
       
 	  if ($fichinter->statut == 0)
 	    {
-	      print '<td align="center" width="20%"><a href="fiche.php?id='.$id.'&action=edit">Mettre à jour</a></td>';
+	      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=edit">'.$langs->trans("Edit").'</a>';
 	    }
-	  else
-	    {
-	      print '<td align="center" width="20%">-</td>';
-	    }
-	  
-	  print '<td align="center" width="20%">-</td>';
-	  
+	  	  
 	  $file = FICHEINTER_OUTPUTDIR . "/$fichinter->ref/$fichinter->ref.pdf";
-	  
 	  if ($fichinter->statut == 0 or !file_exists($file))
 	    {
-	      print '<td align="center" width="20%"><a href="fiche.php?id='.$id.'&action=generate">Génération du pdf</a></td>';
+	      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=generate">'.$langs->trans("BuildPDF").'</a>';
 	    }
-	  else
-	    {
-	      print '<td align="center" width="20%">-</td>';
-	    }
-	  
-	  print '<td align="center" width="20%">-</td>';
 	  
 	  if ($fichinter->statut == 0)
 	    {
-	      print '<td align="center" width="20%"><a href="fiche.php?id='.$id.'&action=valid">Valider</a></td>';
-	    }
-	  else
-	    {
-	      print '<td align="center" width="20%">-</td>';
+	      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=valid">'.$langs->trans("Valid").'</a>';
 	    }
 	  
 	}
-      else
-	{
-	  print '<td align="center" width="20%">-</td>';
-	  print '<td align="center" width="20%">-</td>';
-	  print '<td align="center" width="20%">-</td>';
-	  print '<td align="center" width="20%">-</td>';
-	  print '<td align="center" width="20%">-</td>';
-	}
-  
-      print '</tr></table>';
+    print '</div>';
+      
+      print '<br>';
   
       print '<table width="50%" cellspacing="2"><tr><td width="50%" valign="top">';
       print_titre("Documents générés");
