@@ -93,6 +93,11 @@ $modules["MAIN_MODULE_BOUTIQUE"][1] = "MAIN_MODULE_BOUTIQUE";
 $modules["MAIN_MODULE_BOUTIQUE"][2] = MAIN_MODULE_BOUTIQUE;
 $modules["MAIN_MODULE_BOUTIQUE"][3] = "Module de gestion des boutiques";
 
+$modules["MAIN_MODULE_POSTNUKE"][0] = "Module Postnuke";
+$modules["MAIN_MODULE_POSTNUKE"][1] = "MAIN_MODULE_POSTNUKE";
+$modules["MAIN_MODULE_POSTNUKE"][2] = MAIN_MODULE_POSTNUKE;
+$modules["MAIN_MODULE_POSTNUKE"][3] = "Module de gestion de postnuke";
+
 if ($action == 'set')
 {
   $sql = "REPLACE INTO llx_const SET name = '".$value."', value='1', visible = 0";
