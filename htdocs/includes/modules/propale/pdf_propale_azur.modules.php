@@ -289,8 +289,10 @@ class pdf_propale_azur extends ModelePDFPropales
                 */
                 
                 /*
-                * Conditions de règlements
-                */
+                 * Conditions de règlements
+                 */
+                /* Pour l'instant les conditions de règlement ne sont pas gérées sur les propales */
+                /*
                 $pdf->SetFont('Arial','B',10);
                 $pdf->SetXY(10, 217);
                 $titre = "Conditions de réglement:";
@@ -298,7 +300,7 @@ class pdf_propale_azur extends ModelePDFPropales
                 $pdf->SetFont('Arial','',10);
                 $pdf->SetXY(54, 217);
                 $pdf->MultiCell(80, 5, $prop->cond_reglement_facture,0,'L');
-
+                */
 
                 /*
                  * Pied de page
