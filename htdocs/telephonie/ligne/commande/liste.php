@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,6 @@ require("./pre.inc.php");
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
-
-
 
 if ($_GET["action"] == "commande" && $user->rights->telephonie->ligne_commander)
 {
@@ -56,26 +54,6 @@ if ($sortfield == "") {
   $sortfield="l.statut";
 }
 
-/*
- * Recherche
- *
- *
- */
-if ($mode == 'search') {
-  if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
-    $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
-  }
-      
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() == 1) {
-      $obj = $db->fetch_object(0);
-      $socid = $obj->idp;
-    }
-    $db->free();
-  }
-}
-
 if ($page == -1) { $page = 0 ; }
 
 $offset = $conf->liste_limit * $page ;
@@ -90,10 +68,13 @@ $pagenext = $page + 1;
  */
 
 $sql = "SELECT sf.idp as sfidp, sf.nom as sfnom, s.idp as socidp, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, f.rowid as fournid, l.mode_paiement";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-$sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
-$sql .= " , ".MAIN_DB_PREFIX."societe as sf";
-$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid AND l.statut IN (-1,1,4) ";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= ",".MAIN_DB_PREFIX."telephonie_fournisseur as f";
+$sql .= ",".MAIN_DB_PREFIX."societe as sf";
+$sql .= " WHERE l.fk_soc = s.idp ";
+$sql .= " AND l.fk_fournisseur = f.rowid ";
+$sql .= " AND l.statut IN (-1,1,4) ";
 $sql .= " AND l.fk_soc_facture = sf.idp";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
@@ -127,7 +108,7 @@ if ($result)
       if (!array_key_exists($obj->fournid, $fourntels)) 
 	{
 	  $ft = new FournisseurTelephonie($db, $obj->fournid);
-	  $ft->fetch();
+	  $ft->fetch($obj->fournid);
 	  $fourntels[$obj->fournid] = $ft;
 	}
 
@@ -168,8 +149,8 @@ if ($result)
 	  print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
 	}
 
-      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socidp.'">'.$obj->nom.'</a></td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.$obj->sfnom.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->sfnom).'</a></td>';
       print '<td align="center">'.$socf->verif_rib().'</a></td>';
       print "<td>".$obj->fournisseur."</td>\n";
       print "</tr>\n";
