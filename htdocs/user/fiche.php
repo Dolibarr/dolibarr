@@ -362,7 +362,7 @@ else
 
             if ($user->id == $id or $user->admin)
             {
-                print '<a class="tabAction" href="fiche.php?action=password&amp;id='.$fuser->id.'">Modifier mot de passe</a>';
+                print '<a class="tabAction" href="fiche.php?action=password&amp;id='.$fuser->id.'">Envoyer nouveau mot de passe</a>';
             }
 
             if ($user->admin)
