@@ -240,11 +240,10 @@ function print_liste_field_titre($name, $file, $field, $begin="")
   print '<img src="/theme/'.$conf->theme.'/img/1downarrow.png" border="0"></a>';
   print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.'">';
   print '<img src="/theme/'.$conf->theme.'/img/1uparrow.png" border="0"></a>';
-
 }
 
 function print_titre($titre)
- {
+{
   global $conf;
   print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
   print '<tr><td><div class="titre">'.$titre.'</div></td>';
@@ -254,6 +253,19 @@ function print_titre($titre)
  *
  *
  */
+
+function block_access()
+{
+  llxHeader();
+  print "Accés refusé";
+  llxFooter();
+} 
+
+/*
+ *
+ *
+ */
+
 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $form='')
  {
   global $conf;
