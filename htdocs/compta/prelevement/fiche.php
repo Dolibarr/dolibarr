@@ -35,6 +35,27 @@ if ($_POST["action"] == 'confirm_credite' && $_POST["confirm"] == yes)
   Header("Location: fiche.php?id=".$_GET["id"]);
 }
 
+if ($_POST["action"] == 'infotrans')
+{
+  $bon = new BonPrelevement($db,"");
+  $bon->id = $_GET["id"];
+  $dt = mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+
+  $bon->set_infotrans($user, $dt, $_POST["methode"]);
+
+  Header("Location: fiche.php?id=".$_GET["id"]);
+}
+
+if ($_POST["action"] == 'infocredit')
+{
+  $bon = new BonPrelevement($db,"");
+  $bon->id = $_GET["id"];
+  $dt = mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+
+  $bon->set_infocredit($user, $dt);
+
+  Header("Location: fiche.php?id=".$_GET["id"]);
+}
 
 llxHeader('','Bon de prélèvement');
 
@@ -48,7 +69,13 @@ $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Factures");
 $h++;  
 
+$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Statistiques");
+$h++;  
+
 $prev_id = $_GET["id"];
+
+$html = new Form($db);
 
 if ($_GET["id"])
 {
@@ -60,8 +87,6 @@ if ($_GET["id"])
 
       if ($_GET["action"] == 'credite')
 	{
-	  $html = new Form($db);
-
 	  $html->form_confirm("fiche.php?id=".$bon->id,"Classer comme crédité","Etes-vous sûr de vouloir classer ce bon de prélèvement comme crédité sur votre compte bancaire ?","confirm_credite");
 	  print '<br />';
 	}
@@ -78,7 +103,59 @@ if ($_GET["id"])
       print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;file='.$encfile.'">'.$bon->ref.'</a>';
 
       print '</td></tr>';
+
+      if($bon->date_trans <> 0)
+	{
+	  $muser = new User($db, $bon->user_trans);
+	  $muser->fetch();
+
+	  print '<tr><td width="20%">Date Transmission / Par</td><td>';
+	  print strftime("%d %b %Y",$bon->date_trans);
+	  print ' par '.$muser->fullname.'</td></tr>';
+	  print '<tr><td width="20%">Méthode Transmission</td><td>';
+	  print $bon->methodes_trans[$bon->method_trans];
+	  print '</td></tr>';
+	}
+      if($bon->date_credit <> 0)
+	{
+	  print '<tr><td width="20%">Crédité le</td><td>';
+	  print strftime("%d %b %Y",$bon->date_credit);
+	  print '</td></tr>';
+	}
+
       print '</table><br />';
+
+      if($bon->date_trans == 0)
+	{
+	  print '<form method="post" action="fiche.php?id='.$bon->id.'">';
+	  print '<input type="hidden" name="action" value="infotrans">';
+	  print '<table class="border" width="100%">';
+	  print '<tr><td width="20%">Date Transmission</td><td>';
+	  print $html->select_date();
+	  print '</td></tr>';
+	  print '<tr><td width="20%">Méthode Transmission</td><td>';
+	  print $html->select_array("methode",$bon->methodes_trans);
+	  print '</td></tr>';
+	  print '<tr><td colspan="2" align="center">';
+	  print '<input type="submit">';
+	  print '</td></tr>';
+	  print '</table></form>';
+	}
+
+      if($bon->date_trans <> 0 && $bon->date_credit == 0)
+	{
+	  print '<form method="post" action="fiche.php?id='.$bon->id.'">';
+	  print '<input type="hidden" name="action" value="infocredit">';
+	  print '<table class="border" width="100%">';
+	  print '<tr><td width="20%">Crédité le</td><td>';
+	  print $html->select_date();
+	  print '</td></tr>';
+	  print '<tr><td colspan="2" align="center">';
+	  print '<input type="submit">';
+	  print '</td></tr>';
+	  print '</table></form>';
+	}
+
     }
   else
     {
