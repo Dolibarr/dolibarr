@@ -33,20 +33,19 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("/compta/facture.php","Factures");
-  $menu->add("../charges.php","Charges");
+  $menu->add(DOL_URL_ROOT."/compta/resultat/","Résultat / Exercice");
 
-  $menu->add(DOL_URL_ROOT."/compta/stats/","Chiffre d'affaire");
+  $menu->add(DOL_URL_ROOT."/compta/stats/index.php","Chiffre d'affaire");
 
-  if ($conf->compta->tva)
-    {
-      $menu->add("/compta/tva/index.php","TVA");
-    }
 
-  $menu->add("index.php","Résultats");
-  /*
-   * A automatiser
-   */
+  $menu->add_submenu(DOL_URL_ROOT."/compta/stats/cumul.php","Cumulé");
+  if ($conf->propal->enabled) {
+  	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/prev.php","Prévisionnel");
+  	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/comp.php","Transformé");
+  }
+  $menu->add_submenu(DOL_URL_ROOT."/compta/stats/exercices.php","Evolution");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php","Par société");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php","Par utilisateur");
 
   left_menu($menu->liste);
 }
