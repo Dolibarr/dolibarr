@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,9 @@ if ($action == 'add')
   $soc->fax     = $fax;
   $soc->url     = $url;
   $soc->siren   = $siren;
+
+  $soc->client   = $client;
+  $soc->fournisseur = $fournisseur;
 
   $socid = $soc->create();
 }
@@ -88,7 +91,13 @@ if ($action == 'create')
 
   print '<tr><td>Siren</td><td><input type="text" name="siren"></td></tr>';
 
+  print '<tr><td>Client</td><td><select name="client">';
+  print_oui_non($soc->client);
+  print '</select>';
 
+  print '<tr><td>Fournisseur</td><td><select name="fournisseur">';
+  print_oui_non($soc->fournisseur);
+  print '</select>';
 
   print '<tr><td colspan="2" align="center"><input type="submit" value="Ajouter"></td></tr>';
   print '</table>';
@@ -153,7 +162,14 @@ elseif ($action == 'edit')
 
   print '<tr><td>Siren</td><td>'.$soc->siren.'&nbsp;</td></tr>';
   print '<tr><td>Client</td><td>'.$soc->client.'</td></tr>';
-  print '<tr><td>Fournisseur</td><td>'.$soc->fournisseur.'</td></tr>';
+  if ($soc->fournisseur)
+    {
+      print '<tr><td>Fournisseur</td><td>'.$soc->fournisseur.'</td><td><a href="/fourn/">Fiche</td></tr>';
+    }
+  else
+    {
+      print '<tr><td>Fournisseur</td><td>'.$soc->fournisseur.'</td></tr>';
+    }
   print '</table>';
 
   print "[<a href=\"soc.php3?socid=$socid&action=edit\">Editer</a>]";
