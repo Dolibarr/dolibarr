@@ -305,7 +305,7 @@ setlocale(LC_TIME, "fr_FR");
  *
  */
 
-function top_menu($head) 
+function top_menu($head, $title="") 
 {
   global $user, $conf, $rtplang;
 
@@ -318,13 +318,20 @@ function top_menu($head)
 
   print '<LINK REL="stylesheet" TYPE="text/css" HREF="'.DOL_URL_ROOT.'/'.$conf->css.'">';
   print "\n";
-  if (defined("MAIN_TITLE"))
+  if (strlen($title) > 0)
     {
-      print "<title>".MAIN_TITLE."</title>";
+      print '<title>'.$title.'</title>';
     }
   else
     {
-      print '<title>Dolibarr</title>';
+      if (defined("MAIN_TITLE"))
+	{
+	  print "<title>".MAIN_TITLE."</title>";
+	}
+      else
+	{
+	  print '<title>Dolibarr</title>';
+	}
     }
   print "\n";
 
