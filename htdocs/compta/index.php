@@ -204,12 +204,12 @@ if ( $db->query($sql) )
 print '</td><td valign="top" width="70%">';
 
 /*
- * Propales à facturer
+ * Commandes à facturer
  */
 if ($user->comm > 0 && $conf->commercial ) 
 {
-  $sql = "SELECT p.rowid, p.ref, s.nom, s.idp FROM llx_propal as p, llx_societe as s";
-  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = 2";
+  $sql = "SELECT p.rowid, p.ref, s.nom, s.idp FROM llx_commande as p, llx_societe as s";
+  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = 1 AND p.facture = 0";
   if ($socidp)
     {
       $sql .= " AND p.fk_soc = $socidp";
@@ -223,13 +223,13 @@ if ($user->comm > 0 && $conf->commercial )
 	  $i = 0;
 	  print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
 	  print "<tr class=\"liste_titre\">";
-	  print '<td colspan="2">'.translate("Propositions commerciales à facturer").'</td></tr>';
+	  print '<td colspan="2">'.translate("Commandes à facturer").'</td></tr>';
   
 	  while ($i < $num)
 	    {
 	      $var=!$var;
 	      $obj = $db->fetch_object($i);
-	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"propal.php?propalid=$obj->rowid\">$obj->ref</a></td>";
+	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	      $i++;
 	    }

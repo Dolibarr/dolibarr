@@ -104,10 +104,25 @@ class DoliDb {
     }
 
   Function close()
-    {
-      $this->ret = mysql_close($this->db);
-      return $this->ret;
-    }
+  {
+    $this->ret = mysql_close($this->db);
+    return $this->ret;
+  }
+
+  Function begin()
+  {
+    return $this->query("BEGIN");
+  }
+
+  Function commit()
+  {
+    return $this->query("COMMIT");
+  }
+
+  Function rollback()
+  {
+    return $this->query("ROLLBACK");
+  }
 
   Function query($query, $limit="", $offset="")
     {

@@ -28,8 +28,6 @@ if (!$user->rights->commande->lire)
 require("../project.class.php");
 require("../propal.class.php");
 
-llxHeader();
-
 /*
  * Sécurité accés client
  */
@@ -59,7 +57,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
   $commande->soc_id         = $HTTP_POST_VARS["soc_id"];
   $commande->date_commande  = $datecommande;      
   $commande->note           = $HTTP_POST_VARS["note"];
-
+  $commande->source         = $HTTP_POST_VARS["source_id"];
   $commande->projetid       = $HTTP_POST_VARS["projetid"];
   $commande->remise_percent = $HTTP_POST_VARS["remise_percent"];
   
@@ -140,6 +138,13 @@ if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] =
   $result = $commande->valid($user);
 }
 
+if ($HTTP_POST_VARS["action"] == 'confirm_cancel' && $HTTP_POST_VARS["confirm"] == yes && $user->rights->commande->valider)
+{
+  $commande = new Commande($db);
+  $commande->fetch($_GET["id"]);
+  $result = $commande->cancel($user);
+}
+
 if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
 {
   if ($user->rights->commande->supprimer ) 
@@ -147,7 +152,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
       $commande = new Commande($db);
       $commande->id = $_GET["id"];
       $commande->delete();
-      $id = 0 ;
+      Header("Location: liste.php");
     }
 }
 
@@ -163,6 +168,10 @@ if ($action == 'pdf')
   commande_pdf_create($db, $_GET["id"]);
 } 
 
+llxHeader();
+
+
+
 $html = new Form($db);
 
 /*********************************************************************
@@ -175,6 +184,8 @@ $html = new Form($db);
 if ($action == 'create') 
 {
   print_titre("Créer une commande");
+
+  $new_commande = new Commande($db);
 
   if ($propalid)
     {
@@ -223,7 +234,10 @@ if ($action == 'create')
 	  print "<tr><td>Numéro :</td><td>Provisoire</td></tr>";
 	  print '<input name="facnumber" type="hidden" value="provisoire">';
 
-	  
+	  print "<tr><td>Source :</td><td>";
+	  $html->select_array("source_id",$new_commande->sources,2);
+	  print "</td></tr>";
+
 	  print "<tr><td>Projet :</td><td>";
 	  $proj = new Project($db);
 	  $html->select_array("projetid",$proj->liste_array($socidp),0,1);
@@ -394,10 +408,18 @@ else
 	   * Confirmation de la validation
 	   *
 	   */
-	  if ($action == 'valid')
+	  if ($_GET["action"] == 'valid')
 	    {
 	      //$numfa = commande_get_num($soc);
 	      $html->form_confirm("$PHP_SELF?id=$id","Valider la commande","Etes-vous sûr de vouloir valider cette commande ?","confirm_valid");
+	    }
+	  /*
+	   * Confirmation de l'annulation
+	   *
+	   */
+	  if ($_GET["action"] == 'annuler')
+	    {
+	      $html->form_confirm("$PHP_SELF?id=$id","Annuler la commande","Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
 	    }
 
 	  /*
@@ -411,14 +433,28 @@ else
 
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
 	  print "<tr><td>Client</td>";
-	  print "<td colspan=\"3\">";
+	  print "<td colspan=\"2\">";
 	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  
-	  print "<td>Source : " . $commande->sources[0] ."</td></tr>";
+	  print '<td width="50%">';
+	  print $commande->statuts[$commande->statut];
+	  print "</td></tr>";
 	  
 	  print "<tr><td>Date</td>";
-	  print "<td colspan=\"3\">".strftime("%A %d %B %Y",$commande->date)."</td>\n";
+	  print "<td colspan=\"2\">".strftime("%A %d %B %Y",$commande->date)."</td>\n";
 
+	  print '<td width="50%">Source : ' . $commande->sources[$commande->source] ;
+	  if ($commande->source == 0)
+	    {
+	      /* Propale */
+	      $propal = new Propal($db);
+	      $propal->fetch($commande->propale_id);
+	      print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
+	    }
+	  print "</td></tr>";
+
+	  print "<tr><td>Auteur</td><td colspan=\"2\">$author->fullname</td>";
+	
 	  print '<td>Projet : ';
 	  if ($commande->projet_id > 0)
 	    {
@@ -431,14 +467,14 @@ else
 	      print '<a href="fiche.php?id='.$id.'&amp;action=classer">Classer la commande</a>';
 	    }
 	  print "&nbsp;</td></tr>";
-
-	  print "<tr><td>Auteur</td><td colspan=\"3\">$author->fullname</td>";
-	  
+  
 	  print '<tr><td>Montant</td>';
-	  print '<td align="right" colspan="2"><b>'.price($commande->total_ht).'</b></td>';
-	  print '<td>'.MAIN_MONNAIE.' HT</td></tr>';
+	  print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
+	  print '<td>'.MAIN_MONNAIE.' HT</td>';
 	  
-	  print '<tr><td>Remise</td><td align="right" colspan="2">';
+	  print '<td>Note</td></tr>';
+
+	  print '<tr><td>Remise globale</td><td align="right">';
 
 	  if ($commande->brouillon == 1 && $user->rights->commande->creer) 
 	    {
@@ -451,16 +487,16 @@ else
 	    }
 	  print '</td></tr>';
 
-	  print '<tr><td>TVA</td><td align="right" colspan="2">'.price($commande->total_tva).'</td>';
+	  print '<tr><td>TVA</td><td align="right">'.price($commande->total_tva).'</td>';
 	  print '<td>'.MAIN_MONNAIE.'</td></tr>';
-	  print '<tr><td>Total</td><td align="right" colspan="2">'.price($commande->total_ttc).'</td>';
+	  print '<tr><td>Total</td><td align="right">'.price($commande->total_ttc).'</td>';
 	  print '<td>'.MAIN_MONNAIE.' TTC</td></tr>';
 	  if ($commande->note)
 	    {
 	      print '<tr><td colspan="5">Note : '.nl2br($commande->note)."</td></tr>";
 	    }
 	  
-	  print "</table><br>";
+	  print "</table>";
 	  
 	  if ($commande->brouillon == 1 && $user->rights->commande->creer) 
 	    {
@@ -471,7 +507,7 @@ else
 	   * Lignes de commandes
 	   *
 	   */
-	  echo '<table border="0" width="100%" cellspacing="0" cellpadding="3">';	  
+	  echo '<br><table border="0" width="100%" cellspacing="0" cellpadding="3">';	  
 
 	  $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
 	  $sql .= " FROM llx_commandedet as l WHERE l.fk_commande = $id ORDER BY l.rowid";
@@ -500,7 +536,8 @@ else
 		  print "<TR $bc[$var]>";
 		  if ($objp->fk_product > 0)
 		    {
-		      print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
+		      print '<td>';
+		      print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
 		    }
 		  else
 		    {
@@ -519,8 +556,12 @@ else
 		  print '<td align="right">'.price($objp->subprice)."</td>\n";
 		  if ($commande->statut == 0  && $user->rights->commande->creer) 
 		    {
-		      print '<td align="right"><a href="'.$PHPSELF.'?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">del</a></td>';
-		      print '<td align="right"><a href="'.$PHPSELF.'?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">edit</a></td>';
+		      print '<td align="right"><a href="'.$PHPSELF.'?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+		      print img_edit();
+		      print '</a></td>';
+		      print '<td align="right"><a href="'.$PHPSELF.'?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+		      print img_delete();
+		      print '</a></td>';
 		    }
 		  else
 		    {
@@ -533,7 +574,7 @@ else
 		      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">";
 		      print '<input type="hidden" name="action" value="updateligne">';
 		      print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-		      print "<TR $bc[$var]>";
+		      print "<tr $bc[$var]>";
 		      print '<TD colspan="2"><textarea name="desc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></TD>';
 		      print '<TD align="center"><input size="4" type="text" name="qty" value="'.$objp->qty.'"></TD>';
 		      print '<TD align="right"><input size="3" type="text" name="remise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
@@ -542,14 +583,10 @@ else
 		      print '</tr>' . "\n";
 		      print "</form>\n";
 		    }
-		  
-		  $total = $total + ($objp->qty * $objp->price);
 		  $i++;
 		  $var=!$var;
-		}
-	      
+		}	      
 	      $db->free();
-	      //	    print "</table>";
 	    } 
 	else
 	  {
@@ -625,11 +662,11 @@ else
 	
 	    if ($commande->statut == 0 && $user->rights->commande->supprimer)
 	      {
-		print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?id=$id&amp;action=delete\">Supprimer</a>]</td>";
+		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?id=$id&amp;action=delete\">Supprimer</a></td>";
 	      } 
 	    elseif ($commande->statut == 1 && abs($resteapayer) > 0 && $user->rights->commande->envoyer) 
 	      {
-		print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?id=$id&amp;action=presend\">Envoyer</a>]</td>";
+		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?id=$id&amp;action=presend\">Envoyer</a></td>";
 	      }
 	    else
 	      {
@@ -642,24 +679,24 @@ else
 	    
 
 	    print '<td align="center" width="20%">-</td>';
-
+	    print '<td align="center" width="20%">-</td>';
 	    
 	    if ($commande->statut == 0) 
 	      {
 		if ($user->rights->commande->valider)
 		  {
-		    print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?id=$id&amp;action=valid\">Valider</a>]</td>";
+		    print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?id=$id&amp;action=valid\">Valider</a></td>";
 		  }
 		else
 		  {
 		    print '<td align="center" width="20%">-</td>';
 		  }
 	      }
-	    elseif ($commande->statut == 1 && $commande->paye == 0)
+	    elseif ($commande->statut == 1)
 	      {
-		if ($user->rights->commande->creer)
+		if ($user->rights->commande->valider)
 		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$id&amp;action=pdf\">Générer la commande</a></td>";
+		    print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$id&amp;action=annuler\">Annuler la commande</a></td>";
 		  }
 		else
 		  {
@@ -670,10 +707,6 @@ else
 	      {
 		print '<td align="center" width="20%">-</td>';
 	      }
-
-
-	    print '<td align="center" width="20%">-</td>';
-
 
 	    print "</tr></table>";
 	  }

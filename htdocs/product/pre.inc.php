@@ -66,6 +66,8 @@ function llxHeader($head = "", $urlp = "", $title="")
   $menu->add("stats/", "Statistiques");
   $menu->add_submenu("popuprop.php", "Popularité");
 
+  $menu->add("stock/", "Stock");
+
   left_menu($menu->liste);
   /*
    *

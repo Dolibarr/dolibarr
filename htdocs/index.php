@@ -57,7 +57,7 @@ for ($ii=0, $ni=sizeof($boxes); $ii<$ni; $ii++)
       print "<tr>\n";
     }
 
-  print '<td valign="top">';
+  print '<td valign="top" width="50%">';
   include($boxes[$ii]);
   print "</td>";
 

@@ -49,10 +49,12 @@ if ($user->rights->facture->lire)
 	  
 	  $info_box_contents[$i][0] = array('align' => 'left',
 					    'text' => $objp->facnumber,
+					    'width' => '30%',
 					    'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
 	  
 	  $info_box_contents[$i][1] = array('align' => 'left',
 					    'text' => $objp->nom,
+					    'width' => '70%',
 					    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
 	  
 	  $i++;

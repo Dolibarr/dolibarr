@@ -48,6 +48,7 @@ if ($action == 'add')
   $product->description    = $HTTP_POST_VARS["desc"];
   $product->duration_value = $HTTP_POST_VARS["duration_value"];
   $product->duration_unit  = $HTTP_POST_VARS["duration_unit"];
+  $product->seuil_stock_alerte = $HTTP_POST_VARS["seuil_stock_alerte"];
 
   $id = $product->create($user);
   $action = '';
@@ -118,12 +119,13 @@ if ($HTTP_POST_VARS["action"] == 'update' &&
   if ($product->fetch($id))
     {
 
-      $product->ref         = $HTTP_POST_VARS["ref"];
-      $product->libelle     = $HTTP_POST_VARS["libelle"];
-      $product->price       = $HTTP_POST_VARS["price"];
-      $product->tva_tx      = $HTTP_POST_VARS["tva_tx"];
-      $product->description = $HTTP_POST_VARS["desc"];
-      $product->envente     = $HTTP_POST_VARS["statut"];
+      $product->ref                = $HTTP_POST_VARS["ref"];
+      $product->libelle            = $HTTP_POST_VARS["libelle"];
+      $product->price              = $HTTP_POST_VARS["price"];
+      $product->tva_tx             = $HTTP_POST_VARS["tva_tx"];
+      $product->description        = $HTTP_POST_VARS["desc"];
+      $product->envente            = $HTTP_POST_VARS["statut"];
+      $product->seuil_stock_alerte = $HTTP_POST_VARS["seuil_stock_alerte"];
       $product->duration_value = $HTTP_POST_VARS["duration_value"];
       $product->duration_unit = $HTTP_POST_VARS["duration_unit"];
       
@@ -192,11 +194,21 @@ if ($action == 'create')
   print "<tr>".'<td>Taux TVA</td><TD>';
   $html = new Form($db);
   print $html->select_tva("tva_tx");
-  print '</td></tr>';    
-  print "<tr>".'<td valign="top">Description</td><td>';
+  print '</td></tr>';
+  if ($_GET["type"] == 0)
+    {
+      print "<tr>".'<td>Seuil stock</td><td colspan="2">';
+      print '<input name="seuil_stock_alerte" size="4" value="0">';
+      print '</td></tr>';
+    }
+  else
+    {
+      print '<input name="seuil_stock_alerte" type="hidden" value="0">';
+    }
+  print '<tr><td valign="top">Description</td><td>';
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
-  if ($type == 1)
+  if ($_GET["type"] == 1)
     {
       print "<tr>".'<td>Durée</td><TD><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'">';
       print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
@@ -279,7 +291,24 @@ else
 
 	      print '</td></tr>';
 
-	      print "<tr>".'<td>Taux TVA</td><TD>'.$product->tva_tx.' %</td></tr>';
+	      print '<tr><td>Taux TVA</td><TD>'.$product->tva_tx.' %</td></tr>';
+	      print '<tr><td><a href="stock/product.php?id='.$product->id.'">Stock</a></td>';
+	      if ($product->no_stock)
+		{
+		  print "<td>Pas de définition de stock pour ce produit";
+		}
+	      else
+		{
+		  if ($product->stock_reel <= $product->seuil_stock_alerte)
+		    {
+		      print '<td class="alerte">'.$product->stock_reel.' Seuil : '.$product->seuil_stock_alerte;
+		    }
+		  else
+		    {
+		      print "<td>".$product->stock_reel;
+		    }
+		}
+	      print '</td></tr>';
 	      print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
 
 	      if ($product->type == 1)
@@ -385,6 +414,16 @@ else
 	      print '<option value="0" SELECTED>Hors Vente</option>';
 	    }
 	  print '</td></tr>';
+	  if ($product->type == 0)
+	    {
+	      print "<tr>".'<td>Seuil stock</td><td colspan="2">';
+	      print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
+	      print '</td></tr>';
+	    }
+	  else
+	    {
+	      print '<input name="seuil_stock_alerte" type="hidden" value="0">';
+	    }
 	  print "<tr>".'<td valign="top">Description</td><td colspan="2">';
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $product->description;
@@ -452,7 +491,7 @@ if ($action == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-      print '<td width="20%" align="center">[<a href="fiche.php?action=edit_price&amp;id='.$id.'">Changer le prix</a>]</td>';
+      print '<td width="20%" align="center"><a href="fiche.php?action=edit_price&amp;id='.$id.'">Changer le prix</a></td>';
     }
   else
     {
@@ -464,13 +503,12 @@ else
   print '<td width="20%" align="center">-</td>';
 }
 print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
 
 if ($action == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-      print '<td width="20%" align="center">[<a href="fiche.php?action=edit&amp;id='.$id.'">Editer</a>]</td>';
+      print '<td width="20%" align="center"><a href="fiche.php?action=edit&amp;id='.$id.'">Editer</a></td>';
     }
   else
     {
@@ -482,6 +520,9 @@ else
   print '<td width="20%" align="center">-</td>';
 }
 print '<td width="20%" align="center">-</td>';    
+
+print '<td width="20%" align="center"><a href="stock/product.php?id='.$id.'&amp;action=correction">Correction stock</a></td>';
+
 print '</table><br>';
 
 if ($id && $action == '' && $product->envente)
@@ -524,6 +565,7 @@ if ($id && $action == '' && $product->envente)
 	      print '<input type="hidden" name="action" value="addinpropal">';
 	      print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
 	      print '<input type="text" name="qty" size="3" value="1">';
+	      print " ".$product->stock_proposition;
 	      print '</td><td>';
 	      print '<input type="submit" value="Ajouter">';
 	      print "</td>";

@@ -325,6 +325,7 @@ class Propal
 	      $this->total_tva      = $obj->tva;
 	      $this->total_ttc      = $obj->total;
 	      $this->socidp         = $obj->fk_soc;
+	      $this->soc_id         = $obj->fk_soc;
 	      $this->contactid      = $obj->fk_soc_contact;
 	      $this->modelpdf       = $obj->model_pdf;
 	      $this->note           = $obj->note;
@@ -474,7 +475,7 @@ class Propal
 	      print $this->db->error() . ' in ' . $sql;
 	    }
 	}
-  }
+    }
   /*
    *
    *
@@ -499,20 +500,31 @@ class Propal
 	    }
 	}
   }
-  /*
-   *
+  /**
+   * Cloture de la propale
    *
    *
    */
-  Function cloture($userid, $statut, $note)
+  Function cloture($user, $statut, $note)
     {
-      $sql = "UPDATE llx_propal SET fk_statut = $statut, note = '$note', date_cloture=now(), fk_user_cloture=$userid";
-      
+      $sql = "UPDATE llx_propal SET fk_statut = $statut, note = '$note', date_cloture=now(), fk_user_cloture=$user->id";
       $sql .= " WHERE rowid = $this->id;";
       
       if ($this->db->query($sql) )
 	{
-	  return 1;
+	  if ($statut == 2)
+	    {
+	      /* Propale signée */
+	      include_once DOL_DOCUMENT_ROOT . "/commande/commande.class.php";
+	      $commande = new Commande($this->db);
+	      $commande->create_from_propale($user, $this->id);
+	      return 1;
+	    }
+	  else
+	    {
+	      /* Propale non signée */
+	      return 1;
+	    }
 	}
       else
 	{

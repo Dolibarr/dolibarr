@@ -267,8 +267,8 @@ class Form {
 	}
 
     }
-  /*
-   *
+  /**
+   * Affiche un select à partir d'un tableau
    *
    */
   Function select_array($name, $array, $id='', $empty=0)

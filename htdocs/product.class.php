@@ -31,6 +31,7 @@ class Product
   var $price;
   var $tva_tx;
   var $type;
+  var $seuil_stock_alerte;
   var $duration_value;
   var $duration_unit;
 
@@ -184,6 +185,7 @@ class Product
 	  $sql .= ",ref = '" . trim($this->ref) ."'";
 	  $sql .= ",tva_tx = " . $this->tva_tx ;
 	  $sql .= ",envente = " . $this->envente ;
+	  $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte ;
 	  $sql .= ",description = '" . trim($this->description) ."'";
 	  $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
 	  
@@ -211,7 +213,7 @@ class Product
    */
   Function fetch ($id)
     {    
-      $sql = "SELECT rowid, ref, label, description, price, tva_tx, envente, nbvente, fk_product_type, duration";
+      $sql = "SELECT rowid, ref, label, description, price, tva_tx, envente, nbvente, fk_product_type, duration, seuil_stock_alerte";
       $sql .= " FROM llx_product WHERE rowid = $id";
 
       $result = $this->db->query($sql) ;
@@ -220,22 +222,49 @@ class Product
 	{
 	  $result = $this->db->fetch_array();
 
-	  $this->id             = $result["rowid"];
-	  $this->ref            = $result["ref"];
-	  $this->libelle          = stripslashes($result["label"]);
-	  $this->description    = stripslashes($result["description"]);
-	  $this->price          = $result["price"];
-	  $this->tva_tx         = $result["tva_tx"];
-	  $this->type           = $result["fk_product_type"];
-	  $this->nbvente        = $result["nbvente"];
-	  $this->envente        = $result["envente"];
-	  $this->duration       = $result["duration"];
-	  $this->duration_value = substr($result["duration"],0,strlen($result["duration"])-1);
-	  $this->duration_unit  = substr($result["duration"],-1);
+	  $this->id                 = $result["rowid"];
+	  $this->ref                = $result["ref"];
+	  $this->libelle            = stripslashes($result["label"]);
+	  $this->description        = stripslashes($result["description"]);
+	  $this->price              = $result["price"];
+	  $this->tva_tx             = $result["tva_tx"];
+	  $this->type               = $result["fk_product_type"];
+	  $this->nbvente            = $result["nbvente"];
+	  $this->envente            = $result["envente"];
+	  $this->duration           = $result["duration"];
+	  $this->duration_value     = substr($result["duration"],0,strlen($result["duration"])-1);
+	  $this->duration_unit      = substr($result["duration"],-1);
+	  $this->seuil_stock_alerte = $result["seuil_stock_alerte"];
 
 	  $this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->label.'</a>';
 
 	  $this->db->free();
+
+
+	  $sql = "SELECT sum(reel) as reel";
+	  $sql .= " FROM llx_product_stock WHERE fk_product = $id";
+	  $result = $this->db->query($sql) ;
+	  if ( $result )
+	    {
+	      $num = $this->db->num_rows();
+	      if ($num > 0)
+		{
+		  $result = $this->db->fetch_array();
+
+		  $this->no_stock = 0;
+
+		  $this->stock_reel        = $result["reel"];
+		  $this->stock_proposition = $result["proposition"];
+		  $this->stock_commande    = $result["commande"];
+		}
+	      else
+		{
+		  $this->no_stock = 1;
+		}
+	      $this->db->free();
+	    }
+
+
 	  return 1;
 	}
       else
@@ -431,5 +460,108 @@ class Product
    *
    *
    */
+  Function create_stock($id_entrepot, $nbpiece)
+  {
+    
+    $sql = "INSERT INTO llx_product_stock ";
+    $sql .= " (fk_product, fk_entrepot, reel, commande, proposition)";
+    $sql .= " VALUES ($this->id, $id_entrepot, $nbpiece, $nbpiece, $nbpiece)";
+    
+    if ($this->db->query($sql) )
+      {
+	return 1;	      
+      }
+    else
+      {
+	print $this->db->error() . ' in ' . $sql;
+	return -1;
+      }    
+  }
+  /*
+   *
+   *
+   */
+  Function correct_stock($user, $id_entrepot, $nbpiece, $mouvement)
+  {
+
+    $sql = "SELECT count(*) FROM llx_product_stock ";
+    $sql .= " WHERE fk_product = $this->id AND fk_entrepot = $id_entrepot";
+    
+    if ($this->db->query($sql) )
+      {
+	$row = $this->db->fetch_row(0);
+	if ($row[0] > 0)
+	  {
+	    return $this->ajust_stock($user, $id_entrepot, $nbpiece, $mouvement);
+	  }
+	else
+	  {
+	    return $this->create_stock($id_entrepot, $nbpiece);
+	  }
+      }
+    else
+      {
+	print $this->db->error() . ' in ' . $sql;
+	$this->db->rollback();
+	return -1;
+      }        
+  }
+  /*
+   *
+   *
+   */
+  Function ajust_stock($user, $id_entrepot, $nbpiece, $mouvement)
+  {
+    /* mouvement = 0 -> ajouter
+     * mouvement = 1 -> supprimer
+     */
+    $op[0] = "+" . trim($nbpiece);
+    $op[1] = "-" . trim($nbpiece);
+
+    if ($this->db->begin())
+      {
+
+	$sql = "UPDATE llx_product ";
+	$sql .= " SET stock_commande = stock_commande ".$op[$mouvement].", stock_propale = stock_propale ".$op[$mouvement];
+	$sql .= " WHERE rowid = $this->id ";
+	
+	if ($this->db->query($sql) )
+	  {	    
+	    $sql = "UPDATE llx_product_stock ";
+	    $sql .= " SET reel = reel ".$op[$mouvement];
+	    $sql .= " WHERE fk_product = $this->id AND fk_entrepot = $id_entrepot";
+	    
+	    if ($this->db->query($sql) )
+	      {		
+		$sql = "INSERT INTO llx_stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
+		$sql .= " VALUES (now(), $this->id, $id_entrepot, ".$op[$mouvement].", 0, $user->id)";
+		
+		if ($this->db->query($sql) )
+		  {
+		    $this->db->commit();
+		    return 1;	      
+		  }
+		else
+		  {
+		    print $this->db->error() . ' in ' . $sql;
+		    $this->db->rollback();
+		    return -2;
+		  }
+	      }
+	    else
+	      {
+		print $this->db->error() . ' in ' . $sql;
+		$this->db->rollback();
+		return -1;
+	      } 
+	  }
+	else
+	  {
+	    print $this->db->error() . ' in ' . $sql;
+	    $this->db->rollback();
+	    return -3;
+	  }    
+      }
+  }
 }
 ?>

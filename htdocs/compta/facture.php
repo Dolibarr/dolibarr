@@ -871,11 +871,11 @@ else
 	
 	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
 	      {
-		print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&amp;action=delete\">Supprimer</a>]</td>";
+		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=delete\">Supprimer</a></td>";
 	      } 
 	    elseif ($fac->statut == 1 && abs($resteapayer) > 0 && $user->rights->facture->envoyer) 
 	      {
-		print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&amp;action=presend\">Envoyer</a>]</td>";
+		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=presend\">Envoyer</a></td>";
 	      }
 	    else
 	      {
@@ -884,7 +884,7 @@ else
 	    
 	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
 	      {
-		print "<td align=\"center\" width=\"20%\">[<a href=\"paiement.php?facid=$facid&amp;action=create\">Emettre un paiement</a>]</td>";
+		print "<td align=\"center\" width=\"20%\"><a href=\"paiement.php?facid=$facid&amp;action=create\">Emettre un paiement</a></td>";
 	      }
 	    else
 	      {
@@ -895,7 +895,7 @@ else
 	      {
 		if ($user->rights->facture->paiement)
 		  {
-		    print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&amp;action=payed\">Classer 'Payée'</a>]</td>";
+		    print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=payed\">Classer 'Payée'</a></td>";
 		  }
 		else
 		  {
@@ -904,7 +904,16 @@ else
 	      }
 	    elseif ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer) 
 	      {
-		print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&amp;action=prerelance\">Envoyer une relance</a>]</td>";
+		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=prerelance\">Envoyer une relance</a></td>";
+	      }
+	    else
+	      {
+		print '<td align="center" width="20%">-</td>';
+	      }
+
+	    if ($fac->statut > 0)
+	      {
+		print '<td align="center" width="20%"><a href="facture/fiche-rec.php?facid='.$facid.'&amp;action=create">Récurrente</a></td>';
 	      }
 	    else
 	      {
@@ -915,7 +924,7 @@ else
 	      {
 		if ($user->rights->facture->valider)
 		  {
-		    print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&amp;action=valid\">Valider</a>]</td>";
+		    print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=valid\">Valider</a></td>";
 		  }
 		else
 		  {
@@ -932,17 +941,6 @@ else
 		  {
 		    print '<td align="center" width="20%">-</td>';
 		  }
-	      }
-	    else
-	      {
-		print '<td align="center" width="20%">-</td>';
-	      }
-
-	    if ($fac->statut > 0)
-	      {
-		//print '<td align="center" width="20%">-</td>';
-
-		print '<td align="center" width="20%"><a href="facture/fiche-rec.php?facid='.$facid.'&amp;action=create">Récurrente</a></td>';
 	      }
 	    else
 	      {

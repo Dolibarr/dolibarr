@@ -363,7 +363,9 @@ if ($propalid)
 		  print '<td align="right">'.price($objp->subprice).'</td>';
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
-		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">Supprimer</a></td>';
+		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">';
+		      print img_delete();
+		      print '</a></td>';
 		    }
 		  else
 		    {
@@ -482,7 +484,7 @@ if ($propalid)
 		{
 		  if ($user->rights->propale->supprimer)
 		    {
-		      print "<td width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&amp;action=delete\">Supprimer</a>]</td>";
+		      print "<td width=\"20%\"><a href=\"$PHP_SELF?propalid=$propalid&amp;action=delete\">Supprimer</a></td>";
 		    }
 		  else
 		    {
@@ -493,7 +495,7 @@ if ($propalid)
 		{
 		  if ($obj->statut == 1 && $user->rights->propale->cloturer)
 		    {
-		      print "<td width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&amp;action=statut\">Cloturer</a>]</td>";
+		      print "<td width=\"20%\"><a href=\"$PHP_SELF?propalid=$propalid&amp;action=statut\">Cloturer</a></td>";
 		    }
 		  else
 		    {
@@ -506,7 +508,7 @@ if ($propalid)
 	       */
 	      if ($obj->statut < 2 && $user->rights->propale->creer)
 		{
-		  print '<td width="20%">[<a href="'.$PHP_SELF."?propalid=$propalid&amp;action=pdf\">Générer</a>]</td>";
+		  print '<td width="20%"><a href="'.$PHP_SELF."?propalid=$propalid&amp;action=pdf\">Générer</a></td>";
 		}
 	      else
 		{
@@ -524,7 +526,7 @@ if ($propalid)
 		      if ($user->rights->propale->envoyer)
 			{
 			  print "<td width=\"20%\">";
-			  print "[<a href=\"$PHP_SELF?propalid=$propalid&amp;action=presend\">Envoyer la proposition</a>]</td>";
+			  print "<a href=\"$PHP_SELF?propalid=$propalid&amp;action=presend\">Envoyer la proposition</a></td>";
 			}
 		      else
 			{
@@ -547,7 +549,7 @@ if ($propalid)
 		{
 		  if ($user->rights->propale->valider)
 		    {
-		      print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&amp;valid=1\">Valider</a>]</td>";
+		      print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?propalid=$propalid&amp;valid=1\">Valider</a></td>";
 		    }
 		  else
 		    {
@@ -558,7 +560,7 @@ if ($propalid)
 		{
 		  if ($user->rights->propale->creer)
 		    {
-		      print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&amp;action=modif\">Modifier</a>]</td>";
+		      print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?propalid=$propalid&amp;action=modif\">Modifier</a></td>";
 		    }
 		  else
 		    {
