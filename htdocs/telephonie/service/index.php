@@ -21,29 +21,17 @@
  */
 require("./pre.inc.php");
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-
-if (!$user->rights->telephonie->lire)
-  accessforbidden();
+if (!$user->rights->telephonie->lire) accessforbidden();
 
 llxHeader('','Telephonie - Contrats');
 
 /*
- * Sécurité accés client
+ *
+ *
+ *
  */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
 
-/*
- * Mode Liste
- *
- *
- *
- */
+print_titre("Services");
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
@@ -59,26 +47,18 @@ if ($db->query($sql))
 
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>Lignes Statuts</td><td valign="center">Nb</td><td>&nbsp;</td>';
+  print '<tr class="liste_titre"><td>Libellé</td>';
   print "</tr>\n";
   $var=True;
 
   while ($i < min($num,$conf->liste_limit))
     {
       $obj = $db->fetch_object($i);	
-      $values[$obj->statut] = $obj->cc;
+      print "<tr><td>".stripslashes($obj->libelle)."</td></tr>";
       $i++;
     }
 
-  foreach ($ligne->statuts as $key => $statut)
-    {
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td>".$statut."</td>\n";
-      print "<td>".$values[$key]."</td>\n";
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php?statut='.$key.'"><img border="0" src="./graph'.$key.'.png"></a></td>';
-      print "</tr>\n";
-    }
+
 
   print "</table>";
   $db->free();
@@ -92,13 +72,6 @@ print '<br />';
 
 
 print '</td>';
-
-
-print '</td><td valign="top" width="70%" rowspan="3">';
-
-
-print '</td></tr>';
-
 
 print '</table>';
 
