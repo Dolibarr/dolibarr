@@ -27,10 +27,10 @@ llxHeader();
 $db = new Db();
 
 if ($sortfield == "") {
-  $sortfield="lower(p.label),p.price";
+  $sortfield="date_added";
 }
 if ($sortorder == "") {
-  $sortorder="ASC";
+  $sortorder="DESC";
 }
 
 
@@ -38,18 +38,20 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
+print_barre_liste("Critiques", $page, $PHP_SELF);
 
-print_barre_liste("Liste des produits oscommerce", $page, $PHP_SELF);
-
-$sql = "SELECT r.reviews_rating FROM ".DB_NAME_OSC.".reviews as r";
-  
-//$sql .= " ORDER BY $sortfield $sortorder ";
+$sql = "SELECT r.reviews_id, r.reviews_rating, d.reviews_text, p.products_name FROM ".DB_NAME_OSC.".reviews as r, ".DB_NAME_OSC.".reviews_description as d, ".DB_NAME_OSC.".products_description as p";
+$sql .= " WHERE r.reviews_id = d.reviews_id AND r.products_id=p.products_id";
+$sql .= " AND p.language_id = ".OSC_LANGUAGE_ID. " AND d.languages_id=".OSC_LANGUAGE_ID;
+$sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
 
 print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print '<TR class="liste_titre">';
-print "<td></td>";
-print "<TD align=\"right\">Prix de vente</TD>";
+print "<td>Produit</td>";
+print "<td>Critique</td>";
+print "<td align=\"center\">Note</td>";
+print "<TD align=\"right\"></TD>";
 print "</TR>\n";
  
 if ( $db->query($sql) ) {
@@ -61,8 +63,9 @@ if ( $db->query($sql) ) {
     $objp = $db->fetch_object( $i);
     $var=!$var;
     print "<TR $bc[$var]>";
-    print "<TD>$objp->reviews_rating</TD>\n";
-
+    print "<TD>".substr($objp->products_name, 0, 30)."</TD>\n";
+    print '<TD><a href="fiche.php?id='.$objp->reviews_id.'">'.substr($objp->reviews_text, 0, 40)." ...</a></td>\n";
+    print "<td align=\"center\">$objp->reviews_rating</TD>\n";
     print "</TR>\n";
     $i++;
   }
