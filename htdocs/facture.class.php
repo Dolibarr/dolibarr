@@ -21,11 +21,13 @@
  *
  */
 
-/*!	\file facture.class.php
-		\brief  Fichier de la classe des factures
-		\author Rodolphe Qiedeville
-		\author	Laurent Destailleur
-		\version $Revision$
+/*!
+	    \file       htdocs/facture.class.php
+        \ingroup    facture
+		\brief      Fichier de la classe des factures
+		\author     Rodolphe Qiedeville
+		\author	    Laurent Destailleur
+		\version    $Revision$
 */
 
 
@@ -55,9 +57,9 @@ class Facture
 
   /**
    *    \brief Constructeur de la classe
-   *    \param[in]  $DB         handler accès base de données
-   *    \param[in]  $soc_idp    id societe ("" par defaut)
-   *    \param[in]  $soc_idp    id facture ("" par defaut)
+   *    \param  DB          handler accès base de données
+   *    \param  soc_idp     id societe ("" par defaut)
+   *    \param  facid       id facture ("" par defaut)
    */
   function Facture($DB, $soc_idp="", $facid="")
     {
@@ -77,7 +79,7 @@ class Facture
   
   /**
    * \brief Création de la facture en base
-   *    \param      User       object utilisateur qui crée
+   *    \param      user       object utilisateur qui crée
    *
    */
   function create($user)
@@ -377,7 +379,7 @@ class Facture
 
   /**
    * \brief     Supprime la facture
-   * \param     id      id de la facture à supprimer
+   * \param     rowid      id de la facture à supprimer
    */
   function delete($rowid)
     {
@@ -473,6 +475,7 @@ class Facture
    * \brief     Tag la facture comme validée et valide la facture
    * \param     rowid       id de la facture à modifier
    * \param     user        utilisateur qui valide la facture
+   * \param     soc         societe
    */
   function set_valid($rowid, $user, $soc)
     {
@@ -568,14 +571,15 @@ class Facture
 
   /**
    * \brief     Ajoute une ligne de facture (associé à aucun produit/service prédéfini)
-   * \param     facid       id de la facture
-   * \param     desc        id de la facture
-   * \param     pu          id de la facture
-   * \param     qty         id de la facture
-   * \param     txtva       id de la facture
-   * \param     fk_product  id de la facture
-   * \param     date_start  date_start
-   * \param     date_end    date_end
+   * \param     facid           id de la facture
+   * \param     desc            description de la ligne
+   * \param     pu              prix unitaire
+   * \param     qty             quantité
+   * \param     txtva           taux de tva
+   * \param     fk_product      id du produit/service predéfini
+   * \param     remise_percent  pourcentage de remise de la ligne
+   * \param     datestart       date de debut de validité du service
+   * \param     dateend         date de fin de validité du service
    */
   function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='')
     {
@@ -673,7 +677,7 @@ class Facture
 
   /**
    * \brief     Supprime une ligne facture de la base
-   * \param     id      id de la ligne de facture a supprimer
+   * \param     rowid      id de la ligne de facture a supprimer
    */
   function deleteline($rowid)
     {
@@ -688,7 +692,7 @@ class Facture
 
   /**
    * \brief     Mise à jour des sommes de la facture
-   * \param     id      id de la ligne de facture a modifier
+   * \param     facid      id de la facture a modifier
    */
   function updateprice($facid)
     {
@@ -1020,7 +1024,7 @@ class FactureLigne
 
   /**
    * \brief     Constructeur d'objets ligne de facture
-   * \param     db      handler d'accès base de donnée
+   * \param     DB      handler d'accès base de donnée
    */
   function FactureLigne($DB)
     {
@@ -1029,7 +1033,8 @@ class FactureLigne
 
   /**
    * \brief     Recupére l'objet ligne de facture
-   * \param     rowid      id de la ligne de facture
+   * \param     rowid           id de la ligne de facture
+   * \param     societe_id      id de la societe
    */
   function fetch($rowid, $societe_id=0)
     {

@@ -37,7 +37,7 @@
   \brief    Verifie le RIB d'un compte bancaire grace à sa clé
   \param    code_banque     code banque
   \param    code_guichet    code guichet
-  \param    numero_compte   numero de compte
+  \param    num_compte      numero de compte
   \param    cle             cle
   \param    iban            Ne sert pas pour le calcul de cle mais sert pour determiner le pays
   \return   int             true si les infos sont bonnes, false si la clé ne correspond pas

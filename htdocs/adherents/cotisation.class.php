@@ -350,7 +350,7 @@ class Cotisation
     /*!
     		\brief  fonction qui permet de définir la cotisation comme payée
     		\param	rowid           rowid de la cotisation
-    		\param	modedepaiement  mode de paiement
+    		\param	modepaiement    mode de paiement
     */
 
 	function set_paye($rowid, $modepaiement='')
