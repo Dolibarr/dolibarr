@@ -24,12 +24,30 @@ $info_box_head = array();
 $info_box_head[] = array('text' => "Factures Impayées");
 
 $info_box_contents = array();
-$info_box_contents[0] = array('align' => 'center',
-			      'text' => "factures0");
 
-$info_box_contents[1] = array('align' => 'center',
-			      'text' => "factures1");
+
+$sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
+$sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye=0";  
+$sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
+$sql .= $db->plimit(5, 0);
+
+$result = $db->query($sql);
+if ($result) {
+  $num = $db->num_rows();
+    
+  $i = 0;
+    
+  while ($i < $num) {
+    $objp = $db->fetch_object( $i);
+
+    $info_box_contents[$i] = array('align' => 'center',
+				   'text' => $objp->facnumber . " " . $objp->nom,
+				   'url' => "/compta/facture.php3?facid=".$objp->facid);
+    $i++;
+  }
+}
 
 new infoBox($info_box_head, $info_box_contents);
+
 
 ?>
