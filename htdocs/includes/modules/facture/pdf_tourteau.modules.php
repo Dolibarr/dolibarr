@@ -230,7 +230,9 @@ Class pdf_tourteau {
 	      $pdf->MultiCell(190, 5, $titre, 0, 'J');
 	      
 	      $pdf->SetFont('Arial','',9);
-	      $pdf->SetXY(10, 265);
+	      $pdf->SetXY(10, 260);
+	      $pdf->MultiCell(190, 5, "Numéro de TVA intracommunautaire : ".MAIN_INFO_TVAINTRA, 0, 'J');
+
 	      $pdf->MultiCell(190, 5, "Accepte le réglement des sommes dues par chèques libellés à mon nom en ma qualité de Membre d'une Association de Gestion agréée par l'Administration Fiscale.", 0, 'J');
 
 	      $pdf->Close();
