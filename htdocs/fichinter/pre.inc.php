@@ -33,7 +33,7 @@ function llxHeader($head = "", $urlp = "")
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/comm/clients.php3","Clients");
+  $menu->add(DOL_URL_ROOT."/comm/clients.php","Clients");
 
   $menu->add("index.php","Fiches d'intervention");
 
