@@ -20,9 +20,9 @@
  *
  */
 
-include_once "modDolibarrModules.class.php";
+include_once "DolibarrModules.class.php";
 
-class modFournisseur extends modDolibarrModules
+class modFournisseur extends DolibarrModules
 {
 
   /** Initialisation de l'objet
@@ -32,16 +32,22 @@ class modFournisseur extends modDolibarrModules
 
   Function modFournisseur($DB)
   {
+    $this->db = $DB ;
+    $this->numero = 40 ;
     $this->nom = "Module fournisseur";
 
-    $this->db = $DB ;
-    $this->depends = array("MAIN_MODULE_SOCIETE");
+    $this->name = "Fournisseur";
+    $this->description = "Gestion des fournisseurs";
+    $this->const_name = "MAIN_MODULE_FOURNISSEUR";
+    $this->const_config = MAIN_MODULE_FOURNISSEUR;
+
+    $this->depends = array("modSociete");
 
     $this->const = array();
     $this->boxes = array();
   }
-  /** initialisation du module
-   *
+  /** 
+   * initialisation du module
    *
    *
    */

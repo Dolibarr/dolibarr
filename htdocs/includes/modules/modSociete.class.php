@@ -20,9 +20,9 @@
  *
  */
 
-include_once "modDolibarrModules.class.php";
+include_once "DolibarrModules.class.php";
 
-class modSociete extends modDolibarrModules
+class modSociete extends DolibarrModules
 {
 
   /*
@@ -33,6 +33,13 @@ class modSociete extends modDolibarrModules
   Function modSociete($DB)
   {
     $this->db = $DB ;
+    $this->numero = 1 ;
+    $this->name = "Module societe";
+    $this->description = "Module société";
+    $this->const_name = "MAIN_MODULE_SOCIETE";
+    $this->const_config = MAIN_MODULE_SOCIETE;
+
+
     $this->depends = array();
 
     $this->const = array();
@@ -40,6 +47,8 @@ class modSociete extends modDolibarrModules
 
     $this->boxes[0][0] = "Derniers clients";
     $this->boxes[0][1] = "box_clients.php";
+
+
   }
   /*
    *

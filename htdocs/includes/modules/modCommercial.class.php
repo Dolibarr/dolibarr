@@ -20,9 +20,9 @@
  *
  */
 
-include_once "modDolibarrModules.class.php";
+include_once "DolibarrModules.class.php";
 
-class modCommercial extends modDolibarrModules
+class modCommercial extends DolibarrModules
 {
 
   /*
@@ -33,7 +33,13 @@ class modCommercial extends modDolibarrModules
   Function modCommercial($DB)
   {
     $this->db = $DB ;
+    $this->numero = 2 ;
     $this->depends = array();
+
+    $this->name = "Commercial";
+    $this->description = "Gestion commercial";
+    $this->const_name = "MAIN_MODULE_COMMERCIAL";
+    $this->const_config = MAIN_MODULE_COMMERCIAL;
 
     $this->const = array();
     $this->boxes = array();

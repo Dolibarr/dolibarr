@@ -20,7 +20,9 @@
  *
  */
 
-class modProduit
+include_once "DolibarrModules.class.php";
+
+class modProduit extends DolibarrModules
 {
 
   /*
@@ -31,6 +33,21 @@ class modProduit
   Function modProduit($DB)
   {
     $this->db = $DB ;
+    $this->numero = 50 ;
+    $this->name = "Produit";
+    $this->description = "Gestion des produits";
+    $this->const_name = "MAIN_MODULE_PRODUIT";
+    $this->const_config = MAIN_MODULE_PRODUIT;
+
+    $this->depends = array();
+
+    $this->const = array();
+    $this->boxes = array();
+
+    $this->boxes[0][0] = "Services vendus";
+    $this->boxes[0][1] = "box_services_vendus.php";
+    $this->boxes[1][0] = "Derniers produits";
+    $this->boxes[1][1] = "box_produits.php";
   }
   /*
    *
@@ -46,20 +63,15 @@ class modProduit
     /*
      * Permissions
      */
+
     $sql = array(
 		 "insert into llx_rights_def values (30,'Tous les droits sur les produits','produit','a',0);",
 		 "insert into llx_rights_def values (31,'Lire les produits','produit','r',1);",
 		 "insert into llx_rights_def values (32,'Créer modifier les produits','produit','w',0);",
-		 "INSERT INTO llx_rights_def values (34,'Supprimer les produits','produit','d',0);",
-		 "REPLACE INTO llx_boxes_def (name,file) VALUES('Services vendus', 'box_services_vendus.php');",
-		 "REPLACE INTO llx_boxes_def (name,file) VALUES('Derniers produits', 'box_produits.php');"
+		 "insert INTO llx_rights_def values (34,'Supprimer les produits','produit','d',0);"
 		 );
-    //"insert into llx_rights_def values (33,'Modifier les produits d\'autrui','produit','m',0);",
-    
-    for ($i = 0 ; $i < sizeof($sql) ; $i++)
-      {
-	$this->db->query($sql[$i]);
-      }
+
+    return $this->_init($sql);
   }
   /*
    *
@@ -72,14 +84,8 @@ class modProduit
 		 "DELETE FROM llx_boxes_def WHERE file = 'box_services_vendus.php';",
 		 "DELETE FROM llx_boxes_def WHERE file = 'box_produits.php';"
 		 );
-		 
 
-    for ($i = 0 ; $i < sizeof($sql) ; $i++)
-      {
-	$this->db->query($sql[$i]);
-      }
-
-
+    return $this->_remove($sql);
   }
 }
 ?>

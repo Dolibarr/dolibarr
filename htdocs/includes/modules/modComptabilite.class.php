@@ -20,9 +20,9 @@
  *
  */
 
-include_once "modDolibarrModules.class.php";
+include_once "DolibarrModules.class.php";
 
-class modComptabilite extends modDolibarrModules
+class modComptabilite extends DolibarrModules
 {
 
   /** Initialisation de l'objet
@@ -33,9 +33,14 @@ class modComptabilite extends modDolibarrModules
   Function modComptabilite($DB)
   {
     $this->nom = "Module comptabilité";
-
+    $this->numero = 10 ;
     $this->db = $DB ;
     $this->depends = array();
+
+    $this->name = "Comptabilite";
+    $this->description = "Gestion sommaire de comptabilité";
+    $this->const_name = "MAIN_MODULE_COMPTABILITE";
+    $this->const_config = MAIN_MODULE_COMPTABILITE;
 
     $this->const = array();
     $this->boxes = array();

@@ -20,7 +20,9 @@
  *
  */
 
-class modWebcalendar
+include_once "DolibarrModules.class.php";
+
+class modWebcalendar extends DolibarrModules
 {
 
   /*
@@ -31,6 +33,16 @@ class modWebcalendar
   Function modWebcalendar($DB)
   {
     $this->db = $DB ;
+
+    $this->name = "Webcalendar";
+    $this->description = "Gestion de l'outil Webcalendar";
+    $this->const_name = "MAIN_MODULE_WEBCALENDAR";
+    $this->const_config = MAIN_MODULE_WEBCALENDAR;
+    $this->config_page_url = "webcalendar.php";
+    $this->depends = array();
+
+    $this->const = array();
+    $this->boxes = array();
   }
   /*
    *
@@ -47,10 +59,7 @@ class modWebcalendar
     $sql = array(
 		 );
     
-    for ($i = 0 ; $i < sizeof($sql) ; $i++)
-      {
-	$this->db->query($sql[$i]);
-      }
+    return $this->_init($sql);
   }
   /*
    *
@@ -58,7 +67,9 @@ class modWebcalendar
    */
   Function remove()
   {
-   
+    $sql = array();
+
+    return $this->_remove($sql);
   }
 }
 ?>

@@ -25,110 +25,6 @@ require("./pre.inc.php");
 // TODO mettre cette section dans la base de données
 //
 
-$modules["MAIN_MODULE_SOCIETE"][0] = "Module societe";
-$modules["MAIN_MODULE_SOCIETE"][1] = "MAIN_MODULE_SOCIETE";
-$modules["MAIN_MODULE_SOCIETE"][2] = MAIN_MODULE_SOCIETE;
-$modules["MAIN_MODULE_SOCIETE"][3] = "Module société";
-$modules["MAIN_MODULE_SOCIETE"][4] = "modSociete";
-
-$modules["MAIN_MODULE_COMMERCIAL"][0] = "Module commercial";
-$modules["MAIN_MODULE_COMMERCIAL"][1] = "MAIN_MODULE_COMMERCIAL";
-$modules["MAIN_MODULE_COMMERCIAL"][2] = MAIN_MODULE_COMMERCIAL;
-$modules["MAIN_MODULE_COMMERCIAL"][3] = "Module commercial";
-$modules["MAIN_MODULE_COMMERCIAL"][4] = "modCommercial";
-
-$modules["MAIN_MODULE_COMPTABILITE"][0] = "Module comptabilité";
-$modules["MAIN_MODULE_COMPTABILITE"][1] = "MAIN_MODULE_COMPTABILITE";
-$modules["MAIN_MODULE_COMPTABILITE"][2] = MAIN_MODULE_COMPTABILITE;
-$modules["MAIN_MODULE_COMPTABILITE"][3] = "Module comptabilité";
-$modules["MAIN_MODULE_COMPTABILITE"][4] = "modComptabilite";
-
-$modules["MAIN_MODULE_COMMANDE"][0] = "Module commande";
-$modules["MAIN_MODULE_COMMANDE"][1] = "MAIN_MODULE_COMMANDE";
-$modules["MAIN_MODULE_COMMANDE"][2] = MAIN_MODULE_COMMANDE;
-$modules["MAIN_MODULE_COMMANDE"][3] = "Module de gestion des commandes";
-$modules["MAIN_MODULE_COMMANDE"][4] = "modCommande";
-
-$modules["MAIN_MODULE_EXPEDITION"][0] = "Module expedition";
-$modules["MAIN_MODULE_EXPEDITION"][1] = "MAIN_MODULE_EXPEDITION";
-$modules["MAIN_MODULE_EXPEDITION"][2] = MAIN_MODULE_EXPEDITION;
-$modules["MAIN_MODULE_EXPEDITION"][3] = "Module de gestion des expeditions";
-$modules["MAIN_MODULE_EXPEDITION"][4] = "modExpedition";
-
-
-
-$modules["MAIN_MODULE_FACTURE"][0] = "Module facture";
-$modules["MAIN_MODULE_FACTURE"][1] = "MAIN_MODULE_FACTURE";
-$modules["MAIN_MODULE_FACTURE"][2] = MAIN_MODULE_FACTURE;
-$modules["MAIN_MODULE_FACTURE"][3] = "Module de gestion des factures";
-$modules["MAIN_MODULE_FACTURE"][4] = "modFacture";
-
-$modules["MAIN_MODULE_PROPALE"][0] = "Module propale";
-$modules["MAIN_MODULE_PROPALE"][1] = "MAIN_MODULE_PROPALE";
-$modules["MAIN_MODULE_PROPALE"][2] = MAIN_MODULE_PROPALE;
-$modules["MAIN_MODULE_PROPALE"][3] = "Module de gestion des propositions commerciales";
-$modules["MAIN_MODULE_PROPALE"][4] = "modPropale";
-
-$modules["MAIN_MODULE_PRODUIT"][0] = "Module produit";
-$modules["MAIN_MODULE_PRODUIT"][1] = "MAIN_MODULE_PRODUIT";
-$modules["MAIN_MODULE_PRODUIT"][2] = MAIN_MODULE_PRODUIT;
-$modules["MAIN_MODULE_PRODUIT"][3] = "Module de gestion des produits";
-$modules["MAIN_MODULE_PRODUIT"][4] = "modProduit";
-
-$modules["MAIN_MODULE_PROJET"][0] = "Module projet";
-$modules["MAIN_MODULE_PROJET"][1] = "MAIN_MODULE_PROJET";
-$modules["MAIN_MODULE_PROJET"][2] = MAIN_MODULE_PROJET;
-$modules["MAIN_MODULE_PROJET"][3] = "Module de gestion des projets";
-$modules["MAIN_MODULE_PROJET"][4] = "modProjet";
-
-$modules["MAIN_MODULE_FOURNISSEUR"][0] = "Module fournisseur";
-$modules["MAIN_MODULE_FOURNISSEUR"][1] = "MAIN_MODULE_FOURNISSEUR";
-$modules["MAIN_MODULE_FOURNISSEUR"][2] = MAIN_MODULE_FOURNISSEUR;
-$modules["MAIN_MODULE_FOURNISSEUR"][3] = "Module de gestion des fournisseurs";
-$modules["MAIN_MODULE_FOURNISSEUR"][4] = "modFournisseur";
-
-$modules["MAIN_MODULE_FICHEINTER"][0] = "Module fiche intervention";
-$modules["MAIN_MODULE_FICHEINTER"][1] = "MAIN_MODULE_FICHEINTER";
-$modules["MAIN_MODULE_FICHEINTER"][2] = MAIN_MODULE_FICHEINTER;
-$modules["MAIN_MODULE_FICHEINTER"][3] = "Module de gestion des fiches d'interventions";
-$modules["MAIN_MODULE_FICHEINTER"][4] = "modFicheinter";
-
-$modules["MAIN_MODULE_DON"][0] = "Module don";
-$modules["MAIN_MODULE_DON"][1] = "MAIN_MODULE_DON";
-$modules["MAIN_MODULE_DON"][2] = MAIN_MODULE_DON;
-$modules["MAIN_MODULE_DON"][3] = "Module de gestion des dons";
-$modules["MAIN_MODULE_DON"][4] = "modDon";
-
-$modules["MAIN_MODULE_ADHERENT"][0] = "Module adherent";
-$modules["MAIN_MODULE_ADHERENT"][1] = "MAIN_MODULE_ADHERENT";
-$modules["MAIN_MODULE_ADHERENT"][2] = MAIN_MODULE_ADHERENT;
-$modules["MAIN_MODULE_ADHERENT"][3] = "Module de gestion des adhérents d'une association";
-$modules["MAIN_MODULE_ADHERENT"][4] = "modAdherent";
-
-$modules["MAIN_MODULE_BOUTIQUE"][0] = "Module boutique";
-$modules["MAIN_MODULE_BOUTIQUE"][1] = "MAIN_MODULE_BOUTIQUE";
-$modules["MAIN_MODULE_BOUTIQUE"][2] = MAIN_MODULE_BOUTIQUE;
-$modules["MAIN_MODULE_BOUTIQUE"][3] = "Module de gestion des boutiques";
-$modules["MAIN_MODULE_BOUTIQUE"][4] = "modBoutique";
-
-$modules["MAIN_MODULE_POSTNUKE"][0] = "Module Postnuke";
-$modules["MAIN_MODULE_POSTNUKE"][1] = "MAIN_MODULE_POSTNUKE";
-$modules["MAIN_MODULE_POSTNUKE"][2] = MAIN_MODULE_POSTNUKE;
-$modules["MAIN_MODULE_POSTNUKE"][3] = "Module de gestion de postnuke";
-$modules["MAIN_MODULE_POSTNUKE"][4] = "modPostnuke";
-
-$modules["MAIN_MODULE_WEBCALENDAR"][0] = "Module Webcalendar";
-$modules["MAIN_MODULE_WEBCALENDAR"][1] = "MAIN_MODULE_WEBCALENDAR";
-$modules["MAIN_MODULE_WEBCALENDAR"][2] = MAIN_MODULE_WEBCALENDAR;
-$modules["MAIN_MODULE_WEBCALENDAR"][3] = "Module de gestion du calendrier";
-$modules["MAIN_MODULE_WEBCALENDAR"][4] = "modWebcalendar";
-
-$modules["MAIN_MODULE_EXTERNAL_RSS"][0] = "Module de syndication externe";
-$modules["MAIN_MODULE_EXTERNAL_RSS"][1] = "MAIN_MODULE_EXTERNAL_RSS";
-$modules["MAIN_MODULE_EXTERNAL_RSS"][2] = MAIN_MODULE_EXTERNAL_RSS;
-$modules["MAIN_MODULE_EXTERNAL_RSS"][3] = "Module de gestion de syndication de sites externes";
-$modules["MAIN_MODULE_EXTERNAL_RSS"][4] = "modExternalRss";
-
 if ($_GET["action"] == 'set' && $user->admin)
 {
   Activate($_GET["value"]);
@@ -140,48 +36,34 @@ function Activate($value)
 {
   global $db, $modules;
 
-  $sql = "REPLACE INTO llx_const SET name = '".$value."', value='1', visible = 0";
+  $modName = $value;
 
-  if ($db->query($sql))
+  if ($modName)
     {
-      $modules[$value][2] = 1;
-
-      $modName = $modules[$value][4];
-      if ($modName)
-	{
-	  $file = $modName . ".class.php";
-	  include("../includes/modules/$file");
-	  $objMod = new $modName($db);
-	  $objMod->init();
-	}
+      $file = $modName . ".class.php";
+      include_once("../includes/modules/$file");
+      $objMod = new $modName($db);
+      $objMod->init();
     }
-
+  
   for ($i = 0; $i < sizeof($objMod->depends); $i++)
     {
       Activate($objMod->depends[$i]);
     }
-    
 }
 
 if ($_GET["action"] == 'reset' && $user->admin)
 {
-  $value = $_GET["value"];
+  $modName = $_GET["value"];
 
-  $sql = "DELETE FROM llx_const WHERE name = '".$value."'";
-
-  if ($db->query($sql))
+  if ($modName)
     {
-      $modules[$value][2] = 0;
-
-      $modName = $modules[$value][4];
-      if ($modName)
-	{
-	  $file = $modName . ".class.php";
-	  include("../includes/modules/$file");
-	  $objMod = new $modName($db);
-	  $objMod->remove();
-	}
+      $file = $modName . ".class.php";
+      include("../includes/modules/$file");
+      $objMod = new $modName($db);
+      $objMod->remove();
     }
+
   Header("Location: modules.php");
 }
 
@@ -196,29 +78,71 @@ if (!$user->admin)
   exit;
 }
 
-
 print_titre("Modules");
 
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table class="border" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td>';
-print '<td>Description</td><td align="center">Activé</td>';
-print '<td align="center">Action</td><td>&nbsp;</td></tr>';
+print '<td>Info</td>';
+print '<td align="center">Activé</td>';
+print '<td colspan="2">&nbsp;</td>';
+print "</tr>\n";
 
-foreach ($modules as $key => $value)
+
+$dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
+
+$handle=opendir($dir);
+$modules = array();
+$i = 0;
+$j = 0;
+while (($file = readdir($handle))!==false)
 {
-  $titre = $modules[$key][0];
-  $const_name = $modules[$key][1];
-  $const_value = $modules[$key][2];
-  $desc = $modules[$key][3];
-  $modName = $modules[$key][4];
+  if (is_readable($dir.$file) && substr($file, 0, 3) == 'mod'  && substr($file, strlen($file) - 10) == '.class.php')
+    {
+      $modName = substr($file, 0, strlen($file) - 10);
 
+      if ($modName)
+	{
+	  include("../includes/modules/$file");
+	  $objMod = new $modName($db);
+
+	  if ($objMod->numero > 0)
+	    {
+	      $j = $objMod->numero;
+	      $modules[$objMod->numero] = $modName;
+	    }
+	  else
+	    {
+	      $j = 1000 + $i;
+	    }
+	  $modules[$j] = $modName;
+	  $orders[$i] = $j;
+	  $j++;
+	  $i++;
+	}
+    }
+}
+
+sort($orders);
+
+foreach ($orders as $key => $value)
+{
+  $modName = $modules[$orders[$key]];
+
+  if ($modName)
+    {
+      $objMod = new $modName($db);
+    }
+  
+  $const_name = $objMod->const_name;
+  $const_value = $objMod->const_config;
+  
   print '<tr class="pair"><td>';
-  echo "$titre";
+  echo $objMod->name;
   print "</td><td>\n";
-  echo "$desc";
+  print $objMod->description;
   print '</td><td align="center">';
-
+  
   if ($const_value == 1)
     {
       print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
@@ -230,14 +154,12 @@ foreach ($modules as $key => $value)
   
   print '</td><td align="center">';
   
+  
   if ($const_value == 1)
     {
-      print '<a href="modules.php?action=reset&value='.$const_name.'">Désactiver</a></td>';
-
-
-      $file = $modName . ".class.php";
-      include("../includes/modules/$file");
-      $objMod = new $modName($db);
+      print '<a href="modules.php?action=reset&value='.$modName.'">Désactiver</a></td>';
+      
+      
       if ($objMod->config_page_url)
 	{
 	  print '<td><a href="'.$objMod->config_page_url.'">Configurer</a></td>';
@@ -250,13 +172,13 @@ foreach ($modules as $key => $value)
     }
   else
     {
-      print '<a href="modules.php?action=set&value='.$const_name.'">Activer</a></td><td>&nbsp;</td>';
+      print '<a href="modules.php?action=set&value='.$modName.'">Activer</a></td><td>&nbsp;</td>';
     }
   
   print '</tr>';
+  
 }
-
-print '</table>';
+print "</table>";
 
 llxFooter();
 ?>

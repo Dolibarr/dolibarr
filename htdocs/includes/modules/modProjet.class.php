@@ -20,7 +20,9 @@
  *
  */
 
-class modProjet
+include_once "DolibarrModules.class.php";
+
+class modProjet extends DolibarrModules
 {
 
   /*
@@ -31,6 +33,15 @@ class modProjet
   Function modProjet($DB)
   {
     $this->db = $DB ;
+    $this->numero = 60 ;
+    $this->name = "Projets";
+    $this->description = "Gestion des projets";
+    $this->const_name = "MAIN_MODULE_PROJET";
+    $this->const_config = MAIN_MODULE_PROJET;
+
+    $this->depends = array();
+    $this->const = array();
+    $this->boxes = array();
   }
   /*
    *
@@ -54,10 +65,7 @@ class modProjet
 		 "insert into llx_rights_def values (44,'Supprimer les projets','projet','d',0);"
 		 );
     
-    for ($i = 0 ; $i < sizeof($sql) ; $i++)
-      {
-	$this->db->query($sql[$i]);
-      }
+    return $this->_init($sql);
   }
   /*
    *
@@ -65,8 +73,9 @@ class modProjet
    */
   Function remove()
   {
-    $sql = "DELETE FROM llx_rights_def WHERE module = 'projet';";
-    $this->db->query($sql);
+    $sql = array("DELETE FROM llx_rights_def WHERE module = 'projet';");
+
+    return $this->_remove($sql);
   }
 }
 ?>

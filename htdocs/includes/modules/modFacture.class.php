@@ -19,10 +19,9 @@
  * $Source$
  *
  */
+include_once "DolibarrModules.class.php";
 
-include_once "modDolibarrModules.class.php";
-
-class modFacture extends modDolibarrModules
+class modFacture extends DolibarrModules
 {
 
   /*
@@ -33,7 +32,13 @@ class modFacture extends modDolibarrModules
   Function modFacture($DB)
   {
     $this->db = $DB ;
-    $this->depends = array("MAIN_MODULE_SOCIETE","MAIN_MODULE_COMPTABILITE");
+    $this->numero = 30 ;
+    $this->name = "Factures";
+    $this->description = "Gestion des factures";
+    $this->const_name = "MAIN_MODULE_FACTURE";
+    $this->const_config = MAIN_MODULE_FACTURE;
+
+    $this->depends = array("modSociete","modComptabilite");
     $this->config_page_url = "facture.php";
     $this->const = array();
     $this->boxes = array();
@@ -98,7 +103,7 @@ class modFacture extends modDolibarrModules
 		 "insert into llx_rights_def values (14,'Valider les factures','facture','d',0);",
 		 "insert into llx_rights_def values (15,'Envoyer les factures aux clients','facture','d',0);",
 		 "insert into llx_rights_def values (16,'Emettre des paiements sur les factures','facture','d',0);",
-		 "insert into llx_rights_def values (19,'Supprimer les factures','facture','d',0);",
+		 "insert into llx_rights_def values (19,'Supprimer les factures','facture','d',0);"
 		 );
     
     return $this->_init($sql);

@@ -20,9 +20,9 @@
  *
  */
 
-include_once "modDolibarrModules.class.php";
+include_once "DolibarrModules.class.php";
 
-class modPropale extends modDolibarrModules
+class modPropale extends DolibarrModules
 {
 
   /*
@@ -33,8 +33,15 @@ class modPropale extends modDolibarrModules
   Function modPropale($DB)
   {
     $this->db = $DB ;
-    $this->depends = array("MAIN_MODULE_SOCIETE","MAIN_MODULE_COMMERCIAL");
+    $this->numero = 20 ;
+    $this->name = "Propositions commerciales";
+    $this->description = "Gestion des proposition commerciale";
+    $this->const_name = "MAIN_MODULE_PROPALE";
+    $this->const_config = MAIN_MODULE_PROPALE;
+
+    $this->depends = array("modSociete","modCommercial");
     $this->config_page_url = "propale.php";
+
     $this->const = array();
     $this->boxes = array();
     /*
@@ -47,7 +54,9 @@ class modPropale extends modDolibarrModules
     $this->const[1][0] = "PROPALE_ADDON";
     $this->const[1][1] = "chaine";
     $this->const[1][2] = "mod_propale_ivoire";
-
+    /*
+     * Boites
+     */
     $this->boxes[0][0] = "Proposition commerciales";
     $this->boxes[0][1] = "box_propales.php";
   }
