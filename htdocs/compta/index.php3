@@ -121,7 +121,7 @@ if ($user->societe_id == 0)
     }
 }
 /*
- * Propales
+ * Propales à facturer
  */
 if ($user->comm > 0 && $conf->commercial ) 
 {
@@ -144,12 +144,8 @@ if ($user->comm > 0 && $conf->commercial )
   print "</table><br>";
 }
 /*
- * Factures
+ * Factures impayées
  */
-print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-print "<TR class=\"liste_titre\">";
-print '<td colspan="2">Factures impayées</td>';
-print "</TR>\n";
 
 $sql = "SELECT f.facnumber, f.rowid, s.nom FROM llx_facture as f, llx_societe as s WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut > 0";
 if ($socidp)
@@ -162,19 +158,28 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   $i = 0;
 
-  while ($i < $num)
+  if ($num)
     {
-      $obj = $db->fetch_object( $i);
-      $var=!$var;
-      print '<tr '.$bc[$var].'><td><a href="facture.php3?facid='.$obj->rowid.'">'.$obj->facnumber."</td><td>".$obj->nom."</tr>";
-      $i++;
-  }
+      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print "<TR class=\"liste_titre\">";
+      print '<td colspan="2">Factures impayées</td></tr>';
+
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var=!$var;
+	  print '<tr '.$bc[$var].'><td><a href="facture.php3?facid='.$obj->rowid.'">'.$obj->facnumber."</td><td>".$obj->nom."</tr>";
+	  $i++;
+	}
+      print "</table><br>";
+    }
+  $db->free();
 }
 else
 {
   print $sql;
 }
-print "</table><br>";
+
 /*
  * Bookmark
  *
@@ -241,6 +246,38 @@ if ( $result ) {
  *
  */
 
+/*
+ * Factures brouillons
+ */
+
+$sql = "SELECT f.facnumber, f.rowid, s.nom FROM llx_facture as f, llx_societe as s WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
+
+if ( $db->query($sql) )
+{
+  $num = $db->num_rows();
+  $i = 0;
+
+  if ($num)
+    {
+      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<TR class="liste_titre">';
+      print '<td colspan="2">Factures brouillons</td></tr>';
+
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var=!$var;
+	  print '<tr '.$bc[$var].'><td><a href="facture.php3?facid='.$obj->rowid.'">'.$obj->facnumber."</td><td>".$obj->nom."</tr>";
+	  $i++;
+	}
+      
+      print "</table><br>";
+    }
+}
+else
+{
+  print $sql;
+}
 
 /*
  * Factures a payer
