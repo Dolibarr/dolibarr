@@ -1,8 +1,9 @@
 # Dolibarr language file - en_US - other
 Calendar=Calendar
 LoginWebcal=Login for Webcalendar
-ErrorWebcalLoginNotDefined=The Webcalendar login associated to your Dolibarr login <b>%s</b> is not defined.
 AddCalendarEntry=Add entry in calendar
+ErrorWebcalLoginNotDefined=The Webcalendar login associated to your Dolibarr login <b>%s</b> is not defined.
+ErrorPasswordDiffers=Passwords differs, please type them again.
 Mailing=Mailing
 MailingDesc=This page allows you to send mailings to a group of people.
 MailingResult=Sending mails result
