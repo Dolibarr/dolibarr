@@ -28,7 +28,9 @@ create table llx_don
   datedon         datetime,         -- date du don/promesse
   amount          real default 0,
   fk_paiement     integer,
-  nom             varchar(255),
+  prenom          varchar(50),
+  nom             varchar(50),
+  societe         varchar(50),
   adresse         text,
   cp              varchar(30),
   ville           varchar(50),
