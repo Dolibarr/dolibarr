@@ -2,6 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,15 +139,15 @@ else
 
 
 
-print '<br>';
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Family").'</td>';
-print '<td>'.$langs->trans("Module").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td align="center">'.$langs->trans("Activated").'</td>';
-print '<td align="center">'.$langs->trans("Action").'</td>';
-print '<td>&nbsp;</td>';
+print "<br>\n";
+print "<table class=\"noborder\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print "  <td>".$langs->trans("Family")."</td>\n";
+print "  <td>".$langs->trans("Module")."</td>\n";
+print "  <td>".$langs->trans("Description")."</td>\n";
+print "  <td align=\"center\">".$langs->trans("Activated")."</td>\n";
+print "  <td align=\"center\">".$langs->trans("Action")."</td>\n";
+print "  <td>&nbsp;</td>\n";
 print "</tr>\n";
 
 
@@ -212,7 +213,7 @@ foreach ($orders as $key => $value)
     $const_value = $objMod->const_config;
 
     if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
-        print '<tr class="liste_titre"><td colspan="6"></td></tr>';
+        print "<tr class=\"liste_titre\">\n  <td colspan=\"6\"></td>\n</tr>\n";
         $atleastoneforfamily=0;
     }
 
@@ -221,24 +222,24 @@ foreach ($orders as $key => $value)
         $atleastoneforfamily=1;
         $var=!$var;
         
-        print "<tr $bc[$var]>";
+        print "<tr $bc[$var]>\n";
 	
-        print "<td class='body'>";
+        print "  <td class=\"body\">";
         if ($family!=$oldfamily)
 	  { 
-	    print '<div class="titre">'.$familylib[$family].'</div>';
+	    print "<div class=\"titre\">".$familylib[$family]."</div>";
 	    $oldfamily=$family;
 	  }
         else
 	  { 
 	    print '&nbsp;';
 	  }
-        print "</td>";
-        print "<td>";
+        print "</td>\n";
+        print "  <td>";
         print $objMod->name;
-        print "</td><td>\n";
+        print "</td>\n  <td>";
         print $objMod->description;
-        print '</td><td align="center">';
+        print "</td>\n  <td align=\"center\">";
 
         if ($const_value == 1)
 	  {
@@ -249,18 +250,18 @@ foreach ($orders as $key => $value)
             print "&nbsp;";
 	  }
 	
-        print '</td><td align="center">';
+        print "</td>\n  <td align=\"center\">";
 	
 
         if ($const_value == 1)
 	  {
-            print '<a href="modules.php?action=reset&amp;value='.$modName.'&amp;spe='.$_GET["spe"].'">'.$langs->trans("Disable").'</a></td>';
+            print "<a href=\"modules.php?action=reset&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Disable") . "</a></td>\n";
 
 
             if ($objMod->config_page_url)
             {
                 if (is_array($objMod->config_page_url)) {
-                    print '<td>';
+                    print "  <td>";
                     $i=0;
                     foreach ($objMod->config_page_url as $page) 
 		      {
@@ -273,29 +274,29 @@ foreach ($orders as $key => $value)
 			    print '<a href="'.$page.'">'.$langs->trans("Setup").'</a>&nbsp;'; 
 			  }
 		      }
-                    print '</td>';
+                    print "</td>\n";
                 }
 		else
 		  {
-                    print '<td><a href="'.$objMod->config_page_url.'">'.$langs->trans("Setup").'</a></td>';
+                    print '  <td><a href="'.$objMod->config_page_url.'">'.$langs->trans("Setup").'</a></td>';
 		  }
             }
             else
 	      {
-                print "<td>&nbsp;</td>";
+                print "  <td>&nbsp;</td>";
 	      }
 	    
         }
         else
 	  {
-            print '<a href="modules.php?action=set&amp;value='.$modName.'&amp;spe='.$_GET["spe"].'">'.$langs->trans("Activate").'</a></td><td>&nbsp;</td>';
+            print "<a href=\"modules.php?action=set&amp;value=" . $modName . "&amp;spe=" . $_GET["spe"] . "\">" . $langs->trans("Activate") . "</a></td>\n  <td>&nbsp;</td>\n";
 	  }
 	
-        print '</tr>';
+        print "</tr>\n";
     }
     
 }
-print "</table></div>";
+print "</table></div>\n";
 
 llxFooter();
 ?>

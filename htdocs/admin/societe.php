@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,12 +60,12 @@ print "<br>";
 
 print_titre("Module de vérification des codes client");
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>Info</td>';
-print '<td align="center">Activé</td>';
-print '<td>&nbsp;</td>';
+print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print "  <td>Nom</td>\n";
+print "  <td>Info</td>\n";
+print "  <td align=\"center\">Activé</td>\n";
+print "  <td>&nbsp;</td>\n";
 print "</tr>\n";
 
 clearstatcache();
@@ -82,29 +83,32 @@ if ($handle)
 	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
 
 	  $modCodeClient = new $file;
-
-	  print '<tr class="pair"><td width="140">'.$modCodeClient->nom."</td><td>\n";
+	  if($pair == "pair")
+	    $pair = "impair";
+	  else
+	    $pair = "pair";
+	  print "<tr class=\"$pair\">\n  <td width=\"140\">".$modCodeClient->nom."</td>\n  <td>\n";
 	  print $modCodeClient->info();
-	  print '</td>';
+	  print "</td>\n";
 	  
 	  if ($codeclient_addon_var == "$file")
 	    {
-	      print '<td align="center">';
+	      print "  <td align=\"center\">\n";
 	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-	      print '</td><td>&nbsp;</td>';
+	      print "</td>\n  <td>&nbsp;</td>\n";
 	    }
 	  else
 	    {
-	      print '<td>&nbsp;</td>';
-	      print '<td align="center"><a href="societe.php?action=setmod&amp;value='.$file.'">activer</a></td>';
+	      print "  <td>&nbsp;</td>\n";
+	      print "  <td align=\"center\"><a href=\"societe.php?action=setmod&amp;value=".$file."\">activer</a></td>\n";
 	    }
 	  
-	  print '</tr>';
+	  print "</tr>\n";
 	}
     }
   closedir($handle);
 }
-print '</table>';
+print "</table>\n";
 
 $db->close();
 
