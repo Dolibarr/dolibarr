@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -75,10 +76,10 @@ function ppt ($db) {
   $ptmt = pm($db);
   
   
-  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-  print "<TR bgcolor=\"orange\">";
+  print "<TABLE class=\"border\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<TR class=\"liste_titre\">";
   print "<TD>&nbsp;</TD>";
-  print "<TD>Mois</TD>";
+  print "<TD>".$langs->trans("Month")."</TD>";
   print "<TD align=\"right\">CA</TD>";
   print "<TD align=\"right\">Point mort</TD>";
   print "<TD align=\"right\">Delta</TD>";

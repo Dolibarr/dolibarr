@@ -175,7 +175,7 @@ function pt ($db, $sql, $year) {
     $i = 0; $total = 0 ;
     print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
     print "<tr class=\"liste_titre\">";
-    print "<td>Mois</td>";
+    print '<td>'.$langs->trans("Month").'</td>';
     print "<td align=\"right\">Montant</td></tr>\n";
     $var=True;
     $month = 1 ;
@@ -282,8 +282,8 @@ function ppt ($db, $year, $socidp)
   
   print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
   print "<tr class=\"liste_titre\">";
-  print "<td>Mois</TD>";
-  print "<td align=\"right\">Montant</td>";
+  print '<td>'.$langs->trans("Month").'</td>';
+  print '<td align="right">'.$langs->trans("Amount").'</td>';
   print "</tr>\n";
 
   $var = 1 ;

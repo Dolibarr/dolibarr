@@ -67,7 +67,7 @@ if ($result)
 }
 
 print '<table width="100%" class="noborder" cellspacing="0" cellpadding="3">';
-print '<tr class="liste_titre"><td rowspan="2">Mois</td>';
+print '<tr class="liste_titre"><td rowspan="2">'.$langs->trans("Month").'</td>';
 
 $year_current = strftime("%Y",time());
 $nbyears = 3;

@@ -109,10 +109,10 @@ function pt ($db, $sql, $year) {
   if ($result) {
     $num = $db->num_rows();
     $i = 0; $total = 0 ;
-    print '<p><table class="border" width="100%" cellspacing="0" cellpadding="3">';
-    print "<TR class=\"liste_titre\">";
-    print "<TD>Mois</TD>";
-    print "<td align=\"right\">Montant</td></tr>\n";
+    print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+    print "<tr class=\"liste_titre\">";
+    print '<td>'.$langs->trans("Month").'</td>';
+    print '<td align="right">'.$langs->trans("Amount").'</td></tr>';
     $var=True;
     $month = 1 ;
 
@@ -122,22 +122,22 @@ function pt ($db, $sql, $year) {
 
       if ($obj->dm > $month ) {
         	for ($b = $month ; $b < $obj->dm ; $b++) {
-        	  print "<TR $bc[$var]>";
-        	  print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
-        	  print "<TD align=\"right\">0</TD>\n";	  
-        	  print "</TR>\n";
+        	  print "<tr $bc[$var]>";
+        	  print "<td>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</td>\n";
+        	  print "<td align=\"right\">0</td>\n";	  
+        	  print "</tr>\n";
         	  $var=!$var;
         	  $ca[$b] = 0;
         	}
       }
 
       if ($obj->sum > 0) {
-	print "<TR $bc[$var]>";
+	print "<tr $bc[$var]>";
 	print "<td>";
-	print strftime("%B",mktime(12,0,0,$obj->dm, 1, $year))."</TD>\n";
-	print "<TD align=\"right\">".price($obj->sum)."</TD>\n";
+	print strftime("%B",mktime(12,0,0,$obj->dm, 1, $year))."</td>\n";
+	print "<td align=\"right\">".price($obj->sum)."</td>\n";
 	
-	print "</TR>\n";
+	print "</tr>\n";
 	$month = $obj->dm + 1;
 	$ca[$obj->dm] = $obj->sum;
 	$total = $total + $obj->sum;
@@ -154,10 +154,10 @@ function pt ($db, $sql, $year) {
     if ($beg <= 12 ) {
       for ($b = $beg + 1 ; $b < 13 ; $b++) {
 	$var=!$var;
-	print "<TR $bc[$var]>";
-	print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
-	print "<TD align=\"right\">0</TD>\n";	  
-	print "</TR>\n";
+	print "<tr $bc[$var]>";
+	print "<td>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</td>\n";
+	print "<td align=\"right\">0</td>\n";	  
+	print "</tr>\n";
 	$ca[$b] = 0;
       }
     }
@@ -219,12 +219,12 @@ function ppt ($db, $year, $socidp)
   
   print "</td><td valign=\"top\" width=\"30%\">";
   
-  print '<p><table class="border" width="100%" cellspacing="0" cellpadding="3">';
-  print "<TR class=\"liste_titre\">";
-  print "<TD>Mois</TD>";
-  print "<TD align=\"right\">Montant</TD>";
-  print '<td align="right">Cumul</TD>';
-  print "</TR>\n";
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+  print "<tr class=\"liste_titre\">";
+  print '<td>'.$langs->trans("Month").'</td>';
+  print '<td align="right">'.$langs->trans("Amount").'</td>';
+  print '<td align="right">Cumul</td>';
+  print "</tr>\n";
 
   $var = 1 ;
   for ($b = 1 ; $b <= 12 ; $b++)

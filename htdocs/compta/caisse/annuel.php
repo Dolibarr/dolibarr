@@ -86,8 +86,8 @@ if ($db->query($sql))
     }
 }
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr class="liste_titre"><td rowspan=2>Mois</td>';
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+print '<tr class="liste_titre"><td rowspan=2>'.$langs->trans("Month").'</td>';
 
 
 if ($year_current < (MAIN_START_YEAR + 2))

@@ -1,5 +1,6 @@
 <?PHP
-/* Copyright (C) 2003 Xavier DUTOIT <doli@sydesy.com>
+/* Copyright (C) 2003 Xavier DUTOIT        <doli@sydesy.com>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +67,7 @@ if (empty($YY))
 echo "<div class='noprint'>";
 echo "\n<form action='rapport.php'>";
 echo "<input type='hidden' name='socid' value='$socid'>";
-echo "Mois <input name='MM' size='2' value='$MM'>";
+echo $langs->trans("Month")." <input name='MM' size='2' value='$MM'>";
 echo " Ann&eacute;e <input size='4' name='YY' value='$YY'>";
 echo "<input type='submit' name='g' value='Genérer le rapport'>";
 echo "<form>";

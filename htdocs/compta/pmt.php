@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -42,7 +43,7 @@ if ($action == 'update') {
 
 
 
-print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">";
+print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"3\">";
 print "<tr><td valign=\"top\">";
 
 $sql = "SELECT amount, int(month) as dm FROM ".MAIN_DB_PREFIX."pointmort ORDER BY month DESC";
@@ -53,11 +54,11 @@ if ($result) {
 
 
 
-  print "<p><TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR bgcolor=\"orange\">";
-  print "<TD>Mois</TD>";
-  print "<TD align=\"right\">Montant</TD>";
-  print "</TR>\n";
+  print "<table class=\"noborder\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<tr bgcolor=\"orange\">";
+  print "<td>".$langs->trans("Month")."</td>";
+  print "<td align=\"right\">Montant</td>";
+  print "</tr>\n";
 
   $bc[0]="bgcolor=\"#90c090\"";
   $bc[1]="bgcolor=\"#b0e0b0\"";

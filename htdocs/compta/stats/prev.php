@@ -103,7 +103,7 @@ if ($socidp)
 }
 $sql .= " GROUP BY dm DESC";
 
-pt($db, $sql, "Mois");
+pt($db, $sql, $langs->trans("Month"));
 
 print '</td><td valign="top">';
 
