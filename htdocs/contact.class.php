@@ -103,7 +103,7 @@ class Contact
 
       if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
 	{
-	  update_ldap($user);
+	  $this->update_ldap($user);
 	}
       return $result;
     }
@@ -158,7 +158,7 @@ class Contact
 	    $info["objectclass"][1] = "inetOrgPerson";
 	    $info["objectclass"][2] = "phpgwContact"; // compatibilite egroupware
 	    
-	    $info['uidnumber'] = $id;
+	    $info['uidnumber'] = $this->id;
 	    
 	    $info['phpgwTz']      = 0;
 	    $info['phpgwMailType'] = 'INTERNET';
@@ -182,6 +182,7 @@ class Contact
 	    if (! ldap_add($ds, $dn, $info))
 	      {
 		$this->error[0] = ldap_err2str(ldap_errno($ds));
+		var_dump($info);
 	      }
 	  }
 	else
