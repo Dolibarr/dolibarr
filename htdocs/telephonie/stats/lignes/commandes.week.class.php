@@ -94,7 +94,40 @@ class GraphLignesCommandesWeek extends GraphBar {
 	print $this->db->error() . ' ' . $sql;
       }                  
 
-    $this->GraphDraw($this->file, $datas, $labels);
+    $datas_new = array();
+    $labels_new = array();
+    $j = 0 ;
+
+    $datas_new[0] = $datas[0];
+    $labels_new[0] = ceil(substr($labels[0],-2));
+
+    for ($i = 1 ; $i < sizeof($labels) ; $i++)
+      {
+	if (substr($labels[$i], -2) - substr($labels[$i-1], -2) > 1)
+	  {
+	    for ($k = 1 ; $k < ($labels[$i] - $labels[$i-1]) ; $k++)
+	      {
+		$datas_new[$i+$j] = 0;
+		$labels_new[$i+$j] = ceil(substr($labels[$i-1], -2) + $k) ; // suppression du 0
+
+		$j++;
+	      }
+	  }
+
+	$datas_new[$i+$j] = $datas[$i];
+	$labels_new[$i+$j] = ceil(substr($labels[$i], - 2));
+      }
+
+    $nbel = sizeof($datas_new);
+
+    for ($i = 0 ; $i < ($nbel - 22) ; $i++)
+      {
+	array_shift($datas_new);
+	array_shift($labels_new);
+      }
+
+
+    $this->GraphDraw($this->file, $datas_new, $labels_new);
   }
 }   
 ?>
