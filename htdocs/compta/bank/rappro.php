@@ -31,11 +31,11 @@ llxHeader();
 if ($action == 'rappro')
 {
   if ($num_releve > 0) {
-    $sql = "UPDATE llx_bank set rappro=$rappro, num_releve=$num_releve WHERE rowid=$rowid";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set rappro=$rappro, num_releve=$num_releve WHERE rowid=$rowid";
     $result = $db->query($sql);
     if ($result) {
       if ($cat1 && $rappro) {
-	$sql = "INSERT INTO llx_bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
 	$result = $db->query($sql);
       }
     } else {
@@ -45,14 +45,14 @@ if ($action == 'rappro')
   }
 }
 if ($action == 'del') {
-  $sql = "DELETE FROM llx_bank WHERE rowid=$rowid";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=$rowid";
   $result = $db->query($sql);
   if (!$result) {
     print $db->error();
     print "<p>$sql";
   }
 }
-$sql = "SELECT rowid, label FROM llx_bank_categ ORDER BY label;";
+$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label;";
 $result = $db->query($sql);
 if ($result) {
   $var=True;  
@@ -66,7 +66,7 @@ if ($result) {
   $db->free();
 }
 
-$sql = "SELECT max(num_releve) FROM llx_bank WHERE fk_account=$account";
+$sql = "SELECT max(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE fk_account=$account";
 if ( $db->query($sql) )
 {
   if ( $db->num_rows() )
@@ -86,7 +86,7 @@ $acct->fetch($account);
 print_titre('Rapprochement bancaire compte : <a href="account.php?account='.$account.'">'.$acct->label.'</a>');
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
-$sql .= " FROM llx_bank as b WHERE rappro=0 AND fk_account=$account AND dateo <= now()";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rappro=0 AND fk_account=$account AND dateo <= now()";
 $sql .= " ORDER BY dateo ASC LIMIT 10";
 
 

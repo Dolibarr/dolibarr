@@ -55,7 +55,7 @@ class Societe {
    */
   Function create()
   {
-    $sql = "INSERT INTO llx_societe (nom, datec, datea, client) ";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, client) ";
     $sql .= " VALUES ('".trim($this->nom)."', now(), now(), $this->client);";
 
     if ($this->db->query($sql) ) {
@@ -78,7 +78,7 @@ class Societe {
 	$this->nom = "VALEUR MANQUANTE";
       }
 
-    $sql = "UPDATE llx_societe ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
     $sql .= " SET nom = '" . trim($this->nom) ."'";
     $sql .= ",address = '" . trim($this->adresse) ."'";
     $sql .= ",cp = '" . trim($this->cp) ."'";
@@ -104,7 +104,7 @@ class Societe {
    */
   Function delete($id)
     {
-      $sql = "DELETE from llx_societe ";
+      $sql = "DELETE from ".MAIN_DB_PREFIX."societe ";
       $sql .= " WHERE idp = " . $id .";";
 
       if (! $this->db->query($sql))
@@ -150,7 +150,7 @@ class Societe {
        * Lignes
        */      
       $sql = "SELECT f.rowid";
-      $sql .= " FROM llx_facture as f WHERE f.fk_soc = ".$this->id;
+      $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = ".$this->id;
       $sql .= " AND f.fk_statut = 1 AND f.paye = 0";
 
       if ($this->db->query($sql))
@@ -181,7 +181,7 @@ class Societe {
 
       $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm,";
       $sql .= " s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
-      $sql .= " FROM llx_societe as s";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
       $sql .= " WHERE s.idp = ".$this->id;
 
       $result = $this->db->query($sql);
@@ -229,7 +229,7 @@ class Societe {
 
   Function attribute_prefix()
     {
-      $sql = "SELECT nom FROM llx_societe WHERE idp = $this->id";
+      $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp = $this->id";
       if ( $this->db->query( $sql) )
 	{
 	  if ( $this->db->num_rows() )
@@ -239,7 +239,7 @@ class Societe {
 	      
 	      $prefix = strtoupper(substr($nom, 0, 2));
       
-	      $sql = "SELECT count(*) FROM llx_societe WHERE prefix_comm = '$prefix'";
+	      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
 	      if ( $this->db->query( $sql) )
 		{
 		  if ( $this->db->result(0, 0) )
@@ -250,7 +250,7 @@ class Societe {
 		    {
 		      $this->db->free();
 
-		      $sql = "UPDATE llx_societe set prefix_comm='$prefix' WHERE idp=$this->id";
+		      $sql = "UPDATE ".MAIN_DB_PREFIX."societe set prefix_comm='$prefix' WHERE idp=$this->id";
 		      
 		      if ( $this->db->query( $sql) )
 			{
@@ -283,7 +283,7 @@ class Societe {
   Function get_nom($id)
     {
 
-      $sql = "SELECT nom FROM llx_societe WHERE idp=$id;";
+      $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp=$id;";
       
       $result = $this->db->query($sql);
       
@@ -307,7 +307,7 @@ class Societe {
     {
       $contact_email = array();
 
-      $sql = "SELECT idp, email, name, firstname FROM llx_socpeople WHERE fk_soc = $this->id";
+      $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = $this->id";
       
       if ($this->db->query($sql) )
 	{
@@ -340,7 +340,7 @@ class Societe {
     {
       $contacts = array();
 
-      $sql = "SELECT idp, name, firstname FROM llx_socpeople WHERE fk_soc = $this->id";
+      $sql = "SELECT idp, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = $this->id";
       
       if ($this->db->query($sql) )
 	{
@@ -372,7 +372,7 @@ class Societe {
   Function contact_get_email($rowid)
     {
 
-      $sql = "SELECT idp, email, name, firstname FROM llx_socpeople WHERE idp = $rowid";
+      $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE idp = $rowid";
       
       if ($this->db->query($sql) )
 	{

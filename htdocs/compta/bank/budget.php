@@ -44,7 +44,7 @@ if ($_GET["bid"] == 0)
   print "</TR>\n";
 
   $sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
-  $sql .= " FROM llx_bank_categ as c, llx_bank_class as l, llx_bank as d";
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as c, ".MAIN_DB_PREFIX."bank_class as l, ".MAIN_DB_PREFIX."bank as d";
   $sql .= " WHERE d.rowid=l.lineid AND c.rowid = l.fk_categ GROUP BY c.label, c.rowid ORDER BY c.label";
   
   $result = $db->query($sql);
@@ -84,7 +84,7 @@ else
   /*
    *  Vue
    */
-  $sql = "SELECT label FROM llx_bank_categ WHERE rowid=".$_GET["bid"];
+  $sql = "SELECT label FROM ".MAIN_DB_PREFIX."bank_categ WHERE rowid=".$_GET["bid"];
   if ( $db->query($sql) )
     {
       if ( $db->num_rows() )
@@ -102,7 +102,7 @@ else
   print "</TR>\n";
 
   $sql = "SELECT d.amount, d.label, ".$db->pdate("d.dateo")." as do, d.rowid";
-  $sql .= " FROM llx_bank_class as l, llx_bank as d";
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank_class as l, ".MAIN_DB_PREFIX."bank as d";
   $sql .= " WHERE d.rowid=l.lineid AND l.fk_categ=".$_GET["bid"]." ORDER by d.dateo DESC";
   
   $result = $db->query($sql);

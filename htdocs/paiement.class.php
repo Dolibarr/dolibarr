@@ -54,7 +54,7 @@ class Paiement
     
     $this->amount = ereg_replace(",",".",$this->amount);
 
-    $sql = "INSERT INTO llx_paiement (fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note)";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note)";
     $sql .= " VALUES ($this->facid, now(), $this->datepaye,$this->amount,'$this->author', $this->paiementid, '$this->num_paiement', '$this->note')";
     
     $result = $this->db->query($sql);
@@ -100,8 +100,8 @@ class Paiement
    */
   Function delete()
   {
-    $sql = "SELECT llx_paiement.rowid FROM llx_facture, llx_paiement WHERE  llx_paiement.rowid = ".$this->id;
-    $sql .= " AND llx_paiement.fk_facture = llx_facture.rowid AND llx_facture.paye = 0";
+    $sql = "SELECT ".MAIN_DB_PREFIX."paiement.rowid FROM ".MAIN_DB_PREFIX."facture, ".MAIN_DB_PREFIX."paiement WHERE  ".MAIN_DB_PREFIX."paiement.rowid = ".$this->id;
+    $sql .= " AND ".MAIN_DB_PREFIX."paiement.fk_facture = ".MAIN_DB_PREFIX."facture.rowid AND ".MAIN_DB_PREFIX."facture.paye = 0";
 
     $result = $this->db->query($sql);
     
@@ -109,7 +109,7 @@ class Paiement
       {
 	if ($this->db->num_rows() == 1)
 	  {
-	    $sql = "DELETE FROM llx_paiement WHERE llx_paiement.rowid = ".$this->id;
+	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiement WHERE ".MAIN_DB_PREFIX."paiement.rowid = ".$this->id;
 
 	    $result = $this->db->query($sql);
 	    

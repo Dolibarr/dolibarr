@@ -63,7 +63,7 @@ class Tva
     {
 
       $sql = "SELECT sum(f.tva) as amount";
-      $sql .= " FROM llx_facture as f WHERE f.paye = 1";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
 
       if ($year)
 	{
@@ -102,7 +102,7 @@ class Tva
     {
       
       $sql = "SELECT sum(f.amount) as amount";
-      $sql .= " FROM llx_facture_fourn as f";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
       
       if ($year)
 	{
@@ -141,7 +141,7 @@ class Tva
     {
 
       $sql = "SELECT sum(f.amount) as amount";
-      $sql .= " FROM llx_tva as f";
+      $sql .= " FROM ".MAIN_DB_PREFIX."tva as f";
       
       if ($year)
 	{
@@ -177,7 +177,7 @@ class Tva
    */
   Function add_payement($datep, $datev, $amount)
     {
-      $sql = "INSERT INTO llx_tva (datep, datev, amount) ";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep, datev, amount) ";
       $sql .= " VALUES ('".$this->db->idate($datep)."',";
       $sql .= "'".$this->db->idate($datev)."'," . ereg_replace(",",".",$amount) .")";
 

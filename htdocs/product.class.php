@@ -71,7 +71,7 @@ class Product
   Function create($user) 
     {
       $sql = "SELECT count(*)";
-      $sql .= " FROM llx_product WHERE ref = '" .trim($this->ref)."'";
+      $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .trim($this->ref)."'";
 
       $result = $this->db->query($sql) ;
 
@@ -87,7 +87,7 @@ class Product
 		}
 	      $this->price = round($this->price, 2);
 	      
-	      $sql = "INSERT INTO llx_product (datec, fk_user_author, fk_product_type, price)";
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product (datec, fk_user_author, fk_product_type, price)";
 	      $sql .= " VALUES (now(),".$user->id.",$this->type, " . ereg_replace(",",".",$this->price) . ")";
 	      $result = $this->db->query($sql);
 	      if ( $result )
@@ -129,7 +129,7 @@ class Product
 	  $this->libelle = 'LIBELLE MANQUANT';
 	}
       
-      $sql = "UPDATE llx_product ";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
       $sql .= " SET label = '" . trim($this->libelle) ."'";
       if (strlen(trim($this->ref)))
 	{
@@ -159,7 +159,7 @@ class Product
   Function _log_price($user) 
     {
 
-      $sql = "REPLACE INTO llx_product_price ";
+      $sql = "REPLACE INTO ".MAIN_DB_PREFIX."product_price ";
       $sql .= " SET date_price= now()";
       $sql .= " ,fk_product = ".$this->id;
       $sql .= " ,fk_user_author = ".$user->id;
@@ -186,7 +186,7 @@ class Product
 	{
 	  $this->price = round($this->price, 2);
 
-	  $sql = "UPDATE llx_product ";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
 	  $sql .= " SET price = " . ereg_replace(",",".",$this->price);	  
 	  $sql .= " WHERE rowid = " . $id;
 	  
@@ -216,7 +216,7 @@ class Product
   Function fetch ($id)
     {    
       $sql = "SELECT rowid, ref, label, description, price, tva_tx, envente, nbvente, fk_product_type, duration, seuil_stock_alerte";
-      $sql .= " FROM llx_product WHERE rowid = $id";
+      $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE rowid = $id";
 
       $result = $this->db->query($sql) ;
 
@@ -244,7 +244,7 @@ class Product
 
 
 	  $sql = "SELECT reel, fk_entrepot";
-	  $sql .= " FROM llx_product_stock WHERE fk_product = $id";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product = $id";
 	  $result = $this->db->query($sql) ;
 	  if ( $result )
 	    {
@@ -286,7 +286,7 @@ class Product
   Function count_propale()
     {
       $sql = "SELECT pd.fk_propal";
-      $sql .= " FROM llx_propaldet as pd, llx_product as p";
+      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p";
       $sql .= " WHERE p.rowid = pd.fk_product AND p.rowid = ".$this->id;
       $sql .= " GROUP BY pd.fk_propal";
 
@@ -308,7 +308,7 @@ class Product
   Function count_propale_client()
     {
       $sql = "SELECT pr.fk_soc";
-      $sql .= " FROM llx_propaldet as pd, llx_product as p, llx_propal as pr";
+      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."propal as pr";
       $sql .= " WHERE p.rowid = pd.fk_product AND pd.fk_propal = pr.rowid AND p.rowid = ".$this->id;
       $sql .= " GROUP BY pr.fk_soc";
 
@@ -330,7 +330,7 @@ class Product
   Function count_facture()
     {
       $sql = "SELECT pd.fk_facture";
-      $sql .= " FROM llx_facturedet as pd, llx_product as p";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as pd, ".MAIN_DB_PREFIX."product as p";
       $sql .= " WHERE p.rowid = pd.fk_product AND p.rowid = ".$this->id;
       $sql .= " GROUP BY pd.fk_facture";
 
@@ -403,7 +403,7 @@ class Product
   Function get_nb_vente()
     {
       $sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
-      $sql .= " FROM llx_facturedet as d, llx_facture as f";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
       $sql .= " WHERE f.rowid = d.fk_facture and f.paye = 1 and d.fk_product =".$this->id;
       $sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
 
@@ -416,7 +416,7 @@ class Product
   Function get_num_vente()
     {
       $sql = "SELECT count(*), date_format(f.datef, '%Y%m') ";
-      $sql .= " FROM llx_facturedet as d, llx_facture as f";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
       $sql .= " WHERE f.rowid = d.fk_facture and f.paye = 1 and d.fk_product =".$this->id;
       $sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
 
@@ -428,7 +428,7 @@ class Product
    */
   Function add_fournisseur($user, $id_fourn, $ref_fourn) 
     {
-      $sql = "SELECT count(*) FROM llx_product_fournisseur WHERE fk_product = $this->id AND fk_soc = $id_fourn";
+      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product_fournisseur WHERE fk_product = $this->id AND fk_soc = $id_fourn";
 
       if ($this->db->query($sql) )
 	{
@@ -437,7 +437,7 @@ class Product
 	  if ($row[0] == 0)
 	    {
 
-	      $sql = "INSERT INTO llx_product_fournisseur ";
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur ";
 	      $sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
 	      $sql .= " VALUES (now(), $this->id, $id_fourn, '$ref_fourn', $user->id)";
 	      
@@ -469,7 +469,7 @@ class Product
   Function create_stock($id_entrepot, $nbpiece)
   {
     
-    $sql = "INSERT INTO llx_product_stock ";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock ";
     $sql .= " (fk_product, fk_entrepot, reel)";
     $sql .= " VALUES ($this->id, $id_entrepot, $nbpiece)";
     
@@ -490,7 +490,7 @@ class Product
   Function correct_stock($user, $id_entrepot, $nbpiece, $mouvement)
   {
 
-    $sql = "SELECT count(*) FROM llx_product_stock ";
+    $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product_stock ";
     $sql .= " WHERE fk_product = $this->id AND fk_entrepot = $id_entrepot";
     
     if ($this->db->query($sql) )
@@ -527,19 +527,19 @@ class Product
     if ($this->db->begin())
       {
 
-	$sql = "UPDATE llx_product ";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
 	$sql .= " SET stock_commande = stock_commande ".$op[$mouvement].", stock_propale = stock_propale ".$op[$mouvement];
 	$sql .= " WHERE rowid = $this->id ";
 	
 	if ($this->db->query($sql) )
 	  {	    
-	    $sql = "UPDATE llx_product_stock ";
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."product_stock ";
 	    $sql .= " SET reel = reel ".$op[$mouvement];
 	    $sql .= " WHERE fk_product = $this->id AND fk_entrepot = $id_entrepot";
 	    
 	    if ($this->db->query($sql) )
 	      {		
-		$sql = "INSERT INTO llx_stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
 		$sql .= " VALUES (now(), $this->id, $id_entrepot, ".$op[$mouvement].", 0, $user->id)";
 		
 		if ($this->db->query($sql) )

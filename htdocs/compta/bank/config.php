@@ -37,7 +37,7 @@ print "<td align=\"left\">Number</a></TD>";
 print "<td align=\"center\">Clos</a></TD>";
 print "</TR>\n";
 
-$sql = "SELECT rowid, label,number,bank,clos from llx_bank_account";
+$sql = "SELECT rowid, label,number,bank,clos from ".MAIN_DB_PREFIX."bank_account";
 
 $result = $db->query($sql);
 if ($result)

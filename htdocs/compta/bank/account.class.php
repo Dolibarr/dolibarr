@@ -47,18 +47,18 @@ class Account
   }
 
   /*
-   * Efface une entree dans la table llx_bank
+   * Efface une entree dans la table ".MAIN_DB_PREFIX."bank
    */
 
   Function deleteline($rowid)
   {
-    $sql = "DELETE FROM llx_bank_class WHERE lineid=$rowid";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=$rowid";
     $result = $this->db->query($sql);
 
-    $sql = "DELETE FROM llx_bank WHERE rowid=$rowid";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=$rowid";
     $result = $this->db->query($sql);
 
-    $sql = "DELETE FROM llx_bank_url WHERE fk_bank=$rowid";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=$rowid";
     $result = $this->db->query($sql);
   }
   /*
@@ -67,7 +67,7 @@ class Account
    */
   Function add_url_line($line_id, $url_id, $url, $label)
   {
-    $sql = "INSERT INTO llx_bank_url (fk_bank, url_id, url, label)";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (fk_bank, url_id, url, label)";
     $sql .= " VALUES ('$line_id', '$url_id', '$url', '$label')";
 
     if ($this->db->query($sql))
@@ -89,7 +89,7 @@ class Account
   Function get_url($line_id)
   {
     $lines = array();
-    $sql = "SELECT fk_bank, url_id, url, label FROM llx_bank_url WHERE fk_bank = $line_id";
+    $sql = "SELECT fk_bank, url_id, url, label FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank = $line_id";
     $result = $this->db->query($sql);
 
     if ($result)
@@ -108,7 +108,7 @@ class Account
       }
   }
   /*
-   * Ajoute une entree dans la table llx_bank
+   * Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
    *
    */
   Function addline($date, $oper, $label, $amount, $num_chq="",$categorie='')
@@ -140,7 +140,7 @@ class Account
 	    break;
 	  }
 	
-	$sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
 	$sql .= " VALUES (now(), '$date', '$label', '" . ereg_replace(",",".",$amount) . "','$author','$num_chq', '$this->rowid', '$oper')";
 
 
@@ -149,7 +149,7 @@ class Account
 	    $rowid = $this->db->last_insert_id();
 	    if ($categorie)
 	      {
-		$sql = "INSERT INTO llx_bank_class (lineid, fk_categ) VALUES ('$rowid', '$categorie')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ('$rowid', '$categorie')";
 		$result = $this->db->query($sql);
 		if ($result){
 		  return $rowid;
@@ -172,7 +172,7 @@ class Account
    */
   Function create()
     {
-      $sql = "INSERT INTO llx_bank_account (datec, label) values (now(),'$this->label');";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (datec, label) values (now(),'$this->label');";
       if ($this->db->query($sql))
 	{
 	  if ($this->db->affected_rows()) 
@@ -180,7 +180,7 @@ class Account
 	      $this->id = $this->db->last_insert_id();
 	      if ( $this->update() )
 		{
-		  $sql = "INSERT INTO llx_bank (datec, label, amount, fk_account,datev,dateo,fk_type,rappro) ";
+		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, label, amount, fk_account,datev,dateo,fk_type,rappro) ";
 		  $sql .= " VALUES (now(),'Solde','" . ereg_replace(",",".",$this->solde) . "','$this->id','".$this->db->idate($this->date_solde)."','".$this->db->idate($this->date_solde)."','SOLD',1);";
 
 		  $this->db->query($sql);
@@ -203,7 +203,7 @@ class Account
       if (strlen($this->label)==0)
 	$this->label = "???";
 
-      $sql = "UPDATE llx_bank_account SET ";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."bank_account SET ";
 
       $sql .= " bank = '" .$this->bank ."'";
       $sql .= ",label = '".$this->label ."'";
@@ -243,7 +243,7 @@ class Account
   Function fetch($id)
   {
     $this->id = $id; 
-    $sql = "SELECT rowid, label, bank, number, courant, clos, code_banque,code_guichet,cle_rib,bic,iban_prefix,domiciliation FROM llx_bank_account";
+    $sql = "SELECT rowid, label, bank, number, courant, clos, code_banque,code_guichet,cle_rib,bic,iban_prefix,domiciliation FROM ".MAIN_DB_PREFIX."bank_account";
     $sql .= " WHERE rowid  = ".$id;
 
     $result = $this->db->query($sql);
@@ -279,7 +279,7 @@ class Account
    */
   Function solde()
   {
-    $sql = "SELECT sum(amount) FROM llx_bank WHERE fk_account=$this->id AND dateo <=" . $this->db->idate(time() );
+    $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE fk_account=$this->id AND dateo <=" . $this->db->idate(time() );
 
     $result = $this->db->query($sql);
 

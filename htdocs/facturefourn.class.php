@@ -51,7 +51,7 @@ class FactureFourn
     $this->db = $DB ;
     $this->socidp = $soc_idp;
     $this->products = array();
-    $this->db_table = "llx_facture";
+    $this->db_table = MAIN_DB_PREFIX."facture";
     $this->amount = 0;
     $this->remise = 0;
     $this->tva = 0;
@@ -81,7 +81,7 @@ class FactureFourn
 	for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 	  {	 
 
-	    $sql = "INSERT INTO llx_facture_fourn_det (fk_facture_fourn)";
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
 	    $sql .= " VALUES ($this->id);";
 	    if ($this->db->query($sql) ) 
 	      {
@@ -118,7 +118,7 @@ class FactureFourn
     $totalttc = $totalht + $tva;
 
 
-    $sql = "UPDATE llx_facture_fourn_det ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det ";
     $sql .= "SET description ='".$label."'";
     $sql .= ", pu_ht = " . $puht;
     $sql .= ", qty =".$qty;
@@ -140,7 +140,7 @@ class FactureFourn
   Function delete_ligne($id)
   {
 
-    $sql = "DELETE FROM llx_facture_fourn_det ";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det ";
     $sql .= " WHERE rowid = $id";
 
     if (! $this->db->query($sql) ) 
@@ -174,7 +174,7 @@ class FactureFourn
     $tva = tva($totalht);
     $total = $totalht + $tva;
     
-    $sql = "INSERT INTO llx_facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author) ";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn (facnumber, libelle, fk_soc, datec, datef, note, fk_user_author) ";
     $sql .= " VALUES ('".$this->number."','".$this->libelle."',". $this->socid.", now(),".$this->date.",'".$this->note."', ".$user->id.");";
 
     if ( $this->db->query($sql) )
@@ -184,7 +184,7 @@ class FactureFourn
 	for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 	  {	 
 
-	    $sql = "INSERT INTO llx_facture_fourn_det (fk_facture_fourn)";
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
 	    $sql .= " VALUES ($this->id);";
 	    if ($this->db->query($sql) ) 
 	      {
@@ -222,7 +222,7 @@ class FactureFourn
 
       $sql = "SELECT fk_soc,libelle,facnumber,amount,remise,".$this->db->pdate(datef)."as df";
       $sql .= ", total_ht, total_tva, total_ttc, fk_user_author";
-      $sql .= " FROM llx_facture_fourn as f WHERE f.rowid=$rowid;";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f WHERE f.rowid=$rowid;";
       
       if ($this->db->query($sql) )
 	{
@@ -249,7 +249,7 @@ class FactureFourn
 	      /* 
 	       * Lignes
 	       */
-	      $sql = "SELECT rowid,description, pu_ht, qty, tva_taux, tva, total_ht, total_ttc FROM llx_facture_fourn_det WHERE fk_facture_fourn=".$this->id;
+	      $sql = "SELECT rowid,description, pu_ht, qty, tva_taux, tva, total_ht, total_ttc FROM ".MAIN_DB_PREFIX."facture_fourn_det WHERE fk_facture_fourn=".$this->id;
       
 	      if ($this->db->query($sql) )
 		{
@@ -290,7 +290,7 @@ class FactureFourn
    */
   Function valid($userid, $dir)
     {
-      $sql = "UPDATE llx_facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
       $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
       
       if ($this->db->query($sql) )
@@ -310,13 +310,13 @@ class FactureFourn
   Function delete($rowid)
     {
 
-      $sql = "DELETE FROM llx_facture_fourn WHERE rowid = $rowid AND fk_statut = 0";
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn WHERE rowid = $rowid AND fk_statut = 0";
 
       if ( $this->db->query( $sql) )
 	{
 	  if ( $this->db->affected_rows() )
 	    {
-	      $sql = "DELETE FROM llx_facture_fourn_det WHERE fk_facture_fourn = $rowid;";
+	      $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det WHERE fk_facture_fourn = $rowid;";
 
 	      if ($this->db->query( $sql) )
 		{
@@ -342,7 +342,7 @@ class FactureFourn
    */
   Function set_payed($rowid)
     {
-      $sql = "UPDATE llx_facture set paye = 1 WHERE rowid = $rowid ;";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture set paye = 1 WHERE rowid = $rowid ;";
       $return = $this->db->query( $sql);
     }
   /*
@@ -355,7 +355,7 @@ class FactureFourn
     {
       global $conf;
 
-      $sql = "UPDATE llx_facture set fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid ;";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid ;";
       $result = $this->db->query( $sql);
 
       $dir = $conf->facture->outputdir . "/" . $rowid;
@@ -376,7 +376,7 @@ class FactureFourn
    */
   Function addline($facid, $desc, $pu, $qty)
     {
-      $sql = "INSERT INTO llx_facturedet (fk_facture,description,price,qty) VALUES ($facid, '$desc', $pu, $qty) ;";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet (fk_facture,description,price,qty) VALUES ($facid, '$desc', $pu, $qty) ;";
       $result = $this->db->query( $sql);
 
       $this->updateprice($facid);
@@ -387,7 +387,7 @@ class FactureFourn
    */
   Function updateline($rowid, $desc, $pu, $qty)
     {
-      $sql = "UPDATE llx_facturedet set description='$desc',price=$pu,qty=$qty WHERE rowid = $rowid ;";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc',price=$pu,qty=$qty WHERE rowid = $rowid ;";
       $result = $this->db->query( $sql);
 
       $this->updateprice($this->id);
@@ -398,7 +398,7 @@ class FactureFourn
    */
   Function deleteline($rowid)
     {
-      $sql = "DELETE FROM llx_facturedet WHERE rowid = $rowid;";
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = $rowid;";
       $result = $this->db->query( $sql);
 
       $this->updateprice($this->id);
@@ -410,7 +410,7 @@ class FactureFourn
   Function updateprice($facid)
     {
 
-      $sql = "SELECT sum(total_ht), sum(tva), sum(total_ttc) FROM llx_facture_fourn_det";
+      $sql = "SELECT sum(total_ht), sum(tva), sum(total_ttc) FROM ".MAIN_DB_PREFIX."facture_fourn_det";
       $sql .= " WHERE fk_facture_fourn = $facid;";
   
       $result = $this->db->query($sql);
@@ -425,7 +425,7 @@ class FactureFourn
 	      $total_ttc = $row[2];
 	    }
 	  
-	  $sql = "UPDATE llx_facture_fourn SET total_ht = $total_ht, total_tva = $total_tva, total_ttc = $total_ttc";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET total_ht = $total_ht, total_tva = $total_tva, total_ttc = $total_ttc";
 	  $sql .= " WHERE rowid = $facid ;";
 	  
 	  $result = $this->db->query($sql);

@@ -45,7 +45,7 @@ class ChargeSociales {
   Function solde($year = 0) {
 
     $sql = "SELECT sum(f.amount) as amount";
-    $sql .= " FROM llx_chargesociales as f WHERE paye = 0";
+    $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as f WHERE paye = 0";
 
     if ($year) {
       $sql .= " AND f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";

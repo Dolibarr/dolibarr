@@ -46,7 +46,7 @@ class Notify
   Function send($action, $socid, $texte, $objet_type, $objet_id, $file="")
     {
       $sql = "SELECT s.nom, c.email, c.idp, c.name, c.firstname, a.titre,n.rowid";
-      $sql .= " FROM llx_socpeople as c, llx_action_def as a, llx_notify_def as n, llx_societe as s";
+      $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
       $sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
       $sql .= " AND n.fk_soc = s.idp AND n.fk_action = ".$action;
       $sql .= " AND s.idp = ".$socid;
@@ -79,7 +79,7 @@ class Notify
 		    {
 		      $sendto = htmlentities($sendto);
 	      
-		      $sql = "INSERT INTO llx_notify (daten, fk_action, fk_contact, objet_type, objet_id)";
+		      $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id)";
 		      $sql .= " VALUES (now(), $action ,$obj->idp , '$objet_type', $objet_id);";
 		      $db2 = $this->db->clone();
 		      if (! $db2->query($sql) )

@@ -48,22 +48,22 @@ print_titre("Bilan");
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
 
 $var=!$var;
-$sql = "SELECT sum(amount) FROM llx_paiement";
+$sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."paiement";
 $paiem = valeur($sql);
 print "<tr $bc[$var]><td>Somme des paiements (associés à une facture)</td><td align=\"right\">".price($paiem)."</td></tr>";
 
 $var=!$var;
-$sql = "SELECT sum(amount) FROM llx_bank WHERE amount > 0";
+$sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE amount > 0";
 $credits = valeur($sql);
 print "<tr $bc[$var]><td>Somme des credits</td><td align=\"right\">".price($credits)."</td></tr>";
 
 $var=!$var;
-$sql = "SELECT sum(amount) FROM llx_bank WHERE amount < 0";
+$sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE amount < 0";
 $debits = valeur($sql);
 print "<tr $bc[$var]><td>Somme des debits</td><td align=\"right\">".price($debits)."</td></tr>";
 
 $var=!$var;
-$sql = "SELECT sum(amount) FROM llx_bank ";
+$sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank ";
 $solde = valeur($sql);
 print "<tr $bc[$var]><td>Solde compte</td><td align=\"right\">".price($solde)."</td></tr>";
 

@@ -52,7 +52,7 @@ class Contact
 	$this->socid = 0;
       }
 
-    $sql = "INSERT INTO llx_socpeople (datec, fk_soc, name, fk_user) ";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user) ";
     $sql .= " VALUES (now(),$this->socid,'$this->name',$user->id)";
 
     if ($this->db->query($sql) )
@@ -76,7 +76,7 @@ class Contact
     {
       $this->email = trim($this->email);
 
-      $sql = "UPDATE llx_socpeople SET name='$this->name', firstname='$this->firstname'";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET name='$this->name', firstname='$this->firstname'";
       $sql .= ", poste='$this->poste'";
       $sql .= ", fax='$this->fax'";
       $sql .= ", email='$this->email'";
@@ -202,7 +202,7 @@ class Contact
 	  if ($user)
 	    {
 	      $sql = "SELECT fk_user";
-	      $sql .= " FROM llx_birthday_alert";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."birthday_alert";
 	      $sql .= " WHERE fk_user = $user->id AND fk_contact = $id";
 	      
 	      if ($this->db->query($sql)) 
@@ -231,7 +231,7 @@ class Contact
    */
   Function delete($id)
     {
-      $sql = "DELETE FROM llx_socpeople";
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
       $sql .= " WHERE idp=$id";
 
       $result = $this->db->query($sql);

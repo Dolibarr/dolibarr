@@ -41,7 +41,7 @@ function llxHeader($head = "")
   $menu->add_submenu("search.php","Recherche");
 
 
-  $sql = "SELECT rowid, label FROM llx_bank_account where clos = 0 AND courant = 1";
+  $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account where clos = 0 AND courant = 1";
   $result = $db->query($sql);
   if ($result)
     {

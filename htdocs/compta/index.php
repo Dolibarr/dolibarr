@@ -209,7 +209,7 @@ print '</td><td valign="top" width="70%">';
  */
 if ($user->comm > 0 && $conf->commercial ) 
 {
-  $sql = "SELECT p.rowid, p.ref, s.nom, s.idp FROM llx_commande as p, llx_societe as s";
+  $sql = "SELECT p.rowid, p.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as p, ".MAIN_DB_PREFIX."societe as s";
   $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut >= 1 AND p.facture = 0";
   if ($socidp)
     {
@@ -244,7 +244,7 @@ if ($user->comm > 0 && $conf->commercial )
  * Factures impayées
  */
 
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc FROM llx_facture as f, llx_societe as s WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut > 0";
+$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut > 0";
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
@@ -314,7 +314,7 @@ if ( $result ) {
 if ($user->societe_id == 0)
 {
   $sql = "SELECT ff.total_ttc as amount, ff.libelle, ff.rowid";
-  $sql .= " FROM llx_facture_fourn as ff";
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
   $sql .= " WHERE ff.paye=0";
   
   if ( $db->query($sql) ) 

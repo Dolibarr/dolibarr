@@ -84,7 +84,7 @@ class Propal
 		  $price = $prod->price - $remise;
 		}
 	  
-	      $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
 	      $sql .= " (".$this->id.",". $idproduct.",". $qty.",". $price.",".$prod->tva_tx.",'".addslashes($prod->label)."',$remise_percent, $subprice)";
 	  
 	      if ($this->db->query($sql) )
@@ -127,7 +127,7 @@ class Propal
 	      $price = $p_price - $remise;
 	    }
 
-	  $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
 	  $sql .= " (".$this->id.", 0,". $p_qty.",". $price.",".$p_tva_tx.",'".$p_desc."',$remise_percent, $subprice) ; ";
 	  
 	  if ($this->db->query($sql) )
@@ -168,7 +168,7 @@ class Propal
     {
       if ($this->statut == 0)
 	{
-	  $sql = "DELETE FROM llx_propaldet WHERE rowid = $idligne";
+	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE rowid = $idligne";
 	  
 	  if ($this->db->query($sql) )
 	    {
@@ -194,7 +194,7 @@ class Propal
        */
       $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 
-      $sql = "INSERT INTO llx_propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, model_pdf, fin_validite) ";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, model_pdf, fin_validite) ";
       $sql .= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0,".$this->db->idate($this->datep).", now(), '$this->ref', $this->author, '$this->note','$this->modelpdf',".$this->db->idate($this->fin_validite).")";
       $sqlok = 0;
       
@@ -203,7 +203,7 @@ class Propal
 
 	  $this->id = $this->db->last_insert_id();
 	  
-	  $sql = "SELECT rowid FROM llx_propal WHERE ref='$this->ref';";
+	  $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal WHERE ref='$this->ref';";
 	  if ( $this->db->query($sql) ) 
 	    { 
 	      /*
@@ -232,7 +232,7 @@ class Propal
 		   */
 		  if ($this->projetidp)
 		    {
-		      $sql = "UPDATE llx_propal SET fk_projet=$this->projetidp WHERE ref='$this->ref';";
+		      $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_projet=$this->projetidp WHERE ref='$this->ref';";
 		      $this->db->query($sql);
 		    }
 		}	  
@@ -259,7 +259,7 @@ class Propal
       /*
        *  Liste des produits a ajouter
        */
-      $sql = "SELECT price, qty, tva_tx FROM llx_propaldet WHERE fk_propal = $this->id";
+      $sql = "SELECT price, qty, tva_tx FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = $this->id";
       if ( $this->db->query($sql) )
 	{
 	  $num = $this->db->num_rows();
@@ -288,7 +288,7 @@ class Propal
       /*
        *
        */
-      $sql = "UPDATE llx_propal set price=$totalht, tva=$totaltva, total=$totalttc, remise=$total_remise WHERE rowid = $this->id";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."propal set price=$totalht, tva=$totaltva, total=$totalttc, remise=$total_remise WHERE rowid = $this->id";
       if ( $this->db->query($sql) )
 	{
 	  return 1;
@@ -308,7 +308,7 @@ class Propal
     {
 
       $sql = "SELECT ref,total,price,remise,tva,fk_soc,fk_soc_contact,".$this->db->pdate("datep")."as dp,".$this->db->pdate("fin_validite")."as dfv, model_pdf, note, fk_statut, remise_percent";
-      $sql .= " FROM llx_propal WHERE rowid=$rowid;";
+      $sql .= " FROM ".MAIN_DB_PREFIX."propal WHERE rowid=$rowid;";
 
       if ($this->db->query($sql) )
 	{
@@ -349,7 +349,7 @@ class Propal
 	       */
 
 	      $sql = "SELECT p.rowid, p.label, p.description, p.ref, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice";
-	      $sql .= " FROM llx_propaldet as d, llx_product as p";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."product as p";
 	      $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = p.rowid ORDER by d.rowid ASC";
 	
 	      $result = $this->db->query($sql);
@@ -387,7 +387,7 @@ class Propal
 	       * Lignes génériques
 	       */
 	      $sql = "SELECT d.qty, d.description, d.price, d.subprice, d.tva_tx, d.rowid, d.remise_percent";
-	      $sql .= " FROM llx_propaldet as d";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d";
 	      $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = 0";
 	
 	      $result = $this->db->query($sql);
@@ -440,7 +440,7 @@ class Propal
       if ($user->rights->propale->valider)
 	{
 
-	  $sql = "UPDATE llx_propal SET fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
 	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 	  
 	  if ($this->db->query($sql) )
@@ -465,7 +465,7 @@ class Propal
 
 	  $remise = ereg_replace(",",".",$remise);
 
-	  $sql = "UPDATE llx_propal SET remise_percent = ".$remise;
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET remise_percent = ".$remise;
 	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 	  
 	  if ($this->db->query($sql) )
@@ -490,7 +490,7 @@ class Propal
       if ($user->rights->propale->creer)
 	{
 
-	  $sql = "UPDATE llx_propal SET model_pdf = '$modelpdf'";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET model_pdf = '$modelpdf'";
 	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 	  
 	  if ($this->db->query($sql) )
@@ -513,7 +513,7 @@ class Propal
       $this->statut = $statut;
 
 
-      $sql = "UPDATE llx_propal SET fk_statut = $statut, note = '$note', date_cloture=now(), fk_user_cloture=$user->id";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = $statut, note = '$note', date_cloture=now(), fk_user_cloture=$user->id";
       $sql .= " WHERE rowid = $this->id;";
       
       if ($this->db->query($sql) )
@@ -559,7 +559,7 @@ class Propal
    */
   Function reopen($userid)
     {
-      $sql = "UPDATE llx_propal SET fk_statut = 0";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_statut = 0";
       
       $sql .= " WHERE rowid = $this->id;";
       
@@ -580,7 +580,7 @@ class Propal
     {
       $ga = array();
 
-      $sql = "SELECT rowid, ref FROM llx_propal";
+      $sql = "SELECT rowid, ref FROM ".MAIN_DB_PREFIX."propal";
       if ($brouillon = 1)
 	{
 	  $sql .= " WHERE fk_statut = 0";
@@ -629,7 +629,7 @@ class Propal
     {
       $ga = array();
 
-      $sql = "SELECT fk_commande FROM llx_co_pr";      
+      $sql = "SELECT fk_commande FROM ".MAIN_DB_PREFIX."co_pr";      
       $sql .= " WHERE fk_propale = " . $this->id;
       if ($this->db->query($sql) )
 	{
@@ -659,10 +659,10 @@ class Propal
    */
   Function delete()
   {
-    $sql = "DELETE FROM llx_propaldet WHERE fk_propal = $this->id ;";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = $this->id ;";
     if ( $this->db->query($sql) ) 
       {
-	$sql = "DELETE FROM llx_propal WHERE rowid = $this->id;";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = $this->id;";
 	if ( $this->db->query($sql) ) 
 	  {
 	    return 1;

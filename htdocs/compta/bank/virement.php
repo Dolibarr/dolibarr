@@ -31,7 +31,7 @@ if ($action == 'add')
 {
   $dateo = $reyear."-".$remonth."-".$reday;
 
-  $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, fk_user_author,fk_account, fk_type)";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, label, amount, fk_user_author,fk_account, fk_type)";
   $sql .= " VALUES (now(), '$dateo', '$label', (0 - $amount),$user->id,$account_from, 'VIR')";
 
   $result = $db->query($sql);
@@ -41,7 +41,7 @@ if ($action == 'add')
       print "<p>$sql";
     }
 
-  $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, fk_user_author,fk_account, fk_type)";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, label, amount, fk_user_author,fk_account, fk_type)";
   $sql .= " VALUES (now(), '$dateo', '$label', $amount,$user->id, $account_to, 'VIR')";
 
 
@@ -63,7 +63,7 @@ print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print "<tr $bc[1]><td>De</td><td>Vers</td><td>Date</td><td>Libelle</td><td>Montant</td></tr>";
 print "<tr $bc[1]><td>";
 print "<select name=\"account_from\">";
-$sql = "SELECT rowid, label FROM llx_bank_account";
+$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
 $result = $db->query($sql);
 if ($result)
 {
@@ -81,7 +81,7 @@ if ($result)
 print "</select></td><td>\n";
 
 print "<select name=\"account_to\">";
-$sql = "SELECT rowid, label FROM llx_bank_account";
+$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
 $result = $db->query($sql);
 if ($result)
 {

@@ -56,7 +56,7 @@ $sql = "SELECT ipclient,
                code_retour, 
                ref_commande";
 
-$sql .= " FROM llx_transaction_bplc";
+$sql .= " FROM ".MAIN_DB_PREFIX."transaction_bplc";
 
 $result = $db->query($sql);
 if ($result) {

@@ -47,7 +47,7 @@ class ProjetDon {
     {
       $projets = array();
 
-      $sql = "SELECT rowid, libelle FROM llx_don_projet";
+      $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."don_projet";
       
       if ($this->db->query($sql) )
 	{

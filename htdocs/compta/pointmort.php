@@ -42,7 +42,7 @@ function pt ($db, $sql) {
 }
 
 function pm ($db) {
-  $sql = "SELECT amount, date_format('%Y%m',month) as dm FROM llx_pointmort";
+  $sql = "SELECT amount, date_format('%Y%m',month) as dm FROM ".MAIN_DB_PREFIX."pointmort";
   $result = $db->query($sql);
   if ($result) {
     $num = $db->num_rows();
@@ -68,7 +68,7 @@ function pm ($db) {
 function ppt ($db) {
     
   $sql = "SELECT sum(f.amount), date_format(f.datef,'%Y%m') as dm";
-  $sql .= " FROM llx_facture as f WHERE f.paye = 1";
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
   $sql .= " GROUP BY dm";
   
   $ca = pt($db, $sql);

@@ -33,7 +33,7 @@ print "<br>";
  */
 $user->getrights('');
 
-$sql = "SELECT b.rowid, b.box_id, d.file FROM llx_boxes as b, llx_boxes_def as d WHERE b.box_id = d.rowid";
+$sql = "SELECT b.rowid, b.box_id, d.file FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d WHERE b.box_id = d.rowid";
 $result = $db->query($sql);
 if ($result) 
 {

@@ -138,7 +138,7 @@ if ($_GET["id"] > 0)
       echo '<br><table border="0" width="100%" cellspacing="0" cellpadding="3">';	  
       
       $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-      $sql .= " FROM llx_commandedet as l WHERE l.fk_commande =".$commande->id." ORDER BY l.rowid";
+      $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l WHERE l.fk_commande =".$commande->id." ORDER BY l.rowid";
       
       $result = $db->query($sql);
       if ($result)
@@ -257,7 +257,7 @@ if ($_GET["id"] > 0)
 	   * Factures associees
 	   */
 	  $sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
-	  $sql .= " FROM llx_facture as f, llx_co_fa as fp WHERE fp.fk_facture = f.rowid AND fp.fk_commande = ".$commande->id;
+	  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."co_fa as fp WHERE fp.fk_facture = f.rowid AND fp.fk_commande = ".$commande->id;
 
 	  if ($db->query($sql) )
 	    {

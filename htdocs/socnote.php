@@ -22,7 +22,7 @@
 require("./pre.inc.php");
 
 if ($HTTP_POST_VARS["action"] == 'add') {
-  $sql = "UPDATE llx_societe SET note='$note' WHERE idp=$socid";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='$note' WHERE idp=$socid";
   $result = $db->query($sql);
 }
 /*

@@ -59,11 +59,11 @@ if ($action == 'setstatut')
 
 if ( $action == 'delete' )
 {
-  $sql = "DELETE FROM llx_propal WHERE rowid = $propalid;";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = $propalid;";
   if ( $db->query($sql) )
     {
 
-      $sql = "DELETE FROM llx_propaldet WHERE fk_propal = $propalid ;";
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = $propalid ;";
       if ( $db->query($sql) )
 	{
 	  print "<b><font color=\"red\">Propal supprimée</font></b>";
@@ -205,7 +205,7 @@ if ($_GET["propalid"])
        * Factures associees
        */
       $sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
-      $sql .= " FROM llx_facture as f, llx_fa_pr as fp WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$propal->id;
+      $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."fa_pr as fp WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$propal->id;
 
       $result = $db->query($sql);
       if ($result)
@@ -313,7 +313,7 @@ if ($_GET["propalid"])
     print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
     
     $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
-    $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal =".$propal->id;
+    $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal =".$propal->id;
     $sql .= " ORDER BY pt.rowid ASC";
     if ($db->query($sql)) 
       {
@@ -334,7 +334,7 @@ if ($_GET["propalid"])
       }
 
     $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty, pt.remise_percent";
-    $sql .= " FROM llx_propaldet as pt  WHERE  pt.fk_propal = ".$propal->id." AND pt.fk_product = 0";
+    $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt  WHERE  pt.fk_propal = ".$propal->id." AND pt.fk_product = 0";
     $sql .= " ORDER BY pt.rowid ASC";
     if ($db->query($sql)) 
       {

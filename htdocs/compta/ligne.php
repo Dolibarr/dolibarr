@@ -24,7 +24,7 @@ require("./pre.inc.php");
 llxHeader();
 
 
-$sql = "SELECT rowid, number, label FROM llx_compta_account ORDER BY number";
+$sql = "SELECT rowid, number, label FROM ".MAIN_DB_PREFIX."compta_account ORDER BY number";
 if ( $db->query($sql) ) {
   $num = $db->num_rows();
   $i = 0;
@@ -42,7 +42,7 @@ if ( $db->query($sql) ) {
 
 if ($action == 'add') {
 
-  $sql = "INSERT INTO llx_compta (datec, fk_compta_account, label, amount)";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."compta (datec, fk_compta_account, label, amount)";
   $sql .= " VALUES (now(),$number, '$label',$amount)";
 
   $db->query($sql);
@@ -89,7 +89,7 @@ if ($action == 'create') {
 
 
   $sql = "SELECT ca.number, c.label, c.amount";
-  $sql .= " FROM llx_compta_account as ca, llx_compta as c WHERE c.fk_compta_account = ca.rowid";
+  $sql .= " FROM ".MAIN_DB_PREFIX."compta_account as ca, ".MAIN_DB_PREFIX."compta as c WHERE c.fk_compta_account = ca.rowid";
   $sql .= " ORDER BY ca.number";
   
   $result = $db->query($sql);

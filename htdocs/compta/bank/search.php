@@ -73,7 +73,7 @@ print "</TR>\n";
 </td>
 </tr>
 <?PHP
-$sql = "SELECT count(*) FROM llx_bank";
+$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."bank";
 if ($account) { $sql .= " WHERE fk_account=$account"; }
 if ( $db->query($sql) )
 {
@@ -81,7 +81,7 @@ if ( $db->query($sql) )
   $db->free();    
 }
   
-$sql = "SELECT rowid, label FROM llx_bank_categ;";
+$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
 $result = $db->query($sql);
 if ($result) {
   $var=True;  
@@ -96,7 +96,7 @@ if ($result) {
 }
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account, b.fk_type";
-$sql .= " FROM llx_bank as b "; 
+$sql .= " FROM ".MAIN_DB_PREFIX."bank as b "; 
 $sql .= " WHERE fk_type like '" . $type . "'";
 
 $si=0;

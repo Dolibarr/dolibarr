@@ -47,7 +47,7 @@ class Service {
    */
   Function create($user) {
 
-    $sql = "INSERT INTO llx_service (datec, fk_user_author) VALUES (now(), ".$user->id.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."service (datec, fk_user_author) VALUES (now(), ".$user->id.")";
 
     if ($this->db->query($sql) ) {
       $id = $this->db->last_insert_id();
@@ -66,7 +66,7 @@ class Service {
    */
   Function update($id, $user) {
 
-    $sql = "UPDATE llx_service ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."service ";
     $sql .= " SET label = '" . trim($this->libelle) ."'";
     $sql .= ",ref = '" . trim($this->ref) ."'";
     $sql .= ",price = " . $this->price ;
@@ -88,7 +88,7 @@ class Service {
    */
   Function start_comm($id, $user, $datedeb=0) {
 
-    $sql = "UPDATE llx_service ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."service ";
     if ($datedeb) {
       $sql .= " SET debut_comm = '$datedeb'";
     } else {
@@ -111,7 +111,7 @@ class Service {
    */
   Function stop_comm($id, $user, $datefin=0) {
 
-    $sql = "UPDATE llx_service ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."service ";
     if ($datefin) {
       $sql .= " SET fin_comm = '$datefin'";
     } else {
@@ -137,7 +137,7 @@ class Service {
     $sql = "SELECT s.ref,s.label,s.price,s.tms,s.debut_comm,s.fin_comm,s.description,";
     $sql .= $this->db->pdate("s.debut_comm") . ' as debut_epoch,';
     $sql .= $this->db->pdate("s.fin_comm") . ' as fin_epoch';
-    $sql .= " FROM llx_service as s";
+    $sql .= " FROM ".MAIN_DB_PREFIX."service as s";
     $sql .= " WHERE s.rowid = $id";
   
     $result = $this->db->query($sql);

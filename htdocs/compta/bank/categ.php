@@ -41,7 +41,7 @@ if ($action == 'add')
       $amount = - $debit ;
     }
 
-  $sql = "INSERT INTO llx_bank_categ (label) VALUES ('$label')";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (label) VALUES ('$label')";
   $result = $db->query($sql);
 
   if (!$result)
@@ -60,7 +60,7 @@ print "<td>Num</td><td colspan=\"2\">Description</TD>";
 print "</TR>\n";
 
 
-$sql = "SELECT rowid, label FROM llx_bank_categ ORDER BY label";
+$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label";
 
 $result = $db->query($sql);
 if ($result)

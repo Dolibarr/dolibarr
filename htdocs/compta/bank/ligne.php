@@ -29,17 +29,17 @@ llxHeader();
 
 if ($HTTP_POST_VARS["action"] == 'confirm_delete_categ' && $HTTP_POST_VARS["confirm"] == yes)
 {
-  $sql = "DELETE FROM llx_bank_class WHERE lineid = $rowid AND fk_categ = $cat1";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = $rowid AND fk_categ = $cat1";
   $db->query($sql);
 }
 
 
 if ($action == 'class')
 {
-  $sql = "DELETE FROM llx_bank_class WHERE lineid = $rowid AND fk_categ = $cat1";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = $rowid AND fk_categ = $cat1";
   $db->query($sql);
 
-  $sql = "INSERT INTO llx_bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
   if ($db->query($sql))
     {
       
@@ -57,7 +57,7 @@ if ($action == 'update')
 //print_r ($_POST);
   if (!empty($_POST['amount']))
   {
-    $sql = "SELECT b.rappro FROM llx_bank as b WHERE rowid=$rowid";
+    $sql = "SELECT b.rappro FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=$rowid";
     $result = $db->query($sql);
     if ($result)
     {
@@ -67,27 +67,27 @@ if ($action == 'update')
       $objp = $db->fetch_object( 0);
       if ($objp->rappro)
         die ("Vous ne pouvez pas modifier une écriture déjà rapprochée");
-      $sql = "update llx_bank set label='$label' , dateo = '$date', amount='$amount' where rowid = $rowid;";
+      $sql = "update ".MAIN_DB_PREFIX."bank set label='$label' , dateo = '$date', amount='$amount' where rowid = $rowid;";
     }
   }
   else 
-    $sql = "update llx_bank set label='$label' where rowid = $rowid;";
+    $sql = "update ".MAIN_DB_PREFIX."bank set label='$label' where rowid = $rowid;";
 $result = $db->query($sql);
 }
 
 if ($HTTP_POST_VARS["action"] == 'type')
 {
-  $sql = "update llx_bank set fk_type='$value' where rowid = $rowid;";
+  $sql = "update ".MAIN_DB_PREFIX."bank set fk_type='$value' where rowid = $rowid;";
   $result = $db->query($sql);
 }
 
 if ($HTTP_POST_VARS["action"] == 'num_releve')
 {
-  $sql = "update llx_bank set num_releve=$num_rel where rowid = $rowid;";
+  $sql = "update ".MAIN_DB_PREFIX."bank set num_releve=$num_rel where rowid = $rowid;";
   $result = $db->query($sql);
 }
 
-$sql = "SELECT rowid, label FROM llx_bank_categ;";
+$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
 $result = $db->query($sql);
 if ($result)
 {
@@ -122,7 +122,7 @@ print "<td align=\"center\">Auteur</TD>";
 print "</TR>\n";
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.author, b.num_chq, b.fk_type, fk_account";
-$sql .= " FROM llx_bank as b WHERE rowid=$rowid";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=$rowid";
 $sql .= " ORDER BY dateo ASC";
 $result = $db->query($sql);
 if ($result)
@@ -234,7 +234,7 @@ print '<td colspan="3">Description</td>';
 print "</TR>\n";
 
 $sql = "SELECT c.label, c.rowid";
-$sql .= " FROM llx_bank_class as a, llx_bank_categ as c WHERE a.lineid=$rowid AND a.fk_categ = c.rowid ";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c WHERE a.lineid=$rowid AND a.fk_categ = c.rowid ";
 $sql .= " ORDER BY c.label";
 $result = $db->query($sql);
 if ($result)

@@ -35,8 +35,8 @@ print "Point mort";
 if ($action == 'update') {
   $datepm = mktime(12, 0 , 0, $pmonth, 1, $pyear); 
 
-  $sql = "DELETE FROM llx_pointmort WHERE int(month) = $datepm ;";
-  $sql .= "INSERT INTO llx_pointmort VALUES ($datepm, $pm)";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."pointmort WHERE int(month) = $datepm ;";
+  $sql .= "INSERT INTO ".MAIN_DB_PREFIX."pointmort VALUES ($datepm, $pm)";
   $result = $db->query($sql);
 }
 
@@ -45,7 +45,7 @@ if ($action == 'update') {
 print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">";
 print "<tr><td valign=\"top\">";
 
-$sql = "SELECT amount, int(month) as dm FROM llx_pointmort ORDER BY month DESC";
+$sql = "SELECT amount, int(month) as dm FROM ".MAIN_DB_PREFIX."pointmort ORDER BY month DESC";
 
 $result = $db->query($sql);
 

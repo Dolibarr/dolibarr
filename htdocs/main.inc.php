@@ -52,7 +52,7 @@ require (DOL_DOCUMENT_ROOT."/conf/conf.class.php");
  * Doit figurer aprés l'inclusion de conf.class.php pour overider certaines variables, à terme conf.class.php devra etre un fichier qui ne sera pas modifié par l'utilisateur
  */
 $conf = new Conf();
-if (!strlen(getenv("LLX_DBNAME")))
+if (!strlen(getenv("".MAIN_DB_PREFIX."DBNAME")))
 {
   $conf->db->host = $dolibarr_main_db_host;
   $conf->db->name = $dolibarr_main_db_name;
@@ -93,7 +93,7 @@ else
 
       $params = array(
 		      "dsn" => $conf->db->getdsn(),
-		      "table" => "llx_user",
+		      "table" => MAIN_DB_PREFIX."user",
 		      "usernamecol" => "login",
 		      "passwordcol" => "pass",
 		      "cryptType" => "none",
@@ -131,7 +131,7 @@ define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/font/');
  * Definition de toutes les Constantes globales d'environement
  *
  */
-$sql = "SELECT name, value FROM llx_const";
+$sql = "SELECT name, value FROM ".MAIN_DB_PREFIX."const";
 $result = $db->query($sql);
 if ($result) 
 {

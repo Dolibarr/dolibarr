@@ -49,7 +49,7 @@ if ($action == 'create') {
     print_barre_liste("Comptes comptable",$page,$PHP_SELF);
 
     $sql = "SELECT number, label";
-    $sql .= " FROM llx_compta_account";
+    $sql .= " FROM ".MAIN_DB_PREFIX."compta_account";
     $sql .= " ORDER BY number";
   
     $result = $db->query($sql);

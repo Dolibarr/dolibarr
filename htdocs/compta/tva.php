@@ -79,7 +79,7 @@ for ($y = $yearc ; $y >= $conf->years ; $y=$y-1 ) {
   print "<tr><td valign=\"top\">";
 
   $sql = "SELECT sum(f.tva) as amount , date_format(f.datef,'%Y-%m') as dm";
-  $sql .= " FROM llx_facture as f WHERE f.paye = 1 AND f.datef >= '$y-01-01' AND f.datef <= '$y-12-31' ";
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1 AND f.datef >= '$y-01-01' AND f.datef <= '$y-12-31' ";
   $sql .= " GROUP BY dm DESC";
   
   pt($db, $sql,"Année $y");

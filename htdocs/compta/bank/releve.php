@@ -48,7 +48,7 @@ if (! strlen($_GET["num"]))
   $pagenext = $page + 1;
 
   $sql = "SELECT distinct(b.num_releve) as numr";
-  $sql .= ' FROM llx_bank as b WHERE fk_account = '.$_GET["account"].' ORDER BY numr DESC';
+  $sql .= ' FROM ".MAIN_DB_PREFIX."bank as b WHERE fk_account = '.$_GET["account"].' ORDER BY numr DESC';
   $sql .= $db->plimit($limit + 1,$offset);
 
   $result = $db->query($sql);
@@ -85,7 +85,7 @@ else
    */
   if ($rel == 'prev')
     {
-      $sql = "SELECT distinct(num_releve) FROM llx_bank WHERE num_releve < ".$_GET["num"]." AND fk_account = $account ORDER BY num_releve DESC";
+      $sql = "SELECT distinct(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve < ".$_GET["num"]." AND fk_account = $account ORDER BY num_releve DESC";
       $result = $db->query($sql);
       if ($result)
 	{
@@ -101,7 +101,7 @@ else
     }
   elseif ($rel == 'next')
     {
-      $sql = "SELECT distinct(num_releve) FROM llx_bank WHERE num_releve > ".$_GET["num"]." AND fk_account = $account ORDER BY num_releve ASC";
+      $sql = "SELECT distinct(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve > ".$_GET["num"]." AND fk_account = $account ORDER BY num_releve ASC";
       $result = $db->query($sql);
       if ($result)
 	{
@@ -136,7 +136,7 @@ else
   print "</TR>\n";
  
 
-  $sql = "SELECT sum(amount) FROM llx_bank WHERE num_releve < ".$_GET["num"]." AND fk_account = ".$acct->id;
+  $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve < ".$_GET["num"]." AND fk_account = ".$acct->id;
   if ( $db->query($sql) )
     {
       $total = $db->result (0, 0);
@@ -145,7 +145,7 @@ else
 
 
   $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
-  $sql .= " FROM llx_bank as b WHERE num_releve=".$_GET["num"]." AND fk_account = ".$acct->id;
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE num_releve=".$_GET["num"]." AND fk_account = ".$acct->id;
   $sql .= " ORDER BY dateo ASC";
   $result = $db->query($sql);
   if ($result)
@@ -171,7 +171,7 @@ else
 	  if ($ve)
 	    {
 	      $dc = $db->clone();
-	      $sql = "SELECT label FROM llx_bank_categ as ct, llx_bank_class as cl WHERE ct.rowid=cl.fk_categ AND cl.lineid=$objp->rowid";
+	      $sql = "SELECT label FROM ".MAIN_DB_PREFIX."bank_categ as ct, ".MAIN_DB_PREFIX."bank_class as cl WHERE ct.rowid=cl.fk_categ AND cl.lineid=$objp->rowid";
 	      $resc = $dc->query($sql);
 	      if ($resc)
 		{

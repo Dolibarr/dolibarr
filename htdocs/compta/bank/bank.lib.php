@@ -22,10 +22,10 @@
  */
 
 Function bank_delete_line($db, $rowid) {
-  $sql = "DELETE FROM llx_bank WHERE rowid=$rowid";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=$rowid";
   $result = $db->query($sql);
   if ($result) {
-    $sql = "DELETE FROM llx_bank_class WHERE lineid=$rowid";
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=$rowid";
     $result = $db->query($sql);
   }
 }

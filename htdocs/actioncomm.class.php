@@ -64,7 +64,7 @@ class ActionComm
 	{
 	  $this->propalrowid = 0;
 	}
-      $sql = "INSERT INTO llx_actioncomm (datea, fk_action, fk_soc, fk_user_author, fk_user_action, fk_contact, percent, note,priority,propalrowid) ";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author, fk_user_action, fk_contact, percent, note,priority,propalrowid) ";
       $sql .= " VALUES ('$this->date', $this->type, $this->societe, $author->id,";
       $sql .= $this->user->id . ", $this->contact, $this->percent, '$this->note', $this->priority, $this->propalrowid);";
       
@@ -85,7 +85,7 @@ class ActionComm
   Function fetch($id)
     {      
       $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent ";
-      $sql .= "FROM llx_actioncomm as a, c_actioncomm as c WHERE a.id=$id AND a.fk_action=c.id;";
+      $sql .= "FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c WHERE a.id=$id AND a.fk_action=c.id;";
 
       if ($this->db->query($sql) )
 	{
@@ -127,7 +127,7 @@ class ActionComm
    */
   Function delete($id)
     {      
-      $sql = "DELETE FROM llx_actioncomm WHERE id=$id;";
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm WHERE id=$id;";
       
       if ($this->db->query($sql) )
 	{
@@ -145,7 +145,7 @@ class ActionComm
 	  $this->percent = 100;
 	}
       
-      $sql = "UPDATE llx_actioncomm ";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
       $sql .= " SET percent=$this->percent";
 
       if ($this->percent == 100)

@@ -81,7 +81,7 @@ class User
 
       if ($lowid == 1)
 	{
-	  $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
+	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
 	  if ($this->db->query($sql))
 	    {
 	    }
@@ -89,12 +89,12 @@ class User
       
       if ($lowid > 1)
 	{
-	  $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
+	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
 	  if ($this->db->query($sql))
 	    {
 	    }
 	  $nid = $topid . "1";
-	  $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
+	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
 	  if ($this->db->query($sql))
 	    {
 	      
@@ -110,7 +110,7 @@ class User
 	  for ($i = 1 ; $i < 10 ; $i++)
 	    {
 	      $nid = $topid . "$i";
-	      $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
+	      $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
 	      if ($this->db->query($sql))
 		{
 		  
@@ -146,7 +146,7 @@ class User
 
       if ($lowid > 1)
 	{
-	  $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id AND fk_id=$rid";
+	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rid";
 	  if ($this->db->query($sql))
 	    {
 	    }
@@ -156,7 +156,7 @@ class User
 	{
 	  $fid = $topid . "0";
 	  $lid = $topid . "9";
-	  $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id AND fk_id >= $fid AND fk_id <= $lid";
+	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id >= $fid AND fk_id <= $lid";
 	  if ($this->db->query($sql))
 	    {
 	      
@@ -172,7 +172,7 @@ class User
 	  for ($i = 1 ; $i < 10 ; $i++)
 	    {
 	      $nid = $topid . "$i";
-	      $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id AND fk_id=$nid";
+	      $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
 	      if ($this->db->query($sql))
 		{
 		  
@@ -192,7 +192,7 @@ class User
    */
   Function getrights($module='')
     {
-      $sql = "SELECT fk_user, fk_id FROM llx_user_rights WHERE fk_user= $this->id";
+      $sql = "SELECT fk_user, fk_id FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user= $this->id";
       /*
 	if ($module)
 	{
@@ -375,8 +375,8 @@ class User
     {
 
       //$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.module_comm, u.module_compta, u.login, u.pass, u.webcal_login, u.note";
-      //$sql .= " FROM llx_user as u";
-      $sql = "SELECT * FROM llx_user as u";
+      //$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+      $sql = "SELECT * FROM ".MAIN_DB_PREFIX."user as u";
       if ($this->id)
 	{
 	  $sql .= " WHERE u.rowid = $this->id";
@@ -433,11 +433,11 @@ class User
       if ($this->contact_id) 
 	{
 
-	  $sql = "DELETE FROM llx_user WHERE rowid = $this->id";
+	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."user WHERE rowid = $this->id";
   
 	  $result = $this->db->query($sql);
 
-	  $sql = "UPDATE llx_socpeople SET fk_user = 0 WHERE idp = $this->contact_id";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user = 0 WHERE idp = $this->contact_id";
 	    
 	  if ($this->db->query($sql)) 
 	    {
@@ -446,12 +446,12 @@ class User
 	}
       else
 	{
-	  $sql = "UPDATE llx_user SET login = '' WHERE rowid = $this->id";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."user SET login = '' WHERE rowid = $this->id";
   
 	  $result = $this->db->query($sql);
 	}
 
-      $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id";
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id";
 
       if ($this->db->query($sql)) 
 	{
@@ -465,7 +465,7 @@ class User
    */
   Function create()
     {
-      $sql = "SELECT login FROM llx_user WHERE login ='$this->login'";
+      $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login'";
 
       if ($this->db->query($sql)) 
 	{
@@ -479,7 +479,7 @@ class User
 	    }
 	  else
 	    {            
-	      $sql = "INSERT INTO llx_user (datec, login) values (now(),'$this->login');";
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec, login) values (now(),'$this->login');";
 	      if ($this->db->query($sql))
 		{
 		  if ($this->db->affected_rows()) 
@@ -513,7 +513,7 @@ class User
 
       $this->login = strtolower(substr($contact->prenom, 0, 3)) . strtolower(substr($contact->nom, 0, 3));
 
-      $sql = "SELECT login FROM llx_user WHERE login ='$this->login'";
+      $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login'";
 
       if ($this->db->query($sql)) 
 	{
@@ -527,7 +527,7 @@ class User
 	    }
 	  else
 	    {            
-	      $sql = "INSERT INTO llx_user (datec, login, fk_socpeople, fk_societe)";
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec, login, fk_socpeople, fk_societe)";
 	      $sql .= " VALUES (now(),'$this->login',$contact->id, $contact->societeid);";
 	      if ($this->db->query($sql))
 		{
@@ -537,7 +537,7 @@ class User
 		      $this->admin = 0;
 		      $this->update();
 		      
-		      $sql = "UPDATE llx_socpeople SET fk_user = $this->id WHERE idp = $contact->id";
+		      $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user = $this->id WHERE idp = $contact->id";
 		      $this->db->query($sql);
 
 		      $this->set_default_rights();
@@ -563,7 +563,7 @@ class User
    */
   Function set_default_rights()
     {
-      $sql = "SELECT id FROM llx_rights_def WHERE bydefault = 1";
+      $sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def WHERE bydefault = 1";
 
       if ($this->db->query($sql)) 
 	{
@@ -581,7 +581,7 @@ class User
       $i = 0;
       while ($i < $num)
 	{
-	  $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $rd[$i])";
+	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rd[$i])";
 	  if ($this->db->query($sql)) 
 	    {
 
@@ -595,7 +595,7 @@ class User
    */
   Function update()
     {
-      $sql = "SELECT login FROM llx_user WHERE login ='$this->login' AND rowid <> $this->id";
+      $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login' AND rowid <> $this->id";
 
       if ($this->db->query($sql)) 
 	{
@@ -612,7 +612,7 @@ class User
 	      if (!strlen($this->code))
 		$this->code = $this->login;
 
-	      $sql = "UPDATE llx_user SET ";
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."user SET ";
 	      $sql .= " name = '$this->nom'";
 	      $sql .= ", firstname = '$this->prenom'";
 	      $sql .= ", login = '$this->login'";
@@ -662,7 +662,7 @@ class User
 	  $sqlpass = $password;
 	}
       $this->pass=$password;
-      $sql = "UPDATE llx_user SET pass = '".$sqlpass."'";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."user SET pass = '".$sqlpass."'";
       $sql .= " WHERE rowid = $this->id";
       
       $result = $this->db->query($sql);

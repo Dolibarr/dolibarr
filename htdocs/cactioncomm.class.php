@@ -38,7 +38,7 @@ class CActioncomm {
   {
     $ga = array();
 
-    $sql = "SELECT id, libelle FROM c_actioncomm";
+    $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_actioncomm";
     $sql .= " ORDER BY id";
 
     if ($this->db->query($sql) )
@@ -68,7 +68,7 @@ class CActioncomm {
   Function fetch($db, $id)
     {
 
-      $sql = "SELECT libelle FROM c_actioncomm WHERE id=$id;";
+      $sql = "SELECT libelle FROM ".MAIN_DB_PREFIX."c_actioncomm WHERE id=$id;";
       
       if ($db->query($sql) )
 	{

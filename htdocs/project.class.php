@@ -39,7 +39,7 @@ class Project {
 
   Function create($creatorid) {
 
-    $sql = "INSERT INTO llx_projet (ref, title, fk_soc, fk_user_creat) ";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat) ";
     $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, $creatorid) ;";
     
     if (!$this->db->query($sql) ) 
@@ -57,7 +57,7 @@ class Project {
 
   Function fetch($rowid) {
 
-    $sql = "SELECT title, ref FROM llx_projet WHERE rowid=$rowid;";
+    $sql = "SELECT title, ref FROM ".MAIN_DB_PREFIX."projet WHERE rowid=$rowid;";
 
     if ($this->db->query($sql) ) {
       if ($this->db->num_rows()) {
@@ -81,7 +81,7 @@ class Project {
   Function get_propal_list()
     {
       $propales = array();
-      $sql = "SELECT rowid FROM llx_propal WHERE fk_projet=$this->id;";
+      $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal WHERE fk_projet=$this->id;";
       
       if ($this->db->query($sql) )
 	{
@@ -118,7 +118,7 @@ class Project {
     {
       $projets = array();
 
-      $sql = "SELECT rowid, title FROM llx_projet";
+      $sql = "SELECT rowid, title FROM ".MAIN_DB_PREFIX."projet";
 
       if (isset($id_societe))
 	{

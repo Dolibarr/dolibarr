@@ -31,10 +31,10 @@ $mesg = '';
  *
  */
 $sql = array(
-	     array("Société","SELECT count(*) FROM llx_societe"),
-	     array("Contacts","SELECT count(*) FROM llx_socpeople"),
-	     array("Facture","SELECT count(*) FROM llx_facture"),
-	     array("Proposition commerciales","SELECT count(*) FROM llx_propal")
+	     array("Société","SELECT count(*) FROM ".MAIN_DB_PREFIX."societe"),
+	     array("Contacts","SELECT count(*) FROM ".MAIN_DB_PREFIX."socpeople"),
+	     array("Facture","SELECT count(*) FROM ".MAIN_DB_PREFIX."facture"),
+	     array("Proposition commerciales","SELECT count(*) FROM ".MAIN_DB_PREFIX."propal")
 );
 
 

@@ -58,7 +58,7 @@ class Retourbplc
   {
 
 
-    $sql = "INSERT INTO llx_transaction_bplc";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."transaction_bplc";
     $sql .= " (ipclient, 
                    num_transaction, 
                    date_transaction, 

@@ -54,12 +54,12 @@ if ($HTTP_POST_VARS["action"] == 'add' && $_GET["account"])
     /*
   if ($num_chq)
     {
-      $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
       $sql .= " VALUES (now(), '$dateop', '$label', '$amount','$author','$num_chq','$account','$operation')";
     }
   else
     {
-      $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author,fk_account,fk_type)";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, label, amount, author,fk_account,fk_type)";
       $sql .= " VALUES (now(), '$dateop', '$label', '$amount','$author','$account','$operation')";
     }
   
@@ -69,7 +69,7 @@ if ($HTTP_POST_VARS["action"] == 'add' && $_GET["account"])
       $rowid = $db->last_insert_id();
       if ($cat1)
 	{
-	  $sql = "INSERT INTO llx_bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
 	  $result = $db->query($sql);
 	}
       Header("Location: $PHP_SELF?account=$account");
@@ -109,7 +109,7 @@ if ($_GET["account"] > 0)
   $acct = new Account($db);
   $acct->fetch($_GET["account"]);
 
-  $sql = "SELECT rowid, label FROM llx_bank_categ;";
+  $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
   $result = $db->query($sql);
   if ($result)
     {
@@ -130,7 +130,7 @@ if ($_GET["account"] > 0)
   /*
    *
    */
-  $sql = "SELECT rowid, label FROM llx_bank_categ;";
+  $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
   $result = $db->query($sql);
   if ($result)
     {
@@ -158,7 +158,7 @@ if ($_GET["account"] > 0)
    *
    *
    */
-  $sql = "SELECT count(*) FROM llx_bank as b WHERE 1=1";
+  $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."bank as b WHERE 1=1";
   $sql .= " AND b.dateo <= now()";
   $sql .= " AND b.fk_account=".$acct->id;
 
@@ -250,7 +250,7 @@ if ($_GET["account"] > 0)
    */
 
   $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
-  $sql .= " FROM llx_bank as b ";
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank as b ";
   $sql .= " WHERE fk_account=".$acct->id;
 
   if ($req_debit) 

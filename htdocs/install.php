@@ -114,21 +114,21 @@ if ($HTTP_POST_VARS["action"] == "set")
       $conf->db->pass = $dolibarr_main_db_pass;
       $db = new DoliDb();
 
-      $sql[0] = "REPLACE INTO llx_const SET name = 'FAC_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/facture', visible=0, type='chaine'";
+      $sql[0] = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FAC_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/facture', visible=0, type='chaine'";
 
-      $sql[1] = "REPLACE INTO llx_const SET name = 'FAC_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/facture', visible=0, type='chaine'";
+      $sql[1] = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FAC_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/facture', visible=0, type='chaine'";
 
-      $sql[2] = "REPLACE INTO llx_const SET name = 'PROPALE_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/propale', visible=0, type='chaine'";
+      $sql[2] = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PROPALE_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/propale', visible=0, type='chaine'";
 
-      $sql[3] = "REPLACE INTO llx_const SET name = 'PROPALE_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/propale', visible=0, type='chaine'";
+      $sql[3] = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PROPALE_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/propale', visible=0, type='chaine'";
 
-      $sql[4] = "REPLACE INTO llx_const SET name = 'FICHEINTER_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/ficheinter', visible=0, type='chaine'";
+      $sql[4] = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FICHEINTER_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/ficheinter', visible=0, type='chaine'";
 
-      $sql[5] = "REPLACE INTO llx_const SET name = 'FICHEINTER_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/ficheinter', visible=0, type='chaine'";
+      $sql[5] = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FICHEINTER_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/ficheinter', visible=0, type='chaine'";
 
-      $sql[6] = "REPLACE INTO llx_const SET name = 'SOCIETE_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/societe', visible=0, type='chaine'";
+      $sql[6] = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'SOCIETE_OUTPUTDIR', value='".$dolibarr_main_document_root."/document/societe', visible=0, type='chaine'";
 
-      $sql[7] = "REPLACE INTO llx_const SET name = 'SOCIETE_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/societe', visible=0, type='chaine'";
+      $sql[7] = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'SOCIETE_OUTPUT_URL', value='".$dolibarr_main_url_root."/document/societe', visible=0, type='chaine'";
       $result = 0;
       for ($i=0; $i < sizeof($sql);$i++)
 	{
@@ -152,7 +152,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 	  if ($error == 0)
 	    {
 
-	      $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
+	      $db->query("DELETE FROM ".MAIN_DB_PREFIX."const WHERE name='MAIN_NOT_INSTALLED'");
 
 
 print '<div class="main">
