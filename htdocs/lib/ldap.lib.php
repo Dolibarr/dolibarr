@@ -45,9 +45,10 @@ Function dolibarr_ldap_bind($ds)
 
 Function ldap_unacc($str)
 {
-
   $stu = ereg_replace("é","e",$str);
-
+  $stu = ereg_replace("è","e",$str);
+  $stu = ereg_replace("ê","e",$str);
+  $stu = ereg_replace("à","a",$str);
   return $stu;
 }
 
