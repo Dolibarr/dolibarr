@@ -186,11 +186,12 @@ if ($socid > 0)
 
     if ($user->societe_id == 0)
       {
-	print "<td align=\"center\"><a href=\"../comm/fiche.php3?socid=$objsoc->idp\">Commercial</a></td>";
+	print "<td align=\"center\"><a href=\"/comm/fiche.php3?socid=$objsoc->idp\">Commercial</a></td>";
+	print "<td align=\"center\"><a href=\"/comm/docsoc.php?socid=$objsoc->idp\">Documents</a></td>";
 	print "<td align=\"center\"><a href=\"bookmark.php3?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
 	print "<td>[<a href=\"facture.php3?action=create&socidp=$objsoc->idp\">".translate("Facture")."</a>]</td>";
 	print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
-	print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
+	print "<td align=\"center\">[<a href=\"/soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
       }
     print "</tr></table>";
     /*
@@ -234,34 +235,42 @@ if ($socid > 0)
     $var=!$var;
     $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
     $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND s.idp = $objsoc->idp ORDER BY f.datef DESC";
-    if ( $db->query($sql) ) {
-      $num = $db->num_rows(); $i = 0; 
-      if ($num > 0) {
-	print "<tr $bc[$var]>";
-	print "<td colspan=\"4\"><a href=\"facture.php3?socidp=$objsoc->idp\">liste des factures ($num)</td></tr>";
-      }
+    if ( $db->query($sql) )
+      {
+	$num = $db->num_rows(); $i = 0; 
+	if ($num > 0)
+	  {
+	    print "<tr $bc[$var]>";
+	    print "<td colspan=\"4\"><a href=\"facture.php3?socidp=$objsoc->idp\">liste des factures ($num)</td></tr>";
+	  }
 
-      while ($i < $num && $i < 5) {
-	$objp = $db->fetch_object( $i);
-	$var=!$var;
-	print "<TR $bc[$var]>";
-	print "<TD><a href=\"../compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
-	if ($objp->df > 0 ) {
-	  print "<TD align=\"right\">".strftime("%d %B %Y",$objp->df)."</TD>\n";
-	} else {
-	  print "<TD align=\"right\"><b>!!!</b></TD>\n";
-	}
-	print "<TD align=\"right\">".number_format($objp->amount, 2, ',', ' ')."</TD>\n";
-	$paye[1] = "payée";
-	$paye[0] = "<b>non payée</b>";
-	print "<TD align=\"center\">".$paye[$objp->paye]."</TD>\n";
-	print "</TR>\n";
-	$i++;
+	while ($i < $num && $i < 5)
+	  {
+	    $objp = $db->fetch_object( $i);
+	    $var=!$var;
+	    print "<TR $bc[$var]>";
+	    print "<TD><a href=\"../compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
+	    if ($objp->df > 0 )
+	      {
+		print "<TD align=\"right\">".strftime("%d %B %Y",$objp->df)."</TD>\n";
+	      }
+	    else
+	      {
+		print "<TD align=\"right\"><b>!!!</b></TD>\n";
+	      }
+	    print "<TD align=\"right\">".number_format($objp->amount, 2, ',', ' ')."</TD>\n";
+	    $paye[1] = "payée";
+	    $paye[0] = "<b>non payée</b>";
+	    print "<TD align=\"center\">".$paye[$objp->paye]."</TD>\n";
+	    print "</TR>\n";
+	    $i++;
+	  }
+	$db->free();
       }
-      $db->free();
-    } else {
-      print $db->error();
-    }
+    else
+      {
+	print $db->error();
+      }
     print "</table>";
 
 
@@ -333,7 +342,7 @@ if ($socid > 0)
       print "<td><b>Fax</b></td><td><b>Email</b></td>";
       print "<td><a href=\"../comm/people.php3?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
     
-      $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
+      $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM llx_socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
       $result = $db->query($sql);
       $i = 0 ; $num = $db->num_rows(); 
 
