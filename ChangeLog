@@ -1,11 +1,25 @@
+2003-09-08  Rodolphe Quiédeville  <rq@quiedeville.org>
+
+	* Nouvelle gestion du solde lors de la création de compte
+
 2003-09-06  Rodolphe Quiédeville  <rq@quiedeville.org>
+
+	* Modification gestion des upload de fichier, ajout d'une sécurité
+	si le fichier a l'extension .php, dans ce cas on rajoute
+	l'extension .txt à la fin pour permettre la consultation du
+	fichier et en empécher son interprétation par le serveur web
+
+	* Possibilité de changer le modèle d'une proposition commercial
+
+	* Ajout du modèle de propale "bleu" qui est l'ancien modèle rouge,
+	le modèle rouge inclut désormais les remises
 
 	* Définition d'un modèle de proposition commerciale par défaut
 	lors de l'activation du module
 
 	* Modification de l'installation, ajout d'un test si l'utilisateur
 	est passé par install.php, si non le renvoie automatiquement sur
-	la page.
+	la page
 
 	* bug fix sur les url vers les images dans comm/contact.php3 et
 	four/fiche.php3 et fourn/index.php
