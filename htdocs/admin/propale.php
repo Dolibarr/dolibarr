@@ -86,7 +86,7 @@ while (($file = readdir($handle))!==false)
 
       if ($propale_addon_var_pdf == "$name")
 	{
-	  print '<img src="/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
 	}
       else
 	{
