@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -123,7 +123,7 @@ if ($action == 'create') {
      *
      */
     print "<tr><td>Contact</td><td><select name=\"contactidp\">\n";
-    $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email FROM socpeople as p WHERE p.fk_soc = $socidp";
+    $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email FROM llx_socpeople as p WHERE p.fk_soc = $socidp";
     
     if ( $db->query($sql) ) {
       $i = 0 ;
