@@ -25,21 +25,13 @@ define('DOL_VERSION','1.2.0-DEV');
 
 if (! @include_once("conf/conf.php"))
 {
-  print "<center>\n";
-  print "<b>Bienvenue sur Dolibarr</b><br><br>\n";
-  print "Votre système n'est pas encore configuré, pour procéder à l'installation, cliquer <a href=\"install/\">ici</a>";
-  print "</center>\n";
-  exit ;
+  Header("Location: install/index.php");
 }
 else
 {
   if (! isset($dolibarr_main_db_host))
     {
-      print "<center>\n";
-      print "<b>Bienvenue sur Dolibarr</b><br><br>\n";
-      print "Votre système n'est pas encore configuré, pour procéder à l'installation, cliquer <a href=\"install/\">ici</a>";
-      print "</center>\n";
-      exit ;  
+      Header("Location: install/index.php");
     }
 }
 
@@ -422,7 +414,8 @@ function top_menu($head, $title="")
 
   print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
   // TODO implementer les alternate css
-  //  print '<link rel="alternate styleSheet" type="text/css" title="yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
+  print '<link rel="alternate styleSheet" type="text/css" title="Rodolphe" href="'.DOL_URL_ROOT.'/theme/rodolphe/rodolphe.css">'."\n";
+  print '<link rel="alternate styleSheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
 
   if (strlen($title) > 0)
     {
@@ -515,26 +508,22 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
    * Colonne de gauche
    *
    */
-  print "\n".'<table class="leftmenu" border="0" width="100%" cellspacing="1" cellpadding="4">'."\n";
-
 
   for ($i = 0 ; $i < sizeof($menu) ; $i++) 
     {
-
-      print '<tr><td class="barre" valign="top">';
-      print '<A class="leftmenu" href="'.$menu[$i][0].'">'.$menu[$i][1].'</a>';
+      print '<div class="leftmenu">';
+      print '<a class="leftmenu" href="'.$menu[$i][0].'">'.$menu[$i][1].'</a>';
 
       for ($j = 2 ; $j < sizeof($menu[$i]) - 1 ; $j = $j +2) 
 	{
-	  print '<br>&nbsp;-&nbsp;<a class="submenu" href="'.$menu[$i][$j].'">'.$menu[$i][$j+1].'</a>';
-	}
-      print '</td></tr>';
-      
+	  print '<br><a class="leftsubmenu" href="'.$menu[$i][$j].'">'.$menu[$i][$j+1].'</a>';
+	}      
+      print '</div>';
     }
 
   if ((defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0) || (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0))
     {
-      print '<tr><td class="barre" valign="top" align="right">';
+      print '<div class="leftmenu">';
       
       if (defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
 	{
@@ -566,7 +555,7 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
 	  print '<input type="submit" class="flat" value="go">';
 	  print "</form>\n";
 	}
-      print '</td></tr>';
+      print "</div>";
     }
 
   /*
@@ -575,9 +564,9 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
 
   if (strlen($form_search) > 0)
     {
-      print '<tr><td class="barre" align="right">';
+      print '<div>';
       print $form_search;
-      print '</td></tr>';
+      print '</div>';
     }
 
   /*
@@ -586,22 +575,22 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
 
   if (strlen($help_url) > 0)
     {
+      print '<div class="leftmenu">';
       define('MAIN_AIDE_URL','http://www.dolibarr.com/documentation/dolibarr-user.html');
-      print '<tr><td class="barre"><a target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">Aide</a></td></tr>';
+      print '<a class="leftmenu" target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">Aide</a></div>';
     }
   /*
    *
    *
-   */
+   *
 
-  if (is_object($author))
-  {
+   if (is_object($author))
+   {
+   print '<tr><td class="auteurs">Auteur : ';
+   print $author->fullname .'</td></tr>';
+   }
+  */
 
-    print '<tr><td class="auteurs">Auteur : ';
-    print $author->fullname .'</td></tr>';
-  }
-
-  print '</table>'."\n";
 
   print '</td><td valign="top" width="85%" colspan="6">'."\n";
 
