@@ -98,7 +98,17 @@ if ($_GET["id"])
 	  if ($resf == 0)
 	    {
 	      print '<tr><td width="20%">Motif du rejet</td><td>'.$rej->motif.'</td></tr>';
-	      print '<tr><td width="20%">Date du rejet</td><td>'.strftime("%d %B %Y",$rej->date_rejet).'</td></tr>';
+	      print '<tr><td width="20%">Date du rejet</td><td>';
+	      if ($rej->date_rejet == 0)
+		{
+		  /* Historique pour certaines install */
+		  print "Inconnue";
+		}
+	      else
+		{
+		  print strftime("%d %B %Y",$rej->date_rejet);
+		}
+	      print '</td></tr>';
 	    }
 	  else
 	    {
