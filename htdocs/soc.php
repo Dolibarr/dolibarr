@@ -75,12 +75,12 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
   if ($_POST["action"] == 'update')
     {
       $result = $soc->update($_GET["socid"],$user);
-      if ($result == -1)
+      if ($result <> 0)
 	{
 	  $soc->id = $_GET["socid"];
 	  // doublon sur le prefix comm
 	  $no_reload = 1;
-	  $mesg = "Erreur, le prefix '".$soc->prefix_comm."' existe déjà vous devez en choisir un autre";
+	  $mesg = $soc->error_message;//"Erreur, le prefix '".$soc->prefix_comm."' existe déjà vous devez en choisir un autre";
 	  $_GET["action"]= "edit";
 	}
       else
@@ -89,6 +89,7 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 	}
 	
     }
+
   if ($_POST["action"] == 'add')
     {
       $socid = $soc->create($user);
@@ -202,12 +203,18 @@ elseif ($_GET["action"] == 'edit')
 	  $soc->id = $_GET["socid"];
 	  $soc->fetch($_GET["socid"]);
 	}
-      print $mesg;	  
+      if ($soc->error_message)
+	{
+	  print '<div class="errormessage">';
+	  print $soc->error_message;
+	  print '</div>';
+	}
+
       print '<form action="soc.php?socid='.$soc->id.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
 
       print '<table class="border" width="100%">';
-      print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td>';
+      print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="40" name="nom" value="'.stripslashes($soc->nom).'"></td>';
 
       print '<td>'.$langs->trans('Prefix').'</td><td colspan="3"><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
 
