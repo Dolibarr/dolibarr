@@ -34,6 +34,10 @@ $error=0;
 if ($HTTP_POST_VARS["action"] == 'add') 
 {
   // test si le login existe deja
+  if(!isset($login) || $login=''){
+    $error+=1;
+    $errmsg .="Login vide. Veuillez en positionner un<BR>\n";
+  }
   $sql = "SELECT login FROM llx_adherent WHERE login='$login';";
   $result = $db->query($sql);
   if ($result) {
