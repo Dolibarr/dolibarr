@@ -1,9 +1,6 @@
 #
 # Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 #
-# $Id$
-# $Source$
-#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -17,6 +14,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#
+# $Id$
+# $Source$
 #
 MYSQL=mysql
 BASE=dolibarr
@@ -42,6 +42,8 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_bank_categ.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_bank_class.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_bookmark.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_boxes.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_boxes_def.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_chargesociales.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_compta.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_compta_account.sql
