@@ -113,67 +113,67 @@ if ($user->societe_id > 0)
  *
  *
  *********************************************************************************/  
-if ($socid > 0)
+if ($_GET["socid"] > 0)
 {
-      // On recupere les donnees societes par l'objet
-      $objsoc = new Societe($db);
-      $objsoc->id=$socid;
-      $objsoc->fetch($socid,$to);
-
-      $dac = strftime("%Y-%m-%d %H:%M", time());
-      if ($errmesg)
-	{
-	  print "<b>$errmesg</b><br>";
-	}
-
-    /*
-     * Affichage onglets
-     */
-    $h = 0;
-
-    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$socid;
-    $head[$h][1] = "Fiche société";
+  // On recupere les donnees societes par l'objet
+  $objsoc = new Societe($db);
+  $objsoc->id=$_GET["socid"];
+  $objsoc->fetch($_GET["socid"],$to);
+  
+  $dac = strftime("%Y-%m-%d %H:%M", time());
+  if ($errmesg)
+    {
+      print "<b>$errmesg</b><br>";
+    }
+  
+  /*
+   * Affichage onglets
+   */
+  $h = 0;
+  
+  $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id;
+  $head[$h][1] = "Fiche société";
+  $h++;
+  
+  if ($objsoc->client==1)
+    {
+      $hselected=$h;
+      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
+      $head[$h][1] = 'Fiche client';
+      $h++;
+    }
+  if ($objsoc->client==2)
+    {
+      $hselected=$h;
+      $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->socid;
+      $head[$h][1] = 'Fiche prospect';
+      $h++;
+    }
+  if ($objsoc->fournisseur)
+    {
+      $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objsoc->id;
+      $head[$h][1] = 'Fiche fournisseur';
+      $h++;
+    }
+  
+  if ($conf->compta->enabled) {
+    $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;
+    $head[$h][1] = 'Fiche compta';
     $h++;
+  }
 
-    if ($objsoc->client==1)
-    {
-        $hselected=$h;
-        $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
-        $head[$h][1] = 'Fiche client';
-        $h++;
-    }
-    if ($objsoc->client==2)
-    {
-        $hselected=$h;
-        $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$socid;
-        $head[$h][1] = 'Fiche prospect';
-        $h++;
-    }
-    if ($objsoc->fournisseur)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
-        $head[$h][1] = 'Fiche fournisseur';
-        $h++;
-    }
-
-    if ($conf->compta->enabled) {
-        $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid;
-        $head[$h][1] = 'Fiche compta';
-        $h++;
-    }
-
-    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$socid;
+    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
     $head[$h][1] = 'Note';
     $h++;
 
     if ($user->societe_id == 0)
     {
-        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$socid;
+        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$objsoc->id;
         $head[$h][1] = 'Documents';
         $h++;
     }
 
-    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$socid;
+    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
     $head[$h][1] = 'Notifications';
 
       if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
@@ -190,7 +190,7 @@ if ($socid > 0)
 	$head[$h][2] = 'image';
       }
 
-    dolibarr_fiche_head($head, $hselected);
+    dolibarr_fiche_head($head, $hselected, $objsoc->nom);
 
     /*
      *
