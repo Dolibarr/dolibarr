@@ -598,7 +598,7 @@ if ($_GET["propalid"])
 	   * Envoi de la propale par mail
 	   *
 	   */
-	  if ($action == 'send')
+	  if ($_GET["action"] == 'send')
 	    {
 	      $file = PROPALE_OUTPUTDIR . "/$propal->ref/$propal->ref.pdf";
 	      if (file_exists($file))
@@ -611,9 +611,9 @@ if ($_GET["propalid"])
 		  $filepath[1] = $_FILES['addedfile']['tmp_name'];
 		  $filename[1] = $_FILES['addedfile']['name'];
 		  $mimetype[1] = $_FILES['addedfile']['type'];
-		  $replyto = "$replytoname <$replytomail>";
+		  $replyto = $_POST["replytoname"]. " <".$_POST["replytomail"].">";
 	      
-		  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$sendtocc);
+		  $mailfile = new CMailFile($subject,$_POST["sendto"],$replyto,$_POST["message"],$filepath,$mimetype,$filename,$sendtocc);
 	      
 		  if (! $mailfile->sendfile() )
 		    {	       
@@ -634,7 +634,7 @@ if ($_GET["propalid"])
 	      $actioncomm->user        = $user;	      
 	      $actioncomm->societe     = $propal->socidp;
 	      $actioncomm->propalrowid = $propal->id;
-	      $actioncomm->note        = "Envoyée à $sendto";
+	      $actioncomm->note        = "Envoyée à ".$_POST["sendto"];
 	      $actioncomm->add($user);
 	    }
 	  /*
@@ -769,7 +769,7 @@ if ($_GET["propalid"])
 	   *
 	   *
 	   */
-	  if ($action == 'presend')
+	  if ($_GET["action"] == 'presend')
 	    {
 	      $replytoname = $user->fullname;
 	      $replytomail = $user->email;
@@ -780,20 +780,20 @@ if ($_GET["propalid"])
 	      $message = "Veuillez trouver ci-joint notre proposition commerciale $propal->ref\n\nCordialement\n\n";
 
 	      print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"propal.php?propalid=$propal->id&amp;action=send\">\n";
-	      print "<input type=\"hidden\" name=\"replytoname\" value=\"$replytoname\">\n";
-	      print "<input type=\"hidden\" name=\"replytomail\" value=\"$replytomail\">\n";
+	      print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
+	      print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
 	      print '<input type="hidden" name="max_file_size" value="2000000">';
 
 	      print_titre("Envoyer la propale par mail");
-	      print "<table cellspacing=0 border=1 cellpadding=3>";
+	      print '<table cellspacing="0" border="1" cellpadding="3">';
 	      print "<tr><td>Destinataire</td>";
 	      print "<td  colspan=\"6\" align=\"right\"><input size=\"50\" name=\"sendto\" value=\"" . ucfirst(strtolower($obj->firstname)) . " " .  ucfirst(strtolower($obj->name)) . " <$obj->email>\"></td></tr>";
-	      print "<tr><td>Copie à</td>";
-	      print "<td colspan=\"6\" align=\"right\"><input size=\"50\" name=\"sendtocc\"></td></tr>";
+	      print '<tr><td>Copie à</td>';
+	      print '<td colspan="6" align="right"><input size="50" name="sendtocc"></td></tr>';
 	      print "<tr><td>Expediteur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
 	      print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
 	      print "<td>$replytomail</td></tr>";
-	      print "<tr><td valign=\"top\">Joindre un fichier en plus de la propale<br>(conditions générales de ventes ...)</td><td colspan=\"6\"><input type=\"file\"   name=\"addedfile\" size=\"40\" maxlength=\"80\"></td></tr>";
+	      print "<tr><td valign=\"top\">Joindre un fichier en plus de la propale<br>(conditions générales de ventes ...)</td><td colspan=\"6\"><input type=\"file\" name=\"addedfile\" size=\"40\" maxlength=\"80\"></td></tr>";
 	      print "<tr><td valign=\"top\">Message</td><td colspan=\"6\"><textarea rows=\"5\" cols=\"40\" name=\"message\">$message</textarea></td></tr>";
 	      
 	      print "</table>";

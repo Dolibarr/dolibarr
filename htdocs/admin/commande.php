@@ -38,15 +38,15 @@ $commande_rib_number_var = COMMANDE_RIB_NUMBER;
 
 $commande_addon_var = COMMANDE_ADDON;
 
-if ($action == 'setmod')
+if ($_GET["action"] == 'setmod')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'COMMANDE_ADDON', value='".$value."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'COMMANDE_ADDON', value='".$_GET["value"]."', visible=0";
 
   if ($db->query($sql))
     {
       // la constante qui a été lue en avant du nouveau set
       // on passe donc par une variable pour avoir un affichage cohérent
-      $commande_addon_var = $value;
+      $commande_addon_var = $_GET["value"];
     }
 }
 
