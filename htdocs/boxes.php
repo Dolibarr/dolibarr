@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,10 +29,13 @@ class infoBox
     $var = true;
     $bcx[0] = 'class="box_pair"';
     $bcx[1] = 'class="box_impair"';
+    $nbcol=sizeof($contents[0]);
 
     print '<table width="100%" cellpadding="3" cellspacing="0" class="noborder">';
 
-    print '<tr class="box_titre"><td colspan='.sizeof($contents).'>'.$head[0]['text']."</td></tr>";
+    print '<tr class="box_titre"><td';
+    if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
+    print '>'.$head[0]['text']."</td></tr>";
 
     for ($i=0, $n=sizeof($contents); $i<$n; $i++)
       {
