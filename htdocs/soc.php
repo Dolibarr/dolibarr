@@ -419,7 +419,7 @@ else
   print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
 
   print '<tr><td>';
-  print $langs->trans('CustomerCode').'</td><td>';
+  print $langs->trans('CustomerCode').'</td><td colspan="3">';
   print $soc->code_client;
   if ($soc->check_codeclient() <> 0)
     {
