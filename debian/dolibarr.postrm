@@ -69,6 +69,8 @@ case "$1" in
 		for dir in /usr/share/dolibarr ; do
 			if [ -d ${dir} ] ; then rm -rf ${dir} ; fi
 		done
+
+		db_purge
 	;;
 	remove)
 	;;
@@ -83,7 +85,5 @@ case "$1" in
 esac
 
 db_stop
-
-#DEBHELPER#
 
 exit 0
