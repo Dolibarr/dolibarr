@@ -109,7 +109,7 @@ Laissez vide si vous vous connectez en anonymous
 </table>
 </form>
 
-<a href="/">Go !</a>
+<a href="<?PHP print $dolibarr_main_url_root ?>/">Go !</a>
 
 </body>
 </html>
