@@ -74,7 +74,7 @@ print "</tr>\n";
 </select>
 </td>
 <td align="left">
-<input type="submit" value="Chercher">
+<input type="submit" name="submit" value="Chercher">
 </td>
 </tr>
 <?PHP
@@ -175,8 +175,9 @@ if ($result)
 
 print "</table>";
 
-if (! $num) {
-print "Aucune réponse trouvée.";
+// Si accès issu d'une recherche et rien de trouvé
+if ($_POST["submit"] && ! $num) {
+	print "Aucune écriture bancaire répondant aux critères n'a été trouvée.";
 }
 
 
