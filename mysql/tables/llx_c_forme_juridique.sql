@@ -23,7 +23,7 @@
 create table llx_c_forme_juridique
 (
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
-  fk_pays    integer default 1,
+  fk_pays    integer NOT NULL,
   code       integer UNIQUE,
   libelle    varchar(255),
   active     tinyint default 1
