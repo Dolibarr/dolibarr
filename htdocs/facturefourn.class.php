@@ -21,6 +21,18 @@
  *
  */
 
+/*!
+	    \file       htdocs/facturefourn.class.php
+        \ingroup    facture
+		\brief      Fichier de la classe des factures fournisseurs
+		\version    $Revision$
+*/
+
+
+/*! \class FactureFourn
+		\brief Classe permettant la gestion des factures fournisseurs
+*/
+
 class FactureFourn
 {
   var $id;
@@ -42,9 +54,11 @@ class FactureFourn
   var $propalid;
   var $lignes;
 
-  /*
-   * Initialisation
-   *
+  /**
+   *    \brief  Constructeur de la classe
+   *    \param  DB          handler accès base de données
+   *    \param  soc_idp     id societe ("" par defaut)
+   *    \param  facid       id facture ("" par defaut)
    */
   function FactureFourn($DB, $soc_idp="", $facid="")
   {
@@ -62,8 +76,9 @@ class FactureFourn
     $this->lignes = array();
   }
 
-  /*
-   * Création d'une facture fournisseur
+  /**
+   *    \brief      Création de la facture en base
+   *    \param      user       object utilisateur qui crée
    *
    */
   function create($user)
@@ -124,17 +139,16 @@ class FactureFourn
             print "Erreur : Une facture possédant cet id existe déjà";
         }
         else {
-            print "Erreur : ".$this->db->error() . '<b><br>'.$sql;
+    	  dolibarr_print_error($this->db);
         }
     
         return 0;
     }
    }
 
-  /*
-   *
-   *
-   *
+  /**
+   *    \brief      Recupére l'objet facture et ses lignes de factures
+   *    \param      rowid       id de la facture a récupérer
    */
   function fetch($rowid)
     {
@@ -201,19 +215,19 @@ class FactureFourn
 		}
 	      else
 		{
-		  print $this->db->error();
+    	  dolibarr_print_error($this->db);
 		}
 	    }
 	}
       else
 	{
-	  print $this->db->error();
+    	  dolibarr_print_error($this->db);
 	}
     }
 
-  /*
-   * Suppression de la facture
-   *
+  /**
+   * \brief     Supprime la facture
+   * \param     rowid      id de la facture à supprimer
    */
   function delete($rowid)
     {
@@ -232,48 +246,49 @@ class FactureFourn
 		}
 	      else
 		{
-		  print "Err : ".$this->db->error();
-		  return 0;
+    	  dolibarr_print_error($this->db);
 		}
 	    }
 	}
       else
 	{
-	  print "Err : ".$this->db->error();
-	  return 0;
+    	  dolibarr_print_error($this->db);
 	}
     }
 
-  /*
-   * Passe une facture fournisseur a l'état validé
-   *
-   */
-  function set_valid($userid)
-    {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set fk_statut = 1, fk_user_valid = $userid WHERE rowid = ".$this->id;
-      $result = $this->db->query( $sql);
-      if (! $result) {
-        print "Erreur : $sql : ".$this->db->error(); 
-      }
-    }
-
-  /*
-   * Passe une facture fournisseur a l'état payé
-   *
+  /**
+   * \brief     Tag la facture comme payée complètement
+   * \param     userid        utilisateur qui modifie l'état
    */
   function set_payed($userid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set paye = 1 WHERE rowid = ".$this->id;
       $result = $this->db->query( $sql);
       if (! $result) {
-        print "Erreur : $sql : ".$this->db->error(); 
+    	  dolibarr_print_error($this->db);
+      }
+    }
+
+  /**
+   * \brief     Tag la facture comme validée et valide la facture
+   * \param     userid        utilisateur qui valide la facture
+   */
+  function set_valid($userid)
+    {
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set fk_statut = 1, fk_user_valid = $userid WHERE rowid = ".$this->id;
+      $result = $this->db->query( $sql);
+      if (! $result) {
+    	  dolibarr_print_error($this->db);
       }
     }
 
 
   /**
-   * Ajoute une ligne dans la facture
-   *
+   * \brief     Ajoute une ligne de facture (associé à aucun produit/service prédéfini)
+   * \param     desc            description de la ligne
+   * \param     pu              prix unitaire
+   * \param     tauxtva         taux de tva
+   * \param     qty             quantité
    */
   function addline($desc, $pu, $tauxtva, $qty)
   {
@@ -288,16 +303,22 @@ class FactureFourn
       }
     else
       {
-	print $this->db->error();
+    	  dolibarr_print_error($this->db);
       }
     
     // Mise a jour prix facture
     $this->updateprice($this->id);
     
   }
-  /*
-   * Mise a jour ligne facture fourn
-   *
+
+  /**
+   * \brief     Mets à jour une ligne de facture
+   * \param     id              id de la ligne de facture
+   * \param     label           description de la ligne
+   * \param     puht            prix unitaire
+   * \param     tauxtva         taux tva
+   * \param     qty             quantité
+   * \return    int     0 si erreur
    */
   function updateline($id, $label, $puht, $tauxtva, $qty=1)
   {
@@ -320,16 +341,17 @@ class FactureFourn
 	
 	if (! $this->db->query($sql) )
 	  {
-	    print $this->db->error() . '<b><br>'.$sql;
+    	  dolibarr_print_error($this->db);
 	  }
 
 	// Mise a jour prix facture
 	$this->updateprice($this->id);
       }
   }
+
   /**
-   * Supprime une ligne de la facture
-   *
+   * \brief     Supprime une ligne facture de la base
+   * \param     rowid      id de la ligne de facture a supprimer
    */
   function deleteline($rowid)
   {
@@ -339,7 +361,7 @@ class FactureFourn
     
     if (! $this->db->query($sql) ) 
       {
-        print "Erreur : ".$this->db->error() . '<b><br>'.$sql;
+    	  dolibarr_print_error($this->db);
       }
     
     // Mise a jour prix facture
@@ -347,9 +369,10 @@ class FactureFourn
     
     return 1;
   }
+
   /**
-   *Mets à jour le prix total de la facture
-   *
+   * \brief     Mise à jour des sommes de la facture
+   * \param     facid      id de la facture a modifier
    */
   function updateprice($facid)
   {    
@@ -392,13 +415,12 @@ class FactureFourn
       }
     else 
       {
-	print $this->db->error();
+    	  dolibarr_print_error($this->db);
       }
   }
   
-  /*
-   *
-   * Génération du PDF
+  /**
+   * \todo RODO
    *
    */
   function pdf()
@@ -407,22 +429,25 @@ class FactureFourn
     }
 
   /**
-   * Renvoi un libellé du statut
-   *
+   * \brief     Renvoi un libellé du statut
+   * \param     paye        etat paye
+   * \param     statut      id statut
    */
-  function LibStatut($paye,$statut)
-  {
-    if (! $paye)
-      {
-	if ($statut == 0) return 'Brouillon (à valider)';
-	if ($statut == 3) return 'Annulée';
-	return 'Validée (à payer)';
-      }
-    else
-      {
-	return 'Payée';
-      }
-  }
+    function LibStatut($paye,$statut)
+    {
+        global $langs;
+        $langs->load("bills");
+        if (! $paye)
+        {
+            if ($statut == 0) return $langs->trans("BillStatusDraft");
+            if ($statut == 3) return $langs->trans("BillStatusCanceled");
+            return $langs->trans("BillStatusValidated");
+        }
+        else
+        {
+            return $langs->trans("BillStatusPayed");
+        }
+    }
   
 }
 ?>

@@ -24,16 +24,13 @@
 /*!
 	    \file       htdocs/facture.class.php
         \ingroup    facture
-		\brief      Fichier de la classe des factures
-		\author     Rodolphe Qiedeville
-		\author	    Laurent Destailleur
+		\brief      Fichier de la classe des factures clients
 		\version    $Revision$
 */
 
 
-
 /*! \class Facture
-		\brief Classe permettant la gestion des factures
+		\brief Classe permettant la gestion des factures clients
 */
 
 class Facture
@@ -196,7 +193,7 @@ class Facture
 		      $prod->fetch($_facrec->lignes[$i]->produit_id);
 		    }
 		  
-		  $result_insert = $this->addline($this->id, 
+		    $result_insert = $this->addline($this->id, 
 						  addslashes($_facrec->lignes[$i]->desc),
 						  $_facrec->lignes[$i]->subprice,
 						  $_facrec->lignes[$i]->qty,
@@ -221,8 +218,7 @@ class Facture
 	}
       else
 	{
-	  print "Erreur facture.class fonction create: ".$this->db->error() . '<br>'.$sql.'<br>';
-	  return 0;
+	  dolibarr_print_error($this->db);
 	}
     }
 
@@ -327,6 +323,7 @@ class Facture
 	  dolibarr_print_error($this->db);
 	}    
     }
+
   /**
    * \brief     Recupére l'objet client lié à la facture
    *
@@ -357,6 +354,7 @@ class Facture
 	  dolibarr_print_error($this->db);
 	}
     }
+
   /**
    * \brief     Classe la facture
    * \param     cat_id      id de la catégorie dans laquelle classer la facture
@@ -626,6 +624,13 @@ class Facture
 
   /**
    * \brief     Mets à jour une ligne de facture
+   * \param     rowid           id de la ligne de facture
+   * \param     desc            description de la ligne
+   * \param     pu              prix unitaire
+   * \param     qty             quantité
+   * \param     remise_percent  pourcentage de remise de la ligne
+   * \param     datestart       date de debut de validité du service
+   * \param     dateend         date de fin de validité du service
    * \return    int     0 si erreur
    */
   function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='')
@@ -779,14 +784,12 @@ class Facture
 	    }
 	  else
 	    {
-	      print "$sql<br>";
-	      return -2;
+    	  dolibarr_print_error($this->db);
 	    }
 	}
       else
 	{
-	  print "Error";
-	  return -1;
+    	  dolibarr_print_error($this->db);
 	}
     }
 
@@ -813,7 +816,6 @@ class Facture
 	  else
 	    {
     	  dolibarr_print_error($this->db);
-	      return 0;
 	    }
 	}
   }
@@ -932,18 +934,20 @@ class Facture
    * \param     paye        etat paye
    * \param     statut      id statut
    */
-  function LibStatut($paye,$statut)
+    function LibStatut($paye,$statut)
     {
-		if (! $paye)
-		  {
-		    if ($statut == 0) return 'Brouillon (à valider)';
-		    if ($statut == 3) return 'Abandonnée';
-			return 'Validée (à payer)';
-		  }
-		else
-		  {
-		    return 'Payée';
-    	  }
+        global $langs;
+        $langs->load("bills");
+        if (! $paye)
+        {
+            if ($statut == 0) return $langs->trans("BillStatusDraft");
+            if ($statut == 3) return $langs->trans("BillStatusCanceled");
+            return $langs->trans("BillStatusValidated");
+        }
+        else
+        {
+            return $langs->trans("BillStatusPayed");
+        }
     }
 
 
@@ -963,7 +967,6 @@ class Facture
       else
 	{
 	  dolibarr_print_error($this->db);
-	  return -1;
 	}
     }
 
