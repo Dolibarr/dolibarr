@@ -77,6 +77,10 @@ $head[$h][1] = $langs->trans("Card");
 $hselected = $h;
 $h++;      
 
+$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/bon.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Bon");
+$h++;  
+
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/lignes.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Lignes");
 $h++;  
