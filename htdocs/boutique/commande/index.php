@@ -52,7 +52,7 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\"><td>Date</td><td>";
+  print "<TR class=\"liste_titre\"><td>Numéro</td><td>Date</td><td>";
   print_liste_field_titre("Client",$PHP_SELF, "customers_name");
   print '</td><td align="right">Total</td>';
   //  print '<td align="center">Statut</td>';
@@ -65,7 +65,8 @@ if ( $db->query($sql) )
       $var=!$var;
       print "<TR $bc[$var]>";
 
-      print '<td><a href="fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche"></a>&nbsp;';
+      print '<td><a href="fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche">&nbsp;';
+      print $objp->orders_id ."</a></td><td>";
       print strftime("%d %B %Y",$objp->date_purchased).'</td>';
       print '<TD><a href="../client/fiche.php?id='.$objp->customers_id.'">'.$objp->customers_name."</a></TD>\n";
       print '<td align="right">'.price($objp->value).'</td>';
