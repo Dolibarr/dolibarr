@@ -28,6 +28,8 @@ if (!$user->rights->banque->modifier)
 
 llxHeader();
 
+$rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
+
 if ($_GET["action"] == 'dvnext')
 {
   $ac = new Account($db);
@@ -50,7 +52,7 @@ if ($_POST["action"] == 'confirm_delete_categ' && $_POST["confirm"] == yes)
 }
 
 
-if ($action == 'class')
+if ($_POST["action"] == 'class')
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = $rowid AND fk_categ = $cat1";
   $db->query($sql);
@@ -66,7 +68,7 @@ if ($action == 'class')
     }
 }
 
-if ($action == 'UPDATE')
+if ($_POST["action"] == 'UPDATE')
 {
   // Avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
   if (!empty($_POST['amount']))
@@ -81,23 +83,24 @@ if ($action == 'UPDATE')
       $objp = $db->fetch_object( 0);
       if ($objp->rappro)
         die ("Vous ne pouvez pas modifier une écriture déjà rapprochée");
-      $sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='$label' , dateo = '$date', amount='$amount' WHERE rowid = $rowid;";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='".$_POST["label"]."' , dateo = '".$_POST["date"]."', amount='$amount' WHERE rowid = $rowid;";
     }
   }
   else 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='$label' WHERE rowid = $rowid;";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='".$_POST["label"]."' WHERE rowid = $rowid;";
+
 $result = $db->query($sql);
 }
 
 if ($_POST["action"] == 'type')
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."bank set fk_type='$value' WHERE rowid = $rowid;";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."bank set fk_type='".$_POST["value"]."' WHERE rowid = $rowid;";
   $result = $db->query($sql);
 }
 
 if ($_POST["action"] == 'num_releve')
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."bank set num_releve=$num_rel WHERE rowid = $rowid;";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."bank set num_releve=".$_POST["num_rel"]." WHERE rowid = $rowid;";
   $result = $db->query($sql);
 }
 
@@ -118,7 +121,7 @@ if ($result)
   $db->free();
 }
 
-if ($action == 'delete_categ')
+if ($_POST["action"] == 'delete_categ')
 {
   $html = new Form($db);
   $html->form_confirm("ligne.php?rowid=$rowid&amp;cat1=$fk_categ","Supprimer dans la catégorie","Etes-vous sûr de vouloir supprimer le classement dans la catégorie ?","confirm_delete_categ");
