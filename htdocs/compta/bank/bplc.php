@@ -33,7 +33,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-print_barre_liste("Transactions BPLC", $page, $PHP_SELF);
+print_barre_titre("Transactions BPLC", $page, $PHP_SELF);
 
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
 print "<TR class=\"liste_titre\">";
