@@ -109,9 +109,11 @@ if ($result)
 	  print '<select name="constvalue">';
 	  
 	  print '<option value="0">Homepage</option>';
+	  /*
 	  print '<option value="1">Gauche</option>';
 	  print '<option value="1">Droite</option>';
-	  
+	  */
+
 	  print '</select>';
 	
 	  print '<input type="submit" value="Ajouter">';

@@ -4,7 +4,7 @@
 
               Rodolphe Quiédeville <rodolphe@quiedeville.org>
 
-                                   0.0.1
+                                   0.3.1
 
 
 -------------------------------------------------------------------------------
@@ -31,7 +31,17 @@ Table des matières
      3.2.      Modèles de proposition
 
      4.        Facturation
-     4.1.      Créer une facture
+     4.1.      Facture
+     4.2.      Paiements
+
+     5.        Produits
+     5.1.      Aspect général
+     5.2.      Spécificités des services
+
+     A.        Fichier de conf Apache
+     A.1.      Fichier de config pour `Apache 1.3' + `mod_auth_mysql'
+     A.2.      Fichier de config pour `Apache 2' + `mod_auth_mysql' +
+               `webmin'
 
 
 -------------------------------------------------------------------------------
@@ -170,12 +180,235 @@ Table des matières
      Module de facturation.
 
 
-4.1. Créer une facture
-----------------------
+4.1. Facture
+------------
+
+4.1.1. Créer une facture
+------------------------
 
      La création d'une facture se fait à partir de la fiche client dans la
      partie comptable.  Le lien permettant cela se trouve en haut à gauche
      sur la fiche, sous la barre de menu générale.
+
+4.1.2. Supprimer une facture
+----------------------------
+
+     Pour supprimer une facture il vous faut ouvrir la fiche de celle-ci.
+     Une facture ne peut être supprimée que si celle-ci est à l'état de
+     brouillon.  La suppression d'un facture entraine l'effacement de
+     toutes les données s'y afférant.  Une facture supprimée ne peut pas
+     être récupérée.
+
+4.1.3. Modifier une facture
+---------------------------
+
+     Pour modifier une facture il vous faut ouvrir la fiche de celle-ci.
+     Une facture ne peut être modifiée que si celle-ci est à l'état de
+     brouillon.
+
+4.1.4. Cycle de vie d'une facture
+---------------------------------
+
+4.1.4.1. Brouillon
+------------------
+
+     Lors de sa création une facture est considéré dans l'état de
+     brouillon, dans cet état il n'st possible que de "Valider" ou de
+     supprimer" une facture.
+
+4.1.4.2. Validée
+----------------
+
+     Une facture validée est une facture qui a été vérifiée par les
+     personnes compétentes, une facture validée à pour vocation d'être
+     envoyée au client.
+
+     A ce stade les actions possibles sont, 'Envoyer au client', 'Emettre
+     un paiement', 'Effectuer une relance', 'Classer comme payée' une fois
+     l'intégralité des paiements étant égale au total TTC de la facture.
+
+4.1.4.3. Payée
+--------------
+
+     L'état ultime de la facture qui nous remplit tous de joie.  La seule
+     action possible sur une facture payée est la consultation de celle-ci.
+
+
+4.2. Paiements
+--------------
+
+4.2.1. Création (émission)
+--------------------------
+
+     La création d'un paiement s'effectue depuis la fiche de la facture
+     correspondante.  La création n'est possible que si et seulement si la
+     facture n'est pas dans l'état 'Payée'.
+
+4.2.2. Suppression
+------------------
+
+     La suppression d'un paiement s'effectue depuis la fiche de la facture
+     correspondante.  La suppression n'est possible que si et seulement si
+     la facture n'est pas dans l'état 'Payée'.
+
+4.2.3. Modification
+-------------------
+
+     La modification d'un paiement n'est pas possible vous devez pour cela
+     supprimer le paiement puis en créer un nouveau.
+
+
+-------------------------------------------------------------------------------
+
+
+5. Produits
+-----------
+
+     Tout élément vendu dans Dolibarr est considéré comme un produit.  Les
+     produits manufacturés sont appelés par abus de langage "produit".  Les
+     services sont des produits ayant une durée de valadité d'utilisation
+     de l'acheteur limitée.  Par exemple un contrat de support sur un
+     logiciel, celui-ci fait donc partie des services, un contrat de
+     support inclue forcément une durée.
+
+
+5.1. Aspect général
+-------------------
+
+     La création d'un produit s'effectue depuis le menu gauche de
+     l'application, pour cela il vous faut être dans la section produit.
+
+
+5.2. Spécificités des services
+------------------------------
+
+
+-------------------------------------------------------------------------------
+
+
+A. Fichier de conf Apache
+-------------------------
+
+
+A.1. Fichier de config pour `Apache 1.3' + `mod_auth_mysql'
+-----------------------------------------------------------
+
+     Cet exemple ne fonctionne pas sur la série Apache 2, voir le fichier
+     correspond dans la section suivante.
+
+          	#
+          	#
+          	# Sample httpd.conf for dolibarr
+          	#
+          	# $Id$
+          	# $Source$
+          	#
+          	<VirtualHost dolibarr.lafrere.lan>
+          	ServerAdmin webmaster.fr@lolix.org
+          	DocumentRoot /home/www/dolibarr/dolibarr/htdocs
+          	ServerName dolibarr.lafrere.lan
+          	ErrorLog  /home/www/dolibarr/logs/error.log
+          	CustomLog /home/www/dolibarr/logs/access.log combined
+          
+          	ErrorDocument 401 /public/error-401.html
+          
+          	<Location />
+          	Options Indexes FollowSymLinks
+          	AllowOverride All
+          	Order deny,allow
+          	Deny from all
+          
+          	AuthType 				Basic
+          
+          	# N'utilisez la ligne suivante que si vous utilisez aussi
+          	# le module d'authentification basé sur postgresql
+          	#Auth_MySQL_Authoritative		on
+          
+          	# Utilisez les lignes suivantes si le serveur Apache ne
+          	# peut se logger en anonymous (ce qui est conseillé ;-)
+          	# rq. erics: sur ma debian je n'ai pas le droit de mettre ces
+          	# instructions dans un <virtualhost> ... (apache 1.3.27.0-2)
+          	#AuthMySQL_DefaultHost <host>
+          	#AuthMySQL_DefaultUser <user>
+          	#AuthMySQL_DefaultPassword <pass>
+          
+          	Auth_MySQL_DB 			dolibarr
+          	Auth_MySQL_Password_Table 		llx_user
+          	Auth_MySQL_Username_Field 		login
+          	Auth_MySQL_Password_Field 		pass
+          
+          	# Pour l'instant les pass sont enregistrés en clair
+          	# le stockage crypté est dans la TODO
+          
+          	Auth_MySQL_Encrypted_Passwords 	off
+          
+          	AuthName        			"Dolibarr"
+          
+          	require valid-user
+          	satisfy any
+          	</Location>
+          
+          	<Location /public/>
+          	Options Indexes FollowSymLinks
+          	AllowOverride All
+          	Order deny,allow
+          	Allow from all
+          	</Location>
+          
+          
+          	</VirtualHost>
+
+
+A.2. Fichier de config pour `Apache 2' + `mod_auth_mysql' + `webmin'
+--------------------------------------------------------------------
+
+                Options Indexes FollowSymLinks
+                AllowOverride All
+                Order deny,allow
+                Deny from all
+          
+                AuthType Basic
+          
+                # N'utilisez la ligne suivante que si vous utilisez aussi
+                # le module d'authentification basé sur postgresql
+                AuthMySQLAuthoritative on
+          
+                # Utilisez les lignes suivantes si le serveur Apache ne
+                # peut se logger en anonymous (ce qui est conseillé ;-)
+                # rq. erics: sur ma debian je n'ai pas le droit de mettre ces
+                # instructions dans un <virtualhost> ... (apache 1.3.27.0-2)
+                #AuthMySQL_DefaultHost <host>
+                #AuthMySQL_DefaultUser <user>
+                #AuthMySQL_DefaultPassword <pass>
+          
+                AuthMySQLHost localhost
+                AuthMySQLUser leDBuser
+                AuthMySQLPassword leDBpass
+                AuthMySQLDB dolibarr
+                AuthMySQLUserTable llx_user
+                AuthMySQLNameField login
+                AuthMySQLPasswordField pass
+          
+                # Pour l'instant les pass sont enregistrés en clair
+                # le stockage crypté est dans la TODO
+                AuthMySQLCryptedPasswords off
+          
+                AuthName "Dolibarr"
+          
+                require valid-user
+                Satisfy any
+
+     Pour les gens qui installent Dolibarr dans un répertoire, utilisez
+     Webmin et ajoutez une "Per-Directory Options" à votre serveur virtuel.
+     Utilisez "Location" comme "Type" et "/dolibarr" comme "Path".  Une
+     fois créée, editez les directives et copiez la config ci-dessus,
+     sauvez, restartez Apache et testez en allant à
+     domainname.com/dolibarr.  Le navigateur va vous demander de taper le
+     login/pass.  Il faut créer des options pour chaque <Location> du
+     fichier httpd.conf donné en exemple.
+
+     Merci à la personne qui m'a transmis ces infos, et aux précédentes qui
+     avaient fait de même au sujet d'Apache 2
 
 
 -------------------------------------------------------------------------------
@@ -186,5 +419,5 @@ Table des matières
      Rodolphe Quiédeville <rodolphe@quiedeville.org>
 
 
-     0.0.1
+     0.3.1
 

@@ -69,9 +69,30 @@ class Project {
   /*
    *
    *
+   */
+  Function delete() 
+    {
+      $sql = "DELETE FROM llx_projet WHERE rowid = $this->id";
+
+      if ($this->db->query($sql) ) 
+	{
+	  $sql = "UPDATE llx_propal SET fk_projet = 0 ";
+	  if ($this->db->query($sql) ) 
+	    {
+	      $sql = "UPDATE llx_facture SET fk_projet = 0 ";
+
+	      if ($this->db->query($sql) ) 
+		{
+	      
+		}    
+	    }    
+	}
+    }
+  /*
+   *
+   *
    *
    */
-
   Function fetch($rowid)
     {
       
