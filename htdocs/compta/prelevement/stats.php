@@ -37,7 +37,7 @@ llxHeader('','Statistiques prélèvements');
 print_titre("Statistiques prélèvements");
 
 
-$sql = "SELECT sum(pl.amount)";
+$sql = "SELECT sum(pl.amount), count(pl.amount)";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 
 if ($db->query($sql))
@@ -49,6 +49,7 @@ if ($db->query($sql))
     {
       $row = $db->fetch_row();	
       $total = $row[0];
+      $nbtotal = $row[1];
     }
 }
 
@@ -56,7 +57,7 @@ if ($db->query($sql))
  * Stats
  *
  */
-$sql = "SELECT sum(pl.amount), pl.statut";
+$sql = "SELECT sum(pl.amount), count(pl.amount), pl.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " GROUP BY pl.statut";
 
@@ -68,7 +69,8 @@ if ($db->query($sql))
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print '<td>Statut</td><td align="right">Montant</td><td align="right">%</td></tr>';
+  print '<td width="30%">Statut</td><td align="center">Nombre</td><td align="right">% en nombre</td>';
+  print '<td align="right">Montant</td><td align="right">% en montant</td></tr>';
   
   $var=True;
 
@@ -82,8 +84,16 @@ if ($db->query($sql))
       $row = $db->fetch_row();	
       
       print "<tr $bc[$var]><td>";
-      print $st[$row[1]];            
+
+      print $st[$row[2]];            
+      print '</td><td align="center">';
+      print $row[1];            
+
       print '</td><td align="right">';	  
+      print round($row[1]/$nbtotal*100,2)." %";
+
+      print '</td><td align="right">';
+
       print price($row[0]);	  
       
       print '</td><td align="right">';	  
@@ -94,8 +104,8 @@ if ($db->query($sql))
       $i++;
     }
 
-  print "<tr $bc[$var]>".'<td align="right">Total';
-  print '</td><td align="right">';	  
+  print "<tr $bc[$var]>".'<td align="right">Total</td>';
+  print '<td align="center">'.$nbtotal.'</td><td>&nbsp;</td><td align="right">';	  
   print price($total);	        
   print '</td><td align="right">&nbsp;</td>';
   print "</tr></table>";
@@ -150,7 +160,7 @@ if ($db->query($sql))
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print '<td>Statut</td><td align="center">Nombre</td>';
+  print '<td width="30%">Statut</td><td align="center">Nombre</td>';
   print '<td align="right">% en nombre</td><td align="right">Montant</td><td align="right">% en montant</td></tr>';
   
   $var=True;
