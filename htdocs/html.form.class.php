@@ -126,6 +126,45 @@ class Form
   }
 
   /*
+   * Retourne la liste déroulante des sociétés
+   *
+   */
+  Function select_societes($selected='')
+  {
+    // On recherche les societes
+    $sql = "SELECT s.idp, s.nom FROM ";
+    $sql .= MAIN_DB_PREFIX ."societe as s ";
+    $sql .= "ORDER BY nom ASC";
+
+    print '<select name="soc_id">';
+    if ($this->db->query($sql))
+      {
+	$num = $this->db->num_rows();
+	$i = 0;
+	if ($num)
+	  {
+	    while ($i < $num)
+	      {
+		$obj = $this->db->fetch_object( $i);
+		  if ($selected > 0 && $selected == $obj->idp)
+		    {
+		      print '<option value="'.$obj->idp.'" selected>'.$obj->nom.'</option>';
+		    }
+		  else
+		    {
+		      print '<option value="'.$obj->idp.'">'.$obj->nom.'</option>';
+		    }
+		$i++;
+	      }
+	  }
+      }
+    else {
+      print "Erreur : $sql : ".$this->db->error();
+    }
+    print '</select>';
+  }
+  
+  /*
    * Retourne le nom d'un pays
    *
    */
