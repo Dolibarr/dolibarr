@@ -83,7 +83,7 @@ if ($action == 'create')
       print_titre("Emettre un paiement");
       print '<form action="paiement.php?facid='.$facid.'" method="post">';
       print '<input type="hidden" name="action" value="add">';
-      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+      print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
 
       print "<tr class=\"liste_titre\"><td colspan=\"3\">Facture</td>";
 
