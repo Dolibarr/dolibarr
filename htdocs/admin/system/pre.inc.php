@@ -18,39 +18,40 @@
  * $Id$
  * $Source$
  */
-require("./pre.inc.php");
+require("../../main.inc.php3");
 
-llxHeader();
+function llxHeader($head = "", $urlp = "") {
 
-print_titre("Configuration Mysql");
+  /*
+   *
+   *
+   */
+  top_menu($head);
 
-print '<table border="0" cellpadding="3" cellspacing="1">';
+  $menu = new Menu();
 
-$sql = "SHOW VARIABLES";
+  $menu->add("index.php", "System");
+  $menu->add_submenu("../modules.php", "Modules");
 
-$result = $db->query($sql);
-if ($result) 
-{
-  $num = $db->num_rows();
-    
-  $var=True;
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object( $i);
-      $var=!$var;
-      print "<TR $bc[$var]>";
+  $menu->add("mysql.php", "Mysql");
 
-      print '<td>'.$objp->Variable_name.'</td><td>'.$objp->Value.'</td>';
-      print '</tr>';
+  $menu->add("pear.php", "Pear");
 
-      $i++;
+  $menu->add("phpinfo.php", "phpinfo");
+
+  $menu->add_submenu("phpinfo.php?what=conf", "Conf");
+
+  $menu->add_submenu("phpinfo.php?what=env", "Env");
+
+  $menu->add_submenu("phpinfo.php?what=modules", "Modules");
+
+  if ($user->admin)
+    {      
+      $menu->add(DOL_URL_ROOT."/admin/", "Configuration");
     }
+
+
+  left_menu($menu->liste);
 }
-print '</table>';
 
-
-
-
-
-llxFooter();
 ?>

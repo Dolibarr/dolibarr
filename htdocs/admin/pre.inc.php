@@ -70,8 +70,6 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu("constall.php", "Tout voir");
 
-  $menu->add("mysql.php", "Mysql");
-
   //$menu->add_submenu("sqltables.php", "Tables");
 
   if ($conf->boutique->enabled)
@@ -84,13 +82,7 @@ function llxHeader($head = "", $urlp = "") {
 	}      
     }
 
-  $menu->add("phpinfo.php", "phpinfo");
-
-  $menu->add_submenu("phpinfo.php?what=conf", "Conf");
-
-  $menu->add_submenu("phpinfo.php?what=env", "Env");
-
-  $menu->add_submenu("phpinfo.php?what=modules", "Modules");
+  $menu->add("system/", "system");
 
   left_menu($menu->liste);
 }
