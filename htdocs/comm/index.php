@@ -193,18 +193,18 @@ if ( $db->query($sql) )
   if ($num > 0)
     {
       print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-      print '<TR class="liste_titre">';
-      print '<td colspan="4">Actions à faire</td>';
-      print "</TR>\n";
-      
+      print '<TR class="liste_titre"><td colspan="4">Actions à faire</td></tr>';
+      $var = True;
       $i = 0;
       while ($i < $num ) 
 	{
 	  $obj = $db->fetch_object($i);
 	  $var=!$var;
 	  
-	  print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td>";
-	  print "<td><a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
+	  print "<tr $bc[$var]>";
+	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_file()."</a>&nbsp;";
+	  print "<a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
+	  print "<td>".strftime("%d %b %Y",$obj->da)."</td>";
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->sname.'</a></td>';
 	  $i++;
 	}
@@ -239,7 +239,8 @@ if ( $db->query($sql) )
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object( $i);
-	  print "<tr $bc[$var]><td width=\"12%\"><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td>";
+	  print "<tr $bc[$var]><td width=\"12%\"><a href=\"propal.php?propalid=".$obj->rowid."\">".img_file()."</a>&nbsp;";
+	  print "<a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td>";
 	  print "<td width=\"30%\"><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
 	  print "<td align=\"right\">";
 	  print strftime("%d %B %Y",$obj->dp)."</td>\n";	  
