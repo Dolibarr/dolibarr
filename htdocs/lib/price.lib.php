@@ -29,13 +29,13 @@
 */
 
 /*!
-		\brief permet de calculer un prix
+		\brief permet de calculer un prix.
 		\param products
 		\param remise_percent
 		\return result
 */
 
-Function calcul_price($products, $remise_percent)
+function calcul_price($products, $remise_percent)
 {
   $total_ht = 0;
   $amount_ht = 0;

@@ -22,41 +22,36 @@
  *
  */
 
- /**
-  * librairie contenant les fonctions pour acceder a un
-	* serveur ldap
-	*
-  * @package ldap.lib
-	* @author Rodolphe Quiedeville
-	* @author Benoit Mortier
-	* @version 1.2
-	*
-	*/
+/*!	\file ldap.lib.php
+		\brief Librairie contenant les fonctions pour accèder au serveur ldap.
+		\author Rodolphe Quiedeville.
+		\author	Benoit Mortier.
+		\version 1.2.
 
-/**
- * connection au serveur ldap
- *
- * @access public
- * @return resource
- */
+		Ensemble des fonctions permettant d'accèder à un serveur ldap.
+*/
 
-Function dolibarr_ldap_connect()
+
+/*!
+		\brief ouverture d'une connection vers le serveur ldap.
+		\return	resource
+*/
+
+function dolibarr_ldap_connect()
 {
   $ldapconnect = ldap_connect(LDAP_SERVER_HOST);
 
   return $ldapconnect;
 }
 
-/**
- * bind au serveur ldap
- *
- * @access public
- * @param resource $ds
- * @return bool
- *
- */
+/*!
+		\brief bind au serveur ldap.
+		\param	ds
+		\return	bool
+*/
 
-Function dolibarr_ldap_bind($ds)
+
+function dolibarr_ldap_bind($ds)
 {
   if (defined("LDAP_SERVER_PASS") && LDAP_SERVER_DN && LDAP_SERVER_PASS)
     {
@@ -66,16 +61,13 @@ Function dolibarr_ldap_bind($ds)
   return $ldapbind;
 }
 
-/**
- * unbind du serveur ldap
- *
- * @access public
- * @param resource $ds
- * @return bool
- *
- */
+/*!
+		\brief unbind du serveur ldap.
+		\param	ds
+		\return	bool
+*/
 
-Function dolibarr_ldap_unbind($ds)
+function dolibarr_ldap_unbind($ds)
 {
 
    $ldapunbind = ldap_unbind($ds);
@@ -83,16 +75,13 @@ Function dolibarr_ldap_unbind($ds)
   return $ldapunbind;
 }
 
-/**
- * verification de la version du serveur ldap
- *
- * @access public
- * @param resource $ds
- * @return mixed
- *
- */
+/*!
+		\brief verification de la version du serveur ldap.
+		\param	ds
+		\return	version
+*/
 
-Function dolibarr_ldap_getversion($ds)
+function dolibarr_ldap_getversion($ds)
 {
 	$version = 0;
 
@@ -101,34 +90,28 @@ Function dolibarr_ldap_getversion($ds)
   return $version;
 }
 
-/**
- * changement de la version du serveur ldap
- *
- * @access public
- * @param resource $ds
- * @param integer $version
- * @return bool
- *
- */
+/*!
+		\brief changement de la version du serveur ldap.
+		\param	ds
+		\param	version
+		\return	version
+*/
 
-Function dolibarr_ldap_setversion($ds,$version)
+
+function dolibarr_ldap_setversion($ds,$version)
 {
 	$ldapsetversion = ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, $version);
 
   return $ldapsetversion;
 }
 
-/**
- * permet d'enlever les accents d'une chaine
- * avant de l'envoyer au serveur ldap
- *
- * @access public
- * @param string $str
- * @return string
- *
- */
+/*!
+		\brief permet d'enlever les accents d'une chaine.
+		\param	str
+		\return	string
+*/
 
-Function dolibarr_ldap_unacc($str)
+function dolibarr_ldap_unacc($str)
 {
   $stu = ereg_replace("é","e",$str);
   $stu = ereg_replace("è","e",$stu);

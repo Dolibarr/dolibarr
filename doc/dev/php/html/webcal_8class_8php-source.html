@@ -4,7 +4,7 @@
 <link href="doxygen.css" rel="stylesheet" type="text/css">
 </head><body>
 <!-- Généré par Doxygen 1.3.7 -->
-<div class="qindex"><a class="qindex" href="index.html">Page&nbsp;principale</a> | <a class="qindex" href="files.html">Liste&nbsp;des&nbsp;fichiers</a> | <a class="qindex" href="globals.html">Membres&nbsp;de&nbsp;fichier</a></div>
+<div class="qindex"><a class="qindex" href="index.html">Page&nbsp;principale</a> | <a class="qindex" href="classes.html">Liste&nbsp;alphabétique</a> | <a class="qindex" href="annotated.html">Liste&nbsp;des&nbsp;classes</a> | <a class="qindex" href="files.html">Liste&nbsp;des&nbsp;fichiers</a> | <a class="qindex" href="functions.html">Membres&nbsp;de&nbsp;classe</a> | <a class="qindex" href="globals.html">Membres&nbsp;de&nbsp;fichier</a></div>
 <h1>htdocs/lib/webcal.class.php</h1><a href="webcal_8class_8php.html">Aller à la documentation de ce fichier.</a><pre class="fragment"><div>00001 &lt;?PHP
 00002 <span class="comment">/* Copyright (C) 2002-2003 Rodolphe Quiedeville &lt;rodolphe@quiedeville.org&gt;</span>
 00003 <span class="comment"> *</span>
@@ -27,87 +27,87 @@
 00020 <span class="comment"> *</span>
 00021 <span class="comment"> */</span>
 00022 
-00031 <span class="keyword">class </span>Webcal {
-00032   var $localdb;
-00033   var $heure = -1;
-00034   var $duree = 0;
-00035 
-00040   function Webcal()
-00041     {
-00042       global $conf;
-00043 
-00044       $this-&gt;localdb = <span class="keyword">new</span> Db($conf-&gt;webcal-&gt;db-&gt;type,
-00045             $conf-&gt;webcal-&gt;db-&gt;host,
-00046             $conf-&gt;webcal-&gt;db-&gt;user,
-00047             $conf-&gt;webcal-&gt;db-&gt;pass,
-00048             $conf-&gt;webcal-&gt;db-&gt;name);
-00049     }
-00050 
-00059   function add($user, $date, $texte, $desc)
-00060     {
-00061 
-00062       $id = $this-&gt;get_next_id();
-00063 
-00064       $cal_id = $id;
-00065       $cal_create_by = $user-&gt;webcal_login;
-00066       $cal_date = strftime('%Y%m%d', $date);
-00067       $cal_time  = $this-&gt;heure;
-00068       $cal_mod_date = strftime('%Y%m%d', time());
-00069       $cal_mod_time = strftime('%H%M', time());
-00070       $cal_duration = $this-&gt;duree;
-00071       $cal_priority = 2;
-00072       $cal_type = <span class="stringliteral">"E"</span>;
-00073       $cal_access = <span class="stringliteral">"P"</span>;
-00074       $cal_name = $texte;
-00075       $cal_description = $desc;
-00076 
-00077       $sql = <span class="stringliteral">"INSERT INTO webcal_entry (cal_id, cal_create_by,cal_date,cal_time,cal_mod_date,</span>
-00078 <span class="stringliteral">      cal_mod_time,cal_duration,cal_priority,cal_type, cal_access, cal_name,cal_description)"</span>;
-00079 
-00080       $sql .= <span class="stringliteral">" VALUES ($cal_id, '$cal_create_by', $cal_date, $cal_time,$cal_mod_date, $cal_mod_time,</span>
-00081 <span class="stringliteral">      $cal_duration,$cal_priority,'$cal_type', '$cal_access', '$cal_name','$cal_description')"</span>;
+<a name="l00037"></a><a class="code" href="classWebcal.html">00037</a> <span class="keyword">class </span><a class="code" href="classWebcal.html">Webcal</a> {
+00038   var $localdb;
+00039   var $heure = -1;
+00040   var $duree = 0;
+00041 
+<a name="l00046"></a><a class="code" href="classWebcal.html#a0">00046</a>   function <a class="code" href="classWebcal.html#a0">Webcal</a>()
+00047     {
+00048       global $conf;
+00049 
+00050       $this-&gt;localdb = <span class="keyword">new</span> Db($conf-&gt;webcal-&gt;db-&gt;type,
+00051             $conf-&gt;webcal-&gt;db-&gt;host,
+00052             $conf-&gt;webcal-&gt;db-&gt;user,
+00053             $conf-&gt;webcal-&gt;db-&gt;pass,
+00054             $conf-&gt;webcal-&gt;db-&gt;name);
+00055     }
+00056 
+<a name="l00065"></a><a class="code" href="classWebcal.html#a1">00065</a>   function <a class="code" href="classWebcal.html#a1">add</a>($user, $date, $texte, $desc)
+00066     {
+00067 
+00068       $id = $this-&gt;<a class="code" href="classWebcal.html#a2">get_next_id</a>();
+00069 
+00070       $cal_id = $id;
+00071       $cal_create_by = $user-&gt;webcal_login;
+00072       $cal_date = strftime('%Y%m%d', $date);
+00073       $cal_time  = $this-&gt;heure;
+00074       $cal_mod_date = strftime('%Y%m%d', time());
+00075       $cal_mod_time = strftime('%H%M', time());
+00076       $cal_duration = $this-&gt;duree;
+00077       $cal_priority = 2;
+00078       $cal_type = <span class="stringliteral">"E"</span>;
+00079       $cal_access = <span class="stringliteral">"P"</span>;
+00080       $cal_name = $texte;
+00081       $cal_description = $desc;
 00082 
-00083       <span class="keywordflow">if</span> ( $this-&gt;localdb-&gt;query($sql) )
-00084         {
+00083       $sql = <span class="stringliteral">"INSERT INTO webcal_entry (cal_id, cal_create_by,cal_date,cal_time,cal_mod_date,</span>
+00084 <span class="stringliteral">      cal_mod_time,cal_duration,cal_priority,cal_type, cal_access, cal_name,cal_description)"</span>;
 00085 
-00086           $sql = <span class="stringliteral">"INSERT INTO webcal_entry_user (cal_id, cal_login, cal_status)"</span>;
-00087           $sql .= <span class="stringliteral">" VALUES ($cal_id, '$cal_create_by', 'A')"</span>;
+00086       $sql .= <span class="stringliteral">" VALUES ($cal_id, '$cal_create_by', $cal_date, $cal_time,$cal_mod_date, $cal_mod_time,</span>
+00087 <span class="stringliteral">      $cal_duration,$cal_priority,'$cal_type', '$cal_access', '$cal_name','$cal_description')"</span>;
 00088 
-00089           <span class="keywordflow">if</span> ( $this-&gt;localdb-&gt;query($sql) )
-00090             {
+00089       <span class="keywordflow">if</span> ( $this-&gt;localdb-&gt;query($sql) )
+00090         {
 00091 
-00092             }
-00093           <span class="keywordflow">else</span>
-00094             {
-00095               $error = $this-&gt;localdb-&gt;error() . '&lt;br&gt;' .$sql;
-00096             }
-00097         }
-00098       <span class="keywordflow">else</span>
-00099         {
-00100           $error = $this-&gt;localdb-&gt;error() . '&lt;br&gt;' .$sql;
-00101         }
-00102 
-00103         $this-&gt;localdb-&gt;close();
-00104       }
-00105 
-00112   function get_next_id()
-00113     {
-00114 
-00115       $sql = <span class="stringliteral">"SELECT max(cal_id) FROM webcal_entry"</span>;
-00116 
-00117       <span class="keywordflow">if</span> ($this-&gt;localdb-&gt;query($sql))
-00118         {
-00119           $id = $this-&gt;localdb-&gt;result(0, 0) + 1;
-00120           <span class="keywordflow">return</span> $id;
-00121         }
-00122       <span class="keywordflow">else</span>
-00123         {
-00124           print $this-&gt;localdb-&gt;error();
-00125         }
-00126     }
-00127 }
-00128 ?&gt;
-</div></pre><hr size="1"><address style="align: right;"><small>Généré le Thu Jul 15 14:51:57 2004 pour dolibarr par
+00092           $sql = <span class="stringliteral">"INSERT INTO webcal_entry_user (cal_id, cal_login, cal_status)"</span>;
+00093           $sql .= <span class="stringliteral">" VALUES ($cal_id, '$cal_create_by', 'A')"</span>;
+00094 
+00095           <span class="keywordflow">if</span> ( $this-&gt;localdb-&gt;query($sql) )
+00096             {
+00097 
+00098             }
+00099           <span class="keywordflow">else</span>
+00100             {
+00101               $error = $this-&gt;localdb-&gt;error() . '&lt;br&gt;' .$sql;
+00102             }
+00103         }
+00104       <span class="keywordflow">else</span>
+00105         {
+00106           $error = $this-&gt;localdb-&gt;error() . '&lt;br&gt;' .$sql;
+00107         }
+00108 
+00109         $this-&gt;localdb-&gt;close();
+00110       }
+00111 
+<a name="l00118"></a><a class="code" href="classWebcal.html#a2">00118</a>   function <a class="code" href="classWebcal.html#a2">get_next_id</a>()
+00119     {
+00120 
+00121       $sql = <span class="stringliteral">"SELECT max(cal_id) FROM webcal_entry"</span>;
+00122 
+00123       <span class="keywordflow">if</span> ($this-&gt;localdb-&gt;query($sql))
+00124         {
+00125           $id = $this-&gt;localdb-&gt;result(0, 0) + 1;
+00126           <span class="keywordflow">return</span> $id;
+00127         }
+00128       <span class="keywordflow">else</span>
+00129         {
+00130           print $this-&gt;localdb-&gt;error();
+00131         }
+00132     }
+00133 }
+00134 ?&gt;
+</div></pre><hr size="1"><address style="align: right;"><small>Généré le Thu Jul 15 20:50:38 2004 pour dolibarr par
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.7 </small></address>
 </body>

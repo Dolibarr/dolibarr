@@ -28,6 +28,12 @@
 		Ensemble des fonctions permettant d'acceder a la database webcalendar.
 */
 
+/*! \class Webcal
+		\brief Classe permettant d'acceder a la database webcalendar
+		
+		Ensemble des fonctions permettant d'acceder a la database webcalendar
+*/
+
 class Webcal {
   var $localdb;
   var $heure = -1;
@@ -37,7 +43,7 @@ class Webcal {
 		\brief Permet de se connecter a la database webcalendar.
 */
 
-  Function Webcal()
+  function Webcal()
     {
       global $conf;
 
@@ -50,14 +56,13 @@ class Webcal {
 
 /*!
 		\brief ajoute une entree dans le calendrier de l'utilsateur
-
-		\param[in] $user		le login de l'utilisateur
-		\param[in] $date		la date de l'evenement dans le calendrier
-		\param[in] $texte		le titre a indiquer dans l'evenement
-		\param[in] $desc		la description a indiquer dans l'evenement
+		\param[in] user		le login de l'utilisateur
+		\param[in] date		la date de l'evenement dans le calendrier
+		\param[in] texte		le titre a indiquer dans l'evenement
+		\param[in] desc		la description a indiquer dans l'evenement
 */
 
-  Function add($user, $date, $texte, $desc)
+  function add($user, $date, $texte, $desc)
     {
 
       $id = $this->get_next_id();
@@ -106,12 +111,11 @@ class Webcal {
 
 /*!
 		\brief obtient l'id suivant dans le webcalendar
-
-		\retval $id	retourne l'id suivant dans le webcalendar
+		\retval id	retourne l'id suivant dans le webcalendar
 */
 
 
-  Function get_next_id()
+  function get_next_id()
     {
 
       $sql = "SELECT max(cal_id) FROM webcal_entry";

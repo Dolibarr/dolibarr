@@ -23,7 +23,7 @@
  */
 
 /*!	\file mysql.lib.php
-		\brief contenant les fonctions pour gere la database de dolibarr.
+		\brief Classes permettant de gérér la database de dolibarr.
 		\author Fabien Seisen
 		\author Rodolphe Quiedeville.
 		\author	Laurent Destailleur.
