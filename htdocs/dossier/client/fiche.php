@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +23,11 @@
 require("./pre.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/client.class.php';
 
+$user->getrights("facture");
 
-if (!$user->rights->telephonie->lire)
+if (!$user->rights->facture->lire)
   accessforbidden();
+
 
 $facs = array();
 $client = new client($db, $_GET["id"]);

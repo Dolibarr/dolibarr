@@ -20,11 +20,12 @@
  *
  */
 require("../../main.inc.php");
-require(DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
-$user->getrights('telephonie');
 
-function llxHeader($head = "", $title="", $soc) {
-  global $user, $conf;
+
+function llxHeader($head = "", $title="", $soc="") {
+  global $user, $conf, $langs;
+  $langs->load("bills");
+  
   /*
    *
    *
@@ -35,13 +36,14 @@ function llxHeader($head = "", $title="", $soc) {
 
   $menu->add(DOL_URL_ROOT."/comm/fiche.php?socid=".$soc->id, $soc->nom);
 
-  $menu->add(DOL_URL_ROOT."/dossier/client/fiche.php?id=".$soc->id, "Factures");
+  $menu->add(DOL_URL_ROOT."/dossier/client/fiche.php?id=".$soc->id, $langs->trans("Bills"));
 
-  foreach($soc->factures as $key=>$value)
-    {
-      $menu->add_submenu(DOL_URL_ROOT."/dossier/client/fiche.php?id=".$soc->id."&amp;facid=".$value[0], $value[1]);
-    }
-
+  if ($soc) {
+      foreach($soc->factures as $key=>$value)
+        {
+          $menu->add_submenu(DOL_URL_ROOT."/dossier/client/fiche.php?id=".$soc->id."&amp;facid=".$value[0], $value[1]);
+        }
+  }
 
   left_menu($menu->liste);
 }
