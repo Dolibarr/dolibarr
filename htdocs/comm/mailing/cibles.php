@@ -147,7 +147,6 @@ if ($mil->fetch($_GET["id"]) == 0)
             if (substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
             {
                 if (eregi("(.*)\.(.*)\.(.*)",$file,$reg)) {
-                    $var = !$var;
                     $modulename=$reg[1];
         
                     // Chargement de la classe
@@ -155,31 +154,51 @@ if ($mil->fetch($_GET["id"]) == 0)
                     $classname = "mailing_".$modulename;
                     require_once($file);
         
-                    print '<tr '.$bc[$var].'>';
-        
-                    print '<td>';
                     $obj = new $classname($db);
-                    print img_object('',$obj->picto).' '.$obj->getDesc();
-                    print '</td>';
+
+                    $qualified=1;
+                    foreach ($obj->require_module as $key)
+                    {
+                        if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))
+                        {
+                            $qualified=0;
+                            //print "Les prérequis d'activation du module mailing ne sont pas respectés. Il ne sera pas actif";
+                            break;
+                        }
+                    }
+                    
+                    // Si le module mailing est qualifié
+                    if ($qualified)
+                    {
+                        $var = !$var;
+                        print '<tr '.$bc[$var].'>';
+            
+                        print '<td>';
+                        print img_object('',$obj->picto).' '.$obj->getDesc();
+                        print '</td>';
+            
+                        /*
+                        print '<td width=\"100\">';
+                        print $modulename;
+                        print "</td>";
+                        */
+                        print '<td align="center">'.$obj->getNbOfRecipients().'</td>';
         
-                    /*
-                    print '<td width=\"100\">';
-                    print $modulename;
-                    print "</td>";
-                    */
-                    print '<td align="center">'.$obj->getNbOfRecipients().'</td>';
-    
-                    print '<td align="center">';
-                    if ($mil->statut == 0) {
-                        print '<form action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST"><input type="submit" value="'.$langs->trans("Add").'"></form>';
+                        print '<td align="center">';
+                        if ($mil->statut == 0)
+                        {
+                            print '<form action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST"><input type="submit" value="'.$langs->trans("Add").'"></form>';
+                        }
+                        else
+                        {
+                            //print $langs->trans("MailNoChangePossible");
+                            print "&nbsp;";
+                        }
+                        print '</td>';
+
+                        print "</tr>\n";
                     }
-                    else {
-                        //print $langs->trans("MailNoChangePossible");
-                        print "&nbsp;";
-                    }
-                    print '</td>';
                 }
-                print "</tr>\n";
             }
         }
         closedir($handle);

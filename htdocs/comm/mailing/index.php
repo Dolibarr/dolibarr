@@ -80,10 +80,10 @@ while (($file = readdir($handle))!==false)
                 $qualified=1;
                 foreach ($mailmodule->require_module as $key)
                 {
-                    if (! $conf->$key->enabled)
+                    if (! $conf->$key->enabled || (! $user->admin && $obj->require_admin))
                     {
                         $qualified=0;
-                        //print "Le module mailing a besoin du module $key. Il ne sera pas actif";
+                        //print "Les prérequis d'activation du module mailing ne sont pas respectés. Il ne sera pas actif";
                         break;
                     }
                 }
