@@ -24,6 +24,8 @@ require("./pre.inc.php");
 
 llxHeader();
 
+print_titre("Commandes");
+
 print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top" width="30%">';
@@ -54,10 +56,8 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
 
-  print_barre_liste("Liste des Commandes",$page,$PHP_SELF,"",$sortfield,$sortorder,'',$num);
-
   $i = 0;
-  print '<p><table class="liste" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="liste" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>';
   print_liste_field_titre("Client",$PHP_SELF, "p.ref");
   print "</td>";
@@ -81,6 +81,69 @@ if ( $db->query($sql) )
  *
  */
 print '</td><td valign="top" width="70%">';
+
+/*
+ * Commandes à valider
+ */
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
+$sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
+if ($socidp)
+{
+  $sql .= " AND c.fk_soc = $socidp";
+}
+
+if ( $db->query($sql) ) 
+{
+  $num = $db->num_rows();
+  if ($num)
+    {
+      $i = 0;
+      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<tr class="liste_titre">';
+      print '<td colspan="2">'.translate("Commandes à valider").'</td></tr>';
+      
+      while ($i < $num)
+	{
+	  $var=!$var;
+	  $obj = $db->fetch_object($i);
+	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	  $i++;
+	}
+      print "</table><br>";
+    }
+}
+/*
+ * Commandes à traiter
+ */
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
+$sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 1";
+if ($socidp)
+{
+  $sql .= " AND c.fk_soc = $socidp";
+}
+
+if ( $db->query($sql) ) 
+{
+  $num = $db->num_rows();
+  if ($num)
+    {
+      $i = 0;
+      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<tr class="liste_titre">';
+      print '<td colspan="2">'.translate("Commandes à traiter").'</td></tr>';
+      
+      while ($i < $num)
+	{
+	  $var=!$var;
+	  $obj = $db->fetch_object($i);
+	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	  $i++;
+	}
+      print "</table><br>";
+    }
+}
 
 /*
  * Propales à facturer
