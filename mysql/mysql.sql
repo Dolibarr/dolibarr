@@ -206,6 +206,27 @@ create table llx_facture_fourn
   UNIQUE INDEX (facnumber)
 );
 
+create table llx_notify
+(
+  rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  datec         datetime,
+  tms           timestamp,
+  login         varchar(8),
+  pass          varchar(32),
+  name          varchar(50),
+  firstname     varchar(50),
+  code          varchar(4),
+  email         varchar(255),
+  admin         smallint default 0,
+  webcal_login  varchar(25),
+  module_comm   smallint default 1,
+  module_compta smallint default 1,
+  fk_societe    integer default 0,
+  note          text,
+
+  UNIQUE INDEX(login)
+);
+
 create table llx_livre_to_auteur
 (
   fk_livre       integer NOT NULL,
