@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,50 +87,61 @@ $sql .= " ORDER BY dateo ASC LIMIT 10";
 
 
 $result = $db->query($sql);
-if ($result) {
+if ($result)
+{
   $var=True;  
   $num = $db->num_rows();
   $i = 0; $total = 0;
-  while ($i < $num) {
-    $objp = $db->fetch_object( $i);
-    $total = $total + $objp->amount;
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object( $i);
+      $total = $total + $objp->amount;
 
-    $var=!$var;
-    print "<tr $bc[$var]>";
-    print '<form method="post" action="'.$PHP_SELF.'?account='.$account.'">';
-    print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
-    print "<input type=\"hidden\" name=\"rowid\" value=\"$objp->rowid\">";
+      $var=!$var;
+      print "<tr $bc[$var]>";
+      print '<form method="post" action="'.$PHP_SELF.'?account='.$account.'">';
+      print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
+      print "<input type=\"hidden\" name=\"rowid\" value=\"$objp->rowid\">";
+      
+      print "<td>".strftime("%d %b %Y",$objp->do)."</TD>\n";
+      print "<td>$objp->label</td>";
 
-    print "<td>".strftime("%d %b %Y",$objp->do)."</TD>\n";
-    print "<td>$objp->label</td>";
-    if ($objp->amount < 0) {
-      print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
-    } else {
-      print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
-    }
+      if ($objp->amount < 0)
+	{
+	  print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
+	}
+      else
+	{
+	  print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
+	}
     
-    print "<td align=\"right\">";
-    print "<input name=\"num_releve\" type=\"text\" value=\"$last_releve\" size=\"6\" maxlength=\"6\"></td>";
-    print "<td align=\"center\"><select name=\"rappro\"><option value=\"1\">oui</option><option value=\"0\" selected>non</option></select></td>";
-    print "<td align=\"center\"><input type=\"submit\" value=\"do\"></td>";
-
-    if ($objp->rappro) {
-      print "<td align=\"center\"><a href=\"releve.php3?num=$objp->num_releve\">$objp->num_releve</a></td>";
-    } else {
-      print "<td align=\"center\"><a href=\"$PHP_SELF?account=$account&action=del&rowid=$objp->rowid\">[Del]</a></td>";
+      print "<td align=\"right\">";
+      print "<input name=\"num_releve\" type=\"text\" value=\"$last_releve\" size=\"6\" maxlength=\"6\"></td>";
+      print "<td align=\"center\"><select name=\"rappro\"><option value=\"1\">oui</option><option value=\"0\" selected>non</option></select></td>";
+      print "<td align=\"center\"><input type=\"submit\" value=\"do\"></td>";
+      
+      if ($objp->rappro)
+	{
+	  print "<td align=\"center\"><a href=\"releve.php3?num=$objp->num_releve\">$objp->num_releve</a></td>";
+	}
+      else
+	{
+	  print "<td align=\"center\"><a href=\"$PHP_SELF?account=$account&action=del&rowid=$objp->rowid\">[Del]</a></td>";
+	}
+      print "</tr>";
+      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"7\">";
+      print "<select name=\"cat1\">$options";
+      
+      print "</select>";
+      print "</tr>";
+      print "</form>";
+      $i++;
     }
-    print "</tr>";
-    print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"7\">";
-    print "<select name=\"cat1\">$options";
-
-    print "</select>";
-    print "</tr>";
-    print "</form>";
-    $i++;
-  }
   $db->free();
 }
 print "</table>";
+
+print '<br>Dernier relevé : <a href="releve.php3?account='.$account.'&num='.$last_releve.'">'.$last_releve.'</a>';
 
 $db->close();
 
