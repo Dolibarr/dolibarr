@@ -24,9 +24,10 @@ class CommandeStats
 {
   var $db ;
 
-  Function CommandeStats($DB)
+  Function CommandeStats($DB, $socidp)
     {
       $this->db = $DB;
+      $this->socidp = $socidp;
     }
 
   Function getNbCommandeByMonthWithPrevYear($year)
@@ -53,6 +54,10 @@ class CommandeStats
     $result = array();
     $sql = "SELECT date_format(date_commande,'%m') as dm, count(*)  FROM llx_commande";
     $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
+    if ($this->socidp)
+      {
+	$sql .= " AND fk_soc = ".$this->socidp;
+      }
     $sql .= " GROUP BY dm DESC";
 
     if ($this->db->query($sql))
@@ -84,15 +89,19 @@ class CommandeStats
     return $data;
   }
 
-
   /**
    * Renvoie le nombre de commande par année
    *
    */
-  Function getNbCommandeByYear()
+  Function getNbByYear()
   {
     $result = array();
-    $sql = "SELECT date_format(date_commande,'%Y') as dm, count(*)  FROM llx_commande GROUP BY dm DESC WHERE fk_statut > 0";
+    $sql = "SELECT date_format(date_commande,'%Y') as dm, count(*), sum(total_ht)  FROM llx_commande WHERE fk_statut > 0";
+    if ($this->socidp)
+      {
+	$sql .= " AND fk_soc = ".$this->socidp;
+      }
+    $sql .= " GROUP BY dm DESC";
     if ($this->db->query($sql))
       {
 	$num = $this->db->num_rows();
@@ -100,7 +109,7 @@ class CommandeStats
 	while ($i < $num)
 	  {
 	    $row = $this->db->fetch_row($i);
-	    $result[$i] = $row;
+	    $result[$row[0]] = array($row[1], $row[2]);
 
 	    $i++;
 	  }
@@ -117,6 +126,10 @@ class CommandeStats
     $result = array();
     $sql = "SELECT date_format(date_commande,'%m') as dm, sum(total_ht)  FROM llx_commande";
     $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
+    if ($this->socidp)
+      {
+	$sql .= " AND fk_soc = ".$this->socidp;
+      }
     $sql .= " GROUP BY dm DESC";
 
     if ($this->db->query($sql))
@@ -149,6 +162,10 @@ class CommandeStats
     $result = array();
     $sql = "SELECT date_format(date_commande,'%m') as dm, avg(total_ht)  FROM llx_commande";
     $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
+    if ($this->socidp)
+      {
+	$sql .= " AND fk_soc = ".$this->socidp;
+      }
     $sql .= " GROUP BY dm DESC";
 
     if ($this->db->query($sql))
