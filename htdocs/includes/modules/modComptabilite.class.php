@@ -87,7 +87,7 @@ class modComptabilite extends DolibarrModules
     $sql = array(
 		 "$isq (90,'Tous les droits sur la compta','compta',NULL,NULL,'a',0);",
 		 "$isq (91,'Lire les charges','compta',NULL,NULL,'r',1);",
-		 "$isq (92,'Créer modifier les charges',NULL,NULL,'compta','w',0);",
+		 "$isq (92,'Créer modifier les charges','compta',NULL,NULL,'w',0);",
 		 "$isq (93,'Supprimer les charges','compta',NULL,NULL,'d',0);",
 		 "$isq (95,'Lire CA, bilans, résultats','compta',NULL,NULL,'r',1);",
 		 "$isq (96,'Paramétrer la ventilation','compta','ventilation','param','r',0);",
