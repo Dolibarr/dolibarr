@@ -48,7 +48,7 @@ $filev = "/document/images/propale$year.png";
 
 $px = new Graph($data);
 $px->SetMaxValue($px->GetMaxValue());
-$px->SetWidth(450);
+$px->SetWidth(500);
 $px->SetHeight(280);
 
 $px->draw($dir.$filev, $data, $year);
@@ -66,8 +66,12 @@ for ($i = 1 ; $i < 13 ; $i++)
 
 $file_amount = "/document/images/propalamount$year.png";
 
-$px = new Graph();
+$px = new Graph($data);
 $px->SetYLabel("Montant");
+$px->SetMaxValue($px->GetAmountMaxValue());
+$px->SetWidth(500);
+$px->SetHeight(250);
+
 $px->draw($dir.$file_amount, $data, $year);
 
 $res = $stats->getAverageByMonth($year);
@@ -79,8 +83,11 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
 $file_avg = "/document/images/propalaverage$year.png";
-$px = new Graph();
+$px = new Graph($data);
 $px->SetYLabel("Montant moyen");
+$px->SetMaxValue($px->GetAmountMaxValue());
+$px->SetWidth(500);
+$px->SetHeight(250);
 $px->draw($dir.$file_avg, $data, $year);
 
 
