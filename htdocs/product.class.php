@@ -73,8 +73,9 @@ class Product
    */
   function create($user) 
     {
-    $this->ref = ereg_replace("'","",stripslashes($this->ref));
-    $this->ref = ereg_replace("\"","",stripslashes($this->ref));
+      $this->ref = ereg_replace("'","",stripslashes($this->ref));
+      $this->ref = ereg_replace("\"","",stripslashes($this->ref));
+
       $sql = "SELECT count(*)";
       $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .trim($this->ref)."'";
 
@@ -119,8 +120,12 @@ class Product
 		  return -1;
 		}
 	    }
+	  else
+	    {
+	      return -3;
+	    }
 	}
-  }
+    }
   /**
    *
    *
