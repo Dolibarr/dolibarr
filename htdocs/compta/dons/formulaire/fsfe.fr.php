@@ -167,23 +167,38 @@ $don->fetch($rowid);
 	      Mode de versement :
 	      <table width="100%">
 		<tr align="center">
-		  <td valign="top">
-		    Numéraire
-		  </td>
-		  <td valign="top">
-		    <?php 
-if ($don->modepaiementid == 7)
+		  <td valign="top"><?PHP
+if ($don->modepaiementid == 4)
 {
-print "Chèque ou virement";
+print "( Numéraire )";
 }
 else
 {
-print "<b>Chèque ou virement</b>";
+print "<strike>Numéraire</strike>";
+} ?>
+		  </td>
+		  <td valign="top">
+		    <?php 
+if ($don->modepaiementid == 7 or $don->modepaiementid == 2)
+{
+print "( Chèque ou virement )";
+}
+else
+{
+print "<strike>Chèque ou virement</strike>";
 }
                     ?>
 		  </td>
 		  <td valign="top">
-		    Autres
+<?PHP
+if ($don->modepaiementid <> 4 && $don->modepaiementid <> 7 && $don->modepaiementid <> 2)
+{
+print "( Autres )";
+}
+else
+{
+print "<strike>Autres</strike>";
+} ?>
 		  </td>
 		  <td align="right">
 		    <table border="0" cellspacing="0" cellpadding="1" bgcolor="#000000">
