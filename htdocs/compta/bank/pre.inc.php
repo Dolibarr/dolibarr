@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,9 +38,6 @@ function llxHeader($head = "")
 
   $menu = new Menu();
 
-  $menu->add("index.php","Comptes");
-  $menu->add_submenu("search.php","Recherche");
-
 
   $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account where clos = 0 AND courant = 1";
   $result = $db->query($sql);
@@ -54,6 +52,7 @@ function llxHeader($head = "")
 	  $objp = $db->fetch_object($i);
 	  $menu->add("account.php?account=" . $objp->rowid,  $objp->label);
 	  $menu->add_submenu("releve.php?account=" . $objp->rowid ,"Relevés");
+      $menu->add_submenu("bilanmens.php?account=" . $objp->rowid ,"Bilan mensuel E/S");
 	  $i++;
 	}
     }
@@ -61,6 +60,7 @@ function llxHeader($head = "")
 
   $menu->add("index.php","Banque");
 
+  $menu->add_submenu("search.php","Recherche écriture");
   $menu->add_submenu("budget.php","Budgets");
   $menu->add_submenu("bilan.php","Bilan");
 
