@@ -764,7 +764,7 @@ else
 		print "<tr><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>$_MONNAIE</td></tr>\n";
 		print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($fac->total_ttc)."</td><td bgcolor=\"#d0d0d0\">$_MONNAIE</td></tr>\n";
 		
-		$resteapayer = abs($fac->total_ttc - $total);
+		$resteapayer = $fac->total_ttc - $total;
 
 		print "<tr><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
 		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">$_MONNAIE</td></tr>\n";
@@ -974,7 +974,7 @@ else
 	      } 
 
 	    // Envoyer
-	    if ($fac->statut == 1 && abs($resteapayer) > 0 && $user->rights->facture->envoyer)
+	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer)
 	      {
 		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=presend\">Envoyer</a>";
 	      }
@@ -992,7 +992,7 @@ else
 	      }
 	    
 	    // Classer 'payé'
-	    if ($fac->statut == 1 && abs($resteapayer) == 0 
+	    if ($fac->statut == 1 && $resteapayer <= 0 
 		&& $fac->paye == 0 && $user->rights->facture->paiement)
 	      {
 		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a>";
