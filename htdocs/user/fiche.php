@@ -21,6 +21,13 @@
  * $Source$
  */
 
+/*!
+	    \file       htdocs/user/fiche.php
+		\brief      Page de la fiche utilisateur
+		\version    $Revision$
+*/
+
+
 require("./pre.inc.php");
 
 $langs->load("users");
@@ -123,7 +130,7 @@ llxHeader();
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Nouvel utilisateur                                                         */
+/* Affichage fiche en mode création                                           */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,7 +218,7 @@ else
         $head[$h][1] = $langs->trans("Addons");
         $h++;
     
-        dolibarr_fiche_head($head, $hselected, $fuser->nom." ".$fuser->prenom);
+        dolibarr_fiche_head($head, $hselected, $fuser->fullname);
 
 
         /*
