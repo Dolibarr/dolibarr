@@ -27,7 +27,7 @@ $info_box_contents = array();
 
 
 $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
-$sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye=0";  
+$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye=0";  
 $sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
 $sql .= $db->plimit(5, 0);
 
