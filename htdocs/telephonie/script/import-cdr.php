@@ -23,13 +23,13 @@
 
 require ("../../master.inc.php");
 
-$opt = getopt("file:");
+$opt = getopt("f:");
 
-$file = $opt[file];
+$file = $opt['f'];
 
 if (strlen($file) == 0)
 {
-  print "Usage :\n php import-cdr.php --file FILENAME\n";
+  print "Usage :\n php import-cdr.php -f FILENAME\n";
 }
 else
 {
