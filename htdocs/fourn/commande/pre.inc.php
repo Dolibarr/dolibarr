@@ -33,6 +33,7 @@ $langs->load("suppliers");
 $langs->load("companies");
 $user->getrights('fournisseur');
 
+require_once DOL_DOCUMENT_ROOT."/fournisseur.class.php";
 require_once DOL_DOCUMENT_ROOT."/fournisseur.commande.class.php";
 
 function llxHeader($head = "", $title = "")
