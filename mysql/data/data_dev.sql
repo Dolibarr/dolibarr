@@ -46,6 +46,17 @@ values ('02-11-YHGT',2,now(),'2002-11-01',1,1000,0,196,1196,1,NULL,NULL,'');
 insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
 values ('02-12-YHGT',2,now(),'2002-12-01',1,1000,0,196,1196,1,NULL,NULL,'');
 
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_THEME',  'yellow','chaine',1);
+
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_BOUTIQUE',  '1','yesno',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_COMMANDE',  '1','yesno',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_COMMERCIAL','1','yesno',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_DON',       '1','yesno',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_FACTURE',   '1','yesno',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_ADHERENT',  '1','yesno',0);
+
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('BOUTIQUE_LIVRE','1','yesno',0);
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('BOUTIQUE_ALBUM','1','yesno',0);
 
 
 delete from llx_user;

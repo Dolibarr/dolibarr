@@ -43,14 +43,14 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu("sqltables.php", "Tables");
 
-  if (DB_NAME_OSC <> "DB_NAME_OSC")
-    {
-      $menu->add("osc-languages.php", "OSC Languages $toto");
-    }
-
   if ($conf->boutique->enabled)
     {
       $menu->add("boutique.php", "Boutique");
+
+      if (defined("DB_NAME_OSC"))
+	{
+	  $menu->add_submenu("osc-languages.php", "OSC Languages $toto");
+	}      
     }
 
   $menu->add("phpinfo.php", "phpinfo");

@@ -51,6 +51,10 @@ drop table if exists llx_adherent_options;
 
 drop table if exists llx_adherent_options_label;
 
+drop table if exists llx_album;
+
+drop table if exists llx_auteur;
+
 drop table if exists llx_bank;
 
 drop table if exists llx_bank_account;
@@ -79,6 +83,8 @@ drop table if exists llx_don;
 
 drop table if exists llx_don_projet;
 
+drop table if exists llx_editeur;
+
 drop table if exists llx_fa_pr;
 
 drop table if exists llx_facture;
@@ -88,6 +94,10 @@ drop table if exists llx_facturedet;
 drop table if exists llx_facture_fourn;
 
 drop table if exists llx_fichinter;
+
+drop table if exists llx_groupart;
+
+drop table if exists llx_livre;
 
 drop table if exists llx_paiement;
 
@@ -104,6 +114,8 @@ drop table if exists llx_propaldet;
 drop table if exists llx_service;
 
 drop table if exists llx_soc_recontact;
+
+drop table if exists llx_sqltables;
 
 drop table if exists llx_tva;
 

@@ -38,6 +38,8 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_adherent_type.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_adherent_options.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_adherent_options_label.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_album.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_auteur.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_bank.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_bank_account.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_bank_categ.sql
@@ -52,11 +54,14 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_cotisation.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_don.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_don_projet.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_editeur.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_fa_pr.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_facture.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_facturedet.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_facture_fourn.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_fichinter.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_groupart.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_livre.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_paiement.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_pointmort.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_product.sql
@@ -65,6 +70,7 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_propaldet.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_service.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_soc_recontact.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_sqltables.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_tva.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_user.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_ventes.sql
@@ -73,10 +79,6 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < societe.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < socpeople.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < socstatutlog.sql
-
-
-drop:
-	$(MYSQL) $(OPTIONS) $(BASE) < drop.sql
 
 show:
 	$(MYSQL) $(OPTIONS) $(BASE) -e 'show tables'

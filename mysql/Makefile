@@ -28,8 +28,7 @@ OPTIONS=
 TABLES=$(shell find tables/ -name "*sql")
 
 all:
-	cd tables \
-	&& make show
+	cat README
 
 show:
 	cd tables \
@@ -44,16 +43,15 @@ dev:
 	&& make dev
 
 
-fulldev: droptable table load dev
+fulldev: drop table load dev
 
-droptable:
-	cd tables \
-	&& make drop
+drop:
+	$(MYSQL) $(OPTIONS) $(BASE) < drop.sql
 
 load:
 	$(MYSQL) $(OPTIONS) $(BASE) < data/data.sql
 
-drop: dropdb droppriv
+dropall: dropdb droppriv
 
 droppriv:
 	$(MYSQL) mysql -e "delete from db where Db='$(BASE)' ; "
