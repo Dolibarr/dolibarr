@@ -58,8 +58,8 @@ class CommandeStats
       {
 	$sql .= " AND fk_soc = ".$this->socidp;
       }
-    $sql .= " GROUP BY dm DESC";
-
+    //pas un group by mais un ORDER// $sql .= " GROUP BY dm DESC";
+		$sql .= " ORDER BY dm DESC";
     if ($this->db->query($sql))
       {
 	$num = $this->db->num_rows();

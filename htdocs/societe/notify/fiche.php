@@ -28,6 +28,8 @@ if ($user->societe_id > 0)
 {
   $socid = $user->societe_id;
 }
+	
+$socid = $_GET["socid"];
 
 llxHeader();
 
@@ -36,7 +38,7 @@ if ($_POST["action"] == 'add')
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
   $sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$_POST["contactid"]." AND fk_action=".$_POST["actionid"];
   if ($db->query($sql))
-    {
+   {
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
       $sql .= " VALUES (now(),$socid,".$_POST["contactid"].",".$_POST["actionid"].")";
       
@@ -55,11 +57,11 @@ if ($_POST["action"] == 'add')
     }
 }
 
-if ($action == "delete")
+if ($_GET["action"] == 'delete')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-  $sql .= " WHERE rowid = $actid";
-
+ $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"].";";
+ $db->query($sql);
+    
   if ($db->query($sql))
     {
       // TODO ajouter une sécu pour la suppression 
@@ -72,6 +74,7 @@ if ($action == "delete")
  */
 $soc = new Societe($db);
 $soc->id = $_GET["socid"];
+
 if ( $soc->fetch($soc->id) ) 
 {
   
@@ -149,7 +152,6 @@ if ( $soc->fetch($soc->id) )
     {
       $sortfield="c.name";
     }
-
   print '<table width="100%" class="noborder" cellspacing="0" cellpadding="3">';
   print '<tr class="liste_titre">';
   print_liste_field_titre_new ("Contact","fiche.php","c.name","","&socid=$socid",'',$sortfield);
@@ -171,7 +173,9 @@ if ( $soc->fetch($soc->id) )
 	  
 	  print '<tr '.$bc[$var].'><td>'.$obj->firstname . " ".$obj->name.'</td>';
 	  print '<td>'.$obj->titre.'</td>';
-	  print '<td align="center"><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a>';
+		print'<td align="center">
+		<a href="fiche.php?socid='.$socid.'&action=delete&actid=		'.$obj->rowid.'">'.img_delete().'</a>';
+		
 	  $i++;
 	  $var = !$var;
 	}

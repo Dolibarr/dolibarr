@@ -42,7 +42,7 @@
 class User
 {
   var $db;
-
+	
   var $id;
   var $fullname;
   var $nom;
@@ -55,6 +55,7 @@ class User
   var $pass;
   var $comm;
   var $compta;
+	var $societe_id;
   var $webcal_login;
   var $errorstr;
   var $userpref_limite_liste;
@@ -729,8 +730,6 @@ class User
       $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login' AND rowid <> $this->id;";
 		 
 
-		 	$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='bennybe' AND
-			email = '$this->id';";
 			
       if ($this->db->query($sql)) 
 	{
