@@ -43,8 +43,6 @@ function llxHeader($head = "", $title="") {
       $menu->add_submenu(DOL_URL_ROOT."/telephonie/simulation/fiche.php?action=create", "Nouvelle");
     }
 
-  $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
-
   $menu->add(DOL_URL_ROOT."/telephonie/client/index.php", "Clients");
 
   $menu->add(DOL_URL_ROOT."/telephonie/contrat/", "Contrats");
@@ -61,11 +59,14 @@ function llxHeader($head = "", $title="") {
   if (TELEPHONIE_MODULE_NUMDATA == 1)
     $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/numdata.php", "Numéros data");
 
+
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commandes");
+
+  $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
 
   $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
+  $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/", "Fournisseurs");
 

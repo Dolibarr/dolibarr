@@ -39,7 +39,7 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Telephonie");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
+
   $menu->add(DOL_URL_ROOT."/telephonie/client/index.php", "Clients");
   $menu->add(DOL_URL_ROOT."/telephonie/contrat/", "Contrats");
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
@@ -57,9 +57,11 @@ function llxHeader($head = "", $title="") {
 
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/commande/retour/", "Retour");
 
+  $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
+
   $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
+  $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/", "Fournisseurs");
 

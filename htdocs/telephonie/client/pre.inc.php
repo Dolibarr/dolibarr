@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ require(DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 $user->getrights('telephonie');
 
 function llxHeader($head = "", $title="") {
-  global $user, $conf;
+  global $user;
 
   /*
    *
@@ -37,23 +37,25 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Telephonie");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/simulation/fiche.php", "Simulation");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/simulation/fiche.php?action=create", "Nouvelle");
-
-  $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
+  if (TELEPHONIE_MODULE_SIMULATION == 1)
+    $menu->add(DOL_URL_ROOT."/telephonie/simulation/fiche.php", "Simulation");
 
   $menu->add(DOL_URL_ROOT."/telephonie/client/index.php", "Clients");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/client/liste.php", "Liste");
 
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/client/rapports", "Rapports");
 
+  $menu->add(DOL_URL_ROOT."/telephonie/contrat/", "Contrats");
+
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commandes");
 
+  $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
+
   $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
+  $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/fournisseurs.php", "Fournisseurs");
 
