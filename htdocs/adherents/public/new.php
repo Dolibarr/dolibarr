@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../pre.inc.php");
+require("./pre.inc.php");
 require("../../adherent.class.php");
 require("../../adherent_type.class.php");
 require("../../cotisation.class.php");
