@@ -135,9 +135,13 @@ if ($result)
       print "</a>&nbsp;<a href=\"soc.php?socid=$obj->idp\">$obj->nom</a></td>\n";
       print "<td>".$obj->ville."&nbsp;</TD>\n";
       print '<td align="center">';
-      if ($obj->client)
+      if ($obj->client==1)
 	{
-	  print "<a href=\"comm/fiche.php?socid=$obj->idp\">client</a>\n";
+	  print "<a href=\"comm/fiche.php?socid=$obj->idp\">Client</a>\n";
+	}
+      elseif ($obj->client==2)
+	{
+	  print "<a href=\"comm/prospect/fiche.php?id=$obj->idp\">Prospect</a>\n";
 	}
       else
 	{
