@@ -47,6 +47,7 @@ function llxHeader($head = "") {
 	{
 	  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", "Nouvelle société");
 	}
+      $menu->add_submenu(DOL_URL_ROOT."/societe/groupe/index.php", $langs->trans("SocGroup"));
       $menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
     }
 
@@ -114,6 +115,11 @@ function llxHeader($head = "") {
       if ($conf->expedition->enabled) {
       	$menu->add_submenu(DOL_URL_ROOT."/expedition/index.php", $langs->trans("Sendings"));
       }
+    }
+
+  if ($conf->telephonie->enabled) // EXPERIMENTAL -> RODO
+    {
+      $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Téléphonie");
     }
 
   if ($conf->don->enabled)
