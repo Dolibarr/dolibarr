@@ -92,6 +92,39 @@ else
 
 print '<br />';
 
+$sql = "SELECT distinct s.idp ";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= " , ".MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE s.idp = l.fk_client_comm ";
+$sql .= " AND l.fk_commercial_suiv = ".$user->id;
+
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $i = 0;
+
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>Mes clients suivis</td><td valign="center">Nb</td>';
+  print "</tr>\n";
+  $var=True;
+
+  $row = $db->fetch_row(0);	
+
+  print "<tr $bc[$var]>";
+  print '<td><a href="my.php">Nombre de clients</a></td>';
+  print "<td>".$num."</td>\n";
+  print "</tr>\n";
+
+  print "</table>";
+  $db->free();
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
+
+print '<br />';
+
 print '</td>';
 
 
@@ -146,7 +179,7 @@ if ($result)
       print img_file();      
       print '</a>&nbsp;';
 
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.$obj->nom.'</a></td>';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
       print '<td align="center">'.$obj->ligne."</td>\n";
 
 
