@@ -100,9 +100,10 @@ Class pdf_propale_vert
 		  $nexY = $pdf->GetY();
 		 
 		  $pdf->SetXY (10, $curY );
+		  $pdf->SetFont('Arial','', 8);
+		  $pdf->MultiCell(30, 5, $propale->lignes[$i]->ref, 0, 'L', 0);
 
-		  $pdf->MultiCell(30, 5, $propale->lignes[$i]->ref, 0, 'C', 0);
-
+		  $pdf->SetFont('Arial','', 10);
 		  $pdf->SetXY (132, $curY );		  
 		  $pdf->MultiCell(10, 5, $propale->lignes[$i]->tva_tx, 0, 'C', 0);
 		  
@@ -230,6 +231,10 @@ Class pdf_propale_vert
       $titre = "Montants exprimés en euros";
       $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
 
+      $pdf->SetXY(10, ($tab_top + $tab_height + 6));
+      $pdf->SetFont('Arial','',8);
+      $texte = "En conformité avec la loi 92-1442 du 31/12/92 modifiée, une pénalité sera appliquée pour un retard de paiement au taux d'intérêt légal multiplié par 5. LE matériel reste l'entière propriété de ".MAIN_INFO_SOCIETE_NOM." j'usqu'à son paiement intégral. Les configurations sont garanties trois ans (1 an pièce et main d'oeuvre, 2 ans (souris, micro-ventilateurs, claviers, non garanties). Pièces détachées non garanties si montage hors de nos ateliers. La validation d'un devis est soumise à sa signature et encaissement d'un accompte de 30% du montant TTC.";
+      $pdf->MultiCell(120,3,$texte,0,'J');
     }
 
   Function _pagehead(&$pdf, $propale)
