@@ -130,7 +130,7 @@ create table llx_paiement_facture
 
 insert into llx_const(name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document',1);
 insert into llx_const(name, value, type, note, visible) values ('MAIN_SEARCHFORM_PRODUITSERVICE','1','yesno','Affichage formulaire de recherche des Produits et Services dans la barre de gauche',0);
-
+delete from llx_const where name = 'COMPTA_BANK_FACTURES';
 
 drop table if exists llx_c_forme_juridique;
 

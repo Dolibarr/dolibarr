@@ -62,7 +62,6 @@ insert into llx_const (name, value, type, note) values ('MAIN_START_YEAR','2004'
 insert into llx_const (name, value, type, note) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
 insert into llx_const (name, value, type, note) values ('MAIN_DEBUG','1','yesno','Debug ..');
 
-insert into llx_const (name, value, type, note, visible) values ('COMPTA_BANK_FACTURES','1','yesno','Menu factures dans la partie bank',0);
 insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine',0);
 
 --
