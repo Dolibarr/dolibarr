@@ -52,8 +52,11 @@ function llxHeader($head = "") {
   $menu->add_submenu(DOL_URL_ROOT."/compta/dons/liste.php",$langs->trans("List"));
   $menu->add_submenu(DOL_URL_ROOT."/compta/dons/stats.php",$langs->trans("Statistics"));
 
-  $menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("Bank"));
-
+  if ($conf->banque->enabled) {
+    $langs->load("banks");
+    $menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("Bank"));
+  }
+  
   left_menu($menu->liste);
 
 }

@@ -31,12 +31,14 @@
 require_once("../../main.inc.php");
 require_once("./account.class.php");
 
+$langs->load("banks");
+
 $user->getrights('banque');
 
 
 function llxHeader($head = "")
 {
-  global $db, $user, $conf;
+  global $db, $user, $conf, $langs;
 
   top_menu($head);
 
@@ -62,7 +64,7 @@ function llxHeader($head = "")
     }
   $db->close;
 
-  $menu->add(DOL_URL_ROOT."/compta/bank/index.php","Banque");
+  $menu->add(DOL_URL_ROOT."/compta/bank/index.php",$langs->trans("Bank"));
 
   $menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php","Recherche écriture");
   $menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php","Budgets");
@@ -75,7 +77,7 @@ function llxHeader($head = "")
 
   if ($user->rights->banque->configurer)
     {
-      $menu->add_submenu(DOL_URL_ROOT."/compta/bank/config.php","Configuration");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/bank/config.php",$langs->trans("Setup"));
     }
 
   if (defined("COMPTA_ONLINE_PAYMENT_BPLC") && COMPTA_ONLINE_PAYMENT_BPLC)
