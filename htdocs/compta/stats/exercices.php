@@ -233,8 +233,12 @@ function ppt ($db, $year, $socidp)
   print "<tr><td valign=\"top\" width=\"30%\">";
   
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1 AND date_format(f.datef,'%Y') = ".($year-1);
-
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+  $sql .= " WHERE f.fk_statut = 1";
+  if ($conf->compta->mode != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = 1";
+  }
+  $sql.=" AND date_format(f.datef,'%Y') = ".($year-1);
   if ($socidp)
     {
       $sql .= " AND f.fk_soc = $socidp";
@@ -247,8 +251,12 @@ function ppt ($db, $year, $socidp)
   print "</td><td valign=\"top\" width=\"30%\">";
   
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1 AND date_format(f.datef,'%Y') = $year ";
-
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+  $sql .= " WHERE f.fk_statut = 1";
+  if ($conf->compta->mode != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = 1";
+  }
+  $sql.=" AND date_format(f.datef,'%Y') = $year ";
   if ($socidp)
     {
       $sql .= " AND f.fk_soc = $socidp";

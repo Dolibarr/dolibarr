@@ -45,7 +45,12 @@ function get_ca_propal ($db, $year, $socidp)
 function get_ca ($db, $year, $socidp)
 {
   
-  $sql = "SELECT sum(f.amount) as sum FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1 AND date_format(f.datef , '%Y') = $year ";
+  $sql = "SELECT sum(f.amount) as sum FROM ".MAIN_DB_PREFIX."facture as f";
+  $sql .= " WHERE f.fk_statut = 1";
+  if ($conf->compta->mode != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = 1";
+  }
+  $sql .= " AND date_format(f.datef , '%Y') = $year ";
   if ($socidp)
     {
       $sql .= " AND f.fk_soc = $socidp";

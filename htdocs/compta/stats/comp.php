@@ -97,7 +97,12 @@ function factures ($db, $year, $month, $paye) {
   global $bc;
 
   $sql = "SELECT s.nom, s.idp, f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.paye = $paye";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+  $sql .= " WHERE f.fk_statut = 1";
+  if ($conf->compta->mode != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = $paye";
+  }
+  $sql .= " AND f.fk_soc = s.idp";
   $sql .= " AND date_format(f.datef, '%Y') = $year ";
   $sql .= " AND round(date_format(f.datef, '%m')) = $month ";
   $sql .= " ORDER BY f.datef DESC ";
@@ -258,7 +263,12 @@ function ppt ($db, $year, $socidp)
   print "</td><td valign=\"top\" width=\"30%\">";
   
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1 AND date_format(f.datef,'%Y') = $year ";
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+  $sql .= " WHERE f.fk_statut = 1";
+  if ($conf->compta->mode != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = 1";
+  }
+  $sql .= " AND date_format(f.datef,'%Y') = $year ";
   if ($socidp)
     {
       $sql .= " AND f.fk_soc = $socidp";
