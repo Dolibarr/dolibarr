@@ -35,7 +35,7 @@ class modPropale extends DolibarrModules
     $this->db = $DB ;
     $this->numero = 20 ;
     $this->name = "Propositions commerciales";
-    $this->description = "Gestion des proposition commerciale";
+    $this->description = "Gestion des propositions commerciales";
     $this->const_name = "MAIN_MODULE_PROPALE";
     $this->const_config = MAIN_MODULE_PROPALE;
 
