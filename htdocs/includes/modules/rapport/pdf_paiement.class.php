@@ -34,7 +34,7 @@ Class pdf_paiement {
 
       $this->line_height = 5;
       $this->line_per_page = 25;
-      $this->tab_height = $this->line_height * $this->line_per_page;
+      $this->tab_height = 230;//$this->line_height * $this->line_per_page;
 
     }
 
@@ -62,7 +62,8 @@ Class pdf_paiement {
       $pdf->Text(11, 16, "Date : " . strftime("%d %b %Y", time()));
       
       $pdf->SetFont('Arial','B',12);
-      $pdf->Text(11, 22, "Page " . $page . " sur " . $pages);
+      $pdf->Text(11, 22, "Page " . $page);
+      //      $pdf->Text(11, 22, "Page " . $page . " sur " . $pages);
 
       $pdf->SetFont('Arial','',12);
             
@@ -98,6 +99,16 @@ Class pdf_paiement {
 	  $i = $j;
 	  if ($oldprowid <> $lines[$j][7])
 	    {	     
+	      if ($yp > 200)
+		{
+		  $page++;
+		  $pdf->AddPage();
+		  $this->Header($pdf, $page, $pages);
+		  $pdf->SetFont('Arial','', 9);
+		  $yp = 0;
+		}
+
+
 	      $pdf->SetXY (10, $this->tab_top + 10 + $yp);
 	      $pdf->MultiCell(30, $this->line_height, $lines[$j][1], 0, 'J', 1);
 
@@ -232,8 +243,8 @@ Class pdf_paiement {
       */
 
       $pdf->AddPage();
-      $this->Header($pdf, $i+1, $pages);
-      $this->Body($pdf, $i+1, $lines);
+      $this->Header($pdf, 1, $pages);
+      $this->Body($pdf, 1, $lines);
 
       /*
        *
