@@ -198,8 +198,13 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Liste des clients", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
-
+  if ($action == 'facturer') {
+  	print_barre_liste("Liste des clients facturables", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
+  }
+  else {
+  	print_barre_liste("Liste des clients", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
+  }
+  
   if ($sortorder == "DESC")
     {
       $sortorder="ASC";
@@ -229,7 +234,7 @@ if ($result)
 
       if ($user->societe_id == 0)
 	{
-	  print "<TD align=\"center\"><a href=\"facture.php?socidp=$obj->idp&action=create\">[Facture]</A></td>\n";
+	  print "<TD align=\"center\"><a href=\"facture.php?socidp=$obj->idp&action=create\">Facturer <img src='".DOL_URL_ROOT."/theme/".$conf->theme."/img/filenew.png' border=\"0\" alt=\"Nouvelle facture\"></A></td>\n";
 	}
       else
 	{
