@@ -233,6 +233,7 @@ class Don
 
 	    $obj = $this->db->fetch_object(0);
 
+	    $this->id             = $obj->rowid;
 	    $this->date           = $obj->datedon;
 	    $this->prenom         = stripslashes($obj->prenom);
 	    $this->nom            = stripslashes($obj->nom);
