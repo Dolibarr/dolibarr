@@ -50,20 +50,25 @@ if ($result)
   $db->free();
 }
 
+/*
+ * Comptes
+ */
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
 print '<tr class="liste_titre"><td>Comptes courants</td><td>Banque</td>';
 print '<td align="left">Numéro</td><td align="right">Solde</td><td align="center">Clos</td>';
 print "</tr>\n";
 $total = 0;
+$var=True;
 for ($i = 0 ; $i < sizeof($accounts) ; $i++)
 {
+  $var = !$var;
   $acc = new Account($db);
   $acc->fetch($accounts[$i]);
   if ($acc->courant)
     {
       $solde = $acc->solde();
   
-      print "<tr $bc[1]><td>";
+      print "<tr ".$bc[$var]."><td>";
       print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
     
       print "</td><td>$acc->bank</td><td>$acc->number</td>";
@@ -74,45 +79,53 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++)
     }
 }
 
-print "<tr $bc[1]>".'<td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
+$var = !$var;
+print "<tr>".'<td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
+
+
 print '<tr class="liste_titre"><td colspan="5">Dettes</td></tr>';
+
 /*
  * TVA
  */
 if ($conf->compta->tva)
 {
+  $var = !$var;
   $tva = new Tva($db);
 
   $tva_solde = $tva->solde();
 
   $total = $total + $tva_solde;
 
-  print "<tr $bc[1]>".'<td colspan="3">TVA</td><td align="right">'.price($tva_solde).'</td><td>&nbsp;</td></tr>';
+  print "<tr ".$bc[$var].">".'<td colspan="3">TVA</td><td align="right">'.price($tva_solde).'</td><td>&nbsp;</td></tr>';
 }
+
 /*
  * Charges sociales
  */
+$var = !$var;
 $chs = new ChargeSociales($db);
 
 $chs_a_payer = $chs->solde();
 
 $total = $total - $chs_a_payer;
 
-print "<tr $bc[1]>".'<td colspan="3">URSSAF</td><td align="right">'.price($chs_a_payer).'</td><td>&nbsp;</td></tr>';
+print "<tr ".$bc[$var].">".'<td colspan="3">URSSAF</td><td align="right">'.price($chs_a_payer).'</td><td>&nbsp;</td></tr>';
+
+
 /*
- *
+ * Total
  */
+print "<tr>".'<td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
 
-print "<tr $bc[1]>".'<td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
 
 /*
- *
- *
- *
+ * Comptes placements
  */
 print '<tr class="liste_titre"><td colspan="5">Comptes placements</td></tr>';
 
 for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
+  $var = !$var;
   $acc = new Account($db);
   $acc->fetch($accounts[$i]);
 
@@ -120,7 +133,7 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
 
     $solde = $acc->solde();
   
-    print "<tr $bc[1]><td>";
+    print "<tr ".$bc[$var]."><td>";
     print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
     
     print "</td><td>$acc->bank</td><td>$acc->number</td>";
