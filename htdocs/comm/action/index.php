@@ -125,7 +125,7 @@ if ($sortfield == "")
   $sortfield="a.datea";
 }
 
-$sql = "SELECT s.nom as societe, s.idp as socidp,a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact ";
+$sql = "SELECT s.nom as societe, s.idp as socidp,a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact, a.note ";
 $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_societe as s, llx_user as u";
 $sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid AND a.percent = 100";
 
@@ -163,9 +163,9 @@ if ( $db->query($sql) )
   print '<TD colspan="4">Date</TD>';
   print '<TD>Société</a></td>';
   print '<TD>Action</a></TD>';
-      print '<TD>Contact</a></TD>';
-      print "<TD align=\"right\">Auteur</TD>";
-      print "</TR>\n";
+  print '<td>Contact</a></TD>';
+  print "<td>Commentaires</td><td align=\"right\">Auteur</TD>";
+  print "</TR>\n";
       $var=True;
       while ($i < min($num,$limit)) {
 	$obj = $db->fetch_object( $i);
@@ -220,7 +220,7 @@ if ( $db->query($sql) )
 	/*
 	 *
 	 */
-	print '<td>'.$obj->libelle.'</td>';
+	print '<td>'.substr($obj->note, 0, 20).' ...</td>';
 	print "<TD align=\"right\" width=\"20%\">$obj->code</TD>\n";
 	
 	print "</TR>\n";
