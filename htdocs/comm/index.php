@@ -81,49 +81,6 @@ print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
 print '<tr><td valign="top" width="30%">';
 
 
-/*
- * Résumé
- *
- */
-
-$sql = "SELECT count(s.idp) as nb, client";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE client in (1,2)";
-$sql .= " GROUP BY client";
-$nb = array();
-if ( $db->query($sql) )
-{
-    $i=0;
-    $num = $db->num_rows();
-    while ($i < $num)
-    {
-      $obj = $db->fetch_object( $i);
-      $nb[$obj->client]=$obj->nb;
-      $i++;
-    }
-}
-else {
-    print $db->error();   
-}
-
-
-print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-print "<tr class=\"liste_titre\">";
-print "<td colspan=\"2\">Résumé</td>";
-print "</tr>\n";
-$var = false;
-$type_client_id = array(1,2);
-$type_client[1]="Clients";
-$type_client[2]="Prospects";
-foreach ($type_client_id as $type) {
-    print "<tr $bc[$var]>";
-    print '<td>Nombre de '.$type_client[$type].'</td>';
-    print '<td align="right">'.round($nb[$type]).'</td>';
-    print '</tr>';
-    $var=!$var;
-}
-print "</table><br>\n";
-
 
 /*
  * Recherche Propal
@@ -335,23 +292,25 @@ if ($conf->propal->enabled) {
     {
       $num = $db->num_rows();
       $i = 0;
-    
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-      print '<tr class="liste_titre"><td colspan="4">Les 5 dernières propositions commerciales ouvertes</td></tr>';
-      $var=false;
-      while ($i < $num)
-    	{
-    	  $obj = $db->fetch_object( $i);
-    	  print "<tr $bc[$var]><td width=\"12%\"><a href=\"propal.php?propalid=".$obj->propalid."\">".img_file()."</a>&nbsp;";
-    	  print "<a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td>";
-    	  print "<td width=\"30%\"><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
-    	  print "<td align=\"right\">";
-    	  print strftime("%d %B %Y",$obj->dp)."</td>\n";	  
-    	  print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
-    	  $var=!$var;
-    	  $i++;
-    	}
-      print "</table><br>";
+      if ($num > 0)
+	{
+	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<tr class="liste_titre"><td colspan="4">Les 5 dernières propositions commerciales ouvertes</td></tr>';
+	  $var=false;
+	  while ($i < $num)
+	    {
+	      $obj = $db->fetch_object( $i);
+	      print "<tr $bc[$var]><td width=\"12%\"><a href=\"propal.php?propalid=".$obj->propalid."\">".img_file()."</a>&nbsp;";
+	      print "<a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td>";
+	      print "<td width=\"30%\"><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
+	      print "<td align=\"right\">";
+	      print strftime("%d %B %Y",$obj->dp)."</td>\n";	  
+	      print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
+	      $var=!$var;
+	      $i++;
+	    }
+	  print "</table><br>";
+	}
     }
     
 }
