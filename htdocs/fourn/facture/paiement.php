@@ -161,7 +161,7 @@ if ($action == '') {
 
   $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber, s.nom";
   $sql .=", f.rowid as facid, c.libelle as paiement_type, p.num_paiement";
-  $sql .= " FROM llx_paiementfourn as p, llx_facture_fourn as f, c_paiement as c, societe as s";
+  $sql .= " FROM llx_paiementfourn as p, llx_facture_fourn as f, c_paiement as c, llx_societe as s";
   $sql .= " WHERE p.fk_facture_fourn = f.rowid AND p.fk_paiement = c.id AND s.idp = f.fk_soc";
 
   if ($socidp)
@@ -170,7 +170,7 @@ if ($action == '') {
     }
 
   $sql .= " ORDER BY datep DESC";
-  $sql .= $db->plimit( $limit ,$offset);
+  $sql .= $db->plimit($limit + 1 ,$offset);
   $result = $db->query($sql);
 
   if ($result)
@@ -179,7 +179,7 @@ if ($action == '') {
       $i = 0; 
       $var=True;
 
-      print_barre_liste("Paiements", $page, $PHP_SELF);
+      print_barre_liste("Paiements", $page, $PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<TR class="liste_titre">';
@@ -190,7 +190,7 @@ if ($action == '') {
       print '<td align="right">Montant</TD>';
       print "<td>&nbsp;</td></tr>";
     
-      while ($i < $num)
+      while ($i < min($num,$limit))
 	{
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
