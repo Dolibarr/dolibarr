@@ -52,7 +52,7 @@ class Conf {
 
     $this->password_encrypted = 1;
 
-    $this->css = "theme/dolibarr/dolibarr.css";
+    $this->css = "theme/".$this->theme."/".$this->theme.".css";
   }  
 }
 
