@@ -104,7 +104,7 @@ if ( $db->query($sql) ) {
     $var=!$var;
     print "<TR $bc[$var]>";
     print "<TD>[<a href=\"$PHP_SELF?socidp=$objp->idp\">Filtre</a>]</TD>\n";
-    print "<TD><a href=\"../index.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
+    print "<TD><a href=\"../fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
     print "<TD><a href=\"fiche.php3?id=$objp->projectid\">$objp->ref</a></TD>\n";
     print "<TD><a href=\"fiche.php3?id=$objp->projectid\">$objp->title</a></TD>\n";
     print "<td>&nbsp;</td>";

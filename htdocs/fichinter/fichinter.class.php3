@@ -27,6 +27,7 @@ class Fichinter {
   var $author;
   var $ref;
   var $date;
+  var $duree;
   var $note;
 
 
@@ -51,9 +52,30 @@ class Fichinter {
     /*
      *  Insertion dans la base
      */
-    $sql = "INSERT INTO llx_fichinter (fk_soc, datei, datec, ref, fk_user_author, note) ";
-    $sql .= " VALUES ($this->socidp, $this->date, now(), '$this->ref', $this->author, '$this->note')";
+    $sql = "INSERT INTO llx_fichinter (fk_soc, datei, datec, ref, fk_user_author, note, duree) ";
+    $sql .= " VALUES ($this->socidp, $this->date, now(), '$this->ref', $this->author, '$this->note', $this->duree)";
     $sqlok = 0;
+      
+    if (! $this->db->query($sql) ) {
+
+      print $this->db->error() . '<b><br>'.$sql;
+    }
+    return 1;
+  }
+  /*
+   *
+   *
+   *
+   */
+  Function update($id) {
+    /*
+     *  Insertion dans la base
+     */
+    $sql = "UPDATE llx_fichinter SET ";
+    $sql .= " datei = $this->date,";
+    $sql .= " note  = '$this->note',";
+    $sql .= " duree = $this->duree";
+    $sql .= " WHERE rowid = $id";
       
     if (! $this->db->query($sql) ) {
 
@@ -68,7 +90,7 @@ class Fichinter {
    */
   Function fetch($rowid) {
 
-    $sql = "SELECT ref,note,fk_statut,".$this->db->pdate(datei)."as di FROM llx_fichinter WHERE rowid=$rowid;";
+    $sql = "SELECT ref,note,fk_statut,duree,".$this->db->pdate(datei)."as di FROM llx_fichinter WHERE rowid=$rowid;";
 
     if ($this->db->query($sql) ) {
       if ($this->db->num_rows()) {
@@ -76,6 +98,7 @@ class Fichinter {
 
 	$this->id = $rowid;
 	$this->date = $obj->di;
+	$this->duree = $obj->duree;
 	$this->ref = $obj->ref;
 	$this->note = $obj->note;
 	$this->statut = $obj->fk_statut;
