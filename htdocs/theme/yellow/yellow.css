@@ -532,6 +532,7 @@ tr.impair {
  *
  */
 tr.box_titre { 
+               background: #BBBB88;
                font-family: Helvetica, Verdana;
                font-size: 1.0em;
                font-weight: bold; }
