@@ -69,7 +69,7 @@ class Livre {
 	    if ($this->db->query($sql) )	    
 	      {
 
-		$sql = "INSERT INTO llx_livre (oscid, fk_user_author) VALUES ($idosc, ".$user->id.")";
+		$sql = "INSERT INTO llx_livre (oscid, fk_user_author, date_ajout) VALUES ($idosc, ".$user->id.", now())";
 	    
 		if ($this->db->query($sql) )
 		  {
