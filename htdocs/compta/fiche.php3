@@ -193,7 +193,7 @@ if ($socid > 0)
 	if ($user->rights->facture->creer)
 	  print "<td>[<a href=\"facture.php3?action=create&socidp=$objsoc->idp\">".translate("Facture")."</a>]</td>";
 	print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
-	print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
+	print "<td align=\"center\">[<a href=\"deplacement/fiche.php?socid=$objsoc->idp&action=create\">Déplacement</a>]</td>";
       }
     print "</tr></table>";
     /*
