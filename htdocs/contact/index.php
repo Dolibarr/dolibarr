@@ -73,9 +73,9 @@ if (strlen($_GET["userid"]))  // statut commercial
   $sql .= " WHERE p.fk_user=".$_GET["userid"];
 }
 
-if (strlen($begin)) // filtre sur la premiere lettre du nom
+if (strlen($_GET["begin"])) // filtre sur la premiere lettre du nom
 {
-  $sql .= " AND upper(p.name) like '$begin%'";
+  $sql .= " WHERE upper(p.name) like '".$_GET["begin"]."%'";
 }
 
 if ($contactname) // acces a partir du module de recherche
@@ -106,7 +106,25 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
 
-  print_barre_liste($titre ,$page, $PHP_SELF, '&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
+  print_barre_liste($titre ,$page, $PHP_SELF, '&amp;begin='.$_GET["begin"].'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
+
+  print "<div align=\"center\">";
+
+  print "| <A href=\"$PHP_SELF?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
+  for ($ij = 65 ; $ij < 91; $ij++) {
+    print "<A href=\"$PHP_SELF?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
+    
+    if ($_GET["begin"] == chr($ij) )
+      {
+	print  "<b>&gt;" . chr($ij) . "&lt;</b>" ; 
+      } 
+    else
+      {
+	print  chr($ij);
+      } 
+    print "</A> | ";
+  }
+  print "</div>";
   
   if ($sortorder == "DESC") 
     {
