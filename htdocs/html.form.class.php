@@ -73,7 +73,7 @@ class Form {
   }
 
 
-  Function select_date($set_time='', $h = 0, $m = 0)
+  Function select_date($set_time='', $prefix='re', $h = 0, $m = 0)
   {
     if (! $set_time)
       {
@@ -101,7 +101,7 @@ class Form {
     $shour = date("H", $set_time);
     $smin = date("i", $set_time);
 
-    print "<select name=\"reday\">";    
+    print '<select name="'.$prefix.'day">';    
     
     for ($day = 1 ; $day < $sday + 32 ; $day++) 
       {
@@ -118,7 +118,7 @@ class Form {
     print "</select>";
     
     
-    print "<select name=\"remonth\">";    
+    print '<select name="'.$prefix.'month">';    
     for ($month = $smonth ; $month < $smonth + 12 ; $month++)
       {
 	if ($month == $cmonth)
@@ -132,7 +132,7 @@ class Form {
       }
     print "</select>";
     
-    print '<select name="reyear">';
+    print '<select name="'.$prefix.'year">';
     
     for ($year = $syear - 2; $year < $syear + 5 ; $year++)
       {
@@ -149,7 +149,7 @@ class Form {
   
     if ($h)
       {
-	print '<select name="rehour">';
+	print '<select name="'.$prefix.'hour">';
     
 	for ($hour = 0; $hour < 24 ; $hour++)
 	  {
@@ -170,7 +170,7 @@ class Form {
 
 	if ($m)
 	  {
-	    print '<select name="remin">';
+	    print '<select name="'.$prefix.'min">';
 	    
 	    for ($min = 0; $min < 60 ; $min++)
 	      {
