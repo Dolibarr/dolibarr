@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,11 +24,66 @@
 	    \file       htdocs/includes/menus/barre_left/default.php
 		\brief      Gestionnaire par défaut du menu de gauche
 		\version    $Revision$
+
+        \remarks    La construction d'un gestionnaire pour le menu de gauche est simple:
+        \remarks    A l'aide d'un objet $newmenu=new Menu() et des méthode add et add_submenu,
+        \remarks    définir la liste des entrées menu à faire apparaitre.
+        \remarks    En fin de code, mettre la ligne $menu=$newmenu->liste.
+        \remarks    Ce qui est définir dans un tel gestionnaire sera alors prioritaire sur
+        \remarks    les définitions de menu des fichiers pre.inc.php
 */
 
 
-// Le gestionnaire par defaut ne fait rien: C'est donc le menu défini dans les
-// fichiers pre.inc.php du répertoire de la page qui sont utilisés.
 
+/**     \class      MenuLeft
+	    \brief      Classe permettant la gestion par défaut du menu du gauche
+        \remarks    Le gestionnaire par defaut ne fait rien: C'est donc le menu défini dans les
+        \remarks    fichiers pre.inc.php du répertoire de la page qui est utilisé.
+*/
+
+class MenuLeft {
+
+    var $require_top=array("");    // Si doit etre en phase avec un gestionnaire de menu du haut particulier
+    
+    /**
+     *    \brief      Constructeur
+     *    \param      db      Handler d'accès base de donnée
+     */
+    function MenuLeft($db,&$menu_array)
+    {
+        $this->db=$db;
+        $this->menu_array=$menu_array;
+    }
+  
+    
+    /**
+     *    \brief      Affiche le menu
+     */
+    function showmenu()
+    {
+        global $user, $conf, $langs;
+
+        for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++) 
+        {
+          if (($i%2==0))
+        {
+          print '<div class="blockvmenuimpair">'."\n";
+        }
+          else
+        {
+          print '<div class="blockvmenupair">'."\n";
+        }
+          print '<a class="vmenu" href="'.$this->menu_array[$i][0].'">'.$this->menu_array[$i][1].'</a><br>';
+        
+          for ($j = 2 ; $j < sizeof($this->menu_array[$i]) - 1 ; $j = $j +2) 
+        {
+          print '<a class="vsmenu" href="'.$this->menu_array[$i][$j].'">'.$this->menu_array[$i][$j+1].'</a><br>';
+        }
+          print '</div>';
+        }
+
+    }
+    
+}
 
 ?>

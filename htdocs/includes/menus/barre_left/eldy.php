@@ -20,8 +20,7 @@
  *
  */
 
-/**
-	    \file       htdocs/includes/menus/barre_left/eldy.php
+/**	    \file       htdocs/includes/menus/barre_left/eldy.php
 		\brief      Gestionnaire du menu du gauche Eldy
 		\version    $Revision$
 
@@ -44,7 +43,8 @@ class MenuLeft {
     
     /**
      *    \brief      Constructeur
-     *    \param      db      Handler d'accès base de donnée
+     *    \param      db            Handler d'accès base de donnée
+     *    \param      menu_array    Tableau des entrée de menu défini dans les fichier pre.inc.php
      */
     function MenuLeft($db,&$menu_array)
     {
