@@ -32,7 +32,7 @@ Class pdf_paiement {
 
       $this->tab_top = 30;
 
-      $this->line_height = 8;
+      $this->line_height = 5;
       $this->line_per_page = 25;
       $this->tab_height = $this->line_height * $this->line_per_page;
 
@@ -66,15 +66,16 @@ Class pdf_paiement {
 
       $pdf->SetFont('Arial','',12);
             
-      $pdf->Text(11,$this->tab_top + 6,'Facture');
+      $pdf->Text(11,$this->tab_top + 6,'Date');
       
       $pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
-      $pdf->Text(42, $this->tab_top + 6,'Date');
+      $pdf->Text(42, $this->tab_top + 6,'Type paiement');
+
       $pdf->line(80, $this->tab_top, 80, $this->tab_top + $this->tab_height + 10);
-      $pdf->Text(82, $this->tab_top + 6,'Type paiement');      
+      $pdf->Text(82, $this->tab_top + 6,'Facture');      
 
       $pdf->line(120, $this->tab_top, 120, $this->tab_top + $this->tab_height + 10);
-      $pdf->Text(122, $this->tab_top + 6,'Numéro');
+      $pdf->Text(122, $this->tab_top + 6,'Montant Fac');
       
       $pdf->line(160, $this->tab_top, 160, $this->tab_top + $this->tab_height + 10);
 
@@ -88,31 +89,51 @@ Class pdf_paiement {
 
   Function Body(&$pdf, $page, $lines)
     {
-      $pdf->SetFont('Arial','', 10);
-      for ($i = 0 ; $i < $this->line_per_page ; $i++)
+      $pdf->SetFont('Arial','', 9);
+      $oldprowid = 0;
+      $pdf->SetFillColor(220,220,220);
+      $yp = 0;	  
+      for ($j = 0 ; $j < sizeof($lines) ; $j++)
 	{
-	  $j = $i + (($page - 1) * $this->line_per_page );
-	  $pdf->SetFillColor(220,220,220);
+	  $i = $j;
+	  if ($oldprowid <> $lines[$j][7])
+	    {	     
+	      $pdf->SetXY (10, $this->tab_top + 10 + $yp);
+	      $pdf->MultiCell(30, $this->line_height, $lines[$j][1], 0, 'J', 1);
 
-	  $pdf->SetXY (10, $this->tab_top + 10 + ($i * $this->line_height) );
-	  $pdf->MultiCell(30, $this->line_height, $lines[$j][0], 0, 'J', 0);
-	  
-	  $pdf->SetXY (40, $this->tab_top + 10 + ($i * $this->line_height) );
-	  $pdf->MultiCell(40, $this->line_height, $lines[$j][1], 0, 'J', 0);
+	      $pdf->SetXY (40, $this->tab_top + 10 + $yp);
+	      $pdf->MultiCell(40, $this->line_height, $lines[$j][2], 0, 'J', 1);
+	      	      
+	      $pdf->SetXY (80, $this->tab_top + 10 + $yp);
+	      $pdf->MultiCell(40, $this->line_height, '', 0, 'J', 1);
 
-	  $pdf->SetXY (80, $this->tab_top + 10 + ($i * $this->line_height) );
-	  $pdf->MultiCell(40, $this->line_height, $lines[$j][2], 0, 'J', 0);
-
-	  $pdf->SetXY (120, $this->tab_top + 10 + ($i * $this->line_height) );
-	  $pdf->MultiCell(40, $this->line_height, $lines[$j][3], 0, 'J', 0);
-
-	  $pdf->SetXY (160, $this->tab_top + 10 + ($i * $this->line_height) );
-	  $pdf->MultiCell(40, $this->line_height, $lines[$j][4], 0, 'R', 0);
-
-	  if ($i < $this->line_per_page - 1)
-	    {
-	      $pdf->line(10, $this->tab_top + 10 + (($i+1) * $this->line_height), 200, $this->tab_top + 10 + (($i+1) * $this->line_height));
+	      $pdf->SetXY (120, $this->tab_top + 10 + $yp);
+	      $pdf->MultiCell(40, $this->line_height, $lines[$j][3], 0, 'J', 1);
+	      
+	      $pdf->SetXY (160, $this->tab_top + 10 + $yp);
+	      $pdf->MultiCell(40, $this->line_height, $lines[$j][4], 0, 'R', 1);
+	      $yp = $yp + 5;
 	    }
+       
+	  $pdf->SetXY (80, $this->tab_top + 10 + $yp);
+	  $pdf->MultiCell(40, $this->line_height, $lines[$j][0], 0, 'J', 0);
+
+	  $pdf->SetXY (120, $this->tab_top + 10 + $yp);
+	  $pdf->MultiCell(40, $this->line_height, $lines[$j][5], 0, 'J', 0);
+
+	  $pdf->SetXY (160, $this->tab_top + 10 + $yp);
+	  $pdf->MultiCell(40, $this->line_height, $lines[$j][6], 0, 'R', 0);
+	  $yp = $yp + 5;
+
+	  if ($oldprowid <> $lines[$j][7])
+	    {
+	      $oldprowid = $lines[$j][7];
+	    }
+
+	  //	  if ($i < $this->line_per_page - 1)
+	  //	    {
+	  //	      $pdf->line(10, $this->tab_top + 10 + (($i+1) * $this->line_height), 200, $this->tab_top + 10 + (($i+1) * $this->line_height));
+	  //	    }
 	}
     }
 
@@ -141,7 +162,6 @@ Class pdf_paiement {
       $month = substr("0".$month, strlen("0".$month)-2,2);
       $_file = $_dir . "paiements-$month-$year" . ".pdf";
 
-
       
       $pdf = new FPDF('P','mm','A4');
       $pdf->Open();
@@ -150,13 +170,22 @@ Class pdf_paiement {
        *
        */  
 
-      $sql = "SELECT ".$this->db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber";
-      $sql .=", f.rowid as facid, c.libelle as paiement_type, p.num_paiement";
-      $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."c_paiement as c";
-      $sql .= " WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id";
-      $sql .= " AND date_format(p.datep, '%m%Y') = " . $month.$year;
-      $sql .= " ORDER BY p.datep ASC";
+      $sql = "SELECT ".$this->db->pdate("p.datep")." as dp, f.facnumber";
+      $sql .= ", c.libelle as paiement_type, p.num_paiement";
+      $sql .= ", p.amount as paiement_amount, f.total_ttc as facture_amount ";
+      $sql .= ", pf.amount as pf_amount ";
+      $sql .= ", p.rowid as prowid";
+      $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."facture as f, ";
+      $sql .= MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
+
+      $sql .= " WHERE pf.fk_facture = f.rowid AND pf.fk_paiement = p.rowid";
+
+      $sql .= " AND date_format(p.datep, '%Y') = " . $year;
+      $sql .= " AND p.fk_paiement = c.id ";
+      //      $sql .= " AND date_format(p.datep, '%m%Y') = " . $month.$year;
+      $sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
       $result = $this->db->query($sql);
+      //      print $sql ;
 
       if ($result)
 	{
@@ -173,7 +202,10 @@ Class pdf_paiement {
 	      $lines[$i][1] = strftime("%d %B %Y",$objp->dp);
 	      $lines[$i][2] = $objp->paiement_type ;
 	      $lines[$i][3] = $objp->num_paiement;
-	      $lines[$i][4] = price($objp->amount);
+	      $lines[$i][4] = price($objp->paiement_amount);
+	      $lines[$i][5] = price($objp->facture_amount);
+	      $lines[$i][6] = price($objp->pf_amount);
+	      $lines[$i][7] = price($objp->prowid);
 	      $i++;
 	    }
 	}
@@ -190,13 +222,19 @@ Class pdf_paiement {
 	  // force à générer au moins une page si le rapport ne contient aucune ligne
 	  $pages = 1;
 	}
-
+      /*
       for ($i = 0 ; $i < $pages ; $i++)
 	{
 	  $pdf->AddPage();
 	  $this->Header($pdf, $i+1, $pages);
 	  $this->Body($pdf, $i+1, $lines);
 	}
+      */
+
+      $pdf->AddPage();
+      $this->Header($pdf, $i+1, $pages);
+      $this->Body($pdf, $i+1, $lines);
+
       /*
        *
        */
