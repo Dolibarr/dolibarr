@@ -239,7 +239,7 @@ class UserGroup
 
 
   /**
-   *    \brief      Charge dans l'objet group, la liste des permissions auquels l'utilisateur a droit
+   *    \brief      Charge dans l'objet group, la liste des permissions auquels le groupe a droit
    *    \param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
    */
 	 
@@ -247,7 +247,7 @@ class UserGroup
     {
       if ($this->all_permissions_are_loaded)
       {
-        // Si les permissions ont déja été chargé pour ce user, on quitte
+        // Si les permissions ont déja été chargées, on quitte
         return;
       }
 
