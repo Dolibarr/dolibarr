@@ -168,7 +168,7 @@ if ($result)
   print '<TD>';
   //  print_liste_field_titre("Prenom",$PHP_SELF,"d.prenom","&page=$page&statut=$statut");
   print_liste_field_titre("Prenom Nom<BR>",$PHP_SELF,"d.nom","&page=$page&statut=$statut");
-  print " / Société";
+  //  print " / Société";
   print "</TD>\n";
 
   if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
@@ -190,11 +190,14 @@ if ($result)
       print '<TD align="right">'.price($objp->cotisation).'</TD>';
       //$Total[strftime("%Y",$objp->dateadh)]+=price($objp->cotisation);
       $total+=price($objp->cotisation);
+      /*
       if ($objp->societe != ''){
-	print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></TD>\n";
+	print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." /<BR>".stripslashes($objp->societe)."</a></TD>\n";
       }else{
 	print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></TD>\n";
       }
+      */
+      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></TD>\n";
       if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
 	if ($objp->bank !='' ){
 	  print "<TD>Deposé</TD>";
@@ -204,7 +207,7 @@ if ($result)
 	  print '<input type="hidden" name="action" value="2bank">';
 	  print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
 	  print '<select name="operation">';
-	  print '<option value="CHQ">CHQ';
+	  print '<option value="CHQ" SELECTED>CHQ';
 	  print '<option value="CB">CB';
 	  print '<option value="DEP">DEP';
 	  print '<option value="TIP">TIP';
@@ -215,7 +218,7 @@ if ($result)
 	  print "<input name=\"label\" type=\"text\" size=20 value=\"Cotisation ".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." ".strftime("%Y",$objp->dateadh)."\" >\n";
 	  //	print "<td><input name=\"debit\" type=\"text\" size=8></td>";
 	  //	print "<td><input name=\"credit\" type=\"text\" size=8></td>";
-	  print '<input type="submit" value="ajouter">';
+	  print '<input type="submit" value="Dépot">';
 	  print "</form>\n";
 	  print "</TD>\n";
 	}	  
