@@ -185,7 +185,6 @@ if ($action=='create' && $actionid && $contactid) {
    */   
   else 
     {
-
       print_titre ("Action effectuée");
 
       print '<form action="'.$PHP_SELF.'?socid='.$socid.'" method="post">';
@@ -250,6 +249,12 @@ if ($id)
   print '<td width="10%">Contact</td><td width="40%"><b>'.$act->contact->fullname.'</td></tr>';
   print '<tr><td>Auteur</td><td>'.$act->author->fullname.'</td>';
   print '<td>Date</td><td>'.strftime('%d %B %Y %H:%M',time()).'</td></tr>';
+  if ($act->objet_url)
+    {
+      print '<tr><td>Objet lié</td>';
+      print '<td colspan="3">'.$act->objet_url.'</td></tr>';
+    }
+
   if ($act->note)
     {
       print '<tr><td valign="top">Commentaire</td><td colspan="3">';
