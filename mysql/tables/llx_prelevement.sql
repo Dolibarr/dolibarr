@@ -27,6 +27,7 @@ create table llx_prelevement
   ref              varchar(12),        -- reference
   datec            datetime,           -- date de creation
   amount           real DEFAULT 0,     -- montant total du prelevement
+  credite          smallint DEFAULT 0, -- indique si le prelevement a été credité
   note             text
 
 )type=innodb;
