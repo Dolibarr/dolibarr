@@ -42,14 +42,18 @@ function llxHeader($head = "", $urlp = "")
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/user/", $langs->trans("Users"));
+  $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("Users"));
+
+  $menu->add_submenu(DOL_URL_ROOT."/user/", $langs->trans("List"));
 
   if($user->admin)
     {
       $menu->add_submenu(DOL_URL_ROOT."/user/fiche.php?&amp;action=create",$langs->trans("NewUser"));
     }
 
-  $menu->add(DOL_URL_ROOT."/user/group/", $langs->trans("Groups"));
+  $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("Groups"));
+
+  $menu->add_submenu(DOL_URL_ROOT."/user/group/", $langs->trans("List"));
 
   if($user->admin)
     {
