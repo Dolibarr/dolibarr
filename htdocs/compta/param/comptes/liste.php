@@ -21,27 +21,15 @@
  */
 require("./pre.inc.php");
 
+llxHeader('','Compta - Liste des comptes');
+
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
-
-llxHeader();
-
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
-
 if ($sortorder == "") $sortorder="ASC";
 if ($sortfield == "") $sortfield="cg.numero";
 
 $offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 /*
  * Mode Liste
@@ -76,18 +64,18 @@ else
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows($result);
+  $num = $db->num_rows($resql);
   $i = 0;
   
   print_barre_liste("Comptes généraux", $page, "liste.php", "", $sortfield, $sortorder, '', $num);
 
   print '<table class="liste">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre("N° compte","liste.php","s.nom");
-  print_liste_field_titre("Intitulé compte","liste.php","s.nom");
+  print_liste_field_titre("N° compte","liste.php","cg.numero");
+  print_liste_field_titre("Intitulé compte","liste.php","cg.intitule");
   print '<td align="right">Date création</td>';
   print "</tr>\n";
 
@@ -103,7 +91,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($result);	
+      $obj = $db->fetch_object($resql);	
       $var=!$var;
 
       print "<tr $bc[$var]>";
@@ -118,7 +106,7 @@ if ($result)
       $i++;
     }
   print "</table>";
-  $db->free($result);
+  $db->free($resql);
 }
 else 
 {
