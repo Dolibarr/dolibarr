@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -105,77 +105,84 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
   print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
-	  $casenow = strftime("%Y-%m",mktime());
+      $casenow = strftime("%Y-%m",mktime());
       $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
       $caseprev = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee-1));
 
-	  // Montant CA
+
+      // Valeur CA
+
       print '<td align="right">';
       if ($cum[$case])
 	{
-	  print price($cum[$case]);
+	  print price($cum[$case],1);
 	}
-	else {
-		if ($case <= $casenow) { print '0'; }
-		else { print '&nbsp;'; }
+      else
+	{
+	  if ($case <= $casenow) { print '0'; }
+	  else { print '&nbsp;'; }
 	}
       print "</td>";
-	// Pourcentage evol
-	if ($cum[$caseprev]) {
-		if ($case <= $casenow) {
-			if ($cum[$caseprev]) 
-				print '<td align="center">'.(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100).'%</td>';
-			else
-				print '<td align="center">+Inf%</td>';
-		}
-		else {
-			print '<td>&nbsp;</td>';
-		}
-	} else {
-		if ($case <= $casenow) {
-			print '<td align="center">-</td>';
-		}
-		else {
-			print '<td>&nbsp;</td>';
-		}
+      // Pourcentage evol
+      if ($cum[$caseprev]) {
+	if ($case <= $casenow) {
+	  if ($cum[$caseprev]) 
+	    print '<td align="center">'.(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100).'%</td>';
+	  else
+	    print '<td align="center">+Inf%</td>';
 	}
-	
-	$total[$annee]+=$cum[$case];
+	else
+	  {
+	    print '<td>&nbsp;</td>';
+	  }
+      } else {
+	if ($case <= $casenow) {
+	  print '<td align="center">-</td>';
+	}
+	else {
+	  print '<td>&nbsp;</td>';
+	}
+      }
+      
+      $total[$annee]+=$cum[$case];
     }
-
-  print '</tr>';
+ 
+ print '</tr>';
 }
 
 // Affiche total
 print "<tr><td align=\"right\"><b>Total :</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-	print "<td align=\"right\"><b>".($total[$annee]?$total[$annee]:"&nbsp;")."</b></td>";
-
-	// Pourcentage evol
-	if ($total[$annee-1]) {
-		if ($annee <= $year_current) {
-			if ($total[$annee-1]) 
-				print '<td align="center"><b>'.(round(($total[$annee]-$total[$annee-1])/$total[$annee-1],4)*100).'%</b></td>';
-			else
-				print '<td align="center">+Inf%</td>';
-		}
-		else {
-			print '<td>&nbsp;</td>';
-		}
-	} else {
-		if ($annee <= $year_current) {
-			print '<td align="center">-</td>';
-		}
-		else {
-			print '<td>&nbsp;</td>';
-		}
+  print "<td align=\"right\"><b>".($total[$annee]?$total[$annee]:"&nbsp;")."</b></td>";
+  
+  // Pourcentage evol
+  if ($total[$annee-1]) {
+    if ($annee <= $year_current) {
+      if ($total[$annee-1]) 
+	print '<td align="center"><b>'.(round(($total[$annee]-$total[$annee-1])/$total[$annee-1],4)*100).'%</b></td>';
+      else
+	print '<td align="center">+Inf%</td>';
+    }
+    else
+      {
+	print '<td>&nbsp;</td>';
+      }
+  }
+  else
+    {
+      if ($annee <= $year_current)
+	{
+	  print '<td align="center">-</td>';
 	}
-
+      else
+	{
+	  print '<td>&nbsp;</td>';
+	}
+    }
+  
 }
 print "</tr>\n";
-
-
 print "</table>";
 
 $db->close();
