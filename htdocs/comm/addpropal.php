@@ -64,7 +64,7 @@ if ($_GET["action"] == 'create')
 
   $obj = PROPALE_ADDON;
   $modPropale = new $obj;
-  $numpr = $modPropale->propale_get_num();
+  $numpr = $modPropale->propale_get_num($soc);
   $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."propal WHERE ref like '$numpr%'";
 
   if ( $db->query($sql) )
