@@ -25,6 +25,18 @@
 $yn[0] = "non";
 $yn[1] = "oui";
 
+function doliMoveFileUpload($src_file, $dest_file)
+{
+  $file_name = $dest_file;
+
+  if (substr($file_name, strlen($file_name) -3 , 3) == 'php')
+    {
+      $file_name = $dest_file . ".txt";
+    }
+  
+  return move_uploaded_file($src_file, $file_name);
+}
+
 function loginFunction()
 {
   /**
