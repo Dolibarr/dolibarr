@@ -40,24 +40,24 @@ llxHeader("","","Accueil Produits et services");
 
 print_titre("Produits et services");
 
-print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top" width="30%">';
 
-
-print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+/*
+ * Produits en ventes et hors vente
+ */
+print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td colspan="2">Hors vente</td></tr>';
-print "<TR $bc[0]>";
-print '<td><a href="liste.php?type=0&envente=0">Produits hors vente</a></td></tr>';
-print "<TR $bc[1]>";
-print '<td><a href="liste.php?type=1&envente=0">Services hors vente</a></td></tr></table>';
-
-
-print "</td>";
-  
+print "<tr $bc[0]>";
+print '<td><a href="liste.php?type=0&amp;envente=0">Produits hors vente</a></td></tr>';
+print "<tr $bc[1]>";
+print '<td><a href="liste.php?type=1&amp;envente=0">Services hors vente</a></td></tr></table>';
 
 print '</td><td valign="top" width="70%">';
-
+/*
+ * Derniers produits
+ */
 $sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p WHERE envente=1";
 $sql .= " ORDER BY p.datec DESC ";
 $sql .= $db->plimit(15 ,0);
@@ -71,7 +71,7 @@ if ($result)
   
   if ($num > 0)
     {
-      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
       print '<tr class="liste_titre"><td colspan="2">Derniers produits et services</td></tr>';
     
@@ -80,7 +80,7 @@ if ($result)
 	{
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
-	  print "<TR $bc[$var]>";
+	  print "<tr $bc[$var]>";
 	  print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
 	  print "<TD>$objp->label</TD></tr>\n";
 	  $i++;
@@ -95,7 +95,7 @@ else
   print $db->error() . "<br>" .$sql;
 }
 
-print '</tr></table>';
+print '</td></tr></table>';
 
 $db->close();
 

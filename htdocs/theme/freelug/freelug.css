@@ -21,6 +21,7 @@
 
 body {
   background: #EEEEEE; 
+  margin: 0px;
   background-image: url("/theme/freelug/img/background.png");
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none ;

@@ -361,14 +361,14 @@ if ($propalid)
 		  $var=!$var;
 		  print "<TR $bc[$var]>";
 		  print "<td>[$objp->ref]</td>\n";
-		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.$objp->product.'</td>';
+		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.$objp->product.'</a></td>';
 		  print '<td align="center">'.$objp->tva_tx.' %</td>';
 		  print "<td align=\"center\">".$objp->qty."</td>\n";
 		  print '<td align="center">'.$objp->remise_percent.' %</td>';
 		  print '<td align="right">'.price($objp->subprice).'</td>';
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
-		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&ligne='.$objp->rowid.'&action=del_ligne">Supprimer</a></td>';
+		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">Supprimer</a></td>';
 		    }
 		  else
 		    {
@@ -399,7 +399,7 @@ if ($propalid)
 		  print "<TD align=\"right\">".price($objp->subprice)."</td>";
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
-		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&ligne='.$objp->rowid.'&action=del_ligne">Supprimer</a></td>';
+		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">Supprimer</a></td>';
 		    }
 		  else
 		    {
@@ -493,7 +493,7 @@ if ($propalid)
 		{
 		  if ($user->rights->propale->supprimer)
 		    {
-		      print "<td width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=delete\">Supprimer</a>]</td>";
+		      print "<td width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&amp;action=delete\">Supprimer</a>]</td>";
 		    }
 		  else
 		    {
@@ -504,7 +504,7 @@ if ($propalid)
 		{
 		  if ($obj->statut == 1 && $user->rights->propale->cloturer)
 		    {
-		      print "<td width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=statut\">Cloturer</a>]</td>";
+		      print "<td width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&amp;action=statut\">Cloturer</a>]</td>";
 		    }
 		  else
 		    {
@@ -517,7 +517,7 @@ if ($propalid)
 	       */
 	      if ($obj->statut < 2 && $user->rights->propale->creer)
 		{
-		  print '<td width="20%">[<a href="'.$PHP_SELF."?propalid=$propalid&action=pdf\">Générer</a>]</td>";
+		  print '<td width="20%">[<a href="'.$PHP_SELF."?propalid=$propalid&amp;action=pdf\">Générer</a>]</td>";
 		}
 	      else
 		{
@@ -535,7 +535,7 @@ if ($propalid)
 		      if ($user->rights->propale->envoyer)
 			{
 			  print "<td width=\"20%\">";
-			  print "[<a href=\"$PHP_SELF?propalid=$propalid&action=presend\">Envoyer la proposition</a>]</td>";
+			  print "[<a href=\"$PHP_SELF?propalid=$propalid&amp;action=presend\">Envoyer la proposition</a>]</td>";
 			}
 		      else
 			{
@@ -558,7 +558,7 @@ if ($propalid)
 		{
 		  if ($user->rights->propale->valider)
 		    {
-		      print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
+		      print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&amp;valid=1\">Valider</a>]</td>";
 		    }
 		  else
 		    {
@@ -569,7 +569,7 @@ if ($propalid)
 		{
 		  if ($user->rights->propale->creer)
 		    {
-		      print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=modif\">Modifier</a>]</td>";
+		      print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?propalid=$propalid&amp;action=modif\">Modifier</a>]</td>";
 		    }
 		  else
 		    {
@@ -636,7 +636,7 @@ if ($propalid)
 	  $file = PROPALE_OUTPUTDIR . "/$obj->ref/$obj->ref.pdf";
 	  if (file_exists($file))
 	    {
-	      print "<tr $bc[0]><td>Propale PDF</a></td>";
+	      print "<tr $bc[0]><td>Propale PDF</td>";
 	      print '<td><a href="'.PROPALE_OUTPUT_URL.'/'.$propal->ref.'/'.$propal->ref.'.pdf">'.$propal->ref.'.pdf</a></td>';
 	      print '<td align="right">'.filesize($file). ' bytes</td>';
 	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
@@ -715,7 +715,7 @@ if ($propalid)
 	      $from_name = $user->fullname ; //$conf->propal->fromtoname;
 	      $from_mail = $user->email; //conf->propal->fromtomail;
 	      
-	      print "<form method=\"post\" action=\"$PHP_SELF?propalid=$propalid&action=send\">\n";
+	      print "<form method=\"post\" action=\"$PHP_SELF?propalid=$propalid&amp;action=send\">\n";
 	      print "<input type=\"hidden\" name=\"replytoname\" value=\"$replytoname\">\n";
 	      print "<input type=\"hidden\" name=\"replytomail\" value=\"$replytomail\">\n";
 
@@ -840,7 +840,7 @@ if ($propalid)
   if ( $db->query($sql) )
     {
       $num = $db->num_rows();
-      print_barre_liste("Propositions commerciales", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder,'',$num);
+      print_barre_liste("Propositions commerciales", $page, $PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 
       $i = 0;
@@ -848,14 +848,14 @@ if ($propalid)
 
       print '<TR class="liste_titre">';
 
-      print_liste_field_titre_new ("Réf",$PHP_SELF,"p.ref","","&socidp=$socidp",'width="15%"',$sortfield);
+      print_liste_field_titre_new ("Réf",$PHP_SELF,"p.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
 
-      print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","","&socidp=$socidp",'width="30%"',$sortfield);
+      print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp",'width="30%"',$sortfield);
 
-      print_liste_field_titre_new ("Date",$PHP_SELF,"p.datep","","&socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
-      print_liste_field_titre_new ("Prix",$PHP_SELF,"p.price","","&socidp=$socidp", ' width="20%" align="right"',$sortfield);
+      print_liste_field_titre_new ("Date",$PHP_SELF,"p.datep","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
+      print_liste_field_titre_new ("Prix",$PHP_SELF,"p.price","","&amp;socidp=$socidp", ' width="20%" align="right"',$sortfield);
 
-      print_liste_field_titre_new ("Statut",$PHP_SELF,"p.fk_statut","","&socidp=$socidp",'width="10%" align="center"',$sortfield);
+      print_liste_field_titre_new ("Statut",$PHP_SELF,"p.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
       print "</tr>\n";
       $var=True;
       
@@ -885,7 +885,7 @@ if ($propalid)
 	  $m = strftime("%m",$objp->dp);
 	  
 	  print strftime("%d",$objp->dp)."\n";
-	  print " <a href=\"propal.php?year=$y&month=$m\">";
+	  print " <a href=\"propal.php?year=$y&amp;month=$m\">";
 	  print strftime("%B",$objp->dp)."</a>\n";
 	  print " <a href=\"propal.php?year=$y\">";
 	  print strftime("%Y",$objp->dp)."</a></TD>\n";      
