@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modExpedition.class.php
+        \ingroup    expedition
         \brief      Fichier de description et activation du module Expedition
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modExpedition
+        \brief      Classe de description et activation du module Expedition
+*/
 
 class modExpedition extends DolibarrModules
 {

@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modPropale.class.php
+        \ingroup    propale
         \brief      Fichier de description et activation du module Propale
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modPropale
+        \brief      Classe de description et activation du module Propale
+*/
 
 class modPropale extends DolibarrModules
 {

@@ -28,10 +28,15 @@
 
 /*!
         \file       htdocs/includes/modules/modWebcalendar.class.php
+        \ingroup    webcalendar
         \brief      Fichier de description et activation du module Webcalendar
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modWebcalendar
+        \brief      Classe de description et activation du module Webcalendar
+*/
 
 class modWebcalendar extends DolibarrModules
 {

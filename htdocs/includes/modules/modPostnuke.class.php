@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modPostnuke.class.php
+        \ingroup    postnuke
         \brief      Fichier de description et activation du module Postnuke
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modPostnuke
+        \brief      Classe de description et activation du module Postnuke
+*/
 
 class modPostnuke extends DolibarrModules
 {

@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modCommande.class.php
+        \ingroup    commande
         \brief      Fichier de description et activation du module Commande
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modCommande
+        \brief      Classe de description et activation du module Commande
+*/
 
 class modCommande extends DolibarrModules
 {

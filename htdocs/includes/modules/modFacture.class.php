@@ -25,21 +25,25 @@
         \brief      Module pour gérer les factures clients et/ou fournisseurs
 */
 
-/*!
-        \file       htdocs/includes/modules/modFacture.class.php
-        \brief      Fichier de description et activation du module Facture
+
+/*! \file htdocs/includes/modules/modFacture.class.php
+        \ingroup    facture
+        \brief      Fichier de la classe de description et activation du module Facture
 */
 
 include_once "DolibarrModules.class.php";
 
+
+/*! \class modFacture
+        \brief      Classe de description et activation du module Facture
+*/
+
 class modFacture extends DolibarrModules
 {
 
-  /*
-   * Initialisation
-   *
-   */
-
+   /*!  \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modFacture($DB)
   {
     $this->db = $DB ;
@@ -109,17 +113,11 @@ class modFacture extends DolibarrModules
     $this->boxes[3][1] = "box_factures_fourn.php";
 
   }
-  /*
-   *
-   *
-   *
-   */
 
+   /*!  \brief      Fonction d'activation. Insère en base les constantes, boites et permissions du module
+    */
   function init()
   {
-    /*
-     * Permissions
-     */
     $sql = array(
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (10,'Tous les droits sur les factures','facture','a',0);",
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (11,'Lire les factures','facture','r',1);",
@@ -133,10 +131,9 @@ class modFacture extends DolibarrModules
     
     return $this->_init($sql);
   }
-  /*
-   *
-   *
-   */
+
+   /*!  \brief      Fonction de désactivation. Supprime de la base les constantes, boites et permissions du module
+    */
   function remove()
   {
     $sql = array(

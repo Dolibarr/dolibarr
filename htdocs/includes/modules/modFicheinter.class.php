@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modFicheinter.class.php
+        \ingroup    ficheinter
         \brief      Fichier de description et activation du module Ficheinter
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modFicheinter
+        \brief      Classe de description et activation du module Ficheinter
+*/
 
 class modFicheinter  extends DolibarrModules
 {

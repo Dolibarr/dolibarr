@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modCommercial.class.php
+        \ingroup    commercial
         \brief      Fichier de description et activation du module Commercial
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modCommercial
+        \brief      Classe de description et activation du module Commercial
+*/
 
 class modCommercial extends DolibarrModules
 {

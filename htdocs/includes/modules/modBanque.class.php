@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modBanque.class.php
+        \ingroup    banque
         \brief      Fichier de description et activation du module Banque
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modBanque
+        \brief      Classe de description et activation du module Banque
+*/
 
 class modBanque extends DolibarrModules
 {

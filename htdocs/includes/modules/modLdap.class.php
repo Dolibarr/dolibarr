@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modLdap.class.php
+        \ingroup    ldap
         \brief      Fichier de description et activation du module Ldap
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modLdap
+        \brief      Classe de description et activation du module Ldap
+*/
 
 class modLdap extends DolibarrModules
 {

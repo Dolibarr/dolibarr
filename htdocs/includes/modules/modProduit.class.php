@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modProduit.class.php
+        \ingroup    produit
         \brief      Fichier de description et activation du module Produit
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modProduit
+        \brief      Classe de description et activation du module Produit
+*/
 
 class modProduit extends DolibarrModules
 {

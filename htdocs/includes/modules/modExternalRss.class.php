@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modExternalRss.class.php
+        \ingroup    externalrss
         \brief      Fichier de description et activation du module ExternalRss
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modExternalRss
+        \brief      Classe de description et activation du module ExternalRss
+*/
 
 class modExternalRss extends DolibarrModules
 {

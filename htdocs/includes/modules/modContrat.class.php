@@ -26,10 +26,15 @@
 
 /*!
         \file       htdocs/includes/modules/modContrat.class.php
+        \ingroup    contrat
         \brief      Fichier de description et activation du module Contrat
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modContrat
+        \brief      Classe de description et activation du module Contrat
+*/
 
 class modContrat extends DolibarrModules
 {

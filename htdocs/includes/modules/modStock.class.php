@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modStock.class.php
+        \ingroup    stock
         \brief      Fichier de description et activation du module Stock
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modStock
+        \brief      Classe de description et activation du module Stock
+*/
 
 class modStock extends DolibarrModules
 {

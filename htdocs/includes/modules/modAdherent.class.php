@@ -28,10 +28,15 @@
 
 /*!
         \file       htdocs/includes/modules/modAdherent.class.php
+        \ingroup    adherent
         \brief      Fichier de description et activation du module adherents
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modAdherent
+        \brief      Classe de description et activation du module Adherent
+*/
 
 class modAdherent extends DolibarrModules
 {

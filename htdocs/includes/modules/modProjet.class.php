@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modProjet.class.php
+        \ingroup    projet
         \brief      Fichier de description et activation du module Projet
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modProjet
+        \brief      Classe de description et activation du module Projet
+*/
 
 class modProjet extends DolibarrModules
 {

@@ -27,11 +27,16 @@
 
 /*!
         \file       htdocs/includes/modules/modFournisseur.class.php
+        \ingroup    fournisseur
         \brief      Fichier de description et activation du module Fournisseur
 */
 
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modFournisseur
+        \brief      Classe de description et activation du module Fournisseur
+*/
 
 class modFournisseur extends DolibarrModules
 {

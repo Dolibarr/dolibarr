@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modComptabilite.class.php
+        \ingroup    comptabilite
         \brief      Fichier de description et activation du module Comptabilite
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modComptabilite
+        \brief      Classe de description et activation du module Comptabilite
+*/
 
 class modComptabilite extends DolibarrModules
 {

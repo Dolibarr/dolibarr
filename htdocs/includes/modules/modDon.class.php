@@ -27,10 +27,15 @@
 
 /*!
         \file       htdocs/includes/modules/modDon.class.php
+        \ingroup    don
         \brief      Fichier de description et activation du module Don
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modDon
+        \brief      Classe de description et activation du module Don
+*/
 
 class modDon  extends DolibarrModules
 {

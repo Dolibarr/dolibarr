@@ -26,10 +26,15 @@
 
 /*!
         \file       htdocs/includes/modules/modCaisse.class.php
+        \ingroup    caisse
         \brief      Fichier de description et activation du module Caisse
 */
 
 include_once "DolibarrModules.class.php";
+
+/*! \class modCaisse
+        \brief      Classe de description et activation du module Caisse
+*/
 
 class modCaisse extends DolibarrModules
 {

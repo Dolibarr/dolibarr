@@ -20,32 +20,37 @@
  *
  */
 
+/*! \file htdocs/includes/modules/modDolibarrModules.class.php
+        \brief      Fichier de description et activation du module Facture
+*/
+
+
+/*! \class DolibarrModules
+        \brief      Classe mère des classes de description et activation des modules Dolibarr
+*/
 class DolibarrModules
 {
+   var $db;         // Handler d'accès aux base
+   var $boxes;      // Tableau des boites
+   var $const;      // Tableau des constantes
 
-  /*
-   * Initialisation
-   *
-   */
 
+   /*!  \brief      Constructeur
+    *   \param      DB      handler d'accès base
+    */
   function DolibarrModules($DB)
   {
     $this->db = $DB ;
   }
-  /*
-   *
-   *
-   *
-   */
 
+
+   /*!  \brief      Fonction d'activation. Insère en base les constantes et boites du module
+    *   \param      array_sql       tableau de requete sql a exécuter à l'activation
+    */
   function _init($array_sql)
   {
-    /*
-     *  Activation du module:
-     *  Insère les constantes dans llx_const
-     */
+    // Insère les constantes
     $err = 0;
-
 
     $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '".$this->const_name."', value='1', visible = 0";
 
@@ -54,7 +59,7 @@ class DolibarrModules
 	$err++;
       }
 
-    // Ajout des boxes dans llx_boxes_def
+    // Insère les boxes dans llx_boxes_def
     foreach ($this->boxes as $key => $value)
       {
 	$titre = $this->boxes[$key][0];
@@ -142,10 +147,11 @@ class DolibarrModules
 	return 1;
       }
   }
-  /*
-   *
-   *
-   */
+
+
+   /*!  \brief      Fonction de désactivation. Supprime de la base les constantes et boites du module
+    *   \param      array_sql       tableau de requete sql a exécuter à la désactivation
+    */
   function _remove($array_sql)
   {
     $err = 0;
