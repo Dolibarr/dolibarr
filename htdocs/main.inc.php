@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -95,21 +95,25 @@ else
       // TODO
       // Tester si auth est installé, et si non renvoyé erreur demandant install
       // d'une area d'authentification apache ou de auth.
-	  $modules_list = get_loaded_extensions();
+      $modules_list = get_loaded_extensions();
+      
+      $ispearinstalled=0;
+      foreach ($modules_list as $module) 
+	{
+	  if ($module == 'pear') { $ispearinstalled=1; }
+	}
+      
 
-	  $ispearinstalled=0;
-	  foreach ($modules_list as $module) {
-		if ($module == 'pear') { $ispearinstalled=1; }
-	  }
-	 
-	  if (! $ispearinstalled) {
-		  print "Pour fonctionner, Dolibarr a besoin :<br>\n";
-		  print "- Soit du module PHP 'pear' (actuellement, votre php contient les modules suivant: ".join($modules_list,',')."<br>\n";
-		  print "- Soit d'avoir son répertoire htdocs protégé par une authentification Web basique (Exemple pour Apache: Utilisation des directives Authxxx dans la configuration, ou utilisation du fichier .htaccess).<br>\n";
-		  print "<br><br>Vous devez respecter un de ces pré-requis pour continuer.\n";
-		  exit ;  
-	  }
-    	
+      $ispearinstalled=1; // MODIF RODO, le test ne marche pas
+
+      if (! $ispearinstalled) {
+	print "Pour fonctionner, Dolibarr a besoin :<br>\n";
+	print "- Soit du module PHP 'pear' (actuellement, votre php contient les modules suivant: ".join($modules_list,',')."<br>\n";
+	print "- Soit d'avoir son répertoire htdocs protégé par une authentification Web basique (Exemple pour Apache: Utilisation des directives Authxxx dans la configuration, ou utilisation du fichier .htaccess).<br>\n";
+	print "<br><br>Vous devez respecter un de ces pré-requis pour continuer.\n";
+	exit ;  
+      }
+      
       require_once "Auth/Auth.php";
 
       $params = array(
