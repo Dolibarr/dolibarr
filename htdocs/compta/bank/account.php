@@ -139,13 +139,14 @@ if ($account)
   if ($HTTP_POST_VARS["req_desc"]) 
     { 
       $sql_rech = " AND lower(b.label) like '%".strtolower($HTTP_POST_VARS["req_desc"])."%'";
+      $mode_search = 1;
     }
   /*
    *
    *
    */
-  $sql = "SELECT count(*) FROM llx_bank WHERE 1=1";
-  if ($account) { $sql .= " AND fk_account=$account"; }
+  $sql = "SELECT count(*) FROM llx_bank as b WHERE 1=1";
+  if ($account) { $sql .= " AND b.fk_account=$account"; }
   $sql .= $sql_rech;
   if ( $db->query($sql) )
     {
@@ -163,7 +164,7 @@ if ($account)
 	}
     }
 
-  if ($page > 0)
+  if ($page > 0 && $mode_search == 0)
     {
       $limitsql = $nbline - ($page * $viewline);
       if ($limitsql < $viewline)
