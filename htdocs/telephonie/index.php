@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,25 +21,11 @@
  */
 require("./pre.inc.php");
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-
-if (!$user->rights->telephonie->lire)
-  accessforbidden();
+if (!$user->rights->telephonie->lire) accessforbidden();
 
 llxHeader('','Telephonie');
 
 /*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
-
-/*
- * Mode Liste
  *
  *
  *
@@ -193,22 +179,8 @@ else
   print $sql;
 }  
 
-
-
-
-
-
-
-
-
 print '</td></tr>';
-
-
-
-
 print '</table>';
-
-
 
 $db->close();
 
