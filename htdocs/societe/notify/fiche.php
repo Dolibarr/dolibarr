@@ -31,14 +31,14 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
-if ($HTTP_POST_VARS["action"] == 'add')
+if ($_POST["action"] == 'add')
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
-  $sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$HTTP_POST_VARS["contactid"]." AND fk_action=".$HTTP_POST_VARS["actionid"];
+  $sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$_POST["contactid"]." AND fk_action=".$_POST["actionid"];
   if ($db->query($sql))
     {
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify_def (datec,fk_soc, fk_contact, fk_action)";
-      $sql .= " VALUES (now(),$socid,".$HTTP_POST_VARS["contactid"].",".$HTTP_POST_VARS["actionid"].")";
+      $sql .= " VALUES (now(),$socid,".$_POST["contactid"].",".$_POST["actionid"].")";
       
       if ($db->query($sql))
 	{
@@ -71,8 +71,8 @@ if ($action == "delete")
  *
  */
 $soc = new Societe($db);
-$soc->id = $socid;
-if ( $soc->fetch($socid) ) 
+$soc->id = $_GET["socid"];
+if ( $soc->fetch($soc->id) ) 
 {
   
   $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
