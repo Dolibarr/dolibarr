@@ -71,7 +71,7 @@ if ($action == 'del_bookmark')
 
 print_titre("Espace commercial");
 
-print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top" width="30%">';
 
@@ -80,7 +80,7 @@ print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">Rechercher une proposition</td></tr>';
 print "<tr $bc[1]><td>";
 print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
-print "</table></form><br>\n";
+print "</table></form>\n";
 
 $sql = "SELECT p.rowid, p.ref";
 $sql .= " FROM llx_propal as p";
@@ -92,7 +92,7 @@ if ( $db->query($sql) )
   $i = 0;
   if ($num > 0 )
     {
-      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<br><table border="0" cellspacing="0" cellpadding="3" width="100%">';
       print "<TR class=\"liste_titre\">";
       print "<td colspan=\"2\">Propositions commerciales brouillons</td></tr>";
       
@@ -107,35 +107,37 @@ if ( $db->query($sql) )
     }
 }
 
-$sql = "SELECT p.rowid, p.ref";
-$sql .= " FROM llx_propal as p";
-$sql .= " WHERE p.fk_statut = 1";
+/*
+ * Commandes à valider
+ */
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
+$sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
 if ($socidp)
-{ 
-  $sql .= " AND p.fk_soc = $socidp"; 
+{
+  $sql .= " AND c.fk_soc = $socidp";
 }
 
-if ( $db->query($sql) )
+if ( $db->query($sql) ) 
 {
   $num = $db->num_rows();
-  $i = 0;
-  if ($num > 0 )
+  if ($num)
     {
-      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-      print "<TR class=\"liste_titre\">";
-      print "<td colspan=\"2\">Propositions commerciales ouvertes</td></tr>";
+      $i = 0;
+      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<tr class="liste_titre">';
+      print '<td colspan="2">'.translate("Commandes à valider").'</td></tr>';
       
       while ($i < $num)
 	{
-	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
-	  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
+	  $obj = $db->fetch_object($i);
+	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"../commande/fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
       print "</table><br>";
     }
 }
-
 
 /*
  *
@@ -152,7 +154,7 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   $i = 0;
 
-  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\">";
   print "<TD colspan=\"2\">Bookmark</td>";
   print "</TR>\n";
@@ -184,29 +186,68 @@ $sql .= " ORDER BY a.datea DESC";
 
 if ( $db->query($sql) ) 
 {
-  print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-  print '<TR class="liste_titre">';
-  print '<td colspan="4">Actions à faire</td>';
-  print "</TR>\n";
-
-  $i = 0;
-  while ($i < $db->num_rows() ) 
+  $num = $db->num_rows();
+  if ($num > 0)
     {
-      $obj = $db->fetch_object($i);
-      $var=!$var;
+      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<TR class="liste_titre">';
+      print '<td colspan="4">Actions à faire</td>';
+      print "</TR>\n";
       
-      print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td>";
-      print "<td><a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
-      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->sname.'</a></td>';
-      $i++;
+      $i = 0;
+      while ($i < $num ) 
+	{
+	  $obj = $db->fetch_object($i);
+	  $var=!$var;
+	  
+	  print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td>";
+	  print "<td><a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
+	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->sname.'</a></td>';
+	  $i++;
+	}
+      print "</table><br>";
     }
   $db->free();
-  print "</table><br>";
 } 
 else
 {
   print $db->error();
 }
+
+$sql = "SELECT s.nom, s.idp, p.rowid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+$sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut = 1";
+if ($socidp)
+{ 
+  $sql .= " AND s.idp = $socidp"; 
+}
+
+$sql .= " ORDER BY p.rowid DESC";
+$sql .= $db->plimit(5, 0);
+
+if ( $db->query($sql) )
+{
+  $num = $db->num_rows();
+  $i = 0;
+  if ($num > 0 )
+    {
+      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<tr class="liste_titre"><td colspan="4">Propositions commerciales ouvertes</td></tr>';
+      
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td>";
+	  print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></TD>\n";      
+	  print "<td align=\"right\">";
+	  print strftime("%d %B %Y",$obj->dp)."</td>\n";	  
+	  print "<td align=\"right\">".price($obj->price)."</td></tr>\n";
+	  $i++;
+	}
+      print "</table><br>";
+    }
+}
+
 
 /*
  * Dernières propales
@@ -266,8 +307,8 @@ if ( $db->query($sql) )
     }
 
 
-print '</td></tr>';
 
+print '</td></tr>';
 print '</table>';
 
 $db->close();
