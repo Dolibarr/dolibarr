@@ -139,14 +139,14 @@ if ($_GET["socid"] > 0)
     {
       $hselected=$h;
       $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
-      $head[$h][1] = 'Fiche client';
+      $head[$h][1] = 'Client';
       $h++;
     }
   if ($objsoc->client==2)
     {
       $hselected=$h;
       $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->socid;
-      $head[$h][1] = 'Fiche prospect';
+      $head[$h][1] = 'Prospect';
       $h++;
     }
   if ($objsoc->fournisseur)
