@@ -232,6 +232,8 @@ insert into llx_c_propalst (id,label) values (4, 'Facturée');
 --
 -- Formes juridiques
 -- Extrait de http://www.insee.fr/fr/nom_def_met/nomenclatures/cj/cjniveau2.htm
+insert into llx_c_forme_juridique (code, libelle) values (0,'Non renseignée');
+
 insert into llx_c_forme_juridique (code, libelle) values (11,'Artisan Commerçant');
 insert into llx_c_forme_juridique (code, libelle) values (12,'Commerçant');
 insert into llx_c_forme_juridique (code, libelle) values (13,'Artisan');
