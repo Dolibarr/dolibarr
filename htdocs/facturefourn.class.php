@@ -141,7 +141,9 @@ class FactureFourn
       $sql = "SELECT fk_soc,libelle,facnumber,amount,remise,".$this->db->pdate(datef)."as df";
       $sql .= ", total_ht, total_tva, total_ttc, fk_user_author";
       $sql .= ", fk_statut, paye";
-      $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f WHERE f.rowid=$rowid;";
+      $sql .= ", s.nom as socnom, s.idp as socidp";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f,".MAIN_DB_PREFIX."societe as s";
+      $sql .= " WHERE f.rowid=$rowid AND f.fk_soc = s.idp ;";
       
       if ($this->db->query($sql) )
 	{
@@ -165,6 +167,9 @@ class FactureFourn
 
 	      $this->statut = $obj->fk_statut;
 	      $this->paye   = $obj->paye;
+
+	      $this->socidp = $obj->socidp;
+	      $this->socnom = $obj->socnom;
 
 	      $this->db->free();
 
@@ -266,115 +271,116 @@ class FactureFourn
     }
 
 
-  /*
-   * Ajout ligne facture fourn
+  /**
+   * Ajoute une ligne dans la facture
+   *
    */
   Function addline($desc, $pu, $tauxtva, $qty)
-    {
-
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
-	    $sql .= " VALUES ($this->id);";
-	    if ($this->db->query($sql) ) 
-	      {
-		$idligne = $this->db->last_insert_id();
-
- 		$this->updateline($idligne, $desc, $pu, $tauxtva, $qty);
-	      }
-	    else
-	      {
-		print $this->db->error();
-	      }
-
-        // Mise a jour prix facture
-        $this->updateprice($this->id);
-
-    }
+  {
+    
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture_fourn)";
+    $sql .= " VALUES ($this->id);";
+    if ($this->db->query($sql) ) 
+      {
+	$idligne = $this->db->last_insert_id();
+	
+	$this->updateline($idligne, $desc, $pu, $tauxtva, $qty);
+      }
+    else
+      {
+	print $this->db->error();
+      }
+    
+    // Mise a jour prix facture
+    $this->updateprice($this->id);
+    
+  }
   /*
    * Mise a jour ligne facture fourn
    *
    */
   Function updateline($id, $label, $puht, $tauxtva, $qty=1)
-    {
-        $puht = ereg_replace(",",".",$puht);
-        
-        $totalht  = $puht * $qty;
-        $tva      = tva($totalht, $tauxtva);
-        $totalttc = $totalht + $tva;
-        
-        
-        $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det ";
-        $sql .= "SET description ='".$label."'";
-        $sql .= ", pu_ht = " . $puht;
-        $sql .= ", qty =".$qty;
-        $sql .= ", total_ht=".$totalht;
-        $sql .= ", tva=".$tva;
-        $sql .= ", tva_taux=".$tauxtva;
-        $sql .= ", total_ttc=".$totalttc;
-        
-        $sql .= " WHERE rowid = $id";
-        
-        if (! $this->db->query($sql) )
-        {
-            print $this->db->error() . '<b><br>'.$sql;
-        }
-        
-        // Mise a jour prix facture
-        $this->updateprice($this->id);
-    }
-  /*
-   * Supprime ligne facture fourn
+  {
+    $puht = ereg_replace(",",".",$puht);
+    
+    $totalht  = $puht * $qty;
+    $tva      = ($totalht * $tauxtva /  100);
+    $totalttc = $totalht + $tva;
+    
+    
+    $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn_det ";
+    $sql .= "SET description ='".$label."'";
+    $sql .= ", pu_ht = " . $puht;
+    $sql .= ", qty =".$qty;
+    $sql .= ", total_ht=".$totalht;
+    $sql .= ", tva=".$tva;
+    $sql .= ", tva_taux=".$tauxtva;
+    $sql .= ", total_ttc=".$totalttc;
+    
+    $sql .= " WHERE rowid = $id";
+    
+    if (! $this->db->query($sql) )
+      {
+	print $this->db->error() . '<b><br>'.$sql;
+      }
+    
+    // Mise a jour prix facture
+    $this->updateprice($this->id);
+  }
+  /**
+   * Supprime une ligne de la facture
    *
    */
   Function deleteline($rowid)
-    {
-        // Supprime ligne
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det ";
-        $sql .= " WHERE rowid = $rowid";
-        
-        if (! $this->db->query($sql) ) 
-          {
+  {
+    // Supprime ligne
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det ";
+    $sql .= " WHERE rowid = $rowid";
+    
+    if (! $this->db->query($sql) ) 
+      {
         print "Erreur : ".$this->db->error() . '<b><br>'.$sql;
-          }
-
-        // Mise a jour prix facture
-        $this->updateprice($this->id);
-
-        return 1;
-    }
-  /*
-   *
+      }
+    
+    // Mise a jour prix facture
+    $this->updateprice($this->id);
+    
+    return 1;
+  }
+  /**
+   *Mets à jour le prix total de la facture
    *
    */
   Function updateprice($facid)
-    {
-
-      $sql = "SELECT sum(total_ht), sum(tva), sum(total_ttc) FROM ".MAIN_DB_PREFIX."facture_fourn_det";
-      $sql .= " WHERE fk_facture_fourn = $facid;";
+  {
+    
+    $sql = "SELECT sum(total_ht), sum(tva), sum(total_ttc) FROM ".MAIN_DB_PREFIX."facture_fourn_det";
+    $sql .= " WHERE fk_facture_fourn = $facid;";
+    
+    $result = $this->db->query($sql);
+    
+    if ($result)
+      {
+	if ($this->db->num_rows() )
+	  {
+	    $row = $this->db->fetch_row();
+	    $total_ht  = $row[0];
+	    $total_tva = $row[1];
+	    $total_ttc = $row[2];
+	  }
+	
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET total_ht = $total_ht, total_tva = $total_tva, total_ttc = $total_ttc";
+	$sql .= " WHERE rowid = $facid ;";
+	
+	$result = $this->db->query($sql);
+	
+      }
+    else 
+      {
+	print $this->db->error();
+      }
+  }
   
-      $result = $this->db->query($sql);
-
-      if ($result)
-	{
-	  if ($this->db->num_rows() )
-	    {
-	      $row = $this->db->fetch_row();
-	      $total_ht  = $row[0];
-	      $total_tva = $row[1];
-	      $total_ttc = $row[2];
-	    }
-	  
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET total_ht = $total_ht, total_tva = $total_tva, total_ttc = $total_ttc";
-	  $sql .= " WHERE rowid = $facid ;";
-	  
-	  $result = $this->db->query($sql);
-	  
-	}
-      else 
-	{
-	  print $this->db->error();
-	}
-    }
-
   /*
    *
    * Génération du PDF
