@@ -256,7 +256,6 @@ class Societe {
 
 	      if ($this->client == 1)
 		{
-
 		  $this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id.'">'.$obj->nom.'</a>';
 		}
 	      elseif($this->client == 2)
@@ -272,20 +271,23 @@ class Societe {
 	      
 	      $this->note = $obj->note;
 
-	      return 1;	      
+	      $result = 1;	      
 	    }
 	  else
 	    {
 	      print "Aucun enregistrement trouvé<br>$sql";
-	      return -2;
+	      $result = -2;
 	    }
 
 	  $this->db->free();
 	}
       else
 	{
-        dolibarr_print_error($this->db);
+	  dolibarr_print_error($this->db);
+	  $result = -3;
 	}
+
+      return $result;
   }
 
   /**
@@ -651,29 +653,43 @@ class Societe {
    *    \return     array      tableau des formes juridiques
    */
   function forme_juridique_array()
-    {
-      $fj = array();
-      /*
-       * Lignes
-       */      
-      $sql = "SELECT code, libelle";
-      $sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique";
-      $sql .= " ORDER BY code ASC";
-      if ($this->db->query($sql))
-	{
-	  $num = $this->db->num_rows();
-	  $i = 0;
-	  
-	  while ($i < $num)
-	    {
-	      $objp = $this->db->fetch_object($i);
-	      $fj[$objp->code] = $objp->libelle;
-	      $i++;	  
-	    }
-	  $this->db->free();
-	} 
-      return $fj;
-    }
+  {
+    $fj = array();
+    /*
+     * Lignes
+     */      
+    $sql = "SELECT code, libelle";
+    $sql .= " FROM ".MAIN_DB_PREFIX."c_forme_juridique";
+    $sql .= " ORDER BY code ASC";
+    if ($this->db->query($sql))
+      {
+	$num = $this->db->num_rows();
+	$i = 0;
+	
+	while ($i < $num)
+	  {
+	    $objp = $this->db->fetch_object($i);
+	    $fj[$objp->code] = $objp->libelle;
+	    $i++;	  
+	  }
+	$this->db->free();
+      } 
+    return $fj;
+  }
+  
+  
+  function display_rib()
+  {
+    require_once DOL_DOCUMENT_ROOT . "/companybankaccount.class.php";
+    
+    $bac = new CompanyBankAccount($this->db, $this->id);
+    $bac->fetch();
+
+    $rib = $bac->code_banque." ".$bac->code_guichet." ".$bac->number." ".$bac->cle_rib;
+
+    return $rib;
+
+  }
 }
 
 ?>
