@@ -23,8 +23,12 @@
 require("./pre.inc.php");
 $user->getrights('produit');
 
+$langs->load("products");
+
+
 if (!$user->rights->produit->lire)
   accessforbidden();
+
 
 if ($action == 'update')
 {
@@ -32,14 +36,15 @@ if ($action == 'update')
   $db->query($sql);
 }
 
+
 /*
  *
  *
  */
 
-llxHeader("","","Accueil Produits et services");
+llxHeader("","",$langs->trans("ProductsAndServices"));
 
-print_titre("Produits et services");
+print_titre($langs->trans("ProductsAndServices"));
 
 print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
 
@@ -65,28 +70,29 @@ if ($db->query($sql))
 }
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-print '<tr class="liste_titre"><td colspan="2">Nombre</td></tr>';
-if (defined("MAIN_MODULE_PRODUIT") && MAIN_MODULE_PRODUIT)
+print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Number").'</td></tr>';
+if ($conf->produit->enabled)
 {
     print "<tr $bc[0]>";
-    print '<td><a href="liste.php?type=0&amp;envente=0">Produits hors vente</a></td><td>'.round($prodser[0][0]).'</td>';
+    print '<td><a href="liste.php?type=0&amp;envente=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td>'.round($prodser[0][0]).'</td>';
     print "</tr>";
     print "<tr $bc[1]>";
-    print '<td><a href="liste.php?type=0&amp;envente=1">Produits en vente</a></td><td>'.round($prodser[0][1]).'</td>';
+    print '<td><a href="liste.php?type=0&amp;envente=1">'.$langs->trans("ProductsOnSell").'</a></td><td>'.round($prodser[0][1]).'</td>';
     print "</tr>";
 }
-if (defined("MAIN_MODULE_SERVICE") && MAIN_MODULE_SERVICE)
+if ($conf->service->enabled)
 {
     print "<tr $bc[0]>";
-    print '<td><a href="liste.php?type=1&amp;envente=0">Services hors vente</a></td><td>'.round($prodser[1][0]).'</td>';
+    print '<td><a href="liste.php?type=1&amp;envente=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td>'.round($prodser[1][0]).'</td>';
     print "</tr>";
     print "<tr $bc[1]>";
-    print '<td><a href="liste.php?type=1&amp;envente=1">Services en vente</a></td><td>'.round($prodser[1][1]).'</td>';
+    print '<td><a href="liste.php?type=1&amp;envente=1">'.$langs->trans("ServicesOnSell").'</a></td><td>'.round($prodser[1][1]).'</td>';
     print "</tr>";
 }
 print '</table>';
 
 print '</td><td valign="top" width="70%">';
+
 
 /*
  * Derniers produits/services en vente
@@ -102,14 +108,14 @@ if ($result)
 
   $i = 0;
 
-  $typeprodser[0]="Produit";
-  $typeprodser[1]="Service";
+  $typeprodser[0]=$langs->trans("Product");
+  $typeprodser[1]=$langs->trans("Service");
     
   if ($num > 0)
     {
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 
-      print '<tr class="liste_titre"><td colspan="3">Derniers produits/services en vente enregistrés</td></tr>';
+      print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("LastRecorded").'</td></tr>';
     
       $var=True;
       while ($i < $num)
@@ -132,7 +138,7 @@ if ($result)
 }
 else
 {
-  print $db->error() . "<br>" .$sql;
+  dolibarr_print_error();
 }
 
 print '</td></tr></table>';
