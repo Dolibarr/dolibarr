@@ -1179,7 +1179,7 @@ else
 	 *
 	 *
 	 */
-	if ($action == 'classer')
+	if ($_GET["action"] == 'classer')
 	  {	    
 	    print "<p><form method=\"post\" action=\"$PHP_SELF?facid=$fac->id\">\n";
 	    print '<input type="hidden" name="action" value="classin">';
@@ -1187,7 +1187,7 @@ else
 	    print '<tr><td>Projet</td><td>';
 	    
 	    $proj = new Project($db);
-	    $html->select_array("projetid",$proj->liste_array($socidp));
+	    $html->select_array("projetid",$proj->liste_array($soc->id));
 	    
 	    print "</td></tr>";
 	    print '<tr><td colspan="2" align="center"><input type="submit" value="Envoyer"></td></tr></table></form></p>';
