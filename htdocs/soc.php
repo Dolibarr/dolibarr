@@ -242,13 +242,13 @@ else
   if ($soc->client==1)
     {
       $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id;
-      $head[$h][1] = 'Fiche client';
+      $head[$h][1] = 'Client';
       $h++;
     }
   if ($soc->client==2)
     {
       $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$soc->id;
-      $head[$h][1] = 'Fiche prospect';
+      $head[$h][1] = 'Prospect';
       $h++;
     }
   if ($soc->fournisseur)
@@ -260,7 +260,7 @@ else
 
   if ($conf->compta->enabled) {
       $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
-      $head[$h][1] = 'Fiche compta';
+      $head[$h][1] = 'Comptabilité';
       $h++;
   }
 
