@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/system/web.php
+/**	    \file       htdocs/admin/system/web.php
 		\brief      Page des infos système du serveur Web
 		\version    $Revision$
 */
@@ -40,11 +40,11 @@ print "<br>\n";
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td>".$langs->trans("Parameter")."</td><td>".$langs->trans("Value")."</td></tr>\n";
-print "<tr $bc[1]><td width=\"140\">".$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
+print "<tr $bc[1]><td width=\"200\">".$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("VirtualServerName")."</td><td>" . $_SERVER["SERVER_NAME"] . "</td></tr>\n";
-print "<tr $bc[1]><td width=\"140\">".$langs->trans("IP")."</td><td>".$_SERVER["SERVER_ADDR"]."</td></tr>\n";
+print "<tr $bc[1]><td width=\"200\">".$langs->trans("IP")."</td><td>".$_SERVER["SERVER_ADDR"]."</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("Port")."</td><td>" . $_SERVER["SERVER_PORT"] . "</td></tr>\n";
-print "<tr $bc[1]><td width=\"140\">".$langs->trans("DocumentRootServer")."</td><td>".$_SERVER["DOCUMENT_ROOT"]."</td></tr>\n";
+print "<tr $bc[1]><td width=\"200\">".$langs->trans("DocumentRootServer")."</td><td>".$_SERVER["DOCUMENT_ROOT"]."</td></tr>\n";
 print '</table>';
 
 llxFooter();
