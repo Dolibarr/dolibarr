@@ -20,9 +20,11 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/system/pear_packages.php
+/**	    \file       htdocs/admin/system/pear_packages.php
 		\brief      Page des infos système des packages PEAR
 		\version    $Revision$
+        \deprecated
+        \todo       delete file
 */
 
 require("./pre.inc.php");
