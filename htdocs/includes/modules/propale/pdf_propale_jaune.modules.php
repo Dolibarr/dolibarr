@@ -42,7 +42,7 @@ class pdf_propale_jaune extends ModelePDFPropales
   function pdf_propale_jaune($db=0)
     { 
       $this->db = $db;
-      $this->name = "Jaune";
+      $this->name = "jaune";
       $this->description = "Modèle de proposition Jaune";
       $this->error = "";
     }

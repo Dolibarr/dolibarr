@@ -130,6 +130,7 @@ $dir = "../includes/modules/propale/";
 $handle = opendir($dir);
 if ($handle)
 {
+  $var=false;
   while (($file = readdir($handle))!==false)
     {
       if (substr($file, 0, 12) == 'mod_propale_' && substr($file, strlen($file)-3, 3) == 'php')
@@ -140,11 +141,8 @@ if ($handle)
 
 	  $modPropale = new $file;
 
-	  if($pair == "pair")
-	    $pair = "impair";
-	  else
-	    $pair = "pair";
-	  print "<tr class=\"$pair\">\n  <td width=\"140\">".$file."</td>";
+      $var=!$var;
+	  print "<tr ".$bc[$var].">\n  <td width=\"140\">".$file."</td>";
 	  print "\n  <td>".$modPropale->info()."</td>\n";
 	  print "\n  <td>".$modPropale->getExample()."</td>\n";
 	  
@@ -206,6 +204,7 @@ clearstatcache();
 
 $handle=opendir($dir);
 
+$var=false;
 while (($file = readdir($handle))!==false)
 {
   if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,12) == 'pdf_propale_')
@@ -213,15 +212,12 @@ while (($file = readdir($handle))!==false)
       $name = substr($file, 12, strlen($file) - 24);
       $classname = substr($file, 0, strlen($file) -12);
 
-      if($pair == "pair")
-	$pair = "impair";
-      else
-	$pair = "pair";
-      print "<tr class=\"$pair\">\n  <td>";
+      $var=!$var;
+      print "<tr ".$bc[$var].">\n  <td>";
       print "$name";
       print "</td>\n  <td>\n";
       require_once($dir.$file);
-      $obj = new $classname();
+      $obj = new $classname($db);
       
       print $obj->description;
 

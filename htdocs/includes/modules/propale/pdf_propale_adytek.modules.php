@@ -337,14 +337,6 @@ class pdf_propale_adytek extends ModelePDFPropales
       }
       $pdf->SetTextColor(70,70,170);
 
-      if (defined("FAC_PDF_INTITULE2"))
-	{
-	  $pdf->SetXY(10,30);
-	  $pdf->SetFont('Arial','',7);
-	  $pdf->SetTextColor(0,0,200);
-	  $pdf->MultiCell(45, 5, FAC_PDF_INTITULE2, '' , 'C');
-	}
-
       /*
        * Definition du document
        */
