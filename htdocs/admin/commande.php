@@ -49,13 +49,11 @@ $commande_addon_var = COMMANDE_ADDON;
 
 if ($_GET["action"] == 'setmod')
 {
-	$sql = "delete from ".MAIN_DB_PREFIX."const where name = 'COMMANDE_ADDON' ;";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'COMMANDE_ADDON' ;";
 	$db->query($sql);
 	$sql = '';
-	$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
 	('COMMANDE_ADDON','".$_GET["value"]."',0) ; ";
-	
-  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'COMMANDE_ADDON', value='".$_GET["value"]."', visible=0";
 
   if ($db->query($sql))
     {

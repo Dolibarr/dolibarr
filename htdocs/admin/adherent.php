@@ -53,20 +53,18 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
   if (isset($_POST["consttype"]) && $_POST["consttype"] != '')
 	{
-		$sql = "delete from ".MAIN_DB_PREFIX."const where name = '".$_POST["constname"]."';";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$_POST["constname"]."';";
 	  $db->query($sql);
 		$sql = '';
-		$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,type,visible,note) VALUES ('".$_POST["constname"]."','".$_POST["constvalue"]."','".$typeconst[$_POST["consttype"]]."',0,'".$_POST["constnote"]."') ;";
-				
-  //  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$_POST["constvalue"]."',note='".$_POST["constnote"]."', type='".$typeconst[$_POST["consttype"]]."',visible=0";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,type,visible,note) VALUES ('".$_POST["constname"]."','".$_POST["constvalue"]."','".$typeconst[$_POST["consttype"]]."',0,'".$_POST["constnote"]."') ;";
+
   }
 	else
 	{
-	  $sql = "delete from ".MAIN_DB_PREFIX."const where name = '".$_POST["constname"]."';";
+	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$_POST["constname"]."';";
 	  $db->query($sql);
 		$sql ='';
-		$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible,note) VALUES ('".$_POST["constname"]."','".$_POST["constvalue"]."',0,'".$_POST["constnote"]."') ;";
-    //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$_POST["constvalue"]."',note='".$_POST["constnote"]."',visible=0";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible,note) VALUES ('".$_POST["constname"]."','".$_POST["constvalue"]."',0,'".$_POST["constnote"]."') ;";
   }
   
   if ($db->query($sql))
@@ -85,14 +83,12 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 
 if ($action == 'set')
 {
-   $sql = "delete from ".MAIN_DB_PREFIX." where name = '$name' ;";
+   $sql = "DELETE FROM ".MAIN_DB_PREFIX." WHERE name = '$name' ;";
 	 $db->query($sql);
 	 
 	 $sql ='';
 	 $sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,visible) values ('$name','$value',
 	 0);  "; 
-
- // $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '$name', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {

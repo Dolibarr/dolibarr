@@ -2,8 +2,8 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			  <benoit.mortier@opensides.be>
- * Copyright (C) 2004 Eric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,10 +39,10 @@ if (!$user->admin)
 
 if ($action == 'nbprod' && $user->admin)
 {
-  $sql ="delete from ".MAIN_DB_PREFIX."const where name = 'EXPEDITION_NEW_FORM_NB_PRODUCT';";
+  $sql ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXPEDITION_NEW_FORM_NB_PRODUCT';";
 	$db->query($sql);
 	$sql ='';
-	$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_NEW_FORM_NB_PRODUCT','".$value."',0);";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_NEW_FORM_NB_PRODUCT','".$value."',0);";
 	
   //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXPEDITION_NEW_FORM_NB_PRODUCT', value='".$value."', visible=0";
 
@@ -63,13 +63,10 @@ if ($_GET["action"] == 'set')
   require_once($file);
   
   $obj = new $classname();
-  $sql = "delete from ".MAIN_DB_PREFIX."expedition_methode where rowid = ".$obj->id.";";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition_methode WHERE rowid = ".$obj->id.";";
   $db->query($sql);
   $sql='';
-  $sql = "insert into ".MAIN_DB_PREFIX."expedition_methode (rowid,code,libelle,description,status) VALUES (".$obj->id.",'".$obj->code."','".$obj->name."','".addslashes($obj->description)."',".$_GET["statut"].");";
-  
-  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."expedition_methode (rowid,code,libelle, description, statut)";
-  //$sql .= " VALUES (".$obj->id.",'".$obj->code."','".$obj->name."','".addslashes($obj->description)."',".$_GET["statut"].")";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition_methode (rowid,code,libelle,description,status) VALUES (".$obj->id.",'".$obj->code."','".$obj->name."','".addslashes($obj->description)."',".$_GET["statut"].");";
   
   if ($db->query($sql))
     {
@@ -83,12 +80,10 @@ $expedition_addon_var_pdf = EXPEDITION_ADDON_PDF;
 
 if ($_GET["action"] == 'setpdf')
 {
-	$sql = "delete from ".MAIN_DB_PREFIX."const where name = 'EXPEDITION_ADDON_PDF';";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXPEDITION_ADDON_PDF';";
 	$db->query($sql);
 	$sql='';
-	$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_ADDON_PDF','".$_GET["value"]."',0)";
-	
-  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXPEDITION_ADDON_PDF', value='".$_GET["value"]."', visible=0";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_ADDON_PDF','".$_GET["value"]."',0)";
 
   if ($db->query($sql))
     {
@@ -111,12 +106,11 @@ $expedition_default = EXPEDITION_DEFAULT;
 
 if ($_GET["action"] == 'setdef')
 {
-  $sql = "delete from ".MAIN_DB_PREFIX."const where name = 'EXPEDITION_ADDON';";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXPEDITION_ADDON';";
 	$db->query($sql);
 	$sql='';
-	$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_ADDON','".$value."',0)";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_ADDON','".$value."',0)";
 	
-  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXPEDITION_ADDON', value='".$value."', visible=0";
   if ($db->query($sql))
     {
       // la constante qui a été lue en avant du nouveau set

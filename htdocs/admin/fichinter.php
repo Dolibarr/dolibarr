@@ -45,12 +45,10 @@ $ficheinter_addon_var_pdf = FICHEINTER_ADDON_PDF;
 
 if ($action == 'setpdf')
 {
-	$sql = "delete from ".MAIN_DB_PREFIX."const where name = 'FICHEINTER_ADDON_PDF' ;";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'FICHEINTER_ADDON_PDF' ;";
 	$db->query($sql);$sql ='';
-	$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
 	('FICHEINTER_ADDON_PDF','".$value."',0) ; ";
-	
-  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FICHEINTER_ADDON_PDF', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {

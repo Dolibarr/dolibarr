@@ -42,7 +42,7 @@ if (!$user->admin)
 $def = array();
 
 // positionne la variable pour le nombre de rss externes
-$db->query("select count(*) nb from ".MAIN_DB_PREFIX."const where name like 'EXTERNAL_RSS_URLRSS_%'");
+$db->query("select count(*) nb from ".MAIN_DB_PREFIX."const WHERE name like 'EXTERNAL_RSS_URLRSS_%'");
 $obj = $db->fetch_object(0);
 $nbexternalrss = $obj->nb;
 
@@ -54,22 +54,15 @@ if ($_POST["action"] == 'add')
     if(isset($_POST[$external_rss_urlrss])) {
       $external_rss_title = "external_rss_title_" . $_POST["norss"];
       //$external_rss_url = "external_rss_url_" . $_POST["norss"];
-      
-      //$sql  = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXTERNAL_RSS_URL_" . $_POST["norss"] . "', value='".$_POST[$external_rss_url]."', visible=0"; 
 			
-			$sql = "delete from ".MAIN_DB_PREFIX."const where name ='EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "'; ";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name ='EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "'; ";
       $db->query($sql); $sql='';
-			$sql1 = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "','".$_POST[$external_rss_title]."',0) ;";
-			
-			//$sql1 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "', value='".$_POST[$external_rss_title]."', visible=0";
-			
-			
-			$sql = "delete from ".MAIN_DB_PREFIX."const where name ='EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "'; ";
+			$sql1 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "','".$_POST[$external_rss_title]."',0) ;";
+						
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name ='EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "'; ";
 			$db->query($sql);$sql='';
-		$sql2 = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "','".$_POST[$external_rss_urlrss]."',0) ;";
-			
-      //$sql2 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "', value='".$_POST[$external_rss_urlrss]."', visible=0";
-      
+		$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "','".$_POST[$external_rss_urlrss]."',0) ;";
+			      
       if ($db->query($sql1) && $db->query($sql2))
 	{
         header("Location: external_rss.php");
@@ -82,9 +75,9 @@ if ($_POST["action"] == 'add')
 if ($_POST["delete"])
 {
     if(isset($_POST["norss"])) {
-      $sql  = "DELETE FROM ".MAIN_DB_PREFIX."const where name = 'EXTERNAL_RSS_URL_" . $_POST["norss"]."'";
-      $sql1 = "DELETE FROM ".MAIN_DB_PREFIX."const where name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"]."'";
-      $sql2 = "DELETE FROM ".MAIN_DB_PREFIX."const where name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"]."'";
+      $sql  = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_URL_" . $_POST["norss"]."'";
+      $sql1 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"]."'";
+      $sql2 = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"]."'";
       
       $result = $db->query($sql);
       $result = $db->query($sql1);
@@ -103,18 +96,16 @@ if ($_POST["modify"])
     if(isset($_POST[$external_rss_urlrss])) {
       $external_rss_title = "external_rss_title_" . $_POST["norss"];
       //$external_rss_url = "external_rss_url_" . $i;
-      //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '" . "EXTERNAL_RSS_URL_" . $_POST["norss"] . "', value='". $_POST[$external_rss_url]."', visible=0"; 
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const where name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"]."';";
+			
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_TITLE_" . $_POST["norss"]."';";
 			$db->query($sql);$sql='';
-			$sql1 = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
+			$sql1 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
 			('" . "EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "',". $_POST[$external_rss_title]."',0) ;";
 			
-      //$sql1 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '" . "EXTERNAL_RSS_TITLE_" . $_POST["norss"] . "', value='". $_POST[$external_rss_title]."', visible=0";
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const where name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"]."';";
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXTERNAL_RSS_URLRSS_" . $_POST["norss"]."';";
 			$db->query($sql);$sql='';
-			$sql2 = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES 
+			$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES 
 			('" . "EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "','". $_POST[$external_rss_urlrss]."',0)";
-      //$sql2 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '" . "EXTERNAL_RSS_URLRSS_" . $_POST["norss"] . "', value='". $_POST[$external_rss_urlrss]."', visible=0";
       
       if ($db->query($sql1) && $db->query($sql2))
 	{
