@@ -32,10 +32,6 @@ class Conf
     {
       $this->db = new DbConf();
       
-      $this->liste_limit = 10;
-      
-      $this->voyage     = 0;
-      
       $this->compta    = new ComptaConf();
       $this->propal    = new PropalConf();
       $this->facture   = new FactureConf();
@@ -46,8 +42,8 @@ class Conf
       $this->adherent  = new AdherentConf();
       $this->domaine   = new DomaineConf();
       
-      $this->readonly = 0;
-
+      $this->readonly   = 0;
+      $this->voyage     = 0;
       $this->password_encrypted = 0;
     }  
 }
