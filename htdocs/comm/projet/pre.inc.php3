@@ -20,10 +20,6 @@
  *
  */
 
-$root = "/$PREFIX";
-
-require ("/$GLJ_WWW_ROOT/conf/$GLJ_PREFIX.$GLJ_COUNTRY.inc.php3");
-require ("/$GLJ_WWW_ROOT/../www/lib/db.lib.php3");
 require ("../../main.inc.php3");
 
 function llxHeader($head = "", $urlp = "") {
