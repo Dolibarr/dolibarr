@@ -38,7 +38,8 @@ $offset = $limit * $page ;
 
 print_barre_liste("Liste des concerts", $page, $PHP_SELF);
 
-$sql = "SELECT c.rowid, c.date_concert as dc, ga.nom, lc.nom as lieu, lc.ville";
+//$sql = "SELECT c.rowid, c.date_concert as dc, ga.nom, lc.nom as lieu, lc.ville";
+$sql = "SELECT c.rowid, c.date_concert as dc, c.fk_groupart, c.fk_lieu_concert, ga.nom, lc.nom as lieu, lc.ville";
 $sql .= " FROM llx_concert as c, llx_groupart as ga, llx_lieu_concert as lc";
 $sql .= " WHERE c.fk_groupart = ga.rowid AND c.fk_lieu_concert = lc.rowid";
 $sql .= " ORDER BY $sortfield $sortorder ";
@@ -65,8 +66,10 @@ if ( $db->query($sql) ) {
     $var=!$var;
     print "<TR $bc[$var]>";
     print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->dc</a></TD>\n";
-    print '<TD><a href="product_info.php?products_id='.$objp->osc_id.'">'.$objp->nom.'</a></TD>';
-    print '<TD><a href="product_info.php?products_id='.$objp->osc_id.'">'.$objp->lieu.'</a></TD>';
+    //    print '<TD><a href="product_info.php?products_id='.$objp->osc_id.'">'.$objp->nom.'</a></TD>';
+    print '<TD><a href="../groupart/fiche.php?id='.$objp->fk_groupart.'">'.$objp->nom.'</a></TD>';
+    //    print '<TD><a href="product_info.php?products_id='.$objp->osc_id.'">'.$objp->lieu.'</a></TD>';
+    print '<TD><a href="fichelieu.php?id='.$objp->fk_lieu_concert.'">'.$objp->lieu.'</a></TD>';
     print '<TD>'.$objp->ville.'</TD>';
     print "</TR>\n";
     $i++;
