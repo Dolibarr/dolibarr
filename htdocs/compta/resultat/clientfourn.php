@@ -34,30 +34,45 @@ if (!$user->rights->compta->resultat->lire)
 llxHeader();
 
 $year=$_GET["year"];
-$month=$_GET["month"];
 if (! $year) { $year = strftime("%Y", time()); }
+$modecompta = $conf->compta->mode;
+if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
 
 print_fiche_titre("Détail recettes-dépenses par client/fournisseur",($year?"&nbsp; <a href='clientfourn.php?year=".($year-1)."'>".img_previous()."</a> Année $year <a href='clientfourn.php?year=".($year+1)."'>".img_next()."</a>":""));
-
 print '<br>';
 
-print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+if ($modecompta=="CREANCES-DETTES")
+{
+    print 'Il se base sur la date de validation des factures et inclut les factures dues, qu\'elles soient payées ou non';
+    print ' (<a href="clientfourn.php?year='.$year.'&modecompta=RECETTES-DEPENSES">Voir le rapport sur les factures effectivement payées uniquement</a>).<br>';
+    print '<br>';
+}
+else {
+    print 'Il se base sur la date de validation des factures et n\'inclut que les factures effectivement payées';
+    print ' (<a href="clientfourn.php?year='.$year.'&modecompta=CREANCES-DETTES">Voir le rapport en créances-dettes qui inclut les factures non encore payée</a>).<br>';
+    print '<br>';
+}
+
+
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="10%">&nbsp;</td><td>Elément</td>';
-print "<td align=\"right\">Montant HT</td>";
+print "<td align=\"right\">".$langs->trans("AmountHT")."</td>";
 print "</tr>\n";
 
 
 /*
  * Factures clients
- *
  */
-
 $sql = "SELECT s.nom,s.idp,sum(f.total) as amount";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+$sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
 if ($year) {
 	$sql .= " AND f.datef between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
+}
+if ($modecompta != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = 1";
 }
 $sql .= " GROUP BY s.nom ASC";
 
@@ -88,19 +103,22 @@ if ($result) {
   }
   $db->free();
 } else {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 print '<tr><td colspan="3" align="right">'.price($total).'</td></tr>';
 
 /*
  * Frais, factures fournisseurs.
- *
  */
 
 $sql = "SELECT s.nom,s.idp,sum(f.total_ht) as amount";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f WHERE f.fk_soc = s.idp"; 
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
+$sql .= " WHERE f.fk_soc = s.idp"; 
 if ($year) {
 	$sql .= " AND f.datef between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
+}
+if ($modecompta != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = 1";
 }
 $sql .= " GROUP BY s.nom ASC, s.idp";
 
@@ -118,7 +136,7 @@ if ($result) {
       $var=!$var;
             
       print "<tr $bc[$var]><td>&nbsp</td>";
-      print "<td>Factures <a href=\"../../fourn/facture/index.php?socid=".$objp->idp."\">$objp->nom</a></td>\n";
+      print "<td>".$langs->trans("Bills")." <a href=\"../../fourn/facture/index.php?socid=".$objp->idp."\">$objp->nom</a></td>\n";
       
       print "<td align=\"right\">".price($objp->amount)."</td>\n";
       
@@ -130,13 +148,12 @@ if ($result) {
   }
   $db->free();
 } else {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 print '<tr><td colspan="3" align="right">'.price($subtotal).'</td></tr>';
 
 /*
  * Charges sociales
- *
  */
 
 $subtotal = 0;
@@ -168,7 +185,7 @@ if ( $db->query($sql) ) {
     $i++;
   }
 } else {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 print '<tr><td colspan="3" align="right">'.price($subtotal).'</td></tr>';
 
@@ -176,7 +193,6 @@ print '<tr><td align="right" colspan="2">Résultat</td><td class="border" align="
 
 /*
  * Charges sociales non déductibles
- *
  */
 
 $subtotal = 0;
@@ -208,7 +224,7 @@ if ( $db->query($sql) ) {
     $i++;
   }
 } else {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 print '<tr><td colspan="3" align="right">'.price($subtotal).'</td></tr>';
 

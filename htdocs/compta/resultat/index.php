@@ -36,25 +36,44 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-$year_current = $_GET["year"];;
+$year_current = $_GET["year"];
 if (! $year_current) { $year_current = strftime("%Y", time()); }
-
+$modecompta = $conf->compta->mode;
+if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
 print_titre("Résultat comptable, résumé annuel");
 print '<br>';
 
+print "Ce rapport présente la balance entre les recettes et les dépenses facturées aux clients ou fournisseurs. Les dépenses de charges ne sont pas incluses.<br>\n";
+if ($modecompta=="CREANCES-DETTES")
+{
+    print 'Il se base sur la date de validation des factures et inclut les factures dues, qu\'elles soient payées ou non';
+    print ' (<a href="index.php?year='.$year.'&modecompta=RECETTES-DEPENSES">Voir le rapport sur les factures effectivement payées uniquement</a>).<br>';
+    print '<br>';
+}
+else {
+    print 'Il se base sur la date de validation des factures et n\'inclut que les factures effectivement payées';
+    print ' (<a href="index.php?year='.$year.'&modecompta=CREANCES-DETTES">Voir le rapport en créances-dettes qui inclut les factures non encore payée</a>).<br>';
+    print '<br>';
+}
 
+/*
+ * Factures clients
+ */
 $sql = "SELECT sum(f.total) as amount, date_format(f.datef,'%Y-%m') as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
-if ($year) {
-	$sql .= " AND f.datef between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
+$sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
+if ($_GET["year"]) {
+	$sql .= " AND f.datef between '".$_GET["year"]."-01-01 00:00:00' and '".$_GET["year"]."-12-31 23:59:59'";
 }
 if ($socidp)
 {
-  $sql .= " WHERE f.fk_soc = $socidp";
+  $sql .= " AND f.fk_soc = $socidp";
+}
+if ($modecompta != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = 1";
 }
 $sql .= " GROUP BY dm DESC";
-
 if ($db->query($sql))
 {
   $num = $db->num_rows();
@@ -67,17 +86,24 @@ if ($db->query($sql))
     }
 }
 else {
-	print $db->error();	
+	dolibarr_print_error($db);	
 }
 
+/*
+ * Frais, factures fournisseurs.
+ */
 $sql = "SELECT sum(f.total_ht) as amount, date_format(f.datef,'%Y-%m') as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f WHERE f.fk_soc = s.idp"; 
-if ($year) {
-	$sql .= " AND f.datef between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
+$sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
+if ($_GET["year"]) {
+	$sql .= " AND f.datef between '".$_GET["year"]."-01-01 00:00:00' and '".$_GET["year"]."-12-31 23:59:59'";
 }
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
+}
+if ($modecompta != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = 1";
 }
 $sql .= " GROUP BY dm DESC";
 
@@ -93,10 +119,15 @@ if ($db->query($sql))
     }
 }
 else {
-	print $db->error();	
+	dolibarr_print_error($db);	
 }
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+/*
+ * Charges sociales
+ */
+
+
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td rowspan=2>'.$langs->trans("Month").'</td>';
 
 
