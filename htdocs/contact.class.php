@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * 
+ * Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -114,10 +115,12 @@ class Contact
 			}
       return $result;
     }
+
   /*
-   *
+   * Mise à jour de l'arbre ldap
    *
    */
+
   Function update_ldap($user)
   {
     $this->fetch($this->id);
@@ -132,60 +135,88 @@ class Contact
 
 				if ($ldapbind)
 					{
+
+						$info["objectclass"][0] = "organizationalPerson";
+	    			$info["objectclass"][1] = "inetOrgPerson";
+
+						$info["ou"] = People;
 	    			$info["cn"] = utf8_encode($this->firstname." ".$this->name);
 	    			$info["sn"] = utf8_encode($this->name);
-						$info["ou"] = People;
+						$info["givenName"] = utf8_encode($this->firstname);
 
-	    			if ($this->email)
-	      			$info["rfc822Mailbox"] = $this->email;
+						if ($this->poste)
+	      					$info["title"] = utf8_encode($this->poste);
 
-	    			if ($this->phone_pro)
-	      			$info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
-
-	    			if ($this->phone_mobile)
-	      			$info["mobile"] = dolibarr_print_phone($this->phone_mobile);
-
-	    			if ($this->phone_perso)
-	      			$info["homePhone"] = dolibarr_print_phone($this->phone_perso);
-
-	    			if ($this->poste)
-	      			$info["title"] = utf8_encode($this->poste);
-
-	    			if ($this->socid > 0)
+						if ($this->socid > 0)
 	      			{
 								$soc = new Societe($this->db);
 								$soc->fetch($this->socid);
 								$info["o"] = utf8_encode($soc->nom);
 
+								if ($soc->client == 1)
+									$info["businessCategory"] = utf8_encode("Clients");
+								elseif ($soc->client == 2)
+									$info["businessCategory"] = utf8_encode("Prospects");
+
+								if ($soc->fournisseur == 1)
+									$info["businessCategory"] = utf8_encode("Fournisseurs");
+
 								if ($soc->ville)
-		  					{
-		    					$info["l"] = utf8_encode($soc->ville);
-		  					}
+		  						{
+										if ($soc->address)
+											$info["street"] = ($soc->address);
+
+										if ($soc->cp)
+											$info["postalCode"] = ($soc->cp);
+
+										$info["l"] = utf8_encode($soc->ville);
+		  						}
 	      			}
 
-	    			$info["objectclass"][0] = "organizationalPerson";
-	    			$info["objectclass"][1] = "inetOrgPerson";
-//	    $info["objectclass"][2] = "phpgwContact"; // compatibilite egroupware
+						if ($this->phone_pro)
+	      			$info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
 
-//	    $info['uidnumber'] = $this->id;
+	    			if ($this->phone_perso)
+	      			$info["homePhone"] = dolibarr_print_phone($this->phone_perso);
 
-//	    $info['phpgwTz']      = 0;
-//	    $info['phpgwMailType'] = 'INTERNET';
-//	    $info['phpgwMailHomeType'] = 'INTERNET';
+	    			if ($this->phone_mobile)
+	      			$info["mobile"] = dolibarr_print_phone($this->phone_mobile);
 
-						$info["uid"] = $this->id. ":".$info["sn"];
-//	    $info["phpgwContactTypeId"] = 'n';
-//	    $info["phpgwContactCatId"] = 0;
-//	    $info["phpgwContactAccess"] = "public";
-//	    $info["phpgwContactOwner"] = $user->egroupware_id;
-						$info["givenName"] = utf8_encode($this->firstname);
+	    			if ($this->note)
+	      			$info["description"] = ($this->note);
 
-//	    if ($this->phone_mobile)
-//	      $info["phpgwCellTelephoneNumber"] = dolibarr_print_phone($this->phone_mobile);
+						if(LDAP_SERVER_TYPE == "egroupware")
+							{
 
-						//$dn = "uid=".$info["uid"].","."cn=".$info["cn"].", ".LDAP_SERVER_DN ;
+								$info["objectclass"][2] = "phpgwContact"; // compatibilite egroupware
 
-						$dn = "cn=".$info["cn"].","."ou=".$info["ou"].", ".LDAP_SERVER_DN_SHORT ;
+								if ($this->email)
+	      					$info["rfc822Mailbox"] = $this->email;
+
+								$info['uidnumber'] = $this->id;
+
+								$info['phpgwTz']      = 0;
+								$info['phpgwMailType'] = 'INTERNET';
+								$info['phpgwMailHomeType'] = 'INTERNET';
+
+								$info["uid"] = $this->id. ":".$info["sn"];
+								$info["phpgwContactTypeId"] = 'n';
+								$info["phpgwContactCatId"] = 0;
+								$info["phpgwContactAccess"] = "public";
+								$info["phpgwContactOwner"] = $user->egroupware_id;
+
+								if ($this->phone_mobile)
+									$info["phpgwCellTelephoneNumber"] = dolibarr_print_phone($this->phone_mobile);
+							}
+						else
+							{
+								if ($this->email)
+	      					$info["mail"] = $this->email;
+							}
+
+						$dnshort = explode(",", LDAP_SERVER_DN,2);
+
+						$dn = "cn=".$info["cn"].","."ou=".$info["ou"].",".$dnshort[1];
 
 	    			$r = @ldap_delete($ds, $dn);
 
