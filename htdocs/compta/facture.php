@@ -916,7 +916,7 @@ else
 	    print_titre("Documents");
 	    print '<table width="100%" cellspacing="0" border="1" cellpadding="3">';
 	    
-	    print "<tr $bc[0]><td>Facture PDF</a></td>";
+	    print "<tr $bc[0]><td>Facture PDF</td>";
 	    print '<td><a href="'.FAC_OUTPUT_URL."/".$fac->ref."/".$fac->ref.'.pdf">'.$fac->ref.'.pdf</a></td>';
 	    print '<td align="right">'.filesize($file). ' bytes</td>';
 	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';

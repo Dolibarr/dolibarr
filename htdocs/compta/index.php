@@ -266,7 +266,7 @@ if ( $db->query($sql) )
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</td>';
+	  print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td align="right">'.price($obj->total_ttc).'</td></tr>';
 	  $i++;
