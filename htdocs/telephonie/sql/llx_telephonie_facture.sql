@@ -33,6 +33,7 @@ create table llx_telephonie_facture (
   remise            real,
   cout_vente_remise real,
   gain              real,
+  isfacturable      enum('oui','non') DEFAULT 'oui',
   fk_facture        integer
   
 )type=innodb;
