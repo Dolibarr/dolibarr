@@ -1,4 +1,4 @@
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  */
 body 
 {
-  background: #ebebe0; 
+  background: #eae0ff; 
   font-family: Helvetica, Verdana; font-size: 12px; 
 }
 /*
@@ -71,21 +71,21 @@ td.border {
 
 .menu 
 { 
-  background: #ccccb3; 
+  background: #ccb3ee; 
   font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
   color: #000000; 
   text-decoration: none }
 
 .menusel
 { 
-  background: #bbbb88; 
+  background: #bb88bb; 
   font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
   color: #000000; 
   text-decoration: none }
 
 .submenu 
 { 
-  background: #ccccb3; 
+  background: #ccb3ee; 
   font-family: Helvetica, Verdana; font-size: 1.0em;
   color: #000000; 
   text-decoration: none }
@@ -101,20 +101,20 @@ a.leftmenu {
              font-family: Helvetica, Verdana; 
              font-size: 1.0em; 
              font-weight: bold; 
-             color: #202020; 
+             color: #200020; 
   }
 
 td.barre { 
            border-right: 1px solid #000000;
            border-bottom: 1px solid #000000;
-           background: #ccccb3;
+           background: #ccb3ee;
            font-family: Helvetica, Verdana;
            font-size: 1.0em; 
            color: #000000; 
            text-decoration: none }
 
 td.barre_select { 
-                  background: #ccccb3; 
+                  background: #ccb3ee; 
                   color: #000000 
                   }
 
@@ -122,26 +122,26 @@ div.titre {
             font-family: Helvetica, Verdana; 
             font-size: 1.0em; 
             font-weight: bold; 
-            color: #666633; 
+            color: #663366; 
             text-decoration: none }
 /*
  *
  */
 tr.liste_titre { 
-                 background: #BBBB88; 
+                 background: #aa88dd; 
                  font-family: Helvetica, Verdana;
                  font-size: 1.0em;
                  font-weight: bold;
                  }
 
 tr.pair { 
-          background: #dcdcb3; 
+          background: #dcb3fd; 
           font-family: Helvetica, Verdana; 
           font-size: 1.0em; 
           }
 
 tr.impair { 
-            background: #eeeecc; 
+            background: #eeccff; 
             font-family: Helvetica, Verdana;
             font-size: 1.0em; 
             }
@@ -156,13 +156,13 @@ tr.box_titre {
                }
 
 tr.box_pair { 
-              background: #dcdcb3; 
+              background: #dcdcd4; 
               font-family: Helvetica, Verdana; 
               font-size: 0.9em; 
               }
 
 tr.box_impair { 
-                background: #eeeecc; 
+                background: #eeeedd; 
                 font-family: Helvetica, Verdana;
                 font-size: 0.9em; 
                 }
