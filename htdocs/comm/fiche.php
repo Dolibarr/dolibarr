@@ -99,13 +99,13 @@ if ($mode == 'search') {
 /*
  *
  */
-$socid = $_GET["socid"];
+$_socid = $_GET["socid"];
 /*
  * Sécurité si un client essaye d'accéder à une autre fiche que la sienne
  */
 if ($user->societe_id > 0) 
 {
-  $socid = $user->societe_id;
+  $_socid = $user->societe_id;
 }
 /*********************************************************************************
  *
@@ -113,12 +113,12 @@ if ($user->societe_id > 0)
  *
  *
  *********************************************************************************/  
-if ($_GET["socid"] > 0)
+if ($_socid > 0)
 {
   // On recupere les donnees societes par l'objet
   $objsoc = new Societe($db);
-  $objsoc->id=$_GET["socid"];
-  $objsoc->fetch($_GET["socid"],$to);
+  $objsoc->id=$_socid;
+  $objsoc->fetch($_socid,$to);
   
   $dac = strftime("%Y-%m-%d %H:%M", time());
   if ($errmesg)
@@ -366,7 +366,7 @@ if ($_GET["socid"] > 0)
 
     if ($conf->projet->enabled && $user->rights->projet->creer)
       {
-	print '<a class="tabAction" href="../projet/fiche.php?socidp='.$socid.'&action=create">Projet</a>';
+	print '<a class="tabAction" href="../projet/fiche.php?socidp='.$objsoc->id.'&action=create">Projet</a>';
       }
 
     if ($conf->fichinter->enabled)
@@ -456,7 +456,7 @@ if ($_GET["socid"] > 0)
        *
        */
       print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
-      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$socid.'">Actions à faire</a></td><td align="right"> <a href="action/fiche.php?action=create&socid='.$socid.'&afaire=1">Nouvelle action</a></td></tr>';
+      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">Actions à faire</a></td><td align="right"> <a href="action/fiche.php?action=create&socid='.$objsoc->id.'&afaire=1">Nouvelle action</a></td></tr>';
       print '<tr>';
       print '<td colspan="2" valign="top">';
 
@@ -535,7 +535,7 @@ if ($_GET["socid"] > 0)
        *
        */
       print '<table class="noborder" width="100%" cellspacing=0 cellpadding=2>';
-      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$socid.'">Actions effectuées</a></td></tr>';
+      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">Actions effectuées</a></td></tr>';
       print '<tr>';
       print '<td valign="top">';
 
