@@ -23,13 +23,24 @@
  */
 define('DOL_VERSION','1.2.0-DEV');
 
-if (! @include_once("conf/conf.php") or ! isset($dolibarr_main_db_host))
+if (! @include_once("conf/conf.php"))
 {
   print "<center>\n";
   print "<b>Bienvenue sur Dolibarr</b><br><br>\n";
   print "Votre système n'est pas encore configuré, pour procéder à l'installation, cliquer <a href=\"install/\">ici</a>";
   print "</center>\n";
-  exit ;  
+  exit ;
+}
+else
+{
+  if (! isset($dolibarr_main_db_host))
+    {
+      print "<center>\n";
+      print "<b>Bienvenue sur Dolibarr</b><br><br>\n";
+      print "Votre système n'est pas encore configuré, pour procéder à l'installation, cliquer <a href=\"install/\">ici</a>";
+      print "</center>\n";
+      exit ;  
+    }
 }
 
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
