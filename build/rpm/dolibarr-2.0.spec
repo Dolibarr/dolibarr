@@ -14,12 +14,12 @@ License: GPL
 Packager: Laurent Destailleur (Eldy) <eldy@users.sourceforge.net>
 Vendor: Dolibarr dev team
 
-URL: http://%{name}.sourceforge.net
+URL: http://%{name}.com
 Source: http://dl.sf.net/dolibarr/%{name}-%{version}.tgz
 BuildArch: noarch
 BuildArchitectures: noarch
 BuildRoot: /tmp/%{name}-buildroot
-Icon: dolibarr_logo1.gif
+#Icon: dolibarr_logo1.gif
 
 # For Mandrake
 Group: Networking/WWW
@@ -51,6 +51,7 @@ associations.
 #---- install
 %install
 rm -rf $RPM_BUILD_ROOT
+
 mkdir -p $RPM_BUILD_ROOT/usr/local/dolibarr/doc
 mkdir -p $RPM_BUILD_ROOT/usr/local/dolibarr/htdocs
 mkdir -p $RPM_BUILD_ROOT/usr/local/dolibarr/misc
@@ -60,13 +61,14 @@ mkdir -p $RPM_BUILD_ROOT/usr/local/dolibarr/scripts
 #mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/dolibarr
 #mkdir -p $RPM_BUILD_ROOT/%{_sysconfdir}/cron.daily
 
-#install -m 444 httpd_conf $RPM_BUILD_ROOT/usr/local/dolibarr/doc/httpd_conf
-install -m 444 doc/* $RPM_BUILD_ROOT/usr/local/dolibarr/doc
-install -m 444 htdocs/* $RPM_BUILD_ROOT/usr/local/dolibarr/htdoc
-install -m 444 misc/* $RPM_BUILD_ROOT/usr/local/dolibarr/misc
-install -m 444 mysql/* $RPM_BUILD_ROOT/usr/local/dolibarr/mysql
-install -m 444 pgsql/* $RPM_BUILD_ROOT/usr/local/dolibarr/pgsql
-install -m 444 scripts/* $RPM_BUILD_ROOT/usr/local/dolibarr/scripts
+install -m 444 README  $RPM_BUILD_ROOT/usr/local/dolibarr/README
+install -m 444 COPYRIGHT  $RPM_BUILD_ROOT/usr/local/dolibarr/COPYRIGHT
+cp -pr doc $RPM_BUILD_ROOT/usr/local/dolibarr
+cp -pr htdocs $RPM_BUILD_ROOT/usr/local/dolibarr
+cp -pr misc $RPM_BUILD_ROOT/usr/local/dolibarr
+cp -pr mysql $RPM_BUILD_ROOT/usr/local/dolibarr
+cp -pr pgsql $RPM_BUILD_ROOT/usr/local/dolibarr
+cp -pr scripts $RPM_BUILD_ROOT/usr/local/dolibarr
 
 
 #---- clean
@@ -77,10 +79,10 @@ rm -rf $RPM_BUILD_ROOT
 #---- files
 %files
 %defattr(-,root,root)
-%doc README.TXT
+%doc README
+%doc COPYRIGHT
 %doc /usr/local/dolibarr/doc/*
-%config /%{_sysconfdir}/dolibarr/htdocs/conf/conf.php
-%dir /usr/local/dolibarr/doc
+#%config /usr/local/dolibarr/htdocs/conf/conf.php
 %dir /usr/local/dolibarr/htdocs
 %dir /usr/local/dolibarr/misc
 %dir /usr/local/dolibarr/mysql
