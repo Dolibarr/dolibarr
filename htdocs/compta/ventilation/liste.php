@@ -34,27 +34,20 @@ require("./pre.inc.php");
 
 $user->getrights('facture');
 $user->getrights('banque');
+$langs->load("bills");
 
 if (!$user->rights->facture->lire)
   accessforbidden();
 
-$langs->load("bills");
-
-require_once "../../facture.class.php";
-require_once "../../paiement.class.php";
-
-
-if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
 /*
  * Sécurité accés client
  */
 if ($user->societe_id > 0) 
 {
-  $action = '';
-  $socidp = $user->societe_id;
+  accessforbidden();
 }
 
-llxHeader('',$langs->trans("Bill"),'Facture');
+llxHeader('','Ventilation');
 
 /*
  * Lignes de factures
@@ -65,13 +58,11 @@ if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-$sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice, ".$db->pdate("l.date_start")." as date_start, ".$db->pdate("l.date_end")." as date_end, l.fk_code_ventilation ";
+$sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price, l.rowid, l.fk_code_ventilation ";
 $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l";
 $sql .= " , ".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE f.rowid = l.fk_facture AND f.fk_statut = 1 AND fk_code_ventilation = 0";
-$sql .= " ORDER BY l.rowid DESC";
-$sql .= $db->plimit($limit+1,$offset);
-
+$sql .= " ORDER BY l.rowid DESC ".$db->plimit($limit+1,$offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -81,15 +72,13 @@ if ($result)
   
   print_barre_liste("Lignes de facture à ventiler",$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
 
-  if ($num_lignes)
-    {
-      echo '<table class="noborder" width="100%">';
-      print "<tr class=\"liste_titre\"><td>Facture</td>";
-      print '<td>'.$langs->trans("Description").'</td>';
-      print '<td align="right">&nbsp;</td>';
-      print '<td>&nbsp;</td>';
-      print "</tr>\n";
-    }
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td>Facture</td>';
+  print '<td>'.$langs->trans("Description").'</td>';
+  print '<td align="right">&nbsp;</td>';
+  print '<td>&nbsp;</td>';
+  print "</tr>\n";
+
   $var=True;
   while ($i < min($num_lignes, $limit))
     {
@@ -98,7 +87,6 @@ if ($result)
       print "<tr $bc[$var]>";
       
       print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td>';
-
       print '<td>'.stripslashes(nl2br($objp->description)).'</td>';                       
 
       print '<td align="right">';
