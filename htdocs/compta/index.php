@@ -305,7 +305,7 @@ if ($conf->facture->enabled)
 	      $i++;
 	    }
 	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td colspan="4" align="center">Reste à encaisser : '.price($total-$totalam).'</td></tr>';
+	  print '<tr '.$bc[$var].'><td colspan="4" align="left">Reste à encaisser : '.price($total-$totalam).'</td></tr>';
 	  print "</table><br>";
 	}
       $db->free();
