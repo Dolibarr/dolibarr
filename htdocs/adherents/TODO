@@ -2,4 +2,6 @@
 - mettre le nombre d'adherents ayant cotise en bas de la liste
 - savoir dans la fiche adherents, si il est abonnee aux listes/spip/glasnost
 - faire des stats sur les cotis (moyenne par adherents)
-
+- ne pas afficher le / apres Prenom Nom lorsque le champs suivant est vide (details mais ca aide a lire)
+- faire un compatge automatique du nombre d'adherents
+- eventuellement aussi sur la page Adherent cotisant, faire la disctinction membres zeune et autre
