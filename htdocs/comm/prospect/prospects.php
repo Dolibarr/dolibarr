@@ -159,7 +159,9 @@ if ($result)
   print_liste_field_titre("Département",$PHP_SELF,"s.fk_departement");
   print "</td><td>";
   print_liste_field_titre("Statut",$PHP_SELF,"s.fk_stcomm");
-  print '</td><td colspan="5">&nbsp;</td>';
+  print "</td><td>";
+  print_liste_field_titre("Insertion",$PHP_SELF,"s.datec");
+  print '</td><td colspan="4">&nbsp;</td>';
   print "</TR>\n";
   $var=True;
 
@@ -179,14 +181,8 @@ if ($result)
 
       if ($user->societe_id == 0)
 	{
-	  if ($user->rights->propale->creer)
-	    {
-	      print "<TD align=\"center\"><a href=\"addpropal.php?socidp=$obj->idp&action=create\">[Propal]</A></td>\n";
-	    }
-	  else
-	    {
-	      print "<td>&nbsp;</td>\n";
-	    }
+
+	  print "<TD align=\"center\"><a href=\"addpropal.php?socidp=$obj->idp&action=create\">".strftime("%d/%b/%y",$obj->datec)."</A></td>\n";
 
 	}
       else
