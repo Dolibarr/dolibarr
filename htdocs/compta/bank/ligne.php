@@ -66,7 +66,7 @@ if ($action == 'class')
     }
 }
 
-if ($action == 'update')
+if ($action == 'UPDATE')
 {
   // Avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
   if (!empty($_POST['amount']))
@@ -81,23 +81,23 @@ if ($action == 'update')
       $objp = $db->fetch_object( 0);
       if ($objp->rappro)
         die ("Vous ne pouvez pas modifier une écriture déjà rapprochée");
-      $sql = "update ".MAIN_DB_PREFIX."bank set label='$label' , dateo = '$date', amount='$amount' where rowid = $rowid;";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='$label' , dateo = '$date', amount='$amount' WHERE rowid = $rowid;";
     }
   }
   else 
-    $sql = "update ".MAIN_DB_PREFIX."bank set label='$label' where rowid = $rowid;";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set label='$label' WHERE rowid = $rowid;";
 $result = $db->query($sql);
 }
 
 if ($_POST["action"] == 'type')
 {
-  $sql = "update ".MAIN_DB_PREFIX."bank set fk_type='$value' where rowid = $rowid;";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."bank set fk_type='$value' WHERE rowid = $rowid;";
   $result = $db->query($sql);
 }
 
 if ($_POST["action"] == 'num_releve')
 {
-  $sql = "update ".MAIN_DB_PREFIX."bank set num_releve=$num_rel where rowid = $rowid;";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."bank set num_releve=$num_rel WHERE rowid = $rowid;";
   $result = $db->query($sql);
 }
 
@@ -195,7 +195,7 @@ if ($result)
       print '<option value="DEP"'.($objp->fk_type == 'DEP'?' selected':'').'>Dépôt</option>';
       print "</select>";
       print $objp->num_chq?" - $objp->num_chq":'';
-      print "<input type=\"submit\" value=\"update\">";
+      print "<input type=\"submit\" value=\"UPDATE\">";
       print "</form>";
 
       print "</td></tr>";
@@ -212,22 +212,22 @@ if ($result)
       print "<tr $bc[$var]><td>Compte</td><td colspan=\"5\"><a href=\"account.php?account=$account\">".$acct->label."</a></td></tr>";
 
       print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
-      print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+      print "<input type=\"hidden\" name=\"action\" value=\"UPDATE\">";
     
       print "<tr $bc[$var]><td>Libell&eacute;</td><td colspan=\"5\">";
       print '<input name="label" value="'.$objp->label.'">';
-      print "<input type=\"submit\" value=\"update\"></td>";
+      print "<input type=\"submit\" value=\"UPDATE\"></td>";
       print "</tr>";
       
       if (!$objp->rappro)
       {
         print "<tr $bc[$var]><td>Date</td><td colspan=\"5\">";
         print '<input name="date" value="'.strftime("%Y%m%d",$objp->do).'">';
-        print "<input type=\"submit\" value=\"update\"></td>";
+        print "<input type=\"submit\" value=\"UPDATE\"></td>";
         print "</tr>";
         print "<tr $bc[$var]><td>Montant</td><td colspan=\"5\">";
         print '<input name="amount" value="'.price($objp->amount).'">';
-        print "<input type=\"submit\" value=\"update\"></td>";
+        print "<input type=\"submit\" value=\"UPDATE\"></td>";
         print "</tr>";
       }
       print "</form>";

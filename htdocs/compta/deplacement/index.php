@@ -23,14 +23,6 @@
 require("./pre.inc.php");
 require("../../tva.class.php");
 
-/*
- *
- *
- */
-/*
- *
- */
-
 llxHeader();
 
 /*

@@ -168,7 +168,7 @@ if ($_GET["action"] == 'create')
 	  print '</td>';
 	  print '<td>'.$langs->trans("Comments").'</td></tr>';
 	  
-	  print '<tr><td>'.$langs->trans("Type").' :</td><td><select name="paiementid">";
+	  print '<tr><td>'.$langs->trans("Type").' :</td><td><select name="paiementid">';
 	  
 	  $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY id";
 	  
