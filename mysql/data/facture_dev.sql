@@ -9,7 +9,7 @@
 --
 
 
-INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (1,1,'2002-05-09 03:05:03','2002-05-09 12:00:00',11960,'rodo',0,'321654654','');
+INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (1,1,'2002-05-09 03:05:03','2001-05-19 12:00:00',11960,'rodo',0,'321654654','');
 INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (2,2,'2002-05-09 03:18:10','2002-04-12 12:00:00',500,'rodo',0,'255555','');
 INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (3,2,'2002-05-09 03:18:32','2002-05-02 12:00:00',588.36,'rodo',0,'25555','');
 INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (4,3,'2002-05-09 03:21:43','2002-03-30 12:00:00',11.96,'rodo',0,'','');
@@ -32,7 +32,7 @@ INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_pa
 --
 
 
-INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (1,'F-BO-020509',1,'2002-05-09 03:04:48','2002-05-09',1,10000,0,1960,11960,1,'rodo',NULL,NULL,NULL,'');
+INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (1,'F-BO-010509',1,'2001-05-09 03:04:48','2001-05-09',1,10000,0,1960,11960,1,'rodo',NULL,NULL,NULL,'');
 INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (2,'F-DO-020410',3,'2002-05-09 03:17:44','2002-04-10',1,910,100,178.36,1088.36,1,'rodo',NULL,NULL,NULL,'');
 INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (3,'F-BO-020314',1,'2002-05-09 03:21:25','2002-03-14',1,10,0,1.96,11.96,1,'rodo',NULL,NULL,NULL,'');
 INSERT INTO llx_facture (rowid, facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, author, fk_user, fk_user_author, fk_user_valid, note) VALUES (4,'F-CU-020215',2,'2002-05-09 03:23:31','2002-02-15',1,10000,0,1960,11960,1,'rodo',NULL,NULL,NULL,'');

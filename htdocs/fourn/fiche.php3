@@ -127,25 +127,21 @@ if ($socid > 0) {
     print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
 
     print "<tr><td><div class=\"titre\">Fiche fournisseur : $objsoc->nom</div></td>";
-    print "<td bgcolor=\"#e0E0E0\" align=\"center\"><a href=\"bookmark.php3?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
-    print "<td bgcolor=\"#e0E0E0\" align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
-    print "<td bgcolor=\"#e0E0E0\" align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">[Propal]</a></td>";
-    print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
-    print "<td><a href=\"people.php3?socid=$objsoc->idp\">Contacts</a></td>";
     print "<td bgcolor=\"#e0E0E0\" align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
     print "</tr></table>";
     /*
      *
      *
      */
-
-    print "<hr>";
-    print "<table width=\"100%\" border=0><tr>\n";
-    print "<td valign=\"top\">";
-    print "<table cellspacing=\"0\" border=\"1\" width=\"100%\">";
-
-    print "<tr><td>Type</td><td> $objsoc->typent</td><td>Effectif</td><td>$objsoc->effectif</td></tr>";
-    print "<tr><td>Tel</td><td> $objsoc->tel&nbsp;</td><td>fax</td><td>$objsoc->fax&nbsp;</td></tr>";
+    ?>
+    <style type="text/css">
+       td.border { border: 1px dashed #c0c0c0; }
+    </style>
+    <?PHP
+    print '<table class="border" width="100%" border=0><tr>';
+    print '<td valign="top">';
+    print '<table cellspacing="0" border="0" width="100%">';
+    print '<tr><td class="border">Tel</td><td>'.$objsoc->tel.'&nbsp;</td><td>fax</td><td>'.$objsoc->fax.'&nbsp;</td></tr>';
     print "<tr><td>Ville</td><td colspan=\"3\">".nl2br($objsoc->address)."<br>$objsoc->cp $objsoc->ville</td></tr>";
 
     print "<tr><td>siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
@@ -178,71 +174,6 @@ if ($socid > 0) {
      *
      */
     print "<tr><td valign=\"top\">";
-
-    /*
-     * Propales
-     */
-    $var=!$var;
-    print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"1\">";
-    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-    $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
-    $sql .= " AND s.idp = $objsoc->idp ORDER BY p.datep DESC";
-
-    if ( $db->query($sql) ) {
-      $num = $db->num_rows();
-      if ($num >0 ) {
-	print "<tr $bc[$var]><td colspan=\"4\"><a href=\"propal.php3?socidp=$objsoc->idp\">liste des propales ($num)</td></tr>";
-      }
-      $i = 0;	$now = time(); 	$lim = 3600 * 24 * 15 ;
-      while ($i < $num && $i < 2) {
-	$objp = $db->fetch_object( $i);
-	$var=!$var;
-	print "<TR $bc[$var]>";
-	print "<TD><a href=\"propal.php3?propalid=$objp->propalid\">$objp->ref</a>\n";
-	if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 ) {
-	  print " <b>&gt; 15 jours</b>";
-	}
-	print "</td><TD align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-	print "<TD align=\"right\">".price($objp->price - $objp->remise)."</TD>\n";
-	print "<TD align=\"center\">$objp->statut</TD></tr>\n";
-	$i++;
-      }
-      $db->free();
-    }
-    /*
-     *   Factures
-     */
-    $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
-    $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND s.idp = $objsoc->idp ORDER BY f.datef DESC";
-    if ( $db->query($sql) ) {
-      $num = $db->num_rows(); $i = 0; 
-      if ($num > 0) {
-	print "<tr $bc2[$var]>";
-	print "<td colspan=\"3\"><a href=\"../compta/index.php3?socidp=$objsoc->idp\">liste des factures ($num)</td></tr>";
-      }
-
-      while ($i < $num && $i < 2) {
-	$objp = $db->fetch_object( $i);
-	$var=!$var;
-	print "<TR $bc2[$var]>";
-	print "<TD><a href=\"../compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
-	if ($objp->df > 0 ) {
-	  print "<TD align=\"right\">".strftime("%d %B %Y",$objp->df)."</TD>\n";
-	} else {
-	  print "<TD align=\"right\"><b>!!!</b></TD>\n";
-	}
-	print "<TD align=\"right\">".number_format($objp->amount, 2, ',', ' ')."</TD>\n";
-	$paye[1] = "payée";
-	$paye[0] = "<b>non payée</b>";
-	print "<TD align=\"center\">".$paye[$objp->paye]."</TD>\n";
-	print "</TR>\n";
-	$i++;
-      }
-      $db->free();
-    } else {
-      print $db->error();
-    }
-    print "</table>";
 
     print "</td><td valign=\"top\">";
     /*

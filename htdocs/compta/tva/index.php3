@@ -26,6 +26,34 @@ require("../../tva.class.php3");
  *
  *
  */
+function tva_coll($db, $y,$m) {
+  $sql = "SELECT sum(f.tva) as amount"; 
+  $sql .= " FROM llx_facture as f WHERE f.paye = 1";
+  $sql .= " AND date_format(f.datef,'%Y') = $y";
+  $sql .= " AND date_format(f.datef,'%m') = $m";
+
+  $result = $db->query($sql);
+  if ($result) {
+    $obj = $db->fetch_object ( 0 );
+    return $obj->amount;
+  }
+}
+/*
+ *
+ *
+ */
+function tva_paye($db, $y,$m) {
+  $sql = "SELECT sum(f.tva) as amount"; 
+  $sql .= " FROM llx_facture_fourn as f WHERE f.paye = 1";
+  $sql .= " AND date_format(f.datef,'%Y') = $y";
+  $sql .= " AND date_format(f.datef,'%m') = $m";
+
+  $result = $db->query($sql);
+  if ($result) {
+    $obj = $db->fetch_object ( 0 );
+    return $obj->amount;
+  }
+}
 
 function pt ($db, $sql, $date) {
   global $bc; 
@@ -75,29 +103,52 @@ $tva = new Tva($db);
 
 print "Solde :" . price($tva->solde());
 
-$yearc = strftime("%Y",time());
-
-
+if ($year == 0 ) {
+  $year_current = strftime("%Y",time());
+  //$year_start = $conf->years;
+  $year_start = $year_current;
+} else {
+  $year_current = $year;
+  $year_start = $year;
+}
 echo '<table width="100%">';
 echo '<tr><td width="50%" valign="top"><b>TVA collectée</b></td>';
-echo '<td>Tva Payée</td></tr>';
+echo '<td>Tva Réglée</td></tr>';
 
-for ($y = $yearc ; $y >= $conf->years ; $y=$y-1 ) {
+for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
 
   echo '<tr><td width="50%" valign="top">';
-  /*
-   * Collectée
-   */
-  print "<table width=\"100%\">";
-  print "<tr><td valign=\"top\">";
 
-  $sql = "SELECT sum(f.tva) as amount , date_format(f.datef,'%Y-%m') as dm";
-  $sql .= " FROM llx_facture as f WHERE f.paye = 1 AND f.datef >= '$y-01-01' AND f.datef <= '$y-12-31' ";
-  $sql .= " GROUP BY dm ASC";
-  
-  pt($db, $sql,"Année $y");
-  
-  print "</td></tr></table>";
+  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<TR class=\"liste_titre\">";
+  print "<TD width=\"30%\">Année $y</TD>";
+  print "<TD align=\"right\">Collectée</TD>";
+  print "<TD align=\"right\">Payée</TD>";
+  print "<td>&nbsp;</td>\n";
+  print "</TR>\n";
+  $var=True;
+  $total = 0;
+  for ($m = 1 ; $m < 13 ; $m++ ) {
+    $var=!$var;
+    print "<TR $bc[$var]>";
+    print '<TD>'.strftime("%b %Y",mktime(0,0,0,$m,1,$y)).'</TD>';
+    
+    $x_coll = tva_coll($db, $y, $m);
+    print "<TD align=\"right\">".price($x_coll)."</TD>";
+    
+    $x_paye = tva_paye($db, $y, $m);
+    print "<TD align=\"right\">".price($x_paye)."</TD>";
+    
+    $diff = $x_coll - $x_paye;
+    $total = $total + $diff;
+    
+    print "<td align=\"right\">".price($diff)."</td>\n";
+    print "</TR>\n";
+    
+    $i++;
+  }
+  print '<tr><td align="right" colspan="3">Total :</td><td align="right"><b>'.price($total).'</b></td>';
+  print "</TABLE>";
 
   echo '</td><td valign="top" width="50%">';
   /*

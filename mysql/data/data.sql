@@ -22,6 +22,12 @@
 -- Valeurs pour les bases de langues francaises
 --
 
+delete from c_chargesociales;
+insert into c_chargesociales (id,libelle,deductible) values ( 1, 'Allocations familiales',1);
+insert into c_chargesociales (id,libelle,deductible) values ( 2, 'GSG Deductible',1);
+insert into c_chargesociales (id,libelle,deductible) values ( 3, 'GSG/CRDS NON Deductible',0);
+
+
 delete from c_actioncomm;
 insert into c_actioncomm (id,libelle) values ( 0, '-');
 insert into c_actioncomm (id,libelle) values ( 1, 'Appel Téléphonique');

@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 require("./pre.inc.php3");
@@ -58,8 +58,40 @@ print_titre("Espace compta");
 print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top" width="30%">';
+/*
+ * Charges a payer
+ *
+ */
+$sql = "SELECT c.amount, cc.libelle";
+$sql .= " FROM llx_chargesociales as c, c_chargesociales as cc";
+$sql .= " WHERE c.fk_type = cc.id AND c.paye=0";
 
+if ( $db->query($sql) ) {
+  $num = $db->num_rows();
+  if ($num) {
+    print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+    print "<TR class=\"liste_titre\">";
+    print "<TD colspan=\"2\">Charges à payer</td>";
+    print "</TR>\n";
+    $i = 0;
 
+    while ($i < $num) {
+      $obj = $db->fetch_object( $i);
+      $var = !$var;
+      print "<tr $bc[$var]>";
+      print '<td>'.$obj->libelle.'</td>';
+      print '<td align="right">'.price($obj->amount).'</td>';
+      print '</tr>';
+      $i++;
+    }
+    print '</table><br>';
+  }
+} else {
+  print $db->error();
+}
+/*
+ * Propales
+ */
 print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
 print "<TR class=\"liste_titre\">";
 print "<td colspan=\"2\">Propositions commerciales</td>";
@@ -72,8 +104,9 @@ if (valeur($sql)) {
 }
 
 print "</table><br>";
-
-
+/*
+ * Factures
+ */
 print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
 print "<TR class=\"liste_titre\">";
 print "<td colspan=\"2\">Factures</td>";
@@ -86,13 +119,10 @@ if (valeur($sql)) {
 }
 
 print "</table><br>";
-
-
 /*
- *
+ * Bookmark
  *
  */
-
 $sql = "SELECT s.idp, s.nom,b.rowid as bid";
 $sql .= " FROM societe as s, llx_bookmark as b";
 $sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
@@ -120,7 +150,7 @@ if ( $db->query($sql) ) {
   print '</table>';
 }
 /*
- * 
+ * Actions a faire
  *
  *
  */

@@ -55,10 +55,6 @@ if ($action == 'del_bookmark') {
 
 print_titre("Charges");
 
-print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-
-print '<tr><td valign="top" width="30%">';
-
 
 print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
 print "<TR class=\"liste_titre\">";
@@ -78,7 +74,28 @@ if ( $db->query($sql) ) {
     $obj = $db->fetch_object( $i);
     $var = !$var;
     print "<tr $bc[$var]>";
-    print '<td>'.$obj->nom.'</td><td>'.price($obj->total).'</td>';
+    print '<td>'.$obj->nom.'</td><td align="right">'.price($obj->total).'</td>';
+    print '</tr>';
+    $i++;
+  }
+} else {
+  print "<tr><td>".$db->error()."</td></tr>";
+}
+/*
+ * Factures fournisseurs
+ */
+$sql = "SELECT  sum(f.amount) as total";
+$sql .= " FROM llx_facture_fourn as f";
+
+if ( $db->query($sql) ) {
+  $num = $db->num_rows();
+  $i = 0;
+
+  while ($i < $num) {
+    $obj = $db->fetch_object( $i);
+    $var = !$var;
+    print "<tr $bc[$var]>";
+    print '<td>Factures founisseurs</td><td align="right">'.price($obj->total).'</td>';
     print '</tr>';
     $i++;
   }
@@ -86,20 +103,8 @@ if ( $db->query($sql) ) {
   print "<tr><td>".$db->error()."</td></tr>";
 }
 
-
 print "</table><br>";
 
-
-/*
- *
- *
- */
-
-
-
-print '</td></tr>';
-
-print '</table>';
 
 $db->close();
  

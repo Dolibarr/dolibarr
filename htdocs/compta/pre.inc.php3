@@ -38,7 +38,7 @@ function llxHeader($head = "") {
   //  $menu->add_submenu("fac.php3","admin fac");
 
   $menu->add("charges/index.php3","Charges");
-  $menu->add_submenu("sociales/","Prestations sociales");
+  $menu->add_submenu("sociales/","Prest. Sociales");
 
   $menu->add("ca.php3","Chiffres d'affaires");
 

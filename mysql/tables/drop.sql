@@ -27,37 +27,13 @@ drop table if exists c_anexpe;
 
 drop table if exists c_actioncomm;
 
-drop table if exists c_categtools;
-
-drop table if exists c_contrat ;
-
-drop table if exists c_contrib;
-
-drop table if exists c_diplome ;
-
-drop table if exists c_duree;
+drop table if exists c_chargesociales;
 
 drop table if exists c_effectif;
-
-drop table if exists c_formatdoc;
-
-drop table if exists c_lang ;
-
-drop table if exists c_niveau ;
-
-drop table if exists c_nivlang ;
-
-drop table if exists c_outil ;
-
-drop table if exists c_modecontact;
-
-drop table if exists c_moderech ;
 
 drop table if exists c_paiement ;
 
 drop table if exists c_pays ;
-
-drop table if exists c_poste ;
 
 drop table if exists c_prestatype ;
 
@@ -76,6 +52,8 @@ drop table if exists llx_bank_categ;
 drop table if exists llx_bank_class;
 
 drop table if exists llx_bookmark;
+
+drop table if exists llx_chargesociales;
 
 drop table if exists llx_compta;
 
@@ -104,6 +82,8 @@ drop table if exists llx_propaldet;
 drop table if exists llx_service;
 
 drop table if exists llx_soc_recontact;
+
+drop table if exists llx_tva;
 
 drop table if exists llx_user;
 

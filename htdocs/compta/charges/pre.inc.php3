@@ -37,7 +37,7 @@ function llxHeader($head = "") {
 
   $menu->add("index.php3","Charges");
 
-  $menu->add_submenu("/compta/sociales/index.php3","Prestations sociales");
+  $menu->add_submenu("/compta/sociales/index.php3","Prest. Sociales");
 
   $menu->add("/compta/ca.php3","Chiffres d'affaires");
 

@@ -66,11 +66,11 @@ print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print "<TR class=\"liste_titre\">";
 print '<td>Echeance</td><td>Période</td><td colspan="2">';
 print_liste_field_titre("Charges",$PHP_SELF,"c.libelle");
-print '</td><td align="right">Montant</td><td>&nbsp;</td>';
+print '</td><td align="right">Montant</td><td colspan="2">&nbsp;</td>';
 print "</TR>\n";
 
 
-$sql = "SELECT c.libelle as nom, s.amount,".$db->pdate("s.date_ech")." as de, s.date_pai, s.libelle, s.paye,".$db->pdate("s.periode")." as dp";
+$sql = "SELECT c.libelle as nom, s.amount,".$db->pdate("s.date_ech")." as de, s.date_pai, s.libelle, s.paye,".$db->pdate("s.periode")." as periode,".$db->pdate("s.date_pai")." as dp";
 $sql .= " FROM c_chargesociales as c, llx_chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id";
 if ($year > 0) {
@@ -86,17 +86,17 @@ if ( $db->query($sql) ) {
     $obj = $db->fetch_object( $i);
     $var = !$var;
     print "<tr $bc[$var]>";
-    print '<td>'.strftime("%d/%m/%y",$obj->de).'</td>';
-    print '<td><a href="index.php3?year='.strftime("%Y",$obj->dp).'">'.strftime("%Y",$obj->dp).'</a></td>';
+    print '<td>'.strftime("%d %b %y",$obj->de).'</td>';
+    print '<td><a href="index.php3?year='.strftime("%Y",$obj->periode).'">'.strftime("%Y",$obj->periode).'</a></td>';
     print '<td>'.$obj->nom.'</td><td>'.$obj->libelle.'</td>';
     print '<td align="right">'.price($obj->amount).'</td>';
-    print '<td>';
+
     if ($obj->paye) {
-      print "&nbsp;";
+      print '<td colspan="2">'.strftime("%d/%m/%y",$obj->dp).'</td>';
     } else {
-      print '<img src="/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a>';
+      print '<td><img src="/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
+      print '<td><img src="/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
     }
-    print '</td>';
     print '</tr>';
     $i++;
   }

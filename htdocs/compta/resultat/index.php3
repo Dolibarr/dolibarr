@@ -44,14 +44,12 @@ print "<TD align=\"center\">Montant</TD><td align=\"right\">Solde</td>";
 print "</TR>\n";
 
 $sql = "SELECT s.nom,sum(f.amount) as amount";
-$sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
-  
+$sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp"; 
 if ($year > 0) {
   $sql .= " AND date_format(f.datef, '%Y') = $year";
-}
-  
+}  
 $sql .= " GROUP BY s.nom ASC";
-  
+
 print '<tr><td colspan="4">Factures</td></tr>';
 
 $result = $db->query($sql);
@@ -83,6 +81,48 @@ if ($result) {
   print $db->error();
 }
 print '<tr><td colspan="3" align="right">'.price($total).'</td></tr>';
+/*
+ *
+ */
+$sql = "SELECT s.nom,sum(f.amount) as amount";
+$sql .= " FROM societe as s,llx_facture_fourn as f WHERE f.fk_soc = s.idp"; 
+if ($year > 0) {
+  $sql .= " AND date_format(f.datef, '%Y') = $year";
+}  
+$sql .= " GROUP BY s.nom ASC";
+
+print '<tr><td colspan="4">Frais</td></tr>';
+
+$result = $db->query($sql);
+if ($result) {
+  $num = $db->num_rows();
+    
+  $i = 0;
+  
+  if ($num > 0) {
+    $var=True;
+    while ($i < $num) {
+      $objp = $db->fetch_object( $i);
+      $var=!$var;
+            
+      print "<TR $bc[$var]><td>&nbsp</td>";
+      print "<td>Facture <a href=\"/compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a> $objp->nom</TD>\n";
+      
+      print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
+      
+      $total = $total - $objp->amount;
+      print "<TD align=\"right\">".price($total)."</TD>\n";
+      
+      print "</TR>\n";
+      $i++;
+    }
+  }
+  $db->free();
+} else {
+  print $db->error();
+}
+print '<tr><td colspan="3" align="right">'.price($total).'</td></tr>';
+
 /*
  * Charges sociales
  *

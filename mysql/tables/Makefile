@@ -26,6 +26,7 @@ all:	show
 create:
 	$(MYSQL) $(BASE) < actioncomm.sql
 	$(MYSQL) $(BASE) < c_actioncomm.sql
+	$(MYSQL) $(BASE) < c_chargesociales.sql
 	$(MYSQL) $(BASE) < c_effectif.sql
 	$(MYSQL) $(BASE) < c_paiement.sql
 	$(MYSQL) $(BASE) < c_pays.sql
@@ -37,6 +38,7 @@ create:
 	$(MYSQL) $(BASE) < llx_bank_categ.sql
 	$(MYSQL) $(BASE) < llx_bank_class.sql
 	$(MYSQL) $(BASE) < llx_bookmark.sql
+	$(MYSQL) $(BASE) < llx_chargesociales.sql
 	$(MYSQL) $(BASE) < llx_compta.sql
 	$(MYSQL) $(BASE) < llx_compta_account.sql
 	$(MYSQL) $(BASE) < llx_fa_pr.sql
@@ -51,6 +53,7 @@ create:
 	$(MYSQL) $(BASE) < llx_propaldet.sql
 	$(MYSQL) $(BASE) < llx_service.sql
 	$(MYSQL) $(BASE) < llx_soc_recontact.sql
+	$(MYSQL) $(BASE) < llx_tva.sql
 	$(MYSQL) $(BASE) < llx_user.sql
 	$(MYSQL) $(BASE) < llx_ventes.sql
 	$(MYSQL) $(BASE) < llx_voyage.sql

@@ -1,9 +1,5 @@
 -- ===========================================================================
---
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
---
--- $Id$
--- $Source$
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,10 +15,24 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
+-- $Id$
+-- $Source$
 --
--- Valeurs de test pour les devellopements
---
+-- Valeurs de test pour les developpements
+-- Ne pas hésiter a compléter ce fichier avec de nouvelles valeurs, plus on a
+-- de données, mieux on peut tester l'appli.
 -- ===========================================================================
+delete from llx_tva;
+insert into llx_tva (datep, datev, amount) values ('2001-11-11','2001-10-1',1960);
+
+delete from llx_facture_fourn;
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+values ('LOL-509',1,'2001-05-09','2001-05-09',1,1000,0,196,1196,1,NULL,NULL,'');
+
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+values ('02-1-YHGT',2,now(),'2002-01-01',1,100,0,19.6,119.6,1,NULL,NULL,'');
+insert into llx_facture_fourn (facnumber, fk_soc, datec, datef, paye, amount, remise, tva, total, fk_statut, fk_user_author, fk_user_valid, note) 
+values ('02-5-YHGT',2,now(),'2002-05-01',1,1000,0,196,1196,1,NULL,NULL,'');
 
 delete from llx_user;
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,admin,webcal_login)
@@ -77,8 +87,6 @@ values ('Nimbus','29490','Guipavas','01 55 55 03 18','01 55 55 55 55',1);
 
 insert into societe (nom,cp,ville,tel,fax,client)
 values ('Iono','22110','Rostrenen','01 55 55 03 18','01 55 55 55 55',1);
-
-
 --
 -- Contact
 --
@@ -229,3 +237,34 @@ delete from llx_paiement;
 delete from llx_compta_account;
 insert into llx_compta_account (datec, number, label, fk_user_author) values (now(),'431000','URSSAF',1);
 insert into llx_compta_account (datec, number, label, fk_user_author) values (now(),'654000','Clients',1);
+--
+-- Charges sociales (mais non on n'en paye pas trop ;-)
+--
+delete from llx_chargesociales;
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+('2002-05-15',NULL,'Acompte 1er Trimestre 2002',1,120,0,'2002-1-1');
+
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+('2002-05-15',NULL,'Acompte 1er Trimestre 2002',2,200,0,'2002-1-1');
+
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+('2002-05-15',NULL,'Acompte 1er Trimestre 2002',3,170,0,'2002-1-1');
+
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+('2002-02-15','2002-02-10','Acompte 4ème Trimestre 2001',1,120,1,'2001-10-1');
+
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+('2002-02-15','2002-02-10','Acompte 4ème Trimestre 2001',2,200,1,'2001-10-1');
+
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+('2002-02-15','2002-02-10','Acompte 4ème Trimestre 2001',3,170,1,'2001-10-1');
+
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+('2001-11-15','2001-10-10','Acompte 3ème Trimestre 2001',1,70,1,'2001-7-1');
+
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+('2001-11-15','2001-10-10','Acompte 3ème Trimestre 2001',2,180,1,'2001-7-1');
+
+insert into llx_chargesociales (date_ech,date_pai,libelle,fk_type,amount,paye,periode) values 
+('2001-11-15','2001-10-10','Acompte 3ème Trimestre 2001',3,150,1,'2001-7-1');
+
