@@ -22,7 +22,7 @@
  * $Source$
  */
 
-/*!
+/**
 	    \file       htdocs/compta/bank/account.class.php
         \ingroup    banque
 		\brief      Fichier de la classe des comptes bancaires
@@ -30,7 +30,7 @@
 */
 
 
-/*! \class Account
+/**     \class      Account
 		\brief      Classe permettant la gestion des comptes bancaires
 */
 
@@ -53,8 +53,6 @@ class Account
 
   function Account($DB, $rowid=0)
   {
-    global $config;
-    
     $this->db = $DB;
     $this->rowid = $rowid;
 
@@ -296,7 +294,7 @@ class Account
 
     if ($result)
       {
-	if ($this->db->num_rows())
+	if ($this->db->num_rows($result))
 	  {
 	    $obj = $this->db->fetch_object($result);
 	    
@@ -314,7 +312,7 @@ class Account
 	    $this->proprio       = $obj->proprio;
 	    $this->adresse_proprio = $obj->adresse_proprio;
 	  }
-	$this->db->free();
+	$this->db->free($result);
       }
     else
       {
