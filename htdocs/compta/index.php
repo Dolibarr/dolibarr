@@ -229,6 +229,18 @@ if ( $db->query($sql) )
 print '</td><td valign="top" width="33%">';
 
 
+print '<div class="menus">';
+if ($user->societe_id == 0) 
+{
+  print '<ul>';
+  print '<li><a href="./charges/index.php">Charges</a></li>';
+  print '<li><a href="./resultat/">Résultats</a></li>';
+  print '<li><a href="bank/index.php">Banque</a></li>';
+}
+print '</ul></div>';
+
+
+
 $result = 0;
 if ( $result ) {
 
