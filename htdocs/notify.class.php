@@ -43,12 +43,13 @@ class Notify
    *
    *
    */
-  Function send($action, $texte, $file="")
+  Function send($action, $socid, $texte, $file="")
     {
       $sql = "SELECT s.nom, c.email, c.idp, c.name, c.firstname, a.titre,n.rowid";
       $sql .= " FROM llx_socpeople as c, llx_action_def as a, llx_notify_def as n, llx_societe as s";
       $sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
       $sql .= " AND n.fk_soc = s.idp AND n.fk_action = ".$action;
+      $sql .= " AND s.idp = ".$socid;
 
       $result = $this->db->query($sql);
       if ($result)
