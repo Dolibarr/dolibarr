@@ -24,13 +24,12 @@ require("./pre.inc.php");
 /*
  *
  */
-
-llxHeader();
-
 $user->getrights('compta');
 
-if (!$user->admin && !$user->rights->compta->resultat)
+if (!$user->rights->compta->resultat)
   accessforbidden();
+
+llxHeader();
 
 /*
  * Sécurité accés client
