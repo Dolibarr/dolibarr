@@ -20,6 +20,7 @@
  *
  */
 require("./pre.inc.php");
+require("./paiementfourn.class.php");
 
 /*
  * Sécurité accés client
@@ -42,6 +43,17 @@ if ($action == 'payed')
 {
   $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set paye = 1 WHERE rowid = $facid ;";
   $result = $db->query( $sql);
+}
+
+if($_GET["action"] == 'deletepaiement')
+{
+  $facfou = new FactureFourn($db);
+  $facfou->fetch($_GET["facid"]);
+  if ($facfou->statut == 1 && $facfou->paye == 0 && $user->societe_id == 0)
+    {
+      $paiementfourn = new PaiementFourn($db);
+      $paiementfourn->delete($_GET["paiement_id"]);
+    }
 }
 
 if ($HTTP_POST_VARS["action"] == 'modif_libelle')
@@ -407,28 +419,43 @@ else
 	      print "<TR class=\"liste_titre\">";
 	      print "<td>Date</td>";
 	      print "<td>Type</td>";
-	      print "<td align=\"right\">Montant</TD><td>&nbsp;</td>";
-	      print "</TR>\n";
+
+	      if ($obj->statut == 1 && $obj->paye == 0 && $user->societe_id == 0)
+		{
+		  $tdsup=' colspan="2"';
+		}
+	      print "<td align=\"right\">Montant</TD><td$tdsup>&nbsp;</td>";
+	      print "</tr>\n";
 	      
 	      $var=True;
 	      while ($i < $num)
 		{
 		  $objp = $db->fetch_object( $i);
 		  $var=!$var;
-		  print "<TR $bc[$var]>";
-		  print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-		  print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
-		  print "<TD align=\"right\">".price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
+		  print "<tr $bc[$var]>";
+		  print "<td>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+		  print "<td>$objp->paiement_type $objp->num_paiement</TD>\n";
+		  print "<td align=\"right\">".price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
+
+		  if ($obj->statut == 1 && $obj->paye == 0 && $user->societe_id == 0)
+		    {
+		      print '<td align="center">';
+		      print '<a href="fiche.php?facid='.$facid.'&amp;action=deletepaiement&amp;paiement_id='.$objp->rowid.'">';
+		      print img_delete();
+		      print '</a></td>';
+		    }
+
 		  print "</tr>";
 		  $total = $total + $objp->amount;
 		  $i++;
 		}
-	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>$_MONNAIE</td></tr>\n";
+	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td$tdsup>$_MONNAIE</td></tr>\n";
 	      
-	      $resteapayer = $fac->total_ttc - $total;
+	      $resteapayer = abs($fac->total_ttc - $total);
 	      
 	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Reste a payer :</td>";
-	      print '<td align="right"><b>'.price($resteapayer)."</b></td><td>$_MONNAIE</td></tr>\n";
+	      print '<td align="right"><b>'.price($resteapayer)."</b></td><td$tdsup>$_MONNAIE</td>";
+	      print "</tr>\n";
 	      
 	      print "</table>";
 	      $db->free();
@@ -502,9 +529,9 @@ else
 	  print '<td align="center" width="20%">-</td>';
 	}
  
-      if ($obj->statut == 1 && abs(round($resteapayer == 0)) && $obj->paye == 0  && $user->societe_id == 0)
+      if ($obj->statut == 1 && round($resteapayer) == 0 && $obj->paye == 0  && $user->societe_id == 0)
 	{
-	  print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=payed\">Classer 'Payée'</a></td>";
+	  print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?facid=$facid&amp;action=payed\">Classer 'Payée'</a></td>";
 	}
       else
 	{
