@@ -42,6 +42,7 @@ function llxHeader($head = "", $title="") {
   $menu->add(DOL_URL_ROOT."/compta/facture.php","Factures");
   $menu->add_submenu(DOL_URL_ROOT."/compta/paiement.php","Paiements");
   $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/","Statistiques");
 
   if ($user->comm > 0 && $conf->commercial && MAIN_MODULE_PROPALE) 
     {
