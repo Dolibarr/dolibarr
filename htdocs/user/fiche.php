@@ -232,14 +232,13 @@ else
     
       $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id;
       $head[$h][1] = $langs->trans("UserCard");
-      if ($_GET["action"] != 'perms') { $hselected=$h; }
+      $hselected=$h; 
       $h++;
     
       if ($user->admin)
         {
-	  $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?action=perms&amp;id='.$fuser->id;
+	  $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
 	  $head[$h][1] = $langs->trans("Permissions");
-	  if ($_GET["action"] == 'perms') { $hselected=$h; }
 	  $h++;
         }
     
@@ -262,86 +261,7 @@ else
 	  $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_delete");
         }
 
-
-
-      if ($_GET["action"] == 'perms')
-        {
-	  
-	  /*
-	   * Ecran ajout/suppression permission
-	   */
-	  print '<table class="noborder" width="100%">';
-	  
-	  // Droits existant
-	  print "<tr>".'<td valign="top" colspan="2">';
-	  print '<table width="100%" class="noborder">';
-	  print '<tr class="liste_titre"><td>'.$langs->trans("AvailableRights").'</td><td>'.$langs->trans("Module").'</td><td>&nbsp</td></tr>';
-	  $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r ORDER BY r.module, r.id ASC";
-	  
-	  if ($db->query($sql))
-            {
-	      $num = $db->num_rows();
-	      $i = 0;
-	      $var = True;
-	      while ($i < $num)
-                {
-		  $obj = $db->fetch_object($i);
-		  if ($oldmod <> $obj->module)
-                    {
-		      $oldmod = $obj->module;
-		      $var = !$var;
-                    }
-		  print '<tr '. $bc[$var].'>';
-		  print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td>';
-		  print '<td><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">'.img_edit_add().'</a></td>';
-		  print '</tr>';
-		  
-		  $i++;
-                }
-            }
-	  print '</table>';
-	  
-	  print '</td><td colspan="2" valign="top">';
-	  
-	  // Droits possédés
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td>&nbsp</td><td>'.$langs->trans("OwnedRights").'</td><td>'.$langs->trans("Module").'</td></tr>';
-
-	  $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
-	  $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.module, r.id ASC";
-	  $var = True;
-	  $result=$db->query($sql);
-	  
-	  if ($result)
-            {
-	      $num = $db->num_rows();
-	      $i = 0;
-	      while ($i < $num)
-                {
-		  $obj = $db->fetch_object($i);
-		  if ($oldmod <> $obj->module)
-                    {
-		      $oldmod = $obj->module;
-		      $var = !$var;
-                    }
-		  
-		  print "<tr $bc[$var]>";
-		  print "  <td align= \"right\"><a href=\"fiche.php?id=".$fuser->id."&amp;action=perms&amp;subaction=delrights&amp;rights=".$obj->id."\">".img_edit_remove()."</a></td>\n";
-		  print "  <td>".$obj->libelle . "</td><td>".$obj->module . "</td>\n";
-		  print "</tr>";
-		  $i++;
-                }
-            }
-	  else
-	    {
-	      dolibarr_print_error($db); 
-	    }
-	  print '</table>';
-	  print '</td></tr>';
-        }
-      
-	
-      if ($_GET["action"] != 'perms' && $_GET["action"] != 'edit')
+      if ($_GET["action"] != 'edit')
 	{
 	  /*
 	   * Fiche en mode visu
