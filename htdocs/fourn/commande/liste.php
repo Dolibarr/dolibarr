@@ -102,7 +102,8 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Commandes fournisseurs", $page, "liste.php", "", $sortfield, $sortorder, '', $num);
+  $langs->load("orders");
+  print_barre_liste($langs->trans("SuppliersOrders"), $page, "liste.php", "", $sortfield, $sortorder, '', $num);
   if ($sortorder == "DESC")
     {
       $sortorder="ASC";
@@ -136,8 +137,8 @@ if ($result)
       print "<tr $bc[$var]>";
       print '<td><img src="statut'.$obj->fk_statut.'.png">';
       print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.$obj->ref.'</a></td>'."\n";
-      print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">'.img_file().'</a>';
-      print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>'."\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
+      print $obj->nom.'</a></td>'."\n";
 
       print "<td align=\"right\" width=\"100\">";
 	  if ($obj->dc)
@@ -157,7 +158,7 @@ if ($result)
 }
 else 
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 $db->close();

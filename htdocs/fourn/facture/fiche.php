@@ -200,12 +200,12 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
       $fac_ori = new FactureFourn($db);
       $fac_ori->fetch($_GET["facid"]);
     }
-  print_titre("Saisir une facture fournisseur");
+  print_titre($langs->trans("NewBill"));
       
   print '<form action="fiche.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<table class="border" width="100%">';
-  print '<tr><td>Société</td>';
+  print '<tr><td>'.$langs->trans("Company").'</td>';
 
   print '<td><select name="socidp">';
 
@@ -270,7 +270,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
 	{
 	  $value_qty = "1";
 	}
-      print '<tr><td>Ligne '.$i.'</td>';
+      print '<tr><td>'.$i.'</td>';
       print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
       print '<td align="center"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
       print '<td align="center"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td><td align="center">';

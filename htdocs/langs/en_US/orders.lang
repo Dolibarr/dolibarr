@@ -2,6 +2,8 @@
 OrdersArea=Orders area
 Order=Order
 Orders=Orders
+SupplierOrder=Supplier order
+SuppliersOrders=Suppliers' orders
 OrdersToValid=Orders to valid
 OrdersToBill=Orders to bill
 OrdersInProcess=Orders in process

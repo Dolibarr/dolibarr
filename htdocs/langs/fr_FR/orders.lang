@@ -2,6 +2,8 @@
 OrdersArea=Espace commandes
 Order=Commande
 Orders=Commandes
+SupplierOrder=Commande fournisseur
+SuppliersOrders=Commandes fournisseurs
 OrdersToValid=Commandes à valider
 OrdersToBill=Commandes à facturer
 OrdersInProcess=Commandes en traitement

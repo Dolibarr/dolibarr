@@ -43,7 +43,7 @@ if ($user->societe_id > 0)
 
 $commande = new CommandeFournisseur($db);
 
-print_barre_liste("Commandes fournisseurs", $page, "index.php", "", $sortfield, $sortorder, '', $num);
+print_barre_liste($langs->trans("SuppliersOrders"), $page, "index.php", "", $sortfield, $sortorder, '', $num);
 
 print '<table class="noborder" width="100%">';
 print '<tr><td width="30%">';
@@ -66,7 +66,7 @@ if ($result)
   $i = 0;
   
   print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre"><td>Statut</td><td align="center">Nb</td><td>&nbsp;</td>';
+  print '<tr class="liste_titre"><td>'.$langs->trans("Status").'</td><td align="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
   print "</tr>\n";
   $var=True;
 
@@ -88,7 +88,7 @@ if ($result)
 }
 else 
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 print '</td><td>&nbsp;</td>';
