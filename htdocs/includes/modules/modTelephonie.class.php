@@ -20,20 +20,20 @@
  *
  */
 
-/*!     \defgroup   telephonie     Module telephonie
-        \brief      Module pour gérer la telephonie
+/*!   \defgroup   telephonie  Module telephonie
+      \brief      Module pour gérer la téléphonie
 */
 
 /*!
-        \file       htdocs/includes/modules/modTelephonie.class.php
-        \ingroup    telephonie
-        \brief      Fichier de description et activation du module Telephonie
+      \file       htdocs/includes/modules/modTelephonie.class.php
+      \ingroup    telephonie
+      \brief      Fichier de description et activation du module de Téléphonie
 */
 
 include_once "DolibarrModules.class.php";
 
 /*! \class modTelephonie
-        \brief      Classe de description et activation du module Telephonie
+    \brief Classe de description et activation du module Telephonie
 */
 
 class modTelephonie extends DolibarrModules
