@@ -154,10 +154,10 @@ if ($_POST["action"] == 'add')
 		    }
 		}
 	    }
+
 	  /*
 	   * Commande
 	   */
-
 	  if ($_POST["commandeid"])
 	    {
 	      $facture->commandeid = $_POST["commandeid"];
@@ -200,6 +200,7 @@ if ($_POST["action"] == 'add')
 	}
     }
 }
+
 /*
  *
  */
@@ -838,11 +839,12 @@ else
 	  $sql .= " ORDER BY dp DESC";
 	
 	  $result = $db->query($sql);
+
 	  if ($result)
 	    {
 	      $num = $db->num_rows();
 	      $i = 0; $total = 0;
-	      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<table class="noborder" width="100%">';
 	      print '<tr class="liste_titre"><td>Date</td><td>'.$langs->trans("Type").'</td>';
 	      print '<td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
     
@@ -1172,7 +1174,7 @@ else
 	    {
 	      $encfile = urlencode($file);
 	      print_titre("Documents");
-	      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<table class="border" width="100%">';
 	    
 	      print "<tr $bc[0]><td>Facture PDF</td>";
 
@@ -1255,7 +1257,7 @@ else
 	      print "<p><form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id\">\n";
 	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 	      print '<input type="hidden" name="action" value="classin">';
-	      print '<table cellspacing="0" class="border" cellpadding="3">';
+	      print '<table class="border">';
           
 	      print '<tr><td>'.$langs->trans("Project").'</td><td>';
 	    
@@ -1364,7 +1366,7 @@ else
 		      print_titre("Proposition commerciale associée");
 		    }
 
-		  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+		  print '<table class="noborder" width="100%">';
 		  print '<tr class="liste_titre">';
 		  print '<td>'.$langs->trans("Ref").'</td>';
 		  print '<td>'.$langs->trans("Date").'</td>';
