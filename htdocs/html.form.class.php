@@ -35,6 +35,40 @@ class Form {
   /*
    *
    *
+   */
+  Function select_departement($selected='', $addnsp=0)
+  {
+    print '<select name="departement_id">';
+
+    $sql = "SELECT rowid, code_departement as code , nom, active FROM llx_c_departements";
+    $sql .= " WHERE active = 1 ORDER BY code ASC";
+    
+    if ($this->db->query($sql))
+      {
+	$num = $this->db->num_rows();
+	$i = 0;
+	if ($num)
+	  {
+	    while ($i < $num)
+	      {
+		$obj = $this->db->fetch_object( $i);
+		if ($selected == $obj->rowid)
+		  {
+		    print '<option value="'.$obj->rowid.'" SELECTED>['.$obj->code.'] '.$obj->nom.'</option>';
+		  }
+		else
+		  {
+		    print '<option value="'.$obj->rowid.'">['.$obj->code.'] '.$obj->nom.'</option>';
+		  }
+		$i++;
+	      }
+	  }
+      }
+    print '</select>';
+  }
+  /*
+   *
+   *
    *
    */
   Function form_confirm($page, $title, $question, $action)
