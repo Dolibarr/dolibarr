@@ -48,7 +48,7 @@ define('DOL_URL_ROOT', $pos);
 
 require (DOL_DOCUMENT_ROOT."/conf/conf.class.php");
 /*
- * Doit figurer aprés l'inclusion de conf.class.php pour overider certaines variables, à terme conf.class.php3 devra etre un fichier qui ne sera pas modifié par l'utilisateur
+ * Doit figurer aprés l'inclusion de conf.class.php pour overider certaines variables, à terme conf.class.php devra etre un fichier qui ne sera pas modifié par l'utilisateur
  */
 $conf = new Conf();
 $conf->db->host = $dolibarr_main_db_host;
@@ -58,18 +58,8 @@ $conf->db->pass = $dolibarr_main_db_pass;
 
 require (DOL_DOCUMENT_ROOT ."/lib/mysql.lib.php");
 require (DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
-require (DOL_DOCUMENT_ROOT ."/product.class.php");
-require (DOL_DOCUMENT_ROOT ."/user.class.php");
-require (DOL_DOCUMENT_ROOT ."/menu.class.php");
-require (DOL_DOCUMENT_ROOT ."/societe.class.php");
 require (DOL_DOCUMENT_ROOT ."/html.form.class.php");
-require (DOL_DOCUMENT_ROOT ."/translate.class.php");
-require (DOL_DOCUMENT_ROOT ."/boxes.php");
-require (DOL_DOCUMENT_ROOT ."/address.class.php");
-require (DOL_DOCUMENT_ROOT ."/notify.class.php");
-require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf.php");
-
-define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/font/');
+require (DOL_DOCUMENT_ROOT ."/user.class.php");
 
 $db = new DoliDb();
 
@@ -86,6 +76,7 @@ if (!empty ($GLOBALS["REMOTE_USER"]))
 else
 {
   require_once "Auth/Auth.php";
+
   $params = array(
 		  "dsn" => $conf->db->getdsn(),
 		  "table" => "llx_user",
@@ -93,17 +84,37 @@ else
 		  "passwordcol" => "pass",
 		  "cryptType" => "none",
 		  );
-  $a = new Auth("DB", $params, "loginFunction");
-  $a->start();
-  if ($a->getAuth())
+  $aDol = new Auth("DB", $params, "loginFunction");
+  $aDol->start();
+  $result = $aDol->getAuth();
+  if ($result)
     { 
-      $user->fetch($a->getUsername());
+      $user->fetch($aDol->getUsername());
     }
   else
     {
+      /*
+       * Le début de la page est affiché par
+       * loginFunction
+       */
+      print '</div><div class="main-inside">';
+
+      print '</div></body></html>';
       die ;
+
     }
 }
+
+require (DOL_DOCUMENT_ROOT ."/product.class.php");
+require (DOL_DOCUMENT_ROOT ."/menu.class.php");
+require (DOL_DOCUMENT_ROOT ."/societe.class.php");
+require (DOL_DOCUMENT_ROOT ."/translate.class.php");
+require (DOL_DOCUMENT_ROOT ."/boxes.php");
+require (DOL_DOCUMENT_ROOT ."/address.class.php");
+require (DOL_DOCUMENT_ROOT ."/notify.class.php");
+require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf.php");
+
+define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/font/');
 /*
  * Definition de toutes les Constantes globales d'environement
  *
