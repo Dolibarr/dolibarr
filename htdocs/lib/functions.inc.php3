@@ -267,21 +267,25 @@ function print_barre_liste($titre,$page,$file,$options='') {
  *
  *
  */
-function print_oui_non($value) {
-  if ($value) {
-    print '<option value="0">non';
-    print '<option value="1" selected>oui';
-  } else {
-    print '<option value="0" selected>non';
-    print '<option value="1">oui';
-  }
-
+function print_oui_non($value)
+{
+  if ($value)
+    {
+      print '<option value="0">non';
+      print '<option value="1" selected>oui';
+    }
+  else
+    {
+      print '<option value="0" selected>non';
+      print '<option value="1">oui';
+    }
 }
 /*
  *
  *
  */
-function print_date_select() {
+function print_date_select()
+{
   $strmonth[1] = "Janvier";
   $strmonth[2] = "F&eacute;vrier";
   $strmonth[3] = "Mars";
