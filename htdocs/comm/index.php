@@ -376,7 +376,7 @@ if ($conf->propal->enabled) {
 	    {
 	      $obj = $db->fetch_object( $i);
 	      print "<tr $bc[$var]><td width=\"15%\"><a href=\"propal.php?propalid=".$obj->propalid."\">".img_file()."</a>&nbsp;";
-	      print "<a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td>";
+	      print "<a href=\"propal.php?propalid=".$obj->propalid."\">".$obj->ref."</a></td>";
 	      print "<td width=\"30%\"><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
 	      print "<td align=\"right\">";
 	      print strftime("%e %b %Y",$obj->dp)."</td>\n";	  
