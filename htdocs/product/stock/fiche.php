@@ -34,6 +34,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
   $entrepot->ref         = $HTTP_POST_VARS["ref"];
   $entrepot->libelle     = $HTTP_POST_VARS["libelle"];
   $entrepot->description = $HTTP_POST_VARS["desc"];
+  $entrepot->statut      = $HTTP_POST_VARS["statut"];
 
   $id = $entrepot->create($user);
   $action = '';
@@ -87,7 +88,10 @@ if ($_GET["action"] == 'create')
   print '<tr><td width="20%" valign="top">Description</td><td>';
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
-
+  print '<tr><td width="20%">Statut</td><td colspan="2">';
+  print '<select name="statut">';
+  print '<option value="0" SELECTED>Fermé</option><option value="1">Ouvert</option>';
+  print '</td></tr>';
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
   print '</table>';
   print '</form>';      
