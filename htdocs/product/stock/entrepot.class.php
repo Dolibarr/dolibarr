@@ -51,11 +51,11 @@ class Entrepot
 
 	  if ($this->db->query($sql) )
 	    {
-	      $id = $this->db->last_insert_id();
-	      
+	      $id = $this->db->last_insert_id();	      
 	      if ($id > 0)
 		{
 		  $this->id = $id;
+		  $this->statut = 1;
 		  if ( $this->update($id, $user) )
 		    {
 		      $this->db->query("COMMIT") ;
