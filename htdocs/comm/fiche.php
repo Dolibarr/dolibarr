@@ -453,7 +453,7 @@ if ($socid > 0)
        *
        */
       print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
-      print '<tr class="liste_titre"><td>Actions à faire</td><td align="right"> [<a href="action/fiche.php?action=create&socid='.$socid.'&afaire=1">Nouvelle action</a>]</td></tr>';
+      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$socid.'">Actions à faire</a></td><td align="right"> <a href="action/fiche.php?action=create&socid='.$socid.'&afaire=1">Nouvelle action</a></td></tr>';
       print '<tr>';
       print '<td colspan="2" valign="top">';
 
@@ -531,7 +531,7 @@ if ($socid > 0)
        *      Listes des actions effectuees
        *
        */
-      print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
+      print '<table class="noborder" width="100%" cellspacing=0 cellpadding=2>';
       print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$socid.'">Actions effectuées</a></td></tr>';
       print '<tr>';
       print '<td valign="top">';
@@ -585,11 +585,11 @@ if ($socid > 0)
 	      
 	      if ($obj->propalrowid)
 		{
-		  print '<td width="40%"><a href="propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
 		}
 	      else
 		{
-		  print '<td width="40%"><a href="action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
 		}
 	      /*
 	       * Contact pour cette action

@@ -415,20 +415,18 @@ if ($socid > 0)
             $i++;
             $tag = !$tag;
         }
-        print "</table>";
+        print "</table><br>";
 
-        print "\n<hr noshade size=1>\n";
         /*
+         *
+         *      Listes des actions effectuées
          *
          */
         print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
+        print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$socid.'">Actions effectuées</a></td></tr>';
         print '<tr>';
         print '<td valign="top">';
-        /*
-         *
-         *      Listes des actions
-         *
-         */
+
         $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
         $sql .= " WHERE a.fk_soc = $objsoc->idp ";
@@ -465,11 +463,15 @@ if ($socid > 0)
 
                 print '<td width="10%">&nbsp;</td>';
 
-                if ($obj->propalrowid) {
-                    print '<td width="40%"><a href="propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
-                } else {
-                    print '<td width="40%">'.$obj->libelle.'</td>';
-                }
+        	      if ($obj->propalrowid)
+        		{
+        		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+        		}
+        	      else
+        		{
+        		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+        		}
+
                 /*
                  * Contact pour cette action
                  *
@@ -494,6 +496,7 @@ if ($socid > 0)
             print $db->error();
         }
         print "</td></tr></table>";
+
         /*
          *
          * Notes sur la societe

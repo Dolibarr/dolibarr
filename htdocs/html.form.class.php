@@ -38,7 +38,7 @@ class Form {
    * avec un affichage avec rupture sur le pays
    *
    */
-    Function select_departement($selected='', $addnsp=0)
+    Function select_departement($selected='')
     {
         print '<select name="departement_id">';
     
@@ -90,7 +90,7 @@ class Form {
    * Retourne la liste déroulante des pays actifs
    *
    */
-  Function select_pays($selected='', $addnsp=0)
+  Function select_pays($selected='')
   {
     print '<select name="pays_id">';
 
@@ -120,6 +120,59 @@ class Form {
       }
     print '</select>';
   }
+
+  /*
+   * Retourne la liste déroulante des formes juridiques
+   * avec un affichage avec rupture sur le pays
+   *
+   */
+    Function select_forme_juridique($selected='')
+    {
+        print '<select name="forme_juridique_id">';
+    
+        // On recherche les formes juridiques actives des pays actifs
+        $sql = "SELECT f.rowid, f.code as code , f.libelle as nom, f.active, p.libelle as libelle_pays, p.code as code_pays FROM llx_c_forme_juridique as f, llx_c_pays as p";
+        $sql .= " WHERE f.fk_pays=p.rowid";
+        $sql .= " AND f.active = 1 AND p.active = 1 ORDER BY code_pays, code ASC";
+    
+        if ($this->db->query($sql))
+        {
+            $num = $this->db->num_rows();
+            $i = 0;
+            if ($num)
+            {
+                $pays='';
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object( $i);
+                    if ($obj->code == 0) {
+                        print '<option value="0">&nbsp;</option>';
+                    }
+                    else {
+                        if ($pays == '' || $pays != $obj->libelle_pays) {
+                            // Affiche la rupture
+                            print '<option value="-1">----- '.$obj->libelle_pays.' -----</option>';
+                            $pays=$obj->libelle_pays;   
+                        }
+    
+                        if ($selected > 0 && $selected == $obj->rowid)
+                        {
+                            print '<option value="'.$obj->rowid.'" selected>['.$obj->code.'] '.$obj->nom.'</option>';
+                        }
+                        else
+                        {
+                            print '<option value="'.$obj->rowid.'">['.$obj->code.'] '.$obj->nom.'</option>';
+                        }
+                    }
+                    $i++;
+                }
+            }
+        }
+        else {
+            print "Erreur : $sql : ".$this->db->error();
+        }
+        print '</select>';
+    }
 
   /*
    *

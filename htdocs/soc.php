@@ -75,6 +75,9 @@ $form = new Form($db);
 
 if ($action == 'create') 
 {
+  /*
+   * Fiche societe en mode création
+   */
   $soc = new Societe($db);
   print '<div class="titre">Nouvelle société (prospect, client, fournisseur)</div><br>';
   print '<form action="soc.php" method="post">';
@@ -88,7 +91,7 @@ if ($action == 'create')
   print 'Ville&nbsp;<input type="text" name="ville"></td>';
 
   print '<td>Département</td><td>';
-  print $form->select_departement(0);
+  print $form->select_departement($soc->departement_id);
   print '</td></tr>';
 
   print '<tr><td>Pays</td><td colspan="3">';
@@ -108,7 +111,7 @@ if ($action == 'create')
   print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
   
   print '<tr><td>Forme juridique</td><td colspan="3">';
-  print $form->select_array("forme_juridique_id",$soc->forme_juridique_array(), $soc->forme_juridique, 0, 1);
+  print $form->select_forme_juridique($soc->forme_juridique_id);
   print '</td></tr>';
   
   print '<tr><td>Effectif</td><td colspan="3">';
@@ -123,7 +126,7 @@ if ($action == 'create')
   print '</td></tr>';
   
   print '<tr><td>Prospect / Client</td><td><select name="client">';
-  print '<option value="2" SELECTED>Prospect'; 
+  print '<option value="2" selected>Prospect'; 
   print '<option value="1">Client'; 
   print '<option value="0">Ni client, ni prospect'; 
   print '</select></td>';
@@ -138,6 +141,10 @@ if ($action == 'create')
 }
 elseif ($action == 'edit')
 {
+  /*
+   * Fiche societe en mode edition
+   */
+   
   print_titre("Edition de la société");
 
   if ($socid)
@@ -177,12 +184,11 @@ elseif ($action == 'edit')
 
 
       print '<tr><td>Forme juridique</td><td colspan="3">';
-      $html = new Form($db);
-      print $html->select_array("forme_juridique_id",$soc->forme_juridique_array(), $soc->forme_juridique_id,0,1);
+      print $form->select_forme_juridique($soc->forme_juridique_id);
       print '</td></tr>';
 
       print '<tr><td>Effectif</td><td colspan="3">';
-      print $html->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
+      print $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
       print '</td></tr>';
 
       print '<tr><td colspan="2">Numéro de TVA Intracommunautaire</td><td colspan="2">';
@@ -195,21 +201,21 @@ elseif ($action == 'edit')
       print '<tr><td>Prospect / Client</td><td><select name="client">';
       if ($soc->client == 2)
 	{
-	  print '<option value="2" SELECTED>Prospect</option>';
+	  print '<option value="2" selected>Prospect</option>';
 	  print '<option value="1">Client</option>';
 	  print '<option value="0">Ni client, ni prospect</option>';
 	}
       elseif ($soc->client == 1)
 	{
 	  print '<option value="2">Prospect</option>'; 
-	  print '<option value="1" SELECTED>Client</option>'; 
+	  print '<option value="1" selected>Client</option>'; 
 	  print '<option value="0">Ni client, ni prospect</option>'; 
 	}
       else
 	{
 	  print '<option value="2">Prospect</option>';
 	  print '<option value="1">Client</option>';
-	  print '<option value="0" SELECTED>Ni client, ni prospect</option>';
+	  print '<option value="0" selected>Ni client, ni prospect</option>';
 	}
 
       print '</select></td>';

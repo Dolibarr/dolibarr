@@ -31,10 +31,13 @@ class Societe {
   var $adresse;
   var $cp;
   var $ville;
+  var $departement_id;
+  var $pays_id;
   var $tel;
   var $fax;
   var $url;
   var $siren;
+  var $forme_juridique_id;
   var $client;
   var $note;
   var $fournisseur;
