@@ -124,6 +124,18 @@ if ($modulepart)
         }
         $original_file=$conf->produit->dir_images.'/'.$original_file;
     }
+
+    // Wrapping pour les graph telephonie
+    if ($modulepart == 'telephoniegraph')
+    {
+        $user->getrights('telephonie');
+        if ($user->rights->telephonie->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=DOL_DATA_ROOT.'/graph/telephonie/'.$original_file;
+    }
+
 }
 
 // Limite accès si droits non corrects
