@@ -104,6 +104,7 @@ $modules["MAIN_MODULE_BOUTIQUE"][0] = "Module boutique";
 $modules["MAIN_MODULE_BOUTIQUE"][1] = "MAIN_MODULE_BOUTIQUE";
 $modules["MAIN_MODULE_BOUTIQUE"][2] = MAIN_MODULE_BOUTIQUE;
 $modules["MAIN_MODULE_BOUTIQUE"][3] = "Module de gestion des boutiques";
+$modules["MAIN_MODULE_BOUTIQUE"][4] = "modBoutique";
 
 $modules["MAIN_MODULE_POSTNUKE"][0] = "Module Postnuke";
 $modules["MAIN_MODULE_POSTNUKE"][1] = "MAIN_MODULE_POSTNUKE";
