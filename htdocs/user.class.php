@@ -3,7 +3,7 @@
  * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (c) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,13 @@
  */
 
 /*!	\file htdocs/user.class.php
-		\brief  Fichier de la classe utilisateur
-		\author Rodolphe Qiedeville
-		\author Jean-Louis Bergamo
-		\author	Laurent Destailleur
-		\author Sebastien Di Cintio
-		\author Benoit Mortier
-		\version $Revision$
+  \brief  Fichier de la classe utilisateur
+  \author Rodolphe Qiedeville
+  \author Jean-Louis Bergamo
+  \author Laurent Destailleur
+  \author Sebastien Di Cintio
+  \author Benoit Mortier
+  \version $Revision$
 */
 
 
@@ -625,7 +625,7 @@ class User
 		}
 	      else
 		{
-    	  dolibarr_print_error($this->db);
+		  dolibarr_print_error($this->db);
 		}
 	    }
 	}
@@ -682,7 +682,7 @@ class User
 		}
 	      else
 		{
-    	  dolibarr_print_error($this->db);
+		  dolibarr_print_error($this->db);
 		}
 	    }
 	}
@@ -741,7 +741,6 @@ class User
       $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login' AND rowid <> $this->id;";
 		 
 
-			
       if ($this->db->query($sql)) 
 	{
 	  $num = $this->db->num_rows();
@@ -783,7 +782,7 @@ class User
 		}
 	      else
 		{
-    	  dolibarr_print_error($this->db);
+		  dolibarr_print_error($this->db);
 		}
 	    }
 	}
