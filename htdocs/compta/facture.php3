@@ -1026,7 +1026,7 @@ else
 	if ($sortfield == "")
 	  $sortfield="f.datef";
 
-	$sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid, f.fk_statut";
+	$sql = "SELECT s.nom,s.idp,f.facnumber,f.total,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid, f.fk_statut";
 	$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
 	
 	if ($socidp)
@@ -1122,7 +1122,7 @@ else
 		    print "<TD align=\"right\"><b>!!!</b></TD>\n";
 		  }
 		
-		print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
+		print "<TD align=\"right\">".price($objp->total)."</TD>\n";
 		
 		if (! $objp->paye)
 		  {
