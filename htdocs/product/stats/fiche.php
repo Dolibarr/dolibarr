@@ -38,6 +38,7 @@ llxHeader();
 
 $mesg = '';
 
+
 /*
  *
  *
@@ -54,6 +55,8 @@ if ($_GET["id"])
       if (! file_exists($dir))
 	{
 	  umask(0);
+	  mkdir(DOL_DOCUMENT_ROOT."/document");
+	  mkdir(DOL_DOCUMENT_ROOT."/document/produit");
 	  if (! mkdir($dir, 0755))
 	    {
 	      $mesg = "Impossible de créer $dir !";
@@ -107,7 +110,7 @@ if ($_GET["id"])
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
       print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
       print '<td>'.$langs->trans("Statistics").'</td></tr>';
-      print "<tr><td>Libellé</td><td>$product->libelle</td>";
+      print "<tr><td>".$langs->trans("Label")."</td><td>$product->libelle</td>";
       print '<td valign="top" rowspan="2">';
       print '<a href="propal.php?id='.$product->id.'">Propositions commerciales</a> : '.$product->count_propale($socid);
       print "<br>Proposé à <b>".$product->count_propale_client($socid)."</b> clients";
@@ -189,7 +192,7 @@ if ($_GET["id"])
 }
 else
 {
-  print "Error";
+  dolibarr_print_error();
 }
 
 $db->close();
