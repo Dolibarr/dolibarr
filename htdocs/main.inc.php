@@ -51,10 +51,13 @@ require (DOL_DOCUMENT_ROOT."/conf/conf.class.php");
  * Doit figurer aprés l'inclusion de conf.class.php pour overider certaines variables, à terme conf.class.php devra etre un fichier qui ne sera pas modifié par l'utilisateur
  */
 $conf = new Conf();
-$conf->db->host = $dolibarr_main_db_host;
-$conf->db->name = $dolibarr_main_db_name;
-$conf->db->user = $dolibarr_main_db_user;
-$conf->db->pass = $dolibarr_main_db_pass;
+if (!strlen(getenv("LLX_DBNAME")))
+{
+  $conf->db->host = $dolibarr_main_db_host;
+  $conf->db->name = $dolibarr_main_db_name;
+  $conf->db->user = $dolibarr_main_db_user;
+  $conf->db->pass = $dolibarr_main_db_pass;
+}
 
 require (DOL_DOCUMENT_ROOT ."/lib/mysql.lib.php");
 require (DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
