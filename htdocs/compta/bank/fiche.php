@@ -109,11 +109,11 @@ if ($action == 'create')
   print '<td colspan="3"><select name="courant">';
   print '<option value="0">non<option value="1">oui</select></td></tr>';
 
-  print '<tr><td valign="top">Description</td><td colspan="3">';
-  print "<textarea name=\"desc\" rows=\"12\" cols=\"40\">";
-  print $user->description;
+  print '<tr><td valign="top">Domiciliation</td><td colspan="3">';
+  print "<textarea name=\"domiciliation\" rows=\"5\" cols=\"40\">";
+  //  print $user->description;
   print "</textarea></td></tr>";
-      
+  
   print '<tr><td align="center" colspan="4"><input value="Enregistrer" type="submit"></td></tr>';
   print '</form>';
   print '</table>';
@@ -151,15 +151,22 @@ else
       
       print '<tr><td valign="top">Identifiant BIC</td>';
       print '<td colspan="3">'.$account->bic.'</td></tr>';
-      
+
+      /*      
       print '<tr><td valign="top">Domiciliation</td>';
       print '<td colspan="3">'.$account->domiciliation.'</td></tr>';
+      */
 
       print '<tr><td valign="top">Compte Courant</td>';
       print '<td colspan="3">'.$yn[$account->courant].'</td></tr>';
 
       print '<tr><td valign="top">Compte Clos</td>';
       print '<td colspan="3">'.$yn[$account->clos].'</td></tr>';
+  
+      print '<tr><td valign="top">Domiciliation</td><td colspan="3">';
+      print $account->domiciliation;
+      print "</td></tr>\n";
+
       print '</table>';
 
       print '<br><table width="100%" border="1" cellspacing="0" cellpadding="2">';
@@ -212,9 +219,11 @@ else
 	  
 	  print '<tr><td valign="top">Identifiant BIC</td>';
 	  print '<td colspan="3"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
-	  
+
+	  /*	  
 	  print '<tr><td valign="top">Domiciliation</td>';
 	  print '<td colspan="3"><input size="20" type="text" name="domiciliation" value="'.$account->domiciliation.'"></td></tr>';
+	  */
 
 	  print '<tr><td valign="top">Compte Courant</td>';
 	  print '<td colspan="3">';
@@ -226,11 +235,11 @@ else
 	  $form->selectyesnonum("clos",$account->clos);
 	  print '</td></tr>';
 
-	  print '<tr><td valign="top">Description</td><td colspan="3">';
-	  print "<textarea name=\"desc\" rows=\"12\" cols=\"40\">";
-	  print $user->description;
+	  print '<tr><td valign="top">Domiciliation</td><td colspan="3">';
+	  print "<textarea name=\"domiciliation\" rows=\"5\" cols=\"40\">";
+	  print $account->domiciliation;
 	  print "</textarea></td></tr>";
-	  
+
 	  print '<tr><td align="center" colspan="4"><input value="Enregistrer" type="submit"></td></tr>';
 	  print '</form>';
 	  print '</table>';
