@@ -26,8 +26,8 @@
     Auth_MySQL_Password_Table 		llx_user
     Auth_MySQL_Username_Field 		login
     Auth_MySQL_Password_Field 		pass
-    Auth_MySQL_Encryption_Types 	Crypt_DES
-    Auth_MySQL_Encrypted_Passwords 	off
+    Auth_MySQL_Encryption_Types 	Plaintext Crypt_DES
+#    Auth_MySQL_Encrypted_Passwords 	off
     AuthName        			"Dolibarr"
 
     require valid-user
@@ -39,6 +39,33 @@
     AllowOverride All
     Order deny,allow
     Allow from all
+  </Location>
+
+  <Location /adherents/public/>
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Order deny,allow
+    Allow from all
+  </Location>
+
+  <Location /adherents/private/>
+    Options Indexes FollowSymLinks
+    AllowOverride All
+    Order deny,allow
+    Deny from all
+
+    AuthType 				Basic
+    Auth_MySQL_Authoritative		on
+    Auth_MySQL_DB 			dolibarr
+    Auth_MySQL_Password_Table 		llx_adherent
+    Auth_MySQL_Username_Field 		login
+    Auth_MySQL_Password_Field 		pass
+    Auth_MySQL_Encryption_Types 	Plaintext Crypt_DES
+#    Auth_MySQL_Encrypted_Passwords 	off
+    AuthName        			"Adherents"
+
+    require valid-user
+    satisfy any
   </Location>
 
 </VirtualHost>
