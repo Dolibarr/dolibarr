@@ -162,7 +162,7 @@ if ( $societe->fetch($socid) )
   $sql  = "SELECT p.rowid,p.ref,".$db->pdate("p.date_commande")." as dc, p.fk_statut";
   $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
   $sql .= " WHERE p.fk_soc =".$societe->id;
-  $sql .= " ORDER BY p.rowid DESC LIMIT 0,4";
+  $sql .= " ORDER BY p.rowid DESC LIMIT 4";
   if ( $db->query($sql) )
     {
       $var=!$var;
@@ -172,7 +172,7 @@ if ( $societe->fetch($socid) )
 	{
       print '<table class="border" width="100%">';
 	  print "<tr $bc[$var]>";
-	  print "<td colspan=\"2\"><a href=\"commande/liste.php?socid=$societe->id\">Dernières commandes</td></tr>";
+	  print "<td colspan=\"2\"><a href=\"commande/liste.php?socid=$societe->id\">Dernières commandes ($num)</td></tr>";
 	}
       while ($i < $num && $i < 5)
 	{
@@ -214,7 +214,7 @@ if ( $societe->fetch($socid) )
    */
   $sql  = "SELECT p.rowid,p.libelle,p.facnumber,".$db->pdate("p.datef")." as df, total_ttc as amount, paye";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as p WHERE p.fk_soc = $societe->id";
-  $sql .= " ORDER BY p.datef DESC LIMIT 0,4";
+  $sql .= " ORDER BY p.datef DESC LIMIT 4";
   if ( $db->query($sql) )
     {
       $var=!$var;
@@ -224,7 +224,7 @@ if ( $societe->fetch($socid) )
 	{
       print '<table class="border" width="100%">';
 	  print "<tr $bc[$var]>";
-	  print "<td colspan=\"4\"><a href=\"facture/index.php?socid=$societe->id\">Liste des factures fournisseurs ($num)</td></tr>";
+	  print "<td colspan=\"4\"><a href=\"facture/index.php?socid=$societe->id\">Dernières factures fournisseurs ($num)</td></tr>";
 	}
       while ($i < $num && $i < 5)
 	{
@@ -235,7 +235,7 @@ if ( $societe->fetch($socid) )
 	  print '<td>';
 	  print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
 	  print $obj->facnumber.'</a> '.substr($obj->libelle,0,40).'...</td>';	    
-	  print "<td align=\"right\" width=\"100\">".dolibarr_print_date($obj->df)."</td>";
+	  print "<td align=\"right\" width=\"80\">".dolibarr_print_date($obj->df)."</td>";
 	  print '<td align="right">'.$obj->amount.'</td>';
       $fac = new FactureFourn($db);
 	  print '<td align="center">'.$fac->LibStatut($obj->paye,$obj->statut).'</td>';

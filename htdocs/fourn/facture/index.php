@@ -33,6 +33,8 @@ require("../../facturefourn.class.php");
 
 llxHeader();
 
+$socid = $_GET["socid"];
+
 /*
  * Sécurité accés client
  */
@@ -64,11 +66,10 @@ $pagenext = $page + 1;
 /*
  * Recherche
  *
- *
  */
-if ($mode == 'search')
+if ($_POST["mode"] == 'search')
 {
-  if ($mode-search == 'soc')
+  if ($_POST["mode-search"] == 'soc')
     {
       $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
       $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
@@ -130,17 +131,22 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Liste des factures fournisseurs", $page, "index.php",'', $sortfield, $sortorder,'',$num);
+  if ($socid) {
+      $soc = new Societe($db);
+      $soc->fetch($socid);
+  }
+  
+  print_barre_liste("Factures fournisseur".($socid?" $soc->nom":""),$page,"index.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Date"),"index.php","fac.datef","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Label"),"index.php","fac.libelle","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$sortfield);
-  print_liste_field_titre($langs->trans("AmountHT"),"index.php","fac.total_ht","","",'align="right"',$sortfield);
-  print_liste_field_titre($langs->trans("AmountTTC"),"index.php","fac.total_ttc","","",'align="right"',$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"index.php","fk_statut,paye","","",'align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber","&amp;socid=$socid","","",$sortfield);
+  print_liste_field_titre($langs->trans("Date"),"index.php","fac.datef","&amp;socid=$socid","","",$sortfield);
+  print_liste_field_titre($langs->trans("Label"),"index.php","fac.libelle","&amp;socid=$socid","","",$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","&amp;socid=$socid","","",$sortfield);
+  print_liste_field_titre($langs->trans("AmountHT"),"index.php","fac.total_ht","&amp;socid=$socid","",'align="right"',$sortfield);
+  print_liste_field_titre($langs->trans("AmountTTC"),"index.php","fac.total_ttc","&amp;socid=$socid","",'align="right"',$sortfield);
+  print_liste_field_titre($langs->trans("Status"),"index.php","fk_statut,paye","&amp;socid=$socid","",'align="center"',$sortfield);
   print "</tr>\n";
   $var=True;
   while ($i < min($num,$limit))
