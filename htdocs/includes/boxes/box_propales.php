@@ -61,7 +61,7 @@ if ($user->rights->propale->lire)
 					    'text' => $objp->ref,
 					    'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
 	  
-	  $info_box_contents[$i][1] = array('align' => 'center',
+	  $info_box_contents[$i][1] = array('align' => 'left',
 					    'text' => $objp->nom,
 					    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
 	  $i++;

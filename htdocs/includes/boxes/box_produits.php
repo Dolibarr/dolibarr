@@ -34,7 +34,7 @@ if ($user->rights->produit->lire)
 
   $info_box_contents = array();
 
-  $sql = "SELECT p.label, p.rowid, p.price";
+  $sql = "SELECT p.label, p.rowid, p.price, p.fk_product_type";
   $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
   $sql .= " ORDER BY p.datec DESC";
   $sql .= $db->plimit(5, 0);
@@ -50,13 +50,12 @@ if ($user->rights->produit->lire)
 	  $objp = $db->fetch_object($result);
 	  
 	  $info_box_contents[$i][0] = array('align' => 'left',
-    					'logo' => 'object_product',
+    					'logo' => ($objp->fk_product_type?'object_service':'object_product'),
 					    'text' => $objp->label,
 					    'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
 	  
 	  $info_box_contents[$i][1] = array('align' => 'right',
-					    'text' => price($objp->price),
-					    'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
+					    'text' => price($objp->price));
 	  $i++;
 	}
     } 
