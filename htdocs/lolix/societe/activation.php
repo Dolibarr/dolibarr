@@ -19,7 +19,10 @@
  * $Source$
  *
  */
+
 require("./pre.inc.php");
+
+$langs->load("companies");
 
 llxHeader("","","Lolix - Société a activer");
 
@@ -65,13 +68,11 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<TR class="liste_titre">';
-  print "<TD valign=\"center\">";
-  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-  print "</td><td>";
-  print_liste_field_titre("Ville",$PHP_SELF,"s.ville");
-  print "</td><td>&nbsp;</td>";
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre">';
+  print_liste_field_titre($langs->trans("Company"),$PHP_SELF,"s.nom","","",'valign=\"center\"');
+  print_liste_field_titre($langs->trans("Town"),$PHP_SELF,"s.ville");
+  print "<td>&nbsp;</td>";
 
   print "</tr>\n";
   $var=True;

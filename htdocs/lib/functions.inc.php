@@ -3,7 +3,7 @@
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -933,45 +933,23 @@ function transcoS2L($zonein,$devise)
 		\param	options ("" par defaut)
 */
 
-function print_liste_field_titre($name, $file, $field, $begin="", $options="")
- {
-  global $conf;
-
-  print $name."&nbsp;";
-  print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">';
-  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="A-Z"></a>';
-  print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">';
-  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="Z-A"></a>';
-}
-
-/*!
-		\brief affichage du titre d'une liste avec possibilité de tri et de choix du type de la balise td
-		\param	name
-		\param	file
-		\param	field
-		\param	begin ("" par defaut)
-		\param	options ("" par defaut)
-		\param	td ("" par defaut)
-		\param	sortfield ("" par defaut)
-*/
-
-function print_liste_field_titre_new($name, $file, $field, $begin="", $options="", $td="", $sortfield="")
- {
-  global $conf;
-  if ($sortfield == $field)
+function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="")
+{
+    global $conf;
+    if ($sortfield == $field)
     {
-  print '<td class="menusel" '. $td.'>';
+        print '<td class="menusel" '. $td.'>';
     }
-  else
+    else
     {
-  print '<td '. $td.'>';
+        print '<td '. $td.'>';
     }
-  print $name."&nbsp;";
-  print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">';
-  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="A-Z"></a>';
-  print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">';
-  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="Z-A"></a>';
-  print "</td>";
+    print $name."&nbsp;";
+    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">';
+    print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="A-Z"></a>';
+    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">';
+    print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="Z-A"></a>';
+    print "</td>";
 }
 
 /*!

@@ -155,13 +155,11 @@ if ($result)
     }
 
 
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print '<td>';
   print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom", $params);
-  print '</td><td width="25%">';
-  print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville",$params);
-  print '</td><td colspan="2" align="center">'.$langs->trans("Cards").'</td>';
+  print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville",$params,"",'width="25%"');
+  print '<td colspan="2" align="center">'.$langs->trans("Cards").'</td>';
   print "</tr>\n";
 
   print '<form method="get" action="societe.php">';
