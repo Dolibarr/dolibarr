@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr><td valign="top" width="30%">';
 
 print '<form method="post" action="liste.php">';
-print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">Rechercher une expédition</td></tr>';
 print "<tr $bc[1]><td>";
 print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
@@ -52,11 +52,11 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   if ($num)
     {
-      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="3">'.translate("Expeditions à valider").'</td></tr>';
       $i = 0;
-      
+      $var = True;
       while ($i < $num)
 	{
 	  $var=!$var;
@@ -87,15 +87,16 @@ if ( $db->query($sql) )
   if ($num)
     {
       $i = 0;
-      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">'.translate("Commandes à traiter").'</td></tr>';
-      
+      $var = True;
       while ($i < $num)
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object($i);
-	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
+	  print "<a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
@@ -126,15 +127,16 @@ if ( $db->query($sql) )
   if ($num)
     {
       $i = 0;
-      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">'.translate("Commandes en traitement").'</td></tr>';
-      
+      $var = True;
       while ($i < $num)
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object($i);
-	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
+	  print "<a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
@@ -161,15 +163,16 @@ if ( $db->query($sql) )
   if ($num)
     {
       $i = 0;
-      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="3">'.translate("5 dernières expéditions").'</td></tr>';
-      
+      $var = True;
       while ($i < $num)
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object($i);
-	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
+	  print "<a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$obj->commande_id.'">'.$obj->commande_ref.'</a></td></tr>';
 	  $i++;
