@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,15 +56,16 @@ if ( $db->query($sql) )
   if ($num)
     {
       $i = 0;
-      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">'.translate("Commandes à valider").'</td></tr>';
-      
+      $var = True;
       while ($i < $num)
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object($i);
-	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
+	  print "<a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
@@ -89,15 +90,16 @@ if ( $db->query($sql) )
   if ($num)
     {
       $i = 0;
-      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">Commandes à traiter</td></tr>';
-      
+      $var = True;
       while ($i < $num)
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object($i);
-	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_file()."</a>";
+	  print "&nbsp;<a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
@@ -126,15 +128,16 @@ if ( $db->query($sql) )
   if ($num)
     {
       $i = 0;
-      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">Commandes en traitement</td></tr>';
-      
+      $var = True;
       while ($i < $num)
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object($i);
-	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
+	  print "<a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
@@ -158,15 +161,16 @@ if ( $db->query($sql) )
   if ($num)
     {
       $i = 0;
-      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">5 dernières commandes</td></tr>';
-      
+      $var = True;
       while ($i < $num)
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object($i);
-	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
+	  print "<a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
