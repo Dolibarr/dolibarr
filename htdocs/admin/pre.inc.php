@@ -66,10 +66,6 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add_submenu("external_rss.php", "Syndication");
     }
 
-  $menu->add("const.php", "Constantes");
-
-  $menu->add_submenu("constall.php", "Tout voir");
-
   //$menu->add_submenu("sqltables.php", "Tables");
 
   if ($conf->boutique->enabled)
