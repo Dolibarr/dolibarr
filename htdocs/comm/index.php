@@ -136,12 +136,13 @@ if ($conf->propal->enabled) {
 		{
 		  $obj = $db->fetch_object();
 		  $var=!$var;
-		  print "<tr $bc[$var]><td><a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td><td>".$obj->nom."</td><td align=\"right\">".price($obj->price)."</td></tr>";
+		  print '<tr '.$bc[$var].'><td width="25%">'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td><td>".$obj->nom."</td><td align=\"right\">".price($obj->price)."</td></tr>";
 		  $i++;
 		  $total += $obj->price;
 		}
 		if ($total>0) {
-		  print "<tr $bc[$var]><td colspan=\"2\" align=\"right\"><i>".$langs->trans("Total")."</i></td><td align=\"right\"><i>".price($total)."</i></td></tr>";
+		  $var=!$var;
+		  print '<tr '.$bc[$var]."><td colspan=\"2\"><i>".$langs->trans("Total")."</i></td><td align=\"right\"><i>".price($total)."</i></td></tr>";
 		}
 	      print "</table><br>";
 	    }
@@ -174,7 +175,7 @@ if ($conf->commande->enabled)
           while ($i < $num)
 	    {
 	      $obj = $db->fetch_object();
-	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
+	      print "<tr $bc[$var]><td width=\"25%\"><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	      $i++;
 	      $var=!$var;
