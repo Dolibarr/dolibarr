@@ -62,6 +62,8 @@ if ($action == 'update') {
   $soc->fax = $fax;
   $soc->url = $url;
   $soc->siren = $siren;
+  $soc->client = $client;
+  $soc->fournisseur = $fournisseur;
 
   $soc->update($socid);
 }
@@ -124,10 +126,12 @@ if ($action == 'create') {
 
   print '<tr><td>Siren</td><td><input type="text" name="siren" value="'.$soc->siren.'"></td></tr>';
 
-  print '<tr><td>Type</td><td><select name="type">';
+  print '<tr><td>Client</td><td><select name="client">';
+  print_oui_non($soc->client);
   print '</select>';
 
-  print '<tr><td>Effectif</td><td><select name="effectif">';
+  print '<tr><td>Fournisseur</td><td><select name="fournisseur">';
+  print_oui_non($soc->fournisseur);
   print '</select>';
 
   print '</td></tr>';

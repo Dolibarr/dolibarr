@@ -1,10 +1,6 @@
 <?PHP
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
- * $Id$
- * $Source$
- * Classe Company
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,6 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ *
+ * Classe Company
  *
  */
 
@@ -67,6 +68,13 @@ class Societe {
    *
    */
   Function update($id) {
+    /*
+     * Force au statut de fournisseur si ce n'est pas un client
+     * sinon l'entreprise disparait de toutes les listes
+     */
+    if ($this->client == 0 ) {
+      $this->fournisseur = 1;
+    }
 
     $sql = "UPDATE societe ";
     $sql .= " SET nom = '" . trim($this->nom) ."'";
@@ -77,6 +85,8 @@ class Societe {
     $sql .= ",fax = '" . trim($this->fax) ."'";
     $sql .= ",url = '" . trim($this->url) ."'";
     $sql .= ",siren = '" . trim($this->siren) ."'";
+    $sql .= ",client = " . $this->client ;
+    $sql .= ",fournisseur = " . $this->fournisseur ;
     $sql .= " WHERE idp = " . $id;
 
     $this->db->query($sql);

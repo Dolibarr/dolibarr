@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2000,2001 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,8 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  * or see http://www.gnu.org/
- */
-/*
+ *
  * $Id$
  * $Source$
  *
@@ -55,6 +51,20 @@ function print_barre_liste($titre,$page,$file) {
   }
   print '<a href="'.$file.'?page='.($page+1).'"><img alt="Page suivante" src="/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
   print '</td></tr></table><p>';
+}
+/*
+ *
+ *
+ */
+function print_oui_non($value) {
+  if ($value) {
+    print '<option value="0">non';
+    print '<option value="1" selected>oui';
+  } else {
+    print '<option value="0" selected>non';
+    print '<option value="1">oui';
+  }
+
 }
 /*
  *
