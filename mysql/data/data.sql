@@ -56,6 +56,7 @@ delete from llx_boxes;
 insert into llx_const (name, value, type, note) values ('MAIN_MONNAIE','euros','chaine','Monnaie');
 insert into llx_const (name, value, type, note) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document');
 insert into llx_const (name, value, type, note) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation');
+insert into llx_const (name, value, type, note) values ('MAIN_MAIL_FROM','adherents@domain.com','chaine','From des mails');
 
 insert into llx_const (name, value, type, note) values ('MAIN_START_YEAR','2003','chaine','Année de départ');
 
@@ -83,6 +84,7 @@ insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chai
 --
 -- Mail Adherent
 --
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_FROM','adherents@domain.com','chaine','From des mails adherents',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_RESIL','Votre adhesion sur %SERVEUR% vient d\'etre resilie.\r\nNous esperons vous revoir tres bientot','texte','Mail de Resiliation',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_VALID','MAIN\r\nVotre adhesion vient d\'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante : \r\n%SERVEUR%public/adherents/','texte','Mail de validation',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_EDIT','Voici le rappel des coordonnees que vous avez modifiees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante :\r\n%SERVEUR%public/adherents/','texte','Mail d\'edition',0);
@@ -134,8 +136,6 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_
 insert into llx_const (name, value, type) values ('DB_NAME_OSC','catalog','chaine');
 insert into llx_const (name, value, type) values ('OSC_LANGUAGE_ID','1','chaine');
 insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
-insert into llx_const (name, value, type, note) values ('MAIN_MAIL_FROM','adherents@domain.com','chaine','From des mails');
-insert into llx_const (name, value, type, note) values ('ADHERENT_MAIL_FROM','adherents@domain.com','chaine','From des mails adherents');
 
 --
 -- Types de charges
