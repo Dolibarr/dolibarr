@@ -21,10 +21,12 @@
  *
  */
 
-/**
-* Gestion d'une proposition commerciale
-* @package propale
+/*! \file htdocs/compta/facture/note.php
+        \ingroup    facture
+        \brief      Fiche de notes sur une facture
+		\version    $Revision$
 */
+
 
 require("./pre.inc.php");
 

@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/compta/facture/fiche-rec.php
+        \ingroup    facture
+		\brief      Page d'affichage d'une facture récurrent
+		\version    $Revision$
+*/
+
+
 require("./pre.inc.php");
 require("./facture-rec.class.php");
 

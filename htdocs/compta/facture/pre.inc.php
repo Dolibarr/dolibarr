@@ -19,6 +19,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/compta/facture/pre.inc.php
+        \ingroup    facture
+		\brief      Fichier de gestion du menu gauche du module facture
+		\version    $Revision$
+*/
+
 require("../../main.inc.php");
 require("../../facture.class.php");
 

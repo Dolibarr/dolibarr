@@ -21,6 +21,16 @@
  *
  */
 
+/*! \file htdocs/compta/facture/facture-rec.class.php
+        \ingroup    facture
+		\brief      Fichier de la classe des factures recurentes
+		\version    $Revision$
+*/
+
+
+/*! \class FactureRec
+        \brief      Classe de gestion des factures recurrentes
+*/
 class FactureRec
 {
   var $id;

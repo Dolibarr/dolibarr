@@ -20,13 +20,18 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/compta/facture/info.php
+        \ingroup    facture
+		\brief      Page des informations d'une facture
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
-/*
- *
- *
- */
+
 llxHeader();
+
 
 /*
  * Visualisation de la fiche
