@@ -77,7 +77,8 @@ function llxHeader($head = "") {
 
   if ($conf->fichinter->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/fichinter/index.php", "Fiches d'intervention");
+        $langs->trans("interventions");
+        $menu->add(DOL_URL_ROOT."/fichinter/index.php", $langs->trans("Interventions"));
     }
 
   if ($conf->produit->enabled || $conf->service->enabled)
@@ -118,7 +119,9 @@ function llxHeader($head = "") {
       }
     }
 
-  $menu->add(DOL_URL_ROOT."/comm/mailing/index.php",$langs->trans("Mailing"));
+  $langs->trans("mails");
+  $menu->add(DOL_URL_ROOT."/comm/mailing/index.php",$langs->trans("EMailing"));
+
 
   if ($conf->telephonie->enabled) // EXPERIMENTAL -> RODO
     {
