@@ -21,16 +21,6 @@
  *
  */
 require("./pre.inc.php");
-require("../contact.class.php");
-require("../lib/webcal.class.php");
-require("../cactioncomm.class.php");
-require("../actioncomm.class.php");
-
-$user->getrights('propale');
-$user->getrights('fichinter');
-$user->getrights('commande');
-$user->getrights('projet');
-
 
 /*
  * Sécurité accés client
@@ -42,20 +32,25 @@ if ($user->societe_id > 0)
 }
 
 
+$page=$_GET["page"];
+$begin=$_GET["begin"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
 if ($page == -1) { $page = 0 ; }
 
 $offset = $conf->liste_limit * $_GET["page"] ;
 $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 
-/*
- * Mode Liste
- *
- *
- *
- */
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=1";
+
+if ($socidp)
+{
+  $sql .= " AND s.idp = $socidp";
+}
+
 
 if (strlen($stcomm))
 {
@@ -94,7 +89,7 @@ $result = $db->query($sql);
 if ($result)
 {
   $num = $db->num_rows();
-
+  /*
   if ($num == 1)
     {
       $obj = $db->fetch_object(0);
@@ -104,17 +99,19 @@ if ($result)
     {
       llxHeader();
     }
+  */
+  llxHeader();
 
 
-  print_barre_liste("Liste des clients", $page, "clients.php","",$sortfield,$sortorder,'',$num);
+  print_barre_liste("Liste des clients", $page, "clients.php","&amp;begin=$begin",$sortfield,$sortorder,"",$num);
 
   print '<div align="center">';
 
-  print "| <A href=\"clients.php?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
+  print "| <A href=\"clients.php?page=$pageprevamp;stcomm=$stcommamp;sortfield=$sortfieldamp;sortorder=$sortorderamp;aclasser=$aclasseramp;coord=$coord&amp;begin=$begin\">*</A>\n| ";
   for ($ij = 65 ; $ij < 91; $ij++) {
-    print "<A href=\"clients.php?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
+    print "<A href=\"clients.php?begin=" . chr($ij) . "&amp;stcomm=$stcomm\" class=\"T3\">";
     
-    if ($_GET["begin"] == chr($ij) )
+    if ($begin == chr($ij) )
       {
 	print  "<b>&gt;" . chr($ij) . "&lt;</b>" ; 
       } 
@@ -126,23 +123,14 @@ if ($result)
   }
   print "</div>";
 
-
   $i = 0;
   
-  if ($sortorder == "DESC")
-    {
-      $sortorder="ASC";
-    }
-  else
-    {
-      $sortorder="DESC";
-    }
   print '<TABLE class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<TR class="liste_titre">';
   print "<TD valign=\"center\">";
-  print_liste_field_titre("Société","clients.php","s.nom");
+  print_liste_field_titre("Société","clients.php","s.nom","&amp;page=$page&amp;begin=$begin");
   print "</td><td>";
-  print_liste_field_titre("Ville","clients.php","s.ville");
+  print_liste_field_titre("Ville","clients.php","s.ville","&amp;page=$page&amp;begin=$begin");
   print "</td>";
   print "</TR>\n";
   $var=True;
