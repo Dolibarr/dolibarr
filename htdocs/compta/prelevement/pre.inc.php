@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +21,9 @@
  */
 
 /*!
-	    \file       htdocs/compta/prelevement/pre.inc.php
-        \ingroup    prelevement
-  	    \brief      Fichier gestionnaire du menu prelevement
+  \file       htdocs/compta/prelevement/pre.inc.php
+  \ingroup    prelevement
+  \brief      Fichier gestionnaire du menu prelevement
 */
 
 require("../../main.inc.php");
@@ -37,85 +36,10 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu = new Menu();
 
-  // Les recettes
-
-  $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
-
-  if ($user->comm > 0 && $conf->commercial->enabled && $conf->propal->enabled) 
-    {
-      $langs->load("propal");
-      $menu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"));
-    }
-
-  if ($conf->contrat->enabled)
-    {
-      $langs->load("contracts");
-      $menu->add(DOL_URL_ROOT."/contrat/",$langs->trans("Contracts"));
-    }
-
-  if ($conf->don->enabled)
-    {
-      $langs->load("donations");
-      $menu->add(DOL_URL_ROOT."/compta/dons/",$langs->trans("Donations"));
-    }
-
-  if ($conf->facture->enabled)
-    {
-      $langs->load("bills");
-      $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
-      $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php",$langs->trans("Payments"));
-      if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR) {
-        $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
-      }
-      $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"));
-    }
-   
-    
-  // Les dépenses
-  if ($conf->fournisseur->enabled)
-    {
-      $langs->load("suppliers");
-      $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
-    }
-  
-  if ($user->societe_id == 0)
-    {
-      $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Déplacement");
-    }
-
-  if ($conf->compta->enabled && $conf->compta->tva && $user->societe_id == 0)
-    {
-      $menu->add(DOL_URL_ROOT."/compta/tva/index.php",$langs->trans("VAT"));
-    }
-
-  if ($conf->compta->enabled)
-    {
-    $menu->add(DOL_URL_ROOT."/compta/charges/index.php","Charges");
-    }
-
-
-  // Vision des recettes-dépenses
-  if ($conf->banque->enabled && $user->rights->banque->lire)
-    { 
-      $menu->add(DOL_URL_ROOT."/compta/bank/",$langs->trans("Bank"));
-    }
-  
-  if ($conf->caisse->enabled)
-    {
-      $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisses");
-    }
-
-  $menu->add(DOL_URL_ROOT."/compta/stats/","CA / Résultats");
-
   if ($conf->prelevement->enabled)
     {
       $menu->add(DOL_URL_ROOT."/compta/prelevement/","Bon prélèv.");
-    }
-
-  if (! $user->compta) 
-    {
-      $menu->clear();
-      $menu->add(DOL_URL_ROOT."/",$langs->trans("Home"));
+      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/liste.php","Liste");
     }
 
   left_menu($menu->liste, $help_url);
