@@ -23,7 +23,7 @@
 		\brief      Fichier de gestion XML-RPC pour dolibarr
 		\author     Keith Devens
 		\author     Jean-Louis Bergamo
-		\auhtor     Laurent Destailleur
+		\author     Laurent Destailleur
 		\version    $Revision$
 */
 
