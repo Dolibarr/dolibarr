@@ -22,10 +22,32 @@
 
 require("./pre.inc.php3");
 
-llxHeader();
-
 $db = new Db();
 $form = new Form($db);
+
+if ($subaction == 'addrights' && $user->admin)
+{
+  $edituser = new User($db,$id);
+  $edituser->addrights($rights);
+}
+
+if ($subaction == 'delrights' && $user->admin)
+{
+  $edituser = new User($db,$id);
+  $edituser->delrights($rights);
+}
+
+if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == "yes")
+{
+  if ($id <> $user->id)
+    {
+      $edituser = new User($db, $id);
+      $edituser->fetch($id);
+      $edituser->delete();
+      Header("Location: index.php");
+    }
+}
+
 
 if ($HTTP_POST_VARS["action"] == 'add' && $user->admin)
 {
@@ -38,16 +60,24 @@ if ($HTTP_POST_VARS["action"] == 'add' && $user->admin)
   $edituser->email  = $HTTP_POST_VARS["email"];
   $edituser->admin  = $HTTP_POST_VARS["admin"];
   $edituser->webcal_login  = $HTTP_POST_VARS["webcal_login"];
-  if (isset($HTTP_POST_VARS["module_compta"]) && $HTTP_POST_VARS["module_compta"] ==1){
-    $edituser->compta  = 1;
-  }else{
-    $edituser->compta  = 0;
-  }
-  if (isset($HTTP_POST_VARS["module_comm"]) && $HTTP_POST_VARS["module_comm"] ==1){
-    $edituser->comm  = 1;
-  }else{
-    $edituser->comm  = 0;
-  }
+
+  if (isset($HTTP_POST_VARS["module_compta"]) && $HTTP_POST_VARS["module_compta"] ==1)
+    {
+      $edituser->compta  = 1;
+    }
+  else
+    {
+      $edituser->compta  = 0;
+    }
+
+  if (isset($HTTP_POST_VARS["module_comm"]) && $HTTP_POST_VARS["module_comm"] ==1)
+    {
+      $edituser->comm  = 1;
+    }
+  else
+    {
+      $edituser->comm  = 0;
+    }
 
   //$id = $edituser->create($user->id);
   $id = $edituser->create();
@@ -109,7 +139,7 @@ if ($action == 'password' && $user->admin)
     }
 }
 
-
+llxHeader();
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -179,33 +209,90 @@ else
       $fuser = new User($db, $id);
       $fuser->fetch();
 
-      print '<div class="titre">Fiche utilisateur</div><b>'.$message.'</b><br>';
+      print_fiche_titre("Fiche utilisateur",$message);
+
+      if ($request == 'delete')
+	{
+	  print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
+	  print '<input type="hidden" name="action" value="confirm_delete">';
+	  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+	  
+	  print '<tr><td colspan="3">Supprimer cet utilisateur</td></tr>';	      
+	  print '<tr><td class="delete">Etes-vous sur de vouloir supprimer cet utilisateur ?</td><td class="delete">';
+	  $htmls = new Form($db);
+	  
+	  $htmls->selectyesno("confirm","no");
+	  
+	  print "</td>\n";
+	  print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+	  print '</table>';
+	  print "</form>\n";  
+	}
+      
 
       print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
     
       print '<tr><td width="25%" valign="top">Nom</td>';
       print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
-      print '<td width="25%" valign="top">Prénom</td>';
-      print '<td width="25%" class="valeur">'.$fuser->prenom.'</td></tr>';
-  
+      print '<td>Droits</td></tr>';
+
+      print '<tr><td width="25%" valign="top">Prénom</td>';
+      print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
+      print '<td valign="top" rowspan="9">';
+      /*
+       * Droits
+       */
+      print '<table width="100%" border="0" cellpadding="0" cellspacing="0">';
+      $sql = "SELECT r.libelle, r.module FROM llx_rights_def as r, llx_user_rights as ur";
+      $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.id ASC";
+      $var = True;
+      if ($db->query($sql))
+	{
+	  $num = $db->num_rows();
+	  $i = 0;
+	  while ($i < $num)
+	    {
+	      $obj = $db->fetch_object($i);
+	      if ($oldmod <> $obj->module)
+		{
+		  $oldmod = $obj->module;
+		  $var = !$var;
+		}
+
+	      print "<tr $bc[$var]><td>".$obj->libelle . '</td></tr>';
+	      $i++;
+	    }
+	}
+      print '</table>';
+
+      print '</td></tr>';  
       print '<tr><td width="25%" valign="top">Login</td>';
-      print '<td width="25%"  class="valeur">'.$fuser->login.'</td>';
-      print '<td width="25%" valign="top">Email</td>';
+      print '<td width="25%"  class="valeur">'.$fuser->login.'</td></tr>';
+      print '<tr><td width="25%" valign="top">Email</td>';
       print '<td width="25%"  class="valeur">'.$fuser->email.'</td></tr>';
       
       print '<tr><td width="25%" valign="top">Webcal Login</td>';
-      print '<td width="25%"  class="valeur">'.$fuser->webcal_login.'&nbsp;</td>';
-      print '<td width="25%" valign="top">Administrateur</td>';
+      print '<td width="25%"  class="valeur">'.$fuser->webcal_login.'&nbsp;</td></tr>';
+      print '<tr><td width="25%" valign="top">Administrateur</td>';
       print '<td width="25%"  class="valeur">'.$yn[$fuser->admin].'</td></tr>';
       
       print '<tr><td width="25%" valign="top">Module Compta</td>';
-      print '<td width="25%"  class="valeur">'.$yn[$fuser->compta].'&nbsp;</td>';
-      print '<td width="25%" valign="top">Module Commercial</td>';
+      print '<td width="25%"  class="valeur">'.$yn[$fuser->compta].'&nbsp;</td></tr>';
+      print '<tr><td width="25%" valign="top">Module Commercial</td>';
       print '<td width="25%"  class="valeur">'.$yn[$fuser->comm].'</td></tr>';
 
       print '<tr><td width="25%" valign="top">Id Société</td>';
-      print '<td width="25%"  class="valeur">'.$fuser->societe_id.'&nbsp;</td>';
-      print '<td width="25%" valign="top">&nbsp;</td>';
+      print '<td width="25%"  class="valeur">'.$fuser->societe_id.'&nbsp;</td></tr>';
+      print '<tr><td width="25%" valign="top">';
+      if ($fuser->contact_id)
+	{
+	  print '<a href="../comm/people.php3?contactid='.$fuser->contact_id.'&socid='.$fuser->societe_id.'">Fiche contact</a>';
+	}
+      else
+	{
+	  print "&nbsp;";
+	}
+      print '</td>';
       print '<td width="25%"  class="valeur">&nbsp;</td></tr>';
 
       print '<tr><td width="25%" valign="top">Note</td>';
@@ -217,25 +304,41 @@ else
 
       if ($user->admin) 
 	{
-	  print '<td width="25%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+	  print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
 	}
       else
 	{
-	  print '<td width="25%" align="center">-</td>';
+	  print '<td width="20%" align="center">-</td>';
 	}
-
-      print '<td width="25%" align="center">-</td>';
+      print '<td width="20%" align="center">-</td>';
 
       if ($user->id == $id or $user->admin)
 	{
-	  print '<td width="25%" align="center">[<a href="fiche.php3?action=password&id='.$id.'">Nouveau mot de passe</a>]</td>';
+	  print '<td width="20%" align="center">[<a href="fiche.php3?action=password&id='.$id.'">Nouveau mot de passe</a>]</td>';
 	}
       else 
 	{
-      print '<td width="25%" align="center">-</td>';
+      print '<td width="20%" align="center">-</td>';
 	}
-      print '<td width="25%" align="center">-</td>';
-      
+
+      if ($user->admin)
+	{
+	  print '<td width="20%" align="center">[<a href="fiche.php3?request=perms&id='.$id.'">Permissions</a>]</td>';
+	}
+      else
+	{
+	  print '<td width="20%" align="center">-</td>';
+	}
+
+
+      if ($user->admin && $user->id <> $id)
+	{
+	  print '<td width="20%" align="center">[<a href="fiche.php3?request=delete&id='.$id.'">Supprimer</a>]</td>';
+	}
+      else
+	{	  
+	  print '<td width="20%" align="center">-</td>';
+	}
 
       print '</table><br>';
 
@@ -245,22 +348,19 @@ else
       /*                                                                            */
       /* ************************************************************************** */
       
-      if ($action == 'edit' && $user->admin) 
+      if ($action == 'edit' && $user->admin && !$fuser->societe_id) 
 	{
 	  print '<hr><div class="titre">Edition de l\'utilisateur</div><br>';
 	  print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
 	  print '<input type="hidden" name="action" value="update">';
 	  print '<table border="1" cellpadding="3" cellspacing="0">';
 	  
-	  print '<tr><td valign="top">Id</td>';
-	  print '<td>'.$fuser->id.'</td></tr>';
-	  
 	  print '<tr><td valign="top">Nom</td>';
 	  print '<td><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td></tr>';
-	  
+
 	  print '<tr><td valign="top">Prénom</td>';
 	  print '<td><input size="20" type="text" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
-	  
+
 	  print '<tr><td valign="top">Login</td>';
 	  print '<td><input size="10" maxlength="8" type="text" name="login" value="'.$fuser->login.'"></td></tr>';
 	  
@@ -290,11 +390,35 @@ else
 	  print $fuser->note;
 	  print "</textarea></td></tr>";
 	  
-	  print '<tr><td align="center" colspan="2"><input value="Enregistrer" type="submit"></td></tr>';
+	  print '<tr><td align="center" colspan="3"><input value="Enregistrer" type="submit"></td></tr>';
 	  print '</form>';
 	  print '</table>';
 	}
-            
+     
+      if ($request == 'perms')
+	{
+	  /*
+	   * Droits
+	   */
+	  print '<table>';
+	  $sql = "SELECT r.id, r.libelle FROM llx_rights_def as r ORDER BY r.id ASC";
+
+	  if ($db->query($sql))
+	    {
+	      $num = $db->num_rows();
+	      $i = 0;
+	      while ($i < $num)
+		{
+		  $obj = $db->fetch_object($i);
+		  print '<tr><td><a href="fiche.php3?id='.$id.'&request=perms&subaction=addrights&rights='.$obj->id.'">Ajouter</a></td><td>';
+		  print $obj->libelle . '</td>';
+		  print '<td><a href="fiche.php3?id='.$id.'&request=perms&subaction=delrights&rights='.$obj->id.'">Supprimer</a></td></tr>';
+		  $i++;
+		}
+	    }
+	  print '</table>';
+	}
+       
     }
   
 }
