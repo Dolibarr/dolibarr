@@ -561,37 +561,65 @@ function accessforbidden()
 }
 
 /*!
-		\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostique et la remontée des bugs
-        On doit appeler cette fonction quand une erreur technique bloquante est rencontrée
+		\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostique et la remontée des bugs.
+        On doit appeler cette fonction quand une erreur technique bloquante est rencontrée.
+        Toutefois, il faut essayer de ne l'appeler qu'au sein de page php, les classes devant
+        renvoyer leur erreur par l'intermédiaire de leur propriété "error".
 */
 
 function dolibarr_print_error($db='',$msg='')
 {
   global $langs;
-
-  print "Dolibarr a détecté une erreur technique.<br>\n";
-  print "Voici les informations qui pourront aider au diagnostique:<br><br>\n";
-
-  print "<b>Serveur:</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
-  print "<b>URL sollicitée:</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
-  print "<b>QUERY_STRING:</b> ".$_SERVER["QUERY_STRING"]."<br>\n";;
-  print "<b>Referer:</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
+  $syslog = '';
   
-  $syslog="url=".$_SERVER["REQUEST_URI"];
-  $syslog.=", query_string=".$_SERVER["QUERY_STRING"];
+  if ($_SERVER['DOCUMENT_ROOT']) {
+        // Mode web
+        print "Dolibarr a détecté une erreur technique.<br>\n";
+        print "Voici les informations qui pourront aider au diagnostique:<br><br>\n";
+        
+        print "<b>Serveur:</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
+        print "<b>URL sollicitée:</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
+        print "<b>QUERY_STRING:</b> ".$_SERVER["QUERY_STRING"]."<br>\n";;
+        print "<b>Referer:</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
+        $syslog.="url=".$_SERVER["REQUEST_URI"];
+        $syslog.=", query_string=".$_SERVER["QUERY_STRING"];
+  }
+  else {
+        // Mode CLI   
+        print "Erreur interne détectée...\n";
+        $syslog.="pid=".getmypid();
+  }    
   
   if ($db) {
-    print "<br>\n";
-    print "<b>Requete dernier acces en base:</b> ".$db->lastquery()."<br>\n";
-    print "<b>Code retour dernier acces en base:</b> ".$db->errno()."<br>\n";
-    print "<b>Information sur le dernier accès en base:</b> ".$db->error()."<br>\n";
-    $syslog=", sql=".$db->lastquery();
-    $syslog=", db_error=".$db->error();
+    if ($_SERVER['DOCUMENT_ROOT']) {
+        // Mode web
+        print "<br>\n";
+        print "<b>Requete dernier acces en base:</b> ".$db->lastquery()."<br>\n";
+        print "<b>Code retour dernier acces en base:</b> ".$db->errno()."<br>\n";
+        print "<b>Information sur le dernier accès en base:</b> ".$db->error()."<br>\n";
+    }
+    else {
+        // Mode CLI   
+        print "Requete dernier acces en base:\n".$db->lastquery()."\n";
+        print "Code retour dernier acces en base:\n".$db->errno()."\n";
+        print "Information sur le dernier accès en base:\n".$db->error()."\n";
+
+    }
+    $syslog.=", sql=".$db->lastquery();
+    $syslog.=", db_error=".$db->error();
   }
+
   if ($msg) {
-    print "<b>Message:</b> ".$msg."<br>\n" ;
-    $syslog=", msg=".$msg;
+    if ($_SERVER['DOCUMENT_ROOT']) {
+        // Mode web
+        print "<b>Message:</b> ".$msg."<br>\n" ;
+    } else {
+        // Mode CLI   
+        print "Message:\n".$msg."\n" ;
+    }
+    $syslog.=", msg=".$msg;
   }
+
   dolibarr_syslog("Error $syslog");
 
   /* Commentée voir mail dans la Mailing liste.
