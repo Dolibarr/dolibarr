@@ -74,11 +74,11 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  $titre="Liste des adhérents";
+  $titre=$langs->trans("MembersList");
   if (isset($_GET["statut"])) {
-    if ($statut == -1) { $titre="Liste des adhérents à valider"; }
-    if ($statut == 1) { $titre="Liste des adhérents valides"; }
-    if ($statut == 0) { $titre="Liste des adhérents résiliés"; }
+    if ($statut == -1) { $titre=$langs->trans("MembersListToValid"); }
+    if ($statut == 1) { $titre=$langs->trans("MembersListValid"); }
+    if ($statut == 0) { $titre=$langs->trans("MembersListResiliated"); }
   }
   elseif ($_POST["action"] == 'search') {
       $titre="Liste des adhérents répondant aux critères";
@@ -91,35 +91,16 @@ if ($result)
 
   print_barre_liste($titre, $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
 
-  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<table class=\"noborder\" width=\"100%\">";
 
   print '<tr class="liste_titre">';
-
-  print '<td>';
-  print_liste_field_titre("Prenom Nom / Société","liste.php","d.nom","&page=$page&statut=$statut");
-  print "</td>\n";
-
-  print "<td>";
-  print_liste_field_titre("Date cotisation","liste.php","t.cotisation","&page=$page&statut=$statut");
-  print "</td>\n";
-
-  print "<td>";
-  print_liste_field_titre("Email","liste.php","d.email","&page=$page&statut=$statut");
-  print "</td>\n";
-
-  print "<td>";
-  print_liste_field_titre($langs->trans("Type"),"liste.php","t.libelle","&page=$page&statut=$statut");
-  print "</td>\n";
-
-  print "<td>";
-  print_liste_field_titre("Personne","liste.php","d.morphy","&page=$page&statut=$statut");
-  print "</td>\n";
-
-  print "<td>";
-  print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut","&page=$page&statut=$statut");
-  print "</td>\n";
-
-  print "<td>Action</td>\n";
+  print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),"liste.php","d.nom","&page=$page&statut=$statut","","",$sortfield);
+  print_liste_field_titre($langs->trans("DateAbonment"),"liste.php","t.cotisation","&page=$page&statut=$statut","","",$sortfield);
+  print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email","&page=$page&statut=$statut","","",$sortfield);
+  print_liste_field_titre($langs->trans("Type"),"liste.php","t.libelle","&page=$page&statut=$statut","","",$sortfield);
+  print_liste_field_titre($langs->trans("Person"),"liste.php","d.morphy","&page=$page&statut=$statut","","",$sortfield);
+  print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut","&page=$page&statut=$statut","","",$sortfield);
+  print "<td>".$langs->trans("Action")."</td>\n";
   print "</tr>\n";
     
   $var=True;

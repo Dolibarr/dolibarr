@@ -161,17 +161,9 @@ if ($result)
   print "<table class=\"border\">";
 
   print '<tr class="liste_titre">';
-  print '<td>';
-  print_liste_field_titre("Date<BR>","cotisations.php","c.dateadh","&page=$page&statut=$statut");
-  print "</td>\n";
-
-  print '<td>';
-  print_liste_field_titre("Montant<BR>","cotisations.php","c.cotisation","&page=$page&statut=$statut");
-  print "</td>\n";
-
-  print '<td>';
-  print_liste_field_titre("Prenom Nom<BR>","cotisations.php","d.nom","&page=$page&statut=$statut");
-  print "</td>\n";
+  print_liste_field_titre("Date","cotisations.php","c.dateadh","&page=$page&statut=$statut");
+  print_liste_field_titre("Montant","cotisations.php","c.cotisation","&page=$page&statut=$statut");
+  print_liste_field_titre("Prenom Nom","cotisations.php","d.nom","&page=$page&statut=$statut");
 
   if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
     print '<td>';
