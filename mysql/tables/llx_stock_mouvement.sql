@@ -33,5 +33,5 @@ create table llx_stock_mouvement
 
   key(fk_product),
   key(fk_stock)
-)
+);
 
