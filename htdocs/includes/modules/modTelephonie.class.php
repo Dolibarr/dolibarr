@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +20,22 @@
  *
  */
 
-/**   \defgroup   telephonie  Module telephonie
-      \brief      Module pour gérer la téléphonie
+/*! 
+  \defgroup   telephonie  Module telephonie
+  \brief      Module pour gérer la téléphonie
 */
 
-/**
-      \file       htdocs/includes/modules/modTelephonie.class.php
-      \ingroup    telephonie
-      \brief      Fichier de description et activation du module de Téléphonie
+/*!
+  \file       htdocs/includes/modules/modTelephonie.class.php
+  \ingroup    telephonie
+  \brief      Fichier de description et activation du module de Téléphonie
 */
 
 include_once "DolibarrModules.class.php";
 
-/** \class modTelephonie
-    \brief Classe de description et activation du module Telephonie
+/*!
+  \class modTelephonie
+  \brief Classe de description et activation du module Telephonie
 */
 
 class modTelephonie extends DolibarrModules
@@ -173,13 +175,11 @@ class modTelephonie extends DolibarrModules
     
     return $this->_init($sql);
 
-
-
   }
 
-  /**
-   *    \brief      Fonction appelée lors de la désactivation d'un module.
-   *                Supprime de la base les constantes, boites et permissions du module.
+  /*!
+    \brief      Fonction appelée lors de la désactivation d'un module.
+    Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {
