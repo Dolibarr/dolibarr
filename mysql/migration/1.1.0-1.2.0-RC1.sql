@@ -50,6 +50,8 @@ alter table llx_bank_account modify bank varchar(60);
 alter table llx_bank_account modify domiciliation varchar(255);
 alter table llx_bank_account add proprio varchar(60) after domiciliation ;
 alter table llx_bank_account add adresse_proprio varchar(255) after proprio ;
+alter table llx_bank_account add account_number varchar(8) after clos ;
+update llx_bank_account set account_number = '51' where account_number is null;
 
 alter table llx_paiement add fk_bank integer NOT NULL after note ;
 alter table llx_paiementfourn add fk_bank integer NOT NULL after note ;

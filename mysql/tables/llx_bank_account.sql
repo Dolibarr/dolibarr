@@ -42,5 +42,6 @@ create table llx_bank_account
   proprio        varchar(60),
   adresse_proprio varchar(255),
   courant        smallint default 0 not null,
-  clos           smallint default 0 not null
+  clos           smallint default 0 not null,
+  account_number varchar(8)
 )type=innodb;

@@ -1,7 +1,8 @@
 -- ===================================================================
 -- Copyright (C) 2000-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2002-2003 Éric Seigne          <erics@rycks.com>
+-- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+-- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -39,5 +40,6 @@ create table llx_bank_account
   proprio        varchar(60),
   adresse_proprio varchar(255),
   courant        smallint default 0 not null,
-  clos           smallint default 0 not null
+  clos           smallint default 0 not null,
+  account_number varchar(8)
 );
