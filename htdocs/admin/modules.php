@@ -20,8 +20,6 @@
  */
 require("./pre.inc.php");
 
-$dir = "../includes/modules/facture/";
-
 //
 // TODO mettre cette section dans la base de données
 //
@@ -36,6 +34,7 @@ $modules["MAIN_MODULE_COMMERCIAL"][0] = "Module commercial";
 $modules["MAIN_MODULE_COMMERCIAL"][1] = "MAIN_MODULE_COMMERCIAL";
 $modules["MAIN_MODULE_COMMERCIAL"][2] = MAIN_MODULE_COMMERCIAL;
 $modules["MAIN_MODULE_COMMERCIAL"][3] = "Module commercial";
+$modules["MAIN_MODULE_COMMERCIAL"][4] = "modCommercial";
 
 $modules["MAIN_MODULE_COMPTABILITE"][0] = "Module comptabilité";
 $modules["MAIN_MODULE_COMPTABILITE"][1] = "MAIN_MODULE_COMPTABILITE";
