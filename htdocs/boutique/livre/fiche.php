@@ -34,6 +34,7 @@ if ($action == 'add')
   $livre->annee = $annee;
   $livre->editeurid = $editeurid;
   $livre->description = $desc;
+  $livre->frais_de_port = $HTTP_POST_VARS["fdp"];
 
   $id = $livre->create($user);
 }
@@ -91,6 +92,7 @@ if ($action == 'update' && !$cancel)
   $livre->titre = $titre;
   $livre->ref = $ref;
   $livre->price = $price;
+  $livre->frais_de_port = $HTTP_POST_VARS["fdp"];
   $livre->annee = $annee;
   $livre->editeurid = $editeurid;
   $livre->description = $desc;
@@ -134,6 +136,10 @@ if ($action == 'create')
   print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Titre</td><td><input name="titre" size="40" value=""></td></tr>';
   print '<tr><td>Prix</td><TD><input name="price" size="10" value=""></td></tr>';    
+
+  print '<tr><td>Frais de port</td><td><select name="fdp">';
+  print '<option value="1" SELECTED>oui</option>';
+  print '<option value="0">non</option></td></tr>';
 
   $htmls = new Form($db);
   $edits = new Editeur($db);
@@ -222,14 +228,27 @@ else
 		}
 	      print "</td>\n";
 	      
-	      print '<td valign="top" width="50%" rowspan="6"><textarea name="desc" rows="14" cols="60">';
+	      print '<td valign="top" width="50%" rowspan="7"><textarea name="desc" rows="14" cols="60">';
 	      print $livre->description;
 	      print "</textarea></td></tr>";
 
 	      print '<tr><td>Titre</td><td><input name="titre" size="40" value="'.$livre->titre.'"></td></tr>';
 
 	      print '<tr><td>Année</td><TD><input name="annee" size="6" maxlenght="4" value="'.$livre->annee.'"></td></tr>';
-	      print '<tr><td>Prix</td><TD><input name="price" size="10" value="'.price($livre->price).'"></td></tr>';    
+	      print '<tr><td>Prix</td><TD><input name="price" size="10" value="'.price($livre->price).'"></td></tr>';
+	      print '<tr><td>Frais de port</td><td><select name="fdp">';
+	      if ($livre->frais_de_port)
+		{
+		  print '<option value="1" SELECTED>oui</option>';
+		  print '<option value="0">non</option>';
+		}
+	      else
+		{
+		  print '<option value="1">oui</option>';
+		  print '<option value="0" SELECTED>non</option>';
+		}
+	      print '</select></td></tr>';
+
 	      $htmls = new Form($db);
 	      $edits = new Editeur($db);
 	      
@@ -298,7 +317,7 @@ else
 	      print '<br><a href="fiche.php?id='.$id.'&status=0&action=status">Changer</a>';
 	    }
 	  print "</td>\n";
-	  print '<td rowspan="6" valign="top">'.nl2br($livre->description);
+	  print '<td rowspan="7" valign="top">'.nl2br($livre->description);
 
 	  $img = OSC_CATALOG_DIRECTORY."images/".$livre->image;
 
@@ -308,7 +327,7 @@ else
 	    }
 	  print "</td>";
 
-	  print '<td rowspan="6" valign="top">';
+	  print '<td rowspan="7" valign="top">';
 	  $livre->listcategorie();
 	  print "</td></tr>";
 	  
@@ -333,7 +352,15 @@ else
 	    }
 	  print "</td></tr>";
 	  print '<tr><td>Prix</td><TD>'.price($livre->price).'</td></tr>';    
-	  
+	  print '<tr><td>Frais de port</td><td>';
+	  if ($livre->frais_de_port)
+	    {
+	      print 'oui</td></tr>';
+	    }
+	  else
+	    {
+	      print 'non</td></tr>';
+	    }
 	  print "</table>";
 	}
       else
