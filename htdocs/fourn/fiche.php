@@ -180,8 +180,9 @@ if ($socid > 0)
      * Liste des projets associés
      *
      */
-    $sql  = "SELECT p.rowid,p.title,p.ref,".$db->pdate("p.dateo")." as do";
-    $sql .= " FROM llx_projet as p WHERE p.fk_soc = $objsoc->idp";
+    $sql  = "SELECT p.rowid,p.libelle,p.facnumber,".$db->pdate("p.datef")." as df";
+    $sql .= " FROM llx_facture_fourn as p WHERE p.fk_soc = $objsoc->idp";
+    $sql .= " ORDER BY p.rowid DESC LIMIT 0,4";
     if ( $db->query($sql) )
       {
 	print '<table class="noborder" cellspacing="0" width="100%" cellpadding="1">';
@@ -189,17 +190,19 @@ if ($socid > 0)
 	$num = $db->num_rows();
 	if ($num > 0)
 	  {
-	    $tag = !$tag;
-	    print "<tr $bc[$tag]>";
-	    print "<td colspan=\"2\"><a href=\"../projet/index.php?socidp=$objsoc->idp\">liste des projets ($num)</td></tr>";
+	    print '<tr class="liste_titre">';
+	    print "<td colspan=\"2\"><a href=\"facture/index.php?socid=$objsoc->idp\">liste des factures</td></tr>";
 	  }
 	while ($i < $num && $i < 5)
 	  {
 	    $obj = $db->fetch_object( $i);
 	    $tag = !$tag;
 	    print "<tr $bc[$tag]>";
-	    print '<td><a href="projet/fiche.php?id='.$obj->rowid.'">'.$obj->title.'</a></td>';	    
-	    print "<td align=\"right\">".strftime("%d %b %Y", $obj->do) ."</td></tr>";
+	    print '<td>';
+	    print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
+	    print img_file();
+	    print $obj->facnumber.'</a> '.$obj->libelle.'</td>';	    
+	    print "<td align=\"right\">".strftime("%d %b %Y", $obj->df) ."</td></tr>";
 	    $i++;
 	  }
 	$db->free();
