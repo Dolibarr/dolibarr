@@ -34,6 +34,7 @@ create table llx_livre
   prix            decimal(15,4),
   fk_editeur      integer,
   fk_user_author  integer,
+  frais_de_port   tinyint default 1,
 
   UNIQUE(ref)
 );
