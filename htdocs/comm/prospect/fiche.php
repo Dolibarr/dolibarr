@@ -232,9 +232,9 @@ if ($socid > 0)
 	  }
 	print "</td>";
 	print "<td>$obj->poste&nbsp;</td>";
-	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->id.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
-	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=2&contactid='.$obj->id.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
-	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=4&contactid='.$obj->id.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
+	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
+	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
+	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
 	print "<td align=\"center\">";
 	print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?action=edit&amp;id='.$obj->idp.'">';
 	print img_edit();
