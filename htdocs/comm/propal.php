@@ -632,6 +632,10 @@ if ($_GET["propalid"])
 
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	  
+	  /*
+	   *
+	   */
+
 	  $file = PROPALE_OUTPUTDIR . "/$propal->ref/$propal->ref.pdf";
 	  if (file_exists($file))
 	    {
@@ -640,7 +644,20 @@ if ($_GET["propalid"])
 	      print '<td align="right">'.filesize($file). ' bytes</td>';
 	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
 	    }  
-	  
+	  $file = PROPALE_OUTPUTDIR . "/$propal->ref/$propal->ref-entete.pdf";
+	  if (file_exists($file))
+	    {
+	      print "<tr $bc[0]><td>PDF</td>";
+	      print '<td><a href="'.PROPALE_OUTPUT_URL.'/'.$propal->ref.'/'.$propal->ref.'-entete.pdf">'.$propal->ref.'-entete.pdf</a></td>';
+	      print '<td align="right">'.filesize($file). ' bytes</td>';
+	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
+	    }  
+	  /*
+	   *
+	   *
+	   */
+
+
 	  if ($propal->brouillon == 1)
 	    {
 	      print "<tr $bc[1]><td>Modèle</td><td align=\"right\">";
