@@ -29,8 +29,8 @@ $mesg = '';
 
 print_fiche_titre('Statistiques des propositions commerciales '.$year, $mesg);
 
-//print '<a href="month.php?year='.($year - 1).'">'.($year - 1).'</a> - '.
-//print '<a href="month.php?year='.($year + 1).'">'.($year + 1).'</a>'.
+print '<a href="month.php?year='.($year - 1).'">'.($year - 1).'</a> - ';
+print '<a href="month.php?year='.($year + 1).'">'.($year + 1).'</a>';
 
 /*
  *
