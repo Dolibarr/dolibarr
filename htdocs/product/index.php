@@ -101,7 +101,9 @@ if ($result)
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
+	  print "<td><a href=\"fiche.php?id=$objp->rowid\">";
+	  print img_file();
+	  print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
 	  print "<TD>$objp->label</TD></tr>\n";
 	  $i++;
 	}
