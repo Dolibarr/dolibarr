@@ -21,6 +21,8 @@
  */
 
 require ("../main.inc.php");
+require("./project.class.php");
+
 
 function llxHeader($head = "", $urlp = "") {
   /*

@@ -88,7 +88,18 @@ Class pdf_tourteau {
 		  $curY = $nexY;
 
 		  $pdf->SetXY (11, $curY );
-		  $pdf->MultiCell(118, 5, $fac->lignes[$i]->desc, 0, 'J');
+
+		  //		  if ($fac->lignes[$i]->produit_id)
+		  //  {
+		  //    $prod = new Product($this->db, $fac->lignes[$i]->produit_id);
+		  //    $prod->fetch($fac->lignes[$i]->produit_id);
+		  //    $pdf->MultiCell(118, 5, $prod->description, 0, 'J');
+		  //  }
+		  //else
+		  //  {
+		      $pdf->MultiCell(118, 5, $fac->lignes[$i]->desc, 0, 'J');
+		      //  }
+
 
 		  $nexY = $pdf->GetY();
 		  

@@ -139,8 +139,7 @@ $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
 $sql .= " GROUP BY date_format(a.datea, '%m/%Y') ";
 $sql .= " ORDER BY date_format(a.datea, '%Y %m') DESC";
 
-  
-  
+
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
@@ -153,6 +152,9 @@ if ( $db->query($sql) )
   print '<td>Date</td>';
   print '<td align="center">Nombre</td>';
   print '<td>Action</td>';
+  print '<td align="center">PDF</td>';
+  print '<td align="center">Date</td>';
+  print '<td align="center">Taille</td>';
   print "</tr>\n";
   $var=True;
   while ($i < min($num,$limit))

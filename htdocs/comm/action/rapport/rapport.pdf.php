@@ -149,22 +149,34 @@ Class CommActionRapport {
 	{
 	  $num = $this->db->num_rows();
 	  $i = 0;
+	  $y1 = 0;
+	  $y2 = 0;
 	  while ($i < $num)
 	    {
 	      $obj = $this->db->fetch_object($i);
-	      $y = $pdf->GetY();
-	      $pdf->SetFont('Arial','',11);
-	      $pdf->SetXY(10, $y);
-	      $pdf->MultiCell(40, 8, $obj->societe, 0, 'L', 0);
-	      $pdf->SetXY(50,$y);
-	      $pdf->MultiCell(40, 8, $obj->libelle, 0, 'L', 0);
-	      $pdf->SetXY(90,$y);
-	      $pdf->MultiCell(110, 8, $obj->note, 0, 'L', 0);
+	      $y = max($pdf->GetY(), $y1, $y2) + 1;
+	      $pdf->SetFont('Arial','',10);
+
+	      $pdf->SetXY(5, $y);
+	      $pdf->MultiCell(15, 4, strftime('%d/%b',$obj->da), 0, 'L', 0);
+
+	      $pdf->SetXY(20, $y);
+	      $pdf->MultiCell(40, 4, $obj->societe, 0, 'L', 0);
+
+	      $y1 = max($y, $pdf->GetY());
+
+	      $pdf->SetXY(60,$y);
+	      $pdf->MultiCell(40, 4, $obj->libelle, 0, 'L', 0);
+
+	      $pdf->SetXY(100,$y);
+	      $pdf->MultiCell(110, 4, $obj->note, 0, 'L', 0);
+	      $y2 = max($y, $pdf->GetY());
+
 	      $i++;
 	    }
 	}
 
-      $pdf->Rect(10, 10, 190, 277);
+      $pdf->Rect(5, 5, 200, 287);
       return 1;
     }
 

@@ -20,7 +20,6 @@
  *
  */
 require("./pre.inc.php");
-require("./project.class.php");
 require("../propal.class.php");
 require("../facture.class.php");
 require("../commande/commande.class.php");
@@ -101,8 +100,8 @@ if ($action == 'create')
 
   $projet = new Project($db);
   $projet->fetch($id);
-
-
+  $projet->societe->fetch($projet->societe->id);
+  
   $h=0;
   $head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
   $head[$h][1] = 'Fiche projet';
@@ -118,10 +117,6 @@ if ($action == 'create')
  
   dolibarr_fiche_head($head, 0);
 
-
-
-  $projet->societe->fetch($projet->societe->id);
-  
   if ($action == 'edit')
     {  
       print '<form method="post" action="fiche.php?id='.$id.'">';
@@ -129,16 +124,16 @@ if ($action == 'create')
       print '<table class="border" border="1" cellpadding="4" cellspacing="0">';
       print '<tr><td>Société</td><td>'.$projet->societe->nom.'</td></tr>';      
       print '<tr><td>Ref</td><td><input name="ref" value="'.$projet->ref.'"></td></tr>';
-      print '<tr><td>Titre</td><td><input name="title" value="'.$projet->title.'"></td></tr>';
+  
       print '</table><input type="submit" Value="Enregistrer"></form>';
     }
   else
     {
       print '<table class="border" border="1" cellpadding="4" cellspacing="0" width="100%">';
-      print '<tr><td>Société</td><td><a href="../comm/fiche.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
-      
-      print '<tr><td width="20%">Réf</td><td>'.$projet->ref.'</td></tr>';
-      print '<tr><td width="20%">Titre</td><td>'.$projet->title.'</td></tr>';
+
+print '<tr><td width="20%">Titre</td><td>'.$projet->title.'</td>';  
+print '<td width="20%">Réf</td><td>'.$projet->ref.'</td></tr>';
+print '<tr><td>Société</td><td colspan="3">'.$projet->societe->nom.$projet->societe->id.'</a></td></tr>';
       print '</table>';
     }
 

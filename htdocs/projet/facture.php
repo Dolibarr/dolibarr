@@ -20,7 +20,6 @@
  *
  */
 require("./pre.inc.php");
-require("./project.class.php");
 require("../propal.class.php");
 require("../facture.class.php");
 require("../commande/commande.class.php");

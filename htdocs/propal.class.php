@@ -307,8 +307,11 @@ class Propal
   Function fetch($rowid)
     {
 
-      $sql = "SELECT ref,total,price,remise,tva,fk_soc,fk_soc_contact,".$this->db->pdate("datep")."as dp,".$this->db->pdate("fin_validite")."as dfv, model_pdf, note, fk_projet, fk_statut, remise_percent";
-      $sql .= " FROM ".MAIN_DB_PREFIX."propal WHERE rowid=$rowid;";
+      $sql = "SELECT ref,total,price,remise,tva,fk_soc,fk_soc_contact,".$this->db->pdate("datep")."as dp,".$this->db->pdate("fin_validite")."as dfv, model_pdf, note, fk_projet, fk_statut, remise_percent, fk_user_author";
+      $sql .= ", c.label as statut_label";
+      $sql .= " FROM ".MAIN_DB_PREFIX."propal";
+      $sql .= "," . MAIN_DB_PREFIX."c_propalst as c";
+      $sql .= " WHERE rowid=$rowid AND fk_statut = c.id";
 
       if ($this->db->query($sql) )
 	{
@@ -335,6 +338,10 @@ class Propal
 	      $this->modelpdf       = $obj->model_pdf;
 	      $this->note           = $obj->note;
 	      $this->statut         = $obj->fk_statut;
+	      $this->statut_libelle = $obj->statut_label;
+
+	      $this->user_author_id = $obj->fk_user_author;
+
 	      if ($obj->fk_statut == 0)
 		{
 		  $this->brouillon = 1;
@@ -506,7 +513,7 @@ class Propal
 	}
   }
   /**
-   * Cloture de la propale
+   * Cloture de la proposition commerciale
    *
    */
   Function cloture($user, $statut, $note)
@@ -540,7 +547,7 @@ class Propal
 	}
     }
   /**
-   *
+   * Créée une commande à partir de la proposition commerciale
    *
    */
   Function create_commande($user)

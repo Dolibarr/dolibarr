@@ -33,13 +33,10 @@ if ($HTTP_POST_VARS["action"] == 'add')
 
   $contact->name         = $HTTP_POST_VARS["name"];
   $contact->firstname    = $HTTP_POST_VARS["firstname"];
-
   $contact->poste        = $HTTP_POST_VARS["poste"];
-
-  $contact->address       = $HTTP_POST_VARS["adresse"];
-  $contact->cp            = $HTTP_POST_VARS["cp"];
-  $contact->ville         = $HTTP_POST_VARS["ville"];
-
+  $contact->address      = $HTTP_POST_VARS["adresse"];
+  $contact->cp           = $HTTP_POST_VARS["cp"];
+  $contact->ville        = $HTTP_POST_VARS["ville"];
   $contact->fax          = $HTTP_POST_VARS["fax"];
   $contact->note         = $HTTP_POST_VARS["note"];
   $contact->email        = $HTTP_POST_VARS["email"];
@@ -189,7 +186,7 @@ elseif ($_GET["action"] == 'edit')
     }
 
   print '<tr><td>Nom</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
-  print '<td>Prenom</td><td><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td>';
+  print '<td>Prénom</td><td><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td>';
 
   print '<td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td></tr>';
 

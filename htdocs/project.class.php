@@ -148,6 +148,5 @@ class Project {
 	}
       
     }
-  
 }
 ?>

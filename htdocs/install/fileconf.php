@@ -21,7 +21,6 @@
  * $Source$
  *
  */
-
 include("./inc.php");
 pHeader("Fichier de configuration","etape1");
 
@@ -180,8 +179,6 @@ $dolibarr_main_db_host = "localhost";
 <td class="comment">Cocher cette option si l'utilisateur doit-être créé</div>
 </td>
 </tr>
-
-
 
 <tr>
 <td colspan="3" align="center"><h2>Base de données - Accés super utilisateur</h2></td></tr>

@@ -48,6 +48,9 @@ class Product
    */
   Function check()
     {
+    $this->ref = ereg_replace("'","",stripslashes($this->ref));
+    $this->ref = ereg_replace("\"","",stripslashes($this->ref));
+
       $err = 0;
       if (strlen(trim($this->ref)) == 0)
 	$err++;
@@ -70,6 +73,8 @@ class Product
    */
   Function create($user) 
     {
+    $this->ref = ereg_replace("'","",stripslashes($this->ref));
+    $this->ref = ereg_replace("\"","",stripslashes($this->ref));
       $sql = "SELECT count(*)";
       $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .trim($this->ref)."'";
 
@@ -123,34 +128,36 @@ class Product
    */
   Function update($id, $user)
   {
+    $this->ref = ereg_replace("\"","",stripslashes($this->ref));
+    $this->ref = ereg_replace("'","",stripslashes($this->ref));
 
-      if (strlen(trim($this->libelle)) == 0)
-	{
-	  $this->libelle = 'LIBELLE MANQUANT';
-	}
-      
-      $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
-      $sql .= " SET label = '" . trim($this->libelle) ."'";
-      if (strlen(trim($this->ref)))
-	{
-	  $sql .= ",ref = '" . trim($this->ref) ."'";
-	}
-      $sql .= ",tva_tx = " . $this->tva_tx ;
-      $sql .= ",envente = " . $this->envente ;
-      $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte ;
-      $sql .= ",description = '" . trim($this->description) ."'";
-      $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
-      
-      $sql .= " WHERE rowid = " . $id;
-      
-      if ( $this->db->query($sql) )
-	{
-	  return 1;
-	}
-      else
-	{
-	  print $this->db->error() . ' in ' . $sql;
-	}
+    if (strlen(trim($this->libelle)) == 0)
+      {
+	$this->libelle = 'LIBELLE MANQUANT';
+      }
+    
+    $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
+    $sql .= " SET label = '" . trim($this->libelle) ."'";
+    if (strlen(trim($this->ref)))
+      {
+	$sql .= ",ref = '" . trim($this->ref) ."'";
+      }
+    $sql .= ",tva_tx = " . $this->tva_tx ;
+    $sql .= ",envente = " . $this->envente ;
+    $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte ;
+    $sql .= ",description = '" . trim($this->description) ."'";
+    $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
+    
+    $sql .= " WHERE rowid = " . $id;
+    
+    if ( $this->db->query($sql) )
+      {
+	return 1;
+      }
+    else
+      {
+	print $this->db->error() . ' in ' . $sql;
+      }
   }
   /**
    *
