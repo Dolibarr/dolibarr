@@ -241,10 +241,39 @@ else
 	  if ($product->type == 1)
 	    {
 	      print '<tr><td>Durée</td><TD><input name="duration_value" size="6" value="'.$product->duration_value.'">';
-	      print '<input name="duration_unit" type="radio" value="d" selected>jour&nbsp;';
-	      print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
-	      print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
-	      print '<input name="duration_unit" type="radio" value="y">année';
+	      switch ($product->duration_unit) 
+		{
+		case "d":
+		  print '<input name="duration_unit" type="radio" value="d" checked>jour&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="y">année';
+		  break;
+		case "w":
+		  print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="w" checked>semaine&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="y">année';
+		  break;
+		case "m":
+		  print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="m" checked>mois&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="y">année';
+		  break;
+		case "y":
+		  print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="y" checked>année';
+		  break;
+		default:
+		  print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
+		  print '<input name="duration_unit" type="radio" value="y">année';
+		  break;
+		}
 	      print '</td></tr>';
 	    }
 
