@@ -30,7 +30,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
 
-dolibarr_syslog("retour-traitement");
+if ($verbose) dolibarr_syslog("retour-traitement");
 
 $user = new User($db, 1);
 
@@ -58,7 +58,7 @@ if ($db->query($sql))
 
 $n = sizeof($row);
 
-dolibarr_syslog($n . " lignes à traiter");
+if ($verbose) dolibarr_syslog($n . " lignes à traiter");
 
 for ($i = 0 ; $i < $n ; $i++)
 { 
