@@ -88,6 +88,12 @@ class Societe {
 	$this->capital = 0;
       }
 
+    $this->tel = ereg_replace(" ","",$this->tel);
+    $this->tel = ereg_replace("\.","",$this->tel);
+    $this->fax = ereg_replace(" ","",$this->fax);
+    $this->fax = ereg_replace("\.","",$this->fax);
+
+
     $sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
     $sql .= " SET nom = '" . trim($this->nom) ."'";
     $sql .= ",address = '" . trim($this->adresse) ."'";
@@ -95,8 +101,8 @@ class Societe {
     $sql .= ",ville = '" . trim($this->ville) ."'";
     $sql .= ",fk_departement = '" . $this->departement_id ."'";
     $sql .= ",fk_pays = '" . $this->pays_id ."'";
-    $sql .= ",tel = '" . ereg_replace(" ","",$this->tel) ."'";
-    $sql .= ",fax = '" . ereg_replace(" ","",$this->fax) ."'";
+    $sql .= ",tel = '" . $this->tel ."'";
+    $sql .= ",fax = '" . $this->fax ."'";
     $sql .= ",url = '" . trim($this->url) ."'";
     $sql .= ",siren = '" . trim($this->siren) ."'";
     $sql .= ",siret = '" . trim($this->siret) ."'";
@@ -194,7 +200,7 @@ class Societe {
 	      
 	      $this->client = $obj->client;
 	      $this->fournisseur = $obj->fournisseur;
-	      
+
 	      if ($this->client == 1)
 		{
 
@@ -208,7 +214,6 @@ class Societe {
 		{
 		  $this->nom_url = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">'.$obj->nom.'</a>';
 		}
-
 
 	      $this->rubrique = $obj->rubrique;
 	      
