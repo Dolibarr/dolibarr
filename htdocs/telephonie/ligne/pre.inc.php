@@ -49,7 +49,7 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/liste.php", "Liste");
-
+  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/commande/liste.php", "A commander");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/listecommande.php", "En commande");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/communications.php", "Communications");
 
