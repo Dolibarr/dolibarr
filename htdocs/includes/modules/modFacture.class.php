@@ -85,8 +85,11 @@ class modFacture extends DolibarrModules
     $this->boxes[1][0] = "Factures fournisseurs récentes impayées";
     $this->boxes[1][1] = "box_factures_fourn_imp.php";
 
-    $this->boxes[2][0] = "Dernières factures clients";
+    $this->boxes[2][0] = "Dernières factures clients saisies";
     $this->boxes[2][1] = "box_factures.php";
+
+    $this->boxes[3][0] = "Dernières factures fournisseurs saisies";
+    $this->boxes[3][1] = "box_factures_fourn.php";
 
   }
   /*
