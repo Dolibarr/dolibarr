@@ -42,6 +42,7 @@ create table llx_facture
   fk_cond_reglement   integer,   -- condition de reglement
   date_lim_reglement  date,      -- date limite de reglement
   note                text,
+  fk_export_compta    integer DEFAULT 0 NOT NULL,
 
   UNIQUE INDEX (facnumber),
   INDEX fksoc (fk_soc)
