@@ -19,6 +19,7 @@
  * $Id$
  * $Source$
  *
+ * PROP_PDF_MESSAGE
  */
 
 Class pdf_propale_rouge
@@ -176,6 +177,15 @@ Class pdf_propale_rouge
 	      
 	      $pdf->SetXY (174, $tab2_top + ($tab2_lh*4));
 	      $pdf->MultiCell(26, $tab2_lh, price($propale->total_ttc), 1, 'R', 1);
+
+
+	      if (defined("PROP_PDF_MESSAGE") && PROP_PDF_MESSAGE)
+		{
+		  $pdf->SetXY (10, $tab2_top + 2);
+		  $pdf->SetFont('Arial','',10);
+		  $pdf->MultiCell(120, 5, PROP_PDF_MESSAGE);
+		}  
+
 
 	      /*
 	       *
