@@ -97,9 +97,13 @@ create table llx_paiement_facture
 
 insert into llx_const(name, value, type, note) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document');
 
+
+drop table llx_c_forme_juridique;
+
 create table llx_c_forme_juridique
 (
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
+  fk_pays    integer default 1,
   code       integer UNIQUE,
   libelle    varchar(255),
   active     tinyint default 1
@@ -107,56 +111,70 @@ create table llx_c_forme_juridique
 )type=innodb;
 
 
-insert into llx_c_forme_juridique (code, libelle) values (0,'Non renseignée');
-insert into llx_c_forme_juridique (code, libelle) values (11,'Artisan Commerçant');
-insert into llx_c_forme_juridique (code, libelle) values (12,'Commerçant');
-insert into llx_c_forme_juridique (code, libelle) values (13,'Artisan');
-insert into llx_c_forme_juridique (code, libelle) values (14,'Officier public ou ministériel');
-insert into llx_c_forme_juridique (code, libelle) values (15,'Profession libérale');
-insert into llx_c_forme_juridique (code, libelle) values (16,'Exploitant agricole');
-insert into llx_c_forme_juridique (code, libelle) values (17,'Agent commercial');
-insert into llx_c_forme_juridique (code, libelle) values (18,'Associé Gérant de société');
-insert into llx_c_forme_juridique (code, libelle) values (19,'(Autre) personne physique');
-insert into llx_c_forme_juridique (code, libelle) values (21,'Indivision');
-insert into llx_c_forme_juridique (code, libelle) values (22,'Société créée de fait');
-insert into llx_c_forme_juridique (code, libelle) values (23,'Société en participation');
-insert into llx_c_forme_juridique (code, libelle) values (27,'Paroisse hors zone concordataire');
-insert into llx_c_forme_juridique (code, libelle) values (29,'Autre groupement de droit privé non doté de la personnalité morale');
-insert into llx_c_forme_juridique (code, libelle) values (31,'Personne morale de droit étranger, immatriculée au RCS (registre du commerce et des sociétés)');
-insert into llx_c_forme_juridique (code, libelle) values (32,'Personne morale de droit étranger, non immatriculée au RCS');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (0, 0,'Non renseignée');
 
-insert into llx_c_forme_juridique (code, libelle) values (41,'Établissement public ou régie à caractère industriel ou commercial');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,11,'Artisan Commerçant');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,12,'Commerçant');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,13,'Artisan');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,14,'Officier public ou ministériel');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,15,'Profession libérale');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,16,'Exploitant agricole');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,17,'Agent commercial');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,18,'Associé Gérant de société');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,19,'(Autre) personne physique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,21,'Indivision');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,22,'Société créée de fait');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,23,'Société en participation');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,27,'Paroisse hors zone concordataire');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,29,'Autre groupement de droit privé non doté de la personnalité morale');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,31,'Personne morale de droit étranger, immatriculée au RCS (registre du commerce et des sociétés)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,32,'Personne morale de droit étranger, non immatriculée au RCS');
 
-insert into llx_c_forme_juridique (code, libelle) values (51,'Société coopérative commerciale particulière');
-insert into llx_c_forme_juridique (code, libelle) values (52,'Société en nom collectif');
-insert into llx_c_forme_juridique (code, libelle) values (53,'Société en commandite');
-insert into llx_c_forme_juridique (code, libelle) values (54,'Société à responsabilité limité (SARL)');
-insert into llx_c_forme_juridique (code, libelle) values (55,'Société anonyme à conseil d\'administration');
-insert into llx_c_forme_juridique (code, libelle) values (56,'Société anonyme à directoire');
-insert into llx_c_forme_juridique (code, libelle) values (57,'Société par actions simplifiée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,41,'Établissement public ou régie à caractère industriel ou commercial');
 
-insert into llx_c_forme_juridique (code, libelle) values (61,'Caisse d\'épargne et de prévoyance');
-insert into llx_c_forme_juridique (code, libelle) values (62,'Groupement d\'intérêt économique');
-insert into llx_c_forme_juridique (code, libelle) values (63,'Société coopérative agricole');
-insert into llx_c_forme_juridique (code, libelle) values (64,'Société non commerciale d\'assurances');
-insert into llx_c_forme_juridique (code, libelle) values (65,'Société civile');
-insert into llx_c_forme_juridique (code, libelle) values (69,'Autres personnes de droit privé inscrites au registre du commerce et des sociétés');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,51,'Société coopérative commerciale particulière');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,52,'Société en nom collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,53,'Société en commandite');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,54,'Société à responsabilité limité (SARL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,55,'Société anonyme à conseil d\'administration');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,56,'Société anonyme à directoire');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,57,'Société par actions simplifiée');
 
-insert into llx_c_forme_juridique (code, libelle) values (71,'Administration de l\'état');
-insert into llx_c_forme_juridique (code, libelle) values (72,'Collectivité territoriale');
-insert into llx_c_forme_juridique (code, libelle) values (73,'Établissement public administratif');
-insert into llx_c_forme_juridique (code, libelle) values (74,'Autre personne morale de droit public administratif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,61,'Caisse d\'épargne et de prévoyance');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,62,'Groupement d\'intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,63,'Société coopérative agricole');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,64,'Société non commerciale d\'assurances');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,65,'Société civile');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,69,'Autres personnes de droit privé inscrites au registre du commerce et des sociétés');
 
-insert into llx_c_forme_juridique (code, libelle) values (81,'Organisme gérant un régime de protection social à adhésion obligatoire');
-insert into llx_c_forme_juridique (code, libelle) values (82,'Organisme mutualiste');
-insert into llx_c_forme_juridique (code, libelle) values (83,'Comité d\'entreprise');
-insert into llx_c_forme_juridique (code, libelle) values (84,'Organisme professionnel');
-insert into llx_c_forme_juridique (code, libelle) values (85,'Organisme de retraite à adhésion non obligatoire');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,71,'Administration de l\'état');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,72,'Collectivité territoriale');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,73,'Établissement public administratif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,74,'Autre personne morale de droit public administratif');
 
-insert into llx_c_forme_juridique (code, libelle) values (91,'Syndicat de propriétaires');
-insert into llx_c_forme_juridique (code, libelle) values (92,'Association loi 1901 ou assimilé');
-insert into llx_c_forme_juridique (code, libelle) values (93,'Fondation');
-insert into llx_c_forme_juridique (code, libelle) values (99,'Autre personne morale de droit privé');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,81,'Organisme gérant un régime de protection social à adhésion obligatoire');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,82,'Organisme mutualiste');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,83,'Comité d\'entreprise');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,84,'Organisme professionnel');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,85,'Organisme de retraite à adhésion non obligatoire');
+
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,91,'Syndicat de propriétaires');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,92,'Association loi 1901 ou assimilé');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,93,'Fondation');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,99,'Autre personne morale de droit privé');
+
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 1,'Indépendant');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 2,'SC - Coopérative');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 2,'SCRL - Coopérative à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 3,'SPRL - Société à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2, 4,'SA - Société Anonyme');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,52,'Société en nom collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,53,'Société en commandite');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,71,'Administration publique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,91,'Syndicat de propriétaires');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,93,'Fondations');
+
+
 
 update llx_paiement set author = null where author = '';
 
