@@ -43,7 +43,7 @@ function llxHeader($head = "", $urlp = "") {
 
 
   $menu->add("/fourn/facture/index.php3", "Factures");
-
+  $menu->add_submenu("/fourn/facture/fiche.php3?action=create","Nouvelle");
 
   left_menu($menu->liste);
 }
