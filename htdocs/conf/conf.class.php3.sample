@@ -77,12 +77,6 @@ class PropalConf {
     $this->replytoname = "Service Commercial";
     $this->replytomail = "commercial@propal.com";
 
-    $this->templatesdir = "/home/www/dolibarr/dolibarr/templates/propal/default";
-    $this->outputdir    = "/home/www/dolibarr/dolibarr/htdocs/document/propal";
-    /*
-     * Without ended slash
-     */
-    $this->outputurl    = "/document/propal";
   }
 }
 /*
@@ -140,15 +134,7 @@ class WebcalConf {
  */
 class FactureConf {
   Function FactureConf() {
-
     $this->enabled = 1;
-
-    $this->templatesdir = "/home/www/dolibarr/dolibarr/templates/facture/default";
-    $this->outputdir    = "/home/www/dolibarr/dolibarr/htdocs/document/facture";
-    /*
-     * Without ended slash
-     */
-    $this->outputurl    = "/document/facture";
   }
 }
 
@@ -159,13 +145,6 @@ class FactureConf {
 class FicheInterConf {
   Function FicheInterConf() {
     $this->enabled = 1;
-
-    $this->templatesdir = "/home/www/dolibarr/dolibarr/templates/fichinter/default";
-    $this->outputdir    = "/home/www/dolibarr/dolibarr/htdocs/document/fichinter";
-    /*
-     * Without ended slash
-     */
-    $this->outputurl    = "/document/fichinter";
   }
 }
 /*
