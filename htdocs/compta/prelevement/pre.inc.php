@@ -63,6 +63,7 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $langs->load("bills");
   $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
+  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Impayées"));
 
   left_menu($menu->liste, $help_url);
 }
