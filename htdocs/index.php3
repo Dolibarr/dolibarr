@@ -23,10 +23,10 @@ require("./pre.inc.php3");
 
 llxHeader();
 
-print "<h3>Dolibarr</h3>";
+print "<b>Dolibarr ".DOL_VERSION."</b><br>";
 
-print translate("User") . ' : <b>' . $user->prenom . ' ' . $user->nom .'</b> ['.$user->code.']';
-print "<p>";
+print 'Connecté en tant que : <b>' . $user->prenom . ' ' . $user->nom .'</b> ['.$user->code.']';
+print "<br>";
 /*
  * Boites
  *
