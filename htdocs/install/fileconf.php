@@ -39,10 +39,10 @@ $conf = "../conf/conf.php";
 include($conf);
 
 print '<table border="0" cellpadding="1" cellspacing="0">';
+
 print '<tr>';
 print '<td valign="top" class="label">';
-print "Répertoire d'installation";
-
+print "Répertoire d'installation des pages web";
 print "</td>";
 
 if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
@@ -70,7 +70,7 @@ if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 }
 
 ?>
-<td  class="label" valign="top"><input type="text" size="60" value="<?PHP print $dolibarr_main_document_root; ?>" name="main_dir">
+<td  class="label" valign="top"><input type="text" size="60" value="<?php print $dolibarr_main_document_root; ?>" name="main_dir">
 </td><td class="comment">
 Sans le slash "/" à la fin<br>
 exemples :<br>
@@ -79,27 +79,26 @@ exemples :<br>
 </td>
 </tr>
 
-
-<?php /* mis en commentaire eric seigne 2004, quand ça sera géré, cf etape1.php ligne 43
-	 <tr>
-	 <td valign="top" class="label">
-	 <?php print "Répertoire contenant les documents générés"; ?>
-	 </td><td  class="label" valign="top"><input type="text" size="60" value="
-	 <?php
-
-	 //print ereg_replace("htdocs","document",$dolibarr_main_document_root);
-	 print $dolibarr_main_document_root."/document";
-	 ?>
-	 " name="main_data_dir">
-	 </td><td class="comment">
-	 Sans le slash "/" à la fin<br>
-	 exemples :<br>
-	 <li>/var/www/dolibarr/document</li>
-	 <li>C:/wwwroot/dolibarr/document</li>
-	 </td>
-	 </tr>
-*/
+<tr>
+<td valign="top" class="label">
+<?php print "Répertoire contenant les documents générés"; ?>
+</td>
+<?php 
+if(! isset($dolibarr_main_data_root) || strlen($dolibarr_main_data_root) == 0)
+{
+    // Si le répertoire documents non défini, on en propose un par défaut
+    $dolibarr_main_data_root=ereg_replace("/htdocs","",$dolibarr_main_document_root);
+    $dolibarr_main_data_root.="/documents";
+}
 ?>
+<td class="label" valign="top"><input type="text" size="60" value="<?php print $dolibarr_main_data_root; ?>" name="main_data_dir">
+</td><td class="comment">
+Sans le slash "/" à la fin. Il est recommandé de mettre ce répertoire en dehors du répertoire des pages web.<br>
+exemples :<br>
+<li>/var/www/dolibarr/documents</li>
+<li>C:/wwwroot/dolibarr/documents</li>
+</td>
+</tr>
 
 <tr>
 <td valign="top" class="label">
@@ -148,18 +147,18 @@ $dolibarr_main_db_host = "localhost";
 <option value='pgsql'<?php echo ($dolibarr_main_db_type=='pgsql')?" selected":"" ?>>PostgreSQL</option>
 </select>
 &nbsp;
-
+</td>
 
 <td class="comment">Type de la base de donnée (MySql par défaut ou alors PostgreSql).</td>
 
 </tr>
 
-<br>
+<tr>
 <td valign="top" class="label">Serveur</td>
-<td valign="top" class="label"><input type="text" name="db_host" value="<?php print $dolibarr_main_db_host ?>"></td>
+<td valign="top" class="label"><input type="text" name="db_host" value="<?php print $dolibarr_main_db_host ?>">
 <input type="hidden" name="base" value="<?php print $test_base?>">
-
-<td class="comment">Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web</div></td>
+</td>
+<td class="comment">Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web</td>
 
 </tr>
 
@@ -188,7 +187,7 @@ $dolibarr_main_db_host = "localhost";
 <td class="label" valign="top">Créer l'utilisateur</td>
 
 <td class="label"><input type="checkbox" name="db_create_user"></td>
-<td class="comment">Cocher cette option si l'utilisateur doit-être créé</div>
+<td class="comment">Cocher cette option si l'utilisateur doit-être créé
 </td>
 </tr>
 
