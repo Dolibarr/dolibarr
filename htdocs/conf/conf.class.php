@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Xavier Dutoit <doli@sydesy.com> 
+ * Copyright (C) 2003 Xavier Dutoit        <doli@sydesy.com> 
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,13 +125,13 @@ class WebcalConf
     {
       $this->enabled = 1;
 
-      $this->url = PHPWEBCALENDAR_URL;
+      $this->url = defined("PHPWEBCALENDAR_URL")?PHPWEBCALENDAR_URL:"";
 
       $this->db = new DbConf();
-      $this->db->host = PHPWEBCALENDAR_HOST;
-      $this->db->user = PHPWEBCALENDAR_USER;
-      $this->db->pass = PHPWEBCALENDAR_PASS;
-      $this->db->name = PHPWEBCALENDAR_DBNAME;    
+      $this->db->host = defined("PHPWEBCALENDAR_HOST")?PHPWEBCALENDAR_HOST:"";
+      $this->db->user = defined("PHPWEBCALENDAR_USER")?PHPWEBCALENDAR_USER:"";
+      $this->db->pass = defined("PHPWEBCALENDAR_PASS")?PHPWEBCALENDAR_PASS:"";
+      $this->db->name = defined("PHPWEBCALENDAR_DBNAME")?PHPWEBCALENDAR_DBNAME:"";
     }
 }
 
