@@ -1,5 +1,6 @@
 <?PHP
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003 Brian Fraval <brian@fraval.org>
+ * Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -92,6 +93,48 @@ class Societe {
 	print $this->db->error();
       }
     }
+
+  /*
+   * Suppression d'une societe. 
+   * TODO: il faut ajouter la suppression du répertoire de la societe
+   */
+  Function delete($id)
+    {
+      $sql = "DELETE from llx_societe ";
+      $sql .= " WHERE idp = " . $id .";";
+
+      if (! $this->db->query($sql))
+	{
+	  print $this->db->error();
+	}
+
+      // Suppression du répertoire document
+      $docdir = SOCIETE_OUTPUTDIR . "/$id";
+
+      // Cette fonction permet de supprimer le répertoire de la societe
+      // Meme s'il contient des documents.
+      function deldir($dir){
+	$current_dir = opendir($dir);
+	while($entryname = readdir($current_dir)){
+	  if(is_dir("$dir/$entryname") and ($entryname != "." and $entryname!="..")){
+	    deldir("${dir}/${entryname}");
+	  }elseif($entryname != "." and $entryname!=".."){
+	    unlink("${dir}/${entryname}");
+	  }
+	}
+	closedir($current_dir);
+	rmdir(${dir});
+      } 
+
+
+      if (file_exists ($docdir))
+	{
+	  deldir($docdir);
+	}
+    }
+  
+  
+
   /*
    *
    *

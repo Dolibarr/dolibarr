@@ -1,6 +1,10 @@
+2003-09-12  Brian Fraval  <brian@fraval.org>
+
+	* Ajout de la suppression d'une société, avec confirmation.
+
 2003-09-11  Rodolphe Quiédeville  <rq@quiedeville.org>
 
-	* Correction erreur d'index dans las gestion des documents
+	* Correction erreur d'index dans la gestion des documents
 	attachés à une société
 
 2003-09-10  Rodolphe Quiédeville  <rq@quiedeville.org>

@@ -1,5 +1,6 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003 Brian Fraval <brian@fraval.org>
+ * Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +35,15 @@ if ($user->societe_id > 0)
 
 
 llxHeader();
+
+
+if ($action == 'del')
+{
+  print_titre("Suppression de la société");
+
+  $soc = new Societe($db);
+  $soc->delete($socid);
+}
 
 if ($action == 'add')
 {
@@ -156,23 +166,42 @@ elseif ($action == 'edit')
     }
 } else {
 
-  print_titre("Fiche société");
 
-  $soc = new Societe($db);
-  $soc->id = $socid;
-  $soc->fetch($socid);
+  if ($action != "del")
+    {
+      print_titre("Fiche société");
+      
+      $soc = new Societe($db);
+      $soc->id = $socid;
+      $soc->fetch($socid);
+      
+      print "
+<SCRIPT language=\"JavaScript\">
+<!--
+function Delete(socid)
+{
+ var where_to= confirm(\"Voulez vous vraiment supprimer cette société ?\");
 
-  print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr><td width="20%">Nom</td><td class="valeur">'.$soc->nom.'</td></tr>';
-  print '<tr><td valign="top">Adresse</td><td class="valeur">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
-  print '<tr><td>CP</td><td class="valeur">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
-
-  print '<tr><td>Tel</td><td class="valeur">'.$soc->tel.'</td></tr>';
-  print '<tr><td>Fax</td><td class="valeur">'.$soc->fax.'</td></tr>';
-  print '<tr><td>Web</td><td><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
-
+ if (where_to == true)
+ {
+  window.location.replace(\"$dolibarr_main_url_root/soc.php?socid=\"+socid+\"&action=del\");
+ }
+}
+//-->
+</SCRIPT>
+";
+      
+      print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+      print '<tr><td width="20%">Nom</td><td class="valeur">'.$soc->nom.'</td></tr>';
+      print '<tr><td valign="top">Adresse</td><td class="valeur">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
+      print '<tr><td>CP</td><td class="valeur">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
+      
+      print '<tr><td>Tel</td><td class="valeur">'.$soc->tel.'</td></tr>';
+      print '<tr><td>Fax</td><td class="valeur">'.$soc->fax.'</td></tr>';
+      print '<tr><td>Web</td><td><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
+  
   print '<tr><td>Siren</td><td>'.$soc->siren.'&nbsp;</td></tr>';
-
+  
   if ($soc->client)
     {
       print '<tr><td>Client</td><td>oui <a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
@@ -181,7 +210,7 @@ elseif ($action == 'edit')
     {
       print '<tr><td>Client</td><td>non</td></tr>';
     }
-
+  
   if ($soc->fournisseur)
     {
       print '<tr><td>Fournisseur</td><td>oui <a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
@@ -198,12 +227,12 @@ elseif ($action == 'edit')
    */
 
 
-
+  
   print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
 
- 
+  
   print '<td width="20%" align="center">[<a href="soc.php?socid='.$socid.'&action=edit">Editer</a>]</td>';
-  print '<td width="20%" align="center">-</td>';
+  print '<td width="20%" align="center">[<a href="#" Onclick="javascript:Delete('.$socid.')">Supprimer</a>]</td>';
   print '<td width="20%" align="center">-</td>';
   print '<td width="20%" align="center">-</td>';
   print '<td width="20%" align="center">[<a href="societe/notify/fiche.php?socid='.$socid.'">Notifications</a>]</td>';
@@ -215,7 +244,7 @@ elseif ($action == 'edit')
 
   clearstatcache();
   umask(0);
-
+  
   $docdir = SOCIETE_OUTPUTDIR . "/$socid";
   $url = SOCIETE_OUTPUT_URL . "/$socid";
 
@@ -238,6 +267,8 @@ elseif ($action == 'edit')
 	    }
 	}
     }
+    }
+  
 }
 
 $db->close();
