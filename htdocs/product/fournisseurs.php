@@ -21,11 +21,11 @@
  *
  */
 
-/*!
-  \file       htdocs/product/fiche.php
-  \ingroup    product
-  \brief      Page de la fiche produit
-  \version    $Revision$
+/**
+        \file       htdocs/product/fiche.php
+        \ingroup    product
+        \brief      Page de la fiche produit
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -113,17 +113,20 @@ if ($_GET["id"])
     		  $head[$h][1] = 'Stock';
     		  $h++;
 	        }
-
+        }
+        
 	      if ($conf->fournisseur->enabled)
 		{
-    		  $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
-    		  $head[$h][1] = $langs->trans("Suppliers");
-		  $hselected = $h;
-    		  $h++;
+    		    $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
+    		    $head[$h][1] = $langs->trans("Suppliers");
+		        $hselected = $h;
+    		    $h++;
 		}
 
-	    }
-	      
+      $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("Photos");
+      $h++;
+      
 	  $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
 	  $head[$h][1] = $langs->trans('Statistics');
 	  $h++;

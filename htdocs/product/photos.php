@@ -134,8 +134,8 @@ if ($_GET["id"])
 	  print $langs->trans("NotOnSell");
 	}
       print '</td></tr>';
-      print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
-      print '<td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td></tr>';
+      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td>';
+      print '</tr>';
 
       print '<tr><td>'.$langs->trans("Description").'</td><td colspan="3">'.nl2br($product->description).'</td></tr>';
 
@@ -150,7 +150,7 @@ if ($_GET["id"])
 	  print $product->show_photos($conf->produit->dir_output);
 	}
 
-      print "</div>\n";
+      print "<br></div>\n";
     }      
 }
 else

@@ -851,30 +851,31 @@ class Product
     }
 
   /**
-   *
-   *
+   *    \brief      Déplace fichier uploadé sous le nom $files dans le répertoire sdir
+   *    \param      sdir        Répertoire destination finale
+   *    \param      $files      Nom du fichier uploadé
    */
   function add_photo($sdir, $files)
   {
-
     $dir = $sdir .'/'. get_exdir($this->id) . $this->id ."/";
-
     $dir .= "photos/";
-
+    
     if (! file_exists($dir))
-      {
-	dolibarr_syslog("Product Create $dir");
-	create_exdir($dir);
-      }	
+    {
+        dolibarr_syslog("Product Create $dir");
+        create_exdir($dir);
+    }
+    
+    if (file_exists($dir))
+    {
+        // Crée fichier en taille vignette
+        // \todo A faire
 
-    if ( file_exists($dir))
-      {
-	if (doliMoveFileUpload($files['tmp_name'], $dir . $files['name']))
-	  {
-	    
-	  }
-      }
+        // Crée fichier en taille origine
+        doliMoveFileUpload($files['tmp_name'], $dir . $files['name']))
+    }
   }
+
   /**
    *
    *
@@ -903,6 +904,7 @@ class Product
 	  }
       }
   }
+
   /**
    * Je sais c'est sale mais le besoin est urgent ;-)
    *

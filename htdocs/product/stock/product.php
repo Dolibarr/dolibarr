@@ -114,12 +114,15 @@ if ($_GET["id"])
       $head[$h][1] = $langs->trans("Price");
       $h++;
       
-      if($product->type == 0)
+      if ($product->type == 0)
       {
-          $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-          $head[$h][1] = $langs->trans("Stock");
-          $hselected=$h;
-          $h++;
+         if ($conf->stock->enabled)
+         {
+              $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+              $head[$h][1] = $langs->trans("Stock");
+              $hselected = $h;	      
+              $h++;
+         }
       }
       
       if ($conf->fournisseur->enabled) {
@@ -127,6 +130,10 @@ if ($_GET["id"])
           $head[$h][1] = $langs->trans("Suppliers");
           $h++;
       }
+
+      $head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("Photos");
+      $h++;
       
       $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
       $head[$h][1] = $langs->trans("Statistics");

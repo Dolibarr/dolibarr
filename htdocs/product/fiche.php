@@ -41,33 +41,29 @@ $mesg = '';
 
 if (!$user->rights->produit->lire) accessforbidden();
 
-
 $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
 
-/*
- *
- */
 
+/*
+ * Upload photo
+ */
 if ( $_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 {
-  if ($_GET["id"])
+  if ($_POST["id"])
     {           
       $product = new Product($db);
-      $result = $product->fetch($_GET["id"]);
-
-      // if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
-
-      //      var_dump($_FILES);
+      $result = $product->fetch($_POST["id"]);
 
       $product->add_photo($conf->produit->dir_output, $_FILES['photofile']);
     }
+    
+    $_GET["id"]=$_POST["id"];
 }
+
 /*
  *
  */
-
-
 if ($_GET["action"] == 'fastappro')
 {
   $product = new Product($db);
@@ -369,7 +365,8 @@ else
 		      $head[$h][1] = $langs->trans("Stock");
 		      $h++;
 		    }
-
+        }
+		 
 		  if ($conf->fournisseur->enabled)
 		    {
 		      $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
@@ -381,8 +378,6 @@ else
 		  $head[$h][1] = $langs->trans("Photos");
 		  $h++;
 
-		}
-	      
 	      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
 	      $head[$h][1] = $langs->trans('Statistics');
 	      $h++;
@@ -560,16 +555,16 @@ else
 	    {
 	      print_titre($langs->trans("AddPhoto"));
 
-	      print '<form name="userfile" action="fiche.php?id='.$product->id.'" enctype="multipart/form-data" METHOD="POST">';      
-	      print '<input type="hidden" name="max_file_size" value="2000000">';
+	      print '<form name="userfile" action="fiche.php" enctype="multipart/form-data" METHOD="POST">';
+	      print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
+	      print '<input type="hidden" name="id" value="'.$product->id.'">';
 
 	      print '<table class="border" width="100%"><tr>';
-	      print '<td>'.$langs->trans("File").'</td>';
+	      print '<td>'.$langs->trans("File").' ('.$langs->trans("Size").' <= '.$conf->maxfilesize.')</td>';
 	      print '<td><input type="file" name="photofile"></td></tr>';
 	  
 	      print '<tr><td colspan="4" align="center">';
-	      print '<input type="submit" name="sendit" value="'.$langs->trans("Save").'">&nbsp;';
-
+	      print '<input type="submit" name="sendit" value="'.$langs->trans("Upload").'"> &nbsp; ';
 
 	      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	      print '</table>';
