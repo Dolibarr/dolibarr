@@ -66,7 +66,7 @@ class MenuLeft {
         $user->getrights("");
         
         $newmenu = new Menu();
-        $overwritemenufor=array('home','commercial','accountancy','products','suppliers','tools');
+        $overwritemenufor=array('home','members','products','suppliers','commercial','accountancy','tools');
         
         // On récupère mainmenu et leftmenu qui définissent le menu à afficher
         if (isset($_GET["mainmenu"])) {
@@ -175,6 +175,7 @@ class MenuLeft {
                 {
                   $langs->load("propal");
                   $newmenu->add(DOL_URL_ROOT."/comm/propal.php?leftmenu=propals", $langs->trans("Prop"), 0 ,$user->rights->propale->lire);
+                  if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/socite.php?leftmenu=propals", $langs->trans("NewPropal"), 1, $user->rights->propale->creer);
                   if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=0", $langs->trans("PropalsDraft"), 1, $user->rights->propale->lire);
                   if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=1", $langs->trans("PropalsOpened"), 1, $user->rights->propale->lire);
                   if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/", $langs->trans("Statistics"), 1, $user->rights->propale->lire);
@@ -184,14 +185,16 @@ class MenuLeft {
                 {
                   $langs->load("contracts");
                   $newmenu->add(DOL_URL_ROOT."/contrat/index.php?leftmenu=contracts", $langs->trans("Contracts"), 0 ,$user->rights->contrat->lire);
+                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=contracts", $langs->trans("NewContract"), 1, $user->rights->contrat->creer);
                   if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/liste.php", $langs->trans("List"), 1 ,$user->rights->contrat->lire);
-                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/enservice.php", "En service", 1 ,$user->rights->contrat->lire);
+                  if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/enservice.php", $langs->trans("ContractStatusRunning"), 1 ,$user->rights->contrat->lire);
                 }
                 
                 if ($conf->commande->enabled ) 
                 {
                   $langs->load("orders");
                   $newmenu->add(DOL_URL_ROOT."/commande/index.php?leftmenu=orders", $langs->trans("Orders"), 0 ,$user->rights->commande->lire);
+                  if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=orders", $langs->trans("NewOrder"), 1, $user->rights->commande->creer);
                   if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/liste.php", $langs->trans("List"), 1 ,$user->rights->commande->lire);
                   if ($conf->expedition->enabled) {
                       if ($leftmenu=="orders") $newmenu->add(DOL_URL_ROOT."/expedition/", $langs->trans("Sendings"));
@@ -202,7 +205,9 @@ class MenuLeft {
                 if ($conf->fichinter->enabled ) 
                 {
                   $langs->load("interventions");
-                  $newmenu->add(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"));
+                  $newmenu->add(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->rights->ficheinter->lire);
+                  if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->rights->ficheinter->creer);
+                  if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("List"), 1 ,$user->rights->ficheinter->lire);
                 }
                 
             }
@@ -281,22 +286,22 @@ class MenuLeft {
                 // Déplacements
                 if ($conf->deplacement->enabled)
                 {
-                    $langs->load("trips");
+                  $langs->load("trips");
                   $newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=deplacement&mainmenu=accountancy", $langs->trans("Trips"));
                 }
                 
                 // Charges
                 if ($conf->compta->enabled)
                 {
-                  $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges&mainmenu=accountancy",$langs->trans("Charges"));
-                  if ($leftmenu=="charges") $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"));
+                  $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges&mainmenu=accountancy",$langs->trans("Charges"), 0, $user->rights->compta->charges->lire);
+                  if ($leftmenu=="charges") $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"), 1, $user->rights->compta->charges->creer);
                 }
                 
                 if ($conf->compta->enabled && $conf->compta->tva && $user->societe_id == 0)
                 {
-                  $newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=vat&mainmenu=accountancy",$langs->trans("VAT"));
-                  if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/reglement.php",$langs->trans("Payments"),1);
-                  if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/fiche.php?action=create",$langs->trans("NewPayment"),1);
+                  $newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=vat&mainmenu=accountancy",$langs->trans("VAT"),0,$user->rights->compta->charges->lire);
+                  if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/fiche.php?action=create",$langs->trans("NewPayment"),1,$user->rights->compta->charges->creer);
+                  if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/reglement.php",$langs->trans("Payments"),1,$user->rights->compta->charges->lire);
                 }
                 
                 if ($conf->compta->enabled) {
@@ -308,13 +313,32 @@ class MenuLeft {
                     //}
                 }
                         
+                if ($conf->compta->enabled) {
+                    // Bilan, résultats
+                    $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca&mainmenu=accountancy","Résultats / CA",0,$user->rights->compta->resultat->lire);
+            
+                	if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca","Résultat / Exercice",1,$user->rights->compta->resultat->lire);
+                    if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php?leftmenu=ca","Détail client/fourn.",2,$user->rights->compta->resultat->lire);
+                    if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/compteres.php?leftmenu=ca","Compte de résultat",2,$user->rights->compta->resultat->lire);
+                    if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/bilan.php?leftmenu=ca","Bilan",2,$user->rights->compta->resultat->lire);
+                	
+                	if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca","Chiffre d'affaire",1,$user->rights->compta->resultat->lire);
+                	
+                	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cumul.php?leftmenu=ca","Cumulé",2,$user->rights->compta->resultat->lire);
+                	if ($conf->propal->enabled) {
+                		if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/prev.php?leftmenu=ca","Prévisionnel",2,$user->rights->compta->resultat->lire);
+                		if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/comp.php?leftmenu=ca","Transformé",2,$user->rights->compta->resultat->lire);
+                	}
+                	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/exercices.php?leftmenu=ca",$langs->trans("Evolution"),2,$user->rights->compta->resultat->lire);
+                	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire);
+                	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2,$user->rights->compta->resultat->lire);
+                }
+
                 // Bank-Caisse
-                if ($conf->banque->enabled && $user->rights->banque->lire)
+                if ($conf->banque->enabled)
                 { 
                   $langs->load("banks");
-                  $newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=bank&mainmenu=bank",$langs->trans("Bank"));
-
-
+                  $newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=bank&mainmenu=bank",$langs->trans("Bank"),0,$user->rights->banque->lire);
                 }
                 
                 // Prélèvements
@@ -328,24 +352,6 @@ class MenuLeft {
                     if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandestraitees.php",$langs->trans("StandingOrderProcessed"));
                 }
                
-                // Bilan, résultats
-                $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca&mainmenu=accountancy","Résultats / CA");
-        
-            	if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca","Résultat / Exercice",1);
-                if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php?leftmenu=ca","Détail client/fourn.",2);
-                if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/compteres.php?leftmenu=ca","Compte de résultat",2);
-                if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/bilan.php?leftmenu=ca","Bilan",2);
-            	
-            	if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/stats/index.php?leftmenu=ca","Chiffre d'affaire",1);
-            	
-            	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cumul.php?leftmenu=ca","Cumulé",2);
-            	if ($conf->propal->enabled) {
-            		if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/prev.php?leftmenu=ca","Prévisionnel",2);
-            		if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/comp.php?leftmenu=ca","Transformé",2);
-            	}
-            	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/exercices.php?leftmenu=ca",$langs->trans("Evolution"),2);
-            	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php?leftmenu=ca",$langs->trans("ByCompanies"),2);
-            	if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php?leftmenu=ca",$langs->trans("ByUsers"),2);
             }
         
         
@@ -427,6 +433,7 @@ class MenuLeft {
               {
                   $langs->load("orders");
                   $newmenu->add(DOL_URL_ROOT."/fourn/commande/index.php?leftmenu=suppliers",$langs->trans("Orders"), 0, $user->rights->fournisseur->commande->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=supplier", $langs->trans("NewOrder"), 1, $user->rights->fournisseur->commande->creer);
                   $newmenu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php?leftmenu=suppliers", $langs->trans("List"), 1, $user->rights->fournisseur->commande->lire);
               }
             
@@ -438,27 +445,60 @@ class MenuLeft {
              */
             if ($mainmenu == 'tools') {
 
-                $newmenu->add(DOL_URL_ROOT."/comm/mailing/index.php?leftmenu=mailing", $langs->trans("Mailings"));
+                $newmenu->add(DOL_URL_ROOT."/comm/mailing/index.php?leftmenu=mailing", $langs->trans("EMailings"));
 
-                if($user->admin)
+                if($user->admin)    // \todo en attendant droits d'un module mailing
                 {
                   $langs->load("admin");
                   $langs->load("mails");
                   $newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?leftmenu=mailing&action=create", $langs->trans("NewMailing"));
-        
                 }
 
-                if ($conf->projet->enabled ) 
+                if ($conf->projet->enabled) 
                 {
                   $langs->load("projects");
                   $newmenu->add(DOL_URL_ROOT."/projet/index.php?leftmenu=projects", $langs->trans("Projects"), 0, $user->rights->projet->lire);
-                  // \todo $newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?leftmenu=mailing&action=create", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/comm/clients.php?leftmenu=projects", $langs->trans("NewProject"), 1, $user->rights->projet->creer);
                 }
 
             }
         
-        
-            // Pour les menu du haut qui ne serait pas gérés
+            /*
+             * Menu MEMBERS
+             */
+            if ($mainmenu == 'members') {
+
+                if ($conf->adherent->enabled)
+                {
+                  $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=members&mainmenu=members",$langs->trans("Members"),0,$user->rights->adherent->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/fiche.php?action=create",$langs->trans("NewMember"),1,$user->rights->adherent->creer);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1",$langs->trans("MenuMembersToValidate"),1,$user->rights->adherent->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1",$langs->trans("MenuMembersUpToDate"),1,$user->rights->adherent->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=0",$langs->trans("MenuMembersResiliated"),1,$user->rights->adherent->lire);
+                
+                  $newmenu->add(DOL_URL_ROOT."/public/adherents/index.php","Espace adherents public");
+                
+                  $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&mainmenu=members",$langs->trans("Export"),0,$user->rights->adherent->lire);
+                  if ($leftmenu=="export") $newmenu->add_submenu("htpasswd.php?leftmenu=export","Format htpasswd",1,$user->rights->adherent->lire);
+                  if ($leftmenu=="export") $newmenu->add_submenu("cartes/carte.php?leftmenu=export","Cartes d'adhérents",1,$user->rights->adherent->lire);
+                  if ($leftmenu=="export") $newmenu->add_submenu("cartes/etiquette.php?leftmenu=export","Etiquettes d'adhérents",1,$user->rights->adherent->lire);
+                
+                  $langs->load("compta");
+                  $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=accountancy&mainmenu=members",$langs->trans("Accountancy"),0,$user->rights->adherent->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cotisations.php?leftmenu=accountancy",$langs->trans("Subscriptions"),0,$user->rights->adherent->lire);
+                  $langs->load("banks");
+                  $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=accountancy",$langs->trans("Banks"),0,$user->rights->adherent->lire);
+                
+                  $newmenu->add("index.php?leftmenu=setup&mainmenu=members",$langs->trans("Setup"),0,$user->rights->adherent->configurer);
+                  $newmenu->add_submenu("type.php?leftmenu=setup&",$langs->trans("MembersTypes"),1,$user->rights->adherent->configurer);
+                  $newmenu->add_submenu("options.php?leftmenu=setup&",$langs->trans("MembersAttributes"),1,$user->rights->adherent->configurer);
+                }
+
+            }
+
+            /*
+             * Menu AUTRES (Pour les menus du haut qui ne serait pas gérés)
+             */
             if ($mainmenu && ! in_array($mainmenu,$overwritemenufor)) { $mainmenu=""; }
         
         }
