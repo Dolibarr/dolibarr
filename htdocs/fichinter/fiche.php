@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -319,12 +319,12 @@ if ($action == 'edit')
  *
  */
 
-if ($id)
+if ($_GET["id"])
 {
   print_fiche_titre("Fiche d'intervention",$mesg);
 
   $fichinter = new Fichinter($db);
-  if (  $fichinter->fetch($id) )
+  if ($fichinter->fetch($_GET["id"]))
     {
       $fichinter->fetch_client();
 
