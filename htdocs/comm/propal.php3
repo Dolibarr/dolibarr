@@ -19,6 +19,12 @@
  * $Source$
  *
  */
+
+/**
+* Gestion d'une proposition commerciale
+* @package propale
+*/
+
 require("./pre.inc.php3");
 
 $user->getrights('propale');
@@ -135,6 +141,9 @@ if ($HTTP_POST_VARS["action"] == 'addproduct' && $user->rights->propale->creer)
    */
   $propal = new Propal($db);
   $propal->id = $propalid;
+
+  if (empty ($HTTP_POST_VARS["np_qty"]))
+    $HTTP_POST_VARS["np_qty"]=1;
   $propal->insert_product_generic($HTTP_POST_VARS["np_desc"], 
 				  $HTTP_POST_VARS["np_price"], 
 				  $HTTP_POST_VARS["np_qty"],
@@ -410,7 +419,7 @@ if ($propalid)
 	      print '<td><input type="text" size="28" name="np_desc"></td>';
 	      print '<td align="right"><input type="text" size="6" name="np_price"></td><td align="center">';
 	      print $html->select_tva("np_tva_tx") . '</td>';
-	      print '<td align="center"><input type="text" size="3" name="np_qty"></td>';
+	      print '<td align="center"><input type="text" size="3" value="1" name="np_qty"></td>';
 	      print '<td align="center"><input type="submit" value="Ajouter"></td>';
 	      print '</tr></form>';
 
