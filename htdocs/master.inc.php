@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -259,6 +259,7 @@ if (defined("MAIN_MODULE_PRODUIT"))
 }
 $conf->produit->dir_output=DOL_DATA_ROOT."/produit";
 $conf->produit->dir_images=DOL_DATA_ROOT."/produit/images";
+
 if (defined("MAIN_MODULE_SERVICE"))
 {
   $conf->service->enabled=MAIN_MODULE_SERVICE;
