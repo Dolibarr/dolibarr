@@ -83,7 +83,7 @@ if ($action == 'update')
 
 if ($action == 'create') 
 {
-  print '<div class="titre">Nouvelle société</div><br>';
+  print '<div class="titre">Nouvelle société (prospect, client, fournisseur, partenaire...)</div><br>';
   print '<form action="soc.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="fournisseur" value="0">';
