@@ -23,7 +23,7 @@
 require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf_indexes.php");
 require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf_html.php");
 
-Class CommActionRapport {
+class CommActionRapport {
 
   function CommActionRapport($db=0, $month, $year)
     { 
