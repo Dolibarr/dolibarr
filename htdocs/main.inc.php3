@@ -254,7 +254,7 @@ function top_menu($head)
   //  print "<HTML><HEAD>";
   print $head;
   //  print '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">';
-  print '<LINK REL="stylesheet" TYPE="text/css" HREF="/'.$conf->css.'">';
+  print '<LINK REL="stylesheet" TYPE="text/css" HREF="'.DOL_URL_ROOT.'/'.$conf->css.'">';
   print "\n";
   if (defined("MAIN_TITLE"))
     {
