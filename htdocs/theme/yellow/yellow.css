@@ -21,7 +21,7 @@
 body 
 {
   background: #ebebe0; 
-  font-family: sans-serif; font-size: 1.0em; 
+  font-family: sans-serif; font-size: 0.95em; 
 }
 /*
  *   Menu superieur
@@ -70,11 +70,13 @@ a:hover {     text-decoration: underline;  }
 td.menu { 
           border-right: 1px solid #000000;
           border-bottom: 1px solid #000000;
+          font-size: 0.95em;
           }
 
 td.menusel { 
              border-right: 1px solid #000000;
              border-bottom: 1px solid #000000;
+             font-size: 0.95em;
              }
 
 td.border { 
@@ -87,6 +89,7 @@ td.border {
 div.menus { 
             background: #eeeecc; 
             color: #bbbb88;
+            font-size: 0.95em;
             border-top:    1px dashed #ccccb3;
             border-right:  1px dashed #ccccb3;
             border-bottom: 1px dashed #ccccb3;
@@ -96,21 +99,23 @@ div.menus {
 .menu 
 { 
   background: #ccccb3; 
-  font-size: 1.0em; font-weight: bold; 
+  font-weight: bold; 
+  font-size: 0.95em;
   color: #000000; 
   text-decoration: none }
 
 .menusel
 { 
   background: #bbbb88; 
-  font-size: 1.0em; font-weight: bold; 
+  font-weight: bold;
+  font-size: 0.95em;
   color: #000000; 
   text-decoration: none }
 
 .submenu 
 { 
   background: #ccccb3; 
-  font-size: 1.0em;
+  font-size: 0.95em;
   color: #000000; 
   text-decoration: none }
 
@@ -171,12 +176,12 @@ tr.box_titre {
 
 tr.box_pair { 
               background: #dcdcb3; 
-              font-size: 0.9em; }
+              font-size: 0.95em; }
 
 tr.box_impair { 
                 background: #eeeecc; 
                 font-family: Helvetica, Verdana;
-                font-size: 0.9em; }
+                font-size: 0.95em; }
 
 tr.fiche { 
            font-family: Helvetica, Verdana;
@@ -210,7 +215,7 @@ td.small {
            }
 
 tr.nonpayed { 
-              font-size: 0.9em; font-weight: bold;
+              font-size: 0.95em; font-weight: bold;
               }
 
 
