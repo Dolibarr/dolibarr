@@ -222,13 +222,13 @@ if ($_GET["action"] == 'create')
       
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 
-      // Type d'action
+      // Type d'action actifs
       print '<tr><td width="10%">'.$langs->trans("Action").'</td><td>';
       if ($_GET["actionid"]) {
         print '<input type="hidden" name="actionid" value="'.$_GET["actionid"].'">'."\n";      
         print $caction->get_nom($_GET["actionid"]);
       } else {
-        $html->select_array("actionid",  $caction->liste_array(), 0);
+        $html->select_array("actionid",  $caction->liste_array(1), 0);
       }
       print '</td></tr>';
 
