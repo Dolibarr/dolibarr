@@ -164,7 +164,7 @@ if ($HTTP_POST_VARS["action"] == 'create')
        */
       echo '<br><table border="0" width="100%" cellspacing="0" cellpadding="3">';	  
       
-      $lignes = $commande->fetch_lignes();
+      $lignes = $commande->fetch_lignes(1);
       
       $num = sizeof($commande->lignes);
       $i = 0; $total = 0;
