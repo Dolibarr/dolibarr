@@ -49,17 +49,56 @@ class RejetPrelevement
   {
     $this->db = $DB ;
     $this->user = $user;
+
+    $this->motifs = array();
+    $this->motifs[1] = "Provision insuffisante";
+    $this->motifs[2] = "Tirage contesté";
+    $this->motifs[3] = "Pas de bon à payer";
+
   }
 
-  function create($id, $socid, $previd)
+  function create($user, $id, $motif, $bonid)
     {
+      $error = 0;
       $this->id = $id;
-      $this->socid = $socid;
+      $this->bon_id = $bonid;
 
       dolibarr_syslog("RejetPrelevement::Create id $id");
-      dolibarr_syslog("RejetPrelevement::Create socid $socid");
       
       $facs = $this->_get_list_factures();
+
+      $this->db->begin();
+
+
+      /* Insert la ligne de rejet dans la base */
+      
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_rejet ";
+      $sql .= " (fk_prelevement_lignes";
+      $sql .= " , motif , fk_user_creation, date_creation)";
+      $sql .= " VALUES (".$id;
+      $sql .= " ,".$motif.",". $user->id.", now())";
+      
+      $result=$this->db->query($sql);
+
+      if (!$result)
+	{
+	  dolibarr_syslog("RejetPrelevement::create Erreur 4");
+	  dolibarr_syslog("RejetPrelevement::create Erreur 4 $sql");
+	  $error++;
+	}
+      
+      /* Tag la ligne de prev comme rejetée */
+
+      $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes ";
+      $sql .= " SET statut = 3";
+      $sql .= " WHERE rowid=".$id;
+      
+      if (! $this->db->query($sql))
+	{
+	  dolibarr_syslog("RejetPrelevement::create Erreur 5");
+	  $error++;
+	}
+      
 
       for ($i = 0 ; $i < sizeof($facs) ; $i++)
 	{	  
@@ -89,12 +128,11 @@ class RejetPrelevement
 	  /* Tag la ligne de prev comme rejetée */
 
 	  $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_facture ";
-	  $sql .= " SET statut = 2";
-	  $sql .= " WHERE fk_prelevement=".$previd;
+	  $sql .= " SET statut = 3";
+	  $sql .= " WHERE fk_prelevement_lignes=".$id;
 	  $sql .= " AND fk_facture = ".$facs[$i];
 	  
-	  $result=$this->db->query($sql);
-	  if (!$result)
+	  if (! $this->db->query($sql))
 	    {
 	      dolibarr_syslog("RejetPrelevement::create Erreur 3");
 	      $error++;
@@ -102,6 +140,17 @@ class RejetPrelevement
 	  
 	  /* Envoi un email à l'emetteur de la demande de prev */
 	  $this->_send_email($fac);
+	}
+
+      if ($error == 0)
+	{
+	  dolibarr_syslog("RejetPrelevement::Create Commit");
+	  $this->db->commit();
+	}
+      else
+	{
+	  dolibarr_syslog("RejetPrelevement::Create Rollback");
+	  $this->db->rollback();
 	}
 
     }
@@ -117,7 +166,7 @@ class RejetPrelevement
 
     $sql = "SELECT fk_user_demande";
     $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-    $sql .= " WHERE pfd.fk_prelevement = ".$this->id;
+    $sql .= " WHERE pfd.fk_prelevement_bons = ".$this->bon_id;
     $sql .= " AND pfd.fk_facture = ".$fac->id;
 
     $result=$this->db->query($sql);
@@ -185,9 +234,8 @@ class RejetPrelevement
     {
       $arr = array();
       /*
-       * Renvoie toutes les factures de la société à partir d'une facture
-       * dans un bon de prélèvement
-       * Lors du prélèvement les diff factures sont agrégées ensemble
+       * Renvoie toutes les factures associée à un prélèvement
+       *
        */
       
       $sql = "SELECT f.rowid as facid";
@@ -195,9 +243,7 @@ class RejetPrelevement
       $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
       $sql .= " , ".MAIN_DB_PREFIX."facture as f";
 
-      $sql .= " WHERE f.fk_soc = ".$this->socid;
-
-      $sql .= " AND pf.fk_prelevement = ".$this->id;
+      $sql .= " WHERE pf.fk_prelevement_lignes = ".$this->id;
 
       $sql .= " AND pf.fk_facture = f.rowid";
 
@@ -251,8 +297,9 @@ class RejetPrelevement
 	  $sql .= " AND f.fk_soc = ".$societe_id;
 	}
 
-    $result=$this->db->query($sql);
-    if ($result)
+      $result=$this->db->query($sql);
+
+      if ($result)
 	{
 	  if ($this->db->num_rows($result))
 	    {
