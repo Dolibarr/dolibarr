@@ -49,7 +49,7 @@ class User
       $this->compta = 1;
       $this->limite_liste = 0;
 
-      $this->permissions_are_loaded = 0;
+      $this->all_permissions_are_loaded = 0;
 
       return 1;
   }
@@ -185,7 +185,7 @@ class User
    */
   Function getrights($module='')
     {
-      if ($this->permissions_are_loaded) {
+      if ($this->all_permissions_are_loaded) {
         // Si les permissions ont déja été chargé pour ce user, on quitte
         // Cela évite de faire n fois le select quand la fonction est appelée plusieurs fois
         // pour charger les droits de différents modules. On les charges tous la
@@ -196,12 +196,11 @@ class User
       $sql = "SELECT fk_user, fk_id FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user= $this->id";
       if ($this->db->query($sql))
 	{
-	  $rr=array();
 	  $num = $this->db->num_rows();
 	  $i = 0;
 	  while ($i < $num)
 	    {
-	      $obj = $this->db->fetch_object($i);
+	      $obj = $this->db->fetch_object();
 	      
 	      if ($module == 'facture' or $module == '')
 		{
@@ -339,7 +338,7 @@ class User
 
 		  if ($obj->fk_id == 92)
 		    $this->rights->compta->charges->creer = 1;
-
+		    
 		  if ($obj->fk_id == 93)
 		    $this->rights->compta->charges->supprimer = 1;
 
@@ -361,11 +360,14 @@ class User
 
 		}
 	      $i++;
-	      }
-
+	  }
 	    $this->db->free();	    
 
-        $this->permissions_are_loaded=1;
+        if ($module == '') {
+            // Si module etait non defini, alors on a tout chargé, on peut donc considérer
+            // que les droits sont cachés (car tous chargés) pour cet instance de user
+            $this->all_permissions_are_loaded=1;
+        }
 	  }
 	else
 	  {

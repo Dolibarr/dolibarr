@@ -25,7 +25,7 @@ require("./pre.inc.php");
 $user->getrights('facture');
 $user->getrights('compta');
 
-if (!$user->admin && !$user->rights->compta->charges)
+if (!$user->admin && !$user->rights->compta->charges->lire)
   accessforbidden();
 
 
@@ -82,11 +82,6 @@ $filtre=$_GET["filtre"];
 
 print_fiche_titre("Charges sociales",($year?"<a href='$PHP_SELF?year=".($year-1)."'>".img_previous()."</a> Année $year <a href='$PHP_SELF?year=".($year+1)."'>".img_next()."</a>":""));
 print "<br>\n";
-
-//if ($filtre) {
-//    print_titre("Filtre : ".$_GET["filtrelib"]);
-//    print "<br>\n";
-//}
 
 if ($mesg) {
     print "$mesg<br>";
@@ -173,8 +168,14 @@ if ( $db->query($sql) )
 	  print '<td>&nbsp;</td>';
 	} else {
 	  print '<td align="center"><a class="impayee" href="'.$PHP_SELF.'?filtre=paye:0">Impayé</a></td>';
-	  print '<td align="center"><a href="charges.php?id='.$obj->id.'">'.img_edit().'</a>';
-	  print ' &nbsp; <a href="'.$PHP_SELF.'?action=del&id='.$obj->id.'">'.img_delete().'</a></td>';
+	  print '<td align="center" nowrap>';
+	  if ($user->rights->compta->charges->creer) {
+	    print '<a href="charges.php?id='.$obj->id.'">'.img_edit().'</a>';
+	  }
+	  if ($user->rights->compta->charges->supprimer) {
+	    print ' &nbsp; <a href="'.$PHP_SELF.'?action=del&id='.$obj->id.'">'.img_delete().'</a>';
+	  }
+	  print '</td>';
 	}
       print '</tr>';
       $i++;
@@ -189,37 +190,39 @@ else
  * Forumalaire d'ajout d'une charge
  *
  */
-print '<tr class="form" valign="top"><form method="post" action="index.php">';
-print '<input type="hidden" name="action" value="add">';
-print '<td>&nbsp;</td>';
-print '<td><input type="text" size="8" name="date"><br>YYYYMMDD</td>';
-print '<td><input type="text" size="8" name="periode"><br>YYYYMMDD</td>';
-
-print '<td align="left"><select name="type">';
-
-$sql = "SELECT c.id, c.libelle as type FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-$sql .= " ORDER BY lower(c.libelle) ASC";
-
-if ( $db->query($sql) )
-{
-  $num = $db->num_rows();
-  $i = 0;
-
-  while ($i < $num)
+if ($user->rights->compta->charges->creer) {
+    print '<tr class="form" valign="top"><form method="post" action="index.php">';
+    print '<input type="hidden" name="action" value="add">';
+    print '<td>&nbsp;</td>';
+    print '<td><input type="text" size="8" name="date"><br>YYYYMMDD</td>';
+    print '<td><input type="text" size="8" name="periode"><br>YYYYMMDD</td>';
+    
+    print '<td align="left"><select name="type">';
+    
+    $sql = "SELECT c.id, c.libelle as type FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+    $sql .= " ORDER BY lower(c.libelle) ASC";
+    
+    if ( $db->query($sql) )
     {
-      $obj = $db->fetch_object( $i);
-      print '<option value="'.$obj->id.'">'.$obj->type;
-      $i++;
+      $num = $db->num_rows();
+      $i = 0;
+    
+      while ($i < $num)
+        {
+          $obj = $db->fetch_object( $i);
+          print '<option value="'.$obj->id.'">'.$obj->type;
+          $i++;
+        }
     }
+    print '</select>';
+    print '</td>';
+    print '<td align="left"><input type="text" size="24" name="libelle"></td>';
+    print '<td align="right"><input type="text" size="6" name="amount"></td>';
+    print '<td>&nbsp;</td>';
+    
+    print '<td><input type="submit" value="Ajouter"></form></td>';
+    print '</tr>';
 }
-print '</select>';
-print '</td>';
-print '<td align="left"><input type="text" size="24" name="libelle"></td>';
-print '<td align="right"><input type="text" size="6" name="amount"></td>';
-print '<td>&nbsp;</td>';
-
-print '<td><input type="submit" value="Ajouter"></form></td>';
-print '</tr>';
 
 print '</table>';
 
