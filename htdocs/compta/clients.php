@@ -191,6 +191,23 @@ if (strlen($stcomm))
   $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
+if ($socname)
+{
+  $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
+  $sortfield = "lower(s.nom)";
+  $sortorder = "ASC";
+}
+
+if ($_GET["search_nom"])
+{
+  $sql .= " AND lower(s.nom) like '%".strtolower($_GET["search_nom"])."%'";
+}
+
+if ($_GET["search_compta"])
+{
+  $sql .= " AND s.code_compta like '%".$_GET["search_compta"]."%'";
+}
+
 if (strlen($begin))
 {
   $sql .= " AND upper(s.nom) like '$begin%'";
@@ -199,13 +216,6 @@ if (strlen($begin))
 if ($user->societe_id)
 {
   $sql .= " AND s.idp = " .$user->societe_id;
-}
-
-if ($socname)
-{
-  $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
-  $sortfield = "lower(s.nom)";
-  $sortorder = "ASC";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -239,22 +249,22 @@ if ($result)
   print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","","",'valign="center"',$sortfield);
   print_liste_field_titre($langs->trans("Code client"),"clients.php","s.code_client","","",'align="center"',$sortfield);
 
-  print "</tr>\n";
+  print "<td>&nbsp;</td></tr>\n";
 
   // Lignes des champs de filtre
   print '<form method="GET" action="clients.php">';
   print '<tr class="liste_titre">';
 
   print '<td valign="right">';
-  print '<input class="fat" type="text" name="search_nom" value="'.$search_nom.'"></td>';
+  print '<input class="fat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
 
   print '<td valign="left">';
-  print '<input class="fat" type="text" size="10" name="search_compta" value="'.$search_compta.'">';
+  print '<input class="fat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
   print '</td>';
 
-  print '<td colspan="2" align="center">';
+  print '<td colspan="3" align="left">';
   print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
-  print '&nbsp; <input type="submit" class="button" name="button_removefilter" value="'.$langs->trans("RemoveFilter").'">';
+  print '&nbsp;';
   print '</td>';
   print "</tr>\n";
   print '</form>';
@@ -276,8 +286,9 @@ if ($result)
 
       print "<td>".$obj->ville."&nbsp;</td>\n";
       print "<td align=\"center\">$obj->code_client&nbsp;</td>\n";
-
-      print "</tr>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';
+      print img_folder();
+      print "</td></tr>\n";
       $i++;
     }
   print "</table>";
