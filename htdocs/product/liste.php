@@ -155,8 +155,11 @@ if ($result)
     {
       $objp = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
+      print "<tr $bc[$var]><td>";
+      print "<a href=\"fiche.php?id=$objp->rowid\">";
+      print img_file();
+      print "</a>&nbsp;";
+      print "<a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
       print "<TD>$objp->label</TD>\n";
       print '<TD align="right">'.price($objp->price).'</TD>';
       print "</TR>\n";
