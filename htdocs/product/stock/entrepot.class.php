@@ -41,16 +41,22 @@ class Entrepot
   var $description;
   var $statut;
 
+  /*
+   *    \brief      Constructeur de l'objet entrepot
+   *    \param      DB      Handler d'accès à la base de donnée
+   */
   function Entrepot($DB)
     {
-      $this->db = $DB;
-
-      $this->statuts[0] = "fermé";
-      $this->statuts[1] = "ouvert";
+        global $langs;
+        $this->db = $DB;
+        
+        $this->statuts[0] = $langs->trans("Closed");
+        $this->statuts[1] = $langs->trans("Opened");
     }
+
   /*
-   *
-   *
+   *    \brief      Creation d'un entrepot en base
+   *    \param      Objet user qui crée l'entrepot
    */
   function create($user) 
     {
@@ -60,7 +66,7 @@ class Entrepot
 		  return 0;
 	  }
 	  
-      if ($this->db->query("BEGIN") )
+      if ($this->db->begin())
 	{
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author)";
 	  $sql .= " VALUES (now(),".$user->id.")";
@@ -74,12 +80,12 @@ class Entrepot
 
 		  if ( $this->update($id, $user) )
 		    {
-		      $this->db->query("COMMIT") ;
+		      $this->db->commit();
 		      return $id;
 		    }
 		  else
 		    {
-		      $this->db->query("ROLLBACK") ;
+		      $this->db->rollback();
 		    }
 
 
@@ -87,12 +93,15 @@ class Entrepot
 	    }
 	  else
 	    {
-	      print $this->db->error() . ' in ' . $sql;
+	      return -1;
 	    }
 	}
     }
+
   /*
-   *
+   *    \brief      Mise a jour des information d'un entrepot
+   *    \param      id      id de l'entrepot à modifier
+   *    \param      user
    */
   function update($id, $user)
     {
@@ -111,7 +120,7 @@ class Entrepot
 	    }
 	  else
 	    {
-	      print $this->db->error() . ' in ' . $sql;
+	      return -1;
 	    }
 	}
       else
@@ -120,10 +129,10 @@ class Entrepot
 	  return 0;
 	}
     }
-  /*
-   *
-   *
-   *
+
+  /**
+   *    \brief      Recupéeration de la base d'un entrepot
+   *    \param      id      id de l'entrepot a récupérer
    */
   function fetch ($id)
     {    
@@ -151,9 +160,9 @@ class Entrepot
 	  return -1;
 	}
   }
+
   /**
-   * Renvoie la liste des entrepôts ouverts
-   *
+   *    \brief      Renvoie la liste des entrepôts ouverts
    */
   function list_array()
   {
@@ -177,9 +186,9 @@ class Entrepot
 	}
       return $liste;
   }
+
   /**
-   * Renvoie la liste des entrepôts ouverts
-   *
+   *    \brief      Renvoie le stock (nombre de produits) de l'entrepot
    */
   function nb_products()
   {
@@ -199,5 +208,6 @@ class Entrepot
 	  return 0;
 	}
   }
+  
 }
 ?>
