@@ -29,8 +29,15 @@ if ($_POST["action"] == 'update')
   $contact = new Contact($db);
   $contact->id = $_POST["contactid"];
 
-  $contact->birthday = $_POST["reyear"].'-'.$_POST["remonth"].'-'.$_POST["reday"];
-			
+  if ($_POST["birthdayyear"]) {
+    if ($_POST["birthdayyear"]<=1970 && $_SERVER["WINDIR"]) {
+        # windows mktime does not support negative date timestamp so birthday is not support for old persons
+        $contact->birthday = $_POST["birthdayyear"].'-'.$_POST["birthdaymonth"].'-'.$_POST["birthdayday"];
+        //array_push($error,"Windows ne sachant pas gérer des dates avant 1970, les dates de naissance avant cette date ne seront pas sauvegardées");
+    } else {
+        $contact->birthday     = mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
+    }
+  }
 
   $contact->birthday_alert = $_POST["birthday_alert"];
 
@@ -53,10 +60,12 @@ print '<div class="tabBar">';
 
 if ($_GET["action"] == 'edit') 
 {
-  print_fiche_titre ("Edition d'un contact");
-
+  // Fiche info perso en mode edition
+ 
   $contact = new Contact($db);
   $contact->fetch($_GET["id"], $user);
+
+  print_fiche_titre ("Contact : ". $contact->firstname.' '.$contact->name);
 
   print '<form method="post" action="perso.php?id='.$_GET["id"].'">';
   print '<input type="hidden" name="action" value="update">';
@@ -67,18 +76,24 @@ if ($_GET["action"] == 'edit')
       $objsoc = new Societe($db);
       $objsoc->fetch($contact->socid);
 
-      print 'Société : '.$objsoc->nom.'<br>';
+      print 'Société : '.$objsoc->nom_url.'<br>';
     }
 
   print 'Nom : '.$contact->name.' '.$contact->firstname ."<br>";
 
   print '<table class="border" cellpadding="3" celspacing="0" border="0" width="100%">';
 
-  print '<tr><td>Date de naissance</td><td>';
   $html = new Form($db);
 
-  print $html->select_date('','re',0,0,1);
-  print '</td><td>Alerte : ';
+  print '<tr><td>Date de naissance</td><td>';
+  if ($contact->birthday && $contact->birthday > 0) { 
+    print $html->select_date($contact->birthday,'birthday',0,0,0);
+  } else {
+    print $html->select_date(0,'birthday',0,0,1);
+  }
+  print '</td>';
+
+  print '<td>Alerte : ';
   if ($contact->birthday_alert)
     {
       print '<input type="checkbox" name="birthday_alert" checked></td></tr>';
@@ -114,13 +129,13 @@ else
       print 'Société : '.$objsoc->nom_url.'<br>';
     }
 
-  if ($contact->birthday) {
+  if ($contact->birthday && $contact->birthday > 0) {
     print 'Date de naissance : '.dolibarr_print_date($contact->birthday);
 
     if ($contact->birthday_alert)
-      print ' (alerte active)<br>';
+      print ' (alerte anniversaire active)<br>';
     else
-      print ' (alerte inactive)<br>';
+      print ' (alerte anniversaire inactive)<br>';
   }
   print "<br>";
 

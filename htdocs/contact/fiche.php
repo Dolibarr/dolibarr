@@ -46,12 +46,6 @@ if ($_POST["action"] == 'add')
       $contact->address      = $_POST["adresse"];
       $contact->cp           = $_POST["cp"];
       $contact->ville        = $_POST["ville"];
-      if ($_POST["birthdayyear"] && $_POST["birthdayyear"]<=1970 && $_SERVER["WINDIR"]) {
-        # windows does not support negative date timestamp so birthday is not support for old persons
-        array_push($error,"Windows ne sachant pas gérer des dates avant 1970, les dates de naissance avant cette date ne seront pas sauvegardées");
-      } else {
-        $contact->birthday     = mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
-      }
       $contact->email        = $_POST["email"];
       $contact->phone_pro    = $_POST["phone_pro"];
       $contact->phone_perso  = $_POST["phone_perso"];
@@ -101,8 +95,6 @@ if ($_POST["action"] == 'update')
   $contact->phone_mobile  = $_POST["phone_mobile"];
   $contact->fax           = $_POST["fax"];
   $contact->jabberid      = $_POST["jabberid"];
-
-  $contact->birthday     = mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
 
   $contact->note          = $_POST["note"];
 
@@ -203,9 +195,9 @@ if ($_GET["action"] == 'create')
 
   print '<tr><td>Jabberid</td><td colspan="5"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
 
-  print '<tr><td>Date de naissance</td><td colspan="5">';
-  print $form->select_date('','birthday',0,0,1);
-  print '</td></tr>';
+//  print '<tr><td>Date de naissance</td><td colspan="5">';
+//  print $form->select_date('','birthday',0,0,1);
+//  print '</td></tr>';
 
   print '<tr><td>Note</td><td colspan="5"><textarea name="note" cols="60" rows="3"></textarea></td></tr>';
   print '<tr><td align="center" colspan="6"><input type="submit" value="Ajouter"></td></tr>';
@@ -256,14 +248,6 @@ elseif ($_GET["action"] == 'edit')
   print '<tr><td>Email</td><td colspan="5"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
 
   print '<tr><td>Jabberid</td><td colspan="5"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
-
-  print '<tr><td>Date de naissance</td><td colspan="5">';
-  if ($contact->birthday) { 
-    print $form->select_date($contact->birthday,'birthday',0,0,0);
-  } else {
-    print $form->select_date(0,'birthday',0,0,1);
-  }
-  print '</td></tr>';
 
   print '<tr><td>Note</td><td colspan="5">';
   print '<textarea name="note" cols="60" rows="3">';
@@ -328,9 +312,6 @@ else
     print 'Fax : '.$contact->fax."<br>";
 
   print '</td></tr>';
-
-  if($contact->birthday && $contact->birthday > 0)
-    print '<tr><td>Date de naissance : '.dolibarr_print_date($contact->birthday)."</td></tr>";
 
   if ($contact->note) {
     print '<tr><td>';
