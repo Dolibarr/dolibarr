@@ -93,23 +93,38 @@ if ( $db->query($sql) )
       print "<td><a href=\"fiche.php?id=$obj->cid\">$obj->cid</a></td>\n";
       print "<td><a href=\"../product/fiche.php?id=$obj->pid\">$obj->label</a></td>\n";
       print "<td><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></td>\n";
-      print '<td align="center">';
+
+      // Affiche statut contrat
       if ($obj->enservice == 1)
 	{
-	  print "En service</td>";
+  	  $class = "impayee";
+	  $statut="En service";
 	}
       elseif($obj->enservice == 2)
 	{
-	  print "Cloturé</td>";
+   	  $class = "normal";
+	  $statut= "Cloturé";
 	}
       else
 	{
-	  print "A mettre en service</td>";
+  	  $class = "warning";
+	  $statut= "A mettre en service";
 	}
-      $time=strtotime($obj->fin_validite);
-      print "<td>".dolibarr_print_date($time)."</td>\n";
-      print "</tr>\n";
-      $i++;
+    print "<td align=\"center\" class=\"$class\">";
+    print "$statut";
+	print "</td><td>";
+
+    if ($obj->enservice > 0) {
+	    $time=strtotime($obj->fin_validite);
+        print dolibarr_print_date($time);
+    }
+    else {
+        print "&nbsp;";   
+    }
+    print "</td>\n";
+
+    print "</tr>\n";
+    $i++;
     }
   $db->free();
 
