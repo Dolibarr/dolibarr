@@ -171,6 +171,7 @@ class Form
    * \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
    * \param     selected    code pays pré-sélectionné
    * \param     htmlname    nom de la liste deroulante
+   * \todo      trier liste sur noms après traduction plutot que avant
    */
   function select_pays($selected='',$htmlname='pays_id')
   {
@@ -179,7 +180,7 @@ class Form
     
     $sql = "SELECT rowid, libelle, code, active FROM ".MAIN_DB_PREFIX."c_pays";
     $sql .= " WHERE active = 1";
-    $sql .= " ORDER BY libelle ASC;";
+    $sql .= " ORDER BY code ASC;";
     
     if ($this->db->query($sql))
     {
@@ -202,8 +203,8 @@ class Form
                     print '<option value="'.$obj->rowid.'">';
                 }
                 # Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                print ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->libelle!='-'?$obj->libelle:''));
-                if ($obj->code) { print ' ('.$obj->code.')'; }
+                if ($obj->code) { print '['.$obj->code.'] '; }
+                print ($langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
                 print '</option>';
                 $i++;
             }
