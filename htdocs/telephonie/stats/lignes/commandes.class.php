@@ -30,10 +30,12 @@ class GraphLignesCommandes extends GraphBar {
     $this->file = $file;
 
     $this->client = 0;
-    $this->titre = "Commandes Lignes";
+    $this->titre = "Commandes Lignes par mois";
 
     $this->barcolor = "blue";
     $this->showframe = true;
+
+    $this->LabelAngle = 0;
   }
 
   Function GraphMakeGraph($commercial=0)
@@ -69,7 +71,7 @@ class GraphLignesCommandes extends GraphBar {
 	    $row = $this->db->fetch_row();	
 	    	    
 	    $datas[$i] = $row[1];
-	    $labels[$i] = substr($row[0],-2)."/".substr($row[0],2,2);
+	    $labels[$i] = substr($row[0],-2);//."/".substr($row[0],2,2);
 
 	    $i++;
 	  }
