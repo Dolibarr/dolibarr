@@ -66,3 +66,8 @@ ThisUserIsNot=Cet utilisateur n'est pas un prospect, client ni fournisseur
 VATIntraCheckableOnEUSite=Numéro TVA intra communautaire vérifiable sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la commission européenne
 NorProspectNorCustomer=Ni client, ni prospect
 Staff=Effectifs
+TE_STARTUP=Startup
+TE_GROUP=Grande société
+TE_MEDIUM=PME/PMI
+TE_ADMIN=Administration
+TE_OTHER=Autre

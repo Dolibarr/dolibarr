@@ -66,3 +66,8 @@ ThisUserIsNot=This user is not a prospect, customer nor supplier
 VATIntraCheckableOnEUSite=Intracomunnautary VAT can be checked on European commision <a href="http://europa.eu.int/comm/taxation_customs/vies/en/vieshome.htm" target="_blank">site</a>
 NorProspectNorCustomer=Nor prospect, nor customer
 Staff=Staff
+TE_STARTUP=Startup
+TE_GROUP=Large company
+TE_MEDIUM=Small or medium company
+TE_ADMIN=Governemental
+TE_OTHER=Other

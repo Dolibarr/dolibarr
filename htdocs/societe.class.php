@@ -966,35 +966,40 @@ class Societe {
       
   }
 
-  /**
-   *    \brief      Renvoie la liste des types de parties
-   *    \return     array      tableau des types
-   */
-	 
-  function typent_array()
-  {
-    $effs = array();
-    /*
-     * Lignes
-     */      
-    $sql = "SELECT id, libelle";
-    $sql .= " FROM ".MAIN_DB_PREFIX."c_typent";
-    $sql .= " ORDER BY id ASC";
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	  
-	while ($i < $num)
-	  {
-	    $objp = $this->db->fetch_object();
-	    $effs[$objp->id] = $objp->libelle;
-	    $i++;
-	  }
-	$this->db->free();
-      } 
-    return $effs;
-  }
+    /**
+     *    \brief      Renvoie la liste des types actifs de sociétés
+     *    \return     array      tableau des types
+     */
+    function typent_array()
+    {
+        global $langs;
+        
+        $effs = array();
+    
+        $sql  = "SELECT id, code, libelle";
+        $sql .= " FROM ".MAIN_DB_PREFIX."c_typent";
+        $sql .= " WHERE active = 1";
+        $sql .= " ORDER by id";
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+    
+            while ($i < $num)
+            {
+                $objp = $this->db->fetch_object($result);
+                if ($langs->trans($objp->code) != $objp->code)
+                    $effs[$objp->id] = $langs->trans($objp->code);
+                else
+                    $effs[$objp->id] = $objp->libelle;
+                $i++;
+            }
+            $this->db->free($result);
+        }
+    
+        return $effs;
+    }
 
 
   /**
