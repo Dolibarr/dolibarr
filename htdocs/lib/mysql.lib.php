@@ -52,21 +52,22 @@ class DoliDb
   
   // Constantes pour conversion code erreur MySql en code erreur générique
   var $errorcode_map = array(
-            1004 => DB_ERROR_CANNOT_CREATE,
-            1005 => DB_ERROR_CANNOT_CREATE,
-            1006 => DB_ERROR_CANNOT_CREATE,
-            1007 => DB_ERROR_ALREADY_EXISTS,
-            1008 => DB_ERROR_CANNOT_DROP,
-            1046 => DB_ERROR_NODBSELECTED,
-            1050 => DB_ERROR_TABLE_ALREADY_EXISTS,
-            1051 => DB_ERROR_NOSUCHTABLE,
-            1054 => DB_ERROR_NOSUCHFIELD,
-            1062 => DB_ERROR_RECORD_ALREADY_EXISTS,
-            1064 => DB_ERROR_SYNTAX,
-            1100 => DB_ERROR_NOT_LOCKED,
-            1136 => DB_ERROR_VALUE_COUNT_ON_ROW,
-            1146 => DB_ERROR_NOSUCHTABLE,
-            1048 => DB_ERROR_CONSTRAINT,
+            1004 => 'DB_ERROR_CANNOT_CREATE',
+            1005 => 'DB_ERROR_CANNOT_CREATE',
+            1006 => 'DB_ERROR_CANNOT_CREATE',
+            1007 => 'DB_ERROR_ALREADY_EXISTS',
+            1008 => 'DB_ERROR_CANNOT_DROP',
+            1046 => 'DB_ERROR_NODBSELECTED',
+            1050 => 'DB_ERROR_TABLE_ALREADY_EXISTS',
+            1051 => 'DB_ERROR_NOSUCHTABLE',
+            1054 => 'DB_ERROR_NOSUCHFIELD',
+            1062 => 'DB_ERROR_RECORD_ALREADY_EXISTS',
+            1064 => 'DB_ERROR_SYNTAX',
+            1100 => 'DB_ERROR_NOT_LOCKED',
+            1136 => 'DB_ERROR_VALUE_COUNT_ON_ROW',
+            1146 => 'DB_ERROR_NOSUCHTABLE',
+            1048 => 'DB_ERROR_CONSTRAINT',
+            1217 => 'DB_ERROR_CHILD_EXISTS'
         );  
   
   /**
@@ -473,7 +474,7 @@ class DoliDb
         if (isset($this->errorcode_map[mysql_errno($this->db)])) {
             return $this->errorcode_map[mysql_errno($this->db)];
         }
-        return DB_ERROR;
+        return 'DB_ERROR_'.mysql_errno($this->db);
   }
     
   /**
