@@ -84,7 +84,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	      for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
 		{
 		  $result = $facture->addline($facid,
-					      addslashes($prop->lignes[$i]->desc),
+					      addslashes($prop->lignes[$i]->libelle),
 					      $prop->lignes[$i]->price,
 					      $prop->lignes[$i]->qty,
 					      $prop->lignes[$i]->tva_tx,
