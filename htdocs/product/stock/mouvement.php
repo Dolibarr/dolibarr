@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,19 @@
  * $Source$
  *
  */
+
+/**     \file       htdocs/product/stock/mouvement.php
+        \group      stock
+        \brief      Page liste des mouvements de stocks
+        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 $user->getrights('produit');
 
 if (!$user->rights->produit->lire)
   accessforbidden();
+
 
 /*
  *
@@ -68,12 +76,12 @@ if ($result)
   
   print_barre_liste($texte, $page, "mouvement.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
-  print '<table class=\"noborder" width="100%">';
+  print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Ref"),"mouvement.php", "p.ref","");
   print "<td align=\"center\">Unités</td>";
-  print_liste_field_titre("Date","mouvement.php", "m.datem","");
-  print_liste_field_titre("Entrepôt","mouvement.php", "s.label","");
+  print_liste_field_titre($langs->trans("Date"),"mouvement.php", "m.datem","");
+  print_liste_field_titre($langs->trans("Warehouse"),"mouvement.php", "s.label","");
   print "</tr>\n";
     
   $var=True;
@@ -96,7 +104,7 @@ if ($result)
 }
 else
 {
-  print $db->error() . "<br>" .$sql;
+  dolibarr_print_error($db);
 }
 
 
