@@ -45,7 +45,8 @@ class CompanyBankAccount
     $this->soc_id = $soc_id;
 
     $this->clos = 0;
-    $this->solde = 0;    
+    $this->solde = 0;
+    $this->error_number = 0;
     return 1;
   }
 
@@ -177,7 +178,7 @@ class CompanyBankAccount
    */
   function error()
     {      
-        return $this->error;
+      return $this->error;
     }
 
   /*
@@ -187,13 +188,53 @@ class CompanyBankAccount
   function verif()
   {
     require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
-    if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix))
+
+
+    if (strlen(trim($this->code_banque)) == 0)
       {
-	return 0;
+	$this->error_number = 32;
+	$this->error_message = "Le code banque n'est pas renseigné";
+      }
+
+    if (strlen(trim($this->code_guichet)) == 0)
+      {
+	$this->error_number = 33;
+	$this->error_message = "Le code guichet n'est pas renseigné";
+      }
+
+
+    if (strlen(trim($this->number)) == 0)
+      {
+	$this->error_number = 34;
+	$this->error_message = "Le numéro de compte n'est pas renseigné";
+      }
+
+    if (strlen(trim($this->cle_rib)) == 0)
+      {
+	$this->error_number = 35;
+	$this->error_message = "La clé n'est pas renseignée";
+      }
+
+    if (strlen(trim($this->iban_prefix)) == 0)
+      {
+	$this->error_number = 36;
+	$this->error_message = "La cle IBAN n'est pas renseignée";
+      }
+
+
+    if (! verif_rib($this->code_banque, $this->code_guichet, $this->number, $this->cle_rib, $this->iban_prefix))
+      {
+	$this->error_number = 12;
+	$this->error_message = "Le RIB n'est pas valide";
+      }
+    
+    if ($this->error_number == 0)
+      {
+	return 1;
       }
     else
       {
-	return 1;
+	return 0;
       }
   }
 }
