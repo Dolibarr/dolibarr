@@ -4,10 +4,10 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = dolibarr
-PROJECT_NUMBER         = 1.2.0
+PROJECT_NUMBER         = 2.0.0
 OUTPUT_DIRECTORY       = doc/dev/php
 CREATE_SUBDIRS         = NO
-OUTPUT_LANGUAGE        = French
+OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = NO
 BRIEF_MEMBER_DESC      = YES
 REPEAT_BRIEF           = YES
@@ -77,7 +77,10 @@ EXCLUDE                = mysql \
                          documents \
                          scripts \
                          htdocs/theme \
+                         htdocs/images \
                          htdocs/includes/pear
+                         htdocs/includes/php_writeexcel
+                         htdocs/includes/phplot
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 
 EXAMPLE_PATH           = 
@@ -125,7 +128,7 @@ TREEVIEW_WIDTH         = 250
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
 #---------------------------------------------------------------------------
-GENERATE_LATEX         = YES
+GENERATE_LATEX         = NO
 LATEX_OUTPUT           = latex
 LATEX_CMD_NAME         = latex
 MAKEINDEX_CMD_NAME     = makeindex
