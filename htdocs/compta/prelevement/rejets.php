@@ -91,7 +91,7 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
   
   print_barre_liste("Prélèvements rejetés", $page, "rejets.php", $urladd, $sortfield, $sortorder, '', $num);
@@ -109,7 +109,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object($result);	
 
       print "<tr $bc[$var]><td>";
       print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
@@ -126,11 +126,11 @@ if ($result)
     }
 
   print "</table>";
-  $db->free();
+  $db->free($result);
 }
 else 
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 $db->close();

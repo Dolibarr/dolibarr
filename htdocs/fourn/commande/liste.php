@@ -99,7 +99,7 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
   
   $langs->load("orders");
@@ -131,7 +131,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object($result);	
       $var=!$var;
 
       print "<tr $bc[$var]>";
@@ -154,7 +154,7 @@ if ($result)
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($result);
 }
 else 
 {

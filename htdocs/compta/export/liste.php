@@ -69,15 +69,16 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
   
-  print_barre_liste("Exports", $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste($langs->trans("Exports"), $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
+
   print"\n<!-- debut table -->\n";
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
 
-  print_liste_field_titre("Réf","liste.php","ec.ref");
+  print_liste_field_titre($langs->trans("Ref"),"liste.php","ec.ref");
 
   print '<td>Client facturé</td>';
 
@@ -89,7 +90,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object($result);	
       $var=!$var;
 
       print "<tr $bc[$var]>";
@@ -100,11 +101,11 @@ if ($result)
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($result);
 }
 else 
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 $db->close();

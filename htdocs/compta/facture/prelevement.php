@@ -165,7 +165,7 @@ if ($_GET["facid"] > 0)
       $result_sql = $db->query($sql);
       if ($result_sql)
 	{
-	  $num = $db->num_rows();
+	  $num = $db->num_rows($result_sql);
 	}
 
 
@@ -184,7 +184,7 @@ if ($_GET["facid"] > 0)
       /*
        * Prélèvement
        */
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+      print '<table class="noborder" width="100%">';
 
       print '<tr class="liste_titre">';      
       print '<td align="center">Date demande</td>';
@@ -201,7 +201,7 @@ if ($_GET["facid"] > 0)
 	  
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object($i);	
+	      $obj = $db->fetch_object($result_sql);	
 	      $var=!$var;
 	      
 	      print "<tr $bc[$var]>";	      	      
@@ -218,7 +218,7 @@ if ($_GET["facid"] > 0)
 	      $i++;
 	    }
 
-	  $db->free();
+	  $db->free($result_sql);
 	}
       else 
 	{
@@ -239,12 +239,12 @@ if ($_GET["facid"] > 0)
       $result = $db->query($sql);
       if ($result)
 	{
-	  $num = $db->num_rows();
+	  $num = $db->num_rows($result);
 	  $i = 0;
 	  
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object($i);	
+	      $obj = $db->fetch_object($result);	
 	      $var=!$var;
 	      
 	      print "<tr $bc[$var]>";
@@ -265,7 +265,7 @@ if ($_GET["facid"] > 0)
 	      $i++;
 	    }
 
-	  $db->free();
+	  $db->free($result);
 	}
       else 
 	{

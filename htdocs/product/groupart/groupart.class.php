@@ -117,16 +117,17 @@ class Groupart {
     $sql .= " WHERE a.rowid = l.fk_album AND l.fk_groupart = ".$this->id;
     $sql .= " ORDER BY a.title";
 
-    if ($this->db->query($sql) )
+    $result=$this->db->query($sql);
+    if ($result)
       {
-	$nump = $this->db->num_rows();
+	$nump = $this->db->num_rows($result);
 	
 	if ($nump)
 	  {
 	    $i = 0;
 	    while ($i < $nump)
 	      {
-		$obj = $this->db->fetch_object($i);
+		$obj = $this->db->fetch_object($result);
 		
 		$ga[$obj->rowid] = $obj->title;
 		$i++;
@@ -137,6 +138,7 @@ class Groupart {
     else
       {
 	print $this->db->error();
+	return -1;
       }    
   }
   /*
@@ -165,16 +167,17 @@ class Groupart {
 
     $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."groupart ORDER BY nom";
 
-    if ($this->db->query($sql) )
+    $result=$this->db->query($sql);
+    if ($result)
       {
-	$nump = $this->db->num_rows();
+	$nump = $this->db->num_rows($result);
 	
 	if ($nump)
 	  {
 	    $i = 0;
 	    while ($i < $nump)
 	      {
-		$obj = $this->db->fetch_object($i);
+		$obj = $this->db->fetch_object($result);
 		
 		$ga[$obj->rowid] = $obj->nom;
 		$i++;
@@ -185,6 +188,7 @@ class Groupart {
     else
       {
 	print $this->db->error();
+    return -1;
       }
     
   }

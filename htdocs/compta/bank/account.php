@@ -257,6 +257,7 @@ if ($account > 0)
   if ($result)
     {
       _print_lines($db, $sql, $acct);
+      $db->free($result);
     }
 
 
@@ -409,6 +410,6 @@ function _print_lines($db,$sql,$acct)
 	  
 	  $i++;
 	}
-      $db->free();
+
 }
 ?>

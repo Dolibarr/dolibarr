@@ -217,7 +217,7 @@ if ($_GET["action"] == 'create')
 	  $result = $db->query($sql);
 	  if ($result)
 	    {
-	      $num = $db->num_rows();
+	      $num = $db->num_rows($result);
 	      $i = 0; 
 	      while ($i < $num)
 		{
@@ -249,9 +249,10 @@ if ($_GET["action"] == 'create')
 //	  $sql .= " AND f.fk_statut = 1";  // Statut=0 => non validée, Statut=2 => annulée
 //	  $sql .= " GROUP BY f.facnumber";  
 //
-//	  if ($db->query($sql))
+//    $result=$db->query($sql);
+//	  if ($result)
 //	    {
-//	      $num = $db->num_rows();
+//	      $num = $db->num_rows($result);
 //	      
 //	      if ($num > 0)
 //		{
@@ -273,7 +274,7 @@ if ($_GET["action"] == 'create')
 		  
 		  while ($i < $num)
 		    {
-		      //$objp = $db->fetch_object($i);
+		      //$objp = $db->fetch_object($result);
 		      $objp = $charge;
 		      
 		      $var=!$var;

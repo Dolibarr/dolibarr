@@ -97,13 +97,13 @@ $result = $db->query($sql) ;
 
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
 
   $i = 0;
   
   if ($num == 1 && (isset($sall) or isset($snom) or isset($sref)))
     {
-      $objp = $db->fetch_object($i);
+      $objp = $db->fetch_object($result);
       Header("Location: fiche.php?id=$objp->rowid");
     }
   
@@ -143,7 +143,7 @@ if ($result)
   $var=True;
   while ($i < min($num,$limit))
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       $var=!$var;
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
@@ -152,14 +152,14 @@ if ($result)
       print "</TR>\n";
       $i++;
     }
-  $db->free();
+  $db->free($result);
 
   print "</table>";
 
 }
 else
 {
-  print $db->error() . "<br>" .$sql;
+  dolibarr_print_error($db);
 }
 
 

@@ -530,13 +530,14 @@ else
 	      $sql = "SELECT s.idp, s.nom, s.ville FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur=1";	     
 	      $sql .= " ORDER BY lower(s.nom)";
 	  
-	      if ($db->query($sql))
+	        $result=$db->query($sql);
+	      if ($result)
 		{
-		  $num = $db->num_rows();
+		  $num = $db->num_rows($result);
 		  $i = 0;		  		  
 		  while ($i < $num)
 		    {
-		      $obj = $db->fetch_object($i);
+		      $obj = $db->fetch_object($result);
 		      print '<option value="'.$obj->idp.'">'.$obj->nom . ($obj->ville?" ($obj->ville)":"");
 		      $i++;
 		    }

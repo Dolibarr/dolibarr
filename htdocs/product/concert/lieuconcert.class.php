@@ -128,16 +128,18 @@ class LieuConcert {
 
     $sql = "SELECT rowid, nom, ville, description FROM ".MAIN_DB_PREFIX."lieu_concert";
     $sql .= " ORDER BY ville, nom"; 
-    if ($this->db->query($sql) )
+    
+    $result=$this->db->query($sql);
+    if ($result)
       {
-	$nump = $this->db->num_rows();
+	$nump = $this->db->num_rows($result);
 	
 	if ($nump)
 	  {
 	    $i = 0;
 	    while ($i < $nump)
 	      {
-		$obj = $this->db->fetch_object($i);
+		$obj = $this->db->fetch_object($result);
 		
 		$ga[$obj->rowid] = $obj->ville . " - " .$obj->nom;
 		$i++;
@@ -148,6 +150,7 @@ class LieuConcert {
     else
       {
 	print $this->db->error();
+	return -1;
       }    
   }
 

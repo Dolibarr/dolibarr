@@ -89,13 +89,15 @@ if ($modecompta != 'CREANCES-DETTES') {
 	$sql .= " AND f.paye = 1";
 }
 $sql .= " GROUP BY dm DESC";
-if ($db->query($sql))
+
+$result=$db->query($sql);
+if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0; 
   while ($i < $num)
     {
-      $row = $db->fetch_object($i);
+      $row = $db->fetch_object($result);
       $encaiss[$row->dm] = $row->amount_ht;
       $encaiss_ttc[$row->dm] = $row->amount_ttc;
       $i++;
@@ -104,6 +106,7 @@ if ($db->query($sql))
 else {
 	dolibarr_print_error($db);	
 }
+$db->free($result);
 
 /*
  * Frais, factures fournisseurs.
@@ -123,13 +126,14 @@ if ($modecompta != 'CREANCES-DETTES') {
 }
 $sql .= " GROUP BY dm DESC";
 
-if ($db->query($sql))
+$result=$db->query($sql);
+if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0; 
   while ($i < $num)
     {
-      $row = $db->fetch_object($i);
+      $row = $db->fetch_object($result);
       $decaiss[$row->dm] = $row->amount_ht;
       $decaiss_ttc[$row->dm] = $row->amount_ttc;
       $i++;
@@ -138,7 +142,7 @@ if ($db->query($sql))
 else {
 	dolibarr_print_error($db);	
 }
-
+$db->free($result);
 
 /*
  * Tableau

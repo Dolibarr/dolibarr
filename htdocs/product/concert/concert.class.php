@@ -94,7 +94,7 @@ class Concert {
     $result = $this->db->query($sql) ;
 
     if ( $result ) {
-      $result = $this->db->fetch_array();
+      $result = $this->db->fetch_array($result);
 
       $this->id            = $result["rowid"];
       $this->date          = $result["dc"];
@@ -103,16 +103,10 @@ class Concert {
       $this->groupartid    = $result["fk_groupart"];
       $this->lieuid        = $result["fk_lieu_concert"];
     }
-    $this->db->free();
+    $this->db->free($result);
 
-    return $result;
+    return $this->id;
   }
-
-
-  /*
-   *
-   *
-   */
 
 
   /*
@@ -127,16 +121,17 @@ class Concert {
     $sql .= " WHERE g.rowid = l.fk_groupart AND l.fk_album = ".$this->id;
     $sql .= " ORDER BY g.nom";
 
-    if ($this->db->query($sql) )
+    $result=$this->db->query($sql);
+    if ($result)
       {
-	$nump = $this->db->num_rows();
+	$nump = $this->db->num_rows($result);
 	
 	if ($nump)
 	  {
 	    $i = 0;
 	    while ($i < $nump)
 	      {
-		$obj = $this->db->fetch_object($i);
+		$obj = $this->db->fetch_object($result);
 		
 		$ga[$obj->rowid] = $obj->nom;
 		$i++;
@@ -147,6 +142,7 @@ class Concert {
     else
       {
 	print $this->db->error();
+	return -1;
       }    
   }
 

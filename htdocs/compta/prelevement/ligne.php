@@ -212,7 +212,7 @@ if ($_GET["id"])
 
   if ($result)
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($result);
       $i = 0;
   
       $urladd = "&amp;id=".$_GET["id"];
@@ -230,7 +230,7 @@ if ($_GET["id"])
 
       while ($i < min($num,$conf->liste_limit))
 	{
-	  $obj = $db->fetch_object($i);	
+	  $obj = $db->fetch_object($result);	
 
 	  print "<tr $bc[$var]><td>";
 
@@ -253,11 +253,11 @@ if ($_GET["id"])
 
       print "</table>";
 
-      $db->free();
+      $db->free($result);
     }
   else 
     {
-      print $db->error() . ' ' . $sql;
+      dolibarr_print_error($db);
     }
 
   $db->close();

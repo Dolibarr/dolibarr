@@ -159,33 +159,33 @@ class Categorie {
     $sql .= " WHERE c.categories_id = cd.categories_id AND cd.language_id = ".OSC_LANGUAGE_ID;
     $sql .= " AND c.parent_id = " . $this->id;
     $sql .= " ORDER BY cd.categories_name";
-    if ($this->db->query($sql) )
+    
+    $result=$this->db->query($sql);
+    if ($result)
       {
-	$nump = $this->db->num_rows();
+	$nump = $this->db->num_rows($result);
 	
 	if ($nump)
 	  {
 	    $i = 0;
 	    while ($i < $nump)
 	      {
-		$obj = $this->db->fetch_object($i);
+		$obj = $this->db->fetch_object($result);
 		
 		$ga[$obj->categories_id] = $obj->categories_name;
 		$i++;
 	      }
+        $this->db->free($result);
 	  }
 	return $ga;
       }
     else
       {
 	print $this->db->error();
+	return -1;
       }    
   }
-  /*
-   *
-   *
-   *
-   */
+
   /*
    *
    *

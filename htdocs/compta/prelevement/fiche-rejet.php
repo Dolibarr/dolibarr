@@ -106,7 +106,7 @@ $sql .= " ORDER BY pl.amount DESC";
 $result = $db->query($sql);
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
   
   print_barre_liste("Lignes de prélèvement rejetées", $page, "fiche-rejet.php", $urladd, $sortfield, $sortorder, '', $num);
@@ -121,7 +121,7 @@ if ($result)
 
   while ($i < $num)
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object($result);	
 
       print "<tr $bc[$var]><td>";
       print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
@@ -140,11 +140,11 @@ if ($result)
     }
 
   print "</table>";
-  $db->free();
+  $db->free($result);
 }
 else 
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 $db->close();

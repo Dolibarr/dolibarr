@@ -141,21 +141,22 @@ class Project {
       $propales = array();
       $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal WHERE fk_projet=$this->id;";
       
-      if ($this->db->query($sql) )
+      $result=$this->db->query($sql);
+      if ($result)
 	{
-	  $nump = $this->db->num_rows();
+	  $nump = $this->db->num_rows($result);
 	  if ($nump)
 	    {
 	      $i = 0;
 	      while ($i < $nump)
 		{
-		  $obj = $this->db->fetch_object($i);
+		  $obj = $this->db->fetch_object($result);
 		  
 		  $propales[$i] = $obj->rowid;
 		  
 		  $i++;
 		}
-	      $this->db->free();
+	      $this->db->free($result);
 	      /*
 	       *  Retourne un tableau contenant la liste des propales associees
 	       */
@@ -164,7 +165,7 @@ class Project {
 	}
       else
 	{
-	  print $this->db->error() . '<br>' .$sql;
+	  dolibarr_print_error($this->db);
 	}
     }
   /*
@@ -177,21 +178,22 @@ class Project {
       $factures = array();
       $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE fk_projet=$this->id;";
       
-      if ($this->db->query($sql) )
+      $result=$this->db->query($sql);
+      if ($result)
 	{
-	  $nump = $this->db->num_rows();
+	  $nump = $this->db->num_rows($result);
 	  if ($nump)
 	    {
 	      $i = 0;
 	      while ($i < $nump)
 		{
-		  $obj = $this->db->fetch_object($i);
+		  $obj = $this->db->fetch_object($result);
 		  
 		  $factures[$i] = $obj->rowid;
 		  
 		  $i++;
 		}
-	      $this->db->free();
+	      $this->db->free($result);
 	      /*
 	       *  Retourne un tableau contenant la liste des factures associees
 	       */
@@ -200,7 +202,7 @@ class Project {
 	}
       else
 	{
-	  print $this->db->error() . '<br>' .$sql;
+	  dolibarr_print_error($this->db);
 	}
     }
   /**
@@ -213,21 +215,22 @@ class Project {
       $commandes = array();
       $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande WHERE fk_projet=$this->id;";
       
-      if ($this->db->query($sql) )
+      $result=$this->db->query($sql);
+      if ($result)
 	{
-	  $nump = $this->db->num_rows();
+	  $nump = $this->db->num_rows($result);
 	  if ($nump)
 	    {
 	      $i = 0;
 	      while ($i < $nump)
 		{
-		  $obj = $this->db->fetch_object($i);
+		  $obj = $this->db->fetch_object($result);
 		  
 		  $commandes[$i] = $obj->rowid;
 		  
 		  $i++;
 		}
-	      $this->db->free();
+	      $this->db->free($result);
 	      /*
 	       *  Retourne un tableau contenant la liste des commandes associees
 	       */
@@ -236,7 +239,7 @@ class Project {
 	}
       else
 	{
-	  print $this->db->error() . '<br>' .$sql;
+	  dolibarr_print_error($this->db);
 	}
     }
 
