@@ -24,10 +24,15 @@
 
 require("./pre.inc.php");
 
+if(isset($_GET["account"]))
+  $HTTP_POST_VARS["account"] = $_GET["account"];
+if(isset($_GET["vline"]))
+  $HTTP_POST_VARS["vline"] = $_GET["vline"];
+
 if (!$user->rights->banque->lire)
   accessforbidden();
 
-if ($HTTP_POST_VARS["action"] == 'add' && $_GET["account"])
+if ($HTTP_POST_VARS["action"] == 'add' && $HTTP_POST_VARS["account"])
 {    
   if ($credit > 0)
     {
@@ -39,7 +44,7 @@ if ($HTTP_POST_VARS["action"] == 'add' && $_GET["account"])
     }
   
   $dateop = "$dateoy" . "$dateo";
-  $acct=new Account($db,$_GET["account"]);
+  $acct=new Account($db,$HTTP_POST_VARS["account"]);
 
   $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq,$cat1);
 
@@ -49,7 +54,7 @@ if ($HTTP_POST_VARS["action"] == 'add' && $_GET["account"])
     }
   else
     {
-      Header("Location: $PHP_SELF?account=$acct->id");
+      Header("Location: $PHP_SELF?account=" . $acct->id);
     }
     /*
   if ($num_chq)
@@ -95,8 +100,9 @@ if ($action == 'del' && $account && $user->rights->banque->modifier)
  */
 
 llxHeader();
+print "<p>Account: " . $HTTP_POST_VARS["account"] . "o" . $HTTP_POST_VARS["account"] . "</p>\n";
 
-if ($_GET["account"] > 0)
+if ($HTTP_POST_VARS["account"] > 0)
 {
   if ($vline)
     {
@@ -107,7 +113,7 @@ if ($_GET["account"] > 0)
       $viewline = 20;
     }
   $acct = new Account($db);
-  $acct->fetch($_GET["account"]);
+  $acct->fetch($HTTP_POST_VARS["account"]);
 
   $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
   $result = $db->query($sql);
@@ -198,8 +204,9 @@ if ($_GET["account"] > 0)
    * Formulaire de recherche
    *
    */  
-  print '<form method="post" action="'.$PHP_SELF.'?account='.$acct->id.'">';
+  print '<form method="post" action="'.$PHP_SELF.'">';
   print '<input type="hidden" name="action" value="search">';
+  print '<input type="hidden" name="account" value="' . $acct->id . '">';
   print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
   print "<TR>";
   print '<td>';
@@ -234,8 +241,10 @@ if ($_GET["account"] > 0)
    */
   if ($user->rights->banque->modifier)
     {
-      print '<form method="post" action="'.$PHP_SELF.'?vline='.$vline.'&amp;account='.$acct->id.'">';
+      print '<form method="post" action="'.$PHP_SELF.'">';
       print '<input type="hidden" name="action" value="add">';
+      print '<input type="hidden" name="vline" value="' . $vline . '">';
+      print '<input type="hidden" name="account" value="' . $acct->id . '">';
     }
   print '<tr class="liste_titre">';
   print '<td>Date</td><td>Type</td><td>Description</td>';
@@ -322,7 +331,7 @@ if ($_GET["account"] > 0)
 }
 else
 {
-  print "Erreur : numéro ce compte inexistant";
+  print "Erreur : numéro de compte inexistant";
 }
 
 $db->close();

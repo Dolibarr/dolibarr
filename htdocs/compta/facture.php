@@ -974,25 +974,25 @@ else
 	      } 
 
 	    // Envoyer
-	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer)
+	    if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer)
 	      {
 		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=presend\">Envoyer</a>";
 	      }
 	    
 	    // Envoyer une relance
-	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer) 
+	    if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer) 
 	      {
 		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=prerelance\">Envoyer une relance</a>";
 	      }
 
 	    // Emettre paiement 
-	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
+	    if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->paiement)
 	      {
 		print "<a class=\"tabAction\" href=\"paiement.php?facid=".$fac->id."&amp;action=create\">Emettre un paiement</a>";
 	      }
 	    
 	    // Classer 'payé'
-	    if ($fac->statut == 1 && $resteapayer <= 0 
+	    if ($fac->statut == 1 && price($resteapayer) <= 0 
 		&& $fac->paye == 0 && $user->rights->facture->paiement)
 	      {
 		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a>";
