@@ -21,12 +21,49 @@
  *
  */
 
+
 class FactureLigne
 {
-  Function FactureLigne()
+  Function FactureLigne($DB)
     {
+        $this->db= $DB ;
     }
+
+  /**
+   * Recupére l'objet ligne de facture
+   *
+   */
+  Function fetch($rowid, $societe_id=0)
+    {
+      $sql = "SELECT fk_product, description, price, qty, rowid, tva_taux, remise, remise_percent, subprice, ".$this->db->pdate("date_start")." as date_start,".$this->db->pdate("date_end")." as date_end";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = ".$rowid;
+
+      $result = $this->db->query($sql);
+      if ($result)
+	  {
+	      $objp = $this->db->fetch_object($i);
+	      $this->desc           = stripslashes($objp->description);
+	      $this->qty            = $objp->qty;
+	      $this->price          = $objp->price;
+	      $this->subprice       = $objp->subprice;
+	      $this->tva_taux       = $objp->tva_taux;
+	      $this->remise         = $objp->remise;
+	      $this->remise_percent = $objp->remise_percent;
+	      $this->produit_id     = $objp->fk_product;
+	      $this->date_start     = $objp->date_start;
+	      $this->date_end       = $objp->date_end;
+	      $i++;
+	  }
+	  else {
+	      print "Erreur ".$this->db->error()."<br>".$sql; 
+	  }
+	  $this->db->free();
+    }
+
 }
+
+
+
 
 class Facture
 {

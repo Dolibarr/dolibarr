@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,14 +53,10 @@ if ($_POST["action"] == 'miseenservice')
   $contrat->id = $id;
   $contrat->fetch($id);
   $contrat->mise_en_service($user, 
-			    mktime($_POST["rehour"],
-				   $_POST["remin"],
-				   0,
-				   $_POST["remonth"],
-				   $_POST["reday"],
-				   $_POST["reyear"]),
-			    $_POST["duration"]
-			    );
+    mktime($_POST["date_starthour"],$_POST["date_startmin"],0,$_POST["date_startmonth"],$_POST["date_startday"],$_POST["date_startyear"]),
+    0,
+    mktime($_POST["date_endhour"],$_POST["date_endmin"],0,$_POST["date_endmonth"],$_POST["date_endday"],$_POST["date_endyear"])
+    );
 }
 
 if ($_GET["action"] == 'cloture')
@@ -102,13 +98,13 @@ if ($action == 'update' && $cancel <> 'Annuler')
       $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
     }
 }
-/*
- *
- *
- */
 $html = new Form($db);
 
 
+/*
+ * Fiche création
+ *
+ */
 if ($action == 'create')
 {
   print "<form action=\"$PHP_SELF?type=$type\" method=\"post\">\n";
@@ -129,7 +125,8 @@ if ($action == 'create')
   print "</textarea></td></tr>";
   if ($type == 1)
     {
-      print '<tr><td>Durée</td><TD><input name="duration_value" size="6" value="'.$product->duree.'">';
+        // Si contrat de type service
+      print '<tr><td>Durée</td><td><input name="duration_value" size="6" value="'.$product->duree.'">';
       print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
       print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
       print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
@@ -143,25 +140,33 @@ if ($action == 'create')
 }
 else
 {
+/*
+ * Fiche visu/édition
+ *
+ */
   if ($id)
     {
       $contrat = new Contrat($db);
       $result = $contrat->fetch($id);
 
       if ( $result )
-	{ 
-	  $facture = new Facture($db);
-	  $facture->fetch($contrat->factureid);
-
-
+    { 
+      $date_start='';
+      $date_end='';
+          
 	  print_fiche_titre('Fiche contrat : '.$contrat->id, $mesg);
       
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
 	  print '<td width="20%">Service</td><td colspan=4>'.($contrat->product->ref).' - '.($contrat->product->label_url).'</td>';
 	  print '</tr><tr>';	
-	  if ($contrat->factureid)
+	  if ($contrat->facturedetid)
 	    {
+    	  // Si contrat lié à une ligne de factures (ce n'est pas le cas sur les anciennes données)
+    	  $facturedet = new FactureLigne($db);
+    	  $facturedet->fetch($contrat->facturedetid);
+          $date_start=$facturedet->date_start;
+	      $date_end=$facturedet->date_end;
 	      print '<td>Société</td><td>'.$contrat->societe->nom_url.'</td>';
 	      print '<td>Facture</td><td><a href="../compta/facture.php?facid='.$contrat->factureid.'">Facture</td>';
 	    }
@@ -179,24 +184,62 @@ else
 	    {
 	      print "<b>Ce contrat n'est pas en service</b>";
 	    }
-      print '</td></tr>';
+      print "</td></tr>\n";
 	  if ($request == 'miseenservice')
 	    {
+          // Si date_start et date_end ne sont pas connues de la ligne de facture, on les
+          // definit à une valeur par défaut en fonction de la durée définie pour le service.
+          if (! $date_start) { $date_start=mktime(); }
+          if (! $date_end) {
+            if ($contrat->product->duration) {
+                // Si duree du service connue
+                $duree_value = substr($contrat->product->duration,0,strlen($contrat->product->duration)-1);
+                $duree_unit = substr($contrat->product->duration,-1);
+        
+                $month = date("m",$date_start);
+                $day = date("d",$date_start);
+                $year = date("Y",$date_start);
+        
+                switch($duree_unit) 
+                  {
+                  case "d":
+            	$day = $day + $duree_value;
+            	break;
+                  case "w":
+            	$day = $day + ($duree_value * 7);
+            	break;
+                  case "m":
+            	$month = $month + $duree_value;
+            	break;
+                  case "y":
+            	$year = $year + $duree_value;
+            	break;
+                  }
+                $date_end = mktime(date("H",$date_start), date("i",$date_start), 0, $month, $day, $year);
+            }
+          }
+
+
 	      print '<form action="fiche.php?id='.$id.'" method="post">';
 	      print '<input type="hidden" name="action" value="miseenservice">';
-	      print '<tr><td>Date de mise en service</td><td colspan="3">';
-	      print $html->select_date('','re',1,1);
-	      print "&nbsp;";
-	      print '</td></tr>';
-	      print '<tr><td>Date de fin</td><td colspan="3">';
 	      
-	      // TODO : Offrir le choix de la date de fin de contrat par la durée prédéfinie ou par
-	      // une date explicite.
-	      print $contrat->product->duration." après";
-	      //print "<br>";$html->select_date('','fin',1,1);
-	      
+	      print '<tr><td>Durée standard pour ce service</td><td colspan="3">';
+	      print $contrat->product->duration;
 	      print '<input type="hidden" name="duration" value="'.$contrat->product->duration.'">';
 	      print '</td></tr>';
+
+	      // Date de début de mise en service
+	      print '<tr><td>Date de mise en service</td><td colspan="3">';
+	      print $html->select_date($date_start,'date_start',1,1);
+	      print "&nbsp;";
+	      print '</td></tr>';
+
+	      // Date de fin prévue de mise en service
+	      print '<tr><td>Date de fin prévue</td><td colspan="3">';
+	      print $html->select_date($date_end,'date_end',1,1);
+	      print "&nbsp;";
+	      print '</td></tr>';
+	      
 	      print '<tr><td colspan="4" align="center">';
 	      print '<input type="submit" value="Enregistrer">';
 	      print '</td></tr>';
@@ -251,7 +294,7 @@ if (! $contrat->enservice)
 }
 elseif ($contrat->enservice == 1)
 {
-  print '<a class="tabAction" href="fiche.php?action=annule&id='.$id.'">Annuler</a>';
+  print '<a class="tabAction" href="fiche.php?action=annule&id='.$id.'">Mettre hors service</a>';
   print '<a class="tabAction" href="fiche.php?action=cloture&id='.$id.'">Clôturer</a>';
 }
 print '</div>';
