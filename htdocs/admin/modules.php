@@ -118,9 +118,9 @@ $modules["MAIN_MODULE_EXTERNAL_RSS"][2] = MAIN_MODULE_EXTERNAL_RSS;
 $modules["MAIN_MODULE_EXTERNAL_RSS"][3] = "Module de gestion de syndication de sites externes";
 $modules["MAIN_MODULE_EXTERNAL_RSS"][4] = "modExternalRss";
 
-if ($action == 'set' && $user->admin)
+if ($_GET["action"] == 'set' && $user->admin)
 {
-  Activate($value);
+  Activate($_GET["value"]);
 
   Header("Location: modules.php");
 }
@@ -152,8 +152,10 @@ function Activate($value)
     
 }
 
-if ($action == 'reset' && $user->admin)
+if ($_GET["action"] == 'reset' && $user->admin)
 {
+  $value = $_GET["value"];
+
   $sql = "DELETE FROM llx_const WHERE name = '".$value."'";
 
   if ($db->query($sql))
