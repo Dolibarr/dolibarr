@@ -333,6 +333,25 @@ class Facture
 	  print $this->db->error() . ' in ' . $sql;
 	}
     }
+  /**
+   * Class la facture
+   *
+   *
+   */
+  Function classin($cat_id)
+    {
+      $sql = "UPDATE llx_facture SET fk_projet = $cat_id";
+      $sql .= " WHERE rowid = $this->id;";
+      
+      if ($this->db->query($sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	}
+    }
 
   /**
    * Supprime la facture
