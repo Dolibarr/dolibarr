@@ -87,7 +87,7 @@ if ($handle)
 	    $pair = "impair";
 	  else
 	    $pair = "pair";
-	  print "<tr class=\"$pair\">\n  <td width=\"140\">".$modCodeClient->nom."</td>\n  <td>\n";
+	  print "<tr class=\"$pair\">\n  <td width=\"140\">".$modCodeClient->nom."</td>\n  <td>";
 	  print $modCodeClient->info();
 	  print "</td>\n";
 	  

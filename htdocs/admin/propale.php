@@ -3,6 +3,7 @@
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Eric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,12 +118,12 @@ print "<br>";
 
 print_titre("Module de numérotation des propositions commerciales");
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>Info</td>';
-print '<td align="center">Activé</td>';
-print '<td>&nbsp;</td>';
+print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print "  <td>Nom</td>\n";
+print "  <td>Info</td>\n";
+print "  <td align=\"center\">Activé</td>\n";
+print "  <td>&nbsp;</td>\n";
 print "</tr>\n";
 
 clearstatcache();
@@ -141,33 +142,35 @@ if ($handle)
 
 	  $modPropale = new $file;
 
-	  print '<tr class="pair"><td width="140">'.$file."</td><td>\n";
+	  if($pair == "pair")
+	    $pair = "impair";
+	  else
+	    $pair = "pair";
+	  print "<tr class=\"$pair\">\n  <td width=\"140\">".$file."</td>\n  <td>";
 	  print $modPropale->info();
-	  print '</td>';
+	  print "</td>\n";
 	  
 	  if ($propale_addon_var == "$file")
 	    {
-	      print '<td align="center">';
-	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-		  print '</td><td>&nbsp;</td>';
+	      print "  <td align=\"center\">";
+	      print "<img src=\"".DOL_URL_ROOT."/theme/".$conf->theme."/img/tick.png\" border=\"0\"></a>";
+		  print "</td>\n  <td>&nbsp;</td>\n";
 	    }
 	  else
 	    {
-		  print '<td>&nbsp;</td>';
-		  print '<td align="center"><a href="propale.php?action=setmod&amp;value='.$file.'">activer</a></td>';
+		  print "  <td>&nbsp;</td>\n";
+		  print "  <td align=\"center\"><a href=\"propale.php?action=setmod&amp;value=".$file."\">activer</a></td>\n";
 	    }
 	  
-	  print '</tr>';
+	  print "</tr>\n";
 	}
     }
   closedir($handle);
 }
-print '</table>';
+print "</table>\n";
 /*
  * PDF
  */
-
-
 
 
 $def = array();
@@ -196,12 +199,12 @@ $dir = "../includes/modules/propale/";
 
 print_titre("Modèles de propale pdf");
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print '<tr class="liste_titre">';
-print '<td width="140">Nom</td>';
-print '<td>Info</td>';
-print '<td colspan="2">Actif</td>';
-print '<td colspan="2">Défaut</td>';
+print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print "  <td width=\"140\">Nom</td>\n";
+print "  <td>Info</td>\n";
+print "  <td colspan=\"2\">Actif</td>\n";
+print "  <td colspan=\"2\">Défaut</td>\n";
 print "</tr>\n";
 
 clearstatcache();
@@ -215,30 +218,34 @@ while (($file = readdir($handle))!==false)
       $name = substr($file, 12, strlen($file) - 24);
       $classname = substr($file, 0, strlen($file) -12);
 
-      print '<tr class="pair"><td>';
-      echo "$name";
-      print "</td><td>\n";
+      if($pair == "pair")
+	$pair = "impair";
+      else
+	$pair = "pair";
+      print "<tr class=\"$pair\">\n  <td>";
+      print "$name";
+      print "</td>\n  <td>\n";
       require_once($dir.$file);
       $obj = new $classname();
       
       print $obj->description;
 
-      print '</td><td align="center">';
+      print "</td>\n  <td align=\"center\">\n";
 
       if (in_array($name, $def))
 	{
 	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-	  print "</td><td>\n";
+	  print "</td>\n  <td>";
 	  print '<a href="propale.php?action=del&amp;value='.$name.'">désactiver</a>';
 	}
       else
 	{
 	  print "&nbsp;";
-	  print "</td><td>\n";
+	  print "</td>\n  <td>";
 	  print '<a href="propale.php?action=set&amp;value='.$name.'">activer</a>';
 	}
 
-      print '</td><td align="center">';
+      print "</td>\n  <td align=\"center\">";
 
       if ($propale_addon_var_pdf == "$name")
 	{
@@ -249,7 +256,7 @@ while (($file = readdir($handle))!==false)
 	  print "&nbsp;";
 	}
 
-      print "</td><td>\n";
+      print "</td>\n  <td>";
 
       print '<a href="propale.php?action=setpdf&amp;value='.$name.'">activer</a>';
 
@@ -266,12 +273,12 @@ print '</table>';
 print '<br>';
 print_titre("Chemins d'accés aux documents");
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
-print '<tr class="liste_titre">';
-print '<td>Nom</td><td>Valeur</td>';
+print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print "  <td>Nom</td>\n  <td>Valeur</td>\n";
 print "</tr>\n";
-print '<tr '.$bc[True].'><td width=\"140\">Répertoire</td><td>'.PROPALE_OUTPUTDIR.'</td></tr>';
-print "</table><br>";
+print "<tr ".$bc[True].">\n  <td width=\"140\">Répertoire</td>\n  <td>".PROPALE_OUTPUTDIR."</td>\n</tr>\n";
+print "</table>\n<br>";
 
 
 
@@ -280,18 +287,16 @@ print "</table><br>";
  *
  */
 print_titre("Formulaire de création");
-print '<form method="post" action="propale.php?action=nbprod">';
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>Valeur</td><td>&nbsp;</td>';
+print "<form method=\"post\" action=\"propale.php?action=nbprod\">\n";
+print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print "  <td>Nom</td>\n";
+print "  <td>Valeur</td>\n  <td>&nbsp;</td>\n";
 print "</tr>\n";
-print '<tr class="pair"><td>';
-print 'Nombre de ligne produits</td><td align="center">';
-print '<input size="3" type="text" name="value" value="'.PROPALE_NEW_FORM_NB_PRODUCT.'">';
-print '</td><td><input type="submit" value="changer"></td></tr></table></form>';
-
-
+print "<tr class=\"pair\">\n  <td>";
+print "Nombre de ligne produits</td>\n  <td align=\"center\">";
+print "<input size=\"3\" type=\"text\" name=\"value\" value=\"".PROPALE_NEW_FORM_NB_PRODUCT."\">";
+print "</td>\n  <td><input type=\"submit\" value=\"changer\"></td>\n</tr>\n</table>\n</form>\n";
 
 $db->close();
 
