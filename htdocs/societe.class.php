@@ -801,7 +801,7 @@ class Societe {
     return $this->bank_account->verif();
   }
   /**
-   * Renvoie 0 si ok
+   * Renvoie 0 si ok, peut modifier le code client suivant le module utilisé
    *
    */
   function check_codeclient()
