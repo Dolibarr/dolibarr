@@ -444,11 +444,11 @@ function top_menu($head, $title="", $target="")
   print $langs->lang_header();
   print $head;
 
-  print '<link rel="top" title="Accueil" href="'.DOL_URL_ROOT.'/">';
-  print '<link rel="help" title="Aide" href="http://www.dolibarr.com/aide.fr.html">';
+  print '<link rel="top" title="'.$langs->trans("Home").'" href="'.DOL_URL_ROOT.'/">';
+  print '<link rel="help" title="'.$langs->trans("Help").'" href="http://www.dolibarr.com/aide.fr.html">';
 
   print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
-  print '<link rel="author" title="Equipe de développement" href="http://www.dolibarr.com/dev.fr.html">'."\n";
+  print '<link rel="author" title="'.$langs->trans("DevelopmentTeam").'" href="http://www.dolibarr.com/dev.fr.html">'."\n";
 
   print '<link rel="stylesheet" type="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
   print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
@@ -486,8 +486,7 @@ function top_menu($head, $title="", $target="")
     {
       print '<table class="topbarre" width="100%">';
       print "<tr><td>Votre système nécessite d'être mis à jour. ";
-      print "Pour cela ";
-      print 'cliquez sur <A href="'.DOL_URL_ROOT.'/admin/system/update.php">Mettre à jour</A> !!</td></tr>';
+      print 'Pour cela cliquez sur <A href="'.DOL_URL_ROOT.'/admin/system/update.php">Mettre à jour</A> !!</td></tr>';
       print "</table>";
     }
 
@@ -504,7 +503,7 @@ function top_menu($head, $title="", $target="")
   $class="";
   if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "accueil") { $class="menusel"; }
   elseif (ereg("^".DOL_URL_ROOT."\/[^\\\/]+$",$PHP_SELF) || ereg("^".DOL_URL_ROOT."\/user\/",$PHP_SELF) || ereg("^".DOL_URL_ROOT."\/admin\/",$PHP_SELF)) { $class="menusel"; }
-  print '<td width="200" class="menu"><table cellpadding=0 cellspacing=0 width="100%"><tr><td class="'.$class.'" align=center><a class="'.$class.'" href="'.DOL_URL_ROOT.'/index.php"'.($target?" target=$target":"").'>Accueil</a></td></tr></table></td>';
+  print '<td width="200" class="menu"><table cellpadding=0 cellspacing=0 width="100%"><tr><td class="'.$class.'" align=center><a class="'.$class.'" href="'.DOL_URL_ROOT.'/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Home").'</a></td></tr></table></td>';
 
   // Sommet géré par gestionnaire de menu du haut
   print '<td class="menu">';
@@ -522,7 +521,7 @@ function top_menu($head, $title="", $target="")
       print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->login.'</a>' ;
 
       print '<a href="'.DOL_URL_ROOT.'/user/logout.php">';
-      print '<img border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png" alt="Logout" title="Logout"></a>';
+      print '<img border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png" alt="'.$langs->trans("Logout").'" title="'.$langs->trans("Logout").'"></a>';
 
     }
   else
@@ -550,7 +549,7 @@ function top_menu($head, $title="", $target="")
  */
 Function left_menu($menu, $help_url='', $form_search='', $author='') 
 {
-  global $user, $conf, $rtplang;
+  global $user, $conf, $langs;
 
   /*
    * Colonne de gauche
@@ -572,6 +571,7 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
 
   if ((defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0) || (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0))
     {
+      $langs->load("companies");
       print '<div class="leftmenu">'."\n";
       
       if (defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
@@ -584,7 +584,7 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
 	  {
 	    print '<form action="'.DOL_URL_ROOT.'/societe.php">';
 	  }
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/clients.php">Societes</A><br>';
+	  print '<a class="menu" href="'.DOL_URL_ROOT.'/comm/clients.php">'.$langs->trans("Companies").'</a><br>';
 	  print '<input type="hidden" name="mode" value="search">';
 	  print '<input type="hidden" name="page" value="0">';
 	  print '<input type="hidden" name="mode-search" value="soc">';
@@ -595,8 +595,8 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
       
       if (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
 	{
-	  print '<form action="'.DOL_URL_ROOT.'/contact/index.php">';
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/contact/index.php">Contacts</A><br>';
+      print '<form action="'.DOL_URL_ROOT.'/contact/index.php">';
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/contact/index.php">'.$langs->trans("Contacts").'</A><br>';
 	  print '<input type="hidden" name="mode" value="search">';
 	  print '<input type="hidden" name="mode-search" value="contact">';
 	  print '<input type="text" class="flat" name="contactname" size="10">&nbsp;';
@@ -606,8 +606,9 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
 
       if ($conf->produit->enabled)
 	{
+      $langs->load("products");
 	  print '<form action="'.DOL_URL_ROOT.'/product/liste.php" method="post">';
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/product/">Produits</A><br>';
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/product/">'.$langs->trans("Products").'</A><br>';
 	  print '<input type="text" class="flat" name="sall" size="10">&nbsp;';
 	  print '<input type="submit" class="flat" value="go">';
 	  print "</form>\n";

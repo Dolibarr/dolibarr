@@ -24,7 +24,7 @@
 
 require("pre.inc.php");
 
-$langs->load("soc");
+$langs->load("companies");
  
 
 /*

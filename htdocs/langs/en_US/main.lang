@@ -1,5 +1,7 @@
 # Dolibarr language file - en_US - main
 charset="iso-8859-1"
+Home=Home
+Help=Help
 Activate=Activate
 Activated=Activated
 Add=Add
@@ -10,7 +12,9 @@ Edit=Edit
 Search=Search
 ChooseLangage=Please choose your language
 User=User
+Users=Users
 Group=Group
+Groups=Groups
 Name=Name
 Value=Value
 Type=Type
@@ -18,4 +22,6 @@ Note=Note
 Action=Action
 About=About
 WelcomeString=<font class="body">We are </font>%s<font class="body">, and you are connected with name</font> %s
-
+Number=Number
+DevelopmentTeam=Development Team
+Logout=Logout

@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - soc
 NewCompany=New company (prospect, customer, supplier)
 Company=Company
+Companies=Companies
 Name=Name
 Surname=Surname
 Address=Addrese

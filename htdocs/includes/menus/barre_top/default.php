@@ -39,41 +39,49 @@ else
   
   if ($conf->commercial->enabled)
     {
+      $langs->load("commercial");
+      
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "commercial") { $class="menusel"; }
       elseif (ereg("^".DOL_URL_ROOT."\/comm\/",$_SERVER["PHP_SELF"])) { $class="menusel"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
-      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/comm/index.php"'.($target?" target=$target":"").'>Commercial</A>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/comm/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Commercial").'</a>';
       print '</td>';
     }
     
     if ($conf->adherent->enabled)
     {
+      $langs->load("members");
+
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "adherent") { $class="menusel"; }
       elseif (ereg("^".DOL_URL_ROOT."\/adherents\/",$_SERVER["PHP_SELF"])) { $class="menusel"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
-      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/adherents/index.php"'.($target?" target=$target":"").'>Adhérents</A>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/adherents/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Members").'</a>';
       print '</td>';
     }
     
     if ($conf->compta->enabled || $conf->banque->enabled || $conf->caisse->enabled)
     {
+      $langs->load("compta");
+
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "compta") { $class="menusel"; }
       elseif (ereg("^".DOL_URL_ROOT."\/compta\/",$_SERVER["PHP_SELF"])) { $class="menusel"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
-      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/compta/index.php"'.($target?" target=$target":"").'>Compta/Tréso</A>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/compta/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Accountancy")."/".$langs->trans("Treasury").'</a>';
       print '</td>';
     }
     
     if ($conf->produit->enabled || $conf->service->enabled) 
     {
+      $langs->load("products");
+
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "product") { $class="menusel"; }
       elseif (ereg("^".DOL_URL_ROOT."\/product\/",$_SERVER["PHP_SELF"])) { $class="menusel"; }
       $chaine="";
-      if ($conf->produit->enabled) { $chaine.="Produits"; }
+      if ($conf->produit->enabled) { $chaine.=$langs->trans("Products"); }
       if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
       if ($conf->service->enabled) { $chaine.="Services"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
@@ -83,12 +91,13 @@ else
     
     if ($conf->webcal->enabled)
     {
+      $langs->load("other");
+
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "webcalendar") { $class="menusel"; }
       elseif (ereg("^".DOL_URL_ROOT."\/projet\/",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/webcalendar\/",$_SERVER["PHP_SELF"])) { $class="menusel"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
-//      print '<a class="'.$class.'" href="'. PHPWEBCALENDAR_URL .'">Calendrier</a>';
-      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/projet/webcal.php"'.($target?" target=$target":"").'>Calendrier</a>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/projet/webcal.php"'.($target?" target=$target":"").'>'.$langs->trans("Calendar").'</a>';
       print '</td>';
     };
     
