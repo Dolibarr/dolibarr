@@ -97,7 +97,7 @@ if ($action == 'create')
    *
    */
 
-  print_titre("Projet");
+  print_titre("Fiche projet");
 
   $propales = array();
   $projet = new Project($db);
@@ -117,11 +117,11 @@ if ($action == 'create')
     }
   else
     {
-      print '<table border="1" cellpadding="4" cellspacing="0">';
+      print '<table border="1" cellpadding="4" cellspacing="0" width="100%">';
       print '<tr><td>Société</td><td><a href="../fiche.php3?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
       
-      print '<tr><td>Ref</td><td>'.$projet->ref.'</td></tr>';
-      print '<tr><td>Titre</td><td>'.$projet->title.'</td></tr>';
+      print '<tr><td width="20%">Réf</td><td>'.$projet->ref.'</td></tr>';
+      print '<tr><td width="20%">Titre</td><td>'.$projet->title.'</td></tr>';
       print '</table>';
 
       $propales = $projet->get_propal_list();
@@ -161,10 +161,6 @@ if ($action == 'create')
 	  print '<td align="left"><b>Euros HT</b></td></tr>';
 	  print "</TABLE>";
 	}
-      else
-	{
-	print "pas de propales";
-	}
     }
   
   
@@ -172,21 +168,20 @@ if ($action == 'create')
   
   if ($action == "edit")
     {
-      print "<td align=\"center\" width=\"25%\"><a href=\"fiche.php3?id=$id\">Annuler</a></td>";
+      print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php3?id=$id\">Annuler</a></td>";
     }
   else
     {
-      print "<td align=\"center\" width=\"25%\"><a href=\"fiche.php3?id=$id&action=edit\">Editer</a></td>";
+      print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php3?id=$id&action=edit\">Editer</a></td>";
     }
   
-  print "<td align=\"center\" width=\"25%\">-</td>";	  
+  print '<td align="center" width="20%">-</td>';
+  print '<td align="center" width="20%">-</td>';
+  print '<td align="center" width="20%">-</td>';
   
-  print "<td align=\"center\" width=\"25%\">-</td>";
-  
-  print "<td align=\"center\" width=\"25%\"><a href=\"fiche.php3?id=$id&action=delete\">Supprimer</a></td>";
+  print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php3?id=$id&action=delete\">Supprimer</a></td>";
 
   print "</tr></table>";
-
 
 }
 
