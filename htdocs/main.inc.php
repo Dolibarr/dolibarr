@@ -267,7 +267,11 @@ if (defined("BOUTIQUE_ALBUM"))
 }
 if (defined("MAIN_MODULE_POSTNUKE"))
 {
-  $conf->postnuke->enabled=MAIN_MODULE_POSTNUKE; 
+  $conf->postnuke->enabled=MAIN_MODULE_POSTNUKE;
+}
+if (defined("MAIN_MODULE_WEBCALENDAR"))
+{
+  $conf->webcalendar->enabled=MAIN_MODULE_WEBCALENDAR;
 }
 if (defined("MAIN_MODULE_FACTURE"))
 {
@@ -420,11 +424,7 @@ function top_menu($head, $title="")
   print "\n<html>";
 
   print $langs->lang_header();
-
-  //  print "<HTML><HEAD>";
   print $head;
-  //  print '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">';
-  //  print '<BASE href="'.DOL_URL_ROOT.'/">';
 
   print '<link rel="top" title="Accueil" href="'.DOL_URL_ROOT.'/">';
   print '<link rel="help" title="Aide" href="http://www.dolibarr.com/aide.fr.html">';
@@ -433,8 +433,8 @@ function top_menu($head, $title="")
   print '<link rel="author" title="Equipe de développement" href="http://www.dolibarr.com/dev.fr.html">'."\n";
 
   print '<link rel="stylesheet" type="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
-
   print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+
   // TODO implementer les alternate css
   print '<link rel="alternate styleSheet" type="text/css" title="Rodolphe" href="'.DOL_URL_ROOT.'/theme/rodolphe/rodolphe.css">'."\n";
   print '<link rel="alternate styleSheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
@@ -469,7 +469,7 @@ function top_menu($head, $title="")
       print '<table class="topbarre" width="100%">';
       print "<tr><td>Votre système nécessite d'être mis à jour. ";
       print "Pour cela ";
-      print 'cliquez sur <A href="'.DOL_URL_ROOT.'/admin/system/update.php">Mise à jour</A> !!</td></tr>';
+      print 'cliquez sur <A href="'.DOL_URL_ROOT.'/admin/system/update.php">Mettre à jour</A> !!</td></tr>';
       print "</table>";
     }
 
@@ -479,22 +479,27 @@ function top_menu($head, $title="")
    */
 
   print '<table class="topbarre" width="100%">';
-
   print "<tr>";
-  print '<td width="15%" class="menu" align="center"><A class="menu" href="'.DOL_URL_ROOT.'/index.php">Accueil</A></TD>';
 
+  // Sommet menu de gauche
+  global $PHP_SELF;
+  $class="";
+  if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "accueil") { $class="menusel"; }
+  elseif (ereg('^\/[^\\\/]+$',$PHP_SELF) || ereg('^\/user\/',$PHP_SELF) || ereg('^\/admin\/',$PHP_SELF)) { $class="menusel"; }
+  print '<td width="200" class="menu"><table cellpadding=0 cellspacing=0 width="100%"><tr><td class="'.$class.'" align=center><a class="'.$class.'" href="'.DOL_URL_ROOT.'/index.php">Accueil</a></td></tr></table></td>';
+
+  // Sommet géré par gestionnaire de menu du haut
+  print '<td class="menu">';
   if (!defined(MAIN_MENU_BARRETOP))
     {
       define("MAIN_MENU_BARRETOP","default.php");
     }
-
   require(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".MAIN_MENU_BARRETOP);
+  print '</td>';
 
-  print '<td width="15%" class="menu" align="center">'.strftime(" %d %B - %H:%M",time()).'</TD>';
-
-  print '<td width="10%" class="menu" align="center">' ;
-
-  if (empty ($_SERVER["REMOTE_USER"]))  // Propose ou non de se deloguer si authentication Apache ou non
+  // Logout
+  print '<td width="120" class="menu" align="center">' ;
+  if (! $_SERVER["REMOTE_USER"])  // Propose ou non de se deloguer si authentication Apache ou non
     {
       print '<a href="'.DOL_URL_ROOT.'/user/logout.php" title="logout">'.$user->login.'</a>' ;
     }
@@ -502,16 +507,15 @@ function top_menu($head, $title="")
     {
       print $user->login ;
     }
-  print '</td></tr>';
+  print '</td>';
+  
+  print "</tr>\n";
 
-  //    print '</table>';
   /*
    * Table principale
    *
    */
-  //  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
-
-  print '<tr><td valign="top" align="right">';
+  print '<tr><td valign="top">';
 
 }
 
@@ -530,10 +534,11 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
    * Colonne de gauche
    *
    */
+  print "\n<!-- Debut left menu -->\n";
 
   for ($i = 0 ; $i < sizeof($menu) ; $i++) 
     {
-      print "\n".'<div class="leftmenu">'."\n";
+      print '<div class="leftmenu">'."\n";
       print '<a class="leftmenu" href="'.$menu[$i][0].'">'.$menu[$i][1].'</a>';
 
       for ($j = 2 ; $j < sizeof($menu[$i]) - 1 ; $j = $j +2) 
@@ -620,9 +625,9 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
    print $author->fullname .'</td></tr>';
    }
   */
+  print "<!-- Fin left menu -->\n";
   print "</td>";
-  print "<!-- Fin menu -->\n";
-  print "<td valign=\"top\" width=\"85%\" colspan=\"6\">\n";
+  print "<td valign=\"top\" colspan=\"2\">\n";
 
 }
 /*

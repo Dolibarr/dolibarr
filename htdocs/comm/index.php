@@ -161,6 +161,10 @@ if ($conf->commande->enabled)
 $sql = "SELECT s.idp, s.nom,b.rowid as bid";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
 $sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
+if ($socidp)
+{ 
+  $sql .= " AND s.idp = $socidp"; 
+}
 $sql .= " ORDER BY lower(s.nom) ASC";
 
 if ( $db->query($sql) )
@@ -187,15 +191,67 @@ if ( $db->query($sql) )
   print '</table>';
 }
 
+
+print '</td><td valign="top" width="70%">';
+
+/*
+ * Dernières actions commerciales effectuées
+ *
+ */
+
+$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
+$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE c.id=a.fk_action AND a.percent >= 100 AND s.idp = a.fk_soc";
+if ($socidp)
+{ 
+  $sql .= " AND s.idp = $socidp"; 
+}
+$sql .= " ORDER BY a.datea DESC limit 5";
+
+if ( $db->query($sql) ) 
+{
+  $num = $db->num_rows();
+
+  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+  print '<tr class="liste_titre"><td colspan="4">Dernières actions effectuées</td></tr>';
+  $var = true;
+  $i = 0;
+
+  while ($i < $num ) 
+	{
+	  $obj = $db->fetch_object($i);
+	  $var=!$var;
+	  
+	  print "<tr $bc[$var]>";
+	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_file()."</a>&nbsp;";
+	  print "<a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
+	  print "<td>".strftime("%d %b %Y",$obj->da)."</td>";
+	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->sname.'</a></td>';
+	  $i++;
+	}
+  // TODO Ajouter rappel pour "il y a des contrats à mettre en service"
+  // TODO Ajouter rappel pour "il y a des contrats qui arrivent à expiration"
+  print "</table><br>";
+
+  $db->free();
+} 
+else
+{
+  print $db->error();
+}
+
 /*
  * Actions commerciales a faire
  *
  */
-print '</td><td valign="top" width="70%">';
 
 $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc AND a.fk_user_action = $user->id";
+$sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc";
+if ($socidp)
+{ 
+  $sql .= " AND s.idp = $socidp"; 
+}
 $sql .= " ORDER BY a.datea DESC";
 
 if ( $db->query($sql) ) 
@@ -338,7 +394,7 @@ if ($conf->propal->enabled) {
 	      
 	    $i = 0;
 	    print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';      
-	    print '<tr class="liste_titre"><td colspan="6">Les 5 dernières propositions commerciales traitées</td></tr>';
+	    print '<tr class="liste_titre"><td colspan="6">Les 5 dernières propositions commerciales fermées</td></tr>';
 	    $var=False;	      
 	    while ($i < $num)
 	      {

@@ -113,7 +113,7 @@ print '<br>';
 print '<table class="noborder" cellpadding="3" cellspacing="0">';
 print '<tr class="liste_titre">';
 print '<td>Famille</td>';
-print '<td>Nom</td>';
+print '<td>Module</td>';
 print '<td>Info</td>';
 print '<td align="center">Actif</td>';
 print '<td align="center">Action</td>';
@@ -182,6 +182,8 @@ foreach ($orders as $key => $value)
   
   $const_name = $objMod->const_name;
   $const_value = $objMod->const_config;
+
+  if ($oldfamily && $family!=$oldfamily) { print '<tr class="liste_titre"><td colspan="6"></td></tr>'; }
   
   print "<tr $bc[$var]>";
 

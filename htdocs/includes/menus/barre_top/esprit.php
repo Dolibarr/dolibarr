@@ -20,22 +20,24 @@
  *
  */
 
-print '<TD width="15%" class="menu" align="center">';
+print '<table cellpadding=0 cellspacing=0 width="100%"><tr>';
 
-print '<A class="menu" href="/boutique/livre/">Livres</A></TD>';
+print '<td width="25%" align="center">';
 
-print '<TD width="15%" class="menu" align="center">';
+print '<a href="/boutique/livre/">livres</a></td>';
 
-print '<A class="menu" href="/boutique/client/">Clients</a>';
+print '<td width="25%" align="center">';
 
-print '<TD width="15%" class="menu" align="center">';
+print '<a href="/boutique/client/">clients</a></td>';
 
-print '<A class="menu" href="/product/critiques/">Critiques</A></TD>';
+print '<td width="25%" align="center">';
 
-print '</td><td width="15%" class="menu" align="center">';
+print '<a href="/product/critiques/">critiques</a></td>';
 
-print '<A class="menu" href="/product/categorie/">Catégories</a>';
+print '</td><td width="25%" align="center">';
 
-print '</TD>';
+print '<a href="/product/categorie/">catégories</a></td>';
+
+print '</tr></table>';
 
 ?>

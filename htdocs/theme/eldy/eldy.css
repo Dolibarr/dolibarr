@@ -28,6 +28,11 @@ body {
     margin-right: 0;
     margin-left: 0;
 }
+.body {
+    background-color: #F1F1F1;
+	color: #101010;
+	font: 13px helvetica, verdana, arial, sans-serif;
+}
 
 /***** Styles par défaut *****/
 a:link    { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
@@ -57,7 +62,6 @@ td.menu {
 border-right: 1px solid #000000;
 border-bottom: 1px solid #000000;
 }
-
 td.menusel { 
 border-left: 1px solid #FFFFFF;
 border-right: 1px solid #FFFFFF;
@@ -67,6 +71,13 @@ border-bottom: 1px solid #FFFFFF;
 
 .menu { 
     background: #b3c5cc; 
+    font-size: 12px; font-weight: bold; 
+    color: #000000; 
+    text-decoration: none;
+}
+.menusel
+{ 
+    background: #96B9C9;
     font-size: 12px; font-weight: bold; 
     color: #000000; 
     text-decoration: none;
@@ -239,14 +250,6 @@ font: helvetica, verdana, arial, sans-serif;
 tr.impair { 
 background: #c0d5dd;
 font: helvetica, verdana, arial, sans-serif;
-}
-
-.menusel
-{ 
-  background: #96B9C9;
-  font-size: 12px; font-weight: bold; 
-  color: #000000; 
-  text-decoration: none;
 }
 
 

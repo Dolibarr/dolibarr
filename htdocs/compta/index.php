@@ -247,7 +247,7 @@ if ( $db->query($sql) )
   if ($num)
     {
       print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-      print '<tr class="liste_titre"><td colspan="2">Factures impayées</td><td align="right">Montant TTC</td><td align="right">Reçu</td></tr>';
+      print '<tr class="liste_titre"><td colspan="2">Factures clients impayées</td><td align="right">Montant TTC</td><td align="right">Reçu</td></tr>';
       $var = True;
 	  $total = $totalam = 0;
       while ($i < $num)
@@ -314,7 +314,7 @@ if ($user->societe_id == 0)
       if ($num)
 	{
 	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-      print '<tr class="liste_titre"><td colspan="2">Factures à payer</td><td align="right">Montant TTC</td></tr>';
+      print '<tr class="liste_titre"><td colspan="2">Factures fournisseurs à payer</td><td align="right">Montant TTC</td></tr>';
 	  print "</tr>\n";
 	  $i = 0;
 	  $var = True;

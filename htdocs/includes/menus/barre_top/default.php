@@ -21,107 +21,80 @@
  *
  */
 
-if (defined('MAIN_MODULE_COMMERCIAL') && MAIN_MODULE_COMMERCIAL == 1)
-{
-  if (strstr($GLOBALS["SCRIPT_URL"],DOL_URL_ROOT.'/comm/'))
+global $PHP_SELF;
+
+$nbofentries=0;
+if ($conf->commercial->enabled)   $nbofentries++;
+if ($conf->adherent->enabled)     $nbofentries++;
+if ($conf->compta->enabled) $nbofentries++; 
+if ($conf->produit->enabled || $conf->service->enabled) $nbofentries++; 
+if ($conf->webcalendar->enabled)   $nbofentries++; 
+
+
+print '<table cellpadding=0 cellspacing=0 width="100%"><tr>';
+
+if (! $nbofentries) {
+    print '<td>&nbsp;</td>';
+}
+else {
+    $widthtd=floor(100/$nbofentries);
+
+    if ($conf->commercial->enabled)
     {
-      print '<TD width="15%" class="menusel" align="center">';
-      if ($user->comm > 0 && $conf->commercial ) 
-	{
-	  print '<A class="menusel" href="'.DOL_URL_ROOT.'/comm/index.php">Commercial</A></TD>';
-	}
-      else
-	{
-	  print '-</td>';
-	}
+      $class="";
+      if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "commercial") { $class="menusel"; }
+      elseif (ereg('^\/comm\/',$PHP_SELF)) { $class="menusel"; }
+      print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/comm/index.php">Commercial</A>';
+      print '</td>';
     }
-  else
+    
+    if ($conf->adherent->enabled)
     {
-      print '<TD width="15%" class="menu" align="center">';
-      if ($user->comm > 0 && $conf->commercial ) 
-	{
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/index.php">Commercial</A></TD>';
-	}
-      else
-	{
-	  print '-</td>';
-	}
+      $class="";
+      if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "adherent") { $class="menusel"; }
+      elseif (ereg('^\/adherents\/',$PHP_SELF)) { $class="menusel"; }
+      print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/adherents/index.php">Adhérents</A>';
+      print '</td>';
     }
-}
-elseif (defined('MAIN_MODULE_ADHERENT') && MAIN_MODULE_ADHERENT == 1)
-{
-  print '<TD width="15%" class="menu" align="center">';
-  print '<A class="menu" href="'.DOL_URL_ROOT.'/adherents/index.php">Adhérents</A></TD>';
-}
-else
-{
-  print '<TD width="15%" class="menu" align="center">-</td>';
-}
-
-
-if (defined('MAIN_MODULE_COMPTABILITE') && MAIN_MODULE_COMPTABILITE == 1)
-{
-  if (strstr($GLOBALS["SCRIPT_URL"],DOL_URL_ROOT.'/compta/'))
+    
+    if ($conf->compta->enabled)
     {
-      print '<TD width="15%" class="menusel" align="center">';
-      if ($user->compta > 0)
-	{
-	  print '<A class="menusel" href="'.DOL_URL_ROOT.'/compta/index.php">Compta</A></TD>';
-	} 
-      else
-	{
-	  print '-';
-	}
+      $class="";
+      if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "compta") { $class="menusel"; }
+      elseif (ereg('^\/compta\/',$PHP_SELF)) { $class="menusel"; }
+      print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/compta/index.php">Compta</A>';
+      print '</td>';
     }
-  else
+    
+    if ($conf->produit->enabled || $conf->service->enabled) 
     {
-      
-      print '<TD width="15%" class="menu" align="center">';
-      if ($user->compta > 0)
-	{
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/compta/index.php">Compta</A></TD>';
-	} 
-      else
-	{
-	  print '-';
-	}
+      $class="";
+      if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "product") { $class="menusel"; }
+      elseif (ereg('^\/product\/',$PHP_SELF)) { $class="menusel"; }
+      $chaine="";
+      if ($conf->produit->enabled) { $chaine.="Produits"; }
+      if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
+      if ($conf->service->enabled) { $chaine.="Services"; }
+      print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/product/?type=0">'.$chaine.'</a>';
+      print '</td>';
     }
-}
-else
-{
-  print '<TD width="15%" class="menu" align="center">-</td>';
-}
-
-if (strstr($GLOBALS["SCRIPT_URL"],DOL_URL_ROOT.'/product/'))
-{
-  $class = "menusel";
-}
-else
-{
-  $class = "menu";
+    
+    if ($conf->webcalendar->enabled)
+    {
+      $class="";
+      if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "webcalendar") { $class="menusel"; }
+      elseif (ereg('^\/webcalendar\/',$PHP_SELF)) { $class="menusel"; }
+      print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
+      print '<a class="'.$class.'" href="'. PHPWEBCALENDAR_URL .'">Calendrier</a>';
+      print '</td>';
+    };
+    
 }
 
-print '<TD width="15%" class="'.$class.'" align="center">';
-if ($conf->produit->enabled || $conf->service->enabled) 
-{
-  $chaine="";
-  if ($conf->produit->enabled) { $chaine.="Produits"; }
-  if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
-  if ($conf->service->enabled) { $chaine.="Services"; }
-  print '<A class="'.$class.'" href="'.DOL_URL_ROOT.'/product/?type=0">'.$chaine.'</a>';
-}
-else
-{
-  print '-';
-}
-
-
-print '</td><td width="15%" class="menu" align="center">';
-
-if(defined("MAIN_MODULE_WEBCALENDAR") && MAIN_MODULE_WEBCALENDAR)
-{
-  print '<a class="menu" href="'. PHPWEBCALENDAR_URL .'">Calendrier</a>';
-};
-print '&nbsp;</TD>';
+print '</tr></table>';
 
 ?>
