@@ -37,11 +37,12 @@ if ($HTTP_POST_VARS["action"] == 'add')
   $account->clos         = $HTTP_POST_VARS["clos"];
 
   $account->code_banque  = $HTTP_POST_VARS["code_banque"];
-  $account->code_guichet = $HTTP_POST_VARS["code_guichet"];
-  $account->number       = $HTTP_POST_VARS["number"];
-  $account->cle_rib      = $HTTP_POST_VARS["cle_rib"];
-  $account->bic          = $HTTP_POST_VARS["bic"];
-  $account->iban_prefix  = $HTTP_POST_VARS["iban_prefix"];
+  $account->code_guichet  = $HTTP_POST_VARS["code_guichet"];
+  $account->number        = $HTTP_POST_VARS["number"];
+  $account->cle_rib       = $HTTP_POST_VARS["cle_rib"];
+  $account->bic           = $HTTP_POST_VARS["bic"];
+  $account->iban_prefix   = $HTTP_POST_VARS["iban_prefix"];
+  $account->domiciliation = $HTTP_POST_VARS["domiciliation"];
 
   $id = $account->create($user->id);
 
@@ -64,7 +65,7 @@ if ($action == 'update')
   $account->cle_rib      = $HTTP_POST_VARS["cle_rib"];
   $account->bic          = $HTTP_POST_VARS["bic"];
   $account->iban_prefix  = $HTTP_POST_VARS["iban_prefix"];
-
+  $account->domiciliation = $HTTP_POST_VARS["domiciliation"];
   $account->update($id, $user);
 }
 
@@ -151,6 +152,9 @@ else
       print '<tr><td valign="top">Identifiant BIC</td>';
       print '<td colspan="3">'.$account->bic.'</td></tr>';
       
+      print '<tr><td valign="top">Domiciliation</td>';
+      print '<td colspan="3">'.$account->domiciliation.'</td></tr>';
+
       print '<tr><td valign="top">Compte Courant</td>';
       print '<td colspan="3">'.$yn[$account->courant].'</td></tr>';
 
@@ -209,6 +213,9 @@ else
 	  print '<tr><td valign="top">Identifiant BIC</td>';
 	  print '<td colspan="3"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
 	  
+	  print '<tr><td valign="top">Domiciliation</td>';
+	  print '<td colspan="3"><input size="20" type="text" name="domiciliation" value="'.$account->domiciliation.'"></td></tr>';
+
 	  print '<tr><td valign="top">Compte Courant</td>';
 	  print '<td colspan="3">';
 	  $form->selectyesnonum("courant",$account->courant);
