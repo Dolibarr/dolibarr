@@ -72,7 +72,7 @@ $db->close();
 
 if (defined("FACTURE_ADDON"))
 {
-  require("includes/modules/facture/".FACTURE_ADDON."/".FACTURE_ADDON.".modules.php");
+  require($GLOBALS["DOCUMENT_ROOT"]."/includes/modules/facture/".FACTURE_ADDON."/".FACTURE_ADDON.".modules.php");
 }
 
 
