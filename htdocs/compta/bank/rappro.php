@@ -100,8 +100,6 @@ else
 $acct = new Account($db);
 $acct->fetch($account);
 
-print_titre('Rapprochement bancaire compte : <a href="account.php?account='.$account.'">'.$acct->label.'</a>');
-print '<br>';
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rappro=0 AND fk_account=$account";
@@ -115,9 +113,15 @@ if ($result)
   $num = $db->num_rows();
 
   if ($num == 0) {
-	print "<br>Pas de transactions saisies en attente de rapprochement, pour ce compte bancaire.<br>";
+	//print "<br>Pas ou plus de transactions saisies, en attente de rapprochement, pour ce compte bancaire.<br>";
+    header("Location: /compta/bank/account.php?account=".$account);
+    exit;
   }
   else {
+
+    print_titre('Rapprochement bancaire compte : <a href="account.php?account='.$account.'">'.$acct->label.'</a>');
+    print '<br>';
+
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 	print "<tr class=\"liste_titre\">";
 	print "<td>Date</td><td>Description</TD>";
@@ -207,6 +211,9 @@ if ($result)
 	if ($num != 0) {
 		print "</table>";
 	}
+
+} else {
+    print "Erreur : ".$db->error()." : ".$sql."<br>\n";
 }
 
 print '<br>Dernier relevé : <a href="releve.php?account='.$account.'&amp;num='.$last_releve.'">'.$last_releve.'</a>';

@@ -148,12 +148,12 @@ if ($_GET["action"] == 'create')
 
 	  print_titre("Emettre un paiement d'une charge");
       print "<br>\n";
-      
+
 	  print "<form action=\"$PHP_SELF\" method=\"post\">\n";
 	  print "<input type=\"hidden\" name=\"id\" value=\"$charge->id\">";
 	  print '<input type="hidden" name="action" value="add_paiement">';
 	  print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
-	  
+
       print "<tr class=\"liste_titre\"><td colspan=\"3\">Charge</td>";
 
       print '<tr><td>Numéro :</td><td colspan="2">';
@@ -208,7 +208,7 @@ if ($_GET["action"] == 'create')
 	  print "<tr><td>Compte à créditer :</td><td><select name=\"accountid\">\n";
 	  
 	  $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account ORDER BY rowid";
-	  
+
 	  $result = $db->query($sql);
 	  if ($result)
 	    {
@@ -250,6 +250,7 @@ if ($_GET["action"] == 'create')
 //	      
 //	      if ($num > 0)
 //		{
+		  $num = 1;
 		  $i = 0;
 		  print '<tr><td colspan="3">';
 		  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
