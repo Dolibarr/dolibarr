@@ -51,7 +51,7 @@ $time = mktime(12,0,0,$mois, 1, $annee);
 
 $titre_mois = strftime("%B %Y", $time);
 
-print_titre("Caisse $titre_mois");
+print_fiche_titre("Journal de caisse");
 
 $sql = "SELECT f.amount, date_format(f.datep,'%Y-%m') as dm";
 $sql .= " FROM llx_paiement as f";
@@ -98,44 +98,6 @@ if ($db->query($sql))
 print '<table width="100%" border="1">';
 print '<tr class="liste_titre"><td></td>';
 
-$year_current = strftime("%Y",time());
-
-if ($year_current < (MAIN_START_YEAR + 2))
-{
-  $year_start = MAIN_START_YEAR;
-  $year_end = (MAIN_START_YEAR + 2);
-}
-else
-{
-  $year_start = $year_current - 2;
-  $year_end = $year_current;
-}
-
-
-print '</tr>';
-for ($jour = 1 ; $jour < 32 ; $jour++)
-{
-  print '<tr>';
-  print "<td>".strftime("%d",mktime(1,1,1,$mois,$jour, $annee))."</td>";
-
-  
-  print '<td align="right" width="10%">&nbsp;';
-  $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-  if ($encaiss[$case]>0)
-    {
-      print price($encaiss[$case]);
-    }
-  print "</td>";
-  
-  print '<td align="right" width="10%">&nbsp;';
-  $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-  if ($decaiss[$case]>0)
-    {
-      print price($decaiss[$case]);
-    }
-  print "</td>";
-  print '</tr>';
-}
 
 
 print "</table>";
