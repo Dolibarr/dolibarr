@@ -55,7 +55,8 @@ function llxHeader($head = "") {
     }
   left_menu($menu->liste);
   */
-
+  // remplacement de la barre de gauche
+  print '</td><td valign="top" width="85%" colspan="6">';
 
 }
 
