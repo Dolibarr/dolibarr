@@ -95,8 +95,15 @@ else
       
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print '<td width="20%">Référence</td><td>'.$product->ref.'</td></tr>';
-	  print "<td>Libellé</td><td>$product->label</td></tr>\n";
+	  print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
+	  print '<td>Statistiques</td>';
+	  print '</tr>';
+	  print "<td>Libellé</td><td>$product->label</td>";
+	  print '<td valign="top" rowspan="4">';
+	  print "Propositions commerciales : ".$product->count_propale();
+	  print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
+	  print "<br>Factures : ".$product->count_facture();
+	  print '</td></tr>';
 	  print '<tr><td>Prix</td><TD>'.price($product->price).'</td></tr>';
 	  print '<tr><td>Taux TVA</td><TD>'.$product->tva_tx.'</td></tr>';
 	  print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
