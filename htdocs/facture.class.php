@@ -488,12 +488,19 @@ class Facture
 		}
 
 	      $total_ht = $amount - $total_remise;
-	      $total_tva = $total_tva + tva($lprice, $obj->tva_taux);
+
+	      $ligne_tva = ($lprice * ($obj->tva_tx / 100));
+
+	      $total_tva = $total_tva + $ligne_tva;
 	      $i++;
 	    }
 	  $this->db->free();
 
-	  $this->total_ttc = $total_ht + $total_tva;
+	  /*
+	   * Sommes et arrondis
+	   */
+
+	  $this->total_ttc = round($total_ht, 2) + round($total_tva, 2);
 	  
 	  $sql = "UPDATE llx_facture SET amount = $amount, remise=$total_remise,  total=$total_ht, tva=$total_tva, total_ttc=$this->total_ttc";
 	  $sql .= " WHERE rowid = $facid ;";
