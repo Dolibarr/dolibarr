@@ -3,8 +3,8 @@
 #
 # Prepare l'installation web de Dolibarr
 #
-mkdir documents
-chown www-data documents
+mkdir document
+chown www-data document
 mkdir htdocs/document
 chown www-data htdocs/document
 touch htdocs/conf/conf.php

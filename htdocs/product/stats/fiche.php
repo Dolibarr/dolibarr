@@ -65,15 +65,15 @@ if ($_GET["id"])
   
   if ( $result )
     { 
-      $dir = DOL_DOCUMENT_ROOT."/documents/produit/".$product->id;
+      $dir = DOL_DOCUMENT_ROOT."/document/produit/".$product->id;
       if (! file_exists($dir))
 	{
 	  umask(0);
-	  if(is_dir(DOL_DOCUMENT_ROOT."/documents/produits"))
-	    rmdir(DOL_DOCUMENT_ROOT."/documents/produits");
-	  //mkdir(DOL_DOCUMENT_ROOT."/documents");
-	  if(!file_exists(DOL_DOCUMENT_ROOT."/documents/produit"))
-	    mkdir(DOL_DOCUMENT_ROOT."/documents/produit");
+	  if(is_dir(DOL_DOCUMENT_ROOT."/document/produits"))
+	    rmdir(DOL_DOCUMENT_ROOT."/document/produits");
+	  //mkdir(DOL_DOCUMENT_ROOT."/document");
+	  if(!file_exists(DOL_DOCUMENT_ROOT."/document/produit"))
+	    mkdir(DOL_DOCUMENT_ROOT."/document/produit");
 	  if (! mkdir($dir, 0755))
 	    {
 	      $mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
@@ -155,10 +155,10 @@ if ($_GET["id"])
       print '<td align="center" width="50%" colspan="2">Nombre de pièces vendues</td></tr>';
       print '<tr><td align="center" colspan="2">';
 
-      print '<img src="'.DOL_URL_ROOT.'/documents/produit/'.$product->id.'/vente12mois.png" alt="Ventes sur les 12 derniers mois">';
+      print '<img src="'.DOL_URL_ROOT.'/document/produit/'.$product->id.'/vente12mois.png" alt="Ventes sur les 12 derniers mois">';
       
       print '</td><td align="center" colspan="2">';
-      print '<img src="'.DOL_URL_ROOT.'/documents/produit/'.$product->id.'/vendu12mois.png" alt="Ventes sur les 12 derniers mois">';
+      print '<img src="'.DOL_URL_ROOT.'/document/produit/'.$product->id.'/vendu12mois.png" alt="Ventes sur les 12 derniers mois">';
       
       print '</td></tr><tr>';
       if (file_exists($filenbvente) && filemtime($filenbvente))
@@ -185,7 +185,7 @@ if ($_GET["id"])
       print '<td align="center" width="50%" colspan="2">-</td></tr>';
       print '<tr><td align="center" colspan="2">';
 
-      print '<img src="'.DOL_URL_ROOT.'/documents/produit/'.$product->id.'/'.$img_propal_name.'" alt="Propales sur les 12 derniers mois">';
+      print '<img src="'.DOL_URL_ROOT.'/document/produit/'.$product->id.'/'.$img_propal_name.'" alt="Propales sur les 12 derniers mois">';
       
       print '</td><td align="center" colspan="2">TODO AUTRE GRAPHIQUE';
 
