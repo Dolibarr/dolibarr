@@ -117,34 +117,34 @@ if ($action == 'create')
 
   print '<table border="1" cellpadding="3" cellspacing="0">';
 
-  print "<tr $bc[1]>".'<td valign="top">Prénom</td>';
+  print "<tr>".'<td valign="top">Prénom</td>';
   print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
   
-  print "<tr $bc[0]>".'<td valign="top">Nom</td>';
+  print "<tr>".'<td valign="top">Nom</td>';
   print '<td class="valeur"><input size="20" type="text" name="nom" value=""></td></tr>';
   
-  print "<tr $bc[1]>".'<td valign="top">Login</td>';
+  print "<tr>".'<td valign="top">Login</td>';
   print '<td class="valeur"><input size="30" type="text" name="login" value=""></td></tr>';
 
-  print "<tr $bc[0]>".'<td valign="top">Password</td>';
+  print "<tr>".'<td valign="top">Password</td>';
   print '<td class="valeur"><input size="30" type="text" name="password" value=""></td></tr>';
 
-  print "<tr $bc[1]>".'<td valign="top">Email</td>';
+  print "<tr>".'<td valign="top">Email</td>';
   print '<td class="valeur"><input size="30" type="text" name="email" value=""></td></tr>';
   
-  print "<tr $bc[0]>".'<td valign="top">Admin ?</td>';
+  print "<tr>".'<td valign="top">Admin ?</td>';
   print '<td class="valeur">';
   $form->selectyesnonum('admin',0);
   print '</td></tr>';
   
-  print "<tr $bc[1]>".'<td valign="top">Login Webcal</td>';
+  print "<tr>".'<td valign="top">Login Webcal</td>';
   print '<td class="valeur"><input size="30" type="text" name="webcal_login" value=""></td></tr>';
   
-  print "<tr $bc[0]>".'<td valign="top">Note</td><td>';
+  print "<tr>".'<td valign="top">Note</td><td>';
   print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
   print "</textarea></td></tr>";
       
-  print "<tr $bc[1]>".'<td align="center" colspan="2"><input value="Enregistrer" type="submit"></td></tr>';
+  print "<tr>".'<td align="center" colspan="2"><input value="Enregistrer" type="submit"></td></tr>';
   print '</form>';
   print '</table>';
 }
@@ -168,8 +168,8 @@ else
 	  print '<input type="hidden" name="action" value="confirm_delete">';
 	  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 	  
-	  print "<tr $bc[1]>".'<td colspan="3">Supprimer cet utilisateur</td></tr>';	      
-	  print "<tr $bc[0]>".'<td class="delete">Etes-vous sur de vouloir supprimer cet utilisateur ?</td><td class="delete">';
+	  print "<tr>".'<td colspan="3">Supprimer cet utilisateur</td></tr>';	      
+	  print "<tr>".'<td class="delete">Etes-vous sur de vouloir supprimer cet utilisateur ?</td><td class="delete">';
 	  $htmls = new Form($db);
 	  
 	  $htmls->selectyesno("confirm","no");
@@ -189,12 +189,12 @@ else
 
 	  print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
 	  
-	  print "<tr $bc[1]>".'<td width="25%" valign="top">Nom</td>';
+	  print "<tr>".'<td width="25%" valign="top">Nom</td>';
 	  print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
 	  print '<td width="25%" valign="top">Prénom</td>';
 	  print '<td width="25%" class="valeur">'.$fuser->prenom.'</td></tr>';
 
-	  print "<tr $bc[0]>".'<td valign="top" colspan="2">';
+	  print "<tr>".'<td valign="top" colspan="2">';
 	  print '<table width="100%" border="0" cellpadding="2" cellspacing="0">';
 	  $sql = "SELECT r.id, r.libelle, r.module FROM llx_rights_def as r ORDER BY r.id ASC";
 
@@ -246,7 +246,7 @@ else
 	    }
 	  print '</table>';
 	  print '</td></tr>';
-	  print "<tr $bc[1]>".'<td align="center" colspan="4"><a href="fiche.php?id='.$id.'">ok</a></td></tr></table>';
+	  print "<tr>".'<td align="center" colspan="4"><a href="fiche.php?id='.$id.'">ok</a></td></tr></table>';
 	}
       else
 	{
@@ -258,11 +258,11 @@ else
 
       print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
     
-      print "<tr $bc[1]>".'<td width="25%" valign="top">Nom</td>';
+      print "<tr>".'<td width="25%" valign="top">Nom</td>';
       print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
       print '<td>Droits</td></tr>';
 
-      print "<tr $bc[1]>".'<td width="25%" valign="top">Prénom</td>';
+      print "<tr>".'<td width="25%" valign="top">Prénom</td>';
       print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
       print '<td valign="top" rowspan="7">';
       /*
@@ -292,19 +292,19 @@ else
       print '</table>';
 
       print '</td></tr>';  
-      print "<tr $bc[1]>".'<td width="25%" valign="top">Login</td>';
+      print "<tr>".'<td width="25%" valign="top">Login</td>';
       print '<td width="25%"  class="valeur">'.$fuser->login.'</td></tr>';
-      print "<tr $bc[1]>".'<td width="25%" valign="top">Email</td>';
+      print "<tr>".'<td width="25%" valign="top">Email</td>';
       print '<td width="25%"  class="valeur">'.$fuser->email.'</td></tr>';
       
-      print "<tr $bc[1]>".'<td width="25%" valign="top">Webcal Login</td>';
+      print "<tr>".'<td width="25%" valign="top">Webcal Login</td>';
       print '<td width="25%"  class="valeur">'.$fuser->webcal_login.'&nbsp;</td></tr>';
-      print "<tr $bc[1]>".'<td width="25%" valign="top">Administrateur</td>';
+      print "<tr>".'<td width="25%" valign="top">Administrateur</td>';
       print '<td width="25%"  class="valeur">'.$yn[$fuser->admin].'</td></tr>';
       
-      print "<tr $bc[1]>".'<td width="25%" valign="top">Id Société</td>';
+      print "<tr>".'<td width="25%" valign="top">Id Société</td>';
       print '<td width="25%"  class="valeur">'.$fuser->societe_id.'&nbsp;</td></tr>';
-      print "<tr $bc[1]>".'<td width="25%" valign="top">';
+      print "<tr>".'<td width="25%" valign="top">';
       if ($fuser->contact_id)
 	{
 	  print '<a href="../comm/people.php?contactid='.$fuser->contact_id.'&socid='.$fuser->societe_id.'">Fiche contact</a>';
@@ -316,12 +316,12 @@ else
       print '</td>';
       print '<td width="25%"  class="valeur">&nbsp;</td></tr>';
 
-      print "<tr $bc[1]>".'<td width="25%" valign="top">Note</td>';
+      print "<tr>".'<td width="25%" valign="top">Note</td>';
       print '<td colspan="3"  class="valeur">'.nl2br($fuser->note).'&nbsp;</td></tr>';
 
       print '</table>';
 
-      print '<br><table width="100%" border="1" cellspacing="0" cellpadding="2">'."<tr $bc[1]>";
+      print '<br><table width="100%" border="1" cellspacing="0" cellpadding="2">'."<tr>";
 
       if ($user->admin) 
 	{
@@ -376,32 +376,32 @@ else
 	  print '<input type="hidden" name="action" value="update">';
 	  print '<table border="1" cellpadding="3" cellspacing="0">';
 	  
-	  print "<tr $bc[1]>".'<td valign="top">Nom</td>';
+	  print "<tr>".'<td valign="top">Nom</td>';
 	  print '<td><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td></tr>';
 
-	  print "<tr $bc[0]>".'<td valign="top">Prénom</td>';
+	  print "<tr>".'<td valign="top">Prénom</td>';
 	  print '<td><input size="20" type="text" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
 
-	  print "<tr $bc[1]>".'<td valign="top">Login</td>';
+	  print "<tr>".'<td valign="top">Login</td>';
 	  print '<td><input size="10" maxlength="8" type="text" name="login" value="'.$fuser->login.'"></td></tr>';
 	  
-	  print "<tr $bc[0]>".'<td valign="top">Email</td>';
+	  print "<tr>".'<td valign="top">Email</td>';
 	  print '<td><input size="30" type="text" name="email" value="'.$fuser->email.'"></td></tr>';
 	  
-	  print "<tr $bc[1]>".'<td valign="top">Admin ?</td>';
+	  print "<tr>".'<td valign="top">Admin ?</td>';
 	  print '<td class="valeur">';
 	  $form->selectyesnonum('admin',$fuser->admin);
 	  print '</td></tr>';
 
-	  print "<tr $bc[0]>".'<td valign="top">Login Webcal</td>';
+	  print "<tr>".'<td valign="top">Login Webcal</td>';
 	  print '<td class="valeur"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
 	  
-	  print "<tr $bc[1]>".'<td valign="top">Description</td><td>';
+	  print "<tr>".'<td valign="top">Description</td><td>';
 	  print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
 	  print $fuser->note;
 	  print "</textarea></td></tr>";
 	  
-	  print "<tr $bc[0]>".'<td align="center" colspan="3"><input value="Enregistrer" type="submit"></td></tr>';
+	  print "<tr>".'<td align="center" colspan="3"><input value="Enregistrer" type="submit"></td></tr>';
 	  print '</form>';
 	  print '</table>';
 	}
