@@ -34,16 +34,15 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/fourn/index.php3", "Fournisseurs");
+  $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
 
   if ($user->societe_id == 0) 
     {
       $menu->add_submenu(DOL_URL_ROOT."/soc.php3?&action=create","Nouvelle société");
     }
 
-  $menu->add_submenu("contact.php3","Contacts");
 
-  $menu->add(DOL_URL_ROOT."/fourn/facture/index.php3", "Factures");
+  $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", "Factures");
 
   if ($user->societe_id == 0) 
     {
