@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/*!
+	    \file   	htdocs/compta/pre.inc.php
+  	    \ingroup    compta
+  	    \brief  	Fichier gestionnaire du menu compta
+*/
+
 require("../main.inc.php");
 
 function llxHeader($head = "", $title="", $help_url='')
@@ -32,27 +39,31 @@ function llxHeader($head = "", $title="", $help_url='')
 
   // Les recettes
 
-  $menu->add(DOL_URL_ROOT."/compta/clients.php", "Clients");
+  $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
 
   if ($user->comm > 0 && $conf->commercial->enabled && $conf->propal->enabled) 
     {
-      $menu->add(DOL_URL_ROOT."/compta/propal.php","Prop. commerciales");
+      $langs->load("propal");
+      $menu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"));
     }
 
   if ($conf->contrat->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/contrat/","Contrats");
+      $langs->load("contracts");
+      $menu->add(DOL_URL_ROOT."/contrat/",$langs->trans("Contracts"));
     }
 
   if ($conf->don->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/dons/","Dons");
+      $langs->load("donations");
+      $menu->add(DOL_URL_ROOT."/compta/dons/",$langs->trans("Donations"));
     }
 
   if ($conf->facture->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/facture.php","Factures");
-      $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php","Paiements");
+      $langs->load("bills");
+      $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
+      $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php",$langs->trans("Payments"));
       if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR) {
         $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
       }
@@ -61,8 +72,11 @@ function llxHeader($head = "", $title="", $help_url='')
    
     
   // Les dépenses
-
-  $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
+  if ($conf->fourn->enabled)
+    {
+      $langs->load("suppliers");
+      $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
+    }
 
   if ($user->societe_id == 0)
     {
@@ -71,7 +85,7 @@ function llxHeader($head = "", $title="", $help_url='')
 
   if ($conf->compta->enabled && $conf->compta->tva && $user->societe_id == 0)
     {
-      $menu->add(DOL_URL_ROOT."/compta/tva/index.php","TVA");
+      $menu->add(DOL_URL_ROOT."/compta/tva/index.php",$langs->trans("VAT"));
     }
   if ($conf->compta->enabled)
     {
@@ -82,7 +96,7 @@ function llxHeader($head = "", $title="", $help_url='')
   // Vision des recettes-dépenses
   if ($conf->banque->enabled && $user->rights->banque->lire)
     { 
-      $menu->add(DOL_URL_ROOT."/compta/bank/","Banque");
+      $menu->add(DOL_URL_ROOT."/compta/bank/",$langs->trans("Bank"));
     }
   
   if ($conf->caisse->enabled)
@@ -100,7 +114,7 @@ function llxHeader($head = "", $title="", $help_url='')
   if (! $user->compta) 
     {
       $menu->clear();
-      $menu->add(DOL_URL_ROOT."/","Accueil");      
+      $menu->add(DOL_URL_ROOT."/",$langs->trans("Home"));
     }
 
   left_menu($menu->liste, $help_url);

@@ -29,6 +29,9 @@ require("./pre.inc.php");
 
 require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
 
+$user->getrights('banque');
+
+
 $mod = new modPrelevement($db);
 $dir = $mod->data_directory;
 
@@ -37,7 +40,7 @@ llxHeader();
 print_titre($langs->trans("Bons de prélèvements"));
 
 print '<br>';
-print '<table class="noborder" cellpadding="3" cellspacing="0">';
+print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Date").'</td>';
