@@ -33,6 +33,17 @@ class modPropale extends modDolibarrModules
   Function modPropale($DB)
   {
     $this->db = $DB ;
+    $this->const = array();
+    /*
+     *  Constantes
+     */
+    $this->const[0][0] = "PROPALE_ADDON_PDF";
+    $this->const[0][1] = "chaine";
+    $this->const[0][2] = "rouge";
+
+    $this->const[1][0] = "PROPALE_ADDON";
+    $this->const[1][1] = "chaine";
+    $this->const[1][2] = "mod_propale_ivoire";
   }
   /*
    *
@@ -41,14 +52,7 @@ class modPropale extends modDolibarrModules
    */
 
   Function init()
-  {
-    /*
-     *  Constantes
-     */
-    $const[0][0] = "PROPALE_ADDON_PDF";
-    $const[0][1] = "chaine";
-    $const[0][2] = "rouge";
-       
+  {       
     /*
      * Permissions et valeurs par défaut
      */
@@ -61,12 +65,11 @@ class modPropale extends modDolibarrModules
 		 "insert into llx_rights_def values (26,'Clôturer les propositions commerciales','propale','d',0);",
 		 "insert into llx_rights_def values (27,'Supprimer les propositions commerciales','propale','d',0);",
 		 "INSERT INTO llx_boxes_def (name,file) VALUES('Proposition commerciales', 'box_propales.php');",
-		 "REPLACE INTO llx_propal_model_pdf SET nom = '".$const[0][2]."'",
-		 "REPLACE INTO llx_const SET name = 'PROPALE_ADDON', value='mod_propale_ivoire', visible=0"
+		 "REPLACE INTO llx_propal_model_pdf SET nom = '".$this->const[0][2]."'",
 		 );
     //"insert into llx_rights_def values (23,'Modifier les propositions commerciales d\'autrui','propale','m',0);",
     
-    return $this->_init($const, $sql);
+    return $this->_init($this->const, $sql);
 
   }
   /*
