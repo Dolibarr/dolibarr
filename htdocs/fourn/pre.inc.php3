@@ -40,7 +40,7 @@ function llxHeader($head = "", $urlp = "") {
   /*
    * Sécurité accés client
    */
-  if ($user->societe_id > 0) 
+  if ($user->societe_id == 0) 
     {
 
       $menu->add_submenu("/soc.php3?&action=create","Nouvelle société");
