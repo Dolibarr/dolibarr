@@ -367,13 +367,12 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 	
 		  if (! $db->query($sql) )
 		    {
-		      print $db->error();
-		      print "<p>$sql</p>";
+		      dolibarr_print_error($db->error());
 		    }	      	      	      
 		}
 	      else
 		{
-		  print "<b>!! erreur d'envoi<br>$sendto<br>$replyto<br>$filename";
+		  print $langs->trans("ErrorFailedToSendMail",$replyto,$sendto);
 		}	  
 	    }
 	  else
@@ -403,7 +402,7 @@ if ($_GET["action"] == 'pdf')
 } 
 
 
-llxHeader('','Facture','Facture');
+llxHeader('',$langs->trans("Bill"),'Facture');
 
 $html = new Form($db);
 
@@ -415,6 +414,7 @@ $html = new Form($db);
  ************************************************************************/
 if ($_GET["action"] == 'create') 
 {
+  
   print_titre("Emettre une facture");
 
   if ($propalid)
@@ -455,20 +455,20 @@ if ($_GET["action"] == 'create')
 
 	  print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
 	  
-	  print '<tr><td>Client :</td><td>'.$soc->nom.'</td>';
-	  print '<td class="border">Commentaire</td></tr>';
+	  print '<tr><td>'.$langs->trans("Customer").' :</td><td>'.$soc->nom.'</td>';
+	  print '<td class="border">'.$langs->trans("Comment").'</td></tr>';
 
-	  print "<tr><td>".$langs->trans("Author")." :</td><td>".$user->fullname."</td>";
+	  print '<tr><td>'.$langs->trans("Author").' :</td><td>'.$user->fullname.'</td>';
 	  
 	  print '<td rowspan="6" valign="top">';
 	  print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
 	  
-	  print "<tr><td>Date :</td><td>";
+	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
 	
 	  print_date_select(time());
 
-	  print "</td></tr>";
-	  print "<tr><td>Numéro :</td><td>Provisoire</td></tr>";
+	  print '</td></tr>';
+	  print '<tr><td>'.$langs->trans("Ref").' :</td><td>Provisoire</td></tr>';
 	  print '<input name="facnumber" type="hidden" value="provisoire">';
 	  print "<tr><td>Conditions de réglement :</td><td>";
 	  $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."cond_reglement ORDER BY sortorder";
@@ -490,11 +490,14 @@ if ($_GET["action"] == 'create')
 	  $html->select_array("condid",$conds);
 	  print "</td></tr>";
 	  
-	  print "<tr><td>Projet :</td><td>";
-	  $proj = new Project($db);
-	  $html->select_array("projetid",$proj->liste_array($socidp));
-	  print "</td></tr>";
-	  
+      if ($conf->projet->enabled) {
+          $langs->load("projects");
+    	  print '<tr><td>'.$langs->trans("Project").' :</td><td>';
+    	  $proj = new Project($db);
+    	  $html->select_array("projetid",$proj->liste_array($socidp));
+    	  print "</td></tr>";
+      }
+      	  
 	  if ($_GET["propalid"] > 0)
 	    {
 	      $amount = ($obj->price);
@@ -742,21 +745,21 @@ else
 	  $author->id = $fac->user_author;
 	  $author->fetch();
 
+        $h = 0;
+        
+        $head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
+        $head[$h][1] = $langs->trans("Bill")." : $fac->ref";
+        $hselected = $h;
+        $h++;
+        $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
+        $head[$h][1] = $langs->trans("Note");
+        $h++;      
+        $head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$fac->id;
+        $head[$h][1] = $langs->trans("Info");
+        $h++;      
+        
+        dolibarr_fiche_head($head, $hselected, $soc->nom);
 
-	  $head[0][0] = DOL_URL_ROOT."/compta/facture.php?facid=".$fac->id;
-	  $head[0][1] = "Facture : $fac->ref";
-	  $h = 1;
-	  $a = 0;
-
-	  $head[$h][0] = DOL_URL_ROOT."/compta/facture/note.php?facid=".$fac->id;
-	  $head[$h][1] = "Note";
-	  $h++;
-	  $a = 0;
-
-	  $head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$fac->id;
-	  $head[$h][1] = "Info";
-
-	  dolibarr_fiche_head($head, $a, $soc->nom);
   	  
 	  /*
 	   * Confirmation de la suppression de la facture
@@ -790,35 +793,41 @@ else
 	   *   Facture
 	   */
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
-	  print "<tr><td>Client</td>";
-	  print "<td colspan=\"3\">";
+	  print '<tr><td>'.$langs->trans("Customer").'</td>';
+	  print '<td colspan="3">';
 	  print '<b><a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  
 	  print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
 	  
-	  print "<tr><td>Date</td>";
+	  print '<tr><td>'.$langs->trans("Date").'</td>';
 	  print "<td colspan=\"3\">".strftime("%A %d %B %Y",$fac->date)."</td>\n";
 	  print "<td>Date limite de réglement : " . strftime("%d %B %Y",$fac->date_lim_reglement) ."</td></tr>";
 
-	  print '<tr><td height=\"10\">Projet</td><td colspan="3">';
-	  if ($fac->projetid > 0)
-	    {
-	      $projet = New Project($db);
-	      $projet->fetch($fac->projetid);
-	      print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$fac->projetid.'">'.$projet->title.'</a>';
-	    }
-	  else
-	    {
-	      print '<a href="facture.php?facid='.$fac->id.'&amp;action=classer">Classer la facture</a>';
-	    }
-	  print "&nbsp;</td>";
-
+      print '<tr>';
+      if ($conf->projet->enabled) {
+          $langs->load("projects");
+    	  print '<td height=\"10\">'.$langs->trans("Project").'</td><td colspan="3">';
+    	  if ($fac->projetid > 0)
+    	    {
+    	      $projet = New Project($db);
+    	      $projet->fetch($fac->projetid);
+    	      print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$fac->projetid.'">'.$projet->title.'</a>';
+    	    }
+    	  else
+    	    {
+    	      print '<a href="facture.php?facid='.$fac->id.'&amp;action=classer">Classer la facture</a>';
+    	    }
+    	  print "&nbsp;</td>";
+      } else {
+    	  print '<td height=\"10\">&nbsp;</td><td colspan="3">';
+    	  print "&nbsp;</td>";
+      }
 	  print '<td rowspan="8" valign="top">';
 	  	  
 	  /*
 	   * Paiements
 	   */
-	  print 'Paiements :<br>';
+	  print $langs->trans("Payments").' :<br>';
 	  $sql = "SELECT ".$db->pdate("datep")." as dp, pf.amount,";
 	  $sql .= "c.libelle as paiement_type, p.num_paiement, p.rowid";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement_facture as pf";
@@ -830,9 +839,9 @@ else
 	    {
 	      $num = $db->num_rows();
 	      $i = 0; $total = 0;
-	      echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 	      print '<tr class="liste_titre"><td>Date</td><td>'.$langs->trans("Type").'</td>';
-	      print "<td align=\"right\">Montant</TD><td>&nbsp;</td></tr>";
+	      print '<td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
     
 	      $var=True;
 	      while ($i < $num)
@@ -873,18 +882,18 @@ else
 	  print '<td align="right" colspan="2">'.$fac->remise_percent.'</td>';
 	  print '<td>%</td></tr>';
 
-	  print '<tr><td height=\"10\">Montant HT</td>';
+	  print '<tr><td height=\"10\">'.$langs->trans("AmountHT").'</td>';
 	  print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
 	  print '<td>'.MAIN_MONNAIE.' HT</td></tr>';
 
-	  print '<tr><td height=\"10\">TVA</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
+	  print '<tr><td height=\"10\">'.$langs->trans("VAT").'</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
 	  print '<td>'.MAIN_MONNAIE.'</td></tr>';
-	  print '<tr><td height=\"10\">Montant TTC</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
+	  print '<tr><td height=\"10\">'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
 	  print '<td>'.MAIN_MONNAIE.' TTC</td></tr>';
 	  print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.($fac->get_libstatut()).'</td></tr>';
 	  if ($fac->note)
 	    {
-	      print '<tr><td colspan="4">Note : '.nl2br($fac->note)."</td></tr>";
+	      print '<tr><td colspan="4">'.$langs->trans("Note").' : '.nl2br($fac->note)."</td></tr>";
 	    }
 	  else {
 	    print '<tr><td colspan="4">&nbsp;</td></tr>';
@@ -920,11 +929,11 @@ else
 		{
 		  print "<tr class=\"liste_titre\">";
 		  print '<td width="54%">'.$langs->trans("Description").'</td>';
-		  print '<td width="8%" align="right">Tva</td>';
+		  print '<td width="8%" align="right">'.$langs->trans("VAT").'</td>';
 		  print '<td width="12%" align="right">P.U. HT</td>';
-		  print '<td width="8%" align="right">Quantité</td>';
+		  print '<td width="8%" align="right">'.$langs->trans("Quantity").'</td>';
 		  print '<td width="8%" align="right">Remise</td>';
-		  print '<td width="10%" align="right">Montant HT</td>';
+		  print '<td width="10%" align="right">'.$langs->trans("AmountHT").'</td>';
 		  print '<td>&nbsp;</td><td>&nbsp;</td>';
 		  print "</tr>\n";
 		}
@@ -1019,7 +1028,7 @@ else
 	    } 
 	  else
 	    {
-	      print "Erreur : ".$db->error()."<br>".$sql;
+	      dolibarr_print_error($db->error());
 	    }
 	
 	  /*
@@ -1032,9 +1041,9 @@ else
 	      print "<form action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
 	      print "<tr class=\"liste_titre\">";
 	      print '<td width="54%">'.$langs->trans("Description").'</td>';
-	      print '<td width="8%" align="right">Tva</td>';
+	      print '<td width="8%" align="right">'.$langs->trans("VAT").'</td>';
 	      print '<td width="12%" align="right">P.U. HT</TD>';
-	      print '<td width="8%" align="right">Quantité</td>';
+	      print '<td width="8%" align="right">'.$langs->trans("Quantity").'</td>';
 	      print '<td width="8%" align="right">Remise</td>';
 	      print '<td>&nbsp;</td>';
 	      print '<td>&nbsp;</td>';
@@ -1204,8 +1213,9 @@ else
     
 		  $i = 0; $total = 0;
 		  print '<table class="border" cellspacing="0" cellpadding="4" width="100%">';
-		  print "<tr $bc[$var]><td>Date</td><td>Action</td><td>Par</td></tr>\n";
-    
+		  print '<tr '.$bc[$var].'><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Action").'</td><td>'.$langs->trans("By").'</td></tr>';
+          print "\n";
+          
 		  $var=True;
 		  while ($i < $num)
 		    {
@@ -1215,15 +1225,15 @@ else
 		      print "<td>".dolibarr_print_date($objp->da)."</td>\n";
 		      print '<td>'.stripslashes($objp->note).'</td>';
 		      print '<td>'.$objp->code.'</td>';
-		      print "</tr>";
+		      print "</tr>\n";
 		      $i++;
 		    }
-		  print "</table>";
+		  print "</table>\n";
 		}
 	    }
 	  else
 	    {
-	      print $db->error();
+	      dolibarr_print_error($db);
 	    }
 	    
 	  print "</td></tr></table>";
@@ -1239,13 +1249,15 @@ else
 	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 	      print '<input type="hidden" name="action" value="classin">';
 	      print '<table cellspacing="0" class="border" cellpadding="3">';
-	      print '<tr><td>Projet</td><td>';
+          
+	      print '<tr><td>'.$langs->trans("Project").'</td><td>';
 	    
 	      $proj = new Project($db);
 	      $html->select_array("projetid",$proj->liste_array($soc->id));
 	    
 	      print "</td></tr>";
-	      print '<tr><td colspan="2" align="center"><input type="submit" value="Envoyer"></td></tr></table></form></p>';
+
+	      print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr></table></form></p>';
 	    }
 	  /*
 	   *
@@ -1283,7 +1295,7 @@ else
 
 	      print "</table><br>\n";
 	    
-	      print "<center><input class=\"flat\" type=\"submit\" value=\"Envoyer\"></center></form>\n";
+	      print "<center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("Send")."\"></center></form>\n";
 	    }
 
 	  if ($_GET["action"] == 'prerelance')
@@ -1311,14 +1323,14 @@ else
 	      $form->select_array("destinataire",$soc->contact_email_array());
 	      print " ou <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
 	    
-	      print '<tr><td>Message</td><td colspan=\"2\">';
+	      print '<tr><td>'.$langs->trans("Message").'</td><td colspan=\"2\">';
 	      print "<textarea rows=\"5\" cols=\"60\" name=\"message\">";
 	      print "Nous apportons à votre connaissance que la facture ".$fac->ref." ne semble toujours pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n";
 	      print "</textarea></td></tr>";
 
 	      print "</table><br>\n";
 	    
-	      print "<center><input class=\"flat\" type=\"submit\" value=\"Envoyer\"></center></form>\n";
+	      print "<center><input class=\"flat\" type=\"submit\" value=\"".$langs->trans("Send")."\"></center></form>\n";
 	    }
 	
 	  /*
@@ -1347,8 +1359,8 @@ else
 
 		  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 		  print '<tr class="liste_titre">';
-		  print "<td>Numéro</td>";
-		  print "<td>Date</td>";
+		  print '<td>'.$langs->trans("Ref").'</td>';
+		  print '<td>'.$langs->trans("Date").'</td>';
 		  print '<td align="right">'.$langs->trans("Price").'</td>';
 		  print "</tr>\n";
 		
@@ -1357,10 +1369,10 @@ else
 		    {
 		      $objp = $db->fetch_object( $i);
 		      $var=!$var;
-		      print "<TR $bc[$var]>";
-		      print "<TD><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-		      print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-		      print '<TD align="right">'.price($objp->price).'</TD>';
+		      print "<tr $bc[$var]>";
+		      print "<td><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></td>\n";
+		      print "<td>".strftime("%d %B %Y",$objp->dp)."</td>\n";
+		      print '<td align="right">'.price($objp->price).'</td>';
 		      print "</tr>";
 		      $total = $total + $objp->price;
 		      $i++;
@@ -1369,13 +1381,13 @@ else
 		  print "</table>";
 		}
 	    } else {
-	      print $db->error();
+	      dolibarr_print_error($db);
 	    }	
 	}
       else
 	{
 	  /* Facture non trouvée */
-	  print "Facture inexistante ou accés refusé";
+	  print "Facture inexistante";
 	}
     } else {
       /***************************************************************************
@@ -1454,15 +1466,15 @@ else
 	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 	  print '<tr class="liste_titre">';
 	  print '<td>';
-	  print_liste_field_titre("Numéro",$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socidp=$socidp");
+	  print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socidp=$socidp");
 	  print '</td><td align="center">';
-	  print_liste_field_titre("Date",$_SERVER["PHP_SELF"],"f.datef","","&amp;socidp=$socidp");
+	  print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socidp=$socidp");
 	  print '</td><td>';
-	  print_liste_field_titre("Société",$_SERVER["PHP_SELF"],"s.nom","","&amp;socidp=$socidp");
+	  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socidp=$socidp");
 	  print '</td><td align="right">';
-	  print_liste_field_titre("Montant HT",$_SERVER["PHP_SELF"],"f.total","","&amp;socidp=$socidp");
+	  print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","","&amp;socidp=$socidp");
 	  print '</td><td align="right">';
-	  print_liste_field_titre("Montant TTC",$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socidp=$socidp");
+	  print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socidp=$socidp");
 	  print '</td><td align="right">';
 	  print_liste_field_titre("Reçu",$_SERVER["PHP_SELF"],"am","","&amp;socidp=$socidp");
 	  print '</td><td align="center">';
@@ -1567,7 +1579,7 @@ else
 	}
       else
 	{
-	  print $db->error() . "<br>" . $sql;
+	  dolibarr_print_error($db);
 	}    
     }
   

@@ -34,9 +34,7 @@ $user->getrights('facture');
 if (!$user->rights->facture->lire)
   accessforbidden();
 
-/*
- *  Modules optionnels
- */
+$langs->load("companies");
 
 /*
  * Sécurité accés client
@@ -74,23 +72,25 @@ if ($_GET["facid"])
       $soc = new Societe($db, $facture->socidp);
       $soc->fetch($facture->socidp);
 
-      $head[0][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$facture->id;
-      $head[0][1] = "Facture : $facture->ref";
-      $h = 1;
+      $h=0;
+      
+      $head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$facture->id;
+      $head[$h][1] = $langs->trans("Bill")." : $facture->ref";
+      $h++;
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$facture->id;
-      $head[$h][1] = "Note";
-      $a = 1;
+      $head[$h][1] = $langs->trans("Note");
+      $hselected = $h;
       $h++;      
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$facture->id;
-      $head[$h][1] = "Info";
+      $head[$h][1] = $langs->trans("Info");
+      $h++;
 
-
-      dolibarr_fiche_head($head, $a, $soc->nom);
+      dolibarr_fiche_head($head, $hselected, $soc->nom);
                   
 	  
       print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
       
-      print '<tr><td>Société</td><td>';
+      print '<tr><td>'.$langs->trans("Company").'</td><td>';
       if ($societe->client == 1)
 	{
 	  $url ='fiche.php?socid='.$societe->id;

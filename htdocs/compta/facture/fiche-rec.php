@@ -107,10 +107,10 @@ if ($_GET["action"] == 'create')
       
       $facture->fetch_client();
 
-      print "<tr><td>Client :</td><td>".$facture->client->nom."</td>";
-      print "<td>Commentaire</td></tr>";
+      print '<tr><td>'.$langs->trans("Customer").' :</td><td>'.$facture->client->nom.'</td>';
+      print '<td>'.$langs->trans("Comment").'</td></tr>';
       
-      print '<tr><td>Titre :</td><td><input type="text" name="titre" size="16"></td>';
+      print '<tr><td>'.$langs->trans("Title").' :</td><td><input type="text" name="titre" size="16"></td>';
 
       print '<td rowspan="4" valign="top">';
       print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	

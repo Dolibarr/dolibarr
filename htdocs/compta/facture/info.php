@@ -44,23 +44,25 @@ $facture->info($_GET["facid"]);
 $soc = new Societe($db, $facture->socidp);
 $soc->fetch($facture->socidp);
 
-$head[0][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$facture->id;
-$head[0][1] = "Facture : $facture->ref";
-$h = 1;
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT.'/compta/facture.php?facid='.$facture->id;
+$head[$h][1] = $langs->trans("Bill")." : $facture->ref";
+$h++;
 $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$facture->id;
-$head[$h][1] = "Note";
+$head[$h][1] = $langs->trans("Note");
 $h++;      
 $head[$h][0] = DOL_URL_ROOT.'/compta/facture/info.php?facid='.$facture->id;
-$head[$h][1] = "Info";
-$a = 2;
+$head[$h][1] = $langs->trans("Info");
+$hselected = $h;
+$h++;      
 
-dolibarr_fiche_head($head, $a, $soc->nom);
-
-
-
+dolibarr_fiche_head($head, $hselected, $soc->nom);
 
 
+print '<table width="100%"><tr><td>';
 dolibarr_print_object_info($facture);
+print '</td></tr></table>';
 
 print "<br></div>";
 
