@@ -170,17 +170,18 @@ class Product
       $sql .= " SET date_price= now()";
       $sql .= " ,fk_product = ".$this->id;
       $sql .= " ,fk_user_author = ".$user->id;
-      $sql .= " ,price = ".$this->price;
+      $sql .= " ,price = ".ereg_replace(",",".",$this->price);
       $sql .= " ,envente = ".$this->envente;
       $sql .= " ,tva_tx = ".$this->tva_tx;
       
       if ($this->db->query($sql) )
 	{
-	      return 1;	      
+	  return 1;	      
 	}
       else
 	{
 	  print $this->db->error() . ' in ' . $sql;
+	  return 0;
 	}
   }
   /*
@@ -188,33 +189,31 @@ class Product
    *
    */
   Function update_price($id, $user)
-    {
-      if (strlen(trim($this->price)) > 0 )
-	{
-	  $this->price = round($this->price, 2);
-
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
-	  $sql .= " SET price = " . ereg_replace(",",".",$this->price);	  
-	  $sql .= " WHERE rowid = " . $id;
-	  
-	  if ( $this->db->query($sql) )
-	    {
-	      $this->_log_price($user);
-	      return 1;
-	    }
-	  else
-	    {
-	      print $this->db->error() . ' in ' . $sql;
-	      return -1;
-	    }
-	}
-      else
-	{
-	  $this->mesg_error = "Prix saisi invalide.";
-	  return -2;
-	}
-    }
-
+  {
+    if (strlen(trim($this->price)) > 0 )
+      {
+	
+	$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
+	$sql .= " SET price = " . ereg_replace(",",".",$this->price);	  
+	$sql .= " WHERE rowid = " . $id;
+	
+	if ( $this->db->query($sql) )
+	  {
+	    $this->_log_price($user);
+	    return 1;
+	  }
+	else
+	  {
+	    print $this->db->error() . ' in ' . $sql;
+	    return -1;
+	  }
+      }
+    else
+      {
+	$this->mesg_error = "Prix saisi invalide.";
+	return -2;
+      }
+  }
   /**
    *
    *
