@@ -32,7 +32,7 @@ llxHeader();
 
 print_titre ("Comptes bancaires");
 
-$sql = "SELECT rowid, label,number,bank FROM llx_bank_account";
+$sql = "SELECT rowid, label,number,bank FROM ".MAIN_DB_PREFIX."bank_account";
 
 $result = $db->query($sql);
 if ($result)
@@ -52,7 +52,7 @@ if ($result)
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print '<tr class="liste_titre"><td>Comptes courants</td><td>Banque</td>';
-print '<td align="left">Numéro</td><td align="right">Solde</td><td>Clos</td>';
+print '<td align="left">Numéro</td><td align="right">Solde</td><td align="center">Clos</td>';
 print "</tr>\n";
 $total = 0;
 for ($i = 0 ; $i < sizeof($accounts) ; $i++)
@@ -68,7 +68,7 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++)
     
       print "</td><td>$acc->bank</td><td>$acc->number</td>";
     
-      print '<td align="right">'.price($solde).'</td><td align=\"center\">'.$yn[$acc->clos].'</td></tr>';
+      print '<td align="right">'.price($solde).'</td><td align="center">'.$yn[$acc->clos].'</td></tr>';
   
       $total += $solde;
     }
