@@ -21,11 +21,12 @@
 #
 SQL=psql
 BASE=dolibarr
-OPTIONS=-U postgres
+OWNER=dolibarradm
+OPTIONS=-U $(OWNER) 
 
 all:	show
 
-create:
+create:	
 	$(SQL) $(OPTIONS) $(BASE) < actioncomm.sql
 	$(SQL) $(OPTIONS) $(BASE) < c_actioncomm.sql
 	$(SQL) $(OPTIONS) $(BASE) < c_chargesociales.sql
@@ -67,7 +68,6 @@ create:
 	$(SQL) $(OPTIONS) $(BASE) < societe.sql
 	$(SQL) $(OPTIONS) $(BASE) < socpeople.sql
 	$(SQL) $(OPTIONS) $(BASE) < socstatutlog.sql
-
 
 drop:
 	$(SQL) $(OPTIONS) $(BASE) < drop.sql

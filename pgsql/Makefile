@@ -53,7 +53,7 @@ droptable:
 load:
 	$(SQL) $(OPTIONS) $(BASE) < data/data.sql
 
-drop: dropdb droppriv
+drop: droppriv dropdb dropuser
 
 droppriv:
 	$(SQL) $(OPTIONS) template1 -c "revoke all privileges on database $(BASE) from $(OWNER) ; "

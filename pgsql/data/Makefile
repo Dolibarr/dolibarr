@@ -24,7 +24,8 @@
 
 SQL=psql 
 BASE=dolibarr
-OPTIONS=-U postgres
+OWNER=dolibarradm
+OPTIONS=-U $(OWNER)
 
 dev:
 	$(SQL) $(OPTIONS) $(BASE) < data_dev.sql
