@@ -185,59 +185,71 @@ print '<td><input type="submit" value="Modifier"></td>';
 print "</tr>\n";
 print '<tr '.$bc[True].'>';
 print "<td>Proposer paiement par RIB sur le compte</td>";
-print "<td><select name=\"rib\">";
-print '<option value="0">Ne pas afficher</option>';
+print "<td>";
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
 $var=True;
 if ($db->query($sql))
 {
-  $num = $db->num_rows();
-  $i = 0;
-  while ($i < $num)
-    {
-      $var=!$var;
-      $row = $db->fetch_row($i);
-
-      if ($facture_rib_number_var == $row[0])
-	{
-	  print '<option value="'.$row[0].'" selected>'.$row[1].'</option>';
+	$num = $db->num_rows();
+	$i = 0;
+	if ($num > 0) {
+		print "<select name=\"rib\">";
+		print '<option value="0">Ne pas afficher</option>';
+		while ($i < $num)
+		{
+		  $var=!$var;
+		  $row = $db->fetch_row($i);
+		
+		  if ($facture_rib_number_var == $row[0])
+		{
+		  print '<option value="'.$row[0].'" selected>'.$row[1].'</option>';
+		}
+		  else
+		{
+		  print '<option value="'.$row[0].'">'.$row[1].'</option>';
+		}
+		  $i++;
+		}
+		print "</select>";
+	} else {
+		print "<i>Aucun compte bancaire encore créé</i>";
 	}
-      else
-	{
-	  print '<option value="'.$row[0].'">'.$row[1].'</option>';
-	}
-      $i++;
-    }
 }
-print "</select></td></tr>";
+print "</td></tr>";
 
 print '<tr '.$bc[False].'>';
 print "<td>Proposer paiement par chèque à l'ordre et adresse du titulaire du compte</td>";
-print "<td><select name=\"chq\">";
-print '<option value="0">Ne pas afficher</option>';
+print "<td>";
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
 $var=True;
 if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
-  while ($i < $num)
-    {
-      $var=!$var;
-      $row = $db->fetch_row($i);
-
-      if ($facture_chq_number_var == $row[0])
+  if ($num > 0) {
+  	print "<select name=\"chq\">";
+	print '<option value="0">Ne pas afficher</option>';
+	while ($i < $num)
+	{
+	  $var=!$var;
+	  $row = $db->fetch_row($i);
+	
+	  if ($facture_chq_number_var == $row[0])
 	{
 	  print '<option value="'.$row[0].'" selected>'.$row[1].'</option>';
 	}
-      else
+	  else
 	{
 	  print '<option value="'.$row[0].'">'.$row[1].'</option>';
 	}
-      $i++;
-    }
+	  $i++;
+	}
+	print "</select>";
+  } else {
+		print "<i>Aucun compte bancaire actif encore créé</i>";
+  }
 }
-print "</select></td></tr>";
+print "</td></tr>";
 
 print "</form>";
 print "</table>";
