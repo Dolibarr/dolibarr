@@ -63,17 +63,23 @@ $modules["MAIN_MODULE_FACTURE"][2] = MAIN_MODULE_FACTURE;
 $modules["MAIN_MODULE_FACTURE"][3] = "Module de gestion des factures";
 $modules["MAIN_MODULE_FACTURE"][4] = "modFacture";
 
+$modules["MAIN_MODULE_PROPALE"][0] = "Module propale";
+$modules["MAIN_MODULE_PROPALE"][1] = "MAIN_MODULE_PROPALE";
+$modules["MAIN_MODULE_PROPALE"][2] = MAIN_MODULE_PROPALE;
+$modules["MAIN_MODULE_PROPALE"][3] = "Module de gestion des propositions commerciales";
+$modules["MAIN_MODULE_PROPALE"][4] = "modPropale";
+
 $modules["MAIN_MODULE_PRODUIT"][0] = "Module produit";
 $modules["MAIN_MODULE_PRODUIT"][1] = "MAIN_MODULE_PRODUIT";
 $modules["MAIN_MODULE_PRODUIT"][2] = MAIN_MODULE_PRODUIT;
 $modules["MAIN_MODULE_PRODUIT"][3] = "Module de gestion des produits";
 $modules["MAIN_MODULE_PRODUIT"][4] = "modProduit";
 
-$modules["MAIN_MODULE_PROPALE"][0] = "Module propale";
-$modules["MAIN_MODULE_PROPALE"][1] = "MAIN_MODULE_PROPALE";
-$modules["MAIN_MODULE_PROPALE"][2] = MAIN_MODULE_PROPALE;
-$modules["MAIN_MODULE_PROPALE"][3] = "Module de gestion des propositions commerciales";
-$modules["MAIN_MODULE_PROPALE"][4] = "modPropale";
+$modules["MAIN_MODULE_PROJET"][0] = "Module projet";
+$modules["MAIN_MODULE_PROJET"][1] = "MAIN_MODULE_PROJET";
+$modules["MAIN_MODULE_PROJET"][2] = MAIN_MODULE_PROJET;
+$modules["MAIN_MODULE_PROJET"][3] = "Module de gestion des projets";
+$modules["MAIN_MODULE_PROJET"][4] = "modProjet";
 
 $modules["MAIN_MODULE_FOURNISSEUR"][0] = "Module fournisseur";
 $modules["MAIN_MODULE_FOURNISSEUR"][1] = "MAIN_MODULE_FOURNISSEUR";
