@@ -21,9 +21,9 @@
  */
 
 /*
-  \file       htdocs/compta/prelevement/prelevement.class.php
+  \file       htdocs/compta/prelevement/ligne-prelevement.class.php
   \ingroup    prelevement
-  \brief      Fichier de la classe des prelevements
+  \brief      Fichier de la classe des lignes de prelevements
   \version    $Revision$
 */
 
