@@ -19,14 +19,24 @@
  * $Id$
  * $Source$
  */
+ 
+/*!
+	    \file       htdocs/comm/action/fiche.php
+        \ingroup    commercial
+		\brief      Page de la fiche action commercial
+		\version    $Revision$
+*/
+ 
 require("./pre.inc.php");
 
 $langs->load("company");
+$langs->load("commercial");
 
 require("../../contact.class.php");
 require("../../lib/webcal.class.php");
 require("../../cactioncomm.class.php");
 require("../../actioncomm.class.php");
+
 
 /*
  * Sécurité accés client
@@ -38,8 +48,7 @@ if ($user->societe_id > 0)
 }
 
 /*
- *
- *
+ * Action création de l'action
  *
  */
 if ($_POST["action"] == 'add_action') 
@@ -101,8 +110,7 @@ if ($_POST["action"] == 'add_action')
 	  $webcal->add($user, $actioncomm->date, $societe->nom, $libelle);
 	}
 
-  //  Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=$socid");
-  Header("Location: ".$_POST["from"]);
+    Header("Location: ".$_POST["from"]);
 
   } else {
     
@@ -112,13 +120,22 @@ if ($_POST["action"] == 'add_action')
 
 }
 
+/*
+ * Action suppression de l'action
+ *
+ */
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
   $actioncomm = new ActionComm($db);
   $actioncomm->delete($_GET["id"]);
+
   Header("Location: index.php");
 }
 
+/*
+ * Action mise à jour de l'action
+ *
+ */
 if ($_POST["action"] == 'update')
 {
   $action = new Actioncomm($db);
@@ -138,10 +155,12 @@ llxHeader();
 $html = new Form($db);
 
 
-/*
- * Affichage fiche action vierge en mode creation
- *
- */
+
+/* ************************************************************************** */
+/*                                                                            */
+/* Affichage fiche en mode création                                           */
+/*                                                                            */
+/* ************************************************************************** */
 
 if ($_GET["action"] == 'create')
 {
@@ -164,19 +183,19 @@ if ($_GET["action"] == 'create')
    */
   if ($_GET["actionid"] == 5) 
     {
-	  print_titre ("Saisie d'une action Rendez-vous");	  
+	  print_titre ($langs->trans("AddActionRendezVous"));	  
       print "<br>";
 
       print '<input type="hidden" name="date" value="'.$db->idate(time()).'">'."\n";
       
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+      print '<table class="border" width="100%">';
 
       // Type d'action
-      print '<tr><td colspan="2"><div class="titre">Rendez-vous</div></td></tr>';
+      print '<tr><td colspan="2"><div class="titre">'.$langs->trans("Rendez-Vous").'</div></td></tr>';
       print '<input type="hidden" name="actionid" value="5">';
 
       // Societe, contact
-	  print '<tr><td width="10%">'.$langs->trans("Action concernant la companie").'</td><td width="40%">';
+	  print '<tr><td width="10%">'.$langs->trans("ActionOnCompany").'</td><td width="40%">';
       if ($_GET["socid"]) {
           $societe = new Societe($db);
           $nomsoc=$societe->get_nom($_GET["socid"]);
@@ -190,7 +209,7 @@ if ($_GET["action"] == 'create')
     
       // Si la societe est imposée, on propose ces contacts
       if ($_GET["socid"]) {
-    	  print '<tr><td width="10%">'.$langs->trans("Action concernant le contact").'</td><td width="40%">';
+    	  print '<tr><td width="10%">'.$langs->trans("ActionOnContact").'</td><td width="40%">';
           print $html->select_contacts($_GET["socid"],'','contactid',1,1);
     	  print '</td></tr>';
       }
@@ -217,10 +236,10 @@ if ($_GET["action"] == 'create')
    */   
   else 
     {      
-	  print_titre ("Saisie d'une action");	  
+	  print_titre ($langs->trans("AddAction"));
       print "<br>";
       
-	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+	  print '<table class="border" width="100%">';
 
       // Type d'action actifs
       print '<tr><td width="10%">'.$langs->trans("Action").'</td><td>';
@@ -235,7 +254,7 @@ if ($_GET["action"] == 'create')
       print '<tr><td width="10%">'.$langs->trans("Label").'</td><td><input type="text" name="todo_label" size="30"></td></tr>';
 
       // Societe, contact
-	  print '<tr><td width="10%">'.$langs->trans("Action concernant la companie").'</td><td width="40%">';
+	  print '<tr><td width="10%">'.$langs->trans("ActionOnCompany").'</td><td width="40%">';
       if ($_GET["socid"]) {
           $societe = new Societe($db);
           $nomsoc=$societe->get_nom($_GET["socid"]);
@@ -249,7 +268,7 @@ if ($_GET["action"] == 'create')
     
       // Si la societe est imposée, on propose ces contacts
       if ($_GET["socid"]) {
-    	  print '<tr><td width="10%">'.$langs->trans("Action concernant le contact").'</td><td width="40%">';
+    	  print '<tr><td width="10%">'.$langs->trans("ActionOnContact").'</td><td width="40%">';
           print $html->select_contacts($_GET["socid"],'','contactid',1,1);
     	  print '</td></tr>';
       }
@@ -306,6 +325,7 @@ if ($_GET["action"] == 'create')
       print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
       print '<textarea cols="60" rows="6" name="todo_note"></textarea></td></tr>';
 
+
       print '</table>';
   
       print '<p align="center"><input type="submit" value="'.$langs->trans("Add").'"></p>';
@@ -316,45 +336,57 @@ if ($_GET["action"] == 'create')
 }
 
 /*
- *
- *
+ * Affichage action en mode edition ou visu
  *
  */
 if ($_GET["id"])
 {
+    $act = new ActionComm($db);
+    $act->fetch($_GET["id"]);
+    
+    $act->societe->fetch($act->societe->id);
+    $act->author->fetch($act->author->id);
+    $act->contact->fetch($act->contact->id);
+
+    /*
+     * Affichage onglets
+     */
+
+    $h = 0;
+
+    $head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$_GET["id"];
+    $head[$h][1] = $langs->trans("CardAction");
+    $hselected=$h;
+    $h++;
+
+    dolibarr_fiche_head($head, $hselected, $langs->trans("Ref")." ".$act->id);
+
+
   // Confirmation suppression action
   if ($_GET["action"] == 'delete')
     {
-      $html->form_confirm("fiche.php?id=".$_GET["id"],"Supprimer l'action","Etes-vous sûr de vouloir supprimer cette action ?","confirm_delete");
+      $html->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAction"),$langs->trans("ConfirmDeleteAction"),"confirm_delete");
     }
   
-  $act = new ActionComm($db);
-  $act->fetch($_GET["id"]);
-  
-  $act->societe->fetch($act->societe->id);
-  $act->author->fetch($act->author->id);
-  $act->contact->fetch($act->contact->id);
-  
-  // Fiche action en mode edition
   if ($_GET["action"] == 'edit')
     {      
-      print_titre ("Edition de la fiche action");
+      // Fiche action en mode edition
       print '<form action="fiche.php" method="post">';
       print '<input type="hidden" name="action" value="update">';
       print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
       print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
 
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+      print '<table class="border" width="100%">';
       print '<tr><td width="20%">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-      print '<tr><td width="20%">Société</td>';
+      print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
       print '<td width="30%"><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
       
-      print '<td width="20%">Contact</td><td width="30%">';
+      print '<td width="20%">'.$langs->trans("Contact").'</td><td width="30%">';
       $html->select_array("contactid",  $act->societe->contact_array(), $act->contact->id, 1);
       print '</td></tr>';
-      print '<tr><td>'.$langs->trans("Author").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
+      print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
       print '<td>'.$langs->trans("Author").'</td><td>'.$act->author->fullname.'</td></tr>';
-      print '<tr><td>Pourcentage réalisé</td><td colspan="3"><input name="percent" value="'.$act->percent.'">%</td></tr>';
+      print '<tr><td>'.$langs->trans("PercentDone").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'">%</td></tr>';
       if ($act->objet_url)
 	{
 	  print '<tr><td>Objet lié</td>';
@@ -366,23 +398,22 @@ if ($_GET["id"])
 	  print '<tr><td valign="top">'.$langs->trans("Comment").'</td><td colspan="3">';
 	  print nl2br($act->note).'</td></tr>';
 	}
-      print '<tr><td align="center" colspan="4"><input type="submit" value="Enregister"</td></tr>';
+      print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Save").'"</td></tr>';
       print '</table></form>';
     }
   else
     {      
       // Affichage fiche action en mode visu
-      print_titre ("Action commerciale");
-      
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+      print '<table class="border" width="100%"';
       print '<tr><td width="20%">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
-      print '<tr><td width="20%">Société</td>';
-      print '<td width="30%"><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
+      print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
+      print '<td width="30%"><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
       
-      print '<td width="10%">Contact</td><td width="40%">'.$act->contact->fullname.'</td></tr>';
-      print '<tr><td>'.$langs->trans("Author").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
+      print '<td width="10%">'.$langs->trans("Contact").'</td>';
+      print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.$act->contact->fullname.'</a></td></tr>';
+      print '<tr><td>'.$langs->trans("DateCreation").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
       print '<td>'.$langs->trans("Author").'</td><td>'.$act->author->fullname.'</td></tr>';
-      print '<tr><td>Pourcentage réalisé</td><td colspan="3">'.$act->percent.' %</td></tr>';
+      print '<tr><td>'.$langs->trans("PercentDone").'</td><td colspan="3">'.$act->percent.' %</td></tr>';
       if ($act->objet_url)
 	{
 	  print '<tr><td>Objet lié</td>';
@@ -396,22 +427,29 @@ if ($_GET["id"])
 	}
       print '</table>';
     }
-  /*
-   *
-   */
-  print '<br><div class="tabsAction">';
+    print '<br>';
+    
+    print "</div>\n";
 
-  if ($_GET["action"] == 'edit')
+
+    /*
+     * Barre d'actions
+     *
+     */
+
+    print '<div class="tabsAction">';
+    
+    if ($_GET["action"] == 'edit')
     {
       print '<a class="tabAction" href="fiche.php?id='.$act->id.'">'.$langs->trans("Cancel").'</a>';
     }
-  else
+    else
     {
       print '<a class="tabAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Edit").'</a>';
     }
-
-  print '<a class="tabAction" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
-  print '</div>';
+    
+    print '<a class="tabAction" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
+    print '</div>';
 }
 
 $db->close();
