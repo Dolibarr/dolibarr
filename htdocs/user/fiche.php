@@ -20,7 +20,7 @@
  * $Source$
  */
 
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 $form = new Form($db);
 
@@ -211,9 +211,9 @@ else
 		      $oldmod = $obj->module;
 		      $var = !$var;
 		    }
-		  print '<tr '. $bc[$var].'><td><a href="fiche.php3?id='.$id.'&request=perms&subaction=addrights&rights='.$obj->id.'">Ajouter</a></td><td>';
+		  print '<tr '. $bc[$var].'><td><a href="fiche.php?id='.$id.'&request=perms&subaction=addrights&rights='.$obj->id.'">Ajouter</a></td><td>';
 		  print $obj->libelle . '</td>';
-		  print '<td><a href="fiche.php3?id='.$id.'&request=perms&subaction=delrights&rights='.$obj->id.'">Supprimer</a></td></tr>';
+		  print '<td><a href="fiche.php?id='.$id.'&request=perms&subaction=delrights&rights='.$obj->id.'">Supprimer</a></td></tr>';
 		  $i++;
 		}
 	    }
@@ -246,7 +246,7 @@ else
 	    }
 	  print '</table>';
 	  print '</td></tr>';
-	  print '<tr><td align="center" colspan="4"><a href="fiche.php3?id='.$id.'">ok</a></td></tr></table>';
+	  print '<tr><td align="center" colspan="4"><a href="fiche.php?id='.$id.'">ok</a></td></tr></table>';
 	}
       else
 	{
@@ -325,7 +325,7 @@ else
 
       if ($user->admin) 
 	{
-	  print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+	  print '<td width="20%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
 	}
       else
 	{
@@ -335,7 +335,7 @@ else
 
       if ($user->id == $id or $user->admin)
 	{
-	  print '<td width="20%" align="center">[<a href="fiche.php3?action=password&id='.$id.'">Nouveau mot de passe</a>]</td>';
+	  print '<td width="20%" align="center">[<a href="fiche.php?action=password&id='.$id.'">Nouveau mot de passe</a>]</td>';
 	}
       else 
 	{
@@ -344,7 +344,7 @@ else
 
       if ($user->admin)
 	{
-	  print '<td width="20%" align="center">[<a href="fiche.php3?request=perms&id='.$id.'">Permissions</a>]</td>';
+	  print '<td width="20%" align="center">[<a href="fiche.php?request=perms&id='.$id.'">Permissions</a>]</td>';
 	}
       else
 	{
@@ -354,7 +354,7 @@ else
 
       if ($user->admin && $user->id <> $id)
 	{
-	  print '<td width="20%" align="center">[<a href="fiche.php3?request=delete&id='.$id.'">Supprimer</a>]</td>';
+	  print '<td width="20%" align="center">[<a href="fiche.php?request=delete&id='.$id.'">Supprimer</a>]</td>';
 	}
       else
 	{	  

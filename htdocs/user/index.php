@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 llxHeader();
 
@@ -49,9 +49,9 @@ if ($result)
       $var=!$var;
       
       print "<TR $bc[$var]>";
-      print '<TD><a href="fiche.php3?id='.$obj->rowid.'">'.$obj->firstname.'</a></td>';
+      print '<TD><a href="fiche.php?id='.$obj->rowid.'">'.$obj->firstname.'</a></td>';
       print '<TD>'.$obj->name.'</TD>';
-      print '<TD><a href="fiche.php3?id='.$obj->rowid.'">'.$obj->login.'</a></TD>';
+      print '<TD><a href="fiche.php?id='.$obj->rowid.'">'.$obj->login.'</a></TD>';
       print '<TD>'.$obj->code.'</TD>';
       print "</TR>\n";
       $i++;
