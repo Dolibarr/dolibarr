@@ -68,3 +68,4 @@ StandingOrders=Prélèvements
 StandingOrder=Prélèvement
 NoDraftBills=Pas de factures brouillons
 NoOtherDraftBills=Pas d'autres factures brouillons
+RefBill=Réf facture

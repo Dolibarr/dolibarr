@@ -65,3 +65,4 @@ SendBillRef=Send bill %s
 SendReminderBillRef=Send bill %s (reminder)
 NoDraftBills=No drafts bills
 NoOtherDraftBills=No other drafts bills
+RefBill=Bill ref

@@ -21,7 +21,8 @@
 *
 */
 
-/**   	\file       htdocs/includes/modules/facture/pdf_crabe.modules.php
+/**
+       	\file       htdocs/includes/modules/facture/pdf_crabe.modules.php
 		\ingroup    facture
 		\brief      Fichier de la classe permettant de générer les factures au modèle Crabe
 		\author	    Laurent Destailleur
@@ -29,18 +30,22 @@
 */
 
 
-/**	    \class      pdf_crabe
+/**
+	    \class      pdf_crabe
 		\brief      Classe permettant de générer les factures au modèle Crabe
 */
 
 class pdf_crabe extends ModelePDFFactures
 {
     
-    /**		\brief  Constructeur
+    /**
+    		\brief  Constructeur
     		\param	db		handler accès base de donnée
     */
     function pdf_crabe($db)
     {
+        global $langs;
+        
         $this->db = $db;
         $this->description = "Modèle de facture complet (Gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, logo...)";
         $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
@@ -49,6 +54,22 @@ class pdf_crabe extends ModelePDFFactures
         $this->option_codeproduitservice = 1;      // Affiche code produit-service FACTURE_CODEPRODUITSERVICE
         $this->option_tvaintra = 1;                // Affiche tva intra MAIN_INFO_TVAINTRA
         $this->option_capital = 1;                 // Affiche capital MAIN_INFO_CAPITAL
+    	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') 
+      		$this->franchise=1;
+
+        // Recupere code pays
+        $this->code_pays=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
+        $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
+        $sql .= " WHERE rowid = ".MAIN_INFO_SOCIETE_PAYS;
+        $result=$this->db->query($sql);
+        if ($result) {
+            $obj = $this->db->fetch_object($result);
+            if ($obj->code) $this->code_pays=$obj->code;
+        }
+        else {
+            dolibarr_print_error($this->db);
+        }
+        $this->db->free($result);
     }
 
 
@@ -67,6 +88,7 @@ class pdf_crabe extends ModelePDFFactures
     		\remarks    FAC_PDF_ADRESSE
     		\remarks    MAIN_INFO_SIRET
     		\remarks    MAIN_INFO_SIREN
+    		\remarks    MAIN_INFO_RCS
     		\remarks    MAIN_INFO_CAPITAL
     		\remarks    MAIN_INFO_TVAINTRA
     */
@@ -350,7 +372,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetXY ($tab3_posx+41, $tab3_top-1 );
         $pdf->MultiCell(20, 4, $langs->trans("Type"), 0, 'L', 0);
         $pdf->SetXY ($tab3_posx+60, $tab3_top-1 );
-        $pdf->MultiCell(20, 4, $langs->trans("Ref"), 0, 'L', 0);
+        $pdf->MultiCell(20, 4, $langs->trans("RefBill"), 0, 'L', 0);
 
         $sql = "SELECT ".$this->db->pdate("p.datep")."as date, p.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
         $sql.= "FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."paiement_facture as pf ";
@@ -430,7 +452,8 @@ class pdf_crabe extends ModelePDFFactures
 
         // Affiche la mention TVA non applicable selon option
         $pdf->SetXY (10, $tab2_top + 0);
-        if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') {
+    	if ($this->franchise==1)
+      	{
             $pdf->MultiCell(100, $tab2_hl, "* TVA non applicable art-293B du CGI", 0, 'L', 0);
         }
 
@@ -544,12 +567,15 @@ class pdf_crabe extends ModelePDFFactures
         global $langs;
         $langs->load("main");
         $langs->load("bills");
+        $langs->load("propal");
+        $langs->load("companies");
         
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFont('Arial','B',13);
 
         $pdf->SetXY(10,6);
 
+		// Logo
         if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
         {
             if (file_exists(FAC_PDF_LOGO)) {
@@ -577,8 +603,8 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->MultiCell(100, 10, $langs->trans("Date")." : " . dolibarr_print_date($fac->date,"%d %b %Y"), '', 'R');
 
         /*
-        * Emetteur
-        */
+         * Emetteur
+         */
         $posy=42;
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
@@ -593,48 +619,68 @@ class pdf_crabe extends ModelePDFFactures
 
         $pdf->SetXY(10,$posy+4);
 
-        if (defined("FAC_PDF_INTITULE2"))
-        {
-            $pdf->SetTextColor(0,0,60);
-            $pdf->SetFont('Arial','B',10);
-            $pdf->MultiCell(70, 4, FAC_PDF_INTITULE2, 0, 'L');
-        }
+        // Nom emetteur
+        $pdf->SetTextColor(0,0,60);
+        $pdf->SetFont('Arial','B',11);
+        if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM)  // Prioritaire sur MAIN_INFO_SOCIETE_NOM
+          {
+        $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
+          }
+        else                                                        // Par defaut
+          {
+        $pdf->MultiCell(80, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
+          }
+
+        // Caractéristiques emetteur
+        $pdf->SetFont('Arial','',9);
         if (defined("FAC_PDF_ADRESSE"))
         {
-            $pdf->SetFont('Arial','',10);
             $pdf->MultiCell(80, 4, FAC_PDF_ADRESSE);
         }
         if (defined("FAC_PDF_TEL"))
         {
-            $pdf->SetFont('Arial','',10);
-            $pdf->MultiCell(40, 4, "Tél : ".FAC_PDF_TEL);
+            $pdf->MultiCell(80, 4, $langs->trans("Phone").": ".FAC_PDF_TEL);
         }
+        if (defined("FAC_PDF_FAX"))
+        {
+            $pdf->MultiCell(80, 4, $langs->trans("Fax").": ".FAC_PDF_FAX);
+        }
+		if (defined("FAC_PDF_MEL"))
+		{
+			$pdf->MultiCell(80, 4, $langs->trans("Email").": ".FAC_PDF_MEL);
+		}
+		if (defined("FAC_PDF_WWW"))
+		{
+			$pdf->MultiCell(80, 4, $langs->trans("Web").": ".FAC_PDF_WWW);
+		}
 
-        if (defined("MAIN_INFO_SIREN"))
+        if (defined("MAIN_INFO_SIREN") && MAIN_INFO_SIREN)
         {
-            $pdf->SetFont('Arial','',10);
-            $pdf->MultiCell(60, 4, "SIREN : ".MAIN_INFO_SIREN);
+            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN);
         }
-        elseif (defined("MAIN_INFO_SIRET"))
+        elseif (defined("MAIN_INFO_SIRET") && MAIN_INFO_SIRET)
         {
-            $pdf->SetFont('Arial','',10);
-            $pdf->MultiCell(60, 4, "SIRET : ".MAIN_INFO_SIRET);
+            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIRET);
         }
 
 
         /*
-        * Client
-        */
+         * Client
+         */
         $posy=42;
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
         $pdf->SetXY(102,$posy-5);
         $pdf->MultiCell(80,5, $langs->trans("BillTo").":");
-        $pdf->SetFont('Arial','B',11);
         $fac->fetch_client();
+
+        // Nom client
         $pdf->SetXY(102,$posy+4);
+        $pdf->SetFont('Arial','B',11);
         $pdf->MultiCell(86,4, $fac->client->nom, 0, 'L');
-        $pdf->SetFont('Arial','B',10);
+
+        // Caractéristiques client
+        $pdf->SetFont('Arial','B',9);
         $pdf->SetXY(102,$posy+12);
         $pdf->MultiCell(86,4, $fac->client->adresse . "\n" . $fac->client->cp . " " . $fac->client->ville);
         $pdf->rect(100, $posy, 100, 34);
@@ -666,9 +712,16 @@ class pdf_crabe extends ModelePDFFactures
         $footy=13;
         $pdf->SetFont('Arial','',8);
 
-        if (MAIN_INFO_CAPITAL) {
+        if (defined(MAIN_INFO_CAPITAL)) {
             $pdf->SetY(-$footy);
-            $pdf->MultiCell(190, 3,"SARL au Capital de " . MAIN_INFO_CAPITAL." ".$conf->monnaie." - " . MAIN_INFO_RCS." - Identifiant professionnel: " . MAIN_INFO_SIREN , 0, 'C');
+            $ligne="SARL au Capital de " . MAIN_INFO_CAPITAL." ".$conf->monnaie;
+            if (defined(MAIN_INFO_SIREN) && MAIN_INFO_SIREN) {
+                $ligne.=" - ".$langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIREN;
+            }
+            if (defined(MAIN_INFO_RCS) && MAIN_INFO_RCS) {
+                $ligne.=" - ".$langs->transcountry("ProfId3",$this->code_pays).": ".MAIN_INFO_RCS;
+            }
+            $pdf->MultiCell(190, 3, $ligne, 0, 'C');
             $footy-=3;
         }
 
@@ -683,7 +736,7 @@ class pdf_crabe extends ModelePDFFactures
         }
         elseif (MAIN_INFO_TVAINTRA != '') {
             $pdf->SetY(-$footy);
-            $pdf->MultiCell(190, 3,  $langs->trans("TVAIntra")." : ".MAIN_INFO_TVAINTRA, 0, 'C');
+            $pdf->MultiCell(190, 3,  $langs->trans("TVAIntra").": ".MAIN_INFO_TVAINTRA, 0, 'C');
         }
 
         $pdf->SetXY(-10,-10);

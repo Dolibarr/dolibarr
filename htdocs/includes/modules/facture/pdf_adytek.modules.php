@@ -298,7 +298,12 @@ class pdf_adytek extends ModelePDFFactures {
       $pdf->MultiCell(20, 6, "Banque", 0, 'L', 0);
     }
 
-  function _tableau_tot(&$pdf, $fac)
+    /*
+    *   \brief      Affiche le total à payer
+    *   \param      pdf         objet PDF
+    *   \param      fac         objet facture
+    */
+    function _tableau_tot(&$pdf, $fac)
     {
         global $langs;
         $langs->load("main");
@@ -413,12 +418,14 @@ class pdf_adytek extends ModelePDFFactures {
         global $langs;
         $langs->load("main");
         $langs->load("bills");
+		$langs->load("companies");
 
       $tab4_top = 60;
       $tab4_hl = 6;
       $tab4_sl = 4;
       $ligne = 2;
 
+		// Logo
         if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
         {
             if (file_exists(FAC_PDF_LOGO)) {
@@ -447,38 +454,32 @@ class pdf_adytek extends ModelePDFFactures {
       if (defined("FAC_PDF_ADRESSE"))
       {
       	$pdf->SetXY( $tab4_top , $tab4_hl );
-        $pdf->MultiCell(40, 3, FAC_PDF_ADRESSE, '' , 'L');
+        $pdf->MultiCell(80, 3, FAC_PDF_ADRESSE, '' , 'L');
       }
       $pdf->SetFont('Arial','',7);
       if (defined("FAC_PDF_TEL"))
       {
       	$pdf->SetXY( $tab4_top , $tab4_hl + 2*$tab4_sl );
-        $pdf->MultiCell(40, 3, "Téléphone : " . FAC_PDF_TEL, '' , 'L');
+        $pdf->MultiCell(80, 3, "Téléphone : " . FAC_PDF_TEL, '' , 'L');
       }
       if (defined("FAC_PDF_FAX"))
       {
       	$pdf->SetXY( $tab4_top , $tab4_hl + 3*$tab4_sl );
-        $pdf->MultiCell(40, 3, "Télécopie : " . FAC_PDF_FAX, '' , 'L');
+        $pdf->MultiCell(80, 3, "Télécopie : " . FAC_PDF_FAX, '' , 'L');
       }
       if (defined("FAC_PDF_MEL"))
       {
       	$pdf->SetXY( $tab4_top , $tab4_hl + 4*$tab4_sl );
-        $pdf->MultiCell(40, 3, "E-mail : " . FAC_PDF_MEL, '' , 'L');
+        $pdf->MultiCell(80, 3, "E-mail : " . FAC_PDF_MEL, '' , 'L');
       }
       if (defined("FAC_PDF_WWW"))
       {
       	$pdf->SetXY( $tab4_top , $tab4_hl + 5*$tab4_sl );
-        $pdf->MultiCell(40, 3, "Internet : " . FAC_PDF_WWW, '' , 'L');
+        $pdf->MultiCell(80, 3, "Internet : " . FAC_PDF_WWW, '' , 'L');
       }
       $pdf->SetTextColor(70,70,170);
 
-      if (defined("FAC_PDF_INTITULE2"))
-	{
-	  $pdf->SetXY(10,30);
-	  $pdf->SetFont('Arial','',7);
-	  $pdf->SetTextColor(0,0,200);
-	  $pdf->MultiCell(45, 5, FAC_PDF_INTITULE2, '' , 'C');
-	}
+
        /*
        * Definition du document
        */

@@ -22,16 +22,18 @@
 *
 */
 
-/*!	\file htdocs/includes/modules/facture/pdf_oursin.modules.php
-  \ingroup    facture
-  \brief      Fichier de la classe permettant de générer les factures au modèle oursin
-  \author	   Sylvain SCATTOLINI basé sur un modèle de Laurent Destailleur
-  \version    $Revision$
+/**
+        \file       htdocs/includes/modules/facture/pdf_oursin.modules.php
+        \ingroup    facture
+        \brief      Fichier de la classe permettant de générer les factures au modèle oursin
+        \author	    Sylvain SCATTOLINI basé sur un modèle de Laurent Destailleur
+        \version    $Revision$
 */
 
 
-/*!	\class pdf_oursin
-  \brief  Classe permettant de générer les factures au modèle oursin
+/**
+        \class      pdf_oursin
+        \brief      Classe permettant de générer les factures au modèle oursin
 */
 
 
@@ -40,8 +42,9 @@ class pdf_oursin extends ModelePDFFactures
   var $marges=array("g"=>10,"h"=>5,"d"=>10,"b"=>15);
 
     
-  /*!		\brief  Constructeur
-    \param	db		handler accès base de donnée
+  /**
+  		\brief  Constructeur
+        \param	db		handler accès base de donnée
   */
   function pdf_oursin($db)
   {
@@ -55,10 +58,24 @@ class pdf_oursin extends ModelePDFFactures
     $this->option_capital = 1;                 // Affiche capital MAIN_INFO_CAPITAL
     if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') 
       $this->franchise=1;
+
+    // Recupere code pays
+    $this->code_pays=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
+    $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
+    $sql .= " WHERE rowid = ".MAIN_INFO_SOCIETE_PAYS;
+    $result=$this->db->query($sql);
+    if ($result) {
+        $obj = $this->db->fetch_object($result);
+        if ($obj->code) $this->code_pays=$obj->code;
+    }
+    else {
+        dolibarr_print_error($this->db);
+    }
+    $this->db->free($result);
   }
 
 
-  /*!
+  /**
     \brief      Fonction générant la facture sur le disque
     \param	    facid	id de la facture à générer
     \return	    int     1=ok, 0=ko
@@ -69,11 +86,10 @@ class pdf_oursin extends ModelePDFFactures
     \remarks    FACTURE_RIB_NUMBER
     \remarks    FAC_PDF_INTITULE
     \remarks    FAC_PDF_INTITULE2
-    \remarks    FAC_PDF_SIREN
-    \remarks    FAC_PDF_SIRET
     \remarks    FAC_PDF_TEL
     \remarks    FAC_PDF_ADRESSE
-    \remarks    MAIN_INFO_RCS
+    		\remarks    MAIN_INFO_SIRET
+    		\remarks    MAIN_INFO_SIREN
     \remarks    MAIN_INFO_CAPITAL
     \remarks    MAIN_INFO_TVAINTRA
   */
@@ -154,7 +170,7 @@ class pdf_oursin extends ModelePDFFactures
 		}
 		if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end) {
 		  // Affichage durée si il y en a une
-		  $codeproduitservice.="\n".$langs->trans("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end);
+		  $codeproduitservice.=" (".$langs->trans("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
 		}
 		$pdf->MultiCell(108, 5, $fac->lignes[$i]->desc."$codeproduitservice", 0, 'J');
 
@@ -166,7 +182,7 @@ class pdf_oursin extends ModelePDFFactures
 		    $pdf->SetXY ($this->marges['g']+119, $curY);
 		    $pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_taux, 0, 'C');
 		  }
-		// Prix unitaire HT
+		// Prix unitaire HT avant remise
 		$pdf->SetXY ($this->marges['g']+132, $curY);
 		$pdf->MultiCell(16, 5, price($fac->lignes[$i]->subprice), 0, 'R', 0);
 
@@ -549,15 +565,15 @@ class pdf_oursin extends ModelePDFFactures
     global $langs;
     $langs->load("main");
     $langs->load("bills");
+    $langs->load("propal");
+    $langs->load("companies");
         
     $pdf->SetTextColor(0,0,60);
     $pdf->SetFont('Arial','B',13);
 
     $pdf->SetXY($this->marges['g'],6);
 
-    /*
-     * Logo
-     */
+    // Logo
     if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
       {
 	if (file_exists(FAC_PDF_LOGO)) 
@@ -595,41 +611,44 @@ class pdf_oursin extends ModelePDFFactures
 
     $pdf->SetXY($this->marges['g'],$posy+4);
 
-    if (defined("FAC_PDF_INTITULE2"))
-      {
+    // Nom emetteur
 	$pdf->SetTextColor(0,0,60);
 	$pdf->SetFont('Arial','B',12);
-	$pdf->MultiCell(70, 4, FAC_PDF_INTITULE2, 0, 'L');
+    if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM)  // Prioritaire sur MAIN_INFO_SOCIETE_NOM
+      {
+	$pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
       }
+    else                                                        // Par defaut
+      {
+	$pdf->MultiCell(80, 4, MAIN_INFO_SOCIETE_NOM, 0, 'L');
+      }
+      
+    // Caractéristiques emetteur
+	$pdf->SetFont('Arial','',9);
     if (defined("FAC_PDF_ADRESSE"))
       {
-	$pdf->SetFont('Arial','',10);
 	$pdf->MultiCell(80, 4, FAC_PDF_ADRESSE);
       }
     if (defined("FAC_PDF_TEL"))
       {
-	$pdf->SetFont('Arial','',10);
-	$pdf->MultiCell(40, 4, "Tél. : ".FAC_PDF_TEL);
+            $pdf->MultiCell(80, 4, $langs->trans("Phone").": ".FAC_PDF_TEL);
       }
     if (defined("FAC_PDF_MEL"))
       {
-	$pdf->SetFont('Arial','',10);
-	$pdf->MultiCell(60, 4, "émail : ".FAC_PDF_MEL);
+			$pdf->MultiCell(80, 4, $langs->trans("Email").": ".FAC_PDF_MEL);
       }
     if (defined("FAC_PDF_WWW"))
       {
-	$pdf->SetFont('Arial','',10);
-	$pdf->MultiCell(60, 4, FAC_PDF_WWW);
+			$pdf->MultiCell(80, 4, $langs->trans("Web").": ".FAC_PDF_WWW);
       }
-    if (defined("FAC_PDF_SIRET"))
+
+    if (defined("MAIN_INFO_SIREN") && MAIN_INFO_SIREN)
       {
-	$pdf->SetFont('Arial','',7);
-	$pdf->MultiCell(60, 4, "SIRET : ".FAC_PDF_SIRET);
+            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN);
       }
-    elseif (defined("FAC_PDF_SIREN"))
+    elseif (defined("MAIN_INFO_SIRET") && MAIN_INFO_SIRET)
       {
-	$pdf->SetFont('Arial','',7);
-	$pdf->MultiCell(60, 4, "SIREN : ".FAC_PDF_SIREN);
+            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIRET);
       }
 
 
@@ -659,7 +678,7 @@ class pdf_oursin extends ModelePDFFactures
     $pdf->SetFont('Arial','B',11);
     $pdf->SetXY($this->marges['g'],$posy+6);
     $pdf->SetTextColor(22,137,210);
-    $pdf->MultiCell(100, 10, "N° : " . $fac->ref, '', 'L');
+    $pdf->MultiCell(100, 10, $langs->trans("RefBill")." : " . $fac->ref, '', 'L');
     $pdf->SetTextColor(0,0,0);
 
     /*
@@ -670,7 +689,7 @@ class pdf_oursin extends ModelePDFFactures
 	$projet = New Project($fac->db);
 	$projet->fetch($fac->projetid);
 	$pdf->SetFont('Arial','',9);
-	$pdf->MultiCell(60, 4, "Projet : ".$projet->title);
+	$pdf->MultiCell(60, 4, $langs->trans("Project")." : ".$projet->title);
       }
     	    
     /*
@@ -683,7 +702,7 @@ class pdf_oursin extends ModelePDFFactures
       {
 	$objp = $fac->db->fetch_object();
 	$pdf->SetFont('Arial','',9);
-	$pdf->MultiCell(60, 4, "Réf. interne : ".$objp->ref);
+	$pdf->MultiCell(60, 4, $langs->trans("RefProposal")." : ".$objp->ref);
       }  
  
     /*
@@ -713,10 +732,17 @@ class pdf_oursin extends ModelePDFFactures
     $footy=13;
     $pdf->SetFont('Arial','',8);
 
-    if (MAIN_INFO_CAPITAL) {
-      $pdf->SetY(-$footy);
-      $pdf->MultiCell(190, 3,"SARL au Capital de " . MAIN_INFO_CAPITAL." ".$conf->monnaie." - " . MAIN_INFO_RCS." - Identifiant professionnel: " . MAIN_INFO_SIREN , 0, 'C');
-      $footy-=3;
+    if (defined(MAIN_INFO_CAPITAL)) {
+        $pdf->SetY(-$footy);
+        $ligne="SARL au Capital de " . MAIN_INFO_CAPITAL." ".$conf->monnaie;
+        if (defined(MAIN_INFO_SIREN) && MAIN_INFO_SIREN) {
+            $ligne.=" - ".$langs->transcountry("ProfId2",$this->code_pays).": ".MAIN_INFO_SIREN;
+        }
+        if (defined(MAIN_INFO_RCS) && MAIN_INFO_RCS) {
+            $ligne.=" - ".$langs->transcountry("ProfId3",$this->code_pays).": ".MAIN_INFO_RCS;
+        }
+        $pdf->MultiCell(190, 3, $ligne, 0, 'C');
+        $footy-=3;
     }
 
     // Affiche le numéro de TVA intracommunautaire
