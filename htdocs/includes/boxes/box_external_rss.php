@@ -21,6 +21,13 @@
  *
  */
 
+/*!
+	    \file       htdocs/includes/boxes/box_external_rss
+        \ingroup    external_rss
+		\brief      Fichier de gestion d'une box pour le module external_rss
+		\version    $Revision$
+*/
+
 require_once("includes/magpierss/rss_fetch.inc");
 
 //rq erics:
@@ -34,7 +41,7 @@ for($site = 0; $site < 1; $site++) {
   for($i = 0; $i < 5 ; $i++){
     $item = $rss->items[$i];
     $href = $item['link'];
-    $title = $item['title'];
+    $title = utf8_decode(urldecode($item['title']));
     $info_box_contents["$href"]="$title";
     $info_box_contents[$i][0] = array('align' => 'left',
 				      'text' => $title,
