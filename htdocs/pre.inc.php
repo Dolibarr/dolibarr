@@ -86,24 +86,19 @@ function llxHeader($head = "") {
 	}
     }
 
-  if ($conf->service->enabled ) 
-    {
-      $menu->add(DOL_URL_ROOT."/service/", "Services");
-    }
-
   if ($conf->adherent->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/adherents/", "Adherents");
+      $menu->add(DOL_URL_ROOT."/adherents/index.php", "Adherents");
     }
 
   if ($conf->commande->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
+      $menu->add(DOL_URL_ROOT."/commande/index.php", "Commandes");
     }
 
   if ($conf->don->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/dons/", "Dons");
+      $menu->add(DOL_URL_ROOT."/compta/dons/index.php", "Dons");
     }
 
   if ($conf->fournisseur->enabled)
