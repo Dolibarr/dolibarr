@@ -174,7 +174,7 @@
 	<xsl:apply-templates select="@*|node()"/>
       </td>
       <td class="titre">
-	Limit date
+	Expiry
       </td>
     </tr>
   </xsl:template>
