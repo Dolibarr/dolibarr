@@ -20,7 +20,7 @@
  * $Source$
  */
 
-/*!
+/**
 	    \file       htdocs/societe.php
         \ingroup    societe
 		\brief      Page des societes
@@ -115,7 +115,7 @@ if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
  *
  */
 
-$title=$langs->trans("CompanyList");
+$title=$langs->trans("ListOfCompanies");
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id";
@@ -187,7 +187,7 @@ if ($result)
       $var=!$var;    
       print "<tr $bc[$var]><td>";
       print "<a href=\"soc.php?socid=$obj->idp\">";
-      print img_file();
+      print img_object($langs->trans("ShowCompany"),"company");
       print "</a>&nbsp;<a href=\"soc.php?socid=$obj->idp\">".stripslashes($obj->nom)."</a></td>\n";
       print "<td>".$obj->ville."&nbsp;</td>\n";
       print '<td align="center">';
