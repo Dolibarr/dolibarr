@@ -265,7 +265,7 @@ class Livre {
 	    }
 	  if ($test)
 	    {
-	      print '<a href="/boutique/livre/fiche.php?id='.$this->id.'&action=delcat&catid='.$key.'">';
+	      print '<a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?id='.$this->id.'&action=delcat&catid='.$key.'">';
 	      print '<img src="/theme/'.$conf->theme.'/img/editdelete.png" height="16" width="16" alt="Supprimer" border="0">';
 	      print "</a><b>$value</b><br>";
 	    }

@@ -221,7 +221,7 @@ if ($action == 'create')
       print '</select>';
       if ($numprojet==0) {
 	print 'Cette société n\'a pas de projet.&nbsp;';
-	print '<a href=/comm/projet/fiche.php3?socidp='.$socidp.'&action=create>Créer un projet</a>';
+	print '<a href='.DOL_URL_ROOT.'/comm/projet/fiche.php3?socidp='.$socidp.'&action=create>Créer un projet</a>';
       }
       print '</td></tr>';
             
@@ -292,7 +292,7 @@ if ($action == 'edit')
   if (sizeof($listeprj) == 0)
     {
       print 'Cette société n\'a pas de projet.&nbsp;';
-      print '<a href=/comm/projet/fiche.php3?socidp='.$socidp.'&action=create>Créer un projet</a>';
+      print '<a href='.DOL_URL_ROOT.'/comm/projet/fiche.php3?socidp='.$socidp.'&action=create>Créer un projet</a>';
     }
   print '</td></tr>';
 

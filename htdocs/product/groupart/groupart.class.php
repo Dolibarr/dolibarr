@@ -90,7 +90,7 @@ class Groupart {
       $this->id          = $result["rowid"];
       $this->nom         = $result["nom"];
 
-      $this->nom_url     = '<a href="/product/groupart/fiche.php?id='.$result["rowid"].'">'.$result["nom"].'</a>';
+      $this->nom_url     = '<a href="'.DOL_URL_ROOT.'/product/groupart/fiche.php?id='.$result["rowid"].'">'.$result["nom"].'</a>';
 
     }
     $this->db->free();

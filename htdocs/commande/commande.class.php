@@ -49,7 +49,7 @@ class Commande {
       $this->id          = $result["rowid"];
       $this->client_name = $result["customers_name"];
 
-      $this->nom_url     = '<a href="/commande/fiche.php?id='.$result["rowid"].'">'.$result["nom"].'</a>';
+      $this->nom_url     = '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$result["rowid"].'">'.$result["nom"].'</a>';
 
     }
     $this->db->free();

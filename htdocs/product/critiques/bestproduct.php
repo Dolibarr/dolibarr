@@ -65,7 +65,7 @@ if ( $db->query($sql) ) {
     $objp = $db->fetch_object( $i);
     $var=!$var;
     print "<TR $bc[$var]>";
-    print '<TD><a href="/boutique/livre/fiche.php?oscid='.$objp->products_id.'">'.$objp->products_model.'</a></TD>';
+    print '<TD><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?oscid='.$objp->products_id.'">'.$objp->products_model.'</a></TD>';
     print '<TD align="center">'.$objp->rat."</TD>\n";
     print '<TD align="center">'.$objp->products_quantity."</TD>\n";
     print '<TD align="center">'.$objp->products_status."</TD>\n";

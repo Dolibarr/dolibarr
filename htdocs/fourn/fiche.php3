@@ -321,7 +321,7 @@ if ($socid > 0) {
       if ( $db->query($sql) )
 	{
 	  print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
-	  print '<tr><td><a href="/comm/action/index.php3?socid='.$objsoc->idp.'">Actions</a></td></tr>';
+	  print '<tr><td><a href="'.DOL_URL_ROOT.'/comm/action/index.php3?socid='.$objsoc->idp.'">Actions</a></td></tr>';
 
 	  $i = 0 ; $num = $db->num_rows(); $tag = True;
 	  while ($i < $num)
@@ -374,7 +374,7 @@ if ($socid > 0) {
 	      }
 	      /*
 	       */
-	      print '<td width="20%"><a href="/user/fiche.php3?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
+	      print '<td width="20%"><a href="'.DOL_URL_ROOT.'/user/fiche.php3?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
 	      print "</tr>\n";
 	      $i++;
 	      $tag = !$tag;

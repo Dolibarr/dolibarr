@@ -98,7 +98,7 @@ class LieuConcert {
       $this->ville       = $result["ville"];
       $this->description = $result["description"];
 
-      $this->nom_url     = '<a href="/product/concert/fichelieu.php?id='.$result["rowid"].'">'.$result["nom"].'</a>';
+      $this->nom_url     = '<a href="'.DOL_URL_ROOT.'/product/concert/fichelieu.php?id='.$result["rowid"].'">'.$result["nom"].'</a>';
     }
     $this->db->free();
 

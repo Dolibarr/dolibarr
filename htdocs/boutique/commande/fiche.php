@@ -44,7 +44,7 @@ if ($id)
 
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr><td width="20%">Date</td><td width="80%" colspan="2">'.$commande->date.'</td></tr>';
-      print '<td width="20%">Client</td><td width="80%" colspan="2"><a href="/boutique/client/fiche.php?id='.$commande->client_id.'">'.$commande->client_name.'</a></td></tr>';
+      print '<td width="20%">Client</td><td width="80%" colspan="2"><a href="'.DOL_URL_ROOT.'/boutique/client/fiche.php?id='.$commande->client_id.'">'.$commande->client_name.'</a></td></tr>';
 
       print '<td width="20%">Paiement</td><td width="80%" colspan="2">'.$commande->payment_method.'</td></tr>';
 

@@ -80,8 +80,8 @@ if ($id)
 	      $objp = $db->fetch_object( $i);
 	      $var=!$var;
 	      print "<TR $bc[$var]>";
-	      print '<TD><a href="/boutique/livre/fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></TD>';
-	      print '<TD width="70%"><a href="/boutique/livre/fiche.php?id='.$objp->rowid.'">'.$objp->title.'</a></TD>';
+	      print '<TD><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></TD>';
+	      print '<TD width="70%"><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?id='.$objp->rowid.'">'.$objp->title.'</a></TD>';
 	      
 	      
 	      if ($objp->status == 1)

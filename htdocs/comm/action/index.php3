@@ -237,7 +237,7 @@ else
 	
 	print '<TD width="20%">';
 	
-	print '&nbsp;<a href="/comm/fiche.php3?socid='.$obj->socidp.'">'.$obj->societe.'</A></TD>';
+	print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php3?socid='.$obj->socidp.'">'.$obj->societe.'</A></TD>';
 	
 	print '<TD width="30%"><a href="fiche.php3?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
 	/*
@@ -248,7 +248,7 @@ else
 	  {
 	    $cont = new Contact($db);
 	    $cont->fetch($obj->fk_contact);
-	    print '<a href="/comm/contact.php3?id='.$cont->id.'">'.$cont->fullname.'</a>';
+	    print '<a href="'.DOL_URL_ROOT.'/comm/contact.php3?id='.$cont->id.'">'.$cont->fullname.'</a>';
 	  }
 	else
 	  {

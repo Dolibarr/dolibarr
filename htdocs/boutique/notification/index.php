@@ -64,7 +64,7 @@ if ( $db->query($sql) )
       $var=!$var;
       print "<TR $bc[$var]>";
       print "<TD width='70%'><a href=\"fiche.php?id=$objp->rowid\">$objp->customers_firstname $objp->customers_lastname</a></TD>\n";
-      print '<td><a href="/boutique/livre/fiche.php?oscid='.$objp->products_id.'">'.$objp->products_name."</a></td>";
+      print '<td><a href="'.DOL_URL_ROOT.'/boutique/livre/fiche.php?oscid='.$objp->products_id.'">'.$objp->products_name."</a></td>";
       print "</TR>\n";
       $i++;
     }
