@@ -179,8 +179,7 @@ if ($_POST["action"] == 'update_price' &&
 
   $product->price = ereg_replace(" ","",$_POST["price"]);
 
-
-	  if ( $product->update_price($product->id, $user) > 0 )
+  if ( $product->update_price($product->id, $user) > 0 )
 
     {
       $_GET["action"] = '';
@@ -411,7 +410,7 @@ else
     if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 	{
 	  print '<div class="titre">Nouveau prix</div>';
-	  print "<form action=\"fiche.php\" method=\"post\">\n";
+	  print '<form action="fiche.php?id='.$product->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="update_price">';
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';

@@ -71,24 +71,24 @@ if ($_POST["action"] == 'add' && $user->admin)
 
 if ($_POST["action"] == 'update' && $user->admin)
 {
-    $edituser = new User($db, $id);
-    $edituser->fetch();
+  $edituser = new User($db, $_GET["id"]);
+  $edituser->fetch();
 
-    $edituser->nom           = $_POST["nom"];
-    $edituser->note          = $_POST["note"];
-    $edituser->prenom        = $_POST["prenom"];
-    $edituser->login         = $_POST["login"];
-    $edituser->email         = $_POST["email"];
-    $edituser->admin         = $_POST["admin"];
-    $edituser->webcal_login  = $_POST["webcal_login"];
-
-    if (! $edituser->update())
+  $edituser->nom           = $_POST["nom"];
+  $edituser->note          = $_POST["note"];
+  $edituser->prenom        = $_POST["prenom"];
+  $edituser->login         = $_POST["login"];
+  $edituser->email         = $_POST["email"];
+  $edituser->admin         = $_POST["admin"];
+  $edituser->webcal_login  = $_POST["webcal_login"];
+  
+  if (! $edituser->update())
     {
-        print $edituser->error();
+      print $edituser->error();
     }
-    if (isset($password) && $password !='' )
+  if (isset($password) && $password !='' )
     {
-        $edituser->password($password,$conf->password_encrypted);
+      $edituser->password($password,$conf->password_encrypted);
     }
 }
 
@@ -118,7 +118,7 @@ if ($action == 'create')
 
     print_titre('Nouvel utilisateur');
 
-    print '<form action="'.$PHP_SELF.'" method="post">';
+    print '<form action="fiche.php" method="post">';
     print '<input type="hidden" name="action" value="add">';
 
     print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
@@ -390,7 +390,7 @@ else
             print_fiche_titre("Edition fiche utilisateur",$message);
             print '<br>';
 
-            print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
+            print '<form action="fiche.php?id='.$fuser->id.'" method="post">';
             print '<input type="hidden" name="action" value="update">';
             print '<table class="border" border="1" cellpadding="3" cellspacing="0">';
 
