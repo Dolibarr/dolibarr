@@ -140,14 +140,15 @@ if ($user->comm > 0 && $conf->commercial )
  */
 print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
 print "<TR class=\"liste_titre\">";
-print '<td colspan="2">'.translate("Factures").'</td>';
+print '<td colspan="2">Factures impayées</td>';
 print "</TR>\n";
 
-$sql = "SELECT facnumber, rowid FROM llx_facture WHERE paye = 0";
+$sql = "SELECT f.facnumber, f.rowid, s.nom FROM llx_facture as f, llx_societe as s WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut > 0";
 if ($socidp)
 {
-  $sql .= " AND fk_soc = $socidp";
+  $sql .= " AND f.fk_soc = $socidp";
 }
+
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
@@ -157,11 +158,14 @@ if ( $db->query($sql) )
     {
       $obj = $db->fetch_object( $i);
       $var=!$var;
-      print '<tr '.$bc[$var].'><td><a href="facture.php3?facid='.$obj->rowid.'">'.$obj->facnumber."</td></tr>";
+      print '<tr '.$bc[$var].'><td><a href="facture.php3?facid='.$obj->rowid.'">'.$obj->facnumber."</td><td>".$obj->nom."</tr>";
       $i++;
   }
 }
-
+else
+{
+  print $sql;
+}
 print "</table><br>";
 /*
  * Bookmark
