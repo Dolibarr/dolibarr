@@ -400,24 +400,49 @@ if ($id)
     print '</tr>';
   }
 
-
   print '</td></tr>';
-
   print "</table>";  
 
-
+  /*
+   *
+   */
   print '<br><table border="1" cellspadding="3" cellspacing="0" width="100%"><tr>';
 
-  if ($fichinter->statut == 0 && $user->societe_id == 0)
+  if ($user->societe_id == 0)
     {
 
-      print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=edit">Mettre à jour</a></td>';
+      if ($fichinter->statut == 0)
+	{
+	  print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=edit">Mettre à jour</a></td>';
+	}
+      else
+	{
+	  print '<td align="center" width="20%">-</td>';
+	}
+
       print '<td align="center" width="20%">-</td>';
       
-      print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=generate">Génération du pdf</a></td>';
+      $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.pdf";
+
+      if ($fichinter->statut == 0 or !file_exists($file))
+	{
+	  print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=generate">Génération du pdf</a></td>';
+	}
+      else
+	{
+	  print '<td align="center" width="20%">-</td>';
+	}
+
       print '<td align="center" width="20%">-</td>';
       
-      print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=valid">Valider</a></td>';
+      if ($fichinter->statut == 0)
+	{
+	  print '<td align="center" width="20%"><a href="fiche.php3?id='.$id.'&action=valid">Valider</a></td>';
+	}
+      else
+	{
+	  print '<td align="center" width="20%">-</td>';
+	}
       
     }
   else
