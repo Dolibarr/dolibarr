@@ -27,7 +27,7 @@ create table llx_don
   datec           datetime,         -- date de création de l'enregistrement
   datedon         datetime,         -- date du don/promesse
   amount          real default 0,
-  mode            varchar(20),
+  fk_paiement     integer,
   nom             varchar(255),
   adresse         text,
   cp              varchar(30),
