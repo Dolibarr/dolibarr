@@ -76,7 +76,7 @@ if ($_GET["propalid"])
       $h=0;
       
       $head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-      $head[$h][1] = $langs->trans("Prop").": $propal->ref";
+      $head[$h][1] = $langs->trans("Card");
       $h++;
     
       $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
@@ -88,11 +88,11 @@ if ($_GET["propalid"])
       $head[$h][1] = $langs->trans("Info");
       $h++;
 	   
-	  dolibarr_fiche_head($head, $hselected, $societe->nom);
+	  dolibarr_fiche_head($head, $hselected, $langs->trans("Prop").": $propal->ref");
                   	  
 	  print '<table class="border" width="100%">';
 	  
-	  print '<tr><td>Société</td><td>';
+	  print '<tr><td>'.$langs->trans("Company").'</td><td>';
 	  if ($societe->client == 1)
 	    {
 	      $url ='fiche.php?socid='.$societe->id;
@@ -102,9 +102,9 @@ if ($_GET["propalid"])
 	      $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
 	    }
 	  print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-	  print '<td>'.$langs->trans("Status").'</td><td align="center"><b>'.$propal->statut_libelle.'</b></td></tr>';
+	  print '<td>'.$langs->trans("Status").'</td><td align="left">'.$propal->statut_libelle.'</td></tr>';
 
-	  print '<tr><td>Date</td><td>'.strftime("%A %d %B %Y",$propal->date);
+	  print '<tr><td>'.$langs->trans("Date").'</td><td>'.strftime("%A %d %B %Y",$propal->date);
 	  if ($propal->fin_validite)
 	    {
 	      print " (".strftime("%d %B %Y",$propal->fin_validite).")";

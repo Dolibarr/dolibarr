@@ -48,7 +48,7 @@ require("../actioncomm.class.php");
 require("../lib/CMailFile.class.php");
 
 /*
- * Sécurité accés client
+ *  Sécurité accés client
  */
 if ($user->societe_id > 0) 
 {
@@ -62,7 +62,7 @@ if ($user->societe_id > 0)
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
-  if ($user->rights->propale->supprimer ) 
+  if ($user->rights->propale->supprimer) 
     {
       $propal = new Propal($db, 0, $_GET["propalid"]);
       $propal->delete($user);
@@ -140,7 +140,6 @@ if ($_GET["action"] == 'commande')
   $propal->fetch($propalid);
   $propal->create_commande($user);
 } 
-
 
 if ($_GET["action"] == 'modif' && $user->rights->propale->creer) 
 {
@@ -244,7 +243,7 @@ if ($_GET["propalid"])
   $h=0;
 
   $head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-  $head[$h][1] = $langs->trans("Prop").": $propal->ref";
+  $head[$h][1] = $langs->trans("Card");
   $hselected=$h;
   $h++;
 
@@ -256,7 +255,7 @@ if ($_GET["propalid"])
   $head[$h][1] = $langs->trans("Info");
   $h++;
 
-  dolibarr_fiche_head($head, $hselected, $societe->nom);
+  dolibarr_fiche_head($head, $hselected, $langs->trans("Prop").": $propal->ref");
 
   /*
    * Confirmation de la suppression de la propale
@@ -299,7 +298,7 @@ if ($_GET["propalid"])
 
 	  print "<table class=\"border\" width=\"100%\">";
 
-	  print '<tr><td>'.$langs->trans("Companies").'</td><td colspan="3">';
+	  print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
 	  if ($societe->client == 1)
 	    {
 	      $url ='fiche.php?socid='.$societe->id;
@@ -309,7 +308,7 @@ if ($_GET["propalid"])
 	      $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
 	    }
 	  print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-	  print '<td>'.$langs->trans("Status").'</td><td align="left"><b>'.$obj->lst.'</b></td></tr>';
+	  print '<td align="left">'.$langs->trans("Status").'</td><td align="left">'.$obj->lst.'</td></tr>';
 
 	  print '<tr><td>'.$langs->trans("Date").'</td><td colspan="3">'.strftime("%A %d %B %Y",$propal->date);
 	  if ($propal->fin_validite)
@@ -323,7 +322,7 @@ if ($_GET["propalid"])
 	  $author->fetch('');
 	  print $author->fullname.'</td></tr>';
 
-	  print "<tr><td>".$langs->trans("To")."</td><td colspan=\"3\">$obj->firstname $obj->name &lt;$obj->email&gt;</td>";
+	  print "<tr><td>".$langs->trans("To")."</td><td colspan=\"3\">$obj->firstname $obj->name".($obj->email?"&lt;$obj->email&gt;":"")."</td>";
 
 	  print '<td valign="top" colspan="2" width="50%" rowspan="4">'.$langs->trans("Note").' :<br>'. nl2br($propal->note)."</td></tr>";
 	  

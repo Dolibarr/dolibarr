@@ -52,7 +52,7 @@ if ($_GET["propalid"])
   $h=0;
   
   $head[$h][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
-  $head[$h][1] = $langs->trans("Prop").": $propal->ref";
+  $head[$h][1] = $langs->trans("Card");
   $h++;
 
   $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
@@ -64,7 +64,7 @@ if ($_GET["propalid"])
   $hselected=$h;
   $h++;
   
-  dolibarr_fiche_head($head, $hselected, $societe->nom);
+  dolibarr_fiche_head($head, $hselected, $langs->trans("Prop").": $propal->ref");
   
   $propal->info($propal->id);
 

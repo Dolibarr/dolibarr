@@ -20,7 +20,7 @@
  * $Source$
  */
 
-/*! \file htdocs/comm/propal/document.php
+/*!     \file       htdocs/comm/propal/document.php
         \ingroup    propale
 		\brief      Page de gestion des documents attachées à une proposition commerciale
 		\version    $Revision$
