@@ -115,7 +115,7 @@ if ($_GET["action"] == 'create')
       /*
        * Fiche societe en mode création
        */
-      
+      $soc->fournisseur=0;
       if ($_GET["type"]=='f') { $soc->fournisseur=1; }
       if ($_GET["type"]=='c') { $soc->client=1; }
       if ($_GET["type"]=='p') { $soc->client=2; }
@@ -126,7 +126,6 @@ if ($_GET["action"] == 'create')
       print $mesg;	  
       print '<form action="soc.php" method="post">';
       print '<input type="hidden" name="action" value="add">';
-      print '<input type="hidden" name="fournisseur" value="0">';
       
       print '<table class="border" width="100%">';
       print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" name="nom"></td></tr>';
@@ -154,7 +153,7 @@ if ($_GET["action"] == 'create')
       print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
   
       print '<tr><td>Forme juridique</td><td colspan="3">';
-	  $form->select_forme_juridique($soc->forme_juridique_code);
+      $form->select_forme_juridique($soc->forme_juridique_code);
       print '</td></tr>';
   
       print '<tr><td>Effectif</td><td colspan="3">';
@@ -175,7 +174,7 @@ if ($_GET["action"] == 'create')
       print '</select></td>'."\n";
 
       print '<td>'.$langs->trans('Supplier').'</td><td>'."\n";
-      $form->selectyesnonum("fournisseur",0);
+      $form->selectyesnonum("fournisseur",$soc->fournisseur);
       print '</td></tr>'."\n";
 
       print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans('Add').'"></td></tr>'."\n";
