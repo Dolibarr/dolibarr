@@ -82,6 +82,7 @@ if (! $TEMP || ! -d $TEMP) {
 $BUILDROOT="$TEMP/buildroot";
 
 
+my $copyalreadydone=0;
 
 # Choose package targets
 #-----------------------
@@ -167,7 +168,6 @@ if ($nboftargetok) {
 
     # Update buildroot
     #-----------------
-    my $copyalreadydone=0;
     if (! $copyalreadydone) {
     	print "Delete directory $BUILDROOT\n";
     	$ret=`rm -fr "$BUILDROOT"`;

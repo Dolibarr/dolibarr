@@ -1,8 +1,11 @@
 ; dolibarr.nsi
 ;
 
-!define MUI_PRODUCT "Dolibarr" ;Define your own software name here
-!define MUI_VERSION "2.0" ;Define your own software version here
+!include "MUI.nsh"
+
+
+!define MUI_PROD "Dolibarr" ;Define your own software name here
+!define MUI_VERSION_DOT "2.0" ;Define your own software version here
 !define MUI_VERSION_NODOT "20" ;Define your own software version here
 !define MUI_PUBLISHER "Rodolphe Quiedeville, Laurent Destailleur"
 !define MUI_URL "http://dolibarr.com"
@@ -11,13 +14,12 @@
 !define MUI_URLUPDATE "http://dolibarr.com"
 
 
-!include "MUI.nsh"
-
 ;--------------------------------
 ;Configuration
 
   ;General
-  OutFile "dolibarr-${MUI_VERSION}.exe"
+  Name "Dolibarr"
+  OutFile "dolibarr-${MUI_VERSION_DOT}.exe"
   Icon "..\..\doc\images\dolibarr.ico"
   UninstallIcon "..\..\doc\images\dolibarr.ico"
   !define MUI_ICON "..\..\doc\images\dolibarr.ico"
@@ -25,43 +27,66 @@
 
   BrandingText ""
 ;  ShowInstDetails nevershow
-  CompletedText 'Read opened dolibarr ${MUI_VERSION} documentation page to continue setup process.'
-
+  
   ;Set install dir
-  InstallDir "$PROGRAMFILES\${MUI_PRODUCT}"
+  InstallDir "$PROGRAMFILES\${MUI_PROD}"
   
   ;Get install folder from registry if available
-  InstallDirRegKey HKCU "Software\${MUI_PRODUCT}" ""
+  InstallDirRegKey HKCU "Software\${MUI_PROD}" ""
 
+  CompletedText 'Dolibarr ${MUI_VERSION_DOT} setup completed.'
 
 
 
 ;--------------------------------
-;Modern UI Configuration
+;Interface Settings
 
-  !define MUI_WELCOMEPAGE
-
-  !define MUI_LICENSEPAGE
-
-;  !define MUI_COMPONENTSPAGE
-
-  !define MUI_DIRECTORYPAGE
- 
   !define MUI_ABORTWARNING
-  
-  !define MUI_UNINSTALLER
 
-  !define MUI_UNCONFIRMPAGE
+
+;--------------------------------
+;Language Selection Dialog Settings
+
+  ;Recupere la langue choisie pour la dernière installation
+  !define MUI_LANGDLL_REGISTRY_ROOT "HKCU" 
+  !define MUI_LANGDLL_REGISTRY_KEY "Software\${MUI_PROD}" 
+  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
+
+
+;--------------------------------
+;Pages
 
 ;  !define MUI_SPECIALBITMAP "..\..\build\exe\dolibarr_bitmap1.bmp"
 ;  !define MUI_HEADERBITMAP "..\..\build\exe\dolibarr_bitmap2.bmp"
   !define MUI_SPECIALBITMAP "..\..\build\exe\dolibarr_bitmap1.bmp"
   !define MUI_HEADERBITMAP "..\..\build\exe\dolibarr_bitmap2.bmp"
 
+  !insertmacro MUI_PAGE_WELCOME
+  !insertmacro MUI_PAGE_LICENSE "..\..\COPYING"
+;  !insertmacro MUI_PAGE_COMPONENTS
+  !insertmacro MUI_PAGE_DIRECTORY
+  !insertmacro MUI_PAGE_INSTFILES
+  
+  !insertmacro MUI_UNPAGE_CONFIRM
+  !insertmacro MUI_UNPAGE_INSTFILES
+
+
 ;--------------------------------
 ;Languages
  
   !insertmacro MUI_LANGUAGE "English"
+  !insertmacro MUI_LANGUAGE "French"
+
+  
+;--------------------------------
+;Reserve Files
+  
+  ;These files should be inserted before other files in the data block
+  ;Keep these lines before any File command
+  ;Only for solid compression (by default, solid compression is enabled for BZIP2 and LZMA)
+  
+  !insertmacro MUI_RESERVEFILE_LANGDLL
+
   
 ;--------------------------------
 ;Language Strings
@@ -70,16 +95,15 @@
   LangString PERLCHECK_TITLE ${LANG_ENGLISH} "Perl check"
   LangString PERLCHECK_SUBTITLE ${LANG_ENGLISH} "Check if a working Perl interpreter can be found"
   LangString SETUP_TITLE ${LANG_ENGLISH} "Setup"
-  LangString SETUP_SUBTITLE ${LANG_ENGLISH} "Building dolibarr config files"
+  LangString SETUP_SUBTITLE ${LANG_ENGLISH} "Dolibarr setups"
 
   ;Description
+  LangString Dolibarr ${LANG_ENGLISH} "Dolibarr"
   LangString DESC_dolibarr ${LANG_ENGLISH} "dolibarr main files"
 
+  LangString Dolibarr ${LANG_FRENCH} "Dolibarr"
+  LangString DESC_dolibarr ${LANG_FRENCH} "Fichiers Dolibarr"
 
-;--------------------------------
-;Data
-  
-  LicenseData "..\..\COPYRIGHT"
 
 ;--------------------------------
 ;Reserve Files
@@ -108,13 +132,13 @@ NOPERL:
 PERL:
 	GOTO NOABORT
 ABORT:
-	Abort "dolibarr ${MUI_VERSION} setup has been canceled"
+	Abort "Dolibarr ${MUI_VERSION_DOT} setup has been canceled"
 NOABORT:
 SectionEnd
 
 
 ; Copy the files into install directory
-Section "dolibarr" dolibarr
+Section "Dolibarr" Dolibarr
 
 	SetOutPath $INSTDIR
 	File "..\..\*"
@@ -126,18 +150,18 @@ Section "dolibarr" dolibarr
 	File /r "..\..\scripts"
 	
 	;Store install folder
-    WriteRegStr HKCU "Software\${MUI_PRODUCT}" "" $INSTDIR
+    WriteRegStr HKCU "Software\${MUI_PROD}" "" $INSTDIR
 
 	;Write uninstall entries
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "DisplayName" "${MUI_PRODUCT}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "UninstallString" "$INSTDIR/uninstall.exe"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "Publisher" "${MUI_PUBLISHER}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PROD}" "DisplayName" "${MUI_PRODUCT}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PROD}" "UninstallString" "$INSTDIR/uninstall.exe"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PROD}" "Publisher" "${MUI_PUBLISHER}"
 
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "URLInfoAbout" "${MUI_URL}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "Comments" "${MUI_COMMENTS}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "HelpLink" "${MUI_HELPLINK}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "URLUpdateInfo" "${MUI_URLUPDATE}"
-    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PRODUCT}" "DisplayVersion" "${MUI_VERSION}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PROD}" "URLInfoAbout" "${MUI_URL}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PROD}" "Comments" "${MUI_COMMENTS}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PROD}" "HelpLink" "${MUI_HELPLINK}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PROD}" "URLUpdateInfo" "${MUI_URLUPDATE}"
+    WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${MUI_PROD}" "DisplayVersion" "${MUI_VERSION_DOT}"
 
 	;Create uninstaller
 	WriteUninstaller "uninstall.exe"
@@ -309,7 +333,7 @@ SectionEnd
 ;Descriptions
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${dolibarr} $(DESC_dolibarr)
+  !insertmacro MUI_DESCRIPTION_TEXT ${Dolibarr} $(DESC_Dolibarr)
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
  
 
@@ -319,7 +343,7 @@ SectionEnd
 
 Section "Uninstall"
 
-  DeleteRegKey /ifempty HKCU "Software\${MUI_PRODUCT}"
+  DeleteRegKey /ifempty HKCU "Software\${MUI_PROD}"
 
   Delete "$INSTDIR\Uninstall.exe"
 
