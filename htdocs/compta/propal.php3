@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -412,13 +412,7 @@ if ($propalid) {
       
       $i++;
     }
-    print "<tr><td align=\"right\" colspan=\"5\">Total : <b>".price($subtotal)."</b></td>\n";
-    print "<td align=\"left\">Euros HT</td></tr>\n";
-    
-    
-    print "<tr><td></td><td>$i propales</td>";
-    print "<td colspan=\"3\" align=\"right\"><b>Total : ".price($total)."</b></td>";
-    print "<td align=\"left\"><b>Euros HT</b></td></tr>";
+
     print "</TABLE>";
     $db->free();
   } else {
