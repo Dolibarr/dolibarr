@@ -105,7 +105,7 @@ if ($_GET["facid"] > 0)
       if ($conf->projet->enabled)
 	{
 	  $langs->load("projects");
-	  print '<td height=\"10\">'.$langs->trans("Projet").'</td><td colspan="3">';
+	  print '<td height=\"10\">'.$langs->trans("Project").'</td><td colspan="3">';
 	  if ($fac->projetid > 0)
     	    {
     	      $projet = New Project($db);
@@ -128,67 +128,72 @@ if ($_GET["facid"] > 0)
       /*
        * Documents
        *
-       *
        */      
 			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 			$facref = str_replace($forbidden_chars,"_",$fac->ref);
 			$file = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
 			$filedetail = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . "-detail.pdf";
+            $fileimage = $file.".png";
 	
+        // Si fichier PDF existe
       if (file_exists($file))
 	{
-	  $encfile = urlencode($file);
-	  print_titre("Documents");
-	  print '<table class="border" width="100%">';
-	  
-	  print "<tr $bc[0]><td>Facture PDF</td>";
-	  
-	  print '<td><a href="'.DOL_URL_ROOT . '/document.php?file='.$encfile.'">'.$fac->ref.'.pdf</a></td>';
-	  
-	  print '<td align="right">'.filesize($file). ' bytes</td>';
-	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-	  print '</tr>';
-	  
-	  if (file_exists($filedetail)) // facture détaillée supplémentaire
-	    {
-	      $encfile = urlencode($filedetail);
-	      print "<tr $bc[0]><td>Facture détaillée</td>";
-	      
-	      print '<td><a href="'.DOL_URL_ROOT . '/document.php?file='.$encfile.'">'.$fac->ref.'-detail.pdf</a></td>';		  
-	      print '<td align="right">'.filesize($filedetail). ' bytes</td>';
-	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedetail)).'</td>';
-	      print '</tr>';
-	    }
-
-	  $fileimage = $file.".png";
-	  
-	  print "</table>\n";
-	}
-      
-      /* Conversion en image */
-      
-      if (!file_exists($fileimage))
-	{
-	  $handle = imagick_readimage( $file ) ;
-	  if ( imagick_iserror( $handle ) )
-	    {
-	      $reason      = imagick_failedreason( $handle ) ;
-	      $description = imagick_faileddescription( $handle ) ;
-	      
-	      print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
-	    }
-	  
-	  imagick_convert( $handle, "PNG" ) ;
-
-	  if ( imagick_iserror( $handle ) )
-	    {
-	      $reason      = imagick_failedreason( $handle ) ;
-	      $description = imagick_faileddescription( $handle ) ;
-	      
-	      print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
-	    }
-
-	  imagick_writeimage( $handle, $file .".png");
+        $encfile = urlencode($file);
+        print_titre("Documents");
+        print '<table class="border" width="100%">';
+        
+        print "<tr $bc[0]><td>".$langs->trans("Bill")." PDF</td>";
+        
+        print '<td><a href="'.DOL_URL_ROOT . '/document.php?file='.$encfile.'">'.$fac->ref.'.pdf</a></td>';
+        
+        print '<td align="right">'.filesize($file). ' bytes</td>';
+        print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+        print '</tr>';
+        
+        // Si fichier detail PDF existe
+        if (file_exists($filedetail)) // facture détaillée supplémentaire
+        {
+            $encfile = urlencode($filedetail);
+            print "<tr $bc[0]><td>Facture détaillée</td>";
+            
+            print '<td><a href="'.DOL_URL_ROOT . '/document.php?file='.$encfile.'">'.$fac->ref.'-detail.pdf</a></td>';		  
+            print '<td align="right">'.filesize($filedetail). ' bytes</td>';
+            print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedetail)).'</td>';
+            print '</tr>';
+        }
+        
+        print "</table>\n";
+        
+        // Conversion du PDF en image png si fichier png non existant
+        if (!file_exists($fileimage))
+        {
+            if (function_exists(imagick_readimage)) {
+                $handle = imagick_readimage( $file ) ;
+                if ( imagick_iserror( $handle ) )
+                {
+                  $reason      = imagick_failedreason( $handle ) ;
+                  $description = imagick_faileddescription( $handle ) ;
+                  
+                  print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
+                }
+                
+                imagick_convert( $handle, "PNG" ) ;
+                
+                if ( imagick_iserror( $handle ) )
+                {
+                  $reason      = imagick_failedreason( $handle ) ;
+                  $description = imagick_faileddescription( $handle ) ;
+                  
+                  print "handle failed!<BR>\nReason: $reason<BR>\nDescription: $description<BR>\n";
+                }
+                
+                imagick_writeimage( $handle, $file .".png");
+            }
+            else {
+                print "Les fonctions <i>imagick</i> ne sont pas disponibles sur ce PHP";
+            }
+        }
+        
 	}
 
       /*
@@ -217,7 +222,7 @@ if ($_GET["facid"] > 0)
   else
     {
       /* Facture non trouvée */
-      print "Facture inexistante";
+      print $langs->trans("ErrorBillNotFound");
     }
 }  
 
