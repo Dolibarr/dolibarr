@@ -1,5 +1,6 @@
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+-- Copyright (C) 2004      Laurent Destailleuro <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,11 +27,11 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
-insert into llx_cond_reglement values (1,1,1, 'A réception','Réception de facture',0,0);
-insert into llx_cond_reglement values (2,2,1, '30 jours','Réglement à 30 jours',0,30);
-insert into llx_cond_reglement values (3,3,1, '30 jours fin de mois','Réglement à 30 jours fin de mois',1,30);
-insert into llx_cond_reglement values (4,4,1, '60 jours','Réglement à 60 jours',0,60);
-insert into llx_cond_reglement values (5,5,1, '60 jours fin de mois','Réglement à 60 jours fin de mois',1,60);
+insert into llx_cond_reglement values (1,1,1, "A réception","Réception de facture",0,0);
+insert into llx_cond_reglement values (2,2,1, "30 jours","Réglement à 30 jours",0,30);
+insert into llx_cond_reglement values (3,3,1, "30 jours fin de mois","Réglement à 30 jours fin de mois",1,30);
+insert into llx_cond_reglement values (4,4,1, "60 jours","Réglement à 60 jours",0,60);
+insert into llx_cond_reglement values (5,5,1, "60 jours fin de mois","Réglement à 60 jours fin de mois",1,60);
 
 
 insert into llx_sqltables (name, loaded) values ('llx_album',0);
@@ -38,7 +39,6 @@ insert into llx_sqltables (name, loaded) values ('llx_album',0);
 --
 -- Définition des action de workflow
 --
-
 delete from llx_action_def;
 insert into llx_action_def (rowid,titre,description,objet_type) values (1,'Validation fiche intervention','Déclenché lors de la validation d\'une fiche d\'intervention','ficheinter');
 insert into llx_action_def (rowid,titre,description,objet_type) values (2,'Validation facture','Déclenché lors de la validation d\'une facture','facture');
@@ -46,7 +46,6 @@ insert into llx_action_def (rowid,titre,description,objet_type) values (2,'Valid
 --
 -- Boites
 --
-
 delete from llx_boxes_def;
 
 delete from llx_boxes;
@@ -54,7 +53,6 @@ delete from llx_boxes;
 --
 -- Constantes de configuration
 --
-
 insert into llx_const (name, value, type, note) values ('MAIN_MONNAIE','euros','chaine','Monnaie');
 insert into llx_const (name, value, type, note) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document');
 insert into llx_const (name, value, type, note) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation');
@@ -70,12 +68,10 @@ insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_
 --
 -- IHM
 --
-
-insert into llx_const (name, value, type, note, visible) values ('MAIN_THEME','yellow','chaine','Thème par défaut',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_THEME','eldy','chaine','Thème par défaut',0);
 insert into llx_const (name, value, type, note, visible) values ('SIZE_LISTE_LIMIT','20','chaine','Taille des listes',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_BARRETOP','default.php','chaine','Module de gestion de la barre de menu du haut',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_LANG_DEFAULT','fr_FR','chaine','Langue par défaut pour les écrans Dolibarr',0);
-
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage formulaire de recherche des Contacts dans la barre de gauche',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage formulaire de recherche des Sociétés dans la barre de gauche',0);
@@ -84,13 +80,11 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFOR
 --
 -- Dons
 --
-
 insert into llx_const (name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
 
 --
 -- Mail Adherent
 --
-
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_FROM','adherents@domain.com','chaine','From des mails adherents',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_RESIL','Votre adhesion sur %SERVEUR% vient d\'etre resilie.\r\nNous esperons vous revoir tres bientot','texte','Mail de Resiliation',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_VALID','MAIN\r\nVotre adhesion vient d\'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante : \r\n%SERVEUR%public/adherents/','texte','Mail de validation',0);
@@ -102,11 +96,9 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_COTIS_SUBJECT','Recu de votre cotisation','chaine','sujet du mail de validation de cotisation',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_NEW_SUBJECT','Bienvenue sur %SERVEUR%','chaine','Sujet du mail de nouvelle adhesion',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_EDIT_SUBJECT','Votre fiche a ete editee sur %SERVEUR%','chaine','Sujet du mail d\'edition',0);
-
 --
 -- Mailman
 --
-
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_USE_MAILMAN','0','yesno','Utilisation de Mailman',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAILMAN_UNSUB_URL','http://%SERVER%/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%ADMINPW%&user=%EMAIL%','chaine','Url de desinscription aux listes mailman',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAILMAN_URL','http://%SERVER%/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%ADMINPW%&send_welcome_msg_to_this_batch=1&subscribees=%EMAIL%','chaine','url pour les inscriptions mailman',0);
@@ -114,32 +106,26 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAILM
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAILMAN_ADMINPW','','chaine','Mot de passe Admin des liste mailman',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAILMAN_SERVER','lists.domain.com','chaine','Serveur hebergeant les interfaces d\'Admin des listes mailman',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAILMAN_LISTS_COTISANT','','chaine','Liste(s) auxquelles les nouveaux cotisants sont inscris automatiquement',0);
-
 --
 -- Glasnost
 --
-
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_USE_GLASNOST','0','yesno','utilisation de glasnost ?',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_GLASNOST_SERVEUR','glasnost.j1b.org','chaine','serveur glasnost',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_GLASNOST_USER','user','chaine','Administrateur glasnost',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_GLASNOST_PASS','password','chaine','password de l\'administrateur',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_USE_GLASNOST_AUTO','0','yesno','inscription automatique a glasnost ?',0);
-
 --
 -- SPIP
 --
-
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_USE_SPIP','0','yesno','Utilisation de SPIP ?',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_USE_SPIP_AUTO','0','yesno','Utilisation de SPIP automatiquement',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_SPIP_USER','user','chaine','user spip',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_SPIP_PASS','pass','chaine','Pass de connection',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_SPIP_SERVEUR','localhost','chaine','serveur spip',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_SPIP_DB','spip','chaine','db spip',0);
-
 --
--- cartes adherents
+-- Cartes adherents
 --
-
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_TEXT_NEW_ADH','','texte','Texte d\'entete du formaulaire d\'adhesion en ligne',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_HEADER_TEXT','%ANNEE%','chaine','Texte imprime sur le haut de la carte adherent',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_FOOTER_TEXT','Association FreeLUG http://www.freelug.org/','chaine','Texte imprime sur le bas de la carte adherent',0);
@@ -148,7 +134,6 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_
 --
 -- OsCommerce
 --
-
 insert into llx_const (name, value, type) values ('DB_NAME_OSC','catalog','chaine');
 insert into llx_const (name, value, type) values ('OSC_LANGUAGE_ID','1','chaine');
 insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
@@ -200,7 +185,6 @@ insert into llx_c_chargesociales (id,libelle,deductible) values ( 3, 'GSG/CRDS N
 --
 -- Types action
 --
-
 delete from llx_c_actioncomm;
 insert into llx_c_actioncomm (id, lang, type, libelle) values ( 0, 'all',   'system', '-');
 insert into llx_c_actioncomm (id, lang, type, libelle) values ( 1, 'fr_FR', 'system', 'Appel Téléphonique');
@@ -213,7 +197,7 @@ insert into llx_c_actioncomm (id, lang, type, libelle) values (10, 'fr_FR', 'sys
 insert into llx_c_actioncomm (id, lang, type, libelle) values (11, 'fr_FR', 'system', 'Clôture');
 
 --
---
+-- Types action
 --
 
 delete from llx_c_stcomm;
@@ -223,11 +207,9 @@ insert into llx_c_stcomm (id,libelle) values ( 1, 'A contacter');
 insert into llx_c_stcomm (id,libelle) values ( 2, 'Contact en cours');
 insert into llx_c_stcomm (id,libelle) values ( 3, 'Contactée');
 
-
 --
--- Types d'entreprise
+-- Types entreprises
 --
-
 delete from llx_c_typent;
 insert into llx_c_typent (id,libelle) values (  0, 'Indifférent');
 insert into llx_c_typent (id,libelle) values (  1, 'Start-up');
@@ -240,11 +222,10 @@ insert into llx_c_typent (id,libelle) values (100, 'Autres');
 -- Pays
 --
 
-delete from llx_c_pays;
 insert into llx_c_pays (rowid,libelle,code) values (0, '-',               '');
 insert into llx_c_pays (rowid,libelle,code) values (1, 'France',          'FR');
 insert into llx_c_pays (rowid,libelle,code) values (2, 'Belgique',        'BE');
-insert into llx_c_pays (rowid,libelle,code) values (2, 'Belgie',	        'BE');
+insert into llx_c_pays (rowid,libelle,code) values (2, 'Belgie',          'BE');
 insert into llx_c_pays (rowid,libelle,code) values (3, 'Italie',          'IT');
 insert into llx_c_pays (rowid,libelle,code) values (4, 'Espagne',         'ES');
 insert into llx_c_pays (rowid,libelle,code) values (5, 'Allemagne',       'DE');
@@ -271,7 +252,6 @@ insert into llx_c_pays (rowid,libelle,code) values (25, 'Cameroun',       'CM');
 --
 -- Regions
 --
-
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
 -- Regions de France
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (101,1,  1,'97105',3,'Guadeloupe');
@@ -309,11 +289,9 @@ insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (202,2,202,'',2,'Wallonie');
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (203,2,203,'',3,'Bruxelles-Capitale');
 
-
 --
 -- Departements/Cantons/Provinces
 --
-
 insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,0,'0',0,'-','-');
 -- Departements de France
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'01','01053',5,'AIN','Ain');
@@ -420,7 +398,6 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 --
 -- Provinces de Belgique - en Francais
 --
-
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','',1,'ANVERS','Anvers');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (203,'02','',3,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'03','',2,'BRABANT-WALLON','Brabant-Wallon');
@@ -436,7 +413,6 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 --
 -- Provinces de Belgique - en Néerlandais
 --
-
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','',1,'ANTWERP','Antwerp');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (203,'02','',3,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'04','',1,'VLAMS-BRABANT','Vlams-Brabant');
@@ -444,10 +420,10 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'06','',1,'OOST-VLANDEREN','Oost-Vlanderen');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'09','',1,'LIMBURG','Limburg');
 
+
 --
 -- Effectif des sociétés
 --
-
 delete from llx_c_effectif;
 insert into llx_c_effectif (id,libelle) values (0,  'Non spécifié');
 insert into llx_c_effectif (id,libelle) values (1,  '1 - 5');
@@ -458,7 +434,7 @@ insert into llx_c_effectif (id,libelle) values (5,  '100 - 500');
 insert into llx_c_effectif (id,libelle) values (6,  '> 500');
 
 delete from llx_c_paiement;
-insert into llx_c_paiement (id,code,libelle,type) values (0, '',		'-', 3);
+insert into llx_c_paiement (id,code,libelle,type) values (0, '',    '-', 3);
 insert into llx_c_paiement (id,code,libelle,type) values (1, 'TIP', 'TIP', 1);
 insert into llx_c_paiement (id,code,libelle,type) values (2, 'VIR', 'Virement', 2);
 insert into llx_c_paiement (id,code,libelle,type) values (3, 'PRE', 'Prélèvement', 1);
@@ -474,10 +450,10 @@ insert into llx_c_propalst (id,label) values (2, 'Signée');
 insert into llx_c_propalst (id,label) values (3, 'Non Signée');
 insert into llx_c_propalst (id,label) values (4, 'Facturée');
 
+
 --
 -- Formes juridiques
 --
-
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (0, 0,'Non renseignée');
 
 -- Pour la France: Extrait de http://www.insee.fr/fr/nom_def_met/nomenclatures/cj/cjniveau2.htm
@@ -550,7 +526,6 @@ insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,110,'GEIE -
 --
 -- Civilites
 --
-
 insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (1 , 'MME', 'fr_FR', 0, 'Madame', 1);
 insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (3 , 'MR',  'fr_FR', 0, 'Monsieur', 1);
 insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (5 , 'MLE', 'fr_FR', 0, 'Mademoiselle', 1);
