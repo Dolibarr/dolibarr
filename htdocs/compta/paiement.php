@@ -60,7 +60,7 @@ if ($action == 'create')
 	  print_titre("Emettre un paiement");
 	  print '<form action="facture.php?id='.$facid.'" method="post">';
 	  print '<input type="hidden" name="action" value="add_paiement">';
-	  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+	  print '<table cellspacing="0" class="border" width="100%" cellpadding="3">';
 	  
 	  print "<tr class=\"liste_titre\"><td colspan=\"3\">Facture</td>\n";
 	  
@@ -121,7 +121,12 @@ if ($action == 'create')
 	      while ($i < $num)
 		{
 		  $objopt = $db->fetch_object( $i);
-		  print "<option value=\"$objopt->rowid\">$objopt->label</option>\n";
+		  print '<option value="'.$objopt->rowid.'"';
+		  if (defined("FACTURE_RIB_NUMBER") && FACTURE_RIB_NUMBER == $objopt->rowid)
+		    {
+		      print ' SELECTED';
+		    }
+		  print '>'.$objopt->label.'</option>';
 		  $i++;
 		}
 	    }
