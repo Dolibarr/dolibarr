@@ -25,6 +25,12 @@ require("./lib/webcal.class.php");
 require("./cactioncomm.class.php");
 require("./actioncomm.class.php");
 
+
+$langs->load("companies");
+$langs->load("customers");
+$langs->load("suppliers");
+
+
 /*
  * Sécurité accés client
  */
@@ -34,9 +40,11 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+
 llxHeader();
 
-$socname=$_GET["socname"];
+
+$socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 $page=$_GET["page"];
@@ -54,23 +62,18 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$langs->load("companies");
-$langs->load("customers");
-$langs->load("suppliers");
-
 
 /*
  * Recherche
  *
- *
  */
-if ($_GET["mode"] == 'search')
+$mode=isset($_GET["mode"])?$_GET["mode"]:$_POST["mode"];
+$modesearch=isset($_GET["mode-search"])?$_GET["mode-search"]:$_POST["mode-search"];
+
+if ($mode == 'search')
 {
-  if ($_GET["mode-search"] == 'soc')
-    {
-      $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
-      $sql .= " WHERE lower(s.nom) like '%".strtolower($_GET["socname"])."%'";
-    }
+  $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
+  $sql .= " WHERE s.nom like '%".$socname."%'";
   
   if ( $db->query($sql) )
     {
@@ -91,13 +94,13 @@ if ($_GET["mode"] == 'search')
     }  
 }
 
+
 /*
  * Mode Liste
  *
- *
  */
 
-  $title=$langs->trans("CompanyList");
+$title=$langs->trans("CompanyList");
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id";
@@ -113,13 +116,13 @@ if (strlen($stcomm)) {
 }
 
 if (strlen($begin)) {
-  $sql .= " AND upper(s.nom) like '$begin%'";
+  $sql .= " AND s.nom like '$begin%'";
 }
 
 if ($socname)
 {
-  $title_filtre .= " contenant '$socname'";
-  $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
+  $title_filtre .= "'$socname'";
+  $sql .= " AND s.nom like '%".$socname."%'";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -136,8 +139,8 @@ if ($result)
     
   if ($title_filtre)
     {
-      print "Filtre : $title_filtre";
-      print '  <a href="societe.php">Supprimer le filtre</a>';
+      print $langs->trans("Filter:")." $title_filtre";
+      print ' &nbsp; <a href="societe.php">'.$langs->trans("RemoveFilter").'</a>';
     }
 
 
