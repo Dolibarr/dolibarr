@@ -150,7 +150,7 @@ class BonPrelevement
 		$fac = new Facture($this->db);
 		
 		/* Tag la facture comme impayée */
-		dolibarr_syslog("RejetPrelevement::Create set_payed fac ".$facs[$i]);
+		dolibarr_syslog("BonPrelevement::set_credite set_payed fac ".$facs[$i]);
 		$fac->set_payed($facs[$i]);
 	      }
 	  }
@@ -309,9 +309,9 @@ class BonPrelevement
        * dans un bon de prélèvement
        */
       
-      $sql = "SELECT f.rowid as facid";
-      $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
-      $sql .= " WHERE pf.fk_prelevement = ".$this->id;
+      $sql = "SELECT fk_facture";
+      $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture";
+      $sql .= " WHERE fk_prelevement = ".$this->id;
 
       $result=$this->db->query($sql);
       if ($result)
@@ -332,7 +332,7 @@ class BonPrelevement
 	}
       else
 	{
-	  dolibarr_syslog("Prelevement Erreur");
+	  dolibarr_syslog("Bon-Prelevement::_get_list_factures Erreur");
 	}
 
       return $arr;
