@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,51 +24,48 @@ require("./pre.inc.php");
 if (!$user->admin)
   accessforbidden();
 
+/*
+if ($HTTP_POST_VARS["action"] == 'update')
+{
+  dolibarr_set_const($db, "FAC_PDF_INTITULE2",$HTTP_POST_VARS["nom2"]);
+  dolibarr_set_const($db, "FAC_PDF_INTITULE",$HTTP_POST_VARS["nom"]);
+  dolibarr_set_const($db, "FAC_PDF_ADRESSE",$HTTP_POST_VARS["adresse"]);
+  dolibarr_set_const($db, "FAC_PDF_TEL",$HTTP_POST_VARS["tel"]);
+  dolibarr_set_const($db, "FAC_PDF_FAX",$HTTP_POST_VARS["fax"]);
+  dolibarr_set_const($db, "FAC_PDF_SIREN",$HTTP_POST_VARS["siren"]);
+  dolibarr_set_const($db, "FAC_PDF_SIRET",$HTTP_POST_VARS["siret"]);
 
-#if ($HTTP_POST_VARS["action"] == 'update')
-#{
-#  dolibarr_set_const($db, "FAC_PDF_INTITULE2",$HTTP_POST_VARS["nom2"]);
-#  dolibarr_set_const($db, "FAC_PDF_INTITULE",$HTTP_POST_VARS["nom"]);
-#  dolibarr_set_const($db, "FAC_PDF_ADRESSE",$HTTP_POST_VARS["adresse"]);
-#  dolibarr_set_const($db, "FAC_PDF_TEL",$HTTP_POST_VARS["tel"]);
-#  dolibarr_set_const($db, "FAC_PDF_FAX",$HTTP_POST_VARS["fax"]);
-#  dolibarr_set_const($db, "FAC_PDF_SIREN",$HTTP_POST_VARS["siren"]);
-#  dolibarr_set_const($db, "FAC_PDF_SIRET",$HTTP_POST_VARS["siret"]);
-#
-#  Header("Location: $PHP_SELF");
-#}
+  Header("Location: facture.php");
+}
+*/
 
-
-llxHeader();
-
-
-$facture_addon_var = FACTURE_ADDON;
-$facture_addon_var_pdf = FACTURE_ADDON_PDF;
+$facture_addon_var      = FACTURE_ADDON;
+$facture_addon_var_pdf  = FACTURE_ADDON_PDF;
 $facture_rib_number_var = FACTURE_RIB_NUMBER;
 $facture_chq_number_var = FACTURE_CHQ_NUMBER;
-$facture_tva_option = FACTURE_TVAOPTION;
+$facture_tva_option     = FACTURE_TVAOPTION;
 
-if ($action == 'set')
+if ($_GET["action"] == 'set')
 {
-  if (dolibarr_set_const($db, "FACTURE_ADDON",$value)) $facture_addon_var = $value;
+  if (dolibarr_set_const($db, "FACTURE_ADDON",$_GET["value"])) $facture_addon_var = $_GET["value"];
 }
 
-if ($action == 'setribchq')
+if ($_POST["action"] == 'setribchq')
 {
-  if (dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$rib)) $facture_rib_number_var = $rib;
-  if (dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$chq)) $facture_chq_number_var = $chq;
+  if (dolibarr_set_const($db, "FACTURE_RIB_NUMBER",$_POST["rib"])) $facture_rib_number_var = $_POST["rib"];
+  if (dolibarr_set_const($db, "FACTURE_CHQ_NUMBER",$_POST["chq"])) $facture_chq_number_var = $_POST["chq"];
 }
 
-if ($action == 'setpdf')
+if ($_GET["action"] == 'setpdf')
 {
-  if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$value)) $facture_addon_var_pdf = $value;
+  if (dolibarr_set_const($db, "FACTURE_ADDON_PDF",$_GET["value"])) $facture_addon_var_pdf = $_GET["value"];
 }
 
-if ($action == 'settvaoption')
+if ($_POST["action"] == 'settvaoption')
 {
-  if (dolibarr_set_const($db, "FACTURE_TVAOPTION",$optiontva)) $facture_tva_option = $optiontva;
+  if (dolibarr_set_const($db, "FACTURE_TVAOPTION",$_POST["optiontva"])) $facture_tva_option = $_POST["optiontva"];
 }
-
+llxHeader();
 
 $dir = "../includes/modules/facture/";
 
@@ -194,7 +191,7 @@ print_titre( "Mode de règlement à afficher sur les factures");
 
 print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
 
-print '<form action="'.$PHP_SELF.'" method="post">';
+print '<form action="facture.php" method="post">';
 print '<input type="hidden" name="action" value="setribchq">';
 print '<tr class="liste_titre">';
 print '<td>Mode règlement à proposer</td>';
@@ -207,30 +204,30 @@ $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account where clos = 0";
 $var=True;
 if ($db->query($sql))
 {
-	$num = $db->num_rows();
-	$i = 0;
-	if ($num > 0) {
-		print "<select name=\"rib\">";
-		print '<option value="0">Ne pas afficher</option>';
-		while ($i < $num)
-		{
-		  $var=!$var;
-		  $row = $db->fetch_row($i);
-		
-		  if ($facture_rib_number_var == $row[0])
-		{
-		  print '<option value="'.$row[0].'" selected>'.$row[1].'</option>';
-		}
-		  else
-		{
-		  print '<option value="'.$row[0].'">'.$row[1].'</option>';
-		}
+  $num = $db->num_rows();
+  $i = 0;
+  if ($num > 0) {
+    print "<select name=\"rib\">";
+    print '<option value="0">Ne pas afficher</option>';
+    while ($i < $num)
+      {
+	$var=!$var;
+	$row = $db->fetch_row($i);
+	
+	if ($facture_rib_number_var == $row[0])
+	  {
+	    print '<option value="'.$row[0].'" selected>'.$row[1].'</option>';
+	  }
+	else
+	  {
+	    print '<option value="'.$row[0].'">'.$row[1].'</option>';
+	  }
 		  $i++;
-		}
-		print "</select>";
-	} else {
-		print "<i>Aucun compte bancaire actif créé</i>";
-	}
+      }
+    print "</select>";
+  } else {
+    print "<i>Aucun compte bancaire actif créé</i>";
+  }
 }
 print "</td></tr>";
 
@@ -243,31 +240,31 @@ if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
-  if ($num > 0) {
-  	print "<select name=\"chq\">";
-	print '<option value="0">Ne pas afficher</option>';
-	while ($i < $num)
+  if ($num > 0)
+    {
+      print "<select name=\"chq\">";
+      print '<option value="0">Ne pas afficher</option>';
+      while ($i < $num)
 	{
 	  $var=!$var;
 	  $row = $db->fetch_row($i);
-	
+	  
 	  if ($facture_chq_number_var == $row[0])
-	{
-	  print '<option value="'.$row[0].'" selected>'.$row[1].'</option>';
-	}
+	    {
+	      print '<option value="'.$row[0].'" selected>'.$row[1].'</option>';
+	    }
 	  else
-	{
-	  print '<option value="'.$row[0].'">'.$row[1].'</option>';
-	}
+	    {
+	      print '<option value="'.$row[0].'">'.$row[1].'</option>';
+	    }
 	  $i++;
 	}
-	print "</select>";
-  } else {
-		print "<i>Aucun compte bancaire actif créé</i>";
-  }
+      print "</select>";
+    } else {
+      print "<i>Aucun compte bancaire actif créé</i>";
+    }
 }
 print "</td></tr>";
-
 print "</form>";
 print "</table>";
 $db->close();
@@ -283,7 +280,6 @@ print '<tr class="liste_titre">';
 print '<td>Nom</td><td>Valeur</td>';
 print "</tr>\n";
 print '<tr '.$bc[True].'><td width=\"140\">Répertoire</td><td>'.FAC_OUTPUTDIR.'</td></tr>';
-print '<tr '.$bc[False].'><td width=\"140\">URL</td><td><a href="'.FAC_OUTPUT_URL.'">'.FAC_OUTPUT_URL.'</a></td></tr>';
 print "</table>";
 
 
@@ -294,7 +290,7 @@ print '<br>';
 print_titre("Options fiscales de facturation de la TVA");
 
 print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
-print '<form action="'.$PHP_SELF.'" method="post">';
+print '<form action="facture.php" method="post">';
 print '<input type="hidden" name="action" value="settvaoption">';
 print '<tr class="liste_titre">';
 print '<td>Option</td><td>Description</td>';
