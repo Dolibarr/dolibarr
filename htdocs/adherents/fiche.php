@@ -36,10 +36,14 @@ if ($HTTP_POST_VARS["action"] == 'cotisation')
 {
   $adh = new Adherent($db);
   $adh->id = $rowid;
+  $adh->fetch($rowid);
 
   if ($cotisation > 0)
     {     
       $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
+      if (defined("MAIN_MAIL_COTIS") && defined("MAIN_MAIL_COTIS_SUBJECT")){
+	$adh->send_an_email($adh->email,MAIN_MAIL_COTIS,MAIN_MAIL_COTIS_SUBJECT);
+      }
     }
   $action = "edit";
 }

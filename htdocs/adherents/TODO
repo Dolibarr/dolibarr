@@ -5,3 +5,5 @@
 - ne pas afficher le / apres Prenom Nom lorsque le champs suivant est vide (details mais ca aide a lire)
 - faire un compatge automatique du nombre d'adherents
 - eventuellement aussi sur la page Adherent cotisant, faire la disctinction membres zeune et autre
+- dans la liste des cotisants, changer l'ordre de classement par defaut (avec possibilite de pourvoir le changer)
+

@@ -297,13 +297,30 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
       $options .= "&sortorder=$sortorder";
     }
 
-
+  // affichage des fleches de navigation
+  print_fleche_navigation($page,$file,$options);
+  /*
   if ($page > 0) 
     {
       print '<a href="'.$file.'?page='.($page-1).$options.'"><img alt="Page précédente" src="/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
     }
   print '<a href="'.$file.'?page='.($page+1).$options.'"><img alt="Page suivante" src="/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
+  */
   print '</td></tr></table><p>';
+}
+
+/*
+ * fonction servant a afficher les fleches de navigation dans les
+ * pages de liste
+ */
+function print_fleche_navigation($page,$file,$options='')
+{
+  global $conf;
+  if ($page > 0) 
+    {
+      print '<a href="'.$file.'?page='.($page-1).$options.'"><img alt="Page précédente" src="/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
+    }
+  print '<a href="'.$file.'?page='.($page+1).$options.'"><img alt="Page suivante" src="/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
 }
 /*
  *

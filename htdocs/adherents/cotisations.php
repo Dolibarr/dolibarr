@@ -90,7 +90,7 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Liste des cotisations", $page, $PHP_SELF, "&statut=$statut");
+  print_barre_liste("Liste des cotisations", $page, $PHP_SELF, "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
 
   print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">\n";
   print '<TR class="liste_titre">';
@@ -98,8 +98,8 @@ if ($result)
   print '<td align="right">Montant</TD>';
   print "<td align=\"right\">Nombre</TD>";
   print "<td align=\"right\">Moyenne</TD>\n";
-  //  print "<td>Prenom Nom / Société</td>";
   print "</TR>\n";
+
   foreach ($Total as $key=>$value){
     $var=!$var;
     print "<TR $bc[$var]><TD><A HREF=\"$PHP_SELF?statut=$statut&date_select=$key\">$key</A></TD><TD align=\"right\">".price($value)."</TD><TD align=\"right\">".$Number[$key]."</TD><TD align=\"right\">".price($value/$Number[$key])."</TD></TR>\n";
@@ -109,9 +109,23 @@ if ($result)
   print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">";
 
   print '<TR class="liste_titre">';
-  print "<td>Date</td>";
-  print "<td align=\"right\">Montant</TD>";
-  print "<td>Prenom Nom / Société</td>";
+  //print "<td>Date</td>";
+  print '<TD>';
+  print_liste_field_titre("Date",$PHP_SELF,"c.dateadh","&page=$page&statut=$statut");
+  print "</TD>\n";
+
+  //print "<td align=\"right\">Montant</TD>";
+  print '<TD>';
+  print_liste_field_titre("Montant",$PHP_SELF,"c.cotisation","&page=$page&statut=$statut");
+  print "</TD>\n";
+
+  //print "<td>Prenom Nom / Société</td>";
+  print '<TD>';
+  //  print_liste_field_titre("Prenom",$PHP_SELF,"d.prenom","&page=$page&statut=$statut");
+  print_liste_field_titre("Prenom Nom",$PHP_SELF,"d.nom","&page=$page&statut=$statut");
+  print " / Société";
+  print "</TD>\n";
+
   print "</TR>\n";
     
   $var=True;
@@ -125,7 +139,11 @@ if ($result)
       print '<TD align="right">'.price($objp->cotisation).'</TD>';
       //$Total[strftime("%Y",$objp->dateadh)]+=price($objp->cotisation);
       $total+=price($objp->cotisation);
-      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></TD>\n";
+      if ($objp->societe != ''){
+	print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></TD>\n";
+      }else{
+	print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></TD>\n";
+      }
       print "</tr>";
       $i++;
     }
@@ -133,7 +151,11 @@ if ($result)
   print "<TR $bc[$var]>";
   print "<TD>Total</TD>\n";
   print "<TD align=\"right\">".price($total)."</TD>\n";
-  print "<TD>&nbsp;</TD>\n";
+  //  print "<TD>&nbsp;</TD>\n";
+  print "<TD align=\"right\">";
+  print_fleche_navigation($page,$PHP_SELF,"&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+  print "</TD>\n";
+
   print "</TR>\n";
   print "</table>";
   print "<BR>\n";
