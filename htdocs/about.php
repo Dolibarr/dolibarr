@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,6 +40,7 @@ Dolibarr est développé par :
 D'autres développeurs y contribuent activement :
 <ul>
 <li><a target="blank" href="http://www.ipsyn.net">Jean-Louis Bergamo</a></li>
+<li><a target="blank" href="http://perso.wanadoo.fr/l.destailleur/">Laurent Destailleur</a></li>
 <li>Eric Seigne</li>
 </ul>
 
@@ -46,7 +48,7 @@ D'autres développeurs y contribuent activement :
 Informations :
 <ul>
 <li>
-<a target="blank" href="http://www.dolibarr.com/">site officiel</a> du projet
+<a target="blank" href="http://www.dolibarr.com/">Site officiel</a> du projet
 <li>
 <a target="blank" href="http://freshmeat.net/projects/dolibarr/">Page sur Freshmeat</a>
 
