@@ -335,7 +335,7 @@ if ($id && $action == '' && $product->envente)
   if($user->rights->propale->creer)
     {
       print '<tr><td width="50%" valign="top">';
-      print_titre("Ajouter ma proposition") . '</td>';
+      print_titre("Ajouter à ma proposition") . '</td>';
       if($user->rights->propale->creer)
 	{
 	  print '<td width="50%" valign="top">';
@@ -405,7 +405,7 @@ if ($id && $action == '' && $product->envente)
   if($user->rights->facture->creer)
     {
       print '<tr><td width="50%" valign="top">';
-      print_titre("Ajouter ma facture");
+      print_titre("Ajouter à ma facture");
       print '</td><td width="50%" valign="top">';
       print_titre("Ajouter aux autres factures");
       print '</td></tr>';
