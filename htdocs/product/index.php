@@ -47,14 +47,31 @@ print '<tr><td valign="top" width="30%">';
 /*
  * Produits en ventes et hors vente
  */
+$sql = "SELECT count(*), fk_product_type FROM llx_product as p WHERE envente = 0 GROUP BY fk_product_type";
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $i = 0;
+  $phv[0] = 0;
+  $phv[1] = 0;
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($i);
+      $phv[$row[1]] = $row[0];
+      $i++;
+    }
+  $db->free();
+}
+
+
 print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td colspan="2">Hors vente</td></tr>';
 print "<tr $bc[0]>";
-print '<td><a href="liste.php?type=0&amp;envente=0">Produits hors vente</a></td></tr>';
+print '<td><a href="liste.php?type=0&amp;envente=0">Produits hors vente</a></td><td>'.$phv[0].'</td></tr>';
 if (defined("MAIN_MODULE_SERVICE") && MAIN_MODULE_SERVICE)
 {
   print "<tr $bc[1]>";
-  print '<td><a href="liste.php?type=1&amp;envente=0">Services hors vente</a></td></tr>';
+  print '<td><a href="liste.php?type=1&amp;envente=0">Services hors vente</a></td><td>'.$phv[1].'</td></tr>';
 }
 print '</table>';
 print '</td><td valign="top" width="70%">';
