@@ -300,7 +300,6 @@ insert into llx_c_civilite (rowid, code, civilite, active) values (7 , 'MTRE', '
 -- Departements/Cantons/Provinces
 --
 
-delete from llx_c_departements;
 insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,'0','0',0,'-','-');
 -- Departements de France
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'01','01053',5,'AIN','Ain');
@@ -590,7 +589,6 @@ insert into llx_c_typent (id,code,libelle) values (100, 'TE_OTHER',   'Autres');
 -- Regions
 --
 
-delete from llx_c_regions;
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
 -- Regions de France
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (101,1,  1,'97105',3,'Guadeloupe');
