@@ -263,12 +263,9 @@ else
       $hselected=$h; 
       $h++;
     
-      if ($user->admin)
-        {
-	  $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
-	  $head[$h][1] = $langs->trans("Permissions");
-	  $h++;
-        }
+      $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
+      $head[$h][1] = $langs->trans("Permissions");
+      $h++;
     
       if ($conf->bookmark4u->enabled)
         {
