@@ -135,6 +135,38 @@ else
   exit ;
 }
 
+/*
+ * Charge les ID de lignes
+ *
+ */
+
+$sql = "SELECT ligne, rowid ";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+$sql .= " WHERE statut <> 7";
+
+$resql = $db->query($sql);
+
+if ($resql)
+{  
+  $num = $db->num_rows($resql);
+  dolibarr_syslog ($num . " lignes chargées");
+  $i = 0;
+  $ligneids = array();
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);
+      $ligneids[$row[0]] = $row[1];
+      $i++;
+    }
+}
+else
+{
+  dolibarr_syslog("Erreur chargement des lignes");
+  dolibarr_syslog($sql);
+  exit ;
+}
+
 
 /*
  * Traitement
@@ -162,7 +194,7 @@ if (is_readable($file))
 	  if (sizeof($tabline) == 11)
 	    {
 	      $index             = $tabline[0];
-	      $ligne             = $tabline[1];
+	      $ligne             = ereg_replace('"','',$tabline[1]);
 	      $date              = $tabline[2];
 	      $heure             = $tabline[3];
 	      $numero            = $tabline[4];
@@ -174,12 +206,13 @@ if (is_readable($file))
 	      
 	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_import_cdr";
 	      
-	      $sql .= "(idx,ligne,date,heure,num,dest,dureetext,tarif,montant,duree";
+	      $sql .= "(idx,fk_ligne,ligne,date,heure,num,dest,dureetext,tarif,montant,duree";
 	      $sql .= ", fichier, fk_fournisseur)";
 	      
 	      $sql .= " VALUES (";
 	      $sql .= "$index";
-	      $sql .= ",'".ereg_replace('"','',$ligne)."'";
+	      $sql .= ",'".$ligneids[$ligne]."'";
+	      $sql .= ",'".$ligne."'";
 	      $sql .= ",'".ereg_replace('"','',$date)."'";
 	      $sql .= ",'".ereg_replace('"','',$heure)."'";
 	      $sql .= ",'".ereg_replace('"','',$numero)."'";
