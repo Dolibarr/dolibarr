@@ -41,15 +41,3 @@ create table llx_contrat
 
 )type=innodb;
 
---
---
-ALTER TABLE llx_contrat ADD INDEX (fk_soc);
-ALTER TABLE llx_contrat ADD INDEX (fk_commercial_signature);
-ALTER TABLE llx_contrat ADD INDEX (fk_commercial_suivi);
-ALTER TABLE llx_contrat ADD INDEX (fk_user_author);
---
---
-ALTER TABLE llx_contrat ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
-ALTER TABLE llx_contrat ADD FOREIGN KEY (fk_commercial_signature) REFERENCES llx_user (rowid);
-ALTER TABLE llx_contrat ADD FOREIGN KEY (fk_commercial_suivi) REFERENCES llx_user (rowid);
-ALTER TABLE llx_contrat ADD FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
