@@ -57,7 +57,6 @@ function llxHeader($head = "") {
 
       $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php",$langs->trans("Customers"));
       $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php",$langs->trans("Prospects"));
-      $menu->add_submenu(DOL_URL_ROOT."/comm/mailing.php","Mailing");
 			
       if ($user->rights->propale->lire) {
 	    $langs->load("propal");
@@ -118,6 +117,8 @@ function llxHeader($head = "") {
       	$menu->add_submenu(DOL_URL_ROOT."/expedition/index.php", $langs->trans("Sendings"));
       }
     }
+
+  $menu->add(DOL_URL_ROOT."/comm/mailing/index.php",$langs->trans("Mailing"));
 
   if ($conf->telephonie->enabled) // EXPERIMENTAL -> RODO
     {
