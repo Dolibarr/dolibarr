@@ -69,7 +69,6 @@ if ($err == 0)
 ?>
 
 
-
 <table border="0" cellpadding="4" cellspacing="0">
 <tr>
 <td valign="top" class="label">
@@ -79,8 +78,8 @@ if ($err == 0)
 
 if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
-	# Si le php fonctionne en CGI, alors SCRIPT_FILENAME vaut le path du php et
-	# ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
+	// Si le php fonctionne en CGI, alors SCRIPT_FILENAME vaut le path du php et
+	// ce n'est pas ce qu'on veut. Dans ce cas, on propose $_SERVER["DOCUMENT_ROOT"]
 	if (eregi('php$',$_SERVER["SCRIPT_FILENAME"]) || eregi('php\.exe$',$_SERVER["SCRIPT_FILENAME"])) {
 		$dolibarr_main_document_root=$_SERVER["DOCUMENT_ROOT"];
 		if (! eregi('\/dolibarr\/htdocs$',$dolibarr_main_document_root)) {
@@ -104,6 +103,25 @@ exemples :<br>
 <li>C:/wwwroot/dolibarr/htdocs</li>
 </td>
 </tr>
+
+
+<tr>
+<td valign="top" class="label">
+<?php print "Répertoire contenant les documents générés"; ?>
+</td><td  class="label" valign="top"><input type="text" size="60" value="
+<?PHP
+
+print ereg_replace("htdocs","documents",$dolibarr_main_document_root);
+?>
+" name="main_data_dir">
+</td><td class="comment">
+Sans le slash "/" à la fin<br>
+exemples :<br>
+<li>/var/www/dolibarr/documents</li>
+<li>C:/wwwroot/dolibarr/documents</li>
+</td>
+</tr>
+
 
 <tr>
 <td valign="top" class="label">
