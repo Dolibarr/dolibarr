@@ -20,15 +20,21 @@
  *
  */
 
+/*
+ * Gestion du retour du système de Cyberpaiement
+ *
+ */
+
 require("../../lib/mysql.lib.php3");
 require("../../conf/conf.class.php3");
 require("../../retourbplc.class.php");
+require("../../don.class.php");
 
 $conf = new Conf();
 
 $db = new Db();
 
-$retbplc = new Retourbplc($db, $conf);
+$retbplc = new Retourbplc($db);
 
 $retbplc->num_compte        = $conf->bplc->num_compte;
 
@@ -45,6 +51,24 @@ $retbplc->code_retour       = $CHAMP906;
 
 $retbplc->ref_commande      = $CHAMP200;
 
-print $retbplc->insertdb();
+/*
+ * Insertion de la transaction dans la base
+ */
+
+$return =  $retbplc->insertdb();
+
+if($return)
+{
+  if ($retbplc->check_key($retbplc->cle_acceptation))
+    {
 
 
+      /*
+       * Validation de la commande
+       *
+       */
+      
+      $don = new Don($db);
+    }
+
+}

@@ -18,11 +18,15 @@
  * $Id$
  * $Source$
  *
+ * Classe de gestion du retour RSTS du systeme de paiement en ligne
+ * CyberPaiement (TM) de la Banque Populaire de Lorraine
+ *
+ *
+ *
  */
 
 class Retourbplc
 {
-  var $conf;
   var $db;
 
   var $ipclient;
@@ -41,23 +45,21 @@ class Retourbplc
   /*
    *   Initialisation des valeurs par défaut
    */
-  Function Retourbplc($db, $conf) 
+  Function Retourbplc($db) 
   {
     $this->db = $db;
   }
   /*
-   *
+   * Insertion dans la base de donnée de la transaction
    *
    *
    */
   Function insertdb()
   {
 
-    if ($this->check_key($this->cle_acceptation))
-      {
 
-	$sql = "INSERT INTO transaction_bplc";
-	$sql .= " (ipclient, 
+    $sql = "INSERT INTO transaction_bplc";
+    $sql .= " (ipclient, 
                    num_transaction, 
                    date_transaction, 
                    heure_transaction, 
@@ -66,31 +68,30 @@ class Retourbplc
                    code_retour, 
                    ref_commande)";
     
-	$sql .= " VALUES ('$this->ipclient',
-                          '$this->num_transaction',
-                          '$this->date_transaction',
-                          '$this->heure_transaction',
-                          '$this->num_autorisation',
-                          '$this->cle_acceptation',
-                          '$this->code_retour',
-                          '$this->ref_commande')";
+    $sql .= " VALUES ('$this->ipclient',
+                      '$this->num_transaction',
+                      '$this->date_transaction',
+                      '$this->heure_transaction',
+                      '$this->num_autorisation',
+                      '$this->cle_acceptation',
+                      '$this->code_retour',
+                       $this->ref_commande)";
 
-	$result = $this->db->query($sql);
-	
-	if ($result) 
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    print $this->db->error();
-	    print "<h2><br>$sql<br></h2>";
-	    return 0;
-	  }         
-      } 
+    $result = $this->db->query($sql);
+    
+    if ($result) 
+      {
+	return $this->db->last_insertid();
+      }
+    else
+      {
+	print $this->db->error();
+	print "<h2><br>$sql<br></h2>";
+	return 0;
+      }             
   }
   /*
-   *
+   * Verification de la validitée de la clé
    *
    *
    */

@@ -33,15 +33,15 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-print_barre_titre("Transactions BPLC", $page, $PHP_SELF);
+print_barre_liste("Transactions BPLC", $page, $PHP_SELF);
 
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
 print "<TR class=\"liste_titre\">";
-print "<td>ip client</td><td>Num. transaction</td><td>Date</TD><td>heure</td>";
+print "<td>Réf. commande</td>";
+print "<td>ip client</td><td>Num. transaction</td><td>Date</TD><td>Heure</td>";
 print "<td>Num autorisation</td>";
 print "<td>clé acceptation</td>";
 print "<td>code retour</td>";
-print "<td>Réf. commande</td>";
 print "</TR>\n";
 
 $sql = "SELECT ipclient, 
@@ -67,6 +67,15 @@ if ($result) {
     $objp = $db->fetch_object( $i);
 
     print "<tr>";
+
+    $type = substr($objp->ref_commande, strlen($objp->ref_commande) - 2 );
+    $id = substr($objp->ref_commande, 0 , strlen($objp->ref_commande) - 2 );
+
+    if ($type == 10)
+      {
+	print '<td><a href="../dons/fiche.php?rowid='.$id.'&action=edit">'.$objp->ref_commande.'</a></td>';
+      }
+
     print "<td>$objp->ipclient</td>";
     print "<td>$objp->num_transaction</td>";
     print "<td>$objp->date_transaction</td>";
@@ -74,7 +83,7 @@ if ($result) {
     print "<td>$objp->num_autorisation</td>";
     print "<td>$objp->cle_acceptation</td>";
     print "<td>$objp->code_retour</td>";
-    print "<td>$objp->ref_commande</td>";
+
 
 
     $i++;
