@@ -335,12 +335,13 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
  
 function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
 {
+  global $langs;
   print '<form action="'.$urlaction.'" method="post">';
   print '<a class="vmenu" href="'.$urlobject.'">'.$title.'</a><br>';
   print '<input type="hidden" name="mode" value="search">';
   print '<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
   print '<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
-  print '<input type="submit" class="flat" value="go">';
+  print '<input type="submit" class="button" value="'.$langs->trans("Go").'">';
   print "</form>";
 }
 
