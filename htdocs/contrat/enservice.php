@@ -59,23 +59,26 @@ $offset = $limit * $page ;
 
 if ($sortfield == "")
 {
-  $sortfield="c.fin_validite";
+  $sortfield="cd.date_ouverture";
 }
 
 if ($sortorder == "")
 {
-  $sortorder="ASC";
+  $sortorder="DESC";
 }
 
-$sql = "SELECT s.nom, c.rowid as cid, c.enservice, p.label, p.rowid as pid, s.idp as sidp";
-$sql .= " ,".$db->pdate("c.fin_validite")." as date_fin_validite, c.fin_validite-sysdate() as delairestant ";
-$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
-$sql .= " WHERE c.fk_soc = s.idp AND c.fk_product = p.rowid AND c.enservice = 1";
+$sql = "SELECT s.nom, c.rowid as cid, p.rowid as pid, s.idp as sidp, cd.label, cd.statut";
+$sql .= " ,".$db->pdate("cd.date_ouverture")." as date_ouverture";
+$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c";
+$sql .= " , ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
+$sql .= " , ".MAIN_DB_PREFIX."contratdet as cd";
+$sql .= " WHERE c.fk_soc = s.idp AND cd.fk_product = p.rowid AND cd.statut = 4";
+$sql .= " AND cd.fk_contrat = c.rowid";
 if ($socid > 0)
 {
   $sql .= " AND s.idp = $socid";
 }
-$sql .= " ORDER BY $sortfield $sortorder, delairestant ";
+$sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1 ,$offset);
 
 if ( $db->query($sql) )
@@ -91,8 +94,7 @@ if ( $db->query($sql) )
   print_liste_field_titre($langs->trans("Ref"),"enservice.php", "c.rowid","","","",$sortfield);
   print_liste_field_titre($langs->trans("Label"),"enservice.php", "p.label","","","",$sortfield);
   print_liste_field_titre($langs->trans("Company"),"enservice.php", "s.nom","","","",$sortfield);
-  print "<td align=\"center\">".$langs->trans("Status")."</td>";
-  print_liste_field_titre("Date fin","enservice.php", "date_fin_validite","","",'align="center"',$sortfield);
+  print '<td align="center">Date mise en service</td>';
   print "</tr>\n";
 
   $now=mktime();
@@ -103,38 +105,11 @@ if ( $db->query($sql) )
       $var=!$var;
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$obj->cid\">";
-      print img_file();
+      print '<img src="./statut'.$obj->statut.'.png" border="0" alt="statut">';
       print "</a>&nbsp;<a href=\"fiche.php?id=$obj->cid\">$obj->cid</a></td>\n";
       print "<td><a href=\"../product/fiche.php?id=$obj->pid\">$obj->label</a></td>\n";
       print "<td><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></td>\n";
-
-      // Affiche statut contrat
-      if ($obj->enservice == 1)
-	{
-        if (! $obj->date_fin_validite || $obj->date_fin_validite >= $now) {
-      	  $class = 'normal';
-    	  $statut= $langs->trans("ContractStatusRunning");
-        }
-        else {            
-      	  $class = 'error';
-    	  $statut= $langs->trans("ContractStatusRunning").', '.img_warning().' '.$langs->trans("ContractStatusExpired");
-        }
-	}
-      elseif($obj->enservice == 2)
-	{
-   	  $class = "normal";
-	  $statut= $langs->trans("Closed");
-	}
-      else
-	{
-  	  $class = "warning";
-	  $statut= $langs->trans("ContractStatusToRun");
-	}
-    print "<td align=\"center\" class=\"$class\">";
-    print "$statut";
-	print "</td>";
-
-      print '<td align="center">'.dolibarr_print_date($obj->date_fin_validite).'</td>';
+      print '<td align="center">'.strftime("%d/%m/%y",$obj->date_ouverture)."</td>\n";
 
       print "</tr>\n";
       $i++;
