@@ -76,9 +76,8 @@ if ($HTTP_POST_VARS["action"] == 'add_paiement')
 	      //paiementid est correct, il contient "CHQ ou VIR par exemple"
 	      $bank_line_id = $acc->addline($datepaye, $HTTP_POST_VARS["paiementid"], $label, $paiement->montant, $num_paiement);
 	  
-	      // TODO
-	      // Mise a jour fk_bank dans llx_paiement
-	      // $acc->update_fk_bank($paiement_id,$bank_line_id);
+	      // Mise a jour fk_bank dans llx_paiement. On connait ainsi le paiement qui a généré l'écriture bancaire
+	      $acc->update_fk_bank($paiement_id,$bank_line_id);
 	  
 	      $acc->add_url_line($bank_line_id, $paiement_id, DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', "(paiement)");
 	      $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);	  
