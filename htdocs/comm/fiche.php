@@ -211,17 +211,21 @@ if ($_socid > 0)
      */
     print '<table width="100%" border="0">';
     print '<tr><td valign="top">';
-    print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+    print '<table class="border" width="100%">';
 
     print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">';
     print $objsoc->nom;
     print '</td></tr>';
-    print "<tr><td valign=\"top\">".$langs->trans("Address")."</td><td colspan=\"3\">".nl2br($objsoc->adresse)."<br>".$objsoc->cp." ".$objsoc->ville." ".$objsoc->pays."</td></tr>";
+    print "<tr><td valign=\"top\">".$langs->trans("Address")."</td><td colspan=\"3\">".nl2br($objsoc->adresse).'</td></tr>';
+
+    print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td colspan="3">'.$objsoc->cp." ".$objsoc->ville.'</td></tr>';
+    print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$objsoc->pays.'</td></tr>';
+    
     print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($objsoc->tel).'&nbsp;</td><td>Fax</td><td>'.dolibarr_print_phone($objsoc->fax).'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
 
-    print "<tr><td>Siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
-    print "<td>prefix</td><td>";
+    print "<tr><td>".$langs->trans("ProfIdSiren")."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
+    print '<td>'.$langs->trans("Prefix").'</td><td>';
     if ($objsoc->prefix_comm)
       {
 	print $objsoc->prefix_comm;
@@ -480,7 +484,7 @@ if ($_socid > 0)
 	}
       print "</table>";
       
-      print "<p />";
+      print "<br>";
       
       /*
        *      Listes des actions a faire
@@ -511,22 +515,22 @@ if ($_socid > 0)
 	  if ($oldyear == strftime("%Y",$obj->da) ) 
 		{
 	    //print '<td align="center">|</td>';
-			print "<td align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
+			print "<td align=\"center\">" .strftime("%Y",$obj->da)."</td>\n"; 
 	  } 
 		else 
 		{
-	    print "<td align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
+	    print "<td align=\"center\">" .strftime("%Y",$obj->da)."</td>\n"; 
 	    $oldyear = strftime("%Y",$obj->da);
 	  }
 
 	  if ($oldmonth == strftime("%Y%b",$obj->da) ) 
 		{
 	    //print '<td align="center">|</td>';
-		print "<td align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
+		print "<td align=\"center\">" .strftime("%b",$obj->da)."</td>\n"; 
 	  } 
 		else 
 		{
-	    print "<td align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
+	    print "<td align=\"center\">" .strftime("%b",$obj->da)."</td>\n"; 
 	    $oldmonth = strftime("%Y%b",$obj->da);
 	  }
 	  
@@ -573,7 +577,7 @@ if ($_socid > 0)
        *      Listes des actions effectuees
        *
        */
-      print '<table class="noborder" width="100%" cellspacing=0 cellpadding=2>';
+      print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
       print '<tr>';
       print '<td valign="top">';
@@ -587,7 +591,7 @@ if ($_socid > 0)
 
       if ( $db->query($sql) )
 	{
-	  print '<table width="100%" cellspacing="0" border="0" cellpadding="2">';
+	  print '<table width="100%" class="noborder">';
 	  
 	  $i = 0 ; 
 	  $num = $db->num_rows();
@@ -606,7 +610,7 @@ if ($_socid > 0)
 		}
 	      else
 		{
-		  print "<TD align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
+		  print "<TD align=\"center\">" .strftime("%Y",$obj->da)."</td>\n"; 
 		  $oldyear = strftime("%Y",$obj->da);
 		}
 	      
@@ -616,12 +620,12 @@ if ($_socid > 0)
 		}
 	      else
 		{
-		  print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
+		  print "<TD align=\"center\">" .strftime("%b",$obj->da)."</td>\n"; 
 		  $oldmonth = strftime("%Y%b",$obj->da);
 		}
 	  
-	      print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
-	      print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
+	      print "<TD>" .strftime("%d",$obj->da)."</td>\n"; 
+	      print "<TD>" .strftime("%H:%M",$obj->da)."</td>\n";
 	      
 	      print '<td width="10%">&nbsp;</td>';
 	      
