@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ function llxHeader($head = "")
 
   $menu->add(DOL_URL_ROOT."/compta/resultat/","Résultats");
 
-  $menu->add(DOL_URL_ROOT."/compta/bank/index.php3","Bank");
+  $menu->add(DOL_URL_ROOT."/compta/bank/index.php3","Banque");
 
   left_menu($menu->liste);
 
