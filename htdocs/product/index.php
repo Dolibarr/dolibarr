@@ -42,7 +42,7 @@ print_titre("Produits et services");
 
 print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="70%">';
 
   
 $sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p WHERE envente=1";
