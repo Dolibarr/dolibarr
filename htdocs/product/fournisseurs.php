@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,11 @@
  *
  */
 
-/**	    \file       htdocs/product/fournisseurs.php
-        \ingroup    product,fournisseur
-		\brief      Page fournisseur de produit
-		\version    $Revision$
+/*!
+  \file       htdocs/product/fiche.php
+  \ingroup    product
+  \brief      Page de la fiche produit
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -59,10 +60,8 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
   $action = '';
-  Header("Location: fournisseurs.php?id=".$_POST["id"]);
+  Header("Location: fournisseurs.php?id=".$_GET["id"]);
 }
-
-
 
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
@@ -78,7 +77,7 @@ if ($_GET["id"])
     {
       $product = new Product($db);
       $result = $product->fetch($_GET["id"]);
-	}
+    }
   
   if ( $result )
     { 
@@ -108,13 +107,13 @@ if ($_GET["id"])
     		  $h++;
 	        }
 
-          if ($conf->fournisseur->enabled)
-            {
+	      if ($conf->fournisseur->enabled)
+		{
     		  $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
     		  $head[$h][1] = $langs->trans("Suppliers");
-    	      $hselected = $h;
+		  $hselected = $h;
     		  $h++;
-            }
+		}
 
 	    }
 	      
@@ -125,11 +124,10 @@ if ($_GET["id"])
 
 	  dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
-
 	  print($mesg);
 	  print '<table class="border" width="100%">';
-	  print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">'.$product->ref.'</td></tr>';
-	  print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="3">';
+	  print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$product->ref.'</td>';
+	  print '<td align="right">'.$langs->trans("Status").' : ';
 	  if ($product->envente)
 	    {
 	      print $langs->trans("OnSell");
@@ -139,8 +137,11 @@ if ($_GET["id"])
 	      print $langs->trans("NotOnSell");
 	    }
 	  print '</td></tr>';
-	  print '<tr><td>'.$langs->trans("Label").'</td><td colspan="3">'.$product->libelle.'</td></tr>';
-	  print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="3">'.price($product->price).'</td></tr>';
+	  print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
+	  print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">'.price($product->price).'</td></tr>';
+	  print '</table><br />';
+	  print '<table class="border" width="100%">';
+
 	  if ($product->type == 0)
 	    {
 	      $nblignefour=4;
@@ -149,7 +150,7 @@ if ($_GET["id"])
 	    {
 	      $nblignefour=4;
 	    } 
-		
+
 	  print '<tr class="liste_titre"><td valign="top">';
 	  print $langs->trans("Suppliers").'</td>';
 	  print '<td>'.$langs->trans("Ref").'</td>';
