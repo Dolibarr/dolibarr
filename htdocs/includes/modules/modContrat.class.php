@@ -94,14 +94,21 @@ class modContrat extends DolibarrModules
     $this->rights[1][3] = 1;
 
     $this->rights[2][0] = 162;
-    $this->rights[2][1] = 'Mettre en service un contrat';
+    $this->rights[2][1] = 'Créer / modifier les contrats';
     $this->rights[2][2] = 'r';
-    $this->rights[2][3] = 0;    
+    $this->rights[2][3] = 0;
 
     $this->rights[3][0] = 163;
+    $this->rights[3][1] = 'Mettre en service un contrat';
+    $this->rights[3][2] = 'r';
+    $this->rights[3][3] = 0;    
+
+    $this->rights[3][0] = 164;
     $this->rights[3][1] = 'Mettre fin au service d\'un contrat';
     $this->rights[3][2] = 'r';
     $this->rights[3][3] = 0;
+
+
 
     return $this->_init($sql);
   }
