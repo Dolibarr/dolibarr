@@ -33,31 +33,18 @@ $db = new Db();
 
 print_titre ("Comptes bancaires");
 
-print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-print "<TR class=\"liste_titre\">";
-print "<td>Label</td><td>Banque</TD>";
-print "<td align=\"left\">Numéro</a></TD>";
-print "</TR>\n";
 
 $sql = "SELECT rowid, label,number,bank FROM llx_bank_account";
 
 $result = $db->query($sql);
 if ($result) {
-  $var=True;  
+  $accounts = array();
+
   $num = $db->num_rows();
-  $i = 0; $total = 0;
-  
-  $sep = 0;
-  
+  $i = 0; 
   while ($i < $num) {
     $objp = $db->fetch_object( $i);
-    
-    
-    print "<tr><td>";
-    print '<a href="account.php3?account='.$objp->rowid.'">'.$objp->label.'</a>';
-
-    print "</td><td>$objp->bank</td><td>$objp->number</td></tr>";
-    
+    $accounts[$i] = $objp->rowid;
     
     $i++;
   }
@@ -65,8 +52,35 @@ if ($result) {
 }
 
 
-$acc = new Account($db);
 
+
+print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print "<TR class=\"liste_titre\">";
+print "<td>Label</td><td>Banque</TD>";
+print "<td align=\"left\">Numéro</a></TD><td align=\"right\">Solde</td>";
+print "</TR>\n";
+$total = 0;
+for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
+  $acc = new Account($db);
+  $acc->fetch($accounts[$i]);
+
+  $solde = $acc->solde();
+
+  
+  print "<tr><td>";
+  print '<a href="account.php3?account='.$acc->id.'">'.$acc->label.'</a>';
+
+  print "</td><td>$acc->bank</td><td>$acc->number</td>";
+
+
+
+  print '</td><td align="right">'.price($solde).'</td></tr>';
+  
+  $total += $solde;
+
+}
+
+print '<tr><td colspan="3" align="right">Total</td><td align="right">'.price($total).'</td></tr>';
 print "</table>";
 
 

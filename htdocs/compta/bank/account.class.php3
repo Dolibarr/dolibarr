@@ -24,7 +24,7 @@ class Account {
   var $rowid;
   var $bank;
   var $label;
-  var $name;
+  var $number;
 
   Function Account($DB, $rowid=0) {
     global $config;
@@ -35,9 +35,10 @@ class Account {
     return 1;
   }
 
-  Function fetch() {
-    $sql = "SELECT s.idp, s.nom,".$this->db->pdate("s.datec");  
-    $sql .= " AND s.idp = ".$this->id;
+  Function fetch($id) {
+    $this->id = $id; 
+    $sql = "SELECT rowid, label, bank, number FROM llx_bank_account";
+    $sql .= " WHERE rowid  = ".$id;
 
     $result = $this->db->query($sql);
 
@@ -45,20 +46,22 @@ class Account {
       if ($this->db->num_rows()) {
 	$obj = $this->db->fetch_object($result , 0);
 
-	$this->nom = $obj->nom;
+	$this->bank = $obj->bank;
+	$this->label = $obj->label;
+	$this->number = $obj->number;
       }
       $this->db->free();
     }
   }
 
   Function solde() {
-    $sql = "SELECT sum(amount) FROM llx_bank WHERE rowid=$this->id";
+    $sql = "SELECT sum(amount) FROM llx_bank WHERE fk_account=$this->id AND dateo <" . $this->db->idate(time() );
 
     $result = $this->db->query($sql);
 
     if ($result) {
       if ($this->db->num_rows()) {
-	$solde = $this->db->fetch_result(0,0);
+	$solde = $this->db->result(0,0);
 
 	return $solde;
       }

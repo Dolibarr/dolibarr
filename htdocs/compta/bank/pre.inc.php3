@@ -33,7 +33,7 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("account.php3","Comptes");
+  $menu->add("index.php3","Comptes");
 
   $db = new Db();
   $sql = "SELECT rowid, label FROM llx_bank_account";
