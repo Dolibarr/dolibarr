@@ -19,11 +19,11 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-require("../contact.class.php3");
-require("../lib/webcal.class.php3");
-require("../cactioncomm.class.php3");
-require("../actioncomm.class.php3");
+require("./pre.inc.php");
+require("../contact.class.php");
+require("../lib/webcal.class.php");
+require("../cactioncomm.class.php");
+require("../actioncomm.class.php");
 
 llxHeader();
 $user->getrights('propale');
@@ -146,7 +146,7 @@ if ($socid > 0) {
     if ($user->societe_id == 0)
       {
 
-	print "<td align=\"center\"><a href=\"../compta/fiche.php3?socid=$objsoc->idp\">Compta</a></td>";
+	print "<td align=\"center\"><a href=\"../compta/fiche.php?socid=$objsoc->idp\">Compta</a></td>";
 	print "<td align=\"center\"><a href=\"docsoc.php?socid=$objsoc->idp\">Documents</a></td>";
 	print "<td align=\"center\"><a href=\"index.php?socidp=$objsoc->idp&action=add_bookmark\">[Bookmark]</a></td>";
 	if ($user->rights->projet->creer)
@@ -154,10 +154,10 @@ if ($socid > 0) {
 
 	if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
 	  {
-	    print "<td align=\"center\"><a href=\"../fichinter/fiche.php3?socidp=$objsoc->idp&action=create\">[Intervention]</a></td>";
+	    print "<td align=\"center\"><a href=\"../fichinter/fiche.php?socidp=$objsoc->idp&action=create\">[Intervention]</a></td>";
 	  }
-	print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
-	print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td></tr>";
+	print "<td><a href=\"socnote.php?socid=$objsoc->idp\">Notes</a></td>";
+	print "<td align=\"center\">[<a href=\"../soc.php?socid=$objsoc->idp&action=edit\">Editer</a>]</td></tr>";
       }
     print "</table>";
     /*
@@ -211,14 +211,14 @@ if ($socid > 0) {
     if ( $db->query($sql) ) {
       $num = $db->num_rows();
       if ($num >0 ) {
-	print "<tr $bc[$var]><td colspan=\"4\"><a href=\"propal.php3?socidp=$objsoc->idp\">Liste des propales ($num)</td></tr>";
+	print "<tr $bc[$var]><td colspan=\"4\"><a href=\"propal.php?socidp=$objsoc->idp\">Liste des propales ($num)</td></tr>";
       }
       $i = 0;	$now = time(); 	$lim = 3600 * 24 * 15 ;
       while ($i < $num && $i < 4) {
 	$objp = $db->fetch_object( $i);
 	$var=!$var;
 	print "<TR $bc[$var]>";
-	print "<TD><a href=\"propal.php3?propalid=$objp->propalid\">$objp->ref</a>\n";
+	print "<TD><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a>\n";
 	if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 ) {
 	  print " <b>&gt; 15 jours</b>";
 	}
@@ -274,7 +274,7 @@ if ($socid > 0) {
     print '<td align="center" width="20%">-</td>';
     if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
       {
-	print "<td align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">Créer une proposition</a></td>";
+	print "<td align=\"center\"><a href=\"addpropal.php?socidp=$objsoc->idp&action=create\">Créer une proposition</a></td>";
       }
     else
       {
@@ -314,7 +314,7 @@ if ($socid > 0) {
       print '<tr class="liste_titre"><td>Pr&eacute;nom Nom</td>';
       print '<td>Poste</td><td>T&eacute;l</td>';
       print "<td>Fax</td><td>Email</td>";
-      print "<td align=\"center\"><a href=\"people.php3?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
+      print "<td align=\"center\"><a href=\"people.php?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
     
       $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM llx_socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
       $result = $db->query($sql);
@@ -327,7 +327,7 @@ if ($socid > 0) {
 
 	print '<td>';
 
-	print '<a href="action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+	print '<a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
 	if ($obj->note)
 	  {
@@ -335,10 +335,10 @@ if ($socid > 0) {
 	  }
 	print "</td>";
 	print "<td>$obj->poste&nbsp;</td>";
-	print '<td><a href="action/fiche.php3?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
-	print '<td><a href="action/fiche.php3?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
-	print '<td><a href="action/fiche.php3?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
-	print "<td align=\"center\"><a href=\"people.php3?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
+	print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+	print '<td><a href="action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
+	print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
+	print "<td align=\"center\"><a href=\"people.php?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
 	print "</tr>\n";
 	$i++;
 	$tag = !$tag;
@@ -353,7 +353,7 @@ if ($socid > 0) {
        *
        */
       print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
-      print '<tr class="liste_titre"><td>Actions à faire</td><td align="right"> [<a href="action/fiche.php3?action=create&socid='.$socid.'&afaire=1">Nouvelle action</a>]</td></tr>';
+      print '<tr class="liste_titre"><td>Actions à faire</td><td align="right"> [<a href="action/fiche.php?action=create&socid='.$socid.'&afaire=1">Nouvelle action</a>]</td></tr>';
       print '<tr>';
       print '<td colspan="2" valign="top">';
 
@@ -395,11 +395,11 @@ if ($socid > 0) {
 
 	  if ($obj->propalrowid)
 	    {
-	      print '<td width="40%"><a href="propal.php3?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+	      print '<td width="40%"><a href="propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
 	    }
 	  else
 	    {
-	      print '<td width="40%"><a href="action/fiche.php3?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+	      print '<td width="40%"><a href="action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
 	    }
 	  /*
 	   * Contact pour cette action
@@ -408,13 +408,13 @@ if ($socid > 0) {
 	  if ($obj->fk_contact) {
 	    $contact = new Contact($db);
 	    $contact->fetch($obj->fk_contact);
-	    print '<td width="40%"><a href="people.php3?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+	    print '<td width="40%"><a href="people.php?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
 	  } else {
 	    print '<td width="40%">&nbsp;</td>';
 	  }
 	  /*
 	   */
-	  print '<td width="20%"><a href="../user/fiche.php3?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
+	  print '<td width="20%"><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
 	  print "</tr>\n";
 	  $i++;
 	}
@@ -485,11 +485,11 @@ if ($socid > 0) {
 	      
 	      if ($obj->propalrowid)
 		{
-		  print '<td width="40%"><a href="propal.php3?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+		  print '<td width="40%"><a href="propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
 		}
 	      else
 		{
-		  print '<td width="40%"><a href="action/fiche.php3?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+		  print '<td width="40%"><a href="action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
 		}
 	      /*
 	       * Contact pour cette action
@@ -499,7 +499,7 @@ if ($socid > 0) {
 		{
 		  $contact = new Contact($db);
 		  $contact->fetch($obj->fk_contact);
-		  print '<td width="40%"><a href="people.php3?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+		  print '<td width="40%"><a href="people.php?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
 		}
 	      else
 		{
@@ -507,7 +507,7 @@ if ($socid > 0) {
 		}
 	      /*
 	       */
-	      print '<td width="20%"><a href="../user/fiche.php3?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
+	      print '<td width="20%"><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
 	      print "</tr>\n";
 	      $i++;
 	    }

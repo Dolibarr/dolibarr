@@ -19,8 +19,8 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-require("./propal_model_pdf.class.php3");
+require("./pre.inc.php");
+require("./propal_model_pdf.class.php");
 
 if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php"))
 {
@@ -66,12 +66,12 @@ if ($action == 'create')
 	}
     }
     
-  print "<form action=\"propal.php3?socidp=$socidp\" method=\"post\">";
+  print "<form action=\"propal.php?socidp=$socidp\" method=\"post\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   
   print '<table border="1" cellspacing="0" cellpadding="3" width="100%">';
   
-  print '<tr><td>Société</td><td><a href="fiche.php3?socid='.$socidp.'">'.$objsoc->nom.'</a></td>';
+  print '<tr><td>Société</td><td><a href="fiche.php?socid='.$socidp.'">'.$objsoc->nom.'</a></td>';
   
   print '<td valign="top" colspan="2">';
   print "Commentaires</td></tr>";
@@ -119,7 +119,7 @@ if ($action == 'create')
   if ($numdest==0)
     {
       print 'Cette societe n\'a pas de contact, veuillez en creer un avant de faire de propale</b><br>';
-      print '<a href=people.php3?socid='.$socidp.'&action=addcontact>Ajouter un contact</a>';
+      print '<a href=people.php?socid='.$socidp.'&action=addcontact>Ajouter un contact</a>';
     }
   print '</td></tr>';
   /*
@@ -152,7 +152,7 @@ if ($action == 'create')
   if ($numprojet==0)
     {
 	print 'Cette societe n\'a pas de projet.<br>';
-	print '<a href=projet/fiche.php3?socidp='.$socidp.'&action=create>Créer un projet</a>';
+	print '<a href=projet/fiche.php?socidp='.$socidp.'&action=create>Créer un projet</a>';
     }
   print '</td>';
   print '<td>Modèle</td>';

@@ -20,7 +20,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 /*
  * Sécurité accés client
@@ -115,19 +115,19 @@ if ($result)
 
       print "<TR $bc[$var]>";
 
-      print '<TD><a href="'.DOL_URL_ROOT.'/comm/people.php3?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->name.'</a></TD>';
+      print '<TD><a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->name.'</a></TD>';
       print "<TD>$obj->firstname</TD>";
       
-      print '<TD><a href="contact.php3?socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0" alt="filtrer"></a>&nbsp;';
-      print "<a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print '<TD><a href="contact.php?socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0" alt="filtrer"></a>&nbsp;';
+      print "<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
       
-      print '<td><a href="action/fiche.php3?action=create&actionid=4&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
+      print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
       
-      print '<td><a href="action/fiche.php3?action=create&actionid=1&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+      print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
       
       if ($user->societe_id == 0) 
 	{
-	  print "<TD><a href=\"addpropal.php3?socidp=$obj->idp&setcontact=$obj->cidp&action=create\">[Propal]</A></td>\n";
+	  print "<TD><a href=\"addpropal.php?socidp=$obj->idp&setcontact=$obj->cidp&action=create\">[Propal]</A></td>\n";
 	}
       else
 	{

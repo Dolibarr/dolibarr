@@ -18,7 +18,7 @@
  * $Id$
  * $Source$
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 llxHeader();
 
@@ -83,8 +83,8 @@ if ($socid > 0)
       print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
       
       print "<tr><td><div class=\"titre\">Documents associés à l'entreprise : $societe->nom</div></td>";
-      print "<td align=\"center\"><a href=\"fiche.php3?socid=$societe->id\">Commercial</a></td>";
-      print "<td align=\"center\"><a href=\"../compta/fiche.php3?socid=$societe->id\">Compta</a></td>";
+      print "<td align=\"center\"><a href=\"fiche.php?socid=$societe->id\">Commercial</a></td>";
+      print "<td align=\"center\"><a href=\"../compta/fiche.php?socid=$societe->id\">Compta</a></td>";
       print "</tr></table>";
       /*
        *

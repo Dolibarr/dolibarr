@@ -19,11 +19,11 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-require("../contact.class.php3");
-require("../lib/webcal.class.php3");
-require("../cactioncomm.class.php3");
-require("../actioncomm.class.php3");
+require("./pre.inc.php");
+require("../contact.class.php");
+require("../lib/webcal.class.php");
+require("../cactioncomm.class.php");
+require("../actioncomm.class.php");
 
 /*
  * Sécurité accés client
@@ -91,7 +91,7 @@ if ($result)
   if ($num == 1)
     {
       $obj = $db->fetch_object(0);
-      Header("Location: fiche.php3?socid=$obj->idp");
+      Header("Location: fiche.php?socid=$obj->idp");
     }
   else
     {
@@ -127,7 +127,7 @@ if ($result)
       $var=!$var;
 
       print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print "<TD><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
       print "<TD>".$obj->ville."&nbsp;</TD>\n";
       print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
 
@@ -135,7 +135,7 @@ if ($result)
 	{
 	  if ($user->rights->propale->creer)
 	    {
-	      print "<TD align=\"center\"><a href=\"addpropal.php3?socidp=$obj->idp&action=create\">[Propal]</A></td>\n";
+	      print "<TD align=\"center\"><a href=\"addpropal.php?socidp=$obj->idp&action=create\">[Propal]</A></td>\n";
 	    }
 	  else
 	    {
@@ -143,7 +143,7 @@ if ($result)
 	    }
 	  if ($conf->fichinter->enabled)
 	    {
-	      print "<TD align=\"center\"><a href=\"../fichinter/fiche.php3?socidp=$obj->idp&action=create\">[Fiche Inter]</A></td>\n";
+	      print "<TD align=\"center\"><a href=\"../fichinter/fiche.php?socidp=$obj->idp&action=create\">[Fiche Inter]</A></td>\n";
 	    }
 	  else
 	    {
