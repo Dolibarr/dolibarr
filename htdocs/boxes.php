@@ -29,7 +29,7 @@ class infoBox
     $bcx[0] = 'class="box_pair"';
     $bcx[1] = 'class="box_impair"';
 
-    print '<table width="100%" cellpadding="3" cellspacing="0" border="0">';
+    print '<table width="100%" cellpadding="3" cellspacing="0" class="noborder">';
 
     print '<tr class="box_titre"><td colspan='.sizeof($contents).'>'.$head[0]['text']."</td></tr>";
 
