@@ -1117,6 +1117,7 @@ insert into llx_action_def (rowid,titre,description,objet_type) VALUES (2,'Valid
 delete from llx_boxes_def;
 
 delete from llx_boxes;
+insert into llx_const(name, value, type, note) values ('MAIN_MONNAIE','euros','chaine','Monnaie');
 insert into llx_const(name, value, type, note) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation');
 
 insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2003','chaine','Année de départ');
