@@ -20,8 +20,7 @@
  *
  */
 require("../../main.inc.php3");
-require("../livre/livre.class.php");
-require("./notification.class.php");
+require("./client.class.php");
 
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf;
@@ -34,7 +33,11 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
+  $menu->add("/boutique/client/", "Clients");
+
   $menu->add("/boutique/notification/", "Notifications");
+
+  $menu->add_submenu("/boutique/notification/produits.php", "Produits");
 
   left_menu($menu->liste);
   /*
