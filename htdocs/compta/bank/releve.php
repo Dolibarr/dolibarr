@@ -57,7 +57,7 @@ if (! strlen($num))
       $numrows = $db->num_rows();
       $i = 0; 
       
-      print_barre_liste("Relevés bancaires", $page, $PHP_SELF,"&account=$account",$sortfield,$sortorder,'',$numrows);
+      print_barre_liste("Relevés bancaires", $page, $PHP_SELF,"&amp;account=$account",$sortfield,$sortorder,'',$numrows);
 
       print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="2">';
       print "<TR class=\"liste_titre\">";
@@ -68,7 +68,7 @@ if (! strlen($num))
 	{
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
-	  print "<tr $bc[$var]><td><a href=\"$PHP_SELF?num=$objp->numr&account=$account\">$objp->numr</a></td></tr>\n";
+	  print "<tr $bc[$var]><td><a href=\"$PHP_SELF?num=$objp->numr&amp;account=$account\">$objp->numr</a></td></tr>\n";
 	  $i++;
 	}
   print "</table>";
@@ -114,14 +114,19 @@ else
 	    }
 	}
     }
+
+  $acct = new Account($db);
+  $acct->fetch($account);
+
+  print_titre('Releve num&eacute;ro '.$num.' compte : <a href="account.php?account='.$account.'">'.$acct->label.'</a>');
   
 
-  print "<table border=0 width=100%><tr><td><b>Releve num&eacute;ro $num</b></td>";
-  print "<td align=right><a href=\"$PHP_SELF?rel=prev&num=$num&ve=$ve\">&lt;- prev</a>";
-  print "&nbsp;-&nbsp;<a href=\"$PHP_SELF?rel=next&num=$num&ve=$ve\">next -&gt;</a></td></tr></table>";
+  print "<table border=0 width=100%><tr><td>&nbsp;</td>";
+  print "<td align=right><a href=\"$PHP_SELF?rel=prev&amp;num=$num&amp;ve=$ve\">&lt;- prev</a>";
+  print "&nbsp;-&nbsp;<a href=\"$PHP_SELF?rel=next&amp;num=$num&amp;ve=$ve\">next -&gt;</a></td></tr></table>";
   print "<form method=\"post\" action=\"$PHP_SELF\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-  print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
   print "<TR class=\"liste_titre\">";
   print '<td>Date</td><td>Type</td><td width="30%">Description</TD>';
   print '<td align="right">Debit</TD>';
@@ -148,7 +153,7 @@ else
       $var=True;  
       $numrows = $db->num_rows();
       $i = 0; 
-      print "<tr><td colspan=\"3\"><a href=\"$PHP_SELF?num=$num&ve=1&rel=$rel&account=$account\">vue etendue</a></td>";
+      print "<tr><td colspan=\"3\"><a href=\"$PHP_SELF?num=$num&amp;ve=1&amp;rel=$rel&amp;account=$account\">vue etendue</a></td>";
       print "<td align=\"right\" colspan=\"2\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
 
       while ($i < $numrows)
@@ -200,7 +205,7 @@ else
     
 	  print "<td align=\"right\">".price($total)."</TD>\n";
 	  
-	  print "<td align=\"center\">[<a href=\"ligne.php?rowid=$objp->rowid&account=$account\">edit</a>]</td>";
+	  print "<td align=\"center\">[<a href=\"ligne.php?rowid=$objp->rowid&amp;account=$account\">edit</a>]</td>";
 	  
 	  print "</tr>";
 	  $i++;
