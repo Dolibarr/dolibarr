@@ -136,6 +136,13 @@ class Facture
 	      $sql = "INSERT INTO llx_fa_pr (fk_facture, fk_propal) VALUES (".$this->id.",".$this->propalid.")";
 	      $this->db->query($sql);
 	    }
+
+	  if ($this->id && $this->commandeid)
+	    {
+	      $sql = "INSERT INTO llx_co_fa (fk_facture, fk_commande) VALUES (".$this->id.",".$this->commandeid.")";
+	      $this->db->query($sql);
+	    }
+
 	  /*
 	   * Produits
 	   *
@@ -367,38 +374,50 @@ class Facture
 
 	  if ($this->db->query( $sql) )
 	    {
-	      $sql = "DELETE FROM llx_facturedet WHERE fk_facture = $rowid;";
+
+	      $sql = "DELETE FROM llx_co_fa WHERE fk_facture = $rowid;";
 	      
 	      if ($this->db->query( $sql) )
 		{
-		  $sql = "DELETE FROM llx_facture WHERE rowid = $rowid AND fk_statut = 0;";
-		  
+		  $sql = "DELETE FROM llx_facturedet WHERE fk_facture = $rowid;";
+	      
 		  if ($this->db->query( $sql) )
 		    {
-		      return 1;
+		      $sql = "DELETE FROM llx_facture WHERE rowid = $rowid AND fk_statut = 0;";
+		      
+		      if ($this->db->query( $sql) )
+			{
+			  return 1;
+			}
+		      else
+			{
+			  print "Err : ".$this->db->error();
+			  return -1;
+			}
+
 		    }
 		  else
 		    {
 		      print "Err : ".$this->db->error();
-		      return -1;
+		      return -2;
 		    }
 		}
 	      else
 		{
 		  print "Err : ".$this->db->error();
-		  return -2;
+		  return -3;
 		}
 	    }
 	  else
 	    {
 	      print "Err : ".$this->db->error();
-	      return -3;
+	      return -4;
 	    }
 	}
       else
 	{
 	  print "Err : ".$this->db->error();
-	  return -4;
+	  return -5;
 	}
     }
   /**
