@@ -30,7 +30,77 @@
 
 require("./pre.inc.php");
 
-Header("Location: liste.php?".$_SERVER["QUERY_STRING"]);
+
+llxHeader('','Compta - Ventilation');
+
+print_titre("Ventilation Comptable");
+
+print '<table border="0" width="100%">';
+
+print '<tr><td valign="top" width="30%">';
+
+
+
+$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facturedet";
+$sql .= " WHERE fk_export_compta = 0";
+$result = $db->query($sql);
+if ($result)
+{
+  $row = $db->fetch_row($result);
+  $nbfac = $row[0];
+
+  $db->free($result);
+}
+
+$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."paiement";
+$sql .= " WHERE fk_export_compta = 0";
+
+$result = $db->query($sql);
+if ($result)
+{
+  $row = $db->fetch_row($result);
+  $nbp = $row[0];
+
+  $db->free($result);
+}
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td colspan="2">Lignes a ventiler</tr>';
+print '<tr class="liste_titre"><td>Type</td><td align="center">Nb</td></tr>';
+print '<tr><td>Factures</td><td align="center">'.$nbfac.'</td></tr>';
+print '<tr><td>Paiements</td><td align="center">'.$nbp.'</td></tr>';
+print "</table>\n";
+
+print '</td><td valign="top">';
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td>Type</td><td align="center">Nb de lignes</td></tr>';
+
+$sql = "SELECT count(*), ccg.intitule FROM ".MAIN_DB_PREFIX."facturedet as fd";
+$sql .= " ,".MAIN_DB_PREFIX."compta_compte_generaux as ccg";
+$sql .= " WHERE fd.fk_code_ventilation = ccg.rowid";
+$sql .= " GROUP BY ccg.rowid";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $i = 0;
+  $num = $db->num_rows($resql);
+
+  while ($i < $num)
+    {
+
+      $row = $db->fetch_row($resql);
+
+      print '<tr><td>'.$row[1].'</td><td align="center">'.$row[0].'</td></tr>';
+      $i++;
+    }
+  $db->free($result);
+}
+print "</table>\n";
+
+print '</td></tr></table>';
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
 ?>
