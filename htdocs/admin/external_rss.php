@@ -67,7 +67,7 @@ else {
   <li>WikiApril / http://wiki.april.org / http://wiki.april.org/RecentChanges?format=rss (et tous les sites phpwiki)</li>
   <li>LinuxFR / http://linuxfr.org / http://www.linuxfr.org/backend.rss</li>
   <li>WikiInterneRycks / ../wiki / ../wiki/RecentChanges?format=rss (ne marche pas, je suis en https et en plus y a un apache_auth)</li>
-  <li>LoLix / http://back.fr.lolix.org/ /(ha ben non, ne marche pas, pfffff ‡ faire chez lolix !)</li>
+  <li>LoLix / http://back.fr.lolix.org/ / http://back.fr.lolix.org/jobs.rss.php3</li>
   <li>Parinux / http://parinux.org/ / http://parinux.org/backend.rss</li>
   <li>Docs d'Abul…du / http://docs.abuledu.org / http://docs.abuledu.org/backend.php3 (et tous les sites spip)</li>
  </ul>
