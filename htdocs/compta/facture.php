@@ -790,8 +790,12 @@ else
 		print '<TD align="right">'.price($objp->subprice)."</td>\n";
 		if ($fac->statut == 0  && $user->rights->facture->creer) 
 		  {
-		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">del</a></td>';
-		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&amp;action=editline&amp;rowid='.$objp->rowid.'">edit</a></td>';
+		    print '<td align="right"><a href="'.$PHPSELF.'?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+		    print img_edit();
+		    print '</a></td>';
+		    print '<td align="right"><a href="'.$PHPSELF.'?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+		    print img_delete();
+		    print '</a></td>';
 		  }
 		else
 		  {
