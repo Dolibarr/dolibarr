@@ -35,6 +35,7 @@ class Product
     {
       $this->db = $DB;
       $this->id   = $id ;
+      $this->envente = 0;
     }  
   /*
    *
