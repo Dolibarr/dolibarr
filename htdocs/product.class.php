@@ -248,7 +248,6 @@ class Product
 
 	  $this->db->free();
 
-
 	  $sql = "SELECT reel, fk_entrepot";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."product_stock WHERE fk_product = $id";
 	  $result = $this->db->query($sql) ;
@@ -275,8 +274,6 @@ class Product
 		}
 	      $this->db->free();
 	    }
-
-
 	  return 1;
 	}
       else
