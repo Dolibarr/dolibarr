@@ -43,6 +43,13 @@ td.menu
   border-bottom: 1px solid #000000;
   }
 
+td.menusel
+{ 
+  border-right: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+  }
+
+
 td.border
 { 
   border-top: 1px solid #000000;
