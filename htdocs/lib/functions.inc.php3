@@ -282,7 +282,7 @@ function print_fiche_titre($titre, $mesg='')
   print '<tr><td><div class="titre">'.$titre.'</div></td>';
   if (strlen($mesg))
     {
-      print '<td>'.$mesg.'</td>';
+      print '<td align="right"><b>'.$mesg.'</b></td>';
     }
   print '</tr></table>';
 }
