@@ -187,7 +187,7 @@ if ($account > 0)
       print '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).'"><img alt="Page suivante" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
     }
   print '</td>';
-  print '<td>&nbsp;</td><td><input type="text" name="req_desc" value="'.$HTTP_POST_VARS["req_desc"].'" size="40"></TD>';
+  print '<td colspan="3"><input type="text" name="req_desc" value="'.$HTTP_POST_VARS["req_desc"].'" size="40"></TD>';
   print '<td align="right"><input type="text" name="req_debit" value="'.$HTTP_POST_VARS["req_debit"].'" size="6"></TD>';
   print '<td align="right"><input type="text" name="req_credit" value="'.$HTTP_POST_VARS["req_credit"].'" size="6"></TD>';
   print '<td align="center"><input type="submit" value="Chercher"></td>';
@@ -252,7 +252,7 @@ if ($account > 0)
 
 //  $sql .= " AND b.dateo <= now()";
 
-  $sql .= " ORDER BY b.dateo ASC";
+  $sql .= " ORDER BY b.datev ASC";
   $sql .= $db->plimit($limitsql, 0);
 
   $result = $db->query($sql);
@@ -269,11 +269,11 @@ if ($account > 0)
     {
       print "<tr><td colspan=\"7\">&nbsp;</td></tr>\n";
       print "<tr>";
-      print "<td align=\"left\" colspan=\"7\"><b>Saisie d'une transaction hors facture</b></td></tr>";
+      print "<td align=\"left\" colspan=\"8\"><b>Saisie d'une transaction hors facture</b></td></tr>";
       print '<tr>';
       print '<td><input name="dateoy" type="text" size="3" value="'.strftime("%Y",time()).'" maxlength="4">';
       print '<input name="dateo" type="text" size="3" maxlength="4"></td>';
-      print '<td><select name="operation">';
+      print '<td colspan="2"><select name="operation">';
       print '<option value="CB">CB';
       print '<option value="CHQ">CHQ';
       print '<option value="DEP">DEP';
@@ -290,7 +290,7 @@ if ($account > 0)
       print "<select name=\"cat1\">$options</select>";
       print '</td></tr>';
       print '<tr>';
-      print '<td><small>YYYY MMDD</small></td><td>&nbsp;</td><td>Description</td><td align=right>0000.00</td><td align=right>0000.00</td>';
+      print '<td><small>YYYY MMDD</small></td><td colspan="2">&nbsp;</td><td>Description</td><td align=right>0000.00</td><td align=right>0000.00</td>';
       print '<td colspan="2" align="center"><input type="submit" value="Ajouter"></td>';
       print '</tr>';
     }
