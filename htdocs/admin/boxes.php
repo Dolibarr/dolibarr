@@ -26,7 +26,12 @@ if (!$user->admin)
 
 llxHeader();
 
-print_titre("Boites affichées");
+print_titre("Boites");
+
+print "<br>";
+print "Les boites sont des cartouches d'informations réduites qui s'affichent sur certaines pages. Vous pouvez choisir ou non d'activer ces cartouches en ciquant sur 'Ajouter' ou la poubelle pour les désactiver. ";
+print "Seules les boites en rapport avec un module actif sont présentées.<br>\n";
+
 
 if ($HTTP_POST_VARS["action"] == 'add')
 {
@@ -53,48 +58,54 @@ if ($_GET["action"] == 'delete')
 }
 
 
-/*
- *
- *
- *
- */
+// Définition des positions possibles pour les boites
+$pos_array = array(0);      // Positions possibles pour une boite (0,1,2,...)
+$pos_name = array();        // Nom des position 0=Homepage, 1=...
+$pos_name[0]="Homepage";
 $boxes = array();
 
-$pos = array("Homepage");
 
-print '<table class="noborder" cellpadding="3" cellspacing="0">';
+/*
+ * Recherche des boites actives par position possible
+ * On stocke les boites actives par $boxes[position][id_boite]=1
+ *
+ */
 
 $sql = "SELECT b.rowid, b.box_id, b.position, d.name FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d where b.box_id = d.rowid";
 $result = $db->query($sql);
-$var=True;
 
 if ($result) 
 {
   $num = $db->num_rows();
   $i = 0;
-  
+
   while ($i < $num)
     {
       $var = ! $var;
       $obj = $db->fetch_object( $i);
-
-      print '<tr '.$bc[$var].'><td width="200">'.$obj->name.'</td><td width="200">' . $pos[$obj->position] . '</td><td width="50" align="center">';
-      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;action=delete">'.img_delete().'</a>';
-      array_push($boxes, $obj->box_id);
-      print '</td></tr>';
+      //print "pos ".$obj->position;
+      $boxes[$obj->position][$obj->box_id]=1;
       $i++;
     }
 }
-print '</table>';
+$db->free();
+
 
 /*
- *
- *
+ * Boites disponibles
  *
  */
-print "<p>";
+print '<br>';
 print_titre("Boites disponibles");
-print '<table class="noborder" cellpadding="3" cellspacing="0">';
+
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>Boites</td>';
+print '<td>Fichier source</td>';
+foreach ($pos_array as $position) {
+    print '<td align="center">Activation '.$pos_name[$position].'</td>';
+}
+print "</tr>\n";
 
 $sql = "SELECT rowid, name, file FROM ".MAIN_DB_PREFIX."boxes_def";
 $result = $db->query($sql);
@@ -102,6 +113,56 @@ $var=True;
 
 if ($result) 
 {
+    $num = $db->num_rows();
+    $i = 0;
+    
+    while ($i < $num)
+    {
+        $var = ! $var;
+        $obj = $db->fetch_object( $i);
+        
+        print '<tr '.$bc[$var].'><td width="200">'.$obj->name.'</td><td width="200">' . $obj->file . '</td>';
+
+        // Pour chaque position possible, on affiche un lien 
+        // d'activation si boite non deja active pour cette position
+        foreach ($pos_array as $position) {
+            print '<td width="50" align="center">';
+            if (! $boxes[$position][$obj->rowid])
+            {
+                print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;action=add&pos='.$position.'">Ajouter</a>';
+            }
+            else
+            {
+                print "&nbsp;";
+            }
+            print '</td>';
+        }
+
+        print '</tr>';
+    
+        $i++;
+    }
+}
+$db->free();
+
+print '</table>';
+
+
+print "<br>\n";
+print_titre("Boites activées");
+
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>Boites</td>';
+print '<td>Active pour</td>';
+print '<td align="center">Désactiver</td>';
+print "</tr>\n";
+
+$sql = "SELECT b.rowid, b.box_id, b.position, d.name FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d where b.box_id = d.rowid";
+$result = $db->query($sql);
+
+if ($result) 
+{
   $num = $db->num_rows();
   $i = 0;
   
@@ -110,44 +171,17 @@ if ($result)
       $var = ! $var;
       $obj = $db->fetch_object( $i);
 
-      print '<tr '.$bc[$var].'><td width="200">'.$obj->name.'</td><td width="200">' . $obj->file . '</td><td width="50" align="center">';
-
-      /*
-
-      if ($rowid == $obj->rowid && $action == 'edit')
-	{
-	  print '<form action="'.$PHP_SELF.'" method="POST">';
-	  print '<input type="hidden" name="action" value="add">';
-	  print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-	  
-	  print '<select name="constvalue">';	  
-	  print '<option value="0">Homepage</option>';
-	  print '<option value="1">Gauche</option>';
-	  print '<option value="1">Droite</option>';
-	  print '</select>';
-
-	  print '<input type="hidden" name="constvalue" value="0">';
-	  print '<input type="submit" value="Ajouter">';
-	  print '</form>';
-	  }
-	  else 
-	  {
-      */
-      if (! in_array($obj->rowid, $boxes))
-	{
-	  print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;action=add">Ajouter</a>';
-	}
-      else
-	{
-	  print "&nbsp;";
-	}
-      
+      print '<tr '.$bc[$var].'><td width="200">'.$obj->name.'</td><td width="200">' . $pos_name[$obj->position] . '</td><td width="50" align="center">';
+      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;action=delete">'.img_delete().'</a>';
       print '</td></tr>';
-
       $i++;
     }
 }
+$db->free();
+
+
 print '</table>';
+
 
 $db->close();
 
