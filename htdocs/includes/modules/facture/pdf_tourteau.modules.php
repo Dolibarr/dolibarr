@@ -78,12 +78,13 @@ Class pdf_tourteau {
 	      $pdf->MultiCell(40, 5, "SIREN : ".FAC_PDF_SIREN);
 	    }  
 	  
-	  $pdf->SetXY(100,5);
-	  $pdf->SetFont('Arial','B',14);
-	  $pdf->SetTextColor(0,0,200);
-	  $titre = "Artisan Logiciel Libre";
-	  $pdf->MultiCell(100, 10, $titre, '' , 'R');
-	  
+	  if (defined("FAC_PDF_INTITULE2"))
+	    {
+	      $pdf->SetXY(100,5);
+	      $pdf->SetFont('Arial','B',14);
+	      $pdf->SetTextColor(0,0,200);
+	      $pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
+	    }
 	  /*
 	   * Adresse Client
 	   */
