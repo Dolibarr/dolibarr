@@ -56,6 +56,11 @@ if ($_GET["search_bon"])
   $sql .= " AND p.ref LIKE '%".$_GET["search_bon"]."%'";
 }
 
+if ($_GET["search_code"])
+{
+  $sql .= " AND s.code_client LIKE '%".$_GET["search_code"]."%'";
+}
+
 if ($_GET["search_societe"])
 {
   $sel =urldecode($_GET["search_societe"]);
@@ -89,10 +94,11 @@ if ($result)
   print '</tr><tr class="liste_titre">';
   print '<form action="liste.php" method="GET"><td>&nbsp;</td>';
   print '<td><input type="text" name="search_bon" value="'. $_GET["search_bon"].'" size="8"></td>'; 
-  print '<td><input type="text" name="search_code" value="'. $_GET["search_code"].'" size="8"></td>'; 
   print '<td><input type="text" name="search_societe" value="'. $_GET["search_societe"].'" size="12"></td>'; 
   print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
   print '<td>&nbsp;</td>';
+  print '<td align="center"><input type="text" name="search_code" value="'. $_GET["search_code"].'" size="8"></td>'; 
+
   print '</form>';
   print '</tr>';
 
