@@ -90,6 +90,35 @@ Function dolibarr_del_const($db, $name)
     }
 }
 
+Function dolibarr_print_ca($ca)
+{
+    // Permet d'avoir une fonction commune du formatage des nombres
+    if ($ca > 1000)
+    {
+      $cat = round(($ca / 1000),2);
+      $cat = "$cat Keuros";
+    }
+    else
+    {
+      $cat = round($ca,2);
+      $cat = "$cat euros";
+    }
+    
+    if ($ca > 1000000)
+    {
+      $cat = round(($ca / 1000000),2);
+      $cat = "$cat Meuros";
+    }
+
+    return $cat;
+}
+
+Function dolibarr_print_date($time,$format="%d %b %Y")
+{
+    // Permet d'avoir une fonction commune du formatage d'affichage des date
+    return strftime($format,$time);
+}
+
 Function dolibarr_print_object_info($object)
 {
   print "Créé par  : " . $object->user_creation->fullname . '<br>';
@@ -100,39 +129,16 @@ Function dolibarr_print_object_info($object)
 
 Function dolibarr_print_phone($phone)
 {
-  if (strlen(trim($phone)) == 10)
+    // Permet d'avoir une fonction commune du formatage d'affichage des tel/fax
+    if (strlen(trim($phone)) == 10)
     {
       return substr($phone,0,2)." ".substr($phone,2,2)." ".substr($phone,4,2)." ".substr($phone,6,2)." ".substr($phone,8,2);
     }
-  else
+    else
     {
       return $phone;
     }
 }
-
-Function dolibarr_print_ca($ca)
-{
-  if ($ca > 1000)
-    {
-      $cat = round(($ca / 1000),2);
-      $cat = "$cat Keuros";
-    }
-  else
-    {
-      $cat = round($ca,2);
-      $cat = "$cat euros";
-    }
-
-  if ($ca > 1000000)
-    {
-      $cat = round(($ca / 1000000),2);
-      $cat = "$cat Meuros";
-    }
-
-
-  return $cat;
-}
-
 
 Function img_file($alt = "Voir")
 {
