@@ -21,11 +21,7 @@
  */
 require("./pre.inc.php");
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-
-if (!$user->rights->telephonie->lire)
-  accessforbidden();
+if (!$user->rights->telephonie->lire) accessforbidden();
 
 llxHeader('','Telephonie - Statistiques - Lignes');
 
@@ -49,17 +45,8 @@ print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=
 
 print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=lignes/rejets.hebdomadaire.png" alt="Résiliation de lignes" title="Résiliation de Lignes"><br /><br />'."\n";
 
-/*
- *
- *
- */
-
 print '</td></tr>';
-
-
 print '</table>';
-
-
 
 $db->close();
 
