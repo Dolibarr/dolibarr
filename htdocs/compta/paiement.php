@@ -386,9 +386,7 @@ if ($action == '')
 	  $i++;
 	}
       print "</table>";
-    }
-  print '<a href="paiement/index.php">Rapports</a>';
-  
+    }  
 }
 
 $db->close();
