@@ -124,15 +124,12 @@ else
 	  
 	  print "<td><a href=\"ligne.php3?rowid=$objp->rowid\">$objp->label</a></td>";
 	  print "<td align=\"right\">".price(abs($objp->amount))."</td>";
-	  print "<td align=\"right\"><small>".francs(abs($objp->amount))."</small></td>";
-	  
 	  print "</tr>";
 	  $i++;
 	  $total = $total + $objp->amount;
 	}
       $db->free();
       print "<tr><td colspan=\"2\" align=\"right\">Total</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>euros</td></tr>";
-      print "<tr><td colspan=\"2\" align=\"right\"><small>soit</td><td align=\"right\"><small>".francs(abs($total))."</td><td><small>francs</small></td></tr>\n";
     }
   else
     {

@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 
@@ -42,29 +42,26 @@ function valeur($sql)
 print_titre("Bilan");
 
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-print "<TR class=\"liste_titre\">";
-print "<td>Description</td><td align=\"right\">Montant</TD><td align=\"right\">francs</TD>";
-print "</TR>\n";
 
 $var=!$var;
 $sql = "SELECT sum(amount) FROM llx_paiement";
 $paiem = valeur($sql);
-print "<tr $bc[$var]><td>Somme des paiements</td><td align=\"right\">".price($paiem)."</td><td align=\"right\">".francs($paiem)."</td></tr>";
+print "<tr $bc[$var]><td>Somme des paiements</td><td align=\"right\">".price($paiem)."</td></tr>";
 
 $var=!$var;
 $sql = "SELECT sum(amount) FROM llx_bank WHERE amount > 0";
 $credits = valeur($sql);
-print "<tr $bc[$var]><td>Somme des credits</td><td align=\"right\">".price($credits)."</td><td align=\"right\">".francs($credits)."</td></tr>";
+print "<tr $bc[$var]><td>Somme des credits</td><td align=\"right\">".price($credits)."</td></tr>";
 
 $var=!$var;
 $sql = "SELECT sum(amount) FROM llx_bank WHERE amount < 0";
 $debits = valeur($sql);
-print "<tr $bc[$var]><td>Somme des debits</td><td align=\"right\">".price($debits)."</td><td align=\"right\">".francs($debits)."</td></tr>";
+print "<tr $bc[$var]><td>Somme des debits</td><td align=\"right\">".price($debits)."</td></tr>";
 
 $var=!$var;
 $sql = "SELECT sum(amount) FROM llx_bank ";
 $solde = valeur($sql);
-print "<tr $bc[$var]><td>Solde compte</td><td align=\"right\">".price($solde)."</td><td align=\"right\">".francs($solde)."</td></tr>";
+print "<tr $bc[$var]><td>Solde compte</td><td align=\"right\">".price($solde)."</td></tr>";
 
 
 print "</table>";
