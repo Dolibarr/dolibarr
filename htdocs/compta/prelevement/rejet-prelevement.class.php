@@ -51,108 +51,110 @@ class RejetPrelevement
     $this->user = $user;
 
     $this->motifs = array();
+    $this->motifs[0] = "Non renseigné";
     $this->motifs[1] = "Provision insuffisante";
     $this->motifs[2] = "Tirage contesté";
     $this->motifs[3] = "Pas de bon à payer";
 
   }
 
-  function create($user, $id, $motif, $bonid)
-    {
-      $error = 0;
-      $this->id = $id;
-      $this->bon_id = $bonid;
+  function create($user, $id, $motif, $date_rejet, $bonid)
+  {
+    $error = 0;
+    $this->id = $id;
+    $this->bon_id = $bonid;
+    
+    dolibarr_syslog("RejetPrelevement::Create id $id");
+    
+    $facs = $this->_get_list_factures();
+    
+    $this->db->begin();
 
-      dolibarr_syslog("RejetPrelevement::Create id $id");
-      
-      $facs = $this->_get_list_factures();
 
-      $this->db->begin();
+    /* Insert la ligne de rejet dans la base */
+    
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_rejet ";
+    $sql .= " (fk_prelevement_lignes, date_rejet";
+    $sql .= " , motif , fk_user_creation, date_creation)";
+    $sql .= " VALUES (".$id;
+    $sql .= " ,'".$this->db->idate($date_rejet)."'";
+    $sql .= " ,".$motif.",". $user->id.", now())";
+    
+    $result=$this->db->query($sql);
+    
+    if (!$result)
+      {
+	dolibarr_syslog("RejetPrelevement::create Erreur 4");
+	dolibarr_syslog("RejetPrelevement::create Erreur 4 $sql");
+	$error++;
+      }
+    
+    /* Tag la ligne de prev comme rejetée */
+    
+    $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes ";
+    $sql .= " SET statut = 3";
+    $sql .= " WHERE rowid=".$id;
+    
+    if (! $this->db->query($sql))
+      {
+	dolibarr_syslog("RejetPrelevement::create Erreur 5");
+	$error++;
+      }
+    
+    
+    for ($i = 0 ; $i < sizeof($facs) ; $i++)
+      {	  
+	$fac = new Facture($this->db);
+	$fac->fetch($facs[$i]);
+	
+	/* Emet un paiement négatif */
 
+	$pai = new Paiement($this->db);
 
-      /* Insert la ligne de rejet dans la base */
-      
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_rejet ";
-      $sql .= " (fk_prelevement_lignes";
-      $sql .= " , motif , fk_user_creation, date_creation)";
-      $sql .= " VALUES (".$id;
-      $sql .= " ,".$motif.",". $user->id.", now())";
-      
-      $result=$this->db->query($sql);
+	$pai->amounts = array();
+	// On remplace la virgule éventuelle par un point sinon
+	// certaines install de PHP renvoie uniquement la partie
+	// entiere negative
 
-      if (!$result)
-	{
-	  dolibarr_syslog("RejetPrelevement::create Erreur 4");
-	  dolibarr_syslog("RejetPrelevement::create Erreur 4 $sql");
-	  $error++;
-	}
-      
-      /* Tag la ligne de prev comme rejetée */
+	$pai->amounts[$facs[$i]] = ereg_replace(",",".",($fac->total_ttc * -1));
+	$pai->datepaye = $this->db->idate(time());
+	$pai->paiementid = 3; // prélèvement
+	$pai->num_paiement = "Rejet";
 
-      $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_lignes ";
-      $sql .= " SET statut = 3";
-      $sql .= " WHERE rowid=".$id;
-      
-      if (! $this->db->query($sql))
-	{
-	  dolibarr_syslog("RejetPrelevement::create Erreur 5");
-	  $error++;
-	}
-      
-
-      for ($i = 0 ; $i < sizeof($facs) ; $i++)
-	{	  
-	  $fac = new Facture($this->db);
-	  $fac->fetch($facs[$i]);
-
-	  /* Emet un paiement négatif */
-
-	  $pai = new Paiement($this->db);
-
-	  $pai->amounts = array();
-	  // On remplace la virgule éventuelle par un point sinon
-	  // certaines install de PHP renvoie uniquement la partie
-	  // entiere negative
-
-	  $pai->amounts[$facs[$i]] = ereg_replace(",",".",($fac->total_ttc * -1));
-	  $pai->datepaye = $this->db->idate(time());
-	  $pai->paiementid = 3; // prélèvement
-	  $pai->num_paiement = "Rejet";
-
-	  if ($pai->create($this->user, 1) == -1)  // on appelle en no_commit
-	    {
-	      $error++;
-	      dolibarr_syslog("RejetPrelevement::Create Erreur creation paiement facture ".$facs[$i]);
-	    }       
+	if ($pai->create($this->user, 1) == -1)  // on appelle en no_commit
+	  {
+	    $error++;
+	    dolibarr_syslog("RejetPrelevement::Create Erreur creation paiement facture ".$facs[$i]);
+	  }       
   
-	  /* Valide le paiement */
+	/* Valide le paiement */
 
-	  if ($pai->valide() <> 0)
-	    {
-	      $error++;
-	      dolibarr_syslog("RejetPrelevement::Create Erreur validation du paiement");
-	    }
+	if ($pai->valide() <> 0)
+	  {
+	    $error++;
+	    dolibarr_syslog("RejetPrelevement::Create Erreur validation du paiement");
+	  }
 
-	  /* Tag la facture comme impayée */
-	  dolibarr_syslog("RejetPrelevement::Create set_unpayed fac ".$fac->ref);
-	  $fac->set_unpayed($facs[$i]);
+	/* Tag la facture comme impayée */
+	dolibarr_syslog("RejetPrelevement::Create set_unpayed fac ".$fac->ref);
+	$fac->set_unpayed($facs[$i]);
 
-	  /* Envoi un email à l'emetteur de la demande de prev */
-	  $this->_send_email($fac);
-	}
+	/* Envoi un email à l'emetteur de la demande de prev */
+	$this->_send_email($fac);
+      }
 
-      if ($error == 0)
-	{
-	  dolibarr_syslog("RejetPrelevement::Create Commit");
-	  $this->db->commit();
-	}
-      else
-	{
-	  dolibarr_syslog("RejetPrelevement::Create Rollback");
-	  $this->db->rollback();
-	}
+    if ($error == 0)
+      {
+	dolibarr_syslog("RejetPrelevement::Create Commit");
+	$this->db->commit();
+      }
+    else
+      {
+	dolibarr_syslog("RejetPrelevement::Create Rollback");
+	$this->db->rollback();
+      }
 
-    }
+  }
 
   /**
    *
@@ -230,47 +232,47 @@ class RejetPrelevement
    *    \param      societe_id  id de societe
    */
   function _get_list_factures()
-    {
-      $arr = array();
-      /*
-       * Renvoie toutes les factures associée à un prélèvement
-       *
-       */
+  {
+    $arr = array();
+    /*
+     * Renvoie toutes les factures associée à un prélèvement
+     *
+     */
       
-      $sql = "SELECT f.rowid as facid";
+    $sql = "SELECT f.rowid as facid";
 
-      $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
-      $sql .= " , ".MAIN_DB_PREFIX."facture as f";
+    $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture as pf";
+    $sql .= " , ".MAIN_DB_PREFIX."facture as f";
 
-      $sql .= " WHERE pf.fk_prelevement_lignes = ".$this->id;
+    $sql .= " WHERE pf.fk_prelevement_lignes = ".$this->id;
 
-      $sql .= " AND pf.fk_facture = f.rowid";
+    $sql .= " AND pf.fk_facture = f.rowid";
 
-      $result=$this->db->query($sql);
-      if ($result)
-	{
-	  $num = $this->db->num_rows();
+    $result=$this->db->query($sql);
+    if ($result)
+      {
+	$num = $this->db->num_rows();
 
-	  if ($num)
-	    {
-	      $i = 0;
-	      while ($i < $num)
-		{
-		  $row = $this->db->fetch_row();
-		  $arr[$i] = $row[0];
-		  $i++;
-		}
-	    }
-	  $this->db->free();
-	}
-      else
-	{
-	  dolibarr_syslog("RejetPrelevement Erreur");
-	}
+	if ($num)
+	  {
+	    $i = 0;
+	    while ($i < $num)
+	      {
+		$row = $this->db->fetch_row();
+		$arr[$i] = $row[0];
+		$i++;
+	      }
+	  }
+	$this->db->free();
+      }
+    else
+      {
+	dolibarr_syslog("RejetPrelevement Erreur");
+      }
 
-      return $arr;
+    return $arr;
 
-    }
+  }
 
   
 
@@ -280,76 +282,40 @@ class RejetPrelevement
    *    \param      societe_id  id de societe
    */
   function fetch($rowid)
-    {
+  {
 
-      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent";
-      $sql .= ",".$this->db->pdate("f.datef")." as df,f.fk_projet";
-      $sql .= ",".$this->db->pdate("f.date_lim_reglement")." as dlr";
-      $sql .= ", c.rowid as cond_regl_id, c.libelle, c.libelle_facture";
-      $sql .= ", f.note, f.paye, f.fk_statut, f.fk_user_author";
-      $sql .= ", fk_mode_reglement";
-      $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."cond_reglement as c";
-      $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
+    $sql = "SELECT ".$this->db->pdate("pr.date_rejet")." as dr";
+    $sql .= ", motif";
+    $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_rejet as pr";
+    $sql .= " WHERE pr.fk_prelevement_lignes =".$rowid;
       
-      if ($societe_id > 0) 
-	{
-	  $sql .= " AND f.fk_soc = ".$societe_id;
-	}
 
-      $result=$this->db->query($sql);
-
-      if ($result)
-	{
-	  if ($this->db->num_rows($result))
-	    {
-	      $obj = $this->db->fetch_object($result);
+    if ($this->db->query($sql))
+      {
+	if ($this->db->num_rows())
+	  {
+	    $obj = $this->db->fetch_object();
 	      
-	      $this->id                 = $rowid;
-	      $this->datep              = $obj->dp;
-	      $this->date               = $obj->df;
-	      $this->ref                = $obj->facnumber;
-	      $this->amount             = $obj->amount;
-	      $this->remise             = $obj->remise;
-	      $this->total_ht           = $obj->total;
-	      $this->total_tva          = $obj->tva;
-	      $this->total_ttc          = $obj->total_ttc;
-	      $this->paye               = $obj->paye;
-	      $this->remise_percent     = $obj->remise_percent;
-	      $this->socidp             = $obj->fk_soc;
-	      $this->statut             = $obj->fk_statut;
-	      $this->date_lim_reglement = $obj->dlr;
-	      $this->cond_reglement_id  = $obj->cond_regl_id;
-	      $this->cond_reglement     = $obj->libelle;
-	      $this->cond_reglement_facture = $obj->libelle_facture;
-	      $this->projetid           = $obj->fk_projet;
-	      $this->note               = stripslashes($obj->note);
-	      $this->user_author        = $obj->fk_user_author;
-	      $this->lignes             = array();
+	    $this->id             = $rowid;
+	    $this->date_rejet     = $obj->dr;
+	    $this->motif          = $this->motifs[$obj->motif];
 
-	      $this->mode_reglement     = $obj->fk_mode_reglement;
-
-	      if ($this->statut == 0)
-		{
-		  $this->brouillon = 1;
-		}
-
-	      $this->db->free();
-
-
-	    }
-	  else
-	    {
-	      //dolibarr_print_error($this->db);
-	      dolibarr_syslog("Erreur Facture::Fetch rowid=$rowid numrows=0");
-	    }
-	}
-      else
-	{
-	  //dolibarr_print_error($this->db);
-	  dolibarr_syslog("Erreur Facture::Fetch rowid=$rowid Erreur dans fetch de la facture");
-	}
-    }
-
+	    $this->db->free();
+	    
+	    return 0;
+	  }
+	else
+	  {
+	    dolibarr_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid numrows=0");
+	    return -1;
+	  }
+      }
+    else
+      {
+	dolibarr_syslog("RejetPrelevement::Fetch Erreur rowid=$rowid");
+	return -2;
+      }
+  }
 
 }
 
