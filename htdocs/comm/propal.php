@@ -261,7 +261,7 @@ if ($propalid)
 
 	  $color1 = "#e0e0e0";
 
-	  print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
+	  print "<table class=\"tablefsoc\" border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
 	  print '<tr><td>Société</td><td colspan="3"><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td>Statut</td><td align="center"><b>'.$obj->lst.'</b></td></tr>';
@@ -330,7 +330,7 @@ if ($propalid)
 	    {
 	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
 	      print '<input type="hidden" name="action" value="setremise">';
-	      print '<table cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
+	      print '<table class="tablefsoc" cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
 	      print '<input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">%';
 	      print '<input type="submit" value="Appliquer">';
 	      print '</td></tr></table></form>';
@@ -475,7 +475,7 @@ if ($propalid)
 	   */
 	  if ($obj->statut < 2)
 	    {
-	      print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+	      print "<p><TABLE class=\"tableab\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
 	  
 	      if ($obj->statut == 0)
 		{
@@ -659,7 +659,7 @@ if ($propalid)
 	    {
 	      $num = $db->num_rows();
 	      $i = 0; $total = 0;
-	      print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+	      print "<TABLE class=\"tablefsoc\" border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
 	      print "<tr><td>Date</td><td>Auteur</td></TR>\n";
 	      
 	      while ($i < $num)
