@@ -1,0 +1,101 @@
+<?php
+/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ *
+ */
+
+/*!   \defgroup   telephonie  Module Click to Dial
+      \brief      Module pour gérer l'appel automatique
+*/
+
+/*!
+      \file       htdocs/includes/modules/modClickToDial.class.php
+      \ingroup    telephonie
+*/
+
+include_once "DolibarrModules.class.php";
+
+/*! 
+  \class modClickToDial
+  \brief Classe de description et activation du module de Click to Dial
+*/
+
+class modClickToDial extends DolibarrModules
+{
+
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
+  function modClickToDial($DB)
+  {
+    $this->db = $DB ;
+    $this->numero = 58 ;
+
+    $this->family = "technic";
+    $this->name = "ClickToDial";
+    $this->description = "Gestion du click to dial(experimental)";
+    $this->const_name = "MAIN_MODULE_CLICKTODIAL";
+    $this->const_config = MAIN_MODULE_CLICKTODIAL;
+    $this->special = 1;
+
+    // Dir
+    $this->dirs = array();
+
+    // Dépendances
+    $this->depends = array();
+    $this->requiredby = array();
+
+    // Config pages
+    $this->config_page_url = "clicktodial.php";
+
+    // Constantes
+    $this->const = array();
+
+    // Boites
+    $this->boxes = array();
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'clicktodial';
+  }
+
+   /**
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {
+    global $conf;
+
+    return $this->_init($sql);
+  }
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
+   */
+  function remove()
+  {
+    $sql = array();
+
+    return $this->_remove($sql);
+  }
+}
+?>
