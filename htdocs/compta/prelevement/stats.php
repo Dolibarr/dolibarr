@@ -134,12 +134,13 @@ if ($db->query($sql))
  * Stats sur les rejets
  *
  */
-$sql = "SELECT sum(pl.amount), count(pl.amount), pr.motif";
+$sql = "SELECT sum(pl.amount), count(pl.amount) as cc, pr.motif";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
 $sql .= " WHERE pl.statut = 3";
 $sql .= " AND pr.fk_prelevement_lignes = pl.rowid";
 $sql .= " GROUP BY pr.motif";
+$sql .= " ORDER BY cc DESC";
 
 if ($db->query($sql))
 {
