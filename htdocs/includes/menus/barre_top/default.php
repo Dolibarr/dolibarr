@@ -56,9 +56,12 @@ if ($conf->adherent->enabled)
     {
       $class='class="tmenu" id="sel"';
     }
-  print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
-  print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/adherents/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Members").'</a>';
-  print '</td>';
+  else
+    {
+      $class = 'class="tmenu"';
+    }
+
+  print '<a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Members").'</a>';
 }
 
 if ($conf->compta->enabled || $conf->banque->enabled || $conf->caisse->enabled)
