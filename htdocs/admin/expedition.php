@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
- * Copyright (C) 2004 Eric Seigne          <eric.seigne@ryxeo.com>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Sebastien Di Cintio <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Eric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,37 +23,18 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/expedition.php
-		\ingroup    expedition
-		\brief      Page d'administration/configuration du module Expedition
-		\version    $Revision$
+/*!
+  \file htdocs/admin/expedition.php
+  \ingroup    expedition
+  \brief      Page d'administration/configuration du module Expedition
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
 
 $langs->load("admin");
 
-if (!$user->admin)
-  accessforbidden();
-
-
-if ($action == 'nbprod' && $user->admin)
-{
-  $sql ="DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXPEDITION_NEW_FORM_NB_PRODUCT';";
-	$db->query($sql);
-	$sql ='';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_NEW_FORM_NB_PRODUCT','".$value."',0);";
-	
-  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXPEDITION_NEW_FORM_NB_PRODUCT', value='".$value."', visible=0";
-
-  if ($db->query($sql))
-    {
-      Header("Location: expedition.php");
-    }
-}
-
-llxHeader();
-
+if (!$user->admin) accessforbidden();
 
 if ($_GET["action"] == 'set')
 {
@@ -72,19 +53,18 @@ if ($_GET["action"] == 'set')
     {
       
     }
+
+  Header("Location: expedition.php");
+
 }
-
-// positionne la variable pour le test d'affichage de l'icone
-
-$expedition_addon_var_pdf = EXPEDITION_ADDON_PDF;
 
 if ($_GET["action"] == 'setpdf')
 {
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXPEDITION_ADDON_PDF';";
-	$db->query($sql);
-	$sql='';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_ADDON_PDF','".$_GET["value"]."',0)";
-
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXPEDITION_ADDON_PDF';";
+  $db->query($sql);
+  $sql='';
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_ADDON_PDF','".$_GET["value"]."',0)";
+  
   if ($db->query($sql))
     {
       // la constante qui a été lue en avant du nouveau set
@@ -95,22 +75,33 @@ if ($_GET["action"] == 'setpdf')
    * On la set active
    */
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES ('".$value."')";
-
+  
   if ($db->query($sql))
     {
-
+      
     }
+
+  Header("Location: expedition.php");
+
 }
+
+llxHeader();
+
+// positionne la variable pour le test d'affichage de l'icone
+
+$expedition_addon_var_pdf = EXPEDITION_ADDON_PDF;
+
+
 
 $expedition_default = EXPEDITION_DEFAULT;
 
 if ($_GET["action"] == 'setdef')
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'EXPEDITION_ADDON';";
-	$db->query($sql);
-	$sql='';
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_ADDON','".$value."',0)";
-	
+  $db->query($sql);
+  $sql='';
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES ('EXPEDITION_ADDON','".$value."',0)";
+  
   if ($db->query($sql))
     {
       // la constante qui a été lue en avant du nouveau set
@@ -128,12 +119,13 @@ if ($_GET["action"] == 'setdef')
 $def = array();
 
 $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."propal_model_pdf";
-if ($db->query($sql))
+$resql = $db->query($sql);
+if ($resql)
 {
   $i = 0;
-  while ($i < $db->num_rows())
+  while ($i < $db->num_rows($resql))
     {
-      $array = $db->fetch_array($i);
+      $array = $db->fetch_array($resql);
       array_push($def, $array[0]);
       $i++;
     }
@@ -240,7 +232,8 @@ print "</tr>\n";
 
 clearstatcache();
 
-if(is_dir($dir)) {
+if(is_dir($dir))
+{
   $handle=opendir($dir);
 
   while (($file = readdir($handle))!==false)
