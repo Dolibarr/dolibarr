@@ -26,6 +26,6 @@ create table llx_user_rights
   fk_user       integer NOT NULL,
   fk_id         integer NOT NULL,
 
-  UNIQUE(fk_user,fk_id)
+  UNIQUE INDEX(fk_user,fk_id)
 )type=innodb;
 
