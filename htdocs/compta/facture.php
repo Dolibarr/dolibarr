@@ -812,11 +812,11 @@ else
 	$result = $db->query($sql);
 	if ($result)
 	  {
-	    $num = $db->num_rows();
+	    $num_lignes = $db->num_rows();
 	    $i = 0; $total = 0;
 	    
 	    echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
-	    if ($num)
+	    if ($num_lignes)
 	      {
 		print "<TR class=\"liste_titre\">";
 		print '<td width="54%">Description</td>';
@@ -828,7 +828,7 @@ else
 		print "</TR>\n";
 	      }
 	    $var=True;
-	    while ($i < $num)
+	    while ($i < $num_lignes)
 	      {
 		$objp = $db->fetch_object( $i);
 		$var=!$var;
@@ -930,110 +930,78 @@ else
 	 * Fin Ajout ligne
 	 *
 	 */
-	if ($user->societe_id == 0)
-	  {
-	    print '<p><table id="actions" width="100%"><tr>';
-	
-		// Supprimer
-	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
-	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=delete\">Supprimer</a></td>";
-	      } 
 
-		// Valider
-	    if ($fac->statut == 0 && $fac->total_ht > 0) 
+	if ($user->societe_id == 0 && $_GET["action"] <> 'valid')
+	  {
+	    print "<br><div class=\"tabsAction\">\n";
+
+	    // Valider
+	    if ($fac->statut == 0 && $num_lignes > 0) 
 	      {
 		if ($user->rights->facture->valider)
 		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=valid\">Valider</a></td>";
-		  }
-		else
-		  {
-		    print '<td align="center" width="20%">-</td>';
+		    print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=valid\">Valider</a>";
 		  }
 		}
-		else {
+	    else
+	      {
 		// Générer
-	    if ($fac->statut == 1 && ($fac->paye == 0 || $user->admin))
-	      {
-		if ($user->rights->facture->creer)
+		if ($fac->statut == 1 && ($fac->paye == 0 || $user->admin) && $user->rights->facture->creer)
 		  {
-		    if ($fac->paye == 0) {
-		    	print "<td align=\"center\" width=\"20%\"><a href=\"facture.php?facid=$fac->id&amp;action=pdf\">Générer la facture</a></td>";
-		  	}
-		    else {
-		    	print "<td align=\"center\" width=\"20%\"><a href=\"facture.php?facid=$fac->id&amp;action=pdf\">Regénérer la facture</a></td>";
-			}		  	
-		  }
-		else
-		  {
-		    print '<td align="center" width="20%">-</td>';
+		    if ($fac->paye == 0)
+		      {
+			print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">Générer la facture</a>";
+		      }
+		    else
+		      {
+			print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">Regénérer la facture</a>";
+		      }		  	
 		  }
 	      }
-	    else
-	      {
-		print '<td align="center" width="20%">-</td>';
-	      }
-		}
 
-		// Envoyer
-	    if ($fac->statut == 1 && abs($resteapayer) > 0 && $user->rights->facture->envoyer)
+	    // Supprimer
+	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
 	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=presend\">Envoyer</a></td>";
-	      }
-	    else
-	      {
-		print "<td align=\"center\" width=\"20%\">-</td>";
+		print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=delete\">Supprimer</a>";
 	      } 
 
-		// Envoyer une relance
+	    // Envoyer
+	    if ($fac->statut == 1 && abs($resteapayer) > 0 && $user->rights->facture->envoyer)
+	      {
+		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=presend\">Envoyer</a>";
+	      }
+	    
+	    // Envoyer une relance
 	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer) 
 	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=prerelance\">Envoyer une relance</a></td>";
-	      }
-	    else
-	      {
-		print '<td align="center" width="20%">-</td>';
+		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=prerelance\">Envoyer une relance</a>";
 	      }
 
-		// Emettre paiement 
+	    // Emettre paiement 
 	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
 	      {
-		print '<td align="center" width="20%">';
-		print '<a href="paiement.php?facid='.$fac->id.'&amp;action=create">Emettre un paiement</a></td>';
+		print '<a class=\"tabAction\" href="paiement.php?facid='.$fac->id.'&amp;action=create">Emettre un paiement</a>';
 	      }
-	    else
+	    
+	    // Classer 'payé'
+	    if ($fac->statut == 1 && abs($resteapayer) == 0 
+		&& $fac->paye == 0 && $user->rights->facture->paiement)
 	      {
-		    print '<td align="center" width="20%">-</td>';
+		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a>";
 	      }
-			    
-		// Classer 'payé'
-	    if ($fac->statut == 1 && abs($resteapayer) == 0 && $fac->paye == 0) 
-	      {
-		if ($user->rights->facture->paiement)
-		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a></td>";
-		  }
-		else
-		  {
-		    print '<td align="center" width="20%">-</td>';
-		  }
-	    }
+	    
 	
-		// Récurrente
+	    // Récurrente
 	    if (! defined("FACTURE_DISABLE_RECUR")) 	// Possibilité de désactiver les factures récurrentes
 	      {
 		if ($fac->statut > 0)
 		  {
-		    print '<td align="center" width="20%"><a href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">Récurrente</a></td>';
-		  }
-		else
-		  {
-		    print '<td align="center" width="20%">-</td>';
+		    print '<a class="tabAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">Récurrente</a>';
 		  }
 	      }
-	    
-	    print "</tr></table>";
+
+	    print "</div>";
+
 	  }
 	print "<p>\n";
 
@@ -1057,7 +1025,6 @@ else
 	           	
 	    print "</table>\n";
 	    print '</td><td valign="top" width="50%">';
-	    print_titre("Actions");
 	    /*
 	     * Liste des actions
 	     *
@@ -1071,6 +1038,8 @@ else
 		$num = $db->num_rows();
 		if ($num)
 		  {
+		    print_titre("Actions");
+
 		    $i = 0; $total = 0;
 		    print '<table border="1" cellspacing="0" cellpadding="4" width="100%">';
 		    print "<tr $bc[$var]><td>Date</td><td>Action</td></tr>\n";
