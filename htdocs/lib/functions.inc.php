@@ -954,7 +954,7 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
     }
     print $name."&nbsp;";
     print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z").'</a>';
-    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("A-Z").'</a>';
+    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A").'</a>';
     print "</td>";
 }
 
