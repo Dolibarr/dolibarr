@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,20 +35,14 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-if ($sortfield == "") {
-  $sortfield="c.statut";
-}
-
 /*
- * Recherche
  *
  *
  */
 
 if ($page == -1) { $page = 0 ; }
+if ($sortorder == "") $sortorder="ASC";
+if ($sortfield == "") $sortfield="c.statut";
 
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
@@ -60,14 +54,24 @@ $pagenext = $page + 1;
  *
  *
  */
-$sql = "SELECT c.rowid, c.ref, s.idp as socidp, sf.idp as sfidp, sf.nom as nom_facture,s.nom";
+$sql = "SELECT c.rowid, c.ref, s.idp as socidp, s.nom ";
+$sql .= ", sf.idp as sfidp, sf.nom as sfnom";
+$sql .= ", sa.idp as saidp, sa.nom as sanom";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
+$sql .= " , ".MAIN_DB_PREFIX."societe as sa";
+$sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
+
 
 $sql .= " WHERE c.fk_client_comm = s.idp";
-$sql .= " AND c.fk_soc = sf.idp";
+$sql .= " AND c.fk_soc = sa.idp";
+$sql .= " AND c.fk_soc_facture = sf.idp";
 
+
+if ($socidp > 0)
+{
+  $sql .= " AND s.idp = ".$socidp;
+}
 
 if ($_GET["search_ligne"])
 {
@@ -110,12 +114,11 @@ if ($result)
   print '<tr class="liste_titre">';
 
   print_liste_field_titre("Ref","liste.php","c.ref");
-  print_liste_field_titre("Client (Agence/Filiale)","liste.php","s.nom");
+  print_liste_field_titre("Client","liste.php","s.nom");
+  print_liste_field_titre("Client (Agence/Filiale)","liste.php","sa.nom");
 
   print '<td>Client facturé</td>';
-  print '<td align="center">Statut</td>';
-
-  print_liste_field_titre("Remise LMN","liste.php","l.remise","","",' align="center"');
+  print '<td align="center">-</td>';
 
   print "</tr>\n";
 
@@ -123,25 +126,21 @@ if ($result)
   print '<form action="liste.php" method="GET">';
   print '<td><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>'; 
   print '<td><input type="text" name="search_client" value="'. $_GET["search_client"].'" size="10"></td>';
+  print '<td><input type="text" name="search_client_agence" value="'. $_GET["search_client_agence"].'" size="10"></td>';
   print '<td><input type="text" name="search_client_facture" value="'. $_GET["search_client_facture"].'" size="10"></td>';
 
+
   print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'""></td>';
-
-
   print '<td>&nbsp;</td>';
-
 
   print '</form>';
   print '</tr>';
 
-
   $var=True;
-
-  $ligne = new LigneTel($db);
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object();
       $var=!$var;
 
       print "<tr $bc[$var]><td>";
@@ -153,12 +152,11 @@ if ($result)
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
       print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->nom_facture).'</a></td>';
 
-      print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->sanom).'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->sfnom).'</a></td>';
 
-      print '<td align="center">'.$obj->remise." %</td>\n";
-
+      print '<td align="center">-</td>';
       print "</tr>\n";
       $i++;
     }
