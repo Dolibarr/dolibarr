@@ -83,13 +83,14 @@ div.tmenu
 div.vmenuplusfiche
 {
     float: left;
+    margin-right: 6px;
 }
 
 div.vmenu
 {
     display:block;
     float: left;
-    margin-right: 8px;
+    margin-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
     width: 158px;
@@ -99,9 +100,9 @@ div.fiche
 {
     position: absolute;
     display: block;
-    float: left;
-    top: 29px;
-    margin-right: 2px;
+    top: 28px;
+    margin-right: 6px;
+    margin-top: 0px;
 }
 
 
@@ -199,6 +200,11 @@ a.vsmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left;
 a.vsmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
 a.vsmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
 
+a.help:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+
 div.blockvmenupair
 {
 	border-right: 1px solid #000000;
@@ -225,28 +231,19 @@ div.blockvmenuimpair
     margin: 1px 0px 0px 0px;
 }
 
-
-a.leftmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.leftmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.leftmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.leftmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-
-a.leftsubmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.leftsubmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.leftsubmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.leftsubmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-
-div.leftmenu { 
+div.help
+{
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
-	background: #b3c5cc;
+	background: #f0f0f0;
 	font: helvetica, verdana, arial, sans-serif;
 	color: #000000; 
 	text-align:left;
 	text-decoration: none;
-    padding: 2px;
+    padding: 3px;
     margin: 1px 0px 0px 0px;
 }
+
 
 .flat  {
 	font-family: arial,verdana,helvetica, sans-serif;
@@ -271,68 +268,72 @@ td.barre_select {
 	color: #000000 
 }
 
-
+form {
+    padding: 0.1em 0em 0em 0em;
+    margin: 0em 0em 0em 0em;
+}
 
 /*
  *   Onglets
  */
 div.tabBar {
-  color: #234046;
-  background: #dee7ec;
-  padding: 0em 1em;
-  margin: 0em 0em 1.5em 0em;
-  border: 1px solid #8CACBB;
+    color: #234046;
+    background: #dee7ec;
+    padding: 0em 1em;
+    margin: 0em 0em 1.5em 0em;
+    border: 1px solid #8CACBB;
+    border-top: 1px solid #8CACBB;
 }
 
 div.tabs {
-  margin: 0em;
-  padding: 0em 0.5em;
-  text-align: left;
+    top: 20px;
+    margin: 1px 0em 0em 0em;
+    padding: 0em 0.5em;
+    text-align: left;
 }
 
 div.tabsAction {
-  margin: 0em;
-  padding: 0em 0em;
-  text-align: right;
+    margin: 24px 0em 1px 0em;
+    padding: 0em 0em;
+    text-align: right;
 }
 
 a.tabTitle {
-  background: #436976;
-  border: 1px solid #8CACBB;
-  color: white;
-  font-weight: normal;
-  padding: 0em 0.5em;
-  margin: 0em 1em;
-  text-decoration: none;
-  white-space: nowrap;
+    background: #436976;
+    border: 1px solid #8CACBB;
+    color: white;
+    font-weight: normal;
+    padding: 0em 0.5em;
+    margin: 0em 1em;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
-
 a.tab {
-  background: white;
-  border: 1px solid #8CACBB;
-  color: #436976;
-  padding: 0em 1.0em;
-  margin: 0em 0.2em;
-  text-decoration: none;
-  white-space: nowrap;
+    background: white;
+    border: 1px solid #8CACBB;
+    color: #436976;
+    padding: 0em 1em;
+    margin: 0em 0.2em;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
 a.tab#active {
-  background: #dee7ec;
-  border-bottom: #dee7ec 1px solid;
-  text-decoration: none;
+    background: #dee7ec;
+    border-bottom: #dee7ec 1px solid;
+    text-decoration: none;
 }
 
 a.tab:hover {
-  background: #dee7ec;
-  text-decoration: none;
+    background: #dee7ec;
+    text-decoration: none;
 }
 
 a.tabimage {
-  	   color: #436976;
-  	   text-decoration: none;
-  	   white-space: nowrap;
+    color: #436976;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
 
