@@ -1070,7 +1070,7 @@ else
 	  print '</div>';
 	  if ($user->societe_id == 0 && $_GET["action"] <> 'valid')
 	    {
-	      print "<br><div class=\"tabsAction\">\n";
+	      print "<div class=\"tabsAction\">\n";
 
 	      // Valider
 	      if ($fac->statut == 0 && $num_lignes > 0) 
