@@ -125,7 +125,7 @@ class RejetPrelevement
 	  dolibarr_syslog("RejetPrelevement::Create set_unpayed fac ".$fac->ref);
 	  $fac->set_unpayed($facs[$i]);
 
-	  /* Tag la ligne de prev comme rejetée */
+	  /* Tag la ligne de prev comme rejetée
 
 	  $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_facture ";
 	  $sql .= " SET statut = 3";
@@ -138,6 +138,8 @@ class RejetPrelevement
 	      $error++;
 	    }
 	  
+	  */
+
 	  /* Envoi un email à l'emetteur de la demande de prev */
 	  $this->_send_email($fac);
 	}
