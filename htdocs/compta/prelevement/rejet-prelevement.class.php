@@ -118,7 +118,7 @@ class RejetPrelevement
 	// entiere negative
 
 	$pai->amounts[$facs[$i]] = ereg_replace(",",".",($fac->total_ttc * -1));
-	$pai->datepaye = $this->db->idate(time());
+	$pai->datepaye = $this->db->idate($date_rejet);
 	$pai->paiementid = 3; // prélèvement
 	$pai->num_paiement = "Rejet";
 
