@@ -36,16 +36,13 @@ $user->getrights('facture');
 $user->getrights('banque');
 $langs->load("bills");
 
-if (!$user->rights->facture->lire)
-  accessforbidden();
-
+if (!$user->rights->facture->lire) accessforbidden();
+if (!$user->rights->compta->ventiler) accessforbidden();
 /*
  * Sécurité accés client
  */
-if ($user->societe_id > 0) 
-{
-  accessforbidden();
-}
+if ($user->societe_id > 0) accessforbidden();
+
 
 llxHeader('','Ventilation');
 
@@ -67,7 +64,7 @@ $sql .= " ORDER BY l.rowid DESC ".$db->plimit($limit+1,$offset);
 $result = $db->query($sql);
 if ($result)
 {
-  $num_lignes = $db->num_rows();
+  $num_lignes = $db->num_rows($result);
   $i = 0; 
   
   print_barre_liste("Lignes de facture à ventiler",$page,"liste.php","",$sortfield,$sortorder,'',$num_lignes);
@@ -82,7 +79,7 @@ if ($result)
   $var=True;
   while ($i < min($num_lignes, $limit))
     {
-      $objp = $db->fetch_object();
+      $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
       

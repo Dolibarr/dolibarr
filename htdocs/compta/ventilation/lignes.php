@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,22 +20,25 @@
  *
  */
 
-/**
-	    \file       htdocs/compta/ventilation/lignes.php
-		\ingroup    facture
-		\brief      Page de detail des lignes de ventilation d'une facture
-		\version    $Revision$
+/*!
+   \file       htdocs/compta/ventilation/lignes.php
+   \ingroup    facture
+   \brief      Page de detail des lignes de ventilation d'une facture
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
 
+$user->getrights('facture');
+$user->getrights('banque');
+$langs->load("bills");
+
+if (!$user->rights->facture->lire) accessforbidden();
+if (!$user->rights->compta->ventiler) accessforbidden();
 /*
  * Sécurité accés client
  */
-if ($user->societe_id > 0) 
-{
-  accessforbidden();
-}
+if ($user->societe_id > 0) accessforbidden();
 
 llxHeader('');
 
@@ -66,11 +69,9 @@ $sql .= $db->plimit($limit+1,$offset);
 
 $result = $db->query($sql);
 
-
-
 if ($result)
 {
-  $num_lignes = $db->num_rows();
+  $num_lignes = $db->num_rows($result);
   $i = 0; 
   
   print_barre_liste("Lignes de facture ventilées",$page,"lignes.php","",$sortfield,$sortorder,'',$num_lignes);
@@ -93,7 +94,7 @@ if ($result)
   $var=True;
   while ($i < min($num_lignes, $limit))
     {
-      $objp = $db->fetch_object();
+      $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
       
