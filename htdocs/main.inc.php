@@ -266,17 +266,7 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
       if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
 	{
 	  $langs->load("companies");
-	  
-	  if (strstr($_SERVER["SCRIPT_URL"], "/comm/prospect/"))
-	    {
-	      $url=DOL_URL_ROOT.'/comm/prospect/prospects.php';
-	    }
-	  else
-	    {
-	      $url=DOL_URL_ROOT.'/societe.php';
-	    }
-	  
-	  printSearchForm($url,DOL_URL_ROOT.'/comm/clients.php',$langs->trans("Companies"),'soc','socname');
+	  printSearchForm(DOL_URL_ROOT.'/societe.php',DOL_URL_ROOT.'/societe.php',$langs->trans("Companies"),'soc','socname');
 	}
       
       if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
