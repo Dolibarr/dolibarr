@@ -71,7 +71,7 @@ class Don
       }
   }
 
-  Function check() 
+  Function check($minimum=0) 
     {
       $err = 0;
 
@@ -125,6 +125,14 @@ class Don
 	{
 	  $error_string[$err] = "Le montant du don est null";
 	  $err++;
+	}
+      else
+	{
+	  if ($this->amount < $minimum && $minimum > 0)
+	    {
+	      $error_string[$err] = "Le montant minimum du don est de $minimum";
+	      $err++;
+	    }
 	}
 
       if ($err)

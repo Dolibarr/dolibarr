@@ -149,6 +149,12 @@ class DonConf {
      */
 
     $this->onlinepayment = 0;
+
+    /* 
+     *   Don minimum, 0 pas de limite
+     */ 
+    $this->minimum = 0;
+
   }
 }
 /*
