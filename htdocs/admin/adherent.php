@@ -20,14 +20,21 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/adherent.php
+		\ingroup    adherent
+		\brief      Page d'administration/configuration du module Adherent
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
+$langs->load("admin");
+$langs->load("members");
+
 if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
+  accessforbidden();
+
 
 // positionne la variable pour le test d'affichage de l'icone
 

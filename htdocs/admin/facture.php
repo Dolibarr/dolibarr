@@ -28,6 +28,9 @@
 
 require("./pre.inc.php");
 
+$langs->load("admin");
+$langs->load("bills");
+
 if (!$user->admin)
   accessforbidden();
 

@@ -20,14 +20,21 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/dict.php
+		\ingroup    setup
+		\brief      Page d'administration des dictionnaires de données
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $langs->load("main");
 $langs->load("admin");
 $langs->load("companies");
 
-if (! $user->admin)
-accessforbidden();
+if (!$user->admin)
+  accessforbidden();
 
 
 $acts[0] = "activate";

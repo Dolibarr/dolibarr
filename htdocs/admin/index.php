@@ -19,7 +19,15 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/index.php
+		\brief      Page d'accueil de l'espace administration/configuration
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
 
 if (!$user->admin)
   accessforbidden();

@@ -19,6 +19,13 @@
  * $Id$
  * $Source$
  */
+
+/*!
+	    \file       htdocs/admin/ihm.php
+        \brief      Page de configuration du de l'interface homme machine
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $langs->load("companies");

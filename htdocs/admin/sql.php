@@ -19,6 +19,12 @@
  * $Source$
  */
 
+/*!	\file htdocs/admin/sql.php
+		\brief      Fichier de fonction sql
+		\version    $Revision$
+        \todo       A deplacer dans le gestionnaire d'abstraction de base (mysql.lib.php ou pgsql.lib.php)
+*/
+
 function db_create_table($db, $table)
 {
 

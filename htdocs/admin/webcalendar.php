@@ -22,6 +22,13 @@
  * $Source$
  */
 
+/*!
+	    \file       htdocs/admin/webcalendar.php
+        \ingroup    webcal
+        \brief      Page de configuration du module webcalendar
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 if (!$user->admin)

@@ -20,7 +20,16 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/external_rss.php
+		\ingroup    external_rss
+		\brief      Page d'administration/configuration du module ExternalRss
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
 
 llxHeader();
 

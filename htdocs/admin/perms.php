@@ -19,10 +19,16 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/perms.php
+		\brief      Page d'administration/configuration des permissions par defaut
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
+$langs->load("admin");
 $langs->load("users");
-
 
 if (!$user->admin)
   accessforbidden();

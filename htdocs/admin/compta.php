@@ -19,7 +19,18 @@
  * $Id$
  * $Source$
  */
+
+/*!
+	    \file       htdocs/admin/compta.php
+        \ingroup    comptabilite
+        \brief      Page de configuration du module comptabilité
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
+$langs->load("compta");
 
 if (!$user->admin)
   accessforbidden();
@@ -30,7 +41,7 @@ llxHeader();
 
 $compta_mode = defined("COMPTA_MODE")?COMPTA_MODE:"RECETTES-DEPENSES";
 
-if ($action == 'setcomptamode')
+if ($_POST["action"] == 'setcomptamode')
 {
   $compta_mode = $_POST["compta_mode"];
   if (! dolibarr_set_const($db, "COMPTA_MODE",$compta_mode)) { print $db->error(); }
@@ -60,28 +71,30 @@ if ($_GET["action"] == 'delete')
 
 
 
-print_titre("Configuration du module Comptabilité");
+print_titre($langs->trans("ComptaSetup"));
 
 print "<br>";
 
 print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
 
+// Cas du paramètre COMPTA_MODE
 print '<form action="compta.php" method="post">';
 print '<input type="hidden" name="action" value="setcomptamode">';
 print '<tr class="liste_titre">';
-print '<td>Option de tenue de comptabilité</td><td>Description</td>';
-print '<td><input type="submit" value="Modifier"></td>';
+print '<td>'.$langs->trans("OptionMode").'</td><td>'.$langs->trans("Description").'</td>';
+print '<td><input type="submit" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
-print "<tr ".$bc[True]."><td width=\"200\"><input type=\"radio\" name=\"compta_mode\" value=\"RECETTES-DEPENSES\"".($compta_mode != "CREANCES-DETTES"?" checked":"")."> Option Recettes-Dépenses</td>";
-print "<td colspan=\"2\">Dans ce mode, le CA est calculé sur la base des factures à l'état payé.\nLa validité des chiffres n'est donc assurée que si la tenue de la comptabilité passe rigoureusement par des entrées/sorties sur les comptes via des factures.\nDe plus, dans cette version, Dolibarr utilise la date de passage de la facture à l'état 'Validé' et non la date de passage à l'état 'Payé'.</td></tr>\n";
-print "<tr ".$bc[False]."><td width=\"200\"><input type=\"radio\" name=\"compta_mode\" value=\"CREANCES-DETTES\"".($compta_mode == "CREANCES-DETTES"?" checked":"")."> Option Créances-Dettes</td>";
-print "<td colspan=\"2\">Dans ce mode, le CA est calculé sur la base des factures validées. Qu'elles soient ou non payés, dès lors qu'elles sont dues, elles apparaissent dans le résultat.</td></tr>\n";
+print "<tr ".$bc[True]."><td width=\"200\"><input type=\"radio\" name=\"compta_mode\" value=\"RECETTES-DEPENSES\"".($compta_mode != "CREANCES-DETTES"?" checked":"")."> ".$langs->trans("OptionModeTrue")."</td>";
+print "<td colspan=\"2\">".$langs->trans("OptionModeTrueDesc")."</td></tr>\n";
+print "<tr ".$bc[False]."><td width=\"200\"><input type=\"radio\" name=\"compta_mode\" value=\"CREANCES-DETTES\"".($compta_mode == "CREANCES-DETTES"?" checked":"")."> ".$langs->trans("OptionModeVirtual")."</td>";
+print "<td colspan=\"2\">".$langs->trans("OptionModeVirtualDesc")."</td></tr>\n";
 print "</form>";
 
 print "</table>\n";
 
 print "<br>\n";
 
+// Cas des autres paramètres COMPTA_*
 $sql = "SELECT rowid, name, value, type, note FROM llx_const WHERE name like 'COMPTA_%' and name not in ('COMPTA_MODE')";
 $result = $db->query($sql);
 if ($result) 
@@ -93,7 +106,7 @@ if ($result)
   if ($num) { 
   	print '<table class="noborder" cellpadding="3" cellspacing="0" width=\"100%\">';
 		print '<tr class="liste_titre">';
-		print '<td>Autres option du module comptabilité</td><td>&nbsp;</td><td>&nbsp;</td><td>Description</td>';
+		print '<td>'.$langs->trans("OtherOptions").'</td><td>&nbsp;</td><td>&nbsp;</td><td>'.$langs->trans("Description").'</td>';
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
   }
@@ -133,9 +146,9 @@ if ($result)
 	}
       print '</td><td>';
 
-      print '<input type="text" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
+      print '<input type="text" size="40" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
       print '</td><td>';
-      print '<input type="Submit" value="Update" name="Button"> &nbsp; ';
+      print '<input type="submit" value="'.$langs->trans("Modify").'" name="button"> &nbsp; ';
       print '<a href="compta.php?constname='.$obj->name.'&action=delete">'.img_delete().'</a>';
       print "</td></tr>\n";
 

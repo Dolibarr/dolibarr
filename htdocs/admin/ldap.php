@@ -20,8 +20,20 @@
  * $Source$
  */
  
+/*!	\file htdocs/admin/ldap.php
+		\ingroup    ldap
+		\brief      Page d'administration/configuration du module Ldap
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require (DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
+
+$langs->load("admin");
+
+if (!$user->admin)
+  accessforbidden();
+
 
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {

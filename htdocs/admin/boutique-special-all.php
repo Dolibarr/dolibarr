@@ -20,13 +20,26 @@
  *
  */
 
+/*!	\file htdocs/admin/boutique-special-all.php
+		\ingroup    boutique
+		\brief      Page d'administration/configuration du module Boutique
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../boutique/livre/livre.class.php");
 require("../boutique/editeur/editeur.class.php");
 require("../boutique/auteur/auteur.class.php");
 require("../product/promotion/promotion.class.php");
 
+$langs->load("admin");
+
+if (!$user->admin)
+  accessforbidden();
+
+
 llxHeader();
+
 
 print_barre_liste("Mise a jour de tous les livres", $page, "boutique-special-all.php");
 

@@ -20,6 +20,13 @@
  * $Id$
  * $Source$
  */
+
+/*!
+	    \file       htdocs/admin/modules.php
+        \brief      Page de configuration et activation des modules
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 if (!$user->admin)

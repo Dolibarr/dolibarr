@@ -20,9 +20,22 @@
  *
  */
 
+/*!	\file htdocs/admin/osc-languages.php
+		\ingroup    boutique
+		\brief      Page d'administration/configuration du module Boutique
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
+$langs->load("admin");
+
+if (!$user->admin)
+  accessforbidden();
+
+
 llxHeader();
+
 
 if (! strlen(DB_NAME_OSC))
 {

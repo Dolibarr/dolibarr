@@ -21,16 +21,13 @@
  */
 
 /*!	\file htdocs/admin/boxes.php
-		\brief      Page d'admin des boites
-		\author     Rodolphe Qiedeville
-		\author	    Laurent Destailleur
+		\brief      Page d'administration/configuration des boites
 		\version    $Revision$
 */
 
 require("./pre.inc.php");
 
-$langs->trans("admin");
-
+$langs->load("admin");
 
 if (!$user->admin)
   accessforbidden();

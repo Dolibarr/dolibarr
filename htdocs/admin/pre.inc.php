@@ -19,7 +19,16 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/pre.inc.php
+		\brief      Fichier gestionnaire du menu de gauche de l'espace configuration
+		\version    $Revision$
+*/
+
 require("../main.inc.php");
+
+$langs->load("admin");
+
 
 function llxHeader($head = "", $title="", $help_url='')
 {

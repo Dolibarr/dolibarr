@@ -19,7 +19,20 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/expedition.php
+		\ingroup    expedition
+		\brief      Page d'administration/configuration du module Expedition
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
+
+if (!$user->admin)
+  accessforbidden();
+
 
 if ($action == 'nbprod' && $user->admin)
 {
@@ -33,12 +46,6 @@ if ($action == 'nbprod' && $user->admin)
 
 llxHeader();
 
-if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
 
 if ($_GET["action"] == 'set')
 {

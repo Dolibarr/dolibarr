@@ -18,23 +18,28 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/boutique.php
+		\ingroup    boutique
+		\brief      Page d'administration/configuration du module Boutique
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
+
+if (!$user->admin)
+  accessforbidden();
+
 
 llxHeader();
 
 $dir = "../includes/modules/facture/";
 
-if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
-
 //
-// TODO mettre cette section dans la base de données
+// \todo mettre cette section dans la base de données
 //
-
 $modules["BOUTIQUE_LIVRE"][0] = "Livres";
 $modules["BOUTIQUE_LIVRE"][1] = "BOUTIQUE_LIVRE";
 $modules["BOUTIQUE_LIVRE"][2] = BOUTIQUE_LIVRE;

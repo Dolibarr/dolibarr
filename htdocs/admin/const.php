@@ -19,7 +19,16 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/const.php
+		\ingroup    setup
+		\brief      Page d'administration/configuration des constantes autres
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
 
 if (!$user->admin)
   accessforbidden();

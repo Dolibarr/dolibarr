@@ -19,16 +19,23 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/commande.php
+		\ingroup    commande
+		\brief      Page d'administration-configuration du module Commande
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
+$langs->load("orders");
 
 llxHeader();
 
 if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
+  accessforbidden();
+
 
 // positionne la variable pour le test d'affichage de l'icone
 

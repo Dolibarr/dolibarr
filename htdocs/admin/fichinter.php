@@ -19,16 +19,22 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/fichinter.php
+		\ingroup    fichinter
+		\brief      Page d'administration/configuration du module FicheInter
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
 
 llxHeader();
 
 if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
+  accessforbidden();
+
 
 // positionne la variable pour le test d'affichage de l'icone
 

@@ -20,7 +20,18 @@
  *
  */
 
+/*!	\file htdocs/admin/sqltables.php
+		\brief      Page d'administration/configuration des tables sql
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
+
+if (!$user->admin)
+  accessforbidden();
+
 
 llxHeader();
 
@@ -28,12 +39,12 @@ print_barre_liste("Liste des tables", $page, "sqltables.php");
 
 $sql = "SELECT name, loaded FROM ".MAIN_DB_PREFIX."sqltables";
 
-print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-print '<TR class="liste_titre">';
+print "<table class=\noboirder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+print '<tr class="liste_titre">';
 print "<td>Nom</td>";
 print '<td align="center">Chargée</td>';
 print '<td align="center">Action</td>';
-  print "</TR>\n";
+  print "</tr>\n";
  
 if ( $db->query($sql) ) {
   $num = $db->num_rows();
@@ -43,17 +54,17 @@ if ( $db->query($sql) ) {
   while ($i < $num) {
     $objp = $db->fetch_object( $i);
     $var=!$var;
-    print "<TR $bc[$var]>";
-    print "<TD>$objp->name</TD>\n";
-    print '<TD align="center">'.$objp->loaded."</TD>\n";
+    print "<tr $bc[$var]>";
+    print "<td>$objp->name</td>\n";
+    print '<td align="center">'.$objp->loaded."</td>\n";
 
     if ($objp->loaded) 
       {
-	print '<TD align="center"><a href="'.$PHPSELF.'?action=drop">Supprimer</TD>';
+	print '<td align="center"><a href="'.$PHPSELF.'?action=drop">Supprimer</td>';
       }
     else 
       {
-	print '<TD align="center"><a href="'.$PHPSELF.'?action=create">Créer</TD>';
+	print '<td align="center"><a href="'.$PHPSELF.'?action=create">Créer</td>';
       }
     print "</tr>\n";
     $i++;
@@ -61,7 +72,7 @@ if ( $db->query($sql) ) {
   $db->free();
 }
 
-print "</TABLE>";
+print "</table>";
 
 
 $db->close();

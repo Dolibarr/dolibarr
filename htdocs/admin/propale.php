@@ -19,7 +19,16 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/propale.php
+		\ingroup    propale
+		\brief      Page d'administration/configuration du module Propale
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("admin");
 
 if (!$user->admin)
   accessforbidden();
