@@ -304,10 +304,11 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
       print '<div class="help"><a class="help" target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">'.$langs->trans("Help").'</a></div>';
     }
 
+  print "\n";
+  print "</div>\n";
   print "</div>\n";
   print "<!-- Fin left vertical menu -->\n";
 
-  print '</div>'."\n";
   print '<div class="vmenuplusfiche">'."\n";
 
   print '<div class="fiche">'."\n";
