@@ -23,20 +23,22 @@
  *
  */
 
-/*!	\file htdocs/includes/modules/facture/lune/lune.modules.php
+/**
+    	\file       htdocs/includes/modules/facture/lune/lune.modules.php
 		\ingroup    facture
 		\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Lune
 		\version    $Revision$
 */
 
 
-/*!	\class mod_facture_Lune
+/**
+    	\class      mod_facture_lune
 		\brief      Classe du modèle de numérotation de référence de facture Lune
 */
 class mod_facture_lune extends ModeleNumRefFactures
 {
     
-    /*!     \brief      Renvoi la description du modele de numérotation
+    /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
     function info()
@@ -45,7 +47,7 @@ class mod_facture_lune extends ModeleNumRefFactures
     Système de numérotation mensuel sous la forme F0501015, qui correspond à la 15ème facture du mois de Janvier 2005';
     }
 
-    /*!     \brief      Renvoi un exemple de numérotation
+    /**     \brief      Renvoi un exemple de numérotation
      *      \return     string      Example
      */
     function getExample()
@@ -53,7 +55,7 @@ class mod_facture_lune extends ModeleNumRefFactures
         return "F0501015";
     }
 
-    /*!     \brief      Renvoie la référence de facture suivante non utilisée
+    /**     \brief      Renvoie la référence de facture suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
      */

@@ -21,7 +21,8 @@
  *
  */
 
-/**	    \file       htdocs/boxes.php
+/**
+	    \file       htdocs/boxes.php
 		\brief      Fichier de la classe boxes
 		\author     Rodolphe Qiedeville
 		\author	    Laurent Destailleur
@@ -30,7 +31,8 @@
 
 
 
-/**     \class      infoBox
+/**
+        \class      InfoBox
 		\brief      Classe permettant la gestion des boxes sur une page
 */
 
