@@ -56,7 +56,7 @@ class Form {
    *
    *
    */
-  Function select_tva($name='', $defaulttx = 0)
+  Function select_tva($name='', $defaulttx = '')
   {
     if (! strlen(trim($name)))
     {
@@ -73,6 +73,11 @@ class Form {
 	$txtva[0] = '19.6';
 	$txtva[1] = '5.5';
 	$txtva[2] = '0';
+      }
+
+    if ($defaulttx == '')
+      {
+	$defaulttx = $txtva[0];
       }
 
     $taille = sizeof($txtva);
