@@ -87,6 +87,8 @@ else
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
 	  print "<td>Nom</td><td>".$groupart->nom."</td></tr>\n";
+	  print "<tr>";
+	  print "<td>Groupe/Artiste</td><td>".ucfirst(strtolower(strtoupper($groupart->grar)))."</td></tr>\n";
 	  print "<tr><td valign=\"top\">Description</td><td>".nl2br($groupart->desc)."</td></tr>";
 
 	  $gas = $groupart->liste_albums();
@@ -101,6 +103,14 @@ else
     
       if ($action == 'edit')
 	{
+	  if ($groupart->grar == 'artiste')
+	    {
+	      $grar_opt = 'Groupe';
+	    }
+	  else 
+	    {
+	      $grar_opt = 'Artiste';
+	    }
 	  print '<hr><div class="titre">Edition de la fiche produit : '.$groupart->ref.'</div><br>';
 
 	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
@@ -108,7 +118,8 @@ else
 	  
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr><td>Nom</td><td><input name="nom" size="40" value="'.$groupart->nom.'"></td></tr>';
-
+  print '<tr><td>Artiste/Groupe</td><td><select name="grar"><option value="'.ucfirst(strtolower(strtoupper($groupart->grar))).'">'.ucfirst(strtolower(strtoupper($groupart->grar))).'</option>';
+  print '<option value="'.$grar_opt.'">'.$grar_opt.'</option></select></td></tr>';
 	  print "<tr><td valign=\"top\">Description</td><td>";
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $groupart->desc;
