@@ -19,7 +19,7 @@
  * $Id$
  * $Source$
  */
- 
+
 /*!
 	    \file       htdocs/societe.php
         \ingroup    societe
@@ -50,10 +50,12 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
+$search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
+$search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
 
 $socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=$_GET["page"];
 
 if ($sortorder == "") {
@@ -79,6 +81,8 @@ $modesearch=isset($_GET["mode-search"])?$_GET["mode-search"]:$_POST["mode-search
 
 if ($mode == 'search')
 {
+  $_POST["search_nom"]="$socname";
+
   $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
   $sql .= " WHERE s.nom like '%".$socname."%'";
   
@@ -100,7 +104,11 @@ if ($mode == 'search')
       $socid = $user->societe_id;
     }  
 }
-
+if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
+    $socname="";
+    $search_nom="";
+    $search_ville="";
+}
 
 /*
  * Mode Liste
@@ -122,12 +130,12 @@ if (strlen($stcomm)) {
   $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
-if (strlen($_GET["search_nom"])) {
-  $sql .= " AND s.nom LIKE '%".$_GET["search_nom"]."%'";
+if ($search_nom) {
+  $sql .= " AND s.nom LIKE '%".$search_nom."%'";
 }
 
-if (strlen($_GET["search_ville"])) {
-  $sql .= " AND s.ville LIKE '%".$_GET["search_ville"]."%'";
+if ($search_ville) {
+  $sql .= " AND s.ville LIKE '%".$search_ville."%'";
 }
 
 if ($socname)
@@ -148,28 +156,26 @@ if ($result)
 
   print_barre_liste($title, $page, "societe.php",$params,$sortfield,$sortorder,'',$num);
     
-  if ($title_filtre)
-    {
-      print $langs->trans("Filter:")." $title_filtre";
-      print ' &nbsp; <a href="societe.php">'.$langs->trans("RemoveFilter").'</a>';
-    }
-
-
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom", $params);
-  print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville",$params,"",'width="25%"');
-  print '<td colspan="2" align="center">'.$langs->trans("Cards").'</td>';
+  print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom", $params,"&search_nom=$search_nom&search_ville=$search_ville","",$sortfield);
+  print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville",$params,"&search_nom=$search_nom&search_ville=$search_ville",'width="25%"',$sortfield);
+  print '<td colspan="2" align="center">&nbsp;</td>';
   print "</tr>\n";
 
-  print '<form method="get" action="societe.php">';
+  print '<form method="post" action="societe.php">';
+  print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
+  print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
   print '<tr class="liste_titre">';
   print '<td valign="right">';
-  print '<input type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
+  print '<input type="text" name="search_nom" value="'.$search_nom.'">';
   print '</td>';
   print '<td valign="right">';
-  print '<input type="text" name="search_ville" value="'.$_GET["search_ville"].'">';
-  print '</td><td colspan="2"><input type="submit"></td>';
+  print '<input type="text" name="search_ville" value="'.$search_ville.'">';
+  print '</td><td colspan="2" align="center">';
+  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
+  print '&nbsp; <input type="submit" class="button" name="button_removefilter" value="'.$langs->trans("RemoveFilter").'">';
+  print '</td>';
   print "</tr>\n";
 
 
@@ -183,7 +189,7 @@ if ($result)
       print "<a href=\"soc.php?socid=$obj->idp\">";
       print img_file();
       print "</a>&nbsp;<a href=\"soc.php?socid=$obj->idp\">$obj->nom</a></td>\n";
-      print "<td>".$obj->ville."&nbsp;</TD>\n";
+      print "<td>".$obj->ville."&nbsp;</td>\n";
       print '<td align="center">';
       if ($obj->client==1)
 	{
@@ -216,7 +222,7 @@ if ($result)
 }
 else
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 $db->close();
