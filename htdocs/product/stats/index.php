@@ -19,37 +19,65 @@
  * $Source$
  *
  */
+
 require("./pre.inc.php");
-require("../commande.class.php");
+require("../../propal.class.php");
 require("../../graph.class.php");
 
 llxHeader();
+
+$mesg = '';
+
 /*
  *
  *
  */
-
-print_fiche_titre('Statistiques commandes', $mesg);
-      
-print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr><td>Année</td><td width="40%">Nb de commande</td><td>Somme des commandes</td></tr>';
-
-$sql = "SELECT count(*), date_format(date_commande,'%Y') as dm, sum(total_ht)  FROM ".MAIN_DB_PREFIX."commande WHERE fk_statut > 0 GROUP BY dm DESC ";
+$sql = "SELECT count(*) FROM llx_product WHERE fk_product_type = 0";
 if ($db->query($sql))
 {
-  $num = $db->num_rows();
-  $i = 0;
-  while ($i < $num)
-    {
-      $row = $db->fetch_row($i);
-      $nbproduct = $row[0];
-      $year = $row[1];
-      print "<tr>";
-      print '<td><a href="month.php?year='.$year.'">'.$year.'</a></td><td>'.$nbproduct.'</td><td>'.price($row[2]).'</td></tr>';
-      $i++;
-    }
+  $row = $db->fetch_row(0);
+  $nbproduct = $row[0];
 }
 $db->free();
+$sql = "SELECT count(*) FROM llx_product WHERE envente = 0 AND fk_product_type = 0";
+if ($db->query($sql))
+{
+  $row = $db->fetch_row(0);
+  $nbhv = $row[0];
+}
+$db->free();
+
+print_fiche_titre('Statistiques produits et services', $mesg);
+      
+print '<table class="liste" border="1" width="100%" cellspacing="0" cellpadding="4">';
+print "<tr $bc[1]>";
+print '<td width="40%">Nb de produit dans le catalogue</td>';
+print '<td>'.$nbproduct.'</td></tr>';
+print "<tr $bc[1]>";
+print '<td width="40%">Nb de produit dans le catalogue qui ne sont pas en vente</td>';
+print '<td>'.$nbhv.'</td></tr>';
+
+$sql = "SELECT count(*) FROM llx_product WHERE fk_product_type = 1";
+if ($db->query($sql))
+{
+  $row = $db->fetch_row(0);
+  $nbproduct = $row[0];
+}
+$db->free();
+$sql = "SELECT count(*) FROM llx_product WHERE envente = 0 AND fk_product_type = 1";
+if ($db->query($sql))
+{
+  $row = $db->fetch_row(0);
+  $nbhv = $row[0];
+}
+$db->free();
+
+print "<tr $bc[1]>";
+print '<td width="40%">Nb de service dans le catalogue</td>';
+print '<td>'.$nbproduct.'</td></tr>';
+print "<tr $bc[1]>";
+print '<td width="40%">Nb de service dans le catalogue qui ne sont pas en vente</td>';
+print '<td>'.$nbhv.'</td></tr>';
 
 print '</table>';
 
