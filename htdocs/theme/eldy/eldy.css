@@ -396,7 +396,7 @@ a.tabAction:hover   { font: helvetica, verdana, arial, sans-serif;
 
 a.butDelete:link    { font: helvetica, verdana, arial, sans-serif;
                       background: white; 
-                      border: 1px solid #FF0000; 
+                      border: 1px solid #997777; 
                       color: #436976; 
                       padding: 0em 1.5em; 
                       margin: 0em 0.5em; 
@@ -405,7 +405,7 @@ a.butDelete:link    { font: helvetica, verdana, arial, sans-serif;
 
 a.butDelete:active    { font: helvetica, verdana, arial, sans-serif;
                       background: white; 
-                      border: 1px solid #FF0000; 
+                      border: 1px solid #997777; 
                       color: #436976; 
                       padding: 0em 1.5em; 
                       margin: 0em 0.5em; 
@@ -414,7 +414,7 @@ a.butDelete:active    { font: helvetica, verdana, arial, sans-serif;
 
 a.butDelete:visited    { font: helvetica, verdana, arial, sans-serif;
                       background: white; 
-                      border: 1px solid #FF0000; 
+                      border: 1px solid #997777; 
                       color: #436976; 
                       padding: 0em 1.5em; 
                       margin: 0em 0.5em; 
@@ -423,7 +423,7 @@ a.butDelete:visited    { font: helvetica, verdana, arial, sans-serif;
 
 a.butDelete:hover    { font: helvetica, verdana, arial, sans-serif;
                       background: #FFe7ec; 
-                      border: 1px solid #FF0000; 
+                      border: 1px solid #997777; 
                       color: #436976; 
                       padding: 0em 1.5em; 
                       margin: 0em 0.5em; 
