@@ -20,7 +20,7 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/system/pre.inc.php
+/*!	\file htdocs/admin/system/mysql.php
 		\brief      Page des infos système de la base de donnée
 		\version    $Revision$
 */

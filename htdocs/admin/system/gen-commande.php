@@ -20,7 +20,7 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/system/pre.inc.php
+/*!	\file htdocs/admin/system/gen-commande.php
 		\brief      Générateur de données aléatoires pour les produits et sociétés
 		\version    $Revision$
 */
