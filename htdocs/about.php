@@ -42,6 +42,7 @@ D'autres développeurs y contribuent activement :
 <li><a target="blank" href="http://www.ipsyn.net">Jean-Louis Bergamo</a></li>
 <li><a target="blank" href="http://perso.wanadoo.fr/l.destailleur/">Laurent Destailleur</a></li>
 <li>Eric Seigne</li>
+<li>Benoit Mortier</li>
 </ul>
 
 <p>

@@ -155,7 +155,7 @@ class Societe {
     if (trim($this->tva_intra))       { $sql .= ",tva_intra = '" . trim($this->tva_intra) ."'"; }
     if (trim($this->capital))         { $sql .= ",capital = '" . trim($this->capital) ."'"; }
     if (trim($this->effectif_id))     { $sql .= ",fk_effectif = '" . trim($this->effectif_id) ."'"; }
-    if (trim($this->forme_juridique)) { $sql .= ",fk_forme_juridique = '" . trim($this->forme_juridique_code) ."'"; }
+    if (trim($this->forme_juridique_code)) { $sql .= ",fk_forme_juridique = '" . trim($this->forme_juridique_code) ."'"; }
     if (trim($this->client))          { $sql .= ",client = '" . $this->client ."'"; }
     if (trim($this->fournisseur))     { $sql .= ",fournisseur = '" . $this->fournisseur ."'"; }
     if ($user)                        { $sql .= ",fk_user_modif = '".$user->id."'"; }
