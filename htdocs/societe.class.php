@@ -114,51 +114,56 @@ class Societe {
     $result = $this->verify();
     
     if ($result >= 0)
-    {
+      {
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe (nom, datec, datea, fk_user_creat) ";
         $sql .= " VALUES ('".addslashes($this->nom)."', now(), now(), '".$user->id."')";
         
         $result=$this->db->query($sql);
         if ($result)
-        {
+	  {
             $this->id = $this->db->last_insert_id();
             
             $this->creation_bit = 1;
             
             $ret = $this->update($this->id);
             
-            if ($ret == 0) {
-                $this->db->commit();
-            } else {
-        		dolibarr_syslog("Societe::create echec update");
+            if ($ret == 0)
+	      {
+		$this->db->commit();
+	      }
+	    else 
+	      {
+		dolibarr_syslog("Societe::create echec update");
                 $this->db->rollback();
                 return -3;
-            }
+	      }
             
             return $ret;
-        }
+	  }
         else
-        {
-            if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
-            {
+
+	  {
+	    if ($this->db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
+	      {
+		
                 $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
-            }
-            else {
-        		dolibarr_syslog("Societe::create echec insert sql=$sql");
-            }
+	      }
+            else
+	      {
+		dolibarr_syslog("Societe::create echec insert sql=$sql");
+	      }
             $this->db->rollback();
             return -2;
-        }      
-    
-    }
-    else {
+	  }      
+	
+      }
+    else
+      {
         $this->db->rollback();
-   		dolibarr_syslog("Societe::Create echec verify sql=$sql");
+	dolibarr_syslog("Societe::Create echec verify sql=$sql");
         return -1;
-    }
-    
+      }    
   }
-
 
   /**
    *    \brief      Verification lors de la modification
@@ -300,13 +305,12 @@ class Societe {
 	$sql .= ",siren = '" . $this->siren ."'"; 	
 	$sql .= ",siret = '" . $this->siret ."'"; 	
 	$sql .= ",ape = '" . $this->ape ."'"; 
+	$sql .= ",tva_intra = '" . $this->tva_intra ."'"; 
+	$sql .= ",capital = '" . $this->capital ."'";
 
 	if ($this->prefix_comm) 
 	  { $sql .= ",prefix_comm = '" . $this->prefix_comm ."'"; }
-	if ($this->tva_intra) 
-	  { $sql .= ",tva_intra = '" . $this->tva_intra ."'"; }
-	if ($this->capital)  
-	  { $sql .= ",capital = '" . $this->capital ."'"; }
+
 	if ($this->effectif_id)  
 	  { $sql .= ",fk_effectif = '" . $this->effectif_id ."'"; }
 	
