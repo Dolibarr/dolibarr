@@ -69,7 +69,7 @@ class modComptabilite extends DolibarrModules
    */
   Function remove()
   {
-    $sql = "DELETE FROM llx_rights_def WHERE module = 'compta';";
+    $sql = array("DELETE FROM llx_rights_def WHERE module = 'compta';");
 
     return $this->_remove($sql);
   }
