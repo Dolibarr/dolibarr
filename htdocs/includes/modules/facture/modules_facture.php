@@ -98,6 +98,7 @@ class ModeleNumRefFactures
     \param	    db  		objet base de donnée
     \param	    facid		id de la facture à créer
     \param	    message		message
+    \return     int         0 si KO, 1 si OK
 */
 function facture_pdf_create($db, $facid, $message="")
 {
