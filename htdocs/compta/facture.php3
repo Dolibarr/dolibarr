@@ -24,6 +24,7 @@ require("../facture.class.php3");
 require("../lib/CMailFile.class.php3");
 require("../paiement.class.php");
 require("../project.class.php3");
+require("../propal.class.php3");
 require("./bank/account.class.php");
 
 llxHeader();
@@ -149,8 +150,22 @@ if ($action == 'add')
       $facture->propalid = $propalid;
 
       $facid = $facture->create($user->id);
+      //TODO
+      if ($facid )
+	{
+	  $prop = New Propal($db);
+	  $prop->fetch($propalid);
 
-      if (! $facid )
+	  for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
+	    {
+	      $result = $facture->addline($facid,
+					  $prop->lignes[$i]->desc,
+					  $prop->lignes[$i]->price,
+					  $prop->lignes[$i]->qty,
+					  $prop->lignes[$i]->tva_tx);
+	    }
+	}
+      else
 	{
 	  print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
 	  print "<p>Retour à la <a href=\"propal.php3?propalid=$propalid\">propal</a>";
