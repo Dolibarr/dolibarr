@@ -3,6 +3,9 @@
  * Auteur : Pierre-André Vullioud
  * Licence : Freeware
  * Source : http://www.fpdf.org
+ *
+ * $Id$
+ * $Source$
  */
 
 class PDF_Indexes extends FPDF
@@ -54,10 +57,12 @@ class PDF_Indexes extends FPDF
       {
 	$this->ReferenceNewPage();
       }
-
-    $this->SetFontSize(9);
-    $this->MultiCell(90, 4, $this->ReferenceCurrentSection ,0,1,'L');
-    $this->SetFontSize(8);
+    if ( $this->ReferenceNextSection == $this->ReferenceCurrentSection)
+      {
+	$this->SetFontSize(9);
+	$this->MultiCell(90, 4, $this->ReferenceCurrentSection ,0,1,'L');
+	$this->SetFontSize(8);
+      }
   }
 
   function CreateReference($NbCol, $index)
@@ -77,6 +82,8 @@ class PDF_Indexes extends FPDF
     $last = '';
     for ($i=0 ; $i < $size ; $i++)
       {    
+	$this->ReferenceNextSection = $this->Reference[$index][$i]['t'][0];
+
 	if ($this->GetY() > $this->YMax)
 	  {
 	    $this->ReferenceNextCol();
@@ -91,7 +98,7 @@ class PDF_Indexes extends FPDF
 	    $this->ReferencePrintSection();
 	  }
 	
-	//LibellLabel
+	//LibelleLabel
 	if (is_array($this->Reference[$index][$i]['t']))
 	  {
 	    $str= "  ".$this->Reference[$index][$i]['t'][1];
@@ -132,7 +139,7 @@ class PDF_Indexes extends FPDF
   
   function ReferenceNextCol()
   {
-    if($this->col<$this->NbCol-1)
+    if($this->col < $this->NbCol-1)
       {
 	//Go to the next column
 	$this->SetCol($this->col+1);
