@@ -98,7 +98,7 @@ class Propal
 	{
 	  $p_price = ereg_replace(",",".",$p_price);
 	  $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx, description) VALUES ";
-	  $sql .= " (".$this->id.", 0,". $p_qty.",". $p_price.",19.6,'".$p_desc."') ; ";
+	  $sql .= " (".$this->id.", 0,". $p_qty.",". $p_price.",".$p_tva_tx.",'".$p_desc."') ; ";
 	  
 	  if ($this->db->query($sql) )
 	    {
