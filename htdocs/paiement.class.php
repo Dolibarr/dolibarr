@@ -100,18 +100,19 @@ class Paiement
 	  {
 	    $facid = $key;
 	    $value = trim($value);
-	    $amount = round(ereg_replace(",",".",$value), 2);
+	    $amount = ereg_replace(",",".",round($value, 2));
 
 	    if (is_numeric($amount))
 	      {
 		$total += $amount;
 	      }
 	  }
+    $total = ereg_replace(",",".",$total);
 
 	if ($total > 0)
 	  {
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)";
-	    $sql .= " VALUES (now(), $this->datepaye, $total, $this->paiementid, '$this->num_paiement', '$this->note', $user->id)";
+	    $sql .= " VALUES (now(), $this->datepaye, '$total', $this->paiementid, '$this->num_paiement', '$this->note', $user->id)";
 
 	    if ( $this->db->query($sql) )
 	      {
@@ -130,13 +131,16 @@ class Paiement
 			$sql .= " VALUES ('".$facid."','". $this->id."','". $amount."')";
 			if (! $this->db->query($sql) )
 			  {
+	            print dolibarr_print_error($this->db);
 			    $sql_err++;
 			  }
 		      }
 		  }
+	      
 	      }
 	    else
 	      {
+	    print dolibarr_print_error($this->db);
 		$sql_err++;
 	      }
 	  }

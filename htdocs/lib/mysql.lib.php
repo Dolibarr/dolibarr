@@ -273,7 +273,10 @@ class DoliDb {
     {
       $query = trim($query);
       //print "<p>$query</p>\n";
+      $this->lastquery=$query;
+      
       $this->results = mysql_query($query, $this->db);
+
       return $this->results;
     }
 
@@ -405,6 +408,16 @@ class DoliDb {
   function num_fields()
     {
       return mysql_num_fields($this->results);
+    }
+
+/*!
+		\brief renvoie la derniere requete soumise par la methode query()
+		\return	error_text
+*/
+
+  function lastquery()
+    {
+      return $this->lastquery;
     }
 
 /*!
