@@ -28,6 +28,7 @@ DictionnaryRegion=Regions
 DictionnaryCountry=Countries
 DictionnaryCivility=Civility title
 DictionnaryActions=Actions list
+DictionnarySocialContributions=Social contributions types
 AlwaysActive=Always active
 UpdateRequired=Your system need to be updated. For this click on <a href="%s">Update now</a>.
 WebServer=Web server

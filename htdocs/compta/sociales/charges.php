@@ -19,7 +19,18 @@
  * $Source$
  *
  */
+
+/*!	\file htdocs/compta/sociales/charges.php
+		\ingroup    compta
+		\brief      Fiche d'une charge sociale
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("compta");
+$langs->load("bills");
+
 
 $user->getrights('compta');
 
@@ -83,11 +94,11 @@ if ($chid > 0)
 
       print "<form action=\"charges.php?id=$cha->id&amp;action=update\" method=\"post\">";
 
-	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
+	  print '<table class="border" width="100%">';
 
-	  print "<tr><td>".$langs->trans("Type")."</td><td>$cha->type_libelle</td><td>Paiements</td></tr>";
+	  print "<tr><td>".$langs->trans("Type")."</td><td>$cha->type_libelle</td><td>".$langs->trans("Paiements")."</td></tr>";
 
-	  print "<tr><td>Période</td><td>".dolibarr_print_date($cha->periode,"%Y")."</td>";
+	  print "<tr><td>".$langs->trans("Period")."</td><td>".dolibarr_print_date($cha->periode,"%Y")."</td>";
       print '<td rowspan="5" valign="top">';
 	  	  
     	  /*
@@ -105,8 +116,8 @@ if ($chid > 0)
     	    $num = $db->num_rows();
     	    $i = 0; $total = 0;
     	    echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-    	    print '<tr class="liste_titre"><td>Date</td><td>'.$langs->trans("Type").'</td>';
-    	    print "<td align=\"right\">Montant</TD><td>&nbsp;</td></tr>";
+    	    print '<tr class="liste_titre"><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Type").'</td>';
+    	    print '<td align="right">'.$langs->trans("Amount").'</td><td>&nbsp;</td></tr>';
         
     	    $var=True;
     	    while ($i < $num)
@@ -114,7 +125,6 @@ if ($chid > 0)
     		$objp = $db->fetch_object( $i);
     		$var=!$var;
     		print "<tr $bc[$var]><td>";
-    		//print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_file().'</a>';
     		print dolibarr_print_date($objp->dp)."</td>\n";
     		print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
     		print '<td align="right">'.price($objp->amount)."</td><td>".MAIN_MONNAIE."</td>\n";
@@ -136,7 +146,7 @@ if ($chid > 0)
     	    print "</table>";
     	    $db->free();
     	  } else {
-    	    print $db->error();
+    	    dolibarr_print_error($db);
     	  }
     	  print "</td>";
 
@@ -144,13 +154,13 @@ if ($chid > 0)
 
       if ($cha->paye==0) {
           print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="desc" size="40" value="'.stripslashes($cha->lib).'"></td></tr>';
-    	  print "<tr><td>Date d'échéance</td><td><input type=\"text\" name=\"amount\" value=\"".strftime("%Y%m%d",$cha->date_ech)."\"></td></tr>";
-    	  print "<tr><td>Montant TTC</td><td><b><input type=\"text\" name=\"amount\" value=\"$cha->amount\"></b></td></tr>";
+    	  print '<tr><td>'.$langs->trans("DateDue")."</td><td><input type=\"text\" name=\"amount\" value=\"".strftime("%Y%m%d",$cha->date_ech)."\"></td></tr>";
+    	  print '<tr><td>'.$langs->trans("AmountTTC")."</td><td><b><input type=\"text\" name=\"amount\" value=\"$cha->amount\"></b></td></tr>";
         }
       else {
           print '<tr><td>'.$langs->trans("Label").'</td><td>'.$cha->lib.'</td></tr>';
-    	  print "<tr><td>Date d'échéance</td><td>".dolibarr_print_date($cha->date_ech)."</td></tr>";
-    	  print "<tr><td>Montant TTC</td><td><b>".price($cha->amount)."</b></td></tr>";
+    	  print "<tr><td>".$langs->trans("DateDue")."</td><td>".dolibarr_print_date($cha->date_ech)."</td></tr>";
+    	  print '<tr><td>'.$langs->trans("AmountTTC").'</td><td><b>'.price($cha->amount).'</b></td></tr>';
       }
 
 
@@ -160,7 +170,7 @@ if ($chid > 0)
     
      print "</form>\n";
 
-	print '</div>';
+	print '<br></div>';
 
     if (! $_GET["action"]) {
 
@@ -173,19 +183,19 @@ if ($chid > 0)
 	    // Supprimer
 	    if ($cha->paye == 0 && $totalpaye <=0 && $user->rights->compta->charges)
 	      {
-		print "<a class=\"tabAction\" href=\"charges.php?id=$cha->id&amp;action=delete\">Supprimer</a>";
+		print "<a class=\"tabAction\" href=\"charges.php?id=$cha->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
 	      } 
 
 	    // Emettre paiement 
 	    if ($cha->paye == 0 && round($resteapayer) > 0 && $user->rights->compta->charges)
 	      {
-		print "<a class=\"tabAction\" href=\"../paiement_charge.php?id=$cha->id&amp;action=create\">Emettre paiement</a>";
+		print "<a class=\"tabAction\" href=\"../paiement_charge.php?id=$cha->id&amp;action=create\">".$langs->trans("DoPaiement")."</a>";
 	      }
 	    
 	    // Classer 'payé'
 	    if ($cha->paye == 0 && round($resteapayer) <=0 && $user->rights->compta->charges)
 	      {
-		print "<a class=\"tabAction\" href=\"charges.php?id=$cha->id&amp;action=payed\">Classer 'Payée'</a>";
+		print "<a class=\"tabAction\" href=\"charges.php?id=$cha->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>";
 	      }
 	    
 	    print "</div>";

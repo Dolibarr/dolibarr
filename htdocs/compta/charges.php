@@ -19,9 +19,19 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
+
+/*!	\file htdocs/compta/charges.php
+		\ingroup    compta
+		\brief      Page liste des charges sociales
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
+$langs->load("compta");
+
 llxHeader();
+
 
 function valeur($sql) {
   global $db;
@@ -33,10 +43,10 @@ function valeur($sql) {
   }
   return $valeur;
 }
-/*
- *
- */
 
+/*
+ * Action ajout en bookmark
+ */
 if ($action == 'add_bookmark') {
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
   if (! $db->query($sql) ) {
@@ -49,17 +59,18 @@ if ($action == 'del_bookmark') {
   $result = $db->query($sql);
 }
 
+
 print_titre("Charges");
 
-print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+print '<table width="100%">';
 
 print '<tr><td valign="top" width="30%">';
 
 
-print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-print "<TR class=\"liste_titre\">";
+print '<table class="noborder" width="100%">';
+print "<tr class=\"liste_titre\">";
 print "<td colspan=\"2\">Factures</td>";
-print "</TR>\n";
+print "</tr>\n";
 
 $sql = "SELECT c.libelle as nom, sum(s.amount) as total";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
@@ -79,19 +90,11 @@ if ( $db->query($sql) ) {
     $i++;
   }
 } else {
-  print "<tr><td>".$db->error()."</td></tr>";
+  dolibarr_print_error($db);
 }
 
 
 print "</table><br>";
-
-
-/*
- *
- *
- */
-
-
 
 print '</td></tr>';
 

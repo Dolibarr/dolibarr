@@ -32,6 +32,7 @@ DictionnaryRegion=Régions
 DictionnaryCountry=Pays
 DictionnaryCivility=Titres de civilité
 DictionnaryActions=Liste des actions
+DictionnarySocialContributions=Types de charges sociales
 AlwaysActive=Toujours actif
 UpdateRequired=Votre système nécessite une mise à jour. Pour cela cliquez sur <a href="%s">Mettre à jour</a>.
 WebServer=Serveur Web
