@@ -257,7 +257,16 @@ class User
         return;
       }
 
-      $sql = "SELECT fk_user, fk_id FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user= $this->id";
+      /*
+       * Ancienne méthode
+       * Ne pas supprimer tant que tous les modules n'ont pas été migrés !
+       *
+       */
+
+      $sql = "SELECT u.fk_user, u.fk_id";
+      $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as u, ".MAIN_DB_PREFIX."rights_def as r";
+      $sql .= " WHERE r.id = u.fk_id AND u.fk_user= $this->id AND r.perms IS NULL";
+
       if ($this->db->query($sql))
 	{
 	  $num = $this->db->num_rows();
@@ -498,19 +507,55 @@ class User
 		}
 
 	      $i++;
-	  }
-	    $this->db->free();	    
+	    }
 
-        if ($module == '') {
-            // Si module etait non defini, alors on a tout chargé, on peut donc considérer
-            // que les droits sont cachés (car tous chargés) pour cet instance de user
-            $this->all_permissions_are_loaded=1;
-        }
-	  }
-	else
-	  {
+	  $this->db->free();	    
+	  
+	  if ($module == '')
+	    {
+	      // Si module etait non defini, alors on a tout chargé, on peut donc considérer
+	      // que les droits sont cachés (car tous chargés) pour cet instance de user
+	      $this->all_permissions_are_loaded=1;
+	    }
+	}
+      else
+	{
     	  dolibarr_print_error($this->db);
-	  }
+	}
+
+      /*
+       * Nouvelle méthode 
+       * Compatible avec l'ancienne
+       *
+       */
+      $sql = "SELECT r.module, r.perms, r.subperms ";
+      $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as u, ".MAIN_DB_PREFIX."rights_def as r";
+      $sql .= " WHERE r.id = u.fk_id AND u.fk_user= $this->id AND r.perms IS NOT NULL";
+      if ($this->db->query($sql))
+	{
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  while ($i < $num)
+	    {
+	      $row = $this->db->fetch_row();
+
+	      if (strlen($row[1]) > 0)
+		{
+
+		  if (strlen($row[2]) > 0)
+		    {
+		      $this->rights->$row[0]->$row[1]->$row[2] = 1;
+		    }
+		  else
+		    {
+		      $this->rights->$row[0]->$row[1] = 1;
+		    }
+
+		}
+	      $i++;
+	    }
+	}
+
     }
 
   /**
