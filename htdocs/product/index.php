@@ -42,9 +42,22 @@ print_titre("Produits et services");
 
 print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
-print '<tr><td valign="top" width="70%">';
+print '<tr><td valign="top" width="30%">';
 
+
+print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td colspan="2">Hors vente</td></tr>';
+print "<TR $bc[0]>";
+print '<td><a href="liste.php?type=0&envente=0">Produits hors vente</a></td></tr>';
+print "<TR $bc[1]>";
+print '<td><a href="liste.php?type=1&envente=0">Services hors vente</a></td></tr></table>';
+
+
+print "</td>";
   
+
+print '</td><td valign="top" width="70%">';
+
 $sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p WHERE envente=1";
 $sql .= " ORDER BY p.datec DESC ";
 $sql .= $db->plimit(15 ,0);
@@ -81,19 +94,6 @@ else
 {
   print $db->error() . "<br>" .$sql;
 }
-
-print '</td><td valign="top" width="30%">';
-
-print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr class="liste_titre"><td colspan="2">Hors vente</td></tr>';
-print "<TR $bc[0]>";
-print '<td><a href="liste.php?type=0&envente=0">Produits hors vente</a></td></tr>';
-print "<TR $bc[1]>";
-print '<td><a href="liste.php?type=1&envente=0">Services hors vente</a></td></tr></table>';
-
-print '</td><td valign="top" width="30%">';
-print '&nbsp';
-print "</td>";
 
 print '</tr></table>';
 
