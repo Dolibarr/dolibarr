@@ -28,9 +28,17 @@ require(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 require(DOL_DOCUMENT_ROOT."/paiement.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/XML-RPC.functions.php");
 
-//$db = new Db();
 $adho = new AdherentOptions($db);
 $errmsg='';
+
+if (isset($action) && $action='sendinfo')
+{
+  $adh = new Adherent($db);
+  $adh->id = $rowid;
+  $adh->fetch($rowid);
+  $adh->send_an_email($adh->email,"Voici le contenu de votre fiche\n\n%INFOS%\n\n","Contenu de votre fiche adherent");
+}
+
 
 if ($HTTP_POST_VARS["action"] == 'cotisation') 
 {
@@ -598,6 +606,13 @@ if ($rowid > 0)
 
       print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=delete\">Supprimer</a>]</td>\n";
       
+      print "</tr><tr class=\"barreBouton\">\n";
+
+      /*
+       * bouton : "Envoie des informations"
+       */
+      print "<td align=\"center\" width=\"25%\" class=\"bouton\" colspan=\"4\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=sendinfo\">Envoyer sa fiche a l'adhérent</a>]</td>\n";
+
       print "</tr><tr class=\"barreBouton\">\n";
 
       if ($adht->vote == 'yes' && defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1){
