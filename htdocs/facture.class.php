@@ -931,7 +931,44 @@ class Facture
 	}
     }
 
+  /*
+   * Information sur l'objet
+   *
+   */
+  Function info($id) 
+    {
+      $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec";
+      $sql .= ", fk_user_author, fk_user_valid";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facture as c";
+      $sql .= " WHERE c.rowid = $id";
+      
+      if ($this->db->query($sql)) 
+	{
+	  if ($this->db->num_rows()) 
+	    {
+	      $obj = $this->db->fetch_object($result , 0);
 
+	      $this->id = $obj->rowid;
+
+	      $cuser = new User($this->db, $obj->fk_user_author);
+	      $cuser->fetch();
+	      $this->user_creation     = $cuser;
+
+	      $vuser = new User($this->db, $obj->fk_user_valid);
+	      $vuser->fetch();
+	      $this->user_validation = $vuser;
+
+	      $this->date_creation     = $obj->datec;
+
+	    }
+	  $this->db->free();
+
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+    }
 
 }
 
@@ -973,8 +1010,8 @@ class FactureLigne
 	  $this->db->free();
     }
 
+
+
 }
-
-
 
 ?>
