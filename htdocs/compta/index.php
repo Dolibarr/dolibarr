@@ -92,15 +92,16 @@ if ( $db->query($sql) )
 
   if ($num)
     {
-      print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<TR class="liste_titre">';
       print '<td colspan="2">Factures brouillons</td></tr>';
-
+      $var = True;
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
+	  print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
+	  print '<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
@@ -129,12 +130,11 @@ if ($user->societe_id == 0)
       $num = $db->num_rows();
       if ($num)
 	{
-	  print "<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-	  print "<TR class=\"liste_titre\">";
-	  print "<TD colspan=\"2\">Charges à payer</td>";
-	  print "</TR>\n";
+	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<tr class="liste_titre">';
+	  print '<td colspan="2">Charges à payer</td></tr>';
 	  $i = 0;
-	  
+	  $var = True;
 	  while ($i < $num)
 	    {
 	      $obj = $db->fetch_object( $i);
@@ -172,7 +172,7 @@ if ( $db->query($sql) )
   print "<TR class=\"liste_titre\">";
   print "<TD colspan=\"2\">Bookmark</td>";
   print "</TR>\n";
-
+  $var = True;
   while ($i < $num)
     {
       $obj = $db->fetch_object( $i);
@@ -218,7 +218,8 @@ if ($user->comm > 0 && $conf->commercial )
 	    {
 	      $var=!$var;
 	      $obj = $db->fetch_object($i);
-	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
+	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_file()."</a>";
+	      print "&nbsp;<a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	      $i++;
 	    }
@@ -252,7 +253,8 @@ if ( $db->query($sql) )
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
+	  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>';
+	  print '&nbsp;<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td align="right">'.price($obj->total_ttc).'</td></tr>';
 	  $i++;
@@ -320,7 +322,8 @@ if ($user->societe_id == 0)
 	      $obj = $db->fetch_object( $i);
 	      $var = !$var;
 	      print "<tr $bc[$var]>";
-	      print '<td><a href="../fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->libelle.'</a></td>';
+	      print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
+	      print '<a href="../fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->libelle.'</a></td>';
 	      print '<td align="right">'.price($obj->amount).'</td>';
 	      print '</tr>';
 	      $i++;
