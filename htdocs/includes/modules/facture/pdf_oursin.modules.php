@@ -629,15 +629,15 @@ class pdf_oursin extends ModelePDFFactures
       {
 	$pdf->MultiCell(80, 4, FAC_PDF_ADRESSE);
       }
-    if (defined("FAC_PDF_TEL"))
+    if (defined("FAC_PDF_TEL") && FAC_PDF_TEL)
       {
             $pdf->MultiCell(80, 4, $langs->trans("Phone").": ".FAC_PDF_TEL);
       }
-    if (defined("FAC_PDF_MEL"))
+    if (defined("FAC_PDF_MEL") && FAC_PDF_MEL)
       {
 			$pdf->MultiCell(80, 4, $langs->trans("Email").": ".FAC_PDF_MEL);
       }
-    if (defined("FAC_PDF_WWW"))
+    if (defined("FAC_PDF_WWW") && FAC_PDF_WWW)
       {
 			$pdf->MultiCell(80, 4, $langs->trans("Web").": ".FAC_PDF_WWW);
       }
