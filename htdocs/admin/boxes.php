@@ -48,6 +48,7 @@ if ($action == 'delete')
  *
  *
  */
+$boxes = array();
 
 $pos[0] = "Homepage";
 $pos[1] = "Gauche";
@@ -68,26 +69,10 @@ if ($result)
 
       print '<tr><td>'.$obj->name.'</td><td>' . $pos[$obj->position] . '</td><td>';
 
-      if ($rowid == $obj->rowid && $action == 'edit')
-	{
-	  print '<form action="'.$PHP_SELF.'" method="POST">';
-	  print '<input type="hidden" name="action" value="add">';
-	  print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 
-	  print '<select name="constvalue">';	  
-	  print '<option value="0">Homepage</option>';
-	  print '<option value="1">Gauche</option>';
-	  print '<option value="1">Droite</option>';
-	  
-	  print '</select>';
-	
-	  print '<input type="submit" value="Ajouter">';
-	  print '</form>';
-	}
-      else 
-	{
-	  print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&action=delete">Supprimer</a>';
-	}
+      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&action=delete">Supprimer</a>';
+
+      array_push($boxes, $obj->box_id);
 
       print '</td></tr>';
 
@@ -116,7 +101,7 @@ if ($result)
     {
       $obj = $db->fetch_object( $i);
 
-      print '<tr><td>'.$obj->name.'</td><td>' . $obj->file . '</td><td>';
+      print '<tr><td>'.$obj->name.'</td><td>' . $obj->file . '</td><td align="center">';
 
       if ($rowid == $obj->rowid && $action == 'edit')
 	{
@@ -137,7 +122,14 @@ if ($result)
 	}
       else 
 	{
-	  print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&action=edit">Ajouter</a>';
+	  if (! in_array($obj->rowid, $boxes))
+	    {
+	      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&action=edit">Ajouter</a>';
+	    }
+	  else
+	    {
+	      print "&nbsp;";
+	    }
 	}
 
       print '</td></tr>';
