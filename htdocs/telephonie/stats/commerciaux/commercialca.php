@@ -56,53 +56,15 @@ if ($_GET["commid"])
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
-  print '<tr><td width="30%" valign="top">';
+  print '<tr><td valign="top">';
   
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-  
-  print '<tr class="liste_titre"><td width="50%" valign="top">Nom</td><td align="center">Nb Lignes</td></tr>';
-  
-  $sql = "SELECT count(*) as cc,date_format(date_commande,'%m %Y')";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-  $sql .= " WHERE l.fk_commercial = ".$comm->id;
-  $sql .= " AND date_commande IS NOT NULL";
-  $sql .= " GROUP BY date_format(date_commande,'%Y/%m') DESC";
- 
- $result = $db->query($sql);
- if ($result)
-   {
-     $num = $db->num_rows();
-     $i = 0;
-     $datas = array();
-     $legends = array();
-     
-     while ($i < $num)
-       {
-	 $row = $db->fetch_row($i);		 
-	 $var=!$var;
-	 
-	 print "<tr $bc[$var]>";	 
-	 print '<td width="50%" valign="top">';
-	 print $row[2]." ". $row[1].'</td><td align="center">'.$row[0].'</td></tr>';	 
-	 $i++;
-       }
-     $db->free();
-   }
- else 
-   {
-     print $db->error() . ' ' . $sql;
-   }
- 
- print '</table>';
- 
- print '</td><td valign="top" width="70%">';
 
- print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/commercials/'.$comm->id.'/ca.mensuel.png" alt="Commandes de ligne par mois" title="Lignes Actives"><br /><br />'."\n";
-
- print '</td></tr>';
- print '</table>';
- 
- $db->close();
+  print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/commercials/'.$comm->id.'/ca.mensuel.png" alt="Chiffre d\'affaire mensuel" title="Chiffre d\'affaire mensuel"><br /><br />'."\n";
+  
+  print '</td></tr>';
+  print '</table>';
+  
+  $db->close();
  
 }
 
