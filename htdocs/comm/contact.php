@@ -155,9 +155,9 @@ if ($result)
   
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Lastname"),"contact.php","lower(p.name)", $begin,"&amp;type=$type");
-  print_liste_field_titre($langs->trans("Firstname"),"contact.php","lower(p.firstname)", $begin,"&amp;type=$type");
-  print_liste_field_titre($langs->trans("Company"),"contact.php","lower(s.nom)", $begin,"&amp;type=$type");
+  print_liste_field_titre($langs->trans("Lastname"),"contact.php","lower(p.name)", $begin,"&amp;type=$type","",$sortfield);
+  print_liste_field_titre($langs->trans("Firstname"),"contact.php","lower(p.firstname)", $begin,"&amp;type=$type","",$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"contact.php","lower(s.nom)", $begin,"&amp;type=$type","",$sortfield);
   print '<td>'.$langs->trans("Email").'</td>';
   print '<td>'.$langs->trans("Phone").'</td>';
   print "</tr>\n";
@@ -168,7 +168,7 @@ if ($result)
   print '<td><input name="search_prenom" size="12"  value="'.$_GET["search_prenom"].'"></td>';
   print '<td><input name="search_societe" size="12"  value="'.$_GET["search_societe"].'"></td>';
   print '<td>&nbsp;</td>';
-  print '<td><input type="submit"</td>';
+  print '<td><input type="submit" value='.$langs->trans("Search").'></td>';
   print "</tr>\n";
   print '</form>';
 
