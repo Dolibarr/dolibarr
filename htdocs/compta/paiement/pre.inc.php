@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ function llxHeader($head = "") {
     }
 
   $menu->add("/compta/facture.php3","Factures");
-  $menu->add_submenu("paiement.php3","Paiements");
+  $menu->add_submenu("/compta/paiement.php3","Paiements");
 
   if ($user->comm > 0 && $conf->commercial ) 
     {
@@ -53,41 +53,33 @@ function llxHeader($head = "") {
    */
   if ($user->societe_id == 0) 
     {
-
-      $menu->add("charges/index.php3","Charges");
-      $menu->add_submenu("sociales/","Prest. Sociales");
+      $menu->add("/compta/charges/index.php3","Charges");
+      $menu->add_submenu("/compta/sociales/","Prest. Sociales");
     }
   $menu->add("ca.php3","Chiffre d'affaire");
 
   if ($user->societe_id == 0) 
     {
-      $menu->add_submenu("prev.php3","Prévisionnel");
-      $menu->add_submenu("comp.php3","Comparatif");
-      $menu->add_submenu("exercices.php3","Exercices");
-      $menu->add_submenu("casoc.php3","Par société");
+      $menu->add_submenu("/compta/prev.php3","Prévisionnel");
+      $menu->add_submenu("/compta/comp.php3","Comparatif");
+      $menu->add_submenu("/compta/exercices.php3","Exercices");
+      $menu->add_submenu("/compta/casoc.php3","Par société");
     }
 
 
   if ($conf->compta->tva && $user->societe_id == 0)
     {
-      $menu->add("tva/index.php3","TVA");
+      $menu->add("/compta/tva/index.php3","TVA");
     }
 
   if ($user->societe_id == 0) 
     {
-      $menu->add("resultat/","Résultats");
-
-      $menu->add("bank/index.php3","Bank");
+      $menu->add("/compta/resultat/","Résultats");
+      $menu->add("/compta/bank/index.php3","Bank");
     }
 
 
   $menu->add("/fourn/index.php3", "Fournisseurs");
-
-  /*
-   *  $menu->add("ligne.php3","Compta");
-   *  $menu->add_submenu("ligne.php3","Lignes");
-   *  $menu->add_submenu("config.php3","Configuration");
-   */
 
   if ($user->compta > 0) 
     {
