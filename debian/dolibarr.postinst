@@ -32,10 +32,15 @@ case "$1" in
 			*)		webservers="" ;;
 		esac
 		. /usr/share/wwwconfig-common/php.get
-		. /usr/share/wwwconfig-common/apache-run.get
 		# Set up web server.
 		for server in $webservers ; do
-			trustuser=$wwwuser
+		        . /usr/share/wwwconfig-common/apache-run.get
+			trustuser=$webuser
+			#
+			# That may lead to problems if apache & apache-ssl do
+			# not have the same user/group.
+			#
+			chown -R $webuser.$webgroup /usr/share/dolibarr
 			includefile="/etc/dolibarr/apache.conf"
 			. /usr/share/wwwconfig-common/apache-include_all.sh
 			test "$status" = "uncomment" -o "$status" = "include" && restart="$server $restart"
@@ -44,8 +49,6 @@ case "$1" in
 				test "$status" = "added" && restart="$server $restart"
 			done
 		done
-
-		chown -R www-data.www-data /usr/share/dolibarr
 
 		#
 		# Pear
@@ -105,6 +108,7 @@ case "$1" in
 		servers="apache-ssl apache mysql"
 		. /usr/share/wwwconfig-common/restart.sh
 
+		echo "Visit http://localhost/dolibarr/install.php to complete the installation"
 	;;
 
 	abort-upgrade|abort-remove|abort-deconfigure)
