@@ -57,7 +57,6 @@ class modComptabilite extends DolibarrModules
      * Permissions
      */    
     $sql = array(
-		 "insert into llx_rights_def values (91,'Gestion banquaire','compta','a',1);",
 		 "insert into llx_rights_def values (92,'Gestion charges','compta','a',1);",
 		 "insert into llx_rights_def values (93,'Gestion resultat','compta','a',1);",		 
 		 );
