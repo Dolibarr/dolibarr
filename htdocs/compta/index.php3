@@ -49,7 +49,7 @@ print "<P>Brouillons<p>";
 $sep = 0;
 $sept = 0;
 
-$sql = "SELECT s.nom, s.idp, f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
+$sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
 $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.fk_statut = 0";
   
 if ($socidp) {
@@ -68,16 +68,18 @@ $sql .= " ORDER BY f.fk_statut, f.paye, f.datef DESC ";
 $result = $db->query($sql);
 if ($result) {
   $num = $db->num_rows();
+
+  $i = 0;
+  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<TR bgcolor=\"orange\">";
+  print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
+  print "<TD>Num&eacute;ro</TD>";
+  print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
+  print "<TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
+  print "<TD align=\"right\">Payé</TD><TD align=\"right\">Moyenne</TD>";
+  print "</TR>\n";
+
   if ($num > 0) {
-    $i = 0;
-    print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-    print "<TR bgcolor=\"orange\">";
-    print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
-    print "<TD>Num&eacute;ro</TD>";
-    print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
-    print "<TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
-    print "<TD align=\"right\">Payé</TD><TD align=\"right\">Moyenne</TD>";
-    print "</TR>\n";
     $var=True;
     while ($i < $num) {
       $objp = $db->fetch_object( $i);
@@ -160,6 +162,7 @@ print "<P>Validées<br>";
 
 $sep = 0;
 $sept = 0;
+$subtotal=0;
 
 $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
 $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.fk_statut > 0";
@@ -180,26 +183,28 @@ $sql .= " ORDER BY f.paye, f.datef DESC ";
 $result = $db->query($sql);
 if ($result) {
   $num = $db->num_rows();
+
+  $l=0;
+  $k=0;
+  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<TR bgcolor=\"orange\">";
+  print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
+  print "<TD>Num&eacute;ro</TD>";
+  print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
+  print "<TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
+  print "<TD align=\"right\">Payé</TD><TD align=\"right\">Moyenne</TD>";
+  print "</TR>\n";
+  $var=True;
   if ($num > 0) {
-    $i = 0;
-    print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-    print "<TR bgcolor=\"orange\">";
-    print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
-    print "<TD>Num&eacute;ro</TD>";
-    print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
-    print "<TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
-    print "<TD align=\"right\">Payé</TD><TD align=\"right\">Moyenne</TD>";
-    print "</TR>\n";
-    $var=True;
-    while ($i < $num) {
-      $objp = $db->fetch_object( $i);
+    while ($l < $num) {
+      $objp = $db->fetch_object( $l);
       $var=!$var;
 
       if ($objp->paye && !$sep) {
-	print "<tr><td></td><td>$i factures</td><td colspan=\"2\" align=\"right\">";
+	print "<tr><td></td><td>$l factures</td><td colspan=\"2\" align=\"right\">";
 	print "<small>Total : ".francs($total)." FF</small></td>";
 	print "<td align=\"right\">Sous Total :<b> ".price($total)."</b></td><td>euros HT</td>";
-	print "<td align=\"right\">Moyenne :<b> ".price($total / ($i+1))."</b></td></tr>";
+	print "<td align=\"right\">Moyenne :<b> ".price($total / ($l+1))."</b></td></tr>";
 
 	print "<TR bgcolor=\"orange\">";
 	print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
@@ -208,7 +213,7 @@ if ($result) {
 	print "<TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
 	print "<TD align=\"right\">Payé</TD><TD align=\"right\">Moyenne</TD>";
 	print "</TR>\n";
-	$sep = 1 ; $j = 0;
+	$sep = 1 ; $k = 0;
 	$subtotal = 0;
       }
 
@@ -239,23 +244,23 @@ if ($result) {
       $total = $total + $objp->amount;
       $subtotal = $subtotal + $objp->amount;	  
       print "<TD align=\"right\">".$yn[$objp->paye]."</TD>\n";
-      print "<TD align=\"right\">".price($subtotal / ($j + 1))."</TD>\n";
+      print "<TD align=\"right\">".price($subtotal / ($k + 1))."</TD>\n";
       print "</TR>\n";
-      $i++;
-      $j++;
+      $l++;
+      $k++;
 
     }
   }
-  if ($i == 0) { $i=1; }  if ($j == 0) { $j=1; }
-  print "<tr><td></td><td>$j factures</td><td colspan=\"2\" align=\"right\">";
+  if ($l == 0) { $l=1; }  if ($k == 0) { $k=1; }
+  print "<tr><td></td><td>$k factures</td><td colspan=\"2\" align=\"right\">";
   print "<small>Total : ".francs($subtotal)." FF</small></td>";
   print "<td align=\"right\">Sous Total :<b> ".price($subtotal)."</b></td><td>euros HT</td>";
-  print "<td align=\"right\">Moyenne :<b> ".price($subtotal/ $j)."</b></td></tr>";
+  print "<td align=\"right\">Moyenne :<b> ".price($subtotal/ $k)."</b></td></tr>";
 
-  print "<tr bgcolor=\"#d0d0d0\"><td></td><td>$i factures</td><td colspan=\"2\" align=\"right\">";
+  print "<tr bgcolor=\"#d0d0d0\"><td></td><td>".($l+$i)." factures</td><td colspan=\"2\" align=\"right\">";
   print "<small>Total : ".francs($total)." FF</small></td>";
   print "<td align=\"right\"><b>Total : ".price($total)."</b></td><td>euros HT</td>";
-  print "<td align=\"right\"><b>Moyenne : ".price($total/ $i)."</b></td></tr>";
+  print "<td align=\"right\"><b>Moyenne : ".price($total/ ($l+$i))."</b></td></tr>";
 
   print "</TABLE>";
   $db->free();
