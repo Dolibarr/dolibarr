@@ -141,6 +141,8 @@ insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.
 -- Factures
 --
 
+insert into llx_const (name, value, type) values ('FAC_OUTPUTDIR','/htdocs/document/facture','chaine');
+insert into llx_const (name, value, type) values ('FAC_OUTPUT_URL','/htdocs/document/facture','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_INTITULE','Facture','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_MEL','facture@societe.com','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_WWW','http://www.societe.com','chaine');
@@ -150,8 +152,30 @@ insert into llx_const (name, value, type) values ('FAC_PDF_TVA_INTRA','BE 443 69
 insert into llx_const (name, value, type) values ('FAC_PDF_RCS','634 674','chaine');
 
 --
+-- Propales
+--
+
+insert into llx_const (name, value, type) values ('PROPALE_OUTPUTDIR','/htdocs/document/propale','chaine');
+insert into llx_const (name, value, type) values ('PROPALE_OUTPUT_URL','/htdocs/document/propale','chaine');
+
+--
+-- Ficheinter
+--
+
+insert into llx_const (name, value, type) values ('FICHEINTER_OUTPUT_DIR','/htdocs/document/ficheinter','chaine');
+insert into llx_const (name, value, type) values ('FICHERINTER_OUTPUT_URL','/htdocs/document/ficheinter','chaine');
+
+--
+-- société
+--
+
+insert into llx_const (name, value, type) values ('SOCIETE_OUTPUT_DIR','/htdocs/document/societe','chaine');
+insert into llx_const (name, value, type) values ('SOCIETE_OUTPUT_URL','/htdocs/document/societe','chaine');
+
+--
 -- Types de charges
 --
+
 delete from llx_c_chargesociales;
 insert into llx_c_chargesociales (id,libelle,deductible) values ( 1, 'Allocations familiales',1);
 insert into llx_c_chargesociales (id,libelle,deductible) values ( 2, 'GSG Deductible',1);
@@ -165,15 +189,16 @@ insert into llx_c_actioncomm (id,libelle) values ( 0, '-');
 insert into llx_c_actioncomm (id,libelle) values ( 1, 'Appel Téléphonique');
 insert into llx_c_actioncomm (id,libelle) values ( 2, 'Envoi Fax');
 insert into llx_c_actioncomm (id,libelle) values ( 3, 'Envoi Proposition');
-insert into llx_c_actioncomm (id,libelle) values ( 4, 'Envoi Email'); 
+insert into llx_c_actioncomm (id,libelle) values ( 4, 'Envoi Email');
 insert into llx_c_actioncomm (id,libelle) values ( 5, 'Prendre rendez-vous');
 insert into llx_c_actioncomm (id,libelle) values ( 9, 'Envoi Facture');
 insert into llx_c_actioncomm (id,libelle) values (10, 'Relance effectuée');
 insert into llx_c_actioncomm (id,libelle) values (11, 'Clôture');
 
 --
+-- Types action
 --
---
+
 delete from llx_c_stcomm;
 insert into llx_c_stcomm (id,libelle) values (-1, 'NE PAS CONTACTER');
 insert into llx_c_stcomm (id,libelle) values ( 0, 'Jamais contacté');
@@ -195,8 +220,10 @@ insert into llx_c_typent (id,libelle) values (100, 'Autres');
 --
 -- Pays
 --
+
 insert into llx_c_pays (rowid,libelle,code) values (1, 'France',          'FR');
 insert into llx_c_pays (rowid,libelle,code) values (2, 'Belgique',        'BE');
+insert into llx_c_pays (rowid,libelle,code) values (2, 'Belgie',        	'BE');
 insert into llx_c_pays (rowid,libelle,code) values (3, 'Italie',          'IT');
 insert into llx_c_pays (rowid,libelle,code) values (4, 'Espagne',         'ES');
 insert into llx_c_pays (rowid,libelle,code) values (5, 'Allemagne',       'DE');
