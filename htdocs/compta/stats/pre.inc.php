@@ -42,7 +42,7 @@ function llxHeader($head = "") {
 		$menu->add_submenu("prev.php","Prévisionnel");
 		$menu->add_submenu("comp.php","Transformé");
 	}
-	$menu->add_submenu("exercices.php","Exercices");
+	$menu->add_submenu("exercices.php","Evolution");
 	$menu->add_submenu("casoc.php","Par société");
 	$menu->add_submenu("cabyuser.php","Par utilisateur");
 	

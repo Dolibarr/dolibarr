@@ -60,20 +60,8 @@ if ($socidp)
 }
 $sql .= " GROUP BY dm";
 
+
 pt($db, $sql,"Suivi cumul par année");
-
-print "<br>"; 
-
-$sql = "SELECT sum(f.total) as amount, month(f.datef) as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE fk_user_valid is not NULL and f.paye = 1";
-if ($socidp)
-{
-  $sql .= " AND f.fk_soc = $socidp";
-}
-$sql .= " GROUP BY dm";
-
-pt($db, $sql,"Cumul sur le mois");
-
 
 print "</td></tr></table>";
 
