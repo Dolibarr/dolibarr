@@ -67,6 +67,7 @@ $modules["MAIN_MODULE_PRODUIT"][0] = "Module produit";
 $modules["MAIN_MODULE_PRODUIT"][1] = "MAIN_MODULE_PRODUIT";
 $modules["MAIN_MODULE_PRODUIT"][2] = MAIN_MODULE_PRODUIT;
 $modules["MAIN_MODULE_PRODUIT"][3] = "Module de gestion des produits";
+$modules["MAIN_MODULE_PRODUIT"][4] = "modProduit";
 
 $modules["MAIN_MODULE_PROPALE"][0] = "Module propale";
 $modules["MAIN_MODULE_PROPALE"][1] = "MAIN_MODULE_PROPALE";
