@@ -21,7 +21,8 @@
  * 
  */
 
-/**     \file       htdocs/menu.class.php
+/**
+        \file       htdocs/menu.class.php
         \brief      Fichier de la classe de gestion du menu gauche
         \version    $Revision$
 */
@@ -58,13 +59,15 @@ class Menu {
      *  \param      url         Url a suivre sur le clic
      *  \param      titre       Libelle menu à afficher
      *  \param      level       Niveau du menu à ajouter
+     *  \param      enabled     Menu actif ou non
      */
-    function add($url, $titre, $level=0)
+    function add($url, $titre, $level=0, $enabled=1)
     {
         $i = sizeof($this->liste);
         $this->liste[$i]['url'] = $url;
         $this->liste[$i]['titre'] = $titre;
         $this->liste[$i]['level'] = $level;
+        $this->liste[$i]['enabled'] = $enabled;
     }
 
     /**
@@ -72,11 +75,12 @@ class Menu {
      *  \param      url         Url a suivre sur le clic
      *  \param      titre       Libelle menu à afficher
      *  \param      level       Niveau du menu à ajouter
+     *  \param      enabled     Menu actif ou non
      */
-    function add_submenu($url, $titre, $level=1)
+    function add_submenu($url, $titre, $level=1, $enabled=1)
     {
         $i = sizeof($this->liste) - 1;
-        $this->add($url,$titre,$level);
+        $this->add($url, $titre, $level, $enabled);
     }
 
 }
