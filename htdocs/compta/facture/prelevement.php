@@ -147,7 +147,7 @@ if ($_GET["facid"] > 0)
       print "</table>";
 
       /*
-       *
+       * Demande de prélèvement
        *
        */
 
@@ -227,7 +227,7 @@ if ($_GET["facid"] > 0)
       
       $sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
       $sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
-      $sql .= " , pfd.fk_prelevement_bons";
+      $sql .= " , pfd.fk_prelevement_bons, pfd.amount";
       $sql .= " , u.name, u.firstname";
       $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
       $sql .= " , ".MAIN_DB_PREFIX."user as u";
