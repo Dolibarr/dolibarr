@@ -88,7 +88,6 @@ class GraphLignesResiliationWeek extends GraphBar {
     $labels_new = array();
 
     $max = strftime("%y%V", time());
-    print $max;
     $week = $max;
     $year = substr($week,0,2);
     $smwee = substr($max, -2);
