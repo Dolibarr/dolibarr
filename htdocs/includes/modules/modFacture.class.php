@@ -20,7 +20,9 @@
  *
  */
 
-class modFacture
+include_once "modDolibarrModules.class.php";
+
+class modFacture extends modDolibarrModules
 {
 
   /*
@@ -31,6 +33,43 @@ class modFacture
   Function modFacture($DB)
   {
     $this->db = $DB ;
+    $this->const = array();
+
+    $this->const[0][0] = "FAC_PDF_INTITULE";
+    $this->const[0][1] = "chaine";
+    $this->const[0][2] = "Facture Dolibarr";
+
+    $this->const[1][0] = "FAC_PDF_ADRESSE";
+    $this->const[1][1] = "texte";
+    $this->const[1][2] = "Adresse";
+
+    $this->const[2][0] = "FAC_PDF_TEL";
+    $this->const[2][1] = "chaine";
+    $this->const[2][2] = "02 97 42 42 42";
+
+    $this->const[3][0] = "FAC_PDF_FAX";
+    $this->const[3][1] = "chaine";
+    $this->const[3][2] = "02 97 00 00 00";
+
+    $this->const[4][0] = "FAC_PDF_SIREN";
+    $this->const[4][1] = "chaine";
+    $this->const[4][2] = "123 456 789";
+
+    $this->const[5][0] = "FAC_PDF_SIRET";
+    $this->const[5][1] = "chaine";
+    $this->const[5][2] = "123 456 789 012";
+
+    $this->const[6][0] = "FAC_PDF_INTITULE2";
+    $this->const[6][1] = "chaine";
+
+    $this->const[7][0] = "FACTURE_ADDON_PDF";
+    $this->const[7][1] = "chaine";
+    $this->const[7][2] = "bulot";
+
+    $this->const[8][0] = "FACTURE_ADDON";
+    $this->const[8][1] = "chaine";
+    $this->const[8][2] = "pluton";
+
   }
   /*
    *
@@ -40,58 +79,6 @@ class modFacture
 
   Function init()
   {
-    /*
-     *  Activation du module
-     */
-    $const[0][0] = "FAC_PDF_INTITULE";
-    $const[0][1] = "chaine";
-    $const[1][0] = "FAC_PDF_ADRESSE";
-    $const[1][1] = "texte";
-    $const[2][0] = "FAC_PDF_TEL";
-    $const[2][1] = "chaine";
-    $const[3][0] = "FAC_PDF_FAX";
-    $const[3][1] = "chaine";
-    $const[4][0] = "FAC_PDF_SIREN";
-    $const[4][1] = "chaine";
-    $const[5][0] = "FAC_PDF_SIRET";
-    $const[5][1] = "chaine";
-    $const[6][0] = "FAC_PDF_INTITULE2";
-    $const[6][1] = "chaine";
-    $const[7][0] = "FACTURE_ADDON_PDF";
-    $const[7][1] = "chaine";
-    $const[7][2] = "bulot";
-
-    foreach ($const as $key => $value)
-      {
-	$name = $const[$key][0];
-	$type = $const[$key][1];
-	$val  = $const[$key][2];
-
-	$sql = "SELECT count(*) FROM llx_const WHERE name ='".$name."'";
-
-	if ( $this->db->query($sql) )
-	  {
-	    $row = $this->db->fetch_row($sql);
-	    
-	    if ($row[0] == 0)
-	      {
-		if (strlen($val))
-		  {
-		    $sql = "INSERT INTO llx_const (name,type,value) VALUES ('".$name."','".$type."','".$val."')";
-		  }
-		else
-		  {
-		    $sql = "INSERT INTO llx_const (name,type) VALUES ('".$name."','".$type."')";
-		  }
-
-		if ( $this->db->query($sql) )
-		  {
-
-		  }
-	      }
-	  }
-      } 
-
     /*
      * Permissions
      */
@@ -106,10 +93,7 @@ class modFacture
 		 "insert into llx_rights_def values (19,'Supprimer les factures','facture','d',0);"
 		 );
     
-    for ($i = 0 ; $i < sizeof($sql) ; $i++)
-      {
-	$this->db->query($sql[$i]);
-      }
+    return $this->_init($this->const, $sql);
   }
   /*
    *
@@ -117,8 +101,9 @@ class modFacture
    */
   Function remove()
   {
-    $sql = "DELETE FROM llx_rights_def WHERE module = 'facture';";
-    $this->db->query($sql);
+    $sql = array("DELETE FROM llx_rights_def WHERE module = 'facture';");
+
+    return $this->_remove($sql);
   }
 }
 ?>
