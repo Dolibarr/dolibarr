@@ -219,7 +219,7 @@ exemples :
 <td>
 <input type="text" name="db_user" value="<?PHP print $dolibarr_main_db_user ?>">
 <br>
-Laissez vide si vous vous connectez en anonymous
+Laisser vide si vous vous connectez en anonymous
 </td>
 </tr>
 <tr>
@@ -227,7 +227,7 @@ Laissez vide si vous vous connectez en anonymous
 <td>
 <input type="text" name="db_pass" value="<?PHP print $dolibarr_main_db_pass ?>">
 <br>
-Laissez vide si vous vous connectez en anonymous
+Laisser vide si vous vous connectez en anonymous
 </td>
 </tr>
 <tr>
