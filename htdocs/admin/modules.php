@@ -104,7 +104,7 @@ function UnActivate($value)
 $db->close();
 
 
-llxHeader("","","Admin");
+llxHeader("","");
 
 if (!$_GET["spe"])
 {
