@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,18 +84,9 @@ $acct = new Account($db);
 $acct->fetch($account);
 
 print_titre('Rapprochement bancaire compte : <a href="account.php?account='.$account.'">'.$acct->label.'</a>');
-print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
-print "<TR class=\"liste_titre\">";
-print "<td>Date</td><td>Description</TD>";
-print "<td align=\"right\">Debit</TD>";
-print "<td align=\"right\">Credit</TD>";
-print "<td align=\"center\">Releve</TD>";
-print '<td align="center" colspan="2">Rappro</td>';
-print '<td align="center">&nbsp;</td>';
-print "</TR>\n";
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
-$sql .= " FROM llx_bank as b WHERE rappro=0 AND fk_account=$account AND dateo < now()";
+$sql .= " FROM llx_bank as b WHERE rappro=0 AND fk_account=$account AND dateo <= now()";
 $sql .= " ORDER BY dateo ASC LIMIT 10";
 
 
@@ -103,6 +95,22 @@ if ($result)
 {
   $var=True;  
   $num = $db->num_rows();
+
+  if ($num == 0) {
+	print "<br>Pas de transactions saisies en attente de rapprochement, pour ce compte bancaire.<br>";
+  }
+  else {
+	print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+	print "<TR class=\"liste_titre\">";
+	print "<td>Date</td><td>Description</TD>";
+	print "<td align=\"right\">Debit</TD>";
+	print "<td align=\"right\">Credit</TD>";
+	print "<td align=\"center\">Releve</TD>";
+	print '<td align="center" colspan="2">Rappro</td>';
+	print '<td align="center">&nbsp;</td>';
+	print "</TR>\n";
+  }
+
   $i = 0;
   while ($i < $num)
     {
@@ -133,12 +141,22 @@ if ($result)
       
       if ($objp->rappro)
 	{
-	  print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve\">$objp->num_releve</a></td>";
+	  print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
 	}
       else
 	{
-	  print "<td align=\"center\"><a href=\"$PHP_SELF?account=$account&amp;action=del&amp;rowid=$objp->rowid\">[Del]</a></td>";
+	  if ($user->rights->banque->modifier)
+	    {
+	      print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id\">";
+	      print img_delete();
+	      print "</a></td>";
+	    }
+	  else
+	    {
+	      print "<td align=\"center\">&nbsp;</td>";
+	    }
 	}
+
       print "</tr>";
       print "<tr $bc[$var]><td>&nbsp;</td><td>".$objp->fk_type." ".$objp->num_chq."&nbsp;</td><td colspan=\"6\">";
       print "<select name=\"cat1\">$options";
@@ -149,8 +167,11 @@ if ($result)
       $i++;
     }
   $db->free();
+
+	if ($num != 0) {
+		print "</table>";
+	}
 }
-print "</table>";
 
 print '<br>Dernier relevé : <a href="releve.php?account='.$account.'&amp;num='.$last_releve.'">'.$last_releve.'</a>';
 
