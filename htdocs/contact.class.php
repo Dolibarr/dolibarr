@@ -333,118 +333,120 @@ class Contact
    *    \param      _id         id du contact
    *    \param      user        Utilisateur lié au contact pour une alerte
    */
-  function fetch($_id, $user=0) 
+  function fetch($_id, $user=0)
     {
-      $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname, c.address, c.birthday as birthday, poste, phone, phone_perso, phone_mobile, fax, c.email, jabberid, c.note";
-      $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-      $sql .= " WHERE c.idp = ". $_id;
-
-      if ($this->db->query($sql))
-	{
-	  if ($this->db->num_rows()) 
-	    {
-	      $obj = $this->db->fetch_object();
-
-	      $this->id             = $obj->idp;
-	      $this->civilite_id    = $obj->civilite_id;
-	      $this->name           = $obj->name;
-	      $this->firstname      = $obj->firstname;
-	      $this->nom            = $obj->name;
-	      $this->prenom         = $obj->firstname;
-
-	      $this->address        = $obj->address;
-
-	      $this->societeid      = $obj->fk_soc;
-	      $this->socid          = $obj->fk_soc;
-	      $this->poste          = $obj->poste;
-
-	      $this->fullname       = $this->firstname . ' ' . $this->name;
-	      
-	      $this->phone_pro      = dolibarr_print_phone($obj->phone);
-	      $this->fax            = dolibarr_print_phone($obj->fax);
-	      $this->phone_perso    = dolibarr_print_phone($obj->phone_perso);
-	      $this->phone_mobile   = dolibarr_print_phone($obj->phone_mobile);
-
-	      $this->code           = $obj->code;
-	      $this->email          = $obj->email;
-	      $this->jabberid       = $obj->jabberid;
-	      $this->mail           = $obj->email;
-
-	      $this->birthday       = $obj->birthday;
-	      $this->birthday_alert = $obj->birthday_alert;
-	      $this->note           = $obj->note;
-
-	    }
-	  $this->db->free();
-
-
-	  $sql = "SELECT u.rowid ";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-	  $sql .= " WHERE u.fk_socpeople = ". $_id;
-
-	  if ($this->db->query($sql))
-	    {
-	      if ($this->db->num_rows()) 
-		{
-		  $uobj = $this->db->fetch_object();
-		  
-		  $this->user_id = $uobj->rowid;
-		}
-	    }
-	  $this->db->free();
-
-
-	  $sql = "SELECT count(*) ";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."contact_facture";
-	  $sql .= " WHERE fk_contact = ". $_id;
-
-	  if ($this->db->query($sql))
-	    {
-	      if ($this->db->num_rows()) 
-		{
-		  $this->facturation = 1;
-		}
-	      else
-		{
-		  $this->facturation = 0;
-		}
-	    }
-	  else
-	    {
-	      dolibarr_syslog("Error in Contact::fetch() id=$_id");
-	    }
-
-	  $this->db->free();
-
-	  if ($user)
-	    {
-	      $sql = "SELECT fk_user";
-	      $sql .= " FROM ".MAIN_DB_PREFIX."user_alert";
-	      $sql .= " WHERE fk_user = $user->id AND fk_contact = ".$_id;
-	      
-	      if ($this->db->query($sql)) 
-		{
-		  if ($this->db->num_rows())
-		    {
-		      $obj = $this->db->fetch_object();
-		      
-		      $this->birthday_alert = 1;
-		    } 
-		  else 
-		    {
-		      print $this->db->error();
-		      dolibarr_syslog("Error in Contact::fetch() id=$_id");
-		    }
-		}
-	    }
-	}
-      else
-	{
-	  dolibarr_syslog("Error in Contact::fetch() id=$_id");
-	  print $this->db->error();
-	}
+        $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname, c.address, c.birthday as birthday, poste, phone, phone_perso, phone_mobile, fax, c.email, jabberid, c.note";
+        $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
+        $sql .= " WHERE c.idp = ". $_id;
+    
+        if ($this->db->query($sql))
+        {
+            if ($this->db->num_rows())
+            {
+                $obj = $this->db->fetch_object();
+    
+                $this->id             = $obj->idp;
+                $this->civilite_id    = $obj->civilite_id;
+                $this->name           = $obj->name;
+                $this->firstname      = $obj->firstname;
+                $this->nom            = $obj->name;
+                $this->prenom         = $obj->firstname;
+    
+                $this->address        = $obj->address;
+    
+                $this->societeid      = $obj->fk_soc;
+                $this->socid          = $obj->fk_soc;
+                $this->poste          = $obj->poste;
+    
+                $this->fullname       = $this->firstname . ' ' . $this->name;
+    
+                $this->phone_pro      = dolibarr_print_phone($obj->phone);
+                $this->fax            = dolibarr_print_phone($obj->fax);
+                $this->phone_perso    = dolibarr_print_phone($obj->phone_perso);
+                $this->phone_mobile   = dolibarr_print_phone($obj->phone_mobile);
+    
+                $this->code           = $obj->code;
+                $this->email          = $obj->email;
+                $this->jabberid       = $obj->jabberid;
+                $this->mail           = $obj->email;
+    
+                $this->birthday       = $obj->birthday;
+                $this->birthday_alert = $obj->birthday_alert;
+                $this->note           = $obj->note;
+    
+            }
+            $this->db->free();
+    
+    
+            $sql = "SELECT u.rowid ";
+            $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+            $sql .= " WHERE u.fk_socpeople = ". $_id;
+    
+            if ($this->db->query($sql))
+            {
+                if ($this->db->num_rows())
+                {
+                    $uobj = $this->db->fetch_object();
+    
+                    $this->user_id = $uobj->rowid;
+                }
+                $this->db->free();
+            }
+            else
+            {
+                dolibarr_syslog("Error in Contact::fetch() sql=$sql");
+            }
+    
+    
+            $sql = "SELECT count(*) ";
+            $sql .= " FROM ".MAIN_DB_PREFIX."contact_facture";
+            $sql .= " WHERE fk_contact = ". $_id;
+    
+            if ($this->db->query($sql))
+            {
+                if ($this->db->num_rows())
+                {
+                    $this->facturation = 1;
+                }
+                else
+                {
+                    $this->facturation = 0;
+                }
+                $this->db->free();
+            }
+            else
+            {
+                dolibarr_syslog("Error in Contact::fetch() sql=$sql");
+            }
+    
+            if ($user)
+            {
+                $sql = "SELECT fk_user";
+                $sql .= " FROM ".MAIN_DB_PREFIX."user_alert";
+                $sql .= " WHERE fk_user = $user->id AND fk_contact = ".$_id;
+    
+                if ($this->db->query($sql))
+                {
+                    if ($this->db->num_rows())
+                    {
+                        $obj = $this->db->fetch_object();
+    
+                        $this->birthday_alert = 1;
+                    }
+                    $this->db->free();
+                 }
+                else
+                {
+                    dolibarr_syslog("Error in Contact::fetch() sql=$sql");
+                }
+            }
+        }
+        else
+        {
+            dolibarr_syslog("Error in Contact::fetch() sql=$sql");
+        }
     }
-
+    
 
   /*
    *    \brief      Efface le contacte de la base et éventuellement de l'annuaire LDAP
