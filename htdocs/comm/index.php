@@ -334,7 +334,7 @@ else
  * Derniers contrat
  *
  */
-if ($conf->contrat->enabled && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
+if ($conf->contrat->enabled && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
 {
   $langs->load("contracts");
   
@@ -385,27 +385,25 @@ if ($conf->contrat->enabled && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 if ($conf->propal->enabled) {
 
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut = 1";
-    if ($socidp)
-    { 
-      $sql .= " AND s.idp = $socidp"; 
-    }
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
+    $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut = 1";
+    if ($socidp) $sql .= " AND s.idp = $socidp"; 
     $sql .= " ORDER BY p.rowid DESC";
-//     $sql .= $db->plimit(5, 0);
     
-    if ( $db->query($sql) )
+    $result=$db->query($sql);
+    if ($result)
     {
 	  $total = 0;
-      $num = $db->num_rows();
+      $num = $db->num_rows($result);
       $i = 0;
       if ($num > 0)
 	{
 	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td colspan="4">Propositions commerciales ouvertes et validées</td></tr>';
+	  print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("ProposalsOpened").'</td></tr>';
 	  $var=false;
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object();
+	      $obj = $db->fetch_object($result);
 	      print "<tr $bc[$var]><td width=\"15%\"><a href=\"propal.php?propalid=".$obj->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a></td>";
 	      print "<td width=\"30%\"><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$obj->nom."</a></td>\n";      
 	      print "<td align=\"right\">";
@@ -430,15 +428,17 @@ if ($conf->propal->enabled) {
  */
 
 if ($conf->propal->enabled) {
-
+    $NBMAX=5;
+    
 	$sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut > 1";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
+	$sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut > 1";
 	if ($socidp)
 	{ 
 	  $sql .= " AND s.idp = $socidp"; 
 	}
 	$sql .= " ORDER BY p.rowid DESC";
-	$sql .= $db->plimit(5, 0);
+	$sql .= $db->plimit($NBMAX, 0);
 	
 	if ( $db->query($sql) )
 	    {
@@ -446,7 +446,7 @@ if ($conf->propal->enabled) {
 	      
 	    $i = 0;
 	    print '<table class="noborder" width="100%">';      
-	    print '<tr class="liste_titre"><td colspan="6">Les 5 dernières propositions commerciales fermées</td></tr>';
+	    print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("LastClosedProposals",$NBMAX).'</td></tr>';
 	    $var=False;	      
 	    while ($i < $num)
 	      {
@@ -455,7 +455,7 @@ if ($conf->propal->enabled) {
 		print '<td width="15%">';
 		print '<a href="propal.php?propalid='.$objp->propalid.'">'.img_file().'</a>';
 		print '&nbsp;<a href="propal.php?propalid='.$objp->propalid.'">'.$objp->ref.'</a></td>';
-		print "<td width=\"30%\"><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      
+		print "<td width=\"30%\"><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";      
 		
 		$now = time();
 		$lim = 3600 * 24 * 15 ;
