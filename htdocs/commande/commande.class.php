@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,17 +21,17 @@
  *
  */
 
-/*!
-  \file htdocs/commande/commande.class.php
-  \ingroup    commande
-  \brief      Fichier des classes de commandes
-  \version    $Revision$
+/**
+        \file       htdocs/commande/commande.class.php
+        \ingroup    commande
+        \brief      Fichier des classes de commandes
+        \version    $Revision$
 */
 
 
-/*!	
-  \class Commande
-  \brief      Classe de gestion de commande
+/**	
+        \class      Commande
+        \brief      Classe de gestion de commande
 */
 
 class Commande 
@@ -40,10 +40,13 @@ class Commande
   var $id ;
   var $brouillon;
 
-  /*!  \brief  Constructeur
+  /**  \brief  Constructeur
    */
   function Commande($DB)
     {
+      global $langs;
+      $langs->load("orders");
+      
       $this->db = $DB;
 
       $this->sources[0] = "Proposition commerciale";
@@ -53,16 +56,16 @@ class Commande
       $this->sources[4] = "Fax";
       $this->sources[5] = "Commercial";
 
-      $this->statuts[-1] = "Annulée";
-      $this->statuts[0] = "Brouillon";
-      $this->statuts[1] = "Validée";
-      $this->statuts[2] = "En traitement";
-      $this->statuts[3] = "Traitée";
+      $this->statuts[-1] = $langs->trans("StatusOrderCanceled");
+      $this->statuts[0]  = $langs->trans("StatusOrderDraft");  
+      $this->statuts[1]  = $langs->trans("StatusOrderValidated");
+      $this->statuts[2]  = $langs->trans("StatusOrderOnProcess");
+      $this->statuts[3]  = $langs->trans("StatusOrderProcessed");
 
       $this->products = array();
     }
 
-  /*!   \brief      Créé la facture depuis une propale existante
+  /**   \brief      Créé la facture depuis une propale existante
         \param      user            Utilisateur qui crée
         \param      propale_id      id de la propale qui sert de modèle
    */
@@ -102,7 +105,7 @@ class Commande
       return $this->create($user);
     }
 
-  /*!   \brief      Valide la commande
+  /**   \brief      Valide la commande
         \param      user            Utilisateur qui valide
    */
   function valid($user)
@@ -793,7 +796,7 @@ class Commande
 
 }
 
-/*!	\class CommandeLigne
+/**	\class CommandeLigne
 		\brief      Classe de gestion des lignes de commande
 */
 

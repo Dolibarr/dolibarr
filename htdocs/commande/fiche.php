@@ -21,7 +21,8 @@
  *
  */
 
-/**	        \file       htdocs/commande/fiche.php
+/**
+	        \file       htdocs/commande/fiche.php
 	        \ingroup    commande
 	        \brief      Fiche commande
 	        \version    $Revision$
@@ -251,7 +252,7 @@ if ($_GET["action"] == 'create')
 	  print '<tr><td>'.$langs->trans("Ref").' :</td><td>Provisoire</td></tr>';
 	  print '<input name="facnumber" type="hidden" value="provisoire">';
 
-	  print "<tr><td>Source :</td><td>";
+	  print '<tr><td>'.$langs->trans("Source").' :</td><td>';
 	  $html->select_array("source_id",$new_commande->sources,2);
 	  print "</td></tr>";
 
@@ -471,7 +472,7 @@ else
 	  print '<tr><td>'.$langs->trans("Date").'</td>';
 	  print "<td colspan=\"2\">".strftime("%A %d %B %Y",$commande->date)."</td>\n";
 
-	  print '<td width="50%">Source : ' . $commande->sources[$commande->source] ;
+	  print '<td width="50%">'.$langs->trans("Source").' : ' . $commande->sources[$commande->source] ;
 	  if ($commande->source == 0)
 	    {
 	      /* Propale */
@@ -578,7 +579,7 @@ else
 		  print '<td align="center">'.$objp->qty.'</td>';
 		  if ($objp->remise_percent > 0)
 		    {
-		      print '<td align="right">'.$objp->remise_percent." %</td>\n";
+		      print '<td align="right">'.$objp->remise_percent."%</td>\n";
 		    }
 		  else
 		    {
@@ -607,9 +608,9 @@ else
 		      print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
 		      print "<tr $bc[$var]>";
 		      print '<td colspan="2"><textarea name="eldesc" cols="60" rows="2">'.stripslashes($objp->description).'</textarea></td>';
-		      print '<td align="center"><input size="4" type="text" name="elqty" value="'.$objp->qty.'"></TD>';
-		      print '<td align="right"><input size="3" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
-		      print '<td align="right"><input size="8" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
+		      print '<td align="center"><input size="4" type="text" name="elqty" value="'.$objp->qty.'"></td>';
+		      print '<td align="right"><input size="3" type="text" name="elremise_percent" value="'.$objp->remise_percent.'">%</td>';
+		      print '<td align="right"><input size="7" type="text" name="elprice" value="'.price($objp->subprice).'"></td>';
 		      print '<td align="right" colspan="2"><input type="submit" value="'.$langs->trans("Save").'"></td>';
 		      print '</tr>' . "\n";
 		      print "</form>\n";
@@ -621,7 +622,7 @@ else
 	    } 
 	else
 	  {
-	    print $db->error();
+	    dolibarr_print_error($db);
 	  }
 	
 	/*
@@ -668,15 +669,15 @@ else
 	    print $html->select_tva("tva_tx",$conf->defaulttx);
 	    print '</td>';
 	    print '<td align="center"><input type="text" name="qty" value="1" size="2"></td>';
-	    print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
-	    print '<td align="right"><input type="text" name="pu" size="8"></td>';
+	    print '<td align="right"><input type="text" name="remise_percent" size="3" value="0">%</td>';
+	    print '<td align="right"><input type="text" name="pu" size="7"></td>';
 
 	    print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 
 	    $var=!$var;
 	    print "<tr $bc[$var]><td colspan=\"2\"><select name=\"p_idprod\">$opt</select></td>";
 	    print '<td align="center"><input type="text" size="2" name="pqty" value="1"></td>';
-	    print '<td align="right"><input type="text" size="4" name="premise" value="0"> %</td>';
+	    print '<td align="right"><input type="text" size="3" name="premise" value="0">%</td>';
 	    print '<td>&nbsp;</td>';
 	    print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 	    print "</tr>\n";
