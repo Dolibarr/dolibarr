@@ -24,9 +24,7 @@ require("./bank.lib.php");
 require("../../tva.class.php");
 require("../../chargesociales.class.php");
 
-$user->getrights('compta');
-
-if (!$user->admin && !$user->rights->compta->bank)
+if (!$user->rights->banque->lire)
   accessforbidden();
 
 llxHeader();
