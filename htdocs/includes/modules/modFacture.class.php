@@ -34,7 +34,7 @@ class modFacture extends modDolibarrModules
   {
     $this->db = $DB ;
     $this->depends = array("MAIN_MODULE_SOCIETE","MAIN_MODULE_COMPTABILITE");
-
+    $this->config_page_url = "facture.php";
     $this->const = array();
     $this->boxes = array();
 

@@ -34,7 +34,7 @@ class modPropale extends modDolibarrModules
   {
     $this->db = $DB ;
     $this->depends = array("MAIN_MODULE_SOCIETE","MAIN_MODULE_COMMERCIAL");
-
+    $this->config_page_url = "propale.php";
     $this->const = array();
     $this->boxes = array();
     /*

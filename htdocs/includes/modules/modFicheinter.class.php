@@ -32,6 +32,7 @@ class modFicheinter
   {
     $this->db = $DB ;
     $this->depends = array("MAIN_MODULE_SOCIETE");
+    $this->config_page_url = "fichinter.php";
   }
   /*
    *

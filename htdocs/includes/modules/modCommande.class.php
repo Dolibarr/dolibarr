@@ -35,7 +35,7 @@ class modCommande extends modDolibarrModules
     $this->db = $DB ;
     $this->const = array();
     $this->boxes = array();
-
+    $this->config_page_url = "commande.php";
     $this->boxes[0][0] = "Commandes";
     $this->boxes[0][1] = "box_commandes.php";
   }
