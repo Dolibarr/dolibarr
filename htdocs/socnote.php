@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,11 @@
  *
  */
  
-/*!	    \file       htdocs/socnote.php
-		\brief      Fichier onglet notes liées à la société
-		\ingroup    societe
-		\version    $Revision$
+/*!	 
+  \file       htdocs/socnote.php
+  \brief      Fichier onglet notes liées à la société
+  \ingroup    societe
+  \version    $Revision$
 */
  
 require("./pre.inc.php");
@@ -106,7 +107,8 @@ if ($_GET["socid"] > 0) {
 
   print "<form method=\"post\" action=\"socnote.php\">";
 
-  print '<table class="noborder" width="100%">';
+  print '<table class="border" width="100%">';
+  print '<tr><td width="50%" valign="top">Note</td><td>Note Actuelle</td></tr>';
   print '<tr><td width="50%" valign="top">';
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print "<input type=\"hidden\" name=\"socid\" value=\"".$societe->id."\">";
@@ -114,7 +116,7 @@ if ($_GET["socid"] > 0) {
   print '</td><td width="50%" valign="top">'.nl2br($societe->note).'</td>';
   print "</td></tr>";
   print "</table>";
-  print '<input type="submit" value="'.$langs->trans("Save").'"></form>';
+  print '<input type="submit" value="'.$langs->trans("Modify").'"></form>';
 }
 
 print '<br>';
