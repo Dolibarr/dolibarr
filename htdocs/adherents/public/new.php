@@ -70,10 +70,10 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	Header("Location: new.php?action=added");
       }
   }else{
-    if ($num ==0){
+    if ($num !=0){
       $errmsg .="Login deja utilise. Veuillez en changer<BR>\n";
     }
-    if (isset($email) && $email != '' && ereg('@',$email)){
+    if (!isset($email) || $email == '' || !ereg('@',$email)){
       $errmsg .="Adresse Email invalide<BR>\n";
     }
   }
@@ -92,9 +92,9 @@ llxHeader();
 if (isset($action) && $action== 'added'){
   print "<FONT COLOR=\"blue\">Nouvel Adhérent ajouté. En attente de validation</FONT><BR>\n";
 }
-//if ($errmsg != ''){
+if ($errmsg != ''){
   print "<FONT COLOR=\"red\">$errmsg</FONT><BR>\n";
-//}
+}
 
 print_titre("Nouvel adhérent");
 print "Les login et password vous serviront a editer vos coordonnees ulterieurement<BR>\n";
