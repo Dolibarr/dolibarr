@@ -37,6 +37,24 @@ if ($_POST["action"] == 'add')
     }
 }
 
+if ($_POST["action"] == 'update' && $_GET["id"])
+{
+  $fourn = new FournisseurTelephonie($db);
+
+  if ($fourn->fetch($_GET["id"]) == 0)
+    {
+
+      $fourn->num_client     = $_POST["num_client"];
+      $fourn->email_commande = $_POST["email_commande"];
+      $fourn->methode_commande = $_POST["methode"];
+      
+      if ( $fourn->update($user) == 0)
+	{
+	  Header("Location: fiche.php?id=".$fourn->id);
+	}
+    }
+}
+
 if ($_GET["action"] == 'active')
 {
   $fourn = new FournisseurTelephonie($db);
@@ -107,27 +125,33 @@ if ($_GET["id"] > 0)
 	 */
 	print_titre("Modification fournisseur");
 
+	print '<form action="fiche.php?id='.$fourn->id.'" method="post">';
+	print '<input type="hidden" name="action" value="update">';
+
 	print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	
 	print '<tr><td width="20%">Nom</td><td colspan="2">'.$fourn->nom.'</td></tr>';
+
+	print '<tr><td width="20%">Numéro Client</td>';
+	print '<td><input name="num_client" size="30" value="'.$fourn->num_client.'"></td>';
+	print '<td>Notre numéro de client</td></tr>';
+
 	print '<tr><td width="20%">Email de commande</td>';
-	print '<td><input name="email" size="30" value="'.$fourn->email_commande.'"></td>';
+	print '<td><input name="email_commande" size="30" value="'.$fourn->email_commande.'"></td>';
 	print '<td>adresse email à laquelle sont envoyées les commandes de lignes</td></tr>';
 
 	$html = new Form($db);
 
 	$arr = $fourn->array_methode();
 
-
-	
 	print '<tr><td width="20%">Méthode de commande</td>';
 	print '<td>';
-	print $html->select_array("methode",$arr);
+	print $html->select_array("methode",$arr,$fourn->class_commande);
 	print '</td>';
 	print '<td>méthode utilisée pour les commandes de lignes</td></tr>';
     
-
-	print '</table><br />';
+	print '<tr><td colspan="3" align="center"><input type="submit" value="Update"></td></tr>';
+	print '</table></form><br />';
       }
     else
       {
@@ -150,6 +174,11 @@ if ($_GET["id"] > 0)
 	print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	
 	print '<tr><td width="20%">Nom</td><td colspan="2">'.$fourn->nom.'</td></tr>';
+
+	print '<tr><td width="20%">Numéro Client</td>';
+	print '<td>'.$fourn->num_client.'</td>';
+	print '<td>Notre numéro de client</td></tr>';
+
 	print '<tr><td width="20%">Email de commande</td>';
 	print '<td>'.$fourn->email_commande.'</td>';
 	print '<td>adresse email à laquelle sont envoyées les commandes de lignes</td></tr>';
