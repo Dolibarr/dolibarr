@@ -42,7 +42,7 @@ print '<br>';
 
 print '<table class="noborder" cellspacing="0" cellpadding="3">';
 print '<tr class="liste_titre">';
-print "<td>Type</td>";
+print '<td>'.$langs->trans("Type").'</td>';
 print "<td align=right width=\"80\">A valider</td>";
 print "<td align=right width=\"80\">Valides</td>";
 print "<td align=right width=\"80\">Cotisants à jour</td>";

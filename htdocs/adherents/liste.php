@@ -108,7 +108,7 @@ if ($result)
   print "</td>\n";
 
   print "<td>";
-  print_liste_field_titre("Type","liste.php","t.libelle","&page=$page&statut=$statut");
+  print_liste_field_titre($langs->trans("Type"),"liste.php","t.libelle","&page=$page&statut=$statut");
   print "</td>\n";
 
   print "<td>";
@@ -116,7 +116,7 @@ if ($result)
   print "</td>\n";
 
   print "<td>";
-  print_liste_field_titre("Statut","liste.php","d.statut","&page=$page&statut=$statut");
+  print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut","&page=$page&statut=$statut");
   print "</td>\n";
 
   print "<td>Action</td>\n";

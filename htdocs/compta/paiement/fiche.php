@@ -73,7 +73,7 @@ print '<tr><td valign="top">Numéro : '.$paiement->numero."<br>";
 
 print 'Date : '.strftime("%d %B %Y",$paiement->date)."&nbsp;<br>";
 
-print 'Type : '.$paiement->type_libelle."&nbsp;<br>";
+print $langs->trans("Type").' : '.$paiement->type_libelle."&nbsp;<br>";
 
 print 'Montant : '.$paiement->montant."&nbsp;".MAIN_MONNAIE."<br>";
 

@@ -120,7 +120,7 @@ if ($_GET["action"] == 'create')
   print '<tr><td valign="top">Banque</td>';
   print '<td colspan="3"><input size="30" type="text" name="bank" value="'.$_POST["bank"].'"></td></tr>';
 
-  print '<tr><td valign="top">Libellé</td>';
+  print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
   print '<td colspan="3"><input size="30" type="text" name="label" value="'.$_POST["label"].'"></td></tr>';
 
   print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
@@ -194,7 +194,7 @@ else
     print '<tr><td valign="top">Banque</td>';
     print '<td colspan="3">'.$account->bank.'</td></tr>';
 
-    print '<tr><td valign="top">Libellé</td>';
+    print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
     print '<td colspan="3">'.$account->label.'</td></tr>';
     
     print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
@@ -275,7 +275,7 @@ else
       print '<tr><td valign="top">Banque</td>';
       print '<td colspan="3"><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
       
-	  print '<tr><td valign="top">Libellé</td>';
+	  print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
 	  print '<td colspan="3"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
 	  
 	  print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';

@@ -142,7 +142,7 @@ if ($_GET["id"] > 0)
 	  if ($num)
 	    {
 	      print '<tr class="liste_titre">';
-	      print '<td width="54%">Description</td>';
+	      print '<td width="54%">'.$langs->trans("Description").'</td>';
 	      print '<td align="center">Quan. Commandée</td>';
 	      print '<td align="center">Quan. livrée</td>';
 	      print '<td align="center">Reste à livrer</td>';
@@ -304,7 +304,7 @@ if ($_GET["id"] > 0)
 	    {
 	      print '<br><table class="liste" cellpadding="3" width="100%"><tr>';
 	      print '<tr class="liste_titre">';
-	      print '<td width="54%">Description</td>';
+	      print '<td width="54%">'.$langs->trans("Description").'</td>';
 	      print '<td align="center">Quan. livrée</td>';
 	      print '<td align="center">Expédition</td>';
 

@@ -42,10 +42,10 @@ print '<br>';
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
 print "<tr class=\"liste_titre\">";
-print "<td>Date</td><td>Description</TD>";
-print "<td align=\"right\">Debit</TD>";
-print "<td align=\"right\">Credit</TD>";
-print "<td align=\"center\">Type</TD>";
+print '<td>Date</td><td>'.$langs->trans("Description").'</td>';
+print "<td align=\"right\">Debit</td>";
+print "<td align=\"right\">Credit</td>";
+print "<td align=\"center\">".$langs->trans("Type")."</td>";
 print "<td align=\"left\">Compte</td>";
 print "</tr>\n";
 ?>

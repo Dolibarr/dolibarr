@@ -33,7 +33,7 @@ print '<br>';
 print '<table class="noborder" cellpadding="4" cellspacing="1">';
 print '<tr class="liste_titre">';
 print '<td>Tables</td>';
-print '<td>Type</td>';
+print '<td>'.$langs->trans("Type").'</td>';
 print '<td>Contraintes</td>';
 print "</tr>\n";
 

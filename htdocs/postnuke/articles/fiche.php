@@ -73,7 +73,7 @@ if ($id)
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr><td>Titre</td><td>$article->titre</td></tr>\n";
 	  print "<tr>";
-	  print "<td valign=\"top\">Description</td>";
+	  print '<td valign="top">'.$langs->trans("Description").'</td>';
 	  
 	  print '<td valign="top" width="80%"><textarea name="body" rows="14" cols="60">';
 	  print str_replace("<br />","",$article->body);

@@ -86,7 +86,7 @@ else {
 
 print_fiche_titre("Recettes");
 print '<table class="noborder" width="100%" cellspacing="0" cellpading="3">';
-print '<tr class="liste_titre"><td>Jour</td><td>Description</td><td>Montant</td><td>Type</td></tr>';
+print '<tr class="liste_titre"><td>Jour</td><td>'.$langs->trans("Description").'</td><td>Montant</td><td>'.$langs->trans("Type").'</td></tr>';
 
 print '<tr><td colspan="4">Fonction pas encore disponible</td></tr>';
 
@@ -122,7 +122,7 @@ print '<br>';
 
 print_fiche_titre("Dépenses");
 print '<table class="noborder" width="100%" cellspacing="0" cellpading="3">';
-print '<tr class="liste_titre"><td>Jour</td><td>Description</td><td>Montant</td><td>Type</td></tr>';
+print '<tr class="liste_titre"><td>Jour</td><td>'.$langs->trans("Description").'</td><td>Montant</td><td>'.$langs->trans("Type").'</td></tr>';
 
 print '<tr><td colspan="4">Fonction pas encore disponible</td></tr>';
 

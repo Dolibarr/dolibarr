@@ -127,7 +127,7 @@ if ($action == 'delete_categ')
 print_titre("Edition de la ligne");
 print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print "<tr class=\"liste_titre\">";
-print "<td>Date</td><td>Description</td>";
+print '<td>Date</td><td>'.$langs->trans("Description").'</td>';
 print "<td align=\"right\">Debit</td>";
 print "<td align=\"right\">Credit</td>";
 print "<td align=\"center\">Releve</td>";
@@ -250,9 +250,9 @@ print "</table>";
 print "<p>Classé dans</p>";
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-print "<TR class=\"liste_titre\">";
-print '<td colspan="3">Description</td>';
-print "</TR>\n";
+print "<tr class=\"liste_titre\">";
+print '<td colspan="3">'.$langs->trans("Description").'</td>';
+print "</tr>\n";
 
 $sql = "SELECT c.label, c.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."bank_class as a, ".MAIN_DB_PREFIX."bank_categ as c WHERE a.lineid=$rowid AND a.fk_categ = c.rowid ";

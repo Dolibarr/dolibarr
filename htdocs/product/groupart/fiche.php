@@ -64,7 +64,7 @@ if ($action == 'create')
   print '<td>Nom</td><td><input name="nom" size="40" value=""></td></tr>';
   print '<tr><td>Artiste/Groupe</td><td><select name="grar"><option value="artiste">Artiste</option>';
   print '<option value="groupe">Groupe</option></select></td></tr>';
-  print "<tr><td valign=\"top\">Description</td><td>";
+  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
@@ -90,7 +90,7 @@ else
 	  print "<td>Nom</td><td>".$groupart->nom."</td></tr>\n";
 	  print "<tr>";
 	  print "<td>Groupe/Artiste</td><td>".ucfirst(strtolower(strtoupper($groupart->grar)))."</td></tr>\n";
-	  print "<tr><td valign=\"top\">Description</td><td>".nl2br($groupart->desc)."</td></tr>";
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($groupart->desc).'</td></tr>';
 
 	  $gas = $groupart->liste_albums();
 	  print '<tr><td>Album(s)</td><td><ul>';
@@ -119,9 +119,9 @@ else
 	  
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr><td>Nom</td><td><input name="nom" size="40" value="'.$groupart->nom.'"></td></tr>';
-  print '<tr><td>Artiste/Groupe</td><td><select name="grar"><option value="'.ucfirst(strtolower(strtoupper($groupart->grar))).'">'.ucfirst(strtolower(strtoupper($groupart->grar))).'</option>';
-  print '<option value="'.$grar_opt.'">'.$grar_opt.'</option></select></td></tr>';
-	  print "<tr><td valign=\"top\">Description</td><td>";
+      print '<tr><td>Artiste/Groupe</td><td><select name="grar"><option value="'.ucfirst(strtolower(strtoupper($groupart->grar))).'">'.ucfirst(strtolower(strtoupper($groupart->grar))).'</option>';
+      print '<option value="'.$grar_opt.'">'.$grar_opt.'</option></select></td></tr>';
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $groupart->desc;
 	  print "</textarea></td></tr>";

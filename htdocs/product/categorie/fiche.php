@@ -74,7 +74,7 @@ if ($action == 'create')
   print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Titre</td><td><input name="titre" size="40" value=""></td></tr>';
   print '<tr><td>'.$langs->trans("Price").'</td><TD><input name="price" size="10" value=""></td></tr>';    
-  print "<tr><td valign=\"top\">Description</td><td>";
+  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
@@ -95,13 +95,13 @@ else
 	{ 
 	  print '<div class="titre">Fiche Album : '.$album->titre.'</div><br>';
       
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-	  print "<tr>";
-	  print "<td>".$langs->trans("Ref")."</td><td>$album->ref</td>\n";
-	  print "<td>Statut</td><td>$album->status</td></tr>\n";
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+	  print '<tr>';
+	  print '<td>'.$langs->trans("Ref")."</td><td>$album->ref</td>\n";
+	  print '<td>'.$langs->trans("Status").'</td><td>$album->status</td></tr>\n";
 	  print "<td>Titre</td><td>$album->titre</td>\n";
 	  print '<td>'.$langs->trans("Price").'</td><TD>'.price($album->price).'</td></tr>';    
-	  print '<tr><td valign="top">Description</td><td valign="top">'.nl2br($album->description)."</td>";
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td valign="top">'.nl2br($album->description)."</td>";
 
 	  $gas = $album->liste_groupart();
 	  print '<td valign="top">Artiste/Groupe</td><td><ul>';	      
@@ -123,9 +123,9 @@ else
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<tr>";
 	  print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$album->ref.'"></td></tr>';
-	  print '<td>Libellé</td><td><input name="titre" size="40" value="'.$album->titre.'"></td></tr>';
-	  print '<tr><td>'.$langs->trans("Price").'</td><TD><input name="price" size="10" value="'.$album->price.'"></td></tr>';    
-	  print "<tr><td valign=\"top\">Description</td><td>";
+	  print '<td>'.$langs->trans("Label").'</td><td><input name="titre" size="40" value="'.$album->titre.'"></td></tr>';
+	  print '<tr><td>'.$langs->trans("Price").'</td><td><input name="price" size="10" value="'.$album->price.'"></td></tr>';    
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $album->description;
 	  print "</textarea></td></tr>";

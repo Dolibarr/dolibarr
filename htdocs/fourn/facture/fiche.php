@@ -219,18 +219,18 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
 	}
     }
   print '</select></td>';
-  print "<td>Commentaires</td></tr>";
+  print '<td>'.$langs->trans("Comments").'</td></tr>';
 
   print '<tr><td>Numéro</td><td><input name="facnumber" type="text"></td>';
 
   print '<td rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="30" rows="6"></textarea></td></tr>';
   if ($_GET["action"] == 'copy')
     {
-      print '<tr><td>Libellé</td><td><input size="30" name="libelle" value="'.$fac_ori->libelle.'" type="text"></td></tr>';
+      print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="libelle" value="'.$fac_ori->libelle.'" type="text"></td></tr>';
     }
   else
     {
-      print '<tr><td>Libellé</td><td><input size="30" name="libelle" type="text"></td></tr>';
+      print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="libelle" type="text"></td></tr>';
     }
   print "<tr>".'<td>Date</td><td>';
   $html->select_date();
@@ -240,7 +240,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
   print "</table><br>";
 
   print '<table cellspacing="0" cellpadding="3" class="border" width="100%">';
-  print "<tr class=\"liste_titre\">".'<td>&nbsp;</td><td>Libellé</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Tx TVA</td></tr>';
+  print '<tr class="liste_titre"><td>&nbsp;</td><td>'.$langs->trans("Label").'</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Tx TVA</td></tr>';
 
   for ($i = 1 ; $i < 9 ; $i++)
     {
@@ -263,7 +263,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
     }
 
   print "</table>";
-  print '<p align="center"><input type="submit" value="Enregistrer"></p>';
+  print '<p align="center"><input type="submit" value="'.$langs->trans("Save").'"></p>';
   print "</form>";
   
 }
@@ -295,7 +295,7 @@ else
 	  print "<tr><td width=\"20%\">Société</td>";
       
 	  print '<td width="20%">'.stripslashes($fac->socnom).'</td>';
-	  print '<td width="60%" valign="top">Commentaires</tr>';
+	  print '<td width="60%" valign="top">'.$langs->trans("Comments").'</tr>';
       
 	  print "<tr>".'<td valign="top">Numéro</td><td valign="top">';
 	  print '<input name="facnumber" type="text" value="'.$fac->ref.'"></td>';
@@ -305,7 +305,7 @@ else
 	  print stripslashes($fac->note);
 	  print '</textarea></td></tr>';
 	  
-	  print "<tr>".'<td valign="top">Libellé</td><td>';
+	  print '<tr><td valign="top">'.$langs->trans("Label").'</td><td>';
 	  print '<input size="30" name="libelle" type="text" value="'.stripslashes($fac->libelle).'"></td></tr>';      
 	  print "<tr>".'<td>Montant HT</td>';
 	  print '<td valign="top">'.price($fac->total_ht).'</td></tr>';      
@@ -323,8 +323,8 @@ else
 	      $authorfullname=$author->fullname;
 	    }
 	  print "<tr><td>".$langs->trans("Author")."</td><td>$authorfullname</td></tr>";
-	  print "<tr><td>Statut</td><td>".$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
-	  print "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
+	  print '<tr><td>'.$langs->trans("Status").'</td><td>'.$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
+	  print "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"".$langs->trans("Save")."\"></td></tr>";
 	  print "</table>";
 	  print "</form>";
 	  
@@ -334,7 +334,7 @@ else
 	   */	  
 	  print "<p><form action=\"fiche.php?facid=$fac->id&amp;action=add_ligne\" method=\"post\">";
 	  print '<table class="noborder" cellspacing="0" cellpadding="2" width="100%">';
-	  print '<tr class="liste_titre"><td>Libellé</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Total HT</td>';
+	  print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Total HT</td>';
 	  print '<td align="center">Taux TVA</td>';
 	  print '<td align="center">TVA</td>';
 	  print '<td align="right">'.$langs->trans("TotalTTC").'</td><td>&nbsp;</td></tr>';
@@ -396,7 +396,7 @@ else
 	  print "<td align=\"right\"><a href=\"index.php?socid=$fac->socidp\">Autres factures</a></td>\n";
 	  print "</tr>";
 	  print "<tr><td>Date</td><td colspan=\"4\">".dolibarr_print_date($fac->datep,"%A %d %B %Y")."</td></tr>\n";
-	  print "<tr><td>Libellé</td><td colspan=\"4\">";
+	  print '<tr><td>'.$langs->trans("Label").'</td><td colspan="4">';
 	  print $fac->libelle;
 	  print "</td>";
 
@@ -408,14 +408,14 @@ else
 	      $authorfullname=$author->fullname;
 	    }
 	  print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"4\">$authorfullname</td>";
-	  print "<tr><td>Statut</td><td colspan=\"4\">".$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
+	  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="4">'.$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
 	  
 	  print "<tr>".'<td>&nbsp</td><td>'.$langs->trans("TotalHT").'</td><td align="right"><b>'.price($fac->total_ht)."</b></td>";
 	  print '<td align="right">TVA</td><td align="right">'.price($fac->total_tva)."</td></tr>";
 	  print "<tr>".'<td>&nbsp</td><td>'.$langs->trans("TotalTTC").'</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
 	  if (strlen($fac->note))
 	    {
-	      print "<tr>".'<td>Commentaires</td><td colspan="4">';
+	      print '<tr><td>'.$langs->trans("Comments").'</td><td colspan="4">';
 	      print nl2br(stripslashes($fac->note));
 	      print '</td></tr>';
 	    }
@@ -440,13 +440,13 @@ else
 	      echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 	      print "<tr class=\"liste_titre\">";
 	      print "<td>Date</td>";
-	      print "<td>Type</td>";
+	      print '<td>'.$langs->trans("Type").'</td>';
 
 	      if ($fac->statut == 1 && $fac->paye == 0 && $user->societe_id == 0)
 		{
 		  $tdsup=' colspan="2"';
 		}
-	      print "<td align=\"right\">Montant</TD><td$tdsup>&nbsp;</td>";
+	      print "<td align=\"right\">Montant</td><td$tdsup>&nbsp;</td>";
 	      print "</tr>\n";
 	      
 	      $var=True;
@@ -497,7 +497,7 @@ else
 	   *
 	   */	  
 	  print '<p><table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-	  print '<tr class="liste_titre"><td>Libellé</td><td align="center">P.U. HT</td><td align="center">Qantité</td><td align="center">Total HT</td>';
+	  print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td><td align="center">P.U. HT</td><td align="center">Qantité</td><td align="center">Total HT</td>';
 	  print '<td align="center">Taux TVA</td>';
 	  print '<td align="center">TVA</td>';
 	  print '<td align="right">'.$langs->trans("TotalTTC").'</td></tr>';

@@ -100,7 +100,7 @@ if ($_GET["facid"])
 	  $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
 	}
       print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-      print '<td>Statut</td><td align="center"><b>'.$facture->statut_libelle.'</b></td></tr>';
+      print '<td>'.$langs->trans("Status").'</td><td align="center"><b>'.$facture->statut_libelle.'</b></td></tr>';
 
 	  print '<tr><td>Date</td><td>'.strftime("%A %d %B %Y",$facture->date);
 	  if ($facture->fin_validite)

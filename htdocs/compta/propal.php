@@ -175,7 +175,7 @@ if ($_GET["propalid"])
       /*
        *
        */
-      print "<tr bgcolor=\"#f0f0f0\"><td>Statut :</td><td colspan=2 align=center><b>$obj->lst</b></td>";
+      print '<tr bgcolor="#f0f0f0"><td>'.$langs->trans("Status").' :</td><td colspan=2 align=center><b>'.$obj->lst.'</b></td>';
 
       print '</tr>';
 
@@ -469,7 +469,7 @@ if ($_GET["propalid"])
       print_liste_field_titre_new ("Société","propal.php","s.nom","&viewstatut=$viewstatut","",'',$sortfield);
       print_liste_field_titre_new ("Date","propal.php","p.datep","&viewstatut=$viewstatut","",'align="right" colspan="2"',$sortfield);
       print_liste_field_titre_new ($langs->trans("Price"),"propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
-      print_liste_field_titre_new ("Statut","propal.php","p.fk_statut","&viewstatut=$viewstatut","",'align="center"',$sortfield);
+      print_liste_field_titre_new ($langs->trans("Status"),"propal.php","p.fk_statut","&viewstatut=$viewstatut","",'align="center"',$sortfield);
       print "</tr>\n";
 
       while ($i < min($num, $limit))

@@ -73,7 +73,7 @@ if ($_GET["action"] == 'create')
   print '<tr><td>Société</td><td><a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
   
   print '<td valign="top" colspan="2">';
-  print "Commentaires</td></tr>";
+  print $langs->trans("Comments").'</td></tr>';
   
   print "<tr><td>Date</td><td>";
   print_date_select();

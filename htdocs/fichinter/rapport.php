@@ -95,25 +95,24 @@ if ( $db->query($sql) )
   print_barre_liste($title, $page, "rapport.php","&socid=$socid",$sortfield,$sortorder,'',$num);
 
   $i = 0;
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-  print "<TR class=\"liste_titre\">";
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+  print "<tr class=\"liste_titre\">";
   print '<td>Num</td>';
   if (empty($socid))
     print '<td>Société</td>';
-  print '<TD align="center">Description</TD>';
+  print '<td align="center">'.$langs->trans("Description").'</td>';
     
-  print '<TD align="center">Date</TD>';
-  print '<TD align="center">Durée</TD>';
-//  print '<TD align="center">Statut</TD><td>&nbsp;</td>';
-  print "</TR>\n";
+  print '<td align="center">Date</td>';
+  print '<td align="center">'.$langs->trans("Duration").'</td>';
+  print "</tr>\n";
   $var=True;
   $DureeTotal = 0;
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?id=$objp->fichid\">$objp->ref</a></TD>\n";
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?id=$objp->fichid\">$objp->ref</a></td>\n";
 
       if (empty($socid))
       {
@@ -122,32 +121,21 @@ if ( $db->query($sql) )
         print '<td><a href="rapport.php?socid='.$objp->idp.$filter.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
         print "<a href=\"../comm/fiche.php?socid=$objp->idp$filter\">$objp->nom</a></TD>\n";
       }
-      print '<TD>'.nl2br($objp->note).'</TD>';
-      print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-      print '<TD align="center">'.sprintf("%.1f",$objp->duree).'</TD>';
+      print '<td>'.nl2br($objp->note).'</td>';
+      print "<td>".strftime("%d %B %Y",$objp->dp)."</td>\n";
+      print '<td align="center">'.sprintf("%.1f",$objp->duree).'</td>';
       $DureeTotal += $objp->duree;
-/*      print '<TD align="center">'.$objp->fk_statut.'</TD>';
-
-      if ($user->societe_id == 0)
-	{
-	  print '<TD align="center"><a href="fiche.php3?socidp='.$objp->idp.'&action=create">[Fiche Inter]</A></td>';
-	}
-      else
-	{
-	  print "<td>&nbsp;</td>";
-	}
-  */    print "</TR>\n";
+      print "</tr>\n";
       
       $i++;
     }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
-  print "<br />Total $DureeTotal jour[s]";
+  print "<br />".$langs->trans("Total")." $DureeTotal jour[s]";
 }
 else
 {
-  print $db->error();
-  print "<p>$sql";
+  dolibarr_print_error($db);
 }
 $db->close();
 

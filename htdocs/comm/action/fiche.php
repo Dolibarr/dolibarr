@@ -332,7 +332,7 @@ if ($_GET["id"])
       print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
 
       print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
-      print '<tr><td width="20%">Type</td><td colspan="3">'.$act->type.'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
       print '<tr><td width="20%">Société</td>';
       print '<td width="30%"><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
       
@@ -362,7 +362,7 @@ if ($_GET["id"])
       print_titre ("Action commerciale");
       
       print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
-      print '<tr><td width="20%">Type</td><td colspan="3">'.$act->type.'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
       print '<tr><td width="20%">Société</td>';
       print '<td width="30%"><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
       

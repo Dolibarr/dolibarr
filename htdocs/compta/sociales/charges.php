@@ -85,7 +85,7 @@ if ($chid > 0)
 
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
 
-	  print "<tr><td>Type</td><td>$cha->type_libelle</td><td>Paiements</td></tr>";
+	  print "<tr><td>".$langs->trans("Type")."</td><td>$cha->type_libelle</td><td>Paiements</td></tr>";
 
 	  print "<tr><td>Période</td><td>".dolibarr_print_date($cha->periode,"%Y")."</td>";
       print '<td rowspan="5" valign="top">';
@@ -105,7 +105,7 @@ if ($chid > 0)
     	    $num = $db->num_rows();
     	    $i = 0; $total = 0;
     	    echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-    	    print '<tr class="liste_titre"><td>Date</td><td>Type</td>';
+    	    print '<tr class="liste_titre"><td>Date</td><td>'.$langs->trans("Type").'</td>';
     	    print "<td align=\"right\">Montant</TD><td>&nbsp;</td></tr>";
         
     	    $var=True;
@@ -143,19 +143,19 @@ if ($chid > 0)
 	  print "</tr>";
 
       if ($cha->paye==0) {
-          print '<tr><td>Libellé</td><td><input type="text" name="desc" size="40" value="'.stripslashes($cha->lib).'"></td></tr>';
+          print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="desc" size="40" value="'.stripslashes($cha->lib).'"></td></tr>';
     	  print "<tr><td>Date d'échéance</td><td><input type=\"text\" name=\"amount\" value=\"".strftime("%Y%m%d",$cha->date_ech)."\"></td></tr>";
     	  print "<tr><td>Montant TTC</td><td><b><input type=\"text\" name=\"amount\" value=\"$cha->amount\"></b></td></tr>";
         }
       else {
-          print '<tr><td>Libellé</td><td>'.$cha->lib.'</td></tr>';
+          print '<tr><td>'.$langs->trans("Label").'</td><td>'.$cha->lib.'</td></tr>';
     	  print "<tr><td>Date d'échéance</td><td>".dolibarr_print_date($cha->date_ech)."</td></tr>";
     	  print "<tr><td>Montant TTC</td><td><b>".price($cha->amount)."</b></td></tr>";
       }
 
 
-	  print "<tr><td>Statut</td><td>".$cha->getLibStatut()."</td></tr>";
-      print "</table>";
+	  print '<tr><td>'.$langs->trans("Status").'</td><td>'.$cha->getLibStatut().'</td></tr>';
+      print '</table>';
     
     
      print "</form>\n";

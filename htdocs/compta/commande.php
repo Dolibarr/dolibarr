@@ -157,7 +157,7 @@ if ($_GET["id"] > 0)
 	  if ($num)
 	    {
 	      print '<tr class="liste_titre">';
-	      print '<td width="54%">Description</td>';
+	      print '<td width="54%">'.$langs->trans("Description").'</td>';
 	      print '<td width="8%" align="center">Tva</td>';
 	      print '<td width="8%" align="center">Quantité</td>';
 	      print '<td width="8%" align="right">Remise</td>';

@@ -70,12 +70,12 @@ if ($action == 'create') {
   print_barre_liste("Comptes comptable",$page,"ligne.php");
   
 
-  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-  print '<TR class="liste_titre">';
-  print "<TD>Num&eacute;ro</TD><td>";
-  print_liste_field_titre("Libellé","ligne.php","label");
+  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print '<tr class="liste_titre">';
+  print "<td>Num&eacute;ro</TD><td>";
+  print_liste_field_titre($langs->trans("Label"),"ligne.php","label");
   print "</td><td>Montant</TD>";
-  print "</TR>\n";
+  print "</tr>\n";
     
 
   print '<form action="ligne.php" method="post">';

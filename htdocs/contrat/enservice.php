@@ -70,11 +70,11 @@ if ( $db->query($sql) )
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 
   print '<tr class="liste_titre"><td>';
-  print_liste_field_titre("Libellé","enservice.php", "p.label");
+  print_liste_field_titre($langs->trans("Label"),"enservice.php", "p.label");
   print "</td><td>";
   print_liste_field_titre("Société","enservice.php", "s.nom");
   print "</td>";
-  print "<td align=\"center\">Statut</td>";
+  print "<td align=\"center\">".$langs->trans("Status")."</td>";
   print "<td align=\"center\">";
   print_liste_field_titre("Date fin","enservice.php", "date_fin_validite");
   print '</td>';

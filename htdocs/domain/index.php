@@ -63,12 +63,12 @@ if ($result) {
 
   print "<form method=\"post\" action=\"index.php?viewall=$viewall&vline=$vline&account=$account\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-  print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-  print "<TR class=\"liste_titre\">";
-  print "<td>Date</td><td>Description</TD>";
+  print "<table class=\"border\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+  print "<tr class=\"liste_titre\">";
+  print '<td>Date</td><td>'.$langs->trans("Description").'</td>';
   print "<td align=\"right\">Montant</TD>";
   print "<td align=\"right\">Réduction</td>";
-  print "</TR>\n";
+  print "</tr>\n";
   
 
   $var=True;  

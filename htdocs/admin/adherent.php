@@ -232,13 +232,13 @@ function form_constantes($tableau){
   global $db,$bc;
   $form = new Form($db);
   print '<table class="noborder" cellpadding="3" cellspacing="0">';
-  print '<TR class="liste_titre">';
-  print '<TD>Description</TD>';
-  print '<TD>Valeur</TD>';
-  print '<TD>Type</TD>';
-  //print '<TD>Note</TD>';
-  print "<TD>Action</TD>";
-  print "</TR>\n";
+  print '<tr class="liste_titre">';
+  print '<td>'.$langs->trans("Description").'</td>';
+  print '<td>Valeur</td>';
+  print '<td>'.$langs->trans("Type").'</td>';
+  //print '<td>Note</td>';
+  print "<td>Action</td>";
+  print "</tr>\n";
   $var=True;
   
   foreach($tableau as $const){

@@ -233,7 +233,7 @@ if ($_GET["action"] == 'create')
       }
       print '</td></tr>';
             
-      print '<tr><td valign="top">Description</td>';
+      print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
       print "<td><textarea name=\"note\" wrap=\"soft\" cols=\"60\" rows=\"15\"></textarea>";
       print '</td></tr>';
       
@@ -308,7 +308,7 @@ if ($_GET["action"] == 'edit')
   print '</td></tr>';
 
 
-  print '<tr><td valign="top">Description</td>';
+  print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
   print '<td><textarea name="note" wrap="soft" cols="60" rows="15">';
   print $fichinter->note;
   print '</textarea>';
@@ -345,9 +345,9 @@ if ($_GET["id"])
       print '<tr><td>Société</td><td><a href="../comm/fiche.php?socid='.$fichinter->client->id.'">'.$fichinter->client->nom.'</a></td></tr>';
       print '<tr><td width="20%">Date</td><td>'.strftime("%A %d %B %Y",$fichinter->date).'</td></tr>';
       print '<tr><td>Numéro</td><td>'.$fichinter->ref.'</td></tr>';
-      print '<tr><td>Durée</td><td>'.$fichinter->duree.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$fichinter->duree.'</td></tr>';
       print '<tr><td valign="top">Projet</td><td>&nbsp;</td></tr>';
-      print '<tr><td valign="top">Description</td>';
+      print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
       print '<td colspan="3">';
       print nl2br($fichinter->note);
       print '</td></tr>';

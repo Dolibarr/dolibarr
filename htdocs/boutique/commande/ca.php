@@ -40,8 +40,8 @@ $offset = $limit * $page ;
 
 print_barre_liste("Liste des commandes", $page, "ca.php");
 
-print '<p><table border="0" cellspacing="0" cellpadding="4">';
-print '<tr class="liste_titre"><td>Description</td>';
+print '<table class="noborder" cellspacing="0" cellpadding="3">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td>';
 print '<td align="right">'.$langs->trans("LastName").'</td></tr>';
 
 $sql = "SELECT sum(t.value) as value";
@@ -57,11 +57,11 @@ if ( $db->query($sql) )
     {
       $objp = $db->fetch_object(0);
       $var=!$var;
-      print "<TR $bc[$var]>";
+      print "<tr $bc[$var]>";
       print '<td>Somme des commandes</td>';
       print '<td align="right">'.price($objp->value).'</td>';
 
-      print "</TR>\n";
+      print "</tr>\n";
       $i++;
     }
 
@@ -85,7 +85,7 @@ if ( $db->query($sql) )
     {
       $objp = $db->fetch_object(0);
       $var=!$var;
-      print "<TR $bc[$var]>";
+      print "<tr $bc[$var]>";
       print '<td>Somme des frais de port</td>';
       print '<td align="right">'.price($objp->value).'</td></tr>';
       $i++;

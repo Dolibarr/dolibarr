@@ -47,34 +47,34 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\"><td>";
+  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<tr class=\"liste_titre\"><td>";
   print_liste_field_titre("Sujet","index.php", "email_subject");
   print "</td>";
-  print '<td align="center">Statut</td>';
+  print '<td align="center">'.$langs->trans("Status").'</td>';
   print '<td align="center">Nb envois</td>';
-  print "</TR>\n";
+  print "</tr>\n";
   $var=True;
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
+      print "<tr $bc[$var]>";
 
       print '<td><a href="fiche.php?id='.$objp->rowid.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche"></a>&nbsp;';
 
-      print "<a href=\"fiche.php?id=$objp->rowid\">$objp->email_subject</a></TD>\n";
-      print '<TD align="center">'.$objp->status.'</td>';
-      print '<TD align="center">'.$objp->nbsent.'</td>';
-      print "</TR>\n";
+      print "<a href=\"fiche.php?id=$objp->rowid\">$objp->email_subject</a></td>\n";
+      print '<td align="center">'.$objp->status.'</td>';
+      print '<td align="center">'.$objp->nbsent.'</td>';
+      print "</tr>\n";
       $i++;
   }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 $db->close();

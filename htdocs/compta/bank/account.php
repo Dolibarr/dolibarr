@@ -217,7 +217,7 @@ if ($account > 0)
       print '<input type="hidden" name="account" value="' . $acct->id . '">';
     }
   print '<tr class="liste_titre">';
-  print '<td>Date Ope</td><td>Valeur</td><td>Type</td><td>Description</td>';
+  print '<td>Date Ope</td><td>Valeur</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td>';
   print '<td align="right">Débit</td><td align="right">Crédit</td><td align="right">Solde</td>';
   print '<td align="center">Relevé</td></tr>';
 
@@ -292,7 +292,7 @@ if ($account > 0)
       print "<select name=\"cat1\">$options</select>";
       print '</td></tr>';
       print '<tr>';
-      print '<td><small>YYYY MMDD</small></td><td colspan="2">&nbsp;</td><td>Description</td><td align=right>0000.00</td><td align=right>0000.00</td>';
+      print '<td><small>YYYY MMDD</small></td><td colspan="2">&nbsp;</td><td>'.$langs->trans("Description").'</td><td align=right>0000.00</td><td align=right>0000.00</td>';
       print '<td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td>';
       print '</tr>';
     }

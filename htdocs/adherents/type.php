@@ -103,7 +103,7 @@ if ($result)
   
   print '<tr class="liste_titre">';
   print "<td>Id</td>";
-  print "<td>Libellé</td><td>Cotisation ?</td><td>Vote ?</td><td>&nbsp;</td>";
+  print '<td>'.$langs->trans("Label").'</td><td>Cotisation ?</td><td>Vote ?</td><td>&nbsp;</td>';
   print "</tr>\n";
   
   $var=True;
@@ -157,7 +157,7 @@ if ($_GET["action"] == 'create') {
   
   print '<input type="hidden" name="action" value="add">';
 
-  print '<tr><td>Libellé</td><td><input type="text" name="libelle" size="40"></td></tr>';  
+  print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';  
 
   print '<tr><td>Soumis à cotisation</td><td>';
 
@@ -169,7 +169,7 @@ if ($_GET["action"] == 'create') {
   print '<select name="vote"><option value="yes">oui</option>';
   print '<option value="no">non</option></select>';
 
-  print '<tr><td valign="top">Commentaires :</td><td>';
+  print '<tr><td valign="top">'.$langs->trans("Comments").' :</td><td>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\"></textarea></td></tr>";
 
   print '<tr><td valign="top">Mail d\'accueil :</td><td>';
@@ -207,7 +207,7 @@ if ($_GET["rowid"] > 0 && $_GET["action"] == 'edit')
   print '<input type="hidden" name="action" value="update">';
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
-  print '<tr><td>Libellé</td><td><input type="text" name="libelle" size="40" value="'.$adht->libelle.'"></td></tr>';  
+  print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40" value="'.$adht->libelle.'"></td></tr>';  
 
   print '<tr><td>Soumis à cotisation</td><td>';
 
@@ -220,7 +220,7 @@ if ($_GET["rowid"] > 0 && $_GET["action"] == 'edit')
   $htmls->selectyesno("vote",$adht->vote);
   print '</tr>';
 
-  print '<tr><td valign="top">Commentaires :</td><td>';
+  print '<tr><td valign="top">'.$langs->trans("Comments").' :</td><td>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\">".$adht->commentaire."</textarea></td></tr>";
 
   print '<tr><td valign="top">Mail d\'accueil :</td><td>';

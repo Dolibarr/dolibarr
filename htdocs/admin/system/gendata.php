@@ -77,8 +77,8 @@ if ($action == 'product')
       $produit->type = 1;
       $produit->envente = 1;
       $produit->ref = time() . "$f";
-      $produit->libelle = "Libelle";
-      $produit->description = "Description";
+      $produit->libelle = $langs->trans("Label");
+      $produit->description = $langs->trans("Description");
       $produit->price = rand(1,10000);
       $produit->tva_tx = "19.6";
       $produit->create($user);

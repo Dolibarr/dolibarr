@@ -118,7 +118,7 @@ else
 
 	  print '<tr><td valign="top">Lieu</td><td valign="top">'.$lieuconcert->nom_url."</td>";
 
-	  print '<tr><td valign="top">Description</td><td valign="top">'.nl2br($concert->description)."</td>";
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td valign="top">'.nl2br($concert->description)."</td>";
 	  
 
 	  print "</table>";
@@ -134,9 +134,9 @@ else
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<tr>";
 	  print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$concert->ref.'"></td></tr>';
-	  print '<td>Libellé</td><td><input name="titre" size="40" value="'.$concert->titre.'"></td></tr>';
+	  print '<td>'.$langs->trans("Label").'</td><td><input name="titre" size="40" value="'.$concert->titre.'"></td></tr>';
 	  print '<tr><td>'.$langs->trans("Price").'</td><TD><input name="price" size="10" value="'.$concert->price.'"></td></tr>';    
-	  print "<tr><td valign=\"top\">Description</td><td>";
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $concert->description;
 	  print "</textarea></td></tr>";

@@ -359,11 +359,11 @@ if ($action == 'create') {
     $htmls = new Form($db);
     $adht = new AdherentType($db);
 
-    print '<tr><td width="15%">Type</td><td width="35%">';
+    print '<tr><td width="15%">'.$langs->trans("Type").'</td><td width="35%">';
     $htmls->select_array("type",  $adht->liste_array());
     print "</td>\n";
 
-    print '<td width="50%" valign="top">Commentaires :</td></tr>';
+    print '<td width="50%" valign="top">'.$langs->trans("Comments").' :</td></tr>';
 
     $morphys["phy"] = "Physique";
     $morphys["mor"] = "Morale";
@@ -512,12 +512,12 @@ if ($rowid > 0)
 
 
     print "<form action=\"fiche.php\" method=\"post\">\n";
-    print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+    print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
 
     print '<tr><td>Numero</td><td class="valeur">'.$adh->id.'&nbsp;</td>';
-    print '<td valign="top" width="50%">Commentaires</tr>';
+    print '<td valign="top" width="50%">'.$langs->trans("Comments").'</tr>';
 
-    print "<tr><td>Type</td><td class=\"valeur\">$adh->type</td>\n";
+    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adh->type."</td>\n";
 
     print '<td rowspan="'.(13+count($adh->array_options)).'" valign="top" width="50%">';
     print nl2br($adh->commentaire).'&nbsp;</td></tr>';

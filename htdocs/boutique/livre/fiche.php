@@ -184,7 +184,7 @@ if ($action == 'create')
   $htmls->select_array("editeurid",  $edits->liste_array(), $livre->editeurid);
   print "</td></tr>";
 
-  print "<tr><td valign=\"top\">Description</td><td>";
+  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
@@ -251,9 +251,9 @@ else
 	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	      print "<tr>";
 	      print '<td width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$livre->ref.'"></td>';
-	      print "<td valign=\"top\">Description</td></tr>";
+	      print '<td valign="top">'.$langs->trans("Description").'</td></tr>';
 
-	      print "<tr><td>Statut</td><td>$livre->status_text";
+	      print '<tr><td>'.$langs->trans("Status").'</td><td>'.$livre->status_text;
 	      if ($livre->status == 0)
 		{
 		  print '<br><a href="fiche.php?id='.$id.'&status=1&action=status">Changer</a>';
@@ -350,9 +350,9 @@ else
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
 	  print '<td width="15%">'.$langs->trans("Ref").'</td><td width="20%">'.$livre->ref.'</td>';
-	  print '<td width="50%" valign="top">Description</td>';
+	  print '<td width="50%" valign="top">'.$langs->trans("Description").'</td>';
 	  print '<td valign="top">Catégories</td></tr>';
-	  print "<tr><td>Statut</td><td>$livre->status_text";
+	  print '<tr><td>'.$langs->trans("Status").'</td><td>'.$livre->status_text;
 	  if ($livre->status == 0)
 	    {
 	      print '<br><a href="fiche.php?id='.$id.'&status=1&action=status">Changer</a>';

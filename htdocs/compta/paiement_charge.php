@@ -160,7 +160,7 @@ if ($_GET["action"] == 'create')
       print '<a href="charges.php?id='.$chid.'">'.$chid.'</a></td></tr>';
 	  print "<tr><td>Type charge :</td><td colspan=\"2\">$charge->type_libelle</td></tr>\n";
 	  print "<tr><td>Période :</td><td colspan=\"2\">$charge->periode</td></tr>\n";
-	  print "<tr><td>Libellé :</td><td colspan=\"2\">$charge->lib</td></tr>\n";
+	  print '<tr><td>'.$langs->trans("Label").' :</td><td colspan="2">'.$charge->lib."</td></tr>\n";
 	  print "<tr><td>Date échéance :</td><td colspan=\"2\">".dolibarr_print_date($charge->date_ech)."</td></tr>\n";
 
       print "<tr><td>Montant TTC:</td><td colspan=\"2\">".price($charge->amount)." euros</td></tr>";
@@ -180,7 +180,7 @@ if ($_GET["action"] == 'create')
 	  print "<tr><td>Date :</td><td>";
 	  print_date_select();
 	  print "</td>";
-	  print "<td>Commentaires</td></tr>";
+	  print '<td>'.$langs->trans("Comments").'</td></tr>';
 	  
 	  print "<tr><td>Type du paiement :</td><td><select name=\"paiementtype\">\n";
 	  

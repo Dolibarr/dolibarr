@@ -92,13 +92,13 @@ if ($_GET["action"] == 'create')
   print_titre("Nouvel entrepôt");
       
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr><td width="20%">Libellé</td><td><input name="libelle" size="40" value=""></td></tr>';
-  print '<tr><td width="20%" valign="top">Description</td><td>';
+  print '<tr><td width="20%">'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value=""></td></tr>';
+  print '<tr><td width="20%" valign="top">'.$langs->trans("Description").'</td><td>';
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
-  print '<tr><td width="20%">Statut</td><td colspan="2">';
+  print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="2">';
   print '<select name="statut">';
-  print '<option value="0" SELECTED>Fermé</option><option value="1">Ouvert</option>';
+  print '<option value="0" selected>Fermé</option><option value="1">Ouvert</option>';
   print '</td></tr>';
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
   print '</table>';
@@ -121,8 +121,8 @@ else
 	      print_fiche_titre('Fiche entrepot', $mesg);
       
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-	      print '<tr><td width="20%">Libellé</td><td>'.$entrepot->libelle.'</td>';
-	      print "<tr><td valign=\"top\">Description</td><td>".nl2br($entrepot->description)."</td></tr>";
+	      print '<tr><td width="20%">'.$langs->trans("Label").'</td><td>'.$entrepot->libelle.'</td>';
+	      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($entrepot->description).'</td></tr>';
 	      print '<tr><td width="20%">statut</td><td>'.$entrepot->statuts[$entrepot->statut].'</td></tr>';
 	      print '<tr><td valign="top">Nb de produits</td><td>';
 	      print $entrepot->nb_products();
@@ -140,16 +140,16 @@ else
 	  print '<input type="hidden" name="action" value="update">';
 	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-	  print '<tr><td width="20%">Libellé</td><td colspan="2"><input name="libelle" size="40" value="'.$entrepot->libelle.'"></td></tr>';
-	  print '<tr><td valign="top">Description</td><td colspan="2">';
+	  print '<tr><td width="20%">'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" value="'.$entrepot->libelle.'"></td></tr>';
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $entrepot->description;
 	  print "</textarea></td></tr>";
-	  print '<tr><td width="20%">Statut</td><td colspan="2">';
+	  print '<tr><td width="20%">'.$langs->trans("Status").'</td><td colspan="2">';
 	  print '<select name="statut">';
 	  if ($entrepot->statut == 0)
 	    {
-	      print '<option value="0" SELECTED>Fermé</option><option value="1">Ouvert</option>';
+	      print '<option value="0" selected>Fermé</option><option value="1">Ouvert</option>';
 	    }
 	  else
 	    {

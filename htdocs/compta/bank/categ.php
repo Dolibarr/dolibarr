@@ -55,7 +55,7 @@ print '<form method="post" action="categ.php">';
 print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
 print '<tr class="liste_titre">';
-print "<td>Num</td><td colspan=\"2\">Description</td>";
+print '<td>Num</td><td colspan="2">'.$langs->trans("Description").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label";

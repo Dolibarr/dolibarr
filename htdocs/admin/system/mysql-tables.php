@@ -38,7 +38,7 @@ print '<br>';
 print '<table class="noborder" cellpadding="4" cellspacing="1">';
 print '<tr class="liste_titre">';
 print '<td>Nom de la table</td>';
-print '<td colspan="2">Type</td>';
+print '<td colspan="2">'.$langs->trans("Type").'</td>';
 print '<td>Format lignes</td>';
 print '<td>Nb enr.</td>';
 print '<td>Avg_row_length</td>';

@@ -133,7 +133,7 @@ if ($action == 'create') {
   print_date_select();
   print '</td>';
   
-  print '<td rowspan="11" valign="top">Commentaires :<br>';
+  print '<td rowspan="11" valign="top">'.$langs->trans("Comments").' :<br>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
   print "<tr $bc[1]><td>Mode de paiement</td><td>\n";
   
@@ -208,7 +208,7 @@ if ($rowid > 0 && $action == 'edit')
   print strftime("%d %B %Y",$don->date);
   print "</td>";
   
-  print '<td rowspan="11" valign="top" width="50%">Commentaires :<br>';
+  print '<td rowspan="11" valign="top" width="50%">'.$langs->trans("Comments").' :<br>';
   print nl2br($don->commentaire).'</td></tr>';
 
   if ($don->statut == 1)
@@ -319,7 +319,7 @@ if ($rowid > 0 && $action == 'edit')
   print '<input type="hidden" name="action" value="commentaire">';
   print '<input type="hidden" name="rowid" value="'.$don->id.'">';
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-  print "<tr $bc[1]>".'<td align="center">Commentaires</td></tr>';
+  print "<tr $bc[1]>".'<td align="center">'.$langs->trans("Comments").'</td></tr>';
   print "<tr $bc[1]>".'<td><textarea cols="60" rows="20" name="commentaire">'.$don->commentaire.'</textarea></td></tr>';
   print "<tr $bc[1]>".'<td align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
   print '</table></form>';

@@ -97,13 +97,13 @@ print_liste_field_titre("Echéance","index.php","de");
 print '</td><td>';
 print_liste_field_titre("Période","index.php","periode");
 print '</td><td align="left">';
-print_liste_field_titre("Type","index.php","type");
+print_liste_field_titre($langs->trans("Type"),"index.php","type");
 print '</td><td align="left">';
-print_liste_field_titre("Libellé","index.php","s.libelle");
+print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle");
 print '</td><td align="right">';
 print_liste_field_titre("Montant","index.php","s.amount");
 print '</td><td align="center">';
-print_liste_field_titre("Statut","index.php","s.paye");
+print_liste_field_titre($langs->trans("Status"),"index.php","s.paye");
 print '</td><td>&nbsp;</td>';
 print "</tr>\n";
 

@@ -146,7 +146,7 @@ if ($id)
   	  $class = "warning";
 	  $statut= "<b>Ce contrat n'est pas en service</b>";
 	}
-      print "<tr><td>Statut</td><td colspan=\"3\" class=\"$class\">$statut</td></tr>\n";
+      print "<tr><td>".$langs->trans("Status")."</td><td colspan=\"3\" class=\"$class\">$statut</td></tr>\n";
       
       if ($_GET["request"] == 'miseenservice')
 	{

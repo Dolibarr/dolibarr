@@ -76,8 +76,8 @@ if ( $db->query($sql) )
   print_liste_field_titre_new ("Num","index.php","f.ref","","&amp;socid=$socid",'width="15%"',$sortfield);
   print_liste_field_titre_new ("Société","index.php","s.nom","","&amp;socid=$socid",'',$sortfield);
   print_liste_field_titre_new ("Date","index.php","f.datei","","&amp;socid=$socid",'',$sortfield);
-  print '<td align="center">Durée</td>';
-  print '<td align="center">Statut</td><td>&nbsp;</td>';
+  print '<td align="center">'.$langs->trans("Duration").'</td>';
+  print '<td align="center">'.$langs->trans("Status").'</td><td>&nbsp;</td>';
   print "</tr>\n";
   $var=True;
   while ($i < $num)

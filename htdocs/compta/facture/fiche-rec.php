@@ -152,8 +152,8 @@ if ($_GET["action"] == 'create')
 	  echo '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
 	  if ($num)
 	    {
-	      print "<TR class=\"liste_titre\">";
-	      print '<td width="54%">Description</td>';
+	      print "<tr class=\"liste_titre\">";
+	      print '<td width="54%">'.$langs->trans("Description").'</td>';
 	      print '<td width="8%" align="center">Tva</td>';
 	      print '<td width="8%" align="center">Quantité</td>';
 	      print '<td width="8%" align="right">Remise</td>';

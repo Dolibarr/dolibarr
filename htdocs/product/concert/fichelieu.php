@@ -68,7 +68,7 @@ if ($action == 'create')
   print "<tr>";
   print '<td>Nom</td><td><input name="nom" size="40" value=""></td></tr>';
   print '<td>Ville</td><td><input name="ville" size="40" value=""></td></tr>';
-  print "<tr><td valign=\"top\">Description</td><td>";
+  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
@@ -92,7 +92,7 @@ else
 	  print '<table border="1" width="50%" cellspacing="0" cellpadding="4">';
 	  print "<tr><td>Nom</td><td>$lieuconcert->nom</td></tr>\n";
 	  print "<tr><td>Ville</td><td>$lieuconcert->ville</td></tr>\n";
-	  print '<tr><td valign="top">Description</td><td valign="top">';
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td valign="top">';
 	  print nl2br($lieuconcert->description)."</td></tr>";
 
 	  print "</table>";
@@ -108,7 +108,7 @@ else
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr><td>Nom</td><td><input name="nom" size="40" value="'.$lieuconcert->nom.'"></td></tr>';
 	  print '<tr><td>Ville</td><td><input name="ville" size="40" value="'.$lieuconcert->ville.'"></td></tr>';
-	  print "<tr><td valign=\"top\">Description</td><td>";
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $lieuconcert->description;
 	  print "</textarea></td></tr>";

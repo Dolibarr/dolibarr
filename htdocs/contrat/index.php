@@ -81,11 +81,11 @@ if ( $db->query($sql) )
   print '<td>';
   print_liste_field_titre("Numéro","index.php", "c.rowid");
   print "</td><td>";
-  print_liste_field_titre("Libellé","index.php", "p.label");
+  print_liste_field_titre($langs->trans("Label"),"index.php", "p.label");
   print "</td><td>";
   print_liste_field_titre("Société","index.php", "s.nom");
   print '</td><td align="center">';
-  print_liste_field_titre("Statut","index.php", "c.enservice");
+  print_liste_field_titre($langs->trans("Status"),"index.php", "c.enservice");
   print '</td>';
   print '</td><td align="center">';
   print_liste_field_titre("Date Fin","index.php", "c.fin_validite");

@@ -154,7 +154,7 @@ if ($result)
   print "<td align=\"center\">";
   print_liste_field_titre("Département","prospects.php","s.fk_departement");
   print "</td><td>";
-  print_liste_field_titre("Statut","prospects.php","s.fk_stcomm");
+  print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm");
   print "</td><td>";
   print_liste_field_titre("Insertion","prospects.php","s.datec");
   print '</td><td colspan="4">&nbsp;</td>';

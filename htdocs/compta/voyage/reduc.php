@@ -27,11 +27,11 @@ llxHeader();
 
 print_titre ("Abonnement de réduction");
 
-print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-print "<TR class=\"liste_titre\">";
-print "<td>Date</td><td>Description</TD>";
-print "<td align=\"right\"><a href=\"reduc.php?vue=credit\">Montant</a></TD>";
-print "</TR>\n";
+print "<table class=\"border\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print "<tr class=\"liste_titre\">";
+print '<td>Date</td><td>'.$langs->trans("Description").'</td>';
+print "<td align=\"right\"><a href=\"reduc.php?vue=credit\">Montant</a></td>";
+print "</tr>\n";
 
 
 $sql = "SELECT b.rowid,".$db->pdate("b.date_debut")." as debut,".$db->pdate("b.date_fin")." as fin, b.amount, b.label ";

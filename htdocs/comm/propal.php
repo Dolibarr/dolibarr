@@ -302,7 +302,7 @@ if ($_GET["propalid"])
 	      $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
 	    }
 	  print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-	  print '<td>Statut</td><td align="center"><b>'.$obj->lst.'</b></td></tr>';
+	  print '<td>'.$langs->trans("Status").'</td><td align="center"><b>'.$obj->lst.'</b></td></tr>';
 
 	  print '<tr><td>Date</td><td colspan="3">'.strftime("%A %d %B %Y",$propal->date);
 	  if ($propal->fin_validite)
@@ -378,7 +378,7 @@ if ($_GET["propalid"])
 	      print "<option value=\"2\">Signée";
 	      print "<option value=\"3\">Non Signée";
 	      print '</select>';
-	      print '</td></tr><tr><td>Commentaires : <br><textarea cols="60" rows="6" wrap="soft" name="note">';
+	      print '</td></tr><tr><td>'.$langs->trans("Comments").' : <br><textarea cols="60" rows="6" wrap="soft" name="note">';
 	      print $obj->note;
 	      print '</textarea></td></tr><tr><td align="center"><input type="submit" value="Valider"></td>';
 	      print "</tr></table></form>";
@@ -897,7 +897,7 @@ if ($_GET["propalid"])
       print_liste_field_titre_new ($langs->trans("Date"),"propal.php","p.datep","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut", 'width="25%" align="right" colspan="2"',$sortfield);
       print_liste_field_titre_new ($langs->trans("Price"),"propal.php","p.price","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut", ' width="20%" align="right"',$sortfield);
 
-      print_liste_field_titre_new ("Statut","propal.php","p.fk_statut","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut",'width="10%" align="center"',$sortfield);
+      print_liste_field_titre_new ($langs->trans("Status"),"propal.php","p.fk_statut","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut",'width="10%" align="center"',$sortfield);
       print "</tr>\n";
       $var=True;
       

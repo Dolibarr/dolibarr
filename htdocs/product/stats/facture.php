@@ -49,7 +49,7 @@ if ($_GET["id"])
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
       print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
       print '<td><a href="fiche.php?id='.$product->id.'">'.$langs->trans("Statistics").'</a></td></tr>';
-      print "<tr><td>Libellé</td><td>$product->libelle</td>";
+      print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
       print '<td valign="top" rowspan="2">';
       print "Propositions commerciales : ".$product->count_propale($socid);
       print "<br>Proposé à <b>".$product->count_propale_client($socid)."</b> clients";

@@ -119,7 +119,7 @@ if ($result)
   print_barre_liste("Liste des factures fournisseurs", $page, "index.php",'', $sortfield, $sortorder,'',$num);
 
 
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
   print '<tr class="liste_titre">';
   print '<td>';
   print_liste_field_titre("Numéro","index.php","facnumber");
@@ -127,7 +127,7 @@ if ($result)
   print '<td>';
   print_liste_field_titre("Date","index.php","fac.datef");
   print '</td>';
-  print '<td>Libellé</TD>';
+  print '<td>'.$langs->trans("Label").'</td>';
   print '<td>';
   print_liste_field_titre("Société","index.php","s.nom");
   print '</td>';
@@ -138,7 +138,7 @@ if ($result)
   print_liste_field_titre("Montant TTC","index.php","fac.total_ttc");
   print '</td>';
   print '<td align="center">';
-  print_liste_field_titre("Statut","index.php","fk_statut,paye");
+  print_liste_field_titre($langs->trans("Status"),"index.php","fk_statut,paye");
   print '</td>';
   print "</tr>\n";
   $var=True;

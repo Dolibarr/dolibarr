@@ -57,11 +57,11 @@ if ($action == 'create') {
       $num = $db->num_rows();
     
       $i = 0;
-      print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-      print '<TR class="liste_titre">';
-      print "<TD>Num&eacute;ro</TD><td>";
-      print_liste_field_titre("Libellé","config.php","label");
-      print "</td></TR>\n";
+      print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+      print '<tr class="liste_titre">';
+      print "<td>Num&eacute;ro</td><td>";
+      print_liste_field_titre($langs->trans("Label"),"config.php","label");
+      print "</td></tr>\n";
     
       if ($num > 0) {
 	$var=True;
@@ -69,16 +69,16 @@ if ($action == 'create') {
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
 	
-	  print "<TR $bc[$var]>";
+	  print "<tr $bc[$var]>";
 	  print '<td>'.$objp->number.'</td>';
 	  print '<td>'.$objp->label.'</td>';
 
-	  print "</TR>\n";
+	  print "</tr>\n";
 	  $i++;
 	}
       }
     
-      print "</TABLE>";
+      print "</table>";
       $db->free();
     } else {
       print $db->error();

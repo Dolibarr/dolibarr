@@ -253,17 +253,17 @@ if ($_GET["action"] == 'create')
       print "Cette référence existe déjà";
     }
   print '</td></tr>';
-  print '<tr><td>Libellé</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
   print '<tr><td>Prix de vente</td><TD><input name="price" size="10" value="'.$product->price.'"></td></tr>';    
   print '<tr><td>Taux TVA</td><TD>';
 
 
   print $html->select_tva("tva_tx");
   print '</td></tr>';
-  print '<tr><td>Statut</td><td>';
+  print '<tr><td>'.$langs->trans("Status").'</td><td>';
   print '<select name="statut">';
   print '<option value="1">En vente</option>';
-  print '<option value="0" SELECTED>Hors Vente</option>';
+  print '<option value="0" selected>Hors Vente</option>';
   print '</td></tr>';
   
   if ($_GET["type"] == 0 && defined("MAIN_MODULE_STOCK"))
@@ -276,12 +276,12 @@ if ($_GET["action"] == 'create')
     {
       print '<input name="seuil_stock_alerte" type="hidden" value="0">';
     }
-  print '<tr><td valign="top">Description</td><td>';
+  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
   if ($_GET["type"] == 1)
     {
-      print "<tr>".'<td>Durée</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
+      print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
       print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
       print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
       print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
@@ -289,7 +289,7 @@ if ($_GET["action"] == 'create')
       print '</td></tr>';
     }
   
-  print "<tr>".'<td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
+  print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Create").'"></td></tr>';
   print '</table>';
   print '</form>';      
 }
@@ -360,7 +360,7 @@ else
 		  print "<b>Cet article n'est pas en vente</b>";
 		}
 	      print '</td></tr>';
-	      print '<tr><td>Libellé</td><td colspan="2">'.$product->libelle.'</td></tr>';
+	      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
 	      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
 	      if ($product->type == 0)
 		{
@@ -423,11 +423,11 @@ else
 		    }
 		  print '</td></tr>';
 		}
-	      print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
+	      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
 
 	      if ($product->type == 1)
 		{
-		  print "<tr>".'<td>Durée</td><TD>'.$product->duration_value.'&nbsp;';
+		  print '<tr><td>'.$langs->trans("Duration").'</td><TD>'.$product->duration_value.'&nbsp;';
 		  if ($product->duration_value > 1)
 		    {
 		      $plu = "s";
@@ -525,13 +525,13 @@ else
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>".'<td width="20%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
-	  print '<td>Libellé</td><td colspan="2"><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
+	  print '<td>'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
 	  print "<tr>".'<td>Taux TVA</td><td colspan="2">';
 	  $html = new Form($db);
 	  print $html->select_tva("tva_tx", $product->tva_tx);
 	  print '</td></tr>';
-	  print "<tr>".'<td>Statut</td><td colspan="2">';
+	  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
 	  print '<select name="statut">';
 	  if ($product->envente)
 	    {
@@ -554,14 +554,14 @@ else
 	    {
 	      print '<input name="seuil_stock_alerte" type="hidden" value="0">';
 	    }
-	  print "<tr>".'<td valign="top">Description</td><td colspan="2">';
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $product->description;
 	  print "</textarea></td></tr>";
 
 	  if ($product->type == 1)
 	    {
-	      print "<tr>".'<td>Durée</td><td colspan="2"><input name="duration_value" size="6" maxlength="5" value="'.$product->duration_value.'">';
+	      print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="6" maxlength="5" value="'.$product->duration_value.'">';
 	      switch ($product->duration_unit) 
 		{
 		case "d":

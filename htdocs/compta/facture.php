@@ -831,7 +831,7 @@ else
 	      $num = $db->num_rows();
 	      $i = 0; $total = 0;
 	      echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-	      print '<tr class="liste_titre"><td>Date</td><td>Type</td>';
+	      print '<tr class="liste_titre"><td>Date</td><td>'.$langs->trans("Type").'</td>';
 	      print "<td align=\"right\">Montant</TD><td>&nbsp;</td></tr>";
     
 	      $var=True;
@@ -881,7 +881,7 @@ else
 	  print '<td>'.MAIN_MONNAIE.'</td></tr>';
 	  print '<tr><td height=\"10\">Montant TTC</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
 	  print '<td>'.MAIN_MONNAIE.' TTC</td></tr>';
-	  print '<tr><td height=\"10\">Statut</td><td align="left" colspan="3">'.($fac->get_libstatut()).'</td></tr>';
+	  print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.($fac->get_libstatut()).'</td></tr>';
 	  if ($fac->note)
 	    {
 	      print '<tr><td colspan="4">Note : '.nl2br($fac->note)."</td></tr>";
@@ -919,7 +919,7 @@ else
 	      if ($num_lignes)
 		{
 		  print "<tr class=\"liste_titre\">";
-		  print '<td width="54%">Description</td>';
+		  print '<td width="54%">'.$langs->trans("Description").'</td>';
 		  print '<td width="8%" align="right">Tva</td>';
 		  print '<td width="12%" align="right">P.U. HT</td>';
 		  print '<td width="8%" align="right">Quantité</td>';
@@ -1031,7 +1031,7 @@ else
 
 	      print "<form action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
 	      print "<tr class=\"liste_titre\">";
-	      print '<td width="54%">Description</td>';
+	      print '<td width="54%">'.$langs->trans("Description").'</td>';
 	      print '<td width="8%" align="right">Tva</td>';
 	      print '<td width="12%" align="right">P.U. HT</TD>';
 	      print '<td width="8%" align="right">Quantité</td>';
@@ -1454,7 +1454,7 @@ else
 	  print '</td><td align="right">';
 	  print_liste_field_titre("Reçu",$_SERVER["PHP_SELF"],"am","","&amp;socidp=$socidp");
 	  print '</td><td align="center">';
-	  print_liste_field_titre("Statut",$_SERVER["PHP_SELF"],"fk_statut,paye","","&amp;socidp=$socidp");
+	  print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye","","&amp;socidp=$socidp");
 	  print '</td>';
 	  print "</tr>\n";
       

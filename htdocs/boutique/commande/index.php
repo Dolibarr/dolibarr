@@ -55,27 +55,23 @@ if ( $db->query($sql) )
   print "<tr class=\"liste_titre\"><td>Numéro</td><td>".$langs->trans("Date")."</td><td>";
   print_liste_field_titre("Client","commande.php", "customers_name");
   print '</td><td align="right">'.$langs->trans("Total").'</td>';
-  //  print '<td align="center">Statut</td>';
-  //  print '<td></td>';
-  print "</TR>\n";
+  print "</tr>\n";
   $var=True;
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
+      print "<tr $bc[$var]>";
 
       print '<td><a href="fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche">&nbsp;';
       print $objp->orders_id ."</a></td><td>";
       print strftime("%d %B %Y",$objp->date_purchased).'</td>';
-      print '<TD><a href="../client/fiche.php?id='.$objp->customers_id.'">'.$objp->customers_name."</a></TD>\n";
+      print '<td><a href="../client/fiche.php?id='.$objp->customers_id.'">'.$objp->customers_name."</a></TD>\n";
       print '<td align="right">'.price($objp->value).'</td>';
-      //      print '<td align="center">'.$objp->orders_status.'</td>';
-      //  print '<td>'.$objp->orders_date_finished.'</td>';
-      print "</TR>\n";
+      print "</tr>\n";
       $i++;
     }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else

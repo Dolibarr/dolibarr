@@ -118,7 +118,7 @@ if ($action == 'create')
       $html->select_date();
       print "</td>";
 
-      print "<td>Commentaires :</td></tr>";
+      print '<td>'.$langs->trans("Comments").' :</td></tr>';
 
       print "<input type=\"hidden\" name=\"author\" value=\"$author\">\n";
 
@@ -169,7 +169,7 @@ if ($action == 'create')
 
       print "<tr><td valign=\"top\">Reste à payer :</td><td><b>".price($total - $sumpayed)."</b> euros TTC</td></tr>\n";
       print "<tr><td valign=\"top\">Montant :</td><td><input name=\"amount\" type=\"text\"></td></tr>\n";
-      print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer"></td></tr>';
+      print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
       print "</form>\n";
       print "</table>\n";
 
@@ -208,25 +208,25 @@ if ($action == '') {
 
       print_barre_liste("Paiements", $page, "paiement.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-      print '<TR class="liste_titre">';
+      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+      print '<tr class="liste_titre">';
       print "<td>Facture</td>";
       print "<td>Société</td>";
       print "<td>Date</td>";
-      print "<td>Type</TD>";
-      print '<td align="right">Montant</TD>';
+      print '<td>'.$langs->trans("Type").'</td>';
+      print '<td align="right">Montant</td>';
       print "<td>&nbsp;</td></tr>";
     
       while ($i < min($num,$limit))
 	{
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<TD><a href=\"fiche.php?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
+	  print "<tr $bc[$var]>";
+	  print "<td><a href=\"fiche.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
 	  print '<td>'.$objp->nom.'</td>';
-	  print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-	  print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
-	  print '<TD align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';	
+	  print "<td>".strftime("%d %B %Y",$objp->dp)."</td>\n";
+	  print "<td>$objp->paiement_type $objp->num_paiement</TD>\n";
+	  print '<td align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';	
 	  print "</tr>";
 	  $i++;
 	}

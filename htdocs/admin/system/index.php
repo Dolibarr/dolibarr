@@ -89,7 +89,7 @@ if ($result)
   $row = $db->fetch_row();
 }
 print "<tr $bc[0]><td>Version</td><td>" . $row[1] . "</td></tr>\n";
-print "<tr $bc[1]><td width=\"240\">Type</td><td>" . $conf->db->type . "</td></tr>\n";
+print "<tr $bc[1]><td width=\"240\">".$langs->trans("Type")."</td><td>" . $conf->db->type . "</td></tr>\n";
 print "<tr $bc[0]><td>Host</td><td>" . $conf->db->host . "</td></tr>\n";
 print "<tr $bc[1]><td>User</td><td>" . $conf->db->user . "&nbsp;</td></tr>\n";
 print "<tr $bc[0]><td>Pass</td><td>" . $conf->db->pass . "&nbsp;</td></tr>\n";

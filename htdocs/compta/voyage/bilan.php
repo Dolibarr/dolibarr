@@ -95,12 +95,12 @@ for ($j = 0 ; $j < sizeof($cartes) ; $j++) {
   $reduc = new Reduc($db);
   $reduc->fetch($cartes[$j]);
 
-  print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-  print "<TR>";
-  print '<td colspan="2">Description</TD>';
-  print '<td align="right">Montant</TD>';
-  print '<td>&nbsp;</TD>';
-  print "</TR>\n";
+  print "<table class=\border\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+  print "<tr>";
+  print '<td colspan="2">'.$langs->trans("Description").'</td>';
+  print '<td align="right">Montant</td>';
+  print '<td>&nbsp;</td>';
+  print "</tr>\n";
 
   print '<tr><td colspan="2">'.$reduc->label.'</td><td align="right">'.$reduc->price.'</td>';
   print '<td>&nbsp;</TD></tr>';
@@ -114,11 +114,11 @@ for ($j = 0 ; $j < sizeof($cartes) ; $j++) {
   $result = $db->query($sql);
   if ($result) {
 
-    print "<TR class=\"liste_titre\">";
-    print "<td>Date</td><td>Description</TD>";
-    print "<td align=\"right\">Montant</TD>";
+    print "<tr class=\"liste_titre\">";
+    print '<td>Date</td><td>'.$langs->trans("Description").'</td>';
+    print "<td align=\"right\">Montant</td>";
     print "<td align=\"right\">Réduction</td>";
-    print "</TR>\n";
+    print "</tr>\n";
   
 
     $var=True;  

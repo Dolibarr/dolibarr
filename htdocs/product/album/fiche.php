@@ -76,8 +76,8 @@ if ($action == 'create')
   print "<tr>";
   print '<td>'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Titre</td><td><input name="titre" size="40" value=""></td></tr>';
-  print '<tr><td>'.$langs->trans("Price").'</td><TD><input name="price" size="10" value=""></td></tr>';    
-  print "<tr><td valign=\"top\">Description</td><td>";
+  print '<tr><td>'.$langs->trans("Price").'</td><td><input name="price" size="10" value=""></td></tr>';    
+  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
@@ -105,9 +105,9 @@ else
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
 	  print '<td width="20%">'.$langs->trans("Ref").'</td><td width="30%">'.$album->ref.'</td>';
-	  print '<td width="50%" valign="top">Description</td></tr>';
+	  print '<td width="50%" valign="top">'.$langs->trans("Description").'</td></tr>';
 
-	  print "<tr><td>Statut</td><td>$album->status</td>\n";
+	  print '<tr><td>'.$langs->trans("Status")."</td><td>$album->status</td>\n";
 	  print '<td rowspan="6" valign="top">'.nl2br($album->description)."</td>";
 	  print "<tr><td>Titre</td><td>$album->titre</td></tr>\n";
 	  print "<tr><td>Annee</td><td>$album->annee</td></tr>\n";
@@ -133,7 +133,7 @@ else
 	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	      print "<tr>";
 	      print '<td width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$album->ref.'"></td>';
-	      print "<td valign=\"top\">Description</td></tr>";
+	      print '<td valign="top">'.$langs->trans("Description").'</td></tr>';
 
 	      print '<td>Titre</td><td><input name="titre" size="40" value="'.$album->titre.'"></td>';
 	      print '<td valign="top" width="50%" rowspan="3"><textarea name="desc" rows="8" cols="50">';

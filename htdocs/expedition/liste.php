@@ -94,7 +94,7 @@ if ( $db->query($sql) )
   
   print_liste_field_titre_new ("Date","liste.php","e.date_expedition","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
   
-  print_liste_field_titre_new ("Statut","liste.php","e.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
+  print_liste_field_titre_new ($langs->trans("Status"),"liste.php","e.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
   print "</tr>\n";
   $var=True;
   

@@ -165,10 +165,10 @@ if ($_GET["action"] == 'create')
 	  
 	  print "<tr><td>Date :</td><td>";
 	  print_date_select();
-	  print "</td>";
-	  print "<td>Commentaires</td></tr>";
+	  print '</td>';
+	  print '<td>'.$langs->trans("Comments").'</td></tr>';
 	  
-	  print "<tr><td>Type :</td><td><select name=\"paiementid\">\n";
+	  print '<tr><td>'.$langs->trans("Type").' :</td><td><select name="paiementid">";
 	  
 	  $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY id";
 	  

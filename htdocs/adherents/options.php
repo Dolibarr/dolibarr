@@ -92,9 +92,9 @@ llxHeader();
       print "<table class=\"noborder\" cellspacing=\"0\" cellpadding=\"3\">";
       
       print '<tr class="liste_titre">';
-      print "<td>Libelle</td>";
+      print '<td>'.$langs->trans("Label").'</td>';
       print "<td>Nom de l'attribut</td>";
-      print "<td>Type</td><td width=\"80\">&nbsp;</td>";
+      print '<td>'.$langs->trans("Type").'</td><td width="80">&nbsp;</td>';
       print "</tr>\n";
       
       $var=True;
@@ -104,7 +104,7 @@ llxHeader();
           print "<tr $bc[$var]>";
           print "<td>".$adho->attribute_label[$key]."&nbsp;</td>\n";
           print "<td>$key</td>\n";
-          print "<td>$value</TD>\n";
+          print "<td>$value</td>\n";
           print "<td align=\"center\"><a href=\"options.php?action=edit&attrname=$key\">".img_edit()."</a>";
           print "&nbsp; <a href=\"options.php?action=delete&attrname=$key\">".img_delete()."</a></td>\n";
           print "</tr>";
@@ -139,9 +139,9 @@ if ($_GET["action"] == 'create') {
   
   print '<input type="hidden" name="action" value="add">';
 
-  print '<tr><td>Libellé</td><td class="valeur"><input type="text" name="label" size="40"></td></tr>';  
+  print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur"><input type="text" name="label" size="40"></td></tr>';  
   print '<tr><td>Nom de l\'attribut (pas d\'espace et uniquement des carateres alphanumeriques)</td><td class="valeur"><input type="text" name="attrname" size="40"></td></tr>';  
-  print '<tr><td>Type</td><td class="valeur">';
+  print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">';
   $form->select_array('type',array('varchar'=>'chaine',
 				   'text'=>'texte',
 				   'int'=>'entier',
@@ -176,10 +176,10 @@ if ($_GET["attrname"] && $_GET["action"] == 'edit')
   print '<input type="hidden" name="action" value="update">';
   print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
 
-  print '<tr><td>Libellé</td><td class="valeur"><input type="text" name="label" size="40" value="'.$adho->attribute_label[$_GET["attrname"]].'"></td></tr>';  
+  print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur"><input type="text" name="label" size="40" value="'.$adho->attribute_label[$_GET["attrname"]].'"></td></tr>';  
   print '<tr><td>Nom de l\'attribut</td><td class="valeur">'.$_GET["attrname"].'&nbsp;</td></tr>';
   list($type,$size)=preg_split('/\(|\)/',$adho->attribute_name[$_GET["attrname"]]);
-  print '<tr><td>Type</td><td class="valeur">';
+  print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">';
   $form->select_array('type',array('varchar'=>'chaine',
 				   'text'=>'texte',
 				   'int'=>'entier',

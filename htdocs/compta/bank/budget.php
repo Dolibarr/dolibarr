@@ -42,7 +42,7 @@ if ($_GET["bid"] == 0)
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
   print "<tr class=\"liste_titre\">";
-  echo '<td>Description</TD><td align="center">Nb</td><td align="right">'.$langs->trans("Total").'</td><td align="right">Moyenne</td>';
+  print '<td>'.$langs->trans("Description").'</td><td align="center">Nb</td><td align="right">'.$langs->trans("Total").'</td><td align="right">Moyenne</td>';
   print "</tr>\n";
 
   $sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
@@ -100,7 +100,7 @@ else
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
   print "<tr class=\"liste_titre\">";
-  echo '<td align="right">Date</td><td width="60%">Description</td><td align="right">Montant</td><td>&nbsp;</td>';
+  print '<td align="right">Date</td><td width="60%">'.$langs->trans("Description").'</td><td align="right">Montant</td><td>&nbsp;</td>';
   print "</tr>\n";
 
   $sql = "SELECT d.amount, d.label, ".$db->pdate("d.dateo")." as do, d.rowid";

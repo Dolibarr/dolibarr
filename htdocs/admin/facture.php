@@ -350,7 +350,7 @@ print '<table class="noborder" cellpadding="2" cellspacing="0" width=\"100%\">';
 print '<form action="facture.php" method="post">';
 print '<input type="hidden" name="action" value="settvaoption">';
 print '<tr class="liste_titre">';
-print '<td>Option</td><td>Description</td>';
+print '<td>'.$langs->trans("Option").'</td><td>'.$langs->trans("Description").'</td>';
 print '<td align="right"><input type="submit" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 $var=True;

@@ -125,7 +125,7 @@ if ($socid > 0)
     print '<tr><td>Siret</td><td>'.$societe->siret.'</td>';
     print '<td>Capital</td><td>'.$societe->capital.'</td></tr>';
 
-    print "<tr><td>Type</td><td> $societe->typent</td><td>Effectif</td><td>$societe->effectif</td></tr>";
+    print "<tr><td>".$langs->trans("Type")."</td><td> $societe->typent</td><td>Effectif</td><td>$societe->effectif</td></tr>";
 
     if ($societe->url)
       {
@@ -138,7 +138,7 @@ if ($socid > 0)
       }
 
     print "<tr><td>Forme juridique</td><td colspan=\"3\">$societe->forme_juridique</td></tr>";
-    print "<tr><td>Statut</td><td colspan=\"2\">$societe->statut_commercial</td>";
+    print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">'.$societe->statut_commercial.'</td>';
     print '<td> ';
     print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=-1&amp;action=cstc">';
     print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm-1.png" border="0" alt="Ne pas contacter" title="Ne pas contacter">';

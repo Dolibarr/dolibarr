@@ -48,10 +48,10 @@ if ($rowid > 0)
 
   print_titre("Fiche adhérent de $adh->prenom $adh->nom");
 
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+  print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
 
-  print "<tr><td>Type</td><td class=\"valeur\">$adh->type</td>\n";
-  print '<td valign="top" width="50%">Commentaires</tr>';
+  print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adh->type."</td>\n";
+  print '<td valign="top" width="50%">'.$langs->trans("Comments").'</tr>';
 
   print '<tr><td>Personne</td><td class="valeur">'.$adh->morphy.'&nbsp;</td>';
 

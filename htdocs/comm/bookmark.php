@@ -85,7 +85,7 @@ if ( $db->query($sql) )
   print "<td align=\"center\"><a href=\"index.php?sortfield=idp&sortorder=$sortorder&begin=$begin\">Id</a></td>";
   print "<td><a href=\"index.php?sortfield=lower(s.nom)&sortorder=$sortorder&begin=$begin\">Societe</a></td>";
 
-  print "<td align=\"center\">Statut</td>";
+  print '<td align="center">'.$langs->trans("Status").'</td>';
   print "<td>".$langs->trans("Author")."</td>";
   print "<td>".$langs->trans("Date")."</td>";
 

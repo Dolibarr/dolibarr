@@ -166,10 +166,10 @@ if (isset($user->login)){
     print '</table>';
   }
 
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+  print '<table class="border" cellspacing="0" width="100%" cellpadding="3">';
 
-  print "<tr><td>Type</td><td class=\"valeur\">$adh->type</td>";
-  print '<td valign="top" width="50%">Commentaires</td></tr>';
+  print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adh->type.'</td>';
+  print '<td valign="top" width="50%">'.$langs->trans("Comments").'</td></tr>';
 
   print '<tr><td>Personne</td><td class="valeur">'.$adh->morphy.'&nbsp;</td>';
   print '<td rowspan="15" valign="top" width="50%">';
@@ -213,11 +213,11 @@ if (isset($user->login)){
   $htmls = new Form($db);
 
 
-  print "<tr><td>Type</td><td>";
+  print '<tr><td>'.$langs->trans("Type").'</td><td>';
   $htmls->select_array("type",  $adht->liste_array(), $adh->typeid);
   print "</td>";
 
-  print '<td valign="top" width="50%">Commentaires</td></tr>';
+  print '<td valign="top" width="50%">'.$langs->trans("Comments").'</td></tr>';
 
   $morphys["phy"] = "Physique";
   $morphys["mor"] = "Morale";

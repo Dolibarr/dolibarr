@@ -87,7 +87,7 @@ print '<tr><td>Serveur LDAP</td><td>'.LDAP_SERVER_HOST.'</td></tr>';
 
 print '<tr><td>DN</td><td>'.LDAP_SERVER_DN.'</td></tr>';
 print '<tr><td>Pass</td><td>'.LDAP_SERVER_PASS.'</td></tr>';
-print '<tr><td>Type</td><td>'.LDAP_SERVER_TYPE.'</td></tr>';
+print '<tr><td>'.$langs->trans("Type").'</td><td>'.LDAP_SERVER_TYPE.'</td></tr>';
 
 print '</table>';
 

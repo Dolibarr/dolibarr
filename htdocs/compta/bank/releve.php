@@ -159,7 +159,7 @@ else
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
   print "<tr class=\"liste_titre\">";
-  print '<td>Date Ope</td><td>Valeur</td><td>Type</td><td width="30%">Description</td>';
+  print '<td>Date Ope</td><td>Valeur</td><td>'.$langs->trans("Type").'</td><td width="30%">'.$langs->trans("Description").'</td>';
   print '<td align="right">Debit</td>';
   print '<td align="right">Credit</td>';
   print '<td align="right">Solde</td>';

@@ -60,7 +60,7 @@ function propals ($db, $year, $month) {
       print "<td>".$langs->trans("Ref")."</td>";
       print "<td align=\"right\">Date</td>";
       print "<td align=\"right\">".$langs->trans("Price")."</td>";
-      print "<td align=\"center\">Statut</td>";
+      print "<td align=\"center\">".$langs->trans("Status")."</td>";
       print "</tr>\n";
       $var=True;
     }

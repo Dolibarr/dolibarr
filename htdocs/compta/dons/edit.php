@@ -96,10 +96,10 @@ if ($rowid)
   print_date_select($don->date);
   print "</td>";
   
-  print '<td rowspan="13" valign="top">Commentaires :<br>';
+  print '<td rowspan="13" valign="top">'.$langs->trans("Comments").' :<br>';
   print '<textarea name="comment" wrap="soft" cols="40" rows="15">'.$don->commentaire.'</textarea></td></tr>';
 
-  print "<tr><td>Statut du don</td><td>";
+  print '<tr><td>'.$langs->trans("Status").'</td><td>';
 
   $listst[0] = "Promesse à valider";
   $listst[1] = "Promesse validée";

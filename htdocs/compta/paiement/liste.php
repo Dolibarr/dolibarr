@@ -68,21 +68,21 @@ if ($result)
   print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
   print '<td>Date</td><td>';
-  print_liste_field_titre("Type","liste.php","c.libelle","","");
+  print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","","");
   print '</td><td align="right">Montant</TD>';
   print "<td>&nbsp;</td>";
-  print "</TR>\n";
+  print "</tr>\n";
   
   while ($i < min($num,$limit))
     {
       $objp = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
+      print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->rowid.'">';
       print img_file();
-      print "</a>&nbsp;".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-      print "<td>$objp->paiement_type $objp->num_paiement</TD>\n";
-      print '<td align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';	
+      print "</a>&nbsp;".strftime("%d %B %Y",$objp->dp)."</td>\n";
+      print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
+      print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';	
       print "</tr>";
       $i++;
     }

@@ -155,11 +155,11 @@ print '<input type="hidden" name="action" value="add">';
 $htmls = new Form($db);
 $adht = new AdherentType($db);
 
-print '<tr><td width="15%">Type</td><td width="35%">';
+print '<tr><td width="15%">'.$langs->trans("Type").'</td><td width="35%">';
 $htmls->select_array("type",  $adht->liste_array());
 print "</td>\n";
 
-print '<td width="50%" valign="top">Commentaires :</td></tr>';
+print '<td width="50%" valign="top">'.$langs->trans("Comments").' :</td></tr>';
 
 $morphys["phy"] = "Physique";
 $morphys["mor"] = "Morale";

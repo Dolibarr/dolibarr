@@ -179,7 +179,7 @@ if ($_POST["action"] == 'create')
       if ($num)
 	{
 	  print '<tr class="liste_titre">';
-	  print '<td width="54%">Description</td>';
+	  print '<td width="54%">'.$langs->trans("Description").'</td>';
 	  print '<td align="center">Quan. commandée</td>';
 	  print '<td align="center">Quan. livrée</td>';
 	  print '<td align="center">Quan. à livrer</td>';
@@ -369,7 +369,7 @@ else
 	      if ($num)
 		{
 		  print '<tr class="liste_titre">';
-		  print '<td width="54%">Description</td>';
+		  print '<td width="54%">'.$langs->trans("Description").'</td>';
 		  print '<td align="center">Quan. commandée</td>';
 		  print '<td align="center">Quan. livrée</td>';
 		  print "</tr>\n";
@@ -450,7 +450,7 @@ else
 	      {
 		print '<br><table class="liste" cellpadding="3" width="100%"><tr>';
 		print '<tr class="liste_titre">';
-		print '<td width="54%">Description</td>';
+		print '<td width="54%">'.$langs->trans("Description").'</td>';
 		print '<td align="center">Quan. livrée</td>';
 		print '<td align="center">Expédition</td>';
 		

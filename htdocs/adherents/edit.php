@@ -137,11 +137,11 @@ if ($rowid)
   $htmls = new Form($db);
 
 
-  print "<tr><td>Type</td><td>";
+  print '<tr><td>'.$langs->trans("Type").'</td><td>';
   $htmls->select_array("type",  $adht->liste_array(), $adh->typeid);
   print "</td>";
 
-  print '<td valign="top" width="50%">Commentaires</td></tr>';
+  print '<td valign="top" width="50%">'.$langs->trans("Comments").'</td></tr>';
 
   $morphys["phy"] = "Physique";
   $morphys["mor"] = "Morale";
