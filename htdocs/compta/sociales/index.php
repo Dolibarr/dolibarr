@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/*!	\file htdocs/compta/sociales/index.php
+		\ingroup    compta
+		\brief      Ecran des charges sociales
+		\version    $Revision$
+*/
+
+
 require("./pre.inc.php");
 
 $user->getrights('facture');
@@ -36,7 +44,7 @@ llxHeader();
  * Ajout d'une charge sociale
  */
 
-if ($action == 'add')
+if ($_POST["action"] == 'add')
 {
   if (! $_POST["date"] || ! $_POST["periode"] || ! $_POST["amount"]) {
     $mesg="<div class=\"error\">Erreur: Tous les champs date et montant doivent etre renseignés avec une valeur non vide.</div>";
@@ -48,7 +56,7 @@ if ($action == 'add')
     
       if (! $db->query($sql) )
         {
-          print $db->error();
+          dolibarr_print_error($db);
         }
       else {
         $mesg="<div class=\"ok\">La charge a été ajoutée.</div>";
@@ -66,7 +74,7 @@ if ($_GET["action"] == 'del')
 
   if (! $db->query($sql) )
     {
-      print $db->error();
+          dolibarr_print_error($db);
     }
 }
 
@@ -80,20 +88,83 @@ $year=$_GET["year"];
 $filtre=$_GET["filtre"];
 //if (! $year) { $year=date("Y", time()); }
 
-print_fiche_titre("Charges sociales",($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> Année $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
+print_fiche_titre("Charges sociales",($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
 print "<br>\n";
 
 if ($mesg) {
     print "$mesg<br>";
 }
 
-print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print "<table class=\"noborder\" width=\"100%\">";
+
+/*
+ * Forumalaire d'ajout d'une charge
+ *
+ */
+if ($user->rights->compta->charges->creer) {
+    $var = !$var;
+
+    print "<tr class=\"liste_titre\">";
+    print '<td>';
+    print '&nbsp;';
+    print '</td><td align="left">';
+    print $langs->trans("DateDue");
+    print '</td><td align="left">';
+    print $langs->trans("Period");
+    print '</td><td align="left">';
+    print $langs->trans("Type");
+    print '</td><td align="left">';
+    print $langs->trans("Label");
+    print '</td><td align="right">';
+    print $langs->trans("Amount");
+    print '</td><td align="center">';
+    print '&nbsp;';
+    print '</td>';
+    print "</tr>\n";
+
+    print '<form method="post" action="index.php">';
+    print '<tr '.$bc[$var].' valign="top">';
+    print '<input type="hidden" name="action" value="add">';
+    print '<td>&nbsp;</td>';
+    print '<td><input type="text" size="8" name="date"><br>YYYYMMDD</td>';
+    print '<td><input type="text" size="8" name="periode"><br>YYYYMMDD</td>';
+    
+    print '<td align="left"><select name="type">';
+    
+    $sql = "SELECT c.id, c.libelle as type FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+    $sql .= " ORDER BY lower(c.libelle) ASC";
+    
+    if ( $db->query($sql) )
+    {
+      $num = $db->num_rows();
+      $i = 0;
+    
+      while ($i < $num)
+        {
+          $obj = $db->fetch_object( $i);
+          print '<option value="'.$obj->id.'">'.$obj->type;
+          $i++;
+        }
+    }
+    print '</select>';
+    print '</td>';
+    print '<td align="left"><input type="text" size="34" name="libelle"></td>';
+    print '<td align="right"><input type="text" size="6" name="amount"></td>';
+    
+    print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'"></td>';
+    print '</tr>';
+
+    print '</form>';
+
+    print '<tr><td colspan="7">&nbsp;</td></tr>';
+
+}
+
 print "<tr class=\"liste_titre\">";
 print '<td>';
 print_liste_field_titre($langs->trans("Ref"),"index.php","id");
-print '</td>';
-print '<td>';
-print_liste_field_titre("Echéance","index.php","de");
+print '</td><td>';
+print_liste_field_titre($langs->trans("DateDue"),"index.php","de");
 print '</td><td>';
 print_liste_field_titre($langs->trans("Period"),"index.php","periode");
 print '</td><td align="left">';
@@ -178,43 +249,6 @@ if ( $db->query($sql) )
 else
 {
   dolibarr_print_error($db);
-}
-
-/*
- * Forumalaire d'ajout d'une charge
- *
- */
-if ($user->rights->compta->charges->creer) {
-    print '<tr class="form" valign="top"><form method="post" action="index.php">';
-    print '<input type="hidden" name="action" value="add">';
-    print '<td>&nbsp;</td>';
-    print '<td><input type="text" size="8" name="date"><br>YYYYMMDD</td>';
-    print '<td><input type="text" size="8" name="periode"><br>YYYYMMDD</td>';
-    
-    print '<td align="left"><select name="type">';
-    
-    $sql = "SELECT c.id, c.libelle as type FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-    $sql .= " ORDER BY lower(c.libelle) ASC";
-    
-    if ( $db->query($sql) )
-    {
-      $num = $db->num_rows();
-      $i = 0;
-    
-      while ($i < $num)
-        {
-          $obj = $db->fetch_object( $i);
-          print '<option value="'.$obj->id.'">'.$obj->type;
-          $i++;
-        }
-    }
-    print '</select>';
-    print '</td>';
-    print '<td align="left"><input type="text" size="24" name="libelle"></td>';
-    print '<td align="right"><input type="text" size="6" name="amount"></td>';
-    
-    print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'"></form></td>';
-    print '</tr>';
 }
 
 print '</table>';
