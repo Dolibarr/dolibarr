@@ -90,8 +90,14 @@ class GraphLignesActives extends GraphLine {
 	print $this->db->error() . ' ' . $sql;
       }
     
-               
-    $this->LabelInterval = round($num / 20,0);
+    $this->LabelInterval = 1;
+
+    $a = round($num / 20,0);
+
+    if ($a > 1)
+      {
+	$this->LabelInterval = $a;
+      }
 
     $this->GraphDraw($this->file, $active, $labels);
 
