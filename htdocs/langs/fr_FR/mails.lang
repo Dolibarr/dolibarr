@@ -24,3 +24,5 @@ MailingStatusDraft=Brouillon
 MailingStatusValidated=Validé
 MailingStatusApproved=Apprové
 MailingStatusSent=Envoyé
+MailSuccessfulySent=Mail envoyé avec succès
+ErrorMailRecipientIsEmpty=Le mail du destinataire est vide

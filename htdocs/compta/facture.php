@@ -340,6 +340,8 @@ if ($_POST["action"] == 'confirm_canceled' && $_POST["confirm"] == yes)
  */
 if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 {
+  $langs->load("mails");
+    
   $fac = new Facture($db,"",$_POST["facid"]);
   if ( $fac->fetch($_POST["facid"]) )
     {
@@ -392,7 +394,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 
 	      if ( $mailfile->sendfile() )
 		{		  
-          $msg='<div class="ok">Mails envoyé avec succès à '.htmlentities($sendto).' (de la part de '.htmlentities($from).')</div>';
+          $msg='<div class="ok">'.$langs->trans("MailSuccessfulySent",$sendto,$from).'.</div>';
 
 		  $sendto = htmlentities($sendto);
 			  
@@ -410,12 +412,12 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 		}
 	      else
 		{
-		  $msg='<div class="error">'.$langs->trans("ErrorFailedToSendMail",htmlentities($from),htmlentities($sendto)).'</div>';
+		  $msg='<div class="error">'.$langs->trans("ErrorFailedToSendMail",$from,$sendto).' !</div>';
 		}	  
 	    }
 	  else
 	    {
-		  $msg='<div class="error">'.htmlentities($langs->trans("Le mail du destinataire est vide")).'</div>';
+		  $msg='<div class="error">'.$langs->trans("ErrorMailRecipientIsEmpty").' !</div>';
 	      dolibarr_syslog("Le mail du destinataire est vide");
 	    }
 

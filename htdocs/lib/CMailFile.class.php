@@ -36,6 +36,7 @@ to chunk_split
 class CMailFile
 {
   var $subject;
+  var $addr_from;
   var $addr_to;
   var $addr_cc;
   var $addr_bcc;

@@ -24,4 +24,6 @@ MailingStatusDraft=Draft
 MailingStatusValidated=Validated
 MailingStatusApproved=Approved
 MailingStatusSent=Sent
+MailSuccessfulySent=Mail successfuly sent
+ErrorMailRecipientIsEmpty=Mail recipient is empty
 
