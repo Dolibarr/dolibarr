@@ -76,7 +76,15 @@ class modPropale
 		  }
 	      }
 	  }
-      }       
+      }
+
+    $sql = "INSERT INTO llx_boxes_def (name,file) VALUES('Proposition commerciales', 'box_propales.php');";
+
+    if ( $this->db->query($sql) )
+      {
+	
+      }
+       
   }
   /*
    *
@@ -84,6 +92,13 @@ class modPropale
    */
   Function remove()
   {
+
+    $sql = "DELETE FROM llx_boxes_def WHERE file = 'box_propales.php';";
+
+    if ( $this->db->query($sql) )
+      {
+	
+      }
 
   }
 }
