@@ -231,14 +231,14 @@ function transcoS2L($zonein,$devise)
 
 
 
-function print_liste_field_titre($name, $file, $field, $begin="")
+function print_liste_field_titre($name, $file, $field, $begin="", $options)
  {
   global $conf;
 
   print $name."&nbsp;";
-  print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.'">';
+  print '<a href="'.$file.'?sortfield='.$field.'&sortorder=asc&begin='.$begin.$options.'">';
   print '<img src="/theme/'.$conf->theme.'/img/1downarrow.png" border="0"></a>';
-  print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.'">';
+  print '<a href="'.$file.'?sortfield='.$field.'&sortorder=desc&begin='.$begin.$options.'">';
   print '<img src="/theme/'.$conf->theme.'/img/1uparrow.png" border="0"></a>';
 }
 
