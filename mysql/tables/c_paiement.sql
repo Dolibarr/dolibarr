@@ -31,7 +31,7 @@ create table c_paiement
 (
   id         integer PRIMARY KEY,
   libelle    varchar(30),
-  type       integer
+  type       smallint	
 );
 
 
