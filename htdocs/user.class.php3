@@ -190,7 +190,16 @@ class User {
 	  $password =  substr(crypt(uniqid("")),0,8);
 	}
 
-      $sql = "UPDATE llx_user SET pass = '".crypt($password, "CRYPT_STD_DES")."'";
+      if ($conf->password_encrypted)
+	{
+	  $sqlpass = crypt($password, "CRYPT_STD_DES");
+	}
+      else
+	{
+	  $sqlpass = $password;
+	}
+
+      $sql = "UPDATE llx_user SET pass = '".$sqlpass."'";
       $sql .= " WHERE rowid = $this->id";
       
       $result = $this->db->query($sql);
