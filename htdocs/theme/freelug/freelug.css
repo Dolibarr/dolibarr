@@ -19,7 +19,7 @@
  */
 
 body {
-  background: #e0ebeb; 
+  background: #EEEEEE; 
   background-image: url("http://news.freelug.org/themes/freelug/images/Image16gray.png")
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none ;
@@ -41,7 +41,7 @@ td.menu {
 
 
 .menu { 
-        background: #b3cccc; 
+        background: #DDDDDD; 
         font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
         color: #000000; 
         text-decoration: none }
@@ -49,7 +49,7 @@ td.menu {
 
 .submenu 
 { 
-  background: #b3cccc; 
+  background: #DDDDDD; 
   font-family: Helvetica, Verdana; font-size: 14px;
   color: #000000; 
   text-decoration: none }
@@ -65,13 +65,19 @@ a.leftmenu
   font-size: 14px; 
   font-weight: bold; 
   color: #202020; 
+  background: #DDDDDD; 
   }
 
+.leftmenu { 
+        background: #DDDDDD; 
+        font-family: Helvetica, Verdana; 
+        color: #202020; 
+        text-decoration: none }
 
 td.barre { 
            border-right: 1px solid #000000;
            border-bottom: 1px solid #000000;
-           background: #b3cccc;
+           background: #DDDDDD;
            font-family: Helvetica, Verdana; font-size: 14px; 
            color: #000000; 
            text-decoration: none }
