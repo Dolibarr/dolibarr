@@ -58,9 +58,11 @@ Function dolibarr_fiche_head($links, $active=0)
 }
 
 
-Function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0)
+Function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
+// Ajoute ou modifie un parametre dans la table llx_const
+// Retour: 0=KO, 1=OK
 {
-  $sql = "REPLACE INTO llx_const SET name = '$name', value='$value', visible=$visible, type='$type'";
+  $sql = "REPLACE INTO llx_const SET name = '$name', value='$value', visible=$visible, type='$type', note='$note'";
 
   if ($db->query($sql))
     {
@@ -70,7 +72,22 @@ Function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0)
     {
       return 0;
     }
+}
 
+Function dolibarr_del_const($db, $name)
+// Supprime un parametre de la table llx_const
+// Retour: 0=KO, 1=OK
+{
+  $sql = "DELETE FROM llx_const WHERE name='$name'";
+  
+  if ($db->query($sql))
+    {
+      return 1;
+    }
+  else
+    {
+      return 0;
+    }
 }
 
 Function dolibarr_print_object_info($object)
