@@ -85,28 +85,26 @@ class TelephonieContrat {
   function update($user)
   {
 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_contrat";
     $sql .= " SET ";
-    $sql .= " fk_client_comm = $this->client_comm, ";
-    $sql .= " fk_soc = $this->client, ";
-    $sql .= " ligne = '$this->numero', ";
-    $sql .= " fk_soc_facture = $this->client_facture, ";
-    $sql .= " fk_fournisseur = $this->fournisseur, ";
-    $sql .= " fk_commercial = $this->commercial, ";
-    $sql .= " fk_concurrent = $this->concurrent, ";
-    $sql .= " note =  '$this->note',";
-    $sql .= " remise = '$this->remise'";
-    $sql .= " WHERE rowid = $this->id";
+    $sql .= " fk_client_comm = ".$this->client_comm;
+    $sql .= ", fk_soc = ".$this->client ;
+    $sql .= ", fk_soc_facture = ".$this->client_facture;
+    $sql .= ", fk_commercial_suiv = ".$this->commercial_suiv_id;
+    $sql .= ", mode_paiement = '".$this->mode_paiement."'";
+    $sql .= ", note =  '$this->note'";
+
+    $sql .= " WHERE rowid = ".$this->id;
 
     if ( $this->db->query($sql) )
       {
-	return 1;
+	return 0;
       }
     else
       {
 	print $this->db->error();
 	print $sql ;
-	return 0;
+	return -1;
       }
   }
 
