@@ -25,37 +25,35 @@ require("./pre.inc.php");
 llxHeader();
 
 $user->getrights('compta');
-
 if (!$user->admin && !$user->rights->compta->charges)
   accessforbidden();
 
-function valeur($sql)
-{
-  global $db;
-  if ( $db->query($sql) )
-    {
-      if ( $db->num_rows() )
-	{
-	  $valeur = $db->result(0,0);
-	}
-      $db->free();
-    }
-  return $valeur;
-}
+
+$year=$_GET["year"];
+$filtre=$_GET["filtre"];
+
+
+print_titre("Charges - Résumé".($year > 0?" $year":""));
+
+print "<br>";
+print '<table class="noborder" cellspacing="0" cellpadding="4" width="100%">';
+print "<tr class=\"liste_titre\">";
+print "<td>Groupe</td>";
+print "<td align=\"right\">Nb</td>";
+print "<td align=\"right\">Montant TTC</td>";
+print "<td align=\"right\">Montant Payé</td>";
+print "</tr>\n";
+
 /*
- *
+ * Charges sociales
  */
-
-print_titre("Charges");
-
-print '<TABLE border="0" cellspacing="0" cellpadding="4" width="100%">';
-print "<TR class=\"liste_titre\">";
-print "<td colspan=\"2\">Factures</td>";
-print "</TR>\n";
-
-$sql = "SELECT c.libelle as nom, sum(s.amount) as total";
+$sql = "SELECT c.libelle as lib, s.fk_type as type, count(s.rowid) as nb, sum(s.amount) as total, sum(IF(paye=1,s.amount,0)) as totalpaye";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
-$sql .= " WHERE s.fk_type = c.id AND s.paye = 1";
+$sql .= " WHERE s.fk_type = c.id";
+if ($year > 0)
+{
+    $sql .= " AND date_format(s.date_ech, '%Y') = $year";
+}
 $sql .= " GROUP BY lower(c.libelle) ASC";
 
 if ( $db->query($sql) )
@@ -67,18 +65,26 @@ if ( $db->query($sql) )
     $obj = $db->fetch_object( $i);
     $var = !$var;
     print "<tr $bc[$var]>";
-    print '<td>'.$obj->nom.'</td><td align="right">'.price($obj->total).'</td>';
+    print '<td><a href="../sociales/index.php?filtre=s.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
+    print '<td align="right">'.$obj->nb.'</td>';
+    print '<td align="right">'.price($obj->total).'</td>';
+    print '<td align="right">'.price($obj->totalpaye).'</td>';
     print '</tr>';
     $i++;
   }
 } else {
   print "<tr><td>".$db->error()."</td></tr>";
 }
+
 /*
  * Factures fournisseurs
  */
-$sql = "SELECT sum(f.amount) as total";
+$sql = "SELECT count(f.rowid) as nb, sum(total_ttc) as total, sum(IF(paye=1,total_ttc,0)) as totalpaye";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+if ($year > 0)
+{
+    $sql .= " WHERE date_format(f.datef, '%Y') = $year";
+}
 
 if ( $db->query($sql) ) {
   $num = $db->num_rows();
@@ -88,7 +94,10 @@ if ( $db->query($sql) ) {
     $obj = $db->fetch_object( $i);
     $var = !$var;
     print "<tr $bc[$var]>";
-    print '<td>Factures founisseurs</td><td align="right">'.price($obj->total).'</td>';
+    print '<td>Factures founisseurs</td>';
+    print '<td align="right">'.$obj->nb.'</td>';
+    print '<td align="right">'.price($obj->total).'</td>';
+    print '<td align="right">'.price($obj->totalpaye).'</td>';
     print '</tr>';
     $i++;
   }
