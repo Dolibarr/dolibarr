@@ -264,7 +264,7 @@ class PDF_card extends FPDF {
     
     if ($this->_Avery_Name == "CARD") {
       $Tformat=$this->_Avery_Labels["CARD"];
-      $this->_Pointille($_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,1,25);
+      $this->_Pointille($_PosX,$_PosY,$_PosX+$this->_Width,$_PosY+$this->_Height,0.3,25);
       if($Tformat['fond'] != '' and file_exists($Tformat['fond'])){
 	$this->image($Tformat['fond'],$_PosX,$_PosY,$this->_Width,$this->_Height);
       }
