@@ -20,7 +20,8 @@
  *
  */
 
-class FactureFourn {
+class FactureFourn
+{
   var $id;
   var $db;
   var $socid;
@@ -44,7 +45,8 @@ class FactureFourn {
    *
    */
 
-  Function FactureFourn($DB, $soc_idp="", $facid="") {
+  Function FactureFourn($DB, $soc_idp="", $facid="")
+  {
     $this->db = $DB ;
     $this->socidp = $soc_idp;
     $this->products = array();
@@ -107,6 +109,8 @@ class FactureFourn {
    */
   Function update_ligne($id, $label, $puht, $tauxtva, $qty=1)
   {
+
+    $puht = ereg_replace(",",".",$puht);
 
     $totalht  = $puht * $qty;
     $tva      = tva($totalht, $tauxtva);
@@ -198,8 +202,7 @@ class FactureFourn {
 
 	$this->updateprice($this->id);
 
-	return 1;
-
+	return $this->id;
       }
     else
       {
