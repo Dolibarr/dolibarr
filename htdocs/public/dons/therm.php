@@ -19,53 +19,25 @@
  * $Source$
  */
 
-$thermlib = "/var/www/www.eucd.info/htdocs/thermometer.php";
+$thermlib = "../../lib/thermometer.php";
 
 if (file_exists ($thermlib))
 {
   include($thermlib);
 
-  $posten_file = "/var/www/www.eucd.info/htdocs/posten.txt";
-  $totaal_file = "/var/www/www.eucd.info/htdocs/totaal.txt";
-
-
   /*
    * Read Values
    */
 
-  if (file_exists ($posten_file))
-    {
-      if (file_exists ($totaal_file))
-	{
+  $conf = new Conf();
+  $db = new Db();
+  $don = new Don($db);
 
-	  /* lees posten uit file */
-	  $fp = fopen($posten_file, 'r' );
-	  
-	  
-	  if ($fp)
-	    {
-	      $post_donaties = fgets( $fp, 10 );
-	      $post_sponsoring = fgets( $fp, 10 );
-	      $post_intent = fgets( $fp, 10 );
-	      fclose( $fp ); 
-	    }
-	  
-	  /* lees posten uit file  */
-	  $fp = fopen( $totaal_file, 'r' );
-	  if ($fp)
-	    {
-	      $totaal_ontvangen = fgets( $fp, 10 );
-	      $totaal_pending = fgets( $fp, 10 );
-	      fclose( $fp ); 
-	    }
-	}
-    }
-  
-  /* 
-   * Graph thermometer
-   */
+  $actualValue = $don->sum_actual();
+  $pendingValue = $don->sum_pending();
+  $intentValue = $don->sum_intent();
+ 
+  print moneyMeter($actualValue, $pendingValue, $intentValue);
 
-  print moneyMeter($totaal_ontvangen+$post_donaties+$post_sponsoring, $totaal_pending, $post_intent);
 }
-
 ?>

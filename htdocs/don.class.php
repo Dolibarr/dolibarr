@@ -291,5 +291,59 @@ class Don
 	return 0;
       }    
   }
+  /*
+   * Somme des dons payés
+   * encaissés ou non
+   */
+  Function sum_actual()
+  {
+    $sql = "SELECT sum(amount)";
+    $sql .= " FROM llx_don";
+    $sql .= " WHERE fk_statut = 3";
+
+    if ( $this->db->query( $sql) )
+      {
+	$row = $this->db->fetch_row(0);
+
+	return $row[0];
+
+      }
+  }
+  /*
+   * En attente de paiement
+   *
+   */
+  Function sum_pending()
+  {
+    $sql = "SELECT sum(amount)";
+    $sql .= " FROM llx_don";
+    $sql .= " WHERE fk_statut = 2";
+
+    if ( $this->db->query( $sql) )
+      {
+	$row = $this->db->fetch_row(0);
+
+	return $row[0];
+
+      }
+  }
+  /*
+   * Somme des promesses de dons validées
+   *
+   */
+  Function sum_intent()
+  {
+    $sql = "SELECT sum(amount)";
+    $sql .= " FROM llx_don";
+    $sql .= " WHERE fk_statut = 1";
+
+    if ( $this->db->query( $sql) )
+      {
+	$row = $this->db->fetch_row(0);
+
+	return $row[0];
+
+      }
+  }
 }
 ?>
