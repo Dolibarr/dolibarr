@@ -20,6 +20,17 @@
  *
  */
 
+/**     \file       htdocs/commande/stats/commandestats.class.php
+        \ingroup    commandes
+        \brief      Fichier de la classe de gestion des stats des commandes
+        \version    $Revision$
+*/
+
+
+/**     \class      CommandeStats
+        \brief      Classe permettant la gestion des stats des commandes
+*/
+
 class CommandeStats 
 {
   var $db ;
@@ -45,49 +56,46 @@ class CommandeStats
       }
     return $data;
   }
+
   /**
-   * Renvoie le nombre de commande par mois pour une année donnée
+   *    \brief      Renvoie le nombre de commande par mois pour une année donnée
    *
    */
-  function getNbCommandeByMonth($year)
-  {
-    $result = array();
-    $sql = "SELECT date_format(date_commande,'%m') as dm, count(*)  FROM ".MAIN_DB_PREFIX."commande";
-    $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
-    if ($this->socidp)
-      {
-	$sql .= " AND fk_soc = ".$this->socidp;
-      }
-    //pas un group by mais un ORDER// $sql .= " GROUP BY dm DESC";
-		$sql .= " ORDER BY dm DESC";
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    $j = $row[0] * 1;
-	    $result[$j] = $row[1];
-	    $i++;
-	  }
-	$this->db->free();
-      }
+    function getNbCommandeByMonth($year)
+    {
+        $tabresult = array();
+        $sql = "SELECT date_format(date_commande,'%m') as dm, count(*) nb FROM ".MAIN_DB_PREFIX."commande";
+        $sql .= " WHERE date_format(date_commande,'%Y') = $year AND fk_statut > 0";
+        if ($this->socidp)
+        {
+            $sql .= " AND fk_soc = ".$this->socidp;
+        }
+        $sql .= " GROUP BY dm";
+        $sql .= " ORDER BY dm DESC";
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $row = $this->db->fetch_object($result);
+                $j = $row->dm;
+                $tabresult[$j+0] = $row->nb;
+                $i++;
+            }
+            $this->db->free($result);
+        }
     
-    for ($i = 1 ; $i < 13 ; $i++)
-      {
-	$res[$i] = $result[$i] + 0;
-      }
-
-    $data = array();
+        $data = array();
     
-    for ($i = 1 ; $i < 13 ; $i++)
-      {
-	$data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
-      }
+        for ($i = 1 ; $i < 13 ; $i++)
+        {
+            $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $tabresult[$i] );
+        }
     
-    return $data;
-  }
+        return $data;
+    }
 
   /**
    * Renvoie le nombre de commande par année
