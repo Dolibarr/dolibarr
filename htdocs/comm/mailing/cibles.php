@@ -187,7 +187,7 @@ if ($mil->fetch($_GET["id"]) == 0)
                         print '<td align="center">';
                         if ($mil->statut == 0)
                         {
-                            print '<form action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST"><input type="submit" value="'.$langs->trans("Add").'"></form>';
+                            print '<form action="cibles.php?action=add&rowid='.$mil->id.'&module='.$modulename.'" method="POST"><input type="submit" class="button" value="'.$langs->trans("Add").'"></form>';
                         }
                         else
                         {
@@ -204,7 +204,7 @@ if ($mil->fetch($_GET["id"]) == 0)
         closedir($handle);
 
         print '<tr>';
-        print '<td>&nbsp;</td><td>&nbsp;</td><td align="center"><form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST"><input type="submit" value="'.$langs->trans("Clear").'"></form></td>';
+        print '<td>&nbsp;</td><td>&nbsp;</td><td align="center"><form action="cibles.php?action=clear&rowid='.$mil->id.'" method="POST"><input type="submit" class="button" value="'.$langs->trans("Clear").'"></form></td>';
         print '</tr>';
 
         print '</table><br>';
