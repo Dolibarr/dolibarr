@@ -24,6 +24,10 @@ $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/lignes/index.php';
 $head[$h][1] = "Global";
 $h++;
 
+$head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/lignes/commande.php';
+$head[$h][1] = "Commandes";
+$h++;
+
 $head[$h][0] = DOL_URL_ROOT.'/telephonie/stats/lignes/resiliation.php';
 $head[$h][1] = "Résiliations";
 $h++;
