@@ -74,7 +74,6 @@ class Promotion {
 	print $this->db->error() . ' in ' . $sql;
       }    
   }
-
   /*
    *
    *
@@ -82,8 +81,6 @@ class Promotion {
    */
   Function update($id, $user)
   {
-
-
     $sql = "UPDATE llx_album ";
     $sql .= " SET title = '" . trim($this->titre) ."'";
     $sql .= ",description = '" . trim($this->description) ."'";
@@ -96,6 +93,40 @@ class Promotion {
       print $this->db->error() . ' in ' . $sql;
     }
   }
+  /*
+   *
+   *
+   *
+   */
+  Function set_active($id)
+  {
+    $sql = "UPDATE ".DB_NAME_OSC.".specials";
+    $sql .= " SET status = 1";
+
+    $sql .= " WHERE products_id = " . $id;
+
+    if ( $this->db->query($sql) ) {
+      return 1;
+    } else {
+      print $this->db->error() . ' in ' . $sql;
+    }
+  }  
+  /*
+   *
+   */
+  Function set_inactive($id)
+  {
+    $sql = "UPDATE ".DB_NAME_OSC.".specials";
+    $sql .= " SET status = 0";
+
+    $sql .= " WHERE products_id = " . $id;
+
+    if ( $this->db->query($sql) ) {
+      return 1;
+    } else {
+      print $this->db->error() . ' in ' . $sql;
+    }
+  }  
   /*
    *
    *
