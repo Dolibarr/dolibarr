@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
@@ -23,10 +23,10 @@
  */
 
 /**
-	    \file       htdocs/fourn/facture/fiche.php
-        \ingroup    facture
-		\brief      Page des la fiche facture fournisseur
-		\version    $Revision$
+   \file       htdocs/fourn/facture/fiche.php
+   \ingroup    facture
+   \brief      Page des la fiche facture fournisseur
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -34,7 +34,6 @@ require("./paiementfourn.class.php");
 
 $langs->load("bills");
 $langs->load("companies");
-
 
 /*
  * Sécurité accés client
@@ -211,6 +210,12 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
   $sql = "SELECT s.nom, s.prefix_comm, s.idp";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
   $sql .= " WHERE s.fournisseur = 1";
+  if ($_GET["socid"] > 0 )
+    {
+      $sql .= " AND s.idp =".$_GET["socid"];
+    }
+
+
   $sql .= " ORDER BY s.nom ASC";
 
   if ( $db->query($sql) )
@@ -393,10 +398,9 @@ else
 	}
       else
 	{
-      /*
-       * Fiche facture en mode edition
-       *
-       */
+	  /*
+	   *
+	   */
 	  $h=0;
 	  
 	  $head[$h][0] = "fiche.php?facid=".$fac->id;
@@ -556,22 +560,22 @@ else
 	{
 	  if ($_GET["action"] == "edit")
 	    {
-	      print '<a class="tabAction" href="fiche.php?facid='.$fac->id.'">'.$langs->trans("Cancel").'</a>';
+	      print '<a class="butAction" href="fiche.php?facid='.$fac->id.'">'.$langs->trans("Cancel").'</a>';
 	    }
 	  else
 	    {
-	      print '<a class="tabAction" href="fiche.php?facid='.$fac->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
+	      print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
 	    }
 	}
       
       if ($fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
 	{
-	  print '<a class="tabAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("DoPaiement").'</a>';
+	  print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("DoPaiement").'</a>';
 	}
       
       if ($fac->statut == 1 && price($resteapayer) <= 0 && $fac->paye == 0  && $user->societe_id == 0)
 	{
-	  print "<a class=\"tabAction\" href=\"fiche.php?facid=$fac->id&amp;action=payed\">".$langs->trans('ClassifyPayed')."</a>";
+	  print "<a class=\"butAction\" href=\"fiche.php?facid=$fac->id&amp;action=payed\">".$langs->trans('ClassifyPayed')."</a>";
 	}
       
       if ($user->societe_id == 0)
@@ -579,11 +583,11 @@ else
 	  if ($fac->statut == 0)
 	    {
 	      if ($_GET["action"] <> "edit")
-		print "<a class=\"tabAction\" href=\"fiche.php?facid=$fac->id&amp;action=valid\">".$langs->trans('Valid')."</a>";
+		print "<a class=\"butAction\" href=\"fiche.php?facid=$fac->id&amp;action=valid\">".$langs->trans('Valid')."</a>";
 	    }
 	  else
 	    {
-	      print "<a class=\"tabAction\" href=\"fiche.php?facid=$fac->id&amp;action=copy&amp;socid=$fac->socidp\">".$langs->trans('Copy')."</a>";
+	      print "<a class=\"butAction\" href=\"fiche.php?facid=$fac->id&amp;action=copy&amp;socid=$fac->socidp\">".$langs->trans('Copy')."</a>";
 	    }
 	}
       
@@ -591,7 +595,7 @@ else
 	{
 	  if ($_GET["action"] != "edit")
 	    {
-	      print '<a class="butDelete" href="index.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+	      print '<a class="butActionDelete" href="index.php?facid='.$fac->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 	    }
 	}
 
