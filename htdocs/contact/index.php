@@ -34,6 +34,10 @@ if ($user->societe_id > 0)
 llxHeader();
 
 
+$page = $_GET["page"];
+$sortfield = $_GET["sortfield"];
+$sortorder = $_GET["sortorder"];
+
 if ($sortorder == "")
 {
   $sortorder="ASC";

@@ -41,12 +41,12 @@ if ($_GET["subaction"] == 'delrights' && $user->admin)
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 {
-    if ($id <> $user->id)
+  if ($id <> $user->id)
     {
-        $edituser = new User($db, $id);
-        $edituser->fetch($id);
-        $edituser->delete();
-        Header("Location: index.php");
+      $edituser = new User($db, $_GET["id"]);
+      $edituser->fetch($_GET["id"]);
+      $edituser->delete();
+      Header("Location: index.php");
     }
 }
 
@@ -54,19 +54,23 @@ if ($_POST["action"] == 'add' && $user->admin)
 {
     $edituser = new User($db,0);
 
-    $edituser->nom    = $_POST["nom"];
-    $edituser->note   = $_POST["note"];
-    $edituser->prenom = $_POST["prenom"];
-    $edituser->login  = $_POST["login"];
-    $edituser->email  = $_POST["email"];
-    $edituser->admin  = $_POST["admin"];
+    $edituser->nom           = $_POST["nom"];
+    $edituser->note          = $_POST["note"];
+    $edituser->prenom        = $_POST["prenom"];
+    $edituser->login         = $_POST["login"];
+    $edituser->email         = $_POST["email"];
+    $edituser->admin         = $_POST["admin"];
     $edituser->webcal_login  = $_POST["webcal_login"];
 
     $id = $edituser->create();
+
     if (isset($_POST['password']) && $_POST['password']!='' )
     {
-        $edituser->password($_POST['password'],$conf->password_encrypted);
+      $edituser->password($_POST['password'],$conf->password_encrypted);
     }
+
+    Header("Location: fiche.php?id=$id");
+
 }
 
 if ($_POST["action"] == 'update' && $user->admin)
@@ -178,7 +182,7 @@ else
             print '<br>';
 
             $html = new Form($db);
-            $html->form_confirm("$PHP_SELF?id=$fuser->id","Désactiver cet utilisateur","Etes-vous sûr de vouloir désactiver cet utilisateur ?","confirm_delete");
+            $html->form_confirm("fiche.php?id=$fuser->id","Désactiver cet utilisateur","Etes-vous sûr de vouloir désactiver cet utilisateur ?","confirm_delete");
         }
 
         if ($_GET["action"] == 'perms')
