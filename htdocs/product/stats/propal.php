@@ -68,7 +68,7 @@ if ($_GET["id"])
 	  $sortfield="p.datep";
 	}
       
-      print_barre_liste("Propositions commerciales",$page,$PHP_SELF,"&amp;id=$product->id",$sortfield,$sortorder);
+      print_barre_liste("Propositions commerciales",$page,"propal.php","&amp;id=$product->id",$sortfield,$sortorder);
       
       $sql = "SELECT distinct(p.rowid), s.nom,s.idp, p.ref,".$db->pdate("p.datep")." as df,p.rowid as facid";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."propaldet as d WHERE p.fk_soc = s.idp";
@@ -86,9 +86,9 @@ if ($_GET["id"])
 	  print '<TR class="liste_titre">';
 	  print '<TD>Num&eacute;ro</TD>';
 	  print '<td>';
-	  print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
+	  print_liste_field_titre("Société","propal.php","s.nom","","&amp;id=$product->id&amp;socidp=$socidp");
 	  print '</td><TD align="right">';
-	  print_liste_field_titre("Date",$PHP_SELF,"f.datef","","&amp;socidp=$socidp");
+	  print_liste_field_titre("Date","propal.php","f.datef","","&amp;id=$product->id&amp;socidp=$socidp");
 	  print '</td>';
 	  print "</TR>\n";
 	  
