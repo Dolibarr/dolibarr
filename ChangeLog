@@ -1,4 +1,11 @@
+2003-09-11  Rodolphe Quiédeville  <rq@quiedeville.org>
+
+	* Correction erreur d'index dans las gestion des documents
+	attachés à une société
+
 2003-09-10  Rodolphe Quiédeville  <rq@quiedeville.org>
+	
+	* Ajout gestion des dépendances des modules
 
 	* Release 0.7.1
 	
