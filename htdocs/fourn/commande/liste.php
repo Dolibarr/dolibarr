@@ -105,18 +105,19 @@ if ($result)
       $sortorder="DESC";
     }
   print '<table class="liste">';
-  print '<tr class="liste_titre"><td>Réf</td>';
-  print_liste_field_titre("Société","index.php","s.nom");
-  print '<td>Date</td>';
+  print '<tr class="liste_titre">';
+  print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.idp");
+  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom");
+  print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dc");
   print "</tr>\n";
 
   print '<tr class="liste_titre">';
   print '<form action="liste.php" method="GET">';
   print '<td><input type="text" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
-  print '<td><input type="text" name="search_nom" value="'.$_GET["search_nom"].'"><input type="submit"></td>';
-  print '<td>&nbsp;';
+  print '<td><input type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+  print '<td><input class="button" type="submit" value="'.$langs->trans("Search").'"></td>';
   print '</form>';
-  print '</td></tr>';
+  print '</tr>';
 
   $var=True;
 
