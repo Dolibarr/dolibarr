@@ -1,7 +1,4 @@
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,17 +14,61 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
-
-BODY 
+body 
 {
   background: #ebe0eb; 
   font-family: Helvetica, Verdana; font-size: 12px; 
-  text-decoration: none 
 }
 /*
  *   Menu superieur
  */
+table.topbarre { 
+                 cell-spacing: 0;
+                 }
+/*
+ * Tables
+ */
+table#wiborder { 
+                 border-collapse:collapse; 
+                 }
+
+table#wiborder td { 
+                    border: outset 1pt; 
+                    border-collapse:collapse; 
+                    padding: 3pt;
+                    }
+
+
+
+a { 
+    text-decoration: none;
+    font-weight: bold;
+    color: #000000;
+    }
+
+a:hover {     text-decoration: underline;  }
+
+td.menu { 
+          border-right: 1px solid #000000;
+          border-bottom: 1px solid #000000;
+          }
+
+td.menusel { 
+             border-right: 1px solid #000000;
+             border-bottom: 1px solid #000000;
+             }
+
+td.border { 
+            border-top: 1px solid #000000;
+            border-right: 1px solid #000000;
+            border-bottom: 1px solid #000000;
+            border-left: 1px solid #000000;
+            }
+
 .menu 
 { 
   background: #ccb3cc; 
