@@ -44,7 +44,7 @@ function llxHeader($head = "", $urlp = "")
 
   if($user->admin)
     {
-      $menu->add_submenu("fiche.php?&amp;action=create", $langs->trans("NewUser"));
+      $menu->add_submenu(DOL_URL_ROOT."/user/fiche.php?&amp;action=create", $langs->trans("NewUser"));
     }
 
 
