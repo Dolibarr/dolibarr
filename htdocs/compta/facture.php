@@ -732,7 +732,7 @@ else
 	  $author->fetch();
 
 
-	  $head[0][0] = DOL_URL_ROOT.$_SERVER["PHP_SELF"]."?facid=".$fac->id;
+	  $head[0][0] = DOL_URL_ROOT."/compta/facture.php?facid=".$fac->id;
 	  $head[0][1] = "Facture : $fac->ref";
 	  $h = 1;
 	  $a = 0;
