@@ -294,6 +294,10 @@ if (defined("MAIN_MODULE_POSTNUKE"))
 {
   $conf->postnuke->enabled=MAIN_MODULE_POSTNUKE;
 }
+if (defined("MAIN_MODULE_CLICKTODIAL"))
+{
+  $conf->clicktodial->enabled=MAIN_MODULE_CLICKTODIAL;
+}
 if (defined("MAIN_MODULE_TELEPHONIE"))
 {
   $conf->telephonie->enabled=MAIN_MODULE_TELEPHONIE;
@@ -340,6 +344,7 @@ if (defined("MAIN_MODULE_PROPALE"))
 }
 $conf->propal->dir_output=DOL_DATA_ROOT."/propale";
 if (defined(PROPALE_OUTPUTDIR) && PROPALE_OUTPUTDIR) { $conf->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
+
 
 
 /*
