@@ -383,7 +383,7 @@ class Societe {
     $sql .= ", s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique";
     $sql .= ", s.code_client, s.code_compta, s.parent";
     $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client";
-    $sql .= ", p.libelle as pays";
+    $sql .= ", p.code as pays_code, p.libelle as pays";
     $sql .= ", st.libelle as stcomm";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
     $sql .= ", ".MAIN_DB_PREFIX."c_effectif as e";
@@ -414,6 +414,7 @@ class Societe {
 
 	    $this->departement_id = $obj->fk_departement;
 	    $this->pays_id = $obj->fk_pays;
+	    $this->pays_code = $obj->fk_pays?$obj->pays_code:'';
 	    $this->pays = $obj->fk_pays?$obj->pays:'';
 
 	    $this->stcomm_id = $obj->fk_stcomm; // statut commercial
