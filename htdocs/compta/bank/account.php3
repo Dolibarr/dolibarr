@@ -46,11 +46,11 @@ if ($account) {
     $dateop = "$dateoy" . "$dateo";
     
     if ($num_chq) {
-      $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account)";
-      $sql .= " VALUES (now(), $dateop, '$label', $amount,'$author',$num_chq,$account)";
+      $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
+      $sql .= " VALUES (now(), $dateop, '$label', $amount,'$author',$num_chq,$account,'$operation')";
     } else {
-      $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author,fk_account)";
-      $sql .= " VALUES (now(), $dateop, '$label', $amount,'$author',$account)";
+      $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author,fk_account,fk_type)";
+      $sql .= " VALUES (now(), $dateop, '$label', $amount,'$author',$account,'$operation')";
     }
 
     $result = $db->query($sql);
@@ -231,7 +231,16 @@ if ($account) {
     print "<tr>";
     print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
     print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
-    print "<td><input name=\"num_chq\" type=\"text\" size=4></td><td>";
+    print "<td>";
+
+    print '<select name="operation">';
+    print '<option value="CB">CB';
+    print '<option value="CHQ">CHQ';
+    print '<option value="DEP">DEP';
+    print '<option value="TIP">TIP';
+    print '<option value="PRE">PRE';
+    print '</select></td>';
+    print "<td><input name=\"num_chq\" type=\"text\" size=4>";
     print "<input name=\"label\" type=\"text\" size=40></td>";
     print "<td><input name=\"debit\" type=\"text\" size=8></td>";
     print "<td><input name=\"credit\" type=\"text\" size=8></td>";
