@@ -24,18 +24,6 @@
  *
  */
 
-if (! @include_once("conf/conf.php"))
-{
-  Header("Location: install/index.php");
-}
-else
-{
-  if (! isset($dolibarr_main_db_host))
-    {
-      Header("Location: install/index.php");
-    }
-}
-
 require("master.inc.php");
 
 // Verification du login.

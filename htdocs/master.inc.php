@@ -24,7 +24,17 @@
 define('DOL_VERSION','1.2.0-DEV');
 
 
-
+if (! @include_once("conf/conf.php"))
+{
+  Header("Location: install/index.php");
+}
+else
+{
+  if (! isset($dolibarr_main_db_host))
+    {
+      Header("Location: install/index.php");
+    }
+}
 
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);
