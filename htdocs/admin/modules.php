@@ -106,12 +106,17 @@ if (!$user->admin)
 print_titre("Modules");
 
 print '<br>';
+print 'Les modules Dolibarr définissent les fonctionnalités disponibles dans l\'application.<br>';
+print 'Certains modules nécessitent des droits qu\'il vous faudra affecter aux utilisateurs pour qu\'ils puissent accéder à ces fonctionnalités.<br>';
+
+print '<br>';
 print '<table class="noborder" cellpadding="3" cellspacing="0">';
 print '<tr class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Info</td>';
-print '<td align="center">Activé</td>';
-print '<td colspan="2">&nbsp;</td>';
+print '<td align="center">Actif</td>';
+print '<td align="center">Action</td>';
+print '<td>&nbsp;</td>';
 print "</tr>\n";
 
 
