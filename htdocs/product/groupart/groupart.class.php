@@ -26,6 +26,8 @@ class Groupart {
 
   var $id ;
   var $nom ;
+  var $desc ;
+  var $grar ;
 
   Function Groupart($DB, $id=0) {
     $this->db = $DB;
@@ -39,9 +41,11 @@ class Groupart {
   Function create($user) {
 
     $sql = "INSERT INTO llx_groupart (fk_user_author) VALUES (".$user->id.")";
-    
+
     if ($this->db->query($sql) )
+
       {
+
 	$id = $this->db->last_insert_id();
 	
 	if ( $this->update($id, $user) )
@@ -65,7 +69,8 @@ class Groupart {
 
     $sql = "UPDATE llx_groupart ";
     $sql .= " SET nom = '" . trim($this->nom) ."'";
-
+    $sql .= " , description = '" . trim($this->desc) ."'";
+    $sql .= " , groupart = '" . trim($this->grar) ."'";
     $sql .= " WHERE rowid = " . $id;
 
     if ( $this->db->query($sql) ) {
@@ -81,17 +86,19 @@ class Groupart {
    */
   Function fetch ($id) {
     
-    $sql = "SELECT rowid, nom FROM llx_groupart WHERE rowid = $id";
+    $sql = "SELECT rowid, nom, groupart, description FROM llx_groupart WHERE rowid = $id";
 
     $result = $this->db->query($sql) ;
 
     if ( $result ) {
       $result = $this->db->fetch_array();
 
-      $this->id          = $result["rowid"];
-      $this->nom         = $result["nom"];
+      $this->id           = $result["rowid"];
+      $this->nom          = $result["nom"];
+      $this->desc         = $result["description"];
+      $this->grar         = $result["groupart"];
 
-      $this->nom_url     = '<a href="'.DOL_URL_ROOT.'/product/groupart/fiche.php?id='.$result["rowid"].'">'.$result["nom"].'</a>';
+      $this->nom_url      = '<a href="'.DOL_URL_ROOT.'/product/groupart/fiche.php?id='.$result["rowid"].'">'.$result["nom"].'</a>';
 
     }
     $this->db->free();
