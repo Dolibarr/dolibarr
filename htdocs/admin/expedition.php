@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -43,6 +43,7 @@ if (!$user->admin)
 if ($_GET["action"] == 'set')
 {
   $file = DOL_DOCUMENT_ROOT . '/includes/modules/expedition/methode_expedition_'.$_GET["value"].'.modules.php';
+
   $classname = 'methode_expedition_'.$_GET["value"];
   require_once($file);
   
@@ -61,9 +62,9 @@ if ($_GET["action"] == 'set')
 
 $expedition_addon_var_pdf = EXPEDITION_ADDON_PDF;
 
-if (action == 'setpdf')
+if ($_GET["action"] == 'setpdf')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXPEDITION_ADDON_PDF', value='".$value."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXPEDITION_ADDON_PDF', value='".$_GET["value"]."', visible=0";
 
   if ($db->query($sql))
     {
