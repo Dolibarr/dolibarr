@@ -64,7 +64,7 @@ if ($result) {
       $var=!$var;
             
       print "<TR $bc[$var]><td>&nbsp</td>";
-      print "<td>Factures <a href=\"/compta/facture.php?facid=$objp->facid\">$objp->facnumber</a> $objp->nom</TD>\n";
+      print "<td>Factures <a href=\"../facture.php?facid=$objp->facid\">$objp->facnumber</a> $objp->nom</TD>\n";
       
       print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
       
@@ -106,7 +106,7 @@ if ($result) {
       $var=!$var;
             
       print "<TR $bc[$var]><td>&nbsp</td>";
-      print "<td>Factures <a href=\"/fourn/facture/\">$objp->nom</a></TD>\n";
+      print "<td>Factures <a href=\"../../fourn/facture/\">$objp->nom</a></TD>\n";
       
       print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
       
