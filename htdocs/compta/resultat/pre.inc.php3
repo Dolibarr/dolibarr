@@ -50,12 +50,7 @@ function llxHeader($head = "") {
   $menu->add_submenu("index.php3?year=2002","2002");
   $menu->add_submenu("index.php3?year=2001","2001");
 
-  $menu->add("/compta/resultat/caisse.php","Caisse");
-
-
-
   left_menu($menu->liste);
-
 }
 
 ?>
