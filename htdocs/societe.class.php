@@ -409,12 +409,11 @@ class Societe {
 	  return $this->db->query($sql);
 	}
     }
+
   /*
-   *
-   *
+   * Renvoie le nom d'une societe a partir d'un id
    *
    */
-
   Function get_nom($id)
     {
 
@@ -424,16 +423,19 @@ class Societe {
       
     if ($result)
       {
-	if ($this->db->num_rows())
-	  {
-	    $obj = $this->db->fetch_object($result , 0);
-	    
-	    $this->nom = $obj->nom;
-	    
-	  }
-	$this->db->free();
-      }
-  }
+    	if ($this->db->num_rows())
+    	  {
+    	    $obj = $this->db->fetch_object($result , 0);
+    	    return $obj->nom;
+    	  }
+    	$this->db->free();
+       }
+     else {
+        dolibarr_print_error($db);   
+       }    
+       
+    }
+
   /*
    *
    *

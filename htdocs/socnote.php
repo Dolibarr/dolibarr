@@ -73,7 +73,7 @@ if ($_GET["socid"] > 0) {
 
       $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
       $head[$h][1] = 'Note';
-      $a = $h;
+      $hselected = $h;
       $h++;
 
       if ($user->societe_id == 0)
@@ -86,7 +86,7 @@ if ($_GET["socid"] > 0) {
       $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
       $head[$h][1] = 'Notifications';
       
-      dolibarr_fiche_head($head, $a);
+      dolibarr_fiche_head($head, $hselected, $societe->nom);
 
 
   print_titre($societe->nom);

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -56,17 +57,26 @@ class ActionComm
    */
   Function add($author)
     {
-      if (!strlen($this->contact))
+      if (! $this->contact)
 	{
 	  $this->contact = 0;
 	}
-      if (!strlen($this->propalrowid))
+      if (! $this->propalrowid)
 	{
 	  $this->propalrowid = 0;
 	}
+      if (! $this->percent)
+	{
+	  $this->percent = 0;
+	}
+      if (! $this->priority)
+	{
+	  $this->priority = 0;
+	}
+
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author, fk_user_action, fk_contact, percent, note,priority,propalrowid) ";
       $sql .= " VALUES ('$this->date', $this->type, $this->societe, $author->id,";
-      $sql .= $this->user->id . ", $this->contact, $this->percent, '$this->note', $this->priority, $this->propalrowid);";
+      $sql .= $this->user->id . ", $this->contact, '$this->percent', '$this->note', $this->priority, $this->propalrowid);";
       
       if ($this->db->query($sql) )
 	{
@@ -74,7 +84,7 @@ class ActionComm
 	}
       else
 	{
-	  print $this->db->error() . "<br>" . $sql;
+	  dolibarr_print_error($this->db);
 	}
     }
   /*
@@ -117,7 +127,7 @@ class ActionComm
 	}
       else
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
 	}    
     }
   /**
@@ -162,5 +172,6 @@ class ActionComm
 	  return 1;
 	}
     }
+    
 }    
 ?>

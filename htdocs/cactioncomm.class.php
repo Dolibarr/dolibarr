@@ -96,5 +96,34 @@ class CActioncomm {
 	print $this->db->error();
       }    
   }
+
+  
+  /*
+   * Renvoie le nom d'une action a partir d'un id
+   *
+   */
+  Function get_nom($id)
+    {
+
+      $sql = "SELECT libelle nom FROM ".MAIN_DB_PREFIX."c_actioncomm WHERE id='$id';";
+      
+      $result = $this->db->query($sql);
+      
+    if ($result)
+      {
+    	if ($this->db->num_rows())
+    	  {
+    	    $obj = $this->db->fetch_object($result , 0);
+    	    return $obj->nom;
+    	  }
+    	$this->db->free();
+       }
+     else {
+        dolibarr_print_error($db);   
+       }    
+       
+    }
+   
+  
 }    
 ?>

@@ -42,8 +42,6 @@ class Form
    */
   Function select_departement($selected='')
   {
-    print '<select name="departement_id">';
-    
     // On recherche les départements/cantons/province active d'une region et pays actif
     $sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM ";
     $sql .= MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
@@ -53,6 +51,7 @@ class Form
     
     if ($this->db->query($sql))
       {
+    print '<select name="departement_id">';
 	$num = $this->db->num_rows();
 	$i = 0;
 	if ($num)
@@ -83,11 +82,11 @@ class Form
 		$i++;
 	      }
 	  }
+    print '</select>';
       }
     else {
-      print "Erreur : $sql : ".$this->db->error();
+      dolibarr_print_error($this->db);
     }
-    print '</select>';
   }
   
   /*
@@ -96,13 +95,12 @@ class Form
    */
   Function select_pays($selected='')
   {
-    print '<select name="pays_id">';
-
     $sql = "SELECT rowid, libelle, active FROM ".MAIN_DB_PREFIX."c_pays";
     $sql .= " WHERE active = 1 ORDER BY libelle ASC";
 
     if ($this->db->query($sql))
       {
+    print '<select name="pays_id">';
 	$num = $this->db->num_rows();
 	$i = 0;
 	if ($num)
@@ -121,24 +119,24 @@ class Form
 		$i++;
 	      }
 	  }
-      }
     print '</select>';
+      }
   }
 
   /*
    * Retourne la liste déroulante des sociétés
    *
    */
-  Function select_societes($selected='')
+  Function select_societes($selected='',$htmlname='soc_id')
   {
     // On recherche les societes
     $sql = "SELECT s.idp, s.nom FROM ";
     $sql .= MAIN_DB_PREFIX ."societe as s ";
     $sql .= "ORDER BY nom ASC";
 
-    print '<select name="soc_id">';
     if ($this->db->query($sql))
       {
+    print '<select name="'.$htmlname.'">';
 	$num = $this->db->num_rows();
 	$i = 0;
 	if ($num)
@@ -157,12 +155,54 @@ class Form
 		$i++;
 	      }
 	  }
+    print '</select>';
       }
     else {
-      print "Erreur : $sql : ".$this->db->error();
+      dolibarr_print_error($this->db);
     }
-    print '</select>';
   }
+  
+  /*
+   * Retourne la liste déroulante des contacts d'une société donnée
+   *
+   */
+  Function select_contacts($socid,$selected='',$htmlname='contactid')
+  {
+    // On recherche les societes
+    $sql = "SELECT s.idp, s.name, s.firstname FROM ";
+    $sql .= MAIN_DB_PREFIX ."socpeople as s";
+    $sql .= " WHERE fk_soc=".$socid;
+    $sql .= " ORDER BY s.name ASC";
+
+    if ($this->db->query($sql))
+      {
+    print '<select name="'.$htmlname.'">';
+	$num = $this->db->num_rows();
+	$i = 0;
+	if ($num)
+	  {
+	    while ($i < $num)
+	      {
+  		  $obj = $this->db->fetch_object($i);
+
+		  if ($selected && $selected == $obj->idp)
+		    {
+		      print '<option value="'.$obj->idp.'" selected>'.$obj->name.' '.$obj->firstname.'</option>';
+		    }
+		  else
+		    {
+		      print '<option value="'.$obj->idp.'">'.$obj->name.' '.$obj->firstname.'</option>';
+		    }
+		$i++;
+	      }
+	  }
+    print '</select>';
+      }
+    else {
+      dolibarr_print_error($this->db);
+    }
+  }
+
   
   /*
    * Retourne le nom d'un pays
@@ -180,15 +220,14 @@ class Form
 	if ($num)
 	  {
 	    $obj = $this->db->fetch_object(0);
-	    print $obj->libelle;
+	    return $obj->libelle;
 	  }
 	else
 	  {
-	    print "Non définit";
+	    return "Non définit";
 	  }
 
       }
-    print '</select>';
   }
 
 
@@ -200,13 +239,12 @@ class Form
 
   Function select_civilite($selected='')
   {
-    print '<select name="civilite_id">';
-
     $sql = "SELECT rowid, civilite, active FROM ".MAIN_DB_PREFIX."c_civilite";
     $sql .= " WHERE active = 1";
 
     if ($this->db->query($sql))
       {
+    print '<select name="civilite_id">';
 	$num = $this->db->num_rows();
 	$i = 0;
 	if ($num)
@@ -225,8 +263,12 @@ class Form
 		$i++;
 	      }
 	  }
-      }
     print '</select>';
+      }
+    else {
+          dolibarr_print_error($this->db);
+      }
+
   }
 
   /*
@@ -236,8 +278,6 @@ class Form
    */
     Function select_forme_juridique($selected='')
     {
-      print '<select name="forme_juridique_code">';
-    
       // On recherche les formes juridiques actives des pays actifs
       $sql = "SELECT f.rowid, f.code as code , f.libelle as nom, f.active, p.libelle as libelle_pays, p.code as code_pays FROM llx_c_forme_juridique as f, llx_c_pays as p";
       $sql .= " WHERE f.fk_pays=p.rowid";
@@ -245,6 +285,7 @@ class Form
       
       if ($this->db->query($sql))
         {
+      print '<select name="forme_juridique_code">';
 	  $num = $this->db->num_rows();
 	  $i = 0;
 	  if ($num)
@@ -275,11 +316,11 @@ class Form
 		  $i++;
                 }
             }
-        }
-      else {
-	print "Erreur : $sql : ".$this->db->error();
-      }
       print '</select>';
+      }
+      else {
+          dolibarr_print_error($this->db);
+      }
     }
   
   /*
