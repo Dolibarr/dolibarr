@@ -26,6 +26,6 @@ create table llx_auteur
   rowid           SERIAL PRIMARY KEY,
   oscid           integer NOT NULL,
   tms             timestamp,
-  nom		  varchar(255),
+  nom		          varchar(255),
   fk_user_author  integer
 );

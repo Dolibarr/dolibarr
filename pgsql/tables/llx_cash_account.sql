@@ -28,10 +28,10 @@
 create table llx_cash_account
 (
   rowid          SERIAL PRIMARY KEY,
-  datec          timestamp,
+  datec          timestamp without time zone,
   tms            timestamp,
   label          varchar(30),
-  courant        smallint default 0 not null,
-  clos           smallint default 0 not null,
+  courant        smallint DEFAULT 0 NOT NULL,
+  clos           smallint DEFAULT 0 NOT NULL,
   account_number varchar(8)
 );

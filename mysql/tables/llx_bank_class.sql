@@ -20,8 +20,8 @@
 
 create table llx_bank_class
 (
-  lineid   integer not null,
-  fk_categ integer not null,
+  lineid   integer NOT NULL,
+  fk_categ integer NOT NULL,
 
   INDEX(lineid)
 )type=innodb;

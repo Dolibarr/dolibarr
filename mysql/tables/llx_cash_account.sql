@@ -30,7 +30,7 @@ create table llx_cash_account
   datec          datetime,
   tms            timestamp,
   label          varchar(30),
-  courant        smallint default 0 not null,
-  clos           smallint default 0 not null,
+  courant        smallint DEFAULT 0 NOT NULL,
+  clos           smallint DEFAULT 0 NOT NULL,
   account_number varchar(8)
 )type=innodb;

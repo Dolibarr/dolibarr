@@ -25,9 +25,9 @@ create table llx_album
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   osc_id          integer NOT NULL,
   tms             timestamp,
-  ref		  varchar(12),
-  title		  varchar(64),
-  annee		  smallint(64),
+  ref		          varchar(12),
+  title		        varchar(64),
+  annee		        smallint(64),
   description     text,
   collectif       tinyint,
   fk_user_author  integer

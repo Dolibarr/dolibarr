@@ -25,10 +25,10 @@
 create table llx_c_actioncomm
 (
   id         SERIAL PRIMARY KEY,
-	code       varchar(12) unique not null,
-  type       varchar(10) default 'system' not null,
-  libelle    varchar(30) not null,
-	active     smallint default 1 not null,
+	code       varchar(12) UNIQUE NOT NULL,
+  type       varchar(10) DEFAULT 'system' NOT NULL,
+  libelle    varchar(30) NOT NULL,
+	active     smallint DEFAULT 1 NOT NULL,
   todo       smallint
 );
 

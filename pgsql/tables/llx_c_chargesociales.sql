@@ -25,8 +25,8 @@ create table llx_c_chargesociales
 (
   id          SERIAL PRIMARY KEY,
   libelle     varchar(80),
-  deductible  integer NOT NULL default 0,
-	active      integer default 1  NOT NULL
+  deductible  integer DEFAULT 0 NOT NULL,
+	active      integer DEFAULT 1 NOT NULL
 );
 
 

@@ -32,8 +32,8 @@ create table llx_adherent
   public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
   fk_adherent_type smallint,
   morphy           CHAR(3) CHECK (morphy IN ('mor','phy')) NOT NULL, -- personne morale / personne physique
-  datevalid        timestamp,   -- date de validation
-  datec            timestamp,  -- date de creation
+  datevalid        timestamp without time zone,   -- date de validation
+  datec            timestamp without time zone,  -- date de creation
   prenom           varchar(50),
   nom              varchar(50),
   societe          varchar(50),
@@ -49,7 +49,7 @@ create table llx_adherent
   fk_user_author   integer NOT NULL,
   fk_user_mod      integer NOT NULL,
   fk_user_valid    integer NOT NULL,
-  datefin          timestamp NOT NULL, -- date de fin de validité de la cotisation
+  datefin          timestamp without time zone NOT NULL, -- date de fin de validité de la cotisation
   note             text
 );
 

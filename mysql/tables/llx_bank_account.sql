@@ -41,7 +41,7 @@ create table llx_bank_account
   domiciliation  varchar(255),
   proprio        varchar(60),
   adresse_proprio varchar(255),
-  courant        smallint default 0 not null,
-  clos           smallint default 0 not null,
+  courant        smallint DEFAULT 0 NOT NULL,
+  clos           smallint DEFAULT 0 NOT NULL,
   account_number varchar(8)
 )type=innodb;

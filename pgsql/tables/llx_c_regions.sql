@@ -24,11 +24,11 @@
 create table llx_c_regions
 (
   rowid       serial PRIMARY KEY,
-  code_region integer UNIQUE not null,
-  fk_pays     integer not null,
+  code_region integer UNIQUE NOT NULL,
+  fk_pays     integer NOT NULL,
   cheflieu    varchar(7),
   tncc        integer,
   nom         varchar(50),
-  active      smallint default 1 not null
+  active      smallint DEFAULT 1 NOT NULL
 );
 

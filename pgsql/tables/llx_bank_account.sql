@@ -26,20 +26,20 @@
 create table llx_bank_account
 (
   rowid          SERIAL PRIMARY KEY,
-  datec          timestamp,
+  datec          timestamp without time zone,
   tms            timestamp,
   label          varchar(30),
-  bank           varchar(255),
-  code_banque    varchar(7),
+	bank           varchar(60),
+	code_banque    varchar(7),
   code_guichet   varchar(6),
   number         varchar(255),
   cle_rib        varchar(5),
   bic            varchar(10),
   iban_prefix    varchar(5),
-  domiciliation  varchar(50),
+  domiciliation  varchar(255),
   proprio        varchar(60),
   adresse_proprio varchar(255),
-  courant        smallint default 0 not null,
-  clos           smallint default 0 not null,
+  courant        smallint DEFAULT 0 NOT NULL,
+  clos           smallint DEFAULT 0 NOT NULL,
   account_number varchar(8)
 );

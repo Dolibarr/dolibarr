@@ -22,8 +22,8 @@
 create table llx_c_civilite
 (
   rowid       serial PRIMARY KEY,
-	code        varchar(6) unique not null,
+	code        varchar(6) UNIQUE NOT NULL,
   civilite		varchar(50),
-  active      smallint default 1
+  active      smallint DEFAULT 1 NOT NULL
 );
 

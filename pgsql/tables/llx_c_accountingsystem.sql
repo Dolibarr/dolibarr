@@ -27,6 +27,7 @@ create table llx_c_accountingsystem
   fk_pays         integer      NOT NULL,
   pcg_version     varchar(12)  NOT NULL,
   pcg_type        varchar(20)  NOT NULL,
+	pcg_subtype     varchar(20)  NOT NULL,
   label           varchar(128) NOT NULL,
   account_number  varchar(20)  NOT NULL
 );

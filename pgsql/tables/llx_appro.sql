@@ -24,7 +24,7 @@
 create table llx_appro
 (
   rowid           SERIAL PRIMARY KEY,
-  datec           timestamp,
+  datec           timestamp without time zone,
   tms             timestamp,
   fk_product      integer NOT NULL,
   quantity        smallint NOT NULL,

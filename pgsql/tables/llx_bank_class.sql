@@ -22,8 +22,8 @@
 
 create table llx_bank_class
 (
-  lineid   SERIAL,
-  fk_categ integer not null
+  lineid   integer NOT NULL,
+  fk_categ integer NOT NULL
 );
 
 create index llx_bank_class_lineid on llx_bank_class(lineid);

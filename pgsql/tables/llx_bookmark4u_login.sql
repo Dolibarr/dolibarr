@@ -25,5 +25,5 @@ create table llx_bookmark4u_login
 (
   rowid         serial PRIMARY KEY,
   fk_user       integer,
-  bk4u_uid      integer
+  bk4u_uid      integer,
 );

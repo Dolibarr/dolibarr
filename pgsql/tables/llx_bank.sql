@@ -26,7 +26,7 @@
 create table llx_bank
 (
   rowid           SERIAL PRIMARY KEY,
-  datec           timestamp,
+  datec           timestamp without time zone,
   datev           date,           -- date de valeur
   dateo           date,           -- date operation
   amount          real NOT NULL default 0,
@@ -43,4 +43,3 @@ create table llx_bank
 
   author          varchar(40) -- a supprimer apres migration
 );
-
