@@ -198,7 +198,7 @@ if ($action == 'add_paiement')
   $fac->fetch($HTTP_POST_VARS["facid"]);
   $fac->fetch_client();
 
-  $label = "Règlement facture " . $fac->ref;
+  $label = "Réglement facture".($fac->ref?" ".$fac->ref:"")." client".($fac->client->nom?" ".$fac->client->nom:"");
 
   //On ajoute une ligne dans la table llx_bank pour qu'ensuite on puisse rapprocher le compte !
   $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
@@ -491,7 +491,7 @@ if ($_GET["action"] == 'create')
 	    }
 	  else
 	    {
-	      print '<tr><td colspan="2">Services/Produits</td></tr>';
+	      print '<tr><td colspan="2">&nbsp;</td></tr>';
 	      print '<tr><td colspan="3">';
 	      /*
 	       *
@@ -522,7 +522,7 @@ if ($_GET["action"] == 'create')
 		}
 	      	      
 	      print '<table class="noborder" cellspacing="0">';
-	      print '<tr><td>Produit</td><td>Quan.</td><td>Remise</td></tr>';
+	      print '<tr><td>Services/Produits prédéfinis</td><td>Quan.</td><td>Remise</td></tr>';
 	      for ($i = 1 ; $i < 5 ; $i++)
 		{
 		  print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
@@ -944,7 +944,8 @@ else
 	 */
 	if ($fac->statut == 0 && $user->rights->facture->creer) 
 	  {
-	    print '<form action="facture.php?facid='.$fac->id.'" method="post">';
+
+	    print "<form action=\"$PHP_SELF?facid=$fac->id\" method=\"post\">";
 	    //	    echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="1">';
 	    print "<TR class=\"liste_titre\">";
 	    print '<td width="54%">Description</td>';
@@ -1164,9 +1165,9 @@ else
 	    $form->select_array("destinataire",$soc->contact_email_array());
 	    
 	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
-	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
-	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
-	    print "<td>$replytomail</td></tr></table>";
+	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail &nbsp;</td></tr>";
+	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td><td>$replytomail &nbsp;</td></tr>";
+	    print "</table>";
 	    
 	    print "<input type=\"submit\" value=\"Envoyer\"></form>";
 	  }
@@ -1278,8 +1279,8 @@ else
 	if ($sortfield == "")
 	  $sortfield="f.datef";
 
-	$sql = "SELECT s.nom,s.idp,f.facnumber,f.total,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid, f.fk_statut";
-	$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
+	$sql = "SELECT s.nom,s.idp,f.facnumber,f.total,f.total_ttc,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid, f.fk_statut, sum(p.amount) as am";
+	$sql .= " FROM llx_societe as s,llx_facture as f left join llx_paiement as p on f.rowid=p.fk_facture WHERE f.fk_soc = s.idp";
 	
 	if ($socidp)
 	  $sql .= " AND s.idp = $socidp";
@@ -1305,8 +1306,10 @@ else
 	    $sql .= " AND f.facnumber like '%".$HTTP_POST_VARS["sf_ref"] . "%'";
 	  }
 
+	$sql .= " GROUP BY f.facnumber";   
 	
-	$sql .= " ORDER BY $sortfield $sortorder, rowid DESC";
+	$sql .= " ORDER BY $sortfield $sortorder, f.rowid DESC ";
+	
 	$sql .= $db->plimit($limit + 1,$offset);
 	
 	$result = $db->query($sql);
@@ -1314,23 +1317,35 @@ else
     if ($result)
       {
 	$num = $db->num_rows();
-	print_barre_liste("Factures",$page,$PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+	print_barre_liste("Factures clients",$page,$PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 	$i = 0;
 	print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 	print '<TR class="liste_titre">';
 	print '<TD>Num&eacute;ro</TD>';
-	print '<td>';
-	print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
-	print '</td><TD align="right">';
-	print_liste_field_titre("Date",$PHP_SELF,"f.datef","","&amp;socidp=$socidp");
-	print '</td><TD align="right">Montant</TD>';
-	print '<td>&nbsp;</td>';
+	print '<TD align="center">';
+	print_liste_field_titre("Date facturation",$PHP_SELF,"f.datef","","&amp;socidp=$socidp");
+	print '</td>';
+    print '<td>';
+    print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
+    print '</td>';
+    print '<td align="right">';
+    print_liste_field_titre("Montant HT",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
+    print '</td>';
+    print '<td align="right">';
+    print_liste_field_titre("Montant TTC",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
+    print '</td>';
+
+	print '<TD align="right">Reçu</TD>';
+	print '<td align="center">Status</td>';
 	print "</TR>\n";
       
 	if ($num > 0) 
 	  {
 	    $var=True;
+		$total=0;
+		$totalrecu=0;
+
 	    while ($i < min($num,$limit))
 	      {
 		$objp = $db->fetch_object($i);
@@ -1353,28 +1368,30 @@ else
 		      }
 		  }
 
-		print '<td><a class="'.$class.'" href="facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
+		print '<td><a href="facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
 		print "</a></TD>\n";
-		print '<TD><a class="'.$class.'" href="fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
 		
 		if ($objp->df > 0 )
 		  {
-		    print "<TD align=\"right\">";
+		    print "<TD align=\"center\">";
 		    $y = strftime("%Y",$objp->df);
 		    $m = strftime("%m",$objp->df);
 		    
 		    print strftime("%d",$objp->df)."\n";
-		    print ' <a class="'.$class.'" href="facture.php?year='.$y.'&amp;month='.$m.'">';
-		    print strftime("%B",$objp->df)."</a>\n";
-		    print ' <a class="'.$class.' "href="facture.php?year='.$y.'">';
+		    print ' <a href="facture.php?year='.$y.'&amp;month='.$m.'">';
+		    print substr(strftime("%B",$objp->df),0,3)."</a>\n";
+		    print ' <a href="facture.php?year='.$y.'">';
 		    print strftime("%Y",$objp->df)."</a></TD>\n";
 		  }
 		else
 		  {
-		    print "<TD align=\"right\"><b>!!!</b></TD>\n";
+		    print "<TD align=\"center\"><b>!!!</b></TD>\n";
 		  }
+        print '<TD><a href="fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
 		
-		print "<TD align=\"right\">".price($objp->total)."</TD>\n";
+	    print "<TD align=\"right\">".price($objp->total)."</TD>";
+		print "<TD align=\"right\">".price($objp->total_ttc)."</TD>";
+		print "<TD align=\"right\">".price($objp->am)."</TD>";	
 		
 		if (! $objp->paye)
 		  {
@@ -1384,17 +1401,31 @@ else
 		      }
 		    else
 		      {
-			print '<td align="center"><a href="facture.php?filtre=paye:0,fk_statut:1">impayée</a></td>';
+			print '<td align="center"><a class="'.$class.'" href="facture.php?filtre=paye:0,fk_statut:1">'.($objp->am?"commencé":"impayée").'</a></td>';
 		      }
 		  }
 		else
 		  {
-		    print '<td>&nbsp;</td>';
+		    print '<td align="center">payée</td>';
 		  }
 		
 		print "</TR>\n";
+		$total+=$objp->total;
+		$total_ttc+=$objp->total_ttc;
+		$totalrecu+=$objp->am;
 		$i++;
 	      }
+
+	    if ($num <= $limit) {
+			// Print total
+	    	print "<tr ".$bc[!$var].">";
+	    	print "<TD colspan=3 align=\"left\">Total : </TD>";
+			print "<TD align=\"right\"><b>".price($total)."</b></TD>";		
+	    	print "<TD align=\"right\"><b>".price($total_ttc)."</b></TD>";
+	    	print "<TD align=\"right\"><b>".price($totalrecu)."</b></TD>";
+	    	print '<td align="center">&nbsp;</td>';
+	    	print "</tr>\n";
+		}
 	  }
 	
 	print "</table>";
