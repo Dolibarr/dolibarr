@@ -370,7 +370,7 @@ if ($propalid) {
       if (file_exists($file)) {
 	print "<tr><td>Propale PDF</a></td><td><a href=\"../../doc/propal/$obj->ref/$obj->ref.pdf\">$obj->ref.pdf</a></td></tr>";
       }  
-      $file = $conf->propal->outputdir . "/$obj->ref/$obj->ref.ps";
+      $file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/propal/$obj->ref/$obj->ref.ps";
       if (file_exists($file)) {
 	print "<tr><td>Propale Postscript</a></td><td><a href=\"../../doc/propal/$obj->ref/$obj->ref.ps\">$obj->ref.ps</a></td>";
 	print "</tr>";
