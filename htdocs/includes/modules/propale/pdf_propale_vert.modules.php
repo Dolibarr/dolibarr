@@ -233,7 +233,7 @@ Class pdf_propale_vert
 
       $pdf->SetXY(10, ($tab_top + $tab_height + 6));
       $pdf->SetFont('Arial','',8);
-      $texte = "En conformité avec la loi 92-1442 du 31/12/92 modifiée, une pénalité sera appliquée pour un retard de paiement au taux d'intérêt légal multiplié par 5. LE matériel reste l'entière propriété de ".MAIN_INFO_SOCIETE_NOM." j'usqu'à son paiement intégral. Les configurations sont garanties trois ans (1 an pièce et main d'oeuvre, 2 ans (souris, micro-ventilateurs, claviers, non garanties). Pièces détachées non garanties si montage hors de nos ateliers. La validation d'un devis est soumise à sa signature et encaissement d'un accompte de 30% du montant TTC.";
+      $texte = "En conformité avec la loi 92-1442 du 31/12/92 modifiée, une pénalité sera appliquée pour un retard de paiement au taux d'intérêt légal multiplié par 5. LE matériel reste l'entière propriété de ".MAIN_INFO_SOCIETE_NOM." jusqu'à son paiement intégral. Les configurations sont garanties trois ans (1 an pièce et main d'oeuvre, 2 ans (souris, micro-ventilateurs, claviers, non garanties). Pièces détachées non garanties si montage hors de nos ateliers. La validation d'un devis est soumise à sa signature et encaissement d'un accompte de 30% du montant TTC.";
       $pdf->MultiCell(120,3,$texte,0,'J');
     }
 
