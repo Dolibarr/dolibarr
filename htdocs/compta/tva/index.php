@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,11 +21,18 @@
  * $Source$
  *
  */
+
+/**
+	    \file       htdocs/compta/tva/index.php
+        \ingroup    compta
+		\brief      Page des societes
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../../tva.class.php");
 
 /*
- *
  *
  */
 function tva_coll($db, $y,$m) {
@@ -40,8 +47,8 @@ function tva_coll($db, $y,$m) {
     return $obj->amount;
   }
 }
+
 /*
- *
  *
  */
 function tva_paye($db, $y,$m)
@@ -60,17 +67,17 @@ function tva_paye($db, $y,$m)
 }
 
 function pt ($db, $sql, $date) {
-  global $bc; 
+  global $bc,$langs; 
 
   $result = $db->query($sql);
   if ($result) {
     $num = $db->num_rows();
     $i = 0; 
     $total = 0 ;
-    print "<table class=\"border\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+    print "<table class=\"border\" width=\"100%\">";
     print "<tr class=\"liste_titre\">";
     print "<td nowrap width=\"60%\">$date</td>";
-    print "<td align=\"right\">Montant</td>";
+    print "<td align=\"right\">".$langs->trans("Amount")."</td>";
     print "<td>&nbsp;</td>\n";
     print "</tr>\n";
     $var=True;
@@ -86,12 +93,12 @@ function pt ($db, $sql, $date) {
             
       $i++;
     }
-    print "<tr class=\"total\"><td align=\"right\">Total :</td><td nowrap align=\"right\"><b>".price($total)."</b></td><td>euros&nbsp;HT</td></tr>";
+    print "<tr class=\"total\"><td align=\"right\">".$langs->trans("TotalHT")." :</td><td nowrap align=\"right\"><b>".price($total)."</b></td><td>euros</td></tr>";
     
     print "</table>";
     $db->free();
   } else {
-    print $db->error();
+    dolibar_print_error($db);
   }
 }
 
@@ -103,9 +110,9 @@ llxHeader();
 
 $tva = new Tva($db);
 
+$year=$_GET["year"];
 if ($year == 0 ) {
   $year_current = strftime("%Y",time());
-  //$year_start = $conf->years;
   $year_start = $year_current;
 } else {
   $year_current = $year;
@@ -113,32 +120,27 @@ if ($year == 0 ) {
 }
 
 $textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous()."</a>";
-// On n'affiche pas "Année suivante" si c'est dans le futur !
-if(($year < strftime("%Y",time())) && ($year != 0)) {
-  $textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
-}
+$textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
 
-print_fiche_titre("TVA Solde : ".price($tva->solde($year_start)),"$textprevyear Année $year_start $textnextyear");
+print_fiche_titre($langs->trans("VAT")." : ".price($tva->solde($year_start)),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
 
 
 echo '<table width="100%">';
 echo '<tr><td>';
-print_fiche_titre("TVA collectée");
+print_fiche_titre($langs->trans("VATSummary"));
 echo '</td><td>';
-//<td width="50%" valign="top">TVA collectée</td>';
-print_fiche_titre("TVA réglée");
-//echo '<td>Tva Réglée</td></tr>';
+print_fiche_titre($langs->trans("VATPayed"));
 echo '</td></tr>';
 
 for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
 
   echo '<tr><td width="50%" valign="top">';
 
-  print "<table class=\"border\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<table class=\"border\" width=\"100%\">";
   print "<tr class=\"liste_titre\">";
-  print "<td width=\"30%\">Année $y</td>";
-  print "<td align=\"right\">Collectée</td>";
-  print "<td align=\"right\">Payée</td>";
+  print "<td width=\"30%\">".$langs->trans("Year")." $y</td>";
+  print "<td align=\"right\">".$langs->trans("VATToCollect")."</td>";
+  print "<td align=\"right\">".$langs->trans("VATToPay")."</td>";
   print "<td>&nbsp;</td>\n";
   print "<td>&nbsp;</td>\n";
   print "</tr>\n";
@@ -166,7 +168,7 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
     
     $i++;
     if ($i > 2) {
-      print '<tr class="total"><td align="right" colspan="3">Sous total :</td><td nowrap align="right">'.price($subtotal).'</td><td nowrap align="right"><small>'.price($subtotal * 0.8).'</small></td>';
+      print '<tr class="total"><td align="right" colspan="3">'.$langs->trans("SubTotal").':</td><td nowrap align="right">'.price($subtotal).'</td><td nowrap align="right"><small>'.price($subtotal * 0.8).'</small></td>';
       $i = 0;
       $subtotal = 0;
     }
@@ -189,7 +191,8 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
   $sql .= " FROM ".MAIN_DB_PREFIX."tva as f WHERE f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";
   $sql .= " GROUP BY dm DESC";
   
-  pt($db, $sql,"Année $y");
+  pt($db, $sql,$langs->trans("Year")." $y");
+
   
   print "</td></tr></table>";
 
