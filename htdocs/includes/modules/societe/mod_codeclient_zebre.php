@@ -53,6 +53,8 @@ class mod_codeclient_zebre
 
   function verif($db, $code, $socid=0)
     { 
+      $code = strtoupper(trim($code));
+
       if ($this->verif_syntax($code) == 0)
 	{	  
 	  $i = 1;
@@ -90,6 +92,7 @@ class mod_codeclient_zebre
 
   function get_correct($db, &$code)
     { 
+      $code = strtoupper(trim($code));
 
       if ($this->verif_syntax($code) == 0)
 	{	  
@@ -120,6 +123,8 @@ class mod_codeclient_zebre
 
   function verif_dispo($db, $code)
   {
+    $code = strtoupper(trim($code));
+
     $sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
     $sql .= " WHERE code_client = '".$code."'";
 
