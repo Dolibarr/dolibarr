@@ -18,25 +18,18 @@ to chunk_split
 */
 /* Note: if you don't have base64_encode on your sytem it will not work */
 
-/*!	\file htdocs/lib/CMailFile.class.php
-		\brief Classe permettant d'envoyer des attachements par mail
-		\author Dan Potter.
-		\author	Eric Seigne
-		\author	Laurent Destailleur.
-		\version $Revision$
+/**	    \file       htdocs/lib/CMailFile.class.php
+		\brief      fichier de la classe d'envoi de mails
+		\author     Dan Potter.
+		\author	    Eric Seigne
+		\author	    Laurent Destailleur.
+		\version    $Revision$
 */
 
-/*! \class CMailFile
-		\brief Classe permettant d'envoyer des attachements par mail
-		\remarks Eric Seigne <eric.seigne@ryxeo.com> 2004.01.08
-		\remarks ajout de la gestion des cc:
-		\remarks ajout de l'expedition de plusieurs fichiers
-
-		\remarks Laurent Destailleur 2004.02.10
-		\remarks correction d'un disfonctionnement à la gestion des attachements multiples
+/**     \class      CMailFile
+		\brief      Classe d'envoi de mails et pièces jointes. Encapsule mail() avec d'éventuel attachements.
 */
 
-// simple class that encapsulates mail() with addition of mime file attachment.
 class CMailFile
 {
   var $subject;
@@ -49,26 +42,26 @@ class CMailFile
   var $mime_boundary = "--==================_846811060==_";
   var $smtp_headers;
 
-/*!
-		\brief CMailFile
-		\param subject
-		\param to
-		\param from
-		\param msg
-		\param filename_list
-		\param mimetype_list
-		\param mimefilename_list
-		\param addr_cc
-		\param addr_bcc
-*/
-
-  // CMail("sujet","email_to","email_from","email_msg",tableau du path de fichiers,tableau de type mime,tableau de noms fichiers,"chaine cc")
-  function CMailFile($subject,$to,$from,$msg,$filename_list,$mimetype_list,$mimefilename_list,$addr_cc = "")
+    /**
+    		\brief CMailFile
+    		\param subject              sujet
+    		\param to                   email destinataire
+    		\param from                 email emetteur
+    		\param msg                  message
+    		\param filename_list        tableau de fichiers attachés
+    		\param mimetype_list        tableau des types des fichiers attachés
+    		\param mimefilename_list    tableau des noms des fichiers attachés
+    		\param addr_cc              email cc
+    		\param addr_bcc             email bcc
+    */
+  function CMailFile($subject,$to,$from,$msg,$filename_list,$mimetype_list,$mimefilename_list,$addr_cc="",$addr_bcc="")
     {
       $this->subject = $subject;
+      $this->addr_from = $from;
       $this->addr_to = $to;
-      $this->addr_bcc = "";
-      $this->smtp_headers = $this->write_smtpheaders($from,$addr_cc);
+      $this->addr_cc = $addr_cc;
+      $this->addr_bcc = $addr_bcc;
+      $this->smtp_headers = $this->write_smtpheaders();
       $this->text_body = $this->write_body($msg, $filename_list);
       if (count($filename_list)) {
 			$this->mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
@@ -76,7 +69,7 @@ class CMailFile
       }
     }
 
-/*!
+/**
 		\brief permet d'attacher un fichier
 		\param filename_list
 		\param mimetype_list
@@ -100,7 +93,7 @@ class CMailFile
       // added -- to notify email client attachment is done
     }
 
-/*!
+/**
 		\brief permet d'encoder un fichier
 		\param sourcefile
 */
@@ -118,7 +111,7 @@ class CMailFile
       return $encoded;
   }
 
-/*!
+/**
 		\brief permet d'envoyer un fichier
 */
 
@@ -129,7 +122,7 @@ class CMailFile
       return mail($this->addr_to,$this->subject,stripslashes($message),$headers);
     }
 
-/*!
+/**
 		\brief permet d'ecrire le body d'un message
 		\param msgtext
 		\param filename_list
@@ -147,7 +140,7 @@ class CMailFile
       return $out;
     }
 
-/*!
+/**
 		\brief création des headers mime
 		\param filename_list
 		\param mimefilename_list
@@ -165,20 +158,18 @@ class CMailFile
     return $out;
   }
 
-/*!
+/**
 		\brief création des headers smtp
 		\param addr_from
 		\param addr_cc
+		\param addr_bcc
 */
 
-  function write_smtpheaders($addr_from,$addr_cc)
+  function write_smtpheaders()
     {
-      $out = "From: $addr_from\n";
-      if($addr_cc != "")
-	$out = $out . "Cc: $addr_cc\n";
-
-      if($this->addr_bcc != "")
-	$out = $out . "BCC: ".$this->addr_bcc."\n";
+      $out = "From: ".$this->addr_from."\n";
+      if ($this->addr_cc) $out = $out . "Cc: ".$this->addr_cc."\n";
+      if ($this->addr_bcc) $out = $out . "Bcc: ".$this->addr_bcc."\n";
 
       $out = $out . "Reply-To: $addr_from\n";
       $out = $out . "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
@@ -188,7 +179,7 @@ class CMailFile
     }
 }
 
-/*!
+/**
 		\brief permet de diviser une chaine (RFC2045)
 		\param str
 		\remarks function chunk_split qui remplace celle de php si nécéssaire
