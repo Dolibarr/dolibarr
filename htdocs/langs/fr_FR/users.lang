@@ -20,3 +20,4 @@ Administrator=Administrateur
 DefaultRights=Permissions par défaut
 DefaultRightsDesc=Définissez ici les permissions par defaut, c'est à dire les permissions qui seront attribuées automatiquement à un nouvel utilisateur lors de sa création.
 DolibarrUsers=Utilisateurs Dolibarr
+ListOfGroups=Liste des groupes
