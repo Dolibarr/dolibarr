@@ -555,17 +555,16 @@ class Livre {
    *
    *
    */
-  Function delete($user) {
-
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = $idosc ";
-
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_to_categories WHERE products_id = $idosc";
-
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = $idosc";
-	      
-    $sql = "DELETE FROM llx_livre WHERE rowid = $id";
-	    
-    
+  Function delete()
+  {    
+    $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = ".$this->oscid;
+    $result = $this->db->query($sql) ;
+    $sql = "DELETE FROM ".DB_NAME_OSC.".products_to_categories WHERE products_id = ".$this->oscid;
+    $result = $this->db->query($sql) ;
+    $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = ".$this->oscid;
+    $result = $this->db->query($sql) ;
+    $sql = "DELETE FROM llx_livre WHERE rowid = ".$this->id;
+    $result = $this->db->query($sql) ;
   }
 
 
