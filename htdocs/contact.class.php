@@ -147,14 +147,13 @@ class Contact
 		{
 		  echo "LDAP bind failed...";
 		}	 
-	      ldap_close($ds);
+	      ldap_close($ds);	    
+	    }
+	  else
+	    {
+	      echo "Unable to connect to LDAP server";
 	    }
 	}
-      else
-	{
-	  echo "Unable to connect to LDAP server";
-	}
-      
       return $result;
     }
 
@@ -287,11 +286,12 @@ class Contact
 		  echo "LDAP bind failed...";
 		}	      	      
 	      ldap_close($ds);
+	    
 	    }
-	}
-      else
-	{
-	  echo "Unable to connect to LDAP server";
+	  else
+	    {
+	      echo "Unable to connect to LDAP server";
+	    }
 	}
       
       return $result;
