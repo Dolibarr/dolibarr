@@ -601,7 +601,7 @@ else
       $sql .= " AND date_format(f.datef, '%Y') = $year";
     }
   
-    $sql .= " ORDER BY f.fk_statut, f.paye, f.datef DESC ";
+    $sql .= " ORDER BY f.fk_statut, f.paye, f.datef, f.facnumber DESC ";
   
     $result = $db->query($sql);
     if ($result) {
