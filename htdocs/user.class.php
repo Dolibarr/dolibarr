@@ -443,6 +443,15 @@ class User
 		    $this->rights->caisse->configurer = 1;
 		}
 
+	      if ($module == 'telephonie' or $module == '')
+		{
+		  if ($obj->fk_id == 141)
+		    $this->rights->telephonie->lire = 1;
+
+		  if ($obj->fk_id == 142)
+		    $this->rights->telephonie->modifier = 1;
+
+		}
 
 
 	      $i++;
