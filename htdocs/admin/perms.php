@@ -21,8 +21,12 @@
  */
 require("./pre.inc.php");
 
+$langs->load("users");
+
+
 if (!$user->admin)
   accessforbidden();
+
 
 if ($_GET["action"] == 'add')
 {
@@ -38,7 +42,10 @@ if ($_GET["action"] == 'remove')
 
 llxHeader();
 
-print_titre("Permissions par défaut");
+print_titre($langs->trans("DefaultRights"));
+
+print "<br>".$langs->trans("DefaultRightsDesc")."<br><br>\n";
+
 
 print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%">';
 

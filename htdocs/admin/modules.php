@@ -103,20 +103,18 @@ if (!$user->admin)
   exit;
 }
 
-print_titre("Modules");
+print_titre($langs->trans("Modules"));
 
-print '<br>';
-print 'Les modules Dolibarr définissent les fonctionnalités disponibles dans l\'application.<br>';
-print 'Certains modules nécessitent des droits qu\'il vous faudra affecter aux utilisateurs pour qu\'ils puissent accéder à ces fonctionnalités.<br>';
+print "<br>".$langs->trans("ModulesDesc")."<br>\n";
 
 print '<br>';
 print '<table class="noborder" cellpadding="3" cellspacing="0">';
 print '<tr class="liste_titre">';
-print '<td>Famille</td>';
-print '<td>Module</td>';
-print '<td>Info</td>';
-print '<td align="center">Actif</td>';
-print '<td align="center">Action</td>';
+print '<td>'.$langs->trans("Family").'</td>';
+print '<td>'.$langs->trans("Module").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center">'.$langs->trans("Activated").'</td>';
+print '<td align="center">'.$langs->trans("Action").'</td>';
 print '<td>&nbsp;</td>';
 print "</tr>\n";
 
@@ -160,13 +158,13 @@ asort($orders);
 $var=True;
 
 $familylib=array(
-'crm'=>'Gestion client (CRM)',
-'products'=>'Gestion produits',
-'hr'=>'Ressources humaines',
-'projects'=>'Projets/Travail collaboratif',
-'other'=>'Autre',
-'technic'=>'Modules techniques, interfaces',
-'financial'=>'Modules financiers (Compta/trésorerie)'
+'crm'=>$langs->trans("ModuleFamilyCrm"),
+'products'=>$langs->trans("ModuleFamilyProducts"),
+'hr'=>$langs->trans("ModuleFamilyHr"),
+'projects'=>$langs->trans("ModuleFamilyProjects"),
+'other'=>$langs->trans("ModuleFamilyOther"),
+'technic'=>$langs->trans("ModuleFamilyTechnic"),
+'financial'=>$langs->trans("ModuleFamilyFinancial")
 );
 foreach ($orders as $key => $value)
 {
@@ -211,7 +209,7 @@ foreach ($orders as $key => $value)
   
   if ($const_value == 1)
     {
-      print '<a href="modules.php?action=reset&value='.$modName.'">Désactiver</a></td>';
+      print '<a href="modules.php?action=reset&value='.$modName.'">'.$langs->trans("Disable").'</a></td>';
       
       
       if ($objMod->config_page_url)
@@ -221,11 +219,11 @@ foreach ($orders as $key => $value)
 		$i=0;
 		foreach ($objMod->config_page_url as $page) {
 	  		if ($i++) { print '<a href="'.$page.'">'.ucfirst($page).'</a>&nbsp;'; }
-	  		else { print '<a href="'.$page.'">Configurer</a>&nbsp;'; }
+	  		else { print '<a href="'.$page.'">'.$langs->trans("Setup").'</a>&nbsp;'; }
 	  	}
 	  	print '</td>';
 	  } else {
-	  	print '<td><a href="'.$objMod->config_page_url.'">Configurer</a></td>';
+	  	print '<td><a href="'.$objMod->config_page_url.'">'.$langs->trans("Setup").'</a></td>';
 	  }
 	}
       else
@@ -236,7 +234,7 @@ foreach ($orders as $key => $value)
     }
   else
     {
-      print '<a href="modules.php?action=set&value='.$modName.'">Activer</a></td><td>&nbsp;</td>';
+      print '<a href="modules.php?action=set&value='.$modName.'">'.$langs->trans("Activate").'</a></td><td>&nbsp;</td>';
     }
   
   print '</tr>';

@@ -64,9 +64,34 @@ print '<td>'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 
 
-# Affiche lignes des constantes
 $form = new Form($db);
 
+
+# Affiche ligne d'ajout
+$var=!$var;
+print '<form action="const.php" method="POST">';
+print '<input type="hidden" name="action" value="add">';
+
+print "<tr $bc[$var] class=value><td><input type=\"text\" size=\"15\" name=\"constname\" value=\"\"></td>\n";
+
+print '<td>';
+print '<input type="text" size="30" name="constvalue" value="">';
+print '</td><td>';
+
+$form->select_array('consttype',array('yesno','texte','chaine'),2);
+print '</td><td>';
+
+print '<input type="text" size="15" name="constnote" value="">';
+print '</td><td>';
+
+print '<input type="Submit" value="'.$langs->trans("Add").'" name="Button"><BR>';
+print "</td>\n";
+	
+print '</tr>';
+print '</form>';
+
+
+# Affiche lignes des constantes
 if ($all==1){
   $sql = "SELECT rowid, name, value, type, note FROM llx_const ORDER BY name ASC";
 }else{
@@ -126,31 +151,6 @@ if ($result)
       $i++;
     }
 }
-
-
-# Affiche ligne d'ajout
-$var=!$var;
-print '<form action="const.php" method="POST">';
-print '<input type="hidden" name="action" value="add">';
-
-print "<tr $bc[$var] class=value><td><input type=\"text\" size=\"15\" name=\"constname\" value=\"\"></td>\n";
-
-print '<td>';
-print '<input type="text" size="30" name="constvalue" value="">';
-print '</td><td>';
-
-$form->select_array('consttype',array('yesno','texte','chaine'),1);
-print '</td><td>';
-
-print '<input type="text" size="15" name="constnote" value="">';
-print '</td><td>';
-
-print '<input type="Submit" value="'.$langs->trans("Add").'" name="Button"><BR>';
-print "</td>\n";
-print '</form>';
-	
-print '</tr>';
-
 
 
 print '</table>';

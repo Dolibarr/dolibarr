@@ -46,7 +46,7 @@ if (!defined("MAIN_MOTD") && strlen(trim(MAIN_MOTD)))
   define("MAIN_MOTD","");
 }
 
-print_titre("Configuration IHM (Dolibarr version ".DOL_VERSION.")");
+print_titre($langs->trans("GUISetup"));
 
 print "<br>\n";
 

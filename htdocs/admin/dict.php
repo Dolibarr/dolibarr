@@ -104,7 +104,7 @@ llxHeader();
 
 if ($_GET["id"])
 {
-    print_titre("Configuration des dictionnaires de données");
+    print_titre($langs->trans("DictionnarySetup"));
     print '<br>';
 
     // Complète requete recherche valeurs avec critere de tri
@@ -208,7 +208,7 @@ if ($_GET["id"])
 }
 else
 {
-    print_titre("Configuration des dictionnaires de données");
+    print_titre($langs->trans("DictionnarySetup"));
     print '<br>';
 
     foreach ($tabid as $i => $value) {

@@ -33,7 +33,7 @@ if ($_POST["action"] == 'update')
   dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
   dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"]);
   dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"]);
-  dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"]);
+  dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"]);
 
   Header("Location: index.php");
 }
@@ -42,7 +42,8 @@ if ($_POST["action"] == 'update')
 llxHeader();
 $form = new Form($db);
 
-print_titre("Configuration générale (Dolibarr version ".DOL_VERSION.")");
+print_titre($langs->trans("GlobalSetup"));
+
 
 print "<br>\n";
 
@@ -71,7 +72,7 @@ if ($_GET["action"] == 'edit')
   print '<input name="siren" size="20" value="' . MAIN_INFO_SIREN . '"></td></tr>';
 
   print '<tr class="pair"><td width="50%">Code de l\'activité économique</td><td>';
-  print '<input name="rcs" size="20" value="' . MAIN_INFO_APE . '"></td></tr>';
+  print '<input name="ape" size="20" value="' . MAIN_INFO_APE . '"></td></tr>';
 
   print '<tr><td colspan="2" align="center">';
   print '<input type="submit" value="Enregistrer"></td></tr>';
@@ -81,7 +82,7 @@ else
 {
 
   print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr class="liste_titre"><td>Informations sur la société/association</td><td>Valeur</td></tr>';
+  print '<tr class="liste_titre"><td>Informations sur la société/association</td><td>'.$langs->trans("Value").'</td></tr>';
   print '<tr class="impair"><td width="50%">Nom de la société/association</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
 
   print '<tr class="pair"><td>Pays de la société</td><td>';
@@ -96,8 +97,8 @@ else
   print '<tr class="impair"><td width="50%">Identifiant professionnel (SIREN,...)</td><td>';
   print MAIN_INFO_SIREN . '</td></tr>';
 
-  print '<tr class="pair"><td width="50%">RCS</td><td>';
-  print MAIN_INFO_RCS . '</td></tr>';
+  print '<tr class="pair"><td width="50%">Code de l\'activité économique</td><td>';
+  print MAIN_INFO_APE . '</td></tr>';
 
 
   print '</table><br>';

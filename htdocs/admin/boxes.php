@@ -21,40 +21,36 @@
  */
 require("./pre.inc.php");
 
+$langs->trans("admin");
+
+
 if (!$user->admin)
   accessforbidden();
 
 
 llxHeader();
 
-print_titre("Boites");
+print_titre($langs->trans("Boxes"));
 
-print "<br>";
-print "Les boites sont des cartouches d'informations réduites qui s'affichent sur certaines pages. Vous pouvez choisir ou non d'activer ces cartouches en cliquant sur 'Ajouter' ou la poubelle pour les désactiver. ";
-print "Seules les boites en rapport avec un <a href=\"modules.php\">module</a> actif sont présentées.<br>\n";
+print "<br>".$langs->trans("BoxesDesc")."<br>\n";
 
 
 if ($_POST["action"] == 'add')
 {
-
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position) values (".$_POST["rowid"].",".$_POST["constvalue"].");";
-
+  $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes WHERE box_id=".$_POST["boxid"]." AND position=".$_POST["pos"];
   $result = $db->query($sql);
+
+  $num = $db->num_rows();
+  if ($num == 0) {
+    // Si la boite n'est pas deja active
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position) values (".$_POST["boxid"].",".$_POST["pos"].");";
+    $result = $db->query($sql);
+  }
 }
-
-if ($_GET["action"] == 'add')
-{
-
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position) values (".$_GET["rowid"].",0);";
-
-  $result = $db->query($sql);
-}
-
 
 if ($_GET["action"] == 'delete')
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["rowid"];
-
   $result = $db->query($sql);
 }
 
@@ -96,16 +92,15 @@ $db->free();
  * Boites disponibles
  *
  */
-print '<br>';
-print_titre("Boites disponibles");
+print "<br>\n";
+print_titre($langs->trans("BoxesAvailable"));
 
-print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print '<table class="noborder" cellpadding="1" cellspacing="0" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>Boites</td>';
-print '<td>Fichier source</td>';
-foreach ($pos_array as $position) {
-    print '<td align="center">Activation '.$pos_name[$position].'</td>';
-}
+print '<td>'.$langs->trans("Boxe").'</td>';
+print '<td>'.$langs->trans("SourceFile").'</td>';
+print '<td align="center" width="180">'.$langs->trans("ActivateOn").'</td>';
+print '<td align="center" width="80">&nbsp;</td>';
 print "</tr>\n";
 
 $sql = "SELECT rowid, name, file FROM ".MAIN_DB_PREFIX."boxes_def";
@@ -117,29 +112,29 @@ if ($result)
     $num = $db->num_rows();
     $i = 0;
     
+    // Boucle sur toutes les boites
     while ($i < $num)
     {
         $var = ! $var;
         $obj = $db->fetch_object( $i);
         
-        print '<tr '.$bc[$var].'><td width="200">'.$obj->name.'</td><td width="200">' . $obj->file . '</td>';
+        print '<form action="boxes.php" method="POST">';
+        print '<tr '.$bc[$var].'><td>'.$obj->name.'</td><td>' . $obj->file . '</td>';
 
         // Pour chaque position possible, on affiche un lien 
         // d'activation si boite non deja active pour cette position
-        foreach ($pos_array as $position) {
-            print '<td width="50" align="center">';
-            if (! $boxes[$position][$obj->rowid])
-            {
-                print '<a href="boxes.php?rowid='.$obj->rowid.'&amp;action=add&pos='.$position.'">'.$langs->trans("Add").'</a>';
-            }
-            else
-            {
-                print "&nbsp;";
-            }
-            print '</td>';
-        }
+        print '<td align="center">';
+        $html=new Form($db);
+        print $html->select_array("pos",$pos_name);
+        print '<input type="hidden" name="action" value="add">';
+        print '<input type="hidden" name="boxid" value="'.$obj->rowid.'">';
+        print ' <input type="submit" name="button" value="'.$langs->trans("Activate").'">';
+        print '</td>';
+
+        print '<td>&nbsp;</td>';
 
         print '</tr>';
+        print '</form>';
     
         $i++;
     }
@@ -149,14 +144,15 @@ $db->free();
 print '</table>';
 
 
-print "<br>\n";
-print_titre("Boites activées");
+print "<br>\n\n";
+print_titre($langs->trans("BoxesActivated"));
 
 print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>Boites</td>';
-print '<td>Active pour</td>';
-print '<td align="center">Désactiver</td>';
+print '<td>'.$langs->trans("Boxe").'</td>';
+print '<td>&nbsp;</td>';
+print '<td align="center" width="180">'.$langs->trans("ActiveOn").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Disable").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT b.rowid, b.box_id, b.position, d.name FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d where b.box_id = d.rowid";
@@ -172,9 +168,14 @@ if ($result)
       $var = ! $var;
       $obj = $db->fetch_object( $i);
 
-      print '<tr '.$bc[$var].'><td width="200">'.$obj->name.'</td><td width="200">' . $pos_name[$obj->position] . '</td><td width="50" align="center">';
+      print '<tr '.$bc[$var].'><td>'.$obj->name.'</td>';
+      print '<td>&nbsp;</td>';
+      print '<td align="center">' . $pos_name[$obj->position] . '</td>';
+      print '<td align="center">';
       print '<a href="boxes.php?rowid='.$obj->rowid.'&amp;action=delete">'.img_delete().'</a>';
-      print '</td></tr>';
+      print '</td>';
+      
+      print "</tr>\n";
       $i++;
     }
 }
