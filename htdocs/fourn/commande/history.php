@@ -98,7 +98,7 @@ if ($id > 0)
       print '<table class="border" width="100%">';
       print "<tr><td>".$langs->trans("Supplier")."</td>";
       print '<td colspan="2">';
-      print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
+      print '<b><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  
       print '<td width="50%">';
       print '<img src="statut'.$commande->statut.'.png">&nbsp;';
