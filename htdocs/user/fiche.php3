@@ -61,25 +61,6 @@ if ($HTTP_POST_VARS["action"] == 'add' && $user->admin)
   $edituser->admin  = $HTTP_POST_VARS["admin"];
   $edituser->webcal_login  = $HTTP_POST_VARS["webcal_login"];
 
-  if (isset($HTTP_POST_VARS["module_compta"]) && $HTTP_POST_VARS["module_compta"] ==1)
-    {
-      $edituser->compta  = 1;
-    }
-  else
-    {
-      $edituser->compta  = 0;
-    }
-
-  if (isset($HTTP_POST_VARS["module_comm"]) && $HTTP_POST_VARS["module_comm"] ==1)
-    {
-      $edituser->comm  = 1;
-    }
-  else
-    {
-      $edituser->comm  = 0;
-    }
-
-  //$id = $edituser->create($user->id);
   $id = $edituser->create();
   if (isset($_POST['password']) && $_POST['password']!='' ){
     $edituser->password($_POST['password'],$conf->password_encrypted);
@@ -99,25 +80,6 @@ if ($_POST["action"] == 'update' && $user->admin)
   $edituser->admin         = $_POST["admin"];
   $edituser->webcal_login  = $_POST["webcal_login"];
 
-  if (isset($_POST["module_compta"]) && $_POST["module_compta"] ==1)
-    {
-      $edituser->compta  = 1;
-    }
-  else
-    {
-      $edituser->compta  = 0;
-    }
-  
-  if (isset($_POST["module_comm"]) && $_POST["module_comm"] ==1)
-    {
-      $edituser->comm  = 1;
-    }
-  else
-    {
-      $edituser->comm  = 0;
-    }
-
-  //  if (! $edituser->update($id, $user))
   if (! $edituser->update())
     {
       print $edituser->error();
@@ -179,16 +141,6 @@ if ($action == 'create')
   print '<tr><td valign="top">Login Webcal</td>';
   print '<td class="valeur"><input size="30" type="text" name="webcal_login" value=""></td></tr>';
   
-  print '<tr><td valign="top">Module Commercial ?</td>';
-  print '<td class="valeur">';
-  $form->checkbox('module_comm',0,1);
-  print '</td></tr>';
-
-  print '<tr><td valign="top">Module Compta ?</td>';
-  print '<td class="valeur">';
-  $form->checkbox('module_compta',0,1);
-  print '</td></tr>';
-
   print '<tr><td valign="top">Note</td><td>';
   print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
   print "</textarea></td></tr>";
@@ -238,7 +190,7 @@ else
 
       print '<tr><td width="25%" valign="top">Prénom</td>';
       print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
-      print '<td valign="top" rowspan="9">';
+      print '<td valign="top" rowspan="7">';
       /*
        * Droits
        */
@@ -276,11 +228,6 @@ else
       print '<tr><td width="25%" valign="top">Administrateur</td>';
       print '<td width="25%"  class="valeur">'.$yn[$fuser->admin].'</td></tr>';
       
-      print '<tr><td width="25%" valign="top">Module Compta</td>';
-      print '<td width="25%"  class="valeur">'.$yn[$fuser->compta].'&nbsp;</td></tr>';
-      print '<tr><td width="25%" valign="top">Module Commercial</td>';
-      print '<td width="25%"  class="valeur">'.$yn[$fuser->comm].'</td></tr>';
-
       print '<tr><td width="25%" valign="top">Id Société</td>';
       print '<td width="25%"  class="valeur">'.$fuser->societe_id.'&nbsp;</td></tr>';
       print '<tr><td width="25%" valign="top">';
@@ -375,16 +322,6 @@ else
 	  print '<tr><td valign="top">Login Webcal</td>';
 	  print '<td class="valeur"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
 	  
-	  print '<tr><td valign="top">Module Commercial ?</td>';
-	  print '<td class="valeur">';
-	  $form->checkbox('module_comm',$fuser->comm,1);
-	  print '</td></tr>';
-
-	  print '<tr><td valign="top">Module Compta ?</td>';
-	  print '<td class="valeur">';
-	  $form->checkbox('module_compta',$fuser->compta,1);
-	  print '</td></tr>';
-
 	  print '<tr><td valign="top">Description</td><td>';
 	  print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
 	  print $fuser->note;
