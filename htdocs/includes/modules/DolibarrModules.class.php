@@ -53,6 +53,8 @@ class DolibarrModules
      */
     function _init($array_sql)
     {
+        global $langs;
+        
         // Insère les constantes
         $err = 0;
         $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$this->const_name."';";
@@ -73,13 +75,14 @@ class DolibarrModules
 
             $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."boxes_def WHERE name ='".$titre."'";
 
-            if ( $this->db->query($sql) )
+            $result=$this->db->query($sql);
+            if ($result)
             {
-                $row = $this->db->fetch_row($sql);
+                $row = $this->db->fetch_row($result);
                 if ($row[0] == 0)
                 {
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes_def (name, file) VALUES ('".$titre."','".$file."')";
-                    if (! $this->db->query($sql) )
+                    if (! $this->db->query($sql))
                     {
                         $err++;
                     }
@@ -102,9 +105,10 @@ class DolibarrModules
 
             $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."const WHERE name ='".$name."'";
 
-            if ( $this->db->query($sql) )
+            $result=$this->db->query($sql);
+            if ($result)
             {
-                $row = $this->db->fetch_row($sql);
+                $row = $this->db->fetch_row($result);
 
                 if ($row[0] == 0)
                 {
@@ -188,8 +192,8 @@ class DolibarrModules
                     umask(0);
                     if (! @mkdir($dir, 0755))
                     {
-                        $this->error = "Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
-                        dolibarr_syslog("Erreur: impossible de créer $dir");
+                        $this->error = $langs->trans("ErrorCanNotCreateDir",$dir);
+                        dolibarr_syslog("DolibarrModules::_init error");
 
                     }
                 }
