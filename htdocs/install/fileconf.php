@@ -31,7 +31,7 @@
 
 include_once("./inc.php");
 
-$setuplang=$_POST["selectlang"];
+$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:$langcode;
 $langs->defaultlang=$setuplang;
 $langs->load("install");
 
