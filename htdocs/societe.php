@@ -125,7 +125,7 @@ if ($result) {
   print "</td><TD>";
   print_liste_field_titre("Ville",$PHP_SELF,"s.ville");
   print "</td>";
-  print '</td><td colspan="2">&nbsp;</td>';
+  print '</td><td colspan="2" align="center">Fiches</td><td>&nbsp;</td>';
   print "</TR>\n";
   $var=True;
   while ($i < $num) {
@@ -143,18 +143,20 @@ if ($result) {
       }
     else
       {
-	print "&nbsp;";
+	print "&nbsp;</td>";
       }
     print "</td><TD align=\"center\">";
     if ($obj->fournisseur)
       {
-	print "<a href=\"/fourn/fiche.php3?socid=$obj->idp\">fournisseur</A></td>\n";
+	print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php3?socid='.$obj->idp.'">fournisseur</A></td>';
       }
     else
       {
-	print "&nbsp;";
+	print "&nbsp;</td>";
       }
     
+    print '<td align="center"><a href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$obj->idp.'">Notifications</A></td>';
+
     print "</TR>\n";
     $i++;
   }
