@@ -251,10 +251,10 @@ Class pdf_propale_jaune
       $pdf->SetFont('Arial','B',12);
       $propale->fetch_client();
       $pdf->SetXY(102,42);
-      $pdf->MultiCell(66,5, $propale->client->nom);
+      $pdf->MultiCell(96,5, $propale->client->nom);
       $pdf->SetFont('Arial','B',11);
       $pdf->SetXY(102,47);
-      $pdf->MultiCell(66,5, $propale->client->adresse . "\n" . $propale->client->cp . " " . $propale->client->ville);
+      $pdf->MultiCell(96,5, $propale->client->adresse . "\n" . $propale->client->cp . " " . $propale->client->ville);
       $pdf->rect(100, 40, 100, 40);
             
       $pdf->SetTextColor(200,0,0);
