@@ -250,7 +250,7 @@ if ($socid > 0) {
     if ($action == 'changevalue') {
 
       print "<HR noshade>";
-      print "<form action=\"index.php3?socid=$objsoc->idp\" method=\"post\">";
+      print "<form action=\"index.php?socid=$objsoc->idp\" method=\"post\">";
       print "<input type=\"hidden\" name=\"action\" value=\"cabrecrut\">";
       print "Cette société est un cabinet de recrutement : ";
       print "<select name=\"selectvalue\">";

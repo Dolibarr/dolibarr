@@ -34,9 +34,6 @@ $db = new Db();
 
 $html = new Form($db);
 
-$yn[1] = "oui";
-$yn[0] = "<b>non</b>";
-	
 if ($action == 'valid') 
 {
   $sql = "UPDATE llx_facture_fourn set fk_statut = 1 WHERE rowid = $facid ;";
@@ -69,7 +66,6 @@ if ($action == 'update')
   $result = $db->query( $sql);
 
 }
-
 
 if ($action == 'add')
 {
@@ -105,10 +101,8 @@ if ($action == 'add')
 	  $facfou->add_ligne($$label, $$amount, $$tauxtva, $$qty);
 	}
     }
-  if ($facfou->create($user))
-    {
-      Header("Location: index.php3");
-    }
+  $facid = $facfou->create($user);
+
 }
 
 if ($action == 'del_ligne')
@@ -306,7 +300,7 @@ else
 	   *
 	   */	  
 	  print '<p><table border="1" cellspacing="0" cellpadding="2" width="100%">';
-	  print '<tr><td class="small">Libellé</td><td align="center" class="small">P.U. HT</td><td align="center" class="small">Qty</td><td align="center" class="small">Total HT</td>';
+	  print '<tr class="liste_titre"><td class="small">Libellé</td><td align="center" class="small">P.U. HT</td><td align="center" class="small">Qty</td><td align="center" class="small">Total HT</td>';
 	  print '<td align="center" class="small">Taux TVA</td>';
 	  print '<td align="center" class="small">TVA</td>';
 	  print '<td align="right" class="small">Total TTC</td><td>&nbsp;</td></tr>';
@@ -360,7 +354,7 @@ else
 	   */
 	  print '<table border="1" cellspacing="0" cellpadding="2" width="100%">';
 	  print "<tr><td>Société</td><td colspan=\"3\"><b><a href=\"../fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td>";
-	  print "<td align=\"right\"><a href=\"index.php3?socidp=$obj->socidp\">Autres factures</a></td>\n";
+	  print "<td align=\"right\"><a href=\"index.php?socidp=$obj->socidp\">Autres factures</a></td>\n";
 	  print "</tr>";
 	  print "<tr><td>Date</td><td colspan=\"4\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
 	  print "<tr><td>Libelle</td><td colspan=\"4\">$obj->libelle</td>";
@@ -385,7 +379,8 @@ else
 	   * Paiements
 	   */
 	  $sql = "SELECT ".$db->pdate("datep")." as dp, p.amount, c.libelle as paiement_type, p.num_paiement, p.rowid";
-	  $sql .= " FROM llx_paiementfourn as p, c_paiement as c WHERE p.fk_facture_fourn = ".$fac->id." AND p.fk_paiement = c.id";
+	  $sql .= " FROM llx_paiementfourn as p, c_paiement as c ";
+	  $sql .= " WHERE p.fk_facture_fourn = ".$fac->id." AND p.fk_paiement = c.id";
 	  
 	  $result = $db->query($sql);
 
@@ -435,8 +430,8 @@ else
 	   * Lignes
 	   *
 	   */	  
-	  print '<p><table border="1" cellspacing="0" cellpadding="2" width="100%">';
-	  print '<tr><td class="small">Libellé</td><td align="center" class="small">P.U. HT</td><td align="center" class="small">Qty</td><td align="center" class="small">Total HT</td>';
+	  print '<p><table border="1" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<tr class="liste_titre"><td class="small">Libellé</td><td align="center" class="small">P.U. HT</td><td align="center" class="small">Qty</td><td align="center" class="small">Total HT</td>';
 	  print '<td align="center" class="small">Taux TVA</td>';
 	  print '<td align="center" class="small">TVA</td>';
 	  print '<td align="right" class="small">Total TTC</td></tr>';
@@ -466,7 +461,7 @@ else
   
       if ($obj->statut == 0 && $user->societe_id == 0)
 	{
-	  print '<td align="center" width="25%">[<a href="index.php3?facid='.$facid.'&action=delete">Supprimer</a>]</td>';
+	  print '<td align="center" width="25%">[<a href="index.php?facid='.$facid.'&action=delete">Supprimer</a>]</td>';
 	}
       elseif ($obj->statut == 1 && $obj->paye == 0  && $user->societe_id == 0)
 	{
