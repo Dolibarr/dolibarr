@@ -206,6 +206,17 @@ create table llx_facture_fourn
   UNIQUE INDEX (facnumber)
 );
 
+create table llx_notify
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  tms             timestamp,
+  daten           datetime,           -- date de la notification
+  fk_action       integer NOT NULL,
+  fk_contact      integer NOT NULL,
+  objet_type      enum('ficheinter','facture','propale'),
+  objet_id        integer NOT NULL
+);
+
 create table llx_livre_to_auteur
 (
   fk_livre       integer NOT NULL,
@@ -230,6 +241,15 @@ create table llx_fichinter
   note            text,
 
   UNIQUE INDEX (ref)
+);
+
+create table llx_action_def
+(
+  rowid           integer NOT NULL PRIMARY KEY,
+  tms             timestamp,
+  titre           varchar(255) NOT NULL,
+  description     text,
+  objet_type      enum('ficheinter','facture','propale')
 );
 
 create table llx_soc_events
@@ -281,6 +301,16 @@ create table llx_compta_account
 
 );
 
+create table llx_notify_def
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  tms             timestamp,
+  datec           date,             -- date de creation
+  fk_action       integer NOT NULL,
+  fk_soc          integer NOT NULL,
+  fk_contact      integer NOT NULL
+);
+
 create table llx_bank_account
 (
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
@@ -300,6 +330,13 @@ create table llx_bank_account
 );
 
 
+
+create table llx_propal_model_pdf
+(
+  nom         varchar(50) PRIMARY KEY,
+  libelle     varchar(255),
+  description text
+);
 
 create table llx_user
 (
@@ -665,7 +702,7 @@ create table llx_propal
   tva             real      default 0,
   total           real      default 0,
   note            text,
-
+  model_pdf       varchar(50),
   UNIQUE INDEX (ref)
 );
 
@@ -882,6 +919,10 @@ create table llx_paiementfourn
 
 insert into llx_sqltables (name, loaded) values ('llx_album',0);
 
+delete from llx_action_def;
+insert into llx_action_def (rowid,titre,description,objet_type) VALUES (1,'Validation fiche intervention','Déclenché lors de la validation d\'une fiche d\'intervention','ficheinter');
+insert into llx_action_def (rowid,titre,description,objet_type) VALUES (2,'Validation facture','Déclenché lors de la validation d\'une facture','facture');
+
 delete from llx_boxes_def;
 insert into llx_boxes_def (name, file) values ('Factures','box_factures.php');
 insert into llx_boxes_def (name, file) values ('Factures impayées','box_factures_imp.php');
@@ -892,7 +933,6 @@ delete from llx_boxes;
 insert into llx_boxes (box_id, position) values (4,0);
 insert into llx_boxes (box_id, position) values (1,0);
 insert into llx_boxes (box_id, position) values (3,0);
-
 insert into llx_const(name, value, type) values ('FAC_PDF_FAX','01 02 03 04 05','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_SIRET','123 456 789','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_INTITULE','Dolibarr','chaine');
@@ -900,9 +940,7 @@ insert into llx_const(name, value, type) values ('FAC_PDF_SIREN','123 456 789 12
 insert into llx_const(name, value, type) values ('FAC_PDF_TEL','05 04 03 02 01','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_ADRESSE','1 quai Martin\n56400 Auray','texte');
 
-
-
-insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2001','chaine','Année de départ');
+insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2003','chaine','Année de départ');
 
 insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
 
