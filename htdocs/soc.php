@@ -112,7 +112,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user-
   if ($result == 0)
     {
       llxHeader();
-      print "Société $soc->nom supprimée de la base";
+      print '<div class="ok">'.$langs->trans("CompanyDeleted",$soc->nom).'</div>';
       llxFooter();
       exit ;
     }
@@ -151,7 +151,7 @@ if ($_GET["action"] == 'create')
       
       if ($soc->error)
 	{
-	  print '<div class="errormessage">';
+	  print '<div class="error">';
 	  print nl2br($soc->error);
 	  print '</div>';
 	}
@@ -386,21 +386,19 @@ else
   /*
    * Fiche société en mode visu
    */
-  $html = new Form($db);
-  /*
-   * Confirmation de la suppression de la facture
-   *
-   */
+
+  // Confirmation de la suppression de la facture
   if ($_GET["action"] == 'delete')
     {
-      $html->form_confirm("soc.php?socid=".$soc->id,"Supprimer la société","Etes-vous sûr de vouloir supprimer cette société et tous ses contacts associés ?","confirm_delete");
+      $html = new Form($db);
+      $html->form_confirm("soc.php?socid=".$soc->id,$langs->trans("DeleteACompany"),$langs->trans("ConfirmDeleteCompany"),"confirm_delete");
       print "<br />\n";
     }
   
 
   if ($soc->error)
     {
-      print '<div class="errormessage">';
+      print '<div class="error">';
       print $soc->error;
       print '</div>';
     }

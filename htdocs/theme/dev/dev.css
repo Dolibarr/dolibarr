@@ -101,14 +101,28 @@ div.FicheSubmit {
   text-align: center;
 }
 
-div.message {
-  background: #dee7ec;
-  padding: 0em 1.5em;
-  margin: 0em 0em 0em 0em;
-  border-top: 1px solid #8CACBB;
-  border-left: 1px solid #8CACBB;
-  border-right: 1px solid #8CACBB;
+/*
+ *   Ok, Warning, Error
+ */
+.ok      { color: #114466; }
+.warning { color: #777711; }
+.error   { color: #550000; font-weight: bold; }
+
+div.ok {
+  color: #114466;
 }
+
+div.warning {
+  color: #777711;
+}
+
+div.error {
+  color: #550000; font-weight: bold; 
+  padding: 0.2em 0.2em 0.2em 0.2em;
+  margin: 0.5em 0em 0.5em 0em;
+  border: 1px solid #6C7C8B;
+}
+
 
 a.tabAction {
   background: white; 
