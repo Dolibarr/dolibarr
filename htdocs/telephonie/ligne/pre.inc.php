@@ -57,8 +57,12 @@ function llxHeader($head = "", $title="") {
 
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/listecommande.php", "En commande");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/communications.php", "Communications");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/groupe.php", "Groupes");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/numdata.php", "Numéros data");
+
+  if (TELEPHONIE_MODULE_GROUPES == 1)
+    $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/groupe.php", "Groupes");
+
+  if (TELEPHONIE_MODULE_NUMDATA == 1)
+    $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/numdata.php", "Numéros data");
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commandes");
 
