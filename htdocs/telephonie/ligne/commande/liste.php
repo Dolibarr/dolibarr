@@ -149,9 +149,10 @@ if ($result)
 	  print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
 	}
 
-      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->sfnom).'</a></td>';
-      print '<td align="center">'.$socf->verif_rib().'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socidp.'">'.stripslashes($obj->nom).'</a></td>';
+      print '<td>'.stripslashes($obj->sfnom).'</td>';
+
+      print '<td align="center">'.$yesno[$socf->verif_rib()].'</a></td>';
       print "<td>".$obj->fournisseur."</td>\n";
       print "</tr>\n";
       $i++;
