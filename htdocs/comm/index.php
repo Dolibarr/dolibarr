@@ -100,7 +100,7 @@ print '<tr><td valign="top" width="30%">';
  * Recherche Propal
  */
 if ($conf->propal->enabled) {
-    $var=true;
+    $var=false;
 	print '<form method="post" action="propal.php">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">Rechercher une proposition</td></tr>';
@@ -113,7 +113,7 @@ if ($conf->propal->enabled) {
  * Recherche Contrat
  */
 if ($conf->contrat->enabled) {
-    $var=true;
+    $var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">Rechercher un contrat</td></tr>';
@@ -317,7 +317,7 @@ if ( $db->query($sql) )
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print "<td width=\"40%\"><a href=\"action/fiche.php?id=$obj->id\">".img_file()."</a>&nbsp;";
+	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_file()."</a>&nbsp;";
 	  print "<a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
 	
 	  print '<td>'. strftime("%d %b %Y",$obj->da);
