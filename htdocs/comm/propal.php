@@ -180,6 +180,7 @@ if ($HTTP_POST_VARS["action"] == 'setpdfmodel' && $user->rights->propale->creer)
 {
   $propal = new Propal($db, 0, $propalid);
   $propal->set_pdf_model($user, $HTTP_POST_VARS["modelpdf"]);
+  propale_pdf_create($db, $propalid, $HTTP_POST_VARS["modelpdf"]);
 } 
 
 
@@ -199,7 +200,7 @@ if ($valid == 1 && $user->rights->propale->valider)
   $propal = new Propal($db);
   $propal->fetch($propalid);
   $propal->update_price($propalid);
-  propale_pdf_create($db, $propalid);
+  propale_pdf_create($db, $propalid, $propal->modelpdf);
   $propal->valid($user);
 }
 
