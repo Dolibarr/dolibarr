@@ -50,6 +50,7 @@ if(!$GLOBALS['sessionid'])
  */
 
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
+define('DOL_DATA_ROOT', $dolibarr_main_data_root);
 
 if (strtolower(substr($dolibarr_main_url_root, 0, 7)) == 'http://')
 {
