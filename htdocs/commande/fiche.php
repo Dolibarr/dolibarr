@@ -665,7 +665,7 @@ else
 
 	    print "</form>";
 	  }
-	print "</table>";
+	print "</table><br>";
 	/*
 	 * Fin Ajout ligne
 	 *
@@ -675,7 +675,7 @@ else
 
 	if ($user->societe_id == 0 && $commande->statut < 3)
 	  {
-	    print '<p><div class="tabsAction">';
+	    print '<div class="tabsAction">';
 	
 	    if ($commande->statut == 0 && $user->rights->commande->supprimer)
 	      {
@@ -825,7 +825,7 @@ else
 	    $html->select_array("projetid",$proj->liste_array($commande->soc_id));
 	    
 	    print "</td></tr>";
-	    print '<tr><td colspan="2" align="center"><input type="submit" value="Envoyer"></td></tr></table></form></p>';
+	    print '<tr><td colspan="2" align="center"><input type="submit" value="Envoyer"></td></tr></table></form>';
 	  }
 	/*
 	 *

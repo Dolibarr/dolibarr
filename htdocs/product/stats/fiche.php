@@ -22,7 +22,6 @@
  */
 require("./pre.inc.php");
 require("../../propal.class.php");
-//require("../../graph.class.php");
 
 llxHeader();
 
@@ -78,7 +77,7 @@ if ($id)
       print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
       print '<br><a href="facture.php?id='.$id.'">Factures</a> : '.$product->count_facture();
       print '</td></tr>';
-      print '<tr><td>Prix</td><td>'.price($product->price).'</td></tr>';
+      print '<tr><td>Prix actuel</td><td>'.price($product->price).'</td></tr>';
       print "</table>";
 
       print '<br><table class="border" width="100%" cellspacing="0" cellpadding="4">';

@@ -1131,8 +1131,9 @@ else
     * Liste des actions propres aux document
     *
     */
-    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $fac->id";
+    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note, code ";
+    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."user as u ";
+    $sql .= " WHERE a.fk_user_author = u.rowid and a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $fac->id";
     
     $result = $db->query($sql);
     if ($result)
@@ -1144,7 +1145,7 @@ else
     
             $i = 0; $total = 0;
             print '<table class="border" cellspacing="0" cellpadding="4" width="100%">';
-            print "<tr $bc[$var]><td>Date</td><td>Action</td></tr>\n";
+            print "<tr $bc[$var]><td>Date</td><td>Action</td><td>Par</td></tr>\n";
     
             $var=True;
             while ($i < $num)
@@ -1152,8 +1153,9 @@ else
                 $objp = $db->fetch_object( $i);
                 $var=!$var;
                 print "<tr $bc[$var]>";
-                print "<td>".strftime("%d %B %Y",$objp->da)."</TD>\n";
-                print '<td>'.stripslashes($objp->note).'</TD>';
+                print "<td>".dolibarr_print_date($objp->da)."</td>\n";
+                print '<td>'.stripslashes($objp->note).'</td>';
+                print '<td>'.$objp->code.'</td>';
                 print "</tr>";
                 $i++;
             }
