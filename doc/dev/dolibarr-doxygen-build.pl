@@ -20,7 +20,8 @@ if (! -s "doc/dev/dolibarr-doxygen") {
     exit 1;   
 }
 
-$result=`doxygen doc/dev/dolibarr-doxygen`;
+print "Running doxygen, please wait...\n";
+$result=`doxygen doc/dev/dolibarr-doxygen 2>&1`;
 
 print $result;
 
