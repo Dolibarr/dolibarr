@@ -48,7 +48,7 @@
     Allow from all
   </Location>
 
-  <Location /adherents/private/>
+  <LocationMatch /public/adherents/priv_*>
     Options Indexes FollowSymLinks
     AllowOverride All
     Order deny,allow
@@ -66,6 +66,6 @@
 
     require valid-user
     satisfy any
-  </Location>
+  </LocationMatch>
 
 </VirtualHost>
