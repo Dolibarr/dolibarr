@@ -18,6 +18,8 @@ alter table llx_socpeople add jabberid varchar(255) after email ;
 
 alter table llx_socpeople add birthday date after address ;
 
+alter table llx_socpeople add tms timestamp after datec ;
+
 
 create table llx_birthday_alert
 (
