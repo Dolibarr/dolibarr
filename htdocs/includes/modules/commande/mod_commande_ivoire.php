@@ -28,6 +28,8 @@
 		\version    $Revision$
 */
 
+include_once("modules_commande.php");
+
 
 /**
     	\class      mod_commande_ivoire
