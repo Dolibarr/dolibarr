@@ -189,9 +189,7 @@ if ($_GET["id"])
       print"\n<!-- debut table -->\n";
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr class="liste_titre">';
-      print_liste_field_titre("Facture","factures.php","p.ref",'',$urladd);
-      print_liste_field_titre("Société","factures.php","s.nom",'',$urladd);
-      print_liste_field_titre("Montant","factures.php","f.total_ttc","",$urladd,'align="center"');
+      print '<td>Facture</td><td>Société</td>Montant</td>';
       print '<td>&nbsp;</td></tr>';
 
       $var=True;
