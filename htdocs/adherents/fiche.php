@@ -23,6 +23,7 @@
 require("./pre.inc.php");
 require("../adherent.class.php");
 require("../adherent_type.class.php");
+require($GLOBALS["DOCUMENT_ROOT"]."/adherents/adherent_options.class.php");
 require("../cotisation.class.php");
 require("../paiement.class.php");
 
@@ -63,6 +64,11 @@ if ($HTTP_POST_VARS["action"] == 'add')
   $adh->commentaire = $HTTP_POST_VARS["comment"];
   $adh->morphy      = $HTTP_POST_VARS["morphy"];
   
+  foreach($_POST as $key => $value){
+    if (ereg("^options_",$key)){
+      $adh->array_options[$key]=$_POST[$key];
+    }
+  }
   if ($adh->create($user->id) ) 
     {	  
       if ($cotisation > 0)
@@ -123,8 +129,8 @@ if ($action == 'create') {
       $total = $obj->total;
     }
   }
-  $adh = new Adherent($db);
-  $myattr=$adh->fetch_name_optionals();
+  $adho = new AdherentOptions($db);
+  $myattr=$adho->fetch_name_optionals();
 
   print_titre("Nouvel adhérent");
   print "<form action=\"$PHP_SELF\" method=\"post\">\n";
