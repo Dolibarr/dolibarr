@@ -129,7 +129,7 @@ class DolibarrMail
       {
 	$fd = fopen($sourcefile, "r");
 	$contents = fread($fd, filesize($sourcefile));
-	$encoded = my_chunk_split(base64_encode($contents));
+	$encoded = $this->my_chunk_split(base64_encode($contents));
 	fclose($fd);
       }
     return $encoded;
@@ -208,43 +208,43 @@ class DolibarrMail
     
     return $out;
   }
-}
 
-/*!
-  \brief permet de diviser une chaine (RFC2045)
-  \param str
-  \remarks function chunk_split qui remplace celle de php si nécéssaire
-  \remarks 76 caractères par ligne, terminé par "\r\n"
-*/
 
-// usage - mimetype example "image/gif"
-// $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);
-// $mailfile->sendfile();
-
-// Splits a string by RFC2045 semantics (76 chars per line, end with \r\n).
-// This is not in all PHP versions so I define one here manuall.
-
-function my_chunk_split($str)
-{
-  $stmp = $str;
-  $len = strlen($stmp);
-  $out = "";
-  while ($len > 0)
-    {
-      if ($len >= 76)
-	{
-	  $out = $out . substr($stmp, 0, 76) . "\r\n";
-	  $stmp = substr($stmp, 76);
-	  $len = $len - 76;
-	}
-      else
-	{
-	  $out = $out . $stmp . "\r\n";
+  /*!
+    \brief permet de diviser une chaine (RFC2045)
+    \param str
+    \remarks function chunk_split qui remplace celle de php si nécéssaire
+    \remarks 76 caractères par ligne, terminé par "\r\n"
+  */
+  
+  // usage - mimetype example "image/gif"
+  // $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);
+  // $mailfile->sendfile();
+  
+  // Splits a string by RFC2045 semantics (76 chars per line, end with \r\n).
+  // This is not in all PHP versions so I define one here manuall.
+  
+  function my_chunk_split($str)
+  {
+    $stmp = $str;
+    $len = strlen($stmp);
+    $out = "";
+    while ($len > 0)
+      {
+	if ($len >= 76)
+	  {
+	    $out = $out . substr($stmp, 0, 76) . "\r\n";
+	    $stmp = substr($stmp, 76);
+	    $len = $len - 76;
+	  }
+	else
+	  {
+	    $out = $out . $stmp . "\r\n";
 	  $stmp = ""; $len = 0;
-	}
-    }
-  return $out;
+	  }
+      }
+    return $out;
+  }
 }
-
 // end script
 ?>
