@@ -59,6 +59,12 @@ if ($action == 'delcat')
   $livre->unlinkcategorie($catid);
 }
 
+if ($action == 'delauteur' && $auteurid)
+{
+  $livre = new Livre($db);
+  $livre->fetch($id);
+  $livre->auteur_unlink($auteurid);
+}
 
 if ($action == "status")
 {
@@ -160,17 +166,17 @@ else
 	      print '<td width="20%">Référence</td><td><input name="ref" size="20" value="'.$livre->ref.'"></td>';
 	      print "<td valign=\"top\">Description</td></tr>";
 
-	  print "<tr><td>Statut</td><td>$livre->status_text";
-	  if ($livre->status == 0)
-	    {
-	      print '<br><a href="fiche.php?id='.$id.'&status=1&action=status">Changer</a>';
-	    }
-	  else
-	    {
-	      print '<br><a href="fiche.php?id='.$id.'&status=0&action=status">Changer</a>';
-	    }
-	  print "</td>\n";
-
+	      print "<tr><td>Statut</td><td>$livre->status_text";
+	      if ($livre->status == 0)
+		{
+		  print '<br><a href="fiche.php?id='.$id.'&status=1&action=status">Changer</a>';
+		}
+	      else
+		{
+		  print '<br><a href="fiche.php?id='.$id.'&status=0&action=status">Changer</a>';
+		}
+	      print "</td>\n";
+	      
 	      print '<td valign="top" width="50%" rowspan="6"><textarea name="desc" rows="14" cols="60">';
 	      print $livre->description;
 	      print "</textarea></td></tr>";
@@ -262,8 +268,11 @@ else
 	  print '<tr><td>Auteur(s)</td><td>';
 
 	  foreach ($auteurs as $key => $value)
-	    {
-	      print '<a href="../auteur/fiche.php?id='.$key.'">'.$value."<br>\n";
+	    {	      
+	      print '<a href="fiche.php?id='.$id.'&action=delauteur&auteurid='.$key.'">';
+	      print '<img src="/theme/'.$conf->theme.'/img/editdelete.png" height="16" width="16" alt="Supprimer" border="0"></a>&nbsp;';
+	      print '<a href="../auteur/fiche.php?id='.$key.'">';
+	      print $value."</a><br>\n";
 	    }
 	  print "</td></tr>";
 	  print '<tr><td>Prix</td><TD>'.price($livre->price).'</td></tr>';    

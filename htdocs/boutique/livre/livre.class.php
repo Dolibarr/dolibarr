@@ -160,6 +160,27 @@ class Livre {
    *
    *
    */
+  Function auteur_unlink($auteur_id)
+  {
+
+    $sql = "DELETE FROM llx_livre_to_auteur ";
+
+    $sql .= " WHERE fk_livre=".$this->id;
+    $sql .= " AND fk_auteur=".$auteur_id;
+
+    if ( $this->db->query($sql) )
+      {
+	return 1;
+      }
+    else
+      {
+	print $this->db->error() . ' in ' . $sql;
+      }
+    }
+  /*
+   *
+   *
+   */
   Function unlinkcategorie($categories_id)
   {
 
