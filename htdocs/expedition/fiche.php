@@ -26,7 +26,6 @@ $user->getrights('expedition');
 if (!$user->rights->expedition->lire)
   accessforbidden();
 
-require("../project.class.php");
 require("../propal.class.php");
 require("../product/stock/entrepot.class.php");
 
@@ -37,15 +36,6 @@ if ($user->societe_id > 0)
 {
   $action = '';
   $socidp = $user->societe_id;
-}
-/*
- *
- */	
-if ($HTTP_POST_VARS["action"] == 'classin') 
-{
-  $commande = new Commande($db);
-  $commande->fetch($_GET["id"]);
-  $commande->classin($HTTP_POST_VARS["projetid"]);
 }
 /*
  *
@@ -143,10 +133,10 @@ if ($HTTP_POST_VARS["action"] == 'create')
       print '<input type="hidden" name="entrepot_id" value="'.$HTTP_POST_VARS["entrepot_id"].'">';
       print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
       print '<tr><td width="20%">Client</td>';
-      print '<td width="40%"><b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
+      print '<td width="30%"><b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
       
-      print '<td width="40%" colspan="2">';
-      print $commande->statuts[$commande->statut];
+      print '<td width="50%" colspan="2">';
+
       print "</td></tr>";
       
       print "<tr><td>Date</td>";
@@ -328,23 +318,23 @@ else
 
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
 	  print '<tr><td width="20%">Client</td>';
-	  print '<td width="40%" colspan="2">';
+	  print '<td width="30%">';
 	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  
 	  print '<td width="50%">';
-	  print $commande->statuts[$commande->statut];
+
 	  print "</td></tr>";
 	  
 	  print "<tr><td>Commande</td>";
-	  print '<td colspan="2"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.$commande->ref."</a></td>\n";
+	  print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.$commande->ref."</a></td>\n";
 
 	  print "<tr><td>Date</td>";
-	  print "<td colspan=\"2\">".strftime("%A %d %B %Y",$commande->date)."</td>\n";
+	  print "<td>".strftime("%A %d %B %Y",$expedition->date)."</td>\n";
 
 	  print '<td width="50%">';
 	  print "</td></tr>";
 
-	  print "<tr><td>Auteur</td><td colspan=\"2\">$author->fullname</td>";
+	  print "<tr><td>Auteur</td><td>$author->fullname</td>";
 	
 	  print "</table>";
 	  	  
@@ -576,23 +566,7 @@ else
 	 *
 	 *
 	 */
-	if ($action == 'classer')
-	  {	    
-	    print "<p><form method=\"post\" action=\"$PHP_SELF?id=$id\">\n";
-	    print '<input type="hidden" name="action" value="classin">';
-	    print '<table cellspacing="0" class="border" cellpadding="3">';
-	    print '<tr><td>Projet</td><td>';
-	    
-	    $proj = new Project($db);
-	    $html->select_array("projetid",$proj->liste_array($commande->soc_id));
-	    
-	    print "</td></tr>";
-	    print '<tr><td colspan="2" align="center"><input type="submit" value="Envoyer"></td></tr></table></form></p>';
-	  }
-	/*
-	 *
-	 *
-	 */
+
 	if ($action == 'presend')
 	  {
 	    $replytoname = $user->fullname;

@@ -162,12 +162,10 @@ class Expedition
 	$error++;
       }
 
-
     if ($error == 0 )
       {
 	return 1;
       }
-
   }
   /** 
    *
@@ -234,29 +232,6 @@ class Expedition
 	}
       return $result ;
     }
-  /**
-   * Annule la commande
-   *
-   *
-   */
-  Function cancel($user)
-    {
-      if ($user->rights->commande->valider)
-	{
-
-	  $sql = "UPDATE llx_commande SET fk_statut = -1";
-	  $sql .= " WHERE rowid = $this->id AND fk_statut = 1 ;";
-	  
-	  if ($this->db->query($sql) )
-	    {
-	      return 1;
-	    }
-	  else
-	    {
-	      print $this->db->error() . ' in ' . $sql;
-	    }
-	}
-  }
 
   /**
    * Ajoute un produit
