@@ -88,7 +88,7 @@ if ($action == 'create')
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="fournisseur" value="0">';
 
-  print '<table class="tablefsoc" border="1" cellpadding="3" cellspacing="0">';
+  print '<table class="border" cellpadding="3" cellspacing="0">';
   print '<tr><td>Nom</td><td><input type="text" name="nom"></td></tr>';
   print '<tr><td>Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
   print '<tr><td>CP</td><td><input size="6" type="text" name="cp">&nbsp;';
@@ -126,7 +126,7 @@ elseif ($action == 'edit')
       print '<form action="soc.php?socid='.$socid.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
 
-      print '<table class="tablefsoc" border="1" cellpadding="3" cellspacing="0">';
+      print '<table class="border" cellpadding="3" cellspacing="0">';
       print '<tr><td>Nom</td><td><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
       print '<tr><td valign="top">Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft">';
       print $soc->adresse;
@@ -158,8 +158,6 @@ elseif ($action == 'edit')
 }
 else
 {
-  
-  
   print_titre("Fiche société");
   
   $soc = new Societe($db);
@@ -167,7 +165,7 @@ else
   $soc->fetch($socid);
   
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr><td width="20%">Nom</td><td colspan="3">'.$soc->nom.'</td></tr>';
+  print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$soc->nom.'</td></tr>';
   print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
   print '<tr><td>CP</td><td colspan="3">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
   
@@ -209,7 +207,6 @@ else
   print '<td width="20%" align="center">-</td>';
   print '<td width="20%" align="center">[<a href="societe/notify/fiche.php?socid='.$socid.'">Notifications</a>]</td>';
   print '</table><br>';
-
 /*
  *
  */
