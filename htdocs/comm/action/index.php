@@ -155,9 +155,9 @@ if ( $db->query($sql) )
     	print "<td align=\"center\">".$obj->percent."%</td>";
 	}
 	else {
-		print "<td align=\"center\"><b>réalisé</b></td>";
+		print "<td align=\"center\">".$langs->trans("Done")."</td>";
 	}
-	print '<td><a href="fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+	print '<td><a href="fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.'</a></td>';
 	
 	print '<td>';
 

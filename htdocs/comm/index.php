@@ -130,7 +130,7 @@ if ($conf->propal->enabled) {
 	    {
 	      print '<table class="noborder" width="100%">';
 	      print "<tr class=\"liste_titre\">";
-	      print "<td colspan=\"3\">Propositions commerciales brouillons</td></tr>";
+	      print "<td colspan=\"3\">".$langs->trans("ProposalsDraft")."</td></tr>";
 	      
 	      while ($i < $num)
 		{
@@ -249,7 +249,7 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
 
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="4">Dernières actions effectuées</td></tr>';
+  print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastDoneTasks").'</td></tr>';
   $var = true;
   $i = 0;
 
@@ -259,8 +259,7 @@ if ( $db->query($sql) )
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_file()."</a>&nbsp;";
-	  print "<a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
+	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.' '.$obj->label.'</a></td>';
 	  print "<td>".dolibarr_print_date($obj->da)."</td>";
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->sname.'</a></td>';
 	  $i++;
@@ -307,8 +306,7 @@ if ( $db->query($sql) )
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_file()."</a>&nbsp;";
-	  print "<a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
+	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_object($langs->trans("ShowTask"),"task")."</a> ".$obj->libelle.' '.$obj->label.'</a></td>';
 	
 	  print '<td>'. strftime("%d %b %Y",$obj->da);
           if (date("U",$obj->da) < time())
@@ -365,7 +363,7 @@ if ($conf->contrat->enabled && 0) // TODO A REFAIRE DEPUIS NOUVEAU CONTRAT
 	    {
 	      $obj = $db->fetch_object();
 	      print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowContract","contract"))." ".$obj->ref."</a></td>";
-	      print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
+	      print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany","company"))." ".$obj->nom."</a></td>\n";      
 	      print "<td align=\"right\">".$contrat->LibStatut($obj->enservice)."</td></tr>\n";
 	      $var=!$var;
 	      $i++;

@@ -1,6 +1,8 @@
 # Dolibarr language file - fr_FR - propal
 Proposals=Propositions commerciales
 Proposal=Proposition commerciale
+ProposalsDraft=Propositions commerciales brouillons
+ProposalDraft=Proposition commerciale brouillon
 Prop=Proposition commerciale
 NewProp=Nouvelle proposition commerciale
 Prospect=Prospect

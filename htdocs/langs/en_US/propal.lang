@@ -1,6 +1,8 @@
 # Dolibarr language file - en_US - propal
 Proposals=Commercial proposals
 Proposal=Commercial proposal
+ProposalsDraft=Draft commercial proposals
+ProposalDraft=Draft commercial proposal
 Prop=Commercial proposal
 NewProp=New commercial proposal
 Prospect=Prospect

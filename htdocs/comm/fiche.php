@@ -188,13 +188,6 @@ if ($_socid > 0)
   $head[$h][1] = $langs->trans("Notifications");
   $h++;
   
-  if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
-    {
-      $head[$h][0] = DOL_URL_ROOT.'/sl/fiche.php?id='.$objsoc->id;
-      $head[$h][1] = 'Fiche catalogue';
-      $h++;
-    }
-  
   if ($user->societe_id == 0)
     {
       $head[$h][0] = DOL_URL_ROOT."/comm/index.php?socidp=$objsoc->id&action=add_bookmark";
@@ -595,11 +588,11 @@ if ($_socid > 0)
 
 	  if ($obj->propalrowid)
 	    {
-	      print '<td width="40%"><a href="propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+	      print '<td width="40%"><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.'</a></td>';
 	    }
 	  else
 	    {
-	      print '<td width="40%"><a href="action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+	      print '<td width="40%"><a href="action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.'</a></td>';
 	    }
 	  /*
 	   * Contact pour cette action
@@ -608,7 +601,7 @@ if ($_socid > 0)
 	  if ($obj->fk_contact) {
 	    $contact = new Contact($db);
 	    $contact->fetch($obj->fk_contact);
-	    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.$contact->fullname.'</a></td>';
+	    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
 	  } else {
 	    print '<td width="40%">&nbsp;</td>';
 	  }
@@ -628,9 +621,7 @@ if ($_socid > 0)
       print "</td></tr></table>";
 
       /*
-       *
        *      Listes des actions effectuees
-       *
        */
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$objsoc->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
@@ -675,22 +666,22 @@ if ($_socid > 0)
 		}
 	      else
 		{
-		  print "<TD align=\"center\">" .strftime("%b",$obj->da)."</td>\n"; 
+		  print "<td align=\"center\">" .strftime("%b",$obj->da)."</td>\n"; 
 		  $oldmonth = strftime("%Y%b",$obj->da);
 		}
 	  
-	      print "<TD>" .strftime("%d",$obj->da)."</td>\n"; 
-	      print "<TD>" .strftime("%H:%M",$obj->da)."</td>\n";
+	      print "<td>" .strftime("%d",$obj->da)."</td>\n"; 
+	      print "<td>" .strftime("%H:%M",$obj->da)."</td>\n";
 	      
 	      print '<td width="10%">&nbsp;</td>';
 	      
 	      if ($obj->propalrowid)
 		{
-		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.'</a></td>';
 		}
 	      else
 		{
-		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.'</a></td>';
 		}
 	      /*
 	       * Contact pour cette action
@@ -700,7 +691,7 @@ if ($_socid > 0)
 		{
 		  $contact = new Contact($db);
 		  $contact->fetch($obj->fk_contact);
-		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.$contact->fullname.'</a></td>';
+		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("Showcontact"),"contact").' '.$contact->fullname.'</a></td>';
 		}
 	      else
 		{

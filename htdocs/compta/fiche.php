@@ -421,9 +421,7 @@ if ($socid > 0)
             print "<tr $bc[$var]>";
 
             print '<td>';
-            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
-            print img_object($langs->trans("Show"),"contact");
-            print '&nbsp;'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
             if (trim($obj->note))
             {
@@ -451,16 +449,10 @@ if ($socid > 0)
         print "</table><br>";
 
         /*
-         *
          *      Listes des actions effectuées
-         *
          */
-
-        print '<table width="100%" cellspacing=0 class="noborder" cellpadding=2>';
-        print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
-
-        print '<tr>';
-        print '<td valign="top">';
+        print '<table width="100%" class="noborder">';
+        print '<tr class="liste_titre"><td colspan="8"><a href="action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
 
         $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
@@ -470,7 +462,6 @@ if ($socid > 0)
         $sql .= " ORDER BY a.datea DESC, a.id DESC";
 
         if ( $db->query($sql) ) {
-            print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
 
             $i = 0 ; $num = $db->num_rows();
             while ($i < $num) {
@@ -482,33 +473,29 @@ if ($socid > 0)
                 if ($oldyear == strftime("%Y",$obj->da) ) {
                     print '<td align="center">|</td>';
                 } else {
-                    print "<TD align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n";
+                    print "<td align=\"center\">" .strftime("%Y",$obj->da)."</td>\n";
                     $oldyear = strftime("%Y",$obj->da);
                 }
 
                 if ($oldmonth == strftime("%Y%b",$obj->da) ) {
                     print '<td align="center">|</td>';
                 } else {
-                    print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n";
+                    print "<td align=\"center\">" .strftime("%b",$obj->da)."</td>\n";
                     $oldmonth = strftime("%Y%b",$obj->da);
                 }
 
-                print "<TD>" .strftime("%d",$obj->da)."</TD>\n";
-                print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
+                print "<td>" .strftime("%d",$obj->da)."</td>\n";
+                print "<td>" .strftime("%H:%M",$obj->da)."</td>\n";
 
                 print '<td width="10%">&nbsp;</td>';
 		print '<td width="40%">';
 		if ($obj->propalrowid)
 		  {
-		    print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">';
-		    print img_file().'</a>&nbsp;';
-		    print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+		    print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.'</a></td>';
 		  }
 		else
 		  {
-		    print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">';
-		    print img_file().'</a>&nbsp;';
-		    print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+		    print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' '.$obj->libelle.'</a></td>';
 		  }
 		
                 /*
@@ -518,7 +505,7 @@ if ($socid > 0)
                 if ($obj->fk_contact) {
                     $contact = new Contact($db);
                     $contact->fetch($obj->fk_contact);
-                    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.$contact->fullname.'</a></td>';
+                    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
                 } else {
                     print '<td width="40%">&nbsp;</td>';
                 }
@@ -528,13 +515,12 @@ if ($socid > 0)
                 print "</tr>\n";
                 $i++;
             }
-            print "</table>";
 
             $db->free();
         } else {
-            print $db->error();
+            dolibarr_print_error($db);
         }
-        print "</td></tr></table>";
+        print "</table>";
 
         /*
          *
