@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,32 +33,60 @@
         \remarks    les définitions de menu des fichiers pre.inc.php
 */
 
+session_start();
 
 $newmenu = new Menu();
 
 
-/*
-$class="";
-if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "commercial")
-    {
-      $class='class="tmenu" id="sel"'; 
+/**
+ * On récupère mainmenu qui définit le menu à afficher
+ */
+if (isset($_GET["mainmenu"])) {
+    // On sauve en session le menu principal choisi
+    $mainmenu=$_GET["mainmenu"];
+    $_SESSION["mainmenu"]=$mainmenu;
+} else {
+    // On va le chercher en session si non défini par le lien    
+    $mainmenu=$_SESSION["mainmenu"];
+}
+
+
+/**
+ * On definit newmenu en fonction de mainmenu
+ */
+if ($mainmenu) {
+   
+    // Menu HOME
+    if ($mainmenu == 'home') {
+        $newmenu->add(DOL_URL_ROOT."/user/index.php", $langs->trans("Users"));
+        
+        if($user->admin)
+        {
+          $langs->load("users");
+          $langs->load("admin");
+          $newmenu->add_submenu(DOL_URL_ROOT."/user/fiche.php?action=create", $langs->trans("NewUser"));
+          $newmenu->add(DOL_URL_ROOT."/admin/index.php?", $langs->trans("Setup"));
+          $newmenu->add_submenu(DOL_URL_ROOT."/admin/index.php", $langs->trans("GlobalSetup"));
+          $newmenu->add_submenu(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
+          $newmenu->add_submenu(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"));
+          $newmenu->add_submenu(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"));
+          $newmenu->add_submenu(DOL_URL_ROOT."/admin/perms.php", $langs->trans("DefaultRights"));
+          $newmenu->add_submenu(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
+          $newmenu->add_submenu(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
+          $newmenu->add(DOL_URL_ROOT."/admin/system/?mainmenu=", $langs->trans("System"));
+
+        }
     }
-elseif (ereg("^".DOL_URL_ROOT."\/fourn\/",$_SERVER["PHP_SELF"]))
-    {
-      $class='class="tmenu" id="sel"';
-    }
-else
-    {
-      $class = 'class="tmenu"';
-    }
 
-print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Fournisseur").'</a>';
+    // En attendant que les autres principaux soit gérés
+    if ($mainmenu != 'home') { $mainmenu=""; }
+}
 
-$newmenu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
-$newmenu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
-
-*/
-
-//$menu=$newmenu->liste;
+/**
+ *  Si on est sur un cas géré de surcharge du menu, on ecrase celui par defaut
+ */
+if ($mainmenu) {
+    $menu=$newmenu->liste;
+}
 
 ?>
