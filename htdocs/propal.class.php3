@@ -227,16 +227,16 @@ class Propal
       $totalht=0;
       $totaltva=0;
       $totalttc=0;
+      $total_remise=0;
 
       /*
        *  Remise
        */
-      $sql = "SELECT remise FROM llx_propal WHERE rowid = $rowid";
+      $sql = "SELECT remise_percent FROM llx_propal WHERE rowid = $rowid";
       if ( $this->db->query($sql) )
 	{
-	  $remise = $this->db->result(0, 0);
-	  $this->db->free();
-	  
+	  $remise_percent = $this->db->result(0, 0);
+	  $this->db->free();	  
       
 	  /*
 	   *  Total des produits a ajouter
@@ -251,22 +251,30 @@ class Propal
 		{
 		  $obj = $this->db->fetch_object($i);
 
-		  $totalht = $totalht + ($obj->qty * $obj->price);
-		  $totaltva = $totaltva + (tva(($obj->qty * $obj->price), $obj->tva_tx));
+		  $lprice = ($obj->qty * $obj->price);
+
+		  if ($remise_percent > 0)
+		    {
+		      $lremise = ($lprice * $remise_percent / 100);
+		      $total_remise = $total_remise + $lremise;
+		      $lprice = $lprice - $lremise;
+		    }
+
+		  $totalht = $totalht + $lprice;
+		  $totaltva = $totaltva + (tva(($lprice), $obj->tva_tx));
 		  $i++;
 		}
 
 	      $this->db->free();
 	      
 	      /*
-	       *  Calcul TVA, Remise
+	       *  Calcul TVA
 	       */
-	      $totalht = $totalht - $this->remise;
 	      $totalttc = $totalht + $totaltva;
 	      /*
 	       *
 	       */
-	      $sql = "UPDATE llx_propal set price=$totalht, tva=$totaltva, total=$totalttc WHERE rowid = $rowid";
+	      $sql = "UPDATE llx_propal set price=$totalht, tva=$totaltva, total=$totalttc, remise=$total_remise WHERE rowid = $rowid";
 	      if (! $this->db->query($sql) )
 		{
 		  print "Erreur mise à jour du prix<p>".$sql;
@@ -284,7 +292,7 @@ class Propal
   Function fetch($rowid)
     {
 
-      $sql = "SELECT ref,total,price,remise,tva,fk_soc,fk_soc_contact,".$this->db->pdate(datep)."as dp, model_pdf ";
+      $sql = "SELECT ref,total,price,remise,tva,fk_soc,fk_soc_contact,".$this->db->pdate(datep)."as dp, model_pdf, note, fk_statut, remise_percent";
       $sql .= " FROM llx_propal WHERE rowid=$rowid;";
 
       if ($this->db->query($sql) )
@@ -293,19 +301,27 @@ class Propal
 	    {
 	      $obj = $this->db->fetch_object(0);
 	  
-	      $this->id        = $rowid;
-	      $this->datep     = $obj->dp;
-	      $this->date      = $obj->dp;
-	      $this->ref       = $obj->ref;
-	      $this->price     = $obj->price;
-	      $this->remise    = $obj->remise;
-	      $this->total     = $obj->total;
-	      $this->total_ht  = $obj->price;
-	      $this->total_tva = $obj->tva;
-	      $this->total_ttc = $obj->total;
-	      $this->socidp    = $obj->fk_soc;
-	      $this->contactid = $obj->fk_soc_contact;
-	      $this->modelpdf  = $obj->model_pdf;
+	      $this->id             = $rowid;
+	      $this->datep          = $obj->dp;
+	      $this->date           = $obj->dp;
+	      $this->ref            = $obj->ref;
+	      $this->price          = $obj->price;
+	      $this->remise          = $obj->remise;
+	      $this->remise_percent = $obj->remise_percent;
+	      $this->total          = $obj->total;
+	      $this->total_ht       = $obj->price;
+	      $this->total_tva      = $obj->tva;
+	      $this->total_ttc      = $obj->total;
+	      $this->socidp         = $obj->fk_soc;
+	      $this->contactid      = $obj->fk_soc_contact;
+	      $this->modelpdf       = $obj->model_pdf;
+	      $this->note           = $obj->note;
+
+	      if ($obj->fk_statut == 0)
+		{
+		  $this->brouillon = 1;
+		}
+
 	      $this->lignes = array();
 	      $this->db->free();
 
@@ -408,6 +424,31 @@ class Propal
 	  
 	  if ($this->db->query($sql) )
 	    {
+	      return 1;
+	    }
+	  else
+	    {
+	      print $this->db->error() . ' in ' . $sql;
+	    }
+	}
+  }
+  /*
+   *
+   *
+   *
+   */
+  Function set_remise($user, $remise)
+    {
+
+      if ($user->rights->propale->valider)
+	{
+
+	  $sql = "UPDATE llx_propal SET remise_percent = ".ereg_replace(",",".",$remise);
+	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+	  
+	  if ($this->db->query($sql) )
+	    {
+	      $this->update_price($this->id);
 	      return 1;
 	    }
 	  else
