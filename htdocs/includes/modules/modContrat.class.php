@@ -76,10 +76,33 @@ class modContrat extends DolibarrModules
     /*
      * Permissions
      */
-    $sql = array(
 
-		 );
-  
+    $this->remove();
+
+    $this->rights = array();
+
+    $this->rights_class = 'contrat';
+
+    $this->rights[0][0] = 160; // id de la permission
+    $this->rights[0][1] = 'Tous les droits sur les contrats'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[1][0] = 161;
+    $this->rights[1][1] = 'Consulter les contrats';
+    $this->rights[1][2] = 'r';
+    $this->rights[1][3] = 1;
+
+    $this->rights[2][0] = 162;
+    $this->rights[2][1] = 'Mettre en service un contrat';
+    $this->rights[2][2] = 'r';
+    $this->rights[2][3] = 0;    
+
+    $this->rights[3][0] = 163;
+    $this->rights[3][1] = 'Mettre fin au service d\'un contrat';
+    $this->rights[3][2] = 'r';
+    $this->rights[3][3] = 0;
+
     return $this->_init($sql);
   }
 
@@ -90,7 +113,7 @@ class modContrat extends DolibarrModules
   function remove()
   {
     $sql = array(
-
+		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'contrat';"
 		 );
 
     return $this->_remove($sql);
