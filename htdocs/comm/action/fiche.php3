@@ -186,6 +186,8 @@ if ($action=='create' && $actionid && $contactid) {
   else 
     {
 
+      print_titre ("Action effectuée");
+
       print '<form action="'.$PHP_SELF.'?socid='.$socid.'" method="post">';
       print '<input type="hidden" name="action" value="add_action">';
 
@@ -195,9 +197,7 @@ if ($action=='create' && $actionid && $contactid) {
       print '<input type="hidden" name="socid" value="'.$socid.'">';
       
       print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
-      
-      print '<tr><td colspan="2"><div class="titre">Action effectuée</div></td></tr>';
-      
+            
       print '<tr><td width="10%">Action</td><td><b>'.$caction->libelle.'</td></tr>';
       print '<tr><td width="10%">Société</td><td width="40%">';
       print '<b><a href="../fiche.php3?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
@@ -205,8 +205,12 @@ if ($action=='create' && $actionid && $contactid) {
       print '<td>Date</td><td>'.strftime('%d %B %Y %H:%M',time()).'</td></tr>';
       print '<tr><td valign="top">Commentaire</td><td>';
       print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
-      
-      print '<tr><td colspan="2"><div class="titre">Prochaine Action à faire</div></td></tr>';
+      print "</table><p />";
+
+      print_titre ("Prochaine Action à faire");
+
+      print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
+
       print '<tr><td width="10%">Ajouter</td><td><input type="checkbox" name="todo"></td></tr>';
       print '<tr><td width="10%">Date</td><td width="40%">';
       print_date_select();
@@ -215,11 +219,11 @@ if ($action=='create' && $actionid && $contactid) {
       print '<tr><td width="10%">Calendrier</td><td><input type="checkbox" name="todo_webcal"></td></tr>';
       print '<tr><td valign="top">Commentaire</td><td>';
       print '<textarea cols="60" rows="6" name="todo_note"></textarea></td></tr>';
-      
-      print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
+      print '</table>';
   
-      print '</form></table>';
-  
+      print '<p align="center"><input type="submit" value="Enregistrer"></p>';
+
+      print "</form>";
     }
 }
 /*
@@ -246,9 +250,11 @@ if ($id)
   print '<td width="10%">Contact</td><td width="40%"><b>'.$act->contact->fullname.'</td></tr>';
   print '<tr><td>Auteur</td><td>'.$act->author->fullname.'</td>';
   print '<td>Date</td><td>'.strftime('%d %B %Y %H:%M',time()).'</td></tr>';
-  print '<tr><td valign="top">Commentaire</td><td colspan="3">';
-  print nl2br($act->note).'</td></tr>';
-
+  if ($act->note)
+    {
+      print '<tr><td valign="top">Commentaire</td><td colspan="3">';
+      print nl2br($act->note).'</td></tr>';
+    }
   print '</table>';
 
   print '<p><p><a href="index.php3?action=delete_action&actionid='.$act->id.'">Supprimer</a>';
