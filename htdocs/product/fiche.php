@@ -223,7 +223,8 @@ if ($_POST["cancel"] == 'Annuler')
 }
 
 
-llxHeader("","","Fiche produit");
+llxHeader("","",$langs->trans("CardProduct".$product->type));
+
 
 /*
  * Création du produit
@@ -244,7 +245,7 @@ if ($_GET["action"] == 'create')
   print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
   print '<div class="titre">Nouveau '.$types[$_GET["type"]].'</div><br>'."\n";
       
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
   print '<tr>';
   print '<td>Référence</td><td><input name="ref" size="20" value="'.$product->ref.'">';
   if ($_error == 1)
@@ -448,11 +449,16 @@ else
 		    }
 		  print '</td></tr>';
 		}
-	      print "</table>";
-	    }
+	      print "</table><br>\n";
 
-      print "<br></div>\n";
+      print "</div>\n";
+    }
+
       
+    /*
+     * Edition du prix
+     *
+     */
     if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 	{
 	  print '<div class="titre">Nouveau prix</div>';
@@ -510,6 +516,7 @@ else
     
       if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && $user->rights->produit->creer)
 	{
+
 	  print_fiche_titre('Edition de la fiche '.$types[$product->type].' : '.$product->ref, $mesg);
 
 
@@ -528,13 +535,13 @@ else
 	  print '<select name="statut">';
 	  if ($product->envente)
 	    {
-	      print '<option value="1" SELECTED>En vente</option>';
+	      print '<option value="1" selected>En vente</option>';
 	      print '<option value="0">Hors Vente</option>';
 	    }
 	  else
 	    {
 	      print '<option value="1">En vente</option>';
-	      print '<option value="0" SELECTED>Hors Vente</option>';
+	      print '<option value="0" selected>Hors Vente</option>';
 	    }
 	  print '</td></tr>';
 	  if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
@@ -609,7 +616,7 @@ else
 /*                                                                            */ 
 /* ************************************************************************** */
 
-print "<div class=\"tabsAction\">\n";
+print "\n<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] == '')
 {
@@ -631,7 +638,7 @@ if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
   print '<a class="tabAction" href="stock/product.php?id='.$product->id.'&amp;action=correction">Correction stock</a>';
 }
 
-print "</div>";
+print "\n</div>\n";
 
 
 

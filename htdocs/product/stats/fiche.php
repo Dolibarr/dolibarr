@@ -73,7 +73,7 @@ if ($_GET["id"])
 	  mkdir(DOL_DOCUMENT_ROOT."/document/produit");
 	  if (! mkdir($dir, 0755))
 	    {
-	      $mesg = "Impossible de créer $dir !";
+	      $mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
 	    }
 	}
       $img_propal_name = "propal12mois.png";
@@ -97,7 +97,7 @@ if ($_GET["id"])
 	  $graph_data = $product->get_num_propal($socid);
 	  $px->draw($filenbpropal, $graph_data);
 
-	  $mesg = "Graphiques générés";
+	  $mesg = $langs->trans("ChartGenerated");
 	}
 
       // Zone recherche
@@ -135,7 +135,7 @@ if ($_GET["id"])
 	  dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
 
 	      
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
+      print '<table class="border" width="100%" cellspacing="0" cellpadding="3"><tr>';
       print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
       print '<td>'.$langs->trans("Statistics").'</td></tr>';
       print "<tr><td>".$langs->trans("Label")."</td><td>$product->libelle</td>";
@@ -147,7 +147,7 @@ if ($_GET["id"])
       print '<tr><td>Prix actuel</td><td>'.price($product->price).'</td></tr>';
       print "</table>";
 
-      print '<br><table class="border" width="100%" cellspacing="0" cellpadding="4">';
+      print '<br><table class="border" width="100%" cellspacing="0" cellpadding="3">';
       print '<tr class="liste_titre"><td width="50%" colspan="2" align="center">Nombre de ventes<br>sur les 12 derniers mois</td>';
       print '<td align="center" width="50%" colspan="2">Nombre de pièces vendues</td></tr>';
       print '<tr><td align="center" colspan="2">';
@@ -164,7 +164,7 @@ if ($_GET["id"])
 	}
       else
 	{
-	  print '<td>Graphique non généré</td>';
+	  print '<td>'.$langs->trans("ChartNotGenerated").'</td>';
 	}
       print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">Re-calculer</a>]</td>';
       if (file_exists($filenbpiece) && filemtime($filenbpiece))
@@ -173,7 +173,7 @@ if ($_GET["id"])
 	}
       else
 	{
-	  print '<td>Graphique non généré</td>';
+	  print '<td>'.$langs->trans("ChartNotGenerated").'</td>';
 	}
       print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">Re-calculer</a>]</td></tr>';
       print '<tr><td colspan="4">Statistiques effectuées sur les factures payées uniquement</td></tr>';
@@ -194,7 +194,7 @@ if ($_GET["id"])
 	}
       else
 	{
-	  print '<td>Graphique non généré</td>';
+	  print '<td>'.$langs->trans("ChartNotGenerated").'</td>';
 	}
       print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">Re-calculer</a>]</td>';
       if (file_exists($filenbpiece) && filemtime($filenbpiece33))
@@ -203,7 +203,7 @@ if ($_GET["id"])
 	}
       else
 	{
-	  print '<td>Graphique non généré</td>';
+	  print '<td>'.$langs->trans("ChartNotGenerated").'</td>';
 	}
       print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">Re-calculer</a>]</td></tr>';
 
