@@ -39,10 +39,11 @@ class Translate {
     var $debug;
 
     /**
-    *    \brief     Constructeur de la classe
-    *    \param     dir             repertoire racine des fichiers de traduction
-    *    \param     defaultlang     langue par defaut à utiliser
-    */
+     *    \brief     Constructeur de la classe
+     *    \param     dir             repertoire racine des fichiers de traduction
+     *    \param     defaultlang     langue par defaut à utiliser
+     */
+		
     function Translate($dir = "", $defaultlang = "") {
         $this->dir=$dir;
         $this->defaultlang=$defaultlang;
@@ -50,11 +51,12 @@ class Translate {
         $this->tab_translate = array();
     }
 
-    /*!     
-    		\brief  Charge en mémoire le tableau de traduction pour un domaine particulier
-                    Si le domaine est deja chargé, la fonction ne fait rien
-            \param  domain      Nom du domain (fichier lang) à charger
+    /*!
+				\brief  Charge en mémoire le tableau de traduction pour un domaine particulier
+                Si le domaine est deja chargé, la fonction ne fait rien
+        \param  domain      Nom du domain (fichier lang) à charger
     */
+		
     function Load($domain = "main") {
         if ($this->tab_loaded[$domain]) { return; }   # Ce fichier est deja chargé
 
@@ -91,22 +93,24 @@ class Translate {
     		\brief      Retourne la liste des domaines chargées en memoire
             \return     array       Tableau des domaines chargées
     */
+		
     function list_domainloaded() {
         return join(",",array_keys($this->tab_loaded));
     }
     
     
-    /*
-    *  \brief       Retourne la version traduite du texte passé en paramètre
-    *               Si il n'y a pas de correspondance pour ce texte, il est retourné
-    *               "tel quel" précédé d'un "<b>[vo]</b> <i>" et terminé par un </i>
-    *  [en]         Return translated version of parameter string
-    *  \param       str         original string to translate
-    *  \param       param1      chaine de param1
-    *  \param       param2      chaine de param1
-    *  \param       param3      chaine de param1
-    *  \return      string      translated version of parameter string, or original version of this string with "<b>[vo]</b> <i>" before and "</i>" after
-    */
+    /**
+     *  \brief       Retourne la version traduite du texte passé en paramètre
+     *               Si il n'y a pas de correspondance pour ce texte, il est retourné
+     *               "tel quel" précédé d'un "<b>[vo]</b> <i>" et terminé par un </i>
+     *  [en]         Return translated version of parameter string
+     *  \param       str         original string to translate
+     *  \param       param1      chaine de param1
+     *  \param       param2      chaine de param1
+     *  \param       param3      chaine de param1
+     *  \return      string      translated version of parameter string, or original version of this string with "<b>[vo]</b> <i>" before and "</i>" after
+     */
+		 
     function trans($str, $param1='', $param2='', $param3='') {
         if ($this->tab_translate[$str]) {
             // Si la traduction est disponible
@@ -119,6 +123,7 @@ class Translate {
     *  \brief       Retourne la liste des langues disponibles
     *  \return      array     list of languages
     */
+		
     function get_available_languages()
     {
       // On parcour le répertoire langs pour détecter les langues dispo
@@ -137,6 +142,7 @@ class Translate {
     *  [en]         Send header and return a string of html start page
     *  \return      string      html header avec charset
     */
+		
     function lang_header()
     {
     

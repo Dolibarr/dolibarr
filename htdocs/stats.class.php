@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,10 +44,12 @@ class Stats
       }
     return $data;
   }
+	
   /**
-   * Renvoie le nombre de proposition par mois pour une année donnée
+   * \brief  Renvoie le nombre de proposition par mois pour une année donnée
    *
    */
+	 
   function _getNbByMonth($year, $sql)
   {
     $result = array();
@@ -83,9 +85,10 @@ class Stats
 
 
   /**
-   * Renvoie le nombre d'element par année
+   * \brief  Renvoie le nombre d'element par année
    *
    */
+	 
   function _getNbByYear($sql)
   {
     $result = array();
@@ -106,9 +109,10 @@ class Stats
     return $result;
   }
   /**
-   * Renvoie le nombre d'element par mois pour une année donnée
+   * \brief  Renvoie le nombre d'element par mois pour une année donnée
    *
    */
+	 
   function _getAmountByMonth($year, $sql)
   {
     $result = array();

@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
@@ -25,6 +25,7 @@
  *
  *
  */
+ 
 class Tva
 {
   var $db;
@@ -38,11 +39,12 @@ class Tva
     
       return 1;
   }
+	
   /*
-   * Hum la fonction s'appelle 'Solde' elle doit a mon avis
-   * calcluer le solde de TVA, non ?
+   * \brief Hum la fonction s'appelle 'Solde' elle doit a mon avis calcluer le solde de TVA, non ?
    *
    */
+	 
   function solde($year = 0)
     {
     
@@ -55,11 +57,12 @@ class Tva
 
       return $solde;
     }
+		
   /*
-   * Tva collectée
-   * Total de la TVA des factures emises par la societe.
+   * \brief Total de la TVA des factures emises par la societe.
    *
    */
+	 
   function tva_sum_collectee($year = 0)
     {
 
@@ -94,11 +97,12 @@ class Tva
 	  return -1;
 	} 
     }
+		
   /*
-   * Tva payée
+   * \brief  Tva payée
    * 
-   *
    */
+	 
   function tva_sum_payee($year = 0)
     {
       
@@ -133,11 +137,13 @@ class Tva
 	  return -1;
 	} 
     }
+		
   /*
    * Tva réglée
    * Total de la TVA réglee aupres de qui de droit
    *
    */
+	 
   function tva_sum_reglee($year = 0)
     {
 
@@ -176,6 +182,7 @@ class Tva
   /*
    *
    */
+	 
   function add_payement($datep, $datev, $amount)
     {
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep, datev, amount) ";

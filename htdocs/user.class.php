@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (c) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (c) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
@@ -24,13 +24,13 @@
  */
 
 /*!	\file htdocs/user.class.php
-  \brief  Fichier de la classe utilisateur
-  \author Rodolphe Qiedeville
-  \author Jean-Louis Bergamo
-  \author Laurent Destailleur
-  \author Sebastien Di Cintio
-  \author Benoit Mortier
-  \version $Revision$
+  	\brief  Fichier de la classe utilisateur
+  	\author Rodolphe Qiedeville
+  	\author Jean-Louis Bergamo
+  	\author Laurent Destailleur
+  	\author Sebastien Di Cintio
+  	\author Benoit Mortier
+  	\version $Revision$
 */
 
 
@@ -67,6 +67,7 @@ class User
    *    \param  $DB         handler accès base de données
    *    \param  $id         id de l'utilisateur (0 par défaut)
    */
+	 
   function User($DB, $id=0)
     {
 
@@ -88,6 +89,7 @@ class User
    *    \brief      Ajoute un droit a l'utilisateur
    *    \param      rid        id du droit à ajouter
    */
+	 
   function addrights($rid)
     {
       if (strlen($rid) == 2)
@@ -181,6 +183,7 @@ class User
    *    \brief      Retire un droit a l'utilisateur
    *    \param      rid        id du droit à retirer
    */
+	 
   function delrights($rid)
     {
 
@@ -243,6 +246,7 @@ class User
    *    \brief      Charge dans l'objet user, la liste des permissions auquels l'utilisateur a droit
    *    \param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
    */
+	 
   function getrights($module='')
     {
       if ($this->all_permissions_are_loaded) {
@@ -592,6 +596,7 @@ class User
   /**
    *    \brief  Crée en base un utilisateur
    */
+	 
   function create()
     {
         $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login';";
@@ -643,6 +648,7 @@ class User
    * \param     contact      Objet du contact source
    *
    */
+	 
   function create_from_contact($contact)
     {
       $this->nom = $contact->nom;
@@ -700,6 +706,7 @@ class User
    * \brief     Affectation des permissions par défaut
    *
    */
+	 
   function set_default_rights()
     {
       $sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def WHERE bydefault = 1";
@@ -738,6 +745,7 @@ class User
    * \brief     Mise à jour en base d'un utilisateur
    *
    */
+	 
   function update()
     {
 		
@@ -796,6 +804,7 @@ class User
    * \param     password        nouveau mot de passe (généré par defaut si non communiqué)
    * \param     isencrypted     0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
    */
+	 
   function password($password='', $isencrypted = 0)
     {
       if (! $password)
@@ -842,6 +851,7 @@ class User
    * \brief     Renvoie la dernière erreur fonctionnelle de manipulation de l'objet
    * \return    string      chaine erreur
    */
+	 
   function error()
     {
       return $this->errorstr;
