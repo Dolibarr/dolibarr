@@ -33,7 +33,11 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
+
 $html = new Form($db);
+$mesg='';
+$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+
 
 if ($action == 'valid') 
 {
@@ -62,7 +66,7 @@ if($_GET["action"] == 'deletepaiement')
     }
 }
 
-if ($HTTP_POST_VARS["action"] == 'modif_libelle')
+if ($_POST["action"] == 'modif_libelle')
 {
   $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set libelle = '$form_libelle' WHERE rowid = $facid ;";
   $result = $db->query( $sql);
@@ -71,12 +75,12 @@ if ($HTTP_POST_VARS["action"] == 'modif_libelle')
 
 if ($action == 'update')
 {
-  $datefacture = $db->idate(mktime(12, 0 , 0, $HTTP_POST_VARS["remonth"], $HTTP_POST_VARS["reday"], $HTTP_POST_VARS["reyear"])); 
+  $datefacture = $db->idate(mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"])); 
 
   $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set ";
-  $sql .= " facnumber='".trim($HTTP_POST_VARS["facnumber"])."'";
-  $sql .= ", libelle='".trim($HTTP_POST_VARS["libelle"])."'";
-  $sql .= ", note='".$HTTP_POST_VARS["note"]."'";
+  $sql .= " facnumber='".trim($_POST["facnumber"])."'";
+  $sql .= ", libelle='".trim($_POST["libelle"])."'";
+  $sql .= ", note='".$_POST["note"]."'";
   $sql .= ", datef = '$datefacture'";
   $sql .= " WHERE rowid = $facid ;";
   $result = $db->query( $sql);
@@ -84,40 +88,54 @@ if ($action == 'update')
 
 if ($action == 'add')
 {
-  $datefacture = $db->idate(mktime(12, 
-				   0, 
-				   0, 
-				   $HTTP_POST_VARS["remonth"], 
-				   $HTTP_POST_VARS["reday"],
-				   $HTTP_POST_VARS["reyear"])); 
-  $tva = 0;
-  $tva = ($tva_taux * $amount) / 100 ;
-  $remise = 0;
-  $total = $tva + $amount ;
-  
-  $facfou = new FactureFourn($db);
-
-  $facfou->number  = $HTTP_POST_VARS["facnumber"];
-  $facfou->socid   = $HTTP_POST_VARS["socidp"];
-  $facfou->libelle = $HTTP_POST_VARS["libelle"];
-  $facfou->date    = $datefacture;
-  $facfou->note    = $HTTP_POST_VARS["note"];
-
-  for ($i = 1 ; $i < 9 ; $i++)
-    {
-      $label = "label$i";
-      $amount = "amount$i"; 
-      $tauxtva = "tauxtva$i";
-      $qty = "qty$i";
+  if ($_POST["facnumber"]) {
+      $datefacture = $db->idate(mktime(12, 
+    				   0, 
+    				   0, 
+    				   $_POST["remonth"], 
+    				   $_POST["reday"],
+    				   $_POST["reyear"])); 
+      $tva = 0;
+      $tva = ($_POST["tva_taux"] * $_POST["amount"]) / 100 ;
+      $remise = 0;
+      $total = $tva + $_POST["amount"] ;
       
-      if (strlen($$label))
-	{
-	  // print "Ajour ligne $i " . $$label . " " . $$amount . " " . $$tauxtva ; // DEBUG
-	  $facfou->add_ligne($$label, $$amount, $$tauxtva, $$qty);
-	}
-    }
-  $facid = $facfou->create($user);
+      $db->begin();
+      
+      // Creation facture
+      $facfou = new FactureFourn($db);
+    
+      $facfou->number  = $_POST["facnumber"];
+      $facfou->socid   = $_POST["socidp"];
+      $facfou->libelle = $_POST["libelle"];
+      $facfou->date    = $datefacture;
+      $facfou->note    = $_POST["note"];
 
+      $facid = $facfou->create($user);
+
+      // Ajout des lignes de factures      
+      if ($facid) {
+          for ($i = 1 ; $i < 9 ; $i++)
+            {
+              $label = "label$i";
+              $amount = "amount$i"; 
+              $tauxtva = "tauxtva$i";
+              $qty = "qty$i";
+              
+              if (strlen($$label) && $$amount > 0)
+        	{
+        	  $atleastoneline=1;
+        	  $facfou->add_ligne($$label, $$amount, $$tauxtva, $$qty);
+        	}
+            }
+      }
+
+      $db->commit();
+
+    }
+    else {
+        $mesg="<div class=\"error\">Erreur: Un numéro de facture fournisseur est obligatoire.</div>";
+    }
 }
 
 if ($action == 'del_ligne')
@@ -134,10 +152,10 @@ if ($action == 'add_ligne')
 {
   $facfou = new FactureFourn($db,"", $facid);
 
-  $facfou->add_ligne($HTTP_POST_VARS["label"],
-		     $HTTP_POST_VARS["amount"], 
-		     $HTTP_POST_VARS["tauxtva"], 
-		     $HTTP_POST_VARS["qty"],
+  $facfou->add_ligne($_POST["label"],
+		     $_POST["amount"], 
+		     $_POST["tauxtva"], 
+		     $_POST["qty"],
 		     1);
   
   $action="edit";
@@ -148,9 +166,12 @@ if ($action == 'add_ligne')
  *
  */
 llxHeader();
+
+if ($mesg) { print "<br>$mesg<br>"; }
+
 /*
  *
- * Mode creation
+ * Fiche de creation
  *
  */
 
@@ -161,7 +182,7 @@ if ($action == 'create' or $action == 'copy')
       $fac_ori = new FactureFourn($db);
       $fac_ori->fetch($facid);
     }
-  print_titre("Saisir une facture");
+  print_titre("Saisir une facture fournisseur");
       
   print '<form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
@@ -215,7 +236,7 @@ if ($action == 'create' or $action == 'copy')
   print "</table><br>";
 
   print '<table cellspacing="0" cellpadding="3" class="border" width="100%">';
-  print "<tr class=\"liste_titre\">".'<td>&nbsp;</td><td>Libellé</td><td align="center">P.U.</td><td align="center">Qty</td><td align="center">Tx TVA</td></tr>';
+  print "<tr class=\"liste_titre\">".'<td>&nbsp;</td><td>Libellé</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Tx TVA</td></tr>';
 
   for ($i = 1 ; $i < 9 ; $i++)
     {
@@ -246,6 +267,7 @@ else
 {
   if ($facid > 0)
     {
+
       $fac = new FactureFourn($db);
       $fac->fetch($facid);
 
@@ -268,15 +290,15 @@ else
 	  print $db->error();
 	}
 
-      print_titre ('Facture : '.$obj->facnumber);
-
       /*
-       * Edition
-       *
+       * Fiche facture en mode edition
        *
        */
       if ($action == "edit")
 	{
+
+      print_titre('Facture : '.$obj->facnumber);
+      
 	  print "<form action=\"$PHP_SELF?facid=$obj->rowid\" method=\"post\">";
 	  print '<input type="hidden" name="action" value="update">';
     
@@ -290,7 +312,7 @@ else
 	  print "<tr>".'<td valign="top">Numéro :</td><td valign="top">';
 	  print '<input name="facnumber" type="text" value="'.$obj->facnumber.'"></td>';
 	
-	  print '<td rowspan="8" width="60%" valign="top">';
+	  print '<td rowspan="7" width="60%" valign="top">';
 	  print '<textarea name="note" wrap="soft" cols="60" rows="10">';
 	  print stripslashes($obj->note);
 	  print '</textarea></td></tr>';
@@ -314,6 +336,7 @@ else
 		  $authorfullname=$author->fullname;
 	  }
 	  print "<tr><td>Auteur :</td><td>$authorfullname</td></tr>";
+	  print "<tr><td>Statut:</td><td>".$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
 	  print "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
 	  print "</table>";
 	  print "</form>";
@@ -324,7 +347,7 @@ else
 	   */	  
 	  print "<p><form action=\"$PHP_SELF?facid=$obj->rowid&amp;action=add_ligne\" method=\"post\">";
 	  print '<table class="noborder" cellspacing="0" cellpadding="2" width="100%">';
-	  print '<tr class="liste_titre"><td>Libellé</td><td align="center">P.U. HT</td><td align="center">Qty</td><td align="center">Total HT</td>';
+	  print '<tr class="liste_titre"><td>Libellé</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Total HT</td>';
 	  print '<td align="center">Taux TVA</td>';
 	  print '<td align="center">TVA</td>';
 	  print '<td align="right">Total TTC</td><td>&nbsp;</td></tr>';
@@ -365,11 +388,17 @@ else
       else
 	{
 	  /*
-	   * Affichage
-	   *
+	   * Affichage en visu
 	   *
 	   */
 	  
+	  $head[0][0] = DOL_URL_ROOT."$PHP_SELF?facid=".$_GET["facid"];
+	  $head[0][1] = 'Facture : '.$obj->facnumber;
+	  $h = 1;
+	  $a = 0;
+
+	  dolibarr_fiche_head($head, $a);
+
 	  print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 	  print '<tr><td width="50%" valign="top">';
 	  /*
@@ -379,7 +408,7 @@ else
 	  print "<tr><td>Société</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$obj->socidp\">$obj->socnom</a></b></td>";
 	  print "<td align=\"right\"><a href=\"index.php?socid=$obj->socidp\">Autres factures</a></td>\n";
 	  print "</tr>";
-	  print "<tr><td>Date</td><td colspan=\"4\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
+	  print "<tr><td>Date</td><td colspan=\"4\">".dolibarr_print_date($obj->df,"%A %d %B %Y")."</td></tr>\n";
 	  print "<tr><td>Libellé</td><td colspan=\"4\">";
 	  print $obj->libelle;
 	  print "</td>";
@@ -405,8 +434,6 @@ else
 	      
 	  print "</td><td valign=\"top\">";
 	  	  
-	  $_MONNAIE="euros";
-
 	  /*
 	   * Paiements
 	   */
@@ -441,7 +468,7 @@ else
 		  print "<tr $bc[$var]>";
 		  print "<td>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
 		  print "<td>$objp->paiement_type $objp->num_paiement</TD>\n";
-		  print "<td align=\"right\">".price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
+		  print "<td align=\"right\">".price($objp->amount)."</TD><td>".MAIN_MONNAIE."</td>\n";
 
 		  if ($obj->statut == 1 && $obj->paye == 0 && $user->societe_id == 0)
 		    {
@@ -455,12 +482,12 @@ else
 		  $total = $total + $objp->amount;
 		  $i++;
 		}
-	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td$tdsup>$_MONNAIE</td></tr>\n";
+	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td$tdsup>".MAIN_MONNAIE."</td></tr>\n";
 	      
 	      $resteapayer = abs($fac->total_ttc - $total);
 	      
 	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Reste a payer :</td>";
-	      print '<td align="right"><b>'.price($resteapayer)."</b></td><td$tdsup>$_MONNAIE</td>";
+	      print '<td align="right"><b>'.price($resteapayer)."</b></td><td$tdsup>".MAIN_MONNAIE."</td>";
 	      print "</tr>\n";
 	      
 	      print "</table>";
@@ -482,9 +509,11 @@ else
 	  print '<td align="center">Taux TVA</td>';
 	  print '<td align="center">TVA</td>';
 	  print '<td align="right">Total TTC</td></tr>';
+	  $var=1;
 	  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 	    {
-	      print "<tr $bc[1]>".'<td>'.$fac->lignes[$i][0]."</td>";
+	      $var=!$var;
+	      print "<tr $bc[$var]>".'<td>'.$fac->lignes[$i][0]."</td>";
 	      print '<td align="center">'.price($fac->lignes[$i][1])."</td>";
 	      print '<td align="center">'.$fac->lignes[$i][3]."</td>";  
 	      print '<td align="center">'.price($fac->lignes[$i][4])."</td>";  
@@ -494,8 +523,9 @@ else
 
 	      print '</tr>';
 	    }
-	  print "</table>";
+	  print "</table><br>";
 	  
+      print "</div>\n";
 	}
 
       /*
@@ -504,7 +534,7 @@ else
        *
        */
 
-	print "<br><div class=\"tabsAction\">\n";
+	print "<div class=\"tabsAction\">\n";
   
       if ($obj->statut == 0 && $user->societe_id == 0)
 	{
