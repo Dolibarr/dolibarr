@@ -96,7 +96,7 @@ class Contact
     
     $this->email = trim($this->email);
     
-		//commenté suite a la nouvell fonction dolibarr_print_phone
+    //commenté suite a la nouvell fonction dolibarr_print_phone
     //$this->phone_pro = ereg_replace(" ","",$this->phone_pro);
     //$this->phone_perso = ereg_replace(" ","",$this->phone_perso);
     
@@ -106,6 +106,7 @@ class Contact
 	$soc->fetch($this->socid);
 	$this->phone_pro = $soc->tel;
       }
+
     $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
     $sql .= "  civilite='$this->civilite_id'";
     $sql .= ", name='$this->name'";
@@ -121,16 +122,18 @@ class Contact
     $sql .= ", phone_perso = '$this->phone_perso'";
     $sql .= ", phone_mobile = '$this->phone_mobile'";
     $sql .= ", jabberid = '$this->jabberid'";
-    if ($user) {
+
+    if ($user)
+      {
         $sql .= ", fk_user_modif='".$user->id."'";
-    }
+      }
     $sql .= " WHERE idp=$id";
     
     $result = $this->db->query($sql);
     
     if (!$result)
       {
-    dolibarr_print_error($this->db);
+	dolibarr_print_error($this->db);
       }
     
     if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
@@ -140,7 +143,7 @@ class Contact
     return $result;
   }
   
-  /*
+  /**
    * Mise à jour de l'arbre ldap
    *
    */
@@ -396,6 +399,11 @@ class Contact
 		  $this->facturation = 0;
 		}
 	    }
+	  else
+	    {
+	      dolibarr_syslog("Error in Contact::fetch() id=$_id");
+	    }
+
 	  $this->db->free();
 
 	  if ($user)
@@ -415,6 +423,7 @@ class Contact
 		  else 
 		    {
 		      print $this->db->error();
+		      dolibarr_syslog("Error in Contact::fetch() id=$_id");
 		    }
 		}
 	    }
