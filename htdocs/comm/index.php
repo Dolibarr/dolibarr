@@ -175,7 +175,7 @@ if ($conf->commande->enabled)
           while ($i < $num)
 	    {
 	      $obj = $db->fetch_object();
-	      print "<tr $bc[$var]><td width=\"25%\"><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
+	      print "<tr $bc[$var]><td width=\"25%\" nowrap><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
 	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	      $i++;
 	      $var=!$var;
