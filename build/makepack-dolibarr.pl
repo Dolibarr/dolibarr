@@ -81,7 +81,7 @@ if (! $TEMP || ! -d $TEMP) {
 $BUILDROOT="$TEMP/buildroot";
 
 
-my $copyalreadydone=0;
+my $copyalreadydone=1;
 
 # Choose package targets
 #-----------------------
@@ -135,7 +135,7 @@ foreach my $target (keys %CHOOSEDTARGET) {
         print "Test requirement for target $target: Search '$req'... ";
         $ret=`"$req" 2>&1`;
         $coderetour=$?; $coderetour2=$coderetour>>8;
-        if ($coderetour != 0 && ($coderetour2 == 1 || $coderetour2 == 127) && $PROGPATH) { 
+        if ($coderetour != 0 && ($coderetour2 == 1 && $OS =~ /windows/) || ($coderetour2 == 127 && $OS !~ /windows/) && $PROGPATH) { 
             # If error not found, we try in PROGPATH
             $ret=`"$PROGPATH/$ALTERNATEPATH{$req}/$req\" 2>&1`;
             $coderetour=$?; $coderetour2=$coderetour>>8;
@@ -194,11 +194,14 @@ if ($nboftargetok) {
     	if ($target eq 'TGZ') {
     		unlink $FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-    		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
-    		print "Move $FILENAMETGZ.tgz to $SOURCE/build/$FILENAMETGZ.tgz\n";
-    		rename("$BUILDROOT/$FILENAMETGZ.tgz","$SOURCE/build/$FILENAMETGZ.tgz");
+    		$cmd="tar --exclude-from \"$SOURCE/build/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
+#    		$cmd="tar --exclude-from \"$SOURCE/build/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" $FILENAMETGZ";
+#    		print $cmd;
+    		$ret=`$cmd`;
+#    		print "Move $FILENAMETGZ.tgz to $SOURCE/build/$FILENAMETGZ.tgz\n";
+#    		$ret=`mv "$BUILDROOT/$FILENAMETGZ.tgz" "$SOURCE/build/$FILENAMETGZ.tgz"`;
     		next;
-    	}	
+    	}
     
     	if ($target eq 'ZIP') {
     		unlink $FILENAMEZIP.zip;
@@ -212,7 +215,7 @@ if ($nboftargetok) {
     		next;
     	}
     
-    	if ($target eq 'RPM') {
+    	if ($target eq 'RPM') {                 # Linux only
     		$BUILDFIC="$FILENAMETGZ.spec";
     		unlink $FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";

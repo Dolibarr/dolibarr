@@ -2,3 +2,8 @@ doc/dev/dolibarr-phpdoc
 htdocs/document
 CVS
 *~
+dolibarr-*.tgz
+dolibarr-*.exe
+dolibarr-*.rpm
+dolibarr-*.deb
+dolibarr-*.zip
