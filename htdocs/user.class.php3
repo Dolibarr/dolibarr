@@ -137,7 +137,7 @@ class User {
 
   Function update()
     {
-      $sql = "SELECT login FROM llx_user WHERE login ='$this->login'";
+      $sql = "SELECT login FROM llx_user WHERE login ='$this->login' AND rowid <> $this->id";
 
       if ($this->db->query($sql)) 
 	{
