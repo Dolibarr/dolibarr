@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,9 +43,9 @@ class Contact
       
       return 1;
     }
+
   /**
    * Création du contact
-   *
    *
    */
   Function create($user)
@@ -91,7 +92,13 @@ class Contact
 	$this->phone_pro = $soc->tel;
       }
     
-    $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET name='$this->name', firstname='$this->firstname'";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
+    $sql .= "  civilite='$this->civilite_id'";
+    $sql .= ", name='$this->name'";
+    $sql .= ", firstname='$this->firstname'";
+    $sql .= ", address='$this->address'";
+//    $sql .= ", cp='$this->cp'";
+//    $sql .= ", ville='$this->ville'";
     $sql .= ", poste='$this->poste'";
     $sql .= ", fax='$this->fax'";
     $sql .= ", email='$this->email'";
@@ -100,6 +107,9 @@ class Contact
     $sql .= ", phone_perso = '$this->phone_perso'";
     $sql .= ", phone_mobile = '$this->phone_mobile'";
     $sql .= ", jabberid = '$this->jabberid'";
+    if ($user) {
+        $sql .= ", fk_user_modif=".$user->id;
+    }
     $sql .= " WHERE idp=$id";
     
     $result = $this->db->query($sql);
@@ -247,18 +257,41 @@ class Contact
    */
   Function update_perso($id, $user=0)
     {
+      # Mis a jour contact
+      $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET idp=$id ";
 
-      $sql = "UPDATE llx_socpeople SET ";
-      $sql .= " birthday='".$this->birthday."'";
+      if ($this->birthday>0) {
+        if (eregi('\-',$this->birthday)) {
+            // Si date = chaine
+            $sql .= ", birthday='".$this->birthday."'";
+        }        
+        else {
+            // Si date = timestamp
+            $sql .= ", birthday=".$this->db->idate($this->birthday);
+        }
+      }
       $sql .= " WHERE idp=$id";
 
       $result = $this->db->query($sql);
-
       if (!$result) 
 	{
 	  print $this->db->error() . '<br>' . $sql;
 	}
       
+      # Mis a jour alerte birthday
+      if ($this->birthday_alert) {
+        $sql = "INSERT into ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
+        $sql.= "values (1,".$id.",".$user->id.")";
+      } else {
+        $sql = "DELETE from ".MAIN_DB_PREFIX."user_alert ";
+        $sql.= "where type=1 AND fk_contact=".$id." AND fk_user=".$user->id;
+      }
+      $result = $this->db->query($sql);
+      if (!$result) 
+	{
+	  print $this->db->error() . '<br>' . $sql;
+	}
+ 
       return $result;
     }
 
@@ -269,7 +302,7 @@ class Contact
    */
   Function fetch($id, $user=0) 
     {
-      $sql = "SELECT c.idp, c.fk_soc, c.name, c.firstname, c.email, phone, phone_perso, phone_mobile, fax, jabberid, c.birthday, c.note, poste";
+      $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname, c.address, c.birthday as birthday, poste, phone, phone_perso, phone_mobile, fax, c.email, jabberid, c.note";
       $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
       $sql .= " WHERE c.idp = $id";
       
@@ -282,13 +315,18 @@ class Contact
 	      $obj = $this->db->fetch_object($result , 0);
 
 	      $this->id             = $obj->idp;
+	      $this->civilite_id    = $obj->civilite_id;
 	      $this->name           = $obj->name;
 	      $this->firstname      = $obj->firstname;
 	      $this->nom            = $obj->name;
 	      $this->prenom         = $obj->firstname;
+
+	      $this->address        = $obj->address;
+
 	      $this->societeid      = $obj->fk_soc;
 	      $this->socid          = $obj->fk_soc;
 	      $this->poste          = $obj->poste;
+
 	      $this->fullname       = $this->firstname . ' ' . $this->name;
 	      
 	      $this->phone_pro      = dolibarr_print_phone($obj->phone);
@@ -304,13 +342,14 @@ class Contact
 	      $this->birthday       = $obj->birthday;
 	      $this->birthday_alert = $obj->birthday_alert;
 	      $this->note           = $obj->note;
+
 	    }
 	  $this->db->free();
 
 	  if ($user)
 	    {
 	      $sql = "SELECT fk_user";
-	      $sql .= " FROM ".MAIN_DB_PREFIX."birthday_alert";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."user_alert";
 	      $sql .= " WHERE fk_user = $user->id AND fk_contact = $id";
 	      
 	      if ($this->db->query($sql)) 
@@ -388,7 +427,7 @@ class Contact
   Function info($id) 
     {
       $sql = "SELECT c.idp, ".$this->db->pdate("datec")." as datec, fk_user";
-      $sql .= ", ".$this->db->pdate("tms")." as tms";
+      $sql .= ", ".$this->db->pdate("tms")." as tms, fk_user_modif";
       $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
       $sql .= " WHERE c.idp = $id";
       
@@ -402,8 +441,11 @@ class Contact
 
 	      $cuser = new User($this->db, $obj->fk_user);
 	      $cuser->fetch();
-
 	      $this->user_creation     = $cuser;
+
+	      $muser = new User($this->db, $obj->fk_user_modif);
+	      $muser->fetch();
+	      $this->user_modification = $muser;
 
 	      $this->date_creation     = $obj->datec;
 	      $this->date_modification = $obj->tms;

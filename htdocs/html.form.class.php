@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (c) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -280,12 +280,19 @@ class Form {
     print '</select>';
   }
 
-
+  /*
+   * Affiche zone de selection de date
+   * Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
+   * Les champs sont présélectionnées avec:
+   * - La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
+   * - La date du jour si set_time vaut ''
+   * - Aucune date (champs vides) si set_time vaut -1
+   */
   Function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0)
   {
-    if (! $set_time && !$empty)
+    if (! $set_time && ! $empty)
       {
-	$set_time = time();
+	    $set_time = time();
       }
 
     $strmonth[1] = "Janvier";
@@ -301,30 +308,42 @@ class Form {
     $strmonth[11] = "Novembre";
     $strmonth[12] = "D&eacute;cembre";
     
-    $smonth = 1;
+    # Analyse de la date de préselection
+    if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$set_time,$reg)) {
+        // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
+        $syear = $reg[1];
+        $smonth = $reg[2];
+        $sday = $reg[3];
+        $shour = $reg[4];
+        $smin = $reg[5];
+    }
+    else {
+        // Date est un timestamps
+        $syear = date("Y", $set_time);
+        $smonth = date("n", $set_time);
+        $sday = date("d", $set_time);
+        $shour = date("H", $set_time);
+        $smin = date("i", $set_time);
+    }
     
-    $cday = date("d", $set_time);
-    $cmonth = date("n", $set_time);
-    $syear = date("Y", $set_time);
-    $shour = date("H", $set_time);
-    $smin = date("i", $set_time);
-
     print '<select name="'.$prefix.'day">';    
 
-    if ($empty)
+    if ($empty || $set_time == -1)
       {
-	$cday = 0;
-	$cmonth = 0;
-	$syear = 0;
+    	$sday = 0;
+    	$smonth = 0;
+    	$syear = 0;
+    	$shour = 0;
+    	$smin = 0;
 
-	print '<option value="0" SELECTED>';
+    	print '<option value="0" selected>';
       }
     
-    for ($day = 1 ; $day < $sday + 32 ; $day++) 
+    for ($day = 1 ; $day <= 31; $day++) 
       {
-	if ($day == $cday)
+	if ($day == $sday)
 	  {
-	    print "<option value=\"$day\" SELECTED>$day";
+	    print "<option value=\"$day\" selected>$day";
 	  }
 	else 
 	  {
@@ -336,17 +355,17 @@ class Form {
     
     
     print '<select name="'.$prefix.'month">';    
-    if ($empty)
+    if ($empty || $set_time == -1)
       {
-	print '<option value="0" SELECTED>';
+	print '<option value="0" selected>';
       }
 
 
-    for ($month = $smonth ; $month < $smonth + 12 ; $month++)
+    for ($month = 1 ; $month <= 12 ; $month++)
       {
-	if ($month == $cmonth)
+	if ($month == $smonth)
 	  {
-	    print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
+	    print "<option value=\"$month\" selected>" . $strmonth[$month];
 	  }
 	else
 	  {
@@ -355,7 +374,7 @@ class Form {
       }
     print "</select>";
 
-    if ($empty)
+    if ($empty || $set_time == -1)
       {
 	print '<input type="text" size="5" maxlength="4" name="'.$prefix.'year">';
       }
@@ -364,11 +383,11 @@ class Form {
     
 	print '<select name="'.$prefix.'year">';
 	
-	for ($year = $syear - 2; $year < $syear + 5 ; $year++)
+	for ($year = $syear - 3; $year < $syear + 5 ; $year++)
 	  {
 	    if ($year == $syear)
 	      {
-		print "<option value=\"$year\" SELECTED>$year";
+		print "<option value=\"$year\" selected>$year";
 	      }
 	    else
 	      {
@@ -390,7 +409,7 @@ class Form {
 	      }
 	    if ($hour == $shour)
 	      {
-		print "<option value=\"$hour\" SELECTED>$hour";
+		print "<option value=\"$hour\" selected>$hour";
 	      }
 	    else
 	      {
@@ -411,7 +430,7 @@ class Form {
 		  }
 		if ($min == $smin)
 		  {
-		    print "<option value=\"$min\" SELECTED>$min";
+		    print "<option value=\"$min\" selected>$min";
 		  }
 		else
 		  {
