@@ -132,13 +132,14 @@ if ($_POST["action"] == 'add_action')
     $idaction=$actioncomm->add($user, $webcal);
 
     if ($idaction > 0) {
-        if ($webcal >= 0) {
-            // Si pas de module webcal ou si pas d'erreur avec
+        if (! $actioncomm->error) {
+            // Si pas d'erreur
             Header("Location: ".$_POST["from"]);
         }
         else {
-            // Si erreur dans module webcal
+            // Si erreur
             $_GET["id"]=$idaction;
+            $error=$actioncomm->error;
         }
     } else {
         dolibarr_print_error($db);        
@@ -259,7 +260,16 @@ if ($_GET["action"] == 'create')
       if ($conf->webcal->enabled)
 	{
 	  $langs->load("other");
-	  print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td><td><input type="checkbox" name="todo_webcal"></td></tr>';
+	  print '<tr><td width="10%">'.$langs->trans("AddCalendarEntry").'</td>';
+      if (! $user->webcal_login) {
+	    print '<td><input type="checkbox" disabled name="todo_webcal">';
+	    print ' '.$langs->trans("ErrorWebcalLoginNotDefined","<a href=\"/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
+	    print '</td>';
+      } else {
+	    print '<td><input type="checkbox" name="todo_webcal"></td>';
+	  }
+
+	  print '</tr>';
 	}
 
       print '<tr><td valign="top">'.$langs->trans("Comment").'</td><td>';

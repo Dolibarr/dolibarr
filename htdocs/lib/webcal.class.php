@@ -43,6 +43,7 @@ class Webcal {
   var $date;
   var $texte;
   var $desc;
+  var $error;
   
 /*!
 		\brief      Constructeur de la classe d'interface à Webcalendar
@@ -68,12 +69,17 @@ class Webcal {
 		\param[in]  date		la date de l'evenement dans le calendrier
 		\param[in]  texte		le titre a indiquer dans l'evenement
 		\param[in]  desc		la description a indiquer dans l'evenement
-        \return     int         1 en cas de succès, -1,-2, -3 en cas d'erreur
+        \return     int         1 en cas de succès, -1,-2,-3 en cas d'erreur, -4 si login webcal non défini
 */
 
   function add($user, $date, $texte, $desc)
     {
-
+      // Test si login webcal défini pour le user
+      if (! $user->webcal_login) {
+        $this->error=$langs->trans("ErrorWebcalLoginNotDefined","<a href=\"/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
+        return -4; 
+      }
+      
       // Recupère l'id max+1 dans la base webcalendar
       $id = $this->get_next_id();
 
@@ -110,18 +116,18 @@ class Webcal {
             		}
             		else
             		{
-            		    $error = $this->localdb->error() . '<br>' .$sql;
+            		    $this->error = $this->localdb->error() . '<br>' .$sql;
                         return -1;
             		}
             	}
             else
             	{
-                	$error = $this->localdb->error() . '<br>' .$sql;
+                	$this->error = $this->localdb->error() . '<br>' .$sql;
                     return -2;
             	}
         }
         else {
-        	$error = $this->localdb->error() . '<br>' .$sql;
+        	$this->error = $this->localdb->error() . '<br>' .$sql;
             return -3;
         }
     }
@@ -129,7 +135,7 @@ class Webcal {
 
 /*!
 		\brief      Obtient l'id suivant dans le webcalendar
-		\return     id	retourne l'id suivant dans le webcalendar
+		\return     int     retourne l'id suivant dans le webcalendar ou -1 si erreur
 */
 
   function get_next_id()

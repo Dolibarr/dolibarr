@@ -2,6 +2,7 @@
 Calendar=Calendrier
 LoginWebcal=Login Webcalendar
 AddCalendarEntry=Ajouter entrée dans le calendrier
+ErrorWebcalLoginNotDefined=Le login Webcalendar associé à votre login Dolibarr <b>%s</b> n'est pas défini.
 Mailing=Mailing
 MailingDesc=Cet écran vous permet d'envoyer des mailing à un groupe de personne.
 MailingResult=Résultat de l'envoi du mailing

@@ -55,7 +55,7 @@ $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_
 $socname=isset($_GET["socname"])?$_GET["socname"]:$_POST["socname"];
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page=$_GET["page"];
+$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
 if ($sortorder == "") {
   $sortorder="ASC";

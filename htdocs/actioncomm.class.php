@@ -47,6 +47,7 @@ class ActionComm
   var $contact;
   var $note;
   var $percent;
+  var $error;
 
   /**
    *    \brief      Constructeur
@@ -104,7 +105,7 @@ class ActionComm
                 // Ajoute entrée dans webcal
                 $result=$webcal->add($author,$webcal->date,$webcal->texte,$webcal->desc);
                 if ($result < 0) {
-                    $this->error="Echec insertion dans webcal ".$webcal->error;   
+                    $this->error="Echec insertion dans webcal: ".$webcal->error;   
                 }
             }
             else if ($webcal == 1)
