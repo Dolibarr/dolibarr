@@ -2,6 +2,7 @@
 OrdersArea=Espace commandes
 Order=Commande
 Orders=Commandes
+NewOrder=Nouvelle commande
 SupplierOrder=Commande fournisseur
 SuppliersOrders=Commandes fournisseurs
 OrdersToValid=Commandes à valider

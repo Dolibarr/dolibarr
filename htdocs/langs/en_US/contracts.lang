@@ -6,5 +6,6 @@ ContractStatusRunning=Running
 ContractStatusClosed=Closed
 Contracts=Contracts
 Contract=Contract
+NewContract=New contract
 AddContract=Add contract
 SearchAContract=Search a contract
