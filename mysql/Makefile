@@ -82,5 +82,6 @@ createpriv:
 	$(MYSQL) mysql -e "flush privileges ; "
 
 
-mysql.sql: $(TABLES)
+mysql.sql: $(TABLES) data/data.sql
 	find tables/ -name "*sql" | xargs cat | grep -v ^-- > mysql.sql
+	cat data/data.sql | grep -v ^-- >> mysql.sql
