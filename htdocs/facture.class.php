@@ -116,15 +116,14 @@ class Facture
 	  $this->db->free();
 	}
       $datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
-      
+
       if ($cdr_fdm)
 	{
 	  $mois=date('m', $datelim);
 	  $annee=date('Y', $datelim);
-	  $fins=array(31,28,31,30,31,30,31,31,30,31,30,31);	  
+	  $fins=array(31,28,31,30,31,30,31,31,30,31,30,31);
 	  $datelim=mktime(0,0,0,$mois,$fins[$mois-1],$annee);
 	}
-      
       
       /*
        * Lecture de la remise exceptionnelle
@@ -135,16 +134,18 @@ class Facture
       $sql .= " WHERE rc.fk_soc =". $this->socidp;
       $sql .= " AND fk_facture IS NULL";
       
-      if ( $this->db->query($sql) )
+      $resql = $this->db->query($sql) ;
+
+      if ( $resql)
 	{
-	  $nurmx = $this->db->num_rows();
+	  $nurmx = $this->db->num_rows($resql);
 	  
 	  if ($nurmx > 0)
 	    {
-	      $row = $this->db->fetch_row();
+	      $row = $this->db->fetch_row($resql);
 	      $this->remise_exceptionnelle = $row[0];
 	    }
-	  $this->db->free();
+	  $this->db->free($resql);
 	}      
       /*
        *  Insertion dans la base
@@ -249,7 +250,7 @@ class Facture
 		  
 		  if ( $result_insert < 0)
 		    {
-        	  dolibarr_print_error($this->db);
+		      dolibarr_print_error($this->db);
 		    }
 		}
 	    }
@@ -268,7 +269,9 @@ class Facture
 					      '19.6');
 
 	      $sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
-	      $sql .= " SET fk_facture = $this->id WHERE fk_facture IS NULL";
+	      $sql .= " SET fk_facture = ".$this->id;
+	      $sql .= " WHERE fk_facture IS NULL";
+	      $sql .= " AND fk_soc =". $this->socidp;
 	      $this->db->query( $sql) ; 
 
 	    }
