@@ -82,7 +82,7 @@ else
 		  $sql .= ",'".ereg_replace('"','',$file)."'";
 		  $sql .= ")";
 	      
-		  if (is_int($duree_secondes))
+		  if(ereg("^[0-9]+$", $duree_secondes))
 		    {
 		      if (! $db->query($sql))
 			{
@@ -94,7 +94,9 @@ else
 		    }
 		  else
 		    {
-		      print "Ligne : $cont ignorée\n";
+		      print $duree_secondes."\n";
+		      //print "Ligne : $cont ignorée\n";
+		      exit ;
 		    }
 		}
 	      else
