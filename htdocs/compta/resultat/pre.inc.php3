@@ -40,15 +40,15 @@ function llxHeader($head = "") {
 
   if ($conf->compta->tva)
     {
-      $menu->add("/compta/tva/index.php3","TVA");
+      $menu->add("/compta/tva/index.php","TVA");
     }
 
-  $menu->add("index.php3","Résultats");
+  $menu->add("index.php","Résultats");
   /*
    * A automatiser
    */
-  $menu->add_submenu("index.php3?year=2002","2002");
-  $menu->add_submenu("index.php3?year=2001","2001");
+  $menu->add_submenu("index.php?year=2002","2002");
+  $menu->add_submenu("index.php?year=2001","2001");
 
   left_menu($menu->liste);
 }

@@ -56,14 +56,14 @@ function llxHeader($head = "") {
   if ($user->societe_id == 0) 
     {
 
-      $menu->add("charges/index.php3","Charges");
+      $menu->add("charges/index.php","Charges");
       $menu->add_submenu("sociales/","Prest. Sociales");
     }
   $menu->add("stats/","Chiffre d'affaire");
 
   if ($conf->compta->tva && $user->societe_id == 0)
     {
-      $menu->add("tva/index.php3","TVA");
+      $menu->add("tva/index.php","TVA");
     }
 
   $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisse");
@@ -72,7 +72,7 @@ function llxHeader($head = "") {
     {
       $menu->add("resultat/","Résultats");
 
-      $menu->add("bank/index.php3","Banque");
+      $menu->add("bank/index.php","Banque");
     }
 
 

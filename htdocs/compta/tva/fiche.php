@@ -22,7 +22,7 @@
 require("./pre.inc.php3");
 require("../../tva.class.php3");
 
-$db = new Db();
+
 $mesg = '';
 
 if ($HTTP_POST_VARS["action"] == 'add' && $HTTP_POST_VARS["cancel"] <> 'Annuler')
@@ -83,9 +83,9 @@ else
 	{ 
 	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr class="liste_titre">';
-	  print '<form action="index.php3" method="post">';
+	  print '<form action="index.php" method="post">';
 	  print '<td valign="center">Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
-	  print '</form><form action="index.php3" method="post">';
+	  print '</form><form action="index.php" method="post">';
 	  print '<td>Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go"></td>';
 	  print '</form><td>&nbsp;</td></tr></table>';
 

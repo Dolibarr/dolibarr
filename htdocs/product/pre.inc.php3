@@ -36,11 +36,11 @@ function llxHeader($head = "", $urlp = "")
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/product/index.php3?type=0", "Produits");
+  $menu->add(DOL_URL_ROOT."/product/index.php?type=0", "Produits");
 
   $menu->add_submenu("fiche.php3?&action=create&type=0","Nouveau produit");
 
-  $menu->add(DOL_URL_ROOT."/product/index.php3?type=1", "Services");
+  $menu->add(DOL_URL_ROOT."/product/index.php?type=1", "Services");
 
   $menu->add_submenu("fiche.php3?&action=create&type=1","Nouveau service");
 
@@ -62,7 +62,7 @@ function llxHeader($head = "", $urlp = "")
     }      
     
   // La notion de service est abandonnée pour le moment 
-  //  $menu->add(DOL_URL_ROOT."/service/index.php3", "Services");
+  //  $menu->add(DOL_URL_ROOT."/service/index.php", "Services");
 
   $menu->add("stats/", "Statistiques");
   $menu->add_submenu("popuprop.php", "Popularité");

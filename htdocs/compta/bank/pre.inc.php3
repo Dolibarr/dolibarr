@@ -36,7 +36,7 @@ function llxHeader($head = "")
 
   $menu = new Menu();
 
-  $menu->add("index.php3","Comptes");
+  $menu->add("index.php","Comptes");
   $menu->add_submenu("search.php3","Recherche");
 
   $db = new Db();
@@ -59,7 +59,7 @@ function llxHeader($head = "")
     }
   $db->close;
 
-  $menu->add("index.php3","Banque");
+  $menu->add("index.php","Banque");
 
   $menu->add_submenu("budget.php3","Budgets");
   $menu->add_submenu("bilan.php3","Bilan");
