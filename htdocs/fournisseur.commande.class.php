@@ -663,6 +663,59 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 	return -1;
       }
   }
+
+  /**
+   * Livraison
+   *
+   *
+   */
+  function Livraison($user, $date, $type)
+    {
+      dolibarr_syslog("CommandeFournisseur::Livraison");
+      $result = 0;
+      if ($user->rights->fournisseur->commande->receptionner && $date < time())
+	{
+	  if ($type == 'par')
+	    {
+	      $statut = 4;
+	    }
+
+	  if ($type == 'tot')
+	    {
+	      $statut = 5;
+	    }
+
+	  if ($statut == 4 or $statut == 5)
+	    {
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."commande_fournisseur";
+	      $sql .= " SET fk_statut = ".$statut;
+	      $sql .= " WHERE rowid = ".$this->id;
+	      $sql .= " AND (fk_statut = 3 OR fk_statut = 4) ;";
+	      
+	      if ($this->db->query($sql) )
+		{
+		  $result = 0;
+		  $this->log($user, $statut, $date);
+		}
+	      else
+		{
+		  dolibarr_syslog("CommandeFournisseur::Livraison Error -1");
+		  $result = -1;
+		}	  
+	    }
+	  else
+	    {
+	      dolibarr_syslog("CommandeFournisseur::Livraison Error -2");
+	      $result = -2;
+	    }	
+	}
+      else
+	{
+	  dolibarr_syslog("CommandeFournisseur::Livraison Not Authorized");
+	}
+      return $result ;
+    }
+
   /**
    *
    *
