@@ -55,7 +55,7 @@ if ($_GET["subaction"] == 'delrights' && $user->admin)
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 {
-  if ($_GET["id"] <> $user->id)
+  if ($_GET["id"] <> $user->id  && $user->admin)
     {
       $edituser = new User($db, $_GET["id"]);
       $edituser->fetch($_GET["id"]);
@@ -70,40 +70,45 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 if ($_POST["action"] == 'add' && $user->admin)
 {
   $message="";
-  if (! $_POST["nom"]) {
-    $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
-    $action="create";       // Go back to create page
-  }
-  if (! $_POST["login"]) {
-    $message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
-    $action="create";       // Go back to create page
-  }
-  if (! $message) {
-    $edituser = new User($db,0);
-    
-    $edituser->nom           = trim($_POST["nom"]);
-    $edituser->note          = trim($_POST["note"]);
-    $edituser->prenom        = trim($_POST["prenom"]);
-    $edituser->login         = trim($_POST["login"]);
-    $edituser->email         = trim($_POST["email"]);
-    $edituser->admin         = trim($_POST["admin"]);
-    $edituser->webcal_login  = trim($_POST["webcal_login"]);
-    
-    $id = $edituser->create();
-    
-    if ($id) {
-      if (isset($_POST['password']) && trim($_POST['password']))
-	{
-	  $edituser->password(trim($_POST['password']),$conf->password_encrypted);
-	}
-    
-      Header("Location: fiche.php?id=$id");
-    }           
-    else {
-      $message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
+  if (! $_POST["nom"])
+    {
+      $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
       $action="create";       // Go back to create page
     }
-  }
+  if (! $_POST["login"])
+    {
+      $message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
+      $action="create";       // Go back to create page
+    }
+  if (! $message)
+    {
+      $edituser = new User($db,0);
+      
+      $edituser->nom           = trim($_POST["nom"]);
+      $edituser->note          = trim($_POST["note"]);
+      $edituser->prenom        = trim($_POST["prenom"]);
+      $edituser->login         = trim($_POST["login"]);
+      $edituser->email         = trim($_POST["email"]);
+      $edituser->admin         = trim($_POST["admin"]);
+      $edituser->webcal_login  = trim($_POST["webcal_login"]);
+      
+      $id = $edituser->create();
+      
+      if ($id)
+	{
+	  if (isset($_POST['password']) && trim($_POST['password']))
+	    {
+	      $edituser->password(trim($_POST['password']),$conf->password_encrypted);
+	    }
+	  
+	  Header("Location: fiche.php?id=$id");
+	}           
+      else
+	{
+	  $message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
+	  $action="create";       // Go back to create page
+	}
+    }
 }
 
 
@@ -112,7 +117,7 @@ if ($_GET["action"] == 'password' && $user->admin)
 {
   $edituser = new User($db, $_GET["id"]);
   $edituser->fetch();
-
+  
   if ($edituser->password($user,'',$conf->password_encrypted))
     {
       $message = '<div class="ok">'.$langs->trans("PasswordChangedAndSentTo",$edituser->email).'</div>';
@@ -145,7 +150,7 @@ if ($_GET["id"])
   $head[$h][1] = $langs->trans("UserCard");
   $h++;
   
-  $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?action=perms&amp;id='.$fuser->id;
+  $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
   $head[$h][1] = $langs->trans("Permissions");
   $hselected=$h;
   $h++;
@@ -215,28 +220,37 @@ if ($_GET["id"])
 	    }
 	  print '<tr '. $bc[$var].'>';
 
-
-
-	  if (in_array($obj->id, $perms))
+	  if ( $user->admin )
 	    {
-	      print '<td>&nbsp;</td>';
-	      print '<td>';
-	      print "<a href=\"perms.php?id=".$fuser->id."&amp;action=perms&amp;subaction=delrights&amp;rights=".$obj->id."\">".img_edit_remove()."</a>\n";	      
-	      print '</td>';
+	      if (in_array($obj->id, $perms))
+		{
+		  print '<td>&nbsp;</td>';
+		  print '<td>';
+		  print "<a href=\"perms.php?id=".$fuser->id."&amp;action=perms&amp;subaction=delrights&amp;rights=".$obj->id."\">".img_edit_remove()."</a>\n";	      
+		  print '</td>';
+		  
+		}
+	      else
+		{
+		  print '<td>';
+		  print '<a href="perms.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">'.img_edit_add().'</a>';
+		  print '</td>';
+		  print '<td>&nbsp;</td>';
+		}
 
+	      
+	      print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td>';
+	      print '</tr>';
 	    }
 	  else
 	    {
-	      print '<td>';
-	      print '<a href="perms.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">'.img_edit_add().'</a>';
-	      print '</td>';
-	      print '<td>&nbsp;</td>';
+	      if (in_array($obj->id, $perms))
+		{
+		  print '<td>&nbsp;</td><td>&nbsp;</td>';
+		  print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td>';
+		  print '</tr>';
+		}
 	    }
-
-
-
-	  print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td>';
-	  print '</tr>';
 
 		  
 	  $i++;
