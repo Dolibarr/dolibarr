@@ -32,6 +32,7 @@ class Contact
   var $prenom;
   var $code;
   var $email;
+  var $birthday;
 
   Function Contact($DB, $id=0) 
     {
