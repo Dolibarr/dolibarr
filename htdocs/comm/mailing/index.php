@@ -21,7 +21,8 @@
  *
  */
 
-/**     \file       htdocs/comm/mailing/index.php
+/**
+        \file       htdocs/comm/mailing/index.php
         \ingroup    commercial
         \brief      Page accueil de la zone mailing
         \version    $Revision$
@@ -119,19 +120,21 @@ print '</td><td valign="top" width="70%">';
 $sql  = "SELECT m.rowid, m.titre, m.nbemail, m.statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql .= " LIMIT 10";
-if ( $db->query($sql) ) 
+$result=$db->query($sql);
+if ($result) 
 {
-  $num = $db->num_rows();
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastMailings",10).'</td><td align="center">'.$langs->trans("Status").'</td></tr>';
+
+  $num = $db->num_rows($result);
   if ($num > 0)
     { 
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastMailings",10).'</td><td align="center">'.$langs->trans("Status").'</td></tr>';
       $var = true;
       $i = 0;
       
       while ($i < $num ) 
 	{
-	  $obj = $db->fetch_object();
+	  $obj = $db->fetch_object($result);
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
@@ -143,9 +146,13 @@ if ( $db->query($sql) )
 	  $i++;
 	}
 
-      print "</table><br>";
     }
-  $db->free();
+  else 
+    {
+     print '<tr><td>'.$langs->trans("None").'</td></tr>';   
+    }
+  print "</table><br>";
+  $db->free($result);
 } 
 else
 {
