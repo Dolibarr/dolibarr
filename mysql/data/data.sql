@@ -83,7 +83,8 @@ INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_FROM','adhere
 --
 
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MODULE_COMMANDE','0','yesno','Module commande');
-
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MODULE_DON','0','yesno','Module don');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MODULE_ADHERENT','0','yesno','Module adherent');
 --
 -- Constantes 
 --
