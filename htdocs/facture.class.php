@@ -292,7 +292,7 @@ class Facture
       $sql .= ",".$this->db->pdate("f.date_lim_reglement")." as dlr";
       $sql .= ", c.rowid as cond_regl_id, c.libelle, c.libelle_facture";
       $sql .= ", f.note, f.paye, f.fk_statut, f.fk_user_author";
-      $sql .= ", fk_mode_reglement";
+      $sql .= ", f.fk_mode_reglement";
       $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."cond_reglement as c";
       $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
       
