@@ -74,6 +74,10 @@ if ( $db->query($sql) )
   dolibarr_syslog("Communications à traiter ".$row[0]);
   $db->free();
 }
+else
+{
+  $error++;
+}
 
 /**
  *
@@ -289,6 +293,7 @@ function calcul($client, $db, &$total_cout_achat, &$total_cout_vente, &$total_co
   $comms = array();
 
   $sql = "SELECT t.idx, t.ligne, t.montant, t.duree, t.num, t.date, t.heure, t.dest";
+  $sql .= " , t.fichier, t.fk_fournisseur";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr as t";
   $sql .= " WHERE t.ligne = ".$client;
     
@@ -303,14 +308,16 @@ function calcul($client, $db, &$total_cout_achat, &$total_cout_vente, &$total_co
 
 	  $comm = new CommunicationTelephonique();
 
-	  $comm->index   = $objp->idx;
-	  $comm->ligne   = $objp->ligne;
-	  $comm->date    = $objp->date;
-	  $comm->heure   = $objp->heure;
-	  $comm->duree   = $objp->duree;
-	  $comm->dest    = $objp->dest;
-	  $comm->numero  = $objp->num;
-	  $comm->montant = $objp->montant;
+	  $comm->index       = $objp->idx;
+	  $comm->ligne       = $objp->ligne;
+	  $comm->date        = $objp->date;
+	  $comm->heure       = $objp->heure;
+	  $comm->duree       = $objp->duree;
+	  $comm->dest        = $objp->dest;
+	  $comm->numero      = $objp->num;
+	  $comm->montant     = $objp->montant;
+	  $comm->fichier_cdr = $objp->fichier;
+	  $comm->fournisseur = $objp->fk_fournisseur;
 	 
 	  $comms[$i] = $comm;
 
