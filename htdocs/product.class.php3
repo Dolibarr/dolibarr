@@ -30,6 +30,9 @@ class Product
   var $description;
   var $price;
   var $tva_tx;
+  var $type;
+  var $duration_value;
+  var $duration_unit;
 
   Function Product($DB, $id=0)
     {
@@ -45,7 +48,7 @@ class Product
   Function create($user) 
     {
 
-      $sql = "INSERT INTO llx_product (fk_user_author) VALUES (".$user->id.")";
+      $sql = "INSERT INTO llx_product (fk_user_author, fk_product_type) VALUES (".$user->id.",$this->type)";
       
       if ($this->db->query($sql) )
 	{
@@ -78,6 +81,7 @@ class Product
 	  $sql .= ",tva_tx = " . $this->tva_tx ;
 	  $sql .= ",envente = " . $this->envente ;
 	  $sql .= ",description = '" . trim($this->description) ."'";
+	  $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
 	  
 	  $sql .= " WHERE rowid = " . $id;
 	  
@@ -104,7 +108,7 @@ class Product
   Function fetch ($id)
     {
     
-      $sql = "SELECT rowid, ref, label, description, price, tva_tx, envente, nbvente";
+      $sql = "SELECT rowid, ref, label, description, price, tva_tx, envente, nbvente, fk_product_type, duration";
       $sql .= " FROM llx_product WHERE rowid = $id";
 
       $result = $this->db->query($sql) ;
@@ -119,10 +123,20 @@ class Product
 	  $this->description = stripslashes($result["description"]);
 	  $this->price       = $result["price"];
 	  $this->tva_tx      = $result["tva_tx"];
+	  $this->type        = $result["fk_product_type"];
 	  $this->nbvente     = $result["nbvente"];
 	  $this->envente     = $result["envente"];
+
+	  $this->duration_value = substr($result["duration"],0,strlen($result["duration"])-1);
+	  $this->duration_unit = substr($result["duration"],-1);
+
+	  $this->db->free();
 	}
-      $this->db->free();
+      else
+	{
+	  print $this->db->error();
+	}
+
       return $result;
   }
   /*

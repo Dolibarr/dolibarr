@@ -76,7 +76,7 @@ if ( $db->query($sql) )
 
   llxHeader();
 
-  print_barre_liste("Liste des produits", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+  print_barre_liste("Liste des ".$types[$type]."s", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
@@ -88,7 +88,7 @@ if ( $db->query($sql) )
   print "</TR>\n";
   
   print '<tr class="liste_titre">';
-  print '<form action="index.php3" method="post">';
+  print '<form action="index.php3?type='.$type.'" method="post">';
   print '<td><input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
   print '</form><form action="index.php3" method="post">';
   print '<td><input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go"></td>';

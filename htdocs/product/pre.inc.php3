@@ -21,6 +21,9 @@
  */
 require("../main.inc.php3");
 
+$types[0] = "produit";
+$types[1] = "service";
+
 function llxHeader($head = "", $urlp = "")
 {
   global $user, $conf;
@@ -35,9 +38,11 @@ function llxHeader($head = "", $urlp = "")
 
   $menu->add(DOL_URL_ROOT."/product/index.php3?type=0", "Produits");
 
-  $menu->add_submenu("fiche.php3?&action=create","Nouveau produit");
+  $menu->add_submenu("fiche.php3?&action=create&type=0","Nouveau produit");
 
   $menu->add(DOL_URL_ROOT."/product/index.php3?type=1", "Services");
+
+  $menu->add_submenu("fiche.php3?&action=create&type=1","Nouveau service");
 
   if (defined("MAIN_MODULE_BOUTIQUE") && MAIN_MODULE_BOUTIQUE)
     {

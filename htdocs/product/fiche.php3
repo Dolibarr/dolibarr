@@ -20,9 +20,6 @@
  *
  */
 
-$types[0] = "produit";
-$types[1] = "service";
-
 require("./pre.inc.php3");
 require("../propal.class.php3");
 require("../facture.class.php3");
@@ -84,6 +81,8 @@ if ($action == 'update' && $cancel <> 'Annuler')
   $product->tva_tx = $HTTP_POST_VARS["tva_tx"];
   $product->description = $HTTP_POST_VARS["desc"];
   $product->envente = $HTTP_POST_VARS["statut"];
+  $product->duration_value = $HTTP_POST_VARS["duration_value"];
+  $product->duration_unit = $HTTP_POST_VARS["duration_unit"];
 
   if (  $product->update($id, $user))
     {
@@ -102,7 +101,7 @@ if ($action == 'update' && $cancel <> 'Annuler')
  */
 if ($action == 'create')
 {
-  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+  print "<form action=\"$PHP_SELF?type=$type\" method=\"post\">\n";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">\n";
   print '<input type="hidden" name="type" value="'.$type.'">'."\n";
   print '<div class="titre">Nouveau '.$types[$type].'</div><br>'."\n";
@@ -119,6 +118,16 @@ if ($action == 'create')
   print "<tr><td valign=\"top\">Description</td><td>";
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
+  if ($type == 1)
+    {
+      print '<tr><td>Durée</td><TD><input name="duration_value" size="6" value="'.$product->duree.'">';
+      print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
+      print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
+      print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
+      print '<input name="duration_unit" type="radio" value="y">année';
+      print '</td></tr>';
+    }
+  
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
   print '</table>';
   print '</form>';      
@@ -134,14 +143,14 @@ else
 	{ 
 	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr class="liste_titre">';
-	  print '<form action="index.php3" method="post">';
+	  print '<form action="index.php3?type='.$product->type.'" method="post">';
 	  print '<td valign="center">Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
 	  print '</form><form action="index.php3" method="post">';
 	  print '<td>Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go"></td>';
 	  print '</form><td>&nbsp;</td></tr></table>';
 
 
-	  print_fiche_titre('Fiche produit : '.$product->ref, $mesg);
+	  print_fiche_titre('Fiche '.$types[$product->type].' : '.$product->ref, $mesg);
       
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
@@ -170,7 +179,27 @@ else
 
 	  if ($product->type == 1)
 	    {
-	      print '<tr><td>Durée</td><TD>'.$product->tva_tx.' %</td></tr>';
+	      print '<tr><td>Durée</td><TD>'.$product->duration_value.'&nbsp;';
+	      if ($product->duration_value > 1)
+		{
+		  $plu = "s";
+		}
+	      switch ($product->duration_unit) 
+		{
+		case "d":
+		  print "jour$plu&nbsp;";
+		  break;
+		case "w":
+		  print "semaine$plu&nbsp;";
+		  break;
+		case "m":
+		  print 'mois&nbsp;';
+		  break;
+		case "y":
+		  print "an$plu&nbsp;";
+		  break;
+		}
+	      print '</td></tr>';
 	    }
 
 	  print "</table>";
@@ -178,7 +207,7 @@ else
     
       if ($action == 'edit')
 	{
-	  print '<hr><div class="titre">Edition de la fiche produit : '.$product->ref.'</div><br>';
+	  print '<hr><div class="titre">Edition de la fiche '.$types[$product->type].' : '.$product->ref.'</div><br>';
 
 	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update">';
@@ -211,7 +240,12 @@ else
 
 	  if ($product->type == 1)
 	    {
-	      print '<tr><td>Durée</td><TD><input name="duree" size="6" value="'.$product->duree.'"></td></tr>';
+	      print '<tr><td>Durée</td><TD><input name="duration_value" size="6" value="'.$product->duration_value.'">';
+	      print '<input name="duration_unit" type="radio" value="d" selected>jour&nbsp;';
+	      print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
+	      print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
+	      print '<input name="duration_unit" type="radio" value="y">année';
+	      print '</td></tr>';
 	    }
 
 	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer">&nbsp;';
