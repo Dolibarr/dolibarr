@@ -63,23 +63,27 @@ class modPrelevement extends DolibarrModules
     $this->depends = array();
     $this->requiredby = array();
 
+    // Constantes
     $this->const = array();
+
+    // Boites
     $this->boxes = array();
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'prelevement';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     * Permissions
-     */    
+    // Permissions
     $this->remove();
 
     $this->rights = array();
-
     $this->rights_class = 'prelevement';
 
     $this->rights[0][0] = 150; // id de la permission
@@ -97,13 +101,12 @@ class modPrelevement extends DolibarrModules
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;    
 
-    /*
-     * Documents
-     *
-     */
+    // Dir
     $this->dirs[0] = DOL_DATA_ROOT . "/prelevement/" ;
     $this->dirs[1] = DOL_DATA_ROOT . "/prelevement/bon" ;
 
+    $sql = array();
+    
     return $this->_init($sql);
   }
 

@@ -110,18 +110,20 @@ class modAdherent extends DolibarrModules
     // Boites
     $this->boxes = array();
 
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'adherent';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     * Permissions
-     */
-		 $this->remove();
+    // Permissions
+    $this->remove();
+
     $sql = array(
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (70,'Tous les droits sur les adherents','adherent','a',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (71,'Lire les fiche adherents','adherent','r',1);",

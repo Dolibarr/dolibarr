@@ -62,8 +62,15 @@ class modContrat extends DolibarrModules
     $this->depends = array("modService");
     $this->requiredby = array();
 
+    // Constantes
     $this->const = array();
+    
+    // Boites
     $this->boxes = array();
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'contrat';
 
   }
 
@@ -73,15 +80,8 @@ class modContrat extends DolibarrModules
     */
   function init()
   {
-    /*
-     * Permissions
-     */
-
+    // Permissions
     $this->remove();
-
-    $this->rights = array();
-
-    $this->rights_class = 'contrat';
 
     $this->rights[0][0] = 160; // id de la permission
     $this->rights[0][1] = 'Tous les droits sur les contrats'; // libelle de la permission
@@ -108,7 +108,7 @@ class modContrat extends DolibarrModules
     $this->rights[4][2] = 'r';
     $this->rights[4][3] = 0;
 
-
+    $sql = array();
 
     return $this->_init($sql);
   }

@@ -75,18 +75,18 @@ class modBoutique extends DolibarrModules
     $this->boxes = array();
     $this->boxes[0][0] = "Livres";
     $this->boxes[0][1] = "box_boutique_livre.php";
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'boutique';
   }
   
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     *  Activation du module
-     */
-
     $sql = array();
  
     return $this->_init($sql);

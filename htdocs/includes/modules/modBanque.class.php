@@ -61,27 +61,49 @@ class modBanque extends DolibarrModules
     $this->depends = array();
     $this->requiredby = array();
 
+    // Constantes
     $this->const = array();
+
+    // Boites
     $this->boxes = array();
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'banque';
+
   }
 
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     * Permissions
-     */    
-		 $this->remove();
-    $sql = array(
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (110,'Tous les droits sur les comptes bancaires','banque','a',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (111,'Lire les comptes','banque','r',1);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (112,'Créer modifier rapprocher transactions','banque','w',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (113,'Configurer les comptes (créer, gérer catégories)','banque','w',0);",
-		 );
+    // Permissions
+    $this->remove();
+
+    $this->rights[0][0] = 110; // id de la permission
+    $this->rights[0][1] = 'Tous les droits sur les comptes bancaires'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 111; // id de la permission
+    $this->rights[0][1] = 'Lire les comptes bancaires'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 112; // id de la permission
+    $this->rights[0][1] = 'Créer modifier rapprocher transactions'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 113; // id de la permission
+    $this->rights[0][1] = 'Configurer les comptes bancaires (créer, gérer catégories)'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $sql = array();
     
     return $this->_init($sql);
   }

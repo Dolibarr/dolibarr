@@ -35,7 +35,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modProjet
+/*!     \class      modProjet
 		\brief      Classe de description et activation du module Projet
 */
 
@@ -61,25 +61,30 @@ class modProjet extends DolibarrModules
     $this->depends = array();
     $this->requiredby = array();
 
+    // Constantes
     $this->const = array();
+
+    // Boites
     $this->boxes = array();
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'projet';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     * Permissions
-     */
-		 $this->remove();
+    // Permissions
+    $this->remove();
+
     $sql = array(
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (40,'Tous les droits sur les projets','projet','a',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (41,'Lire les projets','projet','r',1);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (42,'Créer modifier les projets','projet','w',0);",
-		 //"INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (43,'Modifier les projets d\'autrui','projet','m',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (44,'Supprimer les projets','projet','d',0);"
 		 );
     

@@ -73,10 +73,14 @@ class modDon  extends DolibarrModules
 
     // Boxes
     $this->boxes = array();
+    
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'don';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()

@@ -68,24 +68,26 @@ class modFicheinter  extends DolibarrModules
     $this->depends = array("modSociete");
     $this->requiredby = array();
 
+    // Constantes
     $this->const = array();
+
+    // Boites
     $this->boxes = array();
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'ficheinter';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     *  Activation du module
-     */
+    // Permissions
+    $this->remove();
 
-    /*
-     * Permissions
-     */
-		 $this->remove();
     $sql = array(
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (60,'Tous les droits sur les fiches d\'intervention','ficheinter','a',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (61,'Lire les fiches d\'intervention','ficheinter','r',1);",

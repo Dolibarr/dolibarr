@@ -35,7 +35,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modCommande
+/*!     \class      modCommande
         \brief      Classe de description et activation du module Commande
 */
 
@@ -71,29 +71,29 @@ class modCommande extends DolibarrModules
     // Constantes
     $this->const = array();
 
-    // Boxes
+    // Boites
     $this->boxes = array();
     $this->boxes[0][0] = "Commandes";
     $this->boxes[0][1] = "box_commandes.php";
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'commande';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     * Permissions
-     */
-		 
-		$this->remove();
+    // Permissions
+    $this->remove();
 		 
     $sql = array(
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (80,'Tous les droits sur les commandes','commande','a',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (81,'Lire les commandes','commande','r',1);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (82,'Créer modifier les commandes','commande','w',0);",
-		 //"INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (83,'Modifier les commandes d\'autrui','commande','m',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (84,'Valider les commandes','commande','d',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (89,'Supprimer les commandes','commande','d',0);",
 		 );

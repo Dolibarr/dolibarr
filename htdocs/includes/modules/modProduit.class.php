@@ -72,28 +72,42 @@ class modProduit extends DolibarrModules
     $this->boxes = array();
     $this->boxes[0][0] = "Derniers produits/services enregistrés";
     $this->boxes[0][1] = "box_produits.php";
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'produit';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     *  Activation du module
-     */
-    /*
-     * Permissions
-     */
+    // Permissions
     $this->remove();
-    $sql = array(
-	 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (30,'Tous les droits sur les produits/services','produit','a',0);",
-	 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (31,'Lire les produits/services','produit','r',1);",
-	 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (32,'Créer modifier les produits/services','produit','w',0);",
-	 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (33,'Commander les produits','produit','d',0);",
-	 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (34,'Supprimer les produits/services','produit','d',0);"
-		 );
+
+    $this->rights[0][0] = 30; // id de la permission
+    $this->rights[0][1] = 'Tous les droits sur les produits/services'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 31; // id de la permission
+    $this->rights[0][1] = 'Lire les produits/services'; // libelle de la permission
+    $this->rights[0][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 1; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 32; // id de la permission
+    $this->rights[0][1] = 'Créer modifier les produits/services'; // libelle de la permission
+    $this->rights[0][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 34; // id de la permission
+    $this->rights[0][1] = 'Supprimer les produits/services'; // libelle de la permission
+    $this->rights[0][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $sql = array();
 
     return $this->_init($sql);
   }

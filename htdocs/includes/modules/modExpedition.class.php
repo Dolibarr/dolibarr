@@ -71,23 +71,25 @@ class modExpedition extends DolibarrModules
     
     // Boxes
     $this->boxes = array();
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'expedition';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     * Permissions
-     */
-		 $this->remove();
+    // Permissions
+    $this->remove();
+
     $sql = array(
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (100,'Tous les droits sur les expeditions','expedition','a',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (101,'Lire les expeditions','expedition','r',1);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (102,'Créer modifier les expeditions','expedition','w',0);",
-		 //"INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (83,'Modifier les expeditions d\'autrui','expedition','m',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (104,'Valider les expeditions','expedition','d',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (109,'Supprimer les expeditions','expedition','d',0);",
 		 );

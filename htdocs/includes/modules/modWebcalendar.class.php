@@ -67,22 +67,24 @@ class modWebcalendar extends DolibarrModules
     $this->depends = array();
     $this->requiredby = array();
 
+    // Constantes
     $this->const = array();
+    
+    // Boites
     $this->boxes = array();
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'webcal';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     *  Activation du module
-     */
-
-    $sql = array(
-		 );
+    $sql = array();
     
     return $this->_init($sql);
   }

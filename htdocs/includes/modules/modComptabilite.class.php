@@ -64,26 +64,31 @@ class modComptabilite extends DolibarrModules
     $this->depends = array();
     $this->requiredby = array("modFacture");
 
+    // Constantes
     $this->const = array();
+
+    // Boites
     $this->boxes = array();
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'compta';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     * Permissions
-     */    
-		 $this->remove();
+    // Permissions
+    $this->remove();
+
     $sql = array(
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (90,'Tous les droits sur la compta','compta','a',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (91,'Lire les charges','compta','r',1);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (92,'Créer modifier les charges','compta','w',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (93,'Supprimer les charges','compta','d',0);",
-
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (95,'Lire CA, bilans, résultats','compta','r',1);",
 		 );
     

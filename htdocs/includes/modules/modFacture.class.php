@@ -107,7 +107,7 @@ class modFacture extends DolibarrModules
     $this->const[8][1] = "chaine";
     $this->const[8][2] = "pluton";
 
-    // Boxes
+    // Boites
     $this->boxes = array();
 
     $this->boxes[0][0] = "Factures clients récentes impayées";
@@ -122,15 +122,20 @@ class modFacture extends DolibarrModules
     $this->boxes[3][0] = "Dernières factures fournisseurs saisies";
     $this->boxes[3][1] = "box_factures_fourn.php";
 
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'facture';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-	  $this->remove();
+    // Permissions
+    $this->remove();
+
     $sql = array(
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (10,'Tous les droits sur les factures','facture','a',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (11,'Lire les factures','facture','r',1);",

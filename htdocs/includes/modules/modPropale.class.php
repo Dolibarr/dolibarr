@@ -84,31 +84,62 @@ class modPropale extends DolibarrModules
     $this->boxes = array();
     $this->boxes[0][0] = "Proposition commerciales";
     $this->boxes[0][1] = "box_propales.php";
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'propale';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {       
-    /*
-     * Permissions et valeurs par défaut
-     */
-		 $this->remove();
+    // Permissions et valeurs par défaut
+    $this->remove();
+
+    $this->rights[0][0] = 20; // id de la permission
+    $this->rights[0][1] = 'Tous les droits sur les propositions commerciales'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 21; // id de la permission
+    $this->rights[0][1] = 'Lire les propositions commerciales'; // libelle de la permission
+    $this->rights[0][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 1; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 22; // id de la permission
+    $this->rights[0][1] = 'Créer modifier les propositions commerciales'; // libelle de la permission
+    $this->rights[0][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 24; // id de la permission
+    $this->rights[0][1] = 'Valider les propositions commerciales'; // libelle de la permission
+    $this->rights[0][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 25; // id de la permission
+    $this->rights[0][1] = 'Envoyer les propositions commerciales aux clients'; // libelle de la permission
+    $this->rights[0][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 26; // id de la permission
+    $this->rights[0][1] = 'Clôturer les propositions commerciales'; // libelle de la permission
+    $this->rights[0][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 27; // id de la permission
+    $this->rights[0][1] = 'Supprimer les propositions commerciales'; // libelle de la permission
+    $this->rights[0][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+
     $sql = array(
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (20,'Tous les droits sur les propositions commerciales','propale','a',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (21,'Lire les propositions commerciales','propale','r',1);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (22,'Créer modifier les propositions commerciales','propale','w',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (24,'Valider les propositions commerciales','propale','d',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (25,'Envoyer les propositions commerciales aux clients','propale','d',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (26,'Clôturer les propositions commerciales','propale','d',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (27,'Supprimer les propositions commerciales','propale','d',0);",
 		 "DELETE FROM ".MAIN_DB_PREFIX."propal_model_pdf WHERE nom = '".$this->const[0][2]."'",
 		 "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) 
 		 VALUES('".$this->const[0][2]."');",
 		 );
-    //"INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (23,'Modifier les propositions commerciales d\'autrui','propale','m',0);",
     
     return $this->_init($sql);
 

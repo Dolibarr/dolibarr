@@ -62,20 +62,26 @@ class modTelephonie extends DolibarrModules
     $this->depends = array();
     $this->requiredby = array();
 
+    // Constantes
     $this->const = array();
+
+    // Boites
     $this->boxes = array();
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'telephonie';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     * Permissions
-     */    
+    // Permissions
     $this->remove();
+
     $sql = array(
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (140,'Tous les droits sur la telephonie','telephonie','a',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (141,'Consulter la telephonie','telephonie','r',0);",
@@ -83,10 +89,7 @@ class modTelephonie extends DolibarrModules
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (143,'Activer une ligne','telephonie','w',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (144,'Configurer la telephonie','telephonie','w',0);");
     
-    /*
-     * Documents
-     *
-     */
+    // Dir
     $this->dirs[0] = DOL_DATA_ROOT . "/telephonie/" ;
     $this->dirs[1] = DOL_DATA_ROOT . "/telephonie/ligne/" ;	  
     $this->dirs[2] = DOL_DATA_ROOT . "/telephonie/ligne/commande" ;	 

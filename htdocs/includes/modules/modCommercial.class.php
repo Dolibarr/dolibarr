@@ -74,17 +74,18 @@ class modCommercial extends DolibarrModules
     $this->boxes[0][1] = "box_clients.php";
     $this->boxes[1][0] = "Derniers prospects enregistrés";
     $this->boxes[1][1] = "box_prospect.php";
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'commercial';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     * Permissions
-     */
     $sql = array();
     
     return $this->_init($sql);

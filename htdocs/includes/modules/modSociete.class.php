@@ -35,7 +35,7 @@
 
 include_once "DolibarrModules.class.php";
 
-/*! \class modSociete
+/*!     \class      modSociete
 		\brief      Classe de description et activation du module Societe
 */
 
@@ -70,24 +70,42 @@ class modSociete extends DolibarrModules
 
     // Boxes
     $this->boxes = array();
+
+    // Permissions
+    $this->rights = array();
+    $this->rights_class = 'societe';
   }
 
    /**
-    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
     *               Définit également les répertoires de données à créer pour ce module.
     */
   function init()
   {
-    /*
-     * Permissions
-     */
-		 $this->remove();
-    $sql = array(
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (120,'Tous les droits sur les sociétés','societe','a',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (121,'Lire les societes','societe','r',1);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (122,'Créer modifier les societes','societe','w',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (129,'Supprimer les sociétés','societe','d',0);"
-		 );
+    // Permissions
+    $this->remove();
+
+    $this->rights[0][0] = 120; // id de la permission
+    $this->rights[0][1] = 'Tous les droits sur les sociétés'; // libelle de la permission
+    $this->rights[0][2] = 'a'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 121; // id de la permission
+    $this->rights[0][1] = 'Lire les societes'; // libelle de la permission
+    $this->rights[0][2] = 'r'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 1; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 122; // id de la permission
+    $this->rights[0][1] = 'Créer modifier les societes'; // libelle de la permission
+    $this->rights[0][2] = 'w'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $this->rights[0][0] = 129; // id de la permission
+    $this->rights[0][1] = 'Supprimer les sociétés'; // libelle de la permission
+    $this->rights[0][2] = 'd'; // type de la permission (déprécié à ce jour)
+    $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
+
+    $sql = array();
     
     return $this->_init($sql);
   }
