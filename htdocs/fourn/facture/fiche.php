@@ -219,8 +219,8 @@ if ($action == 'create')
   print '</td></tr>';
 
   print "<tr $bc[1]>".'<td colspan="5" align="center"><input type="submit" value="Enregistrer"></td></tr>';
-  print "</form>";
   print "</table>";
+  print "</form>";
   
 }
 else
@@ -290,14 +290,15 @@ else
     
 	  print "<tr $bc[1]><td>Auteur :</td><td>".'&nbsp;'."</td></tr>";
 	  print "<tr $bc[1]><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
-	  print "</form>";
 	  print "</table>";
+	  print "</form>";
 
 	  /*
 	   * Lignes
 	   *
 	   */	  
-	  print '<p><table border="1" cellspacing="0" cellpadding="2" width="100%">';
+	  print "<p><form action=\"$PHP_SELF?facid=$obj->rowid&amp;action=add_ligne\" method=\"post\">";
+	  print '<table border="1" cellspacing="0" cellpadding="2" width="100%">';
 	  print '<tr class="liste_titre"><td class="small">Libellé</td><td align="center" class="small">P.U. HT</td><td align="center" class="small">Qty</td><td align="center" class="small">Total HT</td>';
 	  print '<td align="center" class="small">Taux TVA</td>';
 	  print '<td align="center" class="small">TVA</td>';
@@ -317,7 +318,6 @@ else
 	    }
 
 	  /* Nouvelle ligne */
-	  print "<form action=\"$PHP_SELF?facid=$obj->rowid&amp;action=add_ligne\" method=\"post\">";
 	  print "<tr $bc[1]>";
 	  print '<td>';
 	  print '<input size="30" name="label" type="text">';
@@ -346,7 +346,7 @@ else
 	   */
 	  
 	  print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
-	  print "<tr $bc[1]>".'<td width="50%" valign="top">';
+	  print '<tr><td width="50%" valign="top">';
 	  /*
 	   *   Facture
 	   */
