@@ -142,7 +142,6 @@ else
 
 $sql = "SELECT ligne, rowid ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
-$sql .= " WHERE statut <> 7";
 
 $resql = $db->query($sql);
 
@@ -185,15 +184,13 @@ if (is_readable($file))
   
   if ($db->query("BEGIN"))
     {  
-      while (!feof($hf) && $error == 0)
+      while (!feof($hf) )
 	{
 	  $cont = fgets($hf, 1024);
-	  
-	  $tabline = explode(";", $cont);
-	  
-	  if ($ligneids[$ligne] > 0)
+  
+	  if (strlen(trim($cont)) > 0)
 	    {
-
+	      $tabline = explode(";", $cont);
 	      if (sizeof($tabline) == 11)
 		{
 		  $index             = $tabline[0];
@@ -206,58 +203,68 @@ if (is_readable($file))
 		  $tarif_fourn       = $tabline[7];
 		  $montant           = $tabline[8];
 		  $duree_secondes    = ereg_replace('"','',$tabline[9]);
-		  
-		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_import_cdr";
-		  
-		  $sql .= "(idx,fk_ligne,ligne,date,heure,num,dest,dureetext,tarif,montant,duree";
-		  $sql .= ", fichier, fk_fournisseur)";
-		  
-		  $sql .= " VALUES (";
-		  $sql .= "$index";
-		  $sql .= ",'".$ligneids[$ligne]."'";
-		  $sql .= ",'".$ligne."'";
-		  $sql .= ",'".ereg_replace('"','',$date)."'";
-		  $sql .= ",'".ereg_replace('"','',$heure)."'";
-		  $sql .= ",'".ereg_replace('"','',$numero)."'";
-		  $sql .= ",'".addslashes(ereg_replace('"','',$tarif))."'";
-		  $sql .= ",'".ereg_replace('"','',$duree_text)."'";
-		  $sql .= ",'".ereg_replace('"','',$tarif_fourn)."'";
-		  $sql .= ",".ereg_replace(',','.',$montant);
-		  $sql .= ",".$duree_secondes;
-		  $sql .= ",'".basename($file)."'";
-		  $sql .= " ,".$id_fourn;
-		  $sql .= ")";
-		  
-		  if(ereg("^[0-9]+$", $duree_secondes))
+		  		  
+		  if ($ligneids[$ligne] > 0)
 		    {
-		      if (! $db->query($sql))
+		      $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_import_cdr";
+		      
+		      $sql .= "(idx,fk_ligne,ligne,date,heure,num,dest,dureetext,tarif,montant,duree";
+		      $sql .= ", fichier, fk_fournisseur)";
+		      
+		      $sql .= " VALUES (";
+		      $sql .= "$index";
+		      $sql .= ",'".$ligneids[$ligne]."'";
+		      $sql .= ",'".$ligne."'";
+		      $sql .= ",'".ereg_replace('"','',$date)."'";
+		      $sql .= ",'".ereg_replace('"','',$heure)."'";
+		      $sql .= ",'".ereg_replace('"','',$numero)."'";
+		      $sql .= ",'".addslashes(ereg_replace('"','',$tarif))."'";
+		      $sql .= ",'".ereg_replace('"','',$duree_text)."'";
+		      $sql .= ",'".ereg_replace('"','',$tarif_fourn)."'";
+		      $sql .= ",".ereg_replace(',','.',$montant);
+		      $sql .= ",".$duree_secondes;
+		      $sql .= ",'".basename($file)."'";
+		      $sql .= " ,".$id_fourn;
+		      $sql .= ")";
+		      
+		      if(ereg("^[0-9]+$", $duree_secondes))
 			{
-			  dolibarr_syslog("Erreur de traitement de ligne $index");
-			  dolibarr_syslog($db->error());
-			  dolibarr_syslog($sql);
-			  $error++;
+			  if ($db->query($sql))
+			    {
+			      $line_inserted++;
+			    }
+			  else
+			    {
+			      dolibarr_syslog("Erreur de traitement de ligne $index");
+			      dolibarr_syslog($db->error());
+			      dolibarr_syslog($sql);
+			      $error++;
+			    }
 			}
+		      else
+			{
+			  print "Ligne : $cont ignorée\n";
+			}
+		      
 		    }
 		  else
 		    {
-		      print "Ligne : $cont ignorée\n";
+		      dolibarr_syslog("Ligne : $ligne ignorée!");
+		      $error++;
 		    }
+		  
 		}
 	      else
 		{
 		  dolibarr_syslog("Mauvais format de fichier ligne $line");
+		  $error++;
 		}
 	    }
-	  else
-	    {
-	      dolibarr_syslog("Ligne $ligne ignorée !");
-	    }
-
-	  
 	  $line++;
 	}
       
-      dolibarr_syslog(($line -1 )." lignes traitées");
+      dolibarr_syslog(($line -1 )." lignes traitées dans le fichier");
+      dolibarr_syslog($line_inserted." insert effectués");
       
       if ($error == 0)
 	{	  
