@@ -40,6 +40,7 @@ create table llx_telephonie_societe_ligne (
   remise             real DEFAULT 0,
   note               text,
   fk_commercial      integer NOT NULL,
+  fk_commercial_sign integer NOT NULL,
   fk_commercial_suiv integer NOT NULL,
   fk_concurrent      integer DEFAULT 1 NOT NULL,
   fk_user_creat      integer,
