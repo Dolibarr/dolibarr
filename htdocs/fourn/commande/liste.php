@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/**	        \file       htdocs/fourn/commande/liste.php
+	        \ingroup    commande
+	        \brief      Liste des commandes fournisseurs
+	        \version    $Revision$
+*/
+
 require("./pre.inc.php");
 require_once DOL_DOCUMENT_ROOT."/contact.class.php";
 

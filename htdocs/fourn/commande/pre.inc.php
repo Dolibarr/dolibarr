@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,12 @@
  * $Source$
  *
  */
+
+/**     \file   	htdocs/fourn/commande/pre.inc.php
+        \ingroup    compta
+        \brief  	Fichier gestionnaire du menu commandes fournisseurs
+*/
+
 require("../../main.inc.php");
 
 require_once DOL_DOCUMENT_ROOT."/fournisseur.commande.class.php";
