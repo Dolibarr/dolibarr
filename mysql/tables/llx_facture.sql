@@ -41,7 +41,6 @@ create table llx_facture
   fk_projet           integer,   -- projet auquel est associé la facture
   fk_cond_reglement   integer,   -- condition de reglement
   date_lim_reglement  date,      -- date limite de reglement
-  fk_code_ventilation integer DEFAULT 0 NOT NULL,
   note                text,
 
   UNIQUE INDEX (facnumber),
