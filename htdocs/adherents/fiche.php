@@ -106,21 +106,12 @@ if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] =
       $adh->send_an_email($adh->email,$conf->adherent->email_valid,$conf->adherent->email_valid_subject);
     }
   // rajoute l'utilisateur dans les divers abonnements ..
-  if (!$adh->add_to_abo())
+  if (!$adh->add_to_abo($adht))
     {
       // error
-      $errmsg="echec du rajout de l'utilisateur aux mailing-lists";
+      $errmsg.="echec du rajout de l'utilisateur aux abonnements: ".$adh->errostr."<BR>\n";
     }
   
-  /*
-  if ($conf->adherent->use_mailman == 1)
-    {
-      foreach ($conf->adherent->mailman_lists as $key)
-	{
-	  $adh->add_to_mailman($adh->email,$key,$conf->adherent->mailman_dir);
-	}
-    }
-  */
 }
 
 if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] == yes)
@@ -129,13 +120,16 @@ if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] 
   $adh->resiliate($user->id);
   $adh->fetch($rowid);
 
+  $adht = new AdherentType($db);
+  $adht->fetch($adh->typeid);
+
   $adh->send_an_email($adh->email,$conf->adherent->email_resil,$conf->adherent->email_resil_subject);
 
   // supprime l'utilisateur des divers abonnements ..
-  if (!$adh->del_to_abo())
+  if (!$adh->del_to_abo($adht))
     {
       // error
-      $errmsg="echec du rajout de l'utilisateur aux mailing-lists";
+      $errmsg.="echec de la suppression de l'utilisateur aux abonnements: ".$adh->errostr."<BR>\n";
     }
 }
 
@@ -145,10 +139,16 @@ if ($HTTP_POST_VARS["action"] == 'confirm_add_glasnost' && $HTTP_POST_VARS["conf
 {
   $adh = new Adherent($db, $rowid);
   $adh->fetch($rowid);
-  define("XMLRPC_DEBUG", 1);
-  $adh->add_to_glasnost();
-  if(defined('MAIN_DEBUG') && MAIN_DEBUG == 1){
-    XMLRPC_debug_print();
+  $adht = new AdherentType($db);
+  $adht->fetch($adh->typeid);
+  if ($adht->vote == 'yes'){
+    define("XMLRPC_DEBUG", 1);
+    if (!$adh->add_to_glasnost()){
+      $errmsg.="Echec du rajout de l'utilisateur dans glasnost: ".$adh->errostr."<BR>\n";
+    }
+    if(defined('MAIN_DEBUG') && MAIN_DEBUG == 1){
+      XMLRPC_debug_print();
+    }
   }
 }
 
@@ -156,12 +156,38 @@ if ($HTTP_POST_VARS["action"] == 'confirm_del_glasnost' && $HTTP_POST_VARS["conf
 {
   $adh = new Adherent($db, $rowid);
   $adh->fetch($rowid);
-  define("XMLRPC_DEBUG", 1);
-  $adh->del_to_glasnost();
-  if(defined('MAIN_DEBUG') && MAIN_DEBUG == 1){
-    XMLRPC_debug_print();
+  $adht = new AdherentType($db);
+  $adht->fetch($adh->typeid);
+  if ($adht->vote == 'yes'){
+    define("XMLRPC_DEBUG", 1);
+    if(!$adh->del_to_glasnost()){
+      $errmsg.="Echec de la suppression de l'utilisateur dans glasnost: ".$adh->errostr."<BR>\n";
+    }
+    if(defined('MAIN_DEBUG') && MAIN_DEBUG == 1){
+      XMLRPC_debug_print();
+    }
   }
 }
+
+if ($HTTP_POST_VARS["action"] == 'confirm_del_spip' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  $adh = new Adherent($db, $rowid);
+  $adh->fetch($rowid);
+  if(!$adh->del_to_spip()){
+    $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$adh->errostr."<BR>\n";
+  }
+}
+
+if ($HTTP_POST_VARS["action"] == 'confirm_add_spip' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  $adh = new Adherent($db, $rowid);
+  $adh->fetch($rowid);
+  if (!$adh->add_to_spip()){
+    $errmsg.="Echec du rajout de l'utilisateur dans spip: ".$adh->errostr."<BR>\n";
+  }
+}
+
+
 /* ************************************************************************** */
 /*                                                                            */
 /* Création d'une fiche                                                       */
@@ -179,25 +205,6 @@ if ($errmsg != ''){
 // fetch optionals attributes and labels
 $adho->fetch_optionals();
 if ($action == 'create') {
-
-  /*
-  $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
-  $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
-  $sql .= " AND f.rowid = $facid";
-
-  $result = $db->query($sql);
-  if ($result) {
-    $num = $db->num_rows();
-    if ($num) {
-      $obj = $db->fetch_object( 0);
-
-      $total = $obj->total;
-    }
-  }
-  */
-  //  $adho = new AdherentOptions($db);
-
-  //$myattr=$adho->fetch_name_optionals();
 
   print_titre("Nouvel adhérent");
   print "<form action=\"$PHP_SELF\" method=\"post\">\n";
@@ -276,6 +283,8 @@ if ($rowid > 0)
   $adh->fetch($rowid);
   $adh->fetch_optionals($rowid);
   //$myattr=$adh->fetch_name_optionals();
+  $adht = new AdherentType($db);
+  $adht->fetch($adh->typeid);
 
   print_titre("Edition de la fiche adhérent");
 
@@ -370,7 +379,7 @@ if ($rowid > 0)
       
       print '<tr><td colspan="3">Valider un adhérent</td></tr>';
       
-      print '<tr><td class="valid">Etes-vous sur de vouloir ajouter cet adhérent dans glasnost ?</td><td class="valid">';
+      print '<tr><td class="valid">Etes-vous sur de vouloir ajouter cet adhérent dans glasnost ? (serveur : '.MAIN_GLASNOST_SERVEUR.')</td><td class="valid">';
       $htmls = new Form($db);
       
       $htmls->selectyesno("confirm","no");
@@ -395,7 +404,57 @@ if ($rowid > 0)
       
       print '<tr><td colspan="3">Valider un adhérent</td></tr>';
       
-      print '<tr><td class="delete">Etes-vous sur de vouloir effacer cet adhérent de glasnost ?</td><td class="delete">';
+      print '<tr><td class="delete">Etes-vous sur de vouloir effacer cet adhérent de glasnost ? (serveur : '.MAIN_GLASNOST_SERVEUR.')</td><td class="delete">';
+      $htmls = new Form($db);
+      
+      $htmls->selectyesno("confirm","no");
+      
+      print "</td>\n";
+      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '</table>';
+      print "</form>\n";  
+    }
+
+  /*
+   * Confirmation de l'ajout dans spip
+   *
+   */
+
+  if ($action == 'add_spip')
+    {
+
+      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">';
+      print '<input type="hidden" name="action" value="confirm_add_spip">';
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+      
+      print '<tr><td colspan="3">Valider un adhérent</td></tr>';
+      
+      print '<tr><td class="valid">Etes-vous sur de vouloir ajouter cet adhérent dans spip ? (serveur : '.MAIN_SPIP_SERVEUR.')</td><td class="valid">';
+      $htmls = new Form($db);
+      
+      $htmls->selectyesno("confirm","no");
+      
+      print "</td>\n";
+      print '<td class="valid" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '</table>';
+      print "</form>\n";  
+    }
+
+  /*
+   * Confirmation de la suppression dans spip
+   *
+   */
+
+  if ($action == 'del_spip')
+    {
+
+      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">';
+      print '<input type="hidden" name="action" value="confirm_del_spip">';
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+      
+      print '<tr><td colspan="3">Valider un adhérent</td></tr>';
+      
+      print '<tr><td class="delete">Etes-vous sur de vouloir effacer cet adhérent de glasnost ? (serveur : '.MAIN_SPIP_SERVEUR.')</td><td class="delete">';
       $htmls = new Form($db);
       
       $htmls->selectyesno("confirm","no");
@@ -409,18 +468,21 @@ if ($rowid > 0)
   print "<form action=\"$PHP_SELF\" method=\"post\">\n";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
-  print "<tr><td>Type</td><td class=\"valeur\">$adh->type</td>\n";
+  print '<tr><td>Numero</td><td class="valeur">'.$adh->id.'&nbsp;</td>';
   print '<td valign="top" width="50%">Commentaires</tr>';
 
-  print '<tr><td>Personne</td><td class="valeur">'.$adh->morphy.'&nbsp;</td>';
+  print "<tr><td>Type</td><td class=\"valeur\">$adh->type</td>\n";
 
   print '<td rowspan="13" valign="top" width="50%">';
   print nl2br($adh->commentaire).'&nbsp;</td></tr>';
 
+  print '<tr><td>Personne</td><td class="valeur">'.$adh->morphy.'&nbsp;</td></tr>';
+
+
+
   print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
 
-  print '<tr><td>Nom</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
-  
+    print '<tr><td>Nom</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
 
   print '<tr><td>Société</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
   print '<tr><td>Adresse</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
@@ -457,7 +519,7 @@ if ($rowid > 0)
        * Case 1
        */
       
-      print '<td align="center" width="15%" class=\"bouton\">[<a href="edit.php?rowid='.$adh->id.'">Editer</a>]</td>';
+      print '<td align="center" width="25%" class=\"bouton\">[<a href="edit.php?rowid='.$adh->id.'">Editer</a>]</td>';
       
       /*
        * Case 2
@@ -465,46 +527,80 @@ if ($rowid > 0)
       
       if ($adh->statut < 1) 
 	{
-	  print "<td align=\"center\" width=\"15%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$rowid&action=valid\">Valider l'adhésion</a>]</td>\n";
+	  print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$rowid&action=valid\">Valider l'adhésion</a>]</td>\n";
 	}
       else
 	{
-	  print "<td align=\"center\" width=\"15%\" class=\"bouton\">-</td>\n";
+	  print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>\n";
 	}
       /*
        * Case 3
        */
       if ($adh->statut == 1) 
 	{
-	  print "<td align=\"center\" width=\"15%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$rowid&action=resign\">Résilier l'adhésion</a>]</td>\n";
+	  print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$rowid&action=resign\">Résilier l'adhésion</a>]</td>\n";
 	}
       else
 	{
-	  print "<td align=\"center\" width=\"15%\" class=\"bouton\">-</td>\n";
+	  print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>\n";
 	}
       
       /*
        * Case 4
        */
 
-      print "<td align=\"center\" width=\"15%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=delete\">Supprimer</a>]</td>\n";
+      print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=delete\">Supprimer</a>]</td>\n";
+      
+      print "</tr><tr class=\"barreBouton\">\n";
 
-      if (defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1){
+      if ($adht->vote == 'yes' && defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1){
 	define("XMLRPC_DEBUG", 1);
 	/*
-	 * Case 5
+	 * Case 1
 	 */
-	print "<td align=\"center\" width=\"20%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>]</td>\n";
+	print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>]</td>\n";
 	
 	
 	/*
-	 * Case 6
+	 * Case 2
 	 */
 	
-	print "<td align=\"center\" width=\"20%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>]</td>\n";
+	print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>]</td>\n";
+      }else{
+	/*
+	 * Case 1
+	 */
+	print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>\n";
+
+	/*
+	 * Case 2
+	 */
+	print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>\n";
       }
 
+      if (defined("MAIN_USE_SPIP") && MAIN_USE_SPIP ==1){
+	/*
+	 * Case 3
+	 */
+	print "<td align=\"center\" width=\"20%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=add_spip\">Ajout dans Spip</a>]</td>\n";
+	
+	
+	/*
+	 * Case 4
+	 */
+	
+	print "<td align=\"center\" width=\"20%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=del_spip\">Suppression dans Spip</a>]</td>\n";
+      }else{
+	/*
+	 * Case 3
+	 */
+	print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>\n";
 
+	/*
+	 * Case 4
+	 */
+	print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>\n";
+      }
 
       print "</tr></table></form><p>\n";
     }

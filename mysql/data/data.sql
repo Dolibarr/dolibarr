@@ -62,6 +62,13 @@ INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_GLASNOST','0',
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_GLASNOST_SERVEUR','glasnost.j1b.org','chaine','serveur glasnost');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_GLASNOST_USER','user','chaine','Administrateur glasnost');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_GLASNOST_PASS','password','chaine','password de l\'administrateur');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_GLASNOST_AUTO','1','yesno','inscription automatique a glasnost ?');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_SPIP','1','yesno','Utilisation de SPIP ?');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_SPIP_AUTO','1','yesno','Utilisation de SPIP automatiquement');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_USER','user','chaine','user spip');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_PASS','pass','chaine','Pass de connection');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_SERVEUR','localhost','chaine','serveur spip');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_DB','spip','chaine','db spip');
 
 --
 -- Constantes 

@@ -39,6 +39,7 @@ if ($HTTP_POST_VARS["action"] == 'add' && $user->admin)
   $adht->cotisation  = $HTTP_POST_VARS["cotisation"];
   $adht->commentaire = $HTTP_POST_VARS["comment"];
   $adht->mail_valid  = $HTTP_POST_VARS["mail_valid"];
+  $adht->vote        = $HTTP_POST_VARS["vote"];
 
   if ($adht->create($user->id) ) 
     {	  
@@ -55,6 +56,7 @@ if ($HTTP_POST_VARS["action"] == 'update' && $user->admin)
   $adht->cotisation  = $HTTP_POST_VARS["cotisation"];
   $adht->commentaire = $HTTP_POST_VARS["comment"];
   $adht->mail_valid  = $HTTP_POST_VARS["mail_valid"];
+  $adht->vote        = $HTTP_POST_VARS["vote"];
 
   if ($adht->update($user->id) ) 
     {	  
@@ -87,7 +89,7 @@ print_titre("Configuration");
 /*                                                                            */
 /* ************************************************************************** */
 
-$sql = "SELECT d.rowid, d.libelle, d.cotisation";
+$sql = "SELECT d.rowid, d.libelle, d.cotisation, d.vote";
 $sql .= " FROM llx_adherent_type as d";
 
 $result = $db->query($sql);
@@ -100,7 +102,7 @@ if ($result)
   
   print '<TR class="liste_titre">';
   print "<td>Id</td>";
-  print "<td>Libellé</td><td>Cotisation ?</td><td>&nbsp;</td>";
+  print "<td>Libellé</td><td>Cotisation ?</td><td>Vote ?</td><td>&nbsp;</td>";
   print "</TR>\n";
   
   $var=True;
@@ -112,6 +114,7 @@ if ($result)
       print "<TD>".$objp->rowid."</td>\n";
       print '<TD>'.$objp->libelle.'</TD>';
       print '<TD>'.$objp->cotisation.'</TD>';
+      print '<TD>'.$objp->vote.'</TD>';
       print '<TD><a href="type.php?action=edit&rowid='.$objp->rowid.'">Editer</TD>';
       print "</tr>";
       $i++;
@@ -125,30 +128,30 @@ else
 }
 
 
-print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr class=\"barreBouton\">";
 
 /*
  * Case 1
  */
 
-print '<td align="center" width="25%">[<a href="type.php?action=create">Nouveau Type</a>]</td>';
+print '<td align="center" width="25%" class=\"bouton\">[<a href="type.php?action=create">Nouveau Type</a>]</td>';
 
 /*
  * Case 2
  */
 
-print "<td align=\"center\" width=\"25%\">-</td>";
+print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>";
 
 /*
  * Case 3
  */
-print "<td align=\"center\" width=\"25%\">-</td>";
+print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>";
 
 /*
  * Case 4
  */
 
-print "<td align=\"center\" width=\"25%\">-</td>";
+print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>";
 
 print "</tr></table></form><p>";
 
@@ -193,6 +196,11 @@ if ($action == 'create') {
   print '<select name="cotisation"><option value="yes">oui</option>';
   print '<option value="no">non</option></select>';
   
+  print '<tr><td>Droit de vote</td><td>';
+
+  print '<select name="vote"><option value="yes">oui</option>';
+  print '<option value="no">non</option></select>';
+
   print '<tr><td valign="top">Commentaires :</td><td>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\"></textarea></td></tr>";
 
@@ -223,8 +231,10 @@ if ($rowid > 0 && $action == 'edit')
 
   print '<tr><td>Libellé</td><td class="valeur">'.$adht->libelle.'&nbsp;</td></tr>';
   print '<tr><td>Soumis à cotisation</td><td class="valeur">'.$adht->cotisation.'&nbsp;</td></tr>';
-  print '<tr><td valign="top">Commentaires</td>';
 
+  print '<tr><td>Droit de vote</td><td class="valeur">'.$adht->vote.'&nbsp;</td></tr>';
+
+  print '<tr><td valign="top">Commentaires</td>';
   print '<td valign="top" width="75%" class="valeur">';
   print nl2br($adht->commentaire).'&nbsp;</td></tr>';
 
@@ -253,7 +263,12 @@ if ($rowid > 0 && $action == 'edit')
   $htmls = new Form($db);
 
   $htmls->selectyesno("cotisation",$adht->cotisation);
-  
+  print '</tr>';
+
+  print '<tr><td>Droit de vote</td><td>';
+  $htmls->selectyesno("vote",$adht->vote);
+  print '</tr>';
+
   print '<tr><td valign="top">Commentaires :</td><td>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\">".$adht->commentaire."</textarea></td></tr>";
 

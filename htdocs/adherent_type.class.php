@@ -29,6 +29,7 @@ class AdherentType
   var $errorstr;
   var $mail_valid; // mail envoye lors de la validation
   var $commentaire; // commentaire
+  var $vote; // droit de vote ?
   /*
    *
    *
@@ -97,6 +98,7 @@ class AdherentType
       $sql .= ",statut=".$this->statut;
       $sql .= ",cotisation='".$this->cotisation."'";
       $sql .= ",note='".$this->commentaire."'";
+      $sql .= ",vote='".$this->vote."'";
       $sql .= ",mail_valid='".$this->mail_valid."'";
 
       $sql .= " WHERE rowid = $this->id";
@@ -166,6 +168,7 @@ class AdherentType
 	    $this->cotisation     = $obj->cotisation;
 	    $this->mail_valid     = $obj->mail_valid;
 	    $this->commentaire    = $obj->note;
+	    $this->vote    = $obj->vote;
 	  }
       }
     else

@@ -582,7 +582,7 @@ class Adherent
    * (mailing-list, spip, glasnost etc etc ..)
    *
    */
-  Function add_to_abo()
+  Function add_to_abo($adht)
     {
       $err=0;
       // mailman
@@ -592,9 +592,21 @@ class Adherent
 	    $err+=1;
 	  }
 	}
-      if (defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1)
+      if ($adht->vote == 'yes' && 
+	  defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1 &&
+	  defined("MAIN_USE_GLASNOST_AUTO") && MAIN_USE_GLASNOST_AUTO ==1
+	  )
 	{
 	  if(!$this->add_to_glasnost()){
+	    $err+=1;
+	  }
+	}
+      if (
+	  defined("MAIN_USE_SPIP") && MAIN_USE_SPIP ==1 &&
+	  defined("MAIN_USE_SPIP_AUTO") && MAIN_USE_SPIP_AUTO ==1
+	  )
+	{
+	  if(!$this->add_to_spip()){
 	    $err+=1;
 	  }
 	}
@@ -611,7 +623,7 @@ class Adherent
    * (mailing-list, spip, glasnost etc etc ..)
    *
    */
-  Function del_to_abo()
+  Function del_to_abo($adht)
     {
       $err=0;
       // mailman
@@ -621,9 +633,21 @@ class Adherent
 	    $err+=1;
 	  }
 	}
-      if (defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1)
+      if ($adht->vote == 'yes' && 
+	  defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1 &&
+	  defined("MAIN_USE_GLASNOST_AUTO") && MAIN_USE_GLASNOST_AUTO ==1
+	  )
 	{
 	  if(!$this->del_to_glasnost()){
+	    $err+=1;
+	  }
+	}
+      if (
+	  defined("MAIN_USE_SPIP") && MAIN_USE_SPIP ==1 &&
+	  defined("MAIN_USE_SPIP_AUTO") && MAIN_USE_SPIP_AUTO ==1
+	  )
+	{
+	  if(!$this->del_to_spip()){
 	    $err+=1;
 	  }
 	}
@@ -632,6 +656,66 @@ class Adherent
 	return 0;
       }else{
 	return 1;
+      }
+    }
+
+  /*
+   *
+   * Ajoute cet utilisateur comme redacteur dans spip
+   *
+   */
+  Function add_to_spip()
+    {
+      if (defined("MAIN_USE_SPIP") && MAIN_USE_SPIP ==1 && 
+	  defined('MAIN_SPIP_SERVEUR') && MAIN_SPIP_SERVEUR != '' &&
+	  defined('MAIN_SPIP_USER') && MAIN_SPIP_USER != '' &&
+	  defined('MAIN_SPIP_PASS') && MAIN_SPIP_PASS != '' &&
+	  defined('MAIN_SPIP_DB') && MAIN_SPIP_DB != ''
+	  ){
+	$mdpass=md5($this->pass);
+	$htpass=crypt($this->pass,initialiser_sel());
+	$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->nom."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
+      $mydb=new Db('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
+      $result = $mydb->query($query);
+      
+      if ($result) 
+	{
+	  return 1;
+	}
+      else
+	{
+	  $this->errorstr=$mydb->error();
+	  return 0;
+	}  
+      }
+    }
+
+  /*
+   *
+   * supprime cet utilisateur dans spip
+   *
+   */
+  Function del_to_spip()
+    {
+      if (defined("MAIN_USE_SPIP") && MAIN_USE_SPIP ==1 && 
+	  defined('MAIN_SPIP_SERVEUR') && MAIN_SPIP_SERVEUR != '' &&
+	  defined('MAIN_SPIP_USER') && MAIN_SPIP_USER != '' &&
+	  defined('MAIN_SPIP_PASS') && MAIN_SPIP_PASS != '' &&
+	  defined('MAIN_SPIP_DB') && MAIN_SPIP_DB != ''
+	  ){
+	$query = "DELETE FROM spip_auteurs WHERE login='".$this->login."'";
+	$mydb=new Db('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
+	$result = $mydb->query($query);
+      
+	if ($result) 
+	  {
+	    return 1;
+	  }
+	else
+	  {
+	    $this->errorstr=$mydb->error();
+	    return 0;
+	  }  
       }
     }
 
@@ -661,6 +745,7 @@ class Adherent
 	  $userid=$response[0];
 	  $usertoken=$response[1];
 	}else{
+	  $this->errorstr=$response['faultString'];
 	  return 0;
 	}
 
@@ -689,10 +774,12 @@ class Adherent
 	if ($success){
 	  $personid=$response[0];
 	}else{
+	  $this->errorstr=$response['faultString'];
 	  return 0;
 	}
 	return 1;
       }else{
+	$this->errorstr="Constantes de connection non definies";
 	return 0;
       }
     }
@@ -744,6 +831,7 @@ class Adherent
 	if ($success){
 	  $personid=$response['id'];
 	}else{
+	  $this->errorstr=$response['faultString'];
 	  return 0;
 	}
 	if (defined('MAIN_GLASNOST_DEFAULT_GROUPID') && MAIN_GLASNOST_DEFAULT_GROUPID != ''){
@@ -766,6 +854,7 @@ class Adherent
 	  if ($success){
 	    $groupids=$response['membersSet'];
 	  }else{
+	    $this->errorstr=$response['faultString'];
 	    return 0;
 	  }
 	  // TODO faire la verification que le user n'est pas dans ce
@@ -791,9 +880,11 @@ class Adherent
 	if ($success){
 	  return 1;
 	}else{
+	  $this->errorstr=$response['faultString'];
 	  return 0;
 	}
       }else{
+	$this->errorstr="Constantes de connection non definies";
 	return 0;
       }
     }
@@ -847,6 +938,7 @@ class Adherent
 	    }
 	  return 1;
 	}else{
+	  $this->errorstr="Constantes de connection non definies";
 	  return 0;
 	}
     }
@@ -897,6 +989,7 @@ class Adherent
 	    }
 	  return 1;
 	}else{
+	  $this->errorstr="Constantes de connection non definies";
 	  return 0;
 	}
     }
