@@ -93,10 +93,10 @@ if ($_POST["action"] == 'addinfacture' &&
   $mesg .= '<a href="../compta/facture.php?facid='.$facture->id.'">'.$facture->ref.'</a>';
 }
 
-if ($_POST["action"] == 'add_fourn' && $cancel <> 'Annuler')
+if ($_POST["action"] == 'add_fourn' && $_POST["cancel"] <> 'Annuler')
 {
   $product = new Product($db);
-  if( $product->fetch($id) )
+  if( $product->fetch($_GET["id"]) )
     {
       if ($product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]) > 0)
 	{
@@ -108,9 +108,23 @@ if ($_POST["action"] == 'add_fourn' && $cancel <> 'Annuler')
 	  $action = '';
 	}
     }
-
 }
-
+if ($_GET["action"] == 'remove_fourn')
+{
+  $product = new Product($db);
+  if( $product->fetch($_GET["id"]) )
+    {
+      if ($product->remove_fournisseur($user, $_GET["id_fourn"]) > 0)
+	{
+	  $action = '';
+	  $mesg = 'Founisseur supprimé';
+	}
+      else
+	{
+	  $action = '';
+	}
+    }
+}
 
 if ($_POST["action"] == 'update' && 
     $cancel <> 'Annuler' && 
@@ -313,7 +327,10 @@ else
 		      $objp = $db->fetch_object( $i);	  
 		      $var=!$var;
 		      print "<TR $bc[$var]>";
-		      print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td></tr>';
+		      print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		      print '<td align="right">';
+		      print '<a href="fiche.php?id='.$product->id.'&amp;action=remove_fourn&amp;id_fourn='.$objp->idp.'">';
+		      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td></tr>';
 		      $i++;
 		    }
 		  print '</table>';
@@ -391,10 +408,10 @@ else
        * Ajouter un fournisseur
        *
        */
-      if ($action == 'ajout_fourn' && $user->rights->produit->creer)
+      if ($_GET["action"] == 'ajout_fourn' && $user->rights->produit->creer)
 	{
 	  print_titre ("Ajouter un fournisseur");
-	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	  print '<form action="fiche.php?id='.$product->id.'" method="post">';
 	  print '<input type="hidden" name="action" value="add_fourn">';
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
 	  print '<td>Fournisseurs</td><td><select name="id_fourn">';
