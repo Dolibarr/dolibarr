@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,13 @@
  * $Source$
  *
  */
+
+/*!	\file htdocs/compta/dons/pre.inc.php
+        \ingroup    don
+		\brief      Fichier gestionnaire du menu de gauche de l'espace dons
+		\version    $Revision$
+*/
+
 require("../../main.inc.php");
 require("../../projetdon.class.php");
 
@@ -27,9 +35,9 @@ $libelle[1] = "Promesses validées";
 $libelle[2] = "Dons payés";
 $libelle[3] = "Dons encaissés";
 
-function llxHeader($head = "") {
-  global $user, $conf;
 
+function llxHeader($head = "") {
+  global $user, $conf, $langs;
 
   /*
    *
@@ -41,8 +49,8 @@ function llxHeader($head = "") {
 
   $menu->add(DOL_URL_ROOT."/compta/dons/","Dons");
   $menu->add_submenu("fiche.php?action=create","Saisir un don");
-  $menu->add_submenu("liste.php","Liste complète");
-  $menu->add_submenu("stats.php","Stats");
+  $menu->add_submenu("liste.php",$langs->trans("List"));
+  $menu->add_submenu("stats.php",$langs->trans("Statistics"));
 
   $menu->add(DOL_URL_ROOT."/compta/bank/index.php","Banque");
 
