@@ -38,21 +38,22 @@ if (!$user->rights->facture->lire)
 
 $langs->load("bills");
 
-require("../facture.class.php");
-require("../paiement.class.php");
+require_once "../facture.class.php";
+require_once "../paiement.class.php";
 if ($conf->projet->enabled) {
-    require("../project.class.php");
+  require_once "../project.class.php";
 }
 if ($conf->propal->enabled) {
-    require("../propal.class.php");
+  require_once "../propal.class.php";
 }
 if ($conf->contrat->enabled) {
-    require("../contrat/contrat.class.php");
+  require_once "../contrat/contrat.class.php";
 }
 if ($conf->commande->enabled) {
-    require("../commande/commande.class.php");
+  require_once "../commande/commande.class.php";
 }
-require("../lib/CMailFile.class.php");
+require_once "../lib/CMailFile.class.php";
+
 
 
 
