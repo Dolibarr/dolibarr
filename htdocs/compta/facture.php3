@@ -45,8 +45,9 @@ if ($user->societe_id > 0)
  *
  */	
 
-if ($action == 'add_paiement') {
-  $datepaye = $db->idate(mktime(12, 0 , 0, $pmonth, $pday, $pyear));
+if ($action == 'add_paiement')
+{
+  $datepaye = $db->idate(mktime(12, 0 , 0, $remonth, $reday, $reyear));
 
   $paiement = new Paiement($db);
 
@@ -61,6 +62,12 @@ if ($action == 'add_paiement') {
   $paiement->create();
 
   $action = '';
+
+  $label = "Réglement facture N°";
+
+  $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
+  $acc->addline($datepaye, $paiementid, $label, $amount, $num_paiement);
+
 }
 /*
  *
@@ -233,14 +240,14 @@ if ($action == 'create')
   if ($propalid) 
     {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
-      $sql .= " FROM societe as s, llx_propal as p, c_propalst as c";
+      $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c";
       $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";      
       $sql .= " AND p.rowid = $propalid";
     }
   else
     {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp ";
-      $sql .= "FROM societe as s ";
+      $sql .= "FROM llx_societe as s ";
       $sql .= "WHERE s.idp = $socidp";      
     }
 
@@ -319,7 +326,7 @@ else
   if ($facid > 0) {
     
     $sql = "SELECT s.nom as socnom, s.idp as socidp, f.facnumber, f.amount, f.total, ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.fk_user_author, f.note";
-    $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
+    $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
 
     if ($user->societe_id > 0) 
       {
@@ -777,7 +784,7 @@ else
     print_barre_liste("Factures",$page,$PHP_SELF);
 
     $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
-    $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
+    $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
   
     if ($socidp) {
       $sql .= " AND s.idp = $socidp";

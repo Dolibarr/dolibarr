@@ -56,7 +56,7 @@ if ($catotal == 0) { $catotal = 1; };
 
 
 $sql = "SELECT s.nom, s.idp, sum(f.amount) as ca";
-$sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp GROUP BY s.nom, s.idp ORDER BY ca DESC";
+$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp GROUP BY s.nom, s.idp ORDER BY ca DESC";
  
 $result = $db->query($sql);
 if ($result) {
