@@ -143,6 +143,7 @@ class GraphClientsWeek extends GraphBarMoy {
 
     $moys = array();
     $moys[0] = $datas_new[0];
+    $sum = $moys[0];
 
     for ($i = 1 ; $i < $nbel ; $i++)
       {
