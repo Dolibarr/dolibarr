@@ -30,7 +30,6 @@ print "<p>";
 /*
  * Boites
  *
- * TODO mettre les boites dans une table
  */
 
 $db = new Db();
@@ -49,12 +48,28 @@ if ($result)
       $j++;
     }
 }
+
+print '<table width="100%">';
  
 for ($ii=0, $ni=sizeof($boxes); $ii<$ni; $ii++)
 {
+  if ($ii / 3 == 0)
+    {
+      print "<tr>\n";
+    }
+
+  print '<td valign="top">';
   include($boxes[$ii]);
-  print "<br>";
+  print "</td>";
+
+  if ( ($ii -1) / 3 == 0)
+    {
+      print "</tr>\n";
+    }
+
 }
+
+print "</table>";
 
 $db->close();
 
