@@ -15,7 +15,12 @@
       <author>Rodolphe Quiédeville<email/rodolphe@quiedeville.org/
       </author>
 
-      <version></version>
+      <version>
+	0.0.1
+	<date>
+	$Date$
+	</date>
+      </version>
 
     </titlepag>
     <toc sect>
