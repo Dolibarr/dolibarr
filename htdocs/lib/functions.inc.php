@@ -39,22 +39,22 @@ Function dolibarr_syslog($message)
 
 Function dolibarr_fiche_head($links, $active=0)
 {
-  print '<div class="tabs">';
+  print "<!-- fiche --><div class=\"tabs\">\n";
 
   for ($i = 0 ; $i < sizeof($links) ; $i++)
     {
       if ($i == $active)
 	{
-	  print '<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>';
+	  print '<a id="active" class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 	}
       else
 	{
-	  print '<a class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>';
+	  print '<a class="tab" href="'.$links[$i][0].'">'.$links[$i][1].'</a>'."\n";
 	}
     }
 
-  print '</div>';
-  print '<div class="tabBar"><br>';
+  print "</div>\n";
+  print "<div class=\"tabBar\">\n<br>\n";
 }
 
 
@@ -102,6 +102,12 @@ Function img_delete($alt = "Supprimer")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/delete.png" border="0" alt="'.$alt.'" title="Supprimer">';
 }
+
+Function img_info($alt = "Informations")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/info.png" border="0" alt="'.$alt.'" title="Informations">';
+}
+
 
 Function img_edit($alt = "Modifier")
 {
