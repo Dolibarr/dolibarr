@@ -270,29 +270,6 @@ values ('Tek','22300','Rospez','01 55 55 03 18','01 55 55 55 55',1,'LMT');
 --
 --
 --
-delete from llx_service;
-
-insert into llx_service values ( 1,now(),now(),'FDEVC1','Forfait Dev, CAT. 1','',500,NULL,now(),NULL,2,2);
-insert into llx_service values ( 2,now(),now(),'FDEVC2','Forfait Dev, CAT. 2','',700,NULL,now(),NULL,2,2);
-insert into llx_service values ( 3,now(),now(),'FDEVC3','Forfait Dev, CAT. 3','',900,NULL,now(),NULL,2,2);
-
-insert into llx_service values ( 4,now(),now(),'FADMC1','Forfait Adm, CAT. 1','',600,NULL,now(),NULL,2,2);
-insert into llx_service values ( 5,now(),now(),'FADMC2','Forfait Adm, CAT. 2','',800,NULL,now(),NULL,2,2);
-
-insert into llx_service values ( 6,now(),now(),'FAUDC1','Forfait Aud, CAT. 2','',800,NULL,now(),NULL,2,2);
-insert into llx_service values ( 7,now(),now(),'FAUDC2','Forfait Aud, CAT. 3','',1000,NULL,now(),NULL,2,2);
-
-
-insert into llx_service values ( 8,now(),now(),'RDEVC1','Régie Dev, CAT. 1','',400,NULL,now(),NULL,2,2);
-insert into llx_service values ( 9,now(),now(),'RDEVC2','Régie Dev, CAT. 2','',600,NULL,now(),NULL,2,2);
-insert into llx_service values (10,now(),now(),'RDEVC3','Régie Dev, CAT. 3','',800,NULL,now(),NULL,2,2);
-
-insert into llx_service values (11,now(),now(),'RADMC1','Régie Adm, CAT. 1','',500,NULL,now(),NULL,2,2);
-insert into llx_service values (12,now(),now(),'RADMC2','Régie Adm, CAT. 2','',700,NULL,now(),NULL,2,2);
-
-insert into llx_service values (13,now(),now(),'RAUDC1','Régie Aud, CAT. 2','',700,NULL,now(),NULL,2,2);
-insert into llx_service values (14,now(),now(),'RAUDC2','Régie Aud, CAT. 3','',900,NULL,now(),NULL,2,2);
-
 
 delete from llx_propal;
 delete from llx_propaldet;
