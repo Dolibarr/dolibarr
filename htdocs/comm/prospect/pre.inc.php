@@ -19,16 +19,20 @@
  * $Source$
  *
  */
+
+/**     \file       htdocs/comm/prospect/pre.inc.php
+        \ingroup    commercial
+		\brief      Fichier de gestion du menu gauche de l'espace commercial
+		\version    $Revision$
+*/
+
 require("../../main.inc.php");
 
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf, $langs;
+  $user->getrights();
   $langs->load("companies");
   
-  /*
-   *
-   *
-   */
   top_menu($head);
 
   $menu = new Menu();
