@@ -370,7 +370,7 @@ class Facture
 		    }
 	    
 		  $this->db->free($result2);
-		  $this->db->free($result);
+
 		  return 1;
 		} 
 	      else
@@ -385,7 +385,7 @@ class Facture
 		  return -2;
 	    }
 
-      $this->db->free($result);
+	  $this->db->free($result);
 	}
       else
 	{
