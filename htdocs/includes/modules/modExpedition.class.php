@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,7 +64,7 @@ class modExpedition extends DolibarrModules
     $this->config_page_url = "expedition.php";
 
     // Dépendances
-    $this->depends = array();
+    $this->depends = array("modCommande");
     $this->requiredby = array();
 
     // Constantes
