@@ -30,6 +30,22 @@ Function img_file($alt = "Voir")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/file.png" border="0" alt="'.$alt.'">';
 }
 
+Function img_delete($alt = "Supprimer")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/delete.png" border="0" alt="'.$alt.'" title="Supprimer">';
+}
+
+Function img_edit($alt = "Modifier")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit.png" border="0" alt="'.$alt.'" title="Modifier">';
+}
+
+Function img_alerte($alt = "Alerte")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/alerte.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+
 function loginFunction()
 {
   /**
