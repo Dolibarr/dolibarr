@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,25 @@
  * $Source$
  *
  */
+
+/**
+        \file        htdocs/compta/resultat/index.php
+        \brief       Page reporting resultat
+        \version     $Revision$
+*/
+
 require("./pre.inc.php");
 
-/*
- *
- */
+$year_start=isset($_GET["year_start"])?$_GET["year_start"]:$_POST["year_start"];
+$year_current = strftime("%Y",time());
+if (! $year_start) {
+    $year_start = $year_current - 2;
+    $year_end = $year_current;
+}
+else {
+    $year_end=$year_start+2;   
+}
+
 
 llxHeader();
 
@@ -36,12 +50,13 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-$year_current = $_GET["year"];
-if (! $year_current) { $year_current = strftime("%Y", time()); }
 $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
-print_titre("Résultat comptable, résumé annuel");
+
+$title="Résultat comptable, résumé annuel";
+$lien=($year_start?"<a href='index.php?year_start=".($year_start-1)."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."'>".img_next()."</a>":"");
+print_fiche_titre($title,$lien);
 print '<br>';
 
 print "Ce rapport présente la balance entre les recettes et les dépenses facturées aux clients ou fournisseurs. Les dépenses de charges ne sont pas incluses.<br>\n";
@@ -124,25 +139,13 @@ else {
 	dolibarr_print_error($db);	
 }
 
-/*
- * Charges sociales
- */
 
+/*
+ * Tableau
+ */
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td rowspan=2>'.$langs->trans("Month").'</td>';
-
-
-if ($year_current < (MAIN_START_YEAR + 2))
-{
-  $year_start = MAIN_START_YEAR;
-  $year_end = (MAIN_START_YEAR + 2);
-}
-else
-{
-  $year_start = $year_current - 2;
-  $year_end = $year_current;
-}
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
@@ -187,7 +190,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 }
 
 $var=!$var;
-print "<tr $bc[$var]><td><b>Total annuel</b></td>";
+print "<tr $bc[$var]><td><b>".$langs->trans("Total")."</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
   print '<td align="right">'.price($totentrees[$annee]).'</td><td align="right">'.price($totsorties[$annee]).'</td>';
