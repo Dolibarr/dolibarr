@@ -183,17 +183,73 @@ if ($id && $action == '')
   $htmls = new Form($db);
   $propal = New Propal($db);
 
+  print '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr><td width="50%" valign="top">';
+
+  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp";
+  $sql .= " FROM llx_societe as s, llx_propal as p";
+  $sql .=" WHERE p.fk_soc = s.idp AND p.fk_statut = 0";  
+  $sql .= " ORDER BY p.datec DESC, tms DESC";
+
+  if ( $db->query($sql) )
+    {
+      $num = $db->num_rows();
+      $i = 0;
+      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+
+      $var=True;
+      
+      while ($i < $num)
+	{
+	  $objp = $db->fetch_object( $i);
+	  
+	  $var=!$var;
+	  print "<TR $bc[$var]>";
+	  print "<td><a href=\"../comm/propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+	  print "<td><a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      
+	  
+	  print "<td>";
+	  
+	  print strftime("%d %B %Y",$objp->dp)."</td>\n";
+
+	  print '<form method="POST" action="fiche.php3?id='.$id.'">';
+	  print '<input type="hidden" name="action" value="addinpropal">';
+
+	  print "<td>";
+	  print '<input type="hidden" name="propalid" value="'.$objp->propalid.'">';
+	  print '<input type="text" name="qty" size="3" value="1">';
+	  print '</td><td>';
+	  print '<input type="submit" value="Ajouter">';
+	  print "</td>";
+	  print '</form>';
+
+	  
+	  print "</tr>\n";
+	  
+	  $i++;
+	}
+      
+      
+      print "</TABLE>";
+      $db->free();
+    }
+
+
+
+  print '</td><td width="50%" valign="top">';
+
   print '<form method="POST" action="fiche.php3?id='.$id.'">';
   print '<input type="hidden" name="action" value="addinpropal">';
-  print '<table border="1" cellpadding="3" cellspacing="0">';
-  print "<tr><td>Proposition</td><td>";
-  $htmls->select_array("propalid",  $propal->liste_array(1));
+  print '<table border="1" width="100%" cellpadding="3" cellspacing="0">';
+  print "<tr><td>Autres Propositions</td><td>";
+  $htmls->select_array("propalid",  $propal->liste_array(1, '<>'.$user->id));
   print '</td><td>';
   print '<input type="text" name="qty" size="3" value="1">';
   print '</td><td>';
   print '<input type="submit" value="Ajouter">';
   print "</td></tr>";
   print '</table></form>';
+
+  print '</td></tr></table>';
 }
 
 
