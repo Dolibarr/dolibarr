@@ -380,7 +380,12 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 		  if (! $db->query($sql) )
 		    {
 		      dolibarr_print_error($db->error());
-		    }	      	      	      
+		    }
+		  else
+		    {
+		      // Renvoie sur la page de la facture
+		      Header("Location: facture.php?facid=".$fac->id);
+		    } 	      	      
 		}
 	      else
 		{
