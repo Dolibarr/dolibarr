@@ -26,6 +26,7 @@ require("../propal.class.php3");
 llxHeader();
 
 $db = new Db();
+$mesg = '';
 
 if ($action == 'add')
 {
@@ -49,10 +50,11 @@ if ($action == 'addinpropal')
   $propal->insert_product($id, $HTTP_POST_VARS["qty"]);
 
   $action = '';
+  $mesg = 'Produit ajouté à la proposition '.$propal->ref;
 }
 
 
-if ($action == 'update')
+if ($action == 'update' && $cancel <> 'Annuler')
 {
   $product = new Product($db);
 
@@ -64,6 +66,7 @@ if ($action == 'update')
 
   $product->update($id, $user);
   $action = '';
+  $mesg = 'Fiche mise à jour';
 }
 /*
  *
@@ -71,7 +74,6 @@ if ($action == 'update')
  */
 if ($action == 'create')
 {
-
   print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 
@@ -102,7 +104,7 @@ else
 
       if ( $result )
 	{ 
-	  print '<div class="titre">Fiche produit : '.$product->ref.'</div><br>';
+	  print_fiche_titre('Fiche produit : '.$product->ref, $mesg);
       
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
@@ -125,7 +127,7 @@ else
 	  print '<hr><div class="titre">Edition de la fiche produit : '.$product->ref.'</div><br>';
 
 	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
-	  print "<input type=\"hidden\" name=\"action\" value=\"update\">";
+	  print '<input type="hidden" name="action" value="update">';
 	  
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4"><tr>';
 	  print '<td width="20%">Référence</td><td><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
@@ -139,7 +141,8 @@ else
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $product->description;
 	  print "</textarea></td></tr>";
-	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer"></td></tr>';
+	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer">&nbsp;';
+	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
 	  print '</table>';
 	  print '</form>';
 	}    
