@@ -35,6 +35,23 @@
 class NumRefFacturesJupiter extends ModeleNumRefFactures
 {
     
+    /*!     \brief      Renvoi la description du modele de numérotation
+     *      \return     string      Texte descripif
+     */
+    function getDesc()
+    {
+      return '
+    Système de numérotation mensuel sous la forme F20030715, qui correspond à la 15ème facture du mois de Juillet 2003';
+    }
+
+    /*!     \brief      Renvoi un exemple de numérotation
+     *      \return     string      Example
+     */
+    function getExample()
+    {
+        return "F2004121";
+    }
+
     /*!     \brief      Renvoie la référence de facture suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
@@ -60,15 +77,6 @@ class NumRefFacturesJupiter extends ModeleNumRefFactures
       return  "$prefix" . $date . $num;
     }
     
-    /*!     \brief      Renvoi la description du modele de numérotation
-     *      \return     string      Texte descripif
-     */
-    function getDesc()
-    {
-      return '
-    Système de numérotation mensuel sous la forme F20030715, qui correspond à la 15ème facture du mois de Juillet 2003';
-    }
-
 }
 
 ?>

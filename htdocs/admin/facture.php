@@ -102,6 +102,7 @@ print '<table class="noborder" cellpadding="2" cellspacing="0" width=\"100%\">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
@@ -122,16 +123,19 @@ while (($file = readdir($handle))!==false)
 
       $filebis = $file."/".$file.".modules.php";
 
+      // Chargement de la classe de numérotation
       $classname = "NumRefFactures".ucfirst($file);
       require_once($dir.$filebis);
 
-//      $func = $file."_get_num_explain";
-//      print $func();
       $obj = new $classname($db);
       print $obj->getDesc();
 
-      print '</td><td align="center">';
+      print '</td>';
 
+      // Affiche example
+      print '<td>'.$obj->getExample().'</td>';
+      
+      print '<td align="center">';
       if ($facture_addon_var == "$file")
 	{
 	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';

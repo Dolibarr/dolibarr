@@ -36,6 +36,23 @@
 class NumRefFacturesPluton extends ModeleNumRefFactures
 {
 
+    /*!     \brief      Renvoi la description du modele de numérotation
+     *      \return     string      Texte descripif
+     */
+    function getDesc()
+    {
+      return '
+    Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la quinzième facture ayant le numéro 15.';
+    }
+
+    /*!     \brief      Renvoi un exemple de numérotation
+     *      \return     string      Example
+     */
+    function getExample()
+    {
+        return "FA040001";
+    }
+
     /*!     \brief      Renvoie la référence de facture suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
@@ -60,15 +77,6 @@ class NumRefFacturesPluton extends ModeleNumRefFactures
     
     }
     
-    /*!     \brief      Renvoi la description du modele de numérotation
-     *      \return     string      Texte descripif
-     */
-    function getDesc()
-    {
-      return '
-    Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la quinzième facture ayant le numéro 15.';
-    }
-
 }
 
 ?>

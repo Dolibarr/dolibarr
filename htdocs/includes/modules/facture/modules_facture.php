@@ -84,6 +84,16 @@ class ModeleNumRefFactures
         return $langs->trans("NoDescription");
     }
 
+    /*!     \brief      Renvoi un exemple de numérotation
+     *      \return     string      Example
+     */
+    function getExample()
+    {
+        global $langs;
+        $langs->load("bills");
+        return $langs->trans("NoExample");
+    }
+
    /*! 
         \brief Renvoi le dernier message d'erreur de création de facture
     */

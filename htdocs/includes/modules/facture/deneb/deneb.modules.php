@@ -35,6 +35,35 @@
 class NumRefFacturesDeneb extends ModeleNumRefFactures
 {
     
+    /*!     \brief      Renvoi la description du modele de numérotation
+     *      \return     string      Texte descripif
+     */
+    function getDesc()
+    {
+    
+      $texte = '
+    Renvoie le numéro de facture sous la forme, PREF-03-06-2004-15, où PREF est le préfixe commercial de la société, et est suivi de la date (ici le 14 juin 2004) et d\'un compteur général. La constante FACTURE_DENEB_DELTA sert à la correction de plage. FACTURE_DENEB_DELTA ';
+    
+      if (defined("FACTURE_DENEB_DELTA"))
+        {
+          $texte .= "est défini et vaut : ".FACTURE_DENEB_DELTA;
+        }
+      else
+        {
+          $texte .= "n'est pas défini";
+        }
+      return $texte;
+    
+    }
+
+    /*!     \brief      Renvoi un exemple de numérotation
+     *      \return     string      Example
+     */
+    function getExample()
+    {
+        return "PREF-31-12-04-10";
+    }
+
     /*!     \brief      Renvoie la référence de facture suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
@@ -62,28 +91,6 @@ class NumRefFacturesDeneb extends ModeleNumRefFactures
       $y = strftime("%y",time());
     
       return  $objsoc->prefix_comm . "-" .strftime("%d-%m-%Y", time()) . "-".$num;
-    }
-
-
-    /*!     \brief      Renvoi la description du modele de numérotation
-     *      \return     string      Texte descripif
-     */
-    function getDesc()
-    {
-    
-      $texte = '
-    Renvoie le numéro de facture sous la forme, PR-03-06-2004-15, où PR est le préfixe commercial de la société, et est suivi de la date (ici le 14 juin 2004) et d\'un compteur général. La constante FACTURE_DENEB_DELTA sert à la correction de plage. FACTURE_DENEB_DELTA ';
-    
-      if (defined("FACTURE_DENEB_DELTA"))
-        {
-          $texte .= "est défini et vaut : ".FACTURE_DENEB_DELTA;
-        }
-      else
-        {
-          $texte .= "n'est pas défini";
-        }
-      return $texte;
-    
     }
 
 }

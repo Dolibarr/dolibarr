@@ -35,6 +35,32 @@
 class NumRefFacturesNeptune extends ModeleNumRefFactures
 {
 
+    /*!     \brief      Renvoi la description du modele de numérotation
+     *      \return     string      Texte descripif
+     */
+    function getDesc()
+    {
+      $texte = '
+    Identique à pluton, avec un correcteur au moyen de la constante FACTURE_NEPTUNE_DELTA.';
+      if (defined("FACTURE_NEPTUNE_DELTA"))
+        {
+          $texte .= "Défini et vaut : ".FACTURE_NEPTUNE_DELTA;
+        }
+      else
+        {
+          $texte .= "N'est pas défini";
+        }
+      return $texte;
+    }
+
+    /*!     \brief      Renvoi un exemple de numérotation
+     *      \return     string      Example
+     */
+    function getExample()
+    {
+        return "FA040010";
+    }
+
     /*!     \brief      Renvoie la référence de facture suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
@@ -65,24 +91,6 @@ class NumRefFacturesNeptune extends ModeleNumRefFactures
     
     }
     
-    /*!     \brief      Renvoi la description du modele de numérotation
-     *      \return     string      Texte descripif
-     */
-    function getDesc()
-    {
-      $texte = '
-    Identique à pluton, avec un correcteur au moyen de la constante FACTURE_NEPTUNE_DELTA.';
-      if (defined("FACTURE_NEPTUNE_DELTA"))
-        {
-          $texte .= "Défini et vaut : ".FACTURE_NEPTUNE_DELTA;
-        }
-      else
-        {
-          $texte .= "N'est pas défini";
-        }
-      return $texte;
-    }
-
 }    
 
 ?>
