@@ -38,7 +38,10 @@ function llxHeader($head = "") {
 
   $menu->add("../ca.php3","Chiffres d'affaires");
 
-  $menu->add("/compta/tva/index.php3","TVA");
+  if ($conf->compta->tva)
+    {
+      $menu->add("/compta/tva/index.php3","TVA");
+    }
 
   $menu->add("index.php3","Résultats");
   /*

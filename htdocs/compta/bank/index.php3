@@ -27,7 +27,6 @@
  */
 require("./pre.inc.php3");
 require("./bank.lib.php3");
-
 require("../../tva.class.php3");
 require("../../chargesociales.class.php3");
 
@@ -83,15 +82,18 @@ print '<tr class="liste_titre"><td colspan="5">Dettes</td></tr>';
 /*
  * TVA
  */
-$tva = new Tva($db);
+if ($conf->compta->tva)
+{
+  $tva = new Tva($db);
 
-$tva_solde = $tva->solde();
+  $tva_solde = $tva->solde();
 
-$total = $total + $tva_solde;
+  $total = $total + $tva_solde;
 
-print '<tr><td colspan="3">TVA</td><td align="right">'.price($tva_solde).'</td><td>&nbsp;</td></tr>';
+  print '<tr><td colspan="3">TVA</td><td align="right">'.price($tva_solde).'</td><td>&nbsp;</td></tr>';
+}
 /*
- * TVA
+ * Charges sociales
  */
 $chs = new ChargeSociales($db);
 
