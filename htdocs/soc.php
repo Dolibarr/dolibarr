@@ -94,7 +94,7 @@ llxHeader();
 
 if ($action == 'create') 
 {
-  print '<div class="titre">Nouvelle société (prospect, client, fournisseur, partenaire...)</div><br>';
+  print '<div class="titre">Nouvelle société (prospect, client, fournisseur)</div><br>';
   print '<form action="soc.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="fournisseur" value="0">';
@@ -124,9 +124,10 @@ if ($action == 'create')
   print '<br>Vous pouvez vérifier ce numéro sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la commission européenne';
   print '</td></tr>';
   
-
-  print '<tr><td>Client</td><td><select name="client">';
-  print_oui_non($soc->client);
+  print '<tr><td>Prospect / Client</td><td><select name="client">';
+  print '<option value="2" SELECTED>Prospect'; 
+  print '<option value="1">Client'; 
+  print '<option value="0">Ni client, ni prospect'; 
   print '</select></td>';
 
   print '<td>Fournisseur</td><td><select name="fournisseur">';
@@ -177,11 +178,30 @@ elseif ($action == 'edit')
       print '<br>Vous pouvez vérifier ce numéro sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la commission européenne';
       print '</td></tr>';
 
-      print '<tr><td>Client</td><td><select name="client">';
-      print_oui_non($soc->client);
-      print '</select>';
-      
-      print '<tr><td>Fournisseur</td><td><select name="fournisseur">';
+      print '<tr><td>Prospect / Client</td><td><select name="client">';
+      if ($soc->client == 2)
+	{
+	  print '<option value="2" SELECTED>Prospect'; 
+	  print '<option value="1">Client'; 
+	  print '<option value="0">Ni client, ni prospect'; 
+	}
+      if ($soc->client == 1)
+	{
+	  print '<option value="2">Prospect'; 
+	  print '<option value="1" SELECTED>Client'; 
+	  print '<option value="0">Ni client, ni prospect'; 
+	}
+      else
+	{
+	  print '<option value="2">Prospect'; 
+	  print '<option value="1">Client'; 
+	  print '<option value="0" SELECTED>Ni client, ni prospect'; 
+	}
+
+
+	  print '</select></td>';
+
+      print '<td>Fournisseur</td><td><select name="fournisseur">';
       print_oui_non($soc->fournisseur);
       print '</select>';
       
@@ -202,15 +222,22 @@ else
   print '<div class="tabs">';
   print '<a href="soc.php?socid='.$_GET["socid"].'" id="active" class="tab">Fiche société</a>';
 
-  if ($soc->client)
+  if ($soc->client==1)
     {
-      print '<a class="tab" href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">Fiche commerciale</a>';
+      print '<a class="tab" href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">Fiche client</a>';
+    }
+  if ($soc->client==2)
+    {
+      print '<a class="tab" href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$socid.'">Fiche prospect</a>';
     }
   if ($soc->fournisseur)
     {
       print '<a class="tab" href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid.'">Fiche fournisseur</a>';
     }
-  
+
+
+  print '<a class="tab" href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id.'">Notifications</a>';
+        
   print '</div>';
   print '<div class="tabBar"><br>';
     
