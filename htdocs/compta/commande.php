@@ -22,6 +22,7 @@
 require("./pre.inc.php");
 
 $user->getrights('commande');
+$user->getrights('facture');
 if (!$user->rights->commande->lire)
   accessforbidden();
 
@@ -71,7 +72,7 @@ if ($_GET["id"] > 0)
       $author->fetch();
 
 
-      $head[0][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+      $head[0][0] = DOL_URL_ROOT.'/compta/commande.php?id='.$commande->id;
       $head[0][1] = "Commande : $commande->ref";
       $h = 1;
       $a = 0;
@@ -308,12 +309,14 @@ if ($_GET["id"] > 0)
 	{
 	  print "<br><div class=\"tabsAction\">\n";
 	 
-	  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">Facturer</a>';
+
+	  if ($user->rights->facture->creer)
+	    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">Facturer</a>';
 
 	  if (!$commande->facturee && $num_fac_asso)
 	    {
-
-	      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/compta/commande.php?action=facturee&amp;id='.$commande->id.'">Classer comme facturée</a>';
+	      if ($user->rights->commande->creer)
+		print '<a class="tabAction" href="'.DOL_URL_ROOT.'/compta/commande.php?action=facturee&amp;id='.$commande->id.'">Classer comme facturée</a>';
 
 	    }
 	  print '</div>';
