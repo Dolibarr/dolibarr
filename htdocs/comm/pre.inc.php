@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,22 +21,24 @@
  *
  */
 
-/**     \file       htdocs/comm/pre.inc.php
-        \ingroup    commercial
-		\brief      Fichier de gestion du menu gauche de l'espace commercial
-		\version    $Revision$
+/** 
+    \file       htdocs/comm/pre.inc.php
+    \ingroup    commercial
+    \brief      Fichier de gestion du menu gauche de l'espace commercial
+    \version    $Revision$
 */
 
 require("../main.inc.php");
 
 
-function llxHeader($head = "", $urlp = "") {
+function llxHeader($head = "", $title = "")
+{
   global $user, $conf, $langs;
 
   $user->getrights();
   $langs->load("companies");
 
-  top_menu($head);
+  top_menu($head, $title);
 
   $menu = new Menu();
 
@@ -47,7 +49,7 @@ function llxHeader($head = "", $urlp = "") {
     {
       $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=c", $langs->trans("MenuNewCustomer"));
     }
-
+  
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
 
   // Prospects
@@ -59,7 +61,6 @@ function llxHeader($head = "", $urlp = "") {
     }
 
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
-
 
 
   $menu->add(DOL_URL_ROOT."/comm/action/index.php", $langs->trans("Actions"));
@@ -86,6 +87,8 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
     }
 
+  $menu->add(DOL_URL_ROOT."/comm/mailing/", "Mailing");
+
   if ($conf->fichinter->enabled ) 
     {
       $menu->add(DOL_URL_ROOT."/fichinter/index.php", "Fiches d'intervention");
@@ -108,8 +111,5 @@ function llxHeader($head = "", $urlp = "") {
 	}
 	
   left_menu($menu->liste);
-
 }
-
-
 ?>
