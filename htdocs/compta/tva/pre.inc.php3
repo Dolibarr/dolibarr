@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,24 +33,21 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("/compta/facture.php3","Factures");
-
   $menu->add("../ca.php3","Chiffres d'affaires");
 
   $menu->add("index.php3","TVA");
   /*
-   * A automatiser
+   * Liste les 2 dernières années
    *
    */
-  $menu->add_submenu("index.php3?year=2002","2002");
-  $menu->add_submenu("index.php3?year=2001","2001");
+  $yc = strftime("%Y",time());
+
+  $menu->add_submenu("index.php3?year=".$yc-1,$yc-1);
+  $menu->add_submenu("index.php3?year=".$yc-2,$yc-2);
 
   $menu->add("reglement.php","Reglement");
 
-  $menu->add("/compta/bank/index.php3","Bank");
-
   left_menu($menu->liste);
-
 }
 
 ?>
