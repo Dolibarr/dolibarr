@@ -70,7 +70,7 @@ print 'Marge minimale</td><td align="center">';
 print '<input type="hidden" name="nom1" value="TELEPHONIE_MARGE_MINI">';
 print '<input type="text"   name="value1" value="'.TELEPHONIE_MARGE_MINI.'" size="3" >';
 
-print '</td><td>&nbsp;</td></tr>';
+print '</td><td><input type="submit"></td></tr>';
 
 
 
