@@ -42,7 +42,7 @@ class Account
     $this->clos = 0;
     $this->db = $DB;
     $this->rowid = $rowid;
-    
+    $this->solde = 0;    
     return 1;
   }
 
@@ -118,7 +118,10 @@ class Account
 	  }
       }
   }
-
+  /*
+   *
+   *
+   */
   Function create()
     {
       $sql = "INSERT INTO llx_bank_account (datec, label) values (now(),'$this->label');";
@@ -127,7 +130,13 @@ class Account
 	  if ($this->db->affected_rows()) 
 	    {
 	      $this->id = $this->db->last_insert_id();
-	      $this->update();
+	      if ( $this->update() )
+		{
+		  $sql = "INSERT INTO llx_bank (datec, label, amount, fk_account,datev,dateo) ";
+		  $sql .= " VALUES (now(),'Solde',$this->solde,$this->id,'1970-01-01','1970-01-01');";
+
+		  $this->db->query($sql);
+		}
 	      return $this->id;      
 	    }
 	}
@@ -176,6 +185,7 @@ class Account
 	{
 	  print $this->db->error();
 	  print "<p>$sql</p>";
+	  return 0;
 	}
     }
   /*
