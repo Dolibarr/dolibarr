@@ -20,7 +20,7 @@
  * $Source$
  *
  */
-define('DOL_VERSION','1.0.0');
+define('DOL_VERSION','1.0.1');
 
 if (! include ("conf/conf.php"))
 {
@@ -175,6 +175,11 @@ if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
   if (! defined("PROPALE_OUTPUT_URL"))
     {
       define('PROPALE_OUTPUT_URL', "/document/propale");
+    }
+
+  if (!defined("PROPALE_NEW_FORM_NB_PRODUCT"))
+    {
+      define("PROPALE_NEW_FORM_NB_PRODUCT", 4);
     }
 }
 
