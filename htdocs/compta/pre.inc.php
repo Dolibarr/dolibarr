@@ -37,6 +37,13 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/compta/clients.php", "Clients");
 
+  if ($user->comm > 0 && $conf->commercial->enabled && $conf->propal->enabled) 
+    {
+      $menu->add(DOL_URL_ROOT."/compta/propal.php","Prop. commerciales");
+    }
+
+  $menu->add(DOL_URL_ROOT."/contrat/","Contrats");
+
   if ($conf->don->enabled)
     {
       $menu->add(DOL_URL_ROOT."/compta/dons/","Dons");
@@ -46,13 +53,6 @@ function llxHeader($head = "", $title="") {
   $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php","Paiements");
   $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
   $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/","Statistiques");
-
-  if ($user->comm > 0 && $conf->commercial->enabled && $conf->propal->enabled) 
-    {
-      $menu->add(DOL_URL_ROOT."/compta/propal.php","Prop. commerciales");
-    }
-
-  $menu->add(DOL_URL_ROOT."/contrat/","Contrats");
 
   // Les dépenses
 
