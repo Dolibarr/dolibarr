@@ -19,6 +19,13 @@
  * $Id$
  * $Source$
  */
+
+/*!	\file htdocs/admin/facture.php
+		\ingroup    facture
+		\brief      Page d'administration/configuration du module Facture
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 if (!$user->admin)
@@ -113,9 +120,15 @@ while (($file = readdir($handle))!==false)
       echo "$file";
       print "</td><td>\n";
 
-      $func = $file."_get_num_explain";
+      $filebis = $file."/".$file.".modules.php";
 
-      print $func();
+      $classname = "NumRefFactures".ucfirst($file);
+      require_once($dir.$filebis);
+
+//      $func = $file."_get_num_explain";
+//      print $func();
+      $obj = new $classname($db);
+      print $obj->getDesc();
 
       print '</td><td align="center">';
 

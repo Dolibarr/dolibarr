@@ -21,6 +21,13 @@
  * $Source$
  *
  */
+
+/*!	\file htdocs/compta/facture.php
+		\ingroup    facture
+		\brief      Page de création d'une facture
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $user->getrights('facture');
@@ -714,7 +721,7 @@ if ($_GET["action"] == 'create')
     } 
   else 
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
 } 
 else 
@@ -776,7 +783,7 @@ else
 	  if ($_GET["action"] == 'valid')
 	    {
 	      $numfa = facture_get_num($soc);
-	      $html->form_confirm("facture.php?facid=$fac->id","Valider la facture","Etes-vous sûr de vouloir valider cette facture avec le numéro $numfa ?","confirm_valid");
+	      $html->form_confirm("facture.php?facid=$fac->id","Valider la facture sous la référence no ".$numfa,"Etes-vous sûr de vouloir valider cette facture avec la référence no $numfa ?","confirm_valid");
 	    }
 
 	  /*

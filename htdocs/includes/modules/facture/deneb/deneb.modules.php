@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,29 +22,70 @@
  *
  */
 
-function facture_get_num($objsoc=0)
-{ 
-  global $db;
+/*!	\file htdocs/includes/modules/facture/deneb/deneb.modules.php
+		\ingroup    facture
+		\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Deneb
+		\version    $Revision$
+*/
 
-  $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0";
 
-  if ( $db->query($sql) ) 
-    {
-      $row = $db->fetch_row(0);
-      
-      $num = $row[0];
+/*!	\class NumRefFacturesDeneb
+		\brief      Classe du modèle de numérotation de référence de facture Deneb
+*/
+class NumRefFacturesDeneb extends ModeleNumRefFactures
+{
+    
+    /*!     \brief      Renvoie la référence de facture suivante non utilisée
+     *      \param      objsoc      Objet société
+     *      \return     string      Texte descripif
+     */
+    function getNumRef($objsoc=0)
+    { 
+      global $db;
+    
+      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0";
+    
+      if ( $db->query($sql) ) 
+        {
+          $row = $db->fetch_row(0);
+          
+          $num = $row[0];
+        }
+    
+      if (!defined("FACTURE_DENEB_DELTA"))
+        {
+          define("FACTURE_DENEB_DELTA", 0);
+        }
+    
+      $num = $num + FACTURE_DENEB_DELTA;
+    
+      $y = strftime("%y",time());
+    
+      return  $objsoc->prefix_comm . "-" .strftime("%d-%m-%Y", time()) . "-".$num;
     }
 
-  if (!defined("FACTURE_DENEB_DELTA"))
+
+    /*!     \brief      Renvoi la description du modele de numérotation
+     *      \return     string      Texte descripif
+     */
+    function getDesc()
     {
-      define("FACTURE_DENEB_DELTA", 0);
+    
+      $texte = '
+    Renvoie le numéro de facture sous la forme, PR-03-06-2004-15, où PR est le préfixe commercial de la société, et est suivi de la date (ici le 14 juin 2004) et d\'un compteur général. La constante FACTURE_DENEB_DELTA sert à la correction de plage. FACTURE_DENEB_DELTA ';
+    
+      if (defined("FACTURE_DENEB_DELTA"))
+        {
+          $texte .= "est défini et vaut : ".FACTURE_DENEB_DELTA;
+        }
+      else
+        {
+          $texte .= "n'est pas défini";
+        }
+      return $texte;
+    
     }
 
-  $num = $num + FACTURE_DENEB_DELTA;
-
-  $y = strftime("%y",time());
-
-  return  $objsoc->prefix_comm . "-" .strftime("%d-%m-%Y", time()) . "-".$num;
 }
 
 ?>

@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,72 +22,92 @@
  *
  */
 
-function deneb_get_num_explain()
+/*!	\file htdocs/includes/modules/facture/modules_facture.php
+		\ingroup    facture
+		\brief      Fichier contenant la classe mère de generation des factures en PDF
+		            et la classe mère de numérotation des factures
+		\version    $Revision$
+*/
+
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+
+
+
+/*!	\class ModelePDFFactures
+		\brief  Classe mère des modèles de facture
+*/
+
+class ModelePDFFactures extends FPDF
 {
+    var $error='';
 
-  $texte = '
-Renvoie le numéro de facture sous la forme, PR-03-06-2004-15, où PR est le préfixe commercial de la société, et est suivi de la date (ici le 14 juin 2004) et d\'un compteur général. La constante FACTURE_DENEB_DELTA sert à la correction de plage. FACTURE_DENEB_DELTA ';
+    /*!  \brief      Constructeur
+     */
+    function ModelePDFFactures()
+    {
+    
+    }
 
-  if (defined("FACTURE_DENEB_DELTA"))
+   /*! 
+        \brief Renvoi le dernier message d'erreur de création de facture
+    */
+    function pdferror()
     {
-      $texte .= "est défini et vaut : ".FACTURE_DENEB_DELTA;
+        return $this->error;
     }
-  else
-    {
-      $texte .= "n'est pas défini";
-    }
-  return $texte;
 
 }
 
-function venus_get_num_explain()
+
+/*!	\class ModeleNumRefFactures
+		\brief  Classe mère des modèles de numérotation des références de facture
+*/
+
+class ModeleNumRefFactures
 {
+    var $error='';
 
-  return '
-Renvoie le numéro de facture sous la forme, F-PR-030202, où PR est le préfixe commercial de la société, et est suivi de la date sur un format de 6 digits avec Année, Mois et Jour';
-
-}
-
-function pluton_get_num_explain()
-{
-  return '
-Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la quinzième facture ayant le numéro 15.';
-}
-
-function neptune_get_num_explain()
-{
-  $texte = '
-Identique à pluton, avec un correcteur au moyen de la constante FACTURE_NEPTUNE_DELTA.';
-  if (defined("FACTURE_NEPTUNE_DELTA"))
+    /*!     \brief      Constructeur
+     */
+    function ModeleNumRefFactures()
     {
-      $texte .= "Défini et vaut : ".FACTURE_NEPTUNE_DELTA;
+    
     }
-  else
+
+    /*!     \brief      Renvoi la description par defaut du modele de numérotation
+     *      \return     string      Texte descripif
+     */
+    function getDesc()
     {
-      $texte .= "N'est pas défini";
+        global $langs;
+        $langs->load("bills");
+        return $langs->trans("NoDescription");
     }
-  return $texte;
-}
 
+   /*! 
+        \brief Renvoi le dernier message d'erreur de création de facture
+    */
+    function numreferror()
+    {
+        return $this->error;
+    }
 
-function jupiter_get_num_explain()
-{
-  return '
-Système de numérotation mensuel sous la forme F20030715, qui correspond à la 15ème facture du mois de Juillet 2003';
 }
 
 
 /*!
-		\brief Crée un facture sur disque en fonction du modèle de FACTURE_ADDON_PDF
-		\param	db  		objet base de donnée
-		\param	facid		id de la facture à créer
+		\brief      Crée un facture sur disque en fonction du modèle de FACTURE_ADDON_PDF
+		\param	    db  		objet base de donnée
+		\param	    facid		id de la facture à créer
 */
 function facture_pdf_create($db, $facid)
 {
+  global $langs;
+  $langs->load("bills");
   
   $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
 
-  if (defined("FACTURE_ADDON_PDF"))
+  if (defined("FACTURE_ADDON_PDF") && FACTURE_ADDON_PDF)
     {
 
       $file = "pdf_".FACTURE_ADDON_PDF.".modules.php";
@@ -103,14 +123,55 @@ function facture_pdf_create($db, $facid)
 	}
       else
 	{
-	  print $obj->error();
+	  dolibarr_print_error($db,$obj->pdferror());
 	  return 0;
 	}
     }
   else
     {
-      print "Erreur FACTURE_ADDON_PDF non définit !";
+      print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
       return 0;
+    }
+}
+
+
+/*!
+		\brief      Renvoie la référence de facture suivante non utilisé en fonction du module 
+		            de numérotation actif défini dans FACTURE_ADDON
+		\param	    soc  		objet societe
+		\return     string      reference libre pour la facture
+*/
+function facture_get_num($soc)
+{
+  global $db, $langs;
+  $langs->load("bills");
+  
+  $dir = DOL_DOCUMENT_ROOT . "/includes/modules/facture/";
+
+  if (defined("FACTURE_ADDON") && FACTURE_ADDON)
+    {
+
+      $file = FACTURE_ADDON."/".FACTURE_ADDON.".modules.php";
+
+      $classname = "NumRefFactures".ucfirst(FACTURE_ADDON);
+      require_once($dir.$file);
+
+      $obj = new $classname();
+
+      if ( $obj->getNumRef($soc) != "")
+	{
+	  return $obj->getNumRef($soc);
+	}
+      else
+	{
+	  dolibarr_print_error($db,$obj->numreferror());
+	  return "";
+	}
+    }
+  else
+    {
+      print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_NotDefined");
+      return "";
     }
 }
 

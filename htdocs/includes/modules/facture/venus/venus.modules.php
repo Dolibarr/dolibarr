@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +22,41 @@
  *
  */
 
-function facture_get_num($objsoc=0)
-{ 
+/*!	\file htdocs/includes/modules/facture/venus/venus.modules.php
+		\ingroup    facture
+		\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Venus
+		\version    $Revision$
+*/
 
-  return  "FA-" .  $objsoc->prefix_comm . "-" .strftime("%y%m%d", time());
+
+/*!	\class NumRefFacturesVenus
+		\brief      Classe du modèle de numérotation de référence de facture Venus
+*/
+
+class NumRefFacturesVenus extends ModeleNumRefFactures
+{
+
+    /*!     \brief      Renvoie la référence de facture suivante non utilisée
+     *      \param      objsoc      Objet société
+     *      \return     string      Texte descripif
+     */
+    function getNumRef($objsoc=0)
+    { 
+    
+      return  "FA-" .  $objsoc->prefix_comm . "-" .strftime("%y%m%d", time());
+    
+    }
+    
+    /*!     \brief      Renvoi la description du modele de numérotation
+     *      \return     string      Texte descripif
+     */
+    function getDesc()
+    {
+
+      return '
+    Renvoie le numéro de facture sous la forme, F-PR-030202, où PR est le préfixe commercial de la société, et est suivi de la date sur un format de 6 digits avec Année, Mois et Jour';
+    
+    }
 
 }
 

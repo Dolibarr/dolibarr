@@ -22,24 +22,53 @@
  *
  */
 
-function facture_get_num($objsoc=0)
-{ 
-  global $db;
-  $prefix='F';
-  $date = strftime("%Y%m", time());
-  $num=0;
-  
-  $sql = "SELECT max(0+substring(facnumber,8)) FROM ".MAIN_DB_PREFIX."facture";
-  $sql .= " WHERE facnumber like '$prefix".$date."%'";
+/*!	\file htdocs/includes/modules/facture/jupiter/jupiter.modules.php
+		\ingroup    facture
+		\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Jupiter
+		\version    $Revision$
+*/
 
-  if ( $db->query($sql) ) 
-    {
-      $row = $db->fetch_row(0);
-   
-      $num = $row[0];
+
+/*!	\class NumRefFacturesJupiter
+		\brief      Classe du modèle de numérotation de référence de facture Jupiter
+*/
+class NumRefFacturesJupiter extends ModeleNumRefFactures
+{
+    
+    /*!     \brief      Renvoie la référence de facture suivante non utilisée
+     *      \param      objsoc      Objet société
+     *      \return     string      Texte descripif
+     */
+    function getNumRef($objsoc=0)
+    { 
+      global $db;
+      
+      $prefix='F';
+      $date = strftime("%Y%m", time());
+      $num=0;
+      
+      $sql = "SELECT max(0+substring(facnumber,8)) FROM ".MAIN_DB_PREFIX."facture";
+      $sql .= " WHERE facnumber like '$prefix".$date."%'";
+    
+      if ( $db->query($sql) ) 
+        {
+          $row = $db->fetch_row(0);
+       
+          $num = $row[0];
+        }
+      $num++;
+      return  "$prefix" . $date . $num;
     }
-  $num++;
-  return  "$prefix" . $date . $num;
+    
+    /*!     \brief      Renvoi la description du modele de numérotation
+     *      \return     string      Texte descripif
+     */
+    function getDesc()
+    {
+      return '
+    Système de numérotation mensuel sous la forme F20030715, qui correspond à la 15ème facture du mois de Juillet 2003';
+    }
+
 }
 
 ?>
