@@ -60,6 +60,19 @@ if ($action == 'stcomm') {
     }
   }
 }
+
+
+if ($action == 'delete') {
+  $sql = "DELETE FROM llx_facture_fourn WHERE rowid = $facid;";
+
+  if (! $db->query( $sql) ) {
+    print $db->error();
+  }
+
+  $facid = 0 ;
+}
+
+
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -101,7 +114,7 @@ if ($socid > 0) {
    *
    *
    */
-  print_barre_liste("Liste des factures", $page, $PHP_SELF);
+  print_barre_liste("Liste des factures fournisseurs", $page, $PHP_SELF);
 
   $sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.amount, fac.paye, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid";
   $sql .= " FROM societe as s, llx_facture_fourn as fac ";

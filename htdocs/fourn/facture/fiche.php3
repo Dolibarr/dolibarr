@@ -38,18 +38,6 @@ if ($action == 'payed') {
   $result = $db->query( $sql);
 }
 
-if ($action == 'delete') {
-  $sql = "DELETE FROM llx_facture WHERE rowid = $facid;";
-  if ( $db->query( $sql) ) {
-    $sql = "DELETE FROM llx_fa_pr WHERE fk_facture = $facid;";
-    if (! $db->query( $sql) ) {
-      print $db->error();
-    }
-  } else {
-    print $db->error();
-  }
-  $facid = 0 ;
-}
 
 
 
@@ -282,7 +270,7 @@ if ($action == 'create') {
     print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
   
     if ($obj->statut == 0) {
-      print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
+      print '<td align="center" bgcolor="#e0e0e0" width="25%">[<a href="index.php3?facid='.$facid.'&action=delete">'.translate("Delete").'</a>]</td>';
     } else {
       print "<td align=\"center\" width=\"25%\">-</td>";
     } 
