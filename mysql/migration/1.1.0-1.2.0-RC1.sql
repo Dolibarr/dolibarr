@@ -676,4 +676,39 @@ create table llx_societe_remise
 
 
 
+--
+--
+--
+--
+create table llx_so_gr
+(
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  fk_soc      integer,
+  fk_groupe   integer
+)type=innodb;
+
+create table llx_groupesociete_remise
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_groupe       integer NOT NULL,
+  tms             timestamp,
+  datec	          datetime,                            -- creation date
+  fk_user_author  integer,                             -- utilisateur qui a créé l'info
+  remise          real           default 0,            -- remise systématique pour le client
+  note            text
+
+)type=innodb;
+
+create table llx_groupesociete
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  parent          integer UNIQUE,
+  tms             timestamp,
+  datec	          datetime,                            -- creation date
+  nom             varchar(60),                         -- company name
+  note            text,                                --
+  remise          real           default 0,            -- remise systématique pour le client
+  fk_user_author  integer
+
+)type=innodb;
 
