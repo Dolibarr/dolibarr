@@ -249,6 +249,7 @@ if ( $db->query($sql) )
       print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre"><td colspan="3">Factures impayées</td></tr>';
       $var = True;
+      $total = 0;
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object( $i);
@@ -257,8 +258,10 @@ if ( $db->query($sql) )
 	  print '&nbsp;<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td align="right">'.price($obj->total_ttc).'</td></tr>';
+	  $total += $obj->total_ttc;
 	  $i++;
 	}
+      print '<tr><td colspan="3" align="right">'.price($obj->total_ttc).'</td></tr>';
       print "</table><br>";
     }
   $db->free();
