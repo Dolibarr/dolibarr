@@ -44,7 +44,11 @@ class Project {
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, dateo) ";
       $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, $creatorid, now()) ;";
     
-      if (!$this->db->query($sql) ) 
+      if ($this->db->query($sql) ) 
+	{
+	  return $this->db->last_insert_id();
+	}
+      else
 	{
 	  print '<b>'.$sql.'</b><br>'.$this->db->error();	  
 	}    
