@@ -88,8 +88,6 @@ class mod_facture_deneb extends ModeleNumRefFactures
     
       $num = $num + FACTURE_DENEB_DELTA;
     
-      $y = strftime("%y",time());
-    
       return  $objsoc->prefix_comm . "-" .strftime("%d-%m-%Y", time()) . "-".$num;
     }
 
