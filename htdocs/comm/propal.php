@@ -53,11 +53,23 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-llxHeader();
-
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
+
+if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  if ($user->rights->propale->supprimer ) 
+    {
+      $propal = new Propal($db, 0, $propalid);
+      $propal->delete();
+      $propalid = 0;
+      $brouillon = 1;
+    }
+
+  Header("Location: propal.php");
+}
+
 
 if ($action == 'add') 
 {
@@ -182,32 +194,6 @@ if ($action == 'del_ligne' && $user->rights->propale->creer)
   
 }
 
-if ( $action == 'delete' && $user->rights->propale->supprimer ) 
-{
-  $sql = "DELETE FROM llx_propal WHERE rowid = $propalid;";
-  if ( $db->query($sql) ) 
-    {
-
-      $sql = "DELETE FROM llx_propaldet WHERE fk_propal = $propalid ;";
-      if ( $db->query($sql) ) 
-	{
-	  print "<b><font color=\"red\">Propal supprimée</font></b>";
-	}
-      else
-	{
-	  print $db->error();
-	  print "<p>$sql";
-	} 
-    }
-  else
-    {
-      print $db->error();
-      print "<p>$sql";
-    }
-  $propalid = 0;
-  $brouillon = 1;
-}
-
 if ($valid == 1 && $user->rights->propale->valider)
 {
   $propal = new Propal($db);
@@ -217,6 +203,8 @@ if ($valid == 1 && $user->rights->propale->valider)
   $propal->valid($user);
 }
 
+
+llxHeader();
 
 /******************************************************************************/
 /*                   Fin des  Actions                                         */
@@ -229,6 +217,8 @@ if ($valid == 1 && $user->rights->propale->valider)
  */
 if ($propalid)
 {
+  $html = new Form($db);
+
   $propal = new Propal($db);
   $propal->fetch($propalid);
 
@@ -238,6 +228,15 @@ if ($propalid)
   print "<table width=\"100%\">";
   print "<tr><td><div class=\"titre\">Proposition commerciale : $propal->ref</div></td>";
   print "</table>";
+
+  /*
+   * Confirmation de la suppression de l'adhérent
+   *
+   */
+  if ($action == 'delete')
+    {
+      $html->form_confirm("$PHP_SELF?propalid=$propalid","Supprimer la proposition","Etes-vous sûr de vouloir modifier cette proposition ?","confirm_delete");
+    }
   /*
    *
    */
@@ -444,7 +443,6 @@ if ($propalid)
 	       * Produits génériques
 	       *
 	       */
-	      $html = new Form($db);
 	      $var=!$var;
 	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
 	      print '<input type="hidden" name="action" value="addproduct">';
