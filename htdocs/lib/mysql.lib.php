@@ -109,19 +109,28 @@ class DoliDb {
     return $this->ret;
   }
 
-  Function begin()
+  Function begin($do=1)
   {
-    return $this->query("BEGIN");
+    if ($do)
+      {
+	return $this->query("BEGIN");
+      }
   }
 
-  Function commit()
+  Function commit($do=1)
   {
-    return $this->query("COMMIT");
+    if ($do)
+      {
+	return $this->query("COMMIT");
+      }
   }
 
-  Function rollback()
+  Function rollback($do=1)
   {
-    return $this->query("ROLLBACK");
+    if ($do)
+      {
+	return $this->query("ROLLBACK");
+      }
   }
 
   Function query($query, $limit="", $offset="")
