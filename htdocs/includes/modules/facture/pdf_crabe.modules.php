@@ -128,12 +128,6 @@ Class pdf_crabe {
                 $tab_top = 96;
                 $tab_height = 110;
 
-                  if (defined("FAC_PDF_LOGO"))
-                  {
-                    $pdf->SetXY(10,5);
-                    $pdf->Image(FAC_PDF_LOGO, 10, 5, 0, 24, 'PNG');
-                  }
-
                 $pdf->SetFillColor(220,220,220);
                 $pdf->SetFont('Arial','', 9);
                 $pdf->SetXY (10, $tab_top + 10 );
@@ -498,13 +492,25 @@ Class pdf_crabe {
     */
     function _pagehead(&$pdf, $fac)
     {
+        $pdf->SetTextColor(0,0,60);
+        $pdf->SetFont('Arial','B',13);
 
-        $pdf->SetXY(10,5);
-        if (defined("FAC_PDF_INTITULE"))
+        $pdf->SetXY(10,6);
+
+        if (defined("FAC_PDF_LOGO") && FAC_PDF_LOGO)
         {
-            $pdf->SetTextColor(0,0,60);
-            $pdf->SetFont('Arial','B',13);
-            $pdf->MultiCell(70, 8, FAC_PDF_INTITULE, 0, 'L');
+            if (file_exists(FAC_PDF_LOGO)) {
+                $pdf->Image(FAC_PDF_LOGO, 10, 5, 0, 24, 'PNG');
+            }
+            else {
+                $pdf->SetTextColor(150,0,0);
+                $pdf->SetFont('Arial','B',10);
+                $pdf->MultiCell(80, 6, "Logo file '".FAC_PDF_LOGO."' was not found", 0, 'L');
+            }
+        }
+        else if (defined("FAC_PDF_INTITULE"))
+        {
+            $pdf->MultiCell(80, 6, FAC_PDF_INTITULE, 0, 'L');
         }
 
         $pdf->SetFont('Arial','B',13);
