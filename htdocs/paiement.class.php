@@ -29,9 +29,12 @@ class Paiement
   var $datepaye;
   var $amount;
   var $author;
-  var $paiementid; // numero du paiement dans le cas ou une facture paye +ieur fois
-  var $num_paiement;
+  var $paiementid; 		// Type de paiement. Stocké dans fk_paiement de llx_paiement qui est lié aux types de paiement de llx_c_paiement
+  var $num_paiement;	// Numéro du CHQ, VIR, etc...
   var $note;
+  // fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
+  // fk_paiement dans llx_paiement_facture est le rowid du paiement
+
   /*
    *
    *
