@@ -58,7 +58,7 @@ print_barre_liste("Liste des contacts",$page, $PHP_SELF,"",$sortfield,$sortorder
 
 
 $sql = "SELECT s.idp, s.nom,  st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
-$sql .= "FROM societe as s, socpeople as p, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
+$sql .= "FROM llx_societe as s, llx_socpeople as p, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
 
 if (strlen($stcomm))  // statut commercial
 {

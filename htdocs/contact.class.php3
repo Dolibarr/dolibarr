@@ -51,7 +51,7 @@ class Contact
     {
 
       $sql = "SELECT c.idp, c.idp, c.name, c.firstname";
-      $sql .= " FROM socpeople as c";
+      $sql .= " FROM llx_socpeople as c";
       $sql .= " WHERE c.idp = $id";
       
       $result = $this->db->query($sql);
@@ -81,12 +81,17 @@ class Contact
 	}
     }
 
+  /*
+   *
+   *
+   */
+
   Function update($id)
     {
 
       $this->email = trim($this->email);
 
-      $sql = "UPDATE socpeople set name='$this->name', firstname='$this->firstname', poste='$this->poste', phone='$this->phone',fax='$this->fax',email='$this->email', note='$this->note'";
+      $sql = "UPDATE llx_socpeople set name='$this->name', firstname='$this->firstname', poste='$this->poste', phone='$this->phone',fax='$this->fax',email='$this->email', note='$this->note'";
       $sql .= " WHERE idp=$id";
 
       $result = $this->db->query($sql);

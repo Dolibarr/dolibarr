@@ -125,7 +125,7 @@ if ($socid) {
   print_barre_liste("Liste des actions commerciales effectuées sur " . $societe->nom,$page, $PHP_SELF);
 
   $sql = "SELECT a.id,".$db->pdate("a.datea")." as da, c.libelle, u.code, a.note, u.name, u.firstname ";
-  $sql .= " FROM actioncomm as a, c_actioncomm as c, llx_user as u";
+  $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u";
 $sql .= " WHERE a.fk_soc = $socid AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
  
  if ($type) {
@@ -167,8 +167,8 @@ else
 
   print_barre_liste("Liste des actions commerciales effectuées",$page, $PHP_SELF);
 
-  $sql = "SELECT s.nom as societe, s.idp as socidp,a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact ";
-  $sql .= " FROM actioncomm as a, c_actioncomm as c, societe as s, llx_user as u";
+  $sql = "SELECT s.nom as llx_societe, s.idp as socidp,a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact ";
+  $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_societe as s, llx_user as u";
   $sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
   
   if ($type) {
