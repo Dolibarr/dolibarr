@@ -248,8 +248,6 @@ function MailFile($filename, $shortname, $to)
 			       $from,
 			       $message);
 
-  $mailfile->addr_bcc = TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC;
-
   $mailfile->PrepareFile(array($filename),
 			 array("application/msexcel"),
 			 array($shortname));
