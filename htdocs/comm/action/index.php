@@ -21,12 +21,20 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/comm/action/index.php
+        \ingroup    commercial
+		\brief      Page accueil des actions commerciales
+		\version    $Revision$
+*/
+ 
 require("./pre.inc.php");
 
 require("../../contact.class.php");
-require("../../lib/webcal.class.php");
 require("../../cactioncomm.class.php");
 require("../../actioncomm.class.php");
+
 
 /*
  * Sécurité accés client
@@ -39,73 +47,10 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
-/*
- *
- *
- *
- */
-if ($action=='delete_action')
-{
-  $actioncomm = new ActionComm($db);
-  $actioncomm->delete($actionid);
-}
-/*
- *
- */
-if ($action=='add_action')
-{
-  $contact = new Contact($db);
-  $contact->fetch($contactid);
-
-  $actioncomm = new ActionComm($db);
-
-  if ($actionid == 5)
-    {
-      $actioncomm->date = $db->idate(mktime($heurehour,$heuremin,0,$remonth,$reday,$reyear));
-    }
-  else
-    {
-    $actioncomm->date = $date;
-    }
-  $actioncomm->type = $actionid;
-  $actioncomm->contact = $contactid;
-  $actioncomm->societe = $socid;
-  $actioncomm->note = $note;
-  $actioncomm->add($user);
-
-  $societe = new Societe($db);
-  $societe->fetch($socid);
-
-  $todo = new TodoComm($db);
-  $todo->date = mktime(12,0,0,$remonth, $reday, $reyear);
-  $todo->libelle = $todo_label;
-  $todo->societe = $societe->id;
-  $todo->contact = $contactid;
-
-  $todo->note = $todo_note;
-
-  $todo->add($user);
-
-  $webcal = new Webcal();
-
-  $webcal->heure = $heurehour . $heuremin . '00';
-  $webcal->duree = ($dureehour * 60) + $dureemin;
-
-  if ($actionid == 5) {
-    $libelle = "Rendez-vous avec ".$contact->fullname;
-    $libelle .= "\n" . $todo->libelle;
-  } else {
-    $libelle = $todo->libelle;
-  }
-
-
-  $webcal->add($user, $todo->date, $societe->nom, $libelle);
-  
-}
 
 /*
  *
- *  Liste
+ *  Affichage liste des actions
  *
  */
 
@@ -250,7 +195,7 @@ if ( $db->query($sql) )
     }
   else
     {
-      print $db->error() . ' ' . $sql ;
+      dolibarr_print_error($db);
     }
 
 
