@@ -69,7 +69,7 @@ if ($id)
       print "<tr>";
       print '<td width="20%">Référence</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
       print '<td>Statistiques</td></tr>';
-      print "<td>Libellé</td><td>$product->label</td>";
+      print "<td>Libellé</td><td>$product->libelle</td>";
       print '<td valign="top" rowspan="2">';
       print "Propositions commerciales : ".$product->count_propale();
       print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
