@@ -376,6 +376,30 @@ create table llx_propal_model_pdf
   description text
 );
 
+create table llx_entrepot
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  datec           datetime,
+  tms             timestamp,
+  label           varchar(255),
+  description     text,
+  fk_user_author  integer
+
+) type=ISAM;
+
+
+create table llx_entrepot
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  datec           datetime,
+  tms             timestamp,
+  label           varchar(255),
+  description     text,
+  fk_user_author  integer
+
+) type=INNODB;
+
+
 create table llx_user
 (
   rowid         integer AUTO_INCREMENT PRIMARY KEY,
@@ -740,9 +764,12 @@ create table llx_facturedet
   fk_facture      integer NOT NULL,
   fk_product      integer,
   description     text,
-  price           real default 0,
-  qty             smallint,
-  tva_taux        real default 19.6
+  tva_taux       real default 19.6, -- taux tva
+  qty		 real,              -- quantité
+  remise_percent real default 0,    -- pourcentage de remise
+  remise         real default 0,    -- montant de la remise
+  subprice       real,              -- prix avant remise
+  price          real               -- prix final
 );
 
 create table llx_paiement
@@ -831,13 +858,16 @@ create table llx_ventes
 
 create table llx_propaldet
 (
-  rowid         integer AUTO_INCREMENT PRIMARY KEY,
-  fk_propal     integer,
-  fk_product    integer,
-  description   text,
-  qty		smallint,
-  price         real,
-  tva_tx        real default 19.6
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  fk_propal      integer,
+  fk_product     integer,
+  description    text,
+  tva_tx         real default 19.6, -- taux tva
+  qty		 real,              -- quantité
+  remise_percent real default 0,    -- pourcentage de remise
+  remise         real default 0,    -- montant de la remise
+  subprice       real,              -- prix avant remise
+  price          real               -- prix final
 );
 
 create table llx_don_projet
@@ -849,6 +879,50 @@ create table llx_don_projet
   fk_user_author  integer NOT NULL,
   note            text
 );
+
+create table llx_stock_mouvement
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  tms             timestamp,
+  datem           datetime,
+  fk_product      integer NOT NULL,
+  fk_stock        integer NOT NULL,
+  value           integer,
+  type_mouvement  smallint,
+  fk_user_author  integer,
+
+  key(fk_product),
+  key(fk_stock)
+)
+
+
+create table llx_product_stock
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  tms             timestamp,
+  fk_product      integer NOT NULL,
+  fk_stock        integer NOT NULL,
+  value           integer,
+
+  key(fk_product),
+  key(fk_stock)
+)
+
+
+create table llx_product_fournisseur
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  datec           datetime,
+  tms             timestamp,
+  fk_product      integer,
+  fk_soc          integer,
+  ref_fourn       varchar(30),
+  fk_user_author  integer,
+
+  key(fk_product),
+  key(fk_soc)
+);
+
 
 create table llx_cotisation
 (
