@@ -47,7 +47,7 @@ if ($HTTP_POST_VARS["action"] == 'cotisation')
   $adh->id = $rowid;
   $adh->fetch($rowid);
 
-  if ($cotisation > 0)
+  if ($cotisation >= 0)
     {     
       // rajout du nouveau cotisant dans les listes qui vont bien
       //      if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT!='' && $adh->datefin == "0000-00-00 00:00:00"){
