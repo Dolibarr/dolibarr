@@ -53,7 +53,7 @@ if ($_GET["action"] == 'fastappro')
 {
   $product = new Product($db);
   $product->fetch($_GET["id"]);
-  $result = $product->fastappro();
+  $result = $product->fastappro($user);
   Header("Location: fiche.php?id=".$_GET["id"]);
 }
 
