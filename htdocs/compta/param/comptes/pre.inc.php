@@ -41,11 +41,9 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));
 
-
   $menu->add(DOL_URL_ROOT."/compta/param/comptes/","Comptes généraux");
   $menu->add_submenu(DOL_URL_ROOT."/compta/param/comptes/liste.php","Liste");
   $menu->add_submenu(DOL_URL_ROOT."/compta/param/comptes/fiche.php?action=create","Nouveau");
-
 
   left_menu($menu->liste, $help_url);
 }
