@@ -29,3 +29,5 @@ ErrorBillNotFound=Bill does not exists
 BillFrom=From
 BillTo=To
 AmountInCurrency=Amount in
+ActionsOnBill=Actions on bill
+NewBill=New bill

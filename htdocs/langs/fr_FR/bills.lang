@@ -30,3 +30,4 @@ BillFrom=Émetteur
 BillTo=Adressé à
 AmountInCurrency=Montants exprimés en
 ActionsOnBill=Actions sur la facture
+NewBill=Nouvelle facture
