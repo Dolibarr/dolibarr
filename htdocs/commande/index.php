@@ -77,7 +77,7 @@ if ( $db->query($sql) )
 print '</td><td valign="top" width="70%">';
 
 /*
- * Commandes à traiter
+ * Dernières commandes
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 1";
@@ -85,6 +85,7 @@ if ($socidp)
 {
   $sql .= " AND c.fk_soc = $socidp";
 }
+$sql .= " ORDER BY c.rowid DESC";
 
 if ( $db->query($sql) ) 
 {
@@ -94,7 +95,39 @@ if ( $db->query($sql) )
       $i = 0;
       print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="2">'.translate("Commandes à traiter").'</td></tr>';
+      print '<td colspan="2">Commandes à traiter</td></tr>';
+      
+      while ($i < $num)
+	{
+	  $var=!$var;
+	  $obj = $db->fetch_object($i);
+	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	  $i++;
+	}
+      print "</table><br>";
+    }
+}
+/*
+ * Dernières commandes
+ */
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
+$sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 2 ";
+if ($socidp)
+{
+  $sql .= " AND c.fk_soc = $socidp";
+}
+$sql .= " ORDER BY c.rowid DESC";
+$sql .= $db->plimit(5, 0);
+if ( $db->query($sql) ) 
+{
+  $num = $db->num_rows();
+  if ($num)
+    {
+      $i = 0;
+      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<tr class="liste_titre">';
+      print '<td colspan="2">5 dernières commandes</td></tr>';
       
       while ($i < $num)
 	{
@@ -111,7 +144,7 @@ if ( $db->query($sql) )
  * Commandes à traiter
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
-$sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut > 1 ";
+$sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut > 2 ";
 if ($socidp)
 {
   $sql .= " AND c.fk_soc = $socidp";
