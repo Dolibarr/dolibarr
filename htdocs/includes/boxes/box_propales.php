@@ -21,7 +21,7 @@
  */
 
 $info_box_head = array();
-$info_box_head[] = array('text' => "Factures Impayées");
+$info_box_head[] = array('text' => "Propales");
 
 $info_box_contents = array();
 $info_box_contents[0] = array('align' => 'center',
