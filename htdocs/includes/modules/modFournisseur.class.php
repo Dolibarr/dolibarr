@@ -99,31 +99,43 @@ class modFournisseur extends DolibarrModules
     $this->rights[2][1] = 'Lire les commandes fournisseur';
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;
+    $this->rights[2][4] = 'commande';
+    $this->rights[2][5] = 'lire';
 
     $this->rights[3][0] = 182;
     $this->rights[3][1] = 'Créer une commande fournisseur';
     $this->rights[3][2] = 'w';
     $this->rights[3][3] = 0;
+    $this->rights[3][4] = 'commande';
+    $this->rights[3][5] = 'creer';
 
     $this->rights[4][0] = 183;
     $this->rights[4][1] = 'Valider une commande fournisseur';
     $this->rights[4][2] = 'w';
     $this->rights[4][3] = 0;
+    $this->rights[4][4] = 'commande';
+    $this->rights[4][5] = 'valider';
 
     $this->rights[5][0] = 184;
     $this->rights[5][1] = 'Approuver les commandes fournisseur';
     $this->rights[5][2] = 'w';
     $this->rights[5][3] = 0;
+    $this->rights[5][4] = 'commande';
+    $this->rights[5][5] = 'approuver';
 
     $this->rights[6][0] = 185;
     $this->rights[6][1] = 'Commander une commande fournisseur';
     $this->rights[6][2] = 'w';
     $this->rights[6][3] = 0;
+    $this->rights[6][4] = 'commande';
+    $this->rights[6][5] = 'commander';
 
     $this->rights[7][0] = 186;
     $this->rights[7][1] = 'Clotûrer les commandes fournisseur';
     $this->rights[7][2] = 'w';
     $this->rights[7][3] = 0;
+    $this->rights[7][4] = 'commande';
+    $this->rights[7][5] = 'cloturer';
 
     $sql = array();
 
