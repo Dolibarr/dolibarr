@@ -69,6 +69,15 @@ td.border {
             border-left: 1px solid #000000;
             }
 
+div.menus { 
+            background: #eeccee; 
+            color: #bb88bb;
+            border-top:    1px dashed #ccccb3;
+            border-right:  1px dashed #ccccb3;
+            border-bottom: 1px dashed #ccccb3;
+            border-left:   1px dashed #ccccb3;
+            }
+
 .menu 
 { 
   background: #ccb3ee; 
