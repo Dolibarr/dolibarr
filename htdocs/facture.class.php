@@ -44,11 +44,11 @@ class Facture
   var $db_table;
   var $propalid;
   var $projetid;
-  /*
-   * Initialisation
+
+  /**
+   * Initialisation de la class
    *
    */
-
   Function Facture($DB, $soc_idp="", $facid="")
     {
       $this->db = $DB ;
@@ -64,12 +64,11 @@ class Facture
       $this->projetid = 0;
       $this->id = $facid;
   }
-  /*
-   *
+  /**
+   * Créé la facture
    *
    *
    */
-
   Function create($user)
     {
       /*
@@ -134,7 +133,7 @@ class Facture
 	      $prod->fetch($this->products[$i]);
 
 	      $sql = "INSERT INTO llx_facturedet (fk_facture, fk_product, qty, price, tva_taux, description) VALUES ";
-	      $sql .= " ($this->id,".$this->products[$i].",".$this->products_qty[$i].",$prod->price,$prod->tva_tx,'".addslashes($prod->label)."');";
+	      $sql .= " ($this->id,".$this->products[$i].",".$this->products_qty[$i].",$prod->price,$prod->tva_tx,'".addslashes($prod->libelle)."');";
 	      
 	      if (! $this->db->query($sql) )
 		{
@@ -151,8 +150,8 @@ class Facture
 	}
     }
 
-  /*
-   *
+  /**
+   * Recupére l'objet facture
    *
    *
    */
@@ -248,8 +247,8 @@ class Facture
 	  return -3;
 	}    
     }
-  /*
-   *
+  /**
+   * Recupére l'objet client lié à la facture
    *
    */
   Function fetch_client()
@@ -259,8 +258,8 @@ class Facture
       $this->client = $client;
 	
     }
-  /*
-   *
+  /**
+   * Valide la facture
    *
    *
    */
@@ -279,14 +278,13 @@ class Facture
 	}
     }
 
-  /*
-   * Suppression de la facture
+  /**
+   * Supprime la facture
    *
    */
   Function delete($rowid)
     {
-
-      $sql = "DELETE FROM llx_facture WHERE rowid = $rowid AND fk_statut = 0;";
+      $sql = "DELETE FROM llx_facture_tva_sum WHERE fk_facture = $rowid;";
 
       if ( $this->db->query( $sql) )
 	{
@@ -301,31 +299,41 @@ class Facture
 
 		  if ($this->db->query( $sql) )
 		    {
-		      return 1;
+		      $sql = "DELETE FROM llx_facture WHERE rowid = $rowid AND fk_statut = 0;";
+
+		      if ($this->db->query( $sql) )
+			{
+			  return 1;
+			}
+		      else
+			{
+			  print "Err : ".$this->db->error();
+			  return -1;
+			}
 		    }
 		  else
 		    {
 		      print "Err : ".$this->db->error();
-		      return 0;
+		      return -2;
 		    }
 		}
 	      else
 		{
 		  print "Err : ".$this->db->error();
-		  return 0;
+		  return -3;
 		}
 	    }
 	}
       else
 	{
 	  print "Err : ".$this->db->error();
-	  return 0;
+	  return -4;
 	}
 
 
     }
-  /*
-   *
+  /**
+   * Tag la facture comme payée
    *
    *
    */
@@ -334,8 +342,8 @@ class Facture
       $sql = "UPDATE llx_facture set paye = 1 WHERE rowid = $rowid ;";
       $return = $this->db->query( $sql);
     }
-  /*
-   *
+  /**
+   * Valide la facture
    *
    */
   Function set_valid($rowid, $user)
@@ -389,8 +397,8 @@ class Facture
 	  return $result;
 	}
     }
-  /*
-   *
+  /**
+   * Ajoute un produit dans la facture
    *
    */
   Function add_product($idproduct, $qty)
@@ -406,41 +414,55 @@ class Facture
 	  $this->products_qty[$i] = $qty;
 	}
     }
-  /*
-   *
+  /**
+   * Supprime une ligne de la facture
    *
    */
   Function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL')
     {
       if ($this->brouillon)
 	{
-	  $pu = ereg_replace(",",".",$pu);
+	  if (strlen(trim($qty))==0)
+	    {
+	      $qty=1;
+	    }
+
+	  $pu = round(ereg_replace(",",".",$pu), 2);
 	  $sql = "INSERT INTO llx_facturedet (fk_facture,description,price,qty,tva_taux, fk_product)";
 	  $sql .= " VALUES ($facid, '$desc', $pu, $qty, $txtva, $fk_product) ;";
 
 	  if ( $this->db->query( $sql) )
 	    {
 	      $this->updateprice($facid);
+	      return 1;
+	    }
+	  else
+	    {
+	      return -1;
 	    }
 	}
     }
-  /*
-   *
+  /**
+   * Mets à jour une ligne de facture
    *
    */
   Function updateline($rowid, $desc, $pu, $qty)
     {
       if ($this->brouillon)
 	{
-	  $pu = ereg_replace(",",".",$pu);
+	  if (strlen(trim($qty))==0)
+	    {
+	      $qty=1;
+	    }
+	  $pu = round(ereg_replace(",",".",$pu), 2);
 	  $sql = "UPDATE llx_facturedet set description='$desc',price=$pu,qty=$qty WHERE rowid = $rowid ;";
 	  $result = $this->db->query( $sql);
 
 	  $this->updateprice($this->id);
 	}
     }
-  /*
-   *
+  /**
+   * Supprime une ligne
    *
    */
   Function deleteline($rowid)
@@ -453,13 +475,13 @@ class Facture
 	  $this->updateprice($this->id);
 	}
     }
-  /*
-   *
+  /**
+   * Mets à jour les sommes de la facture
    *
    */
   Function updateprice($facid)
     {
-
+      $err=0;
       $sql = "SELECT price, qty, tva_taux FROM llx_facturedet WHERE fk_facture = $facid;";
   
       $result = $this->db->query($sql);
@@ -470,6 +492,7 @@ class Facture
 	  $i = 0;
 	  $total_ht = 0;
 	  $amount = 0;
+	  $tva = array();
 	  $total_tva = 0;
 	  $total_remise = 0;
 	  while ($i < $num)	  
@@ -487,11 +510,11 @@ class Facture
 		  $total_remise = $total_remise + $lremise;
 		}
 
-	      $total_ht = $amount - $total_remise;
+	      $total_ht = $total_ht + $lprice;
 
-	      $ligne_tva = ($lprice * ($obj->tva_tx / 100));
+	      $ligne_tva = ($lprice * ($obj->tva_taux / 100));
 
-	      $total_tva = $total_tva + $ligne_tva;
+	      $tva[$obj->tva_taux] = $tva[$obj->tva_taux] + $ligne_tva;
 	      $i++;
 	    }
 	  $this->db->free();
@@ -499,15 +522,58 @@ class Facture
 	  /*
 	   * Sommes et arrondis
 	   */
+	 
+	  foreach ($tva as $key => $value)
+	    {
+	      $tva[$key] = round($tva[$key], 2);
+	      $total_tva = $total_tva + $tva[$key];
+	    }
 
-	  $this->total_ttc = round($total_ht, 2) + round($total_tva, 2);
+	  $total_ht  = round($total_ht, 2);
+	  $total_tva = round($total_tva, 2);
+
+	  $this->total_ttc = $total_ht + $total_tva;
 	  
+	  /*
+	   *
+	   */
+
 	  $sql = "UPDATE llx_facture SET amount = $amount, remise=$total_remise,  total=$total_ht, tva=$total_tva, total_ttc=$this->total_ttc";
 	  $sql .= " WHERE rowid = $facid ;";
 	  
 	  if ( $this->db->query($sql) )
 	    {
-	      return 1;	  
+	      
+	      $sql = "DELETE FROM llx_facture_tva_sum WHERE fk_facture=".$this->id;
+
+	      if ( $this->db->query($sql) )
+		{
+		  foreach ($tva as $key => $value)
+		    {
+		      $sql = "REPLACE INTO llx_facture_tva_sum SET fk_facture=".$this->id;
+		      $sql .= ", amount = ".$tva[$key];
+		      $sql .= ", tva_tx=".$key;
+		      
+		      if (! $this->db->query($sql) )
+			{
+			  print "$sql<br>";
+			  $err++;
+			}
+		    }
+		}
+	      else
+		{
+		  $err++;
+		}
+
+	      if ($err == 0)
+		{
+		  return 1;	  
+		}
+	      else
+		{
+		  return -3;
+		}
 	    }
 	  else
 	    {
@@ -605,6 +671,32 @@ class Facture
 	    }
 	}      
     }
+  /** 
+   * Renvoie la liste des sommes de tva
+   *
+   */
+  Function getSumTva()
+  {
+    $sql = "SELECT amount, tva_tx FROM llx_facture_tva_sum WHERE fk_facture = ".$this->id;
+    if ($this->db->query($sql))
+      {
+	$num = $this->db->num_rows();
+	$i = 0;
+	while ($i < $num)	  
+	  {
+	    $row = $this->db->fetch_row($i);
+	    $tvs[$row[1]] = $row[0];
+	    $i++;
+	  }
+	
+	return $tvs;
+      }
+    else
+      {
+	return -1;
+      }
+  }
+
   /*
    *
    * Génération du PDF
