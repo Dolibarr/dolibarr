@@ -21,6 +21,18 @@
  *
  */
 
+/*!
+	    \file       htdocs/paiement.class.php
+        \ingroup    facture
+		\brief      Fichier de la classe des paiement de factures clients
+		\version    $Revision$
+*/
+
+
+/*! \class Paiement
+		\brief Classe permettant la gestion des paiements des factures clients
+*/
+
 class Paiement 
 {
   var $id;
@@ -35,18 +47,20 @@ class Paiement
   // fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
   // fk_paiement dans llx_paiement_facture est le rowid du paiement
 
-  /*
-   *
-   *
-   *
+
+  /**
+   *    \brief  Constructeur de la classe
+   *    \param  DB          handler accès base de données
+   *    \param  soc_idp     id societe ("" par defaut)
    */
   function Paiement($DB, $soc_idp="") 
   {
     $this->db = $DB ;
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Recupére l'objet paiement
+   *    \param      id       id du paiement a récupérer
    */
   function fetch($id) 
     {
@@ -65,6 +79,7 @@ class Paiement
 	      $this->id             = $obj->rowid;
 	      $this->date           = $obj->dp;
 	      $this->numero         = $obj->num_paiement;
+
 	      $this->montant        = $obj->amount;
 	      $this->note           = $obj->note;
 	      $this->type_libelle   = $obj->paiement_type;
@@ -79,12 +94,14 @@ class Paiement
 	}
       else
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
 	  return 0;
 	}
     }
-  /*
-   *
+
+  /**
+   *    \brief      Création du paiement en base
+   *    \param      user       object utilisateur qui crée
    *
    */
   function create($user)
@@ -131,7 +148,7 @@ class Paiement
 			$sql .= " VALUES ('".$facid."','". $this->id."','". $amount."')";
 			if (! $this->db->query($sql) )
 			  {
-	            print dolibarr_print_error($this->db);
+	            dolibarr_print_error($this->db);
 			    $sql_err++;
 			  }
 		      }
@@ -140,7 +157,7 @@ class Paiement
 	      }
 	    else
 	      {
-	    print dolibarr_print_error($this->db);
+	    dolibarr_print_error($this->db);
 		$sql_err++;
 	      }
 	  }
@@ -158,6 +175,7 @@ class Paiement
 
       }
   }
+
   /*
    *
    *
@@ -203,13 +221,13 @@ class Paiement
       }
     else
       {
-	print $this->db->error() ."<br>".$sql;
+    dolibarr_print_error($this->db);
 	return 0;
       }    
   }
   
   /*
-   * Mise a jour du lien entre le paiement et la ligne dans llx_bank générée
+   * Mise a jour du lien entre le paiement et la ligne générée dans llx_bank
    *
    */
   function update_fk_bank($id_bank)
@@ -221,14 +239,14 @@ class Paiement
     	return 1;
         }
     else {
-	    print $this->db->error() ."<br>".$sql;
+ 	    dolibarr_print_error($this->db);
     	return 0;
         }
     }
 
   /*
-   * Information sur l'objet
-   *
+   *    \brief      Information sur l'objet
+   *    \param      id      id du paiement dont il faut afficher les infos
    */
   function info($id) 
     {
@@ -266,7 +284,7 @@ class Paiement
 	}
       else
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
 	}
     }
 }
