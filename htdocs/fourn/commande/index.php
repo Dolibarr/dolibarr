@@ -53,16 +53,12 @@ $sql .= " ,cf.rowid,cf.ref";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s ";
 $sql .= " , ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 $sql .= " WHERE cf.fk_soc = s.idp ";
-
-if ($socidp) {
-  $sql .= " AND s.idp=".$socidp;
-}
 $sql .= " GROUP BY cf.fk_statut";
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
   
   print '<table class="liste" width="100%">';
@@ -72,7 +68,7 @@ if ($result)
 
   while ($i < $num)
     {
-      $row = $db->fetch_row();
+      $row = $db->fetch_row($resql);
       $var=!$var;
 
       print "<tr $bc[$var]>";
@@ -84,14 +80,50 @@ if ($result)
       $i++;
     }
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else 
 {
   dolibarr_print_error($db);
 }
 
-print '</td><td>&nbsp;</td>';
+print '</td><td witdh="70%" valign="top">';
+
+$sql = "SELECT u.name, u.firstname";
+$sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+$sql .= " , ".MAIN_DB_PREFIX."user_rights as ur";
+$sql .= " WHERE u.rowid = ur.fk_user";
+$sql .= " AND ur.fk_id = 184";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+  
+  print '<table class="liste" width="100%">';
+  print '<tr class="liste_titre"><td>Personnes habilitées à approuver les commandes</td>';
+  print "</tr>\n";
+  $var=True;
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);
+      $var=!$var;
+
+      print "<tr $bc[$var]>";
+      print '<td>'.$row[1].' '.$row[0].'</td>';
+      print "</tr>\n";
+      $i++;
+    }
+  print "</table>";
+  $db->free($resql);
+}
+else 
+{
+  dolibarr_print_error($db);
+}
+
 
 print '</td></tr></table>';
 
