@@ -12,7 +12,7 @@
     <p>
       La FSF France s'engage à utiliser vos informations personnelles
       exclusivement pour le traitement de votre don. Vous ne
-      receverez aucun email de la la part de la FSF France autre que
+      receverez aucun email de la part de la FSF France autre que
       pour la gestion de votre don.
     </p>
 
@@ -188,7 +188,7 @@
       <td class="valeur">
 	<xsl:apply-templates select="@*|node()"/>
 	<div class="commentaire">
-	  Acceptez-vous vos noms et prénoms ou le nom de votre société soient affichés dans la liste des <a href="donateurs.php">donateurs</a> ?<br />
+	  Acceptez-vous que vos noms et prénoms ou le nom de votre société soient affichés dans la liste des <a href="donateurs.php">donateurs</a> ?<br />
 	  Do you allow us to list your name, firstname or company name on the donations list ?
 	</div>
       </td>

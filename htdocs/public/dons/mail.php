@@ -12,7 +12,7 @@ Nom: $don->nom
 Montant: $don->amount
 Au plus tard le: $date_limite
 
-L'initiative EUCD.INFO[1]  a pour objet de  préserver l'intérêt public
+L'initiative EUCD.INFO[1] a pour  objet de préserver l'intérêt général
 menacé  par  la   transposition  de  la  directive  du   22  mai  2001
 (EUCD)[2]. Pour y parvenir elle entend:
 
@@ -20,7 +20,7 @@ menacé  par  la   transposition  de  la  directive  du   22  mai  2001
     * Le promouvoir auprès des personnes responsables.
     * Entrer dans le cercle de consultation.
 
-Votre  contribution  financière  servira  principalement à  payer  des
+Votre contribution  financière servira principalement  à rémunérer des
 juristes dont les tâches seront d'analyser la situation et de proposer
 un avant-projet  de loi transposant  la directive dans le  respect des
 droits des utilisateurs et du public.
