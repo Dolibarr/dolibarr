@@ -288,6 +288,22 @@ class User
 		    $this->rights->commande->supprimer = 1;
 		}
 
+	      if ($module == 'expedition' or $module == '')
+		{
+
+		  if ($obj->fk_id == 81)
+		    $this->rights->expedition->lire = 1;
+			
+		  if ($obj->fk_id == 82)
+		    $this->rights->expedition->creer = 1;
+						
+		  if ($obj->fk_id == 84)
+		    $this->rights->expedition->valider = 1;
+
+		  if ($obj->fk_id == 89)
+		    $this->rights->expedition->supprimer = 1;
+		}
+
 	      if ($module == 'adherent' or $module == '')
 		{
 
