@@ -332,7 +332,7 @@ else
 	   * Lignes
 	   *
 	   */	  
-	  print "<p><form action=\"$fiche.php?facid=$fac->id&amp;action=add_ligne\" method=\"post\">";
+	  print "<p><form action=\"fiche.php?facid=$fac->id&amp;action=add_ligne\" method=\"post\">";
 	  print '<table class="noborder" cellspacing="0" cellpadding="2" width="100%">';
 	  print '<tr class="liste_titre"><td>Libellé</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Total HT</td>';
 	  print '<td align="center">Taux TVA</td>';
