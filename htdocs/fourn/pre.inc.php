@@ -27,7 +27,7 @@
 */
 
 require("../main.inc.php");
-
+$user->getrights('fournisseur');
 
 function llxHeader($head = "", $title="", $addons='') {
   global $user, $conf, $langs;
@@ -75,6 +75,7 @@ function llxHeader($head = "", $title="", $addons='') {
       $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
     }
   
+
   if ($conf->commande->enabled)
   {
       $langs->load("orders");
