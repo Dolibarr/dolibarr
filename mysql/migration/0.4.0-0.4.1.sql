@@ -30,3 +30,11 @@ insert into llx_rights_def values (21,'Lire les propositions commerciales','prop
 insert into llx_rights_def values (22,'Créer modifier les propositions commerciales','propale','w');
 insert into llx_rights_def values (23,'Modifier les propositions commerciales d\'autrui','propale','m');
 insert into llx_rights_def values (24,'Supprimer les propositions commerciales','propale','d');
+
+create table llx_user_rights
+(
+  fk_user       integer NOT NULL,
+  fk_id         integer NOT NULL,
+  UNIQUE(fk_user,fk_id)
+);
+
