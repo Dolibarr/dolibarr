@@ -218,7 +218,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
       $i = 0;
       while ($i < $num)
 	{
-	  $obj = $db->fetch_object($i);
+	  $obj = $db->fetch_object();
 	  print '<option value="'.$obj->idp;
 
 	  if ($_GET["socid"] == $obj->idp)
@@ -464,7 +464,7 @@ else
 	      $var=True;
 	      while ($i < $num)
 		{
-		  $objp = $db->fetch_object( $i);
+		  $objp = $db->fetch_object();
 		  $var=!$var;
 		  print "<tr $bc[$var]>";
 		  print "<td>".strftime("%d %B %Y",$objp->dp)."</TD>\n";

@@ -56,7 +56,7 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object();
       $var=!$var;
       print "<TR $bc[$var]>";
       

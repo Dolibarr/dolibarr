@@ -125,7 +125,7 @@ if ( $societe->fetch($socid) )
 	}
       while ($i < $num && $i < 5)
 	{
-	  $obj = $db->fetch_object( $i);
+	  $obj = $db->fetch_object();
       $var=!$var;
       
 	  print "<tr $bc[$var]>";
@@ -182,7 +182,7 @@ if ( $societe->fetch($socid) )
   $var=1;
   while ($i < $num)
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object();
       $var = !$var;
 
       print "<tr $bc[$var]>";

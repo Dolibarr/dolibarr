@@ -84,7 +84,7 @@ if ($action == 'create')
       $num = $db->num_rows();
       if ($num)
 	{
-	  $obj = $db->fetch_object( 0);
+	  $obj = $db->fetch_object($result);
 
 	  $total = $obj->total_ttc;
 
@@ -136,7 +136,7 @@ if ($action == 'create')
 	  $i = 0; 
 	  while ($i < $num)
 	    {
-	      $objopt = $db->fetch_object($i);
+	      $objopt = $db->fetch_object();
 	      print "<option value=\"$objopt->id\">$objopt->libelle</option>\n";
 	      $i++;
 	    }
@@ -158,7 +158,7 @@ if ($action == 'create')
 	  $i = 0; 
 	  while ($i < $num)
 	    {
-	      $objopt = $db->fetch_object( $i);
+	      $objopt = $db->fetch_object();
 	      print '<option value="'.$objopt->rowid.'"';
 	      if (defined("FACTURE_RIB_NUMBER") && FACTURE_RIB_NUMBER == $objopt->rowid)
 		{
@@ -223,7 +223,7 @@ if ($action == '') {
     
       while ($i < min($num,$limit))
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object($result);
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  print "<td><a href=\"fiche.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
@@ -238,7 +238,7 @@ if ($action == '') {
     }
   else
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
 
 }

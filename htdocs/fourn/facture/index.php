@@ -68,7 +68,7 @@ if ($mode == 'search')
     {
       if ( $db->num_rows() == 1)
 	{
-	  $obj = $db->fetch_object(0);
+	  $obj = $db->fetch_object();
 	  $socid = $obj->idp;
 	}
       $db->free();
@@ -148,7 +148,7 @@ if ($result)
   $var=True;
   while ($i < min($num,$limit))
     {
-      $obj = $db->fetch_object($i);      
+      $obj = $db->fetch_object();      
       $var=!$var;
       
       print "<tr $bc[$var]>";

@@ -90,13 +90,13 @@ if ($socid > 0) {
   $result = $db->query($sql);
 
   if ($result) {
-    $objsoc = $db->fetch_object( 0);
+    $objsoc = $db->fetch_object($result);
 
     /*
      *
      *
      */
-    print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"3\">\n";
+    print "<table width=\"100%\" border=\"0\">\n";
     print "<tr><td><div class=\"titre\">Contacts pour la société : <a href=\"fiche.php?socid=$objsoc->idp\">$objsoc->nom</a></div></td>";
     print "<td align=\"center\">[<a href=\"people.php?socid=$socid&action=addcontact\">Ajouter un contact</a>]</td>";
     print '</td></tr></table>';
@@ -148,7 +148,7 @@ if ($socid > 0) {
 
   while ($i < $num)
     {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object();
       $var != $var;
       print "<tr $bc[$var]>";
 
@@ -192,7 +192,7 @@ if ($socid > 0) {
     $result = $db->query($sql);
     $num = $db->num_rows();
     if ( $num >0 ) {
-      $obj = $db->fetch_object( 0);
+      $obj = $db->fetch_object();
     }
   
     print "<form method=\"post\" action=\"people.php?socid=$socid\">";
@@ -236,7 +236,7 @@ if ($socid > 0) {
   if ( $db->query($sql) ) {
     $i = 0 ; $num = $db->num_rows(); $tag = True;
     while ($i < $num) {
-      $obj = $db->fetch_object( $i);
+      $obj = $db->fetch_object();
       if ($tag) {
 	print "<tr bgcolor=\"e0e0e0\">";
       } else {

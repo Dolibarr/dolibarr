@@ -20,8 +20,12 @@
  * $Source$
  *
  */
+
 require("./pre.inc.php");
 require("../contact.class.php");
+
+$langs->load("companies");
+
 llxHeader();
 
 /*
@@ -84,7 +88,7 @@ if ($mode == 'search') {
       
   if ( $db->query($sql) ) {
     if ( $db->num_rows() == 1) {
-      $obj = $db->fetch_object(0);
+      $obj = $db->fetch_object();
       $socid = $obj->idp;
     }
     $db->free();
@@ -153,16 +157,16 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td valign="center">';
-  print_liste_field_titre("Société","index.php","s.nom");
-  print "</td><td>Ville</td>";
+  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom");
+  print '</td><td>'.$langs->trans("Town").'</td>';
   print "</tr>\n";
   $var=True;
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($i);	
+      $obj = $db->fetch_object();	
       $var=!$var;
 
       print "<tr $bc[$var]>";
@@ -177,7 +181,7 @@ if ($result)
 }
 else 
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 $db->close();
