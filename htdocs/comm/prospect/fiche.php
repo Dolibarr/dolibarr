@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/comm/prospect/fiche.php
         \ingroup    prospect
 		\brief      Page de la fiche prospect
@@ -229,12 +229,12 @@ if ($socid > 0)
 
     if ($conf->propal->enabled && defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
       {
-	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$societe->id.'&amp;action=create">Créer une proposition</a>';
+	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$societe->id.'&amp;action=create">'.$langs->trans("AddPropal").'</a>';
       }
 
     if ($conf->projet->enabled && $user->rights->projet->creer)
       {
-	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a>';
+	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$socid.'&action=create">'.$langs->trans("AddProject").'</a>';
       }
     print '</div>';
 
