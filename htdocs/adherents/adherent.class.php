@@ -350,9 +350,9 @@ class Adherent
 
       if (sizeof($this->array_options) > 0 )
 	{
-	  $sql_del = "delete from ".MAIN_DB_PREFIX."adherent_options where adhid = $this->id;";
+	  $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = $this->id;";
 		$this->db->query($sql_del);
-		$sql = "insert into ".MAIN_DB_PREFIX."adherent_options (adhid) VALUES ($this->id);";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid) VALUES ($this->id);";
 	  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options SET adhid = $this->id";
 	  foreach($this->array_options as $key => $value)
 	    {

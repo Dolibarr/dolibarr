@@ -1,6 +1,8 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,9 +62,9 @@ function llxHeader($head = "", $urlp = "") {
     $menu->add("pear.php", $langs->trans("Pear"));
     $menu->add_submenu("pear_packages.php", $langs->trans("PearPackages"));
     
-    $menu->add("mysql.php", $langs->trans("Database"));
-    $menu->add_submenu("mysql-tables.php", $langs->trans("Tables"));
-    $menu->add_submenu("mysql-tables-contraintes.php", $langs->trans("Constraints"));
+    $menu->add("database.php", $langs->trans("Database"));
+    $menu->add_submenu("database-tables.php", $langs->trans("Tables"));
+    $menu->add_submenu("database-tables-contraintes.php", $langs->trans("Constraints"));
     
     left_menu($menu->liste);
 }

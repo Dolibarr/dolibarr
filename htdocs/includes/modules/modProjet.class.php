@@ -1,6 +1,8 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,11 +81,11 @@ class modProjet extends DolibarrModules
      */
 		 $this->remove();
     $sql = array(
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (40,'Tous les droits sur les projets','projet','a',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (41,'Lire les projets','projet','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (42,'Créer modifier les projets','projet','w',0);",
-		 //"insert into ".MAIN_DB_PREFIX."rights_def values (43,'Modifier les projets d\'autrui','projet','m',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (44,'Supprimer les projets','projet','d',0);"
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (40,'Tous les droits sur les projets','projet','a',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (41,'Lire les projets','projet','r',1);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (42,'Créer modifier les projets','projet','w',0);",
+		 //"INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (43,'Modifier les projets d\'autrui','projet','m',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (44,'Supprimer les projets','projet','d',0);"
 		 );
     
     return $this->_init($sql);

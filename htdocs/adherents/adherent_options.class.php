@@ -302,11 +302,11 @@ class AdherentOptions
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
       $escaped_label=mysql_escape_string($label);
-			$sql_del = "delete from ".MAIN_DB_PREFIX."adherent_options_label where name =
+			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options_label WHERE name =
 			'$attrname';";
 			$this->db->query($sql_del);
-			$sql = "insert into ".MAIN_DB_PREFIX."adherent_options_label (name,label) 
-							values ('$attrname','$escaped_label');";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label (name,label) 
+							VALUES ('$attrname','$escaped_label');";
       //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options_label SET name='$attrname',label='$escaped_label'";
 
       if ( $this->db->query( $sql) )

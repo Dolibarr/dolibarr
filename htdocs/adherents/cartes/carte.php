@@ -110,7 +110,7 @@ if ($result)
   $pdf->Output();
 }else{
   llxHeader();
-  print "Erreur mysql";
+  print "Erreur de la base de données";
   llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 }
 ?> 

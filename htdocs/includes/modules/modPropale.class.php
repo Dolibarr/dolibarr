@@ -1,6 +1,8 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,18 +99,18 @@ class modPropale extends DolibarrModules
      */
 		 $this->remove();
     $sql = array(
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (20,'Tous les droits sur les propositions commerciales','propale','a',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (21,'Lire les propositions commerciales','propale','r',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (22,'Créer modifier les propositions commerciales','propale','w',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (24,'Valider les propositions commerciales','propale','d',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (25,'Envoyer les propositions commerciales aux clients','propale','d',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (26,'Clôturer les propositions commerciales','propale','d',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (27,'Supprimer les propositions commerciales','propale','d',0);",
-		 "delete from ".MAIN_DB_PREFIX."propal_model_pdf where nom = '".$this->const[0][2]."'",
-		 "insert INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) 
-		 values('".$this->const[0][2]."');",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (20,'Tous les droits sur les propositions commerciales','propale','a',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (21,'Lire les propositions commerciales','propale','r',1);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (22,'Créer modifier les propositions commerciales','propale','w',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (24,'Valider les propositions commerciales','propale','d',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (25,'Envoyer les propositions commerciales aux clients','propale','d',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (26,'Clôturer les propositions commerciales','propale','d',0);",
+		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (27,'Supprimer les propositions commerciales','propale','d',0);",
+		 "DELETE FROM ".MAIN_DB_PREFIX."propal_model_pdf WHERE nom = '".$this->const[0][2]."'",
+		 "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) 
+		 VALUES('".$this->const[0][2]."');",
 		 );
-    //"insert into ".MAIN_DB_PREFIX."rights_def values (23,'Modifier les propositions commerciales d\'autrui','propale','m',0);",
+    //"INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (23,'Modifier les propositions commerciales d\'autrui','propale','m',0);",
     
     return $this->_init($sql);
 
