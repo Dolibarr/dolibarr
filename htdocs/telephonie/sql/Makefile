@@ -26,5 +26,5 @@ TABLES=$(shell find . -name "*sql")
 
 
 sql.all: $(TABLES) 
-	find . -name "*sql" | xargs cat | grep -v ^-- | cut -d "-" -f 1 > sql.all
+	find . -name "*sql" |grep -v "key.sql" | xargs cat | grep -v ^-- | cut -d "-" -f 1 > sql.alltable
 
