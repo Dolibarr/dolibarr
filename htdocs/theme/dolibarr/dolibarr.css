@@ -93,4 +93,7 @@ TR.impair
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none }
 
-
+td.valeur
+{ 
+  font-weight: bold;
+  }
