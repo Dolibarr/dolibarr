@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/**	        \file       htdocs/commande/liste.php
+	        \ingroup    commande
+	        \brief      Page liste des commandes
+	        \version    $Revision$
+*/
+
 
 require("./pre.inc.php");
 
@@ -106,8 +113,8 @@ if ( $db->query($sql) )
       
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_file()." $objp->ref</a></td>\n";
-	  print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
+	  print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objp->ref."</a></td>\n";
+	  print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".$objp->nom."</a></td>\n";
 	  
 	  $now = time();
 	  $lim = 3600 * 24 * 15 ;
@@ -129,7 +136,7 @@ if ( $db->query($sql) )
 	  print " <a href=\"liste.php?year=$y&amp;month=$m\">";
 	  print strftime("%B",$objp->date_commande)."</a>\n";
 	  print " <a href=\"liste.php?year=$y\">";
-	  print strftime("%Y",$objp->date_commande)."</a></TD>\n";      
+	  print strftime("%Y",$objp->date_commande)."</a></td>\n";      
 
 	  print '<td align="center">'.$generic_commande->statuts[$objp->fk_statut].'</td>';
 	  print "</tr>\n";
@@ -142,11 +149,11 @@ if ( $db->query($sql) )
             
       print "</table>";
       $db->free();
-    }
-  else
-    {
-      print dolibarr_print_error($db);
-    }
+}
+else
+{
+    print dolibarr_print_error($db);
+}
 
 $db->close();
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
