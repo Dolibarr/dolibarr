@@ -109,7 +109,7 @@ if ($_GET["action"] == 'setmod')
  *
  */
 
-print_titre("Configuration du module Propositions Commerciales");
+print_titre($langs->trans("PropalSetup"));
 
 print "<br>";
 
@@ -284,21 +284,20 @@ print "</table>\n<br>";
  */
 print_titre("Formulaire de création");
 
-print "<form method=\"post\" action=\"propale.php\">
-<input type=\"hidden\" name=\"action\" value=\"nbprod\">
-<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">
-<tr class=\"liste_titre\">";
+print "<form method=\"post\" action=\"propale.php\">";
+print "<input type=\"hidden\" name=\"action\" value=\"nbprod\">";
+print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"0\" width=\"100%\">";
+print "<tr class=\"liste_titre\">";
 print "  <td>".$langs->trans("Name")."</td>\n";
 print "  <td align=\"left\">".$langs->trans("Value")."</td>\n";
 print "  <td>&nbsp;</td>\n";
-print "</tr>
-<tr class=\"pair\">
-  <td>Nombre de ligne produits</td>
-  <td align=\"left\"><input size=\"3\" type=\"text\" name=\"value\" value=\"".PROPALE_NEW_FORM_NB_PRODUCT."\"></td>
-  <td><input type=\"submit\" value=\"changer\"></td>
-</tr>
-</table>
-</form>\n";
+print "</tr><tr class=\"pair\">";
+print "<td>Nombre de ligne produits</td>";
+print "<td align=\"left\"><input size=\"3\" type=\"text\" name=\"value\" value=\"".PROPALE_NEW_FORM_NB_PRODUCT."\"></td>";
+print '<td><input type="submit" value="'.$langs->trans("Modify").'"></td>';
+print '</tr>';
+print '</table>';
+print '</form>';
 
 $db->close();
 

@@ -150,6 +150,8 @@ WebCalTestKo1=La connection au serveur '%s' a réussi mais la base '%s' n'a pu êt
 WebCalTestKo2=La connection au serveur '%s' par le user '%s' à échoué.
 ##### Clicktodial setup #####
 ClickToDialSetup=Configuration du click to dial
-##### LDAP setup ####
+##### LDAP setup #####
 LDAPSetup=Configuration LDAP
 LDAPServer=Serveur LDAP
+##### Propal #####
+PropalSetup=Configuration du module Propositions Commerciales

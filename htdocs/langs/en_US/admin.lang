@@ -153,3 +153,5 @@ ClickToDialSetup=Click To Dial setup
 ##### LDAP setup ####
 LDAPSetup=LDAP Setup
 LDAPServer=LDAP Server
+##### Propal #####
+PropalSetup=Commercial proposals setup
