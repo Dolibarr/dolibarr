@@ -44,7 +44,7 @@ if ($sortfield == "")
 print_titre("Liste des fiches d'intervention");
 
 $sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
-$sql .= " FROM societe as s, llx_fichinter as f ";
+$sql .= " FROM llx_societe as s, llx_fichinter as f ";
 $sql .= " WHERE f.fk_soc = s.idp ";
 
 if ($user->societe_id > 0) {

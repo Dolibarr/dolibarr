@@ -64,7 +64,7 @@ if ($action == 'create') {
  */
 if ($sortfield == "")
 {
-  $sortfield="lower(p.label)";
+  $sortfield="lower(s.nom)";
 }
 if ($sortorder == "")
 {
@@ -87,13 +87,15 @@ $pagenext = $page + 1;
 
 print "<P>";
 $sql = "SELECT s.nom, s.idp, p.rowid as projectid, p.ref, p.title,".$db->pdate("p.dateo")." as do";
-$sql .= " FROM societe as s, llx_projet as p";
+$sql .= " FROM llx_societe as s, llx_projet as p";
 $sql .= " WHERE p.fk_soc = s.idp";
 
 if ($socidp)
 { 
   $sql .= " AND s.idp = $socidp"; 
 }
+
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 if ( $db->query($sql) )
 {
@@ -103,10 +105,11 @@ if ( $db->query($sql) )
   
   print '<TR class="liste_titre">';
   print "<TD>";
-  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+  print_liste_field_titre("Titre",$PHP_SELF,"p.title");
   print "</td>";
-  print "<TD>Réf</TD><td>Titre</td>";
-  print "</TR>\n";
+  print "<TD>Réf</TD><td>";
+  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+  print "</td></TR>\n";
 
   while ($i < $num)
     {
@@ -114,9 +117,9 @@ if ( $db->query($sql) )
     
       $var=!$var;
       print "<TR $bc[$var]>";
-      print "<TD><a href=\"../fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
-      print "<TD><a href=\"fiche.php3?id=$objp->projectid\">$objp->ref</a></TD>\n";
       print "<TD><a href=\"fiche.php3?id=$objp->projectid\">$objp->title</a></TD>\n";
+      print "<TD><a href=\"fiche.php3?id=$objp->projectid\">$objp->ref</a></TD>\n";
+      print "<TD><a href=\"../fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
       print "</TR>\n";
     
       $i++;

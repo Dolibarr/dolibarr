@@ -169,7 +169,7 @@ print "</table><br>";
  *
  */
 $sql = "SELECT s.idp, s.nom,b.rowid as bid";
-$sql .= " FROM societe as s, llx_bookmark as b";
+$sql .= " FROM llx_societe as s, llx_bookmark as b";
 $sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
 $sql .= " ORDER BY lower(s.nom) ASC";
 
