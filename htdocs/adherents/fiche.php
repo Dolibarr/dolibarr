@@ -559,17 +559,17 @@ if ($rowid > 0)
 
       if ($adht->vote == 'yes' && defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1){
 	define("XMLRPC_DEBUG", 1);
+     
 	/*
-	 * Case 1
+	 * Case 1 & 2
 	 */
-	print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>]</td>\n";
-	
-	
-	/*
-	 * Case 2
-	 */
-	
-	print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>]</td>\n";
+	if ($adh->is_in_glasnost() == 1){
+	  print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>\n";
+	  print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>]</td>\n";
+	}else{
+	  print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>]</td>\n";
+	  print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>\n";
+	}
       }else{
 	/*
 	 * Case 1
@@ -584,16 +584,16 @@ if ($rowid > 0)
 
       if (defined("MAIN_USE_SPIP") && MAIN_USE_SPIP ==1){
 	/*
-	 * Case 3
+	 * Case 3 & 4
 	 */
-	print "<td align=\"center\" width=\"20%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=add_spip\">Ajout dans Spip</a>]</td>\n";
-	
-	
-	/*
-	 * Case 4
-	 */
-	
-	print "<td align=\"center\" width=\"20%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=del_spip\">Suppression dans Spip</a>]</td>\n";
+	if ($adh->is_in_spip() == 1){
+	  print "<td align=\"center\" width=\"20%\" class=\"bouton\">-</td>\n";
+	  print "<td align=\"center\" width=\"20%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=del_spip\">Suppression dans Spip</a>]</td>\n";
+	}else{
+	  print "<td align=\"center\" width=\"20%\" class=\"bouton\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=add_spip\">Ajout dans Spip</a>]</td>\n";
+	  print "<td align=\"center\" width=\"20%\" class=\"bouton\">-</td>\n";
+	}
+
       }else{
 	/*
 	 * Case 3

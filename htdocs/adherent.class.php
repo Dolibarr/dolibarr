@@ -678,12 +678,13 @@ class Adherent
 	  ){
 	$mdpass=md5($this->pass);
 	$htpass=crypt($this->pass,initialiser_sel());
-	$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->nom."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
+	$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->prenom." ".$this->nom."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
       $mydb=new Db('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
       $result = $mydb->query($query);
       
       if ($result) 
 	{
+	  $mydb->close();
 	  return 1;
 	}
       else
@@ -713,12 +714,51 @@ class Adherent
       
 	if ($result) 
 	  {
+	    $mydb->close();
 	    return 1;
 	  }
 	else
 	  {
 	    $this->errorstr=$mydb->error();
 	    return 0;
+	  }  
+      }
+    }
+
+  /*
+   *
+   * est-ce que cet utilisateur est dans spip
+   *
+   */
+  Function is_in_spip()
+    {
+      if (defined("MAIN_USE_SPIP") && MAIN_USE_SPIP ==1 && 
+	  defined('MAIN_SPIP_SERVEUR') && MAIN_SPIP_SERVEUR != '' &&
+	  defined('MAIN_SPIP_USER') && MAIN_SPIP_USER != '' &&
+	  defined('MAIN_SPIP_PASS') && MAIN_SPIP_PASS != '' &&
+	  defined('MAIN_SPIP_DB') && MAIN_SPIP_DB != ''
+	  ){
+	$query = "SELECT login FROM spip_auteurs WHERE login='".$this->login."'";
+	$mydb=new Db('mysql',MAIN_SPIP_SERVEUR,MAIN_SPIP_USER,MAIN_SPIP_PASS,MAIN_SPIP_DB);
+	$result = $mydb->query($query);
+      
+	if ($result) 
+	  {
+	    if ($mydb->num_rows()){
+	      # nous avons au moins une reponse
+	      $mydb->close();
+	      return 1;
+	    }else{
+	      # nous n'avons pas de reponse => n'existe pas
+	      $mydb->close();
+	      return 0;
+	    }
+	  }
+	else
+	  {
+	    # error
+	    $this->errorstr=$mydb->error();
+	    return -1;
 	  }  
       }
     }
@@ -882,6 +922,63 @@ class Adherent
 			       )
 			 );
 	if ($success){
+	  return 1;
+	}else{
+	  $this->errorstr=$response['faultString'];
+	  return 0;
+	}
+      }else{
+	$this->errorstr="Constantes de connection non definies";
+	return 0;
+      }
+    }
+
+  /*
+   * efface cet utilisateur du serveur glasnost
+   *
+   */
+  Function is_in_glasnost()
+    {
+      if (defined("MAIN_USE_GLASNOST") && MAIN_USE_GLASNOST ==1 && 
+	  defined('MAIN_GLASNOST_SERVEUR') && MAIN_GLASNOST_SERVEUR != '' &&
+	  defined('MAIN_GLASNOST_USER') && MAIN_GLASNOST_USER != '' &&
+	  defined('MAIN_GLASNOST_PASS') && MAIN_GLASNOST_PASS != ''
+	  ){
+	// application token is not useful here
+	$applicationtoken='';
+	list($success, $response) = 
+	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+			 '/RPC2', 
+			 'callGateway',
+			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/authentication"),
+			       XMLRPC_prepare('getUserIdAndToken'),
+			       XMLRPC_prepare(array("glasnost://".MAIN_GLASNOST_SERVEUR."/authentication","$applicationtoken",MAIN_GLASNOST_USER,MAIN_GLASNOST_PASS))
+			       )
+			 );
+	if ($success){
+	  $userid=$response[0];
+	  $usertoken=$response[1];
+	}else{
+	  return 0;
+	}
+	// recuperation du personID
+	list($success,$response)=
+	  XMLRPC_request(MAIN_GLASNOST_SERVEUR.':8001', 
+			 '/RPC2', 
+			 'callGateway',
+			 array(XMLRPC_prepare("glasnost://".MAIN_GLASNOST_SERVEUR."/people"),
+			       XMLRPC_prepare('getObjectByLogin'),
+			       XMLRPC_prepare(array(
+						    "glasnost://".MAIN_GLASNOST_SERVEUR."/people",
+						    "$applicationtoken",
+						    $usertoken,
+						    $this->login
+						    )
+					      )
+			       )
+			 );
+	if ($success){
+	  $personid=$response['id'];
 	  return 1;
 	}else{
 	  $this->errorstr=$response['faultString'];
