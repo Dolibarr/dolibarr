@@ -439,21 +439,23 @@ else
 	      $client_comm->fetch($contrat->client_comm_id);
 
 	      print '<tr><td width="20%">Référence</td><td>'.$contrat->ref.'</td>';
-	      print '<td>Facturé : '.$contrat->facturable.'</td></tr>';
+	      print '<td colspan="2">Facturé : '.$contrat->facturable.'</td></tr>';
 
 	      print '<tr><td width="20%">Client</td><td>';
 	      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$client_comm->id.'">';
 
-	      print $client_comm->nom.'</a></td><td>'.$client_comm->code_client;
+	      print $client_comm->nom.'</a></td><td colspan="2">'.$client_comm->code_client;
 	      print '</td></tr>';
 	      	     
 	      $client = new Societe($db, $contrat->client_id);
 	      $client->fetch($contrat->client_id);
 
-	      print '<tr><td width="20%">Client (Agence/Filiale)</td><td colspan="2">';
+	      print '<tr><td width="20%">Client (Agence/Filiale)</td><td>';
 	      print $client->nom.'<br />';
 
 	      print $client->cp . " " .$client->ville;
+	      print '</td><td colspan="2" valign="top">'.$client->code_client;
+
 	      print '</td></tr>';
 
 	      $client_facture = new Societe($db);
@@ -464,7 +466,10 @@ else
 	      print $client_facture->nom.'</a><br />';
 	      print $client_facture->cp . " " .$client_facture->ville;
 
+	      print '</td><td valign="top">'.$client_facture->code_client;
 	      print '</td><td>';
+
+
 
 	      if ($contrat->mode_paiement == 'pre')
 		{
@@ -481,13 +486,13 @@ else
 	      $commercial->fetch();
 
 	      print '<tr><td width="20%">Commercial Signature</td>';
-	      print '<td colspan="2">'.$commercial->fullname.'</td></tr>';
+	      print '<td colspan="3">'.$commercial->fullname.'</td></tr>';
 
 	      $commercial_suiv = new User($db, $contrat->commercial_suiv_id);
 	      $commercial_suiv->fetch();
 
 	      print '<tr><td width="20%">Commercial Suivi</td>';
-	      print '<td colspan="2">'.$commercial_suiv->fullname.'</td></tr>';
+	      print '<td colspan="3">'.$commercial_suiv->fullname.'</td></tr>';
 
 
 	      /*
@@ -500,7 +505,7 @@ else
 
 	      /* Contacts */
 	      print '<tr><td valign="top" width="20%">Contact facture</td>';
-	      print '<td valign="top" colspan="2">';
+	      print '<td valign="top" colspan="3">';
 
 	      $sql = "SELECT c.idp, c.name, c.firstname, c.email ";
 	      $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as c";
