@@ -1,11 +1,12 @@
 <!-- $Id$ -->
+<!-- $Source$ -->
 <chapt id="adherent">Module de gestion des adherents
 
   <p>
     Ce module permet la gestion des adherents et des cotisation d'un association.
   </p>
 
-
+  
   <sect id="adh-statut">Statut
     <p>
       Un adherent peut avoir plusieurs statuts differents ils sont. FIXME
