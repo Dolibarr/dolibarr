@@ -30,6 +30,7 @@ create table llx_prelevement_rejet
 (
   rowid SERIAL PRIMARY KEY,
   "fk_prelevement_lignes" integer,
+  "date_rejet"            timestamp,
   "motif"                 integer,
   "date_creation"         timestamp,
   "fk_user_creation"      integer,

@@ -23,11 +23,9 @@
 -- $Source$
 -- ===================================================================
 
-
 create table llx_facture_tva_sum
 (
   "fk_facture"    integer NOT NULL,
   "amount"        real  NOT NULL,
-  "tva_tx"        real  NOT NULL,
-  KEY(fk_facture)
+  "tva_tx"        real  NOT NULL
 );

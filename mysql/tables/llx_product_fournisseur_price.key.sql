@@ -21,9 +21,9 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_product_fournisseur_price ADD INDEX (fk_user);
-ALTER TABLE llx_product_fournisseur_price ADD INDEX (fk_soc);
-ALTER TABLE llx_product_fournisseur_price ADD INDEX (fk_product);
+ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_fk_user (fk_user);
+ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_fk_soc (fk_soc);
+ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_fk_product (fk_product);
 
 ALTER TABLE llx_product_fournisseur_price ADD FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
 ALTER TABLE llx_product_fournisseur_price ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
