@@ -25,8 +25,6 @@ require("../contact.class.php3");
 
 llxHeader();
 
-$db = new Db();
-
 /*
  * Sécurité accés client
  */
@@ -219,7 +217,7 @@ if ($socid > 0) {
       $num = $db->num_rows();
       if ($num > 0) {
 	$tag = !$tag; print "<tr $bc[$tag]>";
-	print "<td colspan=\"2\"><a href=\"projet/index.php3?socidp=$objsoc->idp\">liste des projets ($num)</td></tr>";
+	print "<td colspan=\"2\"><a href=\"projet/index.php?socidp=$objsoc->idp\">liste des projets ($num)</td></tr>";
       }
       while ($i < $num && $i < 5) {
 	$obj = $db->fetch_object( $i);
@@ -322,7 +320,7 @@ if ($socid > 0) {
       if ( $db->query($sql) )
 	{
 	  print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
-	  print '<tr><td><a href="'.DOL_URL_ROOT.'/comm/action/index.php3?socid='.$objsoc->idp.'">Actions</a></td></tr>';
+	  print '<tr><td><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$objsoc->idp.'">Actions</a></td></tr>';
 
 	  $i = 0 ; $num = $db->num_rows(); $tag = True;
 	  while ($i < $num)

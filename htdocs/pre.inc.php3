@@ -47,7 +47,7 @@ function llxHeader($head = "") {
 
   if ($conf->commercial->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/comm/index.php3", "Commercial");
+      $menu->add(DOL_URL_ROOT."/comm/index.php", "Commercial");
 
       $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php3", "Clients");
 
@@ -108,15 +108,15 @@ function llxHeader($head = "") {
 
   if ($conf->fournisseur->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/fourn/index.php3", "Fournisseurs");
+      $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
     }
 
   if ($conf->voyage && $user->societe_id == 0) 
     {
 
-      $menu->add(DOL_URL_ROOT."/compta/voyage/index.php3","Voyages");
+      $menu->add(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
 
-      $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/index.php3","Voyages");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
       $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/reduc.php3","Reduc");
     }
 

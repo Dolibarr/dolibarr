@@ -33,9 +33,9 @@ function llxHeader($head = "", $urlp = "")
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/product/index.php3", "Produits");
+  $menu->add(DOL_URL_ROOT."/product/index.php", "Produits");
 
-  $menu->add(DOL_URL_ROOT."/service/index.php3", "Services");
+  $menu->add(DOL_URL_ROOT."/service/index.php", "Services");
 
   $menu->add_submenu(DOL_URL_ROOT."/service/fiche.php3?action=create", "Nouveau");
 
