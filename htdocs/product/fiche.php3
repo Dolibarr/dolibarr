@@ -91,7 +91,7 @@ if ($action == 'create')
   print "<tr>";
   print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Libellé</td><td><input name="libelle" size="40" value=""></td></tr>';
-  print '<tr><td>Prix</td><TD><input name="price" size="10" value=""></td></tr>';    
+  print '<tr><td>Prix de vente</td><TD><input name="price" size="10" value=""></td></tr>';    
   print '<tr><td>Taux TVA</td><TD>';
   $html = new Form($db);
   print $html->select_tva("tva_tx");
@@ -133,12 +133,12 @@ else
 	    }
 	  else
 	    {
-	      print "Cet article n'est pas en vente";
+	      print "<b>Cet article n'est pas en vente</b>";
 	    }
 	  print '</td></tr>';
 	  print "<td>Libellé</td><td>$product->label</td>";
 	  print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
-	  print '<tr><td>Prix</td><TD>'.price($product->price).'</td>';
+	  print '<tr><td>Prix de vente</td><TD>'.price($product->price).'</td>';
 	  print '<td valign="top" rowspan="4">';
 	  print "Propositions commerciales : ".$product->count_propale();
 	  print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
@@ -160,7 +160,7 @@ else
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4"><tr>';
 	  print '<td width="20%">Référence</td><td><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
 	  print '<td>Libellé</td><td><input name="libelle" size="40" value="'.$product->label.'"></td></tr>';
-	  print '<tr><td>Prix</td><TD><input name="price" size="10" value="'.$product->price.'"></td></tr>';    
+	  print '<tr><td>Prix de vente</td><TD><input name="price" size="10" value="'.$product->price.'"></td></tr>';    
 	  print '<tr><td>Taux TVA</td><TD>';
 	  $html = new Form($db);
 	  print $html->select_tva("tva_tx", $product->tva_tx);
@@ -216,7 +216,7 @@ else
 print '<td width="20%" align="center">-</td>';    
 print '</table><br>';
 
-if ($id && $action == '')
+if ($id && $action == '' && $product->envente)
 {
 
   $htmls = new Form($db);
