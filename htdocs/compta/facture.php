@@ -433,6 +433,9 @@ if ($_GET["action"] == 'pdf')
 {
   // Generation de la facture définie dans /includes/modules/facture/modules_facture.php
   facture_pdf_create($db, $_GET["facid"]);
+  // Plus ajout des meta informations dans le même répertoire pour faciliter les
+  //recherches en texte plein (grep etc.)
+  facture_meta_create($db, $_GET["facid"]);
 } 
 
 
@@ -1117,17 +1120,17 @@ else
 	   * Fin Ajout ligne
 	   *
 	   */
-	  print '</div>';
+	  print "</div>\n";
 	  if ($user->societe_id == 0 && $_GET["action"] <> 'valid' && $_GET["action"] <> 'editline')
 	    {
 	      print "<div class=\"tabsAction\">\n";
-
+	      
 	      // Valider
 	      if ($fac->statut == 0 && $num_lignes > 0) 
 		{
 		  if ($user->rights->facture->valider)
 		    {
-		      print '<a class="tabAction" href="facture.php?facid='.$fac->id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
+		      print "  <a class=\"tabAction\" href=\"facture.php?facid=".$fac->id."&amp;action=valid\">".$langs->trans("Valid")."</a>\n";
 		    }
 		}
 	      else
@@ -1137,15 +1140,15 @@ else
 		    {
 		      if ($fac->paye == 0)
 			{
-			  print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">".$langs->trans("BuildPDF")."</a>";
+			  print "  <a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">".$langs->trans("BuildPDF")."</a>\n";
 			}
 		      else
 			{
-			  print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">".$langs->trans("RebuildPDF")."</a>";
+			  print "  <a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">".$langs->trans("RebuildPDF")."</a>\n";
 			}		  	
 		    }
 		}
-
+	      print "  <a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">".$langs->trans("RebuildPDF")."</a>\n";
 	      // Supprimer
 	      if ($fac->statut == 0 && $user->rights->facture->supprimer && $_GET["action"] != 'delete')
 		{
@@ -1155,32 +1158,32 @@ else
 	      // Envoyer
 	      if ($fac->statut == 1 && $user->rights->facture->envoyer)
 		{
-		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=presend\">".$langs->trans("Send")."</a>";
+		  print "  <a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=presend\">".$langs->trans("Send")."</a>\n";
 		}
 	    
 	      // Envoyer une relance
 	      if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer) 
 		{
-		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance\">".$langs->trans("SendRemind")."</a>";
+		  print "  <a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance\">".$langs->trans("SendRemind")."</a>\n";
 		}
 
 	      // Emettre paiement 
 	      if ($fac->statut == 1 && $user->rights->facture->paiement)
 		{
-		  print "<a class=\"tabAction\" href=\"paiement.php?facid=".$fac->id."&amp;action=create\">".$langs->trans("DoPaiement")."</a>";
+		  print "  <a class=\"tabAction\" href=\"paiement.php?facid=".$fac->id."&amp;action=create\">".$langs->trans("DoPaiement")."</a>\n";
 		}
 	    
 	      // Classer 'payé'
 	      if ($fac->statut == 1 && price($resteapayer) <= 0 
 		  && $fac->paye == 0 && $user->rights->facture->paiement)
 		{
-		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>";
+		  print "  <a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>\n";
 		}
 	    
 	      // Classer 'abandonnée' (possible si validée et pas encore classer payée)
 	      if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
 		{
-		  print "<a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=canceled\">".$langs->trans("ClassifyCanceled")."</a>";
+		  print "  <a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=canceled\">".$langs->trans("ClassifyCanceled")."</a>\n";
 		}
 
 	      // Récurrente
@@ -1188,11 +1191,11 @@ else
 		{
 		  if ($fac->statut > 0)
 		    {
-		      print '<a class="tabAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">Récurrente</a>';
+		      print "  <a class=\"tabAction\" href=\"facture/fiche-rec.php?facid=".$fac->id."&amp;action=create\">Récurrente</a>\n";
 		    }
 		}
 
-	      print "</div>";
+	      print "</div>\n";
 
 	    }
 	  print "<p>\n";
