@@ -83,6 +83,7 @@ $modules["MAIN_MODULE_FICHEINTER"][0] = "Module fiche intervention";
 $modules["MAIN_MODULE_FICHEINTER"][1] = "MAIN_MODULE_FICHEINTER";
 $modules["MAIN_MODULE_FICHEINTER"][2] = MAIN_MODULE_FICHEINTER;
 $modules["MAIN_MODULE_FICHEINTER"][3] = "Module de gestion des fiches d'interventions";
+$modules["MAIN_MODULE_FICHEINTER"][4] = "modFicheinter";
 
 $modules["MAIN_MODULE_DON"][0] = "Module don";
 $modules["MAIN_MODULE_DON"][1] = "MAIN_MODULE_DON";
