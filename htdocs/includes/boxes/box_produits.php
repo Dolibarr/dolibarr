@@ -27,38 +27,57 @@
     \brief      Module de génération de l'affichage de la box produits
 */
 
-if ($user->rights->produit->lire)
-{
-  $info_box_head = array();
-  $info_box_head[] = array('text' => "Les 5 derniers produits/services enregistrés");
+include_once("./includes/boxes/modules_boxes.php");
 
-  $info_box_contents = array();
 
-  $sql = "SELECT p.label, p.rowid, p.price, p.fk_product_type";
-  $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
-  $sql .= " ORDER BY p.datec DESC";
-  $sql .= $db->plimit(5, 0);
-  
-  $result = $db->query($sql);
+class box_produits extends ModeleBoxes {
 
-  if ($result) 
+    var $info_box_head = array();
+    var $info_box_contents = array();
+
+    function loadBox($max=5)
     {
-      $num = $db->num_rows();      
-      $i = 0;      
-      while ($i < $num)
-	{
-	  $objp = $db->fetch_object($result);
-	  
-	  $info_box_contents[$i][0] = array('align' => 'left',
-    					'logo' => ($objp->fk_product_type?'object_service':'object_product'),
-					    'text' => $objp->label,
-					    'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
-	  
-	  $info_box_contents[$i][1] = array('align' => 'right',
-					    'text' => price($objp->price));
-	  $i++;
-	}
-    } 
-  new infoBox($info_box_head, $info_box_contents);
+        global $user, $langs, $db;
+
+        $this->info_box_head = array('text' => "Les $max derniers produits/services enregistrés");
+
+        if ($user->rights->produit->lire)
+        {
+            $sql = "SELECT p.label, p.rowid, p.price, p.fk_product_type";
+            $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
+            $sql .= " ORDER BY p.datec DESC";
+            $sql .= $db->plimit($max, 0);
+    
+            $result = $db->query($sql);
+            if ($result)
+            {
+                $num = $db->num_rows($result);
+                $i = 0;
+                while ($i < $num)
+                {
+                    $objp = $db->fetch_object($result);
+    
+                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    'logo' => ($objp->fk_product_type?'object_service':'object_product'),
+                    'text' => $objp->label,
+                    'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
+    
+                    $this->info_box_contents[$i][1] = array('align' => 'right',
+                    'text' => price($objp->price));
+                    $i++;
+                }
+            }
+            else {
+                dolibarr_print_error($db);
+            }
+        }
+    }
+    
+    function showBox()
+    {
+        parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
+   
 }
+
 ?>

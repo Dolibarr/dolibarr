@@ -27,49 +27,62 @@
     \brief      Module de génération de l'affichage de la box services_vendus
 */
 
-$info_box_head = array();
-$info_box_head[] = array('text' => "Les 5 derniers produits/services contractés");
+include_once("./includes/boxes/modules_boxes.php");
 
-$info_box_contents = array();
 
-$sql  = "SELECT s.nom, s.idp, p.label, p.fk_product_type, c.rowid";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p";
-$sql .= " WHERE s.idp = c.fk_soc AND c.fk_product = p.rowid";  
-if($user->societe_id)
-{
-  $sql .= " AND s.idp = $user->societe_id";
-}
-$sql .= " ORDER BY c.tms DESC ";
+class box_services_vendus extends ModeleBoxes {
 
-/*
- *
- */
-$sql .= $db->plimit(5, 0);
+    var $info_box_head = array();
+    var $info_box_contents = array();
 
-$result = $db->query($sql);
-
-if ($result) 
-{
-  $num = $db->num_rows();
-    
-  $i = 0;
-    
-  while ($i < $num)
+    function loadBox($max=5)
     {
-      $objp = $db->fetch_object($result);
-      
-      $info_box_contents[$i][0] = array('align' => 'left',
-					'logo' => ($objp->fk_product_type?'object_service':'object_product'),
-					'text' => $objp->label,
-					'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+        global $user, $langs, $db;
 
-      $info_box_contents[$i][1] = array('align' => 'left',
-					'text' => $objp->nom,
-					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+        $this->info_box_head = array('text' => "Les $max derniers produits/services contractés");
 
-      $i++;
+        $sql  = "SELECT s.nom, s.idp, p.label, p.fk_product_type, c.rowid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p";
+        $sql .= " WHERE s.idp = c.fk_soc AND c.fk_product = p.rowid";
+        if($user->societe_id)
+        {
+            $sql .= " AND s.idp = $user->societe_id";
+        }
+        $sql .= " ORDER BY c.tms DESC ";
+        $sql .= $db->plimit($max, 0);
+
+        $result = $db->query($sql);
+
+        if ($result)
+        {
+            $num = $db->num_rows();
+
+            $i = 0;
+
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($result);
+
+                $this->info_box_contents[$i][0] = array('align' => 'left',
+                'logo' => ($objp->fk_product_type?'object_service':'object_product'),
+                'text' => $objp->label,
+                'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
+
+                $this->info_box_contents[$i][1] = array('align' => 'left',
+                'text' => $objp->nom,
+                'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+
+                $i++;
+            }
+        }
+
     }
+
+    function showBox()
+    {
+        parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
+
 }
 
-new infoBox($info_box_head, $info_box_contents);
 ?>

@@ -30,6 +30,8 @@
 
 require("./pre.inc.php");
 
+$user->getrights('');
+
 
 // Simule le menu par défaut sur Home
 $_GET["mainmenu"]="home";
@@ -49,53 +51,32 @@ print "<br>\n";
 
 
 /*
- * Boites
+ * Affichage des boites
  *
  */
-$user->getrights('');
+include_once("./boxes.php");
+$infobox=new InfoBox($db);
+$boxes=$infobox->listboxes("0");       // 0 = valeur pour la page accueil
 
-$sql  = "SELECT b.rowid, b.box_id, d.file";
-$sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
-$sql .= " WHERE b.box_id = d.rowid";
-$sql .= " AND position = 0";                    // 0 = valeur pour la page accueil
-$sql .= " ORDER BY box_order";
-$result = $db->query($sql);
-if ($result) 
-{
-  $num = $db->num_rows();
-  $j = 0;
-  
-  while ($j < $num)
-    {
-      $obj = $db->fetch_object($result);
-      $boxes[$j] = "includes/boxes/".$obj->file;
-      $j++;
-    }
-}
-else {
-    dolibarr_print_error($db);
-}
-
+$NBCOLS=2;      // Nombre de colonnes pour les boites
 print '<table width="100%">';
- 
 for ($ii=0, $ni=sizeof($boxes); $ii<$ni; $ii++)
 {
-  if ($ii % 2 == 0)
-    {
-      print "<tr>\n";
-    }
-
+  if ($ii % $NBCOLS == 0) print "<tr>\n";
   print '<td valign="top" width="50%">';
-  include($boxes[$ii]);
+
+  // Affichage boite ii
+  include_once("./includes/boxes/".$boxes[$ii].".php");
+  $box=new $boxes[$ii]();
+  $box->loadBox();
+  $box->showBox();
+
   print "</td>";
-
-  if ( ($ii -1) / 3 == 0)
-    {
-      print "</tr>\n";
-    }
+  if ($ii % $NBCOLS == ($NBCOLS-1)) print "</tr>\n";
 }
-
+if ($ii % $NBCOLS == ($NBCOLS-1)) print "</tr>\n";
 print "</table>";
+
 
 $db->close();
 

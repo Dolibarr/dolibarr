@@ -21,39 +21,54 @@
  *
  */
 
-/*!
+/**
     \file       htdocs/includes/boxes/box_osc_client.php
     \ingroup    osc
     \brief      Module de génération de l'affichage de la box osc client
 */
 
-$info_box_head = array();
-$info_box_head[] = array('text' => "Clients");
-
-$info_box_contents = array();
+include_once("./includes/boxes/modules_boxes.php");
 
 
-$sql = "SELECT count(*) as cus FROM ".DB_NAME_OSC.".customers";
+class box_osc_clients extends ModeleBoxes {
 
-$result = $db->query($sql);
-if ($result)
-{
-  $num = $db->num_rows();
-    
-  $i = 0;
-    
-  while ($i < $num)
+    var $info_box_head = array();
+    var $info_box_contents = array();
+
+    function loadBox($max=5)
     {
-      $objp = $db->fetch_object($result);
-      
-      $info_box_contents[$i][0] = array('align' => 'center',
-					 'logo' => 'object_product',
-				     'text' => $objp->cus,
-				     'url' => DOL_URL_ROOT."/boutique/client/index.php");
-      $i++;
-    }
-}
+        global $user, $langs, $db;
 
-new infoBox($info_box_head, $info_box_contents);
+        $this->info_box_head = array('text' => "Nombre de client");
+
+        $sql = "SELECT count(*) as cus FROM ".DB_NAME_OSC.".customers";
+
+        $result = $db->query($sql);
+        if ($result)
+        {
+            $num = $db->num_rows();
+
+            $i = 0;
+
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($result);
+
+                $this->info_box_contents[$i][0] = array('align' => 'center',
+                'logo' => 'object_product',
+                'text' => $objp->cus,
+                'url' => DOL_URL_ROOT."/boutique/client/index.php");
+                $i++;
+            }
+        }
+
+    }
+
+    function showBox()
+    {
+        parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
+
+}
 
 ?>

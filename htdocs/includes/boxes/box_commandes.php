@@ -27,46 +27,62 @@
     \brief      Module de génération de l'affichage de la box commandes
 */
 
-if ($user->rights->commande->lire)
-{
+include_once("./includes/boxes/modules_boxes.php");
 
-  $info_box_head = array();
-  $info_box_head[] = array('text' => "Les 5 dernières commandes");
 
-  $info_box_contents = array();
+class box_commandes extends ModeleBoxes {
 
-  $sql = "SELECT s.nom,s.idp,p.ref,".$db->pdate("p.date_commande")." as dp,p.rowid";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p WHERE p.fk_soc = s.idp";  
-  if($user->societe_id)
+    var $info_box_head = array();
+    var $info_box_contents = array();
+
+    function loadBox($max=5)
     {
-      $sql .= " AND s.idp = $user->societe_id";
+        global $user, $langs, $db;
+
+        if ($user->rights->commande->lire)
+        {
+            $this->info_box_head = array('text' => "Les $max dernières commandes");
+
+            $sql = "SELECT s.nom,s.idp,p.ref,".$db->pdate("p.date_commande")." as dp,p.rowid";
+            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p WHERE p.fk_soc = s.idp";
+            if($user->societe_id)
+            {
+                $sql .= " AND s.idp = $user->societe_id";
+            }
+            $sql .= " ORDER BY p.date_commande DESC, p.ref DESC ";
+            $sql .= $db->plimit($max, 0);
+
+            $result = $db->query($sql);
+
+            if ($result)
+            {
+                $num = $db->num_rows();
+
+                $i = 0;
+
+                while ($i < $num)
+                {
+                    $objp = $db->fetch_object($result);
+
+                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    'logo' => 'object_order',
+                    'text' => $objp->ref,
+                    'url' => DOL_URL_ROOT."/commande/fiche.php?id=".$objp->rowid);
+
+                    $this->info_box_contents[$i][1] = array('align' => 'left',
+                    'text' => $objp->nom,
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+                    $i++;
+                }
+            }
+        }
     }
-  $sql .= " ORDER BY p.date_commande DESC, p.ref DESC ";
-  $sql .= $db->plimit(5, 0);
-  
-  $result = $db->query($sql);
 
-  if ($result) 
+    function showBox()
     {
-      $num = $db->num_rows();
-      
-      $i = 0;
-      
-      while ($i < $num)
-	{
-	  $objp = $db->fetch_object($result);
-	  
-	  $info_box_contents[$i][0] = array('align' => 'left',
-    					'logo' => 'object_order',
-					    'text' => $objp->ref,
-					    'url' => DOL_URL_ROOT."/commande/fiche.php?id=".$objp->rowid);
-	  
-	  $info_box_contents[$i][1] = array('align' => 'left',
-					    'text' => $objp->nom,
-					    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
-	  $i++;
-	}
-    } 
-  new infoBox($info_box_head, $info_box_contents);
+        parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
+
 }
+
 ?>

@@ -27,36 +27,54 @@
     \brief      Module de génération de l'affichage de la box boutique livres
 */
 
-$info_box_head = array();
-$info_box_head[] = array('text' => "Les 20 derniers ouvrages");
 
-$info_box_contents = array();
+include_once("./includes/boxes/modules_boxes.php");
 
-$sql = "SELECT l.ref, l.title, l.rowid";
-$sql .= " FROM ".MAIN_DB_PREFIX."livre as l ";
-$sql .= " ORDER BY l.date_ajout DESC ";
-$sql .= $db->plimit(20, 0);
 
-$result = $db->query($sql);
+class box_boutique_livre extends ModeleBoxes {
 
-if ($result) 
-{
-  $num = $db->num_rows();
-    
-  $i = 0;
-    
-  while ($i < $num)
+    var $info_box_head = array();
+    var $info_box_contents = array();
+
+    function loadBox($max=5)
     {
-      $objp = $db->fetch_object($result);
-      
-      $info_box_contents[$i][0] = array('align' => 'left',
-   					'logo' => 'object_book',
-					'text' => $objp->title,
-					'url' => DOL_URL_ROOT."/boutique/livre/fiche.php?id=".$objp->rowid);
+        global $user, $langs, $db;
 
-      $i++;
+        $this->info_box_head = array('text' => "Les $max derniers ouvrages");
+    
+        $sql = "SELECT l.ref, l.title, l.rowid";
+        $sql .= " FROM ".MAIN_DB_PREFIX."livre as l ";
+        $sql .= " ORDER BY l.date_ajout DESC ";
+        $sql .= $db->plimit($max, 0);
+
+        $result = $db->query($sql);
+
+        if ($result)
+        {
+            $num = $db->num_rows();
+
+            $i = 0;
+
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($result);
+
+                $this->info_box_contents[$i][0] = array('align' => 'left',
+                'logo' => 'object_book',
+                'text' => $objp->title,
+                'url' => DOL_URL_ROOT."/boutique/livre/fiche.php?id=".$objp->rowid);
+
+                $i++;
+            }
+        }
+
     }
+
+    function showBox()
+    {
+        parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
+
 }
 
-new infoBox($info_box_head, $info_box_contents);
 ?>

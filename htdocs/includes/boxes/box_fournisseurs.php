@@ -26,40 +26,57 @@
     \brief      Module de génération de l'affichage de la box fournisseurs
 */
 
-$info_box_head = array();
-$info_box_head[] = array('text' => "Les 5 derniers fournisseurs enregistrés");
+include_once("./includes/boxes/modules_boxes.php");
 
-$info_box_contents = array();
 
-$sql = "SELECT s.nom,s.idp";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur = 1";  
-if ($user->societe_id > 0)
-{
-  $sql .= " AND s.idp = $user->societe_id";
-}
-$sql .= " ORDER BY s.datec DESC ";
-$sql .= $db->plimit(5, 0);
+class box_fournisseurs extends ModeleBoxes {
 
-$result = $db->query($sql);
+    var $info_box_head = array();
+    var $info_box_contents = array();
 
-if ($result) 
-{
-  $num = $db->num_rows();
-    
-  $i = 0;
-    
-  while ($i < $num)
+    function loadBox($max=5)
     {
-      $objp = $db->fetch_object($result);
-      
-      $info_box_contents[$i][0] = array('align' => 'left',
-   					'logo' => 'object_company',
-					'text' => $objp->nom,
-					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+        global $user, $langs, $db;
 
-      $i++;
+        $this->info_box_head = array('text' => "Les $max5 derniers fournisseurs enregistrés");
+
+        $sql = "SELECT s.nom,s.idp";
+        $sql .= " FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur = 1";
+        if ($user->societe_id > 0)
+        {
+            $sql .= " AND s.idp = $user->societe_id";
+        }
+        $sql .= " ORDER BY s.datec DESC ";
+        $sql .= $db->plimit($max, 0);
+
+        $result = $db->query($sql);
+
+        if ($result)
+        {
+            $num = $db->num_rows();
+
+            $i = 0;
+
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object($result);
+
+                $this->info_box_contents[$i][0] = array('align' => 'left',
+                'logo' => 'object_company',
+                'text' => $objp->nom,
+                'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+
+                $i++;
+            }
+        }
+
     }
+
+    function showBox()
+    {
+        parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
+
 }
 
-new infoBox($info_box_head, $info_box_contents);
 ?>

@@ -32,74 +32,53 @@
 
 /**     \class      infoBox
 		\brief      Classe permettant la gestion des boxes sur une page
-		\remarks    Cette classe est utilisé par les fichiers includes/boxes/box_xxx.php
-		\remarks    qui sont les modules de boites
 */
 
-class infoBox 
+class InfoBox 
 {
+    var $db;
 
-  /**
-   *    \brief      Constructeur de la classe
-   *    \param      $head       tableau des entetes de colonnes
-   *    \param      $contents   tableau des lignes
-   */
-  function infoBox($head, $contents)
-  {
-    global $langs;
+    /**
+     *      \brief      Constructeur de la classe
+     *      \param      $DB         Handler d'accès base
+     */
+    function InfoBox($DB)
+    {
+        $this->db=$DB;
+    }
     
-    $MAXLENGTHBOX=70;   // Mettre 0 pour pas de limite
-    
-    $var = true;
-    $bcx[0] = 'class="box_pair"';
-    $bcx[1] = 'class="box_impair"';
-    $nbcol=sizeof($contents[0])+1;
 
-    print '<table width="100%" class="noborder">';
-
-    // Affiche titre de la boite
-    print '<tr class="box_titre"><td';
-    if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
-    print '>'.$head[0]['text']."</td></tr>";
-
-    // Affiche chaque ligne de la boite
-    for ($i=0, $n=sizeof($contents); $i < $n; $i++)
-      {
-	$var=!$var;
-	print '<tr valign="top" '.$bcx[$var].'>';
-
-    // Affiche chaque cellule
-	for ($j=0, $m=sizeof($contents[$i]); $j < $m; $j++)
-	  {
-	    $tdparam="";
-	    if ($contents[$i][$j]['align']) $tdparam.=' align="'. $contents[$i][$j]['align'].'"';
-	    if ($contents[$i][$j]['width']) $tdparam.=' width="'. $contents[$i][$j]['width'].'"';
-
-        if ($contents[$i][$j]['text']) {
-    		if ($contents[$i][$j]['logo']) print '<td width="16">';
-    		else print '<td '.$tdparam.'>';
-    
-    	    if ($contents[$i][$j]['url']) print '<a href="'.$contents[$i][$j]['url'].'" title="'.$contents[$i][$j]['text'].'">';
-    		if ($contents[$i][$j]['logo']) {
-    		    $logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
-    		    print img_object($langs->trans("Show"),$logo);
-    		    print '</a></td><td '.$tdparam.'><a href="'.$contents[$i][$j]['url'].'" title="'.$contents[$i][$j]['text'].'">';
-    		}
-    		$texte=$contents[$i][$j]['text'];
-    		if ($MAXLENGTHBOX && strlen($texte) > $MAXLENGTHBOX)
-    		{
-    		     $texte=substr($texte,0,$MAXLENGTHBOX)."...";
-    		}
-    		print $texte;
-    		if ($contents[$i][$j]['url']) print '</a>';
-    
-    	    print "</td>";
+    /**
+     *      \brief      Retourne liste des boites elligibles pour la zone
+     *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
+     *      \return     array       Tableau des boites qualifiées
+     */
+    function listBoxes($zone)
+    {
+        $boxes=array();
+        
+        $sql  = "SELECT b.rowid, b.box_id, d.file";
+        $sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
+        $sql .= " WHERE b.box_id = d.rowid";
+        $sql .= " AND position = ".$zone;
+        $sql .= " ORDER BY box_order";
+        $result = $this->db->query($sql);
+        if ($result) 
+        {
+          $num = $this->db->num_rows($result);
+          $j = 0;
+          while ($j < $num)
+            {
+              $obj = $this->db->fetch_object($result);
+              $boxes[$j]=eregi_replace('.php$','',$obj->file);
+              $j++;
+            }
         }
-	  }
-	print '</tr>';
-      }
-
-    print "</table>";
-  }
+        else {
+            return array();
+        }
+        return $boxes;
+    }
+  
 }
 ?>

@@ -27,48 +27,62 @@
     \brief      Module de génération de l'affichage de la box factures impayees
 */
 
-if ($user->rights->facture->lire)
-{
-  $nbtoshow=5;
-  
-  $info_box_head = array();
-  $info_box_head[] = array('text' => "Les $nbtoshow plus anciennes factures clients impayées");
+include_once("./includes/boxes/modules_boxes.php");
 
-  $info_box_contents = array();
 
-  $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.paye=0 AND fk_statut = 1";  
-  if($user->societe_id)
+class box_factures_imp extends ModeleBoxes {
+
+    var $info_box_head = array();
+    var $info_box_contents = array();
+
+    function loadBox($max=5)
     {
-      $sql .= " AND s.idp = $user->societe_id";
+        global $user, $langs, $db;
+
+        $this->info_box_head = array('text' => "Les $max plus anciennes factures clients impayées");
+
+        if ($user->rights->facture->lire)
+        {
+            $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
+            $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.paye=0 AND fk_statut = 1";
+            if($user->societe_id)
+            {
+                $sql .= " AND s.idp = $user->societe_id";
+            }
+            $sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
+            $sql .= $db->plimit($max, 0);
+
+            $result = $db->query($sql);
+            if ($result)
+            {
+                $num = $db->num_rows();
+
+                $i = 0;
+
+                while ($i < $num)
+                {
+                    $objp = $db->fetch_object($result);
+
+                    $this->info_box_contents[$i][0] = array('align' => 'left',
+                    'logo' => 'object_bill',
+                    'text' => $objp->facnumber,
+                    'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
+
+                    $this->info_box_contents[$i][1] = array('align' => 'left',
+                    'text' => $objp->nom,
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+
+                    $i++;
+                }
+            }
+        }
     }
-  $sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
-  $sql .= $db->plimit($nbtoshow, 0);
-  
-  $result = $db->query($sql);
-  if ($result)
+
+    function showBox()
     {
-      $num = $db->num_rows();
-      
-      $i = 0;
-      
-      while ($i < $num)
-	{
-	  $objp = $db->fetch_object($result);
-	  
-	  $info_box_contents[$i][0] = array('align' => 'left',
-    					'logo' => 'object_bill',
-					    'text' => $objp->facnumber,
-					    'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
-	  
-	  $info_box_contents[$i][1] = array('align' => 'left',
-					    'text' => $objp->nom,
-					    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
-	  
-	  $i++;
-	}
+        parent::showBox($this->info_box_head, $this->info_box_contents);
     }
-  
-  new infoBox($info_box_head, $info_box_contents);
+
 }
+
 ?>

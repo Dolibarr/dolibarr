@@ -29,26 +29,44 @@
 		\version    $Revision$
 */
 
-require_once("includes/magpierss/rss_fetch.inc");
+require_once("./includes/magpierss/rss_fetch.inc");
+include_once("./includes/boxes/modules_boxes.php");
 
-for($site = 0; $site < 1; $site++) {
-  $info_box_head = array();
-  $info_box_head[] = array('text' => "Les 5 dernières infos du site " . @constant("EXTERNAL_RSS_TITLE_". $site));
-  $info_box_contents = array();
-  $rss = fetch_rss( @constant("EXTERNAL_RSS_URLRSS_" . $site) );
-  for($i = 0; $i < 5 ; $i++){
-    $item = $rss->items[$i];
-    $href = $item['link'];
-    $title = utf8_decode(urldecode($item['title']));
-    $title=ereg_replace("([[:alnum:]])\?([[:alnum:]])","\\1'\\2",$title);   // Gère problème des apostrophes mal codée/décodée par utf8
-    $title=ereg_replace("^\s+","",$title);                                  // Supprime espaces de début
-    $info_box_contents["$href"]="$title";
-    $info_box_contents[$i][0] = array('align' => 'left',
-				      'logo' => 'object_rss',
-				      'text' => $title,
-				      'url' => $href);
-  } 
-  new infoBox($info_box_head, $info_box_contents);
+
+class box_external_rss extends ModeleBoxes {
+
+    var $info_box_head = array();
+    var $info_box_contents = array();
+
+    function loadBox($max=5)
+    {
+        global $user, $langs, $db;
+
+        for($site = 0; $site < 1; $site++) {
+            $this->info_box_head = array('text' => "Les $max dernières infos du site " . @constant("EXTERNAL_RSS_TITLE_". $site));
+            $rss = fetch_rss( @constant("EXTERNAL_RSS_URLRSS_" . $site) );
+            for($i = 0; $i < $max ; $i++){
+                $item = $rss->items[$i];
+                $href = $item['link'];
+                $title = utf8_decode(urldecode($item['title']));
+                $title=ereg_replace("([[:alnum:]])\?([[:alnum:]])","\\1'\\2",$title);   // Gère problème des apostrophes mal codée/décodée par utf8
+                $title=ereg_replace("^\s+","",$title);                                  // Supprime espaces de début
+                $this->info_box_contents["$href"]="$title";
+                $this->info_box_contents[$i][0] = array('align' => 'left',
+                'logo' => 'object_rss',
+                'text' => $title,
+                'url' => $href);
+            }
+
+
+        }
+    }
+
+    function showBox()
+    {
+        parent::showBox($this->info_box_head, $this->info_box_contents);
+    }
+
 }
 
 ?>
