@@ -48,11 +48,6 @@ values ('02-12-YHGT',2,now(),'2002-12-01',1,1000,0,196,1196,1,NULL,NULL,'');
 
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_THEME',  'yellow','chaine',1);
 
-REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_BOUTIQUE',  '1','yesno',0);
-REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_COMMANDE',  '1','yesno',0);
-REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_COMMERCIAL','1','yesno',0);
-REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_FACTURE',   '1','yesno',0);
-
 delete from llx_user;
 
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login,admin)
@@ -111,31 +106,59 @@ values ('Iono','22110','Rostrenen','01 55 55 03 18','01 55 55 55 55',1);
 delete from llx_socpeople;
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (10,1,'Victoire','Paul','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (12,1,'Patrick','Paul','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (20,2,'Corin','Arnaud','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (30,3,'Phil','Breizh','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (31,3,'Marie','Jeanne','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (41,4,'Alix','Victor','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (11,5,'Tourin','Pierre','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (12,1,'Patrick','Paul','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (13,6,'Myriam','Isabelle','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (20,2,'Corin','Arnaud','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (30,3,'Philippine','Sagan','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (31,3,'Marie','Jeanne','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (41,4,'Alix','Hopper','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (14,7,'Victoire','Renoir','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (15,7,'Baudelaire','Matthias','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (16,8,'Hugo','Benjamin','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (17,9,'Rembrandt','Stéphanie','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (18,10,'Picasso','Myriam','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (19,11,'Beethoven','John','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (18,11,'Dumas','Elisabeth','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+values (18,10,'','Joséphine','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 --
 --
 -- Produits
 --
 --
 delete from llx_product;
+
+insert into llx_product (ref, label, description, price, tva_tx, fk_product_type, duration)
+values ('HEB12MS','Hébergement serveur 12 mois','Hébergement serveur 12 mois',2400,19.6,1,'12m');
+
+insert into llx_product (ref, label, description, price, tva_tx, fk_product_type, duration)
+values ('HEB03MS','Hébergement serveur 3 mois','Hébergement serveur 3 mois',600,19.6,1,'3m');
+
+insert into llx_product (ref, label, description, price, tva_tx, fk_product_type, duration)
+values ('HEB06MS','Hébergement serveur 6 mois','Hébergement serveur 6 mois',1200,19.6,1,'6m');
+
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('RJ451MR','Câble Réseaux RJ45 1m rouge','Câble Réseaux RJ45 1m rouge',10,19.6);
+
+insert into llx_product (ref, label, description, price, tva_tx)
+values ('RJ454M','Câble Réseaux RJ45 4m','Câble Réseaux RJ45 4m\n couleur suivant stock',19.5,19.6);
 
 insert into llx_product (ref, label, description, price, tva_tx)
 values ('RJ452M','Câble Réseaux RJ45 2m','Câble Réseaux RJ45 2m',10,19.6);
