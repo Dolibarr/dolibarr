@@ -164,7 +164,7 @@ class Contact
 	    $info['phpgwMailType'] = 'INTERNET';
 	    $info['phpgwMailHomeType'] = 'INTERNET';
 	    
-	    $info["uid"] = $id. ":".$info["sn"];
+	    $info["uid"] = $this->id. ":".$info["sn"];
 	    $info["phpgwContactTypeId"] = 'n';
 	    $info["phpgwContactCatId"] = 0;
 	    $info["phpgwContactAccess"] = "public";
