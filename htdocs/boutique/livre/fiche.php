@@ -53,6 +53,7 @@ if ( $HTTP_POST_VARS["sendit"] )
 	{
 	  $result = $livre->fetch($id, 0);
 	  $livre->update_image($_FILES['userfile']['name']);
+	  $livre->updateosc($user);
 	}
     }
 }
