@@ -15,6 +15,7 @@ ActionOnCompany=Action concernant la société
 ActionOnContact=Action concernant le contact
 TaskRDV=Rendez-vous
 TaskRDVWith=Rendez-vous avec %s
+ShowTask=Afficher action
 SalesRepresentative=Commercial
 ErrorWrongCode=Code incorrect
 NoSalesRepresentativeAffected=Aucun commercial particulier affecté

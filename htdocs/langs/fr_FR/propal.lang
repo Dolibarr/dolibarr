@@ -21,4 +21,7 @@ NbOfProposals=Nombre de propositions commerciales
 ShowPropal=Afficher proposition
 PropalsDraft=Brouillons
 PropalsOpened=Ouvertes
+PropalStatusDraft=Brouillon (à valider)
+PropalStatusValidated=Validée (propale ouverte)
 ListOfProposals=Liste des devis/propositions commerciales
+ActionsOnPropal=Actions sur la proposition

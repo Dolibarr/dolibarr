@@ -21,4 +21,7 @@ NbOfProposals=Number of commercial proposals
 ShowPropal=Show proposal
 PropalsDraft=Drafts
 PropalsOpened=Opened
+PropalStatusDraft=Draft (need to be validated)
+PropalStatusValidated=Validated (proposal is opened)
 ListOfProposals=List of commercial proposals
+ActionsOnPropal=Tasks on proposal

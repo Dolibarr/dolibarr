@@ -23,18 +23,20 @@
  */
 
 
-/*!	\file htdocs/propal.class.php
-		\brief  Fichier de la classe des propales
-		\author Rodolphe Qiedeville
-		\author	Eric Seigne
-		\author	Laurent Destailleur
-		\version $Revision$
+/**
+    	\file       htdocs/propal.class.php
+		\brief      Fichier de la classe des propales
+		\author     Rodolphe Qiedeville
+		\author	    Eric Seigne
+		\author	    Laurent Destailleur
+		\version    $Revision$
 */
 
 
 
-/*! \class Propal
-		\brief Classe permettant la gestion des propales
+/**
+        \class      Propal
+		\brief      Classe permettant la gestion des propales
 */
 
 class Propal
@@ -346,11 +348,11 @@ class Propal
 	  return -1;
 	}
     }
+
 		
   /*
-   * Lit les informations
-   *
-   *
+   *    \brief      Recupère de la base les caractéristiques d'une propale
+   *    \param      rowid       id de la propal à récupérer
    */
 	 
   function fetch($rowid)
@@ -834,6 +836,28 @@ class Propal
 	}
     }
 
+
+  /**
+   *    \brief      Retourne le libellé du statut d'une propale (brouillon, validée, ...)
+   *    \return     string      Libellé
+   */
+  function get_libstatut()
+    {
+		return $this->LibStatut($this->statut);
+    }
+
+  /**
+   *    \brief      Renvoi le libellé d'un statut donné
+   *    \param      statut      id statut
+   *    \return     string      Libellé
+   */
+    function LibStatut($statut)
+    {
+        global $langs;
+        $langs->load("propals");
+        if ($statut == 0) return $langs->trans("PropalStatusDraft");
+        return $langs->trans("PropalStatusValidated");
+    }
 
 }  
 

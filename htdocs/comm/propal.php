@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,10 +38,9 @@ $user->getrights('propale');
 if (!$user->rights->propale->lire)
   accessforbidden();
 
-/*
- *  Modules optionnels
- */
-require("../project.class.php");
+if ($conf->projet->enabled) {
+  require_once "../project.class.php";
+}
 require("./propal_model_pdf.class.php");
 require("../propal.class.php");
 require("../actioncomm.class.php");
@@ -55,6 +54,10 @@ if ($user->societe_id > 0)
   $action = '';
   $socidp = $user->societe_id;
 }
+
+// Nombre de ligne pour choix de produit/service prédéfinis
+$NBLINES=4;
+
 
 /******************************************************************************/
 /*                     Actions                                                */
@@ -255,7 +258,7 @@ if ($_GET["propalid"])
   $head[$h][1] = $langs->trans("Info");
   $h++;
 
-  dolibarr_fiche_head($head, $hselected, $langs->trans("Prop").": $propal->ref");
+  dolibarr_fiche_head($head, $hselected, $langs->trans("Proposal").": $propal->ref");
 
   /*
    * Confirmation de la suppression de la propale
@@ -266,7 +269,10 @@ if ($_GET["propalid"])
       $html->form_confirm("propal.php?propalid=$propal->id",$langs->trans("DeleteProp"),$langs->trans("ConfirmDeleteProp"),"confirm_delete");
       print '<br>';
     }
+
+
   /*
+   * Fiche propal
    *
    */
   $sql = "SELECT s.nom, s.idp, p.price, p.fk_projet,p.remise, p.tva, p.total, p.ref,".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst, p.note, x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture";
@@ -279,16 +285,14 @@ if ($_GET["propalid"])
     }
 
   $result = $db->query($sql);
-
   if ( $result )
     {
-      $obj = $db->fetch_object($result);
-    
-      if ($db->num_rows()) 
+   
+      if ($db->num_rows($result)) 
 	{
 
+      $obj = $db->fetch_object($result);
 	  $color1 = "#e0e0e0";
-
 
 	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
 	    {
@@ -298,7 +302,7 @@ if ($_GET["propalid"])
 	    }
 
 	  print "<table class=\"border\" width=\"100%\">";
-        $rowspan=4;
+      $rowspan=7;
         
 	  print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3">';
 	  if ($societe->client == 1)
@@ -310,7 +314,7 @@ if ($_GET["propalid"])
 	      $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
 	    }
 	  print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
-	  print '<td align="left">'.$langs->trans("Status").'</td><td align="left">'.$obj->lst.'</td></tr>';
+	  print '<td align="left" colspan="2">Conditions de réglement : </td></tr>';
 
 	  print '<tr><td>'.$langs->trans("Date").'</td><td colspan="3">'.strftime("%A %d %B %Y",$propal->date);
 	  if ($propal->fin_validite)
@@ -319,10 +323,7 @@ if ($_GET["propalid"])
 	    }
 	  print '</td>';
 
-	  print '<td>'.$langs->trans("Author").'</td><td>';
-	  $author = new User($db, $obj->fk_user_author);
-	  $author->fetch('');
-	  print $author->fullname.'</td></tr>';
+	  print '<td colspan="2">&nbsp;</td></tr>';
 
 	  $langs->load("mails");
 	  print "<tr><td>".$langs->trans("MailTo")."</td><td colspan=\"3\">$obj->firstname $obj->name".($obj->email?" &lt;$obj->email&gt;":"")."</td>";
@@ -342,37 +343,36 @@ if ($_GET["propalid"])
 	      print $projet->title.'</a></td></tr>';
 	    }
 
-	  /*
-	   *
-	   */
+	  $author = new User($db, $obj->fk_user_author);
+	  $author->fetch('');
+	  print "<tr><td height=\"10\">".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td></tr>";
+
+  	  print '<tr><td height=\"10\">'.$langs->trans("GlobalDiscount").'</td>';
 	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
 	    {
-	      print '<tr><td>'.$langs->trans("Discount").' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a></td>';
-	      print '<td align="right"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">%</td>';
-	      print '<td><input type="submit" value="'.$langs->trans("Save").'"></td>';
-
+	      print '<form action="propal.php?propid='.$fac->id.'" method="post">';
+	      print '<td colspan="3"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">% ';
+	      print '<input type="submit" value="'.$langs->trans("Modify").'">';
+	      print ' <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a>';
+          print '</td>';
+	      print '</form>';
 	    }
 	  else
 	    {
-	      print '<tr><td>'.$langs->trans("Discount").'</td>';
-	      print '<td align="right">'.$propal->remise_percent.' %</td><td>&nbsp;</td>';
+	      print '<td colspan="3">'.$propal->remise_percent.' %</td>';
 	    }
+      print '</tr>';
 
-	  print '<td align="right">'.price($propal->remise).' euros</td></tr>';
-	  /*
-	   *
-	   */
-	  print '<tr><td>'.$langs->trans("AmountHT").'</td><td align="right">'.price($obj->price + $obj->remise).' euros</td>';
-	  print '<td align="right">'.$langs->trans("VAT").'</td><td align="right">'.price($propal->total_tva).' euros</td></tr>';
-	  	  
-	  /*
-	   *
-	   */
-	  print '<tr><td>'.$langs->trans("TotalHT").'</td><td align="right"><b>'.price($obj->price).'</b> euros</td>';
-	  print '<td align="right">'.$langs->trans("TotalTTC").'</td><td align="right"><b>'.price($propal->total_ttc).'</b> euros</td></tr>';
-	  /*
-	   *
-	   */
+	  print '<tr><td height=\"10\">'.$langs->trans("AmountHT").'</td>';
+	  print '<td align="right" colspan="2"><b>'.price($obj->price).'</b></td>';
+	  print '<td>'.$conf->monnaie.'</td></tr>';
+
+	  print '<tr><td height=\"10\">'.$langs->trans("VAT").'</td><td align="right" colspan="2">'.price($propal->total_tva).'</td>';
+	  print '<td>'.$conf->monnaie.'</td></tr>';
+	  print '<tr><td height=\"10\">'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($propal->total_ttc).'</td>';
+	  print '<td>'.$conf->monnaie.'</td></tr>';
+
+	  print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.$propal->get_libstatut().'</td></tr>';
 
 	  print "</table><br>";
 
@@ -397,93 +397,137 @@ if ($_GET["propalid"])
 	      print "</tr></table></form>";
 	    }
 
-	  /*
-	   * Produits
-	   */
-	  print_titre($langs->trans("ProductsAndServices"));
-	  print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-	  print '<table class="noborder" width="100%">';
-	  print "<tr class=\"liste_titre\">";
-	  print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("ProductOrService").'</td>';
-	  print '<td align="center">'.$langs->trans("VAT").'</td><td align="center">'.$langs->trans("Qty").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="right">'.$langs->trans("PriceU").'</td>';
-      print "<td>&nbsp;</td>";
-	  print "</tr>\n";
-
-	  $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, p.fk_product_type, pt.qty, p.rowid as prodid, pt.tva_tx, pt.remise_percent, pt.subprice";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propal->id";
+      /*
+       * Lignes de propale
+       *
+       */
+	  $sql = "SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, p.label as product, p.ref, p.fk_product_type, p.rowid as prodid";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt LEFT JOIN ".MAIN_DB_PREFIX."product as p ON pt.fk_product=p.rowid";
+	  $sql .= " WHERE pt.fk_propal = ".$propal->id;
 	  $sql .= " ORDER BY pt.rowid ASC";
 	  $result = $db->query($sql);
 	  if ($result) 
 	    {
-	      $num = $db->num_rows();
-	      $i = 0;
-	      
-	      $var=True;
+	      $num_lignes = $db->num_rows($result);
+	      $i = 0; $total = 0;
 
-	      while ($i < $num) 
+    	  print '<table class="noborder" width="100%">';
+          if ($num_lignes)
+        {
+    	  print "<tr class=\"liste_titre\">";
+		  print '<td width="54%">'.$langs->trans("Description").'</td>';
+		  print '<td width="8%" align="right">'.$langs->trans("VAT").'</td>';
+		  print '<td width="12%" align="right">'.$langs->trans("PriceUHT").'</td>';
+		  print '<td width="8%" align="right">'.$langs->trans("Qty").'</td>';
+		  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
+		  print '<td width="10%" align="right">'.$langs->trans("AmountHT").'</td>';
+		  print '<td>&nbsp;</td><td>&nbsp;</td>';
+    	  print "</tr>\n";
+		}	
+	      $var=True;
+	      while ($i < $num_lignes)
 		{
 		  $objp = $db->fetch_object($result);
 		  $var=!$var;
 		  print "<tr $bc[$var]>";
-		  print "<td>".$objp->ref."</td>\n";
-		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">';
-		  if ($objp->fk_product_type==0) print img_object($langs->trans("ShowProduct"),"product");
-		  if ($objp->fk_product_type==1) print img_object($langs->trans("ShowService"),"service");
-		  print ' '.$objp->product.'</a></td>';
-		  print '<td align="center">'.$objp->tva_tx.' %</td>';
-		  print "<td align=\"center\">".$objp->qty."</td>\n";
-		  print '<td align="center">'.$objp->remise_percent.' %</td>';
-		  print '<td align="right">'.price($objp->subprice).'</td>';
-		  if ($propal->statut == 0 && $user->rights->propale->creer)
+		  if ($objp->fk_product > 0)
 		    {
-		      print '<td align="center"><a href="propal.php?propalid='.$propal->id.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">';
-		      print img_delete();
-		      print '</a></td>';
+		      print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+        	  if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
+        	  else print img_object($langs->trans("ShowProduct"),"product");
+		      print ' '.stripslashes(nl2br($objp->description?$objp->description:$objp->product)).'</a>';
+		      if ($objp->date_start && $objp->date_end) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
+		      if ($objp->date_start && ! $objp->date_end) { print " (A partir du ".dolibarr_print_date($objp->date_start).")"; }
+		      if (! $objp->date_start && $objp->date_end) { print " (Jusqu'au ".dolibarr_print_date($objp->date_end).")"; }
+		      print '</td>';
 		    }
-		  else {
-		      print '<td>&nbsp;</td>'; 
-		  }
-		  print "</tr>";
-
-		  $i++;
-		}
-	    }
-
-	  $sql = "SELECT pt.rowid, pt.description, pt.price, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt WHERE pt.fk_propal = $propal->id AND pt.fk_product = 0";
-	  
-      $result = $db->query($sql);
-	  if ($result) 
-	    {
-	      $num = $db->num_rows();
-	      $i = 0;	     
-	      while ($i < $num) 
+		  else
 		    {
-		  $objp = $db->fetch_object($result);
-		  $var=!$var;
-		  print "<tr $bc[$var]><td>&nbsp;</td>\n";
-		  print '<td>'.$objp->description.'</td>';
-		  print '<td align="center">'.$objp->tva_tx.' %</td>';
-		  print "<td align=\"center\">".$objp->qty."</td>\n";
-		  print '<td align="center">'.$objp->remise_percent.' %</td>';
-		  print "<td align=\"right\">".price($objp->subprice)."</td>";
-		  if ($propal->statut == 0 && $user->rights->propale->creer)
+		      print "<td>".stripslashes(nl2br($objp->description));
+		      if ($objp->date_start && $objp->date_end) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
+		      if ($objp->date_start && ! $objp->date_end) { print " (A partir du ".dolibarr_print_date($objp->date_start).")"; }
+		      if (! $objp->date_start && $objp->date_end) { print " (Jusqu'au ".dolibarr_print_date($objp->date_end).")"; }
+		      print "</td>\n";
+		    }
+
+		  print '<td align="right">'.$objp->tva_tx.' %</td>';
+		  print '<td align="right">'.price($objp->subprice)."</td>\n";
+		  print '<td align="right">'.$objp->qty.'</td>';
+		  if ($objp->remise_percent > 0)
 		    {
-		      print '<td align="center"><a href="propal.php?propalid='.$propal->id.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">';
-		      print img_delete();
-		      print '</a></td>';
+		      print '<td align="right">'.$objp->remise_percent." %</td>\n";
 		    }
 		  else
 		    {
 		      print '<td>&nbsp;</td>';
 		    }
-		  print "</tr>";
-		  $i++;
+		  print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
+
+		  // Icone d'edition et suppression		  
+		  if ($propal->statut == 0  && $user->rights->propale->creer) 
+		    {
+		      print '<td align="right"><a href="propal.php?facid='.$fac->id.'&amp;action=editline&amp;ligne='.$objp->rowid.'">';
+		      //print img_edit();
+		      print '</a></td>';
+		      print '<td align="right"><a href="propal.php?facid='.$fac->id.'&amp;action=del_ligneeteline&amp;ligne='.$objp->rowid.'">';
+		      print img_delete();
+		      print '</a></td>';
 		    }
+		  else
+		    {
+		      print '<td>&nbsp;</td><td>&nbsp;</td>';
+		    }
+		  print "</tr>";
+
+		  // Update ligne de facture
+          // \todo
+
+
+		  $total = $total + ($objp->qty * $objp->price);
+		  $i++;
+		}
+
+	      $db->free();
+	    } 
+	  else
+	    {
+	      dolibarr_print_error($db);
 	    }
 
+	  /*
+	   * Ajouter une ligne
+	   *
+	   */
 	  if ($propal->statut == 0 && $user->rights->propale->creer)
 	    {
+    	  print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+	      print "<tr class=\"liste_titre\">";
+		  print '<td width="54%">'.$langs->trans("Description").'</td>';
+		  print '<td width="8%" align="right">'.$langs->trans("VAT").'</td>';
+		  print '<td width="12%" align="right">'.$langs->trans("PriceUHT").'</td>';
+		  print '<td width="8%" align="right">'.$langs->trans("Qty").'</td>';
+		  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
+	      print '<td>&nbsp;</td>';
+	      print '<td>&nbsp;</td>';
+	      print '<td>&nbsp;</td>';
+	      print "</tr>\n";
+	      print '<input type="hidden" name="propid" value="'.$propal->id.'">';
+	      print '<input type="hidden" name="action" value="addligne">';
+
+          // Ajout produit produits/services personalisé
+	      $var=!$var;
+
+	      print "<tr ".$bc[$var].">\n";
+	      print "  <td><textarea cols=\"50\" name=\"np_desc\"></textarea></td>\n";
+	      print "  <td align=\"center\">";
+	      print $html->select_tva("np_tva_tx",$conf->defaulttx) . "</td>\n";
+	      print "  <td align=\"right\"><input type=\"text\" size=\"6\" name=\"np_price\"></td>\n";
+	      print "  <td align=\"right\"><input type=\"text\" size=\"3\" value=\"1\" name=\"np_qty\"></td>\n";
+	      print "  <td align=\"right\"><input type=\"text\" size=\"3\" value=\"".$societe->remise_client."\" name=\"np_remise\"> %</td>\n";
+	      print "  <td align=\"center\" colspan=\"3\"><input type=\"submit\" value=\"".$langs->trans("Add")."\" name=\"addproduct\"></td>\n";
+	      print "</tr>";
+
+	      // Ajout de produits/services prédéfinis
 	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p WHERE p.envente=1 ORDER BY p.nbvente DESC LIMIT 20";
 	      $result = $db->query($sql);
 		  if ($result)
@@ -503,39 +547,25 @@ if ($_GET["propalid"])
     		  dolibarr_print_error($db);
     		}
 
-	      /*
-	       * Ligne d'ajout de produits/services personalisé
-	       */
 	      $var=!$var;
-
-	      print "<tr ".$bc[$var].">\n";
-	      print "  <td>&nbsp;</td>\n";
-	      print "  <td><textarea cols=\"50\" name=\"np_desc\"></textarea></td>\n";
-	      print "  <td align=\"center\">";
-	      print $html->select_tva("np_tva_tx",$conf->defaulttx) . "</td>\n";
-	      print "  <td align=\"center\"><input type=\"text\" size=\"3\" value=\"1\" name=\"np_qty\"></td>\n";
-	      print "  <td align=\"center\"><input type=\"text\" size=\"3\" value=\"".$societe->remise_client."\" name=\"np_remise\"> %</td>\n";
-	      print "  <td align=\"right\"><input type=\"text\" size=\"6\" name=\"np_price\"></td>\n";
-	      print "  <td align=\"center\"><input type=\"submit\" value=\"".$langs->trans("Add")."\" name=\"addproduct\"></td>\n";
-	      print "</tr>";
-
-	      /*
-	       * Ligne d'ajout de produits/services prédéfinis
-	       */
-	      $var=!$var;
-	      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"2\"><select name=\"idprod\">".$opt."</select></td>";
-	      print '<td align="center"><input type="text" size="3" name="qty" value="1"></td>';
-	      print '<td align="center"><input type="text" size="3" name="remise" value="'.$societe->remise_client.'"> %</td>';
+	      print "<tr $bc[$var]>";
+	      print "<td colspan=\"2\"><select name=\"idprod\">".$opt."</select></td>";
 	      print '<td>&nbsp;</td>';
-	      print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="addligne"></td>';
+	      print '<td align="right"><input type="text" size="3" name="qty" value="1"></td>';
+	      print '<td align="right"><input type="text" size="3" name="remise" value="'.$societe->remise_client.'"> %</td>';
+	      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'" name="addligne"></td>';
 	      print "</tr>\n";
+	      print "</form>";
 	    }
 
-	  print "</table>";
-	  print '</form><br>';
+	  print "</table><br>\n";
 
       }
 
+	  /*
+	   * Fin Ajout ligne
+	   *
+	   */
 	  print '</div>';
 
 
@@ -719,54 +749,54 @@ if ($_GET["propalid"])
 	      }
 	  }
 
-
-
-	  /*
-	   *
-	   */
 	  print "</td><td valign=\"top\" width=\"50%\">";
+	
 	  /*
-	   *
+	   * Liste des actions propres à la propal
 	   */
-	  $sql = "SELECT ".$db->pdate("a.datea"). " as da, note, fk_user_author" ;
-	  $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = $obj->idp AND a.propalrowid = $propal->id ";
+	  $sql = "SELECT id, ".$db->pdate("a.datea"). " as da, note, fk_user_author" ;
+	  $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a";
+	  $sql .= " WHERE a.fk_soc = $obj->idp AND a.propalrowid = $propal->id ";
 	  
-	  if ( $db->query($sql) )
+	  $result = $db->query($sql);
+	  if ($result)
 	    {
-	      $num = $db->num_rows();
-	      $i = 0; $total = 0;
-
-	      if ($num > 0)
+	      $num = $db->num_rows($result);
+	      if ($num)
 		{
-		  print_titre("Propale envoyée");
+		  print_titre($langs->trans("ActionsOnPropal"));
 
+	      $i = 0; $total = 0;
 		  print '<table class="border" width="100%">';
-		  print "<tr><td>".$langs->trans("Date")."</td><td>".$langs->trans("Author")."</td></tr>\n";
-	      
-
+		  print '<tr '.$bc[$var].'><td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Action").'</td><td>'.$langs->trans("By").'</td></tr>';
+          print "\n";
+          
+		  $var=True;
 		  while ($i < $num)
 		    {
-		      $objp = $db->fetch_object();
-		      print "<tr><td>".strftime("%d %B %Y %H:%M:%S",$objp->da)."</td>\n";
+		      $objp = $db->fetch_object($result);
+		      $var=!$var;
+		      print "<tr $bc[$var]>";
+		      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans("ShowTask"),"task").' '.$objp->id.'</a></td>';
+		      print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
+		      print '<td>'.stripslashes($objp->note).'</td>';
 		      $authoract = new User($db);
 		      $authoract->id = $objp->fk_user_author;
 		      $authoract->fetch('');
-		      print "<td>$authoract->code</td></tr>\n";
-		      print "<tr><td colspan=\"2\">$objp->note</td></tr>";
+		      print '<td>'.$authoract->code.'</td>';
+		      print "</tr>\n";
 		      $i++;
 		    }
 		  print "</table>";
 		}
-	      $db->free();
 	    }
 	  else
 	    {
 	      dolibarr_print_error($db);
 	    }
-	  /*
-	   *
-	   */
+
 	  print "</td></tr></table>";
+
 	  if ($propal->brouillon == 1)
 	    {
 	      print '</form>';
