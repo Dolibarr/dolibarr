@@ -20,12 +20,12 @@
 # General Makefile
 #
 
-FILE=dolibarr-1.0.0
+FILE=dolibarr-1.1.0
 
 tar:
 	rm -fr dolibarr-*.tar.gz* $(FILE)
 	mkdir $(FILE)
-	rsync -ar doc ChangeLog htdocs mysql misc COPY* http* INSTALL README scripts templates pgsql $(FILE)/
+	rsync -ar doc ChangeLog htdocs mysql misc COPY* http* INSTALL README scripts templates $(FILE)/
 	tar --exclude-from tar.exclude -cvvf $(FILE).tar $(FILE)/
 	gzip $(FILE).tar
 	md5sum $(FILE).tar.gz > $(FILE).tar.gz.md5
