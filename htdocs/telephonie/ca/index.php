@@ -83,12 +83,12 @@ if ($db->query($sql))
 }
 else 
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 print '</td><td valign="top" width="50%">'."\n";
 
-print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph=ca/ca.mensuel.png" alt="CA Mensuel"><br /><br />';
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=ca/ca.mensuel.png" alt="CA Mensuel"><br /><br />';
 
 print "\n</td></tr>\n";
 print '</table>';
