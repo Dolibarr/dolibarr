@@ -94,6 +94,8 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/","Accueil");      
     }
 
+  $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Déplacement");
+
   left_menu($menu->liste);
 
 }
