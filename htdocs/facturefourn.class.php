@@ -352,8 +352,11 @@ class FactureFourn
    *
    */
   Function updateprice($facid)
-  {
-    
+  {    
+    $total_ht  = 0;
+    $total_tva = 0;
+    $total_ttc = 0;
+
     $sql = "SELECT sum(total_ht), sum(tva), sum(total_ttc) FROM ".MAIN_DB_PREFIX."facture_fourn_det";
     $sql .= " WHERE fk_facture_fourn = $facid;";
     
@@ -367,13 +370,22 @@ class FactureFourn
 	    $total_ht  = $row[0];
 	    $total_tva = $row[1];
 	    $total_ttc = $row[2];
+
+	    if ($total_ht == '')
+	      $total_ht = 0;
+
+	    if ($total_tva == '')
+	      $total_tva = 0;
+
+	    if ($total_ttc == '')
+	      $total_ttc = 0;
+
 	  }
 	
 	$sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn SET total_ht = $total_ht, total_tva = $total_tva, total_ttc = $total_ttc";
 	$sql .= " WHERE rowid = $facid ;";
-	
-	$result = $this->db->query($sql);
-	
+
+	$result = $this->db->query($sql);	
       }
     else 
       {
@@ -396,18 +408,18 @@ class FactureFourn
    *
    */
   Function LibStatut($paye,$statut)
-    {
-		if (! $paye)
-		  {
-		    if ($statut == 0) return 'Brouillon (à valider)';
-		    if ($statut == 3) return 'Annulée';
-			return 'Validée (à payer)';
-		  }
-		else
-		  {
-		    return 'Payée';
-    	  }
-    }
+  {
+    if (! $paye)
+      {
+	if ($statut == 0) return 'Brouillon (à valider)';
+	if ($statut == 3) return 'Annulée';
+	return 'Validée (à payer)';
+      }
+    else
+      {
+	return 'Payée';
+      }
+  }
   
 }
 ?>
