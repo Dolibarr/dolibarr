@@ -26,5 +26,5 @@ FILE=dolibarr-$(DATE).tar
 tar:
 	tar --exclude-from tar.exclude -cvvf $(FILE) .
 	gzip $(FILE)
-	scp $(FILE).gz rodolphe.quiedeville.org:/home/www/rodolphe.quiedeville.org/htdocs/projets/dolibarr/dl/
-
+	md5sum $(FILE).gz > $(FILE).gz.md5sum
+	scp $(FILE).gz* rodolphe.quiedeville.org:/home/www/rodolphe.quiedeville.org/htdocs/projets/dolibarr/dl/
