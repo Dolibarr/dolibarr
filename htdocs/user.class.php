@@ -571,7 +571,7 @@ class User
 
       if ($result) 
 	{
-	  if ($this->db->num_rows()) 
+	  if ($this->db->num_rows($result)) 
 	    {
 	      $obj = $this->db->fetch_object($result);
 	      $this->id = $obj->rowid;
@@ -663,56 +663,55 @@ class User
   }
 
   /**
-   *    \brief  Crée en base un utilisateur
+   *        \brief      Crée un utilisateur en base
+   *        \return     si erreur <0, si ok renvoie id compte créé
    */
 	 
   function create()
     {
         global $langs;
         
-        $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login';";
-				//$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->email';";
-      if ($this->db->query($sql)) 
-	{
-	  $num = $this->db->num_rows();
-	  $this->db->free();
+        $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='".$this->login."';";
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $this->db->free($result);
+        
+            if ($num)
+            {
+                $this->error = $langs->trans("ErrorLoginAlreadyExists");
+                return -5;
+            }
+            else
+            {
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,email) VALUES(now(),'$this->login','$this->email');";
+                $result=$this->db->query($sql);
 
-	  if ($num) 
-	    {
-	      $this->error = $langs->trans("ErrorLoginAlreadyExists");
-	      return 0;
-	    }
-	  else
-	    {            
-				$sql = "insert into ".MAIN_DB_PREFIX."user (datec,login,email)
-				values(now(),'$this->login','$this->email');";
-	      if ($this->db->query($sql))
-		{
-		  /*if ($this->db->affected_rows()) 
-		    {
-		      $this->id = $this->db->last_insert_id();
-		      $this->update();
-		      $this->set_default_rights();
-		      return $this->id;      
-		    }*/ // ce code pose probleme en postgres il est remplace par le bloc ci dessous
-				// fonctionne autant en postgres que mysql
-				$table =  "".MAIN_DB_PREFIX."user";
-				$this->id = $this->db->last_insert_id($table);
-				$this->set_default_rights();
-				$this->update();
-				return $this->id;
-		}
-	      else
-		{
-		  dolibarr_print_error($this->db);
-		}
-	    }
-	}
-      else
-	{
-    	  dolibarr_print_error($this->db);
-	}
-    } //fin function
+                if ($result)
+                {
+                    $table =  "".MAIN_DB_PREFIX."user";
+                    $this->id = $this->db->last_insert_id($table);
+
+                    if ($this->set_default_rights() < 0) return -4;
+
+                    if ($this->update() < 0) return -3;
+
+                    return $this->id;
+                }
+                else
+                {
+                    dolibarr_print_error($this->db);
+                    return -2;
+                }
+            }
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
+    }
 
   /**
    * \brief     Créé en base un utilisateur depuis l'objetc contact
@@ -776,100 +775,83 @@ class User
     }
 
   /**
-   * \brief     Affectation des permissions par défaut
-   *
+   *    \brief      Affectation des permissions par défaut
+   *    \return     si erreur <0, si ok renvoi le nbre de droits par defaut positionnés
    */
 	 
   function set_default_rights()
     {
-      $sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def WHERE bydefault = 1";
-
-      if ($this->db->query($sql)) 
-	{
-	  $num = $this->db->num_rows();
-	  $i = 0;
-	  $rd = array();
-	  while ($i < $num)
-	    {
-	      $row = $this->db->fetch_row($i);
-	      $rd[$i] = $row[0];
-	      $i++;
-	    }
-	  $this->db->free();
-	}
-      $i = 0;
-      while ($i < $num)
-	{
-	
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rd[$i]";
-		
-		$this->db->query($sql);
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rd[$i])";
-	
-	  if ($this->db->query($sql)) 
-	    {
-	    }
-	  $i++;
-	}
+        $sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def WHERE bydefault = 1";
+        
+        if ($this->db->query($sql))
+        {
+            $num = $this->db->num_rows();
+            $i = 0;
+            $rd = array();
+            while ($i < $num)
+            {
+                $row = $this->db->fetch_row($i);
+                $rd[$i] = $row[0];
+                $i++;
+            }
+            $this->db->free();
+        }
+        $i = 0;
+        while ($i < $num)
+        {
+        
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rd[$i]";
+            $result=$this->db->query($sql);
+        
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rd[$i])";
+            $result=$this->db->query($sql);
+            if (! $result) return -1;
+            $i++;
+        }
+        
+        return $i;
     }
 
   /**
    *    \brief      Mise à jour en base d'un utilisateur
-   *    \return     <0 si echec, >0 si ok
+   *    \return     <0 si echec, >=0 si ok
    */
-	 
   function update()
     {
         global $langs;
-        		
-      $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login' AND rowid <> $this->id;";
-		 
+        
+        if (!strlen($this->code))
+        $this->code = $this->login;
 
-      if ($this->db->query($sql)) 
-	{
-	  $num = $this->db->num_rows();
-	  $this->db->free();
-		
+        $sql = "UPDATE ".MAIN_DB_PREFIX."user SET ";
+        $sql .= " name = '$this->nom'";
+        $sql .= ", firstname = '$this->prenom'";
+        $sql .= ", login = '$this->login'";
+        $sql .= ", email = '$this->email'";
+        $sql .= ", admin = $this->admin";
+        $sql .= ", webcal_login = '$this->webcal_login'";
+        $sql .= ", code = '$this->code'";
+        $sql .= ", note = '$this->note'";
+        $sql .= " WHERE rowid = ".$this->id;
 
-	  if ($num) 
-	    {
-	      $this->error = $langs->trans("ErrorLoginAlreadyExists");
-	      return -1;
-	    }
-	  else
-	    {            
-	      if (!strlen($this->code))
-		$this->code = $this->login;
 
-	      $sql = "UPDATE ".MAIN_DB_PREFIX."user SET ";
-	      $sql .= " name = '$this->nom'";
-	      $sql .= ", firstname = '$this->prenom'";
-	      $sql .= ", login = '$this->login'";
-	      $sql .= ", email = '$this->email'";
-	      $sql .= ", admin = $this->admin";
-	      $sql .= ", webcal_login = '$this->webcal_login'";
-	      $sql .= ", code = '$this->code'";
-	      $sql .= ", note = '$this->note'";
-	      $sql .= " WHERE rowid = $this->id;";
-				
-	      
-	      $result = $this->db->query($sql);
-	      
-	      if ($result) 
-		{
-		  if ($this->db->affected_rows()) 
-		    {
-		      return 1;		      
-		    }		  
-		}
-	      else
-		{
-		  dolibarr_print_error($this->db);
-		}
-	    }
-	}
-    }
+        $result = $this->db->query($sql);
+
+        if ($result)
+        {
+            if ($this->db->affected_rows())
+            {
+                return 1;
+            }
+            return 0;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -2;
+        }
+
+   }
 
   /**
    *    \brief     Change le mot de passe d'un utilisateur et l'envoie par mail

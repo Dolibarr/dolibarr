@@ -65,7 +65,7 @@ class UserGroup
   {      
     $this->id = $id;
 
-    $sql = "SELECT g.rowid, g.nom FROM ".MAIN_DB_PREFIX."usergroup as g";
+    $sql = "SELECT g.rowid, g.nom, g.note FROM ".MAIN_DB_PREFIX."usergroup as g";
     $sql .= " WHERE g.rowid = ".$this->id;
     
       
@@ -73,15 +73,16 @@ class UserGroup
 
     if ($result) 
       {
-	if ($this->db->num_rows()) 
+	if ($this->db->num_rows($result)) 
 	  {
-	    $obj = $this->db->fetch_object();
+	    $obj = $this->db->fetch_object($result);
 
 	    $this->id = $obj->rowid;
-	    $this->nom = stripslashes($obj->nom);
+	    $this->nom  = $obj->nom;
+	    $this->note = $obj->note;
 	    
 	  }
-	$this->db->free();
+	$this->db->free($result);
 	
       }
     else
@@ -108,7 +109,8 @@ class UserGroup
   }
 
   /**
-   *    \brief  Crée un groupe en base
+   *        \brief      Crée un groupe en base
+   *        \return     si erreur <0, si ok renvoie id groupe créé
    */
 	 
   function create()
@@ -117,19 +119,52 @@ class UserGroup
     $sql = "INSERT into ".MAIN_DB_PREFIX."usergroup (datec,nom)";
     $sql .= " VALUES(now(),'$this->nom')";
 
-    if ($this->db->query($sql))
-      {
-	$this->id = $this->db->last_insert_id();
-	return 0;
-      }
+    $result=$this->db->query($sql);
+    if ($result)
+    {
+        $table =  "".MAIN_DB_PREFIX."usergroup";
+        $this->id = $this->db->last_insert_id($table);
+
+        if ($this->update() < 0) return -2;
+
+        return $this->id;
+    }
     else
-      {
-	dolibarr_syslog("UserGroup::Create");
-	return -1;
-      }
+    {
+        dolibarr_syslog("UserGroup::Create");
+        return -1;
+    }
   }
 
 
+  /**
+   *    \brief      Mise à jour en base d'un utilisateur
+   *    \return     <0 si echec, >=0 si ok
+   */
+  function update()
+    {
+        $sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
+        $sql .= " note = '$this->note'";
+        $sql .= " WHERE rowid = ".$this->id;
+
+        $result = $this->db->query($sql);
+
+        if ($result)
+        {
+            if ($this->db->affected_rows())
+            {
+                return 1;
+            }
+            return 0;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -2;
+        }
+
+   }
+   
 }
 
 ?>

@@ -64,6 +64,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
     }
 }
 
+
 /**
  *  Action ajout user
  */
@@ -78,6 +79,7 @@ if ($_POST["action"] == 'add' && $user->admin)
     $message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
     $action="create";       // Go back to create page
   }
+
   if (! $message) {
     $edituser = new User($db,0);
     
@@ -89,20 +91,29 @@ if ($_POST["action"] == 'add' && $user->admin)
     $edituser->admin         = trim($_POST["admin"]);
     $edituser->webcal_login  = trim($_POST["webcal_login"]);
     
+    $db->begin();
+    
     $id = $edituser->create();
-    
-    if ($id) {
-      if (isset($_POST['password']) && trim($_POST['password']))
-	{
-	  $edituser->password($user,trim($_POST['password']),$conf->password_encrypted);
-	}
-    
-      Header("Location: fiche.php?id=$id");
+
+    if ($id > 0)
+    {
+        if (isset($_POST['password']) && trim($_POST['password']))
+        {
+            $edituser->password($user,trim($_POST['password']),$conf->password_encrypted);
+        }
+        
+        $db->commit();
+        
+        Header("Location: fiche.php?id=$id");
     }           
-    else {
-      $message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
-      $action="create";       // Go back to create page
+    else
+    {
+        $db->rollback();
+
+        $message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
+        $action="create";       // Go back to create page
     }
+
   }
 }
 
@@ -187,7 +198,7 @@ if ($action == 'create')
   print "<br>";
   if ($message) { print $message."<br>"; }
 
-  print '<form action="fiche.php" method="post" name="createuser>';
+  print '<form action="fiche.php" method="post" name="createuser">';
   print '<input type="hidden" name="action" value="add">';
 
   print '<table class="border" width="100%">';

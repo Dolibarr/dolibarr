@@ -21,9 +21,9 @@
  */
 
 /**
-   \file       htdocs/user/group/fiche.php
-   \brief      Onglet groupes utilisateurs
-   \version    $Revision$
+    \file       htdocs/user/group/fiche.php
+    \brief      Onglet groupes utilisateurs
+    \version    $Revision$
 */
 
 
@@ -51,16 +51,22 @@ if ($_POST["action"] == 'add' && $user->admin)
     $editgroup->nom    = trim($_POST["nom"]);
     $editgroup->note   = trim($_POST["note"]);
     
-    $result = $editgroup->create();
+    $db->begin();
+
+    $id = $editgroup->create();
     
-    if ($result == 0)
+    if ($id > 0)
       {
-	Header("Location: fiche.php?id=".$editgroup->id);
+        $db->commit();
+        
+    	Header("Location: fiche.php?id=".$editgroup->id);
       }           
     else
       {
-	$message='<div class="error">'.$langs->trans("ErrorGroupAlreadyExists",$editgroup->nom).'</div>';
-	$action="create";       // Go back to create page
+        $db->rollback();
+
+    	$message='<div class="error">'.$langs->trans("ErrorGroupAlreadyExists",$editgroup->nom).'</div>';
+    	$action="create";       // Go back to create page
       }
   }
 }
@@ -224,7 +230,7 @@ else
       $result = $db->query($sql);
       if ($result)
 	{
-	  $num = $db->num_rows();
+	  $num = $db->num_rows($result);
 	  $i = 0;
 	  
 	  print "<br>";
@@ -238,7 +244,7 @@ else
 	  $var=True;
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object();
+	      $obj = $db->fetch_object($result);
 	      $var=!$var;
 	      
 	      print "<tr $bc[$var]>";
@@ -263,8 +269,11 @@ else
 	      $i++;
 	    }
 	  print "</table>";
-	  $db->free();
+	  print "<br>";
+	  $db->free($result);
 	}            
+
+    print '</div>';
     }
 }
 
