@@ -1,9 +1,6 @@
---
+-- ============================================================================--
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
---
--- $Id$
--- $Source$
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,9 +16,12 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
---
 -- Valeurs pour les bases de langues francaises
 --
+-- $Id$
+-- $Source$
+--
+-- ============================================================================--
 
 insert into llx_cond_reglement values (1,1,1, 'A réception','Réception de facture',0,0);
 insert into llx_cond_reglement values (2,2,1, '30 jours','Réglement à 30 jours',0,30);

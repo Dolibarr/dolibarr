@@ -18,6 +18,7 @@
 --
 -- $Id$
 -- $Source$
+--
 -- ============================================================================
 
 ALTER TABLE llx_fichinter        ADD CONSTRAINT fichinter_fk_soc_idp		FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);

@@ -1,6 +1,7 @@
 #
 # Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 # Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
+# Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 #
 # $Id$
 # $Source$

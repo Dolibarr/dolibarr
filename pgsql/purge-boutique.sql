@@ -1,4 +1,4 @@
---
+-- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
@@ -18,6 +18,7 @@
 --
 -- $Id$
 -- $Source$
+--
 -- ===========================================================================
 
 delete from llx_auteur;

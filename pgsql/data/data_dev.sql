@@ -1,5 +1,6 @@
 -- ===========================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,12 +16,13 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
--- $Source$
---
 -- Valeurs de test pour les developpements
 -- Ne pas hésiter a compléter ce fichier avec de nouvelles valeurs, plus on a
 -- de données, mieux on peut tester l'appli.
+--
+-- $Id$
+-- $Source$
+--
 -- ===========================================================================
 
 delete from llx_tva;

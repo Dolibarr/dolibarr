@@ -15,11 +15,14 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
---===========================================================================
-
 --
 -- Dumping data for table 'llx_paiement'
 --
+-- $Id$
+-- $Source$
+--
+--===========================================================================
+
 
 INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (1,1,'2002-05-09 03:05:03','2001-05-19 12:00:00',11960,'rodo',0,'321654654','');
 INSERT INTO llx_paiement (rowid, fk_facture, datec, datep, amount, author, fk_paiement, num_paiement, note) VALUES (2,2,'2002-05-09 03:18:10','2002-04-12 12:00:00',500,'rodo',0,'255555','');

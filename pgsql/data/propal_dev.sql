@@ -15,11 +15,15 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
---===========================================================================
-
 --
 -- Dumping data for table 'llx_propal'
 --
+-- $Id$
+-- $Source$
+--
+--===========================================================================
+
+
 
 INSERT INTO llx_propal (rowid, fk_soc, fk_soc_contact, fk_projet, ref, datec, date_valid, date_cloture, datep, fk_user_author, fk_user_valid, fk_user_cloture, fk_statut, price, remise, tva, total, note) VALUES (1,1,10,0,'PR-BO-020509','2002-05-09 03:04:29','2002-05-09 03:04:37','2002-05-09 03:04:42','2002-05-09',1,1,1,2,10000,0,1960,11960,'----------\r\n');
 INSERT INTO llx_propal (rowid, fk_soc, fk_soc_contact, fk_projet, ref, datec, date_valid, date_cloture, datep, fk_user_author, fk_user_valid, fk_user_cloture, fk_statut, price, remise, tva, total, note) VALUES (2,1,11,0,'PR-BO-020111','2002-05-09 03:08:33','2002-05-09 03:36:25','2002-05-09 03:36:29','2002-01-11',1,1,1,2,20,0,3.92,23.92,'----------\r\n');

@@ -22,26 +22,25 @@
 
 /*!	\file webcal.class.php
 
-		\author Rodolphe Quiedeville
-		\version 1.2
-		\date    2003-2004
- */
 
+*/
+
+/*! \class Webcal webcal.class.php
+		\brief Classe permettant d'acceder a la database webcalendar
+
+		Details des fonctions permettant d'acceder a la database webcalendar
+*/
 
 class Webcal {
   var $localdb;
   var $heure = -1;
   var $duree = 0;
 
-/*! \class Webcal webcal.class.php "htdocs/lib/webcal.class.php"
-		\brief Classe permettant d'acceder a la database webcalendar
+/*!
+		\static
+
+		Permet de se connecter a la database.
 */
-
-
-/*!	\fn
-		\brief permet la connection a la base de donnée webcal
-
- */
 
   Function Webcal()
     {
@@ -55,14 +54,16 @@ class Webcal {
     }
 
 /*!
+		\static
+
 		\brief ajoute une entree dans le calendrier de l'utilsateur
 
-		\param[in] user		le login de l'utilisateur
-		\param[in] date		la date de l'evenement dans le calendrier
-		\param[in] texte	le titre a indiquer dans l'evenement
-		\param[in] desc		la description a indiquer dans l'evenement
+		\param[in] $user		le login de l'utilisateur
+		\param[in] $date		la date de l'evenement dans le calendrier
+		\param[in] $texte		le titre a indiquer dans l'evenement
+		\param[in] $desc		la description a indiquer dans l'evenement
 
- */
+*/
 
   Function add($user, $date, $texte, $desc)
     {
@@ -112,11 +113,12 @@ class Webcal {
     	}
 
 /*!
+		\static
 		\brief obtient l'id suivant dans le webcalendar
 
-		\retval id		retourne l'id suivant dans le webcalendar
+		\retval $id	retourne l'id suivant dans le webcalendar
+*/
 
- */
 
   Function get_next_id()
     {

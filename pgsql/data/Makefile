@@ -1,9 +1,7 @@
 #
 # Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 # Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
-#
-# $Id$
-# $Source$
+# Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -19,10 +17,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 #
-# General Makefile for Mysql database
+# General Makefile for postgresql database
+#
+# $Id$
+# $Source$
 #
 
-SQL=psql 
+SQL=psql
 BASE=dolibarr
 OWNER=dolibarradm
 OPTIONS=-U $(OWNER)
