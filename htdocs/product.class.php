@@ -73,6 +73,8 @@ class Product
 	{
 	  $this->price = 0;
 	}
+      $this->price = round($this->price, 2);
+
       $sql = "INSERT INTO llx_product (datec, fk_user_author, fk_product_type, price)";
       $sql .= " VALUES (now(),".$user->id.",$this->type, " . ereg_replace(",",".",$this->price) . ")";
 
@@ -126,6 +128,8 @@ class Product
     {
       if (strlen(trim($this->price)) > 0 )
 	{
+	  $this->price = round($this->price, 2);
+
 	  $sql = "UPDATE llx_product ";
 	  $sql .= " SET price = " . ereg_replace(",",".",$this->price);	  
 	  $sql .= " WHERE rowid = " . $id;
