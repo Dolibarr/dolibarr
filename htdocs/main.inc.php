@@ -623,7 +623,7 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
   if (strlen($help_url) > 0)
     {
       print '<div class="leftmenu">';
-      define('MAIN_AIDE_URL','http://www.dolibarr.com/documentation/dolibarr-user.html');
+      define('MAIN_AIDE_URL','http://www.dolibarr.com/wikidev/index.php');
       print '<a class="leftmenu" target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">Aide</a></div>';
     }
   /*
