@@ -23,20 +23,35 @@ require("./pre.inc.php3");
 require("../contact.class.php3");
 
 llxHeader();
+
 $db = new Db();
-if ($sortorder == "") {
+
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
+
+if ($sortorder == "")
+{
   $sortorder="ASC";
 }
-if ($sortfield == "") {
+if ($sortfield == "")
+{
   $sortfield="nom";
 }
 
-if ($action == 'attribute_prefix') {
+if ($action == 'attribute_prefix')
+{
   $societe = new Societe($db, $socid);
   $societe->attribute_prefix($db, $socid);
 }
 
-if ($action == 'recontact') {
+if ($action == 'recontact')
+{
   $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
   $sql = "INSERT INTO llx_soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $GLOBALS["REMOTE_USER"]."')";
   $result = $db->query($sql);
@@ -99,7 +114,6 @@ if ($mode == 'search') {
 if ($socid > 0) {
   $societe = new Societe($db, $socid);
   
-
   $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
   $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
 
@@ -362,14 +376,14 @@ if ($socid > 0) {
       print '<table border="1" width="100%" cellspacing="0" bgcolor="#e0e0e0">';
       print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
       print "</table>";
-
-
-
     }
-  } else {
+  }
+  else {
     print $db->error() . "<br>" . $sql;
   }
-} else {
+}
+else
+{
   print "Erreur";
 }
 $db->close();

@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * $Id$
  * $Source$
@@ -22,11 +22,24 @@
 require("./pre.inc.php3");
 
 llxHeader();
+
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
+
+
 $db = new Db();
-if ($sortorder == "") {
+if ($sortorder == "")
+{
   $sortorder="ASC";
 }
-if ($sortfield == "") {
+if ($sortfield == "")
+ {
   $sortfield="p.name";
 }
 

@@ -42,12 +42,15 @@ function llxHeader($head = "", $urlp = "") {
    */
   if ($user->societe_id == 0) 
     {
-
       $menu->add_submenu("/soc.php3?&action=create","Nouvelle société");
-      $menu->add_submenu("contact.php3","Contacts");
+    }
 
+  $menu->add_submenu("contact.php3","Contacts");
 
-      $menu->add("/fourn/facture/index.php3", "Factures");
+  $menu->add("/fourn/facture/index.php3", "Factures");
+
+  if ($user->societe_id == 0) 
+    {
       $menu->add_submenu("/fourn/facture/fiche.php3?action=create","Nouvelle");
     }
   left_menu($menu->liste);
