@@ -17,7 +17,7 @@ $RPMSUBVERSION="1";
 %REQUIREMENTTARGET=(                            # Tool requirement for each package
 "TGZ"=>"tar",
 "ZIP"=>"7z",
-"RPM"=>"rpm",
+"RPM"=>"rpmbuild",
 "DEB"=>"dpkg-buildpackage",
 "EXE"=>"makensis.exe");
 %ALTERNATEPATH=(
@@ -31,6 +31,7 @@ $FILENAMEZIP="$PROJECT-$MAJOR.$MINOR";
 $FILENAMERPM="$PROJECT-$MAJOR.$MINOR-$RPMSUBVERSION";
 $FILENAMEDEB="$PROJECT-$MAJOR.$MINOR";
 $FILENAMEEXE="$PROJECT-$MAJOR.$MINOR";
+$RPMSRC="/usr/src/redhat/SOURCES";
 
 use vars qw/ $REVISION $VERSION /;
 $REVISION='$Revision$'; $REVISION =~ /\s(.*)\s/; $REVISION=$1;
@@ -194,7 +195,7 @@ if ($nboftargetok) {
     	if ($target eq 'TGZ') {
     		unlink $FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-    		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory="$BUILDROOT" -czvf $FILENAMETGZ.tgz $FILENAMETGZ`;
+    		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
     		print "Move $FILENAMETGZ.tgz to $SOURCE/build/$FILENAMETGZ.tgz\n";
     		rename("$BUILDROOT/$FILENAMETGZ.tgz","$SOURCE/build/$FILENAMETGZ.tgz");
     		next;
@@ -216,12 +217,19 @@ if ($nboftargetok) {
     		$BUILDFIC="$FILENAMETGZ.spec";
     		unlink $FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-    		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory="$BUILDROOT" -czvf $FILENAMETGZ.tgz $FILENAMETGZ`;
-    		print "Move $FILENAMETGZ.tgz to $SOURCE/build/$FILENAMETGZ.tgz\n";
-    		rename("$BUILDROOT/$FILENAMETGZ.tgz","$TEMP/$FILENAMETGZ.tgz");
+    		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
+
+    		print "Move $FILENAMETGZ.tgz to $RPMSRC/$FILENAMETGZ.tgz\n";
+    		if (rename("$BUILDROOT/$FILENAMETGZ.tgz","$RPMSRC/$FILENAMETGZ.tgz")==0) {
+    		    print "Error: Failed to rename '$BUILDROOT/$FILENAMETGZ.tgz' into '$RPMSRC/$FILENAMETGZ.tgz'\n";
+    		}
+
+    		print "Copy $SOURCE/build/rpm/${BUILDFIC} to $BUILDROOT\n";
+    		$ret=`cp -p "$SOURCE/build/rpm/${BUILDFIC}" "$BUILDROOT"`;
+    		#rename("$SOURCE/build/rpm/${BUILDFIC}","$BUILDROOT");
     
-    		print "Launch RPM build (rpm --clean -ba $SOURCE/build/rpm/${BUILDFIC})\n";
-    		$ret=`rpm --clean -ba $SOURCE/build/rpm/${BUILDFIC}`;
+    		print "Launch RPM build (rpm --clean -ba $BUILDROOT/${BUILDFIC})\n";
+    		$ret=`rpm --clean -ba $BUILDROOT/${BUILDFIC}`;
     	
     		print "Move /usr/src/RPM/RPMS/noarch/${FILENAMERPM}.noarch.rpm into $SOURCE/build/${FILENAMERPM}.noarch.rpm\n";
     		rename("/usr/src/RPM/RPMS/noarch/${FILENAMERPM}.noarch.rpm","$SOURCE/build/${FILENAMERPM}.noarch.rpm");
