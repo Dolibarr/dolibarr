@@ -1,5 +1,6 @@
 <?PHP
-/* Copyright (C) 2003 Xavier Dutoit <doli@sydesy.com>
+/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2003 Xavier Dutoit <doli@sydesy.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +27,13 @@
 */
 if (!empty ($_SERVER["REMOTE_USER"]))
    die("La d&eacute;connection ne fonctionne actuellement que pour l'authentification par pear");
-require_once "Auth/Auth.php";
+
+require_once "../includes/pear/Auth/Auth.php";
+
 $a = new Auth("DB");
 $a->setShowLogin (false);
 $a->start();
 if ($a->getAuth()) 
   $a->logout();
-header("Location: /"); 
+header("Location: ../"); 
 ?>
