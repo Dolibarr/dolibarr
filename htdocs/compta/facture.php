@@ -332,13 +332,13 @@ if ($action == 'create')
 	  print '<form action="'.$PHP_SELF.'" method="post">';
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="socid" value="'.$obj->idp.'">' ."\n";
-	  
+	  print '<input type="hidden" name="remise_percent" value="0">';
+
 	  print '<table cellspacing="0" cellpadding="3" border="1" width="100%">';
 	  
 	  print "<tr><td>Client :</td><td>$obj->nom</td>";
 	  print "<td>Commentaire</td></tr>";
-	  
-	  print "<input type=\"hidden\" name=\"author\" value=\"$author\">";
+
 	  print "<tr><td>Auteur :</td><td>".$user->fullname."</td>";
 	  
 	  print '<td rowspan="6" valign="top">';
