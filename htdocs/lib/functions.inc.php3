@@ -243,11 +243,20 @@ function print_titre($titre) {
 function print_barre_liste($titre,$page,$file) {
   global $conf;
   print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
-  print '<tr><td><div class="titre">'.$titre.'</div></td>';
+
+ if ($page > 0) 
+   {
+     print '<tr><td><div class="titre">'.$titre.' - page '.($page+1).'</div></td>';
+   }
+ else
+   {
+     print '<tr><td><div class="titre">'.$titre.'</div></td>';
+   }
   print '<td align="right">';
-  if ($page > 0) {
-    print '<a href="'.$file.'?page='.($page-1).'"><img alt="Page précédente" src="/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
-  }
+  if ($page > 0) 
+    {
+      print '<a href="'.$file.'?page='.($page-1).'"><img alt="Page précédente" src="/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
+    }
   print '<a href="'.$file.'?page='.($page+1).'"><img alt="Page suivante" src="/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
   print '</td></tr></table><p>';
 }
