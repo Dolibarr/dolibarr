@@ -62,7 +62,7 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add(DOL_URL_ROOT."/service/", "Services");
     }
 
-  $menu->add("projet/", "Projets");
+  $menu->add(DOL_URL_ROOT."/projet/", "Projets");
 
   left_menu($menu->liste);
 
