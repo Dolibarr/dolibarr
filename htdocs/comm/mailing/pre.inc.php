@@ -27,6 +27,8 @@
 */
 
 require("../../main.inc.php");
+require_once DOL_DOCUMENT_ROOT.'/comm/mailing/mailing.class.php';
+
 $user->getrights();
 $langs->load("companies");
 
@@ -39,25 +41,8 @@ function llxHeader($head = "", $title = "") {
   $menu = new Menu();
 
   $menu->add(DOL_URL_ROOT."/comm/mailing/index.php", $langs->trans("Mailing"));
+  //  $menu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?action=create", "Nouveau mailing");
 
-  $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
-
-  if ($user->rights->societe->creer)
-    {
-      $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=c", $langs->trans("MenuNewCustomer"));
-    }
-
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
-
-  $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("Prospects"));
-
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
-
-
-
-
-
-	
   left_menu($menu->liste);
 
 }
