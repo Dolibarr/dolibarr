@@ -167,6 +167,11 @@ class CommunicationTelephonique {
     return $error;
   }
 
+  /*
+   * Enregistre la ligne de communications dans llx_telephonie_communications_details
+   *
+   *
+   */
 
   function logsql($db)
   {
@@ -184,17 +189,19 @@ class CommunicationTelephonique {
 			      substr($this->date, 6,4));
 
 
-    $sql = "INSERT INTO llx_telephonie_communications_details";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_communications_details";
     $sql .= " (ligne, date, numero, duree";
     $sql .= ", tarif_achat_temp, tarif_achat_fixe, tarif_vente_temp, tarif_vente_fixe";
-    $sql .= ", cout_achat, cout_vente, remise,dest,fourn_montant)";
+    $sql .= ", cout_achat, cout_vente, remise,dest, fourn_montant";
+    $sql .= " , fichier_cdr, fk_fournisseur)";
 
     $sql .= " VALUES (";
     $sql .= "'$this->ligne','".$db->idate($this->dateheure)."','$this->numero','$this->duree'";
 
     $sql .= ", '$this->cout_temp_achat','$this->cout_fixe_achat','$this->cout_temp_vente','$this->cout_fixe_vente'";
     $sql .= ", '$this->cout_achat','$this->cout_vente', '$this->remise'";
-    $sql .= ",'".addslashes($this->tarif_libelle_vente)."','$this->montant')";
+    $sql .= ",'".addslashes($this->tarif_libelle_vente)."','$this->montant'";
+    $sql .= ",'".$this->fichier_cdr."','".$this->fournisseur."')";
 
     if (! $db->query($sql))
       {
