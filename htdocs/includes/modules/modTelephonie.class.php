@@ -158,6 +158,7 @@ class modTelephonie extends DolibarrModules
     $this->dirs[3] = $conf->telephonie->dir_output."/logs" ;
     $this->dirs[4] = $conf->telephonie->dir_output."/client" ;
     $this->dirs[5] = $conf->telephonie->dir_output."/rapports" ;
+    $this->dirs[6] = $conf->telephonie->dir_output."/ligne/commande/retour" ;
     
     return $this->_init($sql);
 
