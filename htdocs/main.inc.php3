@@ -128,6 +128,28 @@ if (defined("MAIN_MODULE_COMMANDE"))
   $conf->commande->enabled=MAIN_MODULE_COMMANDE;
 }
 
+if (defined("MAIN_MODULE_DON"))
+{
+  $conf->don->enabled=MAIN_MODULE_DON;
+}
+
+if (defined("MAIN_MODULE_FOURNISSEUR"))
+{
+  $conf->fournisseur->enabled=MAIN_MODULE_FOURNISSEUR;
+}
+
+if (defined("MAIN_MODULE_FICHEINTER"))
+{
+  $conf->fichinter->enabled=MAIN_MODULE_FICHEINTER;
+}
+
+
+if (defined("MAIN_MODULE_ADHERENT"))
+{
+  $conf->adherent->enabled=MAIN_MODULE_ADHERENT;
+}
+
+
 /*
  */
 if(!isset($application_lang))
