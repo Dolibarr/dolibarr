@@ -198,7 +198,7 @@ if (sizeof($factures_prev) > 0)
       $filebonprev = $ref;
    
       /*
-       * Creation du prelevement
+       * Creation du bon de prelevement
        *
        */
       
@@ -278,32 +278,13 @@ if (sizeof($factures_prev) > 0)
 		    }
 
 		  /*
-		   *
-		   *
-
-		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture (fk_facture,fk_prelevement)";
-		  $sql .= " VALUES (".$fac[0].",".$prev_id.")";
-	      
-		  if ($db->query($sql))
-		    {      
-
-		    }
-		  else
-		    {
-		      $error++;
-		      dolibarr_syslog("Erreur de liens paiement facture");
-		    }
-
-		  */
-
-		  /*
 		   * Mise à jour des demandes
 		   *
 		   */
 		  $sql = "UPDATE ".MAIN_DB_PREFIX."prelevement_facture_demande";
 		  $sql .= " SET traite = 1";
 		  $sql .= ", date_traite=now()";
-		  $sql .= ", fk_prelevement = ".$prev_id;
+		  $sql .= ", fk_prelevement_bons = ".$prev_id;
 		  $sql .= " WHERE rowid=".$fac[1];
 	      
 		  if ($db->query($sql))
