@@ -24,8 +24,9 @@ create table llx_notify
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
-  datec           date,           -- date de paiement
+  daten           datetime,           -- date de la notification
   fk_action       integer NOT NULL,
-  fk_soc          integer NOT NULL,
-  fk_contact      integer NOT NULL
+  fk_contact      integer NOT NULL,
+  objet_type      enum('ficheinter','facture','propale'),
+  objet_id        integer NOT NULL
 );
