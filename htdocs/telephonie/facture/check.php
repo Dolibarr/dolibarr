@@ -55,14 +55,14 @@ if ($page == -1) { $page = 0 ; }
  *
  */
 
-$sql = "SELECT distinct(client), sum(montant) ";
-$sql .= " FROM telephonie_import_cdr";
+$sql = "SELECT distinct(ligne), sum(montant) ";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
 
 if ($_GET["search_ligne"])
 {
   $sql .= " WHERE f.ligne LIKE '%".$_GET["search_ligne"]."%'";
 }
-$sql .= " GROUP BY client";
+$sql .= " GROUP BY ligne";
 $result = $db->query($sql);
 if ($result)
 {
