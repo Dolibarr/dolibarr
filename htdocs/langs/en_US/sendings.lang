@@ -4,3 +4,8 @@ Sendings=Sendings
 ListOfSendings=List of sendings
 SendingMethod=Sending method
 SendingReceipt=Sending receipt
+LastSendings=Last %s sendings
+SearchASending=Search a sending
+StatisticsOfSendings=Statistics of sendings
+NbOfSendings=Number of sendings
+

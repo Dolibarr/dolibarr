@@ -31,12 +31,16 @@
 require("./pre.inc.php");
 require("../expedition.class.php");
 
+$langs->load("sendings");
+
+
 llxHeader();
 
-print_fiche_titre('Statistiques expéditions', $mesg);
+print_fiche_titre($langs->trans("StatisticsOfSendings"), $mesg);
       
 print '<table class="border" width="100%">';
-print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="40%" align="center">Nb d\'expédition</td></tr>';
+print '<tr><td align="center">'.$langs->trans("Year").'</td>';
+print '<td width="40%" align="center">'.$langs->trans("NbOfSendings").'</td></tr>';
 
 $sql = "SELECT count(*), date_format(date_expedition,'%Y') as dm FROM ".MAIN_DB_PREFIX."expedition WHERE fk_statut > 0 GROUP BY dm DESC ";
 if ($db->query($sql))
@@ -59,5 +63,5 @@ print '</table><br><i>Statistiques effectuées sur les expéditions validées uniqu
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

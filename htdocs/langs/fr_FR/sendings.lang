@@ -1,6 +1,10 @@
 # Dolibarr language file - fr_FR - sendings
-Sending=Envoi
-Sendings=Envois
-ListOfSendings=Liste des envois
-SendingMethod=Méthode de livraison
+Sending=Expédition
+Sendings=Expéditions
+ListOfSendings=Liste des expéditions
+SendingMethod=Méthode d'expédition
 SendingReceipt=Bordereau de livraison
+LastSendings=Les %s dernieres expéditions
+SearchASending=Rechercher expédition
+StatisticsOfSendings=Statistiques des expéditions
+NbOfSendings=Nombre d'expéditions

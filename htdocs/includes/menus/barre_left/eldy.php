@@ -195,11 +195,14 @@ class MenuLeft {
                   $langs->load("orders");
                   $newmenu->add(DOL_URL_ROOT."/commande/index.php?leftmenu=orders", $langs->trans("Orders"), 0 ,$user->rights->commande->lire);
                   if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=orders", $langs->trans("NewOrder"), 1, $user->rights->commande->creer);
-                  if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/liste.php", $langs->trans("List"), 1 ,$user->rights->commande->lire);
-                  if ($conf->expedition->enabled) {
-                      if ($leftmenu=="orders") $newmenu->add(DOL_URL_ROOT."/expedition/", $langs->trans("Sendings"));
-                  }
-                  if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/stats/", $langs->trans("Statistics"), 1 ,$user->rights->commande->lire);
+                  if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/liste.php?leftmenu=orders", $langs->trans("List"), 1 ,$user->rights->commande->lire);
+                  if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/stats/index.php?leftmenu=orders", $langs->trans("Statistics"), 1 ,$user->rights->commande->lire);
+                }
+
+                if ($conf->expedition->enabled) {
+                  $newmenu->add(DOL_URL_ROOT."/expedition/index.php?leftmenu=sendings", $langs->trans("Sendings"), 0, $user->rights->expedition->lire);
+                  if ($leftmenu=="sendings") $newmenu->add_submenu(DOL_URL_ROOT."/expedition/liste.php?leftmenu=sendings", $langs->trans("List"), 1 ,$user->rights->expedition->lire);
+                  if ($leftmenu=="sendings") $newmenu->add_submenu(DOL_URL_ROOT."/expedition/stats/index.php?leftmenu=sendings", $langs->trans("Statistics"), 1 ,$user->rights->expedition->lire);
                 }
                 
                 if ($conf->fichinter->enabled ) 

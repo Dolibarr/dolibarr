@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,16 +21,20 @@
  *
  */
 
-/*! \file htdocs/expedition/liste.php
+/**
+        \file       htdocs/expedition/liste.php
 		\ingroup    expedition
 		\brief      Page de la liste des propositions commerciales
 */
 
 require("./pre.inc.php");
 
+$langs->load("sendings");
+
 $user->getrights('expedition');
 if (!$user->rights->expedition->lire)
   accessforbidden();
+
 
 /*
  * Sécurité accés client
@@ -41,20 +45,16 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
+
 /******************************************************************************/
 /*                   Fin des  Actions                                         */
 /******************************************************************************/
 
 llxHeader('','Liste des expéditions','ch-expedition.html');
 
-if ($_GET["sortfield"] == "")
-{
-  $sortfield="e.rowid";
-}
-if ($_GET["sortorder"] == "")
-{
-  $sortorder="DESC";
-}
+if (! $sortfield) $sortfield="e.rowid";
+if (! $sortorder) $sortorder="DESC";
+
 
 $limit = $conf->liste_limit;
 $offset = $limit * $_GET["page"] ;
@@ -80,10 +80,12 @@ $expedition = new Expedition($db);
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1,$offset);
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
-  print_barre_liste("Expeditions", $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+  $num = $db->num_rows($resql);
+  
+  print_barre_liste($langs->trans("Sendings"), $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
   
   $i = 0;
   print '<table class="noborder" width="100%">';
@@ -97,7 +99,7 @@ if ( $db->query($sql) )
   
   while ($i < min($num,$limit))
     {
-      $objp = $db->fetch_object();
+      $objp = $db->fetch_object($resql);
       
       $var=!$var;
       print "<tr $bc[$var]>";
@@ -132,13 +134,15 @@ if ( $db->query($sql) )
     }
   
   print "</table>";
-  $db->free();
+  $db->free($resql);
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 $db->close();
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+llxFooter('$Date$ - $Revision$');
+
 ?>

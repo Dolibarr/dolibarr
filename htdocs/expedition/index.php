@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,25 +21,28 @@
  *
  */
 
-/*! \file htdocs/expedition/index.php
+/**
+        \file       htdocs/expedition/index.php
         \ingroup    expedition
 		\brief      Page accueil du module expedition
 		\version    $Revision$
 */
 
-
 require("./pre.inc.php");
+
+$langs->load("sendings");
+
 
 llxHeader('','Expéditions','ch-expedition.html',$form_search);
 
-print_titre("Expeditions");
+print_titre($langs->trans("Sendings"));
 
-print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+print '<table border="0" width="100%">';
 
 print '<tr><td valign="top" width="30%">';
 
 print '<form method="post" action="liste.php">';
-print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchASending").'</td></tr>';
 print "<tr $bc[1]><td>";
 print $langs->trans("Ref").' : <input type="text" name="sf_ref"> <input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
@@ -60,7 +63,7 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   if ($num)
     {
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="3">Expeditions à valider</td></tr>';
       $i = 0;
@@ -97,7 +100,7 @@ if ( $db->query($sql) )
       $langs->load("orders");
 
       $i = 0;
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">'.$langs->trans("OrdersToProcess").'</td></tr>';
       $var = True;
@@ -139,7 +142,7 @@ if ( $db->query($sql) )
   if ($num)
     {
       $i = 0;
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
       print '<td colspan="2">'.$langs->trans("OrdersInProcess").'</td></tr>';
       $var = True;
@@ -175,9 +178,9 @@ if ( $db->query($sql) )
   if ($num)
     {
       $i = 0;
-      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+      print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td colspan="3">5 dernières expéditions</td></tr>';
+      print '<td colspan="3">'.$langs->trans("LastSendings",$max).'</td></tr>';
       $var = True;
       while ($i < $num)
 	{
