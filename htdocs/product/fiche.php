@@ -233,12 +233,12 @@ if ($action == 'create')
 }
 else
 {
-  if ($id)
+  if ($_GET["id"])
     {
       if ($action <> 're-edit')
 	{
 	  $product = new Product($db);
-	  $result = $product->fetch($id);
+	  $result = $product->fetch($_GET["id"]);
 	}
 
       if ( $result )
@@ -267,6 +267,10 @@ else
 	      $head[1][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
 	      $head[1][1] = 'Prix';
 	      
+	      $head[2][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
+	      $head[2][1] = 'Statistiques';
+
+
 	      dolibarr_fiche_head($head, 0, 'Fiche '.$types[$product->type].' : '.$product->ref);
 	      	      
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -282,8 +286,8 @@ else
 		  print "<b>Cet article n'est pas en vente</b>";
 		}
 	      print '</td></tr>';
-	      print "<tr><td>Libellé</td><td>$product->libelle</td>";
-	      print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
+	      print '<tr><td>Libellé</td><td colspan="2">'.$product->libelle.'</td></tr>';
+
 	      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
           if ($product->type == 1) {
           	$nblignefour=4;
@@ -291,11 +295,11 @@ else
           	$nblignefour=3;
           } 
 	      print '<td valign="top" rowspan="'.$nblignefour.'">';
-	      print 'Fournisseurs [<a href="fiche.php?id='.$id.'&amp;action=ajout_fourn">Ajouter</a>]';
+	      print 'Fournisseurs [<a href="fiche.php?id='.$product->id.'&amp;action=ajout_fourn">Ajouter</a>]';
 
 	      $sql = "SELECT s.nom, s.idp";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
-	      $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product =$id";
+	      $sql .=" WHERE pf.fk_soc = s.idp AND pf.fk_product = ".$product->id;
 	      $sql .= " ORDER BY lower(s.nom)";
 	      
 	      if ( $db->query($sql) )
@@ -370,54 +374,54 @@ else
 
       print "<br></div>\n";
       
-	  if ($action == 'edit_price' && $user->rights->produit->creer)
-	    {
-	      print '<div class="titre">Nouveau prix</div>';
-	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
-	      print '<input type="hidden" name="action" value="update_price">';
-	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-	      print '<tr><td width="20%">Prix de vente</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
-	      print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
-	      print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
-	      print '</table>';
-	      print '</form>';
-	    }
-
-	  /*
-	   * Ajouter un fournisseur
-	   *
-	   */
-	  if ($action == 'ajout_fourn' && $user->rights->produit->creer)
-	    {
-	      print_titre ("Ajouter un fournisseur");
-	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
-	      print '<input type="hidden" name="action" value="add_fourn">';
-	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
-	      print '<td>Fournisseurs</td><td><select name="id_fourn">';
-
-	      $sql = "SELECT s.idp, s.nom, s.ville FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur=1";	     
-	      $sql .= " ORDER BY lower(s.nom)";
-
-	      if ($db->query($sql))
-		{
-		  $num = $db->num_rows();
-		  $i = 0;		  		  
-		  while ($i < $num)
-		    {
-		      $obj = $db->fetch_object( $i);
-		      print '<option value="'.$obj->idp.'">'.$obj->nom . ($obj->ville?" ($obj->ville)":"");
-		      $i++;
-		    }
-		}
-	      print '</select></td><td>Référence</td><td><input name="ref_fourn" size="25" value=""></td></tr>';
-	      print '<tr><td colspan="4" align="center"><input type="submit" value="Enregistrer">&nbsp;';
-	      print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
-	      print '</table>';
-	      print '</form>';
-	    }    
-
+      if ($action == 'edit_price' && $user->rights->produit->creer)
+	{
+	  print '<div class="titre">Nouveau prix</div>';
+	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	  print '<input type="hidden" name="action" value="update_price">';
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<tr><td width="20%">Prix de vente</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
+	  print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
+	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+	  print '</table>';
+	  print '</form>';
 	}
-
+      
+      /*
+       * Ajouter un fournisseur
+       *
+       */
+      if ($action == 'ajout_fourn' && $user->rights->produit->creer)
+	{
+	  print_titre ("Ajouter un fournisseur");
+	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	  print '<input type="hidden" name="action" value="add_fourn">';
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
+	  print '<td>Fournisseurs</td><td><select name="id_fourn">';
+	  
+	  $sql = "SELECT s.idp, s.nom, s.ville FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur=1";	     
+	  $sql .= " ORDER BY lower(s.nom)";
+	  
+	  if ($db->query($sql))
+	    {
+	      $num = $db->num_rows();
+	      $i = 0;		  		  
+	      while ($i < $num)
+		{
+		  $obj = $db->fetch_object( $i);
+		  print '<option value="'.$obj->idp.'">'.$obj->nom . ($obj->ville?" ($obj->ville)":"");
+		  $i++;
+		}
+	    }
+	  print '</select></td><td>Référence</td><td><input name="ref_fourn" size="25" value=""></td></tr>';
+	  print '<tr><td colspan="4" align="center"><input type="submit" value="Enregistrer">&nbsp;';
+	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+	  print '</table>';
+	  print '</form>';
+	}    
+      
+	}
+      
     /*
      * Fiche en mode edition
      */
