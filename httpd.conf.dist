@@ -41,7 +41,7 @@
     Allow from all
   </Location>
 
-  <Location /adherents/public/>
+  <Location /theme/>
     Options Indexes FollowSymLinks
     AllowOverride All
     Order deny,allow
