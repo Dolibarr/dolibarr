@@ -53,7 +53,7 @@ $sql = "SELECT ipclient,
                code_retour, 
                ref_commande";
 
-$sql .= " FROM transaction_bplc";
+$sql .= " FROM llx_transaction_bplc";
 
 $result = $db->query($sql);
 if ($result) {

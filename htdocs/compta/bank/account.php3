@@ -97,13 +97,28 @@ if ($account)
   print "<b>Bank</b> - &nbsp;-";
   print "<a href=\"$PHP_SELF?viewall=1&account=$account\">Voir tout</a>";
   
-  print "<form method=\"post\" action=\"$PHP_SELF?viewall=$viewall&vline=$vline&account=$account\">";
-  print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-  print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+  print '<form method="post" action="'."$PHP_SELF?viewall=$viewall&vline=$vline&account=$account".'">';
+  print '<input type="hidden" name="action" value="search">';
+  print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="2">';
+  /*
+   * Formulaire de recherche
+   *
+   */
   print "<TR class=\"liste_titre\">";
   print "<td>Date</td><td>Type</td><td>Description</TD>";
-  print "<td align=\"right\">Debit</TD>";
-  print "<td align=\"right\">Credit</TD>";
+  print '<td align="right"><input type="text" name="req_debit" size="6"></TD>';
+  print '<td align="right"><input type="text" name="req_credit" size="6"></TD>';
+  print "<td align=\"right\">-</TD>";
+  print "<td align=\"right\">-</td>";
+  print '<td align="right"><input type="submit"></td>';
+  print "</TR>\n";
+  print "</form>";
+  print "<form method=\"post\" action=\"$PHP_SELF?viewall=$viewall&vline=$vline&account=$account\">";
+
+  print "<TR class=\"liste_titre\">";
+  print "<td>Date</td><td>Type</td><td>Description</TD>";
+  print "<td align=\"right\">Débit</TD>";
+  print "<td align=\"right\">Crédit</TD>";
   print "<td align=\"right\">Solde</TD>";
   print "<td align=\"right\">Rel</td>";
   print "<td align=\"right\">Francs</td>";
@@ -151,7 +166,18 @@ if ($account)
    */
 
   $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
-  $sql .= " FROM llx_bank as b "; if ($account) { $sql .= " WHERE fk_account=$account"; }
+  $sql .= " FROM llx_bank as b ";
+
+  if ($account) 
+    { 
+      $sql .= " WHERE fk_account=$account";
+    }
+
+  if ($req_debit) 
+    { 
+      $sql .= " AND b.amount = -".$req_debit;
+    }
+
   if ($vue)
     {
       if ($vue == 'credit')
@@ -182,7 +208,7 @@ if ($account)
 	  if ($i > ($nbline - $viewline))
 	    {
 
-	      if (!$psol)
+	      if (!$psol && $action !='search')
 		{
 		  print "<tr $bc[$var]><td colspan=\"4\">&nbsp;</td>";
 		  print "<td align=\"right\">".price($total)."</b></td><td>&nbsp;</td>";
@@ -237,13 +263,20 @@ if ($account)
 		      print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
 		    }
 		  
-		  if ($total > 0)
+		  if ($action !='search')
 		    {
-		      print "<td align=\"right\">".price($total)."</TD>\n";
+		      if ($total > 0)
+			{
+			  print '<td align="right">'.price($total)."</TD>\n";
+			}
+		      else
+			{
+			  print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
+			}
 		    }
 		  else
 		    {
-		      print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
+		      print '<td align="right">-</TD>';
 		    }
 
 		  if ($objp->rappro)
@@ -255,7 +288,14 @@ if ($account)
 		      print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid&account=$account\">[Del]</a></td>";
 		    }
 		  
-		  print "<td align=\"right\"><small>".francs($objp->amount)."</small></TD>\n";
+		  if ($action !='search')
+		    {
+		      print "<td align=\"right\"><small>".francs($objp->amount)."</small></TD>\n";
+		    }
+		  else
+		    {
+		      print '<td align="right">-</TD>';
+		    }
 		  
 		  print "</tr>";
 		  

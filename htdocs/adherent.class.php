@@ -1,6 +1,7 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *                    Jean-Louis Bergamo <jlb@j1b.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -244,7 +245,7 @@ class Adherent
     }
 
   /*
-   * Suppression du don
+   * Suppression de l'adhérent
    *
    */
   Function delete($rowid)

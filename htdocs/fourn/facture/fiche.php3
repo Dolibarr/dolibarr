@@ -253,11 +253,15 @@ else
     print stripslashes($obj->note);
     print '</textarea></td></tr>';
     
-    print '<tr><td>Numéro :</td><td><input name="facnumber" type="text" value="'.$obj->facnumber.'"></td></tr>';
-    print '<tr><td>Libellé :</td><td><input size="30" name="libelle" type="text" value="'.stripslashes($obj->libelle).'"></td></tr>';
+    print '<tr><td valign="top">Numéro :</td><td valign="top">';
+    print $obj->facnumber .'<br>';
+    print '<input name="facnumber" type="text" value="'.$obj->facnumber.'"></td></tr>';
+    print '<tr><td valign="top">Libellé :</td><td>';
+    print stripslashes($obj->libelle). '<br>';
+    print '<input size="30" name="libelle" type="text" value="'.stripslashes($obj->libelle).'"></td></tr>';
     
     print '<tr bgcolor="#e0e0e0"><td>Montant HT :</td>';
-    print '<td><input type="text" size="8" name="amount" value="'.$obj->amount.'"></td></tr>';
+    print '<td valign="top">'.$obj->amount.'<br><input type="text" size="8" name="amount" value="'.$obj->amount.'"></td></tr>';
     
     print '<tr bgcolor="#e0e0e0"><td>TVA :</td>';
     print '<td><select name="tva_taux">';

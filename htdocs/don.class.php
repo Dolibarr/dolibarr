@@ -360,7 +360,7 @@ class Don
       }    
   }
   /*
-   * Classé comme payé, le don a été recu
+   * 
    *
    */
   Function set_commentaire($rowid, $commentaire='')
