@@ -21,7 +21,7 @@
  * $Source$
  */
 
-/*!	\file user.class.php
+/*!	\file htdocs/user.class.php
 		\brief  Fichier de la classe utilisateur
 		\author Rodolphe Qiedeville
 		\author Jean-Louis Bergamo
@@ -729,17 +729,17 @@ class User
 
   /**
    * \brief     Change le mot de passe d'un utilisateur et l'envoie par mail
-   * \param     password    nouveau mot de passe (généré par defaut si non communiqué)
-   * \param     encrypted   0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
+   * \param     password        nouveau mot de passe (généré par defaut si non communiqué)
+   * \param     isencrypted     0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
    */
-  function password($password='', $password_encrypted = 0)
+  function password($password='', $isencrypted = 0)
     {
       if (! $password)
 	{
 	  $password =  strtolower(substr(md5(uniqid(rand())),0,6));
 	}
 
-      if ($password_encrypted)
+      if ($isencrypted)
 	{
 	  $sqlpass = crypt($password, "CRYPT_STD_DES");
 	}

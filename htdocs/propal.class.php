@@ -23,7 +23,7 @@
  */
 
 
-/*!	\file propal.class.php
+/*!	\file htdocs/propal.class.php
 		\brief  Fichier de la classe des propales
 		\author Rodolphe Qiedeville
 		\author	Eric Seigne
@@ -39,8 +39,6 @@
 
 class Propal
 {
-  // {{{ properties
-
   var $id;
   var $db;
   var $socidp;
@@ -55,10 +53,9 @@ class Propal
   var $note;
   var $price;
 
-  // }}}
 
-  // {{{ constructor
-
+    /*! \brief  Constructeur
+    */
   function Propal($DB, $soc_idp="", $propalid=0)
     {
       $this->db = $DB ;
@@ -67,16 +64,15 @@ class Propal
       $this->products = array();
       $this->remise = 0;
     }
-  // }}}
-  // {{{ add_product()
-  /**
-   * Ajout d'un produit dans la proposition
-   * 
-   * @access public
-   * @param integer $idproduct l'id du produit
-   * @param integer $qty quantité
-   * @param integer $remise_percent remise effectuée sur le produit
-   * @return void
+
+
+  /*!
+   * \brief     Ajout d'un produit dans la proposition, en memoire dans l'objet
+   * \param     idproduct       id du produit à ajouter
+   * \param     qty             quantité
+   * \param     remise_percent  remise effectuée sur le produit
+   * \return    void
+   * \see       insert_product
    */
   function add_product($idproduct, $qty, $remise_percent=0)
     {
@@ -92,11 +88,14 @@ class Propal
 	  $this->products_remise_percent[$i] = $remise_percent;
 	}
     }
-  // }}}
+
   /**
-   *
-   *
-   * @return integer
+   * \brief     Ajout d'un produit dans la proposition, en base
+   * \param     idproduct       id du produit à ajouter
+   * \param     qty             quantité
+   * \param     remise_percent  remise effectuée sur le produit
+   * \return    int             0 en cas de succès
+   * \see       add_product
    */
   function insert_product($idproduct, $qty, $remise_percent=0)
     {

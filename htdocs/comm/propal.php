@@ -21,9 +21,10 @@
  *
  */
 
-/**
-* Gestion d'une proposition commerciale
-* @package propale
+/*!
+    \file       htdocs/comm/propal.php
+    \ingroup    propale
+    \brief      Page liste des propales
 */
 
 require("./pre.inc.php");
