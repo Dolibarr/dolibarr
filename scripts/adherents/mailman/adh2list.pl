@@ -28,7 +28,7 @@ use Getopt::Long;
 # command line option hash table
 my %optctl=();
 # get command line options
-GetOptions(\%optctl,"help!","host=s","db=s","user=s","pass=s","ml=s","type=s");
+GetOptions(\%optctl,"help!","host=s","db=s","user=s","pass=s","ml=s","type=s","cotis!");
 if (defined $optctl{'help'}){
   &usage();
 }
@@ -44,6 +44,10 @@ my @ml_adh=();
 my $dbh = DBI->connect("dbi:$type:dbname=$dbname;host=$host",$user,$pass) || die $DBI::errstr ;
 
 my $sql = 'SELECT email FROM llx_adherent WHERE statut=1';
+
+if (defined $optctl{'cotis'}){
+  $sql.=" AND datefin > now()";
+}
 
 my $sth = $dbh->prepare("$sql") || die $dbh->errstr ;
 $sth->execute;
@@ -85,8 +89,9 @@ foreach my $subs (@ml_adh){
 $dbh->disconnect();
 
 sub usage{
-  print "$0 [--help] [--host] [--db] [--user] [--pass] --ml=mailinglist\n";
-  print " ml is for mailing-list. others options are for database";
-  print "";
+  print "$0 [--help] [--host] [--db] [--user] [--pass] [--cotis] --ml=mailinglist\n";
+  print " ml is for mailing-list. others options are for database\n";
+  print " cotis : select only adherents with cotisations up-to-date\n";
+  print "\n";
   exit (1);
 }
