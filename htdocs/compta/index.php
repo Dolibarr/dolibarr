@@ -306,8 +306,9 @@ if ($conf->facture->enabled)
 	      $i++;
 	    }
 	  $var=!$var;
-	  print "<tr $bc[$var]><td colspan=\"2\" align=\"right\"><i>Total : </i></td><td align=\"right\"><i>".price($total)."</i></td><td align=\"right\"><i>".price($total_ttc)."</i></td><td align=\"right\"><i>".price($totalam)."</i></td></tr>";
-	  print '<tr '.$bc[$var].'><td colspan="4" align="right"><i>Reste à encaisser : '.price($total_ttc-$totalam).'</i></td><td>&nbsp;</td></tr>';
+#	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").':</i></td><td align="right"><i>'.price($total)."</i></td><td align=\"right\"><i>".price($total_ttc)."</i></td><td align=\"right\"><i>".price($totalam)."</i></td></tr>";
+#	  print '<tr '.$bc[!$var].'><td colspan="3" align="left"><i>Reste à encaisser:</i></td><td align="right"><i>'.price($total_ttc-$totalam).'</i></td><td>&nbsp;</td></tr>';
+	  print '<tr '.$bc[$var].'><td colspan="2" align="left"><i>'.$langs->trans("Total").' &nbsp; (Reste à encaisser: '.price($total_ttc-$totalam).')</i></td><td align="right"><i>'.price($total)."</i></td><td align=\"right\"><i>".price($total_ttc)."</i></td><td align=\"right\"><i>".price($totalam)."</i></td></tr>";
 	  print "</table><br>";
 	}
       $db->free();
