@@ -26,7 +26,7 @@ print '<A class="menu" href="/boutique/livre/">Livres</A></TD>';
 
 print '<TD width="15%" class="menu" align="center">';
 
-print '<A class="menu" href="/boutique/auteur/">Auteurs</A></TD>';
+print '<A class="menu" href="/product/osc-reviews.php">Critiques</A></TD>';
 
 print '<TD width="15%" class="menu" align="center">';
 
