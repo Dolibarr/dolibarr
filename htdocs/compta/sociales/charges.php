@@ -61,7 +61,6 @@ if ($chid > 0)
 
       if ( $cha->fetch($chid) > 0)
 	{	  
-
 	  /*
 	   *   Charge
 	   */
@@ -144,12 +143,12 @@ if ($chid > 0)
 	  print "</tr>";
 
       if ($cha->paye==0) {
-          print '<tr><td>Libellé</td><td><input type="text" name="desc" size="40" value='.stripslashes($cha->lib).'></td></tr>';
+          print '<tr><td>Libellé</td><td><input type="text" name="desc" size="40" value="'.stripslashes($cha->lib).'"></td></tr>';
     	  print "<tr><td>Date d'échéance</td><td><input type=\"text\" name=\"amount\" value=\"".strftime("%Y%m%d",$cha->date_ech)."\"></td></tr>";
     	  print "<tr><td>Montant TTC</td><td><b><input type=\"text\" name=\"amount\" value=\"$cha->amount\"></b></td></tr>";
         }
       else {
-          print '<tr><td>Libellé</td><td>'.stripslashes($cha->lib).'</td></tr>';
+          print '<tr><td>Libellé</td><td>'.$cha->lib.'</td></tr>';
     	  print "<tr><td>Date d'échéance</td><td>".dolibarr_print_date($cha->date_ech)."</td></tr>";
     	  print "<tr><td>Montant TTC</td><td><b>".price($cha->amount)."</b></td></tr>";
       }
