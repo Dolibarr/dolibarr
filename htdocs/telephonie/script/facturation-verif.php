@@ -103,4 +103,74 @@ if ( $resql )
   $db->free();
 }
 print "\n";
+
+/*
+ * Verfication des contrats
+ */
+$contrats = array();
+
+$sql = "SELECT rowid, fk_client_comm, fk_soc, fk_soc_facture";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat ";
+
+$resql = $db->query($sql) ;
+
+if ( $resql )
+{
+  $num = $db->num_rows($resql);
+  
+  $i = 0;
+  
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object($resql);
+      
+      $contrats[$i] = $objp;
+      
+      $i++;
+    }            
+  $db->free();
+}
+dolibarr_syslog(sizeof($contrats) ." contrats a vérifier"); 
+
+foreach ($contrats as $contrat)
+{
+
+  $sql = "SELECT rowid, fk_client_comm, fk_soc, fk_soc_facture";
+  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+  $sql .= " WHERE fk_contrat = ".$contrat->rowid;
+
+  $resql = $db->query($sql) ;
+  
+  if ( $resql )
+    {
+      $num = $db->num_rows($resql);      
+      $i = 0;
+      
+      while ($i < $num)
+	{
+	  $objp = $db->fetch_object($resql);
+	  
+	  if ($objp->fk_client_comm <> $contrat->fk_client_comm)
+	    {
+	      dolibarr_syslog("Erreur fk_client_comm contrat ".$contrat->rowid." ligne ".$objp->rowid);
+	    }
+	  
+	  if ($objp->fk_soc <> $contrat->fk_soc)
+	    {
+	      dolibarr_syslog("Erreur fk_soc contrat ".$contrat->rowid." ligne ".$objp->rowid);
+	    }
+
+	  if ($objp->fk_soc_facture <> $contrat->fk_soc_facture)
+	    {
+	      dolibarr_syslog("Erreur fk_soc_facture contrat ".$contrat->rowid." ligne ".$objp->rowid);
+	    }
+	  $i++;
+	}            
+      $db->free();
+    } 
+  else
+    {
+      dolibarr_syslog("Erreur SQL");
+    }
+}
 ?>
