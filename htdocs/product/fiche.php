@@ -74,23 +74,23 @@ if ($_POST["action"] == 'update' &&
       $product->duration_unit = $_POST["duration_unit"];
       
       if ($product->check())
-				{
-					if ($product->update($product->id, $user))
-						{
-							$_GET["action"] = '';
-							$mesg = 'Fiche mise à jour';
-						}
-					else
-						{
-							$_GET["action"] = 're-edit';
-							$mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
-						}
-				}
+	{
+	  if ($product->update($product->id, $user))
+	    {
+	      $_GET["action"] = '';
+	      $mesg = 'Fiche mise à jour';
+	    }
+	  else
+	    {
+	      $_GET["action"] = 're-edit';
+	      $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+	    }
+	}
       else
-				{
-					$_GET["action"] = 're-edit';
-					$mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
-				}
+	{
+	  $_GET["action"] = 're-edit';
+	  $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+	}
     }
   Header("Location: fiche.php?id=".$product->id);
 }
@@ -99,19 +99,15 @@ if ($_POST["action"] == 'update' &&
 if ($_POST["action"] == 'addinpropal')
 {
   $propal = New Propal($db);
-
   $propal->fetch($_POST["propalid"]);
+
   $result =  $propal->insert_product($_GET["id"], $_POST["qty"], $_POST["remise_percent"]);
   if ( $result < 0)
     {
       $mesg = "erreur $result";
     }
-  else
-    {
-      $mesg = ucfirst($types[$type]) . ' ajouté à la proposition ';
-      $mesg .= '<a href="../comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
-    }
-  $_GET["action"] = '';
+
+  Header("Location: ../comm/propal.php?propalid=".$propal->id);
 }
 
 if ($_POST["action"] == 'addinfacture' && 
@@ -267,10 +263,10 @@ else
   if ($_GET["id"])
     {
       if ($_GET["action"] <> 're-edit')
-				{
-					$product = new Product($db);
-					$result = $product->fetch($_GET["id"]);
-				}
+	{
+	  $product = new Product($db);
+	  $result = $product->fetch($_GET["id"]);
+	}
 
       if ( $result )
 	{ 
@@ -310,7 +306,8 @@ else
 	      $head[$h][1] = 'Statistiques';
 
 	      dolibarr_fiche_head($head, 0, 'Fiche '.$types[$product->type].' : '.$product->ref);
-	      print($mesg);    	      
+
+	      print($mesg);
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      print "<tr>";
 	      print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
@@ -602,7 +599,6 @@ print "</div>";
 
 if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 {
-
   $htmls = new Form($db);
   $propal = New Propal($db);
 
@@ -636,9 +632,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	      print "<td><a href=\"../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
 	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
 	      print "<td>". strftime("%d %B %Y",$objp->dp)."</td>\n";
-	      print '<form method="POST" action="fiche.php">';
-	      print '<input type="hidden" name="action" value="addinpropal">';
-	      print '<input type="hidden" name="id" value="'.$product->id.'">';
+	      print '<form method="POST" action="fiche.php?id='.$product->id.'">';
+	      print '<input type="hidden" name="action" value="addinpropal">';	     
 	      print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
 	      print '<input type="text" name="qty" size="3" value="1">&nbsp;Rem.';
 	      print '<input type="text" name="remise_percent" size="3" value="0"> %';
