@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,25 +25,31 @@ require("./pre.inc.php");
 
 llxHeader();
 
-//$db = new Db();
 
-print_titre("Gestion des adherents");
+print_titre("Gestion des adhérents");
+print '<br>';
 
-print '<p><TABLE border="0" cellspacing="0" cellpadding="4">';
-print '<TR class="liste_titre">';
+print '<table class="noborder" cellspacing="0" cellpadding="3">';
+print '<tr class="liste_titre">';
 print "<td>Type</td>";
-print "<td>Nb</td>";
-print "<td>Cotisant</td>";
-print "</TR>\n";
+print "<td align=right width=\"80\">A valider</td>";
+print "<td align=right width=\"80\">Valides</td>";
+print "<td align=right width=\"80\">Cotisants à jour</td>";
+print "<td align=right width=\"80\">Résiliés</td>";
+print "</tr>\n";
 
 $var=True;
 
 
-$sql = "SELECT count(*) as somme , t.libelle FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid  AND d.statut = 1 GROUP BY t.libelle";
-
+$AdherentsAll=array();
 $Adherents=array();
+$AdherentsAValider=array();
+$AdherentsResilies=array();
 $Cotisants=array();
+
+# Liste les adherents
+$sql = "SELECT count(*) as somme , t.libelle, d.statut FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
+$sql .= " WHERE d.fk_adherent_type = t.rowid GROUP BY t.libelle, d.statut";
 
 $result = $db->query($sql);
 
@@ -53,13 +60,17 @@ if ($result)
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
-      $Adherents[$objp->libelle]=$objp->somme;
+      $AdherentsAll[$objp->libelle]+=$objp->somme; 
+      if ($objp->statut == -1) { $AdherentsAValider[$objp->libelle]=$objp->somme; }
+      if ($objp->statut == 1) { $Adherents[$objp->libelle]=$objp->somme; }
+      if ($objp->statut == 0) { $AdherentsResilies[$objp->libelle]=$objp->somme; }
       $i++;
     }
   $db->free();
 
 }
 
+# Liste les cotisants a jour
 $sql = "SELECT count(*) as somme , t.libelle FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 $sql .= " WHERE d.fk_adherent_type = t.rowid  AND d.statut = 1 AND d.datefin >= now() GROUP BY t.libelle";
 
@@ -79,35 +90,45 @@ if ($result)
 
 }
 $SommeA=0;
+$SommeB=0;
 $SommeC=0;
+$SommeD=0;
 
-foreach ($Adherents as $key=>$value){
+foreach ($AdherentsAll as $key=>$value){
   $var=!$var;
-  print "<TR $bc[$var]>";
-  print '<TD><a href="liste.php">'.$key.'</a></TD>';
-  print '<TD align="right">'.$value.'</TD>';
-  print '<TD align="right">'.$Cotisants[$key].'</TD>';
-  print "</TR>\n";
-  $SommeA+=$value;
+  print "<tr $bc[$var]>";
+  print '<td><a href="liste.php">'.$key.'</a></TD>';
+  print '<td align="right">'.$AdherentsAValider[$key].'</TD>';
+  print '<td align="right">'.$Adherents[$key].'</TD>';
+  print '<td align="right">'.$Cotisants[$key].'</TD>';
+  print '<td align="right">'.$AdherentsResilies[$key].'</TD>';
+  print "</tr>\n";
+  $SommeA+=$AdherentsAValider[$key];
+  $SommeB+=$Adherents[$key];
   $SommeC+=$Cotisants[$key];
+  $SommeD+=$AdherentsResilies[$key];
 }
 $var=!$var;
-print "<TR $bc[$var]>";
-print '<TD> <B>Total</B> </TD>';
-print '<TD align="right"><B>'.$SommeA.'</B></TD>';
-print '<TD align="right"><B>'.$SommeC.'</B></TD>';
-print "<TR>\n";
+print "<tr $bc[$var]>";
+print '<td> <b>Total</b> </td>';
+print '<td align="right"><b>'.$SommeA.'</b></td>';
+print '<td align="right"><b>'.$SommeB.'</b></td>';
+print '<td align="right"><b>'.$SommeC.'</b></td>';
+print '<td align="right"><b>'.$SommeD.'</b></td>';
+print "<tr>\n";
 
 print "</table>";
 
+print '<br>';
+
 print '<form action="liste.php" method="post" name="action" value="search">';
 print '<input type="hidden" name="action" value="search">';
-print '<p><TABLE border="0" cellspacing="0" cellpadding="4">';
-print '<TR class="liste_titre">';
+print '<table class="noborder" cellspacing="0" cellpadding="3">';
+print '<tr class="liste_titre">';
 print "<td>Rechercher un adhérent</td>";
-print "</TR>\n";
+print "</tr>\n";
 
-print "<TR $bc[$var]>";
+print "<tr $bc[$var]>";
 print '<td>';
 
 print 'Nom/Prénom <input type="text" name="search" class="flat" size="20">';

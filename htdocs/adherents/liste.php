@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,29 +23,24 @@
  */
 require("./pre.inc.php");
 
+
 llxHeader();
 
-//$db = new Db();
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+$page=$_GET["page"];
 
 if ($sortorder == "") {  $sortorder="ASC"; }
 if ($sortfield == "") {  $sortfield="d.nom"; }
 
 if ($page == -1) { $page = 0 ; }
 
-/*
- * SIZE_LISTE_LIMIT : constante de taille maximale des listes
- */
-if (defined("SIZE_LISTE_LIMIT"))
-{
-  $conf->liste_limit=SIZE_LISTE_LIMIT;
-}
-
 $offset = $conf->liste_limit * $page ;
 
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-if (! isset($statut))
+if (! isset($_GET["statut"]))
 {
   $statut = 1 ;
 }
@@ -67,18 +63,20 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Liste des adhérents", $page, $PHP_SELF, "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
-  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  $titre="Liste des adhérents";
+  if (isset($_GET["statut"]) && $_GET["statut"] == -1) { $titre="Liste des adhérents à valider"; }
+  if (isset($_GET["statut"]) && $_GET["statut"] == 1) { $titre="Liste des adhérents valides"; }
+  if (isset($_GET["statut"]) && $_GET["statut"] == 0) { $titre="Liste des adhérents résiliés"; }
 
-  print '<TR class="liste_titre">';
+  print_barre_liste($titre, $page, $PHP_SELF, "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
 
+  print '<tr class="liste_titre">';
 
-  //  print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.prenom\">Prenom</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.nom\">Nom</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.societe\">Société</a></td>\n";
-  print '<TD>';
+  print '<td>';
   //  print_liste_field_titre("Prenom",$PHP_SELF,"d.prenom","&page=$page&statut=$statut");
-  print_liste_field_titre("Prenom Nom",$PHP_SELF,"d.nom","&page=$page&statut=$statut");
-  print " / Société";
-  print "</TD>\n";
+  print_liste_field_titre("Prenom Nom / Société",$PHP_SELF,"d.nom","&page=$page&statut=$statut");
+  print "</td>\n";
 
   print "<td>";
   print_liste_field_titre("Date cotisation",$PHP_SELF,"t.cotisation","&page=$page&statut=$statut");
@@ -101,7 +99,7 @@ if ($result)
   print "</td>\n";
 
   print "<td>Action</td>\n";
-  print "</TR>\n";
+  print "</tr>\n";
     
   $var=True;
   while ($i < $num)
@@ -131,27 +129,37 @@ if ($result)
 	  print "&nbsp;</td>";
 	}
 
-      print "<TD>$objp->email</TD>\n";
-      print "<TD>$objp->type</TD>\n";
-      print "<TD>$objp->morphy</TD>\n";
+      print "<td>$objp->email</td>\n";
+      print "<td>$objp->type</td>\n";
+      print "<td>$objp->morphy</td>\n";
       print "<td>";
+
       if ($objp->statut == -1)
 	{
 	  print '<a href="fiche.php?rowid='.$objp->rowid.'">A valider</a>';
 	}
+      if ($objp->statut == 0)
+	{
+	  print 'Résilié';
+	}
+      if ($objp->statut == 1)
+	{
+	  print 'Validé';
+	}
+
       print "</td>";
-      print "<TD><a href=\"edit.php?rowid=$objp->rowid\">Editer</a><br><a href=\"fiche.php?rowid=$objp->rowid&action=resign\">Resilier</a><br><a href=\"fiche.php?rowid=$objp->rowid&action=delete\">Supprimer</a></TD>\n";
+      print "<td><a href=\"edit.php?rowid=$objp->rowid\">".img_edit()."</a> &nbsp; <a href=\"fiche.php?rowid=$objp->rowid&action=resign\">Resilier</a> &nbsp; <a href=\"fiche.php?rowid=$objp->rowid&action=delete\">".img_delete()."</a></td>\n";
       print "</tr>";
       $i++;
     }
-  print "</table><BR>\n";
-  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "</table><br>\n";
+  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
   
-  print '<TR>';
-  print '<TD align="right">';
+  print '<tr>';
+  print '<td align="right">';
   print_fleche_navigation($page,$PHP_SELF,"&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",1);
-  print '</TD>';
-  print "</table><BR>\n";
+  print '</td>';
+  print "</table><br>\n";
 
 }
 else

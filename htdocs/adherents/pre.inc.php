@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,10 +35,10 @@ function llxHeader($head = "") {
   $menu = new Menu();
 
   $menu->add("index.php","Adherents");
-  $menu->add_submenu("liste.php?statut=1","Adhérents à ce jour");
   $menu->add_submenu("liste.php?statut=-1","Adhésions à valider");
-
+  $menu->add_submenu("liste.php?statut=1","Adhérents à ce jour");
   $menu->add_submenu("liste.php?statut=0","Adhésions résiliées");
+
   if ($user->admin)
     {
       $menu->add("fiche.php?action=create","Nouvel adhérent");
