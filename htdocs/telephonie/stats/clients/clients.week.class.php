@@ -20,9 +20,9 @@
  *
  */
 
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/barmoy.class.php");
 
-class GraphClientsWeek extends GraphBar {
+class GraphClientsWeek extends GraphBarMoy {
 
   Function GraphClientsWeek($DB, $file)
   {
@@ -141,13 +141,24 @@ class GraphClientsWeek extends GraphBar {
 
     $nbel = sizeof($datas_new);
 
-    for ($i = 0 ; $i < ($nbel - 22) ; $i++)
+    $moys = array();
+    $moys[0] = $datas_new[0];
+
+    for ($i = 1 ; $i < $nbel ; $i++)
+      {
+	$sum = $sum + $datas_new[$i];
+
+	$moys[$i] = ($sum / ($i+1));
+      }
+
+    for ($i = 0 ; $i < ($nbel - 18) ; $i++)
       {
 	array_shift($datas_new);
 	array_shift($labels_new);
+	array_shift($moys);
       }
 
-    $this->GraphDraw($this->file, $datas_new, $labels_new);
+    $this->GraphDraw($this->file, $datas_new, $labels_new, $moys);
   }
 }   
 ?>
