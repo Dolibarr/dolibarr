@@ -42,59 +42,11 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
 
-  if ($user->comm > 0 && $conf->commercial->enabled && $conf->propal->enabled) 
-    {
-      $langs->load("propal");
-      $menu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"));
-    }
-
-  if ($conf->contrat->enabled)
-    {
-      $langs->load("contracts");
-      $menu->add(DOL_URL_ROOT."/contrat/",$langs->trans("Contracts"));
-    }
-
-  if ($conf->don->enabled)
-    {
-      $langs->load("donations");
-      $menu->add(DOL_URL_ROOT."/compta/dons/",$langs->trans("Donations"));
-    }
-
-  if ($conf->facture->enabled)
-    {
-      $langs->load("bills");
-      $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
-    }
-   
-    
-  // Les dépenses
-  if ($conf->fournisseur->enabled)
-    {
-      $langs->load("suppliers");
-      $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
-    }
-
-  if ($user->societe_id == 0)
-    {
-      $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Déplacement");
-    }
-
-  if ($conf->compta->enabled && $conf->compta->tva && $user->societe_id == 0)
-    {
-      $menu->add(DOL_URL_ROOT."/compta/tva/index.php",$langs->trans("VAT"));
-    }
-    
-  if ($conf->compta->enabled)
-    {
-    $menu->add(DOL_URL_ROOT."/compta/charges/index.php","Charges");
-    }
-
   $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
   $menu->add_submenu(DOL_URL_ROOT."/compta/ventilation/liste.php",$langs->trans("A ventiler"));
   $menu->add_submenu(DOL_URL_ROOT."/compta/ventilation/lignes.php",$langs->trans("Ventilées"));
 
-  if ($user->rights->compta->ventilation->param)
-    $menu->add(DOL_URL_ROOT."/compta/param/",$langs->trans("Param"));
+  $menu->add(DOL_URL_ROOT."/compta/export/",$langs->trans("Export"));
 
   if (! $user->compta) 
     {
