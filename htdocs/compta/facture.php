@@ -251,87 +251,86 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
 /*
  *
  */
-if ($action == 'send')
+if ($HTTP_POST_VARS["action"] == 'send' || $HTTP_POST_VARS["action"] == 'relance')
 {
   $fac = new Facture($db,"",$facid);
-
   if ( $fac->fetch($facid) )
     {
-      $soc = new Societe($db, $fac->socidp);
-
-      $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
+        $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
       
-      if (is_readable($file))
-	{
-	  if ($HTTP_POST_VARS["sendto"]) {
-	    // Le destinataire a été fourni via le champ libre
-		$sendto = $HTTP_POST_VARS["sendto"];
-		$sendtoid = 0;
-	  }
-	  else {
-  	    // Le destinataire a été fourni via la liste déroulante
-	  	$sendto = $soc->contact_get_email($HTTP_POST_VARS["destinataire"]);
-	    $sendtoid = $HTTP_POST_VARS["destinataire"];
-	  }
-	  
-	  if (strlen($sendto))
-	    {	  
-	      $subject = "Facture $fac->ref";
-	      $message = $HTTP_POST_VARS["message"];
-	      $filename = $fac->ref.".pdf";
-	      
-	      $replyto = $HTTP_POST_VARS["replytoname"] . " <".$HTTP_POST_VARS["replytomail"] .">";
-	      
-		  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,array ($file),array ("application/pdf"),array ($filename));
-	      
-	      if ( $mailfile->sendfile() )
-		{		  
-		  $sendto = htmlentities($sendto);
-		  
-		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '9' ,'$fac->socidp' ,'Envoyée à $sendto','$fac->id','$sendtoid','$user->id', 'Envoi Facture par mail',100);";
-
-		  if (! $db->query($sql) )
-		    {
-		      print $db->error();
-		      print "<p>$sql</p>";
-		    }	      	      	      
-		}
-	      else
+		if (is_readable($file))
 		{
-		  print "<b>!! erreur d'envoi<br>$sendto<br>$replyto<br>$filename";
-		}	  
-	    }
-	  else
-	    {
-	      dolibarr_syslog("Le mail du destinataire est vide");
-	    }
-	}
-      else
-	{
-	  dolibarr_syslog("Impossible de lire :".$file);
-	}
+	  
+		  if ($HTTP_POST_VARS["sendto"]) {
+		    // Le destinataire a été fourni via le champ libre
+			$sendto = $HTTP_POST_VARS["sendto"];
+			$sendtoid = 0;
+		  }
+		  elseif ($HTTP_POST_VARS["destinataire"]) {
+	  	    // Le destinataire a été fourni via la liste déroulante
+	        $soc = new Societe($db, $fac->socidp);
+		  	$sendto = $soc->contact_get_email($HTTP_POST_VARS["destinataire"]);
+		    $sendtoid = $HTTP_POST_VARS["destinataire"];
+		  }
+
+		  if (strlen($sendto))
+		  {	  
+		      if ($HTTP_POST_VARS["action"] == 'send') {
+		      	$subject = "Facture $fac->ref";
+		      	$actioncode=9;
+				$actionmsg="Envoyée à $sendto";
+		      	$actionmsg2="Envoi Facture par mail";
+		      }
+		      if ($HTTP_POST_VARS["action"] == 'relance') 	{
+		      	$subject = "Relance facture $fac->ref";
+		      	$actioncode=10;
+		      	$actionmsg="Relance envoyée à $sendto";
+		      	$actionmsg2="Relance Facture par mail";
+		      }
+		      $message = $HTTP_POST_VARS["message"];
+		      $filename = $fac->ref.".pdf";
+		      
+		      $replyto = $HTTP_POST_VARS["replytoname"] . " <".$HTTP_POST_VARS["replytomail"] .">";
+		      
+			  // Envoi de la facture
+			  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,array ($file),array ("application/pdf"),array ($filename));
+		      
+		      if ( $mailfile->sendfile() )
+			  {		  
+			  	$sendto = htmlentities($sendto);
+			  
+			  	$sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '$actioncode' ,'$fac->socidp' ,'$actionmsg','$fac->id','$sendtoid','$user->id', '$actionmsg2',100);";
+	
+			  	if (! $db->query($sql) )
+			    {
+			      print $db->error();
+			      print "<p>$sql</p>";
+			    }	      	      	      
+			  }
+		      else
+			  {
+			    print "<b>!! erreur d'envoi<br>$sendto<br>$replyto<br>$filename";
+			  }	  
+		  }
+		  else
+		  {
+		      dolibarr_syslog("Le mail du destinataire est vide");
+		  }
+
+		}
+      	else
+		{
+	  		dolibarr_syslog("Impossible de lire :".$file);
+		}
     }
   else
     {
       dolibarr_syslog("Impossible de lire les données de la facture. Le fichier facture n'a peut-être pas été généré.");
     }
 }
-/*
- *
- */
-if ($HTTP_POST_VARS["action"] == 'relance')
-{
-  $fac = new Facture($db,"",$facid);
-  $fac->fetch($facid);
-
-  $fac->send_relance($HTTP_POST_VARS["destinataire"],
-		     $HTTP_POST_VARS["replytoname"],
-		     $HTTP_POST_VARS["replytomail"],
-		     $user);
-}
 
 /*
- *
+ * Générer ou regénérer le PDF
  */
 if ($action == 'pdf')
 {
@@ -1107,10 +1106,13 @@ else
 	    $from_mail = $replytomail;
 	    
 	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$fac->id&amp;action=send\">\n";
+	    print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+	    print '<input type="hidden" name="action" value="send">';
 	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
 	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
+	    print '<br>';
 	    
-	    print "<p><b>Envoyer la facture par mail</b>";
+	    print_titre("Envoyer la facture par mail");
 	    print "<table cellspacing=\"0\" border=\"1\" cellpadding=\"3\" width=\"100%\">";
 	    print "<tr><td>Expéditeur</td><td>$from_name</td><td>$from_mail &nbsp;</td></tr>";
 	    print "<tr><td>Répondre à</td><td>$replytoname</td><td>$replytomail &nbsp;</td></tr>";
@@ -1118,11 +1120,10 @@ else
 	    
 	    $form = new Form($db);	    
 	    $form->select_array("destinataire",$soc->contact_email_array());
-	    
 	    print " ou <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
 
 	    print '<tr><td>Message</td><td colspan=\"2\">';
-	    print "<textarea rows=\"4\" cols=\"60\" name=\"message\">";
+	    print "<textarea rows=\"5\" cols=\"60\" name=\"message\">";
 	    print "Veuillez trouver ci-joint la facture $fac->ref\n\nCordialement\n\n";
 	    print "</textarea></td></tr>";
 
@@ -1139,24 +1140,31 @@ else
 	    $replytomail = $user->email;
 	    $from_mail = $replytomail;
 	    
-	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$fac->id\">\n";
+	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$fac->id&amp;action=send\">\n";
+	    print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 	    print '<input type="hidden" name="action" value="relance">';
 	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
 	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
+	    print '<br>';
 	    
-	    print_titre("Envoyer une relance");
-	    print "<table cellspacing=0 border=1 cellpadding=3>";
-	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>\n";
-	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td><td>$replytomail</td></tr>\n";
-	    print '<tr><td>Destinataire</td><td colspan="5">';
+	    print_titre("Envoyer une relance par mail");
+	    print "<table cellspacing=\"0\" border=\"1\" cellpadding=\"3\" width=\"100%\">";
+	    print "<tr><td>Expéditeur</td><td>$from_name</td><td>$from_mail &nbsp;</td></tr>";
+	    print "<tr><td>Répondre à</td><td>$replytoname</td><td>$replytomail &nbsp;</td></tr>";
+	    print '<tr><td>Destinataire</td><td colspan=\"2\">';
 	    
 	    $form = new Form($db);	    
 	    $form->select_array("destinataire",$soc->contact_email_array());
+	    print " ou <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
 	    
-	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>\n";
-	    print "</table>";
+	    print '<tr><td>Message</td><td colspan=\"2\">';
+	    print "<textarea rows=\"5\" cols=\"60\" name=\"message\">";
+		print "Nous apportons à votre connaissance que la facture ".$fac->ref." ne semble toujours pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n";
+	    print "</textarea></td></tr>";
+
+	    print "</table><br>\n";
 	    
-	    print "<input type=\"submit\" value=\"Envoyer\"></form>";
+	    print "<center><input class=\"flat\" type=\"submit\" value=\"Envoyer\"></center></form>\n";
 	  }
 	
 	/*
