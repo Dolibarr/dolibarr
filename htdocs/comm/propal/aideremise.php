@@ -80,22 +80,25 @@ if ($_GET["propalid"])
   $head[$h][1] = "Info";
 
   dolibarr_fiche_head($head, $a, $societe->nom);
-  print_titre("Simulation des remises sur le prix HT");
+
+  $price = $propal->price + $propal->remise;
+
+  print_titre("Simulation des remises sur le prix HT : ".price($price));
   print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
   $j=1;
   for ($i = 1 ; $i < 100 ; $i= $i+3)
     {
 
-      $ht1 = $propal->total_ht - ($propal->total_ht * $j / 100 );
-      $ttc1 = $propal->total_ttc - ($propal->total_ttc * $j / 100 );
-      $ht2 = $propal->total_ht - ($propal->total_ht * ($j+33) / 100 );
-      $ttc2 = $propal->total_ttc - ($propal->total_ttc * ($j+33) / 100 );
-      $ht3 = $propal->total_ht - ($propal->total_ht * ($j+66) / 100 );
-      $ttc3 = $propal->total_ttc - ($propal->total_ttc * ($j+66) / 100 );
+      $ht1 = $price - ($price * $j / 100 );
 
-      print "<tr><td>$j %</td><td>".price($ht1)." <small>(".price($ttc1).")</small></td>";
-      print "<td>".($j+33)." %</td><td>".price($ht2)." <small>(".price($ttc2).")</small></td>";
-      print "<td>".($j+66)." %</td><td>".price($ht3)." <small>(".price($ttc3).")</small></td></tr>";
+      $ht2 = $price - ($price * ($j+33) / 100 );
+
+      $ht3 = $price - ($price * ($j+66) / 100 );
+
+
+      print "<tr><td>$j %</td><td>".price($ht1)."</td>";
+      print "<td>".($j+33)." %</td><td>".price($ht2)."</td>";
+      print "<td>".($j+66)." %</td><td>".price($ht3)."</td></tr>";
 
       $j++;
 
