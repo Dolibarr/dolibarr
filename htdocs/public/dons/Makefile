@@ -25,6 +25,7 @@ XSLTOPTS = \
 
 all: 
 	$(XSLTPROC) main-eucd.xsl don.xhtml > don.php
+	$(XSLTPROC) main-eucd.xsl graph.xhtml > graph.php
 	$(XSLTPROC) main-eucd.xsl donateurs.xhtml > donateurs.php
 	$(XSLTPROC) main-eucd.xsl valid.xhtml > valid.php
 	$(XSLTPROC) main-eucd.xsl erreur.xhtml > erreur.php
