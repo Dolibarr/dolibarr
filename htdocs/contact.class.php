@@ -22,27 +22,25 @@
  * 
  */
 
-/*!
-    \file       htdocs/contact.class.php
-    \ingroup    societe
-    \brief      Fichier de la classe des contacts
-    \version    $Revision$
+/**     \file       htdocs/contact.class.php
+        \ingroup    societe
+        \brief      Fichier de la classe des contacts
+        \version    $Revision$
 */
 
 require_once (DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 
 
-/*! 
-    \class      Contact
-    \brief      Classe permettant la gestion des contacts
+/**     \class      Contact
+        \brief      Classe permettant la gestion des contacts
 */
 
 class Contact 
 {
-  var $bs;
   var $db;
-
+  var $error;
+  
   var $id;
   var $fullname;
   var $nom;
@@ -87,7 +85,7 @@ class Contact
       }
     else
       {
-				print $this->db->error() . '<br>' . $sql;
+ 			    $this->error='Echec sql='.$sql;
       }
   }
 
@@ -141,7 +139,7 @@ class Contact
     
     if (!$result)
       {
-	dolibarr_print_error($this->db);
+   	    $this->error='Echec sql='.$sql;
       }
     
     if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
@@ -313,7 +311,7 @@ class Contact
       $result = $this->db->query($sql);
       if (!$result) 
 	{
-	  print $this->db->error() . '<br>' . $sql;
+	  $this->error='Echec sql='.$sql;
 	}
       
       // Mis a jour alerte birthday
@@ -330,7 +328,7 @@ class Contact
       $result = $this->db->query($sql);
       if (!$result) 
 	{
-	  print $this->db->error() . '<br>' . $sql;
+	  $this->error='Echec sql='.$sql;
 	}
  
       return $result;
@@ -339,10 +337,11 @@ class Contact
 
   /*
    *    \brief      Charge l'objet contact
-   *    \param      _id         id du contact
+   *    \param      id          id du contact
    *    \param      user        Utilisateur lié au contact pour une alerte
+   *    \return     int         1 si ok, -1 si erreur
    */
-  function fetch($_id, $user=0)
+  function fetch($id, $user=0)
     {
         $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname";
 	$sql .= ", c.address, c.cp, c.ville";
@@ -350,7 +349,7 @@ class Contact
 	$sql .= ", phone, phone_perso, phone_mobile, fax, c.email, jabberid, c.note";
 
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-        $sql .= " WHERE c.idp = ". $_id;
+        $sql .= " WHERE c.idp = ". $id;
     
         if ($this->db->query($sql))
         {
@@ -395,7 +394,7 @@ class Contact
     
             $sql = "SELECT u.rowid ";
             $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-            $sql .= " WHERE u.fk_socpeople = ". $_id;
+            $sql .= " WHERE u.fk_socpeople = ". $id;
     
             if ($this->db->query($sql))
             {
@@ -409,13 +408,15 @@ class Contact
             }
             else
             {
-                dolibarr_syslog("Error in Contact::fetch() sql=$sql");
+                dolibarr_syslog("Error in Contact::fetch() selectuser sql=$sql");
+           	    $this->error="Error in Contact::fetch() selectuser sql=$sql";
+                return -1;
             }
     
     
             $sql = "SELECT count(*) ";
             $sql .= " FROM ".MAIN_DB_PREFIX."contact_facture";
-            $sql .= " WHERE fk_contact = ". $_id;
+            $sql .= " WHERE fk_contact = ". $id;
     
             if ($this->db->query($sql))
             {
@@ -431,14 +432,16 @@ class Contact
             }
             else
             {
-                dolibarr_syslog("Error in Contact::fetch() sql=$sql");
+                dolibarr_syslog("Error in Contact::fetch() selectcontactfacture sql=$sql");
+           	    $this->error="Error in Contact::fetch() selectcontactfacture sql=$sql";
+                return -1;
             }
     
             if ($user)
             {
                 $sql = "SELECT fk_user";
                 $sql .= " FROM ".MAIN_DB_PREFIX."user_alert";
-                $sql .= " WHERE fk_user = $user->id AND fk_contact = ".$_id;
+                $sql .= " WHERE fk_user = $user->id AND fk_contact = ".$id;
     
                 if ($this->db->query($sql))
                 {
@@ -452,13 +455,19 @@ class Contact
                  }
                 else
                 {
-                    dolibarr_syslog("Error in Contact::fetch() sql=$sql");
+                    dolibarr_syslog("Error in Contact::fetch() selectuseralert sql=$sql");
+            	    $this->error="Error in Contact::fetch() selectuseralert sql=$sql";
+                    return -1;
                 }
             }
+            
+            return 1;
         }
         else
         {
-            dolibarr_syslog("Error in Contact::fetch() sql=$sql");
+            dolibarr_syslog("Error in Contact::fetch() selectsocpeople sql=$sql");
+       	    $this->error="Error in Contact::fetch() selectsocpeople sql=$sql";
+            return -1;
         }
     }
     

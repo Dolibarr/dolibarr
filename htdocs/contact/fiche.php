@@ -157,7 +157,10 @@ if ($_GET["id"] > 0)
   // Si edition contact deja existant
 
   $contact = new Contact($db);
-  $contact->fetch($_GET["id"], $user);
+  $return=$contact->fetch($_GET["id"], $user);
+  if ($return < 0) {
+      dolibarr_print_error('',$contact->error);
+  }
   
   $h=0;
   $head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
