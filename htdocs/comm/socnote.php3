@@ -20,8 +20,8 @@
  *
  */
 require("./pre.inc.php3");
-require("../lib/functions.inc.php3");
-require("../../www/lib/company.class.php3");
+
+//require("../../www/lib/company.class.php3");
 /*
  *
  */

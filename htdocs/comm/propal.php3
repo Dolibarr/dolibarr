@@ -27,6 +27,7 @@ require("../lib/CMailFile.class.php3");
  */
 require("projet/project.class.php3");
 require("./propal.class.php3");
+require("./actioncomm.class.php3");
 /*
  *
  */
@@ -291,7 +292,7 @@ if ($propalid) {
 	print "<td align=\"center\" width=\"25%\">-</td>";
       }
       if ($obj->statut == 1) {
-	$file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/propal/$obj->ref/$obj->ref.pdf";
+	$file = $conf->propal->outputdir. "/$obj->ref/$obj->ref.pdf";
 	if (file_exists($file)) {
 	  print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">";
 	  print "[<a href=\"$PHP_SELF?propalid=$propalid&action=presend\">Envoyer la propale par mail</a>]</td>";
@@ -347,9 +348,15 @@ if ($propalid) {
 	    print "<b>!! erreur d'envoi";
 	  }
 	}
+	/*
+	 * Enregistre l'action
+	 *
+	 * Ne fonctionne pas, a corriger !
+	 */
 
 	if ( $db->query($sql) ) {
-	  $sql = "INSERT INTO actioncomm (datea,fk_action,fk_soc,author,propalrowid,note) VALUES (now(), 3, $obj->idp,'$author', $propalid, 'Envoyée à $sendto');";
+	  $sql = "INSERT INTO actioncomm (datea,fk_action,fk_soc, propalrowid,note, fk_user_author) ";
+	  $sql .= " VALUES (now(), 3, $obj->idp, $propalid, 'Envoyée à $sendto',$user->id);";
 	  if (! $db->query($sql) ) {
 	    print $db->error();
 	    print "<p>$sql</p>";
@@ -392,7 +399,7 @@ if ($propalid) {
       /*
        *
        */
-      $sql = "SELECT ".$db->pdate("a.datea"). " as da, author, note" ;
+      $sql = "SELECT ".$db->pdate("a.datea"). " as da, note, fk_user_author" ;
       $sql .= " FROM actioncomm as a WHERE a.fk_soc = $obj->idp AND a.propalrowid = $propalid ";
 
       if ( $db->query($sql) ) {
@@ -404,7 +411,10 @@ if ($propalid) {
 	while ($i < $num) {
 	  $objp = $db->fetch_object( $i);
 	  print "<TR><TD>".strftime("%d %B %Y %H:%M:%S",$objp->da)."</TD>\n";
-	  print "<TD>$objp->author</TD></tr>\n";
+	  $authoract = new User($db);
+	  $authoract->id = $objp->fk_user_author;
+	  $authoract->fetch('');
+	  print "<TD>$authoract->code</TD></tr>\n";
 	  print "<tr><td colspan=\"2\">$objp->note</td></tr>";
 	  $i++;
 	}
@@ -423,8 +433,12 @@ if ($propalid) {
        */
       if ($action == 'presend') {
 	$sendto = "rq@lolix.org";
-	$replytoname = "Service commercial Lolix"; $ from_name = $replytoname;
-	$replytomail = "commercial@lolix.org"; $from_mail = $replytomail;
+
+	$replytoname = $conf->propal->replytoname;
+	$replytomail = $conf->propal->replytomail;
+
+	$from_name = $user->fullname ; //$conf->propal->fromtoname;
+	$from_mail = $user->email; //conf->propal->fromtomail;
 
 	print "<form method=\"post\" action=\"$PHP_SELF?propalid=$propalid&action=send\">\n";
 	print "<input type=\"hidden\" name=\"sendto\" value=\"$sendto\">\n";
@@ -482,7 +496,7 @@ if ($propalid) {
   /*
    *
    *
-   * Liste des propals
+   * Liste des propales
    *
    * 
    */
@@ -491,16 +505,18 @@ if ($propalid) {
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
   $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
 
-  if ($socidp) { $sql .= " AND s.idp = $socidp"; }
+  if ($socidp) { 
+    $sql .= " AND s.idp = $socidp"; 
+  }
 
-  if ($viewstatut) { $sql .= " AND c.id = $viewstatut"; }
+  if ($viewstatut <> '') {
+    $sql .= " AND c.id = $viewstatut"; 
+  }
 
   if ($month > 0) {
-    //    $sql .= " AND date_part('month', date(p.datep)) = $month";
     $sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
   }
   if ($year > 0) {
-    //    $sql .= " AND date_part('year', date(p.datep)) = $year";
     $sql .= " AND date_format(p.datep, '%Y') = $year";
   }
   

@@ -267,7 +267,7 @@ if ($facid > 0) {
       $sql .= " AND date_part('month', date(f.datef)) = $month";
     }
     if ($year > 0) {
-      $sql .= " AND date_part('year', date(f.datef)) = $year";
+      $sql .= " AND date_format(f.datef, '%Y') = $year";
     }
     
     $sql .= " ORDER BY f.datef DESC ";

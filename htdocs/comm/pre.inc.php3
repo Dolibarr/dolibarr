@@ -22,7 +22,7 @@
 require("../main.inc.php3");
 
 function llxHeader($head = "", $urlp = "") {
-  global $PREFIX, $user;
+  global $PREFIX, $user, $conf;
 
   print "<HTML>\n<HEAD>$head\n</HEAD>\n";
   ?>
@@ -44,7 +44,7 @@ function llxHeader($head = "", $urlp = "") {
 
   print "<TABLE border=\"1\" cellspacing=\"0\" width=\"100%\" cellpadding=\"3\">";
   print "<TR><TD valign=\"top\" align=\"right\">";
-  print "<center><b>" . $GLOBALS["dbname"] . " - " . $user->code ."</B></center>";
+  print "<center><b>" . $conf->db->name . " - " . $user->code ."</B></center>";
   print "<A href=\"".$urlp."../\">Accueil</A><br>";
   print "<A href=\"".$urlp."bookmark.php3\">Bookmark</A>";
   print "</td></tr>";
@@ -58,15 +58,14 @@ function llxHeader($head = "", $urlp = "") {
 
   print "<TR><TD valign=\"top\" align=\"right\">";
   print "<div align=\"center\"><A href=\"".$urlp."actioncomm.php3\">Actions</A></div>\n";
-  print "<A href=\"".$urlp."actioncomm.php3?type=9\">Factures</A><BR>\n";
-  print "<A href=\"".$urlp."actioncomm.php3?type=5\">Propal FE</A><BR>\n";
-  print "<A href=\"".$urlp."actioncomm.php3?type=11\">Cl&ocirc;ture</A><p>\n";
   print "</TD></TR>";
   /*
    *
    */
-  print "<TR><TD valign=\"top\" align=\"right\">";
+  print '<TR><TD valign="top" align="right" bgcolor="#e0e0e0">';
   print '<div align="center"><A href="'.$urlp.'propal.php3">Propal</A></div>';
+  print '<A href="'.$urlp.'propal.php3?viewstatut=0">Brouillon</A><br>';
+  print '<A href="'.$urlp.'propal.php3?viewstatut=1">Ouvertes</A>';
   print "</TD></TR>";
   /*
    *

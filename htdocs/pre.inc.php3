@@ -23,7 +23,7 @@
 require ("./main.inc.php3");
 
 function llxHeader($head = "") {
-  global $PREFIX, $user;
+  global $PREFIX, $user, $conf;
 
   print "<HTML>\n<HEAD>$head\n</HEAD>\n";
   ?>
@@ -33,7 +33,8 @@ function llxHeader($head = "") {
   print "<TABLE border=\"0\" width=\"100%\">\n";
   print "<TR bgcolor=\"".$GLOBALS["SYS_TOPBAR_BGCOLOR"]."\">";
   print "<TD width=\"20%\" bgcolor=\"#e0e0e0\"><B>" . $GLOBALS["MAIN_TITLE"] . "</B></TD>";
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\"><A href=\"".$urlp."../tech/\">Technique</A></TD>";
+
+  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\">-</TD>";
 
   print '<TD width="20%" bgcolor="#e0e0e0" align="center">';
   if ($user->comm > 0) {
@@ -41,9 +42,11 @@ function llxHeader($head = "") {
   } else {
     print 'Commercial';
   }
+
+
   
   print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\"><A href=\"../compta/\">Compta</A></TD>";
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\"><A href=\"../stats/\">Stats</A></TD>";
+  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\">-</TD>";
   print "</TR></TABLE>\n";
 
   print "<TABLE border=\"1\" width=\"100%\">";
@@ -55,12 +58,8 @@ function llxHeader($head = "") {
   print "<TABLE border=\"1\" cellspacing=\"0\" width=\"100%\" cellpadding=\"3\">";
   print "<TR><TD valign=\"top\" align=\"right\">";
 
-  print "<center><b>" . $GLOBALS["DB_NAME"] . " - " . $user->code ."</B></center>";
+  print "<center><b>" . $conf->db->name . " - " . $user->code ."</B></center>";
   print "<A href=\"/\">Accueil</A><br>";
-
-  print "<A href=\"/graph/\">Stat. quantitatives</A><br>\n";
-  print "<A href=\"/stats/\">Stat. qualitatives</A><br>\n";
-  print "<A href=\"/dict/\">Dictionnaires</A>\n";
 
   print '</td></tr>';
 
@@ -78,9 +77,13 @@ function llxHeader($head = "") {
   print "<center><A href=\"/service/\">Services</center></A>\n";
   print '</td></tr>';
 
+
   print "<TR><TD valign=\"top\" align=\"right\">";
+  print '<div align="center"><A href="user.php3">Utilisateurs</div></A>';
+  print '</td></tr>';
 
 
+  print "<TR><TD valign=\"top\" align=\"right\">";
   print "<A href=\"info.php3\">Configuration</A><br>";
   print '</td></tr></table>';
   /*

@@ -152,7 +152,13 @@ if ($socid > 0) {
   print "<td><b>Poste</b></td><td><b>Tel</b></td>";
   print "<td><b>Fax</b></td><td><b>Email</b></td>";
 
-  $sql = "SELECT p.name, p.firstname, p.poste, p.phone, p.fax, p.email FROM socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
+  $sql = "SELECT p.name, p.firstname, p.poste, p.phone, p.fax, p.email ";
+  $sql .= " FROM socpeople as p WHERE p.fk_soc = $objsoc->idp";
+
+  if ($contactid) {
+    $sql .= " AND p.idp = $contactid";
+  }
+  $sql .= "   ORDER by p.datec";
   $result = $db->query($sql);
   $i = 0 ; $num = $db->num_rows(); $tag = True;
   while ($i < $num) {
@@ -218,6 +224,55 @@ if ($socid > 0) {
     print "<input type=\"submit\" value=\"Modifier\">";
     print "</form>";
   }
+
+  /*
+   *
+   *
+   */
+  print "<P><table width=\"100%\" cellspacing=0 border=1 cellpadding=2>";
+  
+  print "<tr><td><b>Action</b></td>";
+  print "<td><b>Fax</b></td><td><b>Email</b></td>";
+
+
+  $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+  $sql .= " FROM actioncomm as a, c_actioncomm as c, llx_user as u ";
+  $sql .= " WHERE a.fk_soc = $objsoc->idp ";
+  $sql .= " AND u.rowid = a.fk_user_author";
+  $sql .= " AND c.id=a.fk_action ";
+
+  if ($contactid) {
+    $sql .= " AND fk_contact = $contactid";
+  }
+  $sql .= " ORDER BY a.datea DESC, a.id DESC";
+
+  if ( $db->query($sql) ) {
+    $i = 0 ; $num = $db->num_rows(); $tag = True;
+    while ($i < $num) {
+      $obj = $db->fetch_object( $i);
+      if ($tag) {
+	print "<tr bgcolor=\"e0e0e0\">";
+      } else {
+	print "<tr>";
+      }
+      print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
+      if ($obj->propalrowid) {
+	print "<td><a href=\"propal.php3?propalid=$obj->propalrowid\">$obj->libelle</a></td>";
+      } else {
+	print "<td>$obj->libelle</td>";
+      }
+
+      print "<td>$obj->code&nbsp;</td>";
+      print "</tr>\n";
+      $i++;
+      $tag = !$tag;
+    }
+  } else {
+    print '<tr><td>' . $db->error() . '</td></tr>';
+  }
+  print "</table>";
+
+
 
 
 } else {  

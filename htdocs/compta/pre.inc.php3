@@ -22,7 +22,7 @@
 require("../main.inc.php3");
 
 function llxHeader($head = "") {
-  global $PREFIX;
+  global $PREFIX, $user, $conf;
 
   print "<HTML>\n<HEAD>$head\n</HEAD>\n";
   ?>
@@ -44,7 +44,7 @@ function llxHeader($head = "") {
   print "<TABLE border=\"1\" cellspacing=\"0\" width=\"100%\" cellpadding=\"3\">";
   print "<TR><TD valign=\"top\" align=\"right\">";
 
-  print "<center><b>" . $GLOBALS["dbname"] . " - " . $GLOBALS["REMOTE_USER"] ."</B></center>";
+  print "<center><b>" . $conf->db->name . " - " . $user->code ."</B></center>";
   print "<A href=\"/\">Accueil</A>";
 
   print "</td></tr>";

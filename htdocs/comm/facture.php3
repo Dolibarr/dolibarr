@@ -74,7 +74,7 @@ if ($action == 'add') {
 
 } elseif ($action == 'create') {
 
-  $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst, p.author";
+  $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
   $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
 
   $sql .= " AND p.rowid = $propalid";
@@ -154,6 +154,8 @@ if ($action == 'add') {
       print "</table>";
 
     }
+  } else {
+    print $db->error();
   }
 
 
