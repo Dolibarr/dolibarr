@@ -31,20 +31,6 @@ if (!$user->admin && !$user->rights->compta->charges)
 
 llxHeader();
 
-function valeur($sql)
-{
-  global $db;
-  if ( $db->query($sql) )
-    {
-      if ( $db->num_rows() )
-	{
-	  $valeur = $db->result(0,0);
-	}
-      $db->free();
-    }
-  return $valeur;
-}
-
 
 /*
  * Ajout d'une charge sociale
@@ -85,24 +71,26 @@ if ($_GET["action"] == 'del')
 }
 
 
-$year=$_GET["year"];
-$filtre=$_GET["filtre"];
 
 /*
  *  Affichage liste et formulaire des charges.
  */
 
-print_titre("Charges sociales $year");
-print "<br>\n";
+$year=$_GET["year"];
+$filtre=$_GET["filtre"];
+//if (! $year) { $year=date("Y", time()); }
 
-if ($mesg) {
-    print "$mesg<br>";
-}
+print_fiche_titre("Charges sociales",($year?"<a href='$PHP_SELF?year=".($year-1)."'>".img_previous()."</a> Année $year <a href='$PHP_SELF?year=".($year+1)."'>".img_next()."</a>":""));
+print "<br>\n";
 
 //if ($filtre) {
 //    print_titre("Filtre : ".$_GET["filtrelib"]);
 //    print "<br>\n";
 //}
+
+if ($mesg) {
+    print "$mesg<br>";
+}
 
 print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
 print "<tr class=\"liste_titre\">";
@@ -120,7 +108,7 @@ print_liste_field_titre("Libellé",$PHP_SELF,"s.libelle");
 print '</td><td align="right">';
 print_liste_field_titre("Montant",$PHP_SELF,"s.amount");
 print '</td><td align="center">';
-print_liste_field_titre("Payé",$PHP_SELF,"s.paye");
+print_liste_field_titre("Statut",$PHP_SELF,"s.paye");
 print '</td><td>&nbsp;</td>';
 print "</tr>\n";
 
@@ -181,10 +169,10 @@ if ( $db->query($sql) )
       
       if ($obj->paye)
 	{
-	  print '<td align="center" class="normal" width="100"><a class="payee" href="'.$PHP_SELF.'?filtre=paye:1">Oui</a></td>';
+	  print '<td align="center" class="normal" width="100"><a class="payee" href="'.$PHP_SELF.'?filtre=paye:1">Payé</a></td>';
 	  print '<td>&nbsp;</td>';
 	} else {
-	  print '<td align="center"><a class="impayee" href="'.$PHP_SELF.'?filtre=paye:0">Non</a></td>';
+	  print '<td align="center"><a class="impayee" href="'.$PHP_SELF.'?filtre=paye:0">Impayé</a></td>';
 	  print '<td align="center"><a href="charges.php?id='.$obj->id.'">'.img_edit().'</a>';
 	  print ' &nbsp; <a href="'.$PHP_SELF.'?action=del&id='.$obj->id.'">'.img_delete().'</a></td>';
 	}
