@@ -209,7 +209,7 @@ print '</td><td valign="top" width="70%">';
 if ($user->comm > 0 && $conf->commercial ) 
 {
   $sql = "SELECT p.rowid, p.ref, s.nom, s.idp FROM llx_commande as p, llx_societe as s";
-  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = 1 AND p.facture = 0";
+  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut >= 1 AND p.facture = 0";
   if ($socidp)
     {
       $sql .= " AND p.fk_soc = $socidp";
