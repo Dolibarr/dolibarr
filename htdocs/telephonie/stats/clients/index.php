@@ -54,7 +54,7 @@ print "</tr>\n";
 
 $sql = "SELECT distinct l.fk_client_comm ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-$sql .= " WHERE l.statut <> 7";
+$sql .= " WHERE statut = 3";
 
 if ($db->query($sql))
 {
@@ -79,7 +79,7 @@ else
 
 $sql = "SELECT count(*) ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-$sql .= " WHERE l.statut <> 7";
+$sql .= " WHERE statut = 3";
 
 if ($db->query($sql))
 {
