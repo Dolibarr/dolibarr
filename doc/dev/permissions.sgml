@@ -73,6 +73,8 @@
 | 62 | Créer modifier les fiches d'intervention          | ficheinter | w    |         0 |
 | 64 | Supprimer les fiches d'intervention               | ficheinter | d    |         0 |
 | 91 | Gestion banquaire                                 | compta     | a    |         0 |
+| 92 | Gestion charges                                   | compta     | a    |         0 |
+| 93 | Gestion resultat                                  | compta     | a    |         0 |
 +----+---------------------------------------------------+------------+------+-----------+
 
       </example>

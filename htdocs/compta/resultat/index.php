@@ -22,10 +22,18 @@
 require("./pre.inc.php");
 require("../../tva.class.php");
 require("../../chargesociales.class.php");
+
 /*
  *
  */
+
 llxHeader();
+
+$user->getrights('compta');
+
+if (!$user->admin && !$user->rights->compta->resultat)
+  accessforbidden();
+  
 ?>
 <style type="text/css">
 td.border { border: 1px solid #000000}

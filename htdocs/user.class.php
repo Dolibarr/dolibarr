@@ -310,7 +310,13 @@ class User
 
 		  if ($obj->fk_id == 91)
 		    $this->rights->compta->bank = 1;
-			
+
+		  if ($obj->fk_id == 92)
+		    $this->rights->compta->charges = 1;
+
+		  if ($obj->fk_id == 93)
+		    $this->rights->compta->resultat = 1;
+
 		}
 		
 	      $i++;

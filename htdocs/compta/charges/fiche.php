@@ -25,6 +25,11 @@ require("../service.class.php");
 
 llxHeader();
 
+$user->getrights('compta');
+
+if (!$user->admin && !$user->rights->compta->charges)
+  accessforbidden();
+
 if ($action == 'add') {
   $service = new Service($db);
 
