@@ -103,6 +103,47 @@ alter table llx_c_actioncomm add active tinyint default 1 NOT NULL after libelle
 alter table llx_c_paiement add code varchar(6) after id;
 
 
+create table llx_mailing
+(
+  rowid              integer AUTO_INCREMENT PRIMARY KEY,
+
+  statut             smallint       DEFAULT 0,   
+
+  date_envoi         datetime,                   
+  titre              varchar(60),                
+  sujet              varchar(60),                
+  body               text,
+  cible              varchar(60),
+
+  nbemail            integer,
+
+  email_from         varchar(160),               
+  email_replyto      varchar(160),               
+  email_errorsto     varchar(160),               
+
+  date_creat         datetime,                   
+  date_valid         datetime,                   
+  date_appro         datetime,                   
+
+  fk_user_creat      integer,                    
+  fk_user_valid      integer,                    
+  fk_user_appro      integer                     
+
+)type=innodb;
+
+
+create table llx_mailing_cibles
+(
+  rowid              integer AUTO_INCREMENT PRIMARY KEY,
+  fk_mailing         integer NOT NULL,
+  fk_contact         integer NOT NULL,
+  nom                varchar(160),
+  prenom             varchar(160),
+  email              varchar(160)
+
+)type=innodb;
+
+
 create table llx_stock_mouvement
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
