@@ -31,6 +31,12 @@ $user->getrights('projet');
 
 llxHeader();
 
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+$page=$_GET["page"];
+$socid=$_GET["socid"];
+
+
 /*
  * Sécurité accés client
  */
@@ -39,6 +45,10 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
+
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+$page=$_GET["page"];
 
 if ($sortorder == "")
 {
