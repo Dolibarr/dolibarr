@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ require("./pre.inc.php");
 
 llxHeader();
 
-print_fiche_titre("<font class=\"body\">Nous sommes le</font> ".dolibarr_print_date(mktime()).'<font class="body">, vous êtes connecté en tant que</font> ' . $user->prenom . ' ' . $user->nom .' ['.$user->code.']', '<a href="about.php">A propos</a>');
+print_fiche_titre("<font class=\"body\">Nous sommes le</font> ".dolibarr_print_date(mktime(),"%A %e %B %Y").'<font class="body">, vous êtes connecté en tant que</font> ' . $user->prenom . ' ' . $user->nom .' ['.$user->code.']', '<a href="about.php">A propos</a>');
 print "<br>\n";
 
 /*
