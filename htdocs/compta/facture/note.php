@@ -95,15 +95,15 @@ if ($_GET["facid"])
       print '<table class="border" width="100%">';
       
       print '<tr><td>'.$langs->trans("Company").'</td><td>';
-      if ($societe->client == 1)
+      if ($soc->client == 1)
 	{
-	  $url ='fiche.php?socid='.$societe->id;
+	  $url = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
 	}
       else
 	{
-	  $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$societe->id;
+	  $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$soc->id;
 	}
-      print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
+      print '<a href="'.$url.'">'.$soc->nom.'</a></td>';
       print '<td>'.$langs->trans("Status").'</td><td align="center"><b>'.$facture->statut_libelle.'</b></td></tr>';
 
 	  print '<tr><td>Date</td><td>'.strftime("%A %d %B %Y",$facture->date);

@@ -482,7 +482,7 @@ if ($_GET["action"] == 'create')
 
 	  print '<table class="border" width="100%">';
 	  
-	  print '<tr><td>'.$langs->trans("Customer").' :</td><td>'.$soc->nom.'</td>';
+	  print '<tr><td>'.$langs->trans("Company").' :</td><td>'.$soc->nom.'</td>';
 	  print '<td class="border">'.$langs->trans("Comment").'</td></tr>';
 
 	  print '<tr><td>'.$langs->trans("Author").' :</td><td>'.$user->fullname.'</td>';
@@ -823,7 +823,7 @@ else
 	   *   Facture
 	   */
 	  print '<table class="border" width="100%">';
-	  print '<tr><td>'.$langs->trans("Customer").'</td>';
+	  print '<tr><td>'.$langs->trans("Company").'</td>';
 	  print '<td colspan="3">';
 	  print '<b><a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  

@@ -91,9 +91,9 @@ if ($_GET["facid"] > 0)
        *   Facture
        */
       print '<table class="border" width="100%">';
-      print '<tr><td>'.$langs->trans("Customer").'</td>';
+      print '<tr><td>'.$langs->trans("Company").'</td>';
       print '<td colspan="3">';
-      print '<b><a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
+      print '<b><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
       
       print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
       
