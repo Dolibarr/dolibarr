@@ -3,6 +3,7 @@ Bill=Facture
 Bills=Factures
 Payment=Paiement
 Payments=Paiements
+PaymentMode=Mode de paiement
 ClassifyPayed=Classer 'Payée'
 ClassifyCanceled=Classer 'Abandonnée'
 CreateBill=Créer Facture

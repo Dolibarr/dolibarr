@@ -3,6 +3,7 @@ Bill=Bill
 Bills=Bills
 Payment=Payment
 Payments=Payments
+PaymentMode=Payment mode
 ClassifyPayed=Classify 'Payed'
 ClassifyCanceled=Classify 'Abandonned'
 CreateBill=Create Bill

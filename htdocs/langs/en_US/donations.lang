@@ -1,0 +1,11 @@
+# Dolibarr language file - en_US - donations
+Donation=Donation
+Donationss=Donations
+AddDonation=Add a donation
+DonationPromise=Gift promise
+PromisesNotValid=Not valid promises
+PromisesValid=Valid promises
+DonationsPayed=Donations payed
+DonationsReceived=Donations received
+PublicDonation=Public donation
+DonationsNumber=Donation number

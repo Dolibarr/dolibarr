@@ -1,0 +1,11 @@
+# Dolibarr language file - fr_FR - donations
+Donation=Donation
+Donationss=Donations
+AddDonation=Add a donation
+DonationPromise=Promesse de don
+PromisesNotValidated=Promesses non validées
+PromisesValidated=Promesses validées
+DonationsPayed=Dons payés
+DonationsReceived=Dons encaissés
+PublicDonation=Don publique
+DonationsNumber=Nombre de dons
