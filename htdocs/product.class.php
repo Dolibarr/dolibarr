@@ -120,7 +120,7 @@ class Product
 	      $result = $this->db->query($sql);
 	      if ( $result )
 		{
-		  $id = $this->db->last_insert_id();
+		  $id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
 		  
 		  if ($id > 0)
 		    {
@@ -206,9 +206,9 @@ class Product
    *    \param  user        utilisateur qui modifie le prix
    */
 	 
-  function _log_price($user) 
+    function _log_price($user) 
     {
-
+        // On supprimme ligne existante au cas ou
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price ";
         $sql .= "WHERE date_price = now()";
         $sql .= " and fk_product = ".$this->id;
@@ -216,27 +216,23 @@ class Product
         $sql .= " and price = ".ereg_replace(",",".",$this->price);
         $sql .= " and envente = ".$this->envente;
         $sql .= " and tva_tx = ".$this->tva_tx;
-        
+
         $this->db->query($sql);
         
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price ";
-        $sql .= " SET date_price = now()";
-        $sql .= " ,fk_product = ".$this->id;
-        $sql .= " ,fk_user_author = ".$user->id;
-        $sql .= " ,price = ".ereg_replace(",",".",$this->price);
-        $sql .= " ,envente = ".$this->envente;
-        $sql .= " ,tva_tx = ".$this->tva_tx;
-      
-      if ($this->db->query($sql) )
-	{
-	  return 1;	      
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	  return 0;
-	}
-  }
+        // On ajoute nouveau tarif
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,envente,tva_tx) ";
+        $sql .= " VALUES(now(),".$this->id.",".$user->id.",".ereg_replace(",",".",$this->price).",".$this->envente.",".$this->tva_tx;
+        $sql .= ")";
+        if ($this->db->query($sql) )
+        {
+            return 1;	      
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return 0;
+        }
+    }
 
   /**
    *    \brief  Modifie le prix d'achat pour un fournisseur
@@ -272,14 +268,12 @@ class Product
 	      }
 	    else
 	      {
-		print $sql .  " ". $this->db->error();
 		dolibarr_print_error($this->db);
 		return 2;
 	      }
 	  }
 	else
 	  {
-	    print $sql .  " ". $this->db->error();
 	    dolibarr_print_error($this->db);
 	    return 2;
 	  }
