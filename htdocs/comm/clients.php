@@ -130,9 +130,9 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?socid='.$obj->idp.'">';
-      print img_file();
-      print "</a>&nbsp;<a href=\"fiche.php?socid=$obj->idp\">".stripslashes($obj->nom)."</A></td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">';
+      print img_object($langs->trans("ShowCustomer"),"company");
+      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom).'</a></td>';
       print "<td>".$obj->code_client."&nbsp;</td>\n";
       print "<td>".$obj->ville."&nbsp;</td>\n";
       print '<td align="center"><a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';

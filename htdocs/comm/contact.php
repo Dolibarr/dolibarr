@@ -39,10 +39,10 @@ $user->getrights('commande');
 $user->getrights('projet');
 
 
-llxHeader('','Contacts Clients');
+llxHeader('','Contacts');
 
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
+$sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=$_GET["page"];
 
 $socid=$_GET["socid"];
@@ -59,13 +59,13 @@ if ($user->societe_id > 0)
 }
 
 
-if ($sortorder == "")
-{
-  $sortorder="ASC";
-}
-if ($sortfield == "")
+if (! $sortfield)
 {
   $sortfield="p.name";
+}
+if (! $sortorder)
+{
+  $sortorder="ASC";
 }
 
 if ($page == -1) { $page = 0 ; }
@@ -133,10 +133,10 @@ if (trim($_GET["search_societe"]))
   $sql .= " AND s.nom like '%".trim($_GET["search_societe"])."%'";
 }
 
-if ($_GET[contactname]) // acces a partir du module de recherche
+if ($_GET["contactname"]) // acces a partir du module de recherche
 {
-  $sql .= " AND ( lower(p.name) like '%".strtolower($_GET[contactname])."%' OR lower(p.firstname) like '%".strtolower($_GET[contactname])."%') ";
-  $sortfield = "lower(p.name)";
+  $sql .= " AND ( p.name like '%".strtolower($_GET[contactname])."%' OR lower(p.firstname) like '%".strtolower($_GET[contactname])."%') ";
+  $sortfield = "p.name";
   $sortorder = "ASC";
 }
 
@@ -155,9 +155,9 @@ if ($result)
   
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Lastname"),"contact.php","lower(p.name)", $begin,"&amp;type=$type","",$sortfield);
-  print_liste_field_titre($langs->trans("Firstname"),"contact.php","lower(p.firstname)", $begin,"&amp;type=$type","",$sortfield);
-  print_liste_field_titre($langs->trans("Company"),"contact.php","lower(s.nom)", $begin,"&amp;type=$type","",$sortfield);
+  print_liste_field_titre($langs->trans("Lastname"),"contact.php","p.name", $begin,"&amp;type=$type","",$sortfield);
+  print_liste_field_titre($langs->trans("Firstname"),"contact.php","p.firstname", $begin,"&amp;type=$type","",$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"contact.php","s.nom", $begin,"&amp;type=$type","",$sortfield);
   print '<td>'.$langs->trans("Email").'</td>';
   print '<td>'.$langs->trans("Phone").'</td>';
   print "</tr>\n";

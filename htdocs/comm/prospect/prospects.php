@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ if ($result)
 
   $urladd="page=$page&amp;stcomm=$stcomm";
 
-  print_barre_liste($langs->trans("ProspectList"), $page, "prospects.php",'&amp;stcomm='.$_GET["stcomm"],"","",'',$num);
+  print_barre_liste($langs->trans("ListOfProspects"), $page, "prospects.php",'&amp;stcomm='.$_GET["stcomm"],"","",'',$num);
 
   $i = 0;
   
@@ -151,9 +151,9 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td width="35%"><a href="fiche.php?id='.$obj->idp.'">';
-      print img_file();
-      print "</a>&nbsp;<a href=\"fiche.php?id=$obj->idp\">$obj->nom</A></td>";
+      print '<td width="35%"><a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->idp.'">';
+      print img_object($langs->trans("ShowProspect"),"company");
+      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print "<td>".$obj->ville."&nbsp;</td>";
       print "<td align=\"center\">$obj->departement</td>";
       print "<td align=\"center\">".$obj->stcomm."</td>";

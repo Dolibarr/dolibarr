@@ -501,12 +501,12 @@ if ($_socid > 0)
 	    print img_object($langs->trans("Show"),"contact");
 	    print '&nbsp;'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 	    
-	    if ($obj->note)
+	    if (trim($obj->note))
 	      {
-		print "<br>".nl2br($obj->note);
+		print '<br>'.nl2br(trim($obj->note));
 	      }
-	    print "</td>";
-	    print "<td>$obj->poste&nbsp;</td>";
+	    print '</td>';
+	    print '<td>'.$obj->poste.'&nbsp;</td>';
 	    print '<td>';
 
 	    /*
