@@ -105,7 +105,7 @@ if ($_GET["id"] > 0)
 	}
       print "</td></tr>";
       
-      print "<tr><td>Auteur</td><td colspan=\"2\">$author->fullname</td>";
+      print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"2\">$author->fullname</td>";
       
       print '<td>Projet : ';
       if ($commande->projet_id > 0)

@@ -107,7 +107,7 @@ if ($_GET["action"] == 'create')
       print '<td rowspan="4" valign="top">';
       print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
       
-      print "<tr><td>Auteur :</td><td>".$user->fullname."</td></tr>";
+      print "<tr><td>".$langs->trans("Author")." :</td><td>".$user->fullname."</td></tr>";
       print "<tr><td>Conditions de réglement :</td><td>";
       
       print $facture->cond_reglement;
@@ -271,7 +271,7 @@ else
 	  
 	  print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
 	  
-	  print "<tr><td>Auteur</td><td colspan=\"3\">$author->fullname</td>";
+	  print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td>";
 	  
 	  if ($fac->remise_percent > 0)
 	    {

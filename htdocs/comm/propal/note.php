@@ -104,7 +104,7 @@ if ($_GET["propalid"])
 	    }
 	  print '</td>';
 
-	  print '<td>Auteur</td><td>';
+	  print '<td>'.$langs->trans("Author").'</td><td>';
 	  $author = new User($db, $propal->user_author_id);
 	  $author->fetch('');
 	  print $author->fullname.'</td></tr>';

@@ -159,14 +159,14 @@ if ( $db->query($sql) )
       print_barre_liste("Liste des actions commerciales réalisées ou à faire", $page, "index.php",'',$sortfield,$sortorder,'',$num);
     }
   $i = 0;
-  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
   print '<tr class="liste_titre">';
-  print '<td colspan="4">Date</td>';
+  print '<td colspan="4">'.$langs->trans("Date").'</td>';
   print '<td>Avancement</td>';
   print '<td>Action</td>';
   print '<td>Société</td>';
   print '<td>Contact</Td>';
-  print "<td>Commentaires</td><td>Auteur</td>";
+  print "<td>".$langs->trans("Comments")."</td><td>".$langs->trans("Author")."</td>";
   print "</tr>\n";
   $var=True;
   while ($i < min($num,$limit))

@@ -310,7 +310,7 @@ if ($_GET["propalid"])
 	    }
 	  print '</td>';
 
-	  print '<td>Auteur</td><td>';
+	  print '<td>'.$langs->trans("Author").'</td><td>';
 	  $author = new User($db, $obj->fk_user_author);
 	  $author->fetch('');
 	  print $author->fullname.'</td></tr>';
@@ -737,7 +737,7 @@ if ($_GET["propalid"])
 		  print_titre("Propale envoyée");
 
 		  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
-		  print "<tr><td>Date</td><td>Auteur</td></TR>\n";
+		  print "<tr><td>".$langs->trans("Date")."</td><td>".$langs->trans("Author")."</td></TR>\n";
 	      
 
 		  while ($i < $num)

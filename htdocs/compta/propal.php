@@ -159,7 +159,7 @@ if ($_GET["propalid"])
       /*
        *
        */
-      print '<tr><td>Auteur</td><td colspan="2">';
+      print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">';
       $author = new User($db, $obj->fk_user_author);
       $author->fetch('');
       print $author->fullname.'</td></tr>';
@@ -225,8 +225,8 @@ if ($_GET["propalid"])
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<tr>";
 	  print "<td>Numéro</td>";
-	  print "<td>Date</td>";
-	  print "<td>Auteur</td>";
+	  print '<td>'.$langs->trans("Date").'</td>';
+	  print '<td>'.$langs->trans("Author").'</td>';
 	  print '<td align="right">Prix</td>';
 	  print "</tr>\n";
 	  

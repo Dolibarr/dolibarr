@@ -126,12 +126,12 @@ if ($action == 'delete_categ')
 
 print_titre("Edition de la ligne");
 print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-print "<TR class=\"liste_titre\">";
-print "<td>Date</td><td>Description</TD>";
-print "<td align=\"right\">Debit</TD>";
-print "<td align=\"right\">Credit</TD>";
-print "<td align=\"center\">Releve</TD>";
-print "<td align=\"center\">Auteur</TD>";
+print "<tr class=\"liste_titre\">";
+print "<td>Date</td><td>Description</td>";
+print "<td align=\"right\">Debit</td>";
+print "<td align=\"right\">Credit</td>";
+print "<td align=\"center\">Releve</td>";
+print "<td align=\"center\">".$langs->trans("Author")."</td>";
 
 print "</TR>\n";
 

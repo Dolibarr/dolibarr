@@ -236,7 +236,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
   $html->select_date();
   print '</td></tr>';
   
-  print '<tr><td>Auteur</td><td>'.$user->fullname.'</td></tr>';
+  print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
   print "</table><br>";
 
   print '<table cellspacing="0" cellpadding="3" class="border" width="100%">';
@@ -322,7 +322,7 @@ else
 	      $author->fetch('');
 	      $authorfullname=$author->fullname;
 	    }
-	  print "<tr><td>Auteur</td><td>$authorfullname</td></tr>";
+	  print "<tr><td>".$langs->trans("Author")."</td><td>$authorfullname</td></tr>";
 	  print "<tr><td>Statut</td><td>".$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
 	  print "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
 	  print "</table>";
@@ -407,7 +407,7 @@ else
 	      $author->fetch('');
 	      $authorfullname=$author->fullname;
 	    }
-	  print "<tr><td>Auteur</td><td colspan=\"4\">$authorfullname</td>";
+	  print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"4\">$authorfullname</td>";
 	  print "<tr><td>Statut</td><td colspan=\"4\">".$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
 	  
 	  print "<tr>".'<td>&nbsp</td><td>'.$langs->trans("TotalHT").'</td><td align="right"><b>'.price($fac->total_ht)."</b></td>";

@@ -454,7 +454,7 @@ if ($_GET["action"] == 'create')
 	  print '<tr><td>Client :</td><td>'.$soc->nom.'</td>';
 	  print '<td class="border">Commentaire</td></tr>';
 
-	  print "<tr><td>Auteur :</td><td>".$user->fullname."</td>";
+	  print "<tr><td>".$langs->trans("Author")." :</td><td>".$user->fullname."</td>";
 	  
 	  print '<td rowspan="6" valign="top">';
 	  print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
@@ -863,7 +863,7 @@ else
 	
 	  print "</td></tr>";
 	
-	  print "<tr><td height=\"10\">Auteur</td><td colspan=\"3\">$author->fullname</td>";
+	  print "<tr><td height=\"10\">".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td>";
   
 	  print '<tr><td height=\"10\">Remise globale</td>';
 	  print '<td align="right" colspan="2">'.$fac->remise_percent.'</td>';

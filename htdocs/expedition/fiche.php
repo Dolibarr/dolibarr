@@ -150,7 +150,7 @@ if ($_POST["action"] == 'create')
       $ents = $entrepot->list_array();
       print $ents[$_POST["entrepot_id"]];
       print '</td>';
-      print "<td>Auteur</td><td>$author->fullname</td>\n";
+      print "<td>".$langs->trans("Author")."</td><td>$author->fullname</td>\n";
       
       if ($commande->note)
 	{
@@ -326,7 +326,7 @@ else
 	  print '<td width="30%">';
 	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  
-	  print '<td width="20%">Auteur</td><td width="30%">'.$author->fullname.'</td>';
+	  print '<td width="20%">'.$langs->trans("Author").'</td><td width="30%">'.$author->fullname.'</td>';
 
 	  print "</tr>";
 	  

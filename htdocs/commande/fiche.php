@@ -230,9 +230,9 @@ if ($_GET["action"] == 'create')
 	  print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
 	  
 	  print '<tr><td>Client :</td><td>'.$obj->nom.'</td>';
-	  print '<td class="border">Commentaire</td></tr>';
+	  print '<td class="border">'.$langs->trans("Comments").' :</td></tr>';
 
-	  print "<tr><td>Auteur :</td><td>".$user->fullname."</td>";
+	  print '<tr><td>'.$langs->trans("Author").' :</td><td>'.$user->fullname.'</td>';
 	  
 	  print '<td rowspan="5" valign="top">';
 	  print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
@@ -458,7 +458,7 @@ else
 	  print $commande->statuts[$commande->statut];
 	  print "</td></tr>";
 	  
-	  print "<tr><td>Date</td>";
+	  print '<tr><td>'.$langs->trans("Date").'</td>';
 	  print "<td colspan=\"2\">".strftime("%A %d %B %Y",$commande->date)."</td>\n";
 
 	  print '<td width="50%">Source : ' . $commande->sources[$commande->source] ;
@@ -471,7 +471,7 @@ else
 	    }
 	  print "</td></tr>";
 
-	  print "<tr><td>Auteur</td><td colspan=\"2\">$author->fullname</td>";
+	  print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';
 	
 	  print '<td>Projet : ';
 	  if ($commande->projet_id > 0)

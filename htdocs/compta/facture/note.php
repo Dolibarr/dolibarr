@@ -107,7 +107,7 @@ if ($_GET["facid"])
 	    }
 	  print '</td>';
 
-	  print '<td>Auteur</td><td>';
+	  print '<td>'.$langs->trans("Author").'</td><td>';
 	  $author = new User($db, $facture->user_author);
 	  $author->fetch('');
 	  print $author->fullname.'</td></tr>';

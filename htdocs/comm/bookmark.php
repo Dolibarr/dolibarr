@@ -79,18 +79,18 @@ if ( $db->query($sql) )
     {
       $sortorder="DESC";
     }
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR bgcolor=\"orange\">";
-  print "<TD>&nbsp;</TD>";
-  print "<TD align=\"center\"><a href=\"index.php?sortfield=idp&sortorder=$sortorder&begin=$begin\">Id</a></TD>";
-  print "<TD><a href=\"index.php?sortfield=lower(s.nom)&sortorder=$sortorder&begin=$begin\">Societe</a></td>";
+  print "<p><table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<tr class=\"liste_titre\">";
+  print "<td>&nbsp;</td>";
+  print "<td align=\"center\"><a href=\"index.php?sortfield=idp&sortorder=$sortorder&begin=$begin\">Id</a></td>";
+  print "<td><a href=\"index.php?sortfield=lower(s.nom)&sortorder=$sortorder&begin=$begin\">Societe</a></td>";
 
-  print "<TD align=\"center\">Statut</TD>";
-  print "<TD>Auteur</TD>";
-  print "<TD>Date</TD>";
+  print "<td align=\"center\">Statut</td>";
+  print "<td>".$langs->trans("Author")."</td>";
+  print "<td>".$langs->trans("Date")."</td>";
 
-  print "<TD>&nbsp;</TD>";
-  print "</TR>\n";
+  print "<td>&nbsp;</td>";
+  print "</tr>\n";
   $var=True;
   while ($i < $num)
     {

@@ -313,8 +313,8 @@ if ($_GET["id"])
       print '<td width="20%">Contact</td><td width="30%">';
       $html->select_array("scontactid",  $act->societe->contact_array(), $act->contact->id, 1);
       print '</td></tr>';
-      print '<tr><td>Date</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
-      print '<td>Auteur</td><td>'.$act->author->fullname.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Author").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
+      print '<td>'.$langs->trans("Author").'</td><td>'.$act->author->fullname.'</td></tr>';
       print '<tr><td>Pourcentage réalisé</td><td colspan="3"><input name="percent" value="'.$act->percent.'">%</td></tr>';
       if ($act->objet_url)
 	{
@@ -340,8 +340,8 @@ if ($_GET["id"])
       print '<td width="30%"><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
       
       print '<td width="10%">Contact</td><td width="40%">'.$act->contact->fullname.'</td></tr>';
-      print '<tr><td>Date</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
-      print '<td>Auteur</td><td>'.$act->author->fullname.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Author").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
+      print '<td>'.$langs->trans("Author").'</td><td>'.$act->author->fullname.'</td></tr>';
       print '<tr><td>Pourcentage réalisé</td><td colspan="4">'.$act->percent.' %</td></tr>';
       if ($act->objet_url)
 	{
