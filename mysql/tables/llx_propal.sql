@@ -40,6 +40,6 @@ create table llx_propal
   tva             real      default 0,
   total           real      default 0,
   note            text,
-
+  model_pdf       varchar(50),
   UNIQUE INDEX (ref)
 );
