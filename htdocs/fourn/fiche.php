@@ -213,8 +213,7 @@ if ( $societe->fetch($socid) )
 	  print "<tr $bc[$var]>";
 	  print '<td>';
 	  print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
-	  print img_file();
-	  print $obj->facnumber.'</a><br>'.substr($obj->libelle,0,40).'...</td>';	    
+	  print $obj->facnumber.'</a> '.substr($obj->libelle,0,40).'...</td>';	    
 	  print "<td align=\"right\" width=\"100\">".dolibarr_print_date($obj->df)."</td>";
 	  print '<td align="right">'.$obj->amount.'</td>';
       $fac = new FactureFourn($db);
