@@ -80,11 +80,10 @@ if (! $conf->db->type) { $conf->db->type = 'mysql'; }
 // A terme cette constante sera définie dans la base
 define('MAIN_DB_PREFIX','llx_');
 
-require (DOL_DOCUMENT_ROOT ."/lib/".$dolibarr_main_db_type.".lib.php");
+require (DOL_DOCUMENT_ROOT ."/lib/".$conf->db->type.".lib.php");
 require (DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
 require (DOL_DOCUMENT_ROOT ."/html.form.class.php");
-require DOL_DOCUMENT_ROOT ."/user.class.php";
-//require "Smarty.class.php";
+require (DOL_DOCUMENT_ROOT ."/user.class.php");
 
 
 $db = new DoliDb();
