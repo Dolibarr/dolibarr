@@ -110,4 +110,15 @@ if ($result)
     }
 }
 
+/*
+ * Contrats
+ *
+ */
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/commerciaux/contrats.class.php");
+      
+$file = $img_root . "commercials/contrats.png";
+if ($verbose) print "Graph : Comemrciaux contrats $file\n";
+$graph = new GraphCommerciauxContrats($db, $file);
+$graph->GraphMakeGraph();
+
 ?>
