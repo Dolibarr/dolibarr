@@ -161,7 +161,9 @@ if ($HTTP_POST_VARS["action"] == 'add')
 		}
 	      else
 		{
-		  print "Erreur creation de facture";
+	      print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
+	      print "<p>Retour à la <a href=\"propal.php?propalid=$propalid\">propale</a>";
+	      print $db->error();
 		}
 	    }
 	  
