@@ -183,7 +183,6 @@ insert into llx_c_typent (id,libelle) values (100, 'Autres');
 --
 -- Pays
 --
-delete from llx_c_pays;
 insert into llx_c_pays (rowid,libelle,code) values (1, 'France',          'FR');
 insert into llx_c_pays (rowid,libelle,code) values (2, 'Belgique',        'BE');
 insert into llx_c_pays (rowid,libelle,code) values (3, 'Italie',          'IT');
@@ -209,7 +208,6 @@ insert into llx_c_pays (rowid,libelle,code) values (23, 'Sénégal',        'SN');
 insert into llx_c_pays (rowid,libelle,code) values (24, 'Argentine',      'AR');
 insert into llx_c_pays (rowid,libelle,code) values (25, 'Cameroun',       'CM');
 
-delete from llx_c_regions;
 insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (01,'97105',3,'Guadeloupe');
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (02,'97209',3,'Martinique');
@@ -238,7 +236,6 @@ insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (91,'34172',2,'
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (93,'13055',0,'Provence-Alpes-Côte d\'Azur');
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (94,'2A004',0,'Corse');
 
-delete from llx_c_departements;
 insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,0,'0',0,'-','-');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'01','01053',5,'AIN','Ain');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (22,'02','02408',5,'AISNE','Aisne');

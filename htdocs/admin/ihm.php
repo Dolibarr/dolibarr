@@ -32,6 +32,7 @@ if ($_POST["action"] == 'update')
   dolibarr_set_const($db, "MAIN_MENU_BARRETOP",$_POST["main_menu_barretop"]);
   dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",$_POST["main_searchform_contact"]);
   dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",$_POST["main_searchform_societe"]);
+  dolibarr_set_const($db, "MAIN_LANG_DEFAULT",$_POST["main_lang_default"]);
 
   Header("Location: $PHP_SELF");
 }
@@ -99,9 +100,14 @@ if ($_GET["action"] == 'edit')
   print '</select>';
   print '</td></tr>';
 
-  print '<tr class="pair"><td width="50%">Afficher formulaire de recherche Contacts dans la barre de gauche</td><td><input name="main_searchform_contact" size="20" value="' . MAIN_SEARCHFORM_CONTACT . '"></td></tr>';
+  print '<tr class="pair"><td width="50%">Langue par défaut à utiliser (fr, ...)</td><td>';
+  print '<select name="main_lang_default">';
+  print '<option value="fr" selected>fr (seul le français est géré pour l\'instant)</option>';
+  print '</select>';
+  print '</td></tr>';
 
-  print '<tr class="impair"><td width="50%">Afficher formulaire de recherche Sociétés dans la barre de gauche</td><td><input name="main_searchform_societe" size="20" value="' . MAIN_SEARCHFORM_SOCIETE . '"></td></tr>';
+  print '<tr class="impair"><td width="50%">Afficher formulaire de recherche Contacts dans la barre de gauche</td><td><input name="main_searchform_contact" size="20" value="' . MAIN_SEARCHFORM_CONTACT . '"></td></tr>';
+  print '<tr class="pair"><td width="50%">Afficher formulaire de recherche Sociétés dans la barre de gauche</td><td><input name="main_searchform_societe" size="20" value="' . MAIN_SEARCHFORM_SOCIETE . '"></td></tr>';
 
   print '</table><br>';
   
@@ -122,8 +128,9 @@ else
   $filelib=eregi_replace('\.php$','',MAIN_MENU_BARRETOP);
   print $filelib;
   print '</td></tr>';
-  print '<tr class="pair"><td>Afficher zone de recherche Contacts dans le menu gauche</td><td>' . (MAIN_SEARCHFORM_CONTACT?"oui":"non") . '</td></tr>';
-  print '<tr class="impair"><td>Afficher zone de recherche Sociétés dans le menu gauche</td><td>' . (MAIN_SEARCHFORM_SOCIETE?"oui":"non") . '</td></tr>';
+  print '<tr class="pair"><td width="50%">Langue par défaut à utiliser (fr, en...)</td><td>' . MAIN_LANG_DEFAULT . '</td></tr>';
+  print '<tr class="impair"><td>Afficher zone de recherche Contacts dans le menu gauche</td><td>' . (MAIN_SEARCHFORM_CONTACT?"oui":"non") . '</td></tr>';
+  print '<tr class="pair"><td>Afficher zone de recherche Sociétés dans le menu gauche</td><td>' . (MAIN_SEARCHFORM_SOCIETE?"oui":"non") . '</td></tr>';
   print '</table><br>';
 
   print '<div class="tabsAction">';

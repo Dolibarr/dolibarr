@@ -1244,8 +1244,8 @@ insert into llx_const(name, value, type, note) values ('MAIN_NOT_INSTALLED','1',
 
 insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2003','chaine','Année de départ');
 
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_THEME','yellow','chaine','Thème par défaut');
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
+insert into llx_const (name, value, type, note) VALUES ('MAIN_THEME','yellow','chaine','Thème par défaut');
+insert into llx_const (name, value, type, note) VALUES ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
 
 
 insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
@@ -1260,47 +1260,47 @@ insert into llx_const(name, value, type, note) values ('COMPTA_ONLINE_PAYMENT_BP
 insert into llx_const(name, value, type, note) values ('COMPTA_BANK_FACTURES','1','yesno','Menu factures dans la partie bank');
 
 
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_RESIL','Votre adhesion sur %SERVEUR% vient d\'etre resilie.\r\nNous esperons vous revoir tres bientot','texte','Mail de Resiliation');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_VALID','MAIN\r\nVotre adhesion vient d\'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante : \r\n%SERVEUR%public/adherents/','texte','Mail de validation');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_EDIT','Voici le rappel des coordonnees que vous avez modifiees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante :\r\n%SERVEUR%public/adherents/','texte','Mail d\'edition');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_NEW','Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\r\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante :\r\n%SERVEUR%public/adherents/','texte','Mail de nouvel inscription');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_COTIS','Bonjour %PRENOM%,\r\nMerci de votre inscription.\r\nCet email confirme que votre cotisation a ete recue et enregistree.\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante :\r\n%SERVEUR%public/adherents/','texte','Mail de validation de cotisation');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_VALID_SUBJECT','Votre adhésion a ete validée sur %SERVEUR%','chaine','sujet du mail de validation');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_RESIL_SUBJECT','Resiliation de votre adhesion sur %SERVEUR%','chaine','sujet du mail de resiliation');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_COTIS_SUBJECT','Recu de votre cotisation','chaine','sujet du mail de validation de cotisation');
-INSERT INTO llx_const (name, value, type, note) VALUES ('SIZE_LISTE_LIMIT','20','chaine','Taille des listes');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_NEW_SUBJECT','Bienvenue sur %SERVEUR%','chaine','Sujet du mail de nouvelle adhesion');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_EDIT_SUBJECT','Votre fiche a ete editee sur %SERVEUR%','chaine','Sujet du mail d\'edition');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_USE_MAILMAN','0','yesno','Utilisation de Mailman');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAILMAN_UNSUB_URL','http://%SERVER%/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%ADMINPW%&user=%EMAIL%','chaine','Url de desinscription aux listes mailman');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAILMAN_URL','http://%SERVER%/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%ADMINPW%&send_welcome_msg_to_this_batch=1&subscribees=%EMAIL%','chaine','url pour les inscriptions mailman');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAILMAN_LISTS','test-test,test-test2','chaine','Listes auxquelles inscrire les nouveaux adherents');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_RESIL','Votre adhesion sur %SERVEUR% vient d\'etre resilie.\r\nNous esperons vous revoir tres bientot','texte','Mail de Resiliation');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_VALID','MAIN\r\nVotre adhesion vient d\'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante : \r\n%SERVEUR%public/adherents/','texte','Mail de validation');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_EDIT','Voici le rappel des coordonnees que vous avez modifiees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante :\r\n%SERVEUR%public/adherents/','texte','Mail d\'edition');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_NEW','Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\r\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante :\r\n%SERVEUR%public/adherents/','texte','Mail de nouvel inscription');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_COTIS','Bonjour %PRENOM%,\r\nMerci de votre inscription.\r\nCet email confirme que votre cotisation a ete recue et enregistree.\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante :\r\n%SERVEUR%public/adherents/','texte','Mail de validation de cotisation');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_VALID_SUBJECT','Votre adhésion a ete validée sur %SERVEUR%','chaine','sujet du mail de validation');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_RESIL_SUBJECT','Resiliation de votre adhesion sur %SERVEUR%','chaine','sujet du mail de resiliation');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_COTIS_SUBJECT','Recu de votre cotisation','chaine','sujet du mail de validation de cotisation');
+insert into llx_const (name, value, type, note) VALUES ('SIZE_LISTE_LIMIT','20','chaine','Taille des listes');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_NEW_SUBJECT','Bienvenue sur %SERVEUR%','chaine','Sujet du mail de nouvelle adhesion');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_EDIT_SUBJECT','Votre fiche a ete editee sur %SERVEUR%','chaine','Sujet du mail d\'edition');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_USE_MAILMAN','0','yesno','Utilisation de Mailman');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAILMAN_UNSUB_URL','http://%SERVER%/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%ADMINPW%&user=%EMAIL%','chaine','Url de desinscription aux listes mailman');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAILMAN_URL','http://%SERVER%/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%ADMINPW%&send_welcome_msg_to_this_batch=1&subscribees=%EMAIL%','chaine','url pour les inscriptions mailman');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAILMAN_LISTS','test-test,test-test2','chaine','Listes auxquelles inscrire les nouveaux adherents');
 insert into llx_const(name, value, type, note, visible) values ('ADHERENT_MAILMAN_ADMINPW','','string','Mot de passe Admin des liste mailman',0);
 insert into llx_const(name, value, type, note, visible) values ('ADHERENT_MAILMAN_SERVER','lists.domain.com','string','Serveur hebergeant les interfaces d\'Admin des listes mailman',0);
 insert into llx_const(name, value, type, note, visible) values ('ADHERENT_MAILMAN_LISTS_COTISANT','','string','Liste(s) auxquelles les nouveaux cotisants sont inscris automatiquement',0);
 
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_DEBUG','1','yesno','Debug ..');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_USE_GLASNOST','0','yesno','utilisation de glasnost ?');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_GLASNOST_SERVEUR','glasnost.j1b.org','chaine','serveur glasnost');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_GLASNOST_USER','user','chaine','Administrateur glasnost');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_GLASNOST_PASS','password','chaine','password de l\'administrateur');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_USE_GLASNOST_AUTO','0','yesno','inscription automatique a glasnost ?');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_USE_SPIP','0','yesno','Utilisation de SPIP ?');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_USE_SPIP_AUTO','0','yesno','Utilisation de SPIP automatiquement');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_SPIP_USER','user','chaine','user spip');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_SPIP_PASS','pass','chaine','Pass de connection');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_SPIP_SERVEUR','localhost','chaine','serveur spip');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_SPIP_DB','spip','chaine','db spip');
+insert into llx_const (name, value, type, note) VALUES ('MAIN_DEBUG','1','yesno','Debug ..');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_USE_GLASNOST','0','yesno','utilisation de glasnost ?');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_GLASNOST_SERVEUR','glasnost.j1b.org','chaine','serveur glasnost');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_GLASNOST_USER','user','chaine','Administrateur glasnost');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_GLASNOST_PASS','password','chaine','password de l\'administrateur');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_USE_GLASNOST_AUTO','0','yesno','inscription automatique a glasnost ?');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_USE_SPIP','0','yesno','Utilisation de SPIP ?');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_USE_SPIP_AUTO','0','yesno','Utilisation de SPIP automatiquement');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_SPIP_USER','user','chaine','user spip');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_SPIP_PASS','pass','chaine','Pass de connection');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_SPIP_SERVEUR','localhost','chaine','serveur spip');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_SPIP_DB','spip','chaine','db spip');
 insert into llx_const(name, value, type, note, visible) values ('ADHERENT_TEXT_NEW_ADH','','texte','Texte d\'entete du formaulaire d\'adhesion en ligne',0);
 insert into llx_const(name, value, type, note, visible) values ('ADHERENT_CARD_HEADER_TEXT','%ANNEE%','string','Texte imprime sur le haut de la carte adherent',0);
 insert into llx_const(name, value, type, note, visible) values ('ADHERENT_CARD_FOOTER_TEXT','Association FreeLUG http://www.freelug.org/','string','Texte imprime sur le bas de la carte adherent',0);
 insert into llx_const(name, value, type, note, visible) values ('ADHERENT_CARD_TEXT','%TYPE% n° %ID%\r\n%PRENOM% %NOM%\r\n<%EMAIL%>\r\n%ADRESSE%\r\n%CP% %VILLE%\r\n%PAYS%','texte','Texte imprime sur la carte adherent',0);
-INSERT INTO llx_const(name, value, type) VALUES ('DB_NAME_OSC','catalog','chaine');
-INSERT INTO llx_const(name, value, type) VALUES ('OSC_LANGUAGE_ID','1','chaine');
-INSERT INTO llx_const(name, value, type) VALUES ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr');
-INSERT INTO llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_FROM','adherents@domain.com','chaine','From des mails adherents');
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MENU_BARRETOP','default.php','chaine','Module de gestion de la barre de menu du haut');
+insert into llx_const(name, value, type) VALUES ('DB_NAME_OSC','catalog','chaine');
+insert into llx_const(name, value, type) VALUES ('OSC_LANGUAGE_ID','1','chaine');
+insert into llx_const(name, value, type) VALUES ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
+insert into llx_const (name, value, type, note) VALUES ('MAIN_MAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr');
+insert into llx_const (name, value, type, note) VALUES ('ADHERENT_MAIL_FROM','adherents@domain.com','chaine','From des mails adherents');
+insert into llx_const (name, value, type, note) VALUES ('MAIN_MENU_BARRETOP','default.php','chaine','Module de gestion de la barre de menu du haut');
 
 
 delete from llx_c_chargesociales;

@@ -388,15 +388,18 @@ if (defined("MAIN_MAIL_NEW_SUBJECT"))
 
 
 /*
+ * Positionne le langage dans $conf->langage
  */
-if(!isset($application_lang))
+if (! defined(MAIN_LANG_DEFAULT))
 {
-  $application_lang = "fr";
+  define(MAIN_LANG_DEFAULT,"fr");
 }
-$rtplang = new rtplang(DOL_DOCUMENT_ROOT ."/langs", "en", "en", $application_lang);
+$conf->langage=MAIN_LANG_DEFAULT;
+$rtplang = new rtplang(DOL_DOCUMENT_ROOT ."/langs", $conf->langage, $conf->langage, $conf->langage);
 $rtplang->debug=1;
 
-setlocale(LC_TIME, "fr_FR");
+$lc=strtolower($conf->langage)."_".strtoupper($conf->langage);  // lc vaut fr_FR par exemple
+setlocale(LC_TIME, $lc);
 
 
 /*
