@@ -113,6 +113,7 @@ $modules["MAIN_MODULE_EXTERNAL_RSS"][0] = "Module de syndication externe";
 $modules["MAIN_MODULE_EXTERNAL_RSS"][1] = "MAIN_MODULE_EXTERNAL_RSS";
 $modules["MAIN_MODULE_EXTERNAL_RSS"][2] = MAIN_MODULE_EXTERNAL_RSS;
 $modules["MAIN_MODULE_EXTERNAL_RSS"][3] = "Module de gestion de syndication de sites externes";
+$modules["MAIN_MODULE_EXTERNAL_RSS"][4] = "modExternalRss";
 
 if ($action == 'set')
 {
@@ -140,6 +141,15 @@ if ($action == 'reset')
   if ($db->query($sql))
     {
       $modules[$value][2] = 0;
+
+      $modName = $modules[$value][4];
+      if ($modName)
+	{
+	  $file = $modName . ".class.php";
+	  include("../includes/modules/$file");
+	  $objMod = new $modName($db);
+	  $objMod->remove();
+	}
     }
 }
 
