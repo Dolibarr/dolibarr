@@ -33,6 +33,8 @@ require("../actioncomm.class.php");
 require("../facture.class.php");
 
 $langs->load("companies");
+if ($conf->facture->enabled) $langs->load("bills");
+if ($conf->projet->enabled) $langs->load("projects");
 
 /*
  * Sécurité accés client
@@ -45,6 +47,8 @@ if ($user->societe_id > 0)
 }
 
 $user->getrights('facture');
+
+
 
 llxHeader();
 
