@@ -55,53 +55,65 @@ if ($HTTP_POST_VARS["action"] == 'add')
   $facture->number         = $HTTP_POST_VARS["facnumber"];
   $facture->date           = $datefacture;      
   $facture->note           = $HTTP_POST_VARS["note"];
-  $facture->projetid       = $HTTP_POST_VARS["projetid"];
-  $facture->cond_reglement = $HTTP_POST_VARS["condid"];
-  $facture->amount         = $HTTP_POST_VARS["amount"];
-  $facture->remise         = $HTTP_POST_VARS["remise"];
-  $facture->remise_percent = $HTTP_POST_VARS["remise_percent"];
-  
-  if (!$HTTP_POST_VARS["propalid"]) 
-    {      
-      $facture->add_product($HTTP_POST_VARS["idprod1"],$HTTP_POST_VARS["qty1"],$HTTP_POST_VARS["remise_percent1"]);
-      $facture->add_product($HTTP_POST_VARS["idprod2"],$HTTP_POST_VARS["qty2"],$HTTP_POST_VARS["remise_percent2"]);
-      $facture->add_product($HTTP_POST_VARS["idprod3"],$HTTP_POST_VARS["qty3"],$HTTP_POST_VARS["remise_percent3"]);
-      $facture->add_product($HTTP_POST_VARS["idprod4"],$HTTP_POST_VARS["qty4"],$HTTP_POST_VARS["remise_percent4"]);
-      
+
+  if ($HTTP_POST_VARS["fac_rec"] > 0)
+    {
+      /*
+       * Facture récurrente
+       */
+      $facture->fac_rec = $HTTP_POST_VARS["fac_rec"];
       $facid = $facture->create($user);
     }
   else
     {
-      $facture->propalid       = $HTTP_POST_VARS["propalid"];
-
-      $facid = $facture->create($user);
-
-      if ($facid)
+      $facture->projetid       = $HTTP_POST_VARS["projetid"];
+      $facture->cond_reglement = $HTTP_POST_VARS["condid"];
+      $facture->amount         = $HTTP_POST_VARS["amount"];
+      $facture->remise         = $HTTP_POST_VARS["remise"];
+      $facture->remise_percent = $HTTP_POST_VARS["remise_percent"];
+  
+      if (!$HTTP_POST_VARS["propalid"]) 
+	{      
+	  $facture->add_product($HTTP_POST_VARS["idprod1"],$HTTP_POST_VARS["qty1"],$HTTP_POST_VARS["remise_percent1"]);
+	  $facture->add_product($HTTP_POST_VARS["idprod2"],$HTTP_POST_VARS["qty2"],$HTTP_POST_VARS["remise_percent2"]);
+	  $facture->add_product($HTTP_POST_VARS["idprod3"],$HTTP_POST_VARS["qty3"],$HTTP_POST_VARS["remise_percent3"]);
+	  $facture->add_product($HTTP_POST_VARS["idprod4"],$HTTP_POST_VARS["qty4"],$HTTP_POST_VARS["remise_percent4"]);
+	  
+	  $facid = $facture->create($user);
+	}
+      else
 	{
-	  $prop = New Propal($db);
-	  if ( $prop->fetch($HTTP_POST_VARS["propalid"]) )
+	  $facture->propalid = $HTTP_POST_VARS["propalid"];
+	  
+	  $facid = $facture->create($user);
+	  
+	  if ($facid)
 	    {
-	      for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
+	      $prop = New Propal($db);
+	      if ( $prop->fetch($HTTP_POST_VARS["propalid"]) )
 		{
-		  $result = $facture->addline($facid,
-					      addslashes($prop->lignes[$i]->libelle),
-					      $prop->lignes[$i]->subprice,
-					      $prop->lignes[$i]->qty,
-					      $prop->lignes[$i]->tva_tx,
-					      $prop->lignes[$i]->product_id,
-					      $prop->lignes[$i]->remise_percent);
+		  for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
+		    {
+		      $result = $facture->addline($facid,
+						  addslashes($prop->lignes[$i]->libelle),
+						  $prop->lignes[$i]->subprice,
+						  $prop->lignes[$i]->qty,
+						  $prop->lignes[$i]->tva_tx,
+						  $prop->lignes[$i]->product_id,
+						  $prop->lignes[$i]->remise_percent);
+		    }
+		}
+	      else
+		{
+		  print "Erreur";
 		}
 	    }
 	  else
 	    {
-	      print "Erreur";
+	      print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
+	      print "<p>Retour à la <a href=\"propal.php?propalid=$propalid\">propal</a>";
+	      print $db->error();
 	    }
-	}
-      else
-	{
-	  print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
-	  print "<p>Retour à la <a href=\"propal.php?propalid=$propalid\">propal</a>";
-	  print $db->error();
 	}
     }
 
@@ -338,10 +350,10 @@ if ($action == 'create')
 	  print '<input type="hidden" name="socid" value="'.$obj->idp.'">' ."\n";
 	  print '<input type="hidden" name="remise_percent" value="0">';
 
-	  print '<table cellspacing="0" cellpadding="3" border="1" width="100%">';
+	  print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
 	  
-	  print "<tr><td>Client :</td><td>$obj->nom</td>";
-	  print "<td>Commentaire</td></tr>";
+	  print '<tr><td>Client :</td><td>'.$obj->nom.'</td>';
+	  print '<td class="border">Commentaire</td></tr>';
 
 	  print "<tr><td>Auteur :</td><td>".$user->fullname."</td>";
 	  
@@ -427,19 +439,53 @@ if ($action == 'create')
 		  print $db->error();
 		}
 	      	      
-	      print '<table border="0" cellspacing="0">';
+	      print '<table class="noborder" cellspacing="0">';
 	      print '<tr><td>Produit</td><td>Quan.</td><td>Remise</td></tr>';
 	      for ($i = 1 ; $i < 5 ; $i++)
 		{
 		  print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
 		  print '<td><input type="text" size="3" name="qty'.$i.'" value="1"></td>';
 		  print '<td><input type="text" size="4" name="remise_percent'.$i.'" value="0"> %</td></tr>';
-		}
-	      	      
+		}	      	      
+
 	      print '</table>';
 	      print '</td></tr>';
 	    }
-	  
+	  /*
+	   * Factures récurrentes
+	   *
+	   */
+	  if ($propalid == 0)
+	    {
+	      $sql = "SELECT r.rowid, r.titre, r.amount FROM llx_facture_rec as r";
+	      $sql .= " WHERE r.fk_soc = $socidp";
+	      if ( $db->query($sql) )
+		{
+		  $num = $db->num_rows();	
+		  $i = 0;	
+		  
+		  if ($num > 0)
+		    {
+		      print '<tr><td colspan="3">Factures récurrentes : <select name="fac_rec">';
+		      print '<option value="0" selected></option>';
+		      while ($i < $num)
+			{
+			  $objp = $db->fetch_object( $i);
+			  print "<option value=\"$objp->rowid\">$objp->titre : $objp->amount</option>\n";
+			  $i++;
+			}
+		      print '</select></td></tr>';
+		    }
+		  $db->free();
+		}
+	      else
+		{
+		  print "$sql";
+		}
+	    }
+	  /*
+	   *
+	   */	  
 	  print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
 	  print "</form>\n";
 	  print "</table>\n";
@@ -678,7 +724,7 @@ else
 		$objp = $db->fetch_object( $i);
 		$var=!$var;
 		print "<TR $bc[$var]>";
-		if ($objp->fk_product)
+		if ($objp->fk_product > 0)
 		  {
 		    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
 		  }
