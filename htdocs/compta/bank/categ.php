@@ -49,7 +49,7 @@ if ($action == 'add')
 print_titre("Catégories");
 print "<form method=\"post\" action=\"$PHP_SELF\">";
 print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print '<TR class="liste_titre">';
 print "<td>Num</td><td colspan=\"2\">Description</TD>";
 print "</TR>\n";
