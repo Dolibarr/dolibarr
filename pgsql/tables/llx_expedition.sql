@@ -44,5 +44,5 @@ create table llx_expedition
   "UNIQUE" INDEX (ref)
 );
 
-CREATE INDEX llx_expedition_fk_expedition_methode ON llx_expedition (fk_expedition_methode);
-CREATE INDEX llx_expedition_fk_commande ON llx_expedition (fk_commande);
+CREATE INDEX idx_fk_expedition_methode ON llx_expedition (fk_expedition_methode);
+CREATE INDEX idx_fk_commande ON llx_expedition (fk_commande);

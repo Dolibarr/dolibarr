@@ -221,28 +221,25 @@ foreach my $file (keys %filelist) {
     		# double -> float8
     		s/double\([^)]*\)/float8/i;
     
-    		# add unique to definition of type (MySQL separates this)
-#    		if (/unique \w+ \((\w+)\)/i) {
-#    			$create_sql.=~s/($1)([^,]+)/$1$2 unique/i;
-#    			next;
-#    		}
     		# FIX: unique for multipe columns (col1,col2) are unsupported!
-#    		next if (/unique/i);
+    		# Ignore "unique key(xx, yy)"
+    		next if (/unique key\(\w+\s*,\s*\w+\)/i);
     
     		if (/\bkey\b/i && !/^\s+primary key\s+/i) {
     			s/KEY(\s+)[^(]*(\s+)/$1 UNIQUE $2/i;		 # hack off name of the non-primary key
     		}
     
-            # if key(xxx),
-            if (/key\((\w+)\)/) {
-                $create_index .= "CREATE INDEX ${table}_$1 ON $table ($1);\n";
+            # if key(xxx)
+            if (/key\((\w+)\)/i) {
+                #$create_index .= "CREATE INDEX ${table}_$1 ON $table ($1);\n";
+                $create_index .= "CREATE INDEX idx_$1 ON $table ($1);\n";
                 next;
             }
             
-    		# quote column names
+    		# Quote column names
     		s/(^\s*)([^\s\-\(]+)(\s*)/$1"$2"$3/gi if (!/\bkey\b/i);
     
-    		# remap colums with names of existing system attribute 
+    		# Remap colums with names of existing system attribute 
     		if (/"oid"/i) {
     			s/"oid"/"_oid"/g;
     			print STDERR "WARNING: table $table uses column \"oid\" which is renamed to \"_oid\"\nYou should fix application manually! Press return to continue.";

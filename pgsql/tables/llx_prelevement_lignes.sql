@@ -3,7 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ===================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,15 +22,23 @@
 -- $Id$
 -- $Source$
 -- ===================================================================
+--
+--
 
 
-create table llx_expeditiondet
+
+
+create table llx_prelevement_lignes
 (
   rowid SERIAL PRIMARY KEY,
-  "fk_expedition"     integer NOT NULL,
-  "fk_commande_ligne" integer NOT NULL,
-  "qty"               real,              -- quantité
+  "fk_prelevement_bons" integer,
+  "fk_soc"              integer NOT NULL,
+  "statut"              smallint DEFAULT 0,
+  "client_nom"          varchar(255),
+  "amount"              real DEFAULT 0,
+  "code_banque"         varchar(7),
+  "code_guichet"        varchar(6),
+  "number"              varchar(255),
+  "cle_rib"             varchar(5),
+  "note"                text
 );
-
-CREATE INDEX idx_fk_expedition ON llx_expeditiondet (fk_expedition);
-CREATE INDEX idx_fk_commande_ligne ON llx_expeditiondet (fk_commande_ligne);
