@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Laurent Destailleur <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2005 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  *
  */
 
-/*!	\file htdocs/projet/webcal.php
+/**	    \file       htdocs/projet/webcal.php
         \ingroup    webcalendar
 		\brief      Page générant 2 frames, une pour le menu Dolibarr, l'autre pour l'affichage du calendrier
 		\author	    Laurent Destailleur
@@ -29,8 +29,9 @@
 
 require("./pre.inc.php");
 
-
 $url=PHPWEBCALENDAR_URL;
+$mainmenu=isset($_GET["mainmenu"])?$_GET["mainmenu"]:"";
+$leftmenu=isset($_GET["leftmenu"])?$_GET["leftmenu"]:"";
 
 print "
 <html>
@@ -39,7 +40,7 @@ print "
 </head>
 
 <frameset rows=\"28,*\" border=0 framespacing=0 frameborder=0>
-    <frame name=\"barre\" src=\"webcaltop.php\" noresize scrolling=\"NO\" noborder>
+    <frame name=\"barre\" src=\"webcaltop.php?mainmenu=$mainmenu&leftmenu=$leftmenu\" noresize scrolling=\"NO\" noborder>
     <frame name=\"main\" src=\"$url\">
     <noframes>
     <body>

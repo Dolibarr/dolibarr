@@ -108,6 +108,7 @@ class MenuTop {
             print '<a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Members").'</a>';
         }
         
+        // Products-Services
         if ($conf->produit->enabled || $conf->service->enabled)
         {
             $langs->load("products");
@@ -130,6 +131,7 @@ class MenuTop {
         
         }
 
+        // Supplier
         if ($conf->fournisseur->enabled)
         {
             $langs->load("suppliers");
@@ -147,6 +149,7 @@ class MenuTop {
             print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a>';
         }
 
+        // Commercial
         if ($conf->commercial->enabled)
         {
             $langs->load("commercial");
@@ -165,6 +168,7 @@ class MenuTop {
         
         }
         
+        // Compta
         if ($conf->compta->enabled || $conf->banque->enabled || $conf->caisse->enabled)
         {
             $langs->load("compta");
@@ -182,7 +186,8 @@ class MenuTop {
             print '<a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Accountancy")."/".$langs->trans("Treasury").'</a>';
         
         }
-        
+
+        // Tools
         if (1 == 1) {
             $langs->load("other");
             
@@ -199,16 +204,13 @@ class MenuTop {
             print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/mailing/index.php?mainmenu=tools&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
         }
         
+        // Webcal
         if ($conf->webcal->enabled)
         {
             $langs->load("other");
         
             $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "webcalendar")
-            {
-                $class='class="tmenu" id="sel"';
-            }
-            elseif (ereg("^".DOL_URL_ROOT."\/projet\/webcal",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/webcalendar\/",$_SERVER["PHP_SELF"]))
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "webcal")
             {
                 $class='class="tmenu" id="sel"';
             }
