@@ -277,8 +277,7 @@ if ($action == 'send')
 		  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,array ($file),array ("application/pdf"),array ($filename));
 	      
 	      if ( $mailfile->sendfile() )
-		{
-		  
+		{		  
 		  $sendto = htmlentities($sendto);
 		  
 		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '9' ,'$fac->socidp' ,'Envoyée à $sendto','$fac->id','$sendtoid','$user->id', 'Envoi Facture par mail',100);";
@@ -1022,16 +1021,17 @@ else
 	    }
 	
 		// Récurrente
-		if (! defined("FACTURE_NORECURENTE")) {	// Possibilité de désactiver les factures récurrentes
-	    if ($fac->statut > 0)
+	    if (! defined("FACTURE_NORECURENTE")) 	// Possibilité de désactiver les factures récurrentes
 	      {
-		print '<td align="center" width="20%"><a href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">Récurrente</a></td>';
+		if ($fac->statut > 0)
+		  {
+		    print '<td align="center" width="20%"><a href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">Récurrente</a></td>';
+		  }
+		else
+		  {
+		    print '<td align="center" width="20%">-</td>';
+		  }
 	      }
-	    else
-	      {
-		print '<td align="center" width="20%">-</td>';
-	      }
-	    }
 	    
 	    print "</tr></table>";
 	  }
@@ -1296,31 +1296,26 @@ else
 	print_barre_liste("Factures clients",$page,$PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 	$i = 0;
-	print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-	print '<TR class="liste_titre">';
-	print '<TD>Num&eacute;ro</TD>';
-	print '<TD align="center">';
+	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	print '<tr class="liste_titre">';
+	print '<td>Num&eacute;ro</td>';
+	print '<td align="center">';
 	print_liste_field_titre("Date",$PHP_SELF,"f.datef","","&amp;socidp=$socidp");
-	print '</td>';
-	print '<td>';
+	print '</td><td>';
 	print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
-	print '</td>';
-	print '<td align="right">';
+	print '</td><td align="right">';
 	print_liste_field_titre("Montant HT",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
-	print '</td>';
-	print '<td align="right">';
+	print '</td><td align="right">';
 	print_liste_field_titre("Montant TTC",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
-	print '</td>';
-
-	print '<TD align="right">Reçu</TD>';
+	print '</td><td align="right">Reçu</td>';
 	print '<td align="center">Status</td>';
-	print "</TR>\n";
+	print "</tr>\n";
       
 	if ($num > 0) 
 	  {
 	    $var=True;
-		$total=0;
-		$totalrecu=0;
+	    $total=0;
+	    $totalrecu=0;
 
 	    while ($i < min($num,$limit))
 	      {
@@ -1344,8 +1339,8 @@ else
 		      }
 		  }
 
-		print '<td><a href="facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
-		print "</a></TD>\n";
+		print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_file()."</a>&nbsp;\n";
+		print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber."</a></td>\n";
 		
 		if ($objp->df > 0 )
 		  {
