@@ -1,0 +1,141 @@
+<?PHP
+/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ */
+
+/**
+   \file       htdocs/compta/prelevement/config.php
+   \ingroup    prelevement
+   \brief      Page configuration des prelevements
+   \version    $Revision$
+*/
+
+require("./pre.inc.php");
+
+$langs->load("admin");
+
+if (!$user->admin) accessforbidden();
+
+if ($_GET["action"] == "set" && $user->admin)
+{
+  for ($i = 1 ; $i < 7 ; $i++)
+    {
+      dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"], $type='chaine');
+    }
+
+  Header("Location: config.php");
+}
+
+/*
+ *
+ *
+ *
+ */
+llxHeader('','Prélèvements - Configuration');
+print_titre("Configuration des prélèvements");
+
+print "<br>";
+
+/*
+ *
+ *
+ */
+
+print '<form method="post" action="config.php?action=set">';
+print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+print '<tr class="liste_titre">';
+print '<td width="30%">Nom</td>';
+print '<td width="40%">Valeur</td>';
+print '<td width="30%">Valeur Actuelle</td>';
+print "</tr>\n";
+
+print '<tr class="pair"><td>';
+print 'Numéro National Emetteur</td><td align="left">';
+print '<input type="hidden" name="nom1" value="PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR">';
+print '<input type="text"   name="value1" value="'.PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'" size="9" ></td>';
+print '<td>'.PRELEVEMENT_NUMERO_NATIONAL_EMETTEUR.'</td></tr>';
+
+print '<tr class="impair"><td>';
+print 'Raison sociale</td><td align="left">';
+print '<input type="hidden" name="nom2" value="PRELEVEMENT_RAISON_SOCIALE">';
+print '<input type="text"   name="value2" value="'.PRELEVEMENT_RAISON_SOCIALE.'" size="14" ></td>';
+print '<td>'.PRELEVEMENT_RAISON_SOCIALE.'</td></tr>';
+
+print '<tr class="pair"><td>';
+print 'Code Banque</td><td align="left">';
+print '<input type="hidden" name="nom3" value="PRELEVEMENT_CODE_BANQUE">';
+print '<input type="text"   name="value3" value="'.PRELEVEMENT_CODE_BANQUE.'" size="6" ></td>';
+print '<td>'.PRELEVEMENT_CODE_BANQUE.'</td></tr>';
+
+print '<tr class="impair"><td>';
+print 'Code Guichet</td><td align="left">';
+print '<input type="hidden" name="nom4" value="PRELEVEMENT_CODE_GUICHET">';
+print '<input type="text"   name="value4" value="'.PRELEVEMENT_CODE_GUICHET.'" size="6" ></td>';
+print '<td>'.PRELEVEMENT_CODE_GUICHET.'</td></tr>';
+
+print '<tr class="pair"><td>';
+print 'Numéro compte</td><td align="left">';
+print '<input type="hidden" name="nom5" value="PRELEVEMENT_NUMERO_COMPTE">';
+print '<input type="text"   name="value5" value="'.PRELEVEMENT_NUMERO_COMPTE.'" size="11" ></td>';
+print '<td>'.PRELEVEMENT_NUMERO_COMPTE.'</td></tr>';
+
+print '<tr class="impair"><td>';
+print 'Utilisateur responsable des prélèvements</td><td align="left">';
+print '<input type="hidden" name="nom6" value="PRELEVEMENT_USER">';
+print '<select name="value6">';
+$sql = "SELECT rowid, name, firstname";
+$sql .= " FROM ".MAIN_DB_PREFIX."user";
+
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $i = 0;
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object();
+      print '<option value="'.$obj->rowid.'">'.stripslashes($obj->firstname)." ".stripslashes($obj->name);
+      $i++;
+    }
+  $db->free();
+}
+
+print '</select></td>';
+print '<td>';
+if (defined("PRELEVEMENT_USER") && PRELEVEMENT_USER > 0)
+{
+  $cuser = new User($db, PRELEVEMENT_USER);
+  $cuser->fetch();
+  print $cuser->fullname;
+}
+else
+{
+  print PRELEVEMENT_USER;
+}
+
+print '</td></tr>';
+
+print '<tr><td align="center" colspan="2"><input type="submit"></td></tr>';
+
+print '</table>';
+print '</form>';
+
+$db->close();
+
+llxFooter();
+?>
