@@ -54,14 +54,17 @@ if ($action == 'add')
 {
   $propal = new Propal($db, $socidp);
 
-  $propal->remise = $remise;
-  $propal->datep = $db->idate(mktime(12, 1 , 1, $remonth, $reday, $reyear));
+  $propal->remise = $HTTP_POST_VARS["remise"];
+  $propal->datep = $db->idate(mktime(12, 1 , 1, 
+				     $HTTP_POST_VARS["remonth"], 
+				     $HTTP_POST_VARS["reday"], 
+				     $HTTP_POST_VARS["reyear"]));
 
-  $propal->contactid = $contactidp;
-  $propal->projetidp = $projetidp;
-
+  $propal->contactid = $HTTP_POST_VARS["contactidp"];
+  $propal->projetidp = $HTTP_POST_VARS["projetidp"];
+  $propal->modelpdf = $HTTP_POST_VARS["modelpdf"];
   $propal->author = $user->id;
-  $propal->note = $note;
+  $propal->note = $HTTP_POST_VARS["note"];
 
   $propal->ref = $ref;
 
@@ -88,7 +91,9 @@ if ($action == 'add')
 
 if ($action == 'pdf')
 {
-  propale_pdf_create($db, $propalid);
+  $propal = new Propal($db);
+  $propal->fetch($propalid);
+  propale_pdf_create($db, $propalid, $propal->modelpdf);
 }
 
 if ($action == 'setstatut') 

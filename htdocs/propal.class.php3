@@ -132,8 +132,8 @@ class Propal
       /*
        *  Insertion dans la base
        */
-      $sql = "INSERT INTO llx_propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note) ";
-      $sql .= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0, $this->datep, now(), '$this->ref', $this->author, '$this->note')";
+      $sql = "INSERT INTO llx_propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note, model_pdf) ";
+      $sql .= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0, $this->datep, now(), '$this->ref', $this->author, '$this->note','$this->modelpdf')";
       $sqlok = 0;
       
       if ( $this->db->query($sql) )
@@ -256,7 +256,7 @@ class Propal
   Function fetch($rowid)
     {
 
-      $sql = "SELECT ref,total,price,remise,tva,fk_soc,".$this->db->pdate(datep)."as dp ";
+      $sql = "SELECT ref,total,price,remise,tva,fk_soc,".$this->db->pdate(datep)."as dp, model_pdf ";
       $sql .= " FROM llx_propal WHERE rowid=$rowid;";
 
       if ($this->db->query($sql) )
@@ -275,7 +275,8 @@ class Propal
 	      $this->total_ht  = $obj->price;
 	      $this->total_tva = $obj->tva;
 	      $this->total_ttc = $obj->total;
-	      $this->socidp = $obj->fk_soc;
+	      $this->socidp    = $obj->fk_soc;
+	      $this->modelpdf  = $obj->model_pdf;
 	      $this->lignes = array();
 	      $this->db->free();
 

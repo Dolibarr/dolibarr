@@ -21,7 +21,7 @@
  */
 
 require("./pre.inc.php3");
-require("./propal.class.php3");
+require("./propal_model_pdf.class.php3");
 
 $db = new Db();
 
@@ -75,14 +75,16 @@ if ($action == 'create')
     
     print '<tr><td>Société</td><td><a href="fiche.php3?socid='.$socidp.'">'.$objsoc->nom.'</a></td>';
 
-    print '<td rowspan="6" valign="top">';
-    print "Commentaires :<br>";
-    print '<textarea name="note" wrap="soft" cols="30" rows="10"></textarea>';
+    print '<td valign="top" colspan="2">';
+    print "Commentaires</td></tr>";
 
     print "<tr><td>Date</td><td>";
     print_date_select();
-    print "</td></tr>";
+    print "</td>";
     
+    print '<td rowspan="4" colspan="2" valign="top">';
+    print '<textarea name="note" wrap="soft" cols="30" rows="10"></textarea>';
+
     print '<tr><td>Auteur</td><td>'.$user->fullname.'</td></tr>';
     print "<tr><td>Num</td><td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
     /*
@@ -154,9 +156,13 @@ if ($action == 'create')
 	print 'Cette societe n\'a pas de projet.<br>';
 	print '<a href=projet/fiche.php3?socidp='.$socidp.'&action=create>Créer un projet</a>';
       }
-    print '</td></tr>';
-
-    print "</table>";
+    print '</td>';
+    print '<td>Modèle</td>';
+    print '<td>';
+    $html = new Form($db);
+    $modelpdf = new Propal_Model_pdf($db);
+    $html->select_array("modelpdf",$modelpdf->liste_array(),PROPALE_ADDON_PDF);
+    print "</td></tr></table>";
 
     /*
      *
@@ -187,19 +193,13 @@ if ($action == 'create')
     print_titre("Services/Produits");
 
     
-    print "<table border=1 cellspacing=0>";
+    print '<table border="1" cellspacing="0">';
     
-    print "<tr><td><select name=\"idprod1\">$opt</select></td>";
-    print "<td><input type=\"text\" size=\"2\" name=\"qty1\" value=\"1\"></td></tr>\n";
-
-    print "<tr><td><select name=\"idprod2\">$opt</select></td>";
-    print "<td><input type=\"text\" size=\"2\" name=\"qty2\" value=\"1\"></td></tr>\n";
-
-    print "<tr><td><select name=\"idprod3\">$opt</select></td>";
-    print "<td><input type=\"text\" size=\"2\" name=\"qty3\" value=\"1\"></td></tr>\n";
-
-    print "<tr><td><select name=\"idprod4\">$opt</select></td>";
-    print "<td><input type=\"text\" size=\"2\" name=\"qty4\" value=\"1\"></td></tr>\n";
+    for ($i = 1 ; $i < 5 ; $i++)
+      {
+	print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
+	print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td></tr>';
+      }
 
     print "<tr><td align=\"right\" colspan=\"2\">Remise : <input size=\"6\" name=\"remise\" value=\"0\"></td></tr>\n";    
 
