@@ -38,34 +38,25 @@
 		Ensemble de fonctions de base de dolibarr sous forme d'include
 */
 
-/*
 
-  valid_email() checks the basic syntax of an email address and returns true/false.
-
-  Distributed by Nick Brandt (nick@nbrandt.com)
-  Last modified 27/Feb /2003 1:15
+/*!
+		\brief  Renvoi vrai si l'email est syntaxiquement valide
+		\param	address     adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+        \return boolean     true si email valide, false sinon
 */
-function valid_email($email) {
-    if (ereg("^([0-9,a-z,A-Z]+)([.,_,-]([0-9,a-z,A-Z]+))*[@]([0-9,a-z,A-Z]+)([.,_,-]([0-9,a-z,A-Z]+))*[.]([0-9,a-z,A-Z]){2}([0-9,a-z,A-Z])*$",$email)) {
-      return TRUE;
-    } else {
-      return FALSE;
-    }
-}
-
 
 function ValidEmail($address)
 {
-  if( ereg( ".*<(.+)>", $address, $regs ) ) {
+  if (ereg( ".*<(.+)>", $address, $regs)) {
     $address = $regs[1];
   }
-  if(ereg( "^[^@  ]+@([a-zA-Z0-9\-]+\.)+([a-zA-Z0-9\-]{2}|net|com|gov|mil|org|edu|int)\$",$address) )
+  if (ereg( "^[^@  ]+@([a-zA-Z0-9\-]+\.)+([a-zA-Z0-9\-]{2}|net|com|gov|mil|org|edu|int)\$",$address))
     {
-      return TRUE;
+      return true;
     }
   else
     {
-      return FALSE;
+      return false;
     }
 }
 
@@ -91,9 +82,6 @@ function check_mail ($mail)
         Le \a message est envoyé dans syslog dans la catégorie LOG_USER.
 */
 
-
-
-
 function dolibarr_syslog($message, $level=LOG_ERR)
 {
   openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les PHP
@@ -103,13 +91,13 @@ function dolibarr_syslog($message, $level=LOG_ERR)
   closelog();
 }
 
+
 /*!
 		\brief      Affiche le header d'une fiche
 		\param	    links		liens
 		\param	    active      0 par défaut
 		\param      title       titre ("" par defaut)
 */
-
 
 function dolibarr_fiche_head($links, $active=0, $title='')
 {
