@@ -91,7 +91,7 @@ if ($sortorder == "")
 }
 if ($sortfield == "")
 {
-  $sortfield="fac.paye ASC, fac.datef";
+  $sortfield="fac.datef";
 }
 
 
