@@ -29,6 +29,7 @@ if ($HTTP_POST_VARS["action"] == 'update')
 {
   dolibarr_set_const($db, "MAIN_THEME",$HTTP_POST_VARS["main_theme"]);
   dolibarr_set_const($db, "SIZE_LISTE_LIMIT",$HTTP_POST_VARS["size_liste_limit"]);
+  dolibarr_set_const($db, "MAIN_MENU_BARRETOP",$HTTP_POST_VARS["main_menu_barretop"]);
 
   Header("Location: $PHP_SELF");
 }
@@ -43,7 +44,6 @@ print "<br>\n";
 if ($_GET["action"] == 'edit')
 {
   print '<form method="post" action="'.$PHP_SELF.'">';
-  print '<input type="hidden" name="action" value="update">';
 
   print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr class="liste_titre"><td>Nom</td><td>Valeur</td></tr>';
@@ -68,14 +68,20 @@ if ($_GET["action"] == 'edit')
 	}
       
     }
+  print '<input type="hidden" name="action" value="update">';
   print '</td></tr>';
 
-  print '<tr class="pair"><td width="50%">Longueur maximum des listes</td><td>';
-  print '<input name="size_liste_limit" size="20" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
+  print '<tr class="pair"><td width="50%">Longueur maximum des listes</td><td><input name="size_liste_limit" size="20" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
 
-  print '<tr class="impair"><td colspan="2">';
-  print '<input type="submit" value="Enregistrer"></td></tr>';
-  print '</table></form>';
+  print '<tr class="impair"><td width="50%">Gestionnaire du menu du haut</td><td><input name="main_menu_barretop" size="20" value="' . MAIN_MENU_BARRETOP . '"></td></tr>';
+
+  print '<div class="tabsAction">';
+  print '<tr class="pair"><td colspan="2"><input class="tabAction" type="submit" value="Enregistrer"></td></tr>';
+  print '</div>';
+
+  print '</table>';
+  
+  print '</form>';
 }
 else
 {
@@ -84,14 +90,12 @@ else
   print '<tr class="liste_titre"><td>Nom</td><td>Valeur</td></tr>';
   print '<tr class="impair"><td width="50%">Thème</td><td>' . MAIN_THEME . '</td></tr>';
   print '<tr class="pair"><td>Longueur maximum des listes</td><td>' . SIZE_LISTE_LIMIT . '</td></tr>';
+  print '<tr class="impair"><td width="50%">Gestionnaire du menu du haut</td><td>' . MAIN_MENU_BARRETOP . '</td></tr>';
   print '</table><br>';
 
   print '<div class="tabsAction">';
-
   print '<a class="tabAction" href="'.$PHP_SELF.'?action=edit">Editer</a>';
-
   print '</div>';
-
 
 }
 
