@@ -44,9 +44,10 @@ if ($_POST["action"] == 'update' && $_GET["id"])
   if ($fourn->fetch($_GET["id"]) == 0)
     {
 
-      $fourn->num_client     = $_POST["num_client"];
-      $fourn->email_commande = $_POST["email_commande"];
+      $fourn->num_client       = $_POST["num_client"];
+      $fourn->email_commande   = $_POST["email_commande"];
       $fourn->methode_commande = $_POST["methode"];
+      $fourn->commande_bloque  = $_POST["commande_bloque"];
       
       if ( $fourn->update($user) == 0)
 	{
@@ -113,6 +114,9 @@ if ($_GET["action"] == 'create')
  */
 if ($_GET["id"] > 0)
 {
+  $art[0] = "non";
+  $art[1] = "oui";
+
   $fourn = new FournisseurTelephonie($db);
   if ($fourn->fetch($_GET["id"]) == 0)
   {
@@ -150,6 +154,13 @@ if ($_GET["id"] > 0)
 	print '</td>';
 	print '<td>méthode utilisée pour les commandes de lignes</td></tr>';
     
+	print '<tr><td width="20%">Blocage des commandes</td>';
+	print '<td>';
+
+	print $html->select_array("commande_bloque",$art,$fourn->commande_bloque);
+	print '</td>';
+	print '<td>Les commandes vers ce fournisseur sont bloquées</td></tr>';
+
 	print '<tr><td colspan="3" align="center"><input type="submit" value="Update"></td></tr>';
 	print '</table></form><br />';
       }
@@ -188,6 +199,10 @@ if ($_GET["id"] > 0)
 	print '<td>méthode utilisée pour les commandes de lignes</td></tr>';
 	
 	
+	print '<tr><td width="20%">Blocage des commandes</td>';
+	print '<td>'.$art[$fourn->commande_bloque].'</td>';
+	print '<td>Les commandes sont bloquées</td></tr>';
+
 	print '</table><br /></div>';
       }
   }
