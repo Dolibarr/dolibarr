@@ -829,6 +829,11 @@ if ($_GET["propalid"])
    *                                                                          *
    ****************************************************************************/
 
+  $sortorder=$_GET["sortorder"];
+  $sortfield=$_GET["sortfield"];
+  $page=$_GET["page"];
+  $viewstatut=$_GET["viewstatut"];
+
   if ($sortfield == "")
     {
       $sortfield="p.datep";
@@ -839,9 +844,9 @@ if ($_GET["propalid"])
     }
 
   $limit = $conf->liste_limit;
-  $offset = $limit * $_GET["page"] ;
-  $pageprev = $_GET["page"] - 1;
-  $pagenext = $_GET["page"] + 1;
+  $offset = $limit * $page ;
+  $pageprev = $page - 1;
+  $pagenext = $page + 1;
 
   $sql = "SELECT s.nom, s.idp, s.client, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp,".$db->pdate("p.fin_validite")." as dfv, c.label as statut, c.id as statutid";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
@@ -876,7 +881,7 @@ if ($_GET["propalid"])
   if ( $db->query($sql) )
     {
       $num = $db->num_rows();
-      print_barre_liste("Propositions commerciales", $_GET["page"],"propal.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+      print_barre_liste("Propositions commerciales", $page,"propal.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 
       $i = 0;
@@ -884,14 +889,14 @@ if ($_GET["propalid"])
 
       print '<TR class="liste_titre">';
 
-      print_liste_field_titre_new ("Réf","propal.php","p.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
+      print_liste_field_titre_new ("Réf","propal.php","p.ref","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut",'width="15%"',$sortfield);
 
-      print_liste_field_titre_new ("Société","propal.php","s.nom","","&amp;socidp=$socidp",'width="30%"',$sortfield);
+      print_liste_field_titre_new ("Société","propal.php","s.nom","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut",'width="30%"',$sortfield);
 
-      print_liste_field_titre_new ("Date","propal.php","p.datep","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
-      print_liste_field_titre_new ("Prix","propal.php","p.price","","&amp;socidp=$socidp", ' width="20%" align="right"',$sortfield);
+      print_liste_field_titre_new ("Date","propal.php","p.datep","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut", 'width="25%" align="right" colspan="2"',$sortfield);
+      print_liste_field_titre_new ("Prix","propal.php","p.price","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut", ' width="20%" align="right"',$sortfield);
 
-      print_liste_field_titre_new ("Statut","propal.php","p.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
+      print_liste_field_titre_new ("Statut","propal.php","p.fk_statut","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut",'width="10%" align="center"',$sortfield);
       print "</tr>\n";
       $var=True;
       
