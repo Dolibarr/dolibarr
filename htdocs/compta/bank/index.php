@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/compta/bank/index.php
         \ingroup    banque
 		\brief      Page accueil banque
@@ -33,6 +33,8 @@ require("./bank.lib.php");
 require("../../tva.class.php");
 require("../../chargesociales.class.php");
 
+$langs->load("banks");
+
 $user->getrights('compta');
 $user->getrights('banque');
 
@@ -41,7 +43,7 @@ if (!$user->rights->banque->lire)
 
 llxHeader();
 
-print_titre ("Comptes bancaires");
+print_titre($langs->trans("BankAccounts"));
 print '<br>';
 
 $sql = "SELECT rowid, label,number,bank FROM ".MAIN_DB_PREFIX."bank_account";
@@ -66,8 +68,8 @@ if ($result)
  * Comptes
  */
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>Comptes courants</td><td>Banque</td>';
-print '<td align="left">Numéro</td><td align="right">Solde</td><td align="center">Clos</td>';
+print '<tr class="liste_titre"><td>Comptes courants</td><td>'.$langs->trans("Bank").'</td>';
+print '<td align="left">'.$langs->trans("Numero").'</td><td align="right">Solde</td><td align="center">'.$langs->trans("Closed").'</td>';
 print "</tr>\n";
 $total = 0;
 $var=True;
@@ -165,8 +167,8 @@ print "</table>";
  */
 print "<br><div class=\"tabsAction\">\n";
 if ($user->rights->banque->configurer) {
-	print '<a class="tabAction" href="fiche.php?action=create">Nouveau compte</a>';
-	print '<a class="tabAction" href="categ.php">Catégories</a>';
+	print '<a class="tabAction" href="fiche.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
+	print '<a class="tabAction" href="categ.php">'.$langs->trans("Categories").'</a>';
 }
 print "</div>";
 
