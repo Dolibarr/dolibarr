@@ -22,7 +22,19 @@
  *
  */
 
+/**     \file       htdocs/product/popuprop.php
+		\ingroup    propal, produit
+		\brief      Liste des produits par popularité
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page = $_GET["page"];
+if ($page < 0) { 
+  $page = 0 ; }
 
 if ($sortfield == "")
 {
@@ -51,14 +63,14 @@ if ( $db->query($sql) )
     $afficher_pagesuivante = -1;
 }
 
-print_barre_liste("Liste des produits par popularité dans les propositions commerciales", $page, "popuprop.php","","","","",$afficher_pagesuivante);
+print_barre_liste("Liste des produits par popularité", $page, "popuprop.php","","","","",$afficher_pagesuivante);
 
 print '<table class="noborder" width="100%">';
 
 print "<tr class=\"liste_titre\">";
-print_liste_field_titre($langs->trans("Ref"),"popuprop.php", "p.ref");
-print_liste_field_titre($langs->trans("Label"),"popuprop.php", "p.label");
-print_liste_field_titre("Nb. de proposition","popuprop.php", "c","","",'align=\"center\"');
+print_liste_field_titre($langs->trans("Ref"),"popuprop.php", "p.ref","","","",$sortfield);
+print_liste_field_titre($langs->trans("Label"),"popuprop.php", "p.label","","","",$sortfield);
+print_liste_field_titre("Nb. de proposition","popuprop.php", "c","","",'align="right"',$sortfield);
 print "</tr>\n";
 
 $sql = "select p.rowid, p.label, p.ref, count(*) as c from ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p where p.rowid = pd.fk_product group by (p.rowid)";
@@ -77,11 +89,11 @@ if ( $db->query($sql) )
     {
       $objp = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
-      print "<TD>$objp->label</TD>\n";
-      print '<TD align="center">'.$objp->c.'</TD>';
-      print "</TR>\n";
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
+      print "<td>$objp->label</td>\n";
+      print '<td align="right">'.$objp->c.'</td>';
+      print "</tr>\n";
       $i++;
     }
   $db->free();
