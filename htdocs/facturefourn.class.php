@@ -63,7 +63,7 @@ class FactureFourn {
    *
    *
    */
-  Function add_ligne($label, $amount, $tauxtva, $qty=1)
+  Function add_ligne($label, $amount, $tauxtva, $qty=1, $write=0)
   {
     $i = sizeof($this->lignes);
 
@@ -71,6 +71,36 @@ class FactureFourn {
     $this->lignes[$i][1] = $amount;
     $this->lignes[$i][2] = $tauxtva;
     $this->lignes[$i][3] = $qty;
+
+    if ($write)
+      {
+
+	for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+	  {	 
+
+	    $sql = "INSERT INTO llx_facture_fourn_det (fk_facture_fourn)";
+	    $sql .= " VALUES ($this->id);";
+	    if ($this->db->query($sql) ) 
+	      {
+		$idligne = $this->db->last_insert_id();
+
+		$this->update_ligne($idligne,
+				    $this->lignes[$i][0],
+				    $this->lignes[$i][1],
+				    $this->lignes[$i][2],
+				    $this->lignes[$i][3]);
+	      }
+	    else
+	      {
+		print $this->db->error();
+	      }
+	  }
+	/*
+	 * Mise à jour prix
+	 */
+
+	$this->updateprice($this->id);
+      }
   }
   /*
    *
@@ -99,7 +129,26 @@ class FactureFourn {
 	print $this->db->error() . '<b><br>'.$sql;
       }
   }
+  /*
+   *
+   */
+  Function delete_ligne($id)
+  {
 
+    $sql = "DELETE FROM llx_facture_fourn_det ";
+    $sql .= " WHERE rowid = $id";
+
+    if (! $this->db->query($sql) ) 
+      {
+	print $this->db->error() . '<b><br>'.$sql;
+      }
+    $this->updateprice($this->id);
+    return 1;
+  }
+  /*
+   *
+   *
+   */
   Function create($user)
   {
 
@@ -149,6 +198,8 @@ class FactureFourn {
 
 	$this->updateprice($this->id);
 
+	return 1;
+
       }
     else
       {
@@ -191,7 +242,7 @@ class FactureFourn {
 	      /* 
 	       * Lignes
 	       */
-	      $sql = "SELECT description, pu_ht, qty, tva_taux, tva, total_ht, total_ttc FROM llx_facture_fourn_det WHERE fk_facture_fourn=".$this->id;
+	      $sql = "SELECT rowid,description, pu_ht, qty, tva_taux, tva, total_ht, total_ttc FROM llx_facture_fourn_det WHERE fk_facture_fourn=".$this->id;
       
 	      if ($this->db->query($sql) )
 		{
@@ -209,6 +260,7 @@ class FactureFourn {
 			  $this->lignes[$i][4] = $obj->total_ht;
 			  $this->lignes[$i][5] = $obj->tva;
 			  $this->lignes[$i][6] = $obj->total_ttc;
+			  $this->lignes[$i][7] = $obj->rowid;
 			  $i++;
 			}
 		    }
@@ -286,7 +338,12 @@ class FactureFourn {
       $sql = "UPDATE llx_facture set paye = 1 WHERE rowid = $rowid ;";
       $return = $this->db->query( $sql);
     }
-
+  /*
+   *
+   *
+   *
+   *
+   */
   Function set_valid($rowid, $userid)
     {
       global $conf;
@@ -305,6 +362,8 @@ class FactureFourn {
 	}
     }
   /*
+   *
+   *
    *
    *
    */
