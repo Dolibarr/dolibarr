@@ -35,6 +35,7 @@ create table llx_don
   cp              varchar(30),
   ville           varchar(50),
   pays            varchar(50),
+  email           varchar(255),
   public          smallint NOT NULL DEFAULT 1, -- le don est-il public (0,1)
   fk_don_projet   integer NOT NULL, -- projet auquel est fait le don
   fk_user_author  integer NOT NULL,
