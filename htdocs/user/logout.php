@@ -33,7 +33,7 @@ define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
 
 require_once "../includes/pear/Auth/Auth.php";
 
-$a = new Auth("DB");
+$a = new DOLIAuth("DB");
 $a->setShowLogin (false);
 $a->start();
 if ($a->getAuth()) 
