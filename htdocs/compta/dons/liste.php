@@ -23,8 +23,6 @@ require("./pre.inc.php");
 
 llxHeader();
 
-$db = new Db();
-
 if ($sortorder == "") {  $sortorder="DESC"; }
 if ($sortfield == "") {  $sortfield="d.datedon"; }
 

@@ -23,9 +23,6 @@ require("./pre.inc.php");
 require("../../don.class.php");
 require("../../paiement.class.php");
 
-$db = new Db();
-
-
 if ($action == 'update') 
 {
 

@@ -23,9 +23,6 @@ require("./pre.inc.php");
 
 llxHeader();
 
-$db = new Db();
-
-
 $sql = "SELECT sum(d.amount) as somme , d.fk_statut FROM llx_don as d GROUP BY d.fk_statut";
 
 $result = $db->query($sql);
