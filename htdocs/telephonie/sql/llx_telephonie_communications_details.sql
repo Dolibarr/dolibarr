@@ -42,7 +42,8 @@ create table llx_telephonie_communications_details (
   fichier_cdr      varchar(255),
   fk_fournisseur   integer,
 
-  key (fk_fournisseur)
+  key (fk_fournisseur),
+  key (fk_ligne)
 
 )type=innodb;
 
