@@ -25,6 +25,18 @@
 $yn[0] = "non";
 $yn[1] = "oui";
 
+Function dolibarr_print_phone($phone)
+{
+  if (strlen(trim($phone)) == 10)
+    {
+      return substr($phone,0,2)." ".substr($phone,2,2)." ".substr($phone,4,2)." ".substr($phone,6,2)." ".substr($phone,8,2);
+    }
+  else
+    {
+      return $phone;
+    }
+}
+
 Function img_file($alt = "Voir")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/file.png" border="0" alt="'.$alt.'">';
