@@ -22,15 +22,15 @@
  */
 
 /*!
-	  \file       htdocs/actioncomm.class.php
-    \ingroup    commercial
-		\brief      Fichier de la classe des actions commerciales
-		\version    $Revision$
+        \file       htdocs/actioncomm.class.php
+        \ingroup    commercial
+        \brief      Fichier de la classe des actions commerciales
+        \version    $Revision$
 */
 
 
-/*! \class ActionComm
-		\brief      Classe permettant la gestion des actions commerciales
+/*!     \class      ActionComm
+	    \brief      Classe permettant la gestion des actions commerciales
 */
 
 class ActionComm
@@ -48,9 +48,9 @@ class ActionComm
   var $note;
   var $percent;
 
-  /*
-   * Initialisation
-   *
+  /**
+   *    \brief      Constructeur
+   *    \param      db      Handler d'accès base de donnée
    */
   function ActionComm($db) 
     {
@@ -59,13 +59,13 @@ class ActionComm
       $this->author = new User($db);
       if (class_exists("Contact"))
       {
-	$this->contact = new Contact($db);
+	    $this->contact = new Contact($db);
       }
     }
-  /*
-   *
-   *
-   *
+
+  /**
+   *    \brief      Ajout d'une action en base
+   *    \param      author      auteur de la creation de l'action
    */
   function add($author)
     {
@@ -92,17 +92,18 @@ class ActionComm
       
       if ($this->db->query($sql) )
 	{
-	  return 1;
+	    return 1;
 	}
       else
 	{
-	  dolibarr_print_error($this->db);
+	    dolibarr_print_error($this->db);
+        return -1;
 	}
     }
-  /*
-   *
-   *
-   *
+
+  /**
+   *    \brief      Charge l'objet action depuis la base
+   *    \param      id      id de l'action a récupérer
    */
   function fetch($id)
     {      
@@ -142,23 +143,24 @@ class ActionComm
 	  dolibarr_print_error($this->db);
 	}    
     }
+
   /**
-   * Supprime l'action
-   *
-   *
+   *    \brief      Supprime l'action de la base
+   *    \param      id      id de l'action a effacer
    */
   function delete($id)
     {      
-      $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm WHERE id=$id;";
-      
-      if ($this->db->query($sql) )
-	{
-	  return 1;
-	}
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."actioncomm WHERE id=$id;";
+        
+        if ($this->db->query($sql) )
+        {
+            return 1;
+        }
     }
+
   /**
-   * Met à jour l'action
-   *
+   *    \brief      Met a jour l'action en base
+   *    \param      id      id de l'action a effacer
    */
   function update()
     {
