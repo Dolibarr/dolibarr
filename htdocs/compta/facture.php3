@@ -434,7 +434,10 @@ else
 	  }
 	
 	print "</td></tr>";
-	print "<tr><td>Note : ".nl2br($obj->note)."</td></tr>";
+	if ($obj->note)
+	  {
+	    print "<tr><td>Note : ".nl2br($obj->note)."</td></tr>";
+	  }
 	print "</table>";
 	/*
 	 * Lignes de factures
@@ -451,13 +454,16 @@ else
 	    $i = 0; $total = 0;
 	    
 	    echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
-	    print "<TR class=\"liste_titre\">";
-	    print '<td width="62%">Description</td>';
-	    print '<td width="8%" align="center">Tva Tx</td>';
-	    print '<td width="8%" align="center">Quantité</td>';
-	    print '<td width="12%" align="right">Montant</TD><td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
-	    print "</TR>\n";
-	    
+	    if ($num)
+	      {
+		print "<TR class=\"liste_titre\">";
+		print '<td width="62%">Description</td>';
+		print '<td width="8%" align="center">Tva Tx</td>';
+		print '<td width="8%" align="center">Quantité</td>';
+		print '<td width="12%" align="right">Montant</TD>';
+		print '<td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
+		print "</TR>\n";
+	      }
 	    $var=True;
 	    while ($i < $num)
 	      {
@@ -528,9 +534,9 @@ else
 	    print '</td>';
 	    print '<td align="center"><input type="text" name="qty" size="2"></td>';
 	    print '<td align="right"><input type="text" name="pu" size="8"></td>';
-	    print '</tr>';       
-	    print '<tr><td align="center" colspan="3"><input type="submit" value="Ajouter"></td></tr>';
-	    //	    print "</table>";
+
+	    print '<td align="center" colspan="3"><input type="submit" value="Ajouter"></td></tr>';
+
 	    print "</form>";
 	  }
 	print "</table>";
@@ -594,7 +600,7 @@ else
 	 *
 	 */
 
-	print "<table width=\"100%\" cellspacing=2><tr><td width=\"60%\" valign=\"top\">";
+	print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
 	print_titre("Documents");
 	print '<table width="100%" cellspacing="0" border="1" cellpadding="3">';
 	
@@ -622,11 +628,12 @@ else
 	    
 	    
 	  }
-	print '<tr $bc[0]><td colspan="4">(<a href="'.$conf->facture->outputurl.'/'.$obj->facnumber.'/">liste...</a>)</td></tr>';  
+	// Tant que d'autres documents ne sont pas attachés à la facture on oublie
+	//print '<tr $bc[0]><td colspan="4">(<a href="'.$conf->facture->outputurl.'/'.$obj->facnumber.'/">liste...</a>)</td></tr>';  
 	
 	print "</table>\n";
 	print "</td>";
-	print '<td valign="top" width="40%">';
+	print '<td valign="top" width="50%">';
 	print_titre("Actions");
 	/*
 	 * Liste des actions
