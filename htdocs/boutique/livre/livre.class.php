@@ -307,7 +307,7 @@ class Livre {
    *
    *
    */
-  Function updateosc()
+  Function updateosc($noupdate_other=0)
   {
     $desc = trim(addslashes($this->description));
     $desc .= "<p>";
@@ -343,6 +343,13 @@ class Livre {
 		      {
 			if ($lakey <> $this->oscid)
 			  {
+			    if (!$noupdate_other)
+			      {
+				$lix = new Livre($this->db);
+				$lix->fetch(0, $lakey);
+				$lix->updateosc(1);
+			      }
+
 			    $desc .= '<a href="product_info.php?products_id='.$lakey.'">'.addslashes($lavalue) . "</a> ";
 			  }
 		      }
