@@ -51,7 +51,7 @@ if ($id)
       print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
       print "<br>Factures : ".$product->count_facture();
       print '</td></tr>';
-      print '<tr><td>Prix</td><TD>'.price($product->price).'</td></tr>';
+      print '<tr><td>Prix de vente</td><TD>'.price($product->price).'</td></tr>';
       print "</table>";
 
       if ($page == -1)
