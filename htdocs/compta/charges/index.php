@@ -28,12 +28,11 @@ $user->getrights('compta');
 if (!$user->admin && !$user->rights->compta->charges)
   accessforbidden();
 
-
 $year=$_GET["year"];
 $filtre=$_GET["filtre"];
+if (! $year) { $year=date("Y", time()); }
 
-
-print_titre("Charges - Résumé".($year > 0?" $year":""));
+print_fiche_titre("Charges",($year?"<a href='$PHP_SELF?year=".($year-1)."'>".img_previous()."</a> Année $year <a href='$PHP_SELF?year=".($year+1)."'>".img_next()."</a>":""));
 
 print "<br>";
 print '<table class="noborder" cellspacing="0" cellpadding="4" width="100%">';
