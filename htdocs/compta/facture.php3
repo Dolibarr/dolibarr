@@ -309,12 +309,15 @@ if ($action == 'create')
       if ($num)
 	{
 	  $obj = $db->fetch_object(0);
-	
-	  $numfa = facture_get_num(); // définit dans includes/modules/facture
+
+	  $soc = new Societe($db);
+	  $soc->fetch($obj->idp);
+       
+	  $numfa = facture_get_num($soc); // définit dans includes/modules/facture
 	
 	  print '<form action="'.$PHP_SELF.'" method="post">';
 	  print '<input type="hidden" name="action" value="add">';
-	  print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
+	  print '<input type="hidden" name="socid" value="'.$obj->idp.'">' ."\n";
 	  
 	  print '<table cellspacing="0" cellpadding="3" border="1" width="100%">';
 	  
