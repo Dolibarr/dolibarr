@@ -127,6 +127,45 @@ class Societe {
    *
    *
    */
+
+  Function attribute_prefix() {
+    $sql = "SELECT nom FROM societe WHERE idp = $this->id";
+    if ( $this->db->query( $sql) ) {
+      if ( $this->db->num_rows() ) {
+      $nom = $this->db->result(0,0);
+      $this->db->free();
+      
+      $prefix = strtoupper(substr($nom, 0, 2));
+      
+      $sql = "SELECT count(*) FROM societe WHERE prefix_comm = '$prefix'";
+      if ( $this->db->query( $sql) ) {
+	if ( $this->db->result(0, 0) ) {
+	  $this->db->free();
+	} else {
+	  $this->db->free();
+	  $sql = "UPDATE societe set prefix_comm='$prefix' WHERE idp=$this->id";
+	  
+	  if ( $this->db->query( $sql) ) {
+	    
+	  } else {
+	    print $this->db->error();
+	  }
+	}
+      } else {
+	print $this->db->error();
+      }
+      }
+    } else {
+      print $this->db->error();
+    }
+    return $prefix;
+  }
+  /*
+   *
+   *
+   *
+   */
+
   Function get_nom($id) {
 
     $sql = "SELECT nom FROM societe WHERE idp=$id;";
