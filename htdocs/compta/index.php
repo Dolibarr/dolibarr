@@ -233,7 +233,7 @@ if ($user->comm > 0 && $conf->commercial )
  * Factures impayées
  */
 
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut > 0";
+$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";

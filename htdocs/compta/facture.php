@@ -198,6 +198,12 @@ if ($action == 'payed' && $user->rights->facture->paiement)
   $result = $fac->set_payed($facid);
 }
 
+if ($action == 'canceled' && $user->rights->facture->paiement) 
+{
+  $fac = new Facture($db);
+  $result = $fac->set_canceled($facid);
+}
+
 if ($HTTP_POST_VARS["action"] == 'setremise' && $user->rights->facture->creer) 
 {
   $fac = new Facture($db);
@@ -459,7 +465,7 @@ if ($_GET["action"] == 'create')
 	    }
 	  else
 	    {
-	      print '<tr><td colspan="2">&nbsp;</td></tr>';
+	      print '<tr><td colspan="3">&nbsp;</td></tr>';
 	      print '<tr><td colspan="3">';
 	      /*
 	       *
@@ -566,7 +572,7 @@ if ($_GET["action"] == 'create')
 		      $var=!$var;
 		      print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
 		      print '<td>'.$objp->product.'</td>';
-		      print "<td align=\"right\">".price($objp->price)."</TD>";
+		      print "<td align=\"right\">".price($objp->price)."</td>";
 		      print '<td align="center">'.$objp->remise_percent.' %</td>';
 		      print "<td align=\"center\">".$objp->qty."</td></tr>\n";
 		      $i++;
@@ -717,14 +723,7 @@ else
 
 	  print "<tr><td>Auteur</td><td colspan=\"3\">$author->fullname</td>";
 	  
-	  if ($fac->remise_percent > 0)
-	    {
-	      print '<td rowspan="5" valign="top">';
-	    }
-	  else
-	    {
-	      print '<td rowspan="4" valign="top">';
-	    }
+      print '<td rowspan="6" valign="top">';
 	  	  
 	  /*
 	   * Paiements
@@ -755,16 +754,16 @@ else
 		print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
 		print '<td align="right">'.price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
 		print "</tr>";
-		$total = $total + $objp->amount;
+		$totalpaye += $objp->amount;
 		$i++;
 	      }
 
 	    if ($fac->paye == 0)
 	      {
-		print "<tr><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>$_MONNAIE</td></tr>\n";
+		print "<tr><td colspan=\"2\" align=\"right\">Total payé:</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>$_MONNAIE</td></tr>\n";
 		print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($fac->total_ttc)."</td><td bgcolor=\"#d0d0d0\">$_MONNAIE</td></tr>\n";
 		
-		$resteapayer = $fac->total_ttc - $total;
+		$resteapayer = $fac->total_ttc - $totalpaye;
 
 		print "<tr><td colspan=\"2\" align=\"right\">Reste à payer :</td>";
 		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">$_MONNAIE</td></tr>\n";
@@ -777,21 +776,19 @@ else
 	
 	print "</td></tr>";
 	
-	print '<tr><td>Montant</td>';
+    print '<tr><td>Remise globale</td>';
+    print '<td align="right" colspan="2">'.$fac->remise_percent.'</td>';
+    print '<td>%</td></tr>';
+
+	print '<tr><td>Montant HT</td>';
 	print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
 	print '<td>'.MAIN_MONNAIE.' HT</td></tr>';
 
-	if ($fac->remise_percent > 0)
-	  {
-	    print '<tr><td>Remise</td>';
-	    print '<td align="right" colspan="2">'.$fac->remise_percent.'</td>';
-	    print '<td>%</td></tr>';
-	  }
-
 	print '<tr><td>TVA</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
 	print '<td>'.MAIN_MONNAIE.'</td></tr>';
-	print '<tr><td>Total</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
+	print '<tr><td>Montant TTC</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
 	print '<td>'.MAIN_MONNAIE.' TTC</td></tr>';
+	print '<tr><td>Statut</td><td align="left" colspan="3">'.($fac->get_libstatut()).'</td></tr>';
 	if ($fac->note)
 	  {
 	    print '<tr><td colspan="5">Note : '.nl2br($fac->note)."</td></tr>";
@@ -964,11 +961,11 @@ else
 		  {
 		    if ($fac->paye == 0)
 		      {
-			print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">Générer la facture</a>";
+			print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">Générer le PDF</a>";
 		      }
 		    else
 		      {
-			print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">Regénérer la facture</a>";
+			print "<a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">Regénérer le PDF</a>";
 		      }		  	
 		  }
 	      }
@@ -988,13 +985,13 @@ else
 	    // Envoyer une relance
 	    if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer) 
 	      {
-		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=prerelance\">Envoyer une relance</a>";
+		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=prerelance\">Envoyer relance</a>";
 	      }
 
 	    // Emettre paiement 
 	    if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->paiement)
 	      {
-		print "<a class=\"tabAction\" href=\"paiement.php?facid=".$fac->id."&amp;action=create\">Emettre un paiement</a>";
+		print "<a class=\"tabAction\" href=\"paiement.php?facid=".$fac->id."&amp;action=create\">Emettre paiement</a>";
 	      }
 	    
 	    // Classer 'payé'
@@ -1004,7 +1001,12 @@ else
 		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a>";
 	      }
 	    
-	
+	    // Classer 'annulée' (possible si validée et aucun paiement n'a encore eu lieu)
+	    if ($fac->statut == 1 && $fac->paye == 0 && $totalpaye == 0 && $user->rights->facture->paiement)
+	      {
+		print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$fac->id&amp;action=canceled\">Classer 'Annulée'</a>";
+	      }
+
 	    // Récurrente
 	    if (! defined("FACTURE_DISABLE_RECUR")) 	// Possibilité de désactiver les factures récurrentes
 	      {
@@ -1370,6 +1372,10 @@ else
 		    if ($objp->fk_statut == 0)
 		      {
 			print '<td align="center">brouillon</td>';
+		      }
+		    elseif ($objp->fk_statut == 3)
+		      {
+			print '<td align="center">annulée</td>';
 		      }
 		    else
 		      {

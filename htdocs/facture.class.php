@@ -422,18 +422,54 @@ class Facture
 	  return -5;
 	}
     }
+
   /**
-   * Tag la facture comme payée
+   * Retourne le libellé du statut d'une facture (brouillon, validée, annulée, payée)
    *
+   */
+  Function get_libstatut()
+    {
+		if (! $this->paye)
+		  {
+		    if ($this->statut == 0) return 'Brouillon (à valider)';
+		    if ($this->statut == 3) return 'Annulée';
+			return 'Validée (à payer)';
+		  }
+		else
+		  {
+		    return 'Payée';
+		  }
+    }
+
+  /**
+   * Tag la facture comme payée complètement
    *
    */
   Function set_payed($rowid)
     {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."facture set paye = 1 WHERE rowid = $rowid ;";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture set paye=1 WHERE rowid = $rowid ;";
       $return = $this->db->query( $sql);
     }
   /**
-   * Valide la facture
+   * Tag la facture comme paiement commencée
+   *
+   */
+  Function set_paiement_started($rowid)
+    {
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_statut=2 WHERE rowid = $rowid ;";
+      $return = $this->db->query( $sql);
+    }
+  /**
+   * Tag la facture comme annulée
+   *
+   */
+  Function set_canceled($rowid)
+    {
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_statut=3 WHERE rowid = $rowid ;";
+      $return = $this->db->query( $sql);
+    }
+  /**
+   * Tag la facture comme validée et valide la facture
    *
    */
   Function set_valid($rowid, $user, $soc)
