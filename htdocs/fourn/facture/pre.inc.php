@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +21,11 @@
  *
  */
 require("../../main.inc.php");
-require("../../facturefourn.class.php");
 
 include_once DOL_DOCUMENT_ROOT."/compta/bank/account.class.php";
 
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf;
-
 
   /*
    *

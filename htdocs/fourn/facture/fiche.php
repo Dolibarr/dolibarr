@@ -22,6 +22,7 @@
  */
 require("./pre.inc.php");
 require("./paiementfourn.class.php");
+require("../../facturefourn.class.php");
 
 /*
  * Sécurité accés client
@@ -36,14 +37,19 @@ $html = new Form($db);
 
 if ($action == 'valid') 
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set fk_statut = 1 WHERE rowid = $facid ;";
-  $result = $db->query( $sql);
+print "ddddddddddddddd";
+  $facturefourn=new FactureFourn($db);
+  $facturefourn->fetch($_GET["facid"]);
+  
+  $facturefourn->set_valid($user->id);
 }
 
 if ($action == 'payed')
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set paye = 1 WHERE rowid = $facid ;";
-  $result = $db->query( $sql);
+  $facturefourn=new FactureFourn($db);
+  $facturefourn->fetch($_GET["facid"]);
+  
+  $facturefourn->set_payed($user->id);
 }
 
 if($_GET["action"] == 'deletepaiement')

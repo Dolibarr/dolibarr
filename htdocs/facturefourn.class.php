@@ -41,11 +41,11 @@ class FactureFourn
   var $db_table;
   var $propalid;
   var $lignes;
+
   /*
    * Initialisation
    *
    */
-
   Function FactureFourn($DB, $soc_idp="", $facid="")
   {
     $this->db = $DB ;
@@ -150,8 +150,9 @@ class FactureFourn
     $this->updateprice($this->id);
     return 1;
   }
+
   /*
-   *
+   * Création d'une facture fournisseur
    *
    */
   Function create($user)
@@ -286,25 +287,6 @@ class FactureFourn
 	  print $this->db->error();
 	}
     }
-  /*
-   *
-   *
-   *
-   */
-  Function valid($userid, $dir)
-    {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
-      $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
-      
-      if ($this->db->query($sql) )
-	{
-	  return 1;
-	}
-      else
-	{
-	  print $this->db->error() . ' in ' . $sql;
-	}
-    }
 
   /*
    * Suppression de la facture
@@ -338,48 +320,40 @@ class FactureFourn
 	  return 0;
 	}
     }
-  /*
-   *
-   *
-   *
-   */
-  Function set_payed($rowid)
-    {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."facture set paye = 1 WHERE rowid = $rowid ;";
-      $return = $this->db->query( $sql);
-    }
-  /*
-   *
-   *
-   *
-   *
-   */
-  Function set_valid($rowid, $userid)
-    {
-      global $conf;
 
-      $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid ;";
+  /*
+   * Passe une facture fournisseur a l'état validé
+   *
+   */
+  Function set_valid($userid)
+    {
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set fk_statut = 1, fk_user_valid = $userid WHERE rowid = ".$this->id;
       $result = $this->db->query( $sql);
-
-      $dir = $conf->facture->outputdir . "/" . $rowid;
-
-      if (! is_dir ("$dir"))
-	{
-	  if (! mkdir ("$dir"))
-	    {
-	      print $dir;
-	    }
-	}
+      if (! $result) {
+        print "Erreur : $sql : ".$this->db->error(); 
+      }
     }
+
   /*
+   * Passe une facture fournisseur a l'état payé
    *
-   *
+   */
+  Function set_payed($userid)
+    {
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture_fourn set paye = 1 WHERE rowid = ".$this->id;
+      $result = $this->db->query( $sql);
+      if (! $result) {
+        print "Erreur : $sql : ".$this->db->error(); 
+      }
+    }
+
+  /*
    *
    *
    */
   Function addline($facid, $desc, $pu, $qty)
     {
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet (fk_facture,description,price,qty) VALUES ($facid, '$desc', $pu, $qty) ;";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_fourn_det (fk_facture,description,price,qty) VALUES ($facid, '$desc', $pu, $qty) ;";
       $result = $this->db->query( $sql);
 
       $this->updateprice($facid);
@@ -390,7 +364,7 @@ class FactureFourn
    */
   Function updateline($rowid, $desc, $pu, $qty)
     {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc',price=$pu,qty=$qty WHERE rowid = $rowid ;";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture-fourn_det set description='$desc',price=$pu,qty=$qty WHERE rowid = $rowid ;";
       $result = $this->db->query( $sql);
 
       $this->updateprice($this->id);
@@ -401,7 +375,7 @@ class FactureFourn
    */
   Function deleteline($rowid)
     {
-      $sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = $rowid;";
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_fourn_det WHERE rowid = $rowid;";
       $result = $this->db->query( $sql);
 
       $this->updateprice($this->id);
@@ -448,14 +422,6 @@ class FactureFourn
   Function pdf()
     {
 
-      
-      print "<hr><b>Génération du PDF</b><p>";
-      
-      $command = "export DBI_DSN=\"".$GLOBALS["DBI"]."\" ";
-      $command .= " ; ../../scripts/facture-tex.pl --facture=$facid --pdf --ps"  ;
-      
-      $output = system($command);
-      print "<p>command : $command<br>";
     }
   
 }

@@ -384,14 +384,15 @@ if ($action == 'pdf')
   facture_pdf_create($db, $facid);
 } 
 
+
 llxHeader();
 
 $html = new Form($db);
 
+
 /*********************************************************************
  *
  * Mode creation
- *
  *
  *
  ************************************************************************/
@@ -894,7 +895,7 @@ else
 	      {
 		$objp = $db->fetch_object( $i);
 		$var=!$var;
-		print "<TR $bc[$var]>";
+		print "<tr $bc[$var]>";
 		if ($objp->fk_product > 0)
 		  {
 		    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a>';
@@ -908,9 +909,9 @@ else
             print "</td>\n";
           }
 
-		print '<TD align="right">'.$objp->tva_taux.' %</TD>';
-		print '<TD align="right">'.price($objp->subprice)."</td>\n";
-		print '<TD align="right">'.$objp->qty.'</TD>';
+		print '<td align="right">'.$objp->tva_taux.' %</td>';
+		print '<td align="right">'.price($objp->subprice)."</td>\n";
+		print '<td align="right">'.$objp->qty.'</td>';
 		if ($objp->remise_percent > 0)
 		  {
 		    print '<td align="right">'.$objp->remise_percent." %</td>\n";
@@ -1321,7 +1322,6 @@ else
     /***************************************************************************
      *                                                                         *
      *                      Mode Liste                                         *
-     *                                                                         * 
      *                                                                         *
      ***************************************************************************/
     if ($page == -1)
@@ -1340,7 +1340,7 @@ else
 	if ($sortfield == "")
 	  $sortfield="f.datef";
 
-	$sql = "SELECT s.nom,s.idp,f.facnumber,f.total,f.total_ttc,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
+	$sql = "SELECT s.nom,s.idp,f.facnumber,f.total,f.total_ttc,".$db->pdate("f.datef")." as df, f.paye as paye, f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture WHERE f.fk_soc = s.idp";
 	
 	if ($socidp)
@@ -1369,7 +1369,12 @@ else
 
 	$sql .= " GROUP BY f.facnumber";   
 	
-	$sql .= " ORDER BY $sortfield $sortorder, f.rowid DESC ";
+	$sql .= " ORDER BY ";
+	$listfield=split(',',$sortfield);
+    foreach ($listfield as $key => $value) {
+	    $sql.="$listfield[$key] $sortorder,";
+    }
+	$sql .= " f.rowid DESC ";
 	
 	$sql .= $db->plimit($limit,$offset);
 	
@@ -1395,8 +1400,9 @@ else
 	print_liste_field_titre("Montant TTC",$PHP_SELF,"f.total_ttc","","&amp;socidp=$socidp");
 	print '</td><td align="right">';
 	print_liste_field_titre("Reçu",$PHP_SELF,"am","","&amp;socidp=$socidp");
+	print '</td><td align="right">';
+	print_liste_field_titre("Statut",$PHP_SELF,"fk_statut,paye","","&amp;socidp=$socidp");
 	print '</td>';
-	print '<td align="center">Status</td>';
 	print "</tr>\n";
       
 	if ($num > 0) 
@@ -1444,14 +1450,14 @@ else
 		  }
 		else
 		  {
-		    print "<TD align=\"center\"><b>!!!</b></TD>\n";
+		    print "<td align=\"center\"><b>!!!</b></td>\n";
 		  }
-        print '<TD><a href="fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+        print '<td><a href="fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
 		
-	    print "<TD align=\"right\">".price($objp->total)."</TD>";
-		print "<TD align=\"right\">".price($objp->total_ttc)."</TD>";
-		print "<TD align=\"right\">".price($objp->am)."</TD>";	
-		
+	    print "<td align=\"right\">".price($objp->total)."</td>";
+		print "<td align=\"right\">".price($objp->total_ttc)."</td>";
+		print "<td align=\"right\">".price($objp->am)."</td>";	
+		// Affiche statut de la facture
 		if (! $objp->paye)
 		  {
 		    if ($objp->fk_statut == 0)
@@ -1472,7 +1478,7 @@ else
 		    print '<td align="center">payée</td>';
 		  }
 		
-		print "</TR>\n";
+		print "</tr>\n";
 		$total+=$objp->total;
 		$total_ttc+=$objp->total_ttc;
 		$totalrecu+=$objp->am;
@@ -1482,10 +1488,10 @@ else
 	    if ($num <= $limit) {
 			// Print total
 	    	print "<tr ".$bc[!$var].">";
-	    	print "<TD colspan=3 align=\"left\">Total : </TD>";
-			print "<TD align=\"right\"><b>".price($total)."</b></TD>";		
-	    	print "<TD align=\"right\"><b>".price($total_ttc)."</b></TD>";
-	    	print "<TD align=\"right\"><b>".price($totalrecu)."</b></TD>";
+	    	print "<td colspan=3 align=\"left\">Total : </TD>";
+			print "<td align=\"right\"><b>".price($total)."</b></TD>";		
+	    	print "<td align=\"right\"><b>".price($total_ttc)."</b></TD>";
+	    	print "<td align=\"right\"><b>".price($totalrecu)."</b></TD>";
 	    	print '<td align="center">&nbsp;</td>';
 	    	print "</tr>\n";
 		}

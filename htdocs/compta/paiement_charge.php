@@ -81,7 +81,7 @@ if ($_POST["action"] == 'add_paiement')
         // Insertion dans llx_bank
         $label = "Règlement charge";
         $acc = new Account($db, $_POST["accountid"]);
-        $bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementtype, $label, $total, $paiement->num_paiement, '', $user);
+        $bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementtype, $label, -abs($total), $paiement->num_paiement, '', $user);
 	  
         // Mise a jour fk_bank dans llx_paiementcharge. On connait ainsi le paiement qui a généré l'écriture bancaire
         if ($bank_line_id) {
