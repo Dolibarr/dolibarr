@@ -41,7 +41,7 @@ function llxHeader($head = "", $title = "") {
   $menu = new Menu();
 
   $menu->add(DOL_URL_ROOT."/comm/mailing/index.php", $langs->trans("Mailing"));
-  //  $menu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?action=create", "Nouveau mailing");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?action=create", "Nouveau mailing");
 
   left_menu($menu->liste);
 
