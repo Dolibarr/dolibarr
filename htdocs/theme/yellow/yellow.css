@@ -23,12 +23,12 @@
 body {
   margin: 0px;
   background: #ebebe0; 
-  font-family: sans-serif; font-size: 0.95em; 
+  font: 12px helvetica, verdana, arial, sans-serif;
 }
 .body {
   background: #ebebe0; 
   color: #101010;
-  font-family: sans-serif; font-size: 0.95em; 
+  font: 12px helvetica, verdana, arial, sans-serif;
 }
 
 /***** Styles par défaut *****/
@@ -292,22 +292,35 @@ div.formsearch
  *   Barre onglets
  */
 div.tabBar {
-  background: #dcdcd3;
-  padding: 0em 0.5em 0.5em;
-  margin: 0em 0em 0.5em 0em;
-  border: 1px solid #8CACBB;
+    background: #dcdcd3;
+    padding: 0em 1em;
+    margin: 0em 0em 1.5em 0em;
+    border: 1px solid #8CACBB;
+    border-top: 1px solid #8CACBB;
 }
 
 div.tabs {
-  margin: 0em;
-  padding: 0em 0em;
+    top: 20px;
+    margin: 1px 0em 0em 0em;
+    padding: 0em 0.5em;
   text-align: left;
 }
 
 div.tabsAction {
-  margin: 0em 0em 0.5em 0em ;
+    margin: 24px 0em 1px 0em;
   padding: 0em 0em;
   text-align: right;
+}
+
+a.tabTitle {
+    background: #436976;
+    border: 1px solid #8CACBB;
+    color: white;
+    font-weight: normal;
+    padding: 0em 0.5em;
+    margin: 0em 1em;
+    text-decoration: none;
+    white-space: nowrap;
 }
 
 div.FicheSubmit {
@@ -329,36 +342,21 @@ a.tab {
   background: white;
   border: 1px solid #8CACBB;
   color: #436976;
-  font: 100% Bold;
-  padding: 0em 1.0em;
-  margin: 0em 0.5em;
+  padding: 0em 1em;
+  margin: 0em 0.2em;
   text-decoration: none;
   white-space: nowrap;
-}
-
-a.tabAction {
-  background: white;
-  border: 1px solid #8CACBB;
-  color: #436976;
-  font: 105% Bold;
-  padding: 0em 1.5em;
-  margin: 0em 0.5em;
-  text-decoration: none;
-  white-space: nowrap;
-}
-
-a.tabAction:hover {
-  background: #dcdcd3;
-  text-decoration: none;
 }
 
 a.tab#active {
   background: #dcdcd3;
   border-bottom: #dee7ec 1px solid;
+    text-decoration: none;
 }
 
 a.tab:hover {
   background: #ebebe0;
+  text-decoration: none;
 }
 
 
@@ -369,66 +367,57 @@ a.tab:hover {
 table.topbarre { 
                  cell-spacing: 0;
                  }
+
+/*
+ *   Case actions
+ */
+a.tabAction:link    { font: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 1.5em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.tabAction:visited { font: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 1.5em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.tabAction:active  { font: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 1.5em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.tabAction:hover   { font: helvetica, verdana, arial, sans-serif; background: #eeeecc; border: 1px solid #999999; color: #436969; padding: 0em 1.5em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+
+
 /*
  * Tables
  */
 table.border {
-               border-collapse: collapse;
-               border: 2px white ridge; }
+font: helvetica, verdana, arial, sans-serif; 
+border-collapse: collapse;
+border: 1px white ridge;
+}
 
 table.border td {
-                  border-collapse: collapse;
-                  border: 2px white ridge; }
+border: 1px solid #6C7C8B;
+padding: 2px 3px;
+}
 
 table.noborder {
-                 border-collapse: collapse;
-                 border: 0px  }
-
-table.noborder td {
-                    border-collapse: collapse;
-                    border: 0px  }
+border-collapse: collapse;
+border: 0px;
+}
 
 table.liste {
-              border-collapse: collapse;
-              border: 0px  }
+border-collapse: collapse;
+border: 0px;
+width: 100%;
+}
 
-table.liste td {
-                 border-collapse: collapse;
-                 border: 0px  }
+table.noborder td {
+border-collapse: collapse;
+border: 0px;
+padding: 1px 3px;
+}
 
 table#actions {
-                border: 0px;
-                cell-spacing: 1em;
-                
-                }
+border-collapse: collapse;
+border: 1px ridge
+}
 
 table#actions td {
-                   border-bottom: 1px ridge black;
-                   border-right: 1px ridge black;
-                   border-left: 1px ridge white; 
-                   border-top: 1px ridge white;
-                   text-align: center;
-                   padding: 0.2em;
+border-collapse: collapse;
+border: 1px ridge
 }
-/*
- *
- */
-a { 
-    text-decoration: none;
-    font-weight: bold;
-    color: #000000; }
 
-a:hover {     text-decoration: underline;  }
-
-td.menu { 
-          border-right: 1px solid #000000;
-          border-bottom: 1px solid #000000;
-          font-size: 0.95em; }
-
-td.menusel { 
-             border-right: 1px solid #000000;
-             border-bottom: 1px solid #000000;
-             font-size: 0.95em; }
 
 td.border { 
             border-top: 1px solid #000000;
@@ -453,12 +442,7 @@ a.leftmenu {
              color: #202020;
              }
 
-a.leftsubmenu { 
-                font-weight: bold; 
-                font-size: 0.95em;
-                color: #202020;
-                margin: 1em 1em 1em 1em;
-                }
+
 
 div.leftmenu { 
                background: #ccccb3; 
@@ -502,49 +486,30 @@ div.leftmenu {
 .warning { color: #777711; }
 .error   { color: #550000; }
 
-.submenu 
-{ 
-  background: #ccccb3; 
-  font-size: 0.95em;
-  color: #000000; 
-  text-decoration: none }
-
-a.normal{ font-weight: normal } 
-a.impayee { font-weight: bold }
 
 /*
- *   Barre de gauche
+ *   Liens Payes/Non payes
  */
 
-a.leftmenu { 
-             
-             font-weight: bold; 
-             color: #202020; }
+a.normal:link { font-weight: normal } 
+a.normal:visited { font-weight: normal }
+a.normal:active { font-weight: normal }
+a.normal:hover { font-weight: normal }
 
-td.barre { 
-           border-right: 1px solid #000000;
-           border-bottom: 1px solid #000000;
-           background: #ccccb3;
-           color: #000000; 
-           text-decoration: none }
-
-td.auteurs { 
-           border: 1px dashed #000000;
-
-           background: #ccccb3;
-           color: #000000; 
-           text-decoration: none }
+a.impayee:link { font-weight: bold; color: #550000; }
+a.impayee:visited { font-weight: bold; color: #550000; }
+a.impayee:active { font-weight: bold; color: #550000; }
+a.impayee:hover { font-weight: bold; color: #550000; }
 
 
-td.barre_select { 
-                  background: #ccccb3; 
-                  color: #000000 
-                  }
+
+
 
 /*
  *  ???
  */
 div.titre { 
+	font: helvetica, verdana, arial, sans-serif;
             font-weight: bold; 
             color: #666633; 
             text-decoration: none }
