@@ -24,7 +24,7 @@
 /*!
 	    \file       htdocs/comm/fiche.php
         \ingroup    commercial
-		\brief      Page de la fiche commercial
+		\brief      Onglet client de la fiche societe
 		\version    $Revision$
 */
  
@@ -32,14 +32,15 @@ require("./pre.inc.php");
 require("../contact.class.php");
 require("../actioncomm.class.php");
 
+$langs->load("companies");
+$langs->load("orders");
+$langs->load("contracts");
+
 $user->getrights('propale');
 $user->getrights('fichinter');
 $user->getrights('commande');
 $user->getrights('projet');
 
-$langs->load("orders");
-$langs->load("companies");
-$langs->load("contracts");
 
 
 llxHeader();
@@ -153,43 +154,45 @@ if ($_socid > 0)
     {
       $hselected=$h;
       $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
-      $head[$h][1] = 'Client';
+      $head[$h][1] = $langs->trans("Customer");;
       $h++;
     }
   if ($objsoc->client==2)
     {
       $hselected=$h;
       $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->socid;
-      $head[$h][1] = 'Prospect';
+      $head[$h][1] = $langs->trans("Prospect");
       $h++;
     }
   if ($objsoc->fournisseur)
     {
       $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objsoc->id;
-      $head[$h][1] = 'Fournisseur';
+      $head[$h][1] = $langs->trans("Supplier");
       $h++;
     }
   
   if ($conf->compta->enabled) {
+    $langs->load("compta");
     $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;
-    $head[$h][1] = 'Comptabilité';
+    $head[$h][1] = $langs->trans("Accountancy");
     $h++;
   }
 
     $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
-    $head[$h][1] = 'Note';
+    $head[$h][1] = $langs->trans("Note");
     $h++;
 
     if ($user->societe_id == 0)
     {
         $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$objsoc->id;
-        $head[$h][1] = 'Documents';
+        $head[$h][1] = $langs->trans("Documents");
         $h++;
     }
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
-    $head[$h][1] = 'Notifications';
-
+    $head[$h][1] = $langs->trans("Notifications");
+    $h++;
+    
       if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/sl/fiche.php?id='.$objsoc->id;
@@ -202,6 +205,7 @@ if ($_socid > 0)
 	$head[$h][0] = DOL_URL_ROOT."/comm/index.php?socidp=$objsoc->id&action=add_bookmark";
 	$head[$h][1] = '<img border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/bookmark.png" alt="Bookmark" title="Bookmark">';
 	$head[$h][2] = 'image';
+	$h++;
       }
 
     dolibarr_fiche_head($head, $hselected, $objsoc->nom);

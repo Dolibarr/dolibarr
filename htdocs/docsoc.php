@@ -20,13 +20,16 @@
  * $Source$
  */
 
-/*!	\file htdocs/docsoc.php
+/*! 	\file       htdocs/docsoc.php
 		\brief      Fichier onglet documents liés à la société
 		\ingroup    societe
-		\version $Revision$
+		\version    $Revision$
 */
 
 require("./pre.inc.php");
+
+$langs->load("companies");
+
 
 llxHeader();
 
@@ -64,7 +67,7 @@ if ( $_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 
 if ( $error_msg )
 { 
-  echo "<B>$error_msg</B><BR><BR>";
+  print '<font class="error">'.$error_msg.'</font><br><br>';
 }
 if ($action=='delete')
 {
@@ -85,51 +88,53 @@ if ($socid > 0)
   $societe = new Societe($db);
   if ($societe->fetch($socid))
     {
-
-      $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
-      $head[0][1] = "Fiche société";
-      $h = 1;
-
+      $h = 0;
+      
+      $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
+      $head[$h][1] = $langs->trans("Company");
+      $h++;
+      
       if ($societe->client==1)
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
-	  $head[$h][1] = 'Client';
+	  $head[$h][1] = $langs->trans("Customer");
 	  $h++;
 	}
       
       if ($societe->client==2)
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
-	  $head[$h][1] = 'Prospect';
+	  $head[$h][1] = $langs->trans("Prospect");
 	  $h++;
 	}
       if ($societe->fournisseur)
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
-	  $head[$h][1] = 'Fournisseur';
+	  $head[$h][1] = $langs->trans("Supplier");
 	  $h++;
 	}
 
       if ($conf->compta->enabled) {
+          $langs->load("compta");
           $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;
-          $head[$h][1] = 'Comptabilité';
+          $head[$h][1] = $langs->trans("Accountancy");
           $h++;
       }
 
       $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
-      $head[$h][1] = 'Note';
+      $head[$h][1] = $langs->trans("Note");
       $h++;
 
       if ($user->societe_id == 0)
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
-	  $head[$h][1] = 'Documents';
+	  $head[$h][1] = $langs->trans("Documents");
       $hselected = $h;
 	  $h++;
 	}
       
       $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
-      $head[$h][1] = 'Notifications';
+      $head[$h][1] = $langs->trans("Notifications");
       
       dolibarr_fiche_head($head, $hselected, $societe->nom);
 
@@ -166,7 +171,7 @@ if ($socid > 0)
 
       if ($handle)
 	{
-	  print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
+	  print '<table width="100%" class="border">';
 	  while (($file = readdir($handle))!==false)
 	    {
 	      if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')

@@ -22,6 +22,12 @@
  *
  */
 
+/*!	    \file       htdocs/soc.php
+		\ingroup    societe
+		\brief      Onglet societe d'une societe
+		\version    $Revision$
+*/
+
 require("pre.inc.php");
 
 $langs->load("companies");
@@ -117,7 +123,7 @@ if ($_GET["action"] == 'create')
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="fournisseur" value="0">';
       
-      print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+      print '<table class="border" width="100%">';
       print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" name="nom"></td></tr>';
       print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
       print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp">&nbsp;';
@@ -260,47 +266,48 @@ else
   $soc->fetch($_GET["socid"]);
 
   $head[0][0] = 'soc.php?socid='.$soc->id;
-  $head[0][1] = "Fiche société";
+  $head[0][1] = $langs->trans("Company");
   $h = 1;
 
   if ($soc->client==1)
     {
       $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id;
-      $head[$h][1] = 'Client';
+      $head[$h][1] = $langs->trans("Customer");
       $h++;
     }
   if ($soc->client==2)
     {
       $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$soc->id;
-      $head[$h][1] = 'Prospect';
+      $head[$h][1] = $langs->trans("Prospect");
       $h++;
     }
   if ($soc->fournisseur)
     {
       $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id;
-      $head[$h][1] = 'Fiche fournisseur';
+      $head[$h][1] = $langs->trans("Supplier");;
       $h++;
     }
 
   if ($conf->compta->enabled) {
+      $langs->load("compta");
       $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
-      $head[$h][1] = 'Comptabilité';
+      $head[$h][1] = $langs->trans("Accountancy");
       $h++;
   }
 
   $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
-  $head[$h][1] = 'Note';
+  $head[$h][1] = $langs->trans("Note");
   $h++;
   
   if ($user->societe_id == 0)
     {
       $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$soc->id;
-      $head[$h][1] = 'Documents';
+      $head[$h][1] = $langs->trans("Documents");
       $h++;
     }
 
   $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
-  $head[$h][1] = 'Notifications';
+  $head[$h][1] = $langs->trans("Notifications");
 
   dolibarr_fiche_head($head, 0, $soc->nom);
 
@@ -308,7 +315,7 @@ else
    * Fiche société en mode visu
    */
   
-  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+  print '<table class="border" width="100%">';
   print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>'.$soc->nom.'</td><td>'.$langs->trans('Prefix').'</td><td>'.$soc->prefix_comm.'</td></tr>';
 
   print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";

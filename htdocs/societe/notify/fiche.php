@@ -82,50 +82,51 @@ $soc->id = $_GET["socid"];
 
 if ( $soc->fetch($soc->id) ) 
 {
+  $h=0;
   
-  $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
-  $head[0][1] = "Fiche société";
-  $h = 1;
+  $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$soc->id;
+  $head[$h][1] = $langs->trans("Company");
+  $h++;
   
   if ($soc->client==1)
     {
       $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id;
-      $head[$h][1] = 'Client';
+      $head[$h][1] = $langs->trans("Customer");
       $h++;
     }
 
   if ($soc->client==2)
     {
       $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$soc->id;
-      $head[$h][1] = 'Prospect';
+      $head[$h][1] = $langs->trans("Prospect");
       $h++;
     }
   if ($soc->fournisseur)
     {
       $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id;
-      $head[$h][1] = 'Fournisseur';
+      $head[$h][1] = $langs->trans("Supplier");
       $h++;
     }
 
   if ($conf->compta->enabled) {
       $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$soc->id;
-      $head[$h][1] = 'Comptabilite';
+      $head[$h][1] = $langs->trans("Accountancy");
       $h++;
   }
 
   $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$soc->id;
-  $head[$h][1] = 'Note';
+  $head[$h][1] = $langs->trans("Note");
   $h++;
   
   if ($user->societe_id == 0)
     {
       $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$soc->id;
-      $head[$h][1] = 'Documents';
+      $head[$h][1] = $langs->trans("Documents");
       $h++;
     }
       
   $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$soc->id;
-  $head[$h][1] = 'Notifications';
+  $head[$h][1] = $langs->trans("Notifications");
   $hselected=$h;
   $h++;
   

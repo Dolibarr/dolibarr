@@ -32,6 +32,8 @@ require("../contact.class.php");
 require("../actioncomm.class.php");
 require("../facture.class.php");
 
+$langs->load("companies");
+
 /*
  * Sécurité accés client
  */
@@ -164,20 +166,21 @@ if ($socid > 0)
     if ($societe->client==2)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
-        $head[$h][1] = 'Prospect';
+        $head[$h][1] = $langs->trans("Prospect");
         $h++;
     }
     if ($societe->fournisseur)
     {
         $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
-        $head[$h][1] = 'Fournisseur';
+        $head[$h][1] = $langs->trans("Supplier");
         $h++;
     }
 
     if ($conf->compta->enabled) {
+        $langs->load("compta");
         $hselected=$h;
         $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;
-        $head[$h][1] = 'Comptabilité';
+        $head[$h][1] = $langs->trans("Accountancy");
         $h++;
     }
 
