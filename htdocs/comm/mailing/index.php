@@ -79,9 +79,9 @@ if ( $db->query($sql) )
     }
   
   $var = true;
-  print "<tr $bc[$var]>".'<td>'.$langs->trans("Customers").'</td><td align="center">'.$st[1]."</td></tr>";
+  print "<tr $bc[$var]>".'<td>'.$langs->trans("Customers").'</td><td align="center">'.($st[1]?$st[1]:"0")."</td></tr>";
   $var=!$var;
-  print "<tr $bc[$var]>".'<td>'.$langs->trans("Prospects").'</td><td align="center">'.$st[2]."</td></tr>";
+  print "<tr $bc[$var]>".'<td>'.$langs->trans("Prospects").'</td><td align="center">'.($st[2]?$st[2]:"0")."</td></tr>";
 
   print "</table><br>";
 
@@ -92,18 +92,7 @@ else
   dolibarr_print_error($db);
 }
 
-/*
- *
- *
- */
-
-/*
- *
- *
- */
 print '</td><td valign="top" width="70%">';
-
-
 
 
 /*
@@ -111,7 +100,7 @@ print '</td><td valign="top" width="70%">';
  *
  */
 
-$sql = "SELECT m.rowid, m.titre, m.nbemail";
+$sql  = "SELECT m.rowid, m.titre, m.nbemail";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
 $sql .= " LIMIT 10";
 if ( $db->query($sql) ) 
@@ -120,7 +109,7 @@ if ( $db->query($sql) )
   if ($num > 0)
     { 
       print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre"><td colspan="4">10 derniers mailings</td></tr>';
+      print '<tr class="liste_titre"><td colspan="4">Les 10 derniers mailings</td></tr>';
       $var = true;
       $i = 0;
       
@@ -131,8 +120,8 @@ if ( $db->query($sql) )
 	  
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="fiche.php?id='.$obj->rowid.'">'.$obj->titre.'</a></td>';
-	  print '<td>'.$obj->nbemail.'</td>';
-
+	  print '<td align="right">'.($obj->nbemail?$obj->nbemail:"0")." ".$langs->trans("EMails").'</td>';
+      print '</tr>';
 	  $i++;
 	}
 
