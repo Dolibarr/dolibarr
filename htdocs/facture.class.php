@@ -880,13 +880,14 @@ class Facture
 	return -1;
       }
   }
+
   /** 
-   * Renvoie la sommes des paiements
-   *
+   * Renvoie la sommes des paiements deja effectués
+   * Utilisé entre autre par certains modèles de factures
    */
   Function getSommePaiement()
   {
-    $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."paiement WHERE fk_facture = ".$this->id;
+    $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."paiement_facture WHERE fk_facture = ".$this->id;
     if ($this->db->query($sql))
       {
 	$row = $this->db->fetch_row(0);
