@@ -38,4 +38,4 @@ ContractStatusToRun=A mettre en service
 ContractNotRunning=Ce contrat n'est pas en service
 ErrorProductAlreadyExists=Un produit avec la référence %s existe déjà.
 ErrorProductBadRefOrLabel=La valeur de la reference ou du libellé est incorrecte.
-
+Suppliers=Fournisseurs
