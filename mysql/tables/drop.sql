@@ -43,6 +43,8 @@ drop table if exists c_stcomm;
 
 drop table if exists c_typent ;
 
+drop table if exists llx_adherent;
+
 drop table if exists llx_bank;
 
 drop table if exists llx_bank_account;
@@ -58,6 +60,8 @@ drop table if exists llx_chargesociales;
 drop table if exists llx_compta;
 
 drop table if exists llx_compta_account;
+
+drop table if exists llx_cotisation;
 
 drop table if exists llx_don;
 

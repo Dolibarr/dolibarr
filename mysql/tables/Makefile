@@ -34,6 +34,7 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < c_propalst.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < c_stcomm.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < c_typent.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_adherent.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_bank.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_bank_account.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_bank_categ.sql
@@ -42,6 +43,7 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_chargesociales.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_compta.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_compta_account.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_cotisation.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_don.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_don_projet.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_fa_pr.sql
