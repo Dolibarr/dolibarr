@@ -215,8 +215,8 @@ else
                         $oldmod = $obj->module;
                         $var = !$var;
                     }
-                    print '<tr '. $bc[$var].'><td><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">Ajouter</a></td><td>';
-                    print $obj->libelle . '</td></tr>';
+                    print '<tr '. $bc[$var].'><td><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">Ajouter</a></td>';
+                    print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td></tr>';
 
                     $i++;
                 }
@@ -243,8 +243,8 @@ else
                         $var = !$var;
                     }
 
-                    print "<tr $bc[$var]><td>".$obj->libelle . '</td>';
-                    print '<td align="right"><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=delrights&amp;rights='.$obj->id.'">Supprimer</a></td></tr>';
+                    print "<tr $bc[$var]><td>".$obj->libelle . '</td><td>'.$obj->module . '</td>';
+                    print '<td align="right"><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=delrights&amp;rights='.$obj->id.'">'.img_delete().'</a></td></tr>';
                     $i++;
                 }
             }
