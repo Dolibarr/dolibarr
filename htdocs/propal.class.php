@@ -738,7 +738,7 @@ class Propal
   Function info($id) 
     {
       $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec";
-
+      $sql .= ", fk_user_valid, fk_user_cloture, fk_user_author";
       $sql .= " FROM ".MAIN_DB_PREFIX."propal as c";
       $sql .= " WHERE c.rowid = $id";
       
@@ -750,16 +750,26 @@ class Propal
 
 	      $this->id                = $obj->rowid;
 
-	      $cuser = new User($this->db, $obj->fk_user);
+	      $this->date_creation     = $obj->datec;
+
+	      $cuser = new User($this->db, $obj->fk_user_author);
 	      $cuser->fetch();
 	      $this->user_creation     = $cuser;
 
-	      $muser = new User($this->db, $obj->fk_user_modif);
-	      $muser->fetch();
-	      $this->user_modification = $muser;
+	      if ($obj->fk_user_valid)
+		{
+		  $vuser = new User($this->db, $obj->fk_user_valid);
+		  $vuser->fetch();
+		  $this->user_validation     = $vuser;
+		}
 
-	      $this->date_creation     = $obj->datec;
-	      $this->date_modification = $obj->tms;
+	      if ($obj->fk_user_cloture)
+		{
+		  $cluser = new User($this->db, $obj->fk_user_cloture);
+		  $cluser->fetch();
+		  $this->user_cloture     = $cluser;
+		}
+
 
 	    }
 	  $this->db->free();
