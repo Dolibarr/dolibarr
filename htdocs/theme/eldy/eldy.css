@@ -42,11 +42,11 @@ a:hover   { font: helvetica, verdana, arial, sans-serif; font-weight: bold; colo
 input     { font: helvetica, verdana, arial, sans-serif; }
 textarea  { font: helvetica, verdana, arial, sans-serif; }
 .button  {
-	font-family: arial,verdana,helvetica, sans-serif;
 	font-size: 100%;
 	border: 1px solid #ccd7e0;
-	background-image : url(/images/button_bg.gif);
+	background-image : url(/theme/eldy/img/button_bg.gif);
 	background-position : bottom;
+    font: 12px helvetica, verdana, arial, sans-serif;
 }
 
 
