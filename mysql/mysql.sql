@@ -909,6 +909,11 @@ insert into llx_boxes_def (name, file) values ('Factures impayées','box_factures
 insert into llx_boxes_def (name, file) values ('Propales','box_propales.php');
 insert into llx_boxes_def (name, file) values ('Derniers clients','box_clients.php');
 
+delete from llx_boxes;
+insert into llx_boxes (box_id, position) values (4,0);
+insert into llx_boxes (box_id, position) values (1,0);
+insert into llx_boxes (box_id, position) values (3,0);
+
 insert into llx_const(name, value, type) values ('FAC_PDF_FAX','01 02 03 04 05','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_SIRET','123 456 789','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_INTITULE','Dolibarr','chaine');
@@ -931,7 +936,7 @@ insert into llx_const(name, value, type, note) values ('COMPTA_ONLINE_PAYMENT_BP
 
 insert into llx_const(name, value, type, note) values ('COMPTA_BANK_FACTURES','1','yesno','Menu factures dans la partie bank');
 
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_THEME','dolibarr','chaine','theme principal');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_THEME','yellow','chaine','theme principal');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_RESIL','Votre adhesion sur %SERVEUR% vient d\'etre resilie.\r\nNous esperons vous revoir tres bientot','texte','Mail de Resiliation');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_VALID','MAIN\r\nVotre adhesion vient d\'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante : \r\n%SERVEUR%public/adherents/','texte','Mail de validation');
@@ -941,7 +946,7 @@ INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_COTIS','Bonjo
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_VALID_SUBJECT','Votre adhésion a ete validée sur %SERVEUR%','chaine','sujet du mail de validation');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_RESIL_SUBJECT','Resiliation de votre adhesion sur %SERVEUR%','chaine','sujet du mail de resiliation');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_COTIS_SUBJECT','Recu de votre cotisation','chaine','sujet du mail de validation de cotisation');
-INSERT INTO llx_const (name, value, type, note) VALUES ('SIZE_LISTE_LIMIT','50','chaine','Taille des listes');
+INSERT INTO llx_const (name, value, type, note) VALUES ('SIZE_LISTE_LIMIT','20','chaine','Taille des listes');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_NEW_SUBJECT','Bienvenue sur %SERVEUR%','chaine','Sujet du mail de nouvelle adhesion');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_EDIT_SUBJECT','Votre fiche a ete editee sur %SERVEUR%','chaine','Sujet du mail d\'edition');
 
