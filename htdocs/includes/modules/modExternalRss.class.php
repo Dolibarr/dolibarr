@@ -21,7 +21,7 @@
  *
  */
 
-/*!     \defgroup   ecternalrss     Module ExternalRss
+/*!     \defgroup   externalrss     Module ExternalRss
         \brief      Module pour inclure des informations externes RSS
 */
 
