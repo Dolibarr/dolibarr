@@ -47,7 +47,7 @@ if ($result)
       $objp = $db->fetch_object( $i);
       
       $info_box_contents[$i][0] = array('align' => 'left',
-					'text' => $objp->nom,
+					'text' => stripslashes($objp->nom),
 					'url' => DOL_URL_ROOT."/comm/prospect/fiche.php?id=".$objp->idp);
 
       $i++;
