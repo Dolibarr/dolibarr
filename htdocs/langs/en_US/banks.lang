@@ -25,4 +25,5 @@ CreateAccount=Create account
 StandingOrderToProcess=To process
 StandingOrderProcessed=Processed
 NewAccount=New account
+NewFinancialAccount=New financial account
 AccountSetup=Account setup
