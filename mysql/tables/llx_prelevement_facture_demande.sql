@@ -25,14 +25,16 @@ create table llx_prelevement_facture_demande
 (
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   fk_facture         integer NOT NULL,
+  amount             real NOT NULL,
   date_demande       datetime NOT NULL,
   traite             smallint DEFAULT 0,
   date_traite        datetime,
-  fk_prelevement integer,
+  fk_prelevement     integer,
   fk_user_demande    integer NOT NULL,
 
   code_banque        varchar(7),
   code_guichet       varchar(6),
-  number             varchar(255)
+  number             varchar(255),
+  cle_rib            varchar(5)
 
 )type=innodb;
