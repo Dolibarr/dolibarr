@@ -41,9 +41,10 @@ create table llx_telephonie_communications_details (
   remise           real,
   fichier_cdr      varchar(255),
   fk_fournisseur   integer,
+  fk_telephonie_facture       integer,
 
   key (fk_fournisseur),
-  key (fk_ligne)
+  key (fk_ligne),
+  key (fk_telephonie_facture)
 
 )type=innodb;
-
