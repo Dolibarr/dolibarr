@@ -51,25 +51,18 @@ REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_THEME',  'yell
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_BOUTIQUE',  '1','yesno',0);
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_COMMANDE',  '1','yesno',0);
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_COMMERCIAL','1','yesno',0);
-REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_DON',       '1','yesno',0);
 REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_FACTURE',   '1','yesno',0);
-REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_ADHERENT',  '1','yesno',0);
-
-REPLACE INTO llx_const (name, value, type, visible) VALUES ('BOUTIQUE_LIVRE','1','yesno',0);
-REPLACE INTO llx_const (name, value, type, visible) VALUES ('BOUTIQUE_ALBUM','1','yesno',0);
-
 
 delete from llx_user;
-insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,admin,webcal_login)
-values ('Quiedeville','Rodolphe','RQ','rodo','CRnN0Tam/s7z.',1,1,1,'rodo');
 
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login,admin)
-values ('demo','demo','DEMO','demo','demo',1,0,'demo',1);
+values ('demo','demo','DEMO','demo','demo',1,1,'demo',1);
 
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
-values ('demo1','demo1','DM1','demo1','demo',1,0,'demo1');
+values ('demo1','demo1','DM1','demo1','demo',1,1,'demo1');
+
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
-values ('demo2','demo2','DM2','demo2','demo',1,0,'demo2');
+values ('demo2','demo2','DM2','demo2','demo',1,1,'demo2');
 --
 -- Societe
 --
