@@ -91,7 +91,9 @@ if ( $db->query($sql) )
       $obj = $db->fetch_object( $i);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$obj->cid\">$obj->cid</a></td>\n";
+      print "<td><a href=\"fiche.php?id=$obj->cid\">";
+      print img_file();
+      print "</a>&nbsp;<a href=\"fiche.php?id=$obj->cid\">$obj->cid</a></td>\n";
       print "<td><a href=\"../product/fiche.php?id=$obj->pid\">$obj->label</a></td>\n";
       print "<td><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></td>\n";
 
