@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
  *
@@ -124,7 +124,7 @@ function llxHeader($head = "") {
 
   if ($conf->don->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/dons/index.php", "Dons");
+      $menu->add(DOL_URL_ROOT."/compta/dons/index.php", $langs->trans("Donations"));
     }
 
   if ($conf->fournisseur->enabled)
@@ -157,7 +157,8 @@ function llxHeader($head = "") {
 	  $menu->add(DOL_URL_ROOT."/rapport/", "Rapports");
 	}
 	
-  $menu->add(DOL_URL_ROOT."/user/index.php", $langs->trans("Users"));
+  $langs->load("users");
+  $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
 
   if ($user->admin)
     {      
