@@ -36,6 +36,7 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
+$page=$_GET["page"];
 
 if ($page == -1)
   $page = 0 ;
