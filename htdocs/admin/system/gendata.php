@@ -20,16 +20,15 @@
  */
 require("./pre.inc.php");
 
+$user->getrights('commande');
+$user->getrights('expedition');
+
 llxHeader();
 ?>
-<h1>Attention</h1>
-<h2>Ceci est un générateur de données aléatoires, ne 
+<h2>Attention : Ceci est un générateur de données aléatoires, ne 
 pas utiliser sur une base de données en production, les opérations ne sont pas réversibles</h2>
-<br>
-<a href="gendata.php">Home</a> | 
-<a href="gendata.php?action=societe">Sociétés</a> | 
-<a href="gendata.php?action=product">Produits</a> | 
-<a href="gendata.php?action=facture">Factures</a>
+
+<a href="gendata.php">Home</a><br> 
 <br>
 <?PHP
 include_once "../../societe.class.php";
@@ -48,9 +47,23 @@ $sql = "SELECT idp FROM llx_societe"; $societesid = array();
 if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;	
 while ($i < $num) { $row = $db->fetch_row($i);      $societesid[$i] = $row[0];      $i++; } } else { print "err"; }
 
+$sql = "SELECT rowid FROM llx_commande"; $commandesid = array();
+if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;	
+while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0];      $i++; } } else { print "err"; }
 
-print "". sizeof($societesid) ." sociétés ";
-print " - ". sizeof($productsid) ." produits ";
+print '<table border="1"><tr>';
+print '<td><a href="gendata.php?action=societe">Sociétés</a></td>';
+print '<td><a href="gendata.php?action=product">Produits</a></td>';
+print '<td><a href="gendata.php?action=facture">Factures</a></td>';
+print '<td><a href="gendata.php?action=commande">Commandes</a></td>';
+
+print '</tr><tr>';
+print "<td>". sizeof($societesid) ."</td>";
+print "<td>". sizeof($productsid) ."</td>";
+print '<td>';
+print "<td>". sizeof($commandesid) ."</td>";
+
+print '</table>';
 print "<p>";
 
 if ($action == 'product')
@@ -129,7 +142,7 @@ if ($action == 'facture')
     }
 }
 
-if ($action == 'societe')
+if ($_GET["action"] == 'societe')
 {
 
   $rands = rand(1,400);
@@ -162,6 +175,81 @@ if ($action == 'societe')
 	}
     }
 }
+
+if ($_GET["action"] == 'commande')
+{
+  $dates = array (mktime(12,0,0,1,3,2003),
+		  mktime(12,0,0,1,9,2003),
+		  mktime(12,0,0,2,13,2003),
+		  mktime(12,0,0,2,23,2003),
+		  mktime(12,0,0,3,30,2003),
+		  mktime(12,0,0,4,3,2003),
+		  mktime(12,0,0,4,3,2003),
+		  mktime(12,0,0,5,9,2003),
+		  mktime(12,0,0,5,1,2003),
+		  mktime(12,0,0,5,13,2003),
+		  mktime(12,0,0,5,19,2003),
+		  mktime(12,0,0,5,23,2003),
+		  mktime(12,0,0,6,3,2003),
+		  mktime(12,0,0,6,19,2003),
+		  mktime(12,0,0,6,24,2003),
+		  mktime(12,0,0,7,3,2003),
+		  mktime(12,0,0,7,9,2003),
+		  mktime(12,0,0,7,23,2003),
+		  mktime(12,0,0,7,30,2003),
+		  mktime(12,0,0,8,9,2003),
+		  mktime(12,0,0,9,23,2003),
+		  mktime(12,0,0,10,3,2003),
+		  mktime(12,0,0,11,12,2003),
+		  mktime(12,0,0,11,13,2003),
+		  mktime(12,0,0,1,3,2002),
+		  mktime(12,0,0,1,9,2002),
+		  mktime(12,0,0,2,13,2002),
+		  mktime(12,0,0,2,23,2002),
+		  mktime(12,0,0,3,30,2002),
+		  mktime(12,0,0,4,3,2002),
+		  mktime(12,0,0,4,3,2002),
+		  mktime(12,0,0,5,9,2002),
+		  mktime(12,0,0,5,1,2002),
+		  mktime(12,0,0,5,13,2002),
+		  mktime(12,0,0,5,19,2002),
+		  mktime(12,0,0,5,23,2002),
+		  mktime(12,0,0,6,3,2002),
+		  mktime(12,0,0,6,19,2002),
+		  mktime(12,0,0,6,24,2002),
+		  mktime(12,0,0,7,3,2002),
+		  mktime(12,0,0,7,9,2002),
+		  mktime(12,0,0,7,23,2002),
+		  mktime(12,0,0,7,30,2002),
+		  mktime(12,0,0,8,9,2002),
+		  mktime(12,0,0,9,23,2002),
+		  mktime(12,0,0,10,3,2002),
+		  mktime(12,0,0,11,12,2003),
+		  mktime(12,0,0,11,13,2003),
+		  mktime(12,0,0,12,12,2003),
+		  mktime(12,0,0,12,13,2003),
+		  );
+  
+  require DOL_DOCUMENT_ROOT."/commande/commande.class.php";
+  
+  $com = new Commande($db);
+  
+  $com->soc_id         = 4;
+  $com->date_commande  = $dates[rand(1, sizeof($dates)-1)];
+  $com->note           = $HTTP_POST_VARS["note"];
+  $com->source         = 1;
+  $com->projetid       = 0;
+  $com->remise_percent = 0;
+  
+  $pidrand = rand(1, sizeof($productsid)-1);
+  $com->add_product($productsid[rand(1, sizeof($productsid)-1)],rand(1,11),rand(1,6),rand(0,20));
+  $id = $com->create($user);
+  print  " " . strftime("%d %B %Y",$com->date_commande);
+  $com->fetch($id);
+  print " " .  $com->valid($user);
+}
+
+
 
 llxFooter();
 ?>
