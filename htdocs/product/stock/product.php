@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -101,7 +102,7 @@ if ($_GET["id"])
       print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$product->id.'">Statistiques</a></td></tr>';
       print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
       print '<td valign="top" rowspan="2">';
-      print 'Fournisseurs [<a href="../fiche.php?id='.$product->id.'&amp;action=ajout_fourn">Ajouter</a>]';
+      print 'Fournisseurs [<a href="../fiche.php?id='.$product->id.'&amp;action=ajout_fourn">'.$langs->trans("Add").'</a>]';
       
       $sql = "SELECT s.nom, s.idp";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
@@ -187,12 +188,12 @@ if ($_GET["id"])
 	}
       print '</select></td>';
       print '<td width="20%"><select name="mouvement">';
-      print '<option value="0">Ajouter</option>';
-      print '<option value="1">Supprimer</option>';
+      print '<option value="0">'.$langs->trans("Add").'</option>';
+      print '<option value="1">'.$langs->trans("Delete").'</option>';
       print '</select></td>';
       print '<td width="20%">Nb de pièce</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
       print '<tr><td colspan="5" align="center"><input type="submit" value="Enregistrer">&nbsp;';
-      print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
       print '</table>';
       print '</form>';
 

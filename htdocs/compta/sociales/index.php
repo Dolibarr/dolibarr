@@ -220,7 +220,7 @@ if ($user->rights->compta->charges->creer) {
     print '<td align="right"><input type="text" size="6" name="amount"></td>';
     print '<td>&nbsp;</td>';
     
-    print '<td><input type="submit" value="Ajouter"></form></td>';
+    print '<td><input type="submit" value="'.$langs->trans("Add").'"></form></td>';
     print '</tr>';
 }
 

@@ -148,7 +148,7 @@ else
 	  print "<tr><td>Artiste/Groupe</td><td>";
 	  $htmls->select_array("ga",  $ga->liste_array());
 	  print "</td></tr>";
-	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Ajouter"></td></tr>';
+	  print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 	  print "</form>";
 	  print '</table>';
 

@@ -204,7 +204,7 @@ if ($result)
       print "<select name=\"cat1\">$options";
       
       print "</select>&nbsp;";
-      print '<input type="submit" value="Ajouter"></td>';
+      print '<input type="submit" value="'.$langs->trans("Add").'"></td>';
       print "</tr>";
       
       print "</form>";

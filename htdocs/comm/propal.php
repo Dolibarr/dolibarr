@@ -507,7 +507,7 @@ if ($_GET["propalid"])
 	      print '<td align="center"><input type="text" size="3" value="1" name="np_qty"></td>';
 	      print '<td align="center"><input type="text" size="3" value="0" name="np_remise"> %</td>';
 	      print '<td align="right"><input type="text" size="6" name="np_price"></td>';
-	      print '<td align="center"><input type="submit" value="Ajouter" name="addproduct"></td>';
+	      print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="addproduct"></td>';
 	      print '</tr>';
 
 	      /*
@@ -519,7 +519,7 @@ if ($_GET["propalid"])
 	      print '<td align="center"><input type="text" size="3" name="qty" value="1"></td>';
 	      print '<td align="center"><input type="text" size="3" name="remise" value="0"> %</td>';
 	      print '<td>&nbsp;</td>';
-	      print '<td align="center"><input type="submit" value="Ajouter" name="addligne"></td>';
+	      print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="addligne"></td>';
 	      print "</tr>\n";
 	    }
 	  print "</table>";

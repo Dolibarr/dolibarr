@@ -639,7 +639,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	      print '<input type="text" name="remise_percent" size="3" value="0"> %';
 	      print " ".$product->stock_proposition;
 	      print '</td><td>';
-	      print '<input type="submit" value="Ajouter">';
+	      print '<input type="submit" value="'.$langs->trans("Add").'">';
 	      print "</td>";
 	      print '</form></tr>';
 	      $i++;
@@ -666,7 +666,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	      print '<input type="text" name="qty" size="3" value="1">&nbsp;Rem.';
 	      print '<input type="text" name="remise_percent" size="3" value="0"> %';
 	      print '</td><td>';
-	      print '<input type="submit" value="Ajouter">';
+	      print '<input type="submit" value="'.$langs->trans("Add").'">';
 	      print '</td></tr>';
 	      print '</table></form>';
 	    }
@@ -709,7 +709,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	      print '<input type="text" name="qty" size="3" value="1">&nbsp;Rem.';
 	      print '<input type="text" name="remise_percent" size="3" value="0"> %';
 	      print '</td><td>';
-	      print '<input type="submit" value="Ajouter">';
+	      print '<input type="submit" value="'.$langs->trans("Add").'">';
 	      print "</td>";
 	      print '</form></tr>';
 	      $i++;

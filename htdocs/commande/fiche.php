@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -653,14 +654,14 @@ else
 	    print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
 	    print '<td align="right"><input type="text" name="pu" size="8"></td>';
 
-	    print '<td align="center" colspan="3"><input type="submit" value="Ajouter"></td></tr>';
+	    print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 
 	    $var=!$var;
 	    print "<tr $bc[$var]><td colspan=\"2\"><select name=\"p_idprod\">$opt</select></td>";
 	    print '<td align="center"><input type="text" size="2" name="pqty" value="1"></td>';
 	    print '<td align="right"><input type="text" size="4" name="premise" value="0"> %</td>';
 	    print '<td>&nbsp;</td>';
-	    print '<td align="center" colspan="3"><input type="submit" value="Ajouter"></td></tr>';
+	    print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 	    print "</tr>\n";
 
 	    print "</form>";

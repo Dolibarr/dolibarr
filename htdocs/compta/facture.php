@@ -1041,7 +1041,7 @@ else
 	      print '<td align="right"><input type="text" name="pu" size="8"></td>';
 	      print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
 	      print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
-	      print '<td align="center" colspan="3"><input type="submit" value="Ajouter"></td></tr>';
+	      print '<td align="center" colspan="3"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 	      if ($conf->service->enabled) {
 		print '<tr>';
 		print '<td colspan="8">Si produit de type service à durée limitée: Du ';

@@ -236,7 +236,7 @@ if ($_GET["action"] == 'create')
       print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
       if($afaire <> 1)
 	{
-	  print '<tr><td width="10%">Ajouter</td><td><input type="checkbox" name="todo"></td></tr>';
+	  print '<tr><td width="10%">'.$langs->trans("Add").'</td><td><input type="checkbox" name="todo"></td></tr>';
 	}
       else
 	{

@@ -315,7 +315,7 @@ else
 
 	      print '<tr><td>Auteur(s)</td><td colspan="2">';
 	      $htmls->select_array("coauteurid",  $auteur->liste_array());
-	      print '&nbsp;<input type="submit" value="Ajouter"></td></tr>';
+	      print '&nbsp;<input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 	      print "</form>";
 
 	      print "<form action=\"fiche.php?id=$id\" method=\"post\">\n";
@@ -324,7 +324,7 @@ else
 	      $listecat = new Categorie($db);
 	      print '<td valign="top">Catégories</td><td colspan="2">';
 	      $htmls->select_array("catid", $listecat->liste_array());
-	      print '&nbsp;<input type="submit" value="Ajouter"></td></tr>';
+	      print '&nbsp;<input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 	      print "</form>";
 	      print "</td></tr>\n";
 

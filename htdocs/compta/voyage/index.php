@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,7 +123,7 @@ if ($result) {
 
   print "<td><input name=\"amount\" type=\"text\" size=8></td>";
 
-  print "<td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"ajouter\"</td>";
+  print "<td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"".$langs->trans("Add")."\"</td>";
   print "</tr><tr><td colspan=\"1\">Réduction</td>";
 
   print "<td><select name=\"reducid\">$options";

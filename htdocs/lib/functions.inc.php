@@ -247,6 +247,9 @@ function dolibarr_print_phone($phone)
     }
 }
 
+/*!
+  \brief Affiche logo fichier
+*/
 function img_file($alt = "default")
 {
   if ($alt="default") {
@@ -256,6 +259,9 @@ function img_file($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/file.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
+/*!
+  \brief Affiche logo nouveau fichier
+*/
 function img_file_new($alt = "default")
 {
   if ($alt="default") {
@@ -265,7 +271,9 @@ function img_file_new($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/filenew.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-
+/*!
+  \brief Affiche logo pdf
+*/
 function img_pdf($alt = "default")
 {
   if ($alt="default") {
@@ -275,7 +283,32 @@ function img_pdf($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/pdf.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
+/*!
+  \brief Affiche logo +
+*/
+function img_edit_add($alt = "default")
+{
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Add");
+  }
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit_add.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+/*!
+  \brief Affiche logo -
+*/
+function img_edit_removed($alt = "default")
+{
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Remove");
+  }
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit_remove.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
 
+/*!
+  \brief Affiche logo editer/modifier fiche
+*/
 function img_edit($alt = "default")
 {
   if ($alt="default") {
@@ -285,6 +318,9 @@ function img_edit($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
+/*!
+  \brief Affiche logo effacer
+*/
 function img_delete($alt = "default")
 {
   if ($alt="default") {
@@ -294,6 +330,9 @@ function img_delete($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
+/*!
+  \brief Affiche logo désactiver
+*/
 function img_disable($alt = "default")
 {
   if ($alt="default") {
@@ -304,6 +343,17 @@ function img_disable($alt = "default")
 }
 
 
+/*!
+  \brief Affiche logo info
+*/
+function img_info($alt = "Informations")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/info.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+/*!
+  \brief Affiche logo warning
+*/
 function img_warning($alt = "default")
 {
   if ($alt="default") {
@@ -313,11 +363,9 @@ function img_warning($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/warning.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-function img_info($alt = "Informations")
-{
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/info.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-}
-
+/*!
+  \brief Affiche logo alerte
+*/
 function img_alerte($alt = "default")
 {
   if ($alt="default") {
@@ -327,7 +375,9 @@ function img_alerte($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/alerte.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-
+/*!
+  \brief Affiche logo téléphone in
+*/
 function img_phone_in($alt = "default")
 {
   if ($alt="default") {
@@ -337,6 +387,9 @@ function img_phone_in($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
+/*!
+  \brief Affiche logo téléphone out
+*/
 function img_phone_out($alt = "default")
 {
   if ($alt="default") {
@@ -346,7 +399,9 @@ function img_phone_out($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call_out.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-
+/*!
+  \brief Affiche logo suivant
+*/
 function img_next($alt = "default")
 {
   if ($alt="default") {
@@ -356,6 +411,9 @@ function img_next($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/next.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
+/*!
+  \brief Affiche logo précédent
+*/
 function img_previous($alt = "default")
 {
   if ($alt="default") {

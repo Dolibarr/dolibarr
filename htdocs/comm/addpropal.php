@@ -96,13 +96,15 @@ if ($_GET["action"] == 'create')
   
   if ( $db->query($sql) )
     {
+      $langs->load("companies");
+      
       $i = 0 ;
       $numdest = $db->num_rows(); 
   
       if ($numdest==0)
 	{
 	  print 'Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale<br>';	
-	  print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">Ajouter un contact</a>';
+	  print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 	}
       else
 	{

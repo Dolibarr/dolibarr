@@ -81,7 +81,7 @@ if ($result)
 }
 print "<tr>";
 print "<td>&nbsp;</td><td><input name=\"label\" type=\"text\" size=45></td>";
-print "<td align=\"center\"><input type=\"submit\" value=\"ajouter\"</td></tr>";
+print "<td align=\"center\"><input type=\"submit\" value=\"".$langs->trans("Add")."\"</td></tr>";
 print "</table></form>";
 
 

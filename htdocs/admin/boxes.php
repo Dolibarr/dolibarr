@@ -130,7 +130,7 @@ if ($result)
             print '<td width="50" align="center">';
             if (! $boxes[$position][$obj->rowid])
             {
-                print '<a href="boxes.php?rowid='.$obj->rowid.'&amp;action=add&pos='.$position.'">Ajouter</a>';
+                print '<a href="boxes.php?rowid='.$obj->rowid.'&amp;action=add&pos='.$position.'">'.$langs->trans("Add").'</a>';
             }
             else
             {

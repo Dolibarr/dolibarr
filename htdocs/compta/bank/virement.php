@@ -127,7 +127,8 @@ print "</td>\n";
 print '<td><input name="label" type="text" size="40"></td>';
 print '<td><input name="amount" type="text" size="8"></td>';
 
-print "<tr $bc[1]>".'<td colspan="5" align="center"><input type="submit" value="ajouter"</td></tr>';
+print "<tr $bc[1]>";
+print '<td colspan="5" align="center"><input type="submit" value="'.$langs->trans("Add").'"</td></tr>';
 
 print "</table></form>";
 

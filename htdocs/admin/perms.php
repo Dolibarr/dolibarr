@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ if ($result)
 	  print '<tr class="liste_titre">';
 	  print '<td>'.$langs->trans("Permission").'</td>';
 	  print '<td>'.$langs->trans("Module").'</td>';
-	  print '<td align="center">'.$langs->trans("Défaut").'</td>';
+	  print '<td align="center">'.$langs->trans("Default").'</td>';
 	  print '<td align="center">&nbsp;</td>';
 	  print "</tr>\n";
 	  $old = $obj->module;
@@ -77,15 +78,13 @@ if ($result)
 
 	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0">';
 	  print '</td><td>';
-	  print '<a href="perms.php?pid='.$obj->id.'&amp;action=remove">';
-	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit_remove.png" alt="Enlever" title="Enlever" border="0"></a>';
+	  print '<a href="perms.php?pid='.$obj->id.'&amp;action=remove">'.img_edit_removed().'</a>';
 	}
       else
 	{
 	  print '&nbsp;';
 	  print '</td><td>';
-	  print '<a href="perms.php?pid='.$obj->id.'&amp;action=add">';
-	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit_add.png" alt="Ajouter" title="Ajouter" border="0"></a>';
+	  print '<a href="perms.php?pid='.$obj->id.'&amp;action=add">'.img_edit_add().'</a>';
 	}
 
       print '</td></tr>';

@@ -293,7 +293,7 @@ if ($account > 0)
       print '</td></tr>';
       print '<tr>';
       print '<td><small>YYYY MMDD</small></td><td colspan="2">&nbsp;</td><td>Description</td><td align=right>0000.00</td><td align=right>0000.00</td>';
-      print '<td colspan="2" align="center"><input type="submit" value="Ajouter"></td>';
+      print '<td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td>';
       print '</tr>';
     }
 

@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
+ * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,10 +165,12 @@ if ($socid > 0) {
 
 
   if ($action == 'addcontact') {
+    $langs->load("companies");
+    
     print "<br><form method=\"post\" action=\"people.php?socid=$socid\">";
     print "<input type=\"hidden\" name=\"action\" value=\"add\">";
     print "<table border=0>";
-    print "<tr><td colspan=\"2\"><div class=\"titre\">Ajouter le contact</div></td>";
+    print "<tr><td colspan=\"2\"><div class=\"titre\">".$langs->trans("AddContact")."</div></td>";
     print "<tr><td>Nom</td><td><input name=\"name\" type=\"text\" size=\"20\" maxlength=\"80\"></td>";
     print "<td>Prenom</td><td><input name=\"firstname\" type=\"text\" size=\"15\" maxlength=\"80\"></td></tr>";
     print "<tr><td>Poste</td><td colspan=\"3\"><input name=\"poste\" type=\"text\" size=\"50\" maxlength=\"80\"></td></tr>";
@@ -175,7 +178,7 @@ if ($socid > 0) {
     print "<td>Fax</td><td><input name=\"fax\" type=\"text\" size=\"18\" maxlength=\"80\"></td></tr>";
     print "<tr><td>Email</td><td colspan=\"3\"><input name=\"email\" type=\"text\" size=\"50\" maxlength=\"80\"></td></tr>";
     print "</table>";
-    print "<input type=\"submit\" value=\"Ajouter\">";
+    print "<input type=\"submit\" value=\"".$langs->trans("Add")."\">";
     print "</form>";
   }
   /*

@@ -151,10 +151,11 @@ if ( $societe->fetch($socid) )
    * Boutons Actions
    */
   $langs->load("bills");
+  $langs->load("companies");
   
   print '<div class="tabsAction">';
   print '<a class="tabAction" href="facture/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("CreateBill").'</a>';
-  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create">Ajouter un contact</a>';
+  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
   print '</div>';
     
 
@@ -167,7 +168,7 @@ if ( $societe->fetch($socid) )
 
   print '<br><table class="noborder" cellspacing="0" cellpadding="2" width="100%">';
 
-  print "<tr class=\"liste_titre\"><td><b>Pr&eacute;nom Nom</b></td>";
+  print '<tr class="liste_titre"><td><b>'.$langs->trans("FirstName").' '.$langs->trans("LastName").'</b></td>';
   print '<td><b>Poste</b></td><td><b>'.$langs->trans("Tel").'</b></td>';
   print "<td><b>".$langs->trans("Fax")."</b></td><td><b>".$langs->trans("EMail")."</b></td>";
   print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">Ajouter</a></td></tr>";

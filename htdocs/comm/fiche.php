@@ -406,7 +406,7 @@ if ($_socid > 0)
       print '<tr class="liste_titre"><td>Pr&eacute;nom Nom</td>';
       print '<td>Poste</td><td>T&eacute;l</td>';
       print "<td>Fax</td><td>Email</td>";
-      print "<td align=\"center\"><a href=\"../contact/fiche.php?socid=$objsoc->id&action=create\">Ajouter</a></td></tr>";
+      print "<td align=\"center\"><a href=\"../contact/fiche.php?socid=$objsoc->id&action=create\">".$langs->trans("Add")."</a></td></tr>";
     
       $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $objsoc->id  ORDER by p.datec";
       $result = $db->query($sql);

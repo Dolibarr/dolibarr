@@ -368,7 +368,7 @@ else
 	  $html->select_tva("tauxtva");
 	  print '</td><td align="center" colspan="2">';
 	  print '&nbsp;';
-	  print '</td><td align="center"><input type="submit" value="Ajouter"></td></tr>';
+	  print '</td><td align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
 	  print "</table>";
 	  print "</form>";
 	}

@@ -30,6 +30,9 @@ $user->getrights('fichinter');
 $user->getrights('commande');
 $user->getrights('projet');
 
+$langs->load('companies');
+
+
 if ($_GET["action"] == 'cstc')
 {
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["stcomm"];
@@ -232,10 +235,10 @@ if ($socid > 0)
      */
     print '<table width="100%" cellspacing="1" border="0" cellpadding="2">';
 
-    print '<tr class="liste_titre"><td>Pr&eacute;nom Nom</td>';
-    print '<td>Poste</td><td colspan="2">T&eacute;l</td>';
-    print "<td>Fax</td><td>Email</td>";
-    print "<td align=\"center\"><a href=\"../../contact/fiche.php?socid=$societe->id&action=create\">Ajouter</a></td></tr>";
+    print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Name").'</td>';
+    print '<td>Poste</td><td colspan="2">'.$langs->trans("Tel").'</td>';
+    print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
+    print "<td align=\"center\"><a href=\"../../contact/fiche.php?socid=$societe->id&action=create\">".$langs->trans("Add")."</a></td></tr>";
     
     $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $societe->id  ORDER by p.datec";
     $result = $db->query($sql);

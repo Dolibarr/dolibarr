@@ -219,7 +219,7 @@ else
                         $oldmod = $obj->module;
                         $var = !$var;
                     }
-                    print '<tr '. $bc[$var].'><td><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">Ajouter</a></td>';
+                    print '<tr '. $bc[$var].'><td><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">'.$langs->trans("Add").'</a></td>';
                     print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td></tr>';
 
                     $i++;

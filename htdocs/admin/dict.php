@@ -152,7 +152,7 @@ if ($_GET["id"])
                 print '<td><input type="text" value="" name="'.$fieldlist[$field].'"></td>';
             }
         }
-        print '<td colspan=2><input type="submit" name="Ajouter" value="Ajouter"></td>';
+        print '<td colspan=2><input type="submit" name="Ajouter" value="'.$langs->trans("Add").'"></td>';
         print "</tr>";
         print '<tr><td colspan="'.(count($fieldlist)+2).'"></td></tr>';
     }

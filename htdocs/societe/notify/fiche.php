@@ -211,7 +211,7 @@ if ( $soc->fetch($soc->id) )
   print '<td>';
   $html->select_array("actionid",$actions);
   print '</td>';
-  print '<td align="center"><input type="submit" value="Ajouter"></td>';
+  print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'"></td>';
   print '</tr></form></table>';
 
 }

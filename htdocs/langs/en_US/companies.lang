@@ -1,9 +1,11 @@
-# Dolibarr language file - fr_US - soc
+# Dolibarr language file - en_US - soc
 NewCompany=New company (prospect, customer, supplier)
 Company=Company
 Companies=Companies
 Name=Name
-Surname=Surname
+LastName=Lastname
+Firstname=Firstname
+Surname=Surname/Pseudo
 Address=Addrese
 State=State
 Country=Country
@@ -21,3 +23,4 @@ Prospect=Prospect
 Customer=Customer
 Supplier=Supplier
 CompanyList=Companies' list
+AddContact=Add new contact
