@@ -52,12 +52,8 @@ class LigneTel {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
     $sql .= " SET ";
-    $sql .= " fk_client_comm = $this->client_comm, ";
-    $sql .= " fk_soc = $this->client, ";
     $sql .= " ligne = '$this->numero', ";
-    $sql .= " fk_soc_facture = $this->client_facture, ";
     $sql .= " fk_fournisseur = $this->fournisseur, ";
-    $sql .= " fk_commercial = $this->commercial, ";
     $sql .= " fk_concurrent = $this->concurrent, ";
     $sql .= " note =  '$this->note'";
     $sql .= " WHERE rowid = $this->id";
@@ -168,10 +164,16 @@ class LigneTel {
   {
     if (strlen(trim($this->numero)) == 10)
       {
+	/*
+	 * fk_commercial est encore définit pour supporter la migration en douceur 
+	 * à terme cette colonne sera supprimé
+	 *
+	 */
+
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_societe_ligne";
-	$sql .= " (datec,fk_soc, fk_client_comm, ligne, fk_soc_facture, fk_fournisseur, note, remise, fk_commercial, statut, fk_user_creat, fk_concurrent, fk_contrat)";
+	$sql .= " (datec,fk_soc, fk_client_comm, ligne, fk_soc_facture, fk_fournisseur, note, remise, fk_commercial, fk_commercial_sign, fk_commercial_suiv, statut, fk_user_creat, fk_concurrent, fk_contrat)";
 	$sql .= " VALUES (";
-	$sql .= "now(),$this->client,$this->client_comm,'$this->numero',$this->client_facture,$this->fournisseur, '$this->note','$this->remise',$this->commercial, -1,$user->id, $this->concurrent, $this->contrat)";
+	$sql .= "now(),$this->client,$this->client_comm,'$this->numero',$this->client_facture,$this->fournisseur, '$this->note','$this->remise',$this->commercial_sign, $this->commercial_sign, $this->commercial_suiv, -1,$user->id, $this->concurrent, $this->contrat)";
 	
 	if ( $this->db->query($sql) )
 	  {
@@ -194,6 +196,8 @@ class LigneTel {
 	      {
 		$this->error_message = "Echec de la création de la ligne";
 		dolibarr_syslog("LigneTel::Create Error -1");
+		dolibarr_syslog("LigneTel::Create ".$this->db->error());
+		dolibarr_syslog("LigneTel::Create $sql");
 		return -1;
 	      }
 	  }
@@ -223,7 +227,7 @@ class LigneTel {
       $sql .= " , mode_paiement, fk_concurrent, code_analytique";
       $sql .= " , fk_user_creat, fk_user_commande";
       $sql .= " , fk_contrat ";
-      $sql .= " , fk_commercial, fk_commercial_suiv";
+      $sql .= " , fk_commercial_suiv, fk_commercial_sign";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as tl";
 
       if ($id > 0)
@@ -250,7 +254,8 @@ class LigneTel {
 	      $this->client_id          = $obj->fk_soc;
 	      $this->client_facture_id  = $obj->fk_soc_facture;
 	      $this->fournisseur_id     = $obj->fk_fournisseur;
-	      $this->commercial_id      = $obj->fk_commercial;
+	      $this->commercial_id      = $obj->fk_commercial_suiv;
+	      $this->commercial_sign_id = $obj->fk_commercial_sign;
 	      $this->commercial_suiv_id = $obj->fk_commercial_suiv;
 	      $this->concurrent_id      = $obj->fk_concurrent;
 	      $this->statut             = $obj->statut;
@@ -262,12 +267,14 @@ class LigneTel {
 
 	      if ($obj->isfacturable == 'oui')
 		{
-		  $this->facturable        = 1;
+		  $this->facturable     = 1;
 		}
 	      else
 		{
-		  $this->facturable        = 0;
+		  $this->facturable     = 0;
 		}
+
+	      $this->note               = stripslashes($obj->note);
 
 	      $result = 1;
 	    }
@@ -497,6 +504,71 @@ class LigneTel {
     $sql .= " VALUES ($this->id, $cid )";
     
     $this->db->query($sql);
+  }
+  /*
+   *
+   *
+   *
+   */
+  function delete($user)
+  {
+    $erro = 0;
+    if ($this->statut == -1)
+      {
+
+	if ($this->db->begin())
+	  {
+	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne_remise";
+	    $sql .= " WHERE fk_ligne=".$this->id;
+	
+	    if (!$this->db->query($sql))
+	      {
+		dolibarr_syslog("LigneTel::Delete Error -5");
+		$error++;
+	      }
+
+	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne_statut";
+	    $sql .= " WHERE fk_ligne=".$this->id;
+	
+	    if (!$this->db->query($sql))
+	      {
+		dolibarr_syslog("LigneTel::Delete Error -4");
+		$error++;
+	      }
+
+	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_contact_facture";
+	    $sql .= " WHERE fk_ligne=".$this->id;
+	
+	    if (!$this->db->query($sql))
+	      {
+		dolibarr_syslog("LigneTel::Delete Error -3");
+		$error++;
+	      }
+
+	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+	    $sql .= " WHERE rowid =".$this->id;
+	    
+	    if (!$this->db->query($sql))
+	      {
+		dolibarr_syslog("LigneTel::Delete Error -2");
+		$error++;
+	      }
+	    
+	    /*****/
+
+	    if (!$error)
+	      {
+		$this->db->commit();
+		return 0;
+	      }
+	    else
+	      {
+		$this->db->rollback();
+		return -1;
+	      }
+	  }
+	
+      }
   }
   /*
    *

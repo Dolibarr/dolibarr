@@ -58,6 +58,17 @@ if ($_POST["action"] == 'add')
     }  
 }
 
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
+{
+  $ligne = new LigneTel($db);
+  $ligne->fetch_by_id($_GET["id"]);
+
+  if ( $ligne->delete($user) == 0)
+    {
+      Header("Location: index.php");
+    }
+}
+
 if ($_POST["action"] == 'updateremise')
 {
   $ligne = new LigneTel($db);
@@ -129,7 +140,6 @@ if ($_GET["action"] == 'refuse')
     {
       Header("Location: fiche.php?id=".$ligne->id);
     }
-
 }
 
 if ($_GET["action"] == 'resilier')
@@ -522,7 +532,22 @@ else
 	      dolibarr_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
 
 	      print_fiche_titre('Fiche Ligne', $mesg);
-      
+
+	      /*
+	       *
+	       */
+	      if ($_GET["action"] == 'delete' && $ligne->statut == -1)
+		{		  
+		  $html = new Form($db);
+
+		  $html->form_confirm("fiche.php"."?id=".$_GET["id"],"Suppression de ligne","Etes-vous sûr de vouloir supprimer la ligne : ".dolibarr_print_phone($ligne->numero)." ?","confirm_delete");
+		  print '<br />';
+		}
+
+	      /*
+	       *
+	       */
+	             
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
 	      if ($ligne->contrat)
@@ -553,8 +578,6 @@ else
 
 	      print $client->cp . " " .$client->ville;
 	      print '</td></tr>';
-
-
 
 	      $client_facture = new Societe($db);
 	      $client_facture->fetch($ligne->client_facture_id);
@@ -698,7 +721,6 @@ else
 
 
 	    }
-	
 
 	  /*
 	   * Edition
@@ -862,10 +884,7 @@ else
 	       *
 	       *
 	       */
-
-
 	      print '<tr><td width="20%">Remise LMN</td><td>'.$ligne->remise.'&nbsp;%</td></tr>';
-	  
 
 	      print '<tr><td width="20%" valign="top">Note</td><td>';
 	      print '<textarea name="note" rows="4" cols="50">';
@@ -1099,7 +1118,12 @@ if ($_GET["action"] == '')
     {
       print "<a class=\"tabAction\" href=\"fiche.php?action=edit&amp;id=$ligne->id\">".$langs->trans("Edit")."</a>";
     }
-      
+     
+  if ( $user->rights->telephonie->ligne->creer && $ligne->statut == -1)
+    {
+      print "<a class=\"butDelete\" href=\"fiche.php?action=delete&amp;id=$ligne->id\">".$langs->trans("Delete")."</a>";
+    }
+ 
 }
 
 print "</div>";
