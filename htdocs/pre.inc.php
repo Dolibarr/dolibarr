@@ -133,8 +133,11 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/postnuke/articles/index.php", "Editorial");
     }
 
-  $menu->add(DOL_URL_ROOT."/rapport/", "Rapports");
-
+  if ($conf->rapport->enabled)
+    {
+	  $menu->add(DOL_URL_ROOT."/rapport/", "Rapports");
+	}
+	
   $menu->add(DOL_URL_ROOT."/user/index.php", "Utilisateurs");
 
   if ($user->admin)
