@@ -32,6 +32,10 @@ class Conf {
 
     $this->db = new DbConf();
 
+    $this->societe    = 1;
+    $this->commercial = 0;
+    $this->voyage     = 0;
+
     $this->propal = new PropalConf();
     $this->facture = new FactureConf();
     $this->fichinter = new FicheInterConf();
@@ -41,15 +45,11 @@ class Conf {
     $this->adherent = new AdherentConf();
     $this->domaine = new domaineConf();
 
-    $this->commercial = 0;
-
     $this->readonly = 0;
 
     $this->years = 2001;
 
     $this->css = "theme/dolibarr/dolibarr.css";
-
-    $this->voyage = 0;
   }  
 }
 

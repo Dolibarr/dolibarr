@@ -86,11 +86,14 @@ function top_menu($head) {
   print '<TD width="15%" class="menu" align="center"><A class="menu" href="/">Accueil</A></TD>';
 
   print '<TD width="15%" class="menu" align="center">';
-  if ($user->comm > 0) {
-    print '<A class="menu" href="/comm/">Commercial</A></TD>';
-  } else {
-    print '-';
-  }
+  if ($user->comm > 0 && $conf->commercial ) 
+    {
+      print '<A class="menu" href="/comm/">Commercial</A></TD>';
+    }
+  else
+    {
+      print '-';
+    }
 
   print '<TD width="15%" class="menu" align="center">';
   if ($user->compta > 0)
