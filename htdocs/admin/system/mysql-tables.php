@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,10 @@
  */
 require("./pre.inc.php");
 
+if (!$user->admin)
+  accessforbidden();
+
+
 if ($_GET["action"] == 'convert')
 {
   $db->query("alter table ".$_GET["table"]." type=INNODB");
@@ -29,7 +34,19 @@ llxHeader();
 
 print_titre("Tables Mysql");
 
-print '<table border="0" cellpadding="4" cellspacing="1">';
+print '<br>';
+print '<table class="noborder" cellpadding="4" cellspacing="1">';
+print '<tr class="liste_titre">';
+print '<td>Nom de la table</td>';
+print '<td colspan="2">Type</td>';
+print '<td>Format lignes</td>';
+print '<td>Nb enr.</td>';
+print '<td>Avg_row_length</td>';
+print '<td>Data_length</td>';
+print '<td>Max_Data_length</td>';
+print '<td>Index_length</td>';
+print '<td>Last check</td>';
+print "</tr>\n";
 
 $sql = "SHOW TABLE STATUS";
 
@@ -59,11 +76,14 @@ if ($result)
       print '<td align="right">'.$row[3].'</td>';
       print '<td align="right">'.$row[4].'</td>';
       print '<td align="right">'.$row[5].'</td>';
+      print '<td align="right">'.$row[6].'</td>';
       print '<td align="right">'.$row[7].'</td>';
+      print '<td align="right">'.$row[12].'</td>';
       print '</tr>';
       $i++;
     }
 }
 print '</table>';
+
 llxFooter();
 ?>
