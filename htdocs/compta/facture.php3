@@ -186,7 +186,6 @@ if ($action == 'add')
 /*
  *
  */
-
 if ($action == 'send')
 {
   $fac = new Facture($db,"",$facid);
@@ -237,7 +236,23 @@ if ($action == 'send')
 	}
     }
 }
+/*
+ *
+ */
+if ($HTTP_POST_VARS["action"] == 'relance')
+{
+  $fac = new Facture($db,"",$facid);
+  $fac->fetch($facid);
 
+  $fac->send_relance($HTTP_POST_VARS["destinataire"],
+		     $HTTP_POST_VARS["replytoname"],
+		     $HTTP_POST_VARS["replytomail"],
+		     $user);
+}
+
+/*
+ *
+ */
 if ($action == 'pdf')
 {
   /*
@@ -641,6 +656,10 @@ else
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=payed\">Classer 'Payée'</a>]</td>";
 	      }
+	    elseif ($obj->statut == 1 && $resteapayer > 0) 
+	      {
+		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=prerelance\">Envoyer une relance</a>]</td>";
+	      }
 	    else
 	      {
 		print "<td align=\"center\" width=\"25%\">-</td>";
@@ -705,7 +724,7 @@ else
 	 *
 	 */
 	$sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-	$sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $obj->socidp AND a.fk_action = 9 AND a.fk_facture = $facid";
+	$sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $obj->socidp AND a.fk_action in (9,10) AND a.fk_facture = $facid";
 	
 	$result = $db->query($sql);
 	if ($result)
@@ -759,26 +778,50 @@ else
 	    $from_mail = $replytomail;
 	    
 	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$facid&action=send\">\n";
-	    print "<input type=\"hidden\" name=\"replytoname\" value=\"$replytoname\">\n";
-	    print "<input type=\"hidden\" name=\"replytomail\" value=\"$replytomail\">\n";
+	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
+	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
 	    
 	    print "<p><b>Envoyer la facture par mail</b>";
 	    print "<table cellspacing=0 border=1 cellpadding=3>";
 	    print '<tr><td>Destinataire</td><td colspan="5">';
 	    
-	    $form = new Form($db);
-	    
+	    $form = new Form($db);	    
 	    $form->select_array("destinataire",$soc->contact_email_array());
 	    
-	    print '</td>';
-	    print "<td><input size=\"30\" name=\"sendto\" value=\"$obj->email\"></td></tr>";
+	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$obj->email\"></td></tr>";
 	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
 	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
-	    print "<td>$replytomail</td></tr>";
+	    print "<td>$replytomail</td></tr></table>";
 	    
-	    print "</table>";
-	    print "<input type=\"submit\" value=\"Envoyer\">";
-	    print "</form>";
+	    print "<input type=\"submit\" value=\"Envoyer\"></form>";
+	  }
+
+	if ($action == 'prerelance')
+	  {
+	    $replytoname = $user->fullname;
+	    $from_name = $replytoname;
+
+	    $replytomail = $user->email;
+	    $from_mail = $replytomail;
+	    
+	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$facid\">\n";
+	    print '<input type="hidden" name="action" value="relance">';
+	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
+	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
+	    
+	    print_titre("Envoyer une relance");
+	    print "<table cellspacing=0 border=1 cellpadding=3>";
+	    print '<tr><td>Destinataire</td><td colspan="5">';
+	    
+	    $form = new Form($db);	    
+	    $form->select_array("destinataire",$soc->contact_email_array());
+	    
+	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$obj->email\"></td></tr>";
+	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
+	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
+	    print "<td>$replytomail</td></tr></table>";
+	    
+	    print "<input type=\"submit\" value=\"Envoyer\"></form>";
 	  }
 	
 	/*
