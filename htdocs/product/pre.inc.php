@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,10 +20,16 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/pre.inc.php
+        \ingroup    product,service
+		\brief      Fichier gestionnaire du menu gauche des produits et services
+		\version    $Revision$
+*/
+
 require("../main.inc.php");
 
-$types[0] = "produit";
-$types[1] = "service";
 
 function llxHeader($head = "", $urlp = "", $title="")
 {

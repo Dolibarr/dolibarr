@@ -21,7 +21,16 @@
  *
  */
 
+/*!
+	    \file       htdocs/product/stock/product.php
+        \ingroup    product
+		\brief      Page de la fiche produit
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
+$langs->load("products");
 
 $user->getrights('produit');
 $mesg = '';
@@ -30,6 +39,11 @@ if (!$user->rights->produit->lire)
 {
   accessforbidden();
 }
+
+
+$types[0] = $langs->trans("Product");
+$types[1] = $langs->trans("Service");
+
 
 llxHeader("","","Fiche produit");
 
@@ -55,7 +69,7 @@ if ($_POST["action"] == "correct_stock" && $_POST["cancel"] <> "Annuler")
 }
 
 /*
- *
+ * Fiche stock
  *
  */
 if ($_GET["id"])
@@ -65,21 +79,39 @@ if ($_GET["id"])
   
   if ( $product->fetch($_GET["id"]))
     {
-      $head[0][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
-      $head[0][1] = 'Fiche';
+
+        // Zone recherche
+        print '<div class="formsearch">';
+        print '<form action="liste.php" method="post">';
+        print '<input type="hidden" name="type" value="'.$product->type.'">';
+        print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"> &nbsp;';
+        print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
+        print '</form></div>';
+        
+        
+        $h=0;
+        
+        $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+        $head[$h][1] = $langs->trans("Card");
+        $h++;
+        
+        $head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
+        $head[$h][1] = $langs->trans("Price");
+        $h++;
+        
+        if($product->type == 0)
+        {
+            $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+            $head[$h][1] = 'Stock';
+            $hselected=$h;
+            $h++;
+        }
+        
+        $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
+        $head[$h][1] = $langs->trans("Statistics");
+        $h++;
       
-      $head[1][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-      $head[1][1] = $langs->trans("Price");
-      $h = 2;
-      
-      $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-      $head[$h][1] = 'Stock';
-      $h++;
-      
-      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-      $head[$h][1] = $langs->trans("Statistics");
-      
-      dolibarr_fiche_head($head, 2, 'Fiche '.$types[$product->type].' : '.$product->ref);
+        dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
       
       print($mesg);    	      
       
@@ -98,7 +130,7 @@ if ($_GET["id"])
 	  print "<b>Cet article n'est pas en vente</b>";
 	}
       print '</td></tr>';
-      print "<tr><td>Libellé</td><td>$product->libelle</td>";
+      print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
       print '<td><a href="'.DOL_URL_ROOT.'/product/stats/fiche.php?id='.$product->id.'">'.$langs->trans("Statistics").'</a></td></tr>';
       print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
       print '<td valign="top" rowspan="2">';
@@ -113,13 +145,13 @@ if ($_GET["id"])
 	{
 	  $num = $db->num_rows();
 	  $i = 0;
-	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 	  $var=True;      
 	  while ($i < $num)
 	    {
 	      $objp = $db->fetch_object( $i);	  
 	      $var=!$var;
-	      print "<TR $bc[$var]>";
+	      print "<tr $bc[$var]>";
 	      print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td></tr>';
 	      $i++;
 	    }
@@ -135,7 +167,7 @@ if ($_GET["id"])
        * Contenu des stocks
        *
        */
-      print '<br><table class="border" width="100%" cellspacing="0" cellpadding="4">';
+      print '<br><table class="border" width="100%" cellspacing="0" cellpadding="3">';
       print '<tr class="liste_titre"><td width="40%">Entrepôt</td><td width="60%">Valeur du stock</td></tr>';
       $sql = "SELECT e.rowid, e.label, ps.reel FROM ".MAIN_DB_PREFIX."entrepot as e, ".MAIN_DB_PREFIX."product_stock as ps";
       $sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = $product->id";
@@ -154,14 +186,15 @@ if ($_GET["id"])
 	    }
 	}      
       print '<tr><td align="right">'.$langs->trans("Total").':</td><td>'.$total."</td></tr></table>";
+      print '<br>';
 
 
 
     }
   print '</div>';
+
   /*
    * Correction du stock
-   *
    *
    */
   if ($_GET["action"] == "correction")
@@ -169,7 +202,7 @@ if ($_GET["id"])
       print_titre ("Correction du stock");
       print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
       print '<input type="hidden" name="action" value="correct_stock">';
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
+      print '<table class="border" width="100%" cellspacing="0" cellpadding="3"><tr>';
       print '<td width="20%">Entrepôt</td><td width="20%"><select name="id_entrepot">';
       
       $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e WHERE statut = 1";    
@@ -192,15 +225,15 @@ if ($_GET["id"])
       print '<option value="1">'.$langs->trans("Delete").'</option>';
       print '</select></td>';
       print '<td width="20%">Nb de pièce</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
-      print '<tr><td colspan="5" align="center"><input type="submit" value="Enregistrer">&nbsp;';
+      print '<tr><td colspan="5" align="center"><input type="submit" value="'.$langs->trans('Save').'">&nbsp;';
       print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
       print '</table>';
       print '</form>';
 
     }
+
   /*
    * Correction du stock
-   *
    *
    */
   if ($_GET["action"] == "definir")
@@ -208,7 +241,7 @@ if ($_GET["id"])
       print_titre ("Créer un stock");
       print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
       print '<input type="hidden" name="action" value="create_stock">';
-      print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
+      print '<table class="border" width="100%" cellspacing="0" cellpadding="3"><tr>';
       print '<td width="20%">Entrepôt</td><td width="40%"><select name="id_entrepot">';
       
       $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e";    
@@ -226,8 +259,8 @@ if ($_GET["id"])
 	    }
 	}
       print '</select></td><td width="20%">Nb de pièce</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
-      print '<tr><td colspan="4" align="center"><input type="submit" value="Enregistrer">&nbsp;';
-      print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
+      print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans('Save').'">&nbsp;';
+      print '<input type="submit" name="cancel" value="'.$langs->trans('Cancel').'"></td></tr>';
       print '</table>';
       print '</form>';
     }

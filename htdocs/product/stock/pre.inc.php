@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +20,17 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/stock/pre.inc.php
+        \ingroup    stock
+		\brief      Fichier gestionnaire du menu gauche de stocks
+		\version    $Revision$
+*/
+
 require("../../main.inc.php");
 require("./entrepot.class.php");
+
 function llxHeader($head = "", $urlp = "", $title="")
 {
   /*

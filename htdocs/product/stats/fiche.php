@@ -20,8 +20,22 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/product/product.php
+        \ingroup    product
+		\brief      Page des stats produits
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../../propal.class.php");
+
+$langs->load("products");
+
+$types[0] = $langs->trans("Product");
+$types[1] = $langs->trans("Service");
+
 
 if ($user->societe_id > 0)
 {
@@ -87,25 +101,39 @@ if ($_GET["id"])
 	}
 
       // Zone recherche
-      print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
-      print '<tr class="liste_titre">';
-      print '<form action="liste.php?type='.$product->type.'" method="post"><td>';
-      print $langs->trans("Ref").' : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go">';
-      print '</td></form><form action="liste.php" method="post"><td>';
-      print 'Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
-      print '</td></form></tr></table>';
-      print '<br>';
+      print '<div class="formsearch">';
+      print '<form action="liste.php" method="post">';
+      print '<input type="hidden" name="type" value="'.$product->type.'">';
+      print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"> &nbsp;';
+      print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
+      print '</form></div>';
+
       
-      $head[0][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
-      $head[0][1] = 'Fiche';
-	
-      $head[1][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-      $head[1][1] = $langs->trans("Price");
-	
-      $head[2][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
-      $head[2][1] = $langs->trans("Statistics");
-		
-      dolibarr_fiche_head($head, 2, 'Fiche '.$types[$product->type].' : '.$product->ref);
+      $h=0;
+      
+      $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("Card");
+	  $h++;
+	  
+      $head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("Price");
+	  $h++;
+	  
+      if($product->type == 0)
+      {
+        $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+        $head[$h][1] = 'Stock';
+        $h++;
+      }
+
+      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
+      $head[$h][1] = $langs->trans("Statistics");
+	  $hselected=$h;
+	  $h++;
+	  
+	  
+	  dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+
 	      
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
       print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
@@ -179,12 +207,7 @@ if ($_GET["id"])
 	}
       print '<td align="center">[<a href="fiche.php?id='.$product->id.'&amp;action=recalcul">Re-calculer</a>]</td></tr>';
 
-      print '</table>';
-
-
-
-
-
+      print '</table><br>';
 
 
 

@@ -21,6 +21,13 @@
  *
  */
 
+/*!
+	    \file       htdocs/product/fiche.php
+        \ingroup    product
+		\brief      Page de la fiche produit
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../propal.class.php");
 require("../facture.class.php");
@@ -36,6 +43,10 @@ if (!$user->rights->produit->lire)
 {
   accessforbidden();
 }
+
+
+$types[0] = $langs->trans("Product");
+$types[1] = $langs->trans("Service");
 
 
 if ($_POST["action"] == 'add' && $user->rights->produit->creer)
@@ -301,34 +312,38 @@ else
 	       */
 	      
 	      // Zone recherche
-
 	      print '<div class="formsearch">';
 	      print '<form action="liste.php" method="post">';
-
 	      print '<input type="hidden" name="type" value="'.$product->type.'">';
-	      print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go">';
-
-	      print 'Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
+	      print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"> &nbsp;';
+	      print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
 	      print '</form></div>';
 	      
-
-	      $head[0][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
-	      $head[0][1] = 'Fiche';
+          $h=0;
+          
+          $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
+          $head[$h][1] = $langs->trans("Card");
+	      $hselected = $h;
+	      $h++;
 	      
-	      $head[1][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
-	      $head[1][1] = $langs->trans("Price");
-	      $h = 2;
-	      if($product->type == 0)
-		{
-		  $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-		  $head[$h][1] = 'Stock';
-		  $h++;
-		}
+	      $head[$h][0] = DOL_URL_ROOT."/product/price.php?id=".$product->id;
+	      $head[$h][1] = $langs->trans("Price");
+	      $h++;
+
+          if($product->type == 0)
+          {
+            $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+            $head[$h][1] = 'Stock';
+            $h++;
+          }
 
 	      $head[$h][0] = DOL_URL_ROOT."/product/stats/fiche.php?id=".$product->id;
 	      $head[$h][1] = $langs->trans('Statistics');
+	      $h++;
 
-	      dolibarr_fiche_head($head, 0, 'Fiche '.$types[$product->type].' : '.$product->ref);
+
+	      dolibarr_fiche_head($head, $hselected, $langs->trans("CardProduct".$product->type).' : '.$product->ref);
+
 
 	      print($mesg);
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
