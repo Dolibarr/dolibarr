@@ -36,6 +36,28 @@ class Form {
    *
    *
    */
+  Function form_confirm($page, $title, $question)
+  {
+    print '<form method="post" action="'.$page.'">';
+    print '<input type="hidden" name="action" value="confirm_valid">';
+    print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+    
+    print '<tr><td colspan="3">'.$title.'</td></tr>';
+    
+    print '<tr><td class="valid">'.$question.'</td><td class="valid">';
+    $htmls = new Form($db);
+    
+    $this->selectyesno("confirm","no");
+    
+    print "</td>\n";
+    print '<td class="valid" align="center"><input type="submit" value="Confirmer"</td></tr>';
+    print '</table>';
+    print "</form>\n";  
+  }
+  /*
+   *
+   *
+   */
   Function select_tva($name='')
   {
     if (! strlen(trim($name)))
