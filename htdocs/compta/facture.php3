@@ -773,7 +773,6 @@ else
 	
 	$file = FAC_OUTPUTDIR . "/" . $obj->facnumber . "/" . $obj->facnumber . ".pdf";
 	
-	
 	if (file_exists($file))
 	  {
 	    print "<tr $bc[0]><td>Facture PDF</a></td>";
@@ -797,8 +796,7 @@ else
 	  }
 	
 	print "</table>\n";
-	print "</td>";
-	print '<td valign="top" width="50%">';
+	print '</td><td valign="top" width="50%">';
 	print_titre("Actions");
 	/*
 	 * Liste des actions
@@ -843,8 +841,7 @@ else
 	 *
 	 *
 	 */
-	print "</td></tr>";
-	print "</table>";
+	print "</td></tr></table>";
 	
 	/*
 	 *
