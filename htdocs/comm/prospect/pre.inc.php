@@ -33,6 +33,9 @@ function llxHeader($head = "", $urlp = "") {
   $menu = new Menu();
 
   $menu->add(DOL_URL_ROOT."/comm/prospect/", "Prospection");
+
+  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=p", "Nouveau prospect");
+
   $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php", "Liste");
 
   $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=0","Derniers");
