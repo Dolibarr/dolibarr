@@ -268,9 +268,22 @@ function print_liste_field_titre_new($name, $file, $field, $begin="", $options="
 
 function print_titre($titre)
 {
-  global $conf;
   print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
   print '<tr><td><div class="titre">'.$titre.'</div></td>';
+  print '</tr></table>';
+}
+/*
+ *
+ *
+ */
+function print_fiche_titre($titre, $mesg='')
+{
+  print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
+  print '<tr><td><div class="titre">'.$titre.'</div></td>';
+  if (strlen($mesg))
+    {
+      print '<td>'.$mesg.'</td>';
+    }
   print '</tr></table>';
 }
 /*
