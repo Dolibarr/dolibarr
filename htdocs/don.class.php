@@ -292,8 +292,7 @@ class Don
       }    
   }
   /*
-   * Somme des dons payés
-   * encaissés ou non
+   * Somme des dons encaissés
    */
   Function sum_actual()
   {
@@ -309,8 +308,8 @@ class Don
 
       }
   }
-  /*
-   * En attente de paiement
+  /* Paiement recu en attente d'encaissement
+   * 
    *
    */
   Function sum_pending()
