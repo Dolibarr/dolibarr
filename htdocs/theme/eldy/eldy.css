@@ -63,21 +63,21 @@ border-right: 1px solid #000000;
 border-bottom: 1px solid #000000;
 }
 td.menusel { 
-border-left: 1px solid #FFFFFF;
+border-left: 1px solid #333344;
 border-right: 1px solid #FFFFFF;
-border-top: 1px solid #FFFFFF;
+border-top: 1px solid #333344;
 border-bottom: 1px solid #FFFFFF;
 }
 
 .menu { 
     background: #b3c5cc; 
-    font-size: 12px; font-weight: bold; 
+    font-size: 12px; 
     color: #000000; 
     text-decoration: none;
 }
 .menusel
 { 
-    background: #96B9C9;
+    background: #a8bdc0;
     font-size: 12px; font-weight: bold; 
     color: #000000; 
     text-decoration: none;
@@ -259,7 +259,7 @@ font: helvetica, verdana, arial, sans-serif;
 tr.box_titre { 
 background: #7699A9;
 color: #334444;
-font: helvetica, verdana, arial, sans-serif;
+font: 12px helvetica, verdana, arial, sans-serif;
 font-weight: bold;
 border-left: 1px solid #FFFFFF;
 border-right: 1px solid #FFFFFF;
@@ -270,12 +270,12 @@ white-space: nowrap;
 
 tr.box_impair { 
 background: #e2ebed; 
-font: helvetica, verdana, arial, sans-serif;
+font: 12px helvetica, verdana, arial, sans-serif;
 }
 
 tr.box_pair { 
 background: #c0d5dd;
-font: helvetica, verdana, arial, sans-serif;
+font: 12px helvetica, verdana, arial, sans-serif;
 }
 
 tr.fiche { 

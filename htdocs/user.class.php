@@ -49,15 +49,8 @@ class User
       $this->compta = 1;
       $this->limite_liste = 0;
 
-      $this->rights->facture->lire = 0;
-      $this->rights->facture->creer = 0;
-      $this->rights->facture->modifier = 0;
-      $this->rights->facture->supprimer = 0;
+      $this->permissions_are_loaded = 0;
 
-      $this->rights->produit->lire = 0;
-      $this->rights->produit->creer = 0;
-      $this->rights->produit->modifier = 0;
-      $this->rights->produit->supprimer = 0;
       return 1;
   }
   /*
@@ -192,13 +185,15 @@ class User
    */
   Function getrights($module='')
     {
+      if ($this->permissions_are_loaded) {
+        // Si les permissions ont déja été chargé pour ce user, on quitte
+        // Cela évite de faire n fois le select quand la fonction est appelée plusieurs fois
+        // pour charger les droits de différents modules. On les charges tous la
+        // première fois, puis on ne fait plus rien.
+        return;
+      }
+
       $sql = "SELECT fk_user, fk_id FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user= $this->id";
-      /*
-	if ($module)
-	{
-	$sql .= " AND module = '$module'";
-	}
-      */
       if ($this->db->query($sql))
 	{
 	  $rr=array();
@@ -339,12 +334,20 @@ class User
 
 	      if ($module == 'compta' or $module == '')
 		{
+		  if ($obj->fk_id == 91)
+		    $this->rights->compta->charges->lire = 1;
+
 		  if ($obj->fk_id == 92)
-		    $this->rights->compta->charges = 1;
+		    $this->rights->compta->charges->creer = 1;
 
 		  if ($obj->fk_id == 93)
-		    $this->rights->compta->resultat = 1;
+		    $this->rights->compta->charges->supprimer = 1;
+
+		  if ($obj->fk_id == 95)
+		    $this->rights->compta->resultat->lire = 1;
+
 		}
+		
 	      if ($module == 'banque' or $module == '')
 		{
 		  if ($obj->fk_id == 111)
@@ -359,7 +362,10 @@ class User
 		}
 	      $i++;
 	      }
-	    //	    $this->db->free();	    
+
+	    $this->db->free();	    
+
+        $this->permissions_are_loaded=1;
 	  }
 	else
 	  {
@@ -452,7 +458,6 @@ class User
    */
   Function delete()
     {
-
       if ($this->contact_id) 
 	{
 

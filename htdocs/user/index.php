@@ -27,7 +27,9 @@ print_titre("Liste des utilisateurs");
 
 $sql = "SELECT u.rowid, u.name, u.firstname, u.code, u.login, u.module_comm, u.module_compta";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql .= " ORDER BY u.name";
+$sql .= " ORDER BY ";
+if ($sortfield) { $sql.="$sortfield $sortorder"; }
+else { $sql.="u.name"; }
 
 $result = $db->query($sql);
 if ($result)
@@ -35,12 +37,20 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print '<TR class="liste_titre">';
-  print "<TD>Prenom</TD>";
-  print "<TD>Nom</TD>";
-  print '<TD>login</TD>';
-  print "<TD>code</TD>";
+  print "<TD>";
+  print_liste_field_titre("Nom",$PHP_SELF,"name");
+  print "</TD>";
+  print "<TD>";
+  print_liste_field_titre("Prénom",$PHP_SELF,"firstname");
+  print "</TD>";
+  print "<TD>";
+  print_liste_field_titre("Login",$PHP_SELF,"login");
+  print "</TD>";
+  print "<TD>";
+  print_liste_field_titre("Code",$PHP_SELF,"code");
+  print "</TD>";
   print "</TR>\n";
   $var=True;
   while ($i < $num)
@@ -49,9 +59,13 @@ if ($result)
       $var=!$var;
       
       print "<TR $bc[$var]>";
-      print '<TD><a href="fiche.php?id='.$obj->rowid.'">'.$obj->firstname.'</a></td>';
-      print '<TD>'.$obj->name.'</TD>';
-      print '<TD><a href="fiche.php?id='.$obj->rowid.'">'.$obj->login.'</a></TD>';
+      print '<TD>'.ucfirst($obj->name).'</TD>';
+      print '<TD>'.ucfirst($obj->firstname).'</td>';
+      if ($obj->login) {
+        print '<TD><a href="fiche.php?id='.$obj->rowid.'">'.$obj->login.'</a></TD>';
+      } else {
+        print '<TD><a class="impayee" href="fiche.php?id='.$obj->rowid.'">Inactif</a></TD>';
+      }        
       print '<TD>'.$obj->code.'</TD>';
       print "</TR>\n";
       $i++;

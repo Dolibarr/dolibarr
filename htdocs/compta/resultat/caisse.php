@@ -26,7 +26,7 @@ require("./pre.inc.php");
  */
 $user->getrights('compta');
 
-if (!$user->rights->compta->resultat)
+if (!$user->rights->compta->resultat->lire)
   accessforbidden();
 
 llxHeader();

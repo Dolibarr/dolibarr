@@ -23,6 +23,7 @@
 
 global $PHP_SELF;
 
+
 $nbofentries=0;
 if ($conf->commercial->enabled)   $nbofentries++;
 if ($conf->adherent->enabled)     $nbofentries++;
@@ -45,7 +46,7 @@ else {
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "commercial") { $class="menusel"; }
       elseif (ereg("^".DOL_URL_ROOT."\/comm\/",$PHP_SELF)) { $class="menusel"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
-      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/comm/index.php">Commercial</A>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/comm/index.php"'.($target?" target=$target":"").'>Commercial</A>';
       print '</td>';
     }
     
@@ -55,7 +56,7 @@ else {
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "adherent") { $class="menusel"; }
       elseif (ereg("^".DOL_URL_ROOT."\/adherents\/",$PHP_SELF)) { $class="menusel"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
-      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/adherents/index.php">Adhérents</A>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/adherents/index.php"'.($target?" target=$target":"").'>Adhérents</A>';
       print '</td>';
     }
     
@@ -65,7 +66,7 @@ else {
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "compta") { $class="menusel"; }
       elseif (ereg("^".DOL_URL_ROOT."\/compta\/",$PHP_SELF)) { $class="menusel"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
-      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/compta/index.php">Compta</A>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/compta/index.php"'.($target?" target=$target":"").'>Compta</A>';
       print '</td>';
     }
     
@@ -79,7 +80,7 @@ else {
       if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
       if ($conf->service->enabled) { $chaine.="Services"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
-      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/product/?type=0">'.$chaine.'</a>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/product/?type=0"'.($target?" target=$target":"").'>'.$chaine.'</a>';
       print '</td>';
     }
     
@@ -87,9 +88,10 @@ else {
     {
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "webcalendar") { $class="menusel"; }
-      elseif (ereg("^".DOL_URL_ROOT."\/webcalendar\/",$PHP_SELF)) { $class="menusel"; }
+      elseif (ereg("^".DOL_URL_ROOT."\/projet\/",$PHP_SELF) || ereg("^".DOL_URL_ROOT."\/webcalendar\/",$PHP_SELF)) { $class="menusel"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
-      print '<a class="'.$class.'" href="'. PHPWEBCALENDAR_URL .'">Calendrier</a>';
+//      print '<a class="'.$class.'" href="'. PHPWEBCALENDAR_URL .'">Calendrier</a>';
+      print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/projet/webcal.php"'.($target?" target=$target":"").'>Calendrier</a>';
       print '</td>';
     };
     

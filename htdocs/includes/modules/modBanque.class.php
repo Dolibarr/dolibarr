@@ -61,9 +61,10 @@ class modBanque extends DolibarrModules
      * Permissions
      */    
     $sql = array(
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (111,'Lire les comptes','banque','a',1);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (112,'Modifier les comptes','banque','a',0);",
-		 "insert into ".MAIN_DB_PREFIX."rights_def values (113,'Configurer les comptes','banque','a',0);",		 
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (110,'Tous les droits sur les comptes bancaires','banque','a',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (111,'Lire les comptes','banque','r',1);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (112,'Créer modifier rapprocher écritures','banque','w',0);",
+		 "insert into ".MAIN_DB_PREFIX."rights_def values (113,'Configurer les comptes (créer, gérer catégories)','banque','w',0);",
 		 );
     
     return $this->_init($sql);
