@@ -27,6 +27,15 @@ class mod_codeclient_zebre
   function mod_codeclient_zebre()
   {
     $this->nom = "Zèbre";
+
+    $this->code_modifiable = 0; // code modifiable
+
+    $this->code_modifiable_invalide = 0; // code modifiable si il est invalide
+
+    $this->code_modifiable_null = 1; // code modifiable si il est null
+
+    $this->code_null = 0; // Saisi vide interdite
+
   }
   /*!     \brief      Renvoi la description du module
    *      \return     string      Texte descripif
@@ -42,13 +51,13 @@ class mod_codeclient_zebre
    *
    */
 
-  function verif($db, $code)
+  function verif($db, $code, $socid=0)
     { 
       if ($this->verif_syntax($code) == 0)
 	{	  
 	  $i = 1;
 
-	  $is_dispo = $this->verif_dispo($db, $code);
+	  $is_dispo = $this->verif_dispo($db, $code, $socid);
 
 	  while ( $is_dispo <> 0 && $i < 99)
 	    {

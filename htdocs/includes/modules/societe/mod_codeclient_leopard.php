@@ -24,9 +24,26 @@
 class mod_codeclient_leopard
 {
 
+  /*
+   * Attention ce module est utilisé par défaut si aucun module n'a 
+   * été définit dans la configuration
+   *
+   * Le fonctionnement de celui-ci doit dont rester le plus ouvert
+   * possible
+   */
+
   function mod_codeclient_leopard()
   {
     $this->nom = "Léopard";
+    $this->code_modifiable = 1;
+
+    $this->code_modifiable_invalide = 1; // code modifiable si il est invalide
+
+    $this->code_modifiable_null = 1; // code modifiable si il est null
+
+    $this->code_null = 1;
+
+
   }
 
   function info()

@@ -47,30 +47,27 @@ $soc = new Societe($db);
 
 if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 {
-  $soc->nom                  = $_POST["nom"];
-  $soc->adresse              = $_POST["adresse"];
-  $soc->cp                   = $_POST["cp"];
-  $soc->ville                = $_POST["ville"];
-  $soc->pays_id              = $_POST["pays_id"];
-  $soc->departement_id       = $_POST["departement_id"];
-  $soc->tel                  = $_POST["tel"];
-  $soc->fax                  = $_POST["fax"];
-  $soc->url                  = ereg_replace( "http://", "", $_POST["url"] );
-  $soc->siren                = $_POST["siren"];
-  $soc->siret                = $_POST["siret"];
-  $soc->ape                  = $_POST["ape"];
-  $soc->prefix_comm          = $_POST["prefix_comm"];
-
-  if (strlen(trim($_POST["code_client"])))
-    {
-      $soc->code_client      = $_POST["code_client"];
-    }
-  $soc->capital              = $_POST["capital"];
-  $soc->tva_intra            = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
-  $soc->forme_juridique_code = $_POST["forme_juridique_code"];
-  $soc->effectif_id          = $_POST["effectif_id"];
-  $soc->client               = $_POST["client"];
-  $soc->fournisseur          = $_POST["fournisseur"];
+  $soc->nom                   = $_POST["nom"];
+  $soc->adresse               = $_POST["adresse"];
+  $soc->cp                    = $_POST["cp"];
+  $soc->ville                 = $_POST["ville"];
+  $soc->pays_id               = $_POST["pays_id"];
+  $soc->departement_id        = $_POST["departement_id"];
+  $soc->tel                   = $_POST["tel"];
+  $soc->fax                   = $_POST["fax"];
+  $soc->url                   = ereg_replace( "http://", "", $_POST["url"] );
+  $soc->siren                 = $_POST["siren"];
+  $soc->siret                 = $_POST["siret"];
+  $soc->ape                   = $_POST["ape"];
+  $soc->prefix_comm           = $_POST["prefix_comm"];
+  $soc->code_client           = $_POST["code_client"];
+  $soc->codeclient_modifiable = $_POST["codeclient_modifiable"];
+  $soc->capital               = $_POST["capital"];
+  $soc->tva_intra             = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
+  $soc->forme_juridique_code  = $_POST["forme_juridique_code"];
+  $soc->effectif_id           = $_POST["effectif_id"];
+  $soc->client                = $_POST["client"];
+  $soc->fournisseur           = $_POST["fournisseur"];
 
   if ($_POST["action"] == 'update')
     {
@@ -208,6 +205,7 @@ elseif ($_GET["action"] == 'edit')
 	  $soc->id = $_GET["socid"];
 	  $soc->fetch($_GET["socid"]);
 	}
+
       if ($soc->error_message)
 	{
 	  print '<div class="errormessage">';
@@ -217,6 +215,7 @@ elseif ($_GET["action"] == 'edit')
 
       print '<form action="soc.php?socid='.$soc->id.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
+      print '<input type="hidden" name="codeclient_modifiable" value="'.$soc->codeclient_modifiable.'">';
 
       print '<table class="border" width="100%">';
       print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="40" name="nom" value="'.stripslashes($soc->nom).'"></td>';
@@ -241,15 +240,15 @@ elseif ($_GET["action"] == 'edit')
       print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
 
       print '<tr><td>'.$langs->trans('Code client').'</td><td colspan="3">';
-      if ($soc->code_client && $soc->check_codeclient() == 0)
-	{
-	  print $soc->code_client;
-	}
-      else
+
+      if ($soc->codeclient_modifiable == 1)
 	{
 	  print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
 	}
-
+      else
+	{
+	  print $soc->code_client;
+	}
       print '</td></tr>';
 
       print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
@@ -276,9 +275,9 @@ elseif ($_GET["action"] == 'edit')
       print '</td></tr>';
 
       print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td><select name="client">';
-	  print '<option value="2"'.($soc->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
-	  print '<option value="1"'.($soc->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
-	  print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
+      print '<option value="2"'.($soc->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
+      print '<option value="1"'.($soc->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
+      print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
       print '</select></td>';
 
       print '<td>'.$langs->trans('Supplier').'</td><td>';

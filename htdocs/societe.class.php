@@ -67,13 +67,31 @@ class Societe {
   function Societe($DB, $id=0)
   {
     global $config;
-
+    $this->creation_bit = 0;
     $this->db = $DB;
     $this->id = $id;
     $this->client = 0;
     $this->fournisseur = 0;
     $this->effectif_id  = 0;
     $this->forme_juridique_code  = 0;
+
+    if (defined('CODECLIENT_ADDON') && strlen(CODECLIENT_ADDON) > 0)
+      {
+	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.CODECLIENT_ADDON.'.php';
+	
+	$var = CODECLIENT_ADDON;
+      }
+    else
+      {
+	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/mod_code_client_leopard.php';
+	
+	$var = "mod_code_client_leopard";
+      }
+
+	$this->mod_codeclient = new $var;
+
+
+    $this->codeclient_modifiable = $this->mod_codeclient->modifiable;
 
     return 1;
   }
@@ -99,6 +117,8 @@ class Societe {
 	    $this->id = $this->db->last_insert_id();
 	  }
 	
+	$this->creation_bit = 1;
+
 	$result = $this->update($this->id);
 
 	return $result;
@@ -110,10 +130,9 @@ class Societe {
     
   }
 
+
   /**
-   *    \brief  Mise a jour des paramètres de la société
-   *    \param  id      id societe
-   *    \param  user    Utilisateur qui demande la mise à jour
+   *    \brief  Verification lors de la modification
    */
   function verify()
   {
@@ -125,31 +144,37 @@ class Societe {
 	$result = -2;
       }
 
-    $rescode = $this->verif_codeclient();
-
-    if ($rescode <> 0)
+    if ($this->codeclient_modifiable)
       {
-	if ($rescode == -1)
-	  {
-	    $this->error_message .= "La syntaxe du code client est incorrecte.\n";
-	  }
+	// On ne vérifie le code client que si celui-ci est modifiable
+	// Si il n'est pas modifiable il n'est pas mis à jour lors de l'update
 
-	if ($rescode == -2)
-	  {
-	    $this->error_message .= "Vous devez saisir un code client.\n";
-	  }
+	$rescode = $this->verif_codeclient();
 
-	if ($rescode == -3)
+	if ($rescode <> 0)
+	  {
+	    if ($rescode == -1)
+	      {
+		$this->error_message .= "La syntaxe du code client est incorrecte.\n";
+	      }
+	    
+	    if ($rescode == -2)
+	      {
+		$this->error_message .= "Vous devez saisir un code client.\n";
+	      }
+	    
+	    if ($rescode == -3)
 	  {
 	    $this->error_message .= "Ce code client est déjà utilisé.\n";
 	  }
-
-	$result = -3;
+	    
+	    $result = -3;
+	  }
       }
+
 	
 
     return $result;
-
   }
 
   /**
@@ -248,7 +273,7 @@ class Societe {
 	    $sql .= ",fk_user_modif = '".$user->id."'";
 	  }
 	
-	if (trim($this->code_client))
+	if ($this->creation_bit || $this->codeclient_modifiable)
 	  {   
 	    // Attention check_codeclient peut modifier le code 
 	    // suivant le module utilisé
@@ -349,6 +374,13 @@ $this->error_message = "Erreur, le prefix '".$this->prefix_comm."' existe déjà v
 	      $this->capital   = $obj->capital;
 
 	      $this->code_client = $obj->code_client;
+
+	      if (strlen($this->code_client) == 0 && $this->mod_codeclient->code_modifiable_null == 1)
+		{
+		  $this->codeclient_modifiable = 1;
+		}
+
+
 	      $this->code_compta = $obj->code_compta;
 
 	      $this->tva_intra      = $obj->tva_intra;
@@ -880,7 +912,7 @@ $this->error_message = "Erreur, le prefix '".$this->prefix_comm."' existe déjà v
 
 	$mod = new $var;
 
-	return $mod->verif($this->db, $this->code_client);
+	return $mod->verif($this->db, $this->code_client, $this->id);
       }
     else
       {
