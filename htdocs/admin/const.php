@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,15 @@ print '<table border="1" cellpadding="3" cellspacing="0">';
 
 $db = new Db();
 
-$sql = "SELECT name, value FROM llx_const";
+if ($HTTP_POST_VARS["action"] == 'update')
+{
+
+  $sql = "UPDATE llx_const set value = '".$HTTP_POST_VARS["constvalue"]."' where rowid=".$HTTP_POST_VARS["rowid"].";";
+
+  $result = $db->query($sql);
+}
+
+$sql = "SELECT rowid, name, value FROM llx_const";
 $result = $db->query($sql);
 if ($result) 
 {
@@ -39,7 +47,24 @@ if ($result)
     {
       $obj = $db->fetch_object( $i);
 
-      print '<tr><td>'.$obj->name.'</td><td>' . $obj->value . '</td></tr>';
+      print '<tr><td>'.$obj->name.'</td><td>' . $obj->value . '</td><td>';
+
+      if ($rowid == $obj->rowid && $action == 'edit')
+	{
+	  print '<form action="'.$PHP_SELF.'" method="POST">';
+	  print '<input type="hidden" name="action" value="update">';
+	  print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+	  
+	  print '<input type="text" name="constvalue" value="'.stripslashes($obj->value).'">';
+	  print '<input type="submit">';
+	  print '</form>';
+	}
+      else 
+	{
+	  print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&action=edit">edit</a>';
+	}
+
+      print '</td></tr>';
       $i++;
     }
 }
