@@ -23,7 +23,9 @@
 -- $Source$
 -- ===================================================================
 
+
 -- Supprimme orhpelins pour permettre montée de la clé
 DELETE llx_facturedet FROM llx_facturedet LEFT JOIN llx_facture ON llx_facturedet.fk_facture = llx_facture.rowid WHERE llx_facture.rowid IS NULL;
 
-ALTER TABLE llx_facturedet       ADD CONSTRAINT facturedet_fk_facture_rowid	FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
+ALTER TABLE llx_facturedet ADD INDEX idx_facturedet_fk_facture (fk_facture);
+ALTER TABLE llx_facturedet ADD CONSTRAINT facturedet_fk_facture_rowid	FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);

@@ -24,4 +24,6 @@
 --
 -- ===================================================================
 
-ALTER TABLE llx_fichinter        ADD CONSTRAINT fichinter_fk_soc_idp		FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
+
+ALTER TABLE llx_fichinter ADD INDEX idx_fichinter_fk_soc (fk_soc);
+ALTER TABLE llx_fichinter ADD CONSTRAINT fichinter_fk_soc_idp		FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);

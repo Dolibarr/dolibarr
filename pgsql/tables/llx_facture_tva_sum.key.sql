@@ -24,10 +24,8 @@
 -- ===================================================================
 
 
-ALTER TABLE llx_facture_tva_sum ADD INDEX idx_fk_facture (fk_facture);
-
-
 -- Supprimme orhpelins pour permettre montée de la clé
 DELETE llx_facture_tva_sum FROM llx_facture_tva_sum LEFT JOIN llx_facture ON llx_facture_tva_sum.fk_facture = llx_facture.rowid WHERE llx_facture.rowid IS NULL;
 
-ALTER TABLE llx_facture_tva_sum  ADD CONSTRAINT facture_tva_sum_fk_facture_rowid FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
+ALTER TABLE llx_facture_tva_sum ADD INDEX idx_facture_tva_sum_fk_facture (fk_facture);
+ALTER TABLE llx_facture_tva_sum ADD CONSTRAINT facture_tva_sum_fk_facture_rowid FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);

@@ -23,15 +23,10 @@
 -- $Source$
 -- ===================================================================
 
-
 create table llx_paiement_facture
 (
   rowid SERIAL PRIMARY KEY,
   "fk_paiement"     integer,
   "fk_facture"      integer,
   "amount"          real     DEFAULT 0
-  
 );
-
-CREATE INDEX idx_llx_paiement_facture_fk_paiement ON llx_paiement_facture (fk_paiement);
-CREATE INDEX idx_llx_paiement_facture_fk_facture ON llx_paiement_facture (fk_facture);
