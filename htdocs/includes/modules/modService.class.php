@@ -46,7 +46,7 @@ class modService extends DolibarrModules
     $this->const = array();
     $this->boxes = array();
 
-    $this->boxes[0][0] = "Services vendus";
+    $this->boxes[0][0] = "Derniers produits/services contractés";
     $this->boxes[0][1] = "box_services_vendus.php";
   }
   /*

@@ -45,7 +45,7 @@ class modProduit extends DolibarrModules
     $this->const = array();
     $this->boxes = array();
 
-    $this->boxes[0][0] = "Derniers produits";
+    $this->boxes[0][0] = "Derniers produits/services enregistrés";
     $this->boxes[0][1] = "box_produits.php";
   }
   /*
