@@ -299,16 +299,16 @@ class User
 	      if ($module == 'expedition' or $module == '')
 		{
 
-		  if ($obj->fk_id == 81)
+		  if ($obj->fk_id == 101)
 		    $this->rights->expedition->lire = 1;
 			
-		  if ($obj->fk_id == 82)
+		  if ($obj->fk_id == 102)
 		    $this->rights->expedition->creer = 1;
 						
-		  if ($obj->fk_id == 84)
+		  if ($obj->fk_id == 104)
 		    $this->rights->expedition->valider = 1;
 
-		  if ($obj->fk_id == 89)
+		  if ($obj->fk_id == 109)
 		    $this->rights->expedition->supprimer = 1;
 		}
 
@@ -445,8 +445,8 @@ class User
 	}
 
   }
-  /*
-   *
+  /**
+   * Créé l'utilisateur
    *
    */
   Function create()
@@ -487,7 +487,7 @@ class User
 	  print $this->db->error();
 	}
     }
-  /*
+  /**
    *
    *
    */
@@ -543,8 +543,8 @@ class User
 	}
       
     }
-  /*
-   *
+  /**
+   * Affectation des permissions par défaut
    *
    */
   Function set_default_rights()
@@ -575,9 +575,8 @@ class User
 	  $i++;
 	}
     }
-
-  /*
-   *
+  /**
+   * Mise à jour
    *
    */
   Function update()
