@@ -75,6 +75,8 @@ function llxHeader($head = "", $title="", $addons='') {
       $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"));
     }
   
+  $menu->add_submenu(DOL_URL_ROOT."/fourn/commande/",$langs->trans("Orders"));
+
   $menu->add(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("Products"));
   
   left_menu($menu->liste);
