@@ -39,6 +39,8 @@ class modExpedition extends DolibarrModules
     $this->const_name = "MAIN_MODULE_EXPEDITION";
     $this->const_config = MAIN_MODULE_EXPEDITION;
 
+    $this->config_page_url = "expedition.php";
+
     $this->const = array();
     $this->boxes = array();
   }
