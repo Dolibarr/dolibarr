@@ -503,7 +503,10 @@ else
   
       if ($obj->statut == 0 && $user->societe_id == 0)
 	{
-	  print '<a class="tabAction" href="index.php?facid='.$facid.'&amp;action=delete">Supprimer</a>';
+        if ($action != "edit")
+	    {
+	        print '<a class="tabAction" href="index.php?facid='.$facid.'&amp;action=delete">Supprimer</a>';
+        }
 	}
       elseif ($obj->statut == 1 && $obj->paye == 0  && $user->societe_id == 0)
 	{
@@ -514,7 +517,7 @@ else
 	{
 	  if ($action == "edit")
 	    {
-	      print '<a class="tabAction" href="fiche.php?facid='.$obj->rowid.'">Annuler</a>';
+	      print '<a class="tabAction" href="fiche.php?facid='.$obj->rowid.'">Abandonner</a>';
 	    }
 	  else
 	    {
