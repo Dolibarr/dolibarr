@@ -131,54 +131,53 @@ $db = new Db();
   }
   $sql .= " ORDER BY b.dateo ASC";
   
-  $result = $db->query($sql);
-  if ($result) {
-    $var=True;  
-    $num = $db->num_rows();
-    $i = 0; $total = 0;
+$result = $db->query($sql);
+if ($result) {
+  $var=True;  
+  $num = $db->num_rows();
+  $i = 0; $total = 0;
+    
+  $sep = 0;
   
-    $sep = 0;
-  
-    while ($i < $num) {
-      $objp = $db->fetch_object( $i);
-      $total = $total + $objp->amount;
-      $time = time();
-      if ($i > ($nbline - $viewline)) {
+  while ($i < $num) {
+    $objp = $db->fetch_object( $i);
+    $total = $total + $objp->amount;
+    $time = time();
+    if ($i > ($nbline - $viewline)) {
+      
 
+      $var=!$var;
 
-	  $var=!$var;
-
-
-	  print "<tr $bc[$var]>";
-	  print "<td>".strftime("%d %b %y",$objp->do)."</TD>\n";
-
-	  if ($objp->num_chq) {
-	    print "<td>CHQ $objp->num_chq - $objp->label</td>";
-	  } else {
-	    print "<td>$objp->label</td>";
-	  }
-
-	  if ($objp->amount < 0) {
-	    print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
-	  } else {
-	    print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
-	  }
-	
-	  if ($total > 0) {
-	    print "<td align=\"right\">".price($total)."</TD>\n";
-	  } else {
-	    print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
-	  }
-
-	  if ($objp->rappro) {
-	    print "<td align=\"center\"><a href=\"releve.php3?num=$objp->num_releve&account=$account\">$objp->num_releve</a></td>";
-	  } else {
-	    print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid&account=$account\">[Del]</a></td>";
-	  }
-
-	  print "<td align=\"right\"><small>".$objp->fk_account."</small></TD>\n";
-
-	  print "</tr>";
+      print "<tr $bc[$var]>";
+      print "<td>".strftime("%d %b %y",$objp->do)."</TD>\n";
+      
+      if ($objp->num_chq) {
+	print "<td>CHQ $objp->num_chq - $objp->label</td>";
+      } else {
+	print "<td>$objp->label</td>";
+      }
+      
+      if ($objp->amount < 0) {
+	print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
+      } else {
+	print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
+      }
+      
+      if ($total > 0) {
+	print "<td align=\"right\">".price($total)."</TD>\n";
+      } else {
+	print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
+      }
+      
+      if ($objp->rappro) {
+	print "<td align=\"center\"><a href=\"releve.php3?num=$objp->num_releve&account=$objp->fk_account\">$objp->num_releve</a></td>";
+      } else {
+	print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid&account=$objp->fk_account\">[Del]</a></td>";
+      }
+      
+      print "<td align=\"right\"><small>".$objp->fk_account."</small></TD>\n";
+      
+      print "</tr>";
 
 
       }

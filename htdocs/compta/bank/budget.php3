@@ -95,7 +95,7 @@ if ($bid == 0) {
   print "<b>Budget : $budget_name</b>";
 
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-  print "<TR bgcolor=\"orange\">";
+  print "<TR class=\"liste_titre\">";
   echo '<td align="right">Date</td><td width="60%">Description</td><td align="right">Montant</td><td>&nbsp;</td>';
   print "</TR>\n";
 
