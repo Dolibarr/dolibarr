@@ -326,7 +326,7 @@ class Propal
 	}
     }
   /*
-   *
+   * Lit les informations
    *
    *
    */
@@ -487,8 +487,8 @@ class Propal
 	    }
 	}
   }
-  /*
-   *
+  /**
+   * Définit une remise globale sur la proposition
    *
    *
    */
@@ -496,7 +496,6 @@ class Propal
     {
       if ($user->rights->propale->creer)
 	{
-
 	  $remise = ereg_replace(",",".",$remise);
 
 	  $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET remise_percent = ".$remise;
