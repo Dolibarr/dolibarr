@@ -170,7 +170,7 @@ if ($action == 'create') {
     print '<a href="'.$url.'">Documents</a>';
   } else {
    
-    mkdir ("$docdir", 0700);
+    mkdir ("$docdir", 2775);
     if (file_exists ($docdir)) {
       print '<a href="'.$url.'">Documents</a>';
     }
