@@ -56,7 +56,7 @@ class GraphBar extends DolibarrGraph {
 
 	$graph->SetFrame($this->showframe);
     
-	$graph->img->SetMargin(40,20,20,40);
+	$graph->img->SetMargin(40,20,20,30);
     
 	if ($this->type == 'LinePlot')
 	  {
@@ -72,7 +72,8 @@ class GraphBar extends DolibarrGraph {
 	$graph->xaxis->scale->SetGrace(20);
 
 	$LabelAngle = 45;
-	if ($this->LabelAngle <> $LabelAngle && $this->LabelAngle > 0)
+
+	if ($this->LabelAngle <> $LabelAngle && strlen($this->LabelAngle) > 0)
 	  $LabelAngle = $this->LabelAngle;
 
 	$graph->xaxis->SetLabelAngle($LabelAngle);
@@ -85,11 +86,13 @@ class GraphBar extends DolibarrGraph {
     
 	$graph->title->SetFont(FF_VERDANA,FS_NORMAL);
 
-	$graph->yaxis->title->SetFont(FF_FONT2);
+	$graph->yaxis->title->SetFont(FF_FONT1);
 	$graph->xaxis->title->SetFont(FF_FONT1);
     
 	$graph->xaxis->SetTickLabels($labels);
     
+	$graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
+
 	// Display the graph
     
 	$graph->img->SetImgFormat("png");
