@@ -47,7 +47,7 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/facture/liste.php", "Factures");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/fournisseurs.php", "Fournisseurs");
+  $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/", "Fournisseurs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/config/", "Configuration");
 
