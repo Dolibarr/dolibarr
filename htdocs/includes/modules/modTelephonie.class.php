@@ -114,6 +114,13 @@ class modTelephonie extends DolibarrModules
     $this->rights[5][4] = 'fournisseur'; // La permission est-elle une permission par défaut
     $this->rights[5][5] = 'config'; // La permission est-elle une permission par défaut
 
+    $this->rights[6][0] = 192;
+    $this->rights[6][1] = 'Creer des lignes';
+    $this->rights[6][2] = 'w';
+    $this->rights[6][3] = 0;
+    $this->rights[6][4] = 'ligne';
+    $this->rights[6][5] = 'creer';
+
     // Dir
     $this->dirs[0] = DOL_DATA_ROOT . "/telephonie/" ;
     $this->dirs[1] = DOL_DATA_ROOT . "/telephonie/ligne/" ;	  
