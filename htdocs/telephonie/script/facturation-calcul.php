@@ -35,7 +35,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
 
 $error = 0;
-
+$nbcommit = 0;
 $datetime = time();
 
 $date = strftime("%d%h%Y%Hh%Mm%S",$datetime);
@@ -59,25 +59,52 @@ else
 
 /********************************************************
  *
- * Affiche le nombre de ligne a facturer
+ * Affiche le nombre de comunications a traiter
  *
  *********************************************************/
 
 $sql = "SELECT count(*)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";;
   
-if ( $db->query($sql) )
+$resql = $db->query($sql);
+  
+if ( $resql )
 {
-  $num = $db->num_rows();
-  $row = $db->fetch_row();
+  $num = $db->num_rows($resql);
+  $row = $db->fetch_row($resql);
 
   dolibarr_syslog("Communications à traiter ".$row[0]);
-  $db->free();
+  $db->free($resql);
 }
 else
 {
-  $error++;
+  $error = 1;
+  dolibarr_syslog("Erreur ".$error);
 }
+
+/**********************************************************
+*
+*
+*
+***********************************************************/
+
+$sql = "SELECT MAX(rowid) FROM ".MAIN_DB_PREFIX."telephonie_facture";
+
+$resql = $db->query($sql);
+  
+if ( $resql )
+{
+  $row = $db->fetch_row($resql);
+
+  dolibarr_syslog("Max rowid avant facture ".$row[0]);
+  $db->free($resql);
+}
+else
+{
+  $error = 2;
+  dolibarr_syslog("Erreur ".$error);
+}
+
 
 /**
  *
@@ -89,11 +116,11 @@ if (!$error)
 {
   $user = new user($db,1);
   
-  $sql = "SELECT distinct(t.ligne)";
+  $sql = "SELECT distinct(t.fk_ligne)";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr as t";
-  $sql .= " ORDER BY ligne ASC";
+  $sql .= " ORDER BY fk_ligne ASC";
   
-  $clients = array();
+  $lines_keys = array();
   
   if ( $db->query($sql) )
     {
@@ -105,192 +132,207 @@ if (!$error)
 	{
 	  $row = $db->fetch_row();
 	  
-	  $clients[$i] = $row[0];
+	  $lines_keys[$i] = $row[0];
 	  
 	  $i++;
 	}            
       $db->free();
-      dolibarr_syslog("$i lignes trouvées");
+      dolibarr_syslog(sizeof($lines_keys)." lignes trouvées");
     }
   else
     {
-      $error = 1;
+      $error = 3;
+      dolibarr_syslog("Erreur ".$error);
     }
 }
 
-/***************************************
- *
- * Traitements
- *
- *
- */
+/* ***************************************************** */
+/*                                                       */
+/* Traitements                                           */
+/*                                                       */
+/*                                                       */
+/* ***************************************************** */
 
 if (!$error)
 {
 
-  foreach ($clients as $client)
+  foreach ($lines_keys as $line_key)
     {
       $error = 0;
       $ligne = new LigneTel($db);
 
-      $db->query("BEGIN");
-
-      dolibarr_syslog("Ligne $client - BEGIN");
-      
-      if ($ligne->fetch($client) > 0 )
+      if ( $db->query("BEGIN") )
 	{
-	  if ($ligne->socid == 0)
+	  if ($ligne->fetch_by_id($line_key) > 0 )
 	    {
-	      $error = 1;
-	      print "Error ($error)\n";
-	    }	  	  
-	}
-      else
-	{
-	  $error = 2;	  
-	  print "Error ($error): Aucune société rattachée à la ligne : $client\n";
-	}
-      
-      /*
-       * Récupération des infos sur la sociétés
-       *
-       */
+	      if ($ligne->socid == 0)
+		{
+		  $error = 4;
+		  dolibarr_syslog("Error ($error)");
+		}	  	  
+	    }
+	  else
+	    {
 
-      $soc = new Societe($db);
-      
-      if (!$error &&  $soc->fetch($ligne->socid) )
-	{
-	  	  
-	}
-      else
-	{
-	  $error = 3;
-	}      
+	      $error = 5;	  
+	      dolibarr_syslog("Error ($error): Aucune société rattachée à la ligne : $line_key");
+	    }
 
-      /*
-       *
-       * Création d'une facture de telephonie
-       *
-       */
-	       
-      if (!$error)
-	{
-	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_facture";
-	  $sql .= " (fk_ligne, ligne, date)";
 	  
-	  $sql .= " VALUES (".$ligne->id.",";
-	  $sql .= "'$client','".$year."-".$month."-01')";
-	  	  
-	  if ($db->query($sql))
-	    {
-	      $facid = $db->last_insert_id(MAIN_DB_PREFIX."telephonie_facture");
+	  /*
+	   * Récupération des infos sur la sociétés
+	   *
+	   */      
+	  if (!$error )
+	    {	      
+	      $soc = new Societe($db);
+	      if ( $soc->fetch($ligne->socid) )
+		{
+		  
+		}
+	      else
+		{
+		  $error = 6;
+		  dolibarr_syslog("Error ($error)");
+		}
 	    }
-	  else
+	  
+	  /*
+	   *
+	   * Création d'une facture de telephonie si la ligne est facturable
+	   *
+	   */
+	  
+	  if (!$error)
 	    {
-	      $error++;
-	      dolibarr_syslog("Erreur d'insertion dans llx_telephonie_facture");
-	      dolibarr_syslog($db->error());
-	      dolibarr_syslog($sql);
-	    }
-	}	 
-      /*
-       *
-       * Calcul de la facture
-       *
-       */
-      if (!$error)
-	{
-	  $total_achat = 0;
-	  $total_vente = 0;
-	  $total_fourn = 0;
-
-	  if (calcul($client, $db, $facid, $total_achat, $total_vente, $total_fourn, $ligne, $ligne->client_comm_id) <> 0)
-	    {
-	      $error++;
-	      dolibarr_syslog("Erreur de calcul de la facture pour la ligne $client");
-	    }	  
-	}	  
-
-      /*
-       *
-       * Insertion des données dans la base
-       *
-       */
-	       
-      if (!$error)
-	{
-	  $total_vente_remise = $total_vente;
-
-	  $total_vente_remise = ereg_replace(",",".", $total_vente_remise);
-
-	  $gain = ($total_vente_remise - $total_fourn);
-
-	  $total_achat = ereg_replace(",",".", $total_achat);
-	  $total_vente = ereg_replace(",",".", $total_vente);
-	  $total_fourn = ereg_replace(",",".", $total_fourn);
-
-	  $gain = ereg_replace(",",".", $gain);
-
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture";
-
-	  $sql .= " SET ";
-	  $sql .= " fourn_montant = $total_fourn";
-	  $sql .= " , cout_achat = $total_achat";
-	  $sql .= " , cout_vente = $total_vente";
-	  $sql .= " , remise = $ligne->remise";
-	  $sql .= " , cout_vente_remise = $total_vente_remise";
-	  $sql .= " , gain = $gain";
-	  	  
-	  $sql .= " WHERE rowid =".$facid;
-
-	  if ($db->query($sql))
-	    {
+	      if ($ligne->isfacturable == 1)
+		{
+		  $facturable = 'oui';
+		}
+	      else
+		{
+		  $facturable = 'non';
+		}
 	      
+	      $sql = "INSERT INTO llx_telephonie_facture";
+	      $sql .= " (fk_ligne, ligne, date, isfacturable)";
+	      $sql .= " VALUES (".$ligne->id.",";
+	      $sql .= " '$ligne->numero','".$year."-".$month."-01'";
+	      $sql .= ", '$facturable')";
+	      
+	      if ($db->query($sql))
+		{
+		  $facid = $db->last_insert_id("llx_telephonie_facture");
+		}
+	      else
+		{
+		  $error++;
+		  dolibarr_syslog("Erreur d'insertion dans llx_telephonie_facture");
+		  dolibarr_syslog($db->error());
+		  dolibarr_syslog($sql);
+		}
+	    }	 
+	  /*
+	   *
+	   * Calcul de la facture
+	   *
+	   */
+	  if (!$error)
+	    {
+	      $total_achat = 0;
+	      $total_vente = 0;
+	      $total_fourn = 0;
+
+	      if (calcul($db, $ligne, $facid, $total_achat, $total_vente, $total_fourn) <> 0)
+		{
+		  $error++;
+		  dolibarr_syslog("Erreur de calcul de la facture pour la ligne $line_key $ligne->numero");
+		}	  
+	    }	  
+	  
+	  /*
+	   *
+	   * Insertion des données dans la base
+	   *
+	   */
+	       
+	  if (!$error)
+	    {
+	      $total_vente_remise = $total_vente;
+	      
+	      $total_vente_remise = ereg_replace(",",".", $total_vente_remise);
+	      
+	      $gain = ($total_vente_remise - $total_fourn);
+	      
+	      $total_achat = ereg_replace(",",".", $total_achat);
+	      $total_vente = ereg_replace(",",".", $total_vente);
+	      $total_fourn = ereg_replace(",",".", $total_fourn);
+	      
+	      $gain = ereg_replace(",",".", $gain);
+	      
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_facture";
+	      
+	      $sql .= " SET ";
+	      $sql .= " fourn_montant = $total_fourn";
+	      $sql .= " , cout_achat = $total_achat";
+	      $sql .= " , cout_vente = $total_vente";
+	      $sql .= " , remise = $ligne->remise";
+	      $sql .= " , cout_vente_remise = $total_vente_remise";
+	      $sql .= " , gain = $gain";
+	      
+	      $sql .= " WHERE rowid =".$facid;
+	      
+	      if ($db->query($sql))
+		{
+		  
+		}
+	      else
+		{
+		  $error++;
+		  dolibarr_syslog("Erreur de mise à jour dans llx_telephonie_facture");
+		  dolibarr_syslog($db->error());
+		  dolibarr_syslog($sql);
+		}
+	    }
+	  
+	  /*
+	   * Suppression des données de la table d'import
+	   *
+	   */
+	  
+	  if (!$error)
+	    {
+	      $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
+	      $sql .= " WHERE fk_ligne = $line_key ";
+	      
+	      if (! $db->query($sql))
+		{
+		  $error++;
+		  dolibarr_syslog("Erreur de suppression dans llx_telephonie_import_cdr");
+		}
+	    }
+	  
+	  /*
+	   * Commit / Rollback SQL
+	   *
+	   */      
+	  
+	  if (!$error)
+	    {
+	      $db->query("COMMIT");
+	      $nbcommit++;
+	      dolibarr_syslog("Ligne $ligne->numero - COMMIT");
 	    }
 	  else
 	    {
-	      $error++;
-	      dolibarr_syslog("Erreur de mise à jour dans llx_telephonie_facture");
-	      dolibarr_syslog($db->error());
-	      dolibarr_syslog($sql);
+	      $db->query("ROLLBACK");
+	      dolibarr_syslog("Ligne $ligne->numero - ROLLBACK de la transaction");	      
 	    }
-	}
-
-      /*
-       * Suppression des données de la table d'import
-       *
-       */
-
-      if (!$error)
-	{
-	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
-	  $sql .= " WHERE ligne = $client ";
-
-	  if (! $db->query($sql))
-	    {
-	      $error++;
-	      dolibarr_syslog("Erreur de suppression dans llx_telephonie_import_cdr");
-	    }
-	}
-
-      /*
-       * Commit / Rollback SQL
-       *
-       */      
-      
-      if (!$error)
-	{
-	  $db->query("COMMIT");
-	  dolibarr_syslog("Ligne $client - COMMIT");
-
 	}
       else
 	{
-	  $db->query("ROLLBACK");
-	  dolibarr_syslog("Ligne $client - ROLLBACK de la transaction");
-
+	  dolibarr_syslog("Erreur ouverture Transaction SQL");
 	}
-
     } /* fin de la boucle */
 
   /*
@@ -298,6 +340,57 @@ if (!$error)
    *
    */
 }
+
+/**********************************************************
+*
+*
+*
+***********************************************************/
+$sql = "SELECT MAX(rowid) FROM ".MAIN_DB_PREFIX."telephonie_facture";
+
+$resql = $db->query($sql);
+  
+if ( $resql )
+{
+  $row = $db->fetch_row($resql);
+
+  dolibarr_syslog("Max rowid après facture ".$row[0]);
+  $db->free($resql);
+}
+else
+{
+  $error++;
+}
+
+/**********************************************************
+*
+*
+*
+***********************************************************/
+
+dolibarr_syslog($nbcommit." facture émises");
+
+/**********************************************************
+*
+*
+*
+***********************************************************/
+$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
+
+$resql = $db->query($sql);
+  
+if ( $resql )
+{
+  $row = $db->fetch_row($resql);
+
+  dolibarr_syslog($row[0]. " communications restantes dans la table d'import");
+  $db->free($resql);
+}
+else
+{
+  $error++;
+}
+
 
 $db->close();
 
@@ -307,11 +400,11 @@ dolibarr_syslog("Conso mémoire ".memory_get_usage() );
 
 /******************************************************************************
  *
- * Fonction de calcul
+ * Fonction de calcul de la facture
  *
  ******************************************************************************/
 
-function calcul($client, $db, $facture_id, &$total_cout_achat, &$total_cout_vente, &$total_cout_fourn, $ligne, $client_id=0)
+function calcul($db, $ligne, $facture_id, &$total_cout_achat, &$total_cout_vente, &$total_cout_fourn)
 {
   $error = 0;
 
@@ -324,14 +417,14 @@ function calcul($client, $db, $facture_id, &$total_cout_achat, &$total_cout_vent
   $fournisseur_id = 1;
 
   $tarif_achat = new TelephonieTarif($db, $fournisseur_id, "achat");
-  $tarif_vente = new TelephonieTarif($db, $fournisseur_id, "vente", $client_id);
+  $tarif_vente = new TelephonieTarif($db, $fournisseur_id, "vente", $ligne->client_comm_id);
 
   $comms = array();
 
-  $sql = "SELECT t.idx, t.ligne, t.montant, t.duree, t.num, t.date, t.heure, t.dest";
+  $sql = "SELECT t.idx, t.fk_ligne, t.montant, t.duree, t.num, t.date, t.heure, t.dest";
   $sql .= " , t.fichier, t.fk_fournisseur";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr as t";
-  $sql .= " WHERE t.ligne = ".$client;
+  $sql .= " WHERE t.fk_ligne = ".$ligne->id;
     
   if ( $db->query($sql) )
     {
@@ -345,6 +438,7 @@ function calcul($client, $db, $facture_id, &$total_cout_achat, &$total_cout_vent
 	  $comm = new CommunicationTelephonique();
 
 	  $comm->index       = $objp->idx;
+	  $comm->fk_ligne    = $facture_id;
 	  $comm->ligne       = $objp->ligne;
 	  $comm->date        = $objp->date;
 	  $comm->heure       = $objp->heure;
@@ -384,7 +478,4 @@ function calcul($client, $db, $facture_id, &$total_cout_achat, &$total_cout_vent
 
   return $error;
 }
-
-
-
 ?>
