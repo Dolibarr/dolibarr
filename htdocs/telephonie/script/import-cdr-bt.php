@@ -151,122 +151,129 @@ else
 
 foreach ($files as $xfile)
 {
-  if (is_readable($xfile) &&  _verif($db, $xfile) == 0)
+  if (is_readable($xfile))
     {
-  
-      dolibarr_syslog("Lecture du fichier $xfile");
+      if ( _verif($db, $xfile) == 0)
+	{
       
-      $error = 0;
-      $line = 0;
-      $line_inserted = 0;
-      $hf = fopen ($xfile, "r");
-      $line = 0;
+	  dolibarr_syslog("Lecture du fichier $xfile");
       
-      if ($db->query("BEGIN"))
-	{  
-	  while (!feof($hf) )
-	    {
-	      $cont = fgets($hf, 1024);
-	      
-	      if (strlen(trim($cont)) > 0)
+	  $error = 0;
+	  $line = 0;
+	  $line_inserted = 0;
+	  $hf = fopen ($xfile, "r");
+	  $line = 0;
+	  
+	  if ($db->query("BEGIN"))
+	    {  
+	      while (!feof($hf) )
 		{
-		  // 297400910,2005-03-23 08:08:08,Appels Mob.-ORANGE,0680301933, 106, .3445
-		  // 297400910,2005-03-23 09:24:36,Appels Mob.-ORANGE,0675621805, 5, .0162
-		  // 297400910,2005-03-23 09:36:55,Appels Mob.-ORANGE,0680301933, 57, .1852
+		  $cont = fgets($hf, 1024);
 		  
-		  $tabline = explode(",", $cont);
-		  if (sizeof($tabline) == 6)
+		  if (strlen(trim($cont)) > 0)
 		    {
-		      $index             = 1;
-		      $ligne             = "0".$tabline[0];
-		      $date              = substr($tabline[1],0,10);
-		      $heure             = substr($tabline[1],11,8);
+		      // 297400910,2005-03-23 08:08:08,Appels Mob.-ORANGE,0680301933, 106, .3445
+		      // 297400910,2005-03-23 09:24:36,Appels Mob.-ORANGE,0675621805, 5, .0162
+		      // 297400910,2005-03-23 09:36:55,Appels Mob.-ORANGE,0680301933, 57, .1852
 		      
-		      $numero            = $tabline[3];
-		      $tarif             = "NONE";
-		      $duree_text        = $tabline[4];
-		      $tarif_fourn       = "NONE";
-		      $montant           = trim($tabline[5]);
-		      $duree_secondes    = trim($tabline[4]);
-		      
-		      if ($ligneids[$ligne] > 0)
+		      $tabline = explode(",", $cont);
+		      if (sizeof($tabline) == 6)
 			{
-			  $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_import_cdr";
+			  $index             = 1;
+			  $ligne             = "0".$tabline[0];
+			  $date              = substr($tabline[1],0,10);
 			  
-			  $sql .= "(idx,fk_ligne,ligne,date,heure,num,dest,dureetext,tarif,montant,duree";
-			  $sql .= ", fichier, fk_fournisseur)";
+			  //Retournment de la date
+			  $date              = substr($date, 8,2)."/".substr($date, 5,2)."/".substr($date, 0,4);
 			  
-			  $sql .= " VALUES (";
-			  $sql .= "$index";
-			  $sql .= ",'".$ligneids[$ligne]."'";
-			  $sql .= ",'".$ligne."'";
-			  $sql .= ",'".ereg_replace('"','',$date)."'";
-			  $sql .= ",'".ereg_replace('"','',$heure)."'";
-			  $sql .= ",'".ereg_replace('"','',$numero)."'";
-			  $sql .= ",'".addslashes(ereg_replace('"','',$tarif))."'";
-			  $sql .= ",'".ereg_replace('"','',$duree_text)."'";
-			  $sql .= ",'".ereg_replace('"','',$tarif_fourn)."'";
-			  $sql .= ",".ereg_replace(',','.',$montant);
-			  $sql .= ",".$duree_secondes;
-			  $sql .= ",'".basename($xfile)."'";
-			  $sql .= " ,".$id_fourn;
-			  $sql .= ")";
+			  $heure             = substr($tabline[1],11,8);
 			  
-			  if(ereg("^[0-9]+$", $duree_secondes))
+			  $numero            = $tabline[3];
+			  $tarif             = "NONE";
+			  $duree_text        = $tabline[4];
+			  $tarif_fourn       = "NONE";
+			  $montant           = trim($tabline[5]);
+			  $duree_secondes    = trim($tabline[4]);
+		      
+			  if ($ligneids[$ligne] > 0)
 			    {
-			      if ($db->query($sql))
+			      $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_import_cdr";
+			  
+			      $sql .= "(idx,fk_ligne,ligne,date,heure,num,dest,dureetext,tarif,montant,duree";
+			      $sql .= ", fichier, fk_fournisseur)";
+			  
+			      $sql .= " VALUES (";
+			      $sql .= "$index";
+			      $sql .= ",'".$ligneids[$ligne]."'";
+			      $sql .= ",'".$ligne."'";
+			      $sql .= ",'".ereg_replace('"','',$date)."'";
+			      $sql .= ",'".ereg_replace('"','',$heure)."'";
+			      $sql .= ",'".ereg_replace('"','',$numero)."'";
+			      $sql .= ",'".addslashes(ereg_replace('"','',$tarif))."'";
+			      $sql .= ",'".ereg_replace('"','',$duree_text)."'";
+			      $sql .= ",'".ereg_replace('"','',$tarif_fourn)."'";
+			      $sql .= ",".ereg_replace(',','.',$montant);
+			      $sql .= ",".$duree_secondes;
+			      $sql .= ",'".basename($xfile)."'";
+			      $sql .= " ,".$id_fourn;
+			      $sql .= ")";
+			  
+			      if(ereg("^[0-9]+$", $duree_secondes))
 				{
-				  $line_inserted++;
+				  if ($db->query($sql))
+				    {
+				      $line_inserted++;
+				    }
+				  else
+				    {
+				      dolibarr_syslog("Erreur de traitement de ligne $index");
+				      dolibarr_syslog($db->error());
+				      dolibarr_syslog($sql);
+				      $error++;
+				    }
 				}
 			      else
 				{
-				  dolibarr_syslog("Erreur de traitement de ligne $index");
-				  dolibarr_syslog($db->error());
-				  dolibarr_syslog($sql);
+				  print "Ligne : $cont ignorée\n";
 				  $error++;
 				}
+			  
 			    }
 			  else
 			    {
-			      print "Ligne : $cont ignorée\n";
+			      dolibarr_syslog("Ligne : $ligne ignorée!");
 			      $error++;
 			    }
-			  
+		      
 			}
 		      else
 			{
-			  dolibarr_syslog("Ligne : $ligne ignorée!");
+			  dolibarr_syslog("Mauvais format de fichier ligne $line ".sizeof($tabline));
+			  dolibarr_syslog($cont);
 			  $error++;
 			}
-		      
 		    }
-		  else
-		    {
-		      dolibarr_syslog("Mauvais format de fichier ligne $line ".sizeof($tabline));
-		      dolibarr_syslog($cont);
-		      $error++;
-		    }
+		  $line++;
 		}
-	      $line++;
-	    }
 	  
-	  dolibarr_syslog($line." lignes traitées dans le fichier");
-	  dolibarr_syslog($line_inserted." insert effectués");
+	      dolibarr_syslog($line." lignes traitées dans le fichier");
+	      dolibarr_syslog($line_inserted." insert effectués");
 	  
-	  if ($error == 0)
-	    {	  
-	      $db->query("COMMIT");
-	      dolibarr_syslog("COMMIT");
-	    }
-	  else
-	    {
-	      $db->query("ROLLBACK");
-	      dolibarr_syslog("ROLLBACK");
-	    }
+	      if ($error == 0)
+		{	  
+		  $db->query("COMMIT");
+		  dolibarr_syslog("COMMIT");
+		}
+	      else
+		{
+		  $db->query("ROLLBACK");
+		  dolibarr_syslog("ROLLBACK");
+		}
 	  
-	}
+	    }
       
-      fclose($hf);
+	  fclose($hf);
+	}
     }
   else
     {
@@ -347,6 +354,8 @@ function _verif($db, $file)
       dolibarr_syslog($sql);
       $result = -1;
     } 
+
+  return $result;
 }
 
 
