@@ -19,26 +19,14 @@
  * $Source$
  *
  */
-require("./pre.inc.php");
-require("../adherent.class.php");
-require("../adherent_type.class.php");
-require("../cotisation.class.php");
-require("../paiement.class.php");
+require("../pre.inc.php");
+require("../../adherent.class.php");
+require("../../adherent_type.class.php");
+require("../../cotisation.class.php");
+require("../../paiement.class.php");
 
 
 $db = new Db();
-
-if ($HTTP_POST_VARS["action"] == 'cotisation') 
-{
-  $adh = new Adherent($db);
-  $adh->id = $rowid;
-
-  if ($cotisation > 0)
-    {     
-      $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
-    }
-  $action = "edit";
-}
 
 if ($HTTP_POST_VARS["action"] == 'add') 
 {
@@ -66,31 +54,27 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	{     
 	  $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
 	}
-      Header("Location: liste.php");
+      Header("Location: new.php");
     }
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
-{
-  $adh = new Adherent($db);
-  $adh->delete($rowid);
-  Header("Location: liste.php");
-}
-
-if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] == yes)
-{
-  $adh = new Adherent($db, $rowid);
-  $adh->validate($user->id);
-}
-
-if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] == yes)
-{
-  $adh = new Adherent($db, $rowid);
-  $adh->resiliate($user->id);
-}
+//llxHeader();
+// Header
+print "<HTML><HEAD>";
+print '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">';
+print '<LINK REL="stylesheet" TYPE="text/css" HREF="/'.$conf->css.'">';
+print "\n";
+print '<title>Dolibarr</title>';
+print "\n";
 
 
-llxHeader();
+print "</HEAD>\n";
+
+print '<BODY TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">';
+
+print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+
+print '<tr><td valign="top" align="right">';
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -154,18 +138,6 @@ if ($action == 'create') {
   print '<tr><td>Login</td><td><input type="text" name="login" size="40"></td></tr>';
   print '<tr><td>Password</td><td><input type="text" name="pass" size="40"></td></tr>';
 
-  print "<tr><td>Date de cotisation</td><td>\n";
-  print_date_select();
-  print "</td></tr>\n";
-  print "<tr><td>Mode de paiement</td><td>\n";
-  
-  $paiement = new Paiement($db);
-
-  $paiement->select("modepaiement","crédit");
-
-  print "</td></tr>\n";
-
-  print '<tr><td>Cotisation</td><td><input type="text" name="cotisation" size="6"> euros</td></tr>';
 
   print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
   print "</form>\n";
@@ -286,8 +258,6 @@ if ($rowid > 0)
   print '<tr><td>CP Ville</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
   print '<tr><td>Pays</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>';
   print '<tr><td>Email</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
-  print '<tr><td>Login</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
-  print '<tr><td>Pass</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
 
   print "</table>\n";
 

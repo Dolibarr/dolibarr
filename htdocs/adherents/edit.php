@@ -46,6 +46,8 @@ if ($action == 'update')
       $adh->cp          = $cp;
       $adh->ville       = $HTTP_POST_VARS["ville"];
       $adh->email       = $HTTP_POST_VARS["email"];
+      $adh->login       = $HTTP_POST_VARS["login"];
+      $adh->pass        = $HTTP_POST_VARS["pass"];
       $adh->date        = mktime(12, 0 , 0, $remonth, $reday, $reyear);
       $adh->note        = $HTTP_POST_VARS["note"];
       $adh->pays        = $HTTP_POST_VARS["pays"];
@@ -114,6 +116,8 @@ if ($rowid)
   print '<tr><td>CP Ville</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
   print '<tr><td>Pays</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>';
   print '<tr><td>Email</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
+  print '<tr><td>Login</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
+  print '<tr><td>Password</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
 
   print "</table>\n";
 

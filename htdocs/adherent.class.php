@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
+ *                    Jean-Louis Bergamo <jlb@j1b.org>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -37,6 +37,8 @@ class Adherent
   var $public;
   var $commentaire;
   var $statut;
+  var $login;
+  var $pass;
 
   var $errorstr;
   /*
@@ -103,6 +105,17 @@ class Adherent
 	  $err++;
 	}
 
+      if (strlen(trim($this->login)) == 0)
+	{
+	  $error_string[$err] = "Le login saisi est invalide";
+	  $err++;
+	}
+
+      if (strlen(trim($this->pass)) == 0)
+	{
+	  $error_string[$err] = "Le pass saisi est invalide";
+	  $err++;
+	}
       $this->amount = trim($this->amount);
 
       $map = range(0,9);
@@ -200,6 +213,8 @@ class Adherent
       $sql .= ",pays='".$this->pays."'";
       $sql .= ",note='".$this->commentaire."'";
       $sql .= ",email='".$this->email."'";
+      $sql .= ",login='".$this->login."'";
+      $sql .= ",pass='".$this->pass."'";
       $sql .= ",statut=".$this->statut;
       $sql .= ",fk_adherent_type=".$this->typeid;
       $sql .= ",morphy='".$this->morphy."'";
@@ -260,7 +275,7 @@ class Adherent
    */
   Function fetch($rowid)
   {
-    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.fk_adherent_type, d.morphy, t.libelle as type";
+    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.login, d.pass, d.fk_adherent_type, d.morphy, t.libelle as type";
     $sql .= ",".$this->db->pdate("d.datefin")." as datefin";
     $sql .= " FROM llx_adherent as d, llx_adherent_type as t";
     $sql .= " WHERE d.rowid = $rowid AND d.fk_adherent_type = t.rowid";
@@ -284,6 +299,8 @@ class Adherent
 	    $this->cp             = stripslashes($obj->cp);
 	    $this->ville          = stripslashes($obj->ville);
 	    $this->email          = stripslashes($obj->email);
+	    $this->login          = stripslashes($obj->login);
+	    $this->pass           = stripslashes($obj->pass);
 	    $this->pays           = stripslashes($obj->pays);
 	    $this->datefin        = $obj->datefin;
 	    $this->commentaire    = stripslashes($obj->note);
