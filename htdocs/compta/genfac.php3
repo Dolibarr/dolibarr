@@ -22,7 +22,7 @@
 require("./pre.inc.php3");
 require("../lib/functions.inc.php3");
 llxHeader();
-$db = new Db();
+
 if ($sortorder == "") {
   $sortfield="lower(s.nom)";
   $sortorder="ASC";

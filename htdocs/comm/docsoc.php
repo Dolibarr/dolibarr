@@ -22,8 +22,6 @@ require("./pre.inc.php3");
 
 llxHeader();
 
-$db = new Db();
-
 $upload_dir = SOCIETE_OUTPUTDIR . "/" . $socid ;
 
 if (! is_dir($upload_dir))

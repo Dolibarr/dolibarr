@@ -66,8 +66,6 @@ function pt ($db, $sql, $date) {
 
 llxHeader();
 
-$db = new Db();
-
 $yearc = strftime("%Y",time());
 
 

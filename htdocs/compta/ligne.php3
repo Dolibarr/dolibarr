@@ -23,7 +23,6 @@ require("./pre.inc.php3");
 
 llxHeader();
 
-$db = new Db();
 
 $sql = "SELECT rowid, number, label FROM llx_compta_account ORDER BY number";
 if ( $db->query($sql) ) {

@@ -30,7 +30,7 @@ llxHeader();
 
 print "Point mort";
 
-$db = new Db();
+
 
 if ($action == 'update') {
   $datepm = mktime(12, 0 , 0, $pmonth, 1, $pyear); 

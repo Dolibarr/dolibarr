@@ -34,8 +34,6 @@ require("../actioncomm.class.php3");
 
 llxHeader();
 
-$db = new Db();
-
 if ($action == 'setstatut')
 {
   /*

@@ -23,7 +23,6 @@ require("./pre.inc.php3");
 require("../paiement.class.php");
 require("./bank/account.class.php");
 
-$db = new Db();
 
 /*
  * Sécurité accés client

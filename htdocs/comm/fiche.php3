@@ -28,7 +28,6 @@ require("../actioncomm.class.php3");
 llxHeader();
 $user->getrights('propale');
 $user->getrights('projet');
-//$db = new Db();
 
 if ($sortorder == "") {
   $sortorder="ASC";

@@ -23,8 +23,6 @@ require("./pre.inc.php3");
 
 llxHeader();
 
-$db = new Db();
-
 function valeur($sql) {
   global $db;
   if ( $db->query($sql) ) {
@@ -38,8 +36,6 @@ function valeur($sql) {
 /*
  *
  */
-$db = new Db();
-
 
 if ($action == 'add_bookmark') {
   $sql = "INSERT INTO llx_bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";

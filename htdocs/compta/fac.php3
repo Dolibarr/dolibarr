@@ -26,7 +26,7 @@ print "Factures";
 $bc[0]="bgcolor=\"#90c090\"";
 $bc[1]="bgcolor=\"#b0e0b0\"";
 
-$db = new Db();
+
 if ($sortfield == "") {
   $sortfield="lower(p.label)";
 }

@@ -42,7 +42,6 @@ if($socidp && $user->societe_id == 0)
 }
 print '</tr></table>';
 
-$db = new Db();
 /*
  * Traitements des actions
  *

@@ -22,7 +22,6 @@
 require("./pre.inc.php3");
 require("../contact.class.php3");
 
-$db = new Db();
 if ($sortorder == "") 
 {
   $sortfield="lower(s.nom)";

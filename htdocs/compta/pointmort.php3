@@ -169,7 +169,7 @@ llxHeader();
 
 print "<b>Point mort</b>";
 
-$db = new Db();
+
 
 ppt($db, 0);
 
