@@ -26,7 +26,7 @@
         \file       htdocs/document.php
 		\brief      Wrapper permettant le téléchargement de fichier de données Dolibarr
                     L'appel ancienne méthode (non sécurisée) est document.php?file=pathcompletdufichier
-                    L'appel nouvelle méthode (sécurisée) est document.php?file=pathrelatifdufichier&type=typefichier
+                    L'appel nouvelle méthode (sécurisée) est document.php?file=pathrelatifdufichier&modulepart=typefichier
 		\version    $Revision$
 */
 
@@ -54,6 +54,15 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->compta->dir_output.'/'.$original_file;
+    }
+    if ($modulepart == 'facture')
+    {
+        $user->getrights('facture');
+        if ($user->rights->facture->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->facture->dir_output.'/'.$original_file;
     }
 }
 else
