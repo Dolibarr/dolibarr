@@ -331,11 +331,9 @@ function dolibarr_print_phone($phone)
 */
 function img_actions($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Rendez-vous");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/object_actions.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Rendez-vous");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/object_actions.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -343,11 +341,9 @@ function img_actions($alt = "default")
 */
 function img_file($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Show");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/file.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Show");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/file.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -355,11 +351,9 @@ function img_file($alt = "default")
 */
 function img_folder($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Dossier");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/folder.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Dossier");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/folder.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -368,11 +362,9 @@ function img_folder($alt = "default")
 */
 function img_file_new($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Show");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/filenew.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Show");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -380,11 +372,9 @@ function img_file_new($alt = "default")
 */
 function img_pdf($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Show");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/pdf.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Show");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/pdf.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -392,22 +382,18 @@ function img_pdf($alt = "default")
 */
 function img_edit_add($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Add");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit_add.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Add");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit_add.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 /**
         \brief  Affiche logo -
 */
 function img_edit_remove($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Remove");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit_remove.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Remove");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit_remove.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -415,11 +401,9 @@ function img_edit_remove($alt = "default")
 */
 function img_edit($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Modify");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Modify");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -427,11 +411,9 @@ function img_edit($alt = "default")
 */
 function img_delete($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Delete");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Delete");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -439,11 +421,9 @@ function img_delete($alt = "default")
 */
 function img_disable($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Disable");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/disable.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Disable");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/disable.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 
@@ -452,11 +432,9 @@ function img_disable($alt = "default")
 */
 function img_info($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Informations");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/info.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Informations");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/info.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -464,11 +442,9 @@ function img_info($alt = "default")
 */
 function img_warning($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Show");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/warning.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Show");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/warning.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -476,11 +452,9 @@ function img_warning($alt = "default")
 */
 function img_alerte($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Alert");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/alerte.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Alert");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/alerte.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -488,11 +462,9 @@ function img_alerte($alt = "default")
 */
 function img_phone_in($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Modify");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Modify");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/call.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -500,11 +472,9 @@ function img_phone_in($alt = "default")
 */
 function img_phone_out($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Modify");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Modify");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/call.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -512,11 +482,11 @@ function img_phone_out($alt = "default")
 */
 function img_next($alt = "default")
 {
+  global $conf,$langs;
   if ($alt=="default") {
-    global $langs;
     $alt=$langs->trans("Next");
   }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/next.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/next.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -524,11 +494,29 @@ function img_next($alt = "default")
 */
 function img_previous($alt = "default")
 {
-  if ($alt=="default") {
-    global $langs;
-    $alt=$langs->trans("Previous");
-  }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/previous.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Previous");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/previous.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+/**
+        \brief  Affiche logo bas
+*/
+function img_down($alt = "default")
+{
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Down");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+/**
+        \brief  Affiche logo haut
+*/
+function img_up($alt = "default")
+{
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Up");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -965,16 +953,14 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
         print '<td '. $td.'>';
     }
     print $name."&nbsp;";
-    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">';
-    print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="A-Z"></a>';
-    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">';
-    print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="Z-A"></a>';
+    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z").'</a>';
+    print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("A-Z").'</a>';
     print "</td>";
 }
 
 /**
 		\brief  Affichage d'un titre
-		\param	titre			le titre a afficher
+		\param	titre			Le titre a afficher
 */
 function print_titre($titre)
 {
@@ -983,8 +969,8 @@ function print_titre($titre)
 
 /**
 		\brief  Affichage d'un titre d'une fiche, aligné a gauche
-		\param	titre			le titre a afficher
-		\param	mesg			message suplémentaire à afficher à droite
+		\param	titre			Le titre a afficher
+		\param	mesg			Message suplémentaire à afficher à droite
 */
 function print_fiche_titre($titre, $mesg='')
 {
@@ -1072,19 +1058,19 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		\param	page			numéro de la page
 		\param	file			lien
 		\param	options         autres parametres d'url a propager dans les liens ("" par defaut)
-		\param	nextpage	    page suivante
+		\param	nextpage	    faut-il une page suivante
 */
-function print_fleche_navigation($page,$file,$options='', $nextpage)
+function print_fleche_navigation($page,$file,$options='',$nextpage)
 {
   global $conf, $langs;
   if ($page > 0)
     {
-      print '<a href="'.$file.'?page='.($page-1).$options.'"><img alt="'.$langs->trans("Previous").'" title="'.$langs->trans("Previous").'" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
+      print '<a href="'.$file.'?page='.($page-1).$options.'">'.img_previous($langs->trans("Previous")).'</a>';
     }
 
   if ($nextpage > 0)
     {
-      print '<a href="'.$file.'?page='.($page+1).$options.'"><img alt="'.$langs->trans("Next").'" title="'.$langs->trans("Next").'" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
+      print '<a href="'.$file.'?page='.($page+1).$options.'">'.img_next($langs->trans("Next")).'</a>';
     }
 }
 
