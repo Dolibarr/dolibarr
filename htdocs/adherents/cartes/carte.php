@@ -20,8 +20,8 @@
  * $Source$
  *
  */
-require($GLOBALS["DOCUMENT_ROOT"]."/adherents/pre.inc.php");
-require($GLOBALS["DOCUMENT_ROOT"]."/adherent.class.php");
+require("./pre.inc.php");
+require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 
 require_once('PDF_card.class.php');
 
