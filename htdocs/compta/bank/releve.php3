@@ -41,7 +41,7 @@ if (! $num) {
 
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";
-  print "<td>Date</td><td>Description</TD>";
+  print "<td>Date</td>";
 
   print "</TR>\n";
  
@@ -56,7 +56,7 @@ if (! $num) {
     while ($i < $numrows) {
       $objp = $db->fetch_object( $i);
       $var=!$var;
-      print "<tr $bc[$var]><td><a href=\"$PHP_SELF?num=$objp->numr\">$objp->numr</a></td></tr>\n";
+      print "<tr $bc[$var]><td><a href=\"$PHP_SELF?num=$objp->numr&account=$account\">$objp->numr</a></td></tr>\n";
       $i++;
     }
   }
@@ -68,7 +68,7 @@ if (! $num) {
    *
    */
   if ($rel == 'prev') {
-    $sql = "SELECT distinct(num_releve) FROM llx_bank WHERE num_releve < $num ORDER BY num_releve DESC";
+    $sql = "SELECT distinct(num_releve) FROM llx_bank WHERE num_releve < $num AND fk_account = $account ORDER BY num_releve DESC";
     $result = $db->query($sql);
     if ($result) {
       $var=True;  
@@ -80,7 +80,7 @@ if (! $num) {
       }
     }
   } elseif ($rel == 'next') {
-    $sql = "SELECT distinct(num_releve) FROM llx_bank WHERE num_releve > $num ORDER BY num_releve ASC";
+    $sql = "SELECT distinct(num_releve) FROM llx_bank WHERE num_releve > $num AND fk_account = $account ORDER BY num_releve ASC";
     $result = $db->query($sql);
     if ($result) {
       $var=True;  
@@ -109,15 +109,15 @@ if (! $num) {
   print "</TR>\n";
  
 
-  $sql = "SELECT sum(amount) FROM llx_bank WHERE num_releve < $num";
+  $sql = "SELECT sum(amount) FROM llx_bank WHERE num_releve < $num AND fk_account = $account";
   if ( $db->query($sql) ) {
     $total = $db->result (0, 0);
     $db->free();
   }
 
 
-  $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve";
-  $sql .= " FROM llx_bank as b WHERE num_releve=$num";
+  $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq";
+  $sql .= " FROM llx_bank as b WHERE num_releve=$num AND fk_account = $account";
   $sql .= " ORDER BY dateo ASC";
   $result = $db->query($sql);
   if ($result) {
@@ -134,7 +134,7 @@ if (! $num) {
       print "<tr $bc[$var]>";
 
       print "<td>".strftime("%d %b %Y",$objp->do)."</TD>\n";
-      print "<td>$objp->label";
+      print "<td>$objp->num_chq $objp->label";
 
       if ($ve) {
 	$dc = $db->clone();
