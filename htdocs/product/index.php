@@ -93,7 +93,14 @@ if ($result)
   
   llxHeader();
 
-  print_barre_liste("Liste des ".$types[$type]."s", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+  if ($ref || $snom || $sall)
+    {
+      print_barre_liste("Recherche d'un produit ou service", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+    }
+  else
+    {
+      print_barre_liste("Liste des ".$types[$type]."s", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+    }
 
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
