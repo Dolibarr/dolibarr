@@ -254,7 +254,7 @@ function print_titre($titre)
  *
  *
  */
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='')
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $form='')
  {
   global $conf;
   print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
@@ -267,6 +267,12 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
    {
      print '<tr><td><div class="titre">'.$titre.'</div></td>';
    }
+
+ if ($form)
+   {
+     print '<td align="left">'.$form.'</td>';
+   }
+
   print '<td align="right">';
 
   if (strlen($sortfield))
