@@ -291,7 +291,7 @@ if ($action == 'create') {
   print '<tr><td>Pays</td><td><input type="text" name="pays" size="40"></td></tr>';
   print '<tr><td>Email</td><td><input type="text" name="email" size="40"></td></tr>';
   print '<tr><td>Login</td><td><input type="text" name="login" size="40"></td></tr>';
-  print '<tr><td>Password</td><td><input type="text" name="pass" size="40"></td></tr>';
+  print '<tr><td>Password</td><td><input type="password" name="pass" size="40"></td></tr>';
   print '<tr><td>Date de Naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="10"></td></tr>';
   print '<tr><td>Url photo</td><td><input type="text" name="photo" size="40"></td></tr>';
   foreach($adho->attribute_label as $key=>$value){
@@ -537,7 +537,7 @@ if ($rowid > 0)
   print '<tr><td>Pays</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>';
   print '<tr><td>Email</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
   print '<tr><td>Login</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
-  print '<tr><td>Pass</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
+  //  print '<tr><td>Pass</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
   print '<tr><td>Date de Naissance</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
   print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
   print '<tr><td>Public ?</td><td class="valeur">';
