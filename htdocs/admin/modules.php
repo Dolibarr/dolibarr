@@ -22,7 +22,8 @@
  * $Source$
  */
  
-/**     \file       htdocs/admin/modules.php
+/**
+        \file       htdocs/admin/modules.php
         \brief      Page de configuration et activation des modules
         \version    $Revision$
 */
@@ -226,7 +227,7 @@ foreach ($orders as $key => $value)
         
         print "<tr $bc[$var]>\n";
 	
-        print "  <td class=\"body\">";
+        print "  <td class=\"body\" valign=\"top\">";
         if ($family!=$oldfamily)
 	  { 
 	    print "<div class=\"titre\">".$familylib[$family]."</div>";
