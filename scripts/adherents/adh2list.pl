@@ -49,27 +49,35 @@ $sth->execute;
 
 # get emails of adherents
 while (my @row = $sth->fetchrow_array ){
-    print "$row[0]\n";
+#    print "$row[0]\n";
     push (@adh,$row[0]);
 }
 
 # get emails of mailing-list suscribers
 @ml_adh=`/usr/sbin/list_members $ml`;
 chomp(@ml_adh);
-
+#foreach (@ml_adh){
+#	print $_;
+#}
 # do the diff
 foreach my $adh (@adh){
-  if (!grep(/^$adh$/,@ml_adh)){
+  if (!grep(/^$adh$/i,@ml_adh)){
     # user not subscribed
     print "register $adh : echo $adh | /usr/sbin/add_members -n - $ml\n";
+    if (system("echo $adh | /usr/sbin/add_members -n - $ml")){
+    	die "can't execute echo $adh | /usr/sbin/add_members -n - $ml : $!";
+    }
   }
 }
 
 # unsubcribe user not adherent
 foreach my $subs (@ml_adh){
-  if (!grep(/^$subs$/,@adh)){
+  if (!grep(/^$subs$/i,@adh)){
     # unsubscrib user
     print "unsubscribe $subs : /usr/sbin/remove_members $ml $subs\n";
+    if (system("/usr/sbin/remove_members $ml $subs")){
+    	die "can't execute /usr/sbin/remove_members $ml $subs : $!";
+    }
   }
 }
 
