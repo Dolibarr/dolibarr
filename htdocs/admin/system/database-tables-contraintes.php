@@ -85,12 +85,22 @@ if ($result)
       $var=!$var;
       print "<tr $bc[$var]>";
 
-      print '<td>'.$row[0].'</td>';
+      if ($base==1)
+	{
+	  print '<td><a href="dbtable.php?table='.$row[0].'">'.$row[0].'</a></td>';
+	}
+      else
+	{
+	  print '<td>'.$row[0].'</td>';
+	}
+
       print '<td>'.$row[1].'</td>';
+
       if ($base==1)
 	{
 	  print '<td align="left">'.$row[14].'</td>';
 	}
+
       print '</tr>';
       $i++;
     }
