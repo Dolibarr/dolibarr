@@ -26,6 +26,7 @@ require ("./main.inc.php");
 
 function llxHeader($head = "") {
   global $user, $conf;
+  $user->getrights('societe');
 
   /*
    *
@@ -39,7 +40,7 @@ function llxHeader($head = "") {
     {
       $menu->add(DOL_URL_ROOT."/societe.php", "Sociétés","company");
 
-      if ($user->admin)
+      if ($user->rights->societe->creer)
 	{
 	  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", "Nouvelle société");
 	}
