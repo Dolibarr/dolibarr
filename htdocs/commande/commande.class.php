@@ -459,11 +459,13 @@ class Commande
 
 	    $ligne->id = $objp->rowid;
 
-	    $ligne->product_id = $objp->fk_product;
-
-	    $ligne->description = stripslashes($objp->description);
-	    
-	    $ligne->qty = $objp->qty;
+	    $ligne->qty            = $objp->qty;
+	    $ligne->price          = $objp->price;
+	    $ligne->tva_tx         = $objp->tva_tx;
+	    $ligne->subprice       = $objp->subprice;
+	    $ligne->remise_percent = $objp->remise_percent;
+	    $ligne->product_id     = $objp->fk_product;
+	    $ligne->description    = stripslashes($objp->description);	    
 
 	    $this->lignes[$i] = $ligne;	    
 	    $i++;
@@ -471,7 +473,7 @@ class Commande
 	$this->db->free();
       }
 
-    return $lignes;
+    return $this->lignes;
   }
   /**
    * Renvoie un tableau avec les livraison par ligne
