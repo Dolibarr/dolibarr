@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,12 @@
  * $Id$
  * $Source$
  */
+
+/** 	\file       htdocs/ficheinter.php
+		\brief      Fichier fiche intervention
+		\ingroup    ficheinter
+		\version    $Revision$
+*/
 
 require("./pre.inc.php");
 require("./fichinter.class.php");
@@ -160,9 +166,9 @@ if ($_GET["action"] == 'create')
       print '<table class="border" width="100%">';
       
       print '<input type="hidden" name="socidp" value='.$_GET["socidp"].'>';
-      print "<tr><td>Société</td><td><b>".$objsoc->nom."</td></tr>";
+      print "<tr><td>".$langs->trans("Company")."</td><td><b>".$objsoc->nom."</td></tr>";
       
-      print "<tr><td>Date</td><td>";
+      print "<tr><td>".$langs->trans("Date")."</td><td>";
       $cday = date("d", time());
       print "<select name=\"pday\">";    
       for ($day = 1 ; $day < $sday + 32 ; $day++)
@@ -201,35 +207,36 @@ if ($_GET["action"] == 'create')
       
       print "<input type=\"hidden\" name=\"action\" value=\"add\">";
       
-      print "<tr><td>Numéro</td><td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
-      print "<tr><td>Durée (en jours)</td><td><input name=\"duree\"></td></tr>\n";
+      print "<tr><td>".$langs->trans("Ref")."</td><td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
+      print "<tr><td>".$langs->trans("Duration")." (".$langs->trans("days").")</td><td><input name=\"duree\"></td></tr>\n";
       
-      /*
-       * Projet associé
-       *
-       */
-      print '<tr><td valign="top">Projet</td><td><select name="projetidp">';
-      print '<option value="0"></option>';
+      if ($conf->projet->enabled) {
+          // Projet associé
+          $langs->load("project");
+          print '<tr><td valign="top">'.$langs->trans("Project").'</td><td><select name="projetidp">';
+          print '<option value="0"></option>';
+           
+          $sql = "SELECT p.rowid, p.title FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $socidp";
+          
+          if ( $db->query($sql) )
+    	{
+    	  $i = 0 ;
+    	  $numprojet = $db->num_rows();
+    	  while ($i < $numprojet)
+    	    {
+    	      $projet = $db->fetch_object();
+    	      print "<option value=\"$projet->rowid\">$projet->title</option>";
+    	      $i++;
+    	    }
+    	  $db->free();
+    	}
+          print '</select>';
       
-      $sql = "SELECT p.rowid, p.title FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $socidp";
-      
-      if ( $db->query($sql) )
-	{
-	  $i = 0 ;
-	  $numprojet = $db->num_rows();
-	  while ($i < $numprojet)
-	    {
-	      $projet = $db->fetch_object();
-	      print "<option value=\"$projet->rowid\">$projet->title</option>";
-	      $i++;
-	    }
-	  $db->free();
-	}
-      print '</select>';
+          if ($numprojet==0) {
+        	print 'Cette société n\'a pas de projet.&nbsp;';
+        	print '<a href='.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$socidp.'&action=create>'.$langs->trans("Add").'</a>';
+          }
 
-      if ($numprojet==0) {
-	print 'Cette société n\'a pas de projet.&nbsp;';
-	print '<a href='.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$socidp.'&action=create>Créer un projet</a>';
       }
       print '</td></tr>';
             
@@ -238,7 +245,7 @@ if ($_GET["action"] == 'create')
       print '</td></tr>';
       
       print '<tr><td colspan="2" align="center">';
-      print "<input type=\"submit\" value=\"".$langs->trans("Save")."\">";
+      print "<input type=\"submit\" value=\"".$langs->trans("Add")."\">";
       print '</td></tr>';
       print '</table>';      
       print '</form>';
@@ -286,27 +293,23 @@ if ($_GET["action"] == 'edit')
 
   print "</select></td></tr>";
   
-  print '<tr><td>Numéro</td><td>'.$fichinter->ref.'</td></tr>';
-  print '<tr><td>Durée (en jours)</td><td><input name="duree" value="'.$fichinter->duree.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$fichinter->ref.'</td></tr>';
+  print '<tr><td>'.$langs->trans("Duration")." (".$langs->trans("days").')</td><td><input name="duree" value="'.$fichinter->duree.'"></td></tr>';
   
-  /*
-   *
-   * Projet associé
-   *
-   */
-
-  print '<tr><td valign="top">Projet</td><td>';
-
-  $sel = new Form($db);
-  $sel->select_array("projetidp",$listeprj,$fichinter->projet_id);
-
-  if (sizeof($listeprj) == 0)
-    {
-      print 'Cette société n\'a pas de projet.&nbsp;';
-      print '<a href='.DOL_URL_ROOT.'/comm/projet/fiche.php?socidp='.$socidp.'&action=create>Créer un projet</a>';
-    }
-  print '</td></tr>';
-
+  if ($conf->projet->enabled) {
+      // Projet associé
+      print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
+    
+      $sel = new Form($db);
+      $sel->select_array("projetidp",$listeprj,$fichinter->projet_id);
+    
+      if (sizeof($listeprj) == 0)
+        {
+          print 'Cette société n\'a pas de projet.&nbsp;';
+          print '<a href='.DOL_URL_ROOT.'/comm/projet/fiche.php?socidp='.$socidp.'&action=create>Créer un projet</a>';
+        }
+      print '</td></tr>';
+  }
 
   print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
   print '<td><textarea name="note" wrap="soft" cols="60" rows="15">';
@@ -321,18 +324,14 @@ if ($_GET["action"] == 'edit')
     
   print "</form>";
     
-  print "<hr noshade>";
-
 }
 
 /*
- * Mode Fiche 
- * Affichage de la fiche d'intervention
- *
+ * Mode visu
  *
  */
 
-if ($_GET["id"])
+if ($_GET["id"] && $_GET["action"] != 'edit')
 {
   print_fiche_titre("Fiche d'intervention",$mesg);
 
@@ -341,12 +340,14 @@ if ($_GET["id"])
     {
       $fichinter->fetch_client();
 
-      print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-      print '<tr><td>Société</td><td><a href="../comm/fiche.php?socid='.$fichinter->client->id.'">'.$fichinter->client->nom.'</a></td></tr>';
+      print '<table class="border" width="100%">';
+      print '<tr><td>'.$langs->trans("Company").'</td><td><a href="../comm/fiche.php?socid='.$fichinter->client->id.'">'.$fichinter->client->nom.'</a></td></tr>';
       print '<tr><td width="20%">Date</td><td>'.strftime("%A %d %B %Y",$fichinter->date).'</td></tr>';
-      print '<tr><td>Numéro</td><td>'.$fichinter->ref.'</td></tr>';
+      print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$fichinter->ref.'</td></tr>';
       print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$fichinter->duree.'</td></tr>';
-      print '<tr><td valign="top">Projet</td><td>&nbsp;</td></tr>';
+      if ($conf->projet->enabled) {
+          print '<tr><td valign="top">'.$langs->trans("Ref").'</td><td>&nbsp;</td></tr>';
+      }
       print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
       print '<td colspan="3">';
       print nl2br($fichinter->note);
@@ -374,6 +375,7 @@ if ($_GET["id"])
 	  $file = $conf->ficheinter->dir_output . "/$fichinter->ref/$fichinter->ref.pdf";
 	  if ($fichinter->statut == 0 or !file_exists($file))
 	    {
+	      $langs->load("bills");
 	      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=generate">'.$langs->trans("BuildPDF").'</a>';
 	    }
 	  
@@ -399,7 +401,7 @@ if ($_GET["id"])
       if (file_exists($file))
 	{
 	  print "<tr $bc[0]><td>Ficheinter PDF</a></td>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=ficheinter&file='.urlencode($relativepath).'.pdf">'.$fichinter->ref.'.pdf</a></td>';
+	  print '<td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=ficheinter&file='.urlencode($relativepath).'">'.$fichinter->ref.'.pdf</a></td>';
 	  print '<td align="right">'.filesize($file). ' bytes</td>';
 	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
 	}  

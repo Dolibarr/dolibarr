@@ -60,28 +60,40 @@ class Fichinter
 	  $this->products[$i] = $idproduct;
 	}
     }
+
+
   /*
-   *
-   *
+   *    \brief      Crée une fiche intervention en base
    *
    */
   function create()
     {
-      /*
-       *  Insertion dans la base
-       */
     if (!strlen($this->duree)) { $this->duree = 0; }
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, note, duree, fk_projet) ";
-    $sql .= " VALUES ($this->socidp, $this->date, now(), '$this->ref', $this->author, '$this->note', $this->duree, $this->projet_id)";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, note, duree";
+    if ($this->projet_id) {
+        $sql .=  ",fk_projet";
+    }
+    $sql .= ") ";
+    $sql .= " VALUES ($this->socidp, $this->date, now(), '$this->ref', $this->author, '$this->note', $this->duree";
+    if ($this->projet_id) {
+        $sql .= ", $this->projet_id";
+    }
+    $sql .= ")";
     $sqlok = 0;
       
-    if (! $this->db->query($sql) )
+    $result=$this->db->query($sql);
+    if ($result)
       {
-	print $this->db->error() . '<b><br>'.$sql;
+        return $this->db->last_insert_id();    
       }
-    return $this->db->last_insert_id();
+    else
+      {
+	    return -1;
+      }
+    
     }
+
   /*
    *
    *

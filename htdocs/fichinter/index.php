@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/** 	\file       htdocs/ficheinter.php
+		\brief      Fichier fiche intervention
+		\ingroup    ficheinter
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../contact.class.php");
 
@@ -30,22 +37,12 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
-/*
- * Liste
- *
- */
+
 $sortorder=$_GET["sortorder"]?$_GET["sortorder"]:$_POST["sortorder"];
 $sortfield=$_GET["sortfield"]?$_GET["sortfield"]:$_POST["sortfield"];
 
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
-if ($sortfield == "")
-{
-  $sortfield="f.datei";
-}
-
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="f.datei";
 if ($page == -1) { $page = 0 ; }
 
 $limit = $conf->liste_limit;
@@ -77,7 +74,7 @@ if ( $db->query($sql) )
   print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&amp;socid=$socid",'',$sortfield);
   print_liste_field_titre($langs->trans("Date"),"index.php","f.datei","","&amp;socid=$socid",'',$sortfield);
   print '<td align="center">'.$langs->trans("Duration").'</td>';
-  print '<td align="center">'.$langs->trans("Status").'</td><td>&nbsp;</td>';
+  print '<td align="center">'.$langs->trans("Status").'</td>';
   print "</tr>\n";
   $var=True;
   while ($i < $num)
@@ -85,35 +82,26 @@ if ( $db->query($sql) )
       $objp = $db->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$objp->fichid\">$objp->ref</a></td>\n";
+      print "<td><a href=\"fiche.php?id=$objp->fichid\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
 
-      print '<td><a href="index.php?socid='.$objp->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
-      print "<a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
+      print '<td><a href="index.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom."</a></td>\n";
       print "<td>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
       print '<td align="center">'.sprintf("%.1f",$objp->duree).'</td>';
-      print '<Td align="center">'.$objp->fk_statut.'</td>';
+      print '<td align="center">'.$objp->fk_statut.'</td>';
 
-      if ($user->societe_id == 0)
-	{
-	  print '<td align="center"><a href="fiche.php?socidp='.$objp->idp.'&amp;action=create">[Fiche Inter]</a></td>';
-	}
-      else
-	{
-	  print "<td>&nbsp;</td>";
-	}
       print "</tr>\n";
       
       $i++;
     }
   
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else
 {
-  print $db->error();
-  print "<p>$sql";
+  dolibarr_print_error($db);
 }
+
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
