@@ -34,7 +34,7 @@ print "<li><A href=\"../comm/\">Commercial</A>";
 print "<li><A href=\"../compta/\">Compta</A>";
 print "<li><A href=\"../stats/\">Stats</A></ul>";
 
-print "<ul><li><A href=\"doc/\">Documents</A></ul>";
+
 
 function valeur($sql) {
   global $db;
@@ -61,18 +61,22 @@ if ($db->ok) {
   print "<td>Description</td><td>Valeur</TD>";
   print "</TR>\n";
 
-  $var=!$var;
-  $sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 0";
-  print "<tr $bc[$var]><td><a href=\"comm/propal.php3?viewstatut=0\">Propales brouillons</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
+  if (valeur($sql)) {
+    $var=!$var;
+    $sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 0";
+    print "<tr $bc[$var]><td><a href=\"comm/propal.php3?viewstatut=0\">Propales brouillons</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
+  }
 
-  $var=!$var;
-  $sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 1";
-  print "<tr $bc[$var]><td><a href=\"comm/propal.php3?viewstatut=1\">Propales ouvertes</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
-
-  $var=!$var;
-  $sql = "SELECT count(*) FROM llx_facture WHERE paye=0";
-  print "<tr $bc[$var]><td><a href=\"compta/index.php3\">Factures en attente de paiement</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
-
+  if (valeur($sql)) {
+    $var=!$var;
+    $sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 1";
+    print "<tr $bc[$var]><td><a href=\"comm/propal.php3?viewstatut=1\">Propales ouvertes</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
+  }
+  if (valeur($sql)) {
+    $var=!$var;
+    $sql = "SELECT count(*) FROM llx_facture WHERE paye=0";
+    print "<tr $bc[$var]><td><a href=\"compta/index.php3\">Factures en attente de paiement</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
+  }
 
   print "</table><br>";
 

@@ -104,7 +104,11 @@ drop table if exists lang ;
 drop table if exists langoffre ;
 
 drop table if exists llx_bank;
+
+drop table if exists llx_bank_account;
+
 drop table if exists llx_bank_categ;
+
 drop table if exists llx_bank_class;
 
 drop table if exists llx_bookmark;
@@ -119,11 +123,15 @@ drop table if exists llx_pointmort;
 
 drop table if exists llx_product;
 
+drop table if exists llx_projet;
+
 drop table if exists llx_propal;
 
 drop table if exists llx_propaldet;
 
 drop table if exists llx_soc_recontact;
+
+drop table if exists llx_user;
 
 drop table if exists llx_ventes;
 

@@ -29,7 +29,7 @@ create:
 	$(MYSQL) $(BASE) < c_effectif.sql
 	$(MYSQL) $(BASE) < c_paiement.sql
 	$(MYSQL) $(BASE) < c_pays.sql
-	$(MYSQL) $(BASE) < c_prestatype.sql
+
 	$(MYSQL) $(BASE) < c_propalst.sql
 	$(MYSQL) $(BASE) < c_stcomm.sql
 	$(MYSQL) $(BASE) < c_typent.sql
@@ -43,6 +43,7 @@ create:
 	$(MYSQL) $(BASE) < llx_paiement.sql
 	$(MYSQL) $(BASE) < llx_pointmort.sql
 	$(MYSQL) $(BASE) < llx_product.sql
+	$(MYSQL) $(BASE) < llx_projet.sql
 	$(MYSQL) $(BASE) < llx_propal.sql
 	$(MYSQL) $(BASE) < llx_propaldet.sql
 	$(MYSQL) $(BASE) < llx_soc_recontact.sql
@@ -50,6 +51,7 @@ create:
 	$(MYSQL) $(BASE) < llx_ventes.sql
 	$(MYSQL) $(BASE) < societe.sql
 	$(MYSQL) $(BASE) < socpeople.sql
+	$(MYSQL) $(BASE) < socstatutlog.sql
 
 drop:
 	$(MYSQL) $(BASE) < drop.sql

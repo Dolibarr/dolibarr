@@ -87,10 +87,6 @@ delete from c_paiement;
 insert into c_paiement (id,libelle) values (0, 'Cheque');
 insert into c_paiement (id,libelle) values (1, 'Virement');
 
-delete from c_prestatype;
-insert into c_prestatype (id,libelle) values (0, '---');
-insert into c_prestatype (id,libelle) values (1, 'Régie');
-insert into c_prestatype (id,libelle) values (2, 'Forfait');
 
 delete from c_propalst;
 insert into c_propalst (id,label) values (0, '---');

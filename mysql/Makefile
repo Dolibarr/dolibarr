@@ -36,6 +36,13 @@ table:
 	cd tables \
 	&& make create
 
+data:
+	cd data \
+	&& make load
+
+dev:
+	$(MYSQL) $(BASE) < data/data-dev.sql
+
 droptable:
 	cd tables \
 	&& make drop

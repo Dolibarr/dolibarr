@@ -19,11 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-
-$root = "/$PREFIX";
-
-require ("/$GLJ_WWW_ROOT/conf/$GLJ_PREFIX.$GLJ_COUNTRY.inc.php3");
-require ("/$GLJ_WWW_ROOT/../www/lib/db.lib.php3");
 require("../main.inc.php3");
 
 function llxHeader($head = "", $urlp = "") {
@@ -55,18 +50,9 @@ function llxHeader($head = "", $urlp = "") {
   print "</td></tr>";
   print "<tr><td valign=\"top\" align=\"right\">";
 
-  print "<CENTER><A href=\"".$urlp."index.php3\">Societe</A></CENTER>\n";
-  print "<A href=\"".$urlp."index.php3?stcomm=1\">A contacter</A><BR>\n";
-  print "<A href=\"".$urlp."index.php3?stcomm=0\">Jamais contactée</A><BR>\n";
-  print "<A href=\"".$urlp."index.php3?stcomm=-1\">Ne pas contacter</A><BR>\n";
-  print "<A href=\"".$urlp."index.php3?stcomm=2\">Contact en cours</A><BR>\n";
-  print "<A href=\"".$urlp."index.php3?stcomm=3\">Contactée</A><p>\n";
-  print "<A href=\"".$urlp."relance.php3\">A relancer</A><BR>\n";
-  print "<A href=\"".$urlp."recontact.php3\">A recontacter</A><BR>\n";
-  print "<A href=\"".$urlp."index.php3?aclasser=1\">A classer</A><p>\n";
-
-  print "<A href=\"".$urlp."topcontact.php3\">Gourmands</A><BR>\n";
-  print "<A href=\"".$urlp."contact.php3\">Contact</A><BR>\n";
+  print "<CENTER><A href=\"".$urlp."index.php3\">Sociétés</A></CENTER>\n";
+  print "<A href=\"".$urlp."../soc.php3?&action=create\">Nouvelle société</A><BR>\n";
+  print "<A href=\"".$urlp."contact.php3\">Contacts</A><BR>\n";
   print "</TD></TR>";
 
 
@@ -80,30 +66,29 @@ function llxHeader($head = "", $urlp = "") {
    *
    */
   print "<TR><TD valign=\"top\" align=\"right\">";
-  print "<div align=\"center\"><A href=\"".$urlp."propal.php3\">Propal</A></div>\n";
-  print "<A href=\"".$urlp."analyse.php3\">Recap</A><br>\n";
+  print '<div align="center"><A href="'.$urlp.'propal.php3">Propal</A></div>';
   print "</TD></TR>";
   /*
    *
    */
-  print "<TR><TD valign=\"top\" align=\"right\" bgcolor=\"#e0e0e0\">";
-
-  print "<A href=\"".$urlp."../compta/\">Factures</A><BR>\n";
-  print "<center><A href=\"".$urlp."ventes.php3\">Ventes</A></center>\n";
-  print "<A href=\"".$urlp."ventes_soc.php3\">Par sociétés</A><BR>\n";
-  print "<A href=\"".$urlp."product.php3\">Produits</A><BR>\n";
-
+  print "<TR><TD valign=\"top\" align=\"right\">";
+  print '<div align="center"><A href="'.$urlp.'../compta/">Factures</A></div>';
+  print "</TD></TR>";
+  /*
+   *
+   */
+  print "<TR><TD valign=\"top\" align=\"right\">";
+  print '<div align="center"><A href="'.$urlp.'../product/">Produits</A></div>';
   print "</td></tr>";
-
+  /*
+   *
+   */
   print "<tr><td align=\"right\" valign=\"top\">";
   print "<A href=\"projet/\">Projets</A><BR>\n";
   print "</td></tr>";
-
-
-  print "<tr><td align=\"right\" valign=\"top\">";
-  print "<A href=\"".$urlp."stats/\">Stats</A><BR>\n";
-  print "</td></tr>";
-
+  /*
+   *
+   */
   print "<tr><td align=\"right\" valign=\"top\">";
   print "<CENTER><A href=\"".$urlp."index.php3\">Societes</A></CENTER>\n";
   print "<form action=\"index.php3\">";

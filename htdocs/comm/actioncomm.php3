@@ -20,7 +20,7 @@
  *
  */
 require("./pre.inc.php3");
-require("../lib/functions.inc.php3");
+
 require("../societe.class.php3");
 require("../contact.class.php3");
 require("cactioncomm.class.php3");

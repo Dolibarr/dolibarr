@@ -5,7 +5,7 @@
 -- ========================================================================
 create table socstatutlog
 (
-  id          serial,
+  id          integer AUTO_INCREMENT PRIMARY KEY,
   datel       datetime,
   fk_soc      integer,
   fk_statut   integer,

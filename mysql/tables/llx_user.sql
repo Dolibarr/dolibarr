@@ -22,16 +22,18 @@
 
 create table llx_user
 (
-  rowid       integer AUTO_INCREMENT PRIMARY KEY,
-  datec       datetime,
-  tms         timestamp,
-  login       varchar(8),
-  pass        varchar(8),
-  name        varchar(50),
-  firstname   varchar(50),
-  code        varchar(4),
-  email       varchar(255),
-  note        text,
+  rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  datec         datetime,
+  tms           timestamp,
+  login         varchar(8),
+  pass          varchar(8),
+  name          varchar(50),
+  firstname     varchar(50),
+  code          varchar(4),
+  email         varchar(255),
+  module_comm   smallint default 1,
+  module_compta smallint default 1,
+  note          text,
 
   UNIQUE INDEX(code)
 );

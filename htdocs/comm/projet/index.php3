@@ -5,7 +5,6 @@
  * $Source$
  */
 require("./pre.inc.php3");
-require("../../lib/functions.inc.php3");
 require("./project.class.php3");
 
 

@@ -20,8 +20,8 @@
  *
  */
 require("./pre.inc.php3");
-require("../lib/functions.inc.php3");
-require("../lib/company.lib.php3");
+require("../contact.class.php3");
+
 llxHeader();
 $db = new Db();
 if ($sortorder == "") {
@@ -34,17 +34,7 @@ $bc[0]="bgcolor=\"#c0f0c0\"";
 $bc[1]="bgcolor=\"#b0e0b0\"";
 $bc2[0]="bgcolor=\"#c9f000\"";
 $bc2[1]="bgcolor=\"#b9e000\"";
-$active["1"] = "Offres en ligne";
-$active["-1"] = "Moderation";
-$active["-2"] = "Refusées";
-$active["0"] = "Rédaction";
-$active["-3"] = "Désactivées";
-$active["-4"] = "Supprimées";
-$cr["t"] = "Cab. Recrut.";
-$cr["f"] = "-";
-$cr[""] = "????";
-$cr["1"] = "Cab. Recrut.";
-$cr["0"] = "-";
+
 
 $yn["t"] = "oui";
 $yn["f"] = "non";
@@ -58,12 +48,6 @@ if ($action == 'attribute_prefix') {
   $prefix_attrib = soc_attribute_prefix($db, $socid);
 }
 
-if ($action == 'cabrecrut') {
-  if ($selectvalue) {
-    $sql = "UPDATE societe SET cabrecrut='$selectvalue' WHERE idp=$socid";
-    $result = $db->query($sql);
-  }
-}
 if ($action == 'recontact') {
   $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
   $sql = "INSERT INTO llx_soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $GLOBALS["REMOTE_USER"]."')";
@@ -90,7 +74,7 @@ if ($action == 'stcomm') {
   }
 
   if ($actioncommid) {
-    $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, author) VALUES ('$dateaction',$actioncommid,$socid,'" . $GLOBALS["REMOTE_USER"] . "')";
+    $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
     $result = @$db->query($sql);
 
     if (!$result) {
@@ -167,7 +151,7 @@ if ($mode == 'search')
  */  
 if ($socid > 0) {
 
-  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc,".$db->pdate("s.datel")." as dl,".$db->pdate("s.datem")." as dm, ".$db->pdate("s.datea")." as da, s.intern, s.cjn, s.c_nom, s.c_prenom, s.c_tel, s.c_mail, s.tel, s.fax, s.fplus, s.cjn, s.viewed, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note,s.karma,s.off_acc, s.off_ref,s.view_res_coord, t.libelle as typent, s.cabrecrut, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
+  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
   $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
 
   if ($to == 'next') {
@@ -231,9 +215,7 @@ if ($socid > 0) {
      *
      */
     print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
-    /*
-     *
-     */
+
     print "<tr><td><big>N° $objsoc->idp - $objsoc->nom - [$objsoc->stcomm]</big></td>";
     print "<td bgcolor=\"#e0E0E0\" align=\"center\"><a href=\"bookmark.php3?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
     print "<td bgcolor=\"#e0E0E0\" align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
@@ -243,9 +225,11 @@ if ($socid > 0) {
     print "<td><a href=\"../tech/soc/soc.php3?socid=$objsoc->idp\">Fiche Technique</a></td>";
     print "<td bgcolor=\"#e0E0E0\" align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
     print "</tr></table>";
-    if ($objsoc->parent > 0) {
-      print "<hr>Société rattaché au cabinet <a href=\"$PHP_SELF?socid=$objsoc->parent\">$objsoc->parent</a>";
-    }
+    /*
+     *
+     *
+     */
+
     print "<hr>";
     print "<table width=\"100%\" border=0><tr>\n";
     print "<td valign=\"top\">";
@@ -267,118 +251,58 @@ if ($socid > 0) {
 
     print "<tr><td>Site</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
 
-    print "<tr><td>Contact </td><td colspan=\"3\"><b>$objsoc->c_nom $objsoc->c_prenom</b>&nbsp;</td></tr>";
-    print "<tr><td>tel</td><td><b>$objsoc->c_tel</b>&nbsp;</td><td colspan=\"2\">email : <b>$objsoc->c_mail</b>&nbsp;</td></tr>";
     print "</table>";
 
     /*
      *
      */
     print "</td>\n";
-    print "<td valign=\"top\"><table border=0 width=\"100%\" cellspacing=0 bgcolor=#e0e0e0>";
-    if ($objsoc->dl > 0) {
-      $datel = strftime("%d %b %Y %H:%M", $objsoc->dl);
-    } else {
-      $datel = "Pas d'infos";
-    }
-    print "<tr><td>Dernière connexion</td><td align=center><b>$datel</b></td></tr>";
+    print '<td valign="top" width="50%">';
+    print '<table border=0 width="100%" cellspacing=0 bgcolor=#e0e0e0>';
     print "<tr><td>Créée le</td><td align=center><b>" . strftime("%d %b %Y %H:%M", $objsoc->dc) . "</b></td></tr>";
-    //print "<tr><td>Dernière modif le</td><td align=center><b>" . strftime("%d %b %Y %H:%M", $objsoc->dm) . "</b></td></tr>";
-    print "<tr><td>Fiche Entreprise</td><td align=center><b>".$yn[$objsoc->fplus]."</b></td></tr>" ;
-    print "<tr bgcolor=\"#d0d0d0\"><td>Coordonnees CV</td><td align=center><b>".$yn["$objsoc->view_res_coord"]."</b>&nbsp;</td></tr>" ;
-    print "<tr bgcolor=\"#d0d0d0\"><td><b>Contacts CV</b></td><td align=center><b>".$yn["$objsoc->services"]."</b>&nbsp;</td></tr>" ;
 
-    if ($objsoc->cabrecrut == 1) {
-      print "<tr bgcolor=\"white\"><td><b>Cab. Recrut.</b> : Oui</td>";
-    } elseif ($objsoc->cabrecrut == 0) {
-      print "<tr><td>Cab. Recrut. : Non</td>";
-    } else {
-      print "<tr><td>Cab. Recrut. : ???</td>";
-    }
-    print "<td><a href=\"$PHP_SELF?socid=$objsoc->idp&action=changevalue&type=cabrecrut\">changer</a></td></tr>";
-
-    print "<tr><td colspan=\"2\">";
-    //print "<hr noshade size=1></td></tr>";
-    //print "<tr><td>Cojonet</td><td align=center><b>".$yn["$objsoc->cjn"]."</b></td></tr>" ;
-    //print "<tr><td>Consult Fiche</td><td align=center><b>$objsoc->viewed</b></td></tr>";
-
-    print "<tr><td valign=\"top\">";
-    print "<hr noshade size=1>";
-
-    print "<table border=0 cellspacing=0>";
-    print "<tr><td><b>Karma</b></td><td>:</td><td align=center><b>$objsoc->karma</b></td></tr>";
-    print "<tr><td><b>Nb d'acceptation</b></td><td>:</td><td align=center><b>$objsoc->off_acc</b></td></tr>";
-    print "<tr><td><b>Nb de refus</b></td><td>:</td><td align=center><b>$objsoc->off_ref</b></td></tr>";
-
-    $sql = "SELECT count(idp) as cc, active FROM offre WHERE fk_soc = $objsoc->idp GROUP by active ORDER BY active DESC";
+    print '<tr><td colspan="2"><hr>Statut commercial</td></tr>';
+    print '<tr><td colspan="2">';
+    /*
+     *
+     * Liste des statuts commerciaux
+     *
+     */
+    $limliste = 5 ;
+    print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
+    
+    $sql  = "SELECT a.id, ".$db->pdate("a.datel")." as da, c.libelle, a.author ";
+    $sql .= " FROM socstatutlog as a, c_stcomm as c WHERE a.fk_soc = $objsoc->idp AND c.id=a.fk_statut ORDER by a.datel DESC";
     if ( $db->query($sql) ) {
-
-      $i = 0 ; $num = $db->num_rows();
-      while ($i < $num) {
+      $i = 0 ; $num = $db->num_rows(); $tag = True;
+      while ($i < $num && $i < $limliste) {
 	$obj = $db->fetch_object( $i);
-	print "<tr><td>".$active["$obj->active"] . "</td><td>:</td><td>$obj->cc</tr>";
+	if ($tag) {
+	  print "<tr bgcolor=\"e0e0e0\">";
+	} else {
+	  print "<tr>";
+	}
+	print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
+	print "<td>$obj->libelle</td>";
+	print "<td>$obj->author</td>";
+	print "</tr>\n";
 	$i++;
+	$tag = !$tag;
       }
       $db->free();
+      if ($num > $limliste) {
+	print "<tr><td>suite ...</td></tr>";
+      }
     } else {
       print $db->error();
     }
-    print "</table></td>";
-
-    print "<td valign=\"top\"><hr noshade size=1>";
-    print "<table cellspacing=0 border=0>";
-    print "<tr><td><b>CV consultés</b></td>";
-    $sql = "SELECT week1 + week2 + week3 + week4 as t, week1, week2, week3, week4 FROM soc_resviewed_byweek WHERE fk_soc = $objsoc->idp";
-    if ( $db->query($sql) ) {
-      $i = 0 ; $num = $db->num_rows();
-      while ($i < $num) {
-	$obj = $db->fetch_object( $i);
-	print "<td>: $obj->t ( $obj->week1 - $obj->week2 - $obj->week3 - $obj->week4 )</td></tr>";
-	$i++;
-      }
-      $db->free();
-    } else {
-      print $db->error();
-    }
-    print "</tr>";
-    print "<tr><td><b>Contacts</b></td>";
-    $sql = "SELECT week1 + week2 + week3 + week4 as t, week1, week2, week3, week4 FROM soc_rescontact_byweek WHERE fk_soc = $objsoc->idp";
-    if ( $db->query($sql) ) {
-      $i = 0 ; $num = $db->num_rows();
-      while ($i < $num) {
-	$obj = $db->fetch_object( $i);
-	print "<td>: $obj->t ( $obj->week1 - $obj->week2 - $obj->week3 - $obj->week4 )</td></tr>";
-	$i++;
-      }
-      $db->free();
-    } else {
-      print $db->error();
-    }
-
-    $sql = "SELECT count(idp) as cc FROM abo_soc WHERE fksoc = $objsoc->idp GROUP by active";
-    $result = $db->query($sql);
-    $i = 0 ; $num = $db->num_rows();
-    while ($i < $num) {
-      $obj = $db->fetch_object( $i);
-      print "<tr><td>Abonnements</td><td>: $obj->cc</td></tr>";
-      $i++;
-    }
-    $sql = "SELECT count(idp) as cc FROM socfollowresume WHERE fk_soc = $objsoc->idp";
-    if ( $db->query($sql) ) {
-      $i = 0 ; $num = $db->num_rows();
-      while ($i < $num) {
-	$obj = $db->fetch_object( $i);
-	print "<tr><td>Cand. suivis</td><td>: $obj->cc</td></tr>";
-	$i++;
-      }
-      $db->free();
-    } else {
-      print $db->error();
-    }
-    print "</table>\n";
-    print "</td></tr>";
-
-    print "</table></td></tr>\n";
+    print "</table>";    
+    print '</td></tr>';
+    /*
+     *
+     */
+    print '</table>';
+    print '</td></tr>';
     /*
      *
      */
@@ -575,55 +499,25 @@ if ($socid > 0) {
       }
       print "</table>";
     
-    
       print "\n<hr noshade size=1>\n";
       /*
        *
        */
-      print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n<tr><td valign=\"top\">\n";
-      /*
-       *
-       * Liste des statuts commerciaux
-       *
-       */
-      $limliste = 5 ;
-      print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
-
-      $sql  = "SELECT a.id, ".$db->pdate("a.datel")." as da, c.libelle, a.author ";
-      $sql .= " FROM socstatutlog as a, c_stcomm as c WHERE a.fk_soc = $objsoc->idp AND c.id=a.fk_statut ORDER by a.datel DESC";
-      if ( $db->query($sql) ) {
-	$i = 0 ; $num = $db->num_rows(); $tag = True;
-	while ($i < $num && $i < $limliste) {
-	  $obj = $db->fetch_object( $i);
-	  if ($tag) {
-	    print "<tr bgcolor=\"e0e0e0\">";
-	  } else {
-	    print "<tr>";
-	  }
-	  print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
-	  print "<td>$obj->libelle</td>";
-	  print "<td>$obj->author</td>";
-	  print "</tr>\n";
-	  $i++;
-	  $tag = !$tag;
-	}
-	$db->free();
-	if ($num > $limliste) {
-	  print "<tr><td>suite ...</td></tr>";
-	}
-      } else {
-	print $db->error();
-      }
-      print "</table>";
-
-      print "</td><td valign=\"top\">";
+      print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
+      print '<tr>';
+      print '<td valign="top">';
       /*
        *
        *      Listes des actions
        *
        */
-      $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, a.author, a.propalrowid ";
-      $sql .= " FROM actioncomm as a, c_actioncomm as c WHERE a.fk_soc = $objsoc->idp AND c.id=a.fk_action ORDER BY a.datea DESC, a.id DESC";
+      $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+      $sql .= " FROM actioncomm as a, c_actioncomm as c, llx_user as u ";
+      $sql .= " WHERE a.fk_soc = $objsoc->idp ";
+      $sql .= " AND u.rowid = a.fk_user_author";
+      $sql .= " AND c.id=a.fk_action ";
+      $sql .= " ORDER BY a.datea DESC, a.id DESC";
+
       if ( $db->query($sql) ) {
 	print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
 	print '<tr><td><a href="actioncomm.php3?socid='.$objsoc->idp.'">Actions</a></td></tr>';
@@ -643,7 +537,20 @@ if ($socid > 0) {
 	  } else {
 	    print "<td>$obj->libelle</td>";
 	  }
-	  print "<td>$obj->author</td>";
+	  /*
+	   * Contact pour cette action
+	   *
+	   */
+	  if ($obj->fk_contact) {
+	    $contact = new Contact($db);
+	    $contact->fetch($obj->fk_contact);
+	    print '<td><a href="people.php3?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+	  } else {
+	    print '<td>&nbsp;</td>';
+	  }
+	  /*
+	   */
+	  print '<td><a href="../user.php3">'.$obj->code.'</a></td>';
 	  print "</tr>\n";
 	  $i++;
 	  $tag = !$tag;
@@ -656,89 +563,13 @@ if ($socid > 0) {
       }
       print "</td></tr></table>";    
       /*
-       * Note sur la societe
+       *
+       * Notes sur la societe
+       *
        */
-
       print '<table border="1" width="100%" cellspacing="0" bgcolor="#e0e0e0">';
       print "<tr><td>".nl2br($objsoc->note)."</td></tr>";
       print "</table>";
-
-      /*
-       *
-       *    Offres
-       *
-       */
-      $sql = "SELECT o.idp, o.titre, ";
-      $sql .= $db->pdate("o.datea")." as da, ".$db->pdate("o.dated")." as dd,";
-      $sql .= $db->pdate("o.datec")." as dc,o.active,o.deacmeth, o.site FROM offre as o";
-      $sql .= " WHERE o.fk_soc = $objsoc->idp AND o.created =1";
-      $sql .= " ORDER BY o.datea DESC";
-    
-      $result = $db->query($sql);
-      $num = $db->num_rows();
-      $i = 0;
-    
-      if ($num > 0)
-	{
-
-	  $bc1="bgcolor=\"#c0f0c0\"";
-	  $bc3="bgcolor=\"#90c090\"";
-	  $bc2="bgcolor=\"#b0e0b0\"";
-    
-	  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-	  print "<TR bgcolor=\"orange\">";
-	  print "<TD>$num</td>";
-	  print "<TD><a href=\"index.php3?sortfield=s.idp&sortorder=$sortorder\">IDP</a></TD>";
-	  print "<TD>Site</TD>";
-	  print "<TD>Statut</TD>";
-	  print "<TD><a href=\"index.php3?sortfield=s.nom&sortorder=$sortorder\">Titre</a></td>";
-	  print "<TD align=\"center\">Cr&eacute;&eacute;e</TD>";
-	  print "<TD align=\"center\">Activ&eacute;e</TD>";
-	  print "<TD align=\"center\"><a href=\"index.php3?sortfield=s.datea&sortorder=$sortorder\">Dated</a></TD>";
-	  print "<TD align=\"center\">Meth</TD>";
-	  print "</TR>\n";
-	  $var=True;
-	  while ($i < $num) {
-	    $objo = $db->fetch_object( $i);
-	    $var=!$var;
-	    
-	    if (!$var) {
-	      $bc=$bc1;
-	    } else {
-	      $bc=$bc2;
-	    }
-	    if ($objo->active < -2) {
-	  $bc = $bc3;
-	    }
-      
-	    print "<TR $bc>";
-	    print "<TD>" . ($i + 1 + ($limit * $page)) . "</TD>";
-	    print "<TD>$objo->idp</TD>";
-	    print "<TD align=\"center\">$objo->site</TD>";
-	    if ($objo->active == 1) {
-	      print "<TD><b>" . $active["$objo->active"] ."</b></TD>";
-	    } else {
-	      print "<TD>" . $active["$objo->active"] ."</TD>";
-	    }
-	    print "<TD><a href=\"../prod/offre.php3?id=$objo->idp\">$objo->titre</A></TD>\n";
-	    print "<TD align=\"center\">" . strftime("%d %b %Y", $objo->dc) . "</TD>";
-	    print "<TD align=\"center\">" . strftime("%d %b %Y", $objo->da) . "</TD>";
-	    if ($objo->active <> -2) {
-	      print "<TD align=\"center\">" . strftime("%d %b %Y", $objo->dd) . "</TD>";
-	    } else {
-	      print "<TD align=\"center\">&nbsp;</TD>";
-	    }
-	    if ($objo->active == -3) {
-	      print "<TD>".$deacmeth[$objo->deacmeth]."</TD>";
-	    } else {
-	      print "<TD align=\"center\">&nbsp;</TD>";
-	    }
-
-	    print "</TR>\n";
-	    $i++;
-	  }
-	  print "</TABLE>";    
-	}
       /*
        *
        *
@@ -791,42 +622,10 @@ if ($socid > 0) {
 
       /*
        *
-       *      Listes des actions
-       *
        */
-      $sql = "SELECT ".$db->pdate("sc.datec")." as da, sc.fk_cand ";
-      $sql .= " FROM soccontact as sc WHERE sc.fk_soc = $objsoc->idp ORDER BY sc.datec DESC";
-      $result = $db->query($sql);
-      $num = $db->num_rows(); 
-      if ($num > 0) 
-	{
-	  $tag = True;
-	  $i = 0 ; 
-
-	  print "<table width=100%><tr><td valign=top width=50%>";
-	  print "Contacts<hr noshade><table cellspacing=0 border=0 cellpadding=2>";
-	  print "<tr><td>date</td><td>Candidat</td></tr>";
-
-	  while ($i < $num) {
-	    $obj = $db->fetch_object( $i);
-	    if ($tag) {
-	      print "<tr bgcolor=\"e0e0e0\">";
-	    } else {
-	      print "<tr>";
-	    }
-	    print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
-	    print "<td align=\"center\">$obj->fk_cand</td>";
-	    print "</tr>\n";
-	    $i++;
-	    $tag = !$tag;
-	  }
-	  print "</table>";
-	  print "</td><td valign=top width=50%>";
-	  print "Description de la société<hr noshade>$objsoc->description";
-	  print "</td></tr></table>";    
-
-	}
     }
+  } else {
+    print $db->error() . "<br>" . $sql;
   }
 } else {
   /*
@@ -839,7 +638,7 @@ if ($socid > 0) {
   $bc[1]="bgcolor=\"#90c090\"";
   $bc[0]="bgcolor=\"#b0e0b0\"";
 
-  $sql = "SELECT s.idp, s.nom, cabrecrut,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea, s.c_nom,s.c_prenom,s.c_tel,s.c_mail, s.cjn,st.libelle as stcomm, s.prefix_comm FROM societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.datea IS NOT NULL";
+  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=1";
 
   if (strlen($stcomm)) {
     $sql .= " AND s.fk_stcomm=$stcomm";
@@ -847,14 +646,6 @@ if ($socid > 0) {
 
   if (strlen($begin)) {
     $sql .= " AND upper(s.nom) like '$begin%'";
-  }
-
-  if ($aclasser==1) {
-    $sql .= " AND cabrecrut is null";
-  }
-
-  if ($coord == 1) {
-    $sql .= " AND view_res_coord=1";
   }
 
   if ($socname) {
@@ -881,7 +672,7 @@ if ($socid > 0) {
     print "<TD><a href=\"index.php3?sortfield=lower(s.nom)&sortorder=$sortorder&begin=$begin\">Societe</a></td>";
     print "<TD>Contact</TD>";
     print "<TD>email</TD>";
-    print "<TD align=\"center\">Statut</TD><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>";
+    print "<TD align=\"center\">Statut</TD><td>&nbsp;</td><td>&nbsp;</td>";
     print "</TR>\n";
     $var=True;
     while ($i < $num) {
@@ -892,12 +683,11 @@ if ($socid > 0) {
       print "<TR $bc[$var]>";
       print "<TD align=\"center\"><b>$obj->idp</b></TD>";
       print "<TD><a href=\"index.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
-      print "<TD>$obj->c_nom $obj->c_prenom</TD>\n";
-      print "<TD>$obj->c_mail</TD>\n";
+      print "<TD>&nbsp;</TD>\n";
+      print "<TD>&nbsp;</TD>\n";
       print "<TD align=\"center\">$obj->stcomm</TD>\n";
       print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
       print "<TD><a href=\"addpropal.php3?socidp=$obj->idp&action=create\">[Propal]</A></td>\n";
-      print "<TD><a href=\"ventes.php3?socid=$obj->idp&action=add\">[Ventes]</A></TD>\n";
       print "</TR>\n";
       $i++;
     }
@@ -909,5 +699,5 @@ if ($socid > 0) {
 }
 $db->close();
 
-llxFooter();
+llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
