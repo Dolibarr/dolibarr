@@ -52,9 +52,11 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td width="50%" valign="top">';
 
-print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/contrats.png" alt="Commandes de ligne par mois" title="Lignes Actives"><br /><br />'."\n";
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/contrats-signes.png" alt="Commandes de ligne par mois" title="Contrats signés"><br /><br />'."\n";
 
 print '</td><td valign="top" width="50%">';
+
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=commercials/contrats-suivis.png" alt="Commandes de ligne par mois" title="Contrats suivis"><br /><br />'."\n";
 
 print '</td></tr>';
 
