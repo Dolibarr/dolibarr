@@ -20,7 +20,7 @@
  * $Source$
  *
  */
-require(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 class PaiementFourn
 {
