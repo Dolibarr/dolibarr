@@ -50,7 +50,6 @@ if ($action == 'del')
     }
 }
 
-
 $def = array();
 
 $sql = "SELECT nom FROM llx_propal_model_pdf";
