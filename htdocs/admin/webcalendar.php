@@ -25,7 +25,7 @@
 require("./pre.inc.php");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 
 llxHeader();
@@ -35,70 +35,48 @@ print '<br>';
 
 $def = array();
 
-// positionne la variable pour le test d'affichage de l'icone
+$phpwebcalendar_url=$_POST["phpwebcalendar_url"];
+$phpwebcalendar_host=$_POST["phpwebcalendar_host"];
+$phpwebcalendar_dbname=$_POST["phpwebcalendar_dbname"];
+$phpwebcalendar_user=$_POST["phpwebcalendar_user"];
+$phpwebcalendar_pass=$_POST["phpwebcalendar_pass"];
+$phpwebcalendar_pass2=$_POST["phpwebcalendar_pass2"];
+$actionsave=$_POST["save"];
+$actiontest=$_POST["test"];
 
-if ($action == 'save')
+// Positionne la variable pour le test d'affichage de l'icone
+if ($actionsave)
 {
-	if(trim($phpwebcalendar_pass) == trim($phpwebcalendar_pass2))
-		{
-			$conf = new Conf();
-      $conf->db->host = $phpwebcalendar_host;
-      $conf->db->name = $phpwebcalendar_dbname;
-      $conf->db->user = $phpwebcalendar_user;
-      $conf->db->pass = $phpwebcalendar_pass;
+    if (trim($phpwebcalendar_pass) == trim($phpwebcalendar_pass2))
+    {
+            $sql  = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_URL',value='".$phpwebcalendar_url."', visible=0";
+            $sql1 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_HOST',value='".$phpwebcalendar_host."', visible=0";
+            $sql2 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_DBNAME', value='".$phpwebcalendar_dbname."', visible=0";
+            $sql3 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_USER',	value='".$phpwebcalendar_user."', visible=0";
+            $sql4 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_PASS',	value='".$phpwebcalendar_pass."', visible=0";
 
-			$webcal = new DoliDb();
-
-	  	if ($webcal->connected == 1)
-				{
-    			$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name =
-					'PHPWEBCALENDAR_URL',value='".$phpwebcalendar_url."', visible=0";
-
-					$sql1 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name =
-					'PHPWEBCALENDAR_HOST',value='".$phpwebcalendar_host."', visible=0";
-
-					$sql2 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_DBNAME',
-					value='".$phpwebcalendar_dbname."', visible=0";
-
-					$sql3 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_USER',
-					value='".$phpwebcalendar_user."', visible=0";
-
-					$sql4 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_PASS',
-					value='".$phpwebcalendar_pass."', visible=0";
-
-					if ($db->query($sql) && $db->query($sql1) && $db->query($sql2) && $db->query($sql3) &&
-					$db->query($sql4))
-      			{
-
-						// la constante qui a été lue en avant du nouveau set
-						// on passe donc par une variable pour avoir un affichage cohérent
-
-						define("PHPWEBCALENDAR_URL",  $phpwebcalendar_url);
-						define("PHPWEBCALENDAR_HOST",  $phpwebcalendar_host);
-						define("PHPWEBCALENDAR_DBNAME",  $phpwebcalendar_dbname);
-						define("PHPWEBCALENDAR_USER",  $phpwebcalendar_user);
-						define("PHPWEBCALENDAR_PASS",  $phpwebcalendar_pass);
-
-						$ok = 1;
-		      	}
-    			else
-						print "<p>erreur d'enregistement dans la base de données $db !</p><br>";
-				}
-			else
-				{
-					$ok = 0;
-				}
-  	}
-  else
-   	{
-			print "<p>le mot de passe n'est pas identique, veuillez le reintroduire</p><br>\n";
- 		}
+            if ($db->query($sql) && $db->query($sql1) && $db->query($sql2) && $db->query($sql3) && $db->query($sql4))
+            {
+                // la constante qui a été lue en avant du nouveau set
+                // on passe donc par une variable pour avoir un affichage cohérent
+                define("PHPWEBCALENDAR_URL",   $phpwebcalendar_url);
+                define("PHPWEBCALENDAR_HOST",  $phpwebcalendar_host);
+                define("PHPWEBCALENDAR_DBNAME",$phpwebcalendar_dbname);
+                define("PHPWEBCALENDAR_USER",  $phpwebcalendar_user);
+                define("PHPWEBCALENDAR_PASS",  $phpwebcalendar_pass);
+                $ok = "<p>Les identifiants webcalendar ont été sauvegardés.</p>";
+            }
+    }
+    else
+    {
+        $ok="<p>Le mot de passe n'est pas identique, veuillez le saisir à nouveau</p><br>\n";
+    }
 }
 
 
 /**
-	* Affichage du formulaire de saisie
-	*/
+ * Affichage du formulaire de saisie
+ */
 
 print "\n<form name=\"phpwebcalendarconfig\" action=\"" . $PHP_SELF . "\" method=\"post\">
 <table class=\"noborder\" cellpadding=\"3\" cellspacing=\"1\">
@@ -107,73 +85,69 @@ print "\n<form name=\"phpwebcalendarconfig\" action=\"" . $PHP_SELF . "\" method
 <td>Valeur</td>
 </tr>
 <tr class=\"impair\">
-  <td>Adresse URL d'accès au calendrier</td>
-  <td><input type=\"text\" name=\"phpwebcalendar_url\" value=\"". PHPWEBCALENDAR_URL . "\" size=\"45\"></td>
+<td>Adresse URL d'accès au calendrier</td>
+<td><input type=\"text\" name=\"phpwebcalendar_url\" value=\"". PHPWEBCALENDAR_URL . "\" size=\"45\"></td>
 </tr>
 <tr class=\"pair\">
-  <td>Serveur où la base du calendrier est hébergée</td>
-  <td><input type=\"text\" name=\"phpwebcalendar_host\" value=\"". PHPWEBCALENDAR_HOST . "\" size=\"45\"></td>
+<td>Serveur où la base du calendrier est hébergée</td>
+<td><input type=\"text\" name=\"phpwebcalendar_host\" value=\"". PHPWEBCALENDAR_HOST . "\" size=\"45\"></td>
 </tr>
 <tr class=\"impair\">
-  <td>Nom de la base de données</td>
-  <td><input type=\"text\" name=\"phpwebcalendar_dbname\" value=\"". PHPWEBCALENDAR_DBNAME . "\" size=\"45\"></td>
+<td>Nom de la base de données</td>
+<td><input type=\"text\" name=\"phpwebcalendar_dbname\" value=\"". PHPWEBCALENDAR_DBNAME . "\" size=\"45\"></td>
 </tr>
 <tr class=\"pair\">
-  <td>Identifiant d'accès à la base</td>
-  <td><input type=\"text\" name=\"phpwebcalendar_user\" value=\"". PHPWEBCALENDAR_USER . "\" size=\"45\"></td>
+<td>Identifiant d'accès à la base</td>
+<td><input type=\"text\" name=\"phpwebcalendar_user\" value=\"". PHPWEBCALENDAR_USER . "\" size=\"45\"></td>
 </tr>
 <tr class=\"impair\">
-  <td>Mot de passe d'accès à la base</td>
-  <td><input type=\"password\" name=\"phpwebcalendar_pass\" value=\"" . PHPWEBCALENDAR_PASS . "\" size=\"45\"></td>
+<td>Mot de passe d'accès à la base</td>
+<td><input type=\"password\" name=\"phpwebcalendar_pass\" value=\"" . PHPWEBCALENDAR_PASS . "\" size=\"45\"></td>
 </tr>
 <tr class=\"pair\">
-  <td>Mot de passe (vérification)</td>
-  <td><input type=\"password\" name=\"phpwebcalendar_pass2\" value=\"" . PHPWEBCALENDAR_PASS ."\" size=\"45\"></td>
+<td>Mot de passe (vérification)</td>
+<td><input type=\"password\" name=\"phpwebcalendar_pass2\" value=\"" . PHPWEBCALENDAR_PASS ."\" size=\"45\"></td>
 </tr>
 <tr class=\"impair\">
-<td colspan=\"2\"><input type=\"submit\" name=\"envoyer\" value=\"Enregistrer\"></td>
+<td colspan=\"2\" align=\"center\">
+<input type=\"submit\" name=\"test\" value=\"Tester connexion\">
+<input type=\"submit\" name=\"save\" value=\"Enregistrer\">
+</td>
 </tr>\n";
 
-  clearstatcache();
+clearstatcache();
 
-  print "
+print "
 </table>
-<input type=\"hidden\" name=\"action\" value=\"save\">
 </form>\n";
 
 
 /**
-  * test de la connection a la database webcalendar
-  *
-  */
+* Test de la connection a la database webcalendar
+*
+*/
+if ($ok) print "$ok<br>";
 
- 	print '<br><a href="webcalendar.php?action=test">test de connection à la database</a><br>';
+if ($actiontest)
+{
+    $conf = new Conf();
 
-	if($ok)
-		print "<p>la connection à la base de données webcalendar $phpwebcalendar_dbname à réussi</p><br>";
+    $conf->db->host = $phpwebcalendar_host;
+    $conf->db->name = $phpwebcalendar_dbname;
+    $conf->db->user = $phpwebcalendar_user;
+    $conf->db->pass = $phpwebcalendar_pass;
 
- 	if ($_GET["action"] == 'test')
-		{
- 			$conf = new Conf();
-			$conf->db->host = $phpwebcalendar_host;
-			$conf->db->name = $phpwebcalendar_dbname;
-			$conf->db->user = $phpwebcalendar_user;
-			$conf->db->pass = $phpwebcalendar_pass;
+    $webcal = new DoliDb();
 
-			$webcal = new DoliDb();
+    if ($webcal->connected == 1)
+    {
+        print "<p class=\"ok\">La connection à la base de données '$phpwebcalendar_dbname' à réussi</p><br>";
+        $webcal->close();
+    }
+    else
+    print "<p class=\"error\">La connection à la base de données '$phpwebcalendar_dbname' à échoué.</p><br>";
+}
 
-	  	if ($webcal->connected == 1)
-				{
-					print "<p>la connection à la base de données webcalendar $phpwebcalendar_dbname à
-					réussi</p><br>";
-					$webcal->close();
-				}
-			else
-					print "<p>la connection à la base de données webcalendar $phpwebcalendar_dbname à
-					échoué</p><br>";
-			}
 
-	$db->close();
-
-	llxFooter();
+llxFooter();
 ?>
