@@ -86,7 +86,7 @@ class pnArticle {
 
 	$this->id         = $result["pn_id"];
 	$this->titre      = $result["pn_title"];
-	$this->body       = $result["pn_bodytext"];
+	$this->body       = $result["pn_hometext"];
 
 	$this->db->free();
       }
