@@ -49,7 +49,7 @@ print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
 $var=!$var;
 $sql = "SELECT sum(amount) FROM llx_paiement";
 $paiem = valeur($sql);
-print "<tr $bc[$var]><td>Somme des paiements</td><td align=\"right\">".price($paiem)."</td></tr>";
+print "<tr $bc[$var]><td>Somme des paiements (associés à une facture)</td><td align=\"right\">".price($paiem)."</td></tr>";
 
 $var=!$var;
 $sql = "SELECT sum(amount) FROM llx_bank WHERE amount > 0";
