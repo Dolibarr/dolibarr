@@ -106,4 +106,5 @@ pgsql.sql: $(TABLES) data/data.sql Makefile
 	echo "-- ;" >> pgsql.sql
 	$(FIND) tables/ -name "*sql" | grep -v "key.sql" | xargs cat | grep -v "^--" | cut -d "-" -f 1 >> pgsql.sql
 	$(FIND) tables/ -name "*sql" | grep "key.sql" | xargs cat | grep -v "^--" | cut -d "-" -f 1 >> pgsql.sql
+	$(FIND) functions/ -name "*sql" | xargs cat | grep -v "^--" | cut -d "-" -f 1 >> pgsql.sql
 	cat data/data.sql | grep -v ^-- >> pgsql.sql
