@@ -64,7 +64,7 @@ function Generate($date_gen, $db, $date_now, $email)
   
   $worksheet = &$workbook->addworksheet();
   
-  $worksheet->write(0, 0,  "Récapitulation des commandes du mois de ".strftime("%B %Y",$date_gen)." (généré le ".strftime("%d %B %Y %HH%M", $date_now) . ")");
+  $worksheet->write(0, 0,  "Récapitulatif des commandes du mois de ".strftime("%B %Y",$date_gen)." (généré le ".strftime("%d %B %Y %HH%M", $date_now) . ")");
   
   $worksheet->set_column('A:A', 12);
   $worksheet->set_column('B:B', 42);
@@ -238,7 +238,7 @@ function Generate($date_gen, $db, $date_now, $email)
 
 function MailFile($filename, $shortname, $to)
 {
-  $subject = "Recapitulatif des commandes";
+  $subject = "Recapitulatif mensuel des commandes";
 
   $sendto = $to;
 

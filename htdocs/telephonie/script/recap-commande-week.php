@@ -234,7 +234,7 @@ function Generate($date_gen, $db, $date_now, $email)
 
 function MailFile($filename, $shortname, $to)
 {
-  $subject = "Recapitulatif des commandes";
+  $subject = "Recapitulatif hebdomadaire des commandes";
 
   $sendto = $to;
 
