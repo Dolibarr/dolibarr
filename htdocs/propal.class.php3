@@ -72,21 +72,27 @@ class Propal
       if ($this->statut == 0)
 	{
 	  $prod = new Product($this->db, $idproduct);
-	  $prod->fetch($idproduct);
-	  
-	  $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx, description) VALUES ";
-	  $sql .= " (".$this->id.",". $idproduct.",". $qty.",". $prod->price.",".$prod->tva_tx.",'".$prod->label."') ; ";
-	  
-	  if ($this->db->query($sql) )
+	  if ($prod->fetch($idproduct) > 0)
 	    {
-	      
-	      $this->update_price($this->id);
-	      
-	      return 1;
+	  
+	      $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx, description) VALUES ";
+	      $sql .= " (".$this->id.",". $idproduct.",". $qty.",". $prod->price.",".$prod->tva_tx.",'".$prod->label."') ; ";
+	  
+	      if ($this->db->query($sql) )
+		{
+		  
+		  $this->update_price($this->id);
+		  
+		  return 1;
+		}
+	      else
+		{
+		  return -1;
+		}
 	    }
 	  else
 	    {
-	      return 0;
+	      return -2;
 	    }
 	}
     }
@@ -105,15 +111,20 @@ class Propal
 	  if ($this->db->query($sql) )
 	    {
 	      
-	      $this->update_price($this->id);
-	      
-	      return 1;
+	      if ($this->update_price($this->id) > 0)
+		{	      
+		  return 1;
+		}
+	      else
+		{
+		  return -1;
+		}
 	    }
 	  else
 	    {
 	      print $this->db->error();
 	      print "<br>".$sql;
-	      return 0;
+	      return -2;
 	    }
 	}
     }
@@ -276,9 +287,14 @@ class Propal
 	       *
 	       */
 	      $sql = "UPDATE llx_propal set price=$totalht, tva=$totaltva, total=$totalttc, remise=$total_remise WHERE rowid = $rowid";
-	      if (! $this->db->query($sql) )
+	      if ( $this->db->query($sql) )
+		{
+		  return 1;
+		}
+	      else
 		{
 		  print "Erreur mise à jour du prix<p>".$sql;
+		  return -1;
 		}
 	    }
 	}
