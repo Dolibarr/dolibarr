@@ -1,5 +1,5 @@
 -- ===========================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,18 +25,22 @@ create table llx_facture_fourn
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
   facnumber  varchar(50) NOT NULL,
   fk_soc     integer NOT NULL,
-  datec      datetime,  -- date de creation de la facture
-  datef      date,      -- date de la facture
+  datec      datetime,    -- date de creation de la facture
+  datef      date,        -- date de la facture
   libelle    varchar(255),
   paye       smallint default 0 NOT NULL,
   amount     real     default 0 NOT NULL,
   remise     real     default 0,
   tva        real     default 0,
   total      real     default 0,
+  total_ht   real     default 0,
+  total_tva  real     default 0,
+  total_ttc  real     default 0,
+
   fk_statut  smallint default 0 NOT NULL,
 
-  fk_user_author  integer,   -- createur de la propale
-  fk_user_valid   integer,   -- valideur de la propale
+  fk_user_author  integer,   -- createur de la facture
+  fk_user_valid   integer,   -- valideur de la facture
 
   note       text,
 
