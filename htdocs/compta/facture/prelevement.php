@@ -62,7 +62,7 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-llxHeader('',$langs->trans("Bill"),'Facture - Prélèvement');
+llxHeader('',$langs->trans("Bill"));
 
 $html = new Form($db);
 
