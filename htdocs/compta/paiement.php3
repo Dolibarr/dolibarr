@@ -175,6 +175,13 @@ if ($action == 'add') {
 
 if ($action == '') {
 
+  if ($page == -1)
+    {
+      $page = 0 ;
+    }
+  $limit = $conf->liste_limit;
+  $offset = $limit * $page ;
+
   $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber";
   $sql .=", f.rowid as facid, c.libelle as paiement_type, p.num_paiement";
   $sql .= " FROM llx_paiement as p, llx_facture as f, c_paiement as c";
@@ -186,39 +193,38 @@ if ($action == '') {
     }
 
   $sql .= " ORDER BY datep DESC";
+  $sql .= $db->plimit( $limit ,$offset);
   $result = $db->query($sql);
 
   if ($result)
     {
     $num = $db->num_rows();
-    $i = 0; $total = 0;
+    $i = 0; 
+    $var=True;
 
     print_barre_liste("Paiements", $page, $PHP_SELF);
-    print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
+    print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
     print '<TR class="liste_titre">';
     print "<td>Facture</td>";
     print "<td>Date</td>";
     print "<td>Type</TD>";
-    print "<td align=\"right\">Montant</TD>";
+    print '<td align="right">Montant</TD>';
     print "<td>&nbsp;</td>";
     print "</TR>\n";
     
-    $var=True;
-    while ($i < $num) {
-      $objp = $db->fetch_object( $i);
-      $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
-      print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-      print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
-      print '<TD align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';
-
-      print "</tr>";
-      $total = $total + $objp->amount;
-      $i++;
-    }
-    print "<tr><td align=\"right\" colspan=\"4\">Total : <b>".price($total)."</b></td><td>Euros HT</td></tr>\n";
+    while ($i < $num)
+      {
+	$objp = $db->fetch_object( $i);
+	$var=!$var;
+	print "<TR $bc[$var]>";
+	print "<TD><a href=\"facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
+	print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+	print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
+	print '<TD align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';	
+	print "</tr>";
+	$i++;
+      }
     print "</table>";
   }
 
