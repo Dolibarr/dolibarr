@@ -34,7 +34,6 @@ llxHeader();
 
 if ($_GET["propalid"])
 {
-
   $propal = new Propal($db);
   $propal->fetch($_GET["propalid"]);
   
@@ -56,35 +55,10 @@ if ($_GET["propalid"])
   
   $propal->info($propal->id);
   dolibarr_print_object_info($propal);
-
-
-  /* TODO A FINIR */
-  print "  /* TODO A FINIR */<br>";
   
-
-  $validor = new User($db, $obj->fk_user_valid);
-  $validor->fetch('');
-  $cloturor = new User($db, $obj->fk_user_cloture);
-  $cloturor->fetch('');
-  
-  print 'Suivi des actions<br>';
-  print '<table cellspacing=0 border=1 cellpadding=3>';
-  print '<tr><td>&nbsp;</td><td>Nom</td><td>Date</td></tr>';
-  print '<tr><td>Création</td><td>'.$author->fullname.'</td>';
-  print '<td>'.$obj->datec.'</td></tr>';
-  
-  print '<tr><td>Validation</td><td>'.$validor->fullname.'&nbsp;</td>';
-  print '<td>'.$obj->date_valid.'&nbsp;</td></tr>';
-  
-  print '<tr><td>Cloture</td><td>'.$cloturor->fullname.'&nbsp;</td>';
-  print '<td>'.$obj->date_cloture.'&nbsp;</td></tr>';      
-  print '</table>';
-  
-
   print "<br></div>";
  
   $db->close();
- 
 }
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
