@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -18,6 +15,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
  */
 
 require("./pre.inc.php3");
@@ -27,7 +26,8 @@ llxHeader();
 
 $db = new Db();
 
-if ($action == 'add') {
+if ($action == 'add')
+{
   $service = new Service($db);
 
   $service->ref = $ref;
@@ -43,7 +43,8 @@ if ($action == 'add') {
 
 }
 
-if ($action == 'set_datedeb') {
+if ($action == 'set_datedeb')
+{
   $service = new Service($db);
   $service->start_comm($id, $user->id, $datedeb);
 }
@@ -62,43 +63,55 @@ if ($action == 'update') {
 
   $service->update($id, $user);
 }
-/*
- * Nouvel utilisateur
- *
- *
- */
 
-if ($action == 'create') {
 
-  print '<div class="titre">Nouveau service</div><br>';
-  print '<form action="'.$PHP_SELF.'" method="post">';
+/* ************************************************************************** */
+/*                                                                            */
+/* Nouvel utilisateur                                                         */
+/*                                                                            */
+/* ************************************************************************** */
+
+if ($action == 'create')
+{
+
+  print '<div class="titre">Nouvel utilisateur</div><br>';
+  print 'A FINIR !!<p><form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
-  print '<table border="1" cellpadding="3" cellspacing="0">';
 
-  print '<tr><td valign="top">Référence</td>';
-  print '<td><input size="12" type="text" name="ref"></td></tr>';
+
+  print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
+  print '<input type="hidden" name="action" value="update">';
+  print '<table border="1" cellpadding="3" cellspacing="0">';
   
-  print '<tr><td valign="top">Libelle</td>';
-  print '<td><input size="30" type="text" name="label"></td></tr>';
+  print '<tr><td valign="top">Nom</td>';
+  print '<td>'.$user->id.'</td></tr>';
   
-  print '<tr><td valign="top">Prix</td>';
-  print '<td><input size="8" type="text" name="price"></td></tr>';
+  print '<tr><td valign="top">Nom</td>';
+  print '<td><input size="12" type="text" name="ref" value="'.$user->nom.'"></td></tr>';
+  
+  print '<tr><td valign="top">Prénom</td>';
+  print '<td><input size="30" type="text" name="label" value="'.$user->prenom.'"></td></tr>';
+  
+  print '<tr><td valign="top">Login</td>';
+  print '<td><input size="30" type="text" name="label" value="'.$user->login.'"></td></tr>';
+
   
   print '<tr><td valign="top">Description</td><td>';
   print "<textarea name=\"desc\" rows=\"12\" cols=\"40\">";
+  print $user->description;
   print "</textarea></td></tr>";
-
-  print '<tr><td valign="top">Commercialisé</td>';
-  print '<td><select name="comm_now">';
-  print '<option value="1">oui';
-  print '<option value="0">non';
-  print '</td></tr>';
-
-  print '<tr><td align="center" colspan="2"><input type="submit"></td></tr>';
+      
+  print '<tr><td align="center" colspan="2"><input value="Enregistrer" type="submit"></td></tr>';
   print '</form>';
   print '</table>';
-
-} else {
+}
+/* ************************************************************************** */
+/*                                                                            */
+/* Visue et edition                                                           */
+/*                                                                            */
+/* ************************************************************************** */
+else
+{
   if ($id) {
     $fuser = new User($db, $id);
     $fuser->fetch();
@@ -135,33 +148,39 @@ if ($action == 'create') {
 
 
     print '</table><br>';
-    /*
-     *
-     * Mode edition
-     *
-     */
+
+    /* ************************************************************************** */
+    /*                                                                            */
+    /* Edition                                                                    */
+    /*                                                                            */
+    /* ************************************************************************** */
 
     if ($action == 'edit') {
-      print '<hr><div class="titre">Editer la fiche service</div><br>';
+      print '<hr><div class="titre">Edition de l\'utilisateur</div><br>';
       print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
       print '<table border="1" cellpadding="3" cellspacing="0">';
       
-      print '<tr><td valign="top">Référence</td>';
-      print '<td><input size="12" type="text" name="ref" value="'.$service->ref.'"></td></tr>';
+      print '<tr><td valign="top">Nom</td>';
+      print '<td>'.$user->id.'</td></tr>';
+
+      print '<tr><td valign="top">Nom</td>';
+      print '<td><input size="12" type="text" name="ref" value="'.$user->nom.'"></td></tr>';
       
-      print '<tr><td valign="top">Libelle</td>';
-      print '<td><input size="30" type="text" name="label" value="'.$service->libelle.'"></td></tr>';
+      print '<tr><td valign="top">Prénom</td>';
+      print '<td><input size="30" type="text" name="label" value="'.$user->prenom.'"></td></tr>';
       
-      print '<tr><td valign="top">Prix</td>';
-      print '<td><input size="8" type="text" name="price" value="'.$service->price.'"></td></tr>';
+      print '<tr><td valign="top">Login</td>';
+      print '<td><input size="30" type="text" name="label" value="'.$user->login.'"></td></tr>';
+
+
       
       print '<tr><td valign="top">Description</td><td>';
       print "<textarea name=\"desc\" rows=\"12\" cols=\"40\">";
-      print $service->description;
+      print $user->description;
       print "</textarea></td></tr>";
       
-      print '<tr><td align="center" colspan="2"><input type="submit"></td></tr>';
+      print '<tr><td align="center" colspan="2"><input value="Enregistrer" type="submit"></td></tr>';
       print '</form>';
       print '</table>';
     }
