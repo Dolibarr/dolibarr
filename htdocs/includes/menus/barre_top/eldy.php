@@ -39,7 +39,7 @@
 class MenuTop {
 
     var $require_left=array("eldy");    // Si doit etre en phase avec un gestionnaire de menu gauche particulier
-    var $showhome=false;                // Faut-il afficher le menu Accueil par le main.inc.php
+    var $showhome=false;                // Faut-il afficher le menu Accueil par le main
 
     
     /**
