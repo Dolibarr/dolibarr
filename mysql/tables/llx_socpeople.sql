@@ -32,5 +32,6 @@ create table llx_socpeople
   phone       varchar(30),
   fax         varchar(30),
   email       varchar(255),
+  fk_user     integer default 0,
   note        text
 );
