@@ -125,94 +125,44 @@ if ($sortfield == "")
   $sortfield="a.datea";
 }
 
+$sql = "SELECT s.nom as societe, s.idp as socidp,a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact ";
+$sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_societe as s, llx_user as u";
+$sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid AND a.percent = 100";
+
+if ($type)
+{
+  $sql .= " AND c.id = $type";
+}
 
 if ($socid) 
 {
-  $societe = new Societe($db);
-  $societe->fetch($socid);
-
-  $sql = "SELECT a.id,".$db->pdate("a.datea")." as da, c.libelle, u.code, a.note, u.name, u.firstname, a.fk_contact ";
-  $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u";
-  $sql .= " WHERE a.fk_soc = $socid AND c.id=a.fk_action AND a.fk_user_author = u.rowid AND a.percent = 100";
- 
- if ($type)
-   {
-     $sql .= " AND c.id = $type";
-   }
-
- $sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
- $sql .= $db->plimit($limit + 1,$offset);
-
- if ( $db->query($sql) )
-   {
-     $num = $db->num_rows();
-     print_barre_liste("Liste des actions commerciales effectuées sur " . $societe->nom,$page, $PHP_SELF,'',$sortfield,$sortorder,'',$num);
-     $i = 0;
-     print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-     print '<TR class="liste_titre">';
-     print '<TD>Date</TD>';
-     print "<TD>Action</TD>";
-     print '<td>Contact</a></TD>';
-     print "</TR>\n";
-     $var=True;
-     
-     while ($i < min($num,$limit))
-       {
-	 $obj = $db->fetch_object( $i);
-	 
-	 $var=!$var;
-     
-	 print "<TR $bc[$var]>";
-	 print "<TD width=\"10%\">" .strftime("%Y %b %d %H:%M",$obj->da)."</TD>\n"; 
-	 print '<TD width="30%"><a href="fiche.php3?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
-	print '<td width="30%">';
-	if ($obj->fk_contact)
-	  {
-	    $cont = new Contact($db);
-	    $cont->fetch($obj->fk_contact);
-	    print '<a href="'.DOL_URL_ROOT.'/comm/people.php3?socid='.$obj->socidp.'&contactid='.$cont->id.'">'.$cont->fullname.'</a>';
-	  }
-	else
-	  {
-	    print "&nbsp;";
-	  }
-	print '</td>';
-	 print "</TR>\n";
-	 
-	 $i++;
-       }
-     print "</TABLE>";
-     $db->free();
-   } else {
-     print $db->error() . '<br>' . $sql;
-   }
- 
+  $sql .= " AND s.idp = $socid";
 }
-else
+
+$sql .= " ORDER BY a.datea DESC";
+$sql .= $db->plimit( $limit + 1, $offset);
+  
+  
+if ( $db->query($sql) )
 {
-  $sql = "SELECT s.nom as societe, s.idp as socidp,a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact ";
-  $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_societe as s, llx_user as u";
-  $sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid AND a.percent = 100";
-  
-  if ($type)
+  $num = $db->num_rows();
+  if ($socid) 
     {
-      $sql .= " AND c.id = $type";
+      $societe = new Societe($db);
+      $societe->fetch($socid);
+      
+      print_barre_liste("Liste des actions commerciales effectuées sur " . $societe->nom, $page, $PHP_SELF,'',$sortfield,$sortorder,'',$num);
     }
-  
-  $sql .= " ORDER BY a.datea DESC";
-  $sql .= $db->plimit( $limit + 1, $offset);
-  
-  
-  if ( $db->query($sql) )
-    {
-      $num = $db->num_rows();
-      print_barre_liste("Liste des actions commerciales effectuées sur " . $societe->nom,$page, $PHP_SELF,'',$sortfield,$sortorder,'',$num);
-      $i = 0;
-      print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-      print '<TR class="liste_titre">';
-      print '<TD colspan="4">Date</TD>';
-      print '<TD>Société</a></td>';
-      print '<TD>Action</a></TD>';
+  else
+    {      
+      print_barre_liste("Liste des actions commerciales", $page, $PHP_SELF,'',$sortfield,$sortorder,'',$num);
+    }
+  $i = 0;
+  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print '<TR class="liste_titre">';
+  print '<TD colspan="4">Date</TD>';
+  print '<TD>Société</a></td>';
+  print '<TD>Action</a></TD>';
       print '<TD>Contact</a></TD>';
       print "<TD align=\"right\">Auteur</TD>";
       print "</TR>\n";
@@ -270,6 +220,7 @@ else
 	/*
 	 *
 	 */
+	print '<td>'.$obj->libelle.'</td>';
 	print "<TD align=\"right\" width=\"20%\">$obj->code</TD>\n";
 	
 	print "</TR>\n";
@@ -282,7 +233,7 @@ else
     {
       print $db->error() . ' ' . $sql ;
     }
-}
+
 
 $db->close();
 
