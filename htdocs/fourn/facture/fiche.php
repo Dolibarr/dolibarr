@@ -356,7 +356,7 @@ else
 	  print "</tr>";
 	  print "<tr $bc[1]><td>Date</td><td colspan=\"4\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
 	  print "<tr $bc[1]><td>Libelle</td><td colspan=\"4\">$obj->libelle</td>";
-	  print "<tr $bc[1]>".'td>Auteur</td><td colspan="4">'.$fac->author.'&nbsp;</td>';
+	  print "<tr $bc[1]><td>Auteur</td><td colspan=\"4\">$fac->author&nbsp;</td>";
 	  
 	  print "<tr $bc[1]>".'<td>&nbsp</td><td>Total HT</td><td align="right"><b>'.price($fac->total_ht)."</b></td>";
 	  print '<td align="right">TVA</td><td align="right">'.price($fac->total_tva)."</td></tr>";
