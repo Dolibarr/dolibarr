@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (c) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (c) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,20 @@
  * $Source$
  */
 
+/*!	\file user.class.php
+		\brief  Fichier de la classe utilisateur
+		\author Rodolphe Qiedeville
+		\author Jean-Louis Bergamo
+		\author	Laurent Destailleur
+		\version $Revision$
+*/
+
+
+
+/*! \class User
+		\brief Classe permettant la gestion d'un utilisateur
+*/
+
 class User
 {
   var $db;
@@ -38,27 +53,37 @@ class User
   var $compta;
   var $webcal_login;
   var $errorstr;
-  var $limite_liste;
+  var $userpref_limite_liste;
+  var $all_permissions_are_loaded;         /*!< \private all_permissions_are_loaded */
 
-  Function User($DB, $id=0)
+
+  /**
+   *    \brief Constructeur de la classe
+   *    \param  $DB         handler accès base de données
+   *    \param  $id         id de l'utilisateur (0 par défaut)
+   */
+  function User($DB, $id=0)
     {
 
       $this->db = $DB;
       $this->id = $id;
+
       $this->comm = 1;
       $this->compta = 1;
-      $this->limite_liste = 0;
+
+      // Preference utilisateur
+      $this->userpreflimite_liste = 0;
 
       $this->all_permissions_are_loaded = 0;
 
       return 1;
   }
-  /*
-   *
-   *
-   *
+
+  /**
+   *    \brief      Ajoute un droit a l'utilisateur
+   *    \param      rid        id du droit à ajouter
    */
-  Function addrights($rid)
+  function addrights($rid)
     {
       if (strlen($rid) == 2)
 	{
@@ -94,7 +119,7 @@ class User
 	    }
 	  else
 	    {
-	      print $sql;
+    	  dolibarr_print_error($this->db);
 	    }
 	}
       
@@ -110,7 +135,7 @@ class User
 		}
 	      else
 		{
-		  print $sql;
+    	  dolibarr_print_error($this->db);
 		}
 	    }
 	}
@@ -118,11 +143,13 @@ class User
       
       return 1;
     }
-  /*
-   *
-   *
+
+
+  /**
+   *    \brief      Retire un droit a l'utilisateur
+   *    \param      rid        id du droit à retirer
    */
-  Function delrights($rid)
+  function delrights($rid)
     {
 
       if (strlen($rid) == 2)
@@ -179,11 +206,12 @@ class User
             
       return 1;
     }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Charge dans l'objet user, la liste des permissions auquels l'utilisateur a droit
+   *    \param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
    */
-  Function getrights($module='')
+  function getrights($module='')
     {
       if ($this->all_permissions_are_loaded) {
         // Si les permissions ont déja été chargé pour ce user, on quitte
@@ -395,15 +423,15 @@ class User
 	  }
 	else
 	  {
-	    print $this->db->error();
+    	  dolibarr_print_error($this->db);
 	  }
     }
 
-  /*
-   *
-   *
+  /**
+   *    \brief      Charge un objet user avec toutes ces caractéristiques depuis un login
+   *    \param      login   login a charger
    */
-  Function fetch($login='')
+  function fetch($login='')
     {
       
       //$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.module_comm, u.module_compta, u.login, u.pass, u.webcal_login, u.note";
@@ -452,7 +480,7 @@ class User
 	}
       else
 	{
-	  print $this->db->error();
+    	  dolibarr_print_error($this->db);
 	}
 
       $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
@@ -477,12 +505,11 @@ class User
 
 
   }
-  /*
-   *
-   *
-   *
+
+  /**
+   *    \brief  Efface de la base, un utilisateur
    */
-  Function delete()
+  function delete()
     {
       if ($this->contact_id) 
 	{
@@ -513,11 +540,11 @@ class User
 	}
 
   }
+
   /**
-   * Créé l'utilisateur
-   *
+   *    \brief  Crée en base un utilisateur
    */
-  Function create()
+  function create()
     {
       $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login'";
 
@@ -546,20 +573,22 @@ class User
 		}
 	      else
 		{
-		  print $this->db->error();
+    	  dolibarr_print_error($this->db);
 		}
 	    }
 	}
       else
 	{
-	  print $this->db->error();
+    	  dolibarr_print_error($this->db);
 	}
     }
+
   /**
-   *
+   * \brief     Créé en base un utilisateur depuis l'objetc contact
+   * \param     contact      Objet du contact source
    *
    */
-  Function create_from_contact($contact)
+  function create_from_contact($contact)
     {
       $this->nom = $contact->nom;
       $this->prenom = $contact->prenom;
@@ -601,23 +630,22 @@ class User
 		}
 	      else
 		{
-		  dolibarr_syslog("Error in  user.class.php->create_from_contact()");
-		  print $this->db->error();
+    	  dolibarr_print_error($this->db);
 		}
 	    }
 	}
       else
 	{
-	  dolibarr_syslog("Error in  user.class.php->create_from_contact()");
-	  print $this->db->error();
+    	  dolibarr_print_error($this->db);
 	}
       
     }
+
   /**
-   * Affectation des permissions par défaut
+   * \brief     Affectation des permissions par défaut
    *
    */
-  Function set_default_rights()
+  function set_default_rights()
     {
       $sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def WHERE bydefault = 1";
 
@@ -645,11 +673,12 @@ class User
 	  $i++;
 	}
     }
+
   /**
-   * Mise à jour
+   * \brief     Mise à jour en base d'un utilisateur
    *
    */
-  Function update()
+  function update()
     {
       $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login' AND rowid <> $this->id";
 
@@ -692,17 +721,18 @@ class User
 		}
 	      else
 		{
-		  print $this->db->error() ."<br>$sql";
+    	  dolibarr_print_error($this->db);
 		}
 	    }
 	}
     }
-  /*
-   * Change le mot de passe et l'envoie par mail
-   *
-   *
+
+  /**
+   * \brief     Change le mot de passe d'un utilisateur et l'envoie par mail
+   * \param     password    nouveau mot de passe (généré par defaut si non communiqué)
+   * \param     encrypted   0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
    */
-  Function password($password='', $password_encrypted = 0)
+  function password($password='', $password_encrypted = 0)
     {
       if (! $password)
 	{
@@ -740,15 +770,15 @@ class User
 	}
       else
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
 	}
     }
-  /*
-   * Renvoie la chaîne de caractère décrivant l'erreur
-   *
-   *
+
+  /**
+   * \brief     Renvoie la dernière erreur fonctionnelle de manipulation de l'objet
+   * \return    string      chaine erreur
    */
-  Function error()
+  function error()
     {
       return $this->errorstr;
     }
