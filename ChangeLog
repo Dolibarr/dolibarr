@@ -1,3 +1,13 @@
+2003-09-09  Rodolphe Quiédeville  <rq@quiedeville.org>
+
+	* Désormais on log les changements de prix, pour permettre un
+	suivi de l'évolution du prix d'un produit dans le temps
+
+	* Ajout d'un nouveau modèle de facture (qui devient le modèle par
+	défaut), ce modèle (bulot) inclut la remise
+	
+	* Ajout d'un fichier robots.txt à la racine
+
 2003-09-08  Rodolphe Quiédeville  <rq@quiedeville.org>
 
 	* Nouvelle gestion du solde lors de la création de compte
@@ -9,7 +19,7 @@
 	l'extension .txt à la fin pour permettre la consultation du
 	fichier et en empécher son interprétation par le serveur web
 
-	* Possibilité de changer le modèle d'une proposition commercial
+	* Possibilité de changer le modèle d'une proposition commerciale
 
 	* Ajout du modèle de propale "bleu" qui est l'ancien modèle rouge,
 	le modèle rouge inclut désormais les remises
@@ -18,8 +28,8 @@
 	lors de l'activation du module
 
 	* Modification de l'installation, ajout d'un test si l'utilisateur
-	est passé par install.php, si non le renvoie automatiquement sur
-	la page
+	est passé par install.php, sinon le renvoie automatiquement sur
+	la page adequat
 
 	* bug fix sur les url vers les images dans comm/contact.php3 et
 	four/fiche.php3 et fourn/index.php
