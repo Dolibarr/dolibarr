@@ -30,6 +30,7 @@ $form = new Form($db);
 
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
+
 if ($_GET["subaction"] == 'addrights' && $user->admin)
 {
     $edituser = new User($db,$_GET["id"]);
@@ -44,7 +45,7 @@ if ($_GET["subaction"] == 'delrights' && $user->admin)
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 {
-  if ($id <> $user->id)
+  if ($_GET["id"] <> $user->id)
     {
       $edituser = new User($db, $_GET["id"]);
       $edituser->fetch($_GET["id"]);
@@ -136,7 +137,7 @@ if ($action == 'create')
     print '<form action="fiche.php" method="post">';
     print '<input type="hidden" name="action" value="add">';
 
-    print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
+    print '<table class="border" width="100%">';
 
     print '<tr><td valign="top" width="20%">'.$langs->trans("FirstName").'</td>';
     print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
@@ -206,9 +207,9 @@ else
             $h++;
         }
     
-	$head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
-	$head[$h][1] = $langs->trans("Addons");
-	$h++;
+        $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
+        $head[$h][1] = $langs->trans("Addons");
+        $h++;
     
         dolibarr_fiche_head($head, $hselected, $fuser->nom." ".$fuser->prenom);
 
@@ -219,7 +220,7 @@ else
         if ($action == 'delete')
         {
             $html = new Form($db);
-            $html->form_confirm("fiche.php?id=$fuser->id","Désactiver cet utilisateur","Etes-vous sûr de vouloir désactiver cet utilisateur ?","confirm_delete");
+            $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_delete");
         }
 
 
@@ -232,12 +233,12 @@ else
              * Ecran ajout/suppression permission
              */
 
-            print '<table class="noborder" width="100%" border="0" cellpadding="3" cellspacing="0">';
+            print '<table class="noborder" width="100%">';
 
 
             // Droits existant
             print "<tr>".'<td valign="top" colspan="2">';
-            print '<table width="100%" class="noborder" cellpadding="2" cellspacing="0">';
+            print '<table width="100%" class="noborder">';
             print '<tr class="liste_titre"><td>'.$langs->trans("AvailableRights").'</td><td>'.$langs->trans("Module").'</td><td>&nbsp</td></tr>';
             $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r ORDER BY r.module, r.id ASC";
 
@@ -267,7 +268,7 @@ else
             print '</td><td colspan="2" valign="top">';
 
             // Droits possédés
-            print '<table class="noborder" width="100%" cellpadding="2" cellspacing="0">';
+            print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre"><td>&nbsp</td><td>'.$langs->trans("OwnedRights").'</td><td>'.$langs->trans("Module").'</td></tr>';
             $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
             $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.module, r.id ASC";
@@ -303,7 +304,7 @@ else
              * Fiche en mode visu
              */
 
-            print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
+            print '<table class="border" width="100%">';
 
             print "<tr>".'<td width="25%" valign="top">'.$langs->trans("LastName").'</td>';
             print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
@@ -350,7 +351,8 @@ else
             // Autres caractéristiques issus des autres modules
             if ($conf->webcal->enabled)
             {
-                print "<tr>".'<td width="25%" valign="top">Webcal Login</td>';
+                $langs->load("other");
+                print '<tr><td width="25%" valign="top">'.$langs->trans("LoginWebcal").'</td>';
                 print '<td colspan="3">'.$fuser->webcal_login.'&nbsp;</td>';
                 print "</tr>\n";
             }
@@ -372,12 +374,12 @@ else
                 print '<a class="tabAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
             }
 
-            if ($user->id == $id or $user->admin)
+            if ($user->id == $_GET["id"] or $user->admin)
             {
                 print '<a class="tabAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("SendNewPassword").'</a>';
             }
 
-            if ($user->admin && $user->id <> $id)
+            if ($user->id <> $_GET["id"] && $user->admin)
             {
                 print '<a class="tabAction" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
             }
@@ -389,7 +391,7 @@ else
             /*
              * Droits
              */
-            print '<table width="100%" class="noborder" cellpadding="0" cellspacing="0">';
+            print '<table width="100%" class="noborder">';
             print '<tr class="liste_titre"><td>'.$langs->trans("Permissions").'</td><td>'.$langs->trans("Module").'</td></tr>';
             $sql = "SELECT r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
             $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.module, r.id ASC";
@@ -425,7 +427,7 @@ else
         {
             print '<form action="fiche.php?id='.$fuser->id.'" method="post">';
             print '<input type="hidden" name="action" value="update">';
-            print '<table wdith="100%" class="border" border="1" cellpadding="3" cellspacing="0">';
+            print '<table wdith="100%" class="border">';
 
             print "<tr>".'<td valign="top">'.$langs->trans("LastName").'</td>';
             print '<td><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td></tr>';
@@ -459,6 +461,7 @@ else
             print "</textarea></td></tr>";
 
             // Autres caractéristiques issus des autres modules
+            $langs->load("other");
             print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
             print '<td class="valeur"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
 
