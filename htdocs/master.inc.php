@@ -106,9 +106,11 @@ require_once(DOL_DOCUMENT_ROOT ."/address.class.php");
 $db = new DoliDb();
 $user = new User($db);
 
-// \todo mettre ces includes uniquement sur les éléments qui manipulent du PDF
-require_once(DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf152/fpdf.php");
-define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/font/');
+
+define('FPDF_PATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/');   // Pour utiliser une autre version de fpdf
+define('FPDF_FONTPATH', FPDF_PATH . 'font/');
+// \todo mettre cet include uniquement sur les éléments qui manipulent du PDF
+require_once(FPDF_PATH . "fpdf.php");
 
 
 /*
