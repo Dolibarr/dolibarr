@@ -34,7 +34,7 @@ if ($action == 'create')
 
   print '<form action="index.php3?socidp='.$socidp.'" method="post">';
   ?>
-  <table border=1 cellpadding="1" cellspacing="0">
+  <table border="1" cellpadding="4" cellspacing="0">
   <input type="hidden" name="action" value="create">
   <tr><td>Société</td><td>
   <?PHP 
@@ -71,15 +71,13 @@ if ($action == 'create')
 
   
   if ($action == 'edit')
-    {
-  
+    {  
       print '<table border="1" cellpadding="4" cellspacing="0">';
       print '<tr><td>Société</td><td>'.$projet->societe->nom.'</td></tr>';
       
       print '<tr><td>Ref</td><td>'.$projet->ref.'</td></tr>';
       print '<tr><td>Titre</td><td>'.$projet->title.'</td></tr>';
-      print '</table>';
-      
+      print '</table>'; 
     }
   else
     {
