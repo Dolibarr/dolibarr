@@ -277,11 +277,6 @@ if ($propalid)
 	   *
 	   */
 
-      
-	  /*
-	   *
-	   */
-
 	  print "</table>";
 
 	  if ($action == 'statut') 
@@ -306,14 +301,14 @@ if ($propalid)
 	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<TR class=\"liste_titre\">";
 	  print "<td>Réf</td><td>Produit</td>";
-	  print '<td align="right">Prix</td><td align="center">&nbsp;</td><td align="center">Qté.</td>';
+	  print '<td align="right">Prix</td><td align="center">Tva</td><td align="center">Qté.</td>';
 	  if ($obj->statut == 0)
 	    {
 	      print "<td>&nbsp;</td>";
 	    }
 	  print "</TR>\n";
 
-	  $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid";
+	  $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.tva_tx";
 	  $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
 	  
 	  $result = $db->query($sql);
@@ -332,7 +327,7 @@ if ($propalid)
 		  print "<TD>[$objp->ref]</TD>\n";
 		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php3?id='.$objp->prodid.'">'.$objp->product.'</td>';
 		  print "<TD align=\"right\">".price($objp->price)."</TD>";
-		  print '<td>&nbsp;</td>';
+		  print '<td align="center">'.$objp->tva_tx.' %</td>';
 		  print "<td align=\"center\">".$objp->qty."</td>\n";
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
@@ -348,7 +343,7 @@ if ($propalid)
 		}
 	    }
 
-	  $sql = "SELECT pt.rowid, pt.description, pt.price, pt.qty";
+	  $sql = "SELECT pt.rowid, pt.description, pt.price, pt.qty, pt.tva_tx";
 	  $sql .= " FROM llx_propaldet as pt WHERE pt.fk_propal = $propalid AND pt.fk_product = 0";
 	  
 	  $result = $db->query($sql);
@@ -363,7 +358,8 @@ if ($propalid)
 		  print "<TR $bc[$var]><td>&nbsp;</td>\n";
 		  print '<td>'.$objp->description.'</td>';
 		  print "<TD align=\"right\">".price($objp->price)."</td>";
-		  print "<td></td><td align=\"center\">".$objp->qty."</td>\n";
+		  print '<td align="center">'.$objp->tva_tx.' %</td>';
+		  print "<td align=\"center\">".$objp->qty."</td>\n";
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
 		      print '<td align="center"><a href="propal.php3?propalid='.$propalid.'&ligne='.$objp->rowid.'&action=del_ligne">Supprimer</a></td>';
