@@ -25,6 +25,8 @@ MYSQL=mysql
 BASE=dolibarr
 OPTIONS=
 
+TABLES=$(shell find tables/ -name "*sql")
+
 all:
 	cd tables \
 	&& make show
@@ -78,3 +80,7 @@ createpriv:
 	$(MYSQL) mysql -e "update db set index_priv      = 'Y'  where db='$(BASE)' ; "
 	$(MYSQL) mysql -e "update db set alter_priv      = 'Y'  where db='$(BASE)' ; "
 	$(MYSQL) mysql -e "flush privileges ; "
+
+
+mysql.sql: $(TABLES)
+	find tables/ -name "*sql" | xargs cat | grep -v ^-- > mysql.sql
