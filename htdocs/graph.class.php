@@ -59,7 +59,31 @@ class Graph
 
     if (isset($this->MaxValue))
       {
+	$this->MaxValue = $this->MaxValue + 1;
+	$max = $this->MaxValue;
+	if (($max % 2) <> 0)
+	  {
+	    $this->MaxValue = $this->MaxValue + 1;
+	    $max++;
+	  }
+
 	$graph->SetPlotAreaWorld(0,0,12,$this->MaxValue);
+
+	$j = 0;
+	for ($i = 1 ; $i < 11 ; $i++)
+	  {
+	    $res = $max % $i;
+	    $cal = $max / $i;
+	    if ($res == 0 && $cal <= 10)
+	      {
+		$nts[$j] = $cal;
+		$j++;
+	      }
+
+	  }
+	rsort($nts);
+
+	$graph->SetNumVertTicks($nts[0]);
       }
     else
       {
@@ -78,7 +102,7 @@ class Graph
     //Set some data
     $graph->SetDataValues($data);
 
-    $graph->SetVertTickIncrement(0);
+    //    $graph->SetVertTickIncrement(0);
 
     $graph->SetDrawYGrid(1); 
 
