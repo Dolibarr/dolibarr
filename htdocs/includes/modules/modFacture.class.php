@@ -146,7 +146,7 @@ class modFacture extends DolibarrModules
     $this->rights[1][2] = 'a';
     $this->rights[1][3] = 0;
 
-    $this->rights[2][0] = 11;
+    $this->rights[2][0] = 12;
     $this->rights[2][1] = 'Créer/modifier les factures';
     $this->rights[2][2] = 'a';
     $this->rights[2][3] = 0;
