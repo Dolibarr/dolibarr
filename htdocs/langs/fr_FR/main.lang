@@ -73,7 +73,7 @@ Family=Famille
 Description=Description
 Action=Action
 About=À propos
-WelcomeString=<font class="body">Nous sommes le</font> %s<font class="body">, et vous êtes connectés sous le nom</font> %s
+WelcomeString=<font class="body">Nous sommes le</font> %s<font class="body">, et vous êtes connecté(e) sous le nom</font> %s
 Number=Nombre
 Numero=Numéro
 DevelopmentTeam=Équipe de développement
@@ -158,7 +158,7 @@ Qty=Qté
 ChangedBy=Modifié par
 ReCalculate=Re-calculer
 ResultOk=Succès
-ResultKo=Echec
+ResultKo=Échec
 Reporting=Rapports
 Drafts=Brouillons
 Opened=Ouverts

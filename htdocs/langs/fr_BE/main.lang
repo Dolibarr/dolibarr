@@ -60,11 +60,11 @@ Family=Famille
 Description=Description
 Action=Action
 About=A propos
-WelcomeString=<font class="body">Nous sommes le</font> %s<font class="body">, et vous êtes connectés comme</font> %s
+WelcomeString=<font class="body">Nous sommes le</font> %s<font class="body">, et vous êtes connecté(e) comme</font> %s
 Number=Nombre
 Numero=Numéro
-DevelopmentTeam=Equipe de développement
-Logout=Deconnexion
+DevelopmentTeam=Équipe de développement
+Logout=Déconnexion
 Setup=Configuration
 Alert=Alerte
 Previous=Précédent
