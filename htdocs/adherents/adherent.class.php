@@ -30,6 +30,8 @@
 		\author     Rodolphe Qiedeville
 		\author	    Jean-Louis Bergamo
 		\author	    Laurent Destailleur
+		\author     Sebastien Di Cintio
+		\author     Benoit Mortier
 		\version    $Revision$
 */
 
