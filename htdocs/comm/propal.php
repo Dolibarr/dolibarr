@@ -766,7 +766,7 @@ if ($propalid)
 	}
       else 
 	{
-	  print '<p><a href="'.$PHP_SELF.'?propalid='.$propal->id.'&suivi=1">Voir le suivi des actions </a>';
+	  print '<p><a href="'.$PHP_SELF.'?propalid='.$propal->id.'&amp;suivi=1">Voir le suivi des actions </a>';
 	}
       
     }
