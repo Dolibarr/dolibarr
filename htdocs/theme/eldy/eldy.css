@@ -50,24 +50,66 @@ textarea  { font: helvetica, verdana, arial, sans-serif; }
 }
 
 
+div.body
+{
+    margin-top: 1px;
+    margin-bottom: 0;
+    margin-right: 3px;
+    margin-left: 3px;
+  display:block;
+  padding:0px;
+  font-family:arial,tahoma,verdana,helvetica;
+  font-size:12px;
+}
+
+
+div.tmenu
+{
+  white-space: nowrap;
+  display:block;
+  border:0;
+  border-right: 1px solid #000000;
+  border-bottom: 1px solid #000000;
+  padding: 0em 1em;
+  margin: 0em 0em 0.2em 0em;
+  font-weight:bold;
+  font-size:13px;
+  height: 18px;
+
+  background: #b3c5cc; 
+  color: #000000; 
+  text-decoration: none;
+}
+
+div.vmenu
+{
+  float: left;
+/*  background: #dee7ec; */
+  display:block;
+  margin-right: 10px;
+  padding: 0px;
+  padding-bottom: 0px;
+  width: 158px;
+}
+
+div.fiche
+{
+  display: block;
+  float: none;
+  position: absolute;
+  top: 25px;
+  left: 164px;
+  margin-right: 10px;
+}
+
+
 /*
  *   Menu superieur et 1ere ligne tableau
  */
- 
+
 table.topbarre
 { 
 	cell-spacing: 0;
-}
-
-td.menu { 
-border-right: 1px solid #000000;
-border-bottom: 1px solid #000000;
-}
-td.menusel { 
-border-left: 1px solid #333344;
-border-right: 1px solid #FFFFFF;
-border-top: 1px solid #333344;
-border-bottom: 1px solid #FFFFFF;
 }
 
 .menu { 
@@ -115,6 +157,43 @@ a.tmenu:hover
 /*
  *   Barre de gauche
  */
+
+a.vmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+
+a.vsmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+
+div.blockvmenupair
+{
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	background: #b3c5cc;
+	font: helvetica, verdana, arial, sans-serif;
+	color: #000000; 
+	text-align:left;
+	text-decoration: none;
+    padding: 3px;
+    margin: 1px 0px 0px 0px;
+}
+
+div.blockvmenuimpair
+{
+	border-right: 1px solid #000000;
+	border-bottom: 1px solid #000000;
+	background: #b3c5cc;
+	font: helvetica, verdana, arial, sans-serif;
+	color: #000000; 
+	text-align:left;
+	text-decoration: none;
+    padding: 3px;
+    margin: 1px 0px 0px 0px;
+}
+
 
 a.leftmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.leftmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
@@ -330,18 +409,6 @@ font: helvetica, verdana, arial, sans-serif;
 
 
 
-/*
- *   Menu
- */
-
-div.menus { 
-	background: #eeeecc; 
-	color: #bbbb88;
-	border-top:    1px dashed #ccccb3;
-	border-right:  1px dashed #ccccb3;
-	border-bottom: 1px dashed #ccccb3;
-	border-left:   1px dashed #ccccb3;
-}
 
 /*
  *   Normal, warning, erreurs
