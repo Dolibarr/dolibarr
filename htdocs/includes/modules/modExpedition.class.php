@@ -77,6 +77,7 @@ class modExpedition extends DolibarrModules
     /*
      * Permissions
      */
+		 $this->remove();
     $sql = array(
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (100,'Tous les droits sur les expeditions','expedition','a',0);",
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (101,'Lire les expeditions','expedition','r',1);",

@@ -81,6 +81,7 @@ class modFicheinter  extends DolibarrModules
     /*
      * Permissions
      */
+		 $this->remove();
     $sql = array(
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (60,'Tous les droits sur les fiches d\'intervention','ficheinter','a',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (61,'Lire les fiches d\'intervention','ficheinter','r',1);",

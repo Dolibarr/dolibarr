@@ -85,7 +85,7 @@ class modExternalRss extends DolibarrModules
      */
     
     $sql = array();
-
+		
     return $this->_init($sql);
   }
   /*

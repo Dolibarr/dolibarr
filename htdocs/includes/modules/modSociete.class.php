@@ -73,6 +73,7 @@ class modSociete extends DolibarrModules
     /*
      * Permissions
      */
+		 $this->remove();
     $sql = array(
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (120,'Tous les droits sur les sociétés','societe','a',0);",
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (121,'Lire les societes','societe','r',1);",

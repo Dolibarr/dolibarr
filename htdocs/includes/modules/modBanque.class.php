@@ -74,6 +74,7 @@ class modBanque extends DolibarrModules
     /*
      * Permissions
      */    
+		 $this->remove();
     $sql = array(
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (110,'Tous les droits sur les comptes bancaires','banque','a',0);",
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (111,'Lire les comptes','banque','r',1);",

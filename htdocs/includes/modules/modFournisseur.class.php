@@ -78,7 +78,7 @@ class modFournisseur extends DolibarrModules
      * Permissions
      */
     $sql = array();
-    
+  
     return $this->_init($sql);
   }
   /** suppression du module

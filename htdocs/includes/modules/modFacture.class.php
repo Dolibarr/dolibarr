@@ -118,6 +118,7 @@ class modFacture extends DolibarrModules
     */
   function init()
   {
+	  $this->remove();
     $sql = array(
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (10,'Tous les droits sur les factures','facture','a',0);",
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (11,'Lire les factures','facture','r',1);",

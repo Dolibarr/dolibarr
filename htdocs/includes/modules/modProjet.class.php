@@ -77,6 +77,7 @@ class modProjet extends DolibarrModules
     /*
      * Permissions
      */
+		 $this->remove();
     $sql = array(
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (40,'Tous les droits sur les projets','projet','a',0);",
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (41,'Lire les projets','projet','r',1);",

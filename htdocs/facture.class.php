@@ -757,9 +757,16 @@ class Facture
 		{
 		  foreach ($tvas as $key => $value)
 		    {
-		      $sql = "REPLACE INTO ".MAIN_DB_PREFIX."facture_tva_sum SET fk_facture=".$this->id;
-		      $sql .= ", amount = '".$tvas[$key]."'";
-		      $sql .= ", tva_tx='".$key."'";
+				
+$sql_del = "delete from ".MAIN_DB_PREFIX."facture_tva_sum where fk_facture =$this->id;";
+$this->db->query($sql_del);
+		
+$sql = "insert into ".MAIN_DB_PREFIX."facture_tva_sum (fk_facture,amount,tva_tx) 
+		values ($this->id,'".$tvas[$key]."','".$key."');";
+		
+		    //  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."facture_tva_sum SET fk_facture=".$this->id;
+//		      $sql .= ", amount = '".$tvas[$key]."'";
+	//	      $sql .= ", tva_tx='".$key."'";
 		      
 		      if (! $this->db->query($sql) )
 			{

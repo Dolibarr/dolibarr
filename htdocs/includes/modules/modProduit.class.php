@@ -79,7 +79,7 @@ class modProduit extends DolibarrModules
     /*
      * Permissions
      */
-
+		$this->remove();
     $sql = array(
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (30,'Tous les droits sur les produits/services','produit','a',0);",
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (31,'Lire les produits/services','produit','r',1);",

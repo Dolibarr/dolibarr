@@ -77,6 +77,7 @@ class modComptabilite extends DolibarrModules
     /*
      * Permissions
      */    
+		 $this->remove();
     $sql = array(
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (90,'Tous les droits sur la compta','compta','a',0);",
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (91,'Lire les charges','compta','r',1);",

@@ -36,6 +36,7 @@
 //session_register("fix_left_menu");
 
 require("./pre.inc.php");
+include_once $dolibarr_main_document_root."/lib/${dolibarr_main_db_type}.lib.php";
 //include_once("../../allpre.inc.php");
 
 $langs->load("admin");
@@ -89,12 +90,17 @@ print "<br>\n";
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Database")."</td></tr>\n";
+if($dolibarr_main_db_type == "mysql")
+{
 $sql = "SHOW VARIABLES LIKE 'version'";
+}
+
 $result = $db->query($sql);
 if ($result)  
 {
   $row = $db->fetch_row();
 }
+
 print "<tr $bc[0]><td>".$langs->trans("Version")."</td><td>" . $row[1] . "</td></tr>\n";
 print "<tr $bc[1]><td width=\"240\">".$langs->trans("Type")."</td><td>" . $conf->db->type . "</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("Host")."</td><td>" . $conf->db->host . "</td></tr>\n";

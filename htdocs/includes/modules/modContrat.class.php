@@ -77,7 +77,7 @@ class modContrat extends DolibarrModules
     $sql = array(
 
 		 );
-    
+  
     return $this->_init($sql);
   }
   /*

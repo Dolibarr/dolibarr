@@ -114,6 +114,7 @@ class modAdherent extends DolibarrModules
     /*
      * Permissions
      */
+		 $this->remove();
     $sql = array(
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (70,'Tous les droits sur les adherents','adherent','a',0);",
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (71,'Lire les fiche adherents','adherent','r',1);",

@@ -79,6 +79,7 @@ class modCommande extends DolibarrModules
     /*
      * Permissions
      */
+		 $this->remove();
     $sql = array(
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (80,'Tous les droits sur les commandes','commande','a',0);",
 		 "insert into ".MAIN_DB_PREFIX."rights_def values (81,'Lire les commandes','commande','r',1);",
