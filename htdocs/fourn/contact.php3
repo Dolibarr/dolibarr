@@ -114,7 +114,7 @@ if ($result) {
   print "<TD>Prénom</TD><td>";
   print_liste_field_titre("Société",$PHP_SELF,"lower(s.nom)", $begin);
   print "</td><TD>email</TD>";
-  print '<TD>Téléphone</TD><td>&nbsp;</td>';
+  print '<TD>Téléphone</TD>';
   print "</TR>\n";
   $var=True;
   while ($i < $num) {
@@ -130,9 +130,8 @@ if ($result) {
     print '<TD><a href="contact.php3?socid='.$obj->idp.'"><img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
     print "<a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
     print "<TD>$obj->email&nbsp;</TD>\n";
-    print '<td><a href="actioncomm.php3?action=create&actionid=1&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+    print '<td>'.$obj->phone.'</td>';
 
-    print "<TD><a href=\"addpropal.php3?socidp=$obj->idp&setcontact=$obj->cidp&action=create\">[Propal]</A></td>\n";
     print "</TR>\n";
     $i++;
   }
