@@ -79,6 +79,11 @@ function llxHeader($head = "") {
       $menu->add("/adherents/", "Adherents");
     }
 
+  if ($conf->commande->enabled)
+    {
+      $menu->add("/commande/", "Commandes");
+    }
+
   $menu->add("/compta/dons/", "Dons");
 
   $menu->add("/fourn/index.php3", "Fournisseurs");
