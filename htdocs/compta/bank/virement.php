@@ -20,6 +20,15 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/compta/bank/virement.php
+        \ingroup    banque
+		\brief      Page de siasie d'un virement
+		\version    $Revision$
+*/
+
+
 require("./pre.inc.php");
 require("./bank.lib.php");
 
@@ -30,37 +39,43 @@ if (!$user->rights->banque->modifier)
 
 llxHeader();
 
-if ($action == 'add')
+
+/*
+ * Action ajout d'un virement
+ */
+if ($_POST["action"] == 'add')
 {
-    /*
-     * Ajout d'un virement
-     */
   $mesg='';
-  $dateo = $_POST["$reyear"]."-".$_POST["$remonth"]."-".$_POST["$reday"];
+  $dateo = $_POST["reyear"]."-".$_POST["remonth"]."-".$_POST["reday"];
   $label = $_POST["label"];
   $amount= $_POST["amount"];
   
   if ($label && $amount) {
 
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
-      $sql .= " VALUES (now(), now(), '$dateo', '$label', (0 - $amount),$user->id,$account_from, 'VIR')";
+      $sql .= " VALUES (now(), now(), '$dateo', '$label', (0 - $amount),$user->id, ".$_POST["account_from"].", 'VIR')";
     
       $result = $db->query($sql);
       if (!$result)
         {
-          print "Erreur: $sql :".$db->error();
+          dolibarr_print_error($db);
         }
     
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
-      $sql .= " VALUES (now(), now(), '$dateo', '$label', $amount,$user->id, $account_to, 'VIR')";
+      $sql .= " VALUES (now(), now(), '$dateo', '$label', $amount,$user->id, ".$_POST["account_to"].", 'VIR')";
     
       $result = $db->query($sql);
       if ($result)
         {
-            $mesg.="<div class=\"ok\"><b>Votre virement de $amount ".MAIN_MONNAIE." a été crée.</b></div>";
+            $accountfrom=new Account($db);
+            $accountfrom->fetch($_POST["account_from"]);
+            $accountto=new Account($db);
+            $accountto->fetch($_POST["account_to"]);
+
+            $mesg.="<div class=\"ok\"><b>Votre virement entre <a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a> et <a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a> de ".$amount." ".MAIN_MONNAIE." a été crée.</b></div>";
         }
       else {
-          print "Erreur: $sql :".$db->error();
+          dolibarr_print_error($db);
         } 
   } else {
       $mesg.="<div class=\"error\"><b>Un libellé de virement et un montant non nul est obligatoire.</b></div>";
@@ -71,7 +86,7 @@ print_titre("Virement inter-compte");
 print '<br>';
 
 if ($mesg) {
-    print "$mesg</div><br>";
+    print "$mesg<br>";
 }
 
 print "En saisissant un virement d'un de vos comptes bancaire vers un autre, Dolibarr crée deux écritures comptables (une de débit dans un compte et l'autre de crédit, du même montant, dans l'autre compte. Le même libellé de transaction, et la même date, sont utilisés pour les 2 écritures)<br><br>";
@@ -80,9 +95,9 @@ print "<form method=\"post\" action=\"virement.php\">";
 
 print '<input type="hidden" name="action" value="add">';
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>De</td><td>Vers</td><td>Date</td><td>Libelle</td><td>Montant</td>';
+print '<td>'.$langs->trans("From").'</td><td>'.$langs->trans("To").'</td><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Description").'</td><td>'.$langs->trans("Amount").'</td>';
 print '</tr>';
 print "<tr $bc[1]><td>";
 print "<select name=\"account_from\">";
@@ -127,10 +142,11 @@ print "</td>\n";
 print '<td><input name="label" type="text" size="40"></td>';
 print '<td><input name="amount" type="text" size="8"></td>';
 
-print "<tr $bc[1]>";
-print '<td colspan="5" align="center"><input type="submit" value="'.$langs->trans("Add").'"</td></tr>';
+print "</table>";
 
-print "</table></form>";
+print '<p align="center"><input type="submit" value="'.$langs->trans("Add").'"</p>';
+
+print "</form>";
 
 $db->close();
 
