@@ -92,5 +92,11 @@ class Paiement
     $form->select($name, $sql, $id);
   }
 
+  /*
+   *
+   *
+   *
+   */
+
 }
 ?>
