@@ -156,4 +156,5 @@ insert into llx_c_forme_juridique (code, libelle) values (93,'Fondation');
 insert into llx_c_forme_juridique (code, libelle) values (99,'Autre personne morale de droit privé');
 
 
+update llx_paiement set author = null where author = '';
 
