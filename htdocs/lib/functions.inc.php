@@ -370,13 +370,13 @@ function print_titre($titre)
  */
 function print_fiche_titre($titre, $mesg='')
 {
-  print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
+  print "\n".'<table width="100%" border="0" cellpadding="3" cellspacing="0">';
   print '<tr><td><div class="titre">'.$titre.'</div></td>';
   if (strlen($mesg))
     {
       print '<td align="right"><b>'.$mesg.'</b></td>';
     }
-  print '</tr></table>';
+  print '</tr></table>'."\n";
 }
 /*
  *
