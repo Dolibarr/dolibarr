@@ -19,24 +19,40 @@
  * $Source$
  *
  */
-require ($GLOBALS["DOCUMENT_ROOT"]."/conf/conf.class.php3");
-require ($GLOBALS["DOCUMENT_ROOT"]."/lib/mysql.lib.php3");
-require ($GLOBALS["DOCUMENT_ROOT"]."/lib/functions.inc.php3");
-require ($GLOBALS["DOCUMENT_ROOT"]."/product.class.php3");
-require ($GLOBALS["DOCUMENT_ROOT"]."/user.class.php3");
-require ($GLOBALS["DOCUMENT_ROOT"]."/menu.class.php3");
-require ($GLOBALS["DOCUMENT_ROOT"]."/societe.class.php3");
-require ($GLOBALS["DOCUMENT_ROOT"]."/html.form.class.php");
-require ($GLOBALS["DOCUMENT_ROOT"]."/translate.class.php");
-require ($GLOBALS["DOCUMENT_ROOT"]."/boxes.php");
-require ($GLOBALS["DOCUMENT_ROOT"]."/address.class.php");
-require ($GLOBALS["DOCUMENT_ROOT"]."/includes/fpdf/fpdf.php");
-require ($GLOBALS["DOCUMENT_ROOT"]."/includes/modules/facture/modules_facture.php");
 
-define('FPDF_FONTPATH',$GLOBALS["DOCUMENT_ROOT"].'/includes/fpdf/font/');
+if (! include ("conf/conf.php"))
+{
+  print "Votre système n'est pas configuré, rendez-vous à l'url <a href=\"/install.php\">install.php</a>";
+  exit ;  
+}
 
 
+define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
+
+require (DOL_DOCUMENT_ROOT."/conf/conf.class.php3");
+/*
+ * Doit figurer aprés l'inclusion de conf.class.php3 pour overider certaines variables, à terme conf.class.php3 devra etre un fichier qui ne sera pas modifié par l'utilisateur
+ */
 $conf = new Conf();
+$conf->db->host = $dolibarr_main_db_host;
+$conf->db->name = $dolibarr_main_db_name;
+$conf->db->user = $dolibarr_main_db_user;
+$conf->db->pass = $dolibarr_main_db_pass;
+
+require (DOL_DOCUMENT_ROOT ."/lib/mysql.lib.php3");
+require (DOL_DOCUMENT_ROOT ."/lib/functions.inc.php3");
+require (DOL_DOCUMENT_ROOT ."/product.class.php3");
+require (DOL_DOCUMENT_ROOT ."/user.class.php3");
+require (DOL_DOCUMENT_ROOT ."/menu.class.php3");
+require (DOL_DOCUMENT_ROOT ."/societe.class.php3");
+require (DOL_DOCUMENT_ROOT ."/html.form.class.php");
+require (DOL_DOCUMENT_ROOT ."/translate.class.php");
+require (DOL_DOCUMENT_ROOT ."/boxes.php");
+require (DOL_DOCUMENT_ROOT ."/address.class.php");
+require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf.php");
+require (DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
+
+define('FPDF_FONTPATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/font/');
 
 $db = new Db();
 
@@ -78,12 +94,12 @@ $db->close();
 
 if (defined("FACTURE_ADDON"))
 {
-  require($GLOBALS["DOCUMENT_ROOT"]."/includes/modules/facture/".FACTURE_ADDON."/".FACTURE_ADDON.".modules.php");
+  require(DOL_DOCUMENT_ROOT ."/includes/modules/facture/".FACTURE_ADDON."/".FACTURE_ADDON.".modules.php");
 }
 
 if (defined("FACTURE_ADDON_PDF"))
 {
-  require($GLOBALS["DOCUMENT_ROOT"]."/includes/modules/facture/pdf_".FACTURE_ADDON_PDF.".modules.php");
+  require(DOL_DOCUMENT_ROOT ."/includes/modules/facture/pdf_".FACTURE_ADDON_PDF.".modules.php");
 }
 
 // Modification de quelques variable de conf en fonction des Constantes
@@ -166,7 +182,7 @@ if (defined("MAIN_MODULE_FOURNISSEUR"))
 
 if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
 {
-  require ($GLOBALS["DOCUMENT_ROOT"]."/includes/modules/fichinter/modules_fichinter.php");
+  require (DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 
   $conf->fichinter->enabled=MAIN_MODULE_FICHEINTER;
 }
@@ -202,7 +218,7 @@ if(!isset($application_lang))
 {
   $application_lang = "fr";
 }
-$rtplang = new rtplang($GLOBALS["DOCUMENT_ROOT"]."/langs", "en", "en", $application_lang);
+$rtplang = new rtplang(DOL_DOCUMENT_ROOT ."/langs", "en", "en", $application_lang);
 $rtplang->debug=1;
 /*
  */
@@ -254,7 +270,7 @@ function top_menu($head)
     define("MAIN_MENU_BARRETOP","default.php");
   }
 
-  require($GLOBALS["DOCUMENT_ROOT"]."/includes/menus/barre_top/".MAIN_MENU_BARRETOP);
+  require(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".MAIN_MENU_BARRETOP);
 
   print '<TD width="15%" class="menu" align="center">'.strftime(" %d %B - %H:%M",time()).'</TD>';
 
