@@ -177,7 +177,7 @@ if ($_GET["action"] == 'create')
     }
 
   print '<tr><td>Titre</td><td colspan="5">';
-  print $form->select_civilite();
+  print $form->select_civilite($obj->civilite);
   print '</td></tr>';
 
   print '<tr><td>Nom</td><td><input name="name" type="text" size="20" maxlength="80"></td>';
