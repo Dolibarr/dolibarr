@@ -29,16 +29,11 @@ if (!$user->admin)
 
 llxHeader();
 
-/*
- * Interface de configuration de certaines variables de la partie adherent
- */
-
 print_titre("Migration paiement multiple facture");
 
-
-$sql = "SELECT p.rowid, p.fk_facture";
+$sql = "SELECT p.rowid, p.fk_facture, p.amount";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
-
+$sql .= " WHERE p.fk_facture > 0";
 $result = $db->query($sql);
 
 if ($result) 
@@ -50,24 +45,44 @@ if ($result)
   while ($i < $num)
     {
       $obj = $db->fetch_object($result , $i);
-      $row[$obj->rowid] = $obj->fk_facture;
+      $row[$i][0] = $obj->rowid ;
+      $row[$i][1] = $obj->fk_facture;
+      $row[$i][2] = $obj->amount;
       $i++;
     }
-
 }
 
-foreach($row as $key => $value)
+print "$num paiement à mettre à jour<br>";
+
+if ($db->begin())
 {
+  $res = 0;
+  for ($i = 0 ; $i < sizeof($row) ; $i++)
+    {
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
+      $sql .= " VALUES (".$row[$i][1].",".$row[$i][0].",".$row[$i][2].")";
+      
+      $res += $db->query($sql);
+      
+      $sql = "UPDATE ".MAIN_DB_PREFIX."paiement SET fk_facture = 0 WHERE rowid = ".$row[$i][0];
+      
+      $res += $db->query($sql);
 
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement)";
-  $sql .= " VALUES ($value, $key)";
+      print "<br>";
+    } 
+}
 
-  print $db->query($sql);
-} 
-
-
+if ($res == (2 * sizeof($row)))
+{
+  $db->commit();
+  print "Mise à jour réussie";
+}
+else
+{
+  $db->rollback();
+  print "La mise à jour à échouée";
+}
 
 $db->close();
 llxFooter();
-
 ?>
