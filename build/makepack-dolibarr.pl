@@ -25,7 +25,6 @@ $RPMSUBVERSION="1";
 "makensis.exe"=>"NSIS"
 );
 
-
 $FILENAMETGZ="$PROJECT-$MAJOR.$MINOR";
 $FILENAMEZIP="$PROJECT-$MAJOR.$MINOR";
 $FILENAMERPM="$PROJECT-$MAJOR.$MINOR-$RPMSUBVERSION";
@@ -190,7 +189,7 @@ if ($nboftargetok) {
     foreach $target (keys %CHOOSEDTARGET) {
         if ($CHOOSEDTARGET{$target} < 0) { next; }
     
-        print "\nBuild pack for target $target\n";
+        print "\nBuild package for target $target\n";
         
     	if ($target eq 'TGZ') {
     		unlink $FILENAMETGZ.tgz;
