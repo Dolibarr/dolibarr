@@ -71,13 +71,15 @@ if ($action=='delete')
  *
  *
  */  
+$socid=$_GET["socid"];
+
 if ($socid > 0)
 {
   $societe = new Societe($db);
   if ($societe->fetch($socid))
     {
 
-      $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$_GET["socid"];
+      $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
       $head[0][1] = "Fiche société";
       $h = 1;
 
@@ -94,7 +96,6 @@ if ($socid > 0)
 	  $head[$h][1] = 'Prospect';
 	  $h++;
 	}
-
       if ($societe->fournisseur)
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
@@ -109,44 +110,46 @@ if ($socid > 0)
       }
 
       $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
-      $head[$h][1] = 'Note';      
+      $head[$h][1] = 'Note';
       $h++;
 
       if ($user->societe_id == 0)
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
 	  $head[$h][1] = 'Documents';
-	  $a = $h;
+      $hselected = $h;
 	  $h++;
 	}
       
       $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
       $head[$h][1] = 'Notifications';
       
-      dolibarr_fiche_head($head, $a);
+      dolibarr_fiche_head($head, $hselected, $societe->nom);
+
+
       /*
        *
        */
-      print_titre("Documents associés à l'entreprise : $societe->nom");
+      print_titre("Documents associés");
       /*
        *
        *
        */
       if (defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 	{
-	  echo '<FORM NAME="userfile" ACTION="docsoc.php?socid='.$socid.'" ENCTYPE="multipart/form-data" METHOD="POST">';      
+	  echo '<form name="userfile" action="docsoc.php?socid='.$socid.'" enctype="multipart/form-data" METHOD="POST">';      
 	  print '<input type="hidden" name="max_file_size" value="2000000">';
 	  print '<input type="file"   name="userfile" size="40" maxlength="80">';
-	  print '<BR>';
-	  print '<input type="submit" value="Upload File!" name="sendit">';
-	  print '<input type="submit" value="Cancel" name="cancelit"><BR>';
-	  print '</FORM>';
+	  print '<br>';
+	  print '<input type="submit" value="'.$langs->trans("Upload").'" name="sendit">';
+	  print '<input type="submit" value="'.$langs->trans("Cancel").'" name="cancelit"><br>';
+	  print '</form>';
 	}
       else
 	{
 	  print "La gestion des fichiers associés est désactivée sur ce serveur";
 	}
-      print '</div>';
+      print '<br></div>';
 
       print $mesg;
 
@@ -185,13 +188,14 @@ if ($socid > 0)
     }
   else
     {
-      print $db->error() . "<br>" . $sql;
+      dolibarr_print_error($db);
     }
 }
 else
 {
-  print "Erreur";
+      dolibarr_print_error();
 }
+
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
