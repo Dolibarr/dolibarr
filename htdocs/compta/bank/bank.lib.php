@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2000,2001 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -21,13 +22,44 @@
  * or see http://www.gnu.org/
  */
 
-Function bank_delete_line($db, $rowid) {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=$rowid";
-  $result = $db->query($sql);
-  if ($result) {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=$rowid";
-    $result = $db->query($sql);
-  }
+/*!	\file bank.lib.php
+  \brief librairie contenant les fonctions bancaires.
+  \author  Laurent Destailleur
+  \version $Revision$
+  
+  Ensemble des fonctions en rappor avec les modules bancaires
+*/
+
+
+
+/*!
+  \brief Verifie le RIB d'un compte bancaire grace à sa clé
+  \param  code banque
+  \param  code_guichet
+  \param  numero_compte
+  \param  cle
+  \return true si les infos sont bonnes, false si la clé ne correspond pas
+*/
+
+function verif_rib($code_banque , $code_guichet , $num_compte , $cle) {
+    $coef = array(62, 34, 3) ;
+    // Concatenation des differents codes.
+    $rib = strtolower($code_banque.$code_guichet.$num_compte.$cle);
+    // On remplca les eventuelles lettres par des chiffres.
+    $rib = strtr($rib, "abcdefghijklmnopqrstuvwxyz","12345678912345678912345678");
+    
+    // Separation du rib en 3 groupes de 7 + 1 groupe de 2.
+    // Multiplication de chaque groupe par les coef du tableau
+    for ($i=0, $s=0; $i<3; $i++) {
+        $code = substr($rib, 7 * $i, 7) ;
+        $s += (0 + $code) * $coef[$i] ;
+    }
+    
+    // Soustraction du modulo 97 de $s à 97 pour obtenir la clé RIB
+    $cle_rib = 97 - ($s % 97) ;
+    if ($cle_rib == $cle) { return true; }
+    return false;
 }
+
 
 ?>

@@ -174,13 +174,28 @@ class Account
 	  }
       }
   }
+
   /*
-   *
+   * Creation du compte bancaire
    *
    */
   Function create()
     {
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (datec, label) values (now(),'$this->label');";
+      // Chargement librairie pour acces fonction controle RIB
+	  require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
+
+      if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib)) {
+            $this->error="Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
+            return false;
+      }
+
+      if (! $pcgnumber) {
+          // TODO
+          // Prendre comme de numero compte comptable pour le compte bancaire, le numero par defaut pour plan de compte actif
+          $pcgnumber="51";
+      }
+
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_account (datec, label, account_number) values (now(),'$this->label','$pcgnumber');";
       if ($this->db->query($sql))
 	{
 	  if ($this->db->affected_rows()) 
@@ -201,6 +216,16 @@ class Account
 	  print $this->db->error();
 	}
     }
+
+  /*
+   *
+   *
+   */
+  Function error()
+    {      
+        return $this->error;
+    }
+    
   /*
    *
    *
@@ -281,7 +306,7 @@ class Account
       }
     else
       {
-	print $this->db->error();
+	    print $this->db->error();
       }
   }
   /*

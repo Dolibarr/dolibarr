@@ -43,6 +43,7 @@ print "</tr>\n";
 $sql = "SELECT rowid, label,number,bank,clos from ".MAIN_DB_PREFIX."bank_account";
 
 $result = $db->query($sql);
+$var=false;
 if ($result)
 {
   $var=True;  
@@ -54,8 +55,8 @@ if ($result)
   while ($i < $num) {
     $objp = $db->fetch_object( $i);
 
-    print "<tr $bc[1]><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td><td>$objp->bank&nbsp;</td><td>$objp->number&nbsp;</td><td align=\"center\">".$yn[$objp->clos]."</td></tr>";
-
+    $var=!$var;
+    print "<tr $bc[$var]><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td><td>$objp->bank&nbsp;</td><td>$objp->number&nbsp;</td><td align=\"center\">".$yn[$objp->clos]."</td></tr>";
 
     $i++;
   }

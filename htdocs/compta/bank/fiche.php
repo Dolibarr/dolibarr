@@ -29,6 +29,7 @@ if (!$user->admin && !$user->rights->compta->bank)
 
 llxHeader();
 
+
 if ($_POST["action"] == 'add')
 {
   $account = new Account($db,0);
@@ -36,7 +37,7 @@ if ($_POST["action"] == 'add')
   $account->bank          = $_POST["bank"];
   $account->label         = $_POST["label"];
 
-  $account->courant       = $_POST["courant"];
+  $account->courant       = $_POST["courant"]=='yes'?1:0;
   $account->clos          = $_POST["clos"];
 
   $account->code_banque   = $_POST["code_banque"];
@@ -54,6 +55,13 @@ if ($_POST["action"] == 'add')
   $account->date_solde    = mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 
   $id = $account->create($user->id);
+  if (! $id) {
+        $message=$account->error(); 
+        $_GET["action"]='create';   // Force chargement page creation
+  }
+  else {
+        $_GET["id"]=$id;                // Force chargement page en mode edition
+  }
 }
 
 if ($_POST["action"] == 'update')
@@ -90,6 +98,8 @@ if ($_GET["action"] == 'create')
 {
   print_titre("Nouveau compte bancaire");
 
+  if ($message) { print "<br>$message<br><br>\n"; }
+
   print '<form action="fiche.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="clos" value="0">';
@@ -97,36 +107,38 @@ if ($_GET["action"] == 'create')
   print '<table class="border" cellpadding="3" cellspacing="0">';
 
   print '<tr><td valign="top">Banque</td>';
-  print '<td colspan="3"><input size="30" type="text" name="bank" value=""></td></tr>';
+  print '<td colspan="3"><input size="30" type="text" name="bank" value="'.$_POST["bank"].'"></td></tr>';
 
   print '<tr><td valign="top">Libellé</td>';
-  print '<td colspan="3"><input size="30" type="text" name="label" value=""></td></tr>';
+  print '<td colspan="3"><input size="30" type="text" name="label" value="'.$_POST["label"].'"></td></tr>';
 
   print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
-  print '<tr><td><input size="8" type="text" name="code_banque"></td>';
-  print '<td><input size="8" type="text" name="code_guichet"></td>';
-  print '<td><input size="15" type="text" name="number"></td>';
-  print '<td><input size="3" type="text" name="cle_rib"></td></tr>';
+  print '<tr><td><input size="8" type="text" name="code_banque" value="'.$_POST["code_banque"].'"></td>';
+  print '<td><input size="8" type="text" name="code_guichet" value="'.$_POST["code_guichet"].'"></td>';
+  print '<td><input size="15" type="text" name="number" value="'.$_POST["number"].'"></td>';
+  print '<td><input size="3" type="text" name="cle_rib" value="'.$_POST["cle_rib"].'"></td></tr>';
   
   print '<tr><td valign="top">Clé IBAN</td>';
-  print '<td colspan="3"><input size="5" type="text" name="iban_prefix" value=""></td></tr>';
+  print '<td colspan="3"><input size="5" type="text" name="iban_prefix" value="'.$_POST["iban_prefix"].'"></td></tr>';
 
   print '<tr><td valign="top">Identifiant BIC</td>';
-  print '<td colspan="3"><input size="12" type="text" name="bic" value=""></td></tr>';
+  print '<td colspan="3"><input size="12" type="text" name="bic" value="'.$_POST["bic"].'"></td></tr>';
 
   print '<tr><td valign="top">Compte Courant</td>';
-  print '<td colspan="3"><select name="courant">';
-  print '<option value="0">non<option value="1">oui</select></td></tr>';
+  print '<td colspan="3">';
+  $form=new Form($db);
+  print $form->selectyesno("courant",isset($_POST["courant"])?$_POST["courant"]:1);
+  print '</td></tr>';
 
   print '<tr><td valign="top">Domiciliation</td><td colspan="3">';
-  print "<textarea name=\"domiciliation\" rows=\"4\" cols=\"40\">";
+  print "<textarea name=\"domiciliation\" rows=\"4\" cols=\"40\">".$_POST["domiciliation"];
   print "</textarea></td></tr>";
 
   print '<tr><td valign="top">Nom propriétaire du compte</td>';
-  print '<td colspan="3"><input size="12" type="text" name="proprio" value=""></td></tr>';
+  print '<td colspan="3"><input size="12" type="text" name="proprio" value="'.$_POST["proprio"].'"></td></tr>';
 
   print '<tr><td valign="top">Adresse propriétaire du compte</td><td colspan="3">';
-  print "<textarea name=\"adresse_proprio\" rows=\"4\" cols=\"40\">";
+  print "<textarea name=\"adresse_proprio\" rows=\"4\" cols=\"40\">".$_POST["adresse_proprio"];
   print "</textarea></td></tr>";
 
   print '<tr><td valign="top">Solde</td>';
@@ -139,7 +151,7 @@ if ($_GET["action"] == 'create')
   print '<input type="text" size="4" maxlength="4" name="reyear" value="'.strftime("%Y",$now).'">';
   print '</td></tr>';
   
-  print '<tr><td align="center" colspan="4"><input value="Enregistrer" type="submit"></td></tr>';
+  print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("Add").'" type="submit"></td></tr>';
   print '</form>';
   print '</table>';
 }
