@@ -21,7 +21,8 @@
  */
 require("../../main.inc.php3");
 
-function llxHeader($head = "") {
+function llxHeader($head = "")
+{
   global $user, $conf;
 
 
@@ -33,17 +34,17 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("/compta/facture.php3","Factures");
+  $menu->add(DOL_URL_ROOT."/compta/facture.php3","Factures");
 
   $menu->add("index.php3","Charges");
 
-  $menu->add_submenu("/compta/sociales/index.php3","Prest. Sociales");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php3","Prest. Sociales");
 
-  $menu->add("/compta/ca.php3","Chiffres d'affaires");
+  $menu->add(DOL_URL_ROOT."/compta/ca.php3","Chiffres d'affaires");
 
-  $menu->add("/compta/resultat/","Résultats");
+  $menu->add(DOL_URL_ROOT."/compta/resultat/","Résultats");
 
-  $menu->add("/compta/bank/index.php3","Bank");
+  $menu->add(DOL_URL_ROOT."/compta/bank/index.php3","Bank");
 
   left_menu($menu->liste);
 
