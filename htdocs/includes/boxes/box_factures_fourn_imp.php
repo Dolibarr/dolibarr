@@ -1,6 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,12 +23,12 @@ if ($user->rights->facture->lire)
 {
 
   $info_box_head = array();
-  $info_box_head[] = array('text' => "Factures clients impayées");
+  $info_box_head[] = array('text' => "Factures fournisseurs impayées");
 
   $info_box_contents = array();
 
   $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.paye=0 AND fk_statut = 1";  
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f WHERE f.fk_soc = s.idp AND f.paye=0 AND fk_statut = 1";  
   if($user->societe_id)
     {
       $sql .= " AND s.idp = $user->societe_id";

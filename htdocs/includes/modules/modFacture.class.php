@@ -78,11 +78,16 @@ class modFacture extends DolibarrModules
     $this->const[8][1] = "chaine";
     $this->const[8][2] = "pluton";
 
-    $this->boxes[0][0] = "Factures";
-    $this->boxes[0][1] = "box_factures.php";
+    // Boxes
+    $this->boxes[0][0] = "Factures clients récentes impayées";
+    $this->boxes[0][1] = "box_factures_imp.php";
 
-    $this->boxes[1][0] = "Factures impayées";
-    $this->boxes[1][1] = "box_factures_imp.php";
+    $this->boxes[1][0] = "Factures fournisseurs récentes impayées";
+    $this->boxes[1][1] = "box_factures_fourn_imp.php";
+
+    $this->boxes[2][0] = "Dernières factures clients";
+    $this->boxes[2][1] = "box_factures.php";
+
   }
   /*
    *
