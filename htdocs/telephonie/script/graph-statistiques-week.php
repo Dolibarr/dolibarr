@@ -19,8 +19,8 @@
  * $Source$
  *
  *
- * Generation des graphiques
- *
+ * Generation des graphiques des données hébdomadaire
+ * Ce script doit-être exécuté au minimum une fois par semaine
  *
  *
  */
@@ -38,6 +38,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.week.class.p
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/resiliation.week.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/rejet.week.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/clients/clients.week.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/clients/clientsmoyenne.week.class.php");
 
 $error = 0;
 
@@ -104,7 +105,7 @@ if (is_array($dirs))
 /***********************************************************************/
 
 $file = $img_root . "lignes/lignes.actives.png";
-print "Graph : Lignes actives$file\n";
+if ($verbose) print "Graph : Lignes actives$file\n";
 $graph = new GraphLignesActives($db, $file);
 $graph->GraphMakeGraph();
 
@@ -115,14 +116,20 @@ $graph->GraphMakeGraph();
 /***********************************************************************/
 
 $file = $img_root . "lignes/commandes.mensuels.png";
-print "Graph : Lignes commandes$file\n";
+if ($verbose) print "Graph : Lignes commandes$file\n";
 $graph = new GraphLignesCommandes($db, $file);
 $graph->width = 400;
 $graph->GraphMakeGraph();
 
 $file = $img_root . "lignes/commandes.hebdomadaire.png";
-print "Graph : Lignes commandes$file\n";
+if ($verbose) print "Graph : Lignes commandes$file\n";
 $graph = new GraphLignesCommandesWeek($db, $file);
+$graph->width = 400;
+$graph->GraphMakeGraph();
+
+$file = $img_root . "commercials/clientsmoyenne.hebdomadaire.png";
+if ($verbose) print "Graph : Clients Moyenne $file\n";
+$graph = new GraphClientsMoyenneWeek($db, $file);
 $graph->width = 400;
 $graph->GraphMakeGraph();
 
@@ -144,20 +151,26 @@ if ($db->query($sql))
       $row = $db->fetch_row();	
       
       $file = $img_root . "commercials/".$row[0]."/lignes.commandes.mensuels.png";
-      print "Graph : Lignes commandes$file\n";
+      if ($verbose) print "Graph : Lignes commandes$file\n";
       $graph = new GraphLignesCommandes($db, $file);
       $graph->width = 400;
       $graph->GraphMakeGraph($row[0]);
       
       $file = $img_root . "commercials/".$row[0]."/lignes.commandes.hebdomadaire.png";
-      print "Graph : Lignes commandes$file\n";
+      if ($verbose) print "Graph : Lignes commandes$file\n";
       $graph = new GraphLignesCommandesWeek($db, $file);
       $graph->width = 400;
       $graph->GraphMakeGraph($row[0]);
 
       $file = $img_root . "commercials/".$row[0]."/clients.hebdomadaire.png";
-      print "Graph : Lignes commandes$file\n";
+      if ($verbose) print "Graph : Lignes commandes$file\n";
       $graph = new GraphClientsWeek($db, $file);
+      $graph->width = 400;
+      $graph->GraphMakeGraph($row[0]);
+
+      $file = $img_root . "commercials/".$row[0]."/clientsmoyenne.hebdomadaire.png";
+      if ($verbose) print "Graph : Moyenne nouveaux clients $file\n";
+      $graph = new GraphClientsMoyenneWeek($db, $file);
       $graph->width = 400;
       $graph->GraphMakeGraph($row[0]);
 
