@@ -66,7 +66,7 @@ print "<td align=\"right\">Rappro</td>";
 print "</TR>\n";
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve";
-$sql .= " FROM llx_bank as b WHERE rappro=0";
+$sql .= " FROM llx_bank as b WHERE rappro=0 AND fk_account=$account";
 $sql .= " ORDER BY dateo ASC";
 $result = $db->query($sql);
 if ($result) {
