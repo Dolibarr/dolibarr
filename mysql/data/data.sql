@@ -28,6 +28,7 @@ insert into llx_sqltables (name, loaded) values ('llx_album',0);
 --
 -- Boites
 --
+delete from llx_boxes_def;
 insert into llx_boxes_def (name, file) values ('Factures','box_factures.php');
 insert into llx_boxes_def (name, file) values ('Factures impayées','box_factures_imp.php');
 insert into llx_boxes_def (name, file) values ('Propales','box_propales.php');
