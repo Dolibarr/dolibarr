@@ -159,6 +159,7 @@ class User {
 	      $sql .= ", firstname = '$this->prenom'";
 	      $sql .= ", login = '$this->login'";
 	      $sql .= ", email = '$this->email'";
+	      $sql .= ", admin = '$this->admin'";
 	      $sql .= " WHERE rowid = $this->id";
 	      
 	      $result = $this->db->query($sql);
@@ -168,8 +169,7 @@ class User {
 		  if ($this->db->affected_rows()) 
 		    {
 		      return 1;		      
-		    }
-		  
+		    }		  
 		}
 	      else
 		{
