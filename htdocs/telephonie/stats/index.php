@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,49 +21,26 @@
  */
 require("./pre.inc.php");
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
+if (!$user->rights->telephonie->lire) accessforbidden();
 
-if (!$user->rights->telephonie->lire)
-  accessforbidden();
-
-llxHeader('','Telephonie - Ligne');
+llxHeader('','Telephonie - Statistiques');
 
 /*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
-
-/*
- * Mode Liste
- *
- *
  *
  */
-
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td width="50%" valign="top">';
 
-print '<img src="./graphcommandeweek.php"><br /><br />';
-print '<img src="./graphcommandemonth.php"><br /><br />';
-
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/commercials/clients.hebdomadaire.png" alt="Nouveaux clients par semaines" title="Nouveaux clients par semaine"><br /><br />'."\n";
 
 print '</td>';
 
-
-
 print '</td><td valign="top" width="50%" rowspan="3">';
 
-print '<a href="commerciaux"><img border="0" src="./graphcommercial.php"></a><br /><br />';
-print '<img src="./graphconcurrent.php">';
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/lignes/commandes.mensuels.png" alt="Commandes de ligne par mois" title="Lignes Actives"><br /><br />'."\n";
 
 print '</td></tr>';
-
 
 print '</table>';
 
