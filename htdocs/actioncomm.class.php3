@@ -140,6 +140,8 @@ class ActionComm
 	  $sql .= ", datea = now()";
 	}
 
+      $sql .= ", fk_contact =". $this->contact->id;
+
       $sql .= " WHERE id=$this->id;";
       
       if ($this->db->query($sql) )
