@@ -29,6 +29,10 @@ create table llx_prelevement_facture_demande
   traite             smallint DEFAULT 0,
   date_traite        datetime,
   fk_prelevement integer,
-  fk_user_demande    integer NOT NULL
+  fk_user_demande    integer NOT NULL,
+
+  code_banque        varchar(7),
+  code_guichet       varchar(6),
+  number             varchar(255)
 
 )type=innodb;
