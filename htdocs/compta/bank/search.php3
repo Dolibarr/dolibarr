@@ -95,9 +95,26 @@ if ($viewall) { $nbline=0; }
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account";
 $sql .= " FROM llx_bank as b "; 
 
+$si=0;
+
 if ($credit) {
-    $sql .= " WHERE b.amount " . $credit;
+  $si++;
+  $sqlw[$si] .= " b.amount " . $credit;
 }
+
+if ($description) {
+  $si++;
+  $sqlw[$si] .= " b.label like '%" . $description . "%'";
+}
+
+if ($si>0) {
+  $sql .= " WHERE " . $sqlw[1];
+}
+
+for ($i = 2 ; $i <= $si; $i++) {
+ $sql .= " AND " . $sqlw[$i];
+}
+
 
 $sql .= " ORDER BY b.dateo ASC";
 
