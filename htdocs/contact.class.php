@@ -40,8 +40,8 @@ class Contact
       
       return 1;
     }
-  /*
-   *
+  /**
+   * Création du contact
    *
    *
    */
@@ -59,7 +59,7 @@ class Contact
       {
 	$id = $this->db->last_insert_id();
 
-	$this->update($id);
+	$this->update($id, $user);
 
 	return $id;
       }
@@ -80,6 +80,7 @@ class Contact
       $this->email = trim($this->email);
 
       $this->phone_pro = ereg_replace(" ","",$this->phone_pro);
+      $this->phone_perso = ereg_replace(" ","",$this->phone_perso);
 
       if (strlen($this->phone_pro) == 0 && $this->socid > 0)
 	{
