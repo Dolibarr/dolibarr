@@ -249,11 +249,14 @@ if ($account)
 		  
 	      if ($objp->num_chq)
 		{
-		  print "<td>CHQ $objp->num_chq - $objp->label</td>";
+		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&account=$account\">CHQ $objp->num_chq - $objp->label</a></td>";
 		}
 	      else
 		{
-		  print "<td>$objp->label&nbsp;</td>";
+		  //Xavier DUTOIT : Ajout d'un lien pour modifier la ligne
+		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&account=$account\">$objp->label</a>&nbsp;</td>";
+					
+//		print "<td>$objp->label&nbsp;</td>";
 		}
 	      
 	      if ($objp->amount < 0)
