@@ -36,7 +36,7 @@ function facture_get_num($objsoc=0)
     }
   $num++;
   //  return  "FA" . $date . substr("000".$num, strlen("000".$num)-4,4);
-  return  $date . $num;
+  return  "F" . $date . $num;
 }
 
 ?>

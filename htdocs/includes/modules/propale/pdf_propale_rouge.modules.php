@@ -154,7 +154,7 @@ Class pdf_propale_rouge
 	      $pdf->MultiCell(42, $tab2_lh, "Remise HT", 0, 'R', 0);
 
 	      $pdf->SetXY (132, $tab2_top + $tab2_lh*2);
-	      $pdf->MultiCell(42, $tab2_lh, "Total HT aprés remise", 0, 'R', 0);
+	      $pdf->MultiCell(42, $tab2_lh, "Total HT après remise", 0, 'R', 0);
 
 	      $pdf->SetXY (132, $tab2_top + $tab2_lh*3);
 	      $pdf->MultiCell(42, $tab2_lh, "Total TVA", 0, 'R', 0);

@@ -431,8 +431,8 @@ if ($_GET["propalid"])
 
 	  if ($obj->statut == 0 && $user->rights->propale->creer)
 	    {
-
 	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p WHERE p.envente=1 ORDER BY p.nbvente DESC LIMIT 20";
+	      // RyXéo on a ORDER BY p.ref et pas de limit
 	      if ( $db->query($sql) )
 		{
 		  $opt = "<option value=\"0\" SELECTED></option>";
@@ -607,14 +607,15 @@ if ($_GET["propalid"])
 		{
 	      
 		  $subject = "Notre proposition commerciale $obj->ref";
-		  $message = "Veuillez trouver ci-joint notre proposition commerciale $obj->ref\n\nCordialement\n\n";
-		  $filepath = $file ;
-		  $filename = "$obj->ref.pdf";
-		  $mimetype = "application/pdf";
-	      
+		  $filepath[0] = $file ;
+		  $filename[0] = "$obj->ref.pdf";
+		  $mimetype[0] = "application/pdf";
+		  $filepath[1] = $_FILES['addedfile']['tmp_name'];
+		  $filename[1] = $_FILES['addedfile']['name'];
+		  $mimetype[1] = $_FILES['addedfile']['type'];
 		  $replyto = "$replytoname <$replytomail>";
 	      
-		  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype, $filename);
+		  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype, $filename,$sendtocc);
 	      
 		  if (! $mailfile->sendfile() )
 		    {	       
@@ -750,17 +751,24 @@ if ($_GET["propalid"])
 	      $from_name = $user->fullname ; //$conf->propal->fromtoname;
 	      $from_mail = $user->email; //conf->propal->fromtomail;
 	      
-	      print "<form method=\"post\" action=\"$PHP_SELF?propalid=$propal->id&amp;action=send\">\n";
+	      $message = "Veuillez trouver ci-joint notre proposition commerciale $obj->ref\n\nCordialement\n\n";
+
+	      print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"$PHP_SELF?propalid=$propal->id&amp;action=send\">\n";
 	      print "<input type=\"hidden\" name=\"replytoname\" value=\"$replytoname\">\n";
 	      print "<input type=\"hidden\" name=\"replytomail\" value=\"$replytomail\">\n";
+	      print '<input type="hidden" name="max_file_size" value="2000000">';
 
 	      print_titre("Envoyer la propale par mail");
 	      print "<table cellspacing=0 border=1 cellpadding=3>";
-	      print "<tr><td>Destinataire</td><td colspan=\"5\">$obj->firstname $obj->name</td>";
-	      print "<td><input size=\"30\" name=\"sendto\" value=\"$obj->email\"></td></tr>";
+	      print "<tr><td>Destinataire</td>";
+	      print "<td  colspan=\"6\" align=\"right\"><input size=\"50\" name=\"sendto\" value=\"" . ucfirst(strtolower($obj->firstname)) . " " .  ucfirst(strtolower($obj->name)) . " <$obj->email>\"></td></tr>";
+	      print "<tr><td>Copie à</td>";
+	      print "<td colspan=\"6\" align=\"right\"><input size=\"50\" name=\"sendtocc\"></td></tr>";
 	      print "<tr><td>Expediteur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
 	      print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
 	      print "<td>$replytomail</td></tr>";
+	      print "<tr><td valign=\"top\">Joindre un fichier en plus de la propale<br>(conditions générales de ventes ...)</td><td colspan=\"6\"><input type=\"file\"   name=\"addedfile\" size=\"40\" maxlength=\"80\"></td></tr>";
+	      print "<tr><td valign=\"top\">Message</td><td colspan=\"6\"><textarea rows=\"5\" cols=\"40\" name=\"message\">$message</textarea></td></tr>";
 	      
 	      print "</table>";
 	      print "<input type=\"submit\" value=\"Envoyer\">";

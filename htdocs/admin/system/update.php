@@ -22,6 +22,9 @@
 require("./pre.inc.php");
 
 $user->getrights('facture');
+
+print "user " . $user->rights->facture->lire . " !";
+
 if (!$user->rights->facture->lire)
   accessforbidden();
 

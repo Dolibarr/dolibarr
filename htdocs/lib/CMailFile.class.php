@@ -18,40 +18,47 @@ to chunk_split
 */
 /* Note: if you don't have base64_encode on your sytem it will not work */
 
+/*
+  Éric Seigne <eric.seigne@ryxeo.com> 2004.01.08
+  - ajout de la gestion du Cc
+  - ajout de l'expédition de plusieurs fichiers
+*/
+
 // simple class that encapsulates mail() with addition of mime file attachment.
 class CMailFile 
 {
   var $subject;
   var $addr_to;
+  var $addr_cc;
   var $text_body;
   var $text_encoded;
   var $mime_headers;
   var $mime_boundary = "--==================_846811060==_";
   var $smtp_headers;
   
-  function CMailFile($subject,$to,$from,$msg,$filename,$mimetype = "application/octet-stream", $mime_filename = false)
+  function CMailFile($subject,$to,$from,$msg,$filename,$mimetype = "application/octet-stream", $mime_filename = false, $addr_cc = "")
     {
       $this->subject = $subject;
       $this->addr_to = $to;
-      $this->smtp_headers = $this->write_smtpheaders($from);
-      $this->text_body = $this->write_body($msg, $filename);
-
-      if (strlen($filename))
-	{
-	  $this->text_encoded = $this->attach_file($filename,$mimetype,$mime_filename);
-	  $this->mime_headers = $this->write_mimeheaders($filename, $mime_filename);
-	}
+      $this->smtp_headers = $this->write_smtpheaders($from,$addr_cc);
+      if (strlen($filename[0])) {
+	$this->mime_headers = $this->write_mimeheaders($filename[0], $mime_filename[0]);
+	$this->text_body = $this->write_body($msg, $filename[0]);
+	$this->text_encoded = $this->attach_file($filename,$mimetype,$mime_filename);
+      }
     }
 
   function attach_file($filename,$mimetype,$mime_filename)
     {
-      $encoded = $this->encode_file($filename);
-      if ($mime_filename) $filename = $mime_filename;
-      $out = "--" . $this->mime_boundary . "\n";
-      $out = $out . "Content-type: " . $mimetype . "; name=\"$filename\";\n";         
-      $out = $out . "Content-Transfer-Encoding: base64\n";
-      $out = $out . "Content-disposition: attachment; filename=\"$filename\"\n\n";
-      $out = $out . $encoded . "\n";
+      for ($i = 0; $i < count($filename); $i++) {
+	$encoded = $this->encode_file($filename[$i]);
+	if ($mime_filename[$i]) $filename[$i] = $mime_filename[$i];
+	$out = $out . "--" . $this->mime_boundary . "\n";
+	$out = $out . "Content-type: " . $mimetype[$i] . "; name=\"$filename[$i]\";\n";         
+	$out = $out . "Content-Transfer-Encoding: base64\n";
+	$out = $out . "Content-disposition: attachment; filename=\"$filename[$i]\"\n\n";
+	$out = $out . $encoded . "\n";
+      }
       $out = $out . "--" . $this->mime_boundary . "--" . "\n";
       return $out; 
       // added -- to notify email client attachment is done
@@ -59,21 +66,22 @@ class CMailFile
 
   function encode_file($sourcefile)
     {
+      //      print "<pre> on encode $sourcefile </pre>\n";
       if (is_readable($sourcefile))
 	{
 	  $fd = fopen($sourcefile, "r");
 	  $contents = fread($fd, filesize($sourcefile));
 	  $encoded = my_chunk_split(base64_encode($contents));
-	  fclose($fd);    
+	  fclose($fd);
 	}
       return $encoded;
   }
   
   function sendfile()
     {
-      $headers = $this->smtp_headers . $this->mime_headers;           
+      $headers .= $this->smtp_headers . $this->mime_headers;
       $message = $this->text_body . $this->text_encoded;
-      return mail($this->addr_to,$this->subject,$message,$headers);
+      return mail($this->addr_to,$this->subject,stripslashes($message),$headers);
     }
   
   function write_body($msgtext, $filename)
@@ -89,18 +97,22 @@ class CMailFile
     }
   
   function write_mimeheaders($filename, $mime_filename) {
-    if ($mime_filename) $filename = $mime_filename;
     $out = "MIME-version: 1.0\n";
     $out = $out . "Content-type: multipart/mixed; ";
     $out = $out . "boundary=\"$this->mime_boundary\"\n";
     $out = $out . "Content-transfer-encoding: 7BIT\n";
-    $out = $out . "X-attachments: $filename;\n\n";
+    for($i = 0; $i < count($filename); $i++) {
+      if ($mime_filename[$i]) $filename[$i] = $mime_filename[$i];
+      $out = $out . "X-attachments: $filename[$i];\n\n";
+    }
     return $out;
   }
   
-  function write_smtpheaders($addr_from)
+  function write_smtpheaders($addr_from,$addr_cc)
     {
       $out = "From: $addr_from\n";
+      if($addr_cc != "")
+	$out = $out . "Cc: $addr_cc\n";
       $out = $out . "Reply-To: $addr_from\n";
       $out = $out . "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
       $out = $out . "X-Sender: $addr_from\n";
