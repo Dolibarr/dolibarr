@@ -95,11 +95,15 @@ if ($db->query($sql))
 
       if ($marge < 0)
 	{
-	  print '<td align="right"><b><font color="red">'.$marge."</font></b> %</td>\n";
+	  print '<td align="right"><b><font color="red">';
+	  printf("%.2f",$marge);
+	  print "</font></b> %</td>\n";
 	}
       else
 	{
-	  print '<td align="right">'.$marge." %</td>\n";
+	  print '<td align="right">';
+	  printf("%.2f",$marge);
+	  print " %</td>\n";
 	}
       print '<td align="right">'.price($row[2])." HT</td>\n";
       print '<td align="right">'.price($row[1])." HT</td>\n";
