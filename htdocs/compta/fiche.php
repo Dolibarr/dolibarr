@@ -200,16 +200,21 @@ if ($socid > 0)
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$socid;
     $head[$h][1] = 'Notifications';
+    $h++;
 
+    if ($user->societe_id == 0)
+      {
+	$head[$h][0] = DOL_URL_ROOT."/index.php?socidp=$objsoc->id&action=add_bookmark";
+	$head[$h][1] = '<img border="0" src="/theme/'.$conf->theme.'/img/bookmark.png" alt="Bookmark" title="Bookmark">';
+	$head[$h][2] = 'image';
+      }
     dolibarr_fiche_head($head, $hselected);
-
 
     /*
      *
      */
     print "<table width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">\n";
-    print '<tr><td valign="top" width="50%">';
- 
+    print '<tr><td valign="top" width="50%">'; 
     /*
     *
     *
@@ -234,13 +239,8 @@ if ($socid > 0)
 
     print "</td></tr>";
 
-
     print "</table>";
 
-    if ($user->societe_id == 0)
-    {
-        print "[<a href=\"index.php?socidp=$objsoc->id&action=add_bookmark\">Bookmark fiche</a>]<br>";
-    }
     print "<br>";
 
     /*
