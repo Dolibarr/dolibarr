@@ -1146,7 +1146,7 @@ class Adherent
 	    //--- Start buffering
 	    //ob_start();
 	    $result=curl_exec ($ch);
-	    logfile($result);
+	    dolibarr_syslog($result);
 	    //--- End buffering and clean output
 	    //ob_end_clean();
 	    if (curl_error($ch) > 0)
@@ -1215,7 +1215,7 @@ class Adherent
 	    //--- Start buffering
 	    //ob_start();
 	    $result=curl_exec ($ch);
-	    logfile($result);
+	    dolibarr_syslog($result);
 	    //--- End buffering and clean output
 	    //ob_end_clean();
 	    if (curl_error($ch) > 0)

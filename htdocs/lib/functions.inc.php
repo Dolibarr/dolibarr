@@ -26,14 +26,14 @@
  *
  */
 
-/*!	\file htdocs/lib/functions.inc.php
-		\brief Ensemble de fonctions de base de dolibarr sous forme d'include
-		\author Rodolphe Quiedeville
-		\author	Jean-Louis Bergamo
-		\author	Laurent Destailleur
-		\author Sebastien Di Cintio
-		\author Benoit Mortier
-		\version $Revision$
+/*!	    \file       htdocs/lib/functions.inc.php
+		\brief      Ensemble de fonctions de base de dolibarr sous forme d'include
+		\author     Rodolphe Quiedeville
+		\author	    Jean-Louis Bergamo
+		\author	    Laurent Destailleur
+		\author     Sebastien Di Cintio
+		\author     Benoit Mortier
+		\version    $Revision$
 
 		Ensemble de fonctions de base de dolibarr sous forme d'include
 */
@@ -44,7 +44,6 @@
 		\param	address     adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
         \return boolean     true si email valide, false sinon
 */
-
 function ValidEmail($address)
 {
   if (ereg( ".*<(.+)>", $address, $regs)) {
@@ -74,21 +73,20 @@ function check_mail ($mail)
 }
 
 
-
 /*!
-		\brief  Envoi des messages dolibarr dans syslog.
-		\param	message		message a envoyer a syslog
-
-        Le \a message est envoyé dans syslog dans la catégorie LOG_USER.
+		\brief      Envoi des messages dolibarr dans syslog.
+		\param	    message		message a envoyer a syslog
+        \param      level       Niveau de l'erreur
+		\remarks    Cette fonction ne marchera qui si la constante MAIN_DEBUG = 1
+        Le message est envoyé dans syslog dans la catégorie LOG_USER.
 */
-
 function dolibarr_syslog($message, $level=LOG_ERR)
 {
-  openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les PHP
-
-  syslog($level, $message);
-
-  closelog();
+  if (defined("MAIN_DEBUG") && MAIN_DEBUG) {
+      openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les PHP
+      syslog($level, $message);
+      closelog();
+  }
 }
 
 
@@ -98,7 +96,6 @@ function dolibarr_syslog($message, $level=LOG_ERR)
 		\param	    active      0 par défaut
 		\param      title       titre ("" par defaut)
 */
-
 function dolibarr_fiche_head($links, $active=0, $title='')
 {
   print "<!-- fiche --><div class=\"tabs\">\n";
@@ -177,7 +174,6 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 		\return     0 pour raté, 1 pour réussi
         \see        dolibarr_set_const
 */
-
 function dolibarr_del_const($db, $name)
 {
   $sql = "DELETE FROM llx_const WHERE name='$name' or rowid='$name'";
@@ -197,7 +193,6 @@ function dolibarr_del_const($db, $name)
 		\param	ca			valeur a formater
 		\return	int			valeur formatée
 */
-
 function dolibarr_print_ca($ca)
 {
     if ($ca > 1000)
@@ -226,7 +221,6 @@ function dolibarr_print_ca($ca)
 		\param	format      format de la date "%d %b %Y"
 		\return string      date formatée
 */
-
 function dolibarr_print_date($time,$format="%d %b %Y")
 {
   // Analyse de la date
@@ -259,7 +253,6 @@ function dolibarr_print_date($time,$format="%d %b %Y")
 		\brief  Affiche les informations d'un objet
 		\param	object			objet a afficher
 */
-
 function dolibarr_print_object_info($object)
 {
     global $langs;
@@ -297,7 +290,6 @@ function dolibarr_print_object_info($object)
   \remarks  formattage automatique des numero non formates
   \remarks  ajouté la prise en charge les numéros de 7, 9, 11 et 12 chiffres	
 */
-
 function dolibarr_print_phone($phone)
 {
     if (strstr($phone, ' ')) { return $phone; }
@@ -328,7 +320,7 @@ function dolibarr_print_phone($phone)
 
 
 /*!
-  \brief Affiche logo dédié aux actions
+        \brief  Affiche logo dédié aux actions
 */
 function img_actions($alt = "default")
 {
@@ -340,7 +332,7 @@ function img_actions($alt = "default")
 }
 
 /*!
-  \brief Affiche logo fichier
+        \brief  Affiche logo fichier
 */
 function img_file($alt = "default")
 {
@@ -352,7 +344,7 @@ function img_file($alt = "default")
 }
 
 /*!
-  \brief Affiche logo nouveau fichier
+        \brief  Affiche logo nouveau fichier
 */
 function img_file_new($alt = "default")
 {
@@ -364,7 +356,7 @@ function img_file_new($alt = "default")
 }
 
 /*!
-  \brief Affiche logo pdf
+        \brief  Affiche logo pdf
 */
 function img_pdf($alt = "default")
 {
@@ -376,7 +368,7 @@ function img_pdf($alt = "default")
 }
 
 /*!
-  \brief Affiche logo +
+        \brief  Affiche logo +
 */
 function img_edit_add($alt = "default")
 {
@@ -387,7 +379,7 @@ function img_edit_add($alt = "default")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit_add.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 /*!
-  \brief Affiche logo -
+        \brief  Affiche logo -
 */
 function img_edit_remove($alt = "default")
 {
@@ -399,7 +391,7 @@ function img_edit_remove($alt = "default")
 }
 
 /*!
-  \brief Affiche logo editer/modifier fiche
+        \brief  Affiche logo editer/modifier fiche
 */
 function img_edit($alt = "default")
 {
@@ -411,7 +403,7 @@ function img_edit($alt = "default")
 }
 
 /*!
-  \brief Affiche logo effacer
+        \brief  Affiche logo effacer
 */
 function img_delete($alt = "default")
 {
@@ -423,7 +415,7 @@ function img_delete($alt = "default")
 }
 
 /*!
-  \brief Affiche logo désactiver
+        \brief  Affiche logo désactiver
 */
 function img_disable($alt = "default")
 {
@@ -436,7 +428,7 @@ function img_disable($alt = "default")
 
 
 /*!
-  \brief Affiche logo info
+        \brief  Affiche logo info
 */
 function img_info($alt = "default")
 {
@@ -448,7 +440,7 @@ function img_info($alt = "default")
 }
 
 /*!
-  \brief Affiche logo warning
+        \brief  Affiche logo warning
 */
 function img_warning($alt = "default")
 {
@@ -460,7 +452,7 @@ function img_warning($alt = "default")
 }
 
 /*!
-  \brief Affiche logo alerte
+        \brief  Affiche logo alerte
 */
 function img_alerte($alt = "default")
 {
@@ -472,7 +464,7 @@ function img_alerte($alt = "default")
 }
 
 /*!
-  \brief Affiche logo téléphone in
+        \brief  Affiche logo téléphone in
 */
 function img_phone_in($alt = "default")
 {
@@ -484,7 +476,7 @@ function img_phone_in($alt = "default")
 }
 
 /*!
-  \brief Affiche logo téléphone out
+        \brief  Affiche logo téléphone out
 */
 function img_phone_out($alt = "default")
 {
@@ -496,7 +488,7 @@ function img_phone_out($alt = "default")
 }
 
 /*!
-  \brief Affiche logo suivant
+        \brief  Affiche logo suivant
 */
 function img_next($alt = "default")
 {
@@ -508,7 +500,7 @@ function img_next($alt = "default")
 }
 
 /*!
-  \brief Affiche logo précédent
+        \brief  Affiche logo précédent
 */
 function img_previous($alt = "default")
 {
@@ -520,10 +512,9 @@ function img_previous($alt = "default")
 }
 
 /*!
-		\brief fonction de login
+		\brief      fonction de login
 		\remarks    il faut changer le code html dans la fonction pour changer le design
 */
-
 function loginfunction()
 {
   print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
@@ -553,7 +544,6 @@ function loginfunction()
 		\brief      Affiche message erreur de type acces interdit et arrete le programme
 		\remarks    l'appel a cette fonction termine le code
 */
-
 function accessforbidden()
 {
   global $langs;
@@ -570,7 +560,6 @@ function accessforbidden()
         Toutefois, il faut essayer de ne l'appeler qu'au sein de page php, les classes devant
         renvoyer leur erreur par l'intermédiaire de leur propriété "error".
 */
-
 function dolibarr_print_error($db='',$msg='')
 {
   global $langs;
@@ -626,12 +615,8 @@ function dolibarr_print_error($db='',$msg='')
 
   dolibarr_syslog("Error $syslog");
 
-  /* Commentée voir mail dans la Mailing liste.
-
-   exit;
-
-  */
 }
+
 
 /*!
 		\brief  Deplacer les fichiers telechargés
@@ -639,7 +624,6 @@ function dolibarr_print_error($db='',$msg='')
 		\param	dest_file	fichier de destination
 		\return int         le resultat du move_uploaded_file
 */
-
 function doliMoveFileUpload($src_file, $dest_file)
 {
   $file_name = $dest_file;
@@ -658,7 +642,6 @@ function doliMoveFileUpload($src_file, $dest_file)
 		\param	db      handler d'accès base
 		\param	user    object utilisateur
 */
-
 function dolibarr_user_page_param($db, &$user)
 {
   foreach ($GLOBALS["_GET"] as $key=>$value)
@@ -726,7 +709,6 @@ function dolibarr_user_page_param($db, &$user)
 		\param	devise		type de devise
 		\return	r           resultat transcodé
 */
-
 function transcoS2L($zonein,$devise)
 {
   // Open source offert par <A HREF="mailto:alainfloch@free.fr?subject=chif2let">alainfloch@free.fr</A> 28/10/2001, sans garantie.
@@ -932,7 +914,6 @@ function transcoS2L($zonein,$devise)
 		\param	begin ("" par defaut)
 		\param	options ("" par defaut)
 */
-
 function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="")
 {
     global $conf;
@@ -956,7 +937,6 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
 		\brief  Affichage d'un titre
 		\param	titre			le titre a afficher
 */
-
 function print_titre($titre)
 {
   print '<div class="titre">'.$titre.'</div>';
@@ -967,7 +947,6 @@ function print_titre($titre)
 		\param	titre			le titre a afficher
 		\param	mesg			message suplémentaire à afficher à droite
 */
-
 function print_fiche_titre($titre, $mesg='')
 {
   print "\n".'<table width="100%" border="0" cellpadding="3" cellspacing="0">';
@@ -983,7 +962,6 @@ function print_fiche_titre($titre, $mesg='')
 		\brief  Effacement d'un fichier
 		\param	file			fichier a effacer
 */
-
 function dol_delete_file($file)
 {
   return unlink($file);
@@ -1001,7 +979,6 @@ function dol_delete_file($file)
 		\param	form
 		\param	num             nombre d'élément total
 */
-
 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $form='', $num=-1)
  {
   global $conf;
@@ -1058,7 +1035,6 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 		\param	options         autres parametres d'url a propager dans les liens ("" par defaut)
 		\param	nextpage	    page suivante
 */
-
 function print_fleche_navigation($page,$file,$options='', $nextpage)
 {
   global $conf, $langs;
@@ -1080,7 +1056,6 @@ function print_fleche_navigation($page,$file,$options='', $nextpage)
 		\param	    nomselect   Nom de la zone select html
 		\param	    value       Critere de filtrage sur les type de paiement
 */
-
 function print_type_paiement_select($db,$nomselect,$value=-1)
 {
   print "<select name=\"$nomselect\">";
@@ -1110,7 +1085,6 @@ function print_type_paiement_select($db,$nomselect,$value=-1)
 		\brief      Fonction servant a afficher les mois dans un liste déroulante
 		\param	    set_time ("" par defaut)
 */
-
 function print_date_select($set_time='')
 {
   if (! $set_time)
@@ -1191,7 +1165,6 @@ function print_date_select($set_time='')
 		\param	begin (1 par defaut)
 		\param	end (23 par defaut)
 */
-
 function print_heure_select($prefix,$begin=1,$end=23) {
   
   print '<select name="'.$prefix.'hour">';
@@ -1213,7 +1186,6 @@ function print_heure_select($prefix,$begin=1,$end=23) {
 		\brief  Fonction servant a afficher une durée dans une liste déroulante
 		\param	prefix  prefix
 */
-
 function print_duree_select($prefix)
 {  
   print '<select name="'.$prefix.'hour">';
@@ -1241,7 +1213,6 @@ function print_duree_select($prefix)
 		\remarks fonction utilisée dans les pdf et les pages html
 
 */
-
 function price($amount, $html=0)
 {
   if ($html)
@@ -1263,7 +1234,6 @@ function price($amount, $html=0)
 		\param	euros   	somme en euro à convertir
 		\return price       prix converti et formaté    
 */
-
 function francs($euros)
 {
   return price($euros * 6.55957);
@@ -1274,7 +1244,6 @@ function francs($euros)
 		\param	euros			somme en euro
 		\param	taux			taux de tva
 */
-
 function tva($euros, $taux=19.6)
 {
   $taux = $taux / 100 ;
@@ -1308,47 +1277,11 @@ function yn($yesno, $case=1) {
 
 
 /*!
-		\brief      Fonction qui permet d'envoyer les infos dans un fichier de log
-		\param	    str				chaine a mettre dans le fichier
-		\param	    log				nom du fichier de log
-		\remarks    Cette fonction ne marchera qui si la constante MAIN_DEBUG = 1
-*/
-
-function logfile($str,$log="/var/log/dolibarr/dolibarr.log")
-{
-  if (defined("MAIN_DEBUG") && MAIN_DEBUG ==1)
-    {
-      if (!file_exists($log))
-	{
-	  if (!$file=fopen($log,"w"))
-	    {
-	      return 0;
-	    }
-	}
-      else
-	{
-	  if (!$file=fopen($log,"a+"))
-	    {
-	      return 0;
-	    }
-	}
-      $logentry=date("[d/M/Y:H:i:s] ").$str."\n";
-      if(!fwrite($file,$logentry)) {
-	fclose($file);
-	return 0;
-      }
-      fclose($file);
-      return 1;
-    }
-}
-
-/*!
 		\brief      Fonction pour créer un mot de passe aléatoire
-		\param	    longueur	longueur du mot de passe (8 par defaut)
-		\param	    sel				donnée aléatoire
+		\param	    longueur    longueur du mot de passe (8 par defaut)
+		\param	    sel			donnée aléatoire
 		\remarks    la fonction a été prise sur http://www.uzine.net/spip
 */
-
 function creer_pass_aleatoire($longueur = 8, $sel = "") {
   $seed = (double) (microtime() + 1) * time();
   srand($seed);
@@ -1375,7 +1308,6 @@ function creer_pass_aleatoire($longueur = 8, $sel = "") {
 		\brief      Fonction pour initialiser sel
 		\remarks    la fonction a été prise sur http://www.uzine.net/spip
 */
-
 function initialiser_sel() {
   global $htsalt;
 
@@ -1388,7 +1320,6 @@ function initialiser_sel() {
 		\param	code		Code région
 		\param	pays_id		Id du pays
 */
-
 function departement_rowid($db,$code, $pays_id)
 {
   $sql = "SELECT c.rowid FROM ".MAIN_DB_PREFIX."c_departements as c,".MAIN_DB_PREFIX."c_regions as r";
