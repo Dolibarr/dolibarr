@@ -1139,6 +1139,38 @@ class Facture
     }
 
   /**
+   * \brief     Change le mode de réglement
+   * \param     mode   nouveau mode
+   */
+  function mode_reglement($mode)
+  {
+    dolibarr_syslog("Facture::ModeReglement");
+    if ($this->statut > 0 && $this->paye == 0)
+      {	  
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+	$sql .= " SET fk_mode_reglement = ".$mode;
+	$sql .= " WHERE rowid=".$this->id;
+	
+	if ( $this->db->query( $sql) )
+	  {
+	    $this->mode_reglement = $mode;
+	    return 0;
+	  }
+	else
+	  {
+	    dolibarr_syslog("Facture::mode_reglement Erreur -2");
+	    return -2;
+	  }
+      }
+    else
+      {
+	dolibarr_syslog("Facture::mode_reglement, etat facture incompatible");
+	return -3;
+      }
+  }
+
+
+  /**
    * \brief     Créé une demande de prélèvement
    * \param     user         utilisateur créant la demande
    */
