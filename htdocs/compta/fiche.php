@@ -347,7 +347,9 @@ if ($socid > 0)
 	        print "<a class=\"tabAction\" href=\"facture.php?action=create&socidp=$societe->id\">".$langs->trans("AddBill")."</a>";
         }
 
-        print "<a class=\"tabAction\" href=\"deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
+        if ($conf->deplacement->enabled) {
+            print "<a class=\"tabAction\" href=\"deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
+        }
       }
     
     print '</div>';

@@ -82,7 +82,7 @@ function llxHeader($head = "", $title="", $help_url='')
       $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
     }
 
-  if ($user->societe_id == 0)
+  if ($conf->deplacement->enabled && $user->societe_id == 0)
     {
       $menu->add(DOL_URL_ROOT."/compta/deplacement/", "Déplacement");
     }
