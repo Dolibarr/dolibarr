@@ -42,7 +42,6 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
