@@ -156,7 +156,7 @@ class Contact
                   $info["phpgwContactTypeId"] = 'n';
                   $info["phpgwContactCatId"] = 0;
                   $info["phpgwContactAccess"] = "public";
-                  $info["phpgwContactOwner"] = 7;
+                  $info["phpgwContactOwner"] = $user->egroupware_id;
 		  $info["givenName"] = $info["sn"];
 
                   if ($this->phone_mobile)
