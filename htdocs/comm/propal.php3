@@ -105,6 +105,17 @@ if ($action == 'setstatut')
 
 } 
 
+if ($action == 'modif') 
+{
+  /*
+   *  Repasse la propale en mode brouillon
+   */
+  $propal = new Propal($db);
+  $propal->id = $propalid;
+  $propal->reopen($user->id);
+
+}
+
 if ($HTTP_POST_VARS["action"] == 'addligne') 
 {
   /*
@@ -400,13 +411,17 @@ if ($propalid) {
 	    {
 	      print "<td align=\"center\" width=\"25%\">-</td>";
 	    }
+	  /*
+	   * 
+	   */
 	  if ($obj->statut == 0)
 	    {
-	      print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
+	      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
 	    }
 	  else
 	    {
-	      print "<td align=\"center\" width=\"25%\">-</td>";
+	      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=modif\">Modifier</a>]</td>";
+
 	    }
 	  print "</tr></table>";
 	  /*
