@@ -1,4 +1,6 @@
 # Dolibarr language file - en_US - soc
+MenuNewCompany=New company
+MenuSocGroup=Groups
 NewCompany=New company (prospect, customer, supplier)
 Company=Company
 Companies=Companies
