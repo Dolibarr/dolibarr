@@ -38,9 +38,13 @@ class PDF_Indexes extends FPDF
       }
   }
 
-  function ReferenceNewPage()
+  function ReferenceNewPage($link='')
   {
     $this->AddPage();
+    if ($link)
+      {
+	$this->SetLink($link);
+      }
     $this->SetFont('Arial','',15);
     $this->SetXY(10,10);
     $this->MultiCell(190,12, $this->IndexesName[$this->IndexName], 1 ,'C', 0);
@@ -65,14 +69,15 @@ class PDF_Indexes extends FPDF
       }
   }
 
-  function CreateReference($NbCol, $index)
+  function CreateReference($NbCol, $index, $link='')
   {
     $this->YMax = 270;
     $this->NbCol = $NbCol;
     $this->SetCol(0);
     $this->IndexName = $index;
+    $page = 1;
     // New Page
-    $this->ReferenceNewPage();
+    $page = $this->ReferenceNewPage($link);
 
     //Initialization
     $this->SetFontSize(8);
