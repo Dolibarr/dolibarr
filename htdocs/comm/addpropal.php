@@ -34,19 +34,6 @@ if (defined("PROPALE_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/module
   require(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".PROPALE_ADDON.".php");
 }
 
-$sql = "SELECT s.nom, s.idp, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s WHERE s.idp = ".$_GET["socidp"];
-
-$result = $db->query($sql);
-if ($result) 
-{
-  if ( $db->num_rows() ) 
-    {
-      $objsoc = $db->fetch_object(0);
-    }
-  $db->free();
-}
-
-
 llxHeader();
 
 print_titre("Nouvelle proposition commerciale");
@@ -58,6 +45,11 @@ print_titre("Nouvelle proposition commerciale");
  */
 if ($_GET["action"] == 'create')
 {
+
+  $soc = new Societe($db);
+  /* TODO Ajouter un test ici */
+  $soc->fetch($_GET["socidp"]);
+
   $obj = PROPALE_ADDON;
   $modPropale = new $obj;
   $numpr = $modPropale->propale_get_num();
@@ -73,12 +65,12 @@ if ($_GET["action"] == 'create')
 	}
     }
     
-  print "<form action=\"propal.php?socidp=".$_GET["socidp"]."\" method=\"post\">";
+  print "<form action=\"propal.php?socidp=".$soc->id."\" method=\"post\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   
   print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
   
-  print '<tr><td>Société</td><td><a href="fiche.php?socid='.$_GET["socidp"].'">'.$objsoc->nom.'</a></td>';
+  print '<tr><td>Société</td><td><a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></td>';
   
   print '<td valign="top" colspan="2">';
   print "Commentaires</td></tr>";
@@ -100,7 +92,7 @@ if ($_GET["action"] == 'create')
    */
   print "<tr><td>Contact</td><td>\n";
   $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email FROM ".MAIN_DB_PREFIX."socpeople as p";
-  $sql .= " WHERE p.fk_soc = ".$_GET["socidp"];
+  $sql .= " WHERE p.fk_soc = ".$soc->id;
   
   if ( $db->query($sql) )
     {
@@ -110,7 +102,7 @@ if ($_GET["action"] == 'create')
       if ($numdest==0)
 	{
 	  print 'Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale<br>';	
-	  print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socidp.'&amp;action=create">Ajouter un contact</a>';
+	  print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">Ajouter un contact</a>';
 	}
       else
 	{
@@ -147,7 +139,7 @@ if ($_GET["action"] == 'create')
   print '<tr><td valign="top">Projet</td><td>';
   print '<option value="0"></option>';
   
-  $sql = "SELECT p.rowid, p.title FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $socidp";
+  $sql = "SELECT p.rowid, p.title FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc =".$soc->id;
   
   if ( $db->query($sql) )
     {
@@ -157,7 +149,7 @@ if ($_GET["action"] == 'create')
       if ($numprojet==0)
 	{
 	  print 'Cette société n\'a pas de projet.<br>';
-	  print '<a href=../projet/fiche.php?socidp='.$socidp.'&action=create>Créer un projet</a>';
+	  print '<a href=../projet/fiche.php?socidp='.$soc->id.'&action=create>Créer un projet</a>';
 	}
       else
 	{	  
@@ -175,7 +167,7 @@ if ($_GET["action"] == 'create')
     }
   else
     {
-      print $db->error();
+      print $db->error()."$sql";
     }
 
 
