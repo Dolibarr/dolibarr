@@ -19,6 +19,11 @@
 -- $Source$
 --
 
+drop table if exists llx_entrepot;
+drop table if exists llx_product_stock;
+drop table if exists llx_stock;
+drop table if exists llx_stock_mouvement;
+
 drop table if exists c_actioncomm;
 
 drop table if exists c_chargesociales;
@@ -101,7 +106,11 @@ drop table if exists llx_fa_pr;
 
 drop table if exists llx_facture;
 
+drop table if exists llx_facture_rec;
+
 drop table if exists llx_facturedet;
+
+drop table if exists llx_facturedet_rec;
 
 drop table if exists llx_facture_fourn;
 
@@ -130,6 +139,8 @@ drop table if exists llx_paiementfourn;
 drop table if exists llx_pointmort;
 
 drop table if exists llx_product;
+
+drop table if exists llx_product_fournisseur;
 
 drop table if exists llx_product_price;
 
