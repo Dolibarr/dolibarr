@@ -41,7 +41,8 @@ class DolibarrModules
   Function _init($array_sql)
   {
     /*
-     *  Activation du module
+     *  Activation du module:
+     *  Insère les constantes dans llx_const
      */
     $err = 0;
 
@@ -53,6 +54,7 @@ class DolibarrModules
 	$err++;
       }
 
+    // Ajout des boxes dans llx_boxes_def
     foreach ($this->boxes as $key => $value)
       {
 	$titre = $this->boxes[$key][0];
@@ -80,10 +82,11 @@ class DolibarrModules
 
     foreach ($this->const as $key => $value)
       {
-	$name = $this->const[$key][0];
-	$type = $this->const[$key][1];
-	$val  = $this->const[$key][2];
-	$note = $this->const[$key][3];
+	$name   = $this->const[$key][0];
+	$type   = $this->const[$key][1];
+	$val    = $this->const[$key][2];
+	$note   = $this->const[$key][3];
+	$visible= $this->const[$key][4]||'0';
 
 	$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."const WHERE name ='".$name."'";
 
@@ -93,21 +96,22 @@ class DolibarrModules
 	    
 	    if ($row[0] == 0)
 	      {
-		if (strlen($note)){
-		    $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note) VALUES ('".$name."','".$type."','".$val."','$note')";
-		}elseif (strlen($val))
-		  {
-		    $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value) VALUES ('".$name."','".$type."','".$val."')";
-		  }
-		else
-		  {
-		    $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type) VALUES ('".$name."','".$type."')";
-		  }
-
-		if (! $this->db->query($sql) )
-		  {
-		    $err++;
-		  }
+	        // Si non trouve
+            if (strlen($note)){
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,note,visible) VALUES ('$name','$type','$val','$note','$visible')";
+            }elseif (strlen($val))
+            {
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,value,visible) VALUES ('$name','$type','$val','$visible')";
+            }
+            else
+            {
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,type,visible) VALUES ('$name','$type','$visible')";
+            }
+            
+            if (! $this->db->query($sql) )
+            {
+            $err++;
+            }
 	      }
 	  }
 	else

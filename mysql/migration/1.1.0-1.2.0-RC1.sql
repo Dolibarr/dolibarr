@@ -181,6 +181,7 @@ create table llx_paiementcharge
 
 
 update llx_const set visible=0 where name like 'ADHERENT%';
+update llx_const set visible=0 where name like 'PROPALE_ADDON%';
 
 drop table llx_c_pays;
 

@@ -44,16 +44,22 @@ class modPropale extends DolibarrModules
 
     $this->const = array();
     $this->boxes = array();
+
     /*
      *  Constantes
      */
     $this->const[0][0] = "PROPALE_ADDON_PDF";
     $this->const[0][1] = "chaine";
     $this->const[0][2] = "rouge";
+    $this->const[0][3] = 'Nom du gestionnaire de génération des propales en PDF';
+    $this->const[0][4] = 0;
 
     $this->const[1][0] = "PROPALE_ADDON";
     $this->const[1][1] = "chaine";
     $this->const[1][2] = "mod_propale_ivoire";
+    $this->const[1][3] = 'Nom du gestionnaire de numérotation des propales';
+    $this->const[1][4] = 0;
+
     /*
      * Boites
      */
