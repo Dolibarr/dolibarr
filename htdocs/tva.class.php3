@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,128 +24,158 @@
  *
  *
  */
-class Tva {
+class Tva
+{
   var $db;
   var $note;
   /*
    * Initialistation automatique de la classe
    */
-  Function Tva($DB) {
-    global $config;
-
-    $this->db = $DB;
+  Function Tva($DB)
+    {
+      $this->db = $DB;
     
-    return 1;
+      return 1;
   }
   /*
    * Hum la fonction s'appelle 'Solde' elle doit a mon avis
    * calcluer le solde de TVA, non ?
    *
    */
-  Function solde($year = 0) {
+  Function solde($year = 0)
+    {
     
-    $reglee = $this->tva_sum_reglee($year);
+      $reglee = $this->tva_sum_reglee($year);
 
-    $payee = $this->tva_sum_payee($year);
-    $collectee = $this->tva_sum_collectee($year);
+      $payee = $this->tva_sum_payee($year);
+      $collectee = $this->tva_sum_collectee($year);
 
-    $solde = $reglee - ($collectee - $payee) ;
+      $solde = $reglee - ($collectee - $payee) ;
 
-    return $solde;
-  }
+      return $solde;
+    }
   /*
    * Tva collectée
    * Total de la TVA des factures emises par la societe.
    *
    */
-  Function tva_sum_collectee($year = 0) {
+  Function tva_sum_collectee($year = 0)
+    {
 
-    $sql = "SELECT sum(f.tva) as amount";
-    $sql .= " FROM llx_facture as f WHERE f.paye = 1";
+      $sql = "SELECT sum(f.tva) as amount";
+      $sql .= " FROM llx_facture as f WHERE f.paye = 1";
 
-    if ($year) {
-      $sql .= " AND f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
+      if ($year)
+	{
+	  $sql .= " AND f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
+	}
+
+      $result = $this->db->query($sql);
+
+      if ($result)
+	{
+	  if ($this->db->num_rows())
+	    {
+	      $obj = $this->db->fetch_object(0);
+	      return $obj->amount;
+	    }
+	  else
+	    {
+	      return 0;
+	    }
+
+	  $this->db->free();
+	  
+	}
+      else
+	{
+	  print $this->db->error();
+	  return -1;
+	} 
     }
-
-    $result = $this->db->query($sql);
-
-    if ($result) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object(0);
-	return $obj->amount;
-      } else {
-	return 0;
-      }
-
-      $this->db->free();
-
-    } else {
-      print $this->db->error();
-      return -1;
-    } 
-  }
   /*
    * Tva payée
    * 
    *
    */
-  Function tva_sum_payee($year = 0) {
+  Function tva_sum_payee($year = 0)
+    {
+      
+      $sql = "SELECT sum(f.amount) as amount";
+      $sql .= " FROM llx_facture_fourn as f";
+      
+      if ($year)
+	{
+	  $sql .= " WHERE f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
+	}
+      
+      $result = $this->db->query($sql);
+      
+      if ($result)
+	{
+	  if ($this->db->num_rows())
+	    {
+	      $obj = $this->db->fetch_object(0);
+	      return $obj->amount;
+	    }
+	  else
+	    {
+	      return 0;
+	    }
+	  
+	  $this->db->free();
 
-    $sql = "SELECT sum(f.amount) as amount";
-    $sql .= " FROM llx_facture_fourn as f";
-
-    if ($year) {
-      $sql .= " WHERE f.datef >= '$year-01-01' AND f.datef <= '$year-12-31' ";
+	}
+      else
+	{
+	  print $this->db->error();
+	  return -1;
+	} 
     }
-
-    $result = $this->db->query($sql);
-
-    if ($result) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object(0);
-	return $obj->amount;
-      } else {
-	return 0;
-      }
-
-      $this->db->free();
-
-    } else {
-      print $this->db->error();
-      return -1;
-    } 
-  }
   /*
    * Tva réglée
    * Total de la TVA réglee aupres de qui de droit
    *
    */
-  Function tva_sum_reglee($year = 0) {
+  Function tva_sum_reglee($year = 0)
+    {
 
-    $sql = "SELECT sum(f.amount) as amount";
-    $sql .= " FROM llx_tva as f";
+      $sql = "SELECT sum(f.amount) as amount";
+      $sql .= " FROM llx_tva as f";
+      
+      if ($year)
+	{
+	  $sql .= " WHERE f.datev >= '$year-01-01' AND f.datev <= '$year-12-31' ";
+	}
 
-    if ($year) {
-      $sql .= " WHERE f.datev >= '$year-01-01' AND f.datev <= '$year-12-31' ";
+      $result = $this->db->query($sql);
+
+      if ($result)
+	{
+	  if ($this->db->num_rows())
+	    {
+	      $obj = $this->db->fetch_object(0);
+	      return $obj->amount;
+	    }
+	  else
+	    {
+	      return 0;
+	    }
+	  
+	  $this->db->free();
+
+	}
+      else
+	{
+	  print $this->db->error();
+	  return -1;
+	} 
     }
 
-    $result = $this->db->query($sql);
+  /*
+   *
+   */
 
-    if ($result) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object(0);
-	return $obj->amount;
-      } else {
-	return 0;
-      }
-
-      $this->db->free();
-
-    } else {
-      print $this->db->error();
-      return -1;
-    } 
-  }
 }
 
 ?>
