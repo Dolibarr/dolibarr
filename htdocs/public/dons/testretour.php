@@ -19,27 +19,18 @@
  * $Source$
  *
  */
+?>
+<form action="bplc.php" method="post">
 
-require("../../lib/mysql.lib.php3");
-require("../../conf/conf.class.php3");
-require("../../retourbplc.class.php");
-$conf = new Conf();
+<input type="hidden" name="CHAMP105" value="80.64.52.12">
+<input type="hidden" name="CHAMP901" value="590165">
+<input type="hidden" name="CHAMP902" value="20021222">
+<input type="hidden" name="CHAMP903" value="023252">
+<input type="hidden" name="CHAMP904" value="05423252">
+<input type="hidden" name="CHAMP905" value="Y2154">
+<input type="hidden" name="CHAMP906" value="0000">
 
+<input type="hidden" name="CHAMP200" value="0000DGFEZ2">
 
-$db = new Db();
-
-$retbplc = new Retourbplc($db, $conf);
-
-$retbplc->ipclient          = $HTTP_POST_VARS["CHAMP105"];
-$retbplc->num_transaction   = $HTTP_POST_VARS["CHAMP901"];
-$retbplc->date_transaction  = $HTTP_POST_VARS["CHAMP902"];
-$retbplc->heure_transaction = $HTTP_POST_VARS["CHAMP903"];
-$retbplc->num_autorisation  = $HTTP_POST_VARS["CHAMP904"];
-$retbplc->cle_acceptation   = $HTTP_POST_VARS["CHAMP905"];
-$retbplc->code_retour       = $HTTP_POST_VARS["CHAMP906"];
-
-$retbplc->ref_commande      = $HTTP_POST_VARS["CHAMP200"];
-
-$retbplc->insertdb();
-
-
+<input type="submit" value="Test Retour">
+</form>
