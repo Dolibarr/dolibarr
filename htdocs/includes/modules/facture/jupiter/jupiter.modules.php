@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,19 +25,22 @@
 function facture_get_num($objsoc=0)
 { 
   global $db;
+  $prefix='F';
   $date = strftime("%Y%m", time());
+  $num=0;
+  
+  $sql = "SELECT max(facnumber) FROM llx_facture";
+  $sql .= " WHERE facnumber like '$prefix".$date."%'";
 
-  $sql = "SELECT count(*) FROM llx_facture";
-  $sql .= " WHERE facnumber like '".$date."%'";
   if ( $db->query($sql) ) 
     {
       $row = $db->fetch_row(0);
-      
-      $num = $row[0];
+   
+      $num = $row[0];										# $num vaut F200401XX
+	  $num = eregi_replace("$prefix([0-9]{6})","",$num);	# $num vaut XX
     }
   $num++;
-  //  return  "FA" . $date . substr("000".$num, strlen("000".$num)-4,4);
-  return  "F" . $date . $num;
+  return  "$prefix" . $date . $num;
 }
 
 ?>
