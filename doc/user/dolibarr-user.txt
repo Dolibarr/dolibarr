@@ -31,11 +31,6 @@ Table des matières
      4.        Divers
      4.1.      Configurer les Taux de TVA
 
-     A.        Fichier de conf Apache
-     A.1.      Fichier de config pour `Apache 1.3' + `mod_auth_mysql'
-     A.2.      Fichier de config pour `Apache 2' + `mod_auth_mysql' +
-               `webmin'
-
 
 -------------------------------------------------------------------------------
 
@@ -161,11 +156,11 @@ Table des matières
      La création d'une facture récurrente s'effectue depuis une facture
      validée qui sert de modèle.
 
-     Dans le formulaire de création si le _N.P._ contient une valeur cela
-     signifie que le prix du produit a changé depuis la création de la
-     facture qui sert de modèle.  Il faut alors indiquer si on souhaite
-     garder le prix de référence on si on crée la facture récurrente avec
-     le nouveau prix du produit.
+     Dans le formulaire de création si le champ _N.P._ de la liste produit
+     contient une valeur cela signifie que le prix du produit a changé
+     depuis la création de la facture qui sert de modèle.  Il faut alors
+     indiquer si on souhaite garder le prix de référence ou si on crée la
+     facture récurrente avec le nouveau prix du produit.
 
 
 -------------------------------------------------------------------------------
@@ -208,134 +203,6 @@ Table des matières
      `htdocs/conf/tva.local.php.exemple' est fournit pour exemple.
 
      Cette fonctionnalité est disponible à partir de la version 1.1
-
-
--------------------------------------------------------------------------------
-
-
-A. Fichier de conf Apache
--------------------------
-
-
-A.1. Fichier de config pour `Apache 1.3' + `mod_auth_mysql'
------------------------------------------------------------
-
-     Cet exemple ne fonctionne pas sur la série Apache 2, voir le fichier
-     correspond dans la section suivante.
-
-          	#
-          	#
-          	# Sample httpd.conf for dolibarr
-          	#
-          	# $Id$
-          	# $Source$
-          	#
-          	<VirtualHost dolibarr.lafrere.lan>
-          	ServerAdmin webmaster.fr@lolix.org
-          	DocumentRoot /home/www/dolibarr/dolibarr/htdocs
-          	ServerName dolibarr.lafrere.lan
-          	ErrorLog  /home/www/dolibarr/logs/error.log
-          	CustomLog /home/www/dolibarr/logs/access.log combined
-          
-          	ErrorDocument 401 /public/error-401.html
-          
-          	<Location />
-          	Options Indexes FollowSymLinks
-          	AllowOverride All
-          	Order deny,allow
-          	Deny from all
-          
-          	AuthType 				Basic
-          
-          	# N'utilisez la ligne suivante que si vous utilisez aussi
-          	# le module d'authentification basé sur postgresql
-          	#Auth_MySQL_Authoritative		on
-          
-          	# Utilisez les lignes suivantes si le serveur Apache ne
-          	# peut se logger en anonymous (ce qui est conseillé ;-)
-          	# rq. erics: sur ma debian je n'ai pas le droit de mettre ces
-          	# instructions dans un <virtualhost> ... (apache 1.3.27.0-2)
-          	#AuthMySQL_DefaultHost <host>
-          	#AuthMySQL_DefaultUser <user>
-          	#AuthMySQL_DefaultPassword <pass>
-          
-          	Auth_MySQL_DB 			dolibarr
-          	Auth_MySQL_Password_Table 		llx_user
-          	Auth_MySQL_Username_Field 		login
-          	Auth_MySQL_Password_Field 		pass
-          
-          	# Pour l'instant les pass sont enregistrés en clair
-          	# le stockage crypté est dans la TODO
-          
-          	Auth_MySQL_Encrypted_Passwords 	off
-          
-          	AuthName        			"Dolibarr"
-          
-          	require valid-user
-          	satisfy any
-          	</Location>
-          
-          	<Location /public/>
-          	Options Indexes FollowSymLinks
-          	AllowOverride All
-          	Order deny,allow
-          	Allow from all
-          	</Location>
-          
-          
-          	</VirtualHost>
-
-
-A.2. Fichier de config pour `Apache 2' + `mod_auth_mysql' + `webmin'
---------------------------------------------------------------------
-
-                Options Indexes FollowSymLinks
-                AllowOverride All
-                Order deny,allow
-                Deny from all
-          
-                AuthType Basic
-          
-                # N'utilisez la ligne suivante que si vous utilisez aussi
-                # le module d'authentification basé sur postgresql
-                AuthMySQLAuthoritative on
-          
-                # Utilisez les lignes suivantes si le serveur Apache ne
-                # peut se logger en anonymous (ce qui est conseillé ;-)
-                # rq. erics: sur ma debian je n'ai pas le droit de mettre ces
-                # instructions dans un <virtualhost> ... (apache 1.3.27.0-2)
-                #AuthMySQL_DefaultHost <host>
-                #AuthMySQL_DefaultUser <user>
-                #AuthMySQL_DefaultPassword <pass>
-          
-                AuthMySQLHost localhost
-                AuthMySQLUser leDBuser
-                AuthMySQLPassword leDBpass
-                AuthMySQLDB dolibarr
-                AuthMySQLUserTable llx_user
-                AuthMySQLNameField login
-                AuthMySQLPasswordField pass
-          
-                # Pour l'instant les pass sont enregistrés en clair
-                # le stockage crypté est dans la TODO
-                AuthMySQLCryptedPasswords off
-          
-                AuthName "Dolibarr"
-          
-                require valid-user
-                Satisfy any
-
-     Pour les gens qui installent Dolibarr dans un répertoire, utilisez
-     Webmin et ajoutez une "Per-Directory Options" à votre serveur virtuel.
-     Utilisez "Location" comme "Type" et "/dolibarr" comme "Path".  Une
-     fois créée, editez les directives et copiez la config ci-dessus,
-     sauvez, restartez Apache et testez en allant à
-     domainname.com/dolibarr.  Le navigateur va vous demander de taper le
-     login/pass.  Il faut créer des options pour chaque <Location> du
-     fichier httpd.conf donné en exemple.
-
-     Merci à la personne qui m'a transmis ces infos, et aux précédentes qui
-     avaient fait de même au sujet d'Apache 2
 
 
 -------------------------------------------------------------------------------
