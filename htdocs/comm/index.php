@@ -89,7 +89,7 @@ print '<tr><td valign="top" width="30%">';
 /*
  * Recherche Propal
  */
-if ($conf->propal->enabled) {
+if ($conf->propal->enabled && $user->rights->propale->lire) {
     $var=false;
 	print '<form method="post" action="propal.php">';
 	print '<table class="noborder" width="100%">';
@@ -115,7 +115,7 @@ if ($conf->contrat->enabled) {
 /*
  * Liste des propal brouillons
  */
-if ($conf->propal->enabled) {
+if ($conf->propal->enabled && $user->rights->propale->lire) {
 	$sql = "SELECT p.rowid, p.ref, p.price, s.nom";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE p.fk_statut = 0 and p.fk_soc = s.idp";
@@ -382,7 +382,7 @@ if ($conf->contrat->enabled && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
  * Dernières propales ouvertes
  *
  */
-if ($conf->propal->enabled) {
+if ($conf->propal->enabled && $user->rights->propale->lire) {
 
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
@@ -427,7 +427,7 @@ if ($conf->propal->enabled) {
  *
  */
 
-if ($conf->propal->enabled) {
+if ($conf->propal->enabled && $user->rights->propale->lire) {
     $NBMAX=5;
     
 	$sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
