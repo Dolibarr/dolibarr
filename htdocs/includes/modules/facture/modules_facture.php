@@ -22,7 +22,7 @@
  *
  */
 
-/*!	\file htdocs/includes/modules/facture/modules_facture.php
+/*!	    \file       htdocs/includes/modules/facture/modules_facture.php
 		\ingroup    facture
 		\brief      Fichier contenant la classe mère de generation des factures en PDF
 		            et la classe mère de numérotation des factures
@@ -30,10 +30,11 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");   // Requis car utilisé dans les classes qui héritent
 
 
 
-/*!	\class ModelePDFFactures
+/*!	    \class  ModelePDFFactures
 		\brief  Classe mère des modèles de facture
 */
 
