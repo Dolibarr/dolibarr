@@ -399,6 +399,7 @@ class Livre {
 	$sql .= "SET products_model = '".$this->ref."'";
 	$sql .= ", products_image = '".$this->image."'";
 	$sql .= ", products_price = ".$this->price."";
+	$sql .= ", products_weight = ".$this->price."";
 
 	$sql .= " WHERE products_id = " . $this->oscid;
 
