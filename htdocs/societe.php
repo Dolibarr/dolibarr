@@ -103,7 +103,8 @@ if ($socname) {
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
-if ($result) {
+if ($result)
+{
   $num = $db->num_rows();
   $i = 0;
     
@@ -115,49 +116,49 @@ if ($result) {
     {
       $sortorder="DESC";
     }
-  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print '<TR class="liste_titre">';
-  print "<TD valign=\"center\">";
-  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-  print "</td><TD>";
-  print_liste_field_titre("Ville",$PHP_SELF,"s.ville");
-  print "</td>";
-  print '</td><td colspan="2" align="center">Fiches</td><td>&nbsp;</td>';
-  print "</TR>\n";
-  $var=True;
-  while ($i < $num) {
-    $obj = $db->fetch_object( $i);
-    
-    $var=!$var;
-    
-    print "<TR $bc[$var]>";
-    print "<TD><a href=\"soc.php?socid=$obj->idp\">$obj->nom</A></td>\n";
-    print "<TD>".$obj->ville."&nbsp;</TD>\n";
-    print '<TD align="center">';
-    if ($obj->client)
-      {
-	print "<a href=\"comm/fiche.php?socid=$obj->idp\">client</A></td>\n";
-      }
-    else
-      {
-	print "&nbsp;</td>";
-      }
-    print "</td><TD align=\"center\">";
-    if ($obj->fournisseur)
-      {
-	print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">fournisseur</A></td>';
-      }
-    else
-      {
-	print "&nbsp;</td>";
-      }
-    
-    print '<td align="center"><a href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$obj->idp.'">Notifications</A></td>';
 
-    print "</TR>\n";
-    $i++;
-  }
-  print "</TABLE>";
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre">';
+  print '<td>';
+  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+  print "</td><td>";
+  print_liste_field_titre("Ville",$PHP_SELF,"s.ville");
+  print '</td><td colspan="2" align="center">Fiches</td><td>&nbsp;</td>';
+  print "</tr>\n";
+  $var=True;
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object( $i);    
+      $var=!$var;    
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"soc.php?socid=$obj->idp\">$obj->nom</a></td>\n";
+      print "<td>".$obj->ville."&nbsp;</TD>\n";
+      print '<td align="center">';
+      if ($obj->client)
+	{
+	  print "<a href=\"comm/fiche.php?socid=$obj->idp\">client</a></td>\n";
+	}
+      else
+	{
+	  print "&nbsp;</td>";
+	}
+      print "</td><td align=\"center\">";
+      if ($obj->fournisseur)
+	{
+	  print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">fournisseur</a></td>';
+	}
+      else
+	{
+	  print "&nbsp;</td>";
+	}
+      
+      print '<td align="center"><a href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$obj->idp.'">Notifications</a></td>';
+      
+      print "</tr>\n";
+      $i++;
+    }
+
+  print "</table>";
   $db->free();
 }
 else
