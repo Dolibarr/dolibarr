@@ -91,33 +91,35 @@ function pt ($db, $sql, $date)
   $bc[1]="class=\"impair\"";
 
   $result = $db->query($sql);
-  if ($result) {
-    $num = $db->num_rows();
-    $i = 0; $total = 0 ;
-    print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="3">';
-    print "<TR class=\"liste_titre\">";
-    print "<TD width=\"60%\">$date</TD>";
-    print "<TD align=\"right\">Montant</TD>";
-    print "<td>&nbsp;</td>\n";
-    print "</TR>\n";
-    $var=True;
-    while ($i < $num) {
-      $obj = $db->fetch_object( $i);
-      $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD>$obj->dm</TD>\n";
-      print "<TD align=\"right\">".price($obj->amount)."</TD><td>&nbsp;</td>\n";
+  if ($result)
+    {
+      $num = $db->num_rows();
+      $i = 0; $total = 0 ;
+      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+      print "<TR class=\"liste_titre\">";
+      print "<TD width=\"60%\">$date</TD>";
+      print "<TD align=\"right\">Montant</TD>";
+      print "<td>&nbsp;</td>\n";
       print "</TR>\n";
+      $var=True;
+      while ($i < $num) 
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<TR $bc[$var]>";
+	  print "<TD>$obj->dm</TD>\n";
+	  print "<TD align=\"right\">".price($obj->amount)."</TD><td>&nbsp;</td>\n";
+	  print "</TR>\n";
+	  
+	  $total = $total + $obj->amount;
       
-      $total = $total + $obj->amount;
+	  $i++;
+	}
+      print '<tr class="total"><td  align="right">Total :</td><td align="right"><b>'.price($total).'</b></td><td>'.MAIN_MONNAIE.'&nbsp;HT</td></tr>';
       
-      $i++;
+      print "</TABLE>";
+      $db->free();
     }
-    print '<tr class="total"><td  align="right">Total :</td><td align="right"><b>'.price($total).'</b></td><td>euros&nbsp;HT</td></tr>';
-    
-    print "</TABLE>";
-    $db->free();
-  }
 }
 
 

@@ -40,14 +40,14 @@ if ($action == 'add')
 {
   $product = new Product($db);
 
-  $product->ref         = $HTTP_POST_VARS["ref"];
-  $product->libelle     = $HTTP_POST_VARS["libelle"];
-  $product->price       = $HTTP_POST_VARS["price"];
-  $product->tva_tx      = $HTTP_POST_VARS["tva_tx"];
-  $product->type        = $HTTP_POST_VARS["type"];
-  $product->description = $HTTP_POST_VARS["desc"];
+  $product->ref            = $HTTP_POST_VARS["ref"];
+  $product->libelle        = $HTTP_POST_VARS["libelle"];
+  $product->price          = $HTTP_POST_VARS["price"];
+  $product->tva_tx         = $HTTP_POST_VARS["tva_tx"];
+  $product->type           = $HTTP_POST_VARS["type"];
+  $product->description    = $HTTP_POST_VARS["desc"];
   $product->duration_value = $HTTP_POST_VARS["duration_value"];
-  $product->duration_unit = $HTTP_POST_VARS["duration_unit"];
+  $product->duration_unit  = $HTTP_POST_VARS["duration_unit"];
 
   $id = $product->create($user);
   $action = '';

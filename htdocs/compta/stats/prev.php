@@ -33,8 +33,8 @@ if ($user->societe_id > 0)
 function pt ($db, $sql, $title) {
   global $bc;
 
-  print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
-  print "<TR class=\"liste_titre\">";
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre">';
   print "<TD>$title</TD>";
   print "<TD align=\"right\">Montant</TD>";
   
@@ -58,7 +58,7 @@ function pt ($db, $sql, $title) {
 	  $total = $total + $obj->amount;
 	  $i++;
 	}
-      print "<tr class=\"total\"><td colspan=\"2\" align=\"right\"><b>Total : ".price($total)."</b> euros HT</td></tr>";
+      print "<tr class=\"total\"><td colspan=\"2\" align=\"right\"><b>Total : ".price($total)."</b> ".MAIN_MONNAIE." HT</td></tr>";
     
       $db->free();
     } 

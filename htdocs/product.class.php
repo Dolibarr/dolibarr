@@ -69,37 +69,50 @@ class Product
    */
   Function create($user) 
     {
-      if (strlen($this->price)==0)
-	{
-	  $this->price = 0;
-	}
-      $this->price = round($this->price, 2);
+      $sql = "SELECT count(*)";
+      $sql .= " FROM llx_product WHERE ref = '" .trim($this->ref)."'";
 
-      $sql = "INSERT INTO llx_product (datec, fk_user_author, fk_product_type, price)";
-      $sql .= " VALUES (now(),".$user->id.",$this->type, " . ereg_replace(",",".",$this->price) . ")";
-      $result = $this->db->query($sql);
+      $result = $this->db->query($sql) ;
+
       if ( $result )
 	{
-	  $id = $this->db->last_insert_id();
-	  
-	  if ($id > 0)
+	  $row = $this->db->fetch_array();
+	  if ($row[0] == 0)
 	    {
-	      $this->id = $id;
-	      $this->_log_price($user);
-	      if ( $this->update($id, $user) )
+
+	      if (strlen($this->price)==0)
 		{
-		  return $id;
+		  $this->price = 0;
+		}
+	      $this->price = round($this->price, 2);
+	      
+	      $sql = "INSERT INTO llx_product (datec, fk_user_author, fk_product_type, price)";
+	      $sql .= " VALUES (now(),".$user->id.",$this->type, " . ereg_replace(",",".",$this->price) . ")";
+	      $result = $this->db->query($sql);
+	      if ( $result )
+		{
+		  $id = $this->db->last_insert_id();
+		  
+		  if ($id > 0)
+		    {
+		      $this->id = $id;
+		      $this->_log_price($user);
+		      if ( $this->update($id, $user) )
+			{
+			  return $id;
+			}
+		    }
+		  else
+		    {
+		      return -2;
+		    }
+		}
+	      else
+		{
+		  print $this->db->error() . ' in ' . $sql;
+		  return -1;
 		}
 	    }
-	  else
-	    {
-	      return -2;
-	    }
-	}
-      else
-	{
-	  print $this->db->error() . ' in ' . $sql;
-	  return -1;
 	}
   }
   /*
@@ -197,8 +210,7 @@ class Product
    *
    */
   Function fetch ($id)
-    {
-    
+    {    
       $sql = "SELECT rowid, ref, label, description, price, tva_tx, envente, nbvente, fk_product_type, duration";
       $sql .= " FROM llx_product WHERE rowid = $id";
 

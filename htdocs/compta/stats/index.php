@@ -35,7 +35,7 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-print_titre("Chiffres d'affaires en euros HT");
+print_titre("Chiffres d'affaires (".MAIN_MONNAIE." HT)");
 
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
 $sql .= " FROM llx_facture as f WHERE f.paye = 1";
@@ -59,7 +59,7 @@ if ($result)
     }
 }
 
-print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
+print '<table width="100%" class="border" cellspacing="0" cellpadding="3">';
 print '<tr class="liste_titre"><td>&nbsp;</td>';
 
 
