@@ -183,7 +183,7 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm ";
+$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=1";
 
 if (strlen($stcomm))
@@ -235,7 +235,8 @@ if ($result)
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","","",'valign="center"',$sortfield);
   print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","","",'valign="center"',$sortfield);
-  print_liste_field_titre($langs->trans("Prefix"),"clients.php","s.prefix_comm","","",'valign="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Code client"),"clients.php","s.code_client","","",'align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Code compta"),"clients.php","s.code_compta","","",'align="center"',$sortfield);
   print "</tr>\n";
 
   $var=True;
@@ -249,7 +250,8 @@ if ($result)
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
       print "<td>".$obj->ville."&nbsp;</td>\n";
-      print "<td align=\"center\">$obj->prefix_comm&nbsp;</td>\n";
+      print "<td align=\"center\">$obj->code_client&nbsp;</td>\n";
+      print "<td align=\"center\">$obj->code_compta&nbsp;</td>\n";
       print "</tr>\n";
       $i++;
     }
