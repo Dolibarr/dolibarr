@@ -154,7 +154,7 @@ class DonConf
 {
   Function DonConf()
     {
-      $this->enabled = 1;
+      $this->enabled = 0;
       
       /* Paiement en ligne */
 
