@@ -271,7 +271,7 @@ elseif ($_GET["action"] == 'edit')
       print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
       print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
 
-      print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3">';
+      print '<tr><td>'.$langs->trans('CustomerCode').'</td><td>';
 
       if ($soc->codeclient_modifiable == 1)
 	{
@@ -281,6 +281,9 @@ elseif ($_GET["action"] == 'edit')
 	{
 	  print $soc->code_client;
 	}
+
+      print '<td>Type</td><td>';
+      $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id);
       print '</td></tr>';
 
       print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
@@ -416,7 +419,7 @@ else
   print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
 
   print '<tr><td>';
-  print $langs->trans('CustomerCode').'</td><td colspan="3">';
+  print $langs->trans('CustomerCode').'</td><td>';
   print $soc->code_client;
   if ($soc->check_codeclient() <> 0)
     {
@@ -457,13 +460,19 @@ else
 
       print '<div class="tabsAction">';
       
+
+
       print '<a class="tabAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
       
       print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 
       if ($user->rights->societe->supprimer)
 	{	  
-	  print '<a class="butDelete" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+
+	  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">Maison mère</a>';
+
+	  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+
 	}
       print '</div>';
     }
