@@ -336,7 +336,10 @@ class Facture
   Function valid($userid, $dir)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
+
       $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+
+
       
       if ($this->db->query($sql) )
 	{
@@ -476,7 +479,16 @@ class Facture
 
 	  $numfa = facture_get_num($soc); // définit dans includes/modules/facture
 
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture set facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id WHERE rowid = $rowid ;";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture set facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id";
+
+	  /* Si l'option est activée on force la date de facture */
+
+	  if (defined("FAC_FORCE_DATE_VALIDATION") && FAC_FORCE_DATE_VALIDATION == "1")
+	    {
+	      $sql .= ", datef=now()";
+	    }
+	  $sql .= " WHERE rowid = $rowid ;";
+
 	  $result = $this->db->query( $sql);
 
 	  if (! $result) { print "Err : ".$this->db->error(); return -1; }
