@@ -81,7 +81,7 @@ if (! isset($_GET["num"]))
       $numrows = $db->num_rows();
       $i = 0; 
       
-      print_barre_liste("Relevés bancaires, compte : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>", $page, "releve.php","&amp;account=$account",$sortfield,$sortorder,'',$numrows);
+      print_barre_liste("Relevés bancaires, compte : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>", $page, "releve.php","&amp;account=".$_GET["account"],$sortfield,$sortorder,'',$numrows);
       print '<br>';
       
       print '<table class="noborder" width="100%">';
@@ -116,7 +116,7 @@ else
   if ($_GET["rel"] == 'prev')
     {
       // Recherche valeur pour num = numéro relevé précédent
-      $sql = "SELECT distinct(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve < ".$_GET["num"]." AND fk_account = $account ORDER BY num_releve DESC";
+      $sql = "SELECT distinct(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve < ".$_GET["num"]." AND fk_account = ".$_GET["account"]." ORDER BY num_releve DESC";
       $result = $db->query($sql);
       if ($result)
 	{
@@ -133,7 +133,7 @@ else
   elseif ($_GET["rel"] == 'next')
     {
       // Recherche valeur pour num = numéro relevé précédent
-      $sql = "SELECT distinct(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve > ".$_GET["num"]." AND fk_account = $account ORDER BY num_releve ASC";
+      $sql = "SELECT distinct(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve > ".$_GET["num"]." AND fk_account = ".$_GET["account"]." ORDER BY num_releve ASC";
       $result = $db->query($sql);
       if ($result)
 	{
@@ -151,7 +151,8 @@ else
     // On veut le relevé num
     $num=$_GET["num"];
   }
-
+  $ve=$_GET["ve"];
+  
   $mesprevnext ="<a href=\"releve.php?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_previous()."</a>";
   $mesprevnext.=" Relevé $num ";
   $mesprevnext.="<a href=\"releve.php?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_next()."</a>";
