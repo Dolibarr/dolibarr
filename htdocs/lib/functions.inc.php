@@ -105,22 +105,25 @@ function dolibarr_fiche_head($links, $active=0, $title='')
 		\param	    visible	    la constante est t'elle visible (0 par défaut)
 		\param	    note		explication de la constante
 		\return     0 pour raté, 1 pour réussi
-        \see        dolibarr_del_const
+    \see        dolibarr_del_const
 */
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
 {
  		 
-		 $sql = "delete from llx_const where name = '$name';"; 		
+		 $sql = "DELETE FROM llx_const WHERE name = '$name';"; 		
+		 
 		 $db->query($sql);	
-		 //$sql = "REPLACE INTO llx_const SET name = '$name', value='$value', visible=$visible, type='$type', note='$note'";
-		 $sqql = "insert into llx_const(name,value,type,visible,note) values 
+
+		 $sqql = "INSERT INTO llx_const(name,value,type,visible,note) VALUES 
 		 ('$name','$value','$type',$visible,'$note');";
 		 
-		 
-		//$sql = "delete from llx_const where name = '$name' and value = '$value' ;";
+		 $db->query($sql);	
+		
+		//$sql = "DELETE FROM llx_const WHERE name = '$name' and value = '$value' ;";
 		//$db->query($sql);
 		
-		//$sql2 = "insert into llx_const values('$name','$value','$type',$visible,'$note');";
+		//$sql2 = "INSERT INTO llx_const VALUES('$name','$value','$type',$visible,'$note');";
+		//$db->query($sql);
 
   if ($db->query($sqql))
     {
@@ -551,7 +554,6 @@ function accessforbidden()
 /*!
 		\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostique et la remontée des bugs
         On doit appeler cette fonction quand une erreur technique bloquante est rencontrée
-		\remarks    l'appel a cette fonction termine le code
 */
 
 function dolibarr_print_error($db='',$msg='')
@@ -623,67 +625,54 @@ function dolibarr_user_page_param($db, &$user)
       if ($key == "sortfield")
 	{
 	
-		$sql = "delete from ".MAIN_DB_PREFIX."user_param where fk_user = $user->id ;"; 
-	  $db->query($sql);
-		$sql = "insert into ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
-		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');	";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param WHERE fk_user = $user->id ;"; 
+	  
+		$db->query($sql);
 		
-	  /*$sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
-	  $sql .= " SET fk_user =".$user->id;
-	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
-	  $sql .= " ,param='sortfield'";
-	  $sql .= " ,value='".urlencode($value)."'";*/
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
+		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');";
 
 	  $db->query($sql);
-	  $user->page_param["sortfield"] = $value;
+	  
+		$user->page_param["sortfield"] = $value;
 	}
 
-      //      print $key . "=".$value . "<br>";
-
       if ($key == "sortorder")
-	{
-	  /*$sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
-	  $sql .= " SET fk_user =".$user->id;
-	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
-	  $sql .= " ,param='sortorder'";
-	  $sql .= " ,value='".urlencode($value)."'";*/
-    $sql = "delete from ".MAIN_DB_PREFIX."user_param where fk_user = $user->id ;"; 
-	  $db->query($sql);
-		$sql = "insert into ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
-		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');	";
+	{    
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param WHERE fk_user = $user->id ;"; 
+	  
+		$db->query($sql);
+		
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
+		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');";
 		
 	  $db->query($sql);
+		
 	  $user->page_param["sortorder"] = $value;
 	}
       if ($key == "begin")
 	{
-	  /*$sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
-	  $sql .= " SET fk_user =".$user->id;
-	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
-	  $sql .= " ,param='begin'";
-	  $sql .= " ,value='".$value."'";*/
-    $sql = "delete from ".MAIN_DB_PREFIX."user_param where fk_user = $user->id ;"; 
-	  $db->query($sql);
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param WHERE fk_user = $user->id ;"; 
+	  
+		$db->query($sql);
 		
-		$sql = "insert into ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
 		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');	";
-	  $db->query($sql);
+	  
+		$db->query($sql);
 		
 	  $user->page_param["begin"] = $value;
 	}
       if ($key == "page")
 	{
-	  /*$sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
-	  $sql .= " SET fk_user =".$user->id;
-	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
-	  $sql .= " ,param='page'";
-	  $sql .= " ,value='".$value."'";*/
-    $sql = "delete from ".MAIN_DB_PREFIX."user_param where fk_user = $user->id ;"; 
-	  $db->query($sql);
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param WHERE fk_user = $user->id ;"; 
+	  
+		$db->query($sql);
 		
-		$sql = "insert into ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."user_param(fk_user,page,param,value) VALUES
 		($user->id,'".$GLOBALS["SCRIPT_URL"]."','sortfield','".urlencode($value)."');	";
-	  $db->query($sql);
+	  
+		$db->query($sql);
 		
 	  $user->page_param["page"] = $value;
 	}
