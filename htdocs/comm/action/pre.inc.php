@@ -22,6 +22,8 @@
 require("../../main.inc.php");
 
 function llxHeader($head = "", $urlp = "") {
+  global $conf;
+
   /*
    *
    *
@@ -42,7 +44,9 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add(DOL_URL_ROOT."/comm/propal.php", "Propales");
 
-  $menu->add(DOL_URL_ROOT."/projet/index.php", "Projets");
+  if ($conf->projet->enabled) {
+    $menu->add(DOL_URL_ROOT."/projet/index.php", "Projets");
+  }
 
   $menu->add(DOL_URL_ROOT."/comm/action/rapport/", "Rapport");
 
