@@ -470,8 +470,8 @@ class Product
   {
     
     $sql = "INSERT INTO llx_product_stock ";
-    $sql .= " (fk_product, fk_entrepot, reel, commande, proposition)";
-    $sql .= " VALUES ($this->id, $id_entrepot, $nbpiece, $nbpiece, $nbpiece)";
+    $sql .= " (fk_product, fk_entrepot, reel)";
+    $sql .= " VALUES ($this->id, $id_entrepot, $nbpiece)";
     
     if ($this->db->query($sql) )
       {
