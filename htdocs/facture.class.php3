@@ -270,15 +270,6 @@ class Facture {
       $sql = "UPDATE llx_facture set fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid ;";
       $result = $this->db->query( $sql);
 
-      $dir = $conf->facture->outputdir . "/" . $rowid;
-
-      if (! is_dir ("$dir"))
-	{
-	  if (! mkdir ("$dir", 755))
-	    {
-	      print $dir;
-	    }
-	}
       return $result;
     }
   /*
