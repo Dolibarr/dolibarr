@@ -18,3 +18,4 @@ create table llx_product_price
   envente         tinyint default 1
 );
 
+REPLACE INTO llx_const (name, value, type, visible) VALUES ('MAIN_NEED_UPDATE',  '1','chaine',1);
