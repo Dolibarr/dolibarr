@@ -51,6 +51,7 @@ if ($action == 'update')
       $adh->pays        = $HTTP_POST_VARS["pays"];
       $adh->typeid      = $HTTP_POST_VARS["type"];
       $adh->commentaire = $HTTP_POST_VARS["comment"];
+      $adh->morphy      = $HTTP_POST_VARS["morphy"];
       
       if ($adh->update($user->id) ) 
 	{	  
@@ -87,21 +88,25 @@ if ($rowid)
       $total = $obj->total;
     }
   }
+
+  $adht = new AdherentType($db);
+
   print_titre("Edition de la fiche adhérent");
 
 
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
-  print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td>';
-
+  print "<tr><td>Type</td><td class=\"valeur\">$adh->type</td>";
   print '<td valign="top" width="50%">Commentaires</td></tr>';
 
-  print '<tr><td>Nom</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
-  
+  print '<tr><td>Personne</td><td class="valeur">'.$adh->morphy.'&nbsp;</td>';
   print '<td rowspan="10" valign="top" width="50%">';
   print nl2br($adh->commentaire).'&nbsp;</td></tr>';
 
+  print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
 
+  print '<tr><td>Nom</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
+  
   print '<tr><td>Société</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
   print '<tr><td>Adresse</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
   print '<tr><td>CP Ville</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
@@ -119,21 +124,28 @@ if ($rowid)
   print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
 
   $htmls = new Form($db);
-  $adht = new AdherentType($db);
+
 
   print "<tr><td>Type</td><td>";
   $htmls->select_array("type",  $adht->liste_array(), $adh->typeid);
-  print "</td></tr>";
+  print "</td>";
 
-  
-  print '<tr><td width="15%">Prénom</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
-  
   print '<td valign="top" width="50%">Commentaires</td></tr>';
 
-  print '<tr><td>Nom</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
+  $morphys["phy"] = "Physique";
+  $morphys["mor"] = "Morale";
+
+  print "<tr><td>Personne</td><td>";
+  $htmls->select_array("morphy",  $morphys, $adh->morphy);
+  print "</td>";
 
   print '<td rowspan="13" valign="top">';
   print '<textarea name="comment" wrap="soft" cols="40" rows="15">'.$adh->commentaire.'</textarea></td></tr>';
+  
+  print '<tr><td width="15%">Prénom</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td></tr>';
+  
+  print '<tr><td>Nom</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td></tr>';
+
 
   print '<tr><td>Societe</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
   print '<tr><td>Adresse</td><td>';
