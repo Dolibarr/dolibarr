@@ -37,9 +37,10 @@ if ($user->societe_id > 0)
   $_GET["socid"] = $user->societe_id;
 }
 
+$soc = new Societe($db);
+
 if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 {
-  $soc = new Societe($db);
   $soc->nom                  = $_POST["nom"];
   $soc->adresse              = $_POST["adresse"];
   $soc->cp                   = $_POST["cp"];
@@ -75,23 +76,25 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
     }
   if ($_POST["action"] == 'add')
     {
-      $socid = $soc->create();
+      $socid = $soc->create($user);
 
       if ($socid > 0) {
         Header("Location: soc.php?socid=$socid");
       }
+      elseif ($socid == -1) {
+        $mesg="Erreur, cette société existe déjà sous ce nom ou pour ce prefix commercial";
+        $_GET["action"]='create';
+      }
       else {
-        $mesg="Erreur, cette société existe déjà";
-        $_GET["actions"]='create';
+        dolibarr_print_error($db); 
       }
     }
 }
 
-/*
- *
- *
- */
+
 llxHeader();
+
+
 $form = new Form($db);
 
 if ($_GET["action"] == 'create')
@@ -101,7 +104,7 @@ if ($_GET["action"] == 'create')
       /*
        * Fiche societe en mode création
        */
-      $soc = new Societe($db);
+      
       if ($_GET["type"]=='f') { $soc->fournisseur=1; }
       if ($_GET["type"]=='c') { $soc->client=1; }
       if ($_GET["type"]=='p') { $soc->client=2; }
