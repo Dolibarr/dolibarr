@@ -112,7 +112,7 @@ $user = new User($db);
 
 
 // Pour utiliser une autre version de fpdf, définir la constante FPDF_PATH
-if (! defined(FPDF_PATH)) { define('FPDF_PATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/'); }
+if (! defined('FPDF_PATH')) { define('FPDF_PATH',DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf152/'); }
 define('FPDF_FONTPATH', FPDF_PATH . 'font/');
 // \todo mettre cet include uniquement sur les éléments qui manipulent du PDF
 require_once(FPDF_PATH . "fpdf.php");
@@ -125,7 +125,7 @@ $sql = "SELECT name, value FROM ".MAIN_DB_PREFIX."const";
 $result = $db->query($sql);
 if ($result) 
 {
-  $numr = $db->num_rows();
+  $numr = $db->num_rows($result);
   $i = 0;
   
   while ($i < $numr)
@@ -135,18 +135,18 @@ if ($result)
       $i++;
     }
 }
-
+$db->free($result);
 
 /*
  * Positionne les gestionnaires de menu
  */
-if (! defined(MAIN_MENU_BARRETOP))
+if (! defined('MAIN_MENU_BARRETOP'))
 {
-  define("MAIN_MENU_BARRETOP","default.php");
+  define('MAIN_MENU_BARRETOP',"default.php");
 }
-if (! defined(MAIN_MENU_BARRELEFT))
+if (! defined('MAIN_MENU_BARRELEFT'))
 {
-  define("MAIN_MENU_BARRELEFT","default.php");
+  define('MAIN_MENU_BARRELEFT',"default.php");
 }
 $conf->top_menu=MAIN_MENU_BARRETOP;
 $conf->left_menu=MAIN_MENU_BARRELEFT;
@@ -155,9 +155,9 @@ $conf->left_menu=MAIN_MENU_BARRELEFT;
  * Positionne le langage et localisation dans $conf->langage
  * et charge l'objet de traduction
  */
-if (! defined(MAIN_LANG_DEFAULT))
+if (! defined('MAIN_LANG_DEFAULT'))
 {
-  define(MAIN_LANG_DEFAULT,"fr_FR");
+  define('MAIN_LANG_DEFAULT',"fr_FR");
 }
 $conf->langage=MAIN_LANG_DEFAULT;
 
@@ -178,8 +178,8 @@ $conf->users->dir_output=DOL_DATA_ROOT."/users";
  * Activation des modules
  * et inclusion de librairies dépendantes
  */
-define(MAIN_MODULE_BOOKMARK4U,1);
-if (defined("MAIN_MODULE_BOOKMARK4U"))
+define('MAIN_MODULE_BOOKMARK4U',1);
+if (defined('MAIN_MODULE_BOOKMARK4U'))
 {
   $conf->bookmark4u->enabled=MAIN_MODULE_BOOKMARK4U;
 }
@@ -210,7 +210,7 @@ if (defined("MAIN_MODULE_SOCIETE"))
 }
 $conf->societe->dir_output=DOL_DATA_ROOT."/societe";
 $conf->societe->dir_images=DOL_DATA_ROOT."/societe/images";
-if (defined(SOCIETE_OUTPUTDIR) && SOCIETE_OUTPUTDIR) { $conf->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
+if (defined('SOCIETE_OUTPUTDIR') && SOCIETE_OUTPUTDIR) { $conf->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
 if (defined("MAIN_MODULE_COMMERCIAL"))
 {
   $conf->commercial->enabled=MAIN_MODULE_COMMERCIAL;
@@ -245,7 +245,7 @@ if (defined("MAIN_MODULE_FICHEINTER"))
 }
 $conf->fichinter->dir_output=DOL_DATA_ROOT."/ficheinter";
 $conf->fichinter->dir_images=DOL_DATA_ROOT."/ficheinter/images";
-if (defined(FICHEINTER_OUTPUTDIR) && FICHEINTER_OUTPUTDIR) { $conf->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par défaut
+if (defined('FICHEINTER_OUTPUTDIR') && FICHEINTER_OUTPUTDIR) { $conf->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par défaut
 if (defined("MAIN_MODULE_ADHERENT"))
 {
   $conf->adherent->enabled=MAIN_MODULE_ADHERENT;
@@ -310,15 +310,15 @@ if (defined("MAIN_MODULE_PRELEVEMENT"))
 }
 $conf->prelevement->dir_output=DOL_DATA_ROOT."/prelevement";
 $conf->prelevement->dir_images=DOL_DATA_ROOT."/prelevement/images";
-if (defined("MAIN_MODULE_WEBCALENDAR"))
+if (defined('MAIN_MODULE_WEBCALENDAR'))
 {
   $conf->webcal->enabled=MAIN_MODULE_WEBCALENDAR;
-  $conf->webcal->db->type=defined(PHPWEBCALENDAR_TYPE)?PHPWEBCALENDAR_TYPE:'mysql';
-  $conf->webcal->db->host=PHPWEBCALENDAR_HOST;
-  $conf->webcal->db->user=PHPWEBCALENDAR_USER;
-  $conf->webcal->db->pass=PHPWEBCALENDAR_PASS;
-  $conf->webcal->db->name=PHPWEBCALENDAR_DBNAME;
-  $conf->webcal->syncro=PHPWEBCALENDAR_SYNCRO;
+  $conf->webcal->db->type=defined('PHPWEBCALENDAR_TYPE')?PHPWEBCALENDAR_TYPE:'mysql';
+  $conf->webcal->db->host=defined('PHPWEBCALENDAR_HOST')?PHPWEBCALENDAR_HOST:'';
+  $conf->webcal->db->user=defined('PHPWEBCALENDAR_USER')?PHPWEBCALENDAR_USER:'';
+  $conf->webcal->db->pass=defined('PHPWEBCALENDAR_PASS')?PHPWEBCALENDAR_PASS:'';
+  $conf->webcal->db->name=defined('PHPWEBCALENDAR_DBNAME')?PHPWEBCALENDAR_DBNAME:'';
+  $conf->webcal->syncro=defined('PHPWEBCALENDAR_SYNCRO')?PHPWEBCALENDAR_SYNCRO:'';
 }
 if (defined("MAIN_MODULE_FACTURE"))
 {
@@ -327,7 +327,7 @@ if (defined("MAIN_MODULE_FACTURE"))
 }
 $conf->facture->dir_output=DOL_DATA_ROOT."/facture";
 $conf->facture->dir_images=DOL_DATA_ROOT."/facture/images";
-if (defined(FAC_OUTPUTDIR) && FAC_OUTPUTDIR) { $conf->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par défaut
+if (defined('FAC_OUTPUTDIR') && FAC_OUTPUTDIR) { $conf->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par défaut
 if (defined("MAIN_MODULE_PROPALE"))
 {
   $conf->propal->enabled=MAIN_MODULE_PROPALE;
@@ -339,7 +339,7 @@ if (defined("MAIN_MODULE_PROPALE"))
 }
 $conf->propal->dir_output=DOL_DATA_ROOT."/propale";
 $conf->propal->dir_images=DOL_DATA_ROOT."/propale/images";
-if (defined(PROPALE_OUTPUTDIR) && PROPALE_OUTPUTDIR) { $conf->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
+if (defined('PROPALE_OUTPUTDIR') && PROPALE_OUTPUTDIR) { $conf->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
 
 
 
@@ -357,7 +357,7 @@ else {
  * Option du module Compta: Defini le mode de calcul des etats comptables (CA,...)
  */
 $conf->compta->mode = 'RECETTES-DEPENSES';  // Par défaut
-if (defined("COMPTA_MODE") && COMPTA_MODE) {
+if (defined('COMPTA_MODE') && COMPTA_MODE) {
 	// Peut etre 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
     $conf->compta->mode = COMPTA_MODE;
 }
@@ -371,7 +371,7 @@ $conf->compta->tva=1;
 /*
  * Option du module Facture
  */
-if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') {
+if (defined('FACTURE_TVAOPTION') && FACTURE_TVAOPTION == 'franchise') {
 	$conf->defaulttx='0';		// Taux par défaut des factures clients
 }
 else {
@@ -381,7 +381,7 @@ else {
 /*
  * SIZE_LISTE_LIMIT : constante de taille maximale des listes
  */
-if (defined("SIZE_LISTE_LIMIT"))
+if (defined('SIZE_LISTE_LIMIT'))
 {
   $conf->liste_limit=SIZE_LISTE_LIMIT;
 }
@@ -389,12 +389,12 @@ else
 {
   $conf->liste_limit=20;
 }
-if ($user->limite_liste > 0)
+if ($user->liste_limit > 0)
 {
-  $conf->liste_limit = $user->limite_liste;
+  $conf->liste_limit = $user->liste_limit;
 }
 
-if (defined("MAIN_THEME"))
+if (defined('MAIN_THEME'))
 {
   $conf->theme=MAIN_THEME;
   $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";

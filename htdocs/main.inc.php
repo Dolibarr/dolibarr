@@ -24,7 +24,8 @@
  *
  */
 
-/**     \file       htdocs/main.inc.php
+/**
+        \file       htdocs/main.inc.php
         \brief      Fichier de formatage générique des ecrans Dolibarr
         \version    $Revision$
 */
@@ -115,7 +116,7 @@ if (defined("MAIN_NOT_INSTALLED"))
 
 function top_menu($head, $title="", $target="") 
 {
-  global $user, $conf, $langs;
+  global $user, $conf, $langs, $db;
 
   print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
   print "\n<html>";
@@ -219,7 +220,7 @@ function top_menu($head, $title="", $target="")
  
 function left_menu($menu_array, $help_url='', $form_search='') 
 {
-  global $user, $conf, $langs;
+  global $user, $conf, $langs, $db;
 
   print '<div class="vmenuplusfiche">'."\n";
 

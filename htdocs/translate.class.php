@@ -60,7 +60,7 @@ class Translate {
 		
     function Load($domain,$alt=0)
     {
-        if ($this->tab_loaded[$domain]) { return; }       // Le fichier de ce domaine est deja chargé
+        if (isset($this->tab_loaded[$domain]) && $this->tab_loaded[$domain]) { return; }    // Le fichier de ce domaine est deja chargé
         
         // Repertoire de traduction
         $scandir = $this->dir."/".$this->defaultlang;
@@ -82,7 +82,7 @@ class Translate {
                     if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#") {
                         $tab=split('=',$ligne,2);
                         //print "Domain=$domain, found a string for $tab[0] with value $tab[1]<br>";
-                        if (! $this->tab_translate[$tab[0]]) $this->tab_translate[$tab[0]]=trim($tab[1]);
+                        if (! isset($this->tab_translate[$tab[0]])) $this->tab_translate[$tab[0]]=trim($tab[1]);
                     }
                 }
                 fclose($fp);
@@ -137,7 +137,7 @@ class Translate {
      */
 		 
     function transnoentities($str, $param1='', $param2='', $param3='') {
-        if ($this->tab_translate[$str]) {
+        if (isset($this->tab_translate[$str]) && $this->tab_translate[$str]) {
             // Si la traduction est disponible
             return sprintf($this->tab_translate[$str],$param1,$param2,$param3);
         }
@@ -188,7 +188,7 @@ class Translate {
         if (! $charset) $charset="iso-8859-1";
     
         //header("Content-Type: text/html; charset=$charset");
-        $texte .= "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$charset\">\n";
+        $texte = "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$charset\">\n";
     
         return $texte;
     }

@@ -78,7 +78,7 @@ class User
       $this->id = $id;
 
       // Preference utilisateur
-      $this->userpreflimite_liste = 0;
+      $this->liste_limit = 0;
       $this->clicktodial_enabled = 0;
 		  
       $this->all_permissions_are_loaded = 0;
@@ -95,7 +95,7 @@ class User
   function fetch($login='')
     {
       
-      $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note";
+      $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note, u.fk_societe, u.fk_socpeople";
       $sql .= ", ".$this->db->pdate("u.datec")." as datec, ".$this->db->pdate("u.tms")." as datem";
       $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
       if ($this->id)
@@ -133,9 +133,8 @@ class User
 	      $this->webcal_login = $obj->webcal_login;
 	      
 	      $this->societe_id = $obj->fk_societe;
-	      $this->egroupware_id = $obj->egroupware_id;
 	    }
-	  $this->db->free();
+	  $this->db->free($result);
 	  
 	}
       else
@@ -143,26 +142,30 @@ class User
     	  dolibarr_print_error($this->db);
 	}
 
-      $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
-      $sql .= " WHERE fk_user = ".$this->id;
-      $sql .= " AND page = '".$_SERVER["SCRIPT_URL"]."'";
-
-      if ( $this->db->query($sql) );
-	{
-	  $num = $this->db->num_rows();
-	  $i = 0;
-	  $page_param_url = '';
-	  $this->page_param = array();
-	  while ($i < $num)
-	    {
-	      $obj = $this->db->fetch_object();
-	      $this->page_param[$obj->param] = $obj->value;
-	      $page_param_url .= $obj->param . "=".$obj->value."&amp;";
-	      $i++;
-	    }
-	  $this->page_param_url = $page_param_url;
-	}
- 
+    if (isset($_SERVER['SCRIPT_URL'])) {
+          // \todo  $_SERVER['SCRIPT_URL'] n'existe pas sous tout os/server web
+          $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
+          $sql .= " WHERE fk_user = ".$this->id;
+          $sql .= " AND page = '".$_SERVER['SCRIPT_URL']."'";
+    
+          $result=$this->db->query($sql);
+          if ($result);
+    	{
+    	  $num = $this->db->num_rows($result);
+    	  $i = 0;
+    	  $page_param_url = '';
+    	  $this->page_param = array();
+    	  while ($i < $num)
+    	    {
+    	      $obj = $this->db->fetch_object($result);
+    	      $this->page_param[$obj->param] = $obj->value;
+    	      $page_param_url .= $obj->param . "=".$obj->value."&amp;";
+    	      $i++;
+    	    }
+    	  $this->page_param_url = $page_param_url;
+    	  $this->db->free($result);
+    	}
+    } 
   }
   
   /**
