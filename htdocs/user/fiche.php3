@@ -21,7 +21,6 @@
  */
 
 require("./pre.inc.php3");
-require($GLOBALS["DOCUMENT_ROOT"]."/service.class.php3");
 
 llxHeader();
 
