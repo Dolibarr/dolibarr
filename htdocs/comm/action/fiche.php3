@@ -256,7 +256,10 @@ if ($action=='create')
       $html->select_array("nextactionid",  $caction->liste_array(), 0);
       print '</td></tr>';
       print '<tr><td width="10%">Action</td><td><input type="text" name="todo_label" size="30"></td></tr>';
-      print '<tr><td width="10%">Calendrier</td><td><input type="checkbox" name="todo_webcal"></td></tr>';
+      if (defined("MAIN_MODULE_WEBCALENDAR") && MAIN_MODULE_WEBCALENDAR)
+	{
+	  print '<tr><td width="10%">Calendrier</td><td><input type="checkbox" name="todo_webcal"></td></tr>';
+	}
       print '<tr><td valign="top">Commentaire</td><td>';
       print '<textarea cols="60" rows="6" name="todo_note"></textarea></td></tr>';
       print '</table>';
