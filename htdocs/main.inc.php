@@ -100,9 +100,7 @@ else
        * Le début de la page est affiché par
        * loginFunction
        */
-      print '</div><div class="main-inside">';
-
-      print '</div></body></html>';
+      print '</div></div></body></html>';
       die ;
 
     }
