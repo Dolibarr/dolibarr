@@ -9,7 +9,7 @@ Prénom:  $don->prenom
 Nom:     $don->nom
 Montant: $don->amount
 
-http://dolibarr.fsffrance.org/compta/dons/
+https://fsffrance.org/dolibarr/compta/dons/
 
 ";
 ?>

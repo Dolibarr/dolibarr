@@ -34,7 +34,7 @@ require("../../don.class.php");
 
 $conf = new Conf();
 
-$db = new Db();
+$db = new DoliDb();
 
 $retbplc = new Retourbplc($db);
 

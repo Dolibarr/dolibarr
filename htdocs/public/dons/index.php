@@ -29,7 +29,7 @@ $conf = new Conf();
 if ($conf->don->enabled)
 {
 
-  $db = new Db();
+  $db = new DoliDb();
   $don = new Don($db);
       
   $don->projetid    = $HTTP_POST_VARS["projetid"];
@@ -72,7 +72,7 @@ if ($conf->don->enabled)
 	  
 	  if ($ref_commande)
 	    {
-	      $a = setlocale("LC_TIME", "FRENCH");
+	      $a = setlocale(LC_TIME, "FRENCH");
 	      $date_limite = strftime("%A %d %B %Y",time() + (3 * 7 * 24 * 3600));
 
 	      include ("mail.php");

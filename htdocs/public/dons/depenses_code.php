@@ -23,10 +23,10 @@
 
 
 $conf = new Conf();
-$db = new Db();
-$a = setlocale("LC_TIME", "FRENCH");
+$db = new DoliDb();
+$a = setlocale(LC_TIME, "FRENCH");
 $sql = "SELECT ".$db->pdate("f.datef")." as datef, s.nom, f.total, f.note, f.paye";
-$sql .= " FROM llx_facture_fourn as f, societe as s";
+$sql .= " FROM llx_facture_fourn as f, llx_societe as s";
 $sql .= " WHERE f.fk_soc = s.idp ORDER BY f.datef DESC";
 
 if ( $db->query( $sql) )
@@ -57,7 +57,7 @@ if ( $db->query( $sql) )
 	  print "<TD>".strftime("%d %B %Y",$objp->datef)."</td>\n";
 	  print '<TD align="right">'.number_format($objp->total,2,'.','').'<br>euros';
 
-	  if ($obj->paye)
+	  if ($objp->paye == 1)
 	    {
 	      print "<br>payé";
 	      $total_paye += $objp->total;

@@ -62,7 +62,7 @@ if (file_exists ($thermlib))
        */
       
       $conf = new Conf();
-      $dbt = new Db();
+      $dbt = new DoliDb();
       $dontherm = new Don($dbt);
       
       $actualValue = $dontherm->sum_actual();

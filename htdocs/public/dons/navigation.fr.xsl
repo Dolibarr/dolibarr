@@ -28,7 +28,7 @@
 	  <a href="http://eucd.info/images.fr.php">Images</a><br />
 	  <br />
 	  <br />
-	  <a href="http://dons.eucd.info/">Dons</a><br />	  
+	  <a href="https://dons.eucd.info/">Dons</a><br />	  
 	  <script language="php">
 	    if (file_exists ("therm.php"))
 	    {
