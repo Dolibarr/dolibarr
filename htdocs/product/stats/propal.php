@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/**	    \file       htdocs/product/stats/propal.php
+        \ingroup    product, service
+		\brief      Page des stats des propals pour un produit
+		\version    $Revision$
+*/
+
 
 require("./pre.inc.php");
 
@@ -45,7 +52,7 @@ if ($_GET["id"])
   
   if ( $result )
     { 
-      print_fiche_titre('Fiche produit : '.$product->ref, $mesg);
+      print_fiche_titre($langs->trans("Product").': '.$product->ref, $mesg);
       
       print '<table class="border" width="100%"><tr>';
       print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
@@ -89,7 +96,7 @@ if ($_GET["id"])
 	}
       
       print "<br>";
-      print_barre_liste("Propositions commerciales",$page,"propal.php","&amp;id=$product->id",$sortfield,$sortorder);
+      print_barre_liste($langs->trans("Proposals"),$page,"propal.php","&amp;id=$product->id",$sortfield,$sortorder);
       
       $sql = "SELECT distinct(p.rowid), s.nom,s.idp, p.ref,".$db->pdate("p.datep")." as df,p.rowid as facid";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."propaldet as d WHERE p.fk_soc = s.idp";
@@ -126,11 +133,10 @@ if ($_GET["id"])
 		  
 		  print "<tr $bc[$var]>";
 		  print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$objp->facid.'">';
-		  print img_file();
-		  print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$objp->facid.'">';
+		  print img_object($langs->trans("ShowPropal"),"propal").' ';
 		  print $objp->ref;
 		  print "</a></td>\n";
-		  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$objp->nom.'</a></td>';
 		  print "<td align=\"right\">";
 		  print strftime("%d %B %Y",$objp->df)."</td>";
 		  print "</tr>\n";
