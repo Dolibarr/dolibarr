@@ -34,7 +34,7 @@ if (!$user->rights->produit->lire)
   accessforbidden();
 }
 
-llxHeader();
+llxHeader("","","Dolibarr - fiche produit");
 
 if ($action == 'add')
 {
