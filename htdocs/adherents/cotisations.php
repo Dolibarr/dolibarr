@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +62,7 @@ if(isset($date_select) && $date_select != ''){
   $sql .= " AND dateadh LIKE '$date_select%'";
 }
 $result = $db->query($sql);
+$Total=array();
 if ($result) 
 {
   $num = $db->num_rows();

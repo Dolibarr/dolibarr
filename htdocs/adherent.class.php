@@ -115,7 +115,11 @@ class Adherent
 			);
       $texttosend = preg_replace ($patterns, $replace, $text);
       $subjectosend = preg_replace ($patterns, $replace, $subject);
-      return mail($recipients,$subjectosend,$texttosend);
+      if (defined('MAIN_MAIL_FROM') && MAIN_MAIL_FROM != ''){
+	return mail($recipients,$subjectosend,$texttosend,"From: ".MAIN_MAIL_FROM."\nReply-To: ".MAIN_MAIL_FROM."\nX-Mailer: PHP/" . phpversion());
+      }else{
+	return mail($recipients,$subjectosend,$texttosend);
+      }
     }
   /*
    *

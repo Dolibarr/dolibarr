@@ -118,7 +118,20 @@ class AdherentOptions
      */
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
       $sql = "ALTER TABLE llx_adherent_options ";
-      $sql .= " ADD $attrname $type($length)";
+      switch ($type){
+      case 'varchar' :
+      case 'interger' :
+	$sql .= " ADD $attrname $type($length)";
+	break;
+      case 'text' :
+      case 'date' :
+      case 'datetime' :
+	$sql .= " ADD $attrname $type";
+	break;
+      default:
+	$sql .= " ADD $attrname $type";
+	break;
+      }
       
       if ($this->db->query($sql)) 
 	{
@@ -214,7 +227,22 @@ class AdherentOptions
   Function update($attrname,$type='varchar',$length=255)
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
-      $sql = "ALTER TABLE llx_adherent_options MODIFY COLUMN $attrname $type($length)";
+      $sql = "ALTER TABLE llx_adherent_options ";
+      switch ($type){
+      case 'varchar' :
+      case 'interger' :
+	$sql .= " MODIFY COLUMN $attrname $type($length)";
+	break;
+      case 'text' :
+      case 'date' :
+      case 'datetime' :
+	$sql .= " MODIFY COLUMN $attrname $type";
+	break;
+      default:
+	$sql .= " MODIFY COLUMN $attrname $type";
+	break;
+      }
+      //$sql .= "MODIFY COLUMN $attrname $type($length)";
       
       if ( $this->db->query( $sql) )
 	{
