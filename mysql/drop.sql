@@ -19,10 +19,6 @@
 -- $Source$
 --
 
-drop table if exists actioncomm;
-
-drop table if exists bots;
-
 drop table if exists c_anexpe;
 
 drop table if exists c_actioncomm;
@@ -42,6 +38,8 @@ drop table if exists c_propalst ;
 drop table if exists c_stcomm;
 
 drop table if exists c_typent ;
+
+drop table if exists llx_actioncomm;
 
 drop table if exists llx_adherent;
 
@@ -115,6 +113,8 @@ drop table if exists llx_livre_to_auteur ;
 
 drop table if exists llx_newsletter;
 
+drop table if exists llx_notify ;
+
 drop table if exists llx_paiement;
 
 drop table if exists llx_pointmort;
@@ -157,15 +157,15 @@ drop table if exists soccontactinfo;
 
 drop table if exists socfollowresume;
 
-drop table if exists socstatutlog ;
+drop table if exists llx_socstatutlog ;
 
 drop table if exists region_resume ;
 
-drop table if exists societe;
+drop table if exists llx_societe;
 
 drop table if exists soc_events;
 
 drop table if exists soc_recontact;
 
-drop table if exists socpeople;
+drop table if exists llx_socpeople;
 
