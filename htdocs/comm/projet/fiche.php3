@@ -1,9 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
- * $Id$
- * $Source$
- *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 
@@ -92,49 +92,52 @@ if ($action == 'create')
 
       $propales = $projet->get_propal_list();
 
-      if (sizeof($propales)>0 && is_array($propales)) {
+      if (sizeof($propales)>0 && is_array($propales))
+	{
 
-	print '<p>Listes des propales associées au projet';
-	print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-	
-	print "<TR bgcolor=\"#e0e0e0\">";
-	print "<TD>Réf</TD>";
-	print '<TD>Date</TD>';
-	print '<TD align="right">Prix</TD>';
-	print '<TD align="center">Statut</TD>';
-	print '</TR>';
-	
-	for ($i = 0; $i<sizeof($propales);$i++){
-	  $propale = new Propal($db);
-	  $propale->fetch($propales[$i]);
+	  print_titre('Listes des propales associées au projet');
+	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 	  
-	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<TD><a href=\"../propal.php3?propalid=$propale->id\">$propale->ref</a></TD>\n";
-	  
-	  print '<TD>'.strftime("%d %B %Y",$propale->datep).'</a></TD>';
-	  
-	  print '<TD align="right">'.price($propale->price).'</TD>';
-	  print '<TD align="center">statut</TD>';
+	  print '<TR class="liste_titre">';
+	  print "<TD>Réf</TD>";
+	  print '<TD>Date</TD>';
+	  print '<TD align="right">Prix</TD>';
+	  print '<TD align="center">Statut</TD>';
 	  print '</TR>';
 	  
-	  $total = $total + $propale->price;
-	}
-	
-	print '<tr><td>'.$i.' propales</td>';
-	print '<td colspan="2" align="right"><b>Total : '.price($total).'</b></td>';
-	print '<td align="left"><b>Euros HT</b></td></tr>';
-	print "</TABLE>";
-      } else {
-	print "pas de propales";
-      }
-    }
-
-
-  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
-	
-  print "<td align=\"center\" width=\"25%\"><a href=\"fiche.php3?id=$id&action=edit\">Editer</a></td>";
+	  for ($i = 0; $i<sizeof($propales);$i++){
+	    $propale = new Propal($db);
+	    $propale->fetch($propales[$i]);
+	    
+	    $var=!$var;
+	    print "<TR $bc[$var]>";
+	    print "<TD><a href=\"../propal.php3?propalid=$propale->id\">$propale->ref</a></TD>\n";
+	    
+	    print '<TD>'.strftime("%d %B %Y",$propale->datep).'</a></TD>';
+	    
+	    print '<TD align="right">'.price($propale->price).'</TD>';
+	    print '<TD align="center">'.$propale->statut.'</TD>';
+	    print '</TR>';
+	    
+	    $total = $total + $propale->price;
+	  }
 	  
+	  print '<tr><td>'.$i.' propales</td>';
+	  print '<td colspan="2" align="right"><b>Total : '.price($total).'</b></td>';
+	  print '<td align="left"><b>Euros HT</b></td></tr>';
+	  print "</TABLE>";
+	}
+      else
+	{
+	print "pas de propales";
+	}
+    }
+  
+  
+  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+  
+  print "<td align=\"center\" width=\"25%\"><a href=\"fiche.php3?id=$id&action=edit\">Editer</a></td>";
+  
   print "<td align=\"center\" width=\"25%\">-</td>";	  
   
   print "<td align=\"center\" width=\"25%\">-</td>";

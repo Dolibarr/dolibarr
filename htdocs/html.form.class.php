@@ -58,7 +58,7 @@ class Form {
    *
    *
    */
-  Function select_tva($name='')
+  Function select_tva($name='', $defaulttx = 19.6)
   {
     if (! strlen(trim($name)))
     {

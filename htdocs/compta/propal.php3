@@ -36,7 +36,8 @@ llxHeader();
 
 $db = new Db();
 
-if ($action == 'setstatut') {
+if ($action == 'setstatut')
+{
   /*
    *  Cloture de la propale
    */
@@ -233,8 +234,7 @@ if ($propalid)
 	  print '<td align="center" width="25%">-</td>';
 	}
       
-
-
+      print "<td align=\"center\" width=\"25%\">-</td>";
       print "<td align=\"center\" width=\"25%\">-</td>";
 
 
@@ -305,120 +305,111 @@ if ($propalid)
 
   if ($sortfield == "")
     {
-      $sortfield="lower(p.label)";
+      $sortfield="p.datep";
     }
   if ($sortorder == "")
     {
-      $sortorder="ASC";
+      $sortorder="DESC";
     }
-
-  $yn["t"] = "oui";
-  $yn["f"] = "non";
 
   if ($page == -1)
     {
       $page = 0 ;
     }
-  $limit = 26;
-  $offset = $limit * $page ;
+
   $pageprev = $page - 1;
   $pagenext = $page + 1;
+  $limit = $conf->liste_limit;
+  $offset = $limit * $page ;
 
-
-  print "<table width=\"100%\">";
-  print "<tr><td><div class=\"titre\">Propositions commerciales</div></td>";
-  print "</table>";
+  print_barre_liste("Propositions commerciales", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder);
 
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
   $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c ";
   $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut in(2,4)";
 
-  if ($socidp) { 
-    $sql .= " AND s.idp = $socidp"; 
-  }
-
-  if ($viewstatut <> '') {
-    $sql .= " AND c.id = $viewstatut"; 
-  }
-
-  if ($month > 0) {
-    $sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
-  }
-  if ($year > 0) {
-    $sql .= " AND date_format(p.datep, '%Y') = $year";
-  }
-  
-  $sql .= " ORDER BY p.fk_statut, datep DESC";
-
-  if ( $db->query($sql) ) {
-    $num = $db->num_rows();
-    $i = 0;
-    print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-
-    $oldstatut = -1;
-    $subtotal = 0;
-    while ($i < $num) {
-      $objp = $db->fetch_object( $i);
-
-      if ($objp->statut <> $oldstatut ) {
-	$oldstatut = $objp->statut;
-
-	if ($i > 0) {
-	  print "<tr><td align=\"right\" colspan=\"5\">Total : <b>".price($subtotal)."</b></td>\n";
-	  print "<td align=\"left\">Euros HT</td></tr>\n";
-	}
-	$subtotal = 0;
-	
-	print '<TR class="liste_titre">';
-	print "<TD>Réf</TD>";
-	print "<TD>Société</td>";
-	print "<TD align=\"right\" colspan=\"2\">Date</TD>";
-	print "<TD align=\"right\">Prix</TD>";
-	print "<TD align=\"center\">Statut <a href=\"$PHP_SELF?viewstatut=$objp->statutid\">";
-	print '<img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a></td>';
-	print "</TR>\n";
-	$var=True;
-      }
-      
-      $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-      print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      
-      
-      $now = time();
-      $lim = 3600 * 24 * 15 ;
-      
-      if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 ) {
-	print "<td><b> &gt; 15 jours</b></td>";
-      } else {
-	print "<td>&nbsp;</td>";
-      }
-      
-      print "<TD align=\"right\">";
-      $y = strftime("%Y",$objp->dp);
-      $m = strftime("%m",$objp->dp);
-      
-      print strftime("%d",$objp->dp)."\n";
-      print " <a href=\"propal.php3?year=$y&month=$m\">";
-      print strftime("%B",$objp->dp)."</a>\n";
-      print " <a href=\"propal.php3?year=$y\">";
-      print strftime("%Y",$objp->dp)."</a></TD>\n";      
-      
-      print "<TD align=\"right\">".price($objp->price)."</TD>\n";
-      print "<TD align=\"center\">$objp->statut</TD>\n";
-      print "</TR>\n";
-  
-      $total = $total + $objp->price;
-      $subtotal = $subtotal + $objp->price;
-      
-      $i++;
+  if ($socidp)
+    { 
+      $sql .= " AND s.idp = $socidp"; 
     }
 
-    print "</TABLE>";
-    $db->free();
-  } else {
-    print $db->error();
-  }
+  if ($viewstatut <> '')
+    {
+      $sql .= " AND c.id = $viewstatut"; 
+    }
+
+  if ($month > 0)
+    {
+      $sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
+    }
+  
+  if ($year > 0)
+    {
+      $sql .= " AND date_format(p.datep, '%Y') = $year";
+    }
+  
+  $sql .= " ORDER BY $sortfield $sortorder ";
+  $sql .= $db->plimit( $limit ,$offset);
+
+  if ( $db->query($sql) )
+    {
+      $num = $db->num_rows();
+      $i = 0;
+      print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+      print '<TR class="liste_titre">';
+      print "<TD>Réf</TD>";
+      print "<TD>Société</td>";
+      print '<td align="right" colspan="2">Date</td>';
+      print '<td align="right">Prix</td>';
+      print '<td align="center">Statut</td>';
+      print "</tr>\n";
+
+      while ($i < $num)
+	{
+	  $objp = $db->fetch_object( $i);
+	
+	  $var=!$var;
+	  print "<TR $bc[$var]>";
+	  print "<TD><a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+	  print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      
+	  
+	  $now = time();
+	  $lim = 3600 * 24 * 15 ;
+	  
+	  if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
+	    {
+	      print "<td><b> &gt; 15 jours</b></td>";
+	    }
+	  else
+	    {
+	      print "<td>&nbsp;</td>";
+	    }
+	
+	  print "<TD align=\"right\">";
+	  $y = strftime("%Y",$objp->dp);
+	  $m = strftime("%m",$objp->dp);
+	  
+	  print strftime("%d",$objp->dp)."\n";
+	  print " <a href=\"propal.php3?year=$y&month=$m\">";
+	  print strftime("%B",$objp->dp)."</a>\n";
+	  print " <a href=\"propal.php3?year=$y\">";
+	  print strftime("%Y",$objp->dp)."</a></TD>\n";      
+	  
+	  print "<TD align=\"right\">".price($objp->price)."</TD>\n";
+	  print "<TD align=\"center\">$objp->statut</TD>\n";
+	  print "</TR>\n";
+	  
+	  $i++;
+	}
+      
+      print "</table>";
+      $db->free();
+    }
+  else
+    {
+      print $db->error();
+      print "<br>$sql";
+    }
 }
 $db->close();
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");

@@ -20,7 +20,8 @@
  *
  */
 
-class Product {
+class Product
+{
   var $db ;
 
   var $id ;
@@ -29,28 +30,34 @@ class Product {
   var $description;
   var $price ;
 
-  Function Product($DB, $id=0) {
-    $this->db = $DB;
-    $this->id   = $id ;
-  }  
+  Function Product($DB, $id=0)
+    {
+      $this->db = $DB;
+      $this->id   = $id ;
+    }  
   /*
    *
    *
    *
    */
-  Function create($user) {
+  Function create($user) 
+    {
 
-    $sql = "INSERT INTO llx_product (fk_user_author) VALUES (".$user->id.")";
-
-    if ($this->db->query($sql) ) {
-      $id = $this->db->last_insert_id();
-
-      if ( $this->update($id, $user) ) {
-	return $id;
-      }
-    } else {
-      print $this->db->error() . ' in ' . $sql;
-    }
+      $sql = "INSERT INTO llx_product (fk_user_author) VALUES (".$user->id.")";
+      
+      if ($this->db->query($sql) )
+	{
+	  $id = $this->db->last_insert_id();
+	  
+	  if ( $this->update($id, $user) )
+	    {
+	      return $id;
+	    }
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	}
   }
 
   /*
@@ -58,44 +65,53 @@ class Product {
    *
    *
    */
-  Function update($id, $user) {
+  Function update($id, $user)
+    {
 
-    $sql = "UPDATE llx_product ";
-    $sql .= " SET label = '" . trim($this->libelle) ."'";
-    $sql .= ",ref = '" . trim($this->ref) ."'";
-    $sql .= ",price = " . $this->price ;
-    $sql .= ",description = '" . trim($this->description) ."'";
-
-    $sql .= " WHERE rowid = " . $id;
-
-    if ( $this->db->query($sql) ) {
-      return 1;
-    } else {
-      print $this->db->error() . ' in ' . $sql;
+      $sql = "UPDATE llx_product ";
+      $sql .= " SET label = '" . trim($this->libelle) ."'";
+      $sql .= ",ref = '" . trim($this->ref) ."'";
+      $sql .= ",price = " . $this->price ;
+      $sql .= ",tva_tx = " . $this->tva_tx ;
+      $sql .= ",description = '" . trim($this->description) ."'";
+      
+      $sql .= " WHERE rowid = " . $id;
+      
+      if ( $this->db->query($sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	}
     }
-  }
   /*
    *
    *
    *
    */
-  Function fetch ($id) {
+  Function fetch ($id)
+    {
     
-    $sql = "SELECT rowid, ref, label, description, price FROM llx_product WHERE rowid = $id";
+      $sql = "SELECT rowid, ref, label, description, price, tva_tx";
+      $sql .= " FROM llx_product WHERE rowid = $id";
 
-    $result = $this->db->query($sql) ;
+      $result = $this->db->query($sql) ;
 
-    if ( $result ) {
-      $result = $this->db->fetch_array();
+      if ( $result )
+	{
+	  $result = $this->db->fetch_array();
 
-      $this->id          = $result["rowid"];
-      $this->ref         = $result["ref"];
-      $this->label       = $result["label"];
-      $this->description = $result["description"];
-      $this->price       = $result["price"];
-    }
-    $this->db->free();
-    return $result;
+	  $this->id          = $result["rowid"];
+	  $this->ref         = $result["ref"];
+	  $this->label       = $result["label"];
+	  $this->description = $result["description"];
+	  $this->price       = $result["price"];
+	  $this->tva_tx      = $result["tva_tx"];
+	}
+      $this->db->free();
+      return $result;
   }
 
 }
