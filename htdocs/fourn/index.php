@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ llxHeader();
 
 if ($action == 'note')
 {
-  $sql = "UPDATE llx_societe SET note='$note' WHERE idp=$socid";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='$note' WHERE idp=$socid";
   $result = $db->query($sql);
 }
 
@@ -47,7 +47,7 @@ if ($action == 'stcomm') {
     $result = @$db->query($sql);
 
     if ($result) {
-      $sql = "UPDATE llx_societe SET fk_stcomm=$stcommid WHERE idp=$socid";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=$socid";
       $result = $db->query($sql);
     } else {
       $errmesg = "ERREUR DE DATE !";
@@ -77,7 +77,7 @@ $pagenext = $page + 1;
  */
 if ($mode == 'search') {
   if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM llx_societe as s ";
+    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
     $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
   }
       
@@ -108,7 +108,7 @@ if ($sortfield == "")
 
 print_barre_liste("Liste des fournisseurs",$page, $PHP_SELF);
 
-$sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM llx_societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
+$sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
 
 if (strlen($stcomm)) {
   $sql .= " AND s.fk_stcomm=$stcomm";
