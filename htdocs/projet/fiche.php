@@ -122,23 +122,26 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   
   $h=0;
   $head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
-  $head[$h][1] = 'Fiche projet';
+  $head[$h][1] = $langs->trans("Project");
   $hselected=$h;
   $h++;
   
   if ($conf->propal->enabled) {
+      $langs->load("propal");
       $head[$h][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$projet->id;
-      $head[$h][1] = 'Prop. Commerciales';
+      $head[$h][1] = $langs->trans("Proposals");
       $h++;
   }  
 
   if ($conf->commande->enabled) {
+      $langs->load("orders");
       $head[$h][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$projet->id;
       $head[$h][1] = $langs->trans("Orders");
       $h++;
   }
   
   if ($conf->facture->enabled) {
+      $langs->load("bills");
       $head[$h][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$projet->id;
       $head[$h][1] = $langs->trans("Bills");
       $h++;

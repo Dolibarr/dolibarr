@@ -40,9 +40,9 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-llxHeader("","Liste des Projets","Projet");
+llxHeader("",$langs->trans("Projects"),"Projet");
 
-print_titre("Projets");
+print_titre($langs->trans("Projects"));
 
 /*
  *
@@ -76,7 +76,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Title"),"index.php","p.title");
 print '<td>'.$langs->trans("Ref").'</td>';
-print_liste_field_titre("Société","index.php","s.nom");
+print_liste_field_titre($langs->trans("Company"),"index.php","s.nom");
 print "</tr>\n";
 
 $sql = "SELECT s.nom, s.idp, p.rowid as projectid, p.ref, p.title, s.client,".$db->pdate("p.dateo")." as do";
@@ -120,11 +120,12 @@ if ( $db->query($sql) )
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 print "</table>";
 
 $db->close();
+
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

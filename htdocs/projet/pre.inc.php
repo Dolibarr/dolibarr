@@ -29,17 +29,16 @@
 require ("../main.inc.php");
 require("./project.class.php");
 
+
 function llxHeader($head = "", $title="", $help_url='')
 {
-  /*
-   *
-   *
-   */
+  global $langs;
+  
   top_menu($head, $title);
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/projet/", "Projets");
+  $menu->add(DOL_URL_ROOT."/projet/", $langs->trans("Projects"));
 
   left_menu($menu->liste, $help_url);
 }

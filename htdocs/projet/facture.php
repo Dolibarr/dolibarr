@@ -32,6 +32,10 @@ require("../propal.class.php");
 require("../facture.class.php");
 require("../commande/commande.class.php");
 
+$langs->load("projects");
+$langs->load("companies");
+
+
 $user->getrights('projet');
 
 if (!$user->rights->projet->lire)
@@ -42,42 +46,45 @@ llxHeader("","../");
 $projet = new Project($db);
 $projet->fetch($_GET["id"]);
 
-  $h=0;
-  $head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
-  $head[$h][1] = 'Fiche projet';
-  $h++;
-  
-  if ($conf->propal->enabled) {
-      $head[$h][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$projet->id;
-      $head[$h][1] = 'Prop. Commerciales';
-      $h++;
-  }  
+$h=0;
+$head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
+$head[$h][1] = $langs->trans("Project");
+$h++;
 
-  if ($conf->commande->enabled) {
-      $head[$h][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$projet->id;
-      $head[$h][1] = 'Commandes';
-      $h++;
-  }
-  
-  if ($conf->facture->enabled) {
-      $head[$h][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$projet->id;
-      $head[$h][1] = 'Factures';
-      $hselected=$h;
-      $h++;
-  }
+if ($conf->propal->enabled) {
+  $langs->load("propal");
+  $head[$h][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$projet->id;
+  $head[$h][1] = $langs->trans("Proposals");
+  $h++;
+}  
+
+if ($conf->commande->enabled) {
+  $langs->load("orders");
+  $head[$h][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$projet->id;
+  $head[$h][1] = $langs->trans("Orders");
+  $h++;
+}
+
+if ($conf->facture->enabled) {
+  $langs->load("bills");
+  $head[$h][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$projet->id;
+  $head[$h][1] = $langs->trans("Bills");
+  $hselected=$h;
+  $h++;
+}
  
 dolibarr_fiche_head($head, $hselected);
+
 /*
- *
  *
  *
  */
 $projet->societe->fetch($projet->societe->id);
 
-print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-print '<tr><td width="20%">Titre</td><td>'.$projet->title.'</td>';  
+print '<table class="border" width="100%">';
+print '<tr><td width="20%">'.$langs->trans("Title").'</td><td>'.$projet->title.'</td>';  
 print '<td width="20%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
-print '<tr><td>Société</td><td colspan="3"><a href="../comm/fiche.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
+print '<tr><td>'.$langs->trans("Company").'</td><td colspan="3"><a href="../comm/fiche.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
 print '</table><br>';
 
 
@@ -90,7 +97,7 @@ print '</table><br>';
       if (sizeof($factures)>0 && is_array($factures))
 	{
 	  print_titre('Listes des factures associées au projet');
-	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="noborder" width="100%">';
 	  
 	  print '<tr class="liste_titre">';
 	  print '<td width="15%">'.$langs->trans("Ref").'</td><td width="25%">Date</td><td align="right">Montant</td><td>&nbsp;</td></tr>';
