@@ -117,9 +117,9 @@ if ($_POST["action"] == 'add')
 
 if ($_GET["action"] == 'pdf')
 {
-  $propal = new Propal($db);
-  $propal->fetch($_GET["propalid"]);
-  propale_pdf_create($db, $_GET["propalid"], $propal->modelpdf);
+    $propal = new Propal($db);
+    $propal->fetch($_GET["propalid"]);
+    propale_pdf_create($db, $_GET["propalid"], $propal->modelpdf);
 }
 
 if ($_POST["action"] == 'setstatut' && $user->rights->propale->cloturer) 
@@ -568,14 +568,13 @@ if ($_GET["propalid"])
           // Send
 	      if ($propal->statut == 1)
 		{
-		  $file = PROPALE_OUTPUTDIR. "/$obj->ref/$obj->ref.pdf";
-		  if (file_exists($file))
-		    {
 		      if ($user->rights->propale->envoyer)
 			{
-			  print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=presend\">Envoyer la proposition</a>";
-			}
-
+                $file = $conf->propal->dir_output . "/$obj->ref/$obj->ref.pdf";
+                if (file_exists($file))
+                {
+                    print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=presend\">".$langs->trans("Send")."</a>";
+                }
 		    }
 		}
 
@@ -584,7 +583,7 @@ if ($_GET["propalid"])
 		{
 		  if ($user->rights->propale->supprimer)
 		    {
-		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+		      print "<a class=\"butDelete\" href=\"propal.php?propalid=$propal->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
 		    }
 		}
 
@@ -609,7 +608,7 @@ if ($_GET["propalid"])
 	   */
 	  if ($_GET["action"] == 'send')
 	    {
-	      $file = PROPALE_OUTPUTDIR . "/$propal->ref/$propal->ref.pdf";
+	      $file = $conf->propal->dir_output . "/$propal->ref/$propal->ref.pdf";
 	      if (file_exists($file))
 		{
 	      
@@ -655,7 +654,7 @@ if ($_GET["propalid"])
 	      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 	      print '<input type="hidden" name="action" value="setpdfmodel">';
 	    }	  
-	  print '<table width="100%" cellspacing="2"><tr><td width="50%" valign="top">';
+	  print '<table width="100%"><tr><td width="50%" valign="top">';
 	  print_titre('<a href="propal/document.php?id='.$propal->id.'">'.$langs->trans("Document").'</a>');
 
 
@@ -665,7 +664,7 @@ if ($_GET["propalid"])
 
 	  print '<table class="border" width="100%">';
 	  
-	  $file = PROPALE_OUTPUTDIR . "/$propal->ref/$propal->ref.pdf";
+	  $file = $conf->propal->dir_output . "/$propal->ref/$propal->ref.pdf";
 	  if (file_exists($file))
 	    {
 	      print "<tr $bc[0]><td>PDF</td>";
@@ -765,7 +764,7 @@ if ($_GET["propalid"])
 	    }
 	  else
 	    {
-	      print $db->error();
+	      dolibarr_print_error($db);
 	    }
 	  /*
 	   *
@@ -797,11 +796,12 @@ if ($_GET["propalid"])
 	      print '<input type="hidden" name="max_file_size" value="2000000">';
 
 	      print_titre("Envoyer la propale par mail");
+          $form=new Form($db);
 
 	      // Formulaire envoi mail
 	      print '<table class="border" width="100%">';
 	      // Destinataire
-	      print "<tr><td width=\"180Â\">Destinataire</td>";
+	      print "<tr><td width=\"180\">Destinataire</td>";
 	      print "<td colspan=\"6\" align=\"left\"><input size=\"50\" name=\"sendto\" value=\"" . ucfirst(strtolower($obj->firstname)) . " " .  ucfirst(strtolower($obj->name)) . " <$obj->email>\"></td></tr>";
 
 	      // CC
@@ -809,6 +809,7 @@ if ($_GET["propalid"])
 	      print '<td colspan="6" align="left"><input size="50" name="sendtocc"></td></tr>';
 
 	      // Sender
+/*
 	      print "<tr><td>Expediteur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
 	      print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
 	      print "<td>$replytomail</td></tr>";
@@ -816,6 +817,8 @@ if ($_GET["propalid"])
 
 	      print "<tr><td valign=\"top\">Message</td><td colspan=\"6\"><textarea rows=\"5\" cols=\"40\" name=\"message\">$message</textarea></td></tr>";
 	      print "</table>";
+*/
+$form->mail_topicmessagefile(0,1,1,$message);
 
 	      print "<input type=\"submit\" value=\"".$langs->trans("Send")."\">";
 	      print "</form>";
@@ -916,7 +919,7 @@ else
 	  print "</a>&nbsp;<a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
 	  if ($objp->client == 1)
 	    {
-	      $url ='fiche.php?socid='.$objp->idp;
+	      $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp;
 	    }
 	  else
 	    {

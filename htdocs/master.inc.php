@@ -306,10 +306,10 @@ if (defined("MAIN_MODULE_FACTURE"))
 if (defined("MAIN_MODULE_PROPALE"))
 {
   $conf->propal->enabled=MAIN_MODULE_PROPALE;
-  $conf->propale->dir_output=DOL_DATA_ROOT."/propale";
-  if (defined(PROPALE_OUTPUTDIR) && PROPALE_OUTPUTDIR) { $conf->propale->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
-  $conf->propale->dir_images=DOL_DOCUMENT_ROOT."/images/propale";
-  $conf->propale->url_images=DOL_URL_ROOT."/images/propale";
+  $conf->propal->dir_output=DOL_DATA_ROOT."/propale";
+  if (defined(PROPALE_OUTPUTDIR) && PROPALE_OUTPUTDIR) { $conf->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
+  $conf->propal->dir_images=DOL_DOCUMENT_ROOT."/images/propale";
+  $conf->propal->url_images=DOL_URL_ROOT."/images/propale";
   require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
 
   if (!defined("PROPALE_NEW_FORM_NB_PRODUCT"))

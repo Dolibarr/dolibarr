@@ -49,10 +49,10 @@ print_fiche_titre('Statistiques des propositions commerciales', $mesg);
 $stats = new PropaleStats($db);
 $data = $stats->getNbByMonth($year);
 
-if (! is_dir($conf->propale->dir_images)) { mkdir($conf->propale->dir_images); }
+if (! is_dir($conf->propal->dir_images)) { mkdir($conf->propal->dir_images); }
 
-$filename = $conf->propale->dir_images."/propale$year.png";
-$fileurl = $conf->propale->url_images."/propale$year.png";
+$filename = $conf->propal->dir_images."/propale$year.png";
+$fileurl = $conf->propal->url_images."/propale$year.png";
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
@@ -72,8 +72,8 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
 
-$filename_amount = $conf->propale->dir_images."/propaleamount$year.png";
-$fileurl_amount = $conf->propale->url_images."/propaleamount$year.png";
+$filename_amount = $conf->propal->dir_images."/propaleamount$year.png";
+$fileurl_amount = $conf->propal->url_images."/propaleamount$year.png";
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
@@ -93,8 +93,8 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
 
-$filename_avg = $conf->propale->dir_images."/propalaverage$year.png";
-$fileurl_avg = $conf->propale->url_images."/propalaverage$year.png";
+$filename_avg = $conf->propal->dir_images."/propalaverage$year.png";
+$fileurl_avg = $conf->propal->url_images."/propalaverage$year.png";
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();

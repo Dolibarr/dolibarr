@@ -39,10 +39,10 @@ $stats = new PropaleStats($db);
 $year = strftime("%Y", time());
 $data = $stats->getNbByMonthWithPrevYear($year);
 
-if (! is_dir($conf->propale->dir_images)) { mkdir($conf->propale->dir_images); }
+if (! is_dir($conf->propal->dir_images)) { mkdir($conf->propal->dir_images); }
 
-$filename = $conf->propale->dir_images."/nbpropale2year-$year.png";
-$fileurl = $conf->propale->url_images."/nbpropale2year-$year.png";
+$filename = $conf->propal->dir_images."/nbpropale2year-$year.png";
+$fileurl = $conf->propal->url_images."/nbpropale2year-$year.png";
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();

@@ -274,7 +274,7 @@ print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Value")."</td>\n";
 print "</tr>\n";
-print "<tr ".$bc[True].">\n  <td width=\"140\">".$langs->trans("Directory")."</td>\n  <td>".$conf->propale->dir_output."</td>\n</tr>\n";
+print "<tr ".$bc[True].">\n  <td width=\"140\">".$langs->trans("Directory")."</td>\n  <td>".$conf->propal->dir_output."</td>\n</tr>\n";
 print "</table>\n<br>";
 
 
