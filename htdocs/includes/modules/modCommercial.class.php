@@ -58,6 +58,7 @@ class modCommercial extends DolibarrModules
     $this->const_name = "MAIN_MODULE_COMMERCIAL";
     $this->const_config = MAIN_MODULE_COMMERCIAL;
     $this->special = 0;
+    $this->picto='commercial';
 
     // Dir
     $this->dirs = array();

@@ -57,6 +57,7 @@ class modService extends DolibarrModules
     $this->version = 'dolibarr';    // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_SERVICE";
     $this->const_config = MAIN_MODULE_SERVICE;
+    $this->picto='service';
 
     // Dépendances
     $this->depends = array("modProduit");

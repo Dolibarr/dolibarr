@@ -52,8 +52,10 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 class mailing_cerise extends MailingTargets
 {
     var $name="ContactProspects";                           // Identifiant du module mailing
-    var $desc='Tous les contacts associés aux prospects';   // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+    var $desc='Tous les contacts de toutes les sociétés prospects';   // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
     var $require_module=array("commercial");                // Module mailing actif si modules require_module actifs
+    var $require_admin=0;                                   // Module mailing actif pour user admin ou non
+    var $picto='contact';
 
     var $db;
     var $statssql=array();

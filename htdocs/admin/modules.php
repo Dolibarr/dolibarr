@@ -144,7 +144,7 @@ print "<br>\n";
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Family")."</td>\n";
-print "  <td>".$langs->trans("Module")."</td>\n";
+print "  <td colspan=\"2\">".$langs->trans("Module")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
 print "  <td align=\"center\">".$langs->trans("Version")."</td>\n";
 print "  <td align=\"center\">".$langs->trans("Activated")."</td>\n";
@@ -215,7 +215,7 @@ foreach ($orders as $key => $value)
     $const_value = $objMod->const_config;
 
     if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {
-        print "<tr class=\"liste_titre\">\n  <td colspan=\"7\"></td>\n</tr>\n";
+        print "<tr class=\"liste_titre\">\n  <td colspan=\"8\"></td>\n</tr>\n";
         $atleastoneforfamily=0;
     }
 
@@ -237,9 +237,10 @@ foreach ($orders as $key => $value)
 	    print '&nbsp;';
 	  }
         print "</td>\n";
-        print "  <td>";
-        print $objMod->getName();
-        print "</td>\n  <td>";
+        print '  <td valign="top" width="14" align="center">';
+        print $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
+        print '</td><td valign="top">'.$objMod->getName();
+        print "</td>\n  <td valign=\"top\">";
         print $objMod->getDesc();
         print "</td>\n  <td align=\"center\">";
         print $objMod->getVersion();

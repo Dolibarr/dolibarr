@@ -56,6 +56,7 @@ class modExternalRss extends DolibarrModules
     $this->const_name = "MAIN_MODULE_EXTERNALRSS";
     $this->const_config = MAIN_MODULE_EXTERNALRSS;
     $this->special = 0;
+    $this->picto='rss';
 
     // Dir
     $this->dirs = array();

@@ -59,6 +59,7 @@ class modCommande extends DolibarrModules
     $this->const_name = "MAIN_MODULE_COMMANDE";
     $this->const_config = MAIN_MODULE_COMMANDE;
     $this->special = 0;
+    $this->picto='order';
 
     // Dir
     $this->dirs = array();

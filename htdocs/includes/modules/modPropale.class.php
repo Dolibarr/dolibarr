@@ -58,6 +58,7 @@ class modPropale extends DolibarrModules
     $this->const_name = "MAIN_MODULE_PROPALE";
     $this->const_config = MAIN_MODULE_PROPALE;
     $this->special = 0;
+    $this->picto='propal';
 
     // Dir
     $this->dirs = array();

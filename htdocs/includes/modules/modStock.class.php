@@ -56,6 +56,7 @@ class modStock extends DolibarrModules
     $this->const_name = "MAIN_MODULE_STOCK";
     $this->const_config = MAIN_MODULE_STOCK;
     $this->special = 0;
+    $this->picto='stock';
 
     // Dir
     $this->dirs = array();

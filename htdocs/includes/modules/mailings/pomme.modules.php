@@ -53,6 +53,8 @@ class mailing_pomme extends MailingTargets
     var $name='DolibarrUsers';                      // Identifiant du module mailing
     var $desc='Tous les utilisateurs de Dolibarr';  // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
     var $require_module=array();                    // Module mailing actif si modules require_module actifs
+    var $require_admin=1;                           // Module mailing actif pour user admin ou non
+    var $picto='user';
 
     var $db;
     var $statssql=array();

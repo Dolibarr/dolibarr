@@ -55,6 +55,7 @@ class modContrat extends DolibarrModules
     $this->const_name = "MAIN_MODULE_CONTRAT";
     $this->const_config = MAIN_MODULE_CONTRAT;
     $this->special = 0;
+    $this->picto='contract';
 
     // Dir
     $this->dirs = array();

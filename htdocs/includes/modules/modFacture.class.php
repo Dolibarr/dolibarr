@@ -59,6 +59,7 @@ class modFacture extends DolibarrModules
     $this->const_name = "MAIN_MODULE_FACTURE";
     $this->const_config = MAIN_MODULE_FACTURE;
     $this->special = 0;
+    $this->picto='bill';
 
     // Dir
     $this->dirs = array();

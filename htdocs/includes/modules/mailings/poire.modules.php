@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -51,8 +52,10 @@ include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php'
 class mailing_poire extends MailingTargets
 {
     var $name='ContactCustomers';                       // Identifiant du module mailing
-    var $desc='Tous les contacts associés aux clients'; // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+    var $desc='Tous les contacts de toutes les sociétés clientes'; // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
     var $require_module=array("commercial");            // Module mailing actif si modules require_module actifs
+    var $require_admin=0;                               // Module mailing actif pour user admin ou non
+    var $picto='contact';
     
     var $db;
     var $statssql=array();

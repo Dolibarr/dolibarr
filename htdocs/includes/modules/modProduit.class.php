@@ -58,6 +58,7 @@ class modProduit extends DolibarrModules
     $this->const_name = "MAIN_MODULE_PRODUIT";
     $this->const_config = MAIN_MODULE_PRODUIT;
     $this->special = 0;
+    $this->picto='product';
 
     // Dir
     $this->dirs = array();

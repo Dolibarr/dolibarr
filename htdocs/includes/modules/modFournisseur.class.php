@@ -57,6 +57,7 @@ class modFournisseur extends DolibarrModules
     $this->const_name = "MAIN_MODULE_FOURNISSEUR";
     $this->const_config = MAIN_MODULE_FOURNISSEUR;
     $this->special = 0;
+    $this->picto='company';
 
     // Dir
     $this->dirs = array();

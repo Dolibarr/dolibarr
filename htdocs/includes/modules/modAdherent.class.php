@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,8 @@
  *
  */
 
-/**     \defgroup   adherent     Module adherents
+/**
+        \defgroup   adherent     Module adherents
         \brief      Module pour gérer les adhérents d'une association
 */
 
@@ -59,7 +60,8 @@ class modAdherent extends DolibarrModules
     $this->const_name = "MAIN_MODULE_ADHERENT";
     $this->const_config = MAIN_MODULE_ADHERENT;
     $this->special = 1;
-
+    $this->picto='user';
+    
     // Dir
     $this->dirs = array();
 
