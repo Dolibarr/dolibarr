@@ -109,10 +109,11 @@
       </p>
 
       <p>
-	Dans le formulaire de création si le <em>N.P.</em> contient
+	Dans le formulaire de création si le champ <em>N.P.</em> de la
+	liste produit contient
 	une valeur cela signifie que le prix du produit a changé
 	depuis la création de la facture qui sert de modèle. Il faut
-	alors indiquer si on souhaite garder le prix de référence on
+	alors indiquer si on souhaite garder le prix de référence ou
 	si on crée la facture récurrente avec le nouveau prix du
 	produit.
       </p>
