@@ -182,14 +182,16 @@ class Don
       $this->date = $this->db->idate($this->date);
 
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."don (datec, amount, fk_paiement,prenom, nom, societe,adresse, cp, ville, pays, public,";
-      if ($this->projetid) {
-        $sql .= " fk_don_projet,";
-      }
+      if ($this->projetid)
+	{
+	  $sql .= " fk_don_projet,";
+	}
       $sql .= " note, fk_user_author, datedon, email)";
-      $sql .= " VALUES (now(), $this->amount, $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, ";
-      if ($this->projetid) {
-        $sql .= " $this->projetid,";
-      }
+      $sql .= " VALUES (now(),".ereg_replace(",",".", $this->amount).", $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, ";
+      if ($this->projetid)
+	{
+	  $sql .= " $this->projetid,";
+	}
       $sql .= " '$this->commentaire', $userid, '$this->date','$this->email')";
       
       $result = $this->db->query($sql);
