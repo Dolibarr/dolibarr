@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -27,14 +27,18 @@ ALTER TABLE llx_fichinter   ADD INDEX (fk_soc);
 
 ALTER TABLE llx_socpeople   ADD INDEX (fk_soc);
 
-ALTER TABLE llx_fichinter        ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
+ALTER TABLE llx_fichinter        ADD FOREIGN KEY (fk_soc)      REFERENCES llx_societe (idp);
 
-ALTER TABLE llx_propal           ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
+ALTER TABLE llx_propal           ADD FOREIGN KEY (fk_soc)      REFERENCES llx_societe (idp);
 
-ALTER TABLE llx_facture          ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
+ALTER TABLE llx_facture          ADD FOREIGN KEY (fk_soc)      REFERENCES llx_societe (idp);
 
-ALTER TABLE llx_facturedet       ADD FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
+ALTER TABLE llx_paiement_facture ADD FOREIGN KEY (fk_facture)  REFERENCES llx_facture (rowid);
+ALTER TABLE llx_paiement_facture ADD FOREIGN KEY (fk_paiement) REFERENCES llx_paiement (rowid);
 
-ALTER TABLE llx_facture_tva_sum  ADD FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
 
-ALTER TABLE llx_socpeople        ADD FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
+ALTER TABLE llx_facturedet       ADD FOREIGN KEY (fk_facture)  REFERENCES llx_facture (rowid);
+
+ALTER TABLE llx_facture_tva_sum  ADD FOREIGN KEY (fk_facture)  REFERENCES llx_facture (rowid);
+
+ALTER TABLE llx_socpeople        ADD FOREIGN KEY (fk_soc)      REFERENCES llx_societe (idp);
