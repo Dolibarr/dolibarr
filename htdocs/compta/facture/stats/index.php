@@ -41,7 +41,7 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
-print_fiche_titre('Statistiques factures', $mesg);
+print_fiche_titre($langs->trans("BillsStatistics"), $mesg);
 
 $stats = new FactureStats($db, $socidp);
 $year = strftime("%Y", time());
@@ -72,10 +72,10 @@ if ($db->query($sql))
 {
   $num = $db->num_rows();
 
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-  print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%">Nb de facture</td><td align="center">Somme des factures</td>';
+  print '<table class="border" width="100%">';
+  print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%" align="center">'.$langs->trans("NumberOfBills").'</td><td align="center">'.$langs->trans("AmountTotal").'</td>';
   print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-  print 'Nombre de factures par mois<br>';
+  print $langs->trans("NumberOfBillsByMonth").'<br>';
   if ($mesg) { print $mesg; }
   else { print '<img src="'.$fileurl.'" alt="Nombre de factures par mois">'; }
   print '</td></tr>';

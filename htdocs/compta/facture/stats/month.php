@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (c) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +30,9 @@
 
 require("./pre.inc.php");
 
+$GRAPHHEIGHT=240;
+$GRAPHWIDTH=500;
+
 /*
  * Sécurité accés client
  */
@@ -47,7 +50,7 @@ $mesg = '<a href="month.php?year='.($year - 1).'">'.img_previous().'</a> ';
 $mesg.= $langs->trans("Year")." $year";
 $mesg.= ' <a href="month.php?year='.($year + 1).'">'.img_next().'</a>';
 
-print_fiche_titre('Statistiques des factures '.$year, $mesg);
+print_fiche_titre($langs->trans("BillsStatistics"), $mesg);
 
 $stats = new FactureStats($db, $socidp);
 $data = $stats->getNbByMonth($year);
@@ -61,8 +64,8 @@ $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
 if (! $mesg) {
     $px->SetMaxValue($px->GetMaxValue());
-    $px->SetWidth(500);
-    $px->SetHeight(280);
+    $px->SetWidth($GRAPHWIDTH);
+    $px->SetHeight($GRAPHHEIGHT);
     $px->draw($filename, $data, $year);
 }
 
@@ -83,8 +86,8 @@ $mesg = $px->isGraphKo();
 if (! $mesg) {
     $px->SetYLabel($langs->trans("AmountTotal"));
     $px->SetMaxValue($px->GetAmountMaxValue());
-    $px->SetWidth(500);
-    $px->SetHeight(250);
+    $px->SetWidth($GRAPHWIDTH);
+    $px->SetHeight($GRAPHHEIGHT);
     $px->draw($filename_amount, $data, $year);
 }
 $res = $stats->getAverageByMonth($year);
@@ -104,13 +107,13 @@ $mesg = $px->isGraphKo();
 if (! $mesg) {
     $px->SetYLabel($langs->trans("AmountAverage"));
     $px->SetMaxValue($px->GetAmountMaxValue());
-    $px->SetWidth(500);
-    $px->SetHeight(250);
+    $px->SetWidth($GRAPHWIDTH);
+    $px->SetHeight($GRAPHHEIGHT);
     $px->draw($filename_avg, $data, $year);
 }
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-print '<tr><td align="center">Nombre par mois</td>';
+print '<table class="border" width="100%">';
+print '<tr><td align="center">'.$langs->trans("NumberOfBillsByMonth").'</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
 else { print '<img src="'.$fileurl.'">'; }

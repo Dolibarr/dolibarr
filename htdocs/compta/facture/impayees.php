@@ -65,6 +65,8 @@ llxHeader('','Factures impayées');
 $page = $_GET["page"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="f.datef";
 
 if ($page == -1)
 {
@@ -76,11 +78,6 @@ if ($user->rights->facture->lire)
   $limit = $conf->liste_limit;
   $offset = $limit * $page ;
   
-  if ($sortorder == "")
-    $sortorder="DESC";
-  
-  if ($sortfield == "")
-    $sortfield="f.datef";
   
   $sql = "SELECT s.nom,s.idp,f.facnumber,f.increment,f.total,f.total_ttc,".$db->pdate("f.datef")." as df, f.paye as paye, f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -150,7 +147,7 @@ if ($user->rights->facture->lire)
 	  $soc->fetch($socidp);
 	}
       
-      print_barre_liste("Factures client".($socidp?" $soc->nom":""),$page,"impayees.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+      print_barre_liste($langs->trans("BillsCustomersUnpayed")." ".($socidp?" $soc->nom":""),$page,"impayees.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
       $i = 0;
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
@@ -198,7 +195,7 @@ if ($user->rights->facture->lire)
 		  print "<tr $bc[$var]>";
 		  $class = "impayee";
 		  
-		  print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_file()."</a>&nbsp;\n";
+		  print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill")."</a> ";
 		  print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment."</td>\n";
 		
 		  if ($objp->df > 0 )

@@ -1613,7 +1613,7 @@ else
 	      $soc->fetch($socidp);
 	    }
 	  
-	  print_barre_liste("Factures client".($socidp?" $soc->nom":""),$page,"facture.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+	  print_barre_liste($langs->trans("BillsCustomers")." ".($socidp?" $soc->nom":""),$page,"facture.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 	  $i = 0;
 	  print '<table class="noborder" width="100%">';
@@ -1674,7 +1674,7 @@ else
 			}
 		    }
 
-		  print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_file()."</a>&nbsp;\n";
+		  print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("Bill"),"bill")."</a> ";
 		  print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment."</td>\n";
 		
 		  if ($objp->df > 0 )

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,16 @@
  * $Source$
  *
  */
+ 
+/**
+	    \file       htdocs/compta/paiement/liste.php
+        \ingroup    compta
+		\brief      Page liste des paiements des factures clients
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
+
 /*
  * Sécurité accés client
  */
@@ -37,6 +46,8 @@ if ($user->societe_id > 0)
 llxHeader();
 
 $page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
 
 if ($page == -1)
   $page = 0 ;
@@ -44,11 +55,8 @@ if ($page == -1)
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-if ($sortorder == "")
-  $sortorder="DESC";
-
-if ($sortfield == "")
-  $sortfield="p.rowid";
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="p.rowid";
   
 $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount, p.statut";
 $sql .=", c.libelle as paiement_type, p.num_paiement";
@@ -69,9 +77,10 @@ if ($result)
   
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print '<td>'.$langs->trans("Date").'</td>';
-  print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","","");
-  print '<td align="right">'.$langs->trans("Amount").'</td>';
+  print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Date"),"liste.php","dp","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","","","",$sortfield);
+  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';
   print "<td>&nbsp;</td>";
   print "</tr>\n";
   
@@ -80,9 +89,8 @@ if ($result)
       $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?id='.$objp->rowid.'">';
-      print img_file();
-      print "</a>&nbsp;".strftime("%d %B %Y",$objp->dp)."</td>\n";
+      print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_file().' '.$objp->rowid.'</td>';
+      print '<td>'.dolibarr_print_date($objp->dp)."</td>\n";
       print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
       print '<td align="right">'.price($objp->amount).'</td>';
       print '<td align="center">';
