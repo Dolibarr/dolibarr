@@ -190,6 +190,7 @@ insert into llx_c_pays (rowid,libelle,code) values (23, 'Sénégal',        'SN');
 insert into llx_c_pays (rowid,libelle,code) values (24, 'Argentine',      'AR');
 insert into llx_c_pays (rowid,libelle,code) values (25, 'Cameroun',       'CM');
 
+drop table if exists llx_c_regions;
 
 create table llx_c_regions
 (
@@ -229,6 +230,8 @@ insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (83,'63113',1,'
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (91,'34172',2,'Languedoc-Roussillon');
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (93,'13055',0,'Provence-Alpes-Côte d\'Azur');
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (94,'2A004',0,'Corse');
+
+drop table if exists llx_c_departements;
 
 create table llx_c_departements
 (
