@@ -128,7 +128,7 @@ class Contact
 	      $info["objectclass"] = "inetOrgPerson";
 	      
 	      // add data to directory
-	      $dn = "cn=".$this->old_firstname." ".$this->old_name.", ".LDAP_SERVER_DN ;
+	      $dn = ldap_unacc("cn=".$this->old_firstname." ".$this->old_name).", ".LDAP_SERVER_DN ;
 
 	      $r = @ldap_delete($ds, $dn);
 
