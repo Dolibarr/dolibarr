@@ -156,9 +156,12 @@ class Account
 	      {
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ('$rowid', '$categorie')";
 		$result = $this->db->query($sql);
-		if ($result){
-		  return $rowid;
-		}else{
+		if ($result)
+		  {
+		    return $rowid;
+		  }
+		else
+		  {
 		  //return '';	On ne quitte pas avec erreur car insertion dans bank_class peut echouer alors que insertion dans bank ok
 		}
 	      }
