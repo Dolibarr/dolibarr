@@ -144,8 +144,7 @@ insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.
 -- Factures
 --
 
-insert into llx_const (name, value, type) values ('FAC_OUTPUTDIR','/htdocs/document/facture','chaine');
-insert into llx_const (name, value, type) values ('FAC_OUTPUT_URL','/htdocs/document/facture','chaine');
+insert into llx_const (name, value, type) values ('FAC_OUTPUTDIR','/documents/facture','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_INTITULE','Facture','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_MEL','facture@societe.com','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_WWW','http://www.societe.com','chaine');
@@ -158,22 +157,19 @@ insert into llx_const (name, value, type) values ('FAC_PDF_RCS','','chaine');
 -- Propales
 --
 
-insert into llx_const (name, value, type) values ('PROPALE_OUTPUTDIR','/htdocs/document/propale','chaine');
-insert into llx_const (name, value, type) values ('PROPALE_OUTPUT_URL','/htdocs/document/propale','chaine');
+insert into llx_const (name, value, type) values ('PROPALE_OUTPUTDIR','/documents/propale','chaine');
 
 --
 -- Ficheinter
 --
 
-insert into llx_const (name, value, type) values ('FICHEINTER_OUTPUTDIR','/htdocs/document/ficheinter','chaine');
-insert into llx_const (name, value, type) values ('FICHEINTER_OUTPUT_URL','/htdocs/document/ficheinter','chaine');
+insert into llx_const (name, value, type) values ('FICHEINTER_OUTPUTDIR','/documents/ficheinter','chaine');
 
 --
 -- société
 --
 
-insert into llx_const (name, value, type) values ('SOCIETE_OUTPUTDIR','/htdocs/document/societe','chaine');
-insert into llx_const (name, value, type) values ('SOCIETE_OUTPUT_URL','/htdocs/document/societe','chaine');
+insert into llx_const (name, value, type) values ('SOCIETE_OUTPUTDIR','/documents/societe','chaine');
 
 
 -- Dictionnaires llx_c

@@ -160,10 +160,10 @@ if ($_POST["action"] == "set")
 	  $ok = 1;
 	}
     }
+
   /***************************************************************************************
    *
-   *
-   *
+   * Chargement fichier data.sql
    *
    ***************************************************************************************/
   if ($ok == 1)
@@ -239,7 +239,6 @@ if ($_POST["action"] == "set")
 	}//else
 			      
       
-      
       print "<tr><td>Chargement des données de base</td>";
       if ($ok)
 	{	  
@@ -255,54 +254,33 @@ if ($_POST["action"] == "set")
 
   /***************************************************************************************
    *
-   *
-   *
+   * Les variables qui ecrase le chemin par defaut sont redéfinies
    *
    ***************************************************************************************/
   if ($ok == 1)
     {
-          			
-      $chem1 = "/facture";
       $sql[0] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/facture',
 						 type = 'chaine',
 						 visible = 0
  						 where name  ='FAC_OUTPUTDIR';" ;
 				
-      $sql[1] = "UPDATE llx_const SET value = '".$dolibarr_main_data_url."/document/facture',
-						type = 'chaine',
-						visible = 0
-						where name  = 'FAC_OUTPUT_URL';" ;
-				
-      $sql[2] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/propale',
+      $sql[1] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/propale',
 						type = 'chaine',
 						visible = 0
 						where name  = 'PROPALE_OUTPUTDIR';" ;
 				
-      $sql[3] = "UPDATE llx_const SET value = '".$dolibarr_main_url_root."/document/propale',
-						type = 'chaine',
-						visible = 0
-						where name  = 'PROPALE_OUTPUT_URL';" ;
-				
-      $sql[4] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/ficheinter',
+      $sql[2] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/ficheinter',
 						 type = 'chaine',
 						 visible = 0
 						 where name  = 'FICHEINTER_OUTPUTDIR';" ;
 				
-      $sql[5] = "UPDATE llx_const SET value='".$dolibarr_main_url_root."/document/ficheinter',
-						 type = 'chaine',
-						 visible = 0
-						 where name  = 'FICHEINTER_OUTPUT_URL';" ;
-				
-      $sql[6] = "UPDATE llx_const SET value='".$dolibarr_main_data_root."/societe',
-	           type = 'chaine',
+      $sql[3] = "UPDATE llx_const SET value='".$dolibarr_main_data_root."/societe',
+	                     type = 'chaine',
 						 visible = 0
 						 where name  = 'SOCIETE_OUTPUTDIR';" ;
 				
-      $sql[7] = "UPDATE llx_const SET value='".$dolibarr_main_url_root."/document/societe',
-						 type = 'chaine',
-						 visible = 0
-						 where name  = 'SOCIETE_OUTPUT_URL';" ;
-			
+      $sql[4] = "DELETE from llx_const where name like '%_OUTPUT_URL';";
+      
       $result = 0;
 			
       for ($i=0; $i < sizeof($sql);$i++)
@@ -310,7 +288,6 @@ if ($_POST["action"] == "set")
 	  if ($db->query($sql[$i]))
 	    {
 	      $result++;
-				
 	    }
 	}
       
@@ -322,12 +299,15 @@ if ($_POST["action"] == "set")
 	    }
 	}
     }
+
+
   /***************************************************************************************
    *
    *
    *
    *
    ***************************************************************************************/
+
 
   print '</table>';
 
