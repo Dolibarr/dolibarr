@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +64,7 @@ if ($db->query($sql))
 }
 
 
-print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td colspan="2">Hors vente</td></tr>';
 print "<tr $bc[0]>";
 print '<td><a href="liste.php?type=0&amp;envente=0">Produits hors vente</a></td><td>'.$phv[0].'</td></tr>';
