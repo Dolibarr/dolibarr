@@ -42,6 +42,7 @@ class Facture
   var $tva;
   var $total;
   var $note;
+  var $paye;
   var $db_table;
   var $propalid;
   var $projetid;
@@ -265,7 +266,7 @@ class Facture
 	       * Lignes
 	       */
 
-	      $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice";
+	      $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise, l.remise_percent, l.subprice";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = ".$this->id;
 	
 	      $result = $this->db->query($sql);
@@ -283,6 +284,7 @@ class Facture
 		      $faclig->price          = $objp->price;
 		      $faclig->subprice       = $objp->subprice;
 		      $faclig->tva_taux       = $objp->tva_taux;
+		      $faclig->remise         = $objp->remise;
 		      $faclig->remise_percent = $objp->remise_percent;
 		      $faclig->produit_id     = $objp->fk_product;
 		      $this->lignes[$i] = $faclig;
