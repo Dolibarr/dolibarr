@@ -36,15 +36,19 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des Commandes", $page, $PHP_SELF);
+
 
 $sql = "SELECT o.orders_id, o.customers_name, o.orders_status FROM ".DB_NAME_OSC.".orders as o";
   
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit( $limit ,$offset);
+$sql .= $db->plimit($limit + 1,$offset);
  
-if ( $db->query($sql) ) {
+if ( $db->query($sql) )
+{
   $num = $db->num_rows();
+
+  print_barre_liste("Liste des Commandes",$page,$PHP_SELF,"",$sortfield,$sortorder,'',$num);
+
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\"><td>";
@@ -53,8 +57,9 @@ if ( $db->query($sql) ) {
   print "<td></td>";
   print "</TR>\n";
   $var=True;
-  while ($i < $num) {
-    $objp = $db->fetch_object( $i);
+  while ($i < min($num,$limit))
+    {
+      $objp = $db->fetch_object( $i);
     $var=!$var;
     print "<TR $bc[$var]>";
     print "<TD><a href=\"fiche.php?id=$objp->orders_id\">$objp->customers_name</a></TD>\n";
