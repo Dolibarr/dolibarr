@@ -20,13 +20,28 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/contrat/enservice.php
+        \ingroup    contrat
+		\brief      Page liste des contrats en service
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
-llxHeader();
+$langs->load("products");
+$langs->load("companies");
 
-if ($page == -1) { 
-  $page = 0 ; 
-}
+llxHeader();
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+
+$statut=isset($_GET["statut"])?$_GET["statut"]:1;
+$socid=$_GET["socid"];
+
+
 /*
  * Sécurité accés client
  */
@@ -35,6 +50,9 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
+
+
+if ($page == -1) { $page = 0 ; }
 
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -49,7 +67,7 @@ if ($sortorder == "")
   $sortorder="ASC";
 }
 
-$sql = "SELECT s.nom, c.rowid as cid, c.enservice, p.label, p.rowid, s.idp as sidp";
+$sql = "SELECT s.nom, c.rowid as cid, c.enservice, p.label, p.rowid as pid, s.idp as sidp";
 $sql .= " ,".$db->pdate("c.fin_validite")." as date_fin_validite, c.fin_validite-sysdate() as delairestant ";
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_product = p.rowid AND c.enservice = 1";
@@ -70,10 +88,11 @@ if ( $db->query($sql) )
   print '<table class="noborder" width="100%">';
 
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Label"),"enservice.php", "p.label");
-  print_liste_field_titre($langs->trans("Company"),"enservice.php", "s.nom");
+  print_liste_field_titre($langs->trans("Ref"),"enservice.php", "c.rowid","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Label"),"enservice.php", "p.label","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"enservice.php", "s.nom","","","",$sortfield);
   print "<td align=\"center\">".$langs->trans("Status")."</td>";
-  print_liste_field_titre("Date fin","enservice.php", "date_fin_validite","","",'align=\"center\"');
+  print_liste_field_titre("Date fin","enservice.php", "date_fin_validite","","",'align="center"',$sortfield);
   print "</tr>\n";
 
   $now=mktime();
@@ -83,30 +102,33 @@ if ( $db->query($sql) )
       $obj = $db->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$obj->cid\">$obj->label</a></td>\n";
+      print "<td><a href=\"fiche.php?id=$obj->cid\">";
+      print img_file();
+      print "</a>&nbsp;<a href=\"fiche.php?id=$obj->cid\">$obj->cid</a></td>\n";
+      print "<td><a href=\"../product/fiche.php?id=$obj->pid\">$obj->label</a></td>\n";
       print "<td><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></td>\n";
 
       // Affiche statut contrat
       if ($obj->enservice == 1)
 	{
         if (! $obj->date_fin_validite || $obj->date_fin_validite >= $now) {
-      	  $class = "normal";
-    	  $statut="En service";
+      	  $class = 'normal';
+    	  $statut= $langs->trans("ContractStatusRunning");
         }
         else {            
-      	  $class = "error";
-    	  $statut="<b>En service, expiré</b>";
+      	  $class = 'error';
+    	  $statut= $langs->trans("ContractStatusRunning").', '.img_warning().' '.$langs->trans("ContractStatusExpired");
         }
 	}
       elseif($obj->enservice == 2)
 	{
    	  $class = "normal";
-	  $statut= "Cloturé";
+	  $statut= $langs->trans("Closed");
 	}
       else
 	{
   	  $class = "warning";
-	  $statut= "A mettre en service";
+	  $statut= $langs->trans("ContractStatusToRun");
 	}
     print "<td align=\"center\" class=\"$class\">";
     print "$statut";
@@ -124,7 +146,7 @@ if ( $db->query($sql) )
 }
 else
 {
-  print $db->error() . "<br>" .$sql;
+  dolibarr_print_error($db);
 }
 
 

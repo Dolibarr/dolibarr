@@ -24,7 +24,7 @@
 /*!
 	    \file       htdocs/contrat/contrat.class.php
         \ingroup    contrat
-		\brief      Fichier de la classe des contrats
+		\brief      Page liste des contrats
 		\version    $Revision$
 */
 
