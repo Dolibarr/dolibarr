@@ -9,3 +9,14 @@
 --
 
 alter table llx_product modify tva_tx double default 19.6 ;
+
+create table llx_cond_reglement
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  sortorder       smallint,
+  actif           tinyint default 1,
+  libelle         varchar(255),
+  libelle_facture text,
+  fdm             tinyint,    -- reglement fin de mois
+  nbjour          smallint
+);
