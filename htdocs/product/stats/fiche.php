@@ -69,9 +69,11 @@ if ($_GET["id"])
       if (! file_exists($dir))
 	{
 	  umask(0);
-		rmdir(DOL_DOCUMENT_ROOT."/documents/produits");
+	  if(is_dir(DOL_DOCUMENT_ROOT."/documents/produits"))
+	    rmdir(DOL_DOCUMENT_ROOT."/documents/produits");
 	  //mkdir(DOL_DOCUMENT_ROOT."/documents");
-	  mkdir(DOL_DOCUMENT_ROOT."/documents/produit");
+	  if(!file_exists(DOL_DOCUMENT_ROOT."/documents/produit"))
+	    mkdir(DOL_DOCUMENT_ROOT."/documents/produit");
 	  if (! mkdir($dir, 0755))
 	    {
 	      $mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
