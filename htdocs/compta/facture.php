@@ -89,23 +89,23 @@ if ($_POST["action"] == 'add')
 
       if (!$_POST["propalid"] && !$_POST["commandeid"]) 
 	{      
-	      for ($i = 1 ; $i <= $NBLINES ; $i++)
-		{
-            if ($_POST["idprod${i}"]) {
+	  for ($i = 1 ; $i <= $NBLINES ; $i++)
+	    {
+	      if ($_POST["idprod${i}"]) {
                 $startday='';
                 $endday='';
                 if ($_POST["date_start${i}year"] && $_POST["date_start${i}month"] && $_POST["date_start${i}day"]) {
         	        $startday=$_POST["date_start${i}year"].'-'.$_POST["date_start${i}month"].'-'.$_POST["date_start${i}day"];
-        	    }
+		}
                 if ($_POST["date_end${i}year"] && $_POST["date_end${i}month"] && $_POST["date_end${i}day"]) {
-        	        $endday=$_POST["date_end${i}year"].'-'.$_POST["date_end${i}month"].'-'.$_POST["date_end${i}day"];
+		  $endday=$_POST["date_end${i}year"].'-'.$_POST["date_end${i}month"].'-'.$_POST["date_end${i}day"];
                 }
-        	    $facture->add_product($_POST["idprod${i}"],$_POST["qty${i}"],$_POST["remise_percent${i}"],$startday,$endday);
+		$facture->add_product($_POST["idprod${i}"],$_POST["qty${i}"],$_POST["remise_percent${i}"],$startday,$endday);
                 
-            }
-        }	  
+	      }
+	    }	  
 	  $facid = $facture->create($user);
-
+	  
 	  if ($facid)
 	    {
 	      Header("Location: facture.php?facid=".$facid);
@@ -731,7 +731,7 @@ else
 	  $h = 1;
 	  $a = 0;
 
-	  dolibarr_fiche_head($head, $a);
+	  dolibarr_fiche_head($head, $a, $soc->nom);
   	  
 	  /*
 	   * Confirmation de la suppression de la facture
