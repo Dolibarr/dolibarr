@@ -18,6 +18,32 @@ set -e
 . /usr/share/debconf/confmodule
 db_version 2.0
 
+#
+# Description:	Verifies that the env module is loaded in the apache config file.
+# Needs:	$server the apache server to use,
+#			anything that matches /etc/$server/*.conf
+#
+env_enable()
+{
+    envverm="env_module"
+    if grep -e "^[[:space:]]*#[[:space:]]*LoadModule[[:space:]]\+$envverm" /etc/$server/httpd.conf > /dev/null 2>&1; then
+		# Uncommenting
+	sed -e "s#\([[:space:]]*\)\#[[:space:]]\+\(LoadModule $envverm\)#\1\2#" /etc/$server/httpd.conf > /etc/$server/httpd.conf.tmp
+	status=uncomment
+	if grep -e "^[[:space:]]*LoadModule[[:space:]]\+$envverm" /etc/$server/httpd.conf.tmp >/dev/null 2>&1; then
+			# Uncomment successful.
+	    cp /etc/$server/httpd.conf /etc/$server/httpd.conf.back >/dev/null 2>&1
+	    mv /etc/$server/httpd.conf.tmp /etc/$server/httpd.conf
+	else
+			# Uncomment unsuccessful.
+	    status=error
+	    rm /etc/$server/httpd.conf.tmp
+	fi
+    fi
+}
+
+set -x 
+
 case "$1" in
 	configure)
 		config="/etc/dolibarr/apache.conf"
@@ -34,10 +60,11 @@ case "$1" in
 		. /usr/share/wwwconfig-common/php.get
 		# Set up web server.
 		for server in $webservers ; do
+			env_enable
 			typestr='application/x-httpd-php'
 			extension='.php3'
 			. /usr/share/wwwconfig-common/apache-addtype_all.sh
-		        . /usr/share/wwwconfig-common/apache-php.get
+		        . /usr/share/wwwconfig-common/apache-php.sh
 		        . /usr/share/wwwconfig-common/apache-run.get
 			trustuser=$webuser
 			#
@@ -82,21 +109,45 @@ case "$1" in
 			db_get "dolibarr/db/user/password"
 			dbpass="$RET"
 			dbtype="mysql"
+			status=''
 			# User may have choosen to continue anyway
 			# with the configuration, so:
 			if [ "$dbtype" = "mysql" ] ; then
 				. /usr/share/wwwconfig-common/${dbtype}-createuser.sh
+				test "$error" && echo $error
 				. /usr/share/wwwconfig-common/${dbtype}-createdb.sh
-				echo $error
+				test "$error" && echo $error
 			fi
-			sqlfile=/usr/lib/dolibarr/mysql.sql
-			perl -pi -e "s/'admin','admin'/'$dbuser','$dbpass'/" $sqlfile
-			. /usr/share/wwwconfig-common/${dbtype}-exec.sh
+
+			if [ "$status" = "create" ] ; then
+			   sqlfile=/usr/lib/dolibarr/${dbtype}.sql
+			   perl -pi -e "s/'admin','admin'/'$dbuser','$dbpass'/" $sqlfile
+			   . /usr/share/wwwconfig-common/${dbtype}-exec.sh
+
+			   if [ -z "$error" ] ; then
+
+			      echo "Visit http://localhost/dolibarr/install.php to complete the installation"
+			   else
+			      echo $error
+			   fi
+			else
+			    #
+			    # This dangerous file should be removed
+			    # after the user visits install.php but this
+			    # is beyond the control of the script. By
+			    # removing it at this point we ensure that
+			    # it does not survive an upgrade of dolibarr.
+			    #
+			    rm -f /usr/share/dolibarr/install.php
+                        fi
 		fi
 
 		perl -pi -e "s/Auth_MySQL_DB.*/Auth_MySQL_DB '$dbname'/" /etc/dolibarr/apache.conf
 		perl -pi -e "s/Auth_MySQL_Username_Field.*/Auth_MySQL_Username_Field '$dbuser'/" /etc/dolibarr/apache.conf
 		perl -pi -e "s/Auth_MySQL_Password_Field.*/Auth_MySQL_Password_Field '$dbpass'/" /etc/dolibarr/apache.conf
+		perl -pi -e "s/DBNAME.*/DBNAME $dbname/" /etc/dolibarr/apache.conf
+		perl -pi -e "s/DBUSER.*/DBUSER $dbuser/" /etc/dolibarr/apache.conf
+		perl -pi -e "s/DBPASS.*/DBPASS $dbpass/" /etc/dolibarr/apache.conf
 
 		if grep DBHOST /usr/share/dolibarr/conf/conf.php > /dev/null
 		then
@@ -112,7 +163,6 @@ case "$1" in
 		servers="apache-ssl apache mysql"
 		. /usr/share/wwwconfig-common/restart.sh
 
-		echo "Visit http://localhost/dolibarr/install.php to complete the installation"
 	;;
 
 	abort-upgrade|abort-remove|abort-deconfigure)
