@@ -1,7 +1,6 @@
 # Dolibarr language file - fr_FR - main
 charset="iso-8859-1"
 Error=Erreur
-ErrorForbidden=Accès non autorisé
 ErrorFileDoesNotExists=Le fichier %s n'existe pas
 ErrorCanNotCreateDir=Impossible de créer le répertoire %s
 ErrorConstantNotDefined=Paramètre %s non défini

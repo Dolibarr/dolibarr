@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
@@ -560,59 +560,73 @@ function loginfunction()
   </form>';
 }
 
+
 /**
 		\brief      Affiche message erreur de type acces interdit et arrete le programme
-		\remarks    l'appel a cette fonction termine le code
+		\remarks    L'appel a cette fonction termine le code.
 */
 function accessforbidden()
 {
-  global $langs;
+  global $user, $langs;
+  $langs->load("other");
   
   llxHeader();
-  print $langs->trans("ErrorForbidden");
+  print '<div class="error">'.$langs->trans("ErrorForbidden").'</div>';
+  print '<br>';
+  if ($user->login) {
+    print $langs->trans("Login").": ".$user->login."<br>";
+    print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
+  }
+  else {
+    print $langs->trans("ErrorForbidden3");
+  }
   llxFooter();
   exit(0);
 }
 
+
 /**
 		\brief      Affiche message erreur system avec toutes les informations pour faciliter le diagnostique et la remontée des bugs.
-        On doit appeler cette fonction quand une erreur technique bloquante est rencontrée.
-        Toutefois, il faut essayer de ne l'appeler qu'au sein de page php, les classes devant
-        renvoyer leur erreur par l'intermédiaire de leur propriété "error".
+                    On doit appeler cette fonction quand une erreur technique bloquante est rencontrée.
+                    Toutefois, il faut essayer de ne l'appeler qu'au sein de page php, les classes devant
+                    renvoyer leur erreur par l'intermédiaire de leur propriété "error".
+        \param      db      Handler de base utilisé
+        \param      msg     Message complémentaire à afficher
 */
 function dolibarr_print_error($db='',$msg='')
 {
   global $langs;
   $syslog = '';
   
-  if ($_SERVER['DOCUMENT_ROOT']) {
-        // Mode web
+  if ($_SERVER['DOCUMENT_ROOT'])    // Mode web
+  {
         print "Dolibarr a détecté une erreur technique.<br>\n";
         print "Voici les informations qui pourront aider au diagnostique:<br><br>\n";
         
-        print "<b>Serveur:</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
+        print "<b>".$langs->trans("Server").":</b> ".$_SERVER["SERVER_SOFTWARE"]."<br>\n";;
         print "<b>URL sollicitée:</b> ".$_SERVER["REQUEST_URI"]."<br>\n";;
         print "<b>QUERY_STRING:</b> ".$_SERVER["QUERY_STRING"]."<br>\n";;
         print "<b>Referer:</b> ".$_SERVER["HTTP_REFERER"]."<br>\n";;
         $syslog.="url=".$_SERVER["REQUEST_URI"];
         $syslog.=", query_string=".$_SERVER["QUERY_STRING"];
   }
-  else {
-        // Mode CLI   
+  else                              // Mode CLI   
+  {
+  
         print "Erreur interne détectée...\n";
         $syslog.="pid=".getmypid();
   }    
   
   if ($db) {
-    if ($_SERVER['DOCUMENT_ROOT']) {
-        // Mode web
+    if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
+    {
         print "<br>\n";
         print "<b>Requete dernier acces en base:</b> ".$db->lastquery()."<br>\n";
         print "<b>Code retour dernier acces en base:</b> ".$db->errno()."<br>\n";
         print "<b>Information sur le dernier accès en base:</b> ".$db->error()."<br>\n";
     }
-    else {
-        // Mode CLI   
+    else                            // Mode CLI   
+    {
         print "Requete dernier acces en base:\n".$db->lastquery()."\n";
         print "Code retour dernier acces en base:\n".$db->errno()."\n";
         print "Information sur le dernier accès en base:\n".$db->error()."\n";
@@ -623,12 +637,13 @@ function dolibarr_print_error($db='',$msg='')
   }
 
   if ($msg) {
-    if ($_SERVER['DOCUMENT_ROOT']) {
-        // Mode web
-        print "<b>Message:</b> ".$msg."<br>\n" ;
-    } else {
-        // Mode CLI   
-        print "Message:\n".$msg."\n" ;
+    if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
+    {
+        print "<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;
+    }
+    else                            // Mode CLI
+    {                               
+        print $langs->trans("Message").":\n".$msg."\n" ;
     }
     $syslog.=", msg=".$msg;
   }
