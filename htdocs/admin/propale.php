@@ -71,8 +71,82 @@ if ($action == 'setpdf')
     {
 
     }
-
 }
+
+$propale_addon_var = PROPALE_ADDON;
+
+if ($action == 'setmod')
+{
+  $sql = "REPLACE INTO llx_const SET name = 'PROPALE_ADDON', value='".$value."', visible=0";
+
+  if ($db->query($sql))
+    {
+      // la constante qui a été lue en avant du nouveau set
+      // on passe donc par une variable pour avoir un affichage cohérent
+      $propale_addon_var = $value;
+    }
+}
+
+
+/*
+ *
+ *
+ *
+ */
+
+print_titre("Module de numérotation");
+
+print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<TR class="liste_titre">';
+print '<td>Nom</td>';
+print '<td>Info</td>';
+print '<td align="center">Activé</td>';
+print '<td>&nbsp;</td>';
+print "</TR>\n";
+
+clearstatcache();
+
+$dir = "../includes/modules/propale/";
+$handle = opendir($dir);
+if ($handle)
+{
+  while (($file = readdir($handle))!==false)
+    {
+      if (substr($file, 0, 12) == 'mod_propale_' && substr($file, strlen($file)-3, 3) == 'php')
+	{
+	  $file = substr($file, 0, strlen($file)-4);
+
+	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/".$file.".php");
+
+	  $modPropale = new $file;
+
+	  print '<tr><td>'.$file."</td><td>\n";
+	  print $modPropale->info();
+	  print '</td><td align="center">';
+	  
+	  if ($propale_addon_var == "$file")
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	    }
+	  else
+	    {
+	      print "&nbsp;";
+	    }
+	  
+	  print "</td><td>\n";
+	  
+	  print '<a href="propale.php?action=setmod&value='.$file.'">activer</a>';
+	  
+	  print '</td></tr>';
+	}
+    }
+  closedir($handle);
+}
+print '</table>';
+/*
+ * PDF
+ */
+
 
 
 
@@ -143,8 +217,6 @@ while (($file = readdir($handle))!==false)
 	  print "</td><td>\n";
 	  print '<a href="propale.php?action=set&value='.$name.'">activer</a>';
 	}
-
-
 
       print '</td><td align="center">';
 
