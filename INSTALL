@@ -1,0 +1,18 @@
+Paquets Debian requis :
+	- php3
+	- php3-mysql
+	- tetex-bin
+	- tetex-extra
+	- perl
+	- apache
+	- libdbd-mysql-perl
+	- libapache-mod-auth-mysql
+
+Configuration :
+	- dans le repertoire dolibarr/htdocs/conf recopier le fichier
+	conf.inc.php3.sample vers conf.inc.php3 et paramétrer selon
+	vos besoins
+
+Apache :
+	- un fichier httpd.conf.sample est fournit vous pouvez vous en
+	servir pour configurer votre serveur
