@@ -21,8 +21,17 @@
  * $Source$
  *
  */
+
+/**
+        \file       htdocs/fourn/fiche.php
+		\ingroup    fournisseur, facture
+		\brief      Page de fiche fournisseur
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../contact.class.php");
+require("../facturefourn.class.php");
 
 $langs->load("suppliers");
 $langs->load("bills");
@@ -61,33 +70,48 @@ if ( $societe->fetch($socid) )
     $h = 0;
 
     $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$socid;
-    $head[$h][1] = "Fiche société";
+    $head[$h][1] = $langs->trans("Company");
     $h++;
 
     if ($societe->client==1)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid;
-        $head[$h][1] = 'Client';
+        $head[$h][1] = $langs->trans("Customer");
         $h++;
     }
     if ($societe->client==2)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$socid;
-        $head[$h][1] = 'Prospect';
+        $head[$h][1] = $langs->trans("Prospect");
         $h++;
     }
     if ($societe->fournisseur)
     {
         $hselected=$h;
         $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
-        $head[$h][1] = 'Fournisseur';
+        $head[$h][1] = $langs->trans("Supplier");
         $h++;
     }
     if ($conf->produit->enabled) {
         $head[$h][0] = DOL_URL_ROOT.'/product/liste.php?type=0&fourn_id='.$societe->id;
-        $head[$h][1] = 'Produits';
+        $head[$h][1] = $langs->trans("Products");
         $h++;
     }
+
+    $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
+    $head[$h][1] = $langs->trans("Note");
+    $h++;
+
+    if ($user->societe_id == 0)
+    {
+        $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
+        $head[$h][1] = $langs->trans("Documents");
+        $h++;
+    }
+
+    $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
+    $head[$h][1] = $langs->trans("Notifications");
+    $h++;
         
     dolibarr_fiche_head($head, $hselected, $societe->nom);
 
@@ -100,11 +124,11 @@ if ( $societe->fetch($socid) )
   /*
    *
    */
-  print '<table class="border" cellpadding="2" cellspacing="0" width="100%">';
-  print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
-  print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($societe->adresse).'<br>'.$societe->cp.' '.$societe->ville.'</td></tr>';
-  print '<tr><td>Tél</td><td>'.dolibarr_print_phone($societe->tel).'&nbsp;</td><td>Fax</td><td>'.dolibarr_print_phone($societe->fax).'&nbsp;</td></tr>';
-  print "<tr><td>Web</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
+  print '<table class="border" width="100%">';
+  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
+  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse).'<br>'.$societe->cp.' '.$societe->ville.'</td></tr>';
+  print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax).'&nbsp;</td></tr>';
+  print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
   print '</table>';
   /*
@@ -123,7 +147,7 @@ if ( $societe->fetch($socid) )
   $sql .= " ORDER BY p.rowid DESC LIMIT 0,4";
   if ( $db->query($sql) )
     {
-      print '<table class="noborder" cellspacing="0" width="100%" cellpadding="4">';
+      print '<table class="noborder" width="100%">';
       $i = 0 ; 
       $num = $db->num_rows();
       if ($num > 0)
@@ -167,18 +191,19 @@ if ( $societe->fetch($socid) )
    * Liste des factures associées
    *
    */
-  $sql  = "SELECT p.rowid,p.libelle,p.facnumber,".$db->pdate("p.datef")." as df";
+  $sql  = "SELECT p.rowid,p.libelle,p.facnumber,".$db->pdate("p.datef")." as df, total_ttc as amount, paye";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as p WHERE p.fk_soc = $societe->id";
   $sql .= " ORDER BY p.datef DESC LIMIT 0,4";
   if ( $db->query($sql) )
     {
-      print '<table class="noborder" cellspacing="0" width="100%" cellpadding="1">';
+      print '<table class="border" width="100%">';
+      $var=!$var;
       $i = 0 ; 
       $num = $db->num_rows();
       if ($num > 0)
 	{
-	  print '<tr class="liste_titre">';
-	  print "<td colspan=\"2\"><a href=\"facture/index.php?socid=$societe->id\">liste des factures</td></tr>";
+	  print "<tr $bc[$var]>";
+	  print "<td colspan=\"4\"><a href=\"facture/index.php?socid=$societe->id\">Liste des factures ($num)</td></tr>";
 	}
       while ($i < $num && $i < 5)
 	{
@@ -189,8 +214,12 @@ if ( $societe->fetch($socid) )
 	  print '<td>';
 	  print '<a href="facture/fiche.php?facid='.$obj->rowid.'">';
 	  print img_file();
-	  print $obj->facnumber.'</a> '.$obj->libelle.'</td>';	    
-	  print "<td align=\"right\" width=\"100\">".dolibarr_print_date($obj->df)."</td></tr>";
+	  print $obj->facnumber.'</a><br>'.substr($obj->libelle,0,40).'...</td>';	    
+	  print "<td align=\"right\" width=\"100\">".dolibarr_print_date($obj->df)."</td>";
+	  print '<td align="right">'.$obj->amount.'</td>';
+      $fac = new FactureFourn($db);
+	  print '<td align="center">'.$fac->LibStatut($obj->paye,$obj->statut).'</td>';
+	  print "</tr>";
 	  $i++;
 	}
       $db->free();
