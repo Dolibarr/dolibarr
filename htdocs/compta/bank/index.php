@@ -51,7 +51,7 @@ if ($result)
 
 print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print '<tr class="liste_titre"><td>Comptes courants</td><td>Banque</td>';
-print '<td align="left">Numéro</td><td align="right">Solde</td><td>&nbsp;</td>';
+print '<td align="left">Numéro</td><td align="right">Solde</td><td>Clos</td>';
 print "</tr>\n";
 $total = 0;
 for ($i = 0 ; $i < sizeof($accounts) ; $i++)
@@ -67,13 +67,13 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++)
     
       print "</td><td>$acc->bank</td><td>$acc->number</td>";
     
-      print '<td align="right">'.price($solde).'</td><td>&nbsp;</td></tr>';
+      print '<td align="right">'.price($solde).'</td><td align=\"center\">'.$yn[$acc->clos].'</td></tr>';
   
       $total += $solde;
     }
 }
 
-print "<tr $bc[1]>".'<td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>euros</td></tr>';
+print "<tr $bc[1]>".'<td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
 print '<tr class="liste_titre"><td colspan="5">Dettes</td></tr>';
 /*
  * TVA
@@ -102,7 +102,7 @@ print "<tr $bc[1]>".'<td colspan="3">URSSAF</td><td align="right">'.price($chs_a
  *
  */
 
-print "<tr $bc[1]>".'<td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>euros</td></tr>';
+print "<tr $bc[1]>".'<td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
 
 /*
  *
@@ -131,6 +131,27 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
 }
 
 print "</table>";
+
+print '<p><table id="actions" width="100%" cellspacing="0" cellpadding="4">'."<tr>";
+
+/*
+ * Case 1
+ */
+
+print '<td align="center" width="20%">';
+print '<a href="fiche.php?action=create">Nouveau compte</a></td>';
+/*
+ * Case 2
+ */
+
+print '<td align="center" width="20%">-</td>';
+print '<td align="center" width="20%">-</td>';
+print '<td align="center" width="20%">';
+print '<a href="categ.php">Catégories</a></td>';
+print '<td align="center" width="20%">-</td>';
+
+print "</table>";
+
 
 $db->close();
 
