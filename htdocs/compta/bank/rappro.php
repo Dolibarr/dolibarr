@@ -30,7 +30,7 @@ require("./pre.inc.php");
 
 $user->getrights('compta');
 
-if (!$user->admin && !$user->rights->compta->bank)
+if (! $user->rights->banque->modifier)
   accessforbidden();
 
 
