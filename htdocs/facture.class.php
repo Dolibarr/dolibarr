@@ -115,6 +115,16 @@ class Facture
 	  $this->db->free();
 	}
       $datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
+      
+      if ($cdr_fdm)
+	{
+	  $mois=date('m', $datelim);
+	  $annee=date('Y', $datelim);
+	  $fins=array(31,28,31,30,31,30,31,31,30,31,30,31);	  
+	  $datelim=mktime(0,0,0,$mois,$fins[$mois-1],$annee);
+	}
+      
+      
       /*
        * Lecture de la remise exceptionnelle
        *
