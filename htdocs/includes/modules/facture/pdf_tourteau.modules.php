@@ -41,9 +41,6 @@ Class pdf_tourteau {
       $dir = $conf->facture->outputdir . "/" . $fac->ref . "/" ;
       $file = $dir . $fac->ref . ".pdf";
 
-
-      print $file;
-
       if (! file_exists($dir))
 	{
 	  mkdir($dir);
@@ -91,13 +88,13 @@ Class pdf_tourteau {
       $pdf->SetFont('Arial','B',11);
       $pdf->SetXY(102,47);
       $pdf->MultiCell(66,5, $fac->client->adresse . "\n" . $fac->client->cp . " " . $fac->client->ville);
-      $pdf->rect(100, 40, 100, 30);
+      $pdf->rect(100, 40, 100, 40);
       
       
       
       $pdf->SetFont('Arial','B',14);
-      $pdf->Text(11, 84, "Date : " . strftime("%d %b %Y", $fac->date));
-      $pdf->Text(11, 90, "Facture : ".$fac->ref);
+      $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $fac->date));
+      $pdf->Text(11, 94, "Facture : ".$fac->ref);
       
       $pdf->SetFont('Arial','',12);
       
