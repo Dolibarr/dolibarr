@@ -133,7 +133,7 @@ if ($socid)
   $societe = new Societe($db);
   $societe->fetch($socid);
 
-  $sql = "SELECT a.id,".$db->pdate("a.datea")." as da, c.libelle, u.code, a.note, u.name, u.firstname ";
+  $sql = "SELECT a.id,".$db->pdate("a.datea")." as da, c.libelle, u.code, a.note, u.name, u.firstname, a.fk_contact ";
   $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u";
   $sql .= " WHERE a.fk_soc = $socid AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
  
@@ -154,6 +154,7 @@ if ($socid)
      print '<TR class="liste_titre">';
      print '<TD>Date</TD>';
      print "<TD>Action</TD>";
+     print '<td>Contact</a></TD>';
      print "</TR>\n";
      $var=True;
      
@@ -166,6 +167,18 @@ if ($socid)
 	 print "<TR $bc[$var]>";
 	 print "<TD width=\"10%\">" .strftime("%Y %b %d %H:%M",$obj->da)."</TD>\n"; 
 	 print '<TD width="30%"><a href="fiche.php3?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+	print '<td width="30%">';
+	if ($obj->fk_contact)
+	  {
+	    $cont = new Contact($db);
+	    $cont->fetch($obj->fk_contact);
+	    print '<a href="'.DOL_URL_ROOT.'/comm/contact.php3?id='.$cont->id.'">'.$cont->fullname.'</a>';
+	  }
+	else
+	  {
+	    print "&nbsp;";
+	  }
+	print '</td>';
 	 print "</TR>\n";
 	 
 	 $i++;
@@ -244,7 +257,7 @@ else
 	/*
 	 * Contact
 	 */
-	print '<TD width="30%">';
+	print '<td width="30%">';
 	if ($obj->fk_contact)
 	  {
 	    $cont = new Contact($db);
