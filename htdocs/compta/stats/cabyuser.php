@@ -33,7 +33,7 @@ if ($user->societe_id > 0)
  */
 llxHeader();
 
-print_titre("Chiffre d'affaire par utilisateur");
+print_titre("Chiffre d'affaire par utilisateur (euros HT)");
 
 /*
  * Ca total
@@ -41,9 +41,10 @@ print_titre("Chiffre d'affaire par utilisateur");
  */
 
 $sql = "SELECT sum(f.total) as ca FROM llx_facture as f";
+$sql .= " WHERE f.fk_user_valid is not NULL AND f.fk_statut = 1";
 if ($socidp)
 {
-  $sql .= " WHERE f.fk_soc = $socidp";
+  $sql .= " AND f.fk_soc = $socidp";
 }
 $result = $db->query($sql);
 if ($result)
@@ -55,14 +56,14 @@ if ($result)
     }
 }
 
-print "Total : ".price($catotal);
+print "<br><b>Cumul : ".price($catotal)."</b>";
 
 if ($catotal == 0) { $catotal = 1; };
 
 
 $sql = "SELECT u.name, u.firstname, sum(f.total) as ca";
 $sql .= " FROM llx_user as u,llx_facture as f";
-$sql .= " WHERE f.fk_user_author = u.rowid";
+$sql .= " WHERE f.fk_user_valid is not NULL and f.fk_statut = 1 AND f.fk_user_author = u.rowid";
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
@@ -76,7 +77,7 @@ if ($result)
   if ($num > 0)
     {
       $i = 0;
-      print "<p><TABLE border=\"0\" width=\"50%\" cellspacing=\"0\" cellpadding=\"4\">";
+      print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
       print "<TR class=\"liste_titre\">";
       print "<td>Utilisateur</td>";
       print '<td align="right">Montant</TD><td align="right">Pourcentage</td>';
