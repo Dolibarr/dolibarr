@@ -245,6 +245,10 @@ if (defined("MAIN_MODULE_STOCK"))
 {
   $conf->stock->enabled=MAIN_MODULE_STOCK;
 }
+if (defined("MAIN_MODULE_CONTRAT"))
+{
+  $conf->contrat->enabled=MAIN_MODULE_CONTRAT;
+}
 if (defined("MAIN_MODULE_BOUTIQUE"))
 {
   $conf->boutique->enabled=MAIN_MODULE_BOUTIQUE;
