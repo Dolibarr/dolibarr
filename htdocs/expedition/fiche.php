@@ -40,14 +40,14 @@ if ($user->societe_id > 0)
 /*
  *
  */	
-if ($HTTP_POST_VARS["action"] == 'add') 
+if ($_POST["action"] == 'add') 
 {
   $expedition = new Expedition($db);
 
   $expedition->date_expedition  = time();
-  $expedition->note             = $HTTP_POST_VARS["note"];
-  $expedition->commande_id      = $HTTP_POST_VARS["commande_id"];
-  $expedition->entrepot_id      = $HTTP_POST_VARS["entrepot_id"];
+  $expedition->note             = $_POST["note"];
+  $expedition->commande_id      = $_POST["commande_id"];
+  $expedition->entrepot_id      = $_POST["entrepot_id"];
 
   $commande = new Commande($db);
   $commande->fetch($expedition->commande_id);
@@ -57,9 +57,9 @@ if ($HTTP_POST_VARS["action"] == 'add')
     {
       $qty = "qtyl".$i;
       $idl = "idl".$i;
-      if ($HTTP_POST_VARS[$qty] > 0)
+      if ($_POST[$qty] > 0)
 	{
-	  $expedition->addline($HTTP_POST_VARS[$idl],$HTTP_POST_VARS[$qty]);
+	  $expedition->addline($_POST[$idl],$_POST[$qty]);
 	}
     }
 
@@ -67,7 +67,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
   
   $id = $expedition->id;
 
-  $action = '';  
+  Header("Location:fiche.php?id=$id");
 }
 
 /*
@@ -75,14 +75,14 @@ if ($HTTP_POST_VARS["action"] == 'add')
  */
 
 
-if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] == yes && $user->rights->expedition->valider)
+if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->rights->expedition->valider)
 {
   $expedition = new Expedition($db);
   $expedition->fetch($_GET["id"]);
   $result = $expedition->valid($user);
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
 {
   if ($user->rights->expedition->supprimer ) 
     {
@@ -106,7 +106,7 @@ $html = new Form($db);
  *
  *
  ************************************************************************/
-if ($HTTP_POST_VARS["action"] == 'create') 
+if ($_POST["action"] == 'create') 
 {
   llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
 
@@ -115,7 +115,7 @@ if ($HTTP_POST_VARS["action"] == 'create')
   $commande = new Commande($db);
   $commande->livraison_array();
   
-  if ( $commande->fetch($HTTP_POST_VARS["commande_id"]))
+  if ( $commande->fetch($_POST["commande_id"]))
     {
       $soc = new Societe($db);
       $soc->fetch($commande->soc_id);
@@ -130,7 +130,7 @@ if ($HTTP_POST_VARS["action"] == 'create')
       print '<form action="fiche.php" method="post">';
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
-      print '<input type="hidden" name="entrepot_id" value="'.$HTTP_POST_VARS["entrepot_id"].'">';
+      print '<input type="hidden" name="entrepot_id" value="'.$_POST["entrepot_id"].'">';
       print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
       print '<tr><td width="20%">Client</td>';
       print '<td width="30%"><b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
@@ -148,7 +148,7 @@ if ($HTTP_POST_VARS["action"] == 'create')
       print '<tr><td>Entrepôt</td>';
       print '<td>';
       $ents = $entrepot->list_array();
-      print $ents[$HTTP_POST_VARS["entrepot_id"]];
+      print $ents[$_POST["entrepot_id"]];
       print '</td>';
       print "<td>Auteur</td><td>$author->fullname</td>\n";
       
@@ -219,7 +219,7 @@ if ($HTTP_POST_VARS["action"] == 'create')
 	      
 	  if (defined("MAIN_MODULE_STOCK"))
 	    {
-	      $stock = $product->stock_entrepot[$HTTP_POST_VARS["entrepot_id"]];
+	      $stock = $product->stock_entrepot[$_POST["entrepot_id"]];
 
 	      print '<input name="qtyl'.$i.'" type="text" size="6" value="'.min($quantite_a_livrer, $stock).'">';	      
 	      print '</td>';
@@ -290,7 +290,7 @@ else
 	   * Confirmation de la suppression
 	   *
 	   */
-	  if ($action == 'delete')
+	  if ($_GET["action"] == 'delete')
 	    {
 	      $html->form_confirm("fiche.php?id=$expedition->id","Supprimer l'expedition","Etes-vous sûr de vouloir supprimer cette expedition ?","confirm_delete");
 	    }
@@ -339,7 +339,7 @@ else
 	  $entrepot = new Entrepot($db);
 	  $entrepot->fetch($expedition->entrepot_id);
 
-	  print '<td width="20%">Entrepôt</td><td>'.$entrepot->libelle.'</td></tr>';
+	  print '<td width="20%">Entrepôt</td><td><a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id.'">'.$entrepot->libelle.'</a></td></tr>';
 
 	  print "</table>\n";
 	  	  
@@ -400,55 +400,25 @@ else
 
 	print "</table>";
 	/*
-	 * Fin Ajout ligne
 	 *
 	 */
 	if ($user->societe_id == 0)
 	  {
-	    print '<p><table id="actions" width="100%"><tr>';
-	
+	    print '<p><div class="tabsAction">';	
+
 	    if ($expedition->brouillon && $user->rights->expedition->supprimer)
 	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$expedition->id&amp;action=delete\">Supprimer</a></td>";
-	      } 
-	    else
-	      {
-		print "<td align=\"center\" width=\"20%\">-</td>";
+		print '<a class="tabAction" href="fiche.php?id='.$expedition->id.'&amp;action=delete">Supprimer</a>';
 	      } 
 	    
-
-	    print "<td align=\"center\" width=\"20%\">-</td>";
-
-	    
-
-	    print '<td align="center" width="20%">-</td>';
-	    print '<td align="center" width="20%">-</td>';
 	    
 	    if ($expedition->statut == 0) 
 	      {
 		if ($user->rights->expedition->valider)
 		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$expedition->id&amp;action=valid\">Valider</a></td>";
+		    print '<a class="tabAction" href="fiche.php?id='.$expedition->id.'&amp;action=valid">Valider</a>';
 		  }
-		else
-		  {
-		    print '<td align="center" width="20%">-</td>';
-		  }
-	      }
-	    elseif ($commande->statut == 1)
-	      {
-		if ($user->rights->commande->valider)
-		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$expedition->id&amp;action=annuler\">Annuler la commande</a></td>";
-		  }
-		else
-		  {
-		    print '<td align="center" width="20%">-</td>';
-		  }
-	      }
-	    else
-	      {
-		print '<td align="center" width="20%">-</td>';
+
 	      }
 
 	    print "</tr></table>";
