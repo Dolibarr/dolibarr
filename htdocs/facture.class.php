@@ -496,7 +496,7 @@ class Facture
 	}
     }
   /**
-   * Mets à jour les sommes de la facture
+   * Mise à jour des sommes de la facture
    *
    */
   Function updateprice($facid)
@@ -696,9 +696,8 @@ class Facture
 	return -1;
       }
   }
-
-  /*
-   *
+  /**
+   * RODO TODO
    *
    */
   Function pdf()
