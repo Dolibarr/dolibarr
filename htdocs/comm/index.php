@@ -298,44 +298,49 @@ else
  * Derniers contrat
  *
  */
-if ($conf->contrat->enabled) {
-    $labelservice[0]="Hors service";
-    $labelservice[1]="En service";
-    $labelservice[2]="Cloturé";
-
-    $sql = "SELECT s.nom, s.idp, c.enservice, c.rowid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p WHERE c.fk_soc = s.idp and c.fk_product = p.rowid";
-    if ($socidp)
+if ($conf->contrat->enabled)
+{
+  $labelservice[0]="Hors service";
+  $labelservice[1]="En service";
+  $labelservice[2]="Cloturé";
+  
+  $sql = "SELECT s.nom, s.idp, c.enservice, c.rowid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p WHERE c.fk_soc = s.idp and c.fk_product = p.rowid";
+  if ($socidp)
     { 
       $sql .= " AND s.idp = $socidp"; 
     }
-    $sql .= " ORDER BY c.tms DESC";
-    $sql .= $db->plimit(5, 0);
-    
-    print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-    print '<tr class="liste_titre"><td colspan="3">Les 5 derniers contrats</td></tr>';
-
-    if ( $db->query($sql) )
+  $sql .= " ORDER BY c.tms DESC";
+  $sql .= $db->plimit(5, 0);
+  
+  if ( $db->query($sql) )
     {
       $num = $db->num_rows();
-      $i = 0;
-    
-      $var=false;
-      while ($i < $num)
-    	{
-    	  $obj = $db->fetch_object( $i);
-    	  print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".img_file()."</a>&nbsp;";
-    	  print "<a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".$obj->ref."</a></td>";
-    	  print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
-    	  print "<td align=\"right\">".$labelservice[$obj->enservice]."</td></tr>\n";
-    	  $var=!$var;
-    	  $i++;
-    	}
+      
+      if ($num > 0)
+	{
+	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+	  print '<tr class="liste_titre"><td colspan="3">Les 5 derniers contrats</td></tr>';
+	  $i = 0;
+	  
+	  $var=false;
+	  while ($i < $num)
+	    {
+	      $obj = $db->fetch_object( $i);
+	      print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".img_file()."</a>&nbsp;";
+	      print "<a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".$obj->ref."</a></td>";
+	      print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";      
+	      print "<td align=\"right\">".$labelservice[$obj->enservice]."</td></tr>\n";
+	      $var=!$var;
+	      $i++;
+	    }
+	  print "</table><br>";
+	}
     }
-    else {
-        print $db->error();   
-    }
-    print "</table><br>";
+  else
+    {
+      print $db->error();   
+    }  
 }
 
 /*
