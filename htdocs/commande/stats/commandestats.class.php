@@ -28,28 +28,21 @@ class CommandeStats
     {
       $this->db = $DB;
     }
-  /**
-   * Renvoie le nombre de commande par année
-   *
-   */
-  Function getNbCommandeByYear()
-  {
-    $result = array();
-    $sql = "SELECT date_format(date_commande,'%Y') as dm, count(*)  FROM llx_commande GROUP BY dm DESC WHERE fk_statut > 0";
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    $result[$i] = $row;
 
-	    $i++;
-	  }
-	$this->db->free();
+  Function getNbCommandeByMonthWithPrevYear($year)
+  {
+    $data1 = $this->getNbCommandeByMonth($year - 1);
+    $data2 = $this->getNbCommandeByMonth($year);
+
+    $data = array();
+
+    for ($i = 0 ; $i < 12 ; $i++)
+      {
+	$data[$i] = array($data1[$i][0], 
+			  $data1[$i][1],
+			  $data2[$i][1]);
       }
-    return $result;
+    return $data;
   }
   /**
    * Renvoie le nombre de commande par mois pour une année donnée
@@ -81,7 +74,39 @@ class CommandeStats
 	$res[$i] = $result[$i] + 0;
       }
 
-    return $res;
+    $data = array();
+    
+    for ($i = 1 ; $i < 13 ; $i++)
+      {
+	$data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
+      }
+    
+    return $data;
+  }
+
+
+  /**
+   * Renvoie le nombre de commande par année
+   *
+   */
+  Function getNbCommandeByYear()
+  {
+    $result = array();
+    $sql = "SELECT date_format(date_commande,'%Y') as dm, count(*)  FROM llx_commande GROUP BY dm DESC WHERE fk_statut > 0";
+    if ($this->db->query($sql))
+      {
+	$num = $this->db->num_rows();
+	$i = 0;
+	while ($i < $num)
+	  {
+	    $row = $this->db->fetch_row($i);
+	    $result[$i] = $row;
+
+	    $i++;
+	  }
+	$this->db->free();
+      }
+    return $result;
   }
   /**
    * Renvoie le nombre de commande par mois pour une année donnée
