@@ -29,8 +29,17 @@ $sortfield = $_GET["sortfield"];
 if ($_GET["action"] == "commande" && $user->rights->telephonie->ligne_commander)
 {
   $ltel = new LigneTel($db);
-  $ltel->id = $_GET["lid"];
-  $ltel->set_statut($user, $_GET["statut"]);
+  $ltel->fetch_by_id($_GET["lid"]);
+
+  if ($_GET["statut"] == 1)
+    {
+      $ltel->set_a_commander($user);
+    }
+
+  if ($_GET["statut"] == -1)
+    {
+      $ltel->set_en_attente($user);
+    }
 
   Header("Location: liste.php");
 }
