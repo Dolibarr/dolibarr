@@ -165,7 +165,7 @@ create table llx_c_regions
   active      tinyint default 1
 )type=innodb;
 
-
+insert into llx_c_regions (rowid,code_region,cheflieu,tncc,nom) values (0,0,'0',0,'-');
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (01,'97105',3,'Guadeloupe');
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (02,'97209',3,'Martinique');
 insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (03,'97302',3,'Guyane');
@@ -209,6 +209,8 @@ create table llx_c_departements
 
 ALTER TABLE llx_c_departements ADD FOREIGN KEY (fk_region)  REFERENCES llx_c_regions (code_region);
 
+insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom)
+values (0,0,0,'0',0,'-','-');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom)
 values (82,'01','01053',5,'AIN','Ain');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom)
