@@ -46,10 +46,16 @@ $db = new Db();
 
 if ($action == 'add_bookmark')
 {
+  $sql = "DELETE FROM llx_bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
+  if (! $db->query($sql) )
+    {
+      print $db->error();
+    }
   $sql = "INSERT INTO llx_bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
-  if (! $db->query($sql) ) {
-    print $db->error();
-  }
+  if (! $db->query($sql) )
+    {
+      print $db->error();
+    }
 }
 
 if ($action == 'del_bookmark')
