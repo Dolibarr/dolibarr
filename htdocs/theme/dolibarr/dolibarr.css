@@ -20,7 +20,7 @@
 body {
   background: #e0ebeb; 
   margin: 0px;
-  font-family: sans-serif; font-size: 0.9em; 
+  font-family: sans-serif; font-size: 0.95em; 
 }
 /*
  * Onglets
@@ -92,10 +92,10 @@ table.topbarre
  */
 table.border {
                border-collapse: collapse;
-               border: 2px white ridge; }
+               border: 1px white ridge; }
 
 table.border td {
-                  border: 2px white ridge; }
+                  border: 1px white ridge; }
 
 table.noborder {
                  border-collapse: collapse;
@@ -126,20 +126,15 @@ a {
 a:hover {     text-decoration: underline;  }
 
 td.menu { 
-          border-right: 1px solid #000000;
-          border-bottom: 1px solid #000000;
+          border: 1px solid #000000;
           }
 
 td.menusel { 
-             border-right: 1px solid #000000;
-             border-bottom: 1px solid #000000;
+             border: 1px solid #000000;
              }
 
 td.border { 
-            border-top: 1px solid #000000;
-            border-right: 1px solid #000000;
-            border-bottom: 1px solid #000000;
-            border-left: 1px solid #000000;
+            border: 1px solid #000000;
             }
 
 div.menus { 
@@ -159,7 +154,7 @@ div.menus {
         text-decoration: none }
 
 .menusel { 
-           background: #bbbb88; 
+           background: #cceeee; 
            font-size: 0.9em; font-weight: bold; 
            color: #000000; 
            text-decoration: none }
@@ -207,10 +202,12 @@ div.titre {
  *
  */
 tr.liste_titre { 
-                 background: #669999; 
+                 background: #b3cccc; 
                  font-family: Helvetica, Verdana;
                  font-size: 0.9em;
                  font-weight: bold;
+                 border: 1px solid #8CACBB; 
+
                  }
 
 tr.pair	{ 
