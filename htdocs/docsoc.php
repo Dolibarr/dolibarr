@@ -114,7 +114,7 @@ if ($socid > 0)
       $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
       $head[$h][1] = 'Notifications';
       
-      dolibarr_fiche_head($head, $a);      
+      dolibarr_fiche_head($head, $a);
       /*
        *
        */
