@@ -79,7 +79,64 @@ class modTelephonie extends DolibarrModules
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (141,'Consulter la telephonie','telephonie','r',0);",
 		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (142,'Configurer la telephonie','telephonie','w',0);");
     
+    /*
+     * Documents
+     *
+     */
+    if (defined("DOL_DATA_ROOT"))
+	{
+	  $dir = DOL_DATA_ROOT . "/telephonie/" ;
+	  
+	  if (! file_exists($dir))
+	    {
+	      umask(0);
+	      if (! mkdir($dir, 0755))
+		{
+                    $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+		}
+	    }
+
+
+	  $dir = DOL_DATA_ROOT . "/telephonie/ligne/" ;
+	  
+	  if (! file_exists($dir))
+	    {
+	      umask(0);
+	      if (! mkdir($dir, 0755))
+		{
+                    $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+		}
+	    }
+
+	  $dir = DOL_DATA_ROOT . "/telephonie/ligne/commande" ;
+	  
+	  if (! file_exists($dir))
+	    {
+	      umask(0);
+	      if (! mkdir($dir, 0755))
+		{
+                    $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+		}
+	    }
+
+	  $dir = DOL_DATA_ROOT . "/telephonie/logs" ;
+	  
+	  if (! file_exists($dir))
+	    {
+	      umask(0);
+	      if (! mkdir($dir, 0755))
+		{
+                    $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+		}
+	    }
+
+	}
+
+
     return $this->_init($sql);
+
+
+
   }
   /** suppression du module
    *
