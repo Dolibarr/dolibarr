@@ -224,7 +224,7 @@ if ($_socid > 0)
   print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($objsoc->tel).'&nbsp;</td><td>Fax</td><td>'.dolibarr_print_phone($objsoc->fax).'&nbsp;</td></tr>';
   print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
   
-  print "<tr><td>".$langs->trans("ProfIdSiren")."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
+  print "<tr><td nowrap>".$langs->trans("ProfIdSiren")."</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
   print '<td>'.$langs->trans("Prefix").'</td><td>';
   if ($objsoc->prefix_comm)
     {
@@ -238,7 +238,7 @@ if ($_socid > 0)
   print "</td></tr>";
   
   print "<tr><td>".$langs->trans("Type")."</td><td> $objsoc->typent</td><td>Effectif</td><td>$objsoc->effectif</td></tr>";
-  print '<tr><td>';
+  print '<tr><td nowrap>';
   print $langs->trans("CustomerDiscount").'</td><td>'.$objsoc->remise_client."&nbsp;%</td>";
   print '<td colspan="2"><a href="remise.php?id='.$objsoc->id.'">';
   print img_edit($langs->trans("Modify"));
@@ -498,7 +498,7 @@ if ($_socid > 0)
 	    
 	    print '<td>';
 	    print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
-	    print img_file();
+	    print img_object($langs->trans("Show"),"contact");
 	    print '&nbsp;'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 	    
 	    if ($obj->note)
@@ -529,7 +529,7 @@ if ($_socid > 0)
 	    print '</a></td>';
 	    
 	    print '<td align="center"><a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">';
-	    print img_actions();
+	    print img_object($langs->trans("Rendez-Vous"),"action");
 	    print '</a></td>';
 	    
 	    print "</tr>\n";

@@ -84,7 +84,7 @@ if ($_socid > 0)
   $dac = strftime("%Y-%m-%d %H:%M", time());
   if ($errmesg)
     {
-      print "<b>$errmesg</b><br>";
+      print '<div class="error">'.$errmesg.'</div><br>';
     }
   
   /*
@@ -136,14 +136,8 @@ if ($_socid > 0)
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
     $head[$h][1] = $langs->trans("Notifications");
-
-   if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
-	{
-	  $head[$h][0] = DOL_URL_ROOT.'/sl/fiche.php?id='.$objsoc->id;
-	  $head[$h][1] = 'Fiche catalogue';
-	  $h++;
-	}
-
+    $h++;
+    
     if ($user->societe_id == 0)
       {
 	$head[$h][0] = DOL_URL_ROOT."/comm/index.php?socidp=$objsoc->id&action=add_bookmark";
@@ -161,15 +155,17 @@ if ($_socid > 0)
     print '<input type="hidden" name="action" value="setremise">';
     print '<table width="100%" border="0">';
     print '<tr><td valign="top">';
-    print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+    print '<table class="border" width="100%">';
 
     print '<tr><td colspan="2">';
     print $langs->trans("CustomerDiscount").'</td><td colspan="2">'.$objsoc->remise_client."&nbsp;%</td></tr>";
 
     print '<tr><td colspan="2">';
-    print $langs->trans("Modify").'</td><td colspan="2"><input type="text" size="5" name="remise" value="'.$objsoc->remise_client.'">&nbsp;%<input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
+    print $langs->trans("NewValue").'</td><td colspan="2"><input type="text" size="5" name="remise" value="'.$objsoc->remise_client.'">&nbsp;%</td></tr>';
+    print '<tr><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
 
-    print "</table></form>";
+    print "</table>";
+    print "</form>";
 
     print "<br>";
     
@@ -205,21 +201,24 @@ if ($_socid > 0)
 
     /*
      *
-     * Liste des projets associés
+     * Liste de l'historique des remises
      *
      */
     $sql  = "SELECT rc.rowid,rc.remise_client,".$db->pdate("rc.datec")." as dc, u.code";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise as rc";
-    $sql .= " , ".MAIN_DB_PREFIX."user as u";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise as rc, ".MAIN_DB_PREFIX."user as u";
     $sql .= " WHERE rc.fk_soc =". $objsoc->id;
     $sql .= " AND u.rowid = rc.fk_user_author";
     $sql .= " ORDER BY rc.datec DESC";
 
     if ( $db->query($sql) )
       {
-	print '<table class="border" cellspacing="0" width="100%" cellpadding="1">';
+	print '<table class="noborder" width="100%">';
 	$tag = !$tag;
-	print "<tr $bc[$tag]>";
+	print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("Date").'</td>';
+    print '<td>'.$langs->trans("Discount").'</td>';
+    print '<td>'.$langs->trans("User").'</td>';
+	print '</tr>';
 	$i = 0 ; 
 	$num = $db->num_rows();
 
@@ -227,12 +226,11 @@ if ($_socid > 0)
 	  {
 	    $obj = $db->fetch_object( $i);
 	    $tag = !$tag;
-	    print "<tr $bc[$tag]>";
-	    print '<td>'.strftime("%d %B %Y",$obj->dc).'</td>';
+	    print '<tr '.$bc[$tag].'>';
+	    print '<td>'.dolibarr_print_date($obj->dc,"%d %B %Y %H:%M").'</td>';
 	    print '<td>'.$obj->remise_client.' %</td>';
 	    print '<td>'.$obj->code.'</td>';
-	    
-	    print "<td align=\"right\">".$obj->ref ."</td></tr>";
+	    print '</tr>';
 	    $i++;
 	  }
 	$db->free();
@@ -240,11 +238,8 @@ if ($_socid > 0)
       }
     else
       {
-	print $db->error();
+	dolibarr_print_error($db);
       }
-
-
-
 
 }
 
