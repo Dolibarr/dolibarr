@@ -1,23 +1,4 @@
 
-create table llx_service
-(
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  datec           datetime,
-  tms             timestamp,
-  ref             varchar(15),
-  label           varchar(255),
-  description     text,
-  price           smallint,
-  duration        varchar(32),
-  debut_comm      datetime,
-  fin_comm        datetime,
-  fk_user_author  integer,
-  fk_user_modif   integer,
-
-  UNIQUE INDEX(ref)
-);
-
-
 create table llx_actioncomm
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
@@ -388,18 +369,6 @@ create table llx_entrepot
 ) type=ISAM;
 
 
-create table llx_entrepot
-(
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  datec           datetime,
-  tms             timestamp,
-  label           varchar(255),
-  description     text,
-  fk_user_author  integer
-
-) type=INNODB;
-
-
 create table llx_user
 (
   rowid         integer AUTO_INCREMENT PRIMARY KEY,
@@ -693,6 +662,29 @@ create table llx_boxes_def
   note        text
 );
 
+create table llx_facture_rec
+(
+  rowid              integer AUTO_INCREMENT PRIMARY KEY,
+  titre              varchar(50) NOT NULL,
+  fk_soc             integer NOT NULL,
+  datec              datetime,  -- date de creation
+
+  amount             real     default 0 NOT NULL,
+  remise             real     default 0,
+  remise_percent     real     default 0,
+  tva                real     default 0,
+  total              real     default 0,
+  total_ttc          real     default 0,
+
+  fk_user_author     integer,   -- createur
+  fk_projet          integer,   -- projet auquel est associé la facture
+  fk_cond_reglement  integer,   -- condition de reglement
+
+  note               text,
+
+  INDEX fksoc (fk_soc)
+);
+
 create table llx_chargesociales
 (
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
@@ -762,14 +754,14 @@ create table llx_facturedet
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_facture      integer NOT NULL,
-  fk_product      integer,
+  fk_product      integer NOT NULL default 0,
   description     text,
-  tva_taux       real default 19.6, -- taux tva
-  qty		 real,              -- quantité
-  remise_percent real default 0,    -- pourcentage de remise
-  remise         real default 0,    -- montant de la remise
-  subprice       real,              -- prix avant remise
-  price          real               -- prix final
+  tva_taux        real default 19.6, -- taux tva
+  qty		  real,              -- quantité
+  remise_percent  real default 0,    -- pourcentage de remise
+  remise          real default 0,    -- montant de la remise
+  subprice        real,              -- prix avant remise
+  price           real               -- prix final
 );
 
 create table llx_paiement
@@ -893,7 +885,7 @@ create table llx_stock_mouvement
 
   key(fk_product),
   key(fk_stock)
-)
+);
 
 
 create table llx_product_stock
@@ -906,7 +898,7 @@ create table llx_product_stock
 
   key(fk_product),
   key(fk_stock)
-)
+);
 
 
 create table llx_product_fournisseur
@@ -945,6 +937,20 @@ create table llx_adherent_type
   vote             enum('yes','no') NOT NULL DEFAULT 'yes',
   note             text,
   mail_valid       text -- mail envoye a la validation
+);
+
+create table llx_facturedet_rec
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  fk_facture      integer NOT NULL,
+  fk_product      integer,
+  description     text,
+  tva_taux       real default 19.6, -- taux tva
+  qty		 real,              -- quantité
+  remise_percent real default 0,    -- pourcentage de remise
+  remise         real default 0,    -- montant de la remise
+  subprice       real,              -- prix avant remise
+  price          real               -- prix final
 );
 
 create table llx_adherent_options_label
