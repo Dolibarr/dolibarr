@@ -21,7 +21,7 @@
  *
  */
 
-/*!	\file htdocs/includes/modules/ficheinter/pdf_soleil.modules.php
+/*!	\file htdocs/includes/modules/fichinter/pdf_soleil.modules.php
         \ingroup    ficheinter
 		\brief      Fichier de la classe permettant de générer les fiches d'intervention au modèle Soleil
 		\version    $Revision$

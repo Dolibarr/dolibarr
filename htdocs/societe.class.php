@@ -23,6 +23,18 @@
  *
  */
 
+/*!
+	    \file       htdocs/societe.class.php
+        \ingroup    societe
+		\brief      Fichier de la classe des societes
+		\version    $Revision$
+*/
+
+
+/*! \class Societe
+		\brief Classe permettant la gestion des societes
+*/
+
 class Societe {
   var $db;
 
@@ -44,6 +56,11 @@ class Societe {
   var $fournisseur;
  
 
+  /**
+   *    \brief  Constructeur de la classe
+   *    \param  DB     handler accès base de données
+   *    \param  id     id societe (0 par defaut)
+   */
   function Societe($DB, $id=0)
   {
     global $config;
@@ -57,10 +74,10 @@ class Societe {
 
     return 1;
   }
-  /*
-   * \brief     Crée une société
-   *
-   *
+
+  /**
+   *    \brief  Crée la societe en base
+   *    \param  user    Utilisateur qui demande la création
    */
   function create($user='')
   {
@@ -79,10 +96,11 @@ class Societe {
     }        
         
   }
-  /*
-   *
-   *
-   *
+
+  /**
+   *    \brief  Mise a jour des paramètres de la société
+   *    \param  id      id societe
+   *    \param  user    Utilisateur qui demande la mise à jour
    */
   function update($id,$user='')
   {
@@ -159,9 +177,9 @@ class Societe {
       }
   }
 
-  /*
-   *
-   *
+  /**
+   *    \brief      Recupére l'objet societe
+   *    \param      socid       id de la société à charger en mémoire
    */
   function fetch($socid)
     {
@@ -266,16 +284,13 @@ class Societe {
 	}
       else
 	{
-	  /* Erreur select SQL */
-	  print $this->db->error();
-	  return -1;
+        dolibarr_print_error($this->db);
 	}
   }
 
-  /*
-   * Suppression d'une societe. 
-   * TODO: Cette fonction n'est pas utilisée.. 
-   * Attente des contraintes d'intégrité dans MySql
+  /**
+   * \brief     Suppression d'une societe de la base 
+   * \TODO      Cette fonction n'est pas utilisée. Attente des contraintes d'intégrité dans MySql
    */
   function delete($id)
     {
@@ -284,7 +299,7 @@ class Societe {
 
       if (! $this->db->query($sql))
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
 	}
 
       // Suppression du répertoire document
@@ -315,9 +330,10 @@ class Societe {
 	  deldir($docdir);
 	}
     }
-  /*
-   *
-   *
+
+  /**
+   * \brief     Retournes les factures impayées de la société
+   * \return    array   tableau des id de factures impayées
    *
    */
   function factures_impayes()
@@ -347,12 +363,11 @@ class Societe {
 	} 
       return $facimp;
     }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Attribut le prefix de la société en base
    *
    */
-
   function attribute_prefix()
     {
       $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp = '$this->id'";
@@ -384,25 +399,25 @@ class Societe {
 			}
 		      else
 			{
-			  print $this->db->error();
+        	  dolibarr_print_error($this->db);
 			}
 		    }
 		}
 	      else
 		{
-		  print $this->db->error();
-		}
+	        dolibarr_print_error($this->db);
+	  	}
 	    }
 	}
       else
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
 	}
       return $prefix;
     }
+
   /**
-   * Définit la société comme un client
-   *
+   *    \brief     Définit la société comme un client
    *
    */
   function set_as_client()
@@ -416,9 +431,11 @@ class Societe {
 	  return $this->db->query($sql);
 	}
     }
+
   /**
-   * Définit la société comme un client
-   *
+   *    \brief      Définit la société comme un client
+   *    \param      remise      montant de la remise
+   *    \param      user        utilisateur qui place la remise
    *
    */
   function set_remise_client($remise, $user)
@@ -437,14 +454,15 @@ class Societe {
 	  
 	  if (! $this->db->query($sql) )
 	    {
-	      print $this->db->error();
+	        dolibarr_print_error($this->db);
 	    }
 
 	}
     }
 
-  /*
-   * Renvoie le nom d'une societe a partir d'un id
+  /**
+   *    \brief      Renvoie le nom d'une societe a partir d'un id
+   *    \param      id      id de la société recherchée
    *
    */
   function get_nom($id)
@@ -464,14 +482,14 @@ class Societe {
     	$this->db->free();
        }
      else {
-        dolibarr_print_error($db);   
+        dolibarr_print_error($this->db);   
        }    
        
     }
 
-  /*
-   *
-   *
+  /**
+   *    \brief      Renvoie la liste des contacts emails existant pour la société
+   *    \return     array       tableau des contacts emails
    */
   function contact_email_array()
     {
@@ -498,13 +516,14 @@ class Societe {
 	}
       else
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
 	}
       
     }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Renvoie la liste des contacts de cette société
+   *    \return     array      tableau des contacts
    */
   function contact_array()
     {
@@ -531,13 +550,15 @@ class Societe {
 	}
       else
 	{
-	  print $this->db->error();
+	  dolibarr_print_error($this->db);
 	}
       
     }
-  /*
-   *
-   *
+  
+  /**
+   *    \brief      Renvoie l'email d'un contact par son id
+   *    \param      rowid       id du contact
+   *    \return     string      email du contact
    */
   function contact_get_email($rowid)
     {
@@ -560,14 +581,14 @@ class Societe {
 	}
       else
 	{
-	  print $this->db->error();
-	  print "<p>$rowid";
+	  dolibarr_print_error($this->db);
 	}
       
     }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Renvoie la liste des types d'effectifs possibles
+   *    \return     array      tableau des types d'effectifs
    */
   function effectif_array()
     {
@@ -593,9 +614,10 @@ class Societe {
 	} 
       return $effs;
     }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Renvoie la liste des formes juridiques existantes
+   *    \return     array      tableau des formes juridiques
    */
   function forme_juridique_array()
     {

@@ -56,7 +56,7 @@ class Facture
   var $projetid;
 
   /**
-   *    \brief Constructeur de la classe
+   *    \brief  Constructeur de la classe
    *    \param  DB          handler accès base de données
    *    \param  soc_idp     id societe ("" par defaut)
    *    \param  facid       id facture ("" par defaut)
@@ -78,7 +78,7 @@ class Facture
   }
   
   /**
-   * \brief Création de la facture en base
+   *    \brief      Création de la facture en base
    *    \param      user       object utilisateur qui crée
    *
    */

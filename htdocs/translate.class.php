@@ -135,7 +135,6 @@ class Translate {
     /**
     *  \brief       Expédie le header correct et retourne le début de la page html
     *  [en]         Send header and return a string of html start page
-    *  \access      public
     *  \return      string      html header avec charset
     */
     function lang_header()
