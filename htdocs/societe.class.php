@@ -290,7 +290,7 @@ class Societe {
 
   /**
    * \brief     Suppression d'une societe de la base 
-   * \TODO      Cette fonction n'est pas utilisée. Attente des contraintes d'intégrité dans MySql
+   * \todo      Cette fonction n'est pas utilisée. Attente des contraintes d'intégrité dans MySql
    */
   function delete($id)
     {
