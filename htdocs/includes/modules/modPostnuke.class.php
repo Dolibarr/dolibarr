@@ -56,6 +56,8 @@ class modPostnuke extends DolibarrModules
     $this->const_name = "MAIN_MODULE_POSTNUKE";
     $this->const_config = MAIN_MODULE_POSTNUKE;
 
+    $this->special = 1;
+
     // Dépendances
     $this->depends = array();
     $this->requiredby = array();
