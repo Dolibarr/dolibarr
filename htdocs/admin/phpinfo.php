@@ -19,5 +19,25 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-phpinfo();
+require("./pre.inc.php");
+
+llxHeader();
+
+if ($what == 'conf')
+{
+  phpinfo(INFO_CONFIGURATION);
+}
+elseif ($what == 'env')
+{
+  phpinfo(INFO_ENVIRONMENT);
+}
+elseif ($what == 'modules')
+{
+  phpinfo(INFO_MODULES);
+}
+else
+{
+  phpinfo();
+}
+llxfooter();
 ?>
