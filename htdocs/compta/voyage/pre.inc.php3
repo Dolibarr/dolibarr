@@ -38,6 +38,7 @@ function llxHeader($head = "") {
   $menu->add_submenu("index.php3","Voyages");
   $menu->add_submenu("bilan.php3","Bilan");
   $menu->add_submenu("reduc.php3","Reduc");
+  $menu->add_submenu("voyage.php3","Voyage");
 
   $menu->add("/compta/facture.php3","Factures");
 

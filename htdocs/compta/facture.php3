@@ -386,7 +386,9 @@ if ($action == 'create') {
 
   } else {
     /*
+     *
      * Liste
+     *
      *
      */
     print_barre_liste("Factures",$page,$PHP_SELF);
