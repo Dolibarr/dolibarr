@@ -39,7 +39,6 @@ if ($user->societe_id > 0)
 
 print_titre("Chiffres d'affaires en euros HT");
 
-
 $sql = "SELECT sum(f.amount) as amount , date_format(f.datef,'%Y-%m') as dm";
 $sql .= " FROM llx_facture as f WHERE f.paye = 1";
 
@@ -50,10 +49,10 @@ if ($socidp)
 $sql .= " GROUP BY dm DESC";
 
 $result = $db->query($sql);
-if ($result) {
+if ($result)
+{
   $num = $db->num_rows();
   $i = 0; 
-  $var=True;
   while ($i < $num)
     {
       $row = $db->fetch_row($i);
@@ -61,8 +60,6 @@ if ($result) {
       $i++;
     }
 }
-
-
 
 print '<table width="100%" border="1">';
 print '<tr class="liste_titre"><td></td>';
@@ -74,7 +71,6 @@ for ($annee = 2001 ; $annee < 2006 ; $annee++)
 print '</tr>';
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
-
   print '<tr>';
   print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
   for ($annee = 2001 ; $annee < 2006 ; $annee++)
@@ -91,55 +87,10 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
   print '</tr>';
 }
 
-
-  //pt($db, $sql,"Par mois");
-
-
-
 print "</table>";
 
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
-
-/*
- * Fonctions
- *
- */
-
-function pt ($db, $sql, $date)
-{
-  global $bc;
-
-  $result = $db->query($sql);
-  if ($result) {
-    $num = $db->num_rows();
-    $i = 0; $total = 0 ;
-    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-    print "<TR class=\"liste_titre\">";
-    print "<TD width=\"60%\">$date</TD>";
-    print "<TD align=\"right\">Montant</TD>";
-    print "<td>&nbsp;</td>\n";
-    print "</TR>\n";
-    $var=True;
-    while ($i < $num) {
-      $obj = $db->fetch_object( $i);
-      $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD>$obj->dm</TD>\n";
-      print "<TD align=\"right\">".price($obj->amount)."</TD><td>&nbsp;</td>\n";
-      print "</TR>\n";
-      
-      $total = $total + $obj->amount;
-      
-      $i++;
-    }
-    print '<tr><td align="right">Total :</td><td align="right"><b>'.price($total).'</b></td><td>euros&nbsp;HT</td></tr>';
-    
-    print "</TABLE>";
-    $db->free();
-  }
-}
-
 
 ?>
