@@ -56,6 +56,7 @@ $modules["MAIN_MODULE_FACTURE"][0] = "Module facture";
 $modules["MAIN_MODULE_FACTURE"][1] = "MAIN_MODULE_FACTURE";
 $modules["MAIN_MODULE_FACTURE"][2] = MAIN_MODULE_FACTURE;
 $modules["MAIN_MODULE_FACTURE"][3] = "Module de gestion des factures";
+$modules["MAIN_MODULE_FACTURE"][4] = "modFacture";
 
 $modules["MAIN_MODULE_PRODUIT"][0] = "Module produit";
 $modules["MAIN_MODULE_PRODUIT"][1] = "MAIN_MODULE_PRODUIT";
@@ -99,6 +100,12 @@ if ($action == 'set')
   if ($db->query($sql))
     {
       $modules[$value][2] = 1;
+
+      $modName = $modules[$value][4];
+      $file = $modName . ".class.php";
+      include("../includes/modules/$file");
+      $objMod = new $modName($db);
+      $objMod->init();
     }
 }
 
@@ -130,7 +137,6 @@ foreach ($modules as $key => $value)
   $const_name = $modules[$key][1];
   $const_value = $modules[$key][2];
   $desc = $modules[$key][3];
-
 
   print '<tr><td>';
   echo "$titre";
