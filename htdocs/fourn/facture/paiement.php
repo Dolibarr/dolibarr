@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -71,7 +71,7 @@ if ($action == 'create')
 {
 
   $sql = "SELECT s.nom,s.idp, f.amount, f.total_ttc, f.facnumber";
-  $sql .= " FROM llx_societe as s, llx_facture_fourn as f WHERE f.fk_soc = s.idp";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as f WHERE f.fk_soc = s.idp";
   $sql .= " AND f.rowid = $facid";
 
   $result = $db->query($sql);
@@ -97,7 +97,7 @@ if ($action == 'create')
 
       print "<tr><td>Montant :</td><td colspan=\"2\">".price($obj->total_ttc)." euros TTC</td></tr>";
 
-      $sql = "SELECT sum(p.amount) FROM llx_paiementfourn as p WHERE p.fk_facture_fourn = $facid;";
+      $sql = "SELECT sum(p.amount) FROM ".MAIN_DB_PREFIX."paiementfourn as p WHERE p.fk_facture_fourn = $facid;";
       $result = $db->query($sql);
       if ($result) {
 	$sumpayed = $db->result(0,0);
@@ -124,7 +124,7 @@ if ($action == 'create')
 
       print "<tr><td>Type :</td><td><select name=\"paiementid\">\n";
 
-      $sql = "SELECT id, libelle FROM c_paiement ORDER BY id";
+      $sql = "SELECT id, libelle FROM ".MAIN_DB_PREFIX."c_paiement ORDER BY id";
   
       if ($db->query($sql))
 	{
@@ -144,7 +144,7 @@ if ($action == 'create')
       print '<textarea name="comment" wrap="soft" cols="40" rows="10"></textarea></td></tr>';
 
       print "<tr><td>Compte à débiter :</td><td><select name=\"accountid\"><option value=\"\">-</option>\n";
-      $sql = "SELECT rowid, label FROM llx_bank_account ORDER BY rowid";
+      $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account ORDER BY rowid";
       $result = $db->query($sql);
       if ($result)
 	{
@@ -187,7 +187,7 @@ if ($action == '') {
 
   $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber, s.nom";
   $sql .=", f.rowid as facid, c.libelle as paiement_type, p.num_paiement";
-  $sql .= " FROM llx_paiementfourn as p, llx_facture_fourn as f, c_paiement as c, llx_societe as s";
+  $sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p, ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."societe as s";
   $sql .= " WHERE p.fk_facture_fourn = f.rowid AND p.fk_paiement = c.id AND s.idp = f.fk_soc";
 
   if ($socidp)

@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -65,7 +65,7 @@ if ($mode == 'search')
 {
   if ($mode-search == 'soc')
     {
-      $sql = "SELECT s.idp FROM llx_societe as s ";
+      $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
       $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
     }
       
@@ -97,7 +97,7 @@ if ($sortfield == "")
 
 
 $sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.total_ht, fac.total_ttc, fac.paye, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid, fac.facnumber";
-$sql .= " FROM llx_societe as s, llx_facture_fourn as fac ";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac ";
 $sql .= " WHERE fac.fk_soc = s.idp";
 
 if ($socid)

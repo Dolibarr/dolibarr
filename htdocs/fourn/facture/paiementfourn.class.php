@@ -57,7 +57,7 @@ class PaiementFourn
 
     $this->amount = ereg_replace(",",".",$this->amount);
     
-    $sql = "INSERT INTO llx_paiementfourn (fk_facture_fourn, datec, datep, amount, fk_user_author, fk_paiement, num_paiement, note)";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementfourn (fk_facture_fourn, datec, datep, amount, fk_user_author, fk_paiement, num_paiement, note)";
     $sql .= " VALUES ('$this->facid', now(), '$this->datepaye', '$this->amount', '$user->id', '$this->paiementid', '$this->num_paiement', '$this->note')";
     
     $result = $this->db->query($sql);
@@ -96,7 +96,7 @@ class PaiementFourn
         break;
       }
 
-	$sql = "INSERT INTO llx_bank (datec, dateo, amount, author, label, fk_type, fk_account, num_chq)";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, amount, author, label, fk_type, fk_account, num_chq)";
 	$sql .= " VALUES (now(), '$this->datepaye', -$this->amount, '$this->author', '$label', '$this->paiementid', '$this->accountid', '$this->num_paiement')";
 	$result = $this->db->query($sql);
 
