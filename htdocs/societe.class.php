@@ -106,120 +106,184 @@ class Societe {
    *    \param  id      id societe
    *    \param  user    Utilisateur qui demande la mise à jour
    */
-	 
-  function update($id,$user='')
+  function verify()
   {
+    $result = 0;
+
     if (strlen(trim($this->nom)) == 0)
       {
-	$this->nom = "VALEUR MANQUANTE";
+	$this->error_message = "Le nom de la société ne peut être vide";
+	$result = -2;
       }
 
-    if (strlen(trim($this->capital)) == 0)
+    $rescode = $this->verif_codeclient();
+
+    if ($rescode <> 0)
       {
-	$this->capital = 0;
-      }
-
-    $this->tel = ereg_replace(" ","",$this->tel);
-    $this->tel = ereg_replace("\.","",$this->tel);
-    $this->fax = ereg_replace(" ","",$this->fax);
-    $this->fax = ereg_replace("\.","",$this->fax);
-
-
-    /*
-     * \todo simpliste pour l'instant mais remplit 95% des cas à améliorer
-     */
-    if ($this->departement_id == -1 && $this->pays_id == 1)
-      {
-	if (strlen(trim($this->cp)) == 5)
+	if ($rescode == -1)
 	  {
-	    $depid = departement_rowid($this->db, 
-				       substr(trim($this->cp),0,2), 
-				       $this->pays_id);
-	    if ($depid > 0)
+	    $this->error_message = "La syntaxe du code client est incorrecte.";
+	  }
+
+	if ($rescode == -2)
+	  {
+	    $this->error_message = "Vous devez saisir un code client.";
+	  }
+
+	if ($rescode == -3)
+	  {
+	    $this->error_message = "Ce code client est déjà utilisé.";
+	  }
+
+	$result = -3;
+      }
+	
+
+    return $result;
+
+  }
+
+  /**
+   *    \brief  Mise a jour des paramètres de la société
+   *    \param  id      id societe
+   *    \param  user    Utilisateur qui demande la mise à jour
+   */
+	 
+  function update($id, $user='')
+  {
+    dolibarr_syslog("Societe::Update");
+    $result = $this->verify();
+
+    if ($result == 0)
+      {
+	dolibarr_syslog("Societe::Update verify ok");
+
+	if (strlen(trim($this->capital)) == 0)
+	  {
+	    $this->capital = 0;
+	  }
+	
+	$this->tel = ereg_replace(" ","",$this->tel);
+	$this->tel = ereg_replace("\.","",$this->tel);
+	$this->fax = ereg_replace(" ","",$this->fax);
+	$this->fax = ereg_replace("\.","",$this->fax);
+	
+	
+	/*
+	 * \todo simpliste pour l'instant mais remplit 95% des cas à améliorer
+	 */
+	if ($this->departement_id == -1 && $this->pays_id == 1)
+	  {
+	    if (strlen(trim($this->cp)) == 5)
 	      {
-		$this->departement_id = $depid;
+		$depid = departement_rowid($this->db, 
+					   substr(trim($this->cp),0,2), 
+					   $this->pays_id);
+		if ($depid > 0)
+		  {
+		    $this->departement_id = $depid;
+		  }
 	      }
 	  }
+	
+	
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
+	$sql .= " SET nom = '" . trim($this->nom) ."'"; // Champ obligatoire
+	
+	if (trim($this->adresse))  
+	  { $sql .= ",address = '" . trim($this->adresse) ."'"; }
+	
+	if (trim($this->cp))
+	  { $sql .= ",cp = '" . trim($this->cp) ."'"; }
+	
+	if (trim($this->ville))
+	  { $sql .= ",ville = '" . trim($this->ville) ."'"; }
+	
+	if (trim($this->departement_id)) 
+	  { $sql .= ",fk_departement = '" . $this->departement_id ."'"; }
+	
+	if (trim($this->pays_id))
+	  { $sql .= ",fk_pays = '" . $this->pays_id ."'"; }
+	
+	if (trim($this->tel))   
+	  { $sql .= ",tel = '" . trim($this->tel) ."'"; }
+	if (trim($this->fax)) 
+	  { $sql .= ",fax = '" . trim($this->fax) ."'"; }
+	if (trim($this->url))   
+	  { $sql .= ",url = '" . trim($this->url) ."'"; }
+	if (trim($this->siren)) 
+	  { $sql .= ",siren = '" . trim($this->siren) ."'"; }
+	if (trim($this->siret)) 
+	  { $sql .= ",siret = '" . trim($this->siret) ."'"; }
+	if (trim($this->ape))    
+	  { $sql .= ",ape = '" . trim($this->ape) ."'"; }
+	if (trim($this->prefix_comm)) 
+	  { $sql .= ",prefix_comm = '" . trim($this->prefix_comm) ."'"; }
+	if (trim($this->tva_intra)) 
+	  { $sql .= ",tva_intra = '" . trim($this->tva_intra) ."'"; }
+	if (trim($this->capital))  
+	  { $sql .= ",capital = '" . trim($this->capital) ."'"; }
+	if (trim($this->effectif_id))  
+	  { $sql .= ",fk_effectif = '" . trim($this->effectif_id) ."'"; }
+	
+	if (trim($this->forme_juridique_code))
+	  { 
+	    $sql .= ",fk_forme_juridique = '".trim($this->forme_juridique_code)."'";
+	  }
+	
+	$sql .= ",client = " . $this->client;
+	$sql .= ",fournisseur = " . $this->fournisseur;
+	
+	if ($user)           
+	  {
+	    $sql .= ",fk_user_modif = '".$user->id."'";
+	  }
+	
+	if (trim($this->code_client))
+	  {   
+	    // Attention check_codeclient peut modifier le code 
+	    // suivant le module utilisé
+	    
+	    $this->check_codeclient();
+	    
+	    $sql .= ", code_client = '". $this->code_client ."'";
+	    
+	    // Attention check_codecompta peut modifier le code 
+	    // suivant le module utilisé
+	    
+	    $this->check_codecompta();
+	    
+	    $sql .= ", code_compta = '". $this->code_compta ."'";
+	  }
+	
+	$sql .= " WHERE idp = '" . $id ."'";
+	
+	if ($this->db->query($sql)) 
+	  {
+	    $result = 0;
+	  }
+	else
+	  {
+	    if ($this->db->errno() == $this->db->ERROR_DUPLICATE)
+	      {
+		// Doublon
+$this->error_message = "Erreur, le prefix '".$this->prefix_comm."' existe déjà vous devez en choisir un autre";
+		$result =  -1;
+	      }	    
+	  }
       }
-    
-
-    $sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
-    $sql .= " SET nom = '" . trim($this->nom) ."'"; // Champ obligatoire
-
-    if (trim($this->adresse))  
-      { $sql .= ",address = '" . trim($this->adresse) ."'"; }
-
-    if (trim($this->cp))
-      { $sql .= ",cp = '" . trim($this->cp) ."'"; }
-
-    if (trim($this->ville))
-      { $sql .= ",ville = '" . trim($this->ville) ."'"; }
-
-    if (trim($this->departement_id)) 
-      { $sql .= ",fk_departement = '" . $this->departement_id ."'"; }
-
-    if (trim($this->pays_id))
-      { $sql .= ",fk_pays = '" . $this->pays_id ."'"; }
-
-    if (trim($this->tel))             { $sql .= ",tel = '" . trim($this->tel) ."'"; }
-    if (trim($this->fax))             { $sql .= ",fax = '" . trim($this->fax) ."'"; }
-    if (trim($this->url))             { $sql .= ",url = '" . trim($this->url) ."'"; }
-    if (trim($this->siren))           { $sql .= ",siren = '" . trim($this->siren) ."'"; }
-    if (trim($this->siret))           { $sql .= ",siret = '" . trim($this->siret) ."'"; }
-    if (trim($this->ape))             { $sql .= ",ape = '" . trim($this->ape) ."'"; }
-    if (trim($this->prefix_comm))     { $sql .= ",prefix_comm = '" . trim($this->prefix_comm) ."'"; }
-    if (trim($this->tva_intra))       { $sql .= ",tva_intra = '" . trim($this->tva_intra) ."'"; }
-    if (trim($this->capital))         { $sql .= ",capital = '" . trim($this->capital) ."'"; }
-    if (trim($this->effectif_id))     { $sql .= ",fk_effectif = '" . trim($this->effectif_id) ."'"; }
-
-    if (trim($this->forme_juridique_code))
-      { 
-	$sql .= ",fk_forme_juridique = '" . trim($this->forme_juridique_code) ."'";
-      }
-
-    $sql .= ",client = " . $this->client;
-    $sql .= ",fournisseur = " . $this->fournisseur;
-
-    if ($user)           
-      {
-	$sql .= ",fk_user_modif = '".$user->id."'";
-      }
-    
-    if (trim($this->code_client))
-      {   
-	// Attention check_codeclient peut modifier le code 
-	// suivant le module utilisé
-
-	$this->check_codeclient();
-
-	$sql .= ", code_client = '". $this->code_client ."'";
-
-	// Attention check_codecompta peut modifier le code 
-	// suivant le module utilisé
-
-	$this->check_codecompta();
-
-	$sql .= ", code_compta = '". $this->code_compta ."'";
-      }
 
 
-    $sql .= " WHERE idp = '" . $id ."'";
+    return $result;
 
-    if ($this->db->query($sql)) 
-      {
-    	return 0;
-      }
-    else
-      {
-    	if ($this->db->errno() == $this->db->ERROR_DUPLICATE)
-    	  {
-    	    // Doublon
-    	    return -1;
-    	  }
-    
-    	dolibarr_print_error($this->db);
-      }
   }
+  
+
+
+
+
+
+
 
   /**
    *    \brief      Recupére l'objet societe
@@ -804,6 +868,25 @@ class Societe {
    * Renvoie 0 si ok, peut modifier le code client suivant le module utilisé
    *
    */
+  function verif_codeclient()
+  {
+    if (defined('CODECLIENT_ADDON') && strlen(CODECLIENT_ADDON) > 0)
+      {
+
+	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.CODECLIENT_ADDON.'.php';
+
+	$var = CODECLIENT_ADDON;
+
+	$mod = new $var;
+
+	return $mod->verif($this->db, $this->code_client);
+      }
+    else
+      {
+	return 0;
+      }
+  }
+
   function check_codeclient()
   {
     if (defined('CODECLIENT_ADDON') && strlen(CODECLIENT_ADDON) > 0)
