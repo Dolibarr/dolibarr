@@ -250,7 +250,7 @@ else
 	      
 	      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	      print "<tr>";
-	      print '<td width="20%">Référence</td><td><input name="ref" size="20" value="'.$livre->ref.'"></td>';
+	      print '<td width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$livre->ref.'"></td>';
 	      print "<td valign=\"top\">Description</td></tr>";
 
 	      print "<tr><td>Statut</td><td>$livre->status_text";
@@ -349,7 +349,7 @@ else
 
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print '<td width="15%">Référence</td><td width="20%">'.$livre->ref.'</td>';
+	  print '<td width="15%">'.$langs->trans("Ref").'</td><td width="20%">'.$livre->ref.'</td>';
 	  print '<td width="50%" valign="top">Description</td>';
 	  print '<td valign="top">Catégories</td></tr>';
 	  print "<tr><td>Statut</td><td>$livre->status_text";

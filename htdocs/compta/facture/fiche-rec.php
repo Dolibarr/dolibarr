@@ -305,7 +305,7 @@ else
 	print_titre("Produits");
 	      
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-	print '<tr class="liste_titre"><td>Réf</td><td>Produit</td>';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>Produit</td>';
 	print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	
 	$num = sizeof($fac->lignes);

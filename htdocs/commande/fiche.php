@@ -329,8 +329,8 @@ if ($_GET["action"] == 'create')
 	       */
 	      print_titre("Produits");
 	      
-	      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
-	      print '<tr class="liste_titre"><td>Réf</td><td>Produit</td>';
+	      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>Produit</td>';
 	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	      
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";

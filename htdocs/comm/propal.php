@@ -394,7 +394,7 @@ if ($_GET["propalid"])
 	  print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 	  print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<TR class=\"liste_titre\">";
-	  print "<td>Réf</td><td>Produit</td>";
+	  print '<td>'.$langs->trans("Ref").'</td><td>Produit</td>';
 	  print '<td align="center">Tva</td><td align="center">Qté.</td><td align="center">Remise</td><td align="right">P.U.</td>';
 	  if ($propal->statut == 0)
 	    {
