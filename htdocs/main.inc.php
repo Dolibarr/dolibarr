@@ -458,9 +458,10 @@ function top_menu($head, $title="", $target="")
   print '<link rel="stylesheet" type="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
   print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
 
-  // TODO implementer les alternate css
+  // Definition en laternate style sheet des feuilles de styles les plus maintenues
   print '<link rel="alternate styleSheet" type="text/css" title="Rodolphe" href="'.DOL_URL_ROOT.'/theme/rodolphe/rodolphe.css">'."\n";
   print '<link rel="alternate styleSheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
+  print '<link rel="alternate styleSheet" type="text/css" title="Eldy" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css">'."\n";
 
   if (strlen($title) > 0)
     {
