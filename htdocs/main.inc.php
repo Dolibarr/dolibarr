@@ -329,7 +329,7 @@ function top_menu($head, $title="")
 {
   global $user, $conf, $rtplang;
 
-  print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+  print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
   print "\n<html>";
 
   print $rtplang->lang_header();
