@@ -335,7 +335,7 @@ else
 	
 	print "<tr><td>Date</td>";
 	print "<td colspan=\"3\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
-	print "<tr><td>".translate("Author")."</td><td colspan=\"3\">$author->fullname</td>";
+	print "<tr><td>Auteur</td><td colspan=\"3\">$author->fullname</td>";
 	
 	print '<tr><td>Montant</td>';
 	print '<td align="right" colspan="2"><b>'.price($obj->amount).'</b></td>';
@@ -346,7 +346,7 @@ else
 	print '<td>euros TTC</td></tr>';
 	
 	print '<tr><td>Statut</td><td align="center">'.$obj->statut.'</td>';
-	print "<td>".translate("Payed")."</td>";
+	print "<td>Payé</td>";
 	print "<td align=\"center\" bgcolor=\"#f0f0f0\"><b>".$yn[$obj->paye]."</b></td></tr>";
 	print "</table>";
 	
