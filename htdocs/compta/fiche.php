@@ -218,8 +218,9 @@ if ($socid > 0)
     print '<tr><td valign="top">';
     print '<table class="border" cellspacing="0" width="100%">';
     print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$objsoc->nom.'</td></tr>';
+    print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($objsoc->adresse)."<br>$objsoc->cp $objsoc->ville</td></tr>";
     print '<tr><td>Tel</td><td>'.$objsoc->tel.'&nbsp;</td><td>Fax</td><td>'.$objsoc->fax.'&nbsp;</td></tr>';
-    print '<tr><td>Ville</td><td colspan="3">'.nl2br($objsoc->adresse)."<br>$objsoc->cp $objsoc->ville</td></tr>";
+    print "<tr><td>Web</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
 
     print '<tr><td>Siren</td><td><a href="http://www.societe.com/cgi-bin/recherche?rncs='.$objsoc->siren.'">'.$objsoc->siren.'</a>&nbsp;</td>';
     print "<td>prefix</td><td>";
@@ -234,7 +235,6 @@ if ($socid > 0)
 
     print "</td></tr>";
 
-    print "<tr><td>Site</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
 
     print "</table>";
 
