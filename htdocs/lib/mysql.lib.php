@@ -22,18 +22,15 @@
  *
  */
 
-/**
-  * classe DoliDb
-	*
-	* Classe contenant les fonctions pour gere la database de dolibarr
-	*
-  * @package mysql.lib.php
-	* @author Fabien Seisen
-	* @author Rodolphe Quiedeville
-	* @author Laurent Destailleur
-	* @version 1.2
-	*
-	*/
+/*!	\file mysql.lib.php
+		\brief contenant les fonctions pour gere la database de dolibarr.
+		\author Fabien Seisen
+		\author Rodolphe Quiedeville.
+		\author	Laurent Destailleur.
+		\version 1.2.
+
+		Ensemble des fonctions permettant de gérer la database de dolibarr.
+*/
 
 class DoliDb {
   var $db, $results, $ok, $connected, $database_selected;
@@ -42,17 +39,14 @@ class DoliDb {
   var $ERROR_DUPLICATE=1062;
   var $ERROR_TABLEEXISTS=1050;
 
-
-/**
- * ouverture d'une connection vers le serveur et/ou une database
- *
- * @access public
- * @param string $type
- * @param string $host
- * @param string $user
- * @param string $pass
- * @param string $name
- */
+/*!
+		\brief ouverture d'une connection vers le serveur et/ou une database.
+		\param	type		type de base de données (mysql ou pgsql)
+		\param	host		addresse de la base de données
+		\param	user		nom de l'utilisateur autorisé
+		\param	pass		mot de passe
+		\param	name		nom de la database
+*/
 
   Function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '')
 
@@ -127,28 +121,24 @@ class DoliDb {
       return $this->ok;
     }
 
-/**
- * selectionne une database
- *
- * @access public
- * @param string $database
- * @return resource
- */
+/*!
+		\brief selectionne une database.
+		\param	database		nom de la database
+		\return	resource
+*/
 
   Function select_db($database)
     {
       return mysql_select_db($database, $this->db);
     }
 
-/**
- * connection vers une database
- *
- * @access public
- * @param string $host
- * @param string $login
- * @param string $passwd
- * @return resource
- */
+/*!
+		\brief connection vers une database.
+		\param	host		addresse de la base de données
+		\param	login		nom de l'utilisateur autorisé
+		\param	pass		mot de passe
+		\return	resource
+*/
 
   Function connect($host, $login, $passwd)
     {
@@ -157,13 +147,11 @@ class DoliDb {
       return $this->db;
     }
 
-/**
- * création d'une database
- *
- * @access public
- * @param string $database
- * @return integer
- */
+/*!
+		\brief création d'une database.
+		\param	database		nom de la database
+		\return	result			resultat 1 pour ok, 0 pour non ok
+*/
 
   Function create_db($database)
   {
@@ -177,12 +165,10 @@ class DoliDb {
       }
   }
 
-/**
- * copie d'une database
- *
- * @access public
- * @return resource
- */
+/*!
+		\brief copie d'une database.
+		\return	resource
+*/
 
 	Function clone()
     {
@@ -191,15 +177,13 @@ class DoliDb {
       return $db2;
     }
 
-/**
- * ouverture d'une connection vers une database
- *
- * @access public
- * @param string $host
- * @param string $login
- * @param string $passwd
- * @return resource
- */
+/*!
+		\brief ouverture d'une connection vers une database.
+		\param	host		addresse de la base de données
+		\param	login		nom de l'utilisateur autorisé
+		\param	pass		mot de passe
+		\return	resource
+*/
 
   Function pconnect($host, $login, $passwd)
     {
@@ -207,25 +191,21 @@ class DoliDb {
       return $this->db;
     }
 
-/**
- * fermeture d'une connection vers une database
- *
- * @access public
- * @return resource
- */
+/*!
+		\brief fermeture d'une connection vers une database.
+		\return	resource
+*/
 
   Function close()
   {
     return mysql_close($this->db);
   }
 
-/**
- * debut d'un transaction
- *
- * @access public
- * @param integer $do
- * @return string
- */
+/*!
+		\brief debut d'une transaction.
+		\param	do
+		\return	string
+*/
 
   Function begin($do=1)
   {
@@ -239,13 +219,11 @@ class DoliDb {
       }
   }
 
-/**
- * écriture d'un transaction
- *
- * @access public
- * @param integer $do
- * @return string
- */
+/*!
+		\brief écriture d'une transaction.
+		\param	do
+		\return	string
+*/
 
   Function commit($do=1)
   {
@@ -259,13 +237,11 @@ class DoliDb {
       }
   }
 
-/**
- * effacement d'un transaction et retour au ancienne valeurs
- *
- * @access public
- * @param integer $do
- * @return string
- */
+/*!
+		\brief éffacement d'une transaction et retour au ancienne valeurs.
+		\param	do
+		\return	string
+*/
 
   Function rollback($do=1)
   {
@@ -279,15 +255,13 @@ class DoliDb {
       }
   }
 
-/**
- * requete vers une database
- *
- * @access public
- * @param string $query
- * @param string $limit
- * @param string $offset
- * @return resource
- */
+/*!
+		\brief requete vers une database.
+		\param	query		contenu de la query
+		\param	limit
+		\param	offset
+		\return	resource
+*/
 
   Function query($query, $limit="", $offset="")
     {
@@ -297,13 +271,11 @@ class DoliDb {
       return $this->results;
     }
 
-/**
- * liste des tables vers une database
- *
- * @access public
- * @param string $database
- * @return resource
- */
+/*!
+		\brief liste des tables dans une database.
+		\param	database		nom de la database
+		\return	resource
+*/
 
   Function list_tables($database)
   {
@@ -311,52 +283,44 @@ class DoliDb {
     return  $this->results;
   }
 
-/**
- * renvoie les données de la requete
- *
- * @access public
- * @param integer $nb
- * @param string $fieldname
- * @return resource
- */
+/*!
+		\brief renvoie les données de la requete.
+		\param	nb			contenu de la query
+		\param	string	nom du champ
+		\return	resource
+*/
 
   Function result($nb, $fieldname)
     {
       return mysql_result($this->results, $nb, $fieldname);
     }
 
-/**
- * désalloue la memoire de la requete
- *
- * @access public
- * @return resource
- */
+/*!
+		\brief désalloue la memoire de la requete.
+		\return	resource
+*/
 
   Function free()
     {
       return mysql_free_result($this->results);
     }
 
-/**
- * renvoie les données comme un objet
- *
- * @access public
- * @return resource
- */
+/*!
+		\brief renvoie les données comme un objet.
+		\return	resource
+*/
 
   Function fetch_object()
     {
       return mysql_fetch_object($this->results);
   	}
 
-/**
- * défini les limites de la requète
- *
- * @access public
- * @param integer $limit
- * @param integer $offset
- * @return string
- */
+/*!
+		\brief défini les limites de la requète.
+		\param	limit
+		\param	offset
+		\return	limit
+*/
 
   Function plimit($limit=0,$offset=0)
     {
@@ -376,37 +340,31 @@ class DoliDb {
       return "unix_timestamp($fname)";
     }
 
-/**
- * formatage de la date en fonction des locales
- *
- * @access public
- * @param integer $fname
- * @return string
- */
+/*!
+		\brief formatage de la date en fonction des locales.
+		\param	fname
+		\return	date
+*/
 
   Function idate($fname)
     {
       return strftime("%Y%m%d%H%M%S",$fname);
     }
 
-/**
- * renvoie les données dans un tableau
- *
- * @access public
- * @return array
- */
+/*!
+		\brief renvoie les données dans un tableau.
+		\return	array
+*/
 
   Function fetch_array()
     {
       return mysql_fetch_array($this->results);
     }
 
-/**
- * renvoie les données comme un tableau
- *
- * @access public
- * @return array
- */
+/*!
+		\brief renvoie les données comme un tableau.
+		\return	array
+*/
 
   Function fetch_row()
     {
@@ -425,48 +383,41 @@ class DoliDb {
       return mysql_fetch_field($this->results);
     }
 
-/**
- * renvoie le nombre de lignes dans le resultat de la requete
- *
- * @access public
- * @return int
- */
+
+/*!
+		\brief renvoie le nombre de lignes dans le resultat de la requete.
+		\return	int
+*/
 
   Function num_rows()
     {
       return mysql_num_rows($this->results);
     }
 
-/**
- * renvoie le nombre de champs dans le resultat de la requete
- *
- * @access public
- * @return int
- */
+/*!
+		\brief renvoie le nombre de champs dans le resultat de la requete.
+		\return	int
+*/
 
   Function num_fields()
     {
       return mysql_num_fields($this->results);
     }
 
-/**
- * renvoie le texte de l'erreur mysql de l'operation precedente
- *
- * @access public
- * @return string
- */
+/*!
+		\brief renvoie le texte de l'erreur mysql de l'operation precedente.
+		\return	error_text
+*/
 
   Function error()
     {
       return mysql_error($this->db);
     }
 
-/**
- * renvoie la valeur numerique de l'erreur mysql de l'operation precedente
- *
- * @access public
- * @return int
- */
+/*!
+		\brief renvoie la valeur numerique de l'erreur mysql de l'operation precedente.
+		\return error_num
+*/
 
   Function errno()
     {
@@ -476,24 +427,20 @@ class DoliDb {
       return mysql_errno($this->db);
     }
 
-/**
- * obtient l'id genéré par le précedent INSERT
- *
- * @access public
- * @return int
- */
+/*!
+		\brief obtient l'id genéré par le précedent INSERT.
+		\return id
+*/
 
   Function last_insert_id()
     {
       return mysql_insert_id();
     }
 
-/**
- * obtient le nombre de lignes affectées dans la précédente opération
- *
- * @access public
- * @return int
- */
+/*!
+		\brief obtient le nombre de lignes affectées dans la précédente opération.
+		\return rows
+*/
 
   Function affected_rows()
     {

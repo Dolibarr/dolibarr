@@ -20,23 +20,20 @@
  *
  */
 
-/**
-  * librairie contenant les fonctions pour calculer un prix
-	*
-  * @package price.lib.php
-	* @author Rodolphe Quiedeville
-	* @version 1.2
-	*
-	*/
+/*!	\file price.lib.php
+		\brief librairie contenant les fonctions pour calculer un prix.
+		\author Rodolphe Quiedeville.
+		\version 1.2.
 
-/**
- * permet de calculer un prix
- *
- * @access public
- * @param integer $products
- * @param integer $remise_percent
- * @return integer $result
- */
+		Ensemble des fonctions permettant de calculer un prix.
+*/
+
+/*!
+		\brief permet de calculer un prix
+		\param products
+		\param remise_percent
+		\return result
+*/
 
 Function calcul_price($products, $remise_percent)
 {
@@ -45,7 +42,7 @@ Function calcul_price($products, $remise_percent)
   $tva = array();
   $total_tva = 0;
   $total_remise = 0;
-  
+
   $num = sizeof($products);
   $i = 0;
 
