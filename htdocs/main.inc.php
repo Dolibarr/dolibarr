@@ -217,6 +217,10 @@ if (defined("MAIN_NOT_INSTALLED"))
  * Activation des modules
  * et inclusion de librairies dépendantes
  */
+if (defined("MAIN_MODULE_EXTERNALRSS"))
+{
+  $conf->externalrss->enabled=MAIN_MODULE_EXTERNALRSS;
+}
 if (defined("MAIN_MODULE_COMMANDE"))
 {
   $conf->commande->enabled=MAIN_MODULE_COMMANDE;
