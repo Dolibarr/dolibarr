@@ -21,7 +21,8 @@
  *
  */
 
-/** 	\file       htdocs/ficheinter.php
+/**
+     	\file       htdocs/ficheinter.php
 		\brief      Fichier fiche intervention
 		\ingroup    ficheinter
 		\version    $Revision$
@@ -30,13 +31,15 @@
 require("./pre.inc.php");
 require("../contact.class.php");
 
+$langs->load("interventions");
+
 if ($user->societe_id > 0)
 {
   $socid = $user->societe_id ;
 }
 
-llxHeader();
 
+llxHeader();
 
 $sortorder=$_GET["sortorder"]?$_GET["sortorder"]:$_POST["sortorder"];
 $sortfield=$_GET["sortfield"]?$_GET["sortfield"]:$_POST["sortfield"];
@@ -50,6 +53,8 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+
+
 $sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f ";
 $sql .= " WHERE f.fk_soc = s.idp ";
@@ -62,10 +67,11 @@ if ($socid > 0)
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
 
-if ( $db->query($sql) )
+$result=$db->query($sql);
+if ($result)
 {
-  $num = $db->num_rows();
-  print_barre_liste("Liste des fiches d'intervention", $page, "index.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
+  $num = $db->num_rows($result);
+  print_barre_liste($langs->trans("ListOfInterventions"), $page, "index.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
 
   $i = 0;
   print '<table class="noborder" width="100%">';
@@ -79,7 +85,7 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object();
+      $objp = $db->fetch_object($result);
       $var=!$var;
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$objp->fichid\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
@@ -95,7 +101,7 @@ if ( $db->query($sql) )
     }
   
   print "</table>";
-  $db->free();
+  $db->free($result);
 }
 else
 {

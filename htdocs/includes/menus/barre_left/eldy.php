@@ -201,7 +201,8 @@ class MenuLeft {
                 
                 if ($conf->fichinter->enabled ) 
                 {
-                  $newmenu->add(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", "Fiches d'intervention");
+                  $langs->load("interventions");
+                  $newmenu->add(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"));
                 }
                 
             }
@@ -233,40 +234,41 @@ class MenuLeft {
                 
                 if ($conf->facture->enabled)
                 {
-                  $langs->load("bills");
-                  $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),1);
-                  
-                  if ($user->societe_id == 0) 
-                {
-                  if ($leftmenu=="suppliers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),2);
-                }
-                  
-                  if ($leftmenu=="suppliers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),2);
+                    $langs->load("bills");
+                    $newmenu->add(DOL_URL_ROOT."/fourn/facture/index.php?leftmenu=suppliers_bills", $langs->trans("BillsSuppliers"),1,$user->rights->facture->lire);
+                    if ($user->societe_id == 0) 
+                    {
+                      if ($leftmenu=="suppliers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create",$langs->trans("NewBill"),2,$user->rights->facture->creer);
+                    }
+                    if ($leftmenu=="suppliers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"),2,$user->rights->facture->lire);
                 }
         
         
                 // Clients
                 if ($conf->societe->enabled) { 
-                    $newmenu->add(DOL_URL_ROOT."/compta/clients.php?leftmenu=customers", $langs->trans("Customers"));
-                    if ($user->rights->societe->creer)
+                    $newmenu->add(DOL_URL_ROOT."/compta/clients.php?leftmenu=customers", $langs->trans("Customers"),0,$user->rights->societe->lire);
+                    if ($user->societe_id == 0) 
                     {
-                      $newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=customers&action=create&amp;type=c", $langs->trans("MenuNewCustomer"));
+                        $newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=customers&action=create&amp;type=c", $langs->trans("MenuNewCustomer"),1,$user->rights->societe->creer);
                     }
-                    $newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&type=c", $langs->trans("Contacts"));
+                    $newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&type=c", $langs->trans("Contacts"),1,$user->rights->societe->lire);
                 }
                                 
                 if ($conf->facture->enabled)
                 {
-                  $langs->load("customers_bills");
-                  $newmenu->add(DOL_URL_ROOT."/compta/facture.php?leftmenu=customers_bills",$langs->trans("BillsCustomers"),1);
-                  if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"),2);
-                  if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/clients.php?action=facturer",$langs->trans("NewBill"),2);
-                  if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR)
-                {
-                  if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes",2);
-                }
-                  if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php",$langs->trans("Payments"),2);
-                  if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"),2);
+                    $langs->load("customers_bills");
+                    $newmenu->add(DOL_URL_ROOT."/compta/facture.php?leftmenu=customers_bills",$langs->trans("BillsCustomers"),1,$user->rights->facture->lire);
+                    if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"),2,$user->rights->facture->lire);
+                    if ($user->societe_id == 0) 
+                    {
+                        if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/clients.php?action=facturer",$langs->trans("NewBill"),2,$user->rights->facture->creer);
+                    }
+                    if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR)
+                    {
+                        if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes",2,$user->rights->facture->lire);
+                    }
+                    if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php",$langs->trans("Payments"),2,$user->rights->facture->lire);
+                    if ($leftmenu=="customers_bills") $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"),2,$user->rights->facture->lire);
                 }
                 
                 // Dons
