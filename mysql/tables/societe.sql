@@ -21,6 +21,7 @@
 -- SGBD : Mysql 3.23
 --
 -- ========================================================================
+
 create table societe
 (
   idp            integer AUTO_INCREMENT PRIMARY KEY,

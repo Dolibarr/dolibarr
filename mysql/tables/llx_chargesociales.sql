@@ -19,6 +19,7 @@
 -- $Source$
 --
 -- ========================================================================
+
 create table llx_chargesociales
 (
   rowid      integer AUTO_INCREMENT PRIMARY KEY,

@@ -20,6 +20,7 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- ========================================================================
+
 create table socstatutlog
 (
   id          integer AUTO_INCREMENT PRIMARY KEY,

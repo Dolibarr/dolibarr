@@ -22,6 +22,7 @@
 -- Actions commerciales a effectuer
 --
 -- ========================================================================
+
 create table llx_todocomm
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,

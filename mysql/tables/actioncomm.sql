@@ -21,6 +21,7 @@
 -- Actions commerciales
 --
 -- ========================================================================
+
 create table actioncomm
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
@@ -44,7 +45,6 @@ create table actioncomm
   fk_facture     integer
 );
 
---create table llx_todocomm
 
 
 

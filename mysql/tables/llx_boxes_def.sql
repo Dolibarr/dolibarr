@@ -19,10 +19,9 @@
 -- $Source$
 --
 -- ===========================================================================
-
 --
 -- 
---
+
 create table llx_boxes_def
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,

@@ -20,19 +20,16 @@
 --
 -- ===================================================================
 
-
 create table llx_voyage_reduc
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   datec           datetime,
   datev           date,           -- date de valeur
-
   date_debut      date,           -- date operation
   date_fin        date,
   amount          real NOT NULL default 0,
   label           varchar(255),
   numero          varchar(255),
   fk_type         smallint,       -- Train, Avion, Bateaux
-
   note            text
 );

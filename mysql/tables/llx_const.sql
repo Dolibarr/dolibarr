@@ -19,10 +19,10 @@
 -- $Source$
 --
 -- ===========================================================================
-
 --
 -- Definitions des constantes utilisés comme parametres de configuration
 --
+
 create table llx_const
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,

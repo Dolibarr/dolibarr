@@ -18,7 +18,6 @@
 --
 -- ===================================================================
 
-
 create table llx_bookmark
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,

@@ -19,6 +19,7 @@
 -- $Source$
 --
 -- ========================================================================
+
 create table c_chargesociales
 (
   id          integer PRIMARY KEY,

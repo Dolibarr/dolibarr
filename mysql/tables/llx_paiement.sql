@@ -18,7 +18,6 @@
 --
 -- ===================================================================
 
-
 create table llx_paiement
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,

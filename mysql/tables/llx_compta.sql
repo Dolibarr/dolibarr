@@ -20,7 +20,6 @@
 --
 -- ===================================================================
 
-
 create table llx_compta
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,

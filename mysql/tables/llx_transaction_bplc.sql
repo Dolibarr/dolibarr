@@ -18,7 +18,6 @@
 --
 -- ===================================================================
 
-
 create table llx_transaction_bplc
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,

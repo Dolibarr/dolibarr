@@ -19,10 +19,11 @@
 -- $Source$
 --
 -- ===========================================================================
-
+--
 -- position : 0-index.php, 1-left, 2-right
 -- 
 --
+
 create table llx_boxes
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,

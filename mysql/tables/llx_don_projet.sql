@@ -18,7 +18,6 @@
 --
 -- ===================================================================
 
-
 create table llx_don_projet
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,

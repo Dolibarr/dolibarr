@@ -20,7 +20,6 @@
 --
 -- ===================================================================
 
-
 create table llx_voyage
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
