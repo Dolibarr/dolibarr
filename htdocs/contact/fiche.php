@@ -64,7 +64,7 @@ if ($_GET["action"] == 'delete')
 }
 
 
-if ($action == 'update') 
+if ($_POST["action"] == 'update') 
 {
   $contact = new Contact($db);
 
@@ -94,7 +94,7 @@ if ($action == 'update')
   $error = $contact->error;
 }
 
-if ($action == 'create_user')
+if ($_GET["action"] == 'create_user')
 {
   $nuser = new User($db);
   $contact = new Contact($db);
