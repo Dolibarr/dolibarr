@@ -21,10 +21,6 @@
  */
 require("./pre.inc.php");
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
-
 llxHeader('','Prélèvements');
 /*
  * Sécurité accés client
@@ -35,21 +31,17 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-if ($sortorder == "") {
-  $sortorder="DESC";
-}
-if ($sortfield == "") {
-  $sortfield="p.datec";
-}
-
 /*
  * Recherche
  *
  *
  */
 
-if ($page == -1) { $page = 0 ; }
-
+$page = $_GET["page"];
+$sortorder = $_GET["sortorder"];
+$sortfield = $_GET["sortfield"];
+if ($sortorder == "") $sortorder="DESC";
+if ($sortfield == "") $sortfield="p.datec";
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
@@ -70,12 +62,23 @@ $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE s.idp = f.fk_soc";
 $sql .= " AND pf.fk_facture = f.rowid AND pf.fk_prelevement = p.rowid";
 
+if ($_GET["search_bon"])
+{
+  $sql .= " AND p.ref LIKE '%".$_GET["search_bon"]."%'";
+}
+
 
 if ($_GET["search_societe"])
 {
   $sel =urldecode($_GET["search_societe"]);
   $sql .= " AND s.nom LIKE '%".$sel."%'";
 }
+
+if ($_GET["search_facture"])
+{
+  $sql .= " AND f.facnumber LIKE '%".$_GET["search_facture"]."%'";
+}
+
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
@@ -85,7 +88,8 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  $urladd= "&amp;statut=".$_GET["statut"];
+  $urladd = "&amp;statut=".$_GET["statut"];
+  $urladd .= "&amp;search_bon=".$_GET["search_bon"];
 
   print_barre_liste("Prélèvements", $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
   print"\n<!-- debut table -->\n";
