@@ -148,6 +148,12 @@ class PaiementFourn
    *
    *
    */
+  Function delete($id) 
+  {
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementfourn WHERE rowid = $id";
+    
+    return $this->db->query($sql);
+  }
 
 }
 ?>

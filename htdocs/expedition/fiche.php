@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,8 +97,6 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
  *
  */
 
-llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
-
 $html = new Form($db);
 
 /*********************************************************************
@@ -110,6 +108,8 @@ $html = new Form($db);
  ************************************************************************/
 if ($HTTP_POST_VARS["action"] == 'create') 
 {
+  llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
+
   print_titre("Créer une expédition");
 
   $commande = new Commande($db);
@@ -267,12 +267,17 @@ else
   if ($id > 0)
     {
       $expedition = New Expedition($db);
-      if ( $expedition->fetch($id) > 0)
+      $result = $expedition->fetch($id);
+
+      if ( $result > 0)
 	{	  
+
 	  $author = new User($db);
 	  $author->id = $expedition->user_author_id;
 	  $author->fetch();
-	  
+
+	  llxHeader('','Fiche expedition','ch-expedition.html',$form_search,$author);
+	 
 	  $commande = New Commande($db);
 	  $commande->fetch($expedition->commande_id);
 
