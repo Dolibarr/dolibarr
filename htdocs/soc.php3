@@ -150,7 +150,7 @@ elseif ($action == 'edit')
       
       print '</td></tr>';
       
-      print '<tr><td align="center" colspan="2"><input type="submit" value="Mettre a jour"></td></tr>';
+      print '<tr><td align="center" colspan="2"><input type="submit" value="Mettre à jour"></td></tr>';
       print '</table>';
       print '</form>';
     }
