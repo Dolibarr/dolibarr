@@ -91,7 +91,8 @@ class modPropale
 		 "insert into llx_rights_def values (26,'Clôturer les propositions commerciales','propale','d',0);",
 		 "insert into llx_rights_def values (27,'Supprimer les propositions commerciales','propale','d',0);",
 		 "INSERT INTO llx_boxes_def (name,file) VALUES('Proposition commerciales', 'box_propales.php');",
-		 "REPLACE INTO llx_propal_model_pdf SET nom = '".$const[0][2]."'"
+		 "REPLACE INTO llx_propal_model_pdf SET nom = '".$const[0][2]."'",
+		 "REPLACE INTO llx_const SET name = 'PROPALE_ADDON', value='mod_propale_ivoire', visible=0"
 		 );
     //"insert into llx_rights_def values (23,'Modifier les propositions commerciales d\'autrui','propale','m',0);",
     for ($i = 0 ; $i < sizeof($sql) ; $i++)
