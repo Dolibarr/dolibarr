@@ -1378,4 +1378,34 @@ function get_exdir($num)
   return substr($num, 0,1).'/'.substr($num, 1,1).'/'.substr($num, 2,1).'/';
 }
 
+/*
+ * Création de répertoire recursive
+ *
+ */
+function create_exdir($dir)
+{
+  $ccdir = '';
+
+  $cdir = explode("/",substr($dir,1));
+
+  for ($i = 0 ; $i < sizeof($cdir) ; $i++)
+  {
+    $ccdir .= "/".$cdir[$i];
+ 
+    if (! file_exists($ccdir))
+      {
+	umask(0);
+	if (! @mkdir($ccdir, 0755))
+	  {
+	    dolibarr_syslog("create_exdir Erreur: Le répertoire '$ccdir' n'existe pas et Dolibarr n'a pu le créer.");
+	  }
+	else
+	  {
+	    dolibarr_syslog("create_exdir Le répertoire '$ccdir' created");
+	  }
+      }	
+  }
+
+}
+
 ?>
