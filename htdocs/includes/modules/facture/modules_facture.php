@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,9 +94,9 @@ class ModeleNumRefFactures
 
 
 /*!
-		\brief      Crée un facture sur disque en fonction du modèle de FACTURE_ADDON_PDF
-		\param	    db  		objet base de donnée
-		\param	    facid		id de la facture à créer
+  \brief      Crée un facture sur disque en fonction du modèle de FACTURE_ADDON_PDF
+  \param	    db  		objet base de donnée
+  \param	    facid		id de la facture à créer
 */
 function facture_pdf_create($db, $facid, $message="")
 {
@@ -131,6 +132,54 @@ function facture_pdf_create($db, $facid, $message="")
     {
       print $langs->trans("Error")." ".$langs->trans("Error_FACTURE_ADDON_PDF_NotDefined");
       return 0;
+    }
+}
+
+/*!
+  \brief      Créé un meta fichier à côté de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payée ou compliquée à gérer ... avec un rgrep c'est vite fait bien fait [eric seigne]
+  \param	    db  		objet base de donnée
+  \param	    facid		id de la facture à créer
+*/
+function facture_meta_create($db, $facid, $message="")
+{
+  $fac = new Facture($db,"",$facid);
+  $fac->fetch($facid);  
+  $fac->fetch_client();
+  if (defined("FAC_OUTPUTDIR"))
+    {
+      $dir = FAC_OUTPUTDIR . "/" . $fac->ref . "/" ;
+      $file = $dir . $fac->ref . ".meta";
+      if (! file_exists($dir))
+	{
+	  umask(0);
+	  if (! mkdir($dir, 0755))
+	    {
+	      print "Impossible de créer $dir !";
+	    }
+	}
+      if (file_exists($dir))
+	{
+	  $nblignes = sizeof($fac->lignes);
+	  $client = $fac->client->nom . " " . $fac->client->adresse . " " . $fac->client->cp . " " . $fac->client->ville;
+	  $meta = "REFERENCE=\"" . $fac->ref . "\"
+DATE=\"" . strftime("%d/%m/%Y",$fac->date) . "\"
+NB_ITEMS=\"" . $nblignes . "\"
+CLIENT=\"" . $client . "\"
+TOTAL_HT=\"" . $fac->total_ht . "\"
+TOTAL_TTC=\"" . $fac->total_ttc . "\"\n";
+
+	  for ($i = 0 ; $i < $nblignes ; $i++) {
+	    //Pour les articles
+	    $meta .= "ITEM_" . $i . "_QUANTITY=\"" . $fac->lignes[$i]->qty . "\"
+ITEM_" . $i . "_UNIT_PRICE=\"" . $fac->lignes[$i]->price . "\"
+ITEM_" . $i . "_TVA=\"" .$fac->lignes[$i]->tva_taux . "\"
+ITEM_" . $i . "_DESCRIPTION=\"" . str_replace("\r\n","",nl2br($fac->lignes[$i]->desc)) . "\"
+";
+	  }
+	}
+      $fp = fopen ($file,"w");
+      fputs($fp,$meta);
+      fclose($fp);
     }
 }
 
