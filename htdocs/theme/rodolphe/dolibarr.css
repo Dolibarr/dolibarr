@@ -21,7 +21,7 @@
 
 BODY 
 {
-  background: #e0ebeb; 
+  background: #ebe0eb; 
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none 
 }
@@ -30,14 +30,14 @@ BODY
  */
 .menu 
 { 
-  background: #b3cccc; 
+  background: #ccb3cc; 
   font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
   color: #000000; 
   text-decoration: none }
 
 .submenu 
 { 
-  background: #b3cccc; 
+  background: #ccb3cc; 
   font-family: Helvetica, Verdana; font-size: 14px;
   color: #000000; 
   text-decoration: none }
@@ -49,14 +49,14 @@ BODY
 
 TD.barre 
 { 
-  background: #b3cccc;
+  background: #ccb3cc;
   font-family: Helvetica, Verdana; font-size: 14px; 
   color: #000000; 
   text-decoration: none }
 
 TD.barre_select 
 { 
-  background: #b3cccc; 
+  background: #ccb3cc; 
   color: #000000 
   }
 
@@ -65,26 +65,26 @@ TD.barre_select
 DIV.titre 
 { 
   font-family: Helvetica, Verdana; font-size: 16px; font-weight: bold; 
-  color: #336666; 
+  color: #663366; 
   text-decoration: none }
 /*
  *
  */
 TR.liste_titre  
 { 
-  background: #669999; 
+  background: #996699; 
   font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
   text-decoration: none }
 
 TR.pair	        
 { 
-  background: #b3cccc; 
+  background: #ccb3cc; 
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none }
 
 TR.impair	
 { 
-  background: #cceeee; 
+  background: #eeccee; 
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none }
 
