@@ -208,7 +208,7 @@ if ( $db->query($sql) )
 
       print '<table class="noborder" width="100%">';
       print "<tr class=\"liste_titre\">";
-      print "<td colspan=\"2\">".$langs->trans("Bookmark")."</td>";
+      print "<td colspan=\"2\">".$langs->trans("Bookmarks")."</td>";
       print "</tr>\n";
       
       while ($i < $num)
@@ -261,8 +261,8 @@ if ( $db->query($sql) )
 	  print "<tr $bc[$var]>";
 	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_file()."</a>&nbsp;";
 	  print "<a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
-	  print "<td>".strftime("%d %b %Y",$obj->da)."</td>";
-	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->sname.'</a></td>';
+	  print "<td>".dolibarr_print_date($obj->da)."</td>";
+	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->sname.'</a></td>';
 	  $i++;
 	}
   // TODO Ajouter rappel pour "il y a des contrats à mettre en service"
@@ -313,11 +313,11 @@ if ( $db->query($sql) )
 	  print '<td>'. strftime("%d %b %Y",$obj->da);
           if (date("U",$obj->da) < time())
           {
-	    print img_warning();
+	    print img_warning("Late");
           }
 	  print "</td>";
 
-	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->sname.'</a></td>';
+	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->sname.'</a></td>';
 	  $i++;
 	}
       // TODO Ajouter rappel pour "il y a des contrats à mettre en service"
