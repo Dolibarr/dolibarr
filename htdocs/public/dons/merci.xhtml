@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE html
+          PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+>
+<html lang="fr">
+  <head>    
+
+  </head>
+  <body>
+    <div class="main">     
+      <p>
+	<h1>Merci, votre promesse de don a été prise en compte</h1>
+      </p>
+
+      <form action="index.php" method="post">
+
+	<table id="formulaire">
+
+	  <tr id="date">
+	    <script language="php">
+	      $a = setlocale("LC_TIME", "FRENCH");
+	      print strftime("%d %B %Y", time());
+	    </script>
+	  </tr>
+	  
+	  <tr id="projet">
+
+	  </tr>
+
+	  <tr id="public">
+
+	  </tr>
+	  
+	  <tr id="nom">
+	    <script language="php">
+	      print $don->nom;
+	    </script>
+	  </tr>
+	  
+	  <tr id="adresse">
+	    <script language="php">
+	      print $don->adresse;
+	    </script>
+	  </tr>
+	  
+	  <tr id="ville">
+	    <script language="php">
+	      print "$don->cp $don->ville";
+	    </script>
+	  </tr>
+	  
+	  <tr id="email">
+	    <script language="php">
+	      print $don->email;
+	    </script>
+	  </tr>
+	  
+	  <tr id="montant">
+	    <script language="php">
+	      print $don->amount;
+	    </script>
+	  </tr>
+	  
+	  <tr>
+	    <td valign="top">
+	      Commentaire
+	    </td>
+	    <td>
+	      <script language="php">
+		nl2br(print $don->note);
+	      </script>
+	    </td>
+	  </tr>
+	  
+	</table>
+      </form>
+    </div>    
+  </body>  
+</html>
+<!--
+Local Variables: ***
+mode: xml ***
+End: ***
+-->
+
