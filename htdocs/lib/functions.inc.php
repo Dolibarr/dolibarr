@@ -522,14 +522,13 @@ function img_previous($alt = "default")
 /*!
 		\brief fonction de login
 		\remarks    il faut changer le code html dans la fonction pour changer le design
-		\remarks	le css devrait etre pris dans le repetoire de dolibarr et ne pas etre en dur !
 */
 
 function loginfunction()
 {
   print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
   print "\n<html><head><title>Dolibarr Authentification</title>";
-  print '<link rel="stylesheet" type="text/css" href="./login.css">
+  print '<link rel="stylesheet" type="text/css" href="lib/login.css">
   </head>
   <body onload="donnefocus();">
   <div class="main">
