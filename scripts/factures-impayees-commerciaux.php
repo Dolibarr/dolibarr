@@ -36,7 +36,7 @@ $sql .= " WHERE f.paye = 0";
 $sql .= " AND f.fk_soc = s.idp";
 $sql .= " AND sc.fk_soc = s.idp";
 $sql .= " AND sc.fk_user = u.rowid";
-$sql .= " ORDER BY u.email";
+$sql .= " ORDER BY u.email ASC, s.idp ASC";
 
 if ( $db->query($sql) ) 
 {
