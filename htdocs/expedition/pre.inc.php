@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +41,10 @@ function llxHeader($head = "", $title="", $help_url='', $form_search='', $author
 
   $menu = new Menu();
 
+  $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
+
   $menu->add(DOL_URL_ROOT."/expedition/", "Expeditions");
   $menu->add_submenu(DOL_URL_ROOT."/expedition/liste.php", "Liste");
-
-  $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
 
   $menu->add(DOL_URL_ROOT."/expedition/stats/", "Statistiques");
 
