@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
- * Copyright (C) 2004 Eric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004 Laurent Destailleur       <eldy@users.sourceforge.net>
+ * Copyright (C) 2004 Sebastien Di Cintio       <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004 Benoit Mortier            <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Eric Seigne               <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/propale.php
+/**	    \file       htdocs/admin/propale.php
 		\ingroup    propale
 		\brief      Page d'administration/configuration du module Propale
 		\version    $Revision$
@@ -107,8 +107,6 @@ if ($_GET["action"] == 'setmod')
 
 /*
  *
- *
- *
  */
 
 print_titre("Configuration du module Propositions Commerciales");
@@ -121,6 +119,7 @@ print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Description")."</td>\n";
+print "  <td>".$langs->trans("Example")."</td>\n";
 print "  <td align=\"center\">".$langs->trans("Activated")."</td>\n";
 print "  <td>&nbsp;</td>\n";
 print "</tr>\n";
@@ -145,9 +144,9 @@ if ($handle)
 	    $pair = "impair";
 	  else
 	    $pair = "pair";
-	  print "<tr class=\"$pair\">\n  <td width=\"140\">".$file."</td>\n  <td>";
-	  print $modPropale->info();
-	  print "</td>\n";
+	  print "<tr class=\"$pair\">\n  <td width=\"140\">".$file."</td>";
+	  print "\n  <td>".$modPropale->info()."</td>\n";
+	  print "\n  <td>".$modPropale->getExample()."</td>\n";
 	  
 	  if ($propale_addon_var == "$file")
 	    {
