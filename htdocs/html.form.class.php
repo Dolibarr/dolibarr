@@ -101,9 +101,9 @@ class Form {
   }
 
 
-  Function select_date($set_time='', $prefix='re', $h = 0, $m = 0)
+  Function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0)
   {
-    if (! $set_time)
+    if (! $set_time && !$empty)
       {
 	$set_time = time();
       }
@@ -130,6 +130,15 @@ class Form {
     $smin = date("i", $set_time);
 
     print '<select name="'.$prefix.'day">';    
+
+    if ($empty)
+      {
+	$cday = 0;
+	$cmonth = 0;
+	$syear = 0;
+
+	print '<option value="0" SELECTED>';
+      }
     
     for ($day = 1 ; $day < $sday + 32 ; $day++) 
       {
@@ -147,6 +156,12 @@ class Form {
     
     
     print '<select name="'.$prefix.'month">';    
+    if ($empty)
+      {
+	print '<option value="0" SELECTED>';
+      }
+
+
     for ($month = $smonth ; $month < $smonth + 12 ; $month++)
       {
 	if ($month == $cmonth)
@@ -159,22 +174,30 @@ class Form {
 	  }
       }
     print "</select>";
-    
-    print '<select name="'.$prefix.'year">';
-    
-    for ($year = $syear - 2; $year < $syear + 5 ; $year++)
+
+    if ($empty)
       {
-	if ($year == $syear)
-	  {
-	    print "<option value=\"$year\" SELECTED>$year";
-	  }
-	else
-	  {
-	    print "<option value=\"$year\">$year";
-	  }
+	print '<input type="text" size="5" maxlength="4" name="'.$prefix.'year">';
       }
-    print "</select>\n";
-  
+    else
+      {
+    
+	print '<select name="'.$prefix.'year">';
+	
+	for ($year = $syear - 2; $year < $syear + 5 ; $year++)
+	  {
+	    if ($year == $syear)
+	      {
+		print "<option value=\"$year\" SELECTED>$year";
+	      }
+	    else
+	      {
+		print "<option value=\"$year\">$year";
+	      }
+	  }
+	print "</select>\n";
+      }
+
     if ($h)
       {
 	print '<select name="'.$prefix.'hour">';
@@ -272,7 +295,7 @@ class Form {
    * Affiche un select à partir d'un tableau
    *
    */
-  Function select_array($name, $array, $id='', $empty=0)
+  Function select_array($name, $array, $id='', $empty=0, $key_libelle=0)
     {
       print '<select name="'.$name.'">';
       
@@ -293,7 +316,14 @@ class Form {
 		{
 		  print "SELECTED";
 		}
-	      print ">$value</option>\n";  
+	      if ($key_libelle)
+		{
+		  print ">[$key] $value</option>\n";  
+		}
+	      else
+		{
+		  print ">$value</option>\n";
+		}
 	    }
 	}
       else
