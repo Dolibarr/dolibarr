@@ -522,6 +522,14 @@ function llxFooter($foot='')
   //  print '<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>&nbsp;'.$foot.'</p>';
   // Suppression temporaire du footer
   print '<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a></p>';
+  if (!empty ($dolibarr_auto_user))
+    {
+  print '<p>
+      <a href="http://validator.w3.org/check/referer"><img border="0"
+          src="http://www.w3.org/Icons/valid-html40"
+          alt="Valid HTML 4.0!" height="31" width="88"></a>
+    </p>';
+    }
   print "</body></html>";
 }
 
