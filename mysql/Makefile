@@ -57,8 +57,7 @@ show:
 	&& make show BASE=$(BASE) OPTIONS=$(OPTIONS)
 
 drop:
-	cd tables \
-	&& make drop
+	$(SQL) $(OPTIONS) $(BASE) < drop.sql
 
 table:
 	cd tables \
