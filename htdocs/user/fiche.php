@@ -329,7 +329,7 @@ else
 	    
 	  print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
 	  print '<td colspan="2" width="50%" class="valeur">'.$fuser->nom.'</td>';
-	  print '<td align=center valign=top width="50%" rowspan="8">';
+	  print '<td align="center" valign="middle" width="50%" rowspan="8">';
 	  if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
 	  {
 	        print '<img src="'.DOL_URL_ROOT.'/image.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
