@@ -158,5 +158,28 @@ class Product
 	  return 0;
 	}
     }
+  /*
+   *
+   *
+   */
+  Function count_facture()
+    {
+      $sql = "SELECT pd.fk_facture";
+      $sql .= " FROM llx_facturedet as pd, llx_product as p";
+      $sql .= " WHERE p.rowid = pd.fk_product AND p.rowid = ".$this->id;
+      $sql .= " GROUP BY pd.fk_facture";
+
+      $result = $this->db->query($sql) ;
+
+      if ( $result )
+	{
+	  return $this->db->num_rows();
+	}
+      else
+	{
+	  return 0;
+	}
+    }
+
 }
 ?>
