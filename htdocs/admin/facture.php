@@ -31,11 +31,11 @@ if (!$user->admin)
 
 $db = new Db();
 
-
 // positionne la variable pour le test d'affichage de l'icone
 
 $facture_addon_var = FACTURE_ADDON;
 $facture_addon_var_pdf = FACTURE_ADDON_PDF;
+$facture_rib_number_var = FACTURE_RIB_NUMBER;
 
 if ($action == 'set')
 {
@@ -46,6 +46,18 @@ if ($action == 'set')
       // la constante qui a été lue en avant du nouveau set
       // on passe donc par une variable pour avoir un affichage cohérent
       $facture_addon_var = $value;
+    }
+}
+
+if ($action == 'setrib')
+{
+  $sql = "REPLACE INTO llx_const SET name = 'FACTURE_RIB_NUMBER', value='".$value."', visible=0";
+
+  if ($db->query($sql))
+    {
+      // la constante qui a été lue en avant du nouveau set
+      // on passe donc par une variable pour avoir un affichage cohérent
+      $facture_rib_number_var = $value;
     }
 }
 
@@ -60,8 +72,6 @@ if ($action == 'setpdf')
       $facture_addon_var_pdf = $value;
     }
 }
-
-$db->close();
 
 $dir = "../includes/modules/facture/";
 
@@ -167,6 +177,48 @@ closedir($handle);
 
 print '</table>';
 
+
+/*
+ *
+ *
+ */
+
+print_titre( "Afficher le RIB du compte");
+
+print '<form action="facture.php" method="post">';
+print '<input type="hidden" name="action" value="setrib">';
+print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<TR class="liste_titre">';
+print '<td>Nom</td>';
+print '<td>&nbsp;</td>';
+print "</TR>\n";
+print '<tr><td><select name="value">';
+print '<option value="0">Aucun</option>';
+$sql = "SELECT rowid, label FROM llx_bank_account";
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $i = 0;
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($i);
+
+      if ($facture_rib_number_var == $row[0])
+	{
+	  print '<option value="'.$row[0].'" SELECTED>'.$row[1].'</option>';
+	}
+      else
+	{
+	  print '<option value="'.$row[0].'">'.$row[1].'</option>';
+	}
+      $i++;
+    }
+}
+print "</select></td>";
+print '<td><input type="submit">';
+print "</table>";
+print "</form>";
+$db->close();
 
 llxFooter();
 ?>
