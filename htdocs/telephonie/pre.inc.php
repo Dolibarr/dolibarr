@@ -24,7 +24,7 @@ require(DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 $user->getrights('telephonie');
 
 function llxHeader($head = "", $title="") {
-  global $user, $conf;
+  global $user;
 
   /*
    *
@@ -45,7 +45,7 @@ function llxHeader($head = "", $title="") {
       $menu->add_submenu(DOL_URL_ROOT."/telephonie/simulation/fiche.php?action=create", "Nouvelle");
     }
 
-  $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
+
 
   $menu->add(DOL_URL_ROOT."/telephonie/client/index.php", "Clients");
 
@@ -57,11 +57,13 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/service/", "Services");
+  $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
+
+  $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/index.php", "Fournisseurs");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
+  $menu->add(DOL_URL_ROOT."/telephonie/service/", "Services");
 
   $menu->add(DOL_URL_ROOT."/telephonie/ca/", "Chiffre d'affaire");
 
