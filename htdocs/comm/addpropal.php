@@ -194,7 +194,7 @@ if ($action == 'create')
     
   print '<table border="1" cellspacing="0">';
   
-  for ($i = 1 ; $i < 5 ; $i++)
+  for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
     {
       print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
       print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td></tr>';
