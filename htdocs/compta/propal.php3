@@ -331,10 +331,8 @@ if ($propalid)
 } else {
   /*
    *
-   *
    * Mode Liste des propales
    *
-   * 
    */
 
   if ($sortfield == "")
@@ -383,7 +381,7 @@ if ($propalid)
     }
   
   $sql .= " ORDER BY $sortfield $sortorder ";
-  $sql .= $db->plimit( $limit ,$offset);
+  $sql .= $db->plimit($limit ,$offset);
 
   if ( $db->query($sql) )
     {
@@ -391,11 +389,11 @@ if ($propalid)
       $i = 0;
       print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
       print '<TR class="liste_titre">';
-      print "<TD>Réf</TD>";
-      print "<TD>Société</td>";
-      print '<td align="right" colspan="2">Date</td>';
-      print '<td align="right">Prix</td>';
-      print '<td align="center">Statut</td>';
+      print_liste_field_titre_new ("Réf",$PHP_SELF,"p.ref","","&year=$year",'',$sortfield);
+      print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","","",'',$sortfield);
+      print_liste_field_titre_new ("Date",$PHP_SELF,"p.datep","","",'align="right" colspan="2"',$sortfield);
+      print_liste_field_titre_new ("Prix",$PHP_SELF,"p.price","","",'align="right"',$sortfield);
+      print_liste_field_titre_new ("Statut",$PHP_SELF,"p.fk_statut","","",'align="center"',$sortfield);
       print "</tr>\n";
 
       while ($i < $num)
