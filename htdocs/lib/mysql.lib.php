@@ -38,7 +38,8 @@
 		Ensemble des fonctions permettant de gérer la database de dolibarr
 */
 
-class DoliDb {
+class DoliDb
+{
   var $db, $results, $ok, $connected, $database_selected;
 
   // Constantes pour code erreurs
@@ -46,20 +47,17 @@ class DoliDb {
   var $ERROR_TABLEEXISTS=1050;
 
 /*!
-		\brief      Ouverture d'une connection vers le serveur et/ou une database.
+		\brief      Ouverture d'une connection vers le serveur et éventuellement une database.
 		\param	    type		type de base de données (mysql ou pgsql)
 		\param	    host		addresse de la base de données
 		\param	    user		nom de l'utilisateur autorisé
 		\param	    pass		mot de passe
 		\param	    name		nom de la database
+		\return		int			1 en cas de succès, 0 sinon
 */
 
   function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '')
-
-	// Se connecte au serveur et éventuellement à une base (si spécifié)
-  // Renvoie 1 en cas de succès, 0 sinon
-
-		{
+	{
       global $conf;
 
 	  	if ($host == '')
@@ -136,10 +134,10 @@ class DoliDb {
 
 /*!
 		\brief      Connection vers le serveur
-		\param	    host			addresse de la base de données
-		\param	    login			nom de l'utilisateur autorisé
+		\param	    host		addresse de la base de données
+		\param	    login		nom de l'utilisateur autorisé
 		\param	    passwd		mot de passe
-		\return	    resource
+		\return		resource	handler d'accès à la base
 */
 
   function connect($host, $login, $passwd)
@@ -184,7 +182,7 @@ class DoliDb {
 		\param	    host		addresse de la base de données
 		\param	    login		nom de l'utilisateur autorisé
 		\param	    passwd		mot de passe
-		\return	    resource
+		\return		resource	handler d'accès à la base
 */
 
   function pconnect($host, $login, $passwd)
@@ -213,11 +211,11 @@ class DoliDb {
   {
     if ($do)
       {
-				return $this->query("BEGIN");
+			return $this->query("BEGIN");
       }
     else
       {
-				return 1;
+			return 1;
       }
   }
 
@@ -231,11 +229,11 @@ class DoliDb {
   {
     if ($do)
       {
-				return $this->query("COMMIT");
+			return $this->query("COMMIT");
       }
     else
       {
-				return 1;
+			return 1;
       }
   }
 
@@ -249,11 +247,11 @@ class DoliDb {
   {
     if ($do)
       {
-				return $this->query("ROLLBACK");
+			return $this->query("ROLLBACK");
       }
     else
       {
-				return 1;
+			return 1;
       }
   }
 
@@ -326,7 +324,7 @@ class DoliDb {
 		\brief      défini les limites de la requète.
 		\param	    limit
 		\param	    offset
-		\return	    limit
+		\return	    int		limite
 */
 
   function plimit($limit=0,$offset=0)
@@ -395,14 +393,31 @@ class DoliDb {
 
 
 /*!
-		\brief      Renvoie le nombre de lignes dans le resultat de la requete.
-		\return	    int
+		\brief      Renvoie le nombre de lignes dans le
+		            resultat d'une requete SELECT
+		\seealso	affected_rows
+		\return     int		nombre de lignes
 */
 
   function num_rows()
     {
       return mysql_num_rows($this->results);
     }
+
+/*!
+		\brief      Renvoie le nombre de lignes dans le
+		            resultat d'une requete INSERT, DELETE ou UPDATE
+		\seealso	num_rows
+		\return     int		nombre de lignes
+*/
+
+  function affected_rows()
+    {
+		// mysql necessite un link de base pour cette fonction contrairement
+		// a pqsql qui prend un resultset
+		return mysql_affected_rows($this->db);
+    }
+
 
 /*!
 		\brief      Renvoie le nombre de champs dans le resultat de la requete.
@@ -415,7 +430,7 @@ class DoliDb {
     }
 
 /*!
-		\brief      renvoie la derniere requete soumise par la methode query()
+		\brief      Renvoie la derniere requete soumise par la methode query()
 		\return	    lastquery
 */
 
@@ -425,7 +440,7 @@ class DoliDb {
     }
 
 /*!
-		\brief      renvoie le texte de l'erreur mysql de l'operation precedente.
+		\brief      Renvoie le texte de l'erreur mysql de l'operation precedente.
 		\return	    error_text
 */
 
@@ -435,7 +450,9 @@ class DoliDb {
     }
 
 /*!
-		\brief      renvoie la valeur numerique de l'erreur mysql de l'operation precedente.
+		\brief      Renvoie la valeur numerique de l'erreur de l'operation precedente.
+					pour etre exploiter par l'appelant et détecter les erreurs du genre:
+					echec car doublons, table deja existante...
 		\return     error_num
 */
 
@@ -458,17 +475,6 @@ class DoliDb {
     }
 
 /*!
-		\brief      Obtient le nombre de lignes affectées dans la précédente opération.
-		\return     rows
-*/
-
-  function affected_rows()
-    {
-      return mysql_affected_rows($this->db);
-    }
-
-
-/*!
 		\brief      Retourne le dsn pear
 		\return     dsn
 */
@@ -480,6 +486,7 @@ class DoliDb {
 			
 			return $pear;
 		}
+
 }
 
 ?>

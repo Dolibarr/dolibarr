@@ -42,28 +42,26 @@
 		Ensemble des fonctions permettant de gérer la database de dolibarr
 */
 
-
-
-
 class DoliDb 
 {
   var $db, $results, $ok, $connected, $database_selected;
 	
+  // Constantes pour code erreurs
+  var $ERROR_DUPLICATE="23505";
+  var $ERROR_TABLEEXISTS='42P07';
 	  
 /*!
-		\brief      Ouverture d'une connection vers le serveur et/ou une database.
-		\param	type		type de base de données (mysql ou pgsql)
-		\param	host		addresse de la base de données
-		\param	user		nom de l'utilisateur autorisé
-		\param	pass		mot de passe
-		\param	name		nom de la database
+		\brief      Ouverture d'une connection vers le serveur et une database.
+		\param		type		type de base de données (mysql ou pgsql)
+		\param		host		addresse de la base de données
+		\param		user		nom de l'utilisateur autorisé
+		\param		pass		mot de passe
+		\param		name		nom de la database
+		\return		int			1 en cas de succès, 0 sinon
 */
 
   function DoliDb($type = 'pgsql', $host = '', $user = '', $pass = '', $name = '')
-
-	// Se connecte au serveur et éventuellement à une base (si spécifié)
-  // Renvoie 1 en cas de succès, 0 sinon
-		{
+	{
       global $conf;
 
 			if ($host == '')
@@ -94,10 +92,8 @@ class DoliDb
 
 			if ($this->db)
 				{
-				
 					$this->connected = 1;
 					$this->ok = 1;
-					
 				}
 	  	else
 				{
@@ -109,27 +105,21 @@ class DoliDb
 
 			if ($this->connected && $name)
 				{
-
 					if ($this->select_db($name) == 1)
 						{
-
 							$this->database_selected = 1;
 							$this->ok = 1;
 						}
 					else
 						{
-
 							$this->database_selected = 0;
 							$this->ok = 0;
 						}
-
       	}
       else
 				{
-					// Pas de selection de base demandée, mais tout est ok
-
+            		// Pas de selection de base demandée, ok ou ko
 					$this->database_selected = 0;
-					$this->ok = 1;
       	}
 
       return $this->ok;
@@ -137,14 +127,12 @@ class DoliDb
 
 /*!
 		\brief      Selectionne une database.
-		\param	database		nom de la database
-		\return	resource
-		\remarks ici postgresql n'a aucune fonction equivalente de mysql_select_db
-		\remarks comparaison manuel si la database est bien celle choisie par l'utilisateur
-		\remarks en cas de succes renverra 1 ou 0
+		\param		database		nom de la database
+		\return		resource
+		\remarks 	ici postgresql n'a aucune fonction equivalente de mysql_select_db
+		\remarks 	comparaison manuel si la database est bien celle choisie par l'utilisateur
+		\remarks 	en cas de succes renverra 1 ou 0
 */
-
-	
 
   function select_db($database)
     {
@@ -156,14 +144,14 @@ class DoliDb
 
 /*!
 		\brief      Connection vers le serveur
-		\param	host			addresse de la base de données
-		\param	login			nom de l'utilisateur autorisé
-		\param	passwd		mot de passe
-		\param	name			nom de la database
-		\return	resource
+		\param		host		addresse de la base de données
+		\param		login		nom de l'utilisateur autorisé
+		\param		passwd		mot de passe
+		\param		name		nom de la database
+		\return		resource	handler d'accès à la base
 */
 
-  function connect($host, $login, $passwd,$name)
+  function connect($host, $login, $passwd, $name)
     {
        $con_string = "host=$host dbname=$name user=$login password=$passwd ";
 			 $this->db = pg_connect($con_string);
@@ -172,8 +160,8 @@ class DoliDb
 
 /*!
 		\brief      Connexion sur une base de donnée
-		\param	database		nom de la database
-		\return	result			resultat 1 pour ok, 0 pour non ok
+		\param		database		nom de la database
+		\return		result			resultat 1 pour ok, 0 pour non ok
 */
 
   function create_db($database)
@@ -182,7 +170,7 @@ class DoliDb
 				return 1;
 			else
 				return 0;
-		}
+  }
   
 
 /*!
@@ -199,17 +187,18 @@ class DoliDb
 
 /*!
 		\brief      Ouverture d'une connection vers une database.
-		\param	host			addresse de la base de données
-		\param	login			nom de l'utilisateur autorisé
-		\param	passwd		mot de passe
-		\param	name			nom de la database
-		\return	resource
+		\param		host		addresse de la base de données
+		\param		login		nom de l'utilisateur autorisé
+		\param		passwd		mot de passe
+		\param		name		nom de la database
+		\return		resource	handler d'accès à la base
 */
 
   function pconnect($host, $login, $passwd,$name)
     {
-			 $con_string = "host=$host dbname=$name user=$login password=$passwd";
-			 $this->db = pg_pconnect($con_string);
+		 $con_string = "host=$host dbname=$name user=$login password=$passwd";
+		 $this->db = pg_pconnect($con_string);
+		 return $this->db;
     }
 
 /*!
@@ -219,69 +208,69 @@ class DoliDb
 
   function close()
   	{
-			return pg_close($this->db);
+		return pg_close($this->db);
   	}
 
 /*!
 		\brief      Debut d'une transaction.
-		\param	do
-		\return	string
+		\param		do
+		\return		string
 */
 
   function begin($do=1)
   {
     if ($do)
       {
-				return $this->query("BEGIN");
+			return $this->query("BEGIN");
       }
     else
       {
-				return 1;
+			return 1;
       }
   }
 
 /*!
 		\brief      Ecriture d'une transaction.
-		\param	do
-		\return	string
+		\param		do
+		\return		string
 */
 
   function commit($do=1)
   {
     if ($do)
       {
-				return $this->query("COMMIT;");
+			return $this->query("COMMIT;");
       }
     else
       {
-				return 1;
+			return 1;
       }
   }
 
 
 /*!
 		\brief      Effacement d'une transaction et retour au ancienne valeurs.
-		\param	do
-		\return	string
+		\param		do
+		\return		string
 */
 
   function rollback($do=1)
   {
     if ($do)
       {
-				return $this->query("ROLLBACK;");
+			return $this->query("ROLLBACK;");
       }
     else
       {
-				return 1;
+			return 1;
       }
   }
 
 /*!
 		\brief      Effectue une requete et renvoi le resultset de réponse de la base
-		\param	query		contenu de la query
-		\param	limit
-		\param	offset
+		\param		query		contenu de la query
+		\param		limit
+		\param		offset
 		\return	    resource resultset
 */
 
@@ -289,17 +278,17 @@ class DoliDb
     {
       $query = trim($query);
 
-			$this->lastquery=$query;
+	  $this->lastquery=$query;
 
-			$this->results = pg_query($this->db,$query);
+	  $this->results = pg_query($this->db,$query);
 
       return $this->results;
     }
 
 /*!
 		\brief      Liste des tables dans une database.
-		\param	database		nom de la database
-		\return	resource
+		\param		database		nom de la database
+		\return		resource
 */
 
   function list_tables($database)
@@ -311,14 +300,14 @@ class DoliDb
 	
 /*!
 		\brief      Renvoie les données de la requete.
-		\param	nb				contenu de la query
-		\param	fieldname	nom du champ
-		\return	resource
+		\param		nb				contenu de la query
+		\param		fieldname	nom du champ
+		\return		resource
 */
 
   function result($nb, $fieldname)
     {
-			return pg_fetch_result($this->results,$nb,$fieldname);
+			return pg_fetch_result($this->results, $nb, $fieldname);
     }
 
 		
@@ -335,7 +324,7 @@ class DoliDb
 /*!
 		\brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
         \param      resultset   curseur de la requete voulue
-		\return	resource
+		\return		resource
 */
 
   function fetch_object($resultset=0)
@@ -346,30 +335,29 @@ class DoliDb
   	}
 
 /*!
-		\brief défini les limites de la requète.
-		\param	limit
-		\param	offset
-		\return	limit
+		\brief 		défini les limites de la requète.
+		\param		limit
+		\param		offset
+		\return		int		limite
 */
 
   function plimit($limit=0,$offset=0)
     {
       if ($offset > 0)
-				{
-					return " LIMIT $offset,$limit ";
+		{
+			return " LIMIT $offset,$limit ";
       	}
-			else
-				{
-					return " LIMIT $limit ";
-      	}
+		else
+		{
+			return " LIMIT $limit ";
+     	}
     }
 
 /*!
-		\brief formatage de la date en format unix.
-		\param	fname
-		\return	date
+		\brief 		formatage de la date en format unix.
+		\param		fname
+		\return		date
 */
-
 
  	function pdate($fname)
     {
@@ -377,9 +365,9 @@ class DoliDb
     }
 
 /*!
-		\brief formatage de la date en fonction des locales.
-		\param	fname
-		\return	date
+		\brief 		formatage de la date en fonction des locales.
+		\param		fname
+		\return		date
 */
 
   function idate($fname)
@@ -389,12 +377,12 @@ class DoliDb
 
 /*!
 		\brief      Renvoie les données dans un tableau.
-		\return	array
+		\return		array
 */
 
   function fetch_array()
     {
-			return pg_fetch_array($this->results);
+		return pg_fetch_array($this->results);
     }
 
 /*!
@@ -404,7 +392,7 @@ class DoliDb
 
   function fetch_row()
     {
-			return pg_fetch_row($this->results);
+		return pg_fetch_row($this->results);
     }
 
 /*!
@@ -414,18 +402,34 @@ class DoliDb
 
   function fetch_field()
     {
-			return pg_field_name($this->results);
+		return pg_field_name($this->results);
     }
 
 
 /*!
-		\brief      Renvoie le nombre de lignes dans le resultat de la requete.
-		\return	int
+		\brief      Renvoie le nombre de lignes dans le
+		            resultat d'une requete SELECT
+		\seealso	affected_rows
+		\return     int		nombre de lignes
 */
 
   function num_rows()
     {
-			return pg_num_rows($this->results);
+		return pg_num_rows($this->results);
+    }
+
+/*!
+		\brief      Renvoie le nombre de lignes dans le
+		            resultat d'une requete INSERT, DELETE ou UPDATE
+		\seealso	num_rows
+		\return     int		nombre de lignes
+*/
+
+  function affected_rows()
+    {
+		// pgsql necessite un resultset pour cette fonction contrairement
+		// a mysql qui prend un link de base
+		return pg_affected_rows($this->results); 
     }
 
 /*!
@@ -435,11 +439,11 @@ class DoliDb
 
   function num_fields()
     {
-			return pg_num_fields($this->results);
+		return pg_num_fields($this->results);
     }
 
 /*!
-		\brief renvoie la derniere requete soumise par la methode query()
+		\brief 		Renvoie la derniere requete soumise par la methode query()
 		\return	    lastquery
 */
 
@@ -449,8 +453,8 @@ class DoliDb
     }
 
 /*!
-		\brief renvoie le texte de l'erreur mysql de l'operation precedente.
-		\return	error_text
+		\brief 		Renvoie le texte de l'erreur mysql de l'operation precedente.
+		\return		error_text
 */
 
   function error()
@@ -459,37 +463,32 @@ class DoliDb
     }
 
 /*!
-		\brief renvoie la valeur numerique de l'erreur mysql de l'operation precedente.
-		\return error_num
+		\brief      Renvoie la valeur numerique de l'erreur de l'operation precedente.
+					pour etre exploiter par l'appelant et détecter les erreurs du genre:
+					echec car doublons, table deja existante...
+		\return 	error_num
+		\remark		pgsql ne permet pas de renvoyer un code générique d'une erreur,
+					mais juste un message. On utilise donc ces messages plutot qu'un code.
 */
 
   function errno()
     {
-			return pg_result_status($this->db);
+			return pg_last_error($this->db);
     }
 
 /*!
 		\brief      Obtient l'id genéré par le précedent INSERT.
-		\return id
+		\return 	id
 */
 
   function last_insert_id($tab)
     {
 			$result = pg_query($this->db,"select max(rowid) from ".$tab." ;");
-			$nbre=pg_num_rows($result);
+			$nbre = pg_num_rows($result);
 			$row = pg_fetch_result($result,0,0);
 			return $row;
      }
 
-/*!
-		\brief      Obtient le nombre de lignes affectées dans la précédente opération.
-		\return rows
-*/
-
-  function affected_rows()
-    {
-			return pg_affected_rows($this->results); 
-    }
 
 /*!
 		\brief      Retourne le dsn pear
@@ -505,4 +504,5 @@ class DoliDb
 	}
 			
 }
+
 ?>
