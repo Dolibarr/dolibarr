@@ -48,6 +48,8 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/compta/propal.php3","Propales");
     }
 
+  $menu->add(DOL_URL_ROOT."/contrat/","Contrats");
+
   /*
    * Sécurité accés client
    */
