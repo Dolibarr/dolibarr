@@ -384,7 +384,7 @@ class Form
     if ($this->db->query($sql))
     {
         print '<select name="civilite_id">';
-        print '<option value="">';
+        print '<option value="">&nbsp;</option>';
         $num = $this->db->num_rows();
         $i = 0;
         if ($num)
@@ -392,7 +392,7 @@ class Form
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object();
-                if ($selected == $obj->rowid)
+                if ($selected == $obj->code)
                 {
                     print '<option value="'.$obj->code.'" selected>';
                 }
