@@ -191,7 +191,7 @@ elseif ($_GET["action"] == 'edit')
       print '<form action="soc.php?socid='.$soc->id.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
 
-      print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
+      print '<table class="border" width="100%">';
       print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td>';
 
       print '<td>'.$langs->trans('Prefix').'</td><td colspan="3"><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
@@ -245,7 +245,7 @@ elseif ($_GET["action"] == 'edit')
       $form->selectyesnonum("fournisseur",$soc->fournisseur);
       print '</td></tr>';
       
-      print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Update").'"></td></tr>';
+      print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
       print '</table>';
       print '</form>';
 
