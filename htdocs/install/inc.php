@@ -1,3 +1,3 @@
 <?PHP
-$etapes=6;
+$etapes=5;
 ?>
