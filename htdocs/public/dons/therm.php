@@ -18,22 +18,54 @@
  * $Id$
  * $Source$
  */
-$file = "/var/www/www.eucd.info/htdocs/thermometer.php";
-if (file_exists ($file))
+
+$thermlib = "/var/www/www.eucd.info/htdocs/thermometer.php";
+
+if (file_exists ($thermlib))
 {
-  include($file);
+  include($thermlib);
+
+  $posten_file = "/var/www/www.eucd.info/htdocs/posten.txt";
+  $totaal_file = "/var/www/www.eucd.info/htdocs/totaal.txt";
 
 
-  $posten = "/var/www/www.eucd.info/htdocs/posten.txt";
-  $totaal = "/var/www/www.eucd.info/htdocs/totaal.txt";
+  /*
+   * Read Values
+   */
 
-  if (file_exists ($posten))
+  if (file_exists ($posten_file))
     {
-      if (file_exists ($totaal))
+      if (file_exists ($totaal_file))
+	{
 
-	print moneyMeter($totaal_ontvangen+$post_donaties+$post_sponsoring, $totaal_pending, $post_intent,$posten, $totaal);
+	  /* lees posten uit file */
+	  $fp = fopen($posten_file, 'r' );
+	  
+	  
+	  if ($fp)
+	    {
+	      $post_donaties = fgets( $fp, 10 );
+	      $post_sponsoring = fgets( $fp, 10 );
+	      $post_intent = fgets( $fp, 10 );
+	      fclose( $fp ); 
+	    }
+	  
+	  /* lees posten uit file  */
+	  $fp = fopen( $totaal_file, 'r' );
+	  if ($fp)
+	    {
+	      $totaal_ontvangen = fgets( $fp, 10 );
+	      $totaal_pending = fgets( $fp, 10 );
+	      fclose( $fp ); 
+	    }
+	}
     }
+  
+  /* 
+   * Graph thermometer
+   */
 
+  print moneyMeter($totaal_ontvangen+$post_donaties+$post_sponsoring, $totaal_pending, $post_intent);
 }
 
 ?>
