@@ -50,7 +50,7 @@ if (defined('MAIN_MODULE_COMMERCIAL') && MAIN_MODULE_COMMERCIAL == 1)
 elseif (defined('MAIN_MODULE_ADHERENT') && MAIN_MODULE_ADHERENT == 1)
 {
   print '<TD width="15%" class="menu" align="center">';
-  print '<A class="menu" href="'.DOL_URL_ROOT.'/adherents/">Adhérents</A></TD>';
+  print '<A class="menu" href="'.DOL_URL_ROOT.'/adherents/index.php">Adhérents</A></TD>';
 }
 else
 {
@@ -65,7 +65,7 @@ if (defined('MAIN_MODULE_COMPTABILITE') && MAIN_MODULE_COMPTABILITE == 1)
       print '<TD width="15%" class="menusel" align="center">';
       if ($user->compta > 0)
 	{
-	  print '<A class="menusel" href="'.DOL_URL_ROOT.'/compta/">Compta</A></TD>';
+	  print '<A class="menusel" href="'.DOL_URL_ROOT.'/compta/index.php">Compta</A></TD>';
 	} 
       else
 	{
@@ -78,7 +78,7 @@ if (defined('MAIN_MODULE_COMPTABILITE') && MAIN_MODULE_COMPTABILITE == 1)
       print '<TD width="15%" class="menu" align="center">';
       if ($user->compta > 0)
 	{
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/compta/">Compta</A></TD>';
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/compta/index.php">Compta</A></TD>';
 	} 
       else
 	{
