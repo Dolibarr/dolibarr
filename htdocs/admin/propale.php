@@ -25,16 +25,11 @@ if (!$user->admin)
   accessforbidden();
 
 
-if ($action == 'nbprod' && $user->admin)
+if ($HTTP_POST_VARS["action"] == 'nbprod')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PROPALE_NEW_FORM_NB_PRODUCT', value='".$value."', visible=0";
-
-  if ($db->query($sql))
-    {
-      // la constante qui a été lue en avant du nouveau set
-      // on passe donc par une variable pour avoir un affichage cohérent
-      Header("Location: propale.php");
-    }
+  dolibarr_set_const($db, "PROPALE_NEW_FORM_NB_PRODUCT",$value);
+	
+  Header("Location: $PHP_SELF");
 }
 
 llxHeader();
@@ -42,6 +37,7 @@ llxHeader();
 
 if ($action == 'set')
 {
+
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES ('".$value."')";
 
   if ($db->query($sql))
@@ -65,9 +61,7 @@ $propale_addon_var_pdf = PROPALE_ADDON_PDF;
 
 if ($action == 'setpdf')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PROPALE_ADDON_PDF', value='".$value."', visible=0";
-
-  if ($db->query($sql))
+	if (dolibarr_set_const($db, "PROPALE_ADDON_PDF",$value))
     {
       // la constante qui a été lue en avant du nouveau set
       // on passe donc par une variable pour avoir un affichage cohérent
@@ -88,9 +82,7 @@ $propale_addon_var = PROPALE_ADDON;
 
 if ($action == 'setmod')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PROPALE_ADDON', value='".$value."', visible=0";
-
-  if ($db->query($sql))
+	if (dolibarr_set_const($db, "PROPALE_ADDON",$value))
     {
       // la constante qui a été lue en avant du nouveau set
       // on passe donc par une variable pour avoir un affichage cohérent
