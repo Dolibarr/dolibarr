@@ -461,6 +461,21 @@ class User
 		}
 
 
+	      if ($module == 'contrat' or $module == '')
+		{
+		  if ($obj->fk_id == 161)
+		    $this->rights->contrat->lire = 1;
+
+		  if ($obj->fk_id == 162)
+		    $this->rights->contrat->creer = 1;
+
+		  if ($obj->fk_id == 163)
+		    $this->rights->contrat->activer = 1;
+
+		  if ($obj->fk_id == 164)
+		    $this->rights->contrat->desactiver = 1;
+		}
+
 	      $i++;
 	  }
 	    $this->db->free();	    
