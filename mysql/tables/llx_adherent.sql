@@ -20,7 +20,7 @@
 -- $Source$
 --
 -- ===================================================================
-
+--
 -- statut
 -- 0 : non adherent
 -- 1 : adherent
@@ -43,10 +43,10 @@ create table llx_adherent
   ville            varchar(50),
   pays             varchar(50),
   email            varchar(255),
-  login            varchar(50), -- login utilise pour editer sa fiche
-  pass             varchar(50), -- pass utilise pour editer sa fiche
-  naiss            date, -- date de naissance
-  photo		   varchar(255), -- url vers la photo de l'adherent
+  login            varchar(50),      -- login utilise pour editer sa fiche
+  pass             varchar(50),      -- pass utilise pour editer sa fiche
+  naiss            date,             -- date de naissance
+  photo		   varchar(255),     -- url vers la photo de l'adherent
   fk_user_author   integer NOT NULL,
   fk_user_mod      integer NOT NULL,
   fk_user_valid    integer NOT NULL,

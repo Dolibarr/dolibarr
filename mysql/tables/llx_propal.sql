@@ -25,22 +25,15 @@ create table llx_propal
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc          integer,
   fk_soc_contact  integer,
-  fk_projet       integer default 0, -- projet auquel est rattache la propale
+  fk_projet       integer default 0,     -- projet auquel est rattache la propale
   ref             varchar(30) NOT NULL,  -- propal number
-
   datec           datetime,              -- date de creation 
   date_valid      datetime,              -- date de validation
   date_cloture    datetime,              -- date de cloture
-
   datep           date,                  -- date de la propal
-
-  fk_user_author  integer,   -- createur de la propale
-
-  fk_user_valid   integer,   -- valideur de la propale
-
-  fk_user_cloture integer,   -- cloture de la propale signee ou non signee
-
-
+  fk_user_author  integer,               -- createur de la propale
+  fk_user_valid   integer,               -- valideur de la propale
+  fk_user_cloture integer,               -- cloture de la propale signee ou non signee
   fk_statut       smallint  default 0,
   price           real      default 0,
   remise          real      default 0,

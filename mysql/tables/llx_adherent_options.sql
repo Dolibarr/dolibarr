@@ -21,10 +21,6 @@
 --
 -- ===================================================================
 
--- statut
--- 0 : non adherent
--- 1 : adherent
-
 create table llx_adherent_options
 (
   optid            integer AUTO_INCREMENT PRIMARY KEY,

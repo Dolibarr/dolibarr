@@ -25,21 +25,15 @@
 create table actioncomm
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
-  datea          datetime,         -- action date
+  datea          datetime,           -- action date
   fk_action      integer,
-
-  label          varchar(50),  -- libelle de l'action
-
+  label          varchar(50),        -- libelle de l'action
   fk_soc         integer,
   fk_contact     integer default 0,
-
-  fk_user_action integer,      -- id de la personne qui doit effectuer l'action
+  fk_user_action integer,            -- id de la personne qui doit effectuer l'action
   fk_user_author integer,
-
   priority       smallint,
-
   percent        smallint,
-
   note           text,
   propalrowid    integer,
   fk_facture     integer

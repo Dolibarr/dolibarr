@@ -137,18 +137,22 @@ create table llx_facture_fourn
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
   facnumber  varchar(50) NOT NULL,
   fk_soc     integer NOT NULL,
-  datec      datetime,  -- date de creation de la facture
-  datef      date,      -- date de la facture
+  datec      datetime,    -- date de creation de la facture
+  datef      date,        -- date de la facture
   libelle    varchar(255),
   paye       smallint default 0 NOT NULL,
   amount     real     default 0 NOT NULL,
   remise     real     default 0,
   tva        real     default 0,
   total      real     default 0,
+  total_ht   real     default 0,
+  total_tva  real     default 0,
+  total_ttc  real     default 0,
+
   fk_statut  smallint default 0 NOT NULL,
 
-  fk_user_author  integer,   -- createur de la propale
-  fk_user_valid   integer,   -- valideur de la propale
+  fk_user_author  integer,   -- createur de la facture
+  fk_user_valid   integer,   -- valideur de la facture
 
   note       text,
 
@@ -179,6 +183,14 @@ create table socstatutlog
   author      varchar(30)
 );
 
+create table llx_livre_to_auteur
+(
+  fk_livre       integer NOT NULL,
+  fk_auteur      integer NOT NULL
+);
+
+alter table  llx_livre_to_auteur add unique key (fk_livre, fk_auteur);
+
 create table llx_fichinter
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -208,8 +220,9 @@ create table llx_const
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   name        varchar(255),
-  value       varchar(255),
-  type        enum('yesno'),
+  value       text, -- max 65535 caracteres
+  type        enum('yesno','texte','chaine'),
+  visible     tinyint DEFAULT 1 NOT NULL,
   note        text,
 
   UNIQUE INDEX(name)
@@ -316,6 +329,18 @@ create table llx_voyage
   note            text
 );
 
+
+
+create table llx_appro
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  datec           datetime,
+  tms             timestamp,
+  fk_product      integer NOT NULL, 
+  quantity        smallint unsigned NOT NULL,
+  price           real,
+  fk_user_author  integer
+);
 
 
 create table llx_voyage_reduc
@@ -481,6 +506,20 @@ create table llx_bank_class
   INDEX(lineid)
 );
 
+create table llx_album
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  osc_id          integer NOT NULL,
+  tms             timestamp,
+  ref		  varchar(12),
+  title		  varchar(64),
+  annee		  smallint(64),
+  description     text,
+  collectif       tinyint,
+  fk_user_author  integer
+);
+
+
 create table c_typent
 (
   id        integer PRIMARY KEY,
@@ -508,6 +547,17 @@ create table c_stcomm
 (
   id       integer PRIMARY KEY,
   libelle  varchar(30)
+);
+
+
+create table llx_groupart
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  osc_id          integer NOT NULL,
+  tms             timestamp,
+  nom		  varchar(64),
+  groupart        enum("artiste","groupe") NOT NULL,
+  fk_user_author  integer
 );
 
 
@@ -560,6 +610,7 @@ create table llx_facture
   remise          real     default 0,
   tva             real     default 0,
   total           real     default 0,
+  total_ttc       real     default 0,
   fk_statut       smallint default 0 NOT NULL,
   author          varchar(50),
   fk_user         integer,   -- createur de la facture
@@ -606,7 +657,7 @@ create table llx_product
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   datec           datetime,
   tms             timestamp,
-  ref             varchar(15),
+  ref             varchar(15) UNIQUE,
   label           varchar(255),
   description     text,
   price           smallint,
@@ -704,7 +755,9 @@ create table llx_adherent_type
   statut           smallint NOT NULL DEFAULT 0,
   libelle          varchar(50),
   cotisation       enum('yes','no') NOT NULL DEFAULT 'yes',
-  note             text
+  vote             enum('yes','no') NOT NULL DEFAULT 'yes',
+  note             text,
+  mail_valid       text -- mail envoye a la validation
 );
 
 create table llx_boxes_def
@@ -722,18 +775,160 @@ create table llx_adherent_options_label
   label            varchar(255) NOT NULL -- label correspondant a l'attribut
 );
 
+create table llx_sqltables
+(
+  rowid    integer AUTO_INCREMENT PRIMARY KEY,
+  name     varchar(255),
+  loaded   tinyint(1)
+);
+
+
+create table llx_concert
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  date_concert	   datetime NOT NULL,
+  description      text,
+  collectif        tinyint DEFAULT 0 NOT NULL,
+  fk_groupart      integer,
+  fk_lieu_concert  integer,
+  fk_user_author   integer
+);
+
+
+create table llx_album_to_groupart
+(
+  fk_album        integer NOT NULL,
+  fk_groupart     integer NOT NULL
+);
+
+alter table  llx_album_to_groupart add unique key (fk_album, fk_groupart);
+
+create table llx_lieu_concert
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  nom              varchar(64) NOT NULL,
+  description      text,
+
+  ville            varchar(64) NOT NULL,
+
+  fk_user_author   integer
+);
+
+
+create table llx_livre
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  oscid           integer NOT NULL,
+  tms             timestamp,
+  status          tinyint,
+  date_ajout      datetime,
+  ref		  varchar(12),
+  title		  varchar(64),
+  annee		  smallint(64),
+  description     text,
+  prix            decimal(15,4),
+  fk_editeur      integer,
+  fk_user_author  integer
+);
+
+
+create table llx_auteur
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  oscid           integer NOT NULL,
+  tms             timestamp,
+  nom		  varchar(32),
+
+  fk_user_author  integer
+);
+
+
+create table llx_editeur
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  oscid           integer NOT NULL,
+  tms             timestamp,
+  nom		  varchar(32),
+
+  fk_user_author  integer
+);
+
+
+create table llx_facture_fourn_det
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  fk_facture_fourn  integer NOT NULL,
+  fk_product        integer NULL,
+  description       text,
+  pu_ht             real default 0,
+  qty               smallint default 1,
+  total_ht          real default 0,
+  tva_taux          real default 0,
+  tva               real default 0,
+  total_ttc         real default 0
+
+);
+
+insert into llx_sqltables (name, loaded) values ('llx_album',0);
+
 insert into llx_boxes_def (name, file) values ('Factures','box_factures.php');
 insert into llx_boxes_def (name, file) values ('Factures impayées','box_factures_imp.php');
 insert into llx_boxes_def (name, file) values ('Propales','box_propales.php');
 
-insert into llx_const(name, value) values ('DONS_FORM','fsfe.fr.php');
+insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
+
+insert into llx_const(name, value, type) values ('FACTURE_ADDON','venus','chaine');
 
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage du formulaire de recherche des sociétés dans la barre de gauche');
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage du formulaire de recherche des contacts dans la barre de gauche');
 
 insert into llx_const(name, value, type, note) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine');
 
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_THEME','dolibarr','chaine','theme principal');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_RESIL','Votre adhesion sur %SERVEUR% vient d\'etre resilie.\r\nNous esperons vous revoir tres bientot','texte','Mail de Resiliation');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_VALID','MAIN\r\nVotre adhesion vient d\'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante : \r\n%SERVEUR%public/adherents/','texte','Mail de validation');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_EDIT','Voici le rappel des coordonnees que vous avez modifiees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante :\r\n%SERVEUR%public/adherents/','texte','Mail d\'edition');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_NEW','Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\r\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante :\r\n%SERVEUR%public/adherents/','texte','Mail de nouvel inscription');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_VALID_SUBJECT','Votre adhésion a ete validée sur %SERVEUR%','chaine','sujet du mail de validation');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_RESIL_SUBJECT','Resiliation de votre adhesion sur %SERVEUR%','chaine','sujet du mail de resiliation');
+INSERT INTO llx_const (name, value, type, note) VALUES ('SIZE_LISTE_LIMIT','50','chaine','Taille des listes');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_NEW_SUBJECT','Bienvenue sur %SERVEUR%','chaine','Sujet du mail de nouvelle adhesion');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_EDIT_SUBJECT','Votre fiche a ete editee sur %SERVEUR%','chaine','Sujet du mail d\'edition');
 
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_MAILMAN','1','yesno','Utilisation de Mailman');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAILMAN_UNSUB_URL','http://lists.ipsyn.net/cgi-bin/mailman/handle_opts/%LISTE%/%EMAIL%?upw=%PASS%&unsub=Unsubscribe','chaine','Url de desinscription aux listes mailman');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAILMAN_URL','http://lists.ipsyn.net/cgi-bin/mailman/subscribe/%LISTE%/?email=%EMAIL%&pw=%PASS%&pw-conf=%PASS%','chaine','url pour les inscriptions mailman');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAILMAN_LISTS','test-test,test-test2','chaine','Listes auxquelles inscrire les nouveaux adherents');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_DEBUG','1','yesno','Debug ..');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_GLASNOST','0','yesno','utilisation de glasnost ?');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_GLASNOST_SERVEUR','glasnost.j1b.org','chaine','serveur glasnost');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_GLASNOST_USER','user','chaine','Administrateur glasnost');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_GLASNOST_PASS','password','chaine','password de l\'administrateur');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_GLASNOST_AUTO','1','yesno','inscription automatique a glasnost ?');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_SPIP','1','yesno','Utilisation de SPIP ?');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_SPIP_AUTO','1','yesno','Utilisation de SPIP automatiquement');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_USER','user','chaine','user spip');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_PASS','pass','chaine','Pass de connection');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_SERVEUR','localhost','chaine','serveur spip');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_DB','spip','chaine','db spip');
+
+INSERT INTO llx_const(name, value, type) VALUES ('DB_NAME_OSC','catalog','chaine');
+INSERT INTO llx_const(name, value, type) VALUES ('OSC_LANGUAGE_ID','1','chaine');
+INSERT INTO llx_const(name, value, type) VALUES ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_FROM','adherents@domain.com','chaine','From des mails');
+
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MENU_BARRETOP','default.php','chaine','Module commande');
+
+
+INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_COMMANDE','0','yesno',0);
+INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_DON','0','yesno',0);
+INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_ADHERENT','0','yesno',0);
+
+INSERT INTO llx_const (name, value, type, visible) VALUES ('BOUTIQUE_LIVRE','0','yesno',0);
+INSERT INTO llx_const (name, value, type, visible) VALUES ('BOUTIQUE_ALBUM','0','yesno',0);
 
 delete from c_chargesociales;
 insert into c_chargesociales (id,libelle,deductible) values ( 1, 'Allocations familiales',1);

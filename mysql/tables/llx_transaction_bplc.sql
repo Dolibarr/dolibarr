@@ -1,4 +1,6 @@
 -- ===================================================================
+-- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+--
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 2 of the License, or
@@ -22,7 +24,6 @@ create table llx_transaction_bplc
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   tms               timestamp,
-
   ipclient          varchar(20),
   num_transaction   varchar(10), 
   date_transaction  varchar(10), 
@@ -30,7 +31,6 @@ create table llx_transaction_bplc
   num_autorisation  varchar(10),
   cle_acceptation   varchar(5),
   code_retour       integer,
-
   ref_commande      integer
 
 );

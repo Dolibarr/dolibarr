@@ -26,7 +26,6 @@ create table llx_editeur
   oscid           integer NOT NULL,
   tms             timestamp,
   nom		  varchar(32),
-
   fk_user_author  integer
 );
 
