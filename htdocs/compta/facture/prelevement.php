@@ -91,7 +91,7 @@ if ($_GET["facid"] > 0)
       $head[$h][1] = $langs->trans("Apercu");
       $h++;
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$fac->id;
-      $head[$h][1] = $langs->trans("Prelevement");
+      $head[$h][1] = $langs->trans("Prélèvement");
       $hselected = $h;
       $h++;
       $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
@@ -132,7 +132,7 @@ if ($_GET["facid"] > 0)
       print "<div class=\"tabsAction\">\n";
       
       // Valider
-      if ($fac->statut > 0 && $fac->paye == 0)
+      if ($fac->statut > 0 && $fac->paye == 0 && $fac->mode_reglement == 3)
 	{
 	  if ($user->rights->facture->creer)
 	    {
@@ -177,7 +177,7 @@ if ($_GET["facid"] > 0)
 	      
 	      print "<tr $bc[$var]>";	      	      
 	      print '<td align="center">'.strftime("%d/%m/%Y",$obj->date_demande)."</td>\n";
-	      print '<td align="center">-</td>';
+	      print '<td align="center">En attente de traitement</td>';
 	      print '<td align="center">-</td>';
 	      print '<td align="center" colspan="2">'.$obj->firstname." ".$obj->name.'</td>';	      
 	      print "</tr>\n";
