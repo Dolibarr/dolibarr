@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +20,10 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/system/index.php
+/**	    \file       htdocs/admin/system/index.php
 		\brief      Page accueil infos système
 		\version    $Revision$
 */
-
-// \todo eldy Choix du menu à garder fixe à finir.
-// Ceci va servir pour garder le menu fixe quelquesoit les liens cliqués
-// dans ce menu. Cela permet d'appeler des pages en dehors sans perdre
-// le menu qui nous intéresse.
-//session_start();
-//$fix_top_menu="accueil";
-//$fix_left_menu="system";
-//session_register("fix_top_menu");
-//session_register("fix_left_menu");
 
 require("./pre.inc.php");
 include_once $dolibarr_main_document_root."/lib/".$conf->db->type.".lib.php";
@@ -106,7 +96,7 @@ print "<tr $bc[0]><td>".$langs->trans("Version")."</td><td>" . $row[1] . "</td><
 print "<tr $bc[1]><td width=\"240\">".$langs->trans("Type")."</td><td>" . $conf->db->type . "</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("Host")."</td><td>" . $conf->db->host . "</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("User")."</td><td>" . $conf->db->user . "&nbsp;</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("Password")."</td><td>" . $conf->db->pass . "&nbsp;</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("Password")."</td><td>" . ereg_replace(".","\*",$conf->db->pass) . "&nbsp;</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";
 
 print '</table>';
