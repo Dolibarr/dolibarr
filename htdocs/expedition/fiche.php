@@ -264,10 +264,10 @@ else
 /*                                                                             */
 /* *************************************************************************** */
 {  
-  if ($id > 0)
+  if ($_GET["id"] > 0)
     {
       $expedition = New Expedition($db);
-      $result = $expedition->fetch($id);
+      $result = $expedition->fetch($_GET["id"]);
 
       if ( $result > 0)
 	{	  
@@ -292,7 +292,7 @@ else
 	   */
 	  if ($action == 'delete')
 	    {
-	      $html->form_confirm("$PHP_SELF?id=$id","Supprimer l'expedition","Etes-vous sûr de vouloir supprimer cette expedition ?","confirm_delete");
+	      $html->form_confirm("fiche.php?id=$expedition->id","Supprimer l'expedition","Etes-vous sûr de vouloir supprimer cette expedition ?","confirm_delete");
 	    }
 	  
 	  /*
@@ -301,7 +301,7 @@ else
 	   */
 	  if ($_GET["action"] == 'valid')
 	    {
-	      $html->form_confirm("$PHP_SELF?id=$id","Valider l'expédition","Etes-vous sûr de vouloir valider cette expédition ?","confirm_valid");
+	      $html->form_confirm("fiche.php?id=$expedition->id","Valider l'expédition","Etes-vous sûr de vouloir valider cette expédition ?","confirm_valid");
 	    }
 	  /*
 	   * Confirmation de l'annulation
@@ -309,7 +309,7 @@ else
 	   */
 	  if ($_GET["action"] == 'annuler')
 	    {
-	      $html->form_confirm("$PHP_SELF?id=$id","Annuler la commande","Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
+	      $html->form_confirm("fiche.php?id=$expedition->id","Annuler la commande","Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
 	    }
 
 	  /*
@@ -317,7 +317,7 @@ else
 	   */
 	  if ($commande->brouillon == 1 && $user->rights->commande->creer) 
 	    {
-	      print '<form action="fiche.php?id='.$id.'" method="post">';
+	      print '<form action="fiche.php?id='.$expedition->id.'" method="post">';
 	      print '<input type="hidden" name="action" value="setremise">';
 	    }
 
@@ -351,7 +351,7 @@ else
 
 	  $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande, ed.qty as qty_livre";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed";
-	  $sql .= " WHERE ed.fk_expedition = $id AND cd.rowid = ed.fk_commande_ligne ";
+	  $sql .= " WHERE ed.fk_expedition = $expedition->id AND cd.rowid = ed.fk_commande_ligne ";
 	  
 	  $result = $db->query($sql);
 	  if ($result)
@@ -409,7 +409,7 @@ else
 	
 	    if ($expedition->brouillon && $user->rights->expedition->supprimer)
 	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?id=$id&amp;action=delete\">Supprimer</a></td>";
+		print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$expedition->id&amp;action=delete\">Supprimer</a></td>";
 	      } 
 	    else
 	      {
@@ -428,7 +428,7 @@ else
 	      {
 		if ($user->rights->expedition->valider)
 		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?id=$id&amp;action=valid\">Valider</a></td>";
+		    print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$expedition->id&amp;action=valid\">Valider</a></td>";
 		  }
 		else
 		  {
@@ -439,7 +439,7 @@ else
 	      {
 		if ($user->rights->commande->valider)
 		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$id&amp;action=annuler\">Annuler la commande</a></td>";
+		    print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?id=$expedition->id&amp;action=annuler\">Annuler la commande</a></td>";
 		  }
 		else
 		  {
@@ -530,7 +530,7 @@ else
 	     *
 	     */
 	    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-	    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = $commande->socidp AND a.fk_action in (9,10) AND a.fk_commande = $id";
+	    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = $commande->socidp AND a.fk_action in (9,10) AND a.fk_commande = $expedition->id";
 	    
 	    $result = $db->query($sql);
 	    if ($result)
@@ -580,7 +580,7 @@ else
 	    $replytomail = $user->email;
 	    $from_mail = $replytomail;
 	    
-	    print "<form method=\"post\" action=\"$PHP_SELF?id=$id&amp;action=send\">\n";
+	    print "<form method=\"post\" action=\"fiche.php?id=$expedition->id&amp;action=send\">\n";
 	    print '<input type="hidden" name="replytoname" value="'.$replytoname.'">';
 	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
 	    
