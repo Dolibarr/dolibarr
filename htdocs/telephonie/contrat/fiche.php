@@ -425,6 +425,10 @@ else
 		}
 	      $h++;
 
+	      $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/stats.php?id=".$contrat->id;
+	      $head[$h][1] = $langs->trans("Stats");
+	      $h++;
+
 	      $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/info.php?id=".$contrat->id;
 	      $head[$h][1] = $langs->trans("Infos");
 	      $h++;
