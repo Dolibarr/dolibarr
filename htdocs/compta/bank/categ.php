@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/*!
+        \file       htdocs/compta/bank/categ.php
+        \ingroup    compta
+		\brief      Page ajout de catégories banaires
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $user->getrights('compta');
@@ -29,33 +37,34 @@ if (!$user->admin && !$user->rights->compta->bank)
 
 llxHeader();
 
-if ($action == 'add')
+
+/*
+ * Actions ajout catégorie
+ */
+if ($_POST["action"] == 'add')
 {
-  if ($credit > 0)
-    {
-      $amount = $credit ;
-    }
-  else 
-    {
-      $amount = - $debit ;
-    }
-
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (label) VALUES ('$label')";
-  $result = $db->query($sql);
-
-  if (!$result)
-    {
-      print $db->error();
-      print "<p>$sql";
+    if ($_POST["label"]) {
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_categ (label) VALUES ('".$_POST["label"]."')";
+      $result = $db->query($sql);
+    
+      if (!$result)
+        {
+          dolibarr_print_error($db);
+        }
     }
 }
 
-print_titre("Catégories");
+
+/*
+ * Affichage liste des catégories
+ */
+
+print_titre($langs->trans("Categories"));
 print '<form method="post" action="categ.php">';
 print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>Num</td><td colspan="2">'.$langs->trans("Description").'</td>';
+print '<td>'.$langs->trans("Ref").'</td><td colspan="2">'.$langs->trans("Label").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label";
@@ -79,7 +88,12 @@ if ($result)
     }
   $db->free();
 }
-print "<tr>";
+
+/*
+ * Affichage ligne ajout de catégorie
+ */
+$var=!$var;
+print "<tr $bc[$var]>";
 print "<td>&nbsp;</td><td><input name=\"label\" type=\"text\" size=45></td>";
 print "<td align=\"center\"><input type=\"submit\" value=\"".$langs->trans("Add")."\"</td></tr>";
 print "</table></form>";
