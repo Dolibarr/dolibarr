@@ -134,7 +134,7 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print "<p><table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print '<p><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>';
   print_liste_field_titre("Nom",$PHP_SELF,"lower(p.name)", $begin);
   print "</td><td>";
@@ -155,7 +155,7 @@ if ($result)
       print '<td>email</td>';
     }
 
-  print "</TR>\n";
+  print "</tr>\n";
   $var=True;
   while ($i < min($num,$limit))
     {
@@ -168,7 +168,7 @@ if ($result)
       print '<td valign="center">';
       print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">';
       print img_file();
-      print '</a><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.$obj->name.'</a></td>';
+      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.$obj->name.'</a></td>';
       print "<TD>$obj->firstname</TD>";
       
       print '<td>';
