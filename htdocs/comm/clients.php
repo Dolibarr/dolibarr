@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
  *
  */
 
-/**
-	    \file       htdocs/comm/clients.php
+/**	    \file       htdocs/comm/clients.php
         \ingroup    commercial, societe
 		\brief      Liste des clients
 		\version    $Revision$
@@ -107,7 +106,7 @@ if ($result)
   $addu = "&amp;page=$page&amp;begin=$begin&amp;search_nom=".$_GET["search_nom"];
   print '<table class="liste">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Companies"),"clients.php","s.nom",$addu,"","",$sortfield);
+  print_liste_field_titre($langs->trans("Companie"),"clients.php","s.nom",$addu,"","",$sortfield);
   print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client",$addu,"","",$sortfield);
   print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$addu,"","",$sortfield);
   print "<td>&nbsp;</td></tr>\n";
@@ -146,7 +145,7 @@ if ($result)
 }
 else
 {
-  print $db->error() . ' ' . $sql;
+  dolibarr_print_error($db);
 }
 
 $db->close();
