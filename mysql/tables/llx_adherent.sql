@@ -27,7 +27,7 @@ create table llx_adherent
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
-  fk_adherent_type smallint,
+  fk_adherent_type smallint
   datec            datetime,
   prenom           varchar(50),
   nom              varchar(50),
