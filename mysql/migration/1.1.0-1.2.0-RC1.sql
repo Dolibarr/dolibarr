@@ -43,3 +43,4 @@ create table llx_co_fa
   key(fk_facture)
 );
 
+alter table c_paiement rename llx_c_paiement ;
