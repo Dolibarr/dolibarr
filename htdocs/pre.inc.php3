@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * $Id$
  * $Source$
@@ -85,7 +85,7 @@ function llxHeader($head = "") {
 
   $menu->add("/user/", "Utilisateurs");
 
-  $menu->add("/info.php3", "Configuration");
+  $menu->add("/admin/", "Configuration");
 
   if ($conf->voyage) 
     {
