@@ -219,7 +219,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
     
           print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-          $form->select_departement($soc->departement_id,$soc->pays_code);
+          $form->select_departement($soc->departement_id,(defined(COMPANY_CREATE_TWO_STEPS)?$soc->pays_code:0));
           print '</td></tr>';
     
           print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel"></td>';
@@ -235,7 +235,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
       
           print '<tr><td>Forme juridique</td><td colspan="3">';
-          $form->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
+          $form->select_forme_juridique($soc->forme_juridique_code,(defined(COMPANY_CREATE_TWO_STEPS)?$soc->pays_code:0));
           print '</td></tr>';
       
           print '<tr><td>Effectif</td><td colspan="3">';
@@ -313,7 +313,7 @@ elseif ($_GET["action"] == 'edit')
       print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
       print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-      $form->select_departement($soc->departement_id,$soc->pays_code);
+      $form->select_departement($soc->departement_id,0);
       print '</td></tr>';      
 
       print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
@@ -347,7 +347,7 @@ elseif ($_GET["action"] == 'edit')
       print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
 
       print '<tr><td>Forme juridique</td><td colspan="3">';
-      $form->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
+      $form->select_forme_juridique($soc->forme_juridique_code,0);
       print '</td></tr>';
 
       print '<tr><td>Effectif</td><td colspan="3">';

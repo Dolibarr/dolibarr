@@ -52,66 +52,74 @@ class Form
   }
   
   /*
-   *    \brief      Retourne la liste déroulante des départements/province/cantons 
-   *                avec un affichage avec rupture sur le pays
+   *    \brief      Retourne la liste déroulante des départements/province/cantons tout pays confondu ou pour un pays donné.
+   *    \remarks    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
    *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrée pour
-   *                un code donnée mais dans ce cas, le champ pays et lang diffère).
-   *                Ainsi les liens avec les départements se font sur un département
-   *                independemment de nom som.
+   *                un code donnée mais dans ce cas, le champ pays diffère).
+   *                Ainsi les liens avec les départements se font sur un département indépendemment de nom som.
+   *    \param      selected        code forme juridique a présélectionné
+   *    \param      pays_code       0=liste tous pays confondus, sinon code du pays à afficher
    */
 	 
-  function select_departement($selected='',$htmlname='departement_id')
+  function select_departement($selected='',$pays_code=0)
   {
     global $conf,$langs;
     $langs->load("dict");
-
-    // On recherche les départements/cantons/province active d'une region et pays actif
-    $sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM ";
-    $sql .= MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
-    $sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
-    $sql .= " AND d.active = 1 AND r.active = 1 AND p.active = 1 ";
-    $sql .= "ORDER BY code_pays, code ASC";
     
-    if ($this->db->query($sql))
-      {
+    $htmlname='departement_id';
+    
+    // On recherche les départements/cantons/province active d'une region et pays actif
+    $sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM";
+    $sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
+    $sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
+    $sql .= " AND d.active = 1 AND r.active = 1 AND p.active = 1";
+    if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
+    $sql .= " ORDER BY p.code, d.code_departement";
+    
+    $result=$this->db->query($sql);
+    if ($result)
+    {
         print '<select name="'.$htmlname.'">';
-        $num = $this->db->num_rows();
+        if ($pays_code) print '<option value="0">&nbsp;</option>';
+        $num = $this->db->num_rows($result);
         $i = 0;
         if ($num)
-	  {
+        {
             $pays='';
             while ($i < $num)
-	      {
-                $obj = $this->db->fetch_object();
+            {
+                $obj = $this->db->fetch_object($result);
                 if ($obj->code == 0) {
-		  print '<option value="0">&nbsp;</option>';
+                    print '<option value="0">&nbsp;</option>';
                 }
                 else {
-		  if ($pays == '' || $pays != $obj->libelle_pays) {
-		    // Affiche la rupture
-		    print '<option value="-1">----- '.$obj->libelle_pays." -----</option>\n";
-		    $pays=$obj->libelle_pays;
-		  }
+                    if (! $pays || $pays != $obj->libelle_pays) {
+                        // Affiche la rupture si on est en mode liste multipays
+                        if (! $pays_code && $obj->code_pays) {
+                            print '<option value="-1">----- '.$obj->libelle_pays." -----</option>\n";
+                            $pays=$obj->libelle_pays;
+                        }
+                    }
     
-		  if ($selected > 0 && $selected == $obj->rowid)
+                    if ($selected > 0 && $selected == $obj->rowid)
                     {
-		      print '<option value="'.$obj->rowid.'" selected>';
+                        print '<option value="'.$obj->rowid.'" selected>';
                     }
-		  else
+                    else
                     {
-		      print '<option value="'.$obj->rowid.'">';
+                        print '<option value="'.$obj->rowid.'">';
                     }
-		  // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-		  print $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
-		  print '</option>';
+                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                    print $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+                    print '</option>';
                 }
                 $i++;
-	      }
-	  }
+            }
+        }
         print '</select>';
-      }
+    }
     else {
-      dolibarr_print_error($this->db);
+        dolibarr_print_error($this->db);
     }
   }
   
@@ -416,60 +424,69 @@ class Form
   }
 
   /*
-   *    \brief  Retourne la liste déroulante des formes juridiques avec un affichage avec rupture sur le pays
-   *
+   *    \brief      Retourne la liste déroulante des formes juridiques tous pays confondu ou pour un pays donné.
+   *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
+   *    \param      selected        code forme juridique a présélectionné
+   *    \param      pays_code       0=liste tous pays confondus, sinon code du pays à afficher
    */
 	 
-  function select_forme_juridique($selected='')
+  function select_forme_juridique($selected='',$pays_code=0)
   {
     global $conf,$langs;
     $langs->load("dict");
-
-    // On recherche les formes juridiques actives des pays actifs
-    $sql = "SELECT f.rowid, f.code as code , f.libelle as nom, f.active, p.libelle as libelle_pays, p.code as code_pays FROM llx_c_forme_juridique as f, llx_c_pays as p";
-    $sql .= " WHERE f.fk_pays=p.rowid";
-    $sql .= " AND f.active = 1 AND p.active = 1 ORDER BY code_pays, code ASC";
     
-    if ($this->db->query($sql))
-      {
+    // On recherche les formes juridiques actives des pays actifs
+    $sql  = "SELECT f.rowid, f.code as code , f.libelle as nom, f.active, p.libelle as libelle_pays, p.code as code_pays";
+    $sql .= " FROM llx_c_forme_juridique as f, llx_c_pays as p";
+    $sql .= " WHERE f.fk_pays=p.rowid";
+    $sql .= " AND f.active = 1 AND p.active = 1";
+    if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
+    $sql .= " ORDER BY p.code, f.code";
+    
+    $result=$this->db->query($sql);
+    if ($result)
+    {
         print '<select name="forme_juridique_code">';
-        $num = $this->db->num_rows();
+        if ($pays_code) print '<option value="0">&nbsp;</option>';
+        $num = $this->db->num_rows($result);
         $i = 0;
         if ($num)
-	  {
+        {
             $pays='';
             while ($i < $num)
-	      {
-                $obj = $this->db->fetch_object();
+            {
+                $obj = $this->db->fetch_object($result);
                 if ($obj->code == 0) {
-		  print '<option value="0">&nbsp;</option>';
+                    print '<option value="0">&nbsp;</option>';
                 }
                 else {
-		  if ($pays == '' || $pays != $obj->libelle_pays) {
-		    // Affiche la rupture
-		    print '<option value="0">----- '.$obj->libelle_pays." -----</option>\n";
-		    $pays=$obj->libelle_pays;
-		  }
+                    if (! $pays || $pays != $obj->libelle_pays) {
+                        // Affiche la rupture si on est en mode liste multipays
+                        if (! $pays_code && $obj->code_pays) {
+                            print '<option value="0">----- '.$obj->libelle_pays." -----</option>\n";
+                            $pays=$obj->libelle_pays;
+                        }
+                    }
     
-		  if ($selected > 0 && $selected == $obj->code)
+                    if ($selected > 0 && $selected == $obj->code)
                     {
-		      print '<option value="'.$obj->code.'" selected>';
+                        print '<option value="'.$obj->code.'" selected>';
                     }
-		  else
+                    else
                     {
-		      print '<option value="'.$obj->code.'">';
+                        print '<option value="'.$obj->code.'">';
                     }
-		  // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-		  print $obj->code . ' - ' .($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
-		  print '</option>';
+                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                    print $obj->code . ' - ' .($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+                    print '</option>';
                 }
                 $i++;
-	      }
-	  }
+            }
+        }
         print '</select>';
-      }
+    }
     else {
-      dolibarr_print_error($this->db);
+        dolibarr_print_error($this->db);
     }
   }
   
