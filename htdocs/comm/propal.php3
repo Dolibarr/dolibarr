@@ -55,7 +55,6 @@ if ($action == 'add')
 {
   $propal = new Propal($db, $socidp);
 
-  $propal->remise = $HTTP_POST_VARS["remise"];
   $propal->datep = $db->idate(mktime(12, 1 , 1, 
 				     $HTTP_POST_VARS["remonth"], 
 				     $HTTP_POST_VARS["reday"], 
