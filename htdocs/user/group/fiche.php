@@ -149,7 +149,7 @@ else
       $hselected=$h;
       $h++;
         
-      dolibarr_fiche_head($head, $hselected, $langs->trans("Group")." : ".$group->nom);
+      dolibarr_fiche_head($head, $hselected, $langs->trans("Group").": ".$group->nom);
 
       /*
        * Confirmation suppression

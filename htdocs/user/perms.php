@@ -158,7 +158,7 @@ if ($_GET["id"])
       $h++;
     }
   
-  dolibarr_fiche_head($head, $hselected, $langs->trans("User")." : ".$fuser->fullname);
+  dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);
 
 
   $sql = "SELECT r.id, r.libelle, r.module ";

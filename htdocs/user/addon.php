@@ -95,7 +95,7 @@ if ($_GET["id"])
       $h++;
     }
 
-  dolibarr_fiche_head($head, $hselected, $langs->trans("User")." : ".$fuser->fullname);
+  dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);
   
   /*
    * Fiche en mode visu
