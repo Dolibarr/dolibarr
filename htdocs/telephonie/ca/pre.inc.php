@@ -53,7 +53,7 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/statca/", "Chiffre d'affaire");
+  $menu->add(DOL_URL_ROOT."/telephonie/ca/", "Chiffre d'affaire");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ca/gain.php", "Gain par client");
 
   left_menu($menu->liste);
