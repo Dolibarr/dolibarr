@@ -32,7 +32,7 @@ if ($user->rights->facture->lire)
   $nbtoshow=5;
   
   $info_box_head = array();
-  $info_box_head[] = array('text' => "Les $nbtoshow plus anciennces factures fournisseurs impayées");
+  $info_box_head[] = array('text' => "Les $nbtoshow plus anciennes factures fournisseurs impayées");
 
   $info_box_contents = array();
 
