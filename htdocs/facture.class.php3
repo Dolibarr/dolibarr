@@ -41,7 +41,7 @@ class Facture {
   var $note;
   var $db_table;
   var $propalid;
-
+  var $projetid;
   /*
    * Initialisation
    *
@@ -82,8 +82,8 @@ class Facture {
     $tva = tva($totalht);
     $total = $totalht + $tva;
     
-    $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, tva, total, datef, note, fk_user_author) ";
-    $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $tva, $total, $this->date,'$note',$userid);";
+    $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, tva, total, datef, note, fk_user_author,fk_projet) ";
+    $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $tva, $total, $this->date,'$note',$userid, $this->projetid);";
       
     if ( $this->db->query($sql) )
       {
@@ -107,7 +107,8 @@ class Facture {
   Function fetch($rowid)
     {
 
-      $sql = "SELECT fk_soc,facnumber,amount,tva,total,remise,".$this->db->pdate(datef)."as df FROM llx_facture WHERE rowid=$rowid;";
+      $sql = "SELECT fk_soc,facnumber,amount,tva,total,remise,".$this->db->pdate(datef)."as df,fk_projet";
+      $sql .= " FROM llx_facture WHERE rowid=$rowid;";
       
       if ($this->db->query($sql) )
 	{
@@ -124,6 +125,7 @@ class Facture {
 	      $this->total_ttc = $obj->total;
 	      $this->remise    = $obj->remise;
 	      $this->socidp    = $obj->fk_soc;
+	      $this->projetid  = $obj->fk_projet;
 	      $this->lignes    = array();
 	      $this->db->free();
 

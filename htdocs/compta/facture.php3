@@ -23,6 +23,7 @@ require("./pre.inc.php3");
 require("../facture.class.php3");
 require("../lib/CMailFile.class.php3");
 require("../paiement.class.php");
+require("../project.class.php3");
 require("./bank/account.class.php");
 
 llxHeader();
@@ -120,7 +121,7 @@ if ($action == 'add')
       $facture = new Facture($db, $socid);
       $facture->number = $facnumber;
       $facture->date = $datefacture;
-      
+      $facture->projetid = $HTTP_POST_VARS["projetid"];
       $facture->note = $note;
       $facture->amount = $amount;
       $facture->remise = $remise;
@@ -232,8 +233,8 @@ if ($action == 'create')
   if ($propalid) 
     {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
-      $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
-      
+      $sql .= " FROM societe as s, llx_propal as p, c_propalst as c";
+      $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";      
       $sql .= " AND p.rowid = $propalid";
     }
   else
@@ -257,10 +258,26 @@ if ($action == 'create')
 	
 	print '<table cellspacing="0" border="1" width="100%">';
 	
-	print "<tr bgcolor=\"#e0e0e0\"><td>Client :</td><td>$obj->nom</td>";
+	print "<tr><td>Client :</td><td>$obj->nom</td>";
+	print "<td>Commentaire</td></tr>";
 	
+	print "<input type=\"hidden\" name=\"author\" value=\"$author\">";
+	print "<tr><td>Auteur :</td><td>".$user->fullname."</td>";
+
 	print '<td rowspan="4">';
-	print '<textarea name="note" wrap="soft" cols="60" rows="15"></textarea></td></tr>';
+	print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
+
+	print "<tr><td>Date :</td><td>";
+
+	print_date_select(time());
+
+	print "</td></tr>";
+	print "<tr><td>Numéro :</td><td> <input name=\"facnumber\" type=\"text\" value=\"$numfa\"></td></tr>";
+
+	print "<tr><td>Projet :</td><td>";
+	$proj = new Project($db);
+	$html->select_array("projetid",$proj->liste_array($socidp));
+	print "</td></tr>";
 
 	if ($propalid)
 	  {
@@ -272,24 +289,11 @@ if ($action == 'create')
 	    print '<input type="hidden" name="propalid" value="'.$propalid.'">';
 	    
 	    print "<tr><td>Propal :</td><td>$obj->ref</td></tr>";
-	    print '<tr bgcolor="#e0e0e0"><td>Montant HT :</td><td>'.price($amount).'</td></tr>';
-	    print "<tr bgcolor=\"#e0e0e0\"><td>TVA 19.6% :</td><td>".price($obj->tva)."</td></tr>";
-	    print "<tr bgcolor=\"#e0e0e0\"><td>Total TTC :</td><td>".price($obj->total)."</td></tr>";	  
+	    print '<tr><td>Montant HT :</td><td>'.price($amount).'</td></tr>';
+	    print "<tr><td>TVA 19.6% :</td><td>".price($obj->tva)."</td></tr>";
+	    print "<tr><td>Total TTC :</td><td>".price($obj->total)."</td></tr>";	  
 	  }
-	else
-	  {	    
 
-	  }
-	
-	print "<input type=\"hidden\" name=\"author\" value=\"$author\">";
-	print "<tr><td>Auteur :</td><td>".$user->fullname."</td></tr>";
-	
-	print "<tr><td>Date :</td><td>";
-
-	print_date_select(time());
-
-	print "</td></tr>";
-	print "<tr><td>Numéro :</td><td> <input name=\"facnumber\" type=\"text\" value=\"$numfa\"></td></tr>";
 	
 	print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
 	print "</form>\n";
@@ -373,7 +377,7 @@ else
 	
 	print '<tr><td>Statut</td><td align="center">'.$obj->statut.'</td>';
 	print "<td>Payé</td>";
-	print "<td align=\"center\" bgcolor=\"#f0f0f0\"><b>".$yn[$obj->paye]."</b></td></tr>";
+	print "<td align=\"center\"><b>".$yn[$obj->paye]."</b></td></tr>";
 	print "</table>";
 	
 	print "</td><td valign=\"top\">";
