@@ -22,9 +22,9 @@
  */
 define('DOL_VERSION','1.2.0-DEV');
 
-if (! include_once("conf/conf.php"))
+if (! @include_once("conf/conf.php"))
 {
-  print "Votre système n'est pas configuré, rendez-vous à l'url <a href=\"install.php\">install.php</a>";
+  print "Votre système n'est pas configuré, procédez à l'<a href=\"install/\">installation</a>";
   exit ;  
 }
 
@@ -450,7 +450,7 @@ function top_menu($head, $title="")
  *
  *
  */
-Function left_menu($menu, $help_url='', $form_search='') 
+Function left_menu($menu, $help_url='', $form_search='', $author='') 
 {
   global $user, $conf, $rtplang;
 
@@ -536,7 +536,16 @@ Function left_menu($menu, $help_url='', $form_search='')
    *
    *
    */
+
+  if (is_object($author))
+  {
+
+    print '<tr><td class="auteurs">Auteur : ';
+    print $author->fullname .'</td></tr>';
+  }
+
   print '</table>'."\n";
+
   print '</td><td valign="top" width="85%" colspan="6">'."\n";
 
 
