@@ -589,12 +589,14 @@ class User
 		}
 	      else
 		{
+		  dolibarr_syslog("Error in  user.class.php->create_from_contact()");
 		  print $this->db->error();
 		}
 	    }
 	}
       else
 	{
+	  dolibarr_syslog("Error in  user.class.php->create_from_contact()");
 	  print $this->db->error();
 	}
       
