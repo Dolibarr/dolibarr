@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Éric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -110,6 +111,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
 		    {
 		      for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
 			{
+			  print "<pre>la propale précédente en ligne " . $prop->lignes[$i]->libelle . " avait comme prix : " . $prop->lignes[$i]->price . " !</pre>\n";
 			  $result = $facture->addline($facid,
 						      addslashes($prop->lignes[$i]->libelle),
 						      $prop->lignes[$i]->subprice,
@@ -185,6 +187,7 @@ if ($action == 'add_paiement')
   $paiement->num_paiement = $HTTP_POST_VARS["num_paiement"];
   $paiement->note         = $HTTP_POST_VARS["note"];
 
+  //A ne pas mélanger avec paiementid !
   $paiement_id = $paiement->create();
 
   $action = '';
@@ -193,9 +196,11 @@ if ($action == 'add_paiement')
   $fac->fetch($HTTP_POST_VARS["facid"]);
   $fac->fetch_client();
 
-  $label = "Réglement facture ";
+  $label = "Règlement facture " . $fac->ref;
 
+  //On ajoute une ligne dans la table llx_bank pour qu'ensuite on puisse rapprocher le compte !
   $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
+  //paiementid est correct, il contient "CHQ ou VIR par exemple"
   $bank_line_id = $acc->addline($datepaye, $paiementid, $label, $amount, $num_paiement);
   $acc->add_url_line($bank_line_id, $fac->id, DOL_URL_ROOT.'/compta/facture.php?facid=', $fac->ref);
   $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);
@@ -210,6 +215,11 @@ if ($action == 'del_paiement' && $user->rights->facture->paiement)
   $paiement->delete();
 
   $action = '';
+  //Attention: bug 18.01.2004 on oublie d'effacer la ligne correspondante dans llx_bank !
+
+  $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
+  //paiementid est correct, il contient "CHQ ou VIR par exemple"
+  $acc->deleteline($paiementid);
 }
 /*
  *
