@@ -38,10 +38,12 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add(DOL_URL_ROOT."/comm/action/", "Actions");
 
-  $menu->add(DOL_URL_ROOT."/comm/propal.php3", "Propales");
-
-  $menu->add_submenu("propal.php3?viewstatut=0", "Brouillons");
-  $menu->add_submenu("propal.php3?viewstatut=1", "Ouvertes");
+  if ($user->rights->propale->lire)
+    {
+      $menu->add(DOL_URL_ROOT."/comm/propal.php3", "Propales");
+      $menu->add_submenu("propal.php3?viewstatut=0", "Brouillons");
+      $menu->add_submenu("propal.php3?viewstatut=1", "Ouvertes");
+    }
 
   if ($conf->fichinter->enabled ) 
     {
