@@ -78,5 +78,13 @@ class modPropale
 	  }
       }       
   }
+  /*
+   *
+   *
+   */
+  Function remove()
+  {
+
+  }
 }
 ?>

@@ -92,5 +92,13 @@ class modFacture
 	  }
       }       
   }
+  /*
+   *
+   *
+   */
+  Function remove()
+  {
+
+  }
 }
 ?>
