@@ -53,23 +53,23 @@ function valeur($sql)
  */
 
 
-if ($action == 'add_bookmark')
+if ($_GET["action"] == 'add_bookmark')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$_GET["socidp"]." AND fk_user=".$user->id;
   if (! $db->query($sql) )
     {
       print $db->error();
     }
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES (".$_GET["socidp"].", now(),".$user->id.");";
   if (! $db->query($sql) )
     {
       print $db->error();
     }
 }
 
-if ($action == 'del_bookmark')
+if ($_GET["action"] == 'del_bookmark')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=$bid";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"];
   $result = $db->query($sql);
 }
 
@@ -170,25 +170,30 @@ $sql .= " ORDER BY lower(s.nom) ASC";
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
-  $i = 0;
 
-  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-  print "<tr class=\"liste_titre\">";
-  print "<td colspan=\"2\">Bookmark</td>";
-  print "</tr>\n";
-
-  while ($i < $num)
+  if ($num)
     {
-      $obj = $db->fetch_object( $i);
-      $var = !$var;
-      print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-      print '<td align="right"><a href="index.php?action=del_bookmark&bid='.$obj->bid.'">';
-      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
-      print '</tr>';
-      $i++;
+
+      $i = 0;
+
+      print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
+      print "<tr class=\"liste_titre\">";
+      print "<td colspan=\"2\">Bookmark</td>";
+      print "</tr>\n";
+      
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var = !$var;
+	  print "<tr $bc[$var]>";
+	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+	  print '<td align="right"><a href="index.php?action=del_bookmark&bid='.$obj->bid.'">';
+	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
+	  print '</tr>';
+	  $i++;
+	}
+      print '</table>';
     }
-  print '</table>';
 }
 
 
