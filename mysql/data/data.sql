@@ -48,15 +48,16 @@ insert into llx_action_def (rowid,titre,description,objet_type) values (2,'Valid
 --
 -- Constantes de configuration
 --
-insert into llx_const (name, value, type, note) values ('MAIN_MONNAIE','euros','chaine','Monnaie');
-insert into llx_const (name, value, type, note) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document');
-insert into llx_const (name, value, type, note) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation');
-insert into llx_const (name, value, type, note) values ('MAIN_MAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr');
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MONNAIE','euros','chaine','Monnaie',0);
 
-insert into llx_const (name, value, type, note) values ('MAIN_START_YEAR','2004','chaine','Année de départ');
+insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','1','chaine','Autorise l\'upload de document',1);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation',1);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr',1);
 
-insert into llx_const (name, value, type, note) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
-insert into llx_const (name, value, type, note) values ('MAIN_DEBUG','1','yesno','Debug ..');
+insert into llx_const (name, value, type, note, visible) values ('MAIN_START_YEAR','2004','chaine','Année de départ',1);
+
+insert into llx_const (name, value, type, note, visible) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages',1);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DEBUG','1','yesno','Debug ..',1);
 
 insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine',0);
 
