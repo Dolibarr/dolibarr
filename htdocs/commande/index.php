@@ -24,19 +24,26 @@ require("./pre.inc.php");
 
 llxHeader();
 
-if ($sortfield == "") {
+print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+
+print '<tr><td valign="top" width="30%">';
+/*
+ *
+ */
+
+
+if ($sortfield == "")
+{
   $sortfield="o.orders_status ASC, o.date_purchased";
 }
-if ($sortorder == "") {
+if ($sortorder == "")
+{
   $sortorder="DESC";
 }
-
 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
-
-
 
 $sql = "SELECT o.orders_id, o.customers_name, o.orders_status FROM ".DB_NAME_OSC.".orders as o";
   
@@ -50,27 +57,69 @@ if ( $db->query($sql) )
   print_barre_liste("Liste des Commandes",$page,$PHP_SELF,"",$sortfield,$sortorder,'',$num);
 
   $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\"><td>";
+  print '<p><table class="liste" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>';
   print_liste_field_titre("Client",$PHP_SELF, "p.ref");
   print "</td>";
   print "<td></td>";
-  print "</TR>\n";
+  print "</tr>\n";
   $var=True;
   while ($i < min($num,$limit))
     {
       $objp = $db->fetch_object( $i);
-    $var=!$var;
-    print "<TR $bc[$var]>";
-    print "<TD><a href=\"fiche.php?id=$objp->orders_id\">$objp->customers_name</a></TD>\n";
-    print "<TD>$objp->orders_status</TD>\n";
-    print "</TR>\n";
-    $i++;
-  }
+      $var=!$var;
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?id=$objp->orders_id\">$objp->customers_name</a></TD>\n";
+      print "<td>$objp->orders_status</TD>\n";
+      print "</tr>\n";
+      $i++;
+    }
   print "</TABLE>";
   $db->free();
 }
+/*
+ *
+ */
+print '</td><td valign="top" width="70%">';
 
+/*
+ * Propales à facturer
+ */
+if ($user->comm > 0 && $conf->commercial ) 
+{
+  $sql = "SELECT p.rowid, p.ref, s.nom, s.idp FROM llx_propal as p, llx_societe as s";
+  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = 2";
+  if ($socidp)
+    {
+      $sql .= " AND p.fk_soc = $socidp";
+    }
+
+  if ( $db->query($sql) ) 
+    {
+      $num = $db->num_rows();
+      if ($num)
+	{
+	  $i = 0;
+	  print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+	  print "<tr class=\"liste_titre\">";
+	  print '<td colspan="2">'.translate("Propositions commerciales signées").'</td></tr>';
+  
+	  while ($i < $num)
+	    {
+	      $var=!$var;
+	      $obj = $db->fetch_object($i);
+	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"propal.php?propalid=$obj->rowid\">$obj->ref</a></td>";
+	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	      $i++;
+	    }
+	  print "</table><br>";
+	}
+    }
+}
+
+
+
+print '</td></tr></table>';
 
 $db->close();
 

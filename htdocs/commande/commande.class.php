@@ -1,6 +1,5 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,81 +20,134 @@
  *
  */
 
-class Commande {
+class Commande 
+{
   var $db ;
-
   var $id ;
-  var $client_name ;
+  var $brouillon;
 
-  Function Commande($DB, $id=0) {
-    $this->db = $DB;
-    $this->id   = $id ;
-  }  
-  /*
-   *
-   *
-   *
-   */
-  Function fetch ($id) {
-    
-    $sql = "SELECT o.orders_id, o.customers_name, o.orders_status FROM ".DB_NAME_OSC.".orders as o";
-
-    $sql .= " WHERE o.orders_id = $id";
-
-    $result = $this->db->query($sql) ;
-
-    if ( $result ) {
-      $result = $this->db->fetch_array();
-
-      $this->id          = $result["rowid"];
-      $this->client_name = $result["customers_name"];
-
-      $this->nom_url     = '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$result["rowid"].'">'.$result["nom"].'</a>';
-
+  Function Commande($DB)
+    {
+      $this->db = $DB;
     }
-    $this->db->free();
+  /**
+   * Créé la facture depuis une propale existante
+   *
+   *
+   */
+  Function create_from_propale($user, $propale_id)
+    {
+      $this->propale_id = $propale_id;
+      return $this->create($user);
+    }
+  /**
+   * Créé la facture
+   *
+   *
+   */
+  Function create($user)
+    {
+      /* On positionne en mode brouillon la facture */
+      $this->brouillon = 1;
 
-    return $result;
-  }
+      if (! $remise)
+	{
+	  $remise = 0 ;
+	}
+
+      if (! $this->projetid)
+	{
+	  $this->projetid = 0;
+	}
+      
+      $sql = "INSERT INTO llx_commande (fk_soc, date_creation, fk_user_author,fk_projet) ";
+      $sql .= " VALUES ($socid, now(), $user->id, $this->projetid)";      
+      if ( $this->db->query($sql) )
+	{
+	  $this->id = $this->db->last_insert_id();
+
+	  $sql = "UPDATE llx_commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+	  $this->db->query($sql);
+
+	  if ($this->id && $this->propale_id)
+	    {
+	      $sql = "INSERT INTO llx_co_pr (fk_commande, fk_propale) VALUES (".$this->id.",".$this->propale_id.")";
+	      $this->db->query($sql);
+	    }
+	  /*
+	   * Produits
+	   *
+	   */
+	  for ($i = 0 ; $i < sizeof($this->products) ; $i++)
+	    {
+	      $prod = new Product($this->db, $this->products[$i]);
+	      $prod->fetch($this->products[$i]);
+
+	      $result_insert = $this->addline($this->id, 
+					      $prod->libelle,
+					      $prod->price,
+					      $this->products_qty[$i], 
+					      $prod->tva_tx, 
+					      $this->products[$i], 
+					      $this->products_remise_percent[$i]);
+
+
+	      if ( $result_insert < 0)
+		{
+		  print $sql . '<br>' . $this->db->error() .'<br>';
+		}
+	    }
+
+	  /*
+	   *
+	   *
+	   */
+	  $this->updateprice($this->id);	  
+	  return $this->id;
+	}
+      else
+	{
+	  print $this->db->error() . '<b><br>'.$sql;
+	  return 0;
+	}
+    }
+  /** 
+   *
+   * Lit une commande
+   *
+   */
+  Function fetch ($id)
+    {
+      $sql = "SELECT c.rowid, c.date, c.fk_user_author FROM commande as c";
+      $sql .= " WHERE c.rowid = $id";
+
+      $result = $this->db->query($sql) ;
+
+      if ( $result )
+	{
+	  $result = $this->db->fetch_object();
+
+	  $this->id          = $obj->rowid;
+
+	  $this->db->free();
+	  
+	  return 1;
+
+	}
+      else
+	{
+	  return -1;
+	}
+    }
   /*
    *
    *
    */
-  Function liste_products ()
-  {
-    $ga = array();
-
-    $sql = "SELECT a.rowid, a.title FROM llx_album as a, llx_album_to_groupart as l";
-    $sql .= " WHERE a.rowid = l.fk_album AND l.fk_groupart = ".$this->id;
-    $sql .= " ORDER BY a.title";
-
-    if ($this->db->query($sql) )
-      {
-	$nump = $this->db->num_rows();
-	
-	if ($nump)
-	  {
-	    $i = 0;
-	    while ($i < $nump)
-	      {
-		$obj = $this->db->fetch_object($i);
-		
-		$ga[$obj->rowid] = $obj->title;
-		$i++;
-	      }
-	  }
-	return $ga;
-      }
-    else
-      {
-	print $this->db->error();
-      }    
-  }
-  /*
-   *
-   *
-   */
-
-
 }
+
+class CommandeLigne
+{
+  var $pu;
+}
+
 ?>
