@@ -503,8 +503,8 @@ Class pdf_crabe {
                 $pdf->Image(FAC_PDF_LOGO, 10, 5, 0, 24, 'PNG');
             }
             else {
-                $pdf->SetTextColor(150,0,0);
-                $pdf->SetFont('Arial','B',10);
+                $pdf->SetTextColor(200,0,0);
+                $pdf->SetFont('Arial','B',8);
                 $pdf->MultiCell(80, 6, "Logo file '".FAC_PDF_LOGO."' was not found", 0, 'L');
             }
         }
