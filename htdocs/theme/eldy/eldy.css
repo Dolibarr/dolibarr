@@ -286,9 +286,15 @@ div.menus {
 	border-left:   1px dashed #ccccb3;
 }
 
+/*
+ *   Normal, warning, erreurs
+ */
+.warning { color: #777711; }
+.error   { color: #550000; }
+
 
 /*
- *   Payes/Non payes
+ *   Liens Payes/Non payes
  */
 
 a.normal:link { font-weight: normal } 
