@@ -23,6 +23,16 @@
 require("pre.inc.php3");
 
 
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
+
+
 llxHeader();
 $db = new Db();
 
@@ -198,7 +208,7 @@ elseif ($action == 'edit')
   print '<td width="20%" align="center">-</td>';
   print '<td width="20%" align="center">-</td>';
   print '<td width="20%" align="center">-</td>';
-  print '<td width="20%" align="center">-</td>';
+  print '<td width="20%" align="center">[<a href="societe/notify/fiche.php?socid='.$socid.'">Notifications</a>]</td>';
   print '</table><br>';
 
 /*
