@@ -28,32 +28,18 @@ $db = new Db();
 
 if ($action == 'update' && !$cancel)
 {
-  $livre = new Livre($db);
+  $article = new pnArticle($db);
 
-  $livre->titre = $titre;
-  $livre->ref = $ref;
-  $livre->price = $price;
-  $livre->annee = $annee;
-  $livre->editeurid = $editeurid;
-  $livre->description = $desc;
-
-  if ($livre->update($id, $user))
+  $article->titre = $HTTP_POST_VARS["titre"];
+  $article->body = $HTTP_POST_VARS["body"];
+  if ($article->update($id, $user))
     {
-      $result = $livre->fetch($id);
-      $livre->updateosc($user);
+
     }
   else
     {
       $action = 'edit';
     }
-}
-
-if ($action == 'updateosc')
-{
-  $livre = new Livre($db);
-  $result = $livre->fetch($id);
-
-  $livre->updateosc($user);
 }
 
 /*
@@ -80,47 +66,24 @@ if ($id)
 
       if ($action == 'edit')
 	{
-	  print '<div class="titre">Edition de la fiche Livre : '.$livre->titre.'</div><br>';
+	  print_titre ("Edition de la fiche article");
 	  
 	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	  print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	  
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	  print "<tr><td>Titre</td><td>$article->titre</td></tr>\n";
 	  print "<tr>";
-	  print '<td width="20%">Référence</td><td><input name="ref" size="20" value="'.$livre->ref.'"></td>';
-	  print "<td valign=\"top\">Description</td></tr>";
+	  print "<td valign=\"top\">Description</td>";
 	  
-	  print "<tr><td>Statut</td><td>$livre->status_text";
-	  if ($livre->status == 0)
-	    {
-	      print '<br><a href="fiche.php?id='.$id.'&status=1&action=status">Changer</a>';
-	    }
-	  else
-	    {
-	      print '<br><a href="fiche.php?id='.$id.'&status=0&action=status">Changer</a>';
-	    }
-	  print "</td>\n";
-	  
-	  print '<td valign="top" width="50%" rowspan="6"><textarea name="desc" rows="14" cols="60">';
-	  print $livre->description;
+	  print '<td valign="top" width="80%"><textarea name="body" rows="14" cols="60">';
+	  print str_replace("<br />","",$article->body);
 	  print "</textarea></td></tr>";
 	  
-	  print '<tr><td>Titre</td><td><input name="titre" size="40" value="'.$livre->titre.'"></td></tr>';
-	  
-	  print '<tr><td>Année</td><TD><input name="annee" size="6" maxlenght="4" value="'.$livre->annee.'"></td></tr>';
-	  print '<tr><td>Prix</td><TD><input name="price" size="10" value="'.price($livre->price).'"></td></tr>';    
-	  $htmls = new Form($db);
-	  $edits = new Editeur($db);
-	  
-	  print "<tr><td>Editeur</td><td>";
-	  $htmls->select_array("editeurid",  $edits->liste_array(), $livre->editeurid);
-	  print "</td></tr>";
-	  
-
-	  print '<tr><td align="center" colspan="3"><input type="submit" value="Enregistrer">&nbsp;<input type="submit" value="Annuler" name="cancel"></td></tr>';
+	  print '<tr><td align="center" colspan="2"><input type="submit" value="Enregistrer">&nbsp;<input type="submit" value="Annuler" name="cancel"></td></tr>';
 	  print "</form>";
 	  
-	  print '</form>';	      
+
 	  print '</table><hr>';
 	      
 	    }    
