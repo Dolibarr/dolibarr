@@ -5,13 +5,11 @@
   </head>
 
   <body>
-    <h1>Erreur</h1>
+    <h2>Erreur 404</h2>
 
-    <p>Le login ou le mot de passe que vous avez saisi est erroné, si vous souhaitez tester le site utiliser les login et mot de passe suivant :
-    <ul>
-      <li>login : demo
-      <li>pass  : demo
-      </ul>
+<p>La page demandée n'existe pas :
+
+<p>Vous venez de ! <?PHP print $HTTP_VARS["Referrer"] ?>
 
 
     <hr>
