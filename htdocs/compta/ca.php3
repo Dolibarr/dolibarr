@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +15,81 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 require("./pre.inc.php3");
 
-function pt ($db, $sql, $date) {
+/*
+ *
+ */
+
+$db = new Db();
+
+llxHeader();
+
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $socidp = $user->societe_id;
+}
+
+print_titre("Chiffres d'affaires en euros HT");
+
+print "<table width=\"100%\">";
+print "<tr><td valign=\"top\">";
+
+$sql = "SELECT sum(f.amount) as amount , date_format(f.datef,'%Y-%m') as dm";
+$sql .= " FROM llx_facture as f WHERE f.paye = 1";
+if ($socidp)
+{
+  $sql .= " AND f.fk_soc = $socidp";
+}
+$sql .= " GROUP BY dm DESC";
+
+pt($db, $sql,"Par mois");
+
+print "</td><td valign=\"top\">";
+
+$sql = "SELECT sum(f.amount) as amount, month(f.datef) as dm";
+$sql .= " FROM llx_facture as f WHERE f.paye = 1";
+if ($socidp)
+{
+  $sql .= " AND f.fk_soc = $socidp";
+}
+$sql .= " GROUP BY dm";
+
+pt($db, $sql,"Mois cumulés");
+
+
+print "<P>";
+
+$sql = "SELECT sum(f.amount) as amount, year(f.datef) as dm";
+$sql .= " FROM llx_facture as f WHERE f.paye = 1";
+if ($socidp)
+{
+  $sql .= " AND f.fk_soc = $socidp";
+}
+$sql .= " GROUP BY dm DESC";
+
+pt($db, $sql,"Année");
+
+print "</td></tr></table>";
+
+$db->close();
+
+llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+/*
+ * Fonctions
+ *
+ */
+
+function pt ($db, $sql, $date)
+{
   $bc[0]="class=\"pair\"";
   $bc[1]="class=\"impair\"";
 
@@ -54,53 +122,6 @@ function pt ($db, $sql, $date) {
     $db->free();
   }
 }
-/*
- *
- */
-
-llxHeader();
 
 
-$db = new Db();
-if ($sortfield == "") {
-  $sortfield="lower(p.label)";
-}
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-
-
-print_titre("Chiffres d'affaires en euros HT");
-
-print "<table width=\"100%\">";
-print "<tr><td valign=\"top\">";
-
-$sql = "SELECT sum(f.amount) as amount , date_format(f.datef,'%Y-%m') as dm";
-$sql .= " FROM llx_facture as f WHERE f.paye = 1";
-$sql .= " GROUP BY dm DESC";
-
-pt($db, $sql,"Par mois");
-
-print "</td><td valign=\"top\">";
-
-$sql = "SELECT sum(f.amount) as amount, month(f.datef) as dm";
-$sql .= " FROM llx_facture as f WHERE f.paye = 1";
-$sql .= " GROUP BY dm";
-
-pt($db, $sql,"Mois cumulés");
-
-
-print "<P>";
-
-$sql = "SELECT sum(f.amount) as amount, year(f.datef) as dm";
-$sql .= " FROM llx_facture as f WHERE f.paye = 1";
-$sql .= " GROUP BY dm DESC";
-
-pt($db, $sql,"Année");
-
-print "</td></tr></table>";
-
-$db->close();
-
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

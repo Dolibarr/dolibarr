@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,16 @@ require("../paiement.class.php");
 llxHeader();
 
 $db = new Db();
+
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socidp = $user->societe_id;
+}
+
 
 if ($action == 'add') {
   $datepaye = $db->idate(mktime(12, 0 , 0, $pmonth, $pday, $pyear));
@@ -162,11 +172,21 @@ if ($action == 'add') {
 
 if ($action == '') {
 
-  $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber, f.rowid as facid, c.libelle as paiement_type, p.num_paiement";
-  $sql .= " FROM llx_paiement as p, llx_facture as f, c_paiement as c WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id";
+  $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber";
+  $sql .=", f.rowid as facid, c.libelle as paiement_type, p.num_paiement";
+  $sql .= " FROM llx_paiement as p, llx_facture as f, c_paiement as c";
+  $sql .= " WHERE p.fk_facture = f.rowid AND p.fk_paiement = c.id";
+
+  if ($socidp)
+    {
+      $sql .= " AND f.fk_soc = $socidp";
+    }
+
   $sql .= " ORDER BY datep DESC";
   $result = $db->query($sql);
-  if ($result) {
+
+  if ($result)
+    {
     $num = $db->num_rows();
     $i = 0; $total = 0;
 
