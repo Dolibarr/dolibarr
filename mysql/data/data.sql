@@ -52,8 +52,10 @@ INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_NEW_SUBJECT',
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_EDIT_SUBJECT','Votre fiche a ete editee sur %SERVEUR%','chaine','Sujet du mail d\'edition');
 
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_USE_MAILMAN','1','yesno','Utilisation de Mailman');
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAILMAN_LIST','lists1,lists2','chaine','Les listes sur lesquelles inscrire les adherents');
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAILMAN_DIR','/home/httpd/adherents.j1b.org/htdocs/adherents/ml/mailman','chaine','Repertoire dans lequel les nouveaux adherents aux listes sont ecris');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAILMAN_UNSUB_URL','http://lists.ipsyn.net/cgi-bin/mailman/handle_opts/%LISTE%/%EMAIL%?upw=%PASS%&unsub=Unsubscribe','chaine','Url de desinscription aux listes mailman');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAILMAN_URL','http://lists.ipsyn.net/cgi-bin/mailman/subscribe/%LISTE%/?email=%EMAIL%&pw=%PASS%&pw-conf=%PASS%','chaine','url pour les inscriptions mailman');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAILMAN_LISTS','test-test,test-test2','chaine','Listes auxquelles inscrire les nouveaux adherents');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_DEBUG','1','yesno','Debug ..');
 
 --
 -- Constantes 

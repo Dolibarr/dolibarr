@@ -16,6 +16,10 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+# ce script prend l'intergralite des adherents valide et les mets dans
+# une mailing-liste.  ce script est utilie si l'on souhaite avoir une
+# mailing-liste avec uniquement les adherents valides.
+
 use DBI;
 use strict;
 # get the command line option

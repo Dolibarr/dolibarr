@@ -112,18 +112,7 @@ if (defined("MAIN_MAIL_NEW_SUBJECT"))
 {
   $conf->adherent->email_new_subject=MAIN_MAIL_NEW_SUBJECT;
 }
-if (defined("MAIN_MAILMAN_DIR"))
-{
-  $conf->adherent->mailman_dir=MAIN_MAILMAN_DIR;
-}
-if (defined("MAIN_MAILMAN_LISTS"))
-{
-  $conf->adherent->mailman_lists=explode(',',MAIN_MAILMAN_DIR);
-}
-if (defined("MAIN_USE_MAILMAN"))
-{
-  $conf->adherent->use_mailman=MAIN_USE_MAILMAN;
-}
+
 /*
  */
 if(!isset($application_lang))

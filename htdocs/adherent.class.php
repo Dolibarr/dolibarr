@@ -578,48 +578,153 @@ class Adherent
     }
 
   /*
-   * Ajoute le user aux mailing-list
+   * Ajoute le user aux differents abonneents automatiques
+   * (mailing-list, spip, glasnost etc etc ..)
    *
    */
-  Function add_to_list($email,$list)
+  Function add_to_abo()
     {
-      
+      $err=0;
+      // mailman
+      if (defined("MAIN_USE_MAILMAN") && MAIN_USE_MAILMAN == 1)
+	{
+	  if(!$this->add_to_mailman()){
+	    $err+=1;
+	  }
+	}
+      if ($err>0){
+	// error
+	return 0;
+      }else{
+	return 1;
+      }
+    }
+
+  /*
+   * supprime le user des differents abonnements automatiques
+   * (mailing-list, spip, glasnost etc etc ..)
+   *
+   */
+  Function del_to_abo()
+    {
+      $err=0;
+      // mailman
+      if (defined("MAIN_USE_MAILMAN") && MAIN_USE_MAILMAN == 1)
+	{
+	  if(!$this->del_to_mailman()){
+	    $err+=1;
+	  }
+	}
+      if ($err>0){
+	// error
+	return 0;
+      }else{
+	return 1;
+      }
     }
 
   /*
    *
    *
    */
-  Function add_to_mailman($email,$list,$mailmandir)
+  Function add_to_mailman()
     {
-      if (!file_exists($mailmandir)) {
-	mkdir($mailmandir, 0777);
-      } 
-      if (!file_exists("$mailmandir/$list")) {
-	mkdir("$mailmandir/$list", 0777);
-      } 
-      if (!file_exists("$mailmandir/$list/subscribe")) {
-	mkdir("$mailmandir/$list/subscribe", 0777);
-      } 
-      if (!file_exists("$mailmandir/$list/subscribe/$email")) {
-	touch("$mailmandir/$list/subscribe/$email");
-      } 
+      if (defined("MAIN_MAILMAN_URL") && MAIN_MAILMAN_URL != '' && defined("MAIN_MAILMAN_LISTS") && MAIN_MAILMAN_LISTS != '')
+	{
+	  $lists=explode(',',MAIN_MAILMAN_LISTS);
+	  foreach ($lists as $list)
+	    {
+	      // on remplace dans l'url le nom de la liste ainsi
+	      // que l'email et le mot de passe
+	      $patterns = array (
+				 '/%LISTE%/',
+				 '/%EMAIL%/',
+				 '/%PASS%/'
+				 );
+	      $replace = array (
+				$list,
+				$this->email,
+				$this->pass
+				);
+	      $curl_url = preg_replace ($patterns, $replace, MAIN_MAILMAN_URL);
+
+	      $ch = curl_init();
+	      curl_setopt($ch, CURLOPT_URL,"$curl_url");
+	      //curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
+	      curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); 
+	      curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+	      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+	      curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+	      //curl_setopt($ch, CURLOPT_POST, 0);
+	      //curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
+	      //--- Start buffering
+	      //ob_start();
+	      $result=curl_exec ($ch);
+	      logfile($result);
+	      //--- End buffering and clean output
+	      //ob_end_clean();
+	      if (curl_error($ch) > 0)
+		{
+		  // error 
+		  return 0;
+		}
+	      curl_close ($ch); 
+	      
+	    }
+	  return 1;
+	}else{
+	  return 0;
+	}
     }
 
-  Function del_to_mailman($email,$list,$mailmandir)
+  Function del_to_mailman()
     {
-      if (!file_exists($mailmandir)) {
-	mkdir($mailmandir, 0777);
-      } 
-      if (!file_exists("$mailmandir/$list")) {
-	mkdir("$mailmandir/$list", 0777);
-      } 
-      if (!file_exists("$mailmandir/$list/unsubscribe")) {
-	mkdir("$mailmandir/$list/unsubscribe", 0777);
-      } 
-      if (!file_exists("$mailmandir/$list/unsubscribe/$email")) {
-	touch("$mailmandir/$list/unsubscribe/$email");
-      } 
+      if (defined("MAIN_MAILMAN_UNSUB_URL") && MAIN_MAILMAN_UNSUB_URL != '' && defined("MAIN_MAILMAN_LISTS") && MAIN_MAILMAN_LISTS != '')
+	{
+	  $lists=explode(',',MAIN_MAILMAN_LISTS);
+	  foreach ($lists as $list)
+	    {
+	      // on remplace dans l'url le nom de la liste ainsi
+	      // que l'email et le mot de passe
+	      $patterns = array (
+				 '/%LISTE%/',
+				 '/%EMAIL%/',
+				 '/%PASS%/'
+				 );
+	      $replace = array (
+				$list,
+				$this->email,
+				$this->pass
+				);
+	      $curl_url = preg_replace ($patterns, $replace, MAIN_MAILMAN_UNSUB_URL);
+
+	      $ch = curl_init();
+	      curl_setopt($ch, CURLOPT_URL,"$curl_url");
+	      //curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
+	      curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); 
+	      curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+	      curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+	      curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+	      //curl_setopt($ch, CURLOPT_POST, 0);
+	      //curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
+	      //--- Start buffering
+	      //ob_start();
+	      $result=curl_exec ($ch);
+	      logfile($result);
+	      //--- End buffering and clean output
+	      //ob_end_clean();
+	      if (curl_error($ch) > 0)
+		{
+		  // error 
+		  return 0;
+		}
+	      curl_close ($ch); 
+	      
+	    }
+	  return 1;
+	}else{
+	  return 0;
+	}
     }
 }
 ?>

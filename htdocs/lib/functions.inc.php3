@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2000,2001 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -636,5 +637,38 @@ function tab_count($basename,$bc1,$bc2,$ftc) {
   
   $db->close();
 
+}
+
+/*
+ * logfile : permet de logguer dans un fichier
+ * cette fonction ne fonctionenra que si et seulement si le fichier de
+ * la constante globale MAIN_DEBUG existe et vaut 1
+ */
+function logfile($str,$log="/var/log/dolibarr/dolibarr.log")
+{
+  if (defined("MAIN_DEBUG") && MAIN_DEBUG ==1)
+    {
+      if (!file_exists($log))
+	{
+	  if (!$file=fopen($log,"w"))
+	    {
+	      return 0;
+	    }
+	}
+      else
+	{
+	  if (!$file=fopen($log,"a+"))
+	    {
+	      return 0;
+	    }
+	}
+      $logentry=date("[d/M/Y:H:i:s] ").$str."\n";
+      if(!fwrite($file,$logentry)) {
+	fclose($file);
+	return 0;
+      }
+      fclose($file);
+      return 1;
+    }
 }
 ?>

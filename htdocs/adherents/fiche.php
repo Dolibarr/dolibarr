@@ -30,6 +30,7 @@ require($GLOBALS["DOCUMENT_ROOT"]."/paiement.class.php");
 
 $db = new Db();
 $adho = new AdherentOptions($db);
+$errmsg='';
 
 if ($HTTP_POST_VARS["action"] == 'cotisation') 
 {
@@ -104,6 +105,14 @@ if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] =
     {
       $adh->send_an_email($adh->email,$conf->adherent->email_valid,$conf->adherent->email_valid_subject);
     }
+  // rajoute l'utilisateur dans les divers abonnements ..
+  if (!$adh->add_to_abo())
+    {
+      // error
+      $errmsg="echec du rajout de l'utilisateur aux mailing-lists";
+    }
+  
+  /*
   if ($conf->adherent->use_mailman == 1)
     {
       foreach ($conf->adherent->mailman_lists as $key)
@@ -111,7 +120,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] =
 	  $adh->add_to_mailman($adh->email,$key,$conf->adherent->mailman_dir);
 	}
     }
-
+  */
 }
 
 if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] == yes)
@@ -122,6 +131,14 @@ if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] 
 
   $adh->send_an_email($adh->email,$conf->adherent->email_resil,$conf->adherent->email_resil_subject);
 
+  // supprime l'utilisateur des divers abonnements ..
+  if (!$adh->del_to_abo())
+    {
+      // error
+      $errmsg="echec du rajout de l'utilisateur aux mailing-lists";
+    }
+  
+  /*
   if ($conf->adherent->use_mailman == 1)
     {
       foreach ($conf->adherent->mailman_lists as $key)
@@ -129,6 +146,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] 
 	  $adh->del_to_mailman($adh->email,$key,$conf->adherent->mailman_dir);
 	}
     }
+  */
 }
 
 
@@ -139,6 +157,14 @@ llxHeader();
 /* Création d'une fiche                                                       */
 /*                                                                            */
 /* ************************************************************************** */
+if ($errmsg != ''){
+  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+  
+  print '<th>Erreur dans l\'execution du  formulaire</th>';
+  print "<tr><td class=\"delete\"><b>$errmsg</b></td></tr>\n";
+  //  print "<FONT COLOR=\"red\">$errmsg</FONT>\n";
+  print '</table>';
+}
 
 // fetch optionals attributes and labels
 $adho->fetch_optionals();
