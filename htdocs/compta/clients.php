@@ -233,9 +233,10 @@ if ($result)
     }
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","","",'valign="center"');
-  print '<td>'.$langs->trans("Company").'</td>';
-  print "<td align=\"center\">Préfix</td></tr>\n";
+  print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","","",'valign="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","","",'valign="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Prefix"),"clients.php","s.prefix_comm","","",'valign="center"',$sortfield);
+  print "</tr>\n";
 
   $var=True;
 
