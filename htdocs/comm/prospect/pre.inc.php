@@ -22,8 +22,9 @@
 require("../../main.inc.php");
 
 function llxHeader($head = "", $urlp = "") {
-  global $user, $conf;
-
+  global $user, $conf, $langs;
+  $langs->load("companies");
+  
   /*
    *
    *
@@ -34,25 +35,23 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add(DOL_URL_ROOT."/comm/prospect/", "Prospection");
 
-  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=p", "Nouveau prospect");
+  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=p", $langs->trans("MenuNewProspect"));
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php", "Liste");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("List"));
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=0","Derniers");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=0", $langs->trans("Last"));
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", "Contacts");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
 
-
-
-
-  $menu->add(DOL_URL_ROOT."/comm/action/index.php", "Actions");
+  $menu->add(DOL_URL_ROOT."/comm/action/index.php", $langs->trans("Actions"));
 
   if ($conf->propal->enabled && $user->rights->propale->lire)
     {
-      $menu->add(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
+      $langs->load("propal");
+      $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
     }
 
-  $menu->add(DOL_URL_ROOT."/comm/clients.php", "Clients");
+  $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
 	
   left_menu($menu->liste);
 

@@ -21,7 +21,7 @@
  *
  */
 
-/*!     \file       htdocs/comm/pre.inc.php
+/**     \file       htdocs/comm/pre.inc.php
         \ingroup    commercial
 		\brief      Fichier de gestion du menu gauche de l'espace commercial
 		\version    $Revision$
@@ -39,6 +39,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
+  // Clients
   $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
 
   if ($user->rights->societe->creer)
@@ -48,14 +49,21 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
 
+  // Prospects
   $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("Prospects"));
+
+  if ($user->rights->societe->creer)
+    {
+      $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=p", $langs->trans("MenuNewProspect"));
+    }
 
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
 
 
+
   $menu->add(DOL_URL_ROOT."/comm/action/index.php", $langs->trans("Actions"));
 
-
+  // Propal
   if ($conf->propal->enabled && $user->rights->propale->lire)
     {
       $langs->load("propal");
