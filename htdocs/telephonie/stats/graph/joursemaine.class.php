@@ -39,10 +39,8 @@ class GraphJoursemaine extends GraphBrouzouf{
     $this->barcolor = "green";
   }
 
-  Function GraphDraw($g)
+  Function GraphDraw()
   {
-
-
     $sql = "SELECT ".$this->db->pdate("date")." as date, duree";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
     
@@ -68,8 +66,11 @@ class GraphJoursemaine extends GraphBrouzouf{
 	    $i++;
 	  }
       }
-        
-    $this->GraphMakeGraph($jour_semaine_nb,array('Lun','Mar','Mer','Jeu','Ven','Sam','Dim'));
+
+    if ($num > 0)
+      {        
+	$this->GraphMakeGraph($jour_semaine_nb,array('Lun','Mar','Mer','Jeu','Ven','Sam','Dim'));
+      }
   }
 
 }

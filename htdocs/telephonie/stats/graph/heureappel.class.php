@@ -22,9 +22,8 @@
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/brouzouf.class.php");
 
-class GraphHeureAppel extends GraphBrouzouf{
-
-
+class GraphHeureAppel extends GraphBrouzouf
+{
   Function GraphHeureAppel($DB, $file)
   {
     $this->db = $DB;
@@ -41,7 +40,33 @@ class GraphHeureAppel extends GraphBrouzouf{
 
   Function GraphDraw($g)
   {
-    $this->GraphMakeGraph($g, $labels);
+
+    $sql = "SELECT ".$this->db->pdate("date")." as date, duree";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+    
+    if ($this->db->query($sql))
+      {
+	$heure_appel = array();
+	$num = $this->db->num_rows();
+	$i = 0;
+	
+	while ($i < $num)
+	  {
+	    $obj = $this->db->fetch_object();	
+	    
+	    $h = ceil(strftime("%H",$obj->date)); // suppression du 0
+	    
+	    $heure_appel_nb[$h]++;
+	    $heure_appel_duree[$h] += $obj->duree;
+	    
+	    $i++;
+	  }
+      }
+
+    if ($num > 0)
+      {
+	$this->GraphMakeGraph($heure_appel_nb, $labels);
+      }
   }
 
 }

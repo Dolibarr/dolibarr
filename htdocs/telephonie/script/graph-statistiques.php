@@ -150,45 +150,15 @@ $graphgain->GraphDraw();
 /*
 /*************************************************************************/
 
-$sql = "SELECT ".$db->pdate("date")." as date, duree";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-
-if ($db->query($sql))
-{
-  $heure_appel = array();
-  $jour_semaine_nb = array();
-  $jour_semaine_duree = array();
-
-  $num = $db->num_rows();
-  if ($verbose) print "$num lignes de comm a traiter\n";
-  $i = 0;
-
-  while ($i < $num)
-    {
-      $obj = $db->fetch_object();	
-
-      $h = strftime("%H",$obj->date) * 1; // suppression du 0
-
-      $heure_appel_nb[$h]++;
-      $heure_appel_duree[$h] += $obj->duree;
-
-      $u = strftime("%u",$obj->date) - 1; // 1 pour Lundi
-
-      $jour_semaine_nb[$u]++;
-      $jour_semaine_duree[$u] += $obj->duree;
-
-      $i++;
-    }
-}
-
 $file = $img_root . "communications/heure_appel_nb.png";
 if ($verbose) print "Heures d'appels\n";
 $graphha = new GraphHeureAppel ($db, $file);
-$graphha->GraphDraw($heure_appel_nb);
+$graphha->GraphDraw();
 
 $file = $img_root . "communications/joursemaine_nb.png";
+if ($verbose) print "Jours de semaines\n";
 $graphha = new GraphJourSemaine ($db, $file);
-$graphha->GraphDraw($jour_semaine_nb);
+$graphha->GraphDraw();
 
 repart_comm($db);
 
