@@ -8,3 +8,5 @@ MembersListValid=Liste des adhérents valides
 MembersListResiliated=Liste des adhérents résiliés
 DateAbonment=Date cotisation
 NewMember=Nouvel adhérent
+MembersTypes=Types d'adhérents
+MembersAttributes=Attributs adhérents

@@ -9,3 +9,5 @@ ErrorForbidden2=Permission for this login can be defined by your Dolibarr admini
 ErrorForbidden3=It seems that Dolibarr is not used through an authenticated session. Take a look at Dolibarr setup documentation to know how to manage authentications (htaccess, mod_auth or other...).
 AddTrip=Add trip
 Tools=Tools
+Birthday=Birthday
+BirthdayDate=Birthday

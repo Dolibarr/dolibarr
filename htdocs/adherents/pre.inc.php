@@ -32,7 +32,8 @@ require("../main.inc.php");
 function llxHeader($head = "") {
   global $user, $conf, $langs;
 
-
+  $langs->load("members");
+  
   top_menu($head);
 
   $menu = new Menu();
@@ -54,11 +55,12 @@ function llxHeader($head = "") {
   $langs->load("compta");
   $menu->add("index.php",$langs->trans("Accountancy"));
   $menu->add_submenu("cotisations.php","Cotisations");
-  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/",$langs->trans("Bank"));
+  $langs->load("banks");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/",$langs->trans("Banks"));
 
   $menu->add("index.php",$langs->trans("Setup"));
-  $menu->add_submenu("type.php","Type d'adhérent");
-  $menu->add_submenu("options.php","Champs optionnels");
+  $menu->add_submenu("type.php",$langs->trans("MembersTypes"));
+  $menu->add_submenu("options.php",$langs->trans("MembersAttributes"));
 
   left_menu($menu->liste);
 
