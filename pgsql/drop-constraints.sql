@@ -34,3 +34,11 @@ ALTER TABLE llx_facturedet	DROP CONSTRAINT "facturedet_fk_facture_rowid";
 ALTER TABLE llx_facture_tva_sum	DROP CONSTRAINT "facture_tva_sum_fk_facture_rowid";
 
 ALTER TABLE llx_socpeople	DROP CONSTRAINT "socpeople_fk_soc_idp";
+
+ALTER TABLE llx_paiement_facture DROP CONSTRAINT "paiement_facture_fk_facture";
+
+ALTER TABLE llx_paiement_facture DROP CONSTRAINT "paiement_facture_fk_paiement";
+
+ALTER TABLE llx_c_departements   DROP CONSTRAINT "c_departements_fk_region";
+
+ALTER TABLE llx_c_regions        DROP CONSTRAINT "c_regions_fk_pays";

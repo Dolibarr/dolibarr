@@ -21,26 +21,27 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 
-drop table  llx_bank_url;
-drop table  llx_entrepot;
-drop table  llx_product_stock;
-drop table  llx_stock_mouvement;
+drop table  llx_co_fa;
 
-drop table  c_actioncomm;
+drop table  llx_co_pr;
 
-drop table  c_chargesociales;
+drop table  llx_c_actioncomm;
 
-drop table  c_effectif;
+drop table  llx_c_chargesociales;
 
-drop table  c_paiement ;
+drop table  llx_c_effectif;
 
-drop table  c_pays ;
+drop table  llx_c_paiement ;
 
-drop table  c_propalst ;
+drop table  llx_c_pays ;
 
-drop table  c_stcomm;
+drop table  llx_c_prestatype ;
 
-drop table  c_typent ;
+drop table  llx_c_propalst ;
+
+drop table  llx_c_stcomm;
+
+drop table  llx_c_typent ;
 
 drop table  llx_action_def;
 
@@ -70,6 +71,10 @@ drop table  llx_bank_categ;
 
 drop table  llx_bank_class;
 
+drop table  llx_bank_url;
+
+drop table  llx_birthday_alert;
+
 drop table  llx_bookmark;
 
 drop table  llx_boxes;
@@ -79,6 +84,10 @@ drop table  llx_boxes_def;
 drop table  llx_chargesociales;
 
 drop table  llx_contrat;
+
+drop table  llx_commande;
+
+drop table  llx_commandedet;
 
 drop table  llx_compta;
 
@@ -101,6 +110,14 @@ drop table  llx_don;
 drop table  llx_don_projet;
 
 drop table  llx_editeur;
+
+drop table  llx_entrepot;
+
+drop table  llx_expedition;
+
+drop table  llx_expedition_methode;
+
+drop table  llx_expeditiondet;
 
 drop table  llx_fa_pr;
 
@@ -144,6 +161,8 @@ drop table  llx_product_fournisseur;
 
 drop table  llx_product_price;
 
+drop table  llx_product_stock;
+
 drop table  llx_projet;
 
 drop table  llx_propal;
@@ -165,6 +184,10 @@ drop table  llx_soc_events;
 drop table  llx_soc_recontact;
 
 drop table  llx_socstatutlog ;
+
+drop table  llx_stock;
+
+drop table  llx_stock_mouvement;
 
 drop table  llx_sqltables;
 
