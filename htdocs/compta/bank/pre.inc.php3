@@ -21,7 +21,8 @@
  */
 
 require("../../main.inc.php3");
-require("./account.class.php3");
+require("./account.class.php");
+
 function llxHeader($head = "")
 {
   global $user, $conf, $account;

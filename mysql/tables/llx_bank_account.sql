@@ -26,5 +26,15 @@ create table llx_bank_account
   label          varchar(30),
   bank           varchar(255),
   number         varchar(255),
+
+  code_banque    varchar(7),
+  code_guichet   varchar(6),
+  cle_rib        varchar(5),
+  bic            varchar(10),
+
+  iban_prefix    varchar(5),
+
+  domiciliation  varchar(50),
+
   courant        smallint default 0 not null
 );
