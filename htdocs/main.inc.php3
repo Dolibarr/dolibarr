@@ -30,9 +30,9 @@ require ($GLOBALS["DOCUMENT_ROOT"]."/html.form.class.php");
 require ($GLOBALS["DOCUMENT_ROOT"]."/rtplang.class.php");
 require ($GLOBALS["DOCUMENT_ROOT"]."/boxes.php");
 require ($GLOBALS["DOCUMENT_ROOT"]."/address.class.php");
-require ($GLOBALS["DOCUMENT_ROOT"]."/includes/fpdf/fpdf151/fpdf.php");
+require ($GLOBALS["DOCUMENT_ROOT"]."/includes/fpdf/fpdf.php");
 
-define('FPDF_FONTPATH',$GLOBALS["DOCUMENT_ROOT"].'/includes/fpdf/fpdf151/font/');
+define('FPDF_FONTPATH',$GLOBALS["DOCUMENT_ROOT"].'/includes/fpdf/font/');
 
 
 $conf = new Conf();
@@ -80,6 +80,10 @@ if (defined("FACTURE_ADDON"))
   require($GLOBALS["DOCUMENT_ROOT"]."/includes/modules/facture/".FACTURE_ADDON."/".FACTURE_ADDON.".modules.php");
 }
 
+if (defined("FACTURE_ADDON_PDF"))
+{
+  require($GLOBALS["DOCUMENT_ROOT"]."/includes/modules/facture/pdf_".FACTURE_ADDON_PDF.".modules.php");
+}
 
 // Modification de quelques variable de conf en fonction des Constantes
 /*
