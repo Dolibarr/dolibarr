@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ function llxHeader($head = "", $title="") {
     }
 
   $menu->add(DOL_URL_ROOT."/compta/facture.php","Factures");
-  $menu->add_submenu(DOL_URL_ROOT."/compta/paiement.php","Paiements");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/index.php","Paiements");
   $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
   $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/","Statistiques");
 
