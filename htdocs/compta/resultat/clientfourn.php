@@ -45,12 +45,12 @@ print '<br>';
 if ($modecompta=="CREANCES-DETTES")
 {
     print 'Il se base sur la date de validation des factures et inclut les factures dues, qu\'elles soient payées ou non';
-    print ' (<a href="clientfourn.php?year='.$year.'&modecompta=RECETTES-DEPENSES">Voir le rapport sur les factures effectivement payées uniquement</a>).<br>';
+    print ' (Voir le rapport <a href="clientfourn.php?year='.$year.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées).<br>';
     print '<br>';
 }
 else {
     print 'Il se base sur la date de validation des factures et n\'inclut que les factures effectivement payées';
-    print ' (<a href="clientfourn.php?year='.$year.'&modecompta=CREANCES-DETTES">Voir le rapport en créances-dettes qui inclut les factures non encore payée</a>).<br>';
+    print ' (Voir le rapport en <a href="clientfourn.php?year='.$year.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée).<br>';
     print '<br>';
 }
 
@@ -59,13 +59,14 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="10%">&nbsp;</td><td>Elément</td>';
 print "<td align=\"right\">".$langs->trans("AmountHT")."</td>";
+print "<td align=\"right\">".$langs->trans("AmountTTC")."</td>";
 print "</tr>\n";
 
 
 /*
  * Factures clients
  */
-$sql = "SELECT s.nom,s.idp,sum(f.total) as amount";
+$sql = "SELECT s.nom, s.idp, sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
 if ($year) {
@@ -94,9 +95,11 @@ if ($result) {
       print "<tr $bc[$var]><td>&nbsp</td>";
       print "<td>Factures  <a href=\"../facture.php?socidp=$objp->idp\">$objp->nom</td>\n";
       
-      print "<td align=\"right\">".price($objp->amount)."</td>\n";
+      print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
+      print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
       
-      $total = $total + $objp->amount;
+      $total_ht = $total_ht + $objp->amount_ht;
+      $total_ttc = $total_ttc + $objp->amount_ttc;
       print "</tr>\n";
       $i++;
     }
@@ -105,13 +108,16 @@ if ($result) {
 } else {
   dolibarr_print_error($db);
 }
-print '<tr><td colspan="3" align="right">'.price($total).'</td></tr>';
+print '<tr>';
+print '<td colspan="3" align="right">'.price($total_ht).'</td>';
+print '<td align="right">'.price($total_ttc).'</td>';
+print '</tr>';
 
 /*
  * Frais, factures fournisseurs.
  */
 
-$sql = "SELECT s.nom,s.idp,sum(f.total_ht) as amount";
+$sql = "SELECT s.nom, s.idp, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
 $sql .= " WHERE f.fk_soc = s.idp"; 
 if ($year) {
@@ -123,7 +129,8 @@ if ($modecompta != 'CREANCES-DETTES') {
 $sql .= " GROUP BY s.nom ASC, s.idp";
 
 print '<tr><td colspan="4">Facturation fournisseurs</td></tr>';
-$subtotal = 0;
+$subtotal_ht = 0;
+$subtotal_ttc = 0;
 $result = $db->query($sql);
 if ($result) {
   $num = $db->num_rows();
@@ -138,10 +145,13 @@ if ($result) {
       print "<tr $bc[$var]><td>&nbsp</td>";
       print "<td>".$langs->trans("Bills")." <a href=\"../../fourn/facture/index.php?socid=".$objp->idp."\">$objp->nom</a></td>\n";
       
-      print "<td align=\"right\">".price($objp->amount)."</td>\n";
+      print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
+      print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
       
-      $total = $total - $objp->amount;
-      $subtotal = $subtotal + $objp->amount;
+      $total_ht = $total_ht - $objp->amount_ht;
+      $total_ttc = $total_ttc - $objp->amount_ttc;
+      $subtotal_ht = $subtotal_ht + $objp->amount_ht;
+      $subtotal_ttc = $subtotal_ttc + $objp->amount_ttc;
       print "</tr>\n";
       $i++;
     }
@@ -150,7 +160,10 @@ if ($result) {
 } else {
   dolibarr_print_error($db);
 }
-print '<tr><td colspan="3" align="right">'.price($subtotal).'</td></tr>';
+print '<tr>';
+print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
+print '<td align="right">'.price($subtotal_ttc).'</td>';
+print '</tr>';
 
 /*
  * Charges sociales
@@ -174,8 +187,10 @@ if ( $db->query($sql) ) {
   while ($i < $num) {
     $obj = $db->fetch_object();
 
-    $total = $total - $obj->amount;
-    $subtotal = $subtotal + $obj->amount;
+    $total_ht = $total_ht - $obj->amount;
+    $total_ttc = $total_ttc - $obj->amount;
+    $subtotal_ht = $subtotal_ht + $obj->amount;
+    $subtotal_ttc = $subtotal_ttc + $obj->amount;
 
     $var = !$var;
     print "<tr $bc[$var]><td>&nbsp</td>";
@@ -187,9 +202,15 @@ if ( $db->query($sql) ) {
 } else {
   dolibarr_print_error($db);
 }
-print '<tr><td colspan="3" align="right">'.price($subtotal).'</td></tr>';
+print '<tr>';
+print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
+print '<td colspan="3" align="right">'.price($subtotal_ttc).'</td>';
+print '</tr>';
 
-print '<tr><td align="right" colspan="2">Résultat</td><td class="border" align="right">'.price($total).'</td></tr>';
+print '<tr><td align="right" colspan="2">Résultat</td>';
+print '<td class="border" align="right">'.price($total_ht).'</td>';
+print '<td class="border" align="right">'.price($total_ttc).'</td>';
+print '</tr>';
 
 /*
  * Charges sociales non déductibles
@@ -213,12 +234,15 @@ if ( $db->query($sql) ) {
   while ($i < $num) {
     $obj = $db->fetch_object();
 
-    $total = $total - $obj->amount;
-    $subtotal = $subtotal + $obj->amount;
+    $total_ht = $total_ht - $obj->amount;
+    $total_ttc = $total_ttc - $obj->amount;
+    $subtotal_ht = $subtotal_ht + $obj->amount;
+    $subtotal_ttc = $subtotal_ttc + $obj->amount;
 
     $var = !$var;
     print "<tr $bc[$var]><td>&nbsp</td>";
     print '<td>'.$obj->nom.'</td>';
+    print '<td align="right">'.price($obj->amount).'</td>';
     print '<td align="right">'.price($obj->amount).'</td>';
     print '</tr>';
     $i++;
@@ -226,9 +250,16 @@ if ( $db->query($sql) ) {
 } else {
   dolibarr_print_error($db);
 }
-print '<tr><td colspan="3" align="right">'.price($subtotal).'</td></tr>';
+print '<tr>';
+print '<td colspan="3" align="right">'.price($subtotal_ht).'</td>';
+print '<td colspan="3" align="right">'.price($subtotal_ttc).'</td>';
+print '</tr>';
 
-print '<tr><td align="right" colspan="2">Résultat</td><td class="border" align="right">'.price($total).'</td></tr>';
+
+print '<tr><td align="right" colspan="2">Résultat</td>';
+print '<td class="border" align="right">'.price($total_ht).'</td>';
+print '<td class="border" align="right">'.price($total_ttc).'</td>';
+print '</tr>';
 
 
 print "</table>";

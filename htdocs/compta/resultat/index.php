@@ -48,19 +48,19 @@ print "Ce rapport présente la balance entre les recettes et les dépenses facturé
 if ($modecompta=="CREANCES-DETTES")
 {
     print 'Il se base sur la date de validation des factures et inclut les factures dues, qu\'elles soient payées ou non';
-    print ' (<a href="index.php?year='.$year.'&modecompta=RECETTES-DEPENSES">Voir le rapport sur les factures effectivement payées uniquement</a>).<br>';
+    print ' (Voir le rapport <a href="index.php?year='.$year.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées).<br>';
     print '<br>';
 }
 else {
     print 'Il se base sur la date de validation des factures et n\'inclut que les factures effectivement payées';
-    print ' (<a href="index.php?year='.$year.'&modecompta=CREANCES-DETTES">Voir le rapport en créances-dettes qui inclut les factures non encore payée</a>).<br>';
+    print ' (Voir le rapport en <a href="index.php?year='.$year.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée).<br>';
     print '<br>';
 }
 
 /*
  * Factures clients
  */
-$sql = "SELECT sum(f.total) as amount, date_format(f.datef,'%Y-%m') as dm";
+$sql = "SELECT sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
 if ($_GET["year"]) {
@@ -80,8 +80,9 @@ if ($db->query($sql))
   $i = 0; 
   while ($i < $num)
     {
-      $row = $db->fetch_row($i);
-      $encaiss[$row[1]] = $row[0];
+      $row = $db->fetch_object($i);
+      $encaiss[$row->dm] = $row->amount_ht;
+      $encaiss_ttc[$row->dm] = $row->amount_ttc;
       $i++;
     }
 }
@@ -92,7 +93,7 @@ else {
 /*
  * Frais, factures fournisseurs.
  */
-$sql = "SELECT sum(f.total_ht) as amount, date_format(f.datef,'%Y-%m') as dm";
+$sql = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
 $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
 if ($_GET["year"]) {
@@ -113,8 +114,9 @@ if ($db->query($sql))
   $i = 0; 
   while ($i < $num)
     {
-      $row = $db->fetch_row($i);
-      $decaiss[$row[1]] = $row[0];
+      $row = $db->fetch_object($i);
+      $decaiss[$row->dm] = $row->amount_ht;
+      $decaiss_ttc[$row->dm] = $row->amount_ttc;
       $i++;
     }
 }
