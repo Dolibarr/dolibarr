@@ -51,6 +51,7 @@ $chaine = ob_get_contents();
 ob_end_clean(); 
 
 # Nettoie la sortie php pour inclusion dans une page deja existante
+$chaine = eregi_replace('background-color: #ffffff;','',$chaine);
 $chaine = eregi_replace('.*<style','<style',$chaine);
 $chaine = eregi_replace('<title>.*<body>','',$chaine);
 $chaine = eregi_replace('<title>.*<body>','',$chaine);
