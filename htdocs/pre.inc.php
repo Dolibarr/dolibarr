@@ -2,6 +2,8 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +32,6 @@ function llxHeader($head = "") {
   $user->getrights('propale');
   $user->getrights('facture');
 
-  /*
-   *
-   *
-   */
   top_menu($head);
 
   $menu = new Menu();
@@ -58,7 +56,8 @@ function llxHeader($head = "") {
 
       $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php",$langs->trans("Customers"));
       $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php",$langs->trans("Prospects"));
-
+      $menu->add_submenu(DOL_URL_ROOT."/comm/mailing.php","Mailing");
+			
       if ($user->rights->propale->lire)
 	$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
     }

@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
+-- Copyright (C) 2004 Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -27,5 +28,5 @@ create table llx_action_def
   tms             timestamp,
   titre           varchar(255) NOT NULL,
   description     text,
-  objet_type	  CHAR(10) CHECK (objet_type IN ('ficheinter','facture','propale'))
+  objet_type	  CHAR(10) CHECK (objet_type IN ('ficheinter','facture','propale','mailing'))
 );

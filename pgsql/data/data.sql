@@ -1,5 +1,6 @@
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+-- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+-- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -102,6 +103,12 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_COTIS_SUBJECT','Recu de votre cotisation','chaine','sujet du mail de validation de cotisation',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_NEW_SUBJECT','Bienvenue sur %SERVEUR%','chaine','Sujet du mail de nouvelle adhesion',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_EDIT_SUBJECT','Votre fiche a ete editee sur %SERVEUR%','chaine','Sujet du mail d\'edition',0);
+
+--
+-- Mail Mailing
+--
+
+insert into llx_const (name, value, type, note) values ('MAILING_EMAIL','mailing@societe.com','chaine','Champ From du mail pour mailing clients/prospects',0);
 
 --
 -- Mailman
