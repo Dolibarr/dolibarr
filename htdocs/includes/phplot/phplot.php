@@ -1461,8 +1461,8 @@ class PHPlot
 	  {
 	    $this->FindDataLimits();  //Get maxima and minima for scaling
 	  }
-	$this->vert_tick_increment = ceil(( ceil($this->max_y * 1.2) - floor($this->min_y * 1.2) )/10);
-	//$this->vert_tick_increment =  ceil(($this->plot_max_y  - $this->plot_min_y  )/10);
+	//$this->vert_tick_increment = ceil(( ceil($this->max_y * 1.2) - floor($this->min_y * 1.2) )/10);
+	$this->vert_tick_increment =  ($this->plot_max_y  - $this->plot_min_y  )/10;
       }
     $this->num_vert_ticks = ''; //either use num_vert_ticks or vert_tick_increment, not both
     return true;
