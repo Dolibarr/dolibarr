@@ -956,7 +956,7 @@ else
 		  // Update ligne de facture
 		  if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
 		    {
-		      print "<form action=\"".$_SERVER["PHP_SELF"]."\" method=\"post\">";
+		      print '<form action="facture.php" method="post">';
 		      print '<input type="hidden" name="action" value="updateligne">';
 		      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 		      print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
