@@ -39,14 +39,14 @@ $tabnom[2] = "Départements/Provinces/Cantons";
 $tabnom[3] = "Régions";
 $tabnom[4] = "Pays";
 
-$tabsql[1] = "SELECT code, libelle, active FROM llx_c_forme_juridique ORDER BY active DESC, code ASC";
-$tabsql[2] = "SELECT rowid, code_departement as code , nom as libelle, active FROM llx_c_departements ORDER BY active DESC, code ASC";
-$tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, p.libelle as pays, r.active FROM llx_c_regions as r, llx_c_pays as p WHERE r.fk_pays=p.rowid ORDER BY active DESC, code ASC";
+$tabsql[1] = "SELECT f.code, f.libelle, p.libelle as pays, f.active FROM llx_c_forme_juridique as f, llx_c_pays as p WHERE f.fk_pays=p.rowid ORDER BY p.rowid, f.active DESC, code ASC";
+$tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, p.libelle as pays, d.active FROM llx_c_departements as d, llx_c_regions as r, llx_c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid ORDER BY p.rowid, d.active DESC, code ASC";
+$tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, p.libelle as pays, r.active FROM llx_c_regions as r, llx_c_pays as p WHERE r.fk_pays=p.rowid ORDER BY p.rowid, r.active DESC, code ASC";
 $tabsql[4] = "SELECT rowid, code, libelle, active FROM llx_c_pays ORDER BY active DESC, code ASC";
 
 // Champs à afficher
-$tabfield[1] = "code,libelle";
-$tabfield[2] = "code,libelle";
+$tabfield[1] = "code,libelle,pays";
+$tabfield[2] = "code,libelle,pays";
 $tabfield[3] = "code,libelle,pays";
 $tabfield[4] = "code,libelle";
 
