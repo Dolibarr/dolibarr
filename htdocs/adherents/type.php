@@ -76,9 +76,11 @@ if ($action == 'commentaire')
 
 llxHeader();
 
+print_titre("Configuration");
+
 /* ************************************************************************** */
 /*                                                                            */
-/* Liste                                                                      */
+/*                                                                            */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +97,7 @@ if ($result)
   
   print '<TR class="liste_titre">';
   print "<td>Id</td>";
-  print "<td>Libelle</td><td>Soumis a cotisation</td><td>&nbsp;</td>";
+  print "<td>Libellé</td><td>Soumis à cotisation</td><td>&nbsp;</td>";
   print "</TR>\n";
   
   $var=True;

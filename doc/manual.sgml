@@ -10,24 +10,19 @@
 
     <titlepag>
       
-      <title>Manuel d'utilisation/développement  Dolibarr</title>
+      <title>Manuel d'utilisation/développement Dolibarr</title>
 
-      <author>Rodolphe Quiédeville<email/rodolphe@quiedeville.org/
-      </author>
+      <author>Rodolphe Quiédeville<email/rodolphe@quiedeville.org/</author>
 
-      <version>
-	0.0.1
-	<date>
-	$Date$
-	</date>
-      </version>
+      <version>0.0.1</version>
 
     </titlepag>
+
     <toc sect>
 
     &ch-adherent;
     &ch-don;
 
- </book>
-
+  </book>
+  
 </debiandoc>
