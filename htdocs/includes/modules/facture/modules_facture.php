@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,24 @@
  * $Source$
  *
  */
+
+function deneb_get_num_explain()
+{
+
+  $texte = '
+Renvoie le numéro de facture sous la forme, PR-03-06-2004-15, où PR est le préfixe commercial de la société, et est suivi de la date (ici le 14 juin 2004) et d\'un compteur général. La constante FACTURE_DENEB_DELTA sert à la correction de plage. FACTURE_DENEB_DELTA ';
+
+  if (defined("FACTURE_DENEB_DELTA"))
+    {
+      $texte .= "est défini et vaut : ".FACTURE_DENEB_DELTA;
+    }
+  else
+    {
+      $texte .= "n'est pas défini";
+    }
+  return $texte;
+
+}
 
 function venus_get_num_explain()
 {
