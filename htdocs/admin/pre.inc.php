@@ -39,6 +39,10 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add("mysql.php", "Mysql");
 
+  $menu->add_submenu("sqltables.php", "Tables");
+
+  $menu->add("osc-languages.php", "OSC Languages");
+
   left_menu($menu->liste);
 }
 
