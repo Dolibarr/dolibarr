@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -33,6 +33,8 @@ function llxHeader($head = "", $urlp = "") {
   $menu = new Menu();
 
   $menu->add(DOL_URL_ROOT."/admin/index.php", "Configuration générale");
+
+  $menu->add(DOL_URL_ROOT."/admin/dict.php", "Configuration dictionnaires");
 
   $menu->add(DOL_URL_ROOT."/admin/const.php", "Configuration autre");
 
