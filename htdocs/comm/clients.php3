@@ -159,15 +159,12 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-
-
 /*
  * Mode Liste
  *
  *
  *
  */
-print_barre_liste("Liste des clients", $page, $PHP_SELF,"",$sortfield,$sortorder);
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM llx_societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=1";
 
@@ -189,16 +186,18 @@ if ($user->societe_id)
 if ($socname)
 {
   $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
-  $sortfield = "lower(s.nom)";
-  $sortorder = "ASC";
+  $sortfield = "s.datec";
+  $sortorder = "DESC";
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit +1, $offset);
 
 $result = $db->query($sql);
 if ($result)
 {
   $num = $db->num_rows();
+  print_barre_liste("Liste des clients", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
+
   $i = 0;
   
   if ($sortorder == "DESC")
@@ -218,7 +217,7 @@ if ($result)
   print "</TR>\n";
   $var=True;
 
-  while ($i < $num)
+  while ($i < min($num,$conf->liste_limit))
     {
       $obj = $db->fetch_object( $i);
       
