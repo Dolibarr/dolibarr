@@ -43,16 +43,16 @@ class modFicheinter
     /*
      *  Activation du module
      */
-       
+    print "toto";
     /*
      * Permissions
      */
     $sql = array(
-		 "insert into llx_rights_def values (60,'Tous les droits sur les fiches d'intervention','ficheinter','a',0);",
-		 "insert into llx_rights_def values (61,'Lire les fiches d'intervention','ficheinter','r',1);",
-		 "insert into llx_rights_def values (62,'Créer modifier les fiches d'intervention','ficheinter','w',0);",
-		 "insert into llx_rights_def values (63,'Modifier les fiches d'intervention d\'autrui','ficheinter','m',0);",
-		 "insert into llx_rights_def values (64,'Supprimer les fiches d'intervention','ficheinter','d',0);"
+		 "INSERT INTO llx_rights_def VALUES (60,'Tous les droits sur les fiches d\'intervention','ficheinter','a',0);",
+		 "INSERT INTO llx_rights_def VALUES (61,'Lire les fiches d\'intervention','ficheinter','r',1);",
+		 "INSERT INTO llx_rights_def VALUES (62,'Créer modifier les fiches d\'intervention','ficheinter','w',0);",
+		 "INSERT INTO llx_rights_def VALUES (63,'Modifier les fiches d\'intervention d\'autrui','ficheinter','m',0);",
+		 "INSERT INTO llx_rights_def VALUES (64,'Supprimer les fiches d\'intervention','ficheinter','d',0);"
 		 );
     
     for ($i = 0 ; $i < sizeof($sql) ; $i++)
