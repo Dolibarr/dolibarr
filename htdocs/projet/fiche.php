@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,11 @@
  *
  */
 
-/**     \file       htdocs/projet/fiche.php
-        \ingroup    projet
-		\brief      Fiche projet
-		\version    $Revision$
+/*!
+  \file htdocs/projet/fiche.php
+  \ingroup    projet
+  \brief      Fiche projet
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -32,16 +33,7 @@ require("../propal.class.php");
 require("../facture.class.php");
 require("../commande/commande.class.php");
 
-$langs->load("projects");
-$langs->load("companies");
-$langs->load("bills");
-$langs->load("orders");
-
-
-$user->getrights('projet');
-
-if (!$user->rights->projet->lire)
-  accessforbidden();
+if (!$user->rights->projet->lire) accessforbidden();
 
 
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
@@ -125,26 +117,29 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   $hselected=$h;
   $h++;
   
-  if ($conf->propal->enabled) {
+  if ($conf->propal->enabled)
+    {
       $langs->load("propal");
       $head[$h][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$projet->id;
       $head[$h][1] = $langs->trans("Proposals");
       $h++;
-  }  
-
-  if ($conf->commande->enabled) {
+    }  
+  
+  if ($conf->commande->enabled)
+    {
       $langs->load("orders");
       $head[$h][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$projet->id;
       $head[$h][1] = $langs->trans("Orders");
       $h++;
-  }
+    }
   
-  if ($conf->facture->enabled) {
+  if ($conf->facture->enabled)
+    {
       $langs->load("bills");
       $head[$h][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$projet->id;
       $head[$h][1] = $langs->trans("Bills");
       $h++;
-  }
+    }
  
   dolibarr_fiche_head($head,  $hselected, $langs->trans("Project").": ".$projet->ref);
 
@@ -163,7 +158,8 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
       print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 
       print '<table class="border" width="50%">';
-      print '<tr><td>'.$langs->trans("Company").'</td><td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</td></tr>';      
+      print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->nom_url.'</td></tr>';
+
       print '<tr><td>'.$langs->trans("Ref").'</td><td><input name="ref" value="'.$projet->ref.'"></td></tr>';
       print '<tr><td>'.$langs->trans("Label").'</td><td><input name="title" value="'.$projet->title.'"></td></tr>';      
       print '<tr><td align="center" colspan="2"><input name="update" type="submit" Value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
@@ -174,7 +170,9 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   else
     {
       print '<table class="border" width="100%">';
-      print '<tr><td>'.$langs->trans("Company").'</td><td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
+
+      print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->nom_url.'</td></tr>';
+
       print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
       print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';      
       print '</table>';
@@ -182,7 +180,6 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
     }
 
   print '</div>';
-
 
   /*
    * Boutons actions
@@ -193,8 +190,8 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
       if ($_GET["action"] != "edit")
 	{
-	  print '<a class="tabAction" href="fiche.php?id='.$projet->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
-      print '<a class="butDelete" href="fiche.php?id='.$projet->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+	  print '<a class="butAction" href="fiche.php?id='.$projet->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+      print '<a class="butActionDelete" href="fiche.php?id='.$projet->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 	}
 
       print "</div>";
