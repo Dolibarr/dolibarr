@@ -140,11 +140,22 @@ class Societe {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
     $sql .= " SET nom = '" . trim($this->nom) ."'"; // Champ obligatoire
-    if (trim($this->adresse))         { $sql .= ",address = '" . trim($this->adresse) ."'"; }
-    if (trim($this->cp))              { $sql .= ",cp = '" . trim($this->cp) ."'"; }
-    if (trim($this->ville))           { $sql .= ",ville = '" . trim($this->ville) ."'"; }
-    if (trim($this->departement_id))  { $sql .= ",fk_departement = '" . $this->departement_id ."'"; }
-    if (trim($this->pays_id))         { $sql .= ",fk_pays = '" . $this->pays_id ."'"; }
+
+    if (trim($this->adresse))  
+      { $sql .= ",address = '" . trim($this->adresse) ."'"; }
+
+    if (trim($this->cp))
+      { $sql .= ",cp = '" . trim($this->cp) ."'"; }
+
+    if (trim($this->ville))
+      { $sql .= ",ville = '" . trim($this->ville) ."'"; }
+
+    if (trim($this->departement_id)) 
+      { $sql .= ",fk_departement = '" . $this->departement_id ."'"; }
+
+    if (trim($this->pays_id))
+      { $sql .= ",fk_pays = '" . $this->pays_id ."'"; }
+
     if (trim($this->tel))             { $sql .= ",tel = '" . trim($this->tel) ."'"; }
     if (trim($this->fax))             { $sql .= ",fax = '" . trim($this->fax) ."'"; }
     if (trim($this->url))             { $sql .= ",url = '" . trim($this->url) ."'"; }
@@ -155,7 +166,11 @@ class Societe {
     if (trim($this->tva_intra))       { $sql .= ",tva_intra = '" . trim($this->tva_intra) ."'"; }
     if (trim($this->capital))         { $sql .= ",capital = '" . trim($this->capital) ."'"; }
     if (trim($this->effectif_id))     { $sql .= ",fk_effectif = '" . trim($this->effectif_id) ."'"; }
-    if (trim($this->forme_juridique_code)) { $sql .= ",fk_forme_juridique = '" . trim($this->forme_juridique_code) ."'"; }
+
+    if (trim($this->forme_juridique_code))
+      { 
+	$sql .= ",fk_forme_juridique = '" . trim($this->forme_juridique_code) ."'";
+      }
     if (trim($this->client))          { $sql .= ",client = '" . $this->client ."'"; }
     if (trim($this->fournisseur))     { $sql .= ",fournisseur = '" . $this->fournisseur ."'"; }
     if ($user)                        { $sql .= ",fk_user_modif = '".$user->id."'"; }
