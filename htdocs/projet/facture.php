@@ -117,7 +117,7 @@ print '</table><br>';
 	    }
 	  
 	  print '<tr><td>'.$i.' factures</td><td>&nbsp;</td>';
-	  print '<td align="right">'.$langs->trans("Total").' : '.price($total).'</td>';
+	  print '<td align="right">'.$langs-<Trans("Total").' : '.price($total).'</td>';
 	  print '<td align="left">'.$conf->monnaie.' HT</td></tr>';
 	  print "</table>";
 	}
