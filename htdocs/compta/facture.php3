@@ -162,7 +162,8 @@ if ($action == 'add')
 					  $prop->lignes[$i]->desc,
 					  $prop->lignes[$i]->price,
 					  $prop->lignes[$i]->qty,
-					  $prop->lignes[$i]->tva_tx);
+					  $prop->lignes[$i]->tva_tx,
+					  $prop->lignes[$i]->product_id);
 	    }
 	}
       else
@@ -464,7 +465,7 @@ else
 	 *
 	 */
 	
-	$sql = "SELECT l.description, l.price, l.qty, l.rowid, l.tva_taux";
+	$sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux";
 	$sql .= " FROM llx_facturedet as l WHERE l.fk_facture = $facid";
 	
 	$result = $db->query($sql);
@@ -490,7 +491,14 @@ else
 		$objp = $db->fetch_object( $i);
 		$var=!$var;
 		print "<TR $bc[$var]>";
-		print "<TD>".stripslashes(nl2br($objp->description))."</TD>\n";
+		if ($objp->fk_product)
+		  {
+		    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php3?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
+		  }
+		else
+		  {
+		print "<td>".stripslashes(nl2br($objp->description))."</TD>\n";
+		  }
 		print '<TD align="center">'.$objp->tva_taux.' %</TD>';
 		print '<TD align="center">'.$objp->qty.'</TD>';
 		print '<TD align="right">'.price($objp->price)."</TD>\n";
