@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +43,7 @@ function valeur($sql)
 
 if ($action == 'add')
 {
-  $sql = "INSERT INTO llx_chargesociales (fk_type, libelle, date_ech,amount) ";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech,amount) ";
   $sql .= " VALUES ($type,'$libelle','$date',$amount);";
 
   if (! $db->query($sql) )
@@ -67,7 +68,7 @@ print "</TR>\n";
 
 
 $sql = "SELECT c.libelle as nom, s.amount,".$db->pdate("s.date_ech")." as de, s.date_pai, s.libelle, s.paye,".$db->pdate("s.periode")." as periode,".$db->pdate("s.date_pai")." as dp";
-$sql .= " FROM c_chargesociales as c, llx_chargesociales as s";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id";
 if ($year > 0)
 {

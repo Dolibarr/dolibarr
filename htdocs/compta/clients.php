@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,13 +90,13 @@ if ($action == 'attribute_prefix')
 if ($action == 'recontact')
 {
   $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
-  $sql = "INSERT INTO llx_soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $GLOBALS["REMOTE_USER"]."')";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $GLOBALS["REMOTE_USER"]."')";
   $result = $db->query($sql);
 }
 
 if ($action == 'note')
 {
-  $sql = "UPDATE llx_societe SET note='$note' WHERE idp=$socid";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='$note' WHERE idp=$socid";
   $result = $db->query($sql);
 }
 
@@ -109,7 +110,7 @@ if ($action == 'stcomm')
       
       if ($result)
 	{
-	  $sql = "UPDATE llx_societe SET fk_stcomm=$stcommid WHERE idp=$socid";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=$socid";
 	  $result = $db->query($sql);
 	}
       else
@@ -120,7 +121,7 @@ if ($action == 'stcomm')
 
   if ($actioncommid)
     {
-      $sql = "INSERT INTO llx_actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
       $result = @$db->query($sql);
       
       if (!$result)
@@ -137,7 +138,7 @@ if ($action == 'stcomm')
  */
 if ($mode == 'search') {
   if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM llx_societe as s ";
+    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
     $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
   }
       
@@ -166,7 +167,7 @@ $pagenext = $page + 1;
  */
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm ";
-$sql .= " FROM llx_societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=1";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=1";
 
 if (strlen($stcomm))
 {

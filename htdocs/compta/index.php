@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,12 +40,12 @@ llxHeader("","Accueil Compta");
 
 if ($action == 'add_bookmark')
 {
-  $sql = "DELETE FROM llx_bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
   if (! $db->query($sql) )
     {
       print $db->error();
     }
-  $sql = "INSERT INTO llx_bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
   if (! $db->query($sql) )
     {
       print $db->error();
@@ -53,7 +54,7 @@ if ($action == 'add_bookmark')
 
 if ($action == 'del_bookmark')
 {
-  $sql = "DELETE FROM llx_bookmark WHERE rowid=$bid";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=$bid";
   $result = $db->query($sql);
 }
 /*
@@ -94,7 +95,7 @@ print '</ul></div><br>';
  * Factures brouillons
  */
 
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp FROM llx_facture as f, llx_societe as s WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
+$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
 
 if ( $db->query($sql) )
 {
@@ -132,7 +133,7 @@ if ($user->societe_id == 0)
 {
  
   $sql = "SELECT c.amount, cc.libelle";
-  $sql .= " FROM llx_chargesociales as c, c_chargesociales as cc";
+  $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc";
   $sql .= " WHERE c.fk_type = cc.id AND c.paye=0";
   
   if ( $db->query($sql) ) 
@@ -170,7 +171,7 @@ if ($user->societe_id == 0)
  *
  */
 $sql = "SELECT s.idp, s.nom,b.rowid as bid";
-$sql .= " FROM llx_societe as s, llx_bookmark as b";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
 $sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
 $sql .= " ORDER BY lower(s.nom) ASC";
 

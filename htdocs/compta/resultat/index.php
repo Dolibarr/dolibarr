@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ print "<TD align=\"right\">Montant</td>";
 print "</tr>\n";
 
 $sql = "SELECT s.nom,s.idp,sum(f.amount) as amount";
-$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.fk_statut = 1 AND f.fk_user_valid is not NULL"; 
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.fk_statut = 1 AND f.fk_user_valid is not NULL"; 
 
 $sql .= " GROUP BY s.nom ASC";
 
@@ -80,7 +81,7 @@ print '<tr><td colspan="3" align="right">'.price($total).'</td></tr>';
  *
  */
 $sql = "SELECT s.nom,s.idp,sum(f.total_ht) as amount";
-$sql .= " FROM llx_societe as s,llx_facture_fourn as f WHERE f.fk_soc = s.idp"; 
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f WHERE f.fk_soc = s.idp"; 
   
 $sql .= " GROUP BY s.nom ASC, s.idp";
 
@@ -122,7 +123,7 @@ $subtotal = 0;
 print '<tr><td colspan="4">Prestations déductibles</td></tr>';
 
 $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
-$sql .= " FROM c_chargesociales as c, llx_chargesociales as s";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id AND c.deductible=1";
 
 $sql .= " GROUP BY c.libelle DESC";
@@ -158,7 +159,7 @@ $subtotal = 0;
 print '<tr><td colspan="4">Prestations NON déductibles</td></tr>';
 
 $sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
-$sql .= " FROM c_chargesociales as c, llx_chargesociales as s";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id AND c.deductible=0";
 
 $sql .= " GROUP BY c.libelle DESC";

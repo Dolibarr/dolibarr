@@ -38,14 +38,14 @@ function valeur($sql) {
  */
 
 if ($action == 'add_bookmark') {
-  $sql = "INSERT INTO llx_bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
   if (! $db->query($sql) ) {
     print $db->error();
   }
 }
 
 if ($action == 'del_bookmark') {
-  $sql = "DELETE FROM llx_bookmark WHERE rowid=$bid";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=$bid";
   $result = $db->query($sql);
 }
 
@@ -62,7 +62,7 @@ print "<td colspan=\"2\">Factures</td>";
 print "</TR>\n";
 
 $sql = "SELECT c.libelle as nom, sum(s.amount) as total";
-$sql .= " FROM c_chargesociales as c, llx_chargesociales as s";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id AND s.paye = 1";
 $sql .= " GROUP BY lower(c.libelle) ASC";
 

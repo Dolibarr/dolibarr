@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ print "<td colspan=\"2\">Factures</td>";
 print "</TR>\n";
 
 $sql = "SELECT c.libelle as nom, sum(s.amount) as total";
-$sql .= " FROM c_chargesociales as c, llx_chargesociales as s";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
 $sql .= " WHERE s.fk_type = c.id AND s.paye = 1";
 $sql .= " GROUP BY lower(c.libelle) ASC";
 
@@ -76,8 +77,8 @@ if ( $db->query($sql) )
 /*
  * Factures fournisseurs
  */
-$sql = "SELECT  sum(f.amount) as total";
-$sql .= " FROM llx_facture_fourn as f";
+$sql = "SELECT sum(f.amount) as total";
+$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
 
 if ( $db->query($sql) ) {
   $num = $db->num_rows();
