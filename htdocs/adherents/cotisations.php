@@ -58,6 +58,9 @@ $pagenext = $page + 1;
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
 $sql .= " FROM llx_adherent as d, llx_cotisation as c";
 $sql .= " WHERE d.rowid = c.fk_adherent";
+if(isset($date_select) && $date_select != ''){
+  $sql .= " AND dateadh LIKE '$date_select%'";
+}
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
@@ -76,6 +79,7 @@ if ($result)
   print "</TR>\n";
     
   $var=True;
+  $total=0;
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
@@ -83,10 +87,31 @@ if ($result)
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->dateadh)."</a></td>\n";
       print '<TD align="right">'.price($objp->cotisation).'</TD>';
+      $Total[strftime("%Y",$objp->dateadh)]+=price($objp->cotisation);
+      $total+=price($objp->cotisation);
       print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></TD>\n";
       print "</tr>";
       $i++;
     }
+  $var=!$var;
+  print "<TR $bc[$var]>";
+  print "<TD>Total</TD>\n";
+  print "<TD align=\"right\">".price($total)."</TD>\n";
+  print "<TD>&nbsp;</TD>\n";
+  print "</TR>\n";
+  print "</table>";
+  print "<BR>\n";
+
+  print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">\n";
+  print '<TR class="liste_titre">';
+  print "<td>Annee</td>";
+  print "<td align=\"right\">Montant</TD>";
+  //  print "<td>Prenom Nom / Société</td>";
+  print "</TR>\n";
+  foreach ($Total as $key=>$value){
+    $var=!$var;
+    print "<TR $bc[$var]><TD><A HREF=\"$PHP_SELF?statut=$statut&date_select=$key\">$key</A></TD><TD align=\"right\">".price($value)."</TD></TR>\n";
+  }
   print "</table>";
 }
 else
