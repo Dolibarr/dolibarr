@@ -1,2 +1,5 @@
 # Dolibarr language file - nl_BE - other
 Calendar=De kalender
+LoginWebcal=Login for Webcalendar
+AddCalendarEntry=Add entry in calendar
+

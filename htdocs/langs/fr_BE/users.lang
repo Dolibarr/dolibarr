@@ -13,3 +13,6 @@ CreateUser=Créer l'utilisateur
 LoginAlreadyExists=Ce login existe déjà
 ListOfUsers=Liste des utilisateurs
 Administrator=Administrateur
+DefaultRights=Permissions par defaut
+DefaultRightsDesc=Definissez ici les permissions par defaut, c'est à dire les permissions qui seront attribuées automatiquement à un nouvel utilisateur lors de sa création.
+

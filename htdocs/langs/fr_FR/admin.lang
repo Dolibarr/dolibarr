@@ -1,8 +1,8 @@
 # Dolibarr language file - fr_FR - admin
 GlobalSetup=Configuration générale
-GUISetup=Configuration IHM
+GUISetup=Configuration Interface
 DictionnarySetup=Configuration dictionnaires
-OtherSetup=Configuration autre
+OtherSetup=Configuration diverses
 Modules=Modules
 Boxe=Boite
 Boxes=Boites
