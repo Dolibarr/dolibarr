@@ -312,12 +312,12 @@ if ($socid > 0)
 
     print '<br><div class="tabsAction">';
 
-    if ($conf->propal->enabled && defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
+    if ($conf->propal->enabled && $user->rights->propale->creer)
       {
 	print '<a class="tabAction" href="addpropal.php?socidp='.$objsoc->idp.'&amp;action=create">Créer une proposition</a>';
       }
 
-    if ($conf->commande->enabled && defined("MAIN_MODULE_COMMANDE") && MAIN_MODULE_COMMANDE && $user->rights->commande->creer)
+    if ($conf->commande->enabled && $user->rights->commande->creer)
       {
 	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->idp.'&amp;action=create">Créer une commande</a>';
       }
@@ -327,7 +327,7 @@ if ($socid > 0)
 	print '<a class="tabAction" href="../projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a>';
       }
 
-    if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
+    if ($conf->fichinter->enabled)
       {
 	print '<a class="tabAction" href="../fichinter/fiche.php?socidp='.$objsoc->idp.'&amp;action=create">Intervention</a>';
       }
@@ -340,7 +340,7 @@ if ($socid > 0)
      *
      */
     if ($action == 'changevalue') {
-      print "<HR noshade>";
+      print "<hr noshade>";
       print "<form action=\"index.php?socid=$objsoc->idp\" method=\"post\">";
       print "<input type=\"hidden\" name=\"action\" value=\"cabrecrut\">";
       print "Cette société est un cabinet de recrutement : ";
