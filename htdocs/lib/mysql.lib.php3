@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001 Fabien Seisen <seisen@linuxfr.org>
- * Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * $Id$
  * $Source$
@@ -21,12 +21,12 @@
  *
  */
 
-class Db {
+class DoliDb {
   var $db, $results, $ok;
 
 
 
-  Function Db($type = 'mysql', $host = '', $user = '', $pass = '', $name = '') 
+  Function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '') 
     {
 
       //      print "Name DB : $host, $user, $pass, $name<br>";
