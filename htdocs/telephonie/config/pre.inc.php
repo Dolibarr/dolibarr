@@ -36,7 +36,8 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Telephonie");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/simulation/fiche.php", "Simulation");
+  if (TELEPHONIE_MODULE_SIMULATION == 1)
+    $menu->add(DOL_URL_ROOT."/telephonie/simulation/fiche.php", "Simulation");
 
   $menu->add(DOL_URL_ROOT."/telephonie/tarifs/liste.php", "Tarifs");
 
