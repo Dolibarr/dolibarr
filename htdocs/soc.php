@@ -60,7 +60,11 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
   $soc->siret                = $_POST["siret"];
   $soc->ape                  = $_POST["ape"];
   $soc->prefix_comm          = $_POST["prefix_comm"];
-  $soc->code_client          = $_POST["code_client"];
+
+  if (strlen(trim($_POST["code_client"])))
+    {
+      $soc->code_client      = $_POST["code_client"];
+    }
   $soc->capital              = $_POST["capital"];
   $soc->tva_intra            = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
   $soc->forme_juridique_code = $_POST["forme_juridique_code"];
