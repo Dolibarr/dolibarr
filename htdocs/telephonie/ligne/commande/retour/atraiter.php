@@ -60,7 +60,7 @@ if ($db->query($sql))
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>Lignes Statuts</td><td>Mode</td><td align="center">Resultat</td>';
-  print '<td align="center">Date</td><td>Commentaire</td><td>-</td>';
+  print '<td align="center">Date</td><td>Résil</td><td>Commentaire</td>';
   print "</tr>\n";
   $var=True;
 
@@ -80,17 +80,8 @@ if ($db->query($sql))
 	print '<td>'.$obj->mode."</td>\n";
 	print '<td align="center">'.$obj->situation."</td>\n";
 	print '<td align="center">'.$obj->date_mise_service."</td>\n";
+	print '<td align="center">'.$obj->date_resiliation."</td>\n";
 	print '<td>'.$obj->commentaire."</td>\n";
-	print '<td>';
-	if ($obj->traite == 0)
-	  {
-	    print "A traiter";
-	  }
-	else
-	  {
-	    print "-";
-	  }
-	print "</td>\n";
 	print "</tr>\n";
       }
       $i++;
