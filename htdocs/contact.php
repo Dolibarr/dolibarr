@@ -22,6 +22,8 @@
  */
 require("./pre.inc.php");
 
+llxHeader();
+
 /*
  * Sécurité accés client
  */
@@ -30,9 +32,6 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
-
-llxHeader();
-
 
 if ($sortorder == "")
 {
@@ -47,8 +46,6 @@ if ($page < 0) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des contacts",$page, $PHP_SELF, '', $sortfield, $sortorder);
-
 
 /*
  *
@@ -59,7 +56,8 @@ print_barre_liste("Liste des contacts",$page, $PHP_SELF, '', $sortfield, $sortor
 
 
 $sql = "SELECT s.idp, s.nom,  st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
-$sql .= "FROM llx_societe as s, llx_socpeople as p, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
+$sql .= " FROM llx_societe as s, llx_socpeople as p, c_stcomm as st";
+$sql .= " WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
 
 if (strlen($stcomm))  // statut commercial
 {
@@ -78,26 +76,36 @@ if ($contactname) // acces a partir du module de recherche
   $sortorder = "ASC";
 }
 
-if ($socid) 
-{
+if ($socid) {
   $sql .= " AND s.idp = $socid";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
 $result = $db->query($sql);
-
-if ($result) 
-{
+if ($result) {
   $num = $db->num_rows();
-  $i = 0;
   
-  if ($sortorder == "DESC") 
-    {
-      $sortorder="ASC";
+  print_barre_liste("Liste des contacts (clients,fournisseurs,partenaires...)",$page, $PHP_SELF, "",$sortfield,$sortorder,"",$num);
+
+  print "<DIV align=\"center\">";
+
+  print "| <A href=\"$PHP_SELF?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
+  for ($i = 65 ; $i < 91; $i++) {
+    print "<A href=\"$PHP_SELF?begin=" . chr($i) . "&stcomm=$stcomm\" class=\"T3\">";
+    
+    if ($begin == chr($i) ) {
+      print  "<b>-&gt;" . chr($i) . "&lt;-</b>" ; 
+    } else {
+      print  chr($i)  ; 
     } 
-  else
-    {
+    print "</A> | ";
+  }
+  print "</div>";
+
+  if ($sortorder == "DESC") {
+    $sortorder="ASC";
+  } else {
       $sortorder="DESC";
     }
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
@@ -112,8 +120,9 @@ if ($result)
   print '<TD>Téléphone</TD>';
   print "</TR>\n";
   $var=True;
-  while ($i < $num) 
-    {
+  $i = 0;
+  while ($i < min($num,$limit)) {
+
       $obj = $db->fetch_object( $i);
     
       $var=!$var;
