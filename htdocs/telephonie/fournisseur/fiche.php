@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,12 +88,96 @@ if ($_GET["action"] == 'create')
   print '</table>';
   print '</form>';
 }
-else
+
+/*
+ * Visualisation & Edition
+ *
+ */
+if ($_GET["id"] > 0)
 {
-  print "Error";
+  $fourn = new FournisseurTelephonie($db);
+  if ($fourn->fetch($_GET["id"]) == 0)
+  {
+
+    if ($_GET["action"] == "edit" && $user->rights->telephonie->fournisseur->config)
+      {
+	/*
+	 * Edition
+	 *
+	 */
+	print_titre("Modification fournisseur");
+
+	print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	
+	print '<tr><td width="20%">Nom</td><td colspan="2">'.$fourn->nom.'</td></tr>';
+	print '<tr><td width="20%">Email de commande</td>';
+	print '<td><input name="email" size="30" value="'.$fourn->email_commande.'"></td>';
+	print '<td>adresse email à laquelle sont envoyées les commandes de lignes</td></tr>';
+
+	$html = new Form($db);
+
+	$arr = $fourn->array_methode();
+
+
+	
+	print '<tr><td width="20%">Méthode de commande</td>';
+	print '<td>';
+	print $html->select_array("methode",$arr);
+	print '</td>';
+	print '<td>méthode utilisée pour les commandes de lignes</td></tr>';
+    
+
+	print '</table><br />';
+      }
+    else
+      {
+	/*
+	 * Visualisation
+	 *
+	 */
+	$h = 0;
+	$head[$h][0] = DOL_URL_ROOT."/telephonie/fournisseur/fiche.php?id=".$fourn->id;
+	$head[$h][1] = $langs->trans("Contrat");
+	$hselected = $h;
+	$h++;
+	
+	dolibarr_fiche_head($head, $hselected, 'Fournisseur : '.$fourn->nom);
+	
+	print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	
+	print '<tr><td width="20%">Nom</td><td colspan="2">'.$fourn->nom.'</td></tr>';
+	print '<tr><td width="20%">Email de commande</td>';
+	print '<td>'.$fourn->email_commande.'</td>';
+	print '<td>adresse email à laquelle sont envoyées les commandes de lignes</td></tr>';
+	
+	print '<tr><td width="20%">Méthode de commande</td>';
+	print '<td>'.$fourn->class_commande.'</td>';
+	print '<td>méthode utilisée pour les commandes de lignes</td></tr>';
+	
+	
+	print '</table><br /></div>';
+      }
+  }
 }
 
+/* ************************************************************************** */
+/*                                                                            */ 
+/* Barre d'action                                                             */ 
+/*                                                                            */ 
+/* ************************************************************************** */
 
+print "\n<div class=\"tabsAction\">\n";
+
+if ($_GET["action"] == '')
+{  
+  if($user->rights->telephonie->fournisseur->config)
+
+    {
+      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/telephonie/fournisseur/fiche.php?action=edit&amp;id='.$fourn->id.'">'.$langs->trans("Edit").'</a>';
+    }
+}
+
+print "</div>";
 
 $db->close();
 
