@@ -47,6 +47,7 @@ class Project {
   function Project($DB)
   {
     $this->db = $DB;
+    $this->societe = new Societe($DB);
   }
   
   /*
@@ -56,16 +57,19 @@ class Project {
 
   function create($user)
   {
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, dateo) ";
+    $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, ".$user->id.",now()) ;";
     
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat) ";
-    $sql .= " VALUES ('$this->ref', '$this->title', $this->socidp, ".$user->id.") ;";
-    
-    if (!$this->db->query($sql) ) 
+    if ($this->db->query($sql) ) 
       {
-	print '<b>'.$sql.'</b><br>'.$this->db->error();	
+	return $this->db->last_insert_id(MAIN_DB_PREFIX."projet");
+      }
+    else
+      {
+	print '<b>'.$sql.'</b><br>'.$this->db->error();	  
       }    
   }
-	
+  
   /*
    *    \brief      Charge objet projet depuis la base
    *    \param      rowid       id du projet à charger
@@ -74,7 +78,7 @@ class Project {
   function fetch($rowid)
   {
     
-    $sql = "SELECT title, ref FROM ".MAIN_DB_PREFIX."projet";
+    $sql = "SELECT title, ref, fk_soc FROM ".MAIN_DB_PREFIX."projet";
     $sql .= " WHERE rowid=".$rowid;
 
     $resql = $this->db->query($sql);
@@ -87,6 +91,8 @@ class Project {
 	    $this->id = $rowid;
 	    $this->ref = $obj->ref;
 	    $this->title = $obj->title;
+	    $this->titre = $obj->title;
+	    $this->societe->id = $obj->fk_soc;
 	    
 	    $this->db->free($resql);
 	  }
@@ -175,5 +181,80 @@ class Project {
 	}
       
     }
+  /*
+   *
+   *
+   *
+   */
+  function get_facture_list()
+    {
+      $factures = array();
+      $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture WHERE fk_projet=$this->id;";
+      
+      $result=$this->db->query($sql);
+      if ($result)
+	{
+	  $nump = $this->db->num_rows($result);
+	  if ($nump)
+	    {
+	      $i = 0;
+	      while ($i < $nump)
+		{
+		  $obj = $this->db->fetch_object($result);
+		  
+		  $factures[$i] = $obj->rowid;
+		  
+		  $i++;
+		}
+	      $this->db->free($result);
+	      /*
+	       *  Retourne un tableau contenant la liste des factures associees
+	       */
+	      return $factures;
+	    }
+	}
+      else
+	{
+	  dolibarr_print_error($this->db);
+	}
+    }
+  /**
+   * Renvoie la liste des commande associées au projet
+   *
+   *
+   */
+  function get_commande_list()
+    {
+      $commandes = array();
+      $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande WHERE fk_projet=$this->id;";
+      
+      $result=$this->db->query($sql);
+      if ($result)
+	{
+	  $nump = $this->db->num_rows($result);
+	  if ($nump)
+	    {
+	      $i = 0;
+	      while ($i < $nump)
+		{
+		  $obj = $this->db->fetch_object($result);
+		  
+		  $commandes[$i] = $obj->rowid;
+		  
+		  $i++;
+		}
+	      $this->db->free($result);
+	      /*
+	       *  Retourne un tableau contenant la liste des commandes associees
+	       */
+	      return $commandes;
+	    }
+	}
+      else
+	{
+	  dolibarr_print_error($this->db);
+	}
+    }
+
 }
 ?>
