@@ -58,8 +58,54 @@ class ComptaExportPoivre
       }
   }
 
+  /**
+   * Agrégation des lignes de facture
+   *
+   *
+   */
+
+  function Agregate($line_in)
+  {
+    dolibarr_syslog("ComptaExportPoivre::Agregate");
+    dolibarr_syslog("ComptaExportPoivre::Agregate " . sizeof($line_in) . " lignes en entrées");
+    $i = 0;
+    $j = 0;
+    $n = sizeof($line_in);
+
+    $oldfacture = $line_in[0][1];
+
+    // On commence par la ligne 0
+
+    $line_out[$j] = $line_in[$i];
+
+    for ( $i = 1 ; $i < $n ; $i++)
+      {
+	// On agrège les lignes avec le même code comptable
+
+	if ( $line_in[$i][1] == $line_in[$i-1][1] && $line_in[$i][4] == $line_in[$i-1][4])
+	  {
+	    $line_out[$j][8] = $line_out[$j][8] + $line_in[$i][8];
+	  }
+	else
+	  {
+	    $line_out[$j] = $line_in[$i];
+	    $j++;
+	  }
+      }
+
+    dolibarr_syslog("ComptaExportPoivre::Agregate " . sizeof($line_out) . " lignes en sorties");
+
+    return $line_out;
+  }
+
   function Export($linec)
   {
+
+    dolibarr_syslog("ComptaExportPoivre::Export");
+    dolibarr_syslog("ComptaExportPoivre::Export " . sizeof($linec) . " lignes en entrées");
+
+    $lines = $this->Agregate($linec);
+    
     $fname = "/tmp/exportcompta";
 
     $fp = fopen($fname,'w');
@@ -79,57 +125,55 @@ class ComptaExportPoivre
     
     // Pour les paiements
 
-
-    
     $i = 0;
     $j = 0;
-    $n = sizeof($linec);
+    $n = sizeof($lines);
 
     $oldfacture = 0;
 
     for ( $i = 0 ; $i < $n ; $i++)
       {
-	if ( $oldfacture <> $linec[$i][1])
+	if ( $oldfacture <> $lines[$i][1])
 	  {
 	    // Ligne client
-	    fputs($fp, strftime("%d%m%y",$linec[$i][0]) . "\t");
+	    fputs($fp, strftime("%d%m%y",$lines[$i][0]) . "\t");
 	    fputs($fp, "VE" ."\t");
 	    fputs($fp, "\t");
 	    fputs($fp, '411000000' ."\t");
-	    fputs($fp, $linec[$i][3]." Facture" ."\t");
-	    fputs($fp, $linec[$i][5] . "\t"); // Numéro de facture
-	    fputs($fp, ereg_replace(",",".",$linec[$i][7]) ."\t"); // Montant total TTC de la facture
+	    fputs($fp, $lines[$i][3]." Facture" ."\t");
+	    fputs($fp, $lines[$i][5] . "\t"); // Numéro de facture
+	    fputs($fp, ereg_replace(",",".",$lines[$i][7]) ."\t"); // Montant total TTC de la facture
 	    fputs($fp, 'D' . "\t"); // D pour débit
-	    fputs($fp, strftime("%d%m%y",$linec[$i][0]) . "\t"); // Date d'échéance
+	    fputs($fp, strftime("%d%m%y",$lines[$i][0]) . "\t"); // Date d'échéance
 	    fputs($fp, "EUR"); // Monnaie
 	    fputs($fp, "\n");
 
 	    // Ligne TVA
-	    fputs($fp, strftime("%d%m%y",$linec[$i][0]) . "\t");
+	    fputs($fp, strftime("%d%m%y",$lines[$i][0]) . "\t");
 	    fputs($fp, "VE" ."\t");
 	    fputs($fp, "\t");
 	    fputs($fp, '4457119' ."\t");
-	    fputs($fp, $linec[$i][3]." Facture" ."\t");
-	    fputs($fp, $linec[$i][5] . "\t");             // Numéro de facture
-	    fputs($fp, ereg_replace(",",".",$linec[$i][6]) ."\t");              // Montant de TVA
+	    fputs($fp, $lines[$i][3]." Facture" ."\t");
+	    fputs($fp, $lines[$i][5] . "\t");             // Numéro de facture
+	    fputs($fp, ereg_replace(",",".",$lines[$i][6]) ."\t");              // Montant de TVA
 	    fputs($fp, 'C' . "\t");                       // C pour crédit
-	    fputs($fp, strftime("%d%m%y",$linec[$i][0]) . "\t"); // Date d'échéance
+	    fputs($fp, strftime("%d%m%y",$lines[$i][0]) . "\t"); // Date d'échéance
 	    fputs($fp, "EUR"); // Monnaie
 	    fputs($fp, "\n");
 	    
-	    $oldfacture = $linec[$i][1];
+	    $oldfacture = $lines[$i][1];
 	    $j++;
 	  }
 
-	fputs($fp, strftime("%d%m%y",$linec[$i][0]) ."\t");
+	fputs($fp, strftime("%d%m%y",$lines[$i][0]) ."\t");
 	fputs($fp, 'VE' ."\t");
-	fputs($fp, $linec[$i][4]."\t"); // Code Comptable
+	fputs($fp, $lines[$i][4]."\t"); // Code Comptable
 	fputs($fp, "\t");
-	fputs($fp, $linec[$i][3]." Facture" ."\t");
-	fputs($fp, $linec[$i][5]."\t");                  // Numéro de facture
-	fputs($fp, ereg_replace(",",".",round($linec[$i][8], 2)) ."\t");            // Montant de la ligne
+	fputs($fp, $lines[$i][3]." Facture" ."\t");
+	fputs($fp, $lines[$i][5]."\t");                  // Numéro de facture
+	fputs($fp, ereg_replace(",",".",round($lines[$i][8], 2)) ."\t");            // Montant de la ligne
 	fputs($fp, 'C' . "\t");                     // C pour crédit
-	fputs($fp, strftime("%d%m%y",$linec[$i][0]) . "\t"); // Date d'échéance
+	fputs($fp, strftime("%d%m%y",$lines[$i][0]) . "\t"); // Date d'échéance
 	fputs($fp, "EUR"); // Monnaie
 	fputs($fp, "\n");
 
