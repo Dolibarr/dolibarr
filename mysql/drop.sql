@@ -89,6 +89,8 @@ drop table if exists llx_const;
 
 drop table if exists llx_cotisation;
 
+drop table if exists llx_deplacement;
+
 drop table if exists llx_domain ;
 
 drop table if exists llx_don;
