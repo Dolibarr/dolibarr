@@ -1,8 +1,9 @@
 <?php
-/* Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
+ *
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -507,6 +508,35 @@ class Societe {
 
 	  $sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise ";
 	  $sql .= " ( datec, fk_soc, remise_client, fk_user_author )";
+	  $sql .= " VALUES (now(),".$this->id.",'".$remise."',".$user->id.")";
+	  
+	  if (! $this->db->query($sql) )
+	    {
+	        dolibarr_print_error($this->db);
+	    }
+
+	}
+    }
+  /**
+   *    \brief      Définit la société comme un client
+   *    \param      remise      montant de la remise
+   *    \param      user        utilisateur qui place la remise
+   *
+   */
+	 
+  function set_remise_except($remise, $user)
+    {
+      if ($this->id)
+	{
+	  $remise = ereg_replace(",",".",$remise);
+
+	  $sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_remise_except ";
+	  $sql .= " WHERE fk_soc = " . $this->id ." AND fk_facture IS NULL;";
+	  
+	  $this->db->query($sql);
+
+	  $sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except ";
+	  $sql .= " ( datec, fk_soc, amount_ht, fk_user )";
 	  $sql .= " VALUES (now(),".$this->id.",'".$remise."',".$user->id.")";
 	  
 	  if (! $this->db->query($sql) )
