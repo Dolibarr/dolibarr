@@ -68,6 +68,29 @@ if ($_POST["action"] == "correct_stock" && $_POST["cancel"] <> $langs->trans("Ca
     }
 }
 
+if ($_POST["action"] == "transfert_stock" && $_POST["cancel"] <> $langs->trans("Cancel"))
+{
+  if ($_POST["id_entrepot_source"] <> $_POST["id_entrepot_destination"])
+    {
+      if (is_numeric($_POST["nbpiece"]))
+	{
+	  
+	  $product = new Product($db);
+	  $product->id = $_GET["id"];
+
+	  $product->correct_stock($user, 
+				  $_POST["id_entrepot_source"], 
+				  $_POST["nbpiece"],
+				  1);
+
+	  $product->correct_stock($user, 
+				  $_POST["id_entrepot_destination"], 
+				  $_POST["nbpiece"],
+				  0);
+	}
+    }
+}
+
 /*
  * Fiche stock
  *
@@ -227,9 +250,60 @@ if ($_GET["id"])
       print '</form>';
 
     }
-
   /*
-   * Correction du stock
+   * Transfert de pièces 
+   *
+   */
+  if ($_GET["action"] == "transfert")
+    {
+      print_titre ("Transfert de stock");
+      print "<form action=\"product.php?id=$product->id\" method=\"post\">\n";
+      print '<input type="hidden" name="action" value="transfert_stock">';
+      print '<table class="border" width="100%"><tr>';
+      print '<td width="20%">Source</td><td width="20%"><select name="id_entrepot_source">';
+      
+      $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e WHERE statut = 1";    
+      $sql .= " ORDER BY lower(e.label)";
+      
+      if ($db->query($sql))
+	{
+	  $num = $db->num_rows();
+	  $i = 0;		  		  
+	  while ($i < $num)
+	    {
+	      $obj = $db->fetch_object( $i);
+	      print '<option value="'.$obj->rowid.'">'.$obj->label ;
+	      $i++;
+	    }
+	}
+      print '</select></td>';
+
+      print '<td width="20%">Destination</td><td width="20%"><select name="id_entrepot_destination">';
+      
+      $sql = "SELECT e.rowid, e.label FROM ".MAIN_DB_PREFIX."entrepot as e WHERE statut = 1";    
+      $sql .= " ORDER BY lower(e.label)";
+      
+      if ($db->query($sql))
+	{
+	  $num = $db->num_rows();
+	  $i = 0;		  		  
+	  while ($i < $num)
+	    {
+	      $obj = $db->fetch_object( $i);
+	      print '<option value="'.$obj->rowid.'">'.$obj->label ;
+	      $i++;
+	    }
+	}
+      print '</select></td>';
+      print '<td width="20%">Nb de pièce</td><td width="20%"><input name="nbpiece" size="10" value=""></td></tr>';
+      print '<tr><td colspan="6" align="center"><input type="submit" value="'.$langs->trans('Save').'">&nbsp;';
+      print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+      print '</table>';
+      print '</form>';
+
+    }
+  /*
+   * 
    *
    */
   if ($_GET["action"] == "definir")
@@ -275,8 +349,9 @@ else
 
 print "<div class=\"tabsAction\">\n";
 
-if ($_GET["action"] <> 'correction')
+if ($_GET["action"] == '' )
 {
+  print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=transfert">Transfert</a>';
   print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=correction">Correction stock</a>';
 }
 print '</div>';
