@@ -1,0 +1,129 @@
+<?PHP
+/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ *
+ */
+
+class modDolibarrModules
+{
+
+  /*
+   * Initialisation
+   *
+   */
+
+  Function modDolibarrModules($DB)
+  {
+    $this->db = $DB ;
+  }
+  /*
+   *
+   *
+   *
+   */
+
+  Function _init($const, $array_sql)
+  {
+    /*
+     *  Activation du module
+     */
+    $err = 0;
+
+
+    foreach ($const as $key => $value)
+      {
+	$name = $const[$key][0];
+	$type = $const[$key][1];
+	$val  = $const[$key][2];
+
+	$sql = "SELECT count(*) FROM llx_const WHERE name ='".$name."'";
+
+	if ( $this->db->query($sql) )
+	  {
+	    $row = $this->db->fetch_row($sql);
+	    
+	    if ($row[0] == 0)
+	      {
+		if (strlen($val))
+		  {
+		    $sql = "INSERT INTO llx_const (name,type,value) VALUES ('".$name."','".$type."','".$val."')";
+		  }
+		else
+		  {
+		    $sql = "INSERT INTO llx_const (name,type) VALUES ('".$name."','".$type."')";
+		  }
+
+		if ( $this->db->query($sql) )
+		  {
+
+		  }
+	      }
+	  }
+      }
+
+
+
+
+    /*
+     *
+     */
+
+    for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
+      {
+	if (! $this->db->query($array_sql[$i]))
+	  {
+	    $err++;
+	  }
+      }
+
+    if ($err > 0)
+      {
+	return 0;
+      }
+    else
+      {
+	return 1;
+      }
+  }
+  /*
+   *
+   *
+   */
+  Function _remove($array_sql)
+  {
+    $err = 0;
+    for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
+      {
+	if (! $this->db->query($array_sql[$i]))
+	  {
+	    $err++;
+	  }
+      }
+
+    if ($err > 0)
+      {
+	return 0;
+      }
+    else
+      {
+	return 1;
+      }
+  }
+}
+?>
