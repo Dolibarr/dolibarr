@@ -38,17 +38,15 @@ if ($action == 'add')
       $don->amount     = $amount;
       $don->cp         = $cp;
       $don->ville      = $ville;
-      $don->date       = $db->idate(mktime(12, 0 , 0, $remonth, $reday, $reyear));
+      $don->date       = mktime(12, 0 , 0, $remonth, $reday, $reyear);
       $don->note       = $note;
       $don->public     = $public;
       $don->projetid   = $projetid;
-      $don->modepaiement = $modepaiement;
+      $don->modepaiementid = $modepaiement;
       
       if ($don->create($user->id) ) 
-	{
-	  
+	{	  
 	  Header("Location: index.php");
-	  
 	}
     }
   else 
@@ -63,6 +61,7 @@ if ($action == 'delete')
 {
   $don = new Don($db);
   $don->delete($rowid);
+  Header("Location: liste.php?statut=0");
 }
 if ($action == 'valid_promesse')
 {
@@ -75,7 +74,7 @@ if ($action == 'valid_promesse')
 if ($action == 'set_paye')
 {
   $don = new Don($db);
-  if ($don->set_paye($rowid)) 
+  if ($don->set_paye($rowid, $modepaiement)) 
     {
       Header("Location: liste.php?statut=1");
     }
@@ -195,7 +194,7 @@ if ($rowid > 0 && $action == 'edit')
   $don->fetch($rowid);
 
   print_titre("Traitement du don");
-
+  print "<form action=\"$PHP_SELF\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
   print "<tr><td>Date du don :</td><td>";
@@ -203,22 +202,26 @@ if ($rowid > 0 && $action == 'edit')
   print "</td>";
   
   print '<td rowspan="9" valign="top" width="50%">Commentaires :<br>';
-  print nl2br($don->note).'</td></tr>';
+  print nl2br($don->commentaire).'</td></tr>';
 
   $author = $GLOBALS["REMOTE_USER"];
   print "<input type=\"hidden\" name=\"author\" value=\"$author\">\n";
   
-  if ($don->statut > 0)
+  if ($don->statut == 1)
     {
-
       print "<tr><td>Type :</td><td>";
-
       $paiement = new Paiement($db);
-
-      $paiement->select("modepaiement","crédit", $don->modepaiement);
-
+      $paiement->select("modepaiement","crédit", $don->modepaiementid);
       print "</td></tr>\n";
     }
+
+  if ($don->statut > 1)
+    {
+      print "<tr><td>Type :</td><td>";
+      print $don->modepaiement;
+      print "</td></tr>\n";
+    }
+
   print '<tr><td>Projet :</td><td>'.$don->projet.'</td></tr>';
 
   print "<tr><td>Don public :</td><td>";
@@ -239,28 +242,41 @@ if ($rowid > 0 && $action == 'edit')
   
   print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
   
-    
-  if ($don->statut == 0) 
-    {
-      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=delete\">Supprimer</a>]</td>";
-    } 
-    else 
-      {
-	print "<td align=\"center\" width=\"25%\">-</td>";
-      } 
+  /*
+   * Case 1
+   */
+
+  print "<td align=\"center\" width=\"25%\">-</td>";
+	
+  /*
+   * Case 2
+   */
   
   if ($don->statut == 1 && $resteapayer > 0) 
     {
       print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php3?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
     }
+  elseif ($don->statut == 0)
+    {
+      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=valid_promesse\">Valider la promesse</a>]</td>";
+    }
   else
     {
       print "<td align=\"center\" width=\"25%\">-</td>";
     }
-  
+  /*
+   * Case 3
+   */
   if ($don->statut == 1 && abs($resteapayer == 0) && $don->paye == 0) 
     {
-      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=set_paye\">Classer 'Payé'</a>]</td>";
+      print "<td align=\"center\" width=\"25%\">";
+
+      print '<input type="hidden" name="action" value="set_paye">';
+      print '<input type="hidden" name="rowid" value="'.$don->id.'">';
+
+      print '<input type="submit" value="Classer Payé">';
+
+      print "</td>";
     }
   else
     {
@@ -269,7 +285,7 @@ if ($rowid > 0 && $action == 'edit')
   
   if ($don->statut == 0) 
     {
-      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=valid_promesse\">Valider la promesse</a>]</td>";
+      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=delete\">Supprimer</a>]</td>";
     }
   elseif ($don->statut == 2)
     {
@@ -280,7 +296,7 @@ if ($rowid > 0 && $action == 'edit')
       print "<td align=\"center\" width=\"25%\">-</td>";
     }
 
-  print "</tr></table><p>";
+  print "</tr></table></form><p>";
   
 }
 
