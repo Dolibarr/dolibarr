@@ -840,18 +840,18 @@ class Form
 
     $yes="yes"; $no="no";
     if ($option) { $yes="1"; $no="0"; }
-    
+
     print '<select name="'.$name.'">';
 
-    if ($value == 'yes' || $value == 1) 
-      {
-	print '<option value="'.$yes.'" selected>'.$langs->trans("yes").'</option>';
-	print '<option value="'.$no.'">'.$langs->trans("no").'</option>';
-      }
-    else
+    if ($value == 'no' || $value == 0) 
       {
 	print '<option value="'.$yes.'">'.$langs->trans("yes").'</option>';
 	print '<option value="'.$no.'" selected>'.$langs->trans("no").'</option>';
+      }
+    else
+      {
+	print '<option value="'.$yes.'" selected>'.$langs->trans("yes").'</option>';
+	print '<option value="'.$no.'">'.$langs->trans("no").'</option>';
       }
     print '</select>';
   }
