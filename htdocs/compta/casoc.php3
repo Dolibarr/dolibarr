@@ -67,7 +67,7 @@ if ($result) {
       
       print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
       print "<TD align=\"right\">".price($objp->ca)."</TD>";
-      print '<td align="right">'.price(100 / $catotal * $objp->ca).'</td>';
+      print '<td align="right">'.price(100 / $catotal * $objp->ca).'%</td>';
       
       $total = $total + $objp->ca;	  
       print "</TR>\n";
