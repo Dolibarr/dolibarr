@@ -231,7 +231,7 @@ class Societe {
 	{
 	  if ( $this->db->num_rows() )
 	    {
-	      $nom = $this->db->result(0,0);
+	      $nom = preg_replace("/[[:punct:]]/","",$this->db->result(0,0));
 	      $this->db->free();
 	      
 	      $prefix = strtoupper(substr($nom, 0, 2));
