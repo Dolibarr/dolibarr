@@ -39,7 +39,9 @@ $v->setPhoneNumber($contact->phone_perso, "PREF;HOME;VOICE");
 if ($contact->birthday)
   $v->setBirthday($contact->birthday);
 
-$v->setAddress("", "", "Musterstrasse 20", "Musterstadt", "", "98765", "Deutschland");
+// TODO finir le support des adresses dans les contacts
+
+$v->setAddress("", "", $contact->address, $contact->ville, "", $contact->cp, $contact->pays);
 $v->setEmail($contact->email);
 //$v->setNote("You can take some notes here.\r\nMultiple lines are supported via \\r\\n.");
 //$v->setURL("http://www.thomas-mustermann.de", "WORK");
