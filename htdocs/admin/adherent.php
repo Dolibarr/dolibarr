@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -64,7 +65,7 @@ llxHeader();
  * PDF
  */
 
-print_titre("Gestion des adhérents");
+print_titre("Gestion des adhérents : Configurations de parametres");
 
 print '<table border="1" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre"><td colspan="4">Modules externes</td></tr>';
