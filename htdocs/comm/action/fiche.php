@@ -205,7 +205,7 @@ if ($_GET["action"] == 'create')
       print_duree_select("duree");
       print '</td></tr>';
 
-      print '<tr><td valign="top">Commentaire</td><td>';
+      print '<tr><td valign="top">'.$langs->trans("Comment").'</td><td>';
       print '<textarea cols="60" rows="6" name="todo_note"></textarea></td></tr>';
       print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';  
       print '</table>';
@@ -363,7 +363,7 @@ if ($_GET["id"])
       
       if ($act->note)
 	{
-	  print '<tr><td valign="top">Commentaire</td><td colspan="3">';
+	  print '<tr><td valign="top">'.$langs->trans("Comment").'</td><td colspan="3">';
 	  print nl2br($act->note).'</td></tr>';
 	}
       print '<tr><td align="center" colspan="4"><input type="submit" value="Enregister"</td></tr>';
@@ -391,7 +391,7 @@ if ($_GET["id"])
       
       if ($act->note)
 	{
-	  print '<tr><td valign="top">Commentaire</td><td colspan="3">';
+	  print '<tr><td valign="top">'.$langs->trans("Comment").'</td><td colspan="3">';
 	  print nl2br($act->note).'</td></tr>';
 	}
       print '</table>';
