@@ -241,6 +241,13 @@ if ($user->limite_liste > 0)
   $conf->liste_limit = $user->limite_liste;
 }
 
+if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise') {
+	$conf->defaulttx='0';		# Taux par défaut des factures clients
+}
+else {
+	$conf->defaulttx='';		# Pas de taux par défaut des factures clients, le premier sera pris
+}
+
 if (defined("MAIN_THEME"))
 {
   $conf->theme=MAIN_THEME;

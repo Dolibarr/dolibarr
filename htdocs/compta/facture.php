@@ -966,7 +966,7 @@ else
 	    print '<input type="hidden" name="action" value="addligne">';
 	    print '<tr><td><textarea name="desc" cols="60" rows="2"></textarea></td>';
 	    print '<td align="center">';
-	    print $html->select_tva("tva_tx");
+	    print $html->select_tva("tva_tx",$conf->defaulttx);
 	    print '</td>';
 	    print '<td align="center"><input type="text" name="qty" value="1" size="2"></td>';
 	    print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
