@@ -1,0 +1,4 @@
+Ce répertoire contient des scripts pour effectuer différentes actions
+hors de l'utilisation en production de Dolibarr.
+
+- purgedemo.sh est utilisé pour purger le site de démonstration
