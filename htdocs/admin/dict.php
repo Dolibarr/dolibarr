@@ -60,7 +60,9 @@ if ($user->admin)
 
 llxHeader();
 
-print_titre("Configuration forme juridique");
+print_titre("Configuration des dictionnaires de données");
+
+print '<br>';
 
 $active = 1;
 $sql = array();
@@ -85,7 +87,7 @@ llxFooter();
 Function ShowTable($db, $active, $id, $actl, $acts)
 {
   global $bc;
-  $sql[1] = "SELECT rowid, code, libelle, active FROM llx_c_forme_juridique WHERE active = $active ORDER BY code ASC";
+  $sql[1] = "SELECT code, libelle, active FROM llx_c_forme_juridique WHERE active = $active ORDER BY code ASC";
   $sql[2] = "SELECT rowid, code_departement as code , nom as libelle, active FROM llx_c_departements WHERE active = $active ORDER BY code ASC";
   $sql[3] = "SELECT rowid, code_region as code , nom as libelle, active FROM llx_c_regions WHERE active = $active ORDER BY code ASC";
 
