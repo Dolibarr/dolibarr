@@ -644,12 +644,11 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
   if($user->rights->propale->creer)
     {
       print "<tr>".'<td width="50%" valign="top">';
-      print_titre("Ajouter à ma proposition") . '</td>';
-
+      print_titre("AddToMyProposals") . '</td>';
       print '<td width="50%" valign="top">';
-      print_titre("Ajouter aux autres propositions") . '</td>';
-
+      print_titre("AddToOtherProposals") . '</td>';
       print '</tr>';
+
       print "<tr>".'<td width="50%" valign="top">';
       $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.ref,".$db->pdate("p.datep")." as dp";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
@@ -668,15 +667,15 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	      $var=!$var;
 	      print "<tr $bc[$var]>";
 	      print "<td><a href=\"../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></td>\n";
-	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
+	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
 	      print "<td>". strftime("%d %b",$objp->dp)."</td>\n";
 	      print '<form method="POST" action="fiche.php?id='.$product->id.'">';
 	      print '<input type="hidden" name="action" value="addinpropal">';	     
 	      print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
-	      print '<input type="text" name="qty" size="3" value="1">&nbsp;Rem.';
-	      print '<input type="text" name="remise_percent" size="3" value="0"> %';
+	      print '<input type="text" name="qty" size="2" value="1"></td><td>Rem.';
+	      print '<input type="text" name="remise_percent" size="1" value="0">%';
 	      print " ".$product->stock_proposition;
-	      print '</td><td>';
+	      print '</td><td align="right">';
 	      print '<input type="submit" value="'.$langs->trans("Add").'">';
 	      print "</td>";
 	      print '</form></tr>';
@@ -687,9 +686,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	}
 
       print '</td>';
-
-      if($user->rights->propale->creer)
-	{
 	  print '<td width="50%" valign="top">';
 
 	  $otherprop = $propal->liste_array(1, '<>'.$user->id);
@@ -701,15 +697,15 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	      print "<tr>".'<td>Autres Propositions</td><td>';
 	      $htmls->select_array("propalid", $otherprop);
 	      print '</td><td>';
-	      print '<input type="text" name="qty" size="3" value="1">&nbsp;Rem.';
-	      print '<input type="text" name="remise_percent" size="3" value="0"> %';
-	      print '</td><td>';
+	      print '<input type="text" name="qty" size="2" value="1"></td><td>Rem.';
+	      print '<input type="text" name="remise_percent" size="1" value="0">%';
+	      print '</td><td align="right">';
 	      print '<input type="submit" value="'.$langs->trans("Add").'">';
 	      print '</td></tr>';
 	      print '</table></form>';
 	    }
 	  print '</td>';
-	}
+
       print '</tr>';
     }
 
@@ -718,10 +714,11 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
       $langs->load("bills");
 
       print "<tr>".'<td width="50%" valign="top">';
-      print_titre("Ajouter à ma facture");
+      print_titre("AddToMyBills");
       print '</td><td width="50%" valign="top">';
-      print_titre("Ajouter aux autres factures");
+      print_titre("AddToOtherBills");
       print '</td></tr>';
+
       print "<tr>".'<td width="50%" valign="top">';
       $sql = "SELECT s.nom, s.idp, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
@@ -741,14 +738,14 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	      $var=!$var;
 	      print "<tr $bc[$var]>";
 	      print "<td><a href=\"../compta/facture.php?facid=$objp->factureid\">$objp->facnumber</a></td>\n";
-	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      	 
+	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";      	 
 	      print "<td>". strftime("%d %b",$objp->df)."</td>\n";
 	      print '<form method="POST" action="fiche.php?id='.$product->id.'">';
 	      print '<input type="hidden" name="action" value="addinfacture">';
 	      print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
-	      print '<input type="text" name="qty" size="3" value="1">&nbsp;Rem.';
-	      print '<input type="text" name="remise_percent" size="3" value="0"> %';
-	      print '</td><td>';
+	      print '<input type="text" name="qty" size="2" value="1"></td><td>Rem.';
+	      print '<input type="text" name="remise_percent" size="2" value="0">%';
+	      print '</td><td align="right">';
 	      print '<input type="submit" value="'.$langs->trans("Add").'">';
 	      print "</td>";
 	      print '</form></tr>';
@@ -762,6 +759,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	  dolibarr_print_error($db);
 	}
       print '</td><td width="50%" valign="top">';
+        // \todo    Ajouter liste des factures autres
       print '</td></tr></table>';
     }
 }
