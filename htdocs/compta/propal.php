@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -264,36 +265,38 @@ if ($_GET["propalid"])
 	}
       print "</table>";
       /*
-       *
+       * Que si le module commande est actif !
        *
        */
-	  $nb_commande = sizeof($propal->commande_liste_array());
-	  if ($nb_commande > 0)
-	    {
-	      $coms = $propal->commande_liste_array();
-	      print '<br><table class="border" width="100%">';
-
-	      if ($nb_commande == 1)
-
-		{
-		  print "<tr><td>Commande rattachée : ";
-		  print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">';
-		  print img_file();
-		  print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a>";
-		  print "</td></tr>\n";
-		}
-	      else
-		{
-		  print "<tr><td>Commandes rattachées</td></tr>\n";
+      if($conf->commande->enabled) {
+	$nb_commande = sizeof($propal->commande_liste_array());
+	if ($nb_commande > 0)
+	  {
+	    $coms = $propal->commande_liste_array();
+	    print '<br><table class="border" width="100%">';
+	    
+	    if ($nb_commande == 1)
 	      
-		  for ($i = 0 ; $i < $nb_commande ; $i++)
-		    {
-		      print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a></td>\n";
-		      print "</tr>\n";
-		    }
-		}
-	      print "</table>";
-	    }
+	      {
+		print "<tr><td>Commande rattachée : ";
+		print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">';
+		print img_file();
+		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a>";
+		print "</td></tr>\n";
+	      }
+	    else
+	      {
+		print "<tr><td>Commandes rattachées</td></tr>\n";
+		
+		for ($i = 0 ; $i < $nb_commande ; $i++)
+		  {
+		    print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a></td>\n";
+		    print "</tr>\n";
+		  }
+	      }
+	    print "</table>";
+	  }
+      }
 
       /*
        *
