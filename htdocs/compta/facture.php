@@ -1048,11 +1048,16 @@ else
 		    print '<td align="center" width="20%">-</td>';
 		  }
 	      }
-	    elseif ($fac->statut == 1 && $fac->paye == 0)
+	    elseif ($fac->statut == 1 && ($fac->paye == 0 || $user->admin))
 	      {
 		if ($user->rights->facture->creer)
 		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"facture.php?facid=$fac->id&amp;action=pdf\">Générer la facture</a></td>";
+		    if ($fac->paye == 0) {
+		    	print "<td align=\"center\" width=\"20%\"><a href=\"facture.php?facid=$fac->id&amp;action=pdf\">Générer la facture</a></td>";
+		  	}
+		    else {
+		    	print "<td align=\"center\" width=\"20%\"><a href=\"facture.php?facid=$fac->id&amp;action=pdf\">Regénérer la facture</a></td>";
+			}		  	
 		  }
 		else
 		  {
