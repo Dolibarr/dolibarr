@@ -20,8 +20,8 @@
  *
  */
 
-/*!	    \file       htdocs/admin/pre.inc.php
-		\brief      Fichier gestionnaire du menu de gauche de l'espace configuration
+/*!	    \file       htdocs/comm/action/rapport/pre.inc.php
+		\brief      Fichier gestionnaire du menu de gauche de la zone rapport des actions
 		\version    $Revision$
 */
 
@@ -44,12 +44,13 @@ function llxHeader($head = "", $urlp = "") {
   if ($conf->societe->enabled) {
     $langs->load("companies");
     $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
-    $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php", $langs->trans("Contacts"));
+    $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
   }
   
   if ($conf->commercial->enabled) {
     $langs->load("commercial");
     $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("Prospects"));
+    $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
   }
   
   if ($conf->propal->enabled) {
