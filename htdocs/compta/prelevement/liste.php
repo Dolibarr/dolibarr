@@ -25,7 +25,7 @@ $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
 
-llxHeader('','Telephonie - Ligne - Liste');
+llxHeader('','Prélèvements');
 /*
  * Sécurité accés client
  */
@@ -61,7 +61,15 @@ $pagenext = $page + 1;
  *
  */
 $sql = "SELECT p.rowid, p.ref, p.amount,".$db->pdate("p.datec")." as datec";
+$sql .= " , f.facnumber, f.total_ttc";
+$sql .= " , s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement as p";
+$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
+$sql .= " , ".MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE s.idp = f.fk_soc";
+$sql .= " AND pf.fk_facture = f.rowid AND pf.fk_prelevement = p.rowid";
+
 
 if ($_GET["search_client"])
 {
@@ -79,24 +87,27 @@ if ($result)
   
   $urladd= "&amp;statut=".$_GET["statut"];
 
-  print_barre_liste("Prélèvements", $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste("Prélèvements", $page, "bons.php", $urladd, $sortfield, $sortorder, '', $num);
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
 
-  print_liste_field_titre("Bon","liste.php","p.ref");
-  print_liste_field_titre("Date","liste.php","p.datec","","",'align="center"');
+  print_liste_field_titre("Bon","bons.php","p.ref");
+  print "<td>Facture</td>";
+  print_liste_field_titre("Société","bons.php","s.nom");
+  print_liste_field_titre("Date","bons.php","p.datec","","",'align="center"');
 
   print '<td align="right">Montant</td>';
 
   print '</tr><tr class="liste_titre">';
 
-  print '<form action="liste.php" method="GET">';
-  print '<td><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>'; 
+
+  print '<form action="bons.php" method="GET">';
+  print '<td><input type="text" name="search_bon" value="'. $_GET["search_bon"].'" size="10"></td>'; 
+  print '<td><input type="text" name="search_facture" value="'. $_GET["search_facture"].'" size="10"></td>'; 
+  print '<td><input type="text" name="search_societe" value="'. $_GET["search_societe"].'" size="10"></td>'; 
   print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
   print '<td>&nbsp;</td>';
-
-
   print '</form>';
   print '</tr>';
 
@@ -110,15 +121,19 @@ if ($result)
 
       print "<tr $bc[$var]><td>";
 
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowi.'">';
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?id='.$obj->rowid.'">';
       print img_file();      
       print '</a>&nbsp;';
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
+      print '<td><a href="fiche.php?id='.$obj->rowid.'">'.$obj->facnumber."</a></td>\n";
+
+      print '<td><a href="fiche.php?id='.$obj->rowid.'">'.$obj->nom."</a></td>\n";
+
       print '<td align="center">'.strftime("%d/%m/%Y",$obj->datec)."</td>\n";
 
-      print '<td align="right">'.price($obj->amount)." euros</td>\n";
+      print '<td align="right">'.price($obj->total_ttc)." euros</td>\n";
 
       print "</tr>\n";
       $i++;
@@ -132,6 +147,7 @@ else
 }
 
 $db->close();
+
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
