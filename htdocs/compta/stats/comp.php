@@ -221,7 +221,8 @@ function pt ($db, $sql, $year) {
   }
 }
 
-function ppt ($db, $year, $socidp) {
+function ppt ($db, $year, $socidp)
+{
   global $bc;
   print "<table width=\"100%\">";
 
@@ -234,11 +235,12 @@ function ppt ($db, $year, $socidp) {
   print "<tr><td valign=\"top\" width=\"30%\">";
   
   $sql = "SELECT sum(f.price - f.remise) as sum, round(date_format(f.datep,'%m')) as dm";
-  $sql .= " FROM llx_propal as f WHERE fk_statut in (1,2) AND date_format(f.datep,'%Y') = $year ";
+  $sql .= " FROM llx_propal as f WHERE fk_statut in (1,2,4) AND date_format(f.datep,'%Y') = $year ";
 
-  if ($socidp) {
-    $sql .= " AND f.fk_soc = $socidp";
-  }
+  if ($socidp)
+    {
+      $sql .= " AND f.fk_soc = $socidp";
+    }
 
   $sql .= " GROUP BY dm";
   
@@ -248,10 +250,10 @@ function ppt ($db, $year, $socidp) {
   
   $sql = "SELECT sum(f.amount) as sum, round(date_format(f.datef, '%m')) as dm";
   $sql .= " FROM llx_facture as f WHERE f.paye = 1 AND date_format(f.datef,'%Y') = $year ";
-
-  if ($socidp) {
-    $sql .= " AND f.fk_soc = $socidp";
-  }
+  if ($socidp)
+    {
+      $sql .= " AND f.fk_soc = $socidp";
+    }
   $sql .= " GROUP BY dm";
   
   $ca = pt($db, $sql, $year);
@@ -265,17 +267,18 @@ function ppt ($db, $year, $socidp) {
   print "</TR>\n";
 
   $var = 1 ;
-  for ($b = 1 ; $b <= 12 ; $b++) {
-    $var=!$var;
+  for ($b = 1 ; $b <= 12 ; $b++)
+    {
+      $var=!$var;
 
-    $delta = $ca[$b] - $prev[$b];
-    $deltat = $deltat + $delta ;
-    print "<TR $bc[$var]>";
-    print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
-    print "<TD align=\"right\">".price($delta)."</TD>\n";	  
-    print "</TR>\n";
-  }
-
+      $delta = $ca[$b] - $prev[$b];
+      $deltat = $deltat + $delta ;
+      print "<TR $bc[$var]>";
+      print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
+      print "<TD align=\"right\">".price($delta)."</TD>\n";	  
+      print "</TR>\n";
+    }
+  
   $ayear = $year - 1;
   $acat = get_ca($db, $ayear, $socidp) - get_ca_propal($db, $ayear, $socidp);
 
