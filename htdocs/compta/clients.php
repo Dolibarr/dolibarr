@@ -208,6 +208,11 @@ if ($_GET["search_compta"])
   $sql .= " AND s.code_compta like '%".$_GET["search_compta"]."%'";
 }
 
+if ($_GET["search_code_client"])
+{
+  $sql .= " AND s.code_client like '%".$_GET["search_code_client"]."%'";
+}
+
 if (strlen($begin))
 {
   $sql .= " AND upper(s.nom) like '$begin%'";
@@ -247,7 +252,7 @@ if ($result)
   print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","","",'valign="center"',$sortfield);
   print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","","",'valign="center"',$sortfield);
   print_liste_field_titre($langs->trans("AccountancyCode"),"clients.php","s.code_compta","","",'align="left"',$sortfield);
-  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client","","",'align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client","","",'align="left"',$sortfield);
 
   print "<td>&nbsp;</td></tr>\n";
 
@@ -255,14 +260,19 @@ if ($result)
   print '<form method="GET" action="clients.php">';
   print '<tr class="liste_titre">';
 
-  print '<td valign="right">';
+  print '<td align="left">';
   print '<input class="fat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+  print '<td>&nbsp;</td>';
 
-  print '<td valign="left">';
+  print '<td align="left">';
   print '<input class="fat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
   print '</td>';
 
-  print '<td colspan="3" align="left">';
+  print '<td align="left">';
+  print '<input class="fat" type="text" size="10" name="search_code_client" value="'.$_GET["search_code_client"].'">';
+  print '</td>';
+
+  print '<td align="left">';
   print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
   print '&nbsp;';
   print '</td>';
@@ -283,7 +293,7 @@ if ($result)
       print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print '<td>'.$obj->ville.'&nbsp;</td>';
       print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
-      print '<td align="center">'.$obj->code_client.'&nbsp;</td>';
+      print '<td align="left">'.$obj->code_client.'&nbsp;</td>';
       print '<td align="center">';
       if (defined("MAIN_MODULE_DOSSIER") && MAIN_MODULE_DOSSIER == 1)
 	{
