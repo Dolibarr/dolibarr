@@ -411,7 +411,7 @@ if ($db->query($sql))
       $row = $db->fetch_row();
       $labels[$i] = substr($row[0],4,2) . '/'.substr($row[0],2,2);
       $durees[$i] = $row[1];
-      $kilomindurees[$i] = ($row[1]/60000);
+      $kilomindurees_mob[$i] = ($row[1]/60000);
 
       $i++;
     }
@@ -422,7 +422,7 @@ $graphgain = new GraphBar ($db, $file);
 $graphgain->show_console = 0 ;
 $graphgain->titre = "Nb minutes -> portables (milliers)";
 print $graphgain->titre."\n";
-$graphgain->GraphDraw($file, $kilomindurees, $labels);
+$graphgain->GraphDraw($file, $kilomindurees_mob, $labels);
 
 /* ---------------------------------------------- */
 
@@ -434,7 +434,7 @@ $sql .= " GROUP BY date_format(date, '%Y%m') ASC";
 if ($db->query($sql))
 {
   $durees = array();
-  $kilomindurees = array();
+  $kilomindurees_inter = array();
   $durees_moyenne = array();
   $nombres = array();
   $labels = array();
@@ -448,7 +448,7 @@ if ($db->query($sql))
       $row = $db->fetch_row();
       $labels[$i] = substr($row[0],4,2) . '/'.substr($row[0],2,2);
       $durees[$i] = $row[1];
-      $kilomindurees[$i] = ($row[1]/60000);
+      $kilomindurees_inter[$i] = ($row[1]/60000);
 
       $i++;
     }
@@ -459,7 +459,39 @@ $graphgain = new GraphBar ($db, $file);
 $graphgain->show_console = 0 ;
 $graphgain->titre = "Nb minutes -> inter (milliers)";
 print $graphgain->titre."\n";
-$graphgain->GraphDraw($file, $kilomindurees, $labels);
+$graphgain->GraphDraw($file, $kilomindurees_inter, $labels);
+
+/* ---------------------------------------------- */
+
+$sql = "SELECT date_format(date, '%Y%m'), sum(duree)";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+$sql .= " WHERE substring(numero, 1, 2) <> '00'";
+$sql .= " AND   substring(numero, 1, 2) <> '06'";
+$sql .= " GROUP BY date_format(date, '%Y%m') ASC";
+
+if ($db->query($sql))
+{
+  $kilomindurees_loc = array();
+  $labels = array();
+  $num = $db->num_rows();
+  $i = 0;
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row();
+      $labels[$i] = substr($row[0],4,2) . '/'.substr($row[0],2,2);
+      $kilomindurees_loc[$i] = ($row[1]/60000);
+
+      $i++;
+    }
+}
+
+$file = $img_root . "communications/duree_loc.png";
+$graphgain = new GraphBar ($db, $file);
+$graphgain->show_console = 0 ;
+$graphgain->titre = "Nb minutes -> local/national (milliers)";
+print $graphgain->titre."\n";
+$graphgain->GraphDraw($file, $kilomindurees_loc, $labels);
 
 
 /**********************************************************************/
