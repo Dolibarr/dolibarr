@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -87,6 +87,12 @@ drop table if exists llx_commande;
 
 drop table if exists llx_commandedet;
 
+drop table if exists llx_commande_fournisseur;
+
+drop table if exists llx_commande_fournisseur_log;
+
+drop table if exists llx_commande_fournisseurdet;
+
 drop table if exists llx_compta;
 
 drop table if exists llx_compta_account;
@@ -96,6 +102,8 @@ drop table if exists llx_concert ;
 drop table if exists llx_cond_reglement ;
 
 drop table if exists llx_const;
+
+drop table if exists llx_contact_facture;
 
 drop table if exists llx_cotisation;
 
@@ -175,6 +183,22 @@ drop table if exists llx_service;
 
 drop table if exists llx_societe;
 
+drop table if exists llx_societe_ca;
+
+drop table if exists llx_societe_details;
+
+drop table if exists llx_societe_prestation;
+
+drop table if exists llx_societe_reference;
+
+drop table if exists llx_societe_remise;
+
+drop table if exists llx_societe_remise_except;
+
+drop table if exists llx_societe_rib;
+
+drop table if exists llx_societe_techno;
+
 drop table if exists llx_socpeople;
 
 drop table if exists llx_soc_events;
@@ -206,3 +230,37 @@ drop table if exists llx_voyage;
 drop table if exists llx_voyage_reduc;
 
 drop table if exists llx_facture_tva_sum;
+
+drop table if exists llx_c_accountingsystem;
+
+drop table if exists llx_c_ape;
+
+drop table if exists llx_c_civilite;
+
+drop table if exists llx_c_currencies;
+
+drop table if exists llx_c_departements;
+
+drop table if exists llx_c_forme_juridique;
+
+drop table if exists llx_c_prestation;
+
+drop table if exists llx_c_regions;
+
+drop table if exists llx_c_techno;
+
+drop table if exists llx_catalog_societe;
+
+drop table if exists llx_catalogsoc;
+
+
+drop table if exists llx_groupesociete;
+drop table if exists llx_groupesociete_remise;
+drop table if exists llx_mailing;
+drop table if exists llx_mailing_cibles;
+drop table if exists llx_paiement_facture;
+drop table if exists llx_paiementcharge;
+drop table if exists llx_so_gr;
+
+drop table if exists llx_user_alert;
+drop table if exists llx_user_param;
