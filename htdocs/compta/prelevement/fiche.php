@@ -81,6 +81,10 @@ $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Bills");
 $h++;  
 
+$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-rejet.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Rejets");
+$h++;  
+
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Statistics");
 $h++;  
