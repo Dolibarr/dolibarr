@@ -16,6 +16,7 @@
  *
  * $Id$
  * $Source$
+ *
  */
 body 
 {
@@ -25,10 +26,23 @@ body
 /*
  *   Menu superieur
  */
-table.topbarre
-{ 
-  cell-spacing: 0;
- }
+table.topbarre { 
+                 cell-spacing: 0;
+                 }
+/*
+ * Tables
+ */
+table#wiborder { 
+                 border-collapse:collapse; 
+                 }
+
+table#wiborder td { 
+                    border: outset 1pt; 
+                    border-collapse:collapse; 
+                    padding: 3pt;
+                    }
+
+
 
 a { 
     text-decoration: none;
