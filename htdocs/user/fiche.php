@@ -291,9 +291,14 @@ else
             print '<td colspan="3" class="valeur">'.$yn[$fuser->admin].'</td>';
             print "</tr>\n";
 
-            print "<tr>".'<td width="25%" valign="top">Id Société</td>';
-            print '<td colspan="3" class="valeur">'.$fuser->societe_id.'&nbsp;</td>';
-            print "</tr>\n";
+	    if ($fuser->societe_id > 0)
+	      {
+		$societe = new Societe($db);
+		$societe->fetch($fuser->societe_id);
+		print "<tr>".'<td width="25%" valign="top">Société</td>';
+		print '<td colspan="3">'.$societe->nom.'&nbsp;</td>';
+		print "</tr>\n";
+	      }
 
             print "<tr>".'<td width="25%" valign="top">Fiche contact</td>';
             print '<td colspan="3" valign="top">';
