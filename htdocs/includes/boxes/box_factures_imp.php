@@ -71,7 +71,8 @@ class box_factures_imp extends ModeleBoxes {
             {
                 $sql .= " AND s.idp = $user->societe_id";
             }
-            $sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
+            //$sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
+            $sql .= " ORDER BY f.datef ASC, f.facnumber ASC ";
             $sql .= $db->plimit($max, 0);
 
             $result = $db->query($sql);
