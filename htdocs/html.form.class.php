@@ -66,9 +66,9 @@ class Form {
     }
 
     print '<select name="'.$name.'">';
-    print '<option value="19.6">19.6';
-    print '<option value="5.5">5.5';
-    print '<option value="0">0';
+    print '<option value="19.6">19.6 %</option>';
+    print '<option value="5.5">5.5 %</option>';
+    print '<option value="0">0 %</option>';
     print '</select>';
   }
 
