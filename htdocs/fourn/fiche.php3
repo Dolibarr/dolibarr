@@ -76,14 +76,16 @@ if ($action == 'stcomm') {
     }
   }
 
-  if ($actioncommid) {
-    $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
-    $result = @$db->query($sql);
-
-    if (!$result) {
-      $errmesg = "ERREUR DE DATE !";
+  if ($actioncommid)
+    {
+      $sql = "INSERT INTO llx_actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
+      $result = @$db->query($sql);
+      
+      if (!$result)
+	{
+	  $errmesg = "ERREUR DE DATE !";
+	}
     }
-  }
 }
 
 /*
@@ -114,26 +116,33 @@ if ($mode == 'search') {
 if ($socid > 0) {
   $societe = new Societe($db, $socid);
   
-  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM llx_societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
+  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description";
+  $sql .= " FROM llx_societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
   $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
 
-  if ($to == 'next') {
-    $sql .= " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
-  } elseif ($to == 'prev') {
-    $sql .= " AND s.idp < $socid ORDER BY idp DESC LIMIT 1";
-  } else {
-    $sql .= " AND s.idp = $socid";
-  }
-
+  if ($to == 'next')
+    {
+      $sql .= " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
+    }
+  elseif ($to == 'prev')
+    {
+      $sql .= " AND s.idp < $socid ORDER BY idp DESC LIMIT 1";
+    }
+  else
+    {
+      $sql .= " AND s.idp = $socid";
+    }
+  
   $result = $db->query($sql);
 
-  if ($result) {
-    $objsoc = $db->fetch_object(0);
+  if ($result)
+    {
+      $objsoc = $db->fetch_object(0);
 
-    $dac = strftime("%Y-%m-%d %H:%M", time());
-    if ($errmesg) {
-      print "<b>$errmesg</b><br>";
-    }
+      $dac = strftime("%Y-%m-%d %H:%M", time());
+      if ($errmesg) {
+	print "<b>$errmesg</b><br>";
+      }
 
     /*
      *
@@ -263,7 +272,8 @@ if ($socid > 0) {
       print "<td><b>Fax</b></td><td><b>Email</b></td>";
       print "<td><a href=\"people.php3?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
     
-      $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
+      $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
+      $sql .= " FROM llx_socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
       $result = $db->query($sql);
       $i = 0 ; $num = $db->num_rows(); $tag = True;
       while ($i < $num) {
@@ -302,71 +312,79 @@ if ($socid > 0) {
        *
        */
       $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-      $sql .= " FROM actioncomm as a, c_actioncomm as c, llx_user as u ";
+      $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u ";
       $sql .= " WHERE a.fk_soc = $objsoc->idp ";
       $sql .= " AND u.rowid = a.fk_user_author";
       $sql .= " AND c.id=a.fk_action ";
       $sql .= " ORDER BY a.datea DESC, a.id DESC";
 
-      if ( $db->query($sql) ) {
-	print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
-	print '<tr><td><a href="/comm/action/index.php3?socid='.$objsoc->idp.'">Actions</a></td></tr>';
+      if ( $db->query($sql) )
+	{
+	  print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
+	  print '<tr><td><a href="/comm/action/index.php3?socid='.$objsoc->idp.'">Actions</a></td></tr>';
 
-	$i = 0 ; $num = $db->num_rows(); $tag = True;
-	while ($i < $num) {
-	  $obj = $db->fetch_object( $i);
-	  if ($tag) {
-	    print "<tr bgcolor=\"e0e0e0\">";
-	  } else {
-	    print "<tr>";
-	  }
-
-	  if ($oldyear == strftime("%Y",$obj->da) ) {
-	    print '<td align="center">|</td>';
-	  } else {
-	    print "<TD align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
-	    $oldyear = strftime("%Y",$obj->da);
-	  }
-
-	  if ($oldmonth == strftime("%Y%b",$obj->da) ) {
-	    print '<td align="center">|</td>';
-	  } else {
-	    print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
-	    $oldmonth = strftime("%Y%b",$obj->da);
-	  }
+	  $i = 0 ; $num = $db->num_rows(); $tag = True;
+	  while ($i < $num)
+	    {
+	      $obj = $db->fetch_object( $i);
+	      if ($tag)
+		{
+		  print "<tr bgcolor=\"e0e0e0\">";
+		}
+	      else
+		{
+		  print "<tr>";
+		}
+	      
+	      if ($oldyear == strftime("%Y",$obj->da) )
+		{
+		  print '<td align="center">|</td>';
+		}
+	      else
+		{
+		  print "<TD align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
+		  $oldyear = strftime("%Y",$obj->da);
+		}
+	      
+	      if ($oldmonth == strftime("%Y%b",$obj->da) ) {
+		print '<td align="center">|</td>';
+	      } else {
+		print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
+		$oldmonth = strftime("%Y%b",$obj->da);
+	      }
+	      
+	      print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
+	      print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
+	      
+	      if ($obj->propalrowid) {
+		print '<td width="40%"><a href="propal.php3?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+	      } else {
+		print '<td width="40%">'.$obj->libelle.'</td>';
+	      }
+	      /*
+	       * Contact pour cette action
+	       *
+	       */
+	      if ($obj->fk_contact) {
+		$contact = new Contact($db);
+		$contact->fetch($obj->fk_contact);
+		print '<td width="40%"><a href="people.php3?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+	      } else {
+		print '<td width="40%">&nbsp;</td>';
+	      }
+	      /*
+	       */
+	      print '<td width="20%"><a href="/user/fiche.php3?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
+	      print "</tr>\n";
+	      $i++;
+	      $tag = !$tag;
+	    }
+	  print "</table>";
 	  
-	  print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
-	  print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
-
-	  if ($obj->propalrowid) {
-	    print '<td width="40%"><a href="propal.php3?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
-	  } else {
-	    print '<td width="40%">'.$obj->libelle.'</td>';
-	  }
-	  /*
-	   * Contact pour cette action
-	   *
-	   */
-	  if ($obj->fk_contact) {
-	    $contact = new Contact($db);
-	    $contact->fetch($obj->fk_contact);
-	    print '<td width="40%"><a href="people.php3?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
-	  } else {
-	    print '<td width="40%">&nbsp;</td>';
-	  }
-	  /*
-	   */
-	  print '<td width="20%"><a href="/user/fiche.php3?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
-	  print "</tr>\n";
-	  $i++;
-	  $tag = !$tag;
+	  $db->free();
+	} else {
+	  print $db->error() . "<br>" . $sql;
 	}
-	print "</table>";
-
-	$db->free();
-      } else {
-	print $db->error();
-      }
       print "</td></tr></table>";    
       /*
        *
