@@ -32,55 +32,13 @@ print '<tr><td valign="top" width="30%">';
 /*
  *
  */
+print '<form method="post" action="liste.php">';
+print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+print '<tr class="liste_titre"><td colspan="2">Rechercher une commande</td></tr>';
+print "<tr $bc[1]><td>";
+print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
+print "</table></form>\n";
 
-
-if ($sortfield == "")
-{
-  $sortfield="o.orders_status ASC, o.date_purchased";
-}
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
-
-if ($page == -1) { $page = 0 ; }
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
-
-$sql = "SELECT o.orders_id, o.customers_name, o.orders_status FROM ".DB_NAME_OSC.".orders as o";
-  
-$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit($limit + 1,$offset);
- 
-if ( $db->query($sql) )
-{
-  $num = $db->num_rows();
-
-  $i = 0;
-  print '<table class="liste" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>';
-  print_liste_field_titre("Client",$PHP_SELF, "p.ref");
-  print "</td>";
-  print "<td></td>";
-  print "</tr>\n";
-  $var=True;
-  while ($i < min($num,$limit))
-    {
-      $objp = $db->fetch_object( $i);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$objp->orders_id\">$objp->customers_name</a></TD>\n";
-      print "<td>$objp->orders_status</TD>\n";
-      print "</tr>\n";
-      $i++;
-    }
-  print "</TABLE>";
-  $db->free();
-}
-/*
- *
- */
-print '</td><td valign="top" width="70%">';
 
 /*
  * Commandes à valider
@@ -114,6 +72,11 @@ if ( $db->query($sql) )
     }
 }
 /*
+ *
+ */
+print '</td><td valign="top" width="70%">';
+
+/*
  * Commandes à traiter
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
@@ -144,41 +107,39 @@ if ( $db->query($sql) )
       print "</table><br>";
     }
 }
-
 /*
- * Propales à facturer
+ * Commandes à traiter
  */
-if ($user->comm > 0 && $conf->commercial ) 
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
+$sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut > 1 ";
+if ($socidp)
 {
-  $sql = "SELECT p.rowid, p.ref, s.nom, s.idp FROM llx_propal as p, llx_societe as s";
-  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = 2";
-  if ($socidp)
+  $sql .= " AND c.fk_soc = $socidp";
+}
+$sql .= " ORDER BY c.rowid DESC";
+$sql .= $db->plimit(5, 0);
+if ( $db->query($sql) ) 
+{
+  $num = $db->num_rows();
+  if ($num)
     {
-      $sql .= " AND p.fk_soc = $socidp";
-    }
-
-  if ( $db->query($sql) ) 
-    {
-      $num = $db->num_rows();
-      if ($num)
+      $i = 0;
+      print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
+      print '<tr class="liste_titre">';
+      print '<td colspan="2">5 dernières commandes</td></tr>';
+      
+      while ($i < $num)
 	{
-	  $i = 0;
-	  print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
-	  print "<tr class=\"liste_titre\">";
-	  print '<td colspan="2">'.translate("Propositions commerciales signées").'</td></tr>';
-  
-	  while ($i < $num)
-	    {
-	      $var=!$var;
-	      $obj = $db->fetch_object($i);
-	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"propal.php?propalid=$obj->rowid\">$obj->ref</a></td>";
-	      print '<td><a href="../comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
-	      $i++;
-	    }
-	  print "</table><br>";
+	  $var=!$var;
+	  $obj = $db->fetch_object($i);
+	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"fiche.php?id=$obj->rowid\">$obj->ref</a></td>";
+	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	  $i++;
 	}
+      print "</table><br>";
     }
 }
+
 
 
 
