@@ -273,6 +273,10 @@ form {
     margin: 0em 0em 0em 0em;
 }
 
+
+/*
+ *   Barre recherche
+ */
 div.formsearch
 {
   display: block;
@@ -283,10 +287,12 @@ div.formsearch
   left: 130px;
   padding: 4px; 
   vertical-align: center;
+  margin-bottom: 10px;
 }
 
+
 /*
- *   Onglets
+ *   Barre onglets
  */
 div.tabBar {
     color: #234046;
