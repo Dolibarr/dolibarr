@@ -71,9 +71,9 @@ $sql .= " WHERE s.idp = f.fk_soc";
 $sql .= " AND pf.fk_facture = f.rowid AND pf.fk_prelevement = p.rowid";
 
 
-if ($_GET["search_client"])
+if ($_GET["search_societe"])
 {
-  $sel =urldecode($_GET["search_client"]);
+  $sel =urldecode($_GET["search_societe"]);
   $sql .= " AND s.nom LIKE '%".$sel."%'";
 }
 
@@ -87,22 +87,22 @@ if ($result)
   
   $urladd= "&amp;statut=".$_GET["statut"];
 
-  print_barre_liste("Prélèvements", $page, "bons.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste("Prélèvements", $page, "liste.php", $urladd, $sortfield, $sortorder, '', $num);
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
 
-  print_liste_field_titre("Bon","bons.php","p.ref");
+  print_liste_field_titre("Bon","liste.php","p.ref");
   print "<td>Facture</td>";
-  print_liste_field_titre("Société","bons.php","s.nom");
-  print_liste_field_titre("Date","bons.php","p.datec","","",'align="center"');
+  print_liste_field_titre("Société","liste.php","s.nom");
+  print_liste_field_titre("Date","liste.php","p.datec","","",'align="center"');
 
   print '<td align="right">Montant</td>';
 
   print '</tr><tr class="liste_titre">';
 
 
-  print '<form action="bons.php" method="GET">';
+  print '<form action="liste.php" method="GET">';
   print '<td><input type="text" name="search_bon" value="'. $_GET["search_bon"].'" size="10"></td>'; 
   print '<td><input type="text" name="search_facture" value="'. $_GET["search_facture"].'" size="10"></td>'; 
   print '<td><input type="text" name="search_societe" value="'. $_GET["search_societe"].'" size="10"></td>'; 
