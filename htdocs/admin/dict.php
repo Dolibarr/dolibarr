@@ -69,32 +69,32 @@ $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.a
 $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, r.nom as region, p.libelle as pays, d.active FROM llx_c_departements as d, llx_c_regions as r, llx_c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid and r.active=1 and p.active=1";
 $tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, p.libelle as pays, r.active FROM llx_c_regions as r, llx_c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
 $tabsql[4] = "SELECT rowid   as rowid, code, libelle, active FROM llx_c_pays";
-$tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.lang as lang, c.civilite AS libelle, c.active FROM llx_c_civilite AS c";
-$tabsql[6] = "SELECT a.id    as rowid, a.libelle AS libelle, a.type, a.lang AS lang, a.active FROM llx_c_actioncomm AS a";
+$tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.active FROM llx_c_civilite AS c";
+$tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active FROM llx_c_actioncomm AS a";
 
 // Tri par defaut
 $tabsqlsort[1]="pays, code ASC";
 $tabsqlsort[2]="pays, code ASC";
 $tabsqlsort[3]="pays, code ASC";
 $tabsqlsort[4]="libelle ASC";
-$tabsqlsort[5]="lang, c.libelle ASC";
-$tabsqlsort[6]="lang ASC, a.type ASC";
+$tabsqlsort[5]="c.libelle ASC";
+$tabsqlsort[6]="a.type ASC, a.code ASC";
  
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
 $tabfield[2] = "code,libelle,region,pays";   // "code,libelle,region,pays"
 $tabfield[3] = "code,libelle,pays";
 $tabfield[4] = "code,libelle";
-$tabfield[5] = "code,libelle,lang";
-$tabfield[6] = "libelle,type,lang";
+$tabfield[5] = "code,libelle";
+$tabfield[6] = "code,libelle,type";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
 $tabfieldinsert[2] = "code_departement,nom,fk_region";
 $tabfieldinsert[3] = "code_region,nom,fk_pays";
 $tabfieldinsert[4] = "code,libelle";
-$tabfieldinsert[5] = "code,civilite,lang";
-$tabfieldinsert[6] = "libelle,type,lang";
+$tabfieldinsert[5] = "code,civilite";
+$tabfieldinsert[6] = "code,libelle,type";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
 $tabrowid[1] = "";
@@ -258,14 +258,14 @@ if ($_GET["id"])
     $sql.=$tabsqlsort[$_GET["id"]];
     
     $fieldlist=split(',',$tabfield[$_GET["id"]]);
-    print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+    print '<table class="noborder" width="100%">';
 
     // Ligne d'ajout
     if ($tabname[$_GET["id"]]) {
         print_titre($tablib[$_GET["id"]]);
         $var=False;
         $fieldlist=split(',',$tabfield[$_GET["id"]]);
-        print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+        print '<table class="noborder" width="100%">';
 
         print '<form action="dict.php" method="post">';
         print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
@@ -279,7 +279,7 @@ if ($_GET["id"])
             if ($fieldlist[$field]=='lang')    $valuetoshow=$langs->trans("Language");
             if ($fieldlist[$field]=='type')    $valuetoshow=$langs->trans("Type");
             if ($fieldlist[$field]=='code')    $valuetoshow=$langs->trans("Code");
-            if ($fieldlist[$field]=='libelle') $valuetoshow=$langs->trans("Label");
+            if ($fieldlist[$field]=='libelle') $valuetoshow=$langs->trans("Label")."*";
             if ($fieldlist[$field]=='pays')    $valuetoshow=$langs->trans("Country");
             print '<td>';
             print $valuetoshow;
@@ -320,7 +320,7 @@ if ($_GET["id"])
         print '<td colspan=3><input type="submit" name="actionadd" value="'.$langs->trans("Add").'"></td>';
         print "</tr>";
 
-        print '<tr><td colspan="'.(count($fieldlist)+2).'"></td></tr>';
+        print '<tr><td colspan="'.(count($fieldlist)+2).'">* Label used by default if no translation can be found for code.</td></tr>';
 
         print '</form>';
 
@@ -343,7 +343,7 @@ if ($_GET["id"])
                 if ($fieldlist[$field]=='lang')    $valuetoshow=$langs->trans("Language");
                 if ($fieldlist[$field]=='type')    $valuetoshow=$langs->trans("Type");
                 if ($fieldlist[$field]=='code')    $valuetoshow=$langs->trans("Code");
-                if ($fieldlist[$field]=='libelle') $valuetoshow=$langs->trans("Label");
+                if ($fieldlist[$field]=='libelle') $valuetoshow=$langs->trans("Label")."*";
                 if ($fieldlist[$field]=='pays')    $valuetoshow=$langs->trans("Country");
                 // Affiche nom du champ
                 print '<td>';
