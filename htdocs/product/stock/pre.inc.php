@@ -32,17 +32,15 @@ require("./entrepot.class.php");
 
 function llxHeader($head = "", $urlp = "", $title="")
 {
-  /*
-   *
-   *
-   */
+  global $langs,$conf,$user;
+  
   top_menu($head, $title);
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/product/stock/", "Stock");
+  $menu->add(DOL_URL_ROOT."/product/stock/", $langs->trans("Stock"));
 
-  $menu->add_submenu(DOL_URL_ROOT."/product/stock/fiche.php?action=create", "Nouvel entrepôt");
+  $menu->add_submenu(DOL_URL_ROOT."/product/stock/fiche.php?action=create", $langs->trans("NewWarehouse"));
 
   $menu->add(DOL_URL_ROOT."/product/stock/mouvement.php", "Mouvements");
 
