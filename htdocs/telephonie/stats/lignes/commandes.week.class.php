@@ -30,7 +30,7 @@ class GraphLignesCommandesWeek extends GraphBar {
     $this->file = $file;
 
     $this->client = 0;
-    $this->titre = "Commandes Lignes";
+    $this->titre = "Commandes Lignes par semaine";
 
     $this->barcolor = "blue";
     $this->showframe = true;
@@ -56,18 +56,13 @@ class GraphLignesCommandesWeek extends GraphBar {
     if ($result)
       {
 	$num = $this->db->num_rows();
-
 	
-  $i = 0;
-  $j = 0;
-  $attente = array();
-  $acommander = array();
-  $commandee = array();
-  $active = array();
-  $last = 0;
-  $oldyear == 0;
-
-
+	$i = 0;
+	$j = 0;
+	$datas = array();
+	$labels = array();
+	$oldyear == 0;
+		
 	while ($i < $num)
 	  {
 
