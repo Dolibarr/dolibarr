@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 
 require("./pre.inc.php3");
@@ -25,29 +25,34 @@ require("./pre.inc.php3");
 llxHeader();
 $db = new Db();
 
-
-if ($action == 'add') {
+if ($action == 'add')
+{
   $author = $GLOBALS["REMOTE_USER"];
 
-  if ($credit > 0) {
-    $amount = $credit ;
-  } else {
-    $amount = - $debit ;
-  }
+  if ($credit > 0)
+    {
+      $amount = $credit ;
+    }
+  else 
+    {
+      $amount = - $debit ;
+    }
 
   $sql = "INSERT INTO llx_bank_categ (label) VALUES ('$label')";
   $result = $db->query($sql);
-  if (!$result) {
-    print $db->error();
-    print "<p>$sql";
-  }
+
+  if (!$result)
+    {
+      print $db->error();
+      print "<p>$sql";
+    }
 }
 
-print "<b>Categorie</b> <a href=\"$PHP_SELF\">reload</a>";
+print_titre("Catégories");
 print "<form method=\"post\" action=\"$PHP_SELF\">";
 print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-print "<TR bgcolor=\"orange\">";
+print '<TR class="liste_titre">';
 print "<td>Num</td><td colspan=\"2\">Description</TD>";
 print "</TR>\n";
 
@@ -55,24 +60,26 @@ print "</TR>\n";
 $sql = "SELECT rowid, label FROM llx_bank_categ ORDER BY label";
 
 $result = $db->query($sql);
-if ($result) {
+if ($result)
+{
   $num = $db->num_rows();
   $i = 0; $total = 0;
     
   $var=True;
-  while ($i < $num) {
-    $objp = $db->fetch_object( $i);
-    $var=!$var;
-    print "<tr $bc[$var]>";
-    print "<td>$objp->rowid</td>";
-    print "<td colspan=\"2\">$objp->label</td>";
-    print "</tr>";
-    $i++;
-  }
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object( $i);
+      $var=!$var;
+      print "<tr $bc[$var]>";
+      print "<td>$objp->rowid</td>";
+      print "<td colspan=\"2\">$objp->label</td>";
+      print "</tr>";
+      $i++;
+    }
   $db->free();
 }
 print "<tr>";
-print "<td><td><input name=\"label\" type=\"text\" size=45></td>";
+print "<td>&nbsp;</td><td><input name=\"label\" type=\"text\" size=45></td>";
 print "<td align=\"center\"><input type=\"submit\" value=\"ajouter\"</td></tr>";
 print "</table></form>";
 
