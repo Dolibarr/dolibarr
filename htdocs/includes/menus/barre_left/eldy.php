@@ -264,7 +264,9 @@ if ($mainmenu) {
         
         if ($conf->prelevement->enabled)
         {
-          $newmenu->add(DOL_URL_ROOT."/compta/prelevement/","Bon prélèv.");
+            $newmenu->add(DOL_URL_ROOT."/compta/prelevement/index.php","Prélèvements");
+            $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php","Bons");
+            $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php","Demandes");
         }
 
     }
