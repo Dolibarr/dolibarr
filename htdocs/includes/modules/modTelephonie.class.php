@@ -79,6 +79,8 @@ class modTelephonie extends DolibarrModules
     */
   function init()
   {
+    global $conf;
+
     // Permissions
     $this->remove();
 

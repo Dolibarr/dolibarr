@@ -190,8 +190,7 @@ class DolibarrModules
 	foreach ($this->dirs as $key => $value)
 	  {
 	    $dir = $value;
-	    
-	    if (! file_exists($dir))
+	    if ($dir && ! file_exists($dir))
 	      {
 		umask(0);
 		if (! @mkdir($dir, 0755))

@@ -169,22 +169,22 @@ if (defined("MAIN_MODULE_EXTERNALRSS"))
 if (defined("MAIN_MODULE_COMMANDE"))
 {
   $conf->commande->enabled=MAIN_MODULE_COMMANDE;
-  $conf->commande->dir_ouput=DOL_DATA_ROOT."/commande";
+  $conf->commande->dir_output=DOL_DATA_ROOT."/commande";
   $conf->commande->dir_images=DOL_DOCUMENT_ROOT."/images/commande";
   $conf->commande->url_images=DOL_URL_ROOT."/images/commande";
 }
 if (defined("MAIN_MODULE_EXPEDITION"))
 {
   $conf->expedition->enabled=MAIN_MODULE_EXPEDITION;
-  $conf->expedition->dir_ouput=DOL_DATA_ROOT."/expedition";
+  $conf->expedition->dir_output=DOL_DATA_ROOT."/expedition";
   $conf->expedition->dir_images=DOL_DOCUMENT_ROOT."/images/expedition";
   $conf->expedition->url_images=DOL_URL_ROOT."/images/expedition";
 }
 if (defined("MAIN_MODULE_SOCIETE"))
 {
   $conf->societe->enabled=MAIN_MODULE_SOCIETE; 
-  $conf->societe->dir_ouput=DOL_DATA_ROOT."/societe";
-  if (defined(SOCIETE_OUTPUTDIR) && SOCIETE_OUTPUTDIR) { $conf->societe->dir_ouput=SOCIETE_OUTPUTDIR; }
+  $conf->societe->dir_output=DOL_DATA_ROOT."/societe";
+  if (defined(SOCIETE_OUTPUTDIR) && SOCIETE_OUTPUTDIR) { $conf->societe->dir_output=SOCIETE_OUTPUTDIR; }
   $conf->societe->dir_images=DOL_DOCUMENT_ROOT."/images/societe";
   $conf->societe->url_images=DOL_URL_ROOT."/images/societe";
   require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
@@ -225,7 +225,7 @@ if (defined("MAIN_MODULE_ADHERENT"))
 if (defined("MAIN_MODULE_PRODUIT"))
 {
   $conf->produit->enabled=MAIN_MODULE_PRODUIT;
-  $conf->produit->dir_ouput=DOL_DATA_ROOT."/produit";
+  $conf->produit->dir_output=DOL_DATA_ROOT."/produit";
   $conf->produit->dir_images=DOL_DOCUMENT_ROOT."/images/produit";
   $conf->produit->url_images=DOL_URL_ROOT."/images/produit";
   require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
@@ -233,7 +233,7 @@ if (defined("MAIN_MODULE_PRODUIT"))
 if (defined("MAIN_MODULE_SERVICE"))
 {
   $conf->service->enabled=MAIN_MODULE_SERVICE;
-  $conf->service->dir_ouput=DOL_DATA_ROOT."/produit";
+  $conf->service->dir_output=DOL_DATA_ROOT."/produit";
   $conf->service->dir_images=DOL_DOCUMENT_ROOT."/images/produit";
   $conf->service->url_images=DOL_URL_ROOT."/images/produit";
   require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
@@ -269,13 +269,16 @@ if (defined("MAIN_MODULE_POSTNUKE"))
 if (defined("MAIN_MODULE_TELEPHONIE"))
 {
   $conf->telephonie->enabled=MAIN_MODULE_TELEPHONIE;
-  $conf->telephonie->dir_ouput=DOL_DATA_ROOT."/telephonie";
+  $conf->telephonie->dir_output=DOL_DATA_ROOT."/telephonie";
   $conf->telephonie->dir_images=DOL_DOCUMENT_ROOT."/images/telephonie";
   $conf->telephonie->url_images=DOL_URL_ROOT."/images/telephonie";
 }
 if (defined("MAIN_MODULE_PRELEVEMENT"))
 {
   $conf->prelevement->enabled=MAIN_MODULE_PRELEVEMENT;
+  $conf->prelevement->dir_output=DOL_DATA_ROOT."/prelevement";
+  $conf->prelevement->dir_images=DOL_DOCUMENT_ROOT."/images/prelevement";
+  $conf->prelevement->url_images=DOL_URL_ROOT."/images/prelevement";
 }
 if (defined("MAIN_MODULE_WEBCALENDAR"))
 {
@@ -290,7 +293,7 @@ if (defined("MAIN_MODULE_FACTURE"))
 {
   $conf->facture->enabled=MAIN_MODULE_FACTURE;
   require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
-  $conf->facture->dir_ouput=DOL_DATA_ROOT."/facture";
+  $conf->facture->dir_output=DOL_DATA_ROOT."/facture";
   $conf->facture->dir_images=DOL_DOCUMENT_ROOT."/images/facture";
   $conf->facture->url_images=DOL_URL_ROOT."/images/facture";
 }
@@ -298,15 +301,15 @@ if (defined("MAIN_MODULE_PROPALE"))
 {
   $conf->propal->enabled=MAIN_MODULE_PROPALE;
   require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
-  $conf->propale->dir_ouput=DOL_DATA_ROOT."/propale";
+  $conf->propale->dir_output=DOL_DATA_ROOT."/propale";
   $conf->propale->dir_images=DOL_DOCUMENT_ROOT."/images/propale";
   $conf->propale->url_images=DOL_URL_ROOT."/images/propale";
 
-  // \todo modifier le code des propales pour utiliser $conf->propale->dir_ouput au lieu de la constante
+  // \todo modifier le code des propales pour utiliser $conf->propale->dir_output au lieu de la constante
   if (! defined("PROPALE_OUTPUTDIR"))
     {
       define('PROPALE_OUTPUTDIR', DOL_DOCUMENT_ROOT . "/document/propale");
-      $conf->propale->dir_ouput=DOL_DOCUMENT_ROOT . "/document/propale";
+      $conf->propale->dir_output=DOL_DOCUMENT_ROOT . "/document/propale";
     }
   if (! defined("PROPALE_OUTPUT_URL"))
     {
