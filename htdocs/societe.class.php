@@ -688,7 +688,24 @@ class Societe {
     $rib = $bac->code_banque." ".$bac->code_guichet." ".$bac->number." ".$bac->cle_rib;
 
     return $rib;
+  }
 
+  function rib()
+  {
+    require_once DOL_DOCUMENT_ROOT . "/companybankaccount.class.php";
+    
+    $bac = new CompanyBankAccount($this->db, $this->id);
+    $bac->fetch();
+
+    $this->bank_account = $bac;
+
+    return 1;
+  }
+
+  function verif_rib()
+  {
+    $this->rib();
+    return $this->bank_account->verif();
   }
 }
 
