@@ -318,13 +318,43 @@ class User
         }
         
         // Récupération des droits utilisateurs + récupération des droits groupes
+
+        // D'abord les droits utilisateurs
         $sql = "SELECT r.module, r.perms, r.subperms";
         $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as r";
-        $sql .= " WHERE r.id = ur.fk_id AND ur.fk_user= $this->id AND r.perms IS NOT NULL";
-        $sql .= " UNION ALL";
-        $sql .= " SELECT r.module, r.perms, r.subperms";
+        $sql .= " WHERE r.id = ur.fk_id AND ur.fk_user= ".$this->id." AND r.perms IS NOT NULL";
+
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $row = $this->db->fetch_row($result);
+        
+                if (strlen($row[1]) > 0)
+                {
+        
+                    if (strlen($row[2]) > 0)
+                    {
+                        $this->rights->$row[0]->$row[1]->$row[2] = 1;
+                    }
+                    else
+                    {
+                        $this->rights->$row[0]->$row[1] = 1;
+                    }
+        
+                }
+                $i++;
+            }
+           $this->db->free($result);
+        }
+        
+        // Maintenant les droits groupes
+        $sql  = " SELECT r.module, r.perms, r.subperms";
         $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr, ".MAIN_DB_PREFIX."usergroup_user as gu, ".MAIN_DB_PREFIX."rights_def as r";
-        $sql .= " WHERE r.id = gr.fk_id AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user= $this->id AND r.perms IS NOT NULL";
+        $sql .= " WHERE r.id = gr.fk_id AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = ".$this->id." AND r.perms IS NOT NULL";
         
         $result = $this->db->query($sql);
         if ($result)
@@ -350,6 +380,7 @@ class User
                 }
                 $i++;
             }
+           $this->db->free($result);
         }
         
         if ($module == '')
