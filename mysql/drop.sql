@@ -39,6 +39,8 @@ drop table if exists c_stcomm;
 
 drop table if exists c_typent ;
 
+drop table if exists llx_action_def;
+
 drop table if exists llx_actioncomm;
 
 drop table if exists llx_adherent;
@@ -115,6 +117,8 @@ drop table if exists llx_newsletter;
 
 drop table if exists llx_notify ;
 
+drop table if exists llx_notify_def;
+
 drop table if exists llx_paiement;
 
 drop table if exists llx_paiementfourn;
@@ -126,6 +130,8 @@ drop table if exists llx_product;
 drop table if exists llx_projet;
 
 drop table if exists llx_propal;
+
+drop table if exists llx_propal_model_pdf;
 
 drop table if exists llx_propaldet;
 
