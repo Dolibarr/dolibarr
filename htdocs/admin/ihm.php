@@ -122,7 +122,7 @@ if ($_GET["action"] == 'edit')
   print '<tr class="pair"><td width="50%">Afficher formulaire de recherche Sociétés dans la barre de gauche</td><td><input name="main_searchform_societe" size="20" value="' . MAIN_SEARCHFORM_SOCIETE . '"></td></tr>';
 
 
-  print '<tr class="pair"><td width="50%">Message du jour</td><td><textarea cols="40" rows="3" name="main_motd" size="20">' .stripslashes(MAIN_MOTD) . '</textarea></td></tr>';
+  print '<tr class="impair"><td width="50%">Message du jour</td><td><textarea cols="40" rows="3" name="main_motd" size="20">' .stripslashes(MAIN_MOTD) . '</textarea></td></tr>';
 
 
   print '</table><br>';
