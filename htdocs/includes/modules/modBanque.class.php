@@ -54,7 +54,7 @@ class modBanque extends DolibarrModules
 
     $this->family = "financial";
     $this->name = "Banque";
-    $this->description = "Gestion des comptes fincanciers de type Comptes bancaires ou postaux";
+    $this->description = "Gestion des comptes financiers de type Comptes bancaires ou postaux";
     $this->const_name = "MAIN_MODULE_BANQUE";
     $this->const_config = MAIN_MODULE_BANQUE;
 
