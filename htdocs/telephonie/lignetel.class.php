@@ -31,7 +31,7 @@ class LigneTel {
     global $config;
 
     $this->db = $DB;
-
+    $this->error_message = '';
     $this->statuts[-1] = "En attente";
     $this->statuts[1] = "A commander";
     $this->statuts[2] = "Commandée chez le fournisseur";
@@ -104,21 +104,40 @@ class LigneTel {
    */
   function create($user)
   {
-
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_societe_ligne";
-    $sql .= " (fk_soc, fk_client_comm, ligne, fk_soc_facture, fk_fournisseur, note, remise, fk_commercial, statut, fk_user_creat, fk_concurrent)";
-    $sql .= " VALUES (";
-    $sql .= " $this->client,$this->client_comm,'$this->numero',$this->client_facture,$this->fournisseur, '$this->note','$this->remise',$this->commercial, -1,$user->id, $this->concurrent)";
-
-    if ( $this->db->query($sql) )
+    if (strlen(trim($this->numero)) == 10)
       {
-	$this->id = $this->db->last_insert_id();
-	return 1;
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+	$sql .= " (fk_soc, fk_client_comm, ligne, fk_soc_facture, fk_fournisseur, note, remise, fk_commercial, statut, fk_user_creat, fk_concurrent)";
+	$sql .= " VALUES (";
+	$sql .= " $this->client,$this->client_comm,'$this->numero',$this->client_facture,$this->fournisseur, '$this->note','$this->remise',$this->commercial, -1,$user->id, $this->concurrent)";
+	
+	if ( $this->db->query($sql) )
+	  {
+	    $this->id = $this->db->last_insert_id();
+	    return 0;
+	  }
+	else
+	  {
+	    $lex = new LigneTel($this->db);
+	    if ($lex->fetch($this->numero) == 1)
+	      {
+		$this->error_message = "Echec de la création de la ligne, cette ligne existe déjà !";
+		dolibarr_syslog("LigneTel::Create Error -3");
+		return -3;
+	      }
+	    else
+	      {
+		$this->error_message = "Echec de la création de la ligne";
+		dolibarr_syslog("LigneTel::Create Error -1");
+		return -1;
+	      }
+	  }
       }
     else
       {
-	print $this->db->error();
-	return 0;
+	$this->error_message = "Echec de la création de la ligne, le numéro de la ligne est incorrect !";
+	dolibarr_syslog("LigneTel::Create Error -2");
+	return -2;
       }
   }
   /*
