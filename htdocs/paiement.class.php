@@ -277,12 +277,13 @@ class Paiement
     }
 
   /**
-   *    \brief      Valide la paiement
+   *    \brief      Valide le paiement
    */
   function valide()
     {
     $sql = "UPDATE ".MAIN_DB_PREFIX."paiement SET statut = 1 WHERE rowid = ".$this->id;
     $result = $this->db->query($sql);
+
     if ($result) 
       {	    
 	return 0;
