@@ -243,19 +243,18 @@ if ($_GET["action"] == 'create')
 	  print '<td rowspan="5" valign="top">';
 	  print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
 	  
-	  print "<tr><td>Date :</td><td>";
-	
-	  print_date_select(time());
-
+	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
+      $html->select_date()	
 	  print "</td></tr>";
-	  print "<tr><td>Numéro :</td><td>Provisoire</td></tr>";
+
+	  print '<tr><td>'.$langs->trans("Ref").' :</td><td>Provisoire</td></tr>';
 	  print '<input name="facnumber" type="hidden" value="provisoire">';
 
 	  print "<tr><td>Source :</td><td>";
 	  $html->select_array("source_id",$new_commande->sources,2);
 	  print "</td></tr>";
 
-	  print "<tr><td>Projet :</td><td>";
+	  print '<tr><td>'.$langs->trans("Project").' :</td><td>';
 	  $proj = new Project($db);
 	  $html->select_array("projetid",$proj->liste_array($soc->id),0,1);
 	  print "</td></tr>";
