@@ -73,7 +73,7 @@ class TelephonieContrat {
     else
       {
 	$this->error_message = "Echec de la création du contrat";
-	dolibarr_syslog("LigneTel::Create Error -1");
+	dolibarr_syslog("TelephonieContrat::Create Error -1");
 	dolibarr_syslog($this->db->error());
 	return -1;
       }
@@ -84,26 +84,60 @@ class TelephonieContrat {
    */
   function update($user)
   {
+    $error = 0 ;
 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_contrat";
-    $sql .= " SET ";
-    $sql .= " fk_client_comm = ".$this->client_comm;
-    $sql .= ", fk_soc = ".$this->client ;
-    $sql .= ", fk_soc_facture = ".$this->client_facture;
-    $sql .= ", fk_commercial_suiv = ".$this->commercial_suiv_id;
-    $sql .= ", mode_paiement = '".$this->mode_paiement."'";
-    $sql .= ", note =  '$this->note'";
-
-    $sql .= " WHERE rowid = ".$this->id;
-
-    if ( $this->db->query($sql) )
+    if (!$this->db->begin())
       {
+	$error++;
+	dolibarr_syslog("TelephonieContrat::Update Error -1");
+      }
+
+    if (!$error)
+      {
+
+	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_contrat";
+	$sql .= " SET ";
+	$sql .= " fk_client_comm = ".$this->client_comm;
+	$sql .= ", fk_soc = ".$this->client ;
+	$sql .= ", fk_soc_facture = ".$this->client_facture;
+	$sql .= ", fk_commercial_suiv = ".$this->commercial_suiv_id;
+	$sql .= ", mode_paiement = '".$this->mode_paiement."'";
+	$sql .= ", note =  '$this->note'";
+	
+	$sql .= " WHERE rowid = ".$this->id;
+	
+	if (! $this->db->query($sql) )
+	  {
+	    $error++;
+	    dolibarr_syslog("TelephonieContrat::Update Error -2");
+	  }
+      }
+
+
+    if (!$error)
+      {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
+	$sql .= " SET ";
+	$sql .= " mode_paiement = '".$this->mode_paiement."'";
+	$sql .= " WHERE fk_contrat = ".$this->id;
+	
+	
+	if (! $this->db->query($sql) )
+	  {
+	    $error++;
+	    dolibarr_syslog("TelephonieContrat::Update Error -3");
+	  }
+      }
+
+
+    if (!$error)
+      {
+	$this->db->commit();
 	return 0;
       }
     else
       {
-	print $this->db->error();
-	print $sql ;
+	$this->db->rollback();
 	return -1;
       }
   }
