@@ -139,7 +139,7 @@ if ($HTTP_POST_VARS["action"] == "set")
   require ($dolibarr_main_document_root . "/lib/mysql.lib.php");
   require ($dolibarr_main_document_root . "/conf/conf.class.php");
 
-  if ($HTTP_POST_VARS["db_create_user"] == "on")
+  if (isset($HTTP_POST_VARS["db_create_user"]) && $HTTP_POST_VARS["db_create_user"] == "on")
     {
       $conf = new Conf();
       $conf->db->host = $dolibarr_main_db_host;
@@ -213,7 +213,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 	  //
 	  // Création de la base
 	  //
-	  
+
 	  print "<tr><td>Echec de connexion à la base : $dolibarr_main_db_name</td><td>Warning</td></tr>";
 	  print '<tr><td colspan="2">Création de la base : '.$dolibarr_main_db_name.'</td></tr>';
 	  	  

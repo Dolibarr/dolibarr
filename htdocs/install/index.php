@@ -60,77 +60,102 @@ else
 <form action="etape1.php" method="POST">
 <input type="hidden" name="action" value="set">
 <table border="0" cellpadding="4" cellspacing="0">
-<tr>
+<tr class="bg2">
 <td valign="top">
 <?php print "Répertoire d'installation"; ?>
 </td><td valign="top"><input type="text" size="60" value="
 <?PHP
-
-if(strlen($dolibarr_main_url_root) == 0)
+if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
-$dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,strlen($_SERVER["SCRIPT_FILENAME"])-18);
+	$dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,strlen($_SERVER["SCRIPT_FILENAME"])-18);
+	# Nettoyage du path proposé
+	$dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);	# Gere les chemins windows avec double "\"
+	$dolibarr_main_document_root = ereg_replace('[\\\\\/]$','',$dolibarr_main_document_root);	# Supprime le "\" ou "/" de fin
 }
-
-
- print $dolibarr_main_document_root 
+print "$dolibarr_main_document_root";
 ?>
 " name="main_dir">
 </td><td>
 Sans le slash "/" à la fin<br>
-exemple : /var/www/dolibarr/htdocs
-
+exemples :<br>
+<li>/var/www/dolibarr/htdocs</li>
+<li>C:/wwwroot/dolibarr</li>
 </td>
 </tr>
-
 <tr class="bg1">
 <td valign="top">
 URL Racine</td><td valign="top"><input type="text" size="60" name="main_url" value="
 <?PHP 
-if(strlen($dolibarr_main_url_root) == 0)
+if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
-$dolibarr_main_url_root = substr($_SERVER["SCRIPT_URI"],0,strlen($_SERVER["SCRIPT_URI"])-9);
+	if (isset($_SERVER["SCRIPT_URI"])) {	# Si défini
+		$dolibarr_main_url_root=$_SERVER["SCRIPT_URI"];
+	}
+	else {									# SCRIPT_URI n'est pas toujours défini (Exemple: Apache 2.0.44 pour Windows)
+		$dolibarr_main_url_root="http://".$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"];
+	}
+	$dolibarr_main_url_root = substr($dolibarr_main_url_root,0,strlen($dolibarr_main_url_root)-9);
+	# Nettoyage de l'URL proposée
+	$dolibarr_main_url_root = ereg_replace('\/$','',$dolibarr_main_url_root);	# Supprime le /
+	$dolibarr_main_url_root = ereg_replace('\/index\.php$','',$dolibarr_main_url_root);	# Supprime le /index.php
+	$dolibarr_main_url_root = ereg_replace('\/install$','',$dolibarr_main_url_root);	# Supprime le /install
 }
-
-print $dolibarr_main_url_root ;
-
+print "$dolibarr_main_url_root";
 ?>">
 </td><td>
-exemples : 
-<br>
-<ul>
+exemples :<br>
 <li>http://dolibarr.lafrere.net</li>
 <li>http://www.lafrere.net/dolibarr</li>
-</ul>
 </tr>
 
 
-<tr>
-<td colspan="3" align="center"><h2>Base de données<h2></td>
-</tr>
+<tr><td colspan="3" align="center"><h2>Base de données - Accés super utilisateur</h2></td></tr>
 
 <tr class="bg1">
-<td valign="top">Serveur</td><td valign="top"><input type="text" name="db_host" value="<?PHP print $dolibarr_main_db_host ?>"></td>
-<td><div class="comment">Nom du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web</div></td>
+<td valign="top">Serveur</td><td valign="top"><input type="text" name="db_host" value="<?PHP print isset($dolibarr_main_db_host)?$dolibarr_main_db_host:'localhost' ?>"></td>
+<td><div class="comment">Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand le serveur est installé sur la même machine que le serveur web</div></td>
 </tr>
 
 <tr class="bg2">
-<td>Nom de la base de données</td><td valign="top"><input type="text" name="db_name" value="<?PHP print $dolibarr_main_db_name ?>"></td>
-<td><div class="comment">Nom de votre base de données</div></td>
+<td valign="top">Login</td>
+<td>
+<input type="text" name="db_user_root">
+</td><td><div class="comment">Login de l'utilisateur ayant les droits de création de la base de données, inutile si vous êtes chez un hébergeur, votre base de données est déjà créée. Laisser vide si vous vous connectez en anonymous</div>
+</td>
+</tr>
+
+<tr class="bg1">
+<td valign="top">Mot de passe</td>
+<td>
+<input type="text" name="db_pass_root">
+</td><td><div class="comment">Laisser vide si vous vous connectez en anonymous</div>
+</td>
+</tr>
+
+
+
+<tr>
+<td colspan="3" align="center"><h2>Base de données Dolibarr<h2></td>
+</tr>
+
+<tr class="bg2">
+<td>Nom de la base de données</td><td valign="top"><input type="text" name="db_name" value="<?PHP print isset($dolibarr_main_db_name)?$dolibarr_main_db_name:'dolibarr' ?>"></td>
+<td><div class="comment">Nom de la base de données Dolibarr (sera créée si nécessaire)</div></td>
 </tr>
 
 <tr class="bg1">
 <td valign="top">Login</td>
 <td>
-<input type="text" name="db_user" value="<?PHP print $dolibarr_main_db_user ?>">
-</td><td><div class="comment">Laisser vide si vous vous connectez en anonymous</div>
+<input type="text" name="db_user" value="<?PHP print isset($dolibarr_main_db_user)?$dolibarr_main_db_user:'' ?>">
+</td><td><div class="comment">Login de l'administrateur de la base de données Dolibarr. Laisser vide si vous vous connectez en anonymous</div>
 </td>
 </tr>
 
 <tr class="bg2">
 <td valign="top">Mot de passe</td>
 <td>
-<input type="text" name="db_pass" value="<?PHP print $dolibarr_main_db_pass ?>">
-</td><td><div class="comment">Laisser vide si vous vous connectez en anonymous</div>
+<input type="text" name="db_pass" value="<?PHP print isset($dolibarr_main_db_pass)?$dolibarr_main_db_pass:'' ?>">
+</td><td><div class="comment">Mot de passe de l'administrateur de la base de données Dolibarr. Laisser vide si vous vous connectez en anonymous</div>
 </td>
 </tr>
 
@@ -139,26 +164,6 @@ exemples :
 <td>
 <input type="checkbox" name="db_create_user">
 </td><td><div class="comment">Cocher cette option si l'utilisateur doit-être créé</div>
-</td>
-</tr>
-
-
-
-<tr><td colspan="3" align="center"><h2>Base de données - Accés super utilisateur</h2></td></tr>
-
-<tr class="bg1">
-<td valign="top">Login</td>
-<td>
-<input type="text" name="db_user_root">
-</td><td><div class="comment">Login de l'utilisateur ayant les droits de création de la base de données, inutile si vous êtes chez un hébergeur, votre base de données est déjà créée. Laisser vide si vous vous connectez en anonymous</div>
-</td>
-</tr>
-
-<tr class="bg2">
-<td valign="top">Mot de passe</td>
-<td>
-<input type="text" name="db_pass_root">
-</td><td><div class="comment">Laisser vide si vous vous connectez en anonymous</div>
 </td>
 </tr>
 
