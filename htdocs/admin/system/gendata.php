@@ -126,7 +126,7 @@ else
 	    {
 	      $contact = new Contact($db);
 	      $contact->socid = $socid;
-	      $contact->nom = "Nom aléa ".time();
+	      $contact->nom = "Nom aléa ".time()."-$c";
 	      if ( $contact->create($user) )
 		{
 
