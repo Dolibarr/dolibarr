@@ -71,16 +71,13 @@ class GraphLignesCommandesWeek extends GraphBar {
 	    if ($oldyear == 0) 
 	      {
 		$oldyear = substr($row[0],0,4);
-	      }
-	    
+	      }	    
 	    
 	    if ($oldyear == substr($row[0],0,4) && $j > 0 && substr($row[0],-2) <> ($labels[$j-1] +1 ) )
 	      {
-		
 		$datas[$j] = 0;
 		$labels[$j] = $labels[$j-1] + 1;
 		$j++;
-		
 	      }
 	    
 	    $datas[$j] = $row[1];
@@ -100,5 +97,4 @@ class GraphLignesCommandesWeek extends GraphBar {
     $this->GraphDraw($this->file, $datas, $labels);
   }
 }   
-
 ?>
