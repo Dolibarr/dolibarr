@@ -52,10 +52,24 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
   $product->duration_value = $_POST["duration_value"];
   $product->duration_unit  = $_POST["duration_unit"];
   $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+ 
+  $e_product = $product;
 
   $id = $product->create($user);
 
-  Header("Location: fiche.php?id=$id");
+  if ($id > 0)
+    {
+      Header("Location: fiche.php?id=$id");
+    }
+  else
+    {
+      if ($id == -3)
+	{
+	  $_error = 1;
+	  $_GET["action"] = "create";
+	  $_GET["type"] = $_POST["type"];
+	}
+    }
 }
 
 if ($_POST["action"] == 'update' && 
@@ -206,21 +220,32 @@ llxHeader("","","Fiche produit");
  */
 if ($_GET["action"] == 'create')
 {
+  $html = new Form($db);
   $nbligne=0;
-  
+  $product = new Product($db);
+  if ($_error == 1)
+    {
+      $product = $e_product;
+    }
 
-  print "<form action=\"fiche.php\" method=\"post\">\n";
-  print "<input type=\"hidden\" name=\"action\" value=\"add\">\n";
+  print '<form action="fiche.php" method="post">';
+  print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
   print '<div class="titre">Nouveau '.$types[$_GET["type"]].'</div><br>'."\n";
       
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr>';
-  print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
-  print "<tr>".'<td>Libellé</td><td><input name="libelle" size="40" value=""></td></tr>';
-  print "<tr>".'<td>Prix de vente</td><TD><input name="price" size="10" value=""></td></tr>';    
-  print "<tr>".'<td>Taux TVA</td><TD>';
-  $html = new Form($db);
+  print '<td>Référence</td><td><input name="ref" size="20" value="'.$product->ref.'">';
+  if ($_error == 1)
+    {
+      print "Cette référence existe déjà";
+    }
+  print '</td></tr>';
+  print '<tr><td>Libellé</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
+  print '<tr><td>Prix de vente</td><TD><input name="price" size="10" value="'.$product->price.'"></td></tr>';    
+  print '<tr><td>Taux TVA</td><TD>';
+
+
   print $html->select_tva("tva_tx");
   print '</td></tr>';
   print '<tr><td>Statut</td><td>';
@@ -279,7 +304,7 @@ else
 	      print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 	      print '<tr class="liste_titre">';
 	      print '<form action="liste.php" method="post"><td>';
-		  print '<input type="hidden" name="type" value="'.$product->type.'">';
+	      print '<input type="hidden" name="type" value="'.$product->type.'">';
 	      print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go">';
 	      print '</td></form><form action="liste.php" method="post"><td>';
 	      print 'Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
