@@ -23,18 +23,19 @@
  */
 
 /*!
-  \file       htdocs/contact.class.php
-  \ingroup    societe
-  \brief      Fichier de la classe des contacts
-  \version    $Revision$
+    \file       htdocs/contact.class.php
+    \ingroup    societe
+    \brief      Fichier de la classe des contacts
+    \version    $Revision$
 */
 
 require_once (DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 
 
-/*! \class Contact
-  \brief      Classe permettant la gestion des contacts
+/*! 
+    \class      Contact
+    \brief      Classe permettant la gestion des contacts
 */
 
 class Contact 
@@ -50,6 +51,10 @@ class Contact
   var $email;
   var $birthday;
 
+  /**
+   *    \brief      Constructeur de l'objet contact
+   *
+   */
   function Contact($DB, $id=0) 
     {
       $this->db = $DB;
@@ -59,8 +64,8 @@ class Contact
     }
 
   /**
-   * Création du contact
-   *
+   *    \brief      Ajout d'un contact en base
+   *    \param      user        Utilisateur qui effectue l'ajout
    */
   function create($user)
   {
@@ -85,8 +90,11 @@ class Contact
 				print $this->db->error() . '<br>' . $sql;
       }
   }
+
   /*
-   * Mise à jour des infos
+   *    \brief      Mise à jour des infos
+   *    \param      id          id du contact à mettre à jour
+   *    \param      user        Utilisateur qui effectue la mise à jour
    *
    */
   function update($id, $user=0)
@@ -144,10 +152,10 @@ class Contact
   }
   
   /**
-   * Mise à jour de l'arbre ldap
+   *    \brief      Mise à jour de l'arbre ldap
+   *    \param      user        Utilisateur qui effectue la mise à jour
    *
    */
-  
   function update_ldap($user)
   {
     $this->fetch($this->id);
@@ -269,8 +277,9 @@ class Contact
   
   
   /*
-   * Mise à jour des infos persos
-   *
+   *    \brief      Mise à jour des alertes
+   *    \param      id          id du contact
+   *    \param      user        Utilisateur qui demande l'alerte
    */
   function update_perso($id, $user=0)
     {
@@ -320,8 +329,9 @@ class Contact
 
 
   /*
-   *
-   *
+   *    \brief      Charge l'objet contact
+   *    \param      _id         id du contact
+   *    \param      user        Utilisateur lié au contact pour une alerte
    */
   function fetch($_id, $user=0) 
     {
@@ -434,9 +444,11 @@ class Contact
 	  print $this->db->error();
 	}
     }
+
+
   /*
-   *
-   *
+   *    \brief      Efface le contacte de la base et éventuellement de l'annuaire LDAP
+   *    \param      id      id du contact a effacer
    */
   function delete($id)
     {
@@ -482,9 +494,10 @@ class Contact
       
       return $result;
     }
+
   /*
-   * Information sur l'objet
-   *
+   *    \brief      Charge les informations sur le contact, depuis la base
+   *    \param      id      id du contact à charger
    */
   function info($id) 
     {
@@ -492,7 +505,6 @@ class Contact
       $sql .= ", ".$this->db->pdate("tms")." as tms, fk_user_modif";
       $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
       $sql .= " WHERE c.idp = $id";
-      
       if ($this->db->query($sql)) 
 	{
 	  if ($this->db->num_rows()) 
@@ -501,20 +513,24 @@ class Contact
 
 	      $this->id                = $obj->idp;
 
-	      $cuser = new User($this->db, $obj->fk_user);
-	      $cuser->fetch();
-	      $this->user_creation     = $cuser;
-
-	      $muser = new User($this->db, $obj->fk_user_modif);
-	      $muser->fetch();
-	      $this->user_modification = $muser;
+          if ($obj->fk_user) {
+            $cuser = new User($this->db, $obj->fk_user);
+            $cuser->fetch();
+            $this->user_creation     = $cuser;
+          }
+          
+	      if ($obj->fk_user_modif) {
+            $muser = new User($this->db, $obj->fk_user_modif);
+            $muser->fetch();
+            $this->user_modification = $muser;
+          }
 
 	      $this->date_creation     = $obj->datec;
 	      $this->date_modification = $obj->tms;
 
 	    }
-	  $this->db->free();
 
+	  $this->db->free();
 	}
       else
 	{
