@@ -216,7 +216,7 @@ Class pdf_tourteau {
 	      $pdf->Close();
 	      
 	      $pdf->Output($file);
-	      retrun 1;
+	      return 1;
 	    }
 	  else
 	    {
