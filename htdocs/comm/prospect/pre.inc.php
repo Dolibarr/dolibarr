@@ -32,13 +32,13 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/comm/clients.php", "Clients");
+  $menu->add(DOL_URL_ROOT."/comm/prospect/", "Prospection");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php", "Liste");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", "Contacts");
 
+  $menu->add(DOL_URL_ROOT."/comm/clients.php", "Clients");
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", "Contacts");
 
-  $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", "Prospects");
-
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", "Contacts");
 
   $menu->add(DOL_URL_ROOT."/comm/action/index.php", "Actions");
 
