@@ -652,7 +652,7 @@ class Commande
       /*
        *
        */
-      $sql = "UPDATE ".MAIN_DB_PREFIX."commande set amount_ht=$totalht, total_ht=$totalht, tva=$totaltva, total_ttc=$totalttc, remise=$total_remise WHERE rowid = $this->id";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."commande set amount_ht='$totalht', total_ht='$totalht', tva='$totaltva', total_ttc='$totalttc', remise='$total_remise' WHERE rowid = $this->id";
       if ( $this->db->query($sql) )
 	{
 	  return 1;
