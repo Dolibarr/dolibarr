@@ -46,9 +46,9 @@ if ($result)
   $db->free();
 }
 
-print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print '<TR class="liste_titre">';
-print "<td>Compte</td><td>Banque</TD>";
+print "<td>Comptes courants</td><td>Banque</TD>";
 print "<td align=\"left\">Numéro</a></TD><td align=\"right\">Solde</td><td>&nbsp;</td>";
 print "</TR>\n";
 $total = 0;
@@ -129,10 +129,7 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
   }
 }
 
-
 print "</table>";
-
-
 
 $db->close();
 
