@@ -1,4 +1,4 @@
-# Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+# Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 # General Makefile
 #
 
-FILE=dolibarr-1.2.0-cvs
+FILE=dolibarr-2.0.0-alpha1
 
 tar:
 	rm -fr dolibarr-*.tar.gz* $(FILE)

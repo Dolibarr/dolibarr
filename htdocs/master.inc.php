@@ -30,7 +30,7 @@
     \version    $Revision$
 */
 
-define('DOL_VERSION','1.2.0-DEV');
+define('DOL_VERSION','2.0.0-alpha1');
 
 define_syslog_variables();
 clearstatcache();
