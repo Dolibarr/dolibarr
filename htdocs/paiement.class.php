@@ -121,7 +121,7 @@ class Paiement
 		    $value = trim($value);
 		    $amount = round(ereg_replace(",",".",$value), 2);
 		    
-		    if (is_numeric($amount))
+		    if (is_numeric($amount) && $amount > 0)
 		      {
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
 			$sql .= " VALUES (".$facid.",". $this->id.",". $amount.")";
