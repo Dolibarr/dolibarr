@@ -920,15 +920,15 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
 function print_fleche_navigation($page,$file,$options='', $nextpage)
 {
-  global $conf;
+  global $conf, $langs;
   if ($page > 0)
     {
-      print '<a href="'.$file.'?page='.($page-1).$options.'"><img alt="Page précédente" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
+      print '<a href="'.$file.'?page='.($page-1).$options.'"><img alt="'.$langs->trans("Previous").'" title="'.$langs->trans("Previous").'" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
     }
 
   if ($nextpage > 0)
     {
-      print '<a href="'.$file.'?page='.($page+1).$options.'"><img alt="Page suivante" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
+      print '<a href="'.$file.'?page='.($page+1).$options.'"><img alt="'.$langs->trans("Next").'" title="'.$langs->trans("Next").'" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
     }
 }
 

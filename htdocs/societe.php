@@ -36,6 +36,10 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+$page=$_GET["page"];
+
 if ($sortorder == "") {
   $sortorder="ASC";
 }
@@ -48,6 +52,10 @@ if ($page == -1) { $page = 0 ; }
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+
+$langs->load("companies");
+$langs->load("customers");
+$langs->load("suppliers");
 
 
 /*
@@ -106,7 +114,7 @@ if ($result)
 
   $params = "&amp;socname=$socname";
 
-  print_barre_liste("Liste des societes", $page, $PHP_SELF,$params,$sortfield,$sortorder,'',$num);
+  print_barre_liste($langs->trans("CompanyList"), $page, $PHP_SELF,$params,$sortfield,$sortorder,'',$num);
     
   if ($sortorder == "DESC") 
     {
@@ -117,13 +125,13 @@ if ($result)
       $sortorder="DESC";
     }
 
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
   print '<tr class="liste_titre">';
   print '<td>';
-  print_liste_field_titre("Société",$PHP_SELF,"s.nom", $params);
+  print_liste_field_titre($langs->trans("Company"),$PHP_SELF,"s.nom", $params);
   print "</td><td>";
-  print_liste_field_titre("Ville",$PHP_SELF,"s.ville",$params);
-  print '</td><td colspan="2" align="center">Fiches</td>';
+  print_liste_field_titre($langs->trans("Town"),$PHP_SELF,"s.ville",$params);
+  print '</td><td colspan="2" align="center">'.$langs->trans("Cards").'</td>';
   print "</tr>\n";
   $var=True;
 
@@ -139,11 +147,11 @@ if ($result)
       print '<td align="center">';
       if ($obj->client==1)
 	{
-	  print "<a href=\"comm/fiche.php?socid=$obj->idp\">Client</a>\n";
+	  print "<a href=\"comm/fiche.php?socid=$obj->idp\">".$langs->trans("Customer")."</a>\n";
 	}
       elseif ($obj->client==2)
 	{
-	  print "<a href=\"comm/prospect/fiche.php?id=$obj->idp\">Prospect</a>\n";
+	  print "<a href=\"comm/prospect/fiche.php?id=$obj->idp\">".$langs->trans("Prospect")."</a>\n";
 	}
       else
 	{
@@ -152,7 +160,7 @@ if ($result)
       print "</td><td align=\"center\">";
       if ($obj->fournisseur)
 	{
-	  print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">fournisseur</a>';
+	  print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">'.$langs->trans("Supplier").'</a>';
 	}
       else
 	{
