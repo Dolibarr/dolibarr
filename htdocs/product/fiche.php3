@@ -24,10 +24,18 @@ require("./pre.inc.php3");
 require("../propal.class.php3");
 require("../facture.class.php3");
 
-llxHeader();
-
-$db = new Db();
+$user->getrights('produit');
 $mesg = '';
+
+if (!$user->rights->produit->lire)
+{
+  llxHeader();
+  print "Accés non authorisé";
+  llxFooter();
+  exit;
+}
+
+llxHeader();
 
 if ($action == 'add')
 {
@@ -71,7 +79,7 @@ if ($action == 'addinfacture')
   $mesg .= '<a href="../compta/facture.php3?facid='.$facture->id.'">'.$facture->ref.'</a>';
 }
 
-if ($action == 'update' && $cancel <> 'Annuler')
+if ($HTTP_POST_VARS["action"] == 'update' && $cancel <> 'Annuler' && ( $user->rights->produit->modifier || $user->rights->produit->creer))
 {
   $product = new Product($db);
 
@@ -306,7 +314,14 @@ if ($action == 'create')
 }
 else
 {
-  print '<td width="20%" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+  if ($user->rights->produit->modifier || $user->rights->produit->creer)
+    {
+      print '<td width="20%" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+    }
+  else
+    {
+      print '<td width="20%" align="center">-</td>';    
+    }
 }
 print '<td width="20%" align="center">-</td>';    
 print '</table><br>';
