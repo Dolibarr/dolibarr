@@ -1,5 +1,7 @@
+#!/usr/bin/php
 <?PHP
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +21,7 @@
  * $Source$
  *
  *
- * Export simple des contacts
+ * !!! Envoi mailing !!!
  *
  * L'utilisation d'adresses de courriers électroniques dans les opérations
  * de prospection commerciale est subordonnée au recueil du consentement 
@@ -36,8 +38,20 @@
 
  */
 
-require ("../htdocs/master.inc.php");
+// Test si mode batch
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) == 'cgi') {
+    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    exit;
+}
 
+if (! $argv[1]) {
+    print "Syntax:  mailing-send.php ID_MAILING\n";   
+    exit;
+}
+$id=$argv[1];
+
+require ("../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/lib/dolibarrmail.class.php");
 
 $error = 0;
@@ -45,7 +59,8 @@ $error = 0;
 $sql = "SELECT m.rowid, m.titre, m.sujet, m.body";
 $sql .= " , m.email_from, m.email_replyto, m.email_errorsto";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
-$sql .= " WHERE m.statut = 2";
+$sql .= " WHERE m.statut >= 1";
+$sql .= " AND m.rowid= ".$id;
 $sql .= " LIMIT 1";
 
 if ( $db->query($sql) ) 
@@ -57,8 +72,7 @@ if ( $db->query($sql) )
     {
       $obj = $db->fetch_object();
 
-      dolibarr_syslog("mailing-send: mailing $row[0]");
-      dolibarr_syslog("mailing-send: mailing module $row[1]");
+      dolibarr_syslog("mailing-send: mailing ".$id);
 
       $id       = $obj->rowid;
       $subject  = $obj->sujet;
@@ -108,13 +122,5 @@ else
 {
   dolibarr_syslog($db->error());
 }
-
-
-
-
-
-
-
-
 
 ?>
