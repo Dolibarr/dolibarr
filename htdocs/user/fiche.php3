@@ -85,13 +85,13 @@ if ($action == 'create')
   print '<table border="1" cellpadding="3" cellspacing="0">';
 
   print '<tr><td valign="top">Prénom</td>';
-  print '<td><input size="30" type="text" name="prenom" value=""></td></tr>';
+  print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
   
   print '<tr><td valign="top">Nom</td>';
-  print '<td><input size="20" type="text" name="nom" value=""></td></tr>';
+  print '<td class="valeur"><input size="20" type="text" name="nom" value=""></td></tr>';
   
   print '<tr><td valign="top">Login</td>';
-  print '<td><input size="30" type="text" name="login" value=""></td></tr>';
+  print '<td class="valeur"><input size="30" type="text" name="login" value=""></td></tr>';
 
   
   print '<tr><td valign="top">Description</td><td>';
@@ -120,9 +120,9 @@ else
       print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
     
       print '<tr><td valign="top">Nom</td>';
-      print '<td bgcolor="#e0e0e0">'.$fuser->nom.'</td>';
+      print '<td class="valeur">'.$fuser->nom.'</td>';
       print '<td valign="top">Prénom</td>';
-      print '<td>'.$fuser->prenom.'</td></tr>';
+      print '<td class="valeur">'.$fuser->prenom.'</td></tr>';
   
       print '<tr><td valign="top">Login</td>';
       print '<td bgcolor="#e0e0e0">'.$fuser->login.'</td>';

@@ -41,8 +41,8 @@ if ($result)
   print '<TR class="liste_titre">';
   print "<TD>Prenom</TD>";
   print "<TD>Nom</TD>";
-  print "<TD>code</TD>";
   print '<TD>login</TD>';
+  print "<TD>code</TD>";
   print "</TR>\n";
   $var=True;
   while ($i < $num)
