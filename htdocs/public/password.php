@@ -50,8 +50,6 @@ if ($result)
 	  $user->id = 1;
 
 	  $user->password("admin");
-
-	  print "Compte admin/admin créé";
 	}
     }
 }
