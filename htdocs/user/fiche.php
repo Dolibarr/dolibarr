@@ -108,25 +108,39 @@ if ($_POST["action"] == 'add' && $user->admin)
 
 if ($_POST["action"] == 'update' && $user->admin)
 {
-  $edituser = new User($db, $_GET["id"]);
-  $edituser->fetch();
+    $db->begin();
 
-  $edituser->nom           = $_POST["nom"];
-  $edituser->note          = $_POST["note"];
-  $edituser->prenom        = $_POST["prenom"];
-  $edituser->login         = $_POST["login"];
-  $edituser->email         = $_POST["email"];
-  $edituser->admin         = $_POST["admin"];
-  $edituser->webcal_login  = $_POST["webcal_login"];
-  
-  if (! $edituser->update())
+    $edituser = new User($db, $_GET["id"]);
+    $edituser->fetch();
+
+    $edituser->nom           = $_POST["nom"];
+    $edituser->note          = $_POST["note"];
+    $edituser->prenom        = $_POST["prenom"];
+    $edituser->login         = $_POST["login"];
+    $edituser->email         = $_POST["email"];
+    $edituser->admin         = $_POST["admin"];
+    $edituser->webcal_login  = $_POST["webcal_login"];
+
+    $ret=$edituser->update();
+    if ($ret < 0)
     {
-      print $edituser->error();
+        $message='<div class="error">'.$edituser->error.'</div>';
     }
-  if (isset($password) && $password !='' )
+    if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='' )
     {
-      $edituser->password($password,$conf->password_encrypted);
+        $ret=$edituser->password($password,$conf->password_encrypted);
+        if ($ret > 0) {
+            $message='<div class="error">'.$edituser->error.'</div>';
+        }
     }
+
+    if ($ret >= 0) {
+        $message.='<div class="ok">'.$langs->trans("UserModififed").'</div>';
+        $db->commit();
+    } else {
+        $db->rollback;
+    }
+
 }
 
 if ($_GET["action"] == 'password' && $user->admin)
@@ -136,7 +150,7 @@ if ($_GET["action"] == 'password' && $user->admin)
 
   if ($edituser->password('',$conf->password_encrypted))
     {
-      $message = $langs->trans("PasswordChangedAndSentTo",$edituser->email);
+      $message = '<div class="ok">'.$langs->trans("PasswordChangedAndSentTo",$edituser->email).'</div>';
     }
 }
 
@@ -255,7 +269,6 @@ else
 
       if ($_GET["action"] == 'perms')
         {
-	  if ($message) { print "$message<br>"; }
 	  
 	  /*
 	   * Ecran ajout/suppression permission
@@ -415,6 +428,7 @@ else
             
 	  print "</div>\n";
 
+      if ($message) { print $message; }
 
 	  /*
 	   * Barre d'actions

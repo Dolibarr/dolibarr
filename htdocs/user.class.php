@@ -58,7 +58,7 @@ class User
   var $societe_id;
   var $webcal_login;
  
-  var $errorstr;
+  var $error;
   var $userpref_limite_liste;
   var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
 
@@ -668,6 +668,8 @@ class User
 	 
   function create()
     {
+        global $langs;
+        
         $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login';";
 				//$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->email';";
       if ($this->db->query($sql)) 
@@ -677,7 +679,7 @@ class User
 
 	  if ($num) 
 	    {
-	      $this->errorstr = "Ce login existe déjà";
+	      $this->error = $langs->trans("ErrorLoginAlreadyExists");
 	      return 0;
 	    }
 	  else
@@ -720,6 +722,8 @@ class User
 	 
   function create_from_contact($contact)
     {
+        global $langs;
+        
       $this->nom = $contact->nom;
       $this->prenom = $contact->prenom;
       $this->email = $contact->email;
@@ -735,7 +739,7 @@ class User
 
 	  if ($num) 
 	    {
-	      $this->errorstr = "Ce login existe déjà";
+	      $this->error = $langs->trans("ErrorLoginAlreadyExists");
 	      return 0;
 	    }
 	  else
@@ -811,13 +815,14 @@ class User
     }
 
   /**
-   * \brief     Mise à jour en base d'un utilisateur
-   *
+   *    \brief      Mise à jour en base d'un utilisateur
+   *    \return     <0 si echec, >0 si ok
    */
 	 
   function update()
     {
-		
+        global $langs;
+        		
       $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user WHERE login ='$this->login' AND rowid <> $this->id;";
 		 
 
@@ -829,8 +834,8 @@ class User
 
 	  if ($num) 
 	    {
-	      $this->errorstr = "Ce login existe déjà";
-	      return 0;
+	      $this->error = $langs->trans("ErrorLoginAlreadyExists");
+	      return -1;
 	    }
 	  else
 	    {            
@@ -867,13 +872,16 @@ class User
     }
 
   /**
-   * \brief     Change le mot de passe d'un utilisateur et l'envoie par mail
-   * \param     password        nouveau mot de passe (généré par defaut si non communiqué)
-   * \param     isencrypted     0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
+   *    \brief     Change le mot de passe d'un utilisateur et l'envoie par mail
+   *    \param     password        Nouveau mot de passe (généré par defaut si non communiqué)
+   *    \param     isencrypted     0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
+   *    \return    int             <0 si erreur, 0 si changement ok mais envoi mail ko, 1 si ok
    */
 	 
   function password($password='', $isencrypted = 0)
     {
+        global $langs;
+       
       if (! $password)
 	{
 	  $password =  strtolower(substr(md5(uniqid(rand())),0,6));
@@ -898,19 +906,25 @@ class User
 	  if ($this->db->affected_rows()) 
 	    {
 	      $mesg = "Votre mot de passe pour accéder à Dolibarr a été changé :\n\n";
-	      $mesg .= "Login        : $this->login\n";
-	      $mesg .= "Mot de passe : $password\n\n";
-	      $mesg .= "Adresse      : ".substr($_SERVER["SCRIPT_URI"],0,strlen($_SERVER["SCRIPT_URI"]) - 14);
-	      if (mail($this->email, "Mot de passe Dolibarr", $mesg))
+	      $mesg .= $langs->trans("Login")." : $this->login\n";
+	      $mesg .= $langs->trans("Password")." : $password\n\n";
+	      if (mail($this->email, $langs->trans("NewPassword"), $mesg))
 		{
-		  return 1;
+		    return 1;
 		}
+		else {
+		    $this->error=$langs->trans("ErrorFailtedToSendPassword");
+		    return 0;
 	    }
-	  
+	    }
+	  else {
+	   	  return -2;
+	  }
 	}
       else
 	{
 	  dolibarr_print_error($this->db);
+	  return -1;
 	}
     }
 
@@ -921,7 +935,7 @@ class User
 	 
   function error()
     {
-      return $this->errorstr;
+      return $this->error;
     }
   
   /**
