@@ -20,8 +20,8 @@
  *
  */
 
-/*! \file htdocs/includes/modules/modDolibarrModules.class.php
-        \brief      Fichier de description et activation du module Facture
+/*! \file htdocs/includes/modules/DolibarrModules.class.php
+        \brief      Fichier de description et activation des modules Dolibarr
 */
 
 
