@@ -35,108 +35,93 @@ $db = new Db();
 
 
 
-  if ($action == 'add') {
-    $author = $GLOBALS["REMOTE_USER"];
-    if ($credit > 0) {
-      $amount = $credit ;
-    } else {
-    $amount = - $debit ;
-    }
-    
-    if ($num_chq) {
-      $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account)";
-      $sql .= " VALUES (now(), $dateo, '$label', $amount,'$author',$num_chq,$account)";
-    } else {
-      $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author,fk_account)";
-      $sql .= " VALUES (now(), $dateo, '$label', $amount,'$author',$account)";
-    }
+if ($vline) {
+  $viewline = $vline;
+} else {
+  $viewline = 50;
+}
 
-    $result = $db->query($sql);
-    if ($result) {
-      $rowid = $db->last_insert_id();
-      if ($cat1) {
-	$sql = "INSERT INTO llx_bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
-	$result = $db->query($sql);
-      }
-    } else {
-      print $db->error();
-      print "<p>$sql";
-    }
-    
-  }
+print_titre("Bank");
 
-  if ($vline) {
-    $viewline = $vline;
+print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print "<TR class=\"liste_titre\">";
+print "<td>Date</td><td>Description</TD>";
+print "<td align=\"right\">Debit</TD>";
+print "<td align=\"right\">Credit</TD>";
+print "<td align=\"right\">Solde</TD>";
+print "<td align=\"right\">Francs</td>";
+print "</TR>\n";
+?>
+
+<form method="post" action="search.php3">
+<tr>
+<td></td>
+<td>
+<input type="text" name="description">
+</td>
+<td>
+<input type="text" name="debit">
+</td>
+<td>
+<input type="text" name="credit">
+</td>
+<td colspan="2">
+<input type="submit">
+</td>
+</tr>
+<?PHP
+$sql = "SELECT count(*) FROM llx_bank";
+if ($account) { $sql .= " WHERE fk_account=$account"; }
+if ( $db->query($sql) ) {
+  $nbline = $db->result (0, 0);
+  $db->free();
+    
+  if ($nbline > $viewline ) {
+    $limit = $nbline - $viewline ;
   } else {
-    $viewline = 50;
+    $limit = $viewline;
   }
-
-  print "<b>Bank</b> - <a href=\"$PHP_SELF\">Reload</a>&nbsp;-";
-  print "<a href=\"$PHP_SELF?viewall=1&account=$account\">Voir tout</a>";
+}
   
-  print "<form method=\"post\" action=\"$PHP_SELF?viewall=$viewall&vline=$vline&account=$account\">";
-  print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-  print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-  print "<TR class=\"liste_titre\">";
-  print "<td>Date</td><td>Description</TD>";
-  print "<td align=\"right\">Debit</TD>";
-  print "<td align=\"right\">Credit</TD>";
-  print "<td align=\"right\">Solde</TD>";
-  print "<td align=\"right\">Francs</td>";
-  print "</TR>\n";
-  
-  $sql = "SELECT count(*) FROM llx_bank";
-  if ($account) { $sql .= " WHERE fk_account=$account"; }
-  if ( $db->query($sql) ) {
-    $nbline = $db->result (0, 0);
-    $db->free();
-    
-    if ($nbline > $viewline ) {
-      $limit = $nbline - $viewline ;
-    } else {
-      $limit = $viewline;
-    }
-  }
-  
-  $sql = "SELECT rowid, label FROM llx_bank_categ;";
-  $result = $db->query($sql);
-  if ($result) {
-    $var=True;  
-    $num = $db->num_rows();
-    $i = 0;
+$sql = "SELECT rowid, label FROM llx_bank_categ;";
+$result = $db->query($sql);
+if ($result) {
+  $var=True;  
+  $num = $db->num_rows();
+  $i = 0;
     $options = "<option value=\"0\" SELECTED></option>";
     while ($i < $num) {
       $obj = $db->fetch_object($i);
       $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
     }
     $db->free();
-  }
-  
-  
-  if ($viewall) { $nbline=0; }
- 
-  /* Another solution
-   * create temporary table solde type=heap select amount from llx_bank limit 100 ;
-   * select sum(amount) from solde ;
-   */
+}
 
-  $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account";
-  $sql .= " FROM llx_bank as b "; if ($account) { $sql .= " WHERE fk_account=$account"; }
-  if ($vue) {
-    if ($vue == 'credit') {
-      $sql .= " AND b.amount >= 0 ";
-    } else {
-      $sql .= " AND b.amount < 0 ";
-  }
-  }
-  $sql .= " ORDER BY b.dateo ASC";
-  
+
+if ($viewall) { $nbline=0; }
+
+/* Another solution
+ * create temporary table solde type=heap select amount from llx_bank limit 100 ;
+ * select sum(amount) from solde ;
+ */
+
+$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account";
+$sql .= " FROM llx_bank as b "; if ($account) { $sql .= " WHERE fk_account=$account"; }
+
+
+if ($credit) {
+    $sql .= " WHERE b.amount " . $credit;
+}
+
+$sql .= " ORDER BY b.dateo ASC";
+
 $result = $db->query($sql);
 if ($result) {
   $var=True;  
   $num = $db->num_rows();
   $i = 0; $total = 0;
-    
+  
   $sep = 0;
   
   while ($i < $num) {
@@ -169,27 +154,25 @@ if ($result) {
 	print "<td align=\"right\"><b>".price($total)."</b></TD>\n";
       }
       
-      if ($objp->rappro) {
-	print "<td align=\"center\"><a href=\"releve.php3?num=$objp->num_releve&account=$objp->fk_account\">$objp->num_releve</a></td>";
-      } else {
-	print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid&account=$objp->fk_account\">[Del]</a></td>";
-      }
+
       
       print "<td align=\"right\"><small>".$objp->fk_account."</small></TD>\n";
       
       print "</tr>";
 
 
-      }
-
-
-      $i++;
     }
-    $db->free();
+
+
+    $i++;
   }
+  $db->free();
+} else {
+  print $db->error() ."<p>" . $sql;
+}
 
 
-  print "</table>";
+print "</table>";
 
 
 
