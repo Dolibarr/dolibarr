@@ -82,7 +82,7 @@ if ( $db->query($sql) ) {
     $var = !$var;
     print "<tr $bc[$var]>";
     print '<td>'.$obj->date_ech.'</td>';
-    print '<td>'.$obj->nom.' '.$obj->libelle.'</td>';
+    print '<td>'.$obj->nom.'</td><td>'.$obj->libelle.'</td>';
     print '<td align="right">'.price($obj->amount).'</td>';
     print '<td>';
     if ($obj->paye) {
@@ -106,7 +106,7 @@ print '<tr><form method="post" action="index.php3">';
 print '<input type="hidden" name="action" value="add">';
 print '<td><input type="text" size="8" name="date"></td>';
 
-print '<td><select name="type">';
+print '<td colspan="2"><select name="type">';
 
 
 $sql = "SELECT c.id, c.libelle as nom FROM c_chargesociales as c";
