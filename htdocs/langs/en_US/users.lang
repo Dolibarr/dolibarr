@@ -6,6 +6,7 @@ NoContactCard=No card among contacts
 Permission=Permission
 Permissions=Permissions
 SendNewPassword=Send new password
+SubjectNewPassword=Your new password for Dolibarr
 AvailableRights=Available permissions
 OwnedRights=Owned permissions
 DisableUser=Disable user
