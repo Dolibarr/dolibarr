@@ -751,6 +751,9 @@ else
         $head[$h][1] = $langs->trans("Bill")." : $fac->ref";
         $hselected = $h;
         $h++;
+        $head[$h][0] = DOL_URL_ROOT.'/compta/facture/apercu.php?facid='.$fac->id;
+        $head[$h][1] = $langs->trans("Apercu");
+        $h++;      
         $head[$h][0] = DOL_URL_ROOT.'/compta/facture/note.php?facid='.$fac->id;
         $head[$h][1] = $langs->trans("Note");
         $h++;      
