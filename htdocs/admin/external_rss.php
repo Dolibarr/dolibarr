@@ -40,8 +40,14 @@ $def = array();
 
 // positionne la variable pour le nombre de rss externes
 $result=$db->query("select count(*) nb from ".MAIN_DB_PREFIX."const WHERE name like 'EXTERNAL_RSS_URLRSS_%'");
-$obj = $db->fetch_object($result);
-$nbexternalrss = $obj->nb;
+if ($result)
+{
+    $obj = $db->fetch_object($result);
+    $nbexternalrss = $obj->nb;
+}
+else {
+	dolibarr_print_error($db);
+}
 
 if ($_POST["action"] == 'add')
 {
