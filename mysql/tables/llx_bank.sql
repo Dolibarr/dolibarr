@@ -32,7 +32,7 @@ create table llx_bank
   fk_account      integer,
   fk_user_author  integer,
   fk_user_rappro  integer,
-  fk_type         smallint,       -- CB, Virement, cheque
+  fk_type         varchar(4),     -- CB, Virement, cheque
   num_releve      varchar(50),
   num_chq         int,
   rappro          tinyint default 0,
