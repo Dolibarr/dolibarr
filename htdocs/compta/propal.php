@@ -297,9 +297,9 @@ if ($propalid)
     print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
     print "<TR class=\"liste_titre\">";
     print "<td>Réf</td><td>Produit</td>";
-    print '<td align="right">Prix</td><td align="center">&nbsp;</td><td align="center">Qté.</td></tr>';
+    print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
     
-    $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid";
+    $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.remise_percent";
     $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
     $sql .= " ORDER BY pt.rowid ASC";
     if ($db->query($sql)) 
@@ -314,13 +314,13 @@ if ($propalid)
 	    print "<tr $bc[$var]><td>[$objp->ref]</TD>\n";
 	    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.$objp->product.'</td>';
 	    print "<td align=\"right\">".price($objp->price)."</TD>";
-	    print '<td>&nbsp;</td>';
+	    print '<td align="center">'.$objp->remise_percent.' %</td>';
 	    print "<td align=\"center\">".$objp->qty."</td></tr>\n";
 	    $i++;
 	  }
       }
 
-    $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty";
+    $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty, pt.remise_percent";
     $sql .= " FROM llx_propaldet as pt  WHERE  pt.fk_propal = $propalid AND pt.fk_product = 0";
     $sql .= " ORDER BY pt.rowid ASC";
     if ($db->query($sql)) 
@@ -332,9 +332,9 @@ if ($propalid)
 	    $objp = $db->fetch_object($i);
 	    $var=!$var;
 	    print "<tr $bc[$var]><td>&nbsp;</td>\n";
-	    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.$objp->product.'</td>';
-	    print "<td align=\"right\">".price($objp->price)."</TD>";
-	    print '<td>&nbsp;</td>';
+	    print '<td>'.$objp->product.'</td>';
+	    print '<td align="right">'.price($objp->price).'</td>';
+	    print '<td align="center">'.$objp->remise_percent.' %</td>';
 	    print "<td align=\"center\">".$objp->qty."</td></tr>\n";
 	    $i++;
 	  }
