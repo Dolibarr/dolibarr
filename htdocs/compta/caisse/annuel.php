@@ -80,7 +80,7 @@ if ($db->query($sql))
 }
 
 print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="4">';
-print '<tr class="liste_titre"><td>Mois</td>';
+print '<tr class="liste_titre"><td rowspan=2>Mois</td>';
 
 $year_current = strftime("%Y",time());
 
@@ -100,6 +100,13 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
   print '<td align="center" width="20%" colspan="2">'.$annee.'</td>';
 }
 print '</tr>';
+print '<tr class="liste_titre">';
+for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+{
+  print '<td align="center">Débits</td><td align="center">Crédits</td>';
+}
+print '</tr>';
+
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
   print '<tr>';
@@ -125,6 +132,13 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 
   print '</tr>';
 }
+
+print "<tr><td><b>Total annuel</b></td>";
+for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+{
+  print '<td align="right">'.$totsorties[$annee].'</td><td align="right">'.$totentrees[$annee].'</td>';
+}
+print "</tr>\n";
 
 print "</table>";
 
