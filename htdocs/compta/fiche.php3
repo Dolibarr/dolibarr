@@ -22,8 +22,8 @@
 require("./pre.inc.php3");
 require("../contact.class.php3");
 require("../lib/webcal.class.php3");
-require("cactioncomm.class.php3");
-require("actioncomm.class.php3");
+require("../cactioncomm.class.php3");
+require("../actioncomm.class.php3");
 
 llxHeader();
 
@@ -179,9 +179,7 @@ if ($socid > 0) {
     print "<table width=\"100%\" border=0><tr>\n";
     print "<td valign=\"top\">";
     print "<table cellspacing=\"0\" border=\"1\" width=\"100%\">";
-
-    print "<tr><td>Type</td><td> $objsoc->typent</td><td>Effectif</td><td>$objsoc->effectif</td></tr>";
-    print "<tr><td>Tel</td><td> $objsoc->tel&nbsp;</td><td>fax</td><td>$objsoc->fax&nbsp;</td></tr>";
+    print "<tr><td>Tel</td><td> $objsoc->tel&nbsp;</td><td>Fax</td><td>$objsoc->fax&nbsp;</td></tr>";
     print "<tr><td>Ville</td><td colspan=\"3\">".nl2br($objsoc->address)."<br>$objsoc->cp $objsoc->ville</td></tr>";
 
     print "<tr><td>siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
@@ -205,51 +203,20 @@ if ($socid > 0) {
     print '<td valign="top" width="50%">';
 
     /*
-     *
-     * Propales
-     *
-     */
-    $var=!$var;
-    print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"1\">";
-    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-    $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
-    $sql .= " AND s.idp = $objsoc->idp ORDER BY p.datep DESC";
-
-    if ( $db->query($sql) ) {
-      $num = $db->num_rows();
-      if ($num >0 ) {
-	print "<tr $bc[$var]><td colspan=\"4\"><a href=\"propal.php3?socidp=$objsoc->idp\">liste des propales ($num)</td></tr>";
-      }
-      $i = 0;	$now = time(); 	$lim = 3600 * 24 * 15 ;
-      while ($i < $num && $i < 2) {
-	$objp = $db->fetch_object( $i);
-	$var=!$var;
-	print "<TR $bc[$var]>";
-	print "<TD><a href=\"propal.php3?propalid=$objp->propalid\">$objp->ref</a>\n";
-	if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 ) {
-	  print " <b>&gt; 15 jours</b>";
-	}
-	print "</td><TD align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-	print "<TD align=\"right\">".price($objp->price - $objp->remise)."</TD>\n";
-	print "<TD align=\"center\">$objp->statut</TD></tr>\n";
-	$i++;
-      }
-      $db->free();
-    }
-    /*
      *   Factures
      */
-	$var=!$var;
+    print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"1\">";
+    $var=!$var;
     $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
     $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND s.idp = $objsoc->idp ORDER BY f.datef DESC";
     if ( $db->query($sql) ) {
       $num = $db->num_rows(); $i = 0; 
       if ($num > 0) {
 	print "<tr $bc[$var]>";
-	print "<td colspan=\"4\"><a href=\"../compta/index.php3?socidp=$objsoc->idp\">liste des factures ($num)</td></tr>";
+	print "<td colspan=\"4\"><a href=\"facture.php3?socidp=$objsoc->idp\">liste des factures ($num)</td></tr>";
       }
 
-      while ($i < $num && $i < 2) {
+      while ($i < $num && $i < 5) {
 	$objp = $db->fetch_object( $i);
 	$var=!$var;
 	print "<TR $bc[$var]>";

@@ -31,7 +31,6 @@ Sys::Syslog::setlogsock('unix');
 Sys::Syslog::openlog($0, 'pid', 'daemon');
 
 
-
 my($debug, $verbose, $bgcolor, $idpropal, $do_fax, $do_pdf, $do_ps, 
    $templatesdir, $outputdir) = (0,0);
 

@@ -24,10 +24,6 @@ require("./pre.inc.php3");
 
 llxHeader();
 $db = new Db();
-$author = $GLOBALS["REMOTE_USER"];
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
-
 
 if ($action == 'add') {
   $datefacture = $db->idate(mktime(12, 0 , 0, $pmonth, $pday, $pyear)); 
@@ -62,9 +58,6 @@ if ($action == 'add') {
 
       $output = system($command);
       print "<p>command : $command<br>";
-
-
-
 
     }
   } else {
@@ -206,6 +199,17 @@ if ($action == 'add') {
   }
   print "</TABLE>";  
 }
+
+
+
+
+
+
+
+
+
+
+
 
 if ($facid) {
 

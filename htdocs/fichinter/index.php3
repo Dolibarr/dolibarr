@@ -21,7 +21,7 @@
  */
 require("./pre.inc.php3");
 require("../contact.class.php3");
-require("../societe.class.php3");
+
 
 llxHeader();
 $db = new Db();
@@ -31,12 +31,9 @@ if ($sortorder == "") {
 if ($sortfield == "") {
   $sortfield="nom";
 }
-$bc[0]="bgcolor=\"#c0f0c0\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
-$bc2[0]="bgcolor=\"#c9f000\"";
-$bc2[1]="bgcolor=\"#b9e000\"";
 
-print '<div class="titre">Liste des fiches d\'intervention</div><p>';
+
+print_titre("Liste des fiches d'intervention");
 
 $sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut";
 $sql .= " FROM societe as s, llx_fichinter as f ";
@@ -47,7 +44,7 @@ if ( $db->query($sql) ) {
   $num = $db->num_rows();
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR bgcolor=\"orange\">";
+  print "<TR class=\"liste_titre\">";
   print "<TD>Num</TD>";
   print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";
   print "<TD>Date</TD>";

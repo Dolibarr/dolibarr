@@ -93,3 +93,4 @@ insert into c_propalst (id,label) values (0, 'Brouillon');
 insert into c_propalst (id,label) values (1, 'Ouverte');
 insert into c_propalst (id,label) values (2, 'Signée');
 insert into c_propalst (id,label) values (3, 'Non Signée');
+insert into c_propalst (id,label) values (4, 'Facturée');

@@ -49,7 +49,6 @@ create:
 	$(MYSQL) $(BASE) < llx_propaldet.sql
 	$(MYSQL) $(BASE) < llx_service.sql
 	$(MYSQL) $(BASE) < llx_soc_recontact.sql
-	$(MYSQL) $(BASE) < llx_train.sql
 	$(MYSQL) $(BASE) < llx_user.sql
 	$(MYSQL) $(BASE) < llx_ventes.sql
 	$(MYSQL) $(BASE) < llx_voyage.sql

@@ -1,0 +1,84 @@
+<?PHP
+/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ *
+ * $Id$
+ * $Source$
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ */
+
+require("./pre.inc.php3");
+
+llxHeader();
+$db = new Db();
+
+
+if ($action == 'add') {
+  $author = $GLOBALS["REMOTE_USER"];
+
+  if ($credit > 0) {
+    $amount = $credit ;
+  } else {
+    $amount = - $debit ;
+  }
+
+  $sql = "INSERT INTO llx_bank_categ (label) VALUES ('$label')";
+  $result = $db->query($sql);
+  if (!$result) {
+    print $db->error();
+    print "<p>$sql";
+  }
+}
+
+print "<b>Categorie</b> <a href=\"$PHP_SELF\">reload</a>";
+print "<form method=\"post\" action=\"$PHP_SELF\">";
+print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print "<TR bgcolor=\"orange\">";
+print "<td>Num</td><td colspan=\"2\">Description</TD>";
+print "</TR>\n";
+
+
+$sql = "SELECT rowid, label FROM llx_bank_categ ORDER BY label";
+
+$result = $db->query($sql);
+if ($result) {
+  $num = $db->num_rows();
+  $i = 0; $total = 0;
+    
+  $var=True;
+  while ($i < $num) {
+    $objp = $db->fetch_object( $i);
+    $var=!$var;
+    print "<tr $bc[$var]>";
+    print "<td>$objp->rowid</td>";
+    print "<td colspan=\"2\">$objp->label</td>";
+    print "</tr>";
+    $i++;
+  }
+  $db->free();
+}
+print "<tr>";
+print "<td><td><input name=\"label\" type=\"text\" size=45></td>";
+print "<td align=\"center\"><input type=\"submit\" value=\"ajouter\"</td></tr>";
+print "</table></form>";
+
+
+
+$db->close();
+
+llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+?>

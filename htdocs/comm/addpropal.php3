@@ -71,7 +71,7 @@ if ($action == 'add') {
     $gljroot = "/home/www/dolibarr/dolibarr/htdocs";
 
     $command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name.":host=localhost\" ";
-    $command .= " ; ./propal-tex.pl --propal=".$id ." --pdf --output=".$conf->propal->outputdir;
+    $command .= " ; ./propal-tex.pl --propal=".$id ." --pdf --ps --output=".$conf->propal->outputdir;
     $command .= " --templates=".$conf->propal->templatesdir;
 
     $output = system($command);

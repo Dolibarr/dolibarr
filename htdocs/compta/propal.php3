@@ -25,9 +25,9 @@ require("../lib/CMailFile.class.php3");
 /*
  *  Modules optionnels
  */
-require("projet/project.class.php3");
-require("./propal.class.php3");
-require("./actioncomm.class.php3");
+require("../project.class.php3");
+require("../propal.class.php3");
+require("../actioncomm.class.php3");
 /*
  *
  */
@@ -155,7 +155,15 @@ if ($propalid) {
       $author = new User($db, $obj->fk_user_author);
       $author->fetch('');
       print $author->fullname.'</td></tr>';
-
+      /*
+       *
+       */
+      print "<tr><td>PDF</a></td>";
+      $file = $conf->propal->outputdir. "/$obj->ref/$obj->ref.pdf";
+      if (file_exists($file)) {
+	print '<td colspan="2"><a href="'.$conf->propal->outputurl.'/'.$obj->ref.'/'.$obj->ref.'.pdf">'.$obj->ref.'.pdf</a></td></tr>';
+      }
+      print '</tr>';
       /*
        *
        */
@@ -180,42 +188,11 @@ if ($propalid) {
       }
 
 
-      print "<table width=\"100%\" cellspacing=2><tr><td valign=\"top\">";
-      /*
-       * Produits
-       */
-      $sql = "SELECT p.label as product, p.ref, pt.price, pt.qty";
-      $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
-
-      $result = $db->query($sql);
-      if ($result) {
-	$num = $db->num_rows();
-	$i = 0; $total = 0;
-	print "<p><b>Produits</b><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-	print "<TR bgcolor=\"orange\">";
-	print "<td>Réf</td><td>Produit</td>";
-	print "<td align=\"right\">Prix</TD><td align=\"center\">Qté.</td>";
-	print "</TR>\n";
-
-	$var=True;
-	while ($i < $num) {
-	  $objp = $db->fetch_object( $i);
-	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<TD>[$objp->ref]</TD>\n";
-	  print "<TD>$objp->product</TD>\n";
-	  print "<TD align=\"right\">".price($objp->price)."</TD><td align=\"center\">".$objp->qty."</td>\n";
-	  print "</tr>";
-	  $total = $total + $objp->price;
-	  $i++;
-	}
-	//print "<tr><td align=\"right\" colspan=\"3\">Total : <b>".price($total)."</b></td><td>Euros HT</td></tr>\n";
-	print "</table>";
-      }
+      print "<table width=\"100%\" cellspacing=2>";
       /*
        *
        */
-      print "</td><td valign=\"top\" width=\"50%\">";
+      print "<td valign=\"top\" width=\"50%\">";
       /*
        * Factures associees
        */
@@ -286,160 +263,16 @@ if ($propalid) {
       }
       if ($obj->statut == 0) {
 	print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
-      } else {
+      } elseif ($obj->statut == 2) {
+	print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=setstatut&statut=4\">Facturée</a>]</td>";
+      } else	{
 	print "<td align=\"center\" width=\"25%\">-</td>";
       }
       print "</tr></table>";
       /*
        *
        */
-      if ($action == 'fax') {
-	print "<hr><b>Génération du fax</b><br>";
-	$command = "export DBI_DSN=\"dbi:mysql:dbname=lolixfr:host=espy:user=rodo\" ";
-	$command .= " ; ../../scripts/propal-tex.pl --propal=$propalid --pdf --gljroot=" . $GLOBALS["GLJ_ROOT"] ;
-	//$command .= " ; ../../scripts/fax-tex.pl --propal=$propalid --gljroot=" . $GLOBALS["GLJ_ROOT"] ;
-
-	print "<p>Resultat :<p>";
-
-	$output = system($command);
-	print "<p>command : $command<br>";
-      } 
-      /*
-       * Send
-       *
-       */
-      if ($action == 'send') {
-	$file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/propal/$obj->ref/$obj->ref.pdf";
-	if (file_exists($file)) {
-
-	  $subject = "Notre proposition commerciale $obj->ref";
-	  $message = "Veuillez trouver ci-joint notre proposition commerciale $obj->ref\n\nCordialement\n\n";
-	  $filepath = $file ;
-	  $filename = "$obj->ref.pdf";
-	  $mimetype = "application/pdf";
-
-	  $replyto = "$replytoname <$replytomail>";
-
-	  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype, $filename);
-
-	  if ( $mailfile->sendfile() ) {
-
-	    print "<p>envoy&eacute; &agrave; $sendto";
-	    print "<p>envoy&eacute; par ".htmlentities($replyto);
-	  } else {
-	    print "<b>!! erreur d'envoi";
-	  }
-	}
-	/*
-	 * Enregistre l'action
-	 *
-	 * Ne fonctionne pas, a corriger !
-	 */
-
-	if ( $db->query($sql) ) {
-	  $sql = "INSERT INTO actioncomm (datea,fk_action,fk_soc, propalrowid,note, fk_user_author) ";
-	  $sql .= " VALUES (now(), 3, $obj->idp, $propalid, 'Envoyée à $sendto',$user->id);";
-	  if (! $db->query($sql) ) {
-	    print $db->error();
-	    print "<p>$sql</p>";
-	  }
-	} else {
-	  print $db->error();
-	}
-      }
-      /*
-       *
-       */
-      print "<hr>";
-      print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
-      print "<b>Documents générés</b><br>";
-      print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=3>";
-
-      $file = $conf->propal->outputdir. "/$obj->ref/$obj->ref.pdf";
-      if (file_exists($file)) {
-	print "<tr><td>Propale PDF</a></td>";
-	print '<td><a href="'.$conf->propal->outputurl.'/'.$obj->ref.'/'.$obj->ref.'.pdf">'.$obj->ref.'.pdf</a></td></tr>';
-      }  
-      $file = $conf->propal->outputdir . "/$obj->ref/$obj->ref.ps";
-      if (file_exists($file)) {
-	print "<tr><td>Propale Postscript</a></td>";
-	print '<td><a href="'.$conf->propal->outputurl.'/'.$obj->ref.'/'.$obj->ref.'.ps">'.$obj->ref.'.s</a></td></tr>';
-	print "</tr>";
-      }
-      print '<tr><td colspan="2">(<a href="'.$conf->propal->outputurl.'/'.$obj->ref.'">liste...</a>)</td></tr>';
-
-      $file = $GLOBALS["GLJ_ROOT"] . "/www-sys/doc/propale/$obj->ref/FAX-$obj->ref.ps";  
-      if (file_exists($file)) {
-	print "<tr><td><a href=\"../../doc/fax/\">FAX d'entete</a></td></tr>";
-      }
-      print "</table>\n";
-      /*
-       *
-       */
-      print "</td><td valign=\"top\" width=\"50%\">";
-      print "<b>Propale envoyée</b><br>";
-      /*
-       *
-       */
-      $sql = "SELECT ".$db->pdate("a.datea"). " as da, note, fk_user_author" ;
-      $sql .= " FROM actioncomm as a WHERE a.fk_soc = $obj->idp AND a.propalrowid = $propalid ";
-
-      if ( $db->query($sql) ) {
-	$num = $db->num_rows();
-	$i = 0; $total = 0;
-	print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-	print "<tr><td>Date</td><td>Auteur</td></TR>\n";
-
-	while ($i < $num) {
-	  $objp = $db->fetch_object( $i);
-	  print "<TR><TD>".strftime("%d %B %Y %H:%M:%S",$objp->da)."</TD>\n";
-	  $authoract = new User($db);
-	  $authoract->id = $objp->fk_user_author;
-	  $authoract->fetch('');
-	  print "<TD>$authoract->code</TD></tr>\n";
-	  print "<tr><td colspan=\"2\">$objp->note</td></tr>";
-	  $i++;
-	}
-	print "</table>";
-	$db->free();
-      } else {
-	print $db->error();
-      }
-      /*
-       *
-       */
-      print "</td></tr></table>";
-      /*
-       *
-       *
-       */
-      if ($action == 'presend') {
-	$sendto = "rq@lolix.org";
-
-	$replytoname = $conf->propal->replytoname;
-	$replytomail = $conf->propal->replytomail;
-
-	$from_name = $user->fullname ; //$conf->propal->fromtoname;
-	$from_mail = $user->email; //conf->propal->fromtomail;
-
-	print "<form method=\"post\" action=\"$PHP_SELF?propalid=$propalid&action=send\">\n";
-	print "<input type=\"hidden\" name=\"sendto\" value=\"$sendto\">\n";
-	print "<input type=\"hidden\" name=\"replytoname\" value=\"$replytoname\">\n";
-	print "<input type=\"hidden\" name=\"replytomail\" value=\"$replytomail\">\n";
-
-	print "<p><b>Envoyer la propale par mail</b>";
-	print "<table cellspacing=0 border=1 cellpadding=3>";
-	print "<tr><td>Destinataire</td><td colspan=\"5\">$obj->firstname $obj->name</td>";
-	print "<td><input size=\"30\" name=\"sendto\" value=\"$obj->email\"></td></tr>";
-	print "<tr><td>Expediteur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
-	print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
-	print "<td>$replytomail</td></tr>";
-
-	print "</table>";
-	print "<input type=\"submit\" value=\"Envoyer\">";
-	print "</form>";
-      }
-
+      
     } else {
       print "Num rows = " . $db->num_rows();
       print "<p><b>$sql";
@@ -456,7 +289,7 @@ if ($propalid) {
       $cloturor = new User($db, $obj->fk_user_cloture);
       $cloturor->fetch('');
       
-      print 'Suivi des actions<br>';
+      print '<p><a href="'.$PHP_SELF.'?propalid='.$propal->id.'">Cacher le suivi des actions </a>';
       print '<table cellspacing=0 border=1 cellpadding=3>';
       print '<tr><td>&nbsp;</td><td>Nom</td><td>Date</td></tr>';
       print '<tr><td>Création</td><td>'.$author->fullname.'</td>';
@@ -496,7 +329,8 @@ if ($propalid) {
   print "</table>";
 
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-  $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
+  $sql .= " FROM societe as s, llx_propal as p, c_propalst as c ";
+  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut in(2,4)";
 
   if ($socidp) { 
     $sql .= " AND s.idp = $socidp"; 

@@ -23,129 +23,138 @@ require("./pre.inc.php3");
 
 llxHeader();
 
-
 $db = new Db();
-if ($sortfield == "") {
-  $sortfield="lower(p.label)";
+
+function valeur($sql) {
+  global $db;
+  if ( $db->query($sql) ) {
+    if ( $db->num_rows() ) {
+      $valeur = $db->result(0,0);
+    }
+    $db->free();
+  }
+  return $valeur;
 }
-if ($sortorder == "") {
-  $sortorder="ASC";
+/*
+ *
+ */
+$db = new Db();
+
+
+if ($action == 'add_bookmark') {
+  $sql = "INSERT INTO llx_bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
+  if (! $db->query($sql) ) {
+    print $db->error();
+  }
 }
 
-$yn["t"] = "oui";
-$yn["f"] = "non";
-
-if ($page == -1) { $page = 0 ; }
-$limit = $conf->limit_liste;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
-print_barre_liste("Factures",$page,$PHP_SELF);
-
-$sep = 0;
-$sept = 0;
-
-$sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
-$sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
-  
-if ($socidp) {
-  $sql .= " AND s.idp = $socidp";
+if ($action == 'del_bookmark') {
+  $sql = "DELETE FROM llx_bookmark WHERE rowid=$bid";
+  $result = $db->query($sql);
 }
-  
-if ($month > 0) {
-  $sql .= " AND date_part('month', date(f.datef)) = $month";
+
+print_titre("Espace compta");
+
+print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+
+print '<tr><td valign="top" width="30%">';
+
+
+print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+print "<TR class=\"liste_titre\">";
+print "<td colspan=\"2\">Propositions commerciales</td>";
+print "</TR>\n";
+
+$sql = "SELECT count(*) FROM llx_propal WHERE fk_statut = 2";
+if (valeur($sql)) {
+  $var=!$var;
+  print "<tr $bc[$var]><td><a href=\"propal.php3?viewstatut=2\">A facturer</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
 }
-if ($year > 0) {
-    $sql .= " AND date_part('year', date(f.datef)) = $year";
+
+print "</table><br>";
+
+
+print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+print "<TR class=\"liste_titre\">";
+print "<td colspan=\"2\">Factures</td>";
+print "</TR>\n";
+
+$sql = "SELECT count(*) FROM llx_facture WHERE paye = 0";
+if (valeur($sql)) {
+  $var=!$var;
+  print "<tr $bc[$var]><td><a href=\"facture.php3\">Non payées</a></td><td align=\"right\">".valeur($sql)."</td></tr>";
 }
-  
-$sql .= " ORDER BY f.fk_statut, f.paye, f.datef DESC ";
-    
-$result = $db->query($sql);
-if ($result) {
+
+print "</table><br>";
+
+
+/*
+ *
+ *
+ */
+
+$sql = "SELECT s.idp, s.nom,b.rowid as bid";
+$sql .= " FROM societe as s, llx_bookmark as b";
+$sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
+$sql .= " ORDER BY lower(s.nom) ASC";
+
+if ( $db->query($sql) ) {
   $num = $db->num_rows();
-
   $i = 0;
+
   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print '<TR class="liste_titre">';
-  print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
-  print "<TD>Num&eacute;ro</TD><td>";
-  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-  print "</td><TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
-  print "<TD align=\"right\">Payé</TD>";
+  print "<TR class=\"liste_titre\">";
+  print "<TD colspan=\"2\">Bookmark</td>";
   print "</TR>\n";
 
-  if ($num > 0) {
-    $var=True;
-    while ($i < $num) {
-      $objp = $db->fetch_object( $i);
-      $var=!$var;
-
-      if ($objp->paye && !$sep) {
-	print "<tr><td></td><td>$i factures</td><td colspan=\"2\" align=\"right\">";
-	print "&nbsp;</small></td>";
-	print "<td align=\"right\">Sous Total :<b> ".price($total)."</b></td><td>euros HT</td></tr>";
-
-	print '<TR class="liste_titre">';
-	print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
-	print "<TD>Num&eacute;ro</TD><td>";
-	print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-	print "</td><TD align=\"right\">Date</TD><TD align=\"right\">Montant</TD>";
-	print "<TD align=\"right\">Payé</TD></TR>\n";
-	$sep = 1 ; $j = 0;
-	$subtotal = 0;
-      }
-
-      print "<TR $bc[$var]>";
-      print "<TD>[<a href=\"$PHP_SELF?socidp=$objp->idp\">Filtre</a>]</TD>\n";
-      print "<td><a href=\"facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
-      print "<TD><a href=\"../comm/index.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
-	
-      if ($objp->df > 0 ) {
-	print "<TD align=\"right\">";
-	$y = strftime("%Y",$objp->df);
-	$m = strftime("%m",$objp->df);
-	  
-	print strftime("%d",$objp->df)."\n";
-	print " <a href=\"facture.php3?year=$y&month=$m\">";
-	print strftime("%B",$objp->df)."</a>\n";
-	print " <a href=\"facture.php3?year=$y\">";
-	print strftime("%Y",$objp->df)."</a></TD>\n";
-      } else {
-	print "<TD align=\"right\"><b>!!!</b></TD>\n";
-      }
-	
-      print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
-	
-      $yn[1] = "oui";
-      $yn[0] = "<b>non</b>";
-	
-      $total = $total + $objp->amount;
-      $subtotal = $subtotal + $objp->amount;	  
-      print "<TD align=\"right\">".$yn[$objp->paye]."</TD>\n";
-
-      print "</TR>\n";
-      $i++;
-      $j++;
-
-    }
+  while ($i < $num) {
+    $obj = $db->fetch_object( $i);
+    $var = !$var;
+    print "<tr $bc[$var]>";
+    print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+    print '<td align="right"><a href="index.php3?action=del_bookmark&bid='.$obj->bid.'">';
+    print '<img src="/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
+    print '</tr>';
+    $i++;
   }
-  if ($i == 0) { $i=1; }  if ($j == 0) { $j=1; }
-  print "<tr><td></td><td>$j factures</td><td colspan=\"2\" align=\"right\">&nbsp;</td>";
-  print "<td align=\"right\">Sous Total :<b> ".price($subtotal)."</b></td><td>euros HT</td></tr>";
+  print '</table>';
+}
+/*
+ * 
+ *
+ *
+ */
+print '</td><td valign="top" width="70%">';
 
-  print "<tr bgcolor=\"#d0d0d0\"><td></td><td>$i factures</td><td colspan=\"2\" align=\"right\">&nbsp;</td>";
-  print "<td align=\"right\"><b>Total : ".price($total)."</b></td><td>euros HT</td></tr>";
 
-  print "</TABLE>";
+$result = 0;
+if ( $result ) {
+
+  print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+  print "<TR class=\"liste_titre\">";
+  print "<td colspan=\"2\">Actions à faire</td>";
+  print "</TR>\n";
+
+  $i = 0;
+  while ($i < $db->num_rows() ) {
+    $obj = $db->fetch_object($i);
+    $var=!$var;
+    
+    print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td><td><a href=\"action/fiche.php3\">$obj->libelle $obj->label</a></td></tr>";
+    $i++;
+  }
   $db->free();
+  print "</table><br>";
 } else {
   print $db->error();
 }
 
 
+print '</td></tr>';
+
+print '</table>';
 
 $db->close();
+ 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

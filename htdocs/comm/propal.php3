@@ -25,9 +25,9 @@ require("../lib/CMailFile.class.php3");
 /*
  *  Modules optionnels
  */
-require("projet/project.class.php3");
-require("./propal.class.php3");
-require("./actioncomm.class.php3");
+require("../project.class.php3");
+require("../propal.class.php3");
+require("../actioncomm.class.php3");
 /*
  *
  */
@@ -255,17 +255,7 @@ if ($propalid) {
       /*
        *
        */
-      if ($action == 'fax') {
-	print "<hr><b>Génération du fax</b><br>";
-	$command = "export DBI_DSN=\"dbi:mysql:dbname=lolixfr:host=espy:user=rodo\" ";
-	$command .= " ; ../../scripts/propal-tex.pl --propal=$propalid --pdf --gljroot=" . $GLOBALS["GLJ_ROOT"] ;
-	//$command .= " ; ../../scripts/fax-tex.pl --propal=$propalid --gljroot=" . $GLOBALS["GLJ_ROOT"] ;
 
-	print "<p>Resultat :<p>";
-
-	$output = system($command);
-	print "<p>command : $command<br>";
-      } 
       /*
        * Send
        *
