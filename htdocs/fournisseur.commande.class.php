@@ -420,8 +420,11 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 	      if ($prod->fetch($fk_product) > 0)
 		{
 		  $desc  = $prod->libelle;
-		  $pu    = $prod->price;
 		  $txtva = $prod->tva_tx;
+
+		  $prod->get_buyprice($this->fourn_id,$qty);
+
+		  $pu    = $prod->buyprice;
 		}
 	    }
 
