@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -95,7 +95,7 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print "<td>".$obj->nom."</td>\n";
+      print '<td><a href="fiche.php?id='.$obj->rowid.'">'.stripslashes($obj->nom)."</td>\n";
       print "<td>".$obj->email_commande."</td>\n";
       print '<td align="center">'.$langs->trans($yesno[$obj->commande_active])."</td>\n";
 
