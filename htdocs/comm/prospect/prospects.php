@@ -129,7 +129,6 @@ if ($result)
   print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","","","align=\"center\"",$sortfield);
   print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","","","align=\"center\"",$sortfield);
   print_liste_field_titre($langs->trans("Created"),"prospects.php","s.datec","","","align=\"center\"",$sortfield);
-  print '<td align="center">'.$langs->trans("Action").'</td>';
   print '<td colspan="4">&nbsp;</td>';
   print "</tr>\n";
   $var=true;
@@ -148,16 +147,6 @@ if ($result)
       print "<td align=\"center\">$obj->departement</td>";
       print "<td align=\"center\">".$obj->stcomm."</td>";
       print "<td align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
-
-      if ($user->societe_id == 0)
-	{
-	  print "<td align=\"center\"><a href=\"".DOL_URL_ROOT."/comm/addpropal.php?socidp=$obj->idp&action=create\">".$langs->trans("AddProp")."</a></td>\n";
-
-	}
-      else
-	{
-	  print "<td>&nbsp;</td>";
-	}
 
       $sts = array(-1,0,1,2);
       foreach ($sts as $key => $value)
