@@ -53,6 +53,17 @@ if ($_GET["subaction"] == 'delrights' && $user->admin)
   $edituser->delrights($_GET["rights"]);
 }
 
+if ($_POST["action"] == 'confirm_disable' && $_POST["confirm"] == "yes")
+{
+  if ($_GET["id"] <> $user->id)
+    {
+      $edituser = new User($db, $_GET["id"]);
+      $edituser->fetch($_GET["id"]);
+      $edituser->disable();
+      Header("Location: index.php");
+    }
+}
+
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 {
   if ($_GET["id"] <> $user->id)
@@ -209,21 +220,21 @@ if ($action == 'create')
   print '<tr><td valign="top" width="20%">'.$langs->trans("Firstname").'</td>';
   print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
 
-  print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';
+  print '<tr><td valign="top">'.$langs->trans("Login").'</td>';
   print '<td class="valeur"><input size="20" type="text" name="login" value=""></td></tr>';
 
-  print "<tr>".'<td valign="top">'.$langs->trans("Password").'</td>';
+  print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
   print '<td class="valeur"><input size="30" type="text" name="password" value=""></td></tr>';
 
-  print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
+  print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
   print '<td class="valeur"><input size="40" type="text" name="email" value=""></td></tr>';
 
-  print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
+  print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
   print '<td class="valeur">';
   $form->selectyesnonum('admin',0);
   print "</td></tr>\n";
 
-  print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
+  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>';
   print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
   print "</textarea></td></tr>\n";
 
@@ -264,7 +275,7 @@ else
       $h++;
     
       $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
-      $head[$h][1] = $langs->trans("Permissions");
+      $head[$h][1] = $langs->trans("UserRights");
       $h++;
     
       if ($conf->bookmark4u->enabled)
@@ -278,12 +289,21 @@ else
 
 
       /*
+       * Confirmation désactivation
+       */
+      if ($action == 'disable')
+        {
+	  $html = new Form($db);
+	  $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_disable");
+        }
+
+      /*
        * Confirmation suppression
        */
       if ($action == 'delete')
         {
 	  $html = new Form($db);
-	  $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_delete");
+	  $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DeleteAUser"),$langs->trans("ConfirmDeleteUser",$fuser->login),"confirm_delete");
         }
 
       if ($_GET["action"] != 'edit')
@@ -390,7 +410,12 @@ else
 
 	  if ($user->id <> $_GET["id"] && $user->admin)
             {
-	      print '<a class="butDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
+	      print '<a class="butDelete" href="fiche.php?action=disable&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
+            }
+
+	  if ($user->id <> $_GET["id"] && $user->admin)
+            {
+	      print '<a class="butDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DeleteUser").'</a>';
             }
 
 	  print "</div>\n";

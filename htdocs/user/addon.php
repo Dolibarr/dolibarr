@@ -75,24 +75,24 @@ if ($_GET["id"])
 
   if ($user->admin)
     {
-  $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
-  $head[$h][1] = $langs->trans("Permissions");
-  $h++;
+    $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
+    $head[$h][1] = $langs->trans("UserRights");
+    $h++;
     }
 
   if ($conf->bookmark4u->enabled)
     {
-  $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
-  $head[$h][1] = $langs->trans("Bookmark4u");
-  $hselected=$h;
-  $h++;
+    $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
+    $head[$h][1] = $langs->trans("Bookmark4u");
+    $hselected=$h;
+    $h++;
     }
 
   if ($conf->clicktodial->enabled)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$fuser->id;
-      $head[$h][1] = $langs->trans("ClickToDial");
-      $h++;
+    $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$fuser->id;
+    $head[$h][1] = $langs->trans("ClickToDial");
+    $h++;
     }
 
   dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);

@@ -40,7 +40,7 @@ if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-if (! $sortfield) $sortfield="u.name";
+if (! $sortfield) $sortfield="u.login";
 if (! $sortorder) $sortorder="ASC";
 
 
@@ -66,9 +66,9 @@ if ($result)
 
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Login"),"index.php","u.login","","","",$sortfield);
     print_liste_field_titre($langs->trans("Lastname"),"index.php","u.name","","","",$sortfield);
     print_liste_field_titre($langs->trans("Firstname"),"index.php","u.firstname","","","",$sortfield);
-    print_liste_field_titre($langs->trans("Login"),"index.php","u.login","","","",$sortfield);
     print_liste_field_titre($langs->trans("Code"),"index.php","u.code","","","",$sortfield);
     print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec","","","",$sortfield);
     print "</tr>\n";
@@ -79,8 +79,6 @@ if ($result)
         $var=!$var;
 
         print "<tr $bc[$var]>";
-        print '<td>'.ucfirst($obj->name).'</td>';
-        print '<td>'.ucfirst($obj->firstname).'</td>';
         if ($obj->login)
         {
             print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a></td>';
@@ -89,6 +87,8 @@ if ($result)
         {
             print '<td><a class="impayee" href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' Inactif</a></td>';
         }
+        print '<td>'.ucfirst($obj->name).'</td>';
+        print '<td>'.ucfirst($obj->firstname).'</td>';
         print '<td>'.$obj->code.'</td>';
         print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"%d %b %Y").'</td>';
         print "</tr>\n";

@@ -22,7 +22,7 @@
  * $Source$
  */
 
-/**     \file       htdocs/user/perms.php
+/**     \file       htdocs/user/group/perms.php
         \brief      Onglet user et permissions de la fiche utilisateur
         \version    $Revision$
 */
@@ -43,16 +43,15 @@ $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
  */
 if ($_GET["subaction"] == 'addrights' && $user->admin)
 {
-  $edituser = new User($db,$_GET["id"]);
-  $edituser->addrights($_GET["rights"]);
+  $editgroup = new Usergroup($db,$_GET["id"]);
+  $editgroup->addrights($_GET["rights"]);
 }
 
 if ($_GET["subaction"] == 'delrights' && $user->admin)
 {
-  $edituser = new User($db,$_GET["id"]);
-  $edituser->delrights($_GET["rights"]);
+  $editgroup = new Usergroup($db,$_GET["id"]);
+  $editgroup->delrights($_GET["rights"]);
 }
-
 
 
 llxHeader('',$langs->trans("Permissions"));
@@ -66,9 +65,9 @@ llxHeader('',$langs->trans("Permissions"));
 
 if ($_GET["id"])
 {
-  $fuser = new User($db, $_GET["id"]);
-  $fuser->fetch();
-  $fuser->getrights();
+  $fgroup = new Usergroup($db, $_GET["id"]);
+  $fgroup->fetch($_GET["id"]);
+  $fgroup->getrights($_GET["id"]);
   
   /*
    * Affichage onglets
@@ -76,29 +75,23 @@ if ($_GET["id"])
   
   $h = 0;
   
-  $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id;
-  $head[$h][1] = $langs->trans("UserCard");
+  $head[$h][0] = DOL_URL_ROOT.'/user/group/fiche.php?id='.$fgroup->id;
+  $head[$h][1] = $langs->trans("GroupCard");
   $h++;
   
-  $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
-  $head[$h][1] = $langs->trans("UserRights");
+  $head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$fgroup->id;
+  $head[$h][1] = $langs->trans("GroupRights");
   $hselected=$h;
   $h++;
-  
-  if ($conf->bookmark4u->enabled)
-    {
-      $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
-      $head[$h][1] = $langs->trans("Bookmark4u");
-      $h++;
-    }
-  
-  dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);
 
-  // Lecture des droits de l'utilisateur
+  
+  dolibarr_fiche_head($head, $hselected, $langs->trans("Group").": ".$fgroup->nom);
+
+  // Lecture des droits du groupe
   $sql = "SELECT r.id, r.libelle, r.module ";
   $sql .= " FROM ".MAIN_DB_PREFIX."rights_def as r";
-  $sql .= ", ".MAIN_DB_PREFIX."user_rights as ur";
-  $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id;
+  $sql .= ", ".MAIN_DB_PREFIX."usergroup_rights as ugr";
+  $sql .= " WHERE ugr.fk_id = r.id AND ugr.fk_usergroup = ".$fgroup->id;
 
   $result=$db->query($sql);
 	  
@@ -155,17 +148,17 @@ if ($_GET["id"])
 		{
 		  print '<td>&nbsp;</td>';
 		  print '<td>';
-		  print '<a href="perms.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=delrights&amp;rights='.$obj->id.'">'.img_edit_remove().'</a>';
+		  print '<a href="perms.php?id='.$fgroup->id.'&amp;action=perms&amp;subaction=delrights&amp;rights='.$obj->id.'">'.img_edit_remove().'</a>';
 		  print '</td>';
 		}
 	      else
 		{
 		  print '<td>';
-		  print '<a href="perms.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">'.img_edit_add().'</a>';
+		  print '<a href="perms.php?id='.$fgroup->id.'&amp;action=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">'.img_edit_add().'</a>';
 		  print '</td>';
 		  print '<td>&nbsp;</td>';
 		}
-
+	      
 	      print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td>';
 	      print '</tr>';
 	    }
