@@ -20,8 +20,19 @@
  * $Id$
  * $Source$
  */
+
+/**
+	    \file       htdocs/societe/rib.php
+        \ingroup    societe
+		\brief      Onglet rib de societe
+		\version    $Revision$
+*/
+ 
 require("./pre.inc.php");
 require_once DOL_DOCUMENT_ROOT . "/companybankaccount.class.php";
+
+$langs->load("companies");
+$langs->load("banks");
 
 $user->getrights('societe');
 
@@ -73,11 +84,11 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
 $h = 0;
 
 $head[0][0] = DOL_URL_ROOT .'/soc.php?socid='.$soc->id;
-$head[0][1] = "Fiche société";
+$head[0][1] = $langs->trans("Company");
 $h = 1;
 
 $head[$h][0] = "fiche.php?id=$account->id";
-$head[$h][1] = "Compte bancaire $account->number";
+$head[$h][1] = $langs->trans("BankAccount")." $account->number";
 $h++;
 
 dolibarr_fiche_head($head, 1);
@@ -97,24 +108,24 @@ $account->fetch();
 
       if (!$account->verif())
 	{
-	  print '<h1><font color="red"><b>Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.</b></font></h1>';
+	  print '<div class="error"><b>Le contrôle de la clé indique que les informations de ce compte bancaire sont incomplètes ou incorrectes.</b></div><br>';
 	}
 
-      print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+      print '<table class="border" width="100%">';
       
-      print '<tr><td valign="top">Banque</td>';
+      print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
       print '<td colspan="4">'.$account->bank.'</td></tr>';
     
-      print '<tr><td>RIB</td><td align="center">Code Banque</td><td align="center">Code Guichet</td><td align="center">Numéro</td><td align="center">Clé RIB</td></tr>';
+      print '<tr><td>'.$langs->trans("RIB").'</td><td align="center">Code Banque</td><td align="center">Code Guichet</td><td align="center">Numéro</td><td align="center">Clé RIB</td></tr>';
       print '<tr><td>&nbsp;</td><td align="center">'.$account->code_banque.'</td>';
       print '<td align="center">'.$account->code_guichet.'</td>';
       print '<td align="center">'.$account->number.'</td>';
       print '<td align="center">'.$account->cle_rib.'</td></tr>';
       
-      print '<tr><td valign="top">Clé IBAN</td>';
+      print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
       print '<td colspan="4">'.$account->iban_prefix.'</td></tr>';
       
-      print '<tr><td valign="top">Identifiant BIC</td>';
+      print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
       print '<td colspan="4">'.$account->bic.'</td></tr>';
       
       print '<tr><td valign="top">Domiciliation</td><td colspan="4">';
@@ -133,9 +144,6 @@ $account->fetch();
     print '<br>';
     
     print '</div>';
-
-
-
 
 
      
@@ -174,21 +182,21 @@ $account->fetch();
       print '<input type="hidden" name="action" value="update">';
       print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
       
-      print '<table class="border" cellpadding="3" cellspacing="0">';
+      print '<table class="border" width="100%">';
       
-      print '<tr><td valign="top">Banque</td>';
-      print '<td colspan="3"><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
+      print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
+      print '<td colspan="4"><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
       
-      print '<tr><td>RIB</td><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
+      print '<tr><td>'.$langs->trans("RIB").'</td><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
       print '<tr><td>&nbsp;</td><td><input size="8" type="text" name="code_banque" value="'.$account->code_banque.'"></td>';
       print '<td><input size="8" type="text" name="code_guichet" value="'.$account->code_guichet.'"></td>';
       print '<td><input size="15" type="text" name="number" value="'.$account->number.'"></td>';
       print '<td><input size="3" type="text" name="cle_rib" value="'.$account->cle_rib.'"></td></tr>';
       
-      print '<tr><td valign="top">Clé IBAN</td>';
+      print '<tr><td valign="top">'.$langs->trans("IBAN").'</td>';
       print '<td colspan="4"><input size="5" type="text" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
       
-      print '<tr><td valign="top">Identifiant BIC</td>';
+      print '<tr><td valign="top">'.$langs->trans("BIC").'</td>';
       print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
       
       print '<tr><td valign="top">Domiciliation</td><td colspan="4">';
@@ -208,8 +216,9 @@ $account->fetch();
       print '<tr><td align="center" colspan="5"><input value="'.$langs->trans("Modify").'" type="submit">';
       print ' &nbsp; <input name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
       print '</td></tr>';
+
       print '</form>';
-      print '</table>';
+      print '</table><br>';
     }
   
 

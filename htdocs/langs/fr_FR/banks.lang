@@ -4,3 +4,6 @@ Banks=Banques
 BankAccount=Compte bancaire
 BankAccounts=Comptes bancaires
 MainAccount=Compte courant
+RIB=RIB
+IBAN=Idnetifiant IBAN
+BIC=Identifiant BIC
