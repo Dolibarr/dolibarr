@@ -415,6 +415,8 @@ else
 
 $db->close();
 
+dolibarr_syslog("Fin Batch ID ".$batch_id);
+
 dolibarr_syslog("Conso mémoire ".memory_get_usage() );
 
 // FIN
