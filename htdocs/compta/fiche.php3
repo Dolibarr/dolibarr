@@ -190,7 +190,7 @@ if ($socid > 0)
 	print "<td align=\"center\"><a href=\"../comm/fiche.php3?socid=$objsoc->idp\">Commercial</a></td>";
 	print "<td align=\"center\"><a href=\"bookmark.php3?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
 	print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
-	print "<td><a href=\"facture.php3?action=create&socidp=$objsoc->idp\">".translate("Bill")."</a></td>";
+	print "<td><a href=\"facture.php3?action=create&socidp=$objsoc->idp\">".translate("Facture")."</a></td>";
 	print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
 	print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
       }
