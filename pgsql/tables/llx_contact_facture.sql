@@ -35,4 +35,4 @@ create table llx_contact_facture
   UNIQUE(fk_soc, fk_contact)
 );
 
-CREATE INDEX idx_llx_contact_facture_fk_soc__fk_contact ON llx_contact_facture ();
+CREATE INDEX idx_llx_contact_facture_fk_soc_fk_contact ON llx_contact_facture (fk_soc, fk_contact);

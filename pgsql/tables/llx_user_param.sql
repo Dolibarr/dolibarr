@@ -35,4 +35,4 @@ create table llx_user_param
   UNIQUE(fk_user,page,param)
 );
 
-CREATE INDEX idx_llx_user_param_fk_user_page_param ON llx_user_param ();
+CREATE INDEX idx_llx_user_param_fk_user_page_param ON llx_user_param (fk_user,page,param);

@@ -33,4 +33,4 @@ create table llx_usergroup_user
   UNIQUE(fk_user,fk_usergroup)
 );
 
-CREATE INDEX idx_llx_usergroup_user_fk_user_fk_usergroup ON llx_usergroup_user ();
+CREATE INDEX idx_llx_usergroup_user_fk_user_fk_usergroup ON llx_usergroup_user (fk_user,fk_usergroup);

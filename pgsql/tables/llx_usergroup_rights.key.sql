@@ -24,7 +24,7 @@
 --
 -- ===========================================================================
 
--- Supprimme orhpelins pour permettre montée de la clé
+-- Supprime orhpelins pour permettre montée de la clé
 DELETE llx_usergroup_rights FROM llx_usergroup_rights LEFT JOIN llx_usergroup ON llx_usergroup_rights.fk_usergroup = llx_usergroup.rowid WHERE llx_usergroup.rowid IS NULL;
 
 ALTER TABLE llx_usergroup_rights ADD FOREIGN KEY (fk_usergroup)    REFERENCES llx_usergroup (rowid);

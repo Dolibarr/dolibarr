@@ -33,5 +33,5 @@ create table llx_usergroup_rights
   UNIQUE(fk_usergroup,fk_id)
 );
 
-CREATE INDEX idx_llx_usergroup_rights_fk_usergroup_fk_id ON llx_usergroup_rights ();
+CREATE INDEX idx_llx_usergroup_rights_fk_usergroup_fk_id ON llx_usergroup_rights (fk_usergroup,fk_id);
 

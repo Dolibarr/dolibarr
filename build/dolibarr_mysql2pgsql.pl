@@ -266,10 +266,11 @@ foreach my $file (keys %filelist) {
             # unique (field) et unique (field1, field2 ...)
             if (/unique\s*\(([\w,\s]+)\)/i) {
                 s/unique\s*\(([\w,\s]+)\)/UNIQUE\($1\)/i;
-                my $idxname="idx_${table}_$1";
-                $idxname =~ s/\W/_/g;
+                my $fieldlist="$1";
+                my $idxname="idx_${table}_${fieldlist}";
+                $idxname =~ s/\W/_/g; $idxname =~ tr/_/_/s;
                 $create_sql.=$_;
-                $create_index .= "CREATE INDEX $idxname ON $table ($1);\n";
+                $create_index .= "CREATE INDEX $idxname ON $table ($fieldlist);\n";
                 next;
             }
             

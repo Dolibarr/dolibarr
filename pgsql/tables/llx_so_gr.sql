@@ -35,4 +35,4 @@ create table llx_so_gr
   UNIQUE(fk_soc, fk_groupe)
 );
 
-CREATE INDEX idx_llx_so_gr_fk_soc__fk_groupe ON llx_so_gr ();
+CREATE INDEX idx_llx_so_gr_fk_soc_fk_groupe ON llx_so_gr (fk_soc, fk_groupe);
