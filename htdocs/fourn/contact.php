@@ -125,7 +125,7 @@ if ($result) {
     print "<TD>$obj->name</TD>";
     print "<TD>$obj->firstname</TD>";
 
-    print '<TD><a href="contact.php?socid='.$obj->idp.'"><img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
+    print '<TD><a href="contact.php?socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
     print "<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
     print "<TD>$obj->email&nbsp;</TD>\n";
     print '<td>'.$obj->phone.'</td>';
