@@ -55,6 +55,7 @@ $tabname[3] = MAIN_DB_PREFIX."c_regions";
 $tabname[4] = MAIN_DB_PREFIX."c_pays";
 $tabname[5] = MAIN_DB_PREFIX."c_civilite";
 $tabname[6] = MAIN_DB_PREFIX."c_actioncomm";
+$tabname[7] = MAIN_DB_PREFIX."c_chargesociales";
 
 // Libellé des dictionnaires
 $tablib[1] = $langs->trans("DictionnaryCompanyType");
@@ -63,6 +64,7 @@ $tablib[3] = $langs->trans("DictionnaryRegion");
 $tablib[4] = $langs->trans("DictionnaryCountry");
 $tablib[5] = $langs->trans("DictionnaryCivility");
 $tablib[6] = $langs->trans("DictionnaryActions");
+$tablib[7] = $langs->trans("DictionnarySocialContributions");
 
 // Requete pour extraction des données des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM llx_c_forme_juridique as f, llx_c_pays as p WHERE f.fk_pays=p.rowid";
@@ -71,6 +73,7 @@ $tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, p.l
 $tabsql[4] = "SELECT rowid   as rowid, code, libelle, active FROM llx_c_pays";
 $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.active FROM llx_c_civilite AS c";
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active FROM llx_c_actioncomm AS a";
+$tabsql[7] = "SELECT a.id    as rowid, a.id as code, a.libelle AS libelle, a.deductible, a.active FROM llx_c_chargesociales AS a";
 
 // Tri par defaut
 $tabsqlsort[1]="pays, code ASC";
@@ -79,6 +82,7 @@ $tabsqlsort[3]="pays, code ASC";
 $tabsqlsort[4]="libelle ASC";
 $tabsqlsort[5]="c.libelle ASC";
 $tabsqlsort[6]="a.type ASC, a.code ASC";
+$tabsqlsort[7]="a.libelle ASC";
  
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -87,6 +91,7 @@ $tabfield[3] = "code,libelle,pays";
 $tabfield[4] = "code,libelle";
 $tabfield[5] = "code,libelle";
 $tabfield[6] = "code,libelle,type";
+$tabfield[7] = "libelle,deductible";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -95,6 +100,7 @@ $tabfieldinsert[3] = "code_region,nom,fk_pays";
 $tabfieldinsert[4] = "code,libelle";
 $tabfieldinsert[5] = "code,civilite";
 $tabfieldinsert[6] = "code,libelle,type";
+$tabfieldinsert[7] = "libelle,deductible";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
 $tabrowid[1] = "";
@@ -103,10 +109,14 @@ $tabrowid[3] = "";
 $tabrowid[4] = "rowid";
 $tabrowid[5] = "rowid";
 $tabrowid[6] = "id";
+$tabrowid[7] = "id";
 
 
 $msg='';
 
+/*
+ * Actions ajout d'une entrée dans un dictionnaire de donnée
+ */
 if ($_POST["actionadd"]) {
     
     $listfield=split(',',$tabfield[$_POST["id"]]);
@@ -206,7 +216,7 @@ if ($_GET["action"] == $acts[0])       // activate
     $result = $db->query($sql);
     if (!$result)
     {
-        print $db->error();
+        dolibarr_print_error($db);
     }
 }
 
@@ -225,7 +235,7 @@ if ($_GET["action"] == $acts[1])       // disable
     $result = $db->query($sql);
     if (!$result)
     {
-        print $db->error();
+        dolibarr_print_error($db);
     }
 }
 
