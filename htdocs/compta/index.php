@@ -75,7 +75,7 @@ if ($_GET["action"] == 'del_bookmark')
  * Affichage page
  *
  */
-print_titre("Espace comptabilité");
+print_titre($langs->trans("AccountancyTreasuryArea"));
 
 print '<table border="0" width="100%">';
 
