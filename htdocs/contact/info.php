@@ -20,12 +20,20 @@
  * $Source$
  *
  */
+
+
+/*!
+	    \file       htdocs/contact/fiche.php
+        \ingroup    societe
+		\brief      Page de la fiche contact
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../contact.class.php");
-/*
- *
- *
- */
+
+$langs->load("company");
+
 llxHeader();
 
 print '<div class="tabs">';
@@ -45,14 +53,14 @@ $contact = new Contact($db);
 $contact->fetch($_GET["id"], $user);
 $contact->info($_GET["id"]);
   
-print_fiche_titre ("Contact : ". $contact->firstname.' '.$contact->name);
+print_fiche_titre ($langs->trans("Contact")." : ". $contact->firstname.' '.$contact->name);
 
 if ($contact->socid > 0)
 {
   $objsoc = new Societe($db);
   $objsoc->fetch($contact->socid);
   
-  print 'Société : '.$objsoc->nom_url.'<br>';
+  print $langs->trans("Company").' : '.$objsoc->nom_url.'<br>';
 }
 
 dolibarr_print_object_info($contact);

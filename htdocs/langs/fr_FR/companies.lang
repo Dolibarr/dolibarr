@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - soc
+ErrorBadEMail=EMail %s invalide
 MenuNewCompany=Nouvelle société
 MenuSocGroup=Groupes
 NewCompany=Nouvelle société (prospect, client, fournisseur)
