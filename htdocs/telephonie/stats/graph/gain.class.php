@@ -99,7 +99,41 @@ class GraphGain extends GraphBrouzouf{
       {
 	print $this->db->error() . ' ' . $sql;
       }
+
+    if ($this->client > 0)
+      {
     
+	/*
+	 * Comptage des remises exceptionnelles
+	 *
+	 */
+	$sql = "SELECT sr.amount_ht";
+	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
+	$sql .= " , ".MAIN_DB_PREFIX."telephonie_facture as tf";
+	$sql .= " , ".MAIN_DB_PREFIX."societe_remise_except as sr";
+	
+	$sql .= " WHERE sr.fk_facture = tf.fk_facture";
+	$sql .= " AND s.rowid = tf.fk_ligne";
+	$sql .= " AND s.fk_client_comm = ".$this->client;
+	$sql .= " GROUP BY tf.fk_facture";
+	
+	if ($this->db->query($sql))
+	  {
+	    $numr = $this->db->num_rows();
+	    $i = 0;
+	    
+	    while ($i < $numr)
+	      {
+		$row = $this->db->fetch_row($i);	
+		if ( $row[0] > 0)
+		  {
+		    $this->total_gain = $this->total_gain - $row[0];
+		  }
+		$i++;
+	      }
+	  }
+      }
+
     if ($this->show_console)
       {
 	print $this->client . " " . $g[$i - 1]."\n";
