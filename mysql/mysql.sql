@@ -18,7 +18,7 @@ create table llx_service
 );
 
 
-create table actioncomm
+create table llx_actioncomm
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
   datea          datetime,           -- action date
@@ -38,6 +38,62 @@ create table actioncomm
 
 
 
+
+create table llx_societe
+(
+  idp            integer AUTO_INCREMENT PRIMARY KEY,
+  id             varchar(32),                         -- private id
+  active         smallint       default 0,            --
+  parent         integer        default 0,            --
+  tms            timestamp,
+  datec	         datetime,                            -- creation date
+  datea	         datetime,                            -- activation date
+  nom            varchar(60),                         -- company name
+  address        varchar(255),                        -- company adresse
+  cp             varchar(10),                         -- zipcode
+  ville          varchar(50),                         -- town
+  fk_pays        integer        default 0,            --
+  tel            varchar(20),                         -- phone number
+  fax            varchar(20),                         -- fax number
+  url            varchar(255),                        --
+  fk_secteur     integer        default 0,            --
+  fk_effectif    integer        default 0,            --
+  fk_typent      integer        default 0,            --
+  siren	         varchar(9),                          --
+  description    text,                                --
+  fk_stcomm      smallint       default 0,            -- commercial statut
+  note           text,                                --
+  services       integer        default 0,            --
+  prefix_comm    varchar(5),                          -- prefix commercial
+  client         smallint       default 0,            -- client oui/non
+  fournisseur    smallint       default 0,            -- fournisseur oui/non
+
+  UNIQUE INDEX(prefix_comm)
+);
+
+create table llx_socstatutlog
+(
+  id          integer AUTO_INCREMENT PRIMARY KEY,
+  datel       datetime,
+  fk_soc      integer,
+  fk_statut   integer,
+  author      varchar(30)
+);
+
+create table llx_socpeople
+(
+  idp         integer AUTO_INCREMENT PRIMARY KEY,
+  datec       datetime,
+  fk_soc      integer,
+  name        varchar(50),
+  firstname   varchar(50),
+  address     varchar(255),
+  poste       varchar(80),
+  phone       varchar(30),
+  fax         varchar(30),
+  email       varchar(255),
+  note        text
+);
 
 create table llx_transaction_bplc
 (
@@ -148,30 +204,6 @@ create table llx_facture_fourn
   note       text,
 
   UNIQUE INDEX (facnumber)
-);
-
-create table socpeople
-(
-  idp         integer AUTO_INCREMENT PRIMARY KEY,
-  datec       datetime,
-  fk_soc      integer,
-  name        varchar(50),
-  firstname   varchar(50),
-  address     varchar(255),
-  poste       varchar(80),
-  phone       varchar(30),
-  fax         varchar(30),
-  email       varchar(255),
-  note        text
-);
-
-create table socstatutlog
-(
-  id          integer AUTO_INCREMENT PRIMARY KEY,
-  datel       datetime,
-  fk_soc      integer,
-  fk_statut   integer,
-  author      varchar(30)
 );
 
 create table llx_livre_to_auteur
@@ -366,38 +398,6 @@ create table llx_domain
   note            text
 );
 
-
-create table societe
-(
-  idp            integer AUTO_INCREMENT PRIMARY KEY,
-  id             varchar(32),                         -- private id
-  active         smallint       default 0,            --
-  parent         integer        default 0,            --
-  tms            timestamp,
-  datec	         datetime,                            -- creation date
-  datea	         datetime,                            -- activation date
-  nom            varchar(60),                         -- company name
-  address        varchar(255),                        -- company adresse
-  cp             varchar(10),                         -- zipcode
-  ville          varchar(50),                         -- town
-  fk_pays        integer        default 0,            --
-  tel            varchar(20),                         -- phone number
-  fax            varchar(20),                         -- fax number
-  url            varchar(255),                        --
-  fk_secteur     integer        default 0,            --
-  fk_effectif    integer        default 0,            --
-  fk_typent      integer        default 0,            --
-  siren	         varchar(9),                          --
-  description    text,                                --
-  fk_stcomm      smallint       default 0,            -- commercial statut
-  note           text,                                --
-  services       integer        default 0,            --
-  prefix_comm    varchar(5),                          -- prefix commercial
-  client         smallint       default 0,            -- client oui/non
-  fournisseur    smallint       default 0,            -- fournisseur oui/non
-
-  UNIQUE INDEX(prefix_comm)
-);
 
 create table c_actioncomm
 (
@@ -594,6 +594,7 @@ create table llx_facture
   fk_user         integer,   -- createur de la facture
   fk_user_author  integer,   -- createur de la propale
   fk_user_valid   integer,   -- valideur de la propale
+  fk_projet       integer,   -- projet auquel est associé la facture
   note       text,
 
   UNIQUE INDEX (facnumber)
@@ -934,6 +935,7 @@ INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MENU_BARRETOP','de
 
 
 INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_COMMANDE','0','yesno',0);
+INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_PROPALE','0','yesno',0);
 INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_DON','0','yesno',0);
 INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_ADHERENT','0','yesno',0);
 
