@@ -24,6 +24,12 @@
 insert into llx_sqltables (name, loaded) values ('llx_album',0);
 
 --
+-- Définition des action de workflow
+--
+delete from llx_action_def;
+insert into llx_action_def (rowid,titre,description) VALUES (1,'Validation fiche intervention','Déclenché lors de la validation d\'une fiche d\'intervention');
+
+--
 -- Boites
 --
 delete from llx_boxes_def;
