@@ -25,8 +25,8 @@
 
 insert into llx_const(name, value) values ('DONS_FORM','fsfe.fr.php');
 
-insert into llx_const(name, value) values ('MAIN_SEARCHFORM_SOCIETE','1');
-insert into llx_const(name, value) values ('MAIN_SEARCHFORM_CONTACT','1');
+insert into llx_const(name, value, type) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage du formulaire de recherche des sociétés dans la barre de gauche');
+insert into llx_const(name, value, type) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage du formulaire de recherche des contacts dans la barre de gauche');
 
 delete from c_chargesociales;
 insert into c_chargesociales (id,libelle,deductible) values ( 1, 'Allocations familiales',1);
