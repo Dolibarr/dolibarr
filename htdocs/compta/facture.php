@@ -547,7 +547,7 @@ if ($_GET["action"] == 'create')
 	       */
 	      print_titre("Produits");
 	      
-	      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 	      print '<tr class="liste_titre"><td>Réf</td><td>Produit</td>';
 	      print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	      
@@ -607,7 +607,7 @@ if ($_GET["action"] == 'create')
 	    {
 	      print_titre("Produits");
 	      
-	      print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 	      print '<tr class="liste_titre"><td>Réf</td><td>Produit</td>';
 	      print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	      
@@ -823,7 +823,7 @@ else
 	    $num_lignes = $db->num_rows();
 	    $i = 0; $total = 0;
 	    
-	    echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+	    echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 	    if ($num_lignes)
 	      {
 		print "<tr class=\"liste_titre\">";
