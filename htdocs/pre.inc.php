@@ -27,6 +27,8 @@ require ("./main.inc.php");
 function llxHeader($head = "") {
   global $user, $conf, $langs;
   $user->getrights('societe');
+  $user->getrights('propale');
+  $user->getrights('facture');
 
   /*
    *
@@ -38,21 +40,23 @@ function llxHeader($head = "") {
 
   if ($conf->societe->enabled) 
     {
-      $menu->add(DOL_URL_ROOT."/societe.php", "Sociétés","company");
+      $langs->load("companies");
+      $menu->add(DOL_URL_ROOT."/societe.php", $langs->trans("Companies"));
 
       if ($user->rights->societe->creer)
 	{
 	  $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", "Nouvelle société");
 	}
-      $menu->add_submenu(DOL_URL_ROOT."/contact/index.php", "Contacts");
+      $menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
     }
 
   if ($conf->commercial->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/comm/index.php", "Commercial");
+      $langs->load("commercial");
+      $menu->add(DOL_URL_ROOT."/comm/index.php",$langs->trans("Commercial"));
 
-      $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php", "Clients");
-      $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php", "Prospects");
+      $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php",$langs->trans("Customers"));
+      $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php",$langs->trans("Prospects"));
 
       if ($user->rights->propale->lire)
 	$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
@@ -60,10 +64,13 @@ function llxHeader($head = "") {
 
   if ($conf->compta->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/compta/index.php", "Comptabilité");
+      $langs->load("compta");
+      $menu->add(DOL_URL_ROOT."/compta/index.php", $langs->trans("Accountancy"));
 
-      if ($user->rights->facture->lire)
-	$menu->add_submenu(DOL_URL_ROOT."/compta/facture.php", "Factures");
+      if ($user->rights->facture->lire) {
+        $langs->load("bills");
+    	$menu->add_submenu(DOL_URL_ROOT."/compta/facture.php", $langs->trans("Bills"));
+      }
     }
 
   if ($conf->fichinter->enabled ) 
@@ -73,10 +80,11 @@ function llxHeader($head = "") {
 
   if ($conf->produit->enabled || $conf->service->enabled)
     {
+      $langs->load("products");
       $chaine="";
-      if ($conf->produit->enabled) { $chaine.="Produits"; }
+      if ($conf->produit->enabled) { $chaine.= $langs->trans("Products"); }
       if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
-      if ($conf->service->enabled) { $chaine.="Services"; }
+      if ($conf->service->enabled) { $chaine.= $langs->trans("Services"); }
       $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
 
       if ($conf->boutique->enabled)
@@ -95,7 +103,8 @@ function llxHeader($head = "") {
 
   if ($conf->adherent->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/adherents/index.php", "Adherents");
+      $langs->load("members");
+      $menu->add(DOL_URL_ROOT."/adherents/index.php", $langs->trans("Members"));
     }
 
   if ($conf->commande->enabled)
@@ -113,7 +122,8 @@ function llxHeader($head = "") {
 
   if ($conf->fournisseur->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
+      $langs->load("suppliers");
+      $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
     }
 
   if ($conf->voyage && $user->societe_id == 0) 
@@ -140,11 +150,11 @@ function llxHeader($head = "") {
 	  $menu->add(DOL_URL_ROOT."/rapport/", "Rapports");
 	}
 	
-  $menu->add(DOL_URL_ROOT."/user/index.php", "Utilisateurs");
+  $menu->add(DOL_URL_ROOT."/user/index.php", $langs->trans("Users"));
 
   if ($user->admin)
     {      
-      $menu->add(DOL_URL_ROOT."/admin/index.php", "Configuration");
+      $menu->add(DOL_URL_ROOT."/admin/index.php", $langs->trans("Setup"));
     }
 
   /*

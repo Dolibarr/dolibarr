@@ -499,10 +499,9 @@ function top_menu($head, $title="", $target="")
   print "<tr>";
 
   // Sommet menu de gauche, lien accueil
-  global $PHP_SELF;
   $class="";
   if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "accueil") { $class="menusel"; }
-  elseif (ereg("^".DOL_URL_ROOT."\/[^\\\/]+$",$PHP_SELF) || ereg("^".DOL_URL_ROOT."\/user\/",$PHP_SELF) || ereg("^".DOL_URL_ROOT."\/admin\/",$PHP_SELF)) { $class="menusel"; }
+  elseif (ereg("^".DOL_URL_ROOT."\/[^\\\/]+$",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/user\/",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/admin\/",$_SERVER["PHP_SELF"])) { $class="menusel"; }
   print '<td width="200" class="menu"><table cellpadding=0 cellspacing=0 width="100%"><tr><td class="'.$class.'" align=center><a class="'.$class.'" href="'.DOL_URL_ROOT.'/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Home").'</a></td></tr></table></td>';
 
   // Sommet géré par gestionnaire de menu du haut
@@ -635,19 +634,11 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
     {
       print '<div class="leftmenu">';
       define('MAIN_AIDE_URL','http://www.dolibarr.com/wikidev/index.php');
-      print '<a class="leftmenu" target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">Aide</a></div>';
+      print '<a class="leftmenu" target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">'.$langs->trans("Help").'</a></div>';
     }
-  /*
-   *
-   *
-   *
 
-   if (is_object($author))
-   {
-   print '<tr><td class="auteurs">Auteur : ';
-   print $author->fullname .'</td></tr>';
-   }
-  */
+
+
   print "<!-- Fin left menu -->\n";
   print "</td>";
   print "<td valign=\"top\" colspan=\"2\">\n";

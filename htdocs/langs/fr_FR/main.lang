@@ -25,3 +25,4 @@ WelcomeString=<font class="body">Nous sommes le</font> %s<font class="body">, et
 Number=Nombre
 DevelopmentTeam=Equipe de développement
 Logout=Deconnexion
+Setup=Configuration

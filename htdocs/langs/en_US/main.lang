@@ -25,3 +25,4 @@ WelcomeString=<font class="body">We are </font>%s<font class="body">, and you ar
 Number=Number
 DevelopmentTeam=Development Team
 Logout=Logout
+Setup=Setup
