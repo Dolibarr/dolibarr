@@ -72,8 +72,8 @@ class Propal
 	  $prod = new Product($this->db, $idproduct);
 	  $prod->fetch($idproduct);
 	  
-	  $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx) VALUES ";
-	  $sql .= " (".$this->id.",". $idproduct.",". $qty.",". $prod->price.",".$prod->tva_tx.") ; ";
+	  $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx, description) VALUES ";
+	  $sql .= " (".$this->id.",". $idproduct.",". $qty.",". $prod->price.",".$prod->tva_tx.",'".$prod->label."') ; ";
 	  
 	  if ($this->db->query($sql) )
 	    {
@@ -343,6 +343,44 @@ class Propal
 		{
 		  print $this->db->error();
 		}
+
+	      /*
+	       * Lignes
+	       */
+
+	      $sql = "SELECT d.qty, d.description, d.price, d.tva_tx, d.rowid";
+	      $sql .= " FROM llx_propaldet as d";
+	      $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = 0";
+	
+	      $result = $this->db->query($sql);
+	      if ($result)
+		{
+		  $num = $this->db->num_rows();
+		  $j = 0; 
+		  
+		  while ($j < $num)
+		    {
+		      $objp              = $this->db->fetch_object($i);
+		      $ligne             = new PropaleLigne();
+		      $ligne->desc       = stripslashes($objp->description);
+		      $ligne->qty        = $objp->qty;
+		      $ligne->ref        = $objp->ref;
+		      $ligne->tva_tx     = $objp->tva_tx;
+		      $ligne->price      = $objp->price;
+		      $ligne->product_id = $objp->rowid;
+		      $this->lignes[$i]  = $ligne;
+		      $i++;
+		      $j++;
+		    }
+	    
+		  $this->db->free();
+		} 
+	      else
+		{
+		  print $this->db->error();
+		}
+
+
 	    }
 	  return 1;
 	}
