@@ -28,7 +28,7 @@ Rechercher une expédition<br>
 <input class="flat" type="text" name="sf_ref" size="10">&nbsp;<input type="submit" value="go" class="flat">
 </form>';
 
-function llxHeader($head = "", $title="", $help_url='', $form_search='')
+function llxHeader($head = "", $title="", $help_url='', $form_search='', $author='')
 {
   global $user, $conf, $form_search;
 
@@ -47,6 +47,6 @@ function llxHeader($head = "", $title="", $help_url='', $form_search='')
 
   $menu->add(DOL_URL_ROOT."/expedition/stats/", "Statistiques");
 
-  left_menu($menu->liste, $help_url, $form_search);
+  left_menu($menu->liste, $help_url, $form_search, $author);
 }
 ?>

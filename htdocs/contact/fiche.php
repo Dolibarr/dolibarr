@@ -34,6 +34,10 @@ if ($HTTP_POST_VARS["action"] == 'add')
 
   $contact->poste        = $HTTP_POST_VARS["poste"];
 
+  $contact->address       = $HTTP_POST_VARS["adresse"];
+  $contact->cp            = $HTTP_POST_VARS["cp"];
+  $contact->ville         = $HTTP_POST_VARS["ville"];
+
   $contact->fax          = $HTTP_POST_VARS["fax"];
   $contact->note         = $HTTP_POST_VARS["note"];
   $contact->email        = $HTTP_POST_VARS["email"];
@@ -68,6 +72,10 @@ if ($action == 'update')
   $contact->name          = $HTTP_POST_VARS["name"];
   $contact->firstname     = $HTTP_POST_VARS["firstname"];
   $contact->poste         = $HTTP_POST_VARS["poste"];
+
+  $contact->address       = $HTTP_POST_VARS["adresse"];
+  $contact->cp            = $HTTP_POST_VARS["cp"];
+  $contact->ville         = $HTTP_POST_VARS["ville"];
 
   $contact->phone_pro     = $HTTP_POST_VARS["phone_pro"];
   $contact->phone_perso   = $HTTP_POST_VARS["phone_perso"];
@@ -104,8 +112,15 @@ print '<a href="perso.php?id='.$_GET["id"].'" class="tab">Informations personnel
 print '<a class="tab" href="vcard.php?id='.$_GET["id"].'">VCard</a>';
 print '<a class="tab" href="info.php?id='.$_GET["id"].'">Info</a>';
 print '</div>';
-print '<div class="tabBar">';
 
+if ($mesg)
+{
+  print '<div class="message">'.$mesg;
+  print '</div>';
+}
+
+
+print '<div class="tabBar">';
 
 if ($_GET["socid"] > 0)
 {
@@ -140,7 +155,7 @@ if ($_GET["action"] == 'create')
 
   print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80"></td></tr>';
 
-  print '<tr><td>CP Ville</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="cp" type="text" size="20" maxlength="80"></td>';
+  print '<tr><td>CP Ville</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="ville" type="text" size="20" maxlength="80"></td>';
 
   print '<td>Fax</td><td><input name="fax" type="text" size="18" maxlength="80"></td></tr>';
   print '<tr><td>Email</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80"></td></tr>';
@@ -189,8 +204,11 @@ elseif ($_GET["action"] == 'edit')
   print '<tr><td>Jabberid</td><td colspan="5"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
 
   print '<tr><td>Note</td><td colspan="5"><textarea name="note"></textarea></td></tr>';
-  print '<tr><td align="center" colspan="6"><input type="submit" value="Enregistrer"></td></tr>';
   print "</table>";
+
+  print '<div class="FicheSubmit"><input type="submit" value="Enregistrer">';
+  
+
   print "</form>";
 }
 else

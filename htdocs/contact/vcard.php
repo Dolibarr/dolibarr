@@ -49,7 +49,7 @@ $filename = $v->getFileName();
 
 Header("Content-Disposition: attachment; filename=$filename");
 Header("Content-Length: ".strlen($output));
-//Header("Connection: close");
+Header("Connection: close");
 Header("Content-Type: text/x-vCard; name=$filename");
 
 echo $output;
