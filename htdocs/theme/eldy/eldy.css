@@ -22,7 +22,7 @@
 /***** Style du fond *****/
 body {
     background-color: #F1F1F1;
-	font: 13px helvetica, verdana, arial, sans-serif;
+	font: 12px helvetica, verdana, arial, sans-serif;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
@@ -31,7 +31,7 @@ body {
 .body {
     background-color: #F1F1F1;
 	color: #101010;
-	font: 13px helvetica, verdana, arial, sans-serif;
+	font: 12px helvetica, verdana, arial, sans-serif;
 }
 
 /***** Styles par défaut *****/
@@ -53,6 +53,7 @@ textarea  { font: helvetica, verdana, arial, sans-serif; }
 /*
  *   Menu superieur et 1ere ligne tableau
  */
+ 
 table.topbarre
 { 
 	cell-spacing: 0;
@@ -81,6 +82,33 @@ border-bottom: 1px solid #FFFFFF;
     font-size: 12px; font-weight: bold; 
     color: #000000; 
     text-decoration: none;
+}
+
+a.tmenu
+{
+  color: #234046;
+  padding: 0em 1em;
+  margin: 0em 0em 1.5em 0em;
+  border: 1px solid #b3c5cc;
+  font-weight:bold;
+  font-size:11px;
+  }
+a.tmenu#sel
+{ 
+  color: #234046;
+  background: #dee7ec;
+  padding: 0em 1em;
+  margin: 0em 0em 1.5em 0em;
+  border: 1px solid #8CACBB;
+}
+a.tmenu:hover
+{
+  color: #234046;
+  background: #dee7ec;
+  padding: 0em 1em;
+  margin: 0em 0em 1.5em 0em;
+  border: 1px solid #8CACBB;
+  text-decoration: none;
 }
 
 
