@@ -20,8 +20,7 @@
 # General Makefile
 #
 
-DATE=`date +%Y%m%d`
-FILE=dolibarr-$(DATE).tar
+FILE=dolibarr-0.1.1.tar
 
 tar:
 	rm -f dolibarr-*.tar.gz*
