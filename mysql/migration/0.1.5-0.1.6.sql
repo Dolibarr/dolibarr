@@ -3,7 +3,7 @@
 -- Mise à jour de la version 0.1.5 à 0.1.6
 --
 
-create table llx_notify
+create table llx_notify_def
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
@@ -12,6 +12,18 @@ create table llx_notify
   fk_soc          integer NOT NULL,
   fk_contact      integer NOT NULL
 );
+
+create table llx_notify
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  tms             timestamp,
+  daten           datetime,           -- date de la notification
+  fk_action       integer NOT NULL,
+  fk_contact      integer NOT NULL,
+  objet_type      enum('ficheinter','facture','propale'),
+  objet_id        integer NOT NULL
+);
+
 
 create table llx_action_def
 (
