@@ -138,6 +138,7 @@ if ($result) {
     print '<option value="PRE">PRE';
     print '<option value="VIR">VIR';
     print '<option value="CB">CB';
+    print '<option value="DEP">Dépôt';
 
     print "</select><input type=\"submit\" value=\"update\"></td>";
     print "</tr>";

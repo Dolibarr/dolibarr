@@ -39,7 +39,7 @@ if (! $num) {
    */
   print "<b>Releves bancaires</b>";
 
-  print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+  print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="2">';
   print "<TR class=\"liste_titre\">";
   print "<td>Date</td>";
 
@@ -101,11 +101,11 @@ if (! $num) {
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";
-  print "<td>Date</td><td></td><td>Description</TD>";
-  print "<td align=\"right\"><a href=\"$PHP_SELF?vue=debit\">Debit</a></TD>";
-  print "<td align=\"right\"><a href=\"$PHP_SELF?vue=credit\">Credit</a></TD>";
-  print "<td align=\"right\">Solde</TD>";
-  print "<td align=\"right\">Francs</td>";
+  print "<td>Date</td><td>Type</td><td>Description</TD>";
+  print '<td align="right">Debit</TD>';
+  print '<td align="right">Credit</TD>';
+  print '<td align="right">Solde</TD>';
+  print '<td align="right">Francs</td>';
   print "</TR>\n";
  
 
