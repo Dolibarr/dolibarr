@@ -546,9 +546,7 @@ function top_menu($head, $title="", $target="")
 }
 
 /*
- * Barre de menu gauche
- *
- *
+ * \brief   Barre de menu gauche
  *
  *
  */
@@ -574,55 +572,44 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
       print "</div>\n";
     }
 
-  if ((defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0) || (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0))
+  /*
+   * Affichage des zones de recherche permanantes
+   */
+  print '<div class="leftmenu">'."\n";
+
+  if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
     {
       $langs->load("companies");
-      print '<div class="leftmenu">'."\n";
-      
-      if (defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
-	{
-	  if (strstr($_SERVER["SCRIPT_URL"], "/comm/prospect/"))
-	  {
-	    print '<form action="'.DOL_URL_ROOT.'/comm/prospect/prospects.php">';
-	  }
-	  else
-	  {
-	    print '<form action="'.DOL_URL_ROOT.'/societe.php">';
-	  }
-	  print '<a class="menu" href="'.DOL_URL_ROOT.'/comm/clients.php">'.$langs->trans("Companies").'</a><br>';
-	  print '<input type="hidden" name="mode" value="search">';
-	  print '<input type="hidden" name="page" value="0">';
-	  print '<input type="hidden" name="mode-search" value="soc">';
-	  print '<input type="text" name="socname" class="flat" size="10">&nbsp;';
-	  print '<input type="submit" class="flat" value="go">';
-	  print "</form>\n";
-	}
-      
-      if (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
-	{
-      print '<form action="'.DOL_URL_ROOT.'/contact/index.php">';
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/contact/index.php">'.$langs->trans("Contacts").'</A><br>';
-	  print '<input type="hidden" name="mode" value="search">';
-	  print '<input type="hidden" name="mode-search" value="contact">';
-	  print '<input type="text" class="flat" name="contactname" size="10">&nbsp;';
-	  print '<input type="submit" class="flat" value="go">';
-	  print "</form>\n";
-	}
 
-      if ($conf->produit->enabled)
-	{
-      $langs->load("products");
-	  print '<form action="'.DOL_URL_ROOT.'/product/liste.php" method="post">';
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/product/">'.$langs->trans("Products").'</A><br>';
-	  print '<input type="text" class="flat" name="sall" size="10">&nbsp;';
-	  print '<input type="submit" class="flat" value="go">';
-	  print "</form>\n";
-	}
-      print "</div>";
+      if (strstr($_SERVER["SCRIPT_URL"], "/comm/prospect/"))
+      {
+        $url=DOL_URL_ROOT.'/comm/prospect/prospects.php';
+      }
+      else
+      {
+        $url=DOL_URL_ROOT.'/societe.php';
+      }
+
+      printSearchForm($url,DOL_URL_ROOT.'/comm/clients.php',$langs->trans("Companies"),'soc','socname');
     }
 
+  if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
+	{
+      $langs->load("companies");
+      printSearchForm(DOL_URL_ROOT.'/contact/index.php',DOL_URL_ROOT.'/contact/index.php',$langs->trans("Contacts"),'contact','contactname');
+	}
+
+  if (($conf->produit->enabled || $conf->service->enabled) && defined("MAIN_SEARCHFORM_PRODUITSERVICE") && MAIN_SEARCHFORM_PRODUITSERVICE > 0)
+	{
+      $langs->load("products");
+      printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/',$langs->trans("Products")."/".$langs->trans("Services"),'products','sall');
+    }
+
+  print "</div>";
+
+
   /*
-   * Formulaire de recherche
+   * Zone de recherche supplémentaire
    */
 
   if (strlen($form_search) > 0)
@@ -650,11 +637,31 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
   print "<td valign=\"top\" colspan=\"2\">\n";
 
 }
+
+
+
 /*
- * Impression du pied de page
- *
- *
- *
+ * \brief   Affiche une zone de recherche
+ * \param   urlaction       url du post
+ * \param   urlobject       url du lien sur titre de la zone de recherche
+ * \param   title           titre de la zone de recherche
+ * \param   htmlinputname   nom du champ input du formulaire
+ */
+function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$htmlinputname)
+{
+	  print '<form action="'.$urlaction.'" method="post">';
+	  print '<a class="menu" href="'.$urlobject.'">'.$title.'</a><br>';
+	  print '<input type="hidden" name="mode" value="search">';
+	  print '<input type="hidden" name="mode-search" value="'.$htmlmodesearch.'">';
+	  print '<input type="text" class="flat" name="'.$htmlinputname.'" size="10">&nbsp;';
+	  print '<input type="submit" class="flat" value="go">';
+	  print "</form>\n";
+}
+
+
+/*
+ * \brief   Impression du pied de page
+ * \param   foot    Non utilisé
  */
 function llxFooter($foot='') 
 {
@@ -665,7 +672,7 @@ function llxFooter($foot='')
    */
   print "</table>\n";
 
-  /* Supression temporaire, mauvais affichage sur petit ecran
+  /* Suppression temporaire, mauvais affichage sur petit ecran
 
   print '<p id="powered-by-dolibarr">';
   print '<a href="http://savannah.gnu.org/bugs/?group_id=1915">Bug report</a>&nbsp;';
