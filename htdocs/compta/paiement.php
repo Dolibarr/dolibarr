@@ -71,13 +71,14 @@ if ($HTTP_POST_VARS["action"] == 'add_paiement')
 	  
 	      $label = "Règlement facture";
 	  
-	      //On ajoute une ligne dans la table llx_bank pour qu'ensuite on puisse rapprocher le compte !
+	      // On ajoute une ligne dans la table llx_bank pour qu'ensuite on puisse rapprocher le compte !
 	      $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
 	      //paiementid est correct, il contient "CHQ ou VIR par exemple"
 	      $bank_line_id = $acc->addline($datepaye, $HTTP_POST_VARS["paiementid"], $label, $paiement->montant, $num_paiement);
 	  
 	      // Mise a jour fk_bank dans llx_paiement. On connait ainsi le paiement qui a généré l'écriture bancaire
-	      $acc->update_fk_bank($paiement_id,$bank_line_id);
+	      $pai = new Paiement($db);
+	      //$pai->update_fk_bank($paiement_id,$bank_line_id);	// TODO Méthode à creer
 	  
 	      $acc->add_url_line($bank_line_id, $paiement_id, DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', "(paiement)");
 	      $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);	  
