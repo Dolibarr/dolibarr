@@ -170,8 +170,8 @@ if ($_POST["actionadd"]) {
 
 if ($_GET["action"] == 'delete')       // delete
 {
-    if ($tabrowid[$_GET["id"]]) $rowidcol.= $tabrowid[$_GET["id"]];
-    else $rowidcold.= "rowid";
+    if ($tabrowid[$_GET["id"]]) $rowidcol=$tabrowid[$_GET["id"]];
+    else $rowidcol="rowid";
 
     $sql = "DELETE from ".$tabname[$_GET["id"]]." WHERE $rowidcol=".$_GET["rowid"];
 
@@ -184,8 +184,8 @@ if ($_GET["action"] == 'delete')       // delete
 
 if ($_GET["action"] == $acts[0])       // activate
 {
-    if ($tabrowid[$_GET["id"]]) $rowidcol.= $tabrowid[$_GET["id"]];
-    else $rowidcold.= "rowid";
+    if ($tabrowid[$_GET["id"]]) $rowidcol=$tabrowid[$_GET["id"]];
+    else $rowidcol="rowid";
 
     if ($_GET["rowid"] >0) {
         $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE $rowidcol=".$_GET["rowid"];
@@ -203,8 +203,8 @@ if ($_GET["action"] == $acts[0])       // activate
 
 if ($_GET["action"] == $acts[1])       // disable
 {
-    if ($tabrowid[$_GET["id"]]) $rowidcol.= $tabrowid[$_GET["id"]];
-    else $rowidcold.= "rowid";
+    if ($tabrowid[$_GET["id"]]) $rowidcol=$tabrowid[$_GET["id"]];
+    else $rowidcol="rowid";
 
     if ($_GET["rowid"] >0) {
         $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE $rowidcol=".$_GET["rowid"];
