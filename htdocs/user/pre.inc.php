@@ -35,7 +35,7 @@ function llxHeader($head = "", $urlp = "")
 
   if($user->admin)
     {
-      $menu->add_submenu("fiche.php?&action=create","Nouvel utilisateur");
+      $menu->add_submenu("fiche.php?&amp;action=create","Nouvel utilisateur");
     }
 
 
