@@ -115,7 +115,7 @@ if ($action=='add_action')
 	}
   }
 
-  Header("Location: ../comm/fiche.php3?socid=$socid");
+  Header("Location: ".DOL_URL_ROOT."/comm/fiche.php3?socid=$socid");
 }
 
 /******************************************************************************/
