@@ -51,7 +51,10 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add_submenu("./propal/stats/", "Statistiques");
     }
 
-  $menu->add(DOL_URL_ROOT."/contrat/index.php", "Contrats");
+  if ($conf->contrat->enabled)
+    {
+      $menu->add(DOL_URL_ROOT."/contrat/index.php", "Contrats");
+    }
 
   if ($conf->commande->enabled ) 
     {
