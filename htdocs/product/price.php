@@ -42,11 +42,7 @@ $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
 
 
-if ($action == 'update')
-{
-  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET description='$desc' where rowid = $rowid";
-  $db->query($sql);
-}
+
 
 /*
  *
@@ -75,7 +71,7 @@ if($product->type == 0)
   if ($conf->stock->enabled)
     {
       $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-      $head[$h][1] = 'Stock';
+      $head[$h][1] = $langs->trans("Stock");
       $h++;
     }
   
