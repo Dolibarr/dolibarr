@@ -108,7 +108,7 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_
 -- Mail Mailing
 --
 
-insert into llx_const (name, value, type, note) values ('MAILING_EMAIL','mailing@societe.com','chaine','Champ From du mail pour mailing clients/prospects',0);
+insert into llx_const (name, value, type, note) values ('MAILING_EMAIL','mailing@societe.com','chaine','Champ From du mail pour mailing clients/prospects');
 
 --
 -- Mailman
