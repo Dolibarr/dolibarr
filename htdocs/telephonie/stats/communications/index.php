@@ -69,6 +69,8 @@ print '<tr><td width="50%" valign="top">'."\n";
 
 print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/duree.png" alt="Duree Moyenne"><br /><br />'."\n";
 
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/duree_loc.png" alt="Duree Moyenne vers Mobiles"><br /><br />'."\n";
+
 print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/duree_mob.png" alt="Duree Moyenne vers Mobiles"><br /><br />'."\n";
 
 print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=communications/duree_inter.png" alt="Duree Moyenne vers Mobiles"><br /><br />'."\n";
