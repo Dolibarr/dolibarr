@@ -121,6 +121,18 @@ TR.impair
   font-family: Helvetica, Verdana; font-size: 12px; 
   text-decoration: none }
 
+TR.barreBouton	
+{ 
+  background: #cceeee; 
+  font-family: Helvetica, Verdana; font-size: 12px; 
+  text-decoration: none 
+}
+
+td.bouton
+{ 
+  font-weight: bold;
+}
+
 td.valeur
 { 
   font-weight: bold;
