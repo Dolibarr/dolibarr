@@ -49,7 +49,8 @@ print '<tr><td valign="top" width="30%">';
  *
  */
 $sql = "SELECT p.rowid, p.ref, p.amount,".$db->pdate("p.datec")." as datec";
-$sql .= " FROM ".MAIN_DB_PREFIX."prelevement as p";
+$sql .= " ,p.statut ";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " ORDER BY datec DESC LIMIT 5";
 
 $result = $db->query($sql);
@@ -71,6 +72,8 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]><td>";
+
+      print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
