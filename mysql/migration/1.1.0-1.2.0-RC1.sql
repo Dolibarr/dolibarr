@@ -22,13 +22,16 @@ alter table llx_socpeople add birthday date after address ;
 create table llx_birthday_alert
 (
   rowid        integer AUTO_INCREMENT PRIMARY KEY,
-  fk_contact   integer, -- pointe sur llx_socpeople
+  fk_contact   integer,
   fk_user      integer
 );
 
 alter table llx_facture_fourn drop index facnumber ;
 alter table llx_facture_fourn add unique index (facnumber, fk_soc) ;
 
+
+alter table llx_paiement add fk_bank integer NOT NULL after note ;
+alter table llx_paiementfourn add fk_bank integer NOT NULL after note ;
 
 create table llx_co_fa
 (
