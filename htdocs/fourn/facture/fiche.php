@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -498,65 +499,47 @@ else
        *
        */
 
-      print '<p><table id="actions" width="100%" cellspacing="0" cellpadding="4"><tr>';
+	print "<br><div class=\"tabsAction\">\n";
   
       if ($obj->statut == 0 && $user->societe_id == 0)
 	{
-	  print '<td align="center" width="20%"><a href="index.php?facid='.$facid.'&amp;action=delete">Supprimer</a></td>';
+	  print '<a class="tabAction" href="index.php?facid='.$facid.'&amp;action=delete">Supprimer</a>';
 	}
       elseif ($obj->statut == 1 && $obj->paye == 0  && $user->societe_id == 0)
 	{
-	  print '<td align="center" width="20%"><a href="paiement.php?facid='.$fac->id.'&amp;action=create">Emmettre un paiement</a></td>';
+	  print '<a class="tabAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">Emmettre un paiement</a>';
 	}
-      else
-	{
-	  print '<td align="center" width="20%">-</td>';
-	} 
 
       if ($obj->statut == 0 && $user->societe_id == 0)    
 	{
 	  if ($action == "edit")
 	    {
-	      print '<td align="center" width="20%"><a href="fiche.php?facid='.$obj->rowid.'">Annuler</a></td>';
+	      print '<a class="tabAction" href="fiche.php?facid='.$obj->rowid.'">Annuler</a>';
 	    }
 	  else
 	    {
-	      print '<td align="center" width="20%"><a href="fiche.php?facid='.$obj->rowid.'&amp;action=edit">Editer</a></td>';
+	      print '<a class="tabAction" href="fiche.php?facid='.$obj->rowid.'&amp;action=edit">Editer</a>';
 	    }
-	}
-      else
-	{
-	  print '<td align="center" width="20%">-</td>';
 	}
  
       if ($obj->statut == 1 && round($resteapayer) == 0 && $obj->paye == 0  && $user->societe_id == 0)
 	{
-	  print "<td align=\"center\" width=\"20%\"><a href=\"fiche.php?facid=$facid&amp;action=payed\">Classer 'Payée'</a></td>";
+	  print "<a class=\"tabAction\" href=\"fiche.php?facid=$facid&amp;action=payed\">Classer 'Payée'</a>";
 	}
-      else
-	{
-	  print "<td align=\"center\" width=\"20%\">-</td>";
-	}
-
-      print "<td align=\"center\" width=\"20%\">-</td>";
 
       if ($user->societe_id == 0)
 	{
 	  if ($obj->statut == 0)
 	    {
-	      print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=valid\">Valider</a></td>";
+	      print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$facid&amp;action=valid\">Valider</a>";
 	    }
 	  else
 	    {
-	      print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=copy&amp;socid=$fac->socidp\">Copier</a></td>";
+	      print "<a class=\"tabAction\" href=\"$PHP_SELF?facid=$facid&amp;action=copy&amp;socid=$fac->socidp\">Copier</a>";
 	    }
 	}
-      else
-	{
-	  print '<td align="center" width="20%">-</td>';
-	}
 
-      print "</tr></table>";
+	print "</div>";
 
     }
 }
