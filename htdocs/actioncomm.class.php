@@ -91,8 +91,8 @@ class ActionComm
 	  $this->priority = 0;
 	}
 
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author, fk_user_action, fk_contact, percent, note,priority,propalrowid) ";
-      $sql .= " VALUES ('$this->date', $this->type, $this->societe, $author->id,";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, label, fk_action, fk_soc, fk_user_author, fk_user_action, fk_contact, percent, note,priority,propalrowid) ";
+      $sql .= " VALUES ('$this->date', '$this->libelle', $this->type, $this->societe, $author->id,";
       $sql .= $this->user->id . ", $this->contact, '$this->percent', '$this->note', $this->priority, $this->propalrowid);";
       
       if ($this->db->query($sql) )

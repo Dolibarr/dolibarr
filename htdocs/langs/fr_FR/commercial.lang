@@ -12,3 +12,6 @@ CardAction=Fiche action
 PercentDone=Pourcentage réalisé
 ActionOnCompany=Action concernant la société
 ActionOnContact=Action concernant le contact
+TaskRDV=Rendez-vous
+TaskRDVWith=Rendez-vous avec %s
+

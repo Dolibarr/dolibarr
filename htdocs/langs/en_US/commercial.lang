@@ -12,3 +12,5 @@ CardAction=Task card
 PercentDone=Percentage done
 ActionOnCompany=Task about company
 ActionOnContact=Task about contact
+TaskRDV=Rendez-vous
+TaskRDVWith=Rendez-vous with %s

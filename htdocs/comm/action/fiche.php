@@ -74,8 +74,13 @@ if ($_POST["action"] == 'add_action')
       
       $actioncomm->type = $_POST["actionid"];
       $actioncomm->priority = isset($_POST["priority"])?$_POST["priority"]:0;
-      $actioncomm->libelle  = $_POST["label"];
-      
+      if ($_POST["actionid"] == 5)
+      {
+          if ($contact->fullname) { $actioncomm->libelle = $langs->trans("TaskRDVWith",$contact->fullname); }
+          else { $actioncomm->libelle = $langs->trans("TaskRDV"); }
+      } else {
+          $actioncomm->libelle = $_POST["label"];
+      }
       $actioncomm->date = $db->idate(mktime($_POST["heurehour"],
 					    $_POST["heuremin"],
 					    0,
@@ -111,12 +116,12 @@ if ($_POST["action"] == 'add_action')
 	      
 	      if ($_POST["actionid"] == 5)
 		{
-		  $libelle = "Rendez-vous avec ".$contact->fullname;
-		  $libelle .= "\n" . $actioncomm->libelle;
+		  $libellecal = "Rendez-vous avec ".$contact->fullname;
+		  $libellecal .= "\n" . $actioncomm->libelle;
 		}
 	      else
 		{
-		  $libelle = $actioncomm->libelle;
+		  $libellecal = $actioncomm->libelle;
 		}
 	      
 	      $webcal->date=mktime($_POST["heurehour"],
@@ -126,7 +131,7 @@ if ($_POST["action"] == 'add_action')
 				   $_POST["acday"],
 				   $_POST["acyear"]);
 	      $webcal->texte=$societe->nom;
-	      $webcal->desc=$libelle;
+	      $webcal->desc=$libellecal;
 	    }
 	}
       
@@ -262,7 +267,7 @@ if ($_GET["action"] == 'create')
 
       add_row_for_webcal_link();
         
-      print '<tr><td valign="top">'.$langs->trans("Comment").'</td><td>';
+      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
       print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
       print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';  
       print '</table>';
@@ -292,7 +297,7 @@ if ($_GET["action"] == 'create')
 	}
       print '</td></tr>';
       
-      print '<tr><td width="10%">'.$langs->trans("Label").'</td><td><input type="text" name="todo_label" size="30"></td></tr>';
+      print '<tr><td width="10%">'.$langs->trans("Label").'</td><td><input type="text" name="label" size="30"></td></tr>';
       
       // Societe, contact
       print '<tr><td width="10%">'.$langs->trans("ActionOnCompany").'</td><td width="40%">';
@@ -418,6 +423,7 @@ if ($_GET["id"])
 
       print '<table class="border" width="100%">';
       print '<tr><td width="20%">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("Label").'</td><td colspan="3">'.$act->libelle.'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
       print '<td width="30%"><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
       
@@ -435,7 +441,7 @@ if ($_GET["id"])
       
       if ($act->note)
 	{
-	  print '<tr><td valign="top">'.$langs->trans("Comment").'</td><td colspan="3">';
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 	  print nl2br($act->note).'</td></tr>';
 	}
       print '<tr><td align="center" colspan="4"><input type="submit" value="'.$langs->trans("Save").'"</td></tr>';
@@ -446,6 +452,7 @@ if ($_GET["id"])
       // Affichage fiche action en mode visu
       print '<table class="border" width="100%"';
       print '<tr><td width="20%">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("Label").'</td><td colspan="3">'.$act->libelle.'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
       print '<td width="30%">'.$act->societe->nom_url.'</td>';
       
@@ -462,7 +469,7 @@ if ($_GET["id"])
       
       if ($act->note)
 	{
-	  print '<tr><td valign="top">'.$langs->trans("Comment").'</td><td colspan="3">';
+	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="3">';
 	  print nl2br($act->note).'</td></tr>';
 	}
       print '</table>';
