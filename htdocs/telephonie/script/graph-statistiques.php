@@ -74,40 +74,10 @@ else
   $month = substr("00".($month - 1), -2) ;
 }
 
-/*
- * Création des répertoires
- *
- */
-$dirs[0] = DOL_DATA_ROOT."/graph/";
-$dirs[1] = DOL_DATA_ROOT."/graph/telephonie/";
-$dirs[2] = DOL_DATA_ROOT."/graph/telephonie/communications/";
-$dirs[3] = DOL_DATA_ROOT."/graph/telephonie/factures/";
-$dirs[4] = DOL_DATA_ROOT."/graph/telephonie/ca/";
-$dirs[5] = DOL_DATA_ROOT."/graph/telephonie/client/";
-$dirs[6] = DOL_DATA_ROOT."/graph/telephonie/lignes/";
 
 $img_root = DOL_DATA_ROOT."/graph/telephonie/";
 
-if (is_array($dirs))
-{
-  foreach ($dirs as $key => $value)
-    {
-      $dir = $value;
-      
-      if (! file_exists($dir))
-	{
-	  umask(0);
-	  if (! @mkdir($dir, 0755))
-	    {
-	      print  "Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
-	    }
-	  else
-	    {
-	      if ($verbose) print $dir ." créé\n";
-	    }
-	}	
-    }
-}
+
 /***********************************************************************/
 /*
 /* Lignes actives
@@ -329,87 +299,7 @@ function repart_comm($db, $year = 0, $month = 0)
     }
 }
 
-/***************************************************************************/
-$sql = "SELECT date_format(date, '%Y%m'), count(distinct(ligne))";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-$sql .= " GROUP BY date_format(date, '%Y%m') ASC";
 
-if ($db->query($sql))
-{
-  $nblignes = array();
-
-  $num = $db->num_rows();
-
-  $i = 0;
-
-  while ($i < $num)
-    {
-      $row = $db->fetch_row();
-      $nblignes[$i] = $row[1];
-      $i++;
-    }
-}
-
-$sql = "SELECT date_format(date, '%Y%m'), sum(duree), count(duree)";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-$sql .= " GROUP BY date_format(date, '%Y%m') ASC";
-
-if ($db->query($sql))
-{
-  $durees = array();
-  $kilomindurees = array();
-  $durees_moyenne = array();
-  $nombres = array();
-  $labels = array();
-
-  $num = $db->num_rows();
-
-  $i = 0;
-
-  while ($i < $num)
-    {
-      $row = $db->fetch_row();
-      $labels[$i] = substr($row[0],4,2) . '/'.substr($row[0],2,2);
-      $durees[$i] = $row[1];
-      $kilomindurees[$i] = ($row[1]/60000);
-      $durees_moyenne[$i] = ($row[1] / $row[2]);
-      $nombres[$i] = $row[2];
-
-      $nbappels_ligne[$i] = ($nombres[$i] / $nblignes[$i]);
-
-      $i++;
-    }
-}
-
-$file = $img_root . "communications/duree.png";
-$graphgain = new GraphBar ($db, $file);
-$graphgain->show_console = 0 ;
-$graphgain->titre = "Nb minutes (milliers)";
-if ($verbose) print $graphgain->titre."\n";
-$graphgain->GraphDraw($file, $kilomindurees, $labels);
-
-$file = $img_root . "communications/nbappelsparligne.png";
-$graphgain = new GraphBar ($db, $file);
-$graphgain->show_console = 0 ;
-$graphgain->titre = "Nb appels moyen par ligne";
-if ($verbose) print $graphgain->titre."\n";
-$graphgain->barcolor = "pink";
-$graphgain->GraphDraw($file, $nbappels_ligne, $labels);
-
-$file = $img_root . "communications/dureemoyenne.png";
-$graphgain = new GraphBar ($db, $file);
-$graphgain->show_console = 0 ;
-$graphgain->titre = "Durée moyenne d'un appel";
-if ($verbose) print $graphgain->titre."\n";
-$graphgain->barcolor = "yellow";
-$graphgain->GraphDraw($file, $durees_moyenne, $labels);
-
-$file = $img_root . "communications/nombre.png";
-$graphgain = new GraphBar ($db, $file);
-$graphgain->show_console = 0 ;
-$graphgain->titre = "Nombres d'appel mensuels";
-if ($verbose) print $graphgain->titre."\n";
-$graphgain->GraphDraw($file, $nombres, $labels);
 
 /**********************************************************************/
 /*
