@@ -107,7 +107,7 @@ if ($action == 'create')
 
   print '<table class="border" width="100%">';
 
-  print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
+  print "<tr>".'<td valign="top">'.$langs->trans("Name").'</td>';
   print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
 
   print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
@@ -159,7 +159,7 @@ else
        */
       
       print '<table class="border" width="100%">';
-      print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
+      print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
       print '<td width="75%" class="valeur">'.$group->nom.'</td>';
       print "</tr>\n";
       print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
