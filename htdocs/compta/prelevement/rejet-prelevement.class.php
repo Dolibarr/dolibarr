@@ -114,8 +114,7 @@ class RejetPrelevement
 	  // certaines install de PHP renvoie uniquement la partie
 	  // entiere negative
 
-	  $tot = ereg_replace(",",".",$fac->total_ttc);
-	  $pai->amounts[$facs[$i]] = ($tot * -1);
+	  $pai->amounts[$facs[$i]] = ereg_replace(",",".",($fac->total_ttc * -1));
 	  $pai->datepaye = $this->db->idate(time());
 	  $pai->paiementid = 3; // prélèvement
 	  $pai->num_paiement = "Rejet";
