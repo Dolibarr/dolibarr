@@ -64,21 +64,6 @@ $a = setlocale("LC_TIME", "FRENCH");
 
 function top_menu($head) 
 {
-
-}
-
-/*
- * Barre de menu gauche
- *
- *
- *
- *
- */
-Function left_menu($menu) 
-{
-  global $conf;
-
-
   global $user, $conf, $rtplang;
 
   print $rtplang->lang_header();
@@ -154,6 +139,18 @@ Function left_menu($menu)
 
   print '<tr><td valign="top" align="right">';
 
+}
+
+/*
+ * Barre de menu gauche
+ *
+ *
+ *
+ *
+ */
+Function left_menu($menu) 
+{
+  global $user, $conf, $rtplang;
 
   /*
    * Colonne de gauche
