@@ -28,11 +28,15 @@ require ("../../master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/ca.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/gain.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/appelsdureemoyenne.class.php");
+
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbmensuel.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbminutes.class.php");
+
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/heureappel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/joursemaine.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camoyen.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/appelsdureemoyenne.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbmensuel.class.php");
+
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
 
 /*
@@ -92,7 +96,7 @@ class ProcessGraphContrats
       {
 	foreach ($contrats as $contrat)
 	  {
-	    //print ".";	
+	    /* Chiffre d'affaire */
 	    
 	    $img_root = DOL_DATA_ROOT."/graph/".substr($contrat,-1)."/telephonie/contrat/";
 
@@ -101,36 +105,45 @@ class ProcessGraphContrats
 	    $graphca->contrat = $contrat;
 	    $graphca->GraphDraw();
 
-	    /*
+	    /* Gain */
 
-	    $file = $img_root . $client."/graphgain.png";
+	    $file = $img_root . $contrat."/graphgain.png";
 
 	    $graphgain = new GraphGain ($this->db, $file);
-	    $graphgain->client = $client;
+	    $graphgain->contrat = $contrat;
 	    $graphgain->show_console = 0 ;
 	    $graphgain->GraphDraw();
 
-	    $file = $img_root . $client."/graphappelsdureemoyenne.png";
+	    /* Duree moyenne des appels */
+
+	    $file = $img_root . $contrat."/graphappelsdureemoyenne.png";
 	    
-	    $graphgain = new GraphAppelsDureeMoyenne ($this->db, $file);
-	    $graphgain->client = $client;
-	    $graphgain->show_console = 0 ;
-	    $graphgain->GraphDraw();
+	    $graphduree = new GraphAppelsDureeMoyenne ($this->db, $file);
+	    $graphduree->contrat = $contrat;
+	    $graphduree->show_console = 0 ;
+	    $graphduree->GraphDraw();
 	    
-	    $file = $img_root . $client."/nb-comm-mensuel.png";
+	    /* Nb de communication */
+
+	    $file = $img_root . $contrat."/nb-comm-mensuel.png";
 	    
 	    $graphx = new GraphCommNbMensuel ($this->db, $file);
-	    $graphx->client = $client;
+	    $graphx->contrat = $contrat;
 	    $graphx->show_console = 0 ;
 	    $graphx->Graph();
-	    */
 
+	    /* Nb de minutes */
+
+	    $file = $img_root . $contrat."/nb-minutes-mensuel.png";
+	    
+	    $graphx = new GraphCommNbMinutes ($this->db, $file);
+	    $graphx->contrat = $contrat;
+	    $graphx->show_console = 0 ;
+	    $graphx->Graph();
 	  }       
       }
 
     dolibarr_syslog("Fin contrat ".$this->ident);
-
   }
 }
-print ".\n";
 ?>
