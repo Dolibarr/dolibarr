@@ -84,12 +84,12 @@ INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MENU_BARRETOP','de
 -- Modules
 --
 
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MODULE_COMMANDE','0','yesno','Module commande');
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MODULE_DON','0','yesno','Module don');
-INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MODULE_ADHERENT','0','yesno','Module adherent');
+INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_COMMANDE','0','yesno',0);
+INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_DON','0','yesno',0);
+INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_ADHERENT','0','yesno',0);
 
-INSERT INTO llx_const (name, value, type, note) VALUES ('BOUTIQUE_LIVRE','0','yesno','');
-INSERT INTO llx_const (name, value, type, note) VALUES ('BOUTIQUE_ALBUM','0','yesno','');
+INSERT INTO llx_const (name, value, type, visible) VALUES ('BOUTIQUE_LIVRE','0','yesno',0);
+INSERT INTO llx_const (name, value, type, visible) VALUES ('BOUTIQUE_ALBUM','0','yesno',0);
 --
 -- Constantes 
 --
