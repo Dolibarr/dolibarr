@@ -34,6 +34,7 @@ if (!$user->admin)
 $facture_addon_var = FACTURE_ADDON;
 $facture_addon_var_pdf = FACTURE_ADDON_PDF;
 $facture_rib_number_var = FACTURE_RIB_NUMBER;
+$facture_chq_number_var = FACTURE_CHQ_NUMBER;
 
 if ($action == 'set')
 {
@@ -47,15 +48,24 @@ if ($action == 'set')
     }
 }
 
-if ($action == 'setrib')
+if ($action == 'setribchq')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FACTURE_RIB_NUMBER', value='".$value."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FACTURE_RIB_NUMBER', value='".$rib."', visible=0";
 
   if ($db->query($sql))
     {
       // la constante qui a été lue en avant du nouveau set
       // on passe donc par une variable pour avoir un affichage cohérent
-      $facture_rib_number_var = $value;
+      $facture_rib_number_var = $rib;
+    }
+
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FACTURE_CHQ_NUMBER', value='".$chq."', visible=0";
+
+  if ($db->query($sql))
+    {
+      // la constante qui a été lue en avant du nouveau set
+      // on passe donc par une variable pour avoir un affichage cohérent
+      $facture_chq_number_var = $chq;
     }
 }
 
@@ -181,17 +191,20 @@ print '</table>';
  *
  */
 
-print_titre( "Afficher le RIB du compte");
+print_titre( "Mode de règlement à afficher sur les factures");
+
+print '<table border="1" cellpadding="3" cellspacing="0">';
 
 print '<form action="facture.php" method="post">';
-print '<input type="hidden" name="action" value="setrib">';
-print '<table border="1" cellpadding="3" cellspacing="0">';
-print '<TR class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>&nbsp;</td>';
-print "</TR>\n";
-print '<tr class="pair"><td><select name="value">';
-print '<option value="0">Aucun</option>';
+print '<input type="hidden" name="action" value="setribchq">';
+print '<tr class="liste_titre">';
+print '<td>Mode règlement</td>';
+print '<td><input type="submit" value="Modifier">';
+print "</tr>\n";
+print '<tr class="pair">';
+print "<td>Virement par RIB sur le compte</td>";
+print "<td><select name=\"rib\">";
+print '<option value="0">Ne pas afficher</option>';
 $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
 if ($db->query($sql))
 {
@@ -203,7 +216,7 @@ if ($db->query($sql))
 
       if ($facture_rib_number_var == $row[0])
 	{
-	  print '<option value="'.$row[0].'" SELECTED>'.$row[1].'</option>';
+	  print '<option value="'.$row[0].'" selected>'.$row[1].'</option>';
 	}
       else
 	{
@@ -212,10 +225,36 @@ if ($db->query($sql))
       $i++;
     }
 }
-print "</select></td>";
-print '<td><input type="submit">';
-print "</table>";
+print "</select></td></tr>";
+
+print '<tr class="pair">';
+print "<td>Ordre et adresse pour chèque à déposer sur le compte</td>";
+print "<td><select name=\"chq\">";
+print '<option value="0">Ne pas afficher</option>';
+$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $i = 0;
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($i);
+
+      if ($facture_chq_number_var == $row[0])
+	{
+	  print '<option value="'.$row[0].'" selected>'.$row[1].'</option>';
+	}
+      else
+	{
+	  print '<option value="'.$row[0].'">'.$row[1].'</option>';
+	}
+      $i++;
+    }
+}
+print "</select></td></tr>";
+
 print "</form>";
+print "</table>";
 $db->close();
 
 /*
