@@ -318,25 +318,33 @@ if ($socid > 0)
 
 	  print '<td width="10%">&nbsp;</td>';
 
+
+	  print '<td width="40%">';
 	  if ($obj->propalrowid)
 	    {
-	      print '<td width="40%"><a href="../propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+	      print '<a href="../propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a>';
 	    }
 	  else
 	    {
-	      print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+	      print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_file().'</a> ';
+	      print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a>';
 	    }
+	  print '</td>';
 	  /*
 	   * Contact pour cette action
 	   *
 	   */
-	  if ($obj->fk_contact) {
-	    $contact = new Contact($db);
-	    $contact->fetch($obj->fk_contact);
-	    print '<td width="40%"><a href="people.php?socid='.$societe->id.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
-	  } else {
-	    print '<td width="40%">&nbsp;</td>';
-	  }
+	  if ($obj->fk_contact)
+	    {
+	      $contact = new Contact($db);
+	      $contact->fetch($obj->fk_contact);
+	      //	      print '<td width="40%"><a href="people.php?socid='.$societe->id.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+	      print '<td width="40%">'.$contact->fullname.'</td>';
+	    }
+	  else
+	    {
+	      print '<td width="40%">&nbsp;</td>';
+	    }
 	  /*
 	   */
 	  print '<td width="20%"><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
@@ -356,95 +364,107 @@ if ($socid > 0)
        *      Listes des actions effectuees
        *
        */
-      print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
-      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$socid.'">Actions effectuées</a></td></tr>';
-      print '<tr>';
-      print '<td valign="top">';
-
-      $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-      $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-      $sql .= " WHERE a.fk_soc = $societe->id ";
-      $sql .= " AND u.rowid = a.fk_user_author";
-      $sql .= " AND c.id=a.fk_action AND a.percent = 100";
-      $sql .= " ORDER BY a.datea DESC, a.id DESC";
 
       if ( $db->query($sql) )
 	{
-	  print '<table width="100%" cellspacing="0" border="0" cellpadding="2">';
-	  
+
 	  $i = 0 ; 
 	  $num = $db->num_rows();
-	  $oldyear='';
-	  $oldmonth='';
-	  while ($i < $num)
+
+	  if ($num)
 	    {
-	      $var = !$var;
+
+	      print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
+	      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$socid.'">Actions effectuées</a></td></tr>';
+	      print '<tr>';
+	      print '<td valign="top">';
 	      
-	      $obj = $db->fetch_object( $i);
-	      print "<tr $bc[$var]>";
+	      $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+	      $sql .= " WHERE a.fk_soc = $societe->id ";
+	      $sql .= " AND u.rowid = a.fk_user_author";
+	      $sql .= " AND c.id=a.fk_action AND a.percent = 100";
+	      $sql .= " ORDER BY a.datea DESC, a.id DESC";
 	      
-	      if ($oldyear == strftime("%Y",$obj->da) )
-		{
-		  print '<td align="center">|</td>';
-		}
-	      else
-		{
-		  print "<TD align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
-		  $oldyear = strftime("%Y",$obj->da);
-		}
+	      print '<table width="100%" cellspacing="0" border="0" cellpadding="2">';
 	      
-	      if ($oldmonth == strftime("%Y%b",$obj->da) )
-		{
-		  print '<td align="center">|</td>';
-		}
-	      else
-		{
-		  print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
-		  $oldmonth = strftime("%Y%b",$obj->da);
-		}
-	  
-	      print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
-	      print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
 	      
-	      print '<td width="10%">&nbsp;</td>';
 	      
-	      if ($obj->propalrowid)
+	      $oldyear='';
+	      $oldmonth='';
+	      while ($i < $num)
 		{
-		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+		  $var = !$var;
+		  
+		  $obj = $db->fetch_object( $i);
+		  print "<tr $bc[$var]>";
+		  
+		  if ($oldyear == strftime("%Y",$obj->da) )
+		    {
+		      print '<td align="center">|</td>';
+		    }
+		  else
+		    {
+		      print "<TD align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
+		      $oldyear = strftime("%Y",$obj->da);
+		    }
+		  
+		  if ($oldmonth == strftime("%Y%b",$obj->da) )
+		    {
+		      print '<td align="center">|</td>';
+		    }
+		  else
+		    {
+		      print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
+		      $oldmonth = strftime("%Y%b",$obj->da);
+		    }
+		  
+		  print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
+		  print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
+		  
+		  print '<td width="10%">&nbsp;</td>';
+		  
+		  print '<td width="40%">';      
+		  if ($obj->propalrowid)
+		    {
+		      print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.img_file().'</a> ';
+		      print '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+		    }
+		  else
+		    {
+		      print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_file().'</a> ';
+		      print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+		    }
+		  /*
+		   * Contact pour cette action
+		   *
+		   */
+		  if ($obj->fk_contact)
+		    {
+		      $contact = new Contact($db);
+		      $contact->fetch($obj->fk_contact);
+		      print '<td width="40%">'.$contact->fullname.'</td>';
+		    }
+		  else
+		    {
+		      print '<td width="40%">&nbsp;</td>';
+		    }
+		  /*
+		   */
+		  print '<td width="20%"><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
+		  print "</tr>\n";
+		  $i++;
 		}
-	      else
-		{
-		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
-		}
-	      /*
-	       * Contact pour cette action
-	       *
-	       */
-	      if ($obj->fk_contact)
-		{
-		  $contact = new Contact($db);
-		  $contact->fetch($obj->fk_contact);
-		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.$contact->fullname.'</a></td>';
-		}
-	      else
-		{
-		  print '<td width="40%">&nbsp;</td>';
-		}
-	      /*
-	       */
-	      print '<td width="20%"><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
-	      print "</tr>\n";
-	      $i++;
-	    }
-	  print "</table>";
-	  
+	      print "</table>";
+	      print "</td></tr></table>";
+	    }	  
 	  $db->free();
 	}
       else
 	{
 	  print $db->error();
 	}
-      print "</td></tr></table>";
+
       /*
        *
        * Notes sur la societe
