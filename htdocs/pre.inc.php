@@ -59,8 +59,10 @@ function llxHeader($head = "") {
       $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php",$langs->trans("Prospects"));
       $menu->add_submenu(DOL_URL_ROOT."/comm/mailing.php","Mailing");
 			
-      if ($user->rights->propale->lire)
-	$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
+      if ($user->rights->propale->lire) {
+	    $langs->load("propal");
+	    $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
+      }
     }
 
   if ($conf->compta->enabled ) 
