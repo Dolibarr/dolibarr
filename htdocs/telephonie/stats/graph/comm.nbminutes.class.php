@@ -99,7 +99,7 @@ class GraphCommNbMinutes extends GraphBar{
 	    $row = $this->db->fetch_row();	
 	    
 	    $this->labels[$i] = substr($row[0],4,2) . '/'.substr($row[0],2,2);
-	    $this->datas[$i] = $row[1];
+	    $this->datas[$i] = ceil($row[1] / 60);
 	    
 	    $i++;
 	  }	

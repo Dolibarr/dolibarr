@@ -75,7 +75,7 @@ class GraphCa extends GraphBrouzouf
       {
 	$num = $this->db->num_rows();
 	$i = 0;
-	$j = -1;
+
 	$labels = array();
 	$cf = array();
 	$cv = array();
