@@ -583,7 +583,11 @@ function dolibarr_print_error($db='',$msg='')
   }
   dolibarr_syslog("Error $syslog");
 
-  exit;
+  /* Commentée voir mail dans la Mailing liste.
+
+   exit;
+
+  */
 }
 
 /*!
