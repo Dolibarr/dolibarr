@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -23,10 +23,10 @@
  */
 
 /**
-    \file       htdocs/comm/contact.php
-    \ingroup    commercial
-    \brief      Liste des contacts
-    \version    $Revision$
+   \file       htdocs/comm/contact.php
+   \ingroup    commercial
+   \brief      Liste des contacts
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -39,7 +39,7 @@ $user->getrights('commande');
 $user->getrights('projet');
 
 
-llxHeader();
+llxHeader('','Contacts Clients');
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
@@ -59,9 +59,6 @@ if ($user->societe_id > 0)
 }
 
 
-
-
-
 if ($sortorder == "")
 {
   $sortorder="ASC";
@@ -76,19 +73,21 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 
-if ($type == "c") {
+if ($type == "c")
+{
   $label = " clients";
   $urlfiche="fiche.php";
 }
-if ($type == "p") {
+if ($type == "p")
+{
   $label = " prospects";
   $urlfiche="prospect/fiche.php";
 }
-if ($type == "f") {
+if ($type == "f")
+{
   $label = " fournisseurs";
   $urlfiche="fiche.php";
 }
-
 
 /*
  *
@@ -97,28 +96,41 @@ if ($type == "f") {
  *
  */
 
-$sql = "SELECT s.idp, s.nom,  st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."socpeople as p, ".MAIN_DB_PREFIX."c_stcomm as st";
+$sql = "SELECT s.idp, s.nom,  st.libelle as stcomm";
+$sql .= ", p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " , ".MAIN_DB_PREFIX."socpeople as p";
+$sql .= " , ".MAIN_DB_PREFIX."c_stcomm as st";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
 
-if ($type == "c") {
-  $sql .= " AND s.client = 1";
-}
-if ($type == "p") {
-  $sql .= " AND s.client = 2";
-}
-if ($type == "f") {
-  $sql .= " AND s.fournisseur = 1";
-}
+if ($type == "c") $sql .= " AND s.client = 1";
+if ($type == "p") $sql .= " AND s.client = 2";
+if ($type == "f") $sql .= " AND s.fournisseur = 1";
 
 
-if (strlen($stcomm)) {
+if (strlen($stcomm))
+{
   $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
 if (strlen($begin)) // filtre sur la premiere lettre du nom
 {
   $sql .= " AND upper(p.name) like '$begin%'";
+}
+
+if (trim($_GET["search_nom"]))
+{
+  $sql .= " AND p.name like '%".trim($_GET["search_nom"])."%'";
+}
+
+if (trim($_GET["search_prenom"]))
+{
+  $sql .= " AND p.firstname like '%".trim($_GET["search_prenom"])."%'";
+}
+
+if (trim($_GET["search_societe"]))
+{
+  $sql .= " AND s.nom like '%".trim($_GET["search_societe"])."%'";
 }
 
 if ($_GET[contactname]) // acces a partir du module de recherche
@@ -132,7 +144,7 @@ if ($socid) {
   $sql .= " AND s.idp = $socid";
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result) 
@@ -146,9 +158,20 @@ if ($result)
   print_liste_field_titre($langs->trans("Lastname"),"contact.php","lower(p.name)", $begin,"&amp;type=$type");
   print_liste_field_titre($langs->trans("Firstname"),"contact.php","lower(p.firstname)", $begin,"&amp;type=$type");
   print_liste_field_titre($langs->trans("Company"),"contact.php","lower(s.nom)", $begin,"&amp;type=$type");
-  print '<td>'.$langs->trans("Lastname").'</td>';
+  print '<td>'.$langs->trans("Email").'</td>';
   print '<td>'.$langs->trans("Phone").'</td>';
   print "</tr>\n";
+
+  print '<form action="contact.php?type='.$_GET["type"].'" method="GET">';
+  print '<tr class="liste_titre">';
+  print '<td><input name="search_nom" size="12" value="'.$_GET["search_nom"].'"></td>';
+  print '<td><input name="search_prenom" size="12"  value="'.$_GET["search_prenom"].'"></td>';
+  print '<td><input name="search_societe" size="12"  value="'.$_GET["search_societe"].'"></td>';
+  print '<td>&nbsp;</td>';
+  print '<td><input type="submit"</td>';
+  print "</tr>\n";
+  print '</form>';
+
   $var=True;
   $i = 0;
   while ($i < min($num,$limit))
