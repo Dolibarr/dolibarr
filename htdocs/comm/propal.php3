@@ -275,7 +275,7 @@ if ($propalid)
 	    {
 	      $projet = new Project($db);
 	      $projet->fetch($obj->fk_projet); 
-	      print '<tr><td>Projet</td><td colspan="1">';
+	      print '<tr><td>Projet</td><td colspan="3">';
 	      print '<a href="projet/fiche.php3?id='.$projet->id.'">';
 	      print $projet->title.'</a></td></tr>';
 	    }
