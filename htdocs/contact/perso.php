@@ -84,7 +84,7 @@ $head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Info");
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $contact->firstname.' '.$contact->name);
+dolibarr_fiche_head($head, $hselected, $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
 
 
 if ($_GET["action"] == 'edit') 
@@ -109,7 +109,7 @@ if ($_GET["action"] == 'edit')
 
   $html = new Form($db);
 
-  print '<tr><td>Date de naissance</td><td>';
+  print '<tr><td>'.$langs->trans("Birthday").'</td><td>';
   if ($contact->birthday && $contact->birthday > 0) { 
     print $html->select_date($contact->birthday,'birthday',0,0,0);
   } else {
@@ -117,7 +117,7 @@ if ($_GET["action"] == 'edit')
   }
   print '</td>';
 
-  print '<td>Alerte : ';
+  print '<td>'.$langs->trans("Alert").': ';
   if ($contact->birthday_alert)
     {
       print '<input type="checkbox" name="birthday_alert" checked></td>';
@@ -150,7 +150,7 @@ else
     }
 
   if ($contact->birthday && $contact->birthday > 0) {
-    print 'Date de naissance : '.dolibarr_print_date($contact->birthday);
+    print $langs->trans("Birthdate").' : '.dolibarr_print_date($contact->birthday);
 
     if ($contact->birthday_alert)
       print ' (alerte anniversaire active)<br>';
@@ -158,7 +158,7 @@ else
       print ' (alerte anniversaire inactive)<br>';
   }
   else {
-    print 'Date de naissance : '.$langs->trans("Unknown")."<br>";
+    print $langs->trans("Birthday").' : '.$langs->trans("Unknown")."<br>";
   }
   
   print "<br>";

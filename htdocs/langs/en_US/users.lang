@@ -41,3 +41,4 @@ ShowUser=Show user
 NonAffectedUsers=Non affected users
 UserModified=User modified successfully
 PhotoFile=Fichier photo
+UserWithDolibarrAccess=User with Dolibarr access

@@ -58,7 +58,7 @@ $head[$h][1] = $langs->trans("Info");
 $hselected=$h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $contact->firstname.' '.$contact->name);
+dolibarr_fiche_head($head, $hselected, $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
 
 /*
  * Visualisation de la fiche

@@ -34,6 +34,7 @@ require_once("../contact.class.php");
 require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
 $langs->load("companies");
+$langs->load("users");
 
 $error = array();
 
@@ -180,7 +181,7 @@ if ($_GET["id"] > 0)
   $head[$h][1] = $langs->trans("Info");
   $h++;
   
-  dolibarr_fiche_head($head, $hselected, $contact->firstname.' '.$contact->name);
+  dolibarr_fiche_head($head, $hselected, $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
 }
 
 
@@ -261,7 +262,9 @@ if ($_GET["action"] == 'create')
 
   print '<tr><td>'.$langs->trans("Note").'</td><td colspan="5"><textarea name="note" cols="60" rows="3"></textarea></td></tr>';
 
-  print '<tr><td>Contact facturation</td><td colspan="5"><select name="facturation"><option value="0">Non<option value="1">Oui</select></td></tr>';
+  print '<tr><td>Contact facturation</td><td colspan="5">';
+  print $form->selectyesno("facturation",$contact->facturation);
+  print '</td></tr>';
 
   print '<tr><td align="center" colspan="6"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
   print "</table><br>";
@@ -320,7 +323,9 @@ elseif ($_GET["action"] == 'edit')
   print nl2br($contact->note);
   print '</textarea></td></tr>';
 
-  print '<tr><td>Contact facturation</td><td colspan="5"><select name="facturation"><option value="0">Non<option value="1">Oui</select></td></tr>';
+  print '<tr><td>Contact facturation</td><td colspan="5">';
+  print $form->selectyesno("facturation");
+  print '</td></tr>';
 
   print '<tr><td colspan="6" align="center"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
   print "</table><br>";
@@ -382,15 +387,15 @@ else
   
   if ($contact->address || $contact->ville)
     {
-      print 'Adresse : '.$contact->address ."<br>";
-      print 'Adresse : '.$contact->cp . " ".$contact->ville ."<br>";
+      print 'Adresse :<br>'.$contact->address ."<br>";
+      print $contact->cp . " ".$contact->ville ."<br>";
     }
 
   if ($contact->jabberid)
     print 'Jabber : '.$contact->jabberid ."<br>";
   
   if($contact->user_id)
-    print 'Utilisateur avec accés : <a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$contact->user_id.'">Fiche utilisateur</a><br>';
+    print $langs->trans("UserWithDolibarrAccess").': <a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$contact->user_id.'">'.img_object($langs->trans("ShowUser"),"user").' '.$langs->trans("UserCard").'</a><br>';
   
   print '</td><td valign="top">';
   
