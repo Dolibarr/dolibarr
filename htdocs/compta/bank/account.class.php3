@@ -25,6 +25,7 @@ class Account {
   var $bank;
   var $label;
   var $number;
+  var $courant;
 
   Function Account($DB, $rowid=0) {
     global $config;
@@ -37,7 +38,7 @@ class Account {
 
   Function fetch($id) {
     $this->id = $id; 
-    $sql = "SELECT rowid, label, bank, number FROM llx_bank_account";
+    $sql = "SELECT rowid, label, bank, number, courant FROM llx_bank_account";
     $sql .= " WHERE rowid  = ".$id;
 
     $result = $this->db->query($sql);
@@ -49,6 +50,7 @@ class Account {
 	$this->bank = $obj->bank;
 	$this->label = $obj->label;
 	$this->number = $obj->number;
+	$this->courant = $obj->courant;
       }
       $this->db->free();
     }

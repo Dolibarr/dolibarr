@@ -63,18 +63,18 @@ $total = 0;
 for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
   $acc = new Account($db);
   $acc->fetch($accounts[$i]);
-
-  $solde = $acc->solde();
+  if ($acc->courant) {
+    $solde = $acc->solde();
   
-  print "<tr><td>";
-  print '<a href="account.php3?account='.$acc->id.'">'.$acc->label.'</a>';
-
-  print "</td><td>$acc->bank</td><td>$acc->number</td>";
-
-  print '</td><td align="right">'.price($solde).'</td><td>&nbsp;</td></tr>';
+    print "<tr><td>";
+    print '<a href="account.php3?account='.$acc->id.'">'.$acc->label.'</a>';
+    
+    print "</td><td>$acc->bank</td><td>$acc->number</td>";
+    
+    print '</td><td align="right">'.price($solde).'</td><td>&nbsp;</td></tr>';
   
-  $total += $solde;
-
+    $total += $solde;
+  }
 }
 
 print '<tr><td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>euros HT</td></tr>';
@@ -105,6 +105,34 @@ print '<tr><td colspan="3">URSSAF</td><td align="right">'.price($chs_a_payer).'<
  */
 
 print '<tr><td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>euros HT</td></tr>';
+
+/*
+ *
+ *
+ *
+ */
+
+print '<tr class="liste_titre"><td colspan="5">Comptes placements</td></tr>';
+
+for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
+  $acc = new Account($db);
+  $acc->fetch($accounts[$i]);
+
+  if (!$acc->courant) {
+
+    $solde = $acc->solde();
+  
+    print "<tr><td>";
+    print '<a href="account.php3?account='.$acc->id.'">'.$acc->label.'</a>';
+    
+    print "</td><td>$acc->bank</td><td>$acc->number</td>";
+    
+    print '</td><td align="right">'.price($solde).'</td><td>&nbsp;</td></tr>';
+    
+    $total += $solde;
+  }
+}
+
 
 print "</table>";
 
