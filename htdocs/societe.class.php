@@ -78,6 +78,11 @@ class Societe {
 	$this->nom = "VALEUR MANQUANTE";
       }
 
+    if (strlen(trim($this->capital)) == 0)
+      {
+	$this->capital = 0;
+      }
+
     $sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
     $sql .= " SET nom = '" . trim($this->nom) ."'";
     $sql .= ",address = '" . trim($this->adresse) ."'";
