@@ -26,5 +26,6 @@ create table llx_expedition_methode
   tms              timestamp,
   code             varchar(30) NOT NULL,
   libelle          varchar(50) NOT NULL,
+  description      text,
   statut           tinyint default 0
 );
