@@ -5,6 +5,7 @@
 -- sans AUCUNE erreur ni warning
 -- ;
 
+DELETE from llx_const where name like '%_OUTPUT_URL';
 
 alter table llx_boxes add box_order smallint default 0 NOT NULL;
 
