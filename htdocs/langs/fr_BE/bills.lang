@@ -3,6 +3,7 @@ Bill=Facture
 Bills=Factures
 ClassifyPayed=Classer 'Payée'
 ClassifyCanceled=Classer 'Abandonnée'
+CreateBill=Créer Facture
 Send=Envoyer
 SendRemind=Envoyer rappel
 DoPaiement=Emettre paiement
