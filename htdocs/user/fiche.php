@@ -307,6 +307,13 @@ else
             $h++;
         }
 
+        if ($conf->clicktodial->enabled)
+        {
+            $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$fuser->id;
+            $head[$h][1] = $langs->trans("ClickToDial");
+            $h++;
+        }
+
         dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);
 
 

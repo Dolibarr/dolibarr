@@ -59,7 +59,7 @@ if ($sortfield) { $sql.=" ORDER BY $sortfield $sortorder"; }
 $result = $db->query($sql);
 if ($result)
 {
-    $num = $db->num_rows();
+    $num = $db->num_rows($result);
     $i = 0;
 
     print "<br>";
@@ -75,7 +75,7 @@ if ($result)
     $var=True;
     while ($i < $num)
     {
-        $obj = $db->fetch_object( $i);
+        $obj = $db->fetch_object($result);
         $var=!$var;
 
         print "<tr $bc[$var]>";
@@ -95,7 +95,7 @@ if ($result)
         $i++;
     }
     print "</table>";
-    $db->free();
+    $db->free($result);
 }
 else
 {

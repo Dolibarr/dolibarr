@@ -76,12 +76,9 @@ if ($_GET["id"])
   if ($_GET["action"] != 'perms') { $hselected=$h; }
   $h++;
   
-  if ($user->admin)
-    {
-    $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?action=perms&amp;id='.$fuser->id;
-    $head[$h][1] = $langs->trans("UserRights");
-    $h++;
-    }
+  $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
+  $head[$h][1] = $langs->trans("UserRights");
+  $h++;
   
   if ($conf->bookmark4u->enabled)
     {
@@ -98,7 +95,7 @@ if ($_GET["id"])
     $h++;
     }
     
-  dolibarr_fiche_head($head, $hselected, $langs->trans("User")." : ".$fuser->fullname);
+  dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);
   
   /*
    * Fiche en mode visu
