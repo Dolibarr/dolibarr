@@ -29,31 +29,31 @@ class infoBox
     $bcx[0] = 'class="box_pair"';
     $bcx[1] = 'class="box_impair"';
 
-    print '<table cellpadding="2" cellspacing="0" border="0">';
+    print '<table width="100%" cellpadding="3" cellspacing="0" border="0">';
 
     print '<tr class="box_titre"><td>'.$head[0]['text']."</td></tr>";
 
     for ($i=0, $n=sizeof($contents); $i<$n; $i++)
       {
 	$var=!$var;
-	if (strlen($contents[$i]['url']) > 0)
+	print '<tr '.$bcx[$var].'>';
+
+	for ($j=0, $m=sizeof($contents[$i]); $j<$m; $j++)
 	  {
-	    print '<tr '.$bcx[$var].'><td><a href="'.$contents[$i]['url'].'">';
-	    print $contents[$i]['text'] . "</a></td></tr>";
+	    if (strlen($contents[$i][$j]['url']) > 0)
+	      {
+		print '<td><a href="'.$contents[$i]['url'].'">';
+		print $contents[$i][$j]['text'] . "</a></td>";
+	      }
+	    else
+	      {
+		print "<td>".$contents[$i][$j]['text'] . "</td>";
+	      }
 	  }
-	else
-	  {
-	    print "<tr $bcx[$var]><td>".$contents[$i]['text'] . "</td></tr>";
-	  }
-	    
+	print '</tr>';
       }
 
     print "</table>";
-
   }
-
-
 }
-
-
 ?>
