@@ -21,7 +21,8 @@
  */
 require("../main.inc.php3");
 
-function llxHeader($head = "", $urlp = "") {
+function llxHeader($head = "", $urlp = "")
+{
   global $user, $conf;
 
   /*
@@ -32,20 +33,11 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/product/index.php3", "Produits");
+  $menu->add(DOL_URL_ROOT."/product/index.php3", "Produits");
 
-  $menu->add("/service/index.php3", "Services");
+  $menu->add(DOL_URL_ROOT."/service/index.php3", "Services");
 
-  $menu->add_submenu("/service/fiche.php3?action=create", "Nouveau");
-
-  $menu->add("/comm/index.php3", "Clients");
-
-  $menu->add("/fourn/index.php3", "Fournisseurs");
-
-
-  $menu->add_submenu("/soc.php3?&action=create","Nouvelle sociétée");
-  $menu->add_submenu("contact.php3","Contacts");
-
+  $menu->add_submenu(DOL_URL_ROOT."/service/fiche.php3?action=create", "Nouveau");
 
   left_menu($menu->liste);
 }
