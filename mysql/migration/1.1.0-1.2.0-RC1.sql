@@ -155,6 +155,8 @@ insert into llx_c_forme_juridique (code, libelle) values (99,'Autre personne mor
 
 update llx_paiement set author = null where author = '';
 
+update llx_const set visible=0 where name like 'ADHERENT%';
+
 drop table llx_c_pays;
 
 create table llx_c_pays
