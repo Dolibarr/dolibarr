@@ -644,9 +644,10 @@ else
 	 */
 	if ($action == 'presend')
 	  {
-	    $replytoname = "R. Quiedeville"; 
+	    $replytoname = $user->fullname;
 	    $from_name = $replytoname;
-	    $replytomail = "rq@quiedeville.org"; 
+
+	    $replytomail = $user->email;
 	    $from_mail = $replytomail;
 	    
 	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$facid&action=send\">\n";
