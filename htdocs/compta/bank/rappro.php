@@ -158,7 +158,7 @@ if ($result)
 	}
 
       print "</tr>";
-      print "<tr $bc[$var]><td>&nbsp;</td><td>".$objp->fk_type." ".$objp->num_chq."&nbsp;</td><td colspan=\"6\">";
+      print "<tr $bc[$var]><td>&nbsp;</td><td>".$objp->fk_type.($objp->num_chq?" ".$objp->num_chq:"")."</td><td colspan=\"6\">";
       print "<select name=\"cat1\">$options";
       
       print "</select>";
