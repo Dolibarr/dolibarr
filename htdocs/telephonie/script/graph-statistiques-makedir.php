@@ -66,6 +66,26 @@ for ($j = 0 ; $j < 10 ; $j++)
   $i++;
 }
 
+/*
+ *
+ */
+
+for ($j = 0 ; $j < 10 ; $j++)
+{
+  $dirs[$i] = DOL_DATA_ROOT."/graph/".$j."/telephonie/client/";
+  $i++;
+  $dirs[$i] = DOL_DATA_ROOT."/graph/".$j."/telephonie/contrat/";
+  $i++;
+  $dirs[$i] = DOL_DATA_ROOT."/graph/".$j."/telephonie/ligne/";
+  $i++;
+  $dirs[$i] = DOL_DATA_ROOT."/graph/".$j."/telephonie/commercial/";
+  $i++;
+}
+
+/*
+ *
+ */
+
 $sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe";
 
 if ($db->query($sql))
@@ -120,13 +140,20 @@ for ($i = 0 ; $i < 10 ; $i++)
 
 function create_dir($dir)
 {
-  if (! file_exists($dir))
+  if (file_exists(dirname($dir)))
     {
-      umask(0);
-      if (! @mkdir($dir, 0755))
+      if (! file_exists($dir))
 	{
-	  print  "Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+	  umask(0);
+	  if (! @mkdir($dir, 0755))
+	    {
+	      print  "Erreur: Le répertoire ".basename($dir)." n'existe pas et Dolibarr n'a pu le créer.";
+	    }
 	}
-    }	
+    }
+  else
+    {
+      create_dir(dirname($dir));
+    }
 }
 ?>
