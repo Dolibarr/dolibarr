@@ -97,6 +97,8 @@ create table llx_paiement_facture
 
 insert into llx_const(name, value, type, note) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document');
 
+update llx_societe set fk_forme_juridique=0 where fk_forme_juridique >= 54
+
 
 drop table llx_c_forme_juridique;
 
@@ -111,7 +113,7 @@ create table llx_c_forme_juridique
 )type=innodb;
 
 
-insert into llx_c_forme_juridique (rowid,fk_pays, code, libelle) values (0, 0, 0,'Non renseignée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (0, 0,'Non renseignée');
 
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,11,'Artisan Commerçant');
 insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,12,'Commerçant');

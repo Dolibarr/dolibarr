@@ -63,7 +63,7 @@ class Form {
                     else {
                         if ($pays == '' || $pays != $obj->libelle_pays) {
                             // Affiche la rupture
-                            print '<option value="-1">----- '.$obj->libelle_pays.' -----</option>';
+                            print '<option value="-1">----- '.$obj->libelle_pays." -----</option>\n";
                             $pays=$obj->libelle_pays;   
                         }
     
@@ -128,13 +128,13 @@ class Form {
    */
     Function select_forme_juridique($selected='')
     {
-        print '<select name="forme_juridique_id">';
+        print '<select name="forme_juridique_code">';
     
         // On recherche les formes juridiques actives des pays actifs
         $sql = "SELECT f.rowid, f.code as code , f.libelle as nom, f.active, p.libelle as libelle_pays, p.code as code_pays FROM llx_c_forme_juridique as f, llx_c_pays as p";
         $sql .= " WHERE f.fk_pays=p.rowid";
         $sql .= " AND f.active = 1 AND p.active = 1 ORDER BY code_pays, code ASC";
-    
+
         if ($this->db->query($sql))
         {
             $num = $this->db->num_rows();
@@ -151,17 +151,17 @@ class Form {
                     else {
                         if ($pays == '' || $pays != $obj->libelle_pays) {
                             // Affiche la rupture
-                            print '<option value="-1">----- '.$obj->libelle_pays.' -----</option>';
+                            print '<option value="-1">----- '.$obj->libelle_pays." -----</option>\n";
                             $pays=$obj->libelle_pays;   
                         }
     
-                        if ($selected > 0 && $selected == $obj->rowid)
+                        if ($selected > 0 && $selected == $obj->code)
                         {
-                            print '<option value="'.$obj->rowid.'" selected>['.$obj->code.'] '.$obj->nom.'</option>';
+                            print '<option value="'.$obj->code.'" selected>['.$obj->code.'] '.$obj->nom.'</option>';
                         }
                         else
                         {
-                            print '<option value="'.$obj->rowid.'">['.$obj->code.'] '.$obj->nom.'</option>';
+                            print '<option value="'.$obj->code.'">['.$obj->code.'] '.$obj->nom.'</option>';
                         }
                     }
                     $i++;

@@ -51,7 +51,7 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
   $soc->capital        = $_POST["capital"];
   $soc->tva_intra      = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
 
-  $soc->forme_juridique_id  = $_POST["forme_juridique_id"];
+  $soc->forme_juridique_code= $_POST["forme_juridique_code"];
   $soc->effectif_id         = $_POST["effectif_id"];
   $soc->client              = $_POST["client"];
   $soc->fournisseur         = $_POST["fournisseur"];
@@ -111,7 +111,7 @@ if ($action == 'create')
   print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
   
   print '<tr><td>Forme juridique</td><td colspan="3">';
-  print $form->select_forme_juridique($soc->forme_juridique_id);
+  print $form->select_forme_juridique($soc->forme_juridique_code);
   print '</td></tr>';
   
   print '<tr><td>Effectif</td><td colspan="3">';
@@ -184,7 +184,7 @@ elseif ($action == 'edit')
 
 
       print '<tr><td>Forme juridique</td><td colspan="3">';
-      print $form->select_forme_juridique($soc->forme_juridique_id);
+      print $form->select_forme_juridique($soc->forme_juridique_code);
       print '</td></tr>';
 
       print '<tr><td>Effectif</td><td colspan="3">';
