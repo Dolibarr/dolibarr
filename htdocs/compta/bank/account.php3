@@ -187,7 +187,7 @@ if ($account) {
 	  if ($objp->num_chq) {
 	    print "<td>CHQ $objp->num_chq - $objp->label</td>";
 	  } else {
-	    print "<td>$objp->label</td>";
+	    print "<td>$objp->label&nbsp;</td>";
 	  }
 
 	  if ($objp->amount < 0) {
