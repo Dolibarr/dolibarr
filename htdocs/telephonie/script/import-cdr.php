@@ -25,7 +25,7 @@ require ("../../master.inc.php");
 
 $opt = getopt("file");
 
-$file = $opt["file"];
+$file = $opt[file];
 
 if (strlen($file) == 0)
 {
