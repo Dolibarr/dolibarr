@@ -53,12 +53,35 @@ class FournisseurTelephonie {
    *
    *
    */
+  function update()
+  {
+    $res = 0;
+
+    $sql = "UPDATE  ".MAIN_DB_PREFIX."telephonie_fournisseur";
+    $sql .= " SET ";
+    $sql .= " email_commande = '".$this->email_commande."'";
+    $sql .= ", num_client = '".$this->num_client."'";
+    $sql .= ", class_commande = '".$this->methode_commande."'";
+
+    $sql .= " WHERE rowid = ".$this->id;
+
+    if (! $this->db->query($sql) )
+      {
+	$res = -1;
+      }
+    return $res;
+  }
+  /**
+   *
+   *
+   */
   function fetch($id)
     {
       $this->id = $id;
 
       $sql = "SELECT f.rowid, f.nom, f.email_commande, f.commande_active";
       $sql .= ", f.class_commande";
+      $sql .= ", f.num_client";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
       $sql .= " WHERE f.rowid = ".$this->id;
 	  
@@ -69,6 +92,7 @@ class FournisseurTelephonie {
 	      $obj = $this->db->fetch_object(0);
 
 	      $this->nom             = stripslashes($obj->nom);
+	      $this->num_client      = $obj->num_client;
 	      $this->email_commande  = $obj->email_commande;
 	      $this->commande_enable = $obj->commande_active;
 	      $this->class_commande  = $obj->class_commande;
