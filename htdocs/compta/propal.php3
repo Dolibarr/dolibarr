@@ -378,7 +378,7 @@ if ($propalid)
       $sql .= " AND date_format(p.datep, '%Y') = $year";
     }
   
-  $sql .= " ORDER BY $sortfield $sortorder ";
+  $sql .= " ORDER BY $sortfield $sortorder, p.rowid DESC ";
   $sql .= $db->plimit($limit + 1,$offset);
 
   if ( $db->query($sql) )
@@ -390,11 +390,11 @@ if ($propalid)
       $i = 0;
       print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
       print '<TR class="liste_titre">';
-      print_liste_field_titre_new ("Réf",$PHP_SELF,"p.ref","","&year=$year",'',$sortfield);
-      print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","","",'',$sortfield);
-      print_liste_field_titre_new ("Date",$PHP_SELF,"p.datep","","",'align="right" colspan="2"',$sortfield);
-      print_liste_field_titre_new ("Prix",$PHP_SELF,"p.price","","",'align="right"',$sortfield);
-      print_liste_field_titre_new ("Statut",$PHP_SELF,"p.fk_statut","","",'align="center"',$sortfield);
+      print_liste_field_titre_new ("Réf",$PHP_SELF,"p.ref","","&year=$year&viewstatut=$viewstatut",'',$sortfield);
+      print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","&viewstatut=$viewstatut","",'',$sortfield);
+      print_liste_field_titre_new ("Date",$PHP_SELF,"p.datep","&viewstatut=$viewstatut","",'align="right" colspan="2"',$sortfield);
+      print_liste_field_titre_new ("Prix",$PHP_SELF,"p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
+      print_liste_field_titre_new ("Statut",$PHP_SELF,"p.fk_statut","&viewstatut=$viewstatut","",'align="center"',$sortfield);
       print "</tr>\n";
 
       while ($i < min($num, $limit))
