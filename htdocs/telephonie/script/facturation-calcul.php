@@ -105,6 +105,27 @@ else
   dolibarr_syslog("Erreur ".$error);
 }
 
+/**********************************************************
+*
+* Création d'un batch de facturation
+*
+***********************************************************/
+
+$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_facturation_batch";
+$sql .= " (date_batch) VALUES (now())";
+$resql = $db->query($sql);
+  
+if ( $resql )
+{
+  $batch_id = $db->last_insert_id(MAIN_DB_PREFIX."telephonie_facturation_batch");
+
+  dolibarr_syslog("Batch ID ".$batch_id);
+}
+else
+{
+  $error = 20;
+  dolibarr_syslog("Erreur ".$error);
+}
 
 /**
  *
@@ -215,10 +236,10 @@ if (!$error)
 		}
 	      
 	      $sql = "INSERT INTO llx_telephonie_facture";
-	      $sql .= " (fk_ligne, ligne, date, isfacturable)";
+	      $sql .= " (fk_ligne, ligne, date, isfacturable, fk_batch)";
 	      $sql .= " VALUES (".$ligne->id.",";
 	      $sql .= " '$ligne->numero','".$year."-".$month."-01'";
-	      $sql .= ", '$facturable')";
+	      $sql .= ", '$facturable',".$batch_id.")";
 	      
 	      if ($db->query($sql))
 		{
