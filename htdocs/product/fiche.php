@@ -96,10 +96,14 @@ if ($HTTP_POST_VARS["action"] == 'add_fourn' && $cancel <> 'Annuler')
   $product = new Product($db);
   if( $product->fetch($id) )
     {
-      if ($product->add_fournisseur($user, $HTTP_POST_VARS["id_fourn"], $HTTP_POST_VARS["ref_fourn"]))
+      if ($product->add_fournisseur($user, $HTTP_POST_VARS["id_fourn"], $HTTP_POST_VARS["ref_fourn"]) > 0)
 	{
 	  $action = '';
 	  $mesg = 'Founisseur ajouté';
+	}
+      else
+	{
+	  $action = '';
 	}
     }
 
