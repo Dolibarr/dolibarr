@@ -55,6 +55,17 @@ if ($HTTP_POST_VARS["action"] == 'add')
     }
 }
 
+if ($action == "delete")
+{
+  $sql = "DELETE FROM llx_notify_def";
+  $sql .= " WHERE rowid = $actid";
+
+  if ($db->query($sql))
+    {
+      // TODO ajouter une sécu pour la suppression 
+    }
+}
+
 /*
  *
  *
