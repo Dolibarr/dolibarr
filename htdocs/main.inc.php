@@ -266,15 +266,14 @@ function left_menu($menu_array, $help_url='', $form_search='')
     }
   
   // Zone de recherche supplémentaire
-  if (strlen($form_search) > 0)
+  if ($form_search)
     {
       print $form_search;
     }
   
-  // Lien vers l'aide en ligne
-  if (strlen($help_url) > 0)
+  // Lien vers l'aide en ligne (uniquement si langue fr_FR)
+  if ($help_url && $langs->defaultlang == "fr_FR")
     {
-
       define('MAIN_AIDE_URL','http://www.dolibarr.com/wikidev/index.php');
       print '<div class="help"><a class="help" target="_blank" href="'.MAIN_AIDE_URL.'/'.$help_url.'">'.$langs->trans("Help").'</a></div>';
     }
