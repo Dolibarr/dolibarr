@@ -22,6 +22,7 @@
 
 require ($GLOBALS["DOCUMENT_ROOT"]."/conf/conf.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/lib/mysql.lib.php3");
+require ($GLOBALS["DOCUMENT_ROOT"]."/lib/product.lib.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/user.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/lib/functions.inc.php3");
 
