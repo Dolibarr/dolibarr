@@ -156,3 +156,8 @@ td.valid
   background: pink;
   font-weight: bold;
   }
+
+td.small
+{ 
+  font-size: 0.8em;
+   }
