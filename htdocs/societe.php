@@ -118,7 +118,10 @@ if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
 $title=$langs->trans("ListOfCompanies");
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id";
+$sql .= ", s.siren";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
+$sql .= " WHERE s.fk_stcomm = st.id";
 
 if ($user->societe_id > 0)
 {
@@ -142,6 +145,10 @@ if ($search_ville) {
   $sql .= " AND s.ville LIKE '%".$search_ville."%'";
 }
 
+if ($_POST["search_siren"]) {
+  $sql .= " AND s.siren LIKE '%".$_POST["search_siren"]."%'";
+}
+
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
@@ -158,7 +165,10 @@ if ($result)
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"societe.php","s.nom", $params,"&search_nom=$search_nom&search_ville=$search_ville","",$sortfield);
-  print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville",$params,"&search_nom=$search_nom&search_ville=$search_ville",'width="25%"',$sortfield);
+  print_liste_field_titre($langs->trans("Town"),"societe.php","s.ville",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield);
+
+  print_liste_field_titre($langs->trans("SIREN"),"societe.php","s.siren",$params,"&search_nom=$search_nom&search_ville=$search_ville",'',$sortfield);
+
   print '<td colspan="2" align="center">&nbsp;</td>';
   print "</tr>\n";
 
@@ -169,9 +179,12 @@ if ($result)
   print '<tr class="liste_titre">';
   print '<td valign="right">';
   print '<input class="fat" type="text" name="search_nom" value="'.stripslashes($search_nom).'">';
-  print '</td>';
-  print '<td valign="right">';
+  print '</td><td valign="right">';
   print '<input class="fat" type="text" name="search_ville" value="'.stripslashes($search_ville).'">';
+  print '</td><td valign="right">';
+  print '<input class="fat" size="10" type="text" name="search_siren" value="'.$_POST["search_siren"].'">';
+
+
   print '</td><td colspan="2" align="center">';
   print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
   print '&nbsp; <input type="submit" class="button" name="button_removefilter" value="'.$langs->trans("RemoveFilter").'">';
@@ -190,6 +203,7 @@ if ($result)
       print img_object($langs->trans("ShowCompany"),"company");
       print "</a>&nbsp;<a href=\"soc.php?socid=$obj->idp\">".stripslashes($obj->nom)."</a></td>\n";
       print "<td>".$obj->ville."&nbsp;</td>\n";
+      print "<td>".$obj->siren."&nbsp;</td>\n";
       print '<td align="center">';
       if ($obj->client==1)
 	{
