@@ -106,7 +106,7 @@ if ($account > 0)
   if ($result)
     {
       $var=True;  
-      $num = $db->num_rows();
+      $num = $db->num_rows($result);
       $i = 0;
       $options = "<option value=\"0\" SELECTED></option>";
       while ($i < $num)
@@ -114,14 +114,14 @@ if ($account > 0)
 	  $obj = $db->fetch_object($result);
 	  $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
 	}
-      $db->free();
+      $db->free($result);
     }
 
   /*
    *
    *
    */
-  $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."bank as b";
+  $sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."bank as b";
   $sql .= " WHERE b.fk_account=".$acct->id;
   $sql_rech="";
   if ($_POST["req_desc"]) 
@@ -137,11 +137,12 @@ if ($account > 0)
   if ($_POST["req_credit"])  $sql_rech.=" AND amount = ".$_POST["req_credit"];
 
   $sql .= $sql_rech;
-  if ( $db->query($sql) )
+  $result=$db->query($sql);
+  if ($result)
     {
-      $nbline = $db->result (0, 0);
+      $obj = $db->fetch_object($result);
+      $nbline = $obj->nb;
       $total_lines = $nbline;
-      $db->free();
     
       if ($nbline > $viewline )
 	{
@@ -151,6 +152,11 @@ if ($account > 0)
 	{
 	  $limit = $viewline;
 	}
+	
+      $db->free($result);
+    }
+    else {
+        dolibarr_print_error($db);
     }
 
   if ($page > 0 && $mode_search == 0)
@@ -256,7 +262,7 @@ if ($account > 0)
   $result = $db->query($sql);
   if ($result)
     {
-      _print_lines($db, $sql, $acct);
+      _print_lines($db, $result, $sql, $acct);
       $db->free($result);
     }
 
@@ -317,99 +323,98 @@ llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</e
 /*
  *
  */
-function _print_lines($db,$sql,$acct)
+function _print_lines($db,$result,$sql,$acct)
 {
-  global $bc, $nbline, $viewline, $user, $page;
-  $var=True;  
-  $num = $db->num_rows();
-  $i = 0; $total = 0;
-  $sep = 0;
-      
-      while ($i < $num)
-	{
-	  $objp = $db->fetch_object();
-	  $total = $total + $objp->amount;
-	  $time = time();
-	  if ($i >= ($nbline - $viewline))
-	    {
-	      $var=!$var;
-
-	      if ($objp->do > $time && !$sep)
-		{
-		  $sep = 1 ;
-		  print "<tr><td align=\"right\" colspan=\"6\">&nbsp;</td>";
-		  print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td>";
-		  print "<td>&nbsp;</td>";
-		  print '</tr>';
-		}
-		  
-	      print "<tr $bc[$var]>";
-	      print "<td>".dolibarr_print_date($objp->do,"%d/%m/%y")."</td>\n";
-	      print "<td>".dolibarr_print_date($objp->dv,"%d/%m/%y")."</td>\n";
-	      print "<td>".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
-		  print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">$objp->label</a>";
-		  /*
-		   * Ajout les liens
-		   */
-		  $urls_line = $acct->get_url($objp->rowid);
-		  $numurl = sizeof($urls_line);
-		  $k = 0;
-		  while ($k < $numurl)
-		    {
-		      print ' <a href="'.$urls_line[$k][0].$urls_line[$k][1].'">'.$urls_line[$k][2].'</a>';
-		      $k++;
-		    }
-		  print '</td>';
-	      
-	      if ($objp->amount < 0)
-		{
-		  print "<td align=\"right\">".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
-		}
-	      else
-		{
-		  print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</td>\n";
-		}
-	      
-	      if ($action !='search')
-		{
-		  if ($total > 0)
-		    {
-		      print '<td align="right">'.price($total)."</td>\n";
-		    }
-		  else
-		    {
-		      print "<td align=\"right\"><b>".price($total)."</b></td>\n";
-		    }
-		}
-	      else
-		{
-		  print '<td align="right">-</td>';
-		}
-	      
-	      if ($objp->rappro)
-		{
-		  print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
-		}
-	      else
-		{
-		  if ($user->rights->banque->modifier)
-		    {
-		      print "<td align=\"center\"><a href=\"account.php?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id&amp;page=$page\">";
-		      print img_delete();
-		      print "</a></td>";
-		    }
-		  else
-		    {
-		      print "<td align=\"center\">&nbsp;</td>";
-		    }
-		}
-	      
-	      print "</tr>";
-	      
-	    }
-	  
-	  $i++;
-	}
+    global $bc, $nbline, $viewline, $user, $page;
+    $var=True;
+    $num = $db->num_rows($result);
+    $i = 0; $total = 0; $sep = 0;
+    
+    while ($i < $num)
+    {
+        $objp = $db->fetch_object($result);
+        $total = $total + $objp->amount;
+        $time = time();
+        if ($i >= ($nbline - $viewline))
+        {
+            $var=!$var;
+    
+            if ($objp->do > $time && !$sep)
+            {
+                $sep = 1 ;
+                print "<tr><td align=\"right\" colspan=\"6\">&nbsp;</td>";
+                print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td>";
+                print "<td>&nbsp;</td>";
+                print '</tr>';
+            }
+    
+            print "<tr $bc[$var]>";
+            print "<td>".dolibarr_print_date($objp->do,"%d/%m/%y")."</td>\n";
+            print "<td>".dolibarr_print_date($objp->dv,"%d/%m/%y")."</td>\n";
+            print "<td>".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
+            print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$acct->id\">$objp->label</a>";
+            /*
+             * Ajout les liens
+             */
+            $urls_line = $acct->get_url($objp->rowid);
+            $numurl = sizeof($urls_line);
+            $k = 0;
+            while ($k < $numurl)
+            {
+                print ' <a href="'.$urls_line[$k][0].$urls_line[$k][1].'">'.$urls_line[$k][2].'</a>';
+                $k++;
+            }
+            print '</td>';
+    
+            if ($objp->amount < 0)
+            {
+                print "<td align=\"right\">".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+            }
+            else
+            {
+                print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</td>\n";
+            }
+    
+            if ($action !='search')
+            {
+                if ($total > 0)
+                {
+                    print '<td align="right">'.price($total)."</td>\n";
+                }
+                else
+                {
+                    print "<td align=\"right\"><b>".price($total)."</b></td>\n";
+                }
+            }
+            else
+            {
+                print '<td align="right">-</td>';
+            }
+    
+            if ($objp->rappro)
+            {
+                print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a></td>";
+            }
+            else
+            {
+                if ($user->rights->banque->modifier)
+                {
+                    print "<td align=\"center\"><a href=\"account.php?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id&amp;page=$page\">";
+                    print img_delete();
+                    print "</a></td>";
+                }
+                else
+                {
+                    print "<td align=\"center\">&nbsp;</td>";
+                }
+            }
+    
+            print "</tr>";
+    
+        }
+    
+        $i++;
+    }
 
 }
 ?>
