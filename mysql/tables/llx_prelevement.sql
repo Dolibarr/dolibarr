@@ -28,6 +28,12 @@ create table llx_prelevement
   datec            datetime,           -- date de creation
   amount           real DEFAULT 0,     -- montant total du prelevement
   credite          smallint DEFAULT 0, -- indique si le prelevement a été credité
-  note             text
-
+  note             text,
+  date_trans       datetime,
+  method_trans     smallint,
+  fk_user_trans    integer,
+  date_credit      datetime,
+  fk_user_credit   integer,
+  
+  UNIQUE(ref)
 )type=innodb;
