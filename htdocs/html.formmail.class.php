@@ -90,6 +90,20 @@ class FormMail
 
 
   /*
+   *    \brief      Effectue les substitutions des mots clés par les données en fonction du tableau $this->substit
+   *    \param      chaine      chaine dans laquelle faire les substitutions
+   *    \return     string      chaine avec les substitutions effectuées
+   */
+  function make_substitutions($chaine)
+    {
+        foreach ($this->substit as $key=>$value) {
+            $chaine=ereg_replace($key,$value,$chaine);
+        }
+        return $chaine;
+    }
+
+
+  /*
    *    \brief  Affiche la partie de formulaire pour saisie d'un mail en fonction des propriétés
    */
   function show_form() {
@@ -165,6 +179,8 @@ class FormMail
     // Topic
     if ($this->withtopic)
     {
+        $this->withtopic=$this->make_substitutions($this->withtopic);
+
         print "<tr>";
         print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
         print "<td>";
@@ -197,11 +213,10 @@ class FormMail
         // \todo    A partir du type, proposer liste de messages dans table llx_models
         if ($this->param["models"]=='body') { $defaultmessage=$this->withbody; }
         if ($this->param["models"]=='facture_send')    { $defaultmessage="Veuillez trouver ci-joint la facture __FACREF__\n\nCordialement\n\n"; }
-        if ($this->param["models"]=='facture_relance') { $defaultmessage="Nous apportons à votre connaissance que la facture  __FACREF__ ne semble toujours pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n"; }
+        if ($this->param["models"]=='facture_relance') { $defaultmessage="Nous apportons à votre connaissance que la facture  __FACREF__ ne semble pas avoir été réglée. La voici donc, pour rappel, en pièce jointe.\n\nCordialement\n\n"; }
 
-        foreach ($this->substit as $key=>$value) {
-            $defaultmessage=ereg_replace($key,$value,$defaultmessage);
-        }
+        $defaultmessage=$this->make_substitutions($defaultmessage);
+        
         print "<tr>";
         print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
         print "<td>";

@@ -59,4 +59,5 @@ AlreadyPayed=Already payed
 RemainderToPay=Remainder to pay
 RemainderToTake=Remainder to take
 CreateDraft=Create draft
-
+SendBillRef=Send bill %s
+SendReminderBillRef=Send bill %s (reminder)

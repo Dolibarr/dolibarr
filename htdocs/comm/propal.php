@@ -802,7 +802,7 @@ if ($_GET["propalid"])
           $formmail->withfrom=1;
           $formmail->withto=ucfirst(strtolower($obj->firstname)) . " " .  ucfirst(strtolower($obj->name)) . " <$obj->email>";
           $formmail->withcc=1;
-          $formmail->withtopic=1;
+          $formmail->withtopic=$langs->trans("SendPropalRef","__PROPREF__");
           $formmail->withfile=1;
 	      $formmail->withbody=1;
           // Tableau des substitutions

@@ -1403,7 +1403,7 @@ else
           $formmail->withfrom=1;
           $formmail->withto=$liste;
           $formmail->withcc=1;
-          $formmail->withtopic=1;
+          $formmail->withtopic=$langs->trans("SendBillRef","__FACREF__");
           $formmail->withfile=1;
 	      $formmail->withbody=1;
           // Tableau des substitutions
@@ -1437,7 +1437,7 @@ else
           $formmail->withfrom=1;
           $formmail->withto=$liste;
           $formmail->withcc=1;
-          $formmail->withtopic=1;
+          $formmail->withtopic=$langs->trans("SendReminderBillRef","__FACREF__");
           $formmail->withfile=1;
 	      $formmail->withbody=1;
           // Tableau des substitutions
