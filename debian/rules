@@ -55,6 +55,9 @@ install: build
 
 	mkdir -p debian/dolibarr/usr/lib/dolibarr
 	install --mode=444 mysql/mysql.sql debian/dolibarr/usr/lib/dolibarr/mysql.sql
+	for i in count-dons.pl file-dons.pl ; do \
+		install --mode=755 scripts/$$i debian/dolibarr/usr/lib/dolibarr/$$i ; \
+	done
 
 # Build architecture-independent files here.
 binary-indep: build install
