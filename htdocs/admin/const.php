@@ -36,7 +36,7 @@ if ($HTTP_POST_VARS["action"] == 'update')
   $result = $db->query($sql);
 }
 
-$sql = "SELECT rowid, name, value FROM llx_const";
+$sql = "SELECT rowid, name, value, type, note FROM llx_const";
 $result = $db->query($sql);
 if ($result) 
 {
@@ -54,8 +54,28 @@ if ($result)
 	  print '<form action="'.$PHP_SELF.'" method="POST">';
 	  print '<input type="hidden" name="action" value="update">';
 	  print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-	  
-	  print '<input type="text" name="constvalue" value="'.stripslashes($obj->value).'">';
+
+	  if ($obj->type == 'yesno')
+	    {
+	      print '<select name="constvalue">';
+	      
+	      if ($obj->value == "1")
+		{
+		  print '<option value="0">non</option>';
+		  print '<option value="1" SELECTED>oui</option>';
+		}
+	      else
+		{
+		  print '<option value="0" SELECTED>non</option>';
+		  print '<option value="1">oui</option>';
+		}
+	      print '</select>';
+	    }
+	  else
+	    {
+	      print '<input type="text" name="constvalue" value="'.stripslashes($obj->value).'">';
+	    }
+
 	  print '<input type="submit">';
 	  print '</form>';
 	}
@@ -65,6 +85,7 @@ if ($result)
 	}
 
       print '</td></tr>';
+      print '<tr><td colspan="3">'.stripslashes(nl2br($obj->note)).'</td></tr>';
       $i++;
     }
 }
