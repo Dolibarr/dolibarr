@@ -28,9 +28,11 @@
     
     # Utilisez les lignes suivantes si le serveur Apache ne 
     # peut se logger en anonymous (ce qui est conseillé ;-)
+    # rq. erics: sur ma debian je n'ai pas le droit de mettre ces
+    # instructions dans un <virtualhost> ... (apache 1.3.27.0-2)
     #AuthMySQL_DefaultHost <host>
     #AuthMySQL_DefaultUser <user>
-    #AuthMySQL_DefaultPass <pass>
+    #AuthMySQL_DefaultPassword <pass>
 
     Auth_MySQL_DB 			dolibarr
     Auth_MySQL_Password_Table 		llx_user
@@ -82,3 +84,7 @@
   </LocationMatch>
 
 </VirtualHost>
+
+
+
+
