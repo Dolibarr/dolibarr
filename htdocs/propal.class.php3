@@ -92,6 +92,33 @@ class Propal
    *
    *
    */
+  Function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6)
+    {
+      if ($this->statut == 0)
+	{
+	  $p_price = ereg_replace(",",".",$p_price);
+	  $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx, description) VALUES ";
+	  $sql .= " (".$this->id.", 0,". $p_qty.",". $p_price.",19.6,'".$p_desc."') ; ";
+	  
+	  if ($this->db->query($sql) )
+	    {
+	      
+	      $this->update_price($this->id);
+	      
+	      return 1;
+	    }
+	  else
+	    {
+	      print $this->db->error();
+	      print "<br>".$sql;
+	      return 0;
+	    }
+	}
+    }
+  /*
+   *
+   *
+   */
   Function fetch_client()
     {
       $client = new Societe($this->db);
