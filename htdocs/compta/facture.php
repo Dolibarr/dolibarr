@@ -229,10 +229,10 @@ if ($_POST["action"] == 'setremise' && $user->rights->facture->creer)
 } 
 
 
-if ($action == 'addligne' && $user->rights->facture->creer) 
+if ($_POST["action"] == 'addligne' && $user->rights->facture->creer) 
 {
   $fac = new Facture($db);
-  $fac->fetch($facid);
+  $fac->fetch($_GET["facid"]);
   $datestart='';
   $dateend='';
   if ($_POST["date_startyear"] && $_POST["date_startmonth"] && $_POST["date_startday"]) {
@@ -241,7 +241,7 @@ if ($action == 'addligne' && $user->rights->facture->creer)
   if ($_POST["date_endyear"] && $_POST["date_endmonth"] && $_POST["date_endday"]) {
     $dateend=$_POST["date_endyear"].'-'.$_POST["date_endmonth"].'-'.$_POST["date_endday"];
   }
-  $result = $fac->addline($facid,
+  $result = $fac->addline($_GET["facid"],
     $_POST["desc"],
     $_POST["pu"],
     $_POST["qty"],
