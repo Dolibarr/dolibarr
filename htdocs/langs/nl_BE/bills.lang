@@ -1,0 +1,12 @@
+# Dolibarr language file - nl_BE - bills
+Bill=Factuur
+Bills=Factuuren
+ClassifyPayed=Classificeer 'Betaalde'
+ClassifyCanceled=Classificeer 'Verlaten'
+Send=Stuur
+SendRemind=Stuur Herinnering
+DoPaiement=Doe Betaling
+BuildPDF=Bouw Pdf
+RebuildPDF=Herbouw Pdf
+VAT=VAT
+Amount=Montant
