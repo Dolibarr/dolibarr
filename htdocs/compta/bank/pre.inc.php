@@ -22,7 +22,7 @@
  *
  */
 
-/*!
+/**
 	    \file   	htdocs/compta/bank/pre.inc.php
   	    \ingroup    compta
   	    \brief  	Fichier gestionnaire du menu compta banque
@@ -57,7 +57,7 @@ function llxHeader($head = "")
 	{
 	  $objp = $db->fetch_object($result);
 	  $menu->add(DOL_URL_ROOT."/compta/bank/account.php?account=" . $objp->rowid,  $objp->label);
-	  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=" . $objp->rowid ,"Relevés");
+	  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/releve.php?account=" . $objp->rowid ,$langs->trans("AccountStatements"));
       $menu->add_submenu(DOL_URL_ROOT."/compta/bank/annuel.php?account=" . $objp->rowid ,"Rapport mensuel E/S");
 	  $i++;
 	}
