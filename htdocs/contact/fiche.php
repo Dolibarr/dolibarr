@@ -22,11 +22,11 @@
  *
  */
 
-/*!
-  \file       htdocs/contact/fiche.php
-  \ingroup    societe
-  \brief      Onglet général d'un contact
-  \version    $Revision$
+/**
+    \file       htdocs/contact/fiche.php
+    \ingroup    societe
+    \brief      Onglet général d'un contact
+    \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -394,16 +394,75 @@ else
       
       print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';    
 
-      print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-
       if ($contact->user_id == 0 && $user->admin)
 	{
 	  print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=create_user">Créer un compte</a>';
 	}
-      
-      print "</div>";      
+
+      print '<a class="butDelete" href="fiche.php?id='.$contact->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+
+      print "</div><br>";
     }
 }
+
+
+// Historique des actions vers ce contact
+print_titre ("Historique des actions pour ce contact");
+
+print '<table width="100%" class="noborder">';
+
+print "<tr class=\"liste_titre\">";
+print "<td>".$langs->trans("Date")."</td><td>".$langs->trans("Actions")."</td>";
+print "<td>".$langs->trans("CreatedBy")."</td></tr>";
+
+$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+$sql .= " WHERE fk_contact = ".$contact->id;
+$sql .= " AND u.rowid = a.fk_user_author";
+$sql .= " AND c.id=a.fk_action ";
+
+if ($contactid) 
+{
+  $sql .= " AND fk_contact = $contactid";
+}
+$sql .= " ORDER BY a.datea DESC, a.id DESC";
+
+if ( $db->query($sql) ) 
+{
+  $i = 0 ; $num = $db->num_rows(); $tag = True;
+  while ($i < $num) 
+    {
+      $obj = $db->fetch_object();
+      $var=!$var;
+      print "<tr $bc[$var]>";
+      
+      print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
+      if ($obj->propalrowid) 
+        {
+          print "<td><a href=\"propal.php?propalid=$obj->propalrowid\">$obj->libelle</a></td>";
+        } 
+      else 
+        {
+          print "<td>$obj->libelle</td>";
+        }
+      
+      print "<td>$obj->code&nbsp;</td>";
+      print "</tr>\n";
+      $i++;
+      $tag = !$tag;
+    }
+}
+else 
+{
+  dolibarr_print_error($db);
+}
+print "</table>";
+  
+
+
+
+
+
 
 $db->close();
 
