@@ -152,7 +152,7 @@ if ($db->query($sql))
 	  print ' <a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
 	  print "</a></td>\n";
 	  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">' . $objp->nom.'</a></td>';
-	  print '<td align="right">'.price($objp->amount).'</td><td>'.$objp->paye.'</td>';
+	  print '<td align="right">'.price($objp->amount).'</td><td align="center">'.$objp->paye.'</td>';
 	  print "</tr>\n";
 	  if ($objp->paye == 1)
 	    {
