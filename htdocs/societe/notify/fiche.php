@@ -21,6 +21,13 @@
  *
  */
 
+/**
+	    \file       htdocs/societe/notify/fiche.php
+        \ingroup    societe
+		\brief      Onglet notifications pour une societe
+		\version    $Revision$
+*/
+
 require("pre.inc.php");
 
 $langs->load("companies");
@@ -36,8 +43,23 @@ if ($user->societe_id > 0)
 	
 $socid = $_GET["socid"];
 
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
+if ($sortorder == "") {
+  $sortorder="ASC";
+}
+if ($sortfield == "") {
+  $sortfield="nom";
+}
+
+
 llxHeader();
 
+
+/*
+ * Action ajout notification
+ */
 if ($_POST["action"] == 'add')
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def";
@@ -53,15 +75,18 @@ if ($_POST["action"] == 'add')
 	}
       else
 	{
-	  print $sql;
+      dolibarr_print_error($db);
 	}
     }
   else
     {
-      print $db->error() ."$sql";;
+      dolibarr_print_error($db);
     }
 }
 
+/*
+ * Action suppression notification
+ */
 if ($_GET["action"] == 'delete')
 {
  $sql = "DELETE FROM ".MAIN_DB_PREFIX."notify_def where rowid=".$_GET["actid"].";";
@@ -73,8 +98,9 @@ if ($_GET["action"] == 'delete')
     //}
 }
 
+
 /*
- *
+ * Affichage notifications
  *
  */
 $soc = new Societe($db);
@@ -138,25 +164,14 @@ if ( $soc->fetch($soc->id) )
    */
 
   print '<table class="border"width="100%">';
-  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td class="valeur">'.$soc->nom.'</td></tr>';
-  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
-  print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$soc->cp.' / '.$soc->ville.'</td></tr>';
+  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td>'.$soc->nom.'</td></tr>';
+  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>'.nl2br($soc->adresse).'&nbsp;</td></tr>';
+  print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td>'.$soc->cp.' / '.$soc->ville.'</td></tr>';
 
   print '</table><br></div>';
 
   print "\n";
 
-  /*
-   *
-   */
-  if ($sortorder == "")
-    {
-      $sortorder="ASC";
-    }
-  if ($sortfield == "")
-    {
-      $sortfield="c.name";
-    }
   print '<table width="100%" class="noborder">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name","","&socid=$socid",'',$sortfield);
@@ -178,8 +193,7 @@ if ( $soc->fetch($soc->id) )
 	  
 	  print '<tr '.$bc[$var].'><td>'.$obj->firstname . " ".$obj->name.'</td>';
 	  print '<td>'.$obj->titre.'</td>';
-		print'<td align="center">
-		<a href="fiche.php?socid='.$socid.'&action=delete&actid=		'.$obj->rowid.'">'.img_delete().'</a>';
+      print'<td align="center"><a href="fiche.php?socid='.$socid.'&action=delete&actid='.$obj->rowid.'">'.img_delete().'</a>';
 		
 	  $i++;
 	  $var = !$var;
@@ -188,8 +202,9 @@ if ( $soc->fetch($soc->id) )
     }
   else
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
+
   /*
    *
    */
@@ -210,7 +225,7 @@ if ( $soc->fetch($soc->id) )
     }
   else
     {
-      print $db->error;
+      dolibarr_print_error($db);
     }
 
   $html = new Form($db);
@@ -226,6 +241,7 @@ if ( $soc->fetch($soc->id) )
   print '</tr></form></table>';
 
 }
+
 /*
  *
  */
