@@ -33,6 +33,12 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
+if ($_GET["action"] == "set")
+{
+  dolibarr_set_const($db, $_GET["name"], $_GET["value"], $type='chaine');
+  Header("Location: index.php");
+}
+
 /*
  *
  *
@@ -42,7 +48,6 @@ llxHeader('','Téléphonie -  Configuration');
 print_titre("Configuration du module de Téléphonie");
 
 print "<br>";
-
 
 /*
  *
@@ -68,10 +73,37 @@ print TELEPHONIE_EMAIL_FACTURATION_EMAIL;
 print '</td><td>TELEPHONIE_EMAIL_FACTURATION_EMAIL</td></tr>';
 
 
-print '<tr class="pair"><td>';
+print '<tr class="impair"><td>';
 print 'Email facturation BCC</td><td align="center">';
 print TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC;
 print '</td><td>TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC</td></tr>';
+
+
+print '<tr class="pair"><td>Module ADSL</td>';
+print '<td align="center">';
+if (TELEPHONIE_MODULE_ADSL == 1)
+{
+  print 'oui</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_ADSL&amp;value=0">Changer</a>';
+}
+else
+{
+  print 'non</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_ADSL&amp;value=1">Changer</a>';
+}
+print '</td><td>TELEPHONIE_MODULE_ADSL</td></tr>';
+
+
+print '<tr class="pair"><td>Module SIMULATION</td>';
+print '<td align="center">';
+if (TELEPHONIE_MODULE_SIMULATION == 1)
+{
+  print 'oui</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_SIMULATION&amp;value=0">Changer</a>';
+}
+else
+{
+  print 'non</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_SIMULATION&amp;value=1">Changer</a>';
+}
+print '</td><td>TELEPHONIE_MODULE_SIMULATION</td></tr>';
+
 
 print '</table></form>';
 
