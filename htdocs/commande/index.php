@@ -48,7 +48,7 @@ print '<form method="post" action="liste.php">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchOrder").'</td></tr>';
 print "<tr $bc[1]><td>";
-print $langs->trans("Ref").' : <input type="text" name="sf_ref"> <input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
+print $langs->trans("Ref").' : <input type="text" name="sf_ref"> <input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table></form><br>\n";
 
 
@@ -90,11 +90,7 @@ if ( $db->query($sql) )
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 1";
-if ($socidp)
-{
-  $sql .= " AND c.fk_soc = $socidp";
-}
-$sql .= " ORDER BY c.rowid DESC";
+$sql .= " ORDER BY c.rowid ASC";
 
 if ( $db->query($sql) ) 
 {

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,23 +22,21 @@
  */
 
 /**
-        \file       htdocs/expedition/index.php
-        \ingroup    expedition
-		\brief      Page accueil du module expedition
-		\version    $Revision$
+   \file       htdocs/expedition/index.php
+   \ingroup    expedition
+   \brief      Page accueil du module expedition
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
 
 $langs->load("sendings");
 
-
 llxHeader('','Expéditions','ch-expedition.html',$form_search);
 
 print_titre($langs->trans("Sendings"));
 
-print '<table border="0" width="100%">';
-
+print '<table class="noborder" width="100%">';
 print '<tr><td valign="top" width="30%">';
 
 print '<form method="post" action="liste.php">';
@@ -46,7 +44,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchASending").'</td></tr>';
 print "<tr $bc[1]><td>";
 print $langs->trans("Ref").' : <input type="text" name="sf_ref"> <input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
-print "</table></form>\n";
+print "</table></form><br />\n";
 
 /*
  * Expeditions à valider
@@ -87,10 +85,7 @@ if ( $db->query($sql) )
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 1";
-if ($socidp)
-{
-  $sql .= " AND c.fk_soc = $socidp";
-}
+$sql .= " ORDER BY c.rowid ASC";
 
 if ( $db->query($sql) ) 
 {
@@ -108,7 +103,7 @@ if ( $db->query($sql) )
 	{
 	  $var=!$var;
 	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
+	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"commande.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
 	  print "<a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
@@ -129,16 +124,12 @@ print '</td><td valign="top" width="70%">';
  */
 $sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 2";
-if ($socidp)
-{
-  $sql .= " AND c.fk_soc = $socidp";
-}
-
-if ( $db->query($sql) ) 
+$resql = $db->query($sql);
+if ( $resql ) 
 {
   $langs->load("orders");
   
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   if ($num)
     {
       $i = 0;
@@ -149,8 +140,8 @@ if ( $db->query($sql) )
       while ($i < $num)
 	{
 	  $var=!$var;
-	  $obj = $db->fetch_object();
-	  print "<tr $bc[$var]><td width=\"20%\"><a href=\"commande.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
+	  $obj = $db->fetch_object($resql);
+	  print "<tr $bc[$var]><td width=\"30%\"><a href=\"commande.php?id=$obj->rowid\">".img_file()."</a>&nbsp;";
 	  print "<a href=\"commande.php?id=$obj->rowid\">$obj->ref</a></td>";
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
@@ -160,18 +151,14 @@ if ( $db->query($sql) )
 }
 
 
-
 /*
  * Expeditions à valider
  */
 $sql = "SELECT e.rowid, e.ref, s.nom, s.idp, c.ref as commande_ref, c.rowid as commande_id FROM ".MAIN_DB_PREFIX."expedition as e, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 $sql .= " WHERE e.fk_commande = c.rowid AND c.fk_soc = s.idp AND e.fk_statut = 1";
-if ($socidp)
-{
-  $sql .= " AND c.fk_soc = $socidp";
-}
-$sql .= " ORDER BY c.rowid DESC";
+
 $sql .= $db->plimit(5, 0);
+
 if ( $db->query($sql) ) 
 {
   $num = $db->num_rows();
