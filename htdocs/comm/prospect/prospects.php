@@ -43,7 +43,12 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=2";
+$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm ";
+$sql .= ", d.nom as departement";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
+$sql .= " , ".MAIN_DB_PREFIX."c_departements as d";
+$sql .= " WHERE s.fk_stcomm = st.id AND s.client=2";
+$sql .= " AND d.rowid = s.fk_departement";
 
 if (strlen($stcomm))
 {
@@ -124,14 +129,18 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<TR class="liste_titre">';
   print "<TD valign=\"center\">";
   print_liste_field_titre("Société",$PHP_SELF,"s.nom");
   print "</td><td>";
   print_liste_field_titre("Ville",$PHP_SELF,"s.ville");
   print "</td>";
-  print "<td align=\"center\">Préfix</td><td colspan=\"2\">&nbsp;</td>";
+  print "<td align=\"center\">";
+  print_liste_field_titre("Département",$PHP_SELF,"s.fk_departement");
+  print "</td><td>";
+  print_liste_field_titre("Statut",$PHP_SELF,"s.fk_stcomm");
+  print "</td><td>&nbsp;</td>";
   print "</TR>\n";
   $var=True;
 
@@ -146,7 +155,8 @@ if ($result)
       print img_file();
       print "</a>&nbsp;<a href=\"fiche.php?id=$obj->idp\">$obj->nom</A></td>\n";
       print "<TD>".$obj->ville."&nbsp;</TD>\n";
-      print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
+      print "<TD align=\"center\">$obj->departement</TD>\n";
+      print "<td>".$obj->stcomm."</td>\n";
 
       if ($user->societe_id == 0)
 	{
@@ -158,11 +168,10 @@ if ($result)
 	    {
 	      print "<td>&nbsp;</td>\n";
 	    }
-	  print "<TD>&nbsp;</TD>\n";
+
 	}
       else
 	{
-	  print "<TD>&nbsp;</TD>\n";
 	  print "<TD>&nbsp;</TD>\n";
 	}
       print "</TR>\n";
