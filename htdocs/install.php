@@ -147,7 +147,8 @@ if ($action == "set")
 
 	  if ($error == 0)
 	    {
-	      print '<h1><a href="'.$dolibarr_main_url_root .'/">Go !</a></h1>';
+	      print "Votre système est maintenant configuré, il ne vous reste plus qu'a sélectionner les modules que vous souhaitez utiliser. Pour cela cliquer sur l'url ci-dessous : <br>";
+	      print '<a href="'.$dolibarr_main_url_root .'/admin/modules.php">Configurer les modules</a>';
 	    }
 	}
       else
