@@ -57,8 +57,7 @@ class DoliDb {
 	}
       else
 	{
-	  print "Db->Db() raté<br>\n";
-	  $this->connected = 1;
+	  $this->connected = 0;
 	  return 0;
 	}
       
@@ -88,7 +87,7 @@ class DoliDb {
    */
   Function connect($host, $login, $passwd)
     {
-      $this->db  = mysql_connect($host, $login, $passwd);
+      $this->db  = @mysql_connect($host, $login, $passwd);
       return $this->db;
     }
   /*
@@ -170,6 +169,16 @@ class DoliDb {
       $this->results = mysql_query($query, $this->db);
       return $this->results;
     }
+
+  /*
+   *
+   */
+  Function list_tables($database)
+  {
+    $this->results = mysql_list_tables($database, $this->db);
+    return  $this->results;
+  }
+
 
   Function result($nb, $fieldname)
     {
