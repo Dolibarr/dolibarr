@@ -122,8 +122,8 @@ else
   
 
   print "<table border=0 width=100%><tr><td>&nbsp;</td>";
-  print "<td align=right><a href=\"$PHP_SELF?rel=prev&amp;num=$num&amp;ve=$ve\">&lt;- prev</a>";
-  print "&nbsp;-&nbsp;<a href=\"$PHP_SELF?rel=next&amp;num=$num&amp;ve=$ve\">next -&gt;</a></td></tr></table>";
+  print "<td align=right><a href=\"$PHP_SELF?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$account\">&lt;- prev</a>";
+  print "&nbsp;-&nbsp;<a href=\"$PHP_SELF?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$account\">next -&gt;</a></td></tr></table>";
   print "<form method=\"post\" action=\"$PHP_SELF\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
