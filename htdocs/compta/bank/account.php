@@ -194,13 +194,6 @@ if ($account > 0)
    * Affiche tableau des transactions bancaires
    *
    */
-  if ($user->rights->banque->modifier)
-    {
-      print '<form method="post" action="account.php">';
-      print '<input type="hidden" name="action" value="add">';
-      print '<input type="hidden" name="vline" value="' . $vline . '">';
-      print '<input type="hidden" name="account" value="' . $acct->id . '">';
-    }
 
   print '<tr class="liste_titre">';
   print '<td>'.$langs->trans("Date").'</td><td>Valeur</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td>';
@@ -273,6 +266,10 @@ if ($account > 0)
    */
   if ($user->rights->banque->modifier)
     {
+      print '<form method="post" action="account.php">';
+      print '<input type="hidden" name="action" value="add">';
+      print '<input type="hidden" name="vline" value="' . $vline . '">';
+      print '<input type="hidden" name="account" value="' . $acct->id . '">';
       print "<tr class=\"noborder\"><td colspan=\"8\">&nbsp;</td></tr>\n";
 
       print "<tr>";
@@ -300,14 +297,11 @@ if ($account > 0)
       print "<td colspan=\"2\" align=\"center\">";
       print "<select name=\"cat1\">$options</select>";
       print '</td></tr>';
+      print "</form>";
     }
 
 
   print "</table>";
-  if ($user->rights->banque->modifier)
-    {
-      print "</form>";
-    }
 }
 else
 {
