@@ -54,6 +54,8 @@ class Societe {
   var $client;
   var $note;
   var $fournisseur;
+  var $code_client;
+  var $code_compta;
  
 
   /**
@@ -178,10 +180,23 @@ class Societe {
     $sql .= ",client = " . $this->client;
     $sql .= ",fournisseur = " . $this->fournisseur;
 
-    if ($user)                        { $sql .= ",fk_user_modif = '".$user->id."'"; }
+    if ($user)           
+      {
+	$sql .= ",fk_user_modif = '".$user->id."'";
+      }
+    
+    if (trim($this->code_client))
+      {   
 
+	$this->check_codeclient();
 
-    $sql .= " , code_client = '". strtoupper(ereg_replace("[^[:alnum:]]", "", $this->code_client)) ."'";
+	$sql .= ", code_client = '". $this->code_client ."'";
+
+	$this->get_codecompta();
+
+	$sql .= ", code_compta = '". $this->code_compta ."'";
+      }
+
 
     $sql .= " WHERE idp = '" . $id ."'";
 
@@ -215,7 +230,8 @@ class Societe {
       $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
       $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique, s.fk_effectif";
       $sql .= ", e.libelle as effectif, e.id as effectif_id";
-      $sql .= ", s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique, s.code_client";
+      $sql .= ", s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique";
+      $sql .= ", s.code_client, s.code_compta";
       $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client";
       $sql .= ", p.libelle as pays";
       $sql .= ", st.libelle as stcomm";
@@ -263,6 +279,7 @@ class Societe {
 	      $this->capital   = $obj->capital;
 
 	      $this->code_client = $obj->code_client;
+	      $this->code_compta = $obj->code_compta;
 
 	      $this->tva_intra      = $obj->tva_intra;
 	      $this->tva_intra_code = substr($obj->tva_intra,0,2);
@@ -793,10 +810,38 @@ class Societe {
 
 	$mod = new $var;
 
-	return $mod->verif($this->db, $this->code_client);
+	return $mod->verif($this->db, &$this->code_client);
       }
     else
       {
+	return 0;
+      }
+  }
+  /**
+   * Renvoie un code compta, suivant le module le code compta renvoyé 
+   * peut être identique à celui saisit ou généré automatiquement
+   *
+   * A ce jour seul la génération automatique est implémentée
+   */
+  function get_codecompta()
+  {
+    if (defined('CODECOMPTA_ADDON') && strlen(CODECOMPTA_ADDON) > 0)
+      {
+	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.CODECOMPTA_ADDON.'.php';
+
+	$var = CODECOMPTA_ADDON;
+
+	$mod = new $var;
+
+	$result = $mod->get_code($this->db, $this);
+
+	$this->code_compta = $mod->code;
+
+	return $result;
+      }
+    else
+      {
+	$this->code_compta = '';
 	return 0;
       }
   }
