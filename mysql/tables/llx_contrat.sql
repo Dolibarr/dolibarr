@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -23,18 +23,33 @@
 
 create table llx_contrat
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,  
   tms             timestamp,
-  enservice       smallint DEFAULT 0,
+  datec           datetime, -- date de creation de l'enregistrement
+  date_contrat    datetime,
+  statut          smallint DEFAULT 0,
+
   mise_en_service datetime,
   fin_validite    datetime,
   date_cloture    datetime,
   fk_soc          integer NOT NULL,
-  fk_product      integer NOT NULL,
-  fk_facture      integer NOT NULL default 0,
-  fk_facturedet   integer NOT NULL default 0,
-  fk_user_author  integer NOT NULL default 0,
+  fk_commercial_signature integer NOT NULL,
+  fk_commercial_suivi     integer NOT NULL,
+  fk_user_author          integer NOT NULL default 0,
   fk_user_mise_en_service integer,
   fk_user_cloture integer
+
 )type=innodb;
 
+--
+--
+ALTER TABLE llx_contrat ADD INDEX (fk_soc);
+ALTER TABLE llx_contrat ADD INDEX (fk_commercial_signature);
+ALTER TABLE llx_contrat ADD INDEX (fk_commercial_suivi);
+ALTER TABLE llx_contrat ADD INDEX (fk_user_author);
+--
+--
+ALTER TABLE llx_contrat ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
+ALTER TABLE llx_contrat ADD FOREIGN KEY (fk_commercial_signature) REFERENCES llx_user (rowid);
+ALTER TABLE llx_contrat ADD FOREIGN KEY (fk_commercial_suivi) REFERENCES llx_user (rowid);
+ALTER TABLE llx_contrat ADD FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
