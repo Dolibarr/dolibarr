@@ -69,15 +69,17 @@ class modDolibarrModules
 		    $sql = "INSERT INTO llx_const (name,type) VALUES ('".$name."','".$type."')";
 		  }
 
-		if ( $this->db->query($sql) )
+		if (! $this->db->query($sql) )
 		  {
-
+		    $err++;
 		  }
 	      }
 	  }
+	else
+	  {
+	    $err++;
+	  }
       }
-
-
 
 
     /*
