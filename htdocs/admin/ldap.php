@@ -120,7 +120,7 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test'
     {
       print "connection au serveur ldap réussie<br>";
 
-      if ((dolibarr_ldap_getversion($ds) == 3)
+      if ((dolibarr_ldap_getversion($ds) == 3))
 				{
 					print "Serveur ldap configuré en version 3<br>";
 				}
@@ -140,7 +140,7 @@ if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test'
 	  			print "connection au dn $dn raté<br>";
 				}
 
-				$unbind = dolibarr_ldap_unbind($ds)
+				$unbind = dolibarr_ldap_unbind($ds);
 
 			if ($bind)
 				{
