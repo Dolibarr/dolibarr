@@ -86,23 +86,12 @@ else
   print $db->error() . ' ' . $sql;
 }
 
+print '</td><td valign="top" width="50%">'."\n";
 
+print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph=ca/ca.mensuel.png" alt="CA Mensuel"><br /><br />';
 
-print '</td><td valign="top" width="50%">';
-
-
-
-print '</td></tr>';
-
-print '<tr><td width="30%" valign="top">';
-
-
-
-print '</td></tr>';
-
+print "\n</td></tr>\n";
 print '</table>';
-
-
 
 $db->close();
 
