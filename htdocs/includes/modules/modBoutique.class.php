@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -57,7 +57,7 @@ class modBoutique extends DolibarrModules
     $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_BOUTIQUE";
     $this->const_config = MAIN_MODULE_BOUTIQUE;
-    $this->special = 0;
+    $this->special = 1;
 
     // Dir
     $this->dirs = array();
