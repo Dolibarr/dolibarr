@@ -61,7 +61,11 @@ class GraphPie extends DolibarrGraph {
     $pieplot->SetFont(FF_FONT1,FS_BOLD);
     $pieplot->SetFontColor("darkred");
     
-    
+    if (is_array($this->colors))
+      {
+	$pieplot->SetSliceColors($this->colors);
+      }
+
     // Size of pie in fraction of the width of the graph
     $pieplot->SetSize(0.38);
     
