@@ -48,12 +48,20 @@ if ($db->query($sql))
 $db->free();
 
 print_fiche_titre('Statistiques produits et services', $mesg);
-      
-print '<table class="liste" border="1" width="100%" cellspacing="0" cellpadding="4">';
-print "<tr $bc[1]>";
+print '<br>';
+
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+
+print "<tr class=\"liste_titre\">";
+print "<td>Résumé</td><td>Valeur</TD>";
+print "</tr>\n";
+
+$var=True;
+print "<tr ".$bc[$var].">";
 print '<td width="40%">Nb de produit dans le catalogue</td>';
 print '<td>'.$nbproduct.'</td></tr>';
-print "<tr $bc[1]>";
+$var=!$var;
+print "<tr ".$bc[$var].">";
 print '<td width="40%">Nb de produit dans le catalogue qui ne sont pas en vente</td>';
 print '<td>'.$nbhv.'</td></tr>';
 
@@ -72,10 +80,13 @@ if ($db->query($sql))
 }
 $db->free();
 
-print "<tr $bc[1]>";
+$var=!$var;
+print "<tr ".$bc[$var].">";
 print '<td width="40%">Nb de service dans le catalogue</td>';
 print '<td>'.$nbproduct.'</td></tr>';
-print "<tr $bc[1]>";
+
+$var=!$var;
+print "<tr ".$bc[$var].">";
 print '<td width="40%">Nb de service dans le catalogue qui ne sont pas en vente</td>';
 print '<td>'.$nbhv.'</td></tr>';
 
