@@ -21,7 +21,8 @@
  *
  */
 
-/*! \file htdocs/projet/index.php
+/*!
+        \file       htdocs/projet/index.php
         \ingroup    projet
 		\brief      Page d'accueil du module projet
 		\version    $Revision$
@@ -44,11 +45,9 @@ llxHeader("",$langs->trans("Projects"),"Projet");
 
 print_titre($langs->trans("Projects"));
 
-/*
- *
- * Affichage
- *
- */
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 if ($sortfield == "")
 {
   $sortfield="lower(s.nom)";
@@ -64,19 +63,18 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+
 /*
  *
- *
- * Liste des projets
- *
+ * Affichage de la liste des projets
  * 
  */
 print '<br>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Title"),"index.php","p.title");
-print '<td>'.$langs->trans("Ref").'</td>';
-print_liste_field_titre($langs->trans("Company"),"index.php","s.nom");
+print_liste_field_titre($langs->trans("Ref"),"index.php","s.idp","","","",$sortfield);
+print_liste_field_titre($langs->trans("Title"),"index.php","p.title","","","",$sortfield);
+print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$sortfield);
 print "</tr>\n";
 
 $sql = "SELECT s.nom, s.idp, p.rowid as projectid, p.ref, p.title, s.client,".$db->pdate("p.dateo")." as do";
@@ -103,14 +101,7 @@ if ( $db->query($sql) )
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->title</a></td>\n";
       print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->ref</a></td>\n";
-      if ($obj->client == 1)
-	{
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
-	}
-      else
-	{
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
-	}
+	  print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
       print "</tr>\n";
     
       $i++;
