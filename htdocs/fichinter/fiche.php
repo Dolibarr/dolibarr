@@ -147,7 +147,7 @@ if ($action == 'create')
       
       $smonth = 1;
       $syear = date("Y", time());
-      print '<table border="1" cellspadding="3" cellspacing="0" width="100%">';
+      print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
       
       print "<tr><td>Société</td><td><b>".$objsoc->nom."</td></tr>";
       
@@ -262,7 +262,7 @@ if ($action == 'edit')
 
   print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">";
   
-  print '<table border="1" cellspadding="3" cellspacing="0" width="100%">';
+  print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
   print "<tr><td>Date</td><td>";
   /*
    * set $reday, $remonth, $reyear
@@ -328,7 +328,7 @@ if ($id)
     {
       $fichinter->fetch_client();
 
-      print '<table border="1" cellspadding="3" cellspacing="0" width="100%">';
+      print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
       print '<tr><td>Société</td><td><a href="../comm/fiche.php?socid='.$fichinter->client->id.'">'.$fichinter->client->nom.'</a></td></tr>';
       print '<tr><td width="20%">Date</td><td>'.strftime("%A %d %B %Y",$fichinter->date).'</td></tr>';
       print '<tr><td>Numéro</td><td>'.$fichinter->ref.'</td></tr>';
@@ -345,7 +345,7 @@ if ($id)
       /*
        *
        */
-      print '<br><table border="1" cellspadding="3" cellspacing="0" width="100%"><tr>';
+      print '<br><table border="1" cellpadding="3" cellspacing="0" width="100%"><tr>';
 
       if ($user->societe_id == 0)
 	{
