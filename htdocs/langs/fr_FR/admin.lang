@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - admin
+Version=Version
 GlobalSetup=Général
 GUISetup=Interface
 DictionnarySetup=Dictionnaires
@@ -32,3 +33,31 @@ DictionnaryCivility=Titres de civilité
 DictionnaryActions=Liste des actions
 AlwaysActive=Toujours actif
 UpdateRequired=Votre système nécessite une mise à jour. Pour cela cliquez sur <a href="%s">Mettre à jour</a>.
+WebServer=Serveur Web
+DocumentRootServer=Racine du serveur
+IP=IP
+Port=Port
+VirtualServerName=Nom du serveur virtuel
+AllParameters=Tous&nbsp;les&nbsp;paramètres
+OS=OS
+Php=Php
+PhpEnv=Env
+PhpModules=Modules
+PhpConf=Conf
+PhpWebLink=Lien Web-Php
+Pear=Pear
+PearPackages=Packages Pear
+Database=Base de donnée
+DatabaseName=Nom de la base de donnée
+DatabaseConfiguration=Configuration de la base de donnée
+Tables=Tables
+TableName=Nom de la table
+TableLineFormat=Format lignes
+NbOfRecord=Nbre d'enr.
+Constraints=Contraintes
+ConstraintsType=Type de la contrainte
+Host=Serveur
+SummarySystem=Résumé des informations systèmes Dolibarr
+SummaryConst=Liste de tous les paramètres de configuration Dolibarr
+SystemUpdate=Mise à jour du système
+SystemSuccessfulyUpdate=Votre système a été mise à jour avec succés
