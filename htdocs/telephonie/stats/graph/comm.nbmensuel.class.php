@@ -20,7 +20,7 @@
  *
  */
 
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/bar.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/bar.class.php");
 
 class GraphCommNbMensuel extends GraphBar{
 
