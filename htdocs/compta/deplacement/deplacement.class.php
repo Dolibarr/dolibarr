@@ -105,9 +105,9 @@ class Deplacement
   /*
    *
    */
-  Function delete()
+  Function delete($id)
     {
-      $sql = "DELETE FROM llx_deplacement WHERE rowid = $this->id)";
+      $sql = "DELETE FROM llx_deplacement WHERE rowid = $id";
 
       $result = $this->db->query($sql);
       if ($result)
