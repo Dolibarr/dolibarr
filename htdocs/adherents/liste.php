@@ -1,6 +1,7 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *                         Jean-Louis Bergamo <jlb@j1b.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -55,10 +56,23 @@ if ($result)
   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
   print '<TR class="liste_titre">';
+
+
   print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.prenom\">Prenom</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.nom\">Nom</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.societe\">Société</a></td>\n";
-  print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=DESC&sortfield=d.datefin\">Date Cotisation</a></td>\n";
-  print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.email\">Email</a></td>\n";
-  print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=t.libelle\">Type</a></td>\n";
+
+  print "<td>";
+  print_liste_field_titre("Date cotisation",$PHP_SELF,"t.cotisation","&page=$page&statut=$statut");
+  print "</td>\n";
+
+  print "<td>";
+  print_liste_field_titre("Email",$PHP_SELF,"d.email","&page=$page&statut=$statut");
+  print "</td>\n";
+
+  print "<td>";
+  print_liste_field_titre("Type",$PHP_SELF,"t.libelle","&page=$page&statut=$statut");
+  print "</td>\n";
+
+
   print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.morphy\">Personne</a></td>\n";
   print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&statut=$statut&sortorder=ASC&sortfield=d.statut\">Statut</a></td>\n";
   print "<td>Action</td>\n";
