@@ -1,5 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,6 +32,7 @@ create table llx_contrat
   fk_soc          integer NOT NULL,
   fk_product      integer NOT NULL,
   fk_facture      integer NOT NULL default 0,
+  fk_facturedet   integer NOT NULL default 0,
   fk_user_author  integer NOT NULL,
   fk_user_mise_en_service integer NOT NULL,
   fk_user_cloture integer NOT NULL

@@ -24,8 +24,8 @@ create table llx_c_pays
 (
   id       SERIAL PRIMARY KEY,
   libelle  varchar(25),
-  code     char(2)      NOT NULL,
-  active      tinyint default 1  NOT NULL
+  code     char(2) NOT NULL,
+  active   smallint default 1  NOT NULL
 );
 
 

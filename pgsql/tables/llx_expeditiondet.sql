@@ -26,9 +26,6 @@ create table llx_expeditiondet
   fk_expedition     integer not null,
   fk_commande_ligne integer not null,
   qty               real,              -- quantité
-
-  key(fk_expedition),
-  key(fk_commande_ligne)
 );
 
 CREATE INDEX llx_expeditiondet_fk_expedition ON llx_expeditiondet(fk_expedition);

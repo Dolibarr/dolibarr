@@ -30,6 +30,7 @@ create table llx_propal
   fk_projet       integer default 0, -- projet auquel est rattache la propale
   ref             varchar(30) NOT NULL,  -- propal number
   datec           timestamp,              -- date de creation
+  fin_validite    timestamp,              -- date de fin de validite
   date_valid      timestamp,              -- date de validation
   date_cloture    timestamp,              -- date de cloture
   datep           date,                  -- date de la propal
@@ -48,4 +49,3 @@ create table llx_propal
 
 create unique index llx_propal_ref on llx_propal(ref);
 
-create index llx_propal_fk_soc on llx_propal(fk_soc);

@@ -35,6 +35,8 @@ create table llx_product
   envente         smallint default 1,
   nbvente         integer default 0,
   fk_product_type integer default 0,
-  duration        varchar(6)
+  duration        varchar(6),
+  stock_propale      integer default 0,
+  stock_commande     integer default 0,
+  seuil_stock_alerte integer default 0
 );
-

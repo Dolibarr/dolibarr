@@ -31,7 +31,7 @@ create table llx_const
   name        varchar(255),
   value       text, -- max 65535 caracteres
   type	      CHAR(6) CHECK (type IN ('yesno','texte','chaine')),
-  visible     int DEFAULT 1 NOT NULL,
+  visible     smallint DEFAULT 1 NOT NULL,
   note        text
 );
 

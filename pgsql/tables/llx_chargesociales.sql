@@ -20,6 +20,7 @@
 -- $Source$
 --
 -- ========================================================================
+
 create table llx_chargesociales
 (
   rowid      SERIAL PRIMARY KEY,

@@ -39,4 +39,3 @@ create table llx_fichinter
 
 CREATE UNIQUE INDEX llx_fichinter_ref ON llx_fichinter(ref);
 
-CREATE INDEX llx_fichinter_fk_soc ON llx_fichinter(fk_soc);

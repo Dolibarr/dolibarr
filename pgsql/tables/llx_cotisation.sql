@@ -1,4 +1,6 @@
 -- ===================================================================
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+--
 -- $Id$
 -- $Source$
 --
@@ -27,5 +29,6 @@ create table llx_cotisation
   fk_adherent     integer,
   dateadh         timestamp,
   cotisation      real,
+  fk_bank         int(11) default NULL,
   note            text
 );

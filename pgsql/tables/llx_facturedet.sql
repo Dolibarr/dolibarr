@@ -32,7 +32,9 @@ create table llx_facturedet
   remise_percent  real default 0,    -- pourcentage de remise
   remise          real default 0,    -- montant de la remise
   subprice        real,              -- prix avant remise
-  price           real               -- prix final
+  price           real,               -- prix final
+  date_start      timestamp,          -- date debut si service
+  date_end        timestamp           -- date fin si service
 );
 
 CREATE INDEX llx_facturedet_fk_facture ON llx_facturedet (fk_facture);

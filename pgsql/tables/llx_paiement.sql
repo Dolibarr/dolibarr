@@ -1,4 +1,6 @@
 -- ===================================================================
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
+--
 -- $Id$
 -- $Source$
 --
@@ -23,10 +25,14 @@ create table llx_paiement
   rowid           SERIAL PRIMARY KEY,
   fk_facture      integer,
   datec           timestamp,
+  tms             timestamp,
   datep           timestamp,           -- payment date
   amount          real default 0,
   author          varchar(50),
   fk_paiement     integer NOT NULL,
   num_paiement    varchar(50),
-  note            text
+  note            text,
+  fk_bank         integer NOT NULL,
+  fk_user_creat   integer,            -- utilisateur qui a créé l'info
+  fk_user_modif   integer             -- utilisateur qui a modifié l'info
 );

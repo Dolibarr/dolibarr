@@ -28,6 +28,7 @@ create table llx_groupart
   tms             timestamp,
   nom		  varchar(64),
   groupart	  CHAR(8) CHECK (groupart IN ('artiste','groupe')) NOT NULL,
+  description     text NOT NULL,
   fk_user_author  integer
 );
 
