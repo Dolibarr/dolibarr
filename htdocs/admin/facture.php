@@ -19,8 +19,19 @@
  * $Source$
  */
 require("./pre.inc.php");
+require("../includes/modules/facture/modules_facture.php");
+
+llxHeader();
+
+if (!$user->admin)
+{
+  print "Forbidden";
+  llxfooter();
+  exit;
+}
 
 $db = new Db();
+
 
 // positionne la variable pour le test d'affichage de l'icone
 
@@ -40,18 +51,7 @@ if ($action == 'set')
 
 $db->close();
 
-
-require("../includes/modules/facture/modules_facture.php");
-llxHeader();
-
 $dir = "../includes/modules/facture/";
-
-if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
 
 print_titre("Module de facture");
 
