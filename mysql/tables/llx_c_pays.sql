@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004           Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- $Id$
 -- $Source$
@@ -23,9 +24,10 @@
 create table llx_c_pays
 (
   rowid    integer PRIMARY KEY,
+  lang     varchar(8)   default 'all' not null,
   libelle  varchar(25)  NOT NULL,
   code     char(2)      NOT NULL,
-  active      tinyint default 1  NOT NULL
+  active   tinyint default 1  NOT NULL
 )type=innodb;
 
 

@@ -24,8 +24,9 @@
 create table llx_c_actioncomm
 (
   id         integer PRIMARY KEY,
-  type       varchar(10) default 'system' not null,
   lang       varchar(8) default 'all' not null,
+  type       varchar(10) default 'system' not null,
   libelle    varchar(30) not null,
+  active     tinyint default 1,
   todo       tinyint
 )type=innodb;

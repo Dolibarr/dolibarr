@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,6 +30,7 @@
 create table llx_c_paiement
 (
   id         integer PRIMARY KEY,
+  lang       varchar(8) default 'all' not null,
   code       varchar(6),
   libelle    varchar(30),
   type       smallint	
