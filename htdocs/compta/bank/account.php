@@ -24,15 +24,16 @@
 
 require("./pre.inc.php");
 
-if(isset($_GET["account"]))
-  $HTTP_POST_VARS["account"] = $_GET["account"];
-if(isset($_GET["vline"]))
-  $HTTP_POST_VARS["vline"] = $_GET["vline"];
-
 if (!$user->rights->banque->lire)
   accessforbidden();
 
-if ($HTTP_POST_VARS["action"] == 'add' && $HTTP_POST_VARS["account"])
+
+$account=isset($_GET["account"])?isset($_GET["account"]):$HTTP_POST_VARS["account"];
+$vline=isset($_GET["vline"])?isset($_GET["vline"]):$HTTP_POST_VARS["vline"];
+$action=isset($_GET["action"])?isset($_GET["action"]):$HTTP_POST_VARS["action"];
+
+
+if ($action == 'add' && $account)
 {    
   if ($credit > 0)
     {
@@ -44,7 +45,7 @@ if ($HTTP_POST_VARS["action"] == 'add' && $HTTP_POST_VARS["account"])
     }
   
   $dateop = "$dateoy" . "$dateo";
-  $acct=new Account($db,$HTTP_POST_VARS["account"]);
+  $acct=new Account($db,$account);
 
   $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq,$cat1);
 
@@ -100,9 +101,10 @@ if ($action == 'del' && $account && $user->rights->banque->modifier)
  */
 
 llxHeader();
-print "<p>Account: " . $HTTP_POST_VARS["account"] . "o" . $HTTP_POST_VARS["account"] . "</p>\n";
 
-if ($HTTP_POST_VARS["account"] > 0)
+//print "<p>Account: " . $account . "o" . $account . "</p>\n";
+
+if ($account > 0)
 {
   if ($vline)
     {
@@ -113,29 +115,10 @@ if ($HTTP_POST_VARS["account"] > 0)
       $viewline = 20;
     }
   $acct = new Account($db);
-  $acct->fetch($HTTP_POST_VARS["account"]);
-
-  $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
-  $result = $db->query($sql);
-  if ($result)
-    {
-      $var=True;  
-      $num = $db->num_rows();
-      $i = 0;
-      $options = "<option value=\"0\" SELECTED></option>";
-      while ($i < $num)
-	{
-	  $obj = $db->fetch_object($i);
-	  $options .= "<option value=\"$obj->rowid\">$obj->label</option>\n"; $i++;
-	}
-      $db->free();
-    }
-
-
+  $acct->fetch($account);
   print_titre("Compte : " .$acct->label);
-  /*
-   *
-   */
+
+  // Chargement des categories dans $options
   $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
   $result = $db->query($sql);
   if ($result)
@@ -151,6 +134,7 @@ if ($HTTP_POST_VARS["account"] > 0)
 	}
       $db->free();
     }
+
   /*
    *
    *
@@ -165,7 +149,7 @@ if ($HTTP_POST_VARS["account"] > 0)
    *
    */
   $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."bank as b WHERE 1=1";
-  $sql .= " AND b.dateo <= now()";
+//  $sql .= " AND b.dateo <= now()";
   $sql .= " AND b.fk_account=".$acct->id;
 
   $sql .= $sql_rech;
@@ -199,6 +183,7 @@ if ($HTTP_POST_VARS["account"] > 0)
       $page = 0;
       $limitsql = $nbline;
     }
+  //print "$viewline $nbline $limitsql";
 
   /*
    * Formulaire de recherche
@@ -208,7 +193,7 @@ if ($HTTP_POST_VARS["account"] > 0)
   print '<input type="hidden" name="action" value="search">';
   print '<input type="hidden" name="account" value="' . $acct->id . '">';
   print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-  print "<TR>";
+  print "<tr>";
   print '<td>';
   if ($limitsql > $viewline)
     {
@@ -281,7 +266,7 @@ if ($HTTP_POST_VARS["account"] > 0)
 	}
     }
 
-  $sql .= " AND b.dateo <= now()";
+//  $sql .= " AND b.dateo <= now()";
 
   $sql .= " ORDER BY b.dateo ASC";
   $sql .= $db->plimit($limitsql, 0);
@@ -291,11 +276,11 @@ if ($HTTP_POST_VARS["account"] > 0)
     {
       _print_lines($db, $sql, $acct);
     }
+
   /*
-   * Opérations futures
+   * Opérations hors factures
    *
    */
-
   if ($user->rights->banque->modifier)
     {
 	  print "<tr><td colspan=\"7\">&nbsp;</td></tr>\n";
@@ -316,7 +301,9 @@ if ($HTTP_POST_VARS["account"] > 0)
       print '<input name="label" type="text" size="40"></td>';
 	  print '<td align=right><input name="debit" type="text" size="8"></td>';
 	  print '<td align=right><input name="credit" type="text" size="8"></td>';
-      print "<td colspan=\"2\" align=\"center\"><select name=\"cat1\">$options</select></td>";
+      print "<td colspan=\"2\" align=\"center\">";
+      print "<select name=\"cat1\">$options</select>";
+      print "</td>";
 	  print '</tr>';
 	  print '<tr>';
 	  print '<td><small>YYYY MMDD</small></td><td>&nbsp;</td><td>Description</td><td align=right>0000.00</td><td align=right>0000.00</td>';
@@ -337,10 +324,12 @@ else
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
+
 /*
  *
  */
-Function _print_lines($db,$sql, $acct)
+Function _print_lines($db,$sql,$acct)
 {
   global $bc, $nbline, $viewline, $user;
   $var=True;  
@@ -353,7 +342,7 @@ Function _print_lines($db,$sql, $acct)
 	  $objp = $db->fetch_object( $i);
 	  $total = $total + $objp->amount;
 	  $time = time();
-	  if ($i > ($nbline - $viewline))
+	  if ($i >= ($nbline - $viewline))
 	    {
 	      $var=!$var;
 
@@ -363,25 +352,7 @@ Function _print_lines($db,$sql, $acct)
 		  print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
 		  print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td>";
 		  print "<td>&nbsp;</td>";
-		  print '</tr><tr>';
-		  print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
-		  print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
-		  print '<td>';
-		  print '<select name="operation">';
-		  print '<option value="CB">CB';
-		  print '<option value="CHQ">CHQ';
-		  print '<option value="DEP">DEP';
-		  print '<option value="TIP">TIP';
-		  print '<option value="PRE">PRE';
-		  print '<option value="VIR">VIR';
-		  print '</select></td>';
-		  print '<td><input name="num_chq" type="text" size="6">&nbsp;-';
-		  print "<input name=\"label\" type=\"text\" size=40></td>";
-		  print "<td><input name=\"debit\" type=\"text\" size=8></td>";
-		  print "<td><input name=\"credit\" type=\"text\" size=8></td>";
-		  print "<td colspan=\"3\" align=\"center\"><select name=\"cat1\">$options</select></td>";
-		  print "</tr><tr><td colspan=\"3\"><small>YYYYMMDD</small></td><td>0000.00</td>";
-		  print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
+		  print '</tr>';
 		}
 		  
 	      print "<tr $bc[$var]>";
