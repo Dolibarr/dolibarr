@@ -36,7 +36,7 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-print_titre("Chiffre d'affaire cumulé (euros HT)");
+print_titre("Chiffre d'affaire cumulé (".MAIN_MONNAIE." HT)");
 
 print '<table width="100%"><tr><td valign="top">';
 
@@ -72,7 +72,7 @@ if ($socidp)
 }
 $sql .= " GROUP BY dm";
 
-pt($db, $sql,"Cumul sur les mois");
+pt($db, $sql,"Cumul sur le mois");
 
 
 print "</td></tr></table>";
@@ -97,27 +97,27 @@ function pt ($db, $sql, $date)
       $num = $db->num_rows();
       $i = 0; $total = 0 ;
       print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
-      print "<TR class=\"liste_titre\">";
-      print "<TD width=\"60%\">$date</TD>";
-      print "<TD align=\"right\">Montant</TD>";
-      print "<td>&nbsp;</td>\n";
-      print "</TR>\n";
+      print "<tr class=\"liste_titre\">";
+      print "<td width=\"60%\">$date</td>";
+      print "<td align=\"right\">Montant</td>";
+      print "<td align=\"right\">Cumul</td>\n";
+      print "</tr>\n";
       $var=True;
       while ($i < $num) 
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
 	  $total = $total + $obj->amount;
-	  print "<TR $bc[$var]>";
-	  print "<TD>$obj->dm</TD>\n";
-	  print "<TD align=\"right\">".$total."</TD><td>&nbsp;</td>\n";
-	  print "</TR>\n";
+	  print "<tr $bc[$var]>";
+	  print "<td>$obj->dm</td>\n";
+	  print "<td align=\"right\">".price($obj->amount)."</td><td align=\"right\">".price($total)."</td>\n";
+	  print "</tr>\n";
 	  
 	  $i++;
 	}
-      print '<tr class="total"><td  align="right">Total :</td><td align="right"><b>'.price($total).'</b></td><td>'.MAIN_MONNAIE.'&nbsp;HT</td></tr>';
+      print "<tr class=\"total\"><td  align=\"right\">Total :</td><td align=\"right\">&nbsp;</b></td><td align=\"right\"><b>".price($total)."</b></td></tr>\n";
       
-      print "</TABLE>";
+      print "</table>\n";
       $db->free();
     }
 }
