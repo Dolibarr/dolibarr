@@ -33,6 +33,8 @@ function llxHeader($head = "", $urlp = "") {
   $menu->add_submenu("../modules.php", "Modules");
 
   $menu->add("mysql.php", "Mysql");
+  $menu->add_submenu("mysql-tables.php", "Tables");
+  $menu->add_submenu("mysql-tables-contraintes.php", "Tables Contraintes");
 
   $menu->add("pear.php", "Pear");
   $menu->add_submenu("pear_packages.php", "Paquets");
