@@ -132,6 +132,7 @@ if ($action == 'create') {
   print '<td><select name="tva_taux">';
   print '<option value="19.6">19.6';
   print '<option value="5.5">5.5';
+  print '<option value="0">0';
   print '</select></td></tr>';
       
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
