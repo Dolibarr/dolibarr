@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@
  * Classe de gestion du retour RSTS du systeme de paiement en ligne
  * CyberPaiement (TM) de la Banque Populaire de Lorraine
  *
- *
- *
+ * Certaine fonction de cette classe existe de base dans PHP4 mais ont été
+ * ré-écrites ici pour le support de PHP3
  */
 
 class Retourbplc
@@ -58,7 +58,7 @@ class Retourbplc
   {
 
 
-    $sql = "INSERT INTO transaction_bplc";
+    $sql = "INSERT INTO llx_transaction_bplc";
     $sql .= " (ipclient, 
                    num_transaction, 
                    date_transaction, 
@@ -74,14 +74,14 @@ class Retourbplc
                       '$this->heure_transaction',
                       '$this->num_autorisation',
                       '$this->cle_acceptation',
-                      '$this->code_retour',
+                      $this->code_retour,
                        $this->ref_commande)";
 
     $result = $this->db->query($sql);
     
     if ($result) 
       {
-	return $this->db->last_insertid();
+	return $this->db->last_insert_id();
       }
     else
       {
@@ -146,7 +146,7 @@ class Retourbplc
       }
   }
   /*
-   *
+   * Table de correspondance de l'algorithme de Luhn
    *
    */
   Function corres($value)
@@ -167,7 +167,7 @@ class Retourbplc
 
   }
   /*
-   *
+   * Calcul de la cle de Luhn
    *
    *
    *
