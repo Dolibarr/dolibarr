@@ -27,8 +27,8 @@
 		\version    $Revision$
 
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
-        \remarks    Toutes les entrées de menu a faire apparaitre dans la barre du 
-        \remarks    du haut doit etre affichée par <a class="tmenu" href="lien">Nom</a>
+        \remarks    Toutes les entrées de menu a faire apparaitre dans la barre du haut
+        \remarks    doit etre affichée par <a class="tmenu" href="...?mainmenu=...">...</a>
         \remarks    On peut éventuellement ajouter l'attribut id="sel" dans la balise <a>
         \remarks    quand il s'agit de l'entrée du menu qui est sélectionné.
 */
@@ -52,7 +52,7 @@ if ($conf->commercial->enabled)
       $class = 'class="tmenu"';
     }
 
-  print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Commercial").'</a>';
+  print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial"'.($target?" target=$target":"").'>'.$langs->trans("Commercial").'</a>';
 
 }
 
@@ -74,7 +74,7 @@ if ($conf->adherent->enabled)
       $class = 'class="tmenu"';
     }
 
-  print '<a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Members").'</a>';
+  print '<a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members"'.($target?" target=$target":"").'>'.$langs->trans("Members").'</a>';
 }
 
 if ($conf->compta->enabled || $conf->banque->enabled || $conf->caisse->enabled)
@@ -95,7 +95,7 @@ if ($conf->compta->enabled || $conf->banque->enabled || $conf->caisse->enabled)
       $class = 'class="tmenu"';
     }
 
-  print '<a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Accountancy")."/".$langs->trans("Treasury").'</a>';
+  print '<a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy"'.($target?" target=$target":"").'>'.$langs->trans("Accountancy")."/".$langs->trans("Treasury").'</a>';
 
 }
 
@@ -122,14 +122,14 @@ if ($conf->produit->enabled || $conf->service->enabled)
   if ($conf->service->enabled) { $chaine.="Services"; }
   
 
-  print '<a '.$class.' href="'.DOL_URL_ROOT.'/product/?type=0"'.($target?" target=$target":"").'>'.$chaine.'</a>';
+  print '<a '.$class.' href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products"'.($target?" target=$target":"").'>'.$chaine.'</a>';
 
 }
 
 
       
   $class="";
-  if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "commercial")
+  if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "supplier")
     {
       $class='class="tmenu" id="sel"'; 
     }
@@ -142,7 +142,7 @@ if ($conf->produit->enabled || $conf->service->enabled)
       $class = 'class="tmenu"';
     }
 
-  print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Fournisseur").'</a>';
+  print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=supplier"'.($target?" target=$target":"").'>'.$langs->trans("Fournisseur").'</a>';
 
 
 
@@ -166,7 +166,7 @@ if ($conf->webcal->enabled)
       $class = 'class="tmenu"';
    }
   
-  print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/webcal.php"'.($target?" target=$target":"").'>'.$langs->trans("Calendar").'</a>';
+  print '<a '.$class.' href="'.DOL_URL_ROOT.'/projet/webcal.php?mainmenu=webcal"'.($target?" target=$target":"").'>'.$langs->trans("Calendar").'</a>';
 };
 
 
