@@ -37,6 +37,7 @@ create table llx_newsletter
   date_send_begin    datetime,   -- debut de l'envoi
   date_send_end      datetime,   -- fin de l'envoi
   nbsent             integer,    -- nombre de mails envoyés
+  nberror            integer,    -- nombre de mails envoyés
   fk_user_author     integer,
   fk_user_valid      integer
   fk_user_modif      integer
