@@ -116,9 +116,10 @@ div.fiche
 }
 .menusel
 { 
-    background: #a8bdc0;
-    font-size: 12px; font-weight: bold; 
-    color: #000000; 
+    background: #BBBB88;
+    font-size: 12px;
+    font-weight: bold; 
+    color: #fcfffc;
     text-decoration: none;
 }
 
@@ -447,24 +448,6 @@ div.leftmenu {
                margin: 1px 0em 0em 0em;
                padding: 2px;
                }
-
-
-
-.menu 
-{ 
-  background: #ccccb3; 
-  font-weight: bold; 
-  font-size: 0.95em;
-  color: #000000; 
-  text-decoration: none }
-
-.menusel
-{ 
-  background: #bbbb88; 
-  font-weight: bold;
-  font-size: 0.95em;
-  color: #000000; 
-  text-decoration: none }
 
 .alerte
 { 
