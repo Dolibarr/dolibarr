@@ -161,7 +161,7 @@ if ($id)
       print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
       print '<td width="20%">Entrepôt</td><td width="20%"><select name="id_entrepot">';
       
-      $sql = "SELECT e.rowid, e.label FROM llx_entrepot as e";    
+      $sql = "SELECT e.rowid, e.label FROM llx_entrepot as e WHERE statut = 1";    
       $sql .= " ORDER BY lower(e.label)";
       
       if ($db->query($sql))
