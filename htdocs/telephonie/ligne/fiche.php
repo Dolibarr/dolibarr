@@ -503,9 +503,18 @@ else
 	      $hselected = $h;
 	      $h++;
 	      
-	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/factures.php?id=".$ligne->id;
-	      $head[$h][1] = $langs->trans('Factures');
-	      $h++;
+	      if ($ligne->statut == -1)
+		{
+		  $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/commande.php?id=".$ligne->id;
+		  $head[$h][1] = $langs->trans('Commande');
+		  $h++;
+		}
+	      else
+		{
+		  $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/factures.php?id=".$ligne->id;
+		  $head[$h][1] = $langs->trans('Factures');
+		  $h++;
+		}
 
 	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/infoc.php?id=".$ligne->id;
 	      $head[$h][1] = $langs->trans('Infos');
