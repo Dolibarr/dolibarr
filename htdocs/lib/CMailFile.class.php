@@ -42,6 +42,7 @@ class CMailFile
   var $subject;
   var $addr_to;
   var $addr_cc;
+  var $addr_bcc;
   var $text_body;
   var $text_encoded;
   var $mime_headers;
@@ -58,6 +59,7 @@ class CMailFile
 		\param mimetype_list
 		\param mimefilename_list
 		\param addr_cc
+		\param addr_bcc
 */
 
   // CMail("sujet","email_to","email_from","email_msg",tableau du path de fichiers,tableau de type mime,tableau de noms fichiers,"chaine cc")
@@ -65,6 +67,7 @@ class CMailFile
     {
       $this->subject = $subject;
       $this->addr_to = $to;
+      $this->addr_bcc = "";
       $this->smtp_headers = $this->write_smtpheaders($from,$addr_cc);
       $this->text_body = $this->write_body($msg, $filename_list);
       if (count($filename_list)) {
@@ -172,7 +175,11 @@ class CMailFile
     {
       $out = "From: $addr_from\n";
       if($addr_cc != "")
-		$out = $out . "Cc: $addr_cc\n";
+	$out = $out . "Cc: $addr_cc\n";
+
+      if($this->addr_bcc != "")
+	$out = $out . "BCC: ".$this->addr_bcc."\n";
+
       $out = $out . "Reply-To: $addr_from\n";
       $out = $out . "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
       $out = $out . "X-Sender: $addr_from\n";
