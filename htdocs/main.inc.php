@@ -238,8 +238,10 @@ else {
 /*
  * Defini le mode de calcul du CA
  */
-$conf->compta->mode = 'RECETTES-DEPENSES';	// Mettre 'CREANCES-DETTES' pour un CA en creances-dettes
-
+$conf->compta->mode = 'RECETTES-DEPENSES';	// Par défaut
+if (defined("COMPTA_MODE")) {
+	$conf->compta->mode = COMPTA_MODE; 		// Peut etre 'CREANCES-DETTES' pour un CA en creances-dettes
+}
 /*
  * SIZE_LISTE_LIMIT : constante de taille maximale des listes
  */
