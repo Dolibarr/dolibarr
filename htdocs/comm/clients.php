@@ -26,6 +26,12 @@ require("../lib/webcal.class.php");
 require("../cactioncomm.class.php");
 require("../actioncomm.class.php");
 
+$user->getrights('propale');
+$user->getrights('fichinter');
+$user->getrights('commande');
+$user->getrights('projet');
+
+
 /*
  * Sécurité accés client
  */

@@ -23,6 +23,10 @@
 require("./pre.inc.php");
 
 $user->getrights('propale');
+$user->getrights('fichinter');
+$user->getrights('commande');
+$user->getrights('projet');
+
 
 if ($user->societe_id > 0)
 {

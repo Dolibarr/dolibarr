@@ -23,6 +23,12 @@
  */
 require("./pre.inc.php");
 
+$user->getrights('propale');
+$user->getrights('fichinter');
+$user->getrights('commande');
+$user->getrights('projet');
+
+
 llxHeader();
 
 /*
@@ -49,7 +55,10 @@ $offset = $limit * $page ;
 
 
 if ($type == "c") {
-  $label = " prospects/clients";
+  $label = " clients";
+}
+if ($type == "p") {
+  $label = " prospects";
 }
 if ($type == "f") {
   $label = " fournisseurs";
@@ -69,6 +78,9 @@ $sql .= " WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
 
 if ($type == "c") {
   $sql .= " AND s.client = 1";
+}
+if ($type == "p") {
+  $sql .= " AND s.client = 2";
 }
 if ($type == "f") {
   $sql .= " AND s.fournisseur = 1";
