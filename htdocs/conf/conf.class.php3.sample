@@ -35,7 +35,7 @@ class Conf {
     $this->db = new DbConf();
 
     $this->societe    = 1;
-    $this->commercial = 0;
+
     $this->voyage     = 0;
 
     $this->compta    = new ComptaConf();
