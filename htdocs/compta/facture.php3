@@ -22,6 +22,7 @@
 require("./pre.inc.php3");
 require("../facture.class.php3");
 require("../lib/CMailFile.class.php3");
+require("../paiement.class.php");
 
 llxHeader();
 
@@ -41,6 +42,28 @@ if ($user->societe_id > 0)
 /*
  *
  */	
+
+if ($action == 'add_paiement') {
+  $datepaye = $db->idate(mktime(12, 0 , 0, $pmonth, $pday, $pyear));
+
+  $paiement = new Paiement($db);
+
+  $paiement->facid        = $facid;  
+  $paiement->datepaye     = $datepaye;
+  $paiement->amount       = $amount;
+  $paiement->author       = $author;
+  $paiement->paiementid   = $paiementid;
+  $paiement->num_paiement = $num_paiement;
+  $paiement->note         = $note;
+
+  $paiement->create();
+
+  $action = '';
+}
+/*
+ *
+ */
+
 if ($action == 'valid') 
 {
   $fac = new Facture($db);
