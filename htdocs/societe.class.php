@@ -126,10 +126,17 @@ class Societe {
             
             $this->creation_bit = 1;
             
-            $result = $this->update($this->id);
+            $ret = $this->update($this->id);
             
-            $this->db->commit();
-            return $result;
+            if ($ret == 0) {
+                $this->db->commit();
+            } else {
+        		dolibarr_syslog("Societe::create echec update");
+                $this->db->rollback();
+                return -3;
+            }
+            
+            return $ret;
         }
         else
         {
@@ -138,7 +145,7 @@ class Societe {
                 $this->error=$langs->trans("ErrorCompanyNameAlreadyExists",$this->nom);
             }
             else {
-        		dolibarr_syslog("Societe::Create echec insert sql=$sql");
+        		dolibarr_syslog("Societe::create echec insert sql=$sql");
             }
             $this->db->rollback();
             return -2;
