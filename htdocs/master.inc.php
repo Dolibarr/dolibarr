@@ -177,6 +177,11 @@ $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
  * Activation des modules
  * et inclusion de librairies dépendantes
  */
+define(MAIN_MODULE_BOOKMARK4U,1);
+if (defined("MAIN_MODULE_BOOKMARK4U"))
+{
+  $conf->bookmark4u->enabled=MAIN_MODULE_BOOKMARK4U;
+}
 if (defined("MAIN_MODULE_DEPLACEMENT"))
 {
   $conf->deplacement->enabled=MAIN_MODULE_DEPLACEMENT;
