@@ -213,7 +213,14 @@ else
 
       print '<td width="25%" align="center">-</td>';
 
-      print '<td width="25%" align="center">[<a href="fiche.php3?action=password&id='.$id.'">Nouveau mot de passe</a>]</td>';
+      if ($user->id == $id)
+	{
+	  print '<td width="25%" align="center">[<a href="fiche.php3?action=password&id='.$id.'">Nouveau mot de passe</a>]</td>';
+	}
+      else 
+	{
+      print '<td width="25%" align="center">-</td>';
+	}
       print '<td width="25%" align="center">-</td>';
       
 
