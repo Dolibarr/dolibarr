@@ -138,75 +138,7 @@ function gljFooter_Cursor ($file, $page, $limit, $i, $parm="") {
 //
 //
 //
-function gljMenu_PrestaLogged() {
-  print "<DIV align=\"right\">";
-  print "<A href=\"prestas.php3\" class=\"T3\">Liste</A> |\n";
 
-  print "</DIV>";
-}
-
-
-function gljMenu_Stat() {
-  print "<DIV align=\"right\">";
-  print "<A href=\"index.php3\" class=\"T3\">" . $GLOBALS["_STAT_HOME"] . "</A> |\n";
-  print "<A href=\"contrat.php3\" class=\"T3\">" . $GLOBALS["_STAT_CONTRAT"] . "</A> |\n";
-  print "<A href=\"effectif.php3\" class=\"T3\">" . $GLOBALS["_STAT_EFFECTIF"] . "</A> |\n";
-  print "<A href=\"poste.php3\" class=\"T3\">" . $GLOBALS["_STAT_POSTE"] . "</A> |\n";
-  print "<A href=\"region.php3\" class=\"T3\">" . $GLOBALS["_STAT_REGION"] . "</A> |\n";
-  print "<A href=\"lang.php3\" class=\"T3\">" . $GLOBALS["_STAT_LANG"] . "</A> |\n";
-  print "<A href=\"secteur.php3\" class=\"T3\">" . $GLOBALS["_STAT_SECTEUR"] . "</A>\n";
-  print "</DIV>";
-}
-//
-//
-//
-function gljMenu_Soc() {
-  print "<div align=\"right\">";
-  print "<A href=\"./\" class=\"T3\">" . $GLOBALS["_AFIND"] . "</A> |\n";
-  print "<A href=\"date.php3\" class=\"T3\">" . $GLOBALS["_BYDATE"] . "</A> |\n";
-  print "<A href=\"stat.php3?t=poste\" class=\"T3\">" . $GLOBALS["_BYPOSTE"] . "</A> |\n";
-  print "<A href=\"stat.php3?t=region\" class=\"T3\">" . $GLOBALS["_BYREGION"] . "</A> |\n";
-  print "<A href=\"stat.php3?t=secteur\" class=\"T3\">" . $GLOBALS["_BYSECTEUR"] . "</A> |\n";
-  print "<A href=\"company.php3\" class=\"T3\">" . $GLOBALS["_BYCOMPANY"] . "</A>\n";
-  print "</div>";
-}
-/*
- *
- */
-function gljMenu_SocLogged() {
-  print "<div align=\"right\">";
-  print "<A href=\"/of/fiche.php3\" class=\"T3\">" . $GLOBALS["_COORDENT"] . "</A> | ";
-  print "<A href=\"/of/desc.php3\" class=\"T3\">" . $GLOBALS["_DESC"] . "</A> | ";
-  //print "<A href=\"/of/ent.php3\" class=\"T3\">" . $GLOBALS["_ENT"] . "</A> | ";
-  print "<A href=\"/of/offres.php3\" class=\"T3\">" . $GLOBALS["_OFFRES"] . "</A> | ";
-  print "<A href=\"/of/abo.php3\" class=\"T3\">" . $GLOBALS["_ABO"] . "</A> | ";
-  print "<A href=\"/of/stat.php3\" class=\"T3\">" . $GLOBALS["_STAT"] . "</A> | ";
-  print "<A href=\"/of/pref.php3\" class=\"T3\">" . $GLOBALS["_PREF"] . "</A>";
-  print "</div><P>";
-}
-/*
- *
- */
-function gljMenu_SocSSII() {
-  print "<div align=\"right\">";
-  print "<A href=\"/of/ssii/\" class=\"T3\">Accueil SSII</A> | ";
-  print "<A href=\"/of/ssii/ressources.php3\" class=\"T3\">Ressources</A> | ";
-  print "<A href=\"/of/ssii/prestas.php3\" class=\"T3\">Prestations</A>";
-  print "</div><P>";
-}
-/*
- *
- */
-function gljMenu_Cv() {
-  print "<DIV align=\"right\">";
-  print "<A href=\"./\" class=\"T3\">" . $GLOBALS["_AFIND"] . "</A> |\n";
-  print "<A href=\"date.php3\" class=\"T3\">" . $GLOBALS["_BYDATE"] . "</A> |\n";
-  print "<A href=\"stat.php3?t=poste\" class=\"T3\">" . $GLOBALS["_BYPOSTE"] . "</A> |\n";
-  print "<A href=\"stat.php3?t=region\" class=\"T3\">" . $GLOBALS["_BYREGION"] . "</A> |\n";
-  print "<A href=\"stat.php3?t=secteur\" class=\"T3\">" . $GLOBALS["_BYSECTEUR"] . "</A> |\n";
-  print "<A href=\"stat.php3?t=expert\" class=\"T3\">" . $GLOBALS["_BYEXPERT"] . "</A>\n";
-  print "</DIV>";
-}
 /*
  *
  * Verif info

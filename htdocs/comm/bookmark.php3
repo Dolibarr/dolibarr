@@ -22,7 +22,7 @@
 require("./pre.inc.php3");
 
 llxHeader();
-$db = new Db();
+
 if ($sortorder == "") {
   $sortorder="DESC";
 }
@@ -82,8 +82,8 @@ if ( $db->query($sql) )
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR bgcolor=\"orange\">";
   print "<TD>&nbsp;</TD>";
-  print "<TD align=\"center\"><a href=\"index.php3?sortfield=idp&sortorder=$sortorder&begin=$begin\">Id</a></TD>";
-  print "<TD><a href=\"index.php3?sortfield=lower(s.nom)&sortorder=$sortorder&begin=$begin\">Societe</a></td>";
+  print "<TD align=\"center\"><a href=\"index.php?sortfield=idp&sortorder=$sortorder&begin=$begin\">Id</a></TD>";
+  print "<TD><a href=\"index.php?sortfield=lower(s.nom)&sortorder=$sortorder&begin=$begin\">Societe</a></td>";
 
   print "<TD align=\"center\">Statut</TD>";
   print "<TD>Auteur</TD>";
@@ -110,7 +110,7 @@ if ( $db->query($sql) )
       print "<TR $bc>";
       print "<TD>" . ($i + 1 + ($limit * $page)) . "</TD>";
       print "<TD align=\"center\"><b>$obj->idp</b></TD>";
-      print "<TD><a href=\"index.php3?socid=$obj->idp\">$obj->nom</A></TD>\n";
+      print "<TD><a href=\"index.php?socid=$obj->idp\">$obj->nom</A></TD>\n";
       
       print "<TD align=\"center\">$obj->stcomm</TD>\n";
       print "<TD>$obj->author</TD>\n";

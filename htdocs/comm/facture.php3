@@ -23,7 +23,7 @@
 require("./pre.inc.php3");
 
 llxHeader();
-$db = new Db();
+
 
 if ($action == 'add') {
   $datefacture = $db->idate(mktime(12, 0 , 0, $pmonth, $pday, $pyear)); 
@@ -171,7 +171,7 @@ if ($action == 'add') {
 	$objp = $db->fetch_object( $i);
 	$var=!$var;
 	print "<TR $bc[$var]>";
-	print "<TD><a href=\"../comm/index.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
+	print "<TD><a href=\"../comm/index.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
 	print "<td><a href=\"facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
 	  
 	if ($objp->df > 0 ) {

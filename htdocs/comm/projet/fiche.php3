@@ -23,8 +23,6 @@ require("./pre.inc.php3");
 require("./project.class.php3");
 require("../../propal.class.php3");
 
-$db = new Db();
-
 if ($HTTP_POST_VARS["action"] == 'update')
 {
   $projet = new Project($db);
@@ -70,7 +68,7 @@ if ($action == 'create')
 {
   print_titre("Nouveau projet");
 
-  print '<form action="index.php3?socidp='.$socidp.'" method="post">';
+  print '<form action="index.php?socidp='.$socidp.'" method="post">';
   ?>
   <table border="1" cellpadding="4" cellspacing="0">
   <input type="hidden" name="action" value="create">

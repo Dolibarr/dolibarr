@@ -36,15 +36,15 @@ function llxHeader($head = "")
 
   $menu->add(DOL_URL_ROOT."/compta/facture.php3","Factures");
 
-  $menu->add("index.php3","Charges");
+  $menu->add("index.php","Charges");
 
-  $menu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php3","Prest. Sociales");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php","Prest. Sociales");
 
   $menu->add(DOL_URL_ROOT."/compta/ca.php3","Chiffres d'affaires");
 
   $menu->add(DOL_URL_ROOT."/compta/resultat/","Résultats");
 
-  $menu->add(DOL_URL_ROOT."/compta/bank/index.php3","Banque");
+  $menu->add(DOL_URL_ROOT."/compta/bank/index.php","Banque");
 
   left_menu($menu->liste);
 

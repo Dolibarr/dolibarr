@@ -90,7 +90,7 @@ if ( $db->query($sql) )
       $var = !$var;
       print "<tr $bc[$var]>";
       print '<td>'.strftime("%d %b %y",$obj->de).'</td>';
-      print '<td><a href="index.php3?year='.strftime("%Y",$obj->periode).'">'.strftime("%Y",$obj->periode).'</a></td>';
+      print '<td><a href="index.php?year='.strftime("%Y",$obj->periode).'">'.strftime("%Y",$obj->periode).'</a></td>';
       print '<td>'.$obj->nom.'</td><td>'.$obj->libelle.'</td>';
       print '<td align="right">'.price($obj->amount).'</td>';
       
@@ -114,7 +114,7 @@ else
  *
  *
  */
-print '<tr><form method="post" action="index.php3">';
+print '<tr><form method="post" action="index.php">';
 print '<input type="hidden" name="action" value="add">';
 print '<td><input type="text" size="8" name="date"></td>';
 

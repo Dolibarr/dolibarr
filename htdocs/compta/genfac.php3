@@ -167,7 +167,7 @@ toto
 	  $var=!$var;
 	  print "<TR $bc[$var]>";
 	  print "<TD>[<a href=\"$PHP_SELF?socidp=$objp->idp\">Filtre</a>]</TD>\n";
-	  print "<TD><a href=\"../comm/index.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
+	  print "<TD><a href=\"../comm/index.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
 	  
 	  
 	  print "<td><a href=\"facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";

@@ -85,7 +85,7 @@ if ($result) {
       print "<TR $bc[$var]>";
 
       print "<td><a href=\"facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
-      print "<TD><a href=\"../comm/index.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
+      print "<TD><a href=\"../comm/index.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
 	
       if ($objp->df > 0 ) {
 	print "<TD align=\"right\">";

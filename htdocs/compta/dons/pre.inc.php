@@ -44,7 +44,7 @@ function llxHeader($head = "") {
   $menu->add_submenu("liste.php","Liste complète");
   $menu->add_submenu("stats.php","Stats");
 
-  $menu->add("/compta/bank/index.php3","Bank");
+  $menu->add("/compta/bank/index.php","Bank");
 
   left_menu($menu->liste);
 

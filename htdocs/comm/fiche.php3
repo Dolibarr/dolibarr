@@ -149,7 +149,7 @@ if ($socid > 0) {
 
 	print "<td align=\"center\"><a href=\"../compta/fiche.php3?socid=$objsoc->idp\">Compta</a></td>";
 	print "<td align=\"center\"><a href=\"docsoc.php?socid=$objsoc->idp\">Documents</a></td>";
-	print "<td align=\"center\"><a href=\"index.php3?socidp=$objsoc->idp&action=add_bookmark\">[Bookmark]</a></td>";
+	print "<td align=\"center\"><a href=\"index.php?socidp=$objsoc->idp&action=add_bookmark\">[Bookmark]</a></td>";
 	if ($user->rights->projet->creer)
 	  print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
 	if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
@@ -278,7 +278,7 @@ if ($socid > 0) {
      */
     if ($action == 'changevalue') {
       print "<HR noshade>";
-      print "<form action=\"index.php3?socid=$objsoc->idp\" method=\"post\">";
+      print "<form action=\"index.php?socid=$objsoc->idp\" method=\"post\">";
       print "<input type=\"hidden\" name=\"action\" value=\"cabrecrut\">";
       print "Cette société est un cabinet de recrutement : ";
       print "<select name=\"selectvalue\">";
