@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,11 +22,12 @@
  */
 
 /**
-        \file       htdocs/install/check.php
-        \ingroup    install
-        \brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
-        \version    $Revision$
+   \file       htdocs/install/check.php
+   \ingroup    install
+   \brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
+   \version    $Revision$
 */
+$err = 0;
 
 include_once("./inc.php");
 
@@ -36,21 +37,20 @@ $langs->load("install");
 
 pHeader($langs->trans("DolibarrWelcome"), "licence");   // Etape suivante = license
 
-
 print $langs->trans("InstallEasy")."<br>";
 
 // Si fichier présent et lisible
 if (is_readable($conffile))
 {
-    $confexists=1;
-    include_once($conffile);
+  $confexists=1;
+  include_once($conffile);
 }
 else
 {
-    // Si non on le crée        
-    $confexists=0;
-    $fp = @fopen("$conffile", "w");
-    if($fp)
+  // Si non on le crée        
+  $confexists=0;
+  $fp = @fopen("$conffile", "w");
+  if($fp)
     {
       @fwrite($fp, '<?php');
       @fputs($fp,"\n");
