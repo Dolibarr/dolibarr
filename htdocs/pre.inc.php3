@@ -54,7 +54,7 @@ function llxHeader($head = "") {
   print "<center><A href=\"/compta/\">Factures</center></A>\n";
   print '</td></tr>';
 
-  if ($conf->fichinter) {
+  if ($conf->fichinter->enabled) {
 
     print "<TR><TD valign=\"top\" align=\"right\">";
     print "<center><A href=\"/fichinter/\">Fiches d'intervention</center></A>\n";

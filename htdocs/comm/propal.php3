@@ -163,14 +163,10 @@ if ($propalid) {
       /*
        *
        */
-      print "<tr bgcolor=\"#f0f0f0\"><td>Statut :</td><td colspan=1 align=center><b>$obj->lst</b></td>";
-      if ($obj->statut == 0) {
-	print "<td colspan=3 align=center>[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
-      } elseif ($obj->statut == 1) {
-	print "<td colspan=3 align=center>[<a href=\"$PHP_SELF?propalid=$propalid&action=statut\">Changer</a>]</td>";
-      } else {
-	print "<td colspan=3>&nbsp;</td>";
-      }
+      print "<tr bgcolor=\"#f0f0f0\"><td>Statut :</td><td colspan=2 align=center><b>$obj->lst</b></td>";
+
+      print '</tr>';
+
 
       print "</table>";
 
@@ -270,7 +266,11 @@ if ($propalid) {
       if ($obj->statut == 0) {
 	print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?propalid=$propalid&action=delete\">Supprimer</a>]</td>";
       } else {
-	print "<td align=\"center\" width=\"25%\">-</td>";
+	if ($obj->statut == 1) {
+	  print "<td bgcolor=\"#e0e0e0\" align=center>[<a href=\"$PHP_SELF?propalid=$propalid&action=statut\">Cloturer</a>]</td>";
+	} else {
+	  print "<td align=\"center\" width=\"25%\">-</td>";
+	}
       } 
       if ($obj->statut == 2) {
 	print "<td bgcolor=\"#e0e0e0\" align=\"center\" width=\"25%\"><a href=\"facture.php3?propalid=$propalid&action=create\">Emettre une facture</td>";
@@ -460,6 +460,7 @@ if ($propalid) {
       $cloturor = new User($db, $obj->fk_user_cloture);
       $cloturor->fetch('');
       
+      print 'Suivi des actions<br>';
       print '<table cellspacing=0 border=1 cellpadding=3>';
       print '<tr><td>&nbsp;</td><td>Nom</td><td>Date</td></tr>';
       print '<tr><td>Création</td><td>'.$author->fullname.'</td>';

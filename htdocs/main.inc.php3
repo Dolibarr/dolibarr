@@ -53,7 +53,7 @@ function top_menu($head) {
   print "<HTML><HEAD>";
   print $head;
   print "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=iso-8859-1\">\n";
-  print '<LINK REL="stylesheet" TYPE="text/css" HREF="/dolibarr.css">';
+  print '<LINK REL="stylesheet" TYPE="text/css" HREF="/'.$conf->css.'">';
   print "</HEAD>\n";
   
   print '<BODY BGCOLOR="#c0c0c0" TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">';

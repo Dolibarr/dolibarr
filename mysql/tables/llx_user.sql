@@ -31,6 +31,8 @@ create table llx_user
   firstname     varchar(50),
   code          varchar(4),
   email         varchar(255),
+  admin         smallint default 0,
+  webcal_login   varchar(25),
   module_comm   smallint default 1,
   module_compta smallint default 1,
   note          text,

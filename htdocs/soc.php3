@@ -61,6 +61,7 @@ if ($action == 'update') {
   $soc->tel = $tel;
   $soc->fax = $fax;
   $soc->url = $url;
+  $soc->siren = $siren;
 
   $soc->update($socid);
 }
@@ -110,15 +111,18 @@ if ($action == 'create') {
 
   print '<table border="1" cellpadding="3" cellspacing="0">';
   print '<tr><td>Nom</td><td><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
-  print '<tr><td>Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
-  print '<tr><td>CP</td><td><input size="6" type="text" name="cp">&nbsp;';
-  print 'Ville&nbsp;<input type="text" name="ville"></td></tr>';
+  print '<tr><td valign="top">Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft">';
+  print $soc->adresse;
+  print '</textarea></td></tr>';
+
+  print '<tr><td>CP</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
+  print 'Ville&nbsp;<input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
   print '<tr><td>Tel</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td></tr>';
   print '<tr><td>Fax</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
   print '<tr><td>Web</td><td>http://<input type="text" name="url" value="'.$soc->url.'"></td></tr>';
 
-  print '<tr><td>Siren</td><td><input type="text" name="siren"></td></tr>';
+  print '<tr><td>Siren</td><td><input type="text" name="siren" value="'.$soc->siren.'"></td></tr>';
 
   print '<tr><td>Type</td><td><select name="type">';
   print '</select>';
@@ -137,17 +141,16 @@ if ($action == 'create') {
   $soc->id = $socid;
   $soc->fetch();
   print "[<a href=\"soc.php3?socid=$socid&action=edit\">Editer</a>]";
-  print '<table>';
+  print '<table border="1" cellpadding="3" cellspacing="0">';
   print '<tr><td>Nom</td><td>'.$soc->nom.'</td></tr>';
-  print '<tr><td>Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
-  print '<tr><td>CP</td><td><input size="6" type="text" name="cp">&nbsp;';
-  print 'Ville&nbsp;<input type="text" name="ville"></td></tr>';
+  print '<tr><td valign="top">Adresse</td><td>'.nl2br($soc->adresse).'</td></tr>';
+  print '<tr><td>CP</td><td>'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
 
   print '<tr><td>Tel</td><td>'.$soc->tel.'</td></tr>';
   print '<tr><td>Fax</td><td>'.$soc->fax.'</td></tr>';
   print '<tr><td>Web</td><td><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
 
-  print '<tr><td>Siren</td><td><input type="text" name="siren"></td></tr>';
+  print '<tr><td>Siren</td><td>'.$soc->siren.'</td></tr>';
 
   print '<tr><td>Type</td><td><select name="type">';
   print '</select>';

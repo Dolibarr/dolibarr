@@ -51,6 +51,7 @@ class Product {
       $this->description = $result["description"];
       $this->price       = $result["price"];
     }
+    $this->db->free();
     return $result;
   }
 

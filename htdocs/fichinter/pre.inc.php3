@@ -43,7 +43,7 @@ function llxHeader($head = "", $urlp = "") {
   print "</td></tr>";
   print "<tr><td valign=\"top\" align=\"right\">";
 
-  print "<CENTER><A href=\"".$urlp."index.php3\">Clients</A></CENTER>\n";
+  print "<CENTER><A href=\"".$urlp."../comm/index.php3\">Clients</A></CENTER>\n";
   print "<A href=\"".$urlp."../soc.php3?&action=create\">Nouvelle société</A><BR>\n";
   print "<A href=\"".$urlp."contact.php3\">Contacts</A><BR><br>\n";
   print "</TD></TR>";

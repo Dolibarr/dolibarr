@@ -22,55 +22,47 @@
 require("../main.inc.php3");
 
 function llxHeader($head = "", $urlp = "") {
-  global $PREFIX, $user;
+  global $user, $conf;
 
-  print "<HTML>\n<HEAD>$head\n</HEAD>\n";
-  ?>
-  <BODY BGCOLOR="#c0c0c0" TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">
-  <?PHP
+  /*
+   *
+   *
+   */
+  top_menu($head);
 
-  print "<TABLE border=\"0\" width=\"100%\">\n";
-  print "<TR bgcolor=\"".$GLOBALS["TOPBAR_BGCOLOR"]."\">";
-  
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\"><B>" . $GLOBALS["MAIN_TITLE"] . "</B></TD>";
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\"><A href=\"".$urlp."../tech/\">Technique</A></TD>";
-  print "<TD width=\"20%\" align=\"center\"><A href=\"".$urlp."../comm/\">Commercial</A></TD>";
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\"><A href=\"".$urlp."../compta/\">Compta</A></TD>";
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\"><A href=\"".$urlp."../stats/\">Stats</A></TD>";
-  print "</TR></TABLE>\n";
 
   print "<TABLE border=\"1\" width=\"100%\" cellpadding=\"0\">";
   print "<TR><TD valign=\"top\" align=\"right\">";
 
   print "<TABLE border=\"1\" cellspacing=\"0\" width=\"100%\" cellpadding=\"3\">";
-  print "<TR><TD valign=\"top\" align=\"right\">";
+  print '<TR><TD class="barre" valign="top" align="right">';
   print "<center><b>" . $GLOBALS["dbname"] . " - " . $user->code ."</B></center>";
   print "<A href=\"".$urlp."../\">Accueil</A><br>";
   print "<A href=\"".$urlp."bookmark.php3\">Bookmark</A>";
   print "</td></tr>";
 
-  print "<tr><td valign=\"top\" align=\"right\">";
+  print '<TR><TD class="barre" valign="top" align="right">';
   print "<CENTER><A href=\"".$urlp."../comm/index.php3\">Societe</A></CENTER>\n";
   print "<A href=\"".$urlp."contact.php3\">Contact</A><BR>\n";
   print "</TD></TR>";
 
 
-  print "<TR><TD valign=\"top\" align=\"right\">";
+  print '<TR><TD class="barre" valign="top" align="right">';
   print "<div align=\"center\"><A href=\"".$urlp."actioncomm.php3\">Actions</A></div>\n";
   print "</TD></TR>";
   /*
    *
    */
-  print "<TR><TD valign=\"top\" align=\"right\">";
+  print '<TR><TD class="barre" valign="top" align="right">';
   print "<center><A href=\"/product/\">Produits</center></A>\n";
   print "</TD></TR>";
 
-  print '<TR><TD valign="top" bgcolor="#e0e0e0" align="right">';
+  print '<TR><TD class="barre_select" valign="top" align="right">';
   print '<div align="center"><A href="/service/">Services</A></div><br>';
   print '<a href="fiche.php3?action=create">Nouveau service</a>';
   print '</td></tr>';
 
-  print "<tr><td align=\"right\" valign=\"top\">";
+  print '<TR><TD class="barre" valign="top" align="right">';
   print "<CENTER><A href=\"".$urlp."../comm/index.php3\">Societes</A></CENTER>\n";
   print "<form action=\"../comm/index.php3\">";
   print '<input type="hidden" name="mode" value="search">';

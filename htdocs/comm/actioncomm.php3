@@ -82,6 +82,9 @@ if ($action=='create' && $actionid && $contactid) {
   print '<input type="hidden" name="socid" value="'.$socid.'">';
 
   print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
+
+  print '<tr><td colspan="2" bgcolor="#e0e0e0"><div class="titre">Action effectuée</div></td></tr>';
+
   print '<tr><td width="10%">Action</td><td bgcolor="#e0e0e0"><b>'.$caction->libelle.'</td></tr>';
   print '<tr><td width="10%">Société</td><td width="40%"bgcolor="#e0e0e0"><b><a href="index.php3?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
   print '<tr><td width="10%">Contact</td><td width="40%"bgcolor="#e0e0e0"><b>'.$contact->fullname.'</td></tr>';
@@ -89,9 +92,17 @@ if ($action=='create' && $actionid && $contactid) {
   print '<tr><td valign="top">Commentaire</td><td>';
   print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
 
-  print '<tr><td width="10%">A recontacter le</td><td width="40%"bgcolor="#e0e0e0"><b>'.$contact->fullname.'</td></tr>';
+  print '<tr><td colspan="2" bgcolor="#e0e0e0"><div class="titre">Prochaine Action à faire</div></td></tr>';
 
-  print '<tr><td colspan="2" align="center"><input type="submit"></td></tr>';
+  print '<tr><td width="10%">Date</td><td width="40%">';
+  print_date_select();
+  print '</td></tr>';
+
+  print '<tr><td valign="top">Commentaire</td><td>';
+  print '<textarea cols="60" rows="6" name="next_note"></textarea></td></tr>';
+
+
+  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
 
   print '</form></table>';
   $limit = 10;
@@ -162,10 +173,10 @@ $sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.r
        $bc=$bc2;
      }
      print "<TR $bc>";
-     print "<TD>" .strftime("%d %b %Y %H:%M",$obj->da)."</TD>\n"; 
+     print "<TD>" .strftime("%Y %b %d %H:%M",$obj->da)."</TD>\n"; 
 
      print "<TD width=\"30%\"><a href=\"index.php3?socid=$obj->socidp\">$obj->societe</A></TD>\n";
-     print '<TD align="left" valign="top" rowspan="2">'.nl2br($obj->note).'</TD>';
+     print '<TD align="left" valign="top" rowspan="2">'.nl2br($obj->note).'&nbsp;</TD>';
      print "</TR>\n";
 
      print "<TR $bc>";
@@ -181,61 +192,75 @@ $sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.r
 
 } else {
 
+  print '<div class="titre">Liste des actions commerciales effectuées</div>';
 
-$sql = "SELECT s.nom as societe, s.idp as socidp,a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code ";
-$sql .= " FROM actioncomm as a, c_actioncomm as c, societe as s, llx_user as u";
-$sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
-
-if ($type) {
-  $sql .= " AND c.id = $type";
-}
-
-$sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit( $limit, $offset);
-
-
-if ( $db->query($sql) ) {
-  $num = $db->num_rows();
-  $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR bgcolor=\"orange\">";
-  print '<TD colspan="4">Date</TD>';
-  print '<TD><a href="'.$PHP_SELF.'?sortfield=lower(s.nom)&sortorder=ASC">Societe</a></td>';
-  print '<TD><a href="'.$PHP_SELF.'?sortfield=c.libelle">Action</a></TD>';
-  print "<TD>Auteur</TD>";
-  print "</TR>\n";
-  $var=True;
-  while ($i < $num) {
-    $obj = $db->fetch_object( $i);
-    
-    $var=!$var;
-    
-    if (!$var) {
-      $bc=$bc1;
-    } else {
-      $bc=$bc2;
-    }
-    print "<TR $bc>";
-    print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
-    print "<TD>" .strftime("%b",$obj->da)."</TD>\n"; 
-    print "<TD>" .strftime("%Y",$obj->da)."</TD>\n"; 
-    print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
-    print "<TD width=\"50%\"><a href=\"index.php3?socid=$obj->socidp\">$obj->societe</A></TD>\n";
-    
-    print '<TD width="30%"><a href="actioncomm.php3?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
-    print "<TD width=\"20%\">$obj->code</TD>\n";
-    print "<TD align=\"center\">$obj->stcomm</TD>\n";
-    print "</TR>\n";
-    $i++;
+  $sql = "SELECT s.nom as societe, s.idp as socidp,a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code ";
+  $sql .= " FROM actioncomm as a, c_actioncomm as c, societe as s, llx_user as u";
+  $sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
+  
+  if ($type) {
+    $sql .= " AND c.id = $type";
   }
-  print "</TABLE>";
-  $db->free();
-}
+  
+  $sql .= " ORDER BY $sortfield $sortorder ";
+  $sql .= $db->plimit( $limit, $offset);
+  
+  
+  if ( $db->query($sql) ) {
+    $num = $db->num_rows();
+    $i = 0;
+    print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+    print "<TR>";
+    print '<TD colspan="4">Date</TD>';
+    print '<TD>Société</a></td>';
+    print '<TD>Action</a></TD>';
+    print "<TD>Auteur</TD>";
+    print "</TR>\n";
+    $var=True;
+    while ($i < $num) {
+      $obj = $db->fetch_object( $i);
+      
+      $var=!$var;
+      
+      if (!$var) {
+	$bc=$bc1;
+      } else {
+	$bc=$bc2;
+      }
+      print "<TR $bc>";
 
+      if ($oldyear == strftime("%Y",$obj->da) ) {
+	print '<td align="center">|</td>';
+      } else {
+	print "<TD>" .strftime("%Y",$obj->da)."</TD>\n"; 
+	$oldyear = strftime("%Y",$obj->da);
+      }
+
+      if ($oldmonth == strftime("%Y%b",$obj->da) ) {
+	print '<td align="center">|</td>';
+      } else {
+	print "<TD>" .strftime("%b",$obj->da)."</TD>\n"; 
+	$oldmonth = strftime("%Y%b",$obj->da);
+      }
+
+      print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
+      print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
+      print "<TD width=\"50%\"><a href=\"index.php3?socid=$obj->socidp\">$obj->societe</A></TD>\n";
+      
+      print '<TD width="30%"><a href="actioncomm.php3?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+      print "<TD width=\"20%\">$obj->code</TD>\n";
+      print "<TD align=\"center\">$obj->stcomm</TD>\n";
+      print "</TR>\n";
+      $i++;
+    }
+    print "</TABLE>";
+    $db->free();
+  }
+  
 
 }
 
 $db->close();
 
-llxFooter();
+llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

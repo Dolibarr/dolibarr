@@ -424,7 +424,7 @@ if ($socid > 0) {
 	print "</td>";
 	print "<td>$obj->poste&nbsp;</td>";
 	print '<td><a href="actioncomm.php3?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
-	print "<td>$obj->fax&nbsp;</td>";
+	print '<td><a href="actioncomm.php3?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
 	print '<td><a href="actioncomm.php3?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
 	print "<td><a href=\"people.php3?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
 	print "</tr>\n";
@@ -464,12 +464,28 @@ if ($socid > 0) {
 	  } else {
 	    print "<tr>";
 	  }
-	  print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
+
+	  if ($oldyear == strftime("%Y",$obj->da) ) {
+	    print '<td align="center">|</td>';
+	  } else {
+	    print "<TD align=\"center\">" .strftime("%Y",$obj->da)."</TD>\n"; 
+	    $oldyear = strftime("%Y",$obj->da);
+	  }
+
+	  if ($oldmonth == strftime("%Y%b",$obj->da) ) {
+	    print '<td align="center">|</td>';
+	  } else {
+	    print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
+	    $oldmonth = strftime("%Y%b",$obj->da);
+	  }
+	  
+	  print "<TD>" .strftime("%d",$obj->da)."</TD>\n"; 
+	  print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
 
 	  if ($obj->propalrowid) {
-	    print "<td><a href=\"propal.php3?propalid=$obj->propalrowid\">$obj->libelle</a></td>";
+	    print '<td width="40%"><a href="propal.php3?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
 	  } else {
-	    print "<td>$obj->libelle</td>";
+	    print '<td width="40%">'.$obj->libelle.'</td>';
 	  }
 	  /*
 	   * Contact pour cette action
@@ -478,13 +494,13 @@ if ($socid > 0) {
 	  if ($obj->fk_contact) {
 	    $contact = new Contact($db);
 	    $contact->fetch($obj->fk_contact);
-	    print '<td><a href="people.php3?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+	    print '<td width="40%"><a href="people.php3?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
 	  } else {
-	    print '<td>&nbsp;</td>';
+	    print '<td width="40%">&nbsp;</td>';
 	  }
 	  /*
 	   */
-	  print '<td><a href="../user.php3">'.$obj->code.'</a></td>';
+	  print '<td width="20%"><a href="../user.php3">'.$obj->code.'</a></td>';
 	  print "</tr>\n";
 	  $i++;
 	  $tag = !$tag;
@@ -651,7 +667,7 @@ if ($socid > 0) {
     print "<TD><a href=\"index.php3?sortfield=lower(s.nom)&sortorder=$sortorder&begin=$begin\">Societe</a></td>";
     print "<TD>Contact</TD>";
     print "<TD>email</TD>";
-    print "<TD align=\"center\">Statut</TD><td>&nbsp;</td><td>&nbsp;</td>";
+    print "<TD align=\"center\">Statut</TD><td>&nbsp;</td><td colspan=\"2\">&nbsp;</td>";
     print "</TR>\n";
     $var=True;
     while ($i < $num) {
@@ -666,7 +682,12 @@ if ($socid > 0) {
       print "<TD>&nbsp;</TD>\n";
       print "<TD align=\"center\">$obj->stcomm</TD>\n";
       print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
-      print "<TD><a href=\"addpropal.php3?socidp=$obj->idp&action=create\">[Propal]</A></td>\n";
+      print "<TD align=\"center\"><a href=\"addpropal.php3?socidp=$obj->idp&action=create\">[Propal]</A></td>\n";
+      if ($conf->fichinter->enabled) {
+	print "<TD align=\"center\"><a href=\"../fichinter/fiche.php3?socidp=$obj->idp&action=create\">[Fiche Inter]</A></td>\n";
+      } else {
+	print "<TD>&nbsp;</TD>\n";
+      }
       print "</TR>\n";
       $i++;
     }

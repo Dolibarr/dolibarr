@@ -51,50 +51,8 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-print "<a href=\"$PHP_SELF\">Liste</a><P>";
+print '<div class="titre">Liste des produits</div>';
 
-if ($rowid) {
-
-  $sql = "SELECT p.rowid, p.label, p.price, p.description, p.duration,p.ref FROM llx_product as p";
-  $sql .= " WHERE p.rowid = $rowid;";
-  
- 
- if ( $db->query($sql) ) {
-   $num = $db->num_rows();
-   $i = 0;
-   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-   print "<TR bgcolor=\"orange\">";
-   print "<TD>Réf</TD>";
-   print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Nom</a></td>";
-   print "</TR>\n";
-   $var=True;
-   if ( $num ) {
-     $objp = $db->fetch_object(0);
-     $var=!$var;
-     print "<TR $bc[$var]>";
-     print "<TD><a href=\"$PHP_SELF?rowid=$objp->rowid\">$objp->ref</a></TD>\n";
-     print "<TD>$objp->label</TD></tr>\n";
-     print "<tr><td>prix</td><TD>$objp->price</td></tr>\n";
-     print "<tr><td>duree</td><TD>$objp->duration</td></tr>\n";
-
-     print "<tr><td>desc</td><td>".nl2br($objp->description)."</td></tr>";
-     $i++;
-   }
-   print "</TABLE>";
-   $db->free();
-
-   print "<hr><form action=\"$PHP_SELF?rowid=$rowid\" method=\"post\">\n";
-   print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-   print "<textarea name=\"desc\" rows=\"12\" cols=\"40\">";
-   print nl2br($objp->description);
-   print "</textarea><br>";
-   print "<input type=\"submit\">";
-   print "</form>";
- }
-
-
-
-} else {
 
   $sql = "SELECT p.rowid, p.label, p.price, p.duration,p.ref FROM llx_product as p";
   
@@ -109,17 +67,15 @@ if ($rowid) {
    print "<TD>Réf</TD>";
    print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Nom</a></td>";
    print "<TD align=\"right\">Prix</TD>";
-   print "<TD align=\"right\">Durée</TD>";
    print "</TR>\n";
    $var=True;
    while ($i < $num) {
      $objp = $db->fetch_object( $i);
      $var=!$var;
      print "<TR $bc[$var]>";
-     print "<TD><a href=\"$PHP_SELF?rowid=$objp->rowid\">$objp->ref</a></TD>\n";
+     print "<TD><a href=\"fiche.php3?id=$objp->rowid\">$objp->ref</a></TD>\n";
      print "<TD>$objp->label</TD>\n";
      print '<TD align="right">'.price($objp->price).'</TD>';
-     print "<TD align=\"right\">$objp->duration</TD>\n";
      print "</TR>\n";
      $i++;
    }
@@ -127,7 +83,7 @@ if ($rowid) {
    $db->free();
  }
 
-}
+
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");

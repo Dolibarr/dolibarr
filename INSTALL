@@ -7,6 +7,8 @@ Paquets Debian requis :
 	- apache
 	- libdbd-mysql-perl
 	- libapache-mod-auth-mysql
+	- recode
+	- libtext-unaccent-perl
 
 Configuration :
 	- dans le repertoire dolibarr/htdocs/conf recopier le fichier

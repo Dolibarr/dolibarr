@@ -41,22 +41,22 @@ function llxHeader($head = "", $urlp = "") {
   print "<A href=\"".$urlp."../\">Accueil</A><br>";
   print "<A href=\"".$urlp."bookmark.php3\">Bookmark</A>";
   print "</td></tr>";
-  print "<tr><td valign=\"top\" align=\"right\">";
 
-  print "<CENTER><A href=\"".$urlp."index.php3\">Clients</A></CENTER>\n";
+  print '<TR><TD class="barre" valign="top" align="right">';
+  print "<div align=\"center\"><A href=\"".$urlp."index.php3\">Clients</A></div>\n";
   print "<A href=\"".$urlp."../soc.php3?&action=create\">Nouvelle société</A><BR>\n";
   print "<A href=\"".$urlp."contact.php3\">Contacts</A><BR><br>\n";
   print "<A href=\"".$urlp."recontact.php3\">A Recontacter</A><BR>\n";
   print "</TD></TR>";
 
 
-  print "<TR><TD valign=\"top\" align=\"right\">";
+  print '<TR><TD class="barre" valign="top" align="right">';
   print "<div align=\"center\"><A href=\"".$urlp."actioncomm.php3\">Actions</A></div>\n";
   print "</TD></TR>";
   /*
    *
    */
-  print '<TR><TD valign="top" align="right" bgcolor="#e0e0e0">';
+  print '<TR><TD class="barre_select" valign="top" align="right">';
   print '<div align="center"><A href="'.$urlp.'propal.php3">Propal</A></div>';
   print '<A href="'.$urlp.'propal.php3?viewstatut=0">Brouillon</A><br>';
   print '<A href="'.$urlp.'propal.php3?viewstatut=1">Ouvertes</A>';
@@ -64,26 +64,26 @@ function llxHeader($head = "", $urlp = "") {
   /*
    *
    */
-  print "<TR><TD valign=\"top\" align=\"right\">";
+  print '<TR><TD class="barre" valign="top" align="right">';
   print '<div align="center"><A href="'.$urlp.'../compta/">Factures</A></div>';
   print "</TD></TR>";
   /*
    *
    */
-  print "<TR><TD valign=\"top\" align=\"right\">";
+  print '<TR><TD class="barre" valign="top" align="right">';
   print '<div align="center"><A href="'.$urlp.'../product/">Produits</A></div>';
   print '<div align="center"><A href="'.$urlp.'../service/">Services</A></div>';
   print "</td></tr>";
   /*
    *
    */
-  print "<tr><td align=\"right\" valign=\"top\">";
-  print "<A href=\"projet/\">Projets</A><BR>\n";
+  print '<TR><TD class="barre" valign="top" align="right">';
+  print '<div align="center"><A href="projet/">Projets</A></div>';
   print "</td></tr>";
   /*
    *
    */
-  print "<tr><td align=\"right\" valign=\"top\">";
+  print '<TR><TD class="barre" valign="top" align="right">';
   print "<CENTER><A href=\"".$urlp."index.php3\">Societes</A></CENTER>\n";
   print "<form action=\"index.php3\">";
   print '<input type="hidden" name="mode" value="search">';

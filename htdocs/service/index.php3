@@ -23,9 +23,6 @@
 require("./pre.inc.php3");
 
 llxHeader();
-$bc[0]="bgcolor=\"#90c090\"";
-$bc[1]="bgcolor=\"#b0e0b0\"";
-
 
 $db = new Db();
 if ($sortfield == "") {
@@ -61,9 +58,9 @@ if ( $db->query($sql) ) {
   $i = 0;
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR bgcolor=\"orange\">";
-  print "<TD>Réf</TD>";
-  print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Nom</a></td>";
-  print "<TD align=\"right\">Prix</TD>";
+  print "<TH>Réf</TH>";
+  print "<TH><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Nom</a></th>";
+  print "<TH align=\"right\">Prix</th>";
   print "</TR>\n";
   $var=True;
   while ($i < $num) {

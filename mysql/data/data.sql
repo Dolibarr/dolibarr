@@ -24,6 +24,7 @@
 
 delete from c_actioncomm;
 insert into c_actioncomm (id,libelle) values ( 1, 'Appel Téléphonique');
+insert into c_actioncomm (id,libelle) values ( 2, 'Envoi Fax');
 insert into c_actioncomm (id,libelle) values ( 3, 'Envoi propal par mail');
 insert into c_actioncomm (id,libelle) values ( 4, 'Envoi d\'un email'); 
 insert into c_actioncomm (id,libelle) values ( 9, 'Envoi Facture');

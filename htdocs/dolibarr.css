@@ -19,6 +19,11 @@
  *
  */
 
+
+TD.barre_select { background: #d9dcc2 }
+
+TD.barre { background: #e0e0e0 }
+
 TD.menu	{ background: #d9dcc2; font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; color: #FFFFFF; text-decoration: none }
 
 DIV.titre { font-family: Helvetica, Verdana; font-size: 16px; font-weight: bold; color: #000000; text-decoration: none }

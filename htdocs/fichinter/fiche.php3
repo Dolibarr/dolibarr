@@ -64,12 +64,13 @@ if ($action == 'add') {
   $fichinter->ref = $ref;
 
   $id = $fichinter->create();
-  
-  /*
-   *
-   *   Generation
-   *
-   */
+}
+/*
+ *
+ *   Generation
+ *
+ */
+if ($action == 'generate') {
   if ($id) {
     print "<hr><b>Génération du PDF</b><p>";
 
@@ -77,12 +78,15 @@ if ($action == 'add') {
 
     $gljroot = "/home/www/dolibarr/dolibarr/htdocs";
 
-    $command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name.":host=localhost\" ";
-    $command .= " ; ./propal-tex.pl --propal=".$id ." --pdf --output=".$conf->propal->outputdir;
-    $command .= " --templates=".$conf->propal->templatesdir;
+    $command = 'export DBI_DSN="dbi:'.$conf->db->type.':dbname='.$conf->db->name.':host='.$conf->db->host.'"';
+
+    $command .= " ; ./tex-fichinter.pl --fichinter=".$id ;
+    $command .= " --pdf --ps";
+    $command .= " --output="    .$conf->fichinter->outputdir;
+    $command .= " --templates=" .$conf->fichinter->templatesdir;
 
     $output = system($command);
-    print "<p>command : $command<br>";
+    print "<p>command : <b>$command<br>";
     print $output;
   } else {
     print $db->error();
@@ -235,6 +239,24 @@ if ($id) {
     print '<tr><td valign="top">Action</td><td><a href="fiche.php3?id='.$id.'&action=valid">Valider</a></td></tr>';
 
   }
+
+  print '<tr><td valign="top">Action</td><td><a href="fiche.php3?id='.$id.'&action=generate">Génération du pdf</a></td></tr>';
+
+
+  print '<tr><td>Documents</td><td><a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'">liste...</a>';
+
+  $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.pdf";
+  if (file_exists($file)) {
+    
+    print '<br>PDF : <a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.pdf">'.$fichinter->ref.'.pdf</a>';
+  }
+  $file = $conf->fichinter->outputdir . "/$fichinter->ref/$fichinter->ref.ps";
+  if (file_exists($file)) {
+    
+    print '<br>PS : <a href="'.$conf->fichinter->outputurl.'/'.$fichinter->ref.'/'.$fichinter->ref.'.ps">'.$fichinter->ref.'.ps</a><br>';
+  }
+
+  print '</td></tr>';
 
   print "</table>";  
     

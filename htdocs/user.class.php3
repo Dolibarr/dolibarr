@@ -30,7 +30,7 @@ class User {
   var $prenom;
   var $code;
   var $email;
-
+  var $admin;
   var $comm;
   var $compta;
 
@@ -49,7 +49,7 @@ class User {
 
   Function fetch($login) {
 
-    $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.module_comm, u.module_compta";
+    $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.module_comm, u.module_compta,webcal_login";
     $sql .= " FROM llx_user as u";
 
     if ($this->id) {
@@ -69,7 +69,8 @@ class User {
 	$this->prenom = $obj->firstname;
 
 	$this->fullname = $this->prenom . ' ' . $this->nom;
-
+	$this->admin = $obj->admin;
+	$this->webcal_login = $obj->webcal_login;
 	$this->code = $obj->code;
 	$this->email = $obj->email;
 
