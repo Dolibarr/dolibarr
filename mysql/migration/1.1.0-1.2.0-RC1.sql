@@ -45,3 +45,11 @@ create table llx_co_fa
 
 alter table c_paiement rename llx_c_paiement ;
 alter table c_propalst rename llx_c_propalst ;
+
+alter table c_actioncomm     rename llx_c_actioncomm ;
+alter table c_chargesociales rename llx_c_chargesociales ;
+alter table c_effectif       rename llx_c_effectif ;
+alter table c_pays           rename llx_c_pays ;
+alter table c_stcomm         rename llx_c_stcomm ;
+alter table c_typent         rename llx_c_typent ;
+
