@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +36,13 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-print_titre("Caisse");
+$year_current = $_GET["year"];;
+if (! $year_current) { $year_current = strftime("%Y", time()); }
+
+
+print_titre("Résumé annuel des journaux comptables");
+print '<br>';
+
 
 $sql = "SELECT sum(f.amount) as amount , date_format(f.datep,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement as f";
@@ -79,10 +86,9 @@ if ($db->query($sql))
     }
 }
 
-print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="4">';
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td rowspan=2>Mois</td>';
 
-$year_current = strftime("%Y",time());
 
 if ($year_current < (MAIN_START_YEAR + 2))
 {
@@ -103,14 +109,16 @@ print '</tr>';
 print '<tr class="liste_titre">';
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="center">Débits</td><td align="center">Crédits</td>';
+  print '<td align="right">Dépenses</td><td align="right">Recettes</td>';
 }
 print '</tr>';
 
+$var=True;
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
-  print '<tr>';
-  print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
+  $var=!$var;
+  print '<tr '.$bc[$var].'>';
+  print "<td><a href=\"index.php?year=$year_current&mois=$mois\">".strftime("%B",mktime(1,1,1,$mois,1,$annee))."</a></td>";
   for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
       print '<td align="right" width="10%">&nbsp;';
@@ -133,7 +141,8 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
   print '</tr>';
 }
 
-print "<tr><td><b>Total annuel</b></td>";
+$var=!$var;
+print "<tr $bc[$var]><td><b>Total annuel</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
   print '<td align="right">'.$totsorties[$annee].'</td><td align="right">'.$totentrees[$annee].'</td>';

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,9 @@ require("./pre.inc.php");
 
 llxHeader();
 
+$mois=$_GET["mois"];
+$annee=$_GET["annee"];
+
 /*
  * Sécurité accés client
  */
@@ -47,10 +51,14 @@ if (!$annee)
 
 $time = mktime(12,0,0,$mois, 1, $annee);
 
-$titre_mois = strftime("%B %Y", $time);
+$titre_mois = strftime("%B", $time);
 
-print_fiche_titre("Journal de caisse");
 
+print_fiche_titre("Livre Journal".($mois?" $titre_mois":"").($annee?" $annee":""));
+print '<br>';
+
+
+// Recettes
 $sql = "SELECT f.amount, date_format(f.datep,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiement as f";
 $sql .= " WHERE date_format(f.datep,'%Y%m') = ".$annee.$mois;
@@ -71,7 +79,20 @@ if ($db->query($sql))
       $i++;
     }
 }
+else {
+	print $db->error();	
+}
 
+print_fiche_titre("Recettes");
+print '<table class="noborder" width="100%" cellspacing="0" cellpading="3">';
+print '<tr class="liste_titre"><td>Jour</td><td>Description</td><td>Montant</td><td>Type</td></tr>';
+
+print '<tr><td colspan="4">Fonction pas encore disponible</td></tr>';
+
+print "</table>";
+
+
+// Dépenses
 $sql = "SELECT sum(f.amount) as amount , date_format(f.datep,'%d') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as f";
 
@@ -92,13 +113,21 @@ if ($db->query($sql))
       $i++;
     }
 }
+else {
+	print $db->error();	
+}
 
-print '<table width="100%" border="1">';
-print '<tr class="liste_titre"><td></td>';
+print '<br>';
 
+print_fiche_titre("Dépenses");
+print '<table class="noborder" width="100%" cellspacing="0" cellpading="3">';
+print '<tr class="liste_titre"><td>Jour</td><td>Description</td><td>Montant</td><td>Type</td></tr>';
 
+print '<tr><td colspan="4">Fonction pas encore disponible</td></tr>';
 
 print "</table>";
+
+
 
 $db->close();
 
