@@ -135,8 +135,8 @@ if ($_GET["id"])
                 include_once("../../includes/modules/$file");
                 $objMod = new $modName($db);
                 if ($objMod->rights_class) {
-                    $modules[$objMod->rights_class]=$modName;
-                    //print "modules[".$objMod->rights_class."]=$modName;";
+                    $modules[$objMod->rights_class]=$objMod;
+                    //print "modules[".$objMod->rights_class."]=$objMod;";
                 }
             }
         }
@@ -145,7 +145,6 @@ if ($_GET["id"])
     /*
      * Ecran ajout/suppression permission
      */
-
 
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
@@ -172,12 +171,8 @@ if ($_GET["id"])
                 $var = !$var;
                 print '<tr '. $bc[$var].'>';
 
-                // Recupère objet module
-                $modName=$modules[$obj->module];
-                $file = $modName.".class.php";
-                include_once("../../includes/modules/$file");
-                $objMod = new $modName($db);
-
+                // Recupère objMod
+                $objMod = $modules[$obj->module];
                 $picto=($objMod->picto?$objMod->picto:'generic');
             }
             else
@@ -206,7 +201,8 @@ if ($_GET["id"])
                 print '<td>&nbsp</td>';
             }
 
-            print '<td>'.$obj->libelle . '</td>';
+            $perm_libelle=(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle);
+            print '<td>'.$perm_libelle. '</td>';
 
             print '<td>'.img_object('',$picto).' '.$objMod->getName();
             print '</td>';

@@ -110,7 +110,8 @@ if ($result)
 	}
 
       print '<tr '. $bc[$var].'>';
-      print '<td>'.(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle) . '</td>';
+      $perm_libelle=(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle);
+      print '<td>'.$perm_libelle. '</td>';
       print '<td>'.$modules[$obj->module]->getName(). '</td><td align="center">';
       if ($obj->bydefault == 1)
 	{
