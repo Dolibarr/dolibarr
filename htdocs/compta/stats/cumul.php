@@ -36,24 +36,12 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-print_titre("Chiffres d'affaires en euros HT");
+print_titre("Chiffres d'affaires (euros HT)");
 
 print '<table width="100%"><tr><td valign="top">';
 
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
-$sql .= " FROM llx_facture as f WHERE f.paye = 1";
-if ($socidp)
-{
-  $sql .= " AND f.fk_soc = $socidp";
-}
-$sql .= " GROUP BY dm DESC";
-
-pt($db, $sql,"Par mois");
-
-print "</td><td valign=\"top\">";
-
-$sql = "SELECT sum(f.total) as amount, month(f.datef) as dm";
-$sql .= " FROM llx_facture as f WHERE f.paye = 1";
+$sql .= " FROM llx_facture as f WHERE fk_user_valid is not NULL and f.paye = 1";
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
@@ -62,18 +50,30 @@ $sql .= " GROUP BY dm";
 
 pt($db, $sql,"Suivi cumul par mois");
 
-
-print "<br>"; 
+print "</td><td valign=\"top\">";
 
 $sql = "SELECT sum(f.total) as amount, year(f.datef) as dm";
-$sql .= " FROM llx_facture as f WHERE f.paye = 1";
+$sql .= " FROM llx_facture as f WHERE fk_user_valid is not NULL and f.paye = 1";
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
 }
-$sql .= " GROUP BY dm DESC";
+$sql .= " GROUP BY dm";
 
 pt($db, $sql,"Suivi cumul par année");
+
+print "<br>"; 
+
+$sql = "SELECT sum(f.total) as amount, month(f.datef) as dm";
+$sql .= " FROM llx_facture as f WHERE fk_user_valid is not NULL and f.paye = 1";
+if ($socidp)
+{
+  $sql .= " AND f.fk_soc = $socidp";
+}
+$sql .= " GROUP BY dm";
+
+pt($db, $sql,"Cumul sur les mois");
+
 
 print "</td></tr></table>";
 
