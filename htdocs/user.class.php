@@ -53,8 +53,6 @@ class User
   var $admin;
   var $login;
   var $pass;
-  var $comm;
-  var $compta;
   var $societe_id;
   var $webcal_login;
   var $errorstr;
@@ -73,9 +71,6 @@ class User
 
       $this->db = $DB;
       $this->id = $id;
-
-      $this->comm = 1;
-      $this->compta = 1;
 
       // Preference utilisateur
       $this->userpreflimite_liste = 0;

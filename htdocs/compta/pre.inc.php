@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +21,9 @@
  *
  */
 
-/*!
-  \file   	htdocs/compta/pre.inc.php
-  \ingroup    compta
-  \brief  	Fichier gestionnaire du menu compta
+/**     \file   	htdocs/compta/pre.inc.php
+        \ingroup    compta
+        \brief  	Fichier gestionnaire du menu compta
 */
 
 require("../main.inc.php");
@@ -43,7 +42,7 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
 
-  if ($user->comm > 0 && $conf->commercial->enabled && $conf->propal->enabled) 
+  if ($conf->propal->enabled) 
     {
       $langs->load("propal");
       $menu->add(DOL_URL_ROOT."/compta/propal.php",$langs->trans("Prop"));

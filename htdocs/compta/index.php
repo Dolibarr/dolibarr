@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
  *
  */
 
-/*!
-        \file       htdocs/compta/index.php
+/**     \file       htdocs/compta/index.php
         \ingroup    compta
 		\brief      Page accueil zone comptabilité
 		\version    $Revision$
@@ -220,7 +219,7 @@ print '</td><td valign="top" width="70%">';
 /*
  * Commandes à facturer
  */
-if ($user->comm > 0 && $conf->commercial->enabled ) 
+if ($conf->commande->enabled && $user->rights->commande->lire)
 {
   $langs->load("orders");
 
