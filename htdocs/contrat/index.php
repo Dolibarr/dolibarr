@@ -49,7 +49,7 @@ if ($sortorder == "")
   $sortorder="DESC";
 }
 
-$sql = "SELECT s.nom, c.rowid as cid, c.enservice, p.label, p.rowid, s.idp as sidp";
+$sql = "SELECT c.rowid as cid, c.enservice, c.fin_validite, p.label, p.rowid as pid, s.nom, s.idp as sidp";
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_product = p.rowid";
 if ($socid > 0)
@@ -69,11 +69,19 @@ if ( $db->query($sql) )
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
-  print '<tr class="liste_titre"><td>';
+  print '<tr class="liste_titre">';
+  print '<td>';
+  print_liste_field_titre("Numéro",$PHP_SELF, "c.rowid");
+  print "</td><td>";
   print_liste_field_titre("Libellé",$PHP_SELF, "p.label");
   print "</td><td>";
   print_liste_field_titre("Société",$PHP_SELF, "s.nom");
-  print '</td><td align="center">Etat</td>';
+  print '</td><td align="center">';
+  print_liste_field_titre("Etat",$PHP_SELF, "c.enservice");
+  print '</td>';
+  print '</td><td align="center">';
+  print_liste_field_titre("Fin",$PHP_SELF, "c.fin_validite");
+  print '</td>';
   print "</tr>\n";
     
   $var=True;
@@ -82,7 +90,8 @@ if ( $db->query($sql) )
       $obj = $db->fetch_object( $i);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$obj->cid\">$obj->label</a></td>\n";
+      print "<td><a href=\"fiche.php?id=$obj->cid\">$obj->cid</a></td>\n";
+      print "<td><a href=\"../product/fiche.php?id=$obj->pid\">$obj->label</a></td>\n";
       print "<td><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></td>\n";
       print '<td align="center">';
       if ($obj->enservice == 1)
@@ -97,6 +106,8 @@ if ( $db->query($sql) )
 	{
 	  print "A mettre en service</td>";
 	}
+      $time=strtotime($obj->fin_validite);
+      print "<td>".dolibarr_print_date($time)."</td>\n";
       print "</tr>\n";
       $i++;
     }
