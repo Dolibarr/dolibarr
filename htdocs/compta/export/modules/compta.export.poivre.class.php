@@ -136,21 +136,23 @@ class ComptaExportPoivre
 	$page->set_column(1,1,6); // B
 	$page->set_column(2,2,9); // C
 	$page->set_column(3,3,14); // D
-	$page->set_column(4,4,40); // E
+	$page->set_column(4,4,44); // E
+	$page->set_column(5,5,9); // F Numéro de pièce
+	$page->set_column(6,6,8); // G
 
     
 	// Pour les factures
 
-	// Date Opération 040604 pour 4 juin 2004
-	// VE -> ventilation
-	// code Compte général
-	// code client
-	// Intitulé
-	// Numéro de pièce
-	// Montant
-	// Type opération D pour Débit ou C pour Crédit
-	// Date d'échéance, = à la date d'opération si pas d'échéance
-	// EUR pour Monnaie en Euros
+	//A 0 Date Opération 040604 pour 4 juin 2004
+	//B 1 VE -> ventilation
+	//C 2 code Compte général
+	//D 3 code client
+	//E 4 Intitulé
+	//F 5 Numéro de pièce
+	//G 6 Date d'échéance, = à la date d'opération si pas d'échéance
+	//H 7 Montant
+	//I 8 Type opération D pour Débit ou C pour Crédit
+	//J 9 EUR pour Monnaie en Euros
     
 	// Pour les paiements
 
@@ -170,9 +172,11 @@ class ComptaExportPoivre
 		$page->write_string($j, 2,  "41100000");
 		$page->write_string($j, 3, stripslashes($this->line_out[$i][2]));
 		$page->write_string($j, 4, stripslashes($this->line_out[$i][3])." Facture");
-		$page->write_string($j, 5, $this->line_out[$i][9]); // Numéro de facture
-		$page->write($j, 6, ereg_replace(",",".",$this->line_out[$i][7]));
-		$page->write_string($j, 7, 'D' ); // D pour débit
+		$page->write_string($j, 5, $this->line_out[$i][5]); // Numéro de facture
+		$page->write_string($j, 6, strftime("%d%m%y",$this->line_out[$i][0]));
+		$page->write($j, 7, ereg_replace(",",".",$this->line_out[$i][7]));
+		$page->write_string($j, 8, 'D' ); // D pour débit
+		$page->write_string($j, 9, 'EUR'); // D pour débit
 
 		$j++;
 
@@ -182,20 +186,25 @@ class ComptaExportPoivre
 		$page->write_string($j, 2, '4457119');
 
 		$page->write_string($j, 4, stripslashes($this->line_out[$i][3])." Facture");
-		$page->write_string($j, 5, $this->line_out[$i][9]); // Numéro de facture
-		$page->write($j, 6, ereg_replace(",",".",$this->line_out[$i][6])); // Montant de TVA
-		$page->write_string($j, 7, 'C'); // C pour crédit
+		$page->write_string($j, 5, $this->line_out[$i][5]); // Numéro de facture
+		$page->write_string($j, 6, strftime("%d%m%y",$this->line_out[$i][0]));
+		$page->write($j, 7, ereg_replace(",",".",$this->line_out[$i][6])); // Montant de TVA
+		$page->write_string($j, 8, 'C'); // C pour crédit
+		$page->write_string($j, 9, 'EUR'); // D pour débit
 	    
 		$oldfacture = $this->line_out[$i][1];
 		$j++;
 	      }
+
 	    $page->write_string($j, 0, strftime("%d%m%y",$this->line_out[$i][0]));
 	    $page->write_string($j, 1, 'VE');
 	    $page->write_string($j, 2, $this->line_out[$i][4]); // Code Comptable
 	    $page->write_string($j, 4, $this->line_out[$i][3]." Facture");
-	    $page->write_string($j, 5, $this->line_out[$i][9]);                  // Numéro de facture
+	    $page->write_string($j, 5, $this->line_out[$i][5]);                  // Numéro de facture
+	    $page->write_string($j, 6, strftime("%d%m%y",$this->line_out[$i][0]));
 	    $page->write($j, 6, ereg_replace(",",".",round($this->line_out[$i][8], 2)));  // Montant de la ligne
-	    $page->write_string($j, 7, 'C');                     // C pour crédit
+	    $page->write_string($j, 8, 'C');                     // C pour crédit
+	    $page->write_string($j, 9, 'EUR'); // D pour débit
 
 	    $j++;
 	  }
