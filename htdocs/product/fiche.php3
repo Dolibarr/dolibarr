@@ -29,10 +29,7 @@ $mesg = '';
 
 if (!$user->rights->produit->lire)
 {
-  llxHeader();
-  print "Accés non authorisé";
-  llxFooter();
-  exit;
+  accessforbidden();
 }
 
 llxHeader();
