@@ -99,7 +99,7 @@ if ($result)
  *
  */
 
-$db->close();
+//$db->close();
 
 /*
  * Inclusion de librairies dépendantes de paramètres de conf
@@ -370,16 +370,14 @@ Function left_menu($menu)
       
     }
 
-  if ((defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)|| (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0))
+  if ((defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0) || (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0))
     {
       print '<tr><td class="barre" valign="top" align="right">';
       
       if (defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
 	{
-	  //	  print constant("MAIN_SEARCHFORM_SOCIETE");
-	  //	  echo MAIN_SEARCHFORM_SOCIETE."==MAIN_SEARCHFORM_SOCIETE; le type est " . gettype( MAIN_SEARCHFORM_SOCIETE ) . "<br>\n";
-	  print '<A class="menu" href="/comm/clients.php3">Societes</A>';
-	  print '<form action="/comm/clients.php3">';
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/clients.php3">Societes</A>';
+	  print '<form action="'.DOL_URL_ROOT.'/comm/clients.php3">';
 	  print '<input type="hidden" name="mode" value="search">';
 	  print '<input type="hidden" name="mode-search" value="soc">';
 	  print '<input type="text" name="socname" class="flat" size="10">&nbsp;';
@@ -389,11 +387,20 @@ Function left_menu($menu)
       
       if (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
 	{
-	  print '<A class="menu" href="/comm/contact.php3">Contacts</A>';
-	  print '<form action="/comm/contact.php3">';
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/contact.php3">Contacts</A>';
+	  print '<form action="'.DOL_URL_ROOT.'/comm/contact.php3">';
 	  print '<input type="hidden" name="mode" value="search">';
 	  print '<input type="hidden" name="mode-search" value="contact">';
 	  print '<input type="text" class="flat" name="contactname" size="10">&nbsp;';
+	  print '<input type="submit" class="flat" value="go">';
+	  print '</form>';
+	}
+
+      if (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
+	{
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/product/">Produits</A>';
+	  print '<form action="'.DOL_URL_ROOT.'/product/">';
+	  print '<input type="text" class="flat" name="sref" size="10">&nbsp;';
 	  print '<input type="submit" class="flat" value="go">';
 	  print '</form>';
 	}
