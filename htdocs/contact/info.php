@@ -53,10 +53,8 @@ if ($contact->socid > 0)
   
   print 'Société : '.$objsoc->nom.'<br>';
 }
-print "Créé par  : " . $contact->user_creation->fullname . '<br>';
-print "Date de création : " . strftime("%A %d %B %Y %H:%M:%S",$contact->date_creation) . '<br>';
-print "Modifié par  : " . '<br>';
-print "Date de modification : " . strftime("%A %d %B %Y %H:%M:%S",$contact->date_modification) . '<br>';
+
+dolibarr_print_object_info($contact);
 
 $db->close();
 
