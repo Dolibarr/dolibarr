@@ -699,7 +699,7 @@ print "\n</div>\n";
  */
 if ($_GET["id"] && $_GET["action"]=='')
 {
-    print $product->show_photo($conf->produit->dir_output,1);
+    $nbphoto=$product->show_photo($conf->produit->dir_output,1);
 }
 
 if ($_GET["id"] && $_GET["action"] == '' && $product->envente)

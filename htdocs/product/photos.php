@@ -141,16 +141,11 @@ if ($_GET["id"])
 
       print "</table><br>\n";
 
-      /*
-       * Photo
-       *
-       */
-      if ($_GET["id"] && $_GET["action"]=='')
-	{
-	  print $product->show_photos($conf->produit->dir_output,1);
-	}
+      // Affiche photos
+      $nbphoto=$product->show_photos($conf->produit->dir_output,1);
+      if ($nbphoto < 1) print $langs->trans("NoPhotoYet")."<br><br>";
 
-      print "<br></div>\n";
+      print "</div>\n";
     }      
 }
 else

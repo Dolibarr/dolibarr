@@ -880,62 +880,28 @@ class Product
    *    \brief      Affiche la première photo du produit
    *    \param      sdir    Répertoire à scanner
    *    \param      size    0=taille origine, 1 taille vignette
+   *    \return     int     Nombre de photos affichées
    */
   function show_photo($sdir,$size=0)
   {
-    $pdir = get_exdir($this->id) . $this->id ."/photos/";
-    $dir = $sdir . '/'. $pdir;
-    
-    if ( file_exists($dir))
-    {
-        $handle=opendir($dir);
-    
-        while (($file = readdir($handle))!==false)
-        {
-            $photo='';
-            if (is_file($dir.$file)) $photo = $file;
-    
-            if ($photo)
-            {
-                if ($size == 1) {
-                    // On determine nom du fichier vignette
-                    $photo_vignette='';
-                    if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs)) {
-                        $photo_vignette=eregi_replace($regs[0],'',$photo)."_small".$regs[0];
-                    }
-                    print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" alt="Taille origine" target="_blank">';
-                    
-                    // Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
-                    if ($photo_vignette && is_file($photo_vignette)) {
-                        print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo_vignette).'">';
-                    }
-                    else {
-                        print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
-                    }
-
-                    print '</a>';
-                }
-    
-                if ($size == 0)
-                    print '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
-    
-                break;
-            }
-        }
-    }
+    return $this->show_photos($sdir,$size,1);
   }
 
   /**
-   *    \brief      Affiche toutes les photos du produit
-   *    \param      sdir    Répertoire à scanner
-   *    \param      size    0=taille origine, 1 taille vignette
+   *    \brief      Affiche toutes les photos du produit (nbmax maximum)
+   *    \param      sdir        Répertoire à scanner
+   *    \param      size        0=taille origine, 1 taille vignette
+   *    \param      nbmax       Nombre maximum de photos
+   *    \return     int         Nombre de photos affichées
    */
-  function show_photos($sdir,$size=0)
+  function show_photos($sdir,$size=0,$nbmax=0)
   {
+    $nbphoto=0;
+    
     $pdir = get_exdir($this->id) . $this->id ."/photos/";
     $dir = $sdir . '/'. $pdir;
     
-    if ( file_exists($dir))
+    if (file_exists($dir))
     {
         $handle=opendir($dir);
     
@@ -946,6 +912,8 @@ class Product
     
             if ($photo)
             {
+                $nbphoto++;
+
                 if ($size == 1) {
                     // On determine nom du fichier vignette
                     $photo_vignette='';
@@ -968,10 +936,14 @@ class Product
                 if ($size == 0)
                     print '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
     
-                print '&nbsp;';
+                // On continue ou on arrete de boucler ?
+                if ($nbmax && $nbphoto >= $nbmax) break;
+                else print '&nbsp;';
             }
         }
     }
+    
+    return $nbphoto;
   }
 
 }
