@@ -105,7 +105,7 @@ if ($action == 'facture')
 else
 {
 
-  $rands = rand(1,10);
+  $rands = rand(1,40);
 
   print "Génère $rands société<br>";
   for ($s = 0 ; $s < $rands ; $s++)
@@ -120,7 +120,7 @@ else
       
       if ($socid)
 	{
-	  $rand = rand(1,10);
+	  $rand = rand(1,4);
 	  print "-- génère $rand contact<br>";
 	  for ($c = 0 ; $c < $rand ; $c++)
 	    {
