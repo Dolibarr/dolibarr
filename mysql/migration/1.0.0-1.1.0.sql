@@ -3,6 +3,8 @@
 -- Mise à jour de la version 1.0.0 à 1.1.0
 --
 
+drop table if exists llx_service;
+
 alter table llx_propaldet modify qty real;
 alter table llx_facturedet modify qty real;
 
