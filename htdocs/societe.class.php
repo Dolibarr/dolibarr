@@ -220,12 +220,17 @@ class Societe {
 	      }
 	  }
 	
+	/*
+	 * Supression des if (trim(valeur)) pour construire la requete
+	 * sinon il est impossible de vider les champs
+	 */
+
 	
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
 	$sql .= " SET nom = '" . addslashes(trim($this->nom)) ."'"; // Champ obligatoire
 	
-	if (trim($this->adresse))  
-	  { $sql .= ",address = '" . addslashes(trim($this->adresse)) ."'"; }
+	
+	$sql .= ",address = '" . addslashes(trim($this->adresse)) ."'";
 	
 	if (trim($this->cp))
 	  { $sql .= ",cp = '" . trim($this->cp) ."'"; }
@@ -238,19 +243,14 @@ class Societe {
 	
 	if (trim($this->pays_id))
 	  { $sql .= ",fk_pays = '" . $this->pays_id ."'"; }
-	
-	if (trim($this->tel))   
-	  { $sql .= ",tel = '" . trim($this->tel) ."'"; }
-	if (trim($this->fax)) 
-	  { $sql .= ",fax = '" . trim($this->fax) ."'"; }
-	if (trim($this->url))   
-	  { $sql .= ",url = '" . trim($this->url) ."'"; }
-	if (trim($this->siren)) 
-	  { $sql .= ",siren = '" . trim($this->siren) ."'"; }
-	if (trim($this->siret)) 
-	  { $sql .= ",siret = '" . trim($this->siret) ."'"; }
-	if (trim($this->ape))    
-	  { $sql .= ",ape = '" . trim($this->ape) ."'"; }
+	      
+	$sql .= ",tel = '" . trim($this->tel) ."'"; 	
+	$sql .= ",fax = '" . trim($this->fax) ."'"; 	
+	$sql .= ",url = '" . trim($this->url) ."'"; 	
+	$sql .= ",siren = '" . trim($this->siren) ."'"; 	
+	$sql .= ",siret = '" . trim($this->siret) ."'"; 	
+	$sql .= ",ape = '" . trim($this->ape) ."'"; 
+
 	if (trim($this->prefix_comm)) 
 	  { $sql .= ",prefix_comm = '" . trim($this->prefix_comm) ."'"; }
 	if (trim($this->tva_intra)) 
@@ -860,6 +860,37 @@ class Societe {
 	}
       
     }
+
+  /**
+   *    \brief      Renvoie la liste des types de parties
+   *    \return     array      tableau des types
+   */
+	 
+  function typent_array()
+    {
+      $effs = array();
+      /*
+       * Lignes
+       */      
+      $sql = "SELECT id, libelle";
+      $sql .= " FROM ".MAIN_DB_PREFIX."c_typent";
+      $sql .= " ORDER BY id ASC";
+      if ($this->db->query($sql))
+	{
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  
+	  while ($i < $num)
+	    {
+	      $objp = $this->db->fetch_object();
+	      $effs[$objp->id] = $objp->libelle;
+	      $i++;
+	    }
+	  $this->db->free();
+	} 
+      return $effs;
+    }
+
 
   /**
    *    \brief      Renvoie la liste des types d'effectifs possibles
