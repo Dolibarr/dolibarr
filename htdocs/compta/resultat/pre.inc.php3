@@ -40,7 +40,7 @@ function llxHeader($head = "") {
 
   $menu->add("/compta/tva/index.php3","TVA");
 
-  $menu->add("resultat/","Résultats");
+  $menu->add("index.php3","Résultats");
   /*
    * A automatiser
    */

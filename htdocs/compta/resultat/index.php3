@@ -35,7 +35,7 @@ llxHeader();
 $db = new Db();
 
 
-print_barre_liste("Factures",$page,$PHP_SELF);
+print_titre("Résultat $year");
 
 
 print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";

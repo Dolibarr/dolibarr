@@ -50,6 +50,8 @@ function llxHeader($head = "") {
 
   $menu->add("tva/index.php3","TVA");
 
+  $menu->add("resultat/","Résultats");
+
   $menu->add("/compta/propal.php3","Propales");
 
   $menu->add("bank/index.php3","Bank");
