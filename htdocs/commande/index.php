@@ -172,7 +172,7 @@ if ($user->comm > 0 && $conf->commercial )
 	      $var=!$var;
 	      $obj = $db->fetch_object($i);
 	      print "<tr $bc[$var]><td width=\"20%\"><a href=\"propal.php?propalid=$obj->rowid\">$obj->ref</a></td>";
-	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	      print '<td><a href="../comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	      $i++;
 	    }
 	  print "</table><br>";
