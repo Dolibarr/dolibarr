@@ -227,9 +227,3 @@ insert into c_propalst (id,label) values (2, 'Signée');
 insert into c_propalst (id,label) values (3, 'Non Signée');
 insert into c_propalst (id,label) values (4, 'Facturée');
 
-
---
--- Utilisateur
--- Creation du login admin lors de l'installation
-insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,admin)
-values ('Admin','Admin','ADM','admin','admin',1,1,1);
