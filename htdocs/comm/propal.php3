@@ -712,13 +712,13 @@ if ($propalid)
    *
    */
 } else {
-  /*
-   *
-   *
-   * Mode Liste des propales
-   *
-   * 
-   */
+  /****************************************************************************
+   *                                                                          *
+   *                                                                          *
+   *                         Mode Liste des propales                          *
+   *                                                                          *
+   *                                                                          *
+   ****************************************************************************/
 
   if ($sortfield == "")
     {
@@ -758,6 +758,11 @@ if ($propalid)
       $sql .= " AND date_format(p.datep, '%Y') = $year";
     }
   
+  if (strlen($HTTP_POST_VARS["sf_ref"]) > 0)
+    {
+      $sql .= " AND p.ref like '%".$HTTP_POST_VARS["sf_ref"] . "%'";
+    }
+
   $sql .= " ORDER BY $sortfield $sortorder";
   $sql .= $db->plimit($limit + 1,$offset);
 
