@@ -190,14 +190,14 @@ $sql .= " WHERE a.fk_soc = $socid AND c.id=a.fk_action AND a.fk_user_author = u.
       print "<TR $bc[$var]>";
 
       if ($oldyear == strftime("%Y",$obj->da) ) {
-	print '<td align="center">|</td>';
+	print '<td align="center">&nbsp;</td>';
       } else {
 	print "<TD>" .strftime("%Y",$obj->da)."</TD>\n"; 
 	$oldyear = strftime("%Y",$obj->da);
       }
 
       if ($oldmonth == strftime("%Y%b",$obj->da) ) {
-	print '<td align="center">|</td>';
+	print '<td align="center">&nbsp;</td>';
       } else {
 	print "<TD>" .strftime("%b",$obj->da)."</TD>\n"; 
 	$oldmonth = strftime("%Y%b",$obj->da);

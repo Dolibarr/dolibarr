@@ -132,7 +132,7 @@ if ($action == 'create') {
     $smonth = 1;
     $syear = date("Y", time());
     print '<table border="0">';
-    print '<tr><td>Société</td><td><a href="index.php3?socid='.$socidp.'">'.$objsoc->nom.'</a></td></tr>';
+    print '<tr><td>Société</td><td><a href="fiche.php3?socid='.$socidp.'">'.$objsoc->nom.'</a></td></tr>';
     print "<tr><td>Date</td><td>";
     $cday = date("d", time());
     print "<select name=\"pday\">";    
@@ -190,7 +190,7 @@ if ($action == 'create') {
     }
     print '</select>';
     if ($numdest==0) {
-      print '<br><b>Cette societe n\'a pas de contact, veuillez en creer un avant de faire de propale</b><br>';
+      print 'Cette societe n\'a pas de contact, veuillez en creer un avant de faire de propale</b><br>';
       print '<a href=people.php3?socid='.$socidp.'&action=addcontact>Ajouter un contact</a>';
     }
     print '</td></tr>';
@@ -218,7 +218,7 @@ if ($action == 'create') {
     }
     print '</select>';
     if ($numprojet==0) {
-      print '<br>Cette societe n\'a pas de projet.<br>';
+      print 'Cette societe n\'a pas de projet.<br>';
       print '<a href=projet/fiche.php3?socidp='.$socidp.'&action=create>Créer un projet</a>';
     }
     print '</td></tr>';

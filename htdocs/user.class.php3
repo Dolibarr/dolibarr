@@ -21,7 +21,6 @@
  */
 
 class User {
-  var $bs;
   var $db;
 
   var $id;
@@ -36,11 +35,15 @@ class User {
   var $compta;
   var $webcal_login;
 
+  var $limite_liste;
+
   Function User($DB, $id=0) {
 
     $this->db = $DB;
     $this->id = $id;
     
+    $this->limite_liste = 20;
+
     return 1;
   }
   /*

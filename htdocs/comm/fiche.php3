@@ -182,8 +182,8 @@ if ($socid > 0) {
      * Propales
      *
      */
-    $var=!$var;
-    print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"1\">";
+
+    print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="1">';
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
     $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
     $sql .= " AND s.idp = $objsoc->idp ORDER BY p.datep DESC";
@@ -191,7 +191,7 @@ if ($socid > 0) {
     if ( $db->query($sql) ) {
       $num = $db->num_rows();
       if ($num >0 ) {
-	print "<tr $bc[$var]><td colspan=\"4\"><a href=\"propal.php3?socidp=$objsoc->idp\">liste des propales ($num)</td></tr>";
+	print "<tr $bc[$var]><td colspan=\"4\"><a href=\"propal.php3?socidp=$objsoc->idp\">Liste des propales ($num)</td></tr>";
       }
       $i = 0;	$now = time(); 	$lim = 3600 * 24 * 15 ;
       while ($i < $num && $i < 4) {

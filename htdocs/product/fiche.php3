@@ -101,7 +101,7 @@ if ($action == 'create') {
       print '<textarea name="desc" rows="8" cols="50">';
       print $product->description;
       print "</textarea></td></tr>";
-      print '<tr><td>&nbsp;</td><td><input type="submit"></td></tr>';
+      print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer"></td></tr>';
       print '</table>';
       print '</form>';
     }    

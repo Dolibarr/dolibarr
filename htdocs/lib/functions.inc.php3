@@ -20,6 +20,10 @@
  * $Source$
  *
  */
+//function translate($texte) {
+//  return $texte;
+//}
+
 function print_liste_field_titre($name, $file, $field, $begin="") {
   global $conf;
 

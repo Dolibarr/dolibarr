@@ -116,11 +116,11 @@ if ($propalid) {
 
       print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
-      print "<tr><td>Société</td><td><a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</a></td><td align=\"right\"><a href=\"propal.php3?socidp=$obj->idp\">Autres propales</a></td>";
+      print '<tr><td>'.translate("Company").'</td><td colspan="2"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print "<td valign=\"top\" width=\"50%\" rowspan=\"8\">Note :<br>". nl2br($obj->note)."</td></tr>";
       //
 
-      print '<tr><td>date</td><td colspan="2">'.strftime("%A %d %B %Y",$obj->dp).'</td></tr>';
+      print '<tr><td>'.translate("Date").'</td><td colspan="2">'.strftime("%A %d %B %Y",$obj->dp).'</td></tr>';
 
       if ($obj->fk_projet) {
 	$projet = new Project();
@@ -221,7 +221,7 @@ if ($propalid) {
 	  print "</TD>\n";
 	  print "<TD>".strftime("%d %B %Y",$objp->df)."</TD>\n";
 	  print "<TD>$objp->author</TD>\n";
-	  print "<TD align=\"right\">$objp->amount</TD>\n";
+	  print '<TD align="right">'.price($objp->amount).'</TD>';
 	  print "</tr>";
 	  $total = $total + $objp->amount;
 	  $i++;

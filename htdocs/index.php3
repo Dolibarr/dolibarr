@@ -24,7 +24,7 @@ require("./pre.inc.php3");
 llxHeader();
 ?>
     <h3>Dolibarr</h3>
-    <?PHP print 'Utilisateur : <b>' . $user->prenom . ' ' . $user->nom .'</b> ['.$user->code.']';?>
+    <?PHP print translate("User") . ' : <b>' . $user->prenom . ' ' . $user->nom .'</b> ['.$user->code.']';?>
 
     <br><br>
       
@@ -35,7 +35,7 @@ llxHeader();
     <table width="100%" cellspacing="3">
 	<tr>
 	  <td width="50%" class="dash" valign="top">
-	    <a href="/comm/">Commercial</a>
+	    <a href="/comm/"><?PHP print translate("Commercial"); ?></a>
 	    <ul>
 	      <li><a href="/comm/propal.php3">Propositions commerciales</a>
 	    </ul>

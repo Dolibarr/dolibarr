@@ -18,12 +18,9 @@
  * $Id$
  * $Source$
  *
- * Classe Company
- *
  */
 
 class Societe {
-  var $bs;
   var $db;
 
   var $id;
@@ -35,9 +32,7 @@ class Societe {
   var $fax;
   var $url;
   var $siren;
-
   var $client;
-
   var $note;
 
   Function Societe($DB, $id=0) {
@@ -48,7 +43,11 @@ class Societe {
     
     return 1;
   }
-
+  /*
+   *
+   *
+   *
+   */
   Function create() {
 
     $sql = "INSERT INTO societe (nom, datec, datea, client) ";
@@ -199,8 +198,5 @@ class Societe {
 
 
 }
-/*
- * $Id$
- * $Source$
- */
+
 ?>

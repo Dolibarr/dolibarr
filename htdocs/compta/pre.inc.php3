@@ -45,7 +45,7 @@ function llxHeader($head = "") {
   $menu->add_submenu("comp.php3","Comparatif");
 
   $menu->add_submenu("casoc.php3","Par société");
-  $menu->add_submenu("pointmort.php3","Point mort");
+  //  $menu->add_submenu("pointmort.php3","Point mort");
 
   $menu->add("tva/index.php3","TVA");
 

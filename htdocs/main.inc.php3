@@ -27,29 +27,49 @@ require ($GLOBALS["DOCUMENT_ROOT"]."/product.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/user.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/menu.class.php3");
 require ($GLOBALS["DOCUMENT_ROOT"]."/societe.class.php3");
-
+require ($GLOBALS["DOCUMENT_ROOT"]."/rtplang.class.php");
 
 $conf = new Conf();
 
-
 $db = new Db();
-$user = new User($db);
-$user->fetch($GLOBALS["REMOTE_USER"]);
-$db->close();
 
+$user = new User($db);
+
+$user->fetch($GLOBALS["REMOTE_USER"]);
+
+if ($user->limite_liste <> $conf->liste_limit) {
+  $conf->liste_limit = $user->limite_liste;
+}
+
+$db->close();
+/*
+ */
+if(!isset($application_lang))
+  $application_lang = "fr";
+
+$rtplang = new rtplang("langs", "en", "en", $application_lang);
+$rtplang->debug=1;
+/*
+ */
 $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
 
 $a = setlocale("LC_TIME", "FRENCH");
 
 function top_menu($head) {
-  global $user, $conf;
+  global $user, $conf, $rtplang;
+
+  print $rtplang->lang_header();
 
   print "<HTML><HEAD>";
   print $head;
-  print "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=iso-8859-1\">\n";
+  print '<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">';
   print '<LINK REL="stylesheet" TYPE="text/css" HREF="/'.$conf->css.'">';
+  print "\n";
   print '<title>Dolibarr</title>';
+  print "\n";
+
+
   print "</HEAD>\n";
   
   print '<BODY TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">';
@@ -160,9 +180,9 @@ function llxFooter($foot='') {
    *
    */
   print "</TABLE>\n";
-  print "$foot<br>";
+  print "<div>";
   print '[<a href="http://savannah.gnu.org/bugs/?group_id=1915">Bug report</a>]&nbsp;';
-  print '[<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>]&nbsp;';
+  print '[<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>]&nbsp;'.$foot.'</div>';
   print "</BODY></HTML>";
 }
 

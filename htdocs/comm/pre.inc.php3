@@ -50,6 +50,8 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add("projet/", "Projets");
 
+  $menu->add("/comm/configuration/", "Configuration");
+
   left_menu($menu->liste);
 
 }

@@ -113,8 +113,8 @@ if ($action == 'stcomm') {
   }
 }
 if ($page == -1) { $page = 0 ; }
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
+
+$offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
@@ -164,7 +164,7 @@ if ($mode == 'search') {
     $sortorder = "ASC";
   }
 
-  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
+  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
   $result = $db->query($sql);
   if ($result) {

@@ -36,21 +36,6 @@ llxHeader();
 
 $db = new Db();
 
-if ($sortfield == "") {
-  $sortfield="lower(p.label)";
-}
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-
-$yn["t"] = "oui";
-$yn["f"] = "non";
-
-if ($page == -1) { $page = 0 ; }
-$limit = 26;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 if ($action == 'setstatut') {
   /*
@@ -116,10 +101,10 @@ if ($propalid) {
 
       print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
-      print "<tr><td>Société</td><td><a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</a></td><td align=\"right\"><a href=\"propal.php3?socidp=$obj->idp\">Autres propales</a></td>";
+      print '<tr><td>Société</td><td colspan="2"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print "<td valign=\"top\" width=\"50%\" rowspan=\"9\">Note :<br>". nl2br($obj->note)."</td></tr>";
 
-      print '<tr><td>date</td><td colspan="2">'.strftime("%A %d %B %Y",$obj->dp).'</td></tr>';
+      print '<tr><td>Date</td><td colspan="2">'.strftime("%A %d %B %Y",$obj->dp).'</td></tr>';
 
       if ($obj->fk_projet) {
 	$projet = new Project();
@@ -441,6 +426,20 @@ if ($propalid) {
    *
    * 
    */
+
+  if ($sortfield == "") {
+    $sortfield="p.fk_statut, datep ";
+  }
+  if ($sortorder == "") {
+    $sortorder="ASC";
+  }
+
+  if ($page == -1) { $page = 0 ; }
+  $limit = 26;
+  $offset = $limit * $page ;
+  $pageprev = $page - 1;
+  $pagenext = $page + 1;
+
   print "<table width=\"100%\">";
   print "<tr><td><div class=\"titre\">Propositions commerciales</div></td>";
   print "</table>";
@@ -463,7 +462,7 @@ if ($propalid) {
     $sql .= " AND date_format(p.datep, '%Y') = $year";
   }
   
-  $sql .= " ORDER BY p.fk_statut, datep DESC";
+  $sql .= " ORDER BY $sortfield ASC";
 
   if ( $db->query($sql) ) {
     $num = $db->num_rows();
@@ -485,9 +484,9 @@ if ($propalid) {
 	$subtotal = 0;
 	
 	print '<TR class="liste_titre">';
-	print "<TD>Réf</TD>";
-	print "<TD>Société</td>";
-	print "<TD align=\"right\" colspan=\"2\">Date</TD>";
+	print "<TD>Réf</TD><td>";
+	print_liste_field_titre ("Société",$PHP_SELF,"s.nom");
+	print "</td><TD align=\"right\" colspan=\"2\">Date</TD>";
 	print "<TD align=\"right\">Prix</TD>";
 	print "<TD align=\"center\">Statut <a href=\"$PHP_SELF?viewstatut=$objp->statutid\">";
 	print '<img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a></td>';
