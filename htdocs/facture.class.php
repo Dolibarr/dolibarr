@@ -909,6 +909,30 @@ class Facture
 		    return 'Payée';
     	  }
     }
+
+
+  /**
+   * Mets à jour les commentaires
+   *
+   */
+  Function update_note($note)
+    {
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET note = '$note'";
+      $sql .= " WHERE rowid =". $this->id;
+      
+      if ($this->db->query($sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	  return -1;
+	}
+    }
+
+
+
 }
 
 class FactureLigne
