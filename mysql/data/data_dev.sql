@@ -59,29 +59,39 @@ values ('demo1','demo1','DM1','demo1','demo',1,1,'demo1');
 insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,webcal_login)
 values ('demo2','demo2','DM2','demo2','demo',1,1,'demo2');
 --
--- Societe
+-- Societe les fournisseurs sont sur les numéros pairs
 --
 delete from llx_societe;
-insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm, fournisseur)
-values ('Bolix SA',now(),'56350','Allaire','01 40 15 03 18','01 40 15 06 18',1,'LO',1);
 
 insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
 values ('Cumulo',now(),'56610','Arradon','01 40 15 03 18','01 40 15 06 18',1,'CU');
 
+insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm, fournisseur)
+values ('Bolix SA',now(),'56350','Allaire','01 40 15 03 18','01 40 15 06 18',1,'LO',1);
+
 insert into llx_societe (nom,cp,ville,tel,fax,client, prefix_comm)
 values ('Doli INC.','29300','Arzano','01 55 55 03 18','01 55 55 55 55',1,'DO');
 
-insert into llx_societe (nom,cp,ville,tel,fax,client, prefix_comm,url)
-values ('Foo SARL','22300','Ploubezre','01 55 55 03 18','01 55 55 55 55',1,'FOO','www.gnu.org');
+insert into llx_societe (nom,cp,ville,tel,fax,client, prefix_comm,url, fournisseur)
+values ('Foo SARL','22300','Ploubezre','01 55 55 03 18','01 55 55 55 55',1,'FOO','www.gnu.org',1);
 
 insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
 values ('Talphinfo',now(),'29400','Bodilis','01 40 15 03 18','01 40 15 06 18',1,'AP');
 
+insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+values (20,'Bouleau','22800','Le Foeil','01 55 55 03 18','01 55 55 55 55',1,'BTP');
+
 insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
 values ('Valphanix',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',1,'AL');
 
+insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+values (101,'Cerisier','22290','Goudelin','01 55 55 03 18','01 55 55 55 55',1,'CER');
+
 insert into llx_societe (nom,cp,ville,tel,fax,client,url)
 values ('Turin','29890','Brignogan-Plage','01 55 55 03 18','01 55 55 55 55',1,'http://www.ot-brignogan-plage.fr/');
+
+insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+values (100,'Chêne','22330','Le Gouray','01 55 55 03 18','01 55 55 55 55',1,'DEL');
 
 insert into llx_societe (nom,cp,ville,tel,fax,client)
 values ('Yratin SA','29660','Carantec','01 55 55 03 18','01 55 55 55 55',1);
@@ -104,13 +114,13 @@ values ('Iono','22110','Rostrenen','01 55 55 03 18','01 55 55 55 55',1);
 -- Contact
 --
 delete from llx_socpeople;
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (10,1,'Maréchal','Ferdinand','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email,poste)
+values (10,1,'Maréchal','Ferdinand','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net','Administrateur système');
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (11,5,'Pejat','Jean-Marie','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
-values (12,1,'Poulossière','Paul','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
+insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email,poste)
+values (12,1,'Poulossière','Paul','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net','Directeur technique');
 insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
 values (13,6,'Myriam','Isabelle','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 
@@ -145,15 +155,6 @@ values (21,10,'','Joséphine','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net'
 --
 delete from llx_product;
 
-insert into llx_product (ref, label, description, price, tva_tx, fk_product_type, duration)
-values ('HEB12MS','Hébergement serveur 12 mois','Hébergement serveur 12 mois',2400,19.6,1,'12m');
-
-insert into llx_product (ref, label, description, price, tva_tx, fk_product_type, duration)
-values ('HEB03MS','Hébergement serveur 3 mois','Hébergement serveur 3 mois',600,19.6,1,'3m');
-
-insert into llx_product (ref, label, description, price, tva_tx, fk_product_type, duration)
-values ('HEB06MS','Hébergement serveur 6 mois','Hébergement serveur 6 mois',1200,19.6,1,'6m');
-
 insert into llx_product (ref, label, description, price, tva_tx)
 values ('RJ451MR','Câble Réseaux RJ45 1m rouge','Câble Réseaux RJ45 1m rouge',10,19.6);
 
@@ -168,6 +169,15 @@ values ('RJ458M','Câble Réseaux RJ45 8m','Câble Réseaux RJ45 8m',10,19.6);
 
 insert into llx_product (ref, label, description, price, tva_tx)
 values ('RJ4515M','Câble Réseaux RJ45 15m','Câble Réseaux RJ45 15m',10,19.6);
+
+insert into llx_product (ref, label, description, price, tva_tx, fk_product_type, duration)
+values ('HEB12MS','Hébergement serveur 12 mois','Hébergement serveur 12 mois',2400,19.6,1,'12m');
+
+insert into llx_product (ref, label, description, price, tva_tx, fk_product_type, duration)
+values ('HEB03MS','Hébergement serveur 3 mois','Hébergement serveur 3 mois',600,19.6,1,'3m');
+
+insert into llx_product (ref, label, description, price, tva_tx, fk_product_type, duration)
+values ('HEB06MS','Hébergement serveur 6 mois','Hébergement serveur 6 mois',1200,19.6,1,'6m');
 
 insert into llx_product (ref, label, description, price, tva_tx)
 values ('SW8','Switch 8 ports 100Mbits','Switch 8 ports 100Mbits',1000,19.6);
@@ -187,8 +197,17 @@ values ('PB-32','Pan. Brass. 32','Panneau de brassage extensible, incluant 2 bar
 insert into llx_product (ref, label, description, price, tva_tx)
 values ('HB-USB1','Hub Usb 4 ports','Hub USB 4 ports avec bloc d\'alimentation indépendant',31,19.6);
 
-
 --
+-- Liens produits fournisseurs
+-- 
+insert into llx_product_fournisseur (datec, fk_product,fk_soc,ref_fourn,fk_user_author)
+values (now(),1,2,'2313487',1);
+insert into llx_product_fournisseur (datec, fk_product,fk_soc,ref_fourn,fk_user_author)
+values (now(),2,2,'2313409',1);
+insert into llx_product_fournisseur (datec, fk_product,fk_soc,ref_fourn,fk_user_author)
+values (now(),3,2,'2323134',1);
+insert into llx_product_fournisseur (datec, fk_product,fk_soc,ref_fourn,fk_user_author)
+values (now(),3,4,'2313784',1);
 --
 -- Fichinter
 --
@@ -220,14 +239,6 @@ values ('2001-03-05',1,1,1,1);
 --
 --
 --
-insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
-values (20,'Bouleau','22800','Le Foeil','01 55 55 03 18','01 55 55 55 55',1,'BTP');
-
-insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
-values (101,'Cerisier','22290','Goudelin','01 55 55 03 18','01 55 55 55 55',1,'CER');
-
-insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
-values (100,'Chêne','22330','Le Gouray','01 55 55 03 18','01 55 55 55 55',1,'DEL');
 
 insert into llx_societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm,datec)
 values ('Peuplier','22300','Lanmérin','01 55 55 03 18','01 55 55 55 55',1,'JP',now());
