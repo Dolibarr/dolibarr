@@ -285,9 +285,15 @@ if ($socid > 0) {
       {
 	print '<td align="center" width="20%">-</td>';
       }
-
-    print '<td align="center" width="20%"><a href="../projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a></td>';
-    print '<td align="center" width="20%">-</td>';  
+    if ($user->rights->projet->creer)
+      {
+	print '<td align="center" width="20%"><a href="../projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a></td>';
+      }
+    else
+      {
+	print '<td align="center" width="20%">-</td>';  
+      }
+    print '<td align="center" width="20%">-</td>';
     print '</tr></table><br>';
 
     /*
