@@ -195,25 +195,35 @@ Function left_menu($menu)
       
     }
 
-  print '<tr><td class="barre" valign="top" align="right">';
-  print '<A class="menu" href="/comm/clients.php3">Societes</A>';
-  print '<form action="/comm/clients.php3">';
-  print '<input type="hidden" name="mode" value="search">';
-  print '<input type="hidden" name="mode-search" value="soc">';
-  print '<input type="text" name="socname" class="flat" size="10">&nbsp;';
-  print '<input type="submit" class="flat" value="go">';
-  print '</form>';
+  if (MAIN_SEARCHFORM_SOCIETE or MAIN_SEARCHFORM_CONTACT)
+    {
+      print '<tr><td class="barre" valign="top" align="right">';
 
-  print '<A class="menu" href="/comm/contact.php3">Contacts</A>';
-  print '<form action="/comm/contact.php3">';
-  print '<input type="hidden" name="mode" value="search">';
-  print '<input type="hidden" name="mode-search" value="contact">';
-  print '<input type="text" class="flat" name="contactname" size="10">&nbsp;';
-  print '<input type="submit" class="flat" value="go">';
-  print '</form>';
-  print '</td></tr>';
-
+      if (MAIN_SEARCHFORM_SOCIETE)
+	{
+	  print '<A class="menu" href="/comm/clients.php3">Societes</A>';
+	  print '<form action="/comm/clients.php3">';
+	  print '<input type="hidden" name="mode" value="search">';
+	  print '<input type="hidden" name="mode-search" value="soc">';
+	  print '<input type="text" name="socname" class="flat" size="10">&nbsp;';
+	  print '<input type="submit" class="flat" value="go">';
+	  print '</form>';
+	}
+      
+      if (MAIN_SEARCHFORM_CONTACT)
+	{
+	  print '<A class="menu" href="/comm/contact.php3">Contacts</A>';
+	  print '<form action="/comm/contact.php3">';
+	  print '<input type="hidden" name="mode" value="search">';
+	  print '<input type="hidden" name="mode-search" value="contact">';
+	  print '<input type="text" class="flat" name="contactname" size="10">&nbsp;';
+	  print '<input type="submit" class="flat" value="go">';
+	  print '</form>';
+	}
+      print '</td></tr>';
+    }
   print '</table>';
+
   /*
    *
    *
