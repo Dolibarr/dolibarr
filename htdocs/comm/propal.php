@@ -69,7 +69,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
 
 if ($HTTP_POST_VARS["action"] == 'add') 
 {
-  $propal = new Propal($db, $socidp);
+  $propal = new Propal($db, $_GET["socidp"]);
 
   $propal->datep = mktime(12, 1 , 1, 
 			  $HTTP_POST_VARS["remonth"], 
@@ -84,7 +84,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
   $propal->author = $user->id;
   $propal->note = $HTTP_POST_VARS["note"];
 
-  $propal->ref = $ref;
+  $propal->ref = $HTTP_POST_VARS["ref"];
 
   for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
     {
@@ -92,7 +92,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
       $xqty = "qty".$i;
       $xremise = "remise".$i;
 
-      $propal->add_product($$xid,$$xqty,$$xremise);
+      $propal->add_product($HTTP_POST_VARS[$xid],$HTTP_POST_VARS[$xqty],$HTTP_POST_VARS[$xremise]);
     }
   
   $id = $propal->create();
@@ -120,8 +120,8 @@ if ($HTTP_POST_VARS["action"] == 'setstatut' && $user->rights->propale->cloturer
    *  Cloture de la propale
    */
   $propal = new Propal($db);
-  $propal->fetch($propalid);
-  $propal->cloture($user, $statut, $note);
+  $propal->fetch($_GET["propalid"]);
+  $propal->cloture($user, $HTTP_POST_VARS["statut"], $HTTP_POST_VARS["note"]);
 } 
 
 if ($_GET["action"] == 'commande')
@@ -156,6 +156,7 @@ if ($HTTP_POST_VARS["addligne"] == 'Ajouter' && $user->rights->propale->creer)
       $propal = new Propal($db);
       $propal->fetch($propalid);
       $propal->insert_product($HTTP_POST_VARS["idprod"], $HTTP_POST_VARS["qty"], $HTTP_POST_VARS["remise"]);
+      propale_pdf_create($db, $_GET["propalid"], $propal->modelpdf);
     }
 } 
 
@@ -184,6 +185,7 @@ if ($HTTP_POST_VARS["action"] == 'setremise' && $user->rights->propale->creer)
   $propal = new Propal($db);
   $propal->fetch($propalid);
   $propal->set_remise($user, $HTTP_POST_VARS["remise"]);
+  propale_pdf_create($db, $_GET["propalid"], $propal->modelpdf);
 } 
 
 if ($HTTP_POST_VARS["action"] == 'setpdfmodel' && $user->rights->propale->creer) 
@@ -202,15 +204,15 @@ if ($action == 'del_ligne' && $user->rights->propale->creer)
   $propal = new Propal($db);
   $propal->fetch($propalid);
   $propal->delete_product($ligne);
-  
+  propale_pdf_create($db, $_GET["propalid"], $propal->modelpdf);
 }
 
-if ($valid == 1 && $user->rights->propale->valider)
+if ($_GET["valid"] == 1 && $user->rights->propale->valider)
 {
   $propal = new Propal($db);
-  $propal->fetch($propalid);
-  $propal->update_price($propalid);
-  propale_pdf_create($db, $propalid, $propal->modelpdf);
+  $propal->fetch($_GET["propalid"]);
+  $propal->update_price($_GET["propalid"]);
+  propale_pdf_create($db, $_GET["propalid"], $propal->modelpdf);
   $propal->valid($user);
 }
 
@@ -226,12 +228,12 @@ llxHeader();
  *
  *
  */
-if ($propalid)
+if ($_GET["propalid"])
 {
   $html = new Form($db);
 
   $propal = new Propal($db);
-  $propal->fetch($propalid);
+  $propal->fetch($_GET["propalid"]);
 
   /*
    *
@@ -246,14 +248,14 @@ if ($propalid)
    */
   if ($action == 'delete')
     {
-      $html->form_confirm("$PHP_SELF?propalid=$propalid","Supprimer la proposition","Etes-vous sûr de vouloir supprimer cette proposition ?","confirm_delete");
+      $html->form_confirm("$PHP_SELF?propalid=$propal->id","Supprimer la proposition","Etes-vous sûr de vouloir supprimer cette proposition ?","confirm_delete");
     }
   /*
    *
    */
   $sql = "SELECT s.nom, s.idp, p.price, p.fk_projet,p.remise, p.tva, p.total, p.ref,".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst, p.note, x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture";
   $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c, llx_socpeople as x";
-  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = $propalid";
+  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = $propal->id";
 
   if ($socidp)
     { 
@@ -323,9 +325,9 @@ if ($propalid)
 
 	  print "</table>";
 
-	  if ($action == 'statut') 
+	  if ($_GET["action"] == 'statut') 
 	    {
-	      print "<form action=\"$PHP_SELF?propalid=$propalid\" method=\"post\">";
+	      print "<form action=\"$PHP_SELF?propalid=$propal->id\" method=\"post\">";
 	      print '<br><table class="border" cellpadding="3" cellspacing="0">';
 	      print '<tr><td>Clôturer comme : <input type="hidden" name="action" value="setstatut">';
 	      print "<select name=\"statut\">";
@@ -346,7 +348,7 @@ if ($propalid)
 	   * Produits
 	   */
 	  print_titre("Produits");
-	  print '<form action="propal.php?propalid='.$propalid.'" method="post">';
+	  print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 	  print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<TR class=\"liste_titre\">";
 	  print "<td>Réf</td><td>Produit</td>";
@@ -358,7 +360,7 @@ if ($propalid)
 	  print "</TR>\n";
 
 	  $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.tva_tx, pt.remise_percent, pt.subprice";
-	  $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propalid";
+	  $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propal->id";
 	  $sql .= " ORDER BY pt.rowid ASC";
 	  $result = $db->query($sql);
 	  if ($result) 
@@ -381,7 +383,7 @@ if ($propalid)
 		  print '<td align="right">'.price($objp->subprice).'</td>';
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
-		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">';
+		      print '<td align="center"><a href="propal.php?propalid='.$propal->id.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">';
 		      print img_delete();
 		      print '</a></td>';
 		    }
@@ -396,7 +398,7 @@ if ($propalid)
 	    }
 
 	  $sql = "SELECT pt.rowid, pt.description, pt.price, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice";
-	  $sql .= " FROM llx_propaldet as pt WHERE pt.fk_propal = $propalid AND pt.fk_product = 0";
+	  $sql .= " FROM llx_propaldet as pt WHERE pt.fk_propal = $propal->id AND pt.fk_product = 0";
 	  
 	  if ($db->query($sql)) 
 	    {
@@ -414,7 +416,7 @@ if ($propalid)
 		  print "<TD align=\"right\">".price($objp->subprice)."</td>";
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
-		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">';
+		      print '<td align="center"><a href="propal.php?propalid='.$propal->id.'&amp;ligne='.$objp->rowid.'&amp;action=del_ligne">';
 		      print img_delete();
 		      print '</a></td>';
 		    }
@@ -486,7 +488,7 @@ if ($propalid)
 
 	  if ($propal->brouillon == 1)
 	    {
-	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
+	      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 	      print '<input type="hidden" name="action" value="setremise">';
 	      print '<table class="border" cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
 	      print '<input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">%';
@@ -504,7 +506,7 @@ if ($propalid)
 		{
 		  if ($user->rights->propale->supprimer)
 		    {
-		      print "<td width=\"20%\"><a href=\"$PHP_SELF?propalid=$propalid&amp;action=delete\">Supprimer</a></td>";
+		      print "<td width=\"20%\"><a href=\"$PHP_SELF?propalid=$propal->id&amp;action=delete\">Supprimer</a></td>";
 		    }
 		  else
 		    {
@@ -515,7 +517,7 @@ if ($propalid)
 		{
 		  if ($obj->statut == 1 && $user->rights->propale->cloturer)
 		    {
-		      print "<td width=\"20%\"><a href=\"$PHP_SELF?propalid=$propalid&amp;action=statut\">Cloturer</a></td>";
+		      print "<td width=\"20%\"><a href=\"$PHP_SELF?propalid=$propal->id&amp;action=statut\">Cloturer</a></td>";
 		    }
 		  else
 		    {
@@ -528,7 +530,7 @@ if ($propalid)
 	       */
 	      if ($obj->statut < 2 && $user->rights->propale->creer)
 		{
-		  print '<td width="20%"><a href="'.$PHP_SELF."?propalid=$propalid&amp;action=pdf\">Générer</a></td>";
+		  print '<td width="20%"><a href="'.$PHP_SELF."?propalid=$propal->id&amp;action=pdf\">Générer</a></td>";
 		}
 	      else
 		{
@@ -546,7 +548,7 @@ if ($propalid)
 		      if ($user->rights->propale->envoyer)
 			{
 			  print "<td width=\"20%\">";
-			  print "<a href=\"$PHP_SELF?propalid=$propalid&amp;action=presend\">Envoyer la proposition</a></td>";
+			  print "<a href=\"$PHP_SELF?propalid=$propal->id&amp;action=presend\">Envoyer la proposition</a></td>";
 			}
 		      else
 			{
@@ -569,7 +571,7 @@ if ($propalid)
 		{
 		  if ($user->rights->propale->valider)
 		    {
-		      print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?propalid=$propalid&amp;valid=1\">Valider</a></td>";
+		      print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?propalid=$propal->id&amp;valid=1\">Valider</a></td>";
 		    }
 		  else
 		    {
@@ -580,7 +582,7 @@ if ($propalid)
 		{
 		  if ($user->rights->propale->creer)
 		    {
-		      print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?propalid=$propalid&amp;action=modif\">Modifier</a></td>";
+		      print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?propalid=$propal->id&amp;action=modif\">Modifier</a></td>";
 		    }
 		  else
 		    {
@@ -641,7 +643,7 @@ if ($propalid)
 	   */
 	  if ($propal->brouillon == 1)
 	    {
-	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
+	      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 	      print '<input type="hidden" name="action" value="setpdfmodel">';
 	    }	  
 	  print '<table width="100%" cellspacing="2"><tr><td width="50%" valign="top">';
@@ -694,7 +696,7 @@ if ($propalid)
 	   *
 	   */
 	  $sql = "SELECT ".$db->pdate("a.datea"). " as da, note, fk_user_author" ;
-	  $sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $obj->idp AND a.propalrowid = $propalid ";
+	  $sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $obj->idp AND a.propalrowid = $propal->id ";
 	  
 	  if ( $db->query($sql) )
 	    {
@@ -748,7 +750,7 @@ if ($propalid)
 	      $from_name = $user->fullname ; //$conf->propal->fromtoname;
 	      $from_mail = $user->email; //conf->propal->fromtomail;
 	      
-	      print "<form method=\"post\" action=\"$PHP_SELF?propalid=$propalid&amp;action=send\">\n";
+	      print "<form method=\"post\" action=\"$PHP_SELF?propalid=$propal->id&amp;action=send\">\n";
 	      print "<input type=\"hidden\" name=\"replytoname\" value=\"$replytoname\">\n";
 	      print "<input type=\"hidden\" name=\"replytomail\" value=\"$replytomail\">\n";
 
@@ -833,12 +835,10 @@ if ($propalid)
       $sortorder="DESC";
     }
 
-  if ($page == -1) { $page = 0 ; }
-
   $limit = $conf->liste_limit;
-  $offset = $limit * $page ;
-  $pageprev = $page - 1;
-  $pagenext = $page + 1;
+  $offset = $limit * $_GET["page"] ;
+  $pageprev = $_GET["page"] - 1;
+  $pagenext = $_GET["page"] + 1;
 
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp,".$db->pdate("p.fin_validite")." as dfv, c.label as statut, c.id as statutid";
   $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
@@ -848,9 +848,9 @@ if ($propalid)
       $sql .= " AND s.idp = $socidp"; 
     }
   
-  if ($viewstatut <> '')
+  if ($_GET["viewstatut"] <> '')
     {
-      $sql .= " AND c.id = $viewstatut"; 
+      $sql .= " AND c.id = ".$_GET["viewstatut"]; 
     }
   
   if ($month > 0)
@@ -873,7 +873,7 @@ if ($propalid)
   if ( $db->query($sql) )
     {
       $num = $db->num_rows();
-      print_barre_liste("Propositions commerciales", $page, $PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+      print_barre_liste("Propositions commerciales", $_GET["page"], $PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 
       $i = 0;
