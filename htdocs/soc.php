@@ -240,7 +240,10 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           $form->select_forme_juridique($soc->forme_juridique_code,(defined(COMPANY_CREATE_TWO_STEPS)?$soc->pays_code:0));
           print '</td></tr>';
       
-          print '<tr><td>Effectif</td><td colspan="3">';
+          print '<tr><td>'.$langs->trans("Type").'</td><td>';
+          $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id);
+          print '</td>';
+          print '<td>'.$langs->trans("Staff").'</td><td>';
           $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
           print '</td></tr>';
     
@@ -254,7 +257,7 @@ if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
           print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td><select name="client">';
           print '<option value="2"'.($soc->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
           print '<option value="1"'.($soc->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
-          print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
+          print '<option value="0"'.($soc->client==0?' selected':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
           print '</select></td>'."\n";
     
           print '<td>'.$langs->trans('Supplier').'</td><td>'."\n";
@@ -358,7 +361,7 @@ elseif ($_GET["action"] == 'edit')
       print '<tr><td>'.$langs->trans("Type").'</td><td>';
       $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id);
       print '</td>';
-      print '<td>Effectif</td><td>';
+      print '<td>'.$langs->trans("Staff").'</td><td>';
       $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
       print '</td></tr>';
 
@@ -506,7 +509,8 @@ else
   print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$soc->capital.' '.$conf->monnaie.'</td></tr>';
 
   print '<tr><td>Forme juridique</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
-  print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>Effectif</td><td>'.$soc->effectif.'</td></tr>';
+
+  print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
 
   print '<tr><td><a href="'.DOL_URL_ROOT.'/societe/rib.php?socid='.$soc->id.'">'.img_edit() ."</a>&nbsp;";
   print $langs->trans('RIB').'</td><td colspan="3">';

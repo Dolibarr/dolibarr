@@ -62,3 +62,7 @@ ShowCompany=Show company
 ShowContact=Show contact
 Capital=Capital
 EditCompany=Edit company
+ThisUserIsNot=This user is not a prospect, customer nor supplier
+VATIntraCheckableOnEUSite=Intracomunnautary VAT can be checked on European commision <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a>
+NorProspectNorCustomer=Nor prospect, nor customer
+Staff=Staff
