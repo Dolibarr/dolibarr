@@ -167,24 +167,24 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
-
-  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\">";
-  print "<TD colspan=\"2\">Bookmark</td>";
-  print "</TR>\n";
-  $var = True;
-  while ($i < $num)
+  if ($num)
     {
-      $obj = $db->fetch_object( $i);
-      $var = !$var;
-      print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-      print '<td align="right"><a href="index.php?action=del_bookmark&amp;bid='.$obj->bid.'">';
-      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" alt="Supprimer" border="0"></a></td>';
-      print '</tr>';
-      $i++;
+      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+      print "<tr class=\"liste_titre\"><TD colspan=\"2\">Bookmark</td></TR>\n";
+      $var = True;
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var = !$var;
+	  print "<tr $bc[$var]>";
+	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+	  print '<td align="right"><a href="index.php?action=del_bookmark&amp;bid='.$obj->bid.'">';
+	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" alt="Supprimer" border="0"></a></td>';
+	  print '</tr>';
+	  $i++;
+	}
+      print '</table>';
     }
-  print '</table>';
 }
 /*
  *
