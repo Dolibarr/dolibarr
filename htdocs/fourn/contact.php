@@ -45,7 +45,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des contacts",$page, $PHP_SELF);
+print_barre_liste("Liste des contacts fournisseurs",$page, $PHP_SELF);
 
 print "<DIV align=\"center\">";
 
