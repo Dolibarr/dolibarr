@@ -83,7 +83,7 @@ if ($user->societe_id > 0)
  *
  */
 
-$sql = "SELECT count(l.ligne), f.rowid, f.nom";
+$sql = "SELECT count(l.ligne), f.rowid, f.nom, f.commande_bloque";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_fournisseur as f";
@@ -117,9 +117,15 @@ if ($result)
       print "<tr $bc[$var]>";
       print '<td>'.$row[2].'</td>';
       print '<td align="center">'.$row[0]."</td>\n";
-
       print '<td>';
-      print '<a class="tabAction" href="fiche.php?action=create&amp;fournid='.$row[1].'">Créer la commande</a>';
+      if ($row[3] == 1)
+	{
+	  print "Les commandes sont bloquées";
+	}
+      else
+	{
+	  print '<a class="tabAction" href="fiche.php?action=create&amp;fournid='.$row[1].'">Créer la commande</a>';
+	}
       print "</td>\n";
       print "</tr>\n";
       $i++;
@@ -133,22 +139,21 @@ else
 }
 
 /*
- * Mode Liste
- *
  *
  *
  */
 
 $sql = "SELECT sf.idp as sfidp, sf.nom as sfnom, s.idp as socidp, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
-$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid AND l.statut IN (1,4) ";
+$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
+$sql .= " AND l.statut IN (1,4) ";
 $sql .= " AND l.fk_soc_facture = sf.idp";
 $sql .= " ORDER BY s.nom ASC ";
 
-$result = $db->query($sql);
-if ($result)
+if ($db->query($sql))
 {
   $num = $db->num_rows();
   $i = 0;
