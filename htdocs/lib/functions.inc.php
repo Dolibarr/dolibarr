@@ -46,13 +46,11 @@
         Le \a message est envoyé dans syslog dans la catégorie LOG_USER.
 */
 
-function dolibarr_syslog($message)
+function dolibarr_syslog($message, $level=LOG_ERR)
 {
-  define_syslog_variables();
-
   openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les PHP
 
-  syslog(LOG_WARNING, $message);
+  syslog($level, $message);
 
   closelog();
 }
