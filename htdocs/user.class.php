@@ -71,21 +71,45 @@ class User
 	{
 	  $topid = substr($rid,0,1);
 	  $lowid = substr($rid,1,1);
-	  if ($lowid == 1)
-	    {
-	      $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
-	      if ($this->db->query($sql))
-		{
-		}
-	    }
+	}
 
-	  if ($lowid > 1)
+      if (strlen($rid) == 3)
+	{
+	  $topid = substr($rid,0,2);
+	  $lowid = substr($rid,2,1);
+	}
+
+      if ($lowid == 1)
+	{
+	  $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
+	  if ($this->db->query($sql))
 	    {
-	      $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
-	      if ($this->db->query($sql))
-		{
-		}
-	      $nid = $topid . "1";
+	    }
+	}
+      
+      if ($lowid > 1)
+	{
+	  $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
+	  if ($this->db->query($sql))
+	    {
+	    }
+	  $nid = $topid . "1";
+	  $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
+	  if ($this->db->query($sql))
+	    {
+	      
+	    }
+	  else
+	    {
+	      print $sql;
+	    }
+	}
+      
+      if ($lowid == 0)
+	{
+	  for ($i = 1 ; $i < 10 ; $i++)
+	    {
+	      $nid = $topid . "$i";
 	      $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
 	      if ($this->db->query($sql))
 		{
@@ -96,25 +120,9 @@ class User
 		  print $sql;
 		}
 	    }
-	  
-	  if ($lowid == 0)
-	    {
-	      for ($i = 1 ; $i < 10 ; $i++)
-		{
-		  $nid = $topid . "$i";
-		  $sql = "REPLACE INTO llx_user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
-		  if ($this->db->query($sql))
-		    {
-		      
-		    }
-		  else
-		    {
-		      print $sql;
-		    }
-		}
-	    }
-
 	}
+      
+      
       return 1;
     }
   /*
