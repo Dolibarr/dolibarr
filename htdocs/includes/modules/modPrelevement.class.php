@@ -20,20 +20,22 @@
  *
  */
 
-/**     \defgroup   prelevement     Module prelevement
-        \brief      Module de gestion des prélèvements bancaires
+/**
+   \defgroup   prelevement     Module prelevement
+   \brief      Module de gestion des prélèvements bancaires
 */
 
 /**
-        \file       htdocs/includes/modules/modPrelevement.class.php
-        \ingroup    prelevement
-        \brief      Fichier de description et activation du module Prelevement
+   \file       htdocs/includes/modules/modPrelevement.class.php
+   \ingroup    prelevement
+   \brief      Fichier de description et activation du module Prelevement
 */
 
 include_once "DolibarrModules.class.php";
 
-/** \class modPrelevement
-		\brief      Classe de description et activation du module Prelevement
+/**
+   \class modPrelevement
+   \brief      Classe de description et activation du module Prelevement
 */
 
 class modPrelevement extends DolibarrModules
@@ -88,9 +90,6 @@ class modPrelevement extends DolibarrModules
     // Permissions
     $this->remove();
 
-    $this->rights = array();
-    $this->rights_class = 'prelevement';
-
     $this->rights[1][0] = 151;
     $this->rights[1][1] = 'Consulter les prélèvements';
     $this->rights[1][2] = 'r';
@@ -102,6 +101,13 @@ class modPrelevement extends DolibarrModules
     $this->rights[2][2] = 'w';
     $this->rights[2][3] = 0;    
     $this->rights[2][4] = 'configurer';
+
+    $this->rights[3][0] = 153;
+    $this->rights[3][1] = 'Consulter les bons de prélèvements';
+    $this->rights[3][2] = 'r';
+    $this->rights[3][3] = 1;
+    $this->rights[3][4] = 'bons';
+    $this->rights[3][5] = 'lire';
 
     // Dir
     $this->dirs[0] = $conf->prelevement->dir_output;
