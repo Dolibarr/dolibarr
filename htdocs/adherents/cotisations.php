@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2003      Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -227,17 +228,16 @@ if ($result)
       $i++;
     }
   $var=!$var;
-  print "<TR $bc[$var]>";
-  print "<TD>Total</TD>\n";
-  print "<TD align=\"right\">".price($total)."</TD>\n";
-  //  print "<TD>&nbsp;</TD>\n";
-  print "<TD align=\"right\" colspan=\"2\">";
+  print "<tr $bc[$var]>";
+  print "<td>".$langs->trans("Total")."</td>\n";
+  print "<td align=\"right\">".price($total)."</td>\n";
+  print "<td align=\"right\" colspan=\"2\">";
   print_fleche_navigation($page,"cotisations.php","&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",1);
-  print "</TD>\n";
+  print "</td>\n";
 
-  print "</TR>\n";
+  print "</tr>\n";
   print "</table>";
-  print "<BR>\n";
+  print "<br>\n";
 
 
 }

@@ -354,8 +354,8 @@ if ($_GET["propalid"])
 	  /*
 	   *
 	   */
-	  print '<tr><td>Total HT</td><td align="right"><b>'.price($obj->price).'</b> euros</td>';
-	  print '<td align="right">Total TTC</td><td align="right"><b>'.price($propal->total_ttc).'</b> euros</td></tr>';
+	  print '<tr><td>'.$langs->trans("TotalHT").'</td><td align="right"><b>'.price($obj->price).'</b> euros</td>';
+	  print '<td align="right">'.$langs->trans("TotalTTC").'</td><td align="right"><b>'.price($propal->total_ttc).'</b> euros</td></tr>';
 	  /*
 	   *
 	   */

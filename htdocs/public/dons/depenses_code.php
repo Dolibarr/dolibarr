@@ -1,6 +1,7 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003 Rodolphe Quiedeville   <rodolphe@quiedeville.org>
  * Copyright (C) 2003 Association FSF France <contact@fsffrance.org>
+ * Copyright (C) 2004 Laurent Destailleur    <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,7 +91,7 @@ if ( $db->query( $sql) )
 
       $var=!$var;
       print "<TR $bc[$var]>";
-      print '<TD colspan="3" align="right">Total : '.number_format($total,2,'.',' ').' euros</TD></tr>';
+      print '<TD colspan="3" align="right">'.$langs->trans("Total").': '.number_format($total,2,'.',' ').' euros</TD></tr>';
 
       print "</table>";
 

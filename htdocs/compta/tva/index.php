@@ -171,7 +171,7 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
       $subtotal = 0;
     }
   }
-  print '<tr class="total"><td align="right" colspan="3">Total :</td><td nowrap align="right"><b>'.price($total).'</b></td>';
+  print '<tr class="total"><td align="right" colspan="3">'.$langs->trans("Total").':</td><td nowrap align="right"><b>'.price($total).'</b></td>';
   print "<td>&nbsp;</td>\n";
   print "</table>";
 

@@ -46,8 +46,8 @@ if ($result)
   print '<br>';
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
   print '<tr class="liste_titre">';
-  print "<td width=\"60%\">Date</td>";
-  print "<td align=\"right\">Montant</td>";
+  print "<td width=\"60%\">".$langs->trans("Date")."</td>";
+  print "<td align=\"right\">".$langs->trans("Amount")."</td>";
   print "<td>&nbsp;</td>\n";
   print "</tr>\n";
   $var=1;
@@ -64,8 +64,8 @@ if ($result)
       
       $i++;
     }
-  print "<tr class=\"total\"><td align=\"right\">Total :</td>";
-  print "<td align=\"right\"><b>".price($total)."</b></td><td>euros&nbsp;HT</td></tr>";
+  print "<tr class=\"total\"><td align=\"right\">".$langs->trans("TotalHT").":</td>";
+  print "<td align=\"right\"><b>".price($total)."</b></td><td>".MAIN_MONNAIE."</td></tr>";
   
   print "</table>";
   $db->free();

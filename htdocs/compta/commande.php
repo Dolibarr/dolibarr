@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -129,8 +130,8 @@ if ($_GET["id"] > 0)
       
       print '<tr><td>TVA</td><td align="right">'.price($commande->total_tva).'</td>';
       print '<td>'.MAIN_MONNAIE.'</td></tr>';
-      print '<tr><td>Total</td><td align="right">'.price($commande->total_ttc).'</td>';
-      print '<td>'.MAIN_MONNAIE.' TTC</td></tr>';
+      print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
+      print '<td>'.MAIN_MONNAIE.'</td></tr>';
       if ($commande->note)
 	{
 	  print '<tr><td colspan="5">Note : '.nl2br($commande->note)."</td></tr>";
@@ -287,7 +288,7 @@ if ($_GET["id"] > 0)
 		  $total = $total + $objp->total;
 		  $i++;
 		}
-	      print "<tr><td align=\"right\" colspan=\"4\">Total : <b>$total</b> Euros HT</td></tr>\n";
+	      print "<tr><td align=\"right\" colspan=\"4\">".$langs->trans("TotalHT").": <b>$total</b> ".MAIN_MONNAIE."</td></tr>\n";
 	      print "</table>";
 	    }
 	  $db->free();

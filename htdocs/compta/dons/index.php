@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,24 +44,24 @@ if ($result)
 
 print_titre("Dons");
 
-print '<TABLE border="0" cellspacing="0" cellpadding="4">';
-print '<TR class="liste_titre">';
+print '<table class="noboerder" cellspacing="0" cellpadding="3">';
+print '<tr class="liste_titre">';
 print "<td>&nbsp;</td>";
 print "<td>Somme</td>";
-print "</TR>\n";
+print "</tr>\n";
 
 $var=True;
 
 for ($i = 0 ; $i < 4 ; $i++)
 {
   $var=!$var;
-  print "<TR $bc[$var]>";
-  print '<TD><a href="liste.php?statut='.$i.'">'.$libelle[$i].'</a></TD>';
-  print '<TD align="right">'.price($somme[$i]).'</TD>';
+  print "<tr $bc[$var]>";
+  print '<td><a href="liste.php?statut='.$i.'">'.$libelle[$i].'</a></td>';
+  print '<td align="right">'.price($somme[$i]).'</td>';
   $total += $somme[$i];
   print "</tr>";
 }
-print "<tr $bc[0]>".'<td>Total</td><td align="right">'.price($total).'</TD></tr>';
+print "<tr $bc[0]>".'<td>'.$langs->trans("Total").'</td><td align="right">'.price($total).'</td></tr>';
 print "</table>";
 
 

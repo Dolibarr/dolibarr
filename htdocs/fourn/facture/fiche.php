@@ -337,7 +337,7 @@ else
 	  print '<tr class="liste_titre"><td>Libellé</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Total HT</td>';
 	  print '<td align="center">Taux TVA</td>';
 	  print '<td align="center">TVA</td>';
-	  print '<td align="right">Total TTC</td><td>&nbsp;</td></tr>';
+	  print '<td align="right">'.$langs->trans("TotalTTC").'</td><td>&nbsp;</td></tr>';
 	  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 	    {
 	      print "<tr $bc[1]>".'<td>'.$fac->lignes[$i][0]."</td>";
@@ -410,9 +410,9 @@ else
 	  print "<tr><td>Auteur</td><td colspan=\"4\">$authorfullname</td>";
 	  print "<tr><td>Statut</td><td colspan=\"4\">".$fac->LibStatut($fac->paye,$fac->statut)."</td></tr>";
 	  
-	  print "<tr>".'<td>&nbsp</td><td>Total HT</td><td align="right"><b>'.price($fac->total_ht)."</b></td>";
+	  print "<tr>".'<td>&nbsp</td><td>'.$langs->trans("TotalHT").'</td><td align="right"><b>'.price($fac->total_ht)."</b></td>";
 	  print '<td align="right">TVA</td><td align="right">'.price($fac->total_tva)."</td></tr>";
-	  print "<tr>".'<td>&nbsp</td><td>Total TTC</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
+	  print "<tr>".'<td>&nbsp</td><td>'.$langs->trans("TotalTTC").'</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
 	  if (strlen($fac->note))
 	    {
 	      print "<tr>".'<td>Commentaires</td><td colspan="4">';
@@ -500,7 +500,7 @@ else
 	  print '<tr class="liste_titre"><td>Libellé</td><td align="center">P.U. HT</td><td align="center">Qantité</td><td align="center">Total HT</td>';
 	  print '<td align="center">Taux TVA</td>';
 	  print '<td align="center">TVA</td>';
-	  print '<td align="right">Total TTC</td></tr>';
+	  print '<td align="right">'.$langs->trans("TotalTTC").'</td></tr>';
 	  $var=1;
 	  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 	    {

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -53,7 +54,7 @@ function pt ($db, $sql, $date) {
       
       $i++;
     }
-    print "<tr><td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>euros&nbsp;HT</td></tr>";
+    print "<tr><td align=\"right\">".$langs->trans("TotalHT").":</td><td align=\"right\"><b>".price($total)."</b></td><td>".MAIN_MONNAIE."</td></tr>";
     
     print "</TABLE>";
     $db->free();

@@ -153,7 +153,7 @@ if ($_GET["id"])
 	      $i++;
 	    }
 	}      
-      print '<tr><td align="right">Total : </td><td>'.$total."</td></tr></table>";
+      print '<tr><td align="right">'.$langs->trans("Total").':</td><td>'.$total."</td></tr></table>";
 
 
 

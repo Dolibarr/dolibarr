@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,7 +46,7 @@ if ($result)
 
   print "<tr $bc[1]>";
   print '<td>Nombre de dons</td><td align="right">'.$i.'</td></tr>';
-  print "<tr $bc[0]>".'<td>Total</td><td align="right">'.price($total).'</td>';
+  print "<tr $bc[0]>".'<td>'.$langs->trans("Total").'</td><td align="right">'.price($total).'</td>';
   print "<tr $bc[1]>".'<td>Moyenne</td><td align="right">'.price($total / $i).'</td>';
   print "</tr>";
 

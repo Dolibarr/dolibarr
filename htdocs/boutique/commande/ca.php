@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,9 +40,9 @@ $offset = $limit * $page ;
 
 print_barre_liste("Liste des commandes", $page, "ca.php");
 
-print '<p><TABLE border="0" cellspacing="0" cellpadding="4">';
+print '<p><table border="0" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Description</td>';
-print '<td align="right">Total</td></tr>';
+print '<td align="right">'.$langs->trans("LastName").'</td></tr>';
 
 $sql = "SELECT sum(t.value) as value";
 $sql .= " FROM ".DB_NAME_OSC.".orders_total as t";

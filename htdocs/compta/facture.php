@@ -504,7 +504,7 @@ if ($_GET["action"] == 'create')
 	      print '<tr><td>Proposition</td><td colspan="2">'.$obj->ref.'</td></tr>';
 	      print '<tr><td>Montant HT</td><td colspan="2">'.price($amount).'</td></tr>';
 	      print '<tr><td>TVA</td><td colspan="2">'.price($obj->tva)."</td></tr>";
-	      print '<tr><td>Total TTC</td><td colspan="2">'.price($obj->total)."</td></tr>";
+	      print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($obj->total)."</td></tr>";
 	    }
 	  elseif ($_GET["commandeid"] > 0)
 	    {
@@ -512,7 +512,7 @@ if ($_GET["action"] == 'create')
 	      print '<tr><td>Commande</td><td colspan="2">'.$commande->ref.'</td></tr>';
 	      print '<tr><td>Montant HT</td><td colspan="2">'.price($commande->total_ht).'</td></tr>';
 	      print '<tr><td>TVA</td><td colspan="2">'.price($commande->total_tva)."</td></tr>";
-	      print '<tr><td>Total TTC</td><td colspan="2">'.price($commande->total_ttc)."</td></tr>";
+	      print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($commande->total_ttc)."</td></tr>";
 	    }
 	  else
 	    {
@@ -1531,12 +1531,12 @@ else
 		}
 
 	      if ($num <= $limit) {
-		// Print total
+		    // Print total
 	    	print "<tr ".$bc[!$var].">";
-	    	print "<td colspan=3 align=\"left\">Total : </TD>";
-		print "<td align=\"right\"><b>".price($total)."</b></TD>";		
-	    	print "<td align=\"right\"><b>".price($total_ttc)."</b></TD>";
-	    	print "<td align=\"right\"><b>".price($totalrecu)."</b></TD>";
+	    	print "<td colspan=3 align=\"left\">".$langs->trans("Total").": </td>";
+		    print "<td align=\"right\"><b>".price($total)."</b></td>";		
+	    	print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
+	    	print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
 	    	print '<td align="center">&nbsp;</td>';
 	    	print "</tr>\n";
 	      }

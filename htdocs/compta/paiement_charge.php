@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -315,7 +315,7 @@ if ($_GET["action"] == 'create')
 		    {
 		      // Print total
 		      print "<tr ".$bc[!$var].">";
-		      print '<td colspan="2" align="left">Total :</td>';
+		      print '<td colspan="2" align="left">'.$langs->trans("TotalTTC").':</td>';
 		      print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
 		      print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
 		      print "<td align=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";

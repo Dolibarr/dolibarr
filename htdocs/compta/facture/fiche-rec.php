@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -289,8 +290,8 @@ else
 
 	print '<tr><td>TVA</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
 	print '<td>'.MAIN_MONNAIE.'</td></tr>';
-	print '<tr><td>Total</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
-	print '<td>'.MAIN_MONNAIE.' TTC</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
+	print '<td>'.MAIN_MONNAIE.'</td></tr>';
 	if ($fac->note)
 	  {
 	    print '<tr><td colspan="5">Note : '.nl2br($fac->note)."</td></tr>";
@@ -303,7 +304,7 @@ else
 	 */
 	print_titre("Produits");
 	      
-	print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+	print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
 	print '<tr class="liste_titre"><td>Réf</td><td>Produit</td>';
 	print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	

@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -109,7 +110,7 @@ if ($id)
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
       print "<tr>";
       print '<td width="20%">Frais d\'expéditions</td><td width="80%">'.price($commande->total_ot_shipping).' EUR</td></tr>';
-      print '<td width="20%">Total</td><td width="80%">'.price($commande->total_ot_total).' EUR</td></tr>';
+      print '<td width="20%">'.$langs->trans("LastName").'</td><td width="80%">'.price($commande->total_ot_total).' EUR</td></tr>';
       print "</table>";
 
       

@@ -84,7 +84,7 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++)
 }
 
 $var = !$var;
-print "<tr>".'<td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
+print "<tr>".'<td colspan="3" align="right"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
 
 
 print '<tr class="liste_titre"><td colspan="5">Dettes</td></tr>';
@@ -120,7 +120,7 @@ print "<tr ".$bc[$var].">".'<td colspan="3">URSSAF</td><td align="right">'.price
 /*
  * Total
  */
-print "<tr>".'<td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
+print "<tr>".'<td colspan="3" align="right"><b>'.$langs->trans("Total").'</b></td><td align="right"><b>'.price($total).'</b></td><td>&nbsp;</td></tr>';
 
 
 /*

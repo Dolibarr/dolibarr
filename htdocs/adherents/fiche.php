@@ -23,6 +23,8 @@
  */
 require("./pre.inc.php");
 
+$langs->load("companies");
+
 require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
@@ -365,16 +367,16 @@ if ($action == 'create') {
 
     print '<td valign="top" rowspan="13"><textarea name="comment" wrap="soft" cols="40" rows="25"></textarea></td></tr>';
 
-    print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td></tr>';
-    print '<tr><td>Nom</td><td><input type="text" name="nom" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("FirstName").'</td><td><input type="text" name="prenom" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("LastName").'</td><td><input type="text" name="nom" size="40"></td></tr>';
     print '<tr><td>Societe</td><td><input type="text" name="societe" size="40"></td></tr>';
     print '<tr><td>Adresse</td><td>';
     print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
     print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
     print '<tr><td>Pays</td><td><input type="text" name="pays" size="40"></td></tr>';
-    print '<tr><td>Email</td><td><input type="text" name="email" size="40"></td></tr>';
-    print '<tr><td>Login</td><td><input type="text" name="login" size="40"></td></tr>';
-    print '<tr><td>Password</td><td><input type="password" name="pass" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("Login").'</td><td><input type="text" name="login" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("Password").'</td><td><input type="password" name="pass" size="40"></td></tr>';
     print '<tr><td>Date de Naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="10"></td></tr>';
     print '<tr><td>Url photo</td><td><input type="text" name="photo" size="40"></td></tr>';
     foreach($adho->attribute_label as $key=>$value){
@@ -409,7 +411,7 @@ if ($action == 'create') {
     if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 && defined("ADHERENT_BANK_USE_AUTO") && ADHERENT_BANK_USE_AUTO !=0){
         print '<tr><td>Libelle</td><td><input name="label" type="text" size=20 value="Cotisation " ></td></tr>';
     }
-    print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
+    print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
     print "</form>\n";
     print "</table>\n";
 

@@ -42,7 +42,7 @@ if ($_GET["bid"] == 0)
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
   print "<tr class=\"liste_titre\">";
-  echo '<td>Description</TD><td align="center">Nb</td><td align="right">Total</td><td align="right">Moyenne</td>';
+  echo '<td>Description</TD><td align="center">Nb</td><td align="right">'.$langs->trans("Total").'</td><td align="right">Moyenne</td>';
   print "</tr>\n";
 
   $sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
@@ -71,7 +71,7 @@ if ($_GET["bid"] == 0)
 	}
       $db->free();
 
-      print "<tr $bc[1]>".'<td colspan="2" align="right">Total</td>';
+      print "<tr $bc[1]>".'<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
       print '<td align="right"><b>'.price($total).'</b></td><td colspan="2">&nbsp;</td></tr>';
     }
   else
@@ -128,7 +128,7 @@ else
 	  $total = $total + (0 - $objp->amount);
 	}
       $db->free();
-      print "<tr><td colspan=\"2\" align=\"right\">Total</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>".MAIN_MONNAIE."</td></tr>";
+      print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("Total")."</td><td align=\"right\"><b>".price(abs($total))."</b></td><td>".MAIN_MONNAIE."</td></tr>";
     }
   else
     {

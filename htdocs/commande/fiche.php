@@ -264,11 +264,11 @@ if ($_GET["action"] == 'create')
 	      print '<tr><td>Proposition</td><td colspan="2">'.$obj->ref.'</td></tr>';
 	      print '<tr><td>Montant HT</td><td colspan="2">'.price($amount).'</td></tr>';
 	      print '<tr><td>TVA</td><td colspan="2">'.price($obj->tva)."</td></tr>";
-	      print '<tr><td>Total TTC</td><td colspan="2">'.price($obj->total)."</td></tr>";	  
+	      print '<tr><td>'.$langs->trans("TotalTTC").'</td><td colspan="2">'.price($obj->total)."</td></tr>";	  
 	    }	  
 	  else
 	    {
-	      print '<tr><td colspan="3">Services/Produits</td></tr>';
+	      print '<tr><td colspan="3">'.$langs->trans("Services").'/'.$langs->trans("Products").'</td></tr>';
 	      print '<tr><td colspan="3">';
 	      /*
 	       *
@@ -504,8 +504,8 @@ else
 
 	  print '<tr><td>TVA</td><td align="right">'.price($commande->total_tva).'</td>';
 	  print '<td>'.MAIN_MONNAIE.'</td></tr>';
-	  print '<tr><td>Total</td><td align="right">'.price($commande->total_ttc).'</td>';
-	  print '<td>'.MAIN_MONNAIE.' TTC</td></tr>';
+	  print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
+	  print '<td>'.MAIN_MONNAIE.'</td></tr>';
 	  if ($commande->note)
 	    {
 	      print '<tr><td colspan="5">Note : '.nl2br($commande->note)."</td></tr>";

@@ -258,7 +258,7 @@ if ($_GET["propalid"])
 	      $total = $total + $objp->total;
 	      $i++;
 	    }
-	  print "<tr><td align=\"right\" colspan=\"4\">Total : <b>$total</b> Euros HT</td></tr>\n";
+	  print "<tr><td align=\"right\" colspan=\"4\">".$langs->trans("TotalHT").": <b>$total</b> ".MAIN_MONNAIE."</td></tr>\n";
 	  print "</table>";
 	  $db->free();
 	}

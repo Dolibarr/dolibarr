@@ -23,6 +23,9 @@
  */
 require("./pre.inc.php");
 
+$langs->load("companies");
+
+
 llxHeader();
 
 
@@ -110,7 +113,7 @@ foreach ($AdherentsAll as $key=>$value){
 }
 $var=!$var;
 print "<tr $bc[$var]>";
-print '<td> <b>Total</b> </td>';
+print '<td> <b>'.$langs->trans("Total").'</b> </td>';
 print '<td align="right"><b>'.$SommeA.'</b></td>';
 print '<td align="right"><b>'.$SommeB.'</b></td>';
 print '<td align="right"><b>'.$SommeC.'</b></td>';
@@ -132,7 +135,7 @@ print "</tr>\n";
 print "<tr $bc[$var]>";
 print '<td>';
 
-print 'Nom/Prénom <input type="text" name="search" class="flat" size="20">';
+print $langs->trans("LastName").'/'.$langs->trans("FirstName").' <input type="text" name="search" class="flat" size="20">';
 
 print '&nbsp; <input class="flat" type="submit" value="'.$langs->trans("Search").'">';
 print '</td></tr>';

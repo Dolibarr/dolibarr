@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +63,7 @@ if ($result) {
   $db->free();
 }
 
-print "<tr><td align=\"right\" colspan=\"2\">Total :</td>";
+print "<tr><td align=\"right\" colspan=\"2\">".$langs->trans("TotalHT").":</td>";
 print "<td align=\"right\"><b>".price($total)."</b></td></tr>\n";
 
 

@@ -295,7 +295,7 @@ if ($_GET["action"] == 'create')
 		    {
 		      // Print total
 		      print "<tr ".$bc[!$var].">";
-		      print '<td colspan="2" align="left">Total :</td>';
+		      print '<td colspan="2" align="left">'.$langs->trans("TotalTTC").':</td>';
 		      print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
 		      print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
 		      print "<td align=\"right\"><b>".price($total_ttc - $totalrecu)."</b></td>";
