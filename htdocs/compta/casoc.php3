@@ -27,6 +27,23 @@ $db = new Db();
 
 print_barre_liste("Chiffre d'affaire par société", $page, $PHP_SELF);
 
+/*
+ * Ca total
+ *
+ */
+
+$sql = "SELECT sum(f.amount) as ca";
+$sql .= " FROM llx_facture as f";
+ 
+$result = $db->query($sql);
+if ($result) {
+  if ($db->num_rows() > 0) {
+    $objp = $db->fetch_object(0);
+    $catotal = $objp->ca;
+  }
+}
+
+if ($catotal == 0) { $catotal = 1; };
 
 
 $sql = "SELECT s.nom, s.idp, sum(f.amount) as ca";
@@ -49,7 +66,8 @@ if ($result) {
       print "<TR $bc[$var]>";
       
       print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
-      print "<TD align=\"right\">".price($objp->ca)."</TD><td>&nbsp;</td>\n";
+      print "<TD align=\"right\">".price($objp->ca)."</TD>";
+      print '<td align="right">'.price(100 / $catotal * $objp->ca).'</td>';
       
       $total = $total + $objp->ca;	  
       print "</TR>\n";

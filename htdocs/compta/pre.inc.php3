@@ -43,6 +43,7 @@ function llxHeader($head = "") {
 
   $menu->add_submenu("prev.php3","Prévisionnel");
   $menu->add_submenu("comp.php3","Comparatif");
+  $menu->add_submenu("exercices.php3","Exercices");
 
   $menu->add_submenu("casoc.php3","Par société");
   //  $menu->add_submenu("pointmort.php3","Point mort");
