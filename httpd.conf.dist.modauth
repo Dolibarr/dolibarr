@@ -55,6 +55,7 @@
   </Location>
 
   <Location /public/>
+    SetEnv REMOTE_USER anonymous
     Options Indexes FollowSymLinks
     AllowOverride All
     Order deny,allow
