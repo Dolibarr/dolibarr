@@ -1,3 +1,26 @@
+<?PHP
+/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ *
+ */
+?>
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=iso8859-1">
@@ -47,15 +70,14 @@ if ($HTTP_POST_VARS["action"] == "set")
 
 	  $ok = 1 ;
 	  
-	  $result = $db->list_tables($dolibarr_db_name);
-	  if ($result)
-	    {
-	      print "toto";
-	      while ($row = $db->fetch_row())
-		{
-		  print "Table : $row[0]\n";
-		}
-	    }
+	  //$result = $db->list_tables($dolibarr_main_db_name);
+	  //if ($result)
+	  //{
+	  //    while ($row = $db->fetch_row())
+	  //	{
+	  //	  print "Table : $row[0]<br>\n";
+ 	  //	}
+	  //}
 
 	  // Création des tables
 	  $dir = "../../mysql/tables/";
@@ -86,8 +108,13 @@ if ($HTTP_POST_VARS["action"] == "set")
 		    }
 		  else
 		    {
-		      print "<td>ERREUR</td></tr>";
+			  if ($db->errno() == 1050) {
+		      print "<td>Déjà existante</td></tr>";
+			  }
+			  else {
+		      print "<td>ERREUR ".$db->errno()."</td></tr>";
 		      $error++;
+		      }
 		    }
 		}
 	      
@@ -116,8 +143,12 @@ if ($HTTP_POST_VARS["action"] == "set")
 		      else
 			{
 			  $ok = 0;
-			  print $db->error();
-			  print "<p>".$buffer."</p>";
+			  if ($db->errno() == 1062) {
+			  	// print "<tr><td>Insertion ligne : $buffer</td><td>Déja existante</td></tr>";
+			  }
+			  else {
+			  	print "Erreur SQL ".$db->errno()." sur requete '$buffer'<br>";
+			  }
 			}
 		    }
 		}

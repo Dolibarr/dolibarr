@@ -168,8 +168,8 @@ if ($HTTP_POST_VARS["action"] == "set")
       $conf = new Conf();
       $conf->db->host = $dolibarr_main_db_host;
       $conf->db->name = "mysql";
-      $conf->db->user = $HTTP_POST_VARS["db_user_root"];
-      $conf->db->pass = $HTTP_POST_VARS["db_user_pass"];
+      $conf->db->user = isset($HTTP_POST_VARS["db_user_root"])?$HTTP_POST_VARS["db_user_root"]:"";
+      $conf->db->pass = isset($HTTP_POST_VARS["db_user_pass"])?$HTTP_POST_VARS["db_user_pass"]:"";
       $db = new DoliDb();
 	  
       $sql = "INSERT INTO user ";
@@ -192,7 +192,11 @@ if ($HTTP_POST_VARS["action"] == "set")
 	}
       else
 	{
-	  print "<tr><td>Création de l'utilisateur : $dolibarr_main_db_user</td><td>ERREUR</td></tr>";
+		if ($db->errno() == 1062) {
+	  		print "<tr><td>Création de l'utilisateur : $dolibarr_main_db_user</td><td>Deja existant</td></tr>";
+	  	} else {
+	  		print "<tr><td>Création de l'utilisateur : $dolibarr_main_db_user</td><td>ERREUR</td></tr>";
+	  	}
 	}
 
       $db->close();
@@ -245,8 +249,8 @@ if ($HTTP_POST_VARS["action"] == "set")
 	  $conf = new Conf();
 	  $conf->db->host = $dolibarr_main_db_host;
 	  $conf->db->name = "mysql";
-	  $conf->db->user = $HTTP_POST_VARS["db_user_root"];
-	  $conf->db->pass = $HTTP_POST_VARS["db_user_pass"];
+      $conf->db->user = isset($HTTP_POST_VARS["db_user_root"])?$HTTP_POST_VARS["db_user_root"]:"";
+      $conf->db->pass = isset($HTTP_POST_VARS["db_user_pass"])?$HTTP_POST_VARS["db_user_pass"]:"";
 	  $db = new DoliDb();
 	  
 	  if ($ok)

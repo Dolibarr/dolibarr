@@ -91,7 +91,7 @@ if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
 	$dolibarr_main_document_root = substr($_SERVER["SCRIPT_FILENAME"],0,strlen($_SERVER["SCRIPT_FILENAME"])-18);
 	# Nettoyage du path proposé
-	$dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);	# Gere les chemins windows avec double "\"
+	$dolibarr_main_document_root = str_replace('\\\\','/',$dolibarr_main_document_root);		# Gere les chemins windows avec double "\"
 	$dolibarr_main_document_root = ereg_replace('[\\\\\/]$','',$dolibarr_main_document_root);	# Supprime le "\" ou "/" de fin
 }
 print "$dolibarr_main_document_root";
@@ -139,10 +139,10 @@ exemples :<br>
 </tr>
 
 <tr class="bg2">
-<td valign="top">Login</td>
+<td valign="top">Login administrateur de la base</td>
 <td>
 <input type="text" name="db_user_root">
-</td><td><div class="comment">Login de l'utilisateur ayant les droits de création de la base de données, inutile si vous êtes chez un hébergeur, votre base de données est déjà créée. Laisser vide si vous vous connectez en anonymous</div>
+</td><td><div class="comment">Login de l'utilisateur ayant les droits de création de bases de données.<br>Si vous avez déjà une base, vierge ou non, pour accueillir les tables dolibarr (exemple si vous êtes chez un hébergeur), ne rien remplir. Laisser vide également si vous vous connectez en anonymous</div>
 </td>
 </tr>
 
@@ -155,10 +155,7 @@ exemples :<br>
 </tr>
 
 
-
-<tr>
-<td colspan="3" align="center"><h2>Base de données Dolibarr<h2></td>
-</tr>
+<tr><td colspan="3" align="center"><h2>Base de données Dolibarr<h2></td></tr>
 
 <tr class="bg2">
 <td>Nom de la base de données</td><td valign="top"><input type="text" name="db_name" value="<?PHP print isset($dolibarr_main_db_name)?$dolibarr_main_db_name:'dolibarr' ?>"></td>
