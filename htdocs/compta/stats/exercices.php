@@ -23,6 +23,26 @@
 require("./pre.inc.php");
 require("./lib.inc.php");
 
+/*
+ *
+ */
+
+llxHeader();
+
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $socidp = $user->societe_id;
+}
+
+$mode='recettes';
+if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
+
+
+print_titre("Comparatif CA année en cours avec année précédente (".MAIN_MONNAIE." HT, ".$mode.")");
+print "<br>\n";
 
 function propals ($db, $year, $month) {
   global $bc;
@@ -170,14 +190,14 @@ function pt ($db, $sql, $year) {
       $var=!$var;
 
       if ($obj->dm > $month ) {
-	for ($b = $month ; $b < $obj->dm ; $b++) {
-	  print "<TR $bc[$var]>";
-	  print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
-	  print "<TD align=\"right\">0</TD>\n";	  
-	  print "</TR>\n";
-	  $var=!$var;
-	  $ca[$b] = 0;
-	}
+        	for ($b = $month ; $b < $obj->dm ; $b++) {
+        	  print "<TR $bc[$var]>";
+        	  print "<TD>".strftime("%B",mktime(12,0,0,$b, 1, $year))."</TD>\n";
+        	  print "<TD align=\"right\">0</TD>\n";	  
+        	  print "</TR>\n";
+        	  $var=!$var;
+        	  $ca[$b] = 0;
+        	}
       }
 
       if ($obj->sum > 0) {
@@ -223,7 +243,7 @@ function pt ($db, $sql, $year) {
 
 function ppt ($db, $year, $socidp)
 {
-  global $bc;
+  global $bc,$conf;
   print "<table width=\"100%\">";
 
   print "<tr class=\"liste_titre\"><td align=\"center\" width=\"30%\">";
@@ -236,15 +256,15 @@ function ppt ($db, $year, $socidp)
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
   $sql .= " WHERE f.fk_statut = 1";
-  if ($conf->compta->mode != 'CREANCES-DETTES') { 
-	$sql .= " AND f.paye = 1";
-  }
-  $sql.=" AND date_format(f.datef,'%Y') = ".($year-1);
-  if ($socidp)
+  $sql .= " AND date_format(f.datef,'%Y') = ".($year-1);
+    
+    if ($conf->compta->mode != 'CREANCES-DETTES') { 
+    	$sql .= " AND f.paye = 1";
+    }
+    if ($socidp)
     {
       $sql .= " AND f.fk_soc = $socidp";
     }
-
   $sql .= " GROUP BY dm";
   
   $prev = pt($db, $sql, $year - 1);
@@ -254,10 +274,10 @@ function ppt ($db, $year, $socidp)
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
   $sql .= " WHERE f.fk_statut = 1";
+  $sql .= " AND date_format(f.datef,'%Y') = $year ";
   if ($conf->compta->mode != 'CREANCES-DETTES') { 
 	$sql .= " AND f.paye = 1";
   }
-  $sql.=" AND date_format(f.datef,'%Y') = $year ";
   if ($socidp)
     {
       $sql .= " AND f.fk_soc = $socidp";
@@ -296,19 +316,6 @@ function ppt ($db, $year, $socidp)
 }
 
 
-/*
- *
- */
-
-llxHeader();
-
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $socidp = $user->societe_id;
-}
 $cyear = strftime ("%Y", time());
 ppt($db, $cyear, $socidp);
 
