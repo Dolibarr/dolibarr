@@ -59,6 +59,8 @@ function llxHeader($head = "", $urlp = "")
   // La notion de service est abandonnée pour le moment 
   //  $menu->add(DOL_URL_ROOT."/service/index.php3", "Services");
 
+  $menu->add("stats/", "Statistiques");
+
   left_menu($menu->liste);
   /*
    *
