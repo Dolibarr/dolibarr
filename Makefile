@@ -20,7 +20,7 @@
 # General Makefile
 #
 
-FILE=dolibarr-0.3.1
+FILE=dolibarr-0.4.0
 
 tar:
 	rm -fr dolibarr-*.tar.gz* $(FILE)
@@ -32,5 +32,5 @@ tar:
 
 
 put:
-	scp $(FILE).tar.gz* rodolphe.quiedeville.org:/home/www/rodolphe.quiedeville.org/htdocs/projets/dolibarr/dl/
-	scp $(FILE).tar.gz rodolphe@subversions.gnu.org:/upload/dolibarr
+	scp $(FILE).tar.gz* rodolphe.quiedeville.org:/home/www/www.dolibarr.com/htdocs/dl/
+#	scp $(FILE).tar.gz rodolphe@subversions.gnu.org:/upload/dolibarr
