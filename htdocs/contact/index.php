@@ -117,8 +117,7 @@ if ($result)
       $sortorder="DESC";
     }
   print "<p><table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print "<TR class=\"liste_titre\">";
-  print "<TD>";
+  print '<tr class="liste_titre"><td>';
   print_liste_field_titre("Nom",$PHP_SELF,"lower(p.name)", $begin);
   print "</td><td>";
   print_liste_field_titre("Prénom",$PHP_SELF,"lower(p.firstname)", $begin);
@@ -127,7 +126,6 @@ if ($result)
   print '</td>';
 
   print '<td>Téléphone</td>';
-
 
   if ($_GET["view"] == 'phone')
     {
@@ -149,7 +147,7 @@ if ($result)
 
       print "<tr $bc[$var]>";
 
-      print '<td>';
+      print '<td valign="center">';
       print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">';
       print img_file();
       print '</a><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">'.$obj->name.'</a></td>';
