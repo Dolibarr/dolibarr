@@ -56,7 +56,29 @@ $bc[1]="class=\"pair\"";
 
 $a = setlocale("LC_TIME", "FRENCH");
 
-function top_menu($head) {
+/*
+ * Barre de menu supérieure
+ *
+ *
+ */
+
+function top_menu($head) 
+{
+
+}
+
+/*
+ * Barre de menu gauche
+ *
+ *
+ *
+ *
+ */
+Function left_menu($menu) 
+{
+  global $conf;
+
+
   global $user, $conf, $rtplang;
 
   print $rtplang->lang_header();
@@ -73,6 +95,7 @@ function top_menu($head) {
   print "</HEAD>\n";
   
   print '<BODY TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">';
+
   /*
    * Barre superieure
    *
@@ -80,8 +103,8 @@ function top_menu($head) {
 
   print '<TABLE class="topbarre" width="100%">';
 
-  print "<TR>";
-  print '<TD width="15%" class="menu" align="center"><A class="menu" href="/">Accueil</A></TD>';
+  print "<tr>";
+  print '<td width="15%" class="menu" align="center"><A class="menu" href="/">Accueil</A></TD>';
 
   print '<TD width="15%" class="menu" align="center">';
   if ($user->comm > 0 && $conf->commercial ) 
@@ -103,7 +126,6 @@ function top_menu($head) {
       print '-';
     }
 
-
   print '<TD width="15%" class="menu" align="center">';
   if ($conf->produit->enabled ) 
     {
@@ -120,32 +142,30 @@ function top_menu($head) {
   print '&nbsp;</TD>';
   print '<TD width="15%" class="menu" align="center">'.strftime(" %d %B - %H:%M",time()).'</TD>';
 
-  print '<TD width="10%" class="menu" align="center">'.$user->login.'</td>';
-  print '</TR>';
-  print '</table>';
+  print '<td width="10%" class="menu" align="center">'.$user->login.'</td>';
+  print '</tr>';
+
+  //    print '</table>';
   /*
    * Table principale
    *
    */
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+  //  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
 
-  print "<TR><TD valign=\"top\" align=\"right\">";
-}
+  print '<tr><td valign="top" align="right">';
 
-function left_menu($menu) 
-{
-  global $conf;
+
   /*
    * Colonne de gauche
    *
    */
-  print '<TABLE class="leftmenu" border="0" width="100%" cellspacing="1" cellpadding="4">';
+  print '<table class="leftmenu" border="0" width="100%" cellspacing="1" cellpadding="4">';
 
 
   for ($i = 0 ; $i < sizeof($menu) ; $i++) 
     {
 
-      print "<TR><TD class=\"barre\" valign=\"top\">";
+      print '<tr><td class="barre" valign="top">';
       print '<A class="leftmenu" href="'.$menu[$i][0].'">'.$menu[$i][1].'</a>';
 
       for ($j = 2 ; $j < sizeof($menu[$i]) - 1 ; $j = $j +2) 
@@ -156,21 +176,21 @@ function left_menu($menu)
       
     }
 
-  print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
+  print '<tr><td class="barre" valign="top" align="right">';
   print '<A class="menu" href="/comm/clients.php3">Societes</A>';
   print '<form action="/comm/clients.php3">';
   print '<input type="hidden" name="mode" value="search">';
   print '<input type="hidden" name="mode-search" value="soc">';
-  print '<input type="text" name="socname" size="8">&nbsp;';
-  print "<input type=\"submit\" value=\"go\">";
-  print "</form>";
+  print '<input type="text" name="socname" class="flat" size="10">&nbsp;';
+  print '<input type="submit" class="flat" value="go">';
+  print '</form>';
 
   print '<A class="menu" href="/comm/contact.php3">Contacts</A>';
   print '<form action="/comm/contact.php3">';
   print '<input type="hidden" name="mode" value="search">';
   print '<input type="hidden" name="mode-search" value="contact">';
-  print "<input type=\"text\" name=\"contactname\" size=\"8\">&nbsp;";
-  print "<input type=\"submit\" value=\"go\">";
+  print '<input type="text" class="flat" name="contactname" size="10">&nbsp;';
+  print '<input type="submit" class="flat" value="go">';
   print '</form>';
   print '</td></tr>';
 
@@ -179,11 +199,16 @@ function left_menu($menu)
    *
    *
    */
-  print "</TD>\n<TD valign=\"top\" width=\"85%\">\n";
+  print '</td><td valign="top" width="85%" colspan="6">';
 
 
 }
-
+/*
+ * Impression du pied de page
+ *
+ *
+ *
+ */
 function llxFooter($foot='') 
 {
   print "</TD></TR>";

@@ -98,7 +98,7 @@ tr.liste_titre
   font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
   }
 
-tr.pair	        
+tr.pair
 { 
   background: #dcdcb3; 
   font-family: Helvetica, Verdana; font-size: 12px; 
@@ -110,4 +110,7 @@ tr.impair
   font-family: Helvetica, Verdana; font-size: 12px; 
   }
 
-
+input.flat
+{ 
+  border: 0
+ }
