@@ -42,11 +42,11 @@ if ($sortfield == "")
   $sortfield="p.name";
 }
 
-if ($page == -1) { $page = 0 ; }
+if ($page < 0) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des contacts",$page, $PHP_SELF);
+print_barre_liste("Liste des contacts",$page, $PHP_SELF, '', $sortfield, $sortorder);
 
 
 /*
@@ -58,7 +58,7 @@ print_barre_liste("Liste des contacts",$page, $PHP_SELF);
 
 
 $sql = "SELECT s.idp, s.nom,  st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
-$sql .= "FROM societe as s, socpeople as p, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
+$sql .= "FROM llx_societe as s, llx_socpeople as p, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
 
 if (strlen($stcomm))  // statut commercial
 {
