@@ -21,33 +21,17 @@
  */
 require("../../main.inc.php");
 
-$types[0] = "produit";
-$types[1] = "service";
-
 function llxHeader($head = "", $urlp = "")
 {
-  global $user, $conf;
-
-  /*
-   *
-   *
-   */
   top_menu($head);
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/product/index.php?type=0", "Produits");
-  $menu->add_submenu("../liste.php?type=0","Liste");
-  $menu->add_submenu("../fiche.php?action=create&amp;type=0","Nouveau produit");
-
-  $menu->add(DOL_URL_ROOT."/product/index.php?amp;type=1", "Services");
-  $menu->add_submenu("../liste.php?type=1","Liste");
-  $menu->add_submenu("../fiche.php?action=create&amp;type=1","Nouveau service");
+  $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
 
 
   $menu->add("./", "Statistiques");
 
-  $menu->add_submenu("../popuprop.php", "Popularité");
    
   left_menu($menu->liste);
   /*
