@@ -20,6 +20,18 @@
  * 
  */
 
+/*!
+    \file       htdocs/menu.class.php
+    \brief      Fichier de la classe de gestion du menu gauche
+    \version    $Revision$
+*/
+
+
+/*!
+    \class      Menu
+    \brief      Classe de gestion du menu gauche
+*/
+
 class Menu {
   var $liste;
 

@@ -24,6 +24,12 @@
  *
  */
 
+/*!
+    \file       htdocs/master.inc.php
+    \brief      Fichier de formatage générique des ecrans Dolibarr
+    \version    $Revision$
+*/
+
 require("master.inc.php");
 
 // Verification du login.
@@ -99,7 +105,6 @@ if (defined("MAIN_NOT_INSTALLED"))
 
 
 
-
 /*!
  *  \brief      Affiche en-tête html + la barre de menu supérieure
  *  \param      head    lignes d'en-tete head
@@ -161,7 +166,7 @@ function top_menu($head, $title="", $target="")
     {
        $langs->load("admin");
       print '<div class="fiche">'."\n";
-      print '<table class="topbarre" width="100%">';
+      print '<table class="noborder" width="100%">';
       print '<tr><td>';
       print $langs->trans("UpdateRequired",DOL_URL_ROOT.'/admin/system/update.php');
       print '</td></tr>';

@@ -23,6 +23,13 @@
  * $Source$
  *
  */
+
+/*!
+    \file       htdocs/master.inc.php
+    \brief      Fichier de preparation de l'environnement Dolibarr
+    \version    $Revision$
+*/
+
 define('DOL_VERSION','1.2.0-DEV');
 
 define_syslog_variables();
