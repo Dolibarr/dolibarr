@@ -94,6 +94,7 @@ class User {
 	    $this->pass  = $obj->pass;
 	    $this->webcal_login = $obj->webcal_login;
 	    
+	    $this->societe_id = $obj->fk_societe;
 	  }
 	$this->db->free();
 	
