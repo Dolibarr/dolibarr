@@ -5,22 +5,10 @@
     Ce module permet la gestion des adherents et des cotisation d'un association.
   </p>
 
-  <sect id="adh-tables">Tables de la base de données
-    
-    <p>
-
-      Deux tables sont utilisées pour ce module.
-
-      <list>
-	<item>llx_adherent</item>
-	<item>llx_cotisation</item>
-      </list>
-    </p>
-  </sect>
 
   <sect id="adh-statut">Statut
     <p>
-      Un adherent peut avoir plusieurs statuts differents ils sont.
+      Un adherent peut avoir plusieurs statuts differents ils sont. FIXME
     </p>
   </sect>
 
@@ -29,14 +17,41 @@
       Classes PHP utilisées pour ce module :
       <list>
 	<item>adherent.class.php</item>
+	<item>adherent_type.class.php</item>
       </list>
     </p>
   </sect>
 
+  <sect id="adh-tables">Tables de la base de données
+    
+    <p>
+
+      Trois tables sont utilisées pour ce module.
+
+      <list>
+	<item>llx_adherent</item>
+	<item>llx_adherent_type</item>
+	<item>llx_cotisation</item>
+      </list>
+    </p>
+  </sect>
 
 </chapt>
-<!--
-Local Variables: ***
-mode: xml ***
-End: ***
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:nil
+sgml-shorttag:t
+sgml-namecase-general:t
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:("manual.sgml" "book" "chapt")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
 -->
+
