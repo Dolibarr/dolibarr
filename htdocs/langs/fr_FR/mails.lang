@@ -43,3 +43,7 @@ RecipientSelectionModules=Modules actifs de sélection de destinataires
 MailSelectedRecipients=Destinataires sélectionnés
 MailingArea=Espace Mailings
 LastMailings=Les %s derniers mailings
+TargetsStatistics=Statistiques destinataires
+NbOfProspectsContacts=Contacts uniques tous prospects
+NbOfCustomersContacts=Contacts uniques tous clients
+MailNoChangePossible=Destinataires d'un mailing validé non modifiables

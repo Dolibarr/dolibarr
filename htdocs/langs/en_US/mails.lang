@@ -43,4 +43,9 @@ RecipientSelectionModules=Active modules for recipients selection
 MailSelectedRecipients=Selected recipients
 MailingArea=Mailings area
 LastMailings=Last %s mailings
+TargetsStatistics=Targets statistics
+NbOfProspectsContacts=Unique contacts for all prospects
+NbOfCustomersContacts=Unique contacts for all customers
+MailNoChangePossible=Recipients for validated mailing can't be changed
+
 

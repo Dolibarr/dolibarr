@@ -37,6 +37,51 @@ llxHeader("","","Fiche Mailing");
 
 
 
+// Action envoi test mailing
+if ($_POST["action"] == 'send')
+{
+  $mil = new Mailing($db);
+
+  $mil->id           = $_POST["mailid"];
+  $mil->fromname     = $_POST["fromname"];
+  $mil->frommail     = $_POST["frommail"];
+  $mil->sendto       = $_POST["sendto"];
+  $mil->titre        = $_POST["titre"];
+  $mil->sujet        = $_POST["subject"];
+  $mil->body         = $_POST["message"];
+
+  if ($mil->sendto && $mil->sujet && $mil->body)
+    {
+        // \todo    Utiliser la class DolibarrMail ou CMailFile pour envoyer le mail
+        $headers = "MIME-Version: 1.0\r\n";
+        $headers .= "Content-type: text/plain; charset=iso-8859-1\n";
+        $headers .= "From: ".$mil->fromname." <".$mil->frommail.">\r\n";
+        $headers .= "Reply-to:".$mil->fromname." <".$mil->frommail.">\r\n";
+        $headers .= "X-Priority: 3\r\n";
+        $headers .= "X-Mailer: Dolibarr ".DOL_VERSION."\r\n";
+        
+        $m=mail($mil->sendto, $mil->sujet, $mil->body, $headers);
+        
+        if($m)
+        {
+            $message='<div class="ok">'.$langs->trans("ResultOk").'</div>';
+        }
+        else
+        {
+            $message='<div class="error">'.$langs->trans("ResultKo").'</div>';
+        }					
+        
+        $_GET["action"]='';
+        $_GET["id"]=$mil->id;
+    }
+  else
+   {
+    $message='<div class="error">'.$langs->trans("ErrorUnknown").'</div>';
+   }
+
+}
+
+// Action ajout mailing
 if ($_POST["action"] == 'add')
 {
   $mil = new Mailing($db);
@@ -57,6 +102,7 @@ if ($_POST["action"] == 'add')
    }
 }
 
+// Action mise a jour mailing
 if ($_POST["action"] == 'update')
 {
   $mil = new Mailing($db);
@@ -73,7 +119,7 @@ if ($_POST["action"] == 'update')
     }
 }
 
-
+// Action confirmation validation
 if ($_POST["action"] == 'confirm_valide')
 {
   
@@ -122,6 +168,7 @@ if ($_POST["action"] == 'confirm_approve')
     }
 }
 
+// Action confirmation suppression
 if ($_POST["action"] == 'confirm_delete')
 {
   if ($_POST["confirm"] == 'yes')
@@ -167,7 +214,7 @@ if ($_GET["action"] == 'create')
 
     print '<tr><td width="20%">'.$langs->trans("MailTopic").'</td><td><input name="sujet" size="40" value=""></td></tr>';
 
-    print '<tr><td width="20%" valign="top">'.$langs->trans("MailMessage").'</td><td><textarea cols="30" rows="8" name="body"></textarea></td></tr>';
+    print '<tr><td width="20%" valign="top">'.$langs->trans("MailMessage").'</td><td><textarea cols="50" rows="10" name="body"></textarea></td></tr>';
 
     print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("CreateMailing").'"></td></tr>';
     print '</table>';
@@ -176,6 +223,7 @@ if ($_GET["action"] == 'create')
 else
 {
     $html = new Form($db);
+    
     if ($mil->fetch($_GET["id"]) == 0)
     {
 
@@ -262,6 +310,7 @@ else
 
             print "</div>";
 
+            if ($message) print "$message<br>";
 
             /*
              * Boutons d'action
@@ -305,21 +354,23 @@ else
             	      // Créé l'objet formulaire mail
             	      include_once("../../html.formmail.class.php");
             	      $formmail = new FormMail($db);	    
-            	      $formmail->fromname = $user->fullname;
-            	      $formmail->frommail = $user->email;
+            	      $formmail->fromname = $mil->email_from;
+            	      $formmail->frommail = $mil->email_from;
                       $formmail->withfrom=1;
                       $formmail->withto=$user->email;
                       $formmail->withcc=0;
-                      $formmail->withtopic=0;
+                      $formmail->withtopic=$mil->sujet;
+                      $formmail->withtopicreadonly=1;
                       $formmail->withfile=0;
-            	      $formmail->withbody=1;
+            	      $formmail->withbody=$mil->body;
+            	      $formmail->withbodyreadonly=1;
                       // Tableau des substitutions
                       $formmail->substit["__FACREF__"]=$fac->ref;
                       // Tableau des paramètres complémentaires du post
                       $formmail->param["action"]="send";
-                      $formmail->param["models"]=$mil->body;
+                      $formmail->param["models"]="body";
                       $formmail->param["mailid"]=$mil->id;
-                      $formmail->param["returnurl"]=DOL_URL_ROOT."/comm/mailing.php?id=$mil->id";
+                      $formmail->param["returnurl"]=DOL_URL_ROOT."/comm/mailing/fiche.php?id=".$mil->id;
             
                       $formmail->show_form();
             }

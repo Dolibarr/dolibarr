@@ -32,9 +32,28 @@
 */
 class Mailing
 {
-  var $id;
-  var $error;
+    var $id;
+    var $error;
   
+    var $statut;
+    var $titre;
+    var $sujet;
+    var $body;
+    var $nbemail;
+    
+    var $email_from;
+    var $email_replyto;
+    var $email_errorsto;
+    
+    var $user_creat;
+    var $user_valid;
+    var $user_appro;
+    
+    var $date_creat;
+    var $date_valid;
+    var $date_appro;
+
+
   /**
    *    \brief  Constructeur de la classe
    *    \param  DB          handler accès base de données
@@ -67,10 +86,10 @@ class Mailing
 
       $this->db->begin();
 
-      $this->from=trim($this->from);
       $this->titre=trim($this->titre);
+      $this->email_from=trim($this->email_from);
 
-      if (! $this->from)
+      if (! $this->email_from)
 	{
 	  $this->error = $langs->trans("ErrorMailFromRequired");
       return -1;
