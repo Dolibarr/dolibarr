@@ -46,6 +46,18 @@ class Contact
    *
    *
    */
+  Function create($user)
+  {
+    $sql = "INSERT INTO llx_socpeople (datec, fk_soc,name) ";
+    $sql .= " VALUES (now(),$this->socid,'$this->nom')";
+
+    if ($this->db->query($sql) ) {
+      $id = $this->db->last_insert_id();
+
+      return $id;
+    }
+
+  }
 
   Function fetch($id) 
     {
