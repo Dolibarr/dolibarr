@@ -93,19 +93,24 @@ if ($mode == 'search') {
   }
 }
 /*
+ *
+ */
+$socid = $_GET["socid"];
+/*
  * Sécurité si un client essaye d'accéder à une autre fiche que la sienne
  */
 if ($user->societe_id > 0) 
 {
   $socid = $user->societe_id;
 }
-/*
+/*********************************************************************************
  *
  * Mode fiche
  *
  *
- */  
-if ($socid > 0) {
+ *********************************************************************************/  
+if ($socid > 0)
+{
 
   $societe = new Societe($db, $socid);
   
@@ -198,33 +203,73 @@ if ($socid > 0) {
      * Propales
      *
      */
-
-    print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="1">';
+    $var = true;
+    print '<table border="0" width="100%" cellspacing="0" cellpadding="1">';
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
     $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
     $sql .= " AND s.idp = $objsoc->idp ORDER BY p.datep DESC";
 
-    if ( $db->query($sql) ) {
-      $num = $db->num_rows();
-      if ($num >0 ) {
-	print "<tr $bc[$var]><td colspan=\"4\"><a href=\"propal.php?socidp=$objsoc->idp\">Liste des propales ($num)</td></tr>";
+    if ( $db->query($sql) )
+      {
+	$num = $db->num_rows();
+	if ($num >0 )
+	  {
+	    print "<tr $bc[$var]><td colspan=\"4\"><a href=\"propal.php?socidp=$objsoc->idp\">Liste des propales ($num)</td></tr>";
+	    $var=!$var;
+	  }
+	$i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
+	while ($i < $num && $i < 2)
+	  {
+	    $objp = $db->fetch_object( $i);
+	    print "<tr $bc[$var]>";
+	    print "<td><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a>\n";
+	    if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
+	      {
+		print " <b>&gt; 15 jours</b>";
+	      }
+	    print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+	    print "<td align=\"right\">".price($objp->price)."</TD>\n";
+	    print "<td align=\"center\">$objp->statut</TD></tr>\n";
+	    $var=!$var;
+	    $i++;
+	  }
+	$db->free();
       }
-      $i = 0;	$now = time(); 	$lim = 3600 * 24 * 15 ;
-      while ($i < $num && $i < 4) {
-	$objp = $db->fetch_object( $i);
-	$var=!$var;
-	print "<TR $bc[$var]>";
-	print "<TD><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a>\n";
-	if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 ) {
-	  print " <b>&gt; 15 jours</b>";
-	}
-	print "</td><TD align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-	print "<TD align=\"right\">".price($objp->price)."</TD>\n";
-	print "<TD align=\"center\">$objp->statut</TD></tr>\n";
-	$i++;
-      }
-      $db->free();
-    }
+    /*
+     * Commandes
+     *
+     */
+    print '<table border="0" width="100%" cellspacing="0" cellpadding="1">';
+    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.ref, ".$db->pdate("p.date_commande")." as dp";
+    $sql .= " FROM llx_societe as s, llx_commande as p WHERE p.fk_soc = s.idp ";
+    $sql .= " AND s.idp = $objsoc->idp ORDER BY p.date_commande DESC";
+
+    if ( $db->query($sql) )
+      {
+	$num = $db->num_rows();
+	if ($num >0 )
+	  {
+	    print "<tr $bc[$var]>";
+	    print '<td colspan="4"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socidp='.$objsoc->idp.'">Liste des commandes ('.$num.')</td></tr>';
+	  }
+	$i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
+	while ($i < $num && $i < 2)
+	  {
+	    $objp = $db->fetch_object( $i);
+	    $var=!$var;
+	    print "<tr $bc[$var]>";
+	    print '<td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->propalid.'">'.$objp->ref."</a>\n";
+	    if ( ($now - $objp->dp) > $lim && $objp->statutid == 1 )
+	      {
+		print " <b>&gt; 15 jours</b>";
+	      }
+	    print "</td><td align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+	    print "<td align=\"right\">".price($objp->price)."</TD>\n";
+	    print "<td align=\"center\">$objp->statut</TD></tr>\n";
+	    $i++;
+	  }
+	$db->free();
+      }    
 
     /*
      *
