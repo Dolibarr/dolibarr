@@ -32,6 +32,10 @@ create table llx_service
   price           smallint,
   duration        varchar(32),
   debut_comm      datetime,
-  fin_comm        datetime
+  fin_comm        datetime,
+  fk_user_auhtor  integer,
+  fk_user_modif   integer,
+
+  UNIQUE INDEX(ref)
 );
 

@@ -50,7 +50,7 @@ function llxHeader($head = "", $urlp = "") {
   print "</td></tr>";
 
   print "<tr><td valign=\"top\" align=\"right\">";
-  print "<CENTER><A href=\"".$urlp."index.php3\">Societe</A></CENTER>\n";
+  print "<CENTER><A href=\"".$urlp."../comm/index.php3\">Societe</A></CENTER>\n";
   print "<A href=\"".$urlp."contact.php3\">Contact</A><BR>\n";
   print "</TD></TR>";
 
@@ -62,20 +62,13 @@ function llxHeader($head = "", $urlp = "") {
    *
    */
   print "<TR><TD valign=\"top\" align=\"right\">";
-  print '<div align="center"><A href="'.$urlp.'propal.php3">Propal</A></div>';
+  print "<center><A href=\"/product/\">Produits</center></A>\n";
   print "</TD></TR>";
-  /*
-   *
-   */
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  print '<div align="center"><A href="'.$urlp.'../compta/\">Factures</A></div>';
-  print "</TD></TR>";
-  /*
-   *
-   */
-  print "<tr><td align=\"right\" valign=\"top\">";
-  print "<A href=\"projet/\">Projets</A><BR>\n";
-  print "</td></tr>";
+
+  print '<TR><TD valign="top" bgcolor="#e0e0e0" align="right">';
+  print '<div align="center"><A href="/service/">Services</A></div><br>';
+  print '<a href="fiche.php3?action=create">Nouveau service</a>';
+  print '</td></tr>';
 
   print "<tr><td align=\"right\" valign=\"top\">";
   print "<CENTER><A href=\"".$urlp."../comm/index.php3\">Societes</A></CENTER>\n";
@@ -109,14 +102,6 @@ function llxHeader($head = "", $urlp = "") {
   print "<TD valign=\"top\" width=\"85%\">\n";
 }
 
-function llxFooter($foot='') {
-  print "</TD></TR>";
-  /*
-   *
-   */
-  print "</TABLE>\n";
-  print "$foot</BODY></HTML>";
-}
 /*
  * $Id$
  * $Source$

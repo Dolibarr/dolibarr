@@ -21,7 +21,7 @@
  */
 
 require("./pre.inc.php3");
-require("../../lib/functions.inc.php3");
+require("../../societe.class.php3");
 require("./project.class.php3");
 require("../propal.class.php3");
 
@@ -54,25 +54,38 @@ $pagenext = $page + 1;
 
 
 if ($action == 'create') {
-?>
 
-<form action="index.php3" method="post">
-<table border=1 cellpadding="1" cellspacing="0">
-<input type="hidden" name="action" value="create">
-<tr><td>Société</td><td>
-<?PHP print '<input type="text" name="socidp" value="'.$socidp.'">'; ?>
-</td></tr>
-<?PHP
-print '<tr><td>Créateur</td><td>'.$user->fullname.'</td></tr>';
-?>
-<tr><td>Ref</td><td><input type="text" name="ref"></td></tr>
-<tr><td>Titre</td><td><input type="text" name="title"></td></tr>
-<tr><td colspan="2"><input type="submit"></td></tr>
-</table>
-</form>
-<?PHP
+
+  print '<form action="index.php3?socidp='.$socidp.'" method="post">';
+  ?>
+
+
+  <table border=1 cellpadding="1" cellspacing="0">
+  <input type="hidden" name="action" value="create">
+  <tr><td>Société</td><td>
+<?PHP 
+   $societe = new Societe($db);
+ $societe->get_nom($socidp); 
+ print $societe->nom; 
+
+  ?>
+  </td></tr>
+  <?PHP
+  print '<tr><td>Créateur</td><td>'.$user->fullname.'</td></tr>';
+  ?>
+  <tr><td>Référence</td><td><input size="10" type="text" name="ref"></td></tr>
+  <tr><td>Titre</td><td><input size="30" type="text" name="title"></td></tr>
+  <tr><td colspan="2"><input type="submit"></td></tr>
+  </table>
+  </form>
+  <?PHP
 
 } else {
+  /*
+   *
+   *
+   *
+   */
   $propales = array();
   $projet = new Project();
   $projet->fetch($db, $id);
@@ -119,7 +132,6 @@ print '<tr><td>Créateur</td><td>'.$user->fullname.'</td></tr>';
     print '<td align="right"><small>Soit : '.francs($total).' FF HT</small></td>';
     print '<td colspan="1" align="right"><b>Total : '.price($total).'</b></td>';
     print '<td align="left"><b>Euros HT</b></td></tr>';
-
     print "</TABLE>";
 
     

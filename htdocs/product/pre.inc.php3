@@ -57,9 +57,6 @@ function llxHeader($head = "", $urlp = "") {
 
   print "<TR><TD valign=\"top\" align=\"right\">";
   print "<div align=\"center\"><A href=\"".$urlp."actioncomm.php3\">Actions</A></div>\n";
-  print "<A href=\"".$urlp."actioncomm.php3?type=9\">Factures</A><BR>\n";
-  print "<A href=\"".$urlp."actioncomm.php3?type=5\">Propal FE</A><BR>\n";
-  print "<A href=\"".$urlp."actioncomm.php3?type=11\">Cl&ocirc;ture</A><p>\n";
   print "</TD></TR>";
   /*
    *
@@ -76,24 +73,13 @@ function llxHeader($head = "", $urlp = "") {
   /*
    *
    */
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  print '<div align="center"><A href="'.$urlp.'product.php3">Produits</A></div>';
-  print "</td></tr>";
-  /*
-   *
-   */
   print "<tr><td align=\"right\" valign=\"top\">";
   print "<A href=\"projet/\">Projets</A><BR>\n";
   print "</td></tr>";
 
-
   print "<tr><td align=\"right\" valign=\"top\">";
-  print "<A href=\"".$urlp."stats/\">Stats</A><BR>\n";
-  print "</td></tr>";
-
-  print "<tr><td align=\"right\" valign=\"top\">";
-  print "<CENTER><A href=\"".$urlp."index.php3\">Societes</A></CENTER>\n";
-  print "<form action=\"index.php3\">";
+  print "<CENTER><A href=\"".$urlp."../comm/index.php3\">Societes</A></CENTER>\n";
+  print "<form action=\"../comm/index.php3\">";
   print '<input type="hidden" name="mode" value="search">';
   print '<input type="hidden" name="mode-search" value="soc">';
   print '<input type="text" name="socname" size="8">&nbsp;';
@@ -123,14 +109,7 @@ function llxHeader($head = "", $urlp = "") {
   print "<TD valign=\"top\" width=\"85%\">\n";
 }
 
-function llxFooter($foot='') {
-  print "</TD></TR>";
-  /*
-   *
-   */
-  print "</TABLE>\n";
-  print "$foot</BODY></HTML>";
-}
+
 /*
  * $Id$
  * $Source$

@@ -35,14 +35,6 @@ if ($sortorder == "") {
   $sortorder="ASC";
 }
 
-if ($action == 'update') {
-  $sql = "UPDATE llx_product SET description='$desc' where rowid = $rowid";
-  $db->query($sql);
-}
-
-$yn["t"] = "oui";
-$yn["f"] = "non";
-
 if ($page == -1) { $page = 0 ; }
 $limit = 26;
 $offset = $limit * $page ;
@@ -57,89 +49,81 @@ print "<a href=\"$PHP_SELF\">Liste</a></td>";
 print "<td bgcolor=\"#e0E0E0\" align=\"center\">[<a href=\"fiche.php3?action=create\">Nouveau service</a>]</td>";
 print '</table>';
 
-/*
- * Fiche
- *
- */
-if ($rowid) {
-
-  $sql = "SELECT p.rowid, p.label, p.price, p.description, p.duration,p.ref FROM llx_product as p";
-  $sql .= " WHERE p.rowid = $rowid;";
-  
- 
- if ( $db->query($sql) ) {
-   $num = $db->num_rows();
-   $i = 0;
-   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-   print "<TR bgcolor=\"orange\">";
-   print "<TD>Réf</TD>";
-   print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Nom</a></td>";
-   print "</TR>\n";
-   $var=True;
-   if ( $num ) {
-     $objp = $db->fetch_object(0);
-     $var=!$var;
-     print "<TR $bc[$var]>";
-     print "<TD><a href=\"$PHP_SELF?rowid=$objp->rowid\">$objp->ref</a></TD>\n";
-     print "<TD>$objp->label</TD></tr>\n";
-     print "<tr><td>prix</td><TD>$objp->price</td></tr>\n";
-     print "<tr><td>duree</td><TD>$objp->duration</td></tr>\n";
-
-     print "<tr><td>desc</td><td>".nl2br($objp->description)."</td></tr>";
-     $i++;
-   }
-   print "</TABLE>";
-   $db->free();
-
-   print "<hr><form action=\"$PHP_SELF?rowid=$rowid\" method=\"post\">\n";
-   print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-   print "<textarea name=\"desc\" rows=\"12\" cols=\"40\">";
-   print nl2br($objp->description);
-   print "</textarea><br>";
-   print "<input type=\"submit\">";
-   print "</form>";
- }
-
  /*
   *
   * Liste
   *
   */
 
-} else {
+$now = strftime ("%Y-%m-%d %H:%M", time());
 
-  $sql = "SELECT p.rowid, p.label, p.price, p.duration,p.ref FROM llx_product as p";
-  
-  $sql .= " ORDER BY $sortfield $sortorder ";
-  $sql .= $db->plimit( $limit ,$offset);
+$sql = "SELECT p.rowid, p.label, p.price, p.duration,p.ref FROM llx_service as p";
+$sql .= " WHERE p.fin_comm >= '$now'";
+$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= $db->plimit( $limit ,$offset);
  
- if ( $db->query($sql) ) {
-   $num = $db->num_rows();
-   $i = 0;
-   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-   print "<TR bgcolor=\"orange\">";
-   print "<TD>Réf</TD>";
-   print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Nom</a></td>";
-   print "<TD align=\"right\">Prix</TD>";
-   print "<TD align=\"right\">Durée</TD>";
-   print "</TR>\n";
-   $var=True;
-   while ($i < $num) {
-     $objp = $db->fetch_object( $i);
-     $var=!$var;
-     print "<TR $bc[$var]>";
-     print "<TD><a href=\"$PHP_SELF?rowid=$objp->rowid\">$objp->ref</a></TD>\n";
-     print "<TD>$objp->label</TD>\n";
-     print '<TD align="right">'.price($objp->price).'</TD>';
-     print "<TD align=\"right\">$objp->duration</TD>\n";
-     print "</TR>\n";
-     $i++;
-   }
-   print "</TABLE>";
-   $db->free();
- }
-
+if ( $db->query($sql) ) {
+  $num = $db->num_rows();
+  $i = 0;
+  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<TR bgcolor=\"orange\">";
+  print "<TD>Réf</TD>";
+  print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Nom</a></td>";
+  print "<TD align=\"right\">Prix</TD>";
+  print "</TR>\n";
+  $var=True;
+  while ($i < $num) {
+    $objp = $db->fetch_object( $i);
+    $var=!$var;
+    print "<TR $bc[$var]>";
+    print "<TD><a href=\"fiche.php3?id=$objp->rowid\">$objp->ref</a></TD>\n";
+    print "<TD>$objp->label</TD>\n";
+    print '<TD align="right">'.price($objp->price).'</TD>';
+    print "</TR>\n";
+    $i++;
+  }
+  print "</TABLE>";
+  $db->free();
+} else {
+  print $this->db->error() . ' in ' . $sql;
 }
+
+
+$sql = "SELECT p.rowid, p.label, p.fin_comm, p.price, p.duration,p.ref FROM llx_service as p";
+$sql .= " WHERE p.fin_comm < '$now'";
+$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= $db->plimit( $limit ,$offset);
+ 
+if ( $db->query($sql) ) {
+  $num = $db->num_rows();
+  $i = 0;
+  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<TR bgcolor=\"orange\">";
+  print "<TD>Réf</TD>";
+  print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Nom</a></td>";
+  print "<TD align=\"right\">Prix</TD>";
+  print "<TD align=\"right\">Fin</TD>";
+  print "</TR>\n";
+  $var=True;
+  while ($i < $num) {
+    $objp = $db->fetch_object( $i);
+    $var=!$var;
+    print "<TR $bc[$var]>";
+    print "<TD><a href=\"fiche.php3?id=$objp->rowid\">$objp->ref</a></TD>\n";
+    print "<TD>$objp->label</TD>\n";
+    print '<TD align="right">'.price($objp->price).'</TD>';
+    print "<TD align=\"right\">$objp->fin_comm</TD>\n";
+    print "</TR>\n";
+    $i++;
+  }
+  print "</TABLE>";
+  $db->free();
+} else {
+  print $this->db->error() . ' in ' . $sql;
+}
+
+
+
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");

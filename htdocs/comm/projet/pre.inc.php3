@@ -63,7 +63,7 @@ function llxHeader($head = "", $urlp = "") {
 
   print "<A href=\"".$urlp."../../compta/\">Factures</A><BR>\n";
 
-  print "<A href=\"".$urlp."product.php3\">Produits</A><BR>\n";
+  print "<A href=\"".$urlp."../../product/\">Produits</A><BR>\n";
 
   print "</td></tr>";
 
@@ -99,14 +99,6 @@ function llxHeader($head = "", $urlp = "") {
   print "<TD valign=\"top\" width=\"85%\">\n";
 }
 
-function llxFooter($foot='') {
-  print "</TD></TR>";
-  /*
-   *
-   */
-  print "</TABLE>\n";
-  print "$foot</BODY></HTML>";
-}
 /*
  * $Id$
  * $Source$

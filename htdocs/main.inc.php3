@@ -33,6 +33,17 @@ $db = new Db();
 $user = new User($db);
 $user->fetch($GLOBALS["REMOTE_USER"]);
 
+function llxFooter($foot='') {
+  print "</TD></TR>";
+  /*
+   *
+   */
+  print "</TABLE>\n";
+  print "$foot<br>";
+  print '[<a href="http://savannah.gnu.org/bugs/?group_id=1915">Bug report</a>]&nbsp;';
+  print '[<a href="http://savannah.gnu.org/projects/dolibarr/">Source Code</a>]&nbsp;';
+  print "</BODY></HTML>";
+}
 
 
 ?>

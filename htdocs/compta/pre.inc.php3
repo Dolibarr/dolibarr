@@ -101,10 +101,7 @@ function llxHeader($head = "") {
 /*
  *
  */
-function llxFooter($foot='') {
-  print "</TD></TR></TABLE>\n";
-  print "$foot</BODY></HTML>";
-}
+
 // $Id$
 // $Source$
 ?>

@@ -63,6 +63,7 @@ function llxHeader($head = "") {
   print "<A href=\"/dict/\">Dictionnaires</A>\n";
 
   print '</td></tr>';
+
   print "<TR><TD valign=\"top\" align=\"right\">";
   print "<center><A href=\"/comm/propal.php3\">Propal</A></center>\n";
   print '</td></tr>';
@@ -73,6 +74,8 @@ function llxHeader($head = "") {
 
   print "<TR><TD valign=\"top\" align=\"right\">";
   print "<center><A href=\"/product/\">Produits</center></A>\n";
+
+  print "<center><A href=\"/service/\">Services</center></A>\n";
   print '</td></tr>';
 
   print "<TR><TD valign=\"top\" align=\"right\">";
@@ -86,13 +89,5 @@ function llxHeader($head = "") {
    */
   print "</TD>\n<TD valign=\"top\" width=\"85%\">\n";
 
-
-
 }
-
-function llxFooter($foot='') {
-  print "</TD></TR></TABLE>\n";
-  print "$foot</BODY></HTML>";
-}
-
 ?>

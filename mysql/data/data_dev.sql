@@ -1,0 +1,46 @@
+--
+-- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+--
+-- $Id$
+-- $Source$
+--
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+--
+--
+-- Valeurs pour les bases de langues francaises
+--
+
+delete from llx_user;
+insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta)
+values ('Quiedeville','Rodolphe','RQ','rodo','rodo',1,1);
+
+insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta)
+values ('demo','demo','demo','demo','demo',1,1);
+
+delete from societe;
+insert into societe (nom,datec,cp,ville,tel,fax, client)
+values ('Lolix',now(),'75001','Paris','01 40 15 03 18','01 40 15 06 18',1);
+
+insert into societe (nom,cp,ville,tel,fax,client)
+values ('Easter-Eggs','75013','Paris','01 55 55 03 18','01 55 55 55 55',1);
+
+insert into societe (nom,cp,ville,tel,fax,fournisseur)
+values ('JPG','75013','Paris','01 55 55 03 18','01 55 55 55 55',1);
+
+insert into llx_product (ref, label, description, price, duration)
+values ('CC-2M','Compilo','Compilateur GCC',10,'1 mois');
+
+insert into llx_product (ref, label, description, price, duration)
+values ('CC-2M','Config Alpha','Configurations a base de proc alpha',1000,'1 mois');
