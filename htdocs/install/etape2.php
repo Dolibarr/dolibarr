@@ -7,9 +7,11 @@
 <body>
 <div class="main">
  <div class="main-inside">
-<h2>Installation de Dolibarr - Etape 2/5</h2>
-
 <?PHP
+include("./inc.php");
+$etape = 3;
+print "<h2>Installation de Dolibarr - Etape $etape/$etapes</h2>";
+
 $conf = "../conf/conf.php";
 if (file_exists($conf))
 {
@@ -65,11 +67,10 @@ if ($HTTP_POST_VARS["action"] == "set")
 
 	      while (($file = readdir($handle))!==false)
 		{
-		  if (substr($file, strlen($file) - 4) == '.sql' && substr($file,0,4) == 'llx_')
+		  if (substr($file, strlen($file) - 4) == '.sql' && 
+		      substr($file,0,4) == 'llx_')
 		    {
 		      $name = substr($file, 0, strlen($file) - 4);
-		      $classname = substr($file, 0, strlen($file) -12);
-		      
 		      print "<tr><td>Création de la table $name</td>";
 		      $buffer = '';
 		      $fp = fopen($dir.$file,"r");
@@ -92,6 +93,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 			  $error++;
 			}
 		    }
+
 		}
 	      closedir($handle);	     
 	    }
@@ -110,7 +112,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 </div>
 </div>
 <div class="barrebottom">
-<form action="etape3.php" method="POST">
+<form action="etape4.php" method="POST">
 <input type="hidden" name="action" value="set">
 <input type="submit" value="Etape suivante ->">
 </form>

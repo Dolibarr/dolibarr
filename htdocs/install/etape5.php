@@ -7,9 +7,12 @@
 <body>
 <div class="main">
  <div class="main-inside">
-<h2>Installation de Dolibarr - Etape 5/5</h2>
 
 <?PHP
+include("./inc.php");
+$etape = 6;
+print "<h2>Installation de Dolibarr - Etape $etape/$etapes</h2>";
+
 $conf = "../conf/conf.php";
 if (file_exists($conf))
 {

@@ -103,8 +103,9 @@ exemples :
 </ul>
 </tr>
 
+
 <tr>
-<td colspan="3" align="center">Base de données</td>
+<td colspan="3" align="center"><h2>Base de données<h2></td>
 </tr>
 
 <tr class="bg1">
@@ -129,9 +130,29 @@ exemples :
 <td valign="top">Mot de passe</td>
 <td>
 <input type="text" name="db_pass" value="<?PHP print $dolibarr_main_db_pass ?>">
-</td><td><a class="comment">Laisser vide si vous vous connectez en anonymous</a>
+</td><td><div class="comment">Laisser vide si vous vous connectez en anonymous</div>
 </td>
 </tr>
+
+<td colspan="3" align="center"><h2>Base de données - Accés super utilisateur</h2></td>
+
+<tr class="bg1">
+<td valign="top">Login</td>
+<td>
+<input type="text" name="db_user_root">
+</td><td><div class="comment">Login de l'utilisateur ayant les droits de création de la base de données, inutile si vous êtes chez un hébergeur, votre base de données est déjà créée. Laisser vide si vous vous connectez en anonymous</div>
+</td>
+</tr>
+
+<tr class="bg2">
+<td valign="top">Mot de passe</td>
+<td>
+<input type="text" name="db_pass_root">
+</td><td><div class="comment">Laisser vide si vous vous connectez en anonymous</div>
+</td>
+</tr>
+
+
 
 </table>
 </div>
