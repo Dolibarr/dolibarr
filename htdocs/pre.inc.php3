@@ -35,103 +35,103 @@ function llxHeader($head = "") {
 
   if ($conf->societe && $conf->commercial->enabled) 
     {
-      $menu->add("/societe.php", "Sociétés","company");
+      $menu->add(DOL_URL_ROOT."/societe.php", "Sociétés","company");
 
       if ($user->admin)
 	{
-	  $menu->add_submenu("../soc.php3?&action=create", "Nouvelle société");
+	  $menu->add_submenu(DOL_URL_ROOT."/soc.php3?&action=create", "Nouvelle société");
 	}
-      $menu->add_submenu("/contact.php", "Contacts");
+      $menu->add_submenu(DOL_URL_ROOT."/contact.php", "Contacts");
     }
 
   if ($conf->commercial->enabled ) 
     {
-      $menu->add("/comm/index.php3", "Commercial");
+      $menu->add(DOL_URL_ROOT."/comm/index.php3", "Commercial");
 
-      $menu->add_submenu("/comm/clients.php3", "Clients");
+      $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php3", "Clients");
 
-      $menu->add_submenu("/comm/propal.php3", "Propales");
+      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php3", "Propales");
     }
 
   if ($conf->compta->enabled ) 
     {
-      $menu->add("/compta/", "Comptabilité");
+      $menu->add(DOL_URL_ROOT."/compta/", "Comptabilité");
 
-      $menu->add_submenu("/compta/facture.php3", "Factures");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/facture.php3", "Factures");
     }
 
   if ($conf->fichinter->enabled ) 
     {
-      $menu->add("/fichinter/", "Fiches d'intervention");
+      $menu->add(DOL_URL_ROOT."/fichinter/", "Fiches d'intervention");
     }
 
   if ($conf->produit->enabled )
     {
-      $menu->add("/product/", "Produits");
+      $menu->add(DOL_URL_ROOT."/product/", "Produits");
 
       if ($conf->boutique->enabled)
 	{
 	  if ($conf->boutique->livre->enabled)
 	    {
-	      $menu->add_submenu("/boutique/livre/", "Livres");
+	      $menu->add_submenu(DOL_URL_ROOT."/boutique/livre/", "Livres");
 	    }
 	  
 	  if ($conf->boutique->album->enabled)
 	    {
-	      $menu->add_submenu("/product/album/", "Albums");
+	      $menu->add_submenu(DOL_URL_ROOT."/product/album/", "Albums");
 	    }
 	}
     }
 
   if ($conf->service->enabled ) 
     {
-      $menu->add("/service/", "Services");
+      $menu->add(DOL_URL_ROOT."/service/", "Services");
     }
 
   if ($conf->adherent->enabled ) 
     {
-      $menu->add("/adherents/", "Adherents");
+      $menu->add(DOL_URL_ROOT."/adherents/", "Adherents");
     }
 
   if ($conf->commande->enabled)
     {
-      $menu->add("/commande/", "Commandes");
+      $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
     }
 
   if ($conf->don->enabled)
     {
-      $menu->add("/compta/dons/", "Dons");
+      $menu->add(DOL_URL_ROOT."/compta/dons/", "Dons");
     }
 
   if ($conf->fournisseur->enabled)
     {
-      $menu->add("/fourn/index.php3", "Fournisseurs");
-    }
-
-  $menu->add("/user/", "Utilisateurs");
-
-  if ($user->admin)
-    {      
-      $menu->add("/admin/", "Configuration");
+      $menu->add(DOL_URL_ROOT."/fourn/index.php3", "Fournisseurs");
     }
 
   if ($conf->voyage && $user->societe_id == 0) 
     {
 
-      $menu->add("/compta/voyage/index.php3","Voyages");
+      $menu->add(DOL_URL_ROOT."/compta/voyage/index.php3","Voyages");
 
-      $menu->add_submenu("/compta/voyage/index.php3","Voyages");
-      $menu->add_submenu("/compta/voyage/reduc.php3","Reduc");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/index.php3","Voyages");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/reduc.php3","Reduc");
     }
 
   if ($conf->domaine->enabled ) 
     {
-      $menu->add("/domain/", "Domaines");
+      $menu->add(DOL_URL_ROOT."/domain/", "Domaines");
     }
 
   if (defined("MAIN_MODULE_POSTNUKE") && MAIN_MODULE_POSTNUKE)
     {
-      $menu->add("/postnuke/articles/", "Editorial");
+      $menu->add(DOL_URL_ROOT."/postnuke/articles/", "Editorial");
+    }
+
+  $menu->add(DOL_URL_ROOT."/user/", "Utilisateurs");
+
+  if ($user->admin)
+    {      
+      $menu->add(DOL_URL_ROOT."/admin/", "Configuration");
     }
 
 
