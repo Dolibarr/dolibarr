@@ -49,11 +49,13 @@ print '<table cellspacing="0" cellpadding="4" border="1" width="100%">';
 $error=0;
 
 $conf = new Conf();
+$conf->db->type = $dolibarr_main_db_type;
 $conf->db->host = $dolibarr_main_db_host;
 $conf->db->name = $dolibarr_main_db_name;
 $conf->db->user = $dolibarr_main_db_user;
 $conf->db->pass = $dolibarr_main_db_pass;
-$db = new DoliDb();
+
+$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
 $ok = 0;
 if ($db->ok == 1)
 {

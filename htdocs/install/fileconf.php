@@ -24,7 +24,8 @@
  *
  */
 
-/**     \file       htdocs/install/fileconf.php
+/**
+        \file       htdocs/install/fileconf.php
         \ingroup    install
         \brief      Demande les infos qui constituerons le contenu du fichier conf.php. Ce fichier sera remplie à l'étape suivante
         \version    $Revision$
@@ -154,7 +155,7 @@ $dolibarr_main_db_host = "localhost";
 <tr>
 <!-- moi-->
 <td valign="top" class="label">
-<?php echo $langs->trans("DatabaseChoice"); ?>
+<?php echo $langs->trans("DatabaseType"); ?>
 </td>
 
 <td class="label"><select name='db_type'>
@@ -190,7 +191,18 @@ Nom ou adresse ip du serveur de base de données, généralement 'localhost' quand 
 
 <td class="label" valign="top"><input type="text" name="db_name" value="<?php echo $dolibarr_main_db_name ?>"></td>
 <td class="comment">
-Nom de la base de données Dolibarr (sera créée si nécessaire)
+<?php echo $langs->trans("DatabaseName"); ?>
+</td>
+</tr>
+
+<tr>
+<td class="label" valign="top">
+<?php echo $langs->trans("CreateDatabase"); ?>
+</td>
+
+<td class="label"><input type="checkbox" name="db_create_database"></td>
+<td class="comment">
+<?php echo $langs->trans("CheckToCreateDatabase"); ?>
 </td>
 </tr>
 
@@ -221,7 +233,7 @@ Nom de la base de données Dolibarr (sera créée si nécessaire)
 
 <td class="label"><input type="checkbox" name="db_create_user"></td>
 <td class="comment">
-<?php echo $langs->trans("CheckToCreate"); ?>
+<?php echo $langs->trans("CheckToCreateUser"); ?>
 </td>
 </tr>
 

@@ -95,13 +95,13 @@ function pFooter($nonext=0,$addlang=1)
 
 function dolibarr_syslog($message)
 {
-  define_syslog_variables();
-
-  openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les php
-  
-  syslog(LOG_WARNING, $message);
-
-  closelog();
+// \todo    Désactiver sous Windows (gros problème mémoire et faute de protections)
+//  if (1 == 2) {
+      define_syslog_variables();
+      openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les php
+      syslog(LOG_WARNING, $message);
+      closelog();
+//  }
 }
 
 ?>
