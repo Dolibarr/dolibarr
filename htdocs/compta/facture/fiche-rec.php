@@ -26,7 +26,6 @@ $user->getrights('facture');
 if (!$user->rights->facture->lire)
   accessforbidden();
 
-require("../../facture.class.php");
 require("../../project.class.php");
 
 llxHeader('','Facture récurrente','ch-facture.html#s-fac-facture-rec');
@@ -82,18 +81,18 @@ $html = new Form($db);
  *
  *
  ************************************************************************/
-if ($action == 'create') 
+if ($_GET["action"] == 'create') 
 {
   print_titre("Créer une facture récurrente");
 
   $facture = new Facture($db);
 
-  if ($facture->fetch($facid) > 0) 
+  if ($facture->fetch($_GET["facid"]) > 0) 
     {
        
       print '<form action="'.$PHP_SELF.'" method="post">';
       print '<input type="hidden" name="action" value="add">';
-      print '<input type="hidden" name="facid" value="'.$facid.'">';
+      print '<input type="hidden" name="facid" value="'.$facture->id.'">';
       
       print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
       
@@ -133,7 +132,7 @@ if ($action == 'create')
       print '<tr><td colspan="3">';
 	
       $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice";
-      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = $facid ORDER BY l.rowid";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = $facture->id ORDER BY l.rowid";
 	  
       $result = $db->query($sql);
       if ($result)
@@ -236,7 +235,7 @@ if ($action == 'create')
     } 
   else 
     {
-      print "Erreur facture $facid inexistante";
+      print "Erreur facture $facture->id inexistante";
     }
 } 
 else 
