@@ -30,8 +30,10 @@ create table llx_action_def
   rowid           integer NOT NULL PRIMARY KEY,
   tms             timestamp,
   titre           varchar(255) NOT NULL,
-  description     text
+  description     text,
+  objet_type      enum('ficheinter','facture','propale')
 );
 
 
-insert into llx_action_def (rowid,titre,description) VALUES (1,'Validation fiche intervention','Déclenché lors de la validation d\'une fiche d\'intervention');
+insert into llx_action_def (rowid,titre,description,objet_type) VALUES (1,'Validation fiche intervention','Déclenché lors de la validation d\'une fiche d\'intervention','ficheinter');
+insert into llx_action_def (rowid,titre,description,objet_type) VALUES (2,'Cloture facture','Déclenché lors de la cloture d\'une fiche d\'intervention','facture');
