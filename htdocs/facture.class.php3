@@ -478,13 +478,15 @@ class Facture
 
 	      $lprice = $obj->qty * $obj->price;
 
+	      $amount = $amount + $lprice;
+
 	      if ($this->remise_percent > 0)
 		{
 		  $lremise = ($lprice * $this->remise_percent / 100);
+		  $lprice = $lprice - $lremise;
 		  $total_remise = $total_remise + $lremise;
 		}
 
-	      $amount = $amount + $lprice;
 	      $total_ht = $amount - $total_remise;
 	      $total_tva = $total_tva + tva($lprice, $obj->tva_taux);
 	      $i++;
