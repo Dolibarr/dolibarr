@@ -152,7 +152,7 @@ class Propal
 	    }
 
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-	  $sql .= " (".$this->id.", 0,". $p_qty.",". $price.",".$p_tva_tx.",'".$p_desc."',$remise_percent, $subprice) ; ";
+	  $sql .= " (".$this->id.", 0,'". $p_qty."','". $price."','".$p_tva_tx."','".$p_desc."','$remise_percent', '$subprice') ; ";
 	  
 	  if ($this->db->query($sql) )
 	    {
@@ -272,7 +272,8 @@ class Propal
 	}
       return $this->id;
     }
-  /*
+  /**
+   * Mets à jour le prix total de la proposition
    *
    *
    */
@@ -300,19 +301,14 @@ class Propal
 	}
       $calculs = calcul_price($products, $this->remise_percent);
 
-      $totalht = $calculs[0];
-      $totaltva = $calculs[1];
-      $totalttc = $calculs[2];
-      $total_remise = $calculs[3];
-
-      $this->remise         = $total_remise;
-      $this->total_ht       = $totalht;
-      $this->total_tva      = $totaltva;
-      $this->total_ttc      = $totalttc;
+      $this->remise         = $calculs[3];
+      $this->total_ht       = $calculs[0];
+      $this->total_tva      = $calculs[1];
+      $this->total_ttc      = $calculs[2];
       /*
        *
        */
-      $sql = "UPDATE ".MAIN_DB_PREFIX."propal set price='$this->total_ht', tva='$totaltva', total='$totalttc', remise='$total_remise' WHERE rowid = $this->id";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."propal set price='$this->total_ht', tva='$this->total_tva', total='$this->total_ttc', remise='$this->total_remise' WHERE rowid = $this->id";
       if ( $this->db->query($sql) )
 	{
 	  return 1;
