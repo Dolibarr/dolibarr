@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,16 +21,22 @@
  *
  */
 
-/**
-        \file       htdocs/projet/pre.inc.php
-        \ingroup    projet
-		\brief      Fichier de gestion du menu gauche du module projet
-		\version    $Revision$
+/*!
+  \file htdocs/projet/pre.inc.php
+  \ingroup    projet
+  \brief      Fichier de gestion du menu gauche du module projet
+  \version    $Revision$
 */
 
 require ("../main.inc.php");
 require("./project.class.php");
 
+$langs->load("projects");
+$langs->load("companies");
+$langs->load("bills");
+$langs->load("orders");
+
+$user->getrights('projet');
 
 function llxHeader($head = "", $title="", $help_url='')
 {
@@ -41,6 +47,7 @@ function llxHeader($head = "", $title="", $help_url='')
   $menu = new Menu();
 
   $menu->add(DOL_URL_ROOT."/projet/", $langs->trans("Projects"));
+  $menu->add_submenu(DOL_URL_ROOT."/projet/liste.php", $langs->trans("List"));
 
   left_menu($menu->liste, $help_url);
 }

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,11 @@
  *
  */
 
-/**     \file       htdocs/projet/index.php
-        \ingroup    projet
-		\brief      Page d'accueil du module projet
-		\version    $Revision$
+/*!
+  \file       htdocs/projet/index.php
+  \ingroup    projet
+  \brief      Page d'accueil du module projet
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -47,20 +48,12 @@ print_titre($langs->trans("Projects"));
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
-if ($sortfield == "")
-{
-  $sortfield="p.ref";
-}
-if ($sortorder == "")
-{
-  $sortorder="ASC";
-}
 
-if ($page == -1) { $page = 0 ; }
-$limit = 26;
+if ($sortfield == "") $sortfield="p.ref";
+if ($sortorder == "") $sortorder="ASC";
+
 $offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+
 
 
 /*
@@ -71,12 +64,11 @@ $pagenext = $page + 1;
 print '<br>';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Ref"),"index.php","p.ref","","","",$sortfield);
-print_liste_field_titre($langs->trans("Label"),"index.php","p.title","","","",$sortfield);
 print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$sortfield);
+print '<td>Nb</td>';
 print "</tr>\n";
 
-$sql = "SELECT s.nom, s.idp, p.rowid as projectid, p.ref, p.title, s.client,".$db->pdate("p.dateo")." as do";
+$sql = "SELECT s.nom, s.idp, count(p.rowid)";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";
 $sql .= " WHERE p.fk_soc = s.idp";
 
@@ -84,29 +76,29 @@ if ($socidp)
 { 
   $sql .= " AND s.idp = $socidp"; 
 }
-
+$sql .= " GROUP BY s.nom";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $var=true;
-if ( $db->query($sql) )
+$resql = $db->query($sql);
+if ( $resql )
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($resql);
   $i = 0;
 
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);    
+      $row = $db->fetch_row( $resql);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->title</a></td>\n";
-      print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->ref</a></td>\n";
-	  print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/projet/liste.php?socid='.$row[1].'">'.$row[0].'</a></td>';
+      print '<td>'.$row[2].'</td>';
       print "</tr>\n";
     
       $i++;
     }
   
-  $db->free();
+  $db->free($resql);
 }
 else
 {
