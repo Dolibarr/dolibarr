@@ -39,7 +39,19 @@ $offset = $limit * $page ;
 
 llxHeader();
 
-print_barre_liste("Liste des produits par popularité dans les propositions commerciales", $page, "popuprop.php");
+//On n'affiche le lien page suivante que s'il y a une page suivante ...
+$sql = "select count(*) as c from ".MAIN_DB_PREFIX."product";
+if ( $db->query($sql) )
+{
+  $d = $db->fetch_object(0);
+  $num = $d->c;
+  if($num < ($offset+$offset))
+    $afficher_pagesuivante = 0;
+  else
+    $afficher_pagesuivante = -1;
+}
+
+print_barre_liste("Liste des produits par popularité dans les propositions commerciales", $page, "popuprop.php","","","","",$afficher_pagesuivante);
 
 print '<table class="noborder" width="100%">';
 
