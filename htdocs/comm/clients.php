@@ -42,7 +42,7 @@ $pageprev = $_GET["page"] - 1;
 $pagenext = $_GET["page"] + 1;
 
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm ";
+$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.code_client ";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client=1";
 
@@ -54,6 +54,11 @@ if ($socidp)
 if ($_GET["search_nom"])
 {
   $sql .= " AND s.nom like '%".strtolower($_GET["search_nom"])."%'";
+}
+
+if ($_GET["search_code"])
+{
+  $sql .= " AND s.code_client like '%".strtolower($_GET["search_code"])."%'";
 }
 
 if ($user->societe_id)
@@ -94,7 +99,8 @@ if ($result)
   $addu = "&amp;page=$page&amp;begin=$begin&amp;search_nom=".$_GET["search_nom"];
   print '<table class="liste">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Companies"),"clients.php","s.nom",$addu,"",'valign="right"');
+  print_liste_field_titre($langs->trans("Companies"),"clients.php","s.nom",$addu,"",'');
+  print_liste_field_titre($langs->trans("Code"),"clients.php","s.code_client",$addu,"",'');
   print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$addu);
   print "</tr>\n";
 
@@ -102,7 +108,9 @@ if ($result)
   print '<tr class="liste_titre">';
   print '<td valign="right">';
   print '<input type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
-  print "</td><td>&nbsp;";
+  print '</td><td valign="right">';
+  print '<input type="text" name="search_code" value="'.$_GET["search_code"].'">';
+  print '</td><td><input type="submit">';
   print "</td>";
   print "</tr>\n";
 
@@ -118,6 +126,7 @@ if ($result)
       print '<td><a href="fiche.php?socid='.$obj->idp.'">';
       print img_file();
       print "</a>&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print "<td>".$obj->code_client."&nbsp;</td>\n";
       print "<td>".$obj->ville."&nbsp;</td>\n";
       print "</tr>\n";
       $i++;
