@@ -238,7 +238,7 @@ class Product
 	  $this->duration_unit      = substr($result["duration"],-1);
 	  $this->seuil_stock_alerte = $result["seuil_stock_alerte"];
 
-	  $this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->label.'</a>';
+	  $this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
 
 	  $this->db->free();
 
