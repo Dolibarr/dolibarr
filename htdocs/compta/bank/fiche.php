@@ -34,8 +34,10 @@ if ($HTTP_POST_VARS["action"] == 'add')
 
   $account->bank          = $HTTP_POST_VARS["bank"];
   $account->label         = $HTTP_POST_VARS["label"];
+
   $account->courant       = $HTTP_POST_VARS["courant"];
   $account->clos          = $HTTP_POST_VARS["clos"];
+
   $account->code_banque   = $HTTP_POST_VARS["code_banque"];
   $account->code_guichet  = $HTTP_POST_VARS["code_guichet"];
   $account->number        = $HTTP_POST_VARS["number"];
@@ -43,6 +45,10 @@ if ($HTTP_POST_VARS["action"] == 'add')
   $account->bic           = $HTTP_POST_VARS["bic"];
   $account->iban_prefix   = $HTTP_POST_VARS["iban_prefix"];
   $account->domiciliation = $HTTP_POST_VARS["domiciliation"];
+
+  $account->proprio 	  = $HTTP_POST_VARS["proprio"];
+  $account->adresse_proprio = $HTTP_POST_VARS["adresse_proprio"];
+
   $account->solde         = $HTTP_POST_VARS["solde"];
   $account->date_solde    = mktime(12,0,0,$HTTP_POST_VARS["remonth"],$HTTP_POST_VARS["reday"],$HTTP_POST_VARS["reyear"]);
 
@@ -67,6 +73,10 @@ if ($action == 'update')
   $account->bic          = $HTTP_POST_VARS["bic"];
   $account->iban_prefix  = $HTTP_POST_VARS["iban_prefix"];
   $account->domiciliation = $HTTP_POST_VARS["domiciliation"];
+
+  $account->proprio 	 = $HTTP_POST_VARS["proprio"];
+  $account->adresse_proprio = $HTTP_POST_VARS["adresse_proprio"];
+
   $account->update($id, $user);
 }
 
@@ -82,7 +92,7 @@ if ($action == 'create')
 {
   print_titre("Nouveau compte bancaire");
 
-  print '<p><form action="'.$PHP_SELF.'" method="post">';
+  print '<form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="clos" value="0">';
 
@@ -111,8 +121,14 @@ if ($action == 'create')
   print '<option value="0">non<option value="1">oui</select></td></tr>';
 
   print '<tr><td valign="top">Domiciliation</td><td colspan="3">';
-  print "<textarea name=\"domiciliation\" rows=\"5\" cols=\"40\">";
-  //  print $user->description;
+  print "<textarea name=\"domiciliation\" rows=\"4\" cols=\"40\">";
+  print "</textarea></td></tr>";
+
+  print '<tr><td valign="top">Nom propriétaire du compte</td>';
+  print '<td colspan="3"><input size="12" type="text" name="proprio" value=""></td></tr>';
+
+  print '<tr><td valign="top">Adresse propriétaire du compte</td><td colspan="3">';
+  print "<textarea name=\"adresse_proprio\" rows=\"4\" cols=\"40\">";
   print "</textarea></td></tr>";
 
   print '<tr><td valign="top">Solde</td>';
@@ -136,7 +152,7 @@ if ($action == 'create')
 /* ************************************************************************** */
 else
 {
-  if ($id) 
+  if ($id && $action != 'edit') 
     {
       $account = new Account($db, $id);
       $account->fetch($id);
@@ -178,6 +194,14 @@ else
       print $account->domiciliation;
       print "</td></tr>\n";
 
+      print '<tr><td valign="top">Nom propriétaire du compte</td><td colspan="3">';
+      print $account->proprio;
+      print "</td></tr>\n";
+
+      print '<tr><td valign="top">Adresse propriétaire du compte</td><td colspan="3">';
+      print $account->adresse_proprio;
+      print "</td></tr>\n";
+
       print '</table>';
 
       print '<br><table width="100%" border="1" cellspacing="0" cellpadding="2">';
@@ -197,18 +221,25 @@ else
 
       print '</table><br>';
 
-      /* ************************************************************************** */
-      /*                                                                            */
-      /* Edition                                                                    */
-      /*                                                                            */
-      /* ************************************************************************** */
+    }
+
+  /* ************************************************************************** */
+  /*                                                                            */
+  /* Edition                                                                    */
+  /*                                                                            */
+  /* ************************************************************************** */
       
-      if ($action == 'edit' && $user->admin) 
+  if ($id && $action == 'edit' && $user->admin) 
 	{
+
+      $account = new Account($db, $id);
+      $account->fetch($id);
 
 	  $form = new Form($db);
 
-	  print '<p><form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
+      print '<div class="titre">Compte bancaire</div><br>';
+
+	  print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
 	  print '<input type="hidden" name="action" value="update">';
 	  
 	  print '<table border="1" cellpadding="3" cellspacing="0">';
@@ -247,8 +278,17 @@ else
 	  print '</td></tr>';
 
 	  print '<tr><td valign="top">Domiciliation</td><td colspan="3">';
-	  print "<textarea name=\"domiciliation\" rows=\"5\" cols=\"40\">";
+	  print "<textarea name=\"domiciliation\" rows=\"4\" cols=\"40\">";
 	  print $account->domiciliation;
+	  print "</textarea></td></tr>";
+
+      print '<tr><td valign="top">Nom propriétaire du compte</td>';
+	  print '<td colspan="3"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
+      print "</td></tr>\n";
+
+      print '<tr><td valign="top">Adresse propriétaire du compte</td><td colspan="3">';
+	  print "<textarea name=\"adresse_proprio\" rows=\"4\" cols=\"40\">";
+	  print $account->adresse_proprio;
 	  print "</textarea></td></tr>";
 
 	  print '<tr><td align="center" colspan="4"><input value="Enregistrer" type="submit"></td></tr>';
@@ -256,8 +296,6 @@ else
 	  print '</table>';
 	}
       
-    }
-  
 }
 
 

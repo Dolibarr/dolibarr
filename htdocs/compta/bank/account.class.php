@@ -34,6 +34,8 @@ class Account
   var $cle_rib;
   var $bic;
   var $iban_prefix;
+  var $proprio;
+  var $adresse_proprio;
 
   Function Account($DB, $rowid=0)
   {
@@ -213,10 +215,12 @@ class Account
       $sql .= ",number='".$this->number."'";
       $sql .= ",cle_rib='".$this->cle_rib."'";
       $sql .= ",bic='".$this->bic."'";
+      $sql .= ",iban_prefix = '".$this->iban_prefix."'";
       $sql .= ",domiciliation='".$this->domiciliation."'";
+      $sql .= ",proprio = '".$this->proprio."'";
+      $sql .= ",adresse_proprio = '".$this->adresse_proprio."'";
       $sql .= ",courant = ".$this->courant;
       $sql .= ",clos = ".$this->clos;
-      $sql .= ",iban_prefix = '".$this->iban_prefix."'";
 
       $sql .= " WHERE rowid = $this->id";
       
@@ -243,7 +247,7 @@ class Account
   Function fetch($id)
   {
     $this->id = $id; 
-    $sql = "SELECT rowid, label, bank, number, courant, clos, code_banque,code_guichet,cle_rib,bic,iban_prefix,domiciliation FROM ".MAIN_DB_PREFIX."bank_account";
+    $sql = "SELECT rowid, label, bank, number, courant, clos, code_banque, code_guichet, cle_rib, bic, iban_prefix, domiciliation, proprio, adresse_proprio FROM ".MAIN_DB_PREFIX."bank_account";
     $sql .= " WHERE rowid  = ".$id;
 
     $result = $this->db->query($sql);
@@ -263,8 +267,10 @@ class Account
 	    $this->number        = $obj->number;
 	    $this->cle_rib       = $obj->cle_rib;
 	    $this->bic           = $obj->bic;
-	    $this->domiciliation = $obj->domiciliation;
 	    $this->iban_prefix   = $obj->iban_prefix;
+	    $this->domiciliation = $obj->domiciliation;
+	    $this->proprio       = $obj->proprio;
+	    $this->adresse_proprio = $obj->adresse_proprio;
 	  }
 	$this->db->free();
       }

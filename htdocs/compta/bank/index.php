@@ -145,7 +145,7 @@ print '<a href="fiche.php?action=create">Nouveau compte</a></td>';
  * Case 2
  */
 
-print '<td align="center" width="20%">-</td>';
+print '<td align="center" width="20%"><a href="config.php">Configurer</a></td>';
 print '<td align="center" width="20%">-</td>';
 print '<td align="center" width="20%">';
 print '<a href="categ.php">Catégories</a></td>';
