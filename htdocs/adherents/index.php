@@ -64,6 +64,20 @@ if ($result)
 
 print "</table>";
 
+print '<form action="liste.php" method="post" name="action" value="search">';
+print '<p><TABLE border="0" cellspacing="0" cellpadding="4">';
+print '<TR class="liste_titre">';
+print "<td>Rechercher un adhérent</td>";
+print "</TR>\n";
+
+print "<TR $bc[$var]>";
+print '<td>';
+
+print 'Nom/Prénom <input type="text" name="search" class="flat" size="20">';
+
+print '&nbsp; <input class="flat" type="submit" value="Chercher">';
+print '</td></tr>';
+print "</table></form>";
 
 
 
