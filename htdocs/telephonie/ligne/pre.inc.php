@@ -37,12 +37,17 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Telephonie");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/simulation/fiche.php", "Simulation");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/simulation/fiche.php?action=create", "Nouvelle");
+  if (TELEPHONIE_MODULE_SIMULATION == 1)
+    {
+      $menu->add(DOL_URL_ROOT."/telephonie/simulation/fiche.php", "Simulation");
+      $menu->add_submenu(DOL_URL_ROOT."/telephonie/simulation/fiche.php?action=create", "Nouvelle");
+    }
 
   $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/client/index.php", "Clients");
+
+  $menu->add(DOL_URL_ROOT."/telephonie/contrat/", "Contrats");
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/ligne/liste.php", "Liste");
