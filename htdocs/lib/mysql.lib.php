@@ -260,11 +260,15 @@ class DoliDb
     function query($query)
     {
         $query = trim($query);
-        $this->lastquery=$query;
+        $ret = mysql_query($query, $this->db);
+
+        if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query)) {
+            // Si requete utilisateur, on la sauvegarde ainsi que son resultset
+            $this->lastquery=$query;
+            $this->results = $ret;
+        }
     
-        $this->results = mysql_query($query, $this->db);
-    
-        return $this->results;
+        return $ret;
     }
     
     /**

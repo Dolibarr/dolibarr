@@ -271,11 +271,15 @@ class DoliDb
     function query($query)
     {
         $query = trim($query);
-        $this->lastquery=$query;
+        $ret = pg_query($this->db, $query);
+
+        if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query)) {
+            // Si requete utilisateur, on la sauvegarde ainsi que son resultset
+            $this->lastquery=$query;
+            $this->results = $ret;
+        }
     
-        $this->results = pg_query($this->db, $query);
-    
-        return $this->results;
+        return $ret;
     }
     
     /**
