@@ -23,35 +23,35 @@
  */
 
 /*!	\file htdocs/includes/modules/propale/modules_propale.php
-		\ingroup    propale
-		\brief      Fichier contenant la classe mère de generation des propales en PDF
-		            et la classe mère de numérotation des propales
-		\version    $Revision$
+	\ingroup    propale
+	\brief      Fichier contenant la classe mère de generation des propales en PDF
+	            et la classe mère de numérotation des propales
+	\version    $Revision$
 */
 
 
 
 /*!	\class ModelePDFPropales
-		\brief  Classe mère des modèles de propale
+        \brief  Classe mère des modèles de propale
 */
 
 class ModelePDFPropales extends FPDF
 {
-    var $error='';
-
-   /*! 
-        \brief Renvoi le dernier message d'erreur de création de propale
-    */
-    function pdferror()
+  var $error='';
+  
+  /*! 
+    \brief Renvoi le dernier message d'erreur de création de propale
+  */
+  function pdferror()
     {
-        return $this->error;
+      return $this->error;
     }
 
 }
 
 
-/*!	\class ModeleNumRefPropales
-		\brief  Classe mère des modèles de numérotation des références de propales
+/*!\class ModeleNumRefPropales
+   \brief  Classe mère des modèles de numérotation des références de propales
 */
 
 class ModeleNumRefPropales
