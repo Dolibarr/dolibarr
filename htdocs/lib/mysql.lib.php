@@ -22,7 +22,7 @@
  *
  */
 
-/*!	\file htdocs/lib/mysql.lib.php
+/*!	    \file htdocs/lib/mysql.lib.php
 		\brief Classe permettant de gérér la database de dolibarr.
 		\author Fabien Seisen
 		\author Rodolphe Quiedeville.
@@ -32,7 +32,7 @@
 		Ensemble des fonctions permettant de gérer la database de dolibarr.
 */
 
-/*! \class DoliDb
+/*!     \class DoliDb
 		\brief Classe permettant de gérér la database de dolibarr
 
 		Ensemble des fonctions permettant de gérer la database de dolibarr
@@ -46,12 +46,12 @@ class DoliDb {
   var $ERROR_TABLEEXISTS=1050;
 
 /*!
-		\brief ouverture d'une connection vers le serveur et/ou une database.
-		\param	type		type de base de données (mysql ou pgsql)
-		\param	host		addresse de la base de données
-		\param	user		nom de l'utilisateur autorisé
-		\param	pass		mot de passe
-		\param	name		nom de la database
+		\brief      Ouverture d'une connection vers le serveur et/ou une database.
+		\param	    type		type de base de données (mysql ou pgsql)
+		\param	    host		addresse de la base de données
+		\param	    user		nom de l'utilisateur autorisé
+		\param	    pass		mot de passe
+		\param	    name		nom de la database
 */
 
   function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '')
@@ -128,9 +128,9 @@ class DoliDb {
     }
 
 /*!
-		\brief selectionne une database.
-		\param	database		nom de la database
-		\return	resource
+		\brief      Selectionne une database.
+		\param	    database		nom de la database
+		\return	    resource
 */
 
   function select_db($database)
@@ -139,11 +139,11 @@ class DoliDb {
     }
 
 /*!
-		\brief connection vers une database.
-		\param	host			addresse de la base de données
-		\param	login			nom de l'utilisateur autorisé
-		\param	passwd		mot de passe
-		\return	resource
+		\brief      Connection vers le serveur
+		\param	    host			addresse de la base de données
+		\param	    login			nom de l'utilisateur autorisé
+		\param	    passwd		mot de passe
+		\return	    resource
 */
 
   function connect($host, $login, $passwd)
@@ -154,9 +154,9 @@ class DoliDb {
     }
 
 /*!
-		\brief création d'une database.
-		\param	database		nom de la database
-		\return	result			resultat 1 pour ok, 0 pour non ok
+		\brief      Connexion sur une base de donnée
+		\param	    database		nom de la database
+		\return	    result			resultat 1 pour ok, 0 pour non ok
 */
 
   function create_db($database)
@@ -172,8 +172,8 @@ class DoliDb {
   }
 
 /*!
-		\brief copie d'une database.
-		\return	resource
+		\brief      Copie d'une database.
+		\return	    resource
 */
 
 	function clone()
@@ -184,11 +184,11 @@ class DoliDb {
     }
 
 /*!
-		\brief ouverture d'une connection vers une database.
-		\param	host			addresse de la base de données
-		\param	login			nom de l'utilisateur autorisé
-		\param	passwd		mot de passe
-		\return	resource
+		\brief      Ouverture d'une connection vers une database.
+		\param	    host		addresse de la base de données
+		\param	    login		nom de l'utilisateur autorisé
+		\param	    passwd		mot de passe
+		\return	    resource
 */
 
   function pconnect($host, $login, $passwd)
@@ -198,8 +198,8 @@ class DoliDb {
     }
 
 /*!
-		\brief fermeture d'une connection vers une database.
-		\return	resource
+		\brief      Fermeture d'une connection vers une database.
+		\return	    resource
 */
 
   function close()
@@ -208,9 +208,9 @@ class DoliDb {
   }
 
 /*!
-		\brief debut d'une transaction.
-		\param	do
-		\return	string
+		\brief      Debut d'une transaction.
+		\param	    do
+		\return	    string
 */
 
   function begin($do=1)
@@ -226,9 +226,9 @@ class DoliDb {
   }
 
 /*!
-		\brief écriture d'une transaction.
-		\param	do
-		\return	string
+		\brief      Ecriture d'une transaction.
+		\param	    do
+		\return	    string
 */
 
   function commit($do=1)
@@ -244,9 +244,9 @@ class DoliDb {
   }
 
 /*!
-		\brief éffacement d'une transaction et retour au ancienne valeurs.
-		\param	do
-		\return	string
+		\brief      Effacement d'une transaction et retour au ancienne valeurs.
+		\param	    do
+		\return	    string
 */
 
   function rollback($do=1)
@@ -262,11 +262,11 @@ class DoliDb {
   }
 
 /*!
-		\brief requete vers une database.
-		\param	query		contenu de la query
-		\param	limit
-		\param	offset
-		\return	resource
+		\brief      Effectue une requete et renvoi le resultset de réponse de la base
+		\param	    query		contenu de la query
+		\param	    limit
+		\param	    offset
+		\return	    resource resultset
 */
 
   function query($query, $limit="", $offset="")
@@ -280,9 +280,9 @@ class DoliDb {
     }
 
 /*!
-		\brief liste des tables dans une database.
-		\param	database		nom de la database
-		\return	resource
+		\brief      Liste des tables dans une database.
+		\param	    database		nom de la database
+		\return	    resource
 */
 
   function list_tables($database)
@@ -292,10 +292,10 @@ class DoliDb {
   }
 
 /*!
-		\brief renvoie les données de la requete.
-		\param	nb				contenu de la query
-		\param	fieldname	nom du champ
-		\return	resource
+		\brief      Renvoie les données de la requete.
+		\param	    nb				contenu de la query
+		\param	    fieldname	    nom du champ
+		\return	    resource
 */
 
   function result($nb, $fieldname)
@@ -304,8 +304,8 @@ class DoliDb {
     }
 
 /*!
-		\brief désalloue la memoire de la requete.
-		\return	resource
+		\brief      Libère le dernier resultset utilisé sur cette connexion.
+		\return	    resource
 */
 
   function free()
@@ -314,41 +314,41 @@ class DoliDb {
     }
 
 /*!
-		\brief  Renvoie la ligne courante (comme un objet) pour le curseur statement.
-        \param  statement   curseur de la requete voulue
-		\return	resource
+		\brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
+        \param      resultset   curseur de la requete voulue
+		\return	    resource
 */
 
-  function fetch_object($statement=0)
+  function fetch_object($resultset=0)
     {
-        // Si statement n'est pas fourni, on prend le dernier utilisé sur cette connexion
-        if (! is_resource($statement)) { $statement=$this->results; }
-        return mysql_fetch_object($statement);
+        // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
+        if (! is_resource($resultset)) { $statement=$this->results; }
+        return mysql_fetch_object($resultset);
   	}
 
 /*!
-		\brief défini les limites de la requète.
-		\param	limit
-		\param	offset
-		\return	limit
+		\brief      défini les limites de la requète.
+		\param	    limit
+		\param	    offset
+		\return	    limit
 */
 
   function plimit($limit=0,$offset=0)
     {
-      if ($offset > 0)
-				{
-					return " LIMIT $offset,$limit ";
-      	}
-			else
-				{
-					return " LIMIT $limit ";
-      	}
+        if ($offset > 0)
+        {
+            return " LIMIT $offset,$limit ";
+        }
+        else
+        {
+            return " LIMIT $limit ";
+        }
     }
 
 /*!
-		\brief formatage de la date en format unix.
-		\param	fname
-		\return	date
+		\brief      formatage de la date en format unix.
+		\param	    fname
+		\return	    date
 */
 
   function pdate($fname)
@@ -357,9 +357,9 @@ class DoliDb {
     }
 
 /*!
-		\brief formatage de la date en fonction des locales.
-		\param	fname
-		\return	date
+		\brief      formatage de la date en fonction des locales.
+		\param	    fname
+		\return	    date
 */
 
   function idate($fname)
@@ -368,8 +368,8 @@ class DoliDb {
     }
 
 /*!
-		\brief renvoie les données dans un tableau.
-		\return	array
+		\brief      Renvoie les données dans un tableau.
+		\return	    array
 */
 
   function fetch_array()
@@ -378,8 +378,8 @@ class DoliDb {
     }
 
 /*!
-		\brief renvoie les données comme un tableau.
-		\return	array
+		\brief      Renvoie les données comme un tableau.
+		\return	    array
 */
 
   function fetch_row()
@@ -388,7 +388,8 @@ class DoliDb {
     }
 
 /*!
-		\brief obtient les données d'un colonne et renvoie les données sous forme d'objet.
+		\brief      Obtient les données d'un colonne et renvoie les données sous forme d'objet.
+        \return     array
 */
 
   function fetch_field()
@@ -398,8 +399,8 @@ class DoliDb {
 
 
 /*!
-		\brief renvoie le nombre de lignes dans le resultat de la requete.
-		\return	int
+		\brief      Renvoie le nombre de lignes dans le resultat de la requete.
+		\return	    int
 */
 
   function num_rows()
@@ -408,8 +409,8 @@ class DoliDb {
     }
 
 /*!
-		\brief renvoie le nombre de champs dans le resultat de la requete.
-		\return	int
+		\brief      Renvoie le nombre de champs dans le resultat de la requete.
+		\return	    int
 */
 
   function num_fields()
@@ -418,8 +419,8 @@ class DoliDb {
     }
 
 /*!
-		\brief renvoie la derniere requete soumise par la methode query()
-		\return	error_text
+		\brief      renvoie la derniere requete soumise par la methode query()
+		\return	    lastquery
 */
 
   function lastquery()
@@ -428,8 +429,8 @@ class DoliDb {
     }
 
 /*!
-		\brief renvoie le texte de l'erreur mysql de l'operation precedente.
-		\return	error_text
+		\brief      renvoie le texte de l'erreur mysql de l'operation precedente.
+		\return	    error_text
 */
 
   function error()
@@ -438,8 +439,8 @@ class DoliDb {
     }
 
 /*!
-		\brief renvoie la valeur numerique de l'erreur mysql de l'operation precedente.
-		\return error_num
+		\brief      renvoie la valeur numerique de l'erreur mysql de l'operation precedente.
+		\return     error_num
 */
 
   function errno()
@@ -451,8 +452,8 @@ class DoliDb {
     }
 
 /*!
-		\brief obtient l'id genéré par le précedent INSERT.
-		\return id
+		\brief      Obtient l'id genéré par le précedent INSERT.
+		\return     id
 */
 
   function last_insert_id()
@@ -461,8 +462,8 @@ class DoliDb {
     }
 
 /*!
-		\brief obtient le nombre de lignes affectées dans la précédente opération.
-		\return rows
+		\brief      Obtient le nombre de lignes affectées dans la précédente opération.
+		\return     rows
 */
 
   function affected_rows()
@@ -470,8 +471,13 @@ class DoliDb {
       return mysql_affected_rows();
     }
 
-		
-function getdsn($db_type,$db_user,$db_pass,$db_host,$dbname)
+
+/*!
+		\brief      Retourne le dsn
+		\return     dsn
+*/
+
+  function getdsn($db_type,$db_user,$db_pass,$db_host,$dbname)
 		{
 		  $pear = $db_type.'://'.$db_user.':'.$db_pass.'@'.
 			$db_host.'/'.$db_name;

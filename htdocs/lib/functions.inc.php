@@ -1119,7 +1119,7 @@ function print_type_paiement_select($db,$nomselect,$value=-1)
         $num = $db->num_rows();
         while ($i < $num)
     	  {
-            $obj = $db->fetch_object( $i);
+            $obj = $db->fetch_object();
             print "<option value=\"$obj->code\">$obj->libelle</option>";
             $i++;
         }
@@ -1423,7 +1423,7 @@ function departement_rowid($db,$code, $pays_id)
       $num = $db->num_rows();
       if ($num)
 	{
-	  $obj = $db->fetch_object(0);
+	  $obj = $db->fetch_object();
 	  return  $obj->rowid;
 	}
       else
