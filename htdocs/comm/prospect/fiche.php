@@ -307,11 +307,13 @@ if ($socid > 0)
 	  $var = !$var;
 
 	  $obj = $db->fetch_object( $i);
+		
 	  print "<tr $bc[$var]>";
 
 	  if ($oldyear == strftime("%Y",$obj->da) )
 	    {
-	      print '<td align="center">|</td>';
+	      //print '<td align="center">|</td>';
+				 print '<td align="center">' .strftime("%Y",$obj->da)."</TD>\n";
 	    } 
 	  else 
 	    {
@@ -319,9 +321,13 @@ if ($socid > 0)
 	    $oldyear = strftime("%Y",$obj->da);
 	    }
 
-	  if ($oldmonth == strftime("%Y%b",$obj->da) ) {
-	    print '<td align="center">|</td>';
-	  } else {
+	  if ($oldmonth == strftime("%Y%b",$obj->da) )
+		 {
+	   // print '<td align="center">|</td>';
+		 print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
+	  } 
+		else 
+		{
 	    print "<TD align=\"center\">" .strftime("%b",$obj->da)."</TD>\n"; 
 	    $oldmonth = strftime("%Y%b",$obj->da);
 	  }
