@@ -124,8 +124,6 @@ create table llx_paiement_facture
 
 insert into llx_const(name, value, type, note) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document');
 
-update llx_societe set fk_forme_juridique=0 where fk_forme_juridique >= 54;
-
 
 drop table if exists llx_c_forme_juridique;
 
@@ -229,7 +227,6 @@ create table llx_paiementcharge
 
 update llx_const set visible=0 where name like 'ADHERENT%';
 update llx_const set visible=0 where name like 'PROPALE_ADDON%';
-update llx_const set visible=0 where name like 'FAC_%';
 
 drop table llx_c_pays;
 
