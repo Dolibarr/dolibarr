@@ -23,6 +23,14 @@ require("./pre.inc.php");
 
 $mesg = '';
 
+if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == "yes")
+{
+  $deplacement = new Deplacement($db);
+  $deplacement->delete($id);
+  Header("Location: index.php");
+}
+
+
 if ($HTTP_POST_VARS["action"] == 'add' && $HTTP_POST_VARS["cancel"] <> 'Annuler')
 {
   $deplacement = new Deplacement($db);
@@ -109,6 +117,31 @@ else
       if ( $result )
 	{ 
     
+	  /*
+	   * Confirmation de la suppression de l'adhérent
+	   *
+	   */
+	  
+	  if ($action == 'delete')
+	    {
+	      
+	      print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
+	      print '<input type="hidden" name="action" value="confirm_delete">';
+	      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+	      
+	      print '<tr><td colspan="3">Supprimer ce déplacement</td></tr>';	      
+	      print '<tr><td class="delete">Etes-vous sur de vouloir supprimer ce déplacement ?</td><td class="delete">';
+	      $htmls = new Form($db);
+	      
+	      $htmls->selectyesno("confirm","no");
+	      
+	      print "</td>\n";
+	      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+	      print '</table>';
+	      print "</form>\n";  
+	    }
+
+
 	  if ($action == 'edit')
 	    {
 	      print_fiche_titre('Fiche déplacement : '.$product->ref, $mesg);
@@ -166,8 +199,6 @@ else
 
 print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
 print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
 
 if ($action == 'create')
 {
@@ -177,7 +208,10 @@ else
 {
   print '<td width="20%" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
 }
-print '<td width="20%" align="center">-</td>';    
+print '<td width="20%" align="center">-</td>';
+
+print '<td width="20%" align="center">-</td>';
+print '<td width="20%" align="center">[<a href="fiche.php?action=delete&id='.$id.'">Supprimer</a>]</td>';
 print '</table><br>';
 
 $db->close();
