@@ -49,7 +49,7 @@ llxHeader("","Accueil Compta");
  * Actions
  */
 
-if ($action == 'add_bookmark')
+if ($_GET["action"] == 'add_bookmark')
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
   if (! $db->query($sql) )
@@ -63,9 +63,9 @@ if ($action == 'add_bookmark')
     }
 }
 
-if ($action == 'del_bookmark')
+if ($_GET["action"] == 'del_bookmark')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=$bid";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=".$_GET["bid"];
   $result = $db->query($sql);
 }
 
