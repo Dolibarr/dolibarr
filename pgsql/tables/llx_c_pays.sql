@@ -23,6 +23,7 @@
 create table llx_c_pays
 (
   rowid    SERIAL PRIMARY KEY,
+	lang     varchar(8)   default 'all' not null,
   libelle  varchar(25),
   code     char(2) NOT NULL,
   active   smallint default 1  NOT NULL

@@ -23,6 +23,7 @@
 create table llx_c_propalst
 (
   id              SERIAL PRIMARY KEY,
+	lang            varchar(8) default 'all' not null,
   label           varchar(30)
 );
 

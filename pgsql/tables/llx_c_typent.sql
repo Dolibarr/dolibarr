@@ -23,5 +23,6 @@
 create table llx_c_typent
 (
   id        SERIAL PRIMARY KEY,
+	lang      varchar(8) default 'all' not null,
   libelle   varchar(30)
 );
