@@ -82,9 +82,10 @@ while (($file = readdir($handle))!==false)
 }
 
 // Affiche lignes des permissions
-$sql = "SELECT r.id, r.libelle, r.module, r.bydefault FROM ".MAIN_DB_PREFIX."rights_def as r";
-$sql .= " WHERE type <> 'a'";
-$sql .= " ORDER BY r.id ASC";
+$sql ="SELECT r.id, r.libelle, r.module, r.bydefault";
+$sql.=" FROM ".MAIN_DB_PREFIX."rights_def as r";
+$sql.=" WHERE r.libelle NOT LIKE 'tou%'";    // On ignore droits "tous"
+$sql.=" ORDER BY r.id, r.module";
 
 $result = $db->query($sql);
 if ($result) 
@@ -100,9 +101,13 @@ if ($result)
 
       if ($old <> $obj->module)
 	{
+       // Rupture détectée, on récupère objMod
+        $objMod=$modules[$obj->module];
+        $picto=($objMod->picto?$objMod->picto:'generic');
+
 	  print '<tr class="liste_titre">';
-	  print '<td>'.$langs->trans("Permission").'</td>';
 	  print '<td>'.$langs->trans("Module").'</td>';
+	  print '<td>'.$langs->trans("Permission").'</td>';
 	  print '<td align="center">'.$langs->trans("Default").'</td>';
 	  print '<td align="center">&nbsp;</td>';
 	  print "</tr>\n";
@@ -110,9 +115,13 @@ if ($result)
 	}
 
       print '<tr '. $bc[$var].'>';
+
+      print '<td>'.img_object('',$picto).' '.$objMod->getName();
+
       $perm_libelle=(($langs->trans("Permission".$obj->id)!=("Permission".$obj->id))?$langs->trans("Permission".$obj->id):$obj->libelle);
       print '<td>'.$perm_libelle. '</td>';
-      print '<td>'.$modules[$obj->module]->getName(). '</td><td align="center">';
+     
+      print '<td align="center">';
       if ($obj->bydefault == 1)
 	{
 
@@ -133,6 +142,7 @@ if ($result)
 }
 
 print '</table>';
+print '<br>';
 
 $db->close();
 
