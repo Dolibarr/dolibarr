@@ -81,7 +81,7 @@ print '<td align="center">&nbsp;</td>';
 print "</TR>\n";
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
-$sql .= " FROM llx_bank as b WHERE rappro=0 AND fk_account=$account";
+$sql .= " FROM llx_bank as b WHERE rappro=0 AND fk_account=$account AND dateo < now()";
 $sql .= " ORDER BY dateo ASC LIMIT 10";
 
 
