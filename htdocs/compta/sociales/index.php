@@ -47,19 +47,23 @@ function valeur($sql)
 
 
 /*
- *
+ * Ajout d'une charge sociale
  */
 
 if ($action == 'add')
 {
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, amount) ";
-  $sql .= " VALUES ($type,'$libelle','$date',$amount);";
+  $sql .= " VALUES (".$_POST["type"].",'".addslashes($_POST["libelle"])."','".$_POST["date"]."','".$_POST["amount"]."');";
 
   if (! $db->query($sql) )
     {
       print $db->error();
     }
 }
+
+/*
+ * Suppression d'une charge sociale
+ */
 
 if ($_GET["action"] == 'del')
 {
@@ -70,6 +74,7 @@ if ($_GET["action"] == 'del')
       print $db->error();
     }
 }
+
 
 $year=$_GET["year"];
 $filtre=$_GET["filtre"];
