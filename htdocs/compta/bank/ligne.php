@@ -183,9 +183,21 @@ if ($result)
       print '</tr>';
 
       print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"5\">";
-      print $objp->fk_type .' - ';
-      print $objp->num_chq;
-      print "</tr>";
+      
+      print "<form method=\"post\" action=\"$PHP_SELF?rowid=$objp->rowid\">";
+      print '<input type="hidden" name="action" value="type">';
+      print '<select name="value">';
+      print '<option value="CHQ"'.($objp->fk_type == 'CHQ'?' selected':'').'>CHQ</option>';
+      print '<option value="PRE"'.($objp->fk_type == 'PRE'?' selected':'').'>PRE</option>';
+      print '<option value="VIR"'.($objp->fk_type == 'VIR'?' selected':'').'>VIR</option>';
+      print '<option value="CB"'.($objp->fk_type == 'CB'?' selected':'').'>CB</option>';
+      print '<option value="DEP"'.($objp->fk_type == 'DEP'?' selected':'').'>Dépôt</option>';
+      print "</select>";
+      print $objp->num_chq?" - $objp->num_chq":'';
+      print "<input type=\"submit\" value=\"update\">";
+      print "</form>";
+
+      print "</td></tr>";
 
       print "<tr $bc[$var]><td>Catégorie</td><td colspan=\"5\">";
       print "<select name=\"cat1\">$options";
@@ -219,21 +231,6 @@ if ($result)
       }
       print "</form>";
       
-      
-      print "<form method=\"post\" action=\"$PHP_SELF?rowid=$objp->rowid\">";
-      print '<input type="hidden" name="action" value="type">';
-      
-      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"5\">";
-      print '<select name="value">';
-      print '<option value="CHQ">CHQ';
-      print '<option value="PRE">PRE';
-      print '<option value="VIR">VIR';
-      print '<option value="CB">CB';
-      print '<option value="DEP">Dépôt';
-      
-      print "</select><input type=\"submit\" value=\"update\"></td>";
-      print "</tr></form>";
-
       print "<form method=\"post\" action=\"$PHP_SELF?rowid=$objp->rowid\">";
       print '<input type="hidden" name="action" value="num_releve">';
       print "<tr $bc[$var]><td>Relevé</td><td colspan=\"5\">";
