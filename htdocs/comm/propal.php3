@@ -646,8 +646,6 @@ if ($propalid)
   $pageprev = $page - 1;
   $pagenext = $page + 1;
 
-  print_barre_liste("Propositions commerciales", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder);
-
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
   $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
 
@@ -671,11 +669,14 @@ if ($propalid)
     }
   
   $sql .= " ORDER BY $sortfield $sortorder";
-  $sql .= $db->plimit( $limit ,$offset);
+  $sql .= $db->plimit($limit + 1,$offset);
 
   if ( $db->query($sql) )
     {
       $num = $db->num_rows();
+      print_barre_liste("Propositions commerciales", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder,'',$num);
+
+
       $i = 0;
       print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
