@@ -92,7 +92,7 @@ function transcoS2L($zonein,$devise)
     $arr1_99[$j] = "quatre-vingt-".$arr1_99[$i];
     $i++;
   } // fin initialise la  table (fin)
-  echo "Pour une valeur en entrée = $zonein<br>"; //pour ceux qui ne croient que ce qu'ils voient !
+  // echo "Pour une valeur en entrée = $zonein<br>"; //pour ceux qui ne croient que ce qu'ils voient !
   // quelques petits controles s'imposent !! 
   $valid = "[a-zA-Z\&\é\"\'\(\-\è\_\ç\à\)\=\;\:\!\*\$\^\<\>]";
   if (ereg($valid,$zonein))
