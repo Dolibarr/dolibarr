@@ -140,7 +140,7 @@ if ($action == 'delete' && $user->rights->facture->supprimer)
   $facid = 0 ;
 }
 
-if ($action == 'add') 
+if ($HTTP_POST_VARS["action"] == 'add') 
 {
   $datefacture = mktime(12, 0 , 0, $remonth, $reday, $reyear); 
 
@@ -157,7 +157,12 @@ if ($action == 'add')
       $facture->amount = $HTTP_POST_VARS["amount"];
       $facture->remise = $HTTP_POST_VARS["remise"];
       
-      $facid = $facture->create($user->id, $statut, $note);
+      $facture->add_product($HTTP_POST_VARS["idprod1"],$HTTP_POST_VARS["qty1"]);
+      $facture->add_product($HTTP_POST_VARS["idprod2"],$HTTP_POST_VARS["qty2"]);
+      $facture->add_product($HTTP_POST_VARS["idprod3"],$HTTP_POST_VARS["qty3"]);
+      $facture->add_product($HTTP_POST_VARS["idprod4"],$HTTP_POST_VARS["qty4"]);
+      
+      $facid = $facture->create($user);
     }
   else
     {
@@ -165,7 +170,7 @@ if ($action == 'add')
       $facture->remise   = $remise;
       $facture->propalid = $HTTP_POST_VARS["propalid"];
 
-      $facid = $facture->create($user->id);
+      $facid = $facture->create($user);
       //TODO
       if ($facid)
 	{
@@ -282,7 +287,6 @@ $html = new Form($db);
  */
 if ($action == 'create') 
 {
-
   print_titre("Emettre une facture");
 
   if ($propalid)
@@ -320,7 +324,7 @@ if ($action == 'create')
 	  print "<input type=\"hidden\" name=\"author\" value=\"$author\">";
 	  print "<tr><td>Auteur :</td><td>".$user->fullname."</td>";
 	  
-	  print '<td rowspan="5" valign="top">';
+	  print '<td rowspan="6" valign="top">';
 	  print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
 	  
 	  print "<tr><td>Date :</td><td>";
@@ -368,15 +372,11 @@ if ($action == 'create')
 	      print '<tr><td>Montant HT</td><td colspan="2">'.price($amount).'</td></tr>';
 	      print '<tr><td>TVA</td><td colspan="2">'.price($obj->tva)."</td></tr>";
 	      print '<tr><td>Total TTC</td><td colspan="2">'.price($obj->total)."</td></tr>";	  
-	    }
-	  
-	  
-	  print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
-	  print "</form>\n";
-	  print "</table>\n";
-	  
-	  if (!$propalid)
+	    }	  
+	  else
 	    {
+	      print '<tr><td colspan="2">Services/Produits</td></tr>';
+	      print '<tr><td colspan="3">';
 	      /*
 	       *
 	       * Liste des elements
@@ -404,22 +404,26 @@ if ($action == 'create')
 		{
 		  print $db->error();
 		}
-	      
-	      print_titre("Services/Produits");
-	      
-	      print '<table border="1" cellspacing="0">';
+	      	      
+	      print '<table border="0" cellspacing="0">';
 	      
 	      for ($i = 1 ; $i < 5 ; $i++)
 		{
 		  print '<tr><td><select name="idprod'.$i.'">'.$opt.'</select></td>';
 		  print '<td><input type="text" size="2" name="qty'.$i.'" value="1"></td></tr>';
 		}
-	      
-	      print "<tr><td align=\"right\" colspan=\"2\">Remise : <input size=\"6\" name=\"remise\" value=\"0\"></td></tr>\n";    
-	      
-	      print "</table>";
-	      
+	      	      
+	      print '</table>';
+	      print '</td></tr>';
 	    }
+
+
+
+	  
+	  print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
+	  print "</form>\n";
+	  print "</table>\n";
+	  
 	}
     } 
   else 
