@@ -124,6 +124,15 @@ div.menus {
   color: #000000; 
   text-decoration: none }
 
+.alerte
+{ 
+  background: #FF9988; 
+  font-weight: bold;
+  font-size: 0.95em;
+  color: #000000; 
+  text-decoration: none }
+
+
 .submenu 
 { 
   background: #ccccb3; 
