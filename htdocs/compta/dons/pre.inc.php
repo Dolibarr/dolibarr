@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,6 +42,7 @@ function llxHeader($head = "") {
   $menu->add("/compta/dons/","Dons");
   $menu->add_submenu("fiche.php?action=create","Saisir un don");
   $menu->add_submenu("liste.php","Liste complète");
+  $menu->add_submenu("stats.php","Stats");
 
   $menu->add("/compta/bank/index.php3","Bank");
 
