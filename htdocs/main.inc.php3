@@ -400,7 +400,7 @@ Function left_menu($menu)
 	{
 	  print '<A class="menu" href="'.DOL_URL_ROOT.'/product/">Produits</A>';
 	  print '<form action="'.DOL_URL_ROOT.'/product/">';
-	  print '<input type="text" class="flat" name="sref" size="10">&nbsp;';
+	  print '<input type="text" class="flat" name="sall" size="10">&nbsp;';
 	  print '<input type="submit" class="flat" value="go">';
 	  print '</form>';
 	}
