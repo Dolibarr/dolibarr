@@ -25,6 +25,14 @@
 $yn[0] = "non";
 $yn[1] = "oui";
 
+function accessforbidden()
+{
+  llxHeader();
+  print "Accés interdit";
+  llxFooter();
+  exit(0);
+}
+
 function transcoS2L($zonein,$devise)
 { 
   // Open source offert par <A HREF="mailto:alainfloch@free.fr?subject=chif2let">alainfloch@free.fr</A> 28/10/2001, sans garantie.
