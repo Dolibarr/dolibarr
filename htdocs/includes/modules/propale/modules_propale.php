@@ -21,19 +21,31 @@
  *
  */
 
-function propale_pdf_create($db, $facid)
+function propale_pdf_create($db, $facid, $modele='')
 {
   
   $dir = DOL_DOCUMENT_ROOT."/includes/modules/propale/";
 
-  if (defined("PROPALE_ADDON_PDF"))
+  if (! $modele)
     {
 
-      $file = "pdf_".PROPALE_ADDON_PDF.".modules.php";
+      if (defined("PROPALE_ADDON_PDF"))
+	{
+	  $modele = PROPALE_ADDON_PDF;
+	}
+      else
+	{
+	  return 0;
+	}
+    }
 
-      $classname = "pdf_".PROPALE_ADDON_PDF;
+  $file = "pdf_propale_".$modele.".modules.php";
+
+  if (file_exists($file))
+    {
+      $classname = "pdf_propale_".PROPALE_ADDON_PDF;
       require_once($dir.$file);
-
+  
       $obj = new $classname($db);
 
       return $obj->write_pdf_file($facid);
