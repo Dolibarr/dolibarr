@@ -42,7 +42,7 @@ if ($_GET["socidp"])
     {
       if ( $db->num_rows() )
 	{
-	  $objsoc = $db->fetch_object(0);
+	  $objsoc = $db->fetch_object($result);
 	}
       $db->free();
     }
@@ -219,7 +219,7 @@ if ($_GET["action"] == 'create')
 	  $numprojet = $db->num_rows();
 	  while ($i < $numprojet)
 	    {
-	      $projet = $db->fetch_object($i);
+	      $projet = $db->fetch_object();
 	      print "<option value=\"$projet->rowid\">$projet->title</option>";
 	      $i++;
 	    }

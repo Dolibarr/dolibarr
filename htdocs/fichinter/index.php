@@ -82,7 +82,7 @@ if ( $db->query($sql) )
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
       print "<td><a href=\"fiche.php?id=$objp->fichid\">$objp->ref</a></td>\n";

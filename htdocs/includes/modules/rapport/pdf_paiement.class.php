@@ -227,7 +227,7 @@ class pdf_paiement {
 
 	  while ($i < $lignes)
 	    {
-	      $objp = $this->db->fetch_object( $i);
+	      $objp = $this->db->fetch_object($result);
 	      $var=!$var;
 	 
 	      $lines[$i][0] = $objp->facnumber;
