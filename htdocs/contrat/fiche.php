@@ -158,11 +158,11 @@ else
       
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print '<td width="20%">Service</td><td colspan=4>'.($contrat->product->ref).' - '.($contrat->product->label_url).'</td>';
+	  print '<td width="20%">Service</td><td colspan="3">'.($contrat->product->ref).' - '.($contrat->product->label_url).'</td>';
 	  print '</tr><tr>';	
-	  if ($contrat->facturedetid)
+	  if ($contrat->factureid)
 	    {
-    	  // Si contrat lié à une ligne de factures (ce n'est pas le cas sur les anciennes données)
+    	  // Si contrat lié à une facture
     	  $facturedet = new FactureLigne($db);
     	  $facturedet->fetch($contrat->facturedetid);
           $date_start=$facturedet->date_start;
@@ -172,7 +172,7 @@ else
 	    }
 	  else
 	    {
-	      print '<td>Société</td><td colspan="4">'.$contrat->societe->nom_url.'</td></tr>';
+	      print '<td>Société</td><td colspan="3">'.$contrat->societe->nom_url.'</td></tr>';
 	    }
 
 	  print '<tr><td>Statut</td><td colspan="3">';
