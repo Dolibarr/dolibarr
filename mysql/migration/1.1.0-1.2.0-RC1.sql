@@ -62,7 +62,7 @@ create table llx_birthday_alert
   rowid        integer AUTO_INCREMENT PRIMARY KEY,
   fk_contact   integer,
   fk_user      integer
-);
+)type=innodb;
 
 create table llx_co_fa
 (
@@ -72,7 +72,7 @@ create table llx_co_fa
 
   key(fk_commande),
   key(fk_facture)
-);
+)type=innodb;
 
 create table llx_paiement_facture
 (
@@ -81,8 +81,9 @@ create table llx_paiement_facture
   fk_facture      integer,
   amount          real default 0,
   
-  unique key (fk_paiement,fk_facture)
-);
+  key (fk_paiement),
+  key( fk_facture)
+)type=innodb;
 
 
 insert into llx_const(name, value, type, note) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document');
