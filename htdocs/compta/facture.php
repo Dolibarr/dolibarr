@@ -1021,7 +1021,7 @@ else
 	    }
 	
 		// Récurrente
-	    if (! defined("FACTURE_NORECURENTE")) 	// Possibilité de désactiver les factures récurrentes
+	    if (! defined("FACTURE_DISABLE_RECUR")) 	// Possibilité de désactiver les factures récurrentes
 	      {
 		if ($fac->statut > 0)
 		  {
