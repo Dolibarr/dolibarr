@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -232,11 +232,9 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
   Header("Location: fiche.php?id=".$_POST["id"]);
 }
 
-
-
-
-llxHeader("","",$langs->trans("CardProduct".$product->type));
-
+// Le produit n'est pas encore chargé a ce stade
+//llxHeader("","",$langs->trans("CardProduct".$product->type));
+llxHeader("","",$langs->trans("CardProduct0"));
 
 /*
  * Création du produit
