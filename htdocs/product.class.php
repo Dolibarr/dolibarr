@@ -891,19 +891,22 @@ class Product
     $pdir = get_exdir($this->id) . $this->id ."/photos/";
     $dir = $sdir . '/'. $pdir;
 
-    $handle=opendir($dir);
-
-    while (($file = readdir($handle))!==false)
+    if ( file_exists($dir))
       {
-	if (is_file($dir.$file))
+	$handle=opendir($dir);
+	
+	while (($file = readdir($handle))!==false)
 	  {
-	    $photo = $file;
+	    if (is_file($dir.$file))
+	      {
+		$photo = $file;
+	      }
 	  }
-      }
-
-    if (strlen($photo))
-      {
-	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+	
+	if (strlen($photo))
+	  {
+	    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
+	  }
       }
   }
   /**
