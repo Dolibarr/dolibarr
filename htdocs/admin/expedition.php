@@ -23,19 +23,24 @@
  * $Source$
  */
 
-/*!
-  \file htdocs/admin/expedition.php
-  \ingroup    expedition
-  \brief      Page d'administration/configuration du module Expedition
-  \version    $Revision$
+/**
+        \file       htdocs/admin/expedition.php
+        \ingroup    expedition
+        \brief      Page d'administration/configuration du module Expedition
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
 
 $langs->load("admin");
+$langs->load("sendings");
 
 if (!$user->admin) accessforbidden();
 
+
+/*
+ * Actions
+ */
 if ($_GET["action"] == 'set')
 {
   $file = DOL_DOCUMENT_ROOT . '/includes/modules/expedition/methode_expedition_'.$_GET["value"].'.modules.php';
@@ -44,15 +49,12 @@ if ($_GET["action"] == 'set')
   require_once($file);
   
   $obj = new $classname();
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."expedition_methode WHERE rowid = ".$obj->id.";";
-  $db->query($sql);
-  $sql='';
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition_methode (rowid,code,libelle,description,status) VALUES (".$obj->id.",'".$obj->code."','".$obj->name."','".addslashes($obj->description)."',".$_GET["statut"].");";
-  
-  if ($db->query($sql))
-    {
-      
-    }
+
+  // Mise a jour statut
+  $sql = "UPDATE ".MAIN_DB_PREFIX."expedition_methode set status='".$_GET["statut"]."'";
+  $sql.= " WHERE rowid = ".$obj->id;
+  print "$sql";
+  exit;  
 
   Header("Location: expedition.php");
 
@@ -85,15 +87,13 @@ if ($_GET["action"] == 'setpdf')
 
 }
 
+
 llxHeader();
 
 // positionne la variable pour le test d'affichage de l'icone
-
 $expedition_addon_var_pdf = EXPEDITION_ADDON_PDF;
-
-
-
 $expedition_default = EXPEDITION_DEFAULT;
+
 
 if ($_GET["action"] == 'setdef')
 {
@@ -141,17 +141,17 @@ $dir = DOL_DOCUMENT_ROOT."/includes/modules/expedition/";
  * Méthode de livraison
  */
 
-print_titre("Configuration du module Expedition/Livraisons");
+print_titre($langs->trans("SendingsSetup"));
 
 print "<br>";
 
-print_titre("Méthode de livraison");
+print_titre($langs->trans("SendingMethod"));
 
-print '<table class="noborder" cellpadding="3" cellspacing="0">';
+print '<table class="noborder">';
 print '<tr class="liste_titre">';
-print '<td>Nom</td><td>Info</td>';
-print '<td align="center" colspan="2">Actif</td>';
-print '<td align="center" colspan="2">Défaut</td>';
+print '<td>'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td>';
+print '<td align="center" colspan="2">'.$langs->trans("Active").'</td>';
+print '<td align="center" colspan="2">'.$langs->trans("Default").'</td>';
 print "</tr>\n";
 
 if(is_dir($dir)) {
@@ -202,7 +202,7 @@ if(is_dir($dir)) {
 	  
 	  print "</td><td>\n";
 	  
-	  print '<a href="expedition.php?action=setdef&amp;value='.$name.'">activer</a>';
+	  print '<a href="expedition.php?action=setdef&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
 	  
 	  print '</td></tr>';
 	}
@@ -221,13 +221,13 @@ print '<br>';
  *
  */
 
-print_titre("Modèles bordereau de livraison");
+print_titre($langs->trans("SendingsReceiptModel"));
 
-print '<table class="noborder" cellpadding="3" cellspacing="0">';
+print '<table class="noborder">';
 print '<tr class="liste_titre">';
-print '<td>Nom</td><td>Info</td>';
-print '<td align="center" colspan="2">Actif</td>';
-print '<td align="center" colspan="2">Défaut</td>';
+print '<td>'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td>';
+print '<td align="center" colspan="2">'.$langs->trans("Active").'</td>';
+print '<td align="center" colspan="2">'.$langs->trans("Default").'</td>';
 print "</tr>\n";
 
 clearstatcache();
