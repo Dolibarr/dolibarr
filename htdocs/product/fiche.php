@@ -81,7 +81,7 @@ if ($HTTP_POST_VARS["action"] == 'addinfacture' &&
 
   $facture->fetch($HTTP_POST_VARS["factureid"]);
   $facture->addline($HTTP_POST_VARS["factureid"], 
-		    addslashes($product->label), 
+		    addslashes($product->libelle), 
 		    $product->price, 
 		    $HTTP_POST_VARS["qty"], 
 		    $product->tva_tx, $id);
@@ -100,7 +100,7 @@ if ($HTTP_POST_VARS["action"] == 'update' &&
     {
 
       $product->ref         = $HTTP_POST_VARS["ref"];
-      $product->label       = $HTTP_POST_VARS["libelle"];
+      $product->libelle     = $HTTP_POST_VARS["libelle"];
       $product->price       = $HTTP_POST_VARS["price"];
       $product->tva_tx      = $HTTP_POST_VARS["tva_tx"];
       $product->description = $HTTP_POST_VARS["desc"];
@@ -229,7 +229,7 @@ else
 	      print "<b>Cet article n'est pas en vente</b>";
 	    }
 	  print '</td></tr>';
-	  print "<td>Libellé</td><td>$product->label</td>";
+	  print "<td>Libellé</td><td>$product->libelle</td>";
 	  print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
 	  print '<tr><td>Prix de vente</td><TD>'.price($product->price).'</td>';
 	  print '<td valign="top" rowspan="4">';
@@ -297,7 +297,7 @@ else
 	  
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>".'<td width="20%">Référence</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
-	  print '<td>Libellé</td><td colspan="2"><input name="libelle" size="40" value="'.$product->label.'"></td></tr>';
+	  print '<td>Libellé</td><td colspan="2"><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
 	  print "<tr>".'<td>Taux TVA</td><td colspan="2">';
 	  $html = new Form($db);

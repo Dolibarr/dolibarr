@@ -26,7 +26,7 @@ class Product
 
   var $id ;
   var $ref;
-  var $label;
+  var $libelle;
   var $description;
   var $price;
   var $tva_tx;
@@ -51,7 +51,7 @@ class Product
       if (strlen(trim($this->ref)) == 0)
 	$err++;
  
-      if (strlen(trim($this->label)) == 0)
+      if (strlen(trim($this->libelle)) == 0)
 	$err++;
       
       if ($err > 0)
@@ -158,7 +158,7 @@ class Product
       if (strlen(trim($this->ref)))
 	{
 	  $sql = "UPDATE llx_product ";
-	  $sql .= " SET label = '" . trim($this->label) ."'";
+	  $sql .= " SET label = '" . trim($this->libelle) ."'";
 	  $sql .= ",ref = '" . trim($this->ref) ."'";
 	  $sql .= ",tva_tx = " . $this->tva_tx ;
 	  $sql .= ",envente = " . $this->envente ;
@@ -201,7 +201,7 @@ class Product
 
 	  $this->id             = $result["rowid"];
 	  $this->ref            = $result["ref"];
-	  $this->label          = stripslashes($result["label"]);
+	  $this->libelle          = stripslashes($result["label"]);
 	  $this->description    = stripslashes($result["description"]);
 	  $this->price          = $result["price"];
 	  $this->tva_tx         = $result["tva_tx"];
