@@ -5,6 +5,7 @@
 -- sans AUCUNE erreur ni warning
 -- ;
 
+alter table llx_user_rights add rowid integer AUTO_INCREMENT PRIMARY KEY;
 alter table llx_facture add fk_mode_reglement integer after fk_cond_reglement ;
 
 alter table llx_paiement add statut smallint DEFAULT 0 NOT NULL ;
