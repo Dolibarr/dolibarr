@@ -102,6 +102,7 @@ class Propal
 	    {
 	      $price = $prod->price;
 	      $subprice = $prod->price;
+
 	      if ($remise_percent > 0)
 		{
 		  $remise = round(($prod->price * $remise_percent / 100), 2);
@@ -109,7 +110,7 @@ class Propal
 		}
 	  
 	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-	      $sql .= " (".$this->id.",". $idproduct.",". $qty.",". $price.",".$prod->tva_tx.",'".addslashes($prod->label)."',$remise_percent, $subprice)";
+	      $sql .= " (".$this->id.",". $idproduct.",'". $qty."','". ereg_replace(",",".",$price)."','".$prod->tva_tx."','".addslashes($prod->label)."','".ereg_replace(",",".",$remise_percent)."','".ereg_replace(",",".",$subprice)."')";
 	  
 	      if ($this->db->query($sql) )
 		{		  
@@ -145,6 +146,7 @@ class Propal
 
 	  $price = $p_price;
 	  $subprice = $p_price;
+
 	  if ($remise_percent > 0)
 	    {
 	      $remise = round(($p_price * $remise_percent / 100), 2);
@@ -152,8 +154,9 @@ class Propal
 	    }
 
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."propaldet (fk_propal, fk_product, qty, price, tva_tx, description, remise_percent, subprice) VALUES ";
-	  $sql .= " (".$this->id.", 0,'". $p_qty."','". $price."','".$p_tva_tx."','".$p_desc."','$remise_percent', '$subprice') ; ";
+	  $sql .= " (".$this->id.", 0,'". $p_qty."','". ereg_replace(",",".",$price)."','".$p_tva_tx."','".$p_desc."','$remise_percent', '".ereg_replace(",",".",$subprice)."') ; ";
 	  
+
 	  if ($this->db->query($sql) )
 	    {
 	      
@@ -242,7 +245,7 @@ class Propal
 		    {
 		      $prod = new Product($this->db, $this->products[$i]);
 		      $prod->fetch($this->products[$i]);
-		    
+
 		      $this->insert_product($this->products[$i], 
 					    $this->products_qty[$i], 
 					    $this->products_remise_percent[$i]);
@@ -690,7 +693,7 @@ class Propal
    *
    *
    */
-  Function delete()
+  Function delete($user)
   {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."propaldet WHERE fk_propal = $this->id ;";
     if ( $this->db->query($sql) ) 
@@ -698,6 +701,7 @@ class Propal
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."propal WHERE rowid = $this->id;";
 	if ( $this->db->query($sql) ) 
 	  {
+	    dolibarr_syslog("Suppression de la proposition $this->id par $user->fullname ($user->id)");
 	    return 1;
 	  }
 	else
