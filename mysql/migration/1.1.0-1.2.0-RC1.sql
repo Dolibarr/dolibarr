@@ -26,7 +26,7 @@ alter table llx_societe add fk_departement integer default 0 after ville;
 alter table llx_societe add fk_user_creat integer;
 alter table llx_societe add fk_user_modif integer;
 
-alter table llx_socpeople add civilite smallint;
+alter table llx_socpeople add civilite varchar(6);
 alter table llx_socpeople add fk_user_modif integer;
 
 
@@ -75,8 +75,7 @@ alter table c_stcomm         rename llx_c_stcomm ;
 alter table c_typent         rename llx_c_typent ;
 
 alter table llx_c_actioncomm add type varchar(10) not null default 'system' after id;
-alter table llx_c_actioncomm add lang varchar(8) not null default 'all' after type;
-update llx_c_actioncomm set lang='fr_FR' where id > 0;
+alter table llx_c_actioncomm add active tinyint default 1 after libelle;
 
 alter table llx_c_paiement add code varchar(6) after id;
 
@@ -606,3 +605,62 @@ insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, label
 insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, label, account_number) VALUES (100,1,'PCG99-ABREGE','XXXXXX','Reprises sur provisions pour risques  ','786');
 insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, label, account_number) VALUES (101,1,'PCG99-ABREGE','XXXXXX','Reprises sur provisions  ','787');
 insert into llx_c_accountingsystem (rowid, fk_pays, pcg_version, pcg_type, label, account_number) VALUES (102,1,'PCG99-ABREGE','XXXXXX','Transferts de charges','79');
+
+
+alter table llx_c_actioncomm      add lang varchar(8) not null default 'all' after id;
+alter table llx_c_pays            add lang varchar(8) not null default 'all' after rowid;
+alter table llx_c_effectif        add lang varchar(8) not null default 'all' after id;
+alter table llx_c_paiement        add lang varchar(8) not null default 'all' after id;
+alter table llx_c_propalst        add lang varchar(8) not null default 'all' after id;
+alter table llx_c_stcomm          add lang varchar(8) not null default 'all' after id;
+alter table llx_c_typent          add lang varchar(8) not null default 'all' after id;
+
+update llx_c_actioncomm set lang='fr_FR' where id > 0;
+update llx_c_pays       set lang='fr_FR' where rowid > 0;
+update llx_c_effectif   set lang='fr_FR' where id > 0;
+update llx_c_paiement   set lang='fr_FR' where id > 0;
+update llx_c_propalst   set lang='fr_FR' where id > 0;
+update llx_c_stcomm     set lang='fr_FR' where id > 0;
+update llx_c_typent     set lang='fr_FR' where id > 0;
+
+
+create table llx_c_civilite
+(
+  rowid       integer PRIMARY KEY,
+  lang        varchar(8) default 'all' not null,
+  code        varchar(6),
+  fk_pays     integer default 0,
+  civilite	  varchar(50),
+  active      tinyint default 1
+)type=innodb;
+
+alter table llx_socpeople change civilite civilite varchar(6);
+
+delete from llx_c_civilite;
+
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (1 , 'MME', 'fr_FR', 0, 'Madame', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (3 , 'MR',  'fr_FR', 0, 'Monsieur', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (5 , 'MLE', 'fr_FR', 0, 'Mademoiselle', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (7 , 'MTRE','fr_FR', 0, 'Maître', 1);
+
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (21, 'MME', 'fr_BE', 0, 'Madame', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (23, 'MR',  'fr_BE', 0, 'Monsieur', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (25, 'MLE', 'fr_BE', 0, 'Mademoiselle', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (27, 'MTRE','fr_BE', 0, 'Maître', 1);
+
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (32, 'MME', 'nl_BE', 0, 'Mevrouw', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (34, 'MR',  'nl_BE', 0, 'Meneer', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (36, 'MLE', 'nl_BE', 0, 'Juffrouw', 1);
+
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (41, 'MME', 'en_US', 0, 'Madam', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (43, 'MR',  'en_US', 0, 'Mister', 1);
+insert into llx_c_civilite (rowid, code, lang, fk_pays, civilite, active) values (45, 'MLE', 'en_US', 0, 'Misses', 1);
+
+
+
+
+
+
+
+
+
