@@ -29,7 +29,18 @@ $db = new Db();
 
 $yn[1] = "oui";
 $yn[0] = "<b>non</b>";
-	
+
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socidp = $user->societe_id;
+}
+/*
+ *
+ */	
 if ($action == 'valid') 
 {
   $fac = new Facture($db);
@@ -75,7 +86,6 @@ if ($action == 'add')
   
   if (! $propalid) 
     {
-
       $facture = new Facture($db, $socid);
       $facture->number = $facnumber;
       $facture->date = $datefacture;
@@ -89,7 +99,6 @@ if ($action == 'add')
     }
   else
     {
-
       $facture = new Facture($db, $socid);
 
       $facture->number   = $facnumber;
@@ -107,8 +116,7 @@ if ($action == 'add')
 	}
     }
   $facid = $facid;
-  $action = '';
-  
+  $action = '';  
 }
 /*
  *
@@ -172,7 +180,6 @@ if ($action == 'send')
  *
  *
  */
-
 if ($action == 'create') 
 {
   print_titre("Emettre une facture");
@@ -271,6 +278,11 @@ else
     $sql = "SELECT s.nom as socnom, s.idp as socidp, f.facnumber, f.amount, f.total, ".$db->pdate("f.datef")." as df, f.paye, f.fk_statut as statut, f.fk_user_author, f.note";
     $sql .= " FROM societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.rowid = $facid";
 
+    if ($user->societe_id > 0) 
+      {
+	$sql .= " AND s.idp = ".$user->societe_id;
+      }
+
     $result = $db->query( $sql);
   
     if ($result)
@@ -287,288 +299,119 @@ else
 	print $db->error();
       }
 
-    $soc = new Societe($db, $obj->socidp);
+    if ($num > 0)
+      {
 
-    $author = new User($db);
-    $author->id = $obj->fk_user_author;
-    $author->fetch();
+	$soc = new Societe($db, $obj->socidp);
 
-    print_titre("Facture : ".$obj->facnumber);
+	$author = new User($db);
+	$author->id = $obj->fk_user_author;
+	$author->fetch();
+
+	print_titre("Facture : ".$obj->facnumber);
   
-    print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
-    print "<tr><td width=\"50%\">";
-    /*
-     *   Facture
-     */
-    print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
-    print "<tr><td>Client</td>";
-    print "<td colspan=\"3\">";
-    print "<b><a href=\"fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td></tr>";
-
-    print "<tr><td>Date</td>";
-    print "<td colspan=\"3\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
-    print "<tr><td>".translate("Author")."</td><td colspan=\"3\">$author->fullname</td>";
-  
-    print '<tr><td>Montant</td>';
-    print '<td align="right" colspan="2"><b>'.price($obj->amount).'</b></td>';
-    print '<td>euros HT</td></tr>';
-    print '<tr><td>TVA</td><td align="right" colspan="2">'.tva($obj->amount).'</td>';
-    print '<td>euros</td></tr>';
-    print '<tr><td>Total</td><td align="right" colspan="2">'.price($obj->total).'</td>';
-    print '<td>euros TTC</td></tr>';
-
-    print '<tr><td>Statut</td><td align="center">'.$obj->statut.'</td>';
-    print "<td>".translate("Payed")."</td>";
-    print "<td align=\"center\" bgcolor=\"#f0f0f0\"><b>".$yn[$obj->paye]."</b></td></tr>";
-    print "</table>";
-  
-    print "</td><td valign=\"top\">";
-
-    $_MONNAIE="euros";
-
-    /*
-     * Paiements
-     */
-    $sql = "SELECT ".$db->pdate("datep")." as dp, p.amount, c.libelle as paiement_type, p.num_paiement, p.rowid";
-    $sql .= " FROM llx_paiement as p, c_paiement as c WHERE p.fk_facture = $facid AND p.fk_paiement = c.id";
-  
-    $result = $db->query($sql);
-    if ($result) {
-      $num = $db->num_rows();
-      $i = 0; $total = 0;
-      print "<p><b>Paiements</b>";
-      echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
-      print "<TR class=\"liste_titre\">";
-      print "<td>Date</td>";
-      print "<td>Type</td>";
-      print "<td align=\"right\">Montant</TD><td>&nbsp;</td>";
-      print "</TR>\n";
-    
-      $var=True;
-      while ($i < $num) {
-	$objp = $db->fetch_object( $i);
-	$var=!$var;
-	print "<TR $bc[$var]>";
-	print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-	print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
-	print "<TD align=\"right\">".price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
-	print "</tr>";
-	$total = $total + $objp->amount;
-	$i++;
-      }
-
-      if ($obj->paye == 0) {
-	print "<tr><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>$_MONNAIE</td></tr>\n";
-	print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($obj->total)."</td><td bgcolor=\"#d0d0d0\">$_MONNAIE</td></tr>\n";
+	print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
+	print "<tr><td width=\"50%\">";
+	/*
+	 *   Facture
+	 */
+	print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
+	print "<tr><td>Client</td>";
+	print "<td colspan=\"3\">";
+	print "<b><a href=\"fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td></tr>";
 	
-	$resteapayer = $obj->total - $total;
-
-	print "<tr><td colspan=\"2\" align=\"right\">Reste a payer :</td>";
-	print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">$_MONNAIE</td></tr>\n";
-      }
-      print "</table>";
-      $db->free();
-    } else {
-      print $db->error();
-    }
-
-    print "</td></tr>";
-    print "<tr><td>Note : ".nl2br($obj->note)."</td></tr>";
-    print "</table>";
-    /*
-     * Lignes de factures
-     *
-     */
-
-    $sql = "SELECT l.description, l.price, l.qty, l.rowid";
-    $sql .= " FROM llx_facturedet as l WHERE l.fk_facture = $facid";
-  
-    $result = $db->query($sql);
-    if ($result)
-      {
-	$num = $db->num_rows();
-	$i = 0; $total = 0;
-
-	echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
-	print "<TR class=\"liste_titre\">";
-	print '<td width="60%">Description</td>';
-	print '<td width="8%"align="center">Quantité</td>';
-	print '<td width="12%" align="right">Montant</TD><td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
-	print "</TR>\n";
-    
-	$var=True;
-	while ($i < $num) {
-	  $objp = $db->fetch_object( $i);
-	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<TD>".stripslashes(nl2br($objp->description))."</TD>\n";
-	  print '<TD align="center">'.$objp->qty.'</TD>';
-	  print '<TD align="right">'.price($objp->price)."</TD>\n";
-	  if ($obj->statut == 0) 
-	    {
-	      print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=deleteline&rowid='.$objp->rowid.'">del</a></td>';
-	      print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=editline&rowid='.$objp->rowid.'">edit</a></td>';
-	    }
-	  else
-	    {
-	      print '<td>&nbsp;</td><td>&nbsp;</td>';
-	    }
-	  print "</tr>";
-
-	  if ($action == 'editline' && $rowid == $objp->rowid)
-	    {
-	      print "<form action=\"$PHP_SELF?facid=$facid\" method=\"post\">";
-	      print '<input type="hidden" name="action" value="updateligne">';
-	      print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-	      print "<TR $bc[$var]>";
-	      print '<TD><textarea name="desc" cols="60" rows="3">'.stripslashes($objp->description).'</textarea></TD>';
-	      print '<TD align="center"><input type="text" name="qty" value="'.$objp->qty.'"></TD>';
-	      print '<TD align="right"><input type="text" name="price" value="'.price($objp->price).'"></TD>';
-	      print '<td colspan="2"><input type="submit"></td>';
-	      print '</tr>' . "\n";
-	      print "</form>\n";
-	    }
-
-	  $total = $total + ($objp->qty * $objp->price);
-	  $i++;
-	}
+	print "<tr><td>Date</td>";
+	print "<td colspan=\"3\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
+	print "<tr><td>".translate("Author")."</td><td colspan=\"3\">$author->fullname</td>";
 	
-	$db->free();
+	print '<tr><td>Montant</td>';
+	print '<td align="right" colspan="2"><b>'.price($obj->amount).'</b></td>';
+	print '<td>euros HT</td></tr>';
+	print '<tr><td>TVA</td><td align="right" colspan="2">'.tva($obj->amount).'</td>';
+	print '<td>euros</td></tr>';
+	print '<tr><td>Total</td><td align="right" colspan="2">'.price($obj->total).'</td>';
+	print '<td>euros TTC</td></tr>';
+	
+	print '<tr><td>Statut</td><td align="center">'.$obj->statut.'</td>';
+	print "<td>".translate("Payed")."</td>";
+	print "<td align=\"center\" bgcolor=\"#f0f0f0\"><b>".$yn[$obj->paye]."</b></td></tr>";
 	print "</table>";
-      } 
-    else
-      {
-	print $db->error();
-      }
+	
+	print "</td><td valign=\"top\">";
 
-    /*
-     * Ajouter une ligne
-     *
-     */
-    if ($obj->statut == 0) 
-      {
-	print "<form action=\"$PHP_SELF?facid=$facid\" method=\"post\">";
-	echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="1">';
-	print "<TR class=\"liste_titre\">";
-	print "<td>Description</td>";
-	print "<td>Quantité</td>";
-	print "<td align=\"right\">Montant</TD>";
-	print "</TR>\n";
-	print '<input type="hidden" name="action" value="addligne">';
-	print '<tr><td><textarea name="desc" cols="60" rows="3"></textarea></td>';
-	print '<td><input type="text" name="qty" size="2"></td>';
-	print '<td><input type="text" name="pu" size="8"></td>';
-	print '</tr>';       
-	print '<tr><td align="center" colspan="3"><input type="submit"></td></tr>';
-	print "</table>";
-	print "</form>";
-      }
+	$_MONNAIE="euros";
 
-    /*
-     * Fin Ajout ligne
-     *
-     */
-    
-    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
-
-    if ($obj->statut == 0) 
-      {
-	print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
-      } 
-    elseif ($obj->statut == 1 && $resteapayer > 0) 
-      {
-	print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=presend\">Envoyer</a>]</td>";
-      }
-    else
-      {
-	print "<td align=\"center\" width=\"25%\">-</td>";
-      } 
-
-    if ($obj->statut == 1 && $resteapayer > 0) 
-      {
-	print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php3?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
-      }
-    else
-      {
-	print "<td align=\"center\" width=\"25%\">-</td>";
-      }
-
-    if ($obj->statut == 1 && abs($resteapayer == 0) && $obj->paye == 0) 
-      {
-	print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=payed\">Classer 'Payée'</a>]</td>";
-      }
-    else
-      {
-	print "<td align=\"center\" width=\"25%\">-</td>";
-      }
-    
-    if ($obj->statut == 0) 
-      {
-	print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=valid\">Valider</a>]</td>";
-      }
-    else
-      {
-	print "<td align=\"center\" width=\"25%\"><a href=\"facture.php3?facid=$facid&action=pdf\">Générer la facture</a></td>";
-      }
-    print "</tr></table><p>";
-
-    /*
-     * Documents générés
-     *
-     */
-    print "<hr>";
-    print "<table width=\"100%\" cellspacing=2><tr><td width=\"60%\" valign=\"top\">";
-    print_titre("Documents générés");
-    print '<table width="100%" cellspacing="0" border="1" cellpadding="3">';
-
-    $file = $conf->facture->outputdir . "/" . $obj->facnumber . "/" . $obj->facnumber . ".pdf";
-
-
-    if (file_exists($file))
-      {
-	print "<tr $bc[0]><td>Facture PDF</a></td>";
-	print '<td><a href="'.$conf->facture->outputurl."/".$obj->facnumber."/".$obj->facnumber.'.pdf">'.$obj->facnumber.'.pdf</a></td>';
-      print '<td align="right">'.filesize($file). ' bytes</td>';
-      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-      print '</tr>';
-      }  
-    
-    $file = $conf->facture->outputdir . "/" . $obj->facnumber . "/" . $obj->facnumber . ".ps";
-
-    if (file_exists($file))
-      {
-	print "<tr $bc[0]><td>Facture Postscript</a></td>";
-	print '<td><a href="'.$conf->facture->outputurl."/".$obj->facnumber."/".$obj->facnumber.'.ps">'.$obj->facnumber.'.ps</a></td>';
-	print '<td align="right">'.filesize($file). ' bytes</td>';
-	print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-	print '</tr>';
-
-
-      }
-    print '<tr $bc[0]><td colspan="4">(<a href="'.$conf->facture->outputurl.'/'.$facid.'/">liste...</a>)</td></tr>';  
-
-    print "</table>\n";
-    print "</td>";
-    print '<td valign="top" width="40%">';
-    print_titre("Actions");
-    /*
-     * Liste des actions
-     *
-     */
-    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-    $sql .= " FROM actioncomm as a WHERE a.fk_soc = $obj->socidp AND a.fk_action = 9 AND a.fk_facture = $facid";
-  
-    $result = $db->query($sql);
-    if ($result)
-      {
-	$num = $db->num_rows();
-	if ($num)
+	/*
+	 * Paiements
+	 */
+	$sql = "SELECT ".$db->pdate("datep")." as dp, p.amount, c.libelle as paiement_type, p.num_paiement, p.rowid";
+	$sql .= " FROM llx_paiement as p, c_paiement as c WHERE p.fk_facture = $facid AND p.fk_paiement = c.id";
+	
+	$result = $db->query($sql);
+	if ($result)
 	  {
+	    $num = $db->num_rows();
 	    $i = 0; $total = 0;
-	    print '<TABLE border="1" cellspacing="0" cellpadding="4">';
-	    print "<TR $bc[$var]>";
+	    print "<p><b>Paiements</b>";
+	    echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+	    print "<TR class=\"liste_titre\">";
 	    print "<td>Date</td>";
-	    print "<td>Action</td>";
+	    print "<td>Type</td>";
+	    print "<td align=\"right\">Montant</TD><td>&nbsp;</td>";
+	    print "</TR>\n";
+    
+	    $var=True;
+	    while ($i < $num)
+	      {
+		$objp = $db->fetch_object( $i);
+		$var=!$var;
+		print "<TR $bc[$var]>";
+		print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+		print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
+		print "<TD align=\"right\">".price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
+		print "</tr>";
+		$total = $total + $objp->amount;
+		$i++;
+	      }
+
+	    if ($obj->paye == 0)
+	      {
+		print "<tr><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>$_MONNAIE</td></tr>\n";
+		print "<tr><td colspan=\"2\" align=\"right\">Facturé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($obj->total)."</td><td bgcolor=\"#d0d0d0\">$_MONNAIE</td></tr>\n";
+		
+		$resteapayer = $obj->total - $total;
+
+		print "<tr><td colspan=\"2\" align=\"right\">Reste a payer :</td>";
+		print "<td align=\"right\" bgcolor=\"#f0f0f0\"><b>".price($resteapayer)."</b></td><td bgcolor=\"#f0f0f0\">$_MONNAIE</td></tr>\n";
+	      }
+	    print "</table>";
+	    $db->free();
+	  } else {
+	    print $db->error();
+	  }
+	
+	print "</td></tr>";
+	print "<tr><td>Note : ".nl2br($obj->note)."</td></tr>";
+	print "</table>";
+	/*
+	 * Lignes de factures
+	 *
+	 */
+	
+	$sql = "SELECT l.description, l.price, l.qty, l.rowid";
+	$sql .= " FROM llx_facturedet as l WHERE l.fk_facture = $facid";
+	
+	$result = $db->query($sql);
+	if ($result)
+	  {
+	    $num = $db->num_rows();
+	    $i = 0; $total = 0;
+	    
+	    echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+	    print "<TR class=\"liste_titre\">";
+	    print '<td width="60%">Description</td>';
+	    print '<td width="8%"align="center">Quantité</td>';
+	    print '<td width="12%" align="right">Montant</TD><td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
 	    print "</TR>\n";
 	    
 	    $var=True;
@@ -577,125 +420,305 @@ else
 		$objp = $db->fetch_object( $i);
 		$var=!$var;
 		print "<TR $bc[$var]>";
-		print "<TD>".strftime("%d %B %Y",$objp->da)."</TD>\n";
-		print '<TD align="right">'.stripslashes($objp->note).'</TD>';
+		print "<TD>".stripslashes(nl2br($objp->description))."</TD>\n";
+		print '<TD align="center">'.$objp->qty.'</TD>';
+		print '<TD align="right">'.price($objp->price)."</TD>\n";
+		if ($obj->statut == 0) 
+		  {
+		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=deleteline&rowid='.$objp->rowid.'">del</a></td>';
+		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=editline&rowid='.$objp->rowid.'">edit</a></td>';
+		  }
+		else
+		  {
+		    print '<td>&nbsp;</td><td>&nbsp;</td>';
+		  }
 		print "</tr>";
+	  
+		if ($action == 'editline' && $rowid == $objp->rowid)
+		  {
+		    print "<form action=\"$PHP_SELF?facid=$facid\" method=\"post\">";
+		    print '<input type="hidden" name="action" value="updateligne">';
+		    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+		    print "<TR $bc[$var]>";
+		    print '<TD><textarea name="desc" cols="60" rows="3">'.stripslashes($objp->description).'</textarea></TD>';
+		    print '<TD align="center"><input type="text" name="qty" value="'.$objp->qty.'"></TD>';
+		    print '<TD align="right"><input type="text" name="price" value="'.price($objp->price).'"></TD>';
+		    print '<td colspan="2"><input type="submit"></td>';
+		    print '</tr>' . "\n";
+		    print "</form>\n";
+		  }
+		
+		$total = $total + ($objp->qty * $objp->price);
 		$i++;
 	      }
+	    
+	    $db->free();
 	    print "</table>";
+	  } 
+	else
+	  {
+	    print $db->error();
 	  }
+	
+	/*
+	 * Ajouter une ligne
+	 *
+	 */
+	if ($obj->statut == 0) 
+	  {
+	    print "<form action=\"$PHP_SELF?facid=$facid\" method=\"post\">";
+	    echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="1">';
+	    print "<TR class=\"liste_titre\">";
+	    print "<td>Description</td>";
+	    print "<td>Quantité</td>";
+	    print "<td align=\"right\">Montant</TD>";
+	    print "</TR>\n";
+	    print '<input type="hidden" name="action" value="addligne">';
+	    print '<tr><td><textarea name="desc" cols="60" rows="3"></textarea></td>';
+	    print '<td><input type="text" name="qty" size="2"></td>';
+	    print '<td><input type="text" name="pu" size="8"></td>';
+	    print '</tr>';       
+	    print '<tr><td align="center" colspan="3"><input type="submit"></td></tr>';
+	    print "</table>";
+	    print "</form>";
+	  }
+	
+	/*
+	 * Fin Ajout ligne
+	 *
+	 */
+	if ($user->societe_id == 0)
+	  {
+	    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+	
+	    if ($obj->statut == 0) 
+	      {
+		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
+	      } 
+	    elseif ($obj->statut == 1 && $resteapayer > 0) 
+	      {
+		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=presend\">Envoyer</a>]</td>";
+	      }
+	    else
+	      {
+		print "<td align=\"center\" width=\"25%\">-</td>";
+	      } 
+	    
+	    if ($obj->statut == 1 && $resteapayer > 0) 
+	      {
+		print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php3?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
+	      }
+	    else
+	      {
+		print "<td align=\"center\" width=\"25%\">-</td>";
+	      }
+	    
+	    if ($obj->statut == 1 && abs($resteapayer == 0) && $obj->paye == 0) 
+	      {
+		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=payed\">Classer 'Payée'</a>]</td>";
+	      }
+	    else
+	      {
+		print "<td align=\"center\" width=\"25%\">-</td>";
+	      }
+	    
+	    if ($obj->statut == 0) 
+	      {
+		print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=valid\">Valider</a>]</td>";
+	      }
+	    else
+	      {
+		print "<td align=\"center\" width=\"25%\"><a href=\"facture.php3?facid=$facid&action=pdf\">Générer la facture</a></td>";
+	      }
+	    print "</tr></table>";
+	  }
+	print "<p>\n";
+	/*
+	 * Documents générés
+	 *
+	 */
+	print "<hr>";
+	print "<table width=\"100%\" cellspacing=2><tr><td width=\"60%\" valign=\"top\">";
+	print_titre("Documents générés");
+	print '<table width="100%" cellspacing="0" border="1" cellpadding="3">';
+	
+	$file = $conf->facture->outputdir . "/" . $obj->facnumber . "/" . $obj->facnumber . ".pdf";
+	
+	
+	if (file_exists($file))
+	  {
+	    print "<tr $bc[0]><td>Facture PDF</a></td>";
+	    print '<td><a href="'.$conf->facture->outputurl."/".$obj->facnumber."/".$obj->facnumber.'.pdf">'.$obj->facnumber.'.pdf</a></td>';
+	    print '<td align="right">'.filesize($file). ' bytes</td>';
+	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+	    print '</tr>';
+	  }  
+	
+	$file = $conf->facture->outputdir . "/" . $obj->facnumber . "/" . $obj->facnumber . ".ps";
+	
+	if (file_exists($file))
+	  {
+	    print "<tr $bc[0]><td>Facture Postscript</a></td>";
+	    print '<td><a href="'.$conf->facture->outputurl."/".$obj->facnumber."/".$obj->facnumber.'.ps">'.$obj->facnumber.'.ps</a></td>';
+	    print '<td align="right">'.filesize($file). ' bytes</td>';
+	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+	    print '</tr>';
+	    
+	    
+	  }
+	print '<tr $bc[0]><td colspan="4">(<a href="'.$conf->facture->outputurl.'/'.$facid.'/">liste...</a>)</td></tr>';  
+	
+	print "</table>\n";
+	print "</td>";
+	print '<td valign="top" width="40%">';
+	print_titre("Actions");
+	/*
+	 * Liste des actions
+	 *
+	 */
+	$sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
+	$sql .= " FROM actioncomm as a WHERE a.fk_soc = $obj->socidp AND a.fk_action = 9 AND a.fk_facture = $facid";
+	
+	$result = $db->query($sql);
+	if ($result)
+	  {
+	    $num = $db->num_rows();
+	    if ($num)
+	      {
+		$i = 0; $total = 0;
+		print '<TABLE border="1" cellspacing="0" cellpadding="4">';
+		print "<TR $bc[$var]>";
+		print "<td>Date</td>";
+		print "<td>Action</td>";
+		print "</TR>\n";
+		
+		$var=True;
+		while ($i < $num)
+		  {
+		    $objp = $db->fetch_object( $i);
+		    $var=!$var;
+		    print "<TR $bc[$var]>";
+		    print "<TD>".strftime("%d %B %Y",$objp->da)."</TD>\n";
+		    print '<TD align="right">'.stripslashes($objp->note).'</TD>';
+		    print "</tr>";
+		    $i++;
+		  }
+		print "</table>";
+	      }
+	  }
+	else
+	  {
+	    print $db->error();
+	  }
+	
+	/*
+	 *
+	 *
+	 */
+	print "</td></tr>";
+	print "</table>";
+	
+	/*
+	 * Generation de la facture
+	 *
+	 */
+	if ($action == 'pdf')
+	  {
+	    print "<hr><b>Génération de la facture</b><br><small><pre>";
+	    $command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name."\" ";
+	    $command .= " ; ./texfacture.pl --html -vv --facture=$facid --pdf --output=".$conf->facture->outputdir;
+	    $command .= " --templates=".$conf->facture->templatesdir;
+	    
+	    $output = system($command);
+	    print "<p>command :<br><small>$command</small><br>";
+	    //print "<p>output :<br><small>$output</small><br>";
+	    print "</pre></small>";
+	  } 
+	/*
+	 *
+	 *
+	 */
+	if ($action == 'presend')
+	  {
+	    $replytoname = "R. Quiedeville"; 
+	    $from_name = $replytoname;
+	    $replytomail = "rq@quiedeville.org"; 
+	    $from_mail = $replytomail;
+	    
+	    print "<form method=\"post\" action=\"$PHP_SELF?facid=$facid&action=send\">\n";
+	    print "<input type=\"hidden\" name=\"replytoname\" value=\"$replytoname\">\n";
+	    print "<input type=\"hidden\" name=\"replytomail\" value=\"$replytomail\">\n";
+	    
+	    print "<p><b>Envoyer la facture par mail</b>";
+	    print "<table cellspacing=0 border=1 cellpadding=3>";
+	    print '<tr><td>Destinataire</td><td colspan="5">';
+	    
+	    $form = new Form($db);
+	    
+	    $form->select_array("destinataire",$soc->contact_email_array());
+	    
+	    print '</td>';
+	    print "<td><input size=\"30\" name=\"sendto\" value=\"$obj->email\"></td></tr>";
+	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
+	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
+	    print "<td>$replytomail</td></tr>";
+	    
+	    print "</table>";
+	    print "<input type=\"submit\" value=\"Envoyer\">";
+	    print "</form>";
+	  }
+	
+	/*
+	 *   Propales
+	 */
+	
+	$sql = "SELECT ".$db->pdate("p.datep")." as dp, p.price, p.ref, p.rowid as propalid";
+	$sql .= " FROM llx_propal as p, llx_fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $facid";
+  
+	$result = $db->query($sql);
+	if ($result)
+	  {
+	    $num = $db->num_rows();
+	    if ($num)
+	      {
+		$i = 0; $total = 0;
+		print "<p><b>Proposition(s) commerciale(s) associée(s)</b>";
+		print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
+		print "<TR class=\"liste_titre\">";
+		print "<td>Num</td>";
+		print "<td>Date</td>";
+		print "<td align=\"right\">Prix</TD>";
+		print "</TR>\n";
+		
+		$var=True;
+		while ($i < $num)
+		  {
+		    $objp = $db->fetch_object( $i);
+		    $var=!$var;
+		    print "<TR $bc[$var]>";
+		    print "<TD><a href=\"propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+		    print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+		    print '<TD align="right">'.price($objp->price).'</TD>';
+		    print "</tr>";
+		    $total = $total + $objp->price;
+		    $i++;
+		  }
+		print "<tr><td align=\"right\" colspan=\"3\">Total : <b>".price($total)."</b> $_MONNAIE HT</td></tr>\n";
+		print "</table>";
+	      }
+	  } else {
+	    print $db->error();
+	  }	
       }
     else
       {
-	print $db->error();
+	/* Facture non trouvée */
+	print "Facture inexistante ou accés refusé";
       }
-
-    /*
-     *
-     *
-     */
-    print "</td></tr>";
-    print "</table>";
-  
-    /*
-     * Generation de la facture
-     *
-     */
-    if ($action == 'pdf')
-      {
-	print "<hr><b>Génération de la facture</b><br><small><pre>";
-	$command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name."\" ";
-	$command .= " ; ./texfacture.pl --html -vv --facture=$facid --pdf --output=".$conf->facture->outputdir;
-	$command .= " --templates=".$conf->facture->templatesdir;
-	
-	$output = system($command);
-	print "<p>command :<br><small>$command</small><br>";
-	//print "<p>output :<br><small>$output</small><br>";
-	print "</pre></small>";
-      } 
-    /*
-     *
-     *
-     */
-    if ($action == 'presend')
-      {
-	$replytoname = "R. Quiedeville"; 
-	$from_name = $replytoname;
-	$replytomail = "rq@quiedeville.org"; 
-	$from_mail = $replytomail;
-	
-	print "<form method=\"post\" action=\"$PHP_SELF?facid=$facid&action=send\">\n";
-	print "<input type=\"hidden\" name=\"replytoname\" value=\"$replytoname\">\n";
-	print "<input type=\"hidden\" name=\"replytomail\" value=\"$replytomail\">\n";
-	
-	print "<p><b>Envoyer la facture par mail</b>";
-	print "<table cellspacing=0 border=1 cellpadding=3>";
-	print '<tr><td>Destinataire</td><td colspan="5">';
-
-	$form = new Form($db);
-
-	$form->select_array("destinataire",$soc->contact_email_array());
-
-	print '</td>';
-	print "<td><input size=\"30\" name=\"sendto\" value=\"$obj->email\"></td></tr>";
-	print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
-	print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
-	print "<td>$replytomail</td></tr>";
-	
-	print "</table>";
-	print "<input type=\"submit\" value=\"Envoyer\">";
-	print "</form>";
-      }
-
-    /*
-     *
-     *
-     */
-    
-
-    /*
-     *   Propales
-     */
-  
-    $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.price, p.ref, p.rowid as propalid";
-    $sql .= " FROM llx_propal as p, llx_fa_pr as fp WHERE fp.fk_propal = p.rowid AND fp.fk_facture = $facid";
-  
-    $result = $db->query($sql);
-    if ($result) {
-      $num = $db->num_rows();
-      if ($num) {
-	$i = 0; $total = 0;
-	print "<p><b>Proposition(s) commerciale(s) associée(s)</b>";
-	print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
-	print "<TR class=\"liste_titre\">";
-	print "<td>Num</td>";
-	print "<td>Date</td>";
-	print "<td align=\"right\">Prix</TD>";
-	print "</TR>\n";
-    
-	$var=True;
-	while ($i < $num) {
-	  $objp = $db->fetch_object( $i);
-	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<TD><a href=\"propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-	  print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-	  print '<TD align="right">'.price($objp->price).'</TD>';
-	  print "</tr>";
-	  $total = $total + $objp->price;
-	  $i++;
-	}
-	print "<tr><td align=\"right\" colspan=\"3\">Total : <b>".price($total)."</b> $_MONNAIE HT</td></tr>\n";
-	print "</table>";
-      }
-    } else {
-      print $db->error();
-    }
-
   } else {
     /*
      *
-     * Liste
+     * Mode Liste
      *
      *
      */
