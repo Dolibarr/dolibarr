@@ -36,6 +36,7 @@ $db = new Db();
 // positionne la variable pour le test d'affichage de l'icone
 
 $facture_addon_var = FACTURE_ADDON;
+$facture_addon_var_pdf = FACTURE_ADDON_PDF;
 
 if ($action == 'set')
 {
@@ -46,6 +47,18 @@ if ($action == 'set')
       // la constante qui a été lue en avant du nouveau set
       // on passe donc par une variable pour avoir un affichage cohérent
       $facture_addon_var = $value;
+    }
+}
+
+if ($action == 'setpdf')
+{
+  $sql = "REPLACE INTO llx_const SET name = 'FACTURE_ADDON_PDF', value='".$value."'";
+
+  if ($db->query($sql))
+    {
+      // la constante qui a été lue en avant du nouveau set
+      // on passe donc par une variable pour avoir un affichage cohérent
+      $facture_addon_var_pdf = $value;
     }
 }
 
@@ -100,6 +113,61 @@ while (($file = readdir($handle))!==false)
 closedir($handle);
 
 print '</table>';
+/*
+ * PDF
+ */
+
+print_titre("Modèles de facture pdf");
+
+print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<TR class="liste_titre">';
+print '<td>Nom</td>';
+print '<td>Info</td>';
+print '<td align="center">Activé</td>';
+print '<td>&nbsp;</td>';
+print "</TR>\n";
+
+clearstatcache();
+
+$handle=opendir($dir);
+
+while (($file = readdir($handle))!==false)
+{
+  if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,4) == 'pdf_')
+    {
+      $name = substr($file, 4, strlen($file) -16);
+      $classname = substr($file, 0, strlen($file) -12);
+
+      print '<tr><td>';
+      echo "$name";
+      print "</td><td>\n";
+      require_once($dir.$file);
+      $obj = new $classname();
+      
+      print $obj->description;
+
+      print '</td><td align="center">';
+
+      if ($facture_addon_var_pdf == "$file")
+	{
+	  print '<img src="/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	}
+      else
+	{
+	  print "&nbsp;";
+	}
+
+      print "</td><td>\n";
+
+      print '<a href="facture.php?action=setpdf&value='.$file.'">activer</a>';
+
+      print '</td></tr>';
+    }
+}
+closedir($handle);
+
+print '</table>';
+
 
 llxFooter();
 ?>
