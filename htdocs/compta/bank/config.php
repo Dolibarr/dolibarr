@@ -25,7 +25,7 @@ llxHeader();
 
 print_titre("Configuration");
 
-print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
 print "<TR class=\"liste_titre\">";
 print "<td>id</td><td>Label</td><td>Description</TD>";
 print "<td align=\"left\">Number</a></TD>";
@@ -56,21 +56,23 @@ if ($result)
 print "</table>";
 
 
-print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr $bc[1]>";
+print '<p><table id="actions" width="100%" cellspacing="0" cellpadding="4">'."<tr>";
 
 /*
  * Case 1
  */
 
-print "<td align=\"center\" width=\"25%\">";
+print '<td align="center" width="20%">';
 print '<a href="fiche.php?action=create">Nouveau compte</a></td>';	
 /*
  * Case 2
  */
 
-print "<td align=\"center\" width=\"25%\">-</td>";
-print "<td align=\"center\" width=\"25%\">-</td>";
-print "<td align=\"center\" width=\"25%\">-</td>";
+print '<td align="center" width="20%">-</td>';
+print '<td align="center" width="20%">-</td>';
+print '<td align="center" width="20%">';
+print '<a href="categ.php">Catégories</a></td>';
+print '<td align="center" width="20%">-</td>';
 
 print "</table>";
 
