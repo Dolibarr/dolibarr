@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,10 +22,11 @@
  */
 
 /**
-	        \file       htdocs/fourn/commande/fiche.php
-	        \ingroup    commande
-	        \brief      Fiche commande
-	        \version    $Revision$
+   \file       htdocs/fourn/commande/fiche.php
+   \ingroup    commande
+   \brief      Fiche commande
+   \version    $Revision$
+
 */
 
 require("./pre.inc.php");
@@ -34,14 +35,12 @@ $langs->load("orders");
 $langs->load("suppliers");
 $langs->load("companies");
 
-
 $user->getrights('fournisseur');
 
-if (!$user->rights->fournisseur->commande->lire)
-  accessforbidden();
+if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
-require_once "../../project.class.php";
-require_once "../../propal.class.php";
+require_once DOL_DOCUMENT_ROOT."/project.class.php";
+require_once DOL_DOCUMENT_ROOT."/propal.class.php";
 require_once DOL_DOCUMENT_ROOT."/fournisseur.class.php";
 
 /*
@@ -60,6 +59,15 @@ if ($_POST["action"] == 'classin')
   $commande = new CommandeFournisseur($db);
   $commande->fetch($_GET["id"]);
   $commande->classin($_POST["projetid"]);
+}
+/*
+ *
+ */
+if ($_GET["action"] == 'pdf') 
+{
+  $commande = new CommandeFournisseur($db);
+  $commande->fetch($_GET["id"]);
+  $commande->generate_pdf();
 }
 
 /*
@@ -167,18 +175,11 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes && $user->r
   $commande->id = $_GET["id"];
   $commande->delete();
   Header("Location: index.php");
-
 }
 
-if ($_GET["action"] == 'pdf')
-{
-  /*
-   * Generation de la commande
-   * définit dans /includes/modules/commande/modules_commande.php
-   */
-  commande_pdf_create($db, $_GET["id"]);
-} 
-
+/*
+ * Créé une commande
+ */
 if ($_GET["action"] == 'create') 
 {
 
@@ -194,10 +195,7 @@ if ($_GET["action"] == 'create')
 
 llxHeader('',$langs->trans("OrderCard"),"Commande");
 
-
-
 $html = new Form($db);
-
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -205,11 +203,10 @@ $html = new Form($db);
 /*                                                                             */
 /* *************************************************************************** */
   
-$id = $_GET["id"];
-if ($id > 0)
+if ($_GET["id"] > 0)
 {
   $commande = new CommandeFournisseur($db);
-  if ( $commande->fetch($id) == 0)
+  if ( $commande->fetch($_GET["id"]) == 0)
     {	  
       $soc = new Societe($db);
       $soc->fetch($commande->soc_id);
@@ -223,6 +220,9 @@ if ($id > 0)
       $a = $h;
       $h++;
 
+      $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$commande->id;
+      $head[$h][1] = $langs->trans("Note");
+      $h++;
       
       $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/history.php?id='.$commande->id;
       $head[$h][1] = $langs->trans("History");
@@ -236,7 +236,7 @@ if ($id > 0)
        */
       if ($_GET["action"] == 'delete')
 	{
-	  $html->form_confirm("fiche.php?id=$id","Supprimer la commande","Etes-vous sûr de vouloir supprimer cette commande ?","confirm_delete");
+	  $html->form_confirm("fiche.php?id=$commande->id","Supprimer la commande","Etes-vous sûr de vouloir supprimer cette commande ?","confirm_delete");
 	  print '<br />';
 	}
 	  
@@ -246,7 +246,7 @@ if ($id > 0)
        */
       if ($_GET["action"] == 'valid')
 	{
-	  $html->form_confirm("fiche.php?id=$id","Valider la commande","Etes-vous sûr de vouloir valider cette commande ?","confirm_valid");
+	  $html->form_confirm("fiche.php?id=$commande->id","Valider la commande","Etes-vous sûr de vouloir valider cette commande ?","confirm_valid");
 	  print '<br />';
 	}
       /*
@@ -255,7 +255,7 @@ if ($id > 0)
        */
       if ($_GET["action"] == 'approve')
 	{
-	  $html->form_confirm("fiche.php?id=$id","Approuver la commande","Etes-vous sûr de vouloir approuver cette commande ?","confirm_approve");
+	  $html->form_confirm("fiche.php?id=$commande->id","Approuver la commande","Etes-vous sûr de vouloir approuver cette commande ?","confirm_approve");
 	  print '<br />';
 	}
       /*
@@ -264,7 +264,7 @@ if ($id > 0)
        */
       if ($_GET["action"] == 'refuse')
 	{
-	  $html->form_confirm("fiche.php?id=$id","Refuser la commande","Etes-vous sûr de vouloir refuser cette commande ?","confirm_refuse");
+	  $html->form_confirm("fiche.php?id=$commande->id","Refuser la commande","Etes-vous sûr de vouloir refuser cette commande ?","confirm_refuse");
 	  print '<br />';
 	}
       /*
@@ -273,7 +273,7 @@ if ($id > 0)
        */
       if ($_GET["action"] == 'annuler')
 	{
-	  $html->form_confirm("fiche.php?id=$id",$langs->trans("Cancel"),"Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
+	  $html->form_confirm("fiche.php?id=$commande->id",$langs->trans("Cancel"),"Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
 	  print '<br />';
 	}
       /*
@@ -295,7 +295,7 @@ if ($id > 0)
       print '<td colspan="2">';
       print '<b><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  
-      print '<td width="50%">';
+      print '<td width="50%" colspan="3">';
       print '<img src="statut'.$commande->statut.'.png">&nbsp;';
       print $commande->statuts[$commande->statut];
       print "</td></tr>";
@@ -308,31 +308,29 @@ if ($id > 0)
 	  print strftime("%A %d %B %Y",$commande->date_commande)."\n";
 	}
 
-      print '&nbsp;</td><td width="50%">';
+      print '&nbsp;</td><td width="50%" colspan="3">';
       if ($commande->methode_commande)
 	{
 	  print "Méthode : " .$commande->methode_commande;
 	}
       print "</td></tr>";
       print '<tr><td>'.$langs->trans("Author").'</td><td colspan="2">'.$author->fullname.'</td>';	
-      print '<td>';
+      print '<td colspan="3">';
       print "&nbsp;</td></tr>";
   
       // Ligne de 3 colonnes
       print '<tr><td>'.$langs->trans("AmountHT").'</td>';
       print '<td align="right"><b>'.price($commande->total_ht).'</b></td>';
       print '<td>'.$conf->monnaie.'</td>';
-      print '<td rowspan="4" valign="top">'.$langs->trans("Note").' :</td></tr>';
-
-
-
-      print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
+      print '<td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
       print '<td>'.$conf->monnaie.'</td></tr>';
+
       print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
-      print '<td>'.$conf->monnaie.'</td></tr>';
+      print '<td>'.$conf->monnaie.'</td><td colspan="3">&nbsp;</td></tr>';
+
       if ($commande->note)
 	{
-	  print '<tr><td colspan="3">Note : '.nl2br($commande->note)."</td></tr>";
+	  print '<tr><td>Note</td><td colspan="5">'.nl2br($commande->note)."</td></tr>";
 	}
 	  
       print "</table>";
@@ -345,7 +343,7 @@ if ($id > 0)
 
       $sql = "SELECT l.ref, l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
       $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l ";
-      $sql .= " WHERE l.fk_commande = $id ORDER BY l.rowid";
+      $sql .= " WHERE l.fk_commande = $commande->id ORDER BY l.rowid";
 	  
       $result = $db->query($sql);
       if ($result)
@@ -393,11 +391,11 @@ if ($id > 0)
 	      print '<td align="right">'.price($objp->subprice)."</td>\n";
 	      if ($commande->statut == 0  && $user->rights->fournisseur->commande->creer) 
 		{/*
-		  print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
+		  print '<td align="right"><a href="fiche.php?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 		  print img_edit();
 		  print '</a></td>';
 		 */
-		  print '<td>&nbsp;</td><td align="right"><a href="fiche.php?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+		  print '<td>&nbsp;</td><td align="right"><a href="fiche.php?id='.$commande->id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
 		  print img_delete();
 		  print '</a></td>';
 		}
@@ -409,7 +407,7 @@ if ($id > 0)
 		  
 	      if ($_GET["action"] == 'editline' && $_GET["rowid"] == $objp->rowid)
 		{
-		  print "<form action=\"fiche.php?id=$id\" method=\"post\">";
+		  print "<form action=\"fiche.php?id=$commande->id\" method=\"post\">";
 		  print '<input type="hidden" name="action" value="updateligne">';
 		  print '<input type="hidden" name="elrowid" value="'.$_GET["rowid"].'">';
 		  print "<tr $bc[$var]>";
@@ -462,7 +460,7 @@ if ($id > 0)
 	      print $db->error();
 	    }
 
-	  print "<form action=\"fiche.php?id=$id\" method=\"post\">";
+	  print "<form action=\"fiche.php?id=$commande->id\" method=\"post\">";
 	  print '<input type="hidden" name="action" value="addligne">';
 
 	  print "<tr class=\"liste_titre\">";
@@ -511,7 +509,7 @@ if ($id > 0)
 	    {
 	      if ($user->rights->fournisseur->commande->valider)
 		{
-		  print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
+		  print '<a class="tabAction" href="fiche.php?id='.$commande->id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
 		}
 	    }
 	    
@@ -519,9 +517,9 @@ if ($id > 0)
 	    {
 	      if ($user->rights->fournisseur->commande->approuver)
 		{
-		  print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
+		  print '<a class="tabAction" href="fiche.php?id='.$commande->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
 
-		  print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+		  print '<a class="tabAction" href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
 		}
 	    }
 
@@ -529,7 +527,7 @@ if ($id > 0)
 	    {
 	      if ($user->rights->fournisseur->commande->approuver)
 		{
-		  print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+		  print '<a class="tabAction" href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
 		}
 	    }
 
@@ -537,7 +535,7 @@ if ($id > 0)
 	    {
 	      if ($user->rights->fournisseur->commande->creer)
 		{
-		  print '<a class="butDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+		  print '<a class="butDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 		}
 	    }
 	    
@@ -695,7 +693,7 @@ if ($id > 0)
   else
     {
       /* Commande non trouvée */
-      print "Commande inexistante ou accés refusé";
+      print "Commande inexistante";
     }
 }  
 
