@@ -2,7 +2,7 @@
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/system/mysql-tables-contraintes.php
+/*!	\file htdocs/admin/system/database-tables-contraintes.php
 		\brief      Page d'info des contraintes de la base
 		\version    $Revision$
 */
 
 require("./pre.inc.php");
-include_once $dolibarr_main_document_root."/lib/${dolibarr_main_db_type}.lib.php";
+include_once $dolibarr_main_document_root."/lib/".$conf->db->type.".lib.php";
 
 $langs->load("admin");
 
@@ -42,12 +42,13 @@ llxHeader();
 
 print_titre($langs->trans("Constraints"));
 
-if($dolibarr_main_db_type=="mysql")
+if ($conf->db->type == 'mysql')
 {
 $sql = "SHOW TABLE STATUS";
 $base=1;
 }
-else
+
+if ($conf->db->type == 'pgsql')
 {
 $sql = "select conname,contype from pg_constraint;";
 $base=2;

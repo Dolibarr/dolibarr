@@ -2,7 +2,7 @@
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/system/mysql-tables.php
+/*!	\file htdocs/admin/system/database-tables.php
 		\brief      Page d'infos des tables de la base
 		\version    $Revision$
 */
 
 require("./pre.inc.php");
-include_once $dolibarr_main_document_root."/lib/${dolibarr_main_db_type}.lib.php";
+include_once $dolibarr_main_document_root."/lib/".$conf->db->type.".lib.php";
 
 $langs->load("admin");
 
@@ -44,9 +44,9 @@ if ($_GET["action"] == 'convert')
 
 llxHeader();
 	
-print_titre($langs->trans("Tables")." ".ucfirst($dolibarr_main_db_type));
+print_titre($langs->trans("Tables")." ".ucfirst($conf->db->type));
 
-if($dolibarr_main_db_type=="mysql")
+if($conf->db->type == 'mysql')
 {
     print '<br>';
     print '<table class="noborder">';
@@ -74,13 +74,13 @@ if($dolibarr_main_db_type=="mysql")
         {
           $row = $db->fetch_row($i);
           $var=!$var;
-          print "<TR $bc[$var]>";
+          print "<tr $bc[$var]>";
     
           print '<td>'.$row[0].'</td>';
           print '<td>'.$row[1].'</td>';
           if ($row[1] == "MyISAM")
     	{
-    	  print '<td><a href="mysql-tables.php?action=convert&amp;table='.$row[0].'">Convertir</a></td>';
+    	  print '<td><a href="database-tables.php?action=convert&amp;table='.$row[0].'">Convertir</a></td>';
     	}
           else
     	{
@@ -98,7 +98,8 @@ if($dolibarr_main_db_type=="mysql")
         }
     }
 }
-else
+
+if($conf->db->type == 'pgsql')
 {
     print '<br>';
     print '<table class="noborder">';
@@ -135,5 +136,6 @@ else
     }
     print '</table>';
 }
+
 llxFooter();
 ?>

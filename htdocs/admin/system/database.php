@@ -2,7 +2,7 @@
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier			 <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,13 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/system/mysql.php
+/*!	\file htdocs/admin/system/database.php
 		\brief      Page des infos système de la base de donnée
 		\version    $Revision$
 */
 
 require("./pre.inc.php");
-include_once $dolibarr_main_document_root."/lib/${dolibarr_main_db_type}.lib.php";
+include_once $dolibarr_main_document_root."/lib/".$conf->db->type.".lib.php";
 
 $langs->load("admin");
 
@@ -39,15 +39,16 @@ llxHeader();
 
 print_titre($langs->trans("DatabaseConfiguration"));
 
-if($dolibarr_main_db_type=="mysql")
+if ($conf->db->type == 'mysql')
 {
-  $sql = "SHOW VARIABLES";
-	$base=1;
+    $sql = "SHOW VARIABLES";
+    $base=1;
 }
-else
+
+if ($conf->db->type == 'pgsql')
 {
-	$sql = "select name,setting from pg_settings;";
-	$base=2;
+    $sql = "select name,setting from pg_settings;";
+    $base=2;
 }
 
 print '<br>';
@@ -69,7 +70,7 @@ if ($result)
         $objp = $db->fetch_object( $i);
         $var=!$var;
         print "<tr $bc[$var]>";
-        if($base==1)
+        if ($base==1)
             print '<td>'.$objp->Variable_name.'</td><td>'.$objp->Value.'</td>';
         else
             print '<td>'.$objp->name.'</td><td>'.$objp->setting.'</td>';
