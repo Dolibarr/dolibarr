@@ -135,6 +135,21 @@ class FicheInterConf {
   }
 }
 /*
+ * Dons
+ *
+ */
+class DonConf {
+  Function DonConf() {
+    $this->enabled = 0;
+
+    /*
+     * Paiement en ligne
+     */
+
+    $this->onlinepayment = 0;
+  }
+}
+/*
  * Produits
  *
  */
