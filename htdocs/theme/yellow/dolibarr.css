@@ -114,3 +114,20 @@ input.flat
 { 
   border: 0
  }
+
+td.valeur
+{ 
+  font-weight: bold;
+  }
+
+td.delete
+{ 
+  background: red;
+  font-weight: bold;
+  }
+
+td.valid
+{ 
+  background: pink;
+  font-weight: bold;
+  }
