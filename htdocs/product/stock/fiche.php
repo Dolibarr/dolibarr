@@ -26,7 +26,7 @@ require("./pre.inc.php");
 
 $mesg = '';
 
-llxHeader("","","Fiche entrepôt");
+
 
 if ($_POST["action"] == 'add')
 {
@@ -38,7 +38,7 @@ if ($_POST["action"] == 'add')
   $entrepot->statut      = $_POST["statut"];
 
   $id = $entrepot->create($user);
-  $action = '';
+  Header("Location: fiche.php?id=$id");
 }
 
 if ($_POST["action"] == 'update' && $_POST["cancel"] <> 'Annuler')
@@ -68,6 +68,8 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> 'Annuler')
     }
 }
 
+
+llxHeader("","","Fiche entrepôt");
 
 if ($cancel == 'Annuler')
 {
