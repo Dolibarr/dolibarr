@@ -167,7 +167,7 @@ if ($propalid) {
    *
    */
   $sql = "SELECT s.nom, s.idp, p.price, p.fk_projet,p.remise, p.tva, p.total, p.ref,".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst, p.note, x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture";
-  $sql .= " FROM societe as s, llx_propal as p, c_propalst as c, socpeople as x";
+  $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c, llx_socpeople as x";
   $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = $propalid";
 
   if ($socidp) { 
@@ -363,7 +363,7 @@ if ($propalid) {
 	 */
 
 	if ( $db->query($sql) ) {
-	  $sql = "INSERT INTO actioncomm (datea,fk_action,fk_soc, propalrowid,note, fk_user_author) ";
+	  $sql = "INSERT INTO llx_actioncomm (datea,fk_action,fk_soc, propalrowid,note, fk_user_author) ";
 	  $sql .= " VALUES (now(), 3, $obj->idp, $propalid, 'Envoyée à $sendto',$user->id);";
 	  if (! $db->query($sql) ) {
 	    print $db->error();
@@ -408,7 +408,7 @@ if ($propalid) {
        *
        */
       $sql = "SELECT ".$db->pdate("a.datea"). " as da, note, fk_user_author" ;
-      $sql .= " FROM actioncomm as a WHERE a.fk_soc = $obj->idp AND a.propalrowid = $propalid ";
+      $sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $obj->idp AND a.propalrowid = $propalid ";
 
       if ( $db->query($sql) ) {
 	$num = $db->num_rows();
@@ -518,12 +518,14 @@ if ($propalid) {
    * 
    */
 
-  if ($sortfield == "") {
-    $sortfield="p.datep";
-  }
-  if ($sortorder == "") {
-    $sortorder="DESC";
-  }
+  if ($sortfield == "")
+    {
+      $sortfield="p.datep";
+    }
+  if ($sortorder == "")
+    {
+      $sortorder="DESC";
+    }
 
   if ($page == -1) { $page = 0 ; }
 
@@ -531,12 +533,10 @@ if ($propalid) {
   $pageprev = $page - 1;
   $pagenext = $page + 1;
 
-  print "<table width=\"100%\">";
-  print "<tr><td><div class=\"titre\">Propositions commerciales</div></td>";
-  print "</table>";
+  print_titre("Propositions commerciales");
 
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-  $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
+  $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
 
   if ($socidp) { 
     $sql .= " AND s.idp = $socidp"; 
@@ -561,11 +561,15 @@ if ($propalid) {
     print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
     print '<TR class="liste_titre">';
-    print "<TD>Réf</TD><td>";
+    print "<TD>";
+    print_liste_field_titre ("Réf",$PHP_SELF,"p.ref");
+    print "</TD><td>";
     print_liste_field_titre ("Société",$PHP_SELF,"s.nom");
-    print "</td><TD align=\"right\" colspan=\"2\">Date</TD>";
-    print "<TD align=\"right\">Prix</TD>";
-    print "<TD align=\"center\">Statut <a href=\"$PHP_SELF?viewstatut=$objp->statutid\">";
+    print '</td><TD align="right" colspan="2">';
+    print_liste_field_titre ("Date",$PHP_SELF,"p.datep");
+    print '</td><TD align="right">';
+    print_liste_field_titre ("Prix",$PHP_SELF,"p.price");
+    print "</td><TD align=\"center\">Statut <a href=\"$PHP_SELF?viewstatut=$objp->statutid\">";
     print '<img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a></td>';
     print "</TR>\n";
     $var=True;
