@@ -26,21 +26,17 @@ llxHeader();
 
 $db = new Db();
 
-if ($action == 'add' && $user->admin)
+if ($HTTP_POST_VARS["action"] == 'add' && $user->admin)
 {
-  $service = new Service($db);
+  $edituser = new User($db,0);
 
-  $service->ref = $ref;
-  $service->libelle = $label;
-  $service->price = $price;
-  $service->description = $desc;
+  $edituser->nom    = $HTTP_POST_VARS["nom"];
+  $edituser->prenom = $HTTP_POST_VARS["prenom"];
+  $edituser->login  = $HTTP_POST_VARS["login"];
+  $edituser->email  = $HTTP_POST_VARS["email"];
+  $edituser->admin  = 0;
 
-  $id = $service->create($user->id);
-
-  if ($comm_now && $id)
-    {
-      $service->start_comm($id, $user->id);
-    }
+  $id = $edituser->create($user->id);
 
 }
 
@@ -65,7 +61,7 @@ if ($action == 'password' && $user->admin)
   $edituser = new User($db, $id);
   $edituser->fetch();
 
-  if ($edituser->password())
+  if ($edituser->password('',$conf->password_encrypted))
     {
       print "Mot de passe changé et envoyé à $edituser->email<p>";
     }
@@ -83,25 +79,19 @@ if ($action == 'create')
 {
 
   print '<div class="titre">Nouvel utilisateur</div><br>';
-  print 'A FINIR !!<p><form action="'.$PHP_SELF.'" method="post">';
+  print '<p><form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
 
-
-  print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
-  print '<input type="hidden" name="action" value="update">';
   print '<table border="1" cellpadding="3" cellspacing="0">';
-  
-  print '<tr><td valign="top">Nom</td>';
-  print '<td>'.$user->id.'</td></tr>';
-  
-  print '<tr><td valign="top">Nom</td>';
-  print '<td><input size="12" type="text" name="ref" value="'.$user->nom.'"></td></tr>';
-  
+
   print '<tr><td valign="top">Prénom</td>';
-  print '<td><input size="30" type="text" name="label" value="'.$user->prenom.'"></td></tr>';
+  print '<td><input size="30" type="text" name="prenom" value=""></td></tr>';
+  
+  print '<tr><td valign="top">Nom</td>';
+  print '<td><input size="20" type="text" name="nom" value=""></td></tr>';
   
   print '<tr><td valign="top">Login</td>';
-  print '<td><input size="30" type="text" name="label" value="'.$user->login.'"></td></tr>';
+  print '<td><input size="30" type="text" name="login" value=""></td></tr>';
 
   
   print '<tr><td valign="top">Description</td><td>';
@@ -140,7 +130,7 @@ else
       print '<td>'.$fuser->email.'</td></tr>';
       
       print '<tr><td width="25%" valign="top">Webcal Login</td>';
-      print '<td width="25%" bgcolor="#e0e0e0">'.$fuser->webcal_login.'</td>';
+      print '<td width="25%" bgcolor="#e0e0e0">'.$fuser->webcal_login.'&nbsp;</td>';
       print '<td width="25%" valign="top">Administrateur</td>';
       print '<td width="25%">'.$yn[$fuser->admin].'</td></tr>';
       

@@ -126,10 +126,18 @@ class User {
 		    {
 		      $this->id = $this->db->last_insert_id();
 		      $this->update();
-		      return 1;		      
+		      return $this->id;      
 		    }
 		}
+	      else
+		{
+		  print $this->db->error();
+		}
 	    }
+	}
+      else
+	{
+	  print $this->db->error();
 	}
     }
   /*
@@ -183,14 +191,14 @@ class User {
    *
    *
    */
-  Function password($password='')
+  Function password($password='',$password_encrypted=0)
     {
       if (! $password)
 	{
 	  $password =  substr(crypt(uniqid("")),0,8);
 	}
 
-      if ($conf->password_encrypted)
+      if ($password_encrypted)
 	{
 	  $sqlpass = crypt($password, "CRYPT_STD_DES");
 	}
