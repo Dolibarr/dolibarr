@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,7 +116,7 @@ class Product
 		}
 	      
 	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product (datec, fk_user_author, fk_product_type, price)";
-	      $sql .= " VALUES (now(),".$user->id.",$this->type, " . ereg_replace(",",".",$this->price) . ")";
+	      $sql .= " VALUES (now(),".$user->id.",$this->type, '" . ereg_replace(",",".",$this->price) . "')";
 	      $result = $this->db->query($sql);
 	      if ( $result )
 		{
