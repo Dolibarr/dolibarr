@@ -259,6 +259,11 @@ if (defined("MAIN_MODULE_PRELEVEMENT"))
 if (defined("MAIN_MODULE_WEBCALENDAR"))
 {
   $conf->webcal->enabled=MAIN_MODULE_WEBCALENDAR;
+  $conf->webcal->db->type=defined(PHPWEBCALENDAR_TYPE)?PHPWEBCALENDAR_TYPE:'mysql';
+  $conf->webcal->db->host=PHPWEBCALENDAR_HOST;
+  $conf->webcal->db->user=PHPWEBCALENDAR_USER;
+  $conf->webcal->db->pass=PHPWEBCALENDAR_PASS;
+  $conf->webcal->db->name=PHPWEBCALENDAR_DBNAME;
 }
 if (defined("MAIN_MODULE_FACTURE"))
 {
