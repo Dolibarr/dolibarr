@@ -123,6 +123,34 @@ class modTelephonie extends DolibarrModules
     $this->rights[6][4] = 'ligne';
     $this->rights[6][5] = 'creer';
 
+    $this->rights[7][0] = 202;
+    $this->rights[7][1] = 'Créer des liaisons ADSL';
+    $this->rights[7][2] = 'w';
+    $this->rights[7][3] = 0;
+    $this->rights[7][4] = 'adsl';
+    $this->rights[7][5] = 'creer';
+
+    $this->rights[8][0] = 203;
+    $this->rights[8][1] = "Demander la commande des liaisons";
+    $this->rights[8][2] = 'w';
+    $this->rights[8][3] = 0;
+    $this->rights[8][4] = 'adsl';
+    $this->rights[8][5] = 'requete';
+
+    $this->rights[9][0] = 204;
+    $this->rights[9][1] = 'Commander les liaisons';
+    $this->rights[9][2] = 'w';
+    $this->rights[9][3] = 0;
+    $this->rights[9][4] = 'adsl';
+    $this->rights[9][5] = 'commander';
+
+    $this->rights[10][0] = 205;
+    $this->rights[10][1] = 'Gérer les liaisons';
+    $this->rights[10][2] = 'w';
+    $this->rights[10][3] = 0;
+    $this->rights[10][4] = 'adsl';
+    $this->rights[10][5] = 'gerer';
+
     // Dir
     $this->dirs[0] = $conf->telephonie->dir_output;
     $this->dirs[1] = $conf->telephonie->dir_output."/ligne";
