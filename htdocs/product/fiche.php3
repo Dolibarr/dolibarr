@@ -347,7 +347,7 @@ if ($id && $action == '' && $product->envente)
 	}
       print '</tr>';
       print '<tr><td width="50%" valign="top">';
-      $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp";
+      $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.ref,".$db->pdate("p.datep")." as dp";
       $sql .= " FROM llx_societe as s, llx_propal as p";
       $sql .=" WHERE p.fk_soc = s.idp AND p.fk_statut = 0 AND p.fk_user_author = ".$user->id;
       $sql .= " ORDER BY p.datec DESC, tms DESC";
