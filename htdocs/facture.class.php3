@@ -41,7 +41,7 @@ class Facture {
    *
    */
 
-  Function Facture($DB, $soc_idp="") {
+  Function Facture($DB, $soc_idp="", $facid="") {
     $this->db = $DB ;
     $this->socidp = $soc_idp;
     $this->products = array();
@@ -51,6 +51,7 @@ class Facture {
     $this->tva = 0;
     $this->total = 0;
     $this->propalid = 0;
+    $this->id = $facid;
   }
   /*
    *
@@ -230,12 +231,21 @@ class Facture {
    */
   Function addline($facid, $desc, $pu, $qty)
     {
-      global $conf;
-
       $sql = "INSERT INTO llx_facturedet (fk_facture,description,price,qty) VALUES ($facid, '$desc', $pu, $qty) ;";
       $result = $this->db->query( $sql);
 
       $this->updateprice($facid);
+    }
+  /*
+   *
+   *
+   */
+  Function updateline($rowid, $desc, $pu, $qty)
+    {
+      $sql = "UPDATE llx_facturedet set description='$desc',price=$pu,qty=$qty WHERE rowid = $rowid ;";
+      $result = $this->db->query( $sql);
+
+      $this->updateprice($this->id);
     }
   /*
    *
