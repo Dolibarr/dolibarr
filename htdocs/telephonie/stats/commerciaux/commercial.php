@@ -84,8 +84,7 @@ if ($_GET["commid"])
 	 
 	 print "<tr $bc[$var]>";	 
 	 print '<td width="50%" valign="top">';
-	 print '<a href="index.php?commid='.$row[3];
-	 print '">'.$row[2]." ". $row[1].'</a></td><td align="center">'.$row[0].'</td></tr>';	 
+	 print $row[2]." ". $row[1].'</td><td align="center">'.$row[0].'</td></tr>';	 
 	 $i++;
        }
      $db->free();
