@@ -292,7 +292,7 @@ if ($_GET["id"])
     }
   
   $act = new ActionComm($db);
-  $act->fetch($id);
+  $act->fetch($_GET["id"]);
   
   $act->societe->fetch($act->societe->id);
   $act->author->fetch($act->author->id);
