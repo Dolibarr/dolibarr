@@ -287,7 +287,7 @@ if ($action == 'pdf')
    * Generation de la facture
    * définit dans /includes/modules/facture/modules_facture.php
    */
-  print facture_pdf_create($db, $facid);
+  facture_pdf_create($db, $facid);
 } 
 
 $html = new Form($db);
@@ -816,23 +816,23 @@ else
 	print_titre("Documents");
 	print '<table width="100%" cellspacing="0" border="1" cellpadding="3">';
 	
-	$file = FAC_OUTPUTDIR . "/" . $fac->facnumber . "/" . $fac->facnumber . ".pdf";
+	$file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
 	
 	if (file_exists($file))
 	  {
 	    print "<tr $bc[0]><td>Facture PDF</a></td>";
-	    print '<td><a href="'.FAC_OUTPUT_URL."/".$fac->facnumber."/".$fac->facnumber.'.pdf">'.$fac->facnumber.'.pdf</a></td>';
+	    print '<td><a href="'.FAC_OUTPUT_URL."/".$fac->ref."/".$fac->ref.'.pdf">'.$fac->ref.'.pdf</a></td>';
 	    print '<td align="right">'.filesize($file). ' bytes</td>';
 	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	    print '</tr>';
 	  }  
 	
-	$file = FAC_OUTPUTDIR . "/" . $fac->facnumber . "/" . $fac->facnumber . ".ps";
+	$file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".ps";
 	
 	if (file_exists($file))
 	  {
 	    print "<tr $bc[0]><td>Facture Postscript</a></td>";
-	    print '<td><a href="'.FAC_OUTPUT_URL."/".$fac->facnumber."/".$fac->facnumber.'.ps">'.$fac->facnumber.'.ps</a></td>';
+	    print '<td><a href="'.FAC_OUTPUT_URL."/".$fac->ref."/".$fac->ref.'.ps">'.$fac->ref.'.ps</a></td>';
 	    print '<td align="right">'.filesize($file). ' bytes</td>';
 	    print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	    print '</tr>';
