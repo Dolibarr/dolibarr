@@ -366,7 +366,8 @@ function top_menu($head, $title="")
   print "\n";
 
   print "</head>\n";
-  print '<body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" marginheight="0" marginwidth="0">';
+  //  print '<body topmargin="0" bottommargin="0" leftmargin="0" rightmargin="0" marginheight="0" marginwidth="0">';
+  print '<body>';
 
   /*
    * Mise à jour entre 2 versions
