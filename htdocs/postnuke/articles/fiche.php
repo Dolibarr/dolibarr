@@ -170,10 +170,9 @@ else
 }
 
 print '<td width="20%" align="center">-</td>';
-//print '<td width="20%" align="center">[<a href="fiche.php?action=updateosc&id='.$id.'">Update Osc</a>]</td>';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">[<a href="fiche.php?action=delete&id='.$id.'">Supprimer</a>]</td>';
+print '<td width="20%" align="center">-</td>';
 print '</table><br>';
 
 $db->close();
