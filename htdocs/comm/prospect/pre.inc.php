@@ -32,15 +32,50 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/comm/prospect/index.php", "Prospects");
+  $menu->add(DOL_URL_ROOT."/comm/clients.php", "Clients");
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php", "Liste");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", "Contacts");
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/prospect/contact.php", "Contacts");
+  $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", "Prospects");
+
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", "Contacts");
 
   $menu->add(DOL_URL_ROOT."/comm/action/index.php", "Actions");
 
+  if ($conf->propal->enabled && $user->rights->propale->lire)
+    {
+      $menu->add(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
+      $menu->add_submenu("propal.php?viewstatut=0", "Brouillons");
+      $menu->add_submenu("propal.php?viewstatut=1", "Ouvertes");
+      $menu->add_submenu("./propal/stats/", "Statistiques");
+    }
 
+  $menu->add(DOL_URL_ROOT."/contrat/index.php", "Contrats");
+
+  if ($conf->commande->enabled ) 
+    {
+      $menu->add(DOL_URL_ROOT."/commande/index.php", "Commandes");
+    }
+
+  if ($conf->fichinter->enabled ) 
+    {
+      $menu->add(DOL_URL_ROOT."/fichinter/index.php", "Fiches d'intervention");
+    }
+
+  if ($conf->produit->enabled || $conf->service->enabled)
+    {
+	  $chaine="";
+	  if ($conf->produit->enabled) { $chaine.="Produits"; }
+	  if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
+	  if ($conf->service->enabled) { $chaine.="Services"; }
+      $menu->add(DOL_URL_ROOT."/product/index.php", "Produits/Services");
+    }
+
+  if ($conf->projet->enabled ) 
+    {
+	  $menu->add(DOL_URL_ROOT."/projet/index.php", "Projets");
+	}
+	
   left_menu($menu->liste);
 
 }

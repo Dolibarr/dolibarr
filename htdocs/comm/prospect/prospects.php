@@ -22,6 +22,12 @@
  */
 require("./pre.inc.php");
 
+$user->getrights('propale');
+$user->getrights('fichinter');
+$user->getrights('commande');
+$user->getrights('projet');
+
+
 /*
  * Sécurité accés client
  */
