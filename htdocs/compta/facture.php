@@ -1536,6 +1536,16 @@ else
 	      $sql .= " AND s.nom like '%".$_GET["search_societe"]."%'";
 	    }
 
+	  if ($_GET["search_montant_ht"])
+	    {
+	      $sql .= " AND f.total = '".$_GET["search_montant_ht"]."'";
+	    }
+
+	  if ($_GET["search_montant_ttc"])
+	    {
+	      $sql .= " AND f.total_ttc = '".$_GET["search_montant_ttc"]."'";
+	    }
+
 	  if ($year > 0)
 	    $sql .= " AND date_format(f.datef, '%Y') = $year";
 
@@ -1588,10 +1598,13 @@ else
 	  print '<td valign="right">';
 	  print '<input class="fat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'">';
 	  print '</td><td>&nbsp;</td>';
-	  print '<td valign="right">';
+	  print '<td align="left">';
 	  print '<input class="fat" type="text" name="search_societe" value="'.$_GET["search_societe"].'">';
-	  print '</td><td>&nbsp;';
-	  print '</td><td>&nbsp;</td><td colspan="2" align="center">';
+	  print '</td><td align="right">';
+	  print '<input class="fat" type="text" size="10" name="search_montant_ht" value="'.$_GET["search_montant_ht"].'">';
+	  print '</td><td align="right">';
+	  print '<input class="fat" type="text" size="10" name="search_montant_ttc" value="'.$_GET["search_montant_ttc"].'">';
+	  print '</td><td colspan="2" align="center">';
 	  print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
 	  print '</td>';
 	  print "</tr>\n";
