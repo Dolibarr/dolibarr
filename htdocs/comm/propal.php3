@@ -32,6 +32,7 @@ require("../lib/CMailFile.class.php3");
 require("../project.class.php3");
 require("../propal.class.php3");
 require("../actioncomm.class.php3");
+
 /*
  *
  */
@@ -296,8 +297,6 @@ if ($propalid)
 	      print '</textarea><br><input type="submit" value="Valider">';
 	      print "</form>";
 	    }
-
-
 
 	  /*
 	   * Produits
@@ -564,22 +563,19 @@ if ($propalid)
 	      /*
 	       * Enregistre l'action
 	       *
-	       * Ne fonctionne pas, a corriger !
 	       */
-
-	      if ( $db->query($sql) )
-		{
-		  $sql = "INSERT INTO llx_actioncomm (datea,fk_action,fk_soc, propalrowid,note, fk_user_author) ";
-		  $sql .= " VALUES (now(), 3, $obj->idp, $propalid, 'Envoyée à $sendto',$user->id);";
-		  if (! $db->query($sql) ) {
-		    print $db->error();
-		    print "<p>$sql</p>";
-		  }
-		}
-	      else
-		{
-		  print $db->error();
-		}
+	      
+	      $actioncomm = new ActionComm($db);
+	      $actioncomm->priority    = 2;
+	      $actioncomm->type        = 3;		  
+	      $actioncomm->date        = $db->idate(time());
+	      $actioncomm->percent     = 100;
+	      $actioncomm->contact     = $propal->contactid;      
+	      $actioncomm->user        = $user;	      
+	      $actioncomm->societe     = $propal->socidp;
+	      $actioncomm->propalrowid = $propal->id;
+	      $actioncomm->note        = "Envoyée à $sendto";
+	      $actioncomm->add($user);
 	    }
 	  /*
 	   *
