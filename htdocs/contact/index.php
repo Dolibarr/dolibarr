@@ -179,15 +179,13 @@ if ($result)
       print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
       
       
-	  print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
 
       if ($_GET["view"] == 'phone')
-	{
+	{      
+	  print '<td>'.dolibarr_print_phone($obj->phone_mobile).'&nbsp;</td>';
       
-	  print '<td>'.$obj->phone_mobile.'&nbsp;</td>';
-      
-	  print '<td>'.$obj->fax.'&nbsp;</td>';
-
+	  print '<td>'.dolibarr_print_phone($obj->fax).'&nbsp;</td>';
 	}
       else
 	{
