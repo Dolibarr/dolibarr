@@ -339,8 +339,8 @@ else
 	  print '<td align="center">';
 	  $html->select_tva("tauxtva");
 	  print '</td><td align="center" colspan="2">';
-	  print '<input type="submit" value="Ajouter">';
-	  print '</td><td>&nbsp;</td></tr>';
+	  print '&nbsp;';
+	  print '</td><td align="center"><input type="submit" value="Ajouter"></td></tr>';
 	  print "</table>";
 	  print "</form>";
 	}
