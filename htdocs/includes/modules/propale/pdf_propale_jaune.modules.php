@@ -186,7 +186,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 	       */
 	      	      
 	      $pdf->Output($file);
-	  
+	  return 1;
 	    }
 	}
     }
