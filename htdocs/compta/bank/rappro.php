@@ -69,8 +69,8 @@ if ( $db->query($sql) ) {
   $db->free();
 } else { print $db->error(); }
 
-print "<b>Rapprochement bancaire</b>";
-print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
+print_titre("Rapprochement bancaire");
+print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 print "<TR class=\"liste_titre\">";
 print "<td>Date</td><td>Description</TD>";
 print "<td align=\"right\">Debit</TD>";
@@ -80,7 +80,7 @@ print '<td align="center" colspan="2">Rappro</td>';
 print '<td align="center">&nbsp;</td>';
 print "</TR>\n";
 
-$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve";
+$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
 $sql .= " FROM llx_bank as b WHERE rappro=0 AND fk_account=$account";
 $sql .= " ORDER BY dateo ASC LIMIT 10";
 
@@ -90,11 +90,10 @@ if ($result)
 {
   $var=True;  
   $num = $db->num_rows();
-  $i = 0; $total = 0;
+  $i = 0;
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
-      $total = $total + $objp->amount;
 
       $var=!$var;
       print "<tr $bc[$var]>";
@@ -125,10 +124,10 @@ if ($result)
 	}
       else
 	{
-	  print "<td align=\"center\"><a href=\"$PHP_SELF?account=$account&action=del&rowid=$objp->rowid\">[Del]</a></td>";
+	  print "<td align=\"center\"><a href=\"$PHP_SELF?account=$account&amp;action=del&amp;rowid=$objp->rowid\">[Del]</a></td>";
 	}
       print "</tr>";
-      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"7\">";
+      print "<tr $bc[$var]><td>&nbsp;</td><td>".$objp->fk_type." ".$objp->num_chq."&nbsp;</td><td colspan=\"6\">";
       print "<select name=\"cat1\">$options";
       
       print "</select>";
@@ -140,7 +139,7 @@ if ($result)
 }
 print "</table>";
 
-print '<br>Dernier relevé : <a href="releve.php?account='.$account.'&num='.$last_releve.'">'.$last_releve.'</a>';
+print '<br>Dernier relevé : <a href="releve.php?account='.$account.'&amp;num='.$last_releve.'">'.$last_releve.'</a>';
 
 $db->close();
 
