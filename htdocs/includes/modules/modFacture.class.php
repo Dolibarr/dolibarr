@@ -52,6 +52,8 @@ class modFacture {
     $const[4][1] = "chaine";
     $const[5][0] = "FAC_PDF_SIRET";
     $const[5][1] = "chaine";
+    $const[6][0] = "FAC_PDF_INTITULE2";
+    $const[6][1] = "chaine";
 
     foreach ($const as $key => $value)
       {
