@@ -53,6 +53,7 @@ class Facture
   var $db_table;
   var $propalid;
   var $projetid;
+  var $prefixe_facture;
 
   /**
    *    \brief  Constructeur de la classe
@@ -74,6 +75,7 @@ class Facture
       $this->propalid = 0;
       $this->projetid = 0;
       $this->id = $facid;
+      $this->prefixe_facture = ''; // utilisé dans le module de numérotation saturne
   }
   
   /**
@@ -483,7 +485,7 @@ class Facture
 	{
 	  $action_notify = 2; // ne pas modifier cette valeur
 
-	  $numfa = facture_get_num($soc); // définit dans includes/modules/facture
+	  $numfa = facture_get_num($soc, $this->prefixe_facture); // définit dans includes/modules/facture
 
 	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture set facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id";
 
