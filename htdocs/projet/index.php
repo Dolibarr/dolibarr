@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,8 +75,9 @@ $pagenext = $page + 1;
  *
  * 
  */
-print '<p><TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-print '<TR class="liste_titre"><td>';
+print '<br>';
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td>';
 print_liste_field_titre("Titre",$PHP_SELF,"p.title");
 print "</td><td>Réf</td><td>";
 print_liste_field_titre("Société",$PHP_SELF,"s.nom");
@@ -101,9 +103,9 @@ if ( $db->query($sql) )
     {
       $objp = $db->fetch_object( $i);    
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?id=$objp->projectid\">$objp->title</a></TD>\n";
-      print "<TD><a href=\"fiche.php?id=$objp->projectid\">$objp->ref</a></TD>\n";
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->title</a></td>\n";
+      print "<td><a href=\"fiche.php?id=$objp->projectid\">$objp->ref</a></td>\n";
       if ($obj->client == 1)
 	{
 	  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';

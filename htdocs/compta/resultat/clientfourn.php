@@ -38,7 +38,7 @@ $month=$_GET["month"];
 if (! $year) { $year = strftime("%Y", time()); }
 
 
-print_titre("Résultat comptable".($year?" année $year":"").", détail par client/fournisseur");
+print_titre("Détail recettes-dépenses par client/fournisseur.".($year?"&nbsp; <a href='$PHP_SELF?year=".($year-1)."'>".img_previous()."</a> Année $year <a href='$PHP_SELF?year=".($year+1)."'>".img_next()."</a>":""));
 
 print '<br>';
 
@@ -48,7 +48,11 @@ print '<td width="10%">&nbsp;</td><td>Elément</td>';
 print "<td align=\"right\">Montant HT</td>";
 print "</tr>\n";
 
-/* Factures clients */
+
+/*
+ * Factures clients
+ *
+ */
 
 $sql = "SELECT s.nom,s.idp,sum(f.total) as amount";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
@@ -87,11 +91,12 @@ if ($result) {
   print $db->error();
 }
 print '<tr><td colspan="3" align="right">'.price($total).'</td></tr>';
+
 /*
  * Frais, factures fournisseurs.
  *
- *
  */
+
 $sql = "SELECT s.nom,s.idp,sum(f.total_ht) as amount";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f WHERE f.fk_soc = s.idp"; 
 if ($year) {
@@ -133,6 +138,7 @@ print '<tr><td colspan="3" align="right">'.price($subtotal).'</td></tr>';
  * Charges sociales
  *
  */
+
 $subtotal = 0;
 print '<tr><td colspan="4">Prestations/Charges déductibles</td></tr>';
 
@@ -167,10 +173,12 @@ if ( $db->query($sql) ) {
 print '<tr><td colspan="3" align="right">'.price($subtotal).'</td></tr>';
 
 print '<tr><td align="right" colspan="2">Résultat</td><td class="border" align="right">'.price($total).'</td></tr>';
+
 /*
  * Charges sociales non déductibles
  *
  */
+
 $subtotal = 0;
 print '<tr><td colspan="4">Prestations/Charges NON déductibles</td></tr>';
 

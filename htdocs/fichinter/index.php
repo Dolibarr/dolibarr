@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -68,37 +69,37 @@ if ( $db->query($sql) )
   print_barre_liste("Liste des fiches d'intervention", $page, $PHP_SELF,"&amp;socid=$socid",$sortfield,$sortorder,'',$num);
 
   $i = 0;
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-  print "<TR class=\"liste_titre\">";
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print "<tr class=\"liste_titre\">";
   print_liste_field_titre_new ("Num",$PHP_SELF,"f.ref","","&amp;socid=$socid",'width="15%"',$sortfield);
   print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","","&amp;socid=$socid",'',$sortfield);
   print_liste_field_titre_new ("Date",$PHP_SELF,"f.datei","","&amp;socid=$socid",'',$sortfield);
-  print '<TD align="center">Durée</TD>';
-  print '<TD align="center">Statut</TD><td>&nbsp;</td>';
-  print "</TR>\n";
+  print '<td align="center">Durée</td>';
+  print '<td align="center">Statut</td><td>&nbsp;</td>';
+  print "</tr>\n";
   $var=True;
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?id=$objp->fichid\">$objp->ref</a></TD>\n";
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?id=$objp->fichid\">$objp->ref</a></td>\n";
 
       print '<td><a href="index.php?socid='.$objp->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
-      print "<a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
-      print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-      print '<TD align="center">'.sprintf("%.1f",$objp->duree).'</TD>';
-      print '<TD align="center">'.$objp->fk_statut.'</TD>';
+      print "<a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
+      print "<td>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
+      print '<td align="center">'.sprintf("%.1f",$objp->duree).'</td>';
+      print '<Td align="center">'.$objp->fk_statut.'</td>';
 
       if ($user->societe_id == 0)
 	{
-	  print '<TD align="center"><a href="fiche.php?socidp='.$objp->idp.'&amp;action=create">[Fiche Inter]</A></td>';
+	  print '<td align="center"><a href="fiche.php?socidp='.$objp->idp.'&amp;action=create">[Fiche Inter]</a></td>';
 	}
       else
 	{
 	  print "<td>&nbsp;</td>";
 	}
-      print "</TR>\n";
+      print "</tr>\n";
       
       $i++;
     }

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,23 +67,23 @@ if ( $db->query($sql) )
 
   print_barre_liste("Liste des contrats", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
-  print '<TR class="liste_titre"><td>';
+  print '<tr class="liste_titre"><td>';
   print_liste_field_titre("Libellé",$PHP_SELF, "p.label");
   print "</td><td>";
   print_liste_field_titre("Société",$PHP_SELF, "s.nom");
   print '</td><td align="center">Etat</td>';
-  print "</TR>\n";
+  print "</tr>\n";
     
   $var=True;
   while ($i < min($num,$limit))
     {
       $obj = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?id=$obj->cid\">$obj->label</a></td>\n";
-      print "<TD><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></TD>\n";
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?id=$obj->cid\">$obj->label</a></td>\n";
+      print "<td><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></td>\n";
       print '<td align="center">';
       if ($obj->enservice == 1)
 	{
@@ -96,7 +97,7 @@ if ( $db->query($sql) )
 	{
 	  print "A mettre en service</td>";
 	}
-      print "</TR>\n";
+      print "</tr>\n";
       $i++;
     }
   $db->free();

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -82,9 +83,9 @@ if ( $db->query($sql) )
   print_barre_liste("Commandes", $_GET["page"], $PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
     
   $i = 0;
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   
-  print '<TR class="liste_titre">';
+  print '<tr class="liste_titre">';
   
   print_liste_field_titre_new ("Réf",$PHP_SELF,"c.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
   
