@@ -133,12 +133,15 @@ if ($_GET["action"] == 'create')
 
       print '<form action="soc.php" method="post">';
       print '<input type="hidden" name="action" value="add">';
+      print '<input type="hidden" name="codeclient_modifiable" value="1">';
       
       print '<table class="border" width="100%">';
       print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
-      print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
+      print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft">';
+      print stripslashes($soc->adresse);
+      print '</textarea></td></tr>';
       print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp">&nbsp;';
-      print $langs->trans('Town').'&nbsp;<input type="text" name="ville"></td>';
+      print $langs->trans('Town').'&nbsp;<input type="text" name="ville" value="'.$soc->ville.'"></td>';
 
       print '<td>'.$langs->trans('State').'</td><td>';
       $form->select_departement($soc->departement_id);
@@ -150,7 +153,7 @@ if ($_GET["action"] == 'create')
 
       print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel"></td>';
       print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax"></td></tr>';
-      print '<tr><td>'.$langs->trans('Code client').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15"></td></tr>';
+      print '<tr><td>'.$langs->trans('Code client').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
       print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input size="40" type="text" name="url"></td></tr>';
 
       print '<tr><td>'.$langs->trans('ProfIdSiren').'</td><td><input type="text" name="siren"></td>';
