@@ -107,7 +107,7 @@ if ($action == 'setmod')
 
 print_titre("Module de numérotation");
 
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table class="border" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Info</td>';
@@ -146,7 +146,7 @@ if ($handle)
 	  
 	  print "</td><td>\n";
 	  
-	  print '<a href="propale.php?action=setmod&value='.$file.'">activer</a>';
+	  print '<a href="propale.php?action=setmod&amp;value='.$file.'">activer</a>';
 	  
 	  print '</td></tr>';
 	}
@@ -187,7 +187,7 @@ $dir = "../includes/modules/propale/";
 
 print_titre("Modèles de propale pdf");
 
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table class="border" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Info</td>';
@@ -220,13 +220,13 @@ while (($file = readdir($handle))!==false)
 	{
 	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
 	  print "</td><td>\n";
-	  print '<a href="propale.php?action=del&value='.$name.'">désactiver</a>';
+	  print '<a href="propale.php?action=del&amp;value='.$name.'">désactiver</a>';
 	}
       else
 	{
 	  print "&nbsp;";
 	  print "</td><td>\n";
-	  print '<a href="propale.php?action=set&value='.$name.'">activer</a>';
+	  print '<a href="propale.php?action=set&amp;value='.$name.'">activer</a>';
 	}
 
       print '</td><td align="center">';
@@ -242,7 +242,7 @@ while (($file = readdir($handle))!==false)
 
       print "</td><td>\n";
 
-      print '<a href="propale.php?action=setpdf&value='.$name.'">activer</a>';
+      print '<a href="propale.php?action=setpdf&amp;value='.$name.'">activer</a>';
 
       print '</td></tr>';
     }
@@ -251,14 +251,13 @@ closedir($handle);
 
 print '</table>';
 
-
 /*
  *
  *
  */
 print_titre("Formulaire de création");
 print '<form method="post" action="propale.php?action=nbprod">';
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table class="border" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>Valeur</td><td>&nbsp;</td>';
