@@ -23,7 +23,7 @@
 FILE=dolibarr-0.1.6
 
 tar:
-	rm -f dolibarr-*.tar.gz* $(FILE)
+	rm -fr dolibarr-*.tar.gz* $(FILE)
 	mkdir $(FILE)
 	rsync -ar doc htdocs mysql misc COPY* http* INSTALL scripts templates pgsql $(FILE)/
 	tar --exclude-from tar.exclude -cvvf $(FILE).tar $(FILE)/
