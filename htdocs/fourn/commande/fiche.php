@@ -31,12 +31,6 @@
 
 require("./pre.inc.php");
 
-$langs->load("orders");
-$langs->load("suppliers");
-$langs->load("companies");
-
-$user->getrights('fournisseur');
-
 if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
 require_once DOL_DOCUMENT_ROOT."/project.class.php";
