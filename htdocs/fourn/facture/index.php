@@ -31,14 +31,14 @@ llxHeader();
  */
 if ($user->societe_id > 0) 
 {
-  $action = '';
+  $_GET["action"] = '';
   $socid = $user->societe_id;
 }
 
-if ($action == 'delete')
+if ($_GET["action"] == 'delete')
 {
   $fac = new FactureFourn($db);
-  $fac->delete($facid);
+  $fac->delete($_GET["facid"]);
   
   $facid = 0 ;
 }
@@ -116,29 +116,29 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Liste des factures fournisseurs", $page, $PHP_SELF,'', $sortfield, $sortorder,'',$num);
+  print_barre_liste("Liste des factures fournisseurs", $page, "index.php",'', $sortfield, $sortorder,'',$num);
 
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
   print '<td>';
-  print_liste_field_titre("Numéro",$PHP_SELF,"facnumber");
+  print_liste_field_titre("Numéro","index.php","facnumber");
   print '</td>';
   print '<td>';
-  print_liste_field_titre("Date",$PHP_SELF,"fac.datef");
+  print_liste_field_titre("Date","index.php","fac.datef");
   print '</td>';
   print '<td>Libellé</TD>';
   print '<td>';
-  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+  print_liste_field_titre("Société","index.php","s.nom");
   print '</td>';
   print '<td align="right">';
-  print_liste_field_titre("Montant HT",$PHP_SELF,"fac.total_ht");
+  print_liste_field_titre("Montant HT","index.php","fac.total_ht");
   print '</td>';
   print '<td align="right">';
-  print_liste_field_titre("Montant TTC",$PHP_SELF,"fac.total_ttc");
+  print_liste_field_titre("Montant TTC","index.php","fac.total_ttc");
   print '</td>';
   print '<td align="center">';
-  print_liste_field_titre("Statut",$PHP_SELF,"fk_statut,paye");
+  print_liste_field_titre("Statut","index.php","fk_statut,paye");
   print '</td>';
   print "</tr>\n";
   $var=True;
@@ -156,41 +156,41 @@ if ($result)
       print '<td align="right">'.price($obj->total_ht).'</td>';
       print '<td align="right">'.price($obj->total_ttc).'</td>';
       // Affiche statut de la facture
-		if ($obj->paye)
-		  {
-		    $class = "normal";
-		  }
-		else
-		  {
-		    if ($obj->fk_statut == 0)
-		      {
-			$class = "normal";
-		      }
-		    else
-		      {
-			$class = "impayee";
-		      }
-		  }
+      if ($obj->paye)
+	{
+	  $class = "normal";
+	}
+      else
+	{
+	  if ($obj->fk_statut == 0)
+	    {
+	      $class = "normal";
+	    }
+	  else
+	    {
+	      $class = "impayee";
+	    }
+	}
       if (! $obj->paye)
         {
           if ($obj->fk_statut == 0)
             {
-      	print '<td align="center">brouillon</td>';
+	      print '<td align="center">brouillon</td>';
             }
           elseif ($obj->fk_statut == 3)
             {
-      	print '<td align="center">annulée</td>';
+	      print '<td align="center">annulée</td>';
             }
           else
             {
-      	print '<td align="center"><a class="'.$class.'" href="'.$PHP_SELF.'?filtre=paye:0,fk_statut:1">'.($obj->am?"commencé":"impayée").'</a></td>';
+	      print '<td align="center"><a class="'.$class.'" href=""index.php?filtre=paye:0,fk_statut:1">'.($obj->am?"commencé":"impayée").'</a></td>';
             }
         }
       else
         {
           print '<td align="center">payée</td>';
         }
-
+      
       print "</tr>\n";
       $i++;
     }
