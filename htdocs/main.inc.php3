@@ -78,12 +78,14 @@ $user = new User($db);
 //XAVIER DUTOIT 18/09/2003 : si l'utilisateur n'est pas authentifié apache, on essaie pear Auth
 
 if (!empty ($GLOBALS["REMOTE_USER"]))
-     $user->fetch($GLOBALS["REMOTE_USER"]);
-     else
+{
+  $user->fetch($GLOBALS["REMOTE_USER"]);
+}  
+else
 {
   require_once "Auth/Auth.php";
   $params = array(
-		  "dsn" => $conf->db->getdsn (),
+		  "dsn" => $conf->db->getdsn(),
 		  "table" => "llx_user",
 		  "usernamecol" => "login",
 		  "passwordcol" => "pass",
@@ -91,11 +93,14 @@ if (!empty ($GLOBALS["REMOTE_USER"]))
 		  );
   $a = new Auth("DB", $params, "loginFunction");
   $a->start();
-  if ($a->getAuth()) { 
-    $user->fetch($a->getUsername());
-  }
+  if ($a->getAuth())
+    { 
+      $user->fetch($a->getUsername());
+    }
   else
-    die ("Veuillez vous authentifier");
+    {
+      die ;
+    }
 }
 /*
  * Definition de toutes les Constantes globales d'envirronement
