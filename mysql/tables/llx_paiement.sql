@@ -29,5 +29,6 @@ create table llx_paiement
   author          varchar(50),
   fk_paiement     integer NOT NULL,
   num_paiement    varchar(50),
-  note            text
+  note            text,
+  fk_bank		  integer NOT NULL
 );
