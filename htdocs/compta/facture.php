@@ -818,7 +818,7 @@ else
 	 */
 	if ($user->societe_id == 0)
 	  {
-	    print '<p><table id="actions" width="100%" cellspacing="0" cellpadding="4"><tr>';
+	    print '<p><table id="actions" width="100%"><tr>';
 	
 	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
 	      {
