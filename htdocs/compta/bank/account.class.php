@@ -51,43 +51,45 @@ class Account
 
   Function addline($date, $oper, $label, $amount, $num_chq="")
   {
-    switch ($oper)
+    if ($this->rowid)
       {
-      case 1:
-	$oper = 'TIP';
-	break;
-      case 2:
-	$oper = 'VIR';
-	break;
-      case 3:
-	$oper = 'PRE';
-	break;
-      case 4:
-	$oper = 'LIQ';
-	break;
-      case 5:
-	$oper = 'WWW';
-	break;
-      case 6:
-	$oper = 'CB';
-	break;
-      case 7:
-	$oper = 'CHQ';
-	break;
-      }
+	switch ($oper)
+	  {
+	  case 1:
+	    $oper = 'TIP';
+	    break;
+	  case 2:
+	    $oper = 'VIR';
+	    break;
+	  case 3:
+	    $oper = 'PRE';
+	    break;
+	  case 4:
+	    $oper = 'LIQ';
+	    break;
+	  case 5:
+	    $oper = 'WWW';
+	    break;
+	  case 6:
+	    $oper = 'CB';
+	    break;
+	  case 7:
+	    $oper = 'CHQ';
+	    break;
+	  }
+	
+	$sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
+	$sql .= " VALUES (now(), $date, '$label', $amount,'$author','$num_chq', $this->rowid, '$oper')";
 
-
-    $sql = "INSERT INTO llx_bank (datec, dateo, label, amount, author, num_chq,fk_account, fk_type)";
-    $sql .= " VALUES (now(), $date, '$label', $amount,'$author','$num_chq', $this->rowid, '$oper')";
-
-    if ($this->db->query($sql))
-      {
-	return 1;
-      }
-    else
-      {
-	print $this->db->error();
-	print "<br>$sql";
+	if ($this->db->query($sql))
+	  {
+	    return 1;
+	  }
+	else
+	  {
+	    print $this->db->error();
+	    print "<br>$sql";
+	  }
       }
   }
 
