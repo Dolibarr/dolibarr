@@ -96,25 +96,30 @@ if ($account)
 
   print "<b>Bank</b> - &nbsp;-";
   print "<a href=\"$PHP_SELF?viewall=1&account=$account\">Voir tout</a>";
-  
-  print '<form method="post" action="'."$PHP_SELF?viewall=$viewall&vline=$vline&account=$account".'">';
-  print '<input type="hidden" name="action" value="search">';
-  print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="2">';
+
   /*
    * Formulaire de recherche
    *
-   */
-  print "<TR class=\"liste_titre\">";
-  print "<td>Date</td><td>Type</td><td>Description</TD>";
+   */  
+  print '<form method="post" action="'."$PHP_SELF?viewall=$viewall&vline=$vline&account=$account".'">';
+  print '<input type="hidden" name="action" value="search">';
+  print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="2">';
+  print "<TR>";
+  print '<td>&nbsp;</td>';
+  print '<td>&nbsp;</td><td><input type="text" name="req_desc" class="flat" size="24"></TD>';
   print '<td align="right"><input type="text" name="req_debit" class="flat" size="6"></TD>';
   print '<td align="right"><input type="text" name="req_credit" class="flat" size="6"></TD>';
   print "<td align=\"right\">-</TD>";
   print "<td align=\"right\">-</td>";
-  print '<td align="right"><input type="submit"></td>';
+  print '<td align="right"><input type="submit" value="Chercher" class="flat"></td>';
   print "</TR>\n";
   print "</form>";
+  /*
+   *
+   *
+   */
   print "<form method=\"post\" action=\"$PHP_SELF?viewall=$viewall&vline=$vline&account=$account\">";
-
+  print '<input type="hidden" name="action" value="add">';
   print "<TR class=\"liste_titre\">";
   print "<td>Date</td><td>Type</td><td>Description</TD>";
   print "<td align=\"right\">Débit</TD>";
@@ -231,8 +236,16 @@ if ($account)
 		      print '</tr><tr>';
 		      print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
 		      print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
-		      print '<td></td>';
-		      print "<td>CHQ<input name=\"num_chq\" type=\"text\" size=4>&nbsp;-";
+		      print '<td>';
+		      print '<select name="operation">';
+		      print '<option value="CB">CB';
+		      print '<option value="CHQ">CHQ';
+		      print '<option value="DEP">DEP';
+		      print '<option value="TIP">TIP';
+		      print '<option value="PRE">PRE';
+		      print '<option value="VIR">VIR';
+		      print '</select></td>';
+		      print '<td><input name="num_chq" type="text" size="6">&nbsp;-';
 		      print "<input name=\"label\" type=\"text\" size=40></td>";
 		      print "<td><input name=\"debit\" type=\"text\" size=8></td>";
 		      print "<td><input name=\"credit\" type=\"text\" size=8></td>";
@@ -335,13 +348,13 @@ if ($account)
       print '<option value="VIR">VIR';
       print '</select></td>';
       print "<td><input name=\"num_chq\" type=\"text\" size=4>";
-      print "<input name=\"label\" type=\"text\" size=40></td>";
-      print "<td><input name=\"debit\" type=\"text\" size=8></td>";
-      print "<td><input name=\"credit\" type=\"text\" size=8></td>";
+      print '<input name="label" type="text" size=40></td>';
+      print '<td><input name="debit" type="text" size="8"></td>';
+      print '<td><input name="credit" type="text" size="8"></td>';
       print "<td colspan=\"3\" align=\"center\"><select name=\"cat1\">$options</select></td>";
       print '</tr><tr><td colspan="2"><small>YYYYMMDD</small></td><td>0000.00</td>';
       
-      print '<td colspan="4" align="center"><input type="submit" value="ajouter"></td></tr>';
+      print '<td colspan="5" align="center"><input type="submit" value="Ajouter"></td></tr>';
       
   }
 
