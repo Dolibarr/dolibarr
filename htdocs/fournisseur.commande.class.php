@@ -505,7 +505,25 @@ $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm
 	return -1;
       }
   }
+  /**
+   *
+   *
+   *
+   */
+  function generate_pdf()
+  {
+    // Récupération des info sur le fournisseur
+    $this->fournisseur = new Societe($this->db);
+    $this->fournisseur->fetch($this->fourn_id);
 
+    $name = 'muscadet';
+    require_once DOL_DOCUMENT_ROOT.'/fourn/commande/modules/pdf/pdf_fourncomm_'.$name.'.modules.php';
+
+    $var = 'pdf_fourncomm_'.$name;
+
+    $opdf = new $var();
+    $opdf->write_pdf_file($this);
+  }
 
   /**
    *
