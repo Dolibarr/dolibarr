@@ -20,6 +20,9 @@
  *
  */
 
+$types[0] = "produit";
+$types[1] = "service";
+
 require("./pre.inc.php3");
 require("../propal.class.php3");
 require("../facture.class.php3");
@@ -33,10 +36,11 @@ if ($action == 'add')
 {
   $product = new Product($db);
 
-  $product->ref = $HTTP_POST_VARS["ref"];
-  $product->libelle = $HTTP_POST_VARS["libelle"];
-  $product->price = $HTTP_POST_VARS["price"];
-  $product->tva_tx = $HTTP_POST_VARS["tva_tx"];
+  $product->ref         = $HTTP_POST_VARS["ref"];
+  $product->libelle     = $HTTP_POST_VARS["libelle"];
+  $product->price       = $HTTP_POST_VARS["price"];
+  $product->tva_tx      = $HTTP_POST_VARS["tva_tx"];
+  $product->type        = $HTTP_POST_VARS["type"];
   $product->description = $HTTP_POST_VARS["desc"];
 
   $id = $product->create($user);
@@ -51,7 +55,7 @@ if ($action == 'addinpropal')
   $propal->insert_product($id, $HTTP_POST_VARS["qty"]);
 
   $action = '';
-  $mesg = 'Produit ajouté à la proposition ';
+  $mesg = ucfirst($types[$type]) . ' ajouté à la proposition ';
   $mesg .= '<a href="../comm/propal.php3?propalid='.$propal->id.'">'.$propal->ref.'</a>';
 }
 
@@ -99,9 +103,9 @@ if ($action == 'update' && $cancel <> 'Annuler')
 if ($action == 'create')
 {
   print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
-  print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-
-  print '<div class="titre">Nouveau produit</div><br>';
+  print "<input type=\"hidden\" name=\"action\" value=\"add\">\n";
+  print '<input type="hidden" name="type" value="'.$type.'">'."\n";
+  print '<div class="titre">Nouveau '.$types[$type].'</div><br>'."\n";
       
   print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
   print "<tr>";
@@ -163,6 +167,12 @@ else
 
 	  print '<tr><td>Taux TVA</td><TD>'.$product->tva_tx.' %</td></tr>';
 	  print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
+
+	  if ($product->type == 1)
+	    {
+	      print '<tr><td>Durée</td><TD>'.$product->tva_tx.' %</td></tr>';
+	    }
+
 	  print "</table>";
 	}
     
@@ -198,6 +208,12 @@ else
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $product->description;
 	  print "</textarea></td></tr>";
+
+	  if ($product->type == 1)
+	    {
+	      print '<tr><td>Durée</td><TD><input name="duree" size="6" value="'.$product->duree.'"></td></tr>';
+	    }
+
 	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer">&nbsp;';
 	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
 	  print '</table>';
