@@ -39,7 +39,8 @@ DictionnarySocialContributions=Social contributions types
 AlwaysActive=Always active
 UpdateRequired=Your system need to be updated. For this click on <a href="%s">Update now</a>.
 WebServer=Web server
-DocumentRootServer=Document root
+DocumentRootServer=Web server root directory
+DataRootServer=Data files directory
 IP=IP
 Port=Port
 VirtualServerName=Virtual server name

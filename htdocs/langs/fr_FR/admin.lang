@@ -39,7 +39,8 @@ DictionnarySocialContributions=Types de charges sociales
 AlwaysActive=Toujours actif
 UpdateRequired=Votre système nécessite une mise à jour. Pour cela cliquez sur <a href="%s">Mettre à jour</a>.
 WebServer=Serveur Web
-DocumentRootServer=Racine du serveur
+DocumentRootServer=Répertoire racine des pages web
+DataRootServer=Répertoire racine des fichiers de données
 IP=IP
 Port=Port
 VirtualServerName=Nom du serveur virtuel
