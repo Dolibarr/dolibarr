@@ -114,9 +114,9 @@ if ($_GET["id"])
       print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 
-      $encfile = urlencode(DOL_DATA_ROOT.'/prelevement/bon/'.$bon->ref);
+      $relativepath = 'bon/'.$bon->ref;
 
-      print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.$encfile.'">'.$bon->ref.'</a>';
+      print '<a href="'.DOL_URL_ROOT.'/document.php?type=text/plain&amp;modulepart=prelevement&amp;file='.urlencode($relativepath).'">'.$bon->ref.'</a>';
 
       print '</td></tr>';
 

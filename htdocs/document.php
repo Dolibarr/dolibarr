@@ -73,7 +73,7 @@ if ($modulepart)
         {
 	  $accessallowed=1;
         }
-      //$original_file=$conf->prelevement->dir_output.'/'.$original_file;
+      $original_file=$conf->prelevement->dir_output.'/'.$original_file;
     }
   
   // Wrapping pour les propales
