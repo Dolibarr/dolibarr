@@ -49,9 +49,6 @@ if ($_GET["action"] == 'cstc')
   $db->query($sql);
 }
 
-llxHeader();
-
-
 /*
  * Sécurité si un client essaye d'accéder à une autre fiche que la sienne
  */
@@ -60,6 +57,8 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+
+llxHeader();
 
 /*********************************************************************************
  *
@@ -84,7 +83,7 @@ if ($socid > 0)
     {
       $h=0;
       $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
-      $head[$h][1] = "Fiche société";
+      $head[$h][1] = "Société";
       $h++;
       
       $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$societe->id;
@@ -224,6 +223,8 @@ if ($socid > 0)
 
     print '<div class="tabsAction">';
 
+    print '<a class="tabAction" href="../../contact/fiche.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+
     print '<a class="tabAction" href="../action/fiche.php?action=create&socid='.$socid.'&afaire=1">'.$langs->trans("AddAction").'</a>';
 
 
@@ -231,13 +232,13 @@ if ($socid > 0)
       {
 	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$societe->id.'&amp;action=create">'.$langs->trans("AddProp").'</a>';
       }
-
+    
     if ($conf->projet->enabled && $user->rights->projet->creer)
       {
 	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$socid.'&action=create">'.$langs->trans("AddProject").'</a>';
       }
     print '</div>';
-
+    
     print '<br>';
 	
     /*
@@ -250,7 +251,7 @@ if ($socid > 0)
     print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Name").'</td>';
     print '<td>Poste</td><td colspan="2">'.$langs->trans("Tel").'</td>';
     print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
-    print "<td align=\"center\"><a href=\"../../contact/fiche.php?socid=$societe->id&action=create\">".$langs->trans("Add")."</a></td></tr>";
+    print '<td>&nbsp;</td>';
     
     $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $societe->id  ORDER by p.datec";
     $result = $db->query($sql);
