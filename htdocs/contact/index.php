@@ -191,7 +191,12 @@ if ($result)
 	}
       else
 	{
-	  print '<td><a href="mailto:'.$obj->email.'">'.$obj->email.'</a>&nbsp;</td>';
+	  print '<td><a href="mailto:'.$obj->email.'">'.$obj->email.'</a>&nbsp;';
+	  if (!valid_email($obj->email))
+	    {
+	      print "Email Invalide !";
+	    }
+	  print '</td>';
 	}
 
       print "</tr>\n";
