@@ -22,4 +22,10 @@ ModuleFamilyProjects=Projects/Collaborative work
 ModuleFamilyOther=Other
 ModuleFamilyTechnic=Tehnical Modules
 ModuleFamilyFinancial=Fiancial Modules (Accountancy/Treasury)
-
+DictionnaryCompanyType=Juridical kinds of company
+DictionnaryCanton=Cantons
+DictionnaryRegion=Regions
+DictionnaryCountry=Countries
+DictionnaryCivility=Civility title
+DictionnaryActions=Actions list
+AlwaysActive=Always active
