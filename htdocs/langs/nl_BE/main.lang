@@ -1,0 +1,37 @@
+# Dolibarr language file - nl_BE - main
+charset="iso-8859-1"
+yes=ya
+no=nee
+Home=Accueil
+Help=Hulp
+Activate=Activeer
+Activated=Activeer
+Add=Voeg toe
+Delete=Schrap
+Resiliate=Resiliate
+Cancel=Annuleer
+Modify=Wijziig
+Edit=Bewerking
+Show=Show
+Search=Zoeken
+ChooseLangage=Selecteer alstublieft je taal
+User=Gebruiker
+Users=Gebruikers
+Group=Groep
+Groups=Groepen
+Name=Naam
+Value=Waarde
+Type=Type
+Note=Aantekening
+Action=Actie
+About=About
+WelcomeString=<font class="body">Wij zijn</font> %s<font class="body">, En u bent met naam verbonden</font> %s
+Number=nummer
+DevelopmentTeam=Ontwikkelingsteam
+Logout=Logout
+Setup=Opstelling
+Alert=Alarm
+Previous=Vorig
+Next=Volgend
+ErrorForbidden=De toegang is verboden
+Cards=Kaarten

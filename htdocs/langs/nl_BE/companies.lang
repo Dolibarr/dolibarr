@@ -1,0 +1,23 @@
+# Dolibarr language file - nl_BE - soc
+NewCompany=Nieuwe bedrijf (vooruitzicht, klant, leverancier)
+Company=Bedrijf
+Companies=Bedrijven
+Name=Naam
+Surname=De familienaam
+Address=Het adres
+State=Provincie
+Country=Land
+Phone=Telefoon
+Fax=Faxapparaat
+Zip=Postcode
+Town=Stad
+Web=Web
+ProfIdSiren=SIREN
+ProfIdSiret=SIRET
+ProfIdApe=APE
+TVAIntra=Intracommunautary VAT
+ProspectCustomer=Vooruitzicht / Klant
+Prospect=Vooruitzicht
+Customer=Klant
+Supplier=Leverancier
+CompanyList=Bedrijven lijst
