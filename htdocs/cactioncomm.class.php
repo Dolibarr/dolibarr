@@ -38,7 +38,7 @@ class CActioncomm {
 
   /**
    *    \brief      Constructeur
-   *    \param      db          Handler d'accès base de donnée
+   *    \param      DB          Handler d'accès base de donnée
    */
   function CActioncomm($DB=0)
     {

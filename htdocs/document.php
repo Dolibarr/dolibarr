@@ -22,10 +22,9 @@
  *
  */
 
-/**
-        \file       htdocs/document.php
+/**     \file       htdocs/document.php
 		\brief      Wrapper permettant le téléchargement de fichier de données Dolibarr
-                    L'appel est document.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
+        \remarks    L'appel est document.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
 		\version    $Revision$
 */
 
