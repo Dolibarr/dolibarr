@@ -445,42 +445,42 @@ if ($_socid > 0)
       $i = 0 ; $num = $db->num_rows(); $tag = True;
       while ($i < $num)
 	{
-	$obj = $db->fetch_object();
-	$var = !$var;
-	print "<tr $bc[$var]>";
-
-	print '<td>';
-    print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
-    print img_file();
-    print '&nbsp;'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
-
-	if ($obj->note)
-	  {
-	    print "<br>".nl2br($obj->note);
-	  }
-	print "</td>";
-	print "<td>$obj->poste&nbsp;</td>";
-	print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->phone.'</a>&nbsp;</td>';
-	print '<td><a href="action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->fax.'</a>&nbsp;</td>';
-	print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->email.'</a>&nbsp;</td>';
-
-	print '<td align="center">';
-	print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
-	print img_edit();
-	print '</a></td>';
-	
-    print '<td align="center"><a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">';
-    print img_actions();
-    print '</a></td>';
-	
-	print "</tr>\n";
-	$i++;
-	$tag = !$tag;
-      }
+	  $obj = $db->fetch_object();
+	  $var = !$var;
+	  print "<tr $bc[$var]>";
+	  
+	  print '<td>';
+	  print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
+	  print img_file();
+	  print '&nbsp;'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+	  
+	  if ($obj->note)
+	    {
+	      print "<br>".nl2br($obj->note);
+	    }
+	  print "</td>";
+	  print "<td>$obj->poste&nbsp;</td>";
+	  print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
+	  print '<td><a href="action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->fax).'</a>&nbsp;</td>';
+	  print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->email.'</a>&nbsp;</td>';
+	  
+	  print '<td align="center">';
+	  print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
+	  print img_edit();
+	  print '</a></td>';
+	  
+	  print '<td align="center"><a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">';
+	  print img_actions();
+	  print '</a></td>';
+	  
+	  print "</tr>\n";
+	  $i++;
+	  $tag = !$tag;
+	}
       print "</table>";
-
+      
       print "<p />";
-
+      
       /*
        *      Listes des actions a faire
        *
