@@ -375,7 +375,7 @@ create table llx_entrepot
   description     text,
   fk_user_author  integer
 
-) type=ISAM;
+);
 
 
 create table llx_user
@@ -559,6 +559,13 @@ create table llx_bank
   author          varchar(40) -- a supprimer apres migration
 );
 
+create table llx_co_pr
+(
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  fk_commande integer,
+  fk_propale  integer
+);
+
 create table llx_bank_categ
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
@@ -571,6 +578,35 @@ create table c_effectif
   libelle varchar(30)
 );
 
+
+create table llx_commande
+(
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  tms              timestamp,
+  fk_soc           integer,
+  fk_soc_contact   integer,
+  fk_projet        integer default 0,     -- projet auquel est rattache la commande
+  ref              varchar(30) NOT NULL,  -- propal number
+  date_creation    datetime,              -- date de creation 
+  date_valid       datetime,              -- date de validation
+  date_cloture     datetime,              -- date de cloture
+  date_commande    date,                  -- date de la commande
+  fk_user_author   integer,               -- createur de la commande
+  fk_user_valid    integer,               -- valideur de la commande
+  fk_user_cloture  integer,               -- cloture de la propale signee ou non signee
+  source           smallint NOT NULL,
+  fk_statut        smallint  default 0,
+  amount_ht        real      default 0,
+  remise_percent   real      default 0,
+  remise           real      default 0,
+  tva              real      default 0,
+  total_ht         real      default 0,
+  total_ttc        real      default 0,
+  note             text,
+  model_pdf        varchar(50),
+  facture          tinyint default 0,   
+  UNIQUE INDEX (ref)
+);
 
 create table c_pays
 (
@@ -887,13 +923,13 @@ create table llx_stock_mouvement
   tms             timestamp,
   datem           datetime,
   fk_product      integer NOT NULL,
-  fk_stock        integer NOT NULL,
+  fk_entrepot     integer NOT NULL,
   value           integer,
   type_mouvement  smallint,
   fk_user_author  integer,
 
   key(fk_product),
-  key(fk_stock)
+  key(fk_entrepot)
 );
 
 
@@ -902,11 +938,13 @@ create table llx_product_stock
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
   fk_product      integer NOT NULL,
-  fk_stock        integer NOT NULL,
-  value           integer,
+  fk_entrepot     integer NOT NULL,
+  reel            integer,  -- stock réel
+  commande        integer,  -- stock commande
+  proposition     integer,  -- stock proposition commerciale
 
   key(fk_product),
-  key(fk_stock)
+  key(fk_entrepot)
 );
 
 
@@ -934,6 +972,21 @@ create table llx_cotisation
   dateadh         datetime,
   cotisation      real,
   note            text
+);
+
+create table llx_commandedet
+(
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  fk_commande    integer,
+  fk_product     integer,
+  label          varchar(255),
+  description    text,
+  tva_tx         real default 19.6, -- taux tva
+  qty		 real,              -- quantité
+  remise_percent real default 0,    -- pourcentage de remise
+  remise         real default 0,    -- montant de la remise
+  subprice       real,              -- prix avant remise
+  price          real               -- prix final
 );
 
 create table llx_adherent_type
