@@ -1,4 +1,6 @@
 -- ===================================================================
+-- Copyright (C) 2000-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+--
 -- $Id$
 -- $Source$
 --
