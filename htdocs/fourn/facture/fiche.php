@@ -44,25 +44,24 @@ if ($action == 'payed')
   $result = $db->query( $sql);
 }
 
+if ($HTTP_POST_VARS["action"] == 'modif_libelle')
+{
+  $sql = "UPDATE llx_facture_fourn set libelle = '$form_libelle' WHERE rowid = $facid ;";
+  $result = $db->query( $sql);
+}
+
+
 if ($action == 'update')
 {
-
-  $tva = ($HTTP_POST_VARS["tauxtva"] * $HTTP_POST_VARS["amount"]) / 100 ;
-  $remise = 0;
-  $total = $tva + $amount ;
-
   $datefacture = $db->idate(mktime(12, 0 , 0, $HTTP_POST_VARS["remonth"], $HTTP_POST_VARS["reday"], $HTTP_POST_VARS["reyear"])); 
 
   $sql = "UPDATE llx_facture_fourn set ";
-  $sql .= " libelle='".$HTTP_POST_VARS["libelle"]."'";
+  $sql .= " facnumber='".trim($HTTP_POST_VARS["facnumber"])."'";
+  $sql .= ", libelle='".trim($HTTP_POST_VARS["libelle"])."'";
   $sql .= ", note='".$HTTP_POST_VARS["note"]."'";
   $sql .= ", datef = '$datefacture'";
-  $sql .= ", amount=".$HTTP_POST_VARS["amount"];
-  $sql .= ", total = $total";
-  $sql .= ", tva = $tva";
   $sql .= " WHERE rowid = $facid ;";
   $result = $db->query( $sql);
-
 }
 
 if ($action == 'add')
@@ -137,10 +136,15 @@ llxHeader();
  *
  */
 
-if ($action == 'create')
+if ($action == 'create' or $action == 'copy')
 {
+  if ($action == 'copy')
+    {
+      $fac_ori = new FactureFourn($db);
+      $fac_ori->fetch($facid);
+    }
   print_titre("Saisir une facture");
-
+      
   print '<form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<table class="border" cellspacing="0" cellpadding="3" border="1" width="100%">';
@@ -177,9 +181,14 @@ if ($action == 'create')
   print '<tr><td>Numéro :</td><td><input name="facnumber" type="text"></td>';
 
   print '<td rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="30" rows="6"></textarea></td></tr>';
-
-  print "<tr>".'<td>Libellé :</td><td><input size="30" name="libelle" type="text"></td></tr>';
-
+  if ($action == 'copy')
+    {
+      print '<tr><td>Libellé :</td><td><input size="30" name="libelle" value="'.$fac_ori->libelle.'" type="text"></td></tr>';
+    }
+  else
+    {
+      print '<tr><td>Libellé :</td><td><input size="30" name="libelle" type="text"></td></tr>';
+    }
   print "<tr>".'<td>Date :</td><td>';
   $html->select_date();
   print '</td></tr>';
@@ -187,36 +196,28 @@ if ($action == 'create')
   print '<tr><td>Auteur :</td><td>'.$user->fullname.'</td></tr>';
   print "</table><br>";
 
-  print '<table cellspacing="0" cellpadding="3" border="1" width="100%">';
-  print "<tr $bc[1]>".'<td>&nbsp;</td><td>Libellé</td><td align="center">P.U.</td><td align="center">Qty</td><td align="center">Tx TVA</td></tr>';
+  print '<table cellspacing="0" cellpadding="3" class="border" width="100%">';
+  print "<tr class=\"liste_titre\">".'<td>&nbsp;</td><td>Libellé</td><td align="center">P.U.</td><td align="center">Qty</td><td align="center">Tx TVA</td></tr>';
 
-  print "<tr $bc[1]>".'<td>Ligne 1 :</td>';
-  print '<td><input size="30" name="label1" type="text"></td>';
-  print '<td align="center"><input type="text" size="8" name="amount1"></td>';
-  print '<td align="center"><input type="text" size="3" name="qty1" value="1"></td><td align="center">';
-  $html->select_tva("tauxtva1");
-  print '</td></tr>';
-
-  print "<tr $bc[1]>".'<td>Ligne 2 :</td>';
-  print '<td><input size="30" name="label2" type="text"></td>';
-  print '<td align="center"><input type="text" size="8" name="amount2"></td>';
-  print '<td align="center"><input type="text" size="3" name="qty2" value="1"></td><td align="center">';
-  $html->select_tva("tauxtva2");
-  print '</td></tr>';
-
-  print "<tr $bc[1]>".'<td>Ligne 3 :</td>';
-  print '<td><input size="30" name="label3" type="text"></td>';
-  print '<td align="center"><input type="text" size="8" name="amount3"></td>';
-  print '<td align="center"><input type="text" size="3" name="qty3" value="1"></td><td align="center">';
-  $html->select_tva("tauxtva3");
-  print '</td></tr>';
-
-  print "<tr $bc[1]>".'<td>Ligne 4 :</td>';
-  print '<td><input size="30" name="label4" type="text"></td>';
-  print '<td align="center"><input type="text" size="8" name="amount4"></td>';
-  print '<td align="center"><input type="text" size="3" name="qty4" value="1"></td><td align="center">';
-  $html->select_tva("tauxtva4");
-  print '</td></tr>';
+  for ($i = 1 ; $i < 5 ; $i++)
+    {
+      if ($action == 'copy')
+	{
+	  $value_label = $fac_ori->lignes[$i-1][0];
+	  $value_pu = $fac_ori->lignes[$i-1][1];
+	  $value_qty = $fac_ori->lignes[$i-1][3];
+	}
+      else
+	{
+	  $value_qty = "1";
+	}
+      print '<tr><td>Ligne '.$i.' :</td>';
+      print '<td><input size="30" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
+      print '<td align="center"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
+      print '<td align="center"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td><td align="center">';
+      $html->select_tva("tauxtva".$i);
+      print '</td></tr>';
+    }
 
   print "</table>";
   print '<p align="center"><input type="submit" value="Enregistrer"></p>';
@@ -262,13 +263,13 @@ else
 	  print '<input type="hidden" name="action" value="update">';
     
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
-	  print "<tr $bc[1]><td width=\"20%\">Société :</td>";
+	  print "<tr><td width=\"20%\">Société :</td>";
 	
 	  print '<td width="20%">'.stripslashes($obj->socnom);
 	  print '</td>';
 	  print '<td width="60%" valign="top">Commentaires :</tr>';
 	
-	  print "<tr $bc[1]>".'<td valign="top">Numéro :</td><td valign="top">';
+	  print "<tr>".'<td valign="top">Numéro :</td><td valign="top">';
 	  print '<input name="facnumber" type="text" value="'.$obj->facnumber.'"></td>';
 	
 	  print '<td rowspan="8" width="60%" valign="top">';
@@ -276,20 +277,20 @@ else
 	  print stripslashes($obj->note);
 	  print '</textarea></td></tr>';
 
-	  print "<tr $bc[1]>".'<td valign="top">Libellé :</td><td>';
+	  print "<tr>".'<td valign="top">Libellé :</td><td>';
 	  print '<input size="30" name="libelle" type="text" value="'.stripslashes($obj->libelle).'"></td></tr>';
     
-	  print "<tr $bc[1]>".'<td>Montant HT :</td>';
+	  print "<tr>".'<td>Montant HT :</td>';
 	  print '<td valign="top">'.price($fac->total_ht).'</td></tr>';
         
-	  print "<tr $bc[1]><td>Date :</td><td>";
+	  print "<tr><td>Date :</td><td>";
 
 	  print_date_select($obj->df);
 
 	  print "</td></tr>";
     
-	  print "<tr $bc[1]><td>Auteur :</td><td>".'&nbsp;'."</td></tr>";
-	  print "<tr $bc[1]><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
+	  print "<tr><td>Auteur :</td><td>".'&nbsp;'."</td></tr>";
+	  print "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
 	  print "</table>";
 	  print "</form>";
 
@@ -312,8 +313,8 @@ else
 	      print '<td align="center">'.$fac->lignes[$i][2]."</td>";  
 	      print '<td align="center">'.price($fac->lignes[$i][5])."</td>";  
 	      print '<td align="right">'.price($fac->lignes[$i][6])."</td>";
-	      print '<td align="center">[';
-	      print '<a href="fiche.php?facid='.$facid.'&amp;action=del_ligne&amp;ligne_id='.$fac->lignes[$i][7].'">Supprimer</a>]</td>';
+	      print '<td align="center">';
+	      print '<a href="fiche.php?facid='.$facid.'&amp;action=del_ligne&amp;ligne_id='.$fac->lignes[$i][7].'">Supprimer</a></td>';
 	      print '</tr>';
 	    }
 
@@ -351,19 +352,21 @@ else
 	   *   Facture
 	   */
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
-	  print "<tr $bc[1]><td>Société</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$obj->socidp\">$obj->socnom</a></b></td>";
+	  print "<tr><td>Société</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$obj->socidp\">$obj->socnom</a></b></td>";
 	  print "<td align=\"right\"><a href=\"index.php?socid=$obj->socidp\">Autres factures</a></td>\n";
 	  print "</tr>";
-	  print "<tr $bc[1]><td>Date</td><td colspan=\"4\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
-	  print "<tr $bc[1]><td>Libelle</td><td colspan=\"4\">$obj->libelle</td>";
-	  print "<tr $bc[1]><td>Auteur</td><td colspan=\"4\">$fac->author&nbsp;</td>";
+	  print "<tr><td>Date</td><td colspan=\"4\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
+	  print "<tr><td>Libellé</td><td colspan=\"4\">";
+	  print $obj->libelle;
+	  print "</td>";
+	  print "<tr><td>Auteur</td><td colspan=\"4\">$fac->author&nbsp;</td>";
 	  
-	  print "<tr $bc[1]>".'<td>&nbsp</td><td>Total HT</td><td align="right"><b>'.price($fac->total_ht)."</b></td>";
+	  print "<tr>".'<td>&nbsp</td><td>Total HT</td><td align="right"><b>'.price($fac->total_ht)."</b></td>";
 	  print '<td align="right">TVA</td><td align="right">'.price($fac->total_tva)."</td></tr>";
-	  print "<tr $bc[1]>".'<td>&nbsp</td><td>Total TTC</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
+	  print "<tr>".'<td>&nbsp</td><td>Total TTC</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
 	  if (strlen($obj->note))
 	    {
-	      print "<tr $bc[1]>".'<td>Commentaires</td><td colspan="4">';
+	      print "<tr>".'<td>Commentaires</td><td colspan="4">';
 	      print nl2br(stripslashes($obj->note));
 	      print '</td></tr>';
 	    }
@@ -459,11 +462,11 @@ else
   
       if ($obj->statut == 0 && $user->societe_id == 0)
 	{
-	  print '<td align="center" width="20%">[<a href="index.php?facid='.$facid.'&amp;action=delete">Supprimer</a>]</td>';
+	  print '<td align="center" width="20%"><a href="index.php?facid='.$facid.'&amp;action=delete">Supprimer</a></td>';
 	}
       elseif ($obj->statut == 1 && $obj->paye == 0  && $user->societe_id == 0)
 	{
-	  print '<td align="center" width="20%">[<a href="paiement.php?facid='.$fac->id.'&amp;action=create">Emmettre un paiement</a>]</td>';
+	  print '<td align="center" width="20%"><a href="paiement.php?facid='.$fac->id.'&amp;action=create">Emmettre un paiement</a></td>';
 	}
       else
 	{
@@ -472,7 +475,14 @@ else
 
       if ($obj->statut == 0 && $user->societe_id == 0)    
 	{
-	  print '<td align="center" width="20%">[<a href="fiche.php?facid='.$obj->rowid.'&amp;action=edit">Editer</a>]</td>';
+	  if ($action == "edit")
+	    {
+	      print '<td align="center" width="20%"><a href="fiche.php?facid='.$obj->rowid.'">Annuler</a></td>';
+	    }
+	  else
+	    {
+	      print '<td align="center" width="20%"><a href="fiche.php?facid='.$obj->rowid.'&amp;action=edit">Editer</a></td>';
+	    }
 	}
       else
 	{
@@ -481,7 +491,7 @@ else
  
       if ($obj->statut == 1 && abs($resteapayer == 0) && $obj->paye == 0  && $user->societe_id == 0)
 	{
-	  print "<td align=\"center\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&amp;action=payed\">Classer 'Payée'</a>]</td>";
+	  print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=payed\">Classer 'Payée'</a></td>";
 	}
       else
 	{
@@ -490,13 +500,20 @@ else
 
       print "<td align=\"center\" width=\"20%\">-</td>";
 
-      if ($obj->statut == 0  && $user->societe_id == 0)
+      if ($user->societe_id == 0)
 	{
-	  print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"20%\">[<a href=\"$PHP_SELF?facid=$facid&amp;action=valid\">Valider</a>]</td>";
+	  if ($obj->statut == 0)
+	    {
+	      print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=valid\">Valider</a></td>";
+	    }
+	  else
+	    {
+	      print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$facid&amp;action=copy&amp;socid=$fac->socidp\">Copier</a></td>";
+	    }
 	}
       else
 	{
-	  print "<td align=\"center\" width=\"20%\">-</td>";
+	  print '<td align="center" width="20%">-</td>';
 	}
 
       print "</tr></table>";
