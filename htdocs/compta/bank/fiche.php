@@ -33,12 +33,14 @@ if ($HTTP_POST_VARS["action"] == 'add')
   $account->label        = $HTTP_POST_VARS["label"];
 
   $account->courant      = $HTTP_POST_VARS["courant"];
+  $account->clos         = $HTTP_POST_VARS["clos"];
 
   $account->code_banque  = $HTTP_POST_VARS["code_banque"];
   $account->code_guichet = $HTTP_POST_VARS["code_guichet"];
   $account->number       = $HTTP_POST_VARS["number"];
   $account->cle_rib      = $HTTP_POST_VARS["cle_rib"];
   $account->bic          = $HTTP_POST_VARS["bic"];
+  $account->iban_prefix  = $HTTP_POST_VARS["iban_prefix"];
 
   $id = $account->create($user->id);
 
@@ -46,18 +48,23 @@ if ($HTTP_POST_VARS["action"] == 'add')
 
 if ($action == 'update')
 {
-  $account = new User($db, $id);
-  $account->fetch();
+  $account = new Account($db, $id);
+  $account->fetch($id);
 
-  $account->nom = $nom;
-  $account->prenom = $prenom;
-  $account->login = $login;
-  $account->email = $email;
+  $account->bank         = $HTTP_POST_VARS["bank"];
+  $account->label        = $HTTP_POST_VARS["label"];
 
-  if (! $account->update($id, $user))
-    {
-      print $account->error();
-    }
+  $account->courant      = $HTTP_POST_VARS["courant"];
+  $account->clos         = $HTTP_POST_VARS["clos"];
+
+  $account->code_banque  = $HTTP_POST_VARS["code_banque"];
+  $account->code_guichet = $HTTP_POST_VARS["code_guichet"];
+  $account->number       = $HTTP_POST_VARS["number"];
+  $account->cle_rib      = $HTTP_POST_VARS["cle_rib"];
+  $account->bic          = $HTTP_POST_VARS["bic"];
+  $account->iban_prefix  = $HTTP_POST_VARS["iban_prefix"];
+
+  $account->update($id, $user);
 }
 
 
@@ -90,7 +97,7 @@ if ($action == 'create')
   print '<td><input size="3" type="text" name="cle_rib"></td></tr>';
   
   print '<tr><td valign="top">Clé IBAN</td>';
-  print '<td colspan="3"><input size="5" type="text" name="iban" value=""></td></tr>';
+  print '<td colspan="3"><input size="5" type="text" name="iban_prefix" value=""></td></tr>';
 
   print '<tr><td valign="top">Identifiant BIC</td>';
   print '<td colspan="3"><input size="12" type="text" name="bic" value=""></td></tr>';
@@ -137,18 +144,16 @@ else
       print '<td>'.$account->cle_rib.'</td></tr>';
       
       print '<tr><td valign="top">Clé IBAN</td>';
-      print '<td colspan="3"><input size="5" type="text" name="iban" value=""></td></tr>';
+      print '<td colspan="3">'.$account->iban_prefix.'</td></tr>';
       
       print '<tr><td valign="top">Identifiant BIC</td>';
-      print '<td colspan="3"><input size="12" type="text" name="bic" value=""></td></tr>';
+      print '<td colspan="3">'.$account->bic.'</td></tr>';
       
       print '<tr><td valign="top">Compte Courant</td>';
-      print '<td colspan="3"><select name="courant">';
-      print '<option value="0">non<option value="1">oui</select></td></tr>';
-            
-      
-      print '<tr><td align="center" colspan="4"><input value="Enregistrer" type="submit"></td></tr>';
-      
+      print '<td colspan="3">'.$yn[$account->courant].'</td></tr>';
+
+      print '<tr><td valign="top">Compte Clos</td>';
+      print '<td colspan="3">'.$yn[$account->clos].'</td></tr>';
       print '</table>';
 
       print '<br><table width="100%" border="1" cellspacing="0" cellpadding="2">';
@@ -165,7 +170,6 @@ else
       print '<td width="25%" align="center">-</td>';
       print '<td width="25%" align="center">-</td>';
       print '<td width="25%" align="center">-</td>';
-      
 
       print '</table><br>';
 
@@ -177,37 +181,52 @@ else
       
       if ($action == 'edit' && $user->admin) 
 	{
-	  print '<hr><div class="titre">Edition de l\'utilisateur</div><br>';
-	  print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
+
+	  $form = new Form($db);
+
+	  print '<p><form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
 	  print '<input type="hidden" name="action" value="update">';
+	  
 	  print '<table border="1" cellpadding="3" cellspacing="0">';
 	  
-	  print '<tr><td valign="top">Id</td>';
-	  print '<td>'.$fuser->id.'</td></tr>';
+	  print '<tr><td valign="top">Banque</td>';
+	  print '<td colspan="3"><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
 	  
-	  print '<tr><td valign="top">Nom</td>';
-	  print '<td><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td></tr>';
+	  print '<tr><td valign="top">Libellé</td>';
+	  print '<td colspan="3"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
 	  
-	  print '<tr><td valign="top">Prénom</td>';
-	  print '<td><input size="20" type="text" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
+	  print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
+	  print '<tr><td><input size="8" type="text" name="code_banque" value="'.$account->code_banque.'"></td>';
+	  print '<td><input size="8" type="text" name="code_guichet" value="'.$account->code_guichet.'"></td>';
+	  print '<td><input size="15" type="text" name="number" value="'.$account->number.'"></td>';
+	  print '<td><input size="3" type="text" name="cle_rib" value="'.$account->cle_rib.'"></td></tr>';
 	  
-	  print '<tr><td valign="top">Login</td>';
-	  print '<td><input size="10" maxlength="8" type="text" name="login" value="'.$fuser->login.'"></td></tr>';
+	  print '<tr><td valign="top">Clé IBAN</td>';
+	  print '<td colspan="3"><input size="5" type="text" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
 	  
-	  print '<tr><td valign="top">Email</td>';
-	  print '<td><input size="30" type="text" name="email" value="'.$fuser->email.'"></td></tr>';
+	  print '<tr><td valign="top">Identifiant BIC</td>';
+	  print '<td colspan="3"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
 	  
+	  print '<tr><td valign="top">Compte Courant</td>';
+	  print '<td colspan="3">';
+	  $form->selectyesnonum("courant",$account->courant);
+	  print '</td></tr>';
 	  
-	  print '<tr><td valign="top">Description</td><td>';
+	  print '<tr><td valign="top">Compte Cloturé</td>';
+	  print '<td colspan="3">';
+	  $form->selectyesnonum("clos",$account->clos);
+	  print '</td></tr>';
+
+	  print '<tr><td valign="top">Description</td><td colspan="3">';
 	  print "<textarea name=\"desc\" rows=\"12\" cols=\"40\">";
-	  print $fuser->description;
+	  print $user->description;
 	  print "</textarea></td></tr>";
 	  
-	  print '<tr><td align="center" colspan="2"><input value="Enregistrer" type="submit"></td></tr>';
+	  print '<tr><td align="center" colspan="4"><input value="Enregistrer" type="submit"></td></tr>';
 	  print '</form>';
 	  print '</table>';
 	}
-            
+      
     }
   
 }
