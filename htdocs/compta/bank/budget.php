@@ -38,10 +38,10 @@ if ($_GET["bid"] == 0)
    */
   print_titre("Budgets");
   
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-  print "<TR class=\"liste_titre\">";
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+  print "<tr class=\"liste_titre\">";
   echo '<td>Description</TD><td align="center">Nb</td><td align="right">Total</td><td align="right">Moyenne</td>';
-  print "</TR>\n";
+  print "</tr>\n";
 
   $sql = "SELECT sum(d.amount) as somme, count(*) as nombre, c.label, c.rowid ";
   $sql .= " FROM ".MAIN_DB_PREFIX."bank_categ as c, ".MAIN_DB_PREFIX."bank_class as l, ".MAIN_DB_PREFIX."bank as d";
@@ -96,10 +96,10 @@ else
   
   print_titre("Budget : $budget_name");
 
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-  print "<TR class=\"liste_titre\">";
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+  print "<tr class=\"liste_titre\">";
   echo '<td align="right">Date</td><td width="60%">Description</td><td align="right">Montant</td><td>&nbsp;</td>';
-  print "</TR>\n";
+  print "</tr>\n";
 
   $sql = "SELECT d.amount, d.label, ".$db->pdate("d.dateo")." as do, d.rowid";
   $sql .= " FROM ".MAIN_DB_PREFIX."bank_class as l, ".MAIN_DB_PREFIX."bank as d";

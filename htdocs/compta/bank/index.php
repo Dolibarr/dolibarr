@@ -134,19 +134,6 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
 print "</table>";
 
 
-print "<br><div class=\"tabsAction\">\n";
-
-if ($user->rights->banque->configurer) {
-	print '<a class="tabAction" href="fiche.php?action=create">Nouveau compte</a>';
-	print '<a class="tabAction" href="config.php">Configurer</a>';
-}
-if ($user->rights->banque->modifier) {
-	print '<a class="tabAction" href="categ.php">Catégories</a>';
-}
-
-print "</div>";
-
-
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");

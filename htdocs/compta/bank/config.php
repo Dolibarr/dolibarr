@@ -30,12 +30,12 @@ llxHeader();
 
 print_titre("Configuration");
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-print "<TR class=\"liste_titre\">";
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
+print "<tr class=\"liste_titre\">";
 print "<td>id</td><td>Label</td><td>Description</TD>";
 print "<td align=\"left\">Number</a></TD>";
 print "<td align=\"center\">Clos</a></TD>";
-print "</TR>\n";
+print "</tr>\n";
 
 $sql = "SELECT rowid, label,number,bank,clos from ".MAIN_DB_PREFIX."bank_account";
 
@@ -61,27 +61,13 @@ if ($result)
 print "</table>";
 
 
-print '<p><table id="actions" width="100%" cellspacing="0" cellpadding="4">'."<tr>";
+print "<br><div class=\"tabsAction\">\n";
 
-/*
- * Case 1
- */
-
-print '<td align="center" width="20%">';
-print '<a href="fiche.php?action=create">Nouveau compte</a></td>';	
-/*
- * Case 2
- */
-
-print '<td align="center" width="20%">-</td>';
-print '<td align="center" width="20%">-</td>';
-print '<td align="center" width="20%">';
-print '<a href="categ.php">Catégories</a></td>';
-print '<td align="center" width="20%">-</td>';
-
-print "</table>";
-
-
+if ($user->rights->banque->configurer) {
+	print '<a class="tabAction" href="fiche.php?action=create">Nouveau compte</a>';
+	print '<a class="tabAction" href="categ.php">Catégories</a>';
+}
+print "</div>";
 
 
 $db->close();
