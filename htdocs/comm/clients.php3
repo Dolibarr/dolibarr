@@ -98,7 +98,7 @@ if ($action == 'recontact')
 
 if ($action == 'note')
 {
-  $sql = "UPDATE societe SET note='$note' WHERE idp=$socid";
+  $sql = "UPDATE llx_societe SET note='$note' WHERE idp=$socid";
   $result = $db->query($sql);
 }
 
@@ -112,7 +112,7 @@ if ($action == 'stcomm')
       
       if ($result)
 	{
-	  $sql = "UPDATE societe SET fk_stcomm=$stcommid WHERE idp=$socid";
+	  $sql = "UPDATE llx_societe SET fk_stcomm=$stcommid WHERE idp=$socid";
 	  $result = $db->query($sql);
 	}
       else
@@ -123,7 +123,7 @@ if ($action == 'stcomm')
 
   if ($actioncommid)
     {
-      $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
+      $sql = "INSERT INTO llx_actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
       $result = @$db->query($sql);
       
       if (!$result)
@@ -140,7 +140,7 @@ if ($action == 'stcomm')
  */
 if ($mode == 'search') {
   if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM societe as s ";
+    $sql = "SELECT s.idp FROM llx_societe as s ";
     $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
   }
       
@@ -169,7 +169,7 @@ $pagenext = $page + 1;
  */
 print_barre_liste("Liste des clients", $page, $PHP_SELF,"",$sortfield,$sortorder);
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=1";
+$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM llx_societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.client=1";
 
 if (strlen($stcomm))
 {

@@ -55,7 +55,7 @@ class Societe {
 
     print $this->url;
 
-    $sql = "INSERT INTO societe (nom, datec, datea, client) ";
+    $sql = "INSERT INTO llx_societe (nom, datec, datea, client) ";
     $sql .= " VALUES ('".trim($this->nom)."', now(), now(), $this->client);";
 
     if ($this->db->query($sql) ) {
@@ -74,7 +74,7 @@ class Societe {
   Function update($id)
     {
 
-      $sql = "UPDATE societe ";
+      $sql = "UPDATE llx_societe ";
       $sql .= " SET nom = '" . trim($this->nom) ."'";
       $sql .= ",address = '" . trim($this->adresse) ."'";
       $sql .= ",cp = '" . trim($this->cp) ."'";
@@ -132,12 +132,11 @@ class Societe {
   Function fetch($socid) {
     $this->id = $socid;
 
-
     $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc,";
 
     $sql .= " s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
 
-    $sql .= " FROM societe as s";
+    $sql .= " FROM llx_societe as s";
     $sql .= " WHERE s.idp = ".$this->id;
 
     $result = $this->db->query($sql);
@@ -176,7 +175,7 @@ class Societe {
 
   Function attribute_prefix()
     {
-      $sql = "SELECT nom FROM societe WHERE idp = $this->id";
+      $sql = "SELECT nom FROM llx_societe WHERE idp = $this->id";
       if ( $this->db->query( $sql) )
 	{
 	  if ( $this->db->num_rows() )
@@ -186,7 +185,7 @@ class Societe {
 	      
 	      $prefix = strtoupper(substr($nom, 0, 2));
       
-	      $sql = "SELECT count(*) FROM societe WHERE prefix_comm = '$prefix'";
+	      $sql = "SELECT count(*) FROM llx_societe WHERE prefix_comm = '$prefix'";
 	      if ( $this->db->query( $sql) )
 		{
 		  if ( $this->db->result(0, 0) )
@@ -197,7 +196,7 @@ class Societe {
 		    {
 		      $this->db->free();
 
-		      $sql = "UPDATE societe set prefix_comm='$prefix' WHERE idp=$this->id";
+		      $sql = "UPDATE llx_societe set prefix_comm='$prefix' WHERE idp=$this->id";
 		      
 		      if ( $this->db->query( $sql) )
 			{
@@ -230,7 +229,7 @@ class Societe {
   Function get_nom($id)
     {
 
-      $sql = "SELECT nom FROM societe WHERE idp=$id;";
+      $sql = "SELECT nom FROM llx_societe WHERE idp=$id;";
       
       $result = $this->db->query($sql);
       
