@@ -28,7 +28,7 @@ if (!$user->rights->facture->lire)
 require("../../facture.class.php");
 require("../../project.class.php");
 
-llxHeader();
+llxHeader('','Nouvelle facture récurrente','ch-facture.html#s-fac-facture-rec');
 
 /*
  * Sécurité accés client
@@ -191,12 +191,20 @@ if ($action == 'create')
 	      print '<td width="8%" align="center">Quantité</td>';
 	      print '<td width="8%" align="right">Remise</td>';
 	      print '<td width="12%" align="right">P.U.</td>';
+	      print '<td width="12%" align="right">N.P.</td>';
 	      print "</tr>\n";
 	    }
 	  $var=True;
 	  while ($i < $num)
 	    {
 	      $objp = $db->fetch_object( $i);
+
+	      if ($objp->fk_product > 0)
+		{
+		  $product = New Product($db);
+		  $product->fetch($objp->fk_product);
+		}
+
 	      $var=!$var;
 	      print "<TR $bc[$var]>";
 	      if ($objp->fk_product)
@@ -217,7 +225,18 @@ if ($action == 'create')
 		{
 		  print '<td>&nbsp;</td>';
 		}
+
 	      print '<TD align="right">'.price($objp->subprice)."</td>\n";
+
+	      if ($objp->fk_product > 0 && $objp->subprice <> $product->price)
+		{
+		  print '<td align="right">'.price($product->price)."</td>\n";
+		  $flag_different_price++;
+		}
+	      else
+		{
+		  print '<td>&nbsp;</td>';
+		}
 	      
 	      print "</tr>";
 	      
@@ -233,7 +252,25 @@ if ($action == 'create')
 	}
       print "</table>";
       
-      print '</td></tr><tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
+      print '</td></tr>';
+      if ($flag_different_price)
+	{
+	  print '<tr><td colspan="3" align="left">';
+	  print '<select name="deal_price">';
+	  if ($flag_different_price>1)
+	    {
+	      print '<option value="new">Prendre en compte les nouveaux prix</option>';
+	      print '<option value="old">Utiliser les anciens prix</option>';
+	    }
+	  else
+	    {
+	      print '<option value="new">Prendre en compte le nouveau prix</option>';
+	      print '<option value="old">Utiliser l\'ancien prix</option>';
+	    }
+	  print '</select>';
+	  print '</td></tr>';
+	}
+      print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
       print "</form>\n";
       print "</table>\n";
       
