@@ -32,7 +32,7 @@ Class pdf_paiement {
 
       $this->file = $this->dir . "paiements" . ".pdf";
 
-      $this->url = "/document/rapport/" . "paiements" . ".pdf";
+      $this->url = DOL_URL_ROOT."/document/rapport/" . "paiements" . ".pdf";
 
       $this->tab_top = 30;
 
