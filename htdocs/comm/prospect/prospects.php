@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/comm/prospect/prospect.php
         \ingroup    prospect
 		\brief      Page de la liste des prospects
@@ -128,7 +128,7 @@ if ($result)
   print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","","","",$sortfield);
   print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","","","align=\"center\"",$sortfield);
   print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","","","align=\"center\"",$sortfield);
-  print_liste_field_titre($langs->trans("Created"),"prospects.php","s.datec","","","align=\"center\"",$sortfield);
+  print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","","","align=\"center\"",$sortfield);
   print '<td colspan="4">&nbsp;</td>';
   print "</tr>\n";
 
