@@ -35,6 +35,10 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+$page=$_GET["page"];
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+
 if ($sortorder == "")
 {
   $sortorder="ASC";
@@ -85,27 +89,7 @@ if ($result) {
   $num = $db->num_rows();
   
   print_barre_liste("Liste des contacts fournisseurs",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
-  
-  print "<DIV align=\"center\">";
-  
-  print "| <A href=\"contact.php?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
-  for ($i = 65 ; $i < 91; $i++) {
-    print "<A href=\"contact.php?begin=" . chr($i) . "&stcomm=$stcomm\" class=\"T3\">";
     
-    if ($begin == chr($i) ) {
-      print  "<b>-&gt;" . chr($i) . "&lt;-</b>" ; 
-    } else {
-      print  chr($i)  ; 
-    }
-    print "</A> | ";
-  }
-  print "</div>";
-  
-  if ($sortorder == "DESC") {
-    $sortorder="ASC";
-  } else {
-    $sortorder="DESC";
-  }
   print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Lastname"),"contact.php","lower(p.name)", $begin);
