@@ -99,14 +99,14 @@ class modContrat extends DolibarrModules
     $this->rights[2][3] = 0;
 
     $this->rights[3][0] = 163;
-    $this->rights[3][1] = 'Mettre en service un contrat';
+    $this->rights[3][1] = 'Activer les services des contrats';
     $this->rights[3][2] = 'r';
     $this->rights[3][3] = 0;    
 
-    $this->rights[3][0] = 164;
-    $this->rights[3][1] = 'Mettre fin au service d\'un contrat';
-    $this->rights[3][2] = 'r';
-    $this->rights[3][3] = 0;
+    $this->rights[4][0] = 164;
+    $this->rights[4][1] = 'Désactiver les services des contrats';
+    $this->rights[4][2] = 'r';
+    $this->rights[4][3] = 0;
 
 
 
