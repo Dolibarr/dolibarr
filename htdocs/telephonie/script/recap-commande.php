@@ -35,12 +35,6 @@ $opt = getopt("e:");
 
 $email = $opt['e'];
 
-if (strlen($email) == 0)
-{
-  print "Usage :\n php recap-commande.php -e EMAIL\n";
-}
-
-
 $date = time();
 $date_now = $date;
 
@@ -106,11 +100,40 @@ function Generate($date_gen, $db, $date_now, $email)
   $format[6]->set_align('center');
   $format[6]->set_align('vcenter');
   $format[6]->set_color('red');
+  $format[6]->set_bold();
 
   $format[7] =& $workbook->addformat();
   $format[7]->set_align('center');
   $format[7]->set_align('vcenter');
   $format[7]->set_color('red');
+  $format[7]->set_bold();
+
+  $format_left[2] =& $workbook->addformat();
+  $format_left[2]->set_align('vcenter');
+  $format_left[2]->set_color('blue');
+
+  $format_left[3] =& $workbook->addformat();
+  $format_left[3]->set_align('vcenter');
+  $format_left[3]->set_color('green');
+
+  $format_left[4] =& $workbook->addformat();
+  $format_left[4]->set_align('vcenter');
+  $format_left[4]->set_color('pink');
+
+  $format_left[5] =& $workbook->addformat();
+  $format_left[5]->set_align('vcenter');
+  $format_left[5]->set_color('orange');
+
+  $format_left[6] =& $workbook->addformat();
+  $format_left[6]->set_align('vcenter');
+  $format_left[6]->set_color('red');
+  $format_left[6]->set_bold();
+
+  $format_left[7] =& $workbook->addformat();
+  $format_left[7]->set_align('vcenter');
+  $format_left[7]->set_color('red');
+  $format_left[7]->set_bold();
+
 
   $formatccb =& $workbook->addformat();
   $formatccb->set_align('center');
@@ -175,9 +198,9 @@ function Generate($date_gen, $db, $date_now, $email)
 	  $soc = new Societe($db);
 	  $soc->fetch($obj->socid);
       
-	  $worksheet->write($j, 0,  $obj->code_client, $formatc);
+	  $worksheet->write($j, 0,  $obj->code_client, $format_left[$obj->statut]);
 
-	  $worksheet->write($j, 1,  $obj->nom, $formatc);
+	  $worksheet->write($j, 1,  $obj->nom, $format_left[$obj->statut]);
       
 	  $worksheet->write_string($j, 2,  "$obj->ligne", $format[$obj->statut]);
       
@@ -204,7 +227,7 @@ function Generate($date_gen, $db, $date_now, $email)
   /*
    *
    */
-  if ($date_gen == $date_now)
+  if ($date_gen == $date_now && strlen($email))
     {
       MailFile($fname, $shortname, $email);
     }
