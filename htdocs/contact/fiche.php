@@ -48,9 +48,8 @@ if ($_GET["action"] == 'create_user' && $user->admin)
 if ($_POST["action"] == 'add') 
 {
   if (! $_POST["name"] && ! $_POST["firstname"]) {
-    array_push($error,"Le champ nom ou prénom est obligatoire");
+    array_push($error,"Le champ nom ou prénom est obligatoire. Cliquez sur <a href=# onclick=history.back()>Retour</a> et réessayez.");
     $_GET["id"]=0;
-    // TODO Mettre lien back
   }
   else {
       $contact = new Contact($db);
@@ -77,7 +76,7 @@ if ($_POST["action"] == 'add')
   }
 }
 
-if ($_GET["action"] == 'delete') 
+if ($_POST["action"] == 'confirm_delete' AND $_POST["confirm"] == 'yes') 
 {
   $contact = new Contact($db);
 
@@ -128,6 +127,16 @@ if ($_POST["action"] == 'update')
 
 llxHeader();
 $form = new Form($db);
+
+/*
+ * Confirmation de la suppression du contact
+ *
+ */
+if ($_GET["action"] == 'delete')
+    {
+         $form->form_confirm($_SERVER["PHP_SELF"]."?id=".$_GET["id"],"Supprimer le contact","Êtes-vous sûr de vouloir supprimer ce contact&nbsp;?","confirm_delete");
+    }
+
 
 /*
  * Onglets
@@ -347,7 +356,7 @@ else
       
       print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';    
 
-      print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=deleteWARNING">'.$langs->trans('Delete').'</a>';
+      print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 
       if ($contact->user_id == 0 && $user->admin)
 	{

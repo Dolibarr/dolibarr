@@ -82,8 +82,9 @@ class Contact
     
     $this->email = trim($this->email);
     
-    $this->phone_pro = ereg_replace(" ","",$this->phone_pro);
-    $this->phone_perso = ereg_replace(" ","",$this->phone_perso);
+		//commenté suite a la nouvell fonction dolibarr_print_phone
+    //$this->phone_pro = ereg_replace(" ","",$this->phone_pro);
+    //$this->phone_perso = ereg_replace(" ","",$this->phone_perso);
     
     if (strlen($this->phone_pro) == 0 && $this->socid > 0)
       {
