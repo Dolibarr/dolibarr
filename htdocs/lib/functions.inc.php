@@ -328,9 +328,9 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="")
   global $conf;
 
   print $name."&nbsp;";
-  print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&begin='.$begin.$options.'">';
+  print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">';
   print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="A-Z"></a>';
-  print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&begin='.$begin.$options.'">';
+  print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">';
   print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="Z-A"></a>';
 }
 
@@ -351,9 +351,9 @@ function print_liste_field_titre_new($name, $file, $field, $begin="", $options="
   print '<td '. $td.'>';
     }
   print $name."&nbsp;";
-  print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&begin='.$begin.$options.'">';
+  print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">';
   print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="A-Z"></a>';
-  print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&begin='.$begin.$options.'">';
+  print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">';
   print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="Z-A"></a>';
   print "</td>";
 }
