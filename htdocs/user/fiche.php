@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +23,9 @@
  */
 
 /*!
-	    \file       htdocs/user/fiche.php
-		\brief      Onglet user et permissions de la fiche utilisateur
-		\version    $Revision$
+  \file       htdocs/user/fiche.php
+  \brief      Onglet user et permissions de la fiche utilisateur
+  \version    $Revision$
 */
 
 
@@ -295,9 +296,9 @@ else
                     }
 		  
 		  print "<tr $bc[$var]>";
-		  print '<td align="right"><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=delrights&amp;rights='.$obj->id.'">'.img_edit_remove().'</a></td>';
-		  print "<td>".$obj->libelle . '</td><td>'.$obj->module . '</td>';
-		  print '</tr>';
+		  print "  <td align= \"right\"><a href=\"fiche.php?id=".$fuser->id."&amp;action=perms&amp;subaction=delrights&amp;rights=".$obj->id."\">".img_edit_remove()."</a></td>\n";
+		  print "  <td>".$obj->libelle . "</td><td>".$obj->module . "</td>\n";
+		  print "</tr>";
 		  $i++;
                 }
             }
@@ -416,10 +417,9 @@ else
                         $oldmod = $obj->module;
                         $var = !$var;
 		      }
-		    $fac = 'facture';
-		    $bac = "lire";
-		    $alpha = $fuser->rights->$fac->$bac; //"user->rights->".$obj->perms;
-                    print "<tr $bc[$var]><td>".$alpha . '</td><td>'.$$alpha." ".$fuser->rights->facture->lire."</td></tr>\n";
+		    print '<tr '. $bc[$var].'>';
+		    print '<td>'.$obj->libelle . '</td><td>'.$obj->module . '</td>';
+		    print '</tr>';
                     $i++;
 		  }
             }
