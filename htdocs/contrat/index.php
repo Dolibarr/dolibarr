@@ -67,7 +67,7 @@ if ( $db->query($sql) )
 
   print_barre_liste("Liste des contrats", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 
   print '<tr class="liste_titre">';
   print '<td>';
