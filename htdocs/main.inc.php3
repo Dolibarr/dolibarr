@@ -31,6 +31,7 @@ require ($GLOBALS["DOCUMENT_ROOT"]."/rtplang.class.php");
 require ($GLOBALS["DOCUMENT_ROOT"]."/boxes.php");
 require ($GLOBALS["DOCUMENT_ROOT"]."/address.class.php");
 require ($GLOBALS["DOCUMENT_ROOT"]."/includes/fpdf/fpdf.php");
+require ($GLOBALS["DOCUMENT_ROOT"]."/includes/modules/facture/modules_facture.php");
 
 define('FPDF_FONTPATH',$GLOBALS["DOCUMENT_ROOT"].'/includes/fpdf/font/');
 
