@@ -20,6 +20,11 @@
  */
 require("./pre.inc.php");
 
+if ($_GET["action"] == 'convert')
+{
+  $db->query("alter table ".$_GET["table"]." type=INNODB");
+}
+
 llxHeader();
 
 print_titre("Tables Mysql");
@@ -42,6 +47,14 @@ if ($result)
 
       print '<td>'.$row[0].'</td>';
       print '<td>'.$row[1].'</td>';
+      if ($row[1] == "MyISAM")
+	{
+	  print '<td><a href="mysql-tables.php?action=convert&amp;table='.$row[0].'">Convertir</a></td>';
+	}
+      else
+	{
+	  print '<td>-</td>';
+	}
       print '<td>'.$row[2].'</td>';
       print '<td align="right">'.$row[3].'</td>';
       print '<td align="right">'.$row[4].'</td>';
