@@ -21,7 +21,7 @@
  */
 require("./pre.inc.php");
 
-llxHeader('','Prélèvements');
+llxHeader('','Lignes de Prélèvements');
 /*
  * Sécurité accés client
  */
@@ -51,6 +51,11 @@ $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE pl.fk_prelevement_bons = p.rowid";
 $sql .= " AND s.idp = pl.fk_soc";
 
+if ($_GET["search_ligne"])
+{
+  $sql .= " AND pl.rowid = '".$_GET["search_ligne"]."'";
+}
+
 if ($_GET["search_bon"])
 {
   $sql .= " AND p.ref LIKE '%".$_GET["search_bon"]."%'";
@@ -70,6 +75,7 @@ if ($_GET["search_societe"])
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
+
 if ($result)
 {
   $num = $db->num_rows($result);
@@ -92,7 +98,9 @@ if ($result)
   print_liste_field_titre("Code client","liste.php","s.code_client",'','','align="center"');
 
   print '</tr><tr class="liste_titre">';
-  print '<form action="liste.php" method="GET"><td>&nbsp;</td>';
+  print '<form action="liste.php" method="GET">';
+  print '<td><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="6"></td>'; 
+
   print '<td><input type="text" name="search_bon" value="'. $_GET["search_bon"].'" size="8"></td>'; 
   print '<td><input type="text" name="search_societe" value="'. $_GET["search_societe"].'" size="12"></td>'; 
   print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
@@ -107,6 +115,7 @@ if ($result)
   while ($i < min($num,$conf->liste_limit))
     {
       $obj = $db->fetch_object($result);	
+
       $var=!$var;
 
       print "<tr $bc[$var]><td>";
