@@ -143,6 +143,7 @@ if ($action == 'add')
       $facture->number   = $facnumber;
       $facture->date     = $datefacture;      
       $facture->note     = $note;
+      $facture->projetid = $HTTP_POST_VARS["projetid"];
       $facture->amount   = $amount;
       $facture->remise   = $remise;
       $facture->propalid = $propalid;
@@ -732,12 +733,21 @@ else
 	    if ($num)
 	      {
 		$i = 0; $total = 0;
-		print "<p><b>Proposition(s) commerciale(s) associée(s)</b>";
+		print "<p>";
+		if ($num >1)
+		  {
+		    print_titre("Propositions commerciales associées");
+		  }
+		else
+		  {
+		    print_titre("Proposition commerciale associée");
+		  }
+
 		print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
-		print "<TR class=\"liste_titre\">";
-		print "<td>Num</td>";
+		print '<tr class="liste_titre">';
+		print "<td>Numéro</td>";
 		print "<td>Date</td>";
-		print "<td align=\"right\">Prix</TD>";
+		print '<td align="right">Prix</td>';
 		print "</TR>\n";
 		
 		$var=True;
