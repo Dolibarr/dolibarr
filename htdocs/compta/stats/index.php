@@ -39,7 +39,9 @@ if ($user->societe_id > 0)
 $mode='recettes';
 if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
 
+
 print_titre("Chiffre d'affaire (".$conf->monnaie." HT, ".$mode.")");
+print '<br>';
 
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -66,7 +68,7 @@ if ($result)
     }
 }
 
-print '<table width="100%" class="noborder" cellspacing="0" cellpadding="3">';
+print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre"><td rowspan="2">'.$langs->trans("Month").'</td>';
 
 $year_current = strftime("%Y",time());
@@ -126,8 +128,11 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
       // Pourcentage evol
       if ($cum[$caseprev]) {
 	if ($case <= $casenow) {
-	  if ($cum[$caseprev]) 
-	    print '<td align="center">'.(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100).'%</td>';
+	  if ($cum[$caseprev]) {
+	    $percent=(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100);
+	    print '<td align="right">'.($percent>=0?"+$percent":"$percent").'%</td>';
+	  
+	  }
 	  else
 	    print '<td align="center">+Inf%</td>';
 	}
@@ -151,7 +156,7 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 
 // Affiche total
-print "<tr><td align=\"right\"><b>Total :</b></td>";
+print "<tr><td align=\"right\"><b>".$langs->trans("Total")." :</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
   print "<td align=\"right\"><b>".($total[$annee]?$total[$annee]:"&nbsp;")."</b></td>";
@@ -159,8 +164,10 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
   // Pourcentage evol
   if ($total[$annee-1]) {
     if ($annee <= $year_current) {
-      if ($total[$annee-1]) 
-	print '<td align="center"><b>'.(round(($total[$annee]-$total[$annee-1])/$total[$annee-1],4)*100).'%</b></td>';
+      if ($total[$annee-1]) {
+	    $percent=(round(($total[$annee]-$total[$annee-1])/$total[$annee-1],4)*100);
+	    print '<td align="right"><b>'.($percent>=0?"+$percent":"$percent").'%</b></td>';
+        }
       else
 	print '<td align="center">+Inf%</td>';
     }
