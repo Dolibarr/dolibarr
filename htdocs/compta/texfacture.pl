@@ -15,6 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+# or see http://www.gnu.org/
 
 # $Id$
 # $Source$
@@ -243,5 +244,5 @@ print "\n**\n** Generate ps file\n**\n";
 system("cd $outputdir/ ; dvips $numfacture.dvi -o $numfacture.ps > /dev/null");
 
 #
-# export DBI_DSN="dbi:mysql:dbname=lolixfr:host=espy" ; ./texfacture.pl 
+# export DBI_DSN="dbi:mysql:dbname=lolixfr:host=espy" ; ../scripts/facture-tex.pl 
 #
