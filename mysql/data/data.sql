@@ -90,13 +90,14 @@ insert into c_effectif (id,libelle) values (5,  '100 - 500');
 insert into c_effectif (id,libelle) values (6,  '> 500');
 
 delete from c_paiement;
-insert into c_paiement (id,libelle,type) values (0, 'Chèque', 2);
+insert into c_paiement (id,libelle,type) values (0, '-', 3);
 insert into c_paiement (id,libelle,type) values (1, 'TIP', 1);
 insert into c_paiement (id,libelle,type) values (2, 'Virement', 2);
 insert into c_paiement (id,libelle,type) values (3, 'Prélèvement', 1);
 insert into c_paiement (id,libelle,type) values (4, 'Liquide', 0);
 insert into c_paiement (id,libelle,type) values (5, 'Paiement en ligne', 0);
 insert into c_paiement (id,libelle,type) values (6, 'CB', 1);
+insert into c_paiement (id,libelle,type) values (7, 'Chèque', 2);
 
 delete from c_propalst;
 insert into c_propalst (id,label) values (0, 'Brouillon');
