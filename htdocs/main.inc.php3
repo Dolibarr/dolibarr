@@ -30,6 +30,10 @@ require ($GLOBALS["DOCUMENT_ROOT"]."/html.form.class.php");
 require ($GLOBALS["DOCUMENT_ROOT"]."/rtplang.class.php");
 require ($GLOBALS["DOCUMENT_ROOT"]."/boxes.php");
 require ($GLOBALS["DOCUMENT_ROOT"]."/address.class.php");
+require ($GLOBALS["DOCUMENT_ROOT"]."/includes/fpdf/fpdf151/fpdf.php");
+
+define('FPDF_FONTPATH',$GLOBALS["DOCUMENT_ROOT"].'/includes/fpdf/fpdf151/font/');
+
 
 $conf = new Conf();
 
