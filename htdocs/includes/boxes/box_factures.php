@@ -20,39 +20,42 @@
  *
  */
 
-$info_box_head = array();
-$info_box_head[] = array('text' => "Les 5 dernières factures");
-
-$info_box_contents = array();
-
-$sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
-$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp";  
-$sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
-$sql .= $db->plimit(5, 0);
-
-$result = $db->query($sql);
-
-if ($result) 
+if ($user->rights->facture->lire)
 {
-  $num = $db->num_rows();
-    
-  $i = 0;
-    
-  while ($i < $num)
+
+  $info_box_head = array();
+  $info_box_head[] = array('text' => "Les 5 dernières factures");
+
+  $info_box_contents = array();
+
+  $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
+  $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp";  
+  $sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
+  $sql .= $db->plimit(5, 0);
+  
+  $result = $db->query($sql);
+  
+  if ($result) 
     {
-      $objp = $db->fetch_object( $i);
+      $num = $db->num_rows();
       
-      $info_box_contents[$i][0] = array('align' => 'left',
-					'text' => $objp->facnumber,
-					'url' => DOL_URL_ROOT."/compta/facture.php3?facid=".$objp->facid);
-
-      $info_box_contents[$i][1] = array('align' => 'left',
-					'text' => $objp->nom,
-					'url' => DOL_URL_ROOT."/comm/fiche.php3?socid=".$objp->idp);
-      $i++;
+      $i = 0;
+      
+      while ($i < $num)
+	{
+	  $objp = $db->fetch_object( $i);
+	  
+	  $info_box_contents[$i][0] = array('align' => 'left',
+					    'text' => $objp->facnumber,
+					    'url' => DOL_URL_ROOT."/compta/facture.php3?facid=".$objp->facid);
+	  
+	  $info_box_contents[$i][1] = array('align' => 'left',
+					    'text' => $objp->nom,
+					    'url' => DOL_URL_ROOT."/comm/fiche.php3?socid=".$objp->idp);
+	  $i++;
+	}
     }
+  
+  new infoBox($info_box_head, $info_box_contents);
 }
-
-new infoBox($info_box_head, $info_box_contents);
-
 ?>
