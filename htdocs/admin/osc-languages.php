@@ -42,7 +42,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 
-print_barre_liste("Liste des langues oscommerce", $page, $PHP_SELF);
+print_barre_liste("Liste des langues oscommerce", $page, "osc-languages.php");
 
 $sql = "SELECT l.languages_id, l.name, l.code FROM ".DB_NAME_OSC.".languages as l";
 

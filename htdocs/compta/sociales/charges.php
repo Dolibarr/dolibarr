@@ -81,7 +81,7 @@ if ($chid > 0)
 	      $html->form_confirm("index.php?id=$cha->id&amp;action=del","Supprimer la charge sociale","Etes-vous sûr de vouloir supprimer cette charge sociale ?","confirm_delete");
 	    }
 
-      print "<form action=\"$PHP_SELF?id=$cha->id&amp;action=update\" method=\"post\">";
+      print "<form action=\"charges.php?id=$cha->id&amp;action=update\" method=\"post\">";
 
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
 
@@ -173,7 +173,7 @@ if ($chid > 0)
 	    // Supprimer
 	    if ($cha->paye == 0 && $totalpaye <=0 && $user->rights->compta->charges)
 	      {
-		print "<a class=\"tabAction\" href=\"$PHP_SELF?id=$cha->id&amp;action=delete\">Supprimer</a>";
+		print "<a class=\"tabAction\" href=\"charges.php?id=$cha->id&amp;action=delete\">Supprimer</a>";
 	      } 
 
 	    // Emettre paiement 
@@ -185,7 +185,7 @@ if ($chid > 0)
 	    // Classer 'payé'
 	    if ($cha->paye == 0 && round($resteapayer) <=0 && $user->rights->compta->charges)
 	      {
-		print "<a class=\"tabAction\" href=\"$PHP_SELF?id=$cha->id&amp;action=payed\">Classer 'Payée'</a>";
+		print "<a class=\"tabAction\" href=\"charges.php?id=$cha->id&amp;action=payed\">Classer 'Payée'</a>";
 	      }
 	    
 	    print "</div>";

@@ -82,34 +82,34 @@ if ($result)
       $titre.=" (".$objp->type.")";
   }
 
-  print_barre_liste($titre, $page, $PHP_SELF, "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
+  print_barre_liste($titre, $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
 
   print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
 
   print '<tr class="liste_titre">';
 
   print '<td>';
-  print_liste_field_titre("Prenom Nom / Société",$PHP_SELF,"d.nom","&page=$page&statut=$statut");
+  print_liste_field_titre("Prenom Nom / Société","liste.php","d.nom","&page=$page&statut=$statut");
   print "</td>\n";
 
   print "<td>";
-  print_liste_field_titre("Date cotisation",$PHP_SELF,"t.cotisation","&page=$page&statut=$statut");
+  print_liste_field_titre("Date cotisation","liste.php","t.cotisation","&page=$page&statut=$statut");
   print "</td>\n";
 
   print "<td>";
-  print_liste_field_titre("Email",$PHP_SELF,"d.email","&page=$page&statut=$statut");
+  print_liste_field_titre("Email","liste.php","d.email","&page=$page&statut=$statut");
   print "</td>\n";
 
   print "<td>";
-  print_liste_field_titre("Type",$PHP_SELF,"t.libelle","&page=$page&statut=$statut");
+  print_liste_field_titre("Type","liste.php","t.libelle","&page=$page&statut=$statut");
   print "</td>\n";
 
   print "<td>";
-  print_liste_field_titre("Personne",$PHP_SELF,"d.morphy","&page=$page&statut=$statut");
+  print_liste_field_titre("Personne","liste.php","d.morphy","&page=$page&statut=$statut");
   print "</td>\n";
 
   print "<td>";
-  print_liste_field_titre("Statut",$PHP_SELF,"d.statut","&page=$page&statut=$statut");
+  print_liste_field_titre("Statut","liste.php","d.statut","&page=$page&statut=$statut");
   print "</td>\n";
 
   print "<td>Action</td>\n";
@@ -176,9 +176,9 @@ if ($result)
   print "</table><br>\n";
   print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
   
-  print_barre_liste("", $page, $PHP_SELF, "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
+  print_barre_liste("", $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
 
-//  print_fleche_navigation($page,$PHP_SELF,"&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",1);
+//  print_fleche_navigation($page,"liste.php","&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",1);
   print "</table><br>\n";
 
 }

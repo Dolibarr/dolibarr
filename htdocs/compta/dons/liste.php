@@ -50,26 +50,26 @@ if ($result)
   
   if (strlen($statut))
     {
-      print_barre_liste($libelle[$statut], $page, $PHP_SELF, "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+      print_barre_liste($libelle[$statut], $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
     }
   else 
     {
-      print_barre_liste("Dons", $page, $PHP_SELF, "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+      print_barre_liste("Dons", $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
     }
   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
   print '<TR class="liste_titre">';
   print "<td>";
-  print_liste_field_titre("Prénom",$PHP_SELF,"d.prenom","&page=$page&statut=$statut");
+  print_liste_field_titre("Prénom","liste.php","d.prenom","&page=$page&statut=$statut");
   print "</td><td>";
-  print_liste_field_titre("Nom",$PHP_SELF,"d.nom","&page=$page&statut=$statut");
+  print_liste_field_titre("Nom","liste.php","d.nom","&page=$page&statut=$statut");
   print "</td><td>";
-  print_liste_field_titre("Société",$PHP_SELF,"d.societe","&page=$page&statut=$statut");
+  print_liste_field_titre("Société","liste.php","d.societe","&page=$page&statut=$statut");
   print "</td><td>";
-  print_liste_field_titre("Date",$PHP_SELF,"d.datedon","&page=$page&statut=$statut");
+  print_liste_field_titre("Date","liste.php","d.datedon","&page=$page&statut=$statut");
   print "</td><td>Projet</td>";
   print "<td align=\"right\">";
-  print_liste_field_titre("Montant",$PHP_SELF,"d.amount","&page=$page&statut=$statut");
+  print_liste_field_titre("Montant","liste.php","d.amount","&page=$page&statut=$statut");
   print '</td><td>&nbsp;</td>';
   print "</TR>\n";
     

@@ -97,7 +97,7 @@ print "<br>";
 if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
 {
   $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-  $lien.='<a href="'.$PHP_SELF.'?action=unset&value=0&name=ADHERENT_USE_MAILMAN">désactiver</a>';
+  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_MAILMAN">désactiver</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_MAILMAN_LISTS',
 		    'ADHERENT_MAILMAN_LISTS_COTISANT',
@@ -111,7 +111,7 @@ if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
 }
 else
 {
-  $lien='<a href="'.$PHP_SELF.'?action=set&value=1&name=ADHERENT_USE_MAILMAN">activer</a>';
+  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_MAILMAN">activer</a>';
   print_fiche_titre("Mailman - Système de mailing listes",$lien);
 }
 
@@ -123,7 +123,7 @@ print "<hr>\n";
 if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE == 1)
 {
   $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-  $lien.='<a href="'.$PHP_SELF.'?action=unset&value=0&name=ADHERENT_BANK_USE">désactiver</a>';
+  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_BANK_USE">désactiver</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_BANK_USE_AUTO',
 		    'ADHERENT_BANK_ACCOUNT',
@@ -134,7 +134,7 @@ if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE == 1)
 }
 else
 {
-  $lien='<a href="'.$PHP_SELF.'?action=set&value=1&name=ADHERENT_BANK_USE">activer</a>';
+  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_BANK_USE">activer</a>';
   print_fiche_titre("Gestion banquaire des adherents",$lien);
 }
 
@@ -147,7 +147,7 @@ $var=!$var;
 if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP == 1)
 {
   $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-  $lien.='<a href="'.$PHP_SELF.'?action=unset&value=0&name=ADHERENT_USE_SPIP">désactiver</a>';
+  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_SPIP">désactiver</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_USE_SPIP_AUTO',
 		    'ADHERENT_SPIP_SERVEUR',
@@ -160,7 +160,7 @@ if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP == 1)
 }
 else
 {
-  $lien='<a href="'.$PHP_SELF.'?action=set&value=1&name=ADHERENT_USE_SPIP">activer</a>';
+  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_SPIP">activer</a>';
   print_fiche_titre("SPIP - Système de publication en ligne",$lien);
 }
 
@@ -173,7 +173,7 @@ $var=!$var;
 if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST == 1)
 {
   $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-  $lien.='<a href="'.$PHP_SELF.'?action=unset&value=0&name=ADHERENT_USE_GLASNOST">désactiver</a>';
+  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_GLASNOST">désactiver</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_USE_GLASNOST_AUTO',
 		    'ADHERENT_GLASNOST_SERVEUR',
@@ -185,7 +185,7 @@ if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST == 1)
 }
 else
 {
-  $lien='<a href="'.$PHP_SELF.'?action=set&value=1&name=ADHERENT_USE_GLASNOST">activer</a>';
+  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_GLASNOST">activer</a>';
   print_fiche_titre("Glasnost - Système de vote en ligne",$lien);
 }
 
@@ -240,7 +240,7 @@ function form_constantes($tableau){
     if ($result && ($db->num_rows() == 1)) {
       $obj = $db->fetch_object(0);
       $var=!$var;
-      print '<form action="'.$PHP_SELF.'" method="POST">';
+      print '<form action="adherent.php" method="POST">';
       print '<input type="hidden" name="action" value="update">';
       print '<input type="hidden" name="rowid" value="'.$rowid.'">';
       print '<input type="hidden" name="constname" value="'.$obj->name.'">';
@@ -274,7 +274,7 @@ function form_constantes($tableau){
       //      print '<input type="text" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
       //      print '</td><td>';
       print '<input type="Submit" value="Update" name="Button"> &nbsp;';
-      print '<a href="'.$PHP_SELF.'?name='.$const.'&action=unset">'.img_delete().'</a>';
+      print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
       print "</td></tr>\n";
       
       print '</form>';

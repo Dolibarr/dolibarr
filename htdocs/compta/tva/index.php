@@ -112,10 +112,10 @@ if ($year == 0 ) {
   $year_start = $year;
 }
 
-$textprevyear="<a href=\"$PHP_SELF?year=" . ($year_current-1) . "\">".img_previous()."</a>";
+$textprevyear="<a href=\"index.php?year=" . ($year_current-1) . "\">".img_previous()."</a>";
 // On n'affiche pas "Année suivante" si c'est dans le futur !
 if(($year < strftime("%Y",time())) && ($year != 0)) {
-  $textnextyear=" <a href=\"$PHP_SELF?year=" . ($year_current+1) . "\">".img_next()."</a>";
+  $textnextyear=" <a href=\"index.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
 }
 
 print_fiche_titre("TVA Solde : ".price($tva->solde($year_start)),"$textprevyear Année $year_start $textnextyear");

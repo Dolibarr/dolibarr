@@ -70,7 +70,7 @@ if ($action == 'update') {
 if ($action == 'create') {
 
   print_titre("Nouveau service");
-  print '<form action="'.$PHP_SELF.'" method="post">';
+  print '<form action="fiche.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<table border="1" cellpadding="3" cellspacing="0">';
 
@@ -154,7 +154,7 @@ if ($action == 'create') {
      */
     if ($action == 'datedeb') {
       print '<p><b>Affectation de la date de début de commercialisation</b></p>';
-      print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
+      print '<form action="fiche.php?id='.$id.'" method="post">';
       print '<input type="hidden" name="action" value="set_datedeb">';
       print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
       print '<tr><td>Date de debut de commercialisation</td>';
@@ -169,7 +169,7 @@ if ($action == 'create') {
      */
     if ($action == 'datefin') {
       print '<p><b>Affectation de la date de fin de commercialisation</b></p>';
-      print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
+      print '<form action="fiche.php?id='.$id.'" method="post">';
       print '<input type="hidden" name="action" value="set_datefin">';
       print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
       print '<tr><td>Date de fin de commercialisation</td>';
@@ -185,7 +185,7 @@ if ($action == 'create') {
 
     if ($action == 'edit') {
       print '<hr><div class="titre">Editer la fiche service</div><br>';
-      print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
+      print '<form action="fiche.php?id='.$id.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
       print '<table border="1" cellpadding="3" cellspacing="0">';
       

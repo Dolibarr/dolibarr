@@ -76,7 +76,7 @@ if ($mesg) {
 
 print "En saisissant un virement d'un de vos comptes bancaire vers un autre, Dolibarr crée deux écritures comptables (une de débit dans un compte et l'autre de crédit, du même montant, dans l'autre compte. Le même libellé de transaction, et la même date, sont utilisés pour les 2 écritures)<br><br>";
 
-print "<form method=\"post\" action=\"$PHP_SELF\">";
+print "<form method=\"post\" action=\"virement.php\">";
 
 print '<input type="hidden" name="action" value="add">';
 

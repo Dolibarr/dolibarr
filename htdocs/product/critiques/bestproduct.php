@@ -38,7 +38,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 
-print_barre_liste("Liste des produits classés pas critiques", $page, $PHP_SELF);
+print_barre_liste("Liste des produits classés pas critiques", $page, "bestproduct.php");
 
 $sql = "SELECT sum(r.reviews_rating)/count(r.reviews_rating) as rat, r.products_id, p.products_model, p.products_quantity, p.products_status";
 $sql .= " FROM ".DB_NAME_OSC.".reviews as r,".DB_NAME_OSC.".products as p ";

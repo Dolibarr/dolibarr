@@ -140,7 +140,7 @@ if ($result)
 
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<form method="post" action="'.$PHP_SELF.'?account='.$account.'">';
+      print '<form method="post" action="rappro.php?account='.$account.'">';
       print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
       print "<input type=\"hidden\" name=\"rowid\" value=\"$objp->rowid\">";
       
@@ -178,7 +178,7 @@ if ($result)
 	    {
 	      print "<td align=\"center\">";
 	      if ($objp->do <= mktime() ) {
-	      	print "<a href=\"$PHP_SELF?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id\">";
+	      	print "<a href=\"rappro.php?action=del&amp;rowid=$objp->rowid&amp;account=$acct->id\">";
 	      	print img_delete();
 	      	print "</a>";
 	      }

@@ -24,7 +24,7 @@ require("./pre.inc.php");
 
 llxHeader();
 
-print_barre_liste("Liste des tables", $page, $PHP_SELF);
+print_barre_liste("Liste des tables", $page, "sqltables.php");
 
 $sql = "SELECT name, loaded FROM ".MAIN_DB_PREFIX."sqltables";
 

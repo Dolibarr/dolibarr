@@ -71,13 +71,13 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
-  print_barre_liste("Liste des déplacements", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder,'',$num);
+  print_barre_liste("Liste des déplacements", $page, "index.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
   $i = 0;
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre_new ("Date",$PHP_SELF,"d.dated","","&socidp=$socidp",'',$sortfield);
-  print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","","&socidp=$socidp",'',$sortfield);
+  print_liste_field_titre_new ("Date","index.php","d.dated","","&socidp=$socidp",'',$sortfield);
+  print_liste_field_titre_new ("Société","index.php","s.nom","","&socidp=$socidp",'',$sortfield);
   print '<td align="center">Utilisateur</TD>';
   print "</tr>\n";
 

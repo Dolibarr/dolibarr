@@ -90,7 +90,7 @@ if ($_GET["action"] == 'create')
   if ($facture->fetch($_GET["facid"]) > 0) 
     {
        
-      print '<form action="'.$PHP_SELF.'" method="post">';
+      print '<form action="fiche-rec.php" method="post">';
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="facid" value="'.$facture->id.'">';
       
@@ -342,7 +342,7 @@ else
 	
 	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
 	      {
-		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
+		print "<td align=\"center\" width=\"25%\">[<a href=\"fiche-rec.php?facid=$facid&action=delete\">Supprimer</a>]</td>";
 	      } 
 	    else
 	      {
@@ -408,14 +408,14 @@ else
     if ($result)
       {
 	$num = $db->num_rows();
-	print_barre_liste("Factures",$page,$PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder,'',$num);
+	print_barre_liste("Factures",$page,"fiche-rec.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 	$i = 0;
 	print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 	print '<TR class="liste_titre">';
 	print '<td>Titre</td>';
 	print '<td>';
-	print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&socidp=$socidp");
+	print_liste_field_titre("Société","fiche-rec.php","s.nom","","&socidp=$socidp");
 
 	print '</td><TD align="right">Montant</TD>';
 	print '<td>&nbsp;</td>';

@@ -330,7 +330,7 @@ if ($user->societe_id > 0)
 $cyear = isset($_GET["year"])?$_GET["year"]:0;
 if (! $cyear) { $cyear = strftime ("%Y", time()); }
 
-print_fiche_titre("Chiffre d'Affaire transformé (prévu-réalisé)",($cyear?"<a href='$PHP_SELF?year=".($cyear-1)."'>".img_previous()."</a> Année $cyear <a href='$PHP_SELF?year=".($cyear+1)."'>".img_next()."</a>":""));
+print_fiche_titre("Chiffre d'Affaire transformé (prévu-réalisé)",($cyear?"<a href='comp.php?year=".($cyear-1)."'>".img_previous()."</a> Année $cyear <a href='comp.php?year=".($cyear+1)."'>".img_next()."</a>":""));
 
 ppt($db, $cyear, $socidp);
 

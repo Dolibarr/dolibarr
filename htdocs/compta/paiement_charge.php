@@ -149,7 +149,7 @@ if ($_GET["action"] == 'create')
 	  print_titre("Emettre un paiement d'une charge");
       print "<br>\n";
 
-	  print "<form action=\"$PHP_SELF\" method=\"post\">\n";
+	  print '<form action="paiement_charge.php" method="post">';
 	  print "<input type=\"hidden\" name=\"id\" value=\"$charge->id\">";
 	  print '<input type="hidden" name="action" value="add_paiement">';
 	  print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';

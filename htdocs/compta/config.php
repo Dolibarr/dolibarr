@@ -46,7 +46,7 @@ if ($action == 'create') {
      *
      *
      */
-    print_barre_liste("Comptes comptable",$page,$PHP_SELF);
+    print_barre_liste("Comptes comptable",$page,"config.php");
 
     $sql = "SELECT number, label";
     $sql .= " FROM ".MAIN_DB_PREFIX."compta_account";
@@ -60,7 +60,7 @@ if ($action == 'create') {
       print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
       print '<TR class="liste_titre">';
       print "<TD>Num&eacute;ro</TD><td>";
-      print_liste_field_titre("Libellé",$PHP_SELF,"label");
+      print_liste_field_titre("Libellé","config.php","label");
       print "</td></TR>\n";
     
       if ($num > 0) {

@@ -36,7 +36,7 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Critiques", $page, $PHP_SELF);
+print_barre_liste("Critiques", $page, "index.php");
 
 $sql = "SELECT r.reviews_id, r.reviews_rating, d.reviews_text, p.products_name FROM ".DB_NAME_OSC.".reviews as r, ".DB_NAME_OSC.".reviews_description as d, ".DB_NAME_OSC.".products_description as p";
 $sql .= " WHERE r.reviews_id = d.reviews_id AND r.products_id=p.products_id";

@@ -86,7 +86,7 @@ if ($rowid)
     }
   }
   print_titre("Saisir un don");
-  print "<form action=\"$PHP_SELF\" method=\"post\">";
+  print "<form action=\"edit.php\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
   print "<input type=\"hidden\" name=\"action\" value=\"update\">";

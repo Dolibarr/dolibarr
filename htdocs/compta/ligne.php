@@ -67,18 +67,18 @@ if ($action == 'create') {
    *
    *
    */
-  print_barre_liste("Comptes comptable",$page,$PHP_SELF);
+  print_barre_liste("Comptes comptable",$page,"ligne.php");
   
 
   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
   print '<TR class="liste_titre">';
   print "<TD>Num&eacute;ro</TD><td>";
-  print_liste_field_titre("Libellé",$PHP_SELF,"label");
+  print_liste_field_titre("Libellé","ligne.php","label");
   print "</td><td>Montant</TD>";
   print "</TR>\n";
     
 
-  print '<form action="'.$PHP_SELF.'" method="post">';
+  print '<form action="ligne.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<tr><td><select name="number">'.$options.'</select></td>';
   print '<td><input type="text" name="label" size="30"></td>';

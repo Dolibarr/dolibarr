@@ -78,8 +78,8 @@ if ($actionsave)
  * Affichage du formulaire de saisie
  */
 
-print "\n<form name=\"phpwebcalendarconfig\" action=\"" . $PHP_SELF . "\" method=\"post\">
-<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"1\">
+print '<form name="phpwebcalendarconfig" action="webcalendar.php" method="post">';
+print "<table class=\"noborder\" cellpadding=\"3\" cellspacing=\"1\">
 <tr class=\"liste_titre\">
 <td>Paramètre</td>
 <td>Valeur</td>

@@ -80,7 +80,7 @@ $year=$_GET["year"];
 $filtre=$_GET["filtre"];
 //if (! $year) { $year=date("Y", time()); }
 
-print_fiche_titre("Charges sociales",($year?"<a href='$PHP_SELF?year=".($year-1)."'>".img_previous()."</a> Année $year <a href='$PHP_SELF?year=".($year+1)."'>".img_next()."</a>":""));
+print_fiche_titre("Charges sociales",($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> Année $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
 print "<br>\n";
 
 if ($mesg) {
@@ -90,20 +90,20 @@ if ($mesg) {
 print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
 print "<tr class=\"liste_titre\">";
 print '<td>';
-print_liste_field_titre("Num",$PHP_SELF,"id");
+print_liste_field_titre("Num","index.php","id");
 print '</td>';
 print '<td>';
-print_liste_field_titre("Echéance",$PHP_SELF,"de");
+print_liste_field_titre("Echéance","index.php","de");
 print '</td><td>';
-print_liste_field_titre("Période",$PHP_SELF,"periode");
+print_liste_field_titre("Période","index.php","periode");
 print '</td><td align="left">';
-print_liste_field_titre("Type",$PHP_SELF,"type");
+print_liste_field_titre("Type","index.php","type");
 print '</td><td align="left">';
-print_liste_field_titre("Libellé",$PHP_SELF,"s.libelle");
+print_liste_field_titre("Libellé","index.php","s.libelle");
 print '</td><td align="right">';
-print_liste_field_titre("Montant",$PHP_SELF,"s.amount");
+print_liste_field_titre("Montant","index.php","s.amount");
 print '</td><td align="center">';
-print_liste_field_titre("Statut",$PHP_SELF,"s.paye");
+print_liste_field_titre("Statut","index.php","s.paye");
 print '</td><td>&nbsp;</td>';
 print "</tr>\n";
 
@@ -164,16 +164,16 @@ if ( $db->query($sql) )
       
       if ($obj->paye)
 	{
-	  print '<td align="center" class="normal" width="100"><a class="payee" href="'.$PHP_SELF.'?filtre=paye:1">Payé</a></td>';
+	  print '<td align="center" class="normal" width="100"><a class="payee" href="index.php?filtre=paye:1">Payé</a></td>';
 	  print '<td>&nbsp;</td>';
 	} else {
-	  print '<td align="center"><a class="impayee" href="'.$PHP_SELF.'?filtre=paye:0">Impayé</a></td>';
+	  print '<td align="center"><a class="impayee" href="index.php?filtre=paye:0">Impayé</a></td>';
 	  print '<td align="center" nowrap>';
 	  if ($user->rights->compta->charges->creer) {
 	    print '<a href="charges.php?id='.$obj->id.'">'.img_edit().'</a>';
 	  }
 	  if ($user->rights->compta->charges->supprimer) {
-	    print ' &nbsp; <a href="'.$PHP_SELF.'?action=del&id='.$obj->id.'">'.img_delete().'</a>';
+	    print ' &nbsp; <a href="index.php?action=del&id='.$obj->id.'">'.img_delete().'</a>';
 	  }
 	  print '</td>';
 	}
