@@ -21,6 +21,14 @@
 -- Valeurs pour les bases de langues francaises
 --
 
+
+insert into llx_cond_reglement values (1,1,1, "A réception","Réception de facture",0,0);
+insert into llx_cond_reglement values (2,2,1, "30 jours","Réglement à 30 jours",0,30);
+insert into llx_cond_reglement values (3,3,1, "30 jours fin de mois","Réglement à 30 jours fin de mois",1,30);
+insert into llx_cond_reglement values (4,4,1, "60 jours","Réglement à 60 jours",0,60);
+insert into llx_cond_reglement values (5,5,1, "60 jours fin de mois","Réglement à 60 jours fin de mois",1,60);
+
+
 insert into llx_sqltables (name, loaded) values ('llx_album',0);
 
 --
