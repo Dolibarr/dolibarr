@@ -21,8 +21,10 @@
 #
 
 DATE=`date +%Y%m%d`
+FILE=dolibarr-$(DATE).tar
 
 tar:
-	tar --exclude-from tar.exclude -cvvf dolibarr-$(DATE).tar .
-	gzip dolibarr-$(DATE).tar
+	tar --exclude-from tar.exclude -cvvf $(FILE) .
+	gzip $(FILE)
+	scp $(FILE).gz rodolphe.quiedeville.org:/home/www/rodolphe.quiedeville.org/htdocs/projets/dolibarr/dl/
 
