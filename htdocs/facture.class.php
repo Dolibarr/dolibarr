@@ -429,7 +429,7 @@ class Facture
    */
   Function get_libstatut()
     {
-		return $this->LibStatut($this->paye,$this->statut);
+		return LibStatut($this->paye,$this->statut);
     }
 
   /**
