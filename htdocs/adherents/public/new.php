@@ -58,7 +58,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
     }
 }
 
-llxHeader();
+llxHeader("Nouvel Adherent");
 // Header
 /*
 print "<HTML><HEAD>";

@@ -33,8 +33,8 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
+  $menu->add("new.php","Nouvel adherent");
   /*
-  $menu->add("index.php","Adherents");
   $menu->add_submenu("liste.php?statut=1","Adhérents à ce jour");
   $menu->add_submenu("liste.php?statut=-1","Adhésions à valider");
 
@@ -53,9 +53,9 @@ function llxHeader($head = "") {
     {
       $menu->add("type.php","Configuration");
     }
+  */
 
   left_menu($menu->liste);
-  */
 }
 
 ?>
