@@ -385,7 +385,7 @@ class Commande
   Function fetch ($id)
     {
       $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva";
-      $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source";
+      $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture";
       $sql .= " FROM llx_commande as c";
       $sql .= " WHERE c.rowid = $id";
 
@@ -407,7 +407,7 @@ class Commande
 	  $this->remise_percent  = $obj->remise_percent;
 
 	  $this->source          = $obj->source;
-
+	  $this->facturee        = $obj->facture;
 	  $this->projet_id       = $obj->fk_projet;
 
 	  $this->db->free();
@@ -570,6 +570,25 @@ class Commande
 	      print $this->db->error() . ' in ' . $sql;
 	    }
 	}
+    }
+  /**
+   * Classe la facture comme facturée
+   *
+   */
+  Function classer_facturee()
+    {
+      $sql = "UPDATE llx_commande SET facture = 1";
+      $sql .= " WHERE rowid = ".$this->id." AND fk_statut > 0 ;";
+      
+      if ($this->db->query($sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	}
+
     }
   /**
    * Mettre à jour le prix

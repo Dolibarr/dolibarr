@@ -41,6 +41,14 @@ if ($user->societe_id > 0)
  *
  */	
 
+if ($_GET["action"] == 'facturee') 
+{
+  $commande = new Commande($db);
+  $commande->fetch($_GET["id"]);
+  $commande->classer_facturee();
+}
+
+
 llxHeader();
 
 $html = new Form($db);
@@ -194,7 +202,7 @@ if ($_GET["id"] > 0)
        * Barre d'actions
        */
 
-      if ($user->societe_id == 0)
+      if ($user->societe_id == 0 && !$commande->facturee)
 	{
 	  print '<p><table id="actions" width="100%"><tr>';
 
@@ -203,7 +211,16 @@ if ($_GET["id"] > 0)
 	  print '</td>';
 	  print '<td align="center" width="20%">-</td>';
 	  print '<td align="center" width="20%">-</td>';
-	  print '<td align="center" width="20%">-</td>';
+	  if (!$commande->facturee)
+	    {
+	      print '<td align="center" width="20%">';
+	      print '<a href="'.DOL_URL_ROOT.'/compta/commande.php?action=facturee&amp;id='.$commande->id.'">Classer comme facturée</a>';
+	      print '</td>';
+	    }
+	  else
+	    {
+	      print '<td align="center" width="20%">-</td>';
+	    }
 	  print '<td align="center" width="20%">-</td>';
 	  
 	  print "</tr></table>";
@@ -230,18 +247,77 @@ if ($_GET["id"] > 0)
 	  
 	  print "</table>\n";
 	  print '</td><td valign="top" width="50%">';
-
-	  
 	  /*
 	   *
 	   *
 	   */
 	  print "</td></tr></table>";
 	}
+	  /*
+	   * Factures associees
+	   */
+	  $sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.paye";
+	  $sql .= " FROM llx_facture as f, llx_co_fa as fp WHERE fp.fk_facture = f.rowid AND fp.fk_commande = ".$commande->id;
+
+	  if ($db->query($sql) )
+	    {
+	      $num_fac_asso = $db->num_rows();
+	      $i = 0; $total = 0;
+	      print "<br>";
+	      if ($num_fac_asso > 1)
+		{
+		  print_titre("Factures associées");
+		}
+	      else
+		{
+		  print_titre("Facture associée");
+		}
+	      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<tr><td>Numéro</td><td>Date</td><td>Auteur</td>';
+	      print '<td align="right">Prix</td>';
+	      print "</tr>\n";
+	      
+	      $var=True;
+	      while ($i < $num_fac_asso)
+		{
+		  $objp = $db->fetch_object( $i);
+		  $var=!$var;
+		  print "<TR bgcolor=\"#e0e0e0\">";
+		  print "<TD><a href=\"../compta/facture.php?facid=$objp->facid\">$objp->facnumber</a>";
+		  if ($objp->paye)
+		    { 
+		      print " (<b>pay&eacute;e</b>)";
+		    } 
+		  print "</TD>\n";
+		  print "<TD>".strftime("%d %B %Y",$objp->df)."</td>\n";
+		  if ($objp->fk_user_author <> $user->id)
+		    {
+		      $fuser = new User($db, $objp->fk_user_author);
+		      $fuser->fetch();
+		      print "<td>".$fuser->fullname."</td>\n";
+		    }
+		  else
+		    {
+		      print "<td>".$user->fullname."</td>\n";
+		    }
+		  print '<TD align="right">'.price($objp->total).'</TD>';
+		  print "</tr>";
+		  $total = $total + $objp->total;
+		  $i++;
+		}
+	      print "<tr><td align=\"right\" colspan=\"4\">Total : <b>$total</b> Euros HT</td></tr>\n";
+	      print "</table>";
+	      $db->free();
+	    }
+	  else
+	    {
+	      print $db->error();
+	    }
       /*
        *
        *
        */
+
       
     }
   else
