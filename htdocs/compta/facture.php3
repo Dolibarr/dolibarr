@@ -323,10 +323,10 @@ if ($action == 'create')
 	    print '<input type="hidden" name="tva"      value="'.$obj->tva.'">';
 	    print '<input type="hidden" name="propalid" value="'.$propalid.'">';
 	    
-	    print "<tr><td>Proposition</td><td>$obj->ref</td></tr>";
-	    print '<tr><td>Montant HT</td><td>'.price($amount).'</td></tr>';
-	    print "<tr><td>TVA</td><td>".price($obj->tva)."</td></tr>";
-	    print "<tr><td>Total TTC</td><td>".price($obj->total)."</td></tr>";	  
+	    print '<tr><td>Proposition</td><td colspan="2">'.$obj->ref.'</td></tr>';
+	    print '<tr><td>Montant HT</td><td colspan="2">'.price($amount).'</td></tr>';
+	    print '<tr><td>TVA</td><td colspan="2">'.price($obj->tva)."</td></tr>";
+	    print '<tr><td>Total TTC</td><td colspan="2">'.price($obj->total)."</td></tr>";	  
 	  }
 
 	
