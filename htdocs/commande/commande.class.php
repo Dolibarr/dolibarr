@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,15 +21,17 @@
  *
  */
 
-/*!	\file htdocs/commande/commande.class.php
-		\ingroup    commande
-		\brief      Fichier des classes de commandes
-		\version    $Revision$
+/*!
+  \file htdocs/commande/commande.class.php
+  \ingroup    commande
+  \brief      Fichier des classes de commandes
+  \version    $Revision$
 */
 
 
-/*!	\class Commande
-		\brief      Classe de gestion de commande
+/*!	
+  \class Commande
+  \brief      Classe de gestion de commande
 */
 
 class Commande 
@@ -49,6 +51,7 @@ class Commande
       $this->sources[2] = "Courrier";
       $this->sources[3] = "Téléphone";
       $this->sources[4] = "Fax";
+      $this->sources[5] = "Commercial";
 
       $this->statuts[-1] = "Annulée";
       $this->statuts[0] = "Brouillon";
