@@ -39,7 +39,7 @@ if ($user->societe_id > 0)
  *
  *
  */
-if ($action=='add_action') 
+if ($HTTP_POST_VARS["action"] == 'add_action') 
 {
   if ($contactid)
     {
@@ -51,8 +51,10 @@ if ($action=='add_action')
 
   if ($HTTP_POST_VARS["afaire"] <> 1)
     {
-
       $actioncomm = new ActionComm($db);
+
+      $actioncomm->priority = 2;
+      $actioncomm->type = $HTTP_POST_VARS["actionid"];
       
       $actioncomm->date = $db->idate(mktime($HTTP_POST_VARS["achour"],
 					    $HTTP_POST_VARS["acmin"],
@@ -61,7 +63,7 @@ if ($action=='add_action')
 					    $HTTP_POST_VARS["acday"],
 					    $HTTP_POST_VARS["acyear"])
 				     );
-      if ($actionid == 5) 
+      if ($HTTP_POST_VARS["actionid"] == 5) 
 	{
 	  $actioncomm->percent = 0;
 	}
@@ -69,8 +71,7 @@ if ($action=='add_action')
 	{
 	  $actioncomm->percent = 100;
 	}
-      $actioncomm->priority = 2;
-      $actioncomm->type = $actionid;
+
       $actioncomm->contact = $contactid;
       
       $actioncomm->user = $user;
@@ -85,7 +86,7 @@ if ($action=='add_action')
     {
 
       $todo = new ActionComm($db);
-      $todo->type     = $actionid;
+      $todo->type     = $HTTP_POST_VARS["nextactionid"];
       $todo->date     = $db->idate(mktime(12,0,0,$remonth, $reday, $reyear));
       $todo->libelle  = $todo_label;
       $todo->priority = 2;
@@ -164,18 +165,20 @@ if ($action=='create')
     }
   $societe = new Societe($db);
   $societe->get_nom($socid);
-      
+
+  print '<form action="'.$PHP_SELF.'?socid='.$socid.'" method="post">';
+  print '<input type="hidden" name="action" value="add_action">';
+  print '<input type="hidden" name="actionid" value="'.$actionid.'">'."\n";      
+
   /*
    * Rendez-vous
    *
    */
   if ($actionid == 5) 
     {
-      print '<form action="'.$PHP_SELF.'?socid='.$socid.'" method="post">';
-      print '<input type="hidden" name="action" value="add_action">';
 
-      print '<input type="hidden" name="date" value="'.$db->idate(time()).'">';
-      print '<input type="hidden" name="actionid" value="'.$actionid.'">';
+      print '<input type="hidden" name="date" value="'.$db->idate(time()).'">'."\n";
+
       print '<input type="hidden" name="contactid" value="'.$contactid.'">';
       print '<input type="hidden" name="socid" value="'.$socid.'">';
       
@@ -208,10 +211,8 @@ if ($action=='create')
    */   
   else 
     {
-      print '<form action="'.$PHP_SELF.'?socid='.$socid.'" method="post">';
-      print '<input type="hidden" name="action" value="add_action">';
-      
-      print '<input type="hidden" name="actionid" value="'.$actionid.'">';
+
+
       print '<input type="hidden" name="contactid" value="'.$contactid.'">';
       print '<input type="hidden" name="socid" value="'.$socid.'">';
       
@@ -252,7 +253,7 @@ if ($action=='create')
       print $html->select_date();
       print '</td></tr>';
       print '<tr><td width="10%">Action</td><td>';
-      $html->select_array("actionid",  $caction->liste_array(), 0);
+      $html->select_array("nextactionid",  $caction->liste_array(), 0);
       print '</td></tr>';
       print '<tr><td width="10%">Action</td><td><input type="text" name="todo_label" size="30"></td></tr>';
       print '<tr><td width="10%">Calendrier</td><td><input type="checkbox" name="todo_webcal"></td></tr>';
