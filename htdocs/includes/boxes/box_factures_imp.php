@@ -29,6 +29,10 @@ if ($user->rights->facture->lire)
 
   $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
   $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye=0 AND fk_statut = 1";  
+  if($user->societe_id)
+    {
+      $sql .= " AND s.idp = $user->societe_id";
+    }
   $sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
   $sql .= $db->plimit(5, 0);
   
