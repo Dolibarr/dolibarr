@@ -62,6 +62,6 @@ while (($file = readdir($handle))!==false)
 
 // Genere le grant_query
 $grant_query = "GRANT ALL ON $table_list TO \"$nom\";";
-print $grant_query;
+//print $grant_query;
 
 ?>
