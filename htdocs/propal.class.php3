@@ -92,6 +92,17 @@ class Propal
    *
    *
    */
+  Function fetch_client()
+    {
+      $client = new Societe($this->db);
+      $client->fetch($this->socidp);
+      $this->client = $client;
+	
+    }
+  /*
+   *
+   *
+   */
   Function delete_product($idligne)
     {
       if ($this->statut == 0)
@@ -216,7 +227,8 @@ class Propal
   Function fetch($rowid)
     {
 
-      $sql = "SELECT ref,price,remise,".$this->db->pdate(datep)."as dp FROM llx_propal WHERE rowid=$rowid;";
+      $sql = "SELECT ref,total,price,remise,fk_soc,".$this->db->pdate(datep)."as dp ";
+      $sql .= " FROM llx_propal WHERE rowid=$rowid;";
 
       if ($this->db->query($sql) )
 	{
@@ -224,14 +236,51 @@ class Propal
 	    {
 	      $obj = $this->db->fetch_object(0);
 	  
-	      $this->id = $rowid;
-	      $this->datep = $obj->dp;
-	      $this->date = $obj->dp;
-	      $this->ref = $obj->ref;
-	      $this->price = $obj->price;
-	      $this->remise = $obj->remise;
-	      
+	      $this->id        = $rowid;
+	      $this->datep     = $obj->dp;
+	      $this->date      = $obj->dp;
+	      $this->ref       = $obj->ref;
+	      $this->price     = $obj->price;
+	      $this->remise    = $obj->remise;
+	      $this->total     = $obj->total;
+	      $this->total_ht  = $obj->total;
+	      $this->total_ttc = $obj->total;
+	      $this->socidp = $obj->fk_soc;
+	      $this->lignes = array();
 	      $this->db->free();
+
+	      /*
+	       * Lignes
+	       */
+
+	      $sql = "SELECT d.qty, p.description, p.ref, p.price";
+	      $sql .= " FROM llx_propaldet as d, llx_product as p";
+	      $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = p.rowid";
+	
+	      $result = $this->db->query($sql);
+	      if ($result)
+		{
+		  $num = $this->db->num_rows();
+		  $i = 0; 
+		  
+		  while ($i < $num)
+		    {
+		      $objp             = $this->db->fetch_object($i);
+		      $ligne            = new PropaleLigne();
+		      $ligne->desc      = stripslashes($objp->description);
+		      $ligne->qty       = $objp->qty;
+		      $ligne->ref       = $objp->ref;
+		      $ligne->price     = $objp->price;
+		      $this->lignes[$i] = $ligne;
+		      $i++;
+		    }
+	    
+		  $this->db->free();
+		} 
+	      else
+		{
+		  print $this->db->error();
+		}
 	    }
 	  return 1;
 	}
@@ -261,17 +310,47 @@ class Propal
    *
    *
    */
-  Function cloture($userid, $statut, $note) {
-    $sql = "UPDATE llx_propal SET fk_statut = $statut, note = '$note', date_cloture=now(), fk_user_cloture=$userid";
-
-    $sql .= " WHERE rowid = $this->id;";
-    
-    if ($this->db->query($sql) ) {
-      return 1;
-    } else {
-      print $this->db->error() . ' in ' . $sql;
+  Function cloture($userid, $statut, $note)
+    {
+      $sql = "UPDATE llx_propal SET fk_statut = $statut, note = '$note', date_cloture=now(), fk_user_cloture=$userid";
+      
+      $sql .= " WHERE rowid = $this->id;";
+      
+      if ($this->db->query($sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	}
     }
-  }
+  /*
+   *
+   *
+   *
+   */
+  Function reopen($userid)
+    {
+      $sql = "UPDATE llx_propal SET fk_statut = 0";
+      
+      $sql .= " WHERE rowid = $this->id;";
+      
+      if ($this->db->query($sql) )
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	}
+    }
+}  
 
-}    
+class PropaleLigne  
+{
+  Function PropaleLigne()
+    {
+    }
+}
 ?>
