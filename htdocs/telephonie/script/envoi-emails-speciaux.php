@@ -245,9 +245,8 @@ if (sizeof($factures_a_mailer) > 0)
 	      if ( $mailfile->sendfile() )
 		{
 		  
-		  for ($kj = 0 ; $kj < sizeof($ligne->contact_facture_id) ; $kj++)
+		  for ($kj = 0 ; $kj < sizeof($emails) ; $kj++)
 		    {
-		      //$sendtoid = $ligne->contact_facture_id[$kj];
 		      $sendtoid = $contactid;
 		      
 		      $sendtox = $emails[$kj];
