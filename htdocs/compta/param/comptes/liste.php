@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@ $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
 
-
 llxHeader();
 
 /*
@@ -37,15 +36,8 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-if ($sortfield == "") {
-  $sortfield="cg.numero";
-}
-
-
-if ($page == -1) { $page = 0 ; }
+if ($sortorder == "") $sortorder="ASC";
+if ($sortfield == "") $sortfield="cg.numero";
 
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
