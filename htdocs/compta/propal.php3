@@ -68,14 +68,15 @@ if ($action == 'setstatut') {
  *
  *
  */
-if ($propalid) {
+if ($propalid)
+{
   $propal = new Propal($db);
   $propal->fetch($propalid);
 
-
-  if ($valid == 1) {
-    $propal->valid($user->id);
-  }
+  if ($valid == 1)
+    {
+      $propal->valid($user->id);
+    }
   /*
    *
    */
@@ -86,7 +87,7 @@ if ($propalid) {
    *
    */
   $sql = "SELECT s.nom, s.idp, p.price, p.fk_projet,p.remise, p.tva, p.total, p.ref,".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst, p.note, x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture";
-  $sql .= " FROM societe as s, llx_propal as p, c_propalst as c, socpeople as x";
+  $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c, llx_socpeople as x";
   $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = $propalid";
 
   $result = $db->query($sql);
@@ -329,7 +330,7 @@ if ($propalid) {
   print "</table>";
 
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-  $sql .= " FROM societe as s, llx_propal as p, c_propalst as c ";
+  $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c ";
   $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut in(2,4)";
 
   if ($socidp) { 
