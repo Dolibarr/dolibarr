@@ -113,7 +113,7 @@ if ($action == 'create')
   print '<input type="hidden" name="type" value="'.$_POST["type"].'">'."\n";
   print '<div class="titre">Nouveau</div><br>'."\n";
       
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
   print "<tr>";
   print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Libellé</td><td><input name="libelle" size="40" value=""></td></tr>';
@@ -155,9 +155,22 @@ else
       $date_start='';
       $date_end='';
           
-	  print_fiche_titre('Fiche contrat : '.$contrat->id, $mesg);
+	  print $mesg;
+
+    /*
+     * Affichage onglets
+     */
+    $h = 0;
+
+    $hselected=$h;
+    $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$socid;
+    $head[$h][1] = 'Fiche contrat : '.$contrat->id;
+    $h++;
+
+    dolibarr_fiche_head($head, $hselected);
+
       
-	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	  print "<tr>";
 	  print '<td width="20%">Service</td><td colspan="3">'.($contrat->product->ref).' - '.($contrat->product->label_url).'</td>';
 	  print '</tr><tr>';	
@@ -284,6 +297,8 @@ else
 
 
 	  print "</table>";
+      print '<br>';
+      print '</div>';
 	}
       
     }
@@ -300,7 +315,6 @@ else
 /* ************************************************************************** */
 
 
-print '<br>';
 print '<div class="tabsAction">';
 
 if (! $contrat->enservice)
