@@ -529,6 +529,8 @@ class Facture
    */
   function set_valid($rowid, $user, $soc, $force_number='')
     {
+      global $conf;
+      
       if ($this->brouillon)
 	{
 	  $action_notify = 2; // ne pas modifier cette valeur
@@ -562,6 +564,18 @@ class Facture
 	      dolibarr_print_error($this->db);
 	    }
      
+	  /*
+	   * On crée les contrats de services automatiquement si
+	   * l'option CONTRACT_AUTOCREATE_FROM_BILL est active
+       * (Cas ou les contrats sont implicites comme lors de ventes de services en lignes)
+	   */      
+      if ($conf->contrat->enabled) {
+          if (defined("CONTRACT_AUTOCREATE_FROM_BILL") && CONTRACT_AUTOCREATE_FROM_BILL == "1") {
+        	  $contrat = new Contrat($this->db);
+        	  $contrat->create_from_facture($rowid, $user, $soc->id);
+            }
+        }
+        
 	  /*
 	   * Notify
 	   *
