@@ -259,10 +259,10 @@ class Adherent
    */
   Function fetch($rowid)
   {
-    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.fk_adherent_type, d.morphy";
+    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.fk_adherent_type, d.morphy, t.libelle as type";
     $sql .= ",".$this->db->pdate("d.datefin")." as datefin";
-    $sql .= " FROM llx_adherent as d";
-    $sql .= " WHERE d.rowid = $rowid";
+    $sql .= " FROM llx_adherent as d, llx_adherent_type as t";
+    $sql .= " WHERE d.rowid = $rowid AND d.fk_adherent_type = t.rowid";
 
     if ( $this->db->query( $sql) )
       {
@@ -273,11 +273,12 @@ class Adherent
 
 	    $this->id             = $obj->rowid;
 	    $this->typeid         = $obj->fk_adherent_type;
+	    $this->type           = $obj->type;
+	    $this->statut         = $obj->statut;
 	    $this->date           = $obj->datedon;
 	    $this->prenom         = stripslashes($obj->prenom);
 	    $this->nom            = stripslashes($obj->nom);
 	    $this->societe        = stripslashes($obj->societe);
-	    $this->statut         = $obj->fk_statut;
 	    $this->adresse        = stripslashes($obj->adresse);
 	    $this->cp             = stripslashes($obj->cp);
 	    $this->ville          = stripslashes($obj->ville);
