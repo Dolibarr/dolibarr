@@ -21,8 +21,6 @@
  */
 
 require("./pre.inc.php3");
-require("../lib/functions.inc.php3");
-require("../lib/Product.class.php3");
 
 require("./propal.class.php3");
 
