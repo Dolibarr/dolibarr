@@ -188,5 +188,42 @@ class Project {
 	  print $this->db->error() . '<br>' .$sql;
 	}
     }
+  /**
+   * Renvoie la liste des commande associées au projet
+   *
+   *
+   */
+  Function get_commande_list()
+    {
+      $commandes = array();
+      $sql = "SELECT rowid FROM llx_commande WHERE fk_projet=$this->id;";
+      
+      if ($this->db->query($sql) )
+	{
+	  $nump = $this->db->num_rows();
+	  if ($nump)
+	    {
+	      $i = 0;
+	      while ($i < $nump)
+		{
+		  $obj = $this->db->fetch_object($i);
+		  
+		  $commandes[$i] = $obj->rowid;
+		  
+		  $i++;
+		}
+	      $this->db->free();
+	      /*
+	       *  Retourne un tableau contenant la liste des commandes associees
+	       */
+	      return $commandes;
+	    }
+	}
+      else
+	{
+	  print $this->db->error() . '<br>' .$sql;
+	}
+    }
+
 }
 ?>
