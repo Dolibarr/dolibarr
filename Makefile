@@ -25,7 +25,7 @@ FILE=dolibarr-0.5.1
 tar:
 	rm -fr dolibarr-*.tar.gz* $(FILE)
 	mkdir $(FILE)
-	rsync -ar doc htdocs mysql misc COPY* http* INSTALL scripts templates pgsql $(FILE)/
+	rsync -ar doc htdocs mysql misc COPY* http* INSTALL README scripts templates pgsql $(FILE)/
 	tar --exclude-from tar.exclude -cvvf $(FILE).tar $(FILE)/
 	gzip $(FILE).tar
 	md5sum $(FILE).tar.gz > $(FILE).tar.gz.md5sum
