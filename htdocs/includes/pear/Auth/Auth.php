@@ -186,7 +186,7 @@ class DOLIAuth {
         $storage_path = "Auth/Container/" . $driver . ".php";
         $storage_class = "Auth_Container_" . $driver;
 
-        require_once $storage_path;
+	require_once DOL_DOCUMENT_ROOT."/includes/pear/".$storage_path;
 
         return new $storage_class($options);
     }
