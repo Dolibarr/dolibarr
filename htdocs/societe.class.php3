@@ -71,26 +71,27 @@ class Societe {
    *
    *
    */
-  Function update($id) {
+  Function update($id)
+    {
 
-    $sql = "UPDATE societe ";
-    $sql .= " SET nom = '" . trim($this->nom) ."'";
-    $sql .= ",address = '" . trim($this->adresse) ."'";
-    $sql .= ",cp = '" . trim($this->cp) ."'";
-    $sql .= ",ville = '" . trim($this->ville) ."'";
-    $sql .= ",tel = '" . trim($this->tel) ."'";
-    $sql .= ",fax = '" . trim($this->fax) ."'";
-    $sql .= ",url = '" . trim($this->url) ."'";
-    $sql .= ",siren = '" . trim($this->siren) ."'";
-    $sql .= ",client = " . $this->client ;
-    $sql .= ",fournisseur = " . $this->fournisseur ;
-    $sql .= " WHERE idp = " . $id .";";
-
-    if (! $this->db->query($sql)) 
+      $sql = "UPDATE societe ";
+      $sql .= " SET nom = '" . trim($this->nom) ."'";
+      $sql .= ",address = '" . trim($this->adresse) ."'";
+      $sql .= ",cp = '" . trim($this->cp) ."'";
+      $sql .= ",ville = '" . trim($this->ville) ."'";
+      $sql .= ",tel = '" . trim($this->tel) ."'";
+      $sql .= ",fax = '" . trim($this->fax) ."'";
+      $sql .= ",url = '" . trim($this->url) ."'";
+      $sql .= ",siren = '" . trim($this->siren) ."'";
+      $sql .= ",client = " . $this->client ;
+      $sql .= ",fournisseur = " . $this->fournisseur ;
+      $sql .= " WHERE idp = " . $id .";";
+      
+      if (! $this->db->query($sql)) 
       {
 	print $this->db->error();
       }
-  }
+    }
   /*
    *
    *
@@ -214,7 +215,69 @@ class Societe {
 	$this->db->free();
       }
   }
+  /*
+   *
+   *
+   */
+  Function contact_email_array()
+    {
+      $contact_email = array();
 
+      $sql = "SELECT idp, email, name, firstname FROM socpeople WHERE fk_soc = $this->id";
+      
+      if ($this->db->query($sql) )
+	{
+	  $nump = $this->db->num_rows();
+
+	  if ($nump)
+	    {
+	      $i = 0;
+	      while ($i < $nump)
+		{
+		  $obj = $this->db->fetch_object($i);
+	      
+		  $contact_email[$obj->idp] = "$obj->firstname $obj->name &lt;$obj->email&gt;";
+		  $i++;
+		}
+	    }
+	  return $contact_email;
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+      
+    }
+  /*
+   *
+   *
+   */
+  Function contact_get_email($rowid)
+    {
+
+      $sql = "SELECT idp, email, name, firstname FROM socpeople WHERE idp = $rowid";
+      
+      if ($this->db->query($sql) )
+	{
+	  $nump = $this->db->num_rows();
+
+	  if ($nump)
+	    {
+	      
+	      $obj = $this->db->fetch_object(0);
+	      
+	      $contact_email = "$obj->firstname $obj->name <$obj->email>";
+
+	    }
+	  return $contact_email;
+	}
+      else
+	{
+	  print $this->db->error();
+	  print "<p>$rowid";
+	}
+      
+    }
 
 }
 

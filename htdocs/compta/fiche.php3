@@ -306,7 +306,7 @@ if ($socid > 0) {
       print "<tr><td><b>Pr&eacute;nom Nom</b></td>";
       print '<td><b>Poste</b></td><td><b>T&eacute;l</b></td>';
       print "<td><b>Fax</b></td><td><b>Email</b></td>";
-      print "<td><a href=\"people.php3?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
+      print "<td><a href=\"../comm/people.php3?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
     
       $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
       $result = $db->query($sql);
@@ -331,7 +331,7 @@ if ($socid > 0) {
 	print '<td><a href="action/fiche.php3?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
 	print '<td><a href="action/fiche.php3?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
 	print '<td><a href="action/fiche.php3?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
-	print "<td><a href=\"people.php3?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
+	print "<td><a href=\"../comm/people.php3?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
 	print "</tr>\n";
 	$i++;
 	$tag = !$tag;

@@ -52,12 +52,15 @@ if ($action == 'del_bookmark') {
   $sql = "DELETE FROM llx_bookmark WHERE rowid=$bid";
   $result = $db->query($sql);
 }
-
+/*
+ *
+ *
+ */
 print_titre(translate("Espace compta"));
 
 print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="33%">';
 /*
  * Charges a payer
  *
@@ -163,7 +166,7 @@ if ( $db->query($sql) ) {
  *
  *
  */
-print '</td><td valign="top" width="70%">';
+print '</td><td valign="top" width="33%">';
 
 
 $result = 0;
@@ -187,9 +190,49 @@ if ( $result ) {
 } else {
   print $db->error();
 }
+/*
+ *
+ *
+ */
 
+/*
+ * Charges a payer
+ *
+ */
+$sql = "SELECT ff.amount, ff.libelle";
+$sql .= " FROM llx_facture_fourn as ff";
+$sql .= " WHERE ff.paye=0";
 
-print '</td></tr>';
+if ( $db->query($sql) ) 
+{
+  $num = $db->num_rows();
+  if ($num)
+    {
+      print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+      print '<TR class="liste_titre">';
+      print '<TD colspan="2">Charges à payer</td>';
+      print "</TR>\n";
+      $i = 0;
+      
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var = !$var;
+	  print "<tr $bc[$var]>";
+	  print '<td>'.$obj->libelle.'</td>';
+	  print '<td align="right">'.price($obj->amount).'</td>';
+	  print '</tr>';
+	  $i++;
+	}
+      print '</table><br>';
+    }
+}
+else
+{
+  print $db->error();
+}
+
+print '</td><td width="40%">&nbsp;</td></tr>';
 
 print '</table>';
 

@@ -21,6 +21,7 @@
  */
 require("./pre.inc.php3");
 require("../facture.class.php3");
+require("../lib/CMailFile.class.php3");
 
 llxHeader();
 
@@ -127,6 +128,58 @@ if ($action == 'add')
   $action = '';
   
 }
+/*
+ *
+ */
+
+if ($action == 'send')
+{
+  $fac = new Facture($db,"",$facid);
+  $fac->fetch($facid);
+
+  $soc = new Societe($db, $fac->socidp);
+
+  $file = $conf->facture->outputdir . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
+
+  if (file_exists($file))
+    {
+
+      $sendto = $soc->contact_get_email($HTTP_POST_VARS["destinataire"]);
+
+      if (strlen($sendto))
+	{
+	  
+	  $subject = "Facture $fac->ref";
+	  $message = "Veuillez trouver ci-joint la facture $fac->ref\n\nCordialement\n\n";
+	  $filename = "$fac->ref.pdf";
+	  
+	  $replyto = $HTTP_POST_VARS["replytoname"] . " <".$HTTP_POST_VARS["replytomail"] .">";
+	  
+	  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$file, "application/pdf", $filename);
+	  
+	  if ( $mailfile->sendfile() )
+	    {
+	      
+	      $sql = "INSERT INTO actioncomm (datea,fk_action,fk_soc,note,fk_facture) VALUES (now(), 9 ,$fac->socidp ,'Envoyée à $sendndto',$fac->id);";
+
+	      if (! $db->query($sql) )
+		{
+		  print $db->error();
+		  print "<p>$sql</p>";
+		}	      	      	      
+	    }
+	  else
+	    {
+	      print "<b>!! erreur d'envoi<br>$sendto<br>$replyto<br>$filename";
+	    }	  
+	}
+      else
+	{
+	  print "Can't get email $sendto";
+	}
+    }
+}
+
 /*
  *
  * Mode creation
@@ -255,6 +308,8 @@ else
 	print $db->error();
       }
 
+    $soc = new Societe($db, $obj->socidp);
+
     $author = new User($db);
     $author->id = $obj->fk_user_author;
     $author->fetch();
@@ -357,9 +412,9 @@ else
 
 	echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
 	print "<TR class=\"liste_titre\">";
-	print "<td>Date</td>";
-	print '<td align="center">Quantité</td>';
-	print '<td align="right">Montant</TD><td>&nbsp;</td><td>&nbsp;</td>';
+	print '<td width="60%">Description</td>';
+	print '<td width="8%"align="center">Quantité</td>';
+	print '<td width="12%" align="right">Montant</TD><td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
 	print "</TR>\n";
     
 	$var=True;
@@ -374,6 +429,10 @@ else
 	    {
 	      print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=deleteline&rowid='.$objp->rowid.'">del</a></td>';
 	      print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=editline&rowid='.$objp->rowid.'">edit</a></td>';
+	    }
+	  else
+	    {
+	      print '<td>&nbsp;</td><td>&nbsp;</td>';
 	    }
 	  print "</tr>";
 
@@ -412,7 +471,7 @@ else
 	print "<form action=\"$PHP_SELF?facid=$facid\" method=\"post\">";
 	echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="1">';
 	print "<TR class=\"liste_titre\">";
-	print "<td>Date</td>";
+	print "<td>Description</td>";
 	print "<td>Quantité</td>";
 	print "<td align=\"right\">Montant</TD>";
 	print "</TR>\n";
@@ -437,7 +496,11 @@ else
       {
 	print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
       } 
-    else 
+    elseif ($obj->statut == 1 && $resteapayer > 0) 
+      {
+	print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=presend\">Envoyer</a>]</td>";
+      }
+    else
       {
 	print "<td align=\"center\" width=\"25%\">-</td>";
       } 
@@ -475,16 +538,16 @@ else
      *
      */
     print "<hr>";
-    print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
-    print "<b>Documents générés</b><br>";
-    print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=3>";
+    print "<table width=\"100%\" cellspacing=2><tr><td width=\"60%\" valign=\"top\">";
+    print_titre("Documents générés");
+    print '<table width="100%" cellspacing="0" border="1" cellpadding="3">';
 
     $file = $conf->facture->outputdir . "/" . $obj->facnumber . "/" . $obj->facnumber . ".pdf";
 
 
     if (file_exists($file))
       {
-	print "<tr><td>Propale PDF</a></td>";
+	print "<tr $bc[0]><td>Facture PDF</a></td>";
 	print '<td><a href="'.$conf->facture->outputurl."/".$obj->facnumber."/".$obj->facnumber.'.pdf">'.$obj->facnumber.'.pdf</a></td>';
       print '<td align="right">'.filesize($file). ' bytes</td>';
       print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
@@ -495,17 +558,65 @@ else
 
     if (file_exists($file))
       {
-	print "<tr><td>Propale Postscript</a></td>";
+	print "<tr $bc[0]><td>Facture Postscript</a></td>";
 	print '<td><a href="'.$conf->facture->outputurl."/".$obj->facnumber."/".$obj->facnumber.'.ps">'.$obj->facnumber.'.ps</a></td>';
-      print '<td align="right">'.filesize($file). ' bytes</td>';
-      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
-      print '</tr>';
+	print '<td align="right">'.filesize($file). ' bytes</td>';
+	print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+	print '</tr>';
 
 
       }
-    print '<tr><td colspan="2">(<a href="'.$conf->facture->outputurl.'/'.$facid.'/">liste...</a>)</td></tr>';  
+    print '<tr $bc[0]><td colspan="4">(<a href="'.$conf->facture->outputurl.'/'.$facid.'/">liste...</a>)</td></tr>';  
 
-    print "</table>\n</table>";
+    print "</table>\n";
+    print "</td>";
+    print '<td valign="top" width="40%">';
+    print_titre("Actions");
+    /*
+     * Liste des actions
+     *
+     */
+    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
+    $sql .= " FROM actioncomm as a WHERE a.fk_soc = $obj->socidp AND a.fk_action = 9 AND a.fk_facture = $facid";
+  
+    $result = $db->query($sql);
+    if ($result)
+      {
+	$num = $db->num_rows();
+	if ($num)
+	  {
+	    $i = 0; $total = 0;
+	    print '<TABLE border="1" cellspacing="0" cellpadding="4">';
+	    print "<TR $bc[$var]>";
+	    print "<td>Date</td>";
+	    print "<td>Action</td>";
+	    print "</TR>\n";
+	    
+	    $var=True;
+	    while ($i < $num)
+	      {
+		$objp = $db->fetch_object( $i);
+		$var=!$var;
+		print "<TR $bc[$var]>";
+		print "<TD>".strftime("%d %B %Y",$objp->da)."</TD>\n";
+		print '<TD align="right">'.stripslashes($objp->note).'</TD>';
+		print "</tr>";
+		$i++;
+	      }
+	    print "</table>";
+	  }
+      }
+    else
+      {
+	print $db->error();
+      }
+
+    /*
+     *
+     *
+     */
+    print "</td></tr>";
+    print "</table>";
   
     /*
      * Generation de la facture
@@ -513,7 +624,7 @@ else
      */
     if ($action == 'pdf')
       {
-	print "<hr><b>Génération de la facture</b><br>";
+	print "<hr><b>Génération de la facture</b><br><small><pre>";
 	$command = "export DBI_DSN=\"dbi:mysql:dbname=".$conf->db->name."\" ";
 	$command .= " ; ./texfacture.pl --html -vv --facture=$facid --pdf --output=".$conf->facture->outputdir;
 	$command .= " --templates=".$conf->facture->templatesdir;
@@ -521,8 +632,47 @@ else
 	$output = system($command);
 	print "<p>command :<br><small>$command</small><br>";
 	//print "<p>output :<br><small>$output</small><br>";
+	print "</pre></small>";
       } 
+    /*
+     *
+     *
+     */
+    if ($action == 'presend')
+      {
+	$replytoname = "R. Quiedeville"; 
+	$from_name = $replytoname;
+	$replytomail = "rq@quiedeville.org"; 
+	$from_mail = $replytomail;
+	
+	print "<form method=\"post\" action=\"$PHP_SELF?facid=$facid&action=send\">\n";
+	print "<input type=\"hidden\" name=\"replytoname\" value=\"$replytoname\">\n";
+	print "<input type=\"hidden\" name=\"replytomail\" value=\"$replytomail\">\n";
+	
+	print "<p><b>Envoyer la facture par mail</b>";
+	print "<table cellspacing=0 border=1 cellpadding=3>";
+	print '<tr><td>Destinataire</td><td colspan="5">';
 
+	$form = new Form($db);
+
+	$form->select_array("destinataire",$soc->contact_email_array());
+
+	print '</td>';
+	print "<td><input size=\"30\" name=\"sendto\" value=\"$obj->email\"></td></tr>";
+	print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
+	print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
+	print "<td>$replytomail</td></tr>";
+	
+	print "</table>";
+	print "<input type=\"submit\" value=\"Envoyer\">";
+	print "</form>";
+      }
+
+    /*
+     *
+     *
+     */
+    
 
     /*
      *   Propales

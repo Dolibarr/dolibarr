@@ -25,12 +25,6 @@ require("../../contact.class.php3");
 
 llxHeader();
 $db = new Db();
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-if ($sortfield == "") {
-  $sortfield="nom";
-}
 
 if ($action == 'note') {
   $sql = "UPDATE societe SET note='$note' WHERE idp=$socid";
@@ -116,11 +110,21 @@ if ($socid > 0) {
    */
   print_barre_liste("Liste des factures fournisseurs", $page, $PHP_SELF);
 
+  if ($sortorder == "")
+    {
+      $sortorder="ASC";
+    }
+  if ($sortfield == "")
+    {
+      $sortfield="fac.paye";
+    }
+
+
   $sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.amount, fac.paye, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid";
   $sql .= " FROM societe as s, llx_facture_fourn as fac ";
   $sql .= " WHERE fac.fk_soc = s.idp";
 
-  //  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
+  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
   $result = $db->query($sql);
 
@@ -128,17 +132,18 @@ if ($socid > 0) {
     $num = $db->num_rows();
     $i = 0;
 
-    if ($sortorder == "DESC") {
-      $sortorder="ASC";
-    } else {
-      $sortorder="DESC";
-    }
+    if ($sortorder == "DESC")
+      {
+	$sortorder="ASC";
+      } else {
+	$sortorder="DESC";
+      }
     print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
     print '<TR class="liste_titre">';
     print "<TD>Libelle</TD><td>";
     print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-    print "</td><TD>Montant</TD>";
-    print "<td colspan=\"2\">&nbsp;</td>";
+    print '</td><TD align="right">Montant</TD>';
+    print '<td align="center">Payé</td>';
     print "</TR>\n";
     $var=True;
     while ($i < $num) {
@@ -151,7 +156,7 @@ if ($socid > 0) {
       print "<TD><a href=\"../fiche.php3?socid=$obj->socid\">$obj->nom</A></td>\n";
       print '<TD align="right">'.price($obj->amount).'</TD>';
 
-      print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
+      print '<TD align="center">'.$yn[$obj->paye].'</TD>';
 
 
       print "</TR>\n";

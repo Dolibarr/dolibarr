@@ -110,7 +110,7 @@ class Facture {
   Function fetch($rowid)
     {
 
-      $sql = "SELECT ref,price,remise,".$this->db->pdate(datep)."as dp FROM llx_facture WHERE rowid=$rowid;";
+      $sql = "SELECT fk_soc,facnumber,amount,remise,".$this->db->pdate(datef)."as df FROM llx_facture WHERE rowid=$rowid;";
       
       if ($this->db->query($sql) )
 	{
@@ -118,11 +118,12 @@ class Facture {
 	    {
 	      $obj = $this->db->fetch_object(0);
 	      
-	      $this->id = $rowid;
-	      $this->datep = $obj->dp;
-	      $this->ref = $obj->ref;
-	      $this->price = $obj->price;
+	      $this->id     = $rowid;
+	      $this->datep  = $obj->dp;
+	      $this->ref    = $obj->facnumber;
+
 	      $this->remise = $obj->remise;
+	      $this->socidp = $obj->fk_soc;
 	      
 	      $this->db->free();
 	    }
