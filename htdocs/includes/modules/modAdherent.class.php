@@ -27,7 +27,7 @@
 */
 
 /*!
-        \file       htdocs/includes/modules/modAdherents.class.php
+        \file       htdocs/includes/modules/modAdherent.class.php
         \brief      Fichier de description et activation du module adherents
 */
 

@@ -26,7 +26,7 @@
 */
 
 /*!
-        \file       htdocs/includes/modules/modExpeditione.class.php
+        \file       htdocs/includes/modules/modExpedition.class.php
         \brief      Fichier de description et activation du module Expedition
 */
 

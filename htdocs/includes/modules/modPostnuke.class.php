@@ -26,7 +26,7 @@
 */
 
 /*!
-        \file       htdocs/includes/modules/modPostNuke.class.php
+        \file       htdocs/includes/modules/modPostnuke.class.php
         \brief      Fichier de description et activation du module Postnuke
 */
 
