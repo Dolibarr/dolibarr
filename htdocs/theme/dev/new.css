@@ -1,0 +1,230 @@
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ *
+ */
+
+div.body
+{
+  display:block;
+  padding:0px;
+  border-top:1px solid black;
+  font-family:arial,tahoma,verdana,helvetica;
+  font-size:12px;
+  background:white;
+}
+
+div.tmenu
+{
+  background: #dcdad5; 
+  white-space: nowrap;
+  display:block;
+  margin:0;
+  padding: 3px;
+  padding-bottom: 6px;
+  border:0;
+  border-bottom:1px solid #9d9da1;	
+  }
+
+div.fiche
+{
+  display: block;
+  float: none;
+  position: absolute;
+/*  background: #dee7ec; */
+  top: 33px;
+  left: 150px;
+  margin-right: 10px;
+}
+
+div.vmenu
+{
+  float: left;
+/*  background: #dee7ec; */
+  display:block;
+  margin-right: 10px;
+  padding: 0px;
+  padding-bottom: 6px;
+}
+
+a
+{ 
+  text-decoration: none;
+ }
+
+a.tmenu
+{
+  padding:3px;
+  margin-right: 3px;
+  text-decoration: none;
+  color:gray;
+  font-weight:bold;
+  font-size:11px;
+  }
+
+a.tmenu#sel
+{ 
+  border-bottom:4px solid #9d9da1;	
+  color:black;
+
+ }
+
+a.tmenu:hover
+{
+  border-color:gray;
+  border-bottom:4px solid #9d9da1;	
+  color:black;
+  }
+
+a.login
+{
+  position: absolute;
+  right: 27px;
+  top: 9px;
+  padding:2px;
+  text-decoration:none;
+  color:white;
+  background:gray;
+  border-bottom:4px solid gray;
+  font-weight:bold;
+  }
+
+img.login
+{
+  position: absolute;
+  right: 9px;
+  top: 9px;
+  padding:2px;
+  text-decoration:none;
+  color:white;
+  background:gray;
+  border-bottom:4px solid gray;
+  font-weight:bold;
+  }
+
+a.login:hover
+{
+  border-color:gray;
+  border-bottom:4px solid #9d9da1;	
+  color:black;
+  }
+
+img {vertical-align:text-top}
+
+
+
+div.blockvmenupair
+{
+  padding: 3px;
+
+}
+
+div.blockvmenuimpair
+{
+
+  padding: 3px;
+}
+
+a.vmenu
+{
+  padding-bottom:3px;
+  text-decoration:none;
+  color:gray;
+  font-weight:bold;
+  font-size:11px;
+  }
+
+a.vsmenu
+{
+  margin-left: 8px;
+  padding-bottom:3px;
+  text-decoration:none;
+  color:gray;
+  font-weight:bold;
+  font-size:11px;
+  }
+
+a.vmenu:hover
+{
+  border-color:gray;
+  text-decoration: none;
+  color:black;
+  }
+
+a.vsmenu:hover
+{
+  border-color:gray;
+  text-decoration: underline;
+  color:black;
+  }
+
+
+
+table.liste
+{
+  border: small solid #000000;
+  border-collapse: collapse;
+  width: 100%;
+  }
+
+table.liste tr
+{ 
+  background: #dfdfdf;
+  }
+
+
+table.liste tr:hover
+{ 
+  background: white;
+  }
+
+
+table.liste th
+{
+  border: thin solid #6495ed;
+
+  width: 50%;
+  font-size:12px;
+  text-align: left;
+  padding: 2px;
+}
+
+table.liste th:hover
+{
+  background: #dfdfdf; 
+}
+
+table.liste td
+{
+  border-bottom: thin solid #6495ed;
+  font-size: 10px;
+}
+
+
+div.formsearch
+{
+  display: block;
+  float: none;
+  clear: right;
+  background: #dee7ec;
+  top: 0px;
+  left: 130px;
+  padding: 4px; 
+  vertical-align: center;
+}
+
