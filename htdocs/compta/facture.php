@@ -1223,7 +1223,6 @@ else
 	  $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
 
 	  $relativepath = "${facref}/${facref}.pdf";
-	  $relativepathdetail = "${facref}/${facref}-detail.pdf";
 	  
 	  $var=true;
       
@@ -1250,6 +1249,7 @@ else
 		  if (is_readable($dir.$file) && substr($file, -10) == 'detail.pdf')
 		    {
 		      print "<tr $bc[$var]><td>Facture détaillée</td>";
+		      $relativepathdetail = "${facref}/$file";
 		      
 		      print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$file.'</a></td>';		  
 		      print '<td align="right">'.filesize($dir.$file). ' bytes</td>';
