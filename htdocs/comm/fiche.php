@@ -229,7 +229,10 @@ if ($_socid > 0)
     print "</td></tr>";
 
     print "<tr><td>".$langs->trans("Type")."</td><td> $objsoc->typent</td><td>Effectif</td><td>$objsoc->effectif</td></tr>";
-    print '<tr><td colspan="2">'.$langs->trans("CustomerDiscount").'</td><td colspan="2">'.$objsoc->remise_client."&nbsp;%</td></tr>";
+    print '<tr><td colspan="2"><a href="remise.php?id='.$objsoc->id.'">';
+    print img_edit("Modifier la remise");
+    print "</a>";
+    print $langs->trans("CustomerDiscount").'</td><td colspan="2">'.$objsoc->remise_client."&nbsp;%</td></tr>";
 
     print "</table>";
 
