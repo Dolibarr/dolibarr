@@ -62,7 +62,7 @@ if ($result)
       
       $i++;
     }
-  print "<tr><td align=\"right\">Total :</td>";
+  print "<tr class=\"total\"><td align=\"right\">Total :</td>";
   print "<td align=\"right\"><b>".price($total)."</b></td><td>euros&nbsp;HT</td></tr>";
   
   print "</TABLE>";

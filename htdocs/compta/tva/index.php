@@ -84,7 +84,7 @@ function pt ($db, $sql, $date) {
             
       $i++;
     }
-    print "<tr><td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>euros&nbsp;HT</td></tr>";
+    print "<tr class=\"total\"><td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>euros&nbsp;HT</td></tr>";
     
     print "</TABLE>";
     $db->free();
@@ -151,12 +151,12 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
     
     $i++;
     if ($i > 2) {
-      print '<tr><td align="right" colspan="3">Sous total :</td><td align="right">'.price($subtotal).'</td><td align="right"><small>'.price($subtotal * 0.8).'</small></td>';
+      print '<tr class="total"><td align="right" colspan="3">Sous total :</td><td align="right">'.price($subtotal).'</td><td align="right"><small>'.price($subtotal * 0.8).'</small></td>';
       $i = 0;
       $subtotal = 0;
     }
   }
-  print '<tr><td align="right" colspan="3">Total :</td><td align="right"><b>'.price($total).'</b></td>';
+  print '<tr class="total"><td align="right" colspan="3">Total :</td><td align="right"><b>'.price($total).'</b></td>';
   print "<td>&nbsp;</td>\n";
   print "</TABLE>";
 
