@@ -55,6 +55,8 @@ class modTelephonie extends DolibarrModules
     $this->const_name = "MAIN_MODULE_TELEPHONIE";
     $this->const_config = MAIN_MODULE_TELEPHONIE;
 
+    $this->special = 1;
+
     // Dépendances
     $this->depends = array();
     $this->requiredby = array();
