@@ -26,7 +26,7 @@ Class pdf_bernique {
   Function pdf_bernique($db=0)
     { 
       $this->db = $db;
-      $this->description = "Modèle pour les factures avec plusieurs taux de tva";
+      $this->description = "Modèle pour les factures avec plusieurs taux de tva, inclus aussi le numéro de TVA Intracommunautaire";
     }
 
   Function write_pdf_file($facid)
@@ -150,7 +150,8 @@ Class pdf_bernique {
 	       */
 	      	      
 	      $pdf->SetFont('Arial','',9);
-	      $pdf->SetXY(10, 265);
+	      $pdf->SetXY(10, 260);
+	      $pdf->MultiCell(190, 5, "Numéro de TVA intracommunautaire : ".MAIN_INFO_TVAINTRA, 0, 'J');
 	      $pdf->MultiCell(190, 5, "Accepte le réglement des sommes dues par chèques libellés à mon nom en ma qualité de Membre d'une Association de Gestion agréée par l'Administration Fiscale.", 0, 'J');
 
 	      $pdf->Close();
