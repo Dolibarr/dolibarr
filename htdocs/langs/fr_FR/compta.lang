@@ -11,7 +11,10 @@ BillsForSuppliers=Factures des fournisseurs
 Balance=Balance
 Debit=Débit
 Credit=Crédit
-Withdrawl=Prélèvement
-Withdrawls=Prélèvements
-
-
+Withdrawal=Prélèvement
+Withdrawals=Prélèvements
+VAT=TVA
+VATToPay=TVA à payé
+VATToCollect=TVA à récupéré
+VATSummary=Résumé TVA
+VATPayed=TVA payée

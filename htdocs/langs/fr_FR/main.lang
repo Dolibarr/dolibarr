@@ -118,6 +118,7 @@ AmountVAT=Montant TVA
 AmountTotal=Montant total
 AmountAverage=Montant moyen
 Total=Total
+SubTotal=Sous total
 TotalHT=Total HT
 TotalTTC=Total TTC
 TotalVAT=Total TVA

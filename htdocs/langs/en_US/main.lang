@@ -118,6 +118,7 @@ AmountVAT=Amount VAT
 AmountTotal=Total amount
 AmountAverage=Average amount
 Total=Total
+SubTotal=Subtotal
 TotalHT=Total HT
 TotalTTC=Total TTC
 TotalVAT=Total VAT
