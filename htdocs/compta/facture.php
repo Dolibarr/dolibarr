@@ -726,7 +726,7 @@ else
 	  $author->fetch();
 
 
-	  $head[0][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
+	  $head[0][0] = DOL_URL_ROOT."$PHP_SELF?facid=".$_GET["facid"];
 	  $head[0][1] = "Facture : $fac->ref";
 	  $h = 1;
 	  $a = 0;
