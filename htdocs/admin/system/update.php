@@ -49,7 +49,7 @@ $err = 0;
 /*
  * Factures
  */
-$sql = "SELECT rowid FROM llx_facture";
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."facture";
 if ($db->query($sql))
 {
   $num = $db->num_rows();
@@ -85,7 +85,7 @@ else
   $err++;
 }
 
-$sql = "DELETE FROM llx_const WHERE name = 'MAIN_NEED_UPDATE'";
+$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'MAIN_NEED_UPDATE'";
 if (! $db->query($sql))
 {
   print "Erreur #100";

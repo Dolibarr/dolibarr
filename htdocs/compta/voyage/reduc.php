@@ -34,7 +34,7 @@ print "</TR>\n";
 
 
 $sql = "SELECT b.rowid,".$db->pdate("b.date_debut")." as debut,".$db->pdate("b.date_fin")." as fin, b.amount, b.label ";
-$sql .= " FROM llx_voyage_reduc as b "; 
+$sql .= " FROM ".MAIN_DB_PREFIX."voyage_reduc as b "; 
 
 $result = $db->query($sql);
 if ($result) {

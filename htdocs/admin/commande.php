@@ -39,7 +39,7 @@ $commande_addon_var = COMMANDE_ADDON;
 
 if ($action == 'setmod')
 {
-  $sql = "REPLACE INTO llx_const SET name = 'COMMANDE_ADDON', value='".$value."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'COMMANDE_ADDON', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {

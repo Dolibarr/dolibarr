@@ -54,7 +54,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 $sql = "SELECT s.nom,s.idp, d.km,".$db->pdate("d.dated")." as dd, u.name, u.firstname, d.rowid";
-$sql .= " FROM llx_societe as s, llx_deplacement as d, llx_user as u ";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u ";
 $sql .= " WHERE d.fk_soc = s.idp AND d.fk_user = u.rowid";
 
 if ($user->societe_id > 0)

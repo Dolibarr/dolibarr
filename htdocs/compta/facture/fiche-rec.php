@@ -133,7 +133,7 @@ if ($action == 'create')
       print '<tr><td colspan="3">';
 	
       $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice";
-      $sql .= " FROM llx_facturedet as l WHERE l.fk_facture = $facid ORDER BY l.rowid";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as l WHERE l.fk_facture = $facid ORDER BY l.rowid";
 	  
       $result = $db->query($sql);
       if ($result)
@@ -396,7 +396,7 @@ else
 	  $sortfield="f.datef";
 
 	$sql = "SELECT s.nom,s.idp,f.titre,f.total,f.rowid as facid";
-	$sql .= " FROM llx_societe as s,llx_facture_rec as f WHERE f.fk_soc = s.idp";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f WHERE f.fk_soc = s.idp";
 	
 	if ($socidp)
 	  $sql .= " AND s.idp = $socidp";

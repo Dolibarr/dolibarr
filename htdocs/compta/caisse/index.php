@@ -52,7 +52,7 @@ $titre_mois = strftime("%B %Y", $time);
 print_fiche_titre("Journal de caisse");
 
 $sql = "SELECT f.amount, date_format(f.datep,'%Y-%m') as dm";
-$sql .= " FROM llx_paiement as f";
+$sql .= " FROM ".MAIN_DB_PREFIX."paiement as f";
 $sql .= " WHERE date_format(f.datep,'%Y%m') = ".$annee.$mois;
 
 if ($socidp)
@@ -73,7 +73,7 @@ if ($db->query($sql))
 }
 
 $sql = "SELECT sum(f.amount) as amount , date_format(f.datep,'%d') as dm";
-$sql .= " FROM llx_paiementfourn as f";
+$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as f";
 
 if ($socidp)
 {

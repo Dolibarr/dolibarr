@@ -23,7 +23,7 @@
 function get_ca_propal ($db, $year, $socidp)
 {
 
-  $sql = "SELECT sum(f.price - f.remise) as sum FROM llx_propal as f WHERE fk_statut in (1,2,4) AND date_format(f.datep, '%Y') = $year ";
+  $sql = "SELECT sum(f.price - f.remise) as sum FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in (1,2,4) AND date_format(f.datep, '%Y') = $year ";
   if ($socidp)
     {
       $sql .= " AND f.fk_soc = $socidp";
@@ -45,7 +45,7 @@ function get_ca_propal ($db, $year, $socidp)
 function get_ca ($db, $year, $socidp)
 {
   
-  $sql = "SELECT sum(f.amount) as sum FROM llx_facture as f WHERE f.paye = 1 AND date_format(f.datef , '%Y') = $year ";
+  $sql = "SELECT sum(f.amount) as sum FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1 AND date_format(f.datef , '%Y') = $year ";
   if ($socidp)
     {
       $sql .= " AND f.fk_soc = $socidp";

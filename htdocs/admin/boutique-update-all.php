@@ -29,7 +29,7 @@ llxHeader();
 
 print_barre_liste("Mise a jour de tous les livres", $page, $PHP_SELF);
 
-$sql = "SELECT l.rowid FROM llx_livre as l";
+$sql = "SELECT l.rowid FROM ".MAIN_DB_PREFIX."livre as l";
   
 if ( $db->query($sql) )
 {

@@ -23,19 +23,19 @@ require (DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
-  $sql = "REPLACE INTO llx_const SET name = 'LDAP_SERVER_HOST', value='".$HTTP_POST_VARS["host"]."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_HOST', value='".$HTTP_POST_VARS["host"]."', visible=0";
 
   $db->query($sql);
 
-  $sql = "REPLACE INTO llx_const SET name = 'LDAP_SERVER_DN', value='".$HTTP_POST_VARS["dn"]."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_DN', value='".$HTTP_POST_VARS["dn"]."', visible=0";
 
   $db->query($sql);
 
-  $sql = "REPLACE INTO llx_const SET name = 'LDAP_SERVER_LOGIN', value='".$HTTP_POST_VARS["login"]."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_LOGIN', value='".$HTTP_POST_VARS["login"]."', visible=0";
 
   $db->query($sql);
 
-  $sql = "REPLACE INTO llx_const SET name = 'LDAP_SERVER_PASS', value='".$HTTP_POST_VARS["pass"]."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_PASS', value='".$HTTP_POST_VARS["pass"]."', visible=0";
 
   $db->query($sql);
 

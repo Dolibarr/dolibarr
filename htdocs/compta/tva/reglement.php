@@ -33,7 +33,7 @@ $tva = new Tva($db);
 print_titre("Réglements TVA");
 
 $sql = "SELECT amount, date_format(f.datev,'%d-%M-%Y') as dm";
-$sql .= " FROM llx_tva as f ";
+$sql .= " FROM ".MAIN_DB_PREFIX."tva as f ";
 $sql .= " ORDER  BY dm DESC";
 
 $result = $db->query($sql);

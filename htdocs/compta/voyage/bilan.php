@@ -29,7 +29,7 @@ llxHeader();
 if ($action == 'add') {
   $author = $GLOBALS["REMOTE_USER"];
 
-  $sql = "INSERT INTO llx_voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc) ";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc) ";
   $sql .= " VALUES ('$date_depart','$date_arrivee',$amount,'$depart','$arrivee',$reduc);";
 
   $result = $db->query($sql);
@@ -43,7 +43,7 @@ if ($action == 'add') {
 
 }
 if ($action == 'del') {
-  /*  $sql = "DELETE FROM llx_voyage WHERE rowid = $rowid";
+  /*  $sql = "DELETE FROM ".MAIN_DB_PREFIX."voyage WHERE rowid = $rowid";
    *$result = $db->query($sql);
    */
 }
@@ -54,7 +54,7 @@ if ($vline) {
   $viewline = 20;
 }
 
-$sql = "SELECT rowid, label FROM llx_voyage_reduc;";
+$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."voyage_reduc;";
 $result = $db->query($sql);
 if ($result) {
   $var=True;  
@@ -74,7 +74,7 @@ print_titre("Bilan des reductions");
  * Cartes
  *
  */
-$sql = "SELECT rowid FROM llx_voyage_reduc";
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."voyage_reduc";
 
 $result = $db->query($sql);
 if ($result) {
@@ -110,7 +110,7 @@ for ($j = 0 ; $j < sizeof($cartes) ; $j++) {
    *
    */
   $sql = "SELECT b.rowid,".$db->pdate("b.date_depart")." as date_depart,".$db->pdate("b.date_arrivee")." as date_arrivee, b.amount, b.depart, b.arrivee , b.reduction";
-  $sql .= " FROM llx_voyage as b WHERE fk_reduc=".$reduc->id." ORDER BY b.date_depart ASC"; 
+  $sql .= " FROM ".MAIN_DB_PREFIX."voyage as b WHERE fk_reduc=".$reduc->id." ORDER BY b.date_depart ASC"; 
 
   $result = $db->query($sql);
   if ($result) {

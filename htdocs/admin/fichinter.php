@@ -36,7 +36,7 @@ $ficheinter_addon_var_pdf = FICHEINTER_ADDON_PDF;
 
 if ($action == 'setpdf')
 {
-  $sql = "REPLACE INTO llx_const SET name = 'FICHEINTER_ADDON_PDF', value='".$value."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FICHEINTER_ADDON_PDF', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {

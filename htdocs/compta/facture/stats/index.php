@@ -50,7 +50,7 @@ $px->SetHeight(280);
 
 $px->draw(DOL_DOCUMENT_ROOT.$filev, $data, $year);
       
-$sql = "SELECT count(*), date_format(datef,'%Y') as dm, sum(total) FROM llx_facture WHERE fk_statut > 0 ";
+$sql = "SELECT count(*), date_format(datef,'%Y') as dm, sum(total) FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0 ";
 if ($socidp)
 {
   $sql .= " AND fk_soc = $socidp";

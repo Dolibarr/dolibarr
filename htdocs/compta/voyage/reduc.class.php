@@ -36,7 +36,7 @@ class Reduc {
 
   Function fetch($id) {
     $sql = "SELECT b.rowid,".$this->db->pdate("b.date_debut")." as debut,".$this->db->pdate("b.date_fin")." as fin, b.amount, b.label ";
-    $sql .= " FROM llx_voyage_reduc as b WHERE rowid = $id"; 
+    $sql .= " FROM ".MAIN_DB_PREFIX."voyage_reduc as b WHERE rowid = $id"; 
 
     $result = $this->db->query($sql);
 

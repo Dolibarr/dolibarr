@@ -118,7 +118,7 @@ print '<td><input type="text" size="8" name="date"></td>';
 print '<td colspan="2" align="right"><select name="type">';
 
 
-$sql = "SELECT c.id, c.libelle as nom FROM c_chargesociales as c";
+$sql = "SELECT c.id, c.libelle as nom FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
 $sql .= " ORDER BY lower(c.libelle) ASC";
 
 if ( $db->query($sql) )

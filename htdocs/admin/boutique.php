@@ -48,7 +48,7 @@ $modules["BOUTIQUE_ALBUM"][3] = "Module de gestion des albums";
 
 if ($action == 'set')
 {
-  $sql = "REPLACE INTO llx_const SET name = '".$value."', value='1', visible = 0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '".$value."', value='1', visible = 0";
 
   if ($db->query($sql))
     {
@@ -58,7 +58,7 @@ if ($action == 'set')
 
 if ($action == 'reset')
 {
-  $sql = "REPLACE INTO llx_const SET name = '".$value."', value='0', visible = 0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '".$value."', value='0', visible = 0";
 
   if ($db->query($sql))
     {

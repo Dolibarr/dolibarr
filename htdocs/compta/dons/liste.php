@@ -34,7 +34,7 @@ $pagenext = $page + 1;
 
 
 $sql = "SELECT d.rowid, ".$db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet";
-$sql .= " FROM llx_don as d, llx_don_projet as p";
+$sql .= " FROM ".MAIN_DB_PREFIX."don as d, ".MAIN_DB_PREFIX."don_projet as p";
 $sql .= " WHERE p.rowid = d.fk_don_projet";
 if (strlen($statut))
 {

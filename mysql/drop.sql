@@ -28,23 +28,23 @@ drop table if exists llx_co_pr;
 drop table if exists llx_commande;
 drop table if exists llx_commandedet;
 
-drop table if exists c_actioncomm;
+drop table if exists llx_c_actioncomm;
 
-drop table if exists c_chargesociales;
+drop table if exists llx_c_chargesociales;
 
-drop table if exists c_effectif;
+drop table if exists llx_c_effectif;
 
-drop table if exists c_paiement ;
+drop table if exists llx_c_paiement ;
 
-drop table if exists c_pays ;
+drop table if exists llx_c_pays ;
 
-drop table if exists c_prestatype ;
+drop table if exists llx_c_prestatype ;
 
-drop table if exists c_propalst ;
+drop table if exists llx_c_propalst ;
 
-drop table if exists c_stcomm;
+drop table if exists llx_c_stcomm;
 
-drop table if exists c_typent ;
+drop table if exists llx_c_typent ;
 
 drop table if exists llx_action_def;
 

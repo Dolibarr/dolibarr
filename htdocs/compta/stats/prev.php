@@ -95,7 +95,7 @@ print '<table width="100%">';
 print '<tr><td valign="top">';
 
 $sql = "SELECT sum(f.price) as amount, date_format(f.datep,'%Y-%m') as dm";
-$sql .= " FROM llx_propal as f WHERE fk_statut in $in";
+$sql .= " FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in $in";
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
@@ -107,7 +107,7 @@ pt($db, $sql, "Mois");
 print '</td><td valign="top">';
 
 $sql = "SELECT sum(f.price) as amount, year(f.datep) as dm";
-$sql .= " FROM llx_propal as f WHERE fk_statut in $in";
+$sql .= " FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in $in";
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
@@ -119,7 +119,7 @@ pt($db, $sql, "Année");
 print "<br>";
 
 $sql = "SELECT sum(f.price) as amount, month(f.datep) as dm";
-$sql .= " FROM llx_propal as f WHERE fk_statut in $in";
+$sql .= " FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in $in";
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";

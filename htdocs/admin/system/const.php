@@ -43,9 +43,9 @@ if ($user->admin)
     {
       
       if (isset($HTTP_POST_VARS["consttype"]) && $HTTP_POST_VARS["consttype"] != ''){
-	$sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."', type='".$typeconst[$HTTP_POST_VARS["consttype"]]."'";
+	$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."', type='".$typeconst[$HTTP_POST_VARS["consttype"]]."'";
       }else{
-	$sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."'";
+	$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."'";
       }
       
       
@@ -58,7 +58,7 @@ if ($user->admin)
 
   if ($action == 'delete')
     {
-      $sql = "DELETE FROM llx_const WHERE rowid='$rowid'";
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE rowid='$rowid'";
       
       $result = $db->query($sql);
       if (!$result)
@@ -69,9 +69,9 @@ if ($user->admin)
 }
 
 if ($all==1){
-  $sql = "SELECT rowid, name, value, type, note FROM llx_const ORDER BY name ASC";
+  $sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const ORDER BY name ASC";
 }else{
-  $sql = "SELECT rowid, name, value, type, note FROM llx_const WHERE visible = 1 ORDER BY name ASC";
+  $sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const WHERE visible = 1 ORDER BY name ASC";
 }
 $result = $db->query($sql);
 if ($result) 

@@ -29,7 +29,7 @@ require("../../tva.class.php");
  */
 function tva_coll($db, $y,$m) {
   $sql = "SELECT sum(f.tva) as amount"; 
-  $sql .= " FROM llx_facture as f WHERE f.paye = 1";
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
   $sql .= " AND date_format(f.datef,'%Y') = $y";
   $sql .= " AND date_format(f.datef,'%m') = $m";
 
@@ -46,7 +46,7 @@ function tva_coll($db, $y,$m) {
 function tva_paye($db, $y,$m)
 {
   $sql = "SELECT sum(f.total_tva) as amount"; 
-  $sql .= " FROM llx_facture_fourn as f WHERE f.paye = 1";
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f WHERE f.paye = 1";
   $sql .= " AND date_format(f.datef,'%Y') = $y";
   $sql .= " AND date_format(f.datef,'%m') = $m";
 
@@ -176,7 +176,7 @@ for ($y = $year_current ; $y >= $year_start ; $y=$y-1 ) {
   print "<tr><td valign=\"top\">";
 
   $sql = "SELECT amount, date_format(f.datev,'%Y-%m') as dm";
-  $sql .= " FROM llx_tva as f WHERE f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";
+  $sql .= " FROM ".MAIN_DB_PREFIX."tva as f WHERE f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";
   $sql .= " GROUP BY dm DESC";
   
   pt($db, $sql,"Année $y");

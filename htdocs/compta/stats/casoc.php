@@ -41,7 +41,7 @@ print_titre("Chiffre d'affaire par société (euros HT)");
  *
  */
 
-$sql = "SELECT sum(f.total) as ca FROM llx_facture as f";
+$sql = "SELECT sum(f.total) as ca FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE f.fk_user_valid = 1 AND f.fk_statut = 1";
 if ($socidp)
 {
@@ -63,7 +63,7 @@ if ($catotal == 0) { $catotal = 1; };
 
 
 $sql = "SELECT s.nom, s.idp, sum(f.total) as ca";
-$sql .= " FROM llx_societe as s,llx_facture as f";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE f.fk_statut = 1 and f.fk_user_valid = 1 AND f.fk_soc = s.idp";
 if ($socidp)
 {

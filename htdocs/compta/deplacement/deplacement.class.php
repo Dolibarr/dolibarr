@@ -41,7 +41,7 @@ class Deplacement
    */
   Function create($user)
     {
-      $sql = "INSERT INTO llx_deplacement (datec, fk_user_author) VALUES (now(), $user->id)";
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."deplacement (datec, fk_user_author) VALUES (now(), $user->id)";
 
       $result = $this->db->query($sql);
       if ($result)
@@ -61,7 +61,7 @@ class Deplacement
       if (strlen($this->km)==0)
 	$this->km = 0;
 
-      $sql = "UPDATE llx_deplacement ";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."deplacement ";
       $sql .= " SET km = $this->km";
       $sql .= " , dated = '".$this->db->idate($this->date)."'";
       $sql .= " , fk_user = $this->userid";
@@ -86,7 +86,7 @@ class Deplacement
   Function fetch ($id)
     {    
       $sql = "SELECT rowid, fk_user, km, fk_soc,".$this->db->pdate("dated")." as dated";
-      $sql .= " FROM llx_deplacement WHERE rowid = $id";
+      $sql .= " FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = $id";
 
       $result = $this->db->query($sql) ;
 
@@ -107,7 +107,7 @@ class Deplacement
    */
   Function delete($id)
     {
-      $sql = "DELETE FROM llx_deplacement WHERE rowid = $id";
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = $id";
 
       $result = $this->db->query($sql);
       if ($result)

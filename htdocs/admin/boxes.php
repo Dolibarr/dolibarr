@@ -27,14 +27,14 @@ print_titre("Boites affichées");
 if ($HTTP_POST_VARS["action"] == 'add')
 {
 
-  $sql = "INSERT INTO llx_boxes (box_id, position) values (".$HTTP_POST_VARS["rowid"].",".$HTTP_POST_VARS["constvalue"].");";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position) values (".$HTTP_POST_VARS["rowid"].",".$HTTP_POST_VARS["constvalue"].");";
 
   $result = $db->query($sql);
 }
 
 if ($action == 'delete')
 {
-  $sql = "DELETE FROM llx_boxes WHERE rowid=$rowid";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=$rowid";
 
   $result = $db->query($sql);
 }
@@ -51,7 +51,7 @@ $pos[0] = "Homepage";
 
 print '<table class="border" cellpadding="3" cellspacing="0">';
 
-$sql = "SELECT b.rowid, b.box_id, b.position, d.name FROM llx_boxes as b, llx_boxes_def as d where b.box_id = d.rowid";
+$sql = "SELECT b.rowid, b.box_id, b.position, d.name FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d where b.box_id = d.rowid";
 $result = $db->query($sql);
 if ($result) 
 {
@@ -85,7 +85,7 @@ print "<p>";
 print_titre("Boites disponibles");
 print '<table class="border" cellpadding="3" cellspacing="0">';
 
-$sql = "SELECT rowid, name, file FROM llx_boxes_def";
+$sql = "SELECT rowid, name, file FROM ".MAIN_DB_PREFIX."boxes_def";
 $result = $db->query($sql);
 if ($result) 
 {

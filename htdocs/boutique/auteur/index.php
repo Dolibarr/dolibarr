@@ -38,7 +38,7 @@ $offset = $limit * $page ;
 
 print_barre_liste("Liste des Auteurs", $page, $PHP_SELF);
 
-$sql = "SELECT e.rowid, e.nom FROM llx_auteur as e";
+$sql = "SELECT e.rowid, e.nom FROM ".MAIN_DB_PREFIX."auteur as e";
   
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);

@@ -42,9 +42,9 @@ if ($action == 'save')
     if(isset($$external_rss_url)) {
       $external_rss_title = "external_rss_title_" . $i;
       $external_rss_urlrss = "external_rss_urlrss_" . $i;
-      $sql = "REPLACE INTO llx_const SET name = '" . "EXTERNAL_RSS_URL_" . $i . "', value='".$$external_rss_url."', visible=0"; 
-      $sql1 = "REPLACE INTO llx_const SET name = '" . "EXTERNAL_RSS_TITLE_" . $i . "', value='".$$external_rss_title."', visible=0";
-      $sql2 = "REPLACE INTO llx_const SET name = '" . "EXTERNAL_RSS_URLRSS_" . $i . "', value='".$$external_rss_urlrss."', visible=0";
+      $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '" . "EXTERNAL_RSS_URL_" . $i . "', value='".$$external_rss_url."', visible=0"; 
+      $sql1 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '" . "EXTERNAL_RSS_TITLE_" . $i . "', value='".$$external_rss_title."', visible=0";
+      $sql2 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '" . "EXTERNAL_RSS_URLRSS_" . $i . "', value='".$$external_rss_urlrss."', visible=0";
       
       if ($db->query($sql) && $db->query($sql1) && $db->query($sql2))
 	{

@@ -26,7 +26,7 @@ require("./lib.inc.php");
 function propals ($db, $year, $month) {
   global $bc;
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-  $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
   $sql .= " AND c.id in (1,2,4)";
   $sql .= " AND date_format(p.datep, '%Y') = $year ";
   $sql .= " AND round(date_format(p.datep, '%m')) = $month ";
@@ -97,7 +97,7 @@ function factures ($db, $year, $month, $paye) {
   global $bc;
 
   $sql = "SELECT s.nom, s.idp, f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
-  $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.paye = $paye";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.paye = $paye";
   $sql .= " AND date_format(f.datef, '%Y') = $year ";
   $sql .= " AND round(date_format(f.datef, '%m')) = $month ";
   $sql .= " ORDER BY f.datef DESC ";
@@ -244,7 +244,7 @@ function ppt ($db, $year, $socidp)
   print '<tr><td valign="top" align="center" width="30%">';
   
   $sql = "SELECT sum(f.price) as sum, round(date_format(f.datep,'%m')) as dm";
-  $sql .= " FROM llx_propal as f WHERE fk_statut in (1,2,4) AND date_format(f.datep,'%Y') = $year ";
+  $sql .= " FROM ".MAIN_DB_PREFIX."propal as f WHERE fk_statut in (1,2,4) AND date_format(f.datep,'%Y') = $year ";
 
   if ($socidp)
     {
@@ -258,7 +258,7 @@ function ppt ($db, $year, $socidp)
   print "</td><td valign=\"top\" width=\"30%\">";
   
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
-  $sql .= " FROM llx_facture as f WHERE f.paye = 1 AND date_format(f.datef,'%Y') = $year ";
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1 AND date_format(f.datef,'%Y') = $year ";
   if ($socidp)
     {
       $sql .= " AND f.fk_soc = $socidp";

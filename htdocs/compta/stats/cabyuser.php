@@ -41,7 +41,7 @@ print_titre("Chiffre d'affaire par utilisateur (euros HT)");
  *
  */
 
-$sql = "SELECT sum(f.total) as ca FROM llx_facture as f";
+$sql = "SELECT sum(f.total) as ca FROM ".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE f.fk_user_valid is not NULL AND f.fk_statut = 1";
 if ($socidp)
 {
@@ -63,7 +63,7 @@ if ($catotal == 0) { $catotal = 1; };
 
 
 $sql = "SELECT u.name, u.firstname, sum(f.total) as ca";
-$sql .= " FROM llx_user as u,llx_facture as f";
+$sql .= " FROM ".MAIN_DB_PREFIX."user as u,".MAIN_DB_PREFIX."facture as f";
 $sql .= " WHERE f.fk_user_valid is not NULL and f.fk_statut = 1 AND f.fk_user_author = u.rowid";
 if ($socidp)
 {

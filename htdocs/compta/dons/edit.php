@@ -73,7 +73,7 @@ if ($rowid)
   $don->fetch($rowid);
 
   $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
-  $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
+  $sql .= " FROM societe as s, ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp";
   $sql .= " AND f.rowid = $facid";
 
   $result = $db->query($sql);

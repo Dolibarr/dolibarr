@@ -110,7 +110,7 @@ llxHeader();
 if ($action == 'create') {
 
   $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
-  $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
+  $sql .= " FROM societe as s, ".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp";
   $sql .= " AND f.rowid = $facid";
 
   $result = $db->query($sql);
@@ -144,7 +144,7 @@ if ($action == 'create') {
 
   print "<tr $bc[1]><td>Projet</td><td><select name=\"projetid\">\n";
   
-  $sql = "SELECT rowid, libelle FROM llx_don_projet ORDER BY rowid";
+  $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."don_projet ORDER BY rowid";
   
   if ($db->query($sql))
     {

@@ -38,7 +38,7 @@ if ($user->societe_id > 0)
 print_titre("Chiffres d'affaires (".MAIN_MONNAIE." HT)");
 
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
-$sql .= " FROM llx_facture as f WHERE f.paye = 1";
+$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
 
 if ($socidp)
 {

@@ -75,7 +75,7 @@ class Contrat
 		  $day,
 		  $year);
 
-    $sql = "UPDATE llx_contrat SET enservice = 1";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET enservice = 1";
     $sql .= " , mise_en_service = ".$this->db->idate($date).", fk_user_mise_en_service = ".$user->id;
     $sql .= " , fin_validite = ". $this->db->idate($fin);
     $sql .= " WHERE rowid = ".$this->id . " AND enservice = 0";
@@ -92,7 +92,7 @@ class Contrat
    */
   Function cloture($user)
   {
-    $sql = "UPDATE llx_contrat SET enservice = 2";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET enservice = 2";
     $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
     $sql .= " WHERE rowid = ".$this->id . " AND enservice = 1";
 
@@ -108,7 +108,7 @@ class Contrat
       $sql .= ", fk_user_mise_en_service, ".$this->db->pdate("date_cloture")." as datecloture";
       $sql .= ", ".$this->db->pdate("fin_validite")." as datefin";
       $sql .= ", fk_user_cloture, fk_facture";
-      $sql .= " FROM llx_contrat WHERE rowid = $id";
+      $sql .= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = $id";
 
       $result = $this->db->query($sql) ;
 
@@ -144,7 +144,7 @@ class Contrat
    */
   Function create_from_facture($factureid, $user, $socid)
     {
-      $sql = "SELECT p.rowid FROM llx_product as p, llx_facturedet as f";
+      $sql = "SELECT p.rowid FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."facturedet as f";
       $sql .= " WHERE p.rowid = f.fk_product AND p.fk_product_type = 1 AND f.fk_facture = ".$factureid;
 
       if ($this->db->query($sql))
@@ -166,7 +166,7 @@ class Contrat
 	      
 	      while (list($key, $value) = each ($contrats))
 		{
-		  $sql = "INSERT INTO llx_contrat (fk_product, fk_facture, fk_soc, fk_user_author)";
+		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (fk_product, fk_facture, fk_soc, fk_user_author)";
 		  $sql .= " VALUES ($value, $factureid, $socid, $user->id)";
 		  if (! $this->db->query($sql))
 		    {

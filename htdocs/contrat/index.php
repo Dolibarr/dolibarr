@@ -49,7 +49,7 @@ if ($sortorder == "")
 }
 
 $sql = "SELECT s.nom, c.rowid as cid, c.enservice, p.label, p.rowid, s.idp as sidp";
-$sql .= " FROM llx_contrat as c, llx_societe as s, llx_product as p";
+$sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_product = p.rowid";
 if ($socid > 0)
 {

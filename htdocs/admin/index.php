@@ -22,7 +22,7 @@ require("./pre.inc.php");
 
 if ($HTTP_POST_VARS["action"] == 'changetheme')
 {
-  $sql = "REPLACE INTO llx_const SET name = 'MAIN_THEME', value='".$HTTP_POST_VARS["theme"]."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'MAIN_THEME', value='".$HTTP_POST_VARS["theme"]."', visible=0";
 
   if ($db->query($sql))
     {

@@ -42,7 +42,7 @@ if ($user->societe_id > 0)
 print_titre("Caisse");
 
 $sql = "SELECT sum(f.amount) as amount , date_format(f.datep,'%Y-%m') as dm";
-$sql .= " FROM llx_paiement as f";
+$sql .= " FROM ".MAIN_DB_PREFIX."paiement as f";
 
 if ($socidp)
 {
@@ -63,7 +63,7 @@ if ($db->query($sql))
 }
 
 $sql = "SELECT sum(f.amount) as amount , date_format(f.datep,'%Y-%m') as dm";
-$sql .= " FROM llx_paiementfourn as f";
+$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as f";
 
 if ($socidp)
 {

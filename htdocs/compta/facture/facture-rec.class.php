@@ -74,7 +74,7 @@ class FactureRec
 	   *
 	   */
 	  	  	  	  
-	  $sql = "INSERT INTO llx_facture_rec (titre, fk_soc, datec, amount, remise, remise_percent, note, fk_user_author,fk_projet, fk_cond_reglement) ";
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_rec (titre, fk_soc, datec, amount, remise, remise_percent, note, fk_user_author,fk_projet, fk_cond_reglement) ";
 	  $sql .= " VALUES ('$this->titre', '$facsrc->socidp', now(), '$facsrc->amount', '$facsrc->remise', '$facsrc->remise_percent', '$this->note','$user->id', '$facsrc->projetid', '$facsrc->cond_reglement_id')";      
 	  if ( $this->db->query($sql) )
 	    {
@@ -131,7 +131,7 @@ class FactureRec
     {
 
       $sql = "SELECT f.fk_soc,f.titre,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent,f.fk_projet, c.rowid as crid, c.libelle, c.libelle_facture, f.note, f.fk_user_author";
-      $sql .= " FROM llx_facture_rec as f, llx_cond_reglement as c";
+      $sql .= " FROM ".MAIN_DB_PREFIX."facture_rec as f, ".MAIN_DB_PREFIX."cond_reglement as c";
       $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
       
       if ($societe_id > 0) 
@@ -178,7 +178,7 @@ class FactureRec
 	       */
 
 	      $sql = "SELECT l.fk_product,l.description, l.subprice, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent";
-	      $sql .= " FROM llx_facturedet_rec as l WHERE l.fk_facture = ".$this->id." ORDER BY l.rowid ASC";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."facturedet_rec as l WHERE l.fk_facture = ".$this->id." ORDER BY l.rowid ASC";
 	
 	      $result = $this->db->query($sql);
 	      if ($result)
@@ -241,7 +241,7 @@ class FactureRec
    */
   Function valid($userid, $dir)
     {
-      $sql = "UPDATE llx_facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
       $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
       
       if ($this->db->query($sql) )
@@ -260,11 +260,11 @@ class FactureRec
    */
   Function delete($rowid)
     {
-      $sql = "DELETE FROM llx_facturedet_rec WHERE fk_facture = $rowid;";
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = $rowid;";
 	  
       if ($this->db->query( $sql) )
 	{
-	  $sql = "DELETE FROM llx_facture_rec WHERE rowid = $rowid";
+	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."facture_rec WHERE rowid = $rowid";
 	  
 	  if ($this->db->query( $sql) )
 	    {
@@ -294,7 +294,7 @@ class FactureRec
 
 	  $numfa = facture_get_num($soc); // définit dans includes/modules/facture
 
-	  $sql = "UPDATE llx_facture set facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id WHERE rowid = $rowid ;";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture set facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id WHERE rowid = $rowid ;";
 	  $result = $this->db->query( $sql);
 
 	  /*
@@ -311,7 +311,7 @@ class FactureRec
 	   * Update Stats
 	   *
 	   */
-	  $sql = "SELECT fk_product FROM llx_facturedet WHERE fk_facture = ".$this->id;
+	  $sql = "SELECT fk_product FROM ".MAIN_DB_PREFIX."facturedet WHERE fk_facture = ".$this->id;
 	  $sql .= " AND fk_product IS NOT NULL";
 	  
 	  $result = $this->db->query($sql);
@@ -324,7 +324,7 @@ class FactureRec
 		{
 		  $obj = $this->db->fetch_object($i);
 		  
-		  $sql = "UPDATE llx_product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
+		  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
 		  $db2 = $this->db->clone();
 		  $result = $db2->query($sql);
 		  $i++;
@@ -378,7 +378,7 @@ class FactureRec
 	      $price = $pu - $remise;
 	    }
 
-	  $sql = "INSERT INTO llx_facturedet_rec (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise)";
+	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."facturedet_rec (fk_facture,description,price,qty,tva_taux, fk_product, remise_percent, subprice, remise)";
 	  $sql .= " VALUES ('$facid', '$desc', '$price', '$qty', '$txtva', '$fk_product', '$remise_percent', '$subprice', '$remise') ;";
 
 	  if ( $this->db->query( $sql) )
@@ -418,7 +418,7 @@ class FactureRec
 	      $remise_percent=0;
 	    }
 
-	  $sql = "UPDATE llx_facturedet set description='$desc',price=$price,subprice=$subprice,remise=$remise,remise_percent=$remise_percent,qty=$qty WHERE rowid = $rowid ;";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc',price=$price,subprice=$subprice,remise=$remise,remise_percent=$remise_percent,qty=$qty WHERE rowid = $rowid ;";
 	  $result = $this->db->query( $sql);
 
 	  $this->updateprice($this->id);
@@ -432,7 +432,7 @@ class FactureRec
     {
       if ($this->brouillon)
 	{
-	  $sql = "DELETE FROM llx_facturedet WHERE rowid = $rowid;";
+	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet WHERE rowid = $rowid;";
 	  $result = $this->db->query( $sql);
 
 	  $this->updateprice($this->id);
@@ -446,7 +446,7 @@ class FactureRec
     {
       include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
       $err=0;
-      $sql = "SELECT price, qty, tva_taux FROM llx_facturedet_rec WHERE fk_facture = $facid;";
+      $sql = "SELECT price, qty, tva_taux FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = $facid;";
   
       $result = $this->db->query($sql);
 
@@ -481,7 +481,7 @@ class FactureRec
 	   *
 	   */
 
-	  $sql = "UPDATE llx_facture_rec SET amount = $this->amount_ht, remise=$this->total_remise,  total=$this->total_ht, tva=$this->total_tva, total_ttc=$this->total_ttc";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture_rec SET amount = $this->amount_ht, remise=$this->total_remise,  total=$this->total_ht, tva=$this->total_tva, total_ttc=$this->total_ttc";
 	  $sql .= " WHERE rowid = $facid ;";
 	  
 	  if ( $this->db->query($sql) )
@@ -518,7 +518,7 @@ class FactureRec
 
 	  $this->remise_percent = $remise ;
 
-	  $sql = "UPDATE llx_facture SET remise_percent = ".ereg_replace(",",".",$remise);
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET remise_percent = ".ereg_replace(",",".",$remise);
 	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 	  
 	  if ($this->db->query($sql) )

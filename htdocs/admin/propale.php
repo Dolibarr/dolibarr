@@ -22,7 +22,7 @@ require("./pre.inc.php");
 
 if ($action == 'nbprod' && $user->admin)
 {
-  $sql = "REPLACE INTO llx_const SET name = 'PROPALE_NEW_FORM_NB_PRODUCT', value='".$value."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PROPALE_NEW_FORM_NB_PRODUCT', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {
@@ -43,7 +43,7 @@ if (!$user->admin)
 
 if ($action == 'set')
 {
-  $sql = "INSERT INTO llx_propal_model_pdf (nom) VALUES ('".$value."')";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES ('".$value."')";
 
   if ($db->query($sql))
     {
@@ -52,7 +52,7 @@ if ($action == 'set')
 }
 if ($action == 'del')
 {
-  $sql = "DELETE FROM llx_propal_model_pdf WHERE nom='".$value."'";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_model_pdf WHERE nom='".$value."'";
 
   if ($db->query($sql))
     {
@@ -66,7 +66,7 @@ $propale_addon_var_pdf = PROPALE_ADDON_PDF;
 
 if ($action == 'setpdf')
 {
-  $sql = "REPLACE INTO llx_const SET name = 'PROPALE_ADDON_PDF', value='".$value."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PROPALE_ADDON_PDF', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {
@@ -77,7 +77,7 @@ if ($action == 'setpdf')
   /*
    * On la set active
    */
-  $sql = "INSERT INTO llx_propal_model_pdf (nom) VALUES ('".$value."')";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES ('".$value."')";
 
   if ($db->query($sql))
     {
@@ -89,7 +89,7 @@ $propale_addon_var = PROPALE_ADDON;
 
 if ($action == 'setmod')
 {
-  $sql = "REPLACE INTO llx_const SET name = 'PROPALE_ADDON', value='".$value."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PROPALE_ADDON', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {
@@ -163,7 +163,7 @@ print '</table>';
 
 $def = array();
 
-$sql = "SELECT nom FROM llx_propal_model_pdf";
+$sql = "SELECT nom FROM ".MAIN_DB_PREFIX."propal_model_pdf";
 if ($db->query($sql))
 {
   $i = 0;

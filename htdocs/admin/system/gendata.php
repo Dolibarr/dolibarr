@@ -38,16 +38,16 @@ include_once "../../product.class.php";
 include_once "../../paiement.class.php";
 include_once "../../contrat/contrat.class.php";
 
-$sql = "SELECT rowid FROM llx_product"; $productsid = array();
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
 if ($db->query($sql)) {
   $num = $db->num_rows(); $i = 0;	
   while ($i < $num) {      $row = $db->fetch_row($i);      $productsid[$i] = $row[0];      $i++; } }
 
-$sql = "SELECT idp FROM llx_societe"; $societesid = array();
+$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
 if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;	
 while ($i < $num) { $row = $db->fetch_row($i);      $societesid[$i] = $row[0];      $i++; } } else { print "err"; }
 
-$sql = "SELECT rowid FROM llx_commande"; $commandesid = array();
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
 if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;	
 while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0];      $i++; } } else { print "err"; }
 

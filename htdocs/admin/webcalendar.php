@@ -36,12 +36,12 @@ $def = array();
 if ($action == 'save')
 {
   if(trim($phpwebcalendar_pass) == trim($phpwebcalendar_pass2)) {
-    $sql = "REPLACE INTO llx_const SET name = 'PHPWEBCALENDAR_URL', value='".$phpwebcalendar_url."', visible=0";
+    $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_URL', value='".$phpwebcalendar_url."', visible=0";
 
-    $sql1 = "REPLACE INTO llx_const SET name = 'PHPWEBCALENDAR_HOST', value='".$phpwebcalendar_host."', visible=0";
-    $sql2 = "REPLACE INTO llx_const SET name = 'PHPWEBCALENDAR_DBNAME', value='".$phpwebcalendar_dbname."', visible=0";
-    $sql3 = "REPLACE INTO llx_const SET name = 'PHPWEBCALENDAR_USER', value='".$phpwebcalendar_user."', visible=0";
-    $sql4 = "REPLACE INTO llx_const SET name = 'PHPWEBCALENDAR_PASS', value='".$phpwebcalendar_pass."', visible=0";
+    $sql1 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_HOST', value='".$phpwebcalendar_host."', visible=0";
+    $sql2 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_DBNAME', value='".$phpwebcalendar_dbname."', visible=0";
+    $sql3 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_USER', value='".$phpwebcalendar_user."', visible=0";
+    $sql4 = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'PHPWEBCALENDAR_PASS', value='".$phpwebcalendar_pass."', visible=0";
 
     if ($db->query($sql) && $db->query($sql1) && $db->query($sql2) && $db->query($sql3) && $db->query($sql4))
       {

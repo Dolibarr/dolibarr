@@ -26,7 +26,7 @@ llxHeader();
 
 print_barre_liste("Liste des tables", $page, $PHP_SELF);
 
-$sql = "SELECT name, loaded FROM llx_sqltables";
+$sql = "SELECT name, loaded FROM ".MAIN_DB_PREFIX."sqltables";
 
 print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 print '<TR class="liste_titre">';

@@ -64,8 +64,8 @@ else
  */
 
 $sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax ";
-$sql .= "FROM llx_socpeople as p";
-$sql .= " LEFT JOIN llx_societe as s ON (s.idp = p.fk_soc)";
+$sql .= "FROM ".MAIN_DB_PREFIX."socpeople as p";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON (s.idp = p.fk_soc)";
 
 
 if (strlen($_GET["userid"]))  // statut commercial

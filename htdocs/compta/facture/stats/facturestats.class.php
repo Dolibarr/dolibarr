@@ -39,7 +39,7 @@ class FactureStats extends Stats
    */
   Function getNbByMonth($year)
   {
-    $sql = "SELECT date_format(datef,'%m') as dm, count(*)  FROM llx_facture";
+    $sql = "SELECT date_format(datef,'%m') as dm, count(*)  FROM ".MAIN_DB_PREFIX."facture";
     $sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
     if ($this->socidp)
       {
@@ -57,7 +57,7 @@ class FactureStats extends Stats
    */
   Function getNbByYear()
   {
-    $sql = "SELECT date_format(datef,'%Y') as dm, count(*) FROM llx_facture GROUP BY dm DESC WHERE fk_statut > 0";
+    $sql = "SELECT date_format(datef,'%Y') as dm, count(*) FROM ".MAIN_DB_PREFIX."facture GROUP BY dm DESC WHERE fk_statut > 0";
 
     return $this->_getNbByYear($sql);
   }
@@ -67,7 +67,7 @@ class FactureStats extends Stats
    */
   Function getAmountByMonth($year)
   {
-    $sql = "SELECT date_format(datef,'%m') as dm, sum(total)  FROM llx_facture";
+    $sql = "SELECT date_format(datef,'%m') as dm, sum(total)  FROM ".MAIN_DB_PREFIX."facture";
     $sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
     if ($this->socidp)
       {
@@ -83,7 +83,7 @@ class FactureStats extends Stats
    */
   Function getAverageByMonth($year)
   {
-    $sql = "SELECT date_format(datef,'%m') as dm, avg(total) FROM llx_facture";
+    $sql = "SELECT date_format(datef,'%m') as dm, avg(total) FROM ".MAIN_DB_PREFIX."facture";
     $sql .= " WHERE date_format(datef,'%Y') = $year AND fk_statut > 0";
     if ($this->socidp)
       {

@@ -42,9 +42,9 @@ $var=True;
 if ($HTTP_POST_VARS["action"] == 'update' || $HTTP_POST_VARS["action"] == 'add')
 {
   if (isset($HTTP_POST_VARS["consttype"]) && $HTTP_POST_VARS["consttype"] != ''){
-    $sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."', type='".$typeconst[$HTTP_POST_VARS["consttype"]]."',visible=0";
+    $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."', type='".$typeconst[$HTTP_POST_VARS["consttype"]]."',visible=0";
   }else{
-    $sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."',visible=0";
+    $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."',visible=0";
   }
   
   if ($db->query($sql))
@@ -63,7 +63,7 @@ if ($HTTP_POST_VARS["action"] == 'update' || $HTTP_POST_VARS["action"] == 'add')
 
 if ($action == 'set')
 {
-  $sql = "REPLACE INTO llx_const SET name = '$name', value='".$value."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = '$name', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {
@@ -73,7 +73,7 @@ if ($action == 'set')
 
 if ($action == 'unset')
 {
-  $sql = "DELETE FROM llx_const WHERE name = '$name'";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '$name'";
 
   if ($db->query($sql))
     {
@@ -267,7 +267,7 @@ function form_constantes($tableau){
   $var=True;
   
   foreach($tableau as $const){
-    $sql = "SELECT rowid, name, value, type, note FROM llx_const WHERE name='$const'";
+    $sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const WHERE name='$const'";
     $result = $db->query($sql);
     if ($result && ($db->num_rows() == 1)) {
       $obj = $db->fetch_object(0);

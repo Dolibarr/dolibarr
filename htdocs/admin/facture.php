@@ -37,7 +37,7 @@ $facture_rib_number_var = FACTURE_RIB_NUMBER;
 
 if ($action == 'set')
 {
-  $sql = "REPLACE INTO llx_const SET name = 'FACTURE_ADDON', value='".$value."', visible=0, type='chaine'";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FACTURE_ADDON', value='".$value."', visible=0, type='chaine'";
 
   if ($db->query($sql))
     {
@@ -49,7 +49,7 @@ if ($action == 'set')
 
 if ($action == 'setrib')
 {
-  $sql = "REPLACE INTO llx_const SET name = 'FACTURE_RIB_NUMBER', value='".$value."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FACTURE_RIB_NUMBER', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {
@@ -61,7 +61,7 @@ if ($action == 'setrib')
 
 if ($action == 'setpdf')
 {
-  $sql = "REPLACE INTO llx_const SET name = 'FACTURE_ADDON_PDF', value='".$value."', visible=0";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'FACTURE_ADDON_PDF', value='".$value."', visible=0";
 
   if ($db->query($sql))
     {
@@ -192,7 +192,7 @@ print '<td>&nbsp;</td>';
 print "</TR>\n";
 print '<tr class="pair"><td><select name="value">';
 print '<option value="0">Aucun</option>';
-$sql = "SELECT rowid, label FROM llx_bank_account";
+$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
 if ($db->query($sql))
 {
   $num = $db->num_rows();

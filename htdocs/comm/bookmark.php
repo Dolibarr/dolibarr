@@ -60,7 +60,7 @@ $pagenext = $page + 1;
 print '<div class="titre">Bookmark</div>';
  
 $sql = "SELECT s.idp, s.nom, ".$db->pdate("b.dateb")." as dateb, st.libelle as stcomm, b.rowid as bid, b.author";
-$sql .= " FROM llx_societe as s, c_stcomm as st, llx_bookmark as b";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."bookmark as b";
 $sql .= " WHERE b.fk_soc = s.idp AND s.fk_stcomm = st.id AND s.datea is not null";
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);

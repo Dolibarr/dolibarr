@@ -37,7 +37,7 @@ class Auteur {
    */
   Function create($user) {
 
-    $sql = "INSERT INTO llx_auteur (fk_user_author) VALUES (".$user->id.")";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."auteur (fk_user_author) VALUES (".$user->id.")";
     
     if ($this->db->query($sql) )
       {
@@ -59,7 +59,7 @@ class Auteur {
   {
     $ga = array();
 
-    $sql = "SELECT rowid, nom FROM llx_auteur ORDER BY nom";
+    $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."auteur ORDER BY nom";
 
     if ($this->db->query($sql) )
       {
@@ -92,7 +92,7 @@ class Auteur {
   Function update($id, $user)
   {
 
-    $sql = "UPDATE llx_auteur ";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."auteur ";
     $sql .= " SET nom = '" . trim($this->nom) ."'";
 
     $sql .= " WHERE rowid = " . $id;
@@ -119,7 +119,7 @@ class Auteur {
       {
 	$sql = "SELECT a.rowid, ";
       }
-    $sql .= " a.title FROM llx_livre as a, llx_livre_to_auteur as l";
+    $sql .= " a.title FROM ".MAIN_DB_PREFIX."livre as a, ".MAIN_DB_PREFIX."livre_to_auteur as l";
     $sql .= " WHERE a.rowid = l.fk_livre AND l.fk_auteur = ".$this->id;
     if ($status)
       {
@@ -156,7 +156,7 @@ class Auteur {
    */
   Function fetch ($id) {
     
-    $sql = "SELECT rowid, nom FROM llx_auteur WHERE rowid = $id";
+    $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."auteur WHERE rowid = $id";
 
     $result = $this->db->query($sql) ;
 
@@ -188,7 +188,7 @@ class Auteur {
 
     if (sizeof($livres) == 0)
       {
-	$sql = "DELETE FROM llx_auteur WHERE rowid = $this->id ";
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."auteur WHERE rowid = $this->id ";
 	$return = $this->db->query($sql) ;
       }
 

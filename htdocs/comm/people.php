@@ -84,7 +84,8 @@ llxHeader();
 if ($socid > 0) 
 {
 
-  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.cp,s.ville, s.note FROM llx_societe as s, c_stcomm as st ";
+  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.cp,s.ville, s.note";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st ";
   $sql .= " WHERE s.fk_stcomm=st.id";
   $sql .= " AND s.idp = $socid";
 
@@ -233,7 +234,7 @@ if ($socid > 0)
   print "<td>Fax</td><td>Email</td>";
 
   $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-  $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u ";
+  $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
   $sql .= " WHERE a.fk_soc = $objsoc->idp ";
   $sql .= " AND u.rowid = a.fk_user_author";
   $sql .= " AND c.id=a.fk_action ";
