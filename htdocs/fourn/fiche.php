@@ -274,7 +274,11 @@ if ( $societe->fetch($socid) )
 
       print "<tr $bc[$var]>";
 
-      print "<td>$obj->firstname $obj->name";
+      print '<td>';
+      print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
+      print img_file();
+      print '&nbsp;'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+
       if ($obj->note)
 	{
 	  print "<br>".nl2br($obj->note);
