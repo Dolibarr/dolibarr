@@ -52,6 +52,7 @@ delete from llx_boxes;
 -- Constantes de configuration
 --
 insert into llx_const(name, value, type, note) values ('MAIN_MONNAIE','euros','chaine','Monnaie');
+insert into llx_const(name, value, type, note) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document');
 insert into llx_const(name, value, type, note) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation');
 
 insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2003','chaine','Année de départ');
