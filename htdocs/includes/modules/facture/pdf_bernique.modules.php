@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ Class pdf_bernique {
 		      $account = new Account($this->db);
 		      $account->fetch(FACTURE_RIB_NUMBER);
 		      
-		      $pdf->SetXY (10, 40);		  
+		      $pdf->SetXY (10, 46);		  
 		      $pdf->SetFont('Arial','U',8);
 		      $pdf->MultiCell(40, 4, "Coordonnées bancaire", 0, 'L', 0);
 		      $pdf->SetFont('Arial','',8);
@@ -338,7 +338,7 @@ Class pdf_bernique {
       $pdf->SetXY(102,42);
       $pdf->MultiCell(66,5, $fac->client->nom);
       $pdf->SetFont('Arial','B',11);
-      $pdf->SetXY(102,47);
+      $pdf->SetXY(102,$pdf->GetY());
       $pdf->MultiCell(66,5, $fac->client->adresse . "\n" . $fac->client->cp . " " . $fac->client->ville);
       $pdf->rect(100, 40, 100, 40);
       
