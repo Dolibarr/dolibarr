@@ -32,5 +32,5 @@ tar:
 
 
 put:
-	scp $(FILE).tar.gz* rodolphe.quiedeville.org:/home/www/www.dolibarr.com/htdocs/dl/
+	scp $(FILE).tar.gz* www.dolibarr.com:/home/www/www.dolibarr.com/download/dl/
 #	scp $(FILE).tar.gz rodolphe@subversions.gnu.org:/upload/dolibarr
