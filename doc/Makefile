@@ -20,10 +20,16 @@
 DOC=manual
 DEBIANDOC2PS= debiandoc2ps
 DEBIANDOC2PDF= debiandoc2pdf
+DEBIANDOC2HTML= debiandoc2html
 
-OPTIONS=-lfr_FR.ISO8859-1 -pa4
+OPTIONS=-v -lfr_FR.ISO8859-1 -pa4
 
-all: $(DOC).ps $(DOC).pdf
+RSYNC=/usr/bin/rsync
+ROPT=-av
+RSSH=-e ssh
+
+
+all: $(DOC).ps $(DOC).pdf $(DOC).html
 
 
 %.ps:	%.sgml
@@ -31,6 +37,12 @@ all: $(DOC).ps $(DOC).pdf
 
 %.pdf:	%.sgml
 	$(DEBIANDOC2PDF) $(OPTIONS) $<
+
+%.html: %.sgml
+	$(DEBIANDOC2HTML) $(OPTIONS) $<
+
+put:
+	$(RSYNC) $(ROPT) $(RSSH) manual.html/* deb:/home/www/rodolphe.quiedeville.org/htdocs/projets/dolibarr/doc
 
 clean:
 	rm -f *pdf *ps
