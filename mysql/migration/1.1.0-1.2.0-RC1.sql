@@ -7,6 +7,7 @@
 
 DELETE from llx_const where name like '%_OUTPUT_URL';
 
+alter table llx_societe modify nom varchar(60) UNIQUE;
 alter table llx_boxes add box_order smallint default 0 NOT NULL;
 
 alter table llx_user drop column module_comm;
