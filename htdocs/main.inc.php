@@ -558,7 +558,7 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
 	  print "</form>\n";
 	}
 
-      if (defined("MAIN_MODULE_PRODUIT") && MAIN_MODULE_PRODUIT > 0)
+      if ($conf->produit->enabled)
 	{
 	  print '<form action="'.DOL_URL_ROOT.'/product/liste.php" method="post">';
 	  print '<A class="menu" href="'.DOL_URL_ROOT.'/product/">Produits</A><br>';
