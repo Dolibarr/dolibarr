@@ -47,6 +47,5 @@ create table llx_facture_fourn
   "fk_statut"  smallint DEFAULT 0 NOT NULL,
   "fk_user_author"  integer,   -- createur de la facture
   "fk_user_valid"   integer,   -- valideur de la facture
-  "note"       text,
-  "UNIQUE" INDEX (facnumber, fk_soc)
+  "note"       text
 );

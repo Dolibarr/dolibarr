@@ -29,7 +29,6 @@ create table llx_user_rights
 (
   rowid SERIAL PRIMARY KEY,
   "fk_user"       integer NOT NULL,
-  "fk_id"         integer NOT NULL,
-  "UNIQUE"(fk_user,fk_id)
+  "fk_id"         integer NOT NULL
 );
 

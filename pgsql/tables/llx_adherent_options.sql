@@ -25,14 +25,12 @@
 --
 -- ===================================================================
 
---  telfixe	   varchar(15),
---  teljob	   varchar(15)
 
 create table llx_adherent_options
 (
   optid SERIAL PRIMARY KEY,
   "tms"              timestamp,
-  "adhid"            integer NOT NULL, -- id de l'adherent auquel correspond ces attributs optionnel 
+  "adhid"            integer NOT NULL -- id de l'adherent auquel correspond ces attributs optionnel 
 );
 
 CREATE INDEX idx_adhid ON llx_adherent_options (adhid);

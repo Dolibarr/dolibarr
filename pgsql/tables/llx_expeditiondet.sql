@@ -29,7 +29,7 @@ create table llx_expeditiondet
   rowid SERIAL PRIMARY KEY,
   "fk_expedition"     integer NOT NULL,
   "fk_commande_ligne" integer NOT NULL,
-  "qty"               real,              -- quantité
+  "qty"               real              -- quantité
 );
 
 CREATE INDEX idx_fk_expedition ON llx_expeditiondet (fk_expedition);

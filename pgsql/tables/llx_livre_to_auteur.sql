@@ -28,6 +28,5 @@
 create table llx_livre_to_auteur
 (
   "fk_livre"       integer NOT NULL,
-  "fk_auteur"      integer NOT NULL,
-  "unique" index (fk_livre, fk_auteur)
+  "fk_auteur"      integer NOT NULL
 );

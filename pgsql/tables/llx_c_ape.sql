@@ -25,11 +25,14 @@
 --
 -- ========================================================================
 
+
 create table llx_c_ape
 (
   rowid SERIAL PRIMARY KEY,
-  code_ape    varchar(5)   PRIMARY KEY,
+  "code_ape"    varchar(5)    NOT NULL,
   "libelle"     varchar(255),
-  "active"      smallint DEFAULT 1  NOT NULL
+  "active"      smallint       DEFAULT 1  NOT NULL
 );
+
+CREATE INDEX idx_code_ape ON llx_c_ape (code_ape);
 

@@ -31,7 +31,7 @@ create table llx_product_stock
   "tms"             timestamp,
   "fk_product"      integer NOT NULL,
   "fk_entrepot"     integer NOT NULL,
-  "reel"            integer,          -- stock réel
+  "reel"            integer          -- stock réel
 );
 
 CREATE INDEX idx_fk_product ON llx_product_stock (fk_product);

@@ -114,7 +114,9 @@ foreach my $file (keys %filelist) {
     # Output for create table and create index
     sub output_create {
         # If command ends with "xxx,);", we change to "xxx);"
-        $create_sql =~ s/,(\s*)\)/$1\)/m;
+        $create_sql =~ s/,(\s*)\);/$1\);/m;
+        # If command ends with "xxx, -- yyy );", we change to "xxx -- yyy);"
+        $create_sql =~ s/,(\s*\-\-[^\)\n]*)(\s*)\);/$1\n\);/m;
 
     	print OUT $create_sql;
         if ($create_index) {
@@ -179,7 +181,6 @@ foreach my $file (keys %filelist) {
     		} elsif (/^[\s\t]*(\w*)\s*.*int.*auto_increment/i) { 		
     			$seq = qq~${table}_${1}_seq~;
     			s/[\s\t]*([a-zA-Z_0-9]*)\s*.*int.*auto_increment[^,]*/  $1 SERIAL PRIMARY KEY/ig;
-    			#  MYSQL: data_id mediumint(8) unsigned NOT NULL auto_increment,
     			$create_sql.=$_;
     			next;
     		# int type conversion
@@ -200,8 +201,8 @@ foreach my $file (keys %filelist) {
     		    s/tinyint/smallint/g;
     		}
     
-    		# nuke int unsigned
-    		s/(int\w+)\s+unsigned/$1/gi;
+    		# nuke unsigned
+    		s/(int\w+|smallint)\s+unsigned/$1/gi;
 
     
     		# blob -> text
@@ -234,7 +235,8 @@ foreach my $file (keys %filelist) {
     		s/(\s*)double/${1}real/i;
     
     		# Ignore "unique key(xx, yy)"  (key on double fields not supported by postgres)
-    		next if (/unique key\(\w+\s*,\s*\w+\)/i);
+    		next if (/unique key\s*\(\w+\s*,\s*\w+\)/i);
+    		next if (/unique index\s*\(\w+\s*,\s*\w+\)/i);
     
     		if (/\bkey\b/i && !/^\s+primary key\s+/i) {
     			s/KEY(\s+)[^(]*(\s+)/$1 UNIQUE $2/i;		 # hack off name of the non-primary key

@@ -30,7 +30,7 @@ create table llx_appro
   "datec"           timestamp,
   "tms"             timestamp,
   "fk_product"      integer NOT NULL, 
-  "quantity"        smallint unsigned NOT NULL,
+  "quantity"        smallint NOT NULL,
   "price"           real,
   "fk_user_author"  integer
 );
