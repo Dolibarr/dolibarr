@@ -22,7 +22,6 @@
 */
 
 Class pdf_crabe {
-
     Function pdf_crabe($db=0)
     {
         $this->db = $db;
@@ -110,7 +109,7 @@ Class pdf_crabe {
                     // Remise sur ligne
                     $pdf->SetXY (163, $curY);
                     if ($fac->lignes[$i]->remise_percent) {
-                        $pdf->MultiCell(10, 5, $fac->lignes[$i]->remise_percent."%", 0, 'R');
+                        $pdf->MultiCell(14, 5, $fac->lignes[$i]->remise_percent."%", 0, 'R');
                     }
 
                     // Total HT
@@ -132,9 +131,13 @@ Class pdf_crabe {
                 }
                 $this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 
-                $this->_tableau_tot($pdf, $fac);
+                $deja_regle = $fac->getSommePaiement();
 
-                $this->_tableau_compl($pdf, $fac);
+                $this->_tableau_tot($pdf, $fac, $deja_regle);
+
+                if ($deja_regle) {            
+                    $this->_tableau_versements($pdf, $fac);
+                }
 
                 /*
                 * Mode de règlement
@@ -194,10 +197,12 @@ Class pdf_crabe {
                 * Conditions de règlements
                 */
                 $pdf->SetFont('Arial','U',10);
-                $pdf->SetXY(10, 220);
-                $titre = "Conditions de réglement : ".$fac->cond_reglement_facture;
-                $pdf->MultiCell(190, 5, $titre, 0, 'J');
-
+                $pdf->SetXY(10, 217);
+                $titre = "Conditions de réglement:";
+                $pdf->MultiCell(80, 5, $titre, 0, 'L');
+                $pdf->SetFont('Arial','',10);
+                $pdf->SetXY(54, 217);
+                $pdf->MultiCell(80, 5, $fac->cond_reglement_facture,0,'L');
 
                 $pdf->Close();
 
@@ -223,32 +228,88 @@ Class pdf_crabe {
     *
     *
     */
-    Function _tableau_compl(&$pdf, $fac)
+    Function _tableau_versements(&$pdf, $fac)
     {
-        $tab3_top = 245;
-        $tab3_height = 18;
-        $tab3_width = 68;
-        $tab3_posx = 132;
-
-        $pdf->Rect($tab3_posx, $tab3_top, $tab3_width, $tab3_height);
-
-        $pdf->line($tab3_posx, $tab3_top + 6, $tab3_posx+$tab3_width, $tab3_top + 6 );
-        $pdf->line($tab3_posx, $tab3_top + 12, $tab3_posx+$tab3_width, $tab3_top + 12 );
-
-        $pdf->line($tab3_posx, $tab3_top, $tab3_posx, $tab3_top + $tab3_height );
+        $tab3_posx = 120;
+        $tab3_top = 240;
+        $tab3_width = 80;
+        $tab3_height = 4;
 
         $pdf->SetFont('Arial','',8);
-        $pdf->SetXY ($tab3_posx, $tab3_top - 6);
-        $pdf->MultiCell(60, 6, "Informations complémentaires", 0, 'L', 0);
-        $pdf->SetXY ($tab3_posx, $tab3_top );
-        $pdf->MultiCell(20, 6, "Réglé le", 0, 'L', 0);
-        $pdf->SetXY ($tab3_posx, $tab3_top + 6);
-        $pdf->MultiCell(20, 6, "Chèque N°", 0, 'L', 0);
-        $pdf->SetXY ($tab3_posx, $tab3_top + 12);
-        $pdf->MultiCell(20, 6, "Banque", 0, 'L', 0);
+        $pdf->SetXY ($tab3_posx, $tab3_top - 5);
+        $pdf->MultiCell(60, 5, "Versements déjà effectués", 0, 'L', 0);
+
+        $pdf->Rect($tab3_posx, $tab3_top-1, $tab3_width, $tab3_height);
+
+        $pdf->SetXY ($tab3_posx, $tab3_top-1 );
+        $pdf->MultiCell(20, 4, "Paiement", 0, 'L', 0);
+        $pdf->SetXY ($tab3_posx+21, $tab3_top-1 );
+        $pdf->MultiCell(20, 4, "Montant", 0, 'L', 0);
+        $pdf->SetXY ($tab3_posx+41, $tab3_top-1 );
+        $pdf->MultiCell(20, 4, "Type", 0, 'L', 0);
+        $pdf->SetXY ($tab3_posx+60, $tab3_top-1 );
+        $pdf->MultiCell(20, 4, "Num", 0, 'L', 0);
+
+        $sql = "SELECT ".$this->db->pdate("p.datep")."as date, p.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
+        $sql.= "FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."paiement_facture as pf ";
+        $sql.= "WHERE pf.fk_paiement = p.rowid and pf.fk_facture = ".$fac->id." ";
+        $sql.= "ORDER BY p.datep";
+        if ($this->db->query($sql))
+        {
+            $pdf->SetFont('Arial','',6);
+            $num = $this->db->num_rows();
+            $i=0; $y=0;
+            while ($i < $num) {
+                $y+=3;
+                $row = $this->db->fetch_row();
+    
+                $pdf->SetXY ($tab3_posx, $tab3_top+$y );
+                $pdf->MultiCell(20, 4, strftime("%d/%m/%y",$row[0]), 0, 'L', 0);
+                $pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
+                $pdf->MultiCell(20, 4, $row[1], 0, 'L', 0);
+                $pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
+            	switch ($row[2])
+            	  {
+            	  case 1:
+            	    $oper = 'TIP';
+            	    break;
+            	  case 2:
+            	    $oper = 'VIR';
+            	    break;
+            	  case 3:
+            	    $oper = 'PRE';
+            	    break;
+            	  case 4:
+            	    $oper = 'LIQ';
+            	    break;
+            	  case 5:
+            	    $oper = 'WWW';
+            	    break;
+            	  case 6:
+            	    $oper = 'CB';
+            	    break;
+            	  case 7:
+            	    $oper = 'CHQ';
+            	    break;
+                  }
+                $pdf->MultiCell(20, 4, $oper, 0, 'L', 0);
+                $pdf->SetXY ($tab3_posx+60, $tab3_top+$y);
+                $pdf->MultiCell(20, 4, $row[3], 0, 'L', 0);
+    
+                $pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
+                $i++;
+            }
+        }
+        else
+        {
+            print "Erreur : ".$this->db->error()."<br>".$sql;
+            return -1;
+        }
+
     }
 
-    Function _tableau_tot(&$pdf, $fac)
+
+    Function _tableau_tot(&$pdf, $fac, $deja_regle)
     {
         $tab2_top = 207;
         $tab2_hl = 5;
@@ -274,25 +335,26 @@ Class pdf_crabe {
             }
         }
 
-        // Tableau complémentaire
-        $pdf->SetXY (132, $tab2_top + 0);
-        $pdf->MultiCell(42, $tab2_hl, "Total HT", 0, 'R', 0);
+        // Tableau total
+        $col1x=120; $col2x=174;
+        $pdf->SetXY ($col1x, $tab2_top + 0);
+        $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT", 0, 'L', 0);
 
-        $pdf->SetXY (174, $tab2_top + 0);
+        $pdf->SetXY ($col2x, $tab2_top + 0);
         $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
 
         if ($fac->remise > 0)
         {
-            $pdf->SetXY (132, $tab2_top + $tab2_hl);
-            $pdf->MultiCell(42, $tab2_hl, "Remise globale", 0, 'R', 0);
+            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Remise globale", 0, 'L', 0);
 
-            $pdf->SetXY (174, $tab2_top + $tab2_hl);
+            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl);
             $pdf->MultiCell(26, $tab2_hl, "-".$fac->remise_percent."%", 0, 'R', 0);
 
-            $pdf->SetXY (132, $tab2_top + $tab2_hl * 2);
-            $pdf->MultiCell(42, $tab2_hl, "Total HT après remise", 0, 'R', 0);
+            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total HT après remise", 0, 'L', 0);
 
-            $pdf->SetXY (174, $tab2_top + $tab2_hl * 2);
+            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
             $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht), 0, 'R', 0);
 
             $index = 3;
@@ -302,40 +364,42 @@ Class pdf_crabe {
             $index = 1;
         }
 
-        $pdf->SetXY (132, $tab2_top + $tab2_hl * $index);
-        $pdf->MultiCell(42, $tab2_hl, "Total TVA", 0, 'R', 0);
+        $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+        $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total TVA", 0, 'L', 0);
 
-        $pdf->SetXY (174, $tab2_top + $tab2_hl * $index);
+        $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
         $pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
 
-        $pdf->SetXY (132, $tab2_top + $tab2_hl * ($index+1));
-        $pdf->MultiCell(42, $tab2_hl, "Total TTC", 0, 'R', 1);
+        $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+1));
+        $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Total TTC", 0, 'L', 1);
 
-        $pdf->SetXY (174, $tab2_top + $tab2_hl * ($index+1));
+        $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+1));
         $pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 1);
-
-        $deja_regle = $fac->getSommePaiement();
 
         if ($deja_regle > 0)
         {
-            $pdf->SetXY (132, $tab2_top + $tab2_hl * ($index+2));
-            $pdf->MultiCell(42, $tab2_hl, "Déjà réglé", 0, 'R', 0);
+            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+2));
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Déjà réglé", 0, 'L', 0);
 
-            $pdf->SetXY (174, $tab2_top + $tab2_hl * ($index+2));
+            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+2));
             $pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
-            $pdf->SetXY (132, $tab2_top + $tab2_hl * ($index+3));
-            $pdf->MultiCell(42, $tab2_hl, "Reste à payer", 0, 'R', 1);
+            $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+3));
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, "Reste à payer", 0, 'L', 1);
 
-            $pdf->SetXY (174, $tab2_top + $tab2_hl * ($index+3));
+            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+3));
             $pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 1);
         }
     }
+
     /*
     * Grille des lignes de factures
     */
     Function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
+        $pdf->Rect( 10, $tab_top, 190, $tab_height);
+        $pdf->line( 10, $tab_top+8, 200, $tab_top+8 );
+
         $pdf->SetFont('Arial','',10);
 
         $pdf->Text(11,$tab_top + 5,'Désignation');
@@ -352,15 +416,12 @@ Class pdf_crabe {
         $pdf->line(162, $tab_top, 162, $tab_top + $tab_height);
         $pdf->Text(163, $tab_top + 5,'Remise');
 
-        $pdf->line(176, $tab_top, 176, $tab_top + $tab_height);
+        $pdf->line(177, $tab_top, 177, $tab_top + $tab_height);
         $pdf->Text(185, $tab_top + 5,'Total HT');
 
-        $pdf->Rect( 10, $tab_top, 190, $tab_height);
-        $pdf->line( 10, $tab_top +10, 200, $tab_top + 10 );
     }
+
     /*
-    *
-    *
     *
     *
     */
@@ -379,9 +440,10 @@ Class pdf_crabe {
         $pdf->SetXY(100,5);
         $pdf->SetTextColor(0,0,60);
         $pdf->MultiCell(100, 10, "Facture no ".$fac->ref, '' , 'R');
+        $pdf->SetFont('Arial','',12);
         $pdf->SetXY(100,11);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 10, "Date : " . strftime("%d %b %Y", $fac->date), '', 'R');
+        $pdf->MultiCell(100, 10, "Date : " . strftime("%d %b %Y", mktime()), '', 'R');
 
         /*
         * Emetteur
