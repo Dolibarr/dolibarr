@@ -29,15 +29,14 @@ function facture_get_num($objsoc=0)
   $date = strftime("%Y%m", time());
   $num=0;
   
-  $sql = "SELECT max(facnumber) FROM llx_facture";
+  $sql = "SELECT max(0+substring(facnumber,8)) FROM llx_facture";
   $sql .= " WHERE facnumber like '$prefix".$date."%'";
 
   if ( $db->query($sql) ) 
     {
       $row = $db->fetch_row(0);
    
-      $num = $row[0];										# $num vaut F200401XX
-	  $num = eregi_replace("$prefix([0-9]{6})","",$num);	# $num vaut XX
+      $num = $row[0];
     }
   $num++;
   return  "$prefix" . $date . $num;
