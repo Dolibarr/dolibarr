@@ -102,9 +102,9 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	    $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
 	  }
 	// Envoi d'un Email de confirmation au nouvel adherent
-	$mesg=preg_replace("/%INFO%/","Prenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass1\nNote : $note\n\nServeur : http://$SERVER_NAME/public/adherents/",$conf->adherent->email_new);
-	//$mesg="Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\n\nPrenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\nhttp://$SERVER_NAME/adherents/private/edit.php\n\n";
-	mail($email,"Votre adhesion sur http://$SERVER_NAME/",$mesg);
+	//$mesg=preg_replace("/%INFO%/","Prenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass1\nNote : $note\n\nServeur : http://$SERVER_NAME/public/adherents/",$conf->adherent->email_new);
+	//mail($email,"Votre adhesion sur http://$SERVER_NAME/",$mesg);
+	$adh->send_an_email($email,$conf->adherent->email_new,'Vos coordonnees sur %SERVEUR%');
 	Header("Location: new.php?action=added");
       }
   }

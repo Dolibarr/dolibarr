@@ -42,7 +42,7 @@ class Adherent
   var $pass;
   var $naiss;
   var $photo;
-  var $public;
+  //  var $public;
   var $array_options;
 
   var $errorstr;
@@ -63,14 +63,59 @@ class Adherent
 
   /*
    * function envoyant un email au destinataire (recipient) avec le text fourni en parametre.
-   * La particularite de cette focntion est de remplacer certains champs par leur valeur pour l'adherent
+   * La particularite de cette fonction est de remplacer certains champs par leur valeur pour l'adherent
    * en l'occurrence :
-   * %prenom% : est remplace par le prenom
-   * %nom% : est remplace par nom
+   * %PRENOM% : est remplace par le prenom
+   * %NOM% : est remplace par nom
+   * %INFOS% : l'ensemble des attributs de cet adherent
+   * %SERVEUR% : URL du serveur web
+   * ...
    */
-  Function send_an_email($recipients,$text)
+  Function send_an_email($recipients,$text,$subject="Vos coordonnees sur %SERVEUR%")
     {
-      
+      $patterns = array (
+			 '/%PRENOM%/',
+			 '/%NOM%/',
+			 '/%INFOS%/',
+			 '/%INFO%/',
+			 '/%SERVEUR%/',
+			 '/%SOCIETE%/',
+			 '/%ADRESSE%/',
+			 '/%CP%/',
+			 '/%VILLE%/',
+			 '/%PAYS%/',
+			 '/%EMAIL%/',
+			 '/%NAISS%/',
+			 '/%PHOTO%/',
+			 '/%LOGIN%/',
+			 '/%PASS%/'
+			 );
+      $infos = "Prenom : $this->prenom\nNom : $this->nom\nSociete : $this->societe\nAdresse : $this->adresse\nCP : $this->cp\nVille : $this->ville\nPays : $this->pays\nEmail : $this->email\nLogin : $this->login\nPassword : $this->pass\nDate de naissance : $this->naiss\nPhoto : $this->photo\n";
+      if ($this->public == 1){
+	$infos.="Fiche Publique : Oui\n";
+      }else{
+	$infos.="Fiche Publique : Non\n";
+      }
+      $replace = array (
+			$this->prenom,
+			$this->nom,
+			$infos,
+			$infos,
+			"http://".$_SERVER["SERVER_NAME"]."/",
+			$this->societe,
+			$this->adresse,
+			$this->cp,
+			$this->ville,
+			$this->pays,
+			$this->email,
+			$this->naiss,
+			$this->photo,
+			$this->login,
+			$this->pass
+			);
+      $texttosend = preg_replace ($patterns, $replace, $text);
+      $subjectosend = preg_replace ($patterns, $replace, $subject);
+      return mail($recipients,$subjectosend,$texttosend);
     }
   /*
    *
@@ -532,6 +577,49 @@ class Adherent
 	}  
     }
 
+  /*
+   * Ajoute le user aux mailing-list
+   *
+   */
+  Function add_to_list($email,$list)
+    {
+      
+    }
 
+  /*
+   *
+   *
+   */
+  Function add_to_mailman($email,$list,$mailmandir)
+    {
+      if (!file_exists($mailmandir)) {
+	mkdir($mailmandir, 0777);
+      } 
+      if (!file_exists("$mailmandir/$list")) {
+	mkdir("$mailmandir/$list", 0777);
+      } 
+      if (!file_exists("$mailmandir/$list/subscribe")) {
+	mkdir("$mailmandir/$list/subscribe", 0777);
+      } 
+      if (!file_exists("$mailmandir/$list/subscribe/$email")) {
+	touch("$mailmandir/$list/subscribe/$email");
+      } 
+    }
+
+  Function del_to_mailman($email,$list,$mailmandir)
+    {
+      if (!file_exists($mailmandir)) {
+	mkdir($mailmandir, 0777);
+      } 
+      if (!file_exists("$mailmandir/$list")) {
+	mkdir("$mailmandir/$list", 0777);
+      } 
+      if (!file_exists("$mailmandir/$list/unsubscribe")) {
+	mkdir("$mailmandir/$list/unsubscribe", 0777);
+      } 
+      if (!file_exists("$mailmandir/$list/unsubscribe/$email")) {
+	touch("$mailmandir/$list/unsubscribe/$email");
+      } 
+    }
 }
 ?>

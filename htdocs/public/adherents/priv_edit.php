@@ -109,9 +109,9 @@ if ($action == 'update')
 	    }
 	    if ($adh->update($user->id) ) 
 	      {	  
-		$mesg=preg_replace("/%INFO%/","Prenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note\n\nServeur : http://$SERVER_NAME/public/adherents/",$conf->adherent->email_edit);
-		mail($email,"Vos coordonnees sur http://$SERVER_NAME/",$mesg);
-		
+		//$mesg=preg_replace("/%INFO%/","Prenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note\n\nServeur : http://$SERVER_NAME/public/adherents/",$conf->adherent->email_edit);
+		//mail($email,"Vos coordonnees sur http://$SERVER_NAME/",$mesg);
+		$adh->send_an_email($email,$conf->adherent->email_edit,'Vos coordonnees sur %SERVEUR%');
 		//Header("Location: fiche.php?rowid=$adh->id&action=edit");
 		Header("Location: $PHP_SELF");
 	      }

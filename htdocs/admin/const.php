@@ -37,14 +37,14 @@ print "</TR>\n";
 
 $db = new Db();
 $form = new Form($db);
-
+$typeconst=array('yesno','texte','chaine');
 if ($user->admin)
 {
   if ($HTTP_POST_VARS["action"] == 'update' || $HTTP_POST_VARS["action"] == 'add')
     {
-  
-      if ($HTTP_POST_VARS["consttype"] == 0){
-	$sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."', type='yesno'";
+      
+      if (isset($HTTP_POST_VARS["consttype"]) && $HTTP_POST_VARS["consttype"] != ''){
+	$sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."', type='".$typeconst[$HTTP_POST_VARS["consttype"]]."'";
       }else{
 	$sql = "REPLACE INTO llx_const SET name='".$_POST["constname"]."', value = '".$HTTP_POST_VARS["constvalue"]."',note='".$HTTP_POST_VARS["constnote"]."'";
       }
@@ -94,13 +94,21 @@ if ($result)
 	{
 	  $form->selectyesnonum('constvalue',$obj->value);
 	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte'),0);
+	  $form->select_array('consttype',array('yesno','texte','chaine'),0);
+	}
+      elseif ($obj->type == 'texte')
+	{
+	  print '<textarea name="constvalue" cols="35" rows="5"wrap="soft">';
+	  print $obj->value;
+	  print "</textarea>\n";
+	  print '</td><td>';
+	  $form->select_array('consttype',array('yesno','texte','chaine'),1);
 	}
       else
 	{
-	  print '<input type="text" size="15" name="constvalue" value="'.stripslashes($obj->value).'">';
+	  print '<input type="text" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
 	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte'),1);
+	  $form->select_array('consttype',array('yesno','texte','chaine'),2);
 	}
       print '</td><td>';
 
@@ -122,10 +130,10 @@ print '<input type="hidden" name="action" value="add">';
 print "<tr $bc[$var] class=value><td><input type=\"text\" size=\"15\" name=\"constname\" value=\"\"></td>\n";
 
 print '<td>';
-print '<input type="text" size="15" name="constvalue" value="">';
+print '<input type="text" size="30" name="constvalue" value="">';
 print '</td><td>';
 
-$form->select_array('consttype',array('yesno','texte'),1);
+$form->select_array('consttype',array('yesno','texte','chaine'),1);
 print '</td><td>';
 
 print '<input type="text" size="15" name="constnote" value="">';

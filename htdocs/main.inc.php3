@@ -80,7 +80,22 @@ if (defined("MAIN_THEME"))
   $conf->theme=MAIN_THEME;
   $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
 }
-
+if (defined("MAIN_MAIL_RESIL"))
+{
+  $conf->adherent->email_resil=MAIN_MAIL_RESIL;
+}
+if (defined("MAIN_MAIL_VALID"))
+{
+  $conf->adherent->email_valid=MAIN_MAIL_VALID;
+}
+if (defined("MAIN_MAIL_EDIT"))
+{
+  $conf->adherent->email_edit=MAIN_MAIL_EDIT;
+}
+if (defined("MAIN_MAIL_NEW"))
+{
+  $conf->adherent->email_new=MAIN_MAIL_NEW;
+}
 /*
  */
 if(!isset($application_lang))

@@ -57,30 +57,31 @@ if ($HTTP_POST_VARS["action"] == 'add' && $user->admin)
   }
 }
 
-if ($action == 'update' && $user->admin) 
+if ($_POST["action"] == 'update' && $user->admin) 
 {
   $edituser = new User($db, $id);
   $edituser->fetch();
 
-  $edituser->nom = $nom;
-  $edituser->note   = $HTTP_POST_VARS["note"];
-  $edituser->prenom = $prenom;
-  $edituser->login = $login;
-  $edituser->email = $email;
-  $edituser->admin  = $HTTP_POST_VARS["admin"];
-  $edituser->webcal_login  = $HTTP_POST_VARS["webcal_login"];
-  if (isset($HTTP_POST_VARS["module_compta"]) && $HTTP_POST_VARS["module_compta"] ==1){
+  $edituser->nom           = $_POST["nom"];
+  $edituser->note          = $_POST["note"];
+  $edituser->prenom        = $_POST["prenom"];
+  $edituser->login         = $_POST["login"];
+  $edituser->email         = $_POST["email"];
+  $edituser->admin         = $_POST["admin"];
+  $edituser->webcal_login  = $_POST["webcal_login"];
+  if (isset($_POST["module_compta"]) && $_POST["module_compta"] ==1){
     $edituser->compta  = 1;
   }else{
     $edituser->compta  = 0;
   }
-  if (isset($HTTP_POST_VARS["module_comm"]) && $HTTP_POST_VARS["module_comm"] ==1){
+  if (isset($_POST["module_comm"]) && $_POST["module_comm"] ==1){
     $edituser->comm  = 1;
   }else{
     $edituser->comm  = 0;
   }
 
-  if (! $edituser->update($id, $user))
+  //  if (! $edituser->update($id, $user))
+  if (! $edituser->update())
     {
       print $edituser->error();
     }

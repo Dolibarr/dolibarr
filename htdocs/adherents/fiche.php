@@ -92,8 +92,15 @@ if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] =
   $adh = new Adherent($db, $rowid);
   $adh->validate($user->id);
   $adh->fetch($rowid);
-  $mesg=preg_replace("/%INFO%/","Prenom : $adh->prenom\nNom : $adh->nom\nSociete = $adh->societe\nAdresse = $adh->adresse\nCode Postal : $adh->cp\nVille : $adh->ville\nPays : $adh->pays\nEmail : $adh->email\nLogin : $adh->login\nPassword : $adh->pass\nNote : $adh->note\n\nServeur : http://$SERVER_NAME/public/adherents/",$conf->adherent->email_valid);
-  mail($adh->email,"Vos coordonnees sur http://$SERVER_NAME/",$mesg);
+  //$mesg=preg_replace("/%INFO%/","Prenom : $adh->prenom\nNom : $adh->nom\nSociete = $adh->societe\nAdresse = $adh->adresse\nCode Postal : $adh->cp\nVille : $adh->ville\nPays : $adh->pays\nEmail : $adh->email\nLogin : $adh->login\nPassword : $adh->pass\nNote : $adh->note\n\nServeur : http://$SERVER_NAME/public/adherents/",$conf->adherent->email_valid);
+  //mail($adh->email,"Vos coordonnees sur http://$SERVER_NAME/",$mesg);
+  $adh->send_an_email($adh->email,$conf->adherent->email_valid,'Vos coordonnees sur %SERVEUR%');
+  if ($conf->adherent->use_mailman == 1){
+    foreach ($conf->adherent->mailman_lists as $key){
+      $adh->add_to_mailman($adh->email,$key,$conf->adherent->mailman_dir);
+    }
+  }
+
 }
 
 if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] == yes)
@@ -101,8 +108,14 @@ if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] 
   $adh = new Adherent($db, $rowid);
   $adh->resiliate($user->id);
   $adh->fetch($rowid);
-  $mesg=preg_replace("/%INFO%/","Prenom : $adh->prenom\nNom : $adh->nom\nSociete = $adh->societe\nAdresse = $adh->adresse\nCode Postal : $adh->cp\nVille : $adh->ville\nPays : $adh->pays\nEmail : $adh->email\nLogin : $adh->login\nPassword : $adh->pass\nNote : $adh->note\n\nServeur : http://$SERVER_NAME/public/adherents/",$conf->adherent->email_resil);
-  mail($adh->email,"Vos coordonnees sur http://$SERVER_NAME/",$mesg);
+  //$mesg=preg_replace("/%INFO%/","Prenom : $adh->prenom\nNom : $adh->nom\nSociete = $adh->societe\nAdresse = $adh->adresse\nCode Postal : $adh->cp\nVille : $adh->ville\nPays : $adh->pays\nEmail : $adh->email\nLogin : $adh->login\nPassword : $adh->pass\nNote : $adh->note\n\nServeur : http://$SERVER_NAME/public/adherents/",$conf->adherent->email_resil);
+  //mail($adh->email,"Vos coordonnees sur http://$SERVER_NAME/",$mesg);
+  $adh->send_an_email($adh->email,$conf->adherent->email_resil,'Vos coordonnees sur %SERVEUR%');
+  if ($conf->adherent->use_mailman == 1){
+    foreach ($conf->adherent->mailman_lists as $key){
+      $adh->del_to_mailman($adh->email,$key,$conf->adherent->mailman_dir);
+    }
+  }
 }
 
 
