@@ -27,6 +27,7 @@ Class pdf_propale_rouge
   Function pdf_propale_rouge($db=0)
     { 
       $this->db = $db;
+      $this->name = "rouge";
       $this->description = "Modèle de propale par défaut";
     }
 
