@@ -30,20 +30,31 @@ llxHeader("","../");
 $projet = new Project($db);
 $projet->fetch($_GET["id"]);
 
-$h=0;
-$head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
-$head[$h][1] = 'Fiche projet';
+  $h=0;
+  $head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
+  $head[$h][1] = 'Fiche projet';
+  $h++;
+  
+  if ($conf->propal->enabled) {
+      $head[$h][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$projet->id;
+      $head[$h][1] = 'Prop. Commerciales';
+      $h++;
+  }  
 
-$head[$h+1][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$projet->id;
-$head[$h+1][1] = 'Prop. Commerciales';
-
-$head[$h+2][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$projet->id;
-$head[$h+2][1] = 'Commandes';
-
-$head[$h+3][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$projet->id;
-$head[$h+3][1] = 'Factures';
-
-dolibarr_fiche_head($head, 2);
+  if ($conf->commande->enabled) {
+      $head[$h][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$projet->id;
+      $head[$h][1] = 'Commandes';
+      $hselected=$h;
+      $h++;
+  }
+  
+  if ($conf->facture->enabled) {
+      $head[$h][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$projet->id;
+      $head[$h][1] = 'Factures';
+      $h++;
+  }
+ 
+dolibarr_fiche_head($head, $hselected);
 /*
  *
  *
@@ -51,9 +62,9 @@ dolibarr_fiche_head($head, 2);
  */
 $projet->societe->fetch($projet->societe->id);
 
-print '<table class="border" border="1" cellpadding="4" cellspacing="0" width="100%">';
+print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
 print '<tr><td width="20%">Titre</td><td>'.$projet->title.'</td>';  
-print '<td width="20%">Réf</td><td>'.$projet->ref.'</td></tr>';
+print '<td width="20%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
 print '<tr><td>Société</td><td colspan="3"><a href="../comm/fiche.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
 print '</table><br>';
 
@@ -69,7 +80,7 @@ if (sizeof($commandes)>0 && is_array($commandes))
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
   
   print '<TR class="liste_titre">';
-  print '<td width="15%">Réf</td><td width="25%">Date</td><td align="right">Montant</td><td>&nbsp;</td></tr>';
+  print '<td width="15%">'.$langs->trans("Ref").'</td><td width="25%">Date</td><td align="right">Montant</td><td>&nbsp;</td></tr>';
   
   for ($i = 0; $i<sizeof($commandes);$i++)
     {

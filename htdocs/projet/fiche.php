@@ -25,9 +25,13 @@ require("../propal.class.php");
 require("../facture.class.php");
 require("../commande/commande.class.php");
 
+$langs->load("projects");
+
 $user->getrights('projet');
+
 if (!$user->rights->projet->lire)
   accessforbidden();
+
 
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
@@ -46,28 +50,31 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 if ($_POST["action"] == 'update' && $user->rights->projet->creer)
 {
   $projet = new Project($db);
-  $projet->id = $id;
+  $projet->id = $_POST["id"];
   $projet->ref = $_POST["ref"];
   $projet->title = $_POST["title"];
   $projet->update();
+
+  $_GET["id"]=$projet->id;  // On retourne sur la fiche projet
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
 {
   $projet = new Project($db);
-  $projet->id = $id;
+  $projet->id = $_POST["id"];
   $projet->delete();
   Header("Location: index.php");
 }
 
 llxHeader("","Projet","Projet");
 
+
 if ($_GET["action"] == 'delete')
 {
 
   print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
   print '<input type="hidden" name="action" value="confirm_delete">';
-  print '<table id="actions" cellspacing="0" border="1" width="100%" cellpadding="3">';
+  print '<table class="border" id="actions" cellspacing="0" width="100%" cellpadding="3">';
   
   print '<tr><td colspan="3">Supprimer le projet</td></tr>';
   
@@ -88,7 +95,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
   print '<form action="fiche.php?socidp='.$_GET["socidp"].'" method="post">';
   ?>
-  <table class="border" border="1" cellpadding="4" cellspacing="0">
+  <table class="border" cellpadding="3" cellspacing="0">
   <input type="hidden" name="action" value="add">
   <tr><td>Société</td><td>
   <?PHP 
@@ -101,7 +108,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   <?PHP
   print '<tr><td>Créateur</td><td>'.$user->fullname.'</td></tr>';
   ?>
-  <tr><td>Référence</td><td><input size="10" type="text" name="ref"></td></tr>
+  <tr><td><?php echo $langs->trans("Ref") ?></td><td><input size="10" type="text" name="ref"></td></tr>
   <tr><td>Titre</td><td><input size="30" type="text" name="title"></td></tr>
   <tr><td colspan="2"><input type="submit" value="Enregistrer"></td></tr>
   </table>
@@ -110,8 +117,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
 } else {
   /*
-   *
-   *
+   * Fiche projet en mode visu
    *
    */
 
@@ -122,36 +128,51 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
   $h=0;
   $head[$h][0] = DOL_URL_ROOT.'/projet/fiche.php?id='.$projet->id;
   $head[$h][1] = 'Fiche projet';
+  $hselected=$h;
+  $h++;
   
-  $head[$h+1][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$projet->id;
-  $head[$h+1][1] = 'Prop. Commerciales';
+  if ($conf->propal->enabled) {
+      $head[$h][0] = DOL_URL_ROOT.'/projet/propal.php?id='.$projet->id;
+      $head[$h][1] = 'Prop. Commerciales';
+      $h++;
+  }  
+
+  if ($conf->commande->enabled) {
+      $head[$h][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$projet->id;
+      $head[$h][1] = 'Commandes';
+      $h++;
+  }
   
-  $head[$h+2][0] = DOL_URL_ROOT.'/projet/commandes.php?id='.$projet->id;
-  $head[$h+2][1] = 'Commandes';
-  
-  $head[$h+3][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$projet->id;
-  $head[$h+3][1] = 'Factures';
+  if ($conf->facture->enabled) {
+      $head[$h][0] = DOL_URL_ROOT.'/projet/facture.php?id='.$projet->id;
+      $head[$h][1] = 'Factures';
+      $h++;
+  }
  
-  dolibarr_fiche_head($head, 0);
+  dolibarr_fiche_head($head,  $hselected);
 
   if ($_GET["action"] == 'edit')
     {  
-      print '<form method="post" action="fiche.php?id='.$id.'">';
+      print '<form method="post" action="fiche.php">';
       print '<input type="hidden" name="action" value="update">';
-      print '<table class="border" border="1" cellpadding="4" cellspacing="0">';
+      print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
+
+      print '<table class="border" cellpadding="3" cellspacing="0" width="50%">';
       print '<tr><td>Société</td><td>'.$projet->societe->nom.'</td></tr>';      
-      print '<tr><td>Ref</td><td><input name="ref" value="'.$projet->ref.'"></td></tr>';
-  
-      print '</table><input type="submit" Value="Enregistrer"></form>';
+      print '<tr><td>'.$langs->trans("Title").'</td><td><input name="title" value="'.$projet->title.'"></td></tr>';      
+      print '<tr><td>'.$langs->trans("Ref").'</td><td><input name="ref" value="'.$projet->ref.'"></td></tr>';
+      print '</table>';
+      print '<p><input type="submit" Value="'.$langs->trans("Modify").'"></p>';
+      print '</form>';
     }
   else
     {
-      print '<table class="border" border="1" cellpadding="4" cellspacing="0" width="100%">';
-
-      print '<tr><td width="20%">Titre</td><td>'.$projet->title.'</td>';  
-      print '<td width="20%">Réf</td><td>'.$projet->ref.'</td></tr>';
+      print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+      print '<tr><td width="20%">'.$langs->trans("Title").'</td><td>'.$projet->title.'</td>';  
+      print '<td width="20%">'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
       print '<tr><td>Société</td><td colspan="3">'.$projet->societe->nom_url.'</a></td></tr>';
       print '</table>';
+      print '<br>';
     }
 
   print '</div>';
@@ -161,7 +182,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
       print '<div class="tabsAction">';
       if ($_GET["action"] == "edit")
 	{
-	  print '<a class="tabAction" href="fiche.php?id='.$projet->id.'">Annuler</a>';
+	  print '<a class="tabAction" href="fiche.php?id='.$projet->id.'">'.$langs->trans("Cancel").'</a>';
 	}
       else
 	{

@@ -22,6 +22,8 @@
  */
 require("./pre.inc.php");
 
+$langs->load("projects");
+
 /*
  * Sécurité accés client
  */
@@ -63,10 +65,10 @@ $pagenext = $page + 1;
  * 
  */
 print '<br>';
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 print '<tr class="liste_titre"><td>';
 print_liste_field_titre("Titre","index.php","p.title");
-print "</td><td>Réf</td><td>";
+print '</td><td>'.$langs->trans("Ref").'</td><td>';
 print_liste_field_titre("Société","index.php","s.nom");
 print "</td></tr>\n";
 
@@ -81,6 +83,7 @@ if ($socidp)
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
+$var=true;
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
