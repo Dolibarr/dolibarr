@@ -34,8 +34,13 @@ table.topbarre
  }
 
 a { 
-    text-decoration: none; 
+    text-decoration: none;
+    font-weight: bold;
+    color: #000000;
     }
+
+a:hover {     text-decoration: underline;  }
+
 
 td.menu
 { 
