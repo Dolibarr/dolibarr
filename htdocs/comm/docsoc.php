@@ -99,8 +99,8 @@ if ($socid > 0)
       print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
       
       print "<tr><td><div class=\"titre\">Documents associés à l'entreprise : $objsoc->nom</div></td>";
-      print "<td align=\"center\"><a href=\"/comm/fiche.php3?socid=$objsoc->idp\">Commercial</a></td>";
-      print "<td align=\"center\"><a href=\"/compta/fiche.php3?socid=$objsoc->idp\">Compta</a></td>";
+      print "<td align=\"center\"><a href=\"fiche.php3?socid=$objsoc->idp\">Commercial</a></td>";
+      print "<td align=\"center\"><a href=\"../compta/fiche.php3?socid=$objsoc->idp\">Compta</a></td>";
       print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
       print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
       print "</tr></table>";
@@ -123,7 +123,9 @@ if ($socid > 0)
       if ($objsoc->prefix_comm)
 	{
 	  print $objsoc->prefix_comm;
-	} else {
+	}
+      else
+	{
 	  print "[<a href=\"$PHP_SELF?socid=$objsoc->idp&action=attribute_prefix\">Attribuer</a>]";
 	}
       
@@ -161,7 +163,7 @@ if ($socid > 0)
 	      if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 		{
 		  print '<tr><td>';
-		  echo '<a href="/document/societe/'.$socid.'/'.$file.'">'.$file.'</a>';
+		  echo '<a href="'.DOL_URL_ROOT.'/document/societe/'.$socid.'/'.$file.'">'.$file.'</a>';
 		  print "</td>\n";
 		  
 		  print '<td align="right">'.filesize($upload_dir."/".$file). ' bytes</td>';
@@ -179,7 +181,7 @@ if ($socid > 0)
 	}
       else
 	{
-	  print "<p>Impossible d'ouvrir : <b>$upload_dir</b>";
+	  print "<p>Impossible d'ouvrir : <b>".$upload_dir."</b>";
 	}
     }
   else
