@@ -20,13 +20,12 @@
  * $Source$
  *
  */
-
 require("../../main.inc.php3");
 require("./account.class.php");
 
 function llxHeader($head = "")
 {
-  global $user, $conf, $account;
+  global $db, $user, $conf, $account;
 
   /*
    *
@@ -39,7 +38,7 @@ function llxHeader($head = "")
   $menu->add("index.php","Comptes");
   $menu->add_submenu("search.php3","Recherche");
 
-  $db = new Db();
+
   $sql = "SELECT rowid, label FROM llx_bank_account where clos = 0";
   $result = $db->query($sql);
   if ($result)

@@ -22,7 +22,6 @@
 require("./pre.inc.php3");
 require("./bank.lib.php3");
 
-$db = new Db();
 
 llxHeader();
 

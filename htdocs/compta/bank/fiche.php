@@ -19,24 +19,19 @@
  * $Id$
  * $Source$
  */
-
 require("./pre.inc.php3");
 
 llxHeader();
-
-$db = new Db();
 
 if ($HTTP_POST_VARS["action"] == 'add')
 {
   $account = new Account($db,0);
 
-  $account->bank         = $HTTP_POST_VARS["bank"];
-  $account->label        = $HTTP_POST_VARS["label"];
-
-  $account->courant      = $HTTP_POST_VARS["courant"];
-  $account->clos         = $HTTP_POST_VARS["clos"];
-
-  $account->code_banque  = $HTTP_POST_VARS["code_banque"];
+  $account->bank          = $HTTP_POST_VARS["bank"];
+  $account->label         = $HTTP_POST_VARS["label"];
+  $account->courant       = $HTTP_POST_VARS["courant"];
+  $account->clos          = $HTTP_POST_VARS["clos"];
+  $account->code_banque   = $HTTP_POST_VARS["code_banque"];
   $account->code_guichet  = $HTTP_POST_VARS["code_guichet"];
   $account->number        = $HTTP_POST_VARS["number"];
   $account->cle_rib       = $HTTP_POST_VARS["cle_rib"];
@@ -45,7 +40,6 @@ if ($HTTP_POST_VARS["action"] == 'add')
   $account->domiciliation = $HTTP_POST_VARS["domiciliation"];
 
   $id = $account->create($user->id);
-
 }
 
 if ($action == 'update')

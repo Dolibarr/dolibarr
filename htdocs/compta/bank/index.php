@@ -19,27 +19,20 @@
  * $Source$
  *
  */
-
-/*
- *
- * $viewall
- *
- */
 require("./pre.inc.php3");
 require("./bank.lib.php3");
 require("../../tva.class.php3");
 require("../../chargesociales.class.php3");
 
 llxHeader();
-$db = new Db();
 
 print_titre ("Comptes bancaires");
-
 
 $sql = "SELECT rowid, label,number,bank FROM llx_bank_account";
 
 $result = $db->query($sql);
-if ($result) {
+if ($result)
+{
   $accounts = array();
 
   $num = $db->num_rows();

@@ -21,10 +21,9 @@
 require("./pre.inc.php3");
 
 llxHeader();
-$db = new Db();
 
-
-if ($action == 'rappro') {
+if ($action == 'rappro')
+{
   $author = $GLOBALS["REMOTE_USER"];
   if ($num_releve > 0) {
     $sql = "UPDATE llx_bank set rappro=$rappro, num_releve=$num_releve WHERE rowid=$rowid";

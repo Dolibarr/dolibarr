@@ -18,12 +18,10 @@
  * $Id$
  * $Source$
  */
-
 require("./pre.inc.php3");
 require("./bank.lib.php3");
 
 llxHeader();
-$db = new Db();
 
 print_titre("Configuration");
 

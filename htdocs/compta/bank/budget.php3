@@ -19,11 +19,9 @@
  * $Source$
  *
  */
-
 require("./pre.inc.php3");
 
 llxHeader();
-$db = new Db();
 
 /*
  *
@@ -32,8 +30,6 @@ $db = new Db();
  *
  *
  *           exemple remboursement de frais de gestion par la banque
- *
- *
  *
  *
  */

@@ -26,7 +26,7 @@
 require("./pre.inc.php3");
 
 llxHeader();
-$db = new Db();
+
 
 if (! strlen($num))
 {

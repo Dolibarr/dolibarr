@@ -26,14 +26,11 @@
  *
  */
 require("./pre.inc.php3");
-
 require("./bank.lib.php3");
 
-$db = new Db();
 
 if ($HTTP_POST_VARS["action"] == 'add' && $account)
-{
-    
+{    
   if ($credit > 0)
     {
       $amount = $credit ;

@@ -23,16 +23,18 @@
 require("./pre.inc.php3");
 
 llxHeader();
-$db = new Db();
 
-function valeur($sql) {
+function valeur($sql)
+{
   global $db;
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() ) {
-      $valeur = $db->result(0,0);
+  if ( $db->query($sql) )
+    {
+      if ( $db->num_rows() )
+	{
+	  $valeur = $db->result(0,0);
+	}
+      $db->free();
     }
-    $db->free();
-  }
   return $valeur;
 }
 
