@@ -143,6 +143,8 @@ if ($action == 'create')
       print "<td rowspan=\"4\">";
       print '<textarea name="comment" wrap="soft" cols="40" rows="10"></textarea></td></tr>';
 
+      print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Num du cheque ou virement</em></td></tr>\n";
+
       print "<tr><td>Compte à débiter :</td><td><select name=\"accountid\"><option value=\"\">-</option>\n";
       $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account ORDER BY rowid";
       $result = $db->query($sql);
@@ -165,7 +167,6 @@ if ($action == 'create')
       print "</select>";
       print "</td></tr>\n";
 
-      print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Num du cheque ou virement</em></td></tr>\n";
       print "<tr><td valign=\"top\">Reste à payer :</td><td><b>".price($total - $sumpayed)."</b> euros TTC</td></tr>\n";
       print "<tr><td valign=\"top\">Montant :</td><td><input name=\"amount\" type=\"text\"></td></tr>\n";
       print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer"></td></tr>';

@@ -167,8 +167,12 @@ if ($_GET["action"] == 'create')
 	    }
 	  print "</select>";
 	  print "</td>\n";
+
 	  print '<td rowspan="3" valign="top">';
 	  print '<textarea name="comment" wrap="soft" cols="40" rows="6"></textarea></td></tr>';	  
+
+	  print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Numéro du chèque / virement</em></td></tr>\n";
+
 	  print "<tr><td>Compte à créditer :</td><td><select name=\"accountid\">\n";
 	  
 	  $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account ORDER BY rowid";
@@ -193,8 +197,6 @@ if ($_GET["action"] == 'create')
 	  print "</select>";
 	  print "</td></tr>\n";
 	  	  
-	  print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Numéro du chèque / virement</em></td></tr>\n";
-
 	  /*
 	   * Autres factures impayées
 	   */
