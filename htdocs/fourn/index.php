@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/**	    \file       htdocs/fourn/index.php
+        \ingroup    fournisseur
+		\brief      Page accueil de la zone fournisseurs
+		\version    $Revision$
+*/
+
 
 require("./pre.inc.php");
 require("../contact.class.php");
@@ -50,13 +57,6 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-/*
- * Mode Liste
- *
- *
- *
- */
-
 if ($sortorder == "")
 {
   $sortorder="ASC";
@@ -65,6 +65,12 @@ if ($sortfield == "")
 {
   $sortfield="nom";
 }
+
+
+/*
+ * Mode Liste
+ *
+ */
 
 $sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
 
@@ -102,14 +108,15 @@ if ($result)
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="center"');
   print '<td>'.$langs->trans("Town").'</td>';
+  print '<td>&nbsp;</td>';
   print "</tr>\n";
 
 
   print '<tr class="liste_titre">';
   print '<form action="index.php" method="GET">';
   print '<td><input type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
-  print '<td><input type="text" name="search_ville" value="'.$_GET["search_ville"].'"><input type="submit"></td>';
-
+  print '<td><input type="text" name="search_ville" value="'.$_GET["search_ville"].'"></td>';
+  print '<td><input class="button" type="submit" value="'.$langs->trans("Search").'"></td>';
   print '</form>';
   print '</tr>';
 
@@ -124,6 +131,7 @@ if ($result)
       print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_file().'</a>';
       print "&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";
       print "<td>".$obj->ville."</td>\n";       
+      print "<td>&nbsp;</td>\n";       
       print "</tr>\n";
       $i++;
     }

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 20004     Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,7 @@
  *
  */
 
-/*!
-	    \file       htdocs/product/index.php
+/**	    \file       htdocs/product/index.php
         \ingroup    product
 		\brief      Page accueil des produits et services
 		\version    $Revision$
@@ -56,9 +55,9 @@ llxHeader("","",$langs->trans("ProductsAndServices"));
 
 print '<div class="formsearch"><form action="liste.php" method="post">';
 print '<input type="hidden" name="type" value="'.$product->type.'">';
-print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
+print $langs->trans("Ref").': <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="button" type="submit" value="'.$langs->trans("Go").'">';
 print ' &nbsp; ';
-print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="'.$langs->trans("Go").'">';
+print $langs->trans("Label").': <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="button" type="submit" value="'.$langs->trans("Go").'">';
 print '</form></div>';
 
 print_titre($langs->trans("ProductsAndServices"));
