@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,7 +42,7 @@ if (isset($action) && $action=='sendinfo')
 }
 
 
-if ($HTTP_POST_VARS["action"] == 'cotisation') 
+if ($_POST["action"] == 'cotisation') 
 {
   $adh = new Adherent($db);
   $adh->id = $rowid;
@@ -65,7 +66,7 @@ if ($HTTP_POST_VARS["action"] == 'cotisation')
 	//$dateop="$reyear$remonth$reday";
 	$amount=$cotisation;
 	$acct=new Account($db,ADHERENT_BANK_ACCOUNT);
-	$insertid=$acct->addline($dateop, $HTTP_POST_VARS["operation"], $HTTP_POST_VARS["label"], $amount, $HTTP_POST_VARS["num_chq"],ADHERENT_BANK_CATEGORIE);
+	$insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE);
 	if ($insertid == '')
 	  {
 	    print "<p> Probleme d'insertion : ".$db->error();
@@ -89,8 +90,13 @@ if ($HTTP_POST_VARS["action"] == 'cotisation')
   $action = "edit";
 }
 
-if ($HTTP_POST_VARS["action"] == 'add') 
+if ($_POST["action"] == 'add') 
 {
+  $type=$_POST["type"];
+  if(!isset($type) || $type==''){
+    $error+=1;
+    $errmsg .="Le type d'adhérent n'est pas renseigné. Vous devez configurer les types d'adhérents avant de pouvoir les ajouter.<BR>\n";
+  }
   $login=$_POST["login"];
   // test si le login existe deja
   if(!isset($login) || $login==''){
@@ -147,8 +153,8 @@ if ($HTTP_POST_VARS["action"] == 'add')
     $adh->note        = $note;
     $adh->pays        = $pays;
     $adh->typeid      = $type;
-    $adh->commentaire = $HTTP_POST_VARS["comment"];
-    $adh->morphy      = $HTTP_POST_VARS["morphy"];
+    $adh->commentaire = $_POST["comment"];
+    $adh->morphy      = $_POST["morphy"];
     
     foreach($_POST as $key => $value){
       if (ereg("^options_",$key)){
@@ -167,7 +173,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	      //$dateop="$reyear$remonth$reday";
 	      $amount=$cotisation;
 	      $acct=new Account($db,ADHERENT_BANK_ACCOUNT);
-	      $insertid=$acct->addline($dateop, $HTTP_POST_VARS["operation"], $HTTP_POST_VARS["label"], $amount, $HTTP_POST_VARS["num_chq"],ADHERENT_BANK_CATEGORIE);
+	      $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE);
 	      if ($insertid == '')
 		{
 		  print "<p> Probleme d'insertion : ".$db->error();
@@ -193,14 +199,14 @@ if ($HTTP_POST_VARS["action"] == 'add')
   }
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
 {
   $adh = new Adherent($db);
   $adh->delete($rowid);
   Header("Location: liste.php");
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes)
 {
   $adh = new Adherent($db, $rowid);
   $adh->validate($user->id);
@@ -226,7 +232,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] =
   
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_resign' && $_POST["confirm"] == yes)
 {
   $adh = new Adherent($db, $rowid);
   $adh->resiliate($user->id);
@@ -247,7 +253,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] 
 
 llxHeader();
 
-if ($HTTP_POST_VARS["action"] == 'confirm_add_glasnost' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_add_glasnost' && $_POST["confirm"] == yes)
 {
   $adh = new Adherent($db, $rowid);
   $adh->fetch($rowid);
@@ -264,7 +270,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_add_glasnost' && $HTTP_POST_VARS["conf
   }
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_del_glasnost' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_del_glasnost' && $_POST["confirm"] == yes)
 {
   $adh = new Adherent($db, $rowid);
   $adh->fetch($rowid);
@@ -281,7 +287,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_del_glasnost' && $HTTP_POST_VARS["conf
   }
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_del_spip' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == yes)
 {
   $adh = new Adherent($db, $rowid);
   $adh->fetch($rowid);
@@ -290,7 +296,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_del_spip' && $HTTP_POST_VARS["confirm"
   }
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_add_spip' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == yes)
 {
   $adh = new Adherent($db, $rowid);
   $adh->fetch($rowid);
@@ -309,7 +315,7 @@ if ($errmsg != '')
 {
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   print '<th>Erreur dans l\'execution du  formulaire</th>';
-  print "<tr><td class=\"delete\"><b>$errmsg</b></td></tr>\n";
+  print "<tr><td class=\"error\"><b>$errmsg</b></td></tr>\n";
   print '</table>';
 }
 
@@ -430,13 +436,13 @@ if ($rowid > 0)
       print '<tr><td colspan="3">Supprimer un adhérent</td></tr>';
       print "<tr><td colspan=\"3\">La suppression d'un adhérent entraine la suppression de toutes ses cotisations !!!</td></tr>\n";
       
-      print '<tr><td class="delete">Etes-vous sur de vouloir supprimer cet adhérent ?</td><td class="delete">';
+      print '<tr><td class="warning">Etes-vous sur de vouloir supprimer cet adhérent ?</td><td class="warning">';
       $htmls = new Form($db);
       
       $htmls->selectyesno("confirm","no");
       
       print "</td>\n";
-      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '<td class="warning" align="center"><input type="submit" value="Confirmer"</td></tr>';
       print '</table>';
       print "</form>\n";  
     }
@@ -481,13 +487,13 @@ if ($rowid > 0)
       
       print '<tr><td colspan="3">Résilier une adhésion</td></tr>';
       
-      print '<tr><td class="delete">Etes-vous sur de vouloir résilier cette adhésion ?</td><td class="delete">';
+      print '<tr><td class="warning">Etes-vous sur de vouloir résilier cette adhésion ?</td><td class="warning">';
       $htmls = new Form($db);
       
       $htmls->selectyesno("confirm","no");
       
       print "</td>\n";
-      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '<td class="warning" align="center"><input type="submit" value="Confirmer"</td></tr>';
       print '</table>';
       print "</form>\n";  
     }
@@ -531,13 +537,13 @@ if ($rowid > 0)
       
       print '<tr><td colspan="3">Valider un adhérent</td></tr>';
       
-      print '<tr><td class="delete">Etes-vous sur de vouloir effacer cet adhérent de glasnost ? (serveur : '.ADHERENT_GLASNOST_SERVEUR.')</td><td class="delete">';
+      print '<tr><td class="warning">Etes-vous sur de vouloir effacer cet adhérent de glasnost ? (serveur : '.ADHERENT_GLASNOST_SERVEUR.')</td><td class="warning">';
       $htmls = new Form($db);
       
       $htmls->selectyesno("confirm","no");
       
       print "</td>\n";
-      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '<td class="warning" align="center"><input type="submit" value="Confirmer"</td></tr>';
       print '</table>';
       print "</form>\n";  
     }
@@ -581,13 +587,13 @@ if ($rowid > 0)
       
       print '<tr><td colspan="3">Valider un adhérent</td></tr>';
       
-      print '<tr><td class="delete">Etes-vous sur de vouloir effacer cet adhérent de glasnost ? (serveur : '.ADHERENT_SPIP_SERVEUR.')</td><td class="delete">';
+      print '<tr><td class="warning">Etes-vous sur de vouloir effacer cet adhérent de glasnost ? (serveur : '.ADHERENT_SPIP_SERVEUR.')</td><td class="warning">';
       $htmls = new Form($db);
       
       $htmls->selectyesno("confirm","no");
       
       print "</td>\n";
-      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '<td class="warning" align="center"><input type="submit" value="Confirmer"</td></tr>';
       print '</table>';
       print "</form>\n";  
     }

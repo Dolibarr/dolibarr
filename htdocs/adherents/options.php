@@ -98,32 +98,14 @@ if (sizeof($array_options)>0)
     }
   print "</table>";
 }
-print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr class=\"barreBouton\">";
 
-/*
- * Case 1
- */
-
-print "<td align=\"center\" width=\"25%\" class=\"bouton\">[<a href=\"$PHP_SELF?action=create\">Nouvel attribut</a>]</td>";
-
-/*
- * Case 2
- */
-
-print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>";
-
-/*
- * Case 3
- */
-print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>";
-
-/*
- * Case 4
- */
-
-print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>";
-
-print "</tr></table></form><p>";
+    /*
+     * Barre d'actions
+     *
+     */
+    print '<div class="tabsAction">';
+    print "<a class=\"tabAction\" href=\"$PHP_SELF?action=create\">Nouvel attribut</a>";
+    print "</div>";
 
 
 

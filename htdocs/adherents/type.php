@@ -24,16 +24,16 @@ require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 
-if ($HTTP_POST_VARS["action"] == 'add' && $user->admin) 
+if ($_POST["action"] == 'add' && $user->admin) 
 {
 
   $adht = new AdherentType($db);
       
-  $adht->libelle     = $HTTP_POST_VARS["libelle"];
-  $adht->cotisation  = $HTTP_POST_VARS["cotisation"];
-  $adht->commentaire = $HTTP_POST_VARS["comment"];
-  $adht->mail_valid  = $HTTP_POST_VARS["mail_valid"];
-  $adht->vote        = $HTTP_POST_VARS["vote"];
+  $adht->libelle     = $_POST["libelle"];
+  $adht->cotisation  = $_POST["cotisation"];
+  $adht->commentaire = $_POST["comment"];
+  $adht->mail_valid  = $_POST["mail_valid"];
+  $adht->vote        = $_POST["vote"];
 
   if ($adht->create($user->id) ) 
     {	  
@@ -41,16 +41,16 @@ if ($HTTP_POST_VARS["action"] == 'add' && $user->admin)
     }
 }
 
-if ($HTTP_POST_VARS["action"] == 'update' && $user->admin) 
+if ($_POST["action"] == 'update' && $user->admin) 
 {
 
   $adht = new AdherentType($db);
   $adht->id          = $rowid;
-  $adht->libelle     = $HTTP_POST_VARS["libelle"];
-  $adht->cotisation  = $HTTP_POST_VARS["cotisation"];
-  $adht->commentaire = $HTTP_POST_VARS["comment"];
-  $adht->mail_valid  = $HTTP_POST_VARS["mail_valid"];
-  $adht->vote        = $HTTP_POST_VARS["vote"];
+  $adht->libelle     = $_POST["libelle"];
+  $adht->cotisation  = $_POST["cotisation"];
+  $adht->commentaire = $_POST["comment"];
+  $adht->mail_valid  = $_POST["mail_valid"];
+  $adht->vote        = $_POST["vote"];
 
   if ($adht->update($user->id) ) 
     {	  
@@ -67,7 +67,7 @@ if ($action == 'delete')
 if ($action == 'commentaire')
 {
   $don = new Don($db);
-  $don->set_commentaire($rowid,$HTTP_POST_VARS["commentaire"]);
+  $don->set_commentaire($rowid,$_POST["commentaire"]);
   $action = "edit";
 }
 
@@ -122,32 +122,14 @@ else
 }
 
 
-print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr class=\"barreBouton\">";
 
-/*
- * Case 1
- */
-
-print '<td align="center" width="25%" class=\"bouton\">[<a href="type.php?action=create">Nouveau Type</a>]</td>';
-
-/*
- * Case 2
- */
-
-print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>";
-
-/*
- * Case 3
- */
-print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>";
-
-/*
- * Case 4
- */
-
-print "<td align=\"center\" width=\"25%\" class=\"bouton\">-</td>";
-
-print "</tr></table></form><p>";
+    /*
+     * Barre d'actions
+     *
+     */
+    print '<div class="tabsAction">';
+    print "<a class=\"tabAction\" href=\"type.php?action=create\">Nouveau Type</a>";
+    print "</div>";
 
 
 
