@@ -473,7 +473,7 @@ class DoliDb {
 
 
 /*!
-		\brief      Retourne le dsn
+		\brief      Retourne le dsn pear
 		\return     dsn
 */
 

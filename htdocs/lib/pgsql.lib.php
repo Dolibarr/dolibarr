@@ -24,8 +24,8 @@
  *
  */
 
-/*!	\file htdocs/lib/pgsql.lib.php
-		\brief Classe permettant de gérér la database postgresql de dolibarr.
+/*!	    \file htdocs/lib/pgsql.lib.php
+		\brief Classe permettant de gérér la database de dolibarr.
 		\author Fabien Seisen
 		\author Rodolphe Quiedeville.
 		\author	Laurent Destailleur.
@@ -36,7 +36,7 @@
 		Ensemble des fonctions permettant de gérer la database de dolibarr.
 */
 
-/*! \class DoliDb
+/*! 	\class DoliDb
 		\brief Classe permettant de gérér la database de dolibarr
 
 		Ensemble des fonctions permettant de gérer la database de dolibarr
@@ -51,7 +51,7 @@ class DoliDb
 	
 	  
 /*!
-		\brief ouverture d'une connection vers le serveur et/ou une database.
+		\brief      Ouverture d'une connection vers le serveur et/ou une database.
 		\param	type		type de base de données (mysql ou pgsql)
 		\param	host		addresse de la base de données
 		\param	user		nom de l'utilisateur autorisé
@@ -136,7 +136,7 @@ class DoliDb
     }
 
 /*!
-		\brief selectionne une database.
+		\brief      Selectionne une database.
 		\param	database		nom de la database
 		\return	resource
 		\remarks ici postgresql n'a aucune fonction equivalente de mysql_select_db
@@ -155,7 +155,7 @@ class DoliDb
     }
 
 /*!
-		\brief connection vers une database.
+		\brief      Connection vers le serveur
 		\param	host			addresse de la base de données
 		\param	login			nom de l'utilisateur autorisé
 		\param	passwd		mot de passe
@@ -171,7 +171,7 @@ class DoliDb
     }
 
 /*!
-		\brief création d'une database.
+		\brief      Connexion sur une base de donnée
 		\param	database		nom de la database
 		\return	result			resultat 1 pour ok, 0 pour non ok
 */
@@ -186,7 +186,7 @@ class DoliDb
   
 
 /*!
-		\brief copie d'une database.
+		\brief      Copie d'une database.
 		\return	resource
 */
 
@@ -198,7 +198,7 @@ class DoliDb
     }
 
 /*!
-		\brief ouverture d'une connection persistante vers une database.
+		\brief      Ouverture d'une connection vers une database.
 		\param	host			addresse de la base de données
 		\param	login			nom de l'utilisateur autorisé
 		\param	passwd		mot de passe
@@ -213,7 +213,7 @@ class DoliDb
     }
 
 /*!
-		\brief fermeture d'une connection vers une database.
+		\brief      Fermeture d'une connection vers une database.
 		\return	resource
 */
 
@@ -223,7 +223,7 @@ class DoliDb
   	}
 
 /*!
-		\brief debut d'une transaction.
+		\brief      Debut d'une transaction.
 		\param	do
 		\return	string
 */
@@ -241,7 +241,7 @@ class DoliDb
   }
 
 /*!
-		\brief écriture d'une transaction.
+		\brief      Ecriture d'une transaction.
 		\param	do
 		\return	string
 */
@@ -260,7 +260,7 @@ class DoliDb
 
 
 /*!
-		\brief éffacement d'une transaction et retour au ancienne valeurs.
+		\brief      Effacement d'une transaction et retour au ancienne valeurs.
 		\param	do
 		\return	string
 */
@@ -278,19 +278,17 @@ class DoliDb
   }
 
 /*!
-		\brief requete vers une database.
+		\brief      Effectue une requete et renvoi le resultset de réponse de la base
 		\param	query		contenu de la query
 		\param	limit
 		\param	offset
-		\return	resource
+		\return	    resource resultset
 */
 
   function query($query, $limit="", $offset="")
     {
       $query = trim($query);
-			
-      //print "<p>$query</p>\n";
-      
+
 			$this->lastquery=$query;
 
 			$this->results = pg_query($this->db,$query);
@@ -299,7 +297,7 @@ class DoliDb
     }
 
 /*!
-		\brief liste des tables dans une database.
+		\brief      Liste des tables dans une database.
 		\param	database		nom de la database
 		\return	resource
 */
@@ -312,7 +310,7 @@ class DoliDb
 
 	
 /*!
-		\brief renvoie les données de la requete.
+		\brief      Renvoie les données de la requete.
 		\param	nb				contenu de la query
 		\param	fieldname	nom du champ
 		\return	resource
@@ -325,7 +323,7 @@ class DoliDb
 
 		
 /*!
-		\brief désalloue la memoire de la requete.
+		\brief      Libère le dernier resultset utilisé sur cette connexion.
 		\return	resource
 */
 
@@ -335,16 +333,16 @@ class DoliDb
     }
 
 /*!
-		\brief  Renvoie la ligne courante (comme un objet) pour le curseur statement.
-        \param  statement   curseur de la requete voulue
+		\brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
+        \param      resultset   curseur de la requete voulue
 		\return	resource
 */
 
-  function fetch_object($statement=0)
+  function fetch_object($resultset=0)
     {
-        // Si statement n'est pas fourni, on prend le dernier utilisé sur cette connexion
-        if (! is_resource($statement)) { $statement=$this->results; }
-        return pg_fetch_object($statement);
+        // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
+        if (! is_resource($resultset)) { $statement=$this->results; }
+        return pg_fetch_object($resultset);
   	}
 
 /*!
@@ -390,7 +388,7 @@ class DoliDb
     }
 
 /*!
-		\brief renvoie les données dans un tableau.
+		\brief      Renvoie les données dans un tableau.
 		\return	array
 */
 
@@ -400,7 +398,7 @@ class DoliDb
     }
 
 /*!
-		\brief renvoie les données comme un tableau.
+		\brief      Renvoie les données comme un tableau.
 		\return	array
 */
 
@@ -410,7 +408,8 @@ class DoliDb
     }
 
 /*!
-		\brief obtient les données d'un colonne et renvoie les données sous forme d'objet.
+		\brief      Obtient les données d'un colonne et renvoie les données sous forme d'objet.
+        \return     array
 */
 
   function fetch_field()
@@ -420,7 +419,7 @@ class DoliDb
 
 
 /*!
-		\brief renvoie le nombre de lignes dans le resultat de la requete.
+		\brief      Renvoie le nombre de lignes dans le resultat de la requete.
 		\return	int
 */
 
@@ -430,7 +429,7 @@ class DoliDb
     }
 
 /*!
-		\brief renvoie le nombre de champs dans le resultat de la requete.
+		\brief      Renvoie le nombre de champs dans le resultat de la requete.
 		\return	int
 */
 
@@ -441,7 +440,7 @@ class DoliDb
 
 /*!
 		\brief renvoie la derniere requete soumise par la methode query()
-		\return	error_text
+		\return	    lastquery
 */
 
   function lastquery()
@@ -470,7 +469,7 @@ class DoliDb
     }
 
 /*!
-		\brief obtient l'id genéré par le précedent INSERT.
+		\brief      Obtient l'id genéré par le précedent INSERT.
 		\return id
 */
 
@@ -483,7 +482,7 @@ class DoliDb
      }
 
 /*!
-		\brief obtient le nombre de lignes affectées dans la précédente opération.
+		\brief      Obtient le nombre de lignes affectées dans la précédente opération.
 		\return rows
 */
 
@@ -493,8 +492,8 @@ class DoliDb
     }
 
 /*!
-		\brief construit une chaine de connection pear.
-		\return peardsn
+		\brief      Retourne le dsn pear
+		\return     dsn
 */
 
 	function getdsn($db_type,$db_user,$db_pass,$db_host,$dbname)
