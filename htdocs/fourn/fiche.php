@@ -275,7 +275,7 @@ if ( $societe->fetch($socid) )
   
   print '<div class="tabsAction">';
 
-  if ($user->fournisseur->commande->creer)
+  if ($user->rights->fournisseur->commande->creer)
     {
       $langs->load("orders");
       print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("AddOrder").'</a>';
