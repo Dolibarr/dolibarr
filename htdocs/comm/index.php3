@@ -21,9 +21,9 @@
  */
 require("./pre.inc.php3");
 
-llxHeader();
+$user->getrights('propale');
 
-$db = new Db();
+llxHeader();
 
 function valeur($sql) 
 {
