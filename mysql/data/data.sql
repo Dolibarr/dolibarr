@@ -185,15 +185,15 @@ insert into llx_c_chargesociales (id,libelle,deductible) values ( 3, 'GSG/CRDS N
 -- Types action
 --
 delete from llx_c_actioncomm;
-insert into llx_c_actioncomm (id,libelle) values ( 0, '-');
-insert into llx_c_actioncomm (id,libelle) values ( 1, 'Appel Téléphonique');
-insert into llx_c_actioncomm (id,libelle) values ( 2, 'Envoi Fax');
-insert into llx_c_actioncomm (id,libelle) values ( 3, 'Envoi Proposition');
-insert into llx_c_actioncomm (id,libelle) values ( 4, 'Envoi Email');
-insert into llx_c_actioncomm (id,libelle) values ( 5, 'Prendre rendez-vous');
-insert into llx_c_actioncomm (id,libelle) values ( 9, 'Envoi Facture');
-insert into llx_c_actioncomm (id,libelle) values (10, 'Relance effectuée');
-insert into llx_c_actioncomm (id,libelle) values (11, 'Clôture');
+insert into llx_c_actioncomm (id,libelle) values ( 0, 'system', 'all',   '-');
+insert into llx_c_actioncomm (id,libelle) values ( 1, 'system', 'fr_FR', 'Appel Téléphonique');
+insert into llx_c_actioncomm (id,libelle) values ( 2, 'system', 'fr_FR', 'Envoi Fax');
+insert into llx_c_actioncomm (id,libelle) values ( 3, 'system', 'fr_FR', 'Envoi Proposition');
+insert into llx_c_actioncomm (id,libelle) values ( 4, 'system', 'fr_FR', 'Envoi Email');
+insert into llx_c_actioncomm (id,libelle) values ( 5, 'system', 'fr_FR', 'Prendre rendez-vous');
+insert into llx_c_actioncomm (id,libelle) values ( 9, 'system', 'fr_FR', 'Envoi Facture');
+insert into llx_c_actioncomm (id,libelle) values (10, 'system', 'fr_FR', 'Relance effectuée');
+insert into llx_c_actioncomm (id,libelle) values (11, 'system', 'fr_FR', 'Clôture');
 
 --
 -- Types action

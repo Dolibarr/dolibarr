@@ -1,7 +1,7 @@
 --
 --
 --
--- Attention à l'ordre des requetes
+-- Attention à l ordre des requetes
 -- ce fichier doit être chargé sur une version 1.1.0 
 -- sans AUCUNE erreur ni warning
 -- 
@@ -73,6 +73,10 @@ alter table c_effectif       rename llx_c_effectif ;
 alter table c_pays           rename llx_c_pays ;
 alter table c_stcomm         rename llx_c_stcomm ;
 alter table c_typent         rename llx_c_typent ;
+
+alter table llx_c_actioncomm add type varchar(10) not null default 'system' after id;
+alter table llx_c_actioncomm add lang varchar(8) not null default 'all' after type;
+update llx_c_actioncomm set lang='fr_FR' where id > 0;
 
 alter table llx_c_paiement add code varchar(6) after id;
 

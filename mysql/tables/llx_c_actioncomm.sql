@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004           Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- $Id$
 -- $Source$
@@ -23,6 +24,8 @@
 create table llx_c_actioncomm
 (
   id         integer PRIMARY KEY,
-  libelle    varchar(30),
+  type       varchar(10) default 'system' not null,
+  lang       varchar(8) default 'all' not null,
+  libelle    varchar(30) not null,
   todo       tinyint
 )type=innodb;
