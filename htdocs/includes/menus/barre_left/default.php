@@ -20,8 +20,7 @@
  *
  */
 
-/**
-	    \file       htdocs/includes/menus/barre_left/default.php
+/**	    \file       htdocs/includes/menus/barre_left/default.php
 		\brief      Gestionnaire par défaut du menu de gauche
 		\version    $Revision$
 
@@ -32,7 +31,6 @@
         \remarks    Ce qui est définir dans un tel gestionnaire sera alors prioritaire sur
         \remarks    les définitions de menu des fichiers pre.inc.php
 */
-
 
 
 /**     \class      MenuLeft
@@ -48,6 +46,7 @@ class MenuLeft {
     /**
      *    \brief      Constructeur
      *    \param      db      Handler d'accès base de donnée
+     *    \param      menu_array    Tableau des entrée de menu défini dans les fichier pre.inc.php
      */
     function MenuLeft($db,&$menu_array)
     {

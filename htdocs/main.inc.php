@@ -219,38 +219,22 @@ function top_menu($head, $title="", $target="")
  *  \param      form_search     Formulaire de recherche permanant supplémentaire
  */
  
-function left_menu($menu, $help_url='', $form_search='') 
+function left_menu($menu_array, $help_url='', $form_search='') 
 {
   global $user, $conf, $langs;
-
-  // Si un gestionnaire de menu gauche est actif, on l'utilise:
-  // Ce gestionnnaire est libre d'écrasé ou non l'objet $menu qui détermine le menu à afficher.
-  require(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
 
   print '<div class="vmenuplusfiche" width="158">'."\n";
 
   // Colonne de gauche
   print "\n<!-- Debut left vertical menu -->\n";
   print '<div class="vmenu">'."\n";
-  
-  for ($i = 0 ; $i < sizeof($menu) ; $i++) 
-    {
-      if (($i%2==0))
-	{
-	  print '<div class="blockvmenuimpair">'."\n";
-	}
-      else
-	{
-	  print '<div class="blockvmenupair">'."\n";
-	}
-      print '<a class="vmenu" href="'.$menu[$i][0].'">'.$menu[$i][1].'</a><br>';
 
-      for ($j = 2 ; $j < sizeof($menu[$i]) - 1 ; $j = $j +2) 
-	{
-	  print '<a class="vsmenu" href="'.$menu[$i][$j].'">'.$menu[$i][$j+1].'</a><br>';
-	}
-      print '</div>';
-    }
+  
+  // Autres entrées du menu par le gestionnaire
+  require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
+  $menu=new MenuLeft($db,$menu_array);
+  $menu->showmenu();
+  
 
   // Affichage des zones de recherche permanantes
   $addzonerecherche=0;
