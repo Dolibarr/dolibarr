@@ -233,12 +233,12 @@ if ($_GET["action"] == 'create')
       print '<input type="hidden" name="actionid" value="5">';
 
       // Societe, contact
-	  print '<tr><td width="10%">'.$langs->trans("ActionOnCompany").'</td><td width="40%">';
+      print '<tr><td width="10%">'.$langs->trans("ActionOnCompany").'</td><td width="40%">';
       if ($_GET["socid"])
 	{
           $societe = new Societe($db);
-          $nomsoc=$societe->get_nom($_GET["socid"]);
-          print '<a href="../fiche.php?socid='.$_GET["socid"].'">'.$nomsoc.'</a>';
+          $societe->fetch($_GET["socid"]);
+	  print $societe->nom_url;
           print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
 	}
       else
@@ -278,11 +278,34 @@ if ($_GET["action"] == 'create')
    *
    */   
   else 
-    {      
+    { 
+      /*
+       * Click to dial
+       *
+       */
+      if (defined("MAIN_MODULE_CLICKTODIAL") && MAIN_MODULE_CLICKTODIAL==1)
+	{
+	  $user->fetch_clicktodial();
+
+	  if ($_GET["call"] && $user->clicktodial_enabled == 1)
+	    {
+
+	      print '<Script language=javascript>'."\n";
+
+	      $url = CLICKTODIAL_URL ."?login=".$user->clicktodial_login."&password=".$user->clicktodial_password."&caller=".$user->clicktodial_poste ."&called=".$_GET["call"];
+	      
+	      print 'window.open("'.$url.'","clicktodial", "toolbar=no,location=0,directories=0,status=0,menubar=no,scrollbars=1,resizable=1,copyhistory=0,width=400,height=300,top=10,left=10");';
+	      print "\n</script>\n";
+	    }
+	}
+      /*
+       *
+       *
+       */
       print_titre ($langs->trans("AddAction"));
       print "<br>";
       
-	  print '<table class="border" width="100%">';
+      print '<table class="border" width="100%">';
 
       // Type d'action actifs
       print '<tr><td width="10%">'.$langs->trans("Action").'</td><td>';
@@ -303,10 +326,10 @@ if ($_GET["action"] == 'create')
       print '<tr><td width="10%">'.$langs->trans("ActionOnCompany").'</td><td width="40%">';
       if ($_GET["socid"])
 	{
-	  $societe = new Societe($db);
-	  $nomsoc=$societe->get_nom($_GET["socid"]);
-	  print '<a href="../fiche.php?socid='.$_GET["socid"].'">'.$nomsoc.'</a>';
-	  print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
+          $societe = new Societe($db);
+          $societe->fetch($_GET["socid"]);
+	  print $societe->nom_url;
+          print '<input type="hidden" name="socid" value="'.$_GET["socid"].'">';
 	}
       else 
 	{  
