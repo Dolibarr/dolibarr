@@ -59,7 +59,7 @@ if ($conf->don->enabled)
 	  require("erreur.php");
 	}     
     }
-  elseif ($HTTP_POST_VARS["action"] == 'valid')
+  elseif ($HTTP_POST_VARS["action"] == 'valid' && $HTTP_POST_VARS["submit"] == 'Valider')
     {
       
       if ($don->check($conf->don->minimum))

@@ -44,50 +44,80 @@
 	  </tr>
 	  
 	  <tr id="prenom">
-	    <input type="text" name="prenom" size="30" />
+	    <script language="php">
+	      print '&lt;input type="text" name="prenom" size="30" value="'.$HTTP_POST_VARS["prenom"].'"&gt;';
+	    </script>
 	  </tr>
 
 	  <tr id="nom">
-	    <input type="text" name="nom" size="40" />
+	    <script language="php">
+	      print '&lt;input type="text" name="nom" size="40" value="'.$HTTP_POST_VARS["nom"].'"&gt;';
+	    </script>
 	  </tr>
 	  
 	  <tr id="societe">
-	    <input type="text" name="societe" size="40" />
+	    <script language="php">
+	      print '&lt;input type="text" name="societe" size="40" value="'.$HTTP_POST_VARS["societe"].'"&gt;';
+	    </script>
 	  </tr>
 
 	  <tr id="adresse">
-	    <textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea>
+	      <script language="php">
+	      print '&lt;textarea name="adresse" wrap="soft" cols="40" rows="3"&gt;'.$HTTP_POST_VARS["adresse"].'&lt;/textarea&gt;';
+	      </script>
 	  </tr>
 
 	  <tr id="cp">
-	    <input type="text" name="cp" size="8" />
+	    <script language="php">
+	      print '&lt;input type="text" name="cp" size="8" value="'.$HTTP_POST_VARS["cp"].'"&gt;';
+	    </script>
 	  </tr>
 
 	  <tr id="ville">
-	    <input type="text" name="ville" size="30" />
+	    <script language="php">
+	      print '&lt;input type="text" name="ville" size="30" value="'.$HTTP_POST_VARS["ville"].'"&gt;';
+	    </script>
 	  </tr>
 
 	  <tr id="pays">
-	    <input type="text" name="pays" size="25" value="France"/>
+	    <script language="php">
+	      print '&lt;input type="text" name="pays" size="40" value="'.$HTTP_POST_VARS["pays"].'"&gt;';
+	    </script>
 	  </tr>
 
 	  <tr id="email">
-	      <input type="text" name="email" size="50" />
+	    <script language="php">
+	      print '&lt;input type="text" name="email" size="50" value="'.$HTTP_POST_VARS["email"].'"&gt;';
+	    </script>
 	  </tr>
 
 	  <tr id="montant">
-	    <input type="text" name="montant" size="10" />
+	    <script language="php">
+	      print '&lt;input type="text" name="montant" size="10" value="'.$HTTP_POST_VARS["montant"].'"&gt;';
+	    </script>
 	  </tr>
 
 	  <tr id="public">
 	    <select name="public">
-	      <option value="1">oui/yes</option>
-	      <option value="0">non/no</option>
+	      <script language="php">
+		if ($HTTP_POST_VARS["public"] == 0)
+		{
+		print '&lt;option value="1"&gt;oui/yes&lt;/option&gt;';
+		print '&lt;option value="0" SELECTED&gt;non/no&lt;/option&gt;';
+		}
+		else
+		{
+		print '&lt;option value="1" SELECTED&gt;oui/yes&lt;/option&gt;';
+		print '&lt;option value="0"&gt;non/no&lt;/option&gt;';
+		}
+	    </script>
 	    </select>
 	  </tr>
 
 	  <tr id="commentaire">
-	    <textarea name="commentaire" wrap="soft" cols="40" rows="6"></textarea>
+	    <script language="php">
+	      print '&lt;textarea name="commentaire" wrap="soft" cols="40" rows="6"&gt;'.$HTTP_POST_VARS["commentaire"].'&lt;/textarea&gt;';
+	    </script>
 	  </tr>
 
 	  <tr>
