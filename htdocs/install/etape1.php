@@ -126,6 +126,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 		  $dir[3] = $HTTP_POST_VARS["main_dir"]."/document/ficheinter";
 		  $dir[4] = $HTTP_POST_VARS["main_dir"]."/document/produit";
 		  $dir[5] = $HTTP_POST_VARS["main_dir"]."/document/images";
+		  $dir[6] = $HTTP_POST_VARS["main_dir"]."/document/rapport";
 		  
 		  for ($i = 0 ; $i < sizeof($dir) ; $i++)
 		    {
