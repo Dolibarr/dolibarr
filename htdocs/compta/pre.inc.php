@@ -66,9 +66,12 @@ function llxHeader($head = "", $title="", $help_url='')
       $langs->load("bills");
       $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
       $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php",$langs->trans("Payments"));
-      if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR) {
-        $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
-      }
+
+      if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR)
+	{
+	  $menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
+	}
+
       $menu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"));
     }
    
@@ -92,7 +95,7 @@ function llxHeader($head = "", $title="", $help_url='')
     
   if ($conf->compta->enabled)
     {
-    $menu->add(DOL_URL_ROOT."/compta/charges/index.php","Charges");
+      $menu->add(DOL_URL_ROOT."/compta/charges/index.php","Charges");
     }
 
 
@@ -114,7 +117,6 @@ function llxHeader($head = "", $title="", $help_url='')
       $menu->add(DOL_URL_ROOT."/compta/prelevement/","Bon prélèv.");
     }
 
-
   $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));
 
   if ($user->rights->compta->ventilation->param)
@@ -126,6 +128,9 @@ function llxHeader($head = "", $title="", $help_url='')
       $menu->add(DOL_URL_ROOT."/",$langs->trans("Home"));
     }
 
+  /*
+   *
+   */
   left_menu($menu->liste, $help_url);
 }
 
