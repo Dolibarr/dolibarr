@@ -364,12 +364,12 @@ if ($socid > 0)
        *      Listes des actions effectuees
        *
        */
-	      $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-	      $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-	      $sql .= " WHERE a.fk_soc = $societe->id ";
-	      $sql .= " AND u.rowid = a.fk_user_author";
-	      $sql .= " AND c.id=a.fk_action AND a.percent = 100";
-	      $sql .= " ORDER BY a.datea DESC, a.id DESC";
+      $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid, a.note ";
+      $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+      $sql .= " WHERE a.fk_soc = $societe->id ";
+      $sql .= " AND u.rowid = a.fk_user_author";
+      $sql .= " AND c.id=a.fk_action AND a.percent = 100";
+      $sql .= " ORDER BY a.datea DESC, a.id DESC";
       if ( $db->query($sql) )
 	{
 
@@ -379,16 +379,12 @@ if ($socid > 0)
 	  if ($num)
 	    {
 
-	      print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
+	      print '<table width="100%" cellspacing="0" border="0" cellpadding="2">';
 	      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$socid.'">Actions effectuées</a></td></tr>';
 	      print '<tr>';
 	      print '<td valign="top">';
-	      
-
-	      
-	      print '<table width="100%" cellspacing="0" border="0" cellpadding="2">';
-	      
-	      
+	      	      
+	      print '<table width="100%" cellspacing="0" border="0" cellpadding="1">';
 	      
 	      $oldyear='';
 	      $oldmonth='';
@@ -453,6 +449,15 @@ if ($socid > 0)
 		   */
 		  print '<td width="20%"><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
 		  print "</tr>\n";
+
+		  if ($i < 2 && strlen($obj->note))
+		    {
+		      print "<tr $bc[$var]>";
+		      print '<td colspan="5">&nbsp;</td><td colspan="3">';
+		      print stripslashes(nl2br($obj->note));
+		      print '</td></tr>';
+		    }
+
 		  $i++;
 		}
 	      print "</table>";
