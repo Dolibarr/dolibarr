@@ -105,9 +105,9 @@ if ($conf->facture->enabled)
 	{
 	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
 	  print '<tr class="liste_titre">';
-	  print '<td colspan="2">Factures brouillons</td></tr>';
+	  print '<td colspan="2">Factures brouillons ('.$num.')</td></tr>';
 	  $var = True;
-	  while ($i < $num)
+	  while ($i < $num && $i < 20)
 	    {
 	      $obj = $db->fetch_object( $i);
 	      $var=!$var;
@@ -274,10 +274,10 @@ if ($conf->facture->enabled)
       if ($num)
 	{
 	  print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-	  print '<tr class="liste_titre"><td colspan="2">Factures clients impayées</td><td align="right">Montant TTC</td><td align="right">Reçu</td></tr>';
+	  print '<tr class="liste_titre"><td colspan="2">Factures clients impayées ('.$num.')</td><td align="right">Montant TTC</td><td align="right">Reçu</td></tr>';
 	  $var = True;
 	  $total = $totalam = 0;
-	  while ($i < $num)
+	  while ($i < $num && $i < 20)
 	    {
 	      $obj = $db->fetch_object( $i);
 	      $var=!$var;
