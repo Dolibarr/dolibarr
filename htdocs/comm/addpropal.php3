@@ -19,7 +19,6 @@
  * $Source$
  *
  */
-
 require("./pre.inc.php3");
 require("./propal_model_pdf.class.php3");
 
@@ -36,11 +35,9 @@ if ($result)
 }
 
 
-
 llxHeader();
 
 print_titre("Nouvelle proposition commerciale");
-
 
 /*
  *
