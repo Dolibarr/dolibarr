@@ -137,7 +137,7 @@ if ($_POST["action"] == "set")
     $dir[5] = "$main_data_dir/rapport";
     $dir[6] = "$main_data_dir/images";
     $dir[7] = "$main_data_dir/rsscache";
-		$dir[8] = "$main_data_dir/logo";
+    $dir[8] = "$main_data_dir/logo";
 
 		if (! is_dir($main_dir))
 		{

@@ -38,12 +38,12 @@ if($dolibarr_main_db_type == "mysql")
 }
 else
 {
-      require ($dolibarr_main_document_root . "/lib/pgsql.lib.php");
-		  require ($dolibarr_main_document_root . "/lib/grant.postgres.php");
+      require ($dolibarr_main_document_root . "/lib/pgsql.lib.php";
+      require ($dolibarr_main_document_root . "/lib/grant.postgres.php");
 			$choix=2;
 }
 			
-require ($dolibarr_main_document_root . "/conf/conf.class.php");// ne sert plus
+require ($dolibarr_main_document_root . "/conf/conf.class.php");
 
 if ($_POST["action"] == "set")
 {
