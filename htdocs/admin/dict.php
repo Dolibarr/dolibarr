@@ -30,28 +30,35 @@ $actl[1] = "Désactiver";
 $active = 1;
 
 // Mettre ici tous les caractéristiques des dictionnaires editables
+
+// Nom des tables des dictionnaires
 $tabid[1] = "llx_c_forme_juridique";
 $tabid[2] = "llx_c_departements";
 $tabid[3] = "llx_c_regions";
 $tabid[4] = "llx_c_pays";
 $tabid[5] = "llx_c_civilite";
 
+// Libellé des dictionnaires
 $tabnom[1] = "Formes juridiques";
 $tabnom[2] = "Départements/Provinces/Cantons";
 $tabnom[3] = "Régions";
 $tabnom[4] = "Pays";
 $tabnom[5] = "Titres de civilité";
 
-$tabsql[1] = "SELECT f.code, f.libelle, p.libelle as pays, f.active FROM llx_c_forme_juridique as f, llx_c_pays as p WHERE f.fk_pays=p.rowid ORDER BY p.rowid, f.active DESC, code ASC";
-$tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, p.libelle as pays, d.active FROM llx_c_departements as d, llx_c_regions as r, llx_c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid ORDER BY p.rowid, d.active DESC, code ASC";
-$tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, p.libelle as pays, r.active FROM llx_c_regions as r, llx_c_pays as p WHERE r.fk_pays=p.rowid ORDER BY p.rowid, r.active DESC, code ASC";
-$tabsql[4] = "SELECT rowid, code, libelle, active FROM llx_c_pays ORDER BY active DESC, code ASC";
+// Requete pour extraction des données des dictionnaires
+$tabsql[1] = "SELECT f.code, f.libelle, p.libelle as pays, f.active FROM llx_c_forme_juridique as f, llx_c_pays as p WHERE f.fk_pays=p.rowid";
+$tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, p.libelle as pays, d.active FROM llx_c_departements as d, llx_c_regions as r, llx_c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
+$tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, p.libelle as pays, r.active FROM llx_c_regions as r, llx_c_pays as p WHERE r.fk_pays=p.rowid";
+$tabsql[4] = "SELECT rowid, code, libelle, active FROM llx_c_pays";
+$tabsql[5] = "SELECT c.rowid AS rowid, c.civilite AS libelle, c.active FROM llx_c_civilite AS c, llx_c_pays AS p WHERE c.fk_pays = p.rowid";
 
-$tabsql[5] = "SELECT c.rowid AS rowid, c.civilite AS libelle, c.active
-FROM llx_c_civilite AS c, llx_c_pays AS p
-WHERE c.fk_pays = p.rowid";
-
-
+// Tri par defaut
+$tabsqlsort[1]="p.rowid, code ASC";
+$tabsqlsort[2]="p.rowid, code ASC";
+$tabsqlsort[3]="p.rowid, code ASC";
+$tabsqlsort[4]="code ASC";
+$tabsqlsort[5]="libelle ASC";
+ 
 // Champs à afficher
 $tabfield[1] = "code,libelle,pays";
 $tabfield[2] = "code,libelle,pays";
@@ -59,33 +66,35 @@ $tabfield[3] = "code,libelle,pays";
 $tabfield[4] = "code,libelle";
 $tabfield[5] = "libelle";
 
+
+
 if (! $user->admin)
-  accessforbidden();
+accessforbidden();
 
 
 if ($_GET["action"] == 'delete')
 {
-  if ($_GET["rowid"] >0) {
-    $sql = "UPDATE ".$tabid[$_GET["id"]]." SET active = 0 WHERE rowid=".$_GET["rowid"];
-  }
-  elseif ($_GET["code"] >0) {
-    $sql = "UPDATE ".$tabid[$_GET["id"]]." SET active = 0 WHERE code=".$_GET["code"];
-  }
-  
-  $result = $db->query($sql);
-  if (!$result)
-{
-  print $db->error();
-}
+    if ($_GET["rowid"] >0) {
+        $sql = "UPDATE ".$tabid[$_GET["id"]]." SET active = 0 WHERE rowid=".$_GET["rowid"];
+    }
+    elseif ($_GET["code"] >0) {
+        $sql = "UPDATE ".$tabid[$_GET["id"]]." SET active = 0 WHERE code=".$_GET["code"];
+    }
+
+    $result = $db->query($sql);
+    if (!$result)
+    {
+        print $db->error();
+    }
 }
 if ($_GET["action"] == 'add')
 {
-  $sql = "UPDATE ".$tabid[$_GET["id"]]." SET active = 1 WHERE rowid=".$_GET["rowid"];
-  
-  $result = $db->query($sql);
-  if (!$result)
+    $sql = "UPDATE ".$tabid[$_GET["id"]]." SET active = 1 WHERE rowid=".$_GET["rowid"];
+
+    $result = $db->query($sql);
+    if (!$result)
     {
-  print $db->error();
+        print $db->error();
     }
 }
 
@@ -95,68 +104,113 @@ llxHeader();
 
 if ($_GET["id"])
 {
-    print_titre("Configuration des dictionnaires de données : ".$tabnom[$_GET["id"]]);
+    print_titre("Configuration des dictionnaires de données");
     print '<br>';
 
-    // Affiche table des valeurs
-  $sql=$tabsql[$_GET["id"]];
-  if ($db->query($sql))
-    {
-    $num = $db->num_rows();
-    $i = 0;
-    $var=True;
-    if ($num)
-    {
-	  print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-	  print '<tr class="liste_titre">';
-
-	  $fieldlist=split(',',$tabfield[$_GET["id"]]);
-      foreach ($fieldlist as $field => $value) {
-	    print '<td>'.ucfirst($fieldlist[$field]).'</td>';
-	  }
-
-	  print '<td>Actif</td>';
-	  print '<td>Inactif</td>';
-	  print '</tr>';      
-	  while ($i < $num)
-	    {
-	      $obj = $db->fetch_object($i);
-	      $var=!$var;
-	      
-	      print "<tr $bc[$var] class=\"value\">";
-
-          foreach ($fieldlist as $field => $value) {
-	        print '<td>'.$obj->$fieldlist[$field].'</td>';
-	      }
-
-	      if ($obj->active) {
-	        print '<td>';
-	        print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-	        print "</td>";
-          }
-          else print '<td>&nbsp;</td>';
-  	      if (! $obj->active) {
-    	      print '<td>';
-    	      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
-    	      print "</td>";
-          }
-          else print '<td>&nbsp;</td>';
-          	      
-	      print "</tr>\n";
-	      $i++;
-	    }
-	  print '</table>';
-	}
+    // Complète requete recherche valeurs avec critere de tri
+    $sql=$tabsql[$_GET["id"]];
+    if ($_GET["sortfield"]) {
+        $sql .= " ORDER BY ".$_GET["sortfield"];
+        if ($_GET["sortorder"]) {
+            $sql.=" ".$_GET["sortorder"];
+        }
+        $sql.=", ";
     }
-  else {
-    print "Erreur : $sql : ".$db->error(); 
-  }
+    else {
+        $sql.=" ORDER BY ";   
+    }
+    $sql.=$tabsqlsort[$_GET["id"]];
+    
+    $fieldlist=split(',',$tabfield[$_GET["id"]]);
+    print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+
+    // Ligne d'ajout
+    if ($tabid[$_GET["id"]]) {
+        print_titre($tabnom[$_GET["id"]]);
+        $var=False;
+        $fieldlist=split(',',$tabfield[$_GET["id"]]);
+        print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+
+        print '<tr class="liste_titre">';
+        foreach ($fieldlist as $field => $value) {
+            print '<td>';
+            print ucfirst($fieldlist[$field]);
+            print '</td>';
+        }
+        print '<td>&nbsp;</td>';
+        print '</td>';
+
+        print "<tr $bc[$var] class=\"value\">";
+        foreach ($fieldlist as $field => $value) {
+            if ($fieldlist[$field] == 'pays') {
+                $html = new Form($db);
+                print '<td>';
+                $html->select_pays();
+                print '</td>';
+            }
+            else {
+                print '<td><input type="text" value="" name="'.$fieldlist[$field].'"></td>';
+            }
+        }
+        print '<td colspan=2><input type="submit" name="Ajouter" value="Ajouter"></td>';
+        print "</tr>";
+        print '<tr><td colspan="'.(count($fieldlist)+2).'"></td></tr>';
+    }
+
+    // Affiche table des valeurs
+    if ($db->query($sql))
+    {
+        $num = $db->num_rows();
+        $i = 0;
+        $var=False;
+        if ($num)
+        {
+            print '<tr class="liste_titre">';
+            foreach ($fieldlist as $field => $value) {
+                print '<td>';
+                print_liste_field_titre(ucfirst($fieldlist[$field]),$PHP_SELF,$fieldlist[$field],"&id=".$_GET["id"]);
+                print '</td>';
+            }
+            print '<td>';
+            print_liste_field_titre("Activer/Désactiver",$PHP_SELF,"active","&id=".$_GET["id"]);
+            print '</td>';
+            print '</tr>';
+
+
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($i);
+                $var=!$var;
+
+                print "<tr $bc[$var] class=\"value\">";
+
+                foreach ($fieldlist as $field => $value) {
+                    print '<td>'.$obj->$fieldlist[$field].'</td>';
+                }
+                print '<td>';
+                if ($obj->code) {
+                    print '<a href="'.$PHP_SELF.'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$obj->rowid.'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+                } else {
+                    print '<a href="'.$PHP_SELF.'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$obj->rowid.'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action='.$acts[$obj->active].'">'.$actl[$obj->active].'</a>';
+                }
+                print "</td>";
+
+                print "</tr>\n";
+                $i++;
+            }
+        }
+    }
+    else {
+        print "Erreur : $sql : ".$db->error();
+    }
+
+    print '</table>';
 }
 else
 {
     print_titre("Configuration des dictionnaires de données");
     print '<br>';
-    
+
     foreach ($tabid as $i => $value) {
         print '<a href="dict.php?id='.$i.'">'.$tabnom[$i].'</a> (Table '.$tabid[$i].')<br>';
     }
