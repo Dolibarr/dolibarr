@@ -20,12 +20,12 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
-require("../../contact.class.php3");
-require("../../lib/webcal.class.php3");
-require("../../cactioncomm.class.php3");
-require("../../actioncomm.class.php3");
+require("../../contact.class.php");
+require("../../lib/webcal.class.php");
+require("../../cactioncomm.class.php");
+require("../../actioncomm.class.php");
 
 /*
  * Sécurité accés client
@@ -204,9 +204,9 @@ if ( $db->query($sql) )
 	
 	print '<TD width="20%">';
 	
-	print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php3?socid='.$obj->socidp.'">'.$obj->societe.'</A></TD>';
+	print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socidp.'">'.$obj->societe.'</A></TD>';
 	
-	print '<TD width="30%"><a href="fiche.php3?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
+	print '<TD width="30%"><a href="fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
 	/*
 	 * Contact
 	 */
@@ -215,7 +215,7 @@ if ( $db->query($sql) )
 	  {
 	    $cont = new Contact($db);
 	    $cont->fetch($obj->fk_contact);
-	    print '<a href="'.DOL_URL_ROOT.'/comm/people.php3?socid='.$obj->socidp.'&contactid='.$cont->id.'">'.$cont->fullname.'</a>';
+	    print '<a href="'.DOL_URL_ROOT.'/comm/people.php?socid='.$obj->socidp.'&contactid='.$cont->id.'">'.$cont->fullname.'</a>';
 	  }
 	else
 	  {

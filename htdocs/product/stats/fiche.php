@@ -20,7 +20,7 @@
  *
  */
 require("./pre.inc.php");
-require("../../propal.class.php3");
+require("../../propal.class.php");
 require("../../graph.class.php");
 
 llxHeader();
@@ -67,7 +67,7 @@ if ($id)
       
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
       print "<tr>";
-      print '<td width="20%">Référence</td><td width="40%"><a href="../fiche.php3?id='.$product->id.'">'.$product->ref.'</a></td>';
+      print '<td width="20%">Référence</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
       print '<td>Statistiques</td></tr>';
       print "<td>Libellé</td><td>$product->label</td>";
       print '<td valign="top" rowspan="2">';

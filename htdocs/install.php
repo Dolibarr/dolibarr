@@ -103,7 +103,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 	}
 
       print '<tr><td colspan="2">test de connexion à la base de données</td></tr>';
-      require ($dolibarr_main_document_root . "/lib/mysql.lib.php3");
+      require ($dolibarr_main_document_root . "/lib/mysql.lib.php");
       require ($dolibarr_main_document_root . "/conf/conf.class.php");
       $conf = new Conf();
       $conf->db->host = $dolibarr_main_db_host;

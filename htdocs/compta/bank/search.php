@@ -21,8 +21,8 @@
  *
  *******************************************************************************/
 
-require("./pre.inc.php3");
-require("./bank.lib.php3");
+require("./pre.inc.php");
+require("./bank.lib.php");
 llxHeader();
 
 if ($vline) {
@@ -44,7 +44,7 @@ print "<td align=\"right\">Compte</td>";
 print "</TR>\n";
 ?>
 
-<form method="post" action="search.php3">
+<form method="post" action="search.php">
 <tr>
 <td></td>
 <td>

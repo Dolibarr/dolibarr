@@ -190,7 +190,7 @@ class Product
 	  $this->duration_value = substr($result["duration"],0,strlen($result["duration"])-1);
 	  $this->duration_unit  = substr($result["duration"],-1);
 
-	  $this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php3?id='.$this->id.'">'.$this->label.'</a>';
+	  $this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->label.'</a>';
 
 	  $this->db->free();
 	  return 1;

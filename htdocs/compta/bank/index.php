@@ -19,10 +19,10 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-require("./bank.lib.php3");
-require("../../tva.class.php3");
-require("../../chargesociales.class.php3");
+require("./pre.inc.php");
+require("./bank.lib.php");
+require("../../tva.class.php");
+require("../../chargesociales.class.php");
 
 llxHeader();
 
@@ -61,7 +61,7 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++)
       $solde = $acc->solde();
   
       print "<tr><td>";
-      print '<a href="account.php3?account='.$acc->id.'">'.$acc->label.'</a>';
+      print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
     
       print "</td><td>$acc->bank</td><td>$acc->number</td>";
     
@@ -119,7 +119,7 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
     $solde = $acc->solde();
   
     print "<tr><td>";
-    print '<a href="account.php3?account='.$acc->id.'">'.$acc->label.'</a>';
+    print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
     
     print "</td><td>$acc->bank</td><td>$acc->number</td>";
     

@@ -19,9 +19,9 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-require("../../tva.class.php3");
-require("../../chargesociales.class.php3");
+require("./pre.inc.php");
+require("../../tva.class.php");
+require("../../chargesociales.class.php");
 /*
  *
  */
@@ -64,7 +64,7 @@ if ($result) {
       $var=!$var;
             
       print "<TR $bc[$var]><td>&nbsp</td>";
-      print "<td>Factures <a href=\"/compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a> $objp->nom</TD>\n";
+      print "<td>Factures <a href=\"/compta/facture.php?facid=$objp->facid\">$objp->facnumber</a> $objp->nom</TD>\n";
       
       print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
       

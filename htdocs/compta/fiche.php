@@ -19,11 +19,11 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-require("../contact.class.php3");
-require("../lib/webcal.class.php3");
-require("../cactioncomm.class.php3");
-require("../actioncomm.class.php3");
+require("./pre.inc.php");
+require("../contact.class.php");
+require("../lib/webcal.class.php");
+require("../cactioncomm.class.php");
+require("../actioncomm.class.php");
 
 /*
  * Sécurité accés client
@@ -43,7 +43,7 @@ llxHeader();
 
 if ($action=='add_action') {
   /*
-   * Vient de actioncomm.php3
+   * Vient de actioncomm.php
    *
    */
   $actioncomm = new ActionComm($db);
@@ -187,12 +187,12 @@ if ($socid > 0)
 
     if ($user->societe_id == 0)
       {
-	print '<td align="center"><a href="../comm/fiche.php3?socid='.$objsoc->idp.'">Commercial</a></td>';
+	print '<td align="center"><a href="../comm/fiche.php?socid='.$objsoc->idp.'">Commercial</a></td>';
 	print "<td align=\"center\"><a href=\"../comm/docsoc.php?socid=$objsoc->idp\">Documents</a></td>";
 	print "<td align=\"center\"><a href=\"index.php?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
 	if ($user->rights->facture->creer)
-	  print "<td>[<a href=\"facture.php3?action=create&socidp=$objsoc->idp\">".translate("Facture")."</a>]</td>";
-	print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
+	  print "<td>[<a href=\"facture.php?action=create&socidp=$objsoc->idp\">".translate("Facture")."</a>]</td>";
+	print "<td><a href=\"socnote.php?socid=$objsoc->idp\">Notes</a></td>";
 	print "<td align=\"center\">[<a href=\"deplacement/fiche.php?socid=$objsoc->idp&action=create\">Déplacement</a>]</td>";
       }
     print "</tr></table>";
@@ -245,7 +245,7 @@ if ($socid > 0)
 	    if ($num > 0)
 	      {
 		print "<tr $bc[$var]>";
-		print "<td colspan=\"4\"><a href=\"facture.php3?socidp=$objsoc->idp\">liste des factures ($num)</td></tr>";
+		print "<td colspan=\"4\"><a href=\"facture.php?socidp=$objsoc->idp\">liste des factures ($num)</td></tr>";
 	      }
 	    
 	    while ($i < $num && $i < 5)
@@ -253,7 +253,7 @@ if ($socid > 0)
 		$objp = $db->fetch_object( $i);
 		$var=!$var;
 		print "<TR $bc[$var]>";
-		print "<TD><a href=\"../compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
+		print "<TD><a href=\"../compta/facture.php?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
 		if ($objp->df > 0 )
 		  {
 		    print "<TD align=\"right\">".strftime("%d %B %Y",$objp->df)."</TD>\n";
@@ -344,7 +344,7 @@ if ($socid > 0)
       print '<tr class="liste_titre"><td><b>Pr&eacute;nom Nom</b></td>';
       print '<td><b>Poste</b></td><td><b>T&eacute;l</b></td>';
       print "<td><b>Fax</b></td><td><b>Email</b></td>";
-      print "<td><a href=\"../comm/people.php3?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
+      print "<td><a href=\"../comm/people.php?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
     
       $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM llx_socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
       $result = $db->query($sql);
@@ -358,9 +358,9 @@ if ($socid > 0)
 	  print "<tr $bc[$var]>";
 
 	  print '<td>';
-	  //print '<a href="action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">';
+	  //print '<a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">';
 	  //print '<img border="0" src="/theme/'.$conf->theme.'/img/filenew.png"></a>&nbsp;';
-	  print '<a href="../comm/action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;</td>';
+	  print '<a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;</td>';
 	  
 	  if ($obj->note)
 	    {
@@ -368,10 +368,10 @@ if ($socid > 0)
 	    }
 	  print "</td>";
 	  print "<td>$obj->poste&nbsp;</td>";
-	  print '<td><a href="../comm/action/fiche.php3?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
-	  print '<td><a href="../comm/action/fiche.php3?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
-	  print '<td><a href="../comm/action/fiche.php3?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
-	  print "<td><a href=\"../comm/people.php3?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
+	  print '<td><a href="../comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+	  print '<td><a href="../comm/action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
+	  print '<td><a href="../comm/action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
+	  print "<td><a href=\"../comm/people.php?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
 	  print "</tr>\n";
 	  $i++;
 	  $tag = !$tag;
@@ -427,7 +427,7 @@ if ($socid > 0)
 	  print '<td width="10%">&nbsp;</td>';
 
 	  if ($obj->propalrowid) {
-	    print '<td width="40%"><a href="propal.php3?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+	    print '<td width="40%"><a href="propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
 	  } else {
 	    print '<td width="40%">'.$obj->libelle.'</td>';
 	  }
@@ -438,13 +438,13 @@ if ($socid > 0)
 	  if ($obj->fk_contact) {
 	    $contact = new Contact($db);
 	    $contact->fetch($obj->fk_contact);
-	    print '<td width="40%"><a href="people.php3?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+	    print '<td width="40%"><a href="people.php?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
 	  } else {
 	    print '<td width="40%">&nbsp;</td>';
 	  }
 	  /*
 	   */
-	  print '<td width="20%"><a href="../user.php3">'.$obj->code.'</a></td>';
+	  print '<td width="20%"><a href="../user.php">'.$obj->code.'</a></td>';
 	  print "</tr>\n";
 	  $i++;
 	}

@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-require("../main.inc.php3");
+require("../main.inc.php");
 
 function llxHeader($head = "", $urlp = "")
 {
@@ -37,7 +37,7 @@ function llxHeader($head = "", $urlp = "")
 
   $menu->add(DOL_URL_ROOT."/service/index.php", "Services");
 
-  $menu->add_submenu(DOL_URL_ROOT."/service/fiche.php3?action=create", "Nouveau");
+  $menu->add_submenu(DOL_URL_ROOT."/service/fiche.php?action=create", "Nouveau");
 
   left_menu($menu->liste);
 }

@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 
 /*
@@ -59,7 +59,7 @@ if ($socid > 0) {
 
   print '<table border="1" width="100%" cellspacing="0" cellpadding="3">';
   print "<tr><td>";
-  print "<form method=\"post\" action=\"fiche.php3?socid=$soc->id\">";
+  print "<form method=\"post\" action=\"fiche.php?socid=$soc->id\">";
   print "<input type=\"hidden\" name=\"action\" value=\"note\">";
   print "<textarea name=\"note\" cols=\"60\" rows=\"10\">$soc->note</textarea><br>";
   print "<input type=\"submit\">";

@@ -46,11 +46,11 @@ if ($user->rights->propale->lire)
 	  
 	  $info_box_contents[$i][0] = array('align' => 'left',
 					    'text' => $objp->ref,
-					    'url' => DOL_URL_ROOT."/comm/propal.php3?propalid=".$objp->rowid);
+					    'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
 	  
 	  $info_box_contents[$i][1] = array('align' => 'center',
 					    'text' => $objp->nom,
-					    'url' => DOL_URL_ROOT."/comm/fiche.php3?socid=".$objp->idp);
+					    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
 	  $i++;
 	}
     } 

@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 require("../paiement.class.php");
 require("./bank/account.class.php");
 
@@ -58,7 +58,7 @@ if ($action == 'create')
 	  $total = $obj->total;
 
 	  print_titre("Emettre un paiement");
-	  print '<form action="facture.php3?id='.$facid.'" method="post">';
+	  print '<form action="facture.php?id='.$facid.'" method="post">';
 	  print '<input type="hidden" name="action" value="add_paiement">';
 	  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 	  
@@ -191,7 +191,7 @@ if ($action == '') {
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
 	  print "<TR $bc[$var]>";
-	  print "<TD><a href=\"facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
+	  print "<TD><a href=\"facture.php?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
 	  print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
 	  print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
 	  print '<TD align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';	

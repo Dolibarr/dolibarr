@@ -19,8 +19,8 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-require("../../tva.class.php3");
+require("./pre.inc.php");
+require("../../tva.class.php");
 
 /*
  *

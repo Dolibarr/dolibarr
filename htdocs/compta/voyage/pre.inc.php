@@ -19,7 +19,7 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  */
-require("../../main.inc.php3");
+require("../../main.inc.php");
 
 function llxHeader($head = "") {
   global $user, $conf;
@@ -36,11 +36,11 @@ function llxHeader($head = "") {
   $menu->add("index.php","Voyages");
 
   $menu->add_submenu("index.php","Voyages");
-  $menu->add_submenu("bilan.php3","Bilan");
-  $menu->add_submenu("reduc.php3","Reduc");
-  $menu->add_submenu("voyage.php3","Voyage");
+  $menu->add_submenu("bilan.php","Bilan");
+  $menu->add_submenu("reduc.php","Reduc");
+  $menu->add_submenu("voyage.php","Voyage");
 
-  $menu->add("/compta/facture.php3","Factures");
+  $menu->add("/compta/facture.php","Factures");
 
   $menu->add("/compta/bank/index.php","Bank");
 

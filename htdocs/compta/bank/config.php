@@ -18,8 +18,8 @@
  * $Id$
  * $Source$
  */
-require("./pre.inc.php3");
-require("./bank.lib.php3");
+require("./pre.inc.php");
+require("./bank.lib.php");
 
 llxHeader();
 

@@ -71,7 +71,7 @@ if ( $db->query($sql) )
       $var=!$var;
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php?id=$obj->cid\">$obj->label</a></td>\n";
-      print "<TD><a href=\"../comm/fiche.php3?socid=$obj->sidp\">$obj->nom</a></TD>\n";
+      print "<TD><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></TD>\n";
       print '<td align="center">';
       if ($obj->enservice == 1)
 	{

@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../../main.inc.php3");
+require("../../main.inc.php");
 
 function llxHeader($head = "") {
   global $user, $conf;
@@ -33,9 +33,9 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("../facture.php3","Factures");
+  $menu->add("../facture.php","Factures");
 
-  $menu->add_submenu("../paiement.php3","Paiements");
+  $menu->add_submenu("../paiement.php","Paiements");
 
   $menu->add(DOL_URL_ROOT."/compta/stats/","Chiffre d'affaire");
 

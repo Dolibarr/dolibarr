@@ -25,7 +25,7 @@
 * @package propale
 */
 
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 $user->getrights('propale');
 if (!$user->rights->propale->lire)
@@ -34,11 +34,11 @@ if (!$user->rights->propale->lire)
 /*
  *  Modules optionnels
  */
-require("../project.class.php3");
-require("./propal_model_pdf.class.php3");
-require("../propal.class.php3");
-require("../actioncomm.class.php3");
-require("../lib/CMailFile.class.php3");
+require("../project.class.php");
+require("./propal_model_pdf.class.php");
+require("../propal.class.php");
+require("../actioncomm.class.php");
+require("../lib/CMailFile.class.php");
 
 /*
  *
@@ -263,7 +263,7 @@ if ($propalid)
 
 	  print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
-	  print '<tr><td>Société</td><td colspan="3"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+	  print '<tr><td>Société</td><td colspan="3"><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td>Statut</td><td align="center"><b>'.$obj->lst.'</b></td></tr>';
 
 	  print '<tr><td>Date</td><td colspan="3">'.strftime("%A %d %B %Y",$obj->dp).'</td>';
@@ -328,7 +328,7 @@ if ($propalid)
 	   */
 	  if ($propal->brouillon == 1)
 	    {
-	      print '<form action="propal.php3?propalid='.$propalid.'" method="post">';
+	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
 	      print '<input type="hidden" name="action" value="setremise">';
 	      print '<table cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
 	      print '<input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">%';
@@ -368,13 +368,13 @@ if ($propalid)
 		  $var=!$var;
 		  print "<TR $bc[$var]>";
 		  print "<TD>[$objp->ref]</TD>\n";
-		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php3?id='.$objp->prodid.'">'.$objp->product.'</td>';
+		  print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.$objp->product.'</td>';
 		  print "<TD align=\"right\">".price($objp->price)."</TD>";
 		  print '<td align="center">'.$objp->tva_tx.' %</td>';
 		  print "<td align=\"center\">".$objp->qty."</td>\n";
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
-		      print '<td align="center"><a href="propal.php3?propalid='.$propalid.'&ligne='.$objp->rowid.'&action=del_ligne">Supprimer</a></td>';
+		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&ligne='.$objp->rowid.'&action=del_ligne">Supprimer</a></td>';
 		    }
 		  else
 		    {
@@ -405,7 +405,7 @@ if ($propalid)
 		  print "<td align=\"center\">".$objp->qty."</td>\n";
 		  if ($obj->statut == 0 && $user->rights->propale->creer)
 		    {
-		      print '<td align="center"><a href="propal.php3?propalid='.$propalid.'&ligne='.$objp->rowid.'&action=del_ligne">Supprimer</a></td>';
+		      print '<td align="center"><a href="propal.php?propalid='.$propalid.'&ligne='.$objp->rowid.'&action=del_ligne">Supprimer</a></td>';
 		    }
 		  else
 		    {
@@ -446,7 +446,7 @@ if ($propalid)
 	       */
 	      $html = new Form($db);
 	      $var=!$var;
-	      print '<form action="propal.php3?propalid='.$propalid.'" method="post">';
+	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
 	      print '<input type="hidden" name="action" value="addproduct">';
 	      print '<tr '.$bc[$var].'>';
 	      print '<td>&nbsp;</td>';
@@ -458,7 +458,7 @@ if ($propalid)
 	      print '</tr></form>';
 
 	      $var=!$var;
-	      print '<form action="propal.php3?propalid='.$propalid.'" method="post">';
+	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
 	      print '<input type="hidden" name="action" value="addligne">';
 	      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"3\"><select name=\"idprod\">$opt</select></td>";
 	      print '<td align="center"><input type="text" size="3" name="qty" value="1"></td>';
@@ -632,7 +632,7 @@ if ($propalid)
 	  
 	  if ($propal->brouillon == 1)
 	    {
-	      print '<form action="propal.php3?propalid='.$propalid.'" method="post">';
+	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
 	      print '<input type="hidden" name="action" value="setpdfmodel">';
 	      print '<tr><td>Modèle</td><td align="right">';
 
@@ -848,7 +848,7 @@ if ($propalid)
 	  $var=!$var;
 	  print "<TR $bc[$var]>";
 	  print "<TD><a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-	  print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      
+	  print "<TD><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      
 	  
 	  $now = time();
 	  $lim = 3600 * 24 * 15 ;
@@ -867,9 +867,9 @@ if ($propalid)
 	  $m = strftime("%m",$objp->dp);
 	  
 	  print strftime("%d",$objp->dp)."\n";
-	  print " <a href=\"propal.php3?year=$y&month=$m\">";
+	  print " <a href=\"propal.php?year=$y&month=$m\">";
 	  print strftime("%B",$objp->dp)."</a>\n";
-	  print " <a href=\"propal.php3?year=$y\">";
+	  print " <a href=\"propal.php?year=$y\">";
 	  print strftime("%Y",$objp->dp)."</a></TD>\n";      
 	  
 	  print "<TD align=\"right\">".price($objp->price)."</TD>\n";

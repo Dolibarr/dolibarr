@@ -20,8 +20,8 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-require("../contact.class.php3");
+require("./pre.inc.php");
+require("../contact.class.php");
 
 llxHeader();
 
@@ -150,9 +150,9 @@ if ($socid > 0) {
 
     print "<tr><td><div class=\"titre\">Fiche fournisseur : $objsoc->nom</div></td>";
 
-    print '<td><a href="facture/fiche.php3?action=create&socid='.$objsoc->idp.'">Nouvelle Facture <img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
+    print '<td><a href="facture/fiche.php?action=create&socid='.$objsoc->idp.'">Nouvelle Facture <img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
 
-    print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
+    print "<td align=\"center\">[<a href=\"../soc.php?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
 
 
 
@@ -223,7 +223,7 @@ if ($socid > 0) {
 	$obj = $db->fetch_object( $i);
 	$tag = !$tag;
 	print "<tr $bc[$tag]>";
-	print '<td><a href="projet/fiche.php3?id='.$obj->rowid.'">'.$obj->title.'</a></td>';
+	print '<td><a href="projet/fiche.php?id='.$obj->rowid.'">'.$obj->title.'</a></td>';
 
 	print "<td align=\"right\">".strftime("%d %b %Y", $obj->do) ."</td></tr>";
 	$i++;
@@ -269,7 +269,7 @@ if ($socid > 0) {
       print "<tr><td><b>Pr&eacute;nom Nom</b></td>";
       print '<td><b>Poste</b></td><td><b>T&eacute;l</b></td>';
       print "<td><b>Fax</b></td><td><b>Email</b></td>";
-      print "<td><a href=\"people.php3?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
+      print "<td><a href=\"people.php?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
     
       $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
       $sql .= " FROM llx_socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
@@ -288,10 +288,10 @@ if ($socid > 0) {
 	}
 	print "</td>";
 	print "<td>$obj->poste&nbsp;</td>";
-	print '<td><a href="actioncomm.php3?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
-	print '<td><a href="actioncomm.php3?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
-	print '<td><a href="actioncomm.php3?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
-	print "<td><a href=\"people.php3?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
+	print '<td><a href="actioncomm.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+	print '<td><a href="actioncomm.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
+	print '<td><a href="actioncomm.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
+	print "<td><a href=\"people.php?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
 	print "</tr>\n";
 	$i++;
 	$tag = !$tag;
@@ -356,7 +356,7 @@ if ($socid > 0) {
 	      print "<TD>" .strftime("%H:%M",$obj->da)."</TD>\n";
 	      
 	      if ($obj->propalrowid) {
-		print '<td width="40%"><a href="propal.php3?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
+		print '<td width="40%"><a href="propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a></td>';
 	      } else {
 		print '<td width="40%">'.$obj->libelle.'</td>';
 	      }
@@ -367,13 +367,13 @@ if ($socid > 0) {
 	      if ($obj->fk_contact) {
 		$contact = new Contact($db);
 		$contact->fetch($obj->fk_contact);
-		print '<td width="40%"><a href="people.php3?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+		print '<td width="40%"><a href="people.php?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
 	      } else {
 		print '<td width="40%">&nbsp;</td>';
 	      }
 	      /*
 	       */
-	      print '<td width="20%"><a href="'.DOL_URL_ROOT.'/user/fiche.php3?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
+	      print '<td width="20%"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
 	      print "</tr>\n";
 	      $i++;
 	      $tag = !$tag;

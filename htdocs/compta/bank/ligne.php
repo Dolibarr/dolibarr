@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 llxHeader();
 
@@ -105,7 +105,7 @@ if ($result)
 	  print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</TD>\n";
 	}
     
-      print "<td align=\"center\"><a href=\"releve.php3?num=$objp->num_releve&ve=1\">$objp->num_releve</a></td>";
+      print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&ve=1\">$objp->num_releve</a></td>";
       print "<td align=\"center\">$objp->author</td>";
       
       print "</tr>";
@@ -181,7 +181,7 @@ if ($result)
       print "<tr $bc[$var]>";
       
       print "<td>$objp->label</td>";
-      print "<td align=\"center\"><a href=\"budget.php3?bid=$objp->rowid\">voir</a></td>";
+      print "<td align=\"center\"><a href=\"budget.php?bid=$objp->rowid\">voir</a></td>";
       print "</tr>";
 
       $i++;

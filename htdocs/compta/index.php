@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 /*
  * Sécurité accés client
@@ -71,7 +71,7 @@ print '<tr><td valign="top" width="33%">';
 print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
 print "<TR class=\"liste_titre\">";
 print '<td colspan="2">Rechercher une facture</td></tr>';
-print '<form method="post" action="facture.php3">';
+print '<form method="post" action="facture.php">';
 print "<tr $bc[1]><td>";
 print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
 print "</form></table><br>";
@@ -103,8 +103,8 @@ if ($user->comm > 0 && $conf->commercial )
 	    {
 	      $var=!$var;
 	      $obj = $db->fetch_object($i);
-	      print "<tr $bc[$var]><td><a href=\"propal.php3?propalid=$obj->rowid\">$obj->ref</a></td>";
-	      print '<td align="right"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	      print "<tr $bc[$var]><td><a href=\"propal.php?propalid=$obj->rowid\">$obj->ref</a></td>";
+	      print '<td align="right"><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	      $i++;
 	    }
 	  print "</table><br>";
@@ -132,8 +132,8 @@ if ( $db->query($sql) )
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td><a href="facture.php3?facid='.$obj->rowid.'">'.$obj->facnumber.'</td>';
-	  print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	  print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</td>';
+	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
       
@@ -210,7 +210,7 @@ if ( $db->query($sql) )
       $obj = $db->fetch_object( $i);
       $var = !$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print '<td align="right"><a href="index.php?action=del_bookmark&bid='.$obj->bid.'">';
       print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
       print '</tr>';
@@ -262,8 +262,8 @@ if ( $db->query($sql) )
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td><a href="facture.php3?facid='.$obj->rowid.'">'.$obj->facnumber.'</td>';
-	  print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	  print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</td>';
+	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
 	  $i++;
 	}
       print "</table><br>";
@@ -289,7 +289,7 @@ if ( $result ) {
     $obj = $db->fetch_object($i);
     $var=!$var;
     
-    print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td><td><a href=\"action/fiche.php3\">$obj->libelle $obj->label</a></td></tr>";
+    print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td><td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
     $i++;
   }
   $db->free();
@@ -329,7 +329,7 @@ if ($user->societe_id == 0)
 	      $obj = $db->fetch_object( $i);
 	      $var = !$var;
 	      print "<tr $bc[$var]>";
-	      print '<td><a href="../fourn/facture/fiche.php3?facid='.$obj->rowid.'">'.$obj->libelle.'</a></td>';
+	      print '<td><a href="../fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->libelle.'</a></td>';
 	      print '<td align="right">'.price($obj->amount).'</td>';
 	      print '</tr>';
 	      $i++;

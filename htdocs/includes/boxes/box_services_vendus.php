@@ -48,7 +48,7 @@ if ($result)
       
       $info_box_contents[$i][0] = array('align' => 'left',
 					'text' => $objp->nom,
-					'url' => DOL_URL_ROOT."/comm/fiche.php3?socid=".$objp->idp);
+					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
 
       $info_box_contents[$i][1] = array('align' => 'left',
 					'text' => $objp->label,

@@ -28,7 +28,7 @@
  * $Source$
  *
  */
-require("../../../main.inc.php3");
+require("../../../main.inc.php");
 require("../../../projetdon.class.php");
 require("../../../don.class.php");
 

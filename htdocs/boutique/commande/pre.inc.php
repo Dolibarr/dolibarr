@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../../main.inc.php3");
+require("../../main.inc.php");
 require("./commande.class.php");
 
 function llxHeader($head = "", $urlp = "") {

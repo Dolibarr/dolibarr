@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 llxHeader();
 
@@ -122,7 +122,7 @@ else
 	  print "<tr $bc[$var]>";
 	  print "<td align=\"right\">".strftime("%d %B %Y",$objp->do)."</TD>\n";
 	  
-	  print "<td><a href=\"ligne.php3?rowid=$objp->rowid\">$objp->label</a></td>";
+	  print "<td><a href=\"ligne.php?rowid=$objp->rowid\">$objp->label</a></td>";
 	  print "<td align=\"right\">".price(abs($objp->amount))."</td><td>&nbsp;</td>";
 	  print "</tr>";
 	  $i++;
@@ -139,7 +139,7 @@ else
   
 }
 
-print '<a href="categ.php3">Editer</a>';
+print '<a href="categ.php">Editer</a>';
 
 
 

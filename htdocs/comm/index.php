@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 $user->getrights('propale');
 
@@ -72,7 +72,7 @@ print '<tr><td valign="top" width="30%">';
 
 print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">Rechercher une proposition</td></tr>';
-print '<form method="post" action="propal.php3">';
+print '<form method="post" action="propal.php">';
 print "<tr $bc[1]><td>";
 print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="Rechercher" class="flat"></td></tr>';
 print "</form></table><br>\n";
@@ -95,7 +95,7 @@ if ( $db->query($sql) )
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
-	  print "<tr $bc[$var]><td><a href=\"propal.php3?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
+	  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
 	  $i++;
 	}
       print "</table><br>";
@@ -120,7 +120,7 @@ if ( $db->query($sql) )
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
-	  print "<tr $bc[$var]><td><a href=\"propal.php3?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
+	  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td></tr>";
 	  $i++;
 	}
       print "</table><br>";
@@ -153,7 +153,7 @@ if ( $db->query($sql) )
       $obj = $db->fetch_object( $i);
       $var = !$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print '<td align="right"><a href="index.php?action=del_bookmark&bid='.$obj->bid.'">';
       print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
       print '</tr>';
@@ -187,8 +187,8 @@ if ( $db->query($sql) )
       $var=!$var;
       
       print "<tr $bc[$var]><td>".strftime("%d %b %Y",$obj->da)."</td>";
-      print "<td><a href=\"action/fiche.php3?id=$obj->id\">$obj->libelle $obj->label</a></td>";
-      print '<td><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->sname.'</a></td>';
+      print "<td><a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
+      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->sname.'</a></td>';
       $i++;
     }
   $db->free();

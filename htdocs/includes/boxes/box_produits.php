@@ -43,11 +43,11 @@ if ($user->rights->produit->lire)
 	  
 	  $info_box_contents[$i][0] = array('align' => 'left',
 					    'text' => $objp->label,
-					    'url' => DOL_URL_ROOT."/product/fiche.php3?id=".$objp->rowid);
+					    'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
 	  
 	  $info_box_contents[$i][1] = array('align' => 'right',
 					    'text' => price($objp->price),
-					    'url' => DOL_URL_ROOT."/product/fiche.php3?id=".$objp->rowid);
+					    'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
 	  $i++;
 	}
     } 

@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../../main.inc.php3");
+require("../../main.inc.php");
 require("./concert.class.php");
 require("./lieuconcert.class.php");
 require("../groupart/groupart.class.php");

@@ -109,7 +109,7 @@ class ActionComm
 
 	      if ($this->fk_facture)
 		{
-		  $this->objet_url = '<a href="'. DOL_URL_ROOT . '/compta/facture.php3?facid='.$this->fk_facture.'">Facture</a>';
+		  $this->objet_url = '<a href="'. DOL_URL_ROOT . '/compta/facture.php?facid='.$this->fk_facture.'">Facture</a>';
 		}
 	      
 	      $this->db->free();

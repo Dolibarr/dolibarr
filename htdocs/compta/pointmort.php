@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 function pt ($db, $sql) {
   $result = $db->query($sql);
@@ -169,7 +169,7 @@ ppt($db, 0);
 
 
 print "<br><br><br><table cellspacing=0 border=1 cellpadding=3>";
-print "<tr><td bgcolor=\"#e0e0e0\"><a href=\"pmt.php3\">Paramétrer le point mort</a></td></tr>";
+print "<tr><td bgcolor=\"#e0e0e0\"><a href=\"pmt.php\">Paramétrer le point mort</a></td></tr>";
 print "</table>";
 
 

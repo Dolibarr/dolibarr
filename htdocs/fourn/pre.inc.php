@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../main.inc.php3");
+require("../main.inc.php");
 
 function llxHeader($head = "", $urlp = "")
 {
@@ -40,16 +40,16 @@ function llxHeader($head = "", $urlp = "")
    */
   if ($user->societe_id == 0) 
     {
-      $menu->add_submenu(DOL_URL_ROOT."/soc.php3?&action=create","Nouvelle société");
+      $menu->add_submenu(DOL_URL_ROOT."/soc.php?&action=create","Nouvelle société");
     }
 
-  $menu->add_submenu("contact.php3","Contacts");
+  $menu->add_submenu("contact.php","Contacts");
 
   $menu->add(DOL_URL_ROOT."/fourn/facture/index.php", "Factures");
 
   if ($user->societe_id == 0) 
     {
-      $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php3?action=create","Nouvelle");
+      $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/fiche.php?action=create","Nouvelle");
     }
 
   left_menu($menu->liste);

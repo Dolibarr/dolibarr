@@ -20,9 +20,9 @@
  *
  */
 
-require("./pre.inc.php3");
-require("../propal.class.php3");
-require("../facture.class.php3");
+require("./pre.inc.php");
+require("../propal.class.php");
+require("../facture.class.php");
 
 $user->getrights('produit');
 $user->getrights('propale');
@@ -66,7 +66,7 @@ if ($action == 'addinpropal')
   else
     {
       $mesg = ucfirst($types[$type]) . ' ajouté à la proposition ';
-      $mesg .= '<a href="../comm/propal.php3?propalid='.$propal->id.'">'.$propal->ref.'</a>';
+      $mesg .= '<a href="../comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
     }
   $action = '';
 }
@@ -83,7 +83,7 @@ if ($action == 'addinfacture')
 
   $action = '';
   $mesg = 'Produit ajouté à la facture ';
-  $mesg .= '<a href="../compta/facture.php3?facid='.$facture->id.'">'.$facture->ref.'</a>';
+  $mesg .= '<a href="../compta/facture.php?facid='.$facture->id.'">'.$facture->ref.'</a>';
 }
 
 if ($HTTP_POST_VARS["action"] == 'update' && 
@@ -363,7 +363,7 @@ if ($action == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-      print '<td width="20%" align="center">[<a href="fiche.php3?action=edit_price&id='.$id.'">Changer le prix</a>]</td>';
+      print '<td width="20%" align="center">[<a href="fiche.php?action=edit_price&id='.$id.'">Changer le prix</a>]</td>';
     }
   else
     {
@@ -381,7 +381,7 @@ if ($action == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-      print '<td width="20%" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+      print '<td width="20%" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
     }
   else
     {
@@ -429,10 +429,10 @@ if ($id && $action == '' && $product->envente)
 	      $objp = $db->fetch_object( $i);	  
 	      $var=!$var;
 	      print "<TR $bc[$var]>";
-	      print "<td><a href=\"../comm/propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-	      print "<td><a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
+	      print "<td><a href=\"../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
 	      print "<td>". strftime("%d %B %Y",$objp->dp)."</td>\n";
-	      print '<form method="POST" action="fiche.php3?id='.$id.'">';
+	      print '<form method="POST" action="fiche.php?id='.$id.'">';
 	      print '<input type="hidden" name="action" value="addinpropal">';
 	      print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
 	      print '<input type="text" name="qty" size="3" value="1">';
@@ -455,7 +455,7 @@ if ($id && $action == '' && $product->envente)
 	  $otherprop = $propal->liste_array(1, '<>'.$user->id);
 	  if (sizeof($otherprop))
 	    {
-	      print '<form method="POST" action="fiche.php3?id='.$id.'">';
+	      print '<form method="POST" action="fiche.php?id='.$id.'">';
 	      print '<input type="hidden" name="action" value="addinpropal">';
 	      print '<table border="1" width="100%" cellpadding="3" cellspacing="0">';
 	      print "<tr><td>Autres Propositions</td><td>";
@@ -497,10 +497,10 @@ if ($id && $action == '' && $product->envente)
 	      
 	      $var=!$var;
 	      print "<TR $bc[$var]>";
-	      print "<td><a href=\"../compta/facture.php3?facid=$objp->factureid\">$objp->facnumber</a></TD>\n";
-	      print "<td><a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      	 
+	      print "<td><a href=\"../compta/facture.php?facid=$objp->factureid\">$objp->facnumber</a></TD>\n";
+	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      	 
 	      print "<td>". strftime("%d %B %Y",$objp->df)."</td>\n";
-	      print '<form method="POST" action="fiche.php3?id='.$id.'">';
+	      print '<form method="POST" action="fiche.php?id='.$id.'">';
 	      print '<input type="hidden" name="action" value="addinfacture">';
 	      print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
 	      print '<input type="text" name="qty" size="3" value="1">';

@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../../main.inc.php3");
+require("../../main.inc.php");
 
 function llxHeader($head = "", $urlp = "") {
   /*
@@ -34,11 +34,11 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu(DOL_URL_ROOT."/comm/action/?time=today", "Aujourd'hui");
 
-  $menu->add(DOL_URL_ROOT."/comm/clients.php3", "Clients");
+  $menu->add(DOL_URL_ROOT."/comm/clients.php", "Clients");
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php3", "Contacts");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php", "Contacts");
 
-  $menu->add(DOL_URL_ROOT."/comm/propal.php3", "Propales");
+  $menu->add(DOL_URL_ROOT."/comm/propal.php", "Propales");
 
   $menu->add(DOL_URL_ROOT."/comm/projet/", "Projets");
 

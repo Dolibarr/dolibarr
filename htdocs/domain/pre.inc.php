@@ -20,7 +20,7 @@
  *
  */
 
-require ("../main.inc.php3");
+require ("../main.inc.php");
 
 
 function llxHeader($head = "") {
@@ -36,7 +36,7 @@ function llxHeader($head = "") {
 
   $menu->add("/comm/index.php", "Commercial");
 
-  $menu->add_submenu("/comm/clients.php3", "Clients");
+  $menu->add_submenu("/comm/clients.php", "Clients");
 
   $menu->add_submenu("/compta/", "Factures");
 

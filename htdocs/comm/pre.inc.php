@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../main.inc.php3");
+require("../main.inc.php");
 
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf;
@@ -32,17 +32,17 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/comm/clients.php3", "Clients");
+  $menu->add(DOL_URL_ROOT."/comm/clients.php", "Clients");
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php3", "Contacts");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php", "Contacts");
 
   $menu->add(DOL_URL_ROOT."/comm/action/", "Actions");
 
   if ($user->rights->propale->lire)
     {
-      $menu->add(DOL_URL_ROOT."/comm/propal.php3", "Propales");
-      $menu->add_submenu("propal.php3?viewstatut=0", "Brouillons");
-      $menu->add_submenu("propal.php3?viewstatut=1", "Ouvertes");
+      $menu->add(DOL_URL_ROOT."/comm/propal.php", "Propales");
+      $menu->add_submenu("propal.php?viewstatut=0", "Brouillons");
+      $menu->add_submenu("propal.php?viewstatut=1", "Ouvertes");
     }
 
   if ($conf->fichinter->enabled ) 

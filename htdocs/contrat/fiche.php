@@ -22,7 +22,7 @@
 
 require("./pre.inc.php");
 require("./contrat.class.php");
-require("../facture.class.php3");
+require("../facture.class.php");
 
 llxHeader();
 
@@ -149,7 +149,7 @@ else
 	  if ($contrat->factureid)
 	    {
 	      print '<td>Société</td><td>'.$contrat->societe->nom_url.'</td>';
-	      print '<td>Facture</td><td><a href="../compta/facture.php3?facid='.$contrat->factureid.'">Facture</td>';
+	      print '<td>Facture</td><td><a href="../compta/facture.php?facid='.$contrat->factureid.'">Facture</td>';
 	    }
 	  else
 	    {

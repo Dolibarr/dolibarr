@@ -20,7 +20,7 @@
  *
  */
 require("./pre.inc.php");
-require("../contact.class.php3");
+require("../contact.class.php");
 
 if ($user->societe_id > 0)
 {
@@ -85,7 +85,7 @@ if ( $db->query($sql) )
       print "<TD><a href=\"fiche.php?id=$objp->fichid\">$objp->ref</a></TD>\n";
 
       print '<td><a href="index.php?socid='.$objp->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
-      print "<a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
+      print "<a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
       print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
       print '<TD align="center">'.sprintf("%.1f",$objp->duree).'</TD>';
       print '<TD align="center">'.$objp->fk_statut.'</TD>';

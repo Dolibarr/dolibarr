@@ -88,10 +88,10 @@ if ($result)
 	  $var=!$var;
 	  print "<TR $bc[$var]>";
 	  
-	  print "<TD><a href=\"../fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
+	  print "<TD><a href=\"../fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
 	  print '<TD align="right">'.price($objp->ca).'</td>';
 	  print '<td align="right">'.price(100 / $catotal * $objp->ca).'%</td>';
-	  print "<td align=\"center\"><a href=\"../facture.php3?socidp=$objp->idp\">Voir les factures</a></TD>\n";
+	  print "<td align=\"center\"><a href=\"../facture.php?socidp=$objp->idp\">Voir les factures</a></TD>\n";
 
 	  print "</TR>\n";
 	  $i++;

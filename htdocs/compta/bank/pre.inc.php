@@ -20,7 +20,7 @@
  * $Source$
  *
  */
-require("../../main.inc.php3");
+require("../../main.inc.php");
 require("./account.class.php");
 
 function llxHeader($head = "")
@@ -36,7 +36,7 @@ function llxHeader($head = "")
   $menu = new Menu();
 
   $menu->add("index.php","Comptes");
-  $menu->add_submenu("search.php3","Recherche");
+  $menu->add_submenu("search.php","Recherche");
 
 
   $sql = "SELECT rowid, label FROM llx_bank_account where clos = 0 AND courant = 1";
@@ -50,9 +50,9 @@ function llxHeader($head = "")
       while ($i < $numr) 
 	{
 	  $objp = $db->fetch_object($i);
-	  $menu->add("account.php3?account=" . $objp->rowid,  $objp->label);
-	  $menu->add_submenu("releve.php3?account=" . $objp->rowid ,"Relevés");
-	  $menu->add_submenu("rappro.php3?account=".$objp->rowid,"Rappro");
+	  $menu->add("account.php?account=" . $objp->rowid,  $objp->label);
+	  $menu->add_submenu("releve.php?account=" . $objp->rowid ,"Relevés");
+	  $menu->add_submenu("rappro.php?account=".$objp->rowid,"Rappro");
 	  $i++;
 	}
     }
@@ -60,11 +60,11 @@ function llxHeader($head = "")
 
   $menu->add("index.php","Banque");
 
-  $menu->add_submenu("budget.php3","Budgets");
-  $menu->add_submenu("bilan.php3","Bilan");
-  $menu->add_submenu("virement.php3","Virement");
+  $menu->add_submenu("budget.php","Budgets");
+  $menu->add_submenu("bilan.php","Bilan");
+  $menu->add_submenu("virement.php","Virement");
 
-  $menu->add_submenu("config.php3","Config");
+  $menu->add_submenu("config.php","Config");
 
   if (defined("COMPTA_ONLINE_PAYMENT_BPLC") && COMPTA_ONLINE_PAYMENT_BPLC)
     {

@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../main.inc.php3");
+require("../main.inc.php");
 
 function llxHeader($head = "", $title="") {
   global $user, $conf;
@@ -32,19 +32,19 @@ function llxHeader($head = "", $title="") {
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/compta/clients.php3", "Clients");
+  $menu->add(DOL_URL_ROOT."/compta/clients.php", "Clients");
 
   if ($conf->don->enabled)
     {
       $menu->add(DOL_URL_ROOT."/compta/dons/","Dons");
     }
 
-  $menu->add(DOL_URL_ROOT."/compta/facture.php3","Factures");
-  $menu->add_submenu("paiement.php3","Paiements");
+  $menu->add(DOL_URL_ROOT."/compta/facture.php","Factures");
+  $menu->add_submenu("paiement.php","Paiements");
 
   if ($user->comm > 0 && $conf->commercial && MAIN_MODULE_PROPALE) 
     {
-      $menu->add(DOL_URL_ROOT."/compta/propal.php3","Propales");
+      $menu->add(DOL_URL_ROOT."/compta/propal.php","Propales");
     }
 
   $menu->add(DOL_URL_ROOT."/contrat/","Contrats");
@@ -62,9 +62,9 @@ function llxHeader($head = "", $title="") {
   $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
 
   /*
-   *  $menu->add("ligne.php3","Compta");
-   *  $menu->add_submenu("ligne.php3","Lignes");
-   *  $menu->add_submenu("config.php3","Configuration");
+   *  $menu->add("ligne.php","Compta");
+   *  $menu->add_submenu("ligne.php","Lignes");
+   *  $menu->add_submenu("config.php","Configuration");
    */
 
   if ($user->compta > 0) 

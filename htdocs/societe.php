@@ -18,11 +18,11 @@
  * $Id$
  * $Source$
  */
-require("./pre.inc.php3");
-require("./contact.class.php3");
-require("./lib/webcal.class.php3");
-require("./cactioncomm.class.php3");
-require("./actioncomm.class.php3");
+require("./pre.inc.php");
+require("./contact.class.php");
+require("./lib/webcal.class.php");
+require("./cactioncomm.class.php");
+require("./actioncomm.class.php");
 
 /*
  * Sécurité accés client
@@ -131,12 +131,12 @@ if ($result) {
     $var=!$var;
     
     print "<TR $bc[$var]>";
-    print "<TD><a href=\"soc.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
+    print "<TD><a href=\"soc.php?socid=$obj->idp\">$obj->nom</A></td>\n";
     print "<TD>".$obj->ville."&nbsp;</TD>\n";
     print '<TD align="center">';
     if ($obj->client)
       {
-	print "<a href=\"comm/fiche.php3?socid=$obj->idp\">client</A></td>\n";
+	print "<a href=\"comm/fiche.php?socid=$obj->idp\">client</A></td>\n";
       }
     else
       {
@@ -145,7 +145,7 @@ if ($result) {
     print "</td><TD align=\"center\">";
     if ($obj->fournisseur)
       {
-	print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php3?socid='.$obj->idp.'">fournisseur</A></td>';
+	print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">fournisseur</A></td>';
       }
     else
       {

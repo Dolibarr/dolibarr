@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../../main.inc.php3");
+require("../../main.inc.php");
 require("../livre/livre.class.php");
 require("./editeur.class.php");
 

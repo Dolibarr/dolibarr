@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../../main.inc.php3");
+require("../../main.inc.php");
 require("../../projetdon.class.php");
 
 $libelle[0] = "Promesses non validées";

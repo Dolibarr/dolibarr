@@ -19,11 +19,11 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-require("../contact.class.php3");
-require("../lib/webcal.class.php3");
-require("../cactioncomm.class.php3");
-require("../actioncomm.class.php3");
+require("./pre.inc.php");
+require("../contact.class.php");
+require("../lib/webcal.class.php");
+require("../cactioncomm.class.php");
+require("../actioncomm.class.php");
 
 llxHeader();
 
@@ -45,7 +45,7 @@ if ($sortfield == "") {
 
 if ($action=='add_action') {
   /*
-   * Vient de actioncomm.php3
+   * Vient de actioncomm.php
    *
    */
   $actioncomm = new ActionComm($db);
@@ -223,13 +223,13 @@ if ($result)
       $var=!$var;
 
       print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print "<TD><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
       print "<TD>".$obj->ville."&nbsp;</TD>\n";
       print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
 
       if ($user->societe_id == 0)
 	{
-	  print "<TD align=\"center\"><a href=\"facture.php3?socidp=$obj->idp&action=create\">[Facture]</A></td>\n";
+	  print "<TD align=\"center\"><a href=\"facture.php?socidp=$obj->idp&action=create\">[Facture]</A></td>\n";
 	}
       else
 	{

@@ -42,7 +42,7 @@ if ($id)
       
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
       print "<tr>";
-      print '<td width="20%">Référence</td><td width="40%"><a href="../fiche.php3?id='.$product->id.'">'.$product->ref.'</a></td>';
+      print '<td width="20%">Référence</td><td width="40%"><a href="../fiche.php?id='.$product->id.'">'.$product->ref.'</a></td>';
       print '<td><a href="fiche.php?id='.$id.'">Statistiques</a></td></tr>';
       print "<td>Libellé</td><td>$product->label</td>";
       print '<td valign="top" rowspan="2">';
@@ -102,7 +102,7 @@ if ($id)
 		$var=!$var;
 		
 		print "<TR $bc[$var]>";
-		print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php3?facid='.$objp->facid.'">';
+		print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">';
 		if ($objp->paye)
 		  {
 		    print $objp->facnumber;
@@ -112,7 +112,7 @@ if ($id)
 		    print '<b>'.$objp->facnumber.'</b>';
 		  }
 		print "</a></TD>\n";
-		print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php3?socid='.$objp->idp.'">'.$objp->nom.'</a></TD>';
+		print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></TD>';
 		
 		if ($objp->df > 0 )
 		  {

@@ -81,7 +81,7 @@ if ( $soc->fetch($socid) )
   print '<td align="center">';
   if ($soc->client)
     {
-      print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php3?socid='.$socid.'">Fiche commercial</a>';
+      print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">Fiche commercial</a>';
     }
   else
     {
@@ -90,7 +90,7 @@ if ( $soc->fetch($socid) )
   print '</td><td align="center">';
   if ($soc->client)
     {
-      print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php3?socid='.$socid.'">Fiche compta</a>';
+      print '<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid.'">Fiche compta</a>';
     }
   else
     {

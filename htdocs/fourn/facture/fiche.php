@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 /*
  * Sécurité accés client
@@ -312,7 +312,7 @@ else
 	      print '<td align="center">'.price($fac->lignes[$i][5])."</td>";  
 	      print '<td align="right">'.price($fac->lignes[$i][6])."</td>";
 	      print '<td align="center">[';
-	      print '<a href="fiche.php3?facid='.$facid.'&action=del_ligne&ligne_id='.$fac->lignes[$i][7].'">Supprimer</a>]</td>';
+	      print '<a href="fiche.php?facid='.$facid.'&action=del_ligne&ligne_id='.$fac->lignes[$i][7].'">Supprimer</a>]</td>';
 	      print '</tr>';
 	    }
 
@@ -351,7 +351,7 @@ else
 	   *   Facture
 	   */
 	  print '<table border="1" cellspacing="0" cellpadding="2" width="100%">';
-	  print "<tr><td>Société</td><td colspan=\"3\"><b><a href=\"../fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td>";
+	  print "<tr><td>Société</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$obj->socidp\">$obj->socnom</a></b></td>";
 	  print "<td align=\"right\"><a href=\"index.php?socidp=$obj->socidp\">Autres factures</a></td>\n";
 	  print "</tr>";
 	  print "<tr><td>Date</td><td colspan=\"4\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
@@ -472,7 +472,7 @@ else
 
       if ($obj->statut == 0 && $user->societe_id == 0)    
 	{
-	  print '<td align="center" width="25%">[<a href="fiche.php3?facid='.$obj->rowid.'&action=edit">Editer</a>]</td>';
+	  print '<td align="center" width="25%">[<a href="fiche.php?facid='.$obj->rowid.'&action=edit">Editer</a>]</td>';
 	}
       else
 	{

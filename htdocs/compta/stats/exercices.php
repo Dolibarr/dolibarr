@@ -69,7 +69,7 @@ function propals ($db, $year, $month) {
     
     print "<TD><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></TD>\n";
     
-    print "<TD><a href=\"../comm/propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+    print "<TD><a href=\"../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
     
     print "<TD align=\"right\">".strftime("%d %B %Y",$objp->dp)."</TD>\n";
     
@@ -122,7 +122,7 @@ function factures ($db, $year, $month, $paye) {
 	$var=!$var;
 	print "<TR $bc[$var]>";
 	print "<TD><a href=\"comp.php?socidp=$objp->idp\">$objp->nom</a></TD>\n";
-	print "<TD><a href=\"facture.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
+	print "<TD><a href=\"facture.php?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
 	if ($objp->df > 0 ) {
 	  print "<TD align=\"right\">".strftime("%d %B %Y",$objp->df)."</TD>\n";
 	} else {

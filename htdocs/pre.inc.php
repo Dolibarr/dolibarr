@@ -21,7 +21,7 @@
  *
  */
 
-require ("./main.inc.php3");
+require ("./main.inc.php");
 
 function llxHeader($head = "") {
   global $user, $conf;
@@ -40,7 +40,7 @@ function llxHeader($head = "") {
 
       if ($user->admin)
 	{
-	  $menu->add_submenu(DOL_URL_ROOT."/soc.php3?&action=create", "Nouvelle société");
+	  $menu->add_submenu(DOL_URL_ROOT."/soc.php?&action=create", "Nouvelle société");
 	}
       $menu->add_submenu(DOL_URL_ROOT."/contact.php", "Contacts");
     }
@@ -49,10 +49,10 @@ function llxHeader($head = "") {
     {
       $menu->add(DOL_URL_ROOT."/comm/index.php", "Commercial");
 
-      $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php3", "Clients");
+      $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php", "Clients");
 
       if ($user->rights->propale->lire)
-	$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php3", "Propales");
+	$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php", "Propales");
     }
 
   if ($conf->compta->enabled ) 
@@ -60,7 +60,7 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/compta/", "Comptabilité");
 
       if ($user->rights->facture->lire)
-	$menu->add_submenu(DOL_URL_ROOT."/compta/facture.php3", "Factures");
+	$menu->add_submenu(DOL_URL_ROOT."/compta/facture.php", "Factures");
     }
 
   if ($conf->fichinter->enabled ) 
@@ -117,7 +117,7 @@ function llxHeader($head = "") {
       $menu->add(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
 
       $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/index.php","Voyages");
-      $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/reduc.php3","Reduc");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/voyage/reduc.php","Reduc");
     }
 
   if ($conf->domaine->enabled ) 

@@ -19,15 +19,15 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
-require("../lib/CMailFile.class.php3");
+require("../lib/CMailFile.class.php");
 /*
  *  Modules optionnels
  */
-require("../project.class.php3");
-require("../propal.class.php3");
-require("../actioncomm.class.php3");
+require("../project.class.php");
+require("../propal.class.php");
+require("../actioncomm.class.php");
 /*
  *
  */
@@ -110,7 +110,7 @@ if ($propalid)
 
       print '<table border="1" cellspacing="0" cellpadding="2" width="100%">';
 
-      print '<tr><td>Société</td><td colspan="2"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+      print '<tr><td>Société</td><td colspan="2"><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
       print "<td valign=\"top\" width=\"50%\" rowspan=\"9\">Note :<br>". nl2br($obj->note)."</td></tr>";
       //
 
@@ -121,7 +121,7 @@ if ($propalid)
 	  $projet = new Project($db);
 	  $projet->fetch($obj->fk_projet); 
 	  print '<tr><td>Projet</td><td colspan="1">';
-	  print '<a href="projet/fiche.php3?id='.$projet->id.'">';
+	  print '<a href="projet/fiche.php?id='.$projet->id.'">';
 	  print $projet->title.'</a></td></tr>';
 	}
       print "<tr><td>Destinataire</td><td colspan=\"2\">$obj->firstname $obj->name &lt;$obj->email&gt;</td></tr>";
@@ -223,7 +223,7 @@ if ($propalid)
 	      $objp = $db->fetch_object( $i);
 	      $var=!$var;
 	      print "<TR bgcolor=\"#e0e0e0\">";
-	      print "<TD><a href=\"../compta/facture.php3?facid=$objp->facid\">$objp->facnumber</a>";
+	      print "<TD><a href=\"../compta/facture.php?facid=$objp->facid\">$objp->facnumber</a>";
 	      if ($objp->paye)
 		{ 
 		  print " (<b>pay&eacute;e</b>)";
@@ -260,7 +260,7 @@ if ($propalid)
 	  if ($obj->statut == 2)
 	    {
 	      print '<td bgcolor="#e0e0e0" align="center" width="25%">';
-	      print "<a href=\"facture.php3?propalid=$propalid&action=create\">Emettre une facture</td>";
+	      print "<a href=\"facture.php?propalid=$propalid&action=create\">Emettre une facture</td>";
 	    }
 	  else
 	    {
@@ -312,7 +312,7 @@ if ($propalid)
 	    $objp = $db->fetch_object($i);
 	    $var=!$var;
 	    print "<tr $bc[$var]><td>[$objp->ref]</TD>\n";
-	    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php3?id='.$objp->prodid.'">'.$objp->product.'</td>';
+	    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.$objp->product.'</td>';
 	    print "<td align=\"right\">".price($objp->price)."</TD>";
 	    print '<td>&nbsp;</td>';
 	    print "<td align=\"center\">".$objp->qty."</td></tr>\n";
@@ -440,7 +440,7 @@ if ($propalid)
 	  $var=!$var;
 	  print "<TR $bc[$var]>";
 	  print "<TD><a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-	  print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";      
+	  print "<TD><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      
 	  
 	  $now = time();
 	  $lim = 3600 * 24 * 15 ;
@@ -459,9 +459,9 @@ if ($propalid)
 	  $m = strftime("%m",$objp->dp);
 	  
 	  print strftime("%d",$objp->dp)."\n";
-	  print " <a href=\"propal.php3?year=$y&month=$m\">";
+	  print " <a href=\"propal.php?year=$y&month=$m\">";
 	  print strftime("%B",$objp->dp)."</a>\n";
-	  print " <a href=\"propal.php3?year=$y\">";
+	  print " <a href=\"propal.php?year=$y\">";
 	  print strftime("%Y",$objp->dp)."</a></TD>\n";      
 	  
 	  print "<TD align=\"right\">".price($objp->price)."</TD>\n";

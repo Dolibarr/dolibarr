@@ -19,8 +19,8 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-require("../contact.class.php3");
+require("./pre.inc.php");
+require("../contact.class.php");
 
 /*
  * Sécurité accés client
@@ -156,12 +156,12 @@ if ($result)
       $var=!$var;
 
       print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print "<TD><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
       print "<TD>".$obj->ville."</TD>\n";
 	
       print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
       
-      print '<td><a href="facture/fiche.php3?action=create&socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
+      print '<td><a href="facture/fiche.php?action=create&socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
 
       print "</tr>\n";
       $i++;

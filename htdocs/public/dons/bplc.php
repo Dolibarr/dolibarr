@@ -27,8 +27,8 @@
  *
  */
 
-require("../../lib/mysql.lib.php3");
-require("../../conf/conf.class.php3");
+require("../../lib/mysql.lib.php");
+require("../../conf/conf.class.php");
 require("../../retourbplc.class.php");
 require("../../don.class.php");
 

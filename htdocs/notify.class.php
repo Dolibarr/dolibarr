@@ -35,7 +35,7 @@ class Notify
   Function Notify($DB)
     {
       $this->db = $DB ;
-      include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php3");
+      include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
     }
 
   /*

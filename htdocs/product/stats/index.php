@@ -21,7 +21,7 @@
  */
 
 require("./pre.inc.php");
-require("../../propal.class.php3");
+require("../../propal.class.php");
 require("../../graph.class.php");
 
 llxHeader();

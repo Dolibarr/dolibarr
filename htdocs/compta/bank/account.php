@@ -21,7 +21,7 @@
  *
  */
 
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 if ($HTTP_POST_VARS["action"] == 'add' && $account)
 {    
@@ -283,7 +283,7 @@ if ($account)
 	      
 	      if ($objp->rappro)
 		{
-		  print "<td align=\"center\"><a href=\"releve.php3?num=$objp->num_releve&account=$account\">$objp->num_releve</a></td>";
+		  print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve&account=$account\">$objp->num_releve</a></td>";
 		}
 	      else
 		{

@@ -19,8 +19,8 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-require("../../tva.class.php3");
+require("./pre.inc.php");
+require("../../tva.class.php");
 
 
 $mesg = '';
@@ -180,7 +180,7 @@ if ($action == 'create')
 }
 else
 {
-  print '<td width="20%" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+  print '<td width="20%" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
 }
 print '<td width="20%" align="center">-</td>';    
 print '</table><br>';

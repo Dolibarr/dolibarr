@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 $user->getrights('produit');
 
 if (!$user->rights->produit->lire)
@@ -96,7 +96,7 @@ if ($result)
   if ($num == 1 && (isset($sall) or isset($snom) or isset($sref)))
     {
       $objp = $db->fetch_object($i);
-      Header("Location: fiche.php3?id=$objp->rowid");
+      Header("Location: fiche.php?id=$objp->rowid");
     }
   
   if ($ref || $snom || $sall)
@@ -139,7 +139,7 @@ if ($result)
       $objp = $db->fetch_object( $i);
       $var=!$var;
       print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php3?id=$objp->rowid\">$objp->ref</a></TD>\n";
+      print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></TD>\n";
       print "<TD>$objp->label</TD>\n";
       print '<TD align="right">'.price($objp->price).'</TD>';
       print "</TR>\n";

@@ -20,8 +20,8 @@
  *
  */
 
-require("./pre.inc.php3");
-require("../service.class.php3");
+require("./pre.inc.php");
+require("../service.class.php");
 
 llxHeader();
 
@@ -133,10 +133,10 @@ if ($action == 'create') {
 
     print '<td width="20%" align="center">-</td>';
 
-    print '<td width="20%" align="center">[<a href="fiche.php3?action=edit&id='.$id.'">Editer</a>]</td>';
+    print '<td width="20%" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
 
-    print '<td width="20%" align="center">[<a href="fiche.php3?action=datedeb&id='.$id.'">Date de debut</a>]</td>';
-    print '<td width="20%" align="center">[<a href="fiche.php3?action=datefin&id='.$id.'">Date de fin</a>]</td>';
+    print '<td width="20%" align="center">[<a href="fiche.php?action=datedeb&id='.$id.'">Date de debut</a>]</td>';
+    print '<td width="20%" align="center">[<a href="fiche.php?action=datefin&id='.$id.'">Date de fin</a>]</td>';
     print '<td width="20%" align="center">-</td>';
 
     print '</table><br>';

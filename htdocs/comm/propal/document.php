@@ -25,7 +25,7 @@ if (!$user->rights->propale->lire)
   accessforbidden();
 
 
-require_once("../../propal.class.php3");
+require_once("../../propal.class.php");
 llxHeader();
 
 function do_upload ($upload_dir)

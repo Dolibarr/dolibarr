@@ -259,7 +259,7 @@ if ($rowid > 0 && $action == 'edit')
   
   if ($don->statut == 1 && $resteapayer > 0) 
     {
-      print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php3?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
+      print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
     }
   elseif ($don->statut == 0)
     {

@@ -25,8 +25,8 @@ $user->getrights('facture');
 if (!$user->rights->facture->lire)
   accessforbidden();
 
-require("../../facture.class.php3");
-require("../../propal.class.php3");
+require("../../facture.class.php");
+require("../../propal.class.php");
 
 llxHeader();
 

@@ -20,8 +20,8 @@
  *
  */
 
-require("./pre.inc.php3");
-require("./reduc.class.php3");
+require("./pre.inc.php");
+require("./reduc.class.php");
 
 
 llxHeader();

@@ -307,7 +307,7 @@ else
       print '<tr><td width="25%" valign="top">';
       if ($fuser->contact_id)
 	{
-	  print '<a href="../comm/people.php3?contactid='.$fuser->contact_id.'&socid='.$fuser->societe_id.'">Fiche contact</a>';
+	  print '<a href="../comm/people.php?contactid='.$fuser->contact_id.'&socid='.$fuser->societe_id.'">Fiche contact</a>';
 	}
       else
 	{

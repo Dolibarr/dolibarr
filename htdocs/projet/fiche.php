@@ -21,7 +21,7 @@
  */
 require("./pre.inc.php");
 require("./project.class.php");
-require("../propal.class.php3");
+require("../propal.class.php");
 
 if ($HTTP_POST_VARS["action"] == 'update')
 {
@@ -76,7 +76,7 @@ if ($action == 'create')
   <?PHP 
   $societe = new Societe($db);
   $societe->get_nom($socidp); 
-  print '<a href="../comm/fiche.php3?socid='.$socidp.'">'.$societe->nom.'</a>'; 
+  print '<a href="../comm/fiche.php?socid='.$socidp.'">'.$societe->nom.'</a>'; 
 
   ?>
   </td></tr>
@@ -118,7 +118,7 @@ if ($action == 'create')
   else
     {
       print '<table border="1" cellpadding="4" cellspacing="0" width="100%">';
-      print '<tr><td>Société</td><td><a href="../comm/fiche.php3?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
+      print '<tr><td>Société</td><td><a href="../comm/fiche.php?socid='.$projet->societe->id.'">'.$projet->societe->nom.'</a></td></tr>';
       
       print '<tr><td width="20%">Réf</td><td>'.$projet->ref.'</td></tr>';
       print '<tr><td width="20%">Titre</td><td>'.$projet->title.'</td></tr>';
@@ -145,7 +145,7 @@ if ($action == 'create')
 	    
 	    $var=!$var;
 	    print "<TR $bc[$var]>";
-	    print "<TD><a href=\"../comm/propal.php3?propalid=$propale->id\">$propale->ref</a></TD>\n";
+	    print "<TD><a href=\"../comm/propal.php?propalid=$propale->id\">$propale->ref</a></TD>\n";
 	    
 	    print '<TD>'.strftime("%d %B %Y",$propale->datep).'</a></TD>';
 	    

@@ -19,8 +19,8 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-require("../../contact.class.php3");
+require("./pre.inc.php");
+require("../../contact.class.php");
 
 llxHeader();
 
@@ -139,10 +139,10 @@ if ($result)
       $var=!$var;
       
       print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php3?facid=$obj->facid\">$obj->facnumber</A></td>\n";
-      print "<TD><a href=\"fiche.php3?facid=$obj->facid\">".strftime("%d %b %Y",$obj->datef)."</A></td>\n";
-      print '<TD><a href="fiche.php3?facid='.$obj->facid.'">'.stripslashes("$obj->libelle").'</A></td>';
-      print "<TD><a href=\"../fiche.php3?socid=$obj->socid\">$obj->nom</A></td>\n";
+      print "<TD><a href=\"fiche.php?facid=$obj->facid\">$obj->facnumber</A></td>\n";
+      print "<TD><a href=\"fiche.php?facid=$obj->facid\">".strftime("%d %b %Y",$obj->datef)."</A></td>\n";
+      print '<TD><a href="fiche.php?facid='.$obj->facid.'">'.stripslashes("$obj->libelle").'</A></td>';
+      print "<TD><a href=\"../fiche.php?socid=$obj->socid\">$obj->nom</A></td>\n";
       print '<TD align="right">'.price($obj->total_ht).'</TD>';
 
       print '<TD align="center">'.$yn[$obj->paye].'</TD>';

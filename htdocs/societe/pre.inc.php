@@ -20,7 +20,7 @@
  *
  */
 
-require ("../main.inc.php3");
+require ("../main.inc.php");
 
 function llxHeader($head = "")
 {
@@ -38,7 +38,7 @@ function llxHeader($head = "")
     {
       $menu->add(DOL_URL_ROOT."/societe.php", "Sociétés","company");
 
-      $menu->add_submenu(DOL_URL_ROOT."/soc.php3?&action=create", "Nouvelle société");
+      $menu->add_submenu(DOL_URL_ROOT."/soc.php?&action=create", "Nouvelle société");
 
       $menu->add_submenu(DOL_URL_ROOT."/contact.php", "Contacts");
 

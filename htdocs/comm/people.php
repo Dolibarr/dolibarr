@@ -19,8 +19,8 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
-require("../contact.class.php3");
+require("./pre.inc.php");
+require("../contact.class.php");
 
 if ($sortorder == "") 
 {
@@ -39,7 +39,7 @@ if ($action == 'add')
       $result = $db->query($sql);
       if ($result) 
 	{
-	  Header("Location: fiche.php3?socid=$socid");
+	  Header("Location: fiche.php?socid=$socid");
       }
     }
 }
@@ -59,7 +59,7 @@ if ($action == 'update')
       $result = $contact->update($contactid);
       if ($result) 
 	{
-	  Header("Location: fiche.php3?socid=$socid");
+	  Header("Location: fiche.php?socid=$socid");
 	}
     }
 }
@@ -99,7 +99,7 @@ if ($socid > 0)
        *
        *
        */
-      print_fiche_titre ("Contact société : <a href=\"fiche.php3?socid=$objsoc->idp\">$objsoc->nom</a>");
+      print_fiche_titre ("Contact société : <a href=\"fiche.php?socid=$objsoc->idp\">$objsoc->nom</a>");
       /*
        *
        */
@@ -152,12 +152,12 @@ if ($socid > 0)
     {
       if ($obj->fk_user)
 	{
-	  print '<tr><td>Login</td><td colspan="4"><a href="'.DOL_URL_ROOT.'/user/fiche.php3?id='.$obj->fk_user.'">Fiche</a></td></tr>';
+	  print '<tr><td>Login</td><td colspan="4"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user.'">Fiche</a></td></tr>';
 	}
       else
 	{
 	  print '<tr><td>Login</td><td colspan="3">Pas de compte</td>';
-	  print '<td align="center"><a href="people.php3?contactid='.$contactid.'&socid='.$socid.'&action=create_user">Créer un compte</td></tr>';
+	  print '<td align="center"><a href="people.php?contactid='.$contactid.'&socid='.$socid.'&action=create_user">Créer un compte</td></tr>';
 	}
     }
 
@@ -166,7 +166,7 @@ if ($socid > 0)
   
   if ($action == 'addcontact') 
     {
-      print "<form method=\"post\" action=\"people.php3?socid=$socid\">";
+      print "<form method=\"post\" action=\"people.php?socid=$socid\">";
       print "<input type=\"hidden\" name=\"action\" value=\"add\">";
       print "<table border=0>";
       print "<tr><td>Nom</td><td><input name=\"name\" type=\"text\" size=\"20\" maxlength=\"80\"></td>";
@@ -196,7 +196,7 @@ if ($socid > 0)
 	  $obj = $db->fetch_object( 0);
 	}
   
-      print "<form method=\"post\" action=\"people.php3?socid=$socid\">";
+      print "<form method=\"post\" action=\"people.php?socid=$socid\">";
       print '<input type="hidden" name="action" value="update">';
       print "<input type=\"hidden\" name=\"contactid\" value=\"$contactid\">";
       print '<br><table border="1" cellpadding="4" cellspacing="0">';
@@ -256,7 +256,7 @@ if ($socid > 0)
 	  print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
 	  if ($obj->propalrowid) 
 	    {
-	      print "<td><a href=\"propal.php3?propalid=$obj->propalrowid\">$obj->libelle</a></td>";
+	      print "<td><a href=\"propal.php?propalid=$obj->propalrowid\">$obj->libelle</a></td>";
 	    } 
 	  else 
 	    {

@@ -20,7 +20,7 @@
  *
  */
 
-require("pre.inc.php3");
+require("pre.inc.php");
 
 
 /*
@@ -83,7 +83,7 @@ if ($action == 'update')
 if ($action == 'create') 
 {
   print '<div class="titre">Nouvelle société</div><br>';
-  print '<form action="soc.php3" method="post">';
+  print '<form action="soc.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="fournisseur" value="0">';
 
@@ -122,7 +122,7 @@ elseif ($action == 'edit')
       $soc->id = $socid;
       $soc->fetch($socid);
 
-      print '<form action="soc.php3?socid='.$socid.'" method="post">';
+      print '<form action="soc.php?socid='.$socid.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
 
       print '<table border="1" cellpadding="3" cellspacing="0">';
@@ -175,7 +175,7 @@ elseif ($action == 'edit')
 
   if ($soc->client)
     {
-      print '<tr><td>Client</td><td>oui <a href="'.DOL_URL_ROOT.'/comm/fiche.php3?socid='.$socid.'">Fiche</a></td></tr>';
+      print '<tr><td>Client</td><td>oui <a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
     }
   else
     {
@@ -184,7 +184,7 @@ elseif ($action == 'edit')
 
   if ($soc->fournisseur)
     {
-      print '<tr><td>Fournisseur</td><td>oui <a href="'.DOL_URL_ROOT.'/compta/fiche.php3?socid='.$socid.'">Fiche</a></td></tr>';
+      print '<tr><td>Fournisseur</td><td>oui <a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
     }
   else
     {
@@ -202,7 +202,7 @@ elseif ($action == 'edit')
   print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
 
  
-  print '<td width="20%" align="center">[<a href="soc.php3?socid='.$socid.'&action=edit">Editer</a>]</td>';
+  print '<td width="20%" align="center">[<a href="soc.php?socid='.$socid.'&action=edit">Editer</a>]</td>';
   print '<td width="20%" align="center">-</td>';
   print '<td width="20%" align="center">-</td>';
   print '<td width="20%" align="center">-</td>';

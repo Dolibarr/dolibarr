@@ -23,7 +23,7 @@
  * $rel
  * $ve
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 llxHeader();
 
@@ -200,7 +200,7 @@ else
     
 	  print "<td align=\"right\">".price($total)."</TD>\n";
 	  
-	  print "<td align=\"center\">[<a href=\"ligne.php3?rowid=$objp->rowid&account=$account\">edit</a>]</td>";
+	  print "<td align=\"center\">[<a href=\"ligne.php?rowid=$objp->rowid&account=$account\">edit</a>]</td>";
 	  
 	  print "</tr>";
 	  $i++;

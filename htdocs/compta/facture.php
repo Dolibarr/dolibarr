@@ -19,17 +19,17 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 $user->getrights('facture');
 if (!$user->rights->facture->lire)
   accessforbidden();
 
-require("../facture.class.php3");
-require("../lib/CMailFile.class.php3");
+require("../facture.class.php");
+require("../lib/CMailFile.class.php");
 require("../paiement.class.php");
-require("../project.class.php3");
-require("../propal.class.php3");
+require("../project.class.php");
+require("../propal.class.php");
 require("./bank/account.class.php");
 require("../contrat/contrat.class.php");
 
@@ -99,7 +99,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
       else
 	{
 	  print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
-	  print "<p>Retour à la <a href=\"propal.php3?propalid=$propalid\">propal</a>";
+	  print "<p>Retour à la <a href=\"propal.php?propalid=$propalid\">propal</a>";
 	  print $db->error();
 	}
     }
@@ -508,7 +508,7 @@ else
 	  print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 	  print "<tr><td>Client</td>";
 	  print "<td colspan=\"3\">";
-	  print '<b><a href="fiche.php3?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
+	  print '<b><a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  
 	  print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
 	  
@@ -562,7 +562,7 @@ else
 		print '<td align="right">'.price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
 		if (! $fac->paye && $user->rights->facture->paiement)
 		  {
-		    print '<td><a href="facture.php3?facid='.$facid.'&action=del_paiement&paiementid='.$objp->rowid.'">Del</a>';
+		    print '<td><a href="facture.php?facid='.$facid.'&action=del_paiement&paiementid='.$objp->rowid.'">Del</a>';
 		  }
 		print "</tr>";
 		$total = $total + $objp->amount;
@@ -611,7 +611,7 @@ else
 
 	if ($fac->brouillon == 1)
 	  {
-	    print '<form action="facture.php3?facid='.$facid.'" method="post">';
+	    print '<form action="facture.php?facid='.$facid.'" method="post">';
 	    print '<input type="hidden" name="action" value="setremise">';
 	    print '<table cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
 	    print '<input type="text" name="remise" size="3" value="'.$fac->remise_percent.'">%';
@@ -652,7 +652,7 @@ else
 		print "<TR $bc[$var]>";
 		if ($objp->fk_product)
 		  {
-		    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php3?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
+		    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a></td>';
 		  }
 		else
 		  {
@@ -750,7 +750,7 @@ else
 	    
 	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
 	      {
-		print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php3?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
+		print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
 	      }
 	    else
 	      {
@@ -792,7 +792,7 @@ else
 	      {
 		if ($user->rights->facture->creer)
 		  {
-		    print "<td align=\"center\" width=\"25%\"><a href=\"facture.php3?facid=$facid&action=pdf\">Générer la facture</a></td>";
+		    print "<td align=\"center\" width=\"25%\"><a href=\"facture.php?facid=$facid&action=pdf\">Générer la facture</a></td>";
 		  }
 		else
 		  {
@@ -984,7 +984,7 @@ else
 		    $objp = $db->fetch_object( $i);
 		    $var=!$var;
 		    print "<TR $bc[$var]>";
-		    print "<TD><a href=\"propal.php3?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+		    print "<TD><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
 		    print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
 		    print '<TD align="right">'.price($objp->price).'</TD>';
 		    print "</tr>";
@@ -1101,9 +1101,9 @@ else
 		      }
 		  }
 
-		print '<td><a class="'.$class.'" href="facture.php3?facid='.$objp->facid.'">' . $objp->facnumber;
+		print '<td><a class="'.$class.'" href="facture.php?facid='.$objp->facid.'">' . $objp->facnumber;
 		print "</a></TD>\n";
-		print '<TD><a class="'.$class.'" href="fiche.php3?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		print '<TD><a class="'.$class.'" href="fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
 		
 		if ($objp->df > 0 )
 		  {
@@ -1112,9 +1112,9 @@ else
 		    $m = strftime("%m",$objp->df);
 		    
 		    print strftime("%d",$objp->df)."\n";
-		    print ' <a class="'.$class.'" href="facture.php3?year='.$y.'&month='.$m.'">';
+		    print ' <a class="'.$class.'" href="facture.php?year='.$y.'&month='.$m.'">';
 		    print strftime("%B",$objp->df)."</a>\n";
-		    print ' <a class="'.$class.' "href="facture.php3?year='.$y.'">';
+		    print ' <a class="'.$class.' "href="facture.php?year='.$y.'">';
 		    print strftime("%Y",$objp->df)."</a></TD>\n";
 		  }
 		else
@@ -1132,7 +1132,7 @@ else
 		      }
 		    else
 		      {
-			print '<td align="center"><a href="facture.php3?filtre=paye:0,fk_statut:1">impayée</a></td>';
+			print '<td align="center"><a href="facture.php?filtre=paye:0,fk_statut:1">impayée</a></td>';
 		      }
 		  }
 		else

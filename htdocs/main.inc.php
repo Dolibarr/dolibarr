@@ -48,7 +48,7 @@ define('DOL_URL_ROOT', $pos);
 
 require (DOL_DOCUMENT_ROOT."/conf/conf.class.php");
 /*
- * Doit figurer aprés l'inclusion de conf.class.php3 pour overider certaines variables, à terme conf.class.php3 devra etre un fichier qui ne sera pas modifié par l'utilisateur
+ * Doit figurer aprés l'inclusion de conf.class.php pour overider certaines variables, à terme conf.class.php3 devra etre un fichier qui ne sera pas modifié par l'utilisateur
  */
 $conf = new Conf();
 $conf->db->host = $dolibarr_main_db_host;
@@ -56,12 +56,12 @@ $conf->db->name = $dolibarr_main_db_name;
 $conf->db->user = $dolibarr_main_db_user;
 $conf->db->pass = $dolibarr_main_db_pass;
 
-require (DOL_DOCUMENT_ROOT ."/lib/mysql.lib.php3");
-require (DOL_DOCUMENT_ROOT ."/lib/functions.inc.php3");
-require (DOL_DOCUMENT_ROOT ."/product.class.php3");
-require (DOL_DOCUMENT_ROOT ."/user.class.php3");
-require (DOL_DOCUMENT_ROOT ."/menu.class.php3");
-require (DOL_DOCUMENT_ROOT ."/societe.class.php3");
+require (DOL_DOCUMENT_ROOT ."/lib/mysql.lib.php");
+require (DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
+require (DOL_DOCUMENT_ROOT ."/product.class.php");
+require (DOL_DOCUMENT_ROOT ."/user.class.php");
+require (DOL_DOCUMENT_ROOT ."/menu.class.php");
+require (DOL_DOCUMENT_ROOT ."/societe.class.php");
 require (DOL_DOCUMENT_ROOT ."/html.form.class.php");
 require (DOL_DOCUMENT_ROOT ."/translate.class.php");
 require (DOL_DOCUMENT_ROOT ."/boxes.php");
@@ -424,8 +424,8 @@ Function left_menu($menu)
       
       if (defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
 	{
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/clients.php3">Societes</A>';
-	  print '<form action="'.DOL_URL_ROOT.'/comm/clients.php3">';
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/clients.php">Societes</A>';
+	  print '<form action="'.DOL_URL_ROOT.'/comm/clients.php">';
 	  print '<input type="hidden" name="mode" value="search">';
 	  print '<input type="hidden" name="mode-search" value="soc">';
 	  print '<input type="text" name="socname" class="flat" size="10">&nbsp;';
@@ -435,8 +435,8 @@ Function left_menu($menu)
       
       if (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
 	{
-	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/contact.php3">Contacts</A>';
-	  print '<form action="'.DOL_URL_ROOT.'/comm/contact.php3">';
+	  print '<A class="menu" href="'.DOL_URL_ROOT.'/comm/contact.php">Contacts</A>';
+	  print '<form action="'.DOL_URL_ROOT.'/comm/contact.php">';
 	  print '<input type="hidden" name="mode" value="search">';
 	  print '<input type="hidden" name="mode-search" value="contact">';
 	  print '<input type="text" class="flat" name="contactname" size="10">&nbsp;';

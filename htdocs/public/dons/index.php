@@ -21,8 +21,8 @@
  */
 
 require("../../don.class.php");
-require("../../lib/mysql.lib.php3");
-require("../../conf/conf.class.php3");
+require("../../lib/mysql.lib.php");
+require("../../conf/conf.class.php");
 
 $conf = new Conf();
 

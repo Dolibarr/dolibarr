@@ -18,7 +18,7 @@
  * $Id$
  * $Source$
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 llxHeader();
 
@@ -121,7 +121,7 @@ if ($result)
       
       if ($objp->rappro)
 	{
-	  print "<td align=\"center\"><a href=\"releve.php3?num=$objp->num_releve\">$objp->num_releve</a></td>";
+	  print "<td align=\"center\"><a href=\"releve.php?num=$objp->num_releve\">$objp->num_releve</a></td>";
 	}
       else
 	{
@@ -140,7 +140,7 @@ if ($result)
 }
 print "</table>";
 
-print '<br>Dernier relevé : <a href="releve.php3?account='.$account.'&num='.$last_releve.'">'.$last_releve.'</a>';
+print '<br>Dernier relevé : <a href="releve.php?account='.$account.'&num='.$last_releve.'">'.$last_releve.'</a>';
 
 $db->close();
 

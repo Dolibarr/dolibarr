@@ -104,7 +104,7 @@ if ( $db->query($sql) )
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php?id=$objp->projectid\">$objp->title</a></TD>\n";
       print "<TD><a href=\"fiche.php?id=$objp->projectid\">$objp->ref</a></TD>\n";
-      print "<TD><a href=\"../comm/fiche.php3?socid=$objp->idp\">$objp->nom</a></td>\n";
+      print "<TD><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
       print "</tr>\n";
     
       $i++;

@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../main.inc.php3");
+require("../main.inc.php");
 
 $types[0] = "produit";
 $types[1] = "service";

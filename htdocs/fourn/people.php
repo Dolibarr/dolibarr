@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
 if ($sortorder == "")
 {
@@ -47,7 +47,7 @@ if ($action == 'add') {
     $sql .= " VALUES (now(),$socid,'$name','$firstname','$poste','$phone','$fax','$email')";
     $result = $db->query($sql);
     if ($result) {
-      Header("Location: fiche.php3?socid=$socid");
+      Header("Location: fiche.php?socid=$socid");
     }
   }
 }
@@ -60,7 +60,7 @@ if ($action == 'update') {
     $sql .= " WHERE idp=$contactid";
     $result = $db->query($sql);
     if ($result) {
-      Header("Location: fiche.php3?socid=$socid");
+      Header("Location: fiche.php?socid=$socid");
     }
   }
 }
@@ -94,8 +94,8 @@ if ($socid > 0) {
      *
      */
     print "<table width=\"100%\" border=\"0\" cellspacing=\"0\" cellpadding=\"3\">\n";
-    print "<tr><td><div class=\"titre\">Contacts pour la société : <a href=\"fiche.php3?socid=$objsoc->idp\">$objsoc->nom</a></div></td>";
-    print "<td align=\"center\">[<a href=\"people.php3?socid=$socid&action=addcontact\">Ajouter un contact</a>]</td>";
+    print "<tr><td><div class=\"titre\">Contacts pour la société : <a href=\"fiche.php?socid=$objsoc->idp\">$objsoc->nom</a></div></td>";
+    print "<td align=\"center\">[<a href=\"people.php?socid=$socid&action=addcontact\">Ajouter un contact</a>]</td>";
     print '</td></tr></table>';
 
     print "<hr>";
@@ -162,7 +162,7 @@ if ($socid > 0) {
 
 
   if ($action == 'addcontact') {
-    print "<br><form method=\"post\" action=\"people.php3?socid=$socid\">";
+    print "<br><form method=\"post\" action=\"people.php?socid=$socid\">";
     print "<input type=\"hidden\" name=\"action\" value=\"add\">";
     print "<table border=0>";
     print "<tr><td colspan=\"2\"><div class=\"titre\">Ajouter le contact</div></td>";
@@ -190,7 +190,7 @@ if ($socid > 0) {
       $obj = $db->fetch_object( 0);
     }
   
-    print "<form method=\"post\" action=\"people.php3?socid=$socid\">";
+    print "<form method=\"post\" action=\"people.php?socid=$socid\">";
     print "<input type=\"hidden\" name=\"action\" value=\"update\">";
     print "<input type=\"hidden\" name=\"contactid\" value=\"$contactid\">";
     print "<table border=0>";
@@ -239,7 +239,7 @@ if ($socid > 0) {
       }
       print "<td>".  strftime("%d %b %Y %H:%M", $obj->da)  ."</td>";
       if ($obj->propalrowid) {
-	print "<td><a href=\"propal.php3?propalid=$obj->propalrowid\">$obj->libelle</a></td>";
+	print "<td><a href=\"propal.php?propalid=$obj->propalrowid\">$obj->libelle</a></td>";
       } else {
 	print "<td>$obj->libelle</td>";
       }

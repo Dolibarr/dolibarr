@@ -32,7 +32,7 @@ class Contrat
 
   Function Contrat($DB)
   {
-    include_once("../societe.class.php3");
+    include_once("../societe.class.php");
     $this->db = $DB ;
     $this->product = new Product($DB);
     $this->societe = new Societe($DB);

@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 require("./paiementfourn.class.php");
 
 /*
@@ -49,7 +49,7 @@ if ($action == 'add') {
 
   if ( $paiementfourn->create($user) )
     {
-      Header("Location: fiche.php3?facid=$facid");
+      Header("Location: fiche.php?facid=$facid");
     }
 
   $action = '';
@@ -88,7 +88,7 @@ if ($action == 'create')
       print "<tr class=\"liste_titre\"><td colspan=\"3\">Facture</td>";
 
       print '<tr><td>Numéro :</td><td colspan="2">';
-      print '<a href="fiche.php3?facid='.$facid.'">'.$obj->facnumber.'</a></td></tr>';
+      print '<a href="fiche.php?facid='.$facid.'">'.$obj->facnumber.'</a></td></tr>';
       print "<tr><td>Société :</td><td colspan=\"2\">$obj->nom</td></tr>";
 
       print "<tr><td>Montant :</td><td colspan=\"2\">".price($obj->total_ttc)." euros TTC</td></tr>";
@@ -195,7 +195,7 @@ if ($action == '') {
 	  $objp = $db->fetch_object( $i);
 	  $var=!$var;
 	  print "<TR $bc[$var]>";
-	  print "<TD><a href=\"fiche.php3?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
+	  print "<TD><a href=\"fiche.php?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
 	  print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
 	  print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
 	  print '<TD align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';	

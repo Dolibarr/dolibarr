@@ -18,12 +18,12 @@
  * $Id$
  * $Source$
  */
-require("./pre.inc.php3");
+require("./pre.inc.php");
 
-require("../../contact.class.php3");
-require("../../lib/webcal.class.php3");
-require("../../cactioncomm.class.php3");
-require("../../actioncomm.class.php3");
+require("../../contact.class.php");
+require("../../lib/webcal.class.php");
+require("../../cactioncomm.class.php");
+require("../../actioncomm.class.php");
 
 /*
  * Sécurité accés client
@@ -118,7 +118,7 @@ if ($HTTP_POST_VARS["action"] == 'add_action')
 	  $webcal->add($user, $todo->date, $societe->nom, $libelle);
 	}
   }
-  Header("Location: ".DOL_URL_ROOT."/comm/fiche.php3?socid=$socid");
+  Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=$socid");
 }
 
 if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
@@ -186,7 +186,7 @@ if ($action=='create')
 
       print '<tr><td colspan="2"><div class="titre">Rendez-vous</div></td></tr>';
       print '<tr><td width="10%">Société</td><td width="40%">';
-      print '<a href="../fiche.php3?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
+      print '<a href="../fiche.php?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
       print '<tr><td width="10%">Contact</td><td width="40%">'.$contact->fullname.'</td></tr>';
       print '<tr><td width="10%">Date</td><td width="40%">';
       print_date_select();
@@ -224,7 +224,7 @@ if ($action=='create')
 	  
 	  print '<tr><td width="10%">Action</td><td>'.$caction->libelle.'</td></tr>';
 	  print '<tr><td width="10%">Société</td><td width="40%">';
-	  print '<a href="../fiche.php3?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
+	  print '<a href="../fiche.php?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
 	  print '<tr><td width="10%">Contact</td><td width="40%">'.$contact->fullname.'</td></tr>';
 	  print '<td>Date</td><td>';
 	  print $html->select_date('','ac',1,1);
@@ -246,7 +246,7 @@ if ($action=='create')
 	  print '<input type="hidden" name="todo" value="on">';
 	  print '<input type="hidden" name="afaire" value="1">';
 	  print '<tr><td width="10%">Société</td><td width="40%">';
-	  print '<a href="../fiche.php3?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
+	  print '<a href="../fiche.php?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
 	}
 
       print '<tr><td width="10%">Date</td><td width="40%">';
@@ -306,12 +306,12 @@ if ($id)
   if ($action == 'edit')
     {      
       print_titre ("Edition de la fiche action");
-      print '<form action="fiche.php3?id='.$id.'" method="post">';
+      print '<form action="fiche.php?id='.$id.'" method="post">';
       print '<input type="hidden" name="action" value="update">';
       print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
       print '<tr><td width="20%">Type</td><td colspan="3">'.$act->type.'</td></tr>';
       print '<tr><td width="20%">Société</td>';
-      print '<td width="30%"><a href="../fiche.php3?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
+      print '<td width="30%"><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
       
       print '<td width="20%">Contact</td><td width="30%">';
       $html->select_array("scontactid",  $act->societe->contact_array(), $act->contact->id, 1);
@@ -340,7 +340,7 @@ if ($id)
       print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
       print '<tr><td width="20%">Type</td><td colspan="3">'.$act->type.'</td></tr>';
       print '<tr><td width="20%">Société</td>';
-      print '<td width="30%"><a href="../fiche.php3?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
+      print '<td width="30%"><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
       
       print '<td width="10%">Contact</td><td width="40%">'.$act->contact->fullname.'</td></tr>';
       print '<tr><td>Date</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
@@ -366,17 +366,17 @@ if ($id)
   print '<td align="center" width="20%">';
   if ($action=='edit')
     {
-      print '<a href="fiche.php3?id='.$act->id.'">Annuler</a></td>';
+      print '<a href="fiche.php?id='.$act->id.'">Annuler</a></td>';
     }
   else
     {
-      print '<a href="fiche.php3?action=edit&id='.$act->id.'">Editer</a></td>';
+      print '<a href="fiche.php?action=edit&id='.$act->id.'">Editer</a></td>';
     }
   print '<td align="center" width="20%">-</td>';
   print '<td align="center" width="20%">-</td>';
   print '<td align="center" width="20%">-</td>';
   print '<td align="center" width="20%">';
-  print '<a href="fiche.php3?action=delete&id='.$act->id.'">Supprimer</a></td>';
+  print '<a href="fiche.php?action=delete&id='.$act->id.'">Supprimer</a></td>';
   print '</table>';
 }
 

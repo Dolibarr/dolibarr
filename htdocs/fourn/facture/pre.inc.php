@@ -19,7 +19,7 @@
  * $Source$
  *
  */
-require("../../main.inc.php3");
+require("../../main.inc.php");
 require("../../facturefourn.class.php");
 
 function llxHeader($head = "", $urlp = "") {
@@ -38,7 +38,7 @@ function llxHeader($head = "", $urlp = "") {
 
   if ($user->societe_id == 0) 
     {
-      $menu->add_submenu(DOL_URL_ROOT."/soc.php3?&action=create","Nouvelle société");
+      $menu->add_submenu(DOL_URL_ROOT."/soc.php?&action=create","Nouvelle société");
     }
 
 
@@ -46,7 +46,7 @@ function llxHeader($head = "", $urlp = "") {
 
   if ($user->societe_id == 0) 
     {
-      $menu->add_submenu("fiche.php3?action=create","Nouvelle");
+      $menu->add_submenu("fiche.php?action=create","Nouvelle");
     }
 
   $menu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", "Paiements");
