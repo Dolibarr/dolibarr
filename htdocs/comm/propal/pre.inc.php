@@ -21,7 +21,7 @@
  *
  */
 
-/*! \file htdocs/comm/propal/pre.inc.php
+/*!     \file       htdocs/comm/propal/pre.inc.php
         \ingroup    propale
 		\brief      Fichier de gestion du menu gauche du module propale
 		\version    $Revision$
@@ -32,37 +32,41 @@ require("../../main.inc.php");
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf, $langs;
 
-  /*
-   *
-   *
-   */
   top_menu($head);
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/comm/clients.php", "Clients");
+  $menu->add(DOL_URL_ROOT."/comm/clients.php", $langs->trans("Customers"));
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", "Contacts");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", $langs->trans("Contacts"));
 
-  $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", "Prospects");
+  $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", $langs->trans("Prospects"));
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", "Contacts");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", $langs->trans("Contacts"));
 
-  $menu->add(DOL_URL_ROOT."/comm/action/index.php", "Actions");
+
+  $menu->add(DOL_URL_ROOT."/comm/action/index.php", $langs->trans("Actions"));
+
 
   if ($conf->propal->enabled && $user->rights->propale->lire)
     {
-      $menu->add(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
-      $menu->add_submenu("propal.php?viewstatut=0", "Brouillons");
-      $menu->add_submenu("propal.php?viewstatut=1", "Ouvertes");
+      $langs->load("propal");
+      $menu->add(DOL_URL_ROOT."/comm/propal.php", $langs->trans("Prop"));
+      $menu->add_submenu("propal.php?viewstatut=0", $langs->trans("Drafts"));
+      $menu->add_submenu("propal.php?viewstatut=1", $langs->trans("Opened"));
       $menu->add_submenu("./propal/stats/", $langs->trans("Statistics"));
     }
 
-  $menu->add(DOL_URL_ROOT."/contrat/index.php", "Contrats");
+  if ($conf->contrat->enabled)
+    {
+      $langs->load("contracts");
+      $menu->add(DOL_URL_ROOT."/contrat/index.php", $langs->trans("Contracts"));
+    }
 
   if ($conf->commande->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/commande/index.php", "Commandes");
+      $langs->load("orders");
+      $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
     }
 
   if ($conf->fichinter->enabled ) 
@@ -72,16 +76,18 @@ function llxHeader($head = "", $urlp = "") {
 
   if ($conf->produit->enabled || $conf->service->enabled)
     {
-	  $chaine="";
-	  if ($conf->produit->enabled) { $chaine.="Produits"; }
+      $langs->load("products");
+      $chaine="";
+	  if ($conf->produit->enabled) { $chaine.=$langs->trans("Products"); }
 	  if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
-	  if ($conf->service->enabled) { $chaine.="Services"; }
+	  if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
       $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
     }
 
   if ($conf->projet->enabled ) 
     {
-	  $menu->add(DOL_URL_ROOT."/projet/index.php", "Projets");
+      $langs->load("projects");
+	  $menu->add(DOL_URL_ROOT."/projet/index.php", $langs->trans("Projects"));
 	}
 	
   left_menu($menu->liste);

@@ -67,8 +67,11 @@ if ($_GET["propalid"])
   dolibarr_fiche_head($head, $hselected, $societe->nom);
   
   $propal->info($propal->id);
+
+  print '<table width="100%"><tr><td>';
   dolibarr_print_object_info($propal);
-  
+  print '</td></tr></table>';
+
   print "<br></div>";
  
   $db->close();
