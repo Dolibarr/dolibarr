@@ -38,9 +38,21 @@ if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-print_barre_liste("Liste des Livres", $page, $PHP_SELF, "", $sortfield, $sortorder);
+$form = '<form action="index.php">'.
+'<input type="hidden" name="mode" value="search">'.
+'<input type="hidden" name="mode-search" value="soc">'.
+'Titre : <input type="text" name="searchvalue" class="flat" size="15">&nbsp;'.
+'<input type="submit" class="flat" value="go"></form>';
+
+
+print_barre_liste("Liste des Livres", $page, $PHP_SELF, "", $sortfield, $sortorder, $form);
 
 $sql = "SELECT l.rowid, l.title, l.oscid, l.ref, l.status FROM llx_livre as l";
+
+if ($searchvalue)
+{
+  $sql .= " WHERE l.title like '%$searchvalue%'";
+}
   
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit( $limit ,$offset);
@@ -73,14 +85,16 @@ if ( $db->query($sql) )
       {
 	print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_green.png" border="0"></a></td>';
 	print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_red_light.png" border="0"></a></td>';
+	print '<TD align="right"><a href="'.OSC_CATALOG_URL.'product_info.php?products_id='.$objp->oscid.'">Fiche en ligne</a></TD>';
+
       }
     else
       {
 	print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_green_light.png" border="0"></a></td>';
 	print '<td align="center"><img src="/theme/'.$conf->theme.'/img/icon_status_red.png" border="0"></a></td>';
+	print '<td>&nbsp;</td>';
       }
 
-    print '<TD align="right"><a href="'.OSC_CATALOG_URL.'product_info.php?products_id='.$objp->oscid.'">Fiche en ligne</a></TD>';
     print "</TR>\n";
     $i++;
   }
