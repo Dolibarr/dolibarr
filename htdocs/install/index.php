@@ -22,9 +22,10 @@
  */
 
 /**
-    \file       htdocs/install/index.php
-    \brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
-    \version    $Revision$
+        \file       htdocs/install/index.php
+        \ingroup    install
+        \brief      Affichage page sélectin langue si premiere install. Si reinstall, passe directement à la page check.php
+        \version    $Revision$
 */
 
 include_once("./inc.php");

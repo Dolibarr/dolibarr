@@ -22,11 +22,12 @@
  */
 include_once("./inc.php");
 
-$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:$langcode;
+$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
 $langs->defaultlang=$setuplang;
+$langs->load("admin");
 $langs->load("install");
 
-pHeader("Création des objets de la base","etape4");
+pHeader($langs->trans("CreateDatabaseObjects"),"etape4");
 
 $etape = 2;
 
@@ -51,12 +52,10 @@ require ($dolibarr_main_document_root . "/conf/conf.class.php");
 
 if ($_POST["action"] == "set")
 {
-  print '<h2>Base de donnée</h2>';
+  print '<h2>'.$langs->trans("Database").'</h2>';
 
   print '<table cellspacing="0" cellpadding="4" border="0" width="100%">';
   $error=0;
-
-  print '<tr><td colspan="2">Test de connexion à la base de données</td></tr>';
 
   $conf = new Conf();// on pourrait s'en passer
   $conf->db->host = $dolibarr_main_db_host;
@@ -67,12 +66,13 @@ if ($_POST["action"] == "set")
   $ok = 0;
   if ($db->connected == 1)
     {
-      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host</td><td>OK</td></tr>";
+      print "<tr><td>";
+      print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td>".$langs->trans("OK")."</td></tr>";
       $ok = 1 ;
     }
   else
     {
-      print "<tr><td>Erreur lors de la création de : $dolibarr_main_db_name</td><td>ERREUR</td></tr>";
+      print "<tr><td>Erreur lors de la création de : $dolibarr_main_db_name</td><td>".$langs->trans("Error")."</td></tr>";
     }
   /***************************************************************************************
    *
@@ -143,7 +143,7 @@ if ($_POST["action"] == "set")
 		  else
 		    {
 		      print "<tr><td>Création de la table $name</td>";
-		      print "<td>ERREUR ".$db->errno()." ".$db->error()."</td></tr>";
+		      print "<td>".$langs->trans("Error")." ".$db->errno()." ".$db->error()."</td></tr>";
 		      $error++;
 		    }
 		}
@@ -154,13 +154,14 @@ if ($_POST["action"] == "set")
       //droit sur les tables
       if ($db->query($grant_query))
 	{
-	  print "<tr><td>Grant User '$nom' </td><td>OK</td></tr>";
+	  print "<tr><td>Grant User '$nom' </td><td>".$langs->trans("OK")."</td></tr>";
 	}
       closedir($handle);
      
       if ($error == 0)
 	{
-	  print '<tr><td>Création des tables et clés primaires</td><td>OK</td></tr>';
+	  print '<tr><td>';
+	  print $langs->trans("TablesAndPrimaryKeyCreation").'</td><td>'.$langs->trans("OK").'</td></tr>';
 	  $ok = 1;
 	}
     }
@@ -243,14 +244,14 @@ if ($_POST["action"] == "set")
 	}//else
 			      
       
-      print "<tr><td>Chargement des données de base</td>";
+      print "<tr><td>".$langs->trans("ReferenceDataLoading")."</td>";
       if ($ok)
 	{	  
-	  print "<td>OK</td></tr>";
+	  print "<td>".$langs->trans("OK")."</td></tr>";
 	}
       else
 	{
-	  print "<td>ERREUR</td></tr>";
+	  print "<td>".$langs->trans("Error")."</td></tr>";
 	  $ok = 1 ;
 	}
     }

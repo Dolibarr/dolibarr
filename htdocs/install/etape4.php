@@ -23,11 +23,12 @@
  */
 include_once("./inc.php");
 
-$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:$langcode;
+$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
 $langs->defaultlang=$setuplang;
+$langs->load("admin");
 $langs->load("install");
 
-pHeader("Création du compte administrateur","etape5");
+pHeader($langs->trans("AdminAccountCreation"),"etape5");
 
 if (file_exists($conffile))
 {
@@ -57,11 +58,11 @@ $ok = 0;
 if ($db->ok == 1)
 {
   
-  print '<tr><td>Compte administrateur :</td><td>';
+  print '<tr><td>'.$langs->trans("Login").' :</td><td>';
   print '<input name="login"></td></tr>';
-  print '<tr><td>Mot de passe :</td><td>';
+  print '<tr><td>'.$langs->trans("Password").' :</td><td>';
   print '<input type="password" name="pass"></td></tr>';
-  print '<tr><td>Vérification du mot de passe :</td><td>';
+  print '<tr><td>'.$langs->trans("PasswordAgain").' :</td><td>';
   print '<input type="password" name="pass_verif"></td></tr>';
   print '</table>';
 
@@ -72,7 +73,9 @@ if ($db->ok == 1)
 
   if ($_GET["error"] == 2)
     {
-      print '<div class="error">Veuillez saisir un mot de passe, les mots de passe vides ne sont pas acceptés !</div>';
+      print '<div class="error">';
+      print $langs->trans("PleaseTypePassword");
+      print '</div>';
     }
 
   if ($_GET["error"] == 3)

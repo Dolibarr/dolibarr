@@ -31,11 +31,12 @@
 
 include_once("./inc.php");
 
-$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:$langcode;
+$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
 $langs->defaultlang=$setuplang;
+$langs->load("admin");
 $langs->load("install");
 
-pHeader("Fichier de configuration","etape2");
+pHeader($langs->trans("ConfigurationFile"),"etape2");
 
 $etape = 1;
 
@@ -56,7 +57,7 @@ if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 if ($_POST["action"] == "set")
 {
   umask(0);
-  print '<h2>Enregistrement des valeurs</h2>';
+  print '<h2>'.$langs->trans("SaveConfigurationFile").'</h2>';
   
   print '<table cellspacing="0" width="100%" cellpadding="1" border="0">';
   $error=0;
@@ -109,7 +110,7 @@ if ($_POST["action"] == "set")
       if (file_exists("$conffile"))
 	{
 	  include ("$conffile");
-	  print "<tr><td>Configuration enregistrée</td><td>OK</td>";
+	  print "<tr><td>".$langs->trans("ConfigurationSaving")."</td><td>".$langs->trans("OK")."</td>";
 	  $error = 0;
 	}
       else
@@ -150,10 +151,14 @@ if ($_POST["action"] == "set")
       $dir[7] = "$main_data_dir/rsscache";
       $dir[8] = "$main_data_dir/logo";
       
-      
+
       if (! is_dir($main_dir))
 	{
-	  print "<tr><td>Le dossier '".$main_dir."' n'existe pas !</td><td>Erreur</td></tr>";
+	  print "<tr><td>";
+	  print $langs->trans("DirDoesNotExists",$main_dir);
+	  print "</td><td>";
+	  print $langs->trans("Error");
+	  print "</td></tr>";
 	  $error++;
 	}
       else
@@ -186,7 +191,11 @@ if ($_POST["action"] == "set")
 		    {
 		      if (! @mkdir($dir[$i], 0755))
 			{
-			  print "<tr><td>Impossible de créer : ".$dir[$i]."</td><td bgcolor=\"red\">Erreur</td></tr>";
+			  print "<tr><td>";
+			  print "Impossible de créer : ".$dir[$i];
+			  print "</td><td bgcolor=\"red\">";
+			  print $langs->trans("Error");
+			  print "</td></tr>";
 			  $error++;
 			}
 		      else
@@ -318,12 +327,22 @@ if ($_POST["action"] == "set")
       if ($db->connected == 1)
 	{
 	  dolibarr_syslog("la connexion au serveur est reussie");
-	  print "<tr><td>Connexion au serveur : $dolibarr_main_db_host</td><td>OK</td></tr>";
+	  print "<tr><td>";
+	  print $langs->trans("ServerConnection")." : ";
+	  print $dolibarr_main_db_host;
+	  print "</td><td>";
+	  print $langs->trans("OK");
+	  print "</td></tr>";
 	}
       else
 	{
 	  dolibarr_syslog("la connection au serveur est rate");
-	  print "<tr><td>Connexion au serveur : $dolibarr_main_db_host</td><td>ERREUR</td></tr>";
+	  print "<tr><td>";
+ 	  print $langs->trans("ServerConnection")." : ";
+      print $dolibarr_main_db_host;
+	  print "</td><td>";
+	  print $langs->trans("Error");
+	  print "</td></tr>";
 	  $ok = 0;
 	}
       
@@ -335,7 +354,12 @@ if ($_POST["action"] == "set")
 	      // Connexion base existante
 	      // 
 	      dolibarr_syslog("la connexion a la database est reussie");
-	      print "<tr><td>Connexion à la base : $dolibarr_main_db_name</td><td>OK</td></tr>";    
+	      print "<tr><td>";
+      	  print $langs->trans("DatabaseConnection")." : ";
+          print $dolibarr_main_db_name;
+          print "</td><td>";
+          print $langs->trans("OK");
+          print "</td></tr>";
 	      $ok = 1 ;
 	    }
 	  else
@@ -344,8 +368,16 @@ if ($_POST["action"] == "set")
 	      // Création de la base
 	      //
 	      dolibarr_syslog("la connexion a la database est rate");
-	      print "<tr><td>Echec de connexion à la base : $dolibarr_main_db_name</td><td>Warning</td></tr>";
-	      print '<tr><td colspan="2">Création de la base : '.$dolibarr_main_db_name.'</td></tr>';
+	      print "<tr><td>";
+	      print "Echec de connexion à la base : ";
+	      print $dolibarr_main_db_name;
+	      print "</td><td>";
+	      print $langs->trans("Warning");
+	      print "</td></tr>";
+	      print '<tr><td colspan="2">';
+	      print "Création de la base : ";
+	      print $dolibarr_main_db_name;
+	      print '</td></tr>';
 	      
 	      $conf = new Conf();
 	      $conf->db->host = $dolibarr_main_db_host;
@@ -360,12 +392,12 @@ if ($_POST["action"] == "set")
 		  if ($dbt->connected == 1)
 		    {
 		      dolibarr_syslog("la connexion au serveur avec l'utilisateur root reussi");
-		      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>OK</td></tr>";
+		      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>".$langs->trans("OK")."</td></tr>";
 		    }
 		  else
 		    {
 		      dolibarr_syslog("la connexion au serveur avec l'utilisateur root rate");
-		      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>ERREUR</td></tr>";
+		      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>".$langs->trans("Error")."</td></tr>";
 		      $ok = 0;
 		    }
 		}
@@ -377,7 +409,7 @@ if ($_POST["action"] == "set")
 		    }
 		  else
 		    {
-		      print "<tr><td>Vérification des droits de création</td><td>ERREUR</td></tr>";
+		      print "<tr><td>Vérification des droits de création</td><td>".$langs->trans("Error")."</td></tr>";
 		      print '<tr><td colspna="2">-- Droits insuffissant</td></tr>';
 		      //$ok = 0;
 		    }
@@ -387,11 +419,11 @@ if ($_POST["action"] == "set")
 		{
 		  if ($dbt->create_db ($dolibarr_main_db_name))
 		    {      
-		      print "<tr><td>Création de la base : $dolibarr_main_db_name</td><td>OK</td></tr>";
+		      print "<tr><td>Création de la base : $dolibarr_main_db_name</td><td>".$langs->trans("OK")."</td></tr>";
 		    }
 		  else
 		    {
-		      print "<tr><td>Création de la base : $dolibarr_main_db_name</td><td>ERREUR</td></tr>";
+		      print "<tr><td>Création de la base : $dolibarr_main_db_name</td><td>".$langs->trans("Error")."</td></tr>";
 		      $ok = 0;
 		    }
 		}

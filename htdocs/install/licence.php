@@ -20,13 +20,20 @@
  *
  */
 
+/**
+	    \file       htdocs/install/licence.php
+        \ingroup    install
+		\brief      Page affichage license
+		\version    $Revision$
+*/
+
 include_once("./inc.php");
 
-$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:$langcode;
+$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
 $langs->defaultlang=$setuplang;
 $langs->load("install");
 
-pHeader("Licence d'utilisation","fileconf");
+pHeader($langs->trans("License"),"fileconf");
 
 print '<pre>';
 print '

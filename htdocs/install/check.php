@@ -22,14 +22,15 @@
  */
 
 /**
-    \file       htdocs/install/check.php
-    \brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
-    \version    $Revision$
+        \file       htdocs/install/check.php
+        \ingroup    install
+        \brief      Test si le fichier conf est modifiable et si il n'existe pas, test la possibilité de le créer
+        \version    $Revision$
 */
 
 include_once("./inc.php");
 
-$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:$langcode;
+$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
 $langs->defaultlang=$setuplang;
 $langs->load("install");
 
@@ -59,10 +60,13 @@ else
 
 if (!file_exists($conffile))
 {
-  print "<br /><br />Le fichier de configuration <b>conf.php</b> n'existe pas !<br />";
-  print "Vous devez créer un fichier <b>htdocs/conf/conf.php</b> et donner les droits d'écriture dans celui-ci au serveur Apache.<br /><br />";
+  print "<br /><br />";
+  print "Le fichier de configuration <b>conf.php</b> n'existe pas !";
+  print "<br />";
+  print "Vous devez créer un fichier <b>htdocs/conf/conf.php</b> et donner les droits d'écriture dans celui-ci au serveur Apache.";
+  print "<br /><br />";
 
-  print 'Corrigez le problème et <a href="index.php">rechargez la page</a>';
+  print 'Corrigez le problème et <a href="index.php">rechargez la page</a>.';
 
   $err++;
 }
@@ -70,18 +74,32 @@ else
 {
   if (!is_writable($conffile))
     {
-      if ($confexists) print "<br /><br />Le fichier de configuration <b>conf.php</b> existe.<br />";
-      else print "<br /><br />Le fichier de configuration <b>conf.php</b> a pu etre créé.<br />";
-      print "Le fichier <b>conf.php</b> n'est pas accessible en écriture, vérifiez les droits sur celui-ci, le serveur Apache doit avoir le droit d'écrire dans ce fichier le temps de la configuration (chmod 666 par exemple)<br>";
-      
+      print "<br /><br />";
+      if ($confexists) {
+        print $langs->trans("ConfFileExists");
+      }
+      else {
+        print $langs->trans("ConfFileCouldBeCreated");
+      }
+      print "<br />";
+      print $langs->trans("ConfFileIsNotWritable");
+      print "<br />";
 
       $err++;
     }
   else
     {
-      if ($confexists) print "<br /><br />Le fichier de configuration <b>conf.php</b> existe.<br />";
-      else print "<br /><br />Le fichier de configuration <b>conf.php</b> a pu etre créé.<br />";
-      print "Le fichier <b>conf.php</b> est accessible en écriture<br /><br />Vous pouvez continuer...";
+      print "<br /><br />";
+      if ($confexists) {
+        print $langs->trans("ConfFileExists");
+      }
+      else {
+        print $langs->trans("ConfFileCouldBeCreated");
+      }
+      print "<br />";
+      print $langs->trans("ConfFileIsWritable");
+      print "<br /><br />";
+      print $langs->trans("YouCanContinue");
 
     }
 }

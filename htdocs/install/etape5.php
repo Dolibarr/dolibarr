@@ -30,8 +30,9 @@
 
 include_once("./inc.php");
 
-$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:$langcode;
+$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:$langcode);
 $langs->defaultlang=$setuplang;
+$langs->load("admin");
 $langs->load("install");
 
 $success=0;
@@ -67,7 +68,7 @@ if ($_POST["action"] == "set")
     }
 
 
-  pHeader("Fin de l'installation","etape5");
+  pHeader($langs->trans("SetupEnd"),"etape5");
 
   print '<table cellspacing="0" cellpadding="4" border="1" width="100%">';
   $error=0;
@@ -90,7 +91,7 @@ if ($_POST["action"] == "set")
   if ($db->query($sql) || $db->errno() == 1062)
     {
       $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
-      print "Création du compte administrateur réussie<br>";
+      print $langs->trans("AdminLoginCreatedSuccessfuly")."<br>";
       $success = 1;
     }
   else
@@ -106,10 +107,12 @@ if ($_POST["action"] == "set")
 <br>
 
 <?php
-print "Votre système est maintenant installé.<br>";
-print "Il vous reste à le configurer selon vos besoins (Choix de l'apparence, des fonctionnalités, etc...). Pour cela, cliquez sur le lien ci-dessous:<br>";
+print $langs->trans("SystemIsInstalled")."<br>";
+print $langs->trans("YouNeedToPersonalizeSetup")."<br>";
 
-print '<br><a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home">Accès à l\'espace configuration</a>';
+print '<br><a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup">';
+print $langs->trans("GoToSetupArea");
+print '</a>';
 
 pFooter(1);
 ?>
