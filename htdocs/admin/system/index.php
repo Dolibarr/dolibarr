@@ -75,6 +75,7 @@ print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("WebServer")."</td></tr>\n";
 print "<tr $bc[1]><td width=\"240\">".$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("DocumentRootServer")."</td><td>" . DOL_DOCUMENT_ROOT . "</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("DataRootServer")."</td><td>" . DOL_DATA_ROOT . "</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
