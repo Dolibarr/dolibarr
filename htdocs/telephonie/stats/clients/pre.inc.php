@@ -20,7 +20,6 @@
  *
  */
 require("../../../main.inc.php");
-require(DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 
 $user->getrights('telephonie');
 
