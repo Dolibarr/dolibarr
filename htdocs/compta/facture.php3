@@ -271,7 +271,7 @@ if ($action == 'create')
 	print "<input type=\"hidden\" name=\"author\" value=\"$author\">";
 	print "<tr><td>Auteur :</td><td>".$user->fullname."</td>";
 
-	print '<td rowspan="8" valign="top">';
+	print '<td rowspan="4" valign="top">';
 	print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
 
 	print "<tr><td>Date :</td><td>";
