@@ -114,8 +114,7 @@ class Translate {
      *  \brief       Retourne la version traduite du texte passé en paramètre
      *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
      *               et si toujours pas trouvé, il est retourné tel quel
-     *  [en]         Return translated version of parameter string
-     *  \param       str         original string to translate
+     *  \param       str         chaine a traduire
      *  \param       param1      chaine de param1
      *  \param       param2      chaine de param1
      *  \param       param3      chaine de param1
@@ -129,6 +128,19 @@ class Translate {
         }
         return $str;
     }
+
+    /**
+     *  \brief       Retourne la version traduite du texte passé en paramètre complété du code pays
+     *  \param       str            chaine a traduire
+     *  \param       country_code   code pays (FR, ...)
+     *  \return      string         chaine traduite
+     */
+
+    function transcountry($str, $countrycode) {
+        if ($this->tab_translate["$str$countrycode"]) return $this->trans("$str$countrycode");
+        else return $this->trans("$str");
+    }
+
 
     /**
      *  \brief       Retourne la liste des langues disponibles
