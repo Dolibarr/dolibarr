@@ -39,6 +39,11 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add_submenu("facture.php", "Factures");
     }
 
+  if(defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE)
+    {
+      $menu->add_submenu("propale.php", "Propositions commerciales");
+    }
+
   if(defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
     {
       $menu->add_submenu("fichinter.php", "Fiches d'intervention");
