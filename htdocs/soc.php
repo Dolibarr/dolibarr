@@ -201,11 +201,13 @@ else
   
   print '<br><table id="actions" width="100%" cellspacing="0" cellpadding="3">';
 
-  print '<td width="20%" align="center">[<a href="soc.php?socid='.$socid.'&action=edit">Editer</a>]</td>';
+  print '<td width="20%" align="center"><a href="soc.php?socid='.$socid.'&action=edit">Editer</a></td>';
   print '<td width="20%" align="center">-</td>';
+  print '<td width="20%" align="center">';
+  print '<a href="../contact/fiche.php?socid='.$socid.'&amp;action=create">Ajouter un contact</a></td>';
+  
   print '<td width="20%" align="center">-</td>';
-  print '<td width="20%" align="center">-</td>';
-  print '<td width="20%" align="center">[<a href="societe/notify/fiche.php?socid='.$socid.'">Notifications</a>]</td>';
+  print '<td width="20%" align="center"><a href="societe/notify/fiche.php?socid='.$socid.'">Notifications</a></td>';
   print '</table><br>';
 /*
  *
