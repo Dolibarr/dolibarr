@@ -60,11 +60,11 @@ if ($action == 'del_bookmark')
  *
  *
  */
-print_titre(translate("Accueil comptabilité"));
+print_titre(translate("Espace comptabilité"));
 
 print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
 
-print '<tr><td valign="top" width="33%">';
+print '<tr><td valign="top" width="30%">';
 /*
  *
  */
@@ -74,43 +74,22 @@ print "<TR class=\"liste_titre\">";
 print '<td colspan="2">Rechercher une facture</td></tr>';
 print "<tr $bc[1]><td>";
 print 'Num. : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="Rechercher" class="flat"></td></tr>';
-print "</table></form><br>";
-
+print "</table></form>";
 /*
- * Propales à facturer
+ *
  */
-if ($user->comm > 0 && $conf->commercial ) 
+print '<div class="menus">';
+if ($user->societe_id == 0) 
 {
-  $sql = "SELECT p.rowid, p.ref, s.nom, s.idp FROM llx_propal as p, llx_societe as s";
-  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = 2";
-  if ($socidp)
-    {
-      $sql .= " AND p.fk_soc = $socidp";
-    }
-
-  if ( $db->query($sql) ) 
-    {
-      $num = $db->num_rows();
-      if ($num)
-	{
-	  $i = 0;
-	  print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
-	  print "<TR class=\"liste_titre\">";
-	  print '<td colspan="2">'.translate("Propositions comm. à facturer").'</td>';
-	  print "</TR>\n";
-  
-	  while ($i < $num)
-	    {
-	      $var=!$var;
-	      $obj = $db->fetch_object($i);
-	      print "<tr $bc[$var]><td><a href=\"propal.php?propalid=$obj->rowid\">$obj->ref</a></td>";
-	      print '<td align="right"><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
-	      $i++;
-	    }
-	  print "</table><br>";
-	}
-    }
+  print '<ul>';
+  print '<li><a href="./charges/index.php">Charges</a></li>';
+  print '<li><a href="./resultat/">Résultats</a></li>';
+  print '<li><a href="bank/index.php">Banque</a></li>';
 }
+print '</ul></div><br>';
+
+
+
 /*
  * Factures brouillons
  */
@@ -223,25 +202,50 @@ if ( $db->query($sql) )
  *
  *
  */
-print '</td><td valign="top" width="33%">';
+print '</td><td valign="top" width="70%">';
 
-
-print '<div class="menus">';
-if ($user->societe_id == 0) 
+/*
+ * Propales à facturer
+ */
+if ($user->comm > 0 && $conf->commercial ) 
 {
-  print '<ul>';
-  print '<li><a href="./charges/index.php">Charges</a></li>';
-  print '<li><a href="./resultat/">Résultats</a></li>';
-  print '<li><a href="bank/index.php">Banque</a></li>';
+  $sql = "SELECT p.rowid, p.ref, s.nom, s.idp FROM llx_propal as p, llx_societe as s";
+  $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = 2";
+  if ($socidp)
+    {
+      $sql .= " AND p.fk_soc = $socidp";
+    }
+
+  if ( $db->query($sql) ) 
+    {
+      $num = $db->num_rows();
+      if ($num)
+	{
+	  $i = 0;
+	  print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
+	  print "<TR class=\"liste_titre\">";
+	  print '<td colspan="2">'.translate("Propositions comm. à facturer").'</td>';
+	  print "</TR>\n";
+  
+	  while ($i < $num)
+	    {
+	      $var=!$var;
+	      $obj = $db->fetch_object($i);
+	      print "<tr $bc[$var]><td><a href=\"propal.php?propalid=$obj->rowid\">$obj->ref</a></td>";
+	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	      $i++;
+	    }
+	  print "</table><br>";
+	}
+    }
 }
-print '</ul></div><br>';
 
 
 /*
  * Factures impayées
  */
 
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp FROM llx_facture as f, llx_societe as s WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut > 0";
+$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc FROM llx_facture as f, llx_societe as s WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut > 0";
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
@@ -256,14 +260,15 @@ if ( $db->query($sql) )
     {
       print '<TABLE border="0" cellspacing="0" cellpadding="3" width="100%">';
       print "<TR class=\"liste_titre\">";
-      print '<td colspan="2">Factures impayées</td></tr>';
+      print '<td colspan="3">Factures impayées</td></tr>';
 
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
 	  print '<tr '.$bc[$var].'><td><a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</td>';
-	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td></tr>';
+	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+	  print '<td align="right">'.price($obj->total_ttc).'</td></tr>';
 	  $i++;
 	}
       print "</table><br>";
@@ -343,7 +348,7 @@ if ($user->societe_id == 0)
     }
 }
 
-print '</td><td width="40%">&nbsp;</td></tr>';
+print '</td></tr>';
 
 print '</table>';
 
