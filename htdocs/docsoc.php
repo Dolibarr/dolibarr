@@ -31,6 +31,7 @@ require("./pre.inc.php");
 llxHeader();
 
 $mesg = "";
+$socid=$_GET["socid"];
 
 $upload_dir = SOCIETE_OUTPUTDIR . "/" . $socid ;
 
@@ -43,7 +44,7 @@ if (! is_dir($upload_dir))
     }
 }
 
-if ( $sendit && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
+if ( $_POST["sendit"] && defined('MAIN_UPLOAD_DOC') && MAIN_UPLOAD_DOC == 1)
 {
   if (is_dir($upload_dir))
     {
@@ -77,8 +78,7 @@ if ($action=='delete')
  * Mode fiche
  *
  *
- */  
-$socid=$_GET["socid"];
+ */
 
 if ($socid > 0)
 {
