@@ -89,7 +89,7 @@ if ($user->rights->facture->lire)
   $sql .= ",".MAIN_DB_PREFIX."facture as f";
   $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
   $sql .= " WHERE f.fk_soc = s.idp";
-  $sql .= " AND f.paye = 0";  
+  $sql .= " AND f.paye = 0 AND f.fk_statut > 0";  
 
   if ($socidp)
     $sql .= " AND s.idp = $socidp";
@@ -144,7 +144,7 @@ if ($user->rights->facture->lire)
   }
   $sql .= " f.rowid DESC ";
   
-  $sql .= $db->plimit($limit+1,$offset);
+  //$sql .= $db->plimit($limit+1,$offset);
   
   $result = $db->query($sql);
   
@@ -188,71 +188,51 @@ if ($user->rights->facture->lire)
       print '</td>';
       print "</tr>\n";
       print '</form>';
-      
-      
+     
       if ($num > 0) 
 	{
 	  $var=True;
 	  $total=0;
 	  $totalrecu=0;
 	  
-	  while ($i < min($num,$limit))
+	  while ($i < $num)
 	    {
 	      $objp = $db->fetch_object($result);
-	      $var=!$var;
 
 	      if ($objp->am == 0)
 		{
+		  $var=!$var;
 
-	      print "<tr $bc[$var]>";
-	      if ($objp->paye)
-		{
-		  $class = "normal";
-		}
-	      else
-		{
-		  if ($objp->fk_statut == 0)
+		  print "<tr $bc[$var]>";
+		  $class = "impayee";
+		  
+		  print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_file()."</a>&nbsp;\n";
+		  print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment."</td>\n";
+		
+		  if ($objp->df > 0 )
 		    {
-		      $class = "normal";
+		      print "<td align=\"center\">";
+		      $y = strftime("%Y",$objp->df);
+		      $m = strftime("%m",$objp->df);
+		      
+		      print strftime("%d",$objp->df)."\n";
+		      print ' <a href="impayees.php?year='.$y.'&amp;month='.$m.'">';
+		      print substr(strftime("%B",$objp->df),0,3)."</a>\n";
+		      print ' <a href="impayees.php?year='.$y.'">';
+		      print strftime("%Y",$objp->df)."</a></TD>\n";
 		    }
 		  else
 		    {
-		      $class = "impayee";
+		      print "<td align=\"center\"><b>!!!</b></td>\n";
 		    }
-		}
+		  print '<td><a href="fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		
+		  print "<td align=\"right\">".price($objp->total)."</td>";
+		  print "<td align=\"right\">".price($objp->total_ttc)."</td>";
+		  print "<td align=\"right\">".price($objp->am)."</td>";	
+		  // Affiche statut de la facture
 
-	      print '<td><a href="facture.php?facid='.$objp->facid.'">'.img_file()."</a>&nbsp;\n";
-	      print '<a href="facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment."</td>\n";
-		
-	      if ($objp->df > 0 )
-		{
-		  print "<td align=\"center\">";
-		  $y = strftime("%Y",$objp->df);
-		  $m = strftime("%m",$objp->df);
-		    
-		  print strftime("%d",$objp->df)."\n";
-		  print ' <a href="impayees.php?year='.$y.'&amp;month='.$m.'">';
-		  print substr(strftime("%B",$objp->df),0,3)."</a>\n";
-		  print ' <a href="impayees.php?year='.$y.'">';
-		  print strftime("%Y",$objp->df)."</a></TD>\n";
-		}
-	      else
-		{
-		  print "<td align=\"center\"><b>!!!</b></td>\n";
-		}
-	      print '<td><a href="fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
-		
-	      print "<td align=\"right\">".price($objp->total)."</td>";
-	      print "<td align=\"right\">".price($objp->total_ttc)."</td>";
-	      print "<td align=\"right\">".price($objp->am)."</td>";	
-	      // Affiche statut de la facture
-	      if (! $objp->paye)
-		{
-		  if ($objp->fk_statut == 0)
-		    {
-		      print '<td align="center">brouillon</td>';
-		    }
-		  elseif ($objp->fk_statut == 3)
+		  if ($objp->fk_statut == 3)
 		    {
 		      print '<td align="center">abandonnée</td>';
 		    }
@@ -260,30 +240,21 @@ if ($user->rights->facture->lire)
 		    {
 		      print '<td align="center"><a class="'.$class.'" href="impayees.php?filtre=paye:0,fk_statut:1">'.($objp->am?"commencé":"impayée").'</a></td>';
 		    }
-		}
-	      else
-		{
-		  print '<td align="center">payée</td>';
-		}
-		
-	      print "</tr>\n";
-	      $total+=$objp->total;
-	      $total_ttc+=$objp->total_ttc;
-	      $totalrecu+=$objp->am;
+
+		  print "</tr>\n";
+		  $total+=$objp->total;
+		  $total_ttc+=$objp->total_ttc;
+		  $totalrecu+=$objp->am;
 		}
 	      $i++;
 	    }
-
-	  if ($num <= $limit) {
-	    // Print total
-	    print "<tr ".$bc[!$var].">";
-	    print "<td colspan=3 align=\"left\">".$langs->trans("Total").": </td>";
-	    print "<td align=\"right\"><b>".price($total)."</b></td>";		
-	    print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
-	    print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
-	    print '<td align="center">&nbsp;</td>';
-	    print "</tr>\n";
-	  }
+	  print "<tr ".$bc[!$var].">";
+	  print "<td colspan=3 align=\"left\">".$langs->trans("Total").": </td>";
+	  print "<td align=\"right\"><b>".price($total)."</b></td>";		
+	  print "<td align=\"right\"><b>".price($total_ttc)."</b></td>";
+	  print "<td align=\"right\"><b>".price($totalrecu)."</b></td>";
+	  print '<td align="center">&nbsp;</td>';
+	  print "</tr>\n";
 	}
 	
       print "</table>";
