@@ -3,6 +3,7 @@
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004 Benoit Mortier			  <benoit.mortier@opensides.be>
+ * Copyright (C) 2004 Eric Seigne <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,18 +62,18 @@ if ($_GET["action"] == 'set')
   $classname = 'methode_expedition_'.$_GET["value"];
   require_once($file);
   
-   $obj = new $classname();
-   $sql = "delete from ".MAIN_DB_PREFIX."expedition_methode where rowid = "$obj->id";";
-	 $db->query($sql);
-	 $sql='';
-	 $sql = "insert into ".MAIN_DB_PREFIX."expedition_methode (rowid,code,libelle,description,status) VALUES (".$obj->id.",'".$obj->code."','".$obj->name."','".addslashes($obj->description)."',".$_GET["statut"].");";
-	 
+  $obj = new $classname();
+  $sql = "delete from ".MAIN_DB_PREFIX."expedition_methode where rowid = ".$obj->id.";";
+  $db->query($sql);
+  $sql='';
+  $sql = "insert into ".MAIN_DB_PREFIX."expedition_methode (rowid,code,libelle,description,status) VALUES (".$obj->id.",'".$obj->code."','".$obj->name."','".addslashes($obj->description)."',".$_GET["statut"].");";
+  
   //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."expedition_methode (rowid,code,libelle, description, statut)";
   //$sql .= " VALUES (".$obj->id.",'".$obj->code."','".$obj->name."','".addslashes($obj->description)."',".$_GET["statut"].")";
-
+  
   if ($db->query($sql))
     {
-
+      
     }
 }
 
@@ -167,60 +168,65 @@ print '<td align="center" colspan="2">Actif</td>';
 print '<td align="center" colspan="2">Défaut</td>';
 print "</tr>\n";
 
-$handle=opendir($dir);
+if(is_dir($dir)) {
+  $handle=opendir($dir);
 
-while (($file = readdir($handle))!==false)
-{
-  if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,19) == 'methode_expedition_')
+  while (($file = readdir($handle))!==false)
     {
-      $name = substr($file, 19, strlen($file) - 31);
-      $classname = substr($file, 0, strlen($file) - 12);
-
-      require_once($dir.$file);
-
-      $obj = new $classname();
-
-      print '<tr class="pair"><td>';
-      echo $obj->name;
-      print "</td><td>\n";
-
-      print $obj->description;
-
-      print '</td><td align="center">';
-
-      if (in_array($name, $def))
+      if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,19) == 'methode_expedition_')
 	{
-	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	  $name = substr($file, 19, strlen($file) - 31);
+	  $classname = substr($file, 0, strlen($file) - 12);
+	  
+	  require_once($dir.$file);
+	  
+	  $obj = new $classname();
+	  
+	  print '<tr class="pair"><td>';
+	  echo $obj->name;
 	  print "</td><td>\n";
-	  print '<a href="expedition.php?action=set&amp;statut=0&amp;value='.$name.'">désactiver</a>';
-	}
-      else
-	{
-	  print "&nbsp;";
+	  
+	  print $obj->description;
+	  
+	  print '</td><td align="center">';
+	  
+	  if (in_array($name, $def))
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	      print "</td><td>\n";
+	      print '<a href="expedition.php?action=set&amp;statut=0&amp;value='.$name.'">désactiver</a>';
+	    }
+	  else
+	    {
+	      print "&nbsp;";
+	      print "</td><td>\n";
+	      print '<a href="expedition.php?action=set&amp;statut=1&amp;value='.$name.'">activer</a>';
+	    }
+	  
+	  print '</td><td align="center">';
+	  
+	  if ($expedition_default == "$name")
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	    }
+	  else
+	    {
+	      print "&nbsp;";
+	    }
+	  
 	  print "</td><td>\n";
-	  print '<a href="expedition.php?action=set&amp;statut=1&amp;value='.$name.'">activer</a>';
+	  
+	  print '<a href="expedition.php?action=setdef&amp;value='.$name.'">activer</a>';
+	  
+	  print '</td></tr>';
 	}
-
-      print '</td><td align="center">';
-
-      if ($expedition_default == "$name")
-	{
-	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-	}
-      else
-	{
-	  print "&nbsp;";
-	}
-
-      print "</td><td>\n";
-
-      print '<a href="expedition.php?action=setdef&amp;value='.$name.'">activer</a>';
-
-      print '</td></tr>';
     }
+  closedir($handle);
 }
-closedir($handle);
-
+else
+{
+  print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
+}
 print '</table>';
 
 print '<br>';
@@ -240,58 +246,63 @@ print "</tr>\n";
 
 clearstatcache();
 
-$handle=opendir($dir);
+if(is_dir($dir)) {
+  $handle=opendir($dir);
 
-while (($file = readdir($handle))!==false)
-{
-  if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,15) == 'pdf_expedition_')
+  while (($file = readdir($handle))!==false)
     {
-      $name = substr($file, 15, strlen($file) - 27);
-      $classname = substr($file, 0, strlen($file) - 12);
-
-      print '<tr class="pair"><td>';
-      echo "$name";
-      print "</td><td>\n";
-      require_once($dir.$file);
-      $obj = new $classname();
-      
-      print $obj->description;
-
-      print '</td><td align="center">';
-
-      if (in_array($name, $def))
+      if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,15) == 'pdf_expedition_')
 	{
-	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	  $name = substr($file, 15, strlen($file) - 27);
+	  $classname = substr($file, 0, strlen($file) - 12);
+	  
+	  print '<tr class="pair"><td>';
+	  echo "$name";
 	  print "</td><td>\n";
-	  print '<a href="expedition.php?action=del&amp;value='.$name.'">désactiver</a>';
-	}
-      else
-	{
-	  print "&nbsp;";
+	  require_once($dir.$file);
+	  $obj = new $classname();
+	  
+	  print $obj->description;
+	  
+	  print '</td><td align="center">';
+	  
+	  if (in_array($name, $def))
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	      print "</td><td>\n";
+	      print '<a href="expedition.php?action=del&amp;value='.$name.'">désactiver</a>';
+	    }
+	  else
+	    {
+	      print "&nbsp;";
+	      print "</td><td>\n";
+	      print '<a href="expedition.php?action=set&amp;value='.$name.'">activer</a>';
+	    }
+	  
+	  print '</td><td align="center">';
+	  
+	  if ($expedition_addon_var_pdf == "$name")
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+	    }
+	  else
+	    {
+	      print "&nbsp;";
+	    }
+	  
 	  print "</td><td>\n";
-	  print '<a href="expedition.php?action=set&amp;value='.$name.'">activer</a>';
+	  
+	  print '<a href="expedition.php?action=setpdf&amp;value='.$name.'">activer</a>';
+	  
+	  print '</td></tr>';
 	}
-
-      print '</td><td align="center">';
-
-      if ($expedition_addon_var_pdf == "$name")
-	{
-	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-	}
-      else
-	{
-	  print "&nbsp;";
-	}
-
-      print "</td><td>\n";
-
-      print '<a href="expedition.php?action=setpdf&amp;value='.$name.'">activer</a>';
-
-      print '</td></tr>';
     }
+  closedir($handle);
 }
-closedir($handle);
-
+else
+{
+  print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
+}
 print '</table>';
 
 /*
