@@ -42,7 +42,7 @@ class Propal
       $this->db = $DB ;
       $this->socidp = $soc_idp;
       $this->products = array();
-  }
+    }
   /*
    *
    *
@@ -72,8 +72,8 @@ class Propal
 	  $prod = new Product($this->db, $idproduct);
 	  $prod->fetch($idproduct);
 	  
-	  $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price) VALUES ";
-	  $sql .= " (".$this->id.",". $idproduct.",". $qty.", $prod->price) ; ";
+	  $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx) VALUES ";
+	  $sql .= " (".$this->id.",". $idproduct.",". $qty.",". $prod->price.",".$prod->tva_tx.") ; ";
 	  
 	  if ($this->db->query($sql) )
 	    {
@@ -127,58 +127,69 @@ class Propal
    *
    *
    */
-  Function create() {
-    /*
-     *  Insertion dans la base
-     */
-    $sql = "INSERT INTO llx_propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note) ";
-    $sql .= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0, $this->datep, now(), '$this->ref', $this->author, '$this->note')";
-    $sqlok = 0;
+  Function create()
+    {
+      /*
+       *  Insertion dans la base
+       */
+      $sql = "INSERT INTO llx_propal (fk_soc, fk_soc_contact, price, remise, tva, total, datep, datec, ref, fk_user_author, note) ";
+      $sql .= " VALUES ($this->socidp, $this->contactid, 0, $this->remise, 0,0, $this->datep, now(), '$this->ref', $this->author, '$this->note')";
+      $sqlok = 0;
       
-    if ( $this->db->query($sql) ) {
+      if ( $this->db->query($sql) )
+	{
 
-      $this->id = $this->db->last_insert_id();
-
-      $sql = "SELECT rowid FROM llx_propal WHERE ref='$this->ref';";
-      if ( $this->db->query($sql) ) { 
-	/*
-	 *  Insertion du detail des produits dans la base
-	 */
-	if ( $this->db->num_rows() ) {
-	  $propalid = $this->db->result( 0, 0);
-	  $this->db->free();
-	    
-	  for ($i = 0 ; $i < sizeof($this->products) ; $i++) {
-	    $prod = new Product($this->db, $this->products[$i]);
-	    $prod->fetch($this->products[$i]);
-
-	    $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price) VALUES ";
-	    $sql .= " ($propalid,". $this->products[$i].",". $this->products_qty[$i].", $prod->price) ; ";
-
-	    if (! $this->db->query($sql) ) {
-	      print $sql . '<br>' . $this->db->error() .'<br>';
+	  $this->id = $this->db->last_insert_id();
+	  
+	  $sql = "SELECT rowid FROM llx_propal WHERE ref='$this->ref';";
+	  if ( $this->db->query($sql) ) 
+	    { 
+	      /*
+	       *  Insertion du detail des produits dans la base
+	       */
+	      if ( $this->db->num_rows() )
+		{
+		  $propalid = $this->db->result( 0, 0);
+		  $this->db->free();
+		  
+		  for ($i = 0 ; $i < sizeof($this->products) ; $i++)
+		    {
+		      $prod = new Product($this->db, $this->products[$i]);
+		      $prod->fetch($this->products[$i]);
+		    
+		      $sql = "INSERT INTO llx_propaldet (fk_propal, fk_product, qty, price, tva_tx) VALUES ";
+		      $sql .= " ($propalid,".$this->products[$i].",".$this->products_qty[$i].",$prod->price,$prod->tva_tx);";
+		    
+		      if (! $this->db->query($sql) )
+			{
+			  print $sql . '<br>' . $this->db->error() .'<br>';
+			}
+		    }
+		  /*
+		   *
+		   */
+		  $this->update_price($this->id);
+		  /*
+		   *  Affectation au projet
+		   */
+		  if ($this->projetidp)
+		    {
+		      $sql = "UPDATE llx_propal SET fk_projet=$this->projetidp WHERE ref='$this->ref';";
+		      $this->db->query($sql);
+		    }
+		}	  
 	    }
-	  }
-	  /*
-	   *
-	   */
-	  $this->update_price($this->id);
-	  /*
-	   *  Affectation au projet
-	   */
-	  if ($this->projetidp) {
-	    $sql = "UPDATE llx_propal SET fk_projet=$this->projetidp WHERE ref='$this->ref';";
-	    $this->db->query($sql);
-	  }
-	}	  
-      } else {
-	print $this->db->error() . '<b><br>'.$sql;
-      }
-    } else {
-      print $this->db->error() . '<b><br>'.$sql;
+	  else
+	    {
+	      print $this->db->error() . '<b><br>'.$sql;
+	    }
+	}
+      else
+	{
+	  print $this->db->error() . '<b><br>'.$sql;
+	}
+      return $this->id;
     }
-    return $this->id;
-  }
   /*
    *
    *
@@ -253,7 +264,7 @@ class Propal
 	       * Lignes
 	       */
 
-	      $sql = "SELECT d.qty, p.description, p.ref, p.price";
+	      $sql = "SELECT d.qty, p.description, p.ref, p.price, d.tva_tx";
 	      $sql .= " FROM llx_propaldet as d, llx_product as p";
 	      $sql .= " WHERE d.fk_propal = ".$this->id ." AND d.fk_product = p.rowid";
 	
@@ -270,6 +281,7 @@ class Propal
 		      $ligne->desc      = stripslashes($objp->description);
 		      $ligne->qty       = $objp->qty;
 		      $ligne->ref       = $objp->ref;
+		      $ligne->tva_tx    = $objp->tva_tx;
 		      $ligne->price     = $objp->price;
 		      $this->lignes[$i] = $ligne;
 		      $i++;
