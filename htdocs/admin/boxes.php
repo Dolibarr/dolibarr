@@ -49,7 +49,7 @@ $boxes = array();
 
 $pos[0] = "Homepage";
 
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table class="border" cellpadding="3" cellspacing="0">';
 
 $sql = "SELECT b.rowid, b.box_id, b.position, d.name FROM llx_boxes as b, llx_boxes_def as d where b.box_id = d.rowid";
 $result = $db->query($sql);
@@ -65,7 +65,7 @@ if ($result)
       print '<tr class="pair"><td>'.$obj->name.'</td><td>' . $pos[$obj->position] . '</td><td>';
 
 
-      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&action=delete">Supprimer</a>';
+      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;action=delete">Supprimer</a>';
 
       array_push($boxes, $obj->box_id);
 
@@ -83,7 +83,7 @@ print '</table>';
  */
 print "<p>";
 print_titre("Boites disponibles");
-print '<table border="1" cellpadding="3" cellspacing="0">';
+print '<table class="border" cellpadding="3" cellspacing="0">';
 
 $sql = "SELECT rowid, name, file FROM llx_boxes_def";
 $result = $db->query($sql);
@@ -121,7 +121,7 @@ if ($result)
 	{
 	  if (! in_array($obj->rowid, $boxes))
 	    {
-	      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&action=edit">Ajouter</a>';
+	      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;action=edit">Ajouter</a>';
 	    }
 	  else
 	    {
