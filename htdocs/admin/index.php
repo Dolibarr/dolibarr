@@ -20,6 +20,17 @@
  */
 require("./pre.inc.php");
 
+if ($HTTP_POST_VARS["action"] == 'changetheme')
+{
+  $sql = "REPLACE INTO llx_const SET name = 'MAIN_THEME', value='".$HTTP_POST_VARS["theme"]."', visible=0";
+
+  if ($db->query($sql))
+    {
+
+    }
+  Header('Location: index.php');
+}
+
 llxHeader();
 
 print_titre("Configuration Dolibarr (version ".DOL_VERSION.")");
@@ -30,17 +41,39 @@ print '<td>Nom</td><td>Valeur</td><td>Action</td>';
 print "</TR>\n";
 
 print '<tr><td>Version</td><td>' . DOL_VERSION . '</td><td>&nbsp;</td></tr>';
-print '<tr><td>css</td><td>' . $conf->css . '</td><td>&nbsp;</td></tr>';
-print '<tr><td>theme</td><td>' . $conf->theme . '</td><td>&nbsp;</td></tr>';
-print '<tr><td>document root</td><td>' . DOL_DOCUMENT_ROOT . '</td><td>&nbsp;</td></tr>';
 
+print '<tr><td>theme</td>';
 
-print '<tr class="liste_titre"><td colspan="3">Database</td></tr>';
-print '<tr><td>type</td><td>' . $conf->db->type . '</td><td>&nbsp;</td></tr>';
-print '<tr><td>host</td><td>' . $conf->db->host . '</td><td>&nbsp;</td></tr>';
-print '<tr><td>user</td><td>' . $conf->db->user . '&nbsp;</td><td>&nbsp;</td></tr>';
-print '<tr><td>pass</td><td>' . $conf->db->pass . '&nbsp;</td><td>&nbsp;</td></tr>';
-print '<tr><td>Database name</td><td>' . $conf->db->name . '</td><td>&nbsp;</td></tr>';
+if ($action == 'modtheme')
+{
+  clearstatcache();
+  $dir = "../theme/";
+  $handle=opendir($dir);
+
+  print '<form method="post" action="index.php">';
+  print '<input type="hidden" name="action" value="changetheme">';
+  print '<td><select name="theme">';
+
+  while (($file = readdir($handle))!==false)
+    {
+      if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+	{
+	  print '<option value="'.$file.'">'.$file;
+	}
+    }
+  print '</td><td><input type="submit" value="Enregistrer"></td></form>';
+}
+else
+{
+print '<td>' . $conf->theme . '</td><td><a href="index.php?action=modtheme">Changer</a></td></tr>';
+}
+
+print '<tr><td>Document root</td><td>' . DOL_DOCUMENT_ROOT . '</td><td>&nbsp;</td></tr>';
+
+print '<tr class="liste_titre"><td colspan="3">Base de données</td></tr>';
+print '<tr><td>Type</td><td>' . $conf->db->type . '</td><td>&nbsp;</td></tr>';
+print '<tr><td>Serveur</td><td>' . $conf->db->host . '</td><td>&nbsp;</td></tr>';
+print '<tr><td>Nom</td><td>' . $conf->db->name . '</td><td>&nbsp;</td></tr>';
 
 print '</table>';
 
