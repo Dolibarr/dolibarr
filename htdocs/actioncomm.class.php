@@ -120,8 +120,8 @@ class ActionComm
 	  print $this->db->error();
 	}    
     }
-  /*
-   *
+  /**
+   * Supprime l'action
    *
    *
    */
@@ -134,12 +134,16 @@ class ActionComm
 	  return 1;
 	}
     }
-  /*
-   *
+  /**
+   * Met à jour l'action
    *
    */
   Function update()
     {
+      if ($this->percent > 100)
+	{
+	  $this->percent = 100;
+	}
       
       $sql = "UPDATE llx_actioncomm ";
       $sql .= " SET percent=$this->percent";
