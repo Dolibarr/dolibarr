@@ -849,7 +849,7 @@ if ($_GET["propalid"])
   $pageprev = $_GET["page"] - 1;
   $pagenext = $_GET["page"] + 1;
 
-  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp,".$db->pdate("p.fin_validite")." as dfv, c.label as statut, c.id as statutid";
+  $sql = "SELECT s.nom, s.idp, s.client, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp,".$db->pdate("p.fin_validite")." as dfv, c.label as statut, c.id as statutid";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
 
   if ($socidp)
@@ -910,8 +910,17 @@ if ($_GET["propalid"])
 	  print '<td><a href="propal.php?propalid='.$objp->propalid.'">';
 	  print img_file();
 	  print "</a>&nbsp;<a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-	  print "<TD><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      
-	  
+	  if ($objp->client == 1)
+	    {
+	      $url ='fiche.php?socid='.$objp->idp;
+	    }
+	  else
+	    {
+	      $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->idp;
+	    }
+
+	  print '<td><a href="'.$url.'">'.$objp->nom.'</a></td>';
+
 	  if ( $now > $objp->dfv && $objp->dfv > 0 )
 	    {
 	      print "<td>".strftime("%d %b %Y",$objp->dfv)."</td>";
