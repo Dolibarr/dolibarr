@@ -27,6 +27,8 @@ if ($HTTP_POST_VARS["action"] == 'add')
 {
   $contact = new Contact($db);
 
+  $contact->socid        = $HTTP_POST_VARS["socid"];
+
   $contact->name         = $HTTP_POST_VARS["name"];
   $contact->firstname    = $HTTP_POST_VARS["firstname"];
 
@@ -75,13 +77,6 @@ if ($action == 'update')
   $contact->email         = $HTTP_POST_VARS["email"];
   $contact->jabberid      = $HTTP_POST_VARS["jabberid"];
 
-  $contact->birthday = mktime(12, 1 , 1, 
-			      $HTTP_POST_VARS["remonth"], 
-			      $HTTP_POST_VARS["reday"], 
-			      $HTTP_POST_VARS["reyear"]);
-
-  $contact->birthday_alert = $HTTP_POST_VARS["birthday_alert"];
-
   $result = $contact->update($HTTP_POST_VARS["contactid"], $user);
 
 }
@@ -103,6 +98,21 @@ if ($action == 'create_user')
 
 llxHeader();
 
+print '<div class="tabs">';
+print '<a href="fiche.php?id='.$_GET["id"].'" id="active" class="tab">Général</a>';
+print '<a href="perso.php?id='.$_GET["id"].'" class="tab">Informations personnelles</a>';
+print '<a class="tab" href="vcard.php?id='.$_GET["id"].'">VCard</a>';
+print '<a class="tab" href="info.php?id='.$_GET["id"].'">Info</a>';
+print '</div>';
+print '<div class="tabBar">';
+
+
+if ($_GET["socid"] > 0)
+{
+  $objsoc = new Societe($db);
+  $objsoc->fetch($_GET["socid"]);
+}
+
 if ($_GET["action"] == 'create') 
 {
   print_fiche_titre ("Création d'un nouveau contact");
@@ -110,11 +120,17 @@ if ($_GET["action"] == 'create')
   print "<form method=\"post\" action=\"fiche.php\">";
   print '<input type="hidden" name="action" value="add">';
   print '<table class="border" border="0" width="100%">';
+
+  if ($_GET["socid"] > 0)
+    {
+      print '<tr><td>Société</td><td colspan="5">'.$objsoc->nom.'</td>';
+      print '<input type="hidden" name="socid" value="'.$objsoc->id.'">';
+    }
+
   print '<tr><td>Nom</td><td><input name="name" type="text" size="20" maxlength="80"></td>';
   print '<td>Prenom</td><td><input name="firstname" type="text" size="15" maxlength="80"></td>';
 
   print '<td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80"></td></tr>';
-
 
   print '<tr><td>Poste</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80"></td>';
 
@@ -129,13 +145,12 @@ if ($_GET["action"] == 'create')
   print '<td>Fax</td><td><input name="fax" type="text" size="18" maxlength="80"></td></tr>';
   print '<tr><td>Email</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80"></td></tr>';
   print '<tr><td>Note</td><td colspan="5"><textarea name="note"></textarea></td></tr>';
-  print '<tr><td align="center" colspan="4"><input type="submit" value="Ajouter"></td></tr>';
+  print '<tr><td align="center" colspan="6"><input type="submit" value="Ajouter"></td></tr>';
   print "</table>";
   print "</form>";
 }
 elseif ($_GET["action"] == 'edit') 
 {
-
   print_fiche_titre ("Edition d'un contact");
 
   $contact = new Contact($db);
@@ -147,6 +162,12 @@ elseif ($_GET["action"] == 'edit')
   print '<input type="hidden" name="old_name" value="'.$contact->name.'">';
   print '<input type="hidden" name="old_firstname" value="'.$contact->firstname.'">';
   print '<table class="border" cellpadding="3" celspacing="0" border="0" width="100%">';
+
+  if ($_GET["socid"] > 0)
+    {
+      print '<tr><td>Société</td><td colspan="5">'.$objsoc->nom.'</td>';
+    }
+
   print '<tr><td>Nom</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
   print '<td>Prenom</td><td><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td>';
 
@@ -167,20 +188,6 @@ elseif ($_GET["action"] == 'edit')
 
   print '<tr><td>Jabberid</td><td colspan="5"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
 
-
-  print '<tr><td>Date de naissance</td><td colspan="2">';
-  $html = new Form($db);
-  print $html->select_date();
-  print '</td><td colspan="3">Alerte : ';
-  if ($contact->birthday_alert)
-    {
-      print '<input type="checkbox" name="birthday_alert" checked><td></tr>';
-    }
-  else
-    {
-      print '<input type="checkbox" name="birthday_alert"><td></tr>';
-    }
-
   print '<tr><td>Note</td><td colspan="5"><textarea name="note"></textarea></td></tr>';
   print '<tr><td align="center" colspan="6"><input type="submit" value="Enregistrer"></td></tr>';
   print "</table>";
@@ -188,12 +195,27 @@ elseif ($_GET["action"] == 'edit')
 }
 else
 {
+  /*
+   * Visualisation de la fiche
+   *
+   */
+    
   $contact = new Contact($db);
   $contact->fetch($_GET["id"], $user);
 
   print_fiche_titre ("Contact : ". $contact->firstname.' '.$contact->name);
 
   print '<table class="noborder" width="100%">';
+
+
+  if ($contact->socid > 0)
+    {
+      $objsoc = new Societe($db);
+      $objsoc->fetch($contact->socid);
+
+      print '<tr><td>Société : '.$objsoc->nom_url.'</td></tr>';
+    }
+
   print '<tr><td valign="top">Nom : '.$contact->name.' '.$contact->firstname ."<br>";
 
   if ($contact->poste)
@@ -204,12 +226,6 @@ else
 
   if ($contact->jabberid)
     print 'Jabber : '.$contact->jabberid ."<br>";
-
-  if ($contact->birthday)
-    print 'Date de naissance : '.strftime("%d %B %Y",$contact->birthday);
-
-  if ($contact->birthday_alert)
-    print ' (alerte)';
 
   print "<br>";
 
@@ -232,25 +248,20 @@ else
 
   print nl2br($contact->note);
 
+  print "</div>";
+
   if ($user->societe_id == 0)
     {
-      print '<p><table id="actions" width="100%"><tr>';
+      print '<div class="tabsAction">';
       
-      print '<td align="center" width="20%"><a href="fiche.php?id='.$_GET["id"].'&amp;action=edit">Editer</a></td>';
+      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=edit">Editer</a>';    
 
-      print '<td align="center" width="20%">-</td>';
-      print '<td align="center" width="20%"><a href="vcard.php?id='.$_GET["id"].'">VCard</a></td>';
-
-      print '<td align="center" width="20%">-</td>';
-
-      print '<td align="center" width="20%"><a href="fiche.php?id='.$_GET["id"].'&amp;action=deleteWARNING">Supprimer</a></td>';
-      print "</tr></table>";
+      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=deleteWARNING">Supprimer</a>';
+      
+      print "</div>";      
     }
-  print "<p>\n";
 }
- 
-
-$db->close();
+  $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>
