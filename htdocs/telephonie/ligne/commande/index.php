@@ -61,7 +61,7 @@ if ($db->query($sql))
   $num = $db->num_rows();
   $i = 0;
   $ligne = new LigneTel($db);
-  print_barre_liste("Commande", $page, "index.php", "", $sortfield, $sortorder, '', $num);
+  print_titre("Commandes");
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>Lignes Statuts</td><td valign="center">Nb</td>';
@@ -87,19 +87,18 @@ else
   print $db->error() . ' ' . $sql;
 }
 
-print '<br>';
+if ($user->rights->telephonie->ligne_commander)
+{
+  print '<br>';
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr class="liste_titre"><td>Nouvelle commande</td>';
-print "</tr>\n";
-
-print "<tr $bc[1]>";
-print '<td><a href="fiche.php">'.img_edit().'</a>';
-print '&nbsp;<a href="fiche.php">Créer une nouvelle commande</a></td>';
-print "</tr>\n";
-print '</table>';
-
-
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>Nouvelle commande</td>';
+  print "</tr><tr $bc[1]>";
+  print '<td><a href="fiche.php">'.img_edit().'</a>';
+  print '&nbsp;<a href="fiche.php">Créer une nouvelle commande</a></td>';
+  print "</tr>\n";
+  print '</table>';
+}
 
 print '</td><td valign="top">';
 
@@ -107,24 +106,57 @@ print '</td><td valign="top">';
  * Seconde colonne
  *
  */
+$sql = "SELECT ";
+$sql .= " cli,mode,situation,date_mise_service,date_resiliation,motif_resiliation,commentaire,fichier, traite ";
 
-  print_barre_liste("Commande", $page, "liste.php", "", $sortfield, $sortorder, '', $num);
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commande_retour";
+$sql .= " WHERE traite = 0 AND mode = 'PRESELECTION'";
+$sql .= " LIMIT 10";
 
-print '<img src="./graphcommande.php"><br /><br />';
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $i = 0;
 
+  print_titre("Retour");
 
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>Lignes Statuts</td><td align="center">Resultat</td>';
+  print '<td align="center">Date</td><td>Commentaire</td>';
+  print "</tr>\n";
+  $var=True;
 
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object();
+      $var=!$var;
 
+      $ligne = new LigneTel($db);
 
+      if ( $ligne->fetch($obj->cli) == 1);
+      {
+	print "<tr $bc[$var]><td>";
+	print '<img src="'.DOL_URL_ROOT.'/telephonie/ligne/graph'.$ligne->statut.'.png">&nbsp;';
+	print '<a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?numero='.$obj->cli.'">';
+	print $obj->cli."</a></td>\n";
+	print '<td align="center">'.$obj->situation."</td>\n";
+	print '<td align="center">'.$obj->date_mise_service."</td>\n";
+	print '<td>'.$obj->commentaire."</td>\n";
+	print "</tr>\n";
+      }
+      $i++;
+    }
+  print "</table>";
+  $db->free();
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
+}
 
 
 print '</td></tr>';
-
-
-
 print '</table>';
-
-
 
 $db->close();
 
