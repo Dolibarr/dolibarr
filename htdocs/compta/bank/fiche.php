@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,6 +82,7 @@ if ($action == 'create')
   print '<div class="titre">Nouveau compte bancaire</div><br>';
   print '<p><form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
+  print '<input type="hidden" name="clos" value="0">';
 
   print '<table border="1" cellpadding="3" cellspacing="0">';
 
