@@ -21,15 +21,20 @@
 -- ========================================================================
 
 create table llx_telephonie_import_cdr (
-  idx       integer,
-  ligne     varchar(255) NOT NULL,
-  date      varchar(255) NOT NULL,
-  heure     varchar(255) NOT NULL,
-  num       varchar(255) NOT NULL,
-  dest      varchar(255) NOT NULL,
-  dureetext varchar(255) NOT NULL,
-  tarif     varchar(255) NOT NULL,
-  montant   real  NOT NULL,
-  duree     integer  NOT NULL,
-  fichier   varchar(255) NOT NULL
+  idx            integer,
+  ligne          varchar(255) NOT NULL,
+  date           varchar(255) NOT NULL,
+  heure          varchar(255) NOT NULL,
+  num            varchar(255) NOT NULL,
+  dest           varchar(255) NOT NULL,
+  dureetext      varchar(255) NOT NULL,
+  tarif          varchar(255) NOT NULL,
+  montant        real         NOT NULL,
+  duree          integer      NOT NULL,
+  fichier        varchar(255) NOT NULL,
+  fk_fournisseur integer      NOT NULL,
+
+  key (ligne)
+
 )type=innodb;
+
