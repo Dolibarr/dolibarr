@@ -28,7 +28,7 @@ use Getopt::Long;
 # command line option hash table
 my %optctl=();
 # get command line options
-GetOptions(\%optctl,"help!","host=s","db=s","user=s","pass=s","type=s","cotis!");
+GetOptions(\%optctl,"help!","host=s","db=s","user=s","pass=s","type=s","cotis!","crypt!");
 if (defined $optctl{'help'}){
   &usage();
 }
@@ -54,13 +54,17 @@ $sth->execute;
 
 # get login,pass of each adherents
 while (my @row = $sth->fetchrow_array ){
+  if (defined $optctl{'crypt'}){
+    print "$row[0]:",crypt($row[1],join '', ('.', '/', 0..9,'A'..'Z', 'a'..'z')[rand 64, rand 64]),"\n";
+  }else{
     print "$row[0]:$row[1]\n";
+  }
 }
 
 $dbh->disconnect();
 
 sub usage{
-  print "$0 [--help] [--host] [--db] [--user] [--pass] [--cotis]\n";
+  print "$0 [--help] [--host] [--db] [--user] [--pass] [--cotis] [--crypt]\n";
   print " cotis : select only adherents with cotisations up-to-date\n";
   print "\n";
   exit (1);
