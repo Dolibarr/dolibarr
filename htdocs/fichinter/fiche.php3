@@ -98,16 +98,10 @@ if ($action == 'update')
  *   Generation du pdf
  *
  */
-if ($action == 'generate')
+if ($action == 'generate' && $id)
 {
-  if ($id)
-    {
-      print fichinter_pdf_create($db, $id);
-    }
-  else
-    {
-      print $db->error();
-    }
+  fichinter_pdf_create($db, $id);
+  $mesg = "PDF généré";
 }
 /*
  *
@@ -329,7 +323,7 @@ if ($action == 'edit')
 
 if ($id)
 {
-  print_titre("Fiche d'intervention");
+  print_fiche_titre("Fiche d'intervention",$mesg);
 
   $fichinter = new Fichinter($db);
   if (  $fichinter->fetch($id) )
