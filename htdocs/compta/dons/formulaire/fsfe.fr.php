@@ -135,7 +135,7 @@ $don->fetch($rowid);
 	  <tr>
 	    <td>
 	      <b>Nom :</b>
-<?PHP print "$don->prenom $don->nom" ?><br>
+<?PHP print "$don->prenom $don->nom $don->societe" ?><br>
 	      <b>Adresse :</b>_____________________________________________<br>
 	      <b>No</b> ______ <b>Rue</b> _________________________________<br>
 	      <b>Code postal</b> <?PHP print $don->cp; ?> <b>Commune</b> <?PHP print $don->ville; ?><br>
