@@ -65,6 +65,7 @@ function llxHeader($head = "", $title="", $help_url='')
     {
       $langs->load("bills");
       $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
+      $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Impayées"));
       $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php",$langs->trans("Payments"));
 
       if (! defined(FACTURE_DISABLE_RECUR) || ! FACTURE_DISABLE_RECUR)
