@@ -1,0 +1,28 @@
+<!DOCTYPE debiandoc public "-//DebianDoc//DTD DebianDoc//EN"
+[
+    <!entity ch-installation system "installation.sgml">
+    <!entity ch-facture	system "facture.sgml">
+]
+>
+<debiandoc>
+
+  <book>
+
+    <titlepag>
+      
+      <title>Manuel d'utilisation de Dolibarr</title>
+
+      <author>Rodolphe Quiédeville<email/rodolphe@quiedeville.org/</author>
+
+      <version>0.0.1</version>
+
+    </titlepag>
+
+    <toc sect>
+
+    &ch-installation;
+    &ch-facture;
+
+  </book>
+  
+</debiandoc>
