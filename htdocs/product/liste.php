@@ -25,11 +25,6 @@ $user->getrights('produit');
 if (!$user->rights->produit->lire)
   accessforbidden();
 
-if ($action == 'update')
-{
-  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET description='$desc' where rowid = $rowid";
-  $db->query($sql);
-}
 
 /*
  *
