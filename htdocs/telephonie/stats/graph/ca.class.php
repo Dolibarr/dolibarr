@@ -32,6 +32,7 @@ class GraphCa extends GraphBrouzouf
 
     $this->client = 0;
     $this->contrat = 0;
+    $this->ligne = 0;
     $this->titre = "Chiffre d'affaire (euros HT)";
 
     $this->barcolor = "green";
@@ -40,33 +41,35 @@ class GraphCa extends GraphBrouzouf
 
   Function GraphDraw()
   {
-    if ($this->client == 0 && $this->contrat == 0)
+    $sql = "SELECT tf.date, sum(tf.gain), sum(tf.cout_vente), sum(tf.fourn_montant)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";   
+
+    if ($this->client == 0 && $this->contrat == 0 && $this->ligne == 0)
       {
-	$sql = "SELECT date, sum(gain), sum(cout_vente), sum(fourn_montant)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture";   
-	$sql .= " WHERE fk_facture is not null";    
-	$sql .= " GROUP BY date ASC";
+	$sql .= " WHERE tf.fk_facture is not null";    
       }
-    elseif ($this->client > 0 && $this->contrat == 0)
+    elseif ($this->client > 0 && $this->contrat == 0 && $this->ligne == 0)
       {
-	$sql = "SELECT date, sum(gain), sum(cout_vente), sum(fourn_montant)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture";   
 	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
 	$sql .= " WHERE fk_facture is not null";
-	$sql .= " AND s.rowid = fk_ligne";
+	$sql .= " AND s.rowid = tf.fk_ligne";
 	$sql .= " AND s.fk_client_comm = ".$this->client;
-	$sql .= " GROUP BY date ASC";
       }
-    elseif ($this->client == 0 && $this->contrat > 0)
+    elseif ($this->client == 0 && $this->contrat > 0 && $this->ligne == 0)
       {
-	$sql = "SELECT tf.date, sum(tf.gain), sum(tf.cout_vente), sum(tf.fourn_montant)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as tf";   
+
 	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
 	$sql .= " WHERE tf.fk_facture is not null";
 	$sql .= " AND s.rowid = tf.fk_ligne";
 	$sql .= " AND s.fk_contrat = ".$this->contrat;
-	$sql .= " GROUP BY tf.date ASC";
       }
+    elseif ($this->client == 0 && $this->contrat == 0 && $this->ligne > 0)
+      {
+	$sql .= " WHERE tf.fk_facture is not null";
+	$sql .= " AND tf.fk_ligne = ".$this->ligne;
+      }
+
+    $sql .= " GROUP BY tf.date ASC";
 
     if ($this->db->query($sql))
       {
