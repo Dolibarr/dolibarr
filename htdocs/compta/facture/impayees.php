@@ -89,7 +89,7 @@ if ($user->rights->facture->lire)
   $sql .= ",".MAIN_DB_PREFIX."facture as f";
   $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid=pf.fk_facture ";
   $sql .= " WHERE f.fk_soc = s.idp";
-  $sql .= " AND f.paye = 0 AND f.fk_statut > 0";  
+  $sql .= " AND f.paye = 0 AND f.fk_statut = 1";  
 
   if ($socidp)
     $sql .= " AND s.idp = $socidp";
