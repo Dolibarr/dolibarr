@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  * $Source$
  */
 
-/*!     \file       htdocs/comm/propal/document.php
+/**     \file       htdocs/comm/propal/document.php
         \ingroup    propale
 		\brief      Page de gestion des documents attachées à une proposition commerciale
 		\version    $Revision$
@@ -37,6 +37,7 @@ if (!$user->rights->propale->lire)
 
 
 llxHeader();
+
 
 function do_upload ($upload_dir)
 {
@@ -61,13 +62,16 @@ function do_upload ($upload_dir)
 
 }
 
-if ($id > 0)
+
+
+if ($_GET["id"] > 0)
 {
   $propal = new Propal($db);
-  if ( $propal->fetch($id) )
+  
+  if ($propal->fetch($_GET["id"]))
     {
 
-      $upload_dir = PROPALE_OUTPUTDIR . "/" . $propal->ref ;
+      $upload_dir = $conf->propal->dir_output . "/" . $propal->ref ;
 
       if ( $error_msg )
 	{ 
@@ -85,20 +89,18 @@ if ($id > 0)
 	  do_upload ($upload_dir);
 	}
             
-      /*
-       *
-       */
-      print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
+     
+      print '<table width="100%" class="noborder">';
       
       print "<tr><td><div class=\"titre\">Documents associés à la proposition : ".$propal->ref_url."</div></td>";
       print "</tr></table>";
 
-      echo '<FORM NAME="userfile" ACTION="document.php?id='.$propal->id.'" ENCTYPE="multipart/form-data" METHOD="POST">';
+      print '<form name="userfile" action="document.php?id='.$propal->id.'" enctype="multipart/form-data" method="POST">';
       print '<input type="hidden" name="max_file_size" value="2000000">';
       print '<input type="file"   name="userfile" size="40" maxlength="80"><br>';
-      print '<input type="submit" value="Upload File!" name="sendit">';
-      print '<input type="submit" value="'.$langs->trans("Cancel").'" name="cancelit"><BR>';
-      print '</FORM>';
+      print '<input type="submit" value="'.$langs->trans("Upload").'" name="sendit">';
+      print '<input type="submit" value="'.$langs->trans("Cancel").'" name="cancelit"><br>';
+      print '</form><br>';
 
       clearstatcache();
 
@@ -106,14 +108,14 @@ if ($id > 0)
 
       if ($handle)
 	{
-	  print '<table width="100%" border="1" cellpadding="3" cellspacing="0">';
+	  print '<table width="100%" class="border">';
 
 	  while (($file = readdir($handle))!==false)
 	    {
 	      if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 		{
 		  print '<tr><td>';
-		  echo '<a target="_blank" href="'.DOL_URL_ROOT.'/document/propale/'.$propal->ref.'/'.$file.'">'.$file.'</a>';
+		  echo '<a target="_blank" href="'.DOL_URL_ROOT.'/document.php?modulepart=propal&file='.urlencode($propal->ref.'/'.$file).'">'.$file.'</a>';
 		  print "</td>\n";
 		  
 		  print '<td align="right">'.filesize($upload_dir."/".$file). ' bytes</td>';
@@ -126,7 +128,7 @@ if ($id > 0)
 		    }
 		  else
 		    {
-		      echo '<a href="document.php?id='.$propal->id.'&action=delete&urlfile='.urlencode($file).'">Supprimer</a>';
+		      echo '<a href="'.DOL_URL_ROOT.'/comm/propal/document.php?id='.$propal->id.'&action=delete&urlfile='.urlencode($file).'">'.$langs->trans("Delete").'</a>';
 		    }
 		  print "</td></tr>\n";
 		}
