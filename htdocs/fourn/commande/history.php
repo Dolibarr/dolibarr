@@ -33,25 +33,15 @@ $langs->load("orders");
 $langs->load("suppliers");
 $langs->load("companies");
 
-
 $user->getrights('fournisseur');
 
-if (!$user->rights->fournisseur->commande->lire)
-  accessforbidden();
+if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
-require_once "../../project.class.php";
-require_once "../../propal.class.php";
+require_once DOL_DOCUMENT_ROOT."/project.class.php";
+require_once DOL_DOCUMENT_ROOT."/propal.class.php";
 require_once DOL_DOCUMENT_ROOT."/fournisseur.class.php";
 require_once DOL_DOCUMENT_ROOT."/fournisseur.commande.class.php";
 
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
 /*
  *
  */	
@@ -65,12 +55,11 @@ $html = new Form($db);
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-  
-$id = $_GET["id"];
-if ($id > 0)
+
+if ($_GET["id"] > 0)
 {
   $commande = new CommandeFournisseur($db);
-  if ( $commande->fetch($id) == 0)
+  if ( $commande->fetch($_GET["id"]) == 0)
     {	  
       $soc = new Societe($db);
       $soc->fetch($commande->soc_id);
@@ -106,7 +95,7 @@ if ($id > 0)
       print "</td></tr>";
 	  
       print '<tr><td>'.$langs->trans("Date").'</td>';
-      print '<td colspan="2">'.strftime("%A %d %B %Y",$commande->date_commande)."</td>\n";
+      print '<td colspan="2">'.strftime("%A %e %B %Y",$commande->date_commande)."</td>\n";
 
       print '<td width="50%">&nbsp;';
       print "</td></tr>";
@@ -130,16 +119,17 @@ if ($id > 0)
       $sql .= " WHERE l.fk_commande = ".$commande->id." AND u.rowid = l.fk_user";
       $sql .= " ORDER BY l.rowid DESC";
 	  
-      $result = $db->query($sql);
-      if ($result)
+      $resql = $db->query($sql);
+
+      if ($resql)
 	{
-	  $num = $db->num_rows();
+	  $num = $db->num_rows($resql);
 	  $i = 0;
 
 	  $var=True;
 	  while ($i < $num)
 	    {
-	      $obj = $db->fetch_object();
+	      $obj = $db->fetch_object($resql);
 	      print "<tr $bc[$var]>";
 
 	      print '<td width="20%">'.strftime("%a %d %B %Y %H:%M:%S",$obj->dl)."</td>\n";
@@ -156,7 +146,7 @@ if ($id > 0)
 	      $i++;
 	      $var=!$var;
 	    }	      
-	  $db->free();
+	  $db->free($resql);
 	} 
       else
 	{
@@ -165,7 +155,6 @@ if ($id > 0)
 
       print "</table>";
       print '<br /></div>';
-
     }
   else
     {
