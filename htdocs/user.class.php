@@ -131,23 +131,48 @@ class User
    */
   Function delrights($rid)
     {
+
       if (strlen($rid) == 2)
 	{
 	  $topid = substr($rid,0,1);
 	  $lowid = substr($rid,1,1);
-	  if ($lowid > 1)
-	    {
-	      $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id AND fk_id=$rid";
-	      if ($this->db->query($sql))
-		{
-		}
-	    }
+	}
 
-	  if ($lowid == 1)
+      if (strlen($rid) == 3)
+	{
+	  $topid = substr($rid,0,2);
+	  $lowid = substr($rid,2,1);
+	}
+
+      if ($lowid > 1)
+	{
+	  $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id AND fk_id=$rid";
+	  if ($this->db->query($sql))
 	    {
-	      $fid = $topid . "0";
-	      $lid = $topid . "9";
-	      $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id AND fk_id >= $fid AND fk_id <= $lid";
+	    }
+	}
+      
+      if ($lowid == 1)
+	{
+	  $fid = $topid . "0";
+	  $lid = $topid . "9";
+	  $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id AND fk_id >= $fid AND fk_id <= $lid";
+	  if ($this->db->query($sql))
+	    {
+	      
+	    }
+	  else
+	    {
+	      print $sql;
+	    }
+	}
+      
+      if ($lowid == 0)
+	{
+	  for ($i = 1 ; $i < 10 ; $i++)
+	    {
+	      $nid = $topid . "$i";
+	      $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id AND fk_id=$nid";
 	      if ($this->db->query($sql))
 		{
 		  
@@ -157,25 +182,8 @@ class User
 		  print $sql;
 		}
 	    }
-	  
-	  if ($lowid == 0)
-	    {
-	      for ($i = 1 ; $i < 10 ; $i++)
-		{
-		  $nid = $topid . "$i";
-		  $sql = "DELETE FROM llx_user_rights WHERE fk_user = $this->id AND fk_id=$nid";
-		  if ($this->db->query($sql))
-		    {
-		      
-		    }
-		  else
-		    {
-		      print $sql;
-		    }
-		}
-	    }
-
 	}
+            
       return 1;
     }
   /*
@@ -331,18 +339,24 @@ class User
 
 	      if ($module == 'compta' or $module == '')
 		{
-
-		  if ($obj->fk_id == 91)
-		    $this->rights->compta->bank = 1;
-
 		  if ($obj->fk_id == 92)
 		    $this->rights->compta->charges = 1;
 
 		  if ($obj->fk_id == 93)
 		    $this->rights->compta->resultat = 1;
+		}
+	      if ($module == 'banque' or $module == '')
+		{
+		  if ($obj->fk_id == 111)
+		    $this->rights->banque->lire = 1;
+
+		  if ($obj->fk_id == 112)
+		    $this->rights->banque->modifier = 1;
+
+		  if ($obj->fk_id == 113)
+		    $this->rights->banque->configurer = 1;
 
 		}
-		
 	      $i++;
 	      }
 	    //	    $this->db->free();	    
