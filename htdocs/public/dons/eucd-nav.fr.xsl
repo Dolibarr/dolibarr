@@ -165,6 +165,21 @@
     </tr>
   </xsl:template>
 
+  <xsl:template match="table/tr[@id='limitdate']">
+    <tr>
+      <td class="titre">
+	Durée
+      </td>
+      <td class="valeur">
+	<xsl:apply-templates select="@*|node()"/>
+      </td>
+      <td class="titre">
+	Duration
+      </td>
+    </tr>
+  </xsl:template>
+
+
   <xsl:template match="/html[@lang='fr']/body/div[@class='main']/form/table/tr[@id='public']">
     <tr>
       <td valign="top" class="titre">
