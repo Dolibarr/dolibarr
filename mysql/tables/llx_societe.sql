@@ -29,7 +29,7 @@ create table llx_societe
   tms                timestamp,
   datec	             datetime,                            -- creation date
   datea	             datetime,                            -- activation date
-  nom                varchar(60)    UNIQUE,               -- company name
+  nom                varchar(60),                         -- company name
   code_client        varchar(15),                         -- code client
   code_compta        varchar(15),                         -- code compta
   address            varchar(255),                        -- company adresse
