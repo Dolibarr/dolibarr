@@ -36,6 +36,7 @@ $user->getrights('banque');
 if (!$user->rights->facture->lire)
   accessforbidden();
 
+$langs->load("main"); // BUG De chargement de traduction ne pas modifier cette ligne
 $langs->load("bills");
 
 require_once "../facture.class.php";
@@ -299,7 +300,7 @@ if ($_POST["action"] == 'updateligne' && $user->rights->facture->creer && $_POST
 
 if ($_POST["action"] == 'updateligne' && $user->rights->facture->creer && $_POST["cancel"] == $langs->trans("Cancel")) 
 {
-      Header("Location: facture.php?facid=".$_POST["facid"]);   // Pour réaffichage de la fiche en cours d'édition
+  Header("Location: facture.php?facid=".$_POST["facid"]);   // Pour réaffichage de la fiche en cours d'édition
 }
 
 if ($_GET["action"] == 'deleteline' && $user->rights->facture->creer) 
