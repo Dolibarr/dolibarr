@@ -21,6 +21,9 @@
  *
  */
 
+$yn[0] = "non";
+$yn[1] = "oui";
+
 function transcoS2L($zonein,$devise)
 { 
   // Open source offert par <A HREF="mailto:alainfloch@free.fr?subject=chif2let">alainfloch@free.fr</A> 28/10/2001, sans garantie.
@@ -294,28 +297,52 @@ function print_date_select() {
     
   $smonth = 1;
   $syear = date("Y", time());
-  
+  $cday = date("d", time());
+
   print "<select name=\"reday\">";    
-  for ($day = 1 ; $day < $sday + 32 ; $day++) {
-    print "<option value=\"$day\">$day";
-  }
+
+  for ($day = 1 ; $day < $sday + 32 ; $day++) 
+    {
+      if ($day == $cday)
+	{
+	  print "<option value=\"$day\" SELECTED>$day";
+	}
+      else 
+	{
+	  print "<option value=\"$day\">$day";
+	}
+    }
+
+
   print "</select>";
   $cmonth = date("n", time());
   print "<select name=\"remonth\">";    
-  for ($month = $smonth ; $month < $smonth + 12 ; $month++) {
-    if ($month == $cmonth) {
-      print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
-    } else {
-      print "<option value=\"$month\">" . $strmonth[$month];
+  for ($month = $smonth ; $month < $smonth + 12 ; $month++)
+    {
+      if ($month == $cmonth)
+	{
+	  print "<option value=\"$month\" SELECTED>" . $strmonth[$month];
+	}
+      else
+	{
+	  print "<option value=\"$month\">" . $strmonth[$month];
+	}
     }
-  }
   print "</select>";
   
   print "<select name=\"reyear\">";
   
-  for ($year = $syear ; $year < $syear + 5 ; $year++) {
-    print "<option value=\"$year\">$year";
-  }
+  for ($year = $syear - 2; $year < $syear + 5 ; $year++)
+    {
+      if ($year == $syear)
+	{
+	  print "<option value=\"$year\" SELECTED>$year";
+	}
+      else
+	{
+	  print "<option value=\"$year\">$year";
+	}
+    }
   print "</select>\n";
   
 }

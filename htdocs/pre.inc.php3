@@ -22,7 +22,6 @@
 
 require ("./main.inc.php3");
 
-
 function llxHeader($head = "") {
   global $user, $conf;
 
@@ -34,7 +33,8 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("/societe.php", "Sociétés");
+  $menu->add("/societe.php", "Sociétés","company");
+  $menu->add_submenu("../soc.php3?&action=create", "Nouvelle société");
 
   $menu->add("/comm/index.php3", "Commercial");
 
@@ -62,17 +62,20 @@ function llxHeader($head = "") {
 
   $menu->add("/adherents/", "Adherents");
 
+  $menu->add("/compta/dons/", "Dons");
+
   $menu->add("/user/", "Utilisateurs");
 
   $menu->add("/info.php3", "Configuration");
 
-  if ($conf->voyage) {
+  if ($conf->voyage) 
+    {
 
-    $menu->add("/compta/voyage/index.php3","Voyages");
+      $menu->add("/compta/voyage/index.php3","Voyages");
 
-    $menu->add_submenu("/compta/voyage/index.php3","Voyages");
-    $menu->add_submenu("/compta/voyage/reduc.php3","Reduc");
-  }
+      $menu->add_submenu("/compta/voyage/index.php3","Voyages");
+      $menu->add_submenu("/compta/voyage/reduc.php3","Reduc");
+    }
 
 
   $menu->add("/domain/", "Domaines");

@@ -75,14 +75,23 @@ class Paiement
    *
    *
    */
-  Function select($name)
+  Function select($name, $filtre='', $id='')
   {
     $form = new Form($this->db);
 
-    $sql = "SELECT id, libelle FROM c_paiement ORDER BY id";
-
-    $form->select($name, $sql);
-
+    if ($filtre == 'crédit')
+      {
+	$sql = "SELECT id, libelle FROM c_paiement WHERE type IN (0,2) ORDER BY libelle";
+      }
+    elseif ($filtre == 'débit')
+      {
+	$sql = "SELECT id, libelle FROM c_paiement WHERE type IN (1,2) ORDER BY libelle";
+      }
+    else
+      {
+	$sql = "SELECT id, libelle FROM c_paiement ORDER BY libelle";
+      }
+    $form->select($name, $sql, $id);
   }
 
 }

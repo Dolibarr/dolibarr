@@ -1,0 +1,97 @@
+<?PHP
+/* Copyright (c) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ */
+
+class Form {
+  var $db;
+  var $errorstr;
+
+
+  Function Form($DB)
+    {
+
+      $this->db = $DB;
+
+      return 1;
+  }
+  /*
+   *
+   *
+   *
+   */
+
+  Function select($name, $sql, $id='')
+    {
+
+      $result = $this->db->query($sql);
+      if ($result)
+	{
+
+	  print '<select name="'.$name.'">';
+
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  
+	  if (strlen($id))
+	    {	    	      
+	      while ($i < $num)
+		{
+		  $row = $this->db->fetch_row($i);
+		  print "<option value=\"$row[0]\" ";
+		  if ($id == $row[0])
+		    {
+		      print "SELECTED";
+		    }
+		  print ">$row[1]</option>\n";
+		  $i++;
+		}
+	    }
+	  else
+	    {
+	      while ($i < $num)
+		{
+		  $row = $this->db->fetch_row($i);
+		  print "<option value=\"$row[0]\">$row[1]</option>\n";
+		  $i++;
+		}
+	    }
+
+	  print "</select>";
+	}
+      else 
+	{
+	  print $this->db->error();
+	}
+
+    }
+  /*
+   * Renvoie la chaîne de caractère décrivant l'erreur
+   *
+   *
+   */
+  Function error()
+    {
+      return $this->errorstr;
+    }
+  
+
+}
+
+?>
