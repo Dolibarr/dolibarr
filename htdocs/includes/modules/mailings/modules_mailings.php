@@ -163,8 +163,10 @@ class MailingTargets
             $sql .=  "'".$cibles[$i][2] ."',";
             $sql .=  "'".$cibles[$i][3] ."',";
             $sql .=  "'".$cibles[$i][0] ."')";
-            if (!$this->db->query($sql))
+            $result=$this->db->query($sql);
+            if (! $result && $this->db->errno() != DB_ERROR_RECORD_ALREADY_EXISTS)
             {
+                // Si erreur autre que doublon
                 dolibarr_syslog($this->db->error());
                 return -1;
             }
