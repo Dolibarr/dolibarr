@@ -31,7 +31,6 @@ Function dolibarr_ldap_connect()
 
 Function dolibarr_ldap_bind($ds)
 {
-
   if (defined("LDAP_SERVER_PASS") && LDAP_SERVER_PASS)
     {
       $ldapbind = ldap_bind($ds, LDAP_SERVER_LOGIN, LDAP_SERVER_PASS);
@@ -42,6 +41,14 @@ Function dolibarr_ldap_bind($ds)
     }
 
   return $ldapbind;
+}
+
+Function ldap_unacc($str)
+{
+
+  $stu = ereg_replace("é","e",$str);
+
+  return $stu;
 }
 
 ?>
