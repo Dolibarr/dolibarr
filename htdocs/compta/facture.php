@@ -1304,9 +1304,9 @@ else
 	print '</td><td>';
 	print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
 	print '</td><td align="right">';
-	print_liste_field_titre("Montant HT",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
+	print_liste_field_titre("Montant HT",$PHP_SELF,"f.total","","&amp;socidp=$socidp");
 	print '</td><td align="right">';
-	print_liste_field_titre("Montant TTC",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
+	print_liste_field_titre("Montant TTC",$PHP_SELF,"f.totalttc","","&amp;socidp=$socidp");
 	print '</td><td align="right">Reçu</td>';
 	print '<td align="center">Status</td>';
 	print "</tr>\n";
