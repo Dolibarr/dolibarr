@@ -607,12 +607,14 @@ if ($_GET["propalid"])
 		{
 		      if ($user->rights->propale->envoyer)
 			{
-                $file = $conf->propal->dir_output . "/$obj->ref/$obj->ref.pdf";
-                if (file_exists($file))
-                {
-                    print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=presend\">".$langs->trans("Send")."</a>";
-                }
-		    }
+		          $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+		          $propref = str_replace($forbidden_chars,"_",$obj->ref);
+		          $file = $conf->propal->dir_output . "/$propref/$propref.pdf";
+	                  if (file_exists($file))
+	       	            {
+	                      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=presend\">".$langs->trans("Send")."</a>";
+	                    }
+		        }
 		}
 
           // Delete
@@ -645,7 +647,9 @@ if ($_GET["propalid"])
 	   */
 	  if ($_GET["action"] == 'send')
 	    {
-	      $file = $conf->propal->dir_output . "/$propal->ref/$propal->ref.pdf";
+              $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+              $propref = str_replace($forbidden_chars,"_",$propal->ref);
+	      $file = $conf->propal->dir_output . "/$propref/$propref.pdf";
 	      if (file_exists($file))
 		{
 	      
@@ -702,8 +706,10 @@ if ($_GET["propalid"])
 
 	  print '<table class="border" width="100%">';
 	  
-	  $file = $conf->propal->dir_output . "/$propal->ref/$propal->ref.pdf";
-      $relativepath = "$propal->ref/$propal->ref.pdf";
+	  $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+	  $propref = str_replace($forbidden_chars,"_",$propal->ref);
+	  $file = $conf->propal->dir_output . "/$propref/$propref.pdf";
+          $relativepath = "$propref/$propref.pdf";
 
       $var=true;
       

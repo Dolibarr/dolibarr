@@ -74,7 +74,9 @@ class pdf_propale_rouge extends ModelePDFPropales
 	  
 	  if ($conf->propal->dir_output)
 	    {
-	      $dir = $conf->propal->dir_output . "/" . $propale->ref ;
+              $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+              $propref = str_replace($forbidden_chars,"_",$propale->ref);
+              $dir = $conf->propal->dir_output . "/" . $propref ;
           if (! file_exists($dir))
             {
                 umask(0);
@@ -91,7 +93,9 @@ class pdf_propale_rouge extends ModelePDFPropales
             return 0;
 	    }
 
-	  $file = $dir . "/" . $propale->ref . ".pdf";
+          $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+          $propref = str_replace($forbidden_chars,"_",$propale->ref);
+          $file = $dir . "/" . $propref . ".pdf";
 	  
 	  if (file_exists($dir))
 	    {
