@@ -45,6 +45,8 @@ drop table if exists c_typent ;
 
 drop table if exists llx_adherent;
 
+drop table if exists llx_adherent_type;
+
 drop table if exists llx_bank;
 
 drop table if exists llx_bank_account;
