@@ -75,7 +75,7 @@ class ActionComm
    */
   Function fetch($id)
     {      
-      $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture ";
+      $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent ";
       $sql .= "FROM llx_actioncomm as a, c_actioncomm as c WHERE a.id=$id AND a.fk_action=c.id;";
 
       if ($this->db->query($sql) )
@@ -88,6 +88,7 @@ class ActionComm
 	      $this->type = $obj->libelle;
 	      $this->date = $obj->da;
 	      $this->note =$obj->note;
+	      $this->percent =$obj->percent;
 	      
 	      $this->societe->id = $obj->fk_soc;
 	      
