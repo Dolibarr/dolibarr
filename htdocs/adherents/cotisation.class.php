@@ -20,6 +20,16 @@
  *
  */
 
+/*!	\file cotisation.class.php
+		\brief Classe permettant de gèrer les cotisations
+		\author Rodolphe Quiedeville
+		\version $Revision$
+*/
+
+/*! \class Cotisation
+		\brief Classe permettant de gèrer les cotisations
+*/
+
 class Cotisation
 {
   var $id;
@@ -43,20 +53,25 @@ class Cotisation
 
   var $projet;
   var $errorstr;
-  /*
-   *
-   *
-   */
-  Function Cotisation($DB, $soc_idp="") 
+
+/*!
+		\brief Cotisation
+		\param DB				base de données
+		\param soc_idp
+*/
+
+	Function Cotisation($DB, $soc_idp="")
     {
       $this->db = $DB ;
       $this->modepaiementid = 0;
     }
+
   /*
    *
    *
    *
    */
+
   Function print_error_list()
   {
     $num = sizeof($this->errorstr);
@@ -65,11 +80,13 @@ class Cotisation
 	print "<li>" . $this->errorstr[$i];
       }
   }
-  /*
+
+	/*
    *
    *
    */
-  Function check($minimum=0) 
+
+	Function check($minimum=0)
     {
       $err = 0;
 
@@ -153,12 +170,13 @@ class Cotisation
 	}
 
     }
-  /*
-   * Création
-   *
-   *
-   */
-  Function create($userid) 
+
+/*!
+		\brief fonction qui permet de créer le don
+		\param userid			userid de l'adhérent
+*/
+
+	Function create($userid)
     {
       /*
        *  Insertion dans la base
@@ -183,12 +201,12 @@ class Cotisation
 	}  
     }
 
-  /*
-   * Mise à jour
-   *
-   *
-   */
-  Function update($userid) 
+/*!
+		\brief fonction qui permet de mettre à jour le don
+		\param userid			userid de l'adhérent
+*/
+
+  Function update($userid)
     {
       
       $this->date = $this->db->idate($this->date);
@@ -226,14 +244,15 @@ class Cotisation
 	}  
     }
 
-  /*
-   * Suppression du don
-   *
-   */
+/*!
+		\brief fonction qui permet de supprimer le don
+		\param rowid
+*/
+
   Function delete($rowid)
 
   {
-    
+
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."don WHERE rowid = $rowid AND fk_statut = 0;";
 
     if ( $this->db->query( $sql) )
@@ -251,13 +270,14 @@ class Cotisation
       {
 	print "Err : ".$this->db->error();
 	return 0;
-      }    
+      }
   }
-  /*
-   * Fetch
-   *
-   *
-   */
+
+/*!
+		\brief fonction qui permet de récupèrer le don
+		\param rowid
+*/
+
   Function fetch($rowid)
   {
     $sql = "SELECT d.rowid, ".$this->db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet";
@@ -296,12 +316,15 @@ class Cotisation
       {
 	print $this->db->error();
       }
-    
+
   }
-  /*
-   * Suppression du don
-   *
-   */
+
+/*!
+		\brief fonction qui permet de valider la promesse de don
+		\param	rowid
+		\param 	userid			userid de l'adhérent
+*/
+
   Function valid_promesse($rowid, $userid)
   {
 
@@ -322,13 +345,16 @@ class Cotisation
       {
 	print "Err : ".$this->db->error();
 	return 0;
-      }    
+      }
   }
-  /*
-   * Classé comme payé, le don a été recu
-   *
-   */
-  Function set_paye($rowid, $modepaiement='')
+
+/*!
+		\brief fonction qui permet de mettre le don comme payé
+		\param	rowid
+		\param	modedepaiement
+*/
+
+	Function set_paye($rowid, $modepaiement='')
   {
     $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
 
@@ -353,12 +379,15 @@ class Cotisation
       {
 	print "Err : ".$this->db->error();
 	return 0;
-      }    
+      }
   }
-  /*
-   * Classé comme payé, le don a été recu
-   *
-   */
+
+/*!
+		\brief fonction qui permet de mettre un commentaire sur le don
+		\param	rowid
+		\param	commentaire
+*/
+
   Function set_commentaire($rowid, $commentaire='')
   {
     $sql = "UPDATE ".MAIN_DB_PREFIX."don SET note = '$commentaire'";
@@ -380,13 +409,15 @@ class Cotisation
       {
 	print "Err : ".$this->db->error();
 	return 0;
-      }    
+      }
   }
-  /*
-   * Classé comme encaissé
-   *
-   */
-  Function set_encaisse($rowid)
+
+/*!
+		\brief fonction qui permet de mettre le don comme encaissé
+		\param	rowid
+*/
+
+	Function set_encaisse($rowid)
   {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2;";
@@ -406,11 +437,13 @@ class Cotisation
       {
 	print "Err : ".$this->db->error();
 	return 0;
-      }    
+      }
   }
+
   /*
    * Somme des dons encaissés
    */
+
   Function sum_actual()
   {
     $sql = "SELECT sum(amount)";
@@ -443,10 +476,12 @@ class Cotisation
 
       }
   }
+
   /*
    * Somme des promesses de dons validées
    *
    */
+	 
   Function sum_intent()
   {
     $sql = "SELECT sum(amount)";

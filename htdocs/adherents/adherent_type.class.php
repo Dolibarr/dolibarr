@@ -20,31 +20,41 @@
  *
  */
 
+/*!	\file adherent_type.class.php
+		\brief Classe gérant les types d'adhérents
+		\author Rodolphe Quiedeville
+		\version $Revision$
+*/
+
+/*! \class AdherentType
+		\brief Classe gérant les types d'adhérents
+*/
+
+
 class AdherentType
 {
   var $id;
   var $libelle;
   var $statut;
-  var $cotisation;  // Soumis à la cotisation
+  var $cotisation;  /**< Soumis à la cotisation */
   var $errorstr;
-  var $mail_valid; // mail envoye lors de la validation
-  var $commentaire; // commentaire
-  var $vote; // droit de vote ?
-  /*
-   *
-   *
-   */
-  Function AdherentType($DB, $soc_idp="") 
+  var $mail_valid;	/**< mail envoye lors de la validation */
+  var $commentaire; /**< commentaire */
+  var $vote;				/** droit de vote ? */
+
+/*!
+		\brief AdherentType
+		\param DB				base de données
+		\param soc_idp
+*/
+
+  Function AdherentType($DB, $soc_idp="")
     {
       $this->db = $DB ;
       $this->statut = 1;
     }
-  /*
-   *
-   *
-   *
-   */
-  Function print_error_list()
+
+	Function print_error_list()
   {
     $num = sizeof($this->errorstr);
     for ($i = 0 ; $i < $num ; $i++)
@@ -52,16 +62,13 @@ class AdherentType
 	print "<li>" . $this->errorstr[$i];
       }
   }
-  /*
-   *
-   *
-   */
-  /*
-   * Création
-   *
-   *
-   */
-  Function create($userid) 
+
+/*!
+		\brief fonction qui permet de créer le status de l'adhérent
+		\param userid			userid de l'adhérent
+*/
+
+	Function create($userid)
     {
       /*
        *  Insertion dans la base
@@ -69,10 +76,10 @@ class AdherentType
 
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (statut)";
       $sql .= " VALUES ($this->statut)";
-      
+
       $result = $this->db->query($sql);
-      
-      if ($result) 
+
+      if ($result)
 	{
 	  $this->id = $this->db->last_insert_id();
 	  return $this->update();
@@ -82,17 +89,12 @@ class AdherentType
 	  print $this->db->error();
 	  print "<h2><br>$sql<br></h2>";
 	  return 0;
-	}  
+	}
     }
 
-  /*
-   * Mise à jour
-   *
-   *
-   */
-  Function update() 
+  Function update()
     {
-      
+
       $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type SET ";
       $sql .= "libelle = '".$this->libelle ."'";
       $sql .= ",statut=".$this->statut;
@@ -102,10 +104,10 @@ class AdherentType
       $sql .= ",mail_valid='".$this->mail_valid."'";
 
       $sql .= " WHERE rowid = $this->id";
-      
+
       $result = $this->db->query($sql);
-      
-      if ($result) 
+
+      if ($result)
 	{
 	  return 1;
 	}
@@ -114,17 +116,17 @@ class AdherentType
 	  print $this->db->error();
 	  print "<h2><br>$sql<br></h2>";
 	  return 0;
-	}  
+	}
     }
 
-  /*
-   * Suppression
-   *
-   */
-  Function delete($rowid)
+/*!
+		\brief fonction qui permet de supprimer le status de l'adhérent
+		\param rowid
+*/
 
+	Function delete($rowid)
   {
-    
+
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type WHERE rowid = $rowid";
 
     if ( $this->db->query( $sql) )
@@ -142,14 +144,15 @@ class AdherentType
       {
 	print "Err : ".$this->db->error();
 	return 0;
-      }    
+      }
   }
-  /*
-   * Fetch
-   *
-   *
-   */
-  Function fetch($rowid)
+
+	/*!
+		\brief fonction qui permet de récupérer le status de l'adhérent
+		\param rowid
+*/
+
+	Function fetch($rowid)
   {
     $sql = "SELECT *";
     $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -175,19 +178,15 @@ class AdherentType
       {
 	print $this->db->error();
       }
-    
+
   }
-  /*
-   *
-   *
-   *
-   */
+
   Function liste_array()
     {
       $projets = array();
 
       $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."adherent_type";
-      
+
       if ($this->db->query($sql) )
 	{
 	  $nump = $this->db->num_rows();
@@ -198,7 +197,7 @@ class AdherentType
 	      while ($i < $nump)
 		{
 		  $obj = $this->db->fetch_object($i);
-	      
+
 		  $projets[$obj->rowid] = $obj->libelle;
 		  $i++;
 		}
@@ -209,7 +208,7 @@ class AdherentType
 	{
 	  print $this->db->error();
 	}
-      
+
     }
 
 }

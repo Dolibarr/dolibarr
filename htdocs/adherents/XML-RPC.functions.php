@@ -14,6 +14,23 @@ Note: this code requires version 4.1.0 or higher of PHP.
 Adaptation pour fonctionnner en PHP 5.0
 
 */
+/*
+ * $Id$
+ * $Source$
+ *
+ */
+
+/*!	\file XML-RPC.functions.php
+		\brief Fonction XLM-RPC pour dolibarr
+		\author Keith Devens
+		\author Jean-Louis Bergamo
+		\auhtor Laurent Destailleur
+		\version $Revision$
+*/
+
+/*! \class XML
+		\brief Fonction XLM-RPC pour dolibarr
+*/
 
 function & XML_serialize(&$data, $level = 0, $prior_key = NULL){
 	#assumes a hash, keys are the variable names
@@ -71,11 +88,11 @@ function & XML_serialize(&$data, $level = 0, $prior_key = NULL){
 }
 
 class XML {
-	var $parser; #a reference to the XML parser
-	var $document; #the entire XML structure built up so far
-	var $current; #a pointer to the current item - what is this
-	var $parent; #a pointer to the current parent - the parent will be an array
-	var $parents; #an array of the most recent parent at each level
+	var $parser; /**< a reference to the XML parser */
+	var $document; /**< the entire XML structure built up so far */
+	var $current; /**< a pointer to the current item - what is this */
+	var $parent; /**< a pointer to the current parent - the parent will be an array */
+	var $parents; /**< an array of the most recent parent at each level */
 
 	var $last_opened_tag;
 

@@ -21,9 +21,17 @@
  *
  */
 
-/*
- * Classe de gestion de la table des champs optionels
- */
+/*!	\file adherent_options.class.php
+		\brief Classe de gestion de la table des champs optionels adhérents
+		\author Rodolphe Quiedville
+		\author	Jean-Louis Bergamo
+		\version $Revision$
+*/
+
+/*! \class AdherentOptions
+		\brief Classe de gestion de la table des champs optionels adhérents
+*/
+
 class AdherentOptions
 {
   var $id;
@@ -44,7 +52,14 @@ class AdherentOptions
    * Constructor
    *
    */
-  Function AdherentOptions($DB, $id='') 
+
+/*!
+		\brief AdherentOptions
+		\param DB			base de données
+		\param id			id de l'adhérent
+*/
+
+  Function AdherentOptions($DB, $id='')
     {
       $this->db = $DB ;
       $this->id = $id;
@@ -52,11 +67,11 @@ class AdherentOptions
       $this->attribute_name = array();
       $this->attribute_label = array();
     }
-  /*
-   * Print error_list
-   *
-   *
-   */
+
+/*!
+		\brief fonction qui imprime un liste d'erreurs
+*/
+
   Function print_error_list()
   {
     $num = sizeof($this->errorstr);
@@ -65,11 +80,13 @@ class AdherentOptions
 	print "<li>" . $this->errorstr[$i];
       }
   }
-  /*
-   * Check argument
-   *
-   */
-  Function check($minimum=0) 
+
+/*!
+		\brief fonction qui vérifie les données entrées
+		\param	minimum
+*/
+
+	Function check($minimum=0)
     {
       $err = 0;
 
@@ -104,14 +121,16 @@ class AdherentOptions
 	}
 
     }
-  /*
-   * Création d'un attribut optionnel supplementaire
-   * Ceci correspond a une modification de la table 
-   * et pas a un rajout d'enregistrement
-   * Prend en argument : le nom de l'attribut et eventuellemnt son
-   * type et sa longueur
-   *
-   */
+
+/*!
+		\brief fonction qui crée un attribut optionnel
+		\param	attrname			nom de l'atribut
+		\param	type					type de l'attribut
+		\param	length				longuer de l'attribut
+
+		\remarks	Ceci correspond a une modification de la table et pas a un rajout d'enregistrement
+*/
+
   Function create($attrname,$type='varchar',$length=255) {
     /*
      *  Insertion dans la base
@@ -132,8 +151,8 @@ class AdherentOptions
 	$sql .= " ADD $attrname $type";
 	break;
       }
-      
-      if ($this->db->query($sql)) 
+
+      if ($this->db->query($sql))
 	{
 	  return 1;
 	}
@@ -142,11 +161,17 @@ class AdherentOptions
 	  print $this->db->error();
 	  print "<h2><br>$sql<br></h2>";
 	  return 0;
-	}  
+	}
     }else{
       return 0;
     }
   }
+
+/*!
+		\brief fonction qui crée un label
+		\param	attrname			nom de l'atribut
+		\param	label					nom du label
+*/
 
   Function create_label($attrname,$label='') {
     /*
@@ -156,8 +181,8 @@ class AdherentOptions
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label SET ";
       $escaped_label=mysql_escape_string($label);
       $sql .= " name='$attrname',label='$escaped_label' ";
-      
-      if ($this->db->query($sql)) 
+
+      if ($this->db->query($sql))
 	{
 	  return 1;
 	}
@@ -166,14 +191,15 @@ class AdherentOptions
 	  print $this->db->error();
 	  print "<h2><br>$sql<br></h2>";
 	  return 0;
-	}  
+	}
     }
   }
 
-  /*
-   * Suppression d'un attribut
-   *
-   */
+/*!
+		\brief fonction qui supprime un attribut
+		\param	attrname			nom de l'atribut
+*/
+
   Function delete($attrname)
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
@@ -195,15 +221,16 @@ class AdherentOptions
 
   }
 
-  /*
-   * Suppression d'un label
-   *
-   */
+/*!
+		\brief fonction qui supprime un label
+		\param	attrname			nom du label
+*/
+
   Function delete_label($attrname)
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options_label WHERE name='$attrname'";
-      
+
       if ( $this->db->query( $sql) )
 	{
 	  return 1;
@@ -220,10 +247,13 @@ class AdherentOptions
 
   }
 
-  /*
-   * Modification d'un attribut
-   *
-   */
+/*!
+		\brief fonction qui modifie un attribut optionnel
+		\param	attrname			nom de l'atribut
+		\param	type					type de l'attribut
+		\param	length				longuer de l'attribut
+*/
+
   Function update($attrname,$type='varchar',$length=255)
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
@@ -260,16 +290,18 @@ class AdherentOptions
 
   }
 
-  /*
-   * Modification d'un label
-   *
-   */
+/*!
+		\brief fonction qui modifie un label
+		\param	attrname			nom de l'atribut
+		\param	label					nom du label
+*/
+
   Function update_label($attrname,$label='')
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
       $escaped_label=mysql_escape_string($label);
       $sql = "REPLACE INTO ".MAIN_DB_PREFIX."adherent_options_label SET name='$attrname',label='$escaped_label'";
-      
+
       if ( $this->db->query( $sql) )
 	{
 	  return 1;
@@ -285,20 +317,14 @@ class AdherentOptions
     }
 
   }
-  
-  /*
-   * fetch optional attribute name and optional attribute label
-   */
-  Function fetch_optionals()
+
+	Function fetch_optionals()
     {
       $this->fetch_name_optionals();
       $this->fetch_name_optionals_label();
     }
 
-  /*
-   * fetch optional attribute name
-   */
-  Function fetch_name_optionals()
+	Function fetch_name_optionals()
   {
     $array_name_options=array();
     $sql = "SHOW COLUMNS FROM ".MAIN_DB_PREFIX."adherent_options";
@@ -324,13 +350,10 @@ class AdherentOptions
       print $this->db->error();
       return array() ;
     }
-    
+
   }
 
-  /*
-   * fetch optional attribute name and its label
-   */
-  Function fetch_name_optionals_label()
+	Function fetch_name_optionals_label()
   {
     $array_name_label=array();
     $sql = "SELECT name,label FROM ".MAIN_DB_PREFIX."adherent_options_label";
@@ -353,7 +376,7 @@ class AdherentOptions
       print $this->db->error();
       return array() ;
     }
-    
+
   }
 }
 ?>

@@ -22,6 +22,19 @@
  *
  */
 
+/*!	\file adherent.class.php
+		\brief Classe permettant la gestion d'un adhérent
+		\author Rodolphe Qiedeville
+		\author	Jean-Louis Bergamo
+		\author	Laurent Destailleur
+		\version $Revision$
+*/
+
+/*! \class adherent.class.php
+		\brief Classe permettant la gestion d'un adhérent
+*/
+
+
 class Adherent
 {
   var $id;
@@ -47,11 +60,14 @@ class Adherent
   var $array_options;
 
   var $errorstr;
-  /*
-   *
-   *
-   */
-  Function Adherent($DB, $id='') 
+
+/*!
+		\brief Adherent
+		\param DB		base de données
+		\param id		id de l'adhérent
+*/
+
+  Function Adherent($DB, $id='')
   {
     $this->db = $DB ;
     $this->id = $id;
@@ -61,17 +77,22 @@ class Adherent
     // les champs optionnels sont vides
     $this->array_options=array();
   }
-  
-  /*
-   * function envoyant un email au destinataire (recipient) avec le text fourni en parametre.
-   * La particularite de cette fonction est de remplacer certains champs par leur valeur pour l'adherent
-   * en l'occurrence :
-   * %PRENOM% : est remplace par le prenom
-   * %NOM% : est remplace par nom
-   * %INFOS% : l'ensemble des attributs de cet adherent
-   * %SERVEUR% : URL du serveur web
-   * ...
-   */
+
+
+/*!
+		\brief	function envoyant un email au destinataire (recipient) avec le text fourni en parametre.
+		\param	recipients		destinataires
+		\param	text					contenu du message
+		\param	subject				sujet du message
+		\remarks	La particularite de cette fonction est de remplacer certains champs
+		\remarks	par leur valeur pour l'adherent en l'occurrence :
+		\remarks	%PRENOM% : est remplace par le prenom
+		\remarks	%NOM% : est remplace par nom
+		\remarks	%INFOS% : l'ensemble des attributs de cet adherent
+		\remarks	%SERVEUR% : URL du serveur web
+		\remarks	etc..
+*/
+
   Function send_an_email($recipients,$text,$subject="Vos coordonnees sur %SERVEUR%")
   {
     $patterns = array (
@@ -125,10 +146,11 @@ class Adherent
       return mail($recipients,$subjectosend,$texttosend);
     }
   }
-  /*
-   *
-   *
-   */
+
+/*!
+		\brief	imprime une liste d'erreur.
+*/
+
   Function print_error_list()
   {
     $num = sizeof($this->errorstr);
@@ -140,8 +162,10 @@ class Adherent
 
 
 /*!
-		\brief fonction qui renvoi la nature physique ou morale d'un adherent
+		\brief fonction qui renvoie la nature physique ou morale d'un adherent
+		\param	morphy		nature physique ou morale de l'adhérent
 */
+
   Function getmorphylib($morphy='')
   {
     if (! $morphy) { $morphy=$this->morphy; }
@@ -150,11 +174,12 @@ class Adherent
     return $morphy;
   }
 
-  /*
-   *
-   *
-   */
-  Function check($minimum=0) 
+/*!
+		\brief fonction qui vérifie les données entrées
+		\param	minimum
+*/
+
+  Function check($minimum=0)
     {
       $err = 0;
 
@@ -249,12 +274,13 @@ class Adherent
 	}
 
     }
-  /*
-   * Création
-   *
-   *
-   */
-  Function create($userid) 
+
+/*!
+		\brief fonction qui crée l'adhérent
+		\param	userid		userid de l'adhérent
+*/
+
+  Function create($userid)
     {
       /*
        *  Insertion dans la base
@@ -264,10 +290,10 @@ class Adherent
 
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent (datec)";
       $sql .= " VALUES (now())";
-      
+
       $result = $this->db->query($sql);
-      
-      if ($result) 
+
+      if ($result)
 	{
 	  $this->id = $this->db->last_insert_id();
 	  return $this->update();
@@ -280,11 +306,10 @@ class Adherent
 	}  
     }
 
-  /*
-   * Mise à jour
-   *
-   *
-   */
+/*!
+		\brief fonction qui met à jour l'adhérent
+*/
+
   Function update() 
     {
 
@@ -342,10 +367,11 @@ class Adherent
 	}  
     }
 
-  /*
-   * Suppression de l'adhérent
-   *
-   */
+/*!
+		\brief fonction qui supprime l'adhérent et les données associées
+		\param	rowid
+*/
+
   Function delete($rowid)
 
   {
@@ -383,13 +409,13 @@ class Adherent
     return $result;
 
   }
-  /*
-   * Fetch
-   *
-   *
-   */
-  /* Fetch adherent corresponding to login passed in argument */
-  Function fetch_login($login)
+
+/*!
+		\brief fonction qui récupére l'adhérent en donnant son login
+		\param	login		login de l'adhérent
+*/
+
+	Function fetch_login($login)
   {
     $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login' LIMIT 1";
     if ( $this->db->query( $sql) )
@@ -405,8 +431,14 @@ class Adherent
 	print $this->db->error();
       }
   }
-  /* Fetch adherent corresponding to rowid passed in argument */
-  Function fetch($rowid)
+
+/*!
+		\brief fonction qui récupére l'adhérent en donnant son rowid
+		\param	rowid
+*/
+
+
+	Function fetch($rowid)
   {
     $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.login, d.pass, d.naiss, d.photo, d.fk_adherent_type, d.morphy, t.libelle as type";
     $sql .= ",".$this->db->pdate("d.datefin")." as datefin";
@@ -450,10 +482,12 @@ class Adherent
     
   }
   
-  /*
-   * fetch optional attribute
-   */
-  Function fetch_optionals($rowid)
+/*!
+		\brief fonction qui récupére les données optionelles de l'adhérent
+		\param	rowid
+*/
+
+	Function fetch_optionals($rowid)
   {
     $tab=array();
     $sql = "SELECT *";
@@ -507,14 +541,16 @@ class Adherent
     }
     
   }
-  /*
-   * Cotisation
-   *
-   */
+/*!
+		\brief fonction qui insèe la cotisation dans la base de données
+		\param	date
+		\param	montant
+*/
+
   Function cotisation($date, $montant)
 
   {
-    
+
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, dateadh, cotisation)";
     $sql .= " VALUES ($this->id, ".$this->db->idate($date).", $montant)";
 
@@ -523,8 +559,8 @@ class Adherent
 	if ( $this->db->affected_rows() )
 	  {
 	    $rowid=$this->db->last_insert_id();
-	    $datefin = mktime(12, 0 , 0, 
-			      strftime("%m",$date), 
+	    $datefin = mktime(12, 0 , 0,
+			      strftime("%m",$date),
 			      strftime("%d",$date),
 			      strftime("%Y",$date)+1) - (24 * 3600);
 
@@ -544,28 +580,26 @@ class Adherent
       {
 	print "Err : ".$this->db->error();
 	return 0;
-      }    
+      }
   }
 
+/*!
+		\brief fonction qui vérifie que l'utilisateur est valide
+		\param	userid		userid de l'adhérent
+*/
 
-
-  /*
-   * Validation
-   *
-   *
-   */
-  Function validate($userid) 
+  Function validate($userid)
     {
-      
+
       $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
       $sql .= "statut=1";
       $sql .= ",fk_user_valid=".$userid;
 
       $sql .= " WHERE rowid = $this->id";
-      
+
       $result = $this->db->query($sql);
-      
-      if ($result) 
+
+      if ($result)
 	{
 	  return 1;
 	}
@@ -574,25 +608,26 @@ class Adherent
 	  print $this->db->error();
 	  print "<h2><br>$sql<br></h2>";
 	  return 0;
-	}  
+	}
     }
-  /*
-   * Résiliation
-   *
-   *
-   */
-  Function resiliate($userid) 
+
+/*!
+		\brief fonction qui résilie un adhérent
+		\param	userid		userid de de l'adhérent
+*/
+
+  Function resiliate($userid)
     {
-      
+
       $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
       $sql .= "statut=0";
       $sql .= ",fk_user_valid=".$userid;
 
       $sql .= " WHERE rowid = $this->id";
-      
+
       $result = $this->db->query($sql);
-      
-      if ($result) 
+
+      if ($result)
 	{
 	  return 1;
 	}
@@ -601,15 +636,17 @@ class Adherent
 	  print $this->db->error();
 	  print "<h2><br>$sql<br></h2>";
 	  return 0;
-	}  
+	}
     }
 
-  /*
-   * Ajoute le user aux differents abonneents automatiques
-   * (mailing-list, spip, glasnost etc etc ..)
-   *
-   */
-  Function add_to_abo($adht)
+
+/*!
+		\brief fonction qui ajoute l'adhérent au abonnements automatiques
+		\param	adht
+		\remarks	mailing-list, spip, glasnost, etc...
+*/
+
+	Function add_to_abo($adht)
     {
       $err=0;
       // mailman
@@ -620,8 +657,8 @@ class Adherent
 	      $err+=1;
 	    }
 	}
-      
-      if ($adht->vote == 'yes' && 
+
+      if ($adht->vote == 'yes' &&
 	  defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
 	  defined("ADHERENT_USE_GLASNOST_AUTO") && ADHERENT_USE_GLASNOST_AUTO ==1
 	  )
@@ -647,11 +684,12 @@ class Adherent
       }
     }
 
-  /*
-   * supprime le user des differents abonnements automatiques
-   * (mailing-list, spip, glasnost etc etc ..)
-   *
-   */
+/*!
+		\brief fonction qui supprime l'adhérent des abonnements automatiques
+		\param	adht
+		\remarks	mailing-list, spip, glasnost, etc...
+*/
+
   Function del_to_abo($adht)
     {
       $err=0;
@@ -662,7 +700,7 @@ class Adherent
 	    $err+=1;
 	  }
 	}
-      if ($adht->vote == 'yes' && 
+      if ($adht->vote == 'yes' &&
 	  defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
 	  defined("ADHERENT_USE_GLASNOST_AUTO") && ADHERENT_USE_GLASNOST_AUTO ==1
 	  )
@@ -688,14 +726,13 @@ class Adherent
       }
     }
 
-  /*
-   *
-   * Ajoute cet utilisateur comme redacteur dans spip
-   *
-   */
-  Function add_to_spip()
+/*!
+		\brief fonction qui donne les droits rédacteurs dans spip
+*/
+
+	Function add_to_spip()
     {
-      if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 && 
+      if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
 	  defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
 	  defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
 	  defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
@@ -707,8 +744,8 @@ class Adherent
 	//      $mydb=new Db('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
       $mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
       $result = $mydb->query($query);
-      
-      if ($result) 
+
+      if ($result)
 	{
 	  $mydb->close();
 	  return 1;
@@ -717,18 +754,17 @@ class Adherent
 	{
 	  $this->errorstr=$mydb->error();
 	  return 0;
-	}  
+	}
       }
     }
 
-  /*
-   *
-   * supprime cet utilisateur dans spip
-   *
-   */
-  Function del_to_spip()
+/*!
+		\brief fonction qui enlève les droits rédacteurs dans spip
+*/
+
+	Function del_to_spip()
     {
-      if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 && 
+      if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
 	  defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
 	  defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
 	  defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
@@ -737,8 +773,8 @@ class Adherent
 	$query = "DELETE FROM spip_auteurs WHERE login='".$this->login."'";
 	$mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
 	$result = $mydb->query($query);
-      
-	if ($result) 
+
+	if ($result)
 	  {
 	    $mydb->close();
 	    return 1;
@@ -747,18 +783,17 @@ class Adherent
 	  {
 	    $this->errorstr=$mydb->error();
 	    return 0;
-	  }  
+	  }
       }
     }
 
-  /*
-   *
-   * est-ce que cet utilisateur est dans spip
-   *
-   */
-  Function is_in_spip()
+/*!
+		\brief fonction qui dit si cet utilisateur est rédacteur dans spip
+*/
+
+	Function is_in_spip()
     {
-      if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 && 
+      if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
 	  defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
 	  defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
 	  defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
@@ -767,8 +802,8 @@ class Adherent
 	$query = "SELECT login FROM spip_auteurs WHERE login='".$this->login."'";
 	$mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
 	$result = $mydb->query($query);
-      
-	if ($result) 
+
+	if ($result)
 	  {
 	    if ($mydb->num_rows()){
 	      # nous avons au moins une reponse
@@ -785,26 +820,26 @@ class Adherent
 	    # error
 	    $this->errorstr=$mydb->error();
 	    return -1;
-	  }  
+	  }
       }
     }
 
-  /*
-   * Rajoute cet utilisateur au serveur glasnost
-   *
-   */
-  Function add_to_glasnost()
+/*!
+		\brief fonction qui ajoute l'utilisateur dans glasnost
+*/
+
+	Function add_to_glasnost()
     {
-      if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 && 
+      if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
 	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
 	  defined('ADHERENT_GLASNOST_USER') && ADHERENT_GLASNOST_USER != '' &&
 	  defined('ADHERENT_GLASNOST_PASS') && ADHERENT_GLASNOST_PASS != ''
 	  ){
 	// application token is not useful here
 	$applicationtoken='';
-	list($success, $response) = 
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
-			 '/RPC2', 
+	list($success, $response) =
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
+			 '/RPC2',
 			 'callGateway',
 			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication"),
 			       XMLRPC_prepare('getUserIdAndToken'),
@@ -820,8 +855,8 @@ class Adherent
 	}
 
 	list($success,$response)=
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
-			 '/RPC2', 
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
+			 '/RPC2',
 			 'callGateway',
 			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
 			       XMLRPC_prepare('addObject'),
@@ -854,22 +889,22 @@ class Adherent
       }
     }
 
-  /*
-   * efface cet utilisateur du serveur glasnost
-   *
-   */
-  Function del_to_glasnost()
+/*!
+		\brief fonction qui enlève l'utilisateur de glasnost
+*/
+
+	Function del_to_glasnost()
     {
-      if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 && 
+      if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
 	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
 	  defined('ADHERENT_GLASNOST_USER') && ADHERENT_GLASNOST_USER != '' &&
 	  defined('ADHERENT_GLASNOST_PASS') && ADHERENT_GLASNOST_PASS != ''
 	  ){
 	// application token is not useful here
 	$applicationtoken='';
-	list($success, $response) = 
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
-			 '/RPC2', 
+	list($success, $response) =
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
+			 '/RPC2',
 			 'callGateway',
 			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication"),
 			       XMLRPC_prepare('getUserIdAndToken'),
@@ -884,8 +919,8 @@ class Adherent
 	}
 	// recuperation du personID
 	list($success,$response)=
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
-			 '/RPC2', 
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
+			 '/RPC2',
 			 'callGateway',
 			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
 			       XMLRPC_prepare('getObjectByLogin'),
@@ -907,8 +942,8 @@ class Adherent
 	if (defined('ADHERENT_GLASNOST_DEFAULT_GROUPID') && ADHERENT_GLASNOST_DEFAULT_GROUPID != ''){
 	  // recuperation des personne de ce groupe
 	  list($success,$response)=
-	    XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
-			 '/RPC2', 
+	    XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
+			 '/RPC2',
 			   'callGateway',
 			   array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/groups"),
 				 XMLRPC_prepare('getObject'),
@@ -933,8 +968,8 @@ class Adherent
 	}
 	// suppression du personID
 	list($success,$response)=
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
-			 '/RPC2', 
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
+			 '/RPC2',
 			 'callGateway',
 			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
 			       XMLRPC_prepare('deleteObject'),
@@ -959,22 +994,22 @@ class Adherent
       }
     }
 
-  /*
-   * efface cet utilisateur du serveur glasnost
-   *
-   */
+/*!
+		\brief fonction qui vérifie si l'utilisateur est dans glasnost
+*/
+
   Function is_in_glasnost()
     {
-      if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 && 
+      if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
 	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
 	  defined('ADHERENT_GLASNOST_USER') && ADHERENT_GLASNOST_USER != '' &&
 	  defined('ADHERENT_GLASNOST_PASS') && ADHERENT_GLASNOST_PASS != ''
 	  ){
 	// application token is not useful here
 	$applicationtoken='';
-	list($success, $response) = 
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
-			 '/RPC2', 
+	list($success, $response) =
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
+			 '/RPC2',
 			 'callGateway',
 			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication"),
 			       XMLRPC_prepare('getUserIdAndToken'),
@@ -989,8 +1024,8 @@ class Adherent
 	}
 	// recuperation du personID
 	list($success,$response)=
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001', 
-			 '/RPC2', 
+	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
+			 '/RPC2',
 			 'callGateway',
 			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
 			       XMLRPC_prepare('getObjectByLogin'),
@@ -1015,11 +1050,12 @@ class Adherent
 	return 0;
       }
     }
-  /*
-   *
-   *
-   */
-  Function add_to_mailman($listes='')
+
+/*!
+		\brief fonction qui rajoute l'utilisateur dans mailman
+*/
+
+	Function add_to_mailman($listes='')
   {
     if (defined("ADHERENT_MAILMAN_URL") && ADHERENT_MAILMAN_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
       {
@@ -1047,11 +1083,11 @@ class Adherent
 			      ADHERENT_MAILMAN_SERVER
 			      );
 	    $curl_url = preg_replace ($patterns, $replace, ADHERENT_MAILMAN_URL);
-		  
+
 	    $ch = curl_init();
 	    curl_setopt($ch, CURLOPT_URL,"$curl_url");
 	    //curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
-	    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); 
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 	    curl_setopt($ch, CURLOPT_FAILONERROR, 1);
 	    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 	    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
@@ -1065,11 +1101,11 @@ class Adherent
 	    //ob_end_clean();
 	    if (curl_error($ch) > 0)
 	      {
-		// error 
+		// error
 		return 0;
 	      }
-	    curl_close ($ch); 
-	      
+	    curl_close ($ch);
+
 	  }
 	return 1;
       }
@@ -1080,11 +1116,11 @@ class Adherent
       }
   }
 
+/*!
+		\brief fonction qui désinscrit l'utilisateur de toutes les mailing list mailman
+		\ remarks	utilie lors de la résiliation d'adhésion
+*/
 
-  /*
-   * desonscription de toutes les listes mailman (utile lors de
-   * resiliation d'adhesion)
-   */
   Function del_to_mailman($listes='')
   {
     if (defined("ADHERENT_MAILMAN_UNSUB_URL") && ADHERENT_MAILMAN_UNSUB_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
@@ -1116,11 +1152,11 @@ class Adherent
 			      ADHERENT_MAILMAN_SERVER
 			      );
 	    $curl_url = preg_replace ($patterns, $replace, ADHERENT_MAILMAN_UNSUB_URL);
-	    
+
 	    $ch = curl_init();
 	    curl_setopt($ch, CURLOPT_URL,"$curl_url");
 	    //curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
-	    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1); 
+	    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 	    curl_setopt($ch, CURLOPT_FAILONERROR, 1);
 	    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 	    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
@@ -1134,11 +1170,11 @@ class Adherent
 	    //ob_end_clean();
 	    if (curl_error($ch) > 0)
 	      {
-		// error 
+		// error
 		return 0;
 	      }
-	    curl_close ($ch); 
-	    
+	    curl_close ($ch);
+
 	  }
 	return 1;
       }
@@ -1148,6 +1184,6 @@ class Adherent
 	return 0;
       }
   }
-  
+
 }
 ?>
