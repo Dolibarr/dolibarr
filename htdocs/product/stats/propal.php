@@ -106,7 +106,7 @@ if ($_GET["id"])
 		  print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$objp->facid.'">';
 		  print $objp->ref;
 		  print "</a></td>\n";
-		  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></TD>';
+		  print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></TD>';
 		  print "<TD align=\"right\">";
 		  print strftime("%d %B %Y",$objp->df)."</td>";
 		  print "</tr>\n";
