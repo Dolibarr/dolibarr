@@ -23,8 +23,6 @@ require("./pre.inc.php3");
 
 llxHeader();
 
-$db = new Db();
-
 print_titre("Liste des utilisateurs");
 
 $sql = "SELECT u.rowid, u.name, u.firstname, u.code, u.login, u.module_comm, u.module_compta";
