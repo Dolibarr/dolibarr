@@ -72,6 +72,7 @@ $modules["MAIN_MODULE_PROPALE"][0] = "Module propale";
 $modules["MAIN_MODULE_PROPALE"][1] = "MAIN_MODULE_PROPALE";
 $modules["MAIN_MODULE_PROPALE"][2] = MAIN_MODULE_PROPALE;
 $modules["MAIN_MODULE_PROPALE"][3] = "Module de gestion des propositions commerciales";
+$modules["MAIN_MODULE_PROPALE"][4] = "modPropale";
 
 $modules["MAIN_MODULE_FOURNISSEUR"][0] = "Module fournisseur";
 $modules["MAIN_MODULE_FOURNISSEUR"][1] = "MAIN_MODULE_FOURNISSEUR";
