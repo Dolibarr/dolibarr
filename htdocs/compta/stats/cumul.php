@@ -106,9 +106,10 @@ function pt ($db, $sql, $date)
 	{
 	  $obj = $db->fetch_object( $i);
 	  $var=!$var;
+	  $total = $total + $obj->amount;
 	  print "<TR $bc[$var]>";
 	  print "<TD>$obj->dm</TD>\n";
-	  print "<TD align=\"right\">".price($obj->amount)."</TD><td>&nbsp;</td>\n";
+	  print "<TD align=\"right\">".$total."</TD><td>&nbsp;</td>\n";
 	  print "</TR>\n";
 	  
 	  $total = $total + $obj->amount;
