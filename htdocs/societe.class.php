@@ -24,15 +24,17 @@
  *
  */
 
-/*!	\file       htdocs/societe.class.php
+/**
+    	\file       htdocs/societe.class.php
 		\ingroup    societe
 		\brief      Fichier de la classe des societes
 		\version    $Revision$
 */
 
 
-/*! \class Societe
-		\brief Classe permettant la gestion des societes
+/**
+		\class 		Societe
+		\brief 		Classe permettant la gestion des societes
 */
 
 class Societe {
@@ -134,6 +136,7 @@ class Societe {
   /**
    *    \brief  Verification lors de la modification
    */
+   
   function verify()
   {
     $result = 0;
@@ -442,10 +445,10 @@ class Societe {
   }
 
   /**
-   * \brief     Suppression d'une societe de la base 
-   * \todo      Cette fonction n'est pas utilisée. Attente des contraintes d'intégrité dans MySql
+   *    \brief     Suppression d'une societe de la base 
+   *    \todo      Cette fonction n'est pas utilisée. Attente des contraintes d'intégrité dans MySql
    */
-	 
+   
   function delete($id)
     {
       dolibarr_syslog("Societe::Delete");
@@ -498,7 +501,7 @@ class Societe {
 	      $this->db->query("COMMIT");
 
 	      // Suppression du répertoire document
-	      $docdir = SOCIETE_OUTPUTDIR . "/$id";
+	      $docdir = $conf->societe->dir_output . "/" . $id;
 	      	      
 	      if (file_exists ($docdir))
 		{
@@ -515,10 +518,13 @@ class Societe {
 	}	  
 
     }
-  /*
-   * Cette fonction permet de supprimer le répertoire de la societe
-   * Meme s'il contient des documents.
+
+  /**
+   *    \brief      Cette fonction permet de supprimer le répertoire de la societe
+   *                et sous répertoire, meme s'ils contiennent des documents.
+   *    \param      dir     repertoire a supprimer
    */
+   
   function deldir($dir)
   {
     $current_dir = opendir($dir);
@@ -539,10 +545,11 @@ class Societe {
   } 
   
   /**
-   * \brief     Retournes les factures impayées de la société
-   * \return    array   tableau des id de factures impayées
+   *    \brief     Retournes les factures impayées de la société
+   *    \return    array   tableau des id de factures impayées
    *
    */
+   
   function factures_impayes()
   {
     $facimp = array();
@@ -968,6 +975,7 @@ class Societe {
     return $rib;
   }
 
+
   function rib()
   {
     require_once DOL_DOCUMENT_ROOT . "/companybankaccount.class.php";
@@ -980,15 +988,18 @@ class Societe {
     return 1;
   }
 
+
   function verif_rib()
   {
     $this->rib();
     return $this->bank_account->verif();
   }
+
   /**
-   * Renvoie 0 si ok, peut modifier le code client suivant le module utilisé
-   *
+   *    \brief      Verifie code client
+   *    \return     Renvoie 0 si ok, peut modifier le code client suivant le module utilisé
    */
+   
   function verif_codeclient()
   {
     if (defined('CODECLIENT_ADDON') && strlen(CODECLIENT_ADDON) > 0)
@@ -1026,11 +1037,12 @@ class Societe {
 	return 0;
       }
   }
+  
   /**
-   * Renvoie un code compta, suivant le module le code compta renvoyé 
-   * peut être identique à celui saisit ou généré automatiquement
+   *    \brief  Renvoie un code compta, suivant le module le code compta renvoyé 
+   *            peut être identique à celui saisit ou généré automatiquement
    *
-   * A ce jour seul la génération automatique est implémentée
+   *            A ce jour seul la génération automatique est implémentée
    */
   function check_codecompta()
   {
@@ -1054,6 +1066,7 @@ class Societe {
 	return 0;
       }
   }
+
 }
 
 ?>
