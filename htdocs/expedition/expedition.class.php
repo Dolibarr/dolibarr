@@ -20,6 +20,16 @@
  *
  */
 
+/*! \file htdocs/expedition/expedition.class.php
+        \ingroup    expedition
+		\brief      Fichier de la classe de gestion des expeditions
+		\version    $Revision$
+*/
+
+
+/*! \class Expedition
+		\brief      Classe de gestion des expeditions
+*/
 class Expedition 
 {
   var $db ;

@@ -21,6 +21,13 @@
  *
  */
 
+/*! \file htdocs/expedition/index.php
+        \ingroup    expedition
+		\brief      Page accueil du module expedition
+		\version    $Revision$
+*/
+
+
 require("./pre.inc.php");
 
 llxHeader('','Expéditions','ch-expedition.html',$form_search);

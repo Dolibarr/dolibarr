@@ -19,6 +19,12 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/expedition/commande.php
+        \ingroup    expedition
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $user->getrights('commande');

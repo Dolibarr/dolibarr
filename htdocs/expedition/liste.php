@@ -21,9 +21,9 @@
  *
  */
 
-/**
-* Gestion d'une proposition commerciale
-* @package propale
+/*! \file htdocs/expedition/liste.php
+        \ingroup    expedition
+        \brief      Page de la liste des propositions commerciales
 */
 
 require("./pre.inc.php");

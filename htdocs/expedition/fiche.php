@@ -19,6 +19,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/expedition/fiche.php
+        \ingroup    expedition
+		\brief      Fiche descriptive d'une expedition
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $user->getrights('commande');
