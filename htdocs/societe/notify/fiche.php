@@ -33,11 +33,11 @@ $db = new Db();
 
 if ($HTTP_POST_VARS["action"] == 'add')
 {
-  $sql = "DELETE FROM llx_notify";
+  $sql = "DELETE FROM llx_notify_def";
   $sql .= " WHERE fk_soc=".$socid." AND fk_contact=".$HTTP_POST_VARS["contactid"]." AND fk_action=".$HTTP_POST_VARS["actionid"];
   if ($db->query($sql))
     {
-      $sql = "INSERT INTO llx_notify (datec,fk_soc, fk_contact, fk_action)";
+      $sql = "INSERT INTO llx_notify_def (datec,fk_soc, fk_contact, fk_action)";
       $sql .= " VALUES (now(),$socid,".$HTTP_POST_VARS["contactid"].",".$HTTP_POST_VARS["actionid"].")";
       
       if ($db->query($sql))
@@ -111,7 +111,7 @@ if ( $soc->fetch($socid) )
   print '<td>&nbsp;</td>';
   print '</tr>';
 
-  $sql = "SELECT c.name, c.firstname, a.titre,n.rowid FROM llx_socpeople as c, llx_action_def as a, llx_notify as n";
+  $sql = "SELECT c.name, c.firstname, a.titre,n.rowid FROM llx_socpeople as c, llx_action_def as a, llx_notify_def as n";
   $sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action AND n.fk_soc = ".$soc->id;
 
   if ($db->query($sql))
