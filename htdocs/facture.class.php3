@@ -67,39 +67,46 @@ class Facture {
    *
    */
 
-  Function create($userid) {
-    /*
-     *  Insertion dans la base
-     */
-    $socid = $this->socidp;
-    $number = $this->number;
-    $amount = $this->amount;
-    $remise = $this->remise;
-
-    if (! $remise) {
-      $remise = 0 ;
-    }
-
-    $totalht = ($amount - $remise);
-    $tva = tva($totalht);
-    $total = $totalht + $tva;
-    
-    $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, tva, total, datef, note, fk_user_author,fk_projet) ";
-    $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $tva, $total, $this->date,'$note',$userid, $this->projetid);";
+  Function create($userid)
+    {
+      /*
+       *  Insertion dans la base
+       */
+      $socid = $this->socidp;
+      $number = $this->number;
+      $amount = $this->amount;
+      $remise = $this->remise;
       
-    if ( $this->db->query($sql) )
-      {
-	$this->id = $this->db->last_insert_id();
+      if (! $remise)
+	{
+	  $remise = 0 ;
+	}
 
-	return $this->id;
-      }
-    else
-      {
-	print $this->db->error() . '<b><br>'.$sql;
-	return 0;
-      }
-
-  }
+      if (! $this->projetid)
+	{
+	  $this->projetid = "NULL";
+	}
+      
+      $totalht = ($amount - $remise);
+      $tva = tva($totalht);
+      $total = $totalht + $tva;
+      
+      $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, tva, total, datef, note, fk_user_author,fk_projet) ";
+      $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $tva, $total, $this->date,'$note',$userid, $this->projetid);";
+      
+      if ( $this->db->query($sql) )
+	{
+	  $this->id = $this->db->last_insert_id();
+	  
+	  return $this->id;
+	}
+      else
+	{
+	  print $this->db->error() . '<b><br>'.$sql;
+	  return 0;
+	}
+      
+    }
 
   /*
    *
