@@ -14,4 +14,4 @@ LoginAlreadyExists=This login already exists
 ListOfUsers=List of users
 Administrator=Administrator
 DefaultRights=Default permissions
-DefaultRightsDesc=Define here default permissions that are permissions automatically granted to a new created user.
+DefaultRightsDesc=Define here default permissions that are automatically granted to a new created user.

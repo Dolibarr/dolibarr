@@ -13,6 +13,6 @@ CreateUser=Creëer gebruiker
 LoginAlreadyExists=login bestaat reeds
 ListOfUsers=Lijsten van gebruikers
 Administrator=De administrateur
-DefaultRights=Default permissions
-DefaultRightsDesc=Define here default permissions that are permissions automatically granted to a new created user.
+DefaultRights=standaardtoestemmingen
+DefaultRightsDesc=Definieer hier standaardtoestemmingen die automatisch gegund zijn naar een nieuwe gecreëerde gebruiker.
 
