@@ -119,19 +119,19 @@ if ($result)
       {
 	print  chr($ij);
       } 
-    print "</A> | ";
+    print "</a> | ";
   }
   print "</div>";
 
   $i = 0;
   
-  print '<TABLE class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<TR class="liste_titre">';
-  print "<TD valign=\"center\">";
+  print '<table class="liste">';
+  print '<tr class="liste_titre">';
+  print "<th valign=\"center\">";
   print_liste_field_titre("Société","clients.php","s.nom","&amp;page=$page&amp;begin=$begin");
-  print "</td><td>";
+  print "</th><th>";
   print_liste_field_titre("Ville","clients.php","s.ville","&amp;page=$page&amp;begin=$begin");
-  print "</td>";
+  print "</th>";
   print "</TR>\n";
   $var=True;
 
@@ -141,7 +141,7 @@ if ($result)
       
       $var=!$var;
 
-      print "<TR $bc[$var]>";
+      print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?socid='.$obj->idp.'">';
       print img_file();
       print "</a>&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
@@ -149,7 +149,7 @@ if ($result)
       print "</tr>\n";
       $i++;
     }
-  print "</TABLE>";
+  print "</table>";
   $db->free();
 }
 else
