@@ -26,55 +26,68 @@ class DoliDb {
   var $db, $results, $ok, $connected, $database_selected;
 
   Function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '') 
+  // Se connecte au serveur et éventuellement à une base (si spécifié)
+  // Renvoie 1 en cas de succès, 0 sinon
     {
       global $conf; 
 
-	  // print "Name DB : $host, $user, $pass, $name<br>";
+	  if ($host == '')
+		{
+		$host = $conf->db->host;
+		}
+		
+	  if ($user == '')
+		{
+		$user = $conf->db->user;
+		}
+		
+	  if ($pass == '')
+		{
+		$pass = $conf->db->pass;
+		}
+		
+	  if ($name == '')
+		{
+		$name = $conf->db->name;
+		}
+		
+	  //print "Name DB: $host,$user,$pass,$name<br>";
 
-      if ($host == '')
-	{
-	  $host = $conf->db->host;
-	}
-      
-      if ($user == '')
-	{
-	  $user = $conf->db->user;
-	}
-      
-      if ($pass == '')
-	{
-	  $pass = $conf->db->pass;
-	}
-
-      if ($name == '')
-	{
-	  $name = $conf->db->name;
-	}
+	  // Essai connexion serveur
+	  $this->db = $this->connect($host, $user, $pass);
+	  if ($this->db)
+		{
+			$this->connected = 1;
+			$this->ok = 1;
+		}
+	  else
+		{
+			$this->connected = 0;
+			$this->ok = 0;
+		}
 	
-      $this->db = $this->connect($host, $user, $pass);
-      if ($this->db)
-	{
-	  $this->connected = 1;
-	}
-      else
-	{
-	  $this->connected = 0;
-	  return 0;
-	}
-      
-      $ret = $this->select_db($name);
-      
-      if ($ret == 1)
-	{
-	  $this->database_selected = 1;
-	  $this->ok = 1;
-	}
-      else
-	{
-	  $this->database_selected = 0;
-	  $this->ok = 0;
-	}
-      return $ret;
+	  // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
+      if ($this->connected && $name) {
+    
+		if ($this->select_db($name) == 1)
+		{
+			$this->database_selected = 1;
+			$this->ok = 1;
+		}
+		else
+		{
+			$this->database_selected = 0;
+			$this->ok = 0;
+		}
+
+      }
+      else {
+      		// Pas de selection de base demandée, mais tout est ok
+			$this->database_selected = 0;
+			$this->ok = 1;
+      }
+
+      return $this->ok;
     }
   /*
    *
@@ -89,6 +102,7 @@ class DoliDb {
   Function connect($host, $login, $passwd)
     {
       $this->db  = @mysql_connect($host, $login, $passwd);
+      //print "Resultat fonction connect: ".$this->db;
       return $this->db;
     }
   /*
