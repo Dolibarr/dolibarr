@@ -77,7 +77,7 @@ if ($id > 0)
 	  dol_delete_file($file);
 	}
       
-      if ( $HTTP_POST_VARS["sendit"] )
+      if ( $_POST["sendit"] )
 	{
 	  do_upload ($upload_dir);
 	}

@@ -52,10 +52,10 @@ if ($action == 'add') {
 
 }
 // Insertion de la cotisation dans le compte banquaire
-if ($HTTP_POST_VARS["action"] == '2bank' && $HTTP_POST_VARS["rowid"] !=''){
+if ($_POST["action"] == '2bank' && $_POST["rowid"] !=''){
   if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
     $dateop=strftime("%Y%m%d",time());
-    $sql="SELECT cotisation FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid=".$HTTP_POST_VARS["rowid"]." ";
+    $sql="SELECT cotisation FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid=".$_POST["rowid"]." ";
     $result = $db->query($sql);
     if ($result) 
       {
@@ -65,7 +65,7 @@ if ($HTTP_POST_VARS["action"] == '2bank' && $HTTP_POST_VARS["rowid"] !=''){
 	    $objp = $db->fetch_object(0);
 	    $amount=$objp->cotisation;
 	    $acct=new Account($db,ADHERENT_BANK_ACCOUNT);
-	    $insertid=$acct->addline($dateop, $HTTP_POST_VARS["operation"], $HTTP_POST_VARS["label"], $amount, $HTTP_POST_VARS["num_chq"],ADHERENT_BANK_CATEGORIE);
+	    $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE);
 	    if ($insertid == '')
 	      {
 		print "<p> Probleme d'insertion : ".$db->error();
@@ -73,7 +73,7 @@ if ($HTTP_POST_VARS["action"] == '2bank' && $HTTP_POST_VARS["rowid"] !=''){
 	    else
 	      {
 		// met a jour la table cotisation
-		$sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=$insertid WHERE rowid=".$HTTP_POST_VARS["rowid"]." ";
+		$sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=$insertid WHERE rowid=".$_POST["rowid"]." ";
 		$result = $db->query($sql);
 		if ($result) 
 		  {

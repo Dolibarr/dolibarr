@@ -31,10 +31,10 @@ if ($action == 'update')
 
       $don = new Don($db);
 
-      $don->id          = $HTTP_POST_VARS["rowid"];
+      $don->id          = $_POST["rowid"];
       $don->prenom      = $prenom;
       $don->nom         = $nom;  
-      $don->statut      = $HTTP_POST_VARS["statutid"];  
+      $don->statut      = $_POST["statutid"];  
       $don->societe     = $societe;
       $don->adresse     = $adresse;
       $don->amount      = $amount;
@@ -46,7 +46,7 @@ if ($action == 'update')
       $don->pays        = $pays;
       $don->public      = $public;
       $don->projetid    = $projetid;
-      $don->commentaire = $HTTP_POST_VARS["comment"];
+      $don->commentaire = $_POST["comment"];
       $don->modepaiementid = $modepaiement;
       
       if ($don->update($user->id) ) 

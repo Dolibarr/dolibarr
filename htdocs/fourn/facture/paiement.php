@@ -41,9 +41,9 @@ if ($action == 'add') {
   $paiementfourn->facid        = $facid;
   $paiementfourn->facnumber    = $facnumber;
   $paiementfourn->datepaye     = $db->idate(mktime(12, 0 , 0,
-					      $HTTP_POST_VARS["remonth"], 
-					      $HTTP_POST_VARS["reday"], 
-					      $HTTP_POST_VARS["reyear"])); 
+					      $_POST["remonth"], 
+					      $_POST["reday"], 
+					      $_POST["reyear"])); 
   $paiementfourn->amount       = $amount;
   $paiementfourn->accountid    = $accountid;
   $paiementfourn->societe      = $societe;

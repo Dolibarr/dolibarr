@@ -29,8 +29,8 @@ if ($action == 'update' && !$cancel)
 {
   $article = new pnArticle($db);
 
-  $article->titre = $HTTP_POST_VARS["titre"];
-  $article->body = $HTTP_POST_VARS["body"];
+  $article->titre = $_POST["titre"];
+  $article->body = $_POST["body"];
   if ($article->update($id, $user))
     {
 

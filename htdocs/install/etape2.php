@@ -45,7 +45,7 @@ else
 			
 require ($dolibarr_main_document_root . "/conf/conf.class.php");// ne sert plus
 
-if ($HTTP_POST_VARS["action"] == "set")
+if ($_POST["action"] == "set")
 {
   print '<h2>Base de donnée</h2>';
 

@@ -29,13 +29,13 @@ if ($conf->don->onlinepayment)
 
   print "<form action=\"".$conf->bplc->url."\" method=\"post\">\n";
 
-  $cyberp->set_client($HTTP_POST_VARS["nom"],
-		      $HTTP_POST_VARS["prenom"],
-		      $HTTP_POST_VARS["email"],
-		      $HTTP_POST_VARS["societe"]);
+  $cyberp->set_client($_POST["nom"],
+		      $_POST["prenom"],
+		      $_POST["email"],
+		      $_POST["societe"]);
 
   $cyberp->set_commande($ref_commande ."10",
-			$HTTP_POST_VARS["montant"]);
+			$_POST["montant"]);
 
   $cyberp->print_hidden();
 

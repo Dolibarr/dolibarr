@@ -70,9 +70,9 @@ if ($socidp)
   $sql_add = " AND ";
 }
 
-if (strlen($HTTP_POST_VARS["sf_ref"]) > 0)
+if (strlen($_POST["sf_ref"]) > 0)
 {
-  $sql .= $sql_add . " e.ref like '%".$HTTP_POST_VARS["sf_ref"] . "%'";
+  $sql .= $sql_add . " e.ref like '%".$_POST["sf_ref"] . "%'";
 }
 
 $expedition = new Expedition($db);

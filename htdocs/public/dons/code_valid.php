@@ -20,19 +20,19 @@
  *
  */
 
-print '<input type="hidden" name="projetid"    value="'.$HTTP_POST_VARS["projetid"].'">';
-print '<input type="hidden" name="prenom"      value="'.$HTTP_POST_VARS["prenom"].'">';
-print '<input type="hidden" name="nom"         value="'.$HTTP_POST_VARS["nom"].'">';
-print '<input type="hidden" name="societe"     value="'.$HTTP_POST_VARS["societe"].'">';
-print '<input type="hidden" name="adresse"     value="'.$HTTP_POST_VARS["adresse"].'">';
-print '<input type="hidden" name="cp"          value="'.$HTTP_POST_VARS["cp"].'">';
-print '<input type="hidden" name="ville"       value="'.$HTTP_POST_VARS["ville"].'">';
-print '<input type="hidden" name="pays"        value="'.$HTTP_POST_VARS["pays"].'">';
-print '<input type="hidden" name="date"        value="'.$HTTP_POST_VARS["date"].'">';
-print '<input type="hidden" name="public"      value="'.$HTTP_POST_VARS["public"].'">';
-print '<input type="hidden" name="email"       value="'.$HTTP_POST_VARS["email"].'">';
-print '<input type="hidden" name="montant"     value="'.$HTTP_POST_VARS["montant"].'">';
-print '<input type="hidden" name="commentaire" value="'.$HTTP_POST_VARS["commentaire"].'">';
+print '<input type="hidden" name="projetid"    value="'.$_POST["projetid"].'">';
+print '<input type="hidden" name="prenom"      value="'.$_POST["prenom"].'">';
+print '<input type="hidden" name="nom"         value="'.$_POST["nom"].'">';
+print '<input type="hidden" name="societe"     value="'.$_POST["societe"].'">';
+print '<input type="hidden" name="adresse"     value="'.$_POST["adresse"].'">';
+print '<input type="hidden" name="cp"          value="'.$_POST["cp"].'">';
+print '<input type="hidden" name="ville"       value="'.$_POST["ville"].'">';
+print '<input type="hidden" name="pays"        value="'.$_POST["pays"].'">';
+print '<input type="hidden" name="date"        value="'.$_POST["date"].'">';
+print '<input type="hidden" name="public"      value="'.$_POST["public"].'">';
+print '<input type="hidden" name="email"       value="'.$_POST["email"].'">';
+print '<input type="hidden" name="montant"     value="'.$_POST["montant"].'">';
+print '<input type="hidden" name="commentaire" value="'.$_POST["commentaire"].'">';
 
 
 ?>

@@ -32,26 +32,26 @@ if ($conf->don->enabled)
   $db = new DoliDb();
   $don = new Don($db);
       
-  $don->projetid    = $HTTP_POST_VARS["projetid"];
+  $don->projetid    = $_POST["projetid"];
   $don->date        = time();
-  $don->prenom      = $HTTP_POST_VARS["prenom"];
-  $don->nom         = $HTTP_POST_VARS["nom"];
-  $don->societe     = $HTTP_POST_VARS["societe"];
-  $don->adresse     = $HTTP_POST_VARS["adresse"];
-  $don->cp          = $HTTP_POST_VARS["cp"];
-  $don->ville       = $HTTP_POST_VARS["ville"];
-  $don->pays        = $HTTP_POST_VARS["pays"];
+  $don->prenom      = $_POST["prenom"];
+  $don->nom         = $_POST["nom"];
+  $don->societe     = $_POST["societe"];
+  $don->adresse     = $_POST["adresse"];
+  $don->cp          = $_POST["cp"];
+  $don->ville       = $_POST["ville"];
+  $don->pays        = $_POST["pays"];
   $don->public      = 1;
-  if ($HTTP_POST_VARS["public"] == "FALSE")
+  if ($_POST["public"] == "FALSE")
     {
       $don->public      = 0;
     }
-  $don->email       = $HTTP_POST_VARS["email"];
-  $don->amount      = $HTTP_POST_VARS["montant"];
-  $don->commentaire = $HTTP_POST_VARS["commentaire"];
+  $don->email       = $_POST["email"];
+  $don->amount      = $_POST["montant"];
+  $don->commentaire = $_POST["commentaire"];
   
 
-  if ($HTTP_POST_VARS["action"] == 'add')
+  if ($_POST["action"] == 'add')
     {
       
       if ($don->check($conf->don->minimum))
@@ -63,7 +63,7 @@ if ($conf->don->enabled)
 	  require("erreur.php");
 	}     
     }
-  elseif ($HTTP_POST_VARS["action"] == 'valid' && $HTTP_POST_VARS["valid"] == 'Valider')
+  elseif ($_POST["action"] == 'valid' && $_POST["valid"] == 'Valider')
     {
       
       if ($don->check($conf->don->minimum))

@@ -23,7 +23,7 @@
 
 require("./pre.inc.php");
 
-if ( $HTTP_POST_VARS["sendit"] )
+if ( $_POST["sendit"] )
 {
   global $local_file, $error_msg;
 
@@ -70,7 +70,7 @@ if ($action == 'add')
   $livre->annee = $annee;
   $livre->editeurid = $editeurid;
   $livre->description = $desc;
-  $livre->frais_de_port = $HTTP_POST_VARS["fdp"];
+  $livre->frais_de_port = $_POST["fdp"];
 
   $id = $livre->create($user);
 }
@@ -81,7 +81,7 @@ if ($action == 'addga')
   $livre->linkga($id, $coauteurid);
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == "yes")
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 {
   $livre = new Livre($db);
   $livre->fetch($id);
@@ -128,7 +128,7 @@ if ($action == 'update' && !$cancel)
   $livre->titre = $titre;
   $livre->ref = $ref;
   $livre->price = $price;
-  $livre->frais_de_port = $HTTP_POST_VARS["fdp"];
+  $livre->frais_de_port = $_POST["fdp"];
   $livre->annee = $annee;
   $livre->editeurid = $editeurid;
   $livre->description = $desc;

@@ -45,7 +45,7 @@ if ($action == 'add')
       $don->pays        = $pays;
       $don->public      = $public;
       $don->projetid    = $projetid;
-      $don->commentaire = $HTTP_POST_VARS["comment"];
+      $don->commentaire = $_POST["comment"];
       $don->modepaiementid = $modepaiement;
       
       if ($don->create($user->id) ) 
@@ -69,7 +69,7 @@ if ($action == 'delete')
 if ($action == 'commentaire')
 {
   $don = new Don($db);
-  $don->set_commentaire($rowid,$HTTP_POST_VARS["commentaire"]);
+  $don->set_commentaire($rowid,$_POST["commentaire"]);
   $action = "edit";
 }
 if ($action == 'valid_promesse')

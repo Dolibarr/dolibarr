@@ -74,29 +74,29 @@ if ($action == 'update')
 	  }
 	  if (!$error){
 	    // email a peu pres correct et le login n'existe pas
-	    $adh->id          = $HTTP_POST_VARS["rowid"];
+	    $adh->id          = $_POST["rowid"];
 	    $adh->prenom      = $prenom;
 	    $adh->nom         = $nom;  
 	    $adh->societe     = $societe;
 	    $adh->adresse     = $adresse;
 	    $adh->amount      = $amount;
 	    $adh->cp          = $cp;
-	    $adh->ville       = $HTTP_POST_VARS["ville"];
-	    $adh->email       = $HTTP_POST_VARS["email"];
+	    $adh->ville       = $_POST["ville"];
+	    $adh->email       = $_POST["email"];
 	    // interdiction de la modif du login adherent
-	    //	    $adh->login       = $HTTP_POST_VARS["login"];
+	    //	    $adh->login       = $_POST["login"];
 	    $adh->login       = $adh->login;
-	    $adh->pass        = $HTTP_POST_VARS["pass"];
-	    $adh->naiss       = $HTTP_POST_VARS["naiss"];
-	    $adh->photo       = $HTTP_POST_VARS["photo"];
+	    $adh->pass        = $_POST["pass"];
+	    $adh->naiss       = $_POST["naiss"];
+	    $adh->photo       = $_POST["photo"];
 	    $adh->date        = mktime(12, 0 , 0, $remonth, $reday, $reyear);
-	    $adh->note        = $HTTP_POST_VARS["note"];
-	    $adh->pays        = $HTTP_POST_VARS["pays"];
-	    $adh->typeid      = $HTTP_POST_VARS["type"];
-	    $adh->commentaire = $HTTP_POST_VARS["comment"];
-	    $adh->morphy      = $HTTP_POST_VARS["morphy"];
+	    $adh->note        = $_POST["note"];
+	    $adh->pays        = $_POST["pays"];
+	    $adh->typeid      = $_POST["type"];
+	    $adh->commentaire = $_POST["comment"];
+	    $adh->morphy      = $_POST["morphy"];
 	    // recuperation du statut et public
-	    $adh->statut      = $HTTP_POST_VARS["statut"];
+	    $adh->statut      = $_POST["statut"];
 	    if (isset($public)){
 	      $public=1;
 	    }else{

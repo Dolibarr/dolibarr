@@ -47,7 +47,7 @@ if ($user->societe_id > 0)
  *
  */	
 
-if ($HTTP_POST_VARS["action"] == 'confirm_cloture' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_cloture' && $_POST["confirm"] == yes)
 {
   $commande = new Commande($db);
   $commande->fetch($_GET["id"]);

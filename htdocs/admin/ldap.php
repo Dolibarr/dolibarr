@@ -41,29 +41,29 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
   $sql = "delete from ".MAIN_DB_PREFIX."const where name = 'LDAP_SERVER_HOST';";
 	$db->query($sql);$sql='';
 	$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-	('LDAP_SERVER_HOST','".$HTTP_POST_VARS["host"]."',0);";
-  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_HOST', value='".$HTTP_POST_VARS["host"]."', visible=0";
+	('LDAP_SERVER_HOST','".$_POST["host"]."',0);";
+  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_HOST', value='".$_POST["host"]."', visible=0";
   $db->query($sql);
 
-  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_DN', value='".$HTTP_POST_VARS["dn"]."', visible=0";
+  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_DN', value='".$_POST["dn"]."', visible=0";
   $sql = "delete from ".MAIN_DB_PREFIX."const where name = 'LDAP_SERVER_DN';";
 	$db->query($sql);$sql='';
 	$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-	('LDAP_SERVER_DN','".$HTTP_POST_VARS["dn"]."',0);";
+	('LDAP_SERVER_DN','".$_POST["dn"]."',0);";
   $db->query($sql);
 
 	$sql = "delete from ".MAIN_DB_PREFIX."const where name = 'LDAP_SERVER_PASS';";
 	$db->query($sql);$sql='';
 	$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-	('LDAP_SERVER_PASS','".$HTTP_POST_VARS["pass"]."',0);";
-  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_PASS', value='".$HTTP_POST_VARS["pass"]."', visible=0";
+	('LDAP_SERVER_PASS','".$_POST["pass"]."',0);";
+  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_PASS', value='".$_POST["pass"]."', visible=0";
   $db->query($sql);
 
-  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_TYPE', value='".$HTTP_POST_VARS["type"]."', visible=0";
+  //$sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'LDAP_SERVER_TYPE', value='".$_POST["type"]."', visible=0";
   $sql = "delete from ".MAIN_DB_PREFIX."const where name = 'LDAP_SERVER_TYPE';";
 	$db->query($sql);$sql='';
 	$sql = "insert into ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-	('LDAP_SERVER_TYPE','".$HTTP_POST_VARS["type"]."',0);";
+	('LDAP_SERVER_TYPE','".$_POST["type"]."',0);";
   $db->query($sql);
 
 

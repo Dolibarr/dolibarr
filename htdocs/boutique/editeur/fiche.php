@@ -46,7 +46,7 @@ if ($action == 'update' && !$cancel)
   $editeur->update($id, $user);
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
 {
   $editeur = new Editeur($db);
   $result = $editeur->fetch($id);

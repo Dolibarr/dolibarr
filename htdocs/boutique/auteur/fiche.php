@@ -37,7 +37,7 @@ if ($action == 'addga') {
   $auteur->linkga($id, $ga);
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
 {
   $auteur = new Auteur($db);
   $result = $auteur->fetch($id);

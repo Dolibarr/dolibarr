@@ -39,19 +39,19 @@ else
 			
 require ($dolibarr_main_document_root . "/conf/conf.class.php");
 
-if ($HTTP_POST_VARS["action"] == "set")
+if ($_POST["action"] == "set")
 {
-  if ($HTTP_POST_VARS["pass"] <> $HTTP_POST_VARS["pass_verif"])
+  if ($_POST["pass"] <> $_POST["pass_verif"])
     {
       Header("Location: etape4.php?error=1");
     }
 
-  if (strlen(trim($HTTP_POST_VARS["pass"])) == 0)
+  if (strlen(trim($_POST["pass"])) == 0)
     {
       Header("Location: etape4.php?error=2");
     }
 
-  if (strlen(trim($HTTP_POST_VARS["login"])) == 0)
+  if (strlen(trim($_POST["login"])) == 0)
     {
       Header("Location: etape4.php?error=3");
     }
@@ -72,8 +72,8 @@ if ($HTTP_POST_VARS["action"] == "set")
   if ($db->connected == 1)
     {
       $sql = "INSERT INTO llx_user(datec,login,pass,admin,name,code) VALUES (now()";
-      $sql .= ",'".$HTTP_POST_VARS["login"]."'";
-      $sql .= ",'".$HTTP_POST_VARS["pass"]."'"; 
+      $sql .= ",'".$_POST["login"]."'";
+      $sql .= ",'".$_POST["pass"]."'"; 
       $sql .= ",1,'Administrateur','ADM')";
     }
   

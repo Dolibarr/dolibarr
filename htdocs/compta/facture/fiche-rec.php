@@ -50,11 +50,11 @@ if ($user->societe_id > 0)
 /*
  *
  */	
-if ($HTTP_POST_VARS["action"] == 'add') 
+if ($_POST["action"] == 'add') 
 {
   $facturerec = new FactureRec($db, $facid);
 
-  $facturerec->titre = $HTTP_POST_VARS["titre"];
+  $facturerec->titre = $_POST["titre"];
   
   if ($facturerec->create($user) > 0)
     {

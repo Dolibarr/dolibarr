@@ -28,8 +28,8 @@ llxHeader();
 if ($action == 'add') {
   $concert = new Concert($db);
 
-  $concert->groupartid = $HTTP_POST_VARS["ga"];
-  $concert->lieuid = $HTTP_POST_VARS["lc"];
+  $concert->groupartid = $_POST["ga"];
+  $concert->lieuid = $_POST["lc"];
   $concert->date = $db->idate(mktime(12, 0 , 0, $remonth, $reday, $reyear)); 
   $concert->description = $desc;
 
@@ -39,8 +39,8 @@ if ($action == 'add') {
 if ($action == 'update') {
   $concert = new Concert($db);
 
-  $concert->groupartid = $HTTP_POST_VARS["ga"];
-  $concert->lieuid = $HTTP_POST_VARS["lc"];
+  $concert->groupartid = $_POST["ga"];
+  $concert->lieuid = $_POST["lc"];
   $concert->date = $db->idate(mktime(12, 0 , 0, $remonth, $reday, $reyear)); 
   $concert->description = $desc;
 

@@ -26,11 +26,11 @@ require("./pre.inc.php");
 if ($action == 'add') {
   $newsletter = new Newsletter($db);
 
-  $newsletter->email_subject    = $HTTP_POST_VARS["email_subject"];
-  $newsletter->email_from_name  = $HTTP_POST_VARS["email_from_name"];
-  $newsletter->email_from_email = $HTTP_POST_VARS["email_from_email"];
-  $newsletter->email_replyto    = $HTTP_POST_VARS["email_replyto"];
-  $newsletter->email_body       = $HTTP_POST_VARS["email_body"];
+  $newsletter->email_subject    = $_POST["email_subject"];
+  $newsletter->email_from_name  = $_POST["email_from_name"];
+  $newsletter->email_from_email = $_POST["email_from_email"];
+  $newsletter->email_replyto    = $_POST["email_replyto"];
+  $newsletter->email_body       = $_POST["email_body"];
 
   $id = $newsletter->create($user);
 }
@@ -45,16 +45,16 @@ if ($action == 'update' && !$cancel)
 {
   $newsletter = new Newsletter($db);
 
-  $newsletter->email_subject    = $HTTP_POST_VARS["email_subject"];
-  $newsletter->email_from_name  = $HTTP_POST_VARS["email_from_name"];
-  $newsletter->email_from_email = $HTTP_POST_VARS["email_from_email"];
-  $newsletter->email_replyto    = $HTTP_POST_VARS["email_replyto"];
-  $newsletter->email_body       = $HTTP_POST_VARS["email_body"];
+  $newsletter->email_subject    = $_POST["email_subject"];
+  $newsletter->email_from_name  = $_POST["email_from_name"];
+  $newsletter->email_from_email = $_POST["email_from_email"];
+  $newsletter->email_replyto    = $_POST["email_replyto"];
+  $newsletter->email_body       = $_POST["email_body"];
 
   $newsletter->update($id, $user);
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
 {
   $newsletter = new Newsletter($db);
   $result = $newsletter->fetch($id);
@@ -62,14 +62,14 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
   Header("Location: index.php");
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes)
 {
   $newsletter = new Newsletter($db);
   $result = $newsletter->fetch($id);
   $newsletter->validate($user);
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_send' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_send' && $_POST["confirm"] == yes)
 {
   $newsletter = new Newsletter($db);
   $result = $newsletter->fetch($id);

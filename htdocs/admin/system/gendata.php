@@ -249,7 +249,7 @@ if ($_GET["action"] == 'commande')
   
   $com->soc_id         = 4;
   $com->date_commande  = $dates[rand(1, sizeof($dates)-1)];
-  $com->note           = $HTTP_POST_VARS["note"];
+  $com->note           = $_POST["note"];
   $com->source         = 1;
   $com->projetid       = 0;
   $com->remise_percent = 0;
