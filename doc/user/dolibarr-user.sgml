@@ -4,6 +4,7 @@
     <!entity ch-update system "update.sgml">
     <!entity ch-propale system "propale.sgml">
     <!entity ch-facture	system "facture.sgml">
+    <!entity ch-annexe system "annexe.sgml">
 ]
 >
 <debiandoc>
@@ -16,7 +17,7 @@
 
       <author>Rodolphe Quiédeville<email/rodolphe@quiedeville.org/</author>
 
-      <version>0.0.1</version>
+      <version>0.3.1</version>
 
     </titlepag>
 
@@ -26,6 +27,7 @@
     &ch-update;
     &ch-propale;
     &ch-facture;
+    &ch-annexe;
 
   </book>
   
