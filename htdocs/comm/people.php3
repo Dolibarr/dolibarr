@@ -49,7 +49,7 @@ if ($action == 'update') {
     $sql .= " WHERE idp=$contactid";
     $result = $db->query($sql);
     if ($result) {
-      Header("Location: index.php3?socid=$socid");
+      Header("Location: fiche.php3?socid=$socid");
     }
   }
 }
@@ -83,7 +83,7 @@ if ($socid > 0) {
      *
      */
     print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
-    print "<tr><td><a href=\"index.php3?socid=$objsoc->idp\">$objsoc->nom</a></td>";
+    print "<tr><td><a href=\"fiche.php3?socid=$objsoc->idp\">$objsoc->nom</a></td>";
     print "<td align=\"center\"><a href=\"socnote.php3?socid=$socid\">Notes</a></big></td>";
 
     print "<td bgcolor=\"#e0E0E0\" align=\"center\">[<a href=\"people.php3?socid=$socid&action=addcontact\">Ajouter un contact</a>]</td>";

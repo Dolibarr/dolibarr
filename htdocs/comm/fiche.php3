@@ -291,10 +291,10 @@ if ($socid > 0) {
 	print '<td>';
 	//print '<a href="action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">';
 	//print '<img border="0" src="/theme/'.$conf->theme.'/img/filenew.png"></a>&nbsp;';
-	print '<a href="action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;</td>';
+	print '<a href="action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
 	if ($obj->note) {
-	  print "<br><b>".nl2br($obj->note);
+	  print "<br>".nl2br($obj->note);
 	}
 	print "</td>";
 	print "<td>$obj->poste&nbsp;</td>";
