@@ -44,5 +44,5 @@ create table llx_facture_fourn
 
   note       text,
 
-  UNIQUE INDEX (facnumber, fk_soc)
+  UNIQUE INDEX(facnumber, fk_soc)
 )type=innodb;

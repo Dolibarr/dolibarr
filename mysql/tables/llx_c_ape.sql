@@ -23,9 +23,11 @@
 
 create table llx_c_ape
 (
-  rowid       integer      AUTO_INCREMENT UNIQUE,
-  code_ape    varchar(5)   PRIMARY KEY,
+  rowid       integer       AUTO_INCREMENT PRIMARY KEY,
+  code_ape    varchar(5)    NOT NULL,
   libelle     varchar(255),
-  active      tinyint DEFAULT 1  NOT NULL
+  active      tinyint       DEFAULT 1  NOT NULL,
+
+  UNIQUE INDEX(code_ape)
 )type=innodb;
 

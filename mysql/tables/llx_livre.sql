@@ -36,6 +36,6 @@ create table llx_livre
   fk_user_author  integer,
   frais_de_port   tinyint DEFAULT 1,
 
-  UNIQUE(ref)
+  UNIQUE INDEX(ref)
 )type=innodb;
 
