@@ -447,8 +447,8 @@ class Societe {
   }
 
   /**
-   *    \brief     Suppression d'une societe de la base 
-   *    \todo      Cette fonction n'est pas utilisée. Attente des contraintes d'intégrité dans MySql
+   *    \brief      Suppression d'une societe de la base avec ses dépendances (contacts, rib...)
+   *    \param      id      id de la societe à supprimer
    */
    
   function delete($id)
@@ -456,7 +456,7 @@ class Societe {
     dolibarr_syslog("Societe::Delete");
     $sqr = 0;
 
-    if ( $this->db->query("BEGIN") )
+    if ( $this->db->begin())
       {	  
 	$sql = "DELETE from ".MAIN_DB_PREFIX."socpeople ";
 	$sql .= " WHERE fk_soc = " . $id .";";
@@ -500,7 +500,7 @@ class Societe {
 
 	if ($sqr == 3)
 	  {
-	    $this->db->query("COMMIT");
+	    $this->db->commit();
 
 	    // Suppression du répertoire document
 	    $docdir = $conf->societe->dir_output . "/" . $id;
@@ -514,7 +514,7 @@ class Societe {
 	  }
 	else
 	  {
-	    $this->db->query("ROLLBACK");
+	    $this->db->rollback();
 	    return -1;
 	  }
       }	  

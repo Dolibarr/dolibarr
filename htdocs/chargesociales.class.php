@@ -44,10 +44,13 @@ class PaiementCharge {
 
     function PaiementCharge($DB) {
         $this->db = $DB;
-
         return 1;
     }
 
+    /**
+     *  \brief      Creation d'un paiement de charge sociale
+     *
+     */
     function create($user) {
         $sql_err = 0;
         /*
@@ -101,10 +104,10 @@ class PaiementCharge {
         }
     }
 
-    /*
-    * Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank générée
-    *
-    */
+    /**
+     *  \brief      Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank générée
+     *
+     */
     function update_fk_bank($id_bank) {
         $sql = "UPDATE llx_paiementcharge set fk_bank = ".$id_bank." where rowid = ".$this->id;
         $result = $this->db->query($sql);
@@ -144,10 +147,10 @@ class ChargeSociales {
         return 1;
     }
 
-    /*
-    * Retrouve et charge une charge sociale
-    * Retour: 1 si trouve, 0 sinon
-    */
+    /**
+     *   \brief      Retrouve et charge une charge sociale
+     *   \return     int     1 si trouve, 0 sinon
+     */
     function fetch($id) {
         $sql = "SELECT cs.rowid,".$this->db->pdate("cs.date_ech")." as date_ech,".$this->db->pdate("cs.date_pai")." as date_pai";
         $sql .=", cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, ".$this->db->pdate("cs.periode")." as periode, c.libelle";
@@ -214,8 +217,8 @@ class ChargeSociales {
     }
 
   /**
-   * Tag la charge comme payée complètement
-   *
+   *    \brief      Tag la charge comme payée complètement
+   *    \param      rowid       id de la ligne a modifier
    */
   function set_payed($rowid)
     {
@@ -225,16 +228,15 @@ class ChargeSociales {
 
 
   /**
-   * Renvoi le staut sous forme de libellé d'une charge
-   *
+   *    \brief      Renvoi le staut de la charge sous forme de libellé
+   *    \return     string      libellé du statut
    */
     function getLibStatut() {
-        if ($this->paye == 0) { return "Non Payé"; }
-        else { return "Payé"; }
+        global $langs;
+        
+        if ($this->paye == 0) { return $langs->trans("Unpayed"); }
+        else { return $langs->trans("Payed"); }
     }
 }
-/*
-* $Id$
-* $Source$
-*/
+
 ?>

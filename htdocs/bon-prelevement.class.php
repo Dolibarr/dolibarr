@@ -120,7 +120,7 @@ class BonPrelevement
   {
     $error == 0;
 
-    if ($this->db->query("BEGIN"))
+    if ($this->db->begin())
       {
 
 
@@ -179,12 +179,12 @@ class BonPrelevement
 	 */
 	if ($error == 0)
 	  {
-	    $this->db->query("COMMIT");
+	    $this->db->commit();
 	    return 0;
 	  }
 	else
 	  {
-	    $this->db->query("ROLLBACK");
+	    $this->db->rollback();
 	    dolibarr_syslog("bon-prelevment::set_credite ROLLBACK ");
 	    return -1;
 	  }
@@ -206,7 +206,7 @@ class BonPrelevement
   {
     $error == 0;
 
-    if ($this->db->query("BEGIN"))
+    if ($this->db->begin())
       {
 
 
@@ -229,12 +229,12 @@ class BonPrelevement
 	 */
 	if ($error == 0)
 	  {
-	    $this->db->query("COMMIT");
+	    $this->db->commit();
 	    return 0;
 	  }
 	else
 	  {
-	    $this->db->query("ROLLBACK");
+	    $this->db->rollback();
 	    dolibarr_syslog("bon-prelevment::set_infotrans ROLLBACK ");
 	    return -1;
 	  }		
@@ -254,7 +254,7 @@ class BonPrelevement
   {
     $error == 0;
 
-    if ($this->db->query("BEGIN"))
+    if ($this->db->begin())
       {
 
 
@@ -278,12 +278,12 @@ class BonPrelevement
 	 */
 	if ($error == 0)
 	  {
-	    $this->db->query("COMMIT");
+	    $this->db->commit();
 	    return 0;
 	  }
 	else
 	  {
-	    $this->db->query("ROLLBACK");
+	    $this->db->rollback();
 	    dolibarr_syslog("bon-prelevment::set_infotrans ROLLBACK ");
 	    return -1;
 	  }		

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  *
  */
 
-/*!	
+/**	
         \file       htdocs/compta/sociales/charges.php
 		\ingroup    compta
 		\brief      Fiche d'une charge sociale
@@ -183,7 +183,7 @@ if ($chid > 0)
 	    // Supprimer
 	    if ($cha->paye == 0 && $totalpaye <=0 && $user->rights->compta->charges)
 	      {
-		print "<a class=\"tabAction\" href=\"charges.php?id=$cha->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+		print "<a class=\"butDelete\" href=\"charges.php?id=$cha->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
 	      } 
 
 	    // Emettre paiement 

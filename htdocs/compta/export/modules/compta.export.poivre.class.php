@@ -82,7 +82,7 @@ class ComptaExportPoivre
 
     $this->Agregate($linec);
 
-    $this->db->query("BEGIN");
+    $this->db->begin();
 
     $dt = strftime('EC%y%m', time());
 
@@ -303,12 +303,12 @@ class ComptaExportPoivre
 
     if (!$error)
       {
-	$this->db->query("COMMIT");
+	$this->db->commit();
 	dolibarr_syslog("ComptaExportPoivre::Export COMMIT");
       }
     else
       {
-	$this->db->query("ROLLBACK");
+	$this->db->rollback();
 	dolibarr_syslog("ComptaExportPoivre::Export ROLLBACK");
       }
 
