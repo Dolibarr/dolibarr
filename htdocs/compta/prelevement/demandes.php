@@ -87,13 +87,13 @@ if ( $db->query($sql) )
   
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print '<td>Facture</td><td>Société</td><td>Date demande</td>';
+  print '<td>'.$langs->trans("Bill").'</td><td>'.$langs->trans("Company").'</td><td>Date demande</td>';
   print '<td>Emetteur</td></tr>';
   
   print '<form action="demandes.php" method="GET">';
   print '<tr class="liste_titre"><td>-</td><td>';
   print '<input type="text" name="search_societe" size="12" value="'.$GET["search_societe"].'">&nbsp;';
-  print '<input type="submit" value="Chercher"></td>';
+  print '<input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
   print '<td colspan="2">&nbsp;</td></tr>';
   print '</form>';
 

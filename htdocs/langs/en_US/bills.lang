@@ -11,6 +11,7 @@ ClassifyPayed=Classify 'Payed'
 ClassifyCanceled=Classify 'Abandonned'
 CreateBill=Create Bill
 AddBill=Add bill
+SearchABill=Search a bill
 Send=Send
 SendRemind=Send reminder
 DoPaiement=Do payment

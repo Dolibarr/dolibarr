@@ -50,9 +50,9 @@ print '<tr><td valign="top" width="30%">';
     $var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/user/index.php">';
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="2">Rechercher un utilisateur</td></tr>';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAUser").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
+	print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 	print "</table></form><br>\n";
 
 /*
@@ -61,9 +61,9 @@ print '<tr><td valign="top" width="30%">';
     $var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/user/group/index.php">';
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="2">Rechercher un groupe</td></tr>';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAGroup").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("Ref").' : <input type="text" name="search_contract">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
+	print $langs->trans("Ref").' : <input type="text" name="search_contract">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 	print "</table></form><br>\n";
 
 

@@ -31,14 +31,10 @@ require("../main.inc.php");
 require("../commande/commande.class.php");
 require("./expedition.class.php");
 
-$form_search = '<form method="post" action="liste.php">
-Rechercher une expédition<br>
-<input class="flat" type="text" name="sf_ref" size="10">&nbsp;<input type="submit" value="go" class="flat">
-</form>';
 
-function llxHeader($head = "", $title="", $help_url='', $form_search='', $author='')
+function llxHeader($head = "", $title="", $help_url='')
 {
-  global $user, $conf, $form_search, $langs;
+  global $user, $conf, $langs;
 
   /*
    *
@@ -48,10 +44,10 @@ function llxHeader($head = "", $title="", $help_url='', $form_search='', $author
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/commande/", "Commandes");
+  $menu->add(DOL_URL_ROOT."/commande/", $langs->trans("Orders"));
 
-  $menu->add(DOL_URL_ROOT."/expedition/", "Expeditions");
-  $menu->add_submenu(DOL_URL_ROOT."/expedition/liste.php", "Liste");
+  $menu->add(DOL_URL_ROOT."/expedition/", $langs->trans("Sendings"));
+  $menu->add_submenu(DOL_URL_ROOT."/expedition/liste.php", $langs->trans("List"));
 
   $menu->add(DOL_URL_ROOT."/expedition/stats/", $langs->trans("Statistics"));
 

@@ -126,7 +126,7 @@ if ($result)
   print '<td><input type="text" name="search_client" value="'. $_GET["search_client"].'" size="10"></td>';
   print '<td><input type="text" name="search_client_facture" value="'. $_GET["search_client_facture"].'" size="10"></td>';
 
-  print '<td><input type="submit" value="Chercher"></td>';
+  print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 
 
   print '<td>&nbsp;</td>';

@@ -137,7 +137,7 @@ print '<form action="liste.php" method="post">';
 print '<input type="hidden" name="action" value="search">';
 print '<table class="noborder" cellspacing="0" cellpadding="3">';
 print '<tr class="liste_titre">';
-print "<td>Rechercher un adhérent</td>";
+print '<td>'.$langs->trans("SearchAMember").'</td>';
 print "</tr>\n";
 
 print "<tr $bc[$var]>";
@@ -145,7 +145,7 @@ print '<td>';
 
 print $langs->trans("Lastname").'/'.$langs->trans("Firstname").' <input type="text" name="search" class="flat" size="20">';
 
-print '&nbsp; <input class="flat" type="submit" value="'.$langs->trans("Search").'">';
+print '&nbsp; <input class="button" type="submit" value="'.$langs->trans("Search").'">';
 print '</td></tr>';
 print "</table></form>";
 

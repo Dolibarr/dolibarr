@@ -101,7 +101,7 @@ if ($result)
   print '<tr class="liste_titre">';
   print '<form action="liste.php" method="GET">';
   print '<td><input type="text" name="search_client" value="'. $_GET["search_client"].'" size="12"></td>';  
-  print '<td><input type="submit" value="Chercher"></td><td>&nbsp;</td>';
+  print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td><td>&nbsp;</td>';
 
   print '</form>';
   print '</tr>';

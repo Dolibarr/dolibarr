@@ -93,9 +93,9 @@ if ($conf->propal->enabled) {
     $var=false;
 	print '<form method="post" action="propal.php">';
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="2">Rechercher une proposition</td></tr>';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAProposal").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
+	print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 	print "</table></form><br>\n";
 }
 
@@ -106,9 +106,9 @@ if ($conf->contrat->enabled) {
     $var=false;
 	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td colspan="2">Rechercher un contrat</td></tr>';
+	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("SearchAContract").'</td></tr>';
 	print '<tr '.$bc[$var].'><td>';
-	print $langs->trans("Ref").' : <input type="text" name="search_contract">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
+	print $langs->trans("Ref").' : <input type="text" name="search_contract">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 	print "</table></form><br>\n";
 }
 

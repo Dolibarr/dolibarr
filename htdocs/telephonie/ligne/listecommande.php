@@ -116,7 +116,7 @@ if ($result)
   print '<form action="listecommande.php" method="GET">';
   print '<td><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="12"></td>';  print '<td><input type="text" name="search_client" value="'. $_GET["search_client"].'" size="20"></td>';
 
-  print '<td><input type="submit" value="Chercher"></td>';
+  print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 
   print '<td>&nbsp;</td>';
   print '<td>&nbsp;</td>';

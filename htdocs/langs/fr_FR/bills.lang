@@ -11,6 +11,7 @@ ClassifyPayed=Classer 'Payée'
 ClassifyCanceled=Classer 'Abandonnée'
 CreateBill=Créer Facture
 AddBill=Créer facture
+SearchABill=Rechercher une facture
 Send=Envoyer
 SendRemind=Envoyer rappel
 DoPaiement=Émettre paiement

@@ -61,9 +61,9 @@ print '<tr><td valign="top" width="30%">';
 print '<form method="post" action="facture.php">';
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print '<td colspan="2">Rechercher une facture</td></tr>';
+print '<td colspan="2">'.$langs->trans("SearchABill").'</td></tr>';
 print "<tr $bc[0]><td>";
-print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
+print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="button"></td></tr>';
 print "</table></form><br>";
 
 

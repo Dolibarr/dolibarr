@@ -102,7 +102,7 @@ if ($result)
   print '<td>&nbsp;</td>';
   print '<td align="center"><input type="text" name="numero" value="'. $_GET["numero"].'" size="12"></td>';
 
-  print '<td><input type="submit" value="Chercher"></td>';
+  print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 
 
 

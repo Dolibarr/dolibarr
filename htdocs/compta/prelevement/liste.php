@@ -93,7 +93,7 @@ if ($result)
 
   print '<form action="liste.php" method="GET">';
   print '<td><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>'; 
-  print '<td><input type="submit" value="Chercher"></td>';
+  print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
   print '<td>&nbsp;</td>';
 
 
