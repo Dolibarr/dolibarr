@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -224,6 +224,9 @@ if ($socid > 0)
 
     print '<div class="tabsAction">';
 
+    print '<a class="tabAction" href="../action/fiche.php?action=create&socid='.$socid.'&afaire=1">'.$langs->trans("AddAction").'</a>';
+
+
     if ($conf->propal->enabled && defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
       {
 	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/comm/addpropal.php?socidp='.$societe->id.'&amp;action=create">Créer une proposition</a>';
@@ -297,96 +300,105 @@ if ($socid > 0)
        *
        */
       print '<table width="100%" class="noborder">';
-      print '<tr class="liste_titre"><td>'.$langs->trans("ActionsToDo").'</td><td align="right"> [<a href="../action/fiche.php?action=create&socid='.$socid.'&afaire=1">'.$langs->trans("AddAction").'</a>]</td></tr>';
-      print '<tr>';
-      print '<td colspan="2" valign="top">';
-
-      $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+      print '<tr class="liste_titre"><td colspan="8">'.$langs->trans("ActionsToDo").'</td></tr>';
+      $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid, a.note ";
       $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
       $sql .= " WHERE a.fk_soc = $societe->id ";
       $sql .= " AND u.rowid = a.fk_user_author";
       $sql .= " AND c.id=a.fk_action AND a.percent < 100";
       $sql .= " ORDER BY a.datea DESC, a.id DESC";
 
-      if ( $db->query($sql) ) {
-	print "<table width=\"100%\" class=\"noborder\">\n";
-
-	$i = 0 ; $num = $db->num_rows();
-	while ($i < $num) {
-	  $var = !$var;
-
-	  $obj = $db->fetch_object();
-		
-	  print "<tr $bc[$var]>";
-
-	  if ($oldyear == strftime("%Y",$obj->da) )
-	    {
-	      //print '<td align="center">|</td>';
-				 print '<td align="center">' .strftime("%Y",$obj->da)."</td>\n";
-	    } 
-	  else 
-	    {
-	    print '<td align="center">' .strftime("%Y",$obj->da)."</td>\n"; 
-	    $oldyear = strftime("%Y",$obj->da);
-	    }
-
-	  if ($oldmonth == strftime("%Y%b",$obj->da) )
-		 {
-	   // print '<td align="center">|</td>';
-		 print "<TD align=\"center\">" .strftime("%b",$obj->da)."</td>\n"; 
-	  } 
-		else 
-		{
-	    print "<TD align=\"center\">" .strftime("%b",$obj->da)."</td>\n"; 
-	    $oldmonth = strftime("%Y%b",$obj->da);
-	  }
+      if ( $db->query($sql) )
+	{
 	  
-	  print "<TD>" .strftime("%d",$obj->da)."</td>\n"; 
-	  print "<TD>" .strftime("%H:%M",$obj->da)."</td>\n";
-
-	  print '<td width="10%">&nbsp;</td>';
-
-
-	  print '<td width="40%">';
-	  if ($obj->propalrowid)
+	  $i = 0 ; $num = $db->num_rows();
+	  while ($i < $num)
 	    {
-	      print '<a href="../propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a>';
-	    }
-	  else
-	    {
-	      print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_file().'</a> ';
-	      print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a>';
-	    }
-	  print '</td>';
+	      $var = !$var;
+	      
+	      $obj = $db->fetch_object();
+	      
+	      print "<tr $bc[$var]>";
+	      
+	      if ($oldyear == strftime("%Y",$obj->da) )
+		{
+		  //print '<td align="center">|</td>';
+		  print '<td align="center">' .strftime("%Y",$obj->da)."</td>\n";
+		} 
+	      else 
+		{
+		  print '<td align="center">' .strftime("%Y",$obj->da)."</td>\n"; 
+		  $oldyear = strftime("%Y",$obj->da);
+		}
+	      
+	      if ($oldmonth == strftime("%Y%b",$obj->da) )
+		{
+		  print '<td align="center">' .strftime("%b",$obj->da)."</td>\n"; 
+		} 
+	      else 
+		{
+		  print "<td align=\"center\">" .strftime("%b",$obj->da)."</td>\n"; 
+		  $oldmonth = strftime("%Y%b",$obj->da);
+		}
+	      
+	      print "<TD>" .strftime("%d",$obj->da)."</td>\n"; 
+	      print "<TD>" .strftime("%H:%M",$obj->da)."</td>\n";
+	      
+	      print '<td width="10%">&nbsp;</td>';
+	      
+	      
+	      print '<td width="40%">';
+	      if ($obj->propalrowid)
+		{
+		  print '<a href="../propal.php?propalid='.$obj->propalrowid.'">'.$obj->libelle.'</a>';
+		}
+	      else
+		{
+		  print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_file().'</a> ';
+		  print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a>';
+		}
+	      print '</td>';
+	      
+	      /*
+	       * Contact pour cette action
+	       *
+	       */
+	      print '<td width="40%">';
+	      if ($obj->fk_contact)
+		{
+		  $contact = new Contact($db);
+		  $contact->fetch($obj->fk_contact);
+		  print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.$contact->fullname.'</a></td>';
+		}
+	      else
+		{
+		  print '&nbsp;</td>';
+		}
+	      /*
+	       *
+	       */
+	      print '<td>';
+	      print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">';
+	      print $obj->code.'</a></td>';
+	      print "</tr>\n";
 
-	  /*
-	   * Contact pour cette action
-	   *
-	   */
-	  if ($obj->fk_contact)
-	    {
-	      $contact = new Contact($db);
-	      $contact->fetch($obj->fk_contact);
-	      print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.$contact->fullname.'</a></td>';
+	      if ($obj->note)
+		{
+		  print "<tr $bc[$var]>";
+		  print '<td colspan="5">&nbsp;</td><td colspan="3">'.stripslashes($obj->note).'</td></tr>';
+		}
+
+	      $i++;
 	    }
-	  else
-	    {
-	      print '<td width="40%">&nbsp;</td>';
-	    }
-	  /*
-	   */
-	  print '<td width="20%"><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
-	  print "</tr>\n";
-	  $i++;
+	  print "</table>";
+	  
+	  $db->free();
 	}
-	print "</table>";
-
-	$db->free();
-      } else {
-	    dolibarr_print_error($db);
-      }
-      print "</td></tr></table>";
-
+      else
+	{
+	  dolibarr_print_error($db);
+	}
+      
       /*
        *
        *      Listes des actions effectuees
@@ -406,13 +418,12 @@ if ($socid > 0)
 
 	  if ($num)
 	    {
-
 	      print '<table width="100%" class="noborder">';
 	      print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$socid.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
 	      print '<tr>';
 	      print '<td valign="top">';
 	      	      
-	      print '<table width="100%" border="0">';
+	      print '<table width="100%" class="noborder">';
 	      
 	      $oldyear='';
 	      $oldmonth='';
