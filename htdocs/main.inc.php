@@ -430,9 +430,11 @@ $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
 
 
-/*
- * Barre de menu supérieure
- *
+/*!
+ *  \brief      Affiche en-tête html + la barre de menu supérieure
+ *  \param      head    lignes d'en-tete head
+ *  \param      title   titre page web
+ *  \param      head    target du menu Accueil
  */
 
 function top_menu($head, $title="", $target="") 
@@ -480,17 +482,22 @@ function top_menu($head, $title="", $target="")
   print "</head>\n";
   print '<body>';
   print '<div class="body">';
+
   /*
    * Mise à jour entre 2 versions
    *
    */
-  
   if (defined("MAIN_NEED_UPDATE"))
     {
+       $langs->load("admin");
+      print '<div class="fiche">'."\n";
       print '<table class="topbarre" width="100%">';
-      print "<tr><td>Votre système nécessite d'être mis à jour. ";
-      print 'Pour cela cliquez sur <A href="'.DOL_URL_ROOT.'/admin/system/update.php">Mettre à jour</A> !!</td></tr>';
+      print '<tr><td>';
+      print $langs->trans("UpdateRequired",DOL_URL_ROOT.'/admin/system/update.php');
+      print '</td></tr>';
       print "</table>";
+      llxFooter();
+      exit;
     }
 
   /*
@@ -512,26 +519,27 @@ function top_menu($head, $title="", $target="")
     }
   require(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".MAIN_MENU_BARRETOP);
 
+  // Lien sur fiche du login
+  print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->login.'</a>' ;
 
-  // Logout
-
-  if (! $_SERVER["REMOTE_USER"])  // Propose ou non de se deloguer si authentication Apache ou non
+  // Lien logout
+  if (! $_SERVER["REMOTE_USER"])
     {
-      print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->login.'</a>' ;
       print '<a href="'.DOL_URL_ROOT.'/user/logout.php">';
       print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png" alt="'.$langs->trans("Logout").'" title="'.$langs->trans("Logout").'"></a>';      
     }
-  else
-    {
-      print $user->login ;
-    }
+
   print "</div><!-- class=tmenu -->\n";
+
 }
 
-/*
- * \brief   Barre de menu gauche
- *
- *
+
+/*!
+ *  \brief      Affiche barre de menu gauche
+ *  \param      menu            Objet du menu gauche
+ *  \param      help_url        Url pour le lien aide ('' par defaut)
+ *  \param      form_search     Formulaire de recherche permanant
+ *  \param      author          Auteur de la page pour ajout en en-tete html
  */
 function left_menu($menu, $help_url='', $form_search='', $author='') 
 {
@@ -636,7 +644,7 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
 
 
 
-/*
+/*!
  * \brief   Affiche une zone de recherche
  * \param   urlaction       url du post
  * \param   urlobject       url du lien sur titre de la zone de recherche
@@ -655,7 +663,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 }
 
 
-/*
+/*!
  * \brief   Impression du pied de page
  * \param   foot    Non utilisé
  */
