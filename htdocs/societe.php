@@ -129,8 +129,10 @@ if ($result)
     {
       $obj = $db->fetch_object( $i);    
       $var=!$var;    
-      print "<tr $bc[$var]>";
-      print "<td><a href=\"soc.php?socid=$obj->idp\">$obj->nom</a></td>\n";
+      print "<tr $bc[$var]><td>";
+      print "<a href=\"soc.php?socid=$obj->idp\">";
+      print img_file();
+      print "</a>&nbsp;<a href=\"soc.php?socid=$obj->idp\">$obj->nom</a></td>\n";
       print "<td>".$obj->ville."&nbsp;</TD>\n";
       print '<td align="center">';
       if ($obj->client)
