@@ -34,9 +34,25 @@ if ($action == 'class')
 if ($action == 'update')
 {
   $author = $GLOBALS["REMOTE_USER"];
-
-  $sql = "update llx_bank set label='$label' where rowid = $rowid;";
-  $result = $db->query($sql);
+  //avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
+//print_r ($_POST);
+  if (!empty($_POST['amount']))
+  {
+    $sql = "SELECT b.rappro FROM llx_bank as b WHERE rowid=$rowid";
+    $result = $db->query($sql);
+    if ($result)
+    {
+      $var=True;  
+      $num = $db->num_rows();
+      $objp = $db->fetch_object( 0);
+      if ($objp->rappro)
+        die ("Vous ne pouvez pas modifier une écriture déjà rapprochée");
+      $sql = "update llx_bank set label='$label' , dateo = '$date', amount='$amount' where rowid = $rowid;";
+    }
+  }
+  else 
+    $sql = "update llx_bank set label='$label' where rowid = $rowid;";
+$result = $db->query($sql);
 }
 
 if ($action == 'type')
@@ -94,6 +110,7 @@ if ($result)
       print "<input type=\"hidden\" name=\"action\" value=\"class\">";
       print "<input type=\"hidden\" name=\"rowid\" value=\"$objp->rowid\">";
       
+ 
       print "<td>".strftime("%d %b %Y",$objp->do)."</TD>\n";
       print "<td>$objp->label</td>";
       if ($objp->amount < 0)
@@ -125,12 +142,22 @@ if ($result)
       print "</form><form method=\"post\" action=\"$PHP_SELF?rowid=$objp->rowid\">";
       print "<input type=\"hidden\" name=\"action\" value=\"update\">";
     
-      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"5\">";
+      print "<tr $bc[$var]><td>Libell&eacute;</td><td colspan=\"5\">";
       print '<input name="label" value="'.$objp->label.'">';
-
       print "<input type=\"submit\" value=\"update\"></td>";
       print "</tr>";
       
+      if (!$objp->rappro)
+      {
+        print "<tr $bc[$var]><td>Date</td><td colspan=\"5\">";
+        print '<input name="date" value="'.strftime("%Y%m%d",$objp->do).'">';
+        print "<input type=\"submit\" value=\"update\"></td>";
+        print "</tr>";
+        print "<tr $bc[$var]><td>Montant</td><td colspan=\"5\">";
+        print '<input name="amount" value="'.price($objp->amount).'">';
+        print "<input type=\"submit\" value=\"update\"></td>";
+        print "</tr>";
+      }
       print "</form>";
       
       
