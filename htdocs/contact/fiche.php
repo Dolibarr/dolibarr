@@ -115,11 +115,11 @@ if ($_GET["action"] == 'create')
 
   print '<tr><td>Poste</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80"></td>';
 
-  print '<td>Tel Perso</td><td><input name="phone" type="text" size="18" maxlength="80"></td></tr>';
+  print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80"></td></tr>';
 
   print '<tr><td>Adresse</td><td colspan="3"><input name="adresse" type="text" size="18" maxlength="80"></td>';
 
-  print '<td>Mobile</td><td><input name="phone" type="text" size="18" maxlength="80"></td></tr>';
+  print '<td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80"></td></tr>';
 
   print '<tr><td>CP Ville</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="cp" type="text" size="20" maxlength="80"></td>';
 
@@ -172,9 +172,7 @@ else
   $contact = new Contact($db);
   $contact->fetch($_GET["id"]);
 
-
   print_fiche_titre ("Contact : ". $contact->firstname.' '.$contact->name);
-
 
   print '<table class="noborder" width="100%">';
   print '<tr><td valign="top">Nom : '.$contact->name.' '.$contact->firstname;
