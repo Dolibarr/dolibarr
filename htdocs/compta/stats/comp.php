@@ -95,7 +95,7 @@ function propals ($db, $year, $month) {
 
 
 function factures ($db, $year, $month, $paye) {
-  global $bc;
+  global $bc,$conf;
 
   $sql = "SELECT s.nom, s.idp, f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
@@ -238,7 +238,7 @@ function pt ($db, $sql, $year) {
 
 function ppt ($db, $year, $socidp)
 {
-  global $bc;
+  global $bc,$conf;
   print "<table width=\"100%\">";
 
   print '<tr><td align="center" valign="top" width="30%">';
