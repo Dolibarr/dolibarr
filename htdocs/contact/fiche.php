@@ -177,20 +177,25 @@ else
 
 
   print '<table class="noborder" width="100%">';
-  print '<tr><td>Nom : '.$contact->name.' '.$contact->firstname;
+  print '<tr><td valign="top">Nom : '.$contact->name.' '.$contact->firstname;
 
   if ($contact->email)
     print '<br>Email : '.$contact->email;
 
-  print '</td><td>';
-
-  print 'Tel Pro : '.$contact->phone_pro;
+  print '</td><td valign="top">';
 
   if ($contact->phone_perso)
-    print '<br>Tel Perso : '.$contact->phone_perso;
+    print 'Tel Pro : '.$contact->phone_pro ."<br>";
+
+  if ($contact->phone_perso)
+    print 'Tel Perso : '.$contact->phone_perso."<br>";
 
   if($contact->phone_mobile)
-    print '<br>Portable : '.$contact->phone_mobile;
+    print 'Portable : '.$contact->phone_mobile."<br>";
+
+  if($contact->fax)
+    print 'Fax : '.$contact->fax."<br>";
+
 
     print '</td></tr>';
 
