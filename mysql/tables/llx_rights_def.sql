@@ -25,6 +25,8 @@ create table llx_rights_def
   id            integer PRIMARY KEY,
   libelle       varchar(255),
   module        varchar(12),
+  perms         varchar(50),
+  subperms      varchar(50),
   type          enum('r','w','m','d','a'),
   bydefault     tinyint DEFAULT 0
 )type=innodb;
