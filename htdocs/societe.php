@@ -136,23 +136,23 @@ if ($result)
       print '<td align="center">';
       if ($obj->client)
 	{
-	  print "<a href=\"comm/fiche.php?socid=$obj->idp\">client</a></td>\n";
+	  print "<a href=\"comm/fiche.php?socid=$obj->idp\">client</a>\n";
 	}
       else
 	{
-	  print "&nbsp;</td>";
+	  print "&nbsp;";
 	}
       print "</td><td align=\"center\">";
       if ($obj->fournisseur)
 	{
-	  print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">fournisseur</a></td>';
+	  print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">fournisseur</a>';
 	}
       else
 	{
-	  print "&nbsp;</td>";
+	  print "&nbsp;";
 	}
       
-      print '<td align="center"><a href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$obj->idp.'">Notifications</a></td>';
+      print '</td><td align="center"><a href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$obj->idp.'">Notifications</a></td>';
       
       print "</tr>\n";
       $i++;

@@ -120,15 +120,15 @@ if ($result)
 
       print "<TR $bc[$var]>";
 
-      print '<TD><a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->name.'</a></TD>';
+      print '<TD><a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.$obj->name.'</a></TD>';
       print "<TD>$obj->firstname</TD>";
       
-      print '<TD><a href="contact.php?socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
+      print '<TD><a href="contact.php?socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0" alt="Filtre"></a>&nbsp;';
       print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
       
-      print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
+      print '<td><a href="action/fiche.php?action=create&amp;actionid=4&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
       
-      print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+      print '<td><a href="action/fiche.php?action=create&amp;actionid=1&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
       
       print "</TR>\n";
       $i++;
