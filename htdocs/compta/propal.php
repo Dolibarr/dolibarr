@@ -264,7 +264,41 @@ if ($_GET["propalid"])
 	}
       print "</table>";
       /*
+       *
+       *
+       */
+	  $nb_commande = sizeof($propal->commande_liste_array());
+	  if ($nb_commande > 0)
+	    {
+	      $coms = $propal->commande_liste_array();
+	      print '<br><table class="border" width="100%">';
+
+	      if ($nb_commande == 1)
+
+		{
+		  print "<tr><td>Commande rattachée : ";
+		  print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">';
+		  print img_file();
+		  print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a>";
+		  print "</td></tr>\n";
+		}
+	      else
+		{
+		  print "<tr><td>Commandes rattachées</td></tr>\n";
+	      
+		  for ($i = 0 ; $i < $nb_commande ; $i++)
+		    {
+		      print '<tr><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i].'">'.$coms[$i]."</a></td>\n";
+		      print "</tr>\n";
+		    }
+		}
+	      print "</table>";
+	    }
+
+      /*
+       *
        * Actions
+       *
        */
       if ($obj->statut <> 4 && $user->societe_id == 0)
 	{  
