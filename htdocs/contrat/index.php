@@ -49,14 +49,14 @@ if ($sortorder == "")
   $sortorder="DESC";
 }
 
-$sql = "SELECT c.rowid as cid, c.enservice, ".$db->pdate("c.fin_validite")." as fin_validite, p.label, p.rowid as pid, s.nom, s.idp as sidp";
+$sql = "SELECT c.rowid as cid, c.enservice, ".$db->pdate("c.fin_validite")." as fin_validite, c.fin_validite-sysdate() as delairestant, p.label, p.rowid as pid, s.nom, s.idp as sidp";
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_product = p.rowid";
 if ($socid > 0)
 {
   $sql .= " AND s.idp = $socid";
 }
-$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= " ORDER BY $sortfield $sortorder, delairestant";
 $sql .= $db->plimit($limit + 1 ,$offset);
 
 if ( $db->query($sql) )
@@ -84,8 +84,8 @@ if ( $db->query($sql) )
   print '</td>';
   print "</tr>\n";
     
-  $var=True;
   $now=mktime();
+  $var=True;
   while ($i < min($num,$limit))
     {
       $obj = $db->fetch_object( $i);
@@ -119,8 +119,9 @@ if ( $db->query($sql) )
 	}
     print "<td align=\"center\" class=\"$class\">";
     print "$statut";
-	print "</td><td>";
-
+	print "</td>";
+	
+	print "<td align=\"center\">";
     if ($obj->enservice > 0) {
         print dolibarr_print_date($obj->fin_validite);
     }

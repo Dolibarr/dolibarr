@@ -49,14 +49,14 @@ if ($sortorder == "")
 }
 
 $sql = "SELECT s.nom, c.rowid as cid, c.enservice, p.label, p.rowid, s.idp as sidp";
-$sql .= " ,".$db->pdate("c.fin_validite")." as date_fin_validite";
+$sql .= " ,".$db->pdate("c.fin_validite")." as date_fin_validite, c.fin_validite-sysdate() as delairestant ";
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product as p";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_product = p.rowid AND c.enservice = 1";
 if ($socid > 0)
 {
   $sql .= " AND s.idp = $socid";
 }
-$sql .= " ORDER BY $sortfield $sortorder ";
+$sql .= " ORDER BY $sortfield $sortorder, delairestant ";
 $sql .= $db->plimit($limit + 1 ,$offset);
 
 if ( $db->query($sql) )
@@ -65,40 +65,60 @@ if ( $db->query($sql) )
   $i = 0;
 
 
-  print_barre_liste("Liste des contrats", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+  print_barre_liste("Liste des contrats en service", $page, $PHP_SELF, "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
 
-  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 
-  print '<TR class="liste_titre"><td>';
+  print '<tr class="liste_titre"><td>';
   print_liste_field_titre("Libellé",$PHP_SELF, "p.label");
   print "</td><td>";
   print_liste_field_titre("Société",$PHP_SELF, "s.nom");
-  print '</td><td>Date Fin</td><td align="center">Etat</td>';
-  print "</TR>\n";
-    
+  print "</td>";
+  print "<td align=\"center\">Statut</td>";
+  print "<td align=\"center\">";
+  print_liste_field_titre("Date fin",$PHP_SELF, "date_fin_validite");
+  print '</td>';
+  print "</tr>\n";
+
+  $now=mktime();
   $var=True;
   while ($i < min($num,$limit))
     {
       $obj = $db->fetch_object( $i);
       $var=!$var;
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?id=$obj->cid\">$obj->label</a></td>\n";
-      print "<TD><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></TD>\n";
-      print '<td>'.strftime("%d %b %Y", $obj->date_fin_validite).'</td>';
-      print '<td align="center">';
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?id=$obj->cid\">$obj->label</a></td>\n";
+      print "<td><a href=\"../comm/fiche.php?socid=$obj->sidp\">$obj->nom</a></td>\n";
+
+      // Affiche statut contrat
       if ($obj->enservice == 1)
 	{
-	  print "En service</td>";
+        if (! $obj->date_fin_validite || $obj->date_fin_validite >= $now) {
+      	  $class = "normal";
+    	  $statut="En service";
+        }
+        else {            
+      	  $class = "error";
+    	  $statut="<b>En service, expiré</b>";
+        }
 	}
       elseif($obj->enservice == 2)
 	{
-	  print "Cloturé</td>";
+   	  $class = "normal";
+	  $statut= "Cloturé";
 	}
       else
 	{
-	  print "A mettre en service</td>";
+  	  $class = "warning";
+	  $statut= "A mettre en service";
 	}
-      print "</TR>\n";
+    print "<td align=\"center\" class=\"$class\">";
+    print "$statut";
+	print "</td>";
+
+      print '<td align="center">'.dolibarr_print_date($obj->date_fin_validite).'</td>';
+
+      print "</tr>\n";
       $i++;
     }
   $db->free();
