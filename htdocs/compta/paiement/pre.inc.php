@@ -35,6 +35,8 @@ function llxHeader($head = "") {
 
   $menu->add("liste.php","Liste");
 
+  $menu->add("rapport.php","Rapports");
+
   $menu->add("../facture.php","Factures");
 
   $menu->add_submenu("liste.php","Paiements");
