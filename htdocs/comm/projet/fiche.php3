@@ -21,7 +21,7 @@
  */
 require("./pre.inc.php3");
 require("./project.class.php3");
-require("../propal.class.php3");
+require("../../propal.class.php3");
 
 $db = new Db();
 
@@ -34,7 +34,36 @@ if ($HTTP_POST_VARS["action"] == 'update')
   $projet->update();
 }
 
+if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  $projet = new Project($db);
+  $projet->id = $id;
+  $projet->delete();
+  Header("Location: index.php");
+}
+
 llxHeader("","../");
+
+if ($action == 'delete')
+{
+
+  print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
+  print '<input type="hidden" name="action" value="confirm_delete">';
+  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+  
+  print '<tr><td colspan="3">Supprimer le projet</td></tr>';
+  
+  print '<tr><td class="delete">Etes-vous sur de vouloir supprimer ce projet ?</td><td class="delete">';
+  $htmls = new Form($db);
+  
+  $htmls->selectyesno("confirm","no");
+  
+  print "</td>\n";
+  print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+  print '</table>';
+  print "</form>\n";  
+    }
+
 
 
 if ($action == 'create')
@@ -156,8 +185,8 @@ if ($action == 'create')
   
   print "<td align=\"center\" width=\"25%\">-</td>";
   
-  print "<td align=\"center\" width=\"25%\">-</td>";
-  
+  print "<td align=\"center\" width=\"25%\"><a href=\"fiche.php3?id=$id&action=delete\">Supprimer</a></td>";
+
   print "</tr></table>";
 
 
