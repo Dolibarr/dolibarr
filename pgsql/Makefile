@@ -104,5 +104,6 @@ pgsql.sql: $(TABLES) data/data.sql Makefile
 	echo "-- Fichier généré par make pgsql.sql" > pgsql.sql
 	echo "-- Contient les ordres de creation des tables + les clés + les données" >> pgsql.sql
 	echo "-- ;" >> pgsql.sql
-	$(FIND) tables/ -name "*sql" | xargs cat | grep -v "^--" | cut -d "-" -f 1 >> pgsql.sql
+	$(FIND) tables/ -name "*sql" | grep -v "key.sql" | xargs cat | grep -v "^--" | cut -d "-" -f 1 >> pgsql.sql
+	$(FIND) tables/ -name "*sql" | grep "key.sql" | xargs cat | grep -v "^--" | cut -d "-" -f 1 >> pgsql.sql
 	cat data/data.sql | grep -v ^-- >> pgsql.sql

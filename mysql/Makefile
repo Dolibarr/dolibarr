@@ -41,8 +41,8 @@ SQL=mysql
 BASE=dolibarr
 OPTIONS=
 
-FIND=find
-#FIND="c:/Program files/cygwin/bin/find"
+#FIND=find
+FIND="c:/Program files/cygwin/bin/find"
 
 
 TABLES=$(shell $(FIND) tables/ -name "*sql")
@@ -111,5 +111,6 @@ mysql.sql: $(TABLES) data/data.sql Makefile
 	echo "-- Fichier généré par make mysql.sql" > mysql.sql
 	echo "-- Contient les ordres de creation des tables + les clés + les données" >> mysql.sql
 	echo "-- ;" >> mysql.sql
-	$(FIND) tables/ -name "*sql" | xargs cat | grep -v "^--" | cut -d "-" -f 1 >> mysql.sql
+	$(FIND) tables/ -name "*sql" | grep -v "key.sql" | xargs cat | grep -v "^--" | cut -d "-" -f 1 >> mysql.sql
+	$(FIND) tables/ -name "*sql" | grep "key.sql" | xargs cat | grep -v "^--" | cut -d "-" -f 1 >> mysql.sql
 	cat data/data.sql | grep -v ^-- >> mysql.sql
