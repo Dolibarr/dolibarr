@@ -112,33 +112,36 @@ if ($action == 'create')
 {
 
   print '<div class="titre">Nouvel utilisateur</div><br>';
-  print '<p><form action="'.$PHP_SELF.'" method="post">';
+  print '<form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
 
-  print '<table class="border" border="1" cellpadding="3" cellspacing="0">';
+  print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
 
-  print "<tr>".'<td valign="top">Prénom</td>';
+  print '<tr><td valign="top" width="20%">Prénom</td>';
   print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
   
   print "<tr>".'<td valign="top">Nom</td>';
-  print '<td class="valeur"><input size="20" type="text" name="nom" value=""></td></tr>';
+  print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
   
   print "<tr>".'<td valign="top">Login</td>';
-  print '<td class="valeur"><input size="30" type="text" name="login" value=""></td></tr>';
+  print '<td class="valeur"><input size="20" type="text" name="login" value=""></td></tr>';
 
   print "<tr>".'<td valign="top">Password</td>';
   print '<td class="valeur"><input size="30" type="text" name="password" value=""></td></tr>';
 
   print "<tr>".'<td valign="top">Email</td>';
-  print '<td class="valeur"><input size="30" type="text" name="email" value=""></td></tr>';
+  print '<td class="valeur"><input size="40" type="text" name="email" value=""></td></tr>';
   
-  print "<tr>".'<td valign="top">Admin ?</td>';
+  print "<tr>".'<td valign="top">Admin</td>';
   print '<td class="valeur">';
   $form->selectyesnonum('admin',0);
   print '</td></tr>';
   
-  print "<tr>".'<td valign="top">Login Webcal</td>';
-  print '<td class="valeur"><input size="30" type="text" name="webcal_login" value=""></td></tr>';
+  if (defined("MAIN_MODULE_WEBCALENDAR"))
+    {
+      print "<tr>".'<td valign="top">Login Webcal</td>';
+      print '<td class="valeur"><input size="30" type="text" name="webcal_login" value=""></td></tr>';
+    }
   
   print "<tr>".'<td valign="top">Note</td><td>';
   print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
@@ -251,7 +254,6 @@ else
       else
 	{
 
-
       /* 
        * Affichage
        */      
@@ -264,7 +266,14 @@ else
 
       print "<tr>".'<td width="25%" valign="top">Prénom</td>';
       print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
-      print '<td valign="top" rowspan="7">';
+      if (defined("MAIN_MODULE_WEBCALENDAR"))
+	{      
+	  print '<td valign="top" rowspan="7">';
+	}
+      else
+	{
+	  print '<td valign="top" rowspan="6">';
+	}
       /*
        * Droits
        */
@@ -296,9 +305,11 @@ else
       print '<td width="25%"  class="valeur">'.$fuser->login.'</td></tr>';
       print "<tr>".'<td width="25%" valign="top">Email</td>';
       print '<td width="25%"  class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td></tr>';
-      
-      print "<tr>".'<td width="25%" valign="top">Webcal Login</td>';
-      print '<td width="25%"  class="valeur">'.$fuser->webcal_login.'&nbsp;</td></tr>';
+      if (defined("MAIN_MODULE_WEBCALENDAR"))
+	{      
+	  print "<tr>".'<td width="25%" valign="top">Webcal Login</td>';
+	  print '<td width="25%"  class="valeur">'.$fuser->webcal_login.'&nbsp;</td></tr>';
+	}
       print "<tr>".'<td width="25%" valign="top">Administrateur</td>';
       print '<td width="25%"  class="valeur">'.$yn[$fuser->admin].'</td></tr>';
       
@@ -320,12 +331,14 @@ else
       print '<td colspan="3"  class="valeur">'.nl2br($fuser->note).'&nbsp;</td></tr>';
 
       print '</table>';
-
+      /*
+       * Barre d'action
+       */
       print '<br><table id="actions" width="100%" border="1" cellspacing="0" cellpadding="2">'."<tr>";
 
       if ($user->admin) 
 	{
-	  print '<td width="20%" align="center">[<a href="fiche.php?action=edit&amp;id='.$id.'">Editer</a>]</td>';
+	  print '<td width="20%" align="center"><a href="fiche.php?action=edit&amp;id='.$id.'">Editer</a></td>';
 	}
       else
 	{
@@ -335,7 +348,7 @@ else
 
       if ($user->id == $id or $user->admin)
 	{
-	  print '<td width="20%" align="center">[<a href="fiche.php?action=password&amp;id='.$id.'">Nouveau mot de passe</a>]</td>';
+	  print '<td width="20%" align="center"><a href="fiche.php?action=password&amp;id='.$id.'">Nouveau mot de passe</a></td>';
 	}
       else 
 	{
@@ -344,7 +357,7 @@ else
 
       if ($user->admin)
 	{
-	  print '<td width="20%" align="center">[<a href="fiche.php?request=perms&amp;id='.$id.'">Permissions</a>]</td>';
+	  print '<td width="20%" align="center"><a href="fiche.php?request=perms&amp;id='.$id.'">Permissions</a></td>';
 	}
       else
 	{
@@ -354,7 +367,7 @@ else
 
       if ($user->admin && $user->id <> $id)
 	{
-	  print '<td width="20%" align="center">[<a href="fiche.php?request=delete&amp;id='.$id.'">Supprimer</a>]</td>';
+	  print '<td width="20%" align="center"><a href="fiche.php?request=delete&amp;id='.$id.'">Supprimer</a></td>';
 	}
       else
 	{	  
