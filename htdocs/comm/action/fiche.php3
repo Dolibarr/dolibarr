@@ -49,17 +49,21 @@ if ($action=='add_action')
   $societe = new Societe($db);
   $societe->fetch($socid);
 
-
   $actioncomm = new ActionComm($db);
-
+  
+  $actioncomm->date = $db->idate(mktime($HTTP_POST_VARS["achour"],
+					$HTTP_POST_VARS["acmin"],
+					0,
+					$HTTP_POST_VARS["acmonth"],
+					$HTTP_POST_VARS["acday"],
+					$HTTP_POST_VARS["acyear"])
+				 );
   if ($actionid == 5) 
     {
-      $actioncomm->date = $db->idate(mktime($heurehour,$heuremin,0,$remonth,$reday,$reyear));
       $actioncomm->percent = 0;
     }
   else
     {
-      $actioncomm->date = $date;
       $actioncomm->percent = 100;
     }
   $actioncomm->priority = 2;
@@ -115,6 +119,14 @@ if ($action=='add_action')
   }
   Header("Location: ".DOL_URL_ROOT."/comm/fiche.php3?socid=$socid");
 }
+
+if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  $actioncomm = new ActionComm($db);
+  $actioncomm->delete($id);
+  Header("Location: index.php");
+}
+
 
 /******************************************************************************/
 /*                                                                            */
@@ -183,12 +195,12 @@ if ($action=='create' && $actionid && $contactid) {
    */   
   else 
     {
+      $html = new Form($db);
       print_titre ("Action effectuée");
 
       print '<form action="'.$PHP_SELF.'?socid='.$socid.'" method="post">';
       print '<input type="hidden" name="action" value="add_action">';
 
-      print '<input type="hidden" name="date" value="'.$db->idate(time()).'">';
       print '<input type="hidden" name="actionid" value="'.$actionid.'">';
       print '<input type="hidden" name="contactid" value="'.$contactid.'">';
       print '<input type="hidden" name="socid" value="'.$socid.'">';
@@ -199,7 +211,9 @@ if ($action=='create' && $actionid && $contactid) {
       print '<tr><td width="10%">Société</td><td width="40%">';
       print '<a href="../fiche.php3?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
       print '<tr><td width="10%">Contact</td><td width="40%">'.$contact->fullname.'</td></tr>';
-      print '<td>Date</td><td>'.strftime('%d %B %Y %H:%M',time()).'</td></tr>';
+      print '<td>Date</td><td>';
+      print $html->select_date('','ac',1,1);
+      print '</td></tr>';
       print '<tr><td valign="top">Commentaire</td><td>';
       print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
       print "</table><p />";
@@ -230,6 +244,27 @@ if ($action=='create' && $actionid && $contactid) {
  */
 if ($id)
 {
+
+  if ($action == 'delete')
+    {
+
+      print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
+      print '<input type="hidden" name="action" value="confirm_delete">';
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+      
+      print '<tr><td colspan="3">Supprimer l\'action</td></tr>';
+      
+      print '<tr><td class="delete">Etes-vous sur de vouloir supprimer cette action ?</td><td class="delete">';
+      $htmls = new Form($db);
+      
+      $htmls->selectyesno("confirm","no");
+  
+      print "</td>\n";
+      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '</table>';
+      print "</form>\n";  
+    }
+  
   $act = new ActionComm($db);
   $act->fetch($id);
 
@@ -246,7 +281,7 @@ if ($id)
 
   print '<td width="10%">Contact</td><td width="40%">'.$act->contact->fullname.'</td></tr>';
   print '<tr><td>Auteur</td><td>'.$act->author->fullname.'</td>';
-  print '<td>Date</td><td>'.strftime('%d %B %Y %H:%M',time()).'</td></tr>';
+  print '<td>Date</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td></tr>';
   if ($act->objet_url)
     {
       print '<tr><td>Objet lié</td>';
@@ -270,11 +305,8 @@ if ($id)
   print '<td align="center" width="20%">-</td>';
   print '<td align="center" width="20%">-</td>';
   print '<td align="center" width="20%">';
-  print '<a href="index.php3?action=delete_action&actionid='.$act->id.'">Supprimer</a></td>';
+  print '<a href="fiche.php3?action=delete&id='.$act->id.'">Supprimer</a></td>';
   print '</table>';
-
-
-
 }
 
 $db->close();
