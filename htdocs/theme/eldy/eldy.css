@@ -376,6 +376,7 @@ border: 1px white ridge;
 
 table.border td {
 border: 1px solid #6C7C8B;
+padding: 2px 3px;
 }
 
 table.noborder {
