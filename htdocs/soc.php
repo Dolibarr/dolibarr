@@ -309,7 +309,7 @@ else
   print '</td></tr>';
 
   print '</table>';
-  print '<br></div>';
+  print "<br></div>\n";
   /*
    *
    */  

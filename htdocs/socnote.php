@@ -22,7 +22,7 @@
  */
 require("./pre.inc.php");
 
-if ($HTTP_POST_VARS["action"] == 'add') {
+if ($_POST["action"] == 'add') {
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='$note' WHERE idp=$socid";
   $result = $db->query($sql);
 }
@@ -97,7 +97,7 @@ if ($socid > 0) {
   print "<textarea name=\"note\" cols=\"60\" rows=\"10\">$societe->note</textarea><br>";
   print '</td><td width="50%" valign="top">'.nl2br($societe->note).'</td>';
   print "</td></tr>";
-  print "</table></div>";
+  print "</table>";
   print '<input type="submit" value="Enregistrer"></form>';
 }
 
