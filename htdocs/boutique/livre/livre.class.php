@@ -405,7 +405,7 @@ class Livre {
 	  }
 	else
 	  {
-	    $sql .= ", products_weight = -1";
+	    $sql .= ", products_weight = 150000";
 	  }
 
 	$sql .= " WHERE products_id = " . $this->oscid;
