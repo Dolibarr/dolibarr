@@ -21,7 +21,7 @@
  */
 
 $info_box_head = array();
-$info_box_head[] = array('text' => "5 dernières propositions");
+$info_box_head[] = array('text' => "Les 5 dernières propositions");
 
 $info_box_contents = array();
 
@@ -48,7 +48,7 @@ if ($result)
 
       $info_box_contents[$i][1] = array('align' => 'center',
 					'text' => $objp->nom,
-					'url' => DOL_URL_ROOT."/comm/propal.php3?propalid=".$objp->rowid);
+					'url' => DOL_URL_ROOT."/comm/fiche.php3?socid=".$objp->idp);
       $i++;
     }
 }
