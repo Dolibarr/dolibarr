@@ -20,13 +20,13 @@
  *
  */
 
-class Editeur {
+class Client {
   var $db ;
 
   var $id ;
   var $nom;
 
-  Function Editeur($DB, $id=0) {
+  Function Client($DB, $id=0) {
     $this->db = $DB;
     $this->id = $id ;
   }  
@@ -35,82 +35,9 @@ class Editeur {
    *
    *
    */
-  Function create($user) {
-
-    $sql = "INSERT INTO llx_editeur (fk_user_author) VALUES (".$user->id.")";
-    
-    if ($this->db->query($sql) )
-      {
-	$id = $this->db->last_insert_id();
-	
-	if ( $this->update($id, $user) )
-	  {
-	    return $id;
-	  }
-      }
-    
-  }
-
-  /*
-   *
-   *
-   */
-  Function liste_array ()
-  {
-    $ga = array();
-
-    $sql = "SELECT rowid, nom FROM llx_editeur ORDER BY nom";
-
-    if ($this->db->query($sql) )
-      {
-	$nump = $this->db->num_rows();
-	
-	if ($nump)
-	  {
-	    $i = 0;
-	    while ($i < $nump)
-	      {
-		$obj = $this->db->fetch_object($i);
-		
-		$ga[$obj->rowid] = $obj->nom;
-		$i++;
-	      }
-	  }
-	return $ga;
-      }
-    else
-      {
-	print $this->db->error();
-      }
-    
-  }
-  /*
-   *
-   *
-   *
-   */
-  Function update($id, $user)
-  {
-
-    $sql = "UPDATE llx_editeur ";
-    $sql .= " SET nom = '" . trim($this->nom) ."'";
-
-    $sql .= " WHERE rowid = " . $id;
-
-    if ( $this->db->query($sql) ) {
-      return 1;
-    } else {
-      print $this->db->error() . ' in ' . $sql;
-    }
-  }
-  /*
-   *
-   *
-   *
-   */
   Function fetch ($id) {
     
-    $sql = "SELECT rowid, nom FROM llx_editeur WHERE rowid = $id";
+    $sql = "SELECT customers_id, customers_lastname, customers_firstname FROM ".DB_NAME_OSC.".customers WHERE customers_id = $id";
 
     $result = $this->db->query($sql) ;
 
@@ -118,8 +45,8 @@ class Editeur {
       {
 	$result = $this->db->fetch_array();
 
-	$this->id      = $result["rowid"];
-	$this->nom     = stripslashes($result["nom"]);
+	$this->id      = $result["customers_id"];
+	$this->name    = stripslashes($result["customers_firstname"]) . " " . stripslashes($result["customers_lastname"]);
 	
 	$this->db->free();
       }
@@ -130,25 +57,6 @@ class Editeur {
     
     return $result;
   }
-
-
-  /*
-   *
-   *
-   */
-  Function delete($user) {
-
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = $idosc ";
-
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_to_categories WHERE products_id = $idosc";
-
-    $sql = "DELETE FROM ".DB_NAME_OSC.".products_description WHERE products_id = $idosc";
-	      
-    $sql = "DELETE FROM llx_livre WHERE rowid = $id";
-	    
-    
-  }
-
 
 }
 ?>
