@@ -175,7 +175,9 @@ elseif ($action == 'edit')
       
       print '<tr><td>Téléphone</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
       print '<td>Fax</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
-      print '<tr><td>Web</td><td colspan="3">http://<input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
+      print '<tr><td>Web</td><td colspan="3">';
+      if ($soc->url && ! ereg("http:\/\/",$soc->url)) { print 'http://'; }
+      print '<input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
       
       print '<tr><td>Siren</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
       print '<td>Siret</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
@@ -291,7 +293,9 @@ else
   
   print '<tr><td>Tel</td><td>'.$soc->tel.'</td>';
   print '<td>Fax</td><td>'.$soc->fax.'</td></tr>';
-  print '<tr><td>Web</td><td colspan="3"><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
+  print '<tr><td>Web</td><td colspan="3">';
+  if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
+  print '</td></tr>';
   
   print '<tr><td>Siren</td><td><a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;</td>';
 
