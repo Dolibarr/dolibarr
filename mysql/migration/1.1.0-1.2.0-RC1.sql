@@ -3,7 +3,7 @@
 -- Attention à l ordre des requetes
 -- ce fichier doit être chargé sur une version 1.1.0 
 -- sans AUCUNE erreur ni warning
--- 
+-- ;
 
 alter table llx_rights_def add perms varchar(255) after module;
 alter table llx_rights_def add subperms varchar(255) after perms;
