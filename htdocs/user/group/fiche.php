@@ -104,7 +104,32 @@ if ($_GET["action"] == 'removeuser' && $user->admin)
     }
 }
 
-llxHeader();
+if ($_POST["action"] == 'update' && $user->admin)
+{
+    $message="";
+
+    $db->begin();
+
+    $editgroup = new Usergroup($db, $_GET["id"]);
+    $editgroup->fetch($_GET["id"]);
+
+    $editgroup->nom           = $_POST["group"];
+    $editgroup->note          = $_POST["note"];
+
+    $ret=$editgroup->update();
+
+    if ($ret >= 0) {
+        $message.='<div class="ok">'.$langs->trans("GroupModified").'</div>';
+        $db->commit();
+    } else {
+        $message.='<div class="error">'.$editgroup->error.'</div>';
+        $db->rollback;
+    }
+
+}
+
+
+llxHeader('',$langs->trans("GroupCard"));
 
 
 /* ************************************************************************** */
@@ -145,7 +170,7 @@ if ($action == 'create')
 /* ************************************************************************** */
 else
 {
-    if ($_GET["id"])
+    if ($_GET["id"] )
     {
         $group = new UserGroup($db);
         $group->fetch($_GET["id"]);
@@ -182,141 +207,182 @@ else
          * Fiche en mode visu
          */
 
-        print '<table class="border" width="100%">';
-        print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
-        print '<td width="75%" class="valeur">'.$group->nom.'</td>';
-        print "</tr>\n";
-        print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-        print '<td class="valeur">'.nl2br($group->note).'&nbsp;</td>';
-        print "</tr>\n";
-        print "</table>\n";
-        print "<br>\n";
+        if ($_GET["action"] != 'edit') {
 
-
-        print '</div>';
-
-        if ($message) { print $message; }
-
-        /*
-         * Barre d'actions
-         *
-         */
-        print '<div class="tabsAction">';
-
-        if ($user->admin)
-        {
-            print '<a class="tabAction" href="fiche.php?id='.$group->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
-        }
-
-        if ($user->id <> $_GET["id"] && $user->admin)
-        {
-            print '<a class="butDelete" href="fiche.php?action=delete&amp;id='.$group->id.'">'.$langs->trans("DeleteGroup").'</a>';
-        }
-
-        print "</div>\n";
-        print "<br>\n";
-
-        print_titre($langs->trans("ListOfUsersInGroup"));
-        print "<br>\n";
-        
-        // On sélectionne les users qui ne sont pas déjà dans le groupe
-        $uss = array();
-
-        $sql = "SELECT u.rowid, u.name, u.firstname, u.code ";
-        $sql .= " FROM ".MAIN_DB_PREFIX."user as u ";
-        #      $sql .= " LEFT JOIN llx_usergroup_user ug ON u.rowid = ug.fk_user";
-        #      $sql .= " WHERE ug.fk_usergroup IS NULL";
-        $sql .= " ORDER BY u.name";
-
-        $result = $db->query($sql);
-        if ($result)
-        {
-            $num = $db->num_rows();
-            $i = 0;
-
-            while ($i < $num)
+            print '<table class="border" width="100%">';
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
+            print '<td width="75%" class="valeur">'.$group->nom.'</td>';
+            print "</tr>\n";
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
+            print '<td class="valeur">'.nl2br($group->note).'&nbsp;</td>';
+            print "</tr>\n";
+            print "</table>\n";
+            print "<br>\n";
+    
+            print '</div>';
+    
+            if ($message) { print $message; }
+    
+            /*
+             * Barre d'actions
+             *
+             */
+            print '<div class="tabsAction">';
+    
+            if ($user->admin)
             {
-                $obj = $db->fetch_object();
-
-                $uss[$obj->rowid] = ucfirst(stripslashes($obj->firstname)) . " ".ucfirst(stripslashes($obj->name));
-                $i++;
+                print '<a class="tabAction" href="fiche.php?id='.$group->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
             }
-        }
-        else {
-            dolibarr_print_error($db);
-        }
-
-        if ($user->admin)
-        {
-            $form = new Form($db);
-            print '<form action="fiche.php?id='.$group->id.'" method="post">'."\n";
-            print '<input type="hidden" name="action" value="adduser">';
-            print '<table class="noborder" width="100%">'."\n";
-            //	  print '<tr class="liste_titre"><td width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
-            print '<tr class="liste_titre"><td width="25%">'.$langs->trans("Users").'</td>'."\n";
-            print '<td>';
-            print $form->select_array("user",$uss);
-            print ' &nbsp; ';
-            print '<input type="submit" class=button value="'.$langs->trans("Add").'">';
-            print '</td></tr>'."\n";
-            print '</table></form>'."\n";
-        }
-
-        /*
-         * Membres du groupe
-         */
-        $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.code ";
-        $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-        $sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
-        $sql .= " WHERE ug.fk_user = u.rowid";
-        $sql .= " AND ug.fk_usergroup = ".$group->id;
-        $sql .= " ORDER BY u.name";
-
-        $result = $db->query($sql);
-        if ($result)
-        {
-            $num = $db->num_rows($result);
-            $i = 0;
-
-            print '<br>';
-
-            print '<table class="noborder" width="100%">';
-            print '<tr class="liste_titre">';
-            print '<td width="25%">'.$langs->trans("Login").'</td>';
-            print '<td width="25%">'.$langs->trans("Lastname").'</td>';
-            print '<td width="25%">'.$langs->trans("Firstname").'</td>';
-            print '<td>'.$langs->trans("Code").'</td>';
-            print "<td>&nbsp;</td></tr>\n";
-            $var=True;
-            while ($i < $num)
+    
+            if ($user->id <> $_GET["id"] && $user->admin)
             {
-                $obj = $db->fetch_object($result);
-                $var=!$var;
-
-                print "<tr $bc[$var]>";
-                print '<td>';
-                print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
-                print '</td>';
-                print '<td>'.ucfirst(stripslashes($obj->name)).'</td>';
-                print '<td>'.ucfirst(stripslashes($obj->firstname)).'</td>';
-                print '<td>'.$obj->code.'</td><td>';
-
-                if ($user->admin)
+                print '<a class="butDelete" href="fiche.php?action=delete&amp;id='.$group->id.'">'.$langs->trans("DeleteGroup").'</a>';
+            }
+    
+            print "</div>\n";
+            print "<br>\n";
+    
+    
+            /*
+             * Liste des utilisateurs dans le groupe
+             */
+    
+            print_titre($langs->trans("ListOfUsersInGroup"));
+            print "<br>\n";
+            
+            // On sélectionne les users qui ne sont pas déjà dans le groupe
+            $uss = array();
+    
+            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.code ";
+            $sql .= " FROM ".MAIN_DB_PREFIX."user as u ";
+            #      $sql .= " LEFT JOIN llx_usergroup_user ug ON u.rowid = ug.fk_user";
+            #      $sql .= " WHERE ug.fk_usergroup IS NULL";
+            $sql .= " ORDER BY u.name";
+    
+            $result = $db->query($sql);
+            if ($result)
+            {
+                $num = $db->num_rows();
+                $i = 0;
+    
+                while ($i < $num)
                 {
-
-                    print '<a href="fiche.php?id='.$group->id.'&amp;action=removeuser&amp;user='.$obj->rowid.'">';
-                    print img_delete($langs->trans("RemoveFromGroup"));
+                    $obj = $db->fetch_object();
+    
+                    $uss[$obj->rowid] = ucfirst(stripslashes($obj->name)).' '.ucfirst(stripslashes($obj->firstname).' ('.$obj->login.')');
+                    $i++;
+                }
+            }
+            else {
+                dolibarr_print_error($db);
+            }
+    
+            if ($user->admin)
+            {
+                $form = new Form($db);
+                print '<form action="fiche.php?id='.$group->id.'" method="post">'."\n";
+                print '<input type="hidden" name="action" value="adduser">';
+                print '<table class="noborder" width="100%">'."\n";
+                //	  print '<tr class="liste_titre"><td width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
+                print '<tr class="liste_titre"><td width="25%">'.$langs->trans("UsersToAdd").'</td>'."\n";
+                print '<td>';
+                print $form->select_array("user",$uss);
+                print ' &nbsp; ';
+                print '<input type="submit" class=button value="'.$langs->trans("Add").'">';
+                print '</td></tr>'."\n";
+                print '</table></form>'."\n";
+            }
+    
+            /*
+             * Membres du groupe
+             */
+            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.code ";
+            $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+            $sql .= ",".MAIN_DB_PREFIX."usergroup_user as ug";
+            $sql .= " WHERE ug.fk_user = u.rowid";
+            $sql .= " AND ug.fk_usergroup = ".$group->id;
+            $sql .= " ORDER BY u.name";
+    
+            $result = $db->query($sql);
+            if ($result)
+            {
+                $num = $db->num_rows($result);
+                $i = 0;
+    
+                print '<br>';
+    
+                print '<table class="noborder" width="100%">';
+                print '<tr class="liste_titre">';
+                print '<td width="25%">'.$langs->trans("Login").'</td>';
+                print '<td width="25%">'.$langs->trans("Lastname").'</td>';
+                print '<td width="25%">'.$langs->trans("Firstname").'</td>';
+                print '<td>'.$langs->trans("Code").'</td>';
+                print "<td>&nbsp;</td></tr>\n";
+                if ($num) {
+                    $var=True;
+                    while ($i < $num)
+                    {
+                        $obj = $db->fetch_object($result);
+                        $var=!$var;
+        
+                        print "<tr $bc[$var]>";
+                        print '<td>';
+                        print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a>';
+                        print '</td>';
+                        print '<td>'.ucfirst(stripslashes($obj->name)).'</td>';
+                        print '<td>'.ucfirst(stripslashes($obj->firstname)).'</td>';
+                        print '<td>'.$obj->code.'</td><td>';
+        
+                        if ($user->admin)
+                        {
+        
+                            print '<a href="fiche.php?id='.$group->id.'&amp;action=removeuser&amp;user='.$obj->rowid.'">';
+                            print img_delete($langs->trans("RemoveFromGroup"));
+                        }
+                        else
+                        {
+                            print "-";
+                        }
+                        print "</td></tr>\n";
+                        $i++;
+                    }
                 }
                 else
                 {
-                    print "-";
+                    print '<tr><td colspan=2>'.$langs->trans("None").'</td></tr>';    
                 }
-                print "</td></tr>\n";
-                $i++;
+                print "</table>";
+                print "<br>";
+                $db->free($result);
             }
-            print "</table>";
-            print "<br>";
-            $db->free($result);
+            else {
+                dolibarr_print_error($db);
+            }
+        }
+
+        /*
+         * Fiche en mode edition
+         */
+        if ($_GET["action"] == 'edit' && $user->admin)
+        {
+            print '<form action="fiche.php?id='.$group->id.'" method="post" name="updategroup" enctype="multipart/form-data">';
+            print '<input type="hidden" name="action" value="update">';
+
+            print '<table class="border" width="100%">';
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
+            print '<td width="75%" class="valeur"><input size="12" maxlength="8" type="text" name="group" value="'.$group->nom.'"></td>';
+            print "</tr>\n";
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
+            print '<td class="valeur"><textarea name="note" rows="12" cols="40">'.nl2br($group->note).'</textarea></td>';
+            print "</tr>\n";
+            print '<tr><td align="center" colspan="2"><input value="'.$langs->trans("Save").'" type="submit"></td></tr>';
+            print "</table>\n";
+            print "<br>\n";
+            print '</form>';
+    
+            print '</div>';
+
+
         }
 
     }

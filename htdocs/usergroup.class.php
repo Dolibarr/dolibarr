@@ -37,7 +37,10 @@ class UserGroup
     var $db;
     
     var $id;
-    var $label;
+    var $nom;
+    var $note;
+    var $datec;
+    var $datem;
 
 
   /**
@@ -64,7 +67,7 @@ class UserGroup
     {
         $this->id = $id;
     
-        $sql  = "SELECT g.rowid, g.nom, g.note";
+        $sql  = "SELECT g.rowid, g.nom, g.note, g.datec, tms as datem";
         $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
         $sql .= " WHERE g.rowid = ".$this->id;
     
@@ -79,7 +82,8 @@ class UserGroup
                 $this->id = $obj->rowid;
                 $this->nom  = $obj->nom;
                 $this->note = $obj->note;
-    
+                $this->datec = $obj->datec;
+                $this->datem = $obj->datem;
             }
             $this->db->free($result);
     
@@ -344,6 +348,7 @@ class UserGroup
   function update()
     {
         $sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
+        $sql .= " nom = '$this->nom',";
         $sql .= " note = '$this->note'";
         $sql .= " WHERE rowid = ".$this->id;
 
