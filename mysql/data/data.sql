@@ -90,6 +90,7 @@ INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MENU_BARRETOP','de
 --
 
 INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_COMMANDE','0','yesno',0);
+INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_PROPALE','0','yesno',0);
 INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_DON','0','yesno',0);
 INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_ADHERENT','0','yesno',0);
 
