@@ -44,8 +44,16 @@ if ($id)
       
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
       print "<tr>";
-      print '<td width="20%">Numéro</td><td width="80%">'.$commande->id.'</td></tr>';
-      print '<td width="20%">Client</td><td width="80%"><a href="/boutique/client/fiche.php?id='.$commande->client_id.'">'.$commande->client_name.'</a></td></tr>';
+      print '<td width="20%">Numéro</td><td width="80%" colspan="2">'.$commande->id.'</td></tr>';
+      print '<td width="20%">Client</td><td width="80%" colspan="2"><a href="/boutique/client/fiche.php?id='.$commande->client_id.'">'.$commande->client_name.'</a></td></tr>';
+
+      print "<tr><td>Adresses</td><td>Livraison</td><td>Facturation</td></tr>";
+
+      print "<td>&nbsp;</td><td>".$commande->delivery_adr->name."<br>".$commande->delivery_adr->street."<br>".$commande->delivery_adr->cp."<br>".$commande->delivery_adr->city."<br>".$commande->delivery_adr->country."</td>";
+      print "<td>".$commande->billing_adr->name."<br>".$commande->billing_adr->street."<br>".$commande->billing_adr->cp."<br>".$commande->billing_adr->city."<br>".$commande->billing_adr->country."</td>";
+      print "</tr>";
+
+
       print "</table>";
       
       /*
@@ -60,12 +68,10 @@ if ($id)
 	{
 	  $num = $db->num_rows();
 	  $i = 0;
-	  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-	  print "<TR class=\"liste_titre\"><td>Produit</td>";
-	  print "<td>Nombre</td>";
-	  print "<td>Prix</td>";
-	  print '<td>Prix final</td>';
-	  print "</TR>\n";
+	  print "<p><table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+	  print '<TR class="liste_titre"><td>Produits</td>';
+	  print '<td align="center">Nombre</td><td>Prix</td><td>Prix final</td>';
+	  print "</tr>\n";
 	  $var=True;
 	  while ($i < $num) {
 	    $objp = $db->fetch_object( $i);
@@ -76,7 +82,7 @@ if ($id)
 	    
 	    print "<a href=\"fiche.php?id=$objp->rowid\">$objp->products_name</a></TD>\n";
 
-	    print "<TD><a href=\"fiche.php?id=$objp->rowid\">$objp->products_quantity</a></TD>\n";
+	    print '<TD align="center"><a href="fiche.php?id='.$objp->rowid."\">$objp->products_quantity</a></TD>\n";
 	    print "<TD><a href=\"fiche.php?id=$objp->rowid\">".price($objp->products_price)."</a></TD>\n";
 	    print "<TD><a href=\"fiche.php?id=$objp->rowid\">".price($objp->final_price)."</a></TD>\n";
 	    
@@ -91,6 +97,16 @@ if ($id)
 	  print $db->error();
 	}
       
+      /*
+       *
+       *
+       */
+      print "<br />";
+      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+      print "<tr>";
+      print '<td width="20%">Total</td><td width="80%"><a href="/boutique/client/fiche.php?id='.$commande->client_id.'">'.price($commande->total_ot_total).'</a></td></tr>';
+      print "</table>";
+
       
       
     }

@@ -86,7 +86,12 @@ if ($action == 'update' && !$cancel) {
   $livre->editeurid = $editeurid;
   $livre->description = $desc;
 
-  if (!$livre->update($id, $user))
+  if ($livre->update($id, $user))
+    {
+      $result = $livre->fetch($id);
+      $livre->updateosc($user);
+    }
+  else
     {
       $action = 'edit';
     }
@@ -313,7 +318,8 @@ else
 }
 
 print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">[<a href="fiche.php?action=updateosc&id='.$id.'">Update Osc</a>]</td>';
+//print '<td width="20%" align="center">[<a href="fiche.php?action=updateosc&id='.$id.'">Update Osc</a>]</td>';
+print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';
 print '<td width="20%" align="center">-</td>';    
 print '</table><br>';

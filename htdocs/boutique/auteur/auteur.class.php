@@ -108,12 +108,23 @@ class Auteur {
    *
    *
    */
-  Function liste_livre()
+  Function liste_livre($id_type='', $status=0)
   {
     $ga = array();
-
-    $sql = "SELECT a.rowid, a.title FROM llx_livre as a, llx_livre_to_auteur as l";
+    if ($id_type == 'oscid')
+      {
+	$sql = "SELECT a.oscid, ";
+      }
+    else
+      {
+	$sql = "SELECT a.rowid, ";
+      }
+    $sql .= " a.title FROM llx_livre as a, llx_livre_to_auteur as l";
     $sql .= " WHERE a.rowid = l.fk_livre AND l.fk_auteur = ".$this->id;
+    if ($status)
+      {
+	$sql .= " AND a.status = 1";
+      }
     $sql .= " ORDER BY a.title";
 
     if ($this->db->query($sql) )
@@ -125,9 +136,9 @@ class Auteur {
 	    $i = 0;
 	    while ($i < $nump)
 	      {
-		$obj = $this->db->fetch_object($i);
+		$row = $this->db->fetch_row($i);
 		
-		$ga[$obj->rowid] = $obj->title;
+		$ga[$row[0]] = $row[1];
 		$i++;
 	      }
 	  }

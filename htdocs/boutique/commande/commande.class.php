@@ -32,6 +32,9 @@ class Commande {
 
     $this->billing_adr = New Address();
     $this->delivry_adr = New Address();
+
+    $this->total_ot_subtotal = 0;
+    $this->total_ot_shipping = 0;
   }  
   /*
    *
@@ -49,13 +52,54 @@ class Commande {
 
     if ( $result )
       {
-	$result = $this->db->fetch_array();
+	$array = $this->db->fetch_array();
 
-	$this->id          = $result["orders_id"];
-	$this->client_id   = stripslashes($result["customers_id"]);
-	$this->client_name = stripslashes($result["customers_name"]);
+	$this->id          = $array["orders_id"];
+	$this->client_id   = stripslashes($array["customers_id"]);
+	$this->client_name = stripslashes($array["customers_name"]);
 	
+
+	$this->delivery_adr->name = stripslashes($array["delivery_name"]);
+	$this->delivery_adr->street = stripslashes($array["delivery_street_address"]);
+	$this->delivery_adr->cp = stripslashes($array["delivery_postcode"]);
+	$this->delivery_adr->city = stripslashes($array["delivery_city"]);
+	$this->delivery_adr->country = stripslashes($array["delivery_country"]);
+
+	$this->billing_adr->name = stripslashes($array["billing_name"]);
+	$this->billing_adr->street = stripslashes($array["billing_street_address"]);
+	$this->billing_adr->cp = stripslashes($array["billing_postcode"]);
+	$this->billing_adr->city = stripslashes($array["billing_city"]);
+	$this->billing_adr->country = stripslashes($array["billing_country"]);
+
 	$this->db->free();
+
+	/*
+	 * Totaux
+	 */
+	$sql = "SELECT value, class ";
+	$sql .= " FROM ".DB_NAME_OSC.".orders_total WHERE orders_id = $id";
+
+	$result = $this->db->query($sql)  ;
+
+	if ( $result )
+	  {
+	    $num = $this->db->num_rows();
+
+	    while ($i < $num)
+	      {
+		$array = $this->db->fetch_array($i);
+		if ($array["class"] == 'ot_total')
+		  {
+		    $this->total_ot_total = $array["value"];
+		  }
+		$i++;
+	      }
+	  }
+	else
+	  {
+	    print $this->db->error();
+	  }
+
       }
     else
       {
