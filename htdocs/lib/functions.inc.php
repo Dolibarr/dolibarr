@@ -25,6 +25,90 @@
 $yn[0] = "non";
 $yn[1] = "oui";
 
+function loginFunction()
+{
+  /**
+   * Change the HTML output so that it fits to your
+   * application.     */
+  print '<html><head><title>Dolibarr Authentification</title>';
+  print '<style type="text/css">
+  body {
+    font-size:14px;
+    font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
+    background-color: #cac8c0;
+    margin-left: 30%;
+    margin-right: 30%;
+    margin-top: 10%;
+    margin-bottom: 1%;
+  }
+  div.main {
+    background-color: white;
+    text-align: left;
+    border: solid black 1px;
+  }
+  div.main-inside {
+    background-color: white;
+    padding-left: 20px;
+    padding-right: 50px;
+    text-align: center;
+    margin-bottom: 50px;
+    margin-top: 30px;
+  }
+  div.footer {
+	background-color: #dcdff4;
+	font-size: 10px;
+	border-top: solid black 1px;
+	padding-left: 5px;
+        text-align: center;
+  }
+  div.header {
+	background-color: #dcdff4;
+	border-bottom: solid black 1px;
+	padding-left: 5px;
+        text-align: center;
+  }
+  div.footer p {
+	margin: 0px;
+  }
+  a:link,a:visited,a:active {
+	text-decoration:none;
+	color:blue;
+  }
+  a:hover {
+	text-decoration:underline;
+	color:blue;
+  }
+  </style>
+  </head><body>
+  <div class="main">
+  <div class="header">';
+  print 'Dolibarr '.DOL_VERSION;
+  print '
+  </div>
+  <div class="main-inside">
+  ';
+
+  echo '<form method="post" action="' . $_SERVER['PHP_SELF'] . '">';
+  print '<table><tr>';
+  print '<td>Login : </td><td><input type="text" name="username"></td></tr>';;
+  print '<tr><td>Password : </td><td><input type="password" name="password"></td></tr>';
+
+  echo '</table>
+  <p align="center"><input value="Login" type="submit">
+  </form>';
+}
+/*
+ *
+ *
+ */
+function accessforbidden()
+{
+  llxHeader();
+  print "Accés interdit";
+  llxFooter();
+  exit(0);
+}
+
 function doliMoveFileUpload($src_file, $dest_file)
 {
   $file_name = $dest_file;
@@ -37,101 +121,7 @@ function doliMoveFileUpload($src_file, $dest_file)
   return move_uploaded_file($src_file, $file_name);
 }
 
-function loginFunction()
-{
-  /**
-   * Change the HTML output so that it fits to your
-   * application.     */
-  print '<html><head><title>Dolibarr Authentification</title>';
-print '
-        <style type="text/css">
-body {
-    font-size:14px;
-    font-family: Verdana, Tahoma, Arial, Helvetica, sans-serif;
-    background-color: #cac8c0;
-    margin-left: 30%;
-    margin-right: 30%;
-    margin-top: 10%;
-    margin-bottom: 1%;
-}
 
-div.main {
-    background-color: white;
-    text-align: left;
-    border: solid black 1px;
-}
-div.main-inside {
-    background-color: white;
-    padding-left: 20px;
-    padding-right: 50px;
-    text-align: center;
-    margin-bottom: 50px;
-    margin-top: 30px;
-}
-
-div.footer {
-	background-color: #dcdff4;
-	font-size: 10px;
-	border-top: solid black 1px;
-	padding-left: 5px;
-    text-align: center;
-}
-
-div.header {
-	background-color: #dcdff4;
-
-	border-bottom: solid black 1px;
-	padding-left: 5px;
-    text-align: center;
-}
-
-div.footer p {
-	margin: 0px;
-}
-
-a:link,a:visited,a:active {
-	text-decoration:none;
-	color:blue;
-}
-a:hover {
-	text-decoration:underline;
-	color:blue;
-}
-
-</style>
-
-  </head><body>
- 
-<div class="main">
-<div class="header">';
- print 'Dolibarr '.DOL_VERSION;
-print '
-</div>
- <div class="main-inside">
-';
-
-
-  echo "<form method=\"post\" action=\"" . $_SERVER['PHP_SELF'] . "\">";
-  print '<table><tr>';
-  print '<td>Login : </td><td><input type="text" name="username"></td></tr>';;
-  print '<tr><td>Password : </td><td><input type="password" name="password"></td></tr>';
-
-  echo '</table>
-<p align="center"><input value="Login" type="submit">
-</form>
-</div>
-
-</body></html>';
-}
-
-
-function accessforbidden()
-{
-  llxHeader();
-  print "Accés interdit";
-  llxFooter();
-  exit(0);
-}
 
 function transcoS2L($zonein,$devise)
 { 
