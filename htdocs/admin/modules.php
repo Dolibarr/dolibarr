@@ -36,12 +36,21 @@ if ($_GET["action"] == 'set' && $user->admin)
   Header("Location: modules.php");
 }
 
+if ($_GET["action"] == 'reset' && $user->admin)
+{
+  UnActivate($_GET["value"]);
+
+  Header("Location: modules.php");
+}
+
+
 function Activate($value)
 {
   global $db, $modules;
 
   $modName = $value;
 
+  // Activation du module
   if ($modName)
     {
       $file = $modName . ".class.php";
@@ -49,17 +58,22 @@ function Activate($value)
       $objMod = new $modName($db);
       $objMod->init();
     }
-  
+
+  // Activation des modules dont le module dépend
   for ($i = 0; $i < sizeof($objMod->depends); $i++)
     {
       Activate($objMod->depends[$i]);
     }
+
 }
 
-if ($_GET["action"] == 'reset' && $user->admin)
+function UnActivate($value)
 {
-  $modName = $_GET["value"];
+  global $db, $modules;
 
+  $modName = $value;
+
+  // Desactivation du module
   if ($modName)
     {
       $file = $modName . ".class.php";
@@ -68,8 +82,15 @@ if ($_GET["action"] == 'reset' && $user->admin)
       $objMod->remove();
     }
 
+  // Desactivation des modules qui dependent de lui
+  for ($i = 0; $i < sizeof($objMod->requiredby); $i++)
+    {
+      UnActivate($objMod->requiredby[$i]);
+    }
+
   Header("Location: modules.php");
 }
+
 
 $db->close();
 

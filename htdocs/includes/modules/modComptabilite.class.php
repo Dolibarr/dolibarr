@@ -37,6 +37,7 @@ class modComptabilite extends DolibarrModules
     $this->numero = 10 ;
     $this->db = $DB ;
     $this->depends = array();
+    $this->requiredby = array("modFacture");
 
     $this->name = "Comptabilite";
     $this->description = "Gestion sommaire de comptabilité";
