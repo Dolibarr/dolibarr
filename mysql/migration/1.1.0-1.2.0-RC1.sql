@@ -1,3 +1,10 @@
+--
+--
+--
+-- Attention à l'ordre des requetes
+-- ce fichier doit être chargé sur une version 1.1.0 
+-- sans AUCUNE erreur ni warning
+-- 
 alter table llx_contrat add fk_facturedet integer NOT NULL default 0 after fk_facture;
 alter table llx_contrat change fk_user_cloture fk_user_cloture integer;
 alter table llx_contrat change fk_user_mise_en_service fk_user_mise_en_service integer;
@@ -56,9 +63,6 @@ update llx_bank_account set account_number = '51' where account_number is null;
 alter table llx_paiement add fk_bank integer NOT NULL after note ;
 alter table llx_paiementfourn add fk_bank integer NOT NULL after note ;
 
-alter table llx_birthday_alert rename llx_user_alert ;
-alter table llx_user_alert add type integer after rowid;
-update llx_user_alert set type=1 where type is null;
 
 alter table c_paiement rename llx_c_paiement ;
 alter table c_propalst rename llx_c_propalst ;
@@ -90,6 +94,12 @@ create table llx_birthday_alert
   fk_user      integer
 )type=innodb;
 
+
+alter table llx_birthday_alert rename llx_user_alert ;
+alter table llx_user_alert add type integer after rowid;
+update llx_user_alert set type=1 where type is null;
+
+
 create table llx_co_fa
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
@@ -117,7 +127,7 @@ insert into llx_const(name, value, type, note) values ('MAIN_UPLOAD_DOC','1','ch
 update llx_societe set fk_forme_juridique=0 where fk_forme_juridique >= 54;
 
 
-drop table llx_c_forme_juridique;
+drop table if exists llx_c_forme_juridique;
 
 create table llx_c_forme_juridique
 (
