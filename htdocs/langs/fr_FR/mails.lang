@@ -34,7 +34,7 @@ ErrorMailRecipientIsEmpty=Le mail du destinataire est vide
 ConfirmValidMailing=Confirmez-vous la validation du mailing ?
 ConfirmDeleteMailing=Confirmez-vous la suppression du mailing ?
 NbOfRecipients=Nombre de destinataires
-TotalNbOfdistinctRecipients=Nombre total de destinataires uniques
+TotalNbOfDistinctRecipients=Nombre total de destinataires uniques
 NoTargetYet=Pas de destinataire définis
 AddRecipients=Ajout de destinataires
 # Libelle des modules de liste de destinataires mailing
