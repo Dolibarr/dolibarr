@@ -58,7 +58,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
 {
   if ($user->rights->propale->supprimer ) 
     {
-      $propal = new Propal($db, 0, $propalid);
+      $propal = new Propal($db, 0, $_GET["propalid"]);
       $propal->delete();
       $propalid = 0;
       $brouillon = 1;
@@ -254,7 +254,7 @@ if ($_GET["propalid"])
    * Confirmation de la suppression de la propale
    *
    */
-  if ($action == 'delete')
+  if ($_GET["action"] == 'delete')
     {
       $html->form_confirm("propal.php?propalid=$propal->id","Supprimer la proposition","Etes-vous sûr de vouloir supprimer cette proposition ?","confirm_delete");
     }
