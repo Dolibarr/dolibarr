@@ -22,6 +22,7 @@ DEBIANDOC2PS= debiandoc2ps
 DEBIANDOC2PDF= debiandoc2pdf
 DEBIANDOC2HTML= debiandoc2html
 DEBIANDOC2LATEX= debiandoc2latex
+DEBIANDOC2TEXT= debiandoc2text
 
 OPTIONS=-v -lfr_FR.ISO8859-1 -pa4
 HOPTIONS=-lfr_FR.ISO8859-1
@@ -41,10 +42,10 @@ all: $(DOC).pdf $(DOC).html
 %.ps:	%.sgml $(FRPAGES)
 	$(DEBIANDOC2PS) $(OPTIONS) $<
 
-%.pdf:	$(FRPAGES)
-	$(DEBIANDOC2PDF) $(OPTIONS) $<
+$(DOC).pdf: $(FRPAGES)
+	$(DEBIANDOC2PDF) $(OPTIONS) $(DOC).sgml
 
-%.html: $(FRPAGES)
+$(DOC).html: $(FRPAGES)
 	$(DEBIANDOC2HTML) $(HOPTIONS) $<
 
 put:
