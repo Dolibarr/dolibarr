@@ -35,6 +35,11 @@ create table llx_facture
   fk_statut  smallint default 0 NOT NULL,
   author     varchar(50),
   fk_user    integer,   -- createur de la facture
+
+  fk_user_author  integer,   -- createur de la propale
+
+  fk_user_valid   integer,   -- valideur de la propale
+
   note       text,
 
   UNIQUE INDEX (facnumber)

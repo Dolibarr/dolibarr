@@ -156,7 +156,7 @@ if ($facid > 0) {
   if ($obj->statut == 0) {
     print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
   } else {
-    print "<td align=\"center\" width=\"25%\">[<a href=\"../comm/ventes.php3?socid=$obj->socidp&facid=$facid&action=add\">Emettre une vente</a>]</td>";
+    print "<td align=\"center\" width=\"25%\">-</td>";
   } 
   if ($obj->statut == 1 && $resteapayer > 0) {
     print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"paiement.php3?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
@@ -195,7 +195,7 @@ if ($facid > 0) {
   }
   print "<tr><td colspan=\"2\">(<a href=\"../../doc/facture/$obj->facnumber/\">liste...</a>)</td></tr>";  
 
-  print "</table>\n";
+  print "</table>\n</table>";
   
   /*
    * Generation de la facture
@@ -223,7 +223,8 @@ if ($facid > 0) {
   if ($result) {
     $num = $db->num_rows();
     $i = 0; $total = 0;
-    print "<p><b>Proposition commerciale associée</b><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+    print "<p><b>Proposition(s) commerciale(s) associée(s)</b>";
+    print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
     print "<TR bgcolor=\"orange\">";
     print "<td>Num</td>";
     print "<td>Date</td>";
@@ -277,7 +278,7 @@ if ($facid > 0) {
       $num = $db->num_rows();
       if ($num > 0) {
 	$i = 0;
-	print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+	print '<p><TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
 	print "<TR bgcolor=\"orange\">";
 	print "<TD>[<a href=\"$PHP_SELF\">Tous</a>]</td>";
 	print "<TD><a href=\"$PHP_SELF?sortfield=lower(p.label)&sortorder=ASC\">Societe</a></td>";

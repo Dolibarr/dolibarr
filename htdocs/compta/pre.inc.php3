@@ -48,9 +48,9 @@ function llxHeader($head = "") {
   print "<A href=\"/\">Accueil</A>";
 
   print "</td></tr>";
-  print "<TR><TD valign=\"top\" align=\"right\">";
 
-  print "<CENTER><A href=\"/compta/index.php3\">Factures</A></CENTER><p>\n";
+  print '<TR><TD bgcolor="#e0e0e0" valign="top" align="right">';
+  print '<div align="center"><A href="/compta/index.php3">Factures</A></div><p>';
   print "<A href=\"paiement.php3\">Paiements</A><BR>\n";
   print "<A href=\"fac.php3\">admin fac</A><BR>\n";
 
