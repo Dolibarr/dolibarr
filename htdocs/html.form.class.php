@@ -22,13 +22,13 @@
  * $Source$
  */
 
-/*!	\file       htdocs/html.form.class.php
+/*!	    \file       htdocs/html.form.class.php
 		\brief      Fichier de la classe des fonctions prédéfinie de composants html
 		\version    $Revision$
 */
 
 
-/*! \class Form
+/*!     \class Form
 		\brief Classe permettant la génération de composants html
 */
 
@@ -38,7 +38,7 @@ class Form
   var $errorstr;
   
   /*!	\brief     Constructeur
-			\param     DB      handler d'accès base de donnée
+		\param     DB      handler d'accès base de donnée
   */
 	
   function Form($DB)
@@ -49,12 +49,12 @@ class Form
   }
   
   /*
-   * \brief     Retourne la liste déroulante des départements/province/cantons 
-   *            avec un affichage avec rupture sur le pays
-   * \remarks   La cle de la liste est le code (il peut y avoir plusieurs entrée pour
-   *            un code donnée mais dans ce cas, le champ pays et lang diffère).
-   *            Ainsi les liens avec les départements se font sur un département
-   *            independemment de nom som.
+   *    \brief      Retourne la liste déroulante des départements/province/cantons 
+   *                avec un affichage avec rupture sur le pays
+   *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrée pour
+   *                un code donnée mais dans ce cas, le champ pays et lang diffère).
+   *                Ainsi les liens avec les départements se font sur un département
+   *                independemment de nom som.
    */
 	 
   function select_departement($selected='',$htmlname='departement_id')
@@ -113,11 +113,11 @@ class Form
  }
   
   /*
-   * \brief     Retourne la liste déroulante des regions actives dont le pays est actif
-   * \remarks   La cle de la liste est le code (il peut y avoir plusieurs entrée pour
-   *            un code donnée mais dans ce cas, le champ pays et lang diffère).
-   *            Ainsi les liens avec les regions se font sur une region independemment
-   *            de nom som.
+   *    \brief      Retourne la liste déroulante des regions actives dont le pays est actif
+   *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrée pour
+   *                un code donnée mais dans ce cas, le champ pays et lang diffère).
+   *                Ainsi les liens avec les regions se font sur une region independemment
+   *                de nom som.
    */
 	 
   function select_region($selected='',$htmlname='region_id')
@@ -169,10 +169,10 @@ class Form
   }
 
   /*
-   * \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
-   * \param     selected    code pays pré-sélectionné
-   * \param     htmlname    nom de la liste deroulante
-   * \todo      trier liste sur noms après traduction plutot que avant
+   *    \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
+   *    \param     selected    code pays pré-sélectionné
+   *    \param     htmlname    nom de la liste deroulante
+   *    \todo      trier liste sur noms après traduction plutot que avant
    */
 	 
   function select_pays($selected='',$htmlname='pays_id')
@@ -222,8 +222,8 @@ class Form
 
 
   /*
-   * \brief     Retourne la liste déroulante des langues disponibles
-   * \param     
+   *    \brief     Retourne la liste déroulante des langues disponibles
+   *    \param     
    */
 	 
   function select_lang($selected='',$htmlname='lang_id')
@@ -255,8 +255,8 @@ class Form
 
 
   /*
-   * \brief   Retourne la liste déroulante des sociétés
-   * \param
+   *    \brief   Retourne la liste déroulante des sociétés
+   *    \param
    */
 	 
   function select_societes($selected='',$htmlname='soc_id')
@@ -295,7 +295,7 @@ class Form
   }
   
   /*
-   * \brief  Retourne la liste déroulante des contacts d'une société donnée
+   *    \brief  Retourne la liste déroulante des contacts d'une société donnée
    *
    */
 	 
@@ -338,8 +338,8 @@ class Form
 
   
   /*
-   * \brief  Retourne le nom d'un pays
-   * 
+   *    \brief      Retourne le nom d'un pays
+   *    \param      id      id du pays
    */
 	 
   function pays_name($id)
@@ -358,7 +358,7 @@ class Form
 	  }
 	else
 	  {
-	    return "Non définit";
+	    return "Non défini";
 	  }
 
       }
@@ -368,8 +368,8 @@ class Form
 
 
   /*
-   *    \brief  Retourne la liste déroulante des civilite actives
-   *    \param  selected    civilite pré-sélectionnée
+   *    \brief      Retourne la liste déroulante des civilite actives
+   *    \param      selected    civilite pré-sélectionnée
    */
 
   function select_civilite($selected='')
@@ -413,7 +413,7 @@ class Form
   }
 
   /*
-   * \brief  Retourne la liste déroulante des formes juridiques avec un affichage avec rupture sur le pays
+   *    \brief  Retourne la liste déroulante des formes juridiques avec un affichage avec rupture sur le pays
    *
    */
 	 
@@ -498,7 +498,7 @@ class Form
   }
 	
   /*
-   * \brief selection du taux de tva
+   *    \brief  Selection du taux de tva
    *
    */
 	 
@@ -546,14 +546,13 @@ class Form
   }
 
   /*
-   * Affiche zone de selection de date
-   * Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
-   * Les champs sont présélectionnées avec:
-   * - La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
-   * - La date du jour si set_time vaut ''
-   * - Aucune date (champs vides) si set_time vaut -1
+   *    \brief  Affiche zone de selection de date
+   *            Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
+   *            Les champs sont présélectionnées avec:
+   *            - La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
+   *            - La date du jour si set_time vaut ''
+   *            - Aucune date (champs vides) si set_time vaut -1
    */
-	 
   function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0)
   {
     if (! $set_time && ! $empty)
@@ -710,10 +709,9 @@ class Form
   }
 	
   /*
-   *
+   *    \brief      Affiche liste déroulante
    *
    */
-	 
   function select($name, $sql, $id='')
     {
 
@@ -820,7 +818,7 @@ class Form
     
     }
   /*
-   * \brief  Renvoie la chaîne de caractère décrivant l'erreur
+   *    \brief  Renvoie la chaîne de caractère décrivant l'erreur
    *
    */
 	 
@@ -828,59 +826,49 @@ class Form
     {
       return $this->errorstr;
     }
+
+
   /*
-   * \brief selection de oui/non en caractere
-   *
+   *    \brief      Selection de oui/non en caractere
+   *    \param      name    nom du select
+   *    \param      value   valeur présélectionnée
+   *    \param      option  0 retourne yes/no, 1 retourne 1/0
    */
-	 
-  function selectyesno($name,$value='')
+  function selectyesno($name,$value='',$option=0)
   {
     global $langs;
+
+    $yes="yes"; $no="no";
+    if ($option) { $yes="1"; $no="0"; }
     
     print '<select name="'.$name.'">';
 
-    if ($value == 'yes') 
+    if ($value == 'yes' || $value == 1) 
       {
-	print '<option value="yes" selected>'.$langs->trans("yes").'</option>';
-	print '<option value="no">'.$langs->trans("no").'</option>';
+	print '<option value="'.$yes.'" selected>'.$langs->trans("yes").'</option>';
+	print '<option value="'.$no.'">'.$langs->trans("no").'</option>';
       }
     else
       {
-	print '<option value="yes">'.$langs->trans("yes").'</option>';
-	print '<option value="no" selected>'.$langs->trans("no").'</option>';
+	print '<option value="'.$yes.'">'.$langs->trans("yes").'</option>';
+	print '<option value="'.$no.'" selected>'.$langs->trans("no").'</option>';
       }
     print '</select>';
   }
 	
   /*
-   * \brief selection de oui/non en chiffre
+   *    \brief  Selection de oui/non en chiffre
    *
    */
-	 
   function selectyesnonum($name,$value='')
   {
-    global $langs;
-    
-    print '<select name="'.$name.'">';
-
-    if ($value == 1) 
-      {
-	print '<option value="1" selected>'.$langs->trans("yes").'</option>';
-	print '<option value="0">'.$langs->trans("no").'</option>';
-      }
-    else
-      {
-	print '<option value="1">'.$langs->trans("yes").'</option>';
-	print '<option value="0" selected>'.$langs->trans("no").'</option>';
-      }
-    print '</select>';
+    selectyesno($name,$value,1);
   }
 	
   /*
-   * \brief Checkbox
+   *    \brief  Checkbox
    *
    */
-	 
   function checkbox($name,$checked=0,$value=1)
     {
       if ($checked==1){
@@ -889,6 +877,53 @@ class Form
 	print "<input type=\"checkbox\" name=\"$name\" value=\"$value\" />\n";
       }
     }
+
+  /*
+   *    \brief  Affiche la partie de formulaire pour saisie d'un mail
+   *    \param  withtopic   1 pour proposer à la saisie le sujet
+   *    \param  withbody    1 pour proposer à la saisie le corps du message
+   *    \param  withfile    1 pour proposer à la saisie l'ajout d'un fichier joint
+   */
+  function mail_topicmessagefile($withtopic=1,$withbody=1,$withfile=1,$defaultbody) {
+    global $langs;
+
+    $langs->load("other");
+
+	print "<table class=\"border\" width=\"100%\">";
+
+	// Topic
+    if ($withtopic) {
+        print "<tr>";
+    	print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
+        print "<td>";
+    	print "<input type=\"text\" size=\"60\" name=\"subject\" value=\"\">";
+        print "</td></tr>";
+    }
+    
+    // Message
+    if ($withbody) {
+        print "<tr>";
+        print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
+        print "<td>";
+    	print "<textarea rows=\"8\" cols=\"72\" name=\"message\">";
+        print $defaultbody;
+    	print "</textarea>";
+    	print "</td></tr>";
+    }
+    	
+	// Si fichier joint
+    if ($withfile) {
+        print "<tr>";
+        print "<td width=\"180\">".$langs->trans("MailFile")."</td>";
+    	print "<td>";
+    	print "<input type=\"file\" value=\"".$langs->trans("Upload")."\"/>";
+    	print "</td></tr>";
+    }
+    
+    print "</table>";
+    
+  }
+
 }
 
 ?>
