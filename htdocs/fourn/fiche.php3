@@ -144,7 +144,7 @@ if ($socid > 0) {
 
     print '<td><a href="facture/fiche.php3?action=create&socid='.$objsoc->idp.'">Nouvelle Facture <img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
 
-    print "<td bgcolor=\"#e0E0E0\" align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
+    print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
 
 
 
@@ -158,11 +158,11 @@ if ($socid > 0) {
        td.border { border: 1px dashed #c0c0c0; }
     </style>
     <?PHP
-    print '<table class="border" width="100%" border=0><tr>';
+    print '<table class="border" width="100%" border="0" cellspacing="0"><tr>';
     print '<td valign="top">';
-    print '<table cellspacing="0" border="0" width="100%">';
-    print '<tr><td class="border">Tel</td><td>'.$objsoc->tel.'&nbsp;</td><td>fax</td><td>'.$objsoc->fax.'&nbsp;</td></tr>';
-    print "<tr><td>Ville</td><td colspan=\"3\">".nl2br($objsoc->address)."<br>$objsoc->cp $objsoc->ville</td></tr>";
+    print '<table cellspacing="0" border="1" width="100%">';
+    print '<tr><td>Tél</td><td>'.$objsoc->tel.'&nbsp;</td><td>fax</td><td>'.$objsoc->fax.'&nbsp;</td></tr>';
+    print "<tr><td>Adresse</td><td colspan=\"3\">".nl2br($objsoc->address)."<br>$objsoc->cp $objsoc->ville</td></tr>";
 
     print "<tr><td>siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
     print "<td>prefix</td><td>";
@@ -183,8 +183,8 @@ if ($socid > 0) {
      */
     print "</td>\n";
     print '<td valign="top" width="50%">';
-    print '<table border=0 width="100%" cellspacing=0 bgcolor=#e0e0e0>';
-    print "<tr><td>Créée le</td><td align=center><b>" . strftime("%d %b %Y %H:%M", $objsoc->dc) . "</b></td></tr>";
+    print '<table border=0 width="100%" cellspacing=0>';
+    print "<tr><td>Créée le</td><td align=center>" . strftime("%d %b %Y %H:%M", $objsoc->dc) . "</td></tr>";
     /*
      *
      */
@@ -310,7 +310,7 @@ if ($socid > 0) {
 
       if ( $db->query($sql) ) {
 	print "<table width=\"100%\" cellspacing=0 border=0 cellpadding=2>\n";
-	print '<tr><td><a href="actioncomm.php3?socid='.$objsoc->idp.'">Actions</a></td></tr>';
+	print '<tr><td><a href="/comm/action/index.php3?socid='.$objsoc->idp.'">Actions</a></td></tr>';
 
 	$i = 0 ; $num = $db->num_rows(); $tag = True;
 	while ($i < $num) {
