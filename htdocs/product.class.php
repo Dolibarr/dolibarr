@@ -286,11 +286,15 @@ class Product
    *
    *
    */
-  Function count_propale()
+  Function count_propale($socid=0)
     {
       $sql = "SELECT pd.fk_propal";
-      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p";
-      $sql .= " WHERE p.rowid = pd.fk_product AND p.rowid = ".$this->id;
+      $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."propal as pr";
+      $sql .= " WHERE pr.rowid = pd.fk_propal AND p.rowid = pd.fk_product AND p.rowid = ".$this->id;
+      if ($socid > 0)
+	{
+	  $sql .= " AND pr.fk_soc = $socid";
+	}
       $sql .= " GROUP BY pd.fk_propal";
 
       $result = $this->db->query($sql) ;
@@ -308,11 +312,15 @@ class Product
    *
    *
    */
-  Function count_propale_client()
+  Function count_propale_client($socid=0)
     {
       $sql = "SELECT pr.fk_soc";
       $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."propal as pr";
       $sql .= " WHERE p.rowid = pd.fk_product AND pd.fk_propal = pr.rowid AND p.rowid = ".$this->id;
+      if ($socid > 0)
+	{
+	  $sql .= " AND pr.fk_soc = $socid";
+	}
       $sql .= " GROUP BY pr.fk_soc";
 
       $result = $this->db->query($sql) ;
@@ -330,11 +338,16 @@ class Product
    *
    *
    */
-  Function count_facture()
+  Function count_facture($socid=0)
     {
       $sql = "SELECT pd.fk_facture";
       $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as pd, ".MAIN_DB_PREFIX."product as p";
-      $sql .= " WHERE p.rowid = pd.fk_product AND p.rowid = ".$this->id;
+      $sql .= ", ".MAIN_DB_PREFIX."facture as f";
+      $sql .= " WHERE f.rowid = pd.fk_facture AND p.rowid = pd.fk_product AND p.rowid = ".$this->id;
+      if ($socid > 0)
+	{
+	  $sql .= " AND f.fk_soc = $socid";
+	}
       $sql .= " GROUP BY pd.fk_facture";
 
       $result = $this->db->query($sql) ;
@@ -403,11 +416,15 @@ class Product
    *
    *
    */
-  Function get_nb_vente()
+  Function get_nb_vente($socid=0)
     {
       $sql = "SELECT sum(d.qty), date_format(f.datef, '%Y%m') ";
       $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
-      $sql .= " WHERE f.rowid = d.fk_facture and f.paye = 1 and d.fk_product =".$this->id;
+      $sql .= " WHERE f.rowid = d.fk_facture and d.fk_product =".$this->id;
+      if ($socid > 0)
+	{
+	  $sql .= " AND f.fk_soc = $socid";
+	}
       $sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
 
       return $this->_get_stats($sql);
@@ -416,11 +433,15 @@ class Product
    *Renvoie le nombre de facture dans lesquelles figure le produit
    *
    */
-  Function get_num_vente()
+  Function get_num_vente($socid=0)
     {
       $sql = "SELECT count(*), date_format(f.datef, '%Y%m') ";
       $sql .= " FROM ".MAIN_DB_PREFIX."facturedet as d, ".MAIN_DB_PREFIX."facture as f";
-      $sql .= " WHERE f.rowid = d.fk_facture and f.paye = 1 and d.fk_product =".$this->id;
+      $sql .= " WHERE f.rowid = d.fk_facture AND d.fk_product =".$this->id;
+      if ($socid > 0)
+	{
+	  $sql .= " AND f.fk_soc = $socid";
+	}
       $sql .= " GROUP BY date_format(f.datef,'%Y%m') DESC ;";
 
       return $this->_get_stats($sql);
@@ -429,11 +450,15 @@ class Product
    *Renvoie le nombre de proaple dans lesquelles figure le produit
    *
    */
-  Function get_num_propal()
-    {
+  Function get_num_propal($socid=0)
+  {
       $sql = "SELECT count(*), date_format(p.datep, '%Y%m') ";
       $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as d, ".MAIN_DB_PREFIX."propal as p";
       $sql .= " WHERE p.rowid = d.fk_propal and d.fk_product =".$this->id;
+      if ($socid > 0)
+	{
+	  $sql .= " AND p.fk_soc = $socid";
+	}
       $sql .= " GROUP BY date_format(p.datep,'%Y%m') DESC ;";
 
       return $this->_get_stats($sql);

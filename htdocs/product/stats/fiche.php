@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,6 +22,17 @@
  */
 require("./pre.inc.php");
 require("../../propal.class.php");
+
+if ($user->societe_id > 0)
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
+else
+{
+  $socid = 0;
+}
+
 
 llxHeader();
 
@@ -48,31 +59,29 @@ if ($_GET["id"])
 	      $mesg = "Impossible de créer $dir !";
 	    }
 	}
-
-      $filenbpropal = $dir . "/propal12mois.png";
+      $img_propal_name = "propal12mois.png";
+      $filenbpropal = $dir . "/" . $img_propal_name;
       $filenbvente  = $dir . "/vente12mois.png";
       $filenbpiece  = $dir . "/vendu12mois.png";
         
-      if (! file_exists($filenbvente) or $_GET["action"] == 'recalcul')
-        {
+
+      $px = new BarGraph();
+      $mesg = $px->isGraphKo();
+      if (! $mesg)
+	{
+	  $graph_data = $product->get_num_vente($socid);
+	  $px->draw($filenbvente, $graph_data);
+	  
 	  $px = new BarGraph();
-	  $mesg = $px->isGraphKo();
-	  if (! $mesg)
-	    {
-	      $graph_data = $product->get_num_vente();
-	      $px->draw($filenbvente, $graph_data);
+	  $graph_data = $product->get_nb_vente($socid);
+	  $px->draw($filenbpiece, $graph_data);
+	  
+	  $px = new BarGraph();
+	  $graph_data = $product->get_num_propal($socid);
+	  $px->draw($filenbpropal, $graph_data);
 
-	      $px = new BarGraph();
-	      $graph_data = $product->get_nb_vente();
-	      $px->draw($filenbpiece, $graph_data);
-
-	      $px = new BarGraph();
-	      $graph_data = $product->get_num_propal();
-	      $px->draw($filenbpropal, $graph_data);
-
-	      $mesg = "Graphiques générés";
-	    }
-        }
+	  $mesg = "Graphiques générés";
+	}
 
       // Zone recherche
       print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
@@ -100,9 +109,9 @@ if ($_GET["id"])
       print '<td>Statistiques</td></tr>';
       print "<tr><td>Libellé</td><td>$product->libelle</td>";
       print '<td valign="top" rowspan="2">';
-      print '<a href="propal.php?id='.$product->id.'">Propositions commerciales</a> : '.$product->count_propale();
-      print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
-      print '<br><a href="facture.php?id='.$product->id.'">Factures</a> : '.$product->count_facture();
+      print '<a href="propal.php?id='.$product->id.'">Propositions commerciales</a> : '.$product->count_propale($socid);
+      print "<br>Proposé à <b>".$product->count_propale_client($socid)."</b> clients";
+      print '<br><a href="facture.php?id='.$product->id.'">Factures</a> : '.$product->count_facture($socid);
       print '</td></tr>';
       print '<tr><td>Prix actuel</td><td>'.price($product->price).'</td></tr>';
       print "</table>";
@@ -142,7 +151,7 @@ if ($_GET["id"])
       print '<td align="center" width="50%" colspan="2">-</td></tr>';
       print '<tr><td align="center" colspan="2">';
 
-      print '<img src="'.DOL_URL_ROOT.'/document/produit/'.$product->id.'/propal12mois.png" alt="Propales sur les 12 derniers mois">';
+      print '<img src="'.DOL_URL_ROOT.'/document/produit/'.$product->id.'/'.$img_propal_name.'" alt="Propales sur les 12 derniers mois">';
       
       print '</td><td align="center" colspan="2">TODO AUTRE GRAPHIQUE';
 

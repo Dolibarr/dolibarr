@@ -51,9 +51,9 @@ if ($_GET["id"])
       print '<td><a href="fiche.php?id='.$product->id.'">Statistiques</a></td></tr>';
       print "<tr><td>Libellé</td><td>$product->libelle</td>";
       print '<td valign="top" rowspan="2">';
-      print "Propositions commerciales : ".$product->count_propale();
-      print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
-      print "<br>Factures : ".$product->count_facture();
+      print "Propositions commerciales : ".$product->count_propale($socid);
+      print "<br>Proposé à <b>".$product->count_propale_client($socid)."</b> clients";
+      print "<br>Factures : ".$product->count_facture($socid);
       print '</td></tr>';
       print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td></tr>';
       print "</table>";

@@ -22,6 +22,12 @@
 
 require("./pre.inc.php");
 
+if ($user->societe_id > 0)
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
+
 llxHeader();
 
 $mesg = '';
@@ -45,9 +51,9 @@ if ($_GET["id"])
       print '<td><a href="fiche.php?id='.$product->id.'">Statistiques</a></td></tr>';
       print "<tr><td>Libellé</td><td>$product->libelle</td>";
       print '<td valign="top" rowspan="2">';
-      print "Propositions commerciales : ".$product->count_propale();
-      print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
-      print "<br>Factures : ".$product->count_facture();
+      print "Propositions commerciales : ".$product->count_propale($socid);
+      print "<br>Proposé à <b>".$product->count_propale_client($socid)."</b> clients";
+      print "<br>Factures : ".$product->count_facture($socid);
       print '</td></tr>';
       print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td></tr>';
       print "</table>";
@@ -73,7 +79,13 @@ if ($_GET["id"])
       $sql = "SELECT distinct(p.rowid), s.nom,s.idp, p.ref,".$db->pdate("p.datep")." as df,p.rowid as facid";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."propaldet as d WHERE p.fk_soc = s.idp";
       $sql .= " AND d.fk_propal = p.rowid AND d.fk_product =".$product->id;
-      $sql .= " ORDER BY $sortfield $sortorder ";
+ 
+      if ($socid)
+	{
+	  $sql .= " AND p.fk_soc = $socid";
+	}
+
+     $sql .= " ORDER BY $sortfield $sortorder ";
       $sql .= $db->plimit( $limit ,$offset);
 
       $result = $db->query($sql);
