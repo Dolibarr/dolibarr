@@ -75,46 +75,51 @@ require (DOL_DOCUMENT_ROOT ."/html.form.class.php");
 require DOL_DOCUMENT_ROOT ."/user.class.php";
 //require "Smarty.class.php";
 
-$db = new DoliDb();
 
+
+$db = new DoliDb();
 $user = new User($db);
 
 clearstatcache();
 
-//XAVIER DUTOIT 18/09/2003 : si l'utilisateur n'est pas authentifié apache, on essaie pear Auth
 
-if (!empty ($HTTP_SERVER_VARS["REMOTE_USER"]))
+// Verification du login.
+// Cette verification est faite pour chaque accès. Après l'authentification,
+// l'objet $user est initialisée. Notament $user->id, $user->login et $user->nom, $user->prenom
+// TODO : Stocker les infos de $user en session persistente php et ajouter recup dans le fetch
+//        depuis la sessions pour ne pas avoir a acceder a la base a chaque acces de page.
+// TODO : Utiliser $user->id pour stocker l'id de l'auteur dans les tables plutot que $_SERVER["REMOTE_USER"]
+
+if (!empty ($_SERVER["REMOTE_USER"]))
 {
-  $user->fetch($HTTP_SERVER_VARS["REMOTE_USER"]);
+    // Authentification Apache OK, on va chercher les infos du user
+    $user->fetch($_SERVER["REMOTE_USER"]);
 }  
 else
 {
+    // Authentification Apache KO ou non active
   if (!empty ($dolibarr_auto_user))
     {
       $user->fetch($dolibarr_auto_user);
     }
   else
     {
-      // TODO
-      // Tester si auth est installé, et si non renvoyé erreur demandant install
-      // d'une area d'authentification apache ou de auth.
-      $modules_list = get_loaded_extensions();
-      
+      // Test si Pear est operationnel
       $ispearinstalled=0;
+
+      $modules_list = get_loaded_extensions();
       foreach ($modules_list as $module) 
 	{
 	  if ($module == 'pear') { $ispearinstalled=1; }
 	}
-      
-
       $ispearinstalled=1; // MODIF RODO, le test ne marche pas
 
       if (! $ispearinstalled) {
-	print "Pour fonctionner, Dolibarr a besoin :<br>\n";
-	print "- Soit du module PHP 'pear' (actuellement, votre php contient les modules suivant: ".join($modules_list,',')."<br>\n";
-	print "- Soit d'avoir son répertoire htdocs protégé par une authentification Web basique (Exemple pour Apache: Utilisation des directives Authxxx dans la configuration, ou utilisation du fichier .htaccess).<br>\n";
-	print "<br><br>Vous devez respecter un de ces pré-requis pour continuer.\n";
-	exit ;  
+        print "Pour fonctionner, Dolibarr a besoin :<br>\n";
+        print "- Soit du module PHP 'pear' (actuellement, votre php contient les modules suivant: ".join($modules_list,',')."<br>\n";
+        print "- Soit d'avoir son répertoire htdocs protégé par une authentification Web basique (Exemple pour Apache: Utilisation des directives Authxxx dans la configuration, ou utilisation du fichier .htaccess).<br>\n";
+        print "<br><br>Vous devez respecter un de ces pré-requis pour continuer.\n";
+        exit ;  
       }
       
       require_once "Auth/Auth.php";
@@ -131,7 +136,8 @@ else
       $result = $aDol->getAuth();
       if ($result)
 	{ 
-	  $user->fetch($aDol->getUsername());
+        // Authentification Auth OK, on va chercher les infos du user
+        $user->fetch($aDol->getUsername());
 	}
       else
 	{
@@ -293,7 +299,6 @@ if (defined("MAIN_MODULE_PROPALE"))
 
 
 /*
- * TODO RODO
  * Modification de quelques variable de conf en fonction des Constantes
  */
 
@@ -483,7 +488,7 @@ function top_menu($head, $title="")
 
   print '<td width="10%" class="menu" align="center">' ;
 
-  if (empty ($GLOBALS["REMOTE_USER"]))
+  if (empty ($_SERVER["REMOTE_USER"]))  // Propose ou non de se deloguer si authentication Apache ou non
     {
       print '<a href="'.DOL_URL_ROOT.'/user/logout.php" title="logout">'.$user->login.'</a>' ;
     }
@@ -538,7 +543,7 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
       
       if (defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
 	{
-	  if (strstr($GLOBALS["SCRIPT_URL"], "/comm/prospect/"))
+	  if (strstr($_SERVER["SCRIPT_URL"], "/comm/prospect/"))
 	  {
 	    print '<form action="'.DOL_URL_ROOT.'/comm/prospect/prospects.php">';
 	  }

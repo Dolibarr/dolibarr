@@ -31,8 +31,6 @@ llxHeader();
 
 if ($action == 'add')
 {
-  $author = $GLOBALS["REMOTE_USER"];
-
   if ($credit > 0)
     {
       $amount = $credit ;

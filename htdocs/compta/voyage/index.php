@@ -25,7 +25,6 @@ require("./pre.inc.php");
 llxHeader();
 
 if ($action == 'add') {
-  $author = $GLOBALS["REMOTE_USER"];
 
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc, reduction) ";
   $sql .= " VALUES ('$date_depart','$date_arrivee',$amount,'$depart','$arrivee',$reducid, $reduc);";

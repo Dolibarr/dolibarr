@@ -27,7 +27,7 @@ if (!$user->rights->banque->modifier)
 
 llxHeader();
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete_categ' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete_categ' && $_POST["confirm"] == yes)
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid = $rowid AND fk_categ = $cat1";
   $db->query($sql);
@@ -52,9 +52,7 @@ if ($action == 'class')
 
 if ($action == 'update')
 {
-  $author = $GLOBALS["REMOTE_USER"];
-  //avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
-//print_r ($_POST);
+  // Avant de modifier la date ou le montant, on controle si ce n'est pas encore rapproche
   if (!empty($_POST['amount']))
   {
     $sql = "SELECT b.rappro FROM ".MAIN_DB_PREFIX."bank as b WHERE rowid=$rowid";

@@ -36,12 +36,12 @@ $error=0;
 if ($action == 'update')
 {
 
-  if ($HTTP_POST_VARS["bouton"] == "Enregistrer")
+  if ($_POST["bouton"] == "Enregistrer")
     {
-      if (isset($_SERVER["REMOTE_USER"])){
+      if (isset($user->login)){
 	$adh = new Adherent($db);
-	$adh->fetch_login($_SERVER["REMOTE_USER"]);
-	if ($HTTP_POST_VARS["rowid"] == $adh->id){
+	$adh->fetch_login($user->login);
+	if ($_POST["rowid"] == $adh->id){
 	  // user and rowid is the same => good
 
 	  // test some values
@@ -130,11 +130,11 @@ if ($action == 'update')
 
 llxHeader();
 
-if (isset($_SERVER["REMOTE_USER"])){
+if (isset($user->login)){
 
   $adh = new Adherent($db);
-  $adh->login = $_SERVER["REMOTE_USER"];
-  $adh->fetch_login($_SERVER["REMOTE_USER"]);
+  $adh->login = $user->login;
+  $adh->fetch_login($user->login);
   $adh->fetch_optionals($adh->id);
   // fetch optionals attibutes
   $adho->fetch_optionals();

@@ -90,7 +90,7 @@ if ($action == 'attribute_prefix')
 if ($action == 'recontact')
 {
   $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $GLOBALS["REMOTE_USER"]."')";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $user->login ."')";
   $result = $db->query($sql);
 }
 
@@ -105,7 +105,7 @@ if ($action == 'stcomm')
   if ($stcommid <> 'null' && $stcommid <> $oldstcomm)
     {
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."socstatutlog (datel, fk_soc, fk_statut, author) ";
-      $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $GLOBALS["REMOTE_USER"] . "')";
+      $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $user->login . "')";
       $result = @$db->query($sql);
       
       if ($result)

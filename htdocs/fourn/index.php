@@ -50,7 +50,7 @@ if ($action == 'note')
 if ($action == 'stcomm') {
   if ($stcommid <> 'null' && $stcommid <> $oldstcomm) {
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."socstatutlog (datel, fk_soc, fk_statut, author) ";
-    $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $GLOBALS["REMOTE_USER"] . "')";
+    $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $user->login . "')";
     $result = @$db->query($sql);
 
     if ($result) {

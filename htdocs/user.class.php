@@ -424,7 +424,7 @@ class User
 
       $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
       $sql .= " WHERE fk_user = ".$this->id;
-      $sql .= " AND page = '".$GLOBALS["SCRIPT_URL"]."'";
+      $sql .= " AND page = '".$_SERVER["SCRIPT_URL"]."'";
 
       if ( $this->db->query($sql) );
 	{
@@ -696,7 +696,7 @@ class User
 	      $mesg = "Votre mot de passe pour accéder à Dolibarr a été changé :\n\n";
 	      $mesg .= "Login        : $this->login\n";
 	      $mesg .= "Mot de passe : $password\n\n";
-	      $mesg .= "Adresse      : ".substr($GLOBALS["SCRIPT_URI"],0,strlen($GLOBALS["SCRIPT_URI"]) - 14);
+	      $mesg .= "Adresse      : ".substr($_SERVER["SCRIPT_URI"],0,strlen($_SERVER["SCRIPT_URI"]) - 14);
 	      if (mail($this->email, "Mot de passe Dolibarr", $mesg))
 		{
 		  return 1;
