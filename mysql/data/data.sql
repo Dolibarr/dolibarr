@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- $Id$
 -- $Source$
@@ -22,16 +22,27 @@
 -- Valeurs pour les bases de langues francaises
 --
 
+--
+-- Boites
+--
 insert into llx_boxes_def (name, file) values ('Factures','box_factures.php');
 insert into llx_boxes_def (name, file) values ('Factures impayées','box_factures_imp.php');
 insert into llx_boxes_def (name, file) values ('Propales','box_propales.php');
 
+--
+-- Constantes de configuration
+--
 insert into llx_const(name, value) values ('DONS_FORM','fsfe.fr.php');
 
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage du formulaire de recherche des sociétés dans la barre de gauche');
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage du formulaire de recherche des contacts dans la barre de gauche');
 
 insert into llx_const(name, value, type, note) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine');
+
+
+--
+-- Constantes 
+--
 
 delete from c_chargesociales;
 insert into c_chargesociales (id,libelle,deductible) values ( 1, 'Allocations familiales',1);
