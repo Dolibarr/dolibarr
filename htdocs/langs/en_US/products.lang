@@ -35,4 +35,5 @@ ContractStatusExpired=expired
 ContractStatusOnHold=Not running
 ContractStatusToRun=A mettre en service
 ContractNotRunning=This contract is not running
-
+ErrorProductAlreadyExists=A product with reference %s already exists.
+ErrorProductBadRefOrLabel=Wrong value for reference or label.
