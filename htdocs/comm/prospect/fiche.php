@@ -246,6 +246,11 @@ if ($socid > 0)
      * Liste des contacts
      *
      */
+    if (defined("MAIN_MODULE_CLICKTODIAL") && MAIN_MODULE_CLICKTODIAL==1)
+      {
+	$user->fetch_clicktodial(); // lecture des infos de clicktodial
+      }
+
     print '<table width="100%" class="noborder">';
 
     print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Name").'</td>';
@@ -279,7 +284,7 @@ if ($socid > 0)
 	 * Lien click to dial
 	 */
 
-	if (strlen($obj->phone))
+	if (strlen($obj->phone) && $user->clicktodial_enabled == 1)
 	  {
 	    print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&amp;socid='.$societe->id.'&amp;call='.$obj->phone.'">';
 	    print img_phone_out("Appel émis") ;
