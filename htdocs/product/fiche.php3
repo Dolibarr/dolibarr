@@ -120,7 +120,7 @@ if ($action == 'create')
   print "</textarea></td></tr>";
   if ($type == 1)
     {
-      print '<tr><td>Durée</td><TD><input name="duration_value" size="6" value="'.$product->duree.'">';
+      print '<tr><td>Durée</td><TD><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'">';
       print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
       print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
       print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
@@ -240,7 +240,7 @@ else
 
 	  if ($product->type == 1)
 	    {
-	      print '<tr><td>Durée</td><TD><input name="duration_value" size="6" value="'.$product->duration_value.'">';
+	      print '<tr><td>Durée</td><TD><input name="duration_value" size="6" maxlength="5" value="'.$product->duration_value.'">';
 	      switch ($product->duration_unit) 
 		{
 		case "d":
