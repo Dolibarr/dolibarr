@@ -31,13 +31,14 @@ $user->getrights('propale');
 if (!$user->rights->propale->lire)
   accessforbidden();
 
-require("../lib/CMailFile.class.php3");
 /*
  *  Modules optionnels
  */
 require("../project.class.php3");
+require("./propal_model_pdf.class.php3");
 require("../propal.class.php3");
 require("../actioncomm.class.php3");
+require("../lib/CMailFile.class.php3");
 
 /*
  *
@@ -160,8 +161,13 @@ if ($HTTP_POST_VARS["action"] == 'setremise' && $user->rights->propale->creer)
 {
   $propal = new Propal($db);
   $propal->id = $propalid;
-
   $propal->set_remise($user, $HTTP_POST_VARS["remise"]);
+} 
+
+if ($HTTP_POST_VARS["action"] == 'setpdfmodel' && $user->rights->propale->creer) 
+{
+  $propal = new Propal($db, 0, $propalid);
+  $propal->set_pdf_model($user, $HTTP_POST_VARS["modelpdf"]);
 } 
 
 
@@ -623,6 +629,20 @@ if ($propalid)
 	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td></tr>';
 	    }  
 	  
+	  if ($propal->brouillon == 1)
+	    {
+	      print '<form action="propal.php3?propalid='.$propalid.'" method="post">';
+	      print '<input type="hidden" name="action" value="setpdfmodel">';
+	      print '<tr><td>Modèle</td><td align="right">';
+
+	      $html = new Form($db);
+	      $modelpdf = new Propal_Model_pdf($db);
+	      $html->select_array("modelpdf",$modelpdf->liste_array(),$propal->modelpdf);
+
+	      print '</td><td colspan="2"><input type="submit" value="Changer">';
+	      print '</td></tr></form>';
+	    }
+
 	  print "</table>\n";
 	  /*
 	   *
