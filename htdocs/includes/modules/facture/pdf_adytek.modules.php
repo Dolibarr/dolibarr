@@ -51,8 +51,10 @@ class pdf_adytek extends ModelePDFFactures {
       if (defined("FAC_OUTPUTDIR"))
 	{
 
-	  $dir = FAC_OUTPUTDIR . "/" . $fac->ref . "/" ;
-	  $file = $dir . $fac->ref . ".pdf";
+			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+			$facref = str_replace($forbidden_chars,"_",$fac->ref);
+			$dir = FAC_OUTPUTDIR . "/" . $facref . "/" ;
+			$file = $dir . $facref . ".pdf";
 
 	  if (! file_exists($dir))
 	    {

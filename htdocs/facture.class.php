@@ -521,7 +521,9 @@ class Facture
 	   * Notify
 	   *
 	   */
-	  $filepdf = FAC_OUTPUTDIR . "/" . $this->ref . "/" . $this->ref . ".pdf";
+		$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+		$facref = str_replace($forbidden_chars,"_",$this->ref);
+		$filepdf = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
 	  
 	  $mesg = "La facture ".$this->ref." a été validée.\n";
 	  
@@ -866,7 +868,9 @@ class Facture
     {
       $soc = new Societe($this->db, $this->socidp);
 
-      $file = FAC_OUTPUTDIR . "/" . $this->ref . "/" . $this->ref . ".pdf";
+			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+			$facref = str_replace($forbidden_chars,"_",$this->ref);
+			$file = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
 
       if (file_exists($file))
 	{

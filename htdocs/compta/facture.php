@@ -324,7 +324,9 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
   $fac = new Facture($db,"",$_POST["facid"]);
   if ( $fac->fetch($_POST["facid"]) )
     {
-      $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
+			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+			$facref = str_replace($forbidden_chars,"_",$fac->ref);
+			$file = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
       
       if (is_readable($file))
 	{
@@ -1168,8 +1170,10 @@ else
 	   * Documents générés
 	   *
 	   */
-	  $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
-	  $filedetail = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . "-detail.pdf";
+		$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+		$facref = str_replace($forbidden_chars,"_",$fac->ref);
+		$file = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
+		$filedetail = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . "-detail.pdf";
 	
 	  print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
 

@@ -25,7 +25,7 @@
 create table llx_actioncomm
 (
   id             integer AUTO_INCREMENT PRIMARY KEY,
-  datea          timestamp without time zone,           -- action date
+  datea          timestamp,           -- action date
   fk_action      integer,
   label          varchar(50),        -- libelle de l'action
   fk_soc         integer,

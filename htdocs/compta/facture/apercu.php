@@ -130,8 +130,10 @@ if ($_GET["facid"] > 0)
        *
        *
        */      
-      $file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
-      $filedetail = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . "-detail.pdf";
+			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+			$facref = str_replace($forbidden_chars,"_",$fac->ref);
+			$file = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
+			$filedetail = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . "-detail.pdf";
 	
       if (file_exists($file))
 	{
