@@ -33,21 +33,14 @@ $langs->load("users");
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-$page = $_GET["page"];
-if ($page < 0) { 
-  $page = 0 ; }
+$page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+if ($page < 0) $page = 0;
 
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
   
-if ($sortfield == "") {
-  $sortfield="g.nom"; }
-     
-if ($sortorder == "")
-{
-  $sortorder="ASC";
-}
-
+if (! $sortfield) $sortfield="g.nom";
+if (! $sortorder) $sortorder="ASC";
 
 
 llxHeader();
@@ -56,13 +49,16 @@ print_titre($langs->trans("ListOfGroups"));
 
 $sql = "SELECT g.rowid, g.nom, ".$db->pdate("g.datec")." as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
+$sql .= " WHERE 1=1";
+if ($_POST["search_group"]) {
+    $sql .= " AND (g.nom like '%".$_POST["search_group"]."%' OR g.note like '%".$_POST["search_group"]."%')";
+}
 if ($sortfield) {
     $sql .= " ORDER BY ".$sortfield;
 }
 if ($sortorder) {
     $sql .= " ".$sortorder;
 }
-
 $result = $db->query($sql);
 if ($result)
 {

@@ -242,7 +242,10 @@ else
 	      $var=!$var;
 	      
 	      print "<tr $bc[$var]>";
-	      print '<td>'.ucfirst(stripslashes($obj->name)).'</td>';
+	      print '<td>';
+	      print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),"user").'</a> ';
+	      print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.ucfirst(stripslashes($obj->name)).'</a>';
+	      print '</td>';
 	      print '<td>'.ucfirst(stripslashes($obj->firstname)).'</td>';
 	      print '<td>'.$obj->code.'</td><td>';
 

@@ -31,21 +31,29 @@ require("./pre.inc.php");
 
 $langs->load("users");
 
-
-llxHeader();
-
-
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
-if (! $sortfield) {
-    $sortfield="u.name";
-}
+$page = $_GET["page"];
+if ($page < 0) $page = 0;
+
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
+
+if (! $sortfield) $sortfield="u.name";
+if (! $sortorder) $sortorder="ASC";
+
+
+llxHeader();
 
 print_titre($langs->trans("ListOfUsers"));
 
 $sql = "SELECT u.rowid, u.name, u.firstname, u.code, u.login, ".$db->pdate("u.datec")." as datec";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+$sql .= " WHERE 1=1";
+if ($_POST["search_user"]) {
+    $sql .= " AND (u.name like '%".$_POST["search_user"]."%' OR u.firstname like '%".$_POST["search_user"]."%')";
+}
 if ($sortfield) { $sql.=" ORDER BY $sortfield $sortorder"; }
 
 $result = $db->query($sql);
