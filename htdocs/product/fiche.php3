@@ -178,13 +178,17 @@ print '</table><br>';
 
 if ($id && $action == '')
 {
-  print_titre("Ajouter à la proposition");
 
   $htmls = new Form($db);
   $propal = New Propal($db);
 
-  print '<table width="100%" border="0" cellpadding="3" cellspacing="0"><tr><td width="50%" valign="top">';
-
+  print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
+  print '<tr><td width="50%" valign="top">';
+  print_titre("Ajouter ma proposition");
+  print '</td><td width="50%" valign="top">';
+  print_titre("Ajouter aux autres propositions");
+  print '</td></tr>';
+  print '<tr><td width="50%" valign="top">';
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp";
   $sql .= " FROM llx_societe as s, llx_propal as p";
   $sql .=" WHERE p.fk_soc = s.idp AND p.fk_statut = 0 AND p.fk_user_author = ".$user->id;
@@ -228,27 +232,27 @@ if ($id && $action == '')
 	  $i++;
 	}
       
-      
-      print "</TABLE>";
+      print "</table>";
       $db->free();
     }
 
-
-
   print '</td><td width="50%" valign="top">';
 
-  print '<form method="POST" action="fiche.php3?id='.$id.'">';
-  print '<input type="hidden" name="action" value="addinpropal">';
-  print '<table border="1" width="100%" cellpadding="3" cellspacing="0">';
-  print "<tr><td>Autres Propositions</td><td>";
-  $htmls->select_array("propalid",  $propal->liste_array(1, '<>'.$user->id));
-  print '</td><td>';
-  print '<input type="text" name="qty" size="3" value="1">';
-  print '</td><td>';
-  print '<input type="submit" value="Ajouter">';
-  print "</td></tr>";
-  print '</table></form>';
-
+  $otherprop = $propal->liste_array(1, '<>'.$user->id);
+  if (sizeof($otherprop))
+  {
+    print '<form method="POST" action="fiche.php3?id='.$id.'">';
+    print '<input type="hidden" name="action" value="addinpropal">';
+    print '<table border="1" width="100%" cellpadding="3" cellspacing="0">';
+    print "<tr><td>Autres Propositions</td><td>";
+    $htmls->select_array("propalid", $otherprop);
+    print '</td><td>';
+    print '<input type="text" name="qty" size="3" value="1">';
+    print '</td><td>';
+    print '<input type="submit" value="Ajouter">';
+    print "</td></tr>";
+    print '</table></form>';
+  }
   print '</td></tr></table>';
 }
 
