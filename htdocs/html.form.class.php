@@ -839,21 +839,26 @@ class Form
     global $langs;
 
     $yes="yes"; $no="no";
-    if ($option) { $yes="1"; $no="0"; }
+    
+    if ($option) 
+      { 
+	$yes="1"; 
+	$no="0"; 
+      }
 
-    print '<select name="'.$name.'">';
+    print '<select name="'.$name.'">'."\n";
 
     if ($value == 'no' || $value == 0) 
       {
-	print '<option value="'.$yes.'">'.$langs->trans("yes").'</option>';
-	print '<option value="'.$no.'" selected>'.$langs->trans("no").'</option>';
+	print '<option value="'.$yes.'">'.$langs->trans("yes").'</option>'."\n";
+	print '<option value="'.$no.'" selected>'.$langs->trans("no").'</option>'."\n";
       }
     else
       {
-	print '<option value="'.$yes.'" selected>'.$langs->trans("yes").'</option>';
-	print '<option value="'.$no.'">'.$langs->trans("no").'</option>';
+	print '<option value="'.$yes.'" selected>'.$langs->trans("yes").'</option>'."\n";
+	print '<option value="'.$no.'">'.$langs->trans("no").'</option>'."\n";
       }
-    print '</select>';
+    print '</select>'."\n";
   }
 	
   /*
