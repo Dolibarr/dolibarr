@@ -72,6 +72,21 @@ class Facture
   Function create($userid)
     {
       /*
+       *
+       */
+      $sql = "SELECT fdm,nbjour FROM llx_cond_reglement WHERE rowid = $this->cond_reglement";
+      if ($this->db->query($sql) )
+	{
+	  if ($this->db->num_rows())
+	    {
+	      $obj = $this->db->fetch_object(0);
+	      $cdr_nbjour = $obj->nbjour;
+	      $cdr_fdm = $obj->fdm;
+	    }
+	  $this->db->free();
+	}
+      $datelim = $this->date + ( $cdr_nbjour * 3600 * 24 );
+      /*
        *  Insertion dans la base
        */
       $socid = $this->socidp;
@@ -93,9 +108,8 @@ class Facture
       $tva = tva($totalht);
       $total = $totalht + $tva;
       
-      $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, tva, total, datef, note, fk_user_author,fk_projet) ";
-      $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $tva, $total, $this->date,'$note',$userid, $this->projetid);";
-      
+      $sql = "INSERT INTO $this->db_table (facnumber, fk_soc, datec, amount, remise, tva, total, datef, note, fk_user_author,fk_projet, fk_cond_reglement, date_lim_reglement) ";
+      $sql .= " VALUES ('$number', $socid, now(), $totalht, $remise, $tva, $total,".$this->db->idate($this->date).",'$this->note',$userid, $this->projetid, $this->cond_reglement,".$this->db->idate($datelim).")";      
       if ( $this->db->query($sql) )
 	{
 	  $this->id = $this->db->last_insert_id();
@@ -123,8 +137,9 @@ class Facture
   Function fetch($rowid)
     {
 
-      $sql = "SELECT fk_soc,facnumber,amount,tva,total,remise,".$this->db->pdate(datef)."as df,fk_projet";
-      $sql .= " FROM llx_facture WHERE rowid=$rowid;";
+      $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.remise,".$this->db->pdate("f.datef")."as df,f.fk_projet,".$this->db->pdate("f.date_lim_reglement")." as dlr, c.libelle, f.note";
+      $sql .= " FROM llx_facture as f, llx_cond_reglement as c";
+      $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
       
       if ($this->db->query($sql) )
 	{
@@ -141,7 +156,10 @@ class Facture
 	      $this->total_ttc = $obj->total;
 	      $this->remise    = $obj->remise;
 	      $this->socidp    = $obj->fk_soc;
+	      $this->date_lim_reglement = $obj->dlr;
+	      $this->cond_reglement = $obj->libelle;
 	      $this->projetid  = $obj->fk_projet;
+	      $this->note      = stripslashes($obj->note);
 	      $this->lignes    = array();
 	      $this->db->free();
 
@@ -176,6 +194,10 @@ class Facture
 		{
 		  print $this->db->error();
 		}
+	    }
+	  else
+	    {
+	      print "Error";
 	    }
 	}
       else

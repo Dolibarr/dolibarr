@@ -133,30 +133,26 @@ if ($action == 'delete')
 
 if ($action == 'add') 
 {
-  $datefacture = $db->idate(mktime(12, 0 , 0, $remonth, $reday, $reyear)); 
+  $datefacture = mktime(12, 0 , 0, $remonth, $reday, $reyear); 
+
+  $facture = new Facture($db, $socid);
+
+  $facture->number   = $HTTP_POST_VARS["facnumber"];
+  $facture->date     = $datefacture;      
+  $facture->note     = $HTTP_POST_VARS["note"];
+  $facture->projetid = $HTTP_POST_VARS["projetid"];
+  $facture->cond_reglement = $HTTP_POST_VARS["condid"];
   
   if (! $propalid) 
     {
-      $facture = new Facture($db, $socid);
-      $facture->number = $facnumber;
-      $facture->date = $datefacture;
-      $facture->projetid = $HTTP_POST_VARS["projetid"];
-      $facture->note = $note;
-      $facture->amount = $amount;
-      $facture->remise = $remise;
+      $facture->amount = $HTTP_POST_VARS["amount"];
+      $facture->remise = $HTTP_POST_VARS["remise"];
       
       $facid = $facture->create($user->id, $statut, $note);
-
     }
   else
     {
-      $facture = new Facture($db, $socid);
-
-      $facture->number   = $facnumber;
-      $facture->date     = $datefacture;      
-      $facture->note     = $note;
-      $facture->projetid = $HTTP_POST_VARS["projetid"];
-      $facture->amount   = $amount;
+      $facture->amount   = $HTTP_POST_VARS["amount"];
       $facture->remise   = $remise;
       $facture->propalid = $propalid;
 
@@ -291,7 +287,7 @@ if ($action == 'create')
 	print '<input type="hidden" name="action" value="add">';
 	print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
 	
-	print '<table cellspacing="0" border="1" width="100%">';
+	print '<table cellspacing="0" cellpadding="3" border="1" width="100%">';
 	
 	print "<tr><td>Client :</td><td>$obj->nom</td>";
 	print "<td>Commentaire</td></tr>";
@@ -299,7 +295,7 @@ if ($action == 'create')
 	print "<input type=\"hidden\" name=\"author\" value=\"$author\">";
 	print "<tr><td>Auteur :</td><td>".$user->fullname."</td>";
 
-	print '<td rowspan="4" valign="top">';
+	print '<td rowspan="5" valign="top">';
 	print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';	
 
 	print "<tr><td>Date :</td><td>";
@@ -308,6 +304,26 @@ if ($action == 'create')
 
 	print "</td></tr>";
 	print "<tr><td>Numéro :</td><td> <input name=\"facnumber\" type=\"text\" value=\"$numfa\"></td></tr>";
+
+	print "<tr><td>Conditions de réglement :</td><td>";
+	$sql = "SELECT rowid, libelle FROM llx_cond_reglement ORDER BY sortorder";
+	$result = $db->query($sql);
+	$conds=array();
+	if ($result)
+	  {
+	    $num = $db->num_rows();
+	    $i = 0;
+	    while ($i < $num)
+	      {
+		$objp = $db->fetch_object($i);
+		$conds[$objp->rowid]=$objp->libelle;
+		$i++;
+	      }
+	    $db->free();
+	  }
+
+	$html->select_array("condid",$conds);
+	print "</td></tr>";
 
 	print "<tr><td>Projet :</td><td>";
 	$proj = new Project($db);
@@ -390,36 +406,27 @@ else
 	$author->id = $obj->fk_user_author;
 	$author->fetch();
 
-	print_titre("Facture : ".$obj->facnumber);
+	print_titre("Facture : ".$fac->ref);
   
-	print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
-	print "<tr><td width=\"50%\">";
 	/*
 	 *   Facture
 	 */
 	print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 	print "<tr><td>Client</td>";
 	print "<td colspan=\"3\">";
-	print "<b><a href=\"fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td></tr>";
+	print "<b><a href=\"fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td>";
 	
+	print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
+
 	print "<tr><td>Date</td>";
-	print "<td colspan=\"3\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
+	print "<td colspan=\"3\">".strftime("%A %d %B %Y",$obj->df)."</td>\n";
+	print "<td>Date limite de réglement : " . strftime("%d %B %Y",$fac->date_lim_reglement) ."</td></tr>";
 	print "<tr><td>Auteur</td><td colspan=\"3\">$author->fullname</td>";
-	
-	print '<tr><td>Montant</td>';
-	print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-	print '<td>euros HT</td></tr>';
-	print '<tr><td>TVA</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
-	print '<td>euros</td></tr>';
-	print '<tr><td>Total</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
-	print '<td>euros TTC</td></tr>';
-	
-	print "</table>";
-	
-	print "</td><td valign=\"top\">";
+
+	print '<td rowspan="4" valign="top">';
 
 	$_MONNAIE="euros";
-
+       
 	/*
 	 * Paiements
 	 */
@@ -431,7 +438,7 @@ else
 	  {
 	    $num = $db->num_rows();
 	    $i = 0; $total = 0;
-	    print "<p><b>Paiements</b>";
+	    print "<b>Paiements</b>";
 	    echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
 	    print "<TR class=\"liste_titre\">";
 	    print "<td>Date</td>";
@@ -478,11 +485,20 @@ else
 	  }
 	
 	print "</td></tr>";
-	if ($obj->note)
+	
+	print '<tr><td>Montant</td>';
+	print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
+	print '<td>euros HT</td></tr>';
+	print '<tr><td>TVA</td><td align="right" colspan="2">'.price($fac->total_tva).'</td>';
+	print '<td>euros</td></tr>';
+	print '<tr><td>Total</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
+	print '<td>euros TTC</td></tr>';
+	if ($fac->note)
 	  {
-	    print "<tr><td>Note : ".nl2br($obj->note)."</td></tr>";
+	    print '<tr><td colspan="5">Note : '.nl2br($obj->note)."</td></tr>";
 	  }
-	print "</table>";
+
+	print "</table><br>";		
 	/*
 	 * Lignes de factures
 	 *
@@ -698,7 +714,7 @@ else
 	    if ($num)
 	      {
 		$i = 0; $total = 0;
-		print '<TABLE border="1" cellspacing="0" cellpadding="4">';
+		print '<TABLE border="1" cellspacing="0" cellpadding="4" width="100%">';
 		print "<TR $bc[$var]>";
 		print "<td>Date</td>";
 		print "<td>Action</td>";
@@ -709,9 +725,9 @@ else
 		  {
 		    $objp = $db->fetch_object( $i);
 		    $var=!$var;
-		    print "<TR $bc[$var]>";
-		    print "<TD>".strftime("%d %B %Y",$objp->da)."</TD>\n";
-		    print '<TD align="right">'.stripslashes($objp->note).'</TD>';
+		    print "<tr $bc[$var]>";
+		    print "<td>".strftime("%d %B %Y",$objp->da)."</TD>\n";
+		    print '<td>'.stripslashes($objp->note).'</TD>';
 		    print "</tr>";
 		    $i++;
 		  }
@@ -844,7 +860,7 @@ else
 	$sortfield="f.datef";
       }
 
-    $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
+    $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid, f.fk_statut";
     $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
   
     if ($socidp)
@@ -887,10 +903,10 @@ else
 	    $var=True;
 	    while ($i < min($num,$limit))
 	      {
-		$objp = $db->fetch_object( $i);
+		$objp = $db->fetch_object($i);
 		$var=!$var;
-	    
-		print "<TR $bc[$var]>";
+
+		print "<tr $bc[$var]>";
 		print "<td><a href=\"facture.php3?facid=$objp->facid\">";
 		if ($objp->paye)
 		  {
@@ -924,7 +940,14 @@ else
 		
 		if (! $objp->paye)
 		  {
-		    print '<td align="center">impayée</td>';
+		    if ($objp->fk_statut == 0)
+		      {
+			print '<td align="center">brouillon</td>';
+		      }
+		    else
+		      {
+			print '<td align="center">impayée</td>';
+		      }
 		  }
 		else
 		  {
@@ -933,20 +956,16 @@ else
 		
 		print "</TR>\n";
 		$i++;
-		$j++;
-		
 	      }
 	  }
-	if ($i == 0) { $i=1; }  if ($j == 0) { $j=1; }
 	
-	print "</TABLE>";
+	print "</table>";
 	$db->free();
       }
     else
       {
 	print $db->error();
-      }
-    
+      }    
   }
   
 }
