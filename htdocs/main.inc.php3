@@ -93,11 +93,14 @@ function top_menu($head) {
   }
 
   print '<TD width="15%" class="menu" align="center">';
-  if ($user->compta > 0) {
-    print '<A class="menu" href="/compta/">Compta</A></TD>';
-  } else {
-    print '-';
-  }
+  if ($user->compta > 0)
+    {
+      print '<A class="menu" href="/compta/">Compta</A></TD>';
+    } 
+  else
+    {
+      print '-';
+    }
 
 
   print '<TD width="15%" class="menu" align="center">';
@@ -123,7 +126,8 @@ function top_menu($head) {
   print "<TR><TD valign=\"top\" align=\"right\">";
 }
 
-function left_menu($menu) {
+function left_menu($menu) 
+{
   global $conf;
   /*
    * Colonne de gauche
@@ -134,21 +138,23 @@ function left_menu($menu) {
   print '<TABLE border="0" width="100%" cellspacing="1" cellpadding="4">';
 
 
-  for ($i = 0 ; $i < sizeof($menu) ; $i++) {
+  for ($i = 0 ; $i < sizeof($menu) ; $i++) 
+    {
 
-    print "<TR><TD class=\"barre\" valign=\"top\">";
-    print '<A class="menu" href="'.$menu[$i][0].'">'.$menu[$i][1].'</a>';
+      print "<TR><TD class=\"barre\" valign=\"top\">";
+      print '<A class="menu" href="'.$menu[$i][0].'">'.$menu[$i][1].'</a>';
 
-    for ($j = 2 ; $j < sizeof($menu[$i]) - 1 ; $j = $j +2) {
-      print '<br>&nbsp;-&nbsp;<a class="submenu" href="'.$menu[$i][$j].'">'.$menu[$i][$j+1].'</A>';
+      for ($j = 2 ; $j < sizeof($menu[$i]) - 1 ; $j = $j +2) 
+	{
+	  print '<br>&nbsp;-&nbsp;<a class="submenu" href="'.$menu[$i][$j].'">'.$menu[$i][$j+1].'</A>';
+	}
+      print '</td></tr>';
+      
     }
-    print '</td></tr>';
-
-  }
 
   print "<TR><TD class=\"barre\" valign=\"top\" align=\"right\">";
   print '<A class="menu" href="/comm/clients.php3">Societes</A>';
-  print '<form action="/comm/index.php3">';
+  print '<form action="/comm/clients.php3">';
   print '<input type="hidden" name="mode" value="search">';
   print '<input type="hidden" name="mode-search" value="soc">';
   print '<input type="text" name="socname" size="8">&nbsp;';
@@ -174,7 +180,8 @@ function left_menu($menu) {
 
 }
 
-function llxFooter($foot='') {
+function llxFooter($foot='') 
+{
   print "</TD></TR>";
   /*
    *

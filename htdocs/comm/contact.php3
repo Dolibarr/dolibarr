@@ -48,36 +48,45 @@ print_barre_liste("Liste des contacts",$page, $PHP_SELF);
 $sql = "SELECT s.idp, s.nom,  st.libelle as stcomm, p.idp as cidp, p.name, p.firstname, p.email, p.phone ";
 $sql .= "FROM societe as s, socpeople as p, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.idp = p.fk_soc";
 
-if (strlen($stcomm)) {
+if (strlen($stcomm))  // statut commercial
+{
   $sql .= " AND s.fk_stcomm=$stcomm";
 }
 
-if (strlen($begin)) {
+if (strlen($begin)) // filtre sur la premiere lettre du nom
+{
   $sql .= " AND upper(p.name) like '$begin%'";
 }
 
-if ($contactname) {
-  $sql .= " AND lower(p.name) like '%".strtolower($contactname)."%'";
+if ($contactname) // acces a partir du module de recherche
+{
+  $sql .= " AND ( lower(p.name) like '%".strtolower($contactname)."%' OR lower(p.firstname) like '%".strtolower($contactname)."%') ";
   $sortfield = "lower(p.name)";
   $sortorder = "ASC";
 }
 
-if ($socid) {
+if ($socid) 
+{
   $sql .= " AND s.idp = $socid";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
 $result = $db->query($sql);
-if ($result) {
+
+if ($result) 
+{
   $num = $db->num_rows();
   $i = 0;
   
-  if ($sortorder == "DESC") {
-    $sortorder="ASC";
-  } else {
-    $sortorder="DESC";
-  }
+  if ($sortorder == "DESC") 
+    {
+      $sortorder="ASC";
+    } 
+  else
+    {
+      $sortorder="DESC";
+    }
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR class=\"liste_titre\">";
   print "<TD>Nom</TD>";
@@ -87,27 +96,28 @@ if ($result) {
   print '<TD>Téléphone</TD><td>&nbsp;</td>';
   print "</TR>\n";
   $var=True;
-  while ($i < $num) {
-    $obj = $db->fetch_object( $i);
+  while ($i < $num) 
+    {
+      $obj = $db->fetch_object( $i);
     
-    $var=!$var;
+      $var=!$var;
 
-    print "<TR $bc[$var]>";
+      print "<TR $bc[$var]>";
 
-    print "<TD>$obj->name</TD>";
-    print "<TD>$obj->firstname</TD>";
-
-    print '<TD><a href="contact.php3?socid='.$obj->idp.'"><img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
-    print "<a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
-
-    print '<td><a href="action/fiche.php3?action=create&actionid=4&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
-
-    print '<td><a href="action/fiche.php3?action=create&actionid=1&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
-
-    print "<TD><a href=\"addpropal.php3?socidp=$obj->idp&setcontact=$obj->cidp&action=create\">[Propal]</A></td>\n";
-    print "</TR>\n";
-    $i++;
-  }
+      print "<TD>$obj->name</TD>";
+      print "<TD>$obj->firstname</TD>";
+      
+      print '<TD><a href="contact.php3?socid='.$obj->idp.'"><img src="/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
+      print "<a href=\"fiche.php3?socid=$obj->idp\">$obj->nom</A></td>\n";
+      
+      print '<td><a href="action/fiche.php3?action=create&actionid=4&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
+      
+      print '<td><a href="action/fiche.php3?action=create&actionid=1&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+      
+      print "<TD><a href=\"addpropal.php3?socidp=$obj->idp&setcontact=$obj->cidp&action=create\">[Propal]</A></td>\n";
+      print "</TR>\n";
+      $i++;
+    }
   print "</TABLE>";
   $db->free();
 } else {
