@@ -331,7 +331,14 @@ class Form {
 	  while (list($key, $value) = each ($array) )
 	    {
 	      print "<option value=\"$key\" ";
-	      print ">$value</option>\n";
+	      if ($key_libelle)
+		{
+		  print ">[$key] $value</option>\n";  
+		}
+	      else
+		{
+		  print ">$value</option>\n";
+		}
 	    }
 	
 	}
