@@ -324,7 +324,7 @@ class User
 		    $this->rights->produit->creer = 1;
 			
 		  if ($obj->fk_id == 33)
-		    $this->rights->produit->modifier = 1;
+		    $this->rights->produit->commander = 1;
 			
 		  if ($obj->fk_id == 34)
 		    $this->rights->produit->supprimer = 1;
