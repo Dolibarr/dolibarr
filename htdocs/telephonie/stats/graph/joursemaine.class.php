@@ -41,7 +41,35 @@ class GraphJoursemaine extends GraphBrouzouf{
 
   Function GraphDraw($g)
   {
-    $this->GraphMakeGraph($g,array('Lun','Mar','Mer','Jeu','Ven','Sam','Dim'));
+
+
+    $sql = "SELECT ".$this->db->pdate("date")." as date, duree";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+    
+    if ($this->db->query($sql))
+      {
+
+	$jour_semaine_nb = array();
+	$jour_semaine_duree = array();
+	
+	$num = $this->db->num_rows();
+
+	$i = 0;
+	
+	while ($i < $num)
+	  {
+	    $obj = $this->db->fetch_object();	
+    
+	    $u = strftime("%u",$obj->date) - 1; // 1 pour Lundi
+	    
+	    $jour_semaine_nb[$u]++;
+	    $jour_semaine_duree[$u] += $obj->duree;
+	    
+	    $i++;
+	  }
+      }
+        
+    $this->GraphMakeGraph($jour_semaine_nb,array('Lun','Mar','Mer','Jeu','Ven','Sam','Dim'));
   }
 
 }
