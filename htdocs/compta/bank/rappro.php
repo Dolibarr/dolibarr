@@ -31,24 +31,28 @@ llxHeader();
 /*
  * Action rapprochement
  */
-if ($action == 'rappro')
+if ($_POST["action"] == 'rappro')
 {
-  if ($num_releve > 0) {
-    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set rappro=$rappro, num_releve=$num_releve";
-    if ($rappro) {
+  if ($_POST["num_releve"] > 0) {
+
+    $valrappro=$_POST["rappro"]=='yes'?1:0;
+
+    $sql = "UPDATE ".MAIN_DB_PREFIX."bank set rappro=$valrappro, num_releve=".$_POST["num_releve"];
+    if ($_POST["rappro"]) {
         # Si on fait un rapprochement, le user de rapprochement est inclus dans l'update
         $sql .= ", fk_user_rappro=".$user->id;
     }
-    $sql .= " WHERE rowid=$rowid";
+    $sql .= " WHERE rowid=".$_POST["rowid"];
+
     $result = $db->query($sql);
+
     if ($result) {
-      if ($cat1 && $rappro) {
+      if ($cat1 && $_POST["action"]) {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ($rowid, $cat1)";
 	$result = $db->query($sql);
       }
     } else {
-      print $db->error();
-      print "<p>$sql";
+      print dolibarr_print_error($db,$sql);
     }
   }
 }
@@ -56,15 +60,15 @@ if ($action == 'rappro')
 /*
  * Action suppression ecriture
  */
-if ($action == 'del') {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=$rowid";
+if ($_GET["action"] == 'del') {
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=".$_GET["rowid"];
   $result = $db->query($sql);
   if (!$result) {
-    print $db->error();
-    print "<p>$sql";
+    print dolibarr_print_error($db,$sql);
   }
 }
-$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label;";
+
+$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ ORDER BY label";
 $result = $db->query($sql);
 $options="";
 if ($result) {
@@ -83,7 +87,7 @@ if ($result) {
 /*
  * Affichage page
  */
-$sql = "SELECT max(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE fk_account=$account";
+$sql = "SELECT max(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE fk_account=".$_GET["account"];
 if ( $db->query($sql) )
 {
   if ( $db->num_rows() )
@@ -98,11 +102,11 @@ else
 }
 
 $acct = new Account($db);
-$acct->fetch($account);
+$acct->fetch($_GET["account"]);
 
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rappro=0 AND fk_account=$account";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE rappro=0 AND fk_account=".$_GET["account"];
 $sql .= " ORDER BY dateo ASC LIMIT 10";
 
 
@@ -119,15 +123,15 @@ if ($result)
   }
   else {
 
-    print_titre('Rapprochement bancaire compte : <a href="account.php?account='.$account.'">'.$acct->label.'</a>');
+    print_titre('Rapprochement compte bancaire: <a href="account.php?account='.$account.'">'.$acct->label.'</a>');
     print '<br>';
 
-	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
 	print "<tr class=\"liste_titre\">";
-	print "<td>Date</td><td>Description</TD>";
-	print "<td align=\"right\">Debit</TD>";
-	print "<td align=\"right\">Credit</TD>";
-	print "<td align=\"center\">Releve</TD>";
+	print "<td>Date</td><td>Description</td>";
+	print "<td align=\"right\">Debit</td>";
+	print "<td align=\"right\">Credit</td>";
+	print "<td align=\"center\">Releve</td>";
 	print '<td align="center" colspan="2">Rappro</td>';
 	print '<td align="center">&nbsp;</td>';
 	print "</tr>\n";
@@ -140,16 +144,17 @@ if ($result)
 
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<form method="post" action="rappro.php?account='.$account.'">';
+      print '<form method="post" action="rappro.php?account='.$_GET["account"].'">';
       print "<input type=\"hidden\" name=\"action\" value=\"rappro\">";
-      print "<input type=\"hidden\" name=\"rowid\" value=\"$objp->rowid\">";
+      print "<input type=\"hidden\" name=\"account\" value=\"".$_GET["account"]."\">";
+      print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";
       
-      print "<td>".strftime("%d %b %Y",$objp->do)."</TD>\n";
+      print "<td>".dolibarr_print_date($objp->do)."</td>\n";
       print "<td>$objp->label</td>";
 
       if ($objp->amount < 0)
 	{
-	  print "<td align=\"right\">".price($objp->amount * -1)."</TD><td>&nbsp;</td>\n";
+	  print "<td align=\"right\">".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
 	}
       else
 	{
@@ -159,8 +164,11 @@ if ($result)
       if ($objp->do <= mktime() ) {
 	      print "<td align=\"center\">";
 	      print "<input name=\"num_releve\" type=\"text\" value=\"$last_releve\" size=\"8\" maxlength=\"6\"></td>";
-	      print "<td align=\"center\"><select name=\"rappro\"><option value=\"1\">oui</option><option value=\"0\" selected>non</option></select></td>";
-	      print "<td align=\"center\"><input type=\"submit\" value=\"do\"></td>";
+	      print "<td align=\"center\">";
+          $html=new Form($db);
+          $html->selectyesno("rappro","no");
+	      print "</td>";
+	      print "<td align=\"center\"><input type=\"submit\" value=\"".$langs->trans("Rapprocher")."\"></td>";
 	  }
 	  else {
 	      print "<td align=\"right\" colspan=\"3\">";
@@ -216,7 +224,7 @@ if ($result)
     print "Erreur : ".$db->error()." : ".$sql."<br>\n";
 }
 
-print '<br>Dernier relevé : <a href="releve.php?account='.$account.'&amp;num='.$last_releve.'">'.$last_releve.'</a>';
+print '<br>Dernier relevé : <a href="releve.php?account='.$_GET["account"].'&amp;num='.$last_releve.'">'.$last_releve.'</a>';
 
 $db->close();
 
