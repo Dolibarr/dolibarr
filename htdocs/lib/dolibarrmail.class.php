@@ -72,8 +72,6 @@ class DolibarrMail
 
   function DolibarrMail($subject, $to, $from, $msg)
     {
-      ini_set('mbstring.func_overload','0');
-
       $this->from = $from;
 
       $this->message = wordwrap($msg, 78);
