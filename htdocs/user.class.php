@@ -23,7 +23,8 @@
  * $Source$
  */
 
-/**	    \file       htdocs/user.class.php
+/**
+	    \file       htdocs/user.class.php
   	    \brief      Fichier de la classe utilisateur
   	    \author     Rodolphe Qiedeville
   	    \author     Jean-Louis Bergamo
@@ -35,7 +36,8 @@
 
 
 
-/**     \class      User
+/**
+        \class      User
 		\brief      Classe permettant la gestion d'un utilisateur
 */
 
@@ -94,7 +96,7 @@ class User
     {
       
       $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.login, u.pass, u.webcal_login, u.note";
-      $sql .= ", ".$this->db->pdate("u.datec")." datec, ".$this->db->pdate("u.tms")." datem";
+      $sql .= ", ".$this->db->pdate("u.datec")." as datec, ".$this->db->pdate("u.tms")." as datem";
       $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
       if ($this->id)
 	{
