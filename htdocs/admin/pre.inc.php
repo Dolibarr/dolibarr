@@ -54,13 +54,12 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add_submenu("webcalendar.php", "Calendrier");
     }
 
+  $menu->add("boxes.php", "Boites");
+
   if(defined("MAIN_MODULE_EXTERNAL_RSS") && MAIN_MODULE_EXTERNAL_RSS)
     {
       $menu->add_submenu("external_rss.php", "Syndication");
     }
-
-
-  $menu->add("boxes.php", "Boites");
 
   $menu->add("const.php", "Constantes");
   $menu->add_submenu("constall.php", "Tout voir");
