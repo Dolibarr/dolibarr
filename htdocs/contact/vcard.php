@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,14 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/contact/vcard.php
+        \ingroup    societe
+		\brief      Onglet vcard d'un contact
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../contact.class.php");
 require (DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");

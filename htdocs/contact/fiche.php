@@ -24,8 +24,8 @@
 
 /*!
 	    \file       htdocs/contact/fiche.php
-        \ingroup    companies
-		\brief      Page de la fiche contact
+        \ingroup    societe
+		\brief      Onglet général d'un contact
 		\version    $Revision$
 */
 

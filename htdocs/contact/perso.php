@@ -23,7 +23,7 @@
 
 /*!
 	    \file       htdocs/contact/perso.php
-        \ingroup    companies
+        \ingroup    societe
 		\brief      Onglet informations personnelles d'un contact
 		\version    $Revision$
 */

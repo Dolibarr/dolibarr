@@ -21,18 +21,17 @@
  *
  */
 
-
 /*!
-	    \file       htdocs/contact/fiche.php
+	    \file       htdocs/contact/info.php
         \ingroup    societe
-		\brief      Page de la fiche contact
+		\brief      Onglet info d'un contact
 		\version    $Revision$
 */
 
 require("./pre.inc.php");
 require("../contact.class.php");
 
-$langs->load("company");
+$langs->load("companies");
 
 llxHeader();
 
