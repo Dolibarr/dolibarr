@@ -108,6 +108,15 @@ create table llx_co_fa
   key(fk_facture)
 )type=innodb;
 
+
+create table llx_co_pr
+(
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  fk_commande integer,
+  fk_propale  integer
+)type=innodb;
+
+
 create table llx_paiement_facture
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
