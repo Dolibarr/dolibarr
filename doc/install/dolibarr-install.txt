@@ -1,6 +1,6 @@
   Dolibarr Installation
   Rodolphe Quiédeville
-  $Id: dolibarr-install.sgml,v 1.2 2003/08/12 12:31:11
+  $Id: dolibarr-install.sgml,v 1.3 2003/08/12 14:06:22
   rodolphe Exp $
 
   Installation et mise à jour de Dolibarr
@@ -90,8 +90,12 @@
 
   , pour vous logger utlisez le login admin avec le mot de passe admin.
 
-  Une fois les valeurs enregistrés, si les controles sont correctes vous
-  n'avez qu'a cliquer sur le lien, 'phase finale de configuration'.
+  Si les contrôles sont corrects vous n'avez qu'à cliquer sur le lien,
+  'Configurer les modules'.
+
+  Une fois les modules configurés il ne reste plus qu'à définir les
+  utilisateurs et leurs permissions respectives. Pour cela cliquer sur
+  Accueil -> Utilisateurs
 
   [1m2.  Mise à jour[0m
 
