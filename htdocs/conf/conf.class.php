@@ -25,199 +25,47 @@
  *
  */
 
+/*!	\file htdocs/conf/conf.class.php
+		\brief      Fichier de la classe de stockage de la config courante
+		\version    $Revision$
+*/
+
+
+/*!	\class Conf
+		\brief      Classe de stockage de la config courante
+		\todo       Deplacer ce fichier dans htdocs/lib
+*/
+
 class Conf
 {
-  var $readonly;
-  var $dbi;
+    /*! \public */
+    var $db;         // Objet des caractéristiques de connexions
+                    // base db->host, db->name, db->user, db->pass, db->type
+    var $langage;    // Langue choisit fr_FR, en_US, ...
 
-  function Conf()
-    {
-      $this->db = new DbConf();
-      
-      $this->compta    = new ComptaConf();
-      $this->propal    = new PropalConf();
-      $this->facture   = new FactureConf();
-      $this->webcal    = new WebcalConf();
-      $this->produit   = new ProduitConf();
-      $this->service   = new ServiceConf();
-      $this->adherent  = new AdherentConf();
-      $this->domaine   = new DomaineConf();
-      $this->don       = new DonConf();
-      
-      $this->readonly   = 0;
-      $this->voyage     = 0;
-      $this->password_encrypted = 0;
-    }  
+    var $externalrss;
+    var $commande;
+    var $ficheinter;
+    var $commercial;
+    var $societe;
+    var $expedition;
+    var $compta;
+    var $banque;
+    var $don;
+    var $caisse;
+    var $fournisseur;
+    var $adherent;
+    var $produit;
+    var $service;
+    var $stock;
+    var $boutique;
+    var $projet;
+    var $postnuke;
+    var $webcal;
+    var $propal;
+    
 }
 
-class ComptaConf
-{
-  function ComptaConf() 
-    {
-      $this->tva = 1;
-    }
-}
 
-class PropalConf
-{
-  function PropalConf()
-    {
-
-    }
-}
-/*
- * Base de données
- * Ne pas modifier ces valeurs
- */
-
-class DbConf {
-  function DbConf()
-  {
-    $this->type = "mysql";
-    $this->host = "";
-    $this->user = "";
-    $this->pass = "";
-    $this->name = "";
-
-    /*
-     * If you want to activate virtualhosting you need tou use these lines and add 
-     * this to your pache virtualhost file
-     SetEnv LLX_DBTYPE mysql
-     SetEnv LLX_DBHOST localhost
-     SetEnv LLX_DBUSER user
-     SetEnv LLX_DBPASS pass
-     SetEnv LLX_DBNAME dolibarr
-    */
-
-    if (strlen(getenv("LLX_DBNAME")))
-      {
-	$this->name = getenv("LLX_DBNAME");
-
-	if (strlen(getenv("LLX_DBTYPE")))
-	  $this->type = getenv("LLX_DBTYPE");
-
-	if (strlen(getenv("LLX_DBHOST")))
-	  $this->host = getenv("LLX_DBHOST");
-
-	if (strlen(getenv("LLX_DBUSER")))
-	  $this->user = getenv("LLX_DBUSER");
-
-	if (strlen(getenv("LLX_DBPASS")))
-	  $this->pass = getenv("LLX_DBPASS");
-      }
-  }
-
-  /** return the dsn according to the pear syntax
-   */
-  function getdsn()
-  {
-    return ($this->type.'://'.$this->user.':'.$this->pass.'@'.$this->host.'/'.$this->name);
-  }
-  
-}
-/*
- * Calendrier
- *
- */
-class WebcalConf
-{
-  function WebcalConf()
-    {
-      $this->enabled = 0;
-      $this->url = defined("PHPWEBCALENDAR_URL")?PHPWEBCALENDAR_URL:"";
-
-      $this->db = new DbConf();
-      $this->db->host = defined("PHPWEBCALENDAR_HOST")?PHPWEBCALENDAR_HOST:"";
-      $this->db->user = defined("PHPWEBCALENDAR_USER")?PHPWEBCALENDAR_USER:"";
-      $this->db->pass = defined("PHPWEBCALENDAR_PASS")?PHPWEBCALENDAR_PASS:"";
-      $this->db->name = defined("PHPWEBCALENDAR_DBNAME")?PHPWEBCALENDAR_DBNAME:"";
-    }
-}
-
-/*
- * Factures
- *
- */
-class FactureConf
-{
-  function FactureConf()
-    {
-      $this->enabled = 0;
-    }
-}
-
-/*
- * Dons
- *
- */
-class DonConf
-{
-  function DonConf()
-    {
-      $this->enabled = 0;
-      
-      /* Paiement en ligne */
-
-      $this->onlinepayment = 0;
-
-      /* Don minimum, 0 pas de limite */ 
-      $this->minimum = 0;
-
-      /* Email des moderateurs */
-
-      $this->email_moderator = "root@localhost";
-    }
-}
-/*
- * Produits
- *
- */
-class ProduitConf
-{
-  function ProduitConf()
-    {
-      $this->enabled = 0;
-    }
-}
-/*
- * Service
- *
- */
-class ServiceConf
-{
-  function ServiceConf()
-    {
-      $this->enabled = 0;
-    }
-}
-/*
- * Adherents
- *
- */
-class AdherentConf {
-  function AdherentConf() {
-    $this->enabled = 0;
-    $this->email_new = "Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\n\n%INFO%\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\n%SERVEUR%public/adherents/\n\n";
-    $this->email_new_subject = 'Vos coordonnees sur %SERVEUR%';
-    $this->email_edit = "Voici le rappel des coordonnees que vous avez modifiees (toute information erronee entrainera la non validation de votre inscription) :\n\n%INFO%\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\n%SERVEUR%public/adherents/\n\n";
-    $this->email_edit_subject = 'Vos coordonnees sur %SERVEUR%';
-    $this->email_valid = "Votre adhesion vient d'etre validee. Voici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\n\n%INFO%\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\n%SERVEUR%public/adherents/\n\n";
-    $this->email_valid_subject = 'Vos coordonnees sur %SERVEUR%';
-    $this->email_resil = "Votre adhesion sur %SERVEUR% vient d'etre resilie.\nNous esperons vous revoir bientot\n";
-    $this->email_resil_subject = 'Vos coordonnees sur %SERVEUR%';
-
-  }
-}
-/*
- * Domaines
- *
- */
-class DomaineConf
-{
-  function DomaineConf()
-    {
-      $this->enabled = 0;
-    }
-}
 
 ?>
