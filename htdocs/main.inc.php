@@ -139,7 +139,7 @@ else
 	   * Le début de la page est affiché par
 	   * loginFunction
 	   */
-	  print '</div></div></body></html>';
+	  print "</div>\n</div>\n</body>\n</html>";
 	  die ;	  
 	}
     }
@@ -521,19 +521,19 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
 
   for ($i = 0 ; $i < sizeof($menu) ; $i++) 
     {
-      print '<div class="leftmenu">';
+      print "\n".'<div class="leftmenu">'."\n";
       print '<a class="leftmenu" href="'.$menu[$i][0].'">'.$menu[$i][1].'</a>';
 
       for ($j = 2 ; $j < sizeof($menu[$i]) - 1 ; $j = $j +2) 
 	{
 	  print '<br><a class="leftsubmenu" href="'.$menu[$i][$j].'">'.$menu[$i][$j+1].'</a>';
 	}      
-      print '</div>';
+      print "</div>\n";
     }
 
   if ((defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0) || (defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0))
     {
-      print '<div class="leftmenu">';
+      print '<div class="leftmenu">'."\n";
       
       if (defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
 	{
@@ -600,10 +600,9 @@ Function left_menu($menu, $help_url='', $form_search='', $author='')
    print $author->fullname .'</td></tr>';
    }
   */
-
-
-  print '</td><td valign="top" width="85%" colspan="6">'."\n";
-
+  print "</td>";
+  print "<!-- Fin menu -->\n";
+  print "<td valign=\"top\" width=\"85%\" colspan=\"6\">\n";
 
 }
 /*
