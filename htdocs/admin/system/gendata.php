@@ -22,13 +22,20 @@ require("./pre.inc.php");
 
 llxHeader();
 ?>
-<a href="gendata.php">Sociétés</a> | 
+<h1>Attention</h1>
+<h2>Ceci est un générateur de données aléatoires, ne 
+pas utiliser sur une base de données en production, les opérations ne sont pas réversibles</h2>
+<br>
+<a href="gendata.php">Home</a> | 
+<a href="gendata.php?action=societe">Sociétés</a> | 
+<a href="gendata.php?action=product">Produits</a> | 
 <a href="gendata.php?action=facture">Factures</a>
 <br>
 <?PHP
 include_once "../../societe.class.php";
 include_once "../../contact.class.php";
 include_once "../../facture.class.php";
+include_once "../../product.class.php";
 include_once "../../paiement.class.php";
 include_once "../../contrat/contrat.class.php";
 
@@ -42,13 +49,32 @@ if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;
 while ($i < $num) { $row = $db->fetch_row($i);      $societesid[$i] = $row[0];      $i++; } } else { print "err"; }
 
 
-print "[". sizeof($societesid) ." sociétés ";
-print "[". sizeof($productsid) ." produits ";
+print "". sizeof($societesid) ." sociétés ";
+print " - ". sizeof($productsid) ." produits ";
 print "<p>";
+
+if ($action == 'product')
+{
+  $randf = rand(1,200);
+
+  print "Génère $randf produits<br>";
+  for ($f = 0 ; $f < $randf ; $f++)
+    {
+      $produit = new Product($db);
+      $produit->type = 1;
+      $produit->envente = 1;
+      $produit->ref = time() . "$f";
+      $produit->libelle = "Libelle";
+      $produit->description = "Description";
+      $produit->price = rand(1,10000);
+      $produit->tva_tx = "19.6";
+      $produit->create($user);
+    }
+}
 
 if ($action == 'facture')
 {
-  $randf = rand(1,20);
+  $randf = rand(1,200);
 
   print "Génère $randf factures<br>";
   for ($f = 0 ; $f < $randf ; $f++)
@@ -70,7 +96,7 @@ if ($action == 'facture')
 	{
 	  $pidrand = rand(1, sizeof($productsid)-1);
 	  $facture->add_product($productsid[rand(1, sizeof($productsid)-1)],rand(1,11));
-	  print "Ajout prod ".$productsid[$pidrand]." ";
+	  print "(AP ".$productsid[$pidrand].") ";
 	}     
 
       $id = $facture->create($user);
@@ -102,10 +128,11 @@ if ($action == 'facture')
 
     }
 }
-else
+
+if ($action == 'societe')
 {
 
-  $rands = rand(1,40);
+  $rands = rand(1,400);
 
   print "Génère $rands société<br>";
   for ($s = 0 ; $s < $rands ; $s++)
