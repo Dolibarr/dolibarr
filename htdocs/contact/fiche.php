@@ -23,10 +23,10 @@
  */
 
 /*!
-	    \file       htdocs/contact/fiche.php
-        \ingroup    societe
-		\brief      Onglet général d'un contact
-		\version    $Revision$
+  \file       htdocs/contact/fiche.php
+  \ingroup    societe
+  \brief      Onglet général d'un contact
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -50,7 +50,6 @@ if ($_GET["action"] == 'create_user' && $user->admin)
     $nuser->nom = $contact->nom;
     $nuser->prenom = $contact->prenom;
     $nuser->create_from_contact($contact);
-
 }
 
 if ($_POST["action"] == 'add') 
@@ -125,7 +124,10 @@ if ($_POST["action"] == 'update')
 
   $result = $contact->update($_POST["contactid"], $user);
 
-  if ($contact->error) { array_push($error,$contact->error); }
+  if ($contact->error) 
+    {
+      $error = $contact->error;
+    }
 }
 
 /*
@@ -182,7 +184,7 @@ if ($_GET["action"] == 'delete')
 // Affiche les erreurs
 if (sizeof($error))
 {
-  print '<div class="message"><br>';
+  print '<div class="message"><br>'.LDAP_SERVER_TYPE.'<br>';
   print join("<br>",$error);
   print '<br><br></div>';
 }
