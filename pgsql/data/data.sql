@@ -281,7 +281,6 @@ delete from llx_c_ape;
 -- Types de charges
 --
 
-delete from llx_c_chargesociales;
 insert into llx_c_chargesociales (id,libelle,deductible) values ( 1, 'Allocations familiales',1);
 insert into llx_c_chargesociales (id,libelle,deductible) values ( 2, 'GSG Deductible',1);
 insert into llx_c_chargesociales (id,libelle,deductible) values ( 3, 'GSG/CRDS NON Deductible',0);
