@@ -461,9 +461,9 @@ else
 
       print '<div class="tabsAction">';
       
-      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">Commerciaux</a>';
+      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/commerciaux.php?socid='.$soc->id.'">'.$langs->trans("SalesRepresentative").'</a>';
 
-      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">Maison mère</a>';
+      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/lien.php?socid='.$soc->id.'">'.$langs->trans("ParentCompany").'</a>';
 
       print '<a class="tabAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
       

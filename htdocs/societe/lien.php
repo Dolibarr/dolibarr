@@ -20,11 +20,11 @@
  * $Source$
  */
 
-/*!
-  \file       htdocs/societe.php
-  \ingroup    societe
-  \brief      Page des societes
-  \version    $Revision$
+/**
+    \file       htdocs/societe/lien.php
+    \ingroup    societe
+    \brief      Page des societes
+    \version    $Revision$
 */
  
 require("./pre.inc.php");

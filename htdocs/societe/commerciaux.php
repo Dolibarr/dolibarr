@@ -129,7 +129,7 @@ if($_GET["socid"])
   print $soc->code_client;
   if ($soc->check_codeclient() <> 0)
     {
-      print "Code incorrect";
+      print $langs->trans("WrongCode");
     }
   print '</td></tr>';
 
