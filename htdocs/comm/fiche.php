@@ -144,18 +144,51 @@ if ($socid > 0)
     /*
      *
      */
-    print '<table class="noborder" width="100%" border="0" cellspacing="1">';
+      $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
+      $head[0][1] = "Fiche société";
+      $h = 1;
+      
+      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?id='.$societe->id;
+      $head[$h][1] = 'Fiche client';
+      $h++;
 
-    print "<tr><td><div class=\"titre\">Fiche client : $objsoc->nom</div></td>";
+      if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
+	{
+	  $head[$h][0] = DOL_URL_ROOT.'/sl/fiche.php?id='.$societe->id;
+	  $head[$h][1] = 'Fiche catalogue';
+	  $h++;
+	}
+      
+      if ($soc->fournisseur)
+	{
+	  $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
+	  $head[$h][1] = 'Fiche fournisseur';
+	  $h++;
+	}
+      $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
+      $head[$h][1] = 'Note';      
+      $h++;
+      if ($user->societe_id == 0)
+	{
+	  $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
+	  $head[$h][1] = 'Documents';
+	  $h++;
+	}
+
+      $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
+      $head[$h][1] = 'Notifications';
+
+      dolibarr_fiche_head($head, 1);
+
+    print_titre("Fiche client : $objsoc->nom");
+
+    print '<table class="noborder" width="100%" border="0" cellspacing="1">';
 
     if ($user->societe_id == 0)
       {
 
 	print "<td align=\"center\"><a href=\"../compta/fiche.php?socid=$objsoc->idp\">Compta</a></td>";
-	print "<td align=\"center\">[<a href=\"docsoc.php?socid=$objsoc->idp\">Documents</a>]</td>";
 	print "<td align=\"center\">[<a href=\"index.php?socidp=$objsoc->idp&action=add_bookmark\">Bookmark</a>]</td>";
-
-	print "<td>[<a href=\"../socnote.php?socid=$objsoc->idp\">Notes</a>]</td>";
 	print "<td align=\"center\">[<a href=\"../soc.php?socid=$objsoc->idp&action=edit\">Editer</a>]</td></tr>";
       }
     print "</table>";
@@ -304,13 +337,13 @@ if ($socid > 0)
      *
      */
     print "</td></tr>";
-    print "</table>\n";
+    print "</table></div>\n";
     /*
      * Barre d'action
      *
      */
 
-    print '<br><div class="tabsAction">';
+    print '<div class="tabsAction">';
 
     if ($conf->propal->enabled && $user->rights->propale->creer)
       {
