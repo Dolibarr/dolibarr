@@ -30,76 +30,7 @@
 
 require("./pre.inc.php");
 
-$user->getrights('banque');
+Header("Location: liste.php");
 
-$langs->load("compta");
-
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
-
-llxHeader("","Accueil Compta");
-
-
-/*
- * Actions
- */
-
-if ($action == 'add_bookmark')
-{
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
-  if (! $db->query($sql) )
-    {
-      dolibarr_print_error($db);
-    }
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
-  if (! $db->query($sql) )
-    {
-      dolibarr_print_error($db);
-    }
-}
-
-if ($action == 'del_bookmark')
-{
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=$bid";
-  $result = $db->query($sql);
-}
-
-
-
-/*
- * Affichage page
- *
- */
-print_titre("Espace ventilation");
-
-print '<table border="0" width="100%">';
-
-print '<tr><td valign="top" width="30%">';
-
-/*
- * Zone recherche facture
- */
-print '<form method="post" action="facture.php">';
-print '<table class="noborder" width="100%">';
-print "<tr class=\"liste_titre\">";
-print '<td colspan="2">Rechercher une facture</td></tr>';
-print "<tr $bc[0]><td>";
-print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
-print "</table></form><br>";
-
-print '</td><td width="70%">&nbsp;';
-
-print '</td></tr>';
-
-print '</table>';
-
-$db->close();
- 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

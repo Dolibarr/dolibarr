@@ -84,7 +84,7 @@ if ($result)
       echo '<table class="noborder" width="100%">';
       print "<tr class=\"liste_titre\"><td>Facture</td>";
       print '<td width="54%">'.$langs->trans("Description").'</td>';
-      print '<td width="20%" align="right">'.$langs->trans("VAT").'</td>';
+      print '<td width="20%" align="right">&nbsp;</td>';
       print "</tr>\n";
     }
   $var=True;
@@ -96,13 +96,10 @@ if ($result)
       
       print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a></td>';
 
-
-      print '<td>'.stripslashes(nl2br($objp->description)).'</td>';
-                       
+      print '<td>'.stripslashes(nl2br($objp->description)).'</td>';                       
       print '<td align="right"><a href="fiche.php?id='.$objp->rowid.'">';
       print img_edit();
       print '</a></td>';
-
 
       print "</tr>";
       $i++;
