@@ -22,12 +22,13 @@
  * or see http://www.gnu.org/
  */
 
-/*!	\file bank.lib.php
-  \brief librairie contenant les fonctions bancaires.
-  \author  Laurent Destailleur
-  \version $Revision$
+/*!	\file htdocs/compta/bank/bank.lib.php
+        \ingroup    banque
+        \brief      librairie contenant les fonctions bancaires.
+        \author     Laurent Destailleur
+        \version    $Revision$
   
-  Ensemble des fonctions en rappor avec les modules bancaires
+        Ensemble des fonctions en rapport avec les modules bancaires
 */
 
 
