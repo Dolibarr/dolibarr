@@ -136,13 +136,13 @@ if ($_GET["action"] == 'commande')
 } 
 
 
-if ($action == 'modif' && $user->rights->propale->creer) 
+if ($_GET["action"] == 'modif' && $user->rights->propale->creer) 
 {
   /*
    *  Repasse la propale en mode brouillon
    */
   $propal = new Propal($db);
-  $propal->fetch($propalid);
+  $propal->fetch($_GET["propalid"]);
   $propal->reopen($user->id);
 
 }
@@ -281,6 +281,14 @@ if ($_GET["propalid"])
 
 	  $color1 = "#e0e0e0";
 
+
+	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
+	    {
+	      /* la form est ouverte avant la table pour respect des normes */
+	      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+	      print '<input type="hidden" name="action" value="setremise">';
+	    }
+
 	  print "<table class=\"border\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
 	  print '<tr><td>Société</td><td colspan="3">';
@@ -323,8 +331,20 @@ if ($_GET["propalid"])
 	  /*
 	   *
 	   */
-	  print '<tr><td>Remise</td><td align="right">'.$propal->remise_percent.' %</td>';
-	  print '<td>&nbsp;</td><td align="right">'.price($propal->remise).' euros</td></tr>';
+	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
+	    {
+	      print '<tr><td>Remise <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a></td>';
+	      print '<td align="right"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">%</td>';
+	      print '<td><input type="submit" value="Appliquer"></td>';
+
+	    }
+	  else
+	    {
+	      print '<tr><td>Remise</td>';
+	      print '<td align="right">'.$propal->remise_percent.' %</td><td>&nbsp;</td>';
+	    }
+
+	  print '<td align="right">'.price($propal->remise).' euros</td></tr>';
 	  /*
 	   *
 	   */
@@ -341,6 +361,12 @@ if ($_GET["propalid"])
 	   */
 
 	  print "</table>";
+
+	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
+	    {
+	      print "</form>";
+	    }
+
 
 	  if ($_GET["action"] == 'statut') 
 	    {
@@ -499,15 +525,7 @@ if ($_GET["propalid"])
 	  print "</table>";
 	  print '</form>';
 
-	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
-	    {
-	      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-	      print '<input type="hidden" name="action" value="setremise">';
-	      print '<table class="border" cellpadding="3" cellspacing="0" border="1"><tr><td>Remise</td><td align="right">';
-	      print '<input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">%';
-	      print '<input type="submit" value="Appliquer">';
-	      print '</td></tr></table></form>';
-	    }
+
 	  /*
 	   * Actions
 	   */
