@@ -35,6 +35,7 @@ function llxHeader($head = "", $urlp = "") {
   $menu->add("mysql.php", "Mysql");
 
   $menu->add("pear.php", "Pear");
+  $menu->add_submenu("pear_packages.php", "Paquets");
 
   $menu->add("const.php", "Constantes");
 
