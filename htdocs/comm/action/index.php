@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -126,7 +126,7 @@ if ($sortfield == "")
   $sortfield="a.datea";
 }
 
-$sql = "SELECT s.nom as societe, s.idp as socidp,a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact, a.note, a.percent as percent";
+$sql = "SELECT s.nom as societe, s.idp as socidp, s.client, a.id,".$db->pdate("a.datea")." as da, a.datea, c.libelle, u.code, a.fk_contact, a.note, a.percent as percent";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
 
@@ -172,29 +172,30 @@ if ( $db->query($sql) )
   print '<TD>Société</td>';
   print '<td>Contact</TD>';
   print "<td>Commentaires</td><td>Auteur</TD>";
-  print "</TR>\n";
-      $var=True;
-      while ($i < min($num,$limit)) {
-	$obj = $db->fetch_object( $i);
-	
-	$var=!$var;
-	
-	print "<TR $bc[$var]>";
-	
-	if ($oldyear == strftime("%Y",$obj->da) )
-	  {
-	    print '<td>&nbsp;</td>';
-	  }
-	else
-	  {
-	    print "<TD width=\"30\">" .strftime("%Y",$obj->da)."</TD>\n"; 
-	    $oldyear = strftime("%Y",$obj->da);
-	  }
-	
-	if ($oldmonth == strftime("%Y%b",$obj->da) )
-	  {
-	    print '<td width=\"20\">&nbsp;</td>';
-	  }
+  print "</tr>\n";
+  $var=True;
+  while ($i < min($num,$limit))
+    {
+      $obj = $db->fetch_object( $i);
+      
+      $var=!$var;
+    
+      print "<TR $bc[$var]>";
+    
+      if ($oldyear == strftime("%Y",$obj->da) )
+	{
+	  print '<td>&nbsp;</td>';
+	}
+      else
+	{
+	  print "<TD width=\"30\">" .strftime("%Y",$obj->da)."</TD>\n"; 
+	  $oldyear = strftime("%Y",$obj->da);
+	}
+      
+      if ($oldmonth == strftime("%Y%b",$obj->da) )
+	{
+	  print '<td width=\"20\">&nbsp;</td>';
+	}
 	else
 	  {
 	    print "<TD width=\"20\">" .strftime("%b",$obj->da)."</TD>\n"; 
@@ -211,8 +212,20 @@ if ( $db->query($sql) )
 	}
 	print '<TD><a href="fiche.php?id='.$obj->id.'">'.$obj->libelle.'</a></td>';
 	
-	print '<TD>';
-	print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socidp.'">'.$obj->societe.'</A></TD>';
+	print '<td>';
+
+	if ($obj->client == 1)
+	  {
+	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socidp.'">'.$obj->societe.'</A></TD>';
+	  }
+	elseif ($obj->client == 2)
+	  {
+	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->socidp.'">'.$obj->societe.'</A></TD>';
+	  }
+	else
+	  {
+	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socidp.'">'.$obj->societe.'</A></TD>';
+	  }
 	/*
 	 * Contact
 	 */
