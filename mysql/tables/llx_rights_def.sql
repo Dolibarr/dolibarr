@@ -25,6 +25,7 @@ create table llx_rights_def
   id            integer PRIMARY KEY,
   libelle       varchar(255),
   module        varchar(12),
-  type          enum('r','w','m','d','a')
+  type          enum('r','w','m','d','a'),
+  bydefault     tinyint default 0
 );
 
