@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/**
+	    \file       htdocs/comm/remise.php
+        \ingroup    commercial
+		\brief      Onglet remise de la societe
+		\version    $Revision$
+*/
+ 
 require("./pre.inc.php");
 require("../contact.class.php");
 require("../cactioncomm.class.php");
@@ -92,44 +100,44 @@ if ($_socid > 0)
     {
       $hselected=$h;
       $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objsoc->id;
-      $head[$h][1] = 'Client';
+      $head[$h][1] = $langs->trans("Customer");
       $h++;
     }
   if ($objsoc->client==2)
     {
       $hselected=$h;
       $head[$h][0] = DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->socid;
-      $head[$h][1] = 'Prospect';
+      $head[$h][1] = $langs->trans("Prospect");
       $h++;
     }
   if ($objsoc->fournisseur)
     {
       $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objsoc->id;
-      $head[$h][1] = 'Fournisseur';
+      $head[$h][1] = $langs->trans("Supplier");
       $h++;
     }
   
   if ($conf->compta->enabled) {
     $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;
-    $head[$h][1] = 'Comptabilité';
+    $head[$h][1] = $langs->trans("Accountancy");
     $h++;
   }
 
     $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
-    $head[$h][1] = 'Note';
+    $head[$h][1] = $langs->trans("Note");
     $h++;
 
     if ($user->societe_id == 0)
     {
         $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$objsoc->id;
-        $head[$h][1] = 'Documents';
+        $head[$h][1] = $langs->trans("Documents");
         $h++;
     }
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
-    $head[$h][1] = 'Notifications';
+    $head[$h][1] = $langs->trans("Notifications");
 
-      if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
+   if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
 	{
 	  $head[$h][0] = DOL_URL_ROOT.'/sl/fiche.php?id='.$objsoc->id;
 	  $head[$h][1] = 'Fiche catalogue';
