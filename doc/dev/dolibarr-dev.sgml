@@ -6,6 +6,9 @@
     <!entity ch-constantes  system "constantes.sgml">
     <!entity ch-permissions system "permissions.sgml">
     <!entity ch-propale	    system "propale.sgml">
+    <!entity ch-commande    system "commande.sgml">
+    <!entity ch-expedition  system "expedition.sgml">
+    <!entity ch-produit	    system "produit.sgml">
 ]
 >
 <debiandoc>
@@ -30,6 +33,7 @@
     &ch-permissions;
     &ch-constantes;
     &ch-propale;
+    &ch-produit;
 
   </book>
   
