@@ -319,6 +319,31 @@ if ($propalid)
 	    $i++;
 	  }
       }
+
+    $sql = "SELECT pt.rowid, pt.description as product,  pt.price, pt.qty";
+    $sql .= " FROM llx_propaldet as pt  WHERE  pt.fk_propal = $propalid AND pt.fk_product = 0";
+    $sql .= " ORDER BY pt.rowid ASC";
+    if ($db->query($sql)) 
+      {
+	$num = $db->num_rows();
+	$i = 0;	
+	while ($i < $num) 
+	  {
+	    $objp = $db->fetch_object($i);
+	    $var=!$var;
+	    print "<tr $bc[$var]><td>&nbsp;</td>\n";
+	    print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->prodid.'">'.$objp->product.'</td>';
+	    print "<td align=\"right\">".price($objp->price)."</TD>";
+	    print '<td>&nbsp;</td>';
+	    print "<td align=\"center\">".$objp->qty."</td></tr>\n";
+	    $i++;
+	  }
+      }
+    else
+      {
+	print $sql;
+      }
+
     print '</table>';
     
 
