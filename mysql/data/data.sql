@@ -28,6 +28,8 @@ insert into llx_const(name, value) values ('DONS_FORM','fsfe.fr.php');
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage du formulaire de recherche des sociétés dans la barre de gauche');
 insert into llx_const(name, value, type, note) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage du formulaire de recherche des contacts dans la barre de gauche');
 
+insert into llx_const(name, value, type, note) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine');
+
 delete from c_chargesociales;
 insert into c_chargesociales (id,libelle,deductible) values ( 1, 'Allocations familiales',1);
 insert into c_chargesociales (id,libelle,deductible) values ( 2, 'GSG Deductible',1);
