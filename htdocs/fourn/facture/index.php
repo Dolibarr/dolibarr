@@ -21,7 +21,8 @@
  *
  */
 
-/**	    \file       htdocs/fourn/facture/index.php
+/**
+        \file       htdocs/fourn/facture/index.php
         \ingroup    fournisseur,facture
 		\brief      Lsite des factures fournisseurs
 		\version    $Revision$
@@ -53,14 +54,16 @@ if ($_GET["action"] == 'delete')
 }
 
 $page=$_GET["page"];
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
-
+$sortorder = $_GET["sortorder"];
+$sortfield = $_GET["sortfield"];
+ 
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="fac.datef";
 
 
 /*
@@ -91,20 +94,7 @@ if ($_POST["mode"] == 'search')
  *
  */
  
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
- 
-if ($sortorder == "")
-{
-  $sortorder="DESC";
-}
-if ($sortfield == "")
-{
-  $sortfield="fac.datef";
-}
-
-
-$sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  s.prefix_comm, fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid, fac.facnumber";
+$sql = "SELECT s.idp as socid, s.nom, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea, s.prefix_comm, fac.total_ht, fac.total_ttc, fac.paye as paye, fac.fk_statut as fk_statut, fac.libelle, ".$db->pdate("fac.datef")." as datef, fac.rowid as facid, fac.facnumber";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as fac ";
 $sql .= " WHERE fac.fk_soc = s.idp";
 
@@ -153,7 +143,7 @@ $result = $db->query($sql);
 
 if ($result)
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
   
   if ($socid) {
@@ -195,22 +185,23 @@ if ($result)
   print "</tr>\n";
   print '</form>';
 
-		$var=True;
+  $fac = new FactureFourn($db);
+
+  $var=true;
   while ($i < min($num,$limit))
     {
       $obj = $db->fetch_object();      
       $var=!$var;
       
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?facid=$obj->facid\">".img_object($langs->trans("ShowBill"),"bill")."</a>\n";
-      print " <a href=\"fiche.php?facid=$obj->facid\">$obj->facnumber</a></td>\n";
-      print "<td>".strftime("%d %b %Y",$obj->datef)."</td>\n";
+      print "<td nowrap><a href=\"fiche.php?facid=$obj->facid\">".img_object($langs->trans("ShowBill"),"bill")." ".$obj->facnumber."</a></td>\n";
+      print "<td nowrap>".strftime("%d %b %Y",$obj->datef)."</td>\n";
       print '<td>'.stripslashes("$obj->libelle").'</td>';
       print '<td>';
-      print '<a href="../fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
-      print '&nbsp;<a href="../fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a</td>';
+      print '<a href="../fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.$obj->nom.'</a</td>';
       print '<td align="right">'.price($obj->total_ht).'</td>';
       print '<td align="right">'.price($obj->total_ttc).'</td>';
+
       // Affiche statut de la facture
       if ($obj->paye)
 	{
@@ -227,28 +218,33 @@ if ($result)
 	      $class = "impayee";
 	    }
 	}
-      if (! $obj->paye)
+	
+	print '<td align="center">';
+    if (! $obj->paye)
+    {
+      if ($obj->fk_statut == 0)
         {
-          if ($obj->fk_statut == 0)
-            {
-	      print '<td align="center">brouillon</td>';
-            }
-          elseif ($obj->fk_statut == 3)
-            {
-	      print '<td align="center">annulée</td>';
-            }
-          else
-            {
-	      print '<td align="center"><a class="'.$class.'" href=""index.php?filtre=paye:0,fk_statut:1">'.($obj->am?"commencé":"impayée").'</a></td>';
-            }
+      print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
+        }
+      elseif ($obj->fk_statut == 3)
+        {
+      print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
         }
       else
         {
-          print '<td align="center">payée</td>';
+      // \todo  le montant deja payé obj->am n'est pas définie
+      print '<a class="'.$class.'" href=""index.php?filtre=paye:0,fk_statut:1">'.($fac->PayedLibStatut($obj->paye,$obj->fk_statut,$obj->am)).'</a>';
         }
+    }
+    else
+    {
+      print $fac->PayedLibStatut($obj->paye,$obj->fk_statut);
+    }
+    print '</td>';
       
-      print "</tr>\n";
-      $i++;
+    print "</tr>\n";
+    $i++;
+
     }
     print "</table>";
     $db->free();

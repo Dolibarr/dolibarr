@@ -1063,28 +1063,19 @@ class Facture
   }
 
   /**
-   * \todo RODO
-   *
-   */
-  function pdf()
-    {      
-
-    }
-
-  /**
    *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
    *    \return     string      Libellé
    */
-  function get_libstatut()
+    function getLibStatut()
     {
 		return $this->LibStatut($this->paye,$this->statut);
     }
 
   /**
-   *    \brief      Renvoi le libellé d'un statut donné
+   *    \brief      Renvoi le libellé long d'un statut donné
    *    \param      paye        etat paye
    *    \param      statut      id statut
-   *    \return     string      Libellé
+   *    \return     string      Libellé long du statut
    */
     function LibStatut($paye,$statut)
     {
@@ -1102,6 +1093,30 @@ class Facture
         }
     }
 
+  /**
+   *    \brief      Renvoi le libellé court d'un statut donné
+   *    \param      paye        etat paye
+   *    \param      statut      id statut
+   *    \param      amount      amount already payed
+   *    \return     string      Libellé court du statut
+   */
+    function PayedLibStatut($paye,$statut,$amount=0)
+    {
+        global $langs;
+        $langs->load("bills");
+        if (! $paye)
+        {
+            if ($statut == 0) return $langs->trans("BillShortStatusDraft");
+            if ($statut == 3) return $langs->trans("BillStatusCanceled");
+            if ($amount) return $langs->trans("BillStatusStarted");
+            return $langs->trans("BillStatusNotPayed");
+        }
+        else
+        {
+            return $langs->trans("BillStatusPayed");
+        }
+    }
+    
 
   /**
    *    \brief      Mets à jour les commentaires

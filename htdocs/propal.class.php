@@ -845,7 +845,7 @@ class Propal
    *    \brief      Retourne le libellé du statut d'une propale (brouillon, validée, ...)
    *    \return     string      Libellé
    */
-  function get_libstatut()
+    function getLibStatut()
     {
 		return $this->LibStatut($this->statut);
     }

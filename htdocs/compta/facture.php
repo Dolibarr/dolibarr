@@ -994,7 +994,7 @@ else
 	  print '<tr><td height=\"10\">'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($fac->total_ttc).'</td>';
 	  print '<td>'.$conf->monnaie.'</td></tr>';
 
-	  print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.($fac->get_libstatut()).'</td></tr>';
+	  print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.($fac->getLibStatut()).'</td></tr>';
 
 	  if ($fac->note)
 	    {

@@ -361,7 +361,7 @@ class Contrat
    *    \brief      Retourne le libellé du statut du contrat
    *    \return     string      Libellé
    */
-  function get_libstatut()
+    function getLibStatut()
     {
 		return $this->LibStatut($this->statut);
     }

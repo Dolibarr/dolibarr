@@ -372,7 +372,7 @@ if ($_GET["propalid"])
 	  print '<tr><td height=\"10\">'.$langs->trans("AmountTTC").'</td><td align="right" colspan="2">'.price($propal->total_ttc).'</td>';
 	  print '<td>'.$conf->monnaie.'</td></tr>';
 
-	  print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.$propal->get_libstatut().'</td></tr>';
+	  print '<tr><td height=\"10\">'.$langs->trans("Status").'</td><td align="left" colspan="3">'.$propal->getLibStatut().'</td></tr>';
 
 	  print "</table><br>";
 
