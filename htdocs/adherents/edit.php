@@ -1,6 +1,8 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *                         Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2002      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -33,33 +35,33 @@ $adho = new AdherentOptions($db);
 if ($action == 'update')
 {
 
-  if ($HTTP_POST_VARS["bouton"] == "Enregistrer")
+  if ($_POST["bouton"] == "Enregistrer")
     {
 
       $adh = new Adherent($db);
 
-      $adh->id          = $HTTP_POST_VARS["rowid"];
+      $adh->id          = $_POST["rowid"];
       $adh->prenom      = $prenom;
       $adh->nom         = $nom;  
       $adh->societe     = $societe;
       $adh->adresse     = $adresse;
       $adh->amount      = $amount;
       $adh->cp          = $cp;
-      $adh->ville       = $HTTP_POST_VARS["ville"];
-      $adh->email       = $HTTP_POST_VARS["email"];
-      $adh->login       = $HTTP_POST_VARS["login"];
-      $adh->pass        = $HTTP_POST_VARS["pass"];
-      $adh->naiss       = $HTTP_POST_VARS["naiss"];
-      $adh->photo       = $HTTP_POST_VARS["photo"];
+      $adh->ville       = $_POST["ville"];
+      $adh->email       = $_POST["email"];
+      $adh->login       = $_POST["login"];
+      $adh->pass        = $_POST["pass"];
+      $adh->naiss       = $_POST["naiss"];
+      $adh->photo       = $_POST["photo"];
       $adh->date        = mktime(12, 0 , 0, $remonth, $reday, $reyear);
-      $adh->note        = $HTTP_POST_VARS["note"];
-      $adh->pays        = $HTTP_POST_VARS["pays"];
-      $adh->typeid      = $HTTP_POST_VARS["type"];
-      $adh->commentaire = $HTTP_POST_VARS["comment"];
-      $adh->morphy      = $HTTP_POST_VARS["morphy"];
+      $adh->note        = $_POST["note"];
+      $adh->pays        = $_POST["pays"];
+      $adh->typeid      = $_POST["type"];
+      $adh->commentaire = $_POST["comment"];
+      $adh->morphy      = $_POST["morphy"];
       // recuperation du statut et public
-      $adh->statut      = $HTTP_POST_VARS["statut"];
-      $adh->public      = $HTTP_POST_VARS["public"];
+      $adh->statut      = $_POST["statut"];
+      $adh->public      = $_POST["public"];
       
       foreach($_POST as $key => $value){
 	if (ereg("^options_",$key)){
@@ -114,38 +116,6 @@ if ($rowid)
   $adht = new AdherentType($db);
 
   print_titre("Edition de la fiche adhérent");
-
-
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-
-  print "<tr><td>Type</td><td class=\"valeur\">$adh->type</td>";
-  print '<td valign="top" width="50%">Commentaires</td></tr>';
-
-  print '<tr><td>Personne</td><td class="valeur">'.$adh->morphy.'&nbsp;</td>';
-  print '<td rowspan="15" valign="top" width="50%">';
-  print nl2br($adh->commentaire).'&nbsp;</td></tr>';
-
-  print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
-
-  print '<tr><td>Nom</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
-  
-  print '<tr><td>Société</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
-  print '<tr><td>Adresse</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
-  print '<tr><td>CP Ville</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
-  print '<tr><td>Pays</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>';
-  print '<tr><td>Email</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
-  print '<tr><td>Login</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
-  //  print '<tr><td>Password</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
-  print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
-  print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
-  //  $adho->fetch_optionals();
-  foreach($adho->attribute_label as $key=>$value){
-    print "<tr><td>$value</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
-  }
-
-  print "</table>\n";
-
-  print "<hr>";
 
   print "<form action=\"$PHP_SELF\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';

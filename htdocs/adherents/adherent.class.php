@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -119,13 +120,12 @@ class Adherent
     $texttosend = preg_replace ($patterns, $replace, $text);
     $subjectosend = preg_replace ($patterns, $replace, $subject);
     if (defined('ADHERENT_MAIL_FROM') && ADHERENT_MAIL_FROM != ''){
-	return mail($recipients,$subjectosend,$texttosend,"From: ".ADHERENT_MAIL_FROM."\nReply-To: ".ADHERENT_MAIL_FROM."\nX-Mailer: PHP/" . phpversion());
+	  return mail($recipients,$subjectosend,$texttosend,"From: ".ADHERENT_MAIL_FROM."\nReply-To: ".ADHERENT_MAIL_FROM."\nX-Mailer: PHP/" . phpversion());
     }else{
       return mail($recipients,$subjectosend,$texttosend);
     }
   }
   /*
-   *
    *
    *
    */
@@ -137,6 +137,19 @@ class Adherent
 	print "<li>" . $this->errorstr[$i];
       }
   }
+
+
+/*!
+		\brief fonction qui renvoi la nature physique ou morale d'un adherent
+*/
+  Function getmorphylib($morphy='')
+  {
+    if (! $morphy) { $morphy=$this->morphy; }
+    if ($morphy == 'phy') { return "Physique"; }
+    if ($morphy == 'mor') { return "Morale"; }
+    return $morphy;
+  }
+
   /*
    *
    *

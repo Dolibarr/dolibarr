@@ -23,6 +23,8 @@
  */
 require("./pre.inc.php");
 
+require("./adherent.class.php");
+
 
 llxHeader();
 
@@ -104,24 +106,27 @@ if ($result)
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($i);
+
+      $adh=new Adherent($db);
+      
       $var=!$var;
-      print "<TR $bc[$var]>";
+      print "<tr $bc[$var]>";
       if ($objp->societe != ''){
-	print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></TD>\n";
+	print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></td>\n";
       }else{
-	print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></TD>\n";
+	print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
       }
-      print "<TD>";
+      print "<td>";
       if ($objp->cotisation == 'yes')
 	{
 	  if ($objp->datefin < time())
 	    {
-	      print "<b><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->datefin)."</a> - Cotisation non recue</b></td>\n";
+	      print dolibarr_print_date($objp->datefin)." - Cotisation non recue ".img_warning()."</td>\n";
 	    }
 	  else 
 	    {
-	      print "<a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->datefin)."</a></td>\n";
+	      print dolibarr_print_date($objp->datefin)."</td>\n";
 	    }
 	}
       else 
@@ -131,7 +136,7 @@ if ($result)
 
       print "<td>$objp->email</td>\n";
       print "<td>$objp->type</td>\n";
-      print "<td>$objp->morphy</td>\n";
+      print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
       print "<td>";
 
       if ($objp->statut == -1)
@@ -148,7 +153,8 @@ if ($result)
 	}
 
       print "</td>";
-      print "<td><a href=\"edit.php?rowid=$objp->rowid\">".img_edit()."</a> &nbsp; <a href=\"fiche.php?rowid=$objp->rowid&action=resign\">Resilier</a> &nbsp; <a href=\"fiche.php?rowid=$objp->rowid&action=delete\">".img_delete()."</a></td>\n";
+      print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".img_edit()."</a> &nbsp; ";
+      print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign\">".img_disable("Résilier")."</a> &nbsp; <a href=\"fiche.php?rowid=$objp->rowid&action=delete\">".img_delete()."</a></td>\n";
       print "</tr>";
       $i++;
     }
