@@ -551,7 +551,7 @@ else
 		      print '<td>&nbsp;</td>';
 		    }
 		  print '<td align="right">'.price($objp->subprice)."</td>\n";
-		  if ($contrat->statut == 0  && $user->rights->contrat->creer) 
+		  if ($contrat->statut == 0  && $objp->statut == 0 && $user->rights->contrat->creer) 
 		    {
 		      print '<td align="right"><a href="fiche.php?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
 		      print img_edit();
@@ -562,7 +562,7 @@ else
 		    }
 		  else
 		    {
-		      print '<td>&nbsp;</td><td>&nbsp;</td>';
+		      print '<td colspan="2">&nbsp;</td>';
 		    }
 		  print "</tr>\n";
 		  
