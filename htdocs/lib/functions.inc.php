@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -504,7 +504,7 @@ function img_phone_out($alt = "default")
     global $langs;
     $alt=$langs->trans("Modify");
   }
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call_out.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
