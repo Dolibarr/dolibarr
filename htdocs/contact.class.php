@@ -300,15 +300,13 @@ class Contact
    *
    *
    */
-  Function fetch($id, $user=0) 
+  Function fetch($_id, $user=0) 
     {
       $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname, c.address, c.birthday as birthday, poste, phone, phone_perso, phone_mobile, fax, c.email, jabberid, c.note";
       $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-      $sql .= " WHERE c.idp = $id";
-      
-      $result = $this->db->query($sql);
-      
-      if ($result) 
+      $sql .= " WHERE c.idp = ". $_id;
+
+      if ($this->db->query($sql))
 	{
 	  if ($this->db->num_rows()) 
 	    {
@@ -346,11 +344,27 @@ class Contact
 	    }
 	  $this->db->free();
 
+
+	  $sql = "SELECT u.rowid ";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+	  $sql .= " WHERE u.fk_socpeople = ". $_id;
+
+	  if ($this->db->query($sql))
+	    {
+	      if ($this->db->num_rows()) 
+		{
+		  $uobj = $this->db->fetch_object($result , 0);
+		  
+		  $this->user_id = $uobj->rowid;
+		}
+	    }
+	  $this->db->free();
+
 	  if ($user)
 	    {
 	      $sql = "SELECT fk_user";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."user_alert";
-	      $sql .= " WHERE fk_user = $user->id AND fk_contact = $id";
+	      $sql .= " WHERE fk_user = $user->id AND fk_contact = ".$_id;
 	      
 	      if ($this->db->query($sql)) 
 		{
@@ -369,6 +383,7 @@ class Contact
 	}
       else
 	{
+	  dolibarr_syslog("Error in Contact::fetch() id=$_id");
 	  print $this->db->error();
 	}
     }
