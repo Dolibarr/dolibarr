@@ -236,6 +236,11 @@ else {
 }
 
 /*
+ * Defini le mode de calcul du CA
+ */
+$conf->compta->mode = 'RECETTES-DEPENSES';	// Mettre 'CREANCES-DETTES' pour un CA en creances-dettes
+
+/*
  * SIZE_LISTE_LIMIT : constante de taille maximale des listes
  */
 if (defined("SIZE_LISTE_LIMIT"))
