@@ -114,7 +114,7 @@ class Account
    * Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
    *
    */
-  Function addline($date, $oper, $label, $amount, $num_chq="",$categorie='')
+  Function addline($date, $oper, $label, $amount, $num_chq='', $categorie='',$user)
   {
     if ($this->rowid)
       {
@@ -145,8 +145,8 @@ class Account
 	
 	$datev = $date;
 
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, author, num_chq,fk_account, fk_type)";
-	$sql .= " VALUES (now(), '$date', '$datev', '$label', '" . ereg_replace(",",".",$amount) . "','$author','$num_chq', '$this->rowid', '$oper')";
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq,fk_account, fk_type)";
+	$sql .= " VALUES (now(), '$date', '$datev', '$label', '" . ereg_replace(",",".",$amount) . "', '$user->id' ,'$num_chq', '$this->rowid', '$oper')";
 
 
 	if ($this->db->query($sql))
