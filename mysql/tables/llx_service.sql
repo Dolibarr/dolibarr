@@ -30,6 +30,8 @@ create table llx_service
   label           varchar(255),
   description     text,
   price           smallint,
-  duration        varchar(32)
+  duration        varchar(32),
+  debut_comm      datetime,
+  fin_comm        datetime
 );
 
