@@ -20,6 +20,14 @@
  *
  */
 require("./pre.inc.php");
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socidp = $user->societe_id;
+}
 
 llxHeader();
 /*
@@ -43,6 +51,11 @@ $px->SetHeight(280);
 $px->draw(DOL_DOCUMENT_ROOT.$filev, $data, $year);
       
 $sql = "SELECT count(*), date_format(datef,'%Y') as dm, sum(total)  FROM llx_facture WHERE fk_statut > 0 GROUP BY dm DESC ";
+if ($socidp)
+{
+  $sql .= " AND fk_soc = $socidp";
+}
+	
 if ($db->query($sql))
 {
   $num = $db->num_rows();
