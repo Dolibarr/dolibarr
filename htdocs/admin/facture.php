@@ -36,7 +36,14 @@ $typeconst=array('yesno','texte','chaine');
 
 if ($_GET["action"] == 'set')
 {
-  if (dolibarr_set_const($db, "FACTURE_ADDON",$_GET["value"])) $facture_addon_var = $_GET["value"];
+  if (dolibarr_set_const($db, "FACTURE_ADDON",$_GET["value"]))
+    $facture_addon_var = $_GET["value"];
+}
+
+if ($_GET["action"] == 'dateforce')
+{
+  dolibarr_set_const($db, "FAC_FORCE_DATE_VALIDATION",$_GET["value"]);
+  Header("Location: facture.php");    
 }
 
 if ($_POST["action"] == 'setribchq')
@@ -65,14 +72,13 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 
 if ($_GET["action"] == 'delete')
 {
-	if (! dolibarr_del_const($db, $_GET["rowid"]));
-	{
-	  	print $db->error();
-	}
+  if (! dolibarr_del_const($db, $_GET["rowid"]));
+  {
+    print $db->error();
+  }
 }
 
-
-llxHeader();
+llxHeader('','Fiche commande','FactureConfiguration');
 
 $dir = "../includes/modules/facture/";
 
@@ -102,7 +108,7 @@ while (($file = readdir($handle))!==false)
 {
   if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
     {
-	  $var = !$var;
+      $var = !$var;
       print '<tr '.$bc[$var].'><td width=\"100\">';
       echo "$file";
       print "</td><td>\n";
@@ -131,6 +137,42 @@ while (($file = readdir($handle))!==false)
 closedir($handle);
 
 print '</table>';
+
+print "<br>";
+print_titre("Date des factures");
+
+print '<table class="noborder" cellpadding="2" cellspacing="0" width=\"100%\">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
+print '<td width="80">&nbsp;</td>';
+print "</tr>\n";
+
+print '<tr '.$bc[$var].'><td>';
+echo "Forcer la définition de la date des factures lors de la validation";
+
+print '</td><td width="60" align="center">';
+
+if (defined("FAC_FORCE_DATE_VALIDATION") && FAC_FORCE_DATE_VALIDATION == "1")
+{
+  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
+  print '</td><td align="center">';
+  print '<a href="facture.php?action=dateforce&amp;value=0">'.$langs->trans("Désactiver").'</a>';
+}
+else
+{
+  print '&nbsp;';
+  print '</td><td align="center">';
+  print '<a href="facture.php?action=dateforce&amp;value=1">'.$langs->trans("Activate").'</a>';
+}
+print "</td></tr>\n";
+
+
+
+
+print '</table>';
+
+
 
 /*
  *  PDF
@@ -300,89 +342,6 @@ print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optiontv
 print "<td colspan=\"2\">L'option 'franchise' est utilisée par les particuliers ou professions libérales à titre occasionnel avec de petits chiffres d'affaires.\nChaque produits/service vendu est soumis à une TVA de 0 (Dolibarr propose le taux 0 par défaut à la création d'une facture cliente). Il n'y a pas de déclaration ou récupération de TVA, et les factures qui gèrent l'option affichent la mention obligatoire \"TVA non applicable - art-293B du CGI\".</td></tr>\n";
 print "</form>";
 print "</table>";
-
-
-/*
- *  Autres constantes
- */
-print '<br>';
-print_titre("Autres constantes relatives aux factures");
-
-print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
-print '<td>'.$langs->trans("Type").'</td>';
-print '<td>'.$langs->trans("Note").'</td>';
-print '<td>'.$langs->trans("Actiion").'</td>';
-print "</tr>\n";
-
-
-# Affiche lignes des constantes
-$form = new Form($db);
-$exclude="'FACTURE_ADDON','FACTURE_ADDON_PDF','FACTURE_CHQ_NUMBER','FACTURE_RIB_NUMBER','FACTURE_TVAOPTION'"; # Lignes exclues car affichées précédemment
-
-$sql = "SELECT rowid, name, value, type, note FROM llx_const ";
-$sql.= "WHERE name like 'FAC%' ";
-$sql.= "AND name not in ($exclude)";
-$sql.= "ORDER BY name ASC";
-$result = $db->query($sql);
-
-if ($result) 
-{
-  $num = $db->num_rows();
-  $i = 0;
-  $var=True;
-
-  while ($i < $num)
-    {
-      $obj = $db->fetch_object( $i);
-      $var=!$var;
-
-      print '<form action="facture.php" method="POST">';
-      print '<input type="hidden" name="action" value="update">';
-      print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-      print '<input type="hidden" name="constname" value="'.$obj->name.'">';
-
-      print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
-
-      print '<td>';
-      if ($obj->type == 'yesno')
-	{
-	  $form->selectyesnonum('constvalue',$obj->value);
-	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte','chaine'),0);
-	}
-      elseif ($obj->type == 'texte')
-	{
-	  print '<textarea name="constvalue" cols="35" rows="4" wrap="soft">';
-	  print $obj->value;
-	  print "</textarea>\n";
-	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte','chaine'),1);
-	}
-      else
-	{
-	  print '<input type="text" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
-	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte','chaine'),2);
-	}
-      print '</td><td>';
-
-      print '<input type="text" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
-      print '</td><td>';
-      print '<input type="Submit" value="'.$langs->trans("Modify").'" name="Button"> &nbsp; ';
-//      print '<a href="facture.php?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
-      print "</td></tr>\n";
-
-      print '</form>';
-      $i++;
-    }
-}
-
-print "</table>\n";
-
-print "<br>\n";
 
 $db->close();
 
