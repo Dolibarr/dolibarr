@@ -23,7 +23,7 @@
 
 require ("../../master.inc.php");
 
-$opt = getopt("file");
+$opt = getopt("file:");
 
 $file = $opt[file];
 
