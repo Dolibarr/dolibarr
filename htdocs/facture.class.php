@@ -723,51 +723,55 @@ class Facture
    * \return    int     0 si erreur
    */
   function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='')
-    {
-      if ($this->brouillon)
-	{
-	  if (strlen(trim($qty))==0)
-	    {
-	      $qty=1;
-	    }
-	  $remise = 0;
-	  $price = ereg_replace(",",".",$pu);
-	  $subprice = $price;
-	  if (trim(strlen($remise_percent)) > 0)
-	    {
-	      $remise = round(($pu * $remise_percent / 100), 2);
-	      $price = $pu - $remise;
-	    }
-	  else
-	    {
-	      $remise_percent=0;
-	    }
-
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc'";
-	  $sql .= ",price='"    .     ereg_replace(",",".",$price)."'";
-	  $sql .= ",subprice='" .     ereg_replace(",",".",$subprice)."'";
-	  $sql .= ",remise='".        ereg_replace(",",".",$remise)."'";
-	  $sql .= ",remise_percent='".ereg_replace(",",".",$remise_percent)."'";
-	  $sql .= ",qty='$qty'";
-
-  	  if ($datestart) { $sql.= ",date_start='$datestart'"; }
-	  else { $sql.=",date_start=null"; }
-	  if ($dateend) { $sql.= ",date_end='$dateend'"; }
-	  else { $sql.=",date_end=null"; }
-
-	  $sql .= " WHERE rowid = $rowid ;";
-
-	  $result = $this->db->query( $sql);
-      if ($result) {
+  {
+    dolibarr_syslog("Facture::UpdateLine");
+    
+    if ($this->brouillon)
+      {
+	if (strlen(trim($qty))==0)
+	  {
+	    $qty=1;
+	  }
+	$remise = 0;
+	$price = ereg_replace(",",".",$pu);
+	$subprice = $price;
+	if (trim(strlen($remise_percent)) > 0)
+	  {
+	    $remise = round(($pu * $remise_percent / 100), 2);
+	    $price = $pu - $remise;
+	  }
+	else
+	  {
+	    $remise_percent=0;
+	  }
+	
+	$sql = "UPDATE ".MAIN_DB_PREFIX."facturedet set description='$desc'";
+	$sql .= ",price='"    .     ereg_replace(",",".",$price)."'";
+	$sql .= ",subprice='" .     ereg_replace(",",".",$subprice)."'";
+	$sql .= ",remise='".        ereg_replace(",",".",$remise)."'";
+	$sql .= ",remise_percent='".ereg_replace(",",".",$remise_percent)."'";
+	$sql .= ",qty='$qty'";
+	
+	if ($datestart) { $sql.= ",date_start='$datestart'"; }
+	else { $sql.=",date_start=null"; }
+	if ($dateend) { $sql.= ",date_end='$dateend'"; }
+	else { $sql.=",date_end=null"; }
+	
+	$sql .= " WHERE rowid = $rowid ;";
+	
+	$result = $this->db->query( $sql);
+	if ($result)
+	  {
 	    $this->updateprice($this->id);
 	  }
-	  else {
-        dolibarr_print_error($this->db);
+	else
+	  {
+	    dolibarr_print_error($this->db);
 	  }
-      return $result;
-
-	}
-    }
+	return $result;
+	
+      }
+  }
 
   /**
    * \brief     Supprime une ligne facture de la base
