@@ -24,6 +24,7 @@ DATE=`date +%Y%m%d`
 FILE=dolibarr-$(DATE).tar
 
 tar:
+	rm -f dolibarr-*.tar.gz*
 	tar --exclude-from tar.exclude -cvvf $(FILE) .
 	gzip $(FILE)
 	md5sum $(FILE).gz > $(FILE).gz.md5sum
