@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,8 @@ if ($HTTP_POST_VARS["action"] == 'add_action')
 	  $webcal->add($user, $todo->date, $societe->nom, $libelle);
 	}
   }
-  Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=$socid");
+  //  Header("Location: ".DOL_URL_ROOT."/comm/fiche.php?socid=$socid");
+  Header("Location: ".$HTTP_POST_VARS["from"]);
 }
 
 if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
@@ -151,7 +152,7 @@ $html = new Form($db);
  *
  */
 
-if ($action=='create')
+if ($_GET["action"] == 'create')
 {
 
   $caction = new CActioncomm($db);
@@ -161,12 +162,13 @@ if ($action=='create')
       $caction->fetch($db, $actionid);
 
       $contact = new Contact($db);
-      $contact->fetch($contactid);
+      $contact->fetch($_GET["contactid"]);
     }
   $societe = new Societe($db);
   $societe->get_nom($socid);
 
   print '<form action="'.$PHP_SELF.'?socid='.$socid.'" method="post">';
+  print '<input type="hidden" name="from" value="'.$_SERVER["HTTP_REFERER"].'">';
   print '<input type="hidden" name="action" value="add_action">';
   print '<input type="hidden" name="actionid" value="'.$actionid.'">'."\n";      
 
@@ -174,7 +176,7 @@ if ($action=='create')
    * Rendez-vous
    *
    */
-  if ($actionid == 5) 
+  if ($_GET["actionid"] == 5) 
     {
 
       print '<input type="hidden" name="date" value="'.$db->idate(time()).'">'."\n";
