@@ -39,8 +39,11 @@ if ($user->societe_id > 0)
 print_titre("Chiffre d'affaire (".MAIN_MONNAIE." HT)");
 
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE f.paye = 1";
-
+$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+$sql .= " WHERE f.fk_statut = 1";
+if ($conf->compta->mode != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = 1";
+}
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";

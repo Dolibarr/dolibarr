@@ -41,7 +41,11 @@ print_titre("Chiffre d'affaire cumulé (".MAIN_MONNAIE." HT)");
 print '<table width="100%"><tr><td valign="top">';
 
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE fk_user_valid is not NULL and f.paye = 1";
+$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+$sql .= " WHERE f.fk_statut = 1";
+if ($conf->compta->mode != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = 1";
+}
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
@@ -53,7 +57,11 @@ pt($db, $sql,"Suivi cumul par mois");
 print "</td><td valign=\"top\">";
 
 $sql = "SELECT sum(f.total) as amount, year(f.datef) as dm";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture as f WHERE fk_user_valid is not NULL and f.paye = 1";
+$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
+$sql .= " WHERE f.fk_statut = 1";
+if ($conf->compta->mode != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = 1";
+}
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";

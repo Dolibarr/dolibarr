@@ -42,7 +42,10 @@ print_titre("Chiffre d'affaire par utilisateur (euros HT)");
  */
 
 $sql = "SELECT sum(f.total) as ca FROM ".MAIN_DB_PREFIX."facture as f";
-$sql .= " WHERE f.fk_user_valid is not NULL AND f.fk_statut = 1";
+$sql .= " WHERE f.fk_statut = 1";
+if ($conf->compta->mode != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = 1";
+}
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
@@ -64,7 +67,10 @@ if ($catotal == 0) { $catotal = 1; };
 
 $sql = "SELECT u.name, u.firstname, sum(f.total) as ca";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u,".MAIN_DB_PREFIX."facture as f";
-$sql .= " WHERE f.fk_user_valid is not NULL and f.fk_statut = 1 AND f.fk_user_author = u.rowid";
+$sql .= " WHERE f.fk_statut = 1 AND f.fk_user_author = u.rowid";
+if ($conf->compta->mode != 'CREANCES-DETTES') { 
+	$sql .= " AND f.paye = 1";
+}
 if ($socidp)
 {
   $sql .= " AND f.fk_soc = $socidp";
