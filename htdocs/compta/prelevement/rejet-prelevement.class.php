@@ -51,7 +51,7 @@ class RejetPrelevement
     $this->user = $user;
   }
 
-  function create($id, $socid)
+  function create($id, $socid, $previd)
     {
       $this->id = $id;
       $this->socid = $socid;
@@ -80,12 +80,26 @@ class RejetPrelevement
 	    {
 	      $error++;
 	      dolibarr_syslog("RejetPrelevement::Create Erreur creation paiement facture ".$facs[$i]);
-	    }
-	  
+	    }       
+  
 	  /* Tag la facture comme impayée */
 	  dolibarr_syslog("RejetPrelevement::Create set_unpayed fac ".$fac->ref);
 	  $fac->set_unpayed($facs[$i]);
 
+	  /* Tag la ligne de prev comme rejetée */
+
+	  $sql = " UPDATE ".MAIN_DB_PREFIX."prelevement_facture ";
+	  $sql .= " SET statut = 2";
+	  $sql .= " WHERE fk_prelevement=".$previd;
+	  $sql .= " AND fk_facture = ".$facs[$i];
+	  
+	  $result=$this->db->query($sql);
+	  if (!$result)
+	    {
+	      dolibarr_syslog("RejetPrelevement::create Erreur 3");
+	      $error++;
+	    }
+	  
 	  /* Envoi un email à l'emetteur de la demande de prev */
 	  $this->_send_email($fac);
 	}

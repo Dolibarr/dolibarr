@@ -36,7 +36,7 @@ if ($_POST["action"] == 'confirm_rejet')
     {
       $rej = new RejetPrelevement($db, $user);
       
-      $rej->create($_GET["id"], $_GET["socid"]);
+      $rej->create($_GET["id"], $_GET["socid"], $_GET["previd"]);
       
       Header("Location: factures.php?id=".$_GET["id"]);
     }
@@ -57,6 +57,10 @@ $h++;
 $head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/factures.php?id='.$_GET["id"];
 $head[$h][1] = $langs->trans("Factures");
 $hselected = $h;
+$h++;  
+
+$head[$h][0] = DOL_URL_ROOT.'/compta/prelevement/fiche-stat.php?id='.$_GET["id"];
+$head[$h][1] = $langs->trans("Statistiques");
 $h++;  
 
 $prev_id = $_GET["id"];
@@ -90,7 +94,7 @@ if ($_GET["action"] == 'rejet')
   $soc = new Societe($db);
   $soc->fetch($_GET["socid"]);
 
-  $html->form_confirm("factures.php"."?id=".$_GET["id"]."&amp;socid=".$_GET["socid"],"Rejet de prélèvement","Etes-vous sûr de vouloir saisir un rejet de prélèvement pour la société ".$soc->nom." ?","confirm_rejet");
+  $html->form_confirm("factures.php"."?id=".$_GET["id"]."&amp;socid=".$_GET["socid"]."&amp;previd=".$_GET["previd"],"Rejet de prélèvement","Etes-vous sûr de vouloir saisir un rejet de prélèvement pour la société ".$soc->nom." ?","confirm_rejet");
 
   print '<table class="border" width="100%">';
   
@@ -121,7 +125,7 @@ if ($sortfield == "") {
  *
  *
  */
-$sql = "SELECT pf.rowid, ".$db->pdate("p.datec")." as datec";
+$sql = "SELECT pf.rowid, pf.statut";
 $sql .= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc";
 $sql .= " , s.idp, s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement as p";
@@ -155,7 +159,7 @@ if ($result)
   print_liste_field_titre("Facture","factures.php","p.ref",'',$urladd);
   print_liste_field_titre("Société","factures.php","s.nom",'',$urladd);
   print_liste_field_titre("Montant","factures.php","f.total_ttc","",$urladd,'align="center"');
-  print '<td>&nbsp;</td></tr>';
+  print '<td colspan="2">&nbsp;</td></tr>';
 
   $var=True;
 
@@ -173,13 +177,35 @@ if ($result)
 
       print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
-      print '<td>'.stripslashes($obj->nom)."</td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom)."</a></td>\n";
 
       print '<td align="center">'.price($obj->total_ttc)."</td>\n";
 
-      print '<td><a href="factures.php?id='.$_GET["id"].'&amp;action=rejet&amp;socid='.$obj->idp.'">';
-      print "Saisir rejet";
-      print '</a></td>';
+      print '<td>';
+
+      if ($obj->statut == 0)
+	{
+	  print '-';
+	}
+      elseif ($obj->statut == 1)
+	{
+	  print 'Crédité';
+	}
+      elseif ($obj->statut == 2)
+	{
+	  print '<b>Rejeté</b>';
+	}
+
+      print '</td><td>';
+
+      if ($obj->statut == 1)
+	{
+	  print '<a href="factures.php?id='.$_GET["id"].'&amp;action=rejet&amp;socid='.$obj->idp;
+	  print '&amp;previd='.$bon->id.'">';
+	  print "Saisir rejet</a>";
+	}
+
+      print '</td>';
 
       print "</tr>\n";
 

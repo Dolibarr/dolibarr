@@ -59,6 +59,8 @@ if ($sortfield == "") $sortfield="f.facnumber";
  */
 
 $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp";
+$sql .= " , ".$db->pdate("pfd.date_demande")." as date_demande";
+$sql .= " , pfd.fk_user_demande";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 $sql .= " WHERE s.idp = f.fk_soc";
@@ -81,41 +83,45 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Demandes de prélèvement", $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
+  print_barre_liste("Demandes de prélèvement à traiter", $page, "demandes.php", $urladd, $sortfield, $sortorder, '', $num);
   
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print '<td>Facture</td><td>Société</td></tr>';
+  print '<td>Facture</td><td>Société</td><td>Date demande</td>';
+  print '<td>Emetteur</td></tr>';
   
   print '<form action="demandes.php" method="GET">';
-  
   print '<tr class="liste_titre"><td>-</td><td>';
   print '<input type="text" name="search_societe" size="12" value="'.$GET["search_societe"].'">&nbsp;';
-  print '<input type="submit" value="Chercher">';
+  print '<input type="submit" value="Chercher"></td>';
+  print '<td colspan="2">&nbsp;</td></tr>';
   print '</form>';
 
-  if ($num)
+  $var = True;
+
+  $users = array();
+
+  while ($i < min($num,$conf->liste_limit))
     {
-
-
-
-
-     $var = True;
-
-      while ($i < min($num,$conf->liste_limit))
+      $obj = $db->fetch_object();
+      $var=!$var;
+      print '<tr '.$bc[$var].'><td>';
+      print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
+      print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
+      print '<td>'.$obj->nom.'</td>';
+      print '<td>'.strftime("%d %m %Y", $obj->date_demande).'</td>';
+      if (!array_key_exists($obj->fk_user_demande,$users))
 	{
-	  $obj = $db->fetch_object();
-	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td>';
-	  print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
-	  print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-	  print '<td>'.$obj->nom.'</td></tr>';
-	  $i++;
+	  $users[$obj->fk_user_demande] = new User($db, $obj->fk_user_demande);
+	  $users[$obj->fk_user_demande]->fetch();
 	}
-      
-      print "</table><br>";
-
+      print '<td>'.$users[$obj->fk_user_demande]->fullname.'</td>';
+      print '</tr>';
+      $i++;
     }
+  
+  print "</table><br />";
+
 }
 else
 {
