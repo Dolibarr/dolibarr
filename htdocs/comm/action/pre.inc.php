@@ -42,6 +42,8 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add(DOL_URL_ROOT."/projet/index.php", "Projets");
 
+  $menu->add(DOL_URL_ROOT."/comm/action/rapport/", "Rapport");
+
   left_menu($menu->liste);
 
 }
