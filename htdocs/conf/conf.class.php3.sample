@@ -67,7 +67,10 @@ class PropalConf {
     $this->outputurl    = "/document/propal";
   }
 }
-
+/*
+ * Base de données
+ *
+ */
 class DbConf {
   Function DbConf() {
     $this->type = "mysql";
@@ -77,7 +80,10 @@ class DbConf {
     $this->name = "dolibarr";
   }
 }
-
+/*
+ * Calendrier
+ *
+ */
 class WebcalConf {
   Function WebcalConf() {
     $this->enabled = 1;
@@ -115,7 +121,6 @@ class FactureConf {
  */
 class FicheInterConf {
   Function FicheInterConf() {
-
     $this->enabled = 1;
 
     $this->templatesdir = "/home/www/dolibarr/dolibarr/templates/fichinter/default";

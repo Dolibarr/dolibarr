@@ -75,6 +75,11 @@ TR.liste_titre
   background: #669999; 
   font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
   text-decoration: none }
+TR.liste_sep
+{ 
+  background: #669999; 
+  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
+  text-decoration: none }
 
 TR.pair	        
 { 
