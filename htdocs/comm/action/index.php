@@ -113,7 +113,7 @@ if ( $db->query($sql) )
   print "<table class=\"noborder\" width=\"100%\">";
   print '<tr class="liste_titre">';
   print '<td colspan="4">'.$langs->trans("Date").'</td>';
-  print '<td>Avancement</td>';
+  print '<td>'.$langs->trans("Status").'</td>';
   print '<td>'.$langs->trans("Action").'</td>';
   print '<td>'.$langs->trans("Company").'</td>';
   print '<td>'.$langs->trans("Contact").'</td>';
@@ -163,15 +163,15 @@ if ( $db->query($sql) )
 
 	if ($obj->client == 1)
 	  {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socidp.'">'.$obj->societe.'</A></TD>';
+	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->societe.'</a></td>';
 	  }
 	elseif ($obj->client == 2)
 	  {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->socidp.'">'.$obj->societe.'</A></TD>';
+	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->socidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->societe.'</a></td>';
 	  }
 	else
 	  {
-	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socidp.'">'.$obj->societe.'</A></TD>';
+	    print '&nbsp;<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->societe.'</a></td>';
 	  }
 	/*
 	 * Contact
@@ -181,13 +181,14 @@ if ( $db->query($sql) )
 	  {
 	    $cont = new Contact($db);
 	    $cont->fetch($obj->fk_contact);
-	    print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$cont->id.'">'.$cont->fullname.'</a>';
+	    print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$cont->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$cont->fullname.'</a>';
 	  }
 	else
 	  {
 	    print "&nbsp;";
 	  }
 	print '</td>';
+
 	/*
 	 *
 	 */
