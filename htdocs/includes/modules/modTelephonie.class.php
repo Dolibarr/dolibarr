@@ -93,17 +93,20 @@ class modTelephonie extends DolibarrModules
     $this->rights[1][0] = 141; // id de la permission
     $this->rights[1][1] = 'Consulter la telephonie'; // libelle de la permission
     $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[1][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[1][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 142; // id de la permission
     $this->rights[2][1] = 'Commander les lignes'; // libelle de la permission
     $this->rights[2][2] = 'w'; // type de la permission (déprécié à ce jour)
     $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[2][4] = 'ligne_commander';
 
     $this->rights[3][0] = 143; // id de la permission
     $this->rights[3][1] = 'Activer une ligne'; // libelle de la permission
     $this->rights[3][2] = 'w'; // type de la permission (déprécié à ce jour)
     $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[3][4] = 'ligne_activer';
 
     $this->rights[4][0] = 144; // id de la permission
     $this->rights[4][1] = 'Configurer la telephonie'; // libelle de la permission

@@ -91,16 +91,19 @@ class modProjet extends DolibarrModules
     $this->rights[1][1] = 'Lire les projets'; // libelle de la permission
     $this->rights[1][2] = 'r'; // type de la permission (déprécié à ce jour)
     $this->rights[1][3] = 1; // La permission est-elle une permission par défaut
+    $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 42; // id de la permission
     $this->rights[2][1] = 'Créer modifier les projets'; // libelle de la permission
     $this->rights[2][2] = 'w'; // type de la permission (déprécié à ce jour)
     $this->rights[2][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[2][4] = 'creer';
 
     $this->rights[3][0] = 44; // id de la permission
     $this->rights[3][1] = 'Supprimer les projets'; // libelle de la permission
     $this->rights[3][2] = 'd'; // type de la permission (déprécié à ce jour)
     $this->rights[3][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[3][4] = 'supprimer';
     
     return $this->_init($sql);
   }

@@ -141,31 +141,37 @@ class modFacture extends DolibarrModules
     $this->rights[1][1] = 'Consulter les factures';
     $this->rights[1][2] = 'a';
     $this->rights[1][3] = 0;
+    $this->rights[1][4] = 'lire';
 
     $this->rights[2][0] = 12;
     $this->rights[2][1] = 'Créer/modifier les factures';
     $this->rights[2][2] = 'a';
     $this->rights[2][3] = 0;
+    $this->rights[2][4] = 'creer';
 
     $this->rights[3][0] = 14;
     $this->rights[3][1] = 'Valider les factures';
     $this->rights[3][2] = 'a';
     $this->rights[3][3] = 0;
+    $this->rights[3][4] = 'valider';
 
     $this->rights[4][0] = 15;
     $this->rights[4][1] = 'Envoyer les factures aux clients';
     $this->rights[4][2] = 'a';
     $this->rights[4][3] = 0;
+    $this->rights[4][4] = 'envoyer';
 
     $this->rights[5][0] = 16;
     $this->rights[5][1] = 'Emettre des paiements sur les factures';
     $this->rights[5][2] = 'a';
     $this->rights[5][3] = 0;
+    $this->rights[5][4] = 'paiement';
 
     $this->rights[6][0] = 19;
     $this->rights[6][1] = 'Supprimer les factures';
     $this->rights[6][2] = 'a';
     $this->rights[6][3] = 0;
+    $this->rights[6][4] = 'supprimer';
 
     // Dir
     $this->dirs[0] = $conf->facture->dir_output;
