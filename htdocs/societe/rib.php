@@ -100,34 +100,32 @@ $account->fetch();
 	  print "Le contrôle de la clé indique que les informations de votre compte bancaire sont incorrectes.";
 	}
 
-
-
       print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
       
       print '<tr><td valign="top">Banque</td>';
-      print '<td colspan="3">'.$account->bank.'</td></tr>';
+      print '<td colspan="4">'.$account->bank.'</td></tr>';
     
-      print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
-      print '<tr><td>'.$account->code_banque.'</td>';
-      print '<td>'.$account->code_guichet.'</td>';
-      print '<td>'.$account->number.'</td>';
-      print '<td>'.$account->cle_rib.'</td></tr>';
+      print '<tr><td>RIB</td><td align="center">Code Banque</td><td align="center">Code Guichet</td><td align="center">Numéro</td><td align="center">Clé RIB</td></tr>';
+      print '<tr><td>&nbsp;</td><td align="center">'.$account->code_banque.'</td>';
+      print '<td align="center">'.$account->code_guichet.'</td>';
+      print '<td align="center">'.$account->number.'</td>';
+      print '<td align="center">'.$account->cle_rib.'</td></tr>';
       
       print '<tr><td valign="top">Clé IBAN</td>';
-      print '<td colspan="3">'.$account->iban_prefix.'</td></tr>';
+      print '<td colspan="4">'.$account->iban_prefix.'</td></tr>';
       
       print '<tr><td valign="top">Identifiant BIC</td>';
-      print '<td colspan="3">'.$account->bic.'</td></tr>';
+      print '<td colspan="4">'.$account->bic.'</td></tr>';
       
-      print '<tr><td valign="top">Domiciliation</td><td colspan="3">';
+      print '<tr><td valign="top">Domiciliation</td><td colspan="4">';
       print $account->domiciliation;
       print "</td></tr>\n";
       
-      print '<tr><td valign="top">Nom propriétaire du compte</td><td colspan="3">';
+      print '<tr><td valign="top">Nom propriétaire du compte</td><td colspan="4">';
       print $account->proprio;
       print "</td></tr>\n";
     
-      print '<tr><td valign="top">Adresse propriétaire du compte</td><td colspan="3">';
+      print '<tr><td valign="top">Adresse propriétaire du compte</td><td colspan="4">';
       print $account->adresse_proprio;
       print "</td></tr>\n";
     
@@ -181,36 +179,33 @@ $account->fetch();
       print '<tr><td valign="top">Banque</td>';
       print '<td colspan="3"><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
       
-      print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
-      print '<td colspan="3"><input size="30" type="text" name="label" value="'.$account->label.'"></td></tr>';
-      
-      print '<tr><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
-      print '<tr><td><input size="8" type="text" name="code_banque" value="'.$account->code_banque.'"></td>';
+      print '<tr><td>RIB</td><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
+      print '<tr><td>&nbsp;</td><td><input size="8" type="text" name="code_banque" value="'.$account->code_banque.'"></td>';
       print '<td><input size="8" type="text" name="code_guichet" value="'.$account->code_guichet.'"></td>';
       print '<td><input size="15" type="text" name="number" value="'.$account->number.'"></td>';
       print '<td><input size="3" type="text" name="cle_rib" value="'.$account->cle_rib.'"></td></tr>';
       
       print '<tr><td valign="top">Clé IBAN</td>';
-      print '<td colspan="3"><input size="5" type="text" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
+      print '<td colspan="4"><input size="5" type="text" name="iban_prefix" value="'.$account->iban_prefix.'"></td></tr>';
       
       print '<tr><td valign="top">Identifiant BIC</td>';
-      print '<td colspan="3"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
+      print '<td colspan="4"><input size="12" type="text" name="bic" value="'.$account->bic.'"></td></tr>';
       
-      print '<tr><td valign="top">Domiciliation</td><td colspan="3">';
+      print '<tr><td valign="top">Domiciliation</td><td colspan="4">';
       print "<textarea name=\"domiciliation\" rows=\"4\" cols=\"40\">";
       print $account->domiciliation;
       print "</textarea></td></tr>";
       
       print '<tr><td valign="top">Nom propriétaire du compte</td>';
-      print '<td colspan="3"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
+      print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
       print "</td></tr>\n";
       
-      print '<tr><td valign="top">Adresse propriétaire du compte</td><td colspan="3">';
+      print '<tr><td valign="top">Adresse propriétaire du compte</td><td colspan="4">';
       print "<textarea name=\"adresse_proprio\" rows=\"4\" cols=\"40\">";
       print $account->adresse_proprio;
       print "</textarea></td></tr>";
       
-      print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("Modify").'" type="submit">';
+      print '<tr><td align="center" colspan="5"><input value="'.$langs->trans("Modify").'" type="submit">';
       print ' &nbsp; <input name="cancel" value="'.$langs->trans("Cancel").'" type="submit">';
       print '</td></tr>';
       print '</form>';
