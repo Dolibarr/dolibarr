@@ -58,6 +58,8 @@ class Commande {
 	$this->client_id   = stripslashes($array["customers_id"]);
 	$this->client_name = stripslashes($array["customers_name"]);
 	
+	$this->payment_method = stripslashes($array["payment_method"]);
+
 	$this->date = strftime("%d/%m/%Y %H:%M",$array["date_purchased"]);
 
 	$this->delivery_adr->name = stripslashes($array["delivery_name"]);
@@ -92,6 +94,10 @@ class Commande {
 		if ($array["class"] == 'ot_total')
 		  {
 		    $this->total_ot_total = $array["value"];
+		  }
+		if ($array["class"] == 'ot_shipping')
+		  {
+		    $this->total_ot_shipping = $array["value"];
 		  }
 		$i++;
 	      }
