@@ -19,13 +19,13 @@
 -- $Source$
 --
 -- ========================================================================
-
+--
 --
 ALTER TABLE llx_telephonie_facture ADD INDEX (fk_facture);
 ALTER TABLE llx_telephonie_facture ADD INDEX (fk_ligne);
-
 --
 --
 ALTER TABLE llx_telephonie_facture ADD FOREIGN KEY (fk_facture) REFERENCES llx_facture (rowid);
 
 ALTER TABLE llx_telephonie_facture ADD FOREIGN KEY (fk_ligne) REFERENCES llx_telephonie_societe_ligne (rowid);
+
