@@ -24,7 +24,7 @@ create table llx_notify_def
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   tms             timestamp,
-  datec           date,           -- date de paiement
+  datec           date,             -- date de creation
   fk_action       integer NOT NULL,
   fk_soc          integer NOT NULL,
   fk_contact      integer NOT NULL
