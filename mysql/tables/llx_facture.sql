@@ -42,5 +42,6 @@ create table llx_facture
   date_lim_reglement date,      -- date limite de reglement
   note               text,
 
-  UNIQUE INDEX (facnumber)
+  UNIQUE INDEX (facnumber),
+  INDEX fksoc (fk_soc)
 );

@@ -51,3 +51,4 @@ create table llx_societe
 
   UNIQUE INDEX(prefix_comm)
 );
+
