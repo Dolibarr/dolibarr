@@ -28,20 +28,21 @@
 	  <tr id="projet">
 
 	  </tr>
-
-	  <tr id="public">
-	    <select name="public">
-	      <option value="1">oui</option>
-	      <option value="0">non</option>
-	    </select>
-	  </tr>
 	  
+	  <tr id="prenom">
+	    <input type="text" name="prenom" size="30" />
+	  </tr>
+
 	  <tr id="nom">
 	    <input type="text" name="nom" size="40" />
 	  </tr>
 	  
+	  <tr id="societe">
+	    <input type="text" name="societe" size="40" />
+	  </tr>
+
 	  <tr id="adresse">
-	    <input type="text" name="adresse" size="40" />	    
+	    <textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea>
 	  </tr>
 
 	  <tr id="cp">
@@ -49,24 +50,35 @@
 	  </tr>
 
 	  <tr id="ville">
-	    <input type="text" name="ville" size="40" />
+	    <input type="text" name="ville" size="30" />
+	  </tr>
+
+	  <tr id="pays">
+	    <input type="text" name="pays" size="25" value="France"/>
 	  </tr>
 
 	  <tr id="email">
-	      <input type="text" name="email" size="40" />
+	      <input type="text" name="email" size="50" />
 	  </tr>
 
 	  <tr id="montant">
 	    <input type="text" name="montant" size="10" />
 	  </tr>
 
+	  <tr id="public">
+	    <select name="public">
+	      <option value="1">oui/yes</option>
+	      <option value="0">non/no</option>
+	    </select>
+	  </tr>
+
 	  <tr id="commentaire">
-	      <textarea name="commentaire" wrap="soft" cols="40" rows="6"></textarea>
+	    <textarea name="commentaire" wrap="soft" cols="40" rows="6"></textarea>
 	  </tr>
 
 	  <tr>
-	    <td colspan="2" align="center" class="titre">
-	      <input type="submit" value="Enregistrer" />
+	    <td colspan="3" align="center" class="titre">
+	      <input type="submit" value="Enregistrer / Submit" />
 	    </td>
 	  </tr>
 	</table>

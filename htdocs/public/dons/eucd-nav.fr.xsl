@@ -5,13 +5,15 @@
   <!-- Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> -->
   <!-- $Id$ -->
 
-  <xsl:template match="/html[@lang='fr']/body/div[@class='main']/form/table[@id='formulaire']">
+  <xsl:template match="table[@id='formulaire']">
     <table cellpadding="4" cellspacing="0">
       <xsl:apply-templates select="@*|node()"/>
     </table>
     <p>
       La FSF France s'engage à n'utliser vos informations personnelles
-      qu'exclusivement pour le traitement de votre don.
+      qu'exclusivement pour le traitement de votre don. Vous ne
+      receverez aucun email de la la part de la FSF France autre que
+      pour la gestion de votre don.
     </p>
 
 
@@ -166,7 +168,7 @@
     </tr>
   </xsl:template>
 
-  <xsl:template match="/html[@lang='fr']/body/div[@class='main']/form/table/tr[@id='montant']">
+  <xsl:template match="table/tr[@id='montant']">
     <tr>
       <td class="titre">
 	Montant
@@ -188,8 +190,7 @@
       <td class="valeur">
 	<xsl:apply-templates select="@*|node()"/>
 	<div class="commentaire">
-	  Acceptez-vous vos noms
-	  et prénoms soient affichés dans la liste des <a href="donateurs.php">donateurs</a> ?<br />
+	  Acceptez-vous vos noms et prénoms ou le nom de votre société soient affichés dans la liste des <a href="donateurs.php">donateurs</a> ?<br />
 	  Do you allow us to list your name, firstaname or company name on the donations list ?
 	</div>
       </td>

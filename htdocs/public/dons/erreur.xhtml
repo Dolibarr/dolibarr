@@ -42,20 +42,28 @@
 	  <tr id="projet">
 
 	  </tr>
-
-	  <tr id="public">
-
-	  </tr>
 	  
+	  <tr id="prenom">
+	    <script language="php">
+	      print $don->prenom;
+	    </script>
+	  </tr>
+
 	  <tr id="nom">
 	    <script language="php">
 	      print $don->nom;
 	    </script>
 	  </tr>
 	  
+	  <tr id="societe">
+	    <script language="php">
+	      print $don->societe;
+	    </script>
+	  </tr>
+	  
 	  <tr id="adresse">
 	    <script language="php">
-	      print "$don->adresse";
+	      print nl2br(stripslashes($don->adresse));
 	    </script>
 	  </tr>
 	  
@@ -71,6 +79,12 @@
 	    </script>
 	  </tr>
 	  
+	  <tr id="pays">
+	    <script language="php">
+	      print $don->pays;
+	    </script>
+	  </tr>
+
 	  <tr id="email">
 	    <script language="php">
 	      print $don->email;
@@ -79,9 +93,23 @@
 	  
 	  <tr id="montant">
 	    <script language="php">
-	      print number_format($don->amount, 2, '.', ' ');
+	      print $don->amount;
 	    </script>
-	  </tr>	  	  
+	  </tr>
+	  	  
+	  <tr id="public">
+	    <script language="php">
+	      $yn[0]="non/no";
+	      $yn[1]="oui/yes";
+	      print $yn[$don->public];
+	    </script>
+	  </tr>
+
+	  <tr id="commentaire">
+	    <script language="php">
+	      print nl2br(stripslashes($don->commentaire));
+	    </script>	    
+	  </tr>
 
 	</table>
 

@@ -24,13 +24,16 @@ class Don
 {
   var $id;
   var $db;
+  var $date;
   var $amount;
+  var $prenom;
   var $nom;
+  var $societe;
   var $adresse;
   var $cp;
   var $ville;
-  var $date;
   var $pays;
+  var $email;
   var $public;
   var $projetid;
   var $modepaiement;
@@ -71,10 +74,14 @@ class Don
   Function check() 
     {
       $err = 0;
-      if (strlen(trim($this->nom)) == 0)
+
+      if (strlen(trim($this->societe)) == 0)
 	{
-	  $error_string[$err] = "Le nom saisi est invalide";
-	  $err++;
+	  if ((strlen(trim($this->nom)) + strlen(trim($this->prenom))) == 0)
+	    {
+	      $error_string[$err] = "Vous devez saisir vos nom et prénom ou le nom de votre société.";
+	      $err++;
+	    }
 	}
 
       if (strlen(trim($this->adresse)) == 0)
@@ -95,12 +102,30 @@ class Don
 	  $err++;
 	}
 
-      if ($this->amount == 0)
+      if (strlen(trim($this->email)) == 0)
 	{
-	  $error_string[$err] = "Le montant du don est invalide";
+	  $error_string[$err] = "L'email saisi est invalide";
 	  $err++;
 	}
 
+      $this->amount = trim($this->amount);
+
+      $map = range(0,9);
+      for ($i = 0; $i < strlen($this->amount) ; $i++)
+	{
+	  if (!isset($map[substr($this->amount, $i, 1)] ))
+	    {
+	      $error_string[$err] = "Le montant du don contient un/des caractère(s) invalide(s)";
+	      $err++;
+	      break;
+	    } 	      
+	}
+
+      if ($this->amount == 0)
+	{
+	  $error_string[$err] = "Le montant du don est null";
+	  $err++;
+	}
 
       if ($err)
 	{
@@ -126,8 +151,8 @@ class Don
 
       $this->date = $this->db->idate($this->date);
 
-      $sql = "INSERT INTO llx_don (datec, amount, fk_paiement, nom, adresse, cp, ville, pays, public, fk_don_projet, note, fk_user_author, datedon)";
-      $sql .= " VALUES (now(), $this->amount, $this->modepaiementid,'$this->nom','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, $this->projetid, '$this->commentaire', $userid, '$this->date')";
+      $sql = "INSERT INTO llx_don (datec, amount, fk_paiement,prenom, nom, societe,adresse, cp, ville, pays, public, fk_don_projet, note, fk_user_author, datedon, email)";
+      $sql .= " VALUES (now(), $this->amount, $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, $this->projetid, '$this->commentaire', $userid, '$this->date','$this->email')";
       
       $result = $this->db->query($sql);
       
@@ -177,7 +202,7 @@ class Don
    */
   Function fetch($rowid)
   {
-    $sql = "SELECT d.rowid, ".$this->db->pdate("d.datedon")." as datedon, d.nom, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.public, d.amount, d.fk_paiement, d.note, cp.libelle";
+    $sql = "SELECT d.rowid, ".$this->db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email";
     $sql .= " FROM llx_don as d, llx_don_projet as p, c_paiement as cp";
     $sql .= " WHERE p.rowid = d.fk_don_projet AND cp.id = d.fk_paiement AND d.rowid = $rowid";
 
@@ -189,11 +214,15 @@ class Don
 	    $obj = $this->db->fetch_object(0);
 
 	    $this->date           = $obj->datedon;
+	    $this->prenom         = stripslashes($obj->prenom);
 	    $this->nom            = stripslashes($obj->nom);
+	    $this->societe        = stripslashes($obj->societe);
 	    $this->statut         = $obj->fk_statut;
 	    $this->adresse        = stripslashes($obj->adresse);
 	    $this->cp             = stripslashes($obj->cp);
 	    $this->ville          = stripslashes($obj->ville);
+	    $this->email          = stripslashes($obj->email);
+	    $this->pays           = stripslashes($obj->pays);
 	    $this->projet         = $obj->projet;
 	    $this->public         = $obj->public;
 	    $this->modepaiementid = $obj->fk_paiement;

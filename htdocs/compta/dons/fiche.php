@@ -33,13 +33,17 @@ if ($action == 'add')
 
       $don = new Don($db);
       
+      $don->prenom     = $prenom;
       $don->nom        = $nom;  
+      $don->societe    = $societe;
       $don->adresse    = $adresse;
       $don->amount     = $amount;
       $don->cp         = $cp;
       $don->ville      = $ville;
+      $don->email      = $email;
       $don->date       = mktime(12, 0 , 0, $remonth, $reday, $reyear);
       $don->note       = $note;
+      $don->pays       = $pays;
       $don->public     = $public;
       $don->projetid   = $projetid;
       $don->modepaiementid = $modepaiement;
@@ -121,13 +125,8 @@ if ($action == 'create') {
   print_date_select();
   print "</td>";
   
-  print '<td rowspan="9" valign="top">Commentaires :<br>';
+  print '<td rowspan="11" valign="top">Commentaires :<br>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
-
-  $author = $GLOBALS["REMOTE_USER"];
-  print "<input type=\"hidden\" name=\"author\" value=\"$author\">\n";
-  
-
   print "<tr><td>Type :</td><td>\n";
   
   $paiement = new Paiement($db);
@@ -140,7 +139,6 @@ if ($action == 'create') {
   
   $sql = "SELECT rowid, libelle FROM llx_don_projet ORDER BY rowid";
   
-
   if ($db->query($sql))
     {
       $num = $db->num_rows();
@@ -167,14 +165,15 @@ if ($action == 'create') {
   print "</select><br>";
   print "</td></tr>\n";
 
-
-  
+  print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td></tr>';
   print '<tr><td>Nom</td><td><input type="text" name="nom" size="40"></td></tr>';
-  print '<tr><td>Adresse</td><td><input type="text" name="adresse" size="40"></td></tr>';
+  print '<tr><td>Societe</td><td><input type="text" name="societe" size="40"></td></tr>';
+  print '<tr><td>Adresse</td><td>';
+  print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
   print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
-
+  print '<tr><td>Pays</td><td><input type="text" name="pays" size="40"></td></tr>';
+  print '<tr><td>Email</td><td><input type="text" name="email" size="40"></td></tr>';
   print '<tr><td>Montant</td><td><input type="text" name="amount" size="10"> euros</td></tr>';
-
   print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
   print "</form>\n";
   print "</table>\n";
@@ -201,12 +200,9 @@ if ($rowid > 0 && $action == 'edit')
   print strftime("%d %B %Y",$don->date);
   print "</td>";
   
-  print '<td rowspan="9" valign="top" width="50%">Commentaires :<br>';
+  print '<td rowspan="11" valign="top" width="50%">Commentaires :<br>';
   print nl2br($don->commentaire).'</td></tr>';
 
-  $author = $GLOBALS["REMOTE_USER"];
-  print "<input type=\"hidden\" name=\"author\" value=\"$author\">\n";
-  
   if ($don->statut == 1)
     {
       print "<tr><td>Type :</td><td>";
@@ -230,11 +226,13 @@ if ($rowid > 0 && $action == 'edit')
   print "</td></tr>\n";
 
 
-  
+  print '<tr><td>Prénom</td><td>'.$don->prenom.'&nbsp;</td></tr>';
   print '<tr><td>Nom</td><td>'.$don->nom.'&nbsp;</td></tr>';
-  print '<tr><td>Adresse</td><td>'.$don->adresse.'&nbsp;</td></tr>';
+  print '<tr><td>Société</td><td>'.$don->societe.'&nbsp;</td></tr>';
+  print '<tr><td>Adresse</td><td>'.nl2br($don->adresse).'&nbsp;</td></tr>';
   print '<tr><td>CP Ville</td><td>'.$don->cp.' '.$don->ville.'&nbsp;</td></tr>';
-
+  print '<tr><td>Pays</td><td>'.$don->pays.'&nbsp;</td></tr>';
+  print '<tr><td>Email</td><td>'.$don->email.'&nbsp;</td></tr>';
   print '<tr><td>Montant</td><td>'.price($don->amount).' euros</td></tr>';
 
   print "</table>\n";

@@ -29,23 +29,26 @@ $conf = new Conf();
 if ($conf->don->enabled)
 {
 
+  $db = new Db();
+  $don = new Don($db);
+      
+  $don->projetid    = $HTTP_POST_VARS["projetid"];
+  $don->date        = time();
+  $don->prenom      = $HTTP_POST_VARS["prenom"];
+  $don->nom         = $HTTP_POST_VARS["nom"];
+  $don->societe     = $HTTP_POST_VARS["societe"];
+  $don->adresse     = $HTTP_POST_VARS["adresse"];
+  $don->cp          = $HTTP_POST_VARS["cp"];
+  $don->ville       = $HTTP_POST_VARS["ville"];
+  $don->pays        = $HTTP_POST_VARS["pays"];
+  $don->public      = $HTTP_POST_VARS["public"];
+  $don->email       = $HTTP_POST_VARS["email"];
+  $don->amount      = $HTTP_POST_VARS["montant"];
+  $don->commentaire = $HTTP_POST_VARS["commentaire"];
+  
+
   if ($HTTP_POST_VARS["action"] == 'add')
     {
-
-      $db = new Db();
-      $don = new Don($db);
-      
-      $don->projetid    = $HTTP_POST_VARS["projetid"];
-      $don->date        = time();
-      $don->nom         = $HTTP_POST_VARS["nom"];
-      $don->adresse     = $HTTP_POST_VARS["adresse"];
-      $don->cp          = $HTTP_POST_VARS["cp"];
-      $don->ville       = $HTTP_POST_VARS["ville"];
-      $don->public      = $HTTP_POST_VARS["public"];
-      $don->email       = $HTTP_POST_VARS["email"];
-      $don->amount      = $HTTP_POST_VARS["montant"];
-      $don->commentaire = $HTTP_POST_VARS["commentaire"];
-      
       
       if ($don->check())
 	{
@@ -58,20 +61,6 @@ if ($conf->don->enabled)
     }
   elseif ($HTTP_POST_VARS["action"] == 'valid')
     {
-
-      $db = new Db();
-      $don = new Don($db);
-  
-      $don->projetid = $HTTP_POST_VARS["projetid"];
-      $don->date     = time();
-      $don->nom      = $HTTP_POST_VARS["nom"];
-      $don->adresse  = $HTTP_POST_VARS["adresse"];
-      $don->cp       = $HTTP_POST_VARS["cp"];
-      $don->ville    = $HTTP_POST_VARS["ville"];
-      $don->public   = $HTTP_POST_VARS["public"];
-      $don->email    = $HTTP_POST_VARS["email"];
-      $don->amount   = $HTTP_POST_VARS["montant"];
-      $don->commentaire = $HTTP_POST_VARS["commentaire"];      
       
       if ($don->check())
 	{

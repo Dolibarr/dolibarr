@@ -55,7 +55,7 @@ $pageprev = $page - 1;
 $pagenext = $page + 1;
 
 
-$sql = "SELECT d.rowid, ".$db->pdate("d.datedon")." as datedon, d.nom, d.amount, p.libelle as projet";
+$sql = "SELECT d.rowid, ".$db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet";
 $sql .= " FROM llx_don as d, llx_don_projet as p";
 $sql .= " WHERE p.rowid = d.fk_don_projet AND d.fk_statut = $statut";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
@@ -70,7 +70,7 @@ if ($result)
   print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
   print '<TR class="liste_titre">';
-  print "<td>Nom</td>";
+  print "<td>Prenom Nom / Société</td>";
   print "<td>Date</td>";
   print "<td>Projet</td>";
   print "<td align=\"right\">Montant</TD>";
@@ -83,7 +83,7 @@ if ($result)
       $objp = $db->fetch_object( $i);
       $var=!$var;
       print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->nom)."</a></TD>\n";
+      print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></TD>\n";
       print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->datedon)."</a></td>\n";
       print "<TD>$objp->projet</TD>\n";
       print '<TD align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';
