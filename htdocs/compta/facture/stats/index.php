@@ -30,6 +30,10 @@
 
 require("./pre.inc.php");
 
+$WIDTH=500;
+$HEIGHT=250;
+
+
 /*
  * Sécurité accés client
  */
@@ -49,16 +53,16 @@ $data = $stats->getNbByMonthWithPrevYear($year);
 
 if (! is_dir($conf->facture->dir_images)) { mkdir($conf->facture->dir_images); }
 
-$filename = $conf->facture->dir_images."/nbfacture2year-$year.png";
-$fileurl = $conf->facture->url_images."/nbfacture2year-$year.png";
+$filename = $conf->facture->dir_images."/nbfacture2year-".$year.".png";
+$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=nbfacture2year-'.$year.'.png';
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
 if (! $mesg) {
     $px->SetMaxValue($px->GetMaxValue());
     $px->SetLegend(array($year - 1, $year));
-    $px->SetWidth(450);
-    $px->SetHeight(280);
+    $px->SetWidth($WIDTH);
+    $px->SetHeight($HEIGHT);
     $px->draw($filename, $data, $year);
 }
       
@@ -75,7 +79,6 @@ if ($db->query($sql))
   print '<table class="border" width="100%">';
   print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%" align="center">'.$langs->trans("NumberOfBills").'</td><td align="center">'.$langs->trans("AmountTotal").'</td>';
   print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-  print $langs->trans("NumberOfBillsByMonth").'<br>';
   if ($mesg) { print $mesg; }
   else { print '<img src="'.$fileurl.'" alt="Nombre de factures par mois">'; }
   print '</td></tr>';

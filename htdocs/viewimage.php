@@ -22,6 +22,11 @@
  *
  */
 
+/**     \file       htdocs/viewimage.php
+		\brief      Wrapper permettant l'affichage de fichiers images Dolibarr
+        \remarks    L'appel est viewimage.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
+		\version    $Revision$
+*/
 
 require_once("main.inc.php");
 
@@ -63,6 +68,61 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->facture->dir_output.'/'.$original_file;
+    }
+
+    // Wrapping pour les images des stats propales
+    if ($modulepart == 'propalstats')
+    {
+        $user->getrights('propale');
+        if ($user->rights->propale->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->propal->dir_images.'/'.$original_file;
+    }
+
+    // Wrapping pour les images des stats commandes
+    if ($modulepart == 'orderstats')
+    {
+        $user->getrights('commande');
+        if ($user->rights->commande->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->commande->dir_images.'/'.$original_file;
+    }
+
+    // Wrapping pour les images des stats commandes
+    if ($modulepart == 'billstats')
+    {
+        $user->getrights('facture');
+        if ($user->rights->facture->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->facture->dir_images.'/'.$original_file;
+    }
+
+    // Wrapping pour les images des stats expeditions
+    if ($modulepart == 'expeditionstats')
+    {
+        $user->getrights('expedition');
+        if ($user->rights->expedition->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->expedition->dir_images.'/'.$original_file;
+    }
+
+    // Wrapping pour les images des stats produits
+    if ($modulepart == 'productstats')
+    {
+        $user->getrights('produit');
+        if ($user->rights->produit->lire)
+        {
+            $accessallowed=1;
+        }
+        $original_file=$conf->produit->dir_images.'/'.$original_file;
     }
 }
 

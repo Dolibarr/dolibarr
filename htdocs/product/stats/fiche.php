@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/product/stats/fiche.php
         \ingroup    product
 		\brief      Page des stats produits
@@ -174,12 +174,14 @@ if ($_GET["id"])
       print '<br><table class="border" width="100%">';
       print '<tr class="liste_titre"><td width="50%" colspan="2" align="center">Nombre de ventes<br>sur les 12 derniers mois</td>';
       print '<td align="center" width="50%" colspan="2">Nombre de pièces vendues</td></tr>';
-      print '<tr><td align="center" colspan="2">';
 
-      print '<img src="'.$conf->produit->url_images."/".$product->id.'/vente12mois.png" alt="Ventes sur les 12 derniers mois">';
+      print '<tr><td align="center" colspan="2">';
+      $file=$product->id.'/vente12mois.png';
+      print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&file='.urlencode($file).'" alt="Ventes sur les 12 derniers mois">';
       
       print '</td><td align="center" colspan="2">';
-      print '<img src="'.$conf->produit->url_images."/".$product->id.'/vendu12mois.png" alt="Ventes sur les 12 derniers mois">';
+      $file=$product->id.'/vendu12mois.png';
+      print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&file='.urlencode($file).'" alt="Nombre de pièces vendues sur les 12 derniers mois">';
       
       print '</td></tr><tr>';
       if (file_exists($filenbvente) && filemtime($filenbvente))
@@ -204,13 +206,13 @@ if ($_GET["id"])
       
       print '<tr class="liste_titre"><td width="50%" colspan="2" align="center">Nombre de propositions commerciales<br>sur les 12 derniers mois</td>';
       print '<td align="center" width="50%" colspan="2">-</td></tr>';
-      print '<tr><td align="center" colspan="2">';
 
-      print '<img src="'.$conf->produit->url_images."/".$product->id.'/'.$img_propal_name.'" alt="Propales sur les 12 derniers mois">';
+      print '<tr><td align="center" colspan="2">';
+      $file=$product->id.'/'.$img_propal_name;
+      print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=productstats&file='.urlencode($file).'" alt="Nombre de propales sur les 12 derniers mois">';
       
       print '</td><td align="center" colspan="2">TODO AUTRE GRAPHIQUE';
-
-      
+     
       print '</td></tr><tr>';
       if (file_exists($filenbpropal) && filemtime($filenbpropal))
 	{

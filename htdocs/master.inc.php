@@ -195,25 +195,22 @@ if (defined("MAIN_MODULE_EXTERNALRSS"))
 if (defined("MAIN_MODULE_COMMANDE"))
 {
   $conf->commande->enabled=MAIN_MODULE_COMMANDE;
-  $conf->commande->dir_images=DOL_DOCUMENT_ROOT."/images/commande";
-  $conf->commande->url_images=DOL_URL_ROOT."/images/commande";
 }
 $conf->commande->dir_output=DOL_DATA_ROOT."/commande";
+$conf->commande->dir_images=DOL_DATA_ROOT."/commande/images";
 if (defined("MAIN_MODULE_EXPEDITION"))
 {
   $conf->expedition->enabled=MAIN_MODULE_EXPEDITION;
-  $conf->expedition->dir_images=DOL_DOCUMENT_ROOT."/images/expedition";
-  $conf->expedition->url_images=DOL_URL_ROOT."/images/expedition";
 }
 $conf->expedition->dir_output=DOL_DATA_ROOT."/expedition";
+$conf->expedition->dir_images=DOL_DATA_ROOT."/expedition/images";
 if (defined("MAIN_MODULE_SOCIETE"))
 {
   $conf->societe->enabled=MAIN_MODULE_SOCIETE; 
-  $conf->societe->dir_images=DOL_DOCUMENT_ROOT."/images/societe";
-  $conf->societe->url_images=DOL_URL_ROOT."/images/societe";
   require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
 }
 $conf->societe->dir_output=DOL_DATA_ROOT."/societe";
+$conf->societe->dir_images=DOL_DATA_ROOT."/societe/images";
 if (defined(SOCIETE_OUTPUTDIR) && SOCIETE_OUTPUTDIR) { $conf->societe->dir_output=SOCIETE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
 if (defined("MAIN_MODULE_COMMERCIAL"))
 {
@@ -223,10 +220,9 @@ $conf->commercial->dir_output=DOL_DATA_ROOT."/rapport";
 if (defined("MAIN_MODULE_COMPTABILITE"))
 {
   $conf->compta->enabled=MAIN_MODULE_COMPTABILITE;
-  $conf->compta->dir_images=DOL_DOCUMENT_ROOT."/images/rapport";
-  $conf->compta->url_images=DOL_URL_ROOT."/images/rapport";
 }
 $conf->compta->dir_output=DOL_DATA_ROOT."/compta";
+$conf->compta->dir_images=DOL_DATA_ROOT."/compta/images";
 if (defined("MAIN_MODULE_BANQUE"))
 {
   $conf->banque->enabled=MAIN_MODULE_BANQUE;
@@ -246,11 +242,10 @@ if (defined("MAIN_MODULE_FOURNISSEUR"))
 if (defined("MAIN_MODULE_FICHEINTER"))
 {
   $conf->fichinter->enabled=MAIN_MODULE_FICHEINTER;
-  $conf->fichinter->dir_images=DOL_DOCUMENT_ROOT."/images/ficheinter";
-  $conf->fichinter->url_images=DOL_URL_ROOT."/images/ficheinter";
   require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 }
 $conf->fichinter->dir_output=DOL_DATA_ROOT."/ficheinter";
+$conf->fichinter->dir_images=DOL_DATA_ROOT."/ficheinter/images";
 if (defined(FICHEINTER_OUTPUTDIR) && FICHEINTER_OUTPUTDIR) { $conf->fichinter->dir_output=FICHEINTER_OUTPUTDIR; }    # Pour passer outre le rep par défaut
 if (defined("MAIN_MODULE_ADHERENT"))
 {
@@ -260,19 +255,17 @@ $conf->adherent->dir_output=DOL_DATA_ROOT."/adherent";
 if (defined("MAIN_MODULE_PRODUIT"))
 {
   $conf->produit->enabled=MAIN_MODULE_PRODUIT;
-  $conf->produit->dir_images=DOL_DOCUMENT_ROOT."/images/produit";
-  $conf->produit->url_images=DOL_URL_ROOT."/images/produit";
   require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 }
 $conf->produit->dir_output=DOL_DATA_ROOT."/produit";
+$conf->produit->dir_images=DOL_DATA_ROOT."/produit/images";
 if (defined("MAIN_MODULE_SERVICE"))
 {
   $conf->service->enabled=MAIN_MODULE_SERVICE;
-  $conf->service->dir_images=DOL_DOCUMENT_ROOT."/images/produit";
-  $conf->service->url_images=DOL_URL_ROOT."/images/produit";
   require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 }
 $conf->service->dir_output=DOL_DATA_ROOT."/produit";
+$conf->service->dir_images=DOL_DATA_ROOT."/produit/images";
 if (defined("MAIN_MODULE_STOCK"))
 {
   $conf->stock->enabled=MAIN_MODULE_STOCK;
@@ -308,17 +301,15 @@ if (defined("MAIN_MODULE_CLICKTODIAL"))
 if (defined("MAIN_MODULE_TELEPHONIE"))
 {
   $conf->telephonie->enabled=MAIN_MODULE_TELEPHONIE;
-  $conf->telephonie->dir_images=DOL_DOCUMENT_ROOT."/images/telephonie";
-  $conf->telephonie->url_images=DOL_URL_ROOT."/images/telephonie";
 }
 $conf->telephonie->dir_output=DOL_DATA_ROOT."/telephonie";
+$conf->telephonie->dir_images=DOL_DATA_ROOT."/telephonie/images";
 if (defined("MAIN_MODULE_PRELEVEMENT"))
 {
   $conf->prelevement->enabled=MAIN_MODULE_PRELEVEMENT;
-  $conf->prelevement->dir_images=DOL_DOCUMENT_ROOT."/images/prelevement";
-  $conf->prelevement->url_images=DOL_URL_ROOT."/images/prelevement";
 }
 $conf->prelevement->dir_output=DOL_DATA_ROOT."/prelevement";
+$conf->prelevement->dir_images=DOL_DATA_ROOT."/prelevement/images";
 if (defined("MAIN_MODULE_WEBCALENDAR"))
 {
   $conf->webcal->enabled=MAIN_MODULE_WEBCALENDAR;
@@ -332,17 +323,14 @@ if (defined("MAIN_MODULE_WEBCALENDAR"))
 if (defined("MAIN_MODULE_FACTURE"))
 {
   $conf->facture->enabled=MAIN_MODULE_FACTURE;
-  $conf->facture->dir_images=DOL_DOCUMENT_ROOT."/images/facture";
-  $conf->facture->url_images=DOL_URL_ROOT."/images/facture";
   require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 }
 $conf->facture->dir_output=DOL_DATA_ROOT."/facture";
+$conf->facture->dir_images=DOL_DATA_ROOT."/facture/images";
 if (defined(FAC_OUTPUTDIR) && FAC_OUTPUTDIR) { $conf->facture->dir_output=FAC_OUTPUTDIR; }                # Pour passer outre le rep par défaut
 if (defined("MAIN_MODULE_PROPALE"))
 {
   $conf->propal->enabled=MAIN_MODULE_PROPALE;
-  $conf->propal->dir_images=DOL_DOCUMENT_ROOT."/images/propale";
-  $conf->propal->url_images=DOL_URL_ROOT."/images/propale";
   require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
   if (!defined("PROPALE_NEW_FORM_NB_PRODUCT"))
     {
@@ -350,6 +338,7 @@ if (defined("MAIN_MODULE_PROPALE"))
     }
 }
 $conf->propal->dir_output=DOL_DATA_ROOT."/propale";
+$conf->propal->dir_images=DOL_DATA_ROOT."/propale/images";
 if (defined(PROPALE_OUTPUTDIR) && PROPALE_OUTPUTDIR) { $conf->propal->dir_output=PROPALE_OUTPUTDIR; }    # Pour passer outre le rep par défaut
 
 

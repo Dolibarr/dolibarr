@@ -33,7 +33,7 @@ require("./propalestats.class.php");
 
 llxHeader();
 
-print_fiche_titre('Statistiques propositions commerciales', $mesg);
+print_fiche_titre($langs->trans("ProposalsStatistics"), $mesg);
 
 $stats = new PropaleStats($db);
 $year = strftime("%Y", time());
@@ -42,7 +42,7 @@ $data = $stats->getNbByMonthWithPrevYear($year);
 if (! is_dir($conf->propal->dir_images)) { mkdir($conf->propal->dir_images); }
 
 $filename = $conf->propal->dir_images."/nbpropale2year-$year.png";
-$fileurl = $conf->propal->url_images."/nbpropale2year-$year.png";
+$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=nbpropale2year-'.$year.'.png';
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
@@ -60,9 +60,8 @@ if ($db->query($sql))
   $num = $db->num_rows();
 
   print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-  print '<tr><td align="center">Année</td><td width="10%">Nb de proposition</td><td align="center">Somme des propositions</td>';
+  print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%" align="center">'.$langs->trans("NbOfProposals").'</td><td align="center">'.$langs->trans("AmountTotal").'</td>';
   print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-  print 'Nombre de proposition par mois<br>';
   if ($mesg) { print "$mesg"; }
   else { print '<img src="'.$fileurl.'" alt="Nombre de proposition par mois">'; }
   print '</td></tr>';

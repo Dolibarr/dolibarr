@@ -39,27 +39,30 @@ $mesg = '<a href="month.php?year='.($year - 1).'">'.img_previous().'</a> ';
 $mesg.= $langs->trans("Year")." $year";
 $mesg.= ' <a href="month.php?year='.($year + 1).'">'.img_next().'</a>';
 
+$WIDTH=500;
+$HEIGHT=250;
+
 /*
  *
  *
  */
 
-print_fiche_titre('Statistiques des propositions commerciales', $mesg);
+print_fiche_titre($langs->trans("ProposalsStatistics"), $mesg);
 
 $stats = new PropaleStats($db);
 $data = $stats->getNbByMonth($year);
 
 if (! is_dir($conf->propal->dir_images)) { mkdir($conf->propal->dir_images); }
 
-$filename = $conf->propal->dir_images."/propale$year.png";
-$fileurl = $conf->propal->url_images."/propale$year.png";
+$filename = $conf->propal->dir_images."/propale".$year.".png";
+$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propale'.$year.'.png';
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
 if (! $mesg) {
     $px->SetMaxValue($px->GetMaxValue());
-    $px->SetWidth(500);
-    $px->SetHeight(280);
+    $px->SetWidth($WIDTH);
+    $px->SetHeight($HEIGHT);
     $px->draw($filename, $data, $year);
 }
 
@@ -72,16 +75,16 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
 
-$filename_amount = $conf->propal->dir_images."/propaleamount$year.png";
-$fileurl_amount = $conf->propal->url_images."/propaleamount$year.png";
+$filename_amount = $conf->propal->dir_images."/propaleamount".$year.".png";
+$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleamount'.$year.'.png';
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
 if (! $mesg) {
     $px->SetYLabel($langs->trans("AmountTotal"));
     $px->SetMaxValue($px->GetAmountMaxValue());
-    $px->SetWidth(500);
-    $px->SetHeight(250);
+    $px->SetWidth($WIDTH);
+    $px->SetHeight($HEIGHT);
     $px->draw($filename_amount, $data, $year);
 }
 $res = $stats->getAverageByMonth($year);
@@ -92,22 +95,21 @@ for ($i = 1 ; $i < 13 ; $i++)
 {
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
-
-$filename_avg = $conf->propal->dir_images."/propalaverage$year.png";
-$fileurl_avg = $conf->propal->url_images."/propalaverage$year.png";
+$filename_avg = $conf->propal->dir_images."/propaleaverage".$year.".png";
+$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=propalstats&file=propaleaverage'.$year.'.png';
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
 if (! $mesg) {
     $px->SetYLabel($langs->trans("AmountAverage"));
     $px->SetMaxValue($px->GetAmountMaxValue());
-    $px->SetWidth(500);
-    $px->SetHeight(250);
+    $px->SetWidth($WIDTH);
+    $px->SetHeight($HEIGHT);
     $px->draw($filename_avg, $data, $year);
 }
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-print '<tr><td align="center">Nombre par mois</td>';
+print '<table class="border" width="100%">';
+print '<tr><td align="center">'.$langs->trans("NumberOfProposalsByMonth").'</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
 else { print '<img src="'.$fileurl.'">'; }

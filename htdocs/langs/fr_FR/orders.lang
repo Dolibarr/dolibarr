@@ -16,3 +16,6 @@ ApproveOrder=Accepter la commande
 AddOrder=Créer commande
 LastOrders=Les %s dernieres commandes
 AllOrders=Toutes les commandes
+NbOfOrders=Nombre de commandes
+OrdersStatistics=Statistiques des commandes
+NumberOfOrdersByMonth=Nombre de commandes par mois

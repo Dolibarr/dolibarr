@@ -47,7 +47,7 @@ llxHeader();
  *
  */
 
-print_fiche_titre('Statistiques commandes', $mesg);
+print_fiche_titre($langs->trans("OrdersStatistics"), $mesg);
 
 $stats = new CommandeStats($db, $socidp);
 
@@ -56,8 +56,8 @@ $data = $stats->getNbCommandeByMonthWithPrevYear($year);
 
 if (! is_dir($conf->commande->dir_images)) { mkdir($conf->commande->dir_images); }
 
-$filename = $conf->commande->dir_images."/nbcommande2year-$year.png";
-$fileurl = $conf->commande->url_images."/nbcommande2year-$year.png";
+$filename = $conf->commande->dir_images."/nbcommande2year-".$year.".png";
+$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=nbcommande2year-'.$year.'.png';
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
@@ -71,10 +71,9 @@ if (! $mesg) {
 $rows = $stats->getNbByYear();
 $num = sizeof($rows);
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%">Nb de commande</td><td align="center">Somme des commandes</td>';
+print '<table class="border" width="100%">';
+print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%" align="center">'.$langs->trans("NbOfOrders").'</td><td align="center">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-print 'Nombre de commande par mois<br>';
 if ($mesg) { print $mesg; }
 else { print '<img src="'.$fileurl.'" alt="Nombre de commande par mois">'; }
 print '</td></tr>';

@@ -43,8 +43,8 @@ $data = $stats->getNbExpeditionByMonth($_GET["year"]);
 
 if (! is_dir($conf->expedition->dir_images)) { mkdir($conf->expedition->dir_images); }
 
-$filename = $conf->expedition->dir_images."/expedition$year.png";
-$fileurl = $conf->expedition->url_images."/expedition$year.png";
+$filename = $conf->expedition->dir_images."/expedition".$year.".png";
+$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=expeditionstats&file=expedition'.$year.'.png';
 
 $px = new BarGraph($data);
 $px->SetMaxValue($px->GetMaxValue());
@@ -52,7 +52,7 @@ $px->SetWidth(600);
 $px->SetHeight(280);
 $px->draw($filename, $data, $_GET["year"]);
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
+print '<table class="border" width="100%">';
 print '<tr><td align="center">Nombre d\'expédition par mois</td>';
 print '<td align="center">';
 print '<img src="'.$fileurl.'">';

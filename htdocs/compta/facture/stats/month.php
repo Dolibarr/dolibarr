@@ -30,7 +30,7 @@
 
 require("./pre.inc.php");
 
-$GRAPHHEIGHT=240;
+$GRAPHHEIGHT=250;
 $GRAPHWIDTH=500;
 
 /*
@@ -57,8 +57,8 @@ $data = $stats->getNbByMonth($year);
 
 if (! is_dir($conf->facture->dir_images)) { mkdir($conf->facture->dir_images); }
 
-$filename = $conf->facture->dir_images."/facture$year.png";
-$fileurl = $conf->facture->url_images."/facture$year.png";
+$filename = $conf->facture->dir_images."/facture".$year.".png";
+$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=facture'.$year.'.png';
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
@@ -78,8 +78,8 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
 
-$filename_amount = $conf->facture->dir_images."/factureamount$year.png";
-$fileurl_amount = $conf->facture->url_images."/factureamount$year.png";
+$filename_amount = $conf->facture->dir_images."/factureamount".$year.".png";
+$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=factureamount'.$year.'.png';
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
@@ -99,8 +99,8 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
 
-$filename_avg = $conf->facture->dir_images."/factureaverage$year.png";
-$fileurl_avg = $conf->facture->url_images."/factureaverage$year.png";
+$filename_avg = $conf->facture->dir_images."/factureaverage".$year.".png";
+$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=factureaverage'.$year.'.png';
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();

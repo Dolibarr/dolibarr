@@ -49,27 +49,30 @@ $mesg = '<a href="month.php?year='.($year - 1).'">'.img_previous().'</a> ';
 $mesg.= $langs->trans("Year")." $year";
 $mesg.= ' <a href="month.php?year='.($year + 1).'">'.img_next().'</a>';
 
+$WIDTH=500;
+$HEIGHT=250;
+
 /*
  *
  *
  */
 
-print_fiche_titre('Statistiques commandes', $mesg);
+print_fiche_titre($langs->trans("OrdersStatistics"), $mesg);
 
 $stats = new CommandeStats($db, $socidp);
 $data = $stats->getNbCommandeByMonth($year);
 
 if (! is_dir($conf->commande->dir_images)) { mkdir($conf->commande->dir_images); }
 
-$filename = $conf->commande->dir_images."/commande$year.png";
-$fileurl = $conf->commande->url_images."/commande$year.png";
+$filename = $conf->commande->dir_images."/commande".$year.".png";
+$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commande'.$year.'.png';
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
 if (! $mesg) {
     $px->SetMaxValue($px->GetMaxValue());
-    $px->SetWidth(500);
-    $px->SetHeight(280);
+    $px->SetWidth($WIDTH);
+    $px->SetHeight($HEIGHT);
     $px->SetYLabel("Nombre de commande");
     $px->draw($filename, $data, $year);
 }
@@ -83,15 +86,15 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
 
-$filename_amount = $conf->commande->dir_images."/commandeamount$year.png";
-$fileurl_amount = $conf->commande->url_images."/commandeamount$year.png";
+$filename_amount = $conf->commande->dir_images."/commandeamount".$year.".png";
+$fileurl_amount = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeamount'.$year.'.png';
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
 if (! $mesg) {
     $px->SetMaxValue($px->GetAmountMaxValue());
-    $px->SetWidth(500);
-    $px->SetHeight(250);
+    $px->SetWidth($WIDTH);
+    $px->SetHeight($HEIGHT);
     $px->SetYLabel($langs->trans("AmountTotal"));
     $px->draw($filename_amount, $data, $year);
 }
@@ -104,31 +107,31 @@ for ($i = 1 ; $i < 13 ; $i++)
   $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
 }
 
-$filename_avg = $conf->commande->dir_images."/commandeaverage$year.png";
-$fileurl_avg = $conf->commande->url_images."/commandeaverage$year.png";
+$filename_avg = $conf->commande->dir_images."/commandeaverage".$year.".png";
+$fileurl_avg = DOL_URL_ROOT.'/viewimage.php?modulepart=orderstats&file=commandeaverage'.$year.'.png';
 
 $px = new BarGraph($data);
 $mesg = $px->isGraphKo();
 if (! $mesg) {
     $px->SetMaxValue($px->GetAmountMaxValue());
-    $px->SetWidth(500);
-    $px->SetHeight(250);
+    $px->SetWidth($WIDTH);
+    $px->SetHeight($HEIGHT);
     $px->SetYLabel($langs->trans("AmountAverage"));
     $px->draw($filename_avg, $data, $year);
 }
 
-print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-print '<tr><td align="center">Nombre de commande par mois</td>';
+print '<table class="border" width="100%">';
+print '<tr><td align="center">'.$langs->trans("NumberOfOrdersByMonth").'</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
 else { print '<img src="'.$fileurl.'">'; }
 print '</td></tr>';
-print '<tr><td align="center">Sommes des commandes</td>';
+print '<tr><td align="center">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
 else { print '<img src="'.$fileurl_amount.'">'; }
 print '</td></tr>';
-print '<tr><td align="center">Montant moyen des commande</td>';
+print '<tr><td align="center">'.$langs->trans("AmountAverage").'</td>';
 print '<td align="center">';
 if ($mesg) { print $mesg; }
 else { print '<img src="'.$fileurl_avg.'">'; }
