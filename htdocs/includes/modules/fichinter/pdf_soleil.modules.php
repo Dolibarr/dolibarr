@@ -21,7 +21,8 @@
  *
  */
 
-Class pdf_soleil {
+Class pdf_soleil
+{
 
   Function pdf_soleil($db=0)
     { 
@@ -34,17 +35,18 @@ Class pdf_soleil {
     {
 
       $fich = new Fichinter($this->db,"",$id);
-      $fich->fetch($id);  
-
-      if (defined("FICHEINTER_OUTPUTDIR"))
+      if ($fich->fetch($id))
 	{
-
-	  $dir = FICHEINTER_OUTPUTDIR . "/" . $fich->ref . "/" ;
-	  $file = $dir . $fich->ref . ".pdf";
-	  
-	  if (! file_exists($dir))
+	  if (defined("FICHEINTER_OUTPUTDIR"))
 	    {
-	      mkdir($dir, 755);
+
+	      $dir = FICHEINTER_OUTPUTDIR . "/" . $fich->ref . "/" ;
+	      $file = $dir . $fich->ref . ".pdf";
+	      
+	      if (! file_exists($dir))
+		{
+		  mkdir($dir, 755);
+		}
 	    }
 	  
 	  if (file_exists($dir))
