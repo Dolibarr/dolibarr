@@ -679,11 +679,31 @@ create table llx_societe_remise
 
 )type=innodb;
 
+
+--
+--
+create table llx_contact_facture
+(
+  idp          integer AUTO_INCREMENT PRIMARY KEY,
+  fk_soc       integer NOT NULL,
+  fk_contact   integer NOT NULL,   -- point sur llx_socpeople
+
+  UNIQUE (fk_soc, fk_contact)
+)type=innodb;
+
+
+--
+--
+--
+--
+
 create table llx_so_gr
 (
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc      integer,
-  fk_groupe   integer
+  fk_groupe   integer,
+
+  UNIQUE(fk_soc, fk_groupe)
 )type=innodb;
 
 create table llx_groupesociete_remise
