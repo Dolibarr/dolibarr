@@ -53,8 +53,8 @@ Class Translate {
                 $finded = 0;
                 while (($ligne = fgets($fp,4096)) && ($finded == 0)){
                     if ($ligne[0] != "\n" && $ligne[0] != " " && $ligne[0] != "#") {
-                        $tab=split('=',$ligne);
-                        //print "Found a string for $tab[0] with value $tab[1]<br>";
+                        $tab=split('=',$ligne,2);
+                        //print "Ligne=$ligne<br>Found a string for $tab[0] with value $tab[1]<br>";
                         $this->tab_translate[$tab[0]]=$tab[1];
                     }
                 }
@@ -77,11 +77,10 @@ Class Translate {
     *  @param      string     $str  original string to translate
     *  @param      int        $mark bolean, 1 or nothing: add [vo] if this translation does not exists, 0 don't add [vo] tags
     */
-    function trans($str) {
+    function trans($str, $param1='', $param2='', $param3='') {
         if ($this->tab_translate[$str]) {
             // Si la traduction est disponible
-    
-            return $this->tab_translate[$str];
+            return sprintf($this->tab_translate[$str],$param1,$param2,$param2);
         }
         return $str;
     }

@@ -1,10 +1,21 @@
 # Dolibarr language file - fr_FR - main
 charset="iso-8859-1"
+Activate=Activer
+Activated=Activé
 Add=Ajouter
 Delete=Supprimer
 Cancel=Annuler
 Modify=Modifier
 Edit=Editer
-ChooseLangage=Please choose your language
+Search=Rechercher
+ChooseLangage=Choisissez votre langue
 User=Utilisateur
 Group=Groupe
+Name=Nom
+Value=Valeur
+Type=Type
+Note=Note
+Action=Action
+About=A propos
+WelcomeString=<font class="body">Nous sommes le</font> %s<font class="body">, et vous êtes connectés sous le user</font> %s
+

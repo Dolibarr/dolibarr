@@ -30,6 +30,10 @@ if ($_POST["action"] == 'update')
   dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"]);
   dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"]);
   dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
+  dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
+  dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"]);
+  dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"]);
+  dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"]);
 
   Header("Location: index.php");
 }
@@ -57,10 +61,19 @@ if ($_GET["action"] == 'edit')
   print $form->select_pays(MAIN_INFO_SOCIETE_PAYS);
   print '</td></tr>';
 
-  print '<tr class="impair"><td width="50%">Numéro de tva intracommunautaire</td><td>';
+  print '<tr class="impair"><td width="50%">Numéro de TVA intracommunautaire</td><td>';
   print '<input name="tva" size="20" value="' . MAIN_INFO_TVAINTRA . '"></td></tr>';
 
-  print '<tr class="pair"><td colspan="2" align="center">';
+  print '<tr class="pair"><td width="50%">Capital</td><td>';
+  print '<input name="capital" size="20" value="' . MAIN_INFO_CAPITAL . '"></td></tr>';
+
+  print '<tr class="impair"><td width="50%">Identifiant professionnel (SIREN,...)</td><td>';
+  print '<input name="siren" size="20" value="' . MAIN_INFO_SIREN . '"></td></tr>';
+
+  print '<tr class="pair"><td width="50%">RCS</td><td>';
+  print '<input name="rcs" size="20" value="' . MAIN_INFO_RCS . '"></td></tr>';
+
+  print '<tr><td colspan="2" align="center">';
   print '<input type="submit" value="Enregistrer"></td></tr>';
   print '</table></form>';
 }
@@ -75,13 +88,23 @@ else
   print $form->pays_name(MAIN_INFO_SOCIETE_PAYS);
   print '</td></tr>';
 
-  print '<tr class="impair"><td>Numéro de tva intracommunautaire</td><td>' . MAIN_INFO_TVAINTRA . '</td></tr>';
+  print '<tr class="impair"><td>Numéro de TVA intracommunautaire</td><td>' . MAIN_INFO_TVAINTRA . '</td></tr>';
+
+  print '<tr class="pair"><td width="50%">Capital</td><td>';
+  print MAIN_INFO_CAPITAL . '</td></tr>';
+
+  print '<tr class="impair"><td width="50%">Identifiant professionnel (SIREN,...)</td><td>';
+  print MAIN_INFO_SIREN . '</td></tr>';
+
+  print '<tr class="pair"><td width="50%">RCS</td><td>';
+  print MAIN_INFO_RCS . '</td></tr>';
+
+
   print '</table><br>';
 
+  // Boutons d'action
   print '<div class="tabsAction">';
-
   print '<a class="tabAction" href="index.php?action=edit">Editer</a>';
-
   print '</div>';
 
 

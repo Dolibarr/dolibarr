@@ -24,7 +24,9 @@ require("./pre.inc.php");
 
 llxHeader();
 
-print_fiche_titre("<font class=\"body\">Nous sommes le</font> ".dolibarr_print_date(mktime(),"%A %d %B %Y").'<font class="body">, vous êtes connecté en tant que</font> ' . $user->prenom . ' ' . $user->nom .' ['.$user->code.']', '<a href="about.php">A propos</a>');
+$userstring=$user->prenom . ' ' . $user->nom .' ['.$user->code.']';
+print_fiche_titre($langs->trans("WelcomeString",dolibarr_print_date(mktime(),"%A %d %B %Y"),$userstring), '<a href="about.php">'.$langs->trans("About").'</a>');
+
 print "<br>\n";
 
 /*

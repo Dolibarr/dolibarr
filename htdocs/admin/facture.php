@@ -87,9 +87,9 @@ print_titre("Module de numérotation des factures");
 
 print '<table class="noborder" cellpadding="2" cellspacing="0" width=\"100%\">';
 print '<tr class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>Description</td>';
-print '<td align="center" width="60">Activé</td>';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
@@ -123,7 +123,7 @@ while (($file = readdir($handle))!==false)
 	{
 	  print '&nbsp;';
       print '</td><td align="center">';
-      print '<a href="facture.php?action=set&value='.$file.'">Activer</a>';
+      print '<a href="facture.php?action=set&value='.$file.'">'.$langs->trans("Activate").'</a>';
 	}
 	print "</td></tr>\n";
     }
@@ -140,9 +140,9 @@ print_titre("Modèles de facture pdf");
 
 print '<table class="noborder" cellpadding="2" cellspacing="0" width=\"100%\">';
 print '<tr class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>Description</td>';
-print '<td align="center" width="60">Activé</td>';
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Description").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
 print '<td width="80">&nbsp;</td>';
 print "</tr>\n";
 
@@ -179,7 +179,7 @@ while (($file = readdir($handle))!==false)
 	{
 	  print '&nbsp;';
       print '</td><td align="center">';
-      print '<a href="facture.php?action=setpdf&value='.$name.'">Activer</a>';
+      print '<a href="facture.php?action=setpdf&value='.$name.'">'.$langs->trans("Activate").'</a>';
 	}
 	print "</td></tr>\n";
 
@@ -204,7 +204,7 @@ print '<form action="facture.php" method="post">';
 print '<input type="hidden" name="action" value="setribchq">';
 print '<tr class="liste_titre">';
 print '<td>Mode règlement à proposer</td>';
-print '<td align="right"><input type="submit" value="Modifier"></td>';
+print '<td align="right"><input type="submit" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 $var=!$var;
 print '<tr '.$bc[$var].'>';
@@ -289,7 +289,7 @@ print '<form action="facture.php" method="post">';
 print '<input type="hidden" name="action" value="settvaoption">';
 print '<tr class="liste_titre">';
 print '<td>Option</td><td>Description</td>';
-print '<td align="right"><input type="submit" value="Modifier"></td>';
+print '<td align="right"><input type="submit" value="'.$langs->trans("Modify").'"></td>';
 print "</tr>\n";
 $var=True;
 $var=!$var;
@@ -310,11 +310,11 @@ print_titre("Autres constantes relatives aux factures");
 
 print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>Valeur</td>';
-print '<td>Type</td>';
-print '<td>Note</td>';
-print "<td>Action</td>";
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Type").'</td>';
+print '<td>'.$langs->trans("Note").'</td>';
+print '<td>'.$langs->trans("Actiion").'</td>';
 print "</tr>\n";
 
 
@@ -371,8 +371,8 @@ if ($result)
 
       print '<input type="text" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
       print '</td><td>';
-      print '<input type="Submit" value="Update" name="Button"> &nbsp; ';
-      print '<a href="const.php?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
+      print '<input type="Submit" value="'.$langs->trans("Modify").'" name="Button"> &nbsp; ';
+//      print '<a href="facture.php?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
       print "</td></tr>\n";
 
       print '</form>';
