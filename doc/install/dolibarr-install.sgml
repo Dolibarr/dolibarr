@@ -110,22 +110,68 @@ mod-auth-mysql.
 <sect1>
 <heading>Dolibarr</heading>
     <p>
-      Créer un répertoire appelé <file>document</file> dans le répertoire <file>htdocs</file> des sources et affectez les droits d'écriture dans ce répertoire à l'utilisateur exécutant le serveur web.
+      Décompressez l'archive
+  <tscreen>
+   <verb>
+	# tar xvfz dolibarr-2.0.0-alpha1.tgz
+   </verb>
+  </tscreen>
     </p>
 
+
     <p>
-      Créer un fichier <file>conf/conf.php</file> et donnez les droits d'écriture dans ce fichier à l'utilisateur exécutant le serveur web.
+      Créer un répertoire appelé <file>documents</file> au même niveau
+      que le répertoire <file>htdocs</file> et affectez les
+      droits d'écriture dans ce répertoire à l'utilisateur exécutant
+      le serveur web.
+
+  <tscreen>
+   <verb>
+        # cd dolibarr-2.0.0-alpha1
+	# mkdir documents
+        # chown www-data.www-data documents
+        # chmod 700 documents
+   </verb>
+  </tscreen>
+
     </p>
 
 <p>
- Pour configurer Dolibarr accédez à la page
- <tscreen><verb>/install/index.php</verb></tscreen>, pour vous logger utlisez
- le login <bf>admin</bf> avec le mot de passe <bf>admin</bf>.
+Ce répertoire peut-être différent, il vous suffira de l'indiquer lors
+de la phase d'installation web.
+</p>
+
+    <p>
+      Créer un fichier <file>conf/conf.php</file> et donnez les droits
+      d'écriture dans ce fichier à l'utilisateur exécutant le serveur
+      web.
+
+  <tscreen>
+   <verb>
+        # cd htdocs/conf/
+	# touch conf.php
+        # chown www-data.www-data conf.php
+        # chmod 700 conf.php
+   </verb>
+  </tscreen>
+    </p>
+
+<p>
+Pour des raisons de securite pensez a modifier les permissions sur ce
+fichier, il n'est plus modifie une fois l'installation finie.
 </p>
 
 <p>
-  Si les contrôles sont corrects
-  vous n'avez qu'à cliquer sur le lien, 'Configurer les modules'.
+ Pour configurer Dolibarr accédez à la page
+ <tscreen><verb>/install/index.php</verb></tscreen>
+</p>
+
+<p>
+  Suivez les étapes une à une et l'installation devrait se faire sans douleurs.
+</p>
+
+<p>
+  Si les contrôles sont corrects vous n'avez qu'à cliquer sur le lien, 'Configurer les modules'.
 </p>
 
 <p>
@@ -135,7 +181,9 @@ Accueil -> Utilisateurs
 </p>
 
 <p>
-Il est fortement conseillé de supprimer le fichier install.php une fois l'installation terminée. De même pensez à modifier le mot de passe de l'utilisateur admin.
+Il est fortement conseillé de supprimer le répertoire
+<file>htdocs/install.php</file> une fois l'installation terminée. De
+même pensez à modifier les permissions sur le fichier <file>conf/conf.php</file>.
 </p>
  </sect1>
 </sect>
