@@ -36,8 +36,6 @@ require("./bank/account.class.php");
 require("../contrat/contrat.class.php");
 require("../commande/commande.class.php");
 
-llxHeader();
-
 /*
  * Sécurité accés client
  */
@@ -93,6 +91,11 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	  $facture->add_product($HTTP_POST_VARS["idprod4"],$HTTP_POST_VARS["qty4"],$HTTP_POST_VARS["remise_percent4"]);
 	  
 	  $facid = $facture->create($user);
+
+	  if ($facid)
+	    {
+	      Header("Location: facture.php?facid=".$facid);
+	    }
 	}
       else
 	{
@@ -324,6 +327,8 @@ if ($action == 'pdf')
   facture_pdf_create($db, $facid);
 } 
 
+llxHeader();
+
 $html = new Form($db);
 
 /*********************************************************************
@@ -357,7 +362,6 @@ if ($_GET["action"] == 'create')
       $commande->fetch($_GET["commandeid"]);
       $societe_id = $commande->soc_id;
     }
-
 
   if ( $db->query($sql) ) 
     {
