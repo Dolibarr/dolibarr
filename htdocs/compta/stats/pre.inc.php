@@ -34,7 +34,7 @@ function llxHeader($head = "") {
 	$menu = new Menu();
 	
 	$menu->add(DOL_URL_ROOT."/compta/resultat/","Résultat / Exercice");
-    $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/resbysource.php","Détail client/fourn.");
+    $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php","Détail client/fourn.");
     $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/compteres.php","Compte de résultat");
     $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/bilan.php","Bilan");
 	
