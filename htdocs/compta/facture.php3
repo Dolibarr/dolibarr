@@ -76,7 +76,7 @@ if ($action == 'add_paiement')
 /*
  *
  */
-if ($action == 'del_paiement')
+if ($action == 'del_paiement' && $user->rights->facture->paiement)
 {
   $paiement = new Paiement($db);
   $paiement->id = $paiementid;
@@ -88,7 +88,7 @@ if ($action == 'del_paiement')
  *
  */
 
-if ($action == 'valid') 
+if ($action == 'valid' && $user->rights->facture->valider)
 {
   $fac = new Facture($db);
   $fac->fetch($facid);
@@ -99,7 +99,7 @@ if ($action == 'valid')
     }
 }
 
-if ($action == 'payed') 
+if ($action == 'payed' && $user->rights->facture->paiement) 
 {
   $fac = new Facture($db);
   $result = $fac->set_payed($facid);
@@ -527,7 +527,7 @@ else
 		print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
 		print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
 		print '<td align="right">'.price($objp->amount)."</TD><td>$_MONNAIE</td>\n";
-		if (! $obj->paye)
+		if (! $obj->paye && $user->rights->facture->paiement)
 		  {
 		    print '<td><a href="facture.php3?facid='.$facid.'&action=del_paiement&paiementid='.$objp->rowid.'">Del</a>';
 		  }
@@ -687,7 +687,7 @@ else
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=delete\">Supprimer</a>]</td>";
 	      } 
-	    elseif ($obj->statut == 1 && abs($resteapayer) > 0) 
+	    elseif ($obj->statut == 1 && abs($resteapayer) > 0 && $user->rights->facture->envoyer) 
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=presend\">Envoyer</a>]</td>";
 	      }
@@ -696,7 +696,7 @@ else
 		print "<td align=\"center\" width=\"25%\">-</td>";
 	      } 
 	    
-	    if ($obj->statut == 1 && $resteapayer > 0) 
+	    if ($obj->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php3?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
 	      }
@@ -707,28 +707,49 @@ else
 	    
 	    if ($obj->statut == 1 && abs($resteapayer) == 0 && $obj->paye == 0) 
 	      {
-		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=payed\">Classer 'Payée'</a>]</td>";
+		if ($user->rights->facture->paiement)
+		  {
+		    print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=payed\">Classer 'Payée'</a>]</td>";
+		  }
+		else
+		  {
+		    print '<td align="center" width="25%">-</td>';
+		  }
 	      }
-	    elseif ($obj->statut == 1 && $resteapayer > 0) 
+	    elseif ($obj->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer) 
 	      {
 		print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=prerelance\">Envoyer une relance</a>]</td>";
 	      }
 	    else
 	      {
-		print "<td align=\"center\" width=\"25%\">-</td>";
+		print '<td align="center" width="25%">-</td>';
 	      }
 	    
 	    if ($obj->statut == 0 && $obj->total > 0) 
 	      {
-		print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=valid\">Valider</a>]</td>";
+		if ($user->rights->facture->valider)
+		  {
+		    print "<td align=\"center\" bgcolor=\"#e0e0e0\" width=\"25%\">[<a href=\"$PHP_SELF?facid=$facid&action=valid\">Valider</a>]</td>";
+		  }
+		else
+		  {
+		    print '<td align="center" width="25%">-</td>';
+		  }
 	      }
 	    elseif ($obj->statut == 1 && $obj->paye == 0)
 	      {
-		print "<td align=\"center\" width=\"25%\"><a href=\"facture.php3?facid=$facid&action=pdf\">Générer la facture</a></td>";
+		if ($user->rights->facture->creer)
+		  {
+		    print "<td align=\"center\" width=\"25%\"><a href=\"facture.php3?facid=$facid&action=pdf\">Générer la facture</a></td>";
+		  }
+		else
+		  {
+		    print '<td align="center" width="25%">-</td>';
+		  }
 	      }
 	    else
 	      {
-		print "<td align=\"center\" width=\"25%\">-</td>";
+		print '<td align="center" width="25%">-</td>';
 	      }
 	    print "</tr></table>";
 	  }
