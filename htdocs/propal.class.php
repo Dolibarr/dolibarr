@@ -491,6 +491,7 @@ class Propal
 	  else
 	    {
 	      print $this->db->error() . ' in ' . $sql;
+	      return -1;
 	    }
 	}
   }

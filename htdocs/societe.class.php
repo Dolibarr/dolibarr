@@ -173,7 +173,7 @@ class Societe {
       $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique, s.fk_effectif";
       $sql .= ", e.libelle as effectif, e.id as effectif_id";
       $sql .= ", s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique";
-      $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm";
+      $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client";
       $sql .= ", p.libelle as pays";
       $sql .= ", st.libelle as stcomm";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -230,6 +230,8 @@ class Societe {
 	      $this->forme_juridique     = $obj->forme_juridique;
 
 	      $this->prefix_comm = $obj->prefix_comm;
+
+	      $this->remise_client = $obj->remise_client;
 	      
 	      $this->client = $obj->client;
 	      $this->fournisseur = $obj->fournisseur;
@@ -412,6 +414,32 @@ class Societe {
 	  $sql .= " WHERE idp = " . $this->id .";";
 	  
 	  return $this->db->query($sql);
+	}
+    }
+  /**
+   * Définit la société comme un client
+   *
+   *
+   */
+  function set_remise_client($remise, $user)
+    {
+      if ($this->id)
+	{
+	  $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
+	  $sql .= " SET remise_client = '".$remise."'";
+	  $sql .= " WHERE idp = " . $this->id .";";
+	  
+	  $this->db->query($sql);
+
+	  $sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise ";
+	  $sql .= " ( datec, fk_soc, remise_client, fk_user_author )";
+	  $sql .= " VALUES (now(),".$this->id.",'".$remise."',".$user->id.")";
+	  
+	  if (! $this->db->query($sql) )
+	    {
+	      print $this->db->error();
+	    }
+
 	}
     }
 

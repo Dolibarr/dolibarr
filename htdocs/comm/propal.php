@@ -105,7 +105,7 @@ if ($_POST["action"] == 'add')
   if ($id) 
     {
       propale_pdf_create($db, $id, $_POST["modelpdf"]);
-      $_GET["propalid"] = $id;
+      Header ("Location: propal.php?propalid=$id");
     }
 }
 
@@ -506,7 +506,7 @@ if ($_GET["propalid"])
 	      print '<td align="center">';
 	      print $html->select_tva("np_tva_tx") . '</td>';
 	      print '<td align="center"><input type="text" size="3" value="1" name="np_qty"></td>';
-	      print '<td align="center"><input type="text" size="3" value="0" name="np_remise"> %</td>';
+	      print '<td align="center"><input type="text" size="3" value="'.$societe->remise_client.'" name="np_remise"> %</td>';
 	      print '<td align="right"><input type="text" size="6" name="np_price"></td>';
 	      print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="addproduct"></td>';
 	      print '</tr>';
@@ -518,7 +518,7 @@ if ($_GET["propalid"])
 	      $var=!$var;
 	      print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"2\"><select name=\"idprod\">$opt</select></td>";
 	      print '<td align="center"><input type="text" size="3" name="qty" value="1"></td>';
-	      print '<td align="center"><input type="text" size="3" name="remise" value="0"> %</td>';
+	      print '<td align="center"><input type="text" size="3" name="remise" value="'.$societe->remise_client.'"> %</td>';
 	      print '<td>&nbsp;</td>';
 	      print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'" name="addligne"></td>';
 	      print "</tr>\n";

@@ -194,6 +194,8 @@ if ($_POST["action"] == "set")
       // Si creation utilisateur admin demandée, on le crée
       if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 	{
+	  dolibarr_syslog ("Creation de l'utilisateur : ".$dolibarr_main_db_user);
+
 	  $conf = new Conf();
 	  $conf->db->host = $dolibarr_main_db_host;
 	  $conf->db->name = "mysql";
@@ -206,16 +208,18 @@ if ($_POST["action"] == "set")
 	  $sql .= "(Host,User,password)";
 	  $sql .= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_user',password('$dolibarr_main_db_pass'))";
 	  
-	  $db->query($sql);
-	  
+	  print $db->query($sql);
+
 	  $sql = "INSERT INTO db ";
 	  $sql .= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
 	  $sql .= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_name','$dolibarr_main_db_user'";
 	  $sql .= ",'Y','Y','Y','Y','Y','Y','Y','Y')";
 	  
+	  print $sql;
+
 	  if ($db->query($sql))
 	    {
-	      
+	      dolibarr_syslog("flush privileges");
 	      $db->query("flush privileges");
 	      
 	      print "<tr><td>Création de l'utilisateur : $dolibarr_main_db_user</td><td>OK</td></tr>";
