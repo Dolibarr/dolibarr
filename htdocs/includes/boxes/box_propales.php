@@ -50,12 +50,10 @@ if ($user->rights->propale->lire)
 	  
 	  $info_box_contents[$i][0] = array('align' => 'left',
 					    'text' => $objp->ref,
-					    'width' => '30%',
 					    'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
 	  
-	  $info_box_contents[$i][1] = array('align' => 'left',
+	  $info_box_contents[$i][1] = array('align' => 'center',
 					    'text' => $objp->nom,
-					    'width' => '70%',
 					    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
 	  $i++;
 	}

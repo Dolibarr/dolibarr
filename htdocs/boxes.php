@@ -31,7 +31,7 @@ class infoBox
 
     print '<table width="100%" cellpadding="3" cellspacing="0" border="0">';
 
-    print '<tr class="box_titre"><td colspan="2">'.$head[0]['text']."</td></tr>";
+    print '<tr class="box_titre"><td colspan='.sizeof($contents).'>'.$head[0]['text']."</td></tr>";
 
     for ($i=0, $n=sizeof($contents); $i<$n; $i++)
       {

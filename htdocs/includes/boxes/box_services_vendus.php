@@ -21,7 +21,7 @@
  */
 
 $info_box_head = array();
-$info_box_head[] = array('text' => "Les 5 derniers services vendus");
+$info_box_head[] = array('text' => "Les 5 derniers produits/services contractés");
 
 $info_box_contents = array();
 

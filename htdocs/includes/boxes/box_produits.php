@@ -22,7 +22,7 @@
 if ($user->rights->produit->lire)
 {
   $info_box_head = array();
-  $info_box_head[] = array('text' => "Les 5 derniers produits");
+  $info_box_head[] = array('text' => "Les 5 derniers produits enregistrés");
 
   $info_box_contents = array();
 
