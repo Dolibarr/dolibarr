@@ -1185,6 +1185,12 @@ class Facture
   function demande_prelevement($user)
   {
     dolibarr_syslog("Facture::DemandePrelevement");
+
+    $soc = new Societe($this->db);
+    $soc->id = $this->socidp;
+    $soc->rib();
+
+
     if ($this->statut > 0 && $this->paye == 0 &&  $this->mode_reglement == 3)
       {	  
 	$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."prelevement_facture_demande";
@@ -1198,8 +1204,11 @@ class Facture
 	    if ($row[0] == 0)
 	      {		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."prelevement_facture_demande";
-		$sql .= " (fk_facture, date_demande, fk_user_demande)";
-		$sql .= " VALUES (".$this->id.",now(),".$user->id.")";
+		$sql .= " (fk_facture, date_demande, fk_user_demande, code_banque, code_guichet, number)";
+		$sql .= " VALUES (".$this->id.",now(),".$user->id."";
+		$sql .= ",'".$soc->bank_account->code_banque."'";
+		$sql .= ",'".$soc->bank_account->code_guichet."'";
+		$sql .= ",'".$soc->bank_account->number."')";
 		
 		if ( $this->db->query( $sql) )
 		  {
