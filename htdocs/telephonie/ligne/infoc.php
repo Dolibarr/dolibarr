@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,334 +62,149 @@ if ($cancel == $langs->trans("Cancel"))
  * Affichage
  *
  */
-/*
- * Création
- *
- */
 
-if ($_GET["action"] == 'create')
+
+if ($_GET["id"] or $_GET["numero"])
 {
-  $ligne = new LigneTel($db);
-  print "<form action=\"infoc.php\" method=\"post\">\n";
-  print '<input type="hidden" name="action" value="add">';
-  print '<input type="hidden" name="type" value="'.$type.'">'."\n";
-  print_titre("Nouvelle ligne");
-      
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-
-  print '<tr><td width="20%">Numéro</td><td><input name="numero" size="12" value=""></td></tr>';
-
-  print '<tr><td width="20%">Client</td><td colspan="2">';
-  print '<select name="client">';
-
-  $sql = "SELECT idp, nom FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
-  if ( $db->query( $sql) )
+  if ($_GET["action"] <> 're-edit')
     {
-      $num = $db->num_rows();
-      if ( $num > 0 )
+      $ligne = new LigneTel($db);
+      if ($_GET["id"])
 	{
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $row = $db->fetch_row($i);
-	      print '<option value="'.$row[0].'">'.$row[1];
-	      $i++;
-	    }
+	  $result = $ligne->fetch_by_id($_GET["id"]);
 	}
-      $db->free();      
-    }
-
-  print '</select></td></tr>';
-
-  print '<tr><td width="20%">Client à facturer</td><td colspan="2">';
-  print '<select name="client_facture">';
-
-
-  $sql = "SELECT idp, nom FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
-  if ( $db->query( $sql) )
-    {
-      $num = $db->num_rows();
-      if ( $num > 0 )
+      if ($_GET["numero"])
 	{
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $row = $db->fetch_row($i);
-	      print '<option value="'.$row[0].'">'.$row[1];
-	      $i++;
-	    }
+	  $result = $ligne->fetch($_GET["numero"]);
 	}
-      $db->free();     
     }
-
-  print '</select></td></tr>';
-
-  print '<tr><td width="20%">Fournisseur</td><td colspan="2">';
-  print '<select name="fournisseur">';
-
-  $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur WHERE commande_active = 1 ORDER BY nom ";
-  if ( $db->query( $sql) )
-    {
-      $num = $db->num_rows();
-      if ( $num > 0 )
-	{
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $row = $db->fetch_row($i);
-	      print '<option value="'.$row[0].'">'.$row[1];
-	      $i++;
-	    }
-	}
-      $db->free();
-      
-    }
-  print '</select></td></tr>';
-
-  /*
-   * Commercial
-   */
-
-  print '<tr><td width="20%">Commercial</td><td colspan="2">';
-  print '<select name="commercial">';
-
-  $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
-  if ( $db->query( $sql) )
-    {
-      $num = $db->num_rows();
-      if ( $num > 0 )
-	{
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $row = $db->fetch_row($i);
-	      print '<option value="'.$row[0].'">'.$row[1] . " " . $row[2];
-	      $i++;
-	    }
-	}
-      $db->free();
-      
-    }
-  print '</select></td></tr>';
-
-  /*
-   * Concurrents
-   */
-
-  print '<tr><td width="20%">Fournisseur précédent</td><td colspan="2">';
-  print '<select name="concurrent">';
-
-  $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_concurrents ORDER BY rowid ";
-  if ( $db->query( $sql) )
-    {
-      $num = $db->num_rows();
-      if ( $num > 0 )
-	{
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $row = $db->fetch_row($i);
-	      print '<option value="'.$row[0].'">'.$row[1];
-	      $i++;
-	    }
-	}
-      $db->free();
-      
-    }
-  print '</select></td></tr>';
-
-
-  print '<tr><td width="20%">Remise</td><td><input name="remise" size="3" maxlength="2" value="">&nbsp;%</td></tr>';
   
-  print '<tr><td width="20%" valign="top">Note</td><td>';
-  print '<textarea name="note" rows="4" cols="50">';
-  print "</textarea></td></tr>";
-
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
-  print '</table>';
-  print '</form>';
-}
-else
-{
-  if ($_GET["id"] or $_GET["numero"])
-    {
-      if ($_GET["action"] <> 're-edit')
+  if ( $result )
+    { 
+      if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	{
-	  $ligne = new LigneTel($db);
-	  if ($_GET["id"])
-	    {
-	      $result = $ligne->fetch_by_id($_GET["id"]);
-	    }
-	  if ($_GET["numero"])
-	    {
-	      $result = $ligne->fetch($_GET["numero"]);
-	    }
-	}
-
-      if ( $result )
-	{ 
-	  if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
-	    {
-
-	      $h=0;
-	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/fiche.php?id=".$ligne->id;
-	      $head[$h][1] = $langs->trans("Ligne");
-	      $h++;
-
-	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/infoc.php?id=".$ligne->id;
-	      $head[$h][1] = $langs->trans('Infos');
-	      $hselected = $h;
-	      $h++;
-	      
-	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/history.php?id=".$ligne->id;
-	      $head[$h][1] = $langs->trans('Historique');
-	      $h++;
-
-	      $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/conso.php?id=".$ligne->id;
-	      $head[$h][1] = $langs->trans('Conso');
-	      $h++;
-	      
-	      dolibarr_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
-
-	      print_fiche_titre('Informations complémentaires', $mesg);
-      
-	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-
-	      print '<tr><td width="20%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
-	      print '<td>Facturée : '.$ligne->facturable.'</td></tr>';
-	      	     
-	      $client = new Societe($db, $ligne->client_id);
-	      $client->fetch($ligne->client_id);
-
-	      print '<tr><td width="20%">Client</td><td colspan="2">'.$client->nom.'</td></tr>';
-
-	      $client_facture = new Societe($db);
-	      $client_facture->fetch($ligne->client_facture_id);
-
-	      print '<tr><td width="20%">Client Facturé</td><td><a href="'.DOL_URL_ROOT.'/comm/infoc.php?socid=';
-	      print $client->id.'">';
-	      print $client_facture->nom.'</a>';
-
-	      print '</td><td>';
-
-	      if ($ligne->mode_paiement == 'pre')
-		{
-		  print 'RIB : '.$client_facture->display_rib();
-		}
-	      else
-		{
-		  print 'Paiement par virement';
-		}
-
-	      print '</td></tr>';
-
-	      print '<tr><td width="20%">Remise LMN</td><td colspan="2">'.$ligne->remise.'&nbsp;%</td></tr>';
-
-	      print '<tr><td width="20%">Code analytique</td><td colspan="2">'.$ligne->code_analytique.'&nbsp;</td></tr>';
-
-
-
-
-	      print "</table>";
-	    }
-	}
-
-    
-      if ($_GET["action"] == 'edit' || $action == 're-edit')
-	{
-	  print_fiche_titre('Edition des informations complémentaires de la ligne', $mesg);
-
-	  print "<form action=\"infoc.php?id=$ligne->id\" method=\"post\">\n";
-	  print '<input type="hidden" name="action" value="update">';
-
+	  
+	  $h=0;
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/fiche.php?id=".$ligne->id;
+	  $head[$h][1] = $langs->trans("Ligne");
+	  $h++;
+	  
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/factures.php?id=".$ligne->id;
+	  $head[$h][1] = $langs->trans('Factures');
+	  $h++;
+	  
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/infoc.php?id=".$ligne->id;
+	  $head[$h][1] = $langs->trans('Infos');
+	  $hselected = $h;
+	  $h++;
+	  
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/history.php?id=".$ligne->id;
+	  $head[$h][1] = $langs->trans('Historique');
+	  $h++;
+	  
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/conso.php?id=".$ligne->id;
+	  $head[$h][1] = $langs->trans('Conso');
+	  $h++;
+	  
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/stat.php?id=".$ligne->id;
+	  $head[$h][1] = $langs->trans('Stats');
+	  $h++;
+	  
+	  dolibarr_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
+	  
+	  print_fiche_titre('Informations complémentaires', $mesg);
+	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-
-	  print '<tr><td width="20%">Numéro</td><td>'.$ligne->numero.'</td></tr>';
-
+	  
+	  print '<tr><td width="20%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
+	  print '<td>Facturée : '.$ligne->facturable.'</td></tr>';
+	  
 	  $client = new Societe($db, $ligne->client_id);
 	  $client->fetch($ligne->client_id);
 	  
-	  print '<tr><td width="20%">Client</td><td colspan="2">'.$client->nom;
+	  print '<tr><td width="20%">Client</td><td colspan="2">'.$client->nom.'</td></tr>';
+	  
+	  $client_facture = new Societe($db);
+	  $client_facture->fetch($ligne->client_facture_id);
+	  
+	  print '<tr><td width="20%">Client Facturé</td><td><a href="'.DOL_URL_ROOT.'/comm/infoc.php?socid=';
+	  print $client->id.'">';
+	  print $client_facture->nom.'</a>';
+	  
+	  print '</td><td>';
+	  
+	  if ($ligne->mode_paiement == 'pre')
+		{
+		  print 'RIB : '.$client_facture->display_rib();
+		}
+	  else
+	    {
+	      print 'Paiement par virement';
+	    }
+	  
 	  print '</td></tr>';
-	  	 
-	  print '<tr><td width="20%">Remise LMN</td><td>'.$ligne->remise.' %</td></tr>';
 	  
-	  print '<tr><td width="20%">Code Analytique</td><td><input name="code_ana" size="13" maxlength="12" value="'.$ligne->code_analytique.'">&nbsp;</td></tr>';
+	  print '<tr><td width="20%">Remise LMN</td><td colspan="2">'.$ligne->remise.'&nbsp;%</td></tr>';
+
+	  $cuser = new User($db, $ligne->user_creat);
+	  if ($ligne->user_creat)
+	    {
+	      $cuser->fetch();
+	    }
+
+	  print '<tr><td width="20%">Ligne créée par</td><td colspan="2">'.$cuser->fullname.'</td></tr>';
+
 	  
-	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Mettre à jour">';
-	  print '<a href="infoc.php?id='.$ligne->id.'">Annuler</a></td></tr>';
-	  print '</table>';
-	  print '</form>';	  
+	  print '<tr><td width="20%">Code analytique</td><td colspan="2">'.$ligne->code_analytique.'&nbsp;</td></tr>';
+
+	  
+	  
+	  
+	  print "</table>";
 	}
-
-      /*
-       *
-       *
-       *
-       */
-
     }
-  else
+  
+  if ($_GET["action"] == 'edit' || $action == 're-edit')
     {
-      print "Error";
+      print_fiche_titre('Edition des informations complémentaires de la ligne', $mesg);
+      
+      print "<form action=\"infoc.php?id=$ligne->id\" method=\"post\">\n";
+      print '<input type="hidden" name="action" value="update">';
+      
+      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+      
+      print '<tr><td width="20%">Numéro</td><td>'.$ligne->numero.'</td></tr>';
+      
+      $client = new Societe($db, $ligne->client_id);
+      $client->fetch($ligne->client_id);
+      
+      print '<tr><td width="20%">Client</td><td colspan="2">'.$client->nom;
+      print '</td></tr>';
+      
+      print '<tr><td width="20%">Remise LMN</td><td>'.$ligne->remise.' %</td></tr>';
+      
+      print '<tr><td width="20%">Code Analytique</td><td><input name="code_ana" size="13" maxlength="12" value="'.$ligne->code_analytique.'">&nbsp;</td></tr>';
+      
+      print '<tr><td>&nbsp;</td><td><input type="submit" value="Mettre à jour">';
+      print '<a href="infoc.php?id='.$ligne->id.'">Annuler</a></td></tr>';
+      print '</table>';
+      print '</form>';	  
     }
+  
+  /*
+   *
+   *
+   *
+   */
+
 }
+else
+{
+  print "Error";
+}
+
 
 print '</div>';
-
-if ( $user->rights->telephonie->ligne_activer && $ligne->statut == 2)
-{
-  $form = new Form($db);
-
-  print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
-
-  print '<form action="infoc.php?id='.$ligne->id.'&amp;action=active" method="post">';
-  print '<table class="noborder" cellpadding="2" cellspacing="0">';
-  print '<tr class="liste_titre"><td colspan="2">Activer</td><td>';
-  print '<tr><td>Date</td><td>';
-  print $form->select_date();
-  print '</td>';
-  print '<td colspan="2"><input type="submit" name="Activer"></td></tr>';
-  print '</table>';
-
-  print '</form></td><td>';
-
-
-  print '<form action="infoc.php?id='.$ligne->id.'&amp;action=refuse" method="post">';
-  print '<table class="noborder" cellpadding="2" cellspacing="0">';
-  print '<tr class="liste_titre"><td colspan="2">Refuser</td><td>';
-  print '<tr><td>Date</td><td>';
-  print $form->select_date();
-  print '</td>';
-  print '<td colspan="2"><input type="submit" name="Activer"></td></tr>';
-  print '</table>';
-
-  print '</form></td></tr></table>';
-}
-
-if ( $user->rights->telephonie->ligne_activer && $ligne->statut == 5)
-{
-  /**
-   * Résiliation demandée
-   */
-  $form = new Form($db);
-
-  print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
-
-  print '<form action="infoc.php?id='.$ligne->id.'&amp;action=confirmresilier" method="post">';
-  print '<table class="noborder" cellpadding="2" cellspacing="0">';
-  print '<tr class="liste_titre"><td colspan="2">Confirmation de la résiliation</td><td>';
-  print '<tr><td>Date</td><td>';
-  print $form->select_date();
-  print '</td>';
-  print '<td colspan="2"><input type="submit" name="Activer"></td></tr>';
-  print '</table>';
-
-  print '</form></td><td>';
-
-  print '&nbsp;</td></tr></table>';
-}
-
 
 /* ************************************************************************** */
 /*                                                                            */ 
