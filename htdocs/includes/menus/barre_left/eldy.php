@@ -28,7 +28,7 @@
         \remarks    A l'aide d'un objet $newmenu=new Menu() et des méthode add et add_submenu,
         \remarks    définir la liste des entrées menu à faire apparaitre.
         \remarks    En fin de code, mettre la ligne $menu=$newmenu->liste.
-        \remarks    Ce qui est définir dans un tel gestionnaire sera alors prioritaire sur
+        \remarks    Ce qui est défini dans un tel gestionnaire sera alors prioritaire sur
         \remarks    les définitions de menu des fichiers pre.inc.php
 */
 
@@ -107,15 +107,15 @@ class MenuLeft {
              */
             if ($mainmenu == 'home') {
                 $langs->load("users");
-                $newmenu->add(DOL_URL_ROOT."/user/index.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"));
+                $newmenu->add(DOL_URL_ROOT."/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"));
         
                 if($user->admin)
                 {
                   $langs->load("admin");
-                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/index.php", $langs->trans("ListOfUsers"));
-                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/fiche.php?action=create", $langs->trans("NewUser"));
-                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/index.php", $langs->trans("ListOfGroups"));
-                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/fiche.php?action=create", $langs->trans("NewGroup"));
+                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/index.php", $langs->trans("Users"));
+                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/fiche.php?action=create", $langs->trans("NewUser"),2);
+                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/index.php", $langs->trans("Groups"));
+                  if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/fiche.php?action=create", $langs->trans("NewGroup"),2);
                   
                   $newmenu->add(DOL_URL_ROOT."/admin/index.php?leftmenu=setup", $langs->trans("Setup"));
                   if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/index.php", $langs->trans("GlobalSetup"));
