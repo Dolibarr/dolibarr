@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -387,7 +387,7 @@ class Commande
       $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva";
       $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture";
       $sql .= " FROM ".MAIN_DB_PREFIX."commande as c";
-      $sql .= " WHERE c.rowid = $id";
+      $sql .= " WHERE c.rowid = ".$id;
 
       $result = $this->db->query($sql) ;
 
@@ -426,13 +426,20 @@ class Commande
 		  $obj = $this->db->fetch_object(0);
 		  $this->propale_id = $obj->fk_propale;
 		}
-	    }
 
-	  return 1;
+	      return 1;	      
+	    }
+	  else
+	    {
+	      print $this->db->error();
+	      print "$sql";
+	      return -1;
+	    }
 	}
       else
 	{
 	  print $this->db->error();
+	  print "$sql";
 	  return -1;
 	}
     }
