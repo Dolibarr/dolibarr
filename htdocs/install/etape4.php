@@ -68,7 +68,7 @@ if ($db->ok == 1)
 
   if ($_GET["error"] == 1)
     {
-      print '<div class="error">Les mots de passe ne concordent pas, veuillez recommencer !</div>';
+      print '<div class="error">'.$langs->trans("PasswordsMismatch").'</div>';
     }
 
   if ($_GET["error"] == 2)
@@ -80,7 +80,7 @@ if ($db->ok == 1)
 
   if ($_GET["error"] == 3)
     {
-      print '<div class="error">Veuillez saisir un login !</div>';
+      print '<div class="error">'.$langs->trans("PleaseTypeALogin").'</div>';
     }
   $db->close();
 }

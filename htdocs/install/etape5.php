@@ -54,17 +54,17 @@ if ($_POST["action"] == "set")
 {
   if ($_POST["pass"] <> $_POST["pass_verif"])
     {
-      Header("Location: etape4.php?error=1");
+      Header("Location: etape4.php?error=1&selectlang=$setuplang");
     }
 
   if (strlen(trim($_POST["pass"])) == 0)
     {
-      Header("Location: etape4.php?error=2");
+      Header("Location: etape4.php?error=2&selectlang=$setuplang");
     }
 
   if (strlen(trim($_POST["login"])) == 0)
     {
-      Header("Location: etape4.php?error=3");
+      Header("Location: etape4.php?error=3&selectlang=$setuplang");
     }
 
 
