@@ -74,18 +74,13 @@ if ($result)
   print "<table class=\"noborder\" width=\"100%\">";
 
   print '<tr class="liste_titre">';
-  print "<td>";
-  print_liste_field_titre("Prénom","liste.php","d.prenom","&page=$page&statut=$statut");
-  print "</td><td>";
-  print_liste_field_titre("Nom","liste.php","d.nom","&page=$page&statut=$statut");
-  print "</td><td>";
-  print_liste_field_titre("Société","liste.php","d.societe","&page=$page&statut=$statut");
-  print "</td><td>";
-  print_liste_field_titre("Date","liste.php","d.datedon","&page=$page&statut=$statut");
-  print "</td><td>Projet</td>";
-  print "<td align=\"right\">";
-  print_liste_field_titre("Montant","liste.php","d.amount","&page=$page&statut=$statut");
-  print '</td><td>&nbsp;</td>';
+  print_liste_field_titre($langs->trans("Firstname"),"liste.php","d.prenom","&page=$page&statut=$statut");
+  print_liste_field_titre($langs->trans("Name"),"liste.php","d.nom","&page=$page&statut=$statut");
+  print_liste_field_titre($langs->trans("Company"),"liste.php","d.societe","&page=$page&statut=$statut");
+  print_liste_field_titre($langs->trans("Date"),"liste.php","d.datedon","&page=$page&statut=$statut");
+  print_liste_field_titre($langs->trans("Project"),"liste.php","","&page=$page&statut=$statut");
+  print_liste_field_titre($langs->trans("Amount"),"liste.php","d.amount","&page=$page&statut=$statut","",'align="right"');
+  print '<td>&nbsp;</td>';
   print "</tr>\n";
     
   $var=True;

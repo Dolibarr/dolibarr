@@ -363,25 +363,24 @@ if ($action == '')
       
       print_barre_liste("Paiements", $page, "paiement.php","",$sortfield,$sortorder,'',$num);
 
-      print '<TABLE border="0" width="100%">';
-      print '<TR class="liste_titre">';
+      print '<table class="noborder" width="100%">';
+      print '<tr class="liste_titre">';
       print "<td>Facture</td>";
       print "<td>Date</td>";
-      print "<td>";
-      print_liste_field_titre("Type","paiement.php","c.libelle","","");
-      print '</td><td align="right">Montant</TD>';
+      print_liste_field_titre($langs->trans("Type"),"paiement.php","c.libelle","","");
+      print_liste_field_titre($langs->trans("Amount"),"paiement.php","c.libelle","","",'align="right"');
       print "<td>&nbsp;</td>";
-      print "</TR>\n";
+      print "</tr>\n";
       
       while ($i < min($num,$limit))
 	{
 	  $objp = $db->fetch_object();
 	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<TD><a href=\"facture.php?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
-	  print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-	  print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
-	  print '<TD align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';	
+	  print "<tr $bc[$var]>";
+	  print "<td><a href=\"facture.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
+	  print "<td>".strftime("%d %B %Y",$objp->dp)."</td>\n";
+	  print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
+	  print '<td align="right">'.price($objp->amount).'</td><td>&nbsp;</td>';	
 	  print "</tr>";
 	  $i++;
 	}

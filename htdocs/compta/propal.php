@@ -463,13 +463,13 @@ if ($_GET["propalid"])
       print_barre_liste("Propositions commerciales", $page, "propal.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
       $i = 0;
-      print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+      print "<table class=\"noborder\" width=\"100%\">";
       print '<tr class="liste_titre">';
-      print_liste_field_titre_new ($langs->trans("Ref"),"propal.php","p.ref","","&year=$year&viewstatut=$viewstatut",'',$sortfield);
-      print_liste_field_titre_new ("Société","propal.php","s.nom","&viewstatut=$viewstatut","",'',$sortfield);
-      print_liste_field_titre_new ("Date","propal.php","p.datep","&viewstatut=$viewstatut","",'align="right" colspan="2"',$sortfield);
-      print_liste_field_titre_new ($langs->trans("Price"),"propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
-      print_liste_field_titre_new ($langs->trans("Status"),"propal.php","p.fk_statut","&viewstatut=$viewstatut","",'align="center"',$sortfield);
+      print_liste_field_titre($langs->trans("Ref"),"propal.php","p.ref","","&year=$year&viewstatut=$viewstatut",'',$sortfield);
+      print_liste_field_titre($langs->trans("Company"),"propal.php","s.nom","&viewstatut=$viewstatut","",'',$sortfield);
+      print_liste_field_titre($langs->trans("Date"),"propal.php","p.datep","&viewstatut=$viewstatut","",'align="right" colspan="2"',$sortfield);
+      print_liste_field_titre($langs->trans("Price"),"propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
+      print_liste_field_titre($langs->trans("Status"),"propal.php","p.fk_statut","&viewstatut=$viewstatut","",'align="center"',$sortfield);
       print "</tr>\n";
 
       while ($i < min($num, $limit))

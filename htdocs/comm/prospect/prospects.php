@@ -145,18 +145,12 @@ if ($result)
   
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print "<td valign=\"center\">";
-  print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom");
-  print "</td><td>";
+  print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","","","valign=\"center\">");
   print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville");
-  print "</td>";
-  print "<td align=\"center\">";
-  print_liste_field_titre("Département","prospects.php","s.fk_departement");
-  print "</td><td>";
+  print_liste_field_titre("Département","prospects.php","s.fk_departement","","","align=\"center\"");
   print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm");
-  print "</td><td>";
   print_liste_field_titre("Insertion","prospects.php","s.datec");
-  print '</td><td colspan="4">&nbsp;</td>';
+  print '<td colspan="4">&nbsp;</td>';
   print "</tr>\n";
   $var=true;
 

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,11 +51,10 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   $i = 0;
   print "<table class=\"noborder\" width=\"100%\">";
-  print "<tr class=\"liste_titre\"><td>";
+  print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Firstname"),"index.php", "c.customers_firstname");
-  print "</td><td>";
   print_liste_field_titre($langs->trans("Lastname"),"index.php", "c.customers_lastname");
-  print '</td><td>'.$langs->trans("EMail").'</td><td align="center">Newsletter</td>';
+  print '<td>'.$langs->trans("EMail").'</td><td align="center">'.$langs->trans("Newsletter").'</td>';
   print "</tr>\n";
   $var=True;
   while ($i < $num)
@@ -62,10 +62,10 @@ if ( $db->query($sql) )
       $objp = $db->fetch_object();
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_firstname."</a></TD>\n";
-      print '<td><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_lastname."</a></TD>\n";
-      print "<td>$objp->customers_email_address</TD>\n";
-      print "<td align=\"center\">$objp->customers_newsletter</TD>\n";
+      print '<td><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_firstname."</a></td>\n";
+      print '<td><a href="fiche.php?id='.$objp->customers_id.'">'.$objp->customers_lastname."</a></td>\n";
+      print "<td>$objp->customers_email_address</td>\n";
+      print "<td align=\"center\">$objp->customers_newsletter</td>\n";
       print "</tr>\n";
       $i++;
     }

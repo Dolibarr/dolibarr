@@ -116,16 +116,11 @@ if ($result)
 
   $i = 0;
   
+  $addu = "&amp;page=$page&amp;begin=$begin&amp;search_nom=".$_GET["search_nom"];
   print '<table class="liste">';
   print '<tr class="liste_titre">';
-  print "<td valign=\"right\">";
-
-  $addu = "&amp;page=$page&amp;begin=$begin&amp;search_nom=".$_GET["search_nom"];
-
-  print_liste_field_titre("Société","clients.php","s.nom",$addu);
-  print "</td><td>";
-  print_liste_field_titre("Ville","clients.php","s.ville",$addu);
-  print "</td>";
+  print_liste_field_titre($langs->trans("Companies"),"clients.php","s.nom",$addu,"",'valign="right"');
+  print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$addu);
   print "</tr>\n";
 
   print '<form method="get" action="clients.php">';

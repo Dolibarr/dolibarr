@@ -160,13 +160,11 @@ if ($result)
   }
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre"><td>';
+  print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Lastname"),"contact.php","lower(p.name)", $begin,"&amp;type=$type");
-  print "</td><td>";
   print_liste_field_titre($langs->trans("Firstname"),"contact.php","lower(p.firstname)", $begin,"&amp;type=$type");
-  print "</td><td>";
   print_liste_field_titre($langs->trans("Company"),"contact.php","lower(s.nom)", $begin,"&amp;type=$type");
-  print '</td><td>'.$langs->trans("Lastname").'</td>';
+  print '<td>'.$langs->trans("Lastname").'</td>';
   print '<td>'.$langs->trans("Phone").'</td>';
   print "</tr>\n";
   $var=True;

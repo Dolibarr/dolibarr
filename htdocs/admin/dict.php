@@ -21,7 +21,7 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/dict.php
+/*!	    \file       htdocs/admin/dict.php
 		\ingroup    setup
 		\brief      Page d'administration des dictionnaires de données
 		\version    $Revision$
@@ -47,6 +47,9 @@ $active = 1;
 
 // Cette page est une page d'édition générique des dictionnaires de données
 // Mettre ici tous les caractéristiques des dictionnaires
+
+// Ordres d'affichage des dictionnaires (0 pour espace)
+$taborder=array(4,3,2,0,1,0,5,0,6,0,7);
 
 // Nom des tables des dictionnaires
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
@@ -113,6 +116,9 @@ $tabrowid[7] = "id";
 
 
 $msg='';
+
+
+$sortfield=$_GET["sortfield"];
 
 /*
  * Actions ajout d'une entrée dans un dictionnaire de donnée
@@ -244,6 +250,9 @@ if ($_GET["action"] == $acts[1])       // disable
 llxHeader();
 
 
+/*
+ * Affichage d'un dictionnaire particulier
+ */
 if ($_GET["id"])
 {
     print_titre($langs->trans("DictionnarySetup"));
@@ -356,13 +365,9 @@ if ($_GET["id"])
                 if ($fieldlist[$field]=='libelle') $valuetoshow=$langs->trans("Label")."*";
                 if ($fieldlist[$field]=='pays')    $valuetoshow=$langs->trans("Country");
                 // Affiche nom du champ
-                print '<td>';
-                print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"]);
-                print '</td>';
+                print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"],"","",$sortfield);
             }
-            print '<td>';
-            print_liste_field_titre($langs->trans("Activate")."/".$langs->trans("Disable"),"dict.php","active","&id=".$_GET["id"]);
-            print '</td>';
+            print_liste_field_titre($langs->trans("Activate")."/".$langs->trans("Disable"),"dict.php","active","&id=".$_GET["id"],"","",$sortfield);
             print '<td>&nbsp;</td>';
             print '</tr>';
 
@@ -413,11 +418,22 @@ if ($_GET["id"])
 }
 else
 {
+    /*
+     * Affichage de la liste des dictionnaires
+     */
+
     print_titre($langs->trans("DictionnarySetup"));
     print '<br>';
 
-    foreach ($tabname as $i => $value) {
-        print '<a href="dict.php?id='.$i.'">'.$tablib[$i].'</a> (Table '.$tabname[$i].')<br>';
+    foreach ($taborder as $i) {
+        if ($i) {
+            $value=$tabname[$i];
+            print '<a href="dict.php?id='.$i.'">'.$tablib[$i].'</a> (Table '.$tabname[$i].')<br>';
+        }
+        else
+        {
+            print '<br>';
+        }
     }
 }
 

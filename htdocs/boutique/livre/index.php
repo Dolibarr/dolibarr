@@ -62,11 +62,9 @@ if ( $db->query($sql) )
   $num = $db->num_rows();
   $i = 0;
   print "<table class=\"noborder\" width=\"100%\">";
-  print "<tr class=\"liste_titre\"><td>";
+  print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Ref"),"index.php", "l.ref");
-  print "</td><td>";
-  print_liste_field_titre("Titre","index.php", "l.title");
-  print "</td>";
+  print_liste_field_titre($langs->trans("Title"),"index.php", "l.title");
   print '<td colspan="3">&nbsp;</td>';
   print "</tr>\n";
   $var=True;

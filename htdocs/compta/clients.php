@@ -36,6 +36,8 @@ if ($conf->webcal->enabled) {
     require("../lib/webcal.class.php");
 }
 
+$langs->laod("companies");
+
 llxHeader();
 
 /*
@@ -226,9 +228,9 @@ if ($result)
       $sortorder="DESC";
     }
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td valign="center">';
-  print_liste_field_titre("Société","clients.php","s.nom");
-  print "</td><td>Ville</td>";
+  print '<tr class="liste_titre">';
+  print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","","",'valign="center"');
+  print '<td>'.$langs->trans("Company").'</td>';
   print "<td align=\"center\">Préfix</td><td colspan=\"2\">&nbsp;</td></tr>\n";
 
   $var=True;

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -57,11 +58,11 @@ if ($action == 'create') {
       $num = $db->num_rows();
     
       $i = 0;
-      print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+      print "<table class=\"noborder\" width=\"100%\">";
       print '<tr class="liste_titre">';
-      print "<td>Num&eacute;ro</td><td>";
+      print "<td>Num&eacute;ro</td>";
       print_liste_field_titre($langs->trans("Label"),"config.php","label");
-      print "</td></tr>\n";
+      print "</tr>\n";
     
       if ($num > 0) {
 	$var=True;

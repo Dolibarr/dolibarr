@@ -161,21 +161,13 @@ if ($user->rights->compta->charges->creer) {
 }
 
 print "<tr class=\"liste_titre\">";
-print '<td>';
 print_liste_field_titre($langs->trans("Ref"),"index.php","id");
-print '</td><td>';
 print_liste_field_titre($langs->trans("DateDue"),"index.php","de");
-print '</td><td>';
 print_liste_field_titre($langs->trans("Period"),"index.php","periode");
-print '</td><td align="left">';
-print_liste_field_titre($langs->trans("Type"),"index.php","type");
-print '</td><td align="left">';
-print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle");
-print '</td><td align="right">';
-print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount");
-print '</td><td align="center">';
-print_liste_field_titre($langs->trans("Status"),"index.php","s.paye");
-print '</td>';
+print_liste_field_titre($langs->trans("Type"),"index.php","type","","",'align="left"');
+print_liste_field_titre($langs->trans("Label"),"index.php","s.libelle","","",'align="left"');
+print_liste_field_titre($langs->trans("Amount"),"index.php","s.amount","","",'align="right"');
+print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","","",'align="center"');
 print "</tr>\n";
 
 

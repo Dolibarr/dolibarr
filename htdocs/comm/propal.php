@@ -879,18 +879,14 @@ else
 
 
       $i = 0;
-      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+      print '<table class="noborder" width="100%">';
 
       print '<tr class="liste_titre">';
-
-      print_liste_field_titre_new ($langs->trans("Ref"),"propal.php","p.ref","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut",'width="15%"',$sortfield);
-
-      print_liste_field_titre_new ("Société","propal.php","s.nom","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut",'width="30%"',$sortfield);
-
-      print_liste_field_titre_new ($langs->trans("Date"),"propal.php","p.datep","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut", 'width="25%" align="right" colspan="2"',$sortfield);
-      print_liste_field_titre_new ($langs->trans("Price"),"propal.php","p.price","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut", ' width="20%" align="right"',$sortfield);
-
-      print_liste_field_titre_new ($langs->trans("Status"),"propal.php","p.fk_statut","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut",'width="10%" align="center"',$sortfield);
+      print_liste_field_titre($langs->trans("Ref"),"propal.php","p.ref","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut",'width="15%"',$sortfield);
+      print_liste_field_titre($langs->trans("Company"),"propal.php","s.nom","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut",'width="30%"',$sortfield);
+      print_liste_field_titre($langs->trans("Date"),"propal.php","p.datep","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut", 'width="25%" align="right" colspan="2"',$sortfield);
+      print_liste_field_titre($langs->trans("Price"),"propal.php","p.price","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut", ' width="20%" align="right"',$sortfield);
+      print_liste_field_titre($langs->trans("Status"),"propal.php","p.fk_statut","","&amp;socidp=$socidp&amp;viewstatut=$viewstatut",'width="10%" align="center"',$sortfield);
       print "</tr>\n";
       $var=true;
       

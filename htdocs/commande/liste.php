@@ -89,18 +89,12 @@ if ( $db->query($sql) )
   print_barre_liste($langs->trans("Orders"), $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
     
   $i = 0;
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
-  
+  print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  
-  print_liste_field_titre_new ($langs->trans("Ref"),"liste.php","c.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
-  
-  print_liste_field_titre_new ($langs->trans("Company"),"liste.php","s.nom","","&amp;socidp=$socidp",'width="30%"',$sortfield);
-  
-  print_liste_field_titre_new ($langs->trans("Date"),"liste.php","c.date_commande","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
-  
-  print_liste_field_titre_new ($langs->trans("Status"),"liste.php","c.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
-
+  print_liste_field_titre($langs->trans("Ref"),"liste.php","c.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","","&amp;socidp=$socidp",'width="30%"',$sortfield);
+  print_liste_field_titre($langs->trans("Date"),"liste.php","c.date_commande","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
+  print_liste_field_titre($langs->trans("Status"),"liste.php","c.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
   print "</tr>\n";
   $var=True;
   

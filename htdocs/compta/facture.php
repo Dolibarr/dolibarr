@@ -1497,21 +1497,13 @@ else
 	  $i = 0;
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
-	  print '<td>';
 	  print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socidp=$socidp");
-	  print '</td><td align="center">';
-	  print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socidp=$socidp");
-	  print '</td><td>';
+	  print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"f.datef","","&amp;socidp=$socidp",'align="center"');
 	  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;socidp=$socidp");
-	  print '</td><td align="right">';
-	  print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","","&amp;socidp=$socidp");
-	  print '</td><td align="right">';
-	  print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socidp=$socidp");
-	  print '</td><td align="right">';
-	  print_liste_field_titre("Reçu",$_SERVER["PHP_SELF"],"am","","&amp;socidp=$socidp");
-	  print '</td><td align="center">';
-	  print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye","","&amp;socidp=$socidp");
-	  print '</td>';
+	  print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"f.total","","&amp;socidp=$socidp",'align="right"');
+	  print_liste_field_titre($langs->trans("AmountTTC"),$_SERVER["PHP_SELF"],"f.total_ttc","","&amp;socidp=$socidp",'align="right"');
+	  print_liste_field_titre($langs->trans("Received"),$_SERVER["PHP_SELF"],"am","","&amp;socidp=$socidp",'align="right"');
+	  print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"fk_statut,paye","","&amp;socidp=$socidp",'align="right"');
 	  print "</tr>\n";
       
 	  if ($num > 0) 

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -69,15 +70,13 @@ if ($action == 'create') {
    */
   print_barre_liste("Comptes comptable",$page,"ligne.php");
   
-
-  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<table class=\"noborder\" width=\"100%\">";
   print '<tr class="liste_titre">';
-  print "<td>Num&eacute;ro</TD><td>";
+  print_liste_field_titre($langs->trans("Ref"),"ligne.php","id");
   print_liste_field_titre($langs->trans("Label"),"ligne.php","label");
-  print "</td><td>Montant</TD>";
+  print '<td>'.$langs->trans("Amount").'</td>';
   print "</tr>\n";
     
-
   print '<form action="ligne.php" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<tr><td><select name="number">'.$options.'</select></td>';
@@ -86,7 +85,6 @@ if ($action == 'create') {
   print '<td><input type="submit" value="add"></td>';
   print '</tr>';
   print '</form>';
-
 
   $sql = "SELECT ca.number, c.label, c.amount";
   $sql .= " FROM ".MAIN_DB_PREFIX."compta_account as ca, ".MAIN_DB_PREFIX."compta as c WHERE c.fk_compta_account = ca.rowid";

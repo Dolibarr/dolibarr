@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,9 +48,8 @@ if ( $db->query($sql) ) {
   $num = $db->num_rows();
   $i = 0;
   print "<table class=\"noborder\" width=\"100%\">";
-  print "<tr class=\"liste_titre\"><td>";
-  print_liste_field_titre("Nom","index.php", "e.nom");
-  print "</td>";
+  print "<tr class=\"liste_titre\">";
+  print_liste_field_titre($langs->trans("Name"),"index.php", "e.nom");
   print "</tr>\n";
   $var=True;
   while ($i < $num) {

@@ -128,15 +128,12 @@ if ($result)
   print_barre_liste($titre ,$page, "index.php", '&amp;begin='.$_GET["begin"].'&amp;view='.$_GET["view"].'&amp;userid='.$_GET["userid"], $sortfield, $sortorder,'',$num);
 
 
-  print '<p><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="noborder" width="100%">';
 
-  print '<tr class="liste_titre"><td>';
+  print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Lastname"),"index.php","lower(p.name)", $begin);
-  print "</td><td>";
   print_liste_field_titre($langs->trans("Firstname"),"index.php","lower(p.firstname)", $begin);
-  print "</td><td>";
   print_liste_field_titre($langs->trans("Company"),"index.php","lower(s.nom)", $begin);
-  print '</td>';
 
   print '<td>'.$langs->trans("Phone").'</td>';
 
@@ -151,8 +148,6 @@ if ($result)
     }
 
   print "</tr>\n";
-
-
 
   print '<form method="get" action="index.php">';
   print '<tr class="liste_titre">';

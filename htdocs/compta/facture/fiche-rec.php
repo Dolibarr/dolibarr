@@ -420,15 +420,13 @@ else
 	print_barre_liste("Factures",$page,"fiche-rec.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 	$i = 0;
-	print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-	print '<TR class="liste_titre">';
-	print '<td>Titre</td>';
-	print '<td>';
-	print_liste_field_titre("Société","fiche-rec.php","s.nom","","&socidp=$socidp");
-
-	print '</td><TD align="right">Montant</TD>';
+	print "<table class=\"noborder\" width=\"100%\">";
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Ref").'</td>';
+	print_liste_field_titre($langs->trans("Company"),"fiche-rec.php","s.nom","","&socidp=$socidp");
+	print '</td><td align="right">'.$langs->trans("Amount").'</td>';
 	print '<td>&nbsp;</td>';
-	print "</TR>\n";
+	print "</td>\n";
       
 	if ($num > 0) 
 	  {
@@ -443,10 +441,10 @@ else
 		$class = "normal";
 
 		print '<td><a class="'.$class.'" href="fiche-rec.php?facid='.$objp->facid.'">' . $objp->titre;
-		print "</a></TD>\n";
-		print '<TD><a class="'.$class.'" href="../fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		print "</a></td>\n";
+		print '<td><a class="'.$class.'" href="../fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
 		
-		print "<TD align=\"right\">".price($objp->total)."</TD>\n";
+		print "<td align=\"right\">".price($objp->total)."</td>\n";
 		
 		if (! $objp->paye)
 		  {
@@ -464,7 +462,7 @@ else
 		    print '<td>&nbsp;</td>';
 		  }
 		
-		print "</TR>\n";
+		print "</tr>\n";
 		$i++;
 	      }
 	  }
@@ -474,7 +472,7 @@ else
       }
     else
       {
-	print $db->error() . "<br>" . $sql;
+	dolibarr_print_error($db);
       }    
   }
   

@@ -51,10 +51,12 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   $i = 0;
-  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
-  print "<tr class=\"liste_titre\"><td>Numéro</td><td>".$langs->trans("Date")."</td><td>";
+  print "<table class=\"noborder\" width=\"100%\">";
+  print "<tr class=\"liste_titre\">";
+  print "<td>".$langs->trans("Ref")."</td>";
+  print "<td>".$langs->trans("Date")."</td>";
   print_liste_field_titre("Client","commande.php", "customers_name");
-  print '</td><td align="right">'.$langs->trans("Total").'</td>';
+  print '<td align="right">'.$langs->trans("Total").'</td>';
   print "</tr>\n";
   $var=True;
   while ($i < $num)

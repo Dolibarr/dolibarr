@@ -66,11 +66,11 @@ if ( $db->query($sql) )
   print_barre_liste("Liste des déplacements", $page, "index.php","&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
   $i = 0;
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+  print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre_new ("Date","index.php","d.dated","","&socidp=$socidp",'',$sortfield);
-  print_liste_field_titre_new ("Société","index.php","s.nom","","&socidp=$socidp",'',$sortfield);
-  print '<td align="center">Utilisateur</TD>';
+  print_liste_field_titre($langs->trans("Date"),"index.php","d.dated","","&socidp=$socidp",'',$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&socidp=$socidp",'',$sortfield);
+  print_liste_field_titre($langs->trans("User"),"index.php","u.name","","&socidp=$socidp",'',$sortfield);
   print "</tr>\n";
 
   $var=True;

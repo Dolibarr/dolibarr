@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,9 +68,9 @@ if ($result)
   
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print '<td>Date</td><td>';
+  print '<td>'.$langs->trans("Date").'</td>';
   print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","","");
-  print '</td><td align="right">'.$langs->trans("Amount").'</td>';
+  print '<td align="right">'.$langs->trans("Amount").'</td>';
   print "<td>&nbsp;</td>";
   print "</tr>\n";
   
