@@ -28,6 +28,7 @@ create table llx_const
   rowid       integer AUTO_INCREMENT PRIMARY KEY,
   name        varchar(255),
   value       varchar(255),
+  type        enum('yesno'),
   note        text,
 
   UNIQUE INDEX(name)
