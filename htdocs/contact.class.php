@@ -50,7 +50,7 @@ class Contact
   {
     if (!$this->socid)
       {
-	$this->socid = 0;
+				$this->socid = 0;
       }
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user) ";
@@ -58,15 +58,15 @@ class Contact
 
     if ($this->db->query($sql) )
       {
-	$id = $this->db->last_insert_id();
+				$id = $this->db->last_insert_id();
 
-	$this->update($id, $user);
+				$this->update($id, $user);
 
-	return $id;
+				return $id;
       }
     else
       {
-	print $this->db->error() . '<br>' . $sql;
+				print $this->db->error() . '<br>' . $sql;
       }
   }
   /*
@@ -74,44 +74,44 @@ class Contact
    *
    */
   Function update($id, $user=0)
-    {
-      $this->id = $id;
-      $this->error = array();
-
-      $this->email = trim($this->email);
-
-      $this->phone_pro = ereg_replace(" ","",$this->phone_pro);
-      $this->phone_perso = ereg_replace(" ","",$this->phone_perso);
-
-      if (strlen($this->phone_pro) == 0 && $this->socid > 0)
 	{
-	  $soc = new Societe($this->db);
-	  $soc->fetch($this->socid);
-	  $this->phone_pro = $soc->tel;
-	}
+		$this->id = $id;
+		$this->error = array();
 
-      $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET name='$this->name', firstname='$this->firstname'";
-      $sql .= ", poste='$this->poste'";
-      $sql .= ", fax='$this->fax'";
-      $sql .= ", email='$this->email'";
-      $sql .= ", note='$this->note'";
-      $sql .= ", phone = '$this->phone_pro'";
-      $sql .= ", phone_perso = '$this->phone_perso'";
-      $sql .= ", phone_mobile = '$this->phone_mobile'";
-      $sql .= ", jabberid = '$this->jabberid'";
-      $sql .= " WHERE idp=$id";
+		$this->email = trim($this->email);
 
-      $result = $this->db->query($sql);
+		$this->phone_pro = ereg_replace(" ","",$this->phone_pro);
+		$this->phone_perso = ereg_replace(" ","",$this->phone_perso);
 
-      if (!$result) 
-	{
-	  print $this->db->error() . '<br>' . $sql;
-	}
+		if (strlen($this->phone_pro) == 0 && $this->socid > 0)
+			{
+	  		$soc = new Societe($this->db);
+	  		$soc->fetch($this->socid);
+	  		$this->phone_pro = $soc->tel;
+			}
 
-      if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
-	{
-	  $this->update_ldap($user);
-	}
+      	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET name='$this->name', firstname='$this->firstname'";
+      	$sql .= ", poste='$this->poste'";
+      	$sql .= ", fax='$this->fax'";
+      	$sql .= ", email='$this->email'";
+      	$sql .= ", note='$this->note'";
+      	$sql .= ", phone = '$this->phone_pro'";
+      	$sql .= ", phone_perso = '$this->phone_perso'";
+      	$sql .= ", phone_mobile = '$this->phone_mobile'";
+      	$sql .= ", jabberid = '$this->jabberid'";
+      	$sql .= " WHERE idp=$id";
+
+      	$result = $this->db->query($sql);
+
+		if (!$result)
+			{
+	  		print $this->db->error() . '<br>' . $sql;
+			}
+
+		if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
+			{
+	  		$this->update_ldap($user);
+			}
       return $result;
     }
   /*
@@ -123,47 +123,48 @@ class Contact
     $this->fetch($this->id);
 
     $ds = dolibarr_ldap_connect();
-    
+
     if ($ds)
       {
-	ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
-	
-	$ldapbind = dolibarr_ldap_bind($ds);
+				dolibarr_ldap_setversion($ds,$version);
 
-	if ($ldapbind)
-	  {
-	    $info["cn"] = utf8_encode($this->firstname." ".$this->name);
-	    $info["sn"] = utf8_encode($this->name);
-	    $info["ou"] = "People";
+				$ldapbind = dolibarr_ldap_bind($ds);
 
-	    if ($this->email)
-	      $info["rfc822Mailbox"] = $this->email;
-		  
-	    if ($this->phone_pro)
-	      $info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
-	    
-	    if ($this->phone_mobile)
-	      $info["mobile"] = dolibarr_print_phone($this->phone_mobile);
-	    
-	    if ($this->phone_perso)
-	      $info["homePhone"] = dolibarr_print_phone($this->phone_perso);
-	    
-	    if ($this->poste)
-	      $info["title"] = utf8_encode($this->poste);
+				if ($ldapbind)
+					{
+	    			$info["cn"] = utf8_encode($this->firstname." ".$this->name);
+	    			$info["sn"] = utf8_encode($this->name);
+						$info["ou"] = People;
 
-	    if ($this->socid > 0)
-	      {
-		$soc = new Societe($this->db);
-		$soc->fetch($this->socid);
-		$info["o"] = utf8_encode($soc->nom);
-		if ($soc->ville)
-		  {
-		    $info["l"] = utf8_encode($soc->ville);
-		  }
-	      }
+	    			if ($this->email)
+	      			$info["rfc822Mailbox"] = $this->email;
 
-	    $info["objectclass"][0] = "organizationalPerson";
-	    $info["objectclass"][1] = "inetOrgPerson";
+	    			if ($this->phone_pro)
+	      			$info["telephoneNumber"] = dolibarr_print_phone($this->phone_pro);
+
+	    			if ($this->phone_mobile)
+	      			$info["mobile"] = dolibarr_print_phone($this->phone_mobile);
+
+	    			if ($this->phone_perso)
+	      			$info["homePhone"] = dolibarr_print_phone($this->phone_perso);
+
+	    			if ($this->poste)
+	      			$info["title"] = utf8_encode($this->poste);
+
+	    			if ($this->socid > 0)
+	      			{
+								$soc = new Societe($this->db);
+								$soc->fetch($this->socid);
+								$info["o"] = utf8_encode($soc->nom);
+
+								if ($soc->ville)
+		  					{
+		    					$info["l"] = utf8_encode($soc->ville);
+		  					}
+	      			}
+
+	    			$info["objectclass"][0] = "organizationalPerson";
+	    			$info["objectclass"][1] = "inetOrgPerson";
 //	    $info["objectclass"][2] = "phpgwContact"; // compatibilite egroupware
 
 //	    $info['uidnumber'] = $this->id;
@@ -172,36 +173,39 @@ class Contact
 //	    $info['phpgwMailType'] = 'INTERNET';
 //	    $info['phpgwMailHomeType'] = 'INTERNET';
 
-	    $info["uid"] = $this->id. ":".$info["sn"];
+						$info["uid"] = $this->id. ":".$info["sn"];
 //	    $info["phpgwContactTypeId"] = 'n';
 //	    $info["phpgwContactCatId"] = 0;
 //	    $info["phpgwContactAccess"] = "public";
 //	    $info["phpgwContactOwner"] = $user->egroupware_id;
-	    $info["givenName"] = utf8_encode($this->firstname);
+						$info["givenName"] = utf8_encode($this->firstname);
 
 //	    if ($this->phone_mobile)
 //	      $info["phpgwCellTelephoneNumber"] = dolibarr_print_phone($this->phone_mobile);
 
-	    //$dn = "uid=".$info["uid"].","."cn=".$info["cn"].", ".LDAP_SERVER_DN ;
-	    //$dn = "cn=".$info["cn"].", ".LDAP_SERVER_DN ;
+						//$dn = "uid=".$info["uid"].","."cn=".$info["cn"].", ".LDAP_SERVER_DN ;
 
-	    $r = @ldap_delete($ds, LDAP_SERVER_DN);
+						$dn = "cn=".$info["cn"].","."ou=".$info["ou"].", ".LDAP_SERVER_DN_SHORT ;
 
-	    if (! ldap_add($ds, $dn, $info))
-	      {
-		$this->error[0] = ldap_err2str(ldap_errno($ds));
-		var_dump($info);
-	      }
-	  }
-	else
-	  {
-	    echo "LDAP bind failed...";
-	  }	 
-	ldap_close($ds);	    
-      }
+	    			$r = @ldap_delete($ds, $dn);
+
+	    			if (! ldap_add($ds, $dn, $info))
+	      			{
+								$this->error[0] = ldap_err2str(ldap_errno($ds));
+								var_dump($info);
+	      			}
+					}
+				else
+	  			{
+	    			echo "Connection au dn $dn échoué !";
+	  			}
+
+				dolibarr_ldap_unbind($ds);
+
+			}
     else
       {
-	echo "Unable to connect to LDAP server";
+				echo "Impossible de se connecter au serveur LDAP !";
       }
   }
 
