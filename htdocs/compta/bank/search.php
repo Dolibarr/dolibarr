@@ -1,6 +1,5 @@
 <?PHP
-/********************************************************************************
- * Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,8 +18,7 @@
  *
  * $Id$
  * $Source$
- *
- *******************************************************************************/
+ */
 
 require("./pre.inc.php");
 require("./bank.lib.php");
