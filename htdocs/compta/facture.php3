@@ -278,13 +278,13 @@ if ($action == 'pdf')
 
 $html = new Form($db);
 
-/*
+/*********************************************************************
  *
  * Mode creation
  *
  *
  *
- */
+ ************************************************************************/
 if ($action == 'create') 
 {
   print_titre("Emettre une facture");
@@ -959,12 +959,12 @@ else
 	print "Facture inexistante ou accés refusé";
       }
   } else {
-    /*
-     *
-     * Mode Liste
-     *
-     *
-     */
+    /***************************************************************************
+     *                                                                         *
+     *                      Mode Liste                                         *
+     *                                                                         * 
+     *                                                                         *
+     ***************************************************************************/
     if ($page == -1)
       {
 	$page = 0 ;
@@ -1002,6 +1002,12 @@ else
 	
 	if ($year > 0)
 	  $sql .= " AND date_format(f.datef, '%Y') = $year";
+
+	if (strlen($HTTP_POST_VARS["sf_ref"]) > 0)
+	  {
+	    $sql .= " AND f.facnumber like '%".$HTTP_POST_VARS["sf_ref"] . "%'";
+	  }
+
 	
 	$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
 	$sql .= $db->plimit($limit + 1,$offset);
