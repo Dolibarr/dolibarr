@@ -56,16 +56,24 @@ class Form {
    *
    *
    */
-  Function select_tva($name='', $defaulttx = 19.6)
+  Function select_tva($name='', $defaulttx = 0)
   {
     if (! strlen(trim($name)))
     {
       $name = "tauxtva";
     }
 
-    $txtva[0] = '19.6';
-    $txtva[1] = '5.5';
-    $txtva[2] = '0';
+    $file = DOL_DOCUMENT_ROOT . "/conf/tva.local.php";
+    if (is_readable($file))
+      {
+	include $file;
+      }
+    else
+      {
+	$txtva[0] = '19.6';
+	$txtva[1] = '5.5';
+	$txtva[2] = '0';
+      }
 
     $taille = sizeof($txtva);
 
