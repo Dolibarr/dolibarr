@@ -28,7 +28,7 @@ class DolibarrModules
    *
    */
 
-  Function DolibarrModules($DB)
+  function DolibarrModules($DB)
   {
     $this->db = $DB ;
   }
@@ -38,7 +38,7 @@ class DolibarrModules
    *
    */
 
-  Function _init($array_sql)
+  function _init($array_sql)
   {
     /*
      *  Activation du module:
@@ -146,7 +146,7 @@ class DolibarrModules
    *
    *
    */
-  Function _remove($array_sql)
+  function _remove($array_sql)
   {
     $err = 0;
 

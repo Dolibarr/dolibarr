@@ -23,7 +23,7 @@
 class MouvementStock
 {
 
-  Function MouvementStock($DB)
+  function MouvementStock($DB)
     {
       $this->db = $DB;
     }
@@ -31,7 +31,7 @@ class MouvementStock
    *
    *
    */
-  Function _create($user, $product_id, $entrepot_id, $qty, $type, $transaction=1) 
+  function _create($user, $product_id, $entrepot_id, $qty, $type, $transaction=1) 
     {
 
       if ($this->db->begin($transaction) )
@@ -70,7 +70,7 @@ class MouvementStock
    *
    *
    */
-  Function livraison($user, $product_id, $entrepot_id, $qty, $transaction=1) 
+  function livraison($user, $product_id, $entrepot_id, $qty, $transaction=1) 
     {
 
       return $this->_create($user, $product_id, $entrepot_id, (0 - $qty), 2, $transaction);

@@ -31,7 +31,7 @@ class modExpedition extends DolibarrModules
    *
    */
 
-  Function modExpedition($DB)
+  function modExpedition($DB)
   {
     $this->db = $DB ;
     $this->numero = 80 ;
@@ -58,7 +58,7 @@ class modExpedition extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      * Permissions
@@ -78,7 +78,7 @@ class modExpedition extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array(
 

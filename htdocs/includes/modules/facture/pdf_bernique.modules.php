@@ -24,7 +24,7 @@
 
 Class pdf_bernique {
 
-  Function pdf_bernique($db=0)
+  function pdf_bernique($db=0)
     { 
       $this->db = $db;
       $this->description = "Modèle pour les factures avec plusieurs taux de tva, inclus aussi le numéro de TVA Intracommunautaire";
@@ -34,13 +34,13 @@ Class pdf_bernique {
     /*!
     		\brief Renvoi le dernier message d'erreur de création de facture
     */
-    Function error()
+    function error()
     {
         return $this->error;
     }
 
 
-  Function write_pdf_file($facid)
+  function write_pdf_file($facid)
     {
       global $user;
       $fac = new Facture($this->db,"",$facid);
@@ -189,7 +189,7 @@ Class pdf_bernique {
    *
    *
    */
-  Function _tableau_compl(&$pdf, $fac)
+  function _tableau_compl(&$pdf, $fac)
     {
       $tab3_top = 240;
       $tab3_height = 18;
@@ -218,7 +218,7 @@ Class pdf_bernique {
       $pdf->MultiCell(120, 5, $titre, 0, 'J');
     }
 
-  Function _tableau_tot(&$pdf, $fac, $top, $height)
+  function _tableau_tot(&$pdf, $fac, $top, $height)
     {
       $tab2_top = $top + $height;
       $tab2_hl = 5;
@@ -282,7 +282,7 @@ Class pdf_bernique {
   /*
    *
    */
-  Function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+  function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
       $pdf->SetFont('Arial','',10);
       
@@ -309,7 +309,7 @@ Class pdf_bernique {
    *
    *
    */
-  Function _pagehead(&$pdf, $fac)
+  function _pagehead(&$pdf, $fac)
     {
       
       $pdf->SetXY(10,5);

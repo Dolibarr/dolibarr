@@ -59,7 +59,7 @@ class AdherentOptions
 		\param id			id de l'adhérent
 */
 
-  Function AdherentOptions($DB, $id='')
+  function AdherentOptions($DB, $id='')
     {
       $this->db = $DB ;
       $this->id = $id;
@@ -71,8 +71,7 @@ class AdherentOptions
 /*!
 		\brief fonction qui imprime un liste d'erreurs
 */
-
-  Function print_error_list()
+  function print_error_list()
   {
     $num = sizeof($this->errorstr);
     for ($i = 0 ; $i < $num ; $i++)
@@ -85,8 +84,7 @@ class AdherentOptions
 		\brief fonction qui vérifie les données entrées
 		\param	minimum
 */
-
-	Function check($minimum=0)
+	function check($minimum=0)
     {
       $err = 0;
 
@@ -123,15 +121,15 @@ class AdherentOptions
     }
 
 /*!
-		\brief fonction qui crée un attribut optionnel
+		\brief  fonction qui crée un attribut optionnel
 		\param	attrname			nom de l'atribut
-		\param	type					type de l'attribut
+		\param	type				type de l'attribut
 		\param	length				longuer de l'attribut
 
 		\remarks	Ceci correspond a une modification de la table et pas a un rajout d'enregistrement
 */
 
-  Function create($attrname,$type='varchar',$length=255) {
+  function create($attrname,$type='varchar',$length=255) {
     /*
      *  Insertion dans la base
      */
@@ -173,25 +171,24 @@ class AdherentOptions
 		\param	label					nom du label
 */
 
-  Function create_label($attrname,$label='') {
+  function create_label($attrname,$label='') {
     /*
      *  Insertion dans la base
      */
-    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label SET ";
-      $escaped_label=mysql_escape_string($label);
-      $sql .= " name='$attrname',label='$escaped_label' ";
-
-      if ($this->db->query($sql))
-	{
-	  return 1;
-	}
-      else
-	{
-	  print $this->db->error();
-	  print "<h2><br>$sql<br></h2>";
-	  return 0;
-	}
+    if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)) {
+          $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options_label SET ";
+          $escaped_label=mysql_escape_string($label);
+          $sql .= " name='$attrname',label='$escaped_label' ";
+    
+          if ($this->db->query($sql))
+    	{
+    	  return 1;
+    	}
+          else
+    	{
+    	  print dolibarr_print_error($this->db);
+    	  return 0;
+    	}
     }
   }
 
@@ -200,7 +197,7 @@ class AdherentOptions
 		\param	attrname			nom de l'atribut
 */
 
-  Function delete($attrname)
+  function delete($attrname)
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
       $sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options DROP COLUMN $attrname";
@@ -226,7 +223,7 @@ class AdherentOptions
 		\param	attrname			nom du label
 */
 
-  Function delete_label($attrname)
+  function delete_label($attrname)
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options_label WHERE name='$attrname'";
@@ -254,7 +251,7 @@ class AdherentOptions
 		\param	length				longuer de l'attribut
 */
 
-  Function update($attrname,$type='varchar',$length=255)
+  function update($attrname,$type='varchar',$length=255)
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
       $sql = "ALTER TABLE ".MAIN_DB_PREFIX."adherent_options ";
@@ -296,7 +293,7 @@ class AdherentOptions
 		\param	label					nom du label
 */
 
-  Function update_label($attrname,$label='')
+  function update_label($attrname,$label='')
   {
     if (isset($attrname) && $attrname != '' && preg_match("/^\w[a-zA-Z0-9-]*$/",$attrname)){
       $escaped_label=mysql_escape_string($label);
@@ -318,13 +315,13 @@ class AdherentOptions
 
   }
 
-	Function fetch_optionals()
+	function fetch_optionals()
     {
       $this->fetch_name_optionals();
       $this->fetch_name_optionals_label();
     }
 
-	Function fetch_name_optionals()
+	function fetch_name_optionals()
   {
     $array_name_options=array();
     $sql = "SHOW COLUMNS FROM ".MAIN_DB_PREFIX."adherent_options";
@@ -353,7 +350,7 @@ class AdherentOptions
 
   }
 
-	Function fetch_name_optionals_label()
+	function fetch_name_optionals_label()
   {
     $array_name_label=array();
     $sql = "SELECT name,label FROM ".MAIN_DB_PREFIX."adherent_options_label";

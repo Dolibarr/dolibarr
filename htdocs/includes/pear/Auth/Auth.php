@@ -84,11 +84,11 @@ class DOLIAuth {
     var $storage = "";
 
     /**
-     * Function defined by the user, that creates the login screen
+     * function defined by the user, that creates the login screen
      *
      * @var string
      */
-    var $loginFunction = "";
+    var $loginfunction = "";
 
     /**
      * Should the login form be displayed?
@@ -151,10 +151,10 @@ class DOLIAuth {
      * @param boolean   Should the login form be displayed if neccessary?
      * @return void
      */
-    function DOLIAuth($storageDriver, $options = "", $loginFunction = "", $showLogin = true)
+    function DOLIAuth($storageDriver, $options = "", $loginfunction = "", $showLogin = true)
     {
-        if ($loginFunction != "" && function_exists($loginFunction)) {
-            $this->loginFunction = $loginFunction;
+        if ($loginfunction != "" && function_exists($loginfunction)) {
+            $this->loginfunction = $loginfunction;
         }
 
         if (is_bool($showLogin)) {
@@ -562,8 +562,8 @@ class DOLIAuth {
      */
     function drawLogin($username = "")
     {
-        if ($this->loginFunction != "") {
-            call_user_func($this->loginFunction, $username, $this->status);
+        if ($this->loginfunction != "") {
+            call_user_func($this->loginfunction, $username, $this->status);
         } else {
             $server = &$this->_importGlobalVariable("server");
 

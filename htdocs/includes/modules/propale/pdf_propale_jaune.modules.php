@@ -24,14 +24,14 @@
 Class pdf_propale_jaune
 {
 
-  Function pdf_propale_jaune($db=0)
+  function pdf_propale_jaune($db=0)
     { 
       $this->db = $db;
       $this->name = "Jaune";
       $this->description = "Modèle de proposition Jaune";
     }
 
-  Function write_pdf_file($id)
+  function write_pdf_file($id)
     {
       global $user;
       $propale = new Propal($this->db,"",$id);
@@ -173,7 +173,7 @@ Class pdf_propale_jaune
 	}
     }
 
-  Function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+  function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
 
       $pdf->SetFont('Arial','',11);
@@ -208,7 +208,7 @@ Class pdf_propale_jaune
       $pdf->Text(10,280, $titre);
     }
 
-  Function _pagehead(&$pdf, $propale)
+  function _pagehead(&$pdf, $propale)
     {
       $pdf->SetXY(12,42);
       if (defined("FAC_PDF_INTITULE"))

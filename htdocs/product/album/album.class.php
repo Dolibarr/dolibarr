@@ -32,7 +32,7 @@ class Album {
   var $price ;
   var $status ;
 
-  Function Album($DB, $id=0) {
+  function Album($DB, $id=0) {
     $this->db = $DB;
     $this->id   = $id ;
   }  
@@ -41,7 +41,7 @@ class Album {
    *
    *
    */
-  Function create($user) {
+  function create($user) {
 
     if (strlen($this->annee))
       {
@@ -106,7 +106,7 @@ class Album {
    *
    *
    */
-  Function linkga($id, $gaid)
+  function linkga($id, $gaid)
   {
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."album_to_groupart (fk_album, fk_groupart) values ($id, $gaid)";
@@ -121,7 +121,7 @@ class Album {
    *
    *
    */
-  Function liste_groupart()
+  function liste_groupart()
   {
     $ga = array();
 
@@ -156,7 +156,7 @@ class Album {
    *
    *
    */
-  Function updateosc()
+  function updateosc()
   {
 
     $sql = "UPDATE ".DB_NAME_OSC.".products_description ";
@@ -224,7 +224,7 @@ class Album {
    *
    *
    */
-  Function update($id, $user)
+  function update($id, $user)
   {
 
     if (strlen($this->annee)==0)
@@ -251,7 +251,7 @@ class Album {
    *
    *
    */
-  Function fetch ($id) {
+  function fetch ($id) {
     
     $sql = "SELECT rowid, ref, annee, osc_id, title, description FROM ".MAIN_DB_PREFIX."album WHERE rowid = $id";
 
@@ -303,7 +303,7 @@ class Album {
    *
    *
    */
-  Function delete($user) {
+  function delete($user) {
 
     $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = $idosc ";
 

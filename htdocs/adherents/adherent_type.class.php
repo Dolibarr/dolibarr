@@ -44,17 +44,20 @@ class AdherentType
 
 /*!
 		\brief AdherentType
-		\param DB				base de données
-		\param soc_idp
+		\param DB				handler accès base de données
 */
 
-  Function AdherentType($DB, $soc_idp="")
+  function AdherentType($DB)
     {
       $this->db = $DB ;
       $this->statut = 1;
     }
 
-	Function print_error_list()
+/*!
+		\brief print_error_list
+*/
+
+	function print_error_list()
   {
     $num = sizeof($this->errorstr);
     for ($i = 0 ; $i < $num ; $i++)
@@ -68,7 +71,7 @@ class AdherentType
 		\param userid			userid de l'adhérent
 */
 
-	Function create($userid)
+	function create($userid)
     {
       /*
        *  Insertion dans la base
@@ -92,7 +95,7 @@ class AdherentType
 	}
     }
 
-  Function update()
+  function update()
     {
 
       $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type SET ";
@@ -124,7 +127,7 @@ class AdherentType
 		\param rowid
 */
 
-	Function delete($rowid)
+	function delete($rowid)
   {
 
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_type WHERE rowid = $rowid";
@@ -152,7 +155,7 @@ class AdherentType
 		\param rowid
 */
 
-	Function fetch($rowid)
+	function fetch($rowid)
   {
     $sql = "SELECT *";
     $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
@@ -181,7 +184,7 @@ class AdherentType
 
   }
 
-  Function liste_array()
+  function liste_array()
     {
       $projets = array();
 

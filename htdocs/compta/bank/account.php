@@ -316,7 +316,7 @@ llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</e
 /*
  *
  */
-Function _print_lines($db,$sql,$acct)
+function _print_lines($db,$sql,$acct)
 {
   global $bc, $nbline, $viewline, $user, $page;
   $var=True;  

@@ -24,13 +24,13 @@ class CommandeStats
 {
   var $db ;
 
-  Function CommandeStats($DB, $socidp)
+  function CommandeStats($DB, $socidp)
     {
       $this->db = $DB;
       $this->socidp = $socidp;
     }
 
-  Function getNbCommandeByMonthWithPrevYear($year)
+  function getNbCommandeByMonthWithPrevYear($year)
   {
     $data1 = $this->getNbCommandeByMonth($year - 1);
     $data2 = $this->getNbCommandeByMonth($year);
@@ -49,7 +49,7 @@ class CommandeStats
    * Renvoie le nombre de commande par mois pour une année donnée
    *
    */
-  Function getNbCommandeByMonth($year)
+  function getNbCommandeByMonth($year)
   {
     $result = array();
     $sql = "SELECT date_format(date_commande,'%m') as dm, count(*)  FROM ".MAIN_DB_PREFIX."commande";
@@ -93,7 +93,7 @@ class CommandeStats
    * Renvoie le nombre de commande par année
    *
    */
-  Function getNbByYear()
+  function getNbByYear()
   {
     $result = array();
     $sql = "SELECT date_format(date_commande,'%Y') as dm, count(*), sum(total_ht)  FROM ".MAIN_DB_PREFIX."commande WHERE fk_statut > 0";
@@ -121,7 +121,7 @@ class CommandeStats
    * Renvoie le nombre de commande par mois pour une année donnée
    *
    */
-  Function getCommandeAmountByMonth($year)
+  function getCommandeAmountByMonth($year)
   {
     $result = array();
     $sql = "SELECT date_format(date_commande,'%m') as dm, sum(total_ht)  FROM ".MAIN_DB_PREFIX."commande";
@@ -157,7 +157,7 @@ class CommandeStats
    * Renvoie le nombre de commande par mois pour une année donnée
    *
    */
-  Function getCommandeAverageByMonth($year)
+  function getCommandeAverageByMonth($year)
   {
     $result = array();
     $sql = "SELECT date_format(date_commande,'%m') as dm, avg(total_ht)  FROM ".MAIN_DB_PREFIX."commande";

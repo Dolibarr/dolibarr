@@ -25,7 +25,7 @@ require (DOL_DOCUMENT_ROOT ."/includes/fpdf/fpdf_html.php");
 
 Class CommActionRapport {
 
-  Function CommActionRapport($db=0, $month, $year)
+  function CommActionRapport($db=0, $month, $year)
     { 
       $this->db = $db;
       $this->description = "";
@@ -34,7 +34,7 @@ Class CommActionRapport {
       $this->year = $year;
     }
 
-  Function generate($socid = 0, $catid = 0)
+  function generate($socid = 0, $catid = 0)
     {
       global $user;
 
@@ -102,7 +102,7 @@ Class CommActionRapport {
    *
    *
    */
-  Function _cover(&$pdf)
+  function _cover(&$pdf)
     {
       $pdf->AddPage();
       $pdf->SetAutoPageBreak(false);
@@ -131,7 +131,7 @@ Class CommActionRapport {
   /*
    *
    */
-  Function _pages(&$pdf)
+  function _pages(&$pdf)
     {
       $pdf->AddPage();
       $pdf->SetAutoPageBreak(true);

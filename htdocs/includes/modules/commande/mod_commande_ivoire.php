@@ -23,12 +23,12 @@
 
 Class mod_commande_ivoire
 {
-  Function mod_commande_ivoire()
+  function mod_commande_ivoire()
     {
       $this->nom = "Ivoire";
     }
 
-  Function info()
+  function info()
     {
       return "Renvoie le numéro sous la forme numérique C0M1, COM2, COM3, ...";      
     }

@@ -56,7 +56,7 @@ function dolibarr_syslog($message)
 		\brief      Affiche le header d'une fiche
 		\param	    links		liens
 		\param	    active      0 par défaut
-		\param      title
+		\param      title       titre ("" par defaut)
 */
 
 
@@ -1154,7 +1154,7 @@ function print_heure_select($prefix,$begin=1,$end=23) {
 
 /*!
 		\brief  Fonction servant a afficher une durée dans une liste déroulante
-		\param	prefix
+		\param	prefix  prefix
 */
 
 function print_duree_select($prefix)
@@ -1203,8 +1203,8 @@ function price($amount, $html=0)
 
 /*!
 		\brief  Fonction qui convertit des euros en francs
-		\param	euros			somme en euro à convertir
-		\return price
+		\param	euros   	somme en euro à convertir
+		\return price       prix converti et formaté    
 */
 
 function francs($euros)
@@ -1249,56 +1249,6 @@ function yn($yesno, $case=1) {
     return "unknown";
 }
 
-/*!
-		\brief  Fonction qui affiche des statistiques
-		\param	basename
-		\param	bc1
-		\param	bc2
-		\param	ftc
-		\param	jour
-*/
-function stat_print($basename,$bc1,$bc2,$ftc, $jour) {
-
-  $db = pg_Connect("","","","","$basename");
-  if (!$db) {
-    echo "Pas de connexion a la base\n";
-    exit ;
-  }
-
-  $offset = $jour * 9;
-
-  $sql="SELECT s.date, s.nb, l.libelle FROM stat_base as s, stat_cat as l WHERE s.cat = l.id ORDER by s.date DESC, s.cat ASC LIMIT 9 OFFSET $offset";
-
-  $result = $db->query($sql);
-  if (!$result) {
-    print "Erreur SELECT<br><h1>$sql</h1><br>";
-    return 1;
-  }
-
-  print "<table border=1 cellspacing=0 cellpadding=2>";
-  print "<tr><td><font color=\"white\">base <b>$basename</b></font></td>";
-  print "<td><font color=\"white\">libelle</font></td>";
-  print "</tr>";
-
-  $num = $db->num_rows();
-  $i = 0;
-
-  $tag = 1;
-  while ( $i < $num) {
-    $obj = $db->fetch_object( $i);
-
-    $tag = !$tag;
-
-    print "<TR><TD>$obj->date</TD><TD>$obj->libelle</TD>\n";
-    print "<TD align=\"center\">$obj->nb</TD></TR>\n";
-    $i++;
-  }
-  print "</TABLE>";
-  $db->free();
-
-  $db->close();
-
-}
 
 /*!
 		\brief      Fonction qui permet d'envoyer les infos dans un fichier de log

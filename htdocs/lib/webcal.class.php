@@ -111,7 +111,7 @@ class Webcal {
 
 /*!
 		\brief obtient l'id suivant dans le webcalendar
-		\retval id	retourne l'id suivant dans le webcalendar
+		\return id	retourne l'id suivant dans le webcalendar
 */
 
 

@@ -32,7 +32,7 @@ class Fichinter
   var $note;
   var $projet_id;
 
-  Function Fichinter($DB, $soc_idp="")
+  function Fichinter($DB, $soc_idp="")
     {
       $this->db = $DB ;
       $this->socidp = $soc_idp;
@@ -40,7 +40,7 @@ class Fichinter
       $this->projet_id = 0;
     }
 
-  Function add_product($idproduct)
+  function add_product($idproduct)
     {
       if ($idproduct > 0)
 	{
@@ -53,7 +53,7 @@ class Fichinter
    *
    *
    */
-  Function create()
+  function create()
     {
       /*
        *  Insertion dans la base
@@ -75,7 +75,7 @@ class Fichinter
    *
    *
    */
-  Function update($id)
+  function update($id)
     {
       if (! strlen($this->projet_id))
 	{
@@ -104,7 +104,7 @@ class Fichinter
    *
    *
    */
-  Function get_new_num($prefix_comm)
+  function get_new_num($prefix_comm)
     {
       
       $sql = "SELECT max(ref) FROM ".MAIN_DB_PREFIX."fichinter WHERE ref like 'FI-".$prefix_comm."-%'";
@@ -141,7 +141,7 @@ class Fichinter
    *
    *
    */
-  Function fetch($rowid)
+  function fetch($rowid)
     {
       
       $sql = "SELECT ref,note,fk_soc,fk_statut,duree,".$this->db->pdate(datei)."as di, fk_projet FROM ".MAIN_DB_PREFIX."fichinter WHERE rowid=$rowid;";
@@ -176,7 +176,7 @@ class Fichinter
    *
    *
    */
-  Function valid($userid, $outputdir)
+  function valid($userid, $outputdir)
     {
       $action_notify = 1; // ne pas modifier cette valeur
 
@@ -230,7 +230,7 @@ class Fichinter
    *
    *
    */
-  Function fetch_client()
+  function fetch_client()
     {
       $client = new Societe($this->db);
       $client->fetch($this->societe_id);

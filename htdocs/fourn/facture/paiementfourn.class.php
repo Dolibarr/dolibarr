@@ -41,7 +41,7 @@ class PaiementFourn
    *
    *
    */
-  Function PaiementFourn($DB) 
+  function PaiementFourn($DB) 
   {
     $this->db = $DB ;
   }
@@ -50,7 +50,7 @@ class PaiementFourn
    *
    *
    */
-  Function create($user) 
+  function create($user) 
   {
     /*
      *  Insertion dans la base
@@ -99,7 +99,7 @@ class PaiementFourn
    *
    *
    */
-  Function select($name, $filtre='', $id='')
+  function select($name, $filtre='', $id='')
   {
     $form = new Form($this->db);
 
@@ -123,7 +123,7 @@ class PaiementFourn
    *
    *
    */
-  Function delete($id) 
+  function delete($id) 
   {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."paiementfourn WHERE rowid = $id";
     

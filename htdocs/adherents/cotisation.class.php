@@ -60,7 +60,7 @@ class Cotisation
 		\param soc_idp
 */
 
-	Function Cotisation($DB, $soc_idp="")
+	function Cotisation($DB, $soc_idp="")
     {
       $this->db = $DB ;
       $this->modepaiementid = 0;
@@ -72,7 +72,7 @@ class Cotisation
    *
    */
 
-  Function print_error_list()
+  function print_error_list()
   {
     $num = sizeof($this->errorstr);
     for ($i = 0 ; $i < $num ; $i++)
@@ -86,7 +86,7 @@ class Cotisation
    *
    */
 
-	Function check($minimum=0)
+	function check($minimum=0)
     {
       $err = 0;
 
@@ -176,7 +176,7 @@ class Cotisation
 		\param userid			userid de l'adhérent
 */
 
-	Function create($userid)
+	function create($userid)
     {
       /*
        *  Insertion dans la base
@@ -206,7 +206,7 @@ class Cotisation
 		\param userid			userid de l'adhérent
 */
 
-  Function update($userid)
+  function update($userid)
     {
       
       $this->date = $this->db->idate($this->date);
@@ -249,7 +249,7 @@ class Cotisation
 		\param rowid
 */
 
-  Function delete($rowid)
+  function delete($rowid)
 
   {
 
@@ -278,7 +278,7 @@ class Cotisation
 		\param rowid
 */
 
-  Function fetch($rowid)
+  function fetch($rowid)
   {
     $sql = "SELECT d.rowid, ".$this->db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet";
     $sql .= " FROM ".MAIN_DB_PREFIX."don as d, ".MAIN_DB_PREFIX."don_projet as p, ".MAIN_DB_PREFIX."c_paiement as cp";
@@ -325,7 +325,7 @@ class Cotisation
 		\param 	userid			userid de l'adhérent
 */
 
-  Function valid_promesse($rowid, $userid)
+  function valid_promesse($rowid, $userid)
   {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid AND fk_statut = 0;";
@@ -354,7 +354,7 @@ class Cotisation
 		\param	modedepaiement
 */
 
-	Function set_paye($rowid, $modepaiement='')
+	function set_paye($rowid, $modepaiement='')
   {
     $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 2";
 
@@ -388,7 +388,7 @@ class Cotisation
 		\param	commentaire
 */
 
-  Function set_commentaire($rowid, $commentaire='')
+  function set_commentaire($rowid, $commentaire='')
   {
     $sql = "UPDATE ".MAIN_DB_PREFIX."don SET note = '$commentaire'";
 
@@ -417,7 +417,7 @@ class Cotisation
 		\param	rowid
 */
 
-	Function set_encaisse($rowid)
+	function set_encaisse($rowid)
   {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2;";
@@ -444,7 +444,7 @@ class Cotisation
    * Somme des dons encaissés
    */
 
-  Function sum_actual()
+  function sum_actual()
   {
     $sql = "SELECT sum(amount)";
     $sql .= " FROM ".MAIN_DB_PREFIX."don";
@@ -462,7 +462,7 @@ class Cotisation
    * 
    *
    */
-  Function sum_pending()
+  function sum_pending()
   {
     $sql = "SELECT sum(amount)";
     $sql .= " FROM ".MAIN_DB_PREFIX."don";
@@ -482,7 +482,7 @@ class Cotisation
    *
    */
 	 
-  Function sum_intent()
+  function sum_intent()
   {
     $sql = "SELECT sum(amount)";
     $sql .= " FROM ".MAIN_DB_PREFIX."don";

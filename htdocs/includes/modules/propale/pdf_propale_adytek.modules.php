@@ -24,14 +24,14 @@
 Class pdf_propale_adytek
 {
 
-  Function pdf_propale_adytek($db=0)
+  function pdf_propale_adytek($db=0)
     {
       $this->db = $db;
       $this->name = "Adytek";
       $this->description = "Modèle de proposition Adytek";
     }
 
-  Function write_pdf_file($id)
+  function write_pdf_file($id)
     {
       global $user;
       $propale = new Propal($this->db,"",$id);
@@ -189,7 +189,7 @@ Class pdf_propale_adytek
 	}
     }
 
-  Function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+  function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
 
       $pdf->SetFont('Arial','',11);
@@ -234,7 +234,7 @@ Class pdf_propale_adytek
 
     }
 
-   Function _pagehead(&$pdf, $propale)
+   function _pagehead(&$pdf, $propale)
     {
  //insertion de la variable FAC_PDF_INTITULE        FAC_PDF_MEL           FAC_PDF_WWW           FAC_PDF_LOGO
 

@@ -24,7 +24,7 @@ class ExpeditionStats
 {
   var $db ;
 
-  Function ExpeditionStats($DB)
+  function ExpeditionStats($DB)
     {
       $this->db = $DB;
     }
@@ -32,7 +32,7 @@ class ExpeditionStats
    * Renvoie le nombre de expedition par année
    *
    */
-  Function getNbExpeditionByYear()
+  function getNbExpeditionByYear()
   {
     $result = array();
     $sql = "SELECT date_format(date_expedition,'%Y') as dm, count(*)  FROM ".MAIN_DB_PREFIX."expedition GROUP BY dm DESC WHERE fk_statut > 0";
@@ -55,7 +55,7 @@ class ExpeditionStats
    * Renvoie le nombre de expedition par mois pour une année donnée
    *
    */
-  Function getNbExpeditionByMonth($year)
+  function getNbExpeditionByMonth($year)
   {
     $result = array();
     $sql = "SELECT date_format(date_expedition,'%m') as dm, count(*)  FROM ".MAIN_DB_PREFIX."expedition";
@@ -92,7 +92,7 @@ class ExpeditionStats
   }
 
 
-  Function getNbExpeditionByMonthWithPrevYear($year)
+  function getNbExpeditionByMonthWithPrevYear($year)
   {
     $data1 = $this->getNbExpeditionByMonth($year);
     $data2 = $this->getNbExpeditionByMonth($year - 1);

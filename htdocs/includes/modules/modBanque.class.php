@@ -31,7 +31,7 @@ class modBanque extends DolibarrModules
    *
    */
 
-  Function modBanque($DB)
+  function modBanque($DB)
   {
     $this->db = $DB ;
     $this->numero = 85 ;
@@ -55,7 +55,7 @@ class modBanque extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      * Permissions
@@ -73,7 +73,7 @@ class modBanque extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'banque';");
 

@@ -29,7 +29,7 @@ class Concert {
   var $lieuid;
   var $description;
 
-  Function Concert($DB, $id=0) {
+  function Concert($DB, $id=0) {
     $this->db = $DB;
     $this->id   = $id ;
   }  
@@ -38,7 +38,7 @@ class Concert {
    *
    *
    */
-  Function create($user) 
+  function create($user) 
   {
     
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."concert (fk_user_author) VALUES (".$user->id.")";
@@ -64,7 +64,7 @@ class Concert {
    *
    *
    */
-  Function update($id, $user)
+  function update($id, $user)
  {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."concert ";
@@ -86,7 +86,7 @@ class Concert {
    *
    *
    */
-  Function fetch ($id) {
+  function fetch ($id) {
     
     $sql = "SELECT rowid,".$this->db->pdate("date_concert")." as dc, description, fk_groupart, fk_lieu_concert";
     $sql .= " FROM ".MAIN_DB_PREFIX."concert WHERE rowid = $id";
@@ -119,7 +119,7 @@ class Concert {
    *
    *
    */
-  Function liste_groupart()
+  function liste_groupart()
   {
     $ga = array();
 

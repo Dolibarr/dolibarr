@@ -31,7 +31,7 @@ class modStock extends DolibarrModules
    *
    */
 
-  Function modStock($DB)
+  function modStock($DB)
   {
     $this->db = $DB ;
     $this->numero = 52 ;
@@ -56,7 +56,7 @@ class modStock extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      * Permissions
@@ -71,7 +71,7 @@ class modStock extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array(
 

@@ -19,7 +19,7 @@
  * $Source$
  */
 
-Function db_create_table($db, $table)
+function db_create_table($db, $table)
 {
 
   $sql = "";
@@ -33,7 +33,7 @@ Function db_create_table($db, $table)
   return $db->query($sql);
 } 
 
-Function db_drop_table($db, $table)
+function db_drop_table($db, $table)
 {
 
   return $db->query("DROP table $table");

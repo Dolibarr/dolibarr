@@ -31,7 +31,7 @@ class Deplacement
   /*
    * Initialistation automatique de la classe
    */
-  Function Deplacement($DB)
+  function Deplacement($DB)
     {
       $this->db = $DB;
     
@@ -40,7 +40,7 @@ class Deplacement
   /*
    *
    */
-  Function create($user)
+  function create($user)
     {
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."deplacement (datec, fk_user_author) VALUES (now(), $user->id)";
 
@@ -57,7 +57,7 @@ class Deplacement
   /*
    *
    */
-  Function update($user)
+  function update($user)
     {
       if (strlen($this->km)==0)
 	$this->km = 0;
@@ -84,7 +84,7 @@ class Deplacement
   /*
    *
    */
-  Function fetch ($id)
+  function fetch ($id)
     {    
       $sql = "SELECT fk_user, km, fk_soc,".$this->db->pdate("dated")." as dated";
       $sql .= " FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = $id";
@@ -111,7 +111,7 @@ class Deplacement
   /*
    *
    */
-  Function delete($id)
+  function delete($id)
     {
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."deplacement WHERE rowid = $id";
 

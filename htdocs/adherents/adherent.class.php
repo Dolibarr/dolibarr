@@ -67,7 +67,7 @@ class Adherent
 		\param id		id de l'adhérent
 */
 
-  Function Adherent($DB, $id='')
+  function Adherent($DB, $id='')
   {
     $this->db = $DB ;
     $this->id = $id;
@@ -93,7 +93,7 @@ class Adherent
 		\remarks	etc..
 */
 
-  Function send_an_email($recipients,$text,$subject="Vos coordonnees sur %SERVEUR%")
+  function send_an_email($recipients,$text,$subject="Vos coordonnees sur %SERVEUR%")
   {
     $patterns = array (
 		       '/%PRENOM%/',
@@ -151,7 +151,7 @@ class Adherent
 		\brief	imprime une liste d'erreur.
 */
 
-  Function print_error_list()
+  function print_error_list()
   {
     $num = sizeof($this->errorstr);
     for ($i = 0 ; $i < $num ; $i++)
@@ -166,7 +166,7 @@ class Adherent
 		\param	morphy		nature physique ou morale de l'adhérent
 */
 
-  Function getmorphylib($morphy='')
+  function getmorphylib($morphy='')
   {
     if (! $morphy) { $morphy=$this->morphy; }
     if ($morphy == 'phy') { return "Physique"; }
@@ -179,7 +179,7 @@ class Adherent
 		\param	minimum
 */
 
-  Function check($minimum=0)
+  function check($minimum=0)
     {
       $err = 0;
 
@@ -280,7 +280,7 @@ class Adherent
 		\param	userid		userid de l'adhérent
 */
 
-  Function create($userid)
+  function create($userid)
     {
       /*
        *  Insertion dans la base
@@ -310,7 +310,7 @@ class Adherent
 		\brief fonction qui met à jour l'adhérent
 */
 
-  Function update() 
+  function update() 
     {
 
       $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
@@ -372,7 +372,7 @@ class Adherent
 		\param	rowid
 */
 
-  Function delete($rowid)
+  function delete($rowid)
 
   {
     $result = 0;
@@ -415,7 +415,7 @@ class Adherent
 		\param	login		login de l'adhérent
 */
 
-	Function fetch_login($login)
+	function fetch_login($login)
   {
     $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login' LIMIT 1";
     if ( $this->db->query( $sql) )
@@ -438,7 +438,7 @@ class Adherent
 */
 
 
-	Function fetch($rowid)
+	function fetch($rowid)
   {
     $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.login, d.pass, d.naiss, d.photo, d.fk_adherent_type, d.morphy, t.libelle as type";
     $sql .= ",".$this->db->pdate("d.datefin")." as datefin";
@@ -487,7 +487,7 @@ class Adherent
 		\param	rowid
 */
 
-	Function fetch_optionals($rowid)
+	function fetch_optionals($rowid)
   {
     $tab=array();
     $sql = "SELECT *";
@@ -516,7 +516,7 @@ class Adherent
   /*
    * fetch optional attribute name
    */
-  Function fetch_name_optionals()
+  function fetch_name_optionals()
   {
     $array_name_options=array();
     $sql = "SHOW COLUMNS FROM ".MAIN_DB_PREFIX."adherent_options";
@@ -547,7 +547,7 @@ class Adherent
 		\param	montant
 */
 
-  Function cotisation($date, $montant)
+  function cotisation($date, $montant)
 
   {
 
@@ -588,7 +588,7 @@ class Adherent
 		\param	userid		userid de l'adhérent
 */
 
-  Function validate($userid)
+  function validate($userid)
     {
 
       $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
@@ -616,7 +616,7 @@ class Adherent
 		\param	userid		userid de de l'adhérent
 */
 
-  Function resiliate($userid)
+  function resiliate($userid)
     {
 
       $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
@@ -646,7 +646,7 @@ class Adherent
 		\remarks	mailing-list, spip, glasnost, etc...
 */
 
-	Function add_to_abo($adht)
+	function add_to_abo($adht)
     {
       $err=0;
       // mailman
@@ -690,7 +690,7 @@ class Adherent
 		\remarks	mailing-list, spip, glasnost, etc...
 */
 
-  Function del_to_abo($adht)
+  function del_to_abo($adht)
     {
       $err=0;
       // mailman
@@ -730,7 +730,7 @@ class Adherent
 		\brief fonction qui donne les droits rédacteurs dans spip
 */
 
-	Function add_to_spip()
+	function add_to_spip()
     {
       if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
 	  defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
@@ -762,7 +762,7 @@ class Adherent
 		\brief fonction qui enlève les droits rédacteurs dans spip
 */
 
-	Function del_to_spip()
+	function del_to_spip()
     {
       if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
 	  defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
@@ -791,7 +791,7 @@ class Adherent
 		\brief fonction qui dit si cet utilisateur est rédacteur dans spip
 */
 
-	Function is_in_spip()
+	function is_in_spip()
     {
       if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
 	  defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
@@ -828,7 +828,7 @@ class Adherent
 		\brief fonction qui ajoute l'utilisateur dans glasnost
 */
 
-	Function add_to_glasnost()
+	function add_to_glasnost()
     {
       if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
 	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
@@ -893,7 +893,7 @@ class Adherent
 		\brief fonction qui enlève l'utilisateur de glasnost
 */
 
-	Function del_to_glasnost()
+	function del_to_glasnost()
     {
       if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
 	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
@@ -998,7 +998,7 @@ class Adherent
 		\brief fonction qui vérifie si l'utilisateur est dans glasnost
 */
 
-  Function is_in_glasnost()
+  function is_in_glasnost()
     {
       if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
 	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
@@ -1055,7 +1055,7 @@ class Adherent
 		\brief fonction qui rajoute l'utilisateur dans mailman
 */
 
-	Function add_to_mailman($listes='')
+	function add_to_mailman($listes='')
   {
     if (defined("ADHERENT_MAILMAN_URL") && ADHERENT_MAILMAN_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
       {
@@ -1121,7 +1121,7 @@ class Adherent
 		\ remarks	utilie lors de la résiliation d'adhésion
 */
 
-  Function del_to_mailman($listes='')
+  function del_to_mailman($listes='')
   {
     if (defined("ADHERENT_MAILMAN_UNSUB_URL") && ADHERENT_MAILMAN_UNSUB_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
       {

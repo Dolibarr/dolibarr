@@ -21,22 +21,29 @@
 *
 */
 
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-
 /*!	\file pdf_crabe.modules.php
-		\brief Classe permettant de générer lune facture au modèle Crabe
+		\brief  Fichier de la classe permettant de générer les factures au modèle Crabe
 		\author	Laurent Destailleur
 		\version $Revision$
+*/
+
+
+require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+
+
+
+/*!	\class pdf_crabe
+		\brief  Classe permettant de générer les factures au modèle Crabe
 */
 
 Class pdf_crabe {
     var $error='';
     
     /*!
-    		\brief Constructeur
-    		\param	db		objet base de donnée
+    		\brief  Constructeur
+    		\param	db		handler accès base de donnée
     */
-    Function pdf_crabe($db=0)
+    function pdf_crabe($db)
     {
         $this->db = $db;
         $this->description = "Modèle de facture complet (Gère l'option fiscale de facturation TVA, le choix du mode de règlement à afficher, logo...)";
@@ -52,15 +59,16 @@ Class pdf_crabe {
     /*!
     		\brief Renvoi le dernier message d'erreur de création de facture
     */
-    Function error()
+    function error()
     {
         return $this->error;
     }
 
 
     /*!
-    		\brief Fonction générant la facture sur le disque
+    		\brief  Fonction générant la facture sur le disque
     		\param	facid		id de la facture à générer
+    		\return	 int    1=ok, 0=ko
             \remarks Variables utilisées
     		\remarks FAC_OUTPUTDIR
             \remarks FAC_PDF_LOGO
@@ -77,9 +85,8 @@ Class pdf_crabe {
     		\remarks MAIN_INFO_RCS
     		\remarks MAIN_INFO_CAPITAL
     		\remarks MAIN_INFO_TVAINTRA
-    		\return	1=ok, 0=ko
     */
-    Function write_pdf_file($facid)
+    function write_pdf_file($facid)
     {
         global $user;
         $fac = new Facture($this->db,"",$facid);
@@ -304,7 +311,7 @@ Class pdf_crabe {
     *
     *
     */
-    Function _tableau_versements(&$pdf, $fac)
+    function _tableau_versements(&$pdf, $fac)
     {
         $tab3_posx = 120;
         $tab3_top = 240;
@@ -386,7 +393,7 @@ Class pdf_crabe {
     }
 
 
-    Function _tableau_tot(&$pdf, $fac, $deja_regle)
+    function _tableau_tot(&$pdf, $fac, $deja_regle)
     {
         $tab2_top = 207;
         $tab2_hl = 5;
@@ -459,7 +466,7 @@ Class pdf_crabe {
     /*
     * Grille des lignes de factures
     */
-    Function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+    function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
         $pdf->Rect( 10, $tab_top, 190, $tab_height);
         $pdf->line( 10, $tab_top+8, 200, $tab_top+8 );
@@ -489,7 +496,7 @@ Class pdf_crabe {
     *
     *
     */
-    Function _pagehead(&$pdf, $fac)
+    function _pagehead(&$pdf, $fac)
     {
 
         $pdf->SetXY(10,5);

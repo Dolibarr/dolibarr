@@ -31,7 +31,7 @@ class modService extends DolibarrModules
    *
    */
 
-  Function modService($DB)
+  function modService($DB)
   {
     $this->db = $DB ;
     $this->numero = 53 ;
@@ -58,7 +58,7 @@ class modService extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      *  Activation du module
@@ -80,7 +80,7 @@ class modService extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'produit';",

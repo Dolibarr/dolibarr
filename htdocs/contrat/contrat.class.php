@@ -31,7 +31,7 @@ class Contrat
    *
    */
 
-  Function Contrat($DB)
+  function Contrat($DB)
   {
     $this->db = $DB ;
     $this->product = new Product($DB);
@@ -45,7 +45,7 @@ class Contrat
    * Si la duree est renseignée, date_start=date_start et date_end=date_start+duree
    * sinon date_start=date_start et date_end=date_end
    */
-  Function mise_en_service($user, $date_start, $duree=0, $date_end)
+  function mise_en_service($user, $date_start, $duree=0, $date_end)
   {
     if ($duree) {
         // Si duree renseignee
@@ -89,7 +89,7 @@ class Contrat
    *
    *
    */
-  Function cloture($user)
+  function cloture($user)
   {
     $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET enservice = 2";
     $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
@@ -101,7 +101,7 @@ class Contrat
    *
    *
    */
-  Function annule($user)
+  function annule($user)
   {
     $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET enservice = 0";
     $sql .= " , date_cloture = now(), fk_user_cloture = ".$user->id;
@@ -113,7 +113,7 @@ class Contrat
    *
    *
    */ 
-  Function fetch ($id)
+  function fetch ($id)
   {    
       $sql = "SELECT rowid, enservice, fk_soc, fk_product, ".$this->db->pdate("mise_en_service")." as datemise";
       $sql .= ", fk_user_mise_en_service, ".$this->db->pdate("date_cloture")." as datecloture";
@@ -155,7 +155,7 @@ class Contrat
    * Crée autant de contrats que de lignes de facture, pour une facture donnée
    *
    */
-  Function create_from_facture($factureid, $user, $socid)
+  function create_from_facture($factureid, $user, $socid)
     {
       $sql = "SELECT p.rowid as rowid, fd.rowid as fdrowid FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."facturedet as fd";
       $sql .= " WHERE p.rowid = fd.fk_product AND p.fk_product_type = 1 AND fd.fk_facture = ".$factureid;

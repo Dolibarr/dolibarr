@@ -24,7 +24,7 @@
 
 Class pdf_bigorneau {
 
-  Function pdf_bigorneau($db=0)
+  function pdf_bigorneau($db=0)
     { 
       $this->db = $db;
       $this->description = "Modèle de facture sans boite info réglement";
@@ -34,13 +34,13 @@ Class pdf_bigorneau {
     /*!
     		\brief Renvoi le dernier message d'erreur de création de facture
     */
-    Function error()
+    function error()
     {
         return $this->error;
     }
 
 
-  Function write_pdf_file($facid)
+  function write_pdf_file($facid)
     {
       global $user;
       $fac = new Facture($this->db,"",$facid);
@@ -227,7 +227,7 @@ Class pdf_bigorneau {
    *
    *
    */
-  Function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+  function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
       $pdf->SetFont('Arial','',12);
       
@@ -254,7 +254,7 @@ Class pdf_bigorneau {
    *
    *
    */
-  Function _pagehead(&$pdf, $fac)
+  function _pagehead(&$pdf, $fac)
     {
       
       $pdf->SetXY(10,5);

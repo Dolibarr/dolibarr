@@ -30,7 +30,7 @@ class modSociete extends DolibarrModules
    * Initialisation
    *
    */
-  Function modSociete($DB)
+  function modSociete($DB)
   {
     $this->db = $DB ;
     $this->numero = 1 ;
@@ -54,7 +54,7 @@ class modSociete extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      * Permissions
@@ -72,7 +72,7 @@ class modSociete extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'societe';",

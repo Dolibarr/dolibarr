@@ -31,7 +31,7 @@ class modWebcalendar extends DolibarrModules
    *
    */
 
-  Function modWebcalendar($DB)
+  function modWebcalendar($DB)
   {
     $this->db = $DB ;
     $this->numero = 410 ;
@@ -58,7 +58,7 @@ class modWebcalendar extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      *  Activation du module
@@ -73,7 +73,7 @@ class modWebcalendar extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array();
 

@@ -23,7 +23,7 @@
 
 Class mod_propale_jade
 {
-  Function info()
+  function info()
     {
       return "Renvoie le numéro sous la forme PROP2, PROP3";      
     }

@@ -43,7 +43,7 @@ class FactureRec
    * Initialisation de la class
    *
    */
-  Function FactureRec($DB, $facid=0)
+  function FactureRec($DB, $facid=0)
   {
     $this->db = $DB ;
     $this->facid = $facid;
@@ -53,7 +53,7 @@ class FactureRec
    *
    *
    */
-  Function create($user)
+  function create($user)
     {
       /*
        *
@@ -128,7 +128,7 @@ class FactureRec
    *
    *
    */
-  Function fetch($rowid, $societe_id=0)
+  function fetch($rowid, $societe_id=0)
     {
 
       $sql = "SELECT f.fk_soc,f.titre,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent,f.fk_projet, c.rowid as crid, c.libelle, c.libelle_facture, f.note, f.fk_user_author";
@@ -228,7 +228,7 @@ class FactureRec
    * Recupére l'objet client lié à la facture
    *
    */
-  Function fetch_client()
+  function fetch_client()
     {
       $client = new Societe($this->db);
       $client->fetch($this->socidp);
@@ -240,7 +240,7 @@ class FactureRec
    *
    *
    */
-  Function valid($userid, $dir)
+  function valid($userid, $dir)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
       $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
@@ -259,7 +259,7 @@ class FactureRec
    * Supprime la facture
    *
    */
-  Function delete($rowid)
+  function delete($rowid)
     {
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."facturedet_rec WHERE fk_facture = $rowid;";
 	  
@@ -287,7 +287,7 @@ class FactureRec
    * Valide la facture
    *
    */
-  Function set_valid($rowid, $user, $soc)
+  function set_valid($rowid, $user, $soc)
     {
       if ($this->brouillon)
 	{
@@ -344,7 +344,7 @@ class FactureRec
    * Ajoute un produit dans la facture
    *
    */
-  Function add_product($idproduct, $qty, $remise_percent)
+  function add_product($idproduct, $qty, $remise_percent)
     {
       if ($idproduct > 0)
 	{
@@ -362,7 +362,7 @@ class FactureRec
    * Ajoute une ligne de facture
    *
    */
-  Function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL', $remise_percent=0)
+  function addline($facid, $desc, $pu, $qty, $txtva, $fk_product='NULL', $remise_percent=0)
     {
       if ($this->brouillon)
 	{
@@ -398,7 +398,7 @@ class FactureRec
    * Mets à jour une ligne de facture
    *
    */
-  Function updateline($rowid, $desc, $pu, $qty, $remise_percent=0)
+  function updateline($rowid, $desc, $pu, $qty, $remise_percent=0)
     {
       if ($this->brouillon)
 	{
@@ -429,7 +429,7 @@ class FactureRec
    * Supprime une ligne
    *
    */
-  Function deleteline($rowid)
+  function deleteline($rowid)
     {
       if ($this->brouillon)
 	{
@@ -443,7 +443,7 @@ class FactureRec
    * Mise à jour des sommes de la facture
    *
    */
-  Function updateprice($facid)
+  function updateprice($facid)
     {
       include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
       $err=0;
@@ -512,7 +512,7 @@ class FactureRec
    * Applique une remise
    *
    */
-  Function set_remise($user, $remise)
+  function set_remise($user, $remise)
     {
       if ($user->rights->facture->creer)
 	{

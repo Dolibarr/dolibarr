@@ -30,7 +30,7 @@ class Expedition
    * Initialisation
    *
    */
-  Function Expedition($DB)
+  function Expedition($DB)
     {
       $this->db = $DB;
       $this->lignes = array();
@@ -52,7 +52,7 @@ class Expedition
    *
    *
    */
-  Function create($user)
+  function create($user)
     {
       require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
       $error = 0;
@@ -133,7 +133,7 @@ class Expedition
    *
    *
    */
-  Function create_line($transaction, $commande_ligne_id, $qty)
+  function create_line($transaction, $commande_ligne_id, $qty)
   {
     $error = 0;
 
@@ -166,7 +166,7 @@ class Expedition
    * Lit une commande
    *
    */
-  Function fetch ($id)
+  function fetch ($id)
     {
       $sql = "SELECT e.rowid, e.date_creation, e.ref, e.fk_user_author, e.fk_statut, e.fk_commande, e.fk_entrepot";
       $sql .= ", ".$this->db->pdate("e.date_expedition")." as date_expedition ";
@@ -205,7 +205,7 @@ class Expedition
    *
    *
    */
-  Function valid($user)
+  function valid($user)
     {
       require_once DOL_DOCUMENT_ROOT ."/product/stock/mouvementstock.class.php";
 
@@ -256,7 +256,7 @@ class Expedition
    * Ajoute un produit
    *
    */
-  Function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6, $p_product_id=0, $remise_percent=0)
+  function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6, $p_product_id=0, $remise_percent=0)
     {
       if ($this->statut == 0)
 	{
@@ -302,7 +302,7 @@ class Expedition
    * Ajoute une ligne
    *
    */
-  Function addline( $id, $qty )
+  function addline( $id, $qty )
     {
       $num = sizeof($this->lignes);
       $ligne = new ExpeditionLigne();
@@ -317,7 +317,7 @@ class Expedition
    *
    *
    */
-  Function delete_line($idligne)
+  function delete_line($idligne)
     {
       if ($this->statut == 0)
 	{
@@ -339,7 +339,7 @@ class Expedition
    * Supprime la fiche
    *
    */
-  Function delete()
+  function delete()
   {
     $this->db->begin();
 
@@ -369,7 +369,7 @@ class Expedition
    *
    *
    */
-  Function classin($cat_id)
+  function classin($cat_id)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_projet = $cat_id";
       $sql .= " WHERE rowid = $this->id;";

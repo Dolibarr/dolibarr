@@ -34,7 +34,7 @@ class Atome
    *
    */
 
-  Function AtomeInitialize($periode, $name, $daystart)
+  function AtomeInitialize($periode, $name, $daystart)
   {
     $this->year = strftime("%Y", $daystart);
     $this->month = strftime("%m", $daystart);
@@ -46,7 +46,7 @@ class Atome
    *
    *
    */
-  Function BarGraph()
+  function BarGraph()
   {
     $filename = DOL_DOCUMENT_ROOT.'/document/';
 

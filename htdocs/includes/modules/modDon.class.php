@@ -29,7 +29,7 @@ class modDon  extends DolibarrModules
    * Initialisation
    *
    */
-  Function modDon($DB)
+  function modDon($DB)
   {
     $this->db = $DB ;
     $this->numero = 700 ;
@@ -61,7 +61,7 @@ class modDon  extends DolibarrModules
    *
    *
    */
-  Function init()
+  function init()
   {
     /*
      *  Activation du module
@@ -75,7 +75,7 @@ class modDon  extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array();
 

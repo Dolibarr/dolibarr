@@ -23,7 +23,7 @@
 $etapes=5;
 $docurl = '<a href="doc/dolibarr-install.html">documentation</a>';
 
-Function pHeader($soutitre,$next)
+function pHeader($soutitre,$next)
 {
 
 print '
@@ -46,7 +46,7 @@ print '<div class="main"><div class="soustitre">'.$soutitre.'</div>
 }
 
 
-Function pFooter($nonext=0)
+function pFooter($nonext=0)
 {
 print '</div></div>';
 if ($nonext == 0)
@@ -60,7 +60,7 @@ print '
     }
 
 
-Function dolibarr_syslog($message)
+function dolibarr_syslog($message)
 {
   define_syslog_variables();
 

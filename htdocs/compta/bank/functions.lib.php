@@ -205,7 +205,7 @@ function gljCreate_Login_Cand($db, $login, $pass, $pass2) {
  *
  *
  */
-Function gljCreateCompany($db, $company_name, $address, $cp, $ville, $fkpays, $phone, $fax, $url, 
+function gljCreateCompany($db, $company_name, $address, $cp, $ville, $fkpays, $phone, $fax, $url, 
 			  $fksecteur, $fkeffectif, $fktypent, $c_nom, $c_prenom, $c_phone, $c_mail, $siren, 
 			  $parentidp=0, $setid=0, &$numerror) {
   /*
@@ -271,7 +271,7 @@ Function gljCreateCompany($db, $company_name, $address, $cp, $ville, $fkpays, $p
  *
  *
  */
-Function gljVerifCompany(&$company_name, &$address, &$cp, &$ville, &$fkpays, &$phone, &$fax, &$url, &$fksecteur,&$fkeffectif, &$c_nom, &$c_prenom, &$c_phone, &$c_mail, &$numerror) {
+function gljVerifCompany(&$company_name, &$address, &$cp, &$ville, &$fkpays, &$phone, &$fax, &$url, &$fksecteur,&$fkeffectif, &$c_nom, &$c_prenom, &$c_phone, &$c_mail, &$numerror) {
   $numerror = 0;
 
   if (!strlen(trim($company_name))) { $numerror = 4; } 

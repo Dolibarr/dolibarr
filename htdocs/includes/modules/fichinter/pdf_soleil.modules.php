@@ -24,14 +24,14 @@
 Class pdf_soleil
 {
 
-  Function pdf_soleil($db=0)
+  function pdf_soleil($db=0)
     { 
       $this->db = $db;
       $this->description = "Modèle de fiche d'intervention stantdard";
     }
 
 
-  Function write_pdf_file($id)
+  function write_pdf_file($id)
     {
 
       $fich = new Fichinter($this->db,"",$id);

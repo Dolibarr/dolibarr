@@ -24,7 +24,7 @@ class Propal_Model_Pdf {
   
   var $nom;
 
-  Function Propal_Model_Pdf($DB)
+  function Propal_Model_Pdf($DB)
     {
       $this->db = $DB ;
     }
@@ -34,7 +34,7 @@ class Propal_Model_Pdf {
    *
    */
 
-  Function liste_array()
+  function liste_array()
     {
       $projets = array();
 

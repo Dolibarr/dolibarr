@@ -24,14 +24,14 @@
 Class pdf_propale_bleu
 {
 
-  Function pdf_propale_bleu($db=0)
+  function pdf_propale_bleu($db=0)
     { 
       $this->db = $db;
       $this->name = "bleu";
       $this->description = "Modèle de propale sans remise.";
     }
 
-  Function write_pdf_file($id)
+  function write_pdf_file($id)
     {
       global $user;
       $propale = new Propal($this->db,"",$id);
@@ -175,7 +175,7 @@ Class pdf_propale_bleu
 	}
     }
 
-  Function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+  function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
 
       $pdf->SetFont('Arial','',11);
@@ -205,7 +205,7 @@ Class pdf_propale_bleu
 
     }
 
-  Function _pagehead(&$pdf, $propale)
+  function _pagehead(&$pdf, $propale)
     {
       $pdf->SetXY(10,5);
       if (defined("FAC_PDF_INTITULE"))

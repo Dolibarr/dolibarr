@@ -30,7 +30,7 @@ class modFacture extends DolibarrModules
    *
    */
 
-  Function modFacture($DB)
+  function modFacture($DB)
   {
     $this->db = $DB ;
     $this->numero = 30 ;
@@ -105,7 +105,7 @@ class modFacture extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      * Permissions
@@ -127,7 +127,7 @@ class modFacture extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'facture';"

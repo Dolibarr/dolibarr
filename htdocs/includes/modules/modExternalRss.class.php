@@ -30,7 +30,7 @@ class modExternalRss extends DolibarrModules
    *
    */
 
-  Function modExternalRss($DB)
+  function modExternalRss($DB)
   {
     $this->db = $DB ;
     $this->numero = 320;
@@ -63,7 +63,7 @@ class modExternalRss extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      *  Activation du module
@@ -77,7 +77,7 @@ class modExternalRss extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array();
 

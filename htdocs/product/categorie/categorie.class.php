@@ -32,7 +32,7 @@ class Categorie {
   var $price ;
   var $status ;
 
-  Function Categorie($DB, $id=0) {
+  function Categorie($DB, $id=0) {
     $this->db = $DB;
     $this->id   = $id ;
   }  
@@ -41,7 +41,7 @@ class Categorie {
    *
    *
    */
-  Function create($user) {
+  function create($user) {
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."album (osc_id, fk_user_author) VALUES ($idosc, ".$user->id.")";
     
@@ -65,7 +65,7 @@ class Categorie {
    *
    *
    */
-  Function linkga($id, $gaid)
+  function linkga($id, $gaid)
   {
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."album_to_groupart (fk_album, fk_groupart) values ($id, $gaid)";
@@ -80,7 +80,7 @@ class Categorie {
    *
    *
    */
-  Function liste_array()
+  function liste_array()
   {
     $cl = array();
 
@@ -115,7 +115,7 @@ class Categorie {
   /*
    *
    */
-  Function printc($id, $level)
+  function printc($id, $level)
   {
     $cr = array();
     $cat = new Categorie($this->db);
@@ -150,7 +150,7 @@ class Categorie {
    *
    *
    */
-  Function liste_childs_array()
+  function liste_childs_array()
   {
     $ga = array();
 
@@ -191,7 +191,7 @@ class Categorie {
    *
    *
    */
-  Function update($id, $user)
+  function update($id, $user)
  {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."album ";
@@ -211,7 +211,7 @@ class Categorie {
    *
    *
    */
-  Function fetch ($id) {
+  function fetch ($id) {
     
     $sql = "SELECT c.categories_id, cd.categories_name, c.parent_id";
     $sql .= " FROM ".DB_NAME_OSC.".categories as c,".DB_NAME_OSC.".categories_description as cd";
@@ -239,7 +239,7 @@ class Categorie {
    *
    *
    */
-  Function delete($user) {
+  function delete($user) {
 
     $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = $idosc ";
 

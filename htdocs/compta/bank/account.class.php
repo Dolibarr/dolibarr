@@ -38,7 +38,7 @@ class Account
   var $proprio;
   var $adresse_proprio;
 
-  Function Account($DB, $rowid=0)
+  function Account($DB, $rowid=0)
   {
     global $config;
     
@@ -55,7 +55,7 @@ class Account
    * Efface une entree dans la table ".MAIN_DB_PREFIX."bank
    */
 
-  Function deleteline($rowid)
+  function deleteline($rowid)
   {
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=$rowid";
     $result = $this->db->query($sql);
@@ -70,7 +70,7 @@ class Account
    *
    *
    */
-  Function add_url_line($line_id, $url_id, $url, $label)
+  function add_url_line($line_id, $url_id, $url, $label)
   {
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (fk_bank, url_id, url, label)";
     $sql .= " VALUES ('$line_id', '$url_id', '$url', '$label')";
@@ -91,7 +91,7 @@ class Account
   /*
    *
    */
-  Function get_url($line_id)
+  function get_url($line_id)
   {
     $lines = array();
     $sql = "SELECT fk_bank, url_id, url, label FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank = $line_id";
@@ -116,7 +116,7 @@ class Account
    * Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
    *
    */
-  Function addline($date, $oper, $label, $amount, $num_chq='', $categorie='',$user)
+  function addline($date, $oper, $label, $amount, $num_chq='', $categorie='',$user)
   {
     if ($this->rowid)
       {
@@ -181,7 +181,7 @@ class Account
    * Creation du compte bancaire
    *
    */
-  Function create()
+  function create()
     {
       // Chargement librairie pour acces fonction controle RIB
 	  require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
@@ -224,7 +224,7 @@ class Account
    *
    *
    */
-  Function update($user='')
+  function update($user='')
     {      
       // Chargement librairie pour acces fonction controle RIB
 	  require_once DOL_DOCUMENT_ROOT . '/compta/bank/bank.lib.php';
@@ -272,7 +272,7 @@ class Account
    *
    *
    */
-  Function fetch($id)
+  function fetch($id)
   {
     $this->id = $id; 
     $sql = "SELECT rowid, label, bank, number, courant, clos, code_banque, code_guichet, cle_rib, bic, iban_prefix, domiciliation, proprio, adresse_proprio FROM ".MAIN_DB_PREFIX."bank_account";
@@ -312,7 +312,7 @@ class Account
    *
    *
    */
-  Function error()
+  function error()
     {      
         return $this->error;
     }
@@ -321,7 +321,7 @@ class Account
    *
    *
    */
-  Function solde()
+  function solde()
   {
     $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE fk_account=$this->id AND dateo <=" . $this->db->idate(time() );
 
@@ -342,7 +342,7 @@ class Account
    *
    *
    */
-  Function datev_next($rowid)
+  function datev_next($rowid)
     {      
       $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
 
@@ -370,7 +370,7 @@ class Account
    *
    *
    */
-  Function datev_previous($rowid)
+  function datev_previous($rowid)
     {      
       $sql = "UPDATE ".MAIN_DB_PREFIX."bank SET ";
 

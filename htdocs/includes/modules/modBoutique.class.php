@@ -31,7 +31,7 @@ class modBoutique extends DolibarrModules
    *
    */
 
-  Function modBoutique($DB)
+  function modBoutique($DB)
   {
     $this->db = $DB ;
     $this->numero = 86 ;
@@ -62,7 +62,7 @@ class modBoutique extends DolibarrModules
    *
    *
    */
-  Function init()
+  function init()
   {
     /*
      *  Activation du module
@@ -76,7 +76,7 @@ class modBoutique extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array();
 

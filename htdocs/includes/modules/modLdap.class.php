@@ -28,7 +28,7 @@ class modLdap extends DolibarrModules
    * Initialisation
    *
    */
-  Function modLdap($DB)
+  function modLdap($DB)
   {
     $this->db = $DB ;
     $this->numero = 200 ;
@@ -54,7 +54,7 @@ class modLdap extends DolibarrModules
    *
    *
    */
-  Function init()
+  function init()
   {
     /*
      *  Activation du module
@@ -69,7 +69,7 @@ class modLdap extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array();
 

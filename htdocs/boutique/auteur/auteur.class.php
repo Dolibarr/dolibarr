@@ -36,7 +36,7 @@ class Auteur {
   var $id ;
   var $nom;
 
-  Function Auteur($DB, $id=0) {
+  function Auteur($DB, $id=0) {
     $this->db = $DB;
     $this->id = $id ;
   }
@@ -47,7 +47,7 @@ class Auteur {
    *
    */
 
-	Function create($user) {
+	function create($user) {
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."auteur (fk_user_author) VALUES (".$user->id.")";
 
@@ -68,7 +68,7 @@ class Auteur {
    *
    */
 
-	Function liste_array ()
+	function liste_array ()
   {
     $ga = array();
 
@@ -103,7 +103,7 @@ class Auteur {
    *
    */
 
-	Function update($id, $user)
+	function update($id, $user)
   {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."auteur ";
@@ -124,7 +124,7 @@ class Auteur {
    *
    */
 
-	Function liste_livre($id_type='', $status=0)
+	function liste_livre($id_type='', $status=0)
   {
     $ga = array();
     if ($id_type == 'oscid')
@@ -172,7 +172,7 @@ class Auteur {
    *
    */
 
-	Function fetch ($id) {
+	function fetch ($id) {
 
     $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."auteur WHERE rowid = $id";
 
@@ -201,7 +201,7 @@ class Auteur {
    *
    */
 
-	Function delete() {
+	function delete() {
 
     $livres = $this->liste_livre();
 

@@ -31,7 +31,7 @@ class modProjet extends DolibarrModules
    *
    */
 
-  Function modProjet($DB)
+  function modProjet($DB)
   {
     $this->db = $DB ;
     $this->numero = 400 ;
@@ -55,7 +55,7 @@ class modProjet extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      *  Activation du module
@@ -77,7 +77,7 @@ class modProjet extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'projet';");
 

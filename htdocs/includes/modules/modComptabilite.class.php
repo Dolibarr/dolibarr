@@ -31,7 +31,7 @@ class modComptabilite extends DolibarrModules
    *
    */
 
-  Function modComptabilite($DB)
+  function modComptabilite($DB)
   {
     $this->db = $DB ;
     $this->numero = 10 ;
@@ -58,7 +58,7 @@ class modComptabilite extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      * Permissions
@@ -78,7 +78,7 @@ class modComptabilite extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'compta';");
 

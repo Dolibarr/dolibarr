@@ -36,7 +36,7 @@ class Livre {
   var $price ;
   var $status ;
 
-  Function Livre($DB, $id=0) {
+  function Livre($DB, $id=0) {
     $this->db = $DB;
     $this->id   = $id ;
   }  
@@ -45,7 +45,7 @@ class Livre {
    *
    *
    */
-  Function create($user) {
+  function create($user) {
 
     if (strlen($this->annee))
       {
@@ -110,7 +110,7 @@ class Livre {
    *
    *
    */
-  Function linkga($id, $gaid)
+  function linkga($id, $gaid)
   {
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."livre_to_auteur (fk_livre, fk_auteur) values ($id, $gaid)";
@@ -128,7 +128,7 @@ class Livre {
    *
    *
    */
-  Function liste_auteur()
+  function liste_auteur()
   {
     $ga = array();
 
@@ -162,7 +162,7 @@ class Livre {
    *
    *
    */
-  Function auteur_unlink($auteur_id)
+  function auteur_unlink($auteur_id)
   {
 
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."livre_to_auteur ";
@@ -183,7 +183,7 @@ class Livre {
    *
    *
    */
-  Function unlinkcategorie($categories_id)
+  function unlinkcategorie($categories_id)
   {
 
     $sql = "DELETE FROM ".DB_NAME_OSC.".products_to_categories ";
@@ -204,7 +204,7 @@ class Livre {
    *
    *
    */
-  Function linkcategorie($categories_id)
+  function linkcategorie($categories_id)
   {
 
     $sql = "INSERT INTO ".DB_NAME_OSC.".products_to_categories ";
@@ -225,7 +225,7 @@ class Livre {
    *
    *
    */
-  Function listcategorie()
+  function listcategorie()
   {
     global $conf;
 
@@ -281,7 +281,7 @@ class Livre {
    *
    *
    */
-  Function update_status($status)
+  function update_status($status)
   {
     $sql = "UPDATE ".DB_NAME_OSC.".products ";
     $sql .= " SET products_status = ".$status;
@@ -309,7 +309,7 @@ class Livre {
    *
    *
    */
-  Function updateosc($noupdate_other=0)
+  function updateosc($noupdate_other=0)
   {
     $desc = trim(addslashes($this->description));
     $desc .= "<p>";
@@ -434,7 +434,7 @@ class Livre {
    *
    *
    */
-  Function update($id, $user)
+  function update($id, $user)
   {
 
     if (strlen($this->annee)==0)
@@ -467,7 +467,7 @@ class Livre {
    *
    *
    */
-  Function fetch ($id, $oscid=0) {
+  function fetch ($id, $oscid=0) {
     
     $sql = "SELECT rowid, fk_editeur, ref, prix, annee, oscid, title, description, frais_de_port FROM ".MAIN_DB_PREFIX."livre";
     if ($id)
@@ -537,7 +537,7 @@ class Livre {
    *
    *
    */
-  Function update_image($file_name)
+  function update_image($file_name)
   {
     $sql = "UPDATE ".DB_NAME_OSC.".products SET products_image='".$file_name."'";
     $sql .= " WHERE products_id = " . $this->oscid;
@@ -553,7 +553,7 @@ class Livre {
    *
    *
    */
-  Function delete()
+  function delete()
   {    
     $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = ".$this->oscid;
     $result = $this->db->query($sql) ;

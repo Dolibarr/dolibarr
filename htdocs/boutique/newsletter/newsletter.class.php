@@ -30,7 +30,7 @@ class Newsletter {
   var $email_body;
   var $status;
 
-  Function Newsletter($DB, $id=0) {
+  function Newsletter($DB, $id=0) {
     $this->db = $DB;
     $this->id = $id ;
 
@@ -46,7 +46,7 @@ class Newsletter {
    *
    *
    */
-  Function create($user) {
+  function create($user) {
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."newsletter (fk_user_author, datec, nbsent) VALUES (".$user->id.",now(), 0)";
     
@@ -65,7 +65,7 @@ class Newsletter {
    *
    *
    */
-  Function update($id, $user)
+  function update($id, $user)
   {
 
     if (strlen(trim($this->email_replyto))==0)
@@ -97,7 +97,7 @@ class Newsletter {
    *
    *
    */
-  Function fetch ($id) {
+  function fetch ($id) {
     
     $sql = "SELECT rowid, email_subject, email_from_name, email_from_email, email_replyto, email_body, target, sql_target, status, date_send_request,".$this->db->pdate("date_send_begin")." as date_send_begin,".$this->db->pdate("date_send_end")." as date_send_end, nbsent, nberror";
     $sql .= " FROM ".MAIN_DB_PREFIX."newsletter WHERE rowid=$id";
@@ -136,7 +136,7 @@ class Newsletter {
    *
    *
    */
-  Function liste_array ()
+  function liste_array ()
   {
     $ga = array();
 
@@ -170,7 +170,7 @@ class Newsletter {
    *
    *
    */
-  Function validate($user) {
+  function validate($user) {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."newsletter SET status=1, fk_user_valid = $user->id WHERE rowid = $this->id";
     $return = $this->db->query($sql) ;
@@ -180,7 +180,7 @@ class Newsletter {
    *
    *
    */
-  Function send($user) {
+  function send($user) {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."newsletter SET status=2, date_send_request=now() WHERE rowid = $this->id";
     $return = $this->db->query($sql) ;
@@ -190,7 +190,7 @@ class Newsletter {
    *
    *
    */
-  Function build_sql($target)
+  function build_sql($target)
   {
     if ($target == 1)
       {
@@ -207,7 +207,7 @@ class Newsletter {
    *
    *
    */
-  Function delete() {
+  function delete() {
 
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."newsletter WHERE rowid = $this->id ";
     $return = $this->db->query($sql) ;

@@ -28,7 +28,7 @@ class pnArticle {
   var $titre;
   var $body;
 
-  Function pnArticle($DB, $id=0) {
+  function pnArticle($DB, $id=0) {
     $this->db = $DB;
     $this->id   = $id ;
   }  
@@ -37,7 +37,7 @@ class pnArticle {
    *
    *
    */
-  Function update($id, $user)
+  function update($id, $user)
   {
 
     if (strlen($this->annee)==0)
@@ -66,7 +66,7 @@ class pnArticle {
    *
    *
    */
-  Function fetch ($id) {
+  function fetch ($id) {
     
     $sql = "SELECT p.pn_sid, p.pn_title, p.pn_hometext FROM " . PN_DB_NAME . "." . PN_TABLE_STORIES_NAME . " as p";
 

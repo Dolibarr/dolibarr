@@ -32,7 +32,7 @@ class AtomeFactureValidee extends Atome
    * Initialisation de la classe
    *
    */
-  Function AtomeFactureValidee($DB, $periode, $daystart)
+  function AtomeFactureValidee($DB, $periode, $daystart)
     {
       $this->db = $DB ;
       $this->name = 'AtomeFactureValidee';
@@ -45,7 +45,7 @@ class AtomeFactureValidee extends Atome
    *
    *
    */
-  Function fetch()
+  function fetch()
     {      
       if ($this->periode == 'year')
 	{

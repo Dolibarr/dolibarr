@@ -25,7 +25,7 @@ class Reduc {
   var $price;
   var $label;
 
-  Function Reduc($DB, $rowid=0) {
+  function Reduc($DB, $rowid=0) {
     global $config;
 
     $this->db = $DB;
@@ -34,7 +34,7 @@ class Reduc {
     return 1;
   }
 
-  Function fetch($id) {
+  function fetch($id) {
     $sql = "SELECT b.rowid,".$this->db->pdate("b.date_debut")." as debut,".$this->db->pdate("b.date_fin")." as fin, b.amount, b.label ";
     $sql .= " FROM ".MAIN_DB_PREFIX."voyage_reduc as b WHERE rowid = $id"; 
 

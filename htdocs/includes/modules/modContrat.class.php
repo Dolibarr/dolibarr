@@ -30,7 +30,7 @@ class modContrat extends DolibarrModules
    *
    */
 
-  Function modcontrat($DB)
+  function modcontrat($DB)
   {
     $this->db = $DB ;
     $this->numero = 54 ;
@@ -55,7 +55,7 @@ class modContrat extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      * Permissions
@@ -70,7 +70,7 @@ class modContrat extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array(
 

@@ -27,7 +27,7 @@ class OscCommande {
   var $id ;
   var $client_name ;
 
-  Function OscCommande($DB, $id=0) {
+  function OscCommande($DB, $id=0) {
     $this->db = $DB;
     $this->id   = $id ;
   }  
@@ -36,7 +36,7 @@ class OscCommande {
    *
    *
    */
-  Function fetch ($id)
+  function fetch ($id)
     {
     
       $sql = "SELECT o.orders_id, o.customers_name, o.orders_status FROM ".DB_NAME_OSC.".orders as o";
@@ -61,7 +61,7 @@ class OscCommande {
    *
    *
    */
-  Function liste_products ()
+  function liste_products ()
   {
     $ga = array();
 

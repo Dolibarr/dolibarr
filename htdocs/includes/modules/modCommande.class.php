@@ -31,7 +31,7 @@ class modCommande extends DolibarrModules
    *
    */
 
-  Function modCommande($DB)
+  function modCommande($DB)
   {
     $this->db = $DB ;
     $this->numero = 25 ;
@@ -60,7 +60,7 @@ class modCommande extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      * Permissions
@@ -80,7 +80,7 @@ class modCommande extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array(
 

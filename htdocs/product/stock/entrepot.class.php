@@ -30,7 +30,7 @@ class Entrepot
   var $description;
   var $statut;
 
-  Function Entrepot($DB)
+  function Entrepot($DB)
     {
       $this->db = $DB;
 
@@ -41,7 +41,7 @@ class Entrepot
    *
    *
    */
-  Function create($user) 
+  function create($user) 
     {
 	  // Si libelle non defini, erreur
 	  if ($this->libelle == '') {
@@ -83,7 +83,7 @@ class Entrepot
   /*
    *
    */
-  Function update($id, $user)
+  function update($id, $user)
     {
       if (strlen(trim($this->libelle)))
 	{
@@ -114,7 +114,7 @@ class Entrepot
    *
    *
    */
-  Function fetch ($id)
+  function fetch ($id)
     {    
       $sql = "SELECT rowid, label, description, statut";
       $sql .= " FROM ".MAIN_DB_PREFIX."entrepot WHERE rowid = $id";
@@ -144,7 +144,7 @@ class Entrepot
    * Renvoie la liste des entrepôts ouverts
    *
    */
-  Function list_array()
+  function list_array()
   {
     $liste = array();
 
@@ -170,7 +170,7 @@ class Entrepot
    * Renvoie la liste des entrepôts ouverts
    *
    */
-  Function nb_products()
+  function nb_products()
   {
     $sql = "SELECT sum(reel) FROM llx_product_stock WHERE fk_entrepot = ".$this->id;
 

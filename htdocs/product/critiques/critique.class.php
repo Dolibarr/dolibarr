@@ -26,7 +26,7 @@ class Critique {
   var $id ;
   var $nom;
 
-  Function Critique($DB, $id=0) {
+  function Critique($DB, $id=0) {
     $this->db = $DB;
     $this->id = $id ;
   }  
@@ -35,7 +35,7 @@ class Critique {
    *
    *
    */
-  Function fetch ($id) {
+  function fetch ($id) {
     
     
     $sql = "SELECT r.reviews_id, r.reviews_rating, d.reviews_text, p.products_name";

@@ -32,7 +32,7 @@ class Promotion {
   var $price ;
   var $status ;
 
-  Function Promotion($DB, $id=0) {
+  function Promotion($DB, $id=0) {
     $this->db = $DB;
     $this->id   = $id ;
   }  
@@ -41,7 +41,7 @@ class Promotion {
    *
    *
    */
-  Function create($user, $pid, $percent) {
+  function create($user, $pid, $percent) {
 
     $sql = "SELECT products_price ";
     $sql .= " FROM ".DB_NAME_OSC.".products as p";
@@ -79,7 +79,7 @@ class Promotion {
    *
    *
    */
-  Function update($id, $user)
+  function update($id, $user)
   {
     $sql = "UPDATE ".MAIN_DB_PREFIX."album ";
     $sql .= " SET title = '" . trim($this->titre) ."'";
@@ -98,7 +98,7 @@ class Promotion {
    *
    *
    */
-  Function set_active($id)
+  function set_active($id)
   {
     $sql = "UPDATE ".DB_NAME_OSC.".specials";
     $sql .= " SET status = 1";
@@ -114,7 +114,7 @@ class Promotion {
   /*
    *
    */
-  Function set_inactive($id)
+  function set_inactive($id)
   {
     $sql = "UPDATE ".DB_NAME_OSC.".specials";
     $sql .= " SET status = 0";
@@ -132,7 +132,7 @@ class Promotion {
    *
    *
    */
-  Function fetch ($id) {
+  function fetch ($id) {
     
     $sql = "SELECT c.categories_id, cd.categories_name, c.parent_id";
     $sql .= " FROM ".DB_NAME_OSC.".categories as c,".DB_NAME_OSC.".categories_description as cd";
@@ -160,7 +160,7 @@ class Promotion {
    *
    *
    */
-  Function delete($user) {
+  function delete($user) {
 
     $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = $idosc ";
 

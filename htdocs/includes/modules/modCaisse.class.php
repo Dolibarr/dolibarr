@@ -30,7 +30,7 @@ class modCaisse extends DolibarrModules
    *
    */
 
-  Function modCaisse($DB)
+  function modCaisse($DB)
   {
     $this->db = $DB ;
     $this->numero = 84 ;
@@ -54,7 +54,7 @@ class modCaisse extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      * Permissions
@@ -72,7 +72,7 @@ class modCaisse extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'caisse';");
 

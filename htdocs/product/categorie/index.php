@@ -164,7 +164,7 @@ llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</e
  *
  *
  */
-Function printc($id, $db, $level)
+function printc($id, $db, $level)
 {
 
   $cat = new Categorie($db);
@@ -191,7 +191,7 @@ Function printc($id, $db, $level)
   }
 }
 
-Function title_url($id, $db)
+function title_url($id, $db)
 {
 
   $cat = new Categorie($db);

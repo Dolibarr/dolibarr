@@ -31,7 +31,7 @@ class modCommercial extends DolibarrModules
    *
    */
 
-  Function modCommercial($DB)
+  function modCommercial($DB)
   {
     $this->db = $DB ;
     $this->numero = 2 ;
@@ -59,7 +59,7 @@ class modCommercial extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      * Permissions
@@ -72,7 +72,7 @@ class modCommercial extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array();
 

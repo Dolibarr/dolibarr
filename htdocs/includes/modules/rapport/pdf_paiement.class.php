@@ -23,7 +23,7 @@
 
 Class pdf_paiement {
 
-  Function pdf_paiement($db=0)
+  function pdf_paiement($db=0)
     { 
       $this->db = $db;
       $this->description = "Liste des paiements";
@@ -38,7 +38,7 @@ Class pdf_paiement {
 
     }
 
-  Function print_link()
+  function print_link()
     {
       if (file_exists($this->file))
 	{
@@ -88,7 +88,7 @@ Class pdf_paiement {
 
     }
 
-  Function Body(&$pdf, $page, $lines)
+  function Body(&$pdf, $page, $lines)
     {
       $pdf->SetFont('Arial','', 9);
       $oldprowid = 0;
@@ -148,7 +148,7 @@ Class pdf_paiement {
 	}
     }
 
-  Function write_pdf_file($_dir, $month, $year)
+  function write_pdf_file($_dir, $month, $year)
     {
       if (! file_exists($_dir))
 	{

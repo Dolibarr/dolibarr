@@ -24,14 +24,14 @@
 Class pdf_propale_vert
 {
 
-  Function pdf_propale_vert($db=0)
+  function pdf_propale_vert($db=0)
     { 
       $this->db = $db;
       $this->name = "vert";
       $this->description = "Affichage de la remise par produit";
     }
 
-  Function write_pdf_file($id)
+  function write_pdf_file($id)
     {
       global $user;
       $propale = new Propal($this->db,"",$id);
@@ -191,7 +191,7 @@ Class pdf_propale_vert
 	}
     }
 
-  Function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+  function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
       $yt = 100;
       $pdf->SetFont('Arial','',10);
@@ -237,7 +237,7 @@ Class pdf_propale_vert
       $pdf->MultiCell(120,3,$texte,0,'J');
     }
 
-  Function _pagehead(&$pdf, $propale)
+  function _pagehead(&$pdf, $propale)
     {
       $pdf->SetXY(10,5);
       if (defined("FAC_PDF_INTITULE"))

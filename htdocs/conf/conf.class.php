@@ -30,7 +30,7 @@ class Conf
   var $readonly;
   var $dbi;
 
-  Function Conf()
+  function Conf()
     {
       $this->db = new DbConf();
       
@@ -52,7 +52,7 @@ class Conf
 
 class ComptaConf
 {
-  Function ComptaConf() 
+  function ComptaConf() 
     {
       $this->tva = 1;
     }
@@ -60,7 +60,7 @@ class ComptaConf
 
 class PropalConf
 {
-  Function PropalConf()
+  function PropalConf()
     {
 
     }
@@ -71,7 +71,7 @@ class PropalConf
  */
 
 class DbConf {
-  Function DbConf()
+  function DbConf()
   {
     $this->type = "mysql";
     $this->host = "";
@@ -109,7 +109,7 @@ class DbConf {
 
   /** return the dsn according to the pear syntax
    */
-  Function getdsn()
+  function getdsn()
   {
     return ($this->type.'://'.$this->user.':'.$this->pass.'@'.$this->host.'/'.$this->name);
   }
@@ -121,7 +121,7 @@ class DbConf {
  */
 class WebcalConf
 {
-  Function WebcalConf()
+  function WebcalConf()
     {
       $this->enabled = 0;
       $this->url = defined("PHPWEBCALENDAR_URL")?PHPWEBCALENDAR_URL:"";
@@ -140,7 +140,7 @@ class WebcalConf
  */
 class FactureConf
 {
-  Function FactureConf()
+  function FactureConf()
     {
       $this->enabled = 0;
     }
@@ -152,7 +152,7 @@ class FactureConf
  */
 class DonConf
 {
-  Function DonConf()
+  function DonConf()
     {
       $this->enabled = 0;
       
@@ -174,7 +174,7 @@ class DonConf
  */
 class ProduitConf
 {
-  Function ProduitConf()
+  function ProduitConf()
     {
       $this->enabled = 0;
     }
@@ -185,7 +185,7 @@ class ProduitConf
  */
 class ServiceConf
 {
-  Function ServiceConf()
+  function ServiceConf()
     {
       $this->enabled = 0;
     }
@@ -195,7 +195,7 @@ class ServiceConf
  *
  */
 class AdherentConf {
-  Function AdherentConf() {
+  function AdherentConf() {
     $this->enabled = 0;
     $this->email_new = "Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\n\n%INFO%\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\n%SERVEUR%public/adherents/\n\n";
     $this->email_new_subject = 'Vos coordonnees sur %SERVEUR%';
@@ -214,7 +214,7 @@ class AdherentConf {
  */
 class DomaineConf
 {
-  Function DomaineConf()
+  function DomaineConf()
     {
       $this->enabled = 0;
     }

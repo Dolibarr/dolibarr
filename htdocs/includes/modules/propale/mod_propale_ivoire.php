@@ -23,7 +23,7 @@
 
 Class mod_propale_ivoire
 {
-  Function info()
+  function info()
     {
       return "Renvoie le numéro sous la forme PR0012";      
     }

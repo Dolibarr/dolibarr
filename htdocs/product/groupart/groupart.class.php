@@ -29,7 +29,7 @@ class Groupart {
   var $desc ;
   var $grar ;
 
-  Function Groupart($DB, $id=0) {
+  function Groupart($DB, $id=0) {
     $this->db = $DB;
     $this->id   = $id ;
   }  
@@ -38,7 +38,7 @@ class Groupart {
    *
    *
    */
-  Function create($user) {
+  function create($user) {
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."groupart (fk_user_author) VALUES (".$user->id.")";
 
@@ -64,7 +64,7 @@ class Groupart {
    *
    *
    */
-  Function update($id, $user)
+  function update($id, $user)
  {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."groupart ";
@@ -84,7 +84,7 @@ class Groupart {
    *
    *
    */
-  Function fetch ($id) {
+  function fetch ($id) {
     
     $sql = "SELECT rowid, nom, groupart, description FROM ".MAIN_DB_PREFIX."groupart WHERE rowid = $id";
 
@@ -109,7 +109,7 @@ class Groupart {
    *
    *
    */
-  Function liste_albums ()
+  function liste_albums ()
   {
     $ga = array();
 
@@ -143,7 +143,7 @@ class Groupart {
    *
    *
    */
-  Function updateosc()
+  function updateosc()
   {
     $albs = array();
     $albs = $this->liste_albums();
@@ -159,7 +159,7 @@ class Groupart {
    *
    *
    */
-  Function liste_array ()
+  function liste_array ()
   {
     $ga = array();
 
@@ -196,7 +196,7 @@ class Groupart {
    *
    *
    */
-  Function delete($user) {
+  function delete($user) {
 
     $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = $idosc ";
 

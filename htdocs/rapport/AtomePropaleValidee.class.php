@@ -32,7 +32,7 @@ class AtomePropaleValidee extends Atome
    * Initialisation de la classe
    *
    */
-  Function AtomePropaleValidee($DB,$periode, $daystart)
+  function AtomePropaleValidee($DB,$periode, $daystart)
     {
       $this->db = $DB ;
       $this->AtomeInitialize($periode, 'AtomePropaleValidee', $daystart);
@@ -43,7 +43,7 @@ class AtomePropaleValidee extends Atome
    *
    *
    */
-  Function fetch()
+  function fetch()
     {
       $sql = "SELECT date_format(f.datep,'%Y%m'), sum(f.price) as am";
       $sql .= " FROM ".MAIN_DB_PREFIX."propal as f";

@@ -28,7 +28,7 @@ class LieuConcert {
   var $ville;
   var $description;
 
-  Function LieuConcert($DB, $id=0)
+  function LieuConcert($DB, $id=0)
   {
     $this->db = $DB;
     $this->id   = $id ;
@@ -38,7 +38,7 @@ class LieuConcert {
    *
    *
    */
-  Function create($user) 
+  function create($user) 
   {
     
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."lieu_concert (fk_user_author) VALUES (".$user->id.")";
@@ -64,7 +64,7 @@ class LieuConcert {
    *
    *
    */
-  Function update($id, $user)
+  function update($id, $user)
   {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."lieu_concert ";
@@ -85,7 +85,7 @@ class LieuConcert {
    *
    *
    */
-  Function fetch ($id) {
+  function fetch ($id) {
     
     $sql = "SELECT rowid, nom, ville, description FROM ".MAIN_DB_PREFIX."lieu_concert WHERE rowid = $id";
 
@@ -111,7 +111,7 @@ class LieuConcert {
    *
    *
    */
-  Function delete($user) {
+  function delete($user) {
 
 	    
     
@@ -122,7 +122,7 @@ class LieuConcert {
    *
    *
    */
-  Function liste()
+  function liste()
   {
     $ga = array();
 

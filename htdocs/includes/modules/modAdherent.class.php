@@ -32,7 +32,7 @@ class modAdherent extends DolibarrModules
    *
    */
 
-  Function modAdherent($DB)
+  function modAdherent($DB)
   {
     $this->db = $DB ;
     $this->numero = 310 ;
@@ -95,7 +95,7 @@ class modAdherent extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      * Permissions
@@ -114,7 +114,7 @@ class modAdherent extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'adherent';"

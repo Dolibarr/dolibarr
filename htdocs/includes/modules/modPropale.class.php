@@ -31,7 +31,7 @@ class modPropale extends DolibarrModules
    *
    */
 
-  Function modPropale($DB)
+  function modPropale($DB)
   {
     $this->db = $DB ;
     $this->numero = 20 ;
@@ -76,7 +76,7 @@ class modPropale extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {       
     /*
      * Permissions et valeurs par défaut
@@ -100,7 +100,7 @@ class modPropale extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array(
 		 "DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'propale';"

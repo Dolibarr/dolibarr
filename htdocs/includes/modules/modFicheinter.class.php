@@ -30,7 +30,7 @@ class modFicheinter  extends DolibarrModules
    *
    */
 
-  Function modFicheinter($DB)
+  function modFicheinter($DB)
   {
     $this->db = $DB ;
     $this->numero = 70 ;
@@ -57,7 +57,7 @@ class modFicheinter  extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      *  Activation du module
@@ -79,7 +79,7 @@ class modFicheinter  extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array("DELETE FROM ".MAIN_DB_PREFIX."rights_def WHERE module = 'ficheinter';");
 

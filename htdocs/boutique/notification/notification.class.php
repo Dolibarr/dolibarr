@@ -26,7 +26,7 @@ class Editeur {
   var $id ;
   var $nom;
 
-  Function Editeur($DB, $id=0) {
+  function Editeur($DB, $id=0) {
     $this->db = $DB;
     $this->id = $id ;
   }  
@@ -35,7 +35,7 @@ class Editeur {
    *
    *
    */
-  Function create($user) {
+  function create($user) {
 
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."editeur (fk_user_author) VALUES (".$user->id.")";
     
@@ -55,7 +55,7 @@ class Editeur {
    *
    *
    */
-  Function liste_array ()
+  function liste_array ()
   {
     $ga = array();
 
@@ -89,7 +89,7 @@ class Editeur {
    *
    *
    */
-  Function update($id, $user)
+  function update($id, $user)
   {
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."editeur ";
@@ -108,7 +108,7 @@ class Editeur {
    *
    *
    */
-  Function fetch ($id) {
+  function fetch ($id) {
     
     $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."editeur WHERE rowid = $id";
 
@@ -136,7 +136,7 @@ class Editeur {
    *
    *
    */
-  Function delete($user) {
+  function delete($user) {
 
     $sql = "DELETE FROM ".DB_NAME_OSC.".products WHERE products_id = $idosc ";
 

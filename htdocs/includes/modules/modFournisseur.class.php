@@ -31,7 +31,7 @@ class modFournisseur extends DolibarrModules
    *
    */
 
-  Function modFournisseur($DB)
+  function modFournisseur($DB)
   {
     $this->db = $DB ;
     $this->numero = 40 ;
@@ -57,7 +57,7 @@ class modFournisseur extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      * Permissions
@@ -70,7 +70,7 @@ class modFournisseur extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array();
 

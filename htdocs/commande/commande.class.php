@@ -29,7 +29,7 @@ class Commande
    * Initialisation
    *
    */
-  Function Commande($DB)
+  function Commande($DB)
     {
       $this->db = $DB;
 
@@ -51,7 +51,7 @@ class Commande
    * Créé la facture depuis une propale existante
    *
    */
-  Function create_from_propale($user, $propale_id)
+  function create_from_propale($user, $propale_id)
     {
       $propal = new Propal($this->db);
       $propal->fetch($propale_id);
@@ -90,7 +90,7 @@ class Commande
    * Valide la commande
    *
    */
-  Function valid($user)
+  function valid($user)
     {
       $result = 0;
       if ($user->rights->commande->valider)
@@ -135,7 +135,7 @@ class Commande
    * Cloture la commande
    *
    */
-  Function cloture($user)
+  function cloture($user)
     {
       if ($user->rights->commande->valider)
 	{
@@ -158,7 +158,7 @@ class Commande
    * Annule la commande
    *
    */
-  Function cancel($user)
+  function cancel($user)
     {
       if ($user->rights->commande->valider)
 	{
@@ -181,7 +181,7 @@ class Commande
    * Créé la commande
    *
    */
-  Function create($user)
+  function create($user)
     {
       /* On positionne en mode brouillon la commande */
       $this->brouillon = 1;
@@ -274,7 +274,7 @@ class Commande
    * Ajoute un produit
    *
    */
-  Function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6, $p_product_id=0, $remise_percent=0)
+  function insert_product_generic($p_desc, $p_price, $p_qty, $p_tva_tx=19.6, $p_product_id=0, $remise_percent=0)
     {
       if ($this->statut == 0)
 	{
@@ -320,7 +320,7 @@ class Commande
    * Ajoute une ligne de commande
    *
    */
-  Function addline( $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
+  function addline( $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
     {
       if ($this->brouillon && strlen(trim($desc)))
 	{
@@ -369,7 +369,7 @@ class Commande
    * Ajoute un produit dans la commande
    *
    */
-  Function add_product($idproduct, $qty, $remise_percent=0)
+  function add_product($idproduct, $qty, $remise_percent=0)
     {
       if ($idproduct > 0)
 	{
@@ -388,7 +388,7 @@ class Commande
    * Lit une commande
    *
    */
-  Function fetch ($id)
+  function fetch ($id)
     {
       $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva";
       $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.facture";
@@ -453,7 +453,7 @@ class Commande
    *
    *
    */
-  Function fetch_lignes($only_product=0)
+  function fetch_lignes($only_product=0)
   {
     $this->lignes = array();
 
@@ -502,7 +502,7 @@ class Commande
    *
    *
    */
-  Function livraison_array()
+  function livraison_array()
   {
     $this->livraisons = array();
 
@@ -531,7 +531,7 @@ class Commande
    * Renvoie un tableau avec les livraison par ligne
    *
    */
-  Function nb_expedition()
+  function nb_expedition()
   {
     $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."expedition as e";
     $sql .=" WHERE e.fk_commande = $this->id";
@@ -549,7 +549,7 @@ class Commande
    * Supprime une ligne de la commande
    *
    */
-  Function delete_line($idligne)
+  function delete_line($idligne)
     {
       if ($this->statut == 0)
 	{
@@ -571,7 +571,7 @@ class Commande
    *
    *
    */
-  Function set_remise($user, $remise)
+  function set_remise($user, $remise)
     {
       if ($user->rights->commande->creer)
 	{
@@ -597,7 +597,7 @@ class Commande
    * Classe la facture comme facturée
    *
    */
-  Function classer_facturee()
+  function classer_facturee()
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET facture = 1";
       $sql .= " WHERE rowid = ".$this->id." AND fk_statut > 0 ;";
@@ -616,7 +616,7 @@ class Commande
    * Mettre à jour le prix
    *
    */
-  Function update_price()
+  function update_price()
     {
       include_once DOL_DOCUMENT_ROOT . "/lib/price.lib.php";
 
@@ -673,7 +673,7 @@ class Commande
    * Mets à jour une ligne de commande
    *
    */
-  Function update_line($rowid, $desc, $pu, $qty, $remise_percent=0)
+  function update_line($rowid, $desc, $pu, $qty, $remise_percent=0)
     {
       if ($this->brouillon)
 	{
@@ -711,7 +711,7 @@ class Commande
    * Supprime la commande
    *
    */
-  Function delete()
+  function delete()
   {
     $err = 0;
 
@@ -750,7 +750,7 @@ class Commande
    * Classe la commande
    *
    */
-  Function classin($cat_id)
+  function classin($cat_id)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_projet = $cat_id";
       $sql .= " WHERE rowid = $this->id;";

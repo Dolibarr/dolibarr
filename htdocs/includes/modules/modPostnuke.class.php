@@ -30,7 +30,7 @@ class modPostnuke extends DolibarrModules
    *
    */
 
-  Function modPostnuke($DB)
+  function modPostnuke($DB)
   {
     $this->db = $DB ;
     $this->numero = 210;
@@ -54,7 +54,7 @@ class modPostnuke extends DolibarrModules
    *
    */
 
-  Function init()
+  function init()
   {
     /*
      *  Activation du module
@@ -69,7 +69,7 @@ class modPostnuke extends DolibarrModules
    *
    *
    */
-  Function remove()
+  function remove()
   {
     $sql = array();
 
