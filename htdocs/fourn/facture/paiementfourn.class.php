@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -100,16 +100,13 @@ class PaiementFourn
 	$sql .= " VALUES (now(), '$this->datepaye', -$this->amount, '$this->author', '$label', '$this->paiementid', '$this->accountid', '$this->num_paiement')";
 	$result = $this->db->query($sql);
 
-	// Pour l'instant ce code n'est pas actif et n'est pas nécessaire.
-	// Je l'activerais (Eldy) si besoin de retrouver le lien entre une transaction bancaire
-	// et la facture générée se fait sentir (fonction futures ?):
 	// Mise a jour fk_bank dans llx_paiement_fourn
-   	//if ($result) {   
- 	//	$this->bankid = $this->db->last_insert_id();
-	//
-	//	$sql = "UPDATE ".MAIN_DB_PREFIX."paiementfourn SET fk_bank=$this->bankid WHERE rowid=$this->id";
-	//	$result = $this->db->query($sql);
-	//}
+   	if ($result) {   
+ 		$this->bankid = $this->db->last_insert_id();
+	
+		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementfourn SET fk_bank=$this->bankid WHERE rowid=$this->id";
+		$result = $this->db->query($sql);
+	}
 
       }
     else
