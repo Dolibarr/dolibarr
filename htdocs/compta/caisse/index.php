@@ -55,7 +55,7 @@ $time = mktime(12,0,0,$mois, 1, $annee);
 $titre_mois = strftime("%B", $time);
 
 
-print_fiche_titre("Livre Journal".($mois?" $titre_mois":"").($annee?" $annee":""));
+print_fiche_titre("Journal de caisse".($mois?" $titre_mois":"").($annee?" $annee":""));
 print '<br>';
 
 
