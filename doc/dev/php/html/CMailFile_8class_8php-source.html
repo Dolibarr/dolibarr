@@ -5,7 +5,7 @@
 </head><body>
 <!-- Généré par Doxygen 1.3.7 -->
 <div class="qindex"><a class="qindex" href="index.html">Page&nbsp;principale</a> | <a class="qindex" href="classes.html">Liste&nbsp;alphabétique</a> | <a class="qindex" href="annotated.html">Liste&nbsp;des&nbsp;classes</a> | <a class="qindex" href="files.html">Liste&nbsp;des&nbsp;fichiers</a> | <a class="qindex" href="functions.html">Membres&nbsp;de&nbsp;classe</a> | <a class="qindex" href="globals.html">Membres&nbsp;de&nbsp;fichier</a></div>
-<h1>htdocs/lib/CMailFile.class.php</h1><pre class="fragment"><div>00001 &lt;?php
+<h1>htdocs/lib/CMailFile.class.php</h1><a href="CMailFile_8class_8php.html">Aller à la documentation de ce fichier.</a><pre class="fragment"><div>00001 &lt;?php
 00002 <span class="comment">/* notes from Dan Potter:</span>
 00003 <span class="comment">Sure. I changed a few other things in here too though. One is that I let</span>
 00004 <span class="comment">you specify what the destination filename is (i.e., what is shows up as in</span>
@@ -25,142 +25,132 @@
 00018 <span class="comment">*/</span>
 00019 <span class="comment">/* Note: if you don't have base64_encode on your sytem it will not work */</span>
 00020 
-00021 <span class="comment">/*</span>
-00022 <span class="comment">  Éric Seigne &lt;eric.seigne@ryxeo.com&gt; 2004.01.08</span>
-00023 <span class="comment">  - ajout de la gestion du Cc</span>
-00024 <span class="comment">  - ajout de l'expédition de plusieurs fichiers</span>
-00025 <span class="comment"></span>
-00026 <span class="comment">  Laurent Destailleur 2004.02.10</span>
-00027 <span class="comment">  - Correction d'un disfonctionnement suite à modif précédente sur la gestion</span>
-00028 <span class="comment">  des attachements multi-fichiers</span>
-00029 <span class="comment">*/</span>
-00030 
-00031 <span class="comment">// simple class that encapsulates mail() with addition of mime file attachment.</span>
-00032 <span class="keyword">class </span>CMailFile 
-00033 {
-00034   var $subject;
-00035   var $addr_to;
-00036   var $addr_cc;
-00037   var $text_body;
-00038   var $text_encoded;
-00039   var $mime_headers;
-00040   var $mime_boundary = <span class="stringliteral">"--==================_846811060==_"</span>;
-00041   var $smtp_headers;
-00042   
-00043   <span class="comment">// CMail("sujet","email_to","email_from","email_msg",tableau du path de fichiers,tableau de type mime,tableau de noms fichiers,"chaine cc")</span>
-00044   function CMailFile($subject,$to,$from,$msg,$filename_list,$mimetype_list,$mimefilename_list,$addr_cc = <span class="stringliteral">""</span>)
-00045     {
-00046       $this-&gt;subject = $subject;
-00047       $this-&gt;addr_to = $to;
-00048       $this-&gt;smtp_headers = $this-&gt;write_smtpheaders($from,$addr_cc);
-00049       $this-&gt;text_body = $this-&gt;write_body($msg, $filename_list);
-00050       <span class="keywordflow">if</span> (count($filename_list)) {
-00051       $this-&gt;mime_headers = $this-&gt;write_mimeheaders($filename_list, $mimefilename_list);
-00052       $this-&gt;text_encoded = $this-&gt;attach_file($filename_list,$mimetype_list,$mimefilename_list);
-00053       }
-00054     }
-00055 
-00056   function attach_file($filename_list,$mimetype_list,$mimefilename_list)
-00057     {
-00058       <span class="keywordflow">for</span> ($i = 0; $i &lt; count($filename_list); $i++) {
-00059     $encoded = $this-&gt;encode_file($filename_list[$i]);
-00060     <span class="keywordflow">if</span> ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
-00061     $out = $out . <span class="stringliteral">"--"</span> . $this-&gt;mime_boundary . <span class="stringliteral">"\n"</span>;
-00062     <span class="keywordflow">if</span> (! $mimetype_list[$i]) { $mimetype_list[$i] = <span class="stringliteral">"application/octet-stream"</span>; }
-00063     $out = $out . <span class="stringliteral">"Content-type: "</span> . $mimetype_list[$i] . <span class="stringliteral">"; name=\"$filename_list[$i]\";\n"</span>;         
-00064     $out = $out . <span class="stringliteral">"Content-Transfer-Encoding: base64\n"</span>;
-00065     $out = $out . <span class="stringliteral">"Content-disposition: attachment; filename=\"$filename_list[$i]\"\n\n"</span>;
-00066     $out = $out . $encoded . <span class="stringliteral">"\n"</span>;
-00067       }
-00068       $out = $out . <span class="stringliteral">"--"</span> . $this-&gt;mime_boundary . <span class="stringliteral">"--"</span> . <span class="stringliteral">"\n"</span>;
-00069       <span class="keywordflow">return</span> $out; 
-00070       <span class="comment">// added -- to notify email client attachment is done</span>
-00071     }
-00072 
-00073   function encode_file($sourcefile)
-00074     {
-00075       <span class="comment">//      print "&lt;pre&gt; on encode $sourcefile &lt;/pre&gt;\n";</span>
-00076       <span class="keywordflow">if</span> (is_readable($sourcefile))
-00077   {
-00078     $fd = fopen($sourcefile, <span class="stringliteral">"r"</span>);
-00079     $contents = fread($fd, filesize($sourcefile));
-00080     $encoded = my_chunk_split(base64_encode($contents));
-00081     fclose($fd);
-00082   }
-00083       <span class="keywordflow">return</span> $encoded;
-00084   }
-00085   
-00086   function sendfile()
-00087     {
-00088       $headers .= $this-&gt;smtp_headers . $this-&gt;mime_headers;
-00089       $message = $this-&gt;text_body . $this-&gt;text_encoded;
-00090       <span class="keywordflow">return</span> mail($this-&gt;addr_to,$this-&gt;subject,stripslashes($message),$headers);
+00039 <span class="comment">// simple class that encapsulates mail() with addition of mime file attachment.</span>
+<a name="l00040"></a><a class="code" href="classCMailFile.html">00040</a> <span class="keyword">class </span><a class="code" href="classCMailFile.html">CMailFile</a>
+00041 {
+00042   var $subject;
+00043   var $addr_to;
+00044   var $addr_cc;
+00045   var $text_body;
+00046   var $text_encoded;
+00047   var $mime_headers;
+00048   var $mime_boundary = <span class="stringliteral">"--==================_846811060==_"</span>;
+00049   var $smtp_headers;
+00050 
+00063   <span class="comment">// CMail("sujet","email_to","email_from","email_msg",tableau du path de fichiers,tableau de type mime,tableau de noms fichiers,"chaine cc")</span>
+<a name="l00064"></a><a class="code" href="classCMailFile.html#a0">00064</a>   function <a class="code" href="classCMailFile.html">CMailFile</a>($subject,$to,$from,$msg,$filename_list,$mimetype_list,$mimefilename_list,$addr_cc = <span class="stringliteral">""</span>)
+00065     {
+00066       $this-&gt;subject = $subject;
+00067       $this-&gt;addr_to = $to;
+00068       $this-&gt;smtp_headers = $this-&gt;write_smtpheaders($from,$addr_cc);
+00069       $this-&gt;text_body = $this-&gt;write_body($msg, $filename_list);
+00070       <span class="keywordflow">if</span> (count($filename_list)) {
+00071       $this-&gt;mime_headers = $this-&gt;write_mimeheaders($filename_list, $mimefilename_list);
+00072       $this-&gt;text_encoded = $this-&gt;attach_file($filename_list,$mimetype_list,$mimefilename_list);
+00073       }
+00074     }
+00075 
+00076   function attach_file($filename_list,$mimetype_list,$mimefilename_list)
+00077     {
+00078       <span class="keywordflow">for</span> ($i = 0; $i &lt; count($filename_list); $i++) {
+00079     $encoded = $this-&gt;encode_file($filename_list[$i]);
+00080     <span class="keywordflow">if</span> ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
+00081     $out = $out . <span class="stringliteral">"--"</span> . $this-&gt;mime_boundary . <span class="stringliteral">"\n"</span>;
+00082     <span class="keywordflow">if</span> (! $mimetype_list[$i]) { $mimetype_list[$i] = <span class="stringliteral">"application/octet-stream"</span>; }
+00083     $out = $out . <span class="stringliteral">"Content-type: "</span> . $mimetype_list[$i] . <span class="stringliteral">"; name=\"$filename_list[$i]\";\n"</span>;         
+00084     $out = $out . <span class="stringliteral">"Content-Transfer-Encoding: base64\n"</span>;
+00085     $out = $out . <span class="stringliteral">"Content-disposition: attachment; filename=\"$filename_list[$i]\"\n\n"</span>;
+00086     $out = $out . $encoded . <span class="stringliteral">"\n"</span>;
+00087       }
+00088       $out = $out . <span class="stringliteral">"--"</span> . $this-&gt;mime_boundary . <span class="stringliteral">"--"</span> . <span class="stringliteral">"\n"</span>;
+00089       <span class="keywordflow">return</span> $out; 
+00090       <span class="comment">// added -- to notify email client attachment is done</span>
 00091     }
-00092   
-00093   function write_body($msgtext, $filename_list)
+00092 
+00093   function encode_file($sourcefile)
 00094     {
-00095       <span class="keywordflow">if</span> (count($filename_list))
-00096   {
-00097     $out = <span class="stringliteral">"--"</span> . $this-&gt;mime_boundary . <span class="stringliteral">"\n"</span>;
-00098     $out = $out . <span class="stringliteral">"Content-Type: text/plain; charset=\"iso8859-15\"\n\n"</span>;
-00099     <span class="comment">//    $out = $out . "Content-Type: text/plain; charset=\"us-ascii\"\n\n";</span>
-00100   }
-00101       $out = $out . $msgtext . <span class="stringliteral">"\n"</span>;
-00102       <span class="keywordflow">return</span> $out;
-00103     }
-00104   
-00105   function write_mimeheaders($filename_list, $mimefilename_list) {
-00106     $out = <span class="stringliteral">"MIME-version: 1.0\n"</span>;
-00107     $out = $out . <span class="stringliteral">"Content-type: multipart/mixed; "</span>;
-00108     $out = $out . <span class="stringliteral">"boundary=\"$this-&gt;mime_boundary\"\n"</span>;
-00109     $out = $out . <span class="stringliteral">"Content-transfer-encoding: 7BIT\n"</span>;
-00110     <span class="keywordflow">for</span>($i = 0; $i &lt; count($filename_list); $i++) {
-00111       <span class="keywordflow">if</span> ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
-00112       $out = $out . <span class="stringliteral">"X-attachments: $filename_list[$i];\n\n"</span>;
-00113     }
-00114     <span class="keywordflow">return</span> $out;
-00115   }
-00116   
-00117   function write_smtpheaders($addr_from,$addr_cc)
-00118     {
-00119       $out = <span class="stringliteral">"From: $addr_from\n"</span>;
-00120       <span class="keywordflow">if</span>($addr_cc != <span class="stringliteral">""</span>)
-00121     $out = $out . <span class="stringliteral">"Cc: $addr_cc\n"</span>;
-00122       $out = $out . <span class="stringliteral">"Reply-To: $addr_from\n"</span>;
-00123       $out = $out . <span class="stringliteral">"X-Mailer: Dolibarr version "</span> . DOL_VERSION .<span class="stringliteral">"\n"</span>;
-00124       $out = $out . <span class="stringliteral">"X-Sender: $addr_from\n"</span>;
-00125       <span class="keywordflow">return</span> $out;
-00126     }
-00127 }
-00128 
-00129 <span class="comment">// usage - mimetype example "image/gif"</span>
-00130 <span class="comment">// $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);</span>
-00131 <span class="comment">// $mailfile-&gt;sendfile();</span>
-00132 
-00133 <span class="comment">// Splits a string by RFC2045 semantics (76 chars per line, end with \r\n).</span>
-00134 <span class="comment">// This is not in all PHP versions so I define one here manuall.</span>
-00135 function my_chunk_split($str)
-00136 {
-00137   $stmp = $str;
-00138   $len = strlen($stmp);
-00139   $out = <span class="stringliteral">""</span>;
-00140   <span class="keywordflow">while</span> ($len &gt; 0) {
-00141     <span class="keywordflow">if</span> ($len &gt;= 76) {
-00142       $out = $out . substr($stmp, 0, 76) . <span class="stringliteral">"\r\n"</span>;
-00143       $stmp = substr($stmp, 76);
-00144       $len = $len - 76;
-00145     }
-00146     <span class="keywordflow">else</span> {
-00147       $out = $out . $stmp . <span class="stringliteral">"\r\n"</span>;
-00148       $stmp = <span class="stringliteral">""</span>; $len = 0;
-00149     }
-00150   }
-00151   <span class="keywordflow">return</span> $out;
-00152 }
-00153 
-00154 <span class="comment">// end script</span>
-00155 ?&gt;
-</div></pre><hr size="1"><address style="align: right;"><small>Généré le Thu Jul 15 20:50:37 2004 pour dolibarr par
+00095       <span class="comment">//      print "&lt;pre&gt; on encode $sourcefile &lt;/pre&gt;\n";</span>
+00096       <span class="keywordflow">if</span> (is_readable($sourcefile))
+00097   {
+00098     $fd = fopen($sourcefile, <span class="stringliteral">"r"</span>);
+00099     $contents = fread($fd, filesize($sourcefile));
+00100     $encoded = my_chunk_split(base64_encode($contents));
+00101     fclose($fd);
+00102   }
+00103       <span class="keywordflow">return</span> $encoded;
+00104   }
+00105   
+00106   function sendfile()
+00107     {
+00108       $headers .= $this-&gt;smtp_headers . $this-&gt;mime_headers;
+00109       $message = $this-&gt;text_body . $this-&gt;text_encoded;
+00110       <span class="keywordflow">return</span> mail($this-&gt;addr_to,$this-&gt;subject,stripslashes($message),$headers);
+00111     }
+00112   
+00113   function write_body($msgtext, $filename_list)
+00114     {
+00115       <span class="keywordflow">if</span> (count($filename_list))
+00116   {
+00117     $out = <span class="stringliteral">"--"</span> . $this-&gt;mime_boundary . <span class="stringliteral">"\n"</span>;
+00118     $out = $out . <span class="stringliteral">"Content-Type: text/plain; charset=\"iso8859-15\"\n\n"</span>;
+00119     <span class="comment">//    $out = $out . "Content-Type: text/plain; charset=\"us-ascii\"\n\n";</span>
+00120   }
+00121       $out = $out . $msgtext . <span class="stringliteral">"\n"</span>;
+00122       <span class="keywordflow">return</span> $out;
+00123     }
+00124   
+00125   function write_mimeheaders($filename_list, $mimefilename_list) {
+00126     $out = <span class="stringliteral">"MIME-version: 1.0\n"</span>;
+00127     $out = $out . <span class="stringliteral">"Content-type: multipart/mixed; "</span>;
+00128     $out = $out . <span class="stringliteral">"boundary=\"$this-&gt;mime_boundary\"\n"</span>;
+00129     $out = $out . <span class="stringliteral">"Content-transfer-encoding: 7BIT\n"</span>;
+00130     <span class="keywordflow">for</span>($i = 0; $i &lt; count($filename_list); $i++) {
+00131       <span class="keywordflow">if</span> ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
+00132       $out = $out . <span class="stringliteral">"X-attachments: $filename_list[$i];\n\n"</span>;
+00133     }
+00134     <span class="keywordflow">return</span> $out;
+00135   }
+00136   
+00137   function write_smtpheaders($addr_from,$addr_cc)
+00138     {
+00139       $out = <span class="stringliteral">"From: $addr_from\n"</span>;
+00140       <span class="keywordflow">if</span>($addr_cc != <span class="stringliteral">""</span>)
+00141     $out = $out . <span class="stringliteral">"Cc: $addr_cc\n"</span>;
+00142       $out = $out . <span class="stringliteral">"Reply-To: $addr_from\n"</span>;
+00143       $out = $out . <span class="stringliteral">"X-Mailer: Dolibarr version "</span> . DOL_VERSION .<span class="stringliteral">"\n"</span>;
+00144       $out = $out . <span class="stringliteral">"X-Sender: $addr_from\n"</span>;
+00145       <span class="keywordflow">return</span> $out;
+00146     }
+00147 }
+00148 
+00149 <span class="comment">// usage - mimetype example "image/gif"</span>
+00150 <span class="comment">// $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filename,$mimetype);</span>
+00151 <span class="comment">// $mailfile-&gt;sendfile();</span>
+00152 
+00153 <span class="comment">// Splits a string by RFC2045 semantics (76 chars per line, end with \r\n).</span>
+00154 <span class="comment">// This is not in all PHP versions so I define one here manuall.</span>
+00155 function my_chunk_split($str)
+00156 {
+00157   $stmp = $str;
+00158   $len = strlen($stmp);
+00159   $out = <span class="stringliteral">""</span>;
+00160   <span class="keywordflow">while</span> ($len &gt; 0) {
+00161     <span class="keywordflow">if</span> ($len &gt;= 76) {
+00162       $out = $out . substr($stmp, 0, 76) . <span class="stringliteral">"\r\n"</span>;
+00163       $stmp = substr($stmp, 76);
+00164       $len = $len - 76;
+00165     }
+00166     <span class="keywordflow">else</span> {
+00167       $out = $out . $stmp . <span class="stringliteral">"\r\n"</span>;
+00168       $stmp = <span class="stringliteral">""</span>; $len = 0;
+00169     }
+00170   }
+00171   <span class="keywordflow">return</span> $out;
+00172 }
+00173 
+00174 <span class="comment">// end script</span>
+00175 ?&gt;
+</div></pre><hr size="1"><address style="align: right;"><small>Généré le Fri Jul 16 00:31:06 2004 pour dolibarr par
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.7 </small></address>
 </body>

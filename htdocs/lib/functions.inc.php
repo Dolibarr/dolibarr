@@ -23,21 +23,44 @@
  *
  */
 
+/*!	\file functions.inc.php
+		\brief Ensemble de fonctions de base de dolibarr sous forme d'include
+		\author Rodolphe Quiedeville
+		\author	Jean-Louis Bergamo
+		\author	Laurent Destailleur
+		\version 1.2.
+
+		Ensemble de fonctions de base de dolibarr sous forme d'include
+*/
+
 $yn[0] = "non";
 $yn[1] = "oui";
 
-Function dolibarr_syslog($message)
+/*!
+		\brief envoi des messages dolibarr dans syslog
+		\param	message		message a envoyer a syslog
+*/
+
+function dolibarr_syslog($message)
 {
   define_syslog_variables();
 
   openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les PHP
-  
+
   syslog(LOG_WARNING, $message);
 
   closelog();
 }
 
-Function dolibarr_fiche_head($links, $active=0)
+/*!
+		\brief header d'une fiche
+		\param	links		liens
+		\param	active
+		\remarks active = 0 par défaut
+*/
+
+
+function dolibarr_fiche_head($links, $active=0)
 {
   print "<!-- fiche --><div class=\"tabs\">\n";
 
@@ -64,10 +87,20 @@ Function dolibarr_fiche_head($links, $active=0)
   print "<div class=\"tabBar\">\n<br>\n";
 }
 
+/*!
+		\brief insertion d'une constantes dans la base de données
+		\param	db			base de données
+		\param	name		nom de la constante
+		\param	value		valeur de la constante
+		\param	type		type de constante
+		\param	visible	la constante est t'elle visible
+		\param	note		explication de la constante
+		\remarks type = chaine par défaut
+		\remarks visible = 0 par défaut
+		\remarks retourne 0 pour raté, 1 pour réussi
+*/
 
-Function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
-// Ajoute ou modifie un parametre dans la table llx_const
-// Retour: 0=KO, 1=OK
+function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
 {
   $sql = "REPLACE INTO llx_const SET name = '$name', value='$value', visible=$visible, type='$type', note='$note'";
 
@@ -81,12 +114,17 @@ Function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
     }
 }
 
-Function dolibarr_del_const($db, $name)
-// Supprime un parametre de la table llx_const
-// Retour: 0=KO, 1=OK
+/*!
+		\brief effacement d'une constante dans la base de données
+		\param	db			base de données
+		\param	name		nom de la constante
+		\remarks retourne 0 pour raté, 1 pour réussi
+*/
+
+function dolibarr_del_const($db, $name)
 {
   $sql = "DELETE FROM llx_const WHERE name='$name'";
-  
+
   if ($db->query($sql))
     {
       return 1;
@@ -97,9 +135,14 @@ Function dolibarr_del_const($db, $name)
     }
 }
 
-Function dolibarr_print_ca($ca)
+/*!
+		\brief formattage des nombres
+		\param	ca			valeur a formater
+		\return	cat			valeur formatée
+*/
+
+function dolibarr_print_ca($ca)
 {
-    // Permet d'avoir une fonction commune du formatage des nombres
     if ($ca > 1000)
     {
       $cat = round(($ca / 1000),2);
@@ -110,7 +153,7 @@ Function dolibarr_print_ca($ca)
       $cat = round($ca,2);
       $cat = "$cat euros";
     }
-    
+
     if ($ca > 1000000)
     {
       $cat = round(($ca / 1000000),2);
@@ -120,13 +163,25 @@ Function dolibarr_print_ca($ca)
     return $cat;
 }
 
-Function dolibarr_print_date($time,$format="%d %b %Y")
+/*!
+		\brief formattage de la date
+		\param	time			date
+		\param	format		format de la date "%d %b %Y"
+		\remarks retourne la date formatée
+*/
+
+function dolibarr_print_date($time,$format="%d %b %Y")
 {
-    // Permet d'avoir une fonction commune du formatage d'affichage des date
     return strftime($format,$time);
 }
 
-Function dolibarr_print_object_info($object)
+
+/*!
+		\brief affiche les informations d'un objet
+		\param	object			objet a afficher
+*/
+
+function dolibarr_print_object_info($object)
 {
   print "Créé par  : " . $object->user_creation->fullname . '<br>';
   print "Date de création : " . strftime("%A %d %B %Y %H:%M:%S",$object->date_creation) . '<br>';
@@ -134,9 +189,15 @@ Function dolibarr_print_object_info($object)
   print "Date de modification : " . strftime("%A %d %B %Y %H:%M:%S",$object->date_modification) . '<br>';
 }
 
-Function dolibarr_print_phone($phone)
+/*!
+		\brief formattage du telephone
+		\param	phone			numéro de telephone à formater
+		\return phone			numéro de téléphone formaté
+		\remarks net tient pas en compte le format belge 02/211 34 83
+*/
+
+function dolibarr_print_phone($phone)
 {
-    // Permet d'avoir une fonction commune du formatage d'affichage des tel/fax
     if (strlen(trim($phone)) == 10)
     {
       return substr($phone,0,2)." ".substr($phone,2,2)." ".substr($phone,4,2)." ".substr($phone,6,2)." ".substr($phone,8,2);
@@ -147,76 +208,78 @@ Function dolibarr_print_phone($phone)
     }
 }
 
-Function img_file($alt = "Voir")
+function img_file($alt = "Voir")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/file.png" border="0" alt="'.$alt.'">';
 }
 
-Function img_file_new($alt = "Voir")
+function img_file_new($alt = "Voir")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/filenew.png" border="0" alt="'.$alt.'">';
 }
 
 
-Function img_pdf($alt = "Voir")
+function img_pdf($alt = "Voir")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/pdf.png" border="0" alt="'.$alt.'">';
 }
 
-Function img_warning($alt = "Voir")
+function img_warning($alt = "Voir")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/warning.png" border="0" alt="'.$alt.'">';
 }
 
-Function img_delete($alt = "Supprimer")
+function img_delete($alt = "Supprimer")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/delete.png" border="0" alt="'.$alt.'" title="Supprimer">';
 }
 
-Function img_info($alt = "Informations")
+function img_info($alt = "Informations")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/info.png" border="0" alt="'.$alt.'" title="Informations">';
 }
 
 
-Function img_edit($alt = "Modifier")
+function img_edit($alt = "Modifier")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit.png" border="0" alt="'.$alt.'" title="Modifier">';
 }
 
-Function img_phone_in($alt = "Modifier")
+function img_phone_in($alt = "Modifier")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-Function img_phone_out($alt = "Modifier")
+function img_phone_out($alt = "Modifier")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call_out.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 
-Function img_alerte($alt = "Alerte")
+function img_alerte($alt = "Alerte")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/alerte.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 
-Function img_next($alt = "Suivant")
+function img_next($alt = "Suivant")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/next.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-Function img_previous($alt = "Précédent")
+function img_previous($alt = "Précédent")
 {
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/previous.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
+/*!
+		\brief fonction de login
+		\remarks if faut changer le code html dans la fonction pour changer le design
+		\remarks	le css devrait etre pris dans le repetoire de dolibarr et ne pas etre en dur !
+*/
 
-function loginFunction()
+function loginfunction()
 {
-  /**
-   * Change the HTML output so that it fits to your
-   * application.     */
   print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
   print "\n<html><head><title>Dolibarr Authentification</title>";
   print '<style type="text/css">
@@ -292,10 +355,11 @@ function loginFunction()
   <p align="center"><input value="Login" type="submit">
   </form>';
 }
-/*
- *
- *
- */
+
+/*!
+		\brief acces interdit
+*/
+
 function accessforbidden()
 {
   llxHeader();
@@ -303,6 +367,12 @@ function accessforbidden()
   llxFooter();
   exit(0);
 }
+
+/*!
+		\brief deplacer les fichiers telechargés
+		\param	src_file	fichier source
+		\param	dest_file	fichier de destination
+*/
 
 function doliMoveFileUpload($src_file, $dest_file)
 {
@@ -312,14 +382,15 @@ function doliMoveFileUpload($src_file, $dest_file)
     {
       $file_name = $dest_file . ".txt";
     }
-  
+
   return move_uploaded_file($src_file, $file_name);
 }
+
 
 function dolibarr_user_page_param($db, &$user)
 {
   foreach ($GLOBALS["_GET"] as $key=>$value)
-    { 
+    {
       if ($key == "sortfield")
 	{
 	  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."user_param ";
@@ -327,7 +398,7 @@ function dolibarr_user_page_param($db, &$user)
 	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
 	  $sql .= " ,param='sortfield'";
 	  $sql .= " ,value='".urlencode($value)."'";
-	  
+
 	  $db->query($sql);
 	  $user->page_param["sortfield"] = $value;
 	}
@@ -341,7 +412,7 @@ function dolibarr_user_page_param($db, &$user)
 	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
 	  $sql .= " ,param='sortorder'";
 	  $sql .= " ,value='".urlencode($value)."'";
-	  
+
 	  $db->query($sql);
 	  $user->page_param["sortorder"] = $value;
 	}
@@ -352,7 +423,7 @@ function dolibarr_user_page_param($db, &$user)
 	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
 	  $sql .= " ,param='begin'";
 	  $sql .= " ,value='".$value."'";
-	  
+
 	  $db->query($sql);
 	  $user->page_param["begin"] = $value;
 	}
@@ -363,19 +434,26 @@ function dolibarr_user_page_param($db, &$user)
 	  $sql .= " ,page='".$GLOBALS["SCRIPT_URL"] . "'";
 	  $sql .= " ,param='page'";
 	  $sql .= " ,value='".$value."'";
-	  
+
 	  $db->query($sql);
 	  $user->page_param["page"] = $value;
 	}
     }
 }
 
+/*!
+		\brief transcodage de francs en euros
+		\param	zonein		zone de depart
+		\param	devise		type de devise
+		\return	r
+*/
+
 function transcoS2L($zonein,$devise)
-{ 
+{
   // Open source offert par <A HREF="mailto:alainfloch@free.fr?subject=chif2let">alainfloch@free.fr</A> 28/10/2001, sans garantie.
   // début de la fonction de transcodification de somme en toutes lettres
 
-  /*  $zonein = "123,56";  
+  /*  $zonein = "123,56";
    *  $devise = "E"; // préciser F si francs , sinon ce sera de l'euro
    *  $r = transcoS2L($zonein,$devise); // appeler la fonction
    *  echo "résultat   vaut $r<br>";
@@ -399,7 +477,7 @@ function transcoS2L($zonein,$devise)
       $unite_pluriel = " euros ";
       $cent_singulier = " centime";
     }
-  
+
   $arr1_99 = array("zéro","un","deux","trois",
 		   "quatre","cinq","six","sept",
 		   "huit","neuf","dix","onze","douze",
@@ -541,7 +619,7 @@ function transcoS2L($zonein,$devise)
 	  if ($C1 > 1) $r = $r.$arr1_99[$C1]." cent ";
 	}
     }
-  if ($C2 != 0) 
+  if ($C2 != 0)
     {
       $r = $r.$arr1_99[$C2];
     }
@@ -566,7 +644,16 @@ function transcoS2L($zonein,$devise)
   return($r); // retourne le résultat
 } // fin fonction transcoS2L
 
-
+/*!
+		\brief affichage du titre d'une liste
+		\param	name
+		\param	file
+		\param	field
+		\param	begin
+		\param	options
+		\remarks begin = "" par défaut
+		\remarks options = "" par défaut
+*/
 
 function print_liste_field_titre($name, $file, $field, $begin="", $options="")
  {
@@ -579,13 +666,23 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="")
   print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="Z-A"></a>';
 }
 
+/*!
+		\brief affichage du titre d'une liste avec possibilité de tri et de choix du type de la balise td
+		\param	name
+		\param	file
+		\param	field
+		\param	begin
+		\param	options
+		\param	td
+		\param	sortfield
+		\remarks begin = "" par défaut
+		\remarks options = "" par défaut
+		\remarks td = "" par défaut
+		\remarks sortfield = "" par défaut
+*/
+
 function print_liste_field_titre_new($name, $file, $field, $begin="", $options="", $td="", $sortfield="")
  {
-   /*
-    * idem à la fonction ci dessus mais ajoute des fonctionnalités
-    *
-    *
-    */
   global $conf;
   if ($sortfield == $field)
     {
@@ -603,16 +700,22 @@ function print_liste_field_titre_new($name, $file, $field, $begin="", $options="
   print "</td>";
 }
 
-/*
- *
- */
+/*!
+		\brief affichage d'un titre
+		\param	titre			le titre a afficher
+*/
+
 function print_titre($titre)
 {
   print '<div class="titre">'.$titre.'</div>';
 }
-/*
- * Idem que print_titre mais offre en plus possibilité de mettre un text à droite
- */
+
+/*!
+		\brief affichage d'un titre d'une fiche aligné a droite
+		\param	titre			le titre a afficher
+		\param	mesg			message afficher
+*/
+
 function print_fiche_titre($titre, $mesg='')
 {
   print "\n".'<table width="100%" border="0" cellpadding="3" cellspacing="0">';
@@ -624,25 +727,26 @@ function print_fiche_titre($titre, $mesg='')
   print '</tr></table>'."\n";
 }
 
-/*
- *
- *
- */
+/*!
+		\brief effacement d'un fichier
+		\param	file			fichier a effacer
+*/
+
 function dol_delete_file($file)
 {
   return unlink($file);
 }
 
-/*
- *
- *
- */
+/*!
+		\brief accès refusé
+*/
+
 function block_access()
 {
   llxHeader();
   print "Accés refusé";
   llxFooter();
-} 
+}
 
 /*
  *
@@ -664,7 +768,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
   print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
 
- if ($page > 0) 
+ if ($page > 0)
    {
      print '<tr><td><div class="titre">'.$titre.' - page '.($page+1).'</div></td>';
    }
@@ -697,27 +801,34 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
   print '</td></tr></table>';
 }
 
-/*
- * fonction servant a afficher les fleches de navigation dans les
- * pages de liste
- */
+/*!
+		\brief fonction servant a afficher les fleches de navigation dans les pages de listes
+		\param	page			numéro de la page
+		\param	file			lien
+		\param	options
+		\param	nextpage	page suivante
+*/
+
 function print_fleche_navigation($page,$file,$options='', $nextpage)
 {
   global $conf;
-  if ($page > 0) 
+  if ($page > 0)
     {
       print '<a href="'.$file.'?page='.($page-1).$options.'"><img alt="Page précédente" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
     }
 
-  if ($nextpage > 0) 
+  if ($nextpage > 0)
     {
       print '<a href="'.$file.'?page='.($page+1).$options.'"><img alt="Page suivante" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
     }
 }
-/*
- *
- *
- */
+
+/*!
+		\brief fonction servant a afficher un menu déroulant avec oui ou non
+		\param	value
+		\remarks value peut avoir la valeur 0 ou 1
+*/
+
 function print_oui_non($value)
 {
   if ($value)
@@ -731,10 +842,13 @@ function print_oui_non($value)
       print '<option value="1">oui';
     }
 }
-/*
- *
- *
- */
+
+/*!
+		\brief fonction servant a afficher les mois dans un liste déroulante
+		\param	set_time
+		\remarks set_time = '' par défaut
+*/
+
 function print_date_select($set_time='')
 {
   if (! $set_time)
@@ -809,10 +923,15 @@ function print_date_select($set_time='')
   print "</select>\n";
   
 }
-/*
- *
- *
- */
+/*!
+		\brief fonction servant a afficher les heures/minutes dans un liste déroulante
+		\param	prefix
+		\param	begin
+		\param	end
+		\remarks begin = 1 par défaut
+		\remarks end = 23 par défaut
+*/
+
 function print_heure_select($prefix,$begin=1,$end=23) {
   
   print '<select name="'.$prefix.'hour">';
@@ -829,10 +948,12 @@ function print_heure_select($prefix,$begin=1,$end=23) {
   }
   print "</select>\n";  
 }
-/*
- *
- *
- */
+
+/*!
+		\brief fonction servant a afficher une durée dans une liste déroulante
+		\param	prefix
+*/
+
 function print_duree_select($prefix)
 {  
   print '<select name="'.$prefix.'hour">';
@@ -852,19 +973,23 @@ function print_duree_select($prefix)
   print "</select>\n";  
 }
 
-/*
- * Return an amount with format	"9 999.99"
- * Fonction utilisée dans les pdf et les pages
- * html
- */
+/*!
+		\brief fonction qui retourne un montant monétaire formaté
+		\param	amount		montant a formater
+		\param	html			formatage html ou pas
+		\remarks html = 0 par défaut
+		\remarks fnction utilisée dans les pdf et les pages html
+
+*/
+
 function price($amount, $html=0)
 {
   if ($html)
     {
 
-      $dec='.'; $thousand=' ';	
+      $dec='.'; $thousand=' ';
       return ereg_replace(' ','&nbsp;',number_format($amount, 2, $dec, $thousand));
-   
+
     }
   else
     {
@@ -873,10 +998,22 @@ function price($amount, $html=0)
 
 }
 
+/*!
+		\brief fonction qui convertit des euros en francs
+		\param	euros			somme en euro à convertir
+		\return price
+*/
+
 function francs($euros)
 {
   return price($euros * 6.55957);
 }
+
+/*!
+		\brief fonction qui calcule la tva
+		\param	euros			somme en euro
+		\param	taux			taux de tva
+*/
 
 function tva($euros, $taux=19.6)
 {
@@ -884,28 +1021,40 @@ function tva($euros, $taux=19.6)
 
   return sprintf("%01.2f",($euros * $taux));
 }
+
+/*!
+		\brief fonction qui calcule le montant tva incluse
+		\param	euros			somme en euro
+		\param	taux			taux de tva
+*/
+
 function inctva($euros, $taux=1.196)
 {
   return sprintf("%01.2f",($euros * $taux));
 }
 
+/*!
+		\brief fonction qui affiche des statistiques
+		\param	basename
+		\param	bc1
+		\param	bc2
+		\param	ftc
+		\param	jour
+*/
 
-/*
- *
- *
- */
+
 function stat_print($basename,$bc1,$bc2,$ftc, $jour) {
 
   $db = pg_Connect("","","","","$basename");
   if (!$db) {
-    echo "Pas de connexion a la base\n"; 
-    exit ; 
+    echo "Pas de connexion a la base\n";
+    exit ;
   }
 
   $offset = $jour * 9;
 
   $sql="SELECT s.date, s.nb, l.libelle FROM stat_base as s, stat_cat as l WHERE s.cat = l.id ORDER by s.date DESC, s.cat ASC LIMIT 9 OFFSET $offset";
-  
+
   $result = $db->query($sql);
   if (!$result) {
     print "Erreur SELECT<br><h1>$sql</h1><br>";
@@ -919,7 +1068,7 @@ function stat_print($basename,$bc1,$bc2,$ftc, $jour) {
 
   $num = $db->num_rows();
   $i = 0;
-  
+
   $tag = 1;
   while ( $i < $num) {
     $obj = $db->fetch_object( $i);
@@ -932,7 +1081,7 @@ function stat_print($basename,$bc1,$bc2,$ftc, $jour) {
   }
   print "</TABLE>";
   $db->free();
-  
+
   $db->close();
 
 }
@@ -941,8 +1090,8 @@ function tab_count($basename,$bc1,$bc2,$ftc) {
 
   $db = pg_Connect("","","","","$basename");
   if (!$db) {
-    echo "Pas de connexion a la base\n"; 
-    exit ; 
+    echo "Pas de connexion a la base\n";
+    exit ;
   }
 
   $sql="SELECT count(*) AS nbcv from candidat WHERE active=1";
@@ -952,13 +1101,13 @@ function tab_count($basename,$bc1,$bc2,$ftc) {
     return 1;
   }
   print "<table border=0 bgcolor=black cellspacing=0 cellpadding=0><tr><td>";
-  
+
   print "<table border=0 cellspacing=1 cellpadding=1>";
   print "<tr><td><font color=\"white\">base <b>$basename</b></font></td>";
   print "<td><font color=\"white\">libelle</font></td>";
   print "</tr>";
   $nbcv = $db->result( $i, "nbcv");
-  
+
   print "<tr $bc1><td><b>$ftc Nombre de CV</font></b></td>\n";
   print "<td  align=\"center\">$ftc $nbcv</td>\n";
   print "</tr>\n";
@@ -969,15 +1118,15 @@ function tab_count($basename,$bc1,$bc2,$ftc) {
   $result = $db->query($sql);
   if (!$result) {
     print "Erreur SELECT<br><h1>$sql</h1><br>";
-  }  
+  }
   $nbcv = $db->result( $i, "nbcv");
-  
+
   print "<tr $bc2><td><b>$ftc Nombre d'offre</font></b></td>";
   print "<td align=\"center\">$ftc $nbcv</td>";
   print "</tr>";
-  
+
   $db->free();
-	
+
 
   $sql="SELECT count(*) AS nbcv from candidat WHERE active=0";
 
@@ -987,53 +1136,55 @@ function tab_count($basename,$bc1,$bc2,$ftc) {
   }
 
   $nbcv = $db->result( $i, "nbcv");
-  
+
   print "<tr $bc1><td><b>$ftc Nombre de CV inactifs</font></b></td>\n";
   print "<td align=\"center\">$ftc $nbcv</td>";
   print "</tr>";
-  
+
   $db->free();
 
 
   $sql="SELECT count(*) AS nbcv from offre WHERE active=0";
-  
+
   $result = $db->query($sql);
   if (!$result) {
     print "Erreur SELECT<br><h1>$sql</h1><br>";
   }
-  
+
   $nbcv = $db->result( $i, "nbcv");
 
   print "<tr $bc2><td><b>$ftc Nombre d'offres inactives</font></b></td>\n";
   print "<td  align=\"center\">$ftc $nbcv</td>\n";
   print "</tr>\n";
-  
+
   $db->free();
-    
+
   $sql="SELECT count(*) AS nbsoc from logsoc";
-  
+
   $result = $db->query($sql);
   if (!$result) {
     print "Erreur SELECT<br><h1>$sql</h1><br>";
   }
-  
+
   $nbsoc = $db->result( $i, "nbsoc");
-  
+
   print "<tr $bc1><td><b>$ftc Nombre de logins societes</font></b></td>\n";
   print "<td align=\"center\">$ftc $nbsoc</td>";
   print "</tr>";
 
   print "</td></tr></table></td></tr></table>";
-  
+
   $db->close();
 
 }
 
-/*
- * logfile : permet de logguer dans un fichier
- * cette fonction ne fonctionenra que si et seulement si le fichier de
- * la constante globale MAIN_DEBUG existe et vaut 1
- */
+/*!
+		\brief fonction qui permet d'envoyer les infos dans un fichier de log
+		\param	str				chaine a mettre dans le fichier
+		\param	log				nom du fichier de log
+		\remarks cette fonction ne marchera qui si la constante MAIN_DEBUG = 1
+*/
+
 function logfile($str,$log="/var/log/dolibarr/dolibarr.log")
 {
   if (defined("MAIN_DEBUG") && MAIN_DEBUG ==1)
@@ -1062,14 +1213,18 @@ function logfile($str,$log="/var/log/dolibarr/dolibarr.log")
     }
 }
 
-/*
- * Fonctions reprise sur spip
- * http://www.uzine.net/spip/
- */
+/*!
+		\brief fonction pour créer un mot de passe aléatoire
+		\param	longueur	longueur du mot de passe
+		\param	sel				donnée aléatoire
+		\remarks la longueur est fixée a 8 par défaut
+		\remarks la fonction a été prise sur http://www.uzine.net/spip
+*/
+
 function creer_pass_aleatoire($longueur = 8, $sel = "") {
   $seed = (double) (microtime() + 1) * time();
   srand($seed);
-  
+
   for ($i = 0; $i < $longueur; $i++) {
     if (!$s) {
       if (!$s) $s = rand();
@@ -1088,14 +1243,14 @@ function creer_pass_aleatoire($longueur = 8, $sel = "") {
   return $pass;
 }
 
-/*
- * Fonctions reprise sur spip
- * http://www.uzine.net/spip/
- */
+/*!
+		\brief fonction pour initialiser sel
+		\remarks la fonction a été prise sur http://www.uzine.net/spip
+*/
 
 function initialiser_sel() {
   global $htsalt;
-  
+
   $htsalt = '$1$'.creer_pass_aleatoire();
 }
 

@@ -29,269 +29,269 @@
 00022 <span class="comment"> *</span>
 00023 <span class="comment"> */</span>
 00024 
-00035 <span class="keyword">class </span>DoliDb {
-00036   var $db, $results, $ok, $connected, $database_selected;
-00037 
-00038   <span class="comment">// Constantes pour code erreurs</span>
-00039   var $ERROR_DUPLICATE=1062;
-00040   var $ERROR_TABLEEXISTS=1050;
-00041 
-00051   Function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '')
-00052 
-00053   <span class="comment">// Se connecte au serveur et éventuellement à une base (si spécifié)</span>
-00054   <span class="comment">// Renvoie 1 en cas de succès, 0 sinon</span>
-00055 
-00056     {
-00057       global $conf;
+<a name="l00041"></a><a class="code" href="classDoliDb.html">00041</a> <span class="keyword">class </span><a class="code" href="classDoliDb.html">DoliDb</a> {
+00042   var $db, $results, $ok, $connected, $database_selected;
+00043 
+00044   <span class="comment">// Constantes pour code erreurs</span>
+00045   var $ERROR_DUPLICATE=1062;
+00046   var $ERROR_TABLEEXISTS=1050;
+00047 
+<a name="l00057"></a><a class="code" href="classDoliDb.html#a0">00057</a>   function <a class="code" href="classDoliDb.html">DoliDb</a>($type = 'mysql', $host = '', $user = '', $pass = '', $name = '')
 00058 
-00059       <span class="keywordflow">if</span> ($host == '')
-00060         {
-00061           $host = $conf-&gt;db-&gt;host;
-00062         }
-00063 
-00064       <span class="keywordflow">if</span> ($user == '')
-00065         {
-00066           $user = $conf-&gt;db-&gt;user;
-00067         }
-00068 
-00069       <span class="keywordflow">if</span> ($pass == '')
-00070         {
-00071           $pass = $conf-&gt;db-&gt;pass;
-00072         }
-00073 
-00074       <span class="keywordflow">if</span> ($name == '')
-00075         {
-00076           $name = $conf-&gt;db-&gt;name;
-00077         }
-00078 
-00079       <span class="comment">//print "Name DB: $host,$user,$pass,$name&lt;br&gt;";</span>
-00080 
-00081       <span class="comment">// Essai connexion serveur</span>
-00082 
-00083       $this-&gt;db = $this-&gt;connect($host, $user, $pass);
+00059   <span class="comment">// Se connecte au serveur et éventuellement à une base (si spécifié)</span>
+00060   <span class="comment">// Renvoie 1 en cas de succès, 0 sinon</span>
+00061 
+00062     {
+00063       global $conf;
+00064 
+00065       <span class="keywordflow">if</span> ($host == '')
+00066         {
+00067           $host = $conf-&gt;db-&gt;host;
+00068         }
+00069 
+00070       <span class="keywordflow">if</span> ($user == '')
+00071         {
+00072           $user = $conf-&gt;db-&gt;user;
+00073         }
+00074 
+00075       <span class="keywordflow">if</span> ($pass == '')
+00076         {
+00077           $pass = $conf-&gt;db-&gt;pass;
+00078         }
+00079 
+00080       <span class="keywordflow">if</span> ($name == '')
+00081         {
+00082           $name = $conf-&gt;db-&gt;name;
+00083         }
 00084 
-00085       <span class="keywordflow">if</span> ($this-&gt;db)
-00086         {
-00087           $this-&gt;connected = 1;
-00088           $this-&gt;ok = 1;
-00089         }
-00090       <span class="keywordflow">else</span>
-00091         {
-00092           $this-&gt;connected = 0;
-00093           $this-&gt;ok = 0;
-00094         }
-00095 
-00096       <span class="comment">// Si connexion serveur ok et si connexion base demandée, on essaie connexion base</span>
-00097 
-00098       <span class="keywordflow">if</span> ($this-&gt;connected &amp;&amp; $name)
-00099         {
-00100 
-00101           <span class="keywordflow">if</span> ($this-&gt;select_db($name) == 1)
-00102             {
-00103               $this-&gt;database_selected = 1;
-00104               $this-&gt;ok = 1;
-00105             }
-00106           <span class="keywordflow">else</span>
-00107             {
-00108               $this-&gt;database_selected = 0;
-00109               $this-&gt;ok = 0;
-00110             }
-00111 
-00112         }
-00113       <span class="keywordflow">else</span>
-00114         {
-00115           <span class="comment">// Pas de selection de base demandée, mais tout est ok</span>
-00116 
-00117           $this-&gt;database_selected = 0;
-00118           $this-&gt;ok = 1;
-00119         }
-00120 
-00121       <span class="keywordflow">return</span> $this-&gt;ok;
-00122     }
-00123 
-00130   Function select_db($database)
-00131     {
-00132       <span class="keywordflow">return</span> mysql_select_db($database, $this-&gt;db);
-00133     }
-00134 
-00143   Function connect($host, $login, $passwd)
-00144     {
-00145       $this-&gt;db  = @mysql_connect($host, $login, $passwd);
-00146       <span class="comment">//print "Resultat fonction connect: ".$this-&gt;db;</span>
-00147       <span class="keywordflow">return</span> $this-&gt;db;
-00148     }
-00149 
-00156   Function create_db($database)
-00157   {
-00158     <span class="keywordflow">if</span> (mysql_create_db ($database, $this-&gt;db))
-00159       {
-00160         <span class="keywordflow">return</span> 1;
-00161       }
-00162     <span class="keywordflow">else</span>
-00163       {
-00164         <span class="keywordflow">return</span> 0;
-00165       }
-00166   }
-00167 
-00173   Function clone()
-00174     {
-00175       $db2 = <span class="keyword">new</span> DoliDb(<span class="stringliteral">""</span>, <span class="stringliteral">""</span>, <span class="stringliteral">""</span>, <span class="stringliteral">""</span>, <span class="stringliteral">""</span>);
-00176       $db2-&gt;db = $this-&gt;db;
-00177       <span class="keywordflow">return</span> $db2;
-00178     }
-00179 
-00188   Function pconnect($host, $login, $passwd)
-00189     {
-00190       $this-&gt;db  = mysql_pconnect($host, $login, $passwd);
-00191       <span class="keywordflow">return</span> $this-&gt;db;
-00192     }
-00193 
-00199   Function close()
-00200   {
-00201     <span class="keywordflow">return</span> mysql_close($this-&gt;db);
-00202   }
-00203 
-00210   Function begin($<span class="keywordflow">do</span>=1)
-00211   {
-00212     <span class="keywordflow">if</span> ($do)
-00213       {
-00214         <span class="keywordflow">return</span> $this-&gt;query(<span class="stringliteral">"BEGIN"</span>);
-00215       }
-00216     <span class="keywordflow">else</span>
-00217       {
-00218         <span class="keywordflow">return</span> 1;
-00219       }
-00220   }
-00221 
-00228   Function commit($<span class="keywordflow">do</span>=1)
-00229   {
-00230     <span class="keywordflow">if</span> ($do)
-00231       {
-00232         <span class="keywordflow">return</span> $this-&gt;query(<span class="stringliteral">"COMMIT"</span>);
-00233       }
-00234     <span class="keywordflow">else</span>
-00235       {
-00236         <span class="keywordflow">return</span> 1;
-00237       }
-00238   }
-00239 
-00246   Function rollback($<span class="keywordflow">do</span>=1)
-00247   {
-00248     <span class="keywordflow">if</span> ($do)
-00249       {
-00250         <span class="keywordflow">return</span> $this-&gt;query(<span class="stringliteral">"ROLLBACK"</span>);
-00251       }
-00252     <span class="keywordflow">else</span>
-00253       {
-00254         <span class="keywordflow">return</span> 1;
-00255       }
-00256   }
-00257 
-00266   Function query($query, $limit=<span class="stringliteral">""</span>, $offset=<span class="stringliteral">""</span>)
-00267     {
-00268       $query = trim($query);
-00269       <span class="comment">//print "&lt;p&gt;$query&lt;/p&gt;\n";</span>
-00270       $this-&gt;results = mysql_query($query, $this-&gt;db);
-00271       <span class="keywordflow">return</span> $this-&gt;results;
-00272     }
-00273 
-00280   Function list_tables($database)
-00281   {
-00282     $this-&gt;results = mysql_list_tables($database, $this-&gt;db);
-00283     <span class="keywordflow">return</span>  $this-&gt;results;
-00284   }
-00285 
-00293   Function result($nb, $fieldname)
-00294     {
-00295       <span class="keywordflow">return</span> mysql_result($this-&gt;results, $nb, $fieldname);
-00296     }
-00297 
-00303   Function free()
-00304     {
-00305       <span class="keywordflow">return</span> mysql_free_result($this-&gt;results);
-00306     }
-00307 
-00313   Function fetch_object()
-00314     {
-00315       <span class="keywordflow">return</span> mysql_fetch_object($this-&gt;results);
-00316     }
-00317 
-00325   Function plimit($limit=0,$offset=0)
-00326     {
-00327       <span class="keywordflow">if</span> ($offset &gt; 0)
-00328         {
-00329           <span class="keywordflow">return</span> <span class="stringliteral">" LIMIT $offset,$limit "</span>;
-00330         }
-00331       <span class="keywordflow">else</span>
-00332         {
-00333           <span class="keywordflow">return</span> <span class="stringliteral">" LIMIT $limit "</span>;
-00334         }
-00335     }
-00336 
-00337 
-00338   Function pdate($fname)
-00339     {
-00340       <span class="keywordflow">return</span> <span class="stringliteral">"unix_timestamp($fname)"</span>;
+00085       <span class="comment">//print "Name DB: $host,$user,$pass,$name&lt;br&gt;";</span>
+00086 
+00087       <span class="comment">// Essai connexion serveur</span>
+00088 
+00089       $this-&gt;db = $this-&gt;<a class="code" href="classDoliDb.html#a2">connect</a>($host, $user, $pass);
+00090 
+00091       <span class="keywordflow">if</span> ($this-&gt;db)
+00092         {
+00093           $this-&gt;connected = 1;
+00094           $this-&gt;ok = 1;
+00095         }
+00096       <span class="keywordflow">else</span>
+00097         {
+00098           $this-&gt;connected = 0;
+00099           $this-&gt;ok = 0;
+00100         }
+00101 
+00102       <span class="comment">// Si connexion serveur ok et si connexion base demandée, on essaie connexion base</span>
+00103 
+00104       <span class="keywordflow">if</span> ($this-&gt;connected &amp;&amp; $name)
+00105         {
+00106 
+00107           <span class="keywordflow">if</span> ($this-&gt;<a class="code" href="classDoliDb.html#a1">select_db</a>($name) == 1)
+00108             {
+00109               $this-&gt;database_selected = 1;
+00110               $this-&gt;ok = 1;
+00111             }
+00112           <span class="keywordflow">else</span>
+00113             {
+00114               $this-&gt;database_selected = 0;
+00115               $this-&gt;ok = 0;
+00116             }
+00117 
+00118         }
+00119       <span class="keywordflow">else</span>
+00120         {
+00121           <span class="comment">// Pas de selection de base demandée, mais tout est ok</span>
+00122 
+00123           $this-&gt;database_selected = 0;
+00124           $this-&gt;ok = 1;
+00125         }
+00126 
+00127       <span class="keywordflow">return</span> $this-&gt;ok;
+00128     }
+00129 
+<a name="l00136"></a><a class="code" href="classDoliDb.html#a1">00136</a>   function <a class="code" href="classDoliDb.html#a1">select_db</a>($database)
+00137     {
+00138       <span class="keywordflow">return</span> mysql_select_db($database, $this-&gt;db);
+00139     }
+00140 
+<a name="l00149"></a><a class="code" href="classDoliDb.html#a2">00149</a>   function <a class="code" href="classDoliDb.html#a2">connect</a>($host, $login, $passwd)
+00150     {
+00151       $this-&gt;db  = @mysql_connect($host, $login, $passwd);
+00152       <span class="comment">//print "Resultat fonction connect: ".$this-&gt;db;</span>
+00153       <span class="keywordflow">return</span> $this-&gt;db;
+00154     }
+00155 
+<a name="l00162"></a><a class="code" href="classDoliDb.html#a3">00162</a>   function <a class="code" href="classDoliDb.html#a3">create_db</a>($database)
+00163   {
+00164     <span class="keywordflow">if</span> (mysql_create_db ($database, $this-&gt;db))
+00165       {
+00166         <span class="keywordflow">return</span> 1;
+00167       }
+00168     <span class="keywordflow">else</span>
+00169       {
+00170         <span class="keywordflow">return</span> 0;
+00171       }
+00172   }
+00173 
+<a name="l00179"></a><a class="code" href="classDoliDb.html#a4">00179</a>   function <a class="code" href="classDoliDb.html#a4">clone</a>()
+00180     {
+00181       $db2 = <span class="keyword">new</span> DoliDb(<span class="stringliteral">""</span>, <span class="stringliteral">""</span>, <span class="stringliteral">""</span>, <span class="stringliteral">""</span>, <span class="stringliteral">""</span>);
+00182       $db2-&gt;db = $this-&gt;db;
+00183       <span class="keywordflow">return</span> $db2;
+00184     }
+00185 
+<a name="l00194"></a><a class="code" href="classDoliDb.html#a5">00194</a>   function <a class="code" href="classDoliDb.html#a5">pconnect</a>($host, $login, $passwd)
+00195     {
+00196       $this-&gt;db  = mysql_pconnect($host, $login, $passwd);
+00197       <span class="keywordflow">return</span> $this-&gt;db;
+00198     }
+00199 
+<a name="l00205"></a><a class="code" href="classDoliDb.html#a6">00205</a>   function <a class="code" href="classDoliDb.html#a6">close</a>()
+00206   {
+00207     <span class="keywordflow">return</span> mysql_close($this-&gt;db);
+00208   }
+00209 
+<a name="l00216"></a><a class="code" href="classDoliDb.html#a7">00216</a>   function <a class="code" href="classDoliDb.html#a7">begin</a>($<span class="keywordflow">do</span>=1)
+00217   {
+00218     <span class="keywordflow">if</span> ($do)
+00219       {
+00220         <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classDoliDb.html#a10">query</a>(<span class="stringliteral">"BEGIN"</span>);
+00221       }
+00222     <span class="keywordflow">else</span>
+00223       {
+00224         <span class="keywordflow">return</span> 1;
+00225       }
+00226   }
+00227 
+<a name="l00234"></a><a class="code" href="classDoliDb.html#a8">00234</a>   function <a class="code" href="classDoliDb.html#a8">commit</a>($<span class="keywordflow">do</span>=1)
+00235   {
+00236     <span class="keywordflow">if</span> ($do)
+00237       {
+00238         <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classDoliDb.html#a10">query</a>(<span class="stringliteral">"COMMIT"</span>);
+00239       }
+00240     <span class="keywordflow">else</span>
+00241       {
+00242         <span class="keywordflow">return</span> 1;
+00243       }
+00244   }
+00245 
+<a name="l00252"></a><a class="code" href="classDoliDb.html#a9">00252</a>   function <a class="code" href="classDoliDb.html#a9">rollback</a>($<span class="keywordflow">do</span>=1)
+00253   {
+00254     <span class="keywordflow">if</span> ($do)
+00255       {
+00256         <span class="keywordflow">return</span> $this-&gt;<a class="code" href="classDoliDb.html#a10">query</a>(<span class="stringliteral">"ROLLBACK"</span>);
+00257       }
+00258     <span class="keywordflow">else</span>
+00259       {
+00260         <span class="keywordflow">return</span> 1;
+00261       }
+00262   }
+00263 
+<a name="l00272"></a><a class="code" href="classDoliDb.html#a10">00272</a>   function <a class="code" href="classDoliDb.html#a10">query</a>($query, $limit=<span class="stringliteral">""</span>, $offset=<span class="stringliteral">""</span>)
+00273     {
+00274       $query = trim($query);
+00275       <span class="comment">//print "&lt;p&gt;$query&lt;/p&gt;\n";</span>
+00276       $this-&gt;results = mysql_query($query, $this-&gt;db);
+00277       <span class="keywordflow">return</span> $this-&gt;results;
+00278     }
+00279 
+<a name="l00286"></a><a class="code" href="classDoliDb.html#a11">00286</a>   function <a class="code" href="classDoliDb.html#a11">list_tables</a>($database)
+00287   {
+00288     $this-&gt;results = mysql_list_tables($database, $this-&gt;db);
+00289     <span class="keywordflow">return</span>  $this-&gt;results;
+00290   }
+00291 
+<a name="l00299"></a><a class="code" href="classDoliDb.html#a12">00299</a>   function <a class="code" href="classDoliDb.html#a12">result</a>($nb, $fieldname)
+00300     {
+00301       <span class="keywordflow">return</span> mysql_result($this-&gt;results, $nb, $fieldname);
+00302     }
+00303 
+<a name="l00309"></a><a class="code" href="classDoliDb.html#a13">00309</a>   function <a class="code" href="classDoliDb.html#a13">free</a>()
+00310     {
+00311       <span class="keywordflow">return</span> mysql_free_result($this-&gt;results);
+00312     }
+00313 
+<a name="l00319"></a><a class="code" href="classDoliDb.html#a14">00319</a>   function <a class="code" href="classDoliDb.html#a14">fetch_object</a>()
+00320     {
+00321       <span class="keywordflow">return</span> mysql_fetch_object($this-&gt;results);
+00322     }
+00323 
+<a name="l00331"></a><a class="code" href="classDoliDb.html#a15">00331</a>   function <a class="code" href="classDoliDb.html#a15">plimit</a>($limit=0,$offset=0)
+00332     {
+00333       <span class="keywordflow">if</span> ($offset &gt; 0)
+00334         {
+00335           <span class="keywordflow">return</span> <span class="stringliteral">" LIMIT $offset,$limit "</span>;
+00336         }
+00337       <span class="keywordflow">else</span>
+00338         {
+00339           <span class="keywordflow">return</span> <span class="stringliteral">" LIMIT $limit "</span>;
+00340         }
 00341     }
 00342 
-00349   Function idate($fname)
-00350     {
-00351       <span class="keywordflow">return</span> strftime(<span class="stringliteral">"%Y%m%d%H%M%S"</span>,$fname);
-00352     }
-00353 
-00359   Function fetch_array()
-00360     {
-00361       <span class="keywordflow">return</span> mysql_fetch_array($this-&gt;results);
-00362     }
-00363 
-00369   Function fetch_row()
-00370     {
-00371       <span class="keywordflow">return</span> mysql_fetch_row($this-&gt;results);
-00372     }
-00373 
-00381   Function fetch_field()
-00382     {
-00383       <span class="keywordflow">return</span> mysql_fetch_field($this-&gt;results);
-00384     }
-00385 
-00386 
-00392   Function num_rows()
-00393     {
-00394       <span class="keywordflow">return</span> mysql_num_rows($this-&gt;results);
-00395     }
-00396 
-00402   Function num_fields()
-00403     {
-00404       <span class="keywordflow">return</span> mysql_num_fields($this-&gt;results);
-00405     }
-00406 
-00412   Function error()
-00413     {
-00414       <span class="keywordflow">return</span> mysql_error($this-&gt;db);
-00415     }
-00416 
-00422   Function errno()
-00423     {
-00424       <span class="comment">// $ERROR_DUPLICATE=1062;</span>
-00425       <span class="comment">// $ERROR_TABLEEXISTS=1050;</span>
-00426 
-00427       <span class="keywordflow">return</span> mysql_errno($this-&gt;db);
-00428     }
+00343 
+00344   function pdate($fname)
+00345     {
+00346       <span class="keywordflow">return</span> <span class="stringliteral">"unix_timestamp($fname)"</span>;
+00347     }
+00348 
+<a name="l00355"></a><a class="code" href="classDoliDb.html#a17">00355</a>   function <a class="code" href="classDoliDb.html#a17">idate</a>($fname)
+00356     {
+00357       <span class="keywordflow">return</span> strftime(<span class="stringliteral">"%Y%m%d%H%M%S"</span>,$fname);
+00358     }
+00359 
+<a name="l00365"></a><a class="code" href="classDoliDb.html#a18">00365</a>   function <a class="code" href="classDoliDb.html#a18">fetch_array</a>()
+00366     {
+00367       <span class="keywordflow">return</span> mysql_fetch_array($this-&gt;results);
+00368     }
+00369 
+<a name="l00375"></a><a class="code" href="classDoliDb.html#a19">00375</a>   function <a class="code" href="classDoliDb.html#a19">fetch_row</a>()
+00376     {
+00377       <span class="keywordflow">return</span> mysql_fetch_row($this-&gt;results);
+00378     }
+00379 
+<a name="l00384"></a><a class="code" href="classDoliDb.html#a20">00384</a>   function <a class="code" href="classDoliDb.html#a20">fetch_field</a>()
+00385     {
+00386       <span class="keywordflow">return</span> mysql_fetch_field($this-&gt;results);
+00387     }
+00388 
+00389 
+<a name="l00395"></a><a class="code" href="classDoliDb.html#a21">00395</a>   function <a class="code" href="classDoliDb.html#a21">num_rows</a>()
+00396     {
+00397       <span class="keywordflow">return</span> mysql_num_rows($this-&gt;results);
+00398     }
+00399 
+<a name="l00405"></a><a class="code" href="classDoliDb.html#a22">00405</a>   function <a class="code" href="classDoliDb.html#a22">num_fields</a>()
+00406     {
+00407       <span class="keywordflow">return</span> mysql_num_fields($this-&gt;results);
+00408     }
+00409 
+<a name="l00415"></a><a class="code" href="classDoliDb.html#a23">00415</a>   function <a class="code" href="classDoliDb.html#a23">error</a>()
+00416     {
+00417       <span class="keywordflow">return</span> mysql_error($this-&gt;db);
+00418     }
+00419 
+<a name="l00425"></a><a class="code" href="classDoliDb.html#a24">00425</a>   function <a class="code" href="classDoliDb.html#a24">errno</a>()
+00426     {
+00427       <span class="comment">// $ERROR_DUPLICATE=1062;</span>
+00428       <span class="comment">// $ERROR_TABLEEXISTS=1050;</span>
 00429 
-00435   Function last_insert_id()
-00436     {
-00437       <span class="keywordflow">return</span> mysql_insert_id();
-00438     }
-00439 
-00445   Function affected_rows()
-00446     {
-00447       <span class="keywordflow">return</span> mysql_affected_rows();
-00448     }
-00449 
-00450 }
-00451 
-00452 ?&gt;
-</div></pre><hr size="1"><address style="align: right;"><small>Généré le Thu Jul 15 20:50:38 2004 pour dolibarr par
+00430       <span class="keywordflow">return</span> mysql_errno($this-&gt;db);
+00431     }
+00432 
+<a name="l00438"></a><a class="code" href="classDoliDb.html#a25">00438</a>   function <a class="code" href="classDoliDb.html#a25">last_insert_id</a>()
+00439     {
+00440       <span class="keywordflow">return</span> mysql_insert_id();
+00441     }
+00442 
+<a name="l00448"></a><a class="code" href="classDoliDb.html#a26">00448</a>   function <a class="code" href="classDoliDb.html#a26">affected_rows</a>()
+00449     {
+00450       <span class="keywordflow">return</span> mysql_affected_rows();
+00451     }
+00452 
+00453 }
+00454 
+00455 ?&gt;
+</div></pre><hr size="1"><address style="align: right;"><small>Généré le Fri Jul 16 00:31:07 2004 pour dolibarr par
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.7 </small></address>
 </body>

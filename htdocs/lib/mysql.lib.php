@@ -23,13 +23,19 @@
  */
 
 /*!	\file mysql.lib.php
-		\brief Classes permettant de gérér la database de dolibarr.
+		\brief Classe permettant de gérér la database de dolibarr.
 		\author Fabien Seisen
 		\author Rodolphe Quiedeville.
 		\author	Laurent Destailleur.
 		\version 1.2.
 
 		Ensemble des fonctions permettant de gérer la database de dolibarr.
+*/
+
+/*! \class DoliDb
+		\brief Classe permettant de gérér la database de dolibarr
+
+		Ensemble des fonctions permettant de gérer la database de dolibarr
 */
 
 class DoliDb {
@@ -48,7 +54,7 @@ class DoliDb {
 		\param	name		nom de la database
 */
 
-  Function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '')
+  function DoliDb($type = 'mysql', $host = '', $user = '', $pass = '', $name = '')
 
 	// Se connecte au serveur et éventuellement à une base (si spécifié)
   // Renvoie 1 en cas de succès, 0 sinon
@@ -127,20 +133,20 @@ class DoliDb {
 		\return	resource
 */
 
-  Function select_db($database)
+  function select_db($database)
     {
       return mysql_select_db($database, $this->db);
     }
 
 /*!
 		\brief connection vers une database.
-		\param	host		addresse de la base de données
-		\param	login		nom de l'utilisateur autorisé
-		\param	pass		mot de passe
+		\param	host			addresse de la base de données
+		\param	login			nom de l'utilisateur autorisé
+		\param	passwd		mot de passe
 		\return	resource
 */
 
-  Function connect($host, $login, $passwd)
+  function connect($host, $login, $passwd)
     {
       $this->db  = @mysql_connect($host, $login, $passwd);
       //print "Resultat fonction connect: ".$this->db;
@@ -153,7 +159,7 @@ class DoliDb {
 		\return	result			resultat 1 pour ok, 0 pour non ok
 */
 
-  Function create_db($database)
+  function create_db($database)
   {
     if (mysql_create_db ($database, $this->db))
       {
@@ -170,7 +176,7 @@ class DoliDb {
 		\return	resource
 */
 
-	Function clone()
+	function clone()
     {
       $db2 = new DoliDb("", "", "", "", "");
       $db2->db = $this->db;
@@ -179,13 +185,13 @@ class DoliDb {
 
 /*!
 		\brief ouverture d'une connection vers une database.
-		\param	host		addresse de la base de données
-		\param	login		nom de l'utilisateur autorisé
-		\param	pass		mot de passe
+		\param	host			addresse de la base de données
+		\param	login			nom de l'utilisateur autorisé
+		\param	passwd		mot de passe
 		\return	resource
 */
 
-  Function pconnect($host, $login, $passwd)
+  function pconnect($host, $login, $passwd)
     {
       $this->db  = mysql_pconnect($host, $login, $passwd);
       return $this->db;
@@ -196,7 +202,7 @@ class DoliDb {
 		\return	resource
 */
 
-  Function close()
+  function close()
   {
     return mysql_close($this->db);
   }
@@ -207,7 +213,7 @@ class DoliDb {
 		\return	string
 */
 
-  Function begin($do=1)
+  function begin($do=1)
   {
     if ($do)
       {
@@ -225,7 +231,7 @@ class DoliDb {
 		\return	string
 */
 
-  Function commit($do=1)
+  function commit($do=1)
   {
     if ($do)
       {
@@ -243,7 +249,7 @@ class DoliDb {
 		\return	string
 */
 
-  Function rollback($do=1)
+  function rollback($do=1)
   {
     if ($do)
       {
@@ -263,7 +269,7 @@ class DoliDb {
 		\return	resource
 */
 
-  Function query($query, $limit="", $offset="")
+  function query($query, $limit="", $offset="")
     {
       $query = trim($query);
       //print "<p>$query</p>\n";
@@ -277,7 +283,7 @@ class DoliDb {
 		\return	resource
 */
 
-  Function list_tables($database)
+  function list_tables($database)
   {
     $this->results = mysql_list_tables($database, $this->db);
     return  $this->results;
@@ -285,12 +291,12 @@ class DoliDb {
 
 /*!
 		\brief renvoie les données de la requete.
-		\param	nb			contenu de la query
-		\param	string	nom du champ
+		\param	nb				contenu de la query
+		\param	fieldname	nom du champ
 		\return	resource
 */
 
-  Function result($nb, $fieldname)
+  function result($nb, $fieldname)
     {
       return mysql_result($this->results, $nb, $fieldname);
     }
@@ -300,7 +306,7 @@ class DoliDb {
 		\return	resource
 */
 
-  Function free()
+  function free()
     {
       return mysql_free_result($this->results);
     }
@@ -310,7 +316,7 @@ class DoliDb {
 		\return	resource
 */
 
-  Function fetch_object()
+  function fetch_object()
     {
       return mysql_fetch_object($this->results);
   	}
@@ -322,7 +328,7 @@ class DoliDb {
 		\return	limit
 */
 
-  Function plimit($limit=0,$offset=0)
+  function plimit($limit=0,$offset=0)
     {
       if ($offset > 0)
 				{
@@ -335,7 +341,7 @@ class DoliDb {
     }
 
 
-  Function pdate($fname)
+  function pdate($fname)
     {
       return "unix_timestamp($fname)";
     }
@@ -346,7 +352,7 @@ class DoliDb {
 		\return	date
 */
 
-  Function idate($fname)
+  function idate($fname)
     {
       return strftime("%Y%m%d%H%M%S",$fname);
     }
@@ -356,7 +362,7 @@ class DoliDb {
 		\return	array
 */
 
-  Function fetch_array()
+  function fetch_array()
     {
       return mysql_fetch_array($this->results);
     }
@@ -366,19 +372,16 @@ class DoliDb {
 		\return	array
 */
 
-  Function fetch_row()
+  function fetch_row()
     {
       return mysql_fetch_row($this->results);
     }
 
-/**
- * Get column information from a result and return as an object
- *
- * @access public
- * @return object
- */
+/*!
+		\brief obtient les données d'un colonne et renvoie les données sous forme d'objet.
+*/
 
-  Function fetch_field()
+  function fetch_field()
     {
       return mysql_fetch_field($this->results);
     }
@@ -389,7 +392,7 @@ class DoliDb {
 		\return	int
 */
 
-  Function num_rows()
+  function num_rows()
     {
       return mysql_num_rows($this->results);
     }
@@ -399,7 +402,7 @@ class DoliDb {
 		\return	int
 */
 
-  Function num_fields()
+  function num_fields()
     {
       return mysql_num_fields($this->results);
     }
@@ -409,7 +412,7 @@ class DoliDb {
 		\return	error_text
 */
 
-  Function error()
+  function error()
     {
       return mysql_error($this->db);
     }
@@ -419,7 +422,7 @@ class DoliDb {
 		\return error_num
 */
 
-  Function errno()
+  function errno()
     {
       // $ERROR_DUPLICATE=1062;
       // $ERROR_TABLEEXISTS=1050;
@@ -432,7 +435,7 @@ class DoliDb {
 		\return id
 */
 
-  Function last_insert_id()
+  function last_insert_id()
     {
       return mysql_insert_id();
     }
@@ -442,7 +445,7 @@ class DoliDb {
 		\return rows
 */
 
-  Function affected_rows()
+  function affected_rows()
     {
       return mysql_affected_rows();
     }

@@ -18,18 +18,26 @@ to chunk_split
 */
 /* Note: if you don't have base64_encode on your sytem it will not work */
 
-/*
-  Éric Seigne <eric.seigne@ryxeo.com> 2004.01.08
-  - ajout de la gestion du Cc
-  - ajout de l'expédition de plusieurs fichiers
+/*!	\file CMailFile.class.php
+		\brief Classe permettant d'envoyer des attachements par mail
+		\author Dan Potter.
+		\author	Eric Seigne
+		\author	Laurent Destailleur.
+		\version 1.2.
+*/
 
-  Laurent Destailleur 2004.02.10
-  - Correction d'un disfonctionnement suite à modif précédente sur la gestion
-  des attachements multi-fichiers
+/*! \class CMailFile
+		\brief Classe permettant d'envoyer des attachements par mail
+		\remarks Eric Seigne <eric.seigne@ryxeo.com> 2004.01.08
+		\remarks ajout de la gestion des cc:
+		\remarks ajout de l'expedition de plusieurs fichiers
+
+		\remarks Laurent Destailleur 2004.02.10
+		\remarks correction d'un disfonctionnement à la gestion des attachements multiples
 */
 
 // simple class that encapsulates mail() with addition of mime file attachment.
-class CMailFile 
+class CMailFile
 {
   var $subject;
   var $addr_to;
@@ -39,7 +47,19 @@ class CMailFile
   var $mime_headers;
   var $mime_boundary = "--==================_846811060==_";
   var $smtp_headers;
-  
+
+	/*!
+		\brief CMailFile
+		\param subject
+		\param to
+		\param from
+		\param msg
+		\param filename_list
+		\param mimetype_list
+		\param mimefilename_list
+		\param addr_cc
+*/
+
   // CMail("sujet","email_to","email_from","email_msg",tableau du path de fichiers,tableau de type mime,tableau de noms fichiers,"chaine cc")
   function CMailFile($subject,$to,$from,$msg,$filename_list,$mimetype_list,$mimefilename_list,$addr_cc = "")
     {

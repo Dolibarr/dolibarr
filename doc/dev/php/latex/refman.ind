@@ -1,60 +1,289 @@
 \begin{theindex}
 
+  \item {add}
+    \subitem {Webcal}, \hyperpage{16}
+  \item {affected\_\discretionary {-}{}{}rows}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{9}
+
+  \indexspace
+
+  \item {begin}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{9}
+
+  \indexspace
+
   \item {calcul\_\discretionary {-}{}{}price}
-    \subitem {price.lib.php}, \hyperpage{7}
+    \subitem {price.lib.php}, \hyperpage{34}
+  \item {clone}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{9}
+  \item {close}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{9}
+  \item {CMailFile}, \hyperpage{5}
+    \subitem {CMail\discretionary {-}{}{}File}, \hyperpage{6}
+  \item {CMail\discretionary {-}{}{}File}
+    \subitem {CMailFile}, \hyperpage{6}
+  \item {commit}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{9}
+  \item {connect}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{10}
+  \item {create\_\discretionary {-}{}{}db}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{10}
+  \item {creer\_\discretionary {-}{}{}pass\_\discretionary {-}{}{}aleatoire}
+    \subitem {functions.inc.php}, \hyperpage{22}
 
   \indexspace
 
+  \item {dol\_\discretionary {-}{}{}delete\_\discretionary {-}{}{}file}
+    \subitem {functions.inc.php}, \hyperpage{22}
+  \item {dolibarr\_\discretionary {-}{}{}del\_\discretionary {-}{}{}const}
+    \subitem {functions.inc.php}, \hyperpage{22}
+  \item {dolibarr\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}head}
+    \subitem {functions.inc.php}, \hyperpage{22}
   \item {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}bind}
-    \subitem {ldap.lib.php}, \hyperpage{4}
+    \subitem {ldap.lib.php}, \hyperpage{30}
   \item {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}connect}
-    \subitem {ldap.lib.php}, \hyperpage{4}
+    \subitem {ldap.lib.php}, \hyperpage{30}
   \item {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}getversion}
-    \subitem {ldap.lib.php}, \hyperpage{4}
+    \subitem {ldap.lib.php}, \hyperpage{31}
   \item {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}setversion}
-    \subitem {ldap.lib.php}, \hyperpage{4}
+    \subitem {ldap.lib.php}, \hyperpage{31}
   \item {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unacc}
-    \subitem {ldap.lib.php}, \hyperpage{5}
+    \subitem {ldap.lib.php}, \hyperpage{31}
   \item {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unbind}
-    \subitem {ldap.lib.php}, \hyperpage{5}
+    \subitem {ldap.lib.php}, \hyperpage{31}
+  \item {dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}ca}
+    \subitem {functions.inc.php}, \hyperpage{23}
+  \item {dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}date}
+    \subitem {functions.inc.php}, \hyperpage{23}
+  \item {dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}object\_\discretionary {-}{}{}info}
+    \subitem {functions.inc.php}, \hyperpage{23}
+  \item {dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}phone}
+    \subitem {functions.inc.php}, \hyperpage{23}
+  \item {dolibarr\_\discretionary {-}{}{}set\_\discretionary {-}{}{}const}
+    \subitem {functions.inc.php}, \hyperpage{24}
+  \item {dolibarr\_\discretionary {-}{}{}syslog}
+    \subitem {functions.inc.php}, \hyperpage{24}
+  \item {DoliDb}, \hyperpage{7}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{8}
+  \item {Doli\discretionary {-}{}{}Db}
+    \subitem {affected\_\discretionary {-}{}{}rows}, \hyperpage{9}
+    \subitem {begin}, \hyperpage{9}
+    \subitem {clone}, \hyperpage{9}
+    \subitem {close}, \hyperpage{9}
+    \subitem {commit}, \hyperpage{9}
+    \subitem {connect}, \hyperpage{10}
+    \subitem {create\_\discretionary {-}{}{}db}, \hyperpage{10}
+    \subitem {DoliDb}, \hyperpage{8}
+    \subitem {errno}, \hyperpage{10}
+    \subitem {error}, \hyperpage{11}
+    \subitem {fetch\_\discretionary {-}{}{}array}, \hyperpage{11}
+    \subitem {fetch\_\discretionary {-}{}{}object}, \hyperpage{11}
+    \subitem {fetch\_\discretionary {-}{}{}row}, \hyperpage{11}
+    \subitem {free}, \hyperpage{11}
+    \subitem {idate}, \hyperpage{12}
+    \subitem {last\_\discretionary {-}{}{}insert\_\discretionary {-}{}{}id}, 
+		\hyperpage{12}
+    \subitem {list\_\discretionary {-}{}{}tables}, \hyperpage{12}
+    \subitem {num\_\discretionary {-}{}{}fields}, \hyperpage{12}
+    \subitem {num\_\discretionary {-}{}{}rows}, \hyperpage{13}
+    \subitem {pconnect}, \hyperpage{13}
+    \subitem {plimit}, \hyperpage{13}
+    \subitem {query}, \hyperpage{13}
+    \subitem {result}, \hyperpage{14}
+    \subitem {rollback}, \hyperpage{14}
+    \subitem {select\_\discretionary {-}{}{}db}, \hyperpage{14}
+  \item {doliMoveFileUpload}
+    \subitem {functions.inc.php}, \hyperpage{24}
 
   \indexspace
 
-  \item {htdocs/lib/ldap.lib.php}, \hyperpage{3}
-  \item {htdocs/lib/mysql.lib.php}, \hyperpage{6}
-  \item {htdocs/lib/price.lib.php}, \hyperpage{7}
-  \item {htdocs/lib/thermometer.php}, \hyperpage{8}
-  \item {htdocs/lib/webcal.class.php}, \hyperpage{9}
+  \item {errno}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{10}
+  \item {error}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{11}
 
   \indexspace
 
+  \item {fetch\_\discretionary {-}{}{}array}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{11}
+  \item {fetch\_\discretionary {-}{}{}object}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{11}
+  \item {fetch\_\discretionary {-}{}{}row}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{11}
+  \item {francs}
+    \subitem {functions.inc.php}, \hyperpage{24}
+  \item {free}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{11}
+  \item {functions.inc.php}
+    \subitem {creer\_\discretionary {-}{}{}pass\_\discretionary {-}{}{}aleatoire}, 
+		\hyperpage{22}
+    \subitem {dol\_\discretionary {-}{}{}delete\_\discretionary {-}{}{}file}, 
+		\hyperpage{22}
+    \subitem {dolibarr\_\discretionary {-}{}{}del\_\discretionary {-}{}{}const}, 
+		\hyperpage{22}
+    \subitem {dolibarr\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}head}, 
+		\hyperpage{22}
+    \subitem {dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}ca}, 
+		\hyperpage{23}
+    \subitem {dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}date}, 
+		\hyperpage{23}
+    \subitem {dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}object\_\discretionary {-}{}{}info}, 
+		\hyperpage{23}
+    \subitem {dolibarr\_\discretionary {-}{}{}print\_\discretionary {-}{}{}phone}, 
+		\hyperpage{23}
+    \subitem {dolibarr\_\discretionary {-}{}{}set\_\discretionary {-}{}{}const}, 
+		\hyperpage{24}
+    \subitem {dolibarr\_\discretionary {-}{}{}syslog}, \hyperpage{24}
+    \subitem {doliMoveFileUpload}, \hyperpage{24}
+    \subitem {francs}, \hyperpage{24}
+    \subitem {inctva}, \hyperpage{25}
+    \subitem {initialiser\_\discretionary {-}{}{}sel}, \hyperpage{25}
+    \subitem {logfile}, \hyperpage{25}
+    \subitem {loginfunction}, \hyperpage{25}
+    \subitem {price}, \hyperpage{26}
+    \subitem {print\_\discretionary {-}{}{}date\_\discretionary {-}{}{}select}, 
+		\hyperpage{26}
+    \subitem {print\_\discretionary {-}{}{}duree\_\discretionary {-}{}{}select}, 
+		\hyperpage{26}
+    \subitem {print\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}titre}, 
+		\hyperpage{26}
+    \subitem {print\_\discretionary {-}{}{}fleche\_\discretionary {-}{}{}navigation}, 
+		\hyperpage{27}
+    \subitem {print\_\discretionary {-}{}{}heure\_\discretionary {-}{}{}select}, 
+		\hyperpage{27}
+    \subitem {print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre}, 
+		\hyperpage{27}
+    \subitem {print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre\_\discretionary {-}{}{}new}, 
+		\hyperpage{28}
+    \subitem {print\_\discretionary {-}{}{}oui\_\discretionary {-}{}{}non}, 
+		\hyperpage{28}
+    \subitem {print\_\discretionary {-}{}{}titre}, \hyperpage{28}
+    \subitem {stat\_\discretionary {-}{}{}print}, \hyperpage{28}
+    \subitem {transcoS2L}, \hyperpage{29}
+    \subitem {tva}, \hyperpage{29}
+
+  \indexspace
+
+  \item {get\_\discretionary {-}{}{}next\_\discretionary {-}{}{}id}
+    \subitem {Webcal}, \hyperpage{16}
+
+  \indexspace
+
+  \item {htdocs/lib/CMailFile.class.php}, \hyperpage{19}
+  \item {htdocs/lib/functions.inc.php}, \hyperpage{20}
+  \item {htdocs/lib/ldap.lib.php}, \hyperpage{30}
+  \item {htdocs/lib/mysql.lib.php}, \hyperpage{33}
+  \item {htdocs/lib/price.lib.php}, \hyperpage{34}
+  \item {htdocs/lib/thermometer.php}, \hyperpage{35}
+  \item {htdocs/lib/webcal.class.php}, \hyperpage{36}
+
+  \indexspace
+
+  \item {idate}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{12}
+  \item {inctva}
+    \subitem {functions.inc.php}, \hyperpage{25}
+  \item {initialiser\_\discretionary {-}{}{}sel}
+    \subitem {functions.inc.php}, \hyperpage{25}
+
+  \indexspace
+
+  \item {last\_\discretionary {-}{}{}insert\_\discretionary {-}{}{}id}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{12}
   \item {ldap.lib.php}
     \subitem {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}bind}, 
-		\hyperpage{4}
+		\hyperpage{30}
     \subitem {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}connect}, 
-		\hyperpage{4}
+		\hyperpage{30}
     \subitem {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}getversion}, 
-		\hyperpage{4}
+		\hyperpage{31}
     \subitem {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}setversion}, 
-		\hyperpage{4}
+		\hyperpage{31}
     \subitem {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unacc}, 
-		\hyperpage{5}
+		\hyperpage{31}
     \subitem {dolibarr\_\discretionary {-}{}{}ldap\_\discretionary {-}{}{}unbind}, 
-		\hyperpage{5}
+		\hyperpage{31}
+  \item {list\_\discretionary {-}{}{}tables}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{12}
+  \item {logfile}
+    \subitem {functions.inc.php}, \hyperpage{25}
+  \item {loginfunction}
+    \subitem {functions.inc.php}, \hyperpage{25}
 
   \indexspace
 
   \item {moneyMeter}
-    \subitem {thermometer.php}, \hyperpage{8}
+    \subitem {thermometer.php}, \hyperpage{35}
 
   \indexspace
 
+  \item {num\_\discretionary {-}{}{}fields}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{12}
+  \item {num\_\discretionary {-}{}{}rows}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{13}
+
+  \indexspace
+
+  \item {pconnect}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{13}
+  \item {plimit}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{13}
+  \item {price}
+    \subitem {functions.inc.php}, \hyperpage{26}
   \item {price.lib.php}
-    \subitem {calcul\_\discretionary {-}{}{}price}, \hyperpage{7}
+    \subitem {calcul\_\discretionary {-}{}{}price}, \hyperpage{34}
+  \item {print\_\discretionary {-}{}{}date\_\discretionary {-}{}{}select}
+    \subitem {functions.inc.php}, \hyperpage{26}
+  \item {print\_\discretionary {-}{}{}duree\_\discretionary {-}{}{}select}
+    \subitem {functions.inc.php}, \hyperpage{26}
+  \item {print\_\discretionary {-}{}{}fiche\_\discretionary {-}{}{}titre}
+    \subitem {functions.inc.php}, \hyperpage{26}
+  \item {print\_\discretionary {-}{}{}fleche\_\discretionary {-}{}{}navigation}
+    \subitem {functions.inc.php}, \hyperpage{27}
+  \item {print\_\discretionary {-}{}{}heure\_\discretionary {-}{}{}select}
+    \subitem {functions.inc.php}, \hyperpage{27}
+  \item {print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre}
+    \subitem {functions.inc.php}, \hyperpage{27}
+  \item {print\_\discretionary {-}{}{}liste\_\discretionary {-}{}{}field\_\discretionary {-}{}{}titre\_\discretionary {-}{}{}new}
+    \subitem {functions.inc.php}, \hyperpage{28}
+  \item {print\_\discretionary {-}{}{}oui\_\discretionary {-}{}{}non}
+    \subitem {functions.inc.php}, \hyperpage{28}
+  \item {print\_\discretionary {-}{}{}titre}
+    \subitem {functions.inc.php}, \hyperpage{28}
+
+  \indexspace
+
+  \item {query}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{13}
+
+  \indexspace
+
+  \item {result}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{14}
+  \item {rollback}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{14}
+
+  \indexspace
+
+  \item {select\_\discretionary {-}{}{}db}
+    \subitem {Doli\discretionary {-}{}{}Db}, \hyperpage{14}
+  \item {stat\_\discretionary {-}{}{}print}
+    \subitem {functions.inc.php}, \hyperpage{28}
 
   \indexspace
 
   \item {thermometer.php}
-    \subitem {moneyMeter}, \hyperpage{8}
+    \subitem {moneyMeter}, \hyperpage{35}
+  \item {transcoS2L}
+    \subitem {functions.inc.php}, \hyperpage{29}
+  \item {tva}
+    \subitem {functions.inc.php}, \hyperpage{29}
+
+  \indexspace
+
+  \item {Webcal}, \hyperpage{16}
+    \subitem {add}, \hyperpage{16}
+    \subitem {get\_\discretionary {-}{}{}next\_\discretionary {-}{}{}id}, 
+		\hyperpage{16}
 
 \end{theindex}
