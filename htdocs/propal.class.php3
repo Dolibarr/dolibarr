@@ -243,7 +243,7 @@ class Propal
 	      $this->price     = $obj->price;
 	      $this->remise    = $obj->remise;
 	      $this->total     = $obj->total;
-	      $this->total_ht  = $obj->total;
+	      $this->total_ht  = $obj->price;
 	      $this->total_ttc = $obj->total;
 	      $this->socidp = $obj->fk_soc;
 	      $this->lignes = array();
