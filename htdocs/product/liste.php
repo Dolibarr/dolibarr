@@ -60,7 +60,6 @@ if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
     $snom="";
 }
 
-
 /*
  * Mode Liste
  *
@@ -163,16 +162,16 @@ if ($result)
     }
   else
     {
-      print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id&amp;type=$type", $sortfield, $sortorder,'',$num);
+      print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
     }
 
   print '<table class="noborder" width="100%">';
 
   // Lignes des titres
   print "<tr class=\"liste_titre\">";
-  print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente&amp;type=$type&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
-  print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&type=$type&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
-  print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price","&envente=$envente&type=$type&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
+  print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
+  print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
+  print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
   print "</tr>\n";
   
   // Lignes des champs de filtre
