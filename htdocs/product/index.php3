@@ -21,6 +21,11 @@
  */
 require("./pre.inc.php3");
 
+if (strlen($type) == 0)
+{
+$type = 0;
+}
+
 $db = new Db();
 
 if ($action == 'update')
@@ -46,14 +51,14 @@ if ($sortorder == "")
 }
 
 $sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p";
-
+$sql .= " WHERE p.fk_product_type = $type";
 if ($sref)
 {
-  $sql .= " WHERE lower(p.ref) like '%".strtolower($sref)."%'";
+  $sql .= " AND lower(p.ref) like '%".strtolower($sref)."%'";
 }
 if ($snom)
 {
-  $sql .= " WHERE lower(p.label) like '%".strtolower($snom)."%'";
+  $sql .= " AND lower(p.label) like '%".strtolower($snom)."%'";
 }
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);
@@ -109,7 +114,7 @@ if ( $db->query($sql) )
 }
 else
 {
-  print $db->error();
+  print $db->error() . "<br>" .$sql;
 }
 
 
