@@ -22,7 +22,8 @@
  *
  */
 
-/**	    \file       htdocs/includes/modules/facture/pdf_adytek.modules.php
+/**
+	    \file       htdocs/includes/modules/facture/pdf_adytek.modules.php
 		\ingroup    facture
 		\brief      Fichier de la classe permettant de générer les factures au modèle Adytek
 		\author	    Laurent Destailleur
@@ -30,7 +31,8 @@
 */
 
 
-/**	    \class      pdf_adytek
+/**
+	    \class      pdf_adytek
 		\brief      Classe permettant de générer les factures au modèle Adytek
 */
 

@@ -654,6 +654,7 @@ class pdf_crabe extends ModelePDFFactures
 			$pdf->MultiCell(80, 4, $langs->trans("Web").": ".FAC_PDF_WWW);
 		}
 
+        $pdf->SetFont('Arial','',7);
         if (defined("MAIN_INFO_SIREN") && MAIN_INFO_SIREN)
         {
             $pdf->MultiCell(80, 4, $langs->transcountry("ProfId1",$this->code_pays).": ".MAIN_INFO_SIREN);
