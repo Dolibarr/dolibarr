@@ -79,9 +79,9 @@ else
     {
       $sql .= " AND lower(p.label) like '%".strtolower($snom)."%'";
     }
-  if (isset($envente) && strlen($envente) > 0)
+  if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
     {
-      $sql .= " AND p.envente = $envente";
+      $sql .= " AND p.envente = ".$_GET["envente"];
     }
   else
     {
