@@ -139,7 +139,7 @@ if ($_GET["action"] == 'edit')
 
   // Liste des zone de recherche permanantes supportées
   print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr class="liste_titre"><td>Zone de recherche permanante du menu de gauche</td><td>'.$langs->trans("Active").'</td></tr>';
+  print '<tr class="liste_titre"><td>Zone de recherche permanante du menu de gauche</td><td>'.$langs->trans("Activated").'</td></tr>';
   $var=True;
   foreach ($searchform as $key => $value) {
     $var=!$var;
@@ -174,7 +174,7 @@ else
 
   // Liste des zone de recherche permanantes supportées
   print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr class="liste_titre"><td>Zone de recherche permanante du menu de gauche</td><td>'.$langs->trans("Active").'</td></tr>';
+  print '<tr class="liste_titre"><td>Zone de recherche permanante du menu de gauche</td><td>'.$langs->trans("Activated").'</td></tr>';
   $var=True;
   foreach ($searchform as $key => $value) {
     $var=!$var;
