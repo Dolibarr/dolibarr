@@ -143,8 +143,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
 		  if ( $comm->fetch($HTTP_POST_VARS["commandeid"]) )
 		    {
 		      $lines = $comm->fetch_lignes();
-
-		      for ($i = 0 ; $i < sizeof(lines) ; $i++)
+		      for ($i = 0 ; $i < sizeof($lines) ; $i++)
 			{
 			  $result = $facture->addline($facid,
 						      addslashes($lines[$i]->description),
@@ -388,6 +387,7 @@ $html = new Form($db);
 if ($_GET["action"] == 'create') 
 {
   print_titre("Emettre une facture");
+
   if ($propalid)
     {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.remise_percent, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
@@ -638,16 +638,17 @@ if ($_GET["action"] == 'create')
 
 	  if ($_GET["commandeid"])
 	    {
-
 	      print_titre("Produits");
 	      
-	      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<table border="0" width="100%" cellspacing="0" cellpadding="3">';
 	      print '<tr class="liste_titre"><td>Réf</td><td>Produit</td>';
 	      print '<td align="right">Prix</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	      
 	      $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.subprice, pt.qty, p.rowid as prodid, pt.remise_percent";
-	      $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_commande = ".$commande->id;
+	      $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as pt, ".MAIN_DB_PREFIX."product as p";
+	      $sql .= " WHERE pt.fk_product = p.rowid AND pt.fk_commande = ".$commande->id;
 	      $sql .= " ORDER BY pt.rowid ASC";
+
 	      $result = $db->query($sql);
 	      if ($result) 
 		{
@@ -660,9 +661,9 @@ if ($_GET["action"] == 'create')
 		      $var=!$var;
 		      print "<tr $bc[$var]><td>[$objp->ref]</td>\n";
 		      print '<td>'.$objp->product.'</td>';
-		      print "<td align=\"right\">".price($objp->subprice)."</TD>";
+		      print '<td align="right">'.price($objp->subprice).'</td>';
 		      print '<td align="center">'.$objp->remise_percent.' %</td>';
-		      print "<td align=\"center\">".$objp->qty."</td></tr>\n";
+		      print '<td align="center">'.$objp->qty.'</td></tr>';
 		      $i++;
 		    }
 		}
