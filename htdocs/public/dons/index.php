@@ -73,7 +73,7 @@ if ($conf->don->enabled)
 
 	      include ("mail.php");
 
-	      mail($don->email, $subject, $body);
+	      mail($don->email, $subject, $body, "From: eucd.info");
 
 	      require("merci.php");
 	    }

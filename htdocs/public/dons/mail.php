@@ -3,7 +3,9 @@ $subject = "Subject: EUCD.INFO promesse de don de $don->amount euros pour sauver
 
 $body ="
 EUCD.INFO  vous  remercie  de  la  promesse  de  don  que  vous  venez
-d'enregistrer:
+d'enregistrer.   Elle  sera  comptabilisée   sur  le   thermomètre  de
+http://eucd.info/ après validation par un opérateur.
+
 
 Prénom: $don->prenom
 Nom: $don->nom
@@ -33,6 +35,7 @@ qui lui sont fait ouvrent  droit à une réduction d'impôt. Vous pourrez
 en bénéficier grâce au reçu[4]  qui vous sera adressé dès reception du
 montant promis de $don->amount euros.
 
+Merci pour votre soutien.
 
 [1] EUCD.INFO: http://eucd.info/
 [2] Directive du 22 mai 2001:
