@@ -123,3 +123,6 @@ WebCalTestKo1=Connection to server '%s' succeed but database '%s' could not be r
 WebCalTestKo2=Connection to server '%s' with user '%s' failed.
 ##### Clicktodial setup #####
 ClickToDialSetup=Click To Dial setup
+##### LDAP setup ####
+LDAPSetup=LDAP Setup
+LDAPServer=LDAP Server

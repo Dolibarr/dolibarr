@@ -35,7 +35,10 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
-
+/*
+ * Actions
+ */
+ 
 if ($_GET["action"] == 'setvalue' && $user->admin)
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'LDAP_SERVER_HOST';";
@@ -74,33 +77,26 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
     }
 }
 
+
+
 llxHeader();
 
-if (!$user->admin)
-{
-  print "Forbidden";
-  llxfooter();
-  exit;
-}
-/**
-  *
-  */
+print_titre($langs->trans("LDAPSetup"));
 
-print_titre("Configuration de ldap");
-
-print '<table class="noborder" width="100%" cellpadding="3" cellspacing="0">';
+print '<br>';
+print '<table class="noborder" width="100%">';
 print '<tr>';
 print '<td width="50%" valign="top">';
 
-print '<table class="border" cellpadding="3" cellspacing="0">';
+print '<table class="border" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>Valeur</td><td colspan="2">&nbsp;</td>';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Value").'</td><td colspan="2">&nbsp;</td>';
 print "</tr>\n";
-print '<tr><td>Serveur LDAP</td><td>'.LDAP_SERVER_HOST.'</td></tr>';
+print '<tr><td>'.$langs->trans("LDAPServer").'</td><td>'.LDAP_SERVER_HOST.'</td></tr>';
 
-print '<tr><td>DN</td><td>'.LDAP_SERVER_DN.'</td></tr>';
-print '<tr><td>Pass</td><td>'.LDAP_SERVER_PASS.'</td></tr>';
+print '<tr><td>'.$langs->trans("DN").'</td><td>'.LDAP_SERVER_DN.'</td></tr>';
+print '<tr><td>'.$langs->trans("Password").'</td><td>'.LDAP_SERVER_PASS.'</td></tr>';
 print '<tr><td>'.$langs->trans("Type").'</td><td>'.LDAP_SERVER_TYPE.'</td></tr>';
 
 print '</table>';
@@ -109,29 +105,29 @@ print '</td><td width="50%">';
 
 print '<form method="post" action="ldap.php?action=setvalue">';
 
-print '<table class="border" cellpadding="3" cellspacing="0">';
-print '<TR class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>Valeur</td><td colspan="2">&nbsp;</td>';
+print '<table class="border" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Value").'</td><td colspan="2">&nbsp;</td>';
 print "</tr>\n";
 print '<tr><td>';
-print 'Serveur LDAP</td><td>';
-print '<input size="15" type="text" name="host" value="'.LDAP_SERVER_HOST.'">';
+print $langs->trans("LDAPServer").'</td><td>';
+print '<input size="25" type="text" name="host" value="'.LDAP_SERVER_HOST.'">';
 print '</td></tr>';
-print '<tr><td>DN</td><td>';
+print '<tr><td>'.$langs->trans("DN").'</td><td>';
 print '<input size="25" type="text" name="dn" value="'.LDAP_SERVER_DN.'">';
 print '</td></tr>';
-print '<tr><td>Pass</td><td>';
+print '<tr><td>'.$langs->trans("Password").'</td><td>';
 print '<input size="25" type="text" name="pass" value="'.LDAP_SERVER_PASS.'">';
 print '</td></tr>';
 
-print '<tr><td><select name="type">';
+print '<tr><td>'.$langs->trans("Type").'</td><td><select name="type">';
 print '<option value="openldap" selected>OpenLdap';
 print '<option value="egroupware">Egroupware';
 print '</select>';
 print '</td></tr>';
 
-print '<tr><td><input type="submit" value="changer"></td></tr>';
+print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table></form>';
 
 print '</td></tr></table>';
@@ -140,7 +136,10 @@ print '</td></tr></table>';
   *
   */
 
-print '<a href="ldap.php?action=test">test de connection</a><br>';
+if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test') {
+    print '<a class="tabAction" href="ldap.php?action=test">'.$langs->trans("TestConnection").'</a><br>';
+}
+
 
 if (defined("LDAP_SERVER_HOST") && LDAP_SERVER_HOST && $_GET["action"] == 'test')
 {
