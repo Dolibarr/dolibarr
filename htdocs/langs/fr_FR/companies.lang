@@ -21,6 +21,7 @@ TVAIntra=Numéro de TVA Intracommunautaire
 ProspectCustomer=Prospect / Client
 Prospect=Prospect
 Customer=Client
+CustomerDiscount=Remise client
 Supplier=Fournisseur
 CompanyList=Liste des sociétés
 AddContact=Ajouter un contact
