@@ -171,142 +171,192 @@ class User
   /**
    *    \brief      Ajoute un droit a l'utilisateur
    *    \param      rid         id du droit à ajouter
+   *    \param      allmodule   Ajouter tous les droits du module allmodule
+   *    \param      allperms    Ajouter tous les droits du module allmodule, perms allperms
    *    \return     int         > 0 si ok, < 0 si erreur
    */
 	 
-    function addrights($rid)
+    function addrights($rid,$allmodule='',$allperms='')
     {
-        if (strlen($rid) == 2)
+        $err=0;
+        $whereforadd='';
+        
+        $this->db->begin();
+
+        if ($rid) 
         {
-            $topid = substr($rid,0,1);
-            $lowid = substr($rid,1,1);
-        }
-    
-        if (strlen($rid) == 3)
-        {
-            $topid = substr($rid,0,2);
-            $lowid = substr($rid,2,1);
-        }
-    
-        if ($lowid == 1)
-        {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rid";
-            $this->db->query($sql);
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
-            if ($this->db->query($sql))
-            {
+            // Si on a demandé ajout d'un droit en particulier, on récupère
+            // les caractéristiques (module, perms et subperms) de ce droit.
+            $sql = "SELECT module, perms, subperms";
+            $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
+            $sql.= " WHERE ";
+            $sql.=" id = '".$rid."'";
+       
+            $result=$this->db->query($sql);
+            if ($result) {
+                $obj = $this->db->fetch_object($result);
+                $module=$obj->module;
+                $perms=$obj->perms;
+                $subperms=$obj->subperms;
             }
+            else {
+                $err++;
+                dolibarr_print_error($this->db);
+            }
+
+            // Where pour la liste des droits à ajouter
+            $whereforadd="id=".$rid;
+            // Ajout des droits induits
+            if ($subperms) $whereforadd.=" OR (module='$module' AND perms='$perms' AND subperms='lire')";
+            if ($perms)    $whereforadd.=" OR (module='$module' AND perms='lire' AND subperms IS NULL)";
+
+            // Pour compatibilité, si lowid = 0, on est en mode ajout de tout
+            // \todo A virer quand sera géré par l'appelant
+            if (substr($rid,-1,1) == 0) $whereforadd="module='$module'";
         }
-    
-        if ($lowid > 1)
+        else {
+            // Where pour la liste des droits à ajouter
+            if ($allmodule) $whereforadd="module='$allmodule'";
+            if ($allperms)  $whereforadd=" AND perms='$allperms'";
+        }
+
+        // Ajout des droits de la liste whereforadd
+        if ($whereforadd)
         {
-    
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rid";
-            $this->db->query($sql);
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rid)";
-            if ($this->db->query($sql))
+            //print "$module-$perms-$subperms";
+            $sql = "SELECT id";
+            $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
+            $sql.= " WHERE $whereforadd";
+            
+            $result=$this->db->query($sql);
+            if ($result)
             {
+                $num = $this->db->num_rows($result);
+                $i = 0;
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($result);
+                    $nid = $obj->id;
+       
+                    $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
+                    if (! $this->db->query($sql)) $err++;
+                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
+                    if (! $this->db->query($sql)) $err++;
+    
+                    $i++;
+                }
             }
-    
-            $nid = $topid . "1";
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
-            $this->db->query($sql);
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
-            if ($this->db->query($sql))
+            else 
             {
-    
-            }
-            else
-            {
+                $err++;
                 dolibarr_print_error($this->db);
             }
         }
     
-        if ($lowid == 0)
-        {
-            for ($i = 1 ; $i < 10 ; $i++)
-            {
-                $nid = $topid . "$i";
-    
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
-                $this->db->query($sql);
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
-                if ($this->db->query($sql))
-                {
-    
-                }
-                else
-                {
-                    dolibarr_print_error($this->db);
-                }
-            }
+        if ($err) {
+            $this->db->rollback();
+            return -$err;
         }
-    
-        return 1;
+        else {
+            $this->db->commit();
+            return 1;
+        }
+        
     }
 
 
   /**
    *    \brief      Retire un droit a l'utilisateur
-   *    \param      rid        id du droit à retirer
+   *    \param      rid         id du droit à retirer
+   *    \param      allmodule   Retirer tous les droits du module allmodule
+   *    \param      allperms    Retirer tous les droits du module allmodule, perms allperms
    *    \return     int         > 0 si ok, < 0 si erreur
    */
 	 
-    function delrights($rid)
+    function delrights($rid,$allmodule='',$allperms='')
     {
-        if (strlen($rid) == 2)
+        $err=0;
+        $wherefordel='';
+        
+        $this->db->begin();
+
+        if ($rid) 
         {
-            $topid = substr($rid,0,1);
-            $lowid = substr($rid,1,1);
-        }
-    
-        if (strlen($rid) == 3)
-        {
-            $topid = substr($rid,0,2);
-            $lowid = substr($rid,2,1);
-        }
-    
-        if ($lowid > 1)
-        {
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rid";
-            if ($this->db->query($sql))
-            {
+            // Si on a demandé supression d'un droit en particulier, on récupère
+            // les caractéristiques module, perms et subperms de ce droit.
+            $sql = "SELECT module, perms, subperms";
+            $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
+            $sql.= " WHERE ";
+            $sql.=" id = '".$rid."'";
+       
+            $result=$this->db->query($sql);
+            if ($result) {
+                $obj = $this->db->fetch_object($result);
+                $module=$obj->module;
+                $perms=$obj->perms;
+                $subperms=$obj->subperms;
             }
-        }
-    
-        if ($lowid == 1)
-        {
-            $fid = $topid . "0";
-            $lid = $topid . "9";
-            $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id >= $fid AND fk_id <= $lid";
-            if ($this->db->query($sql))
-            {
-    
+            else {
+                $err++;
+                dolibarr_print_error($this->db);
             }
-            else
+
+            // Where pour la liste des droits à supprimer
+            $wherefordel="id=".$rid;
+            // Suppression des droits induits
+            if ($subperms=='lire') $wherefordel.=" OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
+            if ($perms=='lire')    $wherefordel.=" OR (module='$module')";
+
+            // Pour compatibilité, si lowid = 0, on est en mode suppression de tout
+            // \todo A virer quand sera géré par l'appelant
+            if (substr($rid,-1,1) == 0) $wherefordel="module='$module'";
+        }
+        else {
+            // Where pour la liste des droits à supprimer
+            if ($allmodule) $wherefordel="module='$allmodule'";
+            if ($allperms)  $wherefordel=" AND perms='$allperms'";
+        }
+
+        // Suppression des droits de la liste wherefordel
+        if ($wherefordel)
+        {
+            //print "$module-$perms-$subperms";
+            $sql = "SELECT id";
+            $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
+            $sql.= " WHERE $wherefordel";
+
+            $result=$this->db->query($sql);
+            if ($result)
             {
+                $num = $this->db->num_rows($result);
+                $i = 0;
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object($result);
+                    $nid = $obj->id;
+       
+                    $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
+                    if (! $this->db->query($sql)) $err++;
+    
+                    $i++;
+                }
+            }
+            else 
+            {
+                $err++;
                 dolibarr_print_error($this->db);
             }
         }
     
-        if ($lowid == 0)
-        {
-            for ($i = 1 ; $i < 10 ; $i++)
-            {
-                $nid = $topid . "$i";
-                $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
-                if ($this->db->query($sql))
-                {
-    
-                }
-                else
-                {
-                    dolibarr_print_error($this->db);
-                }
-            }
+        if ($err) {
+            $this->db->rollback();
+            return -$err;
         }
-    
-        return 1;
+        else {
+            $this->db->commit();
+            return 1;
+        }
+
     }
 
   /**
