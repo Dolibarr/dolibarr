@@ -497,9 +497,11 @@ class Facture
 
 	  $result = $this->db->query( $sql);
 
-	  if (! $result) {
-	    	  dolibarr_print_error($this->db);
-        }
+	  if (! $result)
+	    {
+	      dolibarr_syslog("Facture::set_valid()  - 10");
+	      dolibarr_print_error($this->db);
+	    }
      
 	  /*
 	   * Notify
@@ -531,6 +533,7 @@ class Facture
 		  $sql = "UPDATE ".MAIN_DB_PREFIX."product SET nbvente=nbvente+1 WHERE rowid = ".$obj->fk_product;
 		  $db2 = $this->db->clone();
 		  $result = $db2->query($sql);
+
 		  $i++;
 		}
 	    }
@@ -774,11 +777,10 @@ class Facture
 		  foreach ($tvas as $key => $value)
 		    {
 				
-$sql_del = "delete from ".MAIN_DB_PREFIX."facture_tva_sum where fk_facture =$this->id;";
-$this->db->query($sql_del);
+		      $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."facture_tva_sum where fk_facture =$this->id;";
+		      $this->db->query($sql_del);
 		
-$sql = "insert into ".MAIN_DB_PREFIX."facture_tva_sum (fk_facture,amount,tva_tx) 
-		values ($this->id,'".$tvas[$key]."','".$key."');";
+		      $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_tva_sum (fk_facture,amount,tva_tx) values ($this->id,'".ereg_replace(",",".",$tvas[$key])."','".ereg_replace(",",".",$key)."');";
 		
 		    //  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."facture_tva_sum SET fk_facture=".$this->id;
 //		      $sql .= ", amount = '".$tvas[$key]."'";
@@ -786,7 +788,7 @@ $sql = "insert into ".MAIN_DB_PREFIX."facture_tva_sum (fk_facture,amount,tva_tx)
 		      
 		      if (! $this->db->query($sql) )
 			{
-        	  dolibarr_print_error($this->db);
+			  dolibarr_print_error($this->db);
 			  $err++;
 			}
 		    }
