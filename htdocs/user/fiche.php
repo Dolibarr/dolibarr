@@ -262,7 +262,7 @@ else
              */
             $h = 0;
 
-            $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$socid;
+            $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id;
             $head[$h][1] = "Fiche utilisateur";
             $h++;
 
