@@ -478,17 +478,27 @@ class Facture
 
   /**
    * \brief     Tag la facture comme validée et valide la facture
-   * \param     rowid       id de la facture à modifier
-   * \param     user        utilisateur qui valide la facture
-   * \param     soc         societe
+   * \param     rowid        id de la facture à valider
+   * \param     user         utilisateur qui valide la facture
+   * \param     soc          societe
+   * \param     force_number force le numéro de facture
    */
-  function set_valid($rowid, $user, $soc)
+  function set_valid($rowid, $user, $soc, $force_number='')
     {
       if ($this->brouillon)
 	{
 	  $action_notify = 2; // ne pas modifier cette valeur
 
-	  $numfa = facture_get_num($soc, $this->prefixe_facture); // définit dans includes/modules/facture
+	  if ($force_number)
+	    {
+	      $numfa=$force_number;
+	    }
+	  else
+	    {
+	      $numfa = facture_get_num($soc, $this->prefixe_facture); // définit dans includes/modules/facture
+	    }
+
+
 
 	  $sql = "UPDATE ".MAIN_DB_PREFIX."facture set facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id";
 
