@@ -1,16 +1,20 @@
-README FR documentation développeur
+README (French)
+################################
+Documentation developpeur
+################################
 
 
 ***** Documentation doxygen
 
-La documentation doxygen de Dolibarr peut etre généré en lançant la commande
+La documentation doxygen des sources de Dolibarr peut etre généré en lançant
+la commande:
 > perl dolybarr-doxygen-build.pl
 
-Le prerequis est d'avoir doxygen installé (windows ou linux).
+Le prerequis est d'avoir Doxygen installé (Linux ou Windows).
 
 
 
 ***** Autre documentation développeur
 
-D'autres informations sont disponibles sur le wiki Dolibarr:
+D'autres informations sont disponibles en Français sur le Wiki Dolibarr:
 > http://www.dolibarr.com/wikidev
