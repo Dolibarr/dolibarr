@@ -279,7 +279,7 @@ if ($_socid > 0)
      * Commandes
      *
      */
-    print '<table border="0" width="100%" cellspacing="0" cellpadding="1">';
+    print '<table class="border" width="100%" cellspacing="0" cellpadding="1">';
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.total_ht, p.ref, ".$db->pdate("p.date_commande")." as dp";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p WHERE p.fk_soc = s.idp ";
     $sql .= " AND s.idp = $objsoc->id ORDER BY p.date_commande DESC";

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ if ($user->rights->commande->lire)
 	  $objp = $db->fetch_object( $i);
 	  
 	  $info_box_contents[$i][0] = array('align' => 'left',
-					    'text' => $objp->ref,
+					    'text' => img_file()." ".$objp->ref,
 					    'url' => DOL_URL_ROOT."/commande/fiche.php?id=".$objp->rowid);
 	  
 	  $info_box_contents[$i][1] = array('align' => 'left',

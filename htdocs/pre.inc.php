@@ -109,9 +109,10 @@ function llxHeader($head = "") {
 
   if ($conf->commande->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/commande/index.php", "Commandes");
+      $langs->load("orders");
+      $menu->add(DOL_URL_ROOT."/commande/index.php", $langs->trans("Orders"));
       if ($conf->expedition->enabled) {
-      	$menu->add_submenu(DOL_URL_ROOT."/expedition/index.php", "Expéditions");
+      	$menu->add_submenu(DOL_URL_ROOT."/expedition/index.php", $langs->trans("Sendings"));
       }
     }
 

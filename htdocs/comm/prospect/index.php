@@ -60,7 +60,7 @@ if ($conf->propal->enabled)
   print '<table border="0" cellspacing="0" cellpadding="3" width="100%">';
   print '<tr class="liste_titre"><td colspan="2">Rechercher une proposition</td></tr>';
   print "<tr $bc[1]><td>";
-  print 'Num. : <input type="text" name="sf_ref"><input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
+  print $langs->trans("Ref").' : <input type="text" name="sf_ref"><input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
   print "</table></form><br>\n";
 }
 

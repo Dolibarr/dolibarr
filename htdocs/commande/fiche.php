@@ -23,6 +23,7 @@
 require("./pre.inc.php");
 
 $langs->load("orders");
+$langs->load("companies");
 
 $user->getrights('commande');
 $user->getrights('expedition');
@@ -229,7 +230,7 @@ if ($_GET["action"] == 'create')
 
 	  print '<table class="border" cellspacing="0" cellpadding="3" width="100%">';
 	  
-	  print '<tr><td>Client :</td><td>'.$obj->nom.'</td>';
+	  print '<tr><td>'.$langs->trans("Customer").' :</td><td>'.$obj->nom.'</td>';
 	  print '<td class="border">'.$langs->trans("Comments").' :</td></tr>';
 
 	  print '<tr><td>'.$langs->trans("Author").' :</td><td>'.$user->fullname.'</td>';
@@ -450,7 +451,7 @@ else
 	    }
 
 	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
-	  print "<tr><td>Client</td>";
+	  print "<tr><td>".$langs->trans("Customer")."</td>";
 	  print '<td colspan="2">';
 	  print '<b><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 	  
