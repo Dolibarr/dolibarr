@@ -42,9 +42,13 @@ if ($result)
     {
       $objp = $db->fetch_object( $i);
       
-      $info_box_contents[$i][0] = array('align' => 'center',
-					'text' => $objp->facnumber . " " . $objp->nom,
+      $info_box_contents[$i][0] = array('align' => 'left',
+					'text' => $objp->facnumber,
 					'url' => DOL_URL_ROOT."/compta/facture.php3?facid=".$objp->facid);
+
+      $info_box_contents[$i][1] = array('align' => 'left',
+					'text' => $objp->nom,
+					'url' => DOL_URL_ROOT."/comm/fiche.php3?socid=".$objp->idp);
       $i++;
     }
 }
