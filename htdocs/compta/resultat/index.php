@@ -40,8 +40,8 @@ print '<td width="10%">&nbsp;</td><TD>Elément</TD>';
 print "<TD align=\"right\">Montant</td>";
 print "</tr>\n";
 
-$sql = "SELECT s.nom,sum(f.amount) as amount";
-$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp"; 
+$sql = "SELECT s.nom,s.idp,sum(f.amount) as amount";
+$sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp AND f.fk_statut = 1 AND f.fk_user_valid is not NULL"; 
 
 $sql .= " GROUP BY s.nom ASC";
 
@@ -60,7 +60,7 @@ if ($result) {
       $var=!$var;
             
       print "<TR $bc[$var]><td>&nbsp</td>";
-      print "<td>Factures <a href=\"../facture.php?facid=$objp->facid\">$objp->facnumber</a> $objp->nom</TD>\n";
+      print "<td>Factures  <a href=\"../facture.php?socidp=$objp->idp\">$objp->nom</TD>\n";
       
       print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
       
