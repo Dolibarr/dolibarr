@@ -248,7 +248,7 @@ else
 		  print "<b>Cet article n'est pas en vente</b>";
 		}
 	      print '</td></tr>';
-	      print "<td>Libellé</td><td>$product->libelle</td>";
+	      print "<tr><td>Libellé</td><td>$product->libelle</td>";
 	      print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
 	      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
 	      print '<td valign="top" rowspan="4">';
