@@ -2,7 +2,7 @@
 Project=Project
 Projects=Projects
 NewProject=New project
-AddProject=Créer projet
+AddProject=Add project
 DeleteAProject=Supprimer un projet
 ConfirmDeleteAProject=Are you sure you want to delete this project ?
 LastProjects=Last %s projects
