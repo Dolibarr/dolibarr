@@ -131,6 +131,17 @@ if ($result)
   print_liste_field_titre($langs->trans("Created"),"prospects.php","s.datec","","","align=\"center\"",$sortfield);
   print '<td colspan="4">&nbsp;</td>';
   print "</tr>\n";
+
+  print '<form method="get" action="prospects.php">';
+  print '<tr class="liste_titre">';
+  print '<td valign="right">';
+  print '<input type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
+  print '</td><td>';
+  print '<input type="text" name="search_ville" value="'.$_GET["search_nom"].'">';
+  print "</td><td>&nbsp;</td>";
+  print "<td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>";
+  print "</tr>\n";
+
   $var=true;
 
   while ($i < min($num,$conf->liste_limit))
