@@ -173,14 +173,18 @@ if ( $action == 'delete' )
  *
  *
  */
-if ($propalid) {
+if ($propalid)
+{
   $propal = new Propal($db);
   $propal->fetch($propalid);
 
 
-  if ($valid == 1) {
-    $propal->valid($user->id);
-  }
+  if ($valid == 1)
+    {
+      $propal->update_price($propalid);
+      propale_pdf_create($db, $propalid);
+      $propal->valid($user->id);
+    }
   /*
    *
    */
@@ -194,9 +198,10 @@ if ($propalid) {
   $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c, llx_socpeople as x";
   $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = $propalid";
 
-  if ($socidp) { 
-    $sql .= " AND s.idp = $socidp"; 
-  }
+  if ($socidp)
+    { 
+      $sql .= " AND s.idp = $socidp"; 
+    }
 
   $result = $db->query($sql);
 
