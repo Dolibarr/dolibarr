@@ -53,7 +53,7 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_NOT_INSTA
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr',1);
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages',1);
-insert into llx_const (name, value, type, note, visible) values ('MAIN_DEBUG','1','yesno','Debug ..',1);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DEBUG','0','yesno','Mode debug actif ou non',1);
 
 insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine',0);
 
@@ -93,7 +93,7 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_
 --
 -- Mail Mailing
 --
-insert into llx_const (name, value, type, note) values ('MAILING_EMAIL','mailing@societe.com','chaine','Champ From du mail pour mailing clients/prospects');
+insert into llx_const (name, value, type, note) values ('MAILING_EMAIL_FROM','mailing@societe.com','chaine','Champ From du mail pour mailing clients/prospects');
 
 --
 -- Mailman
