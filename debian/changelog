@@ -1,3 +1,9 @@
+dolibarr (1.0.0_RC1-1) unstable; urgency=low
+
+  * Upstream update
+
+ -- Rodolphe Quiedeville <rq@quiedeville.org>  Sun, 14 Sep 2003 11:40:15 +0200
+
 dolibarr (0.7.1-1) unstable; urgency=low
 
   * Upstream update
