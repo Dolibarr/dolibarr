@@ -37,11 +37,9 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td valign="top">';
 
-print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=lignes/lignes.actives.png" alt="Lignes Actives" title="Lignes Actives"><br /><br />'."\n";
+print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=contrats/modereglement.png" alt="Mode de réglement" title="Mode de réglement"><br /><br />'."\n";
 
 print '</td><td valign="top">';
-
-
 
 print '</td></tr>';
 print '</table>';
