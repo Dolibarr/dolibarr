@@ -37,7 +37,7 @@ Class mod_commande_ivoire
     { 
       global $db;
       
-      $sql = "SELECT count(*) FROM llx_commande WHERE fk_statut > 0";
+      $sql = "SELECT count(*) FROM llx_commande WHERE fk_statut <> 0";
       
       if ( $db->query($sql) ) 
 	{
