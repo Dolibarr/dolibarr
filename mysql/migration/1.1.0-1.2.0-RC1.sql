@@ -12,6 +12,7 @@ alter table llx_facturedet add date_start date;
 alter table llx_facturedet add date_end   date;
 
 alter table llx_user add egroupware_id integer;
+alter table llx_societe add code_client  varchar(15) after nom;
 alter table llx_societe add siret     varchar(14) after siren;
 alter table llx_societe add ape       varchar(4) after siret;
 alter table llx_societe add tva_intra varchar(20) after ape;
