@@ -21,7 +21,8 @@
  *
  */
 
-/**     \file       htdocs/comm/mailing/cibles.php
+/**
+        \file       htdocs/comm/mailing/cibles.php
         \brief      Page des cibles de mailing
         \version    $Revision$
 */
@@ -63,9 +64,22 @@ if ($_GET["action"] == 'add')
     require_once($file);
     
     $obj = new $classname($db);
-    $obj->add_to_target($_GET["rowid"]);
+    $result=$obj->add_to_target($_GET["rowid"]);
    
-    Header("Location: cibles.php?id=".$_GET["rowid"]);
+    if ($result > 0)
+    {
+        Header("Location: cibles.php?id=".$_GET["rowid"]);
+    }
+    if ($result == 0)
+    {
+print $obj->aaa;
+        $mesg='<div class="warning">'.$langs->trans("WarningNoEMailsAdded").'</div>';
+    }   
+    if ($result < 0)
+    {
+        $mesg='<div class="error">'.$obj->error.'</div>';
+    }   
+    $_GET["id"]=$_GET["rowid"];
 }
 
 if ($_GET["action"] == 'clear')
@@ -123,13 +137,14 @@ if ($mil->fetch($_GET["id"]) == 0)
     
     print "</div>";
     
+    if ($mesg) print "$mesg<br>\n";
 
     // Affiche les listes de sélection
     if ($mil->statut == 0) {
         print '<table class="noborder" width=\"100%\">';
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans("RecipientSelectionModules").'</td>';
-        print '<td align="center">'.$langs->trans("NbOfRecipients").'</td>';
+        print '<td align="center">'.$langs->trans("NbOfUniqueEMails").'</td>';
         print '<td align="center" width="120">';
         if ($mil->statut == 0) {
            print $langs->trans("Actions");
