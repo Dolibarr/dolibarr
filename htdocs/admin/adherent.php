@@ -54,15 +54,15 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
   if (isset($_POST["consttype"]) && $_POST["consttype"] != '')
 	{
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$_POST["constname"]."';";
-	  $db->query($sql);
+	    $db->query($sql);
 		$sql = '';
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,type,visible,note) VALUES ('".$_POST["constname"]."','".$_POST["constvalue"]."','".$typeconst[$_POST["consttype"]]."',0,'".$_POST["constnote"]."') ;";
 
   }
 	else
 	{
-	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$_POST["constname"]."';";
-	  $db->query($sql);
+	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$_POST["constname"]."';";
+	    $db->query($sql);
 		$sql ='';
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible,note) VALUES ('".$_POST["constname"]."','".$_POST["constvalue"]."',0,'".$_POST["constnote"]."') ;";
   }
@@ -72,23 +72,15 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
       Header("Location: adherent.php");
     }
   
-  /*
-  $result = $db->query($sql);
-  if (!$result)
-    {
-      print $db->error();
-    }
-  */
 }
 
-if ($action == 'set')
+if ($_GET["action"] == 'set')
 {
-   $sql = "DELETE FROM ".MAIN_DB_PREFIX." WHERE name = '$name' ;";
+   $sql = "DELETE FROM ".MAIN_DB_PREFIX." WHERE name = '".$_GET["name"]."' ;";
 	 $db->query($sql);
 	 
 	 $sql ='';
-	 $sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,visible) values ('$name','$value',
-	 0);  "; 
+	 $sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,visible) values ('".$_GET["name"]."','".$_GET["value"]."', 0);";
 
   if ($db->query($sql))
     {
@@ -96,9 +88,9 @@ if ($action == 'set')
     }
 }
 
-if ($action == 'unset')
+if ($_GET["action"] == 'unset')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '$name'";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$_GET["name"]."'";
 
   if ($db->query($sql))
     {
@@ -121,7 +113,7 @@ print "<br>";
 if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
 {
   $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_MAILMAN">désactiver</a>';
+  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Disable").'</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_MAILMAN_LISTS',
 		    'ADHERENT_MAILMAN_LISTS_COTISANT',
@@ -135,7 +127,7 @@ if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
 }
 else
 {
-  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_MAILMAN">activer</a>';
+  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Activate").'</a>';
   print_fiche_titre("Mailman - Système de mailing listes",$lien);
 }
 
@@ -147,7 +139,7 @@ print "<hr>\n";
 if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE == 1)
 {
   $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_BANK_USE">désactiver</a>';
+  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_BANK_USE">'.$langs->trans("Disable").'</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_BANK_USE_AUTO',
 		    'ADHERENT_BANK_ACCOUNT',
@@ -158,7 +150,7 @@ if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE == 1)
 }
 else
 {
-  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_BANK_USE">activer</a>';
+  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_BANK_USE">'.$langs->trans("Activate").'</a>';
   print_fiche_titre("Gestion banquaire des adherents",$lien);
 }
 
@@ -171,7 +163,7 @@ $var=!$var;
 if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP == 1)
 {
   $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_SPIP">désactiver</a>';
+  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_USE_SPIP_AUTO',
 		    'ADHERENT_SPIP_SERVEUR',
@@ -184,7 +176,7 @@ if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP == 1)
 }
 else
 {
-  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_SPIP">activer</a>';
+  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
   print_fiche_titre("SPIP - Système de publication en ligne",$lien);
 }
 
@@ -197,7 +189,7 @@ $var=!$var;
 if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST == 1)
 {
   $lien='<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_GLASNOST">désactiver</a>';
+  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_GLASNOST">'.$langs->trans("Disable").'</a>';
   // Edition des varibales globales rattache au theme Mailman 
   $constantes=array('ADHERENT_USE_GLASNOST_AUTO',
 		    'ADHERENT_GLASNOST_SERVEUR',
@@ -209,7 +201,7 @@ if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST == 1)
 }
 else
 {
-  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_GLASNOST">activer</a>';
+  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_GLASNOST">'.$langs->trans("Activate").'</a>';
   print_fiche_titre("Glasnost - Système de vote en ligne",$lien);
 }
 
@@ -248,7 +240,7 @@ function form_constantes($tableau){
   // Variables globales
   global $db,$bc,$langs;
   $form = new Form($db);
-  print '<table class="noborder" cellpadding="3" cellspacing="0">';
+  print '<table class="noborder">';
   print '<tr class="liste_titre">';
   print '<td>'.$langs->trans("Description").'</td>';
   print '<td>'.$langs->trans("Value").'</td>';
