@@ -212,15 +212,24 @@ function dolibarr_print_object_info($object)
 {
   print "Créé par  : " . $object->user_creation->fullname . '<br>';
   print "Date de création : " . strftime("%A %d %B %Y %H:%M:%S",$object->date_creation) . '<br>';
-  print "Modifié par  : " . $object->user_modification->fullname . '<br>';
-  print "Date de modification : " . strftime("%A %d %B %Y %H:%M:%S",$object->date_modification) . '<br>';
+
+  if (isset($object->user_modification))
+    print "Modifié par  : " . $object->user_modification->fullname . '<br>';
+
+
+  if (isset($object->date_modification))
+    print "Date de modification : " . strftime("%A %d %B %Y %H:%M:%S",$object->date_modification) . '<br>';
+
+  if (isset($object->user_validation))
+    print "Validé par  : " . $object->user_validation->fullname . '<br>';
+
 }
 
 /*!
-		\brief formattage du telephone
-		\param	phone			numéro de telephone à formater
-		\return phone			numéro de téléphone formaté
-		\remarks net tient pas en compte le format belge 02/211 34 83
+  \brief formattage du telephone
+  \param	phone			numéro de telephone à formater
+  \return phone			numéro de téléphone formaté
+  \remarks net tient pas en compte le format belge 02/211 34 83
 */
 
 function dolibarr_print_phone($phone)
