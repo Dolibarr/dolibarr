@@ -533,7 +533,21 @@ class Livre {
     
     return $result;
   }
-
+  /*
+   *
+   *
+   */
+  Function update_image($file_name)
+  {
+    $sql = "UPDATE ".DB_NAME_OSC.".products SET products_image='".$file_name."'";
+    $sql .= " WHERE products_id = " . $this->oscid;
+	
+    $result = $this->db->query($sql) ;
+	
+    if ( $result )
+      {
+      }
+  }
 
   /*
    *
