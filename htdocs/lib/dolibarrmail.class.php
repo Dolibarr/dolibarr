@@ -25,26 +25,22 @@
  */
 
 
-/*!	\file htdocs/lib/CMailFile.class.php
-  \brief Classe permettant d'envoyer des mail avec attachements, recriture de CMailFile
-  \author Dan Potter.
-  \author Eric Seigne
-  \author Rodolphe Quiedeville
-  \author Laurent Destailleur.
-  \version $Revision$
+/**
+    \file       htdocs/lib/dolibarrmail.class.php
+    \brief      Classe permettant d'envoyer des mail avec attachements, recriture de CMailFile
+    \author     Dan Potter.
+    \author     Eric Seigne
+    \author     Rodolphe Quiedeville
+    \author     Laurent Destailleur.
+    \version    $Revision$
 */
 
-/*! \class CMailFile
-  \brief Classe permettant d'envoyer des attachements par mail
-  \remarks Eric Seigne <eric.seigne@ryxeo.com> 2004.01.08
-  \remarks ajout de la gestion des cc:
-  \remarks ajout de l'expedition de plusieurs fichiers
-  
-  \remarks Laurent Destailleur 2004.02.10
-  \remarks correction d'un disfonctionnement à la gestion des attachements multiples
+/** 
+    \class      DolibarrMail
+    \brief      Classe permettant d'envoyer des attachements par mail
+    \todo       Classe en double avec CMAilFile.class.php
 */
 
-// simple class that encapsulates mail() with addition of mime file attachment.
 class DolibarrMail
 {
   var $subject;
@@ -57,7 +53,7 @@ class DolibarrMail
   var $boundary;
   var $smtp_headers;
 
-/*!
+/**
   \brief DolibarrMail
   \param subject
   \param to
@@ -93,7 +89,7 @@ class DolibarrMail
       dolibarr_syslog("DolibarrMail::DolibarrMail from : ".$this->from);
     }
 
-  /*!
+  /**
     \brief PrepareFile
     \param filename_list
     \param mimetype_list
@@ -118,7 +114,7 @@ class DolibarrMail
       }
   }
     
-  /*!
+  /**
     \brief permet d'attacher un fichier
     \param filename_list
     \param mimetype_list
@@ -155,7 +151,7 @@ class DolibarrMail
     // added -- to notify email client attachment is done
   }
   
-/*!
+/**
   \brief permet d'encoder un fichier
   \param sourcefile
 */
@@ -176,7 +172,7 @@ class DolibarrMail
     return $encoded;
   }
   
-  /*!
+  /**
     \brief permet d'envoyer un fichier
   */
   
@@ -215,7 +211,7 @@ class DolibarrMail
     fputs($fp, $message_comp);
     fclose($fp);
   }
-  /*!
+  /**
     \brief permet d'ecrire le corps du message
     \param msgtext
     \param filename_list
@@ -239,7 +235,7 @@ class DolibarrMail
     return $out;
   }
   
-  /*!
+  /**
     \brief création des headers mime
     \param filename_list
     \param mimefilename_list
@@ -264,7 +260,7 @@ class DolibarrMail
     return $out;
   }
 
-/*!
+/**
   \brief création des headers smtp
   \param addr_from
   \param addr_cc
