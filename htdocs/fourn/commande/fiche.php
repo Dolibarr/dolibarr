@@ -389,12 +389,8 @@ if ($_GET["id"] > 0)
 		  print '<td>&nbsp;</td>';
 		}
 	      print '<td align="right">'.price($objp->subprice)."</td>\n";
-	      if ($commande->statut == 0  && $user->rights->fournisseur->commande->creer) 
-		{/*
-		  print '<td align="right"><a href="fiche.php?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'">';
-		  print img_edit();
-		  print '</a></td>';
-		 */
+	      if ($commande->statut == 0  && $user->rights->fournisseur->commande->creer && $_GET["action"] <> 'valid') 
+		{
 		  print '<td>&nbsp;</td><td align="right"><a href="fiche.php?id='.$commande->id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
 		  print img_delete();
 		  print '</a></td>';
@@ -433,7 +429,7 @@ if ($_GET["id"] > 0)
        * Ajouter une ligne
        *
        */
-      if ($commande->statut == 0 && $user->rights->fournisseur->commande->creer) 
+      if ($_GET["action"] <> 'valid' && $commande->statut == 0 && $user->rights->fournisseur->commande->creer) 
 	{
 	  $sql = "SELECT p.rowid,p.label,p.ref ";
 	  $sql .=" , pf.price";
@@ -491,7 +487,7 @@ if ($_GET["id"] > 0)
 
       print '</div>';
 
-      if ($user->societe_id == 0 && $commande->statut < 3)
+      if ($user->societe_id == 0 && $commande->statut < 3 && $_GET["action"] <> 'valid')
 	{
 	  print '<div class="tabsAction">';
 	
@@ -499,7 +495,7 @@ if ($_GET["id"] > 0)
 	    {
 	      if ($user->rights->fournisseur->commande->valider)
 		{
-		  print '<a class="tabAction" href="fiche.php?id='.$commande->id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
+		  print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
 		}
 	    }
 	    
@@ -507,9 +503,9 @@ if ($_GET["id"] > 0)
 	    {
 	      if ($user->rights->fournisseur->commande->approuver)
 		{
-		  print '<a class="tabAction" href="fiche.php?id='.$commande->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
+		  print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=approve">'.$langs->trans("ApproveOrder").'</a>';
 
-		  print '<a class="tabAction" href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+		  print '<a class="butActionRefuse" href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
 		}
 	    }
 
@@ -517,7 +513,7 @@ if ($_GET["id"] > 0)
 	    {
 	      if ($user->rights->fournisseur->commande->approuver)
 		{
-		  print '<a class="tabAction" href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
+		  print '<a class="butActionRefuse" href="fiche.php?id='.$commande->id.'&amp;action=refuse">'.$langs->trans("RefuseOrder").'</a>';
 		}
 	    }
 
@@ -525,7 +521,7 @@ if ($_GET["id"] > 0)
 	    {
 	      if ($user->rights->fournisseur->commande->creer)
 		{
-		  print '<a class="butDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+		  print '<a class="butActionDelete" href="fiche.php?id='.$commande->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 		}
 	    }
 	    
