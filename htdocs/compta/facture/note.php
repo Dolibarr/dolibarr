@@ -35,6 +35,7 @@ if (!$user->rights->facture->lire)
   accessforbidden();
 
 $langs->load("companies");
+$langs->load("bills");
 
 /*
  * Sécurité accés client

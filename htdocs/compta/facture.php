@@ -924,7 +924,7 @@ else
 	      $num_lignes = $db->num_rows();
 	      $i = 0; $total = 0;
 	    
-	      echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	      echo '<table class="noborder" width="100%">';
 	      if ($num_lignes)
 		{
 		  print "<tr class=\"liste_titre\">";
@@ -1212,7 +1212,7 @@ else
 		  print_titre("Actions sur les documents");
     
 		  $i = 0; $total = 0;
-		  print '<table class="border" cellspacing="0" cellpadding="4" width="100%">';
+		  print '<table class="border" width="100%">';
 		  print '<tr '.$bc[$var].'><td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Action").'</td><td>'.$langs->trans("By").'</td></tr>';
           print "\n";
           
@@ -1463,7 +1463,7 @@ else
 	  print_barre_liste("Factures clients",$page,$_SERVER["PHP_SELF"],"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 	  $i = 0;
-	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
 	  print '<td>';
 	  print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"f.facnumber","","&amp;socidp=$socidp");
@@ -1515,7 +1515,7 @@ else
 		
 		  if ($objp->df > 0 )
 		    {
-		      print "<TD align=\"center\">";
+		      print "<td align=\"center\">";
 		      $y = strftime("%Y",$objp->df);
 		      $m = strftime("%m",$objp->df);
 		    

@@ -29,6 +29,7 @@
 
 require("./pre.inc.php");
 
+$langs->load("bills");
 
 llxHeader();
 
