@@ -23,8 +23,6 @@ require("./pre.inc.php");
 
 llxHeader();
 
-//$db = new Db();
-
 print_titre("Gestion des adhesions a l'association");
 
 print '<p><TABLE border="0" cellspacing="0" cellpadding="4">';
