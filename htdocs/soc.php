@@ -45,7 +45,15 @@ if ($user->societe_id > 0)
 
 $soc = new Societe($db);
 
-if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
+$step=$_POST["step"];
+if ($_POST["createnextstep"]) { $step++; $_GET["action"]="create"; }
+if ($_POST["createpreviousstep"]) { $step--; $_GET["action"]="create"; }
+if (! $step) $step++;
+
+/*
+ * Actions
+ */
+if (($_POST["action"] == 'add' && (! defined(COMPANY_CREATE_TWO_STEPS) || $step == 2)) or $_POST["action"] == 'update')
 {
   $soc->nom                   = stripslashes($_POST["nom"]);
   $soc->adresse               = stripslashes($_POST["adresse"]);
@@ -77,7 +85,7 @@ if ($_POST["action"] == 'add' or $_POST["action"] == 'update')
 	  $soc->id = $_GET["socid"];
 	  // doublon sur le prefix comm
 	  $no_reload = 1;
-	  $mesg = $soc->error;//"Erreur, le prefix '".$soc->prefix_comm."' existe déjà vous devez en choisir un autre";
+	  $mesg = $soc->error;      //"Erreur, le prefix '".$soc->prefix_comm."' existe déjà vous devez en choisir un autre";
 	  $_GET["action"]= "edit";
 	}
       else
@@ -126,29 +134,28 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user-
 /**
  *
  *
- *
- *
  */
 
 llxHeader();
 
 $form = new Form($db);
 
-if ($_GET["action"] == 'create')
+if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 {
   if ($user->rights->societe->creer)
     {
       /*
-       * Fiche societe en mode création
+       * Fiche societe en mode création (Creation en 1 ou 2 temps selon COMPANY_CREATE_TWO_STEPS)
        */
       $soc->fournisseur=0;
       if ($_GET["type"]=='f') { $soc->fournisseur=1; }
       if ($_GET["type"]=='c') { $soc->client=1; }
       if ($_GET["type"]=='p') { $soc->client=2; }
+      if ($_POST["nom"]) { $soc->nom=$_POST["nom"]; }
       
       print_titre($langs->trans("NewCompany"));
       print "<br>\n";
-      
+  
       if ($soc->error)
 	{
 	  print '<div class="error">';
@@ -157,67 +164,112 @@ if ($_GET["action"] == 'create')
 	}
 
       print '<form action="soc.php" method="post">';
-      print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="codeclient_modifiable" value="1">';
       
       print '<table class="border" width="100%">';
       
-      print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
-      print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
-      print $soc->adresse;
-      print '</textarea></td></tr>';
-      
-      print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"></td>';
-      print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
+      print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="30" name="nom" value="'.$soc->nom.'"></td></tr>';
 
-      print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-      $form->select_departement($soc->departement_id);
-      print '</td></tr>';
+      // On positionne pays_id, pays_code et libelle du pays choisi
+      $soc->pays_id=$_POST["pays_id"]?$_POST["pays_id"]:(defined(MAIN_INFO_SOCIETE_PAYS)?MAIN_INFO_SOCIETE_PAYS:'');
+      if ($soc->pays_id) {
+          $sql = "SELECT code, libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$soc->pays_id;
+          $result=$db->query($sql);
+          if ($result)
+          {
+    	    $obj = $db->fetch_object($result);
+          }
+          else {
+            dolibarr_print_error($db);
+          }
+          $soc->pays_code=$obj->code;
+          $soc->pays=$obj->libelle;
+      }
+            
+      if ($step==1 && defined(COMPANY_CREATE_TWO_STEPS)) {
+          print '<tr><td width="140">'.$langs->trans('Country').'</td><td colspan="3">';
+          $form->select_pays($soc->pays_id);
+          print '</td></tr>';
+    
+          print '<input type="hidden" name="step" value="'.$step.'">';
+          print '<input type="hidden" name="action" value="create">';
+          print '<tr><td colspan="4" align="center"><input type="submit" name="createnextstep" value="'.$langs->trans('NextStep').'"></td></tr>'."\n";
 
-      print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
-      $form->select_pays($soc->pays?$soc->pays:(defined(MAIN_INFO_SOCIETE_PAYS)?MAIN_INFO_SOCIETE_PAYS:''));
-      print '</td></tr>';
-
-      print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel"></td>';
-      print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax"></td></tr>';
-      
-      print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
-      print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
-
-          print '<tr><td>'.$langs->transcountry('ProfIdSiren',$soc->pays_code).'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
-          print '<td>'.$langs->transcountry('ProfIdSiret',$soc->pays_code).'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
-          print '<tr><td>'.$langs->transcountry('ProfIdApe',$soc->pays_code).'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td><td colspan="2">&nbsp;</td></tr>';
+      }
+      if ($step==2 || ! defined(COMPANY_CREATE_TWO_STEPS)) {
+            if (defined(COMPANY_CREATE_TWO_STEPS)) {
+              print '<tr><td width="140">'.$langs->trans('Country').'</td><td colspan="3">';
+              print $soc->pays;
+              print '<input type="hidden" name="pays_id" value="'.$soc->pays_id.'">';
+              print '</td></tr>';
+            } else {
+              print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+              $form->select_pays($soc->pays_id);
+              print '</td></tr>';
+            }
+            
+          print '<input type="hidden" name="step" value="'.$step.'">';
+          print '<input type="hidden" name="action" value="add">';
+        
+          print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
+          print $soc->adresse;
+          print '</textarea></td></tr>';
+          
+          print '<tr><td>'.$langs->trans('Zip').'</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'"></td>';
+          print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
+    
+          print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
+          $form->select_departement($soc->departement_id,$soc->pays_code);
+          print '</td></tr>';
+    
+          print '<tr><td>'.$langs->trans('Phone').'</td><td><input type="text" name="tel"></td>';
+          print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax"></td></tr>';
+          
+          print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
+          print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
+    
+          print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td><input type="text" name="siren" size="15" maxlength="9" value="'.$soc->siren.'"></td>';
+          print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
+          print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td><td colspan="2">&nbsp;</td></tr>';
 
           print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
-  
-      print '<tr><td>Forme juridique</td><td colspan="3">';
-      $form->select_forme_juridique($soc->forme_juridique_code);
-      print '</td></tr>';
-  
-      print '<tr><td>Effectif</td><td colspan="3">';
-      $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
-      print '</td></tr>';
-
+      
+          print '<tr><td>Forme juridique</td><td colspan="3">';
+          $form->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
+          print '</td></tr>';
+      
+          print '<tr><td>Effectif</td><td colspan="3">';
+          $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
+          print '</td></tr>';
+    
           print '<tr><td>'.$langs->trans('TVAIntra').'</td><td colspan="3">';
-  
-      print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
-      print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
-      print '<br>Vous pouvez vérifier ce numéro sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la commission européenne';
-      print '</td></tr>';
-  
-      print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td><select name="client">';
-      print '<option value="2"'.($soc->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
-      print '<option value="1"'.($soc->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
-      print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
-      print '</select></td>'."\n";
+      
+          print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
+          print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
+          print '<br>Vous pouvez vérifier ce numéro sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la commission européenne';
+          print '</td></tr>';
+      
+          print '<tr><td>'.$langs->trans('ProspectCustomer').'</td><td><select name="client">';
+          print '<option value="2"'.($soc->client==2?' selected':'').'>'.$langs->trans('Prospect').'</option>';
+          print '<option value="1"'.($soc->client==1?' selected':'').'>'.$langs->trans('Customer').'</option>';
+          print '<option value="0"'.($soc->client==0?' selected':'').'>Ni client, ni prospect</option>';
+          print '</select></td>'."\n";
+    
+          print '<td>'.$langs->trans('Supplier').'</td><td>'."\n";
+          $form->selectyesnonum("fournisseur",$soc->fournisseur);
+          print '</td></tr>'."\n";
+    
+          print '<tr><td colspan="4" align="center">';
+          if (defined(COMPANY_CREATE_TWO_STEPS)) {
+            print '<input type="submit" name="createpreviousstep" value="'.$langs->trans('PreviousStep').'"> &nbsp; &nbsp; ';
+          }
+          print '<input type="submit" value="'.$langs->trans('AddCompany').'"></td></tr>'."\n";
+    
+        }
 
-      print '<td>'.$langs->trans('Supplier').'</td><td>'."\n";
-      $form->selectyesnonum("fournisseur",$soc->fournisseur);
-      print '</td></tr>'."\n";
-
-      print '<tr><td colspan="4" align="center"><input type="submit" value="'.$langs->trans('Add').'"></td></tr>'."\n";
       print '</table>'."\n";
       print '</form>'."\n";
+
     }
 }
 elseif ($_GET["action"] == 'edit')
@@ -261,7 +313,7 @@ elseif ($_GET["action"] == 'edit')
       print '<td>'.$langs->trans('Town').'</td><td><input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
 
       print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
-      $form->select_departement($soc->departement_id);
+      $form->select_departement($soc->departement_id,$soc->pays_code);
       print '</td></tr>';      
 
       print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
@@ -295,7 +347,7 @@ elseif ($_GET["action"] == 'edit')
       print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
 
       print '<tr><td>Forme juridique</td><td colspan="3">';
-      $form->select_forme_juridique($soc->forme_juridique_code);
+      $form->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
       print '</td></tr>';
 
       print '<tr><td>Effectif</td><td colspan="3">';
@@ -433,16 +485,16 @@ else
   print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td>';
   // Si société FR et siren fourni, on le vérifie
   if ($soc->pays_code == "FR" && $soc->siren) {
-  if ($soc->check_siren() == 0)
-    {
-      print '<a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;';
-    }
-  else
-    {
-      print '<a class="error">'.$soc->siren;
-      // Siren invalide
-      print "&nbsp;Code Siren Invalide !</a>";
-    }
+      if ($soc->check_siren() == 0)
+        {
+          print '<a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;';
+        }
+      else
+        {
+          print '<a class="error">'.$soc->siren;
+          // Siren invalide
+          print "&nbsp;Code Siren Invalide !</a>";
+        }
   }
   else {
         print $soc->siren;
