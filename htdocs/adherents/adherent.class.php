@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,8 @@
  *
  */
 
-/*!	    \file       htdocs/adherents/adherent.class.php
+/**
+	    \file       htdocs/adherents/adherent.class.php
         \ingroup    adherent
 		\brief      Fichier de la classe permettant la gestion d'un adhérent
 		\author     Rodolphe Qiedeville
@@ -36,7 +37,8 @@
 */
 
 
-/*! \class Adherent
+/** 
+        \class      Adherent
 		\brief      Classe permettant la gestion d'un adhérent
 */
 
@@ -66,7 +68,7 @@ class Adherent
 
   var $errorstr;
 
-/*!
+/**
 		\brief Adherent
 		\param DB		base de données
 		\param id		id de l'adhérent
@@ -84,7 +86,7 @@ class Adherent
   }
 
 
-/*!
+/**
 		\brief	    function envoyant un email au destinataire (recipient) avec le text fourni en parametre.
 		\param	    recipients		destinataires
 		\param	    text			contenu du message
@@ -152,7 +154,7 @@ class Adherent
     }
   }
 
-/*!
+/**
 		\brief	imprime une liste d'erreur.
 */
 
@@ -166,7 +168,7 @@ class Adherent
   }
 
 
-/*!
+/**
 		\brief  fonction qui renvoie la nature physique ou morale d'un adherent
 		\param	morphy		nature physique ou morale de l'adhérent
 */
@@ -179,7 +181,7 @@ class Adherent
     return $morphy;
   }
 
-/*!
+/**
 		\brief  fonction qui vérifie les données entrées
 		\param	minimum
 */
@@ -279,7 +281,7 @@ class Adherent
 
     }
 
-/*!
+/**
 		\brief  fonction qui crée l'adhérent
 		\param	userid		userid de l'adhérent
 */
@@ -310,7 +312,7 @@ class Adherent
     }
 
 
-/*!
+/**
 		\brief fonction qui met à jour l'adhérent
 */
   function update() 
@@ -383,7 +385,7 @@ class Adherent
     }
 
 
-/*!
+/**
 		\brief fonction qui supprime l'adhérent et les données associées
 		\param	rowid
 */
@@ -426,7 +428,7 @@ class Adherent
 
   }
 
-/*!
+/**
 		\brief      Fonction qui récupére l'adhérent en donnant son login
 		\param	    login		login de l'adhérent
 */
@@ -451,12 +453,11 @@ class Adherent
     }
   }
 
-/*!
+
+/**
 		\brief fonction qui récupére l'adhérent en donnant son rowid
 		\param	rowid
 */
-
-
 	function fetch($rowid)
   {
     $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.login, d.pass, d.naiss, d.photo, d.fk_adherent_type, d.morphy, t.libelle as type";
@@ -502,8 +503,9 @@ class Adherent
       }
     
   }
+
   
-/*!
+/**
 		\brief      Fonction qui récupére les données optionelles de l'adhérent
 		\param	    rowid
 */
@@ -577,7 +579,8 @@ class Adherent
     }
     
   }
-/*!
+  
+/**
 		\brief fonction qui insère la cotisation dans la base de données
 		\param	date
 		\param	montant
@@ -621,7 +624,7 @@ class Adherent
     }
   }
 
-/*!
+/**
 		\brief fonction qui vérifie que l'utilisateur est valide
 		\param	userid		userid de l'adhérent
 */
@@ -648,7 +651,7 @@ class Adherent
 	}
     }
 
-/*!
+/**
 		\brief fonction qui résilie un adhérent
 		\param	userid		userid de de l'adhérent
 */
@@ -676,7 +679,7 @@ class Adherent
     }
 
 
-/*!
+/**
 		\brief fonction qui ajoute l'adhérent au abonnements automatiques
 		\param	adht
 		\remarks	mailing-list, spip, glasnost, etc...
@@ -721,9 +724,9 @@ class Adherent
     }
 
 
-/*!
-		\brief fonction qui supprime l'adhérent des abonnements automatiques
-		\param	adht
+/**
+		\brief      fonction qui supprime l'adhérent des abonnements automatiques
+		\param	    adht
 		\remarks	mailing-list, spip, glasnost, etc...
 */
 
@@ -763,7 +766,7 @@ class Adherent
       }
     }
 
-/*!
+/**
 		\brief fonction qui donne les droits rédacteurs dans spip
 */
 
@@ -795,7 +798,7 @@ class Adherent
       }
     }
 
-/*!
+/**
 		\brief fonction qui enlève les droits rédacteurs dans spip
 */
 
@@ -824,7 +827,7 @@ class Adherent
       }
     }
 
-/*!
+/**
 		\brief      Fonction qui dit si cet utilisateur est un rédacteur existant dans spip
 		\return     int     1=existe, 0=n'existe pas, -1=erreur
 */
@@ -874,7 +877,7 @@ class Adherent
     }
 
 
-/*!
+/**
 		\brief      Fonction qui ajoute l'utilisateur dans glasnost
 */
 
@@ -939,7 +942,7 @@ class Adherent
       }
     }
 
-/*!
+/**
 		\brief fonction qui enlève l'utilisateur de glasnost
 */
 
@@ -1044,7 +1047,7 @@ class Adherent
       }
     }
 
-/*!
+/**
 		\brief fonction qui vérifie si l'utilisateur est dans glasnost
 */
 
@@ -1101,7 +1104,7 @@ class Adherent
       }
     }
 
-/*!
+/**
 		\brief fonction qui rajoute l'utilisateur dans mailman
 */
 
@@ -1166,7 +1169,7 @@ class Adherent
       }
   }
 
-/*!
+/**
 		\brief fonction qui désinscrit l'utilisateur de toutes les mailing list mailman
 		\ remarks	utilie lors de la résiliation d'adhésion
 */
@@ -1234,6 +1237,30 @@ class Adherent
 	return 0;
       }
   }
+
+  /**
+   *    \brief      Retourne le libellé du statut d'un adhérent (brouillon, validé, résilié)
+   *    \param      adh         Objet adhérent
+   *    \return     string      Libellé
+   */
+    function getLibStatut()
+    {
+		return $this->LibStatut($this->statut);
+    }
+
+  /**
+   *    \brief      Renvoi le libellé d'un statut donné
+   *    \param      statut      id statut
+   *    \return     string      Libellé
+   */
+    function LibStatut($statut)
+    {
+        global $langs;
+        $langs->load("members");
+        if ($statut == -1) return $langs->trans("MemberStatusDraft");
+        if ($statut == 1)  return $langs->trans("MemberStatusActive");
+        if ($statut == 0)  return $langs->trans("MemberStatusResiliated");
+    }
 
 }
 ?>

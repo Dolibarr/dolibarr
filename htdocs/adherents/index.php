@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
  *
  */
 
-/*!
+/**
     \file       htdocs/adherents/index.php
     \ingroup    adherent
     \brief      Page accueil module adherents
@@ -32,21 +32,22 @@
 require("./pre.inc.php");
 
 $langs->load("companies");
+$langs->load("members");
 
 
 llxHeader();
 
 
-print_titre("Gestion des adhérents");
+print_titre($langs->trans("MembersArea"));
 print '<br>';
 
-print '<table class="noborder" cellspacing="0" cellpadding="3">';
+print '<table class="noborder">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td>';
-print "<td align=right width=\"80\">A valider</td>";
-print "<td align=right width=\"80\">Valides</td>";
-print "<td align=right width=\"80\">Cotisants à jour</td>";
-print "<td align=right width=\"80\">Résiliés</td>";
+print '<td align=right width="80">'.$langs->trans("MembersStatusToValid").'</td>';
+print '<td align=right width="80">'.$langs->trans("MembersStatusValidated").'</td>';
+print '<td align=right width="80">'.$langs->trans("MembersStatusPayed").'</td>';
+print '<td align=right width="80">'.$langs->trans("MembersStatusResiliated").'</td>';
 print "</tr>\n";
 
 $var=True;
@@ -59,37 +60,40 @@ $AdherentsResilies=array();
 $Cotisants=array();
 
 # Liste les adherents
-$sql = "SELECT count(*) as somme , t.rowid, t.libelle, d.statut FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid GROUP BY t.libelle, d.statut";
+$sql  = "SELECT count(*) as somme , t.rowid, t.libelle, d.statut";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
+$sql .= " WHERE d.fk_adherent_type = t.rowid";
+$sql .= " GROUP BY t.libelle, d.statut";
 
 $result = $db->query($sql);
-
 if ($result) 
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
   while ($i < $num)
     {
       $objp = $db->fetch_object($result);
       $AdherentsAll[$objp->libelle]=$objp->rowid; 
       if ($objp->statut == -1) { $AdherentsAValider[$objp->libelle]=$objp->somme; }
-      if ($objp->statut == 1) { $Adherents[$objp->libelle]=$objp->somme; }
-      if ($objp->statut == 0) { $AdherentsResilies[$objp->libelle]=$objp->somme; }
+      if ($objp->statut == 1)  { $Adherents[$objp->libelle]=$objp->somme; }
+      if ($objp->statut == 0)  { $AdherentsResilies[$objp->libelle]=$objp->somme; }
       $i++;
     }
-  $db->free();
+  $db->free($result);
 
 }
 
 # Liste les cotisants a jour
-$sql = "SELECT count(*) as somme , t.libelle FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid  AND d.statut = 1 AND d.datefin >= now() GROUP BY t.libelle";
+$sql  = "SELECT count(*) as somme , t.libelle";
+$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
+$sql .= " WHERE d.fk_adherent_type = t.rowid  AND d.statut = 1 AND d.datefin >= now()";
+$sql .= " GROUP BY t.libelle";
 
 $result = $db->query($sql);
 
 if ($result) 
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
   while ($i < $num)
     {

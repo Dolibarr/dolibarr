@@ -22,7 +22,8 @@
  *
  */
 
-/*! \file htdocs/adherents/edit.php
+/** 
+        \file       htdocs/adherents/edit.php
         \ingroup    adherent
 		\brief      Page d'edition d'un adherent
 		\version    $Revision$
@@ -32,6 +33,9 @@ require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
+
+$langs->load("members");
+
 
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
@@ -49,19 +53,19 @@ if ($action == 'update')
       $adh = new Adherent($db);
 
       $adh->id          = $_POST["rowid"];
-      $adh->prenom      = $prenom;
-      $adh->nom         = $nom;  
-      $adh->societe     = $societe;
-      $adh->adresse     = $adresse;
-      $adh->amount      = $amount;
-      $adh->cp          = $cp;
+      $adh->prenom      = $_POST["prenom"];
+      $adh->nom         = $_POST["nom"];
+      $adh->societe     = $_POST["societe"];
+      $adh->adresse     = $_POST["adresse"];
+      $adh->amount      = $_POST["amount"];
+      $adh->cp          = $_POST["cp"];
       $adh->ville       = $_POST["ville"];
       $adh->email       = $_POST["email"];
       $adh->login       = $_POST["login"];
       $adh->pass        = $_POST["pass"];
       $adh->naiss       = $_POST["naiss"];
       $adh->photo       = $_POST["photo"];
-      $adh->date        = mktime(12, 0 , 0, $remonth, $reday, $reyear);
+      $adh->date        = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
       $adh->note        = $_POST["note"];
       $adh->pays        = $_POST["pays"];
       $adh->typeid      = $_POST["type"];
@@ -124,10 +128,10 @@ if ($rowid)
 
   $adht = new AdherentType($db);
 
-  print_titre("Edition de la fiche adhérent");
+  print_titre($langs->trans("EditMember"));
 
   print "<form action=\"edit.php\" method=\"post\">";
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+  print '<table class="border" width="100%">';
   
   print "<input type=\"hidden\" name=\"action\" value=\"update\">";
   print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
@@ -153,20 +157,20 @@ if ($rowid)
   print '<td rowspan="15" valign="top">';
   print '<textarea name="comment" wrap="soft" cols="40" rows="15">'.$adh->commentaire.'</textarea></td></tr>';
   
-  print '<tr><td width="15%">Prénom</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td></tr>';
+  print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td></tr>';
   
-  print '<tr><td>Nom</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td></tr>';
 
 
-  print '<tr><td>Societe</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
-  print '<tr><td>Adresse</td><td>';
+  print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("Address").'</td><td>';
   print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.$adh->adresse.'</textarea></td></tr>';
-  print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="6" value="'.$adh->cp.'"> <input type="text" name="ville" size="20" value="'.$adh->ville.'"></td></tr>';
-  print '<tr><td>Pays</td><td><input type="text" name="pays" size="40" value="'.$adh->pays.'"></td></tr>';
-  print '<tr><td>Email</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
-  print '<tr><td>Login</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
-  print '<tr><td>Password</td><td><input type="password" name="pass" size="40" value="'.$adh->pass.'"></td></tr>';
-  print '<tr><td>Date de naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$adh->naiss.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="6" value="'.$adh->cp.'"> <input type="text" name="ville" size="20" value="'.$adh->ville.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40" value="'.$adh->pays.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("Password").'</td><td><input type="password" name="pass" size="40" value="'.$adh->pass.'"></td></tr>';
+  print '<tr><td>'.$langs->trans("Birthday").'<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="40" value="'.$adh->naiss.'"></td></tr>';
   print '<tr><td>URL photo</td><td><input type="text" name="photo" size="40" value="'.$adh->photo.'"></td></tr>';
   //  $myattr=$adho->fetch_name_optionals();
   foreach($adho->attribute_label as $key=>$value){

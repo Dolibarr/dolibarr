@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@
  *
  */
 
-/*! \file htdocs/adherents/liste.php
+/** 
+        \file       htdocs/adherents/liste.php
         \ingroup    adherent
 		\brief      Page listant les adhérents
 		\version    $Revision$
@@ -40,8 +41,8 @@ $sortfield=$_GET["sortfield"];
 $page=$_GET["page"];
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
 
-if ($sortorder == "") {  $sortorder="ASC"; }
-if ($sortfield == "") {  $sortfield="d.nom"; }
+if (! $sortorder) {  $sortorder="ASC"; }
+if (! $sortfield) {  $sortfield="d.nom"; }
 
 if ($page == -1) { $page = 0 ; }
 
@@ -77,8 +78,8 @@ if ($result)
   $titre=$langs->trans("MembersList");
   if (isset($_GET["statut"])) {
     if ($statut == -1) { $titre=$langs->trans("MembersListToValid"); }
-    if ($statut == 1) { $titre=$langs->trans("MembersListValid"); }
-    if ($statut == 0) { $titre=$langs->trans("MembersListResiliated"); }
+    if ($statut == 1)  { $titre=$langs->trans("MembersListValid"); }
+    if ($statut == 0)  { $titre=$langs->trans("MembersListResiliated"); }
   }
   elseif ($_POST["action"] == 'search') {
       $titre="Liste des adhérents répondant aux critères";
@@ -142,18 +143,9 @@ if ($result)
       print "<td>".$adh->getmorphylib($objp->morphy)."</td>\n";
       print "<td>";
 
-      if ($objp->statut == -1)
-	{
-	  print '<a href="fiche.php?rowid='.$objp->rowid.'">A valider</a>';
-	}
-      if ($objp->statut == 0)
-	{
-	  print 'Résilié';
-	}
-      if ($objp->statut == 1)
-	{
-	  print 'Validé';
-	}
+      if ($objp->statut == -1) print '<a href="fiche.php?rowid='.$objp->rowid.'">';
+      print $adh->LibStatut($objp->statut);
+      if ($objp->statut == -1) print '</a>';
 
       print "</td>";
       print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".img_edit()."</a> &nbsp; ";
@@ -162,11 +154,10 @@ if ($result)
       $i++;
     }
   print "</table><br>\n";
-  print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<table class=\"noborder\" width=\"100%\">";
   
   print_barre_liste("", $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
 
-//  print_fleche_navigation($page,"liste.php","&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",1);
   print "</table><br>\n";
 
 }
