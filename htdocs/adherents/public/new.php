@@ -54,6 +54,9 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	{     
 	  $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
 	}
+      // Envoi d'un Email de confirmation au nouvel adherent
+      $mesg="Merci de votre inscription. Votre adhesion devrait etre rapidement validee.\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\nPrenom : $prenom\nNom : $nom\nSociete = $societe\nAdresse = $adresse\nCode Postal : $cp\nVille : $ville\nPays : $pays\nEmail : $email\nLogin : $login\nPassword : $pass\nNote : $note\nType : $type\n\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\n http://$SERVER_NAME/adherents/private/edit.php\n\n";
+      mail($email,"Votre adhesion sur http://$SERVER_NAME/",$mesg);
       Header("Location: new.php?action=added");
     }
 }
@@ -84,7 +87,7 @@ if ($result) {
   }
 }
 print_titre("Nouvel adhérent");
-
+print "Les login et password vous serviront a editer vos coordonnees ulterieurement<BR>\n";
 print "<form action=\"$PHP_SELF\" method=\"post\">\n";
 print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
