@@ -47,6 +47,8 @@ drop table if exists llx_adherent;
 
 drop table if exists llx_adherent_type;
 
+drop table if exists llx_adherent_options;
+
 drop table if exists llx_bank;
 
 drop table if exists llx_bank_account;
