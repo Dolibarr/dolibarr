@@ -103,14 +103,13 @@ class Translate {
     
     /**
      *  \brief       Retourne la version traduite du texte passé en paramètre
-     *               Si il n'y a pas de correspondance pour ce texte, il est retourné
-     *               "tel quel" précédé d'un "<b>[vo]</b> <i>" et terminé par un </i>
+     *               Si il n'y a pas de correspondance pour ce texte, il est retourné tel quel
      *  [en]         Return translated version of parameter string
      *  \param       str         original string to translate
      *  \param       param1      chaine de param1
      *  \param       param2      chaine de param1
      *  \param       param3      chaine de param1
-     *  \return      string      translated version of parameter string, or original version of this string with "<b>[vo]</b> <i>" before and "</i>" after
+     *  \return      string      chaine traduite
      */
 		 
     function trans($str, $param1='', $param2='', $param3='') {
