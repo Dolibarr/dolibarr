@@ -80,10 +80,15 @@ if ($action == 'del' && $account)
   //bank_delete_line($db, $rowid);
 }
 
+/*
+ *
+ *
+ *
+ */
 
 llxHeader();
 
-if ($account)
+if ($account > 0)
 {
   if ($vline)
     {
@@ -403,42 +408,11 @@ if ($account)
       
   }
   print "</table></form>";
-
-} else {
-
-  print_titre ("Comptes bancaires");
-
-  print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-  print "<TR class=\"liste_titre\">";
-  print "<td>Label</td><td>Banque</TD>";
-  print "<td align=\"left\">Numéro</a></TD>";
-  print "</TR>\n";
-
-  $sql = "SELECT rowid, label,number,bank FROM llx_bank_account";
-
-  $result = $db->query($sql);
-  if ($result) {
-    $var=True;  
-    $num = $db->num_rows();
-    $i = 0; $total = 0;
-
-    $sep = 0;
-
-    while ($i < $num) {
-      $objp = $db->fetch_object( $i);
-
-      print "<tr><td>$objp->label</td><td>$objp->bank</td><td>$objp->number</td></tr>";
-
-      $i++;
-    }
-    $db->free();
-  }
-
-  //$acc = new Account($db);
-
-  print "</table>";
 }
-
+else
+{
+  print "Erreur : numéro ce compte inexistant";
+}
 
 $db->close();
 
