@@ -1,0 +1,104 @@
+<?PHP
+/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ *
+ */
+
+require("./pre.inc.php");
+require("./propalestats.class.php");
+
+llxHeader();
+$year = $_GET["year"];
+$mesg = '';
+
+print_fiche_titre('Statistiques des propositions commerciales '.$year, $mesg);
+
+//print '<a href="month.php?year='.($year - 1).'">'.($year - 1).'</a> - '.
+//print '<a href="month.php?year='.($year + 1).'">'.($year + 1).'</a>'.
+
+/*
+ *
+ *
+ */
+$stats = new PropaleStats($db);
+
+$dir = DOL_DOCUMENT_ROOT;
+
+////////////////////////
+
+$data = $stats->getNbByMonth($year);
+
+$filev = "/document/images/propale$year.png";
+
+$px = new Graph($data);
+$px->SetMaxValue($px->GetMaxValue());
+$px->SetWidth(450);
+$px->SetHeight(280);
+
+$px->draw($dir.$filev, $data, $year);
+
+/////
+
+$res = $stats->getAmountByMonth($year);
+
+$data = array();
+
+for ($i = 1 ; $i < 13 ; $i++)
+{
+  $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
+}
+
+$file_amount = "/document/images/propalamount$year.png";
+
+$px = new Graph();
+$px->SetYLabel("Montant");
+$px->draw($dir.$file_amount, $data, $year);
+
+$res = $stats->getAverageByMonth($year);
+
+$data = array();
+
+for ($i = 1 ; $i < 13 ; $i++)
+{
+  $data[$i-1] = array(strftime("%b",mktime(12,12,12,$i,1,$year)), $res[$i]);
+}
+$file_avg = "/document/images/propalaverage$year.png";
+$px = new Graph();
+$px->SetYLabel("Montant moyen");
+$px->draw($dir.$file_avg, $data, $year);
+
+
+print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr><td align="center">Nombre par mois</td>';
+print '<td align="center">';
+print '<img src="'.DOL_URL_ROOT.$filev.'">';
+print '</td></tr>';
+print '<tr><td align="center">Sommes</td>';
+print '<td align="center">';
+print '<img src="'.DOL_URL_ROOT.$file_amount.'">';
+print '</td></tr>';
+print '<tr><td align="center">Montant moyen</td>';
+print '<td align="center">';
+print '<img src="'.DOL_URL_ROOT.$file_avg.'">';
+print '</td></tr></table>';
+
+$db->close();
+
+llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+?>
