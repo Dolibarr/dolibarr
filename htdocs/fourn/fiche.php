@@ -25,6 +25,7 @@ require("./pre.inc.php");
 require("../contact.class.php");
 
 $langs->load("bills");
+$langs->load("orders");
 $langs->load("companies");
 
 $socid = $_GET["socid"];
@@ -109,6 +110,57 @@ if ( $societe->fetch($socid) )
    *
    */
   print '</td><td valign="top" width="50%">';
+
+  /*
+   *
+   * Liste des commandes associées
+   *
+   */
+  $sql  = "SELECT p.rowid,p.ref,".$db->pdate("p.date_commande")." as dc, p.fk_statut";
+  $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
+  $sql .= " WHERE p.fk_soc =".$societe->id;
+  $sql .= " ORDER BY p.rowid DESC LIMIT 0,4";
+  if ( $db->query($sql) )
+    {
+      print '<table class="noborder" cellspacing="0" width="100%" cellpadding="4">';
+      $i = 0 ; 
+      $num = $db->num_rows();
+      if ($num > 0)
+	{
+	  print '<tr class="liste_titre">';
+	  print "<td colspan=\"2\"><a href=\"commande/liste.php?socid=$societe->id\">Dernières commandes</td></tr>";
+	}
+      while ($i < $num && $i < 5)
+	{
+	  $obj = $db->fetch_object();
+      $var=!$var;
+      
+	  print "<tr $bc[$var]>";
+	  print '<td>';
+	  print '<img src="commande/statut'.$obj->fk_statut.'.png">&nbsp;';
+	  print '<a href="commande/fiche.php?id='.$obj->rowid.'">';
+	  print $obj->ref.'</a></td>';	    
+	  print "<td align=\"right\" width=\"100\">";
+	  if ($obj->dc)
+	    {
+	      print dolibarr_print_date($obj->dc);
+	    }
+	  else
+	    {
+	      print "-";
+	    }
+	  print "</td></tr>";
+	  $i++;
+	}
+      $db->free();
+      print "</table>";
+    }
+  else
+    {
+      print $db->error();
+    }
+
+
   /*
    *
    * Liste des factures associées
@@ -161,6 +213,7 @@ if ( $societe->fetch($socid) )
    */
   
   print '<div class="tabsAction">';
+  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("CreateOrder").'</a>';
   print '<a class="tabAction" href="facture/fiche.php?action=create&socid='.$societe->id.'">'.$langs->trans("CreateBill").'</a>';
   print '</div>';
     
