@@ -31,7 +31,8 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-llxHeader("","../");
+llxHeader("","Liste des Projets","Projet");
+
 print_titre("Projets");
 
 /*
