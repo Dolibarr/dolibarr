@@ -81,12 +81,13 @@ class modProduit extends DolibarrModules
     /*
      * Permissions
      */
-		$this->remove();
+    $this->remove();
     $sql = array(
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (30,'Tous les droits sur les produits/services','produit','a',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (31,'Lire les produits/services','produit','r',1);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (32,'Créer modifier les produits/services','produit','w',0);",
-		 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (34,'Supprimer les produits/services','produit','d',0);"
+	 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (30,'Tous les droits sur les produits/services','produit','a',0);",
+	 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (31,'Lire les produits/services','produit','r',1);",
+	 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (32,'Créer modifier les produits/services','produit','w',0);",
+	 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (33,'Commander les produits','produit','d',0);",
+	 "INSERT INTO ".MAIN_DB_PREFIX."rights_def VALUES (34,'Supprimer les produits/services','produit','d',0);"
 		 );
 
     return $this->_init($sql);
