@@ -24,6 +24,8 @@
  */
 require ("../../master.inc.php");
 
+$img_root = DOL_DATA_ROOT."/graph/telephonie/";
+
 /*
  * Création des répertoires
  *
@@ -36,8 +38,7 @@ $dirs[4] = DOL_DATA_ROOT."/graph/telephonie/ca/";
 $dirs[5] = DOL_DATA_ROOT."/graph/telephonie/client/";
 $dirs[6] = DOL_DATA_ROOT."/graph/telephonie/lignes/";
 $dirs[7] = DOL_DATA_ROOT."/graph/telephonie/commercials/";
-
-$img_root = DOL_DATA_ROOT."/graph/telephonie/";
+$dirs[8] = DOL_DATA_ROOT."/graph/telephonie/contrats/";
 
 $numdir = sizeof($dirs);
 
