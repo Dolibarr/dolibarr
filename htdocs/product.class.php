@@ -350,6 +350,17 @@ class Product
 
 	  $this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
 
+	  if ($this->type == 0)
+	    {
+	      $this->isproduct = 1;
+	      $this->isservice = 0;
+	    }
+	  else
+	    {
+	      $this->isproduct = 0;
+	      $this->isservice = 1;
+	    }
+
 	  $this->db->free();
 
 	  $sql = "SELECT reel, fk_entrepot";
