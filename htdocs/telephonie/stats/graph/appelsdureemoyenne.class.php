@@ -32,6 +32,7 @@ class GraphAppelsDureeMoyenne extends GraphBrouzouf{
 
     $this->client = 0;
     $this->contrat = 0;
+    $this->ligne = 0;
     $this->titre = "Durée moyenne des appels";
 
     //$this->type = "LinePlot";
@@ -47,11 +48,11 @@ class GraphAppelsDureeMoyenne extends GraphBrouzouf{
     $sql = "SELECT date_format(td.date,'%Y%m'), sum(td.duree), count(td.duree)";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as td";
     
-    if ($this->client == 0 && $this->contrat == 0)
+    if ($this->client == 0 && $this->contrat == 0 && $this->ligne == 0)
       {
 	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
       }
-    elseif ($this->client > 0 && $this->contrat == 0)
+    elseif ($this->client > 0 && $this->contrat == 0 && $this->ligne == 0)
       {
 	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
 
@@ -59,7 +60,7 @@ class GraphAppelsDureeMoyenne extends GraphBrouzouf{
 	$sql .= " AND s.fk_client_comm = ".$this->client;
 	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
       }
-    elseif ($this->client == 0 && $this->contrat > 0)
+    elseif ($this->client == 0 && $this->contrat > 0 && $this->ligne == 0)
       {
 
 	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
@@ -68,7 +69,15 @@ class GraphAppelsDureeMoyenne extends GraphBrouzouf{
 	$sql .= " AND s.fk_contrat = ".$this->contrat;
 	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
       }
+    elseif ($this->client == 0 && $this->contrat == 0 && $this->ligne > 0)
+      {
 
+	$sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as s";   
+
+	$sql .= " WHERE td.ligne = s.ligne";
+	$sql .= " AND s.rowid = ".$this->ligne;
+	$sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
+      }
     
     if ($this->db->query($sql))
       {
