@@ -45,6 +45,17 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user-
       Header("Location: liste.php");
     }
 }
+
+if ($_POST["action"] == 'confirm_valide' && $_POST["confirm"] == 'yes' && $user->rights->facture->creer)
+{
+  $paiement = new Paiement($db);
+  $paiement->id = $_GET["id"];
+  if ( $paiement->valide() == 0 )
+    {
+      Header("Location: fiche.php?id=".$paiement->id);
+    }
+}
+
 /*
  *
  *
@@ -68,15 +79,25 @@ $paiement->fetch($_GET["id"]);
 $html = new Form($db);
 
 /*
- * Confirmation de la suppression de la facture
+ * Confirmation de la suppression du paiement
  *
  */
  if ($_GET["action"] == 'delete')
    {
-	 print '<br>';
+     print '<br>';
      $html->form_confirm("fiche.php?id=$paiement->id","Supprimer le paiement","Etes-vous sûr de vouloir supprimer ce paiement ?","confirm_delete");
+     print '<br>';
+
    }
  
+ if ($_GET["action"] == 'valide')
+   {
+     print '<br>';
+     $html->form_confirm("fiche.php?id=$paiement->id","Valider le paiement","Etes-vous sûr de vouloir valider ce paiment, auncune modification n'est possible une fois le paiement validé ?","confirm_valide");
+     print '<br>';
+
+   }
+
 
 print '<table class="noborder" width="100%">';
 
@@ -157,20 +178,22 @@ if ($db->query($sql))
  *
  *
  */
-  print "<br></div>";
+print "<br></div>";
+print '<div class="tabsAction">';
 
-  if ($user->societe_id == 0 && $allow_delete)
-    {
-      print '<div class="tabsAction">';
+if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET["action"] == '')
+{
+  print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=valide">'.$langs->trans("Valider").'</a>';
+}
 
-      if ($_GET["action"] != 'delete') { 
-      	print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=delete">'.$langs->trans("Delete").'</a>';
-      }
-      
-      print "</div>";      
-    }
 
-  $db->close();
+if ($user->societe_id == 0 && $allow_delete && $paiement->statut == 0 && $_GET["action"] == '')
+{
+  print '<a class="butDelete" href="fiche.php?id='.$_GET["id"].'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+  
+}
+print "</div>";      
+$db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 ?>

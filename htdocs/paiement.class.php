@@ -62,13 +62,13 @@ class Paiement
   }
 
   /**
-   *    \brief      Recupére l'objet paiement
+   *    \brief      Récupère l'objet paiement
    *    \param      id       id du paiement a récupérer
    */
 	 
   function fetch($id) 
     {
-      $sql = "SELECT p.rowid,".$this->db->pdate("p.datep")." as dp, p.amount";
+      $sql = "SELECT p.rowid,".$this->db->pdate("p.datep")." as dp, p.amount, p.statut";
       $sql .=", c.libelle as paiement_type, p.num_paiement";
       $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."c_paiement as c";
       $sql .= " WHERE p.fk_paiement = c.id";
@@ -87,6 +87,7 @@ class Paiement
 	      $this->montant        = $obj->amount;
 	      $this->note           = $obj->note;
 	      $this->type_libelle   = $obj->paiement_type;
+	      $this->statut         = $obj->statut;
 
 	      return 1;
 	    }
@@ -210,7 +211,7 @@ class Paiement
     $form->select($name, $sql, $id);
   }
 
-  /*
+  /**
    *
    *
    *
@@ -254,6 +255,24 @@ class Paiement
       {
 	dolibarr_print_error($this->db);
     	return 0;
+      }
+    }
+
+  /**
+   *    \brief      Valide la paiement
+   */
+  function valide()
+    {
+    $sql = "UPDATE ".MAIN_DB_PREFIX."paiement SET statut = 1 WHERE rowid = ".$this->id;
+    $result = $this->db->query($sql);
+    if ($result) 
+      {	    
+	return 0;
+      }
+    else
+      {
+	dolibarr_syslog("Paiement::Valide Error -1");
+    	return -1;
       }
     }
 
