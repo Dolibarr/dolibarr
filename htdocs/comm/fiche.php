@@ -208,7 +208,7 @@ if ($_socid > 0)
     print '<tr><td valign="top">';
     print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
 
-    print '<tr><td width="20%">'.$langs->trans("FirstName").'</td><td width="80%" colspan="3">';
+    print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">';
     print $objsoc->nom;
     print '</td></tr>';
     print "<tr><td valign=\"top\">".$langs->trans("Address")."</td><td colspan=\"3\">".nl2br($objsoc->adresse)."<br>".$objsoc->cp." ".$objsoc->ville." ".$objsoc->pays."</td></tr>";
@@ -229,6 +229,7 @@ if ($_socid > 0)
     print "</td></tr>";
 
     print "<tr><td>".$langs->trans("Type")."</td><td> $objsoc->typent</td><td>Effectif</td><td>$objsoc->effectif</td></tr>";
+    print '<tr><td colspan="2">'.$langs->trans("CustomerDiscount").'</td><td colspan="2">'.$objsoc->remise_client."&nbsp;%</td></tr>";
 
     print "</table>";
 
@@ -410,7 +411,7 @@ if ($_socid > 0)
        */
       print '<table class="noborder" width="100%" cellspacing="1" cellpadding="2">';
 
-      print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
+      print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("LastName").'</td>';
       print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
       print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
       print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a></td>";
