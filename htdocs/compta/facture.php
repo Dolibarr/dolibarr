@@ -48,47 +48,47 @@ if ($user->societe_id > 0)
  *
  */ 
 
-if ($HTTP_POST_VARS["action"] == 'classin') 
+if ($_POST["action"] == 'classin') 
 {
   $facture = new Facture($db);
   $facture->fetch($facid);
-  $facture->classin($HTTP_POST_VARS["projetid"]);
+  $facture->classin($_POST["projetid"]);
 }
 /*
  *
  */	
-if ($HTTP_POST_VARS["action"] == 'add') 
+if ($_POST["action"] == 'add') 
 {
-  $datefacture = mktime(12, 0 , 0, $HTTP_POST_VARS["remonth"], $HTTP_POST_VARS["reday"], $HTTP_POST_VARS["reyear"]); 
+  $datefacture = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]); 
 
-  $facture = new Facture($db, $HTTP_POST_VARS["socid"]);
+  $facture = new Facture($db, $_POST["socid"]);
 
-  $facture->number         = $HTTP_POST_VARS["facnumber"];
+  $facture->number         = $_POST["facnumber"];
   $facture->date           = $datefacture;      
-  $facture->note           = $HTTP_POST_VARS["note"];
+  $facture->note           = $_POST["note"];
 
-  if ($HTTP_POST_VARS["fac_rec"] > 0)
+  if ($_POST["fac_rec"] > 0)
     {
       /*
        * Facture récurrente
        */
-      $facture->fac_rec = $HTTP_POST_VARS["fac_rec"];
+      $facture->fac_rec = $_POST["fac_rec"];
       $facid = $facture->create($user);
     }
   else
     {
-      $facture->projetid       = $HTTP_POST_VARS["projetid"];
-      $facture->cond_reglement = $HTTP_POST_VARS["condid"];
-      $facture->amount         = $HTTP_POST_VARS["amount"];
-      $facture->remise         = $HTTP_POST_VARS["remise"];
-      $facture->remise_percent = $HTTP_POST_VARS["remise_percent"];
+      $facture->projetid       = $_POST["projetid"];
+      $facture->cond_reglement = $_POST["condid"];
+      $facture->amount         = $_POST["amount"];
+      $facture->remise         = $_POST["remise"];
+      $facture->remise_percent = $_POST["remise_percent"];
 
-      if (!$HTTP_POST_VARS["propalid"] && !$HTTP_POST_VARS["commandeid"]) 
+      if (!$_POST["propalid"] && !$_POST["commandeid"]) 
 	{      
-	  $facture->add_product($HTTP_POST_VARS["idprod1"],$HTTP_POST_VARS["qty1"],$HTTP_POST_VARS["remise_percent1"]);
-	  $facture->add_product($HTTP_POST_VARS["idprod2"],$HTTP_POST_VARS["qty2"],$HTTP_POST_VARS["remise_percent2"]);
-	  $facture->add_product($HTTP_POST_VARS["idprod3"],$HTTP_POST_VARS["qty3"],$HTTP_POST_VARS["remise_percent3"]);
-	  $facture->add_product($HTTP_POST_VARS["idprod4"],$HTTP_POST_VARS["qty4"],$HTTP_POST_VARS["remise_percent4"]);
+	  $facture->add_product($_POST["idprod1"],$_POST["qty1"],$_POST["remise_percent1"]);
+	  $facture->add_product($_POST["idprod2"],$_POST["qty2"],$_POST["remise_percent2"]);
+	  $facture->add_product($_POST["idprod3"],$_POST["qty3"],$_POST["remise_percent3"]);
+	  $facture->add_product($_POST["idprod4"],$_POST["qty4"],$_POST["remise_percent4"]);
 	  
 	  $facid = $facture->create($user);
 
@@ -102,16 +102,16 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	  /*
 	   * Propale
 	   */
-	  if ($HTTP_POST_VARS["propalid"])
+	  if ($_POST["propalid"])
 	    {
-	      $facture->propalid = $HTTP_POST_VARS["propalid"];
+	      $facture->propalid = $_POST["propalid"];
 	  
 	      $facid = $facture->create($user);
 	      
 	      if ($facid)
 		{
 		  $prop = New Propal($db);
-		  if ( $prop->fetch($HTTP_POST_VARS["propalid"]) )
+		  if ( $prop->fetch($_POST["propalid"]) )
 		    {
 		      for ($i = 0 ; $i < sizeof($prop->lignes) ; $i++)
 			{
@@ -135,15 +135,15 @@ if ($HTTP_POST_VARS["action"] == 'add')
 	   * Commande
 	   */
 
-	  if ($HTTP_POST_VARS["commandeid"])
+	  if ($_POST["commandeid"])
 	    {
-	      $facture->commandeid = $HTTP_POST_VARS["commandeid"];
+	      $facture->commandeid = $_POST["commandeid"];
 	      $facid = $facture->create($user);
 
 	      if ($facid)
 		{
 		  $comm = New Commande($db);
-		  if ( $comm->fetch($HTTP_POST_VARS["commandeid"]) )
+		  if ( $comm->fetch($_POST["commandeid"]) )
 		    {
 		      $lines = $comm->fetch_lignes();
 		      for ($i = 0 ; $i < sizeof($lines) ; $i++)
@@ -179,7 +179,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
  *
  */
 
-if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] == yes && $user->rights->facture->valider)
+if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == yes && $user->rights->facture->valider)
 {
   $fac = new Facture($db);
   $fac->fetch($facid);
@@ -204,12 +204,12 @@ if ($action == 'canceled' && $user->rights->facture->paiement)
   $result = $fac->set_canceled($facid);
 }
 
-if ($HTTP_POST_VARS["action"] == 'setremise' && $user->rights->facture->creer) 
+if ($_POST["action"] == 'setremise' && $user->rights->facture->creer) 
 {
   $fac = new Facture($db);
   $fac->fetch($facid);
 
-  $fac->set_remise($user, $HTTP_POST_VARS["remise"]);
+  $fac->set_remise($user, $_POST["remise"]);
 } 
 
 
@@ -218,12 +218,12 @@ if ($action == 'addligne' && $user->rights->facture->creer)
   $fac = new Facture($db);
   $fac->fetch($facid);
   $result = $fac->addline($facid,
-			  $HTTP_POST_VARS["desc"],
-			  $HTTP_POST_VARS["pu"],
-			  $HTTP_POST_VARS["qty"],
-			  $HTTP_POST_VARS["tva_tx"],
+			  $_POST["desc"],
+			  $_POST["pu"],
+			  $_POST["qty"],
+			  $_POST["tva_tx"],
 			  0,
-			  $HTTP_POST_VARS["remise_percent"]);
+			  $_POST["remise_percent"]);
 }
 
 if ($action == 'updateligne' && $user->rights->facture->creer) 
@@ -231,10 +231,10 @@ if ($action == 'updateligne' && $user->rights->facture->creer)
   $fac = new Facture($db,"",$facid);
   $fac->fetch($facid);
   $result = $fac->updateline($rowid,
-			     $HTTP_POST_VARS["desc"],
-			     $HTTP_POST_VARS["price"],
-			     $HTTP_POST_VARS["qty"],
-			     $HTTP_POST_VARS["remise_percent"]);
+			     $_POST["desc"],
+			     $_POST["price"],
+			     $_POST["qty"],
+			     $_POST["remise_percent"]);
 }
 
 if ($action == 'deleteline' && $user->rights->facture->creer) 
@@ -244,7 +244,7 @@ if ($action == 'deleteline' && $user->rights->facture->creer)
   $result = $fac->deleteline($rowid);
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
 {
   if ($user->rights->facture->supprimer ) 
     {
@@ -257,7 +257,7 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
 /*
  *
  */
-if ($HTTP_POST_VARS["action"] == 'send' || $HTTP_POST_VARS["action"] == 'relance')
+if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 {
   $fac = new Facture($db,"",$facid);
   if ( $fac->fetch($facid) )
@@ -267,36 +267,36 @@ if ($HTTP_POST_VARS["action"] == 'send' || $HTTP_POST_VARS["action"] == 'relance
 		if (is_readable($file))
 		{
 	  
-		  if ($HTTP_POST_VARS["sendto"]) {
+		  if ($_POST["sendto"]) {
 		    // Le destinataire a été fourni via le champ libre
-			$sendto = $HTTP_POST_VARS["sendto"];
+			$sendto = $_POST["sendto"];
 			$sendtoid = 0;
 		  }
-		  elseif ($HTTP_POST_VARS["destinataire"]) {
+		  elseif ($_POST["destinataire"]) {
 	  	    // Le destinataire a été fourni via la liste déroulante
 	        $soc = new Societe($db, $fac->socidp);
-		  	$sendto = $soc->contact_get_email($HTTP_POST_VARS["destinataire"]);
-		    $sendtoid = $HTTP_POST_VARS["destinataire"];
+		  	$sendto = $soc->contact_get_email($_POST["destinataire"]);
+		    $sendtoid = $_POST["destinataire"];
 		  }
 
 		  if (strlen($sendto))
 		  {	  
-		      if ($HTTP_POST_VARS["action"] == 'send') {
+		      if ($_POST["action"] == 'send') {
 		      	$subject = "Facture $fac->ref";
 		      	$actioncode=9;
 				$actionmsg="Envoyée à $sendto";
 		      	$actionmsg2="Envoi Facture par mail";
 		      }
-		      if ($HTTP_POST_VARS["action"] == 'relance') 	{
+		      if ($_POST["action"] == 'relance') 	{
 		      	$subject = "Relance facture $fac->ref";
 		      	$actioncode=10;
 		      	$actionmsg="Relance envoyée à $sendto";
 		      	$actionmsg2="Relance Facture par mail";
 		      }
-		      $message = $HTTP_POST_VARS["message"];
+		      $message = $_POST["message"];
 		      $filename = $fac->ref.".pdf";
 		      
-		      $replyto = $HTTP_POST_VARS["replytoname"] . " <".$HTTP_POST_VARS["replytomail"] .">";
+		      $replyto = $_POST["replytoname"] . " <".$_POST["replytomail"] .">";
 		      
 			  // Envoi de la facture
 			  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,array ($file),array ("application/pdf"),array ($filename));
@@ -1027,11 +1027,12 @@ else
 	 */
 	$file = FAC_OUTPUTDIR . "/" . $fac->ref . "/" . $fac->ref . ".pdf";
 	
+    print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
+
 	if (file_exists($file))
 	  {
-	    print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
 	    print_titre("Documents");
-	    print '<table width="100%" cellspacing="0" class="border" cellpadding="3">';
+	    print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
 	    
 	    print "<tr $bc[0]><td>Facture PDF</td>";
 	    print '<td><a href="'.FAC_OUTPUT_URL."/".$fac->ref."/".$fac->ref.'.pdf">'.$fac->ref.'.pdf</a></td>';
@@ -1040,51 +1041,51 @@ else
 	    print '</tr>';
 	           	
 	    print "</table>\n";
-	    print '</td><td valign="top" width="50%">';
-	    /*
-	     * Liste des actions
-	     *
-	     */
-	    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
-	    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $fac->id";
-	    
-	    $result = $db->query($sql);
-	    if ($result)
-	      {
-		$num = $db->num_rows();
-		if ($num)
-		  {
-		    print_titre("Actions");
+      }
 
-		    $i = 0; $total = 0;
-		    print '<table border="1" cellspacing="0" cellpadding="4" width="100%">';
-		    print "<tr $bc[$var]><td>Date</td><td>Action</td></tr>\n";
-		    
-		    $var=True;
-		    while ($i < $num)
-		      {
-			$objp = $db->fetch_object( $i);
-			$var=!$var;
-			print "<tr $bc[$var]>";
-			print "<td>".strftime("%d %B %Y",$objp->da)."</TD>\n";
-			print '<td>'.stripslashes($objp->note).'</TD>';
-			print "</tr>";
-			$i++;
-		      }
-		    print "</table>";
-		  }
-	      }
-	    else
-	      {
-		print $db->error();
-	      }
+    print '</td><td valign="top" width="50%">';
+
+    /*
+    * Liste des actions propres aux document
+    *
+    */
+    $sql = "SELECT ".$db->pdate("a.datea")." as da,  a.note";
+    $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $fac->id";
+    
+    $result = $db->query($sql);
+    if ($result)
+    {
+        $num = $db->num_rows();
+        if ($num)
+        {
+            print_titre("Actions sur les documents");
+    
+            $i = 0; $total = 0;
+            print '<table class="border" cellspacing="0" cellpadding="4" width="100%">';
+            print "<tr $bc[$var]><td>Date</td><td>Action</td></tr>\n";
+    
+            $var=True;
+            while ($i < $num)
+            {
+                $objp = $db->fetch_object( $i);
+                $var=!$var;
+                print "<tr $bc[$var]>";
+                print "<td>".strftime("%d %B %Y",$objp->da)."</TD>\n";
+                print '<td>'.stripslashes($objp->note).'</TD>';
+                print "</tr>";
+                $i++;
+            }
+            print "</table>";
+        }
+    }
+    else
+    {
+        print $db->error();
+    }
 	    
-	    /*
-	     *
-	     *
-	     */
-	    print "</td></tr></table>";
-	  }
+	print "</td></tr></table>";
+	    
+	    
 	/*
 	 *
 	 *
@@ -1277,9 +1278,9 @@ else
 	if ($year > 0)
 	  $sql .= " AND date_format(f.datef, '%Y') = $year";
 
-	if (strlen($HTTP_POST_VARS["sf_ref"]) > 0)
+	if (strlen($_POST["sf_ref"]) > 0)
 	  {
-	    $sql .= " AND f.facnumber like '%".$HTTP_POST_VARS["sf_ref"] . "%'";
+	    $sql .= " AND f.facnumber like '%".$_POST["sf_ref"] . "%'";
 	  }
 
 	$sql .= " GROUP BY f.facnumber";   
