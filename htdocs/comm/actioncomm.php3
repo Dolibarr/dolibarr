@@ -40,10 +40,6 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-print "<A href=\"$PHP_SELF?page=$pageprev&begin=$begin&stcomm=$stcomm\">< Prev</A>\n| ";
-print " <A href=\"$PHP_SELF?page=$pagenext&begin=$begin&stcomm=$stcomm\">Next ></A>\n";
-
-
 $bc1="bgcolor=\"#90c090\"";
 $bc2="bgcolor=\"#b0e0b0\"";
 /*
@@ -86,14 +82,16 @@ if ($action=='create' && $actionid && $contactid) {
   print '<input type="hidden" name="socid" value="'.$socid.'">';
 
   print '<table width="100%" border="1" cellspacing="0" cellpadding="3">';
-  print '<tr><td width="10%">Action</td><td colspan="3" bgcolor="#e0e0e0"><b>'.$caction->libelle.'</td></tr>';
-  print '<tr><td width="10%">Société</td><td width="40%"bgcolor="#e0e0e0"><b>'.$societe->nom.'</td>';
-  print '<td width="10%">Contact</td><td width="40%"bgcolor="#e0e0e0"><b>'.$contact->fullname.'</td></tr>';
-  print '<tr><td>Auteur</td><td>'.$user->fullname.'</td>';
+  print '<tr><td width="10%">Action</td><td bgcolor="#e0e0e0"><b>'.$caction->libelle.'</td></tr>';
+  print '<tr><td width="10%">Société</td><td width="40%"bgcolor="#e0e0e0"><b><a href="index.php3?socid='.$socid.'">'.$societe->nom.'</a></td></tr>';
+  print '<tr><td width="10%">Contact</td><td width="40%"bgcolor="#e0e0e0"><b>'.$contact->fullname.'</td></tr>';
   print '<td>Date</td><td>'.strftime('%d %B %Y %H:%M',time()).'</td></tr>';
-  print '<tr><td valign="top">Commentaire</td><td colspan="3">';
+  print '<tr><td valign="top">Commentaire</td><td>';
   print '<textarea cols="60" rows="6" name="note"></textarea></td></tr>';
-  print '<tr><td colspan="4" align="center"><input type="submit"></td></tr>';
+
+  print '<tr><td width="10%">A recontacter le</td><td width="40%"bgcolor="#e0e0e0"><b>'.$contact->fullname.'</td></tr>';
+
+  print '<tr><td colspan="2" align="center"><input type="submit"></td></tr>';
 
   print '</form></table>';
   $limit = 10;

@@ -125,23 +125,24 @@ class Propal {
    *
    *
    */
-  Function fetch($db, $rowid) {
+  Function fetch($rowid) {
 
-    $sql = "SELECT ref,price,".$db->pdate(datep)."as dp FROM llx_propal WHERE rowid=$rowid;";
+    $sql = "SELECT ref,price,remise,".$this->db->pdate(datep)."as dp FROM llx_propal WHERE rowid=$rowid;";
 
-    if ($db->query($sql) ) {
-      if ($db->num_rows()) {
-	$obj = $db->fetch_object(0);
+    if ($this->db->query($sql) ) {
+      if ($this->db->num_rows()) {
+	$obj = $this->db->fetch_object(0);
 
 	$this->id = $rowid;
 	$this->datep = $obj->dp;
 	$this->ref = $obj->ref;
 	$this->price = $obj->price;
+	$this->remise = $obj->remise;
 	
-	$db->free();
+	$this->db->free();
       }
     } else {
-      print $db->error();
+      print $this->db->error();
     }    
   }
   /*
@@ -151,7 +152,7 @@ class Propal {
    */
   Function valid($userid) {
     $sql = "UPDATE llx_propal SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
-    $sql .= " WHERE rowid = $this->id;";
+    $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
     
     if ($this->db->query($sql) ) {
       return 1;

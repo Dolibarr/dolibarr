@@ -91,22 +91,7 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-print "<DIV align=\"center\">";
 
-print "<A href=\"$PHP_SELF?page=$pageprev&begin=$begin&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">&lt;- Prev</A>\n| ";
-print "<A href=\"$PHP_SELF?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
-for ($i = 65 ; $i < 91; $i++) {
-  print "<A href=\"$PHP_SELF?begin=" . chr($i) . "&stcomm=$stcomm\" class=\"T3\">";
-  
-  if ($begin == chr($i) ) {
-    print  "<b>-&gt;" . chr($i) . "&lt;-</b>" ; 
-  } else {
-    print  chr($i)  ; 
-  }
-  print "</A> | ";
-}
-print " <A href=\"$PHP_SELF?page=$pagenext&begin=$begin&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">Next -></A>\n";
-print "</DIV><P>";
 /*
  * Recherche
  *
@@ -130,6 +115,7 @@ if ($mode == 'search') {
 
 
 /*
+ *
  * Mode fiche
  *
  *
@@ -158,52 +144,13 @@ if ($socid > 0) {
     if ($errmesg) {
       print "<b>$errmesg</b><br>";
     }
-    print "<form action=\"index.php3?socid=$objsoc->idp\" method=\"post\">";
-    print "<input type=\"hidden\" name=\"action\" value=\"stcomm\">";
-    print "<input type=\"hidden\" name=\"oldstcomm\" value=\"$objsoc->fk_stcomm\">";
-    
-    $sql = "SELECT st.id, st.libelle FROM c_stcomm as st ORDER BY id";
-    $result = $db->query($sql);
-    print "<select name=\"stcommid\">\n";
-    print "<option value=\"null\" SELECTED>\n";
-    if ($result) {
-      $num = $db->num_rows();
-      $i = 0 ;
-      while ($i < $num) {
-	$objse = $db->fetch_object( $i);
-	
-	print "<option value=\"$objse->id\"";
-	if ($objse->id == $objsoc->fk_stcomm) { print " SELECTED"; }
-	print ">$objse->libelle\n";
-	$i++;
-      }
-    }
-    print "</select>\n";
-    $sql = "SELECT st.id, st.libelle FROM c_actioncomm as st ORDER BY id";
-    $result = $db->query($sql);
-    print "<select name=\"actioncommid\">\n";
-    print "<option value=\"0\" SELECTED>\n";
-    if ($result) {
-      $num = $db->num_rows();
-      $i = 0 ;
-      while ($i < $num) {
-	$objse = $db->fetch_object($i);
-	
-	print "<option value=\"$objse->id\">$objse->libelle\n";
-	$i++;
-      }
-    }
-    print "</select>\n";
 
-    print "<input type=\"text\" name=\"dateaction\" size=\"16\" value=\"$dac\">";
-    print "<input type=\"submit\" value=\"Update\">";
-    print "</form>\n";
     /*
      *
      */
     print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
 
-    print "<tr><td><big>N° $objsoc->idp - $objsoc->nom - [$objsoc->stcomm]</big></td>";
+    print "<tr><td><div class=\"titre\">Fiche client : $objsoc->nom</div></td>";
     print "<td bgcolor=\"#e0E0E0\" align=\"center\"><a href=\"bookmark.php3?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
     print "<td bgcolor=\"#e0E0E0\" align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
     print "<td bgcolor=\"#e0E0E0\" align=\"center\"><a href=\"addpropal.php3?socidp=$objsoc->idp&action=create\">[Propal]</a></td>";
@@ -610,6 +557,50 @@ if ($socid > 0) {
       /*
        *
        */
+
+    print "<form action=\"index.php3?socid=$objsoc->idp\" method=\"post\">";
+    print "<input type=\"hidden\" name=\"action\" value=\"stcomm\">";
+    print "<input type=\"hidden\" name=\"oldstcomm\" value=\"$objsoc->fk_stcomm\">";
+    
+    $sql = "SELECT st.id, st.libelle FROM c_stcomm as st ORDER BY id";
+    $result = $db->query($sql);
+    print "<select name=\"stcommid\">\n";
+    print "<option value=\"null\" SELECTED>\n";
+    if ($result) {
+      $num = $db->num_rows();
+      $i = 0 ;
+      while ($i < $num) {
+	$objse = $db->fetch_object( $i);
+	
+	print "<option value=\"$objse->id\"";
+	if ($objse->id == $objsoc->fk_stcomm) { print " SELECTED"; }
+	print ">$objse->libelle\n";
+	$i++;
+      }
+    }
+    print "</select>\n";
+    $sql = "SELECT st.id, st.libelle FROM c_actioncomm as st ORDER BY id";
+    $result = $db->query($sql);
+    print "<select name=\"actioncommid\">\n";
+    print "<option value=\"0\" SELECTED>\n";
+    if ($result) {
+      $num = $db->num_rows();
+      $i = 0 ;
+      while ($i < $num) {
+	$objse = $db->fetch_object($i);
+	
+	print "<option value=\"$objse->id\">$objse->libelle\n";
+	$i++;
+      }
+    }
+    print "</select>\n";
+
+    print "<input type=\"text\" name=\"dateaction\" size=\"16\" value=\"$dac\">";
+    print "<input type=\"submit\" value=\"Update\">";
+    print "</form>\n";
+
+
+
     }
   } else {
     print $db->error() . "<br>" . $sql;
@@ -621,6 +612,7 @@ if ($socid > 0) {
    *
    *
    */
+  print '<div class="titre">Liste des clients</div>';
 
   $bc[1]="bgcolor=\"#90c090\"";
   $bc[0]="bgcolor=\"#b0e0b0\"";

@@ -24,19 +24,14 @@ require("../main.inc.php3");
 function llxHeader($head = "") {
   global $PREFIX, $user, $conf;
 
-  print "<HTML>\n<HEAD>$head\n</HEAD>\n";
-  ?>
-  <BODY BGCOLOR="#c0c0c0" TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">
-  <?PHP
 
-  print "<TABLE border=\"0\" width=\"100%\">\n";
-  print "<TR bgcolor=\"".$GLOBALS["TOPBAR_BGCOLOR"]."\">";
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\"><B>" . $GLOBALS["MAIN_TITLE"] . "</B></TD>";
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\"><A href=\"../tech/\">Technique</A></TD>";
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\"><A href=\"../comm/\">Commercial</A></TD>";
-  print "<TD width=\"20%\" align=\"center\"><A href=\"../compta/\">Compta</A></TD>";
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\"><A href=\"../stats/\">Stats</A></TD>";
-  print "</TR></TABLE>\n";
+  /*
+   *
+   *
+   */
+  top_menu($head);
+
+
 
   print "<TABLE border=\"1\" width=\"100%\">";
   print "<TR><TD valign=\"top\" align=\"right\">";

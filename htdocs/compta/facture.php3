@@ -77,7 +77,7 @@ if ($facid > 0) {
   
   print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
   print "<tr>";
-  print "<td><b>Facture $facid</b>&nbsp;[<a href=\"facture.php3?facid=$facid\">reload</a>]</td>";
+  print '<td><div class="titre">Facture : '.$obj->facnumber.'</div></td>';
   print "<td align=\"right\"><a href=\"index.php3?socidp=$obj->socidp\">Autres factures de $obj->socnom</a></td>\n";
   print "</tr>";
   print "<tr><td width=\"50%\">";
@@ -86,7 +86,7 @@ if ($facid > 0) {
    */
   print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
   print "<tr><td>Société</td><td colspan=\"2\"><b><a href=\"../comm/index.php3?socid=$obj->socidp\">$obj->socnom</a></b></td></tr>";
-  print "<tr><td>Numéro</td><td colspan=\"2\"><b>$obj->facnumber</b></td></tr>";
+
   print "<tr><td>date</td><td colspan=\"2\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
   print "<tr><td>Auteur</td><td colspan=\"2\">$obj->author</td>";
   print "<tr><td>Statut</td><td align=\"center\" colspan=\"2\">$obj->statut</td>";

@@ -22,7 +22,7 @@
 require("./pre.inc.php3");
 
 llxHeader();
-print "Chiffres d'affaire par société";
+print '<div class="titre">Chiffre d\'affaire par société</div>';
 
 $bc[0]="bgcolor=\"#90c090\"";
 $bc[1]="bgcolor=\"#b0e0b0\"";

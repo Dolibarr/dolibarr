@@ -27,7 +27,7 @@ class Webcal {
   }
 
 
-  Function add($user, $texte, $desc) {
+  Function add($user, $date, $texte, $desc) {
 
     $db = new Db();
 
@@ -35,7 +35,7 @@ class Webcal {
 
     $cal_id = $id;
     $cal_create_by = $user;
-    $cal_date = strftime('%Y%m%d');
+    $cal_date = strftime('%Y%m%d', $date);
     $cal_time  = -1;
     $cal_mod_date = strftime('%Y%m%d', time());
     $cal_mod_time = strftime('%H%M', time());

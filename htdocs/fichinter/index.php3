@@ -36,6 +36,8 @@ $bc[1]="bgcolor=\"#b0e0b0\"";
 $bc2[0]="bgcolor=\"#c9f000\"";
 $bc2[1]="bgcolor=\"#b9e000\"";
 
+print '<div class="titre">Liste des fiches d\'intervention</div><p>';
+
 $sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut";
 $sql .= " FROM societe as s, llx_fichinter as f ";
 $sql .= " WHERE f.fk_soc = s.idp ";

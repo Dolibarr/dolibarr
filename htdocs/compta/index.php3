@@ -22,7 +22,7 @@
 require("./pre.inc.php3");
 
 llxHeader();
-print "Factures émises";
+print '<div class="titre">Factures émises</div>';
 
 $bc[0]="bgcolor=\"#90c090\"";
 $bc[1]="bgcolor=\"#b0e0b0\"";

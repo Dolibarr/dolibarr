@@ -27,10 +27,13 @@ class Societe {
 
   var $id;
   var $nom;
-
+  var $adresse;
+  var $cp;
+  var $ville;
   var $tel;
   var $fax;
   var $url;
+  var $siren;
 
   var $client;
 
@@ -65,6 +68,7 @@ class Societe {
 
     $sql = "UPDATE societe ";
     $sql .= " SET nom = '" . trim($this->nom) ."'";
+    $sql .= ",address = '" . trim($this->adresse) ."'";
     $sql .= ",cp = '" . trim($this->cp) ."'";
     $sql .= ",ville = '" . trim($this->ville) ."'";
     $sql .= ",tel = '" . trim($this->tel) ."'";
@@ -82,20 +86,18 @@ class Societe {
    */
   Function fetch() {
 
-    $sql = "SELECT s.idp, s.nom,".$this->db->pdate("s.datec")." as dc,".$this->db->pdate("s.datem")." as dm,".$this->db->pdate("s.datea")." as da, s.intern, s.cjn, ";
+    $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc,";
 
-    $sql .= " s.c_nom, s.c_prenom, s.c_tel, s.c_mail, s.tel, s.fax, s.fplus, s.cjn, s.viewed, st.libelle as stcomm, s.fk_stcomm, s.url,s.cp,s.ville, s.note";
+    $sql .= " s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren";
 
-    $sql .= " FROM societe as s, c_stcomm as st ";
-    $sql .= " WHERE s.fk_stcomm = st.id";
-  
-    $sql .= " AND s.idp = ".$this->id;
+    $sql .= " FROM societe as s";
+    $sql .= " WHERE s.idp = ".$this->id;
 
     $result = $this->db->query($sql);
 
     if ($result) {
       if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object($result , 0);
+	$obj = $this->db->fetch_object(0);
 
 	$this->nom = $obj->nom;
 
@@ -103,23 +105,16 @@ class Societe {
 	$this->fax = $obj->fax;
 
 	$this->url = $obj->url;
+	$this->adresse = $obj->address;
 	$this->cp = $obj->cp;
 	$this->ville = $obj->ville;
 
-
-	$this->cjn = $obj->cjn;
-
-	$this->viewed = $obj->viewed;
-
-	$this->stcomm = $obj->stcomm;
-
-	$this->c_nom = $obj->c_nom;
-	$this->c_prenom = $obj->c_prenom;
-	$this->c_tel = $obj->c_tel;
-	$this->c_fax = $obj->c_fax;
+	$this->siren = $obj->siren;
 
       }
       $this->db->free();
+    } else {
+      print $this->db->error();
     }
   }
   /*

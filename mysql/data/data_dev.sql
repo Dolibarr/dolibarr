@@ -30,14 +30,14 @@ insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta)
 values ('demo','demo','demo','demo','demo',1,1);
 
 delete from societe;
-insert into societe (nom,datec,cp,ville,tel,fax, client)
-values ('Lolix',now(),'75001','Paris','01 40 15 03 18','01 40 15 06 18',1);
+insert into societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
+values ('Lolix',now(),'75001','Paris','01 40 15 03 18','01 40 15 06 18',1,'LO');
 
 insert into societe (nom,cp,ville,tel,fax,client)
 values ('Easter-Eggs','75013','Paris','01 55 55 03 18','01 55 55 55 55',1);
 
-insert into societe (nom,cp,ville,tel,fax,fournisseur)
-values ('JPG','75013','Paris','01 55 55 03 18','01 55 55 55 55',1);
+insert into societe (nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+values ('JPG','75013','Paris','01 55 55 03 18','01 55 55 55 55',1,'JP');
 
 delete from llx_product;
 insert into llx_product (ref, label, description, price, duration)

@@ -29,12 +29,6 @@ $bc[1]="bgcolor=\"#b0e0b0\"";
 
 print 'Utilisateur : ' . $user->prenom . ' ' . $user->nom .' ['.$user->code.']';
 
-print "<ul>";
-print "<li><A href=\"../comm/\">Commercial</A>";
-print "<li><A href=\"../compta/\">Compta</A>";
-print "</ul>";
-
-
 
 function valeur($sql) {
   global $db;
@@ -102,21 +96,6 @@ if ($db->ok) {
   print '</td><td valign="top">';
 
 
-  print '<A href="comm/index.php3">Societes</A>';
-  print '<form action="comm/index.php3">';
-  print '<input type="hidden" name="mode" value="search">';
-  print '<input type="hidden" name="mode-search" value="soc">';
-  print '<input type="text" name="socname" size="8">&nbsp;';
-  print "<input type=\"submit\" value=\"go\">";
-  print "</form>";
-
-  print '<A href="comm/contact.php3">Contacts</A>';
-  print '<form action="comm/contact.php3">';
-  print '<input type="hidden" name="mode" value="search">';
-  print '<input type="hidden" name="mode-search" value="contact">';
-  print "<input type=\"text\" name=\"contactname\" size=\"8\">&nbsp;";
-  print "<input type=\"submit\" value=\"go\">";
-  print '</form>';
 
   print '</td></tr>';
 

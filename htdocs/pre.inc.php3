@@ -23,31 +23,14 @@
 require ("./main.inc.php3");
 
 function llxHeader($head = "") {
-  global $PREFIX, $user, $conf;
+  global $user, $conf;
 
-  print "<HTML>\n<HEAD>$head\n</HEAD>\n";
-  ?>
-  <BODY BGCOLOR="#c0c0c0" TOPMARGIN="0" BOTTOMMARGIN="0" LEFTMARGIN="0" RIGHTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">
-  <?PHP
-
-  print "<TABLE border=\"0\" width=\"100%\">\n";
-  print "<TR bgcolor=\"".$GLOBALS["SYS_TOPBAR_BGCOLOR"]."\">";
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\"><B>" . $GLOBALS["MAIN_TITLE"] . "</B></TD>";
-
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\">-</TD>";
-
-  print '<TD width="20%" bgcolor="#e0e0e0" align="center">';
-  if ($user->comm > 0) {
-    print '<A href="../comm/">Commercial</A></TD>';
-  } else {
-    print 'Commercial';
-  }
-
-
-  
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\"><A href=\"../compta/\">Compta</A></TD>";
-  print "<TD width=\"20%\" bgcolor=\"#e0e0e0\" align=\"center\">-</TD>";
-  print "</TR></TABLE>\n";
+  /*
+   *
+   *
+   */
+  top_menu($head);
+     
 
   print "<TABLE border=\"1\" width=\"100%\">";
   print "<TR><TD valign=\"top\" align=\"right\">";
@@ -64,12 +47,20 @@ function llxHeader($head = "") {
   print '</td></tr>';
 
   print "<TR><TD valign=\"top\" align=\"right\">";
-  print "<center><A href=\"/comm/propal.php3\">Propal</A></center>\n";
+  print "<center><A href=\"/comm/propal.php3\">Propales</A></center>\n";
   print '</td></tr>';
 
   print "<TR><TD valign=\"top\" align=\"right\">";
   print "<center><A href=\"/compta/\">Factures</center></A>\n";
   print '</td></tr>';
+
+  if ($conf->fichinter) {
+
+    print "<TR><TD valign=\"top\" align=\"right\">";
+    print "<center><A href=\"/fichinter/\">Fiches d'intervention</center></A>\n";
+    print '</td></tr>';
+
+  }
 
   print "<TR><TD valign=\"top\" align=\"right\">";
   print "<center><A href=\"/product/\">Produits</center></A>\n";
@@ -82,6 +73,24 @@ function llxHeader($head = "") {
   print '<div align="center"><A href="user.php3">Utilisateurs</div></A>';
   print '</td></tr>';
 
+  print '<TR><TD valign="top" align="center">';
+
+  print '<A href="comm/index.php3">Societes</A>';
+  print '<form action="comm/index.php3">';
+  print '<input type="hidden" name="mode" value="search">';
+  print '<input type="hidden" name="mode-search" value="soc">';
+  print '<input type="text" name="socname" size="8">&nbsp;';
+  print "<input type=\"submit\" value=\"go\">";
+  print "</form>";
+
+  print '<A href="comm/contact.php3">Contacts</A>';
+  print '<form action="comm/contact.php3">';
+  print '<input type="hidden" name="mode" value="search">';
+  print '<input type="hidden" name="mode-search" value="contact">';
+  print "<input type=\"text\" name=\"contactname\" size=\"8\">&nbsp;";
+  print "<input type=\"submit\" value=\"go\">";
+  print '</form>';
+  print '</td></tr>';
 
   print "<TR><TD valign=\"top\" align=\"right\">";
   print "<A href=\"info.php3\">Configuration</A><br>";

@@ -53,6 +53,11 @@ if ($action == 'update') {
   $soc = new Societe($db);
 
   $soc->nom = $nom;
+
+  $soc->adresse = $adresse;
+  $soc->cp = $cp;
+  $soc->ville = $ville;
+
   $soc->tel = $tel;
   $soc->fax = $fax;
   $soc->url = $url;
@@ -66,11 +71,11 @@ if ($action == 'update') {
  */
 
 if ($action == 'create') {
-  print 'Nouvelle societe<br>';
+  print '<div class="titre">Nouveau client</div><br>';
   print '<form action="soc.php3" method="post">';
   print '<input type="hidden" name="action" value="add">';
 
-  print '<table>';
+  print '<table border="1" cellpadding="3" cellspacing="0">';
   print '<tr><td>Nom</td><td><input type="text" name="nom"></td></tr>';
   print '<tr><td>Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
   print '<tr><td>CP</td><td><input size="6" type="text" name="cp">&nbsp;';
@@ -90,11 +95,11 @@ if ($action == 'create') {
 
   print '</td></tr>';
 
-  print '<tr><td colspan="2"><input type="submit"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" value="Ajouter"></td></tr>';
   print '</table>';
   print '</form>';
 } elseif ($action == 'edit') {
-  print 'Edition de la société<br>';
+  print '<div class="titre">Edition de la société</div><br>';
 
   $soc = new Societe($db);
   $soc->id = $socid;
@@ -103,7 +108,7 @@ if ($action == 'create') {
   print '<form action="soc.php3?socid='.$socid.'" method="post">';
   print '<input type="hidden" name="action" value="update">';
 
-  print '<table>';
+  print '<table border="1" cellpadding="3" cellspacing="0">';
   print '<tr><td>Nom</td><td><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
   print '<tr><td>Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
   print '<tr><td>CP</td><td><input size="6" type="text" name="cp">&nbsp;';
@@ -111,7 +116,7 @@ if ($action == 'create') {
 
   print '<tr><td>Tel</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td></tr>';
   print '<tr><td>Fax</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
-  print '<tr><td>Web</td><td><input type="text" name="url" value="'.$soc->url.'"></td></tr>';
+  print '<tr><td>Web</td><td>http://<input type="text" name="url" value="'.$soc->url.'"></td></tr>';
 
   print '<tr><td>Siren</td><td><input type="text" name="siren"></td></tr>';
 
@@ -140,7 +145,7 @@ if ($action == 'create') {
 
   print '<tr><td>Tel</td><td>'.$soc->tel.'</td></tr>';
   print '<tr><td>Fax</td><td>'.$soc->fax.'</td></tr>';
-  print '<tr><td>Web</td><td>'.$soc->url.'</td></tr>';
+  print '<tr><td>Web</td><td><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
 
   print '<tr><td>Siren</td><td><input type="text" name="siren"></td></tr>';
 

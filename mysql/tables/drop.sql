@@ -19,10 +19,6 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 
-drop table if exists abo_can;
-
-drop table if exists abo_soc;
-
 drop table if exists actioncomm;
 
 drop table if exists bots;
@@ -67,41 +63,9 @@ drop table if exists c_prestatype ;
 
 drop table if exists c_propalst ;
 
-drop table if exists c_quality;
-
-drop table if exists c_region ;
-
-drop table if exists c_secteur ;
-
-drop table if exists c_sex;
-
-drop table if exists c_situation ;
-
-drop table if exists c_stage_type;
-
 drop table if exists c_stcomm;
 
 drop table if exists c_typent ;
-
-drop table if exists c_skilltype ;
-
-drop table if exists candidat;
-
-drop table if exists communique;
-
-drop table if exists diplome ;
-
-drop table if exists expe;
-
-drop table if exists followbots;
-
-drop table if exists indy;
-
-drop table if exists known;
-
-drop table if exists lang ;
-
-drop table if exists langoffre ;
 
 drop table if exists llx_bank;
 
@@ -116,6 +80,8 @@ drop table if exists llx_bookmark;
 drop table if exists llx_fa_pr;
 
 drop table if exists llx_facture;
+
+drop table if exists llx_fichinter;
 
 drop table if exists llx_paiement;
 
@@ -211,11 +177,4 @@ drop table if exists statof ;
 
 drop table if exists statof_day;
 
-drop table if exists tchcontrib;
-
-drop table if exists tchcorres;
-
-drop table if exists tchsociete;
-
-drop table if exists savannah_projects;
 

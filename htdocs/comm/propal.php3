@@ -34,15 +34,6 @@ require("./actioncomm.class.php3");
 
 llxHeader();
 
-print "<table width=\"100%\">";
-print "<tr><td>Propositions commerciales</td>";
-if ($socidp) {
-print "<td bgcolor=\"#e0e0e0\" align=\"center\">[<a href=\"addpropal.php3?socidp=$socidp&action=create\">Nouvelle Propal</a>]</td>";
-}
-print "<td align=\"right\"><a href=\"propal.php3\">Liste</a></td>";
-print "<td align=\"right\"><a href=\"/compta/prev.php3\">CA Prévisionnel</a></td>";
-print "<td align=\"right\"><a href=\"$PHP_SELF?viewstatut=2\">Propal Signées</a></td></tr>";
-print "</table>";
 
 $bc[0]="bgcolor=\"#90c090\"";
 $bc[1]="bgcolor=\"#b0e0b0\"";
@@ -91,22 +82,26 @@ if ($action == 'setstatut') {
   $propalid = 0;
   $brouillon = 1;
 }
-
+/*
+ *
+ * Mode fiche
+ *
+ *
+ */
 if ($propalid) {
-  if ($valid == 1) {
-    $sql = "SELECT p.fk_soc, p.fk_projet,p.price, p.ref,".$db->pdate("p.datep")." as dp";
-    $sql .= " FROM llx_propal as p WHERE p.rowid = $propalid";
-    
-    if ( $db->query($sql) ) {
-      $obj = $db->fetch_object( 0 );
+  $propal = new Propal($db);
+  $propal->fetch($propalid);
 
-      $propal = new Propal($db);
-      $propal->id = $propalid;
-      $propal->valid($user->id);
-    } else {
-      print $db->error();
-    }
+
+  if ($valid == 1) {
+    $propal->valid($user->id);
   }
+  /*
+   *
+   */
+  print "<table width=\"100%\">";
+  print "<tr><td><div class=\"titre\">Proposition commerciale : $propal->ref</div></td>";
+  print "</table>";
   /*
    *
    */
@@ -123,61 +118,52 @@ if ($propalid) {
             
       $color1 = "#e0e0e0";
 
-      print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\">";
+      print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
-      print "<tr><td>Société</td><td colspan=\"4\"><a href=\"index.php3?socid=$obj->idp\">$obj->nom</a></td><td align=\"right\"><a href=\"propal.php3?socidp=$obj->idp\">Autres propales</a></td>";
-      print "<td valign=\"top\" rowspan=\"8\">Note :<br>". nl2br($obj->note)."</td></tr>";
+      print "<tr><td>Société</td><td><a href=\"index.php3?socid=$obj->idp\">$obj->nom</a></td><td align=\"right\"><a href=\"propal.php3?socidp=$obj->idp\">Autres propales</a></td>";
+      print "<td valign=\"top\" width=\"50%\" rowspan=\"8\">Note :<br>". nl2br($obj->note)."</td></tr>";
       //
+
+      print '<tr><td>date</td><td colspan="2">'.strftime("%A %d %B %Y",$obj->dp).'</td></tr>';
+
       if ($obj->fk_projet) {
 	$projet = new Project();
 	$projet->fetch($db,$obj->fk_projet); 
-	print '<tr><td>Projet</td><td colspan="5">';
+	print '<tr><td>Projet</td><td colspan="1">';
 	print '<a href="projet/fiche.php3?id='.$projet->id.'">';
 	print $projet->title.'</a></td></tr>';
       }
-      print "<tr><td>Destinataire</td><td colspan=\"5\">$obj->firstname $obj->name &lt;$obj->email&gt;</td></tr>";
+      print "<tr><td>Destinataire</td><td colspan=\"2\">$obj->firstname $obj->name &lt;$obj->email&gt;</td></tr>";
       /*
        *
        */
-      print "<tr><td>Numéro</td><td colspan=\"2\">$obj->ref</td>";
-      print "<td bgcolor=\"$color1\">Montant HT</td><td bgcolor=\"$color1\" align=\"right\">".price($obj->price)."</td>";
-      print "<td bgcolor=\"$color1\">euros</td></tr>";
-      /*
-       *
-       */
-      print "<tr><td>date</td><td colspan=\"2\" align=\"right\">".strftime("%A %d %B %Y",$obj->dp)."</td>\n";
-      print "<td bgcolor=\"$color1\">Remise</td><td bgcolor=\"$color1\" align=\"right\">".price($obj->remise)."</td>";
-      print "<td bgcolor=\"$color1\">euros</td></tr>";
 
+      print "<tr><td bgcolor=\"$color1\">Montant HT</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->price)." euros</td></tr>";
+      /*
+       *
+       */
+
+      print "<tr><td bgcolor=\"$color1\">Remise</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\">".price($obj->remise)." euros</td></tr>";
+
+      /*
+       *
+       */
+
+      $totalht = $propal->price - $propal->remise ;
+
+      print "<tr><td bgcolor=\"$color1\">Total HT</td><td colspan=\"2\" bgcolor=\"$color1\" align=\"right\"><b>".price($totalht)."</b> euros</td></tr>";
       /*
        *
        */
       print '<tr><td>Auteur</td><td colspan="2">';
       $author = new User($db, $obj->fk_user_author);
       $author->fetch('');
-      print $author->fullname.'</td>';
+      print $author->fullname.'</td></tr>';
 
-      $totalht = $obj->price - $obj->remise ;
-
-      print "<td bgcolor=\"$color1\">Total HT</td><td bgcolor=\"$color1\" align=\"right\"><b>".price($totalht)."</b></td><td bgcolor=\"$color1\">euros ";
-      print "<small>soit ".francs($totalht)." francs</small></td></tr>";
       /*
        *
        */
-      print "<tr>";
-
-      print "<td colspan=3>&nbsp;</td>";
-      print "<td bgcolor=\"$color1\">TVA</td><td bgcolor=\"$color1\" align=\"right\">".price($obj->tva)."</td><td bgcolor=\"$color1\">euros</td></tr>";
-
-      print "</tr>";
-      print "<tr><td colspan=3>&nbsp;</td>";
-      print "<td bgcolor=\"$color1\">Total TTC</td><td bgcolor=\"$color1\" align=\"right\">".price($obj->total)."</td><td bgcolor=\"$color1\">euros ";
-      print "<small>soit ".francs($obj->total)." francs</small></td></tr>";
-      print "</tr>";
-      /*
-       *
-       */
-      print "<tr bgcolor=\"#f0f0f0\"><td>Statut :</td><td colspan=2 align=center><b>$obj->lst</b></td>";
+      print "<tr bgcolor=\"#f0f0f0\"><td>Statut :</td><td colspan=1 align=center><b>$obj->lst</b></td>";
       if ($obj->statut == 0) {
 	print "<td colspan=3 align=center>[<a href=\"$PHP_SELF?propalid=$propalid&valid=1\">Valider</a>]</td>";
       } elseif ($obj->statut == 1) {
@@ -462,24 +448,32 @@ if ($propalid) {
       print "Num rows = " . $db->num_rows();
       print "<p><b>$sql";
     }
+    /*
+     * Voir le suivi des actions
+     *
+     *
+     *
+     */
+    if ($suivi) {
+      $validor = new User($db, $obj->fk_user_valid);
+      $validor->fetch('');
+      $cloturor = new User($db, $obj->fk_user_cloture);
+      $cloturor->fetch('');
+      
+      print '<table cellspacing=0 border=1 cellpadding=3>';
+      print '<tr><td>&nbsp;</td><td>Nom</td><td>Date</td></tr>';
+      print '<tr><td>Création</td><td>'.$author->fullname.'</td>';
+      print '<td>'.$obj->datec.'</td></tr>';
 
-    $validor = new User($db, $obj->fk_user_valid);
-    $validor->fetch('');
-    $cloturor = new User($db, $obj->fk_user_cloture);
-    $cloturor->fetch('');
-
-    print '<table cellspacing=0 border=1 cellpadding=3>';
-    print '<tr><td>&nbsp;</td><td>Nom</td><td>Date</td></tr>';
-    print '<tr><td>Création</td><td>'.$author->fullname.'</td>';
-    print '<td>'.$obj->datec.'</td></tr>';
-
-    print '<tr><td>Validation</td><td>'.$validor->fullname.'&nbsp;</td>';
-    print '<td>'.$obj->date_valid.'&nbsp;</td></tr>';
-
-    print '<tr><td>Cloture</td><td>'.$cloturor->fullname.'&nbsp;</td>';
-    print '<td>'.$obj->date_cloture.'&nbsp;</td></tr>';
-
-    print '</table>';
+      print '<tr><td>Validation</td><td>'.$validor->fullname.'&nbsp;</td>';
+      print '<td>'.$obj->date_valid.'&nbsp;</td></tr>';
+      
+      print '<tr><td>Cloture</td><td>'.$cloturor->fullname.'&nbsp;</td>';
+      print '<td>'.$obj->date_cloture.'&nbsp;</td></tr>';      
+      print '</table>';
+    } else {
+      print '<p><a href="'.$PHP_SELF.'?propalid='.$propal->id.'&suivi=1">Voir le suivi des actions </a>';
+    }
 
   } else {
     print $db->error();
@@ -496,12 +490,14 @@ if ($propalid) {
   /*
    *
    *
-   * Liste des propales
+   * Mode Liste des propales
    *
    * 
    */
+  print "<table width=\"100%\">";
+  print "<tr><td><div class=\"titre\">Propositions commerciales</div></td>";
+  print "</table>";
 
-  print "<P>";
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
   $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
 

@@ -46,20 +46,18 @@ function llxHeader($head = "", $urlp = "") {
   print "<CENTER><A href=\"".$urlp."index.php3\">Clients</A></CENTER>\n";
   print "<A href=\"".$urlp."../soc.php3?&action=create\">Nouvelle société</A><BR>\n";
   print "<A href=\"".$urlp."contact.php3\">Contacts</A><BR><br>\n";
-  print "<A href=\"".$urlp."recontact.php3\">A Recontacter</A><BR>\n";
   print "</TD></TR>";
 
 
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  print "<div align=\"center\"><A href=\"".$urlp."actioncomm.php3\">Actions</A></div>\n";
-  print "</TD></TR>";
+  print '<TR><TD valign="top" align="right" bgcolor="#e0e0e0">';
+  print "<center><A href=\"index.php3\">Fiches d'intervention</center></A>\n";
+  print '</td></tr>';
+
   /*
    *
    */
-  print '<TR><TD valign="top" align="right" bgcolor="#e0e0e0">';
+  print '<TR><TD valign="top" align="right">';
   print '<div align="center"><A href="'.$urlp.'propal.php3">Propal</A></div>';
-  print '<A href="'.$urlp.'propal.php3?viewstatut=0">Brouillon</A><br>';
-  print '<A href="'.$urlp.'propal.php3?viewstatut=1">Ouvertes</A>';
   print "</TD></TR>";
   /*
    *
@@ -70,16 +68,7 @@ function llxHeader($head = "", $urlp = "") {
   /*
    *
    */
-  print "<TR><TD valign=\"top\" align=\"right\">";
-  print '<div align="center"><A href="'.$urlp.'../product/">Produits</A></div>';
-  print '<div align="center"><A href="'.$urlp.'../service/">Services</A></div>';
-  print "</td></tr>";
-  /*
-   *
-   */
-  print "<tr><td align=\"right\" valign=\"top\">";
-  print "<A href=\"projet/\">Projets</A><BR>\n";
-  print "</td></tr>";
+
   /*
    *
    */

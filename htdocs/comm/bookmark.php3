@@ -30,9 +30,7 @@ if ($sortfield == "") {
   $sortfield="idp";
 }
 
-$cr["t"] = "Cab. Recrut.";
-$cr["f"] = "-";
-$cr[""] = "????";
+
 
 $yn["t"] = "oui";
 $yn["f"] = "non";
@@ -57,9 +55,9 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-print "Bookmark<p>";
+print '<div class="titre">Bookmark</div>';
  
-$sql = "SELECT s.idp, s.nom, cabrecrut,".$db->pdate("b.dateb")." as dateb, s.c_nom,s.c_prenom, s.cjn,st.libelle as stcomm, b.rowid as bid, b.author";
+$sql = "SELECT s.idp, s.nom, ".$db->pdate("b.dateb")." as dateb, st.libelle as stcomm, b.rowid as bid, b.author";
 $sql .= " FROM societe as s, c_stcomm as st, llx_bookmark as b";
 $sql .= " WHERE b.fk_soc = s.idp AND s.fk_stcomm = st.id AND s.datea is not null";
 
