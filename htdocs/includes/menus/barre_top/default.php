@@ -43,7 +43,7 @@ else {
     {
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "commercial") { $class="menusel"; }
-      elseif (ereg('^\/comm\/',$PHP_SELF)) { $class="menusel"; }
+      elseif (ereg("^".DOL_URL_ROOT."\/comm\/",$PHP_SELF)) { $class="menusel"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
       print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/comm/index.php">Commercial</A>';
       print '</td>';
@@ -53,7 +53,7 @@ else {
     {
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "adherent") { $class="menusel"; }
-      elseif (ereg('^\/adherents\/',$PHP_SELF)) { $class="menusel"; }
+      elseif (ereg("^".DOL_URL_ROOT."\/adherents\/",$PHP_SELF)) { $class="menusel"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
       print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/adherents/index.php">Adhérents</A>';
       print '</td>';
@@ -63,7 +63,7 @@ else {
     {
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "compta") { $class="menusel"; }
-      elseif (ereg('^\/compta\/',$PHP_SELF)) { $class="menusel"; }
+      elseif (ereg("^".DOL_URL_ROOT."\/compta\/",$PHP_SELF)) { $class="menusel"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
       print '<a class="'.$class.'" href="'.DOL_URL_ROOT.'/compta/index.php">Compta</A>';
       print '</td>';
@@ -73,7 +73,7 @@ else {
     {
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "product") { $class="menusel"; }
-      elseif (ereg('^\/product\/',$PHP_SELF)) { $class="menusel"; }
+      elseif (ereg("^".DOL_URL_ROOT."\/product\/",$PHP_SELF)) { $class="menusel"; }
       $chaine="";
       if ($conf->produit->enabled) { $chaine.="Produits"; }
       if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
@@ -87,7 +87,7 @@ else {
     {
       $class="";
       if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "webcalendar") { $class="menusel"; }
-      elseif (ereg('^\/webcalendar\/',$PHP_SELF)) { $class="menusel"; }
+      elseif (ereg("^".DOL_URL_ROOT."\/webcalendar\/",$PHP_SELF)) { $class="menusel"; }
       print '<td class="'.$class.'" width="'.$widthtd.'%" align=center>';
       print '<a class="'.$class.'" href="'. PHPWEBCALENDAR_URL .'">Calendrier</a>';
       print '</td>';

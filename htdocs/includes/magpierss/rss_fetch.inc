@@ -117,8 +117,10 @@ function fetch_rss ($url) {
 		
 		$cache = new RSSCache( MAGPIE_CACHE_DIR, MAGPIE_CACHE_AGE );
 		
-		if (MAGPIE_DEBUG and $cache->ERROR) {
-			debug($cache->ERROR, E_USER_WARNING);
+		if ($cache->ERROR) {
+		    // Erreur
+		    print $cache->ERROR;
+		    if (MAGPIE_DEBUG) { debug($cache->ERROR, E_USER_WARNING); }
 		}
 		
 		
@@ -336,7 +338,7 @@ function init () {
 	}
 
 	if ( !defined('MAGPIE_CACHE_DIR') ) {
-		define('MAGPIE_CACHE_DIR', './cache');
+		define('MAGPIE_CACHE_DIR', DOL_DOCUMENT_ROOT.'/document/rsscache');
 	}
 
 	if ( !defined('MAGPIE_CACHE_AGE') ) {

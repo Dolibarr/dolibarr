@@ -110,13 +110,14 @@ if ($_POST["action"] == "set")
   if ($error == 0)
     {
     
-	$dir[0] = "$main_data_dir/facture";
-        $dir[1] = "$main_data_dir/propale";
-        $dir[2] = "$main_data_dir/societe";
-        $dir[3] = "$main_data_dir/ficheinter";
-        $dir[4] = "$main_data_dir/produit";
-        $dir[5] = "$main_data_dir/rapport";
-        $dir[6] = "$main_data_dir/images";
+    $dir[0] = "$main_data_dir/facture";
+    $dir[1] = "$main_data_dir/propale";
+    $dir[2] = "$main_data_dir/societe";
+    $dir[3] = "$main_data_dir/ficheinter";
+    $dir[4] = "$main_data_dir/produit";
+    $dir[5] = "$main_data_dir/rapport";
+    $dir[6] = "$main_data_dir/images";
+    $dir[7] = "$main_data_dir/rsscache";
 
       if (! is_dir($main_dir))
 	{
