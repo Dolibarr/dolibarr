@@ -57,6 +57,21 @@ $modules["MAIN_MODULE_FICHEINTER"][1] = "MAIN_MODULE_FICHEINTER";
 $modules["MAIN_MODULE_FICHEINTER"][2] = MAIN_MODULE_FICHEINTER;
 $modules["MAIN_MODULE_FICHEINTER"][3] = "Module des gestion des fiche d'intervention";
 
+$modules["MAIN_MODULE_DON"][0] = "Module don";
+$modules["MAIN_MODULE_DON"][1] = "MAIN_MODULE_DON";
+$modules["MAIN_MODULE_DON"][2] = MAIN_MODULE_DON;
+$modules["MAIN_MODULE_DON"][3] = "Module des gestion des dons";
+
+$modules["MAIN_MODULE_ADHERENT"][0] = "Module adherent";
+$modules["MAIN_MODULE_ADHERENT"][1] = "MAIN_MODULE_ADHERENT";
+$modules["MAIN_MODULE_ADHERENT"][2] = MAIN_MODULE_ADHERENT;
+$modules["MAIN_MODULE_ADHERENT"][3] = "Module des gestion des adherents";
+
+$modules["MAIN_MODULE_FOURNISSEUR"][0] = "Module fournisseur";
+$modules["MAIN_MODULE_FOURNISSEUR"][1] = "MAIN_MODULE_FOURNISSEUR";
+$modules["MAIN_MODULE_FOURNISSEUR"][2] = MAIN_MODULE_FOURNISSEUR;
+$modules["MAIN_MODULE_FOURNISSEUR"][3] = "Module des gestion des fournisseurs";
+
 if ($action == 'set')
 {
   $sql = "REPLACE INTO llx_const SET name = '".$value."', value='1'";
