@@ -48,6 +48,15 @@ if (!$user->rights->produit->lire)
 $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
 
+
+if ($_GET["action"] == 'fastappro' && $user->rights->facture->creer)
+{
+  $product = new Product($db);
+  $result = $product->fastappro();
+  Header("Location: fiche.php?id=".$_GET["id"]);
+}
+
+
 // Action ajout d'un produit ou service
 if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 {
@@ -613,7 +622,7 @@ if ($_GET["action"] == '')
 {
   if ($product->type == 0 && $user->rights->produit->commander && $num_fournisseur == 1)
     {
-      print '<a class="tabAction" href="fiche.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("Commander").'</a>';
+      print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">'.$langs->trans("Commander").'</a>';
     }
 
 
