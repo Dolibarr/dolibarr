@@ -25,6 +25,8 @@ require("../contact.class.php3");
 
 llxHeader();
 
+$db = new Db();
+
 /*
  * Sécurité accés client
  */
