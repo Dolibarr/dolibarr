@@ -106,18 +106,18 @@ class modTelephonie extends DolibarrModules
 
     $this->rights[4][0] = 144; // id de la permission
     $this->rights[4][1] = 'Configurer la telephonie'; // libelle de la permission
-    $this->rights[4][2] = 'w'; // type de la permission (déprécié à ce jour)
-    $this->rights[4][3] = 0; // La permission est-elle une permission par défaut
+    $this->rights[4][2] = 'w';
+    $this->rights[4][3] = 0;
 
-    $this->rights[5][0] = 145; // id de la permission
-    $this->rights[5][1] = 'Configurer les fournisseurs'; // libelle de la permission
-    $this->rights[5][2] = 'w'; // type de la permission (déprécié à ce jour)
-    $this->rights[5][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[5][4] = 'fournisseur'; // La permission est-elle une permission par défaut
-    $this->rights[5][5] = 'config'; // La permission est-elle une permission par défaut
+    $this->rights[5][0] = 145;
+    $this->rights[5][1] = 'Configurer les fournisseurs';
+    $this->rights[5][2] = 'w';
+    $this->rights[5][3] = 0;
+    $this->rights[5][4] = 'fournisseur';
+    $this->rights[5][5] = 'config';
 
     $this->rights[6][0] = 192;
-    $this->rights[6][1] = 'Creer des lignes';
+    $this->rights[6][1] = 'Créer des lignes';
     $this->rights[6][2] = 'w';
     $this->rights[6][3] = 0;
     $this->rights[6][4] = 'ligne';
@@ -150,6 +150,13 @@ class modTelephonie extends DolibarrModules
     $this->rights[10][3] = 0;
     $this->rights[10][4] = 'adsl';
     $this->rights[10][5] = 'gerer';
+
+    $this->rights[11][0] = 215;
+    $this->rights[11][1] = 'Définir le mode de réglement';
+    $this->rights[11][2] = 'w';
+    $this->rights[11][3] = 0;
+    $this->rights[11][4] = 'contrat';
+    $this->rights[11][5] = 'paiement';
 
     // Dir
     $this->dirs[0] = $conf->telephonie->dir_output;
