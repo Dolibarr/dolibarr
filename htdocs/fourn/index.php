@@ -106,7 +106,7 @@ if ($result)
 
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="center"');
+  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="center"',$sortfield);
   print '<td>'.$langs->trans("Town").'</td>';
   print '<td>&nbsp;</td>';
   print "</tr>\n";

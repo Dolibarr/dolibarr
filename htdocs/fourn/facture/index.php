@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/**	    \file       htdocs/fourn/facture/index.php
+        \ingroup    fournisseur,facture
+		\brief      Lsite des factures fournisseurs
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../../contact.class.php");
 require("../../facturefourn.class.php");
@@ -127,13 +134,13 @@ if ($result)
 
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber");
-  print_liste_field_titre($langs->trans("Date"),"index.php","fac.datef");
-  print '<td>'.$langs->trans("Label").'</td>';
-  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom");
-  print_liste_field_titre($langs->trans("AmountHT"),"index.php","fac.total_ht","","",'align="right"');
-  print_liste_field_titre($langs->trans("AmountTTC"),"index.php","fac.total_ttc","","",'align="right"');
-  print_liste_field_titre($langs->trans("Status"),"index.php","fk_statut,paye","","",'align="center"');
+  print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Date"),"index.php","fac.datef","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Label"),"index.php","fac.libelle","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$sortfield);
+  print_liste_field_titre($langs->trans("AmountHT"),"index.php","fac.total_ht","","",'align="right"',$sortfield);
+  print_liste_field_titre($langs->trans("AmountTTC"),"index.php","fac.total_ttc","","",'align="right"',$sortfield);
+  print_liste_field_titre($langs->trans("Status"),"index.php","fk_statut,paye","","",'align="center"',$sortfield);
   print "</tr>\n";
   $var=True;
   while ($i < min($num,$limit))
@@ -193,7 +200,7 @@ if ($result)
 }
 else
 {
-  print $db->error();
+  dolibarr_print_error($db);
 }
 
 $db->close();

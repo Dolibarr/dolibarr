@@ -954,7 +954,9 @@ function transcoS2L($zonein,$devise)
 function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="")
 {
     global $conf;
-    if ($sortfield == $field)
+    // Le champ de tri est mis en évidence.
+    // Exemple si (sortfield,field)=("nom","xxx.nom") ou (sortfield,field)=("nom","nom")
+    if ($sortfield == $field || $sortfield == ereg_replace("^[^\.]+\.","",$field))
     {
         print '<td class="menusel" '. $td.'>';
     }
