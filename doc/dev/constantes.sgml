@@ -1,0 +1,67 @@
+<!-- $Id$ -->
+<!-- $Source$ -->
+<chapt id="adherent">Constantes
+
+  <p>
+    Définition des constantes utilisées
+  </p>
+  
+  <sect id="const-config">Configuration
+    <p>
+      Liste des constantes utilisées dans la configuration
+      
+      <list>
+	<item>DB_NAME_OSC
+	    <p>Nom de la base de données d'oscommerce</p>
+	</item>
+	<item>DONS_FORM</item>
+	<item>FAC_PDF_ADRESSE
+	  <p>Adresse imprimée sur les factures</p>
+	</item>
+	<item>FAC_PDF_FAX
+	  <p>Numéro de Fax imprimé sur les factures</p>
+	</item>
+	<item>FAC_PDF_SIREN
+	  <p>Numéro de SIREN affiché sur les factures</p>
+	</item>
+	<item>MAIN_DEBUG</item>
+	<item>MAIN_THEME</item>
+	<item>MAIN_TITLE</item>
+	<item>MAIN_SPIP_DB
+	  <p>Nom de la base de données SPIP</p>
+	</item>
+	<item>MAIN_SPIP_PASS</item>
+	<item>OSC_CATALOG_URL
+	  <p>URL du catalogue Oscommerce</p>
+	</item>
+	<item>OSC_CATALOG_DIRECTORY</item>
+	<item>OSC_DIRECTORY</item>
+	<item>OSC_IMAGE_DEFAULT</item>
+	<item>PN_DB_NAME
+	  <p>Nom de la base Postnuke</p>
+	</item>
+	<item>PN_TABLE_STORIES_NAME</item>
+	<item>SIZE_LISTE_LIMIT</item>
+      </list>
+    </p>
+  </sect>
+  
+
+</chapt>
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:nil
+sgml-shorttag:t
+sgml-namecase-general:t
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:("dolibarr-dev.sgml" "book" "chapt")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
