@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,6 +22,7 @@
  */
 require("./pre.inc.php");
 require("../contact.class.php");
+llxHeader();
 
 /*
  * Sécurité accés client
@@ -31,7 +33,12 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-llxHeader();
+if ($sortorder == "") {
+  $sortorder="ASC";
+}
+if ($sortfield == "") {
+  $sortfield="nom";
+}
 
 
 if ($action == 'note')
@@ -42,7 +49,7 @@ if ($action == 'note')
 
 if ($action == 'stcomm') {
   if ($stcommid <> 'null' && $stcommid <> $oldstcomm) {
-    $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."socstatutlog (datel, fk_soc, fk_statut, author) ";
     $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $GLOBALS["REMOTE_USER"] . "')";
     $result = @$db->query($sql);
 
@@ -55,7 +62,7 @@ if ($action == 'stcomm') {
   }
 
   if ($actioncommid) {
-    $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
     $result = @$db->query($sql);
 
     if (!$result) {
@@ -63,12 +70,6 @@ if ($action == 'stcomm') {
     }
   }
 }
-if ($page == -1) { $page = 0 ; }
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
 
 /*
  * Recherche
@@ -90,6 +91,14 @@ if ($mode == 'search') {
   }
 }
 
+if ($page == -1) { $page = 0 ; }
+
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
+
+
 /*
  * Mode Liste
  *
@@ -106,7 +115,6 @@ if ($sortfield == "")
   $sortfield="nom";
 }
 
-print_barre_liste("Liste des fournisseurs",$page, $PHP_SELF);
 
 $sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
 
@@ -128,7 +136,7 @@ if ($socname) {
   $sortorder = "ASC";
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
 if ($result)
@@ -136,6 +144,7 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
+  print_barre_liste("Liste des fournisseurs", $page, $PHP_SELF, "", $sortfield, $sortorder, '', $num);
   if ($sortorder == "DESC")
     {
       $sortorder="ASC";
@@ -144,20 +153,20 @@ if ($result)
     {
       $sortorder="DESC";
     }
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-  print '<TR class="liste_titre"><td>';
+  print "<table border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print '<tr class="liste_titre"><td valign="center">';
   print_liste_field_titre("Société",$PHP_SELF,"s.nom");
-  print "</td><TD>Ville</TD>";
-  print "<td colspan=\"2\">&nbsp;</td>";
-  print "</TR>\n";
+  print "</td><td>Ville</td>";
+  print "<td align=\"center\">Préfix</td><td>&nbsp;</td></tr>\n";
+  print "</tr>\n";
   $var=True;
   while ($i < $num)
     {
       $obj = $db->fetch_object($i);	
       $var=!$var;
 
-      print "<TR $bc[$var]>";
-      print "<TD><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print "<tr $bc[$var]>";
+      print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";
       print "<td>".$obj->ville."</td>\n";       
       print "<td align=\"center\">$obj->prefix_comm&nbsp;</td>\n";
       
@@ -171,7 +180,7 @@ if ($result)
 }
 else 
 {
-  print $db->error();
+  print $db->error() . ' ' . $sql;
 }
 
 $db->close();
