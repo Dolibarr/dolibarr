@@ -23,7 +23,6 @@
  */
 
 require("./pre.inc.php");
-require("../lib/webcal.class.php");
 
 if (!$user->admin)
   accessforbidden();
@@ -47,8 +46,6 @@ if ($action == 'save')
       $conf->db->name = $phpwebcalendar_dbname;
       $conf->db->user = $phpwebcalendar_user;
       $conf->db->pass = $phpwebcalendar_pass;
-
-	  	//print $conf->db->host.",".$conf->db->name.",".$conf->db->user.",".$conf->db->pass;
 
 			$webcal = new DoliDb();
 
@@ -82,15 +79,15 @@ if ($action == 'save')
 						define("PHPWEBCALENDAR_USER",  $phpwebcalendar_user);
 						define("PHPWEBCALENDAR_PASS",  $phpwebcalendar_pass);
 
-						print "<p>la connection à la base de données webcalendar $phpwebcalendar_dbname à
-						réussi</p><br>";
+						$ok = 1;
 		      	}
     			else
 						print "<p>erreur d'enregistement dans la base de données $db !</p><br>";
 				}
 			else
-					print "<p>la connection à la base de données webcalendar $phpwebcalendar_dbname à
-					échoué</p><br>";
+				{
+					$ok = 0;
+				}
   	}
   else
    	{
@@ -138,20 +135,45 @@ print "\n<form name=\"phpwebcalendarconfig\" action=\"" . $PHP_SELF . "\" method
 </tr>\n";
 
   clearstatcache();
-  
+
   print "
 </table>
 <input type=\"hidden\" name=\"action\" value=\"save\">
 </form>\n";
 
 
-/*
- *
- *
- */
+/**
+  * test de la connection a la database webcalendar
+  *
+  */
 
+ 	print '<br><a href="webcalendar.php?action=test">test de connection à la database</a><br>';
 
-$db->close();
+	if($ok)
+		print "<p>la connection à la base de données webcalendar $phpwebcalendar_dbname à réussi</p><br>";
 
-llxFooter();
+ 	if ($_GET["action"] == 'test')
+		{
+ 			$conf = new Conf();
+			$conf->db->host = $phpwebcalendar_host;
+			$conf->db->name = $phpwebcalendar_dbname;
+			$conf->db->user = $phpwebcalendar_user;
+			$conf->db->pass = $phpwebcalendar_pass;
+
+			$webcal = new DoliDb();
+
+	  	if ($webcal->connected == 1)
+				{
+					print "<p>la connection à la base de données webcalendar $phpwebcalendar_dbname à
+					réussi</p><br>";
+					$webcal->close();
+				}
+			else
+					print "<p>la connection à la base de données webcalendar $phpwebcalendar_dbname à
+					échoué</p><br>";
+			}
+
+	$db->close();
+
+	llxFooter();
 ?>
