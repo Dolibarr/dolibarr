@@ -83,15 +83,19 @@ function check_mail ($mail)
 		\param	    message		message a envoyer a syslog
         \param      level       Niveau de l'erreur
 		\remarks    Cette fonction ne marchera qui si la constante MAIN_DEBUG = 1
-        Le message est envoyé dans syslog dans la catégorie LOG_USER.
+                    Le message est envoyé dans syslog dans la catégorie LOG_USER.
 */
 function dolibarr_syslog($message, $level=LOG_ERR)
 {
-  if (defined("MAIN_DEBUG") && MAIN_DEBUG) {
-      openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);	# LOG_USER au lieu de LOG_LOCAL0 car non accepté par tous les PHP
-      syslog($level, $message);
-      closelog();
-  }
+    if (defined("MAIN_DEBUG") && MAIN_DEBUG) {
+        // Warning, les fonctions syslog sont buggués sous Windows et génèrent des
+        // fautes de protection mémoire. Pour résoudre, désactiver MAIN_DEBUG sous Windows.
+        define_syslog_variables();
+        openlog("dolibarr", LOG_PID | LOG_PERROR, LOG_USER);
+        if (! $level) syslog(LOG_ERR, $message);
+        else syslog($level, $message);
+        closelog();
+    }
 }
 
 
