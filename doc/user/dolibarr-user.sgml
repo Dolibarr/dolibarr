@@ -3,8 +3,9 @@
     <!entity ch-intro system "intro.sgml">
     <!entity ch-propale system "propale.sgml">
     <!entity ch-facture	system "facture.sgml">
-    <!entity ch-commande system "commande.sgml">
     <!entity ch-produit	system "produit.sgml">
+    <!entity ch-commande system "commande.sgml">
+    <!entity ch-expedition system "expedition.sgml">
     <!entity ch-misc system "misc.sgml">
     <!entity ch-annexe system "annexe.sgml">
 ]
@@ -30,6 +31,7 @@
     &ch-propale;
     &ch-facture;
     &ch-produit;
+    &ch-expedition;
     &ch-misc;
 
   </book>
