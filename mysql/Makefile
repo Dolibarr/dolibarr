@@ -32,15 +32,15 @@ all:
 
 show:
 	cd tables \
-	&& make show BASE=$(BASE)
+	&& make show BASE=$(BASE) OPTIONS=$(OPTIONS)
 
 table:
 	cd tables \
-	&& make create BASE=$(BASE)
+	&& make create BASE=$(BASE) OPTIONS=$(OPTIONS)
 
 dev:
 	cd data \
-	&& make dev BASE=$(BASE)
+	&& make dev BASE=$(BASE) OPTIONS=$(OPTIONS)
 
 
 fulldev: drop table load dev
@@ -54,30 +54,30 @@ load:
 dropall: dropdb droppriv
 
 droppriv:
-	$(MYSQL) mysql -e "delete from db where Db='$(BASE)' ; "
+	$(MYSQL) $(OPTIONS) mysql -e "delete from db where Db='$(BASE)' ; "
 
 dropdb:
-	$(MYSQL) mysql -f -e "drop database if exists $(BASE) ; "
+	$(MYSQL) $(OPTIONS) mysql -f -e "drop database if exists $(BASE) ; "
 
 create: drop createdb createpriv
 
 
 createdb:
-	$(MYSQL) mysql -e "create database $(BASE) ; "
+	$(MYSQL) $(OPTIONS) mysql -e "create database $(BASE) ; "
 
 createpriv:
-	$(MYSQL) mysql -e "insert into db (Host, Db) values ('localhost', '$(BASE)') ; "
-	$(MYSQL) mysql -e "update db set select_priv     = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) mysql -e "update db set insert_priv     = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) mysql -e "update db set update_priv     = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) mysql -e "update db set delete_priv     = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) mysql -e "update db set create_priv     = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) mysql -e "update db set drop_priv       = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) mysql -e "update db set grant_priv      = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) mysql -e "update db set references_priv = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) mysql -e "update db set index_priv      = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) mysql -e "update db set alter_priv      = 'Y'  where db='$(BASE)' ; "
-	$(MYSQL) mysql -e "flush privileges ; "
+	$(MYSQL) $(OPTIONS) mysql -e "insert into db (Host, Db) values ('localhost', '$(BASE)') ; "
+	$(MYSQL) $(OPTIONS) mysql -e "update db set select_priv     = 'Y'  where db='$(BASE)' ; "
+	$(MYSQL) $(OPTIONS) mysql -e "update db set insert_priv     = 'Y'  where db='$(BASE)' ; "
+	$(MYSQL) $(OPTIONS) mysql -e "update db set update_priv     = 'Y'  where db='$(BASE)' ; "
+	$(MYSQL) $(OPTIONS) mysql -e "update db set delete_priv     = 'Y'  where db='$(BASE)' ; "
+	$(MYSQL) $(OPTIONS) mysql -e "update db set create_priv     = 'Y'  where db='$(BASE)' ; "
+	$(MYSQL) $(OPTIONS) mysql -e "update db set drop_priv       = 'Y'  where db='$(BASE)' ; "
+	$(MYSQL) $(OPTIONS) mysql -e "update db set grant_priv      = 'Y'  where db='$(BASE)' ; "
+	$(MYSQL) $(OPTIONS) mysql -e "update db set references_priv = 'Y'  where db='$(BASE)' ; "
+	$(MYSQL) $(OPTIONS) mysql -e "update db set index_priv      = 'Y'  where db='$(BASE)' ; "
+	$(MYSQL) $(OPTIONS) mysql -e "update db set alter_priv      = 'Y'  where db='$(BASE)' ; "
+	$(MYSQL) $(OPTIONS) mysql -e "flush privileges ; "
 
 
 mysql.sql: $(TABLES) data/data.sql
