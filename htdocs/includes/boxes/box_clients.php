@@ -27,6 +27,10 @@ $info_box_contents = array();
 
 $sql = "SELECT s.nom,s.idp";
 $sql .= " FROM llx_societe as s WHERE s.client = 1";  
+if ($user->societe_id > 0)
+{
+  $sql .= " AND s.idp = $user->societe_id";
+}
 $sql .= " ORDER BY s.datec DESC ";
 $sql .= $db->plimit(5, 0);
 

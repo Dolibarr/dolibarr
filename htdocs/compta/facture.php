@@ -682,7 +682,7 @@ else
 
 	print "</table><br>";
 
-	if ($fac->brouillon == 1)
+	if ($fac->brouillon == 1 && $user->rights->facture->creer) 
 	  {
 	    print '<form action="facture.php?facid='.$facid.'" method="post">';
 	    print '<input type="hidden" name="action" value="setremise">';
@@ -743,7 +743,7 @@ else
 		    print '<td>&nbsp;</td>';
 		  }
 		print '<TD align="right">'.price($objp->subprice)."</td>\n";
-		if ($fac->statut == 0) 
+		if ($fac->statut == 0  && $user->rights->facture->creer) 
 		  {
 		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=deleteline&rowid='.$objp->rowid.'">del</a></td>';
 		    print '<td align="right"><a href="'.$PHPSELF.'?facid='.$facid.'&action=editline&rowid='.$objp->rowid.'">edit</a></td>';
@@ -785,7 +785,7 @@ else
 	 * Ajouter une ligne
 	 *
 	 */
-	if ($fac->statut == 0) 
+	if ($fac->statut == 0 && $user->rights->facture->creer) 
 	  {
 	    print "<form action=\"$PHP_SELF?facid=$facid\" method=\"post\">";
 	    //	    echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="1">';

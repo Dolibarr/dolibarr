@@ -23,6 +23,11 @@ require("./pre.inc.php");
 
 $user->getrights('propale');
 
+if ($user->societe_id > 0)
+{
+  $socidp = $user->societe_id;
+}
+
 llxHeader();
 
 function valeur($sql) 
@@ -105,6 +110,10 @@ if ( $db->query($sql) )
 $sql = "SELECT p.rowid, p.ref";
 $sql .= " FROM llx_propal as p";
 $sql .= " WHERE p.fk_statut = 1";
+if ($socidp)
+{ 
+  $sql .= " AND p.fk_soc = $socidp"; 
+}
 
 if ( $db->query($sql) )
 {
@@ -205,8 +214,7 @@ else
  */
 
 $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-$sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut > 0";
-
+$sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut > 1";
 if ($socidp)
 { 
   $sql .= " AND s.idp = $socidp"; 
