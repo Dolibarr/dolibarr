@@ -83,17 +83,17 @@ class ComptaExport
     $sql .= " ORDER BY f.rowid ASC, l.fk_code_ventilation ASC";
 
 
-    $result = $this->db->query($sql);
+    $resql = $this->db->query($sql);
 
-    if ($result)
+    if ($resql)
       {
-	$num = $this->db->num_rows($result);
+	$num = $this->db->num_rows($resql);
 	$i = 0;
 	$this->linec = array();
 
 	while ($i < $num)
 	  {
-	    $obj = $this->db->fetch_object($result);
+	    $obj = $this->db->fetch_object($resql);
 
 	    $this->linec[$i][0] = $obj->datef;
 	    $this->linec[$i][1] = $obj->facid;
@@ -115,7 +115,7 @@ class ComptaExport
 
 	    $i++;
 	  }
-	$this->db->free($result);
+	$this->db->free($resql);
       }    
 
     return $error;
@@ -150,17 +150,17 @@ class ComptaExport
 
     $sql .= " ORDER BY f.rowid ASC, p.rowid ASC";
 
-    $result = $this->db->query($sql);
+    $resql = $this->db->query($sql);
 
-    if ($result)
+    if ($resql)
       {
-	$num = $this->db->num_rows($result);
+	$num = $this->db->num_rows($resql);
 	$i = 0;
 	$this->linep = array();
 
 	while ($i < $num)
 	  {
-	    $obj = $this->db->fetch_object($result);
+	    $obj = $this->db->fetch_object($resql);
 
 	    $this->linep[$i][0] = $obj->datep;
 	    $this->linep[$i][1] = $obj->paymentid;
@@ -174,7 +174,7 @@ class ComptaExport
 	    $i++;
 	  }
 
-	$this->db->free($result);
+	$this->db->free($resql);
 
       }
     else
@@ -210,6 +210,9 @@ class ComptaExport
 	$objexport = new $objexport_name($this->db, $this->user);
 
 	$objexport->Export($this->linec, $this->linep);
+
+	$this->id = $objexport->id;
+	$this->ref = $objexport->ref;
       }
   }
 
