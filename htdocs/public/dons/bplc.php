@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,6 +22,8 @@
 
 /*
  * Gestion du retour du système de Cyberpaiement
+ * Cette page est appellée par le serveur de la BPLC lors de l'utilisation
+ * su système RSTS
  *
  */
 
@@ -57,6 +59,10 @@ $retbplc->ref_commande      = $CHAMP200;
 
 $return =  $retbplc->insertdb();
 
+
+$don_id = substr($retbplc->ref_commande, 0, strlen($retbplc->ref_commande) -2);
+print $don_id;
+
 if($return)
 {
   if ($retbplc->check_key($retbplc->cle_acceptation))
@@ -69,6 +75,13 @@ if($return)
        */
       
       $don = new Don($db);
+
+      $don_id = strstr($retbplc->ref_commande, 0, strlen($retbplc->ref_commande) -2);
+
+      // 5 correspond au paiement en ligne voir table c_paiement
+
+      $don->set_paye($don_id, 5); 
+
     }
 
 }
