@@ -18,19 +18,19 @@
     </p>
   </sect>
 
-  <sect id="adh-statut">
-
-    Un adherent peut avoir plusieurs statuts differents ils sont.
-
+  <sect id="adh-statut">Statut
+    <p>
+      Un adherent peut avoir plusieurs statuts differents ils sont.
+    </p>
   </sect>
 
-  <sect id="adh-classe">
+  <sect id="adh-classe">Classes PHP
     <p>
       Classes PHP utilisées pour ce module :
       <list>
 	<item>adherent.class.php</item>
       </list>
-      
+    </p>
   </sect>
 
 

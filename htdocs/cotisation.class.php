@@ -20,7 +20,7 @@
  *
  */
 
-class Don
+class Cotisation
 {
   var $id;
   var $db;
@@ -44,15 +44,10 @@ class Don
   var $projet;
   var $errorstr;
   /*
-   * Statut du don
-   * 0 : promesse non validée
-   * 1 : promesse validée
-   * 2 : don validé
-   * 3 : don payé
    *
    *
    */
-  Function Don($DB, $soc_idp="") 
+  Function Cotisation($DB, $soc_idp="") 
     {
       $this->db = $DB ;
       $this->modepaiementid = 0;

@@ -20,91 +20,66 @@
  *
  */
 require("./pre.inc.php");
-require("../../don.class.php");
-require("../../paiement.class.php");
+require("../adherent.class.php");
+require("../adherent_type.class.php");
+require("../cotisation.class.php");
+require("../paiement.class.php");
+
 
 $db = new Db();
 
-if ($action == 'add') 
+if ($HTTP_POST_VARS["action"] == 'cotisation') 
 {
+  $adh = new Adherent($db);
+  $adh->id = $rowid;
 
-  if ($amount > 0)
-    {
-
-      $don = new Don($db);
-      
-      $don->prenom      = $prenom;
-      $don->nom         = $nom;  
-      $don->societe     = $societe;
-      $don->adresse     = $adresse;
-      $don->amount      = $amount;
-      $don->cp          = $cp;
-      $don->ville       = $ville;
-      $don->email       = $email;
-      $don->date        = mktime(12, 0 , 0, $remonth, $reday, $reyear);
-      $don->note        = $note;
-      $don->pays        = $pays;
-      $don->public      = $public;
-      $don->projetid    = $projetid;
-      $don->commentaire = $HTTP_POST_VARS["comment"];
-      $don->modepaiementid = $modepaiement;
-      
-      if ($don->create($user->id) ) 
-	{	  
-	  Header("Location: index.php");
-	}
+  if ($cotisation > 0)
+    {     
+      $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
     }
-  else 
-    {
-      print "Erreur";
-      $action = "create";
-    }
-}
-
-if ($action == 'delete')
-{
-  $don = new Don($db);
-  $don->delete($rowid);
-  Header("Location: liste.php?statut=0");
-}
-if ($action == 'commentaire')
-{
-  $don = new Don($db);
-  $don->set_commentaire($rowid,$HTTP_POST_VARS["commentaire"]);
   $action = "edit";
 }
-if ($action == 'valid_promesse')
+
+if ($HTTP_POST_VARS["action"] == 'add') 
 {
-  $don = new Don($db);
-  if ($don->valid_promesse($rowid, $user->id))
-    {
-      Header("Location: liste.php?statut=0");
-    }
-}
-if ($action == 'set_paye')
-{
-  $don = new Don($db);
-  if ($don->set_paye($rowid, $modepaiement)) 
-    {
-      Header("Location: liste.php?statut=1");
-    }
-}
-if ($action == 'set_encaisse')
-{
-  $don = new Don($db);
-  if ($don->set_encaisse($rowid))
-    {
-      Header("Location: liste.php?statut=2");
+
+  $adh = new Adherent($db);
+      
+  $adh->prenom      = $prenom;
+  $adh->nom         = $nom;  
+  $adh->societe     = $societe;
+  $adh->adresse     = $adresse;
+  $adh->cp          = $cp;
+  $adh->ville       = $ville;
+  $adh->email       = $email;
+  $adh->note        = $note;
+  $adh->pays        = $pays;
+  $adh->typeid      = $type;
+  $adh->commentaire = $HTTP_POST_VARS["comment"];
+  
+  if ($adh->create($user->id) ) 
+    {	  
+      if ($cotisation > 0)
+	{     
+	  $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
+	}
+      Header("Location: liste.php");
     }
 }
 
+if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  $adh = new Adherent($db);
+  $adh->delete($rowid);
+  Header("Location: liste.php");
+}
 
 
 llxHeader();
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Création d'une fiche don                                                   */
+/* Création d'une fiche                                                       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,18 +99,37 @@ if ($action == 'create') {
       $total = $obj->total;
     }
   }
-  print_titre("Saisir un don");
+  print_titre("Nouvel adhérent");
   print "<form action=\"$PHP_SELF\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
-  print "<input type=\"hidden\" name=\"action\" value=\"add\">";
-  
-  print "<tr><td>Date du don</td><td>";
-  print_date_select();
-  print "</td>";
+  print '<input type="hidden" name="action" value="add">';
+
+  $htmls = new Form($db);
+  $adht = new AdherentType($db);
+
+  print "<tr><td>Type</td><td>";
+  $htmls->select_array("type",  $adht->liste_array());
+  print "</td></tr>";
+
+  print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td>';  
   
   print '<td rowspan="11" valign="top">Commentaires :<br>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
+
+
+  print '<tr><td>Nom</td><td><input type="text" name="nom" size="40"></td></tr>';
+  print '<tr><td>Societe</td><td><input type="text" name="societe" size="40"></td></tr>';
+  print '<tr><td>Adresse</td><td>';
+  print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
+  print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
+  print '<tr><td>Pays</td><td><input type="text" name="pays" size="40"></td></tr>';
+  print '<tr><td>Email</td><td><input type="text" name="email" size="40"></td></tr>';
+
+
+  print "<tr><td>Date de cotisation</td><td>";
+  print_date_select();
+  print "</td></tr>";
   print "<tr><td>Mode de paiement</td><td>\n";
   
   $paiement = new Paiement($db);
@@ -144,45 +138,8 @@ if ($action == 'create') {
 
   print "</td></tr>\n";
 
-  print "<tr><td>Projet</td><td><select name=\"projetid\">\n";
-  
-  $sql = "SELECT rowid, libelle FROM llx_don_projet ORDER BY rowid";
-  
-  if ($db->query($sql))
-    {
-      $num = $db->num_rows();
-      $i = 0; 
-      while ($i < $num) 
-	{
-	  $objopt = $db->fetch_object( $i);
-	  print "<option value=\"$objopt->rowid\">$objopt->libelle</option>\n";
-	  $i++;
-	}    
-    }
-  else
-    {
-      print $db->error();
-    }
-  print "</select><br>";
-  print "</td></tr>\n";
+  print '<tr><td>Cotisation</td><td><input type="text" name="cotisation" size="6"> euros</td></tr>';
 
-  print "<tr><td>Don public</td><td><select name=\"public\">\n";
-  
-  print '<option value="1">oui</option>';
-  print '<option value="0">non</option>';
-
-  print "</select><br>";
-  print "</td></tr>\n";
-
-  print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td></tr>';
-  print '<tr><td>Nom</td><td><input type="text" name="nom" size="40"></td></tr>';
-  print '<tr><td>Societe</td><td><input type="text" name="societe" size="40"></td></tr>';
-  print '<tr><td>Adresse</td><td>';
-  print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
-  print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
-  print '<tr><td>Pays</td><td><input type="text" name="pays" size="40"></td></tr>';
-  print '<tr><td>Email</td><td><input type="text" name="email" size="40"></td></tr>';
-  print '<tr><td>Montant</td><td><input type="text" name="amount" size="10"> euros</td></tr>';
   print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
   print "</form>\n";
   print "</table>\n";
@@ -191,136 +148,185 @@ if ($action == 'create') {
 } 
 /* ************************************************************************** */
 /*                                                                            */
-/* Edition de la fiche don                                                    */
+/* Edition de la fiche                                                        */
 /*                                                                            */
 /* ************************************************************************** */
-if ($rowid > 0 && $action == 'edit')
+if ($rowid > 0)
 {
 
-  $don = new Don($db);
-  $don->id = $rowid;
-  $don->fetch($rowid);
+  $adh = new Adherent($db);
+  $adh->id = $rowid;
+  $adh->fetch($rowid);
 
-  print_titre("Traitement du don");
+  print_titre("Edition de la fiche adhérent");
   print "<form action=\"$PHP_SELF\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+
+  print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td>';
+
+  print '<td valign="top" width="50%">Commentaires</tr>';
+
+  print '<tr><td>Nom</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
   
-  print "<tr><td>Date du don</td><td>";
-  print strftime("%d %B %Y",$don->date);
-  print "</td>";
-  
-  print '<td rowspan="11" valign="top" width="50%">Commentaires :<br>';
-  print nl2br($don->commentaire).'</td></tr>';
+  print '<td rowspan="11" valign="top" width="50%">';
+  print nl2br($adh->commentaire).'&nbsp;</td></tr>';
 
-  if ($don->statut == 1)
-    {
-      print "<tr><td>Mode de paiement</td><td>";
-      $paiement = new Paiement($db);
-      $paiement->select("modepaiement","crédit", $don->modepaiementid);
-      print "</td></tr>\n";
-    }
-
-  if ($don->statut > 1)
-    {
-      print "<tr><td>Mode de paiement</td><td>";
-      print $don->modepaiement;
-      print "</td></tr>\n";
-    }
-
-  print '<tr><td>Projet</td><td>'.$don->projet.'</td></tr>';
-
-  print "<tr><td>Don public</td><td>";
-
-  print $yn[$don->public];
-  print "</td></tr>\n";
-
-
-  print '<tr><td>Prénom</td><td>'.$don->prenom.'&nbsp;</td></tr>';
-  print '<tr><td>Nom</td><td>'.$don->nom.'&nbsp;</td></tr>';
-  print '<tr><td>Société</td><td>'.$don->societe.'&nbsp;</td></tr>';
-  print '<tr><td>Adresse</td><td>'.nl2br($don->adresse).'&nbsp;</td></tr>';
-  print '<tr><td>CP Ville</td><td>'.$don->cp.' '.$don->ville.'&nbsp;</td></tr>';
-  print '<tr><td>Pays</td><td>'.$don->pays.'&nbsp;</td></tr>';
-  print '<tr><td>Email</td><td>'.$don->email.'&nbsp;</td></tr>';
-  print '<tr><td>Montant</td><td>'.price($don->amount).' euros</td></tr>';
+  print '<tr><td>Société</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
+  print '<tr><td>Adresse</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
+  print '<tr><td>CP Ville</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
+  print '<tr><td>Pays</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>';
+  print '<tr><td>Email</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
 
   print "</table>\n";
 
-  
-  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
-  
-  /*
-   * Case 1
-   */
 
-  print '<td align="center" width="25%">[<a href="edit.php?rowid='.$don->id.'">Editer</a>]</td>';
-	
-  /*
-   * Case 2
-   */
+  if ($user->admin)
+    {
   
-  if ($don->statut == 1 && $resteapayer > 0) 
+      print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+      
+      /*
+       * Case 1
+       */
+      
+      print '<td align="center" width="25%">[<a href="edit.php?rowid='.$adh->id.'">Editer</a>]</td>';
+      
+      /*
+       * Case 2
+       */
+      
+      if ($adh->statut == 1 && $resteapayer > 0) 
+	{
+	  print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php3?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
+	}
+      
+      else
+	{
+	  print "<td align=\"center\" width=\"25%\">-</td>";
+	}
+      /*
+       * Case 3
+       */
+      print "<td align=\"center\" width=\"25%\">-</td>";
+      
+      /*
+       * Case 4
+       */
+      if ($adh->statut == 0) 
+	{
+	  print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=delete\">Supprimer</a>]</td>";
+	}
+      elseif ($adh->statut == 2)
     {
-      print "<td align=\"center\" width=\"25%\">[<a href=\"paiement.php3?facid=$facid&action=create\">Emettre un paiement</a>]</td>";
+      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$adh->id&action=set_encaisse\">Encaisser</a>]</td>";
     }
-  elseif ($don->statut == 0)
+      else
+	{
+	  print "<td align=\"center\" width=\"25%\">-</td>";
+	}
+
+      print "</tr></table></form><p>";
+    }
+
+  /*
+   *
+   *
+   *
+   */
+  $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
+  $sql .= " FROM llx_adherent as d, llx_cotisation as c";
+  $sql .= " WHERE d.rowid = c.fk_adherent AND d.rowid=$rowid";
+
+  $result = $db->query($sql);
+  if ($result) 
     {
-      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=valid_promesse\">Valider la promesse</a>]</td>";
+      $num = $db->num_rows();
+      $i = 0;
+  
+      print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">";
+
+      print '<TR class="liste_titre">';
+      print "<td>Cotisations</td>";
+      print "<td>Date</td>";
+      print "<td align=\"right\">Montant</TD>";
+      print "</TR>\n";
+      
+      $var=True;
+      while ($i < $num)
+	{
+	  $objp = $db->fetch_object( $i);
+	  $var=!$var;
+	  print "<TR $bc[$var]><td>&nbsp;</td>";
+	  print "<TD>".strftime("%d %B %Y",$objp->dateadh)."</td>\n";
+	  print '<TD align="right">'.price($objp->cotisation).'</TD>';
+	  print "</tr>";
+	  $i++;
+	}
+      print "</table>";
     }
   else
     {
-      print "<td align=\"center\" width=\"25%\">-</td>";
+      print $sql;
+      print $db->error();
     }
+
   /*
-   * Case 3
+   *
+   *
+   *
    */
-  if ($don->statut == 1 && abs($resteapayer == 0) && $don->paye == 0) 
-    {
-      print "<td align=\"center\" width=\"25%\">";
-
-      print '<input type="hidden" name="action" value="set_paye">';
-      print '<input type="hidden" name="rowid" value="'.$don->id.'">';
-
-      print '<input type="submit" value="Classer Payé">';
-
-      print "</td>";
-    }
-  else
-    {
-      print "<td align=\"center\" width=\"25%\">-</td>";
-    }
-  /*
-   * Case 4
-   */
-  if ($don->statut == 0) 
-    {
-      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=delete\">Supprimer</a>]</td>";
-    }
-  elseif ($don->statut == 2)
-    {
-      print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$don->id&action=set_encaisse\">Encaisser</a>]</td>";
-    }
-  else
-    {
-      print "<td align=\"center\" width=\"25%\">-</td>";
-    }
-
-  print "</tr></table></form><p>";
-/* ************************************************************************** */
-/*                                                                            */
-/* Commentaire                                                                */
-/*                                                                            */
-/* ************************************************************************** */
-
-  print "<form action=\"$PHP_SELF\" method=\"post\">";
-  print '<input type="hidden" name="action" value="commentaire">';
-  print '<input type="hidden" name="rowid" value="'.$don->id.'">';
+  print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'&action=edit">';
+  print '<input type="hidden" name="action" value="cotisation">';
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-  print '<tr><td align="center">Commentaires</td></tr>';
-  print '<tr><td><textarea cols="60" rows="20" name="commentaire">'.$don->commentaire.'</textarea></td></tr>';
-  print '<tr><td align="center"><input type="submit" value="Enregistrer"></td></tr>';
-  print '</table></form>';
+
+  print '<tr><td width="15%">Fin adhésion</td><td width="35%" class="valeur">'.strftime("%d %B %Y",$adh->datefin).'&nbsp;</td>';
+
+  print '<td valign="top" width="50%">&nbsp;</td></tr>';
+
+  print '<tr><td colspan="3">Nouvelle adhésion</td></tr>';
+
+  print "<tr><td>Date de cotisation</td><td>";
+  print_date_select($adh->datefin + (3600*24));
+  print "</td><td>&nbsp;</td></tr>";
+  print "<tr><td>Mode de paiement</td><td>\n";
   
+  $paiement = new Paiement($db);
+
+  $paiement->select("modepaiement","crédit");
+
+  print "</td><td>&nbsp;</td></tr>\n";
+  print '<tr><td>Cotisation</td><td colspan="2"><input type="text" name="cotisation" size="6"> euros</td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"</td></tr>';
+  print '</table>';
+  print "</form>";  
+
+  /*
+   * Confirmation de la suppression de l'adhérent
+   *
+   */
+
+  if ($action == 'delete')
+    {
+
+      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">';
+      print '<input type="hidden" name="action" value="confirm_delete">';
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+      
+      print '<tr><td colspan="3">Supprimer un adhérent</td></tr>';
+      print "<tr><td colspan=\"3\">La suppression d'un adhérent entraine la suppression de toutes ses cotisations !!!</td></tr>";
+      
+      print '<tr><td class="delete">Etes-vous sur de vouloir supprimer cet adhérent ?</td><td class="delete">';
+      $htmls = new Form($db);
+      
+      $htmls->selectyesno("confirm","no");
+      
+      print "</td>";
+      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '</table>';
+      print "</form>";  
+    }
+
+
 }
 
 $db->close();

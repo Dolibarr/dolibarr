@@ -1,11 +1,30 @@
 <chapt id="dons">Dons
 
-  <sect id="don-suffix">Suffixe de commande
-    
-    Le suffixe de commande des dons est la valeur 10.
+  <sect id="don-conf">Configuration
+    <p>
 
+    $this->enabled = 0;
 
+    /* Paiement en ligne */
+
+    $this->onlinepayment = 0;
+
+    /* Don minimum, 0 pas de limite */ 
+    $this->minimum = 0;
+
+    /* Email des moderateurs */
+
+    $this->email_moderator = "root@localhost";
+
+    </p>
   </sect>
+
+  <sect id="don-suffix">Suffixe de commande
+    <p>
+      Le suffixe de commande des dons est la valeur 10.
+    </p>
+  </sect>
+
 
 
 </chapt>

@@ -20,12 +20,10 @@
  *
  */
 
-class Don
+class Adherent
 {
   var $id;
   var $db;
-  var $date;
-  var $amount;
   var $prenom;
   var $nom;
   var $societe;
@@ -33,29 +31,21 @@ class Don
   var $cp;
   var $ville;
   var $pays;
+  var $typeid;
   var $email;
   var $public;
-  var $projetid;
-  var $modepaiement;
-  var $modepaiementid;
   var $commentaire;
   var $statut;
 
-  var $projet;
   var $errorstr;
   /*
-   * Statut du don
-   * 0 : promesse non validée
-   * 1 : promesse validée
-   * 2 : don validé
-   * 3 : don payé
    *
    *
    */
-  Function Don($DB, $soc_idp="") 
+  Function Adherent($DB, $soc_idp="") 
     {
       $this->db = $DB ;
-      $this->modepaiementid = 0;
+      $this->statut = 0;
     }
   /*
    *
@@ -171,14 +161,15 @@ class Don
 
       $this->date = $this->db->idate($this->date);
 
-      $sql = "INSERT INTO llx_don (datec, amount, fk_paiement,prenom, nom, societe,adresse, cp, ville, pays, public, fk_don_projet, note, fk_user_author, datedon, email)";
-      $sql .= " VALUES (now(), $this->amount, $this->modepaiementid,'$this->prenom','$this->nom','$this->societe','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, $this->projetid, '$this->commentaire', $userid, '$this->date','$this->email')";
+      $sql = "INSERT INTO llx_adherent (datec)";
+      $sql .= " VALUES (now())";
       
       $result = $this->db->query($sql);
       
       if ($result) 
 	{
-	  return $this->db->last_insert_id();
+	  $this->id = $this->db->last_insert_id();
+	  return $this->update();
 	}
       else
 	{
@@ -193,27 +184,22 @@ class Don
    *
    *
    */
-  Function update($userid) 
+  Function update() 
     {
       
-      $this->date = $this->db->idate($this->date);
 
-      $sql = "UPDATE llx_don SET ";
-      $sql .= "amount = " . $this->amount;
-      $sql .= ",fk_paiement = ".$this->modepaiementid;
-      $sql .= ",prenom = '".$this->prenom ."'";
+      $sql = "UPDATE llx_adherent SET ";
+      $sql .= "prenom = '".$this->prenom ."'";
       $sql .= ",nom='".$this->nom."'";
       $sql .= ",societe='".$this->societe."'";
       $sql .= ",adresse='".$this->adresse."'";
       $sql .= ",cp='".$this->cp."'";
       $sql .= ",ville='".$this->ville."'";
       $sql .= ",pays='".$this->pays."'";
-      $sql .= ",public=".$this->public;
-      $sql .= ",fk_don_projet=".$this->projetid;
       $sql .= ",note='".$this->commentaire."'";
-      $sql .= ",datedon='".$this->date."'";
       $sql .= ",email='".$this->email."'";
-      $sql .= ",fk_statut=".$this->statut;
+      $sql .= ",statut=".$this->statut;
+      $sql .= ",fk_adherent_type=".$this->typeid;
 
       $sql .= " WHERE rowid = $this->id";
       
@@ -238,25 +224,31 @@ class Don
   Function delete($rowid)
 
   {
-    
-    $sql = "DELETE FROM llx_don WHERE rowid = $rowid AND fk_statut = 0;";
+    $result = 0;
+    $sql = "DELETE FROM llx_adherent WHERE rowid = $rowid";
 
     if ( $this->db->query( $sql) )
       {
 	if ( $this->db->affected_rows() )
 	  {
-	    return 1;
-	  }
-	else
-	  {
-	    return 0;
+
+	    $sql = "DELETE FROM llx_cotisation WHERE fk_adherent = $rowid";
+	    if ( $this->db->query( $sql) )
+	      {
+		if ( $this->db->affected_rows() )
+		  {
+		    $result = 1;
+		  }
+	      }
 	  }
       }
     else
       {
 	print "Err : ".$this->db->error();
-	return 0;
-      }    
+      }
+
+    return $result;
+
   }
   /*
    * Fetch
@@ -265,9 +257,10 @@ class Don
    */
   Function fetch($rowid)
   {
-    $sql = "SELECT d.rowid, ".$this->db->pdate("d.datedon")." as datedon, d.prenom, d.nom, d.societe, d.amount, p.libelle as projet, d.fk_statut, d.adresse, d.cp, d.ville, d.pays, d.public, d.amount, d.fk_paiement, d.note, cp.libelle, d.email, d.fk_don_projet";
-    $sql .= " FROM llx_don as d, llx_don_projet as p, c_paiement as cp";
-    $sql .= " WHERE p.rowid = d.fk_don_projet AND cp.id = d.fk_paiement AND d.rowid = $rowid";
+    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.adresse, d.cp, d.ville, d.pays, d.note, d.email, d.fk_adherent_type";
+    $sql .= ",".$this->db->pdate("d.datefin")." as datefin";
+    $sql .= " FROM llx_adherent as d";
+    $sql .= " WHERE d.rowid = $rowid";
 
     if ( $this->db->query( $sql) )
       {
@@ -277,6 +270,7 @@ class Don
 	    $obj = $this->db->fetch_object(0);
 
 	    $this->id             = $obj->rowid;
+	    $this->typeid         = $obj->fk_adherent_type;
 	    $this->date           = $obj->datedon;
 	    $this->prenom         = stripslashes($obj->prenom);
 	    $this->nom            = stripslashes($obj->nom);
@@ -287,12 +281,7 @@ class Don
 	    $this->ville          = stripslashes($obj->ville);
 	    $this->email          = stripslashes($obj->email);
 	    $this->pays           = stripslashes($obj->pays);
-	    $this->projet         = $obj->projet;
-	    $this->projetid       = $obj->fk_don_projet;
-	    $this->public         = $obj->public;
-	    $this->modepaiementid = $obj->fk_paiement;
-	    $this->modepaiement   = $obj->libelle;
-	    $this->amount         = $obj->amount;
+	    $this->datefin        = $obj->datefin;
 	    $this->commentaire    = stripslashes($obj->note);
 	  }
       }
@@ -302,20 +291,35 @@ class Don
       }
     
   }
+
+
   /*
-   * Suppression du don
+   * Cotisation
    *
    */
-  Function valid_promesse($rowid, $userid)
-  {
+  Function cotisation($date, $montant)
 
-    $sql = "UPDATE llx_don SET fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid AND fk_statut = 0;";
+  {
+    
+    $sql = "INSERT INTO llx_cotisation (fk_adherent, dateadh, cotisation)";
+    $sql .= " VALUES ($this->id, ".$this->db->idate($date).", $montant)";
 
     if ( $this->db->query( $sql) )
       {
 	if ( $this->db->affected_rows() )
 	  {
-	    return 1;
+
+	    $datefin = mktime(12, 0 , 0, 
+			      strftime("%m",$date), 
+			      strftime("%d",$date),
+			      strftime("%Y",$date)+1) - (24 * 3600);
+
+	    $sql = "UPDATE llx_adherent SET datefin = ".$this->db->idate($datefin)." WHERE rowid =". $this->id;
+
+	    if ( $this->db->query( $sql) )
+	      {
+	      return 1;
+	      }
 	  }
 	else
 	  {
@@ -328,142 +332,6 @@ class Don
 	return 0;
       }    
   }
-  /*
-   * Classé comme payé, le don a été recu
-   *
-   */
-  Function set_paye($rowid, $modepaiement='')
-  {
-    $sql = "UPDATE llx_don SET fk_statut = 2";
 
-    if ($modepaiement)
-      {
-	$sql .= ", fk_paiement=$modepaiement";
-      }
-    $sql .=  " WHERE rowid = $rowid AND fk_statut = 1;";
-
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->affected_rows() )
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    return 0;
-	  }
-      }
-    else
-      {
-	print "Err : ".$this->db->error();
-	return 0;
-      }    
-  }
-  /*
-   * Classé comme payé, le don a été recu
-   *
-   */
-  Function set_commentaire($rowid, $commentaire='')
-  {
-    $sql = "UPDATE llx_don SET note = '$commentaire'";
-
-    $sql .=  " WHERE rowid = $rowid ;";
-
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->affected_rows() )
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    return 0;
-	  }
-      }
-    else
-      {
-	print "Err : ".$this->db->error();
-	return 0;
-      }    
-  }
-  /*
-   * Classé comme encaissé
-   *
-   */
-  Function set_encaisse($rowid)
-  {
-
-    $sql = "UPDATE llx_don SET fk_statut = 3 WHERE rowid = $rowid AND fk_statut = 2;";
-
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->affected_rows() )
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    return 0;
-	  }
-      }
-    else
-      {
-	print "Err : ".$this->db->error();
-	return 0;
-      }    
-  }
-  /*
-   * Somme des dons encaissés
-   */
-  Function sum_actual()
-  {
-    $sql = "SELECT sum(amount)";
-    $sql .= " FROM llx_don";
-    $sql .= " WHERE fk_statut = 3";
-
-    if ( $this->db->query( $sql) )
-      {
-	$row = $this->db->fetch_row(0);
-
-	return $row[0];
-
-      }
-  }
-  /* Paiement recu en attente d'encaissement
-   * 
-   *
-   */
-  Function sum_pending()
-  {
-    $sql = "SELECT sum(amount)";
-    $sql .= " FROM llx_don";
-    $sql .= " WHERE fk_statut = 2";
-
-    if ( $this->db->query( $sql) )
-      {
-	$row = $this->db->fetch_row(0);
-
-	return $row[0];
-
-      }
-  }
-  /*
-   * Somme des promesses de dons validées
-   *
-   */
-  Function sum_intent()
-  {
-    $sql = "SELECT sum(amount)";
-    $sql .= " FROM llx_don";
-    $sql .= " WHERE fk_statut = 1";
-
-    if ( $this->db->query( $sql) )
-      {
-	$row = $this->db->fetch_row(0);
-
-	return $row[0];
-
-      }
-  }
 }
 ?>

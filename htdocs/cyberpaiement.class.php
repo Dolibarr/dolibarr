@@ -17,6 +17,11 @@
  *
  * $Id$
  * $Source$
+ */
+
+/* Classe de gestion du système de paiement de la banque Populaire
+ * de Lorraine et Champagne
+ * http://www.cyberpaiement.tm.fr/
  *
  */
 
@@ -191,7 +196,7 @@ class Cyberpaiement
       print "\n";
       print '<input type="hidden" name="CHAMP006" value="'.$this->champ006.'">';
       print "\n";
-      print '<input type="hidden" name="CHAMP007" value="'.$this->champ007.'">';
+      print '<input type="hidden" name="CHAMP007" value="'.$this->champ007.'ref='.$this->champ200.'">';
       print "\n";
       print '<input type="hidden" name="CHAMP008" value="'.$this->champ008.'">';
       print "\n";

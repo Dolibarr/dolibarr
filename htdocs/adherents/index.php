@@ -25,6 +25,16 @@ llxHeader();
 
 $db = new Db();
 
+print_titre("Gestion des adherents");
+
+print '<TABLE border="0" cellspacing="0" cellpadding="4">';
+print '<TR class="liste_titre">';
+print "<td>&nbsp;</td>";
+print "<td>Somme</td>";
+print "</TR>\n";
+
+$var=True;
+
 
 $sql = "SELECT sum(d.amount) as somme , d.fk_statut FROM llx_don as d GROUP BY d.fk_statut";
 
@@ -44,15 +54,6 @@ if ($result)
   $db->free();
 }
 
-print_barre_liste("Dons", $page, $PHP_SELF);
-
-print '<TABLE border="0" cellspacing="0" cellpadding="4">';
-print '<TR class="liste_titre">';
-print "<td>&nbsp;</td>";
-print "<td>Somme</td>";
-print "</TR>\n";
-
-$var=True;
 
 for ($i = 0 ; $i < 4 ; $i++)
 {
@@ -65,6 +66,8 @@ for ($i = 0 ; $i < 4 ; $i++)
 }
 print '<tr><td>Total</td><td align="right">'.price($total).'</TD></tr>';
 print "</table>";
+
+
 
 
 

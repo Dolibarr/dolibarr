@@ -31,7 +31,7 @@
 <input type="hidden" name="CHAMP906" value="0000">
 
 <input type="hidden" name="CHAMP002" value="1234567890">
-<input type="hidden" name="CHAMP200" value="123456789012345">
+<input type="hidden" name="CHAMP200" value="1">
 <input type="hidden" name="CHAMP201" value="200">
 
 <input type="submit" value="Test Retour">

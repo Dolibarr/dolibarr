@@ -20,47 +20,46 @@
  *
  */
 require("./pre.inc.php");
-require("../../don.class.php");
-require("../../paiement.class.php");
+require("../adherent.class.php");
+require("../adherent_type.class.php");
 
 $db = new Db();
 
+/* 
+ * Enregistrer les modifs
+ */
 
-if ($action == 'update') 
+if ($action == 'update')
 {
 
-  if ($amount > 0)
+  if ($HTTP_POST_VARS["bouton"] == "Enregistrer")
     {
 
-      $don = new Don($db);
+      $adh = new Adherent($db);
 
-      $don->id          = $HTTP_POST_VARS["rowid"];
-      $don->prenom      = $prenom;
-      $don->nom         = $nom;  
-      $don->statut      = $HTTP_POST_VARS["statutid"];  
-      $don->societe     = $societe;
-      $don->adresse     = $adresse;
-      $don->amount      = $amount;
-      $don->cp          = $cp;
-      $don->ville       = $ville;
-      $don->email       = $email;
-      $don->date        = mktime(12, 0 , 0, $remonth, $reday, $reyear);
-      $don->note        = $note;
-      $don->pays        = $pays;
-      $don->public      = $public;
-      $don->projetid    = $projetid;
-      $don->commentaire = $HTTP_POST_VARS["comment"];
-      $don->modepaiementid = $modepaiement;
+      $adh->id          = $HTTP_POST_VARS["rowid"];
+      $adh->prenom      = $prenom;
+      $adh->nom         = $nom;  
+      $adh->societe     = $societe;
+      $adh->adresse     = $adresse;
+      $adh->amount      = $amount;
+      $adh->cp          = $cp;
+      $adh->ville       = $HTTP_POST_VARS["ville"];
+      $adh->email       = $HTTP_POST_VARS["email"];
+      $adh->date        = mktime(12, 0 , 0, $remonth, $reday, $reyear);
+      $adh->note        = $HTTP_POST_VARS["note"];
+      $adh->pays        = $HTTP_POST_VARS["pays"];
+      $adh->typeid      = $HTTP_POST_VARS["type"];
+      $adh->commentaire = $HTTP_POST_VARS["comment"];
       
-      if ($don->update($user->id) ) 
+      if ($adh->update($user->id) ) 
 	{	  
-	  Header("Location: fiche.php?rowid=$don->id&action=edit");
+	  Header("Location: fiche.php?rowid=$adh->id&action=edit");
 	}
     }
-  else 
+  else
     {
-      print "Erreur";
-      $action = "create";
+      Header("Location: fiche.php?rowid=$rowid&action=edit");
     }
 }
 
@@ -71,9 +70,9 @@ llxHeader();
 if ($rowid)
 {
 
-  $don = new Don($db);
-  $don->id = $rowid;
-  $don->fetch($rowid);
+  $adh = new Adherent($db);
+  $adh->id = $rowid;
+  $adh->fetch($rowid);
 
   $sql = "SELECT s.nom,s.idp, f.amount, f.total, f.facnumber";
   $sql .= " FROM societe as s, llx_facture as f WHERE f.fk_soc = s.idp";
@@ -88,79 +87,66 @@ if ($rowid)
       $total = $obj->total;
     }
   }
-  print_titre("Saisir un don");
+  print_titre("Edition de la fiche adhérent");
+
+
+  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+
+  print '<tr><td width="15%">Prénom</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td>';
+
+  print '<td valign="top" width="50%">Commentaires</td></tr>';
+
+  print '<tr><td>Nom</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
+  
+  print '<td rowspan="10" valign="top" width="50%">';
+  print nl2br($adh->commentaire).'&nbsp;</td></tr>';
+
+
+  print '<tr><td>Société</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
+  print '<tr><td>Adresse</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
+  print '<tr><td>CP Ville</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
+  print '<tr><td>Pays</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>';
+  print '<tr><td>Email</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
+
+  print "</table>\n";
+
+  print "<hr>";
+
   print "<form action=\"$PHP_SELF\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
   print "<input type=\"hidden\" name=\"action\" value=\"update\">";
   print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
-  
-  print "<tr><td>Date du don</td><td>";
-  print_date_select($don->date);
-  print "</td>";
-  
-  print '<td rowspan="13" valign="top">Commentaires :<br>';
-  print '<textarea name="comment" wrap="soft" cols="40" rows="15">'.$don->commentaire.'</textarea></td></tr>';
 
-  print "<tr><td>Statut du don</td><td>";
+  $htmls = new Form($db);
+  $adht = new AdherentType($db);
 
-  $listst[0] = "Promesse à valider";
-  $listst[1] = "Promesse validée";
-  $listst[2] = "Don payé";
-  $listst[3] = "Don encaissé";
-
-
-  $sel = new Form($db);
-  $sel->select_array("statutid",$listst,$don->statut);
-
+  print "<tr><td>Type</td><td>";
+  $htmls->select_array("type",  $adht->liste_array(), $adh->typeid);
   print "</td></tr>";
 
-  print "<tr><td>Mode de paiement</td><td>\n";
   
-  $paiement = new Paiement($db);
-
-  $paiement->select("modepaiement","", $don->modepaiementid);
-
-  print "</td></tr>\n";
-
-  print "<tr><td>Projet</td><td>\n";
-
-  $prj = new ProjetDon($db);
-  $listeprj = $prj->liste_array();
-
-  $sel = new Form($db);
-  $sel->select_array("projetid",$listeprj,$don->projetid);
+  print '<tr><td width="15%">Prénom</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
   
+  print '<td valign="top" width="50%">Commentaires</td></tr>';
 
-  print "<br>";
-  print "</td></tr>\n";
+  print '<tr><td>Nom</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
 
-  print "<tr><td>Don public</td><td><select name=\"public\">\n";
-  if ($don->public) 
-    {
-      print '<option value="1" SELECTED>oui</option>';
-      print '<option value="0">non</option>';
-    }
-  else
-    {
-      print '<option value="1">oui</option>';
-      print '<option value="0" SELECTED>non</option>';
-    }
-  print "</select><br>";
-  print "</td></tr>\n";
+  print '<td rowspan="13" valign="top">';
+  print '<textarea name="comment" wrap="soft" cols="40" rows="15">'.$adh->commentaire.'</textarea></td></tr>';
 
-  print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40" value="'.$don->prenom.'"></td></tr>';
-  print '<tr><td>Nom</td><td><input type="text" name="nom" size="40" value="'.$don->nom.'"></td></tr>';
-  print '<tr><td>Societe</td><td><input type="text" name="societe" size="40" value="'.$don->societe.'"></td></tr>';
+  print '<tr><td>Societe</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
   print '<tr><td>Adresse</td><td>';
-  print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.$don->adresse.'</textarea></td></tr>';
-  print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="8" value="'.$don->cp.'"> <input type="text" name="ville" size="40" value="'.$don->ville.'"></td></tr>';
-  print '<tr><td>Pays</td><td><input type="text" name="pays" size="40" value="'.$don->pays.'"></td></tr>';
-  print '<tr><td>Email</td><td><input type="text" name="email" size="40" value="'.$don->email.'"></td></tr>';
-  print '<tr><td>Montant</td><td><input type="text" name="amount" size="10" value="'.$don->amount.'"> euros</td></tr>';
-  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
-  print "</form>\n";
-  print "</table>\n";
+  print '<textarea name="adresse" wrap="soft" cols="40" rows="3">'.$adh->adresse.'</textarea></td></tr>';
+  print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="6" value="'.$adh->cp.'"> <input type="text" name="ville" size="20" value="'.$adh->ville.'"></td></tr>';
+  print '<tr><td>Pays</td><td><input type="text" name="pays" size="40" value="'.$adh->pays.'"></td></tr>';
+  print '<tr><td>Email</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
+  print '<tr><td colspan="2" align="center">';
+  print '<input type="submit" name="bouton" value="Enregistrer">&nbsp;';
+  print '<input type="submit" value="Annuler">';
+  print '</td></tr>';
+  print '</form>';
+  print '</table>';
        
 }
 

@@ -44,7 +44,7 @@ if ($result)
   $db->free();
 }
 
-print_barre_liste("Dons", $page, $PHP_SELF);
+print_titre("Dons");
 
 print '<TABLE border="0" cellspacing="0" cellpadding="4">';
 print '<TR class="liste_titre">';

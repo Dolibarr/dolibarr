@@ -126,7 +126,27 @@ class Form {
     {
       return $this->errorstr;
     }
-  
+  /*
+   *
+   * Yes/No
+   *
+   */
+  Function selectyesno($name,$value='')
+  {
+    print '<select name="'.$name.'">';
+
+    if ($value == 'yes') 
+      {
+	print '<option value="yes" SELECTED>oui</option>';
+	print '<option value="no">non</option>';
+      }
+    else
+      {
+	print '<option value="yes">oui</option>';
+	print '<option value="no" SELECTED>non</option>';
+      }
+    print '</select>';
+  }
 
 }
 
