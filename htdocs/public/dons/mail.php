@@ -17,14 +17,14 @@ L'initiative EUCD.INFO[1] a pour  objet de préserver l'intérêt général
 menacé  par  la   transposition  de  la  directive  du   22  mai  2001
 (EUCD)[2]. Pour y parvenir elle entend:
 
-    * Produire et proposer un avant-projet de loi alternatif.
+    * Produire et proposer des solutions au législateur.
     * Le promouvoir auprès des personnes responsables.
     * Entrer dans le cercle de consultation.
 
 Votre contribution  financière servira principalement  à rémunérer des
 juristes dont les tâches seront d'analyser la situation et de proposer
-un avant-projet  de loi transposant  la directive dans le  respect des
-droits des utilisateurs et du public.
+des  solutions permettant une  transposition de  la directive  dans le
+respect des droits des utilisateurs et du public.
 
 Vous pourrez suivre  les progrès de notre action  grâce à l'échéancier
 que nous remettons  régulièrement à jour sur la page  de garde du site
