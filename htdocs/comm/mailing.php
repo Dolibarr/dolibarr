@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +25,9 @@
 
 /*!
     \file       htdocs/comm/mailing.php
-    \ingroup    
     \brief      Page pour faire des mailing
 */
+
 require("./pre.inc.php");
 
 $langs->load("admin");
@@ -34,6 +35,7 @@ $langs->load("commercial");
 $langs->load("users");
 $langs->load("bills");
 $langs->load("companies");
+$langs->load("other");
 
 /*
  *  Modules optionnels

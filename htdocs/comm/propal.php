@@ -29,7 +29,10 @@
 
 require("./pre.inc.php");
 
+$langs->load("companies");
+
 $user->getrights('propale');
+
 if (!$user->rights->propale->lire)
   accessforbidden();
 
@@ -109,7 +112,7 @@ if ($_POST["action"] == 'add')
     }
 }
 
-if ($action == 'pdf')
+if ($_GET["action"] == 'pdf')
 {
   $propal = new Propal($db);
   $propal->fetch($propalid);
@@ -218,15 +221,13 @@ if ($_GET["valid"] == 1 && $user->rights->propale->valider)
 }
 
 
+
+
 llxHeader();
 
-/******************************************************************************/
-/*                   Fin des  Actions                                         */
-/******************************************************************************/
+
 /*
- *
- * Mode fiche
- *
+ * Affichage fiche propal en mode visu
  *
  */
 if ($_GET["propalid"])
@@ -244,10 +245,10 @@ if ($_GET["propalid"])
   $h = 1;
   $a = 0;
   $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
-  $head[$h][1] = "Note";
+  $head[$h][1] = $langs->trans("Note");
   $h++;
   $head[$h][0] = DOL_URL_ROOT.'/comm/propal/info.php?propalid='.$propal->id;
-  $head[$h][1] = "Info";
+  $head[$h][1] = $langs->trans("Info");
 
   dolibarr_fiche_head($head, $a, $societe->nom);
 
@@ -290,9 +291,9 @@ if ($_GET["propalid"])
 	      print '<input type="hidden" name="action" value="setremise">';
 	    }
 
-	  print "<table class=\"border\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
+	  print "<table class=\"border\" width=\"100%\">";
 
-	  print '<tr><td>Société</td><td colspan="3">';
+	  print '<tr><td>'.$langs->trans("Companies").'</td><td colspan="3">';
 	  if ($societe->client == 1)
 	    {
 	      $url ='fiche.php?socid='.$societe->id;
@@ -304,7 +305,7 @@ if ($_GET["propalid"])
 	  print '<a href="'.$url.'">'.$societe->nom.'</a></td>';
 	  print '<td>'.$langs->trans("Status").'</td><td align="center"><b>'.$obj->lst.'</b></td></tr>';
 
-	  print '<tr><td>Date</td><td colspan="3">'.strftime("%A %d %B %Y",$propal->date);
+	  print '<tr><td>'.$langs->trans("Date").'</td><td colspan="3">'.strftime("%A %d %B %Y",$propal->date);
 	  if ($propal->fin_validite)
 	    {
 	      print " (".strftime("%d %B %Y",$propal->fin_validite).")";
@@ -318,13 +319,15 @@ if ($_GET["propalid"])
 
 	  print "<tr><td>Destinataire</td><td colspan=\"3\">$obj->firstname $obj->name &lt;$obj->email&gt;</td>";
 
-	  print '<td valign="top" colspan="2" width="50%" rowspan="5">Note :<br>'. nl2br($propal->note)."</td></tr>";
+	  print '<td valign="top" colspan="2" width="50%" rowspan="5">'.$langs->trans("Note").' :<br>'. nl2br($propal->note)."</td></tr>";
 	  
 	  if ($propal->projet_id) 
 	    {
+          $langs->load("projects");
+          
 	      $projet = new Project($db);
 	      $projet->fetch($propal->projet_id); 
-	      print '<tr><td>Projet</td><td colspan="3">';
+	      print '<tr><td>'.$langs->trans("Projects").'</td><td colspan="3">';
 	      print '<a href="../projet/fiche.php?id='.$projet->id.'">';
 	      print $projet->title.'</a></td></tr>';
 	    }
@@ -336,7 +339,7 @@ if ($_GET["propalid"])
 	    {
 	      print '<tr><td>Remise <a href="propal/aideremise.php?propalid='.$propal->id.'">?</a></td>';
 	      print '<td align="right"><input type="text" name="remise" size="3" value="'.$propal->remise_percent.'">%</td>';
-	      print '<td><input type="submit" value="Appliquer"></td>';
+	      print '<td><input type="submit" value="'.$langs->trans("Save").'"></td>';
 
 	    }
 	  else
@@ -349,8 +352,8 @@ if ($_GET["propalid"])
 	  /*
 	   *
 	   */
-	  print '<tr><td>Montant HT</td><td align="right">'.price($obj->price + $obj->remise).' euros</td>';
-	  print '<td align="right">TVA</td><td align="right">'.price($propal->total_tva).' euros</td></tr>';
+	  print '<tr><td>'.$langs->trans("AmountHT").'</td><td align="right">'.price($obj->price + $obj->remise).' euros</td>';
+	  print '<td align="right">'.$langs->trans("VAT").'</td><td align="right">'.price($propal->total_tva).' euros</td></tr>';
 	  	  
 	  /*
 	   *
@@ -806,21 +809,12 @@ if ($_GET["propalid"])
 	}
       else
 	{
-	  print "Num rows = " . $db->num_rows();
-	  print "<p><b>$sql";
+	  dolibarr_print_error($db);
 	}      
-    }
-  else
-    {
-      print $db->error();
-      print "<p><b>$sql";
-    }  
-  /*
-   *
-   *
-   *
-   */
-} else {
+
+}
+else
+{
   /****************************************************************************
    *                                                                          *
    *                                                                          *
@@ -937,7 +931,7 @@ if ($_GET["propalid"])
 	  print " <a href=\"propal.php?year=$y&amp;month=$m\">";
 	  print strftime("%B",$objp->dp)."</a>\n";
 	  print " <a href=\"propal.php?year=$y\">";
-	  print strftime("%Y",$objp->dp)."</a></TD>\n";      
+	  print strftime("%Y",$objp->dp)."</a></td>\n";      
 	  
 	  print "<td align=\"right\">".price($objp->price)."</td>\n";
 	  print "<td align=\"center\">$objp->statut</td>\n";
@@ -954,9 +948,11 @@ if ($_GET["propalid"])
     }
   else
     {
-      print $db->error();
+      dolibarr_print_error($db);
     }
 }
 $db->close();
+
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
 ?>

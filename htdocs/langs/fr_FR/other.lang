@@ -2,7 +2,8 @@
 Calendar=Calendrier
 LoginWebcal=Login Webcalendar
 AddCalendarEntry=Ajouter entrée dans le calendrier
-MailingDesc=Cette écran vous permet d'envoyer des mailing à un groupe de personne.
+Mailing=Mailing
+MailingDesc=Cet écran vous permet d'envoyer des mailing à un groupe de personne.
 MailingResult=Résultat de l'envoi du mailing
 MailFrom=Emetteur
 MailReply=Répondre à

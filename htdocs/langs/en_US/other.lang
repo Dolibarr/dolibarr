@@ -2,3 +2,12 @@
 Calendar=Calendar
 LoginWebcal=Login for Webcalendar
 AddCalendarEntry=Add entry in calendar
+Mailing=Mailing
+MailingDesc=This page allows you to send mailings to a group of people.
+MailingResult=Sending mails result
+MailFrom=Sender
+MailReply=Reply to
+MailTo=Receiver(s)
+MailTopic=Subject
+MailText=Message
+MailFile=Attach a file
