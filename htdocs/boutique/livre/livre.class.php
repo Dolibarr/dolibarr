@@ -398,8 +398,8 @@ class Livre {
 	$sql = "UPDATE ".DB_NAME_OSC.".products ";
 	$sql .= "SET products_model = '".$this->ref."'";
 	$sql .= ", products_image = '".$this->image."'";
-	$sql .= ", products_price = ".$this->price."";
-	$sql .= ", products_weight = ".$this->price."";
+	$sql .= ", products_price = ".ereg_replace(",",".",$this->price)."";
+	$sql .= ", products_weight = ".ereg_replace(",",".",$this->price)."";
 
 	$sql .= " WHERE products_id = " . $this->oscid;
 
@@ -466,7 +466,7 @@ class Livre {
     $sql = "UPDATE llx_livre ";
     $sql .= " SET title = '" . trim($this->titre) ."'";
     $sql .= ", ref = '" . trim($this->ref) ."'";
-    $sql .= ", prix = " . $this->price ."";
+    $sql .= ", prix = " . ereg_replace(",",".",$this->price)."";
     $sql .= ", annee = " . $this->annee ;
     $sql .= ", fk_editeur = " . $this->editeurid ;
     $sql .= ", description = '" . trim($this->description) ."'";
