@@ -54,7 +54,7 @@ class pdf_soleil extends ModelePDFFicheinter
       $fich = new Fichinter($this->db,"",$id);
       if ($fich->fetch($id))
 	{
-      $dir = $conf->ficheinter->dir_output . "/" . $fich->ref . "/" ;
+      $dir = $conf->fichinter->dir_output . "/" . $fich->ref . "/" ;
       $file = $dir . $fich->ref . ".pdf";
 	      
 	  if (! file_exists($dir))

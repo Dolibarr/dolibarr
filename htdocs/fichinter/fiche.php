@@ -370,7 +370,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=edit">'.$langs->trans("Edit").'</a>';
 	    }
 	  	  
-	  $file = $conf->ficheinter->dir_output . "/$fichinter->ref/$fichinter->ref.pdf";
+	  $file = $conf->fichinter->dir_output . "/$fichinter->ref/$fichinter->ref.pdf";
 	  if ($fichinter->statut == 0 or !file_exists($file))
 	    {
 	      $langs->load("bills");
@@ -391,7 +391,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
       print_titre("Documents générés");
       print '<table width="100%" class="border">';
       
-      $file = $conf->ficheinter->dir_output . "/$fichinter->ref/$fichinter->ref.pdf";
+      $file = $conf->fichinter->dir_output . "/$fichinter->ref/$fichinter->ref.pdf";
       $relativepath="$fichinter->ref/$fichinter->ref.pdf";
       
       $var=true;

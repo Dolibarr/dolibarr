@@ -226,7 +226,7 @@ class Fichinter
 	    {
 	      chmod($file, 0444);
 	    }
-	  $filepdf = $conf->ficheinter->dir_output . "/$this->ref/$this->ref.pdf";
+	  $filepdf = $conf->fichinter->dir_output . "/$this->ref/$this->ref.pdf";
 	  if (is_writeable($filepdf)) 
 	    {
 	      chmod($filepdf, 0444);
