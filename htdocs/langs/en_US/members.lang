@@ -33,3 +33,5 @@ OptionalFieldsSetup=Optional fields setup
 MembersTypeSetup=Members type setup
 Subscription=Subscription
 Subscriptions=Subscriptions
+ListOfSubscriptions=List of subscriptions
+SendCardByMail=Send card

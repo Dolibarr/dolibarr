@@ -22,7 +22,8 @@
  *
  */
 
-/**     \file       htdocs/adherents/cotisations.php
+/**
+        \file       htdocs/adherents/cotisations.php
         \ingroup    adherent
 		\brief      Page de consultation et insertion d'une cotisation
 		\version    $Revision$
@@ -149,14 +150,14 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $of
 $result = $db->query($sql);
 if ($result) 
 {
-  $num = $db->num_rows();
+  $num = $db->num_rows($result);
   $i = 0;
   
-  print_barre_liste("Liste des cotisations", $page, "cotisations.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
+  print_barre_liste($langs->trans("ListOfSubscriptions"), $page, "cotisations.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
 
   print "<table class=\"noborder\">\n";
   print '<tr class="liste_titre">';
-  print "<td>Annee</td>";
+  print '<td>'.$langs->trans("Year").'</td>';
   print '<td align="right">'.$langs->trans("Amount").'</td>';
   print '<td align="right">'.$langs->trans("Number").'</td>';
   print '<td align="right">'.$langs->trans("Average").'</td>';
@@ -168,12 +169,14 @@ if ($result)
   }
   print "</table><br>\n";
 
-  print "<table class=\"border\">";
+
+  // Liste des cotisations
+  print '<table class="noborder" width="100%">';
 
   print '<tr class="liste_titre">';
-  print_liste_field_titre("Date","cotisations.php","c.dateadh","&page=$page&statut=$statut");
-  print_liste_field_titre("Montant","cotisations.php","c.cotisation","&page=$page&statut=$statut");
-  print_liste_field_titre("Prenom Nom","cotisations.php","d.nom","&page=$page&statut=$statut");
+  print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.nom","&page=$page&statut=$statut");
+  print_liste_field_titre($langs->trans("Date"),"cotisations.php","c.dateadh","&page=$page&statut=$statut");
+  print_liste_field_titre($langs->trans("Amount"),"cotisations.php","c.cotisation","&page=$page&statut=$statut","","align=\"right\"");
 
   if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
     print '<td>';
@@ -183,17 +186,18 @@ if ($result)
   }
   print "</tr>\n";
     
-  $var=True;
+  $var=true;
   $total=0;
   while ($i < $num)
     {
-      $objp = $db->fetch_object();
+      $objp = $db->fetch_object($result);
+      $total+=price($objp->cotisation);
+
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->dateadh)."</a></td>\n";
-      print '<td align="right">'.price($objp->cotisation).'</td>';
-      $total+=price($objp->cotisation);
       print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
+      print "<td>".strftime("%d %B %Y",$objp->dateadh)."</td>\n";
+      print '<td align="right">'.price($objp->cotisation).'</td>';
       if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0){
 	if ($objp->bank !='' ){
 	  print "<td>Deposé</td>";
@@ -222,14 +226,12 @@ if ($result)
       print "</tr>";
       $i++;
     }
+
   $var=!$var;
   print "<tr $bc[$var]>";
   print "<td>".$langs->trans("Total")."</td>\n";
+  print "<td align=\"right\">&nbsp;</td>\n";
   print "<td align=\"right\">".price($total)."</td>\n";
-  print "<td align=\"right\" colspan=\"2\">";
-  print_fleche_navigation($page,"cotisations.php","&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",1);
-  print "</td>\n";
-
   print "</tr>\n";
   print "</table>";
   print "<br>\n";

@@ -33,3 +33,5 @@ OptionalFieldsSetup=Configuration des champs optionnels
 MembersTypeSetup=Configuration des types d'adhérents
 Subscription=Cotisation
 Subscriptions=Cotisations
+ListOfSubscriptions=Liste des cotisations
+SendCardByMail=Envoyer fiche

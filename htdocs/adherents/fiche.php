@@ -587,16 +587,16 @@ if ($rowid)
     // Valider
     if ($adh->statut < 1)
     {
-        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$rowid&action=valid\">Valider l'adhésion</a>\n";
+        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Validate")."</a>\n";
     }
     
     // Envoi fiche par mail
-    print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">Envoyer sa fiche a l'adhérent</a>\n";
+    print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
     
     // Résilier
     if ($adh->statut == 1)
     {
-        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$rowid&action=resign\">Résilier l'adhésion</a>\n";
+        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$rowid&action=resign\">".$langs->trans("Resiliate")."</a>\n";
     }
     
     // Supprimer
