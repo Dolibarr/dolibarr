@@ -153,13 +153,13 @@ if ($socid > 0)
     $h = 0;
 
     $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
-    $head[$h][1] = "Fiche société";
+    $head[$h][1] = $langs->trans("Company");
     $h++;
 
     if ($societe->client==1)
     {
         $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?socid='.$societe->id;
-        $head[$h][1] = 'Client';
+        $head[$h][1] = $langs->trans("Customer");
         $h++;
     }
     if ($societe->client==2)
@@ -183,49 +183,49 @@ if ($socid > 0)
     }
 
     $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
-    $head[$h][1] = 'Note';
+    $head[$h][1] = $langs->trans("Note");
     $h++;
 
     if ($user->societe_id == 0)
     {
         $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
-        $head[$h][1] = 'Documents';
+        $head[$h][1] = $langs->trans("Documents");
         $h++;
     }
 
     $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
-    $head[$h][1] = 'Notifications';
+    $head[$h][1] = $langs->trans("Notifications");
     $h++;
 
     if ($user->societe_id == 0)
-      {
-	$head[$h][0] = DOL_URL_ROOT."/index.php?socidp=$societe->id&action=add_bookmark";
-	$head[$h][1] = '<img border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/bookmark.png" alt="Bookmark" title="Bookmark">';
-	$head[$h][2] = 'image';
-      }
+    {
+    	$head[$h][0] = DOL_URL_ROOT."/index.php?socidp=$societe->id&action=add_bookmark";
+    	$head[$h][1] = '<img border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/bookmark.png" alt="Bookmark" title="Bookmark">';
+    	$head[$h][2] = 'image';
+    }
     dolibarr_fiche_head($head, $hselected, $societe->nom);
 
     /*
      *
      */
-    print "<table width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">\n";
+    print "<table width=\"100%\">\n";
     print '<tr><td valign="top" width="50%">'; 
     /*
     *
     *
     */
 
-    print '<table class="border" cellpadding="2" cellspacing="0" width="100%">';
-    print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
-    print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($societe->adresse)."<br>$societe->cp $societe->ville</td></tr>";
-    print '<tr><td>Tél</td><td>'.$societe->tel.'&nbsp;</td><td>Fax</td><td>'.$societe->fax.'&nbsp;</td></tr>';
-    print "<tr><td>Web</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
+    print '<table class="border" width="100%">';
+    print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
+    print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse)."<br>$societe->cp $societe->ville</td></tr>";
+    print '<tr><td>'.$langs->trans("Phone").'</td><td>'.$societe->tel.'&nbsp;</td><td>Fax</td><td>'.$societe->fax.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
     print '<tr><td>Siren</td><td><a href="http://www.societe.com/cgi-bin/recherche?rncs='.$societe->siren.'">'.$societe->siren.'</a>&nbsp;</td>';
     print "<td>prefix</td><td>";
     if ($societe->prefix_comm)
       {
-	print $societe->prefix_comm;
+    	print $societe->prefix_comm;
       }
     
     print "</td></tr>";
@@ -286,8 +286,8 @@ if ($socid > 0)
         }
         print "</table>";
     }
+
     /*
-     *
      * Liste des projets associés
      *
      */
@@ -318,15 +318,12 @@ if ($socid > 0)
       }
     else
       {
-        print $db->error();
+        dolibarr_print_error($db);
       }
 
-    /*
-     *
-     *
-     */
     print "</td></tr>";
     print "</table></div>\n";
+
 
     /*
      * Barre d'actions
@@ -372,7 +369,7 @@ if ($socid > 0)
          * Liste des contacts
          *
          */
-      print '<table class="noborder" width="100%" cellspacing="1" cellpadding="2">';
+      print '<table class="noborder" width="100%">';
 
       print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
       print '<td>'.$langs->trans("Poste").'</td><td>'.$langs->trans("Tel").'</td>';
@@ -381,7 +378,7 @@ if ($socid > 0)
       print '<td>&nbsp;</td>';
       print "</tr>";
 
-        $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $societe->id  ORDER by p.datec";
+        $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = ".$societe->id." ORDER by p.datec";
         $result = $db->query($sql);
         $i = 0 ; $num = $db->num_rows();
         $var=1;
@@ -412,7 +409,7 @@ if ($socid > 0)
         	print img_edit();
         	print '</a></td>';
         	
-            print '<td align="center"><a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">';
+            print '<td align="center"><a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$societe->id.'">';
             print img_actions();
             print '</a></td>';
 
