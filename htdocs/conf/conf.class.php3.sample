@@ -77,6 +77,8 @@ class PropalConf {
     $this->replytoname = "Service Commercial";
     $this->replytomail = "commercial@propal.com";
 
+    $this->templatesdir = "/home/www/dolibarr/dolibarr/templates/propal/default";
+    $this->outputdir    = "/home/www/dolibarr/dolibarr/htdocs/document/propal";
     /*
      * Without ended slash
      */
