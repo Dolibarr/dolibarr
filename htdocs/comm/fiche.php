@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
@@ -22,10 +22,11 @@
  *
  */
 
-/**	    \file       htdocs/comm/fiche.php
-        \ingroup    commercial
-		\brief      Onglet client de la fiche societe
-		\version    $Revision$
+/*!	   
+  \file       htdocs/comm/fiche.php
+  \ingroup    commercial
+  \brief      Onglet client de la fiche societe
+  \version    $Revision$
 */
  
 require("./pre.inc.php");
@@ -38,8 +39,7 @@ $langs->load("contracts");
 
 $user->getrights();
 
-llxHeader();
-
+llxHeader('',$langs->trans('CustomerCard'));
 
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
@@ -52,39 +52,48 @@ if ($sortfield == "") {
 }
 
 
-if ($_GET["action"] == 'attribute_prefix') {
+if ($_GET["action"] == 'attribute_prefix')
+{
   $societe = new Societe($db, $_GET["socid"]);
   $societe->attribute_prefix($db, $_GET["socid"]);
 }
 
-if ($action == 'recontact') {
+if ($action == 'recontact')
+{
   $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
   $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'".  $user->login ."')";
   $result = $db->query($sql);
 }
 
-if ($action == 'stcomm') {
-  if ($stcommid <> 'null' && $stcommid <> $oldstcomm) {
-    $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
-    $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $user->login . "')";
-    $result = @$db->query($sql);
-
-    if ($result) {
-      $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=$socid";
-      $result = $db->query($sql);
-    } else {
-      $errmesg = "ERREUR DE DATE !";
+if ($action == 'stcomm')
+{
+  if ($stcommid <> 'null' && $stcommid <> $oldstcomm)
+    {
+      $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
+      $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $user->login . "')";
+      $result = @$db->query($sql);
+      
+      if ($result)
+	{
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=$socid";
+	  $result = $db->query($sql);
+	}
+      else
+	{
+	  $errmesg = "ERREUR DE DATE !";
+	}
     }
-  }
 
-  if ($actioncommid) {
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
-    $result = @$db->query($sql);
-
-    if (!$result) {
-      $errmesg = "ERREUR DE DATE !";
+  if ($actioncommid)
+    {
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
+      $result = @$db->query($sql);
+      
+      if (!$result)
+	{
+	  $errmesg = "ERREUR DE DATE !";
+	}
     }
-  }
 }
 
 /*
@@ -206,13 +215,13 @@ if ($_socid > 0)
   print '<tr><td valign="top">';
   print '<table class="border" width="100%">';
   
-  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">';
+  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="2">';
   print $objsoc->nom;
-  print '</td></tr>';
-  print "<tr><td valign=\"top\">".$langs->trans("Address")."</td><td colspan=\"3\">".nl2br($objsoc->adresse).'</td></tr>';
+  print '</td><td align="center">'.$objsoc->code_client.'</td></tr>';
+  print "<tr><td valign=\"top\">".$langs->trans("Address")."</td><td colspan=\"3\">".nl2br($objsoc->adresse);
   
-  print '<tr><td>'.$langs->trans('Zip').' / '.$langs->trans('Town').'</td><td colspan="3">'.$objsoc->cp." ".$objsoc->ville.'</td></tr>';
-  print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$objsoc->pays.'</td></tr>';
+  print '<br />'.$objsoc->cp." ".$objsoc->ville;
+  print '<br />'.$objsoc->pays.'</td></tr>';
   
   print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($objsoc->tel).'&nbsp;</td><td>Fax</td><td>'.dolibarr_print_phone($objsoc->fax).'&nbsp;</td></tr>';
   print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
@@ -431,6 +440,8 @@ if ($_socid > 0)
       {
 	print '<a class="tabAction" href="../fichinter/fiche.php?socidp='.$objsoc->id.'&amp;action=create">Intervention</a>';
       }
+
+      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
   
     print '</div>';
     print '<br>';
@@ -471,7 +482,7 @@ if ($_socid > 0)
 	print '<tr class="liste_titre"><td>'.$langs->trans("Firstname").' '.$langs->trans("Lastname").'</td>';
 	print '<td>'.$langs->trans("Poste").'</td><td colspan="2">'.$langs->trans("Tel").'</td>';
 	print '<td>'.$langs->trans("Fax").'</td><td>'.$langs->trans("EMail").'</td>';
-	print "<td align=\"center\"><a href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$objsoc->id."&amp;action=create\">".$langs->trans("AddContact")."</a></td>";
+	print "<td>&nbsp;</td>";
 	print '<td>&nbsp;</td>';
 	print "</tr>";
 	
