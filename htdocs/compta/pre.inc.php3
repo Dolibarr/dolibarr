@@ -46,7 +46,7 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("/comm/clients.php3", "Clients");
+  $menu->add("/compta/clients.php3", "Clients");
 
   if ($conf->don->enabled)
     {
