@@ -225,7 +225,7 @@ elseif ($_GET["action"] == 'edit')
       print '<td>'.$langs->trans('Fax').'</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
 
       print '<tr><td>'.$langs->trans('Code client').'</td><td colspan="3">';
-      if ($soc->code_client)
+      if ($soc->code_client && $soc->check_codeclient() == 0)
 	{
 	  print $soc->code_client;
 	}
@@ -344,6 +344,10 @@ else
   print '<tr><td>';
   print $langs->trans('Code client').'</td><td colspan="3">';
   print $soc->code_client;
+  if ($soc->check_codeclient() <> 0)
+    {
+      print "Code incorrect";
+    }
   print '</td></tr>';
 
   print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3">';
