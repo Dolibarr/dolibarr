@@ -133,7 +133,7 @@ else
 	    }
 	  else
 	    {
-	      print "Cet article n'est plus en vente";
+	      print "Cet article n'est pas en vente";
 	    }
 	  print '</td></tr>';
 	  print "<td>Libellé</td><td>$product->label</td>";
