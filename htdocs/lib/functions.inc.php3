@@ -496,9 +496,8 @@ function print_heure_select($prefix,$begin=1,$end=23) {
  *
  */
 function print_duree_select($prefix)
- {  
+{  
   print '<select name="'.$prefix.'hour">';
-
   print "<option value=\"0\">0";
   print "<option value=\"1\" SELECTED>1";
 
@@ -539,83 +538,10 @@ function inctva($euros, $taux=1.196)
 }
 
 
-function gljftime($format,$timestamp)
-{
-  $hour = substr($timestamp,11,2);
-  $min = substr($timestamp,14,2);
-  $sec = substr($timestamp,17,2);
-  $month = substr($timestamp,5,2);
-  $day = substr($timestamp,8,2);
-  $year = substr($timestamp,0,4);
-
-  $ftime = mktime($hour,$min,$sec,$month,$day,$year);
-
-  return strftime($format,$ftime);
-
-}
-
-
-function gljPrintTitle($title, $ispage, $page=0, $parm=0)
-{
-
-  $pageprev = $page - 1;
-  $pagenext = $page + 1;
-
-
-  print "<table width=\"100%\" cellspacing=\"0\"><tr><td>";
-  print "<b>$title</b></td><td align=\"right\">$basec <b>Page $pagenext</b>";
-  print "</td>";
-
-  if ($ispage)
-    {
-
-      print "</tr>";
-      print "<tr><td>";
-      if ($page > 0)
-	{
-	  print "<A href=\"".$GLOBALS["PHP_SELF"]."?page=$pageprev&$parm\"><- ".$GLOBALS["_PAGE_PREV"]."</A>";
-	}
-      print "</td>\n";
-      print "<td align=\"right\"><A href=\"".$GLOBALS["PHP_SELF"]."?&page=$pagenext&$parm\">$_PAGE_NEXT -></A>\n";
-    }
-
-  print "</tr></table>";
-};
 /*
  *
  *
  */
-function gljActiveSoc($db, $socidp)
-{
-
-  if ($db)
-    {
-      $sql = "UPDATE societe set datea = " . time() . " WHERE idp= " . $socidp ; 
-      $result = $db->query($sql);
-      if (!$result)
-	{
-	  return 1;
-	}
-      return 0;
-    }
-}
-/*
- *
- *
- */
-function gljChangeSocAlias($db, $socidp, $alias) {
-
-  if ($db) {
-    $alias = strtolower(trim($alias));
-    $sql = "UPDATE societe set alias = '$alias' WHERE idp=$socidp" ; 
-    $result = $db->query($sql);
-    if (!$result) {
-      return 1;
-    }
-    return 0;
-  }
-}
-
 function stat_print($basename,$bc1,$bc2,$ftc, $jour) {
 
   $db = pg_Connect("","","","","$basename");
