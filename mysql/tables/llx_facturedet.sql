@@ -24,7 +24,7 @@ create table llx_facturedet
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_facture      integer NOT NULL,
   fk_product      integer,
-  desc            text,
+  description     text,
   price           real default 0,
   qty             smallint
 

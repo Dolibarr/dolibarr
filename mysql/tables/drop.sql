@@ -1,5 +1,5 @@
 --
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- $Id$
 -- $Source$
@@ -72,6 +72,8 @@ drop table if exists llx_don_projet;
 drop table if exists llx_fa_pr;
 
 drop table if exists llx_facture;
+
+drop table if exists llx_facturedet;
 
 drop table if exists llx_facture_fourn;
 
