@@ -9,7 +9,7 @@
     <table border="1" cellpadding="5" cellspacing="10" class="main">
       <tr>
 	<td colspan="2">
-	  <span>Dons FSF France</span>
+	  <span><a href="http://eucd.info/">EUCD.INFO</a> - Au <a href="donations.fr.php">secours</a> de la copie privée</span>
 	</td>
       </tr>
       
@@ -27,9 +27,15 @@
 	  <a href="http://eucd.info/who.fr.php">Qui</a><br />
 	  <br />
 	  <br />
+	  <a href="donations.fr.php">Dons</a><br />	  
+	  <script language="php">
+	    //require("/var/www/www.eucd.info/htdocs/thermometer.php");
+	    //print moneyMeter($totaal_ontvangen+$post_donaties+$post_sponsoring, $totaal_pending, $post_intent);
+	  </script>
+
 	</td>
 	
-	<td>	
+	<td>	  
 	  <xsl:apply-templates select="@*|node()"/>
 	</td>
       </tr>

@@ -38,6 +38,7 @@ class Don
   var $statut;
 
   var $projet;
+  var $errorstr;
   /*
    * Statut du don
    * 0 : promesse non validée
@@ -50,6 +51,66 @@ class Don
   Function Don($DB, $soc_idp="") 
     {
       $this->db = $DB ;
+      $this->modepaiement = 0;
+    }
+  /*
+   *
+   *
+   *
+   */
+  Function print_error_list()
+  {
+    $num = sizeof($this->errorstr);
+    for ($i = 0 ; $i < $num ; $i++)
+      {
+	print "<li>" . $this->errorstr[$i];
+      }
+  }
+
+  Function check() 
+    {
+      $err = 0;
+      if (strlen(trim($this->nom)) == 0)
+	{
+	  $error_string[$err] = "Le nom saisi est invalide";
+	  $err++;
+	}
+
+      if (strlen(trim($this->adresse)) == 0)
+	{
+	  $error_string[$err] = "L'adresse saisie est invalide";
+	  $err++;
+	}
+
+      if (strlen(trim($this->cp)) == 0)
+	{
+	  $error_string[$err] = "Le code postal saisi est invalide";
+	  $err++;
+	}
+
+      if (strlen(trim($this->ville)) == 0)
+	{
+	  $error_string[$err] = "La ville saisie est invalide";
+	  $err++;
+	}
+
+      if ($this->amount == 0)
+	{
+	  $error_string[$err] = "Le montant du don est invalide";
+	  $err++;
+	}
+
+
+      if ($err)
+	{
+	  $this->errorstr = $error_string;
+	  return 0;
+	}
+      else
+	{
+	  return 1;
+	}
+
     }
   /*
    *
@@ -61,6 +122,8 @@ class Don
       /*
        *  Insertion dans la base
        */
+
+      $this->date = $this->db->idate($this->date);
 
       $sql = "INSERT INTO llx_don (datec, amount, fk_paiement, nom, adresse, cp, ville, pays, public, fk_don_projet, note, fk_user_author, datedon)";
       $sql .= " VALUES (now(), $this->amount, $this->modepaiement,'$this->nom','$this->adresse', '$this->cp','$this->ville','$this->pays',$this->public, $this->projetid, '$this->note', $userid, '$this->date')";
@@ -84,8 +147,9 @@ class Don
    *
    */
   Function delete($rowid)
-  {
 
+  {
+    
     $sql = "DELETE FROM llx_don WHERE rowid = $rowid AND fk_statut = 0;";
 
     if ( $this->db->query( $sql) )

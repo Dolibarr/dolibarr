@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<!DOCTYPE html
+          PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
+>
+<html lang="fr">
+  <head>    
+
+  </head>
+  <body>
+    <div class="main">     
+
+      <p>
+	<h1>Ce formulaire n'est pas encore actif, merci de ne pas l'utiliser</h1>
+      </p>
+
+      <form action="index.php" method="post">
+	<table id="formulaire">
+	  <input type="hidden" name="action" value="add" />
+
+	  <tr id="date">
+	    <script language="php">
+	      $a = setlocale("LC_TIME", "FRENCH");
+	      print strftime("%d %B %Y", time());
+	    </script>
+	  </tr>
+	
+	  <tr id="projet">
+
+	  </tr>
+
+	  <tr id="public">
+	    <select name="public">
+	      <option value="1">oui</option>
+	      <option value="0">non</option>
+	    </select>
+	  </tr>
+	  
+	  <tr id="nom">
+	    <input type="text" name="nom" size="40" />
+	  </tr>
+	  
+	  <tr id="adresse">
+		<input type="text" name="adresse" size="40" />	    
+	  </tr>
+
+	  <tr>
+	    <td class="titre">CP Ville</td>
+	    <td class="valeur">
+	      <input type="text" name="cp" size="8" /> 
+	      <input type="text" name="ville" size="40" />
+	    </td>
+	  </tr>
+
+	  <tr id="email">
+	      <input type="text" name="email" size="40" />
+	  </tr>
+
+	  <tr>
+	    <td class="titre">
+	      Montant
+	    </td>
+	    <td class="valeur">
+	      <input type="text" name="montant" size="10" /> euros
+	    </td>
+	  </tr>
+
+	  <tr id="commentaire">
+	      <textarea name="comment" wrap="soft" cols="40" rows="8"></textarea>
+	  </tr>
+
+	  <tr>
+	    <td colspan="2" align="center">
+	      <input type="submit" value="Valider" />
+	    </td>
+	  </tr>
+	</table>
+      </form>
+    </div>    
+  </body>  
+</html>
+<!--
+Local Variables: ***
+mode: xml ***
+End: ***
+-->
+
