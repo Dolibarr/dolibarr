@@ -89,7 +89,7 @@ if ($result)
     while ($i < $num)
       {
 	$objp = $db->fetch_object($i);
-	print "<option value=\"$objp->rowid\">$objp->label</option>";
+	print "<option value=\"$objp->rowid\">$objp->label</option><br>";
 	$i++;
       }
 }
