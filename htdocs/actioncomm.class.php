@@ -131,7 +131,7 @@ class ActionComm
    */
   function fetch($id)
     {      
-      $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent ";
+      $sql = "SELECT ".$this->db->pdate("a.datea")." as da, a.note, a.label, c.libelle, fk_soc, fk_user_author, fk_contact, fk_facture, a.percent ";
       $sql .= "FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c WHERE a.id=$id AND a.fk_action=c.id;";
 
       if ($this->db->query($sql) )
@@ -142,18 +142,14 @@ class ActionComm
 	      
 	      $this->id = $id;
 	      $this->type = $obj->libelle;
+	      $this->libelle = $obj->label;
 	      $this->date = $obj->da;
 	      $this->note =$obj->note;
 	      $this->percent =$obj->percent;
-	      
 	      $this->societe->id = $obj->fk_soc;
-	      
 	      $this->author->id = $obj->fk_user_author;
-	      
 	      $this->contact->id = $obj->fk_contact;
-
 	      $this->fk_facture = $obj->fk_facture;
-
 	      if ($this->fk_facture)
 		{
 		  $this->objet_url = '<a href="'. DOL_URL_ROOT . '/compta/facture.php?facid='.$this->fk_facture.'">Facture</a>';
