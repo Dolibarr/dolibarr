@@ -581,7 +581,7 @@ td.delete {
   }
 
 td.valid { 
-  background: pink;
+  background: #DC9999;
   font-weight: bold;
   }
 
