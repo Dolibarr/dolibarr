@@ -151,25 +151,33 @@ class Contrat
       if ($this->db->query($sql))
 	{
 	  $num = $this->db->num_rows();
-	  $i = 0;
-	  
-	  while ($i < $num)
-	    {
-	      $objp = $this->db->fetch_object($i);
-	      $contrats[$i] = $objp->rowid;
-	      $i++;
-	    }
-	  
-	  $this->db->free();
 
-	  while (list($key, $value) = each ($contrats))
+	  if ($num > 0)
 	    {
-	      $sql = "INSERT INTO llx_contrat (fk_product, fk_facture, fk_soc, fk_user_author)";
-	      $sql .= " VALUES ($value, $factureid, $socid, $user->id)";
-	      if (! $this->db->query($sql))
+	      $i = 0;
+	  
+	      while ($i < $num)
 		{
-		  print $this->db->error();
+		  $objp = $this->db->fetch_object($i);
+		  $contrats[$i] = $objp->rowid;
+		  $i++;
 		}
+	      
+	      $this->db->free();
+	      
+	      while (list($key, $value) = each ($contrats))
+		{
+		  $sql = "INSERT INTO llx_contrat (fk_product, fk_facture, fk_soc, fk_user_author)";
+		  $sql .= " VALUES ($value, $factureid, $socid, $user->id)";
+		  if (! $this->db->query($sql))
+		    {
+		      print $this->db->error();
+		    }
+		}
+	    }
+	  else
+	    {
+	      $this->db->free();
 	    }
 	}
       else
