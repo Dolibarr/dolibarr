@@ -134,7 +134,7 @@ if ($socid > 0) {
     /*
      *
      */
-    print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
+    print '<table class="noborder" width="100%" border="0" cellspacing="1">';
 
     print "<tr><td><div class=\"titre\">Fiche client : $objsoc->nom</div></td>";
 
@@ -161,9 +161,9 @@ if ($socid > 0) {
      */
 
 
-    print "<table width=\"100%\" border=0><tr>\n";
-    print "<td valign=\"top\">";
-    print "<table class=\"tablefsoc\" cellspacing=\"0\" border=\"1\" width=\"100%\">";
+    print '<table width="100%" border="0">';
+    print '<tr><td valign="top">';
+    print '<table class="border" cellspacing="0" border="1" width="100%">';
 
     print "<tr><td>Type</td><td> $objsoc->typent</td><td>Effectif</td><td>$objsoc->effectif</td></tr>";
     print "<tr><td>Tel</td><td> $objsoc->tel&nbsp;</td><td>fax</td><td>$objsoc->fax&nbsp;</td></tr>";
@@ -262,10 +262,10 @@ if ($socid > 0) {
     print "</td></tr>";
     print "</table>\n";
     /*
-     *
+     * Barre d'action
      *
      */
-    print '<table class="tableab" border="1" cellspadding="3" cellspacing="0" width="100%"><tr>';
+    print '<br><table id="actions" cellspadding="3" cellspacing="0" width="100%"><tr>';
     print '<td align="center" width="20%">-</td>';
     if (defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
       {
@@ -279,7 +279,7 @@ if ($socid > 0) {
 
     print '<td align="center" width="20%"><a href="../projet/fiche.php?socidp='.$socid.'&action=create">Créer un projet</a></td>';
     print '<td align="center" width="20%">-</td>';  
-    print '</tr></table>';
+    print '</tr></table><br>';
 
     /*
      *
