@@ -207,7 +207,7 @@ if (sizeof($factures_prev) > 0)
       
       if ($db->query($sql))
 	{      
-	  $prev_id = $db->last_insert_id();
+	  $prev_id = $db->last_insert_id(MAIN_DB_PREFIX."prelevement_bons");
 
 	  $bonprev = new BonPrelevement($db, DOL_DATA_ROOT."/prelevement/bon/".$filebonprev);
 	  $bonprev->id = $prev_id;
