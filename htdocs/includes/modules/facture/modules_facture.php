@@ -156,9 +156,12 @@ function facture_get_num($soc, $prefixe_additionnel='')
 
       $obj = new $classname();
 
-      if ( $obj->getNumRef($soc, $prefixe_additionnel) != "")
+      $numref = "";
+      $numref = $obj->getNumRef($soc, $prefixe_additionnel);
+
+      if ( $numref != "")
 	{
-	  return $obj->getNumRef($soc, $prefixe_additionnel);
+	  return $numref;
 	}
       else
 	{
