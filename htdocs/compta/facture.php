@@ -274,7 +274,7 @@ if ($action == 'send')
 	      
 	      $replyto = $HTTP_POST_VARS["replytoname"] . " <".$HTTP_POST_VARS["replytomail"] .">";
 	      
-	      $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$file, "application/pdf", $filename);
+		  $mailfile = new CMailFile($subject,$sendto,$replyto,$message,array ($file),array ("application/pdf"),array ($filename));
 	      
 	      if ( $mailfile->sendfile() )
 		{
@@ -306,7 +306,7 @@ if ($action == 'send')
     }
   else
     {
-      dolibarr_syslog("Impossible de lire les données de la facture");
+      dolibarr_syslog("Impossible de lire les données de la facture. Le fichier facture n'a peut-être pas été généré.");
     }
 }
 /*
@@ -935,58 +935,13 @@ else
 	  {
 	    print '<p><table id="actions" width="100%"><tr>';
 	
+		// Supprimer
 	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
 	      {
 		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=delete\">Supprimer</a></td>";
 	      } 
-	    elseif ($fac->statut == 1 && abs($resteapayer) > 0 && $user->rights->facture->envoyer) 
-	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=presend\">Envoyer</a></td>";
-	      }
-	    else
-	      {
-		print "<td align=\"center\" width=\"20%\">-</td>";
-	      } 
-	    
-	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
-	      {
-		print '<td align="center" width="20%">';
-		print '<a href="paiement.php?facid='.$fac->id.'&amp;action=create">Emettre un paiement</a></td>';
-	      }
-	    else
-	      {
-		    print '<td align="center" width="20%">-</td>';
-	      }
-	    
-	    if ($fac->statut == 1 && abs($resteapayer) == 0 && $fac->paye == 0) 
-	      {
-		if ($user->rights->facture->paiement)
-		  {
-		    print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a></td>";
-		  }
-		else
-		  {
-		    print '<td align="center" width="20%">-</td>';
-		  }
-	      }
-	    elseif ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer) 
-	      {
-		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=prerelance\">Envoyer une relance</a></td>";
-	      }
-	    else
-	      {
-		print '<td align="center" width="20%">-</td>';
-	      }
 
-	    if ($fac->statut > 0)
-	      {
-		print '<td align="center" width="20%"><a href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">Récurrente</a></td>';
-	      }
-	    else
-	      {
-		print '<td align="center" width="20%">-</td>';
-	      }
-	    
+		// Valider
 	    if ($fac->statut == 0 && $fac->total_ht > 0) 
 	      {
 		if ($user->rights->facture->valider)
@@ -997,8 +952,10 @@ else
 		  {
 		    print '<td align="center" width="20%">-</td>';
 		  }
-	      }
-	    elseif ($fac->statut == 1 && ($fac->paye == 0 || $user->admin))
+		}
+		else {
+		// Générer
+	    if ($fac->statut == 1 && ($fac->paye == 0 || $user->admin))
 	      {
 		if ($user->rights->facture->creer)
 		  {
@@ -1018,7 +975,64 @@ else
 	      {
 		print '<td align="center" width="20%">-</td>';
 	      }
+		}
 
+		// Envoyer
+	    if ($fac->statut == 1 && abs($resteapayer) > 0 && $user->rights->facture->envoyer)
+	      {
+		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=presend\">Envoyer</a></td>";
+	      }
+	    else
+	      {
+		print "<td align=\"center\" width=\"20%\">-</td>";
+	      } 
+
+		// Envoyer une relance
+	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer) 
+	      {
+		print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=prerelance\">Envoyer une relance</a></td>";
+	      }
+	    else
+	      {
+		print '<td align="center" width="20%">-</td>';
+	      }
+
+		// Emettre paiement 
+	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
+	      {
+		print '<td align="center" width="20%">';
+		print '<a href="paiement.php?facid='.$fac->id.'&amp;action=create">Emettre un paiement</a></td>';
+	      }
+	    else
+	      {
+		    print '<td align="center" width="20%">-</td>';
+	      }
+			    
+		// Classer 'payé'
+	    if ($fac->statut == 1 && abs($resteapayer) == 0 && $fac->paye == 0) 
+	      {
+		if ($user->rights->facture->paiement)
+		  {
+		    print "<td align=\"center\" width=\"20%\"><a href=\"$PHP_SELF?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a></td>";
+		  }
+		else
+		  {
+		    print '<td align="center" width="20%">-</td>';
+		  }
+	    }
+	
+		// Récurrente
+		if (! defined("FACTURE_NORECURENTE")) {	// Possibilité de désactiver les factures récurrentes
+	    if ($fac->statut > 0)
+	      {
+		print '<td align="center" width="20%"><a href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">Récurrente</a></td>';
+	      }
+	    else
+	      {
+		print '<td align="center" width="20%">-</td>';
+	      }
+	    }
+	    
 	    print "</tr></table>";
 	  }
 	print "<p>\n";
@@ -1121,14 +1135,14 @@ else
 	    
 	    print "<p><b>Envoyer la facture par mail</b>";
 	    print "<table cellspacing=0 border=1 cellpadding=3>";
+	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail &nbsp;</td></tr>";
+	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td><td>$replytomail &nbsp;</td></tr>";
 	    print '<tr><td>Destinataire</td><td colspan="5">';
 	    
 	    $form = new Form($db);	    
 	    $form->select_array("destinataire",$soc->contact_email_array());
 	    
 	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
-	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail &nbsp;</td></tr>";
-	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td><td>$replytomail &nbsp;</td></tr>";
 	    print "</table>";
 	    
 	    print "<input type=\"submit\" value=\"Envoyer\"></form>";
@@ -1149,15 +1163,15 @@ else
 	    
 	    print_titre("Envoyer une relance");
 	    print "<table cellspacing=0 border=1 cellpadding=3>";
+	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>\n";
+	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td><td>$replytomail</td></tr>\n";
 	    print '<tr><td>Destinataire</td><td colspan="5">';
 	    
 	    $form = new Form($db);	    
 	    $form->select_array("destinataire",$soc->contact_email_array());
 	    
-	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
-	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail</td></tr>";
-	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td>";
-	    print "<td>$replytomail</td></tr></table>";
+	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>\n";
+	    print "</table>";
 	    
 	    print "<input type=\"submit\" value=\"Envoyer\"></form>";
 	  }

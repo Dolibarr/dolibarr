@@ -737,9 +737,10 @@ class Facture
 					$sendto,
 					$replyto,
 					$message,
-					$file, 
-					"application/pdf", 
-					$filename);
+					array($file), 
+					array("application/pdf"), 
+					array($filename)
+					);
 	      
 	      if ( $mailfile->sendfile() )
 		{

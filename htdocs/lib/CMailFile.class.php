@@ -22,6 +22,10 @@ to chunk_split
   Éric Seigne <eric.seigne@ryxeo.com> 2004.01.08
   - ajout de la gestion du Cc
   - ajout de l'expédition de plusieurs fichiers
+
+  Laurent Destailleur 2004.02.10
+  - Correction d'un disfonctionnement suite à modif précédente sur la gestion
+  des attachements multi-fichiers
 */
 
 // simple class that encapsulates mail() with addition of mime file attachment.
@@ -36,28 +40,30 @@ class CMailFile
   var $mime_boundary = "--==================_846811060==_";
   var $smtp_headers;
   
-  function CMailFile($subject,$to,$from,$msg,$filename,$mimetype = "application/octet-stream", $mime_filename = false, $addr_cc = "")
+  // CMail("sujet","email_to","email_from","email_msg",tableau du path de fichiers,tableau de type mime,tableau de noms fichiers,"chaine cc")
+  function CMailFile($subject,$to,$from,$msg,$filename_list,$mimetype_list,$mimefilename_list,$addr_cc = "")
     {
       $this->subject = $subject;
       $this->addr_to = $to;
       $this->smtp_headers = $this->write_smtpheaders($from,$addr_cc);
-      if (strlen($filename[0])) {
-	$this->mime_headers = $this->write_mimeheaders($filename[0], $mime_filename[0]);
-	$this->text_body = $this->write_body($msg, $filename[0]);
-	$this->text_encoded = $this->attach_file($filename,$mimetype,$mime_filename);
+      $this->text_body = $this->write_body($msg, $filename_list);
+      if (count($filename_list)) {
+			$this->mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
+			$this->text_encoded = $this->attach_file($filename_list,$mimetype_list,$mimefilename_list);
       }
     }
 
-  function attach_file($filename,$mimetype,$mime_filename)
+  function attach_file($filename_list,$mimetype_list,$mimefilename_list)
     {
-      for ($i = 0; $i < count($filename); $i++) {
-	$encoded = $this->encode_file($filename[$i]);
-	if ($mime_filename[$i]) $filename[$i] = $mime_filename[$i];
-	$out = $out . "--" . $this->mime_boundary . "\n";
-	$out = $out . "Content-type: " . $mimetype[$i] . "; name=\"$filename[$i]\";\n";         
-	$out = $out . "Content-Transfer-Encoding: base64\n";
-	$out = $out . "Content-disposition: attachment; filename=\"$filename[$i]\"\n\n";
-	$out = $out . $encoded . "\n";
+      for ($i = 0; $i < count($filename_list); $i++) {
+		$encoded = $this->encode_file($filename_list[$i]);
+		if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
+		$out = $out . "--" . $this->mime_boundary . "\n";
+		if (! $mimetype_list[$i]) { $mimetype_list[$i] = "application/octet-stream"; }
+		$out = $out . "Content-type: " . $mimetype_list[$i] . "; name=\"$filename_list[$i]\";\n";         
+		$out = $out . "Content-Transfer-Encoding: base64\n";
+		$out = $out . "Content-disposition: attachment; filename=\"$filename_list[$i]\"\n\n";
+		$out = $out . $encoded . "\n";
       }
       $out = $out . "--" . $this->mime_boundary . "--" . "\n";
       return $out; 
@@ -84,9 +90,9 @@ class CMailFile
       return mail($this->addr_to,$this->subject,stripslashes($message),$headers);
     }
   
-  function write_body($msgtext, $filename)
+  function write_body($msgtext, $filename_list)
     {
-      if (strlen($filename))
+      if (count($filename_list))
 	{
 	  $out = "--" . $this->mime_boundary . "\n";
 	  $out = $out . "Content-Type: text/plain; charset=\"iso8859-15\"\n\n";
@@ -96,14 +102,14 @@ class CMailFile
       return $out;
     }
   
-  function write_mimeheaders($filename, $mime_filename) {
+  function write_mimeheaders($filename_list, $mimefilename_list) {
     $out = "MIME-version: 1.0\n";
     $out = $out . "Content-type: multipart/mixed; ";
     $out = $out . "boundary=\"$this->mime_boundary\"\n";
     $out = $out . "Content-transfer-encoding: 7BIT\n";
-    for($i = 0; $i < count($filename); $i++) {
-      if ($mime_filename[$i]) $filename[$i] = $mime_filename[$i];
-      $out = $out . "X-attachments: $filename[$i];\n\n";
+    for($i = 0; $i < count($filename_list); $i++) {
+      if ($mimefilename_list[$i]) $filename_list[$i] = $mimefilename_list[$i];
+      $out = $out . "X-attachments: $filename_list[$i];\n\n";
     }
     return $out;
   }
@@ -112,7 +118,7 @@ class CMailFile
     {
       $out = "From: $addr_from\n";
       if($addr_cc != "")
-	$out = $out . "Cc: $addr_cc\n";
+		$out = $out . "Cc: $addr_cc\n";
       $out = $out . "Reply-To: $addr_from\n";
       $out = $out . "X-Mailer: Dolibarr version " . DOL_VERSION ."\n";
       $out = $out . "X-Sender: $addr_from\n";
