@@ -108,7 +108,7 @@ if ($_GET["id"] or $_GET["numero"])
       print "2. ".$ftx->commande_enable .'<br>';
       print "3. ".$user->rights->telephonie->ligne_commander.'<br>';
       print "4. ".($ligne->statut == 1 or $ligne->statut == -1) .'<br>';
-      print "5. ".($client_facture->verif_rib() or $obj->mode_paiement == 'vir');
+      print "5. ".($client_facture->verif_rib() or $ligne->mode_paiement == 'vir');
 
     }
 }
