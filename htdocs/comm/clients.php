@@ -135,9 +135,18 @@ if ($result)
       print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom).'</a></td>';
       print "<td>".$obj->code_client."&nbsp;</td>\n";
       print "<td>".$obj->ville."&nbsp;</td>\n";
-      print '<td align="center"><a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';
-      print img_folder();
-      print "</a></td></tr>\n";
+      print '<td align="center">';
+      if (defined("MAIN_MODULE_DOSSIER") && MAIN_MODULE_DOSSIER == 1)
+	{
+	  print '<a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';
+	  print img_folder();
+	  print '</a>';
+	}
+      else
+	{
+	  print "&nbsp;";
+	}
+      print "</td></tr>\n";
       $i++;
     }
   print "</table>";
