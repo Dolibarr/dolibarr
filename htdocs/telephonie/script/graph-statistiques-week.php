@@ -35,6 +35,7 @@ require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/actives.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/commandes.week.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/lignes/resiliation.week.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/clients/clients.week.class.php");
 
 $error = 0;
@@ -162,4 +163,14 @@ if ($db->query($sql))
       $i++;
     }
 }
+/*****
+ *
+ *
+ *
+ */
+$file = $img_root . "lignes/resiliations.hebdomadaire.png";
+
+$graph = new GraphLignesResiliationWeek($db, $file);
+$graph->width = 400;
+$graph->GraphMakeGraph();
 ?>
