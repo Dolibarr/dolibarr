@@ -103,7 +103,8 @@ if ($db->ok) {
   $db->close();
  
 }
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Id$</em>");
+$Id = "Révision";
+llxFooter("<em>$Id$</em>");
 ?>
 
 
