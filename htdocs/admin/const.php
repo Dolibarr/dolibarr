@@ -27,7 +27,8 @@ if (!$user->admin)
 
 llxHeader();
 
-print_titre("Configuration autre (Dolibarr version ".DOL_VERSION.")");
+
+print_titre($langs->trans("OtherSetup"));
 
 //print_r(get_defined_constants());
 print "<br>\n";
@@ -55,11 +56,11 @@ if ($_GET["action"] == 'delete')
 
 print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>Valeur</td>';
-print '<td>Type</td>';
-print '<td>Note</td>';
-print "<td>Action</td>";
+print '<td>'.$langs->trans("Name").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+print '<td>'.$langs->trans("Type").'</td>';
+print '<td>'.$langs->trans("Note").'</td>';
+print '<td>'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 
 
@@ -90,6 +91,7 @@ if ($result)
 
       print "<tr $bc[$var] class=value><td>$obj->name</td>\n";
 
+      // Type
       print '<td>';
       if ($obj->type == 'yesno')
 	{
@@ -113,9 +115,10 @@ if ($result)
 	}
       print '</td><td>';
 
-      print '<input type="text" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
+      // Note
+      print '<input type="text" size="30" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
       print '</td><td>';
-      print '<input type="Submit" value="Update" name="Button"> &nbsp; ';
+      print '<input type="Submit" value="'.$langs->trans("Modify").'" name="Button"> &nbsp; ';
       print '<a href="const.php?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
       print "</td></tr>\n";
 
@@ -142,7 +145,7 @@ print '</td><td>';
 print '<input type="text" size="15" name="constnote" value="">';
 print '</td><td>';
 
-print '<input type="Submit" value="Add" name="Button"><BR>';
+print '<input type="Submit" value="'.$langs->trans("Add").'" name="Button"><BR>';
 print "</td>\n";
 print '</form>';
 	

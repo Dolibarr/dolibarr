@@ -19,8 +19,9 @@
  * ************************************************************************* */
 
 Class Translate {
-    var $tab_loaded;
-    var $tab_translate;
+
+    var $tab_loaded=array();
+    var $tab_translate=array();
 
     var $defaultlang;
     var $dir;
@@ -66,6 +67,11 @@ Class Translate {
 
     }
 
+    function list_domainloaded() {
+        return join(",",array_keys($this->tab_loaded));
+    }
+    
+    
     /*
     *  Return translated version of parameter string
     *  [fr] Retourne la version traduite du texte passé en paramètre

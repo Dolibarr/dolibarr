@@ -20,14 +20,13 @@
  *
  */
 require("./pre.inc.php");
+
 /*
  * Sécurité accés
  */
-if ($user->societe_id > 0) 
-{
-  block_access();
-  exit;
-}
+if (!$user->admin && $user->societe_id > 0)
+  accessforbidden();
+
 
 llxHeader();
 
@@ -36,7 +35,6 @@ print_titre("Paiements");
  *
  *
  */
-
 
 
 

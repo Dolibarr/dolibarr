@@ -244,41 +244,69 @@ function dolibarr_print_phone($phone)
     }
 }
 
-function img_file($alt = "Voir")
+function img_file($alt = "default")
 {
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Show");
+  }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/file.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-function img_file_new($alt = "Voir")
+function img_file_new($alt = "default")
 {
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Show");
+  }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/filenew.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 
-function img_pdf($alt = "Voir")
+function img_pdf($alt = "default")
 {
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Show");
+  }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/pdf.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 
-function img_edit($alt = "Modifier")
+function img_edit($alt = "default")
 {
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Modify");
+  }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/edit.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-function img_delete($alt = "Supprimer")
+function img_delete($alt = "default")
 {
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Delete");
+  }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/delete.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-function img_disable($alt = "Désactiver")
+function img_disable($alt = "default")
 {
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Disable");
+  }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/disable.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 
-function img_warning($alt = "Voir")
+function img_warning($alt = "default")
 {
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Show");
+  }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/warning.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
@@ -287,31 +315,50 @@ function img_info($alt = "Informations")
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/info.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-function img_alerte($alt = "Alerte")
+function img_alerte($alt = "default")
 {
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Alert");
+  }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/alerte.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 
-function img_phone_in($alt = "Modifier")
+function img_phone_in($alt = "default")
 {
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Modify");
+  }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-function img_phone_out($alt = "Modifier")
+function img_phone_out($alt = "default")
 {
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Modify");
+  }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/call_out.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 
-
-function img_next($alt = "Suivant")
+function img_next($alt = "default")
 {
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Next");
+  }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/next.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-function img_previous($alt = "Précédent")
+function img_previous($alt = "default")
 {
+  if ($alt="default") {
+    global $langs;
+    $alt=$langs->trans("Previous");
+  }
   return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/previous.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
@@ -405,8 +452,10 @@ function loginfunction()
 
 function accessforbidden()
 {
+  global $langs;
+  
   llxHeader();
-  print "Accés interdit";
+  print $langs->trans("ErrorForbidden");
   llxFooter();
   exit(0);
 }
@@ -713,6 +762,7 @@ function transcoS2L($zonein,$devise)
   return($r); // retourne le résultat
 } // fin fonction transcoS2L
 
+
 /*!
 		\brief affichage du titre d'une liste
 		\param	name
@@ -806,16 +856,6 @@ function dol_delete_file($file)
   return unlink($file);
 }
 
-/*!
-		\brief accès refusé
-*/
-
-function block_access()
-{
-  llxHeader();
-  print "Accés refusé";
-  llxFooter();
-}
 
 /*
  *
@@ -1059,7 +1099,7 @@ function print_duree_select($prefix)
 {  
   print '<select name="'.$prefix.'hour">';
   print "<option value=\"0\">0";
-  print "<option value=\"1\" SELECTED>1";
+  print "<option value=\"1\" selected>1";
 
   for ($hour = 2 ; $hour < 13 ; $hour++)
     {

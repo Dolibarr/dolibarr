@@ -536,7 +536,7 @@ class Form
 		  print "<option value=\"$row[0]\" ";
 		  if ($id == $row[0])
 		    {
-		      print "SELECTED";
+		      print "selected";
 		    }
 		  print ">$row[1]</option>\n";
 		  $i++;
@@ -583,7 +583,7 @@ class Form
 	      print "<option value=\"$key\" ";
 	      if ($id == $key)
 		{
-		  print "SELECTED";
+		  print "selected";
 		}
 	      if ($key_libelle)
 		{
@@ -631,17 +631,19 @@ class Form
    */
   Function selectyesno($name,$value='')
   {
+    global $langs;
+    
     print '<select name="'.$name.'">';
 
     if ($value == 'yes') 
       {
-	print '<option value="yes" SELECTED>oui</option>';
-	print '<option value="no">non</option>';
+	print '<option value="yes" selected>'.$langs->trans("yes").'</option>';
+	print '<option value="no">'.$langs->trans("no").'</option>';
       }
     else
       {
-	print '<option value="yes">oui</option>';
-	print '<option value="no" SELECTED>non</option>';
+	print '<option value="yes">'.$langs->trans("yes").'</option>';
+	print '<option value="no" selected>'.$langs->trans("no").'</option>';
       }
     print '</select>';
   }
@@ -652,17 +654,19 @@ class Form
    */
   Function selectyesnonum($name,$value='')
   {
+    global $langs;
+    
     print '<select name="'.$name.'">';
 
     if ($value == 1) 
       {
-	print '<option value="1" SELECTED>oui</option>';
-	print '<option value="0">non</option>';
+	print '<option value="1" selected>'.$langs->trans("yes").'</option>';
+	print '<option value="0">'.$langs->trans("no").'</option>';
       }
     else
       {
-	print '<option value="1">oui</option>';
-	print '<option value="0" SELECTED>non</option>';
+	print '<option value="1">'.$langs->trans("yes").'</option>';
+	print '<option value="0" selected>'.$langs->trans("no").'</option>';
       }
     print '</select>';
   }

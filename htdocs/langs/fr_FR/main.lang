@@ -1,14 +1,18 @@
 # Dolibarr language file - fr_FR - main
 charset="iso-8859-1"
+yes=oui
+no=non
 Home=Accueil
 Help=Aide
 Activate=Activer
 Activated=Activé
 Add=Ajouter
 Delete=Supprimer
+Resiliate=Résilier
 Cancel=Annuler
 Modify=Modifier
 Edit=Editer
+Show=Voir
 Search=Rechercher
 ChooseLangage=Choisissez votre langue
 User=Utilisateur
@@ -26,3 +30,7 @@ Number=Nombre
 DevelopmentTeam=Equipe de développement
 Logout=Deconnexion
 Setup=Configuration
+Alert=Alerte
+Previous=Précédent
+Next=Suivant
+ErrorForbidden=Accès non autorisé

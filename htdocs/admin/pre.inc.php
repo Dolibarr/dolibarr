@@ -22,7 +22,7 @@
 require("../main.inc.php");
 
 function llxHeader($head = "", $urlp = "") {
-  global $user, $conf;
+  global $user, $conf, $langs;
 
   /*
    *
@@ -31,25 +31,21 @@ function llxHeader($head = "", $urlp = "") {
   top_menu($head);
 
   $menu = new Menu();
+  $langs->load("admin");
+  
+  $menu->add(DOL_URL_ROOT."/admin/index.php", $langs->trans("GlobalSetup"));
 
-  $menu->add(DOL_URL_ROOT."/admin/index.php", "Configuration générale");
+  $menu->add(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
 
-  $menu->add(DOL_URL_ROOT."/admin/ihm.php", "Configuration IHM");
+  $menu->add(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"));
 
-  $menu->add(DOL_URL_ROOT."/admin/dict.php", "Configuration dictionnaires");
+  $menu->add(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
 
-  $menu->add(DOL_URL_ROOT."/admin/const.php", "Configuration autre");
+  $menu->add(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"));
 
-  $menu->add(DOL_URL_ROOT."/admin/modules.php", "Modules");
+  $menu->add(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
 
-  $menu->add(DOL_URL_ROOT."/admin/boxes.php", "Boites");
-
-  if(defined("MAIN_MODULE_EXTERNAL_RSS") && MAIN_MODULE_EXTERNAL_RSS)
-    {
-      $menu->add_submenu(DOL_URL_ROOT."/admin/external_rss.php", "Syndication");
-    }
-
-  $menu->add("system/", "Système");
+  $menu->add("system/", $langs->trans("System"));
 
   left_menu($menu->liste);
 }

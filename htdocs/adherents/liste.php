@@ -169,7 +169,7 @@ if ($result)
 
       print "</td>";
       print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".img_edit()."</a> &nbsp; ";
-      print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign\">".img_disable("Résilier")."</a> &nbsp; <a href=\"fiche.php?rowid=$objp->rowid&action=delete\">".img_delete()."</a></td>\n";
+      print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign\">".img_disable($langs->trans("Resiliate"))."</a> &nbsp; <a href=\"fiche.php?rowid=$objp->rowid&action=delete\">".img_delete()."</a></td>\n";
       print "</tr>";
       $i++;
     }
