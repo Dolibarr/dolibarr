@@ -36,7 +36,10 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-print_titre("Chiffre d'affaire (".MAIN_MONNAIE." HT)");
+$mode='recettes';
+if ($conf->compta->mode == 'CREANCES-DETTES') { $mode='creances'; }
+
+print_titre("Chiffre d'affaire (".MAIN_MONNAIE." HT, ".$mode.")");
 
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
@@ -63,8 +66,8 @@ if ($result)
     }
 }
 
-print '<table width="100%" class="border" cellspacing="0" cellpadding="3">';
-print '<tr ><td>&nbsp;</td>';
+print '<table width="100%" class="noborder" cellspacing="0" cellpadding="3">';
+print '<tr class="liste_titre"><td rowspan="2">Mois</td>';
 
 $year_current = strftime("%Y",time());
 $nbyears = 3;
@@ -82,9 +85,18 @@ else
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="center" width="10%">'.$annee.'</td>';
+  print '<td align="center" width="10%" colspan="2">'.$annee.'</td>';
 }
 print '</tr>';
+
+print '<tr class="liste_titre">';
+for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+{
+  print '<td align="right">Valeur</td>';
+  print '<td align="center">Delta</td>';
+}
+print '</tr>';
+
 for ($mois = 1 ; $mois < 13 ; $mois++)
 {
   $var=!$var;
@@ -93,13 +105,41 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
   print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
-      print '<td align="right">&nbsp;';
+	  $casenow = strftime("%Y-%m",mktime());
       $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
-      if ($cum[$case]>0)
+      $caseprev = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee-1));
+
+	  // Valeur CA
+      print '<td align="right">';
+      if ($cum[$case])
 	{
 	  print price($cum[$case]);
 	}
+	else {
+		if ($case <= $casenow) { print '0'; }
+		else { print '&nbsp;'; }
+	}
       print "</td>";
+	// Pourcentage evol
+	if ($cum[$caseprev]) {
+		if ($case <= $casenow) {
+			if ($cum[$caseprev]) 
+				print '<td align="center">'.(round(($cum[$case]-$cum[$caseprev])/$cum[$caseprev],4)*100).'%</td>';
+			else
+				print '<td align="center">+Inf%</td>';
+		}
+		else {
+			print '<td>&nbsp;</td>';
+		}
+	} else {
+		if ($case <= $casenow) {
+			print '<td align="center">-</td>';
+		}
+		else {
+			print '<td>&nbsp;</td>';
+		}
+	}
+	
 	$total[$annee]+=$cum[$case];
     }
 
@@ -107,10 +147,31 @@ for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 }
 
 // Affiche total
-print "<tr><td align=\"right\">Total : </td>";
+print "<tr><td align=\"right\"><b>Total :</b></td>";
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
 	print "<td align=\"right\"><b>".($total[$annee]?$total[$annee]:"&nbsp;")."</b></td>";
+
+	// Pourcentage evol
+	if ($total[$annee-1]) {
+		if ($annee <= $year_current) {
+			if ($total[$annee-1]) 
+				print '<td align="center"><b>'.(round(($total[$annee]-$total[$annee-1])/$total[$annee-1],4)*100).'%</b></td>';
+			else
+				print '<td align="center">+Inf%</td>';
+		}
+		else {
+			print '<td>&nbsp;</td>';
+		}
+	} else {
+		if ($annee <= $year_current) {
+			print '<td align="center">-</td>';
+		}
+		else {
+			print '<td>&nbsp;</td>';
+		}
+	}
+
 }
 print "</tr>\n";
 
