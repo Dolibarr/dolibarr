@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
@@ -23,7 +23,7 @@
  */
  
 /**
-\todo Ce fichier ne semble plus utilisé. A virer ?
+\todo Ce fichier ne semble plus utilisé. A virer ? NON Il est utilisé !
 */
 
 require("./pre.inc.php");
@@ -524,7 +524,10 @@ if ($_GET["propalid"])
 	
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
-	  print "<td><a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></td>\n";
+
+	  print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal")."</a>&nbsp;\n";
+	  print '<a href="propal.php?propalid='.$objp->propalid.'">'.$objp->ref."</a></td>\n";
+
 	  print "<td><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
 	  
 	  $now = time();
