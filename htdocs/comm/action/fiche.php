@@ -440,7 +440,7 @@ if ($_GET["id"])
       print '<table class="border" width="100%"';
       print '<tr><td width="20%">'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
-      print '<td width="30%"><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
+      print '<td width="30%">'.$act->societe->nom_url.'</td>';
       
       print '<td width="10%">'.$langs->trans("Contact").'</td>';
       print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$act->contact->id.'">'.$act->contact->fullname.'</a></td></tr>';
