@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +21,10 @@
  *
  */
 
-/*!     \file       htdocs/comm/pre.inc.php
-  \ingroup    commercial
-  \brief      Fichier de gestion du menu gauche de l'espace commercial mailing
-  \version    $Revision$
+/**     \file       htdocs/comm/mailling/pre.inc.php
+        \ingroup    commercial
+        \brief      Fichier de gestion du menu gauche de l'espace commercial mailing
+        \version    $Revision$
 */
 
 require("../../main.inc.php");
@@ -31,6 +32,7 @@ require_once DOL_DOCUMENT_ROOT.'/comm/mailing/mailing.class.php';
 
 $user->getrights();
 $langs->load("companies");
+$langs->load("mails");
 
 
 function llxHeader($head = "", $title = "") {
@@ -40,8 +42,8 @@ function llxHeader($head = "", $title = "") {
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/comm/mailing/index.php", $langs->trans("Mailing"));
-  $menu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?action=create", "Nouveau mailing");
+  $menu->add(DOL_URL_ROOT."/comm/mailing/index.php", $langs->trans("Mailings"));
+  $menu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?action=create", $langs->trans("NewMailing"));
 
   left_menu($menu->liste);
 
