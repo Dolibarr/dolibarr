@@ -74,12 +74,6 @@ if ($action == 'recontact')
   $result = $db->query($sql);
 }
 
-if ($action == 'note')
-{
-  $sql = "UPDATE llx_societe SET note='$note' WHERE idp=$socid";
-  $result = $db->query($sql);
-}
-
 if ($action == 'stcomm')
 {
   if ($stcommid <> 'null' && $stcommid <> $oldstcomm)
@@ -192,7 +186,7 @@ if ($socid > 0)
 	print "<td align=\"center\"><a href=\"index.php?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
 	if ($user->rights->facture->creer)
 	  print "<td>[<a href=\"facture.php?action=create&socidp=$objsoc->idp\">".translate("Facture")."</a>]</td>";
-	print "<td><a href=\"socnote.php?socid=$objsoc->idp\">Notes</a></td>";
+	print "<td><a href=\"../socnote.php?socid=$objsoc->idp\">Notes</a></td>";
 	print "<td align=\"center\">[<a href=\"deplacement/fiche.php?socid=$objsoc->idp&action=create\">Déplacement</a>]</td>";
       }
     print "</tr></table>";

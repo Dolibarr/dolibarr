@@ -48,11 +48,6 @@ if ($action == 'recontact') {
   $result = $db->query($sql);
 }
 
-if ($action == 'note') {
-  $sql = "UPDATE llx_societe SET note='$note' WHERE idp=$socid";
-  $result = $db->query($sql);
-}
-
 if ($action == 'stcomm') {
   if ($stcommid <> 'null' && $stcommid <> $oldstcomm) {
     $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
@@ -156,7 +151,7 @@ if ($socid > 0) {
 	  {
 	    print "<td align=\"center\"><a href=\"../fichinter/fiche.php?socidp=$objsoc->idp&action=create\">[Intervention]</a></td>";
 	  }
-	print "<td><a href=\"socnote.php?socid=$objsoc->idp\">Notes</a></td>";
+	print "<td><a href=\"../socnote.php?socid=$objsoc->idp\">Notes</a></td>";
 	print "<td align=\"center\">[<a href=\"../soc.php?socid=$objsoc->idp&action=edit\">Editer</a>]</td></tr>";
       }
     print "</table>";
