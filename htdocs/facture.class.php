@@ -32,7 +32,7 @@
 
 
 /*! \class Facture
-		\brief Classe permettant la gestion des factures clients
+		\brief      Classe permettant la gestion des factures clients
 */
 
 class Facture

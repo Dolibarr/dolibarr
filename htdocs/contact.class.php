@@ -21,7 +21,20 @@
  * $Source$
  * 
  */
+
+/*!
+	    \file       htdocs/contact.class.php
+        \ingroup    societe
+		\brief      Fichier de la classe des contacts
+		\version    $Revision$
+*/
+
 require (DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
+
+
+/*! \class Contact
+		\brief      Classe permettant la gestion des contacts
+*/
 
 class Contact 
 {

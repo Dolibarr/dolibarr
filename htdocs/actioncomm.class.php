@@ -21,6 +21,18 @@
  *
  */
 
+/*!
+	    \file       htdocs/actioncomm.class.php
+        \ingroup    commercial
+		\brief      Fichier de la classe des actions commerciales
+		\version    $Revision$
+*/
+
+
+/*! \class ActionComm
+		\brief      Classe permettant la gestion des actions commerciales
+*/
+
 class ActionComm
 {
   var $id;
