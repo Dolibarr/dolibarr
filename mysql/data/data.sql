@@ -1,6 +1,6 @@
 -- Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
--- Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 --
@@ -29,11 +29,11 @@
 -- de l'install et tous les sigles '--' sont supprimés.
 --
 
-insert into llx_cond_reglement values (1,1,1, "A réception","Réception de facture",0,0);
-insert into llx_cond_reglement values (2,2,1, "30 jours","Réglement à 30 jours",0,30);
-insert into llx_cond_reglement values (3,3,1, "30 jours fin de mois","Réglement à 30 jours fin de mois",1,30);
-insert into llx_cond_reglement values (4,4,1, "60 jours","Réglement à 60 jours",0,60);
-insert into llx_cond_reglement values (5,5,1, "60 jours fin de mois","Réglement à 60 jours fin de mois",1,60);
+insert into llx_cond_reglement(rowid, code, sortorder, actif, libelle, libelle_facture, fdm, nbjour) values (1,'RECEP',       1,1, 'A réception','Réception de facture',0,0);
+insert into llx_cond_reglement(rowid, code, sortorder, actif, libelle, libelle_facture, fdm, nbjour) values (2,'30D',         2,1, '30 jours','Réglement à 30 jours',0,30);
+insert into llx_cond_reglement(rowid, code, sortorder, actif, libelle, libelle_facture, fdm, nbjour) values (3,'30DENDMONTH', 3,1, '30 jours fin de mois','Réglement à 30 jours fin de mois',1,30);
+insert into llx_cond_reglement(rowid, code, sortorder, actif, libelle, libelle_facture, fdm, nbjour) values (4,'60D',         4,1, '60 jours','Réglement à 60 jours',0,60);
+insert into llx_cond_reglement(rowid, code, sortorder, actif, libelle, libelle_facture, fdm, nbjour) values (5,'60DENDMONTH', 5,1, '60 jours fin de mois','Réglement à 60 jours fin de mois',1,60);
 
 
 insert into llx_sqltables (name, loaded) values ('llx_album',0);
@@ -145,29 +145,10 @@ insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.
 -- Factures
 --
 
-insert into llx_const (name, value, type) values ('FAC_OUTPUTDIR','/documents/facture','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_INTITULE','Facture','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_MEL','facture@societe.com','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_WWW','http://www.societe.com','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_LOGO','/documents/logo/mylogo.png','chaine');
-
---
--- Propales
---
-
-insert into llx_const (name, value, type) values ('PROPALE_OUTPUTDIR','/documents/propale','chaine');
-
---
--- Ficheinter
---
-
-insert into llx_const (name, value, type) values ('FICHEINTER_OUTPUTDIR','/documents/ficheinter','chaine');
-
---
--- société
---
-
-insert into llx_const (name, value, type) values ('SOCIETE_OUTPUTDIR','/documents/societe','chaine');
 
 
 -- Dictionnaires llx_c

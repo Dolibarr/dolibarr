@@ -1,4 +1,5 @@
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
 -- Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
 --
@@ -39,44 +40,33 @@ insert into llx_sqltables (name, loaded) values ('llx_album',0);
 --
 -- Définition des action de workflow
 --
-
 delete from llx_action_def;
 insert into llx_action_def (rowid,titre,description,objet_type) values (1,'Validation fiche intervention','Déclenché lors de la validation d\'une fiche d\'intervention','ficheinter');
 insert into llx_action_def (rowid,titre,description,objet_type) values (2,'Validation facture','Déclenché lors de la validation d\'une facture','facture');
 
 --
--- Boites
---
-
-delete from llx_boxes_def;
-
-delete from llx_boxes;
-
---
 -- Constantes de configuration
 --
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MONNAIE','euros','chaine','Monnaie',0);
 
-insert into llx_const (name, value, type, note) values ('MAIN_MONNAIE','euros','chaine','Monnaie');
-insert into llx_const (name, value, type, note) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document');
-insert into llx_const (name, value, type, note) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation');
-insert into llx_const (name, value, type, note) values ('MAIN_MAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr');
+insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','1','chaine','Autorise l\'upload de document',1);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation',1);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr',1);
 
-insert into llx_const (name, value, type, note) values ('MAIN_START_YEAR','2004','chaine','Année de départ');
+insert into llx_const (name, value, type, note, visible) values ('MAIN_START_YEAR','2004','chaine','Année de départ',1);
 
-insert into llx_const (name, value, type, note) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
-insert into llx_const (name, value, type, note) values ('MAIN_DEBUG','1','yesno','Debug ..');
+insert into llx_const (name, value, type, note, visible) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages',1);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_DEBUG','1','yesno','Debug ..',1);
 
 insert into llx_const (name, value, type, note, visible) values ('COMPTA_ONLINE_PAYMENT_BPLC','1','yesno','Système de gestion de la banque populaire de Lorraine',0);
 
 --
 -- IHM
 --
-
 insert into llx_const (name, value, type, note, visible) values ('MAIN_THEME','eldy','chaine','Thème par défaut',0);
 insert into llx_const (name, value, type, note, visible) values ('SIZE_LISTE_LIMIT','20','chaine','Taille des listes',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MENU_BARRETOP','default.php','chaine','Module de gestion de la barre de menu du haut',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_LANG_DEFAULT','fr_FR','chaine','Langue par défaut pour les écrans Dolibarr',0);
-
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_CONTACT','1','yesno','Affichage formulaire de recherche des Contacts dans la barre de gauche',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFORM_SOCIETE','1','yesno','Affichage formulaire de recherche des Sociétés dans la barre de gauche',0);
@@ -85,13 +75,12 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_SEARCHFOR
 --
 -- Dons
 --
-
 insert into llx_const (name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
 
 --
 -- Mail Adherent
 --
-
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_REQUIRED','1','yesno','Le mail est obligatoire pour créer un adhérent',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_FROM','adherents@domain.com','chaine','From des mails adherents',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_RESIL','Votre adhesion sur %SERVEUR% vient d\'etre resilie.\r\nNous esperons vous revoir tres bientot','texte','Mail de Resiliation',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_VALID','MAIN\r\nVotre adhesion vient d\'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l\'adresse suivante : \r\n%SERVEUR%public/adherents/','texte','Mail de validation',0);
@@ -107,13 +96,11 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_
 --
 -- Mail Mailing
 --
-
 insert into llx_const (name, value, type, note) values ('MAILING_EMAIL','mailing@societe.com','chaine','Champ From du mail pour mailing clients/prospects');
 
 --
 -- Mailman
 --
-
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_USE_MAILMAN','0','yesno','Utilisation de Mailman',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAILMAN_UNSUB_URL','http://%SERVER%/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%ADMINPW%&user=%EMAIL%','chaine','Url de desinscription aux listes mailman',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAILMAN_URL','http://%SERVER%/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%ADMINPW%&send_welcome_msg_to_this_batch=1&subscribees=%EMAIL%','chaine','url pour les inscriptions mailman',0);
@@ -121,32 +108,26 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAILM
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAILMAN_ADMINPW','','chaine','Mot de passe Admin des liste mailman',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAILMAN_SERVER','lists.domain.com','chaine','Serveur hebergeant les interfaces d\'Admin des listes mailman',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAILMAN_LISTS_COTISANT','','chaine','Liste(s) auxquelles les nouveaux cotisants sont inscris automatiquement',0);
-
 --
 -- Glasnost
 --
-
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_USE_GLASNOST','0','yesno','utilisation de glasnost ?',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_GLASNOST_SERVEUR','glasnost.j1b.org','chaine','serveur glasnost',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_GLASNOST_USER','user','chaine','Administrateur glasnost',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_GLASNOST_PASS','password','chaine','password de l\'administrateur',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_USE_GLASNOST_AUTO','0','yesno','inscription automatique a glasnost ?',0);
-
 --
 -- SPIP
 --
-
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_USE_SPIP','0','yesno','Utilisation de SPIP ?',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_USE_SPIP_AUTO','0','yesno','Utilisation de SPIP automatiquement',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_SPIP_USER','user','chaine','user spip',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_SPIP_PASS','pass','chaine','Pass de connection',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_SPIP_SERVEUR','localhost','chaine','serveur spip',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_SPIP_DB','spip','chaine','db spip',0);
-
 --
--- cartes adherents
+-- Cartes adherents
 --
-
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_TEXT_NEW_ADH','','texte','Texte d\'entete du formaulaire d\'adhesion en ligne',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_HEADER_TEXT','%ANNEE%','chaine','Texte imprime sur le haut de la carte adherent',0);
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_FOOTER_TEXT','Association FreeLUG http://www.freelug.org/','chaine','Texte imprime sur le bas de la carte adherent',0);
@@ -155,7 +136,6 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_
 --
 -- OsCommerce
 --
-
 insert into llx_const (name, value, type) values ('DB_NAME_OSC','catalog','chaine');
 insert into llx_const (name, value, type) values ('OSC_LANGUAGE_ID','1','chaine');
 insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
@@ -164,36 +144,10 @@ insert into llx_const (name, value, type) values ('OSC_CATALOG_URL','http://osc.
 -- Factures
 --
 
-insert into llx_const (name, value, type) values ('FAC_OUTPUTDIR','/htdocs/document/facture','chaine');
-insert into llx_const (name, value, type) values ('FAC_OUTPUT_URL','/htdocs/document/facture','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_INTITULE','Facture','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_MEL','facture@societe.com','chaine');
 insert into llx_const (name, value, type) values ('FAC_PDF_WWW','http://www.societe.com','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_LOGO','/document/logo','chaine');
-insert into llx_const (name, value, type) values ('FAC_CAPITAL_EURO','0','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_TVA_INTRA','','chaine');
-insert into llx_const (name, value, type) values ('FAC_PDF_RCS','','chaine');
-
---
--- Propales
---
-
-insert into llx_const (name, value, type) values ('PROPALE_OUTPUTDIR','/htdocs/document/propale','chaine');
-insert into llx_const (name, value, type) values ('PROPALE_OUTPUT_URL','/htdocs/document/propale','chaine');
-
---
--- Ficheinter
---
-
-insert into llx_const (name, value, type) values ('FICHEINTER_OUTPUTDIR','/htdocs/document/ficheinter','chaine');
-insert into llx_const (name, value, type) values ('FICHEINTER_OUTPUT_URL','/htdocs/document/ficheinter','chaine');
-
---
--- société
---
-
-insert into llx_const (name, value, type) values ('SOCIETE_OUTPUTDIR','/htdocs/document/societe','chaine');
-insert into llx_const (name, value, type) values ('SOCIETE_OUTPUT_URL','/htdocs/document/societe','chaine');
+insert into llx_const (name, value, type) values ('FAC_PDF_LOGO','/documents/logo/mylogo.png','chaine');
 
 
 -- Dictionnaires llx_c
@@ -352,6 +306,7 @@ insert into llx_c_civilite (rowid, code, civilite, active) values (7 , 'MTRE', '
 -- Departements/Cantons/Provinces
 --
 
+delete from llx_c_departements;
 insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,'0','0',0,'-','-');
 -- Departements de France
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'01','01053',5,'AIN','Ain');
@@ -472,7 +427,7 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'11','',2,'NAMUR','Namur');
 
 --
--- Effectif des sociétés
+-- Types effectifs
 --
 
 delete from llx_c_effectif;
@@ -489,74 +444,76 @@ insert into llx_c_effectif (id,code,libelle) values (6, 'EF500-',    '> 500');
 -- Formes juridiques
 --
 
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (0, 0,'-');
+delete from llx_c_forme_juridique;
+
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (0, '0','-');
 
 -- Pour la France: Extrait de http://www.insee.fr/fr/nom_def_met/nomenclatures/cj/cjniveau2.htm
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,11,'Artisan Commerçant');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,12,'Commerçant');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,13,'Artisan');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,14,'Officier public ou ministériel');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,15,'Profession libérale');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,16,'Exploitant agricole');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,17,'Agent commercial');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,18,'Associé Gérant de société');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,19,'(Autre) personne physique');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,21,'Indivision');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,22,'Société créée de fait');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,23,'Société en participation');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,27,'Paroisse hors zone concordataire');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,29,'Autre groupement de droit privé non doté de la personnalité morale');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,31,'Personne morale de droit étranger, immatriculée au RCS (registre du commerce et des sociétés)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,32,'Personne morale de droit étranger, non immatriculée au RCS');
-
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,41,'Établissement public ou régie à caractère industriel ou commercial');
-
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,51,'Société coopérative commerciale particulière');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,52,'Société en nom collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,53,'Société en commandite');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,54,'Société à responsabilité limité (SARL)');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,55,'Société anonyme à conseil d\'administration');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,56,'Société anonyme à directoire');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,57,'Société par actions simplifiée');
-
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,61,'Caisse d\'épargne et de prévoyance');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,62,'Groupement d\'intérêt économique');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,63,'Société coopérative agricole');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,64,'Société non commerciale d\'assurances');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,65,'Société civile');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,69,'Autres personnes de droit privé inscrites au registre du commerce et des sociétés');
-
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,71,'Administration de l\'état');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,72,'Collectivité territoriale');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,73,'Établissement public administratif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,74,'Autre personne morale de droit public administratif');
-
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,81,'Organisme gérant un régime de protection social à adhésion obligatoire');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,82,'Organisme mutualiste');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,83,'Comité d\'entreprise');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,84,'Organisme professionnel');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,85,'Organisme de retraite à adhésion non obligatoire');
-
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,91,'Syndicat de propriétaires');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,92,'Association loi 1901 ou assimilé');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,93,'Fondation');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,99,'Autre personne morale de droit privé');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'11','Artisan Commerçant');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'12','Commerçant');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'13','Artisan');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'14','Officier public ou ministériel');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'15','Profession libérale');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'16','Exploitant agricole');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'17','Agent commercial');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'18','Associé Gérant de société');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'19','(Autre) personne physique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'21','Indivision');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'22','Société créée de fait');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'23','Société en participation');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'27','Paroisse hors zone concordataire');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'29','Autre groupement de droit privé non doté de la personnalité morale');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'31','Personne morale de droit étranger, immatriculée au RCS');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'32','Personne morale de droit étranger, non immatriculée au RCS');
+                                                                     
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'41','Établissement public ou régie à caractère industriel ou commercial');
+                                                                     
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'51','Société coopérative commerciale particulière');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'52','Société en nom collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'53','Société en commandite');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'54','Société à responsabilité limité (SARL)');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'55','Société anonyme à conseil d\'administration');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'56','Société anonyme à directoire');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'57','Société par actions simplifiée');
+                                                                     
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'61','Caisse d\'épargne et de prévoyance');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'62','Groupement d\'intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'63','Société coopérative agricole');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'64','Société non commerciale d\'assurances');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'65','Société civile');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'69','Autres personnes de droit privé inscrites au registre du commerce et des sociétés');
+                                                                     
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'71','Administration de l\'état');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'72','Collectivité territoriale');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'73','Établissement public administratif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'74','Autre personne morale de droit public administratif');
+                                                                     
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'81','Organisme gérant un régime de protection social à adhésion obligatoire');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'82','Organisme mutualiste');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'83','Comité d\'entreprise');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'84','Organisme professionnel');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'85','Organisme de retraite à adhésion non obligatoire');
+                                                                     
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'91','Syndicat de propriétaires');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'92','Association loi 1901 ou assimilé');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'93','Fondation');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (1,'99','Autre personne morale de droit privé');
 
 --
 -- Pour la Belgique
 --
 
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,100,'Indépendant');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,101,'SPRL - Société à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,102,'SA   - Société Anonyme');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,103,'SCRL - Société coopérative à responsabilité limitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,104,'ASBL - Association sans but Lucratif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,105,'SCRI - Société coopérative à responsabilité illimitée');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,106,'SCS  - Société en comanndite simple');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,107,'SCA  - Société en commandite par action');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,108,'SNC  - Société en nom collectif');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,109,'GIE  - Groupement d\'intérêt économique');
-insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,110,'GEIE - Groupement européen d\'intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'100','Indépendant');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'101','SPRL - Société à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'102','SA   - Société Anonyme');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'103','SCRL - Société coopérative à responsabilité limitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'104','ASBL - Association sans but Lucratif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'105','SCRI - Société coopérative à responsabilité illimitée');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'106','SCS  - Société en comanndite simple');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'107','SCA  - Société en commandite par action');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'108','SNC  - Société en nom collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'109','GIE  - Groupement d\'intérêt économique');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (2,'110','GEIE - Groupement européen d\'intérêt économique');
 
 --
 -- Types paiement
