@@ -486,6 +486,25 @@ class Product
    *
    *
    */
+  Function remove_fournisseur($user, $id_fourn) 
+    {
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur ";
+      $sql .= " WHERE fk_product = $this->id AND fk_soc = $id_fourn;";	
+      
+      if ($this->db->query($sql) )
+	{
+	  return 1;	      
+	}
+      else
+	{
+	  print $this->db->error() . ' in ' . $sql;
+	  return -1;
+	}
+    }
+  /*
+   *
+   *
+   */
   Function create_stock($id_entrepot, $nbpiece)
   {
     
