@@ -81,7 +81,7 @@ if ($_POST["action"] == 'cotisation')
             $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"],ADHERENT_BANK_CATEGORIE);
             if ($insertid == '')
             {
-                print "<p> Probleme d'insertion : ".$db->error();
+                dolibarr_print_error($db);
             }
             else
             {
@@ -94,7 +94,7 @@ if ($_POST["action"] == 'cotisation')
                 }
                 else
                 {
-                    print "<p> Probleme d'insertion $sql : ".$db->error();
+                    dolibarr_print_error($db);
                 }
             }
         }
@@ -159,37 +159,37 @@ if ($_POST["action"] == 'add')
     if ($result) {
         $num = $db->num_rows();
     }
-    if (!isset($nom) || !isset($prenom) || $prenom=='' || $nom==''){
+    if (!isset($nom) || !isset($prenom) || $prenom=='' || $nom=='') {
         $error+=1;
-        $errmsg .="Nom et Prenom obligatoires<br>\n";
+        $errmsg .="Nom et Prénom obligatoires<br>\n";
     }
-    if (!isset($email) || $email == '' || !ereg('@',$email)){
+    if (ADHERENT_MAIL_REQUIRED && ADHERENT_MAIL_REQUIRED == 1 && ! ValidEMail($email)) {
         $error+=1;
         $errmsg .="Adresse Email invalide<br>\n";
     }
-    if ($num !=0){
+    if ($num !=0) {
         $error+=1;
-        $errmsg .="Login deja utilise. Veuillez en changer<BR>\n";
+        $errmsg .="Login deja utilise. Veuillez en changer<br>\n";
     }
-    if (!isset($pass) || $pass == '' ){
+    if (!isset($pass) || $pass == '' ) {
         $error+=1;
         $errmsg .="Password invalide<br>\n";
     }
     if (isset($naiss) && $naiss !=''){
-        if (!preg_match("/^\d\d\d\d-\d\d-\d\d$/",$naiss)){
+        if (!preg_match("/^\d\d\d\d-\d\d-\d\d$/",$naiss)) {
             $error+=1;
             $errmsg .="Date de naissance invalide (Format AAAA-MM-JJ)<br>\n";
         }
     }
-    if (isset($public)){
+    if (isset($public)) {
         $public=1;
-    }else{
+    } else {
         $public=0;
     }
-    if (!$error){
+    if (!$error) {
 
     // Email a peu pres correct et le login n'existe pas
-    if ($adh->create($user->id) )
+    if ($adh->create($user->id))
     {
         if ($cotisation > 0)
         {
@@ -345,7 +345,7 @@ if ($_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == yes)
 /* ************************************************************************** */
 if ($errmsg != '')
 {
-    print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+    print '<table class="border" width="100%">';
     print '<th>Erreur dans l\'execution du  formulaire</th>';
     print "<tr><td class=\"error\"><b>$errmsg</b></td></tr>\n";
     print '</table>';
@@ -355,9 +355,9 @@ if ($errmsg != '')
 $adho->fetch_optionals();
 if ($action == 'create') {
 
-    print_titre("Nouvel adhérent");
+    print_titre($langs->trans("NewMember"));
     print "<form action=\"fiche.php\" method=\"post\">\n";
-    print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+    print '<table class="border" width="100%">';
 
     print '<input type="hidden" name="action" value="add">';
 
@@ -379,17 +379,17 @@ if ($action == 'create') {
 
     print '<td valign="top" rowspan="13"><textarea name="comment" wrap="soft" cols="40" rows="25"></textarea></td></tr>';
 
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td><input type="text" name="prenom" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("LastName").'</td><td><input type="text" name="nom" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("Firstname").'*</td><td><input type="text" name="prenom" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("LastName").'*</td><td><input type="text" name="nom" size="40"></td></tr>';
     print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40"></td></tr>';
     print '<tr><td>'.$langs->trans("Address").'</td><td>';
     print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
     print '<tr><td>'.$langs->trans("Country").'</td><td><input type="text" name="pays" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("EMail").'</td><td><input type="text" name="email" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("Login").'</td><td><input type="text" name="login" size="40"></td></tr>';
-    print '<tr><td>'.$langs->trans("Password").'</td><td><input type="password" name="pass" size="40"></td></tr>';
-    print '<tr><td>Date de Naissance<BR>Format AAAA-MM-JJ</td><td><input type="text" name="naiss" size="10"></td></tr>';
+    print '<tr><td>'.$langs->trans("EMail").(ADHERENT_MAIL_REQUIRED&&ADHERENT_MAIL_REQUIRED==1?'*':'').'</td><td><input type="text" name="email" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="login" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="pass" size="40"></td></tr>';
+    print '<tr><td>'.$langs->trans("Birthday").'<br>(AAAA-MM-JJ)</td><td><input type="text" name="naiss" size="10"></td></tr>';
     print '<tr><td>Url photo</td><td><input type="text" name="photo" size="40"></td></tr>';
     foreach($adho->attribute_label as $key=>$value){
         print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
@@ -452,7 +452,7 @@ if ($rowid > 0)
     $h = 0;
 
     $head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$rowid;
-    $head[$h][1] = "Fiche adhérent";
+    $head[$h][1] = $langs->trans("Member");
     $hselected=$h;
     $h++;
 
@@ -519,28 +519,28 @@ if ($rowid > 0)
     print "<form action=\"fiche.php\" method=\"post\">\n";
     print '<table class="border" width="100%">';
 
-    print '<tr><td>Numero</td><td class="valeur">'.$adh->id.'&nbsp;</td>';
+    print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur">'.$adh->id.'&nbsp;</td>';
     print '<td valign="top" width="50%">'.$langs->trans("Comments").'</tr>';
 
-    print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adh->type."</td>\n";
+    print '<tr><td>'.$langs->trans("Type").'*</td><td class="valeur">'.$adh->type."</td>\n";
 
     print '<td rowspan="'.(13+count($adh->array_options)).'" valign="top" width="50%">';
     print nl2br($adh->commentaire).'&nbsp;</td></tr>';
 
     print '<tr><td>Personne</td><td class="valeur">'.$adh->getmorphylib().'&nbsp;</td></tr>';
 
-    print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
+    print '<tr><td width="15%">'.$langs->trans("Firstname").'*</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td></tr>';
 
-    print '<tr><td>'.$langs->trans("LastName").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("LastName").'*</td><td class="valeur">'.$adh->nom.'&nbsp;</td></tr>';
 
     print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$adh->pays.'&nbsp;</td></tr>';
-    print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
-    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("EMail").(ADHERENT_MAIL_REQUIRED&&ADHERENT_MAIL_REQUIRED==1?'*':'').'</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Login").'*</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
     //  print '<tr><td>Pass</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
-    print '<tr><td>Date de Naissance</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
     print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
     print '<tr><td>Public ?</td><td class="valeur">';
     if ($adh->public==1){
@@ -555,8 +555,10 @@ foreach($adho->attribute_label as $key=>$value){
 }
 
 print "</table>\n";
+print "<br>";
 
 print "</div>\n";
+
 
 /*
  * Barre d'actions
@@ -564,45 +566,56 @@ print "</div>\n";
  */
 print '<div class="tabsAction">';
 
-if ($user->admin)
+
+print "<a class=\"tabAction\" href=\"edit.php?rowid=$rowid\">".$langs->trans("Edit")."</a>";
+
+if ($adh->statut < 1)
 {
-    print "<a class=\"tabAction\" href=\"edit.php?rowid=$rowid\">".$langs->trans("Edit")."</a>";
+    print "<a class=\"tabAction\" href=\"fiche.php?rowid=$rowid&action=valid\">Valider l'adhésion</a>\n";
+}
 
-    if ($adh->statut < 1)
+if ($adh->statut == 1)
+{
+    print "<a class=\"tabAction\" href=\"fiche.php?rowid=$rowid&action=resign\">Résilier l'adhésion</a>\n";
+}
+
+print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=delete\">".$langs->trans("Delete")."</a>\n";
+
+// Envoi fiche par mail
+print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">Envoyer sa fiche a l'adhérent</a>\n";
+
+// Action Glasnost
+if ($adht->vote == 'yes' && defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1)
+{
+    define("XMLRPC_DEBUG", 1);
+    $isinglasnost=$adh->is_in_glasnost();
+    if ($isinglasnost == 1)
     {
-        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$rowid&action=valid\">Valider l'adhésion</a>\n";
-    }
-
-    if ($adh->statut == 1)
-    {
-        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$rowid&action=resign\">Résilier l'adhésion</a>\n";
-    }
-
-    print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=delete\">".$langs->trans("Delete")."</a>\n";
-
-    /*
-    * bouton : "Envoie des informations"
-    */
-    print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">Envoyer sa fiche a l'adhérent</a>\n";
-
-    if ($adht->vote == 'yes' && defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1){
-        define("XMLRPC_DEBUG", 1);
-
-        if ($adh->is_in_glasnost() == 1){
-            print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>\n";
-        }
-        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>\n";
         print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>\n";
     }
+    if ($isinglasnost == 0) {
+        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>\n";
+    }
+    if ($isinglasnost == -1) {
+        print '<br><font class="error">Failed to connect to SPIP: '.$adh->errorstr.'</font>';
+    }
+}
 
-    if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1){
-        if ($adh->is_in_spip() == 1){
-            print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=del_spip\">Suppression dans Spip</a>\n";
-        }else{
+// Action SPIP
+if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1)
+{
+    $isinspip=$adh->is_in_spip();
+    if ($isinspip == 1)
+    {
+        print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=del_spip\">Suppression dans Spip</a>\n";
+    }
+    if ($isinspip == 0)
+    {
         print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=add_spip\">Ajout dans Spip</a>\n";
     }
-
-}
+    if ($isinspip == -1) {
+        print '<br><font class="error">Failed to connect to SPIP: '.$adh->errorstr.'</font>';
+    }
 }
 
 print '</div>';
@@ -615,7 +628,7 @@ print "<br>\n";
  *
  */
 
-print '<table cellspacing="0" class="border" width="100%" cellpadding="3">';
+print '<table class="border" width="100%">';
 
 print '<tr>';
 if (defined("ADHERENT_BANK_USE") && ADHERENT_BANK_USE !=0 &&
@@ -640,7 +653,7 @@ if ($result)
     $num = $db->num_rows();
     $i = 0;
 
-    print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">\n";
+    print "<table class=\"noborder\" width=\"100%\">\n";
 
     print '<tr class="liste_titre">';
     print "<td>Date cotisations</td>\n";

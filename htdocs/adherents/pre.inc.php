@@ -30,26 +30,19 @@
 require("../main.inc.php");
 
 function llxHeader($head = "") {
-  global $user, $conf;
+  global $user, $conf, $langs;
 
 
-  /*
-   *
-   *
-   */
   top_menu($head);
 
   $menu = new Menu();
 
-  $menu->add("index.php","Adherents");
+
+  $menu->add("index.php",$langs->trans("Members"));
+  $menu->add_submenu("fiche.php?action=create",$langs->trans("NewMember"));
   $menu->add_submenu("liste.php?statut=-1","Adhésions à valider");
   $menu->add_submenu("liste.php?statut=1","Adhérents à ce jour");
   $menu->add_submenu("liste.php?statut=0","Adhésions résiliées");
-
-  if ($user->admin)
-    {
-      $menu->add("fiche.php?action=create","Nouvel adhérent");
-    }
 
   $menu->add(DOL_URL_ROOT."/public/adherents/","Espace adherents public");
 
@@ -58,18 +51,19 @@ function llxHeader($head = "") {
   $menu->add_submenu("cartes/carte.php","Cartes d'adhérents");
   $menu->add_submenu("cartes/etiquette.php","Etiquettes d'adhérents");
 
-  $menu->add("index.php","Comptabilite");
+  $langs->load("compta");
+  $menu->add("index.php",$langs->trans("Accountancy"));
   $menu->add_submenu("cotisations.php","Cotisations");
-  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/","Bank");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/bank/",$langs->trans("Bank"));
 
-  if ($user->admin)
-    {
-      $menu->add("index.php","Configuration");
-      $menu->add_submenu("type.php","Type d'adhérent");
-      $menu->add_submenu("options.php","Champs optionnels");
-      $menu->add_submenu(DOL_URL_ROOT."/admin/adherent.php","Constantes");
-    }
+  $menu->add("index.php",$langs->trans("Setup"));
+  $menu->add_submenu("type.php","Type d'adhérent");
+  $menu->add_submenu("options.php","Champs optionnels");
 
+  if ($user->admin) {
+    $menu->add_submenu(DOL_URL_ROOT."/admin/adherent.php",$langs->trans("Module"));
+  }
+  
   left_menu($menu->liste);
 
 }

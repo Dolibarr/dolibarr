@@ -49,6 +49,8 @@ $main_use_spip_auto = ADHERENT_USE_SPIP_AUTO;
 $typeconst=array('yesno','texte','chaine');
 $var=True;
 
+
+// Action mise a jour ou ajout d'une constante
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
   if (isset($_POST["consttype"]) && $_POST["consttype"] != '')
@@ -74,20 +76,31 @@ if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
   
 }
 
+// Action activation d'un sous module du module adhérent
 if ($_GET["action"] == 'set')
 {
-   $sql = "DELETE FROM ".MAIN_DB_PREFIX." WHERE name = '".$_GET["name"]."' ;";
-	 $db->query($sql);
-	 
-	 $sql ='';
-	 $sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,visible) values ('".$_GET["name"]."','".$_GET["value"]."', 0);";
-
-  if ($db->query($sql))
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$_GET["name"]."' ;";
+    $result=$db->query($sql);
+    if (! $result) {
+        dolibarr_print_error($db);
+        exit;
+    }
+    
+    $sql ='';
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,visible) values ('".$_GET["name"]."','".$_GET["value"]."', 0);";
+    
+    $result=$db->query($sql);
+    if ($result)
     {
-      Header("Location: adherent.php");
+        Header("Location: adherent.php");
+    }
+    else {
+        dolibarr_print_error($db);   
+        exit;
     }
 }
 
+// Action désactivation d'un sous module du module adhérent
 if ($_GET["action"] == 'unset')
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$_GET["name"]."'";
@@ -210,7 +223,9 @@ $var=!$var;
 /*
  * Edition des varibales globales non rattache a un theme specifique 
  */
-$constantes=array('ADHERENT_TEXT_NEW_ADH',
+$constantes=array(
+          'ADHERENT_MAIL_REQUIRED',
+          'ADHERENT_TEXT_NEW_ADH',
 		  'ADHERENT_MAIL_COTIS_SUBJECT',
 		  'ADHERENT_MAIL_COTIS',
 		  'ADHERENT_MAIL_EDIT_SUBJECT',
@@ -232,6 +247,9 @@ form_constantes($constantes);
 
 
 $db->close();
+
+print '<br>';
+
 
 llxFooter();
 
@@ -286,10 +304,8 @@ function form_constantes($tableau){
 	}
       print '</td><td>';
       
-      //      print '<input type="text" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
-      //      print '</td><td>';
       print '<input type="Submit" value="Update" name="Button"> &nbsp;';
-      print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
+//      print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
       print "</td></tr>\n";
       
       print '</form>';
@@ -298,4 +314,5 @@ function form_constantes($tableau){
   }
   print '</table>';
 }
+
 ?>

@@ -24,7 +24,7 @@
  *
  */
 
-/*!	\file htdocs/adherents/adherent.class.php
+/*!	    \file       htdocs/adherents/adherent.class.php
         \ingroup    adherent
 		\brief      Fichier de la classe permettant la gestion d'un adhérent
 		\author     Rodolphe Qiedeville
@@ -85,10 +85,10 @@ class Adherent
 
 
 /*!
-		\brief	function envoyant un email au destinataire (recipient) avec le text fourni en parametre.
-		\param	recipients		destinataires
-		\param	text					contenu du message
-		\param	subject				sujet du message
+		\brief	    function envoyant un email au destinataire (recipient) avec le text fourni en parametre.
+		\param	    recipients		destinataires
+		\param	    text			contenu du message
+		\param	    subject			sujet du message
 		\remarks	La particularite de cette fonction est de remplacer certains champs
 		\remarks	par leur valeur pour l'adherent en l'occurrence :
 		\remarks	%PRENOM% : est remplace par le prenom
@@ -316,67 +316,72 @@ class Adherent
   function update() 
     {
 
-      $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
-      $sql .= "prenom = '".$this->prenom ."'";
-      $sql .= ",nom='"    .$this->nom."'";
-      $sql .= ",societe='".$this->societe."'";
-      $sql .= ",adresse='".$this->adresse."'";
-      $sql .= ",cp='"     .$this->cp."'";
-      $sql .= ",ville='"  .$this->ville."'";
-      $sql .= ",pays='"   .$this->pays."'";
-      $sql .= ",note='"   .$this->commentaire."'";
-      $sql .= ",email='"  .$this->email."'";
-      $sql .= ",login='"  .$this->login."'";
-      $sql .= ",pass='"   .$this->pass."'";
-      $sql .= ",naiss='"  .$this->naiss."'";
-      $sql .= ",photo='"  .$this->photo."'";
-      $sql .= ",public='" .$this->public."'";
-      $sql .= ",statut="  .$this->statut;
-      $sql .= ",fk_adherent_type=".$this->typeid;
-      $sql .= ",morphy='".$this->morphy."'";
-
-      $sql .= " WHERE rowid = $this->id";
-      
-      $result = $this->db->query($sql);
+    $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
+    $sql .= "prenom = '".$this->prenom ."'";
+    $sql .= ",nom='"    .$this->nom."'";
+    $sql .= ",societe='".$this->societe."'";
+    $sql .= ",adresse='".$this->adresse."'";
+    $sql .= ",cp='"     .$this->cp."'";
+    $sql .= ",ville='"  .$this->ville."'";
+    $sql .= ",pays='"   .$this->pays."'";
+    $sql .= ",note='"   .$this->commentaire."'";
+    $sql .= ",email='"  .$this->email."'";
+    $sql .= ",login='"  .$this->login."'";
+    $sql .= ",pass='"   .$this->pass."'";
+    $sql .= ",naiss='"  .$this->naiss."'";
+    $sql .= ",photo='"  .$this->photo."'";
+    $sql .= ",public='" .$this->public."'";
+    $sql .= ",statut="  .$this->statut;
+    $sql .= ",fk_adherent_type=".$this->typeid;
+    $sql .= ",morphy='".$this->morphy."'";
     
-      if (!$result)
-	{
-      dolibarr_print_error($this->db);
-	  return 0;
-	}
-
-      if (sizeof($this->array_options) > 0 )
-	{
-	  $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = $this->id;";
-		$this->db->query($sql_del);
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid";
-	  foreach($this->array_options as $key => $value)
-	    {
-	      // recupere le nom de l'attribut
-	      $attr=substr($key,8);
-	      $sql.=",$attr";
-	    }
-	  $sql .= ") VALUES ($this->id";
-	  foreach($this->array_options as $key => $value)
-	    {
-
-	      $sql.=",'".$this->array_options[$key]."'";
-        }
-      $sql.=");";
-
-	  $result = $this->db->query($sql);
-	}
-	
-      if ($result) 
-	{
-	  return 1;
-	}
-      else
-	{
-      dolibarr_print_error($this->db);
-	  return 0;
-	}  
+    $sql .= " WHERE rowid = $this->id";
+    
+    $result = $this->db->query($sql);
+    
+    if (!$result)
+    {
+        dolibarr_print_error($this->db);
+        return 0;
     }
+    
+    if (sizeof($this->array_options) > 0 )
+    {
+        $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = $this->id;";
+        $this->db->query($sql_del);
+
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid";
+        foreach($this->array_options as $key => $value)
+        {
+            // recupere le nom de l'attribut
+            $attr=substr($key,8);
+            $sql.=",$attr";
+        }
+        $sql .= ") VALUES ($this->id";
+        foreach($this->array_options as $key => $value)
+        {
+    
+            $sql.=",'".$this->array_options[$key]."'";
+        }
+        $sql.=");";
+    
+        $result = $this->db->query($sql);
+    
+        if ($result)
+        {
+            return 1;
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return 0;
+        }
+    
+    }
+
+    return 1;
+    }
+
 
 /*!
 		\brief fonction qui supprime l'adhérent et les données associées
@@ -422,25 +427,28 @@ class Adherent
   }
 
 /*!
-		\brief fonction qui récupére l'adhérent en donnant son login
-		\param	login		login de l'adhérent
+		\brief      Fonction qui récupére l'adhérent en donnant son login
+		\param	    login		login de l'adhérent
 */
 
 	function fetch_login($login)
   {
     $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login' LIMIT 1";
-    if ( $this->db->query( $sql) )
-      {
-	if ($this->db->num_rows())
-	  {
-	    $obj = $this->db->fetch_object();
-	    $this->fetch($obj->rowid);
-	  }
-      }
+
+    $result=$this->db->query( $sql);
+
+    if ($result)
+    {
+        if ($this->db->num_rows())
+        {
+            $obj = $this->db->fetch_object($result);
+            $this->fetch($obj->rowid);
+        }
+    }
     else
-      {
-      dolibarr_print_error($this->db);
-      }
+    {
+        dolibarr_print_error($this->db);
+    }
   }
 
 /*!
@@ -456,12 +464,14 @@ class Adherent
     $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
     $sql .= " WHERE d.rowid = $rowid AND d.fk_adherent_type = t.rowid";
 
-    if ( $this->db->query( $sql) )
+    $result=$this->db->query( $sql);
+
+    if ($result)
       {
 	if ($this->db->num_rows())
 	  {
 
-	    $obj = $this->db->fetch_object();
+	    $obj = $this->db->fetch_object($result);
 
 	    $this->id             = $obj->rowid;
 	    $this->typeid         = $obj->fk_adherent_type;
@@ -494,8 +504,8 @@ class Adherent
   }
   
 /*!
-		\brief fonction qui récupére les données optionelles de l'adhérent
-		\param	rowid
+		\brief      Fonction qui récupére les données optionelles de l'adhérent
+		\param	    rowid
 */
 
 	function fetch_optionals($rowid)
@@ -505,19 +515,26 @@ class Adherent
     $sql .= " FROM ".MAIN_DB_PREFIX."adherent_options";
     $sql .= " WHERE adhid=$rowid";
     
-    if ( $this->db->query( $sql) ){
-	if ($this->db->num_rows()){
-	  
-	  $tab = $this->db->fetch_array();
-	  
-	  foreach ($tab as $key => $value){
-	    if ($key != 'optid' && $key != 'tms' && $key != 'adhid'){
-	      // we can add this attribute to adherent object
-	      $this->array_options["options_$key"]=$value;
-	    }
-	  }
-	}
-    }else{
+    $result=$this->db->query( $sql);
+
+    if ($result)
+    {
+    	if ($this->db->num_rows())
+    	{
+    	  $tab = $this->db->fetch_array($result);
+    	  
+    	  foreach ($tab as $key => $value)
+    	  {
+    	    if ($key != 'optid' && $key != 'tms' && $key != 'adhid')
+    	    {
+    	      // we can add this attribute to adherent object
+    	      $this->array_options["options_$key"]=$value;
+    	    }
+    	  }
+    	}
+    }
+    else
+    {
       dolibarr_print_error($this->db);
     }
     
@@ -530,28 +547,38 @@ class Adherent
   {
     $array_name_options=array();
     $sql = "SHOW COLUMNS FROM ".MAIN_DB_PREFIX."adherent_options";
+    
+    $result=$this->db->query( $sql);
 
-    if ( $this->db->query( $sql) ){
-      if ($this->db->num_rows()){
-	//$array_name_options[]=$tab->Field;
-	while ($tab = $this->db->fetch_object()){
-	  if ($tab->Field != 'optid' && $tab->Field != 'tms' && $tab->Field != 'adhid'){
-	    // we can add this attribute to adherent object
-	    $array_name_options[]=$tab->Field;
-	  }
-	}
-	return $array_name_options;
-      }else{
-	return array();
-      }
-    }else{
-      dolibarr_print_error($this->db);
-      return array() ;
+    if ($result)
+    {
+        if ($this->db->num_rows())
+        {
+            //$array_name_options[]=$tab->Field;
+            while ($tab = $this->db->fetch_object($result))
+            {
+                if ($tab->Field != 'optid' && $tab->Field != 'tms' && $tab->Field != 'adhid')
+                {
+                    // we can add this attribute to adherent object
+                    $array_name_options[]=$tab->Field;
+                }
+            }
+            return $array_name_options;
+        }
+        else
+        {
+            return array();
+        }
+    }
+    else
+    {
+        dolibarr_print_error($this->db);
+        return array() ;
     }
     
   }
 /*!
-		\brief fonction qui insèe la cotisation dans la base de données
+		\brief fonction qui insère la cotisation dans la base de données
 		\param	date
 		\param	montant
 */
@@ -563,33 +590,35 @@ class Adherent
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, dateadh, cotisation)";
     $sql .= " VALUES ($this->id, ".$this->db->idate($date).", $montant)";
 
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->affected_rows() )
-	  {
-	    $rowid=$this->db->last_insert_id();
-	    $datefin = mktime(12, 0 , 0,
-			      strftime("%m",$date),
-			      strftime("%d",$date),
-			      strftime("%Y",$date)+1) - (24 * 3600);
-
-	    $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET datefin = ".$this->db->idate($datefin)." WHERE rowid =". $this->id;
-
-	    if ( $this->db->query( $sql) )
-	      {
-	      return $rowid;
-	      }
-	  }
-	else
-	  {
-	    return 0;
-	  }
-      }
+    $result=$this->db->query( $sql);
+    
+    if ($result)
+    {
+        if ( $this->db->affected_rows() )
+        {
+            $rowid=$this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
+            $datefin = mktime(12, 0 , 0,
+            strftime("%m",$date),
+            strftime("%d",$date),
+            strftime("%Y",$date)+1) - (24 * 3600);
+    
+            $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET datefin = ".$this->db->idate($datefin)." WHERE rowid =". $this->id;
+    
+            if ( $this->db->query( $sql) )
+            {
+                return $rowid;
+            }
+        }
+        else
+        {
+            return 0;
+        }
+    }
     else
-      {
-      dolibarr_print_error($this->db);
-	return 0;
-      }
+    {
+        dolibarr_print_error($this->db);
+        return 0;
+    }
   }
 
 /*!
@@ -690,6 +719,7 @@ class Adherent
 	return 1;
       }
     }
+
 
 /*!
 		\brief fonction qui supprime l'adhérent des abonnements automatiques
@@ -795,44 +825,57 @@ class Adherent
     }
 
 /*!
-		\brief fonction qui dit si cet utilisateur est rédacteur dans spip
+		\brief      Fonction qui dit si cet utilisateur est un rédacteur existant dans spip
+		\return     int     1=existe, 0=n'existe pas, -1=erreur
 */
 
 	function is_in_spip()
     {
-      if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
-	  defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
-	  defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
-	  defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
-	  defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
-	  ){
-	$query = "SELECT login FROM spip_auteurs WHERE login='".$this->login."'";
-	$mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
-	$result = $mydb->query($query);
-
-	if ($result)
-	  {
-	    if ($mydb->num_rows()){
-	      # nous avons au moins une reponse
-	      $mydb->close();
-	      return 1;
-	    }else{
-	      # nous n'avons pas de reponse => n'existe pas
-	      $mydb->close();
-	      return 0;
-	    }
-	  }
-	else
-	  {
-	    # error
-	    $this->errorstr=$mydb->error();
-	    return -1;
-	  }
-      }
+        if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
+            defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
+            defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
+            defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
+            defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != '')
+        {
+        
+            $query = "SELECT login FROM spip_auteurs WHERE login='".$this->login."'";
+            $mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
+        
+            if ($mydb->ok) {
+        
+                $result = $mydb->query($query);
+        
+                if ($result)
+                {
+                    if ($mydb->num_rows())
+                    {
+                        # nous avons au moins une reponse
+                        $mydb->close();
+                        return 1;
+                    }
+                    else
+                    {
+                    # nous n'avons pas de reponse => n'existe pas
+                    $mydb->close();
+                    return 0;
+                    }
+                }
+                else
+                {
+                    # error
+                    $this->errorstr=$mydb->error();
+                    return -1;
+                }
+            } else {
+                $this->errorstr="Echec de connexion avec les identifiants ".ADHERENT_SPIP_SERVEUR." ".ADHERENT_SPIP_USER." ".ADHERENT_SPIP_PASS." ".ADHERENT_SPIP_DB;
+                return -1;
+            }
+        }
     }
 
+
 /*!
-		\brief fonction qui ajoute l'utilisateur dans glasnost
+		\brief      Fonction qui ajoute l'utilisateur dans glasnost
 */
 
 	function add_to_glasnost()

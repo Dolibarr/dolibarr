@@ -19,7 +19,7 @@ alter table llx_societe add capital real after tva_intra;
 alter table llx_societe add rubrique varchar(255);
 alter table llx_societe add remise_client real default 0;
 
-
+insert into llx_const (name, value, type, note, visible) values ('ADHERENT_MAIL_REQUIRED','1','yesno','Le mail est obligatoire pour créer un adhérent',0);
 
 alter table llx_societe add fk_forme_juridique integer default 0 after fk_typent;
 
