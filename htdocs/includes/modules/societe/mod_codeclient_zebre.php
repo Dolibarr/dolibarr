@@ -51,7 +51,7 @@ class mod_codeclient_zebre
    *
    */
 
-  function verif($db, $code, $socid=0)
+  function verif($db, &$code, $socid=0)
     { 
       $code = strtoupper(trim($code));
 

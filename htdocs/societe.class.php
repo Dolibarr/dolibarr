@@ -1030,7 +1030,7 @@ class Societe {
 
 	$mod = new $var;
 
-	return $mod->verif($this->db, &$this->code_client);
+	return $mod->verif($this->db, $this->code_client);
       }
     else
       {
