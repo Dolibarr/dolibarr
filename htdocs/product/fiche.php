@@ -91,7 +91,7 @@ if ($HTTP_POST_VARS["action"] == 'addinfacture' &&
   $mesg .= '<a href="../compta/facture.php?facid='.$facture->id.'">'.$facture->ref.'</a>';
 }
 
-if ($HTTP_POST_VARS["action"] == 'add_fourn')
+if ($HTTP_POST_VARS["action"] == 'add_fourn' && $cancel <> 'Annuler')
 {
   $product = new Product($db);
   if( $product->fetch($id) )
