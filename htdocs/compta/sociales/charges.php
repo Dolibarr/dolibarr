@@ -87,7 +87,7 @@ if ($chid > 0)
 
 	  print "<tr><td>Type</td><td>$cha->type_libelle</td><td>Paiements</td></tr>";
 
-	  print "<tr><td>Période</td><td>NA</td>";
+	  print "<tr><td>Période</td><td>".dolibarr_print_date($cha->periode,"%Y")."</td>";
       print '<td rowspan="5" valign="top">';
 	  	  
     	  /*
