@@ -28,7 +28,7 @@ $deplacement_type[0] = "voiture";
 //$deplacement_type[2] = "avion";
 
 function llxHeader($head = "") {
-  global $user, $conf;
+  global $user, $conf, $langs;
 
 
   /*

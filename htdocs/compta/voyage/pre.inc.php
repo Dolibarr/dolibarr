@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -22,7 +23,7 @@
 require("../../main.inc.php");
 
 function llxHeader($head = "") {
-  global $user, $conf;
+  global $user, $conf, $langs;
 
 
   /*
@@ -33,16 +34,16 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("index.php","Voyages");
+  $menu->add("index.php",$langs->trans("Trips"));
 
-  $menu->add_submenu("index.php","Voyages");
+  $menu->add_submenu("index.php",$langs->trans("Trips"));
   $menu->add_submenu("bilan.php","Bilan");
   $menu->add_submenu("reduc.php","Reduc");
-  $menu->add_submenu("voyage.php","Voyage");
+  $menu->add_submenu("voyage.php",$langs->trans("Trip"));
 
-  $menu->add("/compta/facture.php","Factures");
+  $menu->add("/compta/facture.php",$langs->trans("Bills"));
 
-  $menu->add("/compta/bank/index.php","Bank");
+  $menu->add("/compta/bank/index.php",$langs->trans("Bank"));
 
   left_menu($menu->liste);
 

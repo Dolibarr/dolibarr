@@ -38,8 +38,6 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu = new Menu();
 
-  // Les recettes
-
   $menu->add(DOL_URL_ROOT."/compta/clients.php", $langs->trans("Customers"));
 
   $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));

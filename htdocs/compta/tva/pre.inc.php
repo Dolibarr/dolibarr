@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 require("../../main.inc.php");
 
 function llxHeader($head = "") {
-  global $user, $conf;
+  global $user, $conf, $langs;
 
 
   /*
@@ -33,10 +34,10 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("index.php","TVA");
+  $menu->add("index.php",$langs->trans("VAT"));
 
-  $menu->add_submenu("reglement.php","Réglements");
-  $menu->add_submenu("fiche.php?action=create","Nouveau réglement");
+  $menu->add_submenu("reglement.php",$langs->trans("Payments"));
+  $menu->add_submenu("fiche.php?action=create",$langs->trans("NewPayment"));
 
   left_menu($menu->liste);
 }

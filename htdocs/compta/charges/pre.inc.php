@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@ require("../../main.inc.php");
 
 function llxHeader($head = "")
 {
-  global $user, $conf;
+  global $user, $conf, $langs;
 
 
   /*
@@ -34,9 +35,9 @@ function llxHeader($head = "")
 
   $menu = new Menu();
 
-  $menu->add("index.php","Charges");
+  $menu->add("index.php",$langs->trans("Charges"));
 
-  $menu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php","Prest. Sociales");
+  $menu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"));
 
   left_menu($menu->liste);
 }

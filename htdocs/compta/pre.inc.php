@@ -96,7 +96,7 @@ function llxHeader($head = "", $title="", $help_url='')
     
   if ($conf->compta->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/charges/index.php","Charges");
+      $menu->add(DOL_URL_ROOT."/compta/charges/index.php",$langs->trans("Charges"));
     }
 
 
@@ -107,16 +107,11 @@ function llxHeader($head = "", $title="", $help_url='')
       $menu->add(DOL_URL_ROOT."/compta/bank/",$langs->trans("Bank"));
     }
   
-  if ($conf->caisse->enabled)
-    {
-      $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisses");
-    }
-
   $menu->add(DOL_URL_ROOT."/compta/stats/","CA / Résultats");
 
   if ($conf->prelevement->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("Withdrawls"));
+      $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrder"));
     }
 
   $menu->add(DOL_URL_ROOT."/compta/ventilation/",$langs->trans("Ventilation"));

@@ -23,7 +23,7 @@
 require("../../main.inc.php");
 
 function llxHeader($head = "") {
-  global $conf;
+  global $user, $conf, $langs;
 
   /*
    *
@@ -46,8 +46,8 @@ function llxHeader($head = "") {
 		$menu->add_submenu(DOL_URL_ROOT."/compta/stats/comp.php","Transformé");
 	}
 	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/exercices.php","Evolution");
-	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php","Par société");
-	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php","Par utilisateur");
+	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php",$langs->trans("ByCompanies"));
+	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php",$langs->trans("ByUsers"));
 
   left_menu($menu->liste);
 }

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +41,10 @@ function llxHeader($head = "", $title="", $help_url='')
 
   if ($conf->prelevement->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/compta/prelevement/","Prélèvements");
+      $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrder"));
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/bons.php","Bons");
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/rejets.php","Rejets");
-      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/stats.php","Statistiques");
+      $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/stats.php",$langs->trans("Statistics"));
 
       $menu->add(DOL_URL_ROOT."/compta/prelevement/demandes.php","Demandes");
       $menu->add_submenu(DOL_URL_ROOT."/compta/prelevement/demandes.php","A Traiter");

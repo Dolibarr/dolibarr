@@ -32,7 +32,7 @@ require("../../main.inc.php");
 require_once("../../facture.class.php");
 
 function llxHeader($head = "", $title="", $help_url='') {
-  global $conf, $langs;
+  global $user, $conf, $langs;
   $langs->load("companies");
   $langs->load("bills");
   /*
@@ -49,7 +49,7 @@ function llxHeader($head = "", $title="", $help_url='') {
   $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
   $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"));
 
-  $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("Prélèvements"));
+  $menu->add(DOL_URL_ROOT."/compta/prelevement/",$langs->trans("StandingOrder"));
 
   left_menu($menu->liste, $help_url);
 }

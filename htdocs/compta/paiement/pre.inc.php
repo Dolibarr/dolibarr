@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 require("../../main.inc.php");
 
 function llxHeader($head = "") {
-  global $user, $conf;
+  global $user, $conf, $langs;
 
 
   /*
@@ -33,13 +34,13 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("liste.php","Liste");
+  $menu->add("liste.php",$langs->trans("List"));
 
   $menu->add("rapport.php","Rapports");
 
-  $menu->add("../facture.php","Factures");
+  $menu->add("../facture.php",$langs->trans("Bills"));
 
-  $menu->add_submenu("liste.php","Paiements");
+  $menu->add_submenu("liste.php",$langs->trans("Payments"));
 
   left_menu($menu->liste);
 }
