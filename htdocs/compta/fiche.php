@@ -186,6 +186,11 @@ if ($socid > 0)
         $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$societe->id;
         $head[$h][1] = $langs->trans("Accountancy");
         $h++;
+
+        $head[$h][0] = DOL_URL_ROOT.'/compta/recap-client.php?socid='.$societe->id;
+        $head[$h][1] = $langs->trans("Recap");
+        $h++;
+
     }
 
     $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
