@@ -81,10 +81,10 @@ print '<tr><td colspan="3" align="right">'.price($total).'</td></tr>';
  *
  *
  */
-$sql = "SELECT s.nom,sum(f.total_ht) as amount";
+$sql = "SELECT s.nom,s.idp,sum(f.total_ht) as amount";
 $sql .= " FROM llx_societe as s,llx_facture_fourn as f WHERE f.fk_soc = s.idp"; 
   
-$sql .= " GROUP BY s.nom ASC";
+$sql .= " GROUP BY s.nom ASC, s.idp";
 
 print '<tr><td colspan="4">Frais</td></tr>';
 $subtotal = 0;
@@ -100,7 +100,7 @@ if ($result) {
       $var=!$var;
             
       print "<TR $bc[$var]><td>&nbsp</td>";
-      print "<td>Factures <a href=\"../../fourn/facture/\">$objp->nom</a></TD>\n";
+      print "<td>Factures <a href=\"../../fourn/facture/index.php?socid=".$objp->idp."\">$objp->nom</a></TD>\n";
       
       print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
       
