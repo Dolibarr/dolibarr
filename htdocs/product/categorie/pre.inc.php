@@ -40,6 +40,10 @@ function llxHeader($head = "", $urlp = "") {
 
       $menu->add_submenu("/boutique/livre/fiche.php?&action=create","Nouvel ouvrage");
       
+      $menu->add("/boutique/auteur/", "Auteurs");
+
+      $menu->add_submenu("/boutique/auteur/fiche.php?&action=create","Nouvel auteur");
+
       $menu->add("/boutique/editeur/", "Editeurs");
 
       $menu->add_submenu("/boutique/editeur/fiche.php?&action=create","Nouvel éditeur");
