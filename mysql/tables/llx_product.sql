@@ -28,7 +28,8 @@ create table llx_product
   ref             varchar(15) UNIQUE,
   label           varchar(255),
   description     text,
-  price           smallint,
+  price           double,
+  tva_tx          double,
   fk_user_author  integer
 );
 
