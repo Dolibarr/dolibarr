@@ -37,7 +37,6 @@ $html = new Form($db);
 
 if ($action == 'valid') 
 {
-print "ddddddddddddddd";
   $facturefourn=new FactureFourn($db);
   $facturefourn->fetch($_GET["facid"]);
   
