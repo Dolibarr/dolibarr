@@ -32,6 +32,6 @@ create table transaction_bplc
   cle_acceptation   varchar(5),
   code_retour       varchar(4),
 
-  ref_commande      varchar(15)
+  ref_commande      integer
 
 );
