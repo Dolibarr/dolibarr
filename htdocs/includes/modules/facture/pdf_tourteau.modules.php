@@ -53,12 +53,15 @@ Class pdf_tourteau {
 	  $pdf->Open();
 	  $pdf->AddPage();
       
+	  $pdf->SetXY(10,5);
 	  if (defined("FAC_PDF_INTITULE"))
 	    {
-	      $pdf->SetFont('Arial','B',12);
-	      $pdf->Text(10, 10, FAC_PDF_INTITULE);
+	      $pdf->SetTextColor(0,0,200);
+	      $pdf->SetFont('Arial','B',14);
+	      $pdf->MultiCell(60, 8, FAC_PDF_INTITULE, 0, 'L');
 	    }
       
+	  $pdf->SetTextColor(70,70,170);
 	  if (defined("FAC_PDF_ADRESSE"))
 	    {
 	      $pdf->SetFont('Arial','',12);
@@ -75,13 +78,16 @@ Class pdf_tourteau {
 	      $pdf->MultiCell(40, 5, "SIREN : ".FAC_PDF_SIREN);
 	    }  
 	  
+	  $pdf->SetXY(100,5);
 	  $pdf->SetFont('Arial','B',14);
+	  $pdf->SetTextColor(0,0,200);
 	  $titre = "Artisan Logiciel Libre";
-	  $pdf->Text(200 -   $pdf->GetStringWidth($titre), 10, $titre);
+	  $pdf->MultiCell(100, 10, $titre, '' , 'R');
 	  
 	  /*
 	   * Adresse Client
 	   */
+	  $pdf->SetTextColor(0,0,0);
 	  $pdf->SetFont('Arial','B',12);
 	  $fac->fetch_client();
 	  $pdf->SetXY(102,42);
@@ -92,11 +98,20 @@ Class pdf_tourteau {
 	  $pdf->rect(100, 40, 100, 40);
 	  
 	  
-	  
+	  $pdf->SetTextColor(200,0,0);
 	  $pdf->SetFont('Arial','B',14);
 	  $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $fac->date));
 	  $pdf->Text(11, 94, "Facture : ".$fac->ref);
 	  
+	  /*
+	   */
+	  $pdf->SetTextColor(0,0,0);
+	  $pdf->SetFont('Arial','',10);
+	  $titre = "Montants exprimés en euros";
+	  $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
+	  /*
+	   */
+
 	  $pdf->SetFont('Arial','',12);
 	  
 	  $tab_top = 100;
@@ -122,7 +137,10 @@ Class pdf_tourteau {
 	  /*
 	   *
 	   */  
-	  $pdf->SetFont('Arial','', 11);
+
+	  $pdf->SetFillColor(220,220,220);
+
+	  $pdf->SetFont('Arial','', 10);
 	  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 	    {
 	      $pdf->SetXY (11, $tab_top + 11 + ($i * 27) );
@@ -134,12 +152,12 @@ Class pdf_tourteau {
 	      $pdf->SetXY (145, $tab_top + 11 + ($i * 27) );
 	      $pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'C');
 	  
-	      $pdf->SetXY (154, $tab_top + 11 + ($i * 27) );
-	      $pdf->MultiCell(18, 5, $fac->lignes[$i]->price, 0, 'R');
+	      $pdf->SetXY (156, $tab_top + 11 + ($i * 27) );
+	      $pdf->MultiCell(18, 5, price($fac->lignes[$i]->price), 0, 'R', 0);
 	      
 	      $pdf->SetXY (174, $tab_top + 11 + ($i * 27) );
-	      
-	      $pdf->MultiCell(24, 5, price($fac->lignes[$i]->price * $fac->lignes[$i]->qty), 0, 'R');
+	      $total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
+	      $pdf->MultiCell(26, 5, $total, 0, 'R', 0);
 	  
 	      $pdf->line(10, $pdf->GetY + 37 + $tab_top, 200, $pdf->GetY + 37 + $tab_top);
 	    }
@@ -158,9 +176,7 @@ Class pdf_tourteau {
 	  $pdf->line(132, $tab2_top + $tab2_height - 8, 200, $tab2_top + $tab2_height - 8 );
 	  
 	  $pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
-	  
-	  $pdf->SetFillColor(220,220,220);
-	  
+	  	 
 	  $pdf->SetXY (132, $tab2_top + 0);
 	  $pdf->MultiCell(42, 8, "Total HT", 0, 'R', 0);
 	  
@@ -180,26 +196,60 @@ Class pdf_tourteau {
 	  $pdf->MultiCell(26, 8, price($fac->total_ttc), 1, 'R', 1);
 	  
 	  /*
-	    if (sizeof($fac->client->factures_impayes()))
-	    {
-	    $tab3_top = 212;
-	    $tab3_height = 30;
-	    $tab3_width = 100;
-	    
-	    $pdf->Rect(10, $tab3_top, $tab3_width, $tab3_height);
-	    
-	    $pdf->line(10, $tab3_top + $tab3_height - 20, $tab3_width+10, $tab3_top + $tab3_height - 20 );
-	    $pdf->line(10, $tab3_top + $tab3_height - 10, $tab3_width+10, $tab3_top + $tab3_height - 10 );
-	    
-	    $pdf->line(40, $tab3_top, 40, $tab3_top + $tab3_height);
-	    $pdf->line(70, $tab3_top, 70, $tab3_top + $tab3_height);
-	    }
-	  */
+	   *
+	   */
+
+	  $tab3_top = 240;
+	  $tab3_height = 18;
+	  $tab3_width = 60;
+	  
+	  $pdf->Rect(10, $tab3_top, $tab3_width, $tab3_height);
+	  
+	  $pdf->line(10, $tab3_top + 6, $tab3_width+10, $tab3_top + 6 );
+	  $pdf->line(10, $tab3_top + 12, $tab3_width+10, $tab3_top + 12 );
+	  
+	  $pdf->line(30, $tab3_top, 30, $tab3_top + $tab3_height );
+
+	  $pdf->SetFont('Arial','',8);
+	  $pdf->SetXY (10, $tab3_top - 6);
+	  $pdf->MultiCell(60, 6, "Informations complémentaires", 0, 'L', 0);
+	  $pdf->SetXY (10, $tab3_top );
+	  $pdf->MultiCell(20, 6, "Réglé le", 0, 'L', 0);
+	  $pdf->SetXY (10, $tab3_top + 6);
+	  $pdf->MultiCell(20, 6, "Chèque N°", 0, 'L', 0);
+	  $pdf->SetXY (10, $tab3_top + 12);
+	  $pdf->MultiCell(20, 6, "Banque", 0, 'L', 0);
 	  /*
 	   *
 	   */
+	  if (defined("FACTURE_RIB_NUMBER"))
+	    {
+	      if (FACTURE_RIB_NUMBER > 0)
+		{
+		  $account = new Account($this->db);
+		  $account->fetch(FACTURE_RIB_NUMBER);
+
+		  $pdf->SetXY (10, 40);		  
+		  $pdf->SetFont('Arial','U',8);
+		  $pdf->MultiCell(40, 4, "Coordonnées bancaire", 0, 'L', 0);
+		  $pdf->SetFont('Arial','',8);
+		  $pdf->MultiCell(40, 4, "Code banque : " . $account->code_banque, 0, 'L', 0);
+		  $pdf->MultiCell(40, 4, "Code guichet : " . $account->code_guichet, 0, 'L', 0);
+		  $pdf->MultiCell(50, 4, "Numéro compte : " . $account->number, 0, 'L', 0);
+		  $pdf->MultiCell(40, 4, "Clé RIB : " . $account->cle_rib, 0, 'L', 0);
+		  $pdf->MultiCell(40, 4, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
+		  $pdf->MultiCell(40, 4, "Prefix IBAN : " . $account->iban_prefix, 0, 'L', 0);
+		  $pdf->MultiCell(40, 4, "BIC : " . $account->bic, 0, 'L', 0);
+		}
+	    }
+
+	  /*
+	   *
+	   *
+	   */
+
 	  $pdf->SetFont('Arial','U',12);
-	  $pdf->SetXY(10, 250);
+	  $pdf->SetXY(10, 220);
 	  $pdf->MultiCell(190, 5, "Conditions de réglement : à réception de facture.", 0, 'J');
 	  
 	  $pdf->SetFont('Arial','',9);
