@@ -119,7 +119,7 @@ class User {
 	    }
 	  else
 	    {            
-	      $sql = "INSERT INTO llx_user (login) values ('$this->login');";
+	      $sql = "INSERT INTO llx_user (datec, login) values (now(),'$this->login');";
 	      if ($this->db->query($sql))
 		{
 		  if ($this->db->affected_rows()) 
@@ -159,7 +159,7 @@ class User {
 	      $sql .= ", firstname = '$this->prenom'";
 	      $sql .= ", login = '$this->login'";
 	      $sql .= ", email = '$this->email'";
-	      $sql .= ", admin = '$this->admin'";
+	      $sql .= ", admin = $this->admin";
 	      $sql .= " WHERE rowid = $this->id";
 	      
 	      $result = $this->db->query($sql);
