@@ -1,3 +1,4 @@
 # Dolibarr language file - en_US - other
 Calendar=Calendar
 LoginWebcal=Login for Webcalendar
+AddCalendarEntry=Add entry in calendar
