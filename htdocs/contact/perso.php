@@ -91,6 +91,8 @@ if ($_GET["action"] == 'edit')
 {
   // Fiche info perso en mode edition
 
+  print '<table width="100%"><tr><td>';
+
   print '<form method="post" action="perso.php?id='.$_GET["id"].'">';
   print '<input type="hidden" name="action" value="update">';
   print '<input type="hidden" name="contactid" value="'.$contact->id.'">';
@@ -129,6 +131,9 @@ if ($_GET["action"] == 'edit')
 
   print "</tr></table>";
 
+  print "</td></tr>";
+  print "</table>";
+
   print '<div class="FicheSubmit"><input type="submit" value="'.$langs->trans("Save").'">';
 
   print "</form>";
@@ -149,6 +154,8 @@ else
       print $langs->trans("Company").' : '.$objsoc->nom_url.'<br>';
     }
 
+  print $langs->trans("Name").' : '.$contact->name.' '.$contact->firstname ."<br>";
+
   if ($contact->birthday && $contact->birthday > 0) {
     print $langs->trans("Birthdate").' : '.dolibarr_print_date($contact->birthday);
 
@@ -161,8 +168,8 @@ else
     print $langs->trans("Birthday").' : '.$langs->trans("Unknown")."<br>";
   }
   
-  print "<br>";
-  print "</table>";
+  print "</td></tr>";
+  print "</table><br>";
 
   print "</div>";
 

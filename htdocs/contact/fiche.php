@@ -387,7 +387,7 @@ else
   
   if ($contact->address || $contact->ville)
     {
-      print 'Adresse :<br>'.$contact->address ."<br>";
+      print $langs->trans("Address").' :<br>'.$contact->address ."<br>";
       print $contact->cp . " ".$contact->ville ."<br>";
     }
 
