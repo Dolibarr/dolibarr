@@ -209,6 +209,7 @@ class Facture
 		    }
 		}
 	    }
+
 	  /*
 	   *
 	   *
@@ -224,8 +225,9 @@ class Facture
     }
 
   /**
-   * Recupére l'objet facture et ses lignes de factures
-   *
+   *    \brief      Recupére l'objet facture et ses lignes de factures
+   *    \param      rowid       id de la facture a récupérer
+   *    \param      societe_id  id de societe
    */
   function fetch($rowid, $societe_id=0)
     {
@@ -324,7 +326,7 @@ class Facture
 	}    
     }
   /**
-   * Recupére l'objet client lié à la facture
+   * \brief     Recupére l'objet client lié à la facture
    *
    */
   function fetch_client()
@@ -333,19 +335,17 @@ class Facture
       $client->fetch($this->socidp);
       $this->client = $client;
     }
+
   /**
-   * Valide la facture
-   *
-   *
+   * \brief     Valide la facture
+   * \param     userid      id de l'utilisateur qui valide
    */
-  function valid($userid, $dir)
+  function valid($userid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 1, date_valid=now(), fk_user_valid=$userid";
 
       $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 
-
-      
       if ($this->db->query($sql) )
 	{
 	  return 1;
@@ -356,8 +356,8 @@ class Facture
 	}
     }
   /**
-   * Classe la facture
-   *    \param  cat_id      id de la catégorie dans laquelle classer la facture
+   * \brief     Classe la facture
+   * \param     cat_id      id de la catégorie dans laquelle classer la facture
    *
    */
   function classin($cat_id)
@@ -376,8 +376,8 @@ class Facture
     }
 
   /**
-   * Supprime la facture
-   *
+   * \brief     Supprime la facture
+   * \param     id      id de la facture à supprimer
    */
   function delete($rowid)
     {
@@ -432,8 +432,7 @@ class Facture
     }
 
   /**
-   * Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-   *
+   * \brief Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
    */
   function get_libstatut()
     {
@@ -441,35 +440,39 @@ class Facture
     }
 
   /**
-   * Tag la facture comme payée complètement
-   *
+   * \brief     Tag la facture comme payée complètement
+   * \param     rowid       id de la facture à modifier
    */
   function set_payed($rowid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture set paye=1 WHERE rowid = $rowid ;";
       $return = $this->db->query( $sql);
     }
+
   /**
-   * Tag la facture comme paiement commencée
-   *
+   * \brief     Tag la facture comme paiement commencée
+   * \param     rowid       id de la facture à modifier
    */
   function set_paiement_started($rowid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_statut=2 WHERE rowid = $rowid ;";
       $return = $this->db->query( $sql);
     }
+
   /**
-   * Tag la facture comme abandonnée
-   *
+   * \brief     Tag la facture comme abandonnée
+   * \param     rowid       id de la facture à modifier
    */
   function set_canceled($rowid)
     {
       $sql = "UPDATE ".MAIN_DB_PREFIX."facture set fk_statut=3 WHERE rowid = $rowid ;";
       $return = $this->db->query( $sql);
     }
+
   /**
-   * Tag la facture comme validée et valide la facture
-   *
+   * \brief     Tag la facture comme validée et valide la facture
+   * \param     rowid       id de la facture à modifier
+   * \param     user        utilisateur qui valide la facture
    */
   function set_valid($rowid, $user, $soc)
     {
@@ -539,8 +542,12 @@ class Facture
     }
 
   /**
-   * Ajoute un produit dans l'objet facture
-   *
+   * \brief     Ajoute un produit dans l'objet facture
+   * \param     idproduct
+   * \param     qty
+   * \param     remise_percent
+   * \param     datestart
+   * \param     dateend
    */
   function add_product($idproduct, $qty, $remise_percent, $datestart='', $dateend='')
     {
@@ -560,8 +567,15 @@ class Facture
     }
 
   /**
-   * Ajoute une ligne de facture (associé à aucun produit/service prédéfini)
-   *
+   * \brief     Ajoute une ligne de facture (associé à aucun produit/service prédéfini)
+   * \param     facid       id de la facture
+   * \param     desc        id de la facture
+   * \param     pu          id de la facture
+   * \param     qty         id de la facture
+   * \param     txtva       id de la facture
+   * \param     fk_product  id de la facture
+   * \param     date_start  date_start
+   * \param     date_end    date_end
    */
   function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $datestart='', $dateend='')
     {
@@ -605,9 +619,10 @@ class Facture
 	    }
 	}
     }
+
   /**
-   * Mets à jour une ligne de facture
-   * Retourne 0 si erreur
+   * \brief     Mets à jour une ligne de facture
+   * \return    int     0 si erreur
    */
   function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $datestart='', $dateend='')
     {
@@ -655,9 +670,10 @@ class Facture
 
 	}
     }
+
   /**
-   * Supprime une ligne
-   *
+   * \brief     Supprime une ligne facture de la base
+   * \param     id      id de la ligne de facture a supprimer
    */
   function deleteline($rowid)
     {
@@ -669,9 +685,10 @@ class Facture
 	  $this->updateprice($this->id);
 	}
     }
+
   /**
-   * Mise à jour des sommes de la facture
-   *
+   * \brief     Mise à jour des sommes de la facture
+   * \param     id      id de la ligne de facture a modifier
    */
   function updateprice($facid)
     {
@@ -768,9 +785,11 @@ class Facture
 	  return -1;
 	}
     }
+
   /**
-   * Applique une remise
-   *
+   * \brief     Applique une remise
+   * \param     user
+   * \param     remise
    */
   function set_remise($user, $remise)
     {
@@ -794,10 +813,9 @@ class Facture
 	    }
 	}
   }
+
   /**
-   * Envoie une relance
-   *
-   *
+   * \brief     Envoie une relance
    */
   function send_relance($destinataire, $replytoname, $replytomail, $user)
     {
@@ -852,9 +870,9 @@ class Facture
 	    }
 	}      
     }
+
   /** 
-   * Renvoie la liste des sommes de tva
-   *
+   * \brief     Renvoie la liste des sommes de tva
    */
   function getSumTva()
   {
@@ -879,8 +897,8 @@ class Facture
   }
 
   /** 
-   * Renvoie la sommes des paiements deja effectués
-   * Utilisé entre autre par certains modèles de factures
+   * \brief     Renvoie la sommes des paiements deja effectués
+   * \remarks   Utilisé entre autre par certains modèles de factures
    */
   function getSommePaiement()
   {
@@ -906,8 +924,9 @@ class Facture
     }
 
   /**
-   * Renvoi un libellé du statut
-   *
+   * \brief     Renvoi un libellé du statut
+   * \param     paye        etat paye
+   * \param     statut      id statut
    */
   function LibStatut($paye,$statut)
     {
@@ -925,8 +944,8 @@ class Facture
 
 
   /**
-   * Mets à jour les commentaires
-   *
+   * \brief     Mets à jour les commentaires
+   * \param     note        note
    */
   function update_note($note)
     {
@@ -945,15 +964,15 @@ class Facture
     }
 
   /*
-   * Information sur l'objet
-   *
+   * \brief     Charge les informations d'ordre info dans l'objet facture
+   * \param     id  id de la facture a charger
    */
   function info($id) 
     {
       $sql = "SELECT c.rowid, ".$this->db->pdate("datec")." as datec";
       $sql .= ", fk_user_author, fk_user_valid";
       $sql .= " FROM ".MAIN_DB_PREFIX."facture as c";
-      $sql .= " WHERE c.rowid = $id";
+      $sql .= " WHERE c.rowid = ".$id;
       
       if ($this->db->query($sql)) 
 	{
@@ -963,15 +982,20 @@ class Facture
 
 	      $this->id = $obj->rowid;
 
-	      $cuser = new User($this->db, $obj->fk_user_author);
-	      $cuser->fetch();
-	      $this->user_creation     = $cuser;
-
-	      $vuser = new User($this->db, $obj->fk_user_valid);
-	      $vuser->fetch();
-	      $this->user_validation = $vuser;
-
+          if ($obj->fk_user_author) {
+    	      $cuser = new User($this->db, $obj->fk_user_author);
+    	      $cuser->fetch();
+    	      $this->user_creation     = $cuser;
+          }
+          
+          if ($obj->fk_user_valid) {
+    	      $vuser = new User($this->db, $obj->fk_user_valid);
+    	      $vuser->fetch();
+    	      $this->user_validation = $vuser;
+          }
+          
 	      $this->date_creation     = $obj->datec;
+	      //$this->date_validation   = $obj->datev; \todo La date de validation n'est pas encore gérée
 
 	    }
 	  $this->db->free();
@@ -985,16 +1009,27 @@ class Facture
 
 }
 
+
+
+/*! \class FactureLigne
+		\brief Classe permettant la gestion des lignes de factures
+*/
+
 class FactureLigne
 {
+
+  /**
+   * \brief     Constructeur d'objets ligne de facture
+   * \param     db      handler d'accès base de donnée
+   */
   function FactureLigne($DB)
     {
         $this->db= $DB ;
     }
 
   /**
-   * Recupére l'objet ligne de facture
-   *
+   * \brief     Recupére l'objet ligne de facture
+   * \param     rowid      id de la ligne de facture
    */
   function fetch($rowid, $societe_id=0)
     {
@@ -1022,8 +1057,6 @@ class FactureLigne
 	  }
 	  $this->db->free();
     }
-
-
 
 }
 
