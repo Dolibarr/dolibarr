@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,16 +21,18 @@
  *
  */
 
-/*! \file htdocs/expedition/pre.inc.php
-		\ingroup    expedition
-		\brief      Fichier de gestion du menu gauche du module expedition
-		\version    $Revision$
+/*!
+  \file htdocs/expedition/pre.inc.php
+  \ingroup    expedition
+  \brief      Fichier de gestion du menu gauche du module expedition
+  \version    $Revision$
 */
 
 require("../main.inc.php");
 require("../commande/commande.class.php");
 require("./expedition.class.php");
 
+$langs->load("orders");
 
 function llxHeader($head = "", $title="", $help_url='')
 {
