@@ -9,3 +9,15 @@ alter table  llx_product add stock_commande integer default 0;
 alter table  llx_product add seuil_stock_alerte integer default 0;
 
 ALTER TABLE `llx_groupart` ADD `description` TEXT AFTER `groupart` ;
+
+
+-- Nouvelle table
+create table llx_co_fa
+(
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  fk_commande integer NOT NULL,
+  fk_facture  integer NOT NULL,
+
+  key(fk_commande),
+  key(fk_facture)
+);
