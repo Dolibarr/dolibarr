@@ -8,6 +8,7 @@ Companies=Companies
 Name=Name
 LastName=Lastname
 FirstName=Firstname
+UserTitle=Title
 Surname=Surname/Pseudo
 Address=Address
 State=State/Canton

@@ -9,6 +9,7 @@ Companies=Sociétés
 Name=Nom
 LastName=Nom
 Firstname=Prénom
+UserTitle=Titre civilité
 Surname=Surnom/Pseudo
 Address=Adresse
 State=Département/Canton
