@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  * $Source$
  *
  */
+
 require("./pre.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/client.class.php';
 
@@ -49,34 +50,32 @@ if ($user->societe_id > 0)
 
 if ($_GET["facid"])
 {
-  require_once DOL_DOCUMENT_ROOT.'/facture.class.php';
-
-  $fac = new Facture($db);
-  $fac->fetch($_GET["facid"]);
-
-  $file = DOL_DATA_ROOT."/facture/".$fac->ref."/".$fac->ref.".pdf";
-  $file_img = DOL_DATA_ROOT."/facture/".$fac->ref."/".$fac->ref.".pdf.png";
-  
-  if (file_exists($file_img))
+    require_once DOL_DOCUMENT_ROOT.'/facture.class.php';
+    
+    $fac = new Facture($db);
+    $fac->fetch($_GET["facid"]);
+    
+    $file = DOL_DATA_ROOT."/facture/".$fac->ref."/".$fac->ref.".pdf";
+    $file_img = DOL_DATA_ROOT."/facture/".$fac->ref."/".$fac->ref.".pdf.png";
+    
+    // Si image n'existe pas, on la genere
+    if (! file_exists($file_img))
     {
-      print '<br><img src="./image.php?file='.$file_img.'"></img>';
+        $converttool="";
+        if (file_exists("/usr/bin/convert")) $converttool="/usr/bin/convert";
+        elseif (file_exists("/usr/local/bin/convert")) $converttool="/usr/local/bin/convert";
+        if ($converttool) {
+            // Si convert est dispo
+            //print "x $file_img $converttool $file $file_img x";
+            exec("$converttool $file $file_img");
+        }
     }
-  else
+    
+    if (file_exists($file_img))
     {
-      if ( exec("/usr/bin/convert $file $file_img"))
-	{
-
-	  if (file_exists($file_img))
-	    {
-	      print '<br><img src="./image.php?file='.$file_img.'"></img>';
-	    }
-	}
-      else
-	{
-	  print "Erreur ";
-	}
+        print '<br><img src="./image.php?file='.$file_img.'"></img>';
     }
-
+    
 }
 
 $db->close();
