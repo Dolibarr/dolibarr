@@ -449,7 +449,10 @@ class User
 		    $this->rights->telephonie->lire = 1;
 
 		  if ($obj->fk_id == 142)
-		    $this->rights->telephonie->modifier = 1;
+		    $this->rights->telephonie->ligne_commander = 1;
+
+		  if ($obj->fk_id == 143)
+		    $this->rights->telephonie->ligne_activer = 1;
 
 		}
 
