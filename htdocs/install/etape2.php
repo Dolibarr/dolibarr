@@ -33,14 +33,14 @@ if (file_exists($conf))
 
 if($dolibarr_main_db_type == "mysql")
 {
-			require ($dolibarr_main_document_root . "/lib/mysql.lib.php");		
-			$choix=1;
+  require ($dolibarr_main_document_root . "/lib/mysql.lib.php");		
+  $choix=1;
 }
 else
 {
-      require ($dolibarr_main_document_root . "/lib/pgsql.lib.php");
-      require ($dolibarr_main_document_root . "/lib/grant.postgres.php");
-			$choix=2;
+  require ($dolibarr_main_document_root . "/lib/pgsql.lib.php");
+  require ($dolibarr_main_document_root . "/lib/grant.postgres.php");
+  $choix=2;
 }
 			
 require ($dolibarr_main_document_root . "/conf/conf.class.php");
@@ -93,20 +93,20 @@ if ($_POST["action"] == "set")
   if ($ok)
     {
       $ok = 0;
-     if ($choix == 1)
-		 {
-			      $dir = "../../mysql/tables/";						
-		 }
-			else
-			{
-						$dir = "../../pgsql/tables/";						
-			}
-	  
+      if ($choix == 1)
+	{
+	  $dir = "../../mysql/tables/";						
+	}
+      else
+	{
+	  $dir = "../../pgsql/tables/";						
+	}
+     
       $handle=opendir($dir);
       $table_exists = 0;
       while (($file = readdir($handle))!==false)
 	{
-	  if (substr($file, strlen($file) - 4) == '.sql' && substr($file,0,4) == 'llx_')
+	  if (substr($file, strlen($file) - 4) == '.sql' && substr($file,0,4) == 'llx_' && substr($file, - 8) <> '.key.sql')
 	    {
 	      $name = substr($file, 0, strlen($file) - 4);
 	      //print "<tr><td>Création de la table $name</td>";
@@ -116,12 +116,16 @@ if ($_POST["action"] == "set")
 		{
 		  while (!feof ($fp))
 		    {
-		      $buffer .= fgets($fp, 4096);
+		      $buf = fgets($fp, 4096);
+		      if (substr($buf, 0, 2) <> '--')
+			{
+			  $buffer .= $buf;
+			}
 		    }
 		  fclose($fp);
 		}
-	 
-	   if ($db->query($buffer))				
+
+	      if ($db->query($buffer))				
 		{
 		  //print "<td>OK requete ==== $buffer</td></tr>";
 		}
@@ -140,16 +144,16 @@ if ($_POST["action"] == "set")
 		    }
 		}
 	    }
-	  
+	 
 	}
-	
+     
       //droit sur les tables
-			if ($db->query($grant_query))
-			{
-		  	print "<tr><td>Grant User '$nom' </td><td>OK</td></tr>";
-			}
+      if ($db->query($grant_query))
+	{
+	  print "<tr><td>Grant User '$nom' </td><td>OK</td></tr>";
+	}
       closedir($handle);
-      
+     
       if ($error == 0)
 	{
 	  print '<tr><td>Création des tables et clés primaires</td><td>OK</td></tr>';
@@ -167,72 +171,72 @@ if ($_POST["action"] == "set")
       //
       // Données
       //
-			if ($choix==1)
-			{
-      	$dir = "../../mysql/data/";
-      	$file = "data.sql";
-				$fp = fopen($dir.$file,"r");
-      if ($fp)
+      if ($choix==1)
+	{
+	  $dir = "../../mysql/data/";
+	  $file = "data.sql";
+	  $fp = fopen($dir.$file,"r");
+	  if ($fp)
 	    {
-					while (!feof ($fp))
-						{
-							$buffer = fgets($fp, 4096);
-							
-							if (strlen(trim(ereg_replace("--","",$buffer))))
-					{
-						if ($db->query($buffer))
-							{
-								$ok = 1;
-							}
-						else
-							{
-								if ($db->errno() == 1062)
-						{
-							// print "<tr><td>Insertion ligne : $buffer</td><td>
-						}
-								else
-						{
-								$ok = 0;
-							print "Erreur SQL ".$db->errno()." sur requete '$buffer': ".$db->error()."<br>";
-						}
-							}
-					}
-						}
-					fclose($fp);
-				}
-			}//choix==1
-			else
+	      while (!feof ($fp))
+		{
+		  $buffer = fgets($fp, 4096);
+		  
+		  if (strlen(trim(ereg_replace("--","",$buffer))))
+		    {
+		      if ($db->query($buffer))
 			{
-				$dir = "../../pgsql/data/";
-				$file = "data.sql";
-				$fp = fopen($dir.$file,"r");
-				$buffer='';
-      	if ($fp)
-				{
-					while (!feof ($fp))
-	        {
-	         $buffer .= fgets($fp, 4096);		
-					}			 					 
-							if ($db->query($buffer))
-		    			{
-		      			$ok = 1;
-		    			}
-		  				else
-		    			{
-		      				if ($db->errno() == 1062)
-									{
-			  		// print "<tr><td>Insertion ligne : $buffer</td><td>Déja existante</td></tr>";
-									}	
-		      				else
-									{
-		      					$ok = 0;
-			  						print "Erreur SQL ".$db->errno()." sur requete '$buffer': ".$db->error()."<br>";
-									}
-		    			}						
-					//}//while
-				fclose($fp);
+			  $ok = 1;
 			}
-		}//else
+		      else
+			{
+			  if ($db->errno() == 1062)
+			    {
+			      // print "<tr><td>Insertion ligne : $buffer</td><td>
+			    }
+			  else
+			    {
+			      $ok = 0;
+			      print "Erreur SQL ".$db->errno()." sur requete '$buffer': ".$db->error()."<br>";
+			    }
+			}
+		    }
+		}
+	      fclose($fp);
+	    }
+	}//choix==1
+      else
+	{
+	  $dir = "../../pgsql/data/";
+	  $file = "data.sql";
+	  $fp = fopen($dir.$file,"r");
+	  $buffer='';
+	  if ($fp)
+	    {
+	      while (!feof ($fp))
+	        {
+		  $buffer .= fgets($fp, 4096);		
+		}			 					 
+	      if ($db->query($buffer))
+		{
+		  $ok = 1;
+		}
+	      else
+		{
+		  if ($db->errno() == 1062)
+		    {
+		      // print "<tr><td>Insertion ligne : $buffer</td><td>Déja existante</td></tr>";
+		    }	
+		  else
+		    {
+		      $ok = 0;
+		      print "Erreur SQL ".$db->errno()." sur requete '$buffer': ".$db->error()."<br>";
+		    }
+		}						
+	      //}//while
+	      fclose($fp);
+	    }
+	}//else
 			      
       
       
@@ -258,48 +262,48 @@ if ($_POST["action"] == "set")
   if ($ok == 1)
     {
           			
-	$chem1 = "/facture";
-	$sql[0] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/facture',
+      $chem1 = "/facture";
+      $sql[0] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/facture',
 						 type = 'chaine',
 						 visible = 0
  						 where name  ='FAC_OUTPUTDIR';" ;
 				
-	$sql[1] = "UPDATE llx_const SET value = '".$dolibarr_main_data_url."/document/facture',
+      $sql[1] = "UPDATE llx_const SET value = '".$dolibarr_main_data_url."/document/facture',
 						type = 'chaine',
 						visible = 0
 						where name  = 'FAC_OUTPUT_URL';" ;
 				
-	$sql[2] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/propale',
+      $sql[2] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/propale',
 						type = 'chaine',
 						visible = 0
 						where name  = 'PROPALE_OUTPUTDIR';" ;
 				
-	$sql[3] = "UPDATE llx_const SET value = '".$dolibarr_main_url_root."/document/propale',
+      $sql[3] = "UPDATE llx_const SET value = '".$dolibarr_main_url_root."/document/propale',
 						type = 'chaine',
 						visible = 0
 						where name  = 'PROPALE_OUTPUT_URL';" ;
 				
-	$sql[4] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/ficheinter',
+      $sql[4] = "UPDATE llx_const SET value = '".$dolibarr_main_data_root."/ficheinter',
 						 type = 'chaine',
 						 visible = 0
 						 where name  = 'FICHEINTER_OUTPUTDIR';" ;
 				
-	$sql[5] = "UPDATE llx_const SET value='".$dolibarr_main_url_root."/document/ficheinter',
+      $sql[5] = "UPDATE llx_const SET value='".$dolibarr_main_url_root."/document/ficheinter',
 						 type = 'chaine',
 						 visible = 0
 						 where name  = 'FICHEINTER_OUTPUT_URL';" ;
 				
-	$sql[6] = "UPDATE llx_const SET value='".$dolibarr_main_data_root."/societe',
+      $sql[6] = "UPDATE llx_const SET value='".$dolibarr_main_data_root."/societe',
 	           type = 'chaine',
 						 visible = 0
 						 where name  = 'SOCIETE_OUTPUTDIR';" ;
 				
-	$sql[7] = "UPDATE llx_const SET value='".$dolibarr_main_url_root."/document/societe',
+      $sql[7] = "UPDATE llx_const SET value='".$dolibarr_main_url_root."/document/societe',
 						 type = 'chaine',
 						 visible = 0
 						 where name  = 'SOCIETE_OUTPUT_URL';" ;
 			
-	$result = 0;
+      $result = 0;
 			
       for ($i=0; $i < sizeof($sql);$i++)
 	{
