@@ -23,7 +23,7 @@
 
 create table llx_projet
 (
-  rowid            SERIAL,
+  rowid            SERIAL PRIMARY KEY,
   fk_soc           integer  NOT NULL,
   fk_statut        smallint NOT NULL,
   tms              timestamp,

@@ -20,9 +20,9 @@
 -- $Source$
 --
 -- ========================================================================
-create table llx_c_chargesociales
+create table c_chargesociales
 (
-  id          SERIAL,
+  id          SERIAL PRIMARY KEY,
   libelle     varchar(80),
   deductible  smallint NOT NULL default 0
 );

@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2000-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- $Id$
 -- $Source$
@@ -23,21 +24,18 @@
 
 create table llx_bank_account
 (
-  rowid          SERIAL,
+  rowid          SERIAL PRIMARY KEY,
   datec          timestamp,
   tms            timestamp,
   label          varchar(30),
   bank           varchar(255),
-
   code_banque    varchar(7),
   code_guichet   varchar(6),
   number         varchar(255),
   cle_rib        varchar(5),
   bic            varchar(10),
-
   iban_prefix    varchar(5),
-
   domiciliation  varchar(50),
-
-  courant        smallint default 0 not null
+  courant        smallint default 0 not null,
+  clos           smallint default 0 not null
 );

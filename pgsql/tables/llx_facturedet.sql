@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,11 +23,16 @@
 
 create table llx_facturedet
 (
-  rowid           SERIAL,
-  fk_facture      integer,
-  fk_product      integer,
-  datec           timestamp,
-  note            varchar(255),
-  price           real default 0
-
+  rowid           SERIAL PRIMARY KEY,
+  fk_facture      integer NOT NULL,
+  fk_product      integer NOT NULL DEFAULT 0,
+  description     text,
+  tva_taux        real default 19.6, -- taux tva
+  qty		  real,              -- quantité
+  remise_percent  real default 0,    -- pourcentage de remise
+  remise          real default 0,    -- montant de la remise
+  subprice        real,              -- prix avant remise
+  price           real               -- prix final
 );
+
+CREATE INDEX llx_facturedet_fk_facture ON llx_facturedet (fk_facture);

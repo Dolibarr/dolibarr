@@ -23,25 +23,20 @@
 
 create table llx_fichinter
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   fk_soc          integer NOT NULL,
   fk_projet       integer default 0,     -- projet auquel est rattache la fiche
   ref             varchar(30) NOT NULL,  -- number
-
-  datec           timestamp,              -- date de creation 
+  datec           timestamp,              -- date de creation
   date_valid      timestamp,              -- date de validation
-
   datei           date,                  -- date de l'intervention
-
   fk_user_author  integer,   -- createur de la fiche
-
   fk_user_valid   integer,   -- valideur de la fiche
-
   fk_statut       smallint  default 0,
-
   duree           real,
-
   note            text
 );
 
-create unique index llx_fichinter_ref on llx_fichinter(ref);
+CREATE UNIQUE INDEX llx_fichinter_ref ON llx_fichinter(ref);
+
+CREATE INDEX llx_fichinter_fk_soc ON llx_fichinter(fk_soc);

@@ -21,7 +21,7 @@
 
 create table llx_don
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   tms             timestamp,
   fk_statut       smallint NOT NULL DEFAULT 0,-- etat du don promesse/valid
   datec           timestamp,         -- date de création de l'enregistrement

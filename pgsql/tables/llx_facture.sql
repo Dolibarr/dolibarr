@@ -1,6 +1,7 @@
 -- ===========================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 -- 
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,7 +23,7 @@
 
 create table llx_facture
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   facnumber       varchar(50) NOT NULL,
   fk_soc          integer NOT NULL,
   datec           timestamp,  -- date de creation de la facture
@@ -37,8 +38,12 @@ create table llx_facture
   fk_user         integer,   -- createur de la facture
   fk_user_author  integer,   -- createur de la propale
   fk_user_valid   integer,   -- valideur de la propale
+  fk_projet          integer,   -- projet auquel est associé la facture
+  fk_cond_reglement  integer,   -- condition de reglement
+  date_lim_reglement date,      -- date limite de reglement
   note       text
-
 );
 
 create unique index llx_facture_facnumber on llx_facture(facnumber);
+
+create index llx_facture_fksoc on llx_facture(fk_soc);

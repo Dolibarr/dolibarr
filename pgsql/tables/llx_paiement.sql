@@ -18,10 +18,9 @@
 --
 -- ===================================================================
 
-
 create table llx_paiement
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   fk_facture      integer,
   datec           timestamp,
   datep           timestamp,           -- payment date

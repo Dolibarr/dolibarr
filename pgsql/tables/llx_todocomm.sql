@@ -23,15 +23,16 @@
 -- Actions commerciales a effectuer
 --
 -- ========================================================================
+
 create table llx_todocomm
 (
-  id             SERIAL,
+  id             SERIAL PRIMARY KEY,
   datea          timestamp,     -- date de l'action
   label          varchar(50),  -- libelle de l'action
   fk_user_action integer,      -- id de la personne qui doit effectuer l'action
   fk_user_author integer,      -- id auteur de l'action
   fk_soc         integer,      -- id de la societe auquel est rattachee l'action
-  fk_contact     integer,      -- id du contact sur laquelle l'action 
+  fk_contact     integer,      -- id du contact sur laquelle l'action
                                --    doit etre effectuee
   note           text
 );

@@ -18,8 +18,8 @@
 --
 -- ========================================================================
 
-create table llx_c_typent
+create table c_typent
 (
-  id        SERIAL,
+  id        SERIAL PRIMARY KEY,
   libelle   varchar(30)
 );

@@ -21,7 +21,7 @@
 
 create table llx_cotisation
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   tms             timestamp,
   datec           timestamp,
   fk_adherent     integer,

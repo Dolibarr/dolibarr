@@ -18,9 +18,9 @@
 --
 -- ========================================================================
 
-create table llx_c_pays
+create table c_pays
 (
-  id       SERIAL,
+  id       SERIAL PRIMARY KEY,
   libelle  varchar(25),
   code     char(2)      NOT NULL
 );

@@ -21,9 +21,9 @@
 --
 -- ========================================================================
 
-create table llx_c_actioncomm
+create table c_actioncomm
 (
-  id         SERIAL,
+  id         SERIAL PRIMARY KEY,
   libelle    varchar(30),
   todo       int
 );

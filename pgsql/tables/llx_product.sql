@@ -1,6 +1,6 @@
 -- ===================================================================
--- $Id$
--- $Source$
+-- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -16,17 +16,25 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
+-- $Id$
+-- $Source$
+--
 -- ===================================================================
 
 create table llx_product
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   datec           timestamp,
   tms             timestamp,
   ref             varchar(15),
   label           varchar(255),
   description     text,
-  price           smallint,
-  fk_user_author  integer
+  price           double precision,
+  tva_tx          double precision default 19.6,
+  fk_user_author  integer,
+  envente         smallint default 1,
+  nbvente         integer default 0,
+  fk_product_type integer default 0,
+  duration        varchar(6)
 );
 

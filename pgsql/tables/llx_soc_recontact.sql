@@ -22,9 +22,10 @@
 -- Societes a recontacter
 --
 -- ===================================================================
+
 create table llx_soc_recontact
 (
-  rowid      SERIAL,
+  rowid      SERIAL PRIMARY KEY,
   fk_soc     integer,
   datere     timestamp,
   author     varchar(15)

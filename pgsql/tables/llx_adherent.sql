@@ -24,11 +24,13 @@
 
 create table llx_adherent
 (
-  rowid            SERIAL,
+  rowid            SERIAL PRIMARY KEY,
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
+  public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
   fk_adherent_type smallint,
-  datec            timestamp,
+  datevalid        timestamp,   -- date de validation
+  datec            timestamp,  -- date de creation
   prenom           varchar(50),
   nom              varchar(50),
   societe          varchar(50),
@@ -37,6 +39,9 @@ create table llx_adherent
   ville            varchar(50),
   pays             varchar(50),
   email            varchar(255),
+  login            varchar(50) NOT NULL,      -- login utilise pour editer sa fiche
+  pass             varchar(50),      -- pass utilise pour editer sa fiche
+  naiss            date,             -- date de naissance
   fk_user_author   integer NOT NULL,
   fk_user_valid    integer NOT NULL,
   datefin          timestamp NOT NULL, -- date de fin de validité de la cotisation

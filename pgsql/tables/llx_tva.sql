@@ -23,7 +23,7 @@
 
 create table llx_tva
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   tms             timestamp,
   datep           date,           -- date de paiement
   datev           date,           -- date de valeur

@@ -24,7 +24,7 @@
 
 create table llx_compta_account
 (
-  rowid             SERIAL,
+  rowid             SERIAL PRIMARY KEY,
   datec             timestamp,
   number            varchar(12),
   label             varchar(255),

@@ -21,12 +21,10 @@
 --
 -- ===================================================================
 
-
 create table llx_voyage
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   datec           timestamp,
-
   dateo           date,                    -- date operation
   date_depart     timestamp,                -- date du voyage
   date_arrivee    timestamp,                -- date du voyage

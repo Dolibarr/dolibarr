@@ -22,7 +22,7 @@
 -- ========================================================================
 create table llx_chargesociales
 (
-  rowid      SERIAL,
+  rowid      SERIAL PRIMARY KEY,
   date_ech   timestamp NOT NULL, -- date d'echeance
   date_pai   timestamp, -- date de paiements
   libelle    varchar(80),

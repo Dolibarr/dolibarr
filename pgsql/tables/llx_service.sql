@@ -23,7 +23,7 @@
 
 create table llx_service
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   datec           timestamp,
   tms             timestamp,
   ref             varchar(15),

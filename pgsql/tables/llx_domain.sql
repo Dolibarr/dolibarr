@@ -23,7 +23,7 @@
 
 create table llx_domain
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   datec           timestamp,
   label           varchar(255),
   note            text

@@ -24,7 +24,7 @@
 
 create table llx_compta
 (
-  rowid             SERIAL,
+  rowid             SERIAL PRIMARY KEY,
   datec             timestamp,
   datev             date,           -- date de valeur
   amount            real NOT NULL default 0,

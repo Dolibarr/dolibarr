@@ -20,7 +20,7 @@
 
 create table llx_fa_pr
 (
-  rowid         SERIAL,
+  rowid      SERIAL PRIMARY KEY,
   fk_facture integer,
   fk_propal  integer
 );

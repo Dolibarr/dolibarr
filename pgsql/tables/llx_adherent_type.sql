@@ -22,12 +22,15 @@
 -- 0 : actif
 -- 1 : inactif
 
+
 create table llx_adherent_type
 (
-  rowid            SERIAL,
+  rowid            SERIAL PRIMARY KEY,
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
   libelle          varchar(50),
-  cotisation       enum('yes','no') NOT NULL DEFAULT 'yes',
-  note             text
+  cotisation	   CHAR(3) CHECK (cotisation IN ('yes','no')) NOT NULL DEFAULT 'yes',
+  vote             CHAR(3) CHECK (vote IN ('yes','no')) NOT NULL DEFAULT 'yes',
+  note             text,
+  mail_valid       text -- mail envoye a la validation
 );

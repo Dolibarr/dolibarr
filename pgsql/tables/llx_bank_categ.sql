@@ -20,6 +20,6 @@
 
 create table llx_bank_categ
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   label           varchar(255)
 );

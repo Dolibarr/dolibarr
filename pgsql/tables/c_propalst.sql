@@ -18,9 +18,9 @@
 --
 -- ===================================================================
 
-create table llx_c_propalst
+create table c_propalst
 (
-  id              SERIAL,
+  id              SERIAL PRIMARY KEY,
   label           varchar(30)
 );
 

@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,7 +24,7 @@
 
 create table llx_user
 (
-  rowid         SERIAL,
+  rowid         SERIAL PRIMARY KEY,
   datec         timestamp,
   tms           timestamp,
   login         varchar(8),
@@ -36,9 +37,10 @@ create table llx_user
   webcal_login   varchar(25),
   module_comm   smallint default 1,
   module_compta smallint default 1,
+  fk_societe    integer default 0,
+  fk_socpeople  integer default 0,
   note          text
-
 );
 
-create unique index llx_user_index_login on llx_user(login);
+create unique index llx_user_login on llx_user(login);
 

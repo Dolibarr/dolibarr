@@ -21,7 +21,7 @@
 
 create table llx_don_projet
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   tms             timestamp,
   datec           timestamp,
   libelle         varchar(255),

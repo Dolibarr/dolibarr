@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- $Id$
 -- $Source$
@@ -23,9 +24,14 @@
 
 create table llx_propaldet
 (
-  rowid         SERIAL,
+  rowid         SERIAL PRIMARY KEY,
   fk_propal     integer,
   fk_product    integer,
-  qty		smallint,
-  price         real
+  description    text,
+  tva_tx         real default 19.6, -- taux tva
+  qty		 real,              -- quantité
+  remise_percent real default 0,    -- pourcentage de remise
+  remise         real default 0,    -- montant de la remise
+  subprice       real,              -- prix avant remise
+  price          real               -- prix final
 );

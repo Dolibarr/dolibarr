@@ -23,7 +23,7 @@
 
 create table llx_ventes
 (
-  rowid         SERIAL,
+  rowid         SERIAL PRIMARY KEY,
   fk_soc        integer NOT NULL,
   fk_product    integer NOT NULL,
   dated         timestamp,         -- date debut

@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2002-2003 Éric Seigne <erics@rycks.com>
+-- Copyright (C) 2004 Benoit Mortier <benoit.mortier@opensides.be>
 --
 -- $Id$
 -- $Source$
@@ -23,31 +24,28 @@
 
 create table llx_propal
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   fk_soc          integer,
   fk_soc_contact  integer,
   fk_projet       integer default 0, -- projet auquel est rattache la propale
   ref             varchar(30) NOT NULL,  -- propal number
-
-  datec           timestamp,              -- date de creation 
+  datec           timestamp,              -- date de creation
   date_valid      timestamp,              -- date de validation
   date_cloture    timestamp,              -- date de cloture
-
   datep           date,                  -- date de la propal
-
   fk_user_author  integer,   -- createur de la propale
-
   fk_user_valid   integer,   -- valideur de la propale
-
   fk_user_cloture integer,   -- cloture de la propale signee ou non signee
-
-
   fk_statut       smallint  default 0,
   price           real      default 0,
+  remise_percent  real      default 0,
   remise          real      default 0,
   tva             real      default 0,
   total           real      default 0,
-  note            text
+  note            text,
+  model_pdf       varchar(50)
 );
 
 create unique index llx_propal_ref on llx_propal(ref);
+
+create index llx_propal_fk_soc on llx_propal(fk_soc);

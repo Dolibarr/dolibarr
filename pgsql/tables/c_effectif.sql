@@ -18,9 +18,9 @@
 --
 -- ========================================================================
 
-create table llx_c_effectif
+create table c_effectif
 (
-  id SERIAL,
+  id SERIAL PRIMARY KEY,
   libelle varchar(30)
 );
 

@@ -24,7 +24,7 @@
 
 create table llx_bank
 (
-  rowid           SERIAL,
+  rowid           SERIAL PRIMARY KEY,
   datec           timestamp,
   datev           date,           -- date de valeur
   dateo           date,           -- date operation
