@@ -29,9 +29,21 @@ BODY
  *   Menu superieur
  */
 
+table.topbarre
+{ 
+  background: #cbcbcb;
+
+  cell-spacing: 0;
+ }
+
 a { 
     text-decoration: none; 
     }
+
+td.menu
+{ 
+  border: 1px solid #000000;
+ }
 
 .menu 
 { 
