@@ -383,6 +383,7 @@ class Form
     if ($this->db->query($sql))
     {
         print '<select name="civilite_id">';
+        print '<option value="">';
         $num = $this->db->num_rows();
         $i = 0;
         if ($num)
