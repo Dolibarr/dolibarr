@@ -30,9 +30,9 @@
 	<item>2 - propositions commerciales</item>
 	<item>3 - produits</item>
 	<item>4 - projets</item>
-	<item>5 - RESERVE</item>
-	<item>6 - fiche d'intervention</item>
-	<item>7 - adhérent</item>
+	<item>5 - utilisateurs</item>
+	<item>6 - fiches d'intervention</item>
+	<item>7 - adhérents</item>
 	<item>8 - <em>non attribué</em></item>
       </list>
     </p>
