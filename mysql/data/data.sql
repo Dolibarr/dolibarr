@@ -73,6 +73,7 @@ INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_DB','spip','c
 INSERT INTO llx_const(name, value, type) VALUES ('DB_NAME_OSC','catalog','chaine');
 INSERT INTO llx_const(name, value, type) VALUES ('OSC_LANGUAGE_ID','1','chaine');
 INSERT INTO llx_const(name, value, type) VALUES ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
+INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_FROM','adherents@domain.com','chaine','From des mails');
 
 
 --
