@@ -462,8 +462,8 @@ if ($_GET["propalid"])
       print_barre_liste("Propositions commerciales", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder,'',$num);
 
       $i = 0;
-      print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-      print '<TR class="liste_titre">';
+      print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+      print '<tr class="liste_titre">';
       print_liste_field_titre_new ("Réf",$PHP_SELF,"p.ref","","&year=$year&viewstatut=$viewstatut",'',$sortfield);
       print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","&viewstatut=$viewstatut","",'',$sortfield);
       print_liste_field_titre_new ("Date",$PHP_SELF,"p.datep","&viewstatut=$viewstatut","",'align="right" colspan="2"',$sortfield);
@@ -476,9 +476,9 @@ if ($_GET["propalid"])
 	  $objp = $db->fetch_object( $i);
 	
 	  $var=!$var;
-	  print "<TR $bc[$var]>";
-	  print "<TD><a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
-	  print "<TD><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      
+	  print "<tr $bc[$var]>";
+	  print "<td><a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></td>\n";
+	  print "<td><a href=\"fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
 	  
 	  $now = time();
 	  $lim = 3600 * 24 * 15 ;
@@ -492,7 +492,7 @@ if ($_GET["propalid"])
 	      print "<td>&nbsp;</td>";
 	    }
 	
-	  print "<TD align=\"right\">";
+	  print "<td align=\"right\">";
 	  $y = strftime("%Y",$objp->dp);
 	  $m = strftime("%m",$objp->dp);
 	  
@@ -500,11 +500,11 @@ if ($_GET["propalid"])
 	  print " <a href=\"propal.php?year=$y&month=$m\">";
 	  print strftime("%B",$objp->dp)."</a>\n";
 	  print " <a href=\"propal.php?year=$y\">";
-	  print strftime("%Y",$objp->dp)."</a></TD>\n";      
+	  print strftime("%Y",$objp->dp)."</a></td>\n";      
 	  
-	  print "<TD align=\"right\">".price($objp->price)."</TD>\n";
-	  print "<TD align=\"center\">$objp->statut</TD>\n";
-	  print "</TR>\n";
+	  print "<td align=\"right\">".price($objp->price)."</td>\n";
+	  print "<td align=\"center\">$objp->statut</td>\n";
+	  print "</tr>\n";
 	  
 	  $i++;
 	}

@@ -39,7 +39,7 @@ llxHeader();
 
 print_barre_liste("Liste des produits par popularité dans les propositions commerciales", $page, $PHP_SELF);
 
-print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print "<TR class=\"liste_titre\"><td>";
 print_liste_field_titre("Réf",$PHP_SELF, "p.ref");

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,7 +50,7 @@ if ($result)
   
   if ($num > 0)
     {
-      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
       print '<tr class="liste_titre"><td colspan="2">Entrepôts</td></tr>';
     
