@@ -131,6 +131,11 @@ tr.box_impair
   font-family: Helvetica, Verdana; font-size: 0.8em; 
   }
 
+tr.fiche
+{ 
+  font-family: Helvetica, Verdana; font-size: 0.6em; 
+  }
+
 /*
  *
  */
