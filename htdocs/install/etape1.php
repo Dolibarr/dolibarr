@@ -374,8 +374,9 @@ if ($_POST["action"] == "set")
 	      print "</td><td>";
 	      print $langs->trans("Warning");
 	      print "</td></tr>";
+
 	      print '<tr><td colspan="2">';
-	      print "Création de la base : ";
+	      print "On tente de créer la base : ";
 	      print $dolibarr_main_db_name;
 	      print '</td></tr>';
 	      
@@ -392,29 +393,23 @@ if ($_POST["action"] == "set")
 		  if ($dbt->connected == 1)
 		    {
 		      dolibarr_syslog("la connexion au serveur avec l'utilisateur root reussi");
-		      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>".$langs->trans("OK")."</td></tr>";
+		      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host, avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>".$langs->trans("OK")."</td></tr>";
 		    }
 		  else
 		    {
 		      dolibarr_syslog("la connexion au serveur avec l'utilisateur root rate");
-		      print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>".$langs->trans("Error")."</td></tr>";
+		      if (! $conf->db->user) {
+		        print "<tr><td colspan='2'>".$langs->trans("Error").": ";
+		        print "Le super utilisateur de la base est requis pour créer la base. Créer la base en manuel ou revenez en arrière pour saisir le super utilisateur";
+		        print "</tr>";
+		      } else {
+		        print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>".$langs->trans("Error")."</td></tr>";
+              }
 		      $ok = 0;
 		    }
 		}
 	      
-	      if ($ok)
-		{  
-		  if($dbt->database_selected == 1)
-		    {
-		    }
-		  else
-		    {
-		      print "<tr><td>Vérification des droits de création</td><td>".$langs->trans("Error")."</td></tr>";
-		      print '<tr><td colspna="2">-- Droits insuffissant</td></tr>';
-		      //$ok = 0;
-		    }
-		}
-	      
+     
 	      if ($ok)
 		{
 		  if ($dbt->create_db ($dolibarr_main_db_name))
