@@ -342,6 +342,9 @@ class Commande
    */
   function addline( $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
     {
+      $qty = ereg_replace(",",".",$qty);
+      $pu = ereg_replace(",",".",$pu);
+
       if ($this->brouillon && strlen(trim($desc)))
 	{
 	  if (strlen(trim($qty))==0)
@@ -371,7 +374,7 @@ class Commande
 	    }
 
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."commandedet (fk_commande,label,description,fk_product, price,qty,tva_tx, remise_percent, subprice, remise)";
-	  $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", $qty, $txtva, $remise_percent,".ereg_replace(",",".",$subprice).",".ereg_replace(",",".", $remise).") ;";
+	  $sql .= " VALUES ($this->id, '" . addslashes($desc) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."') ;";
 
 	  if ( $this->db->query( $sql) )
 	    {
