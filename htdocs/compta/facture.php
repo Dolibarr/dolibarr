@@ -733,6 +733,11 @@ else
 	  $h = 1;
 	  $a = 0;
 
+	  $head[$h][0] = DOL_URL_ROOT."/compta/facture/note.php?facid=".$_GET["facid"];
+	  $head[$h][1] = "Note";
+	  $h++;
+	  $a = 0;
+
 	  dolibarr_fiche_head($head, $a, $soc->nom);
   	  
 	  /*

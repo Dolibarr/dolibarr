@@ -22,16 +22,31 @@ body
 {
   background: #dcdad5; 
   margin: 0px;
-  font-family: sans-serif; font-size: 0.9em; 
+  font-family: sans-serif; font-size: 0.9em;
 }
+
 /*
  * Onglets
  */
-div.tabs {
+div.tabs 
+{
+  float: none;
   margin: 0em;
   padding: 0em 0em;
   text-align: left;
+  }
+
+a.tabTitle {
+             background: #436976;
+             border: 1px solid #8CACBB;
+             color: white;
+             font: 100% Bold;
+             padding: 0em 1.0em;
+             margin: 0em 0em;
+             text-decoration: none;
+             white-space: nowrap;
 }
+
 
 a.tab {
   background: white;
@@ -65,7 +80,7 @@ div.tabsAction {
 
 a.tabAction {
   background: white; 
-  border: 1px solid #8CACBB;
+  border: 1px outset #8CACBB;
   color: #436976;
   font: 105% Bold;
   padding: 0em 1.5em;
