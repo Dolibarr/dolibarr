@@ -247,7 +247,7 @@ if ($result)
   print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom","","",'valign="center"',$sortfield);
   print_liste_field_titre($langs->trans("Code compta"),"clients.php","s.code_compta","","",'align="left"',$sortfield);
   print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville","","",'valign="center"',$sortfield);
-  print_liste_field_titre($langs->trans("Code client"),"clients.php","s.code_client","","",'align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client","","",'align="center"',$sortfield);
 
   print "<td>&nbsp;</td></tr>\n";
 
