@@ -64,7 +64,7 @@ if ($db->query($sql))
   $db->free();
 }
 
-print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 print '<tr class="liste_titre"><td colspan="2">Nombre</td></tr>';
 if (defined("MAIN_MODULE_PRODUIT") && MAIN_MODULE_PRODUIT)
 {
