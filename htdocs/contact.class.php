@@ -91,7 +91,6 @@ class Contact
 	$soc->fetch($this->socid);
 	$this->phone_pro = $soc->tel;
       }
-    
     $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
     $sql .= "  civilite='$this->civilite_id'";
     $sql .= ", name='$this->name'";
@@ -108,7 +107,7 @@ class Contact
     $sql .= ", phone_mobile = '$this->phone_mobile'";
     $sql .= ", jabberid = '$this->jabberid'";
     if ($user) {
-        $sql .= ", fk_user_modif=".$user->id;
+        $sql .= ", fk_user_modif='".$user->id."'";
     }
     $sql .= " WHERE idp=$id";
     
@@ -116,7 +115,7 @@ class Contact
     
     if (!$result)
       {
-	print $this->db->error() . '<br>' . $sql;
+    dolibarr_print_error($this->db);
       }
     
     if (defined('MAIN_MODULE_LDAP')  && MAIN_MODULE_LDAP)
