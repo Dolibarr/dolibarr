@@ -115,7 +115,7 @@ if ( $db->query($sql) )
       print "<TD align=\"center\">$obj->stcomm</TD>\n";
       print "<TD>$obj->author</TD>\n";
       print "<td>".strftime("%d %b %Y %H:%M", $obj->dateb) ."</td>";
-      print "<TD>[<a href=\"$PHP_SELF?action=delete&bid=$obj->bid\">Delete</A>]</TD>\n";
+      print "<TD>[<a href=\"bookmark.php?action=delete&bid=$obj->bid\">Delete</A>]</TD>\n";
       print "</TR>\n";
       $i++;
     }

@@ -54,7 +54,7 @@ if ($user->societe_id > 0)
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == yes)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == yes)
 {
   if ($user->rights->propale->supprimer ) 
     {
@@ -68,24 +68,24 @@ if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] 
 }
 
 
-if ($HTTP_POST_VARS["action"] == 'add') 
+if ($_POST["action"] == 'add') 
 {
   $propal = new Propal($db, $_GET["socidp"]);
 
   $propal->datep = mktime(12, 1 , 1, 
-			  $HTTP_POST_VARS["remonth"], 
-			  $HTTP_POST_VARS["reday"], 
-			  $HTTP_POST_VARS["reyear"]);
+			  $_POST["remonth"], 
+			  $_POST["reday"], 
+			  $_POST["reyear"]);
 
-  $propal->duree_validite = $HTTP_POST_VARS["duree_validite"];
+  $propal->duree_validite = $_POST["duree_validite"];
 
-  $propal->contactid = $HTTP_POST_VARS["contactidp"];
-  $propal->projetidp = $HTTP_POST_VARS["projetidp"];
-  $propal->modelpdf = $HTTP_POST_VARS["modelpdf"];
+  $propal->contactid = $_POST["contactidp"];
+  $propal->projetidp = $_POST["projetidp"];
+  $propal->modelpdf = $_POST["modelpdf"];
   $propal->author = $user->id;
-  $propal->note = $HTTP_POST_VARS["note"];
+  $propal->note = $_POST["note"];
 
-  $propal->ref = $HTTP_POST_VARS["ref"];
+  $propal->ref = $_POST["ref"];
 
   for ($i = 1 ; $i <= PROPALE_NEW_FORM_NB_PRODUCT ; $i++)
     {
@@ -93,7 +93,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
       $xqty = "qty".$i;
       $xremise = "remise".$i;
 
-      $propal->add_product($HTTP_POST_VARS[$xid],$HTTP_POST_VARS[$xqty],$HTTP_POST_VARS[$xremise]);
+      $propal->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
     }
   
   $id = $propal->create();
@@ -103,7 +103,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
    */
   if ($id) 
     {
-      propale_pdf_create($db, $id, $HTTP_POST_VARS["modelpdf"]);
+      propale_pdf_create($db, $id, $_POST["modelpdf"]);
       $_GET["propalid"] = $id;
     }
 }
@@ -115,14 +115,14 @@ if ($action == 'pdf')
   propale_pdf_create($db, $propalid, $propal->modelpdf);
 }
 
-if ($HTTP_POST_VARS["action"] == 'setstatut' && $user->rights->propale->cloturer) 
+if ($_POST["action"] == 'setstatut' && $user->rights->propale->cloturer) 
 {
   /*
    *  Cloture de la propale
    */
   $propal = new Propal($db);
   $propal->fetch($_GET["propalid"]);
-  $propal->cloture($user, $HTTP_POST_VARS["statut"], $HTTP_POST_VARS["note"]);
+  $propal->cloture($user, $_POST["statut"], $_POST["note"]);
 } 
 
 if ($_GET["action"] == 'commande')
@@ -147,53 +147,53 @@ if ($action == 'modif' && $user->rights->propale->creer)
 
 }
 
-if ($HTTP_POST_VARS["addligne"] == 'Ajouter' && $user->rights->propale->creer) 
+if ($_POST["addligne"] == 'Ajouter' && $user->rights->propale->creer) 
 {
   /*
    *  Ajout d'une ligne produit dans la propale
    */
-  if ($HTTP_POST_VARS["idprod"])
+  if ($_POST["idprod"])
     {
       $propal = new Propal($db);
       $propal->fetch($propalid);
-      $propal->insert_product($HTTP_POST_VARS["idprod"], $HTTP_POST_VARS["qty"], $HTTP_POST_VARS["remise"]);
+      $propal->insert_product($_POST["idprod"], $_POST["qty"], $_POST["remise"]);
       propale_pdf_create($db, $_GET["propalid"], $propal->modelpdf);
     }
 } 
 
-if ($HTTP_POST_VARS["addproduct"] == 'Ajouter' && $user->rights->propale->creer) 
+if ($_POST["addproduct"] == 'Ajouter' && $user->rights->propale->creer) 
 {
   /*
    *  Ajout d'une ligne produit dans la propale
    */
-  if (strlen($HTTP_POST_VARS["np_desc"]) &&
-      strlen($HTTP_POST_VARS["np_price"]))
+  if (strlen($_POST["np_desc"]) &&
+      strlen($_POST["np_price"]))
     {
 
       $propal = new Propal($db);
       $propal->fetch($propalid);
             
-      $propal->insert_product_generic($HTTP_POST_VARS["np_desc"], 
-				      $HTTP_POST_VARS["np_price"], 
-				      $HTTP_POST_VARS["np_qty"],
-				      $HTTP_POST_VARS["np_tva_tx"],
-				      $HTTP_POST_VARS["np_remise"]);
+      $propal->insert_product_generic($_POST["np_desc"], 
+				      $_POST["np_price"], 
+				      $_POST["np_qty"],
+				      $_POST["np_tva_tx"],
+				      $_POST["np_remise"]);
     } 
 }
 
-if ($HTTP_POST_VARS["action"] == 'setremise' && $user->rights->propale->creer) 
+if ($_POST["action"] == 'setremise' && $user->rights->propale->creer) 
 {
   $propal = new Propal($db);
-  $propal->fetch($propalid);
-  $propal->set_remise($user, $HTTP_POST_VARS["remise"]);
+  $propal->fetch($_GET["propalid"]);
+  $propal->set_remise($user, $_POST["remise"]);
   propale_pdf_create($db, $_GET["propalid"], $propal->modelpdf);
 } 
 
-if ($HTTP_POST_VARS["action"] == 'setpdfmodel' && $user->rights->propale->creer) 
+if ($_POST["action"] == 'setpdfmodel' && $user->rights->propale->creer) 
 {
-  $propal = new Propal($db, 0, $propalid);
-  $propal->set_pdf_model($user, $HTTP_POST_VARS["modelpdf"]);
-  propale_pdf_create($db, $propalid, $HTTP_POST_VARS["modelpdf"]);
+  $propal = new Propal($db, 0, $_GET["propalid"]);
+  $propal->set_pdf_model($user, $_POST["modelpdf"]);
+  propale_pdf_create($db, $_GET["propalid"], $_POST["modelpdf"]);
 } 
 
 
@@ -246,7 +246,7 @@ if ($_GET["propalid"])
   $head[$h][0] = DOL_URL_ROOT.'/comm/propal/note.php?propalid='.$propal->id;
   $head[$h][1] = "Note";
 
-  dolibarr_fiche_head($head, $a);
+  dolibarr_fiche_head($head, $a, $societe->nom);
 
   /*
    * Confirmation de la suppression de la propale
@@ -254,7 +254,7 @@ if ($_GET["propalid"])
    */
   if ($action == 'delete')
     {
-      $html->form_confirm("$PHP_SELF?propalid=$propal->id","Supprimer la proposition","Etes-vous sûr de vouloir supprimer cette proposition ?","confirm_delete");
+      $html->form_confirm("propal.php?propalid=$propal->id","Supprimer la proposition","Etes-vous sûr de vouloir supprimer cette proposition ?","confirm_delete");
     }
   /*
    *
@@ -307,7 +307,7 @@ if ($_GET["propalid"])
 
 	  print "<tr><td>Destinataire</td><td colspan=\"3\">$obj->firstname $obj->name &lt;$obj->email&gt;</td>";
 
-	  print '<td valign="top" colspan="2" width="50%" rowspan="4">Note :<br>'. nl2br($propal->note)."</td></tr>";
+	  print '<td valign="top" colspan="2" width="50%" rowspan="5">Note :<br>'. nl2br($propal->note)."</td></tr>";
 	  
 	  if ($propal->projet_id) 
 	    {
@@ -342,7 +342,7 @@ if ($_GET["propalid"])
 
 	  if ($_GET["action"] == 'statut') 
 	    {
-	      print "<form action=\"$PHP_SELF?propalid=$propal->id\" method=\"post\">";
+	      print "<form action=\"propal.php?propalid=$propal->id\" method=\"post\">";
 	      print '<br><table class="border" cellpadding="3" cellspacing="0">';
 	      print '<tr><td>Clôturer comme : <input type="hidden" name="action" value="setstatut">';
 	      print "<select name=\"statut\">";
@@ -497,7 +497,7 @@ if ($_GET["propalid"])
 	  print "</table>";
 	  print '</form>';
 
-	  if ($propal->brouillon == 1)
+	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
 	    {
 	      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
 	      print '<input type="hidden" name="action" value="setremise">';
@@ -518,7 +518,7 @@ if ($_GET["propalid"])
 		{
 		  if ($user->rights->propale->supprimer)
 		    {
-		      print "<a class=\"tabAction\" href=\"$PHP_SELF?propalid=$propal->id&amp;action=delete\">Supprimer</a>";
+		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=delete\">Supprimer</a>";
 		    }
 
 		}
@@ -526,7 +526,7 @@ if ($_GET["propalid"])
 		{
 		  if ($propal->statut == 1 && $user->rights->propale->cloturer)
 		    {
-		      print "<a class=\"tabAction\" href=\"$PHP_SELF?propalid=$propal->id&amp;action=statut\">Cloturer</a>";
+		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=statut\">Cloturer</a>";
 		    }
 		} 
 
@@ -535,10 +535,8 @@ if ($_GET["propalid"])
 	       */
 	      if ($propal->statut < 2 && $user->rights->propale->creer)
 		{
-		  print '<a class="tabAction" href="'.$PHP_SELF."?propalid=$propal->id&amp;action=pdf\">Générer</a>";
-		}
-
-	    
+		  print '<a class="tabAction" href="propal.php?propalid='.$propal->id.'&amp;action=pdf">Générer</a>';
+		}	   
 	      /*
 	       *
 	       */
@@ -549,7 +547,7 @@ if ($_GET["propalid"])
 		    {
 		      if ($user->rights->propale->envoyer)
 			{
-			  print "<a class=\"tabAction\" href=\"$PHP_SELF?propalid=$propal->id&amp;action=presend\">Envoyer la proposition</a>";
+			  print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=presend\">Envoyer la proposition</a>";
 			}
 
 		    }
@@ -561,7 +559,7 @@ if ($_GET["propalid"])
 		{
 		  if ($user->rights->propale->valider)
 		    {
-		      print "<a class=\"tabAction\" href=\"$PHP_SELF?propalid=$propal->id&amp;valid=1\">Valider</a>";
+		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;valid=1\">Valider</a>";
 		    }
 
 		}
@@ -569,7 +567,7 @@ if ($_GET["propalid"])
 		{
 		  if ($user->rights->propale->creer)
 		    {
-		      print "<a class=\"tabAction\" href=\"$PHP_SELF?propalid=$propal->id&amp;action=modif\">Modifier</a>";
+		      print "<a class=\"tabAction\" href=\"propal.php?propalid=$propal->id&amp;action=modif\">Modifier</a>";
 		    }
 		}
 
@@ -654,7 +652,7 @@ if ($_GET["propalid"])
 	   */
 
 
-	  if ($propal->brouillon == 1)
+	  if ($propal->brouillon == 1 && $user->rights->propale->creer)
 	    {
 	      print "<tr $bc[1]><td>Modèle</td><td align=\"right\">";
 	      $html = new Form($db);
@@ -681,7 +679,7 @@ if ($_GET["propalid"])
 		}
 	      print "</table>";
 	    }
-	  //	  print '<a href="'.$PHP_SELF."?propalid=$propalid&amp;action=commande\">Générer</a>";
+	  //	  print '<a href="propal.php?propalid=$propalid&amp;action=commande\">Générer</a>";
 	  /*
 	   *
 	   */
@@ -746,7 +744,7 @@ if ($_GET["propalid"])
 	      
 	      $message = "Veuillez trouver ci-joint notre proposition commerciale $propal->ref\n\nCordialement\n\n";
 
-	      print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"$PHP_SELF?propalid=$propal->id&amp;action=send\">\n";
+	      print "<form method=\"post\" ENCTYPE=\"multipart/form-data\" action=\"propal.php?propalid=$propal->id&amp;action=send\">\n";
 	      print "<input type=\"hidden\" name=\"replytoname\" value=\"$replytoname\">\n";
 	      print "<input type=\"hidden\" name=\"replytomail\" value=\"$replytomail\">\n";
 	      print '<input type="hidden" name="max_file_size" value="2000000">';
@@ -802,7 +800,7 @@ if ($_GET["propalid"])
 	}
       else 
 	{
-	  print '<p><a href="'.$PHP_SELF.'?propalid='.$propal->id.'&amp;suivi=1">Voir le suivi des actions </a>';
+	  print '<p><a href="propal.php?propalid='.$propal->id.'&amp;suivi=1">Voir le suivi des actions </a>';
 	}
       
     }
@@ -863,9 +861,9 @@ if ($_GET["propalid"])
       $sql .= " AND date_format(p.datep, '%Y') = $year";
     }
   
-  if (strlen($HTTP_POST_VARS["sf_ref"]) > 0)
+  if (strlen($_POST["sf_ref"]) > 0)
     {
-      $sql .= " AND p.ref like '%".$HTTP_POST_VARS["sf_ref"] . "%'";
+      $sql .= " AND p.ref like '%".$_POST["sf_ref"] . "%'";
     }
 
   $sql .= " ORDER BY $sortfield $sortorder";
@@ -874,7 +872,7 @@ if ($_GET["propalid"])
   if ( $db->query($sql) )
     {
       $num = $db->num_rows();
-      print_barre_liste("Propositions commerciales", $_GET["page"], $PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+      print_barre_liste("Propositions commerciales", $_GET["page"],"propal.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 
       $i = 0;
@@ -882,14 +880,14 @@ if ($_GET["propalid"])
 
       print '<TR class="liste_titre">';
 
-      print_liste_field_titre_new ("Réf",$PHP_SELF,"p.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
+      print_liste_field_titre_new ("Réf","propal.php","p.ref","","&amp;socidp=$socidp",'width="15%"',$sortfield);
 
-      print_liste_field_titre_new ("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp",'width="30%"',$sortfield);
+      print_liste_field_titre_new ("Société","propal.php","s.nom","","&amp;socidp=$socidp",'width="30%"',$sortfield);
 
-      print_liste_field_titre_new ("Date",$PHP_SELF,"p.datep","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
-      print_liste_field_titre_new ("Prix",$PHP_SELF,"p.price","","&amp;socidp=$socidp", ' width="20%" align="right"',$sortfield);
+      print_liste_field_titre_new ("Date","propal.php","p.datep","","&amp;socidp=$socidp", 'width="25%" align="right" colspan="2"',$sortfield);
+      print_liste_field_titre_new ("Prix","propal.php","p.price","","&amp;socidp=$socidp", ' width="20%" align="right"',$sortfield);
 
-      print_liste_field_titre_new ("Statut",$PHP_SELF,"p.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
+      print_liste_field_titre_new ("Statut","propal.php","p.fk_statut","","&amp;socidp=$socidp",'width="10%" align="center"',$sortfield);
       print "</tr>\n";
       $var=True;
       
@@ -901,7 +899,7 @@ if ($_GET["propalid"])
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="propal.php?propalid='.$objp->propalid.'">';
 	  print img_file();
-	  print "</a>&nbsp;<a href=\"$PHP_SELF?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
+	  print "</a>&nbsp;<a href=\"propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
 	  if ($objp->client == 1)
 	    {
 	      $url ='fiche.php?socid='.$objp->idp;

@@ -44,9 +44,9 @@ if ($user->societe_id > 0)
 
 if ($page == -1) { $page = 0 ; }
 
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+$offset = $conf->liste_limit * $_GET["page"] ;
+$pageprev = $_GET["page"] - 1;
+$pagenext = $_GET["page"] + 1;
 
 /*
  * Mode Liste
@@ -106,13 +106,13 @@ if ($result)
     }
 
 
-  print_barre_liste("Liste des clients", $page, $PHP_SELF,"",$sortfield,$sortorder,'',$num);
+  print_barre_liste("Liste des clients", $page, "clients.php","",$sortfield,$sortorder,'',$num);
 
   print '<div align="center">';
 
-  print "| <A href=\"$PHP_SELF?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
+  print "| <A href=\"clients.php?page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
   for ($ij = 65 ; $ij < 91; $ij++) {
-    print "<A href=\"$PHP_SELF?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
+    print "<A href=\"clients.php?begin=" . chr($ij) . "&stcomm=$stcomm\" class=\"T3\">";
     
     if ($_GET["begin"] == chr($ij) )
       {
@@ -140,9 +140,9 @@ if ($result)
   print '<TABLE class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<TR class="liste_titre">';
   print "<TD valign=\"center\">";
-  print_liste_field_titre("Société",$PHP_SELF,"s.nom");
+  print_liste_field_titre("Société","clients.php","s.nom");
   print "</td><td>";
-  print_liste_field_titre("Ville",$PHP_SELF,"s.ville");
+  print_liste_field_titre("Ville","clients.php","s.ville");
   print "</td>";
   print "</TR>\n";
   $var=True;

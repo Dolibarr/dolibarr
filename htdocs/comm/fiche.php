@@ -215,7 +215,7 @@ if ($_GET["socid"] > 0)
       }
     else
       {
-	print "[<a href=\"$PHP_SELF?socid=$objsoc->id&action=attribute_prefix\">Attribuer</a>]";
+	print "[<a href=\"fiche.php?socid=$objsoc->id&action=attribute_prefix\">Attribuer</a>]";
       }
 
     print "</td></tr>";

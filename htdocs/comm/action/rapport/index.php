@@ -144,7 +144,7 @@ if ( $db->query($sql) )
 {
   $num = $db->num_rows();
   
-  print_barre_liste("Liste des actions commerciales réalisées ou à faire", $page, $PHP_SELF,'',$sortfield,$sortorder,'',$num);
+  print_barre_liste("Liste des actions commerciales réalisées ou à faire", $page, "index.php",'',$sortfield,$sortorder,'',$num);
   
   $i = 0;
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';

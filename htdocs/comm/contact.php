@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -48,23 +48,23 @@ if ($sortfield == "")
 {
   $sortfield="p.name";
 }
-
+$page=$_GET["page"];
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 
 if ($type == "c") {
-	$label = " clients";
-	$urlfiche="fiche.php";
+  $label = " clients";
+  $urlfiche="fiche.php";
 }
 if ($type == "p") {
-	$label = " prospects";
-	$urlfiche="prospect/fiche.php";
+  $label = " prospects";
+  $urlfiche="prospect/fiche.php";
 }
 if ($type == "f") {
-	$label = " fournisseurs";
-	$urlfiche="fiche.php";
+  $label = " fournisseurs";
+  $urlfiche="fiche.php";
 }
 
 
@@ -114,39 +114,45 @@ $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
 $result = $db->query($sql);
 if ($result) 
-  {
+{
   $num = $db->num_rows();
   
-  print_barre_liste("Liste des contacts $label",$page, $PHP_SELF, "",$sortfield,$sortorder,"",$num);
+  print_barre_liste("Liste des contacts $label",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
   
   print "<DIV align=\"center\">";
   
-  print "| <A href=\"$PHP_SELF?type=$type&page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
+  print "| <A href=\"contact.php?type=$type&page=$pageprev&stcomm=$stcomm&sortfield=$sortfield&sortorder=$sortorder&aclasser=$aclasser&coord=$coord\">*</A>\n| ";
   for ($i = 65 ; $i < 91; $i++) {
-    print "<A href=\"$PHP_SELF?type=$type&begin=" . chr($i) . "&stcomm=$stcomm\" class=\"T3\">";
+    print "<A href=\"contact.php?type=$type&begin=" . chr($i) . "&stcomm=$stcomm\" class=\"T3\">";
     
-    if ($begin == chr($i) ) {
-      print  "<b>-&gt;" . chr($i) . "&lt;-</b>" ; 
-    } else {
-      print  chr($i)  ; 
-  } 
+    if ($begin == chr($i) )
+      {
+	print  "<b>-&gt;" . chr($i) . "&lt;-</b>" ; 
+      }
+    else
+      {
+	print  chr($i)  ; 
+      } 
     print "</A> | ";
   }
   print "</div>";
   
-  if ($sortorder == "DESC") {
-    $sortorder="ASC";
-  } else {
-    $sortorder="DESC";
+  if ($sortorder == "DESC")
+    {
+      $sortorder="ASC";
+    }
+  else
+    {
+      $sortorder="DESC";
   }
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre"><td>';
-  print_liste_field_titre("Nom",$PHP_SELF,"lower(p.name)", $begin);
+  print_liste_field_titre("Nom","contact.php","lower(p.name)", $begin);
   print "</td><td>";
-  print_liste_field_titre("Prénom",$PHP_SELF,"lower(p.firstname)", $begin);
+  print_liste_field_titre("Prénom","contact.php","lower(p.firstname)", $begin);
   print "</td><td>";
-  print_liste_field_titre("Société",$PHP_SELF,"lower(s.nom)", $begin);
+  print_liste_field_titre("Société","contact.php","lower(s.nom)", $begin);
   print "</td><TD>email</TD>";
   print '<td>Téléphone</td>';
   print "</tr>\n";
@@ -160,7 +166,7 @@ if ($result)
 
       print "<TR $bc[$var]>";
       print '<TD><a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.img_file();
-      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->name.'</a></TD>';
+      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/people.php?contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->name.'</a></td>';
       print "<TD>$obj->firstname</TD>";
       
       print '<TD><a href="contact.php?type='.$type.'&socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0" alt="filtrer"></a>&nbsp;';
@@ -168,16 +174,18 @@ if ($result)
       
       print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
       
-      print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+      print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
       
       print "</TR>\n";
       $i++;
     }
   print "</TABLE></p>";
   $db->free();
-} else {
-  print_barre_liste("Liste des contacts $label",$page, $PHP_SELF);
-
+}
+else
+{
+  print_barre_liste("Liste des contacts $label",$page, "contact.php");
+  
   print $db->error();
 }
 

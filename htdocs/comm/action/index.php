@@ -69,21 +69,16 @@ if ($action=='add_action')
     }
   $actioncomm->type = $actionid;
   $actioncomm->contact = $contactid;
-  
   $actioncomm->societe = $socid;
   $actioncomm->note = $note;
-
   $actioncomm->add($user);
 
   $societe = new Societe($db);
   $societe->fetch($socid);
 
-
   $todo = new TodoComm($db);
   $todo->date = mktime(12,0,0,$remonth, $reday, $reyear);
-
   $todo->libelle = $todo_label;
-
   $todo->societe = $societe->id;
   $todo->contact = $contactid;
 
@@ -157,11 +152,11 @@ if ( $db->query($sql) )
       $societe = new Societe($db);
       $societe->fetch($socid);
       
-      print_barre_liste("Liste des actions commerciales réalisées ou à faire sur " . $societe->nom, $page, $PHP_SELF,'',$sortfield,$sortorder,'',$num);
+      print_barre_liste("Liste des actions commerciales réalisées ou à faire sur " . $societe->nom, $page, "index.php",'',$sortfield,$sortorder,'',$num);
     }
   else
     {      
-      print_barre_liste("Liste des actions commerciales réalisées ou à faire", $page, $PHP_SELF,'',$sortfield,$sortorder,'',$num);
+      print_barre_liste("Liste des actions commerciales réalisées ou à faire", $page, "index.php",'',$sortfield,$sortorder,'',$num);
     }
   $i = 0;
   print "<table class=\"noborder\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
