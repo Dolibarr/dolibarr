@@ -182,7 +182,7 @@ if ( $db->query($sql) )
 	  {
 	    $cont = new Contact($db);
 	    $cont->fetch($obj->fk_contact);
-	    print '<a href="'.DOL_URL_ROOT.'/comm/people.php?socid='.$obj->socidp.'&contactid='.$cont->id.'">'.$cont->fullname.'</a>';
+	    print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$cont->id.'">'.$cont->fullname.'</a>';
 	  }
 	else
 	  {

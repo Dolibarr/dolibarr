@@ -556,10 +556,11 @@ if ($_socid > 0)
 	  if ($obj->fk_contact) {
 	    $contact = new Contact($db);
 	    $contact->fetch($obj->fk_contact);
-	    print '<td width="40%"><a href="people.php?socid='.$objsoc->id.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+	    print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.$contact->fullname.'</a></td>';
 	  } else {
 	    print '<td width="40%">&nbsp;</td>';
 	  }
+
 	  /*
 	   */
 	  print '<td width="20%"><a href="../user/fiche.php?id='.$obj->fk_user_author.'">'.$obj->code.'</a></td>';
@@ -647,7 +648,7 @@ if ($_socid > 0)
 		{
 		  $contact = new Contact($db);
 		  $contact->fetch($obj->fk_contact);
-		  print '<td width="40%"><a href="people.php?socid='.$objsoc->id.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+		  print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.$contact->fullname.'</a></td>';
 		}
 	      else
 		{

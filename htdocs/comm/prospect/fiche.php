@@ -367,8 +367,7 @@ if ($socid > 0)
 	    {
 	      $contact = new Contact($db);
 	      $contact->fetch($obj->fk_contact);
-	      //	      print '<td width="40%"><a href="people.php?socid='.$societe->id.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
-	      print '<td width="40%">'.$contact->fullname.'</td>';
+	      print '<td width="40%"><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.$contact->fullname.'</a></td>';
 	    }
 	  else
 	    {
