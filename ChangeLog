@@ -1,8 +1,12 @@
 2003-09-06  Rodolphe Quiédeville  <rq@quiedeville.org>
 
+	* Définition d'un modèle de proposition commerciale par défaut
+	lors de l'activation du module
+
 	* Modification de l'installation, ajout d'un test si l'utilisateur
 	est passé par install.php, si non le renvoie automatiquement sur
 	la page.
+
 	* bug fix sur les url vers les images dans comm/contact.php3 et
 	four/fiche.php3 et fourn/index.php
 	
