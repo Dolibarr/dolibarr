@@ -40,6 +40,8 @@ print '</td>';
 
 print '</td><td valign="top" width="50%" rowspan="3">';
 
+print '<img src="'.DOL_URL_ROOT.'/showgraph.php?graph='.DOL_DATA_ROOT.'/graph/telephonie/commercials/clients.mensuel.png" alt="Nouveaux clients par mois" title="Nouveaux clients par mois"><br /><br />'."\n";
+
 print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=telephoniegraph&file=lignes/commandes.mensuels.png" alt="Commandes de ligne par mois" title="Lignes Actives"><br /><br />'."\n";
 
 print '</td></tr>';
