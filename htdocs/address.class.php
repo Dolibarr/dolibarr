@@ -22,6 +22,7 @@
 
 class Address {
 
+  var $name;
   var $street;
   var $cp;
   var $city;
