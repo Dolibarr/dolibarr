@@ -50,7 +50,8 @@ class modProduit
 		 "insert into llx_rights_def values (30,'Tous les droits sur les produits','produit','a',0);",
 		 "insert into llx_rights_def values (31,'Lire les produits','produit','r',1);",
 		 "insert into llx_rights_def values (32,'Créer modifier les produits','produit','w',0);",
-		 "insert into llx_rights_def values (34,'Supprimer les produits','produit','d',0);"
+		 "INSERT INTO llx_rights_def values (34,'Supprimer les produits','produit','d',0);",
+		 "INSERT INTO llx_boxes_def (name,file) VALUES('Services vendus', 'box_services_vendus.php');"
 		 );
     //"insert into llx_rights_def values (33,'Modifier les produits d\'autrui','produit','m',0);",
     
