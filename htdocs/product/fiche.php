@@ -362,7 +362,7 @@ else
 		}
 	      else
 		{
-		  print "<b>Cet article n'est pas en vente</b>";
+		  print $langs->trans("NotOnSell");
 		}
 	      print '</td></tr>';
 	      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
@@ -558,12 +558,15 @@ else
 
 	  if ($product->type == 1)
 	    {
-	      print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="6" maxlength="5" value="'.$product->duration_value.'">';
-
-		  print '<input name="duration_unit" type="radio" value="d"'.($product->duration_unit=='d'?' checked':'').'>jour&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="w"'.($product->duration_unit=='w'?' checked':'').'>semaine&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="m"'.($product->duration_unit=='m'?' checked':'').'>mois&nbsp;';
-		  print '<input name="duration_unit" type="radio" value="y"'.($product->duration_unit=='y'?' checked':'').'>année';
+	      print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="3" maxlength="5" value="'.$product->duration_value.'">';
+		  print '&nbsp; ';
+		  print '<input name="duration_unit" type="radio" value="d"'.($product->duration_unit=='d'?' checked':'').'>'.$langs->trans("day");
+		  print '&nbsp; ';
+		  print '<input name="duration_unit" type="radio" value="w"'.($product->duration_unit=='w'?' checked':'').'>'.$langs->trans("week");
+		  print '&nbsp; ';
+		  print '<input name="duration_unit" type="radio" value="m"'.($product->duration_unit=='m'?' checked':'').'>'.$langs->trans("month");
+		  print '&nbsp; ';
+		  print '<input name="duration_unit" type="radio" value="y"'.($product->duration_unit=='y'?' checked':'').'>'.$langs->trans("year");
 
 	      print '</td></tr>';
 	    }
