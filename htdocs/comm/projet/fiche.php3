@@ -62,7 +62,7 @@ if ($action == 'delete')
   print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
   print '</table>';
   print "</form>\n";  
-    }
+}
 
 
 
