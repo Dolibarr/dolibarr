@@ -39,7 +39,7 @@ print_titre("Chiffres d'affaires en euros HT");
 
 print '<table width="100%"><tr><td valign="top">';
 
-$sql = "SELECT sum(f.amount) as amount , date_format(f.datef,'%Y-%m') as dm";
+$sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
 $sql .= " FROM llx_facture as f WHERE f.paye = 1";
 if ($socidp)
 {
@@ -51,7 +51,7 @@ pt($db, $sql,"Par mois");
 
 print "</td><td valign=\"top\">";
 
-$sql = "SELECT sum(f.amount) as amount, month(f.datef) as dm";
+$sql = "SELECT sum(f.total) as amount, month(f.datef) as dm";
 $sql .= " FROM llx_facture as f WHERE f.paye = 1";
 if ($socidp)
 {
@@ -64,7 +64,7 @@ pt($db, $sql,"Mois cumulés");
 
 print "<P>";
 
-$sql = "SELECT sum(f.amount) as amount, year(f.datef) as dm";
+$sql = "SELECT sum(f.total) as amount, year(f.datef) as dm";
 $sql .= " FROM llx_facture as f WHERE f.paye = 1";
 if ($socidp)
 {
