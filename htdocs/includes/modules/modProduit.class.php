@@ -51,7 +51,8 @@ class modProduit
 		 "insert into llx_rights_def values (31,'Lire les produits','produit','r',1);",
 		 "insert into llx_rights_def values (32,'Créer modifier les produits','produit','w',0);",
 		 "INSERT INTO llx_rights_def values (34,'Supprimer les produits','produit','d',0);",
-		 "INSERT INTO llx_boxes_def (name,file) VALUES('Services vendus', 'box_services_vendus.php');"
+		 "REPLACE INTO llx_boxes_def (name,file) VALUES('Services vendus', 'box_services_vendus.php');",
+		 "REPLACE INTO llx_boxes_def (name,file) VALUES('Derniers produits', 'box_produits.php');"
 		 );
     //"insert into llx_rights_def values (33,'Modifier les produits d\'autrui','produit','m',0);",
     
@@ -66,8 +67,19 @@ class modProduit
    */
   Function remove()
   {
-    $sql = "DELETE FROM llx_rights_def WHERE module = 'produit';";
-    $this->db->query($sql);
+    $sql = array(
+		 "DELETE FROM llx_rights_def WHERE module = 'produit';",
+		 "DELETE FROM llx_boxes_def WHERE file = 'box_services_vendus.php';",
+		 "DELETE FROM llx_boxes_def WHERE file = 'box_produits.php';"
+		 );
+		 
+
+    for ($i = 0 ; $i < sizeof($sql) ; $i++)
+      {
+	$this->db->query($sql[$i]);
+      }
+
+
   }
 }
 ?>
