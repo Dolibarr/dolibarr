@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,9 +68,12 @@ function llxHeader($head = "")
 
   $menu->add_submenu("config.php3","Config");
 
-  $menu->add("/compta/facture.php3","Factures");
+  if (defined("COMPTA_BANK_FACTURES") && COMPTA_BANK_FACTURES)
+    {
+      $menu->add("/compta/facture.php3","Factures");
+    }
 
-  if (COMPTA_ONLINE_PAYMENT_BPLC)
+  if (defined("COMPTA_ONLINE_PAYMENT_BPLC") && COMPTA_ONLINE_PAYMENT_BPLC)
     {
       $menu->add("/compta/bank/bplc.php","Transactions BPLC");
     }
