@@ -84,10 +84,11 @@ function llxHeader($head = "", $title="", $help_url='')
 
 
   // Vision des recettes-dépenses
-  if ($conf->banque->enabled)
-   { 
-    $menu->add(DOL_URL_ROOT."/compta/bank/","Banques");
+  if ($conf->banque->enabled && $user->rights->banque->lire)
+    { 
+      $menu->add(DOL_URL_ROOT."/compta/bank/","Banque");
     }
+  
   if ($conf->caisse->enabled)
     {
       $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisses");
