@@ -265,6 +265,10 @@ Class pdf_tourteau {
 	      $pdf->Output($file);
 	      
 	    }
+	  else
+	    {
+	      print "Erreur : le répertoire $dir n'existe pas !";
+	    }
 	}
       else
 	{
