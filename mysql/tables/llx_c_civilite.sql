@@ -25,7 +25,6 @@ create table llx_c_civilite
   rowid       integer PRIMARY KEY,
   lang        varchar(8) default 'all' not null,
   code        varchar(6),
-  fk_pays     integer default 0,
   civilite	  varchar(50),
   active      tinyint default 1
 )type=innodb;
