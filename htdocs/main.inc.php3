@@ -19,6 +19,7 @@
  * $Source$
  *
  */
+define('DOL_VERSION','0.1.2');
 
 if (! include ("conf/conf.php"))
 {
