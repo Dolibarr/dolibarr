@@ -640,7 +640,6 @@ if ($propalid) {
   $pageprev = $page - 1;
   $pagenext = $page + 1;
   $limit = $conf->liste_limit;
-  $offset = $limit * $page ;
 
   print_barre_liste("Propositions commerciales", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder);
 
