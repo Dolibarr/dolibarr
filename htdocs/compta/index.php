@@ -231,6 +231,7 @@ if ($user->comm > 0 && $conf->commercial )
 
 /*
  * Factures impayées
+ *
  */
 
 $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc, sum(pf.amount) as am";
@@ -247,9 +248,9 @@ if ( $db->query($sql) )
   if ($num)
     {
       print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-      print '<tr class="liste_titre"><td colspan="3">Factures impayées</td><td>Reçu</td></tr>';
+      print '<tr class="liste_titre"><td colspan="2">Factures impayées</td><td align="right">Montant TTC</td><td align="right">Reçu</td></tr>';
       $var = True;
-      $total = 0;
+	  $total = $totalam = 0;
       while ($i < $num)
 	{
 	  $obj = $db->fetch_object( $i);
@@ -297,11 +298,6 @@ else
 {
   print $db->error();
 }
-/*
- *
- *
- */
-
 
 /*
  * Factures a payer
@@ -309,7 +305,7 @@ else
  */
 if ($user->societe_id == 0)
 {
-  $sql = "SELECT ff.total_ttc as amount, ff.libelle, ff.rowid";
+  $sql = "SELECT ff.rowid, ff.facnumber, ff.libelle, ff.total_ttc as amount";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
   $sql .= " WHERE ff.paye=0";
   
@@ -319,21 +315,26 @@ if ($user->societe_id == 0)
       if ($num)
 	{
 	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-	  print '<tr class="liste_titre"><td colspan="2">Factures à payer</td>';
+      print '<tr class="liste_titre"><td colspan="2">Factures à payer</td><td align="right">Montant TTC</td></tr>';
 	  print "</tr>\n";
 	  $i = 0;
 	  $var = True;
+	  $total = $totalam = 0;
 	  while ($i < $num)
 	    {
 	      $obj = $db->fetch_object( $i);
 	      $var = !$var;
-	      print "<tr $bc[$var]>";
-	      print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
-	      print '<a href="../fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->libelle.'</a></td>';
+    	  print '<tr '.$bc[$var].'><td width="20%"><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.img_file().'</a>';
+	      print '&nbsp;<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
+	      print '<td><a href="../fourn/facture/fiche.php?facid='.$obj->rowid.'">'.$obj->libelle.'</a></td>';
 	      print '<td align="right">'.price($obj->amount).'</td>';
 	      print '</tr>';
+    	  $total +=  $obj->total_ttc;
+    	  $totalam +=  $obj->am;
 	      $i++;
-	}
+        }
+      $var=!$var;
+      print '<tr '.$bc[$var].'><td colspan="2" align="left">Reste à payer : '.price($total-$totalam).'</td><td align="right">'.price($total).'</td></tr>';
 	  print '</table><br>';
 	}
     }
