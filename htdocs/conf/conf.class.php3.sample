@@ -34,7 +34,7 @@ class Conf {
 
     $this->facture = new FactureConf();
 
-    $this->fichinter = new FichinterConf();
+    $this->fichinter = new FicheInterConf();
 
     $this->webcal = new WebcalConf();
 
@@ -78,7 +78,7 @@ class DbConf {
 }
 
 class WebcalConf {
-  Function WebcalConf {
+  Function WebcalConf() {
     $this->enabled = 1;
 
     $this->db = new DbConf();
