@@ -31,9 +31,6 @@ llxHeader();
 
 $db = new Db();
 
-$yn[1] = "oui";
-$yn[0] = "<b>non</b>";
-
 /*
  * Sécurité accés client
  */
@@ -77,6 +74,7 @@ if ($action == 'add_paiement')
 if ($action == 'valid') 
 {
   $fac = new Facture($db);
+  $fac->fetch($facid);
   $result = $fac->set_valid($facid, $user->id);
   if ($result)
     {
