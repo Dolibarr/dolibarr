@@ -1,0 +1,12 @@
+README
+------
+
+IMPORTANT
+---------
+
+Mise à jour de la version 0.4.0 vers la version 0.5.0
+
+- Lors de la mise à jour vers la version 0.5.0 vous devez désactiver
+et réactiver les modules que vous utilisez. La gestion des droits
+inclues des actions lors de l'activation des modules. Cette étape est
+indispensable au bon fonctionnement de Dolibarr.
