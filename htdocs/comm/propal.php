@@ -81,9 +81,9 @@ if ($_POST["action"] == 'add')
 
   $propal->contactid = $_POST["contactidp"];
   $propal->projetidp = $_POST["projetidp"];
-  $propal->modelpdf = $_POST["modelpdf"];
-  $propal->author = $user->id;
-  $propal->note = $_POST["note"];
+  $propal->modelpdf  = $_POST["modelpdf"];
+  $propal->author    = $user->id;
+  $propal->note      = $_POST["note"];
 
   $propal->ref = $_POST["ref"];
 
@@ -155,7 +155,7 @@ if ($_POST["addligne"] == 'Ajouter' && $user->rights->propale->creer)
   if ($_POST["idprod"])
     {
       $propal = new Propal($db);
-      $propal->fetch($propalid);
+      $propal->fetch($_GET["propalid"]);
       $propal->insert_product($_POST["idprod"], $_POST["qty"], $_POST["remise"]);
       propale_pdf_create($db, $_GET["propalid"], $propal->modelpdf);
     }
@@ -166,12 +166,11 @@ if ($_POST["addproduct"] == 'Ajouter' && $user->rights->propale->creer)
   /*
    *  Ajout d'une ligne produit dans la propale
    */
-  if (strlen($_POST["np_desc"]) &&
-      strlen($_POST["np_price"]))
+  if (strlen($_POST["np_desc"]) && strlen($_POST["np_price"]))
     {
-
+      
       $propal = new Propal($db);
-      $propal->fetch($propalid);
+      $propal->fetch($_GET["propalid"]);
             
       $propal->insert_product_generic($_POST["np_desc"], 
 				      $_POST["np_price"], 
@@ -197,14 +196,14 @@ if ($_POST["action"] == 'setpdfmodel' && $user->rights->propale->creer)
 } 
 
 
-if ($action == 'del_ligne' && $user->rights->propale->creer) 
+if ($_GET["action"] == 'del_ligne' && $user->rights->propale->creer) 
 {
   /*
    *  Supprime une ligne produit dans la propale
    */
   $propal = new Propal($db);
-  $propal->fetch($propalid);
-  $propal->delete_product($ligne);
+  $propal->fetch($_GET["propalid"]);
+  $propal->delete_product($_GET["ligne"]);
   propale_pdf_create($db, $_GET["propalid"], $propal->modelpdf);
 }
 
