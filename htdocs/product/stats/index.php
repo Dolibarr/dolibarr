@@ -32,14 +32,14 @@ $mesg = '';
  *
  *
  */
-$sql = "SELECT count(*) FROM llx_product WHERE fk_product_type = 0";
+$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product WHERE fk_product_type = 0";
 if ($db->query($sql))
 {
   $row = $db->fetch_row(0);
   $nbproduct = $row[0];
 }
 $db->free();
-$sql = "SELECT count(*) FROM llx_product WHERE envente = 0 AND fk_product_type = 0";
+$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product WHERE envente = 0 AND fk_product_type = 0";
 if ($db->query($sql))
 {
   $row = $db->fetch_row(0);
@@ -72,7 +72,7 @@ if ($db->query($sql))
   $nbproduct = $row[0];
 }
 $db->free();
-$sql = "SELECT count(*) FROM llx_product WHERE envente = 0 AND fk_product_type = 1";
+$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."product WHERE envente = 0 AND fk_product_type = 1";
 if ($db->query($sql))
 {
   $row = $db->fetch_row(0);
@@ -91,6 +91,40 @@ print '<td width="40%">Nb de service dans le catalogue qui ne sont pas en vente<
 print '<td>'.$nbhv.'</td></tr>';
 
 print '</table>';
+
+
+// Stats des produits en factures, propale, ...
+#print '<br>';
+#print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+#print "<tr class=\"liste_titre\">";
+#print "<td>Produit/Service</td>";
+#print "<td>Qté en facture</td>";
+#print "<td>Qté en propale</td>";
+#print "</tr>\n";
+#$sql = "SELECT p.label, sum(f.qty) as sumf, sum(pr.qty) as sumpr FROM ".MAIN_DB_PREFIX."product as p";
+#$sql.=" left join ".MAIN_DB_PREFIX."facturedet as f on p.rowid = f.fk_product";
+#$sql.=" left join ".MAIN_DB_PREFIX."propaldet as pr on p.rowid = pr.fk_product";
+#$sql.=" group by p.label";
+#if ($db->query($sql))
+#{
+#  $num = $db->num_rows();
+#  $i = 0;
+#      while ($i < $num)
+#	{
+#		$obj = $db->fetch_object( $i);
+#		print "<tr ".$bc[$var].">";
+#		print "<td>".$obj->label."</td>";
+#		print "<td>".$obj->sumf."</td>";
+#		print "<td>".$obj->sumpr."</td>";
+#		print '</tr>';
+#		$i++;
+#	}
+#}
+#else {
+#	print $db->error()." $sql";	
+#}
+#print "</table>\n";
+#$db->free();
 
 $db->close();
 
