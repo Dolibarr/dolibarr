@@ -184,11 +184,11 @@ if ($_GET["action"] == 'create')
       print '<tr><td>'.$langs->trans('CustomerCode').'</td><td colspan="3"><input size="16" type="text" name="code_client" maxlength="15" value="'.$soc->code_client.'"></td></tr>';
       print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
 
-      print '<tr><td>'.$langs->trans('ProfIdSiren').'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
-      print '<td>'.$langs->trans('ProfIdSiret').'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
+          print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
+          print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
+          print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td><td colspan="2">&nbsp;</td></tr>';
 
-      print '<tr><td>'.$langs->trans('ProfIdApe').'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td>';
-      print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
+          print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
   
       print '<tr><td>Forme juridique</td><td colspan="3">';
       $form->select_forme_juridique($soc->forme_juridique_code);
@@ -198,7 +198,7 @@ if ($_GET["action"] == 'create')
       $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
       print '</td></tr>';
 
-      print '<tr><td colspan="2">'.$langs->trans('TVAIntra').'</td><td colspan="2">';
+          print '<tr><td>'.$langs->trans('TVAIntra').'</td><td colspan="3">';
   
       print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
       print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
@@ -226,7 +226,7 @@ elseif ($_GET["action"] == 'edit')
    * Fiche societe en mode edition
    */
    
-  print_titre("Edition de la société");
+  print_titre($langs->trans("EditCompany"));
 
   if ($_GET["socid"])
     {
@@ -282,17 +282,17 @@ elseif ($_GET["action"] == 'edit')
 	  print $soc->code_client;
 	}
 
-      print '<td>Type</td><td>';
+      print '<td>'.$langs->trans("Type").'</td><td>';
       $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id);
       print '</td></tr>';
 
       print '<tr><td>'.$langs->trans('Web').'</td><td colspan="3"><input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
       
-      print '<tr><td>'.$langs->trans('ProfIdSiren').'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
-      print '<td>'.$langs->trans('ProfIdSiret').'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
+      print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td><input type="text" name="siren" size="10" maxlength="9" value="'.$soc->siren.'"></td>';
+      print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
 
-      print '<tr><td>'.$langs->trans('ProfIdApe').'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td>';
-      print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
+      print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td><td colspan="2">&nbsp;</td></tr>';
+      print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$conf->monnaie.'</td></tr>';
 
       print '<tr><td>Forme juridique</td><td colspan="3">';
       $form->select_forme_juridique($soc->forme_juridique_code);
@@ -302,7 +302,7 @@ elseif ($_GET["action"] == 'edit')
       $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
       print '</td></tr>';
 
-      print '<tr><td colspan="2">'.$langs->trans('TVAIntra').'</td><td colspan="2">';
+      print '<tr><td>'.$langs->trans('TVAIntra').'</td><td colspan="3">';
 
       print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
       print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
@@ -430,8 +430,9 @@ else
   if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
   print '</td></tr>';
   
-  print '<tr><td>'.$langs->trans('ProfIdSiren').'</td><td>';
-
+  print '<tr><td>'.$langs->transcountry('ProfId1',$soc->pays_code).'</td><td>';
+  // Si société FR et siren fourni, on le vérifie
+  if ($soc->pays_code == "FR" && $soc->siren) {
   if ($soc->check_siren() == 0)
     {
       print '<a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;';
@@ -442,18 +443,22 @@ else
       // Siren invalide
       print "&nbsp;Code Siren Invalide !</a>";
     }
-
+  }
+  else {
+        print $soc->siren;
+  }
   print '</td>';
 
-  print '<td>'.$langs->trans('ProfIdSiret').'</td><td>'.$soc->siret.'</td></tr>';
+  print '<td>'.$langs->transcountry('ProfId2',$soc->pays_code).'</td><td>'.$soc->siret.'</td></tr>';
 
-  print '<tr><td>'.$langs->trans('ProfIdApe').'</td><td>'.$soc->ape.'</td>';
-  print '<td>Capital</td><td>'.$soc->capital.' '.$conf->monnaie.'</td></tr>';
+  print '<tr><td>'.$langs->transcountry('ProfId3',$soc->pays_code).'</td><td>'.$soc->ape.'</td><td colspan="2">&nbsp;</td></tr>';
+
+  print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">'.$soc->capital.' '.$conf->monnaie.'</td></tr>';
 
   print '<tr><td>Forme juridique</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
   print '<tr><td>Effectif</td><td colspan="3">'.$soc->effectif.'</td></tr>';
 
-  print '<tr><td colspan="2">'.$langs->trans('TVAIntra').'</td><td colspan="2">';
+  print '<tr><td>'.$langs->trans('TVAIntra').'</td><td colspan="3">';
   print $soc->tva_intra;
   print '</td></tr>';
 
