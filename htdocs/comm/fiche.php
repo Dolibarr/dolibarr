@@ -115,12 +115,9 @@ if ($user->societe_id > 0)
  *********************************************************************************/  
 if ($socid > 0)
 {
-
-  $societe = new Societe($db, $socid);
-  
+  // On récupère id societe (courant ou suivant ou précédent)
   $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."c_typent as t, ".MAIN_DB_PREFIX."c_effectif as e ";
   $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
-
   if ($to == 'next') {
     $sql .= " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
   } elseif ($to == 'prev') {
@@ -133,7 +130,12 @@ if ($socid > 0)
 
   if ($result)
     {
-      $objsoc = $db->fetch_object(0);
+      $resp = $db->fetch_object(0);
+
+      // On recupere les donnees societes par l'objet
+      $objsoc = new Societe($db);
+      $objsoc->id=$resp->idp;
+      $objsoc->fetch($resp->idp);
 
       $dac = strftime("%Y-%m-%d %H:%M", time());
       if ($errmesg)
@@ -144,68 +146,65 @@ if ($socid > 0)
     /*
      *
      */
-      $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
+      $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id;
       $head[0][1] = "Fiche société";
       $h = 1;
       
-      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?id='.$societe->id;
+      $head[$h][0] = DOL_URL_ROOT.'/comm/fiche.php?id='.$objsoc->id;
       $head[$h][1] = 'Fiche client';
       $h++;
 
+      if ($conf->compta->enabled) {
+          $head[$h][0] = DOL_URL_ROOT.'/compta/fiche.php?socid='.$objsoc->id;
+          $head[$h][1] = 'Fiche compta';
+          $h++;
+      }
+
       if (file_exists(DOL_DOCUMENT_ROOT.'/sl/'))
 	{
-	  $head[$h][0] = DOL_URL_ROOT.'/sl/fiche.php?id='.$societe->id;
+	  $head[$h][0] = DOL_URL_ROOT.'/sl/fiche.php?id='.$objsoc->id;
 	  $head[$h][1] = 'Fiche catalogue';
 	  $h++;
 	}
       
       if ($soc->fournisseur)
 	{
-	  $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
+	  $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objsoc->id;
 	  $head[$h][1] = 'Fiche fournisseur';
 	  $h++;
 	}
-      $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
+      $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$objsoc->id;
       $head[$h][1] = 'Note';      
       $h++;
+      
       if ($user->societe_id == 0)
 	{
-	  $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$societe->id;
+	  $head[$h][0] = DOL_URL_ROOT.'/docsoc.php?socid='.$objsoc->id;
 	  $head[$h][1] = 'Documents';
 	  $h++;
 	}
 
-      $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$societe->id;
+      $head[$h][0] = DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$objsoc->id;
       $head[$h][1] = 'Notifications';
 
       dolibarr_fiche_head($head, 1);
 
-    print_titre("Fiche client : $objsoc->nom");
-
-    print '<table class="noborder" width="100%" border="0" cellspacing="1">';
-
-    if ($user->societe_id == 0)
-      {
-	print "<td align=\"center\"><a href=\"../compta/fiche.php?socid=$objsoc->idp\">Compta</a></td>";
-	print "<td align=\"center\">[<a href=\"index.php?socidp=$objsoc->idp&action=add_bookmark\">Bookmark</a>]</td>";
-
-      }
-    print "</table>";
     /*
      *
      *
      */
-
-
     print '<table width="100%" border="0">';
     print '<tr><td valign="top">';
-    print '<table class="border" cellspacing="0" border="1" width="100%">';
+    print '<table class="border" cellpadding="3" cellspacing="0" border="1" width="100%">';
 
-    print "<tr><td>Type</td><td> $objsoc->typent</td><td>Effectif</td><td>$objsoc->effectif</td></tr>";
-    print "<tr><td>Tel</td><td> $objsoc->tel&nbsp;</td><td>fax</td><td>$objsoc->fax&nbsp;</td></tr>";
-    print "<tr><td>Ville</td><td colspan=\"3\">".nl2br($objsoc->address)."<br>$objsoc->cp $objsoc->ville</td></tr>";
+    print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">';
+    print $objsoc->nom;
+    print '</td></tr>';
+    print "<tr><td valign=\"top\">Adresse</td><td colspan=\"3\">".nl2br($objsoc->address)."<br>".$objsoc->cp." ".$objsoc->ville." ".$objsoc->pays."</td></tr>";
+    print "<tr><td>Téléphone</td><td> $objsoc->tel&nbsp;</td><td>Fax</td><td>$objsoc->fax&nbsp;</td></tr>";
+    print "<tr><td>Web</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
 
-    print "<tr><td>siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
+    print "<tr><td>Siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
     print "<td>prefix</td><td>";
     if ($objsoc->prefix_comm)
       {
@@ -213,19 +212,28 @@ if ($socid > 0)
       }
     else
       {
-	print "[<a href=\"$PHP_SELF?socid=$objsoc->idp&action=attribute_prefix\">Attribuer</a>]";
+	print "[<a href=\"$PHP_SELF?socid=$objsoc->id&action=attribute_prefix\">Attribuer</a>]";
       }
 
     print "</td></tr>";
 
-    print "<tr><td>Site</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
+    print "<tr><td>Type</td><td> $objsoc->typent</td><td>Effectif</td><td>$objsoc->effectif</td></tr>";
 
     print "</table>";
 
+    if ($user->societe_id == 0)
+    {
+    print "[<a href=\"index.php?socidp=$objsoc->id&action=add_bookmark\">Bookmark fiche</a>]<br>";
+    }
+    print "<br>";
+    
     /*
      *
      */
     print "</td>\n";
+    
+    //if ($conf->propal->enabled) {
+    
     print '<td valign="top" width="50%">';
 
     /*
@@ -237,14 +245,14 @@ if ($socid > 0)
     print '<table border="0" width="100%" cellspacing="0" cellpadding="1">';
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
-    $sql .= " AND s.idp = $objsoc->idp ORDER BY p.datep DESC";
+    $sql .= " AND s.idp = ".$objsoc->id." ORDER BY p.datep DESC";
 
     if ( $db->query($sql) )
       {
 	$num = $db->num_rows();
 	if ($num >0 )
 	  {
-	    print "<tr $bc[$var]><td colspan=\"4\"><a href=\"propal.php?socidp=$objsoc->idp\">Liste des propales ($num)</td></tr>";
+	    print "<tr $bc[$var]><td colspan=\"4\"><a href=\"propal.php?socidp=$objsoc->id\">Liste des propales ($num)</td></tr>";
 	    $var=!$var;
 	  }
 	$i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
@@ -265,6 +273,9 @@ if ($socid > 0)
 	  }
 	$db->free();
       }
+    else {
+        print "Erreur ".$db->error()."<br>".$sql;    
+    }
     /*
      * Commandes
      *
@@ -272,7 +283,7 @@ if ($socid > 0)
     print '<table border="0" width="100%" cellspacing="0" cellpadding="1">';
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.ref, ".$db->pdate("p.date_commande")." as dp";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p WHERE p.fk_soc = s.idp ";
-    $sql .= " AND s.idp = $objsoc->idp ORDER BY p.date_commande DESC";
+    $sql .= " AND s.idp = $objsoc->id ORDER BY p.date_commande DESC";
 
     if ( $db->query($sql) )
       {
@@ -280,7 +291,7 @@ if ($socid > 0)
 	if ($num >0 )
 	  {
 	    print "<tr $bc[$var]>";
-	    print '<td colspan="4"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socidp='.$objsoc->idp.'">Liste des commandes ('.$num.')</td></tr>';
+	    print '<td colspan="4"><a href="'.DOL_URL_ROOT.'/commande/liste.php?socidp='.$objsoc->id.'">Liste des commandes ('.$num.')</td></tr>';
 	  }
 	$i = 0;	$now = time(); $lim = 3600 * 24 * 15 ;
 	while ($i < $num && $i < 2)
@@ -307,14 +318,14 @@ if ($socid > 0)
      *
      */
     $sql  = "SELECT p.rowid,p.title,p.ref,".$db->pdate("p.dateo")." as do";
-    $sql .= " FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $objsoc->idp";
+    $sql .= " FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $objsoc->id";
     if ( $db->query($sql) ) {
       print "<table border=1 cellspacing=0 width=100% cellpadding=\"1\">";
       $i = 0 ; 
       $num = $db->num_rows();
       if ($num > 0) {
 	$tag = !$tag; print "<tr $bc[$tag]>";
-	print "<td colspan=\"2\"><a href=\"../projet/index.php?socidp=$objsoc->idp\">liste des projets ($num)</td></tr>";
+	print "<td colspan=\"2\"><a href=\"../projet/index.php?socidp=$objsoc->id\">liste des projets ($num)</td></tr>";
       }
       while ($i < $num && $i < 5) {
 	$obj = $db->fetch_object( $i);
@@ -337,21 +348,21 @@ if ($socid > 0)
      */
     print "</td></tr>";
     print "</table></div>\n";
+    
     /*
      * Barre d'action
      *
      */
-
     print '<div class="tabsAction">';
 
     if ($conf->propal->enabled && $user->rights->propale->creer)
       {
-	print '<a class="tabAction" href="addpropal.php?socidp='.$objsoc->idp.'&amp;action=create">Créer une proposition</a>';
+	print '<a class="tabAction" href="addpropal.php?socidp='.$objsoc->id.'&amp;action=create">Créer une proposition</a>';
       }
 
     if ($conf->commande->enabled && $user->rights->commande->creer)
       {
-	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->idp.'&amp;action=create">Créer une commande</a>';
+	print '<a class="tabAction" href="'.DOL_URL_ROOT.'/commande/fiche.php?socidp='.$objsoc->id.'&amp;action=create">Créer une commande</a>';
       }
 
     if ($conf->projet->enabled && $user->rights->projet->creer)
@@ -361,11 +372,16 @@ if ($socid > 0)
 
     if ($conf->fichinter->enabled)
       {
-	print '<a class="tabAction" href="../fichinter/fiche.php?socidp='.$objsoc->idp.'&amp;action=create">Intervention</a>';
+	print '<a class="tabAction" href="../fichinter/fiche.php?socidp='.$objsoc->id.'&amp;action=create">Intervention</a>';
       }
+
+    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid.'&amp;action=create">Ajouter un contact</a>';
+    
+    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/societe/notify/fiche.php?socid='.$socid.'">Notifications</a>';
     
     print '</div>';
-
+    print '<br>';
+    
     /*
      *
      *
@@ -373,7 +389,7 @@ if ($socid > 0)
      */
     if ($action == 'changevalue') {
       print "<hr noshade>";
-      print "<form action=\"index.php?socid=$objsoc->idp\" method=\"post\">";
+      print "<form action=\"index.php?socid=$objsoc->id\" method=\"post\">";
       print "<input type=\"hidden\" name=\"action\" value=\"cabrecrut\">";
       print "Cette société est un cabinet de recrutement : ";
       print "<select name=\"selectvalue\">";
@@ -394,9 +410,9 @@ if ($socid > 0)
       print '<tr class="liste_titre"><td>Pr&eacute;nom Nom</td>';
       print '<td>Poste</td><td>T&eacute;l</td>';
       print "<td>Fax</td><td>Email</td>";
-      print "<td align=\"center\"><a href=\"../contact/fiche.php?socid=$objsoc->idp&action=create\">Ajouter</a></td></tr>";
+      print "<td align=\"center\"><a href=\"../contact/fiche.php?socid=$objsoc->id&action=create\">Ajouter</a></td></tr>";
     
-      $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
+      $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $objsoc->id  ORDER by p.datec";
       $result = $db->query($sql);
       $i = 0 ; $num = $db->num_rows(); $tag = True;
       while ($i < $num)
@@ -407,7 +423,7 @@ if ($socid > 0)
 
 	print '<td>';
 
-	print '<a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+	print '<a href="action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
 	if ($obj->note)
 	  {
@@ -415,9 +431,9 @@ if ($socid > 0)
 	  }
 	print "</td>";
 	print "<td>$obj->poste&nbsp;</td>";
-	print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
-	print '<td><a href="action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
-	print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
+	print '<td><a href="action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->phone.'</a>&nbsp;</td>';
+	print '<td><a href="action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->fax.'</a>&nbsp;</td>';
+	print '<td><a href="action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->email.'</a>&nbsp;</td>';
 	print "<td align=\"center\">";
 	print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
 	print img_edit();
@@ -442,7 +458,7 @@ if ($socid > 0)
 
       $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
       $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-      $sql .= " WHERE a.fk_soc = $objsoc->idp ";
+      $sql .= " WHERE a.fk_soc = $objsoc->id ";
       $sql .= " AND u.rowid = a.fk_user_author";
       $sql .= " AND c.id=a.fk_action AND a.percent < 100";
       $sql .= " ORDER BY a.datea DESC, a.id DESC";
@@ -491,7 +507,7 @@ if ($socid > 0)
 	  if ($obj->fk_contact) {
 	    $contact = new Contact($db);
 	    $contact->fetch($obj->fk_contact);
-	    print '<td width="40%"><a href="people.php?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+	    print '<td width="40%"><a href="people.php?socid='.$objsoc->id.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
 	  } else {
 	    print '<td width="40%">&nbsp;</td>';
 	  }
@@ -521,7 +537,7 @@ if ($socid > 0)
 
       $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
       $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-      $sql .= " WHERE a.fk_soc = $objsoc->idp ";
+      $sql .= " WHERE a.fk_soc = $objsoc->id ";
       $sql .= " AND u.rowid = a.fk_user_author";
       $sql .= " AND c.id=a.fk_action AND a.percent = 100";
       $sql .= " ORDER BY a.datea DESC, a.id DESC";
@@ -582,7 +598,7 @@ if ($socid > 0)
 		{
 		  $contact = new Contact($db);
 		  $contact->fetch($obj->fk_contact);
-		  print '<td width="40%"><a href="people.php?socid='.$objsoc->idp.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
+		  print '<td width="40%"><a href="people.php?socid='.$objsoc->id.'&contactid='.$contact->id.'">'.$contact->fullname.'</a></td>';
 		}
 	      else
 		{
