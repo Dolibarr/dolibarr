@@ -39,7 +39,6 @@ insert into llx_boxes (box_id, position) values (3,0);
 --
 -- Constantes de configuration
 --
-
 insert into llx_const(name, value, type) values ('FAC_PDF_FAX','01 02 03 04 05','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_SIRET','123 456 789','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_INTITULE','Dolibarr','chaine');
@@ -47,9 +46,7 @@ insert into llx_const(name, value, type) values ('FAC_PDF_SIREN','123 456 789 12
 insert into llx_const(name, value, type) values ('FAC_PDF_TEL','05 04 03 02 01','chaine');
 insert into llx_const(name, value, type) values ('FAC_PDF_ADRESSE','1 quai Martin\n56400 Auray','texte');
 
-
-
-insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2001','chaine','Année de départ');
+insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2003','chaine','Année de départ');
 
 insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
 
