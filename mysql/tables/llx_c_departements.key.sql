@@ -1,9 +1,5 @@
--- ========================================================================
--- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
---
--- $Id$
--- $Source$
+-- ============================================================================
+-- Copyright (C) 2005 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -19,19 +15,12 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- ========================================================================
-
-create table llx_c_departements
-(
-  rowid            integer    AUTO_INCREMENT PRIMARY KEY,
-  code_departement varchar(6) NOT NULL,
-  fk_region        integer,
-  cheflieu         varchar(7),
-  tncc             integer,
-  ncc              varchar(50),
-  nom              varchar(50),
-  active           tinyint DEFAULT 1  NOT NULL
-)type=innodb;
+-- $Id$
+-- $Source$
+--
+-- ============================================================================
 
 
+ALTER TABLE llx_c_departements ADD UNIQUE uk_departements (code_departement,fk_region);
 
+ALTER TABLE llx_c_departements ADD INDEX idx_departements_fk_region (fk_region);
