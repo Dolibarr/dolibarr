@@ -24,6 +24,16 @@ require("./lib/webcal.class.php3");
 require("./cactioncomm.class.php3");
 require("./actioncomm.class.php3");
 
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
+
+
 llxHeader();
 
 $db = new Db();
