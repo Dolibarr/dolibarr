@@ -287,21 +287,25 @@ if ($conf->facture->enabled)
 	  print '<tr class="liste_titre"><td colspan="2">Factures clients impayées ('.$num.')</td><td align="right">Montant TTC</td><td align="right">Reçu</td></tr>';
 	  $var = True;
 	  $total = $totalam = 0;
-	  while ($i < $num && $i < 20)
+	  while ($i < $num)
 	    {
 	      $obj = $db->fetch_object();
-	      $var=!$var;
-	      print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>';
-	      print '&nbsp;<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
-	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-	      print '<td align="right">'.price($obj->total_ttc).'</td>';
-	      print '<td align="right">'.price($obj->am).'</td></tr>';
+
+	      if ($i < 20)
+		{
+		  $var=!$var;
+		  print '<tr '.$bc[$var].'><td width="20%"><a href="facture.php?facid='.$obj->rowid.'">'.img_file().'</a>';
+		  print '&nbsp;<a href="facture.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
+		  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+		  print '<td align="right">'.price($obj->total_ttc).'</td>';
+		  print '<td align="right">'.price($obj->am).'</td></tr>';
+		}
 	      $total +=  $obj->total_ttc;
 	      $totalam +=  $obj->am;
 	      $i++;
 	    }
 	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td colspan="2" align="left">Reste à encaisser : '.price($total-$totalam).'</td><td align="right">'.price($total).'</td><td align="right">'.price($totalam).'</td></tr>';
+	  print '<tr '.$bc[$var].'><td colspan="4" align="center">Reste à encaisser : '.price($total-$totalam).'</td></tr>';
 	  print "</table><br>";
 	}
       $db->free();
