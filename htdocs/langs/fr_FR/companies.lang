@@ -1,5 +1,7 @@
 # Dolibarr language file - fr_FR - soc
 ErrorBadEMail=EMail %s invalide
+ErrorCompanyNameAlreadyExists=Le nom de société %s existe déjà. Choisissez-en une autre.
+ErrorPrefixAlreadyExists=Le prefix %s existe déjà. Choisissez-en un autre.
 MenuNewCompany=Nouvelle société
 MenuNewCustomer=Nouveau client
 MenuNewProspect=Nouveau prospect

@@ -1,5 +1,7 @@
 # Dolibarr language file - en_US - soc
 ErrorBadEMail=EMail %s is wrong
+ErrorCompanyNameAlreadyExists=Company name %s already exists. Choose another one.
+ErrorPrefixAlreadyExists=Prefix %s already exists. Choose another one.
 MenuNewCompany=New company
 MenuNewCustomer=New customer
 MenuNewProspect=New prospect
