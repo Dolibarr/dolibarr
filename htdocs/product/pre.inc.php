@@ -40,9 +40,12 @@ function llxHeader($head = "", $urlp = "", $title="")
   $menu->add_submenu("liste.php?type=0","Liste");
   $menu->add_submenu("fiche.php?action=create&amp;type=0","Nouveau produit");
 
-  $menu->add(DOL_URL_ROOT."/product/index.php?type=1", "Services");
-  $menu->add_submenu("liste.php?type=1","Liste");
-  $menu->add_submenu("fiche.php?action=create&amp;type=1","Nouveau service");
+  if (defined("MAIN_MODULE_SERVICE") && MAIN_MODULE_SERVICE)
+    {
+      $menu->add(DOL_URL_ROOT."/product/index.php?type=1", "Services");
+      $menu->add_submenu("liste.php?type=1","Liste");
+      $menu->add_submenu("fiche.php?action=create&amp;type=1","Nouveau service");
+    }
 
   if (defined("MAIN_MODULE_BOUTIQUE") && MAIN_MODULE_BOUTIQUE)
     {
@@ -66,7 +69,8 @@ function llxHeader($head = "", $urlp = "", $title="")
   $menu->add("stats/", "Statistiques");
   $menu->add_submenu("popuprop.php", "Popularité");
 
-  $menu->add("stock/", "Stock");
+  if (defined("MAIN_MODULE_STOCK"))
+    $menu->add("stock/", "Stock");
 
   left_menu($menu->liste);
   /*

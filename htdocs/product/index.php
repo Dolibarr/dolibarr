@@ -51,9 +51,12 @@ print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td colspan="2">Hors vente</td></tr>';
 print "<tr $bc[0]>";
 print '<td><a href="liste.php?type=0&amp;envente=0">Produits hors vente</a></td></tr>';
-print "<tr $bc[1]>";
-print '<td><a href="liste.php?type=1&amp;envente=0">Services hors vente</a></td></tr></table>';
-
+if (defined("MAIN_MODULE_SERVICE") && MAIN_MODULE_SERVICE)
+{
+  print "<tr $bc[1]>";
+  print '<td><a href="liste.php?type=1&amp;envente=0">Services hors vente</a></td></tr>';
+}
+print '</table>';
 print '</td><td valign="top" width="70%">';
 /*
  * Derniers produits
