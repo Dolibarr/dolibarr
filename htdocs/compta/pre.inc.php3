@@ -21,19 +21,6 @@
  */
 require("../main.inc.php3");
 
-$strmonth[1] = "Janvier";
-$strmonth[2] = "F&eacute;vrier";  
-$strmonth[3] = "Mars";  
-$strmonth[4] = "Avril";  
-$strmonth[5] = "Mai"; 
-$strmonth[6] = "Juin"; 
-$strmonth[7] = "Juillet";  
-$strmonth[8] = "Ao&ucirc;t"; 
-$strmonth[9] = "Septembre";
-$strmonth[10] = "Octobre";
-$strmonth[11] = "Novembre";
-$strmonth[12] = "D&eacute;cembre";
-
 function llxHeader($head = "") {
   global $user, $conf;
 
