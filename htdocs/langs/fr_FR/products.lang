@@ -3,6 +3,7 @@ Products=Produits
 Services=Services
 Product=Produit
 Service=Service
+Create=Créer
 NewProduct=Nouveau produit
 NewService=Nouveau service
 ProductCode=Code produit
