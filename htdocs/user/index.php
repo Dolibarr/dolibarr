@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,15 +38,15 @@ llxHeader();
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=isset($_GET["page"])?$_GET["page"]:$_POST["page"];
-
+if (! $sortfield) {
+    $sortfield="u.name";
+}
 
 print_titre($langs->trans("ListOfUsers"));
 
 $sql = "SELECT u.rowid, u.name, u.firstname, u.code, u.login, u.module_comm, u.module_compta";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql .= " ORDER BY ";
-if ($sortfield) { $sql.="$sortfield $sortorder"; }
-else { $sql.="u.name"; }
+if ($sortfield) { $sql.=" ORDER BY $sortfield $sortorder"; }
 
 $result = $db->query($sql);
 if ($result)
@@ -58,10 +58,10 @@ if ($result)
 
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Lastname"),"index.php","name","","","",$sortfield);
-    print_liste_field_titre($langs->trans("Firstname"),"index.php","firstname","","","",$sortfield);
-    print_liste_field_titre($langs->trans("Login"),"index.php","login","","","",$sortfield);
-    print_liste_field_titre($langs->trans("Code"),"index.php","code","","","",$sortfield);
+    print_liste_field_titre($langs->trans("Lastname"),"index.php","u.name","","","",$sortfield);
+    print_liste_field_titre($langs->trans("Firstname"),"index.php","u.firstname","","","",$sortfield);
+    print_liste_field_titre($langs->trans("Login"),"index.php","u.login","","","",$sortfield);
+    print_liste_field_titre($langs->trans("Code"),"index.php","u.code","","","",$sortfield);
     print "</tr>\n";
     $var=True;
     while ($i < $num)
