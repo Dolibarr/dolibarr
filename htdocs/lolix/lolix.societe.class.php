@@ -93,7 +93,7 @@ class LolixSociete {
     {
       $this->id = $socid;
 
-      $sql = "SELECT s.nom,s.siren,tel,url,fax";
+      $sql = "SELECT s.nom,s.active,s.siren,s.tel,s.url,s.fax,";
       $sql .= $this->db->pdate("s.datec")." as dc";
       $sql .= " FROM lolixfr.societe as s";
       $sql .= " WHERE s.idp = ".$this->id;
@@ -105,6 +105,7 @@ class LolixSociete {
 	      $obj = $this->db->fetch_object(0);
 
 	      $this->nom = $obj->nom;
+	      $this->active = $obj->active;
 	      $this->tel = $obj->tel;
 	      $this->fax = $obj->fax;
 	      $this->url = $obj->url;
