@@ -82,7 +82,7 @@ function llxHeader($head = "", $urlp = "") {
 	}      
     }
 
-  $menu->add("system/", "system");
+  $menu->add("system/", "System");
 
   left_menu($menu->liste);
 }
