@@ -42,33 +42,30 @@ if ($action == 'update')
  *
  */
 
+if ($page < 0) { 
+  $page = 0 ; }
 
-  if ($page == -1) { 
-    $page = 0 ; 
-  }
-
-  $limit = $conf->liste_limit;
-  $offset = $limit * $page ;
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
   
-  if ($sortfield == "")
-    {
-      $sortfield="p.tms";
-    }
-  if ($sortorder == "")
-    {
-      $sortorder="DESC";
-    }
+if ($sortfield == "") {
+  $sortfield="p.tms"; }
+     
+if ($sortorder == "")
+{
+  $sortorder="DESC";
+}
   
-  $sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p";
-  $sql .= " WHERE p.fk_product_type = $type";
-  if ($sref)
-    {
-      $sql .= " AND lower(p.ref) like '%".strtolower($sref)."%'";
-    }
-  if ($snom)
-    {
-      $sql .= " AND lower(p.label) like '%".strtolower($snom)."%'";
-    }
+$sql = "SELECT p.rowid, p.label, p.price, p.ref FROM llx_product as p";
+$sql .= " WHERE p.fk_product_type = $type";
+if ($sref)
+{
+  $sql .= " AND lower(p.ref) like '%".strtolower($sref)."%'";
+}
+if ($snom)
+{
+  $sql .= " AND lower(p.label) like '%".strtolower($snom)."%'";
+}
 
   $sql .= " ORDER BY $sortfield $sortorder ";
   $sql .= $db->plimit($limit + 1 ,$offset);
