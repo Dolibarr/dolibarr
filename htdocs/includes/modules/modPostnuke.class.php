@@ -39,6 +39,9 @@ class modPostnuke extends DolibarrModules
     $this->const_config = MAIN_MODULE_POSTNUKE;
 
     $this->depends = array();
+
+    $this->const = array();
+    $this->boxes = array();
   }
   /*
    *

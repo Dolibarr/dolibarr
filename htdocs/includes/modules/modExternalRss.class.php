@@ -40,6 +40,7 @@ class modExternalRss extends DolibarrModules
 
     $this->depends = array();
 
+    $this->const = array();
     $this->boxes = array();
     /*
      * Boites

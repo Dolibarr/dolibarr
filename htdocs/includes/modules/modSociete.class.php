@@ -29,7 +29,6 @@ class modSociete extends DolibarrModules
    * Initialisation
    *
    */
-
   Function modSociete($DB)
   {
     $this->db = $DB ;
@@ -38,7 +37,6 @@ class modSociete extends DolibarrModules
     $this->description = "Module société";
     $this->const_name = "MAIN_MODULE_SOCIETE";
     $this->const_config = MAIN_MODULE_SOCIETE;
-
 
     $this->depends = array();
 

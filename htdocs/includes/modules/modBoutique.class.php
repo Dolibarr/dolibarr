@@ -20,7 +20,9 @@
  *
  */
 
-class modBoutique
+include_once "DolibarrModules.class.php";
+
+class modBoutique extends DolibarrModules
 {
 
   /*
@@ -31,27 +33,36 @@ class modBoutique
   Function modBoutique($DB)
   {
     $this->db = $DB ;
+
+    $this->name = "Boutique";
+    $this->description = "Gestion des boutiques";
+    $this->const_name = "MAIN_MODULE_BOUTIQUE";
+    $this->const_config = MAIN_MODULE_BOUTIQUE;
+
+    $this->depends = array();
+
+    $this->const = array();
+    $this->boxes = array();
+    /*
+     * Boites
+     */
+    $this->boxes[0][0] = "Livres";
+    $this->boxes[0][1] = "box_boutique_livre.php";
   }
   /*
    *
    *
    *
    */
-
   Function init()
   {
     /*
      *  Activation du module
      */
 
-    $sql = array(
-		 "REPLACE INTO llx_boxes_def (name,file) VALUES('Livres', 'box_boutique_livre.php');"
-		 );
+    $sql = array();
     
-    for ($i = 0 ; $i < sizeof($sql) ; $i++)
-      {
-	$this->db->query($sql[$i]);
-      }
+    return $this->_init($sql);
   }
   /*
    *
@@ -59,8 +70,9 @@ class modBoutique
    */
   Function remove()
   {
-    $sql = "DELETE FROM llx_boxes_def WHERE file = 'box_boutique_livre.php';";
-    $this->db->query($sql);
+    $sql = array();
+
+    return $this->_remove($sql);
   }
 }
 ?>

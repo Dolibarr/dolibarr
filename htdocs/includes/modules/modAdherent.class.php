@@ -21,9 +21,9 @@
  *
  */
 
-include_once "modDolibarrModules.class.php";
+include_once "DolibarrModules.class.php";
 
-class modAdherent extends modDolibarrModules
+class modAdherent extends DolibarrModules
 {
 
   /*
@@ -35,6 +35,13 @@ class modAdherent extends modDolibarrModules
   {
     $this->db = $DB ;
     $this->depends = array();
+
+    $this->name = "Adhérents";
+    $this->description = "Gestion des adhérents d'une association";
+    $this->const_name = "MAIN_MODULE_ADHERENT";
+    $this->const_config = MAIN_MODULE_ADHERENT;
+
+    $this->config_page_url = "adherent.php";
 
     $this->const = array();
     $this->boxes = array();

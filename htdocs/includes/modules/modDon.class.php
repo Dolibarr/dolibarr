@@ -19,38 +19,43 @@
  * $Source$
  *
  */
+include_once "DolibarrModules.class.php";
 
-class modDon
+class modDon  extends DolibarrModules
 {
 
   /*
    * Initialisation
    *
    */
-
   Function modDon($DB)
   {
     $this->db = $DB ;
+
+    $this->name = "Don";
+    $this->description = "Gestion des dons (expérimental)";
+    $this->const_name = "MAIN_MODULE_DON";
+    $this->const_config = MAIN_MODULE_DON;
+
+    $this->depends = array();
+
+    $this->const = array();
+    $this->boxes = array();
   }
   /*
    *
    *
    *
    */
-
   Function init()
   {
     /*
      *  Activation du module
      */
 
-    $sql = array(
-		 );
+    $sql = array();
     
-    for ($i = 0 ; $i < sizeof($sql) ; $i++)
-      {
-	$this->db->query($sql[$i]);
-      }
+    return $this->_init($sql);
   }
   /*
    *
@@ -58,7 +63,9 @@ class modDon
    */
   Function remove()
   {
-   
+    $sql = array();
+
+    return $this->_remove($sql);   
   }
 }
 ?>
