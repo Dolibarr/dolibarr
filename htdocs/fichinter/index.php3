@@ -37,7 +37,7 @@ if ($sortorder == "")
 }
 if ($sortfield == "")
 {
-  $sortfield="nom";
+  $sortfield="f.datei";
 }
 
 
@@ -51,7 +51,7 @@ if ($user->societe_id > 0) {
   $sql .= " AND s.idp = " . $user->societe_id;
 }
 
-$sql .= " ORDER BY f.datei DESC ;";
+$sql .= " ORDER BY $sortfield DESC ;";
 
 if ( $db->query($sql) )
 {
