@@ -23,7 +23,7 @@
  *
  */
 
-/*!	\file htdocs/compta/bank/account.php
+/**	    \file       htdocs/compta/bank/account.php
 		\ingroup    banque
 		\brief      Page de détail des transactions bancaires
 		\version    $Revision$
@@ -187,30 +187,10 @@ if ($account > 0)
       $mesg.= '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).'">'.img_next().'</a>';
     }
   print_fiche_titre("Journal de trésorerie du compte : " .$acct->label,$mesg);
-  print '<br>';
 
-  print '<form method="post" action="account.php">';
-  print '<input type="hidden" name="action" value="search">';
-  print '<input type="hidden" name="account" value="' . $acct->id . '">';
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-  print "<tr>";
-  print '<td>&nbsp;</td>';
-  print '<td colspan="3"><input type="text" name="req_desc" value="'.$_POST["req_desc"].'" size="40"></TD>';
-  print '<td align="right"><input type="text" name="req_debit" value="'.$_POST["req_debit"].'" size="6"></TD>';
-  print '<td align="right"><input type="text" name="req_credit" value="'.$_POST["req_credit"].'" size="6"></TD>';
-  print '<td align="center"><input type="submit" value="'.$langs->trans("Search").'"></td>';
-  print '<td align="center">';
-  if ($user->rights->banque->modifier)
-    {
-      print '<a href="rappro.php?account='.$acct->id.'">Rappro</a>';
-    }
-  else
-    {
-      print "&nbsp;";
-    }
-  print '</td>';
-  print "</tr>\n";
-  print "</form>\n";
+
+  print '<br>';
+  print '<table class="border" width="100%">';
 
   /*
    * Affiche tableau des transactions bancaires
@@ -226,8 +206,30 @@ if ($account > 0)
 
   print '<tr class="liste_titre">';
   print '<td>Date Ope</td><td>Valeur</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td>';
-  print '<td align="right">Débit</td><td align="right">Crédit</td><td align="right">Solde</td>';
-  print '<td align="center">Relevé</td></tr>';
+  print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td><td align="right">Solde</td>';
+  print '<td align="center">'.$langs->trans("AccountStatement").'</td></tr>';
+
+  print '<form method="post" action="account.php">';
+  print '<input type="hidden" name="action" value="search">';
+  print '<input type="hidden" name="account" value="' . $acct->id . '">';
+  print '<tr class="liste_titre">';
+  print '<td colspan="3">&nbsp;</td>';
+  print '<td><input type="text" name="req_desc" value="'.$_POST["req_desc"].'" size="40"></td>';
+  print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$_POST["req_debit"].'" size="6"></td>';
+  print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$_POST["req_credit"].'" size="6"></td>';
+  print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
+  print '<td align="center">';
+  if ($user->rights->banque->modifier)
+    {
+        print '<a class="tabAction" href="rappro.php?account='.$acct->id.'">'.$langs->trans("Rappro").'</a>';
+    }
+  else
+    {
+    print "&nbsp;";
+    }
+  print '</td>';
+  print "</tr>\n";
+  print "</form>\n";
 
   /* Another solution
    * create temporary table solde type=heap select amount from llx_bank limit 100 ;
@@ -266,18 +268,24 @@ if ($account > 0)
       _print_lines($db, $sql, $acct);
     }
 
+
   /*
    * Formulaire de saisie d'une opération hors factures
    *
    */
   if ($user->rights->banque->modifier)
     {
-      print "<tr><td colspan=\"8\">&nbsp;</td></tr>\n";
+      print "<tr class=\"noborder\"><td colspan=\"8\">&nbsp;</td></tr>\n";
+
       print "<tr>";
       print "<td align=\"left\" colspan=\"8\"><b>Saisie d'une transaction hors facture</b></td></tr>";
       print '<tr>';
-      print '<td><input name="dateoy" type="text" size="3" value="'.strftime("%Y",time()).'" maxlength="4">';
-      print '<input name="dateo" type="text" size="3" maxlength="4"></td>';
+      print '<td><small>YYYY MMDD</small></td><td colspan="2">&nbsp;</td><td>'.$langs->trans("Description").'</td><td align=right>0000.00</td><td align=right>0000.00</td>';
+      print '<td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td>';
+      print '</tr>';
+      print '<tr>';
+      print '<td nowrap><input name="dateoy" type="text" size="2" value="'.strftime("%Y",time()).'" maxlength="4">';
+      print '<input name="dateo" type="text" size="2" maxlength="4"></td>';
       print '<td colspan="2"><select name="operation">';
       print '<option value="CB">CB';
       print '<option value="CHQ">CHQ';
@@ -294,11 +302,8 @@ if ($account > 0)
       print "<td colspan=\"2\" align=\"center\">";
       print "<select name=\"cat1\">$options</select>";
       print '</td></tr>';
-      print '<tr>';
-      print '<td><small>YYYY MMDD</small></td><td colspan="2">&nbsp;</td><td>'.$langs->trans("Description").'</td><td align=right>0000.00</td><td align=right>0000.00</td>';
-      print '<td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td>';
-      print '</tr>';
     }
+
 
   print "</table>";
   if ($user->rights->banque->modifier)

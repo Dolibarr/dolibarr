@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  * $Source$
  */
 
-/*!	\file htdocs/compta/bank/rappro.php
+/**	    \file       htdocs/compta/bank/rappro.php
 		\ingroup    banque
 		\brief      Page de rapprochement bancaire
 		\version    $Revision$
@@ -95,22 +95,6 @@ if ($result) {
 }
 
 
-// Recupère nom du dernier relevé
-$sql = "SELECT max(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE fk_account=".$_GET["account"];
-if ( $db->query($sql) )
-{
-  if ( $db->num_rows() )
-    {
-      $last_releve = $db->result(0, 0);
-    }
-  $db->free();
-}
-else
-{
-  dolibarr_print_error($db);
-}
-
-
 /*
  * Affichage liste des transactions à rapprocher
  */
@@ -134,22 +118,52 @@ if ($result)
   }
   else {
 
-    print_titre('Rapprochement compte bancaire: <a href="account.php?account='.$_GET["account"].'">'.$acct->label.'</a>');
+    print_titre('Rapprochement compte bancaire : <a href="account.php?account='.$_GET["account"].'">'.$acct->label.'</a>');
     print '<br>';
 
     if ($msg) {
         print "$msg<br><br>";
     }
 
+    // Affiche nom des derniers relevés
+    $nbmax=5;
+    $sql = "SELECT distinct num_releve FROM ".MAIN_DB_PREFIX."bank";
+    $sql.= " WHERE fk_account=".$_GET["account"];
+    $sql.= " ORDER BY num_releve DESC";
+    $sql.= " LIMIT ".($nbmax+1);
+    print $langs->trans("LastAccountStatements").' : ';
+    $resultr=$db->query($sql);
+    $liste="";
+    if ($resultr)
+    {
+        $num=$db->num_rows();
+        $i=0;
+        while (($i < $num) && ($i < $nbmax))
+        {
+            $objr = $db->fetch_object($resultr);
+            $last_releve = $objr->num_releve;
+            $i++;
+            $liste='<a href="releve.php?account='.$_GET["account"].'&amp;num='.$objr->num_releve.'">'.$objr->num_releve.'</a> &nbsp; '.$liste;
+        }
+        if ($num >= $nbmax) $liste="... &nbsp; ".$liste;
+        print "$liste";
+        if ($num > 0) print '<br><br>';
+        else print $langs->trans("None").'<br><br>';
+    }
+    else
+    {
+        dolibarr_print_error($db);
+    }
+
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
-	print '<td>Date Ope</td>';
-	print '<td>Date Valeur</td>';
+	print '<td>'.$langs->trans("Date").'</td>';
+	print '<td>'.$langs->trans("DateValue").'</td>';
 	print '<td>'.$langs->trans("Type").'</td>';
 	print '<td>'.$langs->trans("Description").'</td>';
-	print '<td align="right">Debit</td>';
-	print '<td align="right">Credit</td>';
-	print '<td align="center" width="100">Releve<br>(Ex: YYYYMM)</td>';
+	print '<td align="right">'.$langs->trans("Debit").'</td>';
+	print '<td align="right">'.$langs->trans("Credit").'</td>';
+	print '<td align="center" width="100">'.$langs->trans("AccountStatement").'<br>(Ex: YYYYMM)</td>';
 	print '<td align="center" width="100" colspan="2">'.$langs->trans("Action").'</td>';
 	print "</tr>\n";
   }
@@ -157,7 +171,7 @@ if ($result)
   $i = 0;
   while ($i < $num)
     {
-      $objp = $db->fetch_object();
+      $objp = $db->fetch_object($result);
 
       $var=!$var;
       print "<tr $bc[$var]>";
@@ -182,13 +196,13 @@ if ($result)
     
       if ($objp->do <= mktime() ) {
 	      print "<td align=\"center\">";
-	      print "<input name=\"num_releve\" type=\"text\" value=\"\" size=\"8\">";
+	      print "<input class=\"flat\" name=\"num_releve\" type=\"text\" value=\"\" size=\"8\">";
           if ($options) {
           	print "<br><select name=\"cat1\">$options";
           	print "</select>";
           }
 	      print "</td>";
-	      print "<td align=\"center\"><input type=\"submit\" value=\"".$langs->trans("Rapprocher")."\">";
+	      print "<td align=\"center\"><input class=\"button\" type=\"submit\" value=\"".$langs->trans("Rapprocher")."\">";
           print "</td>";
 	  }
 	  else {
@@ -236,8 +250,6 @@ if ($result)
 } else {
     dolibarr_print_error($db);
 }
-
-print '<br>Dernier relevé : <a href="releve.php?account='.$_GET["account"].'&amp;num='.$last_releve.'">'.$last_releve.'</a>';
 
 $db->close();
 

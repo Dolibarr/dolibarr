@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
  * $Source$
  */
  
-/*!
+/**
 	    \file       htdocs/compta/bank/releve.php
         \ingroup    banque
 		\brief      Page d'affichage d'un relevé
@@ -86,7 +86,7 @@ if (! isset($_GET["num"]))
       
       print '<table class="noborder" width="100%">';
       print "<tr class=\"liste_titre\">";
-      print "<td>Relevé</td></tr>";
+      print '<td>'.$langs->trans("AccountStatement").'</td></tr>';
 
       while ($i < min($numrows,$limit))
 	{
@@ -153,17 +153,17 @@ else
   }
   $ve=$_GET["ve"];
   
-  $mesprevnext ="<a href=\"releve.php?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_previous()."</a>";
-  $mesprevnext.=" Relevé $num ";
-  $mesprevnext.="<a href=\"releve.php?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_next()."</a>";
-  print_fiche_titre('Relevé numéro '.$num.', compte : <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>',$mesprevnext);
-  
+  $mesprevnext ="<a href=\"releve.php?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_previous()."</a> &nbsp;";
+  $mesprevnext.= $langs->trans("AccountStatement")." $num";
+  $mesprevnext.=" &nbsp; <a href=\"releve.php?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_next()."</a>";
+  print_fiche_titre($langs->trans("AccountStatement").' '.$num.', '.$langs->trans("BankAccount").' : <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>',$mesprevnext);
+  print '<br>';
 
   print "<form method=\"post\" action=\"releve.php\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print '<table class="border" width="100%">';
   print "<tr class=\"liste_titre\">";
-  print '<td>Date Ope</td><td>Date Valeur</td><td>'.$langs->trans("Type").'</td><td width="30%">'.$langs->trans("Description").'</td>';
+  print '<td>'.$langs->trans("Date").'</td><td>'.$langs->trans("DateValue").'</td><td>'.$langs->trans("Type").'</td><td width="30%">'.$langs->trans("Description").'</td>';
   print '<td align="right">'.$langs->trans("Debit").'</td>';
   print '<td align="right">'.$langs->trans("Credit").'</td>';
   print '<td align="right">'.$langs->trans("Solde").'</td>';
@@ -180,8 +180,8 @@ else
 
 
   $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
-  $sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE";
-  $sql .= " num_releve='".$num."'";
+  $sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
+  $sql .= " WHERE num_releve='".$num."'";
   if (! $num) {
   	$sql .= " or num_releve is null";
   }
