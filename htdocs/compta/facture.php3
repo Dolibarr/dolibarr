@@ -99,25 +99,7 @@ if ($action == 'add')
       $facture->remise   = $remise;
       $facture->propalid = $propalid;
 
-      if ($facture->create($user->id) )
-	{
-
-	      /*
-	       *
-	       * Génération du PDF
-	       *
-	       */
-	      
-	      //      print "<hr><b>Génération du PDF</b><p>";
-	      
-	      //      $command = "export DBI_DSN=\"".$GLOBALS["DBI"]."\" ";
-	      //      $command .= " ; ../../scripts/facture-tex.pl --facture=$facid --pdf --ps"  ;
-	      
-	      //      $output = system($command);
-	      //      print "<p>command : $command<br>";
-	      
-	}
-      else
+      if (! $facture->create($user->id) )
 	{
 	  print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
 	  print "<p>Retour à la <a href=\"propal.php3?propalid=$propalid\">propal</a>";
@@ -197,17 +179,16 @@ if ($action == 'create')
 
   if ($propalid) 
     {
-
       $sql = "SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.tva, p.total, p.ref, ".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst";
       $sql .= " FROM societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
       
       $sql .= " AND p.rowid = $propalid";
-    } else {
-      
+    }
+  else
+    {
       $sql = "SELECT s.nom, s.prefix_comm, s.idp ";
       $sql .= "FROM societe as s ";
-      $sql .= "WHERE s.idp = $socidp";
-      
+      $sql .= "WHERE s.idp = $socidp";      
     }
 
   if ( $db->query($sql) ) 
@@ -216,7 +197,7 @@ if ($action == 'create')
       if ($num) {
 	$obj = $db->fetch_object(0);
 	
-	$numfa = "F-" . $obj->prefix_comm . "-" . strftime("%y%m%d", time());
+	$numfa = facture_get_num(); // définit dans includes/modules/facture
 	
 	print "<form action=\"$PHP_SELF\" method=\"post\">";
 	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
@@ -224,7 +205,7 @@ if ($action == 'create')
 	
 	print '<table cellspacing="0" border="1" width="100%">';
 	
-	print "<tr bgcolor=\"#e0e0e0\"><td>Société :</td><td>$obj->nom</td>";
+	print "<tr bgcolor=\"#e0e0e0\"><td>Client :</td><td>$obj->nom</td>";
 	
 	print '<td rowspan="6">';
 	print '<textarea name="note" wrap="soft" cols="60" rows="15"></textarea></td></tr>';
@@ -263,15 +244,10 @@ if ($action == 'create')
 
 	print "</td></tr>";
 	print "<tr><td>Numéro :</td><td> <input name=\"facnumber\" type=\"text\" value=\"$numfa\"></td></tr>";
-
-
-	print '<tr><td>Désignation</td><td><textarea cols="40" rows="3"</textarea></td>';
-
-	print '<td><input type="text" size="8"</td></tr>';
 	
-	print "<tr><td colspan=\"3\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
-	print "</form>";
-	print "</table>";
+	print '<tr><td colspan="3" align="center"><input type="submit" value="Créer"></td></tr>';
+	print "</form>\n";
+	print "</table>\n";
 	
       }
     } 
@@ -325,7 +301,7 @@ else
      *   Facture
      */
     print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
-    print "<tr><td>Société</td>";
+    print "<tr><td>Client</td>";
     print "<td colspan=\"3\">";
     print "<b><a href=\"fiche.php3?socid=$obj->socidp\">$obj->socnom</a></b></td></tr>";
 

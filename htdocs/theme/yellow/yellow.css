@@ -161,3 +161,8 @@ td.small
 { 
   font-size: 0.8em;
    }
+
+tr.nonpayed
+{ 
+  font-size: 0.9em; font-weight: bold;
+  }
