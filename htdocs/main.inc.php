@@ -183,17 +183,19 @@ function top_menu($head, $title="", $target="")
    */
   print '<div class="tmenu">'."\n";
 
-  // Sommet menu de gauche, lien accueil
-  $class="tmenu"; $id="";
-  if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "accueil") { $class="tmenu"; $id="sel"; }
-  elseif (ereg("^".DOL_URL_ROOT."\/[^\\\/]+$",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/user\/",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/admin\/",$_SERVER["PHP_SELF"])) { $class="tmenu"; $id="sel"; }
-
-  // Entrée Home du menu
+  // Entrée Home/Accueil du menu
+  $id="";
+  if ($_SESSION["topmenu"] && $_SESSION["topmenu"] == "accueil") { $id="sel"; }
+  elseif (ereg("^".DOL_URL_ROOT."\/[^\\\/]+$",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/user\/",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/admin\/",$_SERVER["PHP_SELF"])) { $id="sel"; }
   print '<a class="tmenu" id="'.$id.'" href="'.DOL_URL_ROOT.'/index.php?mainmenu=home"'.($target?" target=$target":"").'>'.$langs->trans("Home").'</a>';
 
-  // Autres entrées du menu par le gestionnaires
-  require(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
 
+  // Autres entrées du menu par le gestionnaire
+  require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
+  $menutop = new MenuTop($db);
+  $menutop->showmenu();
+
+  
   // Lien sur fiche du login
   print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->login.'</a>' ;
 

@@ -21,24 +21,53 @@
  *
  */
 
-/**
-	    \file       htdocs/includes/menus/barre_top/esprit.php
+/**	    \file       htdocs/includes/menus/barre_top/esprit.php
 		\brief      Gestionnaire du menu du haut spécialisé vente de CD/livres
 		\version    $Revision$
 
         \remarks    La construction d'un gestionnaire pour le menu du haut est simple:
-        \remarks    Toutes les entrées de menu a faire apparaitre dans la barre du 
-        \remarks    du haut doit etre affichée par <a class="tmenu" href="lien">Nom</a>
+        \remarks    Toutes les entrées de menu à faire apparaitre dans la barre du haut
+        \remarks    doivent être affichées par <a class="tmenu" href="...?mainmenu=...">...</a>
         \remarks    On peut éventuellement ajouter l'attribut id="sel" dans la balise <a>
-        \remarks    quand il s'agit de l'entrée du menu qui est sélectionné.
+        \remarks    quand il s'agit de l'entrée du menu qui est sélectionnée.
 */
 
-print '<a class="tmenu" href="/boutique/livre/">livres</a>';
 
-print '<a class="tmenu" href="/boutique/client/">clients</a>';
+/**     \class      MenuTop
+	    \brief      Classe permettant la gestion du menu du haut Esprit
+*/
 
-print '<a class="tmenu" href="/product/critiques/">critiques</a>';
+class MenuTop {
 
-print '<a class="tmenu" href="/product/categorie/">catégories</a>';
+    var $require_left=array();    // Si doit etre en phase avec un gestionnaire de menu gauche particulier
+    
+    /**
+     *    \brief      Constructeur
+     *    \param      db      Handler d'accès base de donnée
+     */
+    function MenuTop($db)
+    {
+        $this->db=$db;
+    }
+    
+    
+    /**
+     *    \brief      Affiche le menu
+     */
+    function showmenu()
+    {
+
+        global $conf,$langs;
+        $langs->load("commercial");
+        $langs->load("other");
+        
+        print '<a class="tmenu" href="/boutique/livre/">'.$langs->trans("Books").'</a>';
+        print '<a class="tmenu" href="/boutique/client/">'.$langs->trans("Customers").'</a>';
+        print '<a class="tmenu" href="/product/critiques/">'.$langs->trans("Criticals").'</a>';
+        print '<a class="tmenu" href="/product/categorie/">'.$langs->trans("Categories").'</a>';
+
+    }
+
+}
 
 ?>
