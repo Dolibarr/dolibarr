@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2004 Eric Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004 Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,17 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/compta/deplacement/index.php
+		\brief      Page liste des déplacements
+*/
+
 require("./pre.inc.php");
 require("../../tva.class.php");
+
+$langs->load("companies");
+$langs->load("users");
 
 llxHeader();
 
@@ -71,13 +80,13 @@ if ( $db->query($sql) )
   print "<tr class=\"liste_titre\">";
   print_liste_field_titre($langs->trans("Date"),"index.php","d.dated","","&socidp=$socidp",'',$sortfield);
   print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","&socidp=$socidp",'',$sortfield);
-  print_liste_field_titre($langs->trans("User"),"index.php","u.name","","&socidp=$socidp",'',$sortfield);
+  print_liste_field_titre($langs->trans("Person"),"index.php","u.name","","&socidp=$socidp",'',$sortfield);
   print "</tr>\n";
 
   $var=True;
   while ($i < $num)
     {
-      $objp = $db->fetch_object($i);
+      $objp = $db->fetch_object();
       $soc = new Societe($db);
       $soc->fetch($objp->idp);
       $var=!$var;
@@ -85,7 +94,7 @@ if ( $db->query($sql) )
       print '<td><a href="fiche.php?id='.$objp->rowid.'">'.dolibarr_print_date($objp->dd).'</a></td>';
       print '<td>' . $soc->nom_url . '</a></td>';
 
-      print '<td align="center">'.$objp->firstname.' '.$objp->name.'</td>';
+      print '<td align="left">'.$objp->firstname.' '.$objp->name.'</td>';
 
       print "</tr>\n";
       
@@ -97,8 +106,7 @@ if ( $db->query($sql) )
 }
 else
 {
-  print $db->error();
-  print "<p>$sql";
+  dolibarr_print_error($db);
 }
 $db->close();
 

@@ -20,6 +20,12 @@
  * $Source$
  *
  */
+
+/*!
+	    \file       htdocs/compta/deplacement/fiche.php
+		\brief      Page fiche d'un déplacement
+*/
+
 require("./pre.inc.php");
 
 $mesg = '';
@@ -45,13 +51,13 @@ if ($_POST["action"] == 'add' && $_POST["cancel"] <> $langs->trans("Cancel"))
   $deplacement->userid = $user->id; //$_POST["km"];
   $id = $deplacement->create($user);
 
-  if ($_POST["id"])
+  if ($id)
     {
-      Header ( "Location: fiche.php?id=".$_POST["id"]);
+      Header ( "Location: fiche.php?id=".$id);
     }
   else
     {
-      print "Error";
+      dolibarr_print_error($db);
     }
 }
 
@@ -136,6 +142,8 @@ else
 
             $html = new Form($db);
             $html->form_confirm("fiche.php?id=".$_GET["id"],"Supprimer ce déplacement","Etes-vous sûr de vouloir supprimer ce déplacement ?","confirm_delete");
+
+            print '<br>';
 	    }
 
 
@@ -147,7 +155,7 @@ else
 	      print '<input type="hidden" name="action" value="update">';
 	      print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
 	            
-	      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<table class="border" width="100%">';
 
 	      $soc = new Societe($db);
 	      $soc->fetch($deplacement->socid);
