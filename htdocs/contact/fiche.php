@@ -35,7 +35,7 @@ if ($_POST["action"] == 'add')
 
   $contact->name         = $_POST["name"];
   $contact->firstname    = $_POST["firstname"];
-	$contact->civilite_id	 = $_POST["civilite_id"];
+  $contact->civilite_id	 = $_POST["civilite_id"];
   $contact->poste        = $_POST["poste"];
   $contact->address      = $_POST["adresse"];
   $contact->cp           = $_POST["cp"];
@@ -226,7 +226,7 @@ elseif ($_GET["action"] == 'edit')
 
   print '<tr><td>CP Ville</td><td colspan="3"><input name="cp" type="text" size="6" maxlength="80">&nbsp;<input name="cp" type="text" size="20" maxlength="80"></td>';
 
-  print '<td>Fax</td><td><input name="fax" type="text" size="18" maxlength="80"></td></tr>';
+  print '<td>Fax</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
   print '<tr><td>Email</td><td colspan="5"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
 
   print '<tr><td>Jabberid</td><td colspan="5"><input name="jabberid" type="text" size="50" maxlength="80" value="'.$contact->jabberid.'"></td></tr>';
