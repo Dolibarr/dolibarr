@@ -29,7 +29,7 @@ create table llx_societe_rib
   datec          datetime,
   tms            timestamp,
   label          varchar(30),
-  bank           varchar(60),
+  bank           varchar(255),
   code_banque    varchar(7),
   code_guichet   varchar(6),
   number         varchar(255),
