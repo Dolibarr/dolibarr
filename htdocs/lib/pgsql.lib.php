@@ -148,27 +148,22 @@ class DoliDb
     }
     
     /**
-        \brief      Connexion sur une base de donnée
-        \param		database		nom de la database
-        \return		result			resultat 1 pour ok, 0 pour non ok
+            \brief          Création d'une nouvelle base de donnée
+            \param	        database		nom de la database à créer
+            \return	        resource		resource définie si ok, null si ko
+            \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
     */
-    
+
     function create_db($database)
     {
-        if(createdb($database, $this->db))
-		{
-        	return 1;
-		}	
-        else
-        {
-        	return 0;
-   		}
+        $ret=$this->query('CREATE DATABASE '.$database.';');
+        return $ret;
     }
-    
+        
     
     /**
-        \brief      Copie d'un handler de database.
-        \return	resource
+            \brief      Copie d'un handler de database.
+            \return	    resource
     */
     
     function dbclone()
@@ -179,12 +174,12 @@ class DoliDb
     }
     
     /**
-        \brief      Ouverture d'une connection vers une database.
-        \param		host		Adresse de la base de données
-        \param		login		Nom de l'utilisateur autorisé
-        \param		passwd		Mot de passe
-        \param		name		Nom de la database
-        \return		resource	handler d'accès à la base
+            \brief      Ouverture d'une connection vers une database.
+            \param		host		Adresse de la base de données
+            \param		login		Nom de l'utilisateur autorisé
+            \param		passwd		Mot de passe
+            \param		name		Nom de la database
+            \return		resource	handler d'accès à la base
     */
     
     function pconnect($host, $login, $passwd, $name)
@@ -195,8 +190,8 @@ class DoliDb
     }
     
     /**
-        \brief      Fermeture d'une connection vers une database.
-        \return	resource
+            \brief      Fermeture d'une connection vers une database.
+            \return	    resource
     */
     
     function close()

@@ -280,7 +280,7 @@ if ($_POST["action"] == "set")
                             print $langs->trans("UserCreation").' : ';
                             print $dolibarr_main_db_user;
                             print '</td>';
-                            print "<td>Deja existant</td></tr>";
+                            print '<td>'.$langs->trans("LoginAlreadyExists").'</td></tr>';
                         }
                         else
                         {
@@ -343,7 +343,7 @@ if ($_POST["action"] == "set")
 
         }   // Fin si "creation utilisateur"
         
-        
+
         /*
          * Si creation database demandée, on la crée
          */
@@ -351,11 +351,11 @@ if ($_POST["action"] == "set")
         {
             dolibarr_syslog ("Creation de la base : ".$dolibarr_main_db_name);
 
-            $db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,$conf->db->name);
-
+            $db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot);
+ 
             if ($db->connected) 
             {
-                if ($db->create_db($dolibarr_main_db_pass))
+                if ($db->create_db($dolibarr_main_db_name))
                 {
                     print '<tr><td>';
                     print $langs->trans("DatabaseCreation").' : ';
@@ -369,7 +369,7 @@ if ($_POST["action"] == "set")
                     print $langs->trans("DatabaseCreation").' : ';
                     print $dolibarr_main_db_name;
                     print '</td>';
-                    print "<td>".$langs->trans("Error")."</td></tr>";
+                    print '<td>'.$langs->trans("Error").' '.$db->errno().'</td></tr>';
 
                     // Affiche aide diagnostique
                     print '<tr><td colspan="2"><br>La création de la base Dolibarr ('.$dolibarr_main_db_name.') a échoué.';
