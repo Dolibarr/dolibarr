@@ -124,7 +124,7 @@ if (! $num) {
     $var=True;  
     $numrows = $db->num_rows();
     $i = 0; 
-    print "<tr><td colspan=\"4\"><a href=\"$PHP_SELF?num=$num&ve=1&rel=$rel\">vue etendue</a></td>";
+    print "<tr><td colspan=\"4\"><a href=\"$PHP_SELF?num=$num&ve=1&rel=$rel&account=$account\">vue etendue</a></td>";
     print "<td align=\"right\" colspan=\"2\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td align=\"right\"><small>".francs($total)."</small></td></tr>\n";
     while ($i < $numrows) {
       $objp = $db->fetch_object( $i);
@@ -167,7 +167,7 @@ if (! $num) {
       print "<td align=\"right\">".price($total)."</TD>\n";
       print "<td align=\"right\"><small>".francs($objp->amount)."</small></TD>\n";
 
-      print "<td align=\"center\">[<a href=\"ligne.php3?rowid=$objp->rowid\">edit</a>]</td>";
+      print "<td align=\"center\">[<a href=\"ligne.php3?rowid=$objp->rowid&account=$account\">edit</a>]</td>";
 
       print "</tr>";
       $i++;
