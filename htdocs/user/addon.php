@@ -86,7 +86,14 @@ if ($_GET["id"])
   $head[$h][1] = $langs->trans("Addons");
   $hselected=$h;
   $h++;
-  
+
+  if (defined("MAIN_MODULE_CLICKTODIAL") && MAIN_MODULE_CLICKTODIAL==1)
+    {
+      $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$fuser->id;
+      $head[$h][1] = $langs->trans("ClickToDial");
+      $h++;
+    }
+
   dolibarr_fiche_head($head, $hselected, $fuser->fullname);
   
   /*
