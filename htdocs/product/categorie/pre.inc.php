@@ -36,36 +36,36 @@ function llxHeader($head = "", $urlp = "") {
 
   if ($conf->boutique->livre->enabled)
     {
-      $menu->add("/boutique/livre/", "Livres");
+      $menu->add(DOL_URL_ROOT."/boutique/livre/", "Livres");
 
-      $menu->add_submenu("/boutique/livre/fiche.php?&action=create","Nouvel ouvrage");
+      $menu->add_submenu(DOL_URL_ROOT."/boutique/livre/fiche.php?&action=create","Nouvel ouvrage");
       
-      $menu->add("/boutique/auteur/", "Auteurs");
+      $menu->add(DOL_URL_ROOT."/boutique/auteur/", "Auteurs");
 
-      $menu->add_submenu("/boutique/auteur/fiche.php?&action=create","Nouvel auteur");
+      $menu->add_submenu(DOL_URL_ROOT."/boutique/auteur/fiche.php?&action=create","Nouvel auteur");
 
-      $menu->add("/boutique/editeur/", "Editeurs");
+      $menu->add(DOL_URL_ROOT."/boutique/editeur/", "Editeurs");
 
-      $menu->add_submenu("/boutique/editeur/fiche.php?&action=create","Nouvel éditeur");
+      $menu->add_submenu(DOL_URL_ROOT."/boutique/editeur/fiche.php?&action=create","Nouvel éditeur");
 
     }
 
-  $menu->add("/product/categorie/", "Catégories");
+  $menu->add(DOL_URL_ROOT."/product/categorie/", "Catégories");
 
   if ($conf->boutique->album->enabled)
     {
-      $menu->add("/product/album/", "Albums");
+      $menu->add(DOL_URL_ROOT."/product/album/", "Albums");
 
       $menu->add_submenu("../osc-liste.php", "Osc");
       $menu->add_submenu("../osc-liste.php?reqstock=epuise", "Produits Epuisés");
       
-      $menu->add_submenu("/product/album/fiche.php?&action=create","Nouvel album");
+      $menu->add_submenu(DOL_URL_ROOT."/product/album/fiche.php?&action=create","Nouvel album");
   
-      $menu->add("/product/groupart/", "Artistes/Groupes");
+      $menu->add(DOL_URL_ROOT."/product/groupart/", "Artistes/Groupes");
       
-      $menu->add_submenu("/product/groupart/fiche.php?&action=create","Nouvel Artiste/Groupe");
+      $menu->add_submenu(DOL_URL_ROOT."/product/groupart/fiche.php?&action=create","Nouvel Artiste/Groupe");
   
-      $menu->add("/product/concert/", "Concerts");
+      $menu->add(DOL_URL_ROOT."/product/concert/", "Concerts");
       
       $menu->add_submenu("/product/concert/fiche.php?&action=create","Nouveau concert");
       

@@ -34,20 +34,20 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu = new Menu();
 
-  $menu->add("/product/album/", "Albums");
+  $menu->add(DOL_URL_ROOT."/product/album/", "Albums");
 
   $menu->add_submenu("../osc-liste.php", "Osc");
   $menu->add_submenu("../osc-liste.php?reqstock=epuise", "Produits Epuisés");
 
-  $menu->add_submenu("/product/album/fiche.php?&action=create","Nouvel album");
+  $menu->add_submenu(DOL_URL_ROOT."/product/album/fiche.php?&action=create","Nouvel album");
 
-  $menu->add("/product/groupart/", "Artistes/Groupes");
+  $menu->add(DOL_URL_ROOT."/product/groupart/", "Artistes/Groupes");
 
-  $menu->add_submenu("/product/groupart/fiche.php?&action=create","Nouvel Artiste/Groupe");
+  $menu->add_submenu(DOL_URL_ROOT."/product/groupart/fiche.php?&action=create","Nouvel Artiste/Groupe");
 
-  $menu->add("/product/concert/", "Concerts");
+  $menu->add(DOL_URL_ROOT."/product/concert/", "Concerts");
 
-  $menu->add_submenu("/product/concert/fiche.php?&action=create","Nouveau concert");
+  $menu->add_submenu(DOL_URL_ROOT."/product/concert/fiche.php?&action=create","Nouveau concert");
 
   $menu->add("../osc-reviews.php", "Critiques");
 
