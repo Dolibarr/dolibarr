@@ -34,6 +34,6 @@ create table llx_facturedet
   price           real,              -- prix final
   date_start      datetime,          -- date debut si service
   date_end        datetime,          -- date fin si service
-  fk_code_ventilation integer DEFAULT 0 NOT NULL,
+  fk_code_ventilation integer DEFAULT 0 NOT NULL
 
 )type=innodb;
