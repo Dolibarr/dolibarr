@@ -47,7 +47,7 @@ function llxHeader($head = "", $title="", $help_url='') {
       $menu->add(DOL_URL_ROOT."/compta/dons/","Dons");
     }
 
-  if ($conf->don->enabled)
+  if ($conf->facture->enabled)
     {
   	$menu->add(DOL_URL_ROOT."/compta/facture.php","Factures");
 	$menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");

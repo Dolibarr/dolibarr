@@ -72,7 +72,7 @@ function llxHeader($head = "", $title="", $help_url='')
    
     
   // Les dépenses
-  if ($conf->fourn->enabled)
+  if ($conf->fournisseur->enabled)
     {
       $langs->load("suppliers");
       $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
