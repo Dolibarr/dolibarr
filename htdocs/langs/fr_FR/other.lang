@@ -9,6 +9,7 @@ MailingResult=Résultat de l'envoi du mailing
 MailFrom=Emetteur
 MailReply=Répondre à
 MailTo=Destinataire(s)
+MailCC=Copie à
 MailTopic=Sujet
 MailText=Message
 MailFile=Joindre un fichier

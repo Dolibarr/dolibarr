@@ -9,6 +9,7 @@ MailingResult=Sending mails result
 MailFrom=Sender
 MailReply=Reply to
 MailTo=Receiver(s)
+MailCC=Copy to
 MailTopic=Subject
 MailText=Message
 MailFile=Attach a file
