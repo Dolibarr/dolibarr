@@ -70,43 +70,49 @@ class PropalConf
  */
 
 class DbConf {
-  Function DbConf() {
+  Function DbConf()
+  {
     $this->type = "mysql";
     $this->host = "";
     $this->user = "";
     $this->pass = "";
     $this->name = "";
-/*
- * If you want to activate virtualhosting you need tou use these lines and add 
- * this to your pache virtualhost file
- SetEnv LLX_DBTYPE mysql
- SetEnv LLX_DBHOST localhost
- SetEnv LLX_DBUSER user
- SetEnv LLX_DBPASS pass
- SetEnv LLX_DBNAME dolibarr
-*/
 
-/*
- * Ce bloc de code, casse l'authentification par Pear::Auth !!
- * La conf est positionnée dans conf.php les virtualhost ne sont
- * pas encore valide
- *
-    $this->type = getenv("LLX_DBTYPE");
-    $this->host = getenv("LLX_DBHOST");
-    $this->user = getenv("LLX_DBUSER");
-    $this->pass = getenv("LLX_DBPASS");
-    $this->name = getenv("LLX_DBNAME");
-*/
+    /*
+     * If you want to activate virtualhosting you need tou use these lines and add 
+     * this to your pache virtualhost file
+     SetEnv LLX_DBTYPE mysql
+     SetEnv LLX_DBHOST localhost
+     SetEnv LLX_DBUSER user
+     SetEnv LLX_DBPASS pass
+     SetEnv LLX_DBNAME dolibarr
+    */
 
+    if (strlen(getenv("LLX_DBNAME")))
+      {
+	$this->name = getenv("LLX_DBNAME");
+
+	if (strlen(getenv("LLX_DBTYPE")))
+	  $this->type = getenv("LLX_DBTYPE");
+
+	if (strlen(getenv("LLX_DBHOST")))
+	  $this->host = getenv("LLX_DBHOST");
+
+	if (strlen(getenv("LLX_DBUSER")))
+	  $this->user = getenv("LLX_DBUSER");
+
+	if (strlen(getenv("LLX_DBPASS")))
+	  $this->pass = getenv("LLX_DBPASS");
+      }
   }
 
   /** return the dsn according to the pear syntax
-  */
-  function getdsn ()
+   */
+  Function getdsn()
   {
-  	return ($this->type.'://'.$this->user.':'.$this->pass.'@'.$this->host.'/'.$this->name);
+    return ($this->type.'://'.$this->user.':'.$this->pass.'@'.$this->host.'/'.$this->name);
   }
-
+  
 }
 /*
  * Calendrier
