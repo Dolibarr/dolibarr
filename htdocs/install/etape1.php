@@ -41,7 +41,7 @@ $main_data_dir=isset($_POST["main_data_dir"])?$_POST["main_data_dir"]:'';
 // En attendant que le main_data_dir soit géré de manière autonome,
 // on le force à sa valeur fixe des anciennes versions.
 // Eric Seigne 2004
-$main_data_dir="$main_dir/document";
+$main_data_dir=ereg_replace("htdocs","documents",$main_dir);
 
 // Quand ça sera géré !
 if (! $main_data_dir) { $main_data_dir="$main_dir/document"; }
@@ -310,87 +310,87 @@ if ($_POST["action"] == "set")
       
 		if ($db->connected == 1)
 		{
-			dolibarr_syslog("la connexion au serveur est reussie");
-			print "<tr><td>Connexion au serveur : $dolibarr_main_db_host</td><td>OK</td></tr>";
+		  dolibarr_syslog("la connexion au serveur est reussie");
+		  print "<tr><td>Connexion au serveur : $dolibarr_main_db_host</td><td>OK</td></tr>";
 		}
 		else
-		{
-			dolibarr_syslog("la connection au serveur est rate");
-			print "<tr><td>Connexion au serveur : $dolibarr_main_db_host</td><td>ERREUR</td></tr>";
-			$ok = 0;
-		}
-      
+		  {
+		    dolibarr_syslog("la connection au serveur est rate");
+		    print "<tr><td>Connexion au serveur : $dolibarr_main_db_host</td><td>ERREUR</td></tr>";
+		    $ok = 0;
+		  }
+		
 		if ($ok)
-		{
-			if($db->database_selected == 1)
-			{
-	      //
-	      // Connexion base existante
-	      // 
-				dolibarr_syslog("la connexion a la database est reussie");
-				print "<tr><td>Connexion à la base : $dolibarr_main_db_name</td><td>OK</td></tr>";    
-				$ok = 1 ;
-			}
-			else
-			{
-	      //
-	      // Création de la base
-	      //
-				dolibarr_syslog("la connexion a la database est rate");
-				print "<tr><td>Echec de connexion à la base : $dolibarr_main_db_name</td><td>Warning</td></tr>";
-				print '<tr><td colspan="2">Création de la base : '.$dolibarr_main_db_name.'</td></tr>';
-	      
-				$conf = new Conf();
-				$conf->db->host = $dolibarr_main_db_host;
-				$conf->db->name = $dolibarr_main_db_name;
-				$conf->db->user = isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
-				$conf->db->pass = isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
-
-				$dbt = new DoliDb();  // Ne pas prendre $db comme nom de variable car dejà pris pour connexion précédente et bug mémoire sur php windows dans ce cas
-	      
-				if ($ok)
-				{
-					if ($dbt->connected == 1)
-					{
-						dolibarr_syslog("la connexion au serveur avec l'utilisateur root reussi");
-						print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>OK</td></tr>";
-					}
-					else
-					{
-						dolibarr_syslog("la connexion au serveur avec l'utilisateur root rate");
-		      	print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>ERREUR</td></tr>";
+		  {
+		    if($db->database_selected == 1)
+		      {
+			//
+			// Connexion base existante
+			// 
+			dolibarr_syslog("la connexion a la database est reussie");
+			print "<tr><td>Connexion à la base : $dolibarr_main_db_name</td><td>OK</td></tr>";    
+			$ok = 1 ;
+		      }
+		    else
+		      {
+			//
+			// Création de la base
+			//
+			dolibarr_syslog("la connexion a la database est rate");
+			print "<tr><td>Echec de connexion à la base : $dolibarr_main_db_name</td><td>Warning</td></tr>";
+			print '<tr><td colspan="2">Création de la base : '.$dolibarr_main_db_name.'</td></tr>';
+			
+			$conf = new Conf();
+			$conf->db->host = $dolibarr_main_db_host;
+			$conf->db->name = $dolibarr_main_db_name;
+			$conf->db->user = isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
+			$conf->db->pass = isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
+			
+			$dbt = new DoliDb();  // Ne pas prendre $db comme nom de variable car dejà pris pour connexion précédente et bug mémoire sur php windows dans ce cas
+			
+			if ($ok)
+			  {
+			    if ($dbt->connected == 1)
+			      {
+				dolibarr_syslog("la connexion au serveur avec l'utilisateur root reussi");
+				print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>OK</td></tr>";
+			      }
+			    else
+			      {
+				dolibarr_syslog("la connexion au serveur avec l'utilisateur root rate");
+				print "<tr><td>Connexion au serveur : $dolibarr_main_db_host avec l'utilisateur : ".$_POST["db_user_root"]."</td><td>ERREUR</td></tr>";
 						$ok = 0;
-					}
-				}
-	      
-				if ($ok)
-				{  
-					if($dbt->database_selected == 1)
-					{
-					}
-					else
-					{
-						print "<tr><td>Vérification des droits de création</td><td>ERREUR</td></tr>";
-						print '<tr><td colspna="2">-- Droits insuffissant</td></tr>';
-						//$ok = 0;
-					}
-				}
-	      
-				if ($ok)
-				{
-					if ($dbt->create_db ($dolibarr_main_db_name))
-					{      
-						print "<tr><td>Création de la base : $dolibarr_main_db_name</td><td>OK</td></tr>";
-					}
-					else
-					{
+			      }
+			  }
+			
+			if ($ok)
+			  {  
+			    if($dbt->database_selected == 1)
+			      {
+			      }
+			    else
+			      {
+				print "<tr><td>Vérification des droits de création</td><td>ERREUR</td></tr>";
+				print '<tr><td colspna="2">-- Droits insuffissant</td></tr>';
+				//$ok = 0;
+			      }
+			  }
+			
+			if ($ok)
+			  {
+			    if ($dbt->create_db ($dolibarr_main_db_name))
+			      {      
+				print "<tr><td>Création de la base : $dolibarr_main_db_name</td><td>OK</td></tr>";
+			      }
+			    else
+			      {
 						print "<tr><td>Création de la base : $dolibarr_main_db_name</td><td>ERREUR</td></tr>";
 						$ok = 0;
-					}
-				}
-			}
-		}    
-  }
+			      }
+			  }
+		      }
+		  }    
+	}
 }
 ?>
 </table>
