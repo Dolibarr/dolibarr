@@ -61,13 +61,6 @@ if ($socid > 0) {
 	  $head[$h][1] = 'Fiche fournisseur';
 	  $h++;
 	}
-      
-      if ($societe->fournisseur)
-	{
-	  $head[$h][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$societe->id;
-	  $head[$h][1] = 'Fiche fournisseur';
-	  $h++;
-	}
       $head[$h][0] = DOL_URL_ROOT.'/socnote.php?socid='.$societe->id;
       $head[$h][1] = 'Note';
       $a = $h;
