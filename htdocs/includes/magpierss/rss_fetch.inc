@@ -341,7 +341,9 @@ function init () {
 
         // Le rep de cache est defini dans DOL_DATA_ROOT
         if (! file_exists(DOL_DATA_ROOT.'/rsscache')) {
-            mkdir(DOL_DATA_ROOT);
+            if (! file_exists(DOL_DATA_ROOT)) {
+                mkdir(DOL_DATA_ROOT);
+            }
             mkdir(DOL_DATA_ROOT.'/rsscache');
         }
         define('MAGPIE_CACHE_DIR', DOL_DATA_ROOT.'/rsscache');
