@@ -46,7 +46,7 @@ if ($action == 'add')
 
   $soc->tel     = $tel;
   $soc->fax     = $fax;
-  $soc->url     = $url;
+  $soc->url     = ereg_replace( "http://", "", $url );
   $soc->siren   = $siren;
 
   $soc->client   = $client;
@@ -67,7 +67,7 @@ if ($action == 'update')
 
   $soc->tel = $tel;
   $soc->fax = $fax;
-  $soc->url = $url;
+  $soc->url = ereg_replace( "http://", "", $url );
   $soc->siren = $siren;
   $soc->client = $client;
   $soc->fournisseur = $fournisseur;
@@ -95,7 +95,7 @@ if ($action == 'create')
 
   print '<tr><td>Tel</td><td><input type="text" name="tel"></td></tr>';
   print '<tr><td>Fax</td><td><input type="text" name="fax"></td></tr>';
-  print '<tr><td>Web</td><td><input type="text" name="url"></td></tr>';
+  print '<tr><td>Web</td><td>http://<input type="text" name="url"></td></tr>';
 
   print '<tr><td>Siren</td><td><input type="text" name="siren"></td></tr>';
 
