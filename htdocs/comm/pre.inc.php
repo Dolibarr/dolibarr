@@ -45,6 +45,12 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add_submenu("propal.php?viewstatut=1", "Ouvertes");
     }
 
+  if ($conf->commande->enabled ) 
+    {
+      $menu->add(DOL_URL_ROOT."/commande/index.php", "Commandes");
+    }
+
+
   if ($conf->fichinter->enabled ) 
     {
       $menu->add(DOL_URL_ROOT."/fichinter/index.php", "Fiches d'intervention");
