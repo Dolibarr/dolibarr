@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,12 @@
  * $Source$
  *
  */
+
+/**
+    \file       htdocs/includes/boxes/box_factures.php
+    \ingroup    factures
+    \brief      Module de génération de l'affichage de la box factures
+*/
 
 if ($user->rights->facture->lire)
 {
@@ -48,10 +54,11 @@ if ($user->rights->facture->lire)
       
       while ($i < $num)
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object($result);
 	  
 	  $info_box_contents[$i][0] = array('align' => 'left',
-					    'text' => img_file()." ".$objp->facnumber,
+    					'logo' => 'object_bill',
+					    'text' => $objp->facnumber,
 					    'url' => DOL_URL_ROOT."/compta/facture.php?facid=".$objp->facid);
 	  
 	  $info_box_contents[$i][1] = array('align' => 'left',

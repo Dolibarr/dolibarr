@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,12 @@
  * $Source$
  *
  */
+
+/**
+    \file       htdocs/includes/boxes/box_boutique_livre.php
+    \ingroup    boutique
+    \brief      Module de génération de l'affichage de la box boutique livres
+*/
 
 $info_box_head = array();
 $info_box_head[] = array('text' => "Les 20 derniers ouvrages");
@@ -40,9 +47,10 @@ if ($result)
     
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       
       $info_box_contents[$i][0] = array('align' => 'left',
+   					'logo' => 'object_book',
 					'text' => $objp->title,
 					'url' => DOL_URL_ROOT."/boutique/livre/fiche.php?id=".$objp->rowid);
 

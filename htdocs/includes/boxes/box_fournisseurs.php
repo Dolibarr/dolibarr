@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Destailleur Laurent <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2005 Destailleur Laurent <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,12 @@
  * $Source$
  *
  */
+
+/**
+    \file       htdocs/includes/boxes/box_fournisseurs.php
+    \ingroup    fournisseurs
+    \brief      Module de génération de l'affichage de la box fournisseurs
+*/
 
 $info_box_head = array();
 $info_box_head[] = array('text' => "Les 5 derniers fournisseurs enregistrés");
@@ -44,9 +50,10 @@ if ($result)
     
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       
       $info_box_contents[$i][0] = array('align' => 'left',
+   					'logo' => 'object_company',
 					'text' => $objp->nom,
 					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
 

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +20,13 @@
  * $Source$
  *
  */
+
+/**
+    \file       htdocs/includes/boxes/box_propales.php
+    \ingroup    propales
+    \brief      Module de génération de l'affichage de la box propales
+*/
+
 if ($user->rights->propale->lire)
 {
 
@@ -46,9 +54,10 @@ if ($user->rights->propale->lire)
       
       while ($i < $num)
 	{
-	  $objp = $db->fetch_object( $i);
+	  $objp = $db->fetch_object($result);
 	  
 	  $info_box_contents[$i][0] = array('align' => 'left',
+    					'logo' => 'object_bill',
 					    'text' => $objp->ref,
 					    'url' => DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->rowid);
 	  

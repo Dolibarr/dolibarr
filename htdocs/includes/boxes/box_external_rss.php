@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Éric Seigne <erics@rycks.com>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +22,8 @@
  *
  */
 
-/*!
-	    \file       htdocs/includes/boxes/box_external_rss
+/**
+	    \file       htdocs/includes/boxes/box_external_rss.php
         \ingroup    external_rss
 		\brief      Fichier de gestion d'une box pour le module external_rss
 		\version    $Revision$
@@ -30,9 +31,6 @@
 
 require_once("includes/magpierss/rss_fetch.inc");
 
-//rq erics:
-// A changer si on a plus d'un site syndiqué ? je n'ai pas encore tout
-// compris aux boxes, sorry !
 for($site = 0; $site < 1; $site++) {
   $info_box_head = array();
   $info_box_head[] = array('text' => "Les 5 dernières infos du site " . @constant("EXTERNAL_RSS_TITLE_". $site));
@@ -42,11 +40,15 @@ for($site = 0; $site < 1; $site++) {
     $item = $rss->items[$i];
     $href = $item['link'];
     $title = utf8_decode(urldecode($item['title']));
+    $title=ereg_replace("([[:alnum:]])\?([[:alnum:]])","\\1'\\2",$title);   // Gère problème des apostrophes mal codée/décodée par utf8
+    $title=ereg_replace("^\s+","",$title);                                  // Supprime espaces de début
     $info_box_contents["$href"]="$title";
     $info_box_contents[$i][0] = array('align' => 'left',
+				      'logo' => 'object_rss',
 				      'text' => $title,
 				      'url' => $href);
   } 
   new infoBox($info_box_head, $info_box_contents);
 }
+
 ?>

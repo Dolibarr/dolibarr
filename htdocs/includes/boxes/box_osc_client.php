@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,12 @@
  *
  */
 
+/*!
+    \file       htdocs/includes/boxes/box_osc_client.php
+    \ingroup    osc
+    \brief      Module de génération de l'affichage de la box osc client
+*/
+
 $info_box_head = array();
 $info_box_head[] = array('text' => "Clients");
 
@@ -37,11 +44,12 @@ if ($result)
     
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       
       $info_box_contents[$i][0] = array('align' => 'center',
+					 'logo' => 'object_product',
 				     'text' => $objp->cus,
-				     'url' => "/boutique/client/");
+				     'url' => DOL_URL_ROOT."/boutique/client/index.php");
       $i++;
     }
 }

@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +21,19 @@
  *
  */
 
+/**
+    \file       htdocs/includes/boxes/box_prospect.php
+    \ingroup    commercial
+    \brief      Module de génération de l'affichage de la box prospect
+*/
+
 $info_box_head = array();
 $info_box_head[] = array('text' => "Les 5 derniers prospects enregistrés");
 
 $info_box_contents = array();
 
 $sql = "SELECT s.nom,s.idp";
-$sql .= " FROM llx_societe as s WHERE s.client = 2";  
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s WHERE s.client = 2";  
 if ($user->societe_id > 0)
 {
   $sql .= " AND s.idp = $user->societe_id";
@@ -44,9 +51,10 @@ if ($result)
     
   while ($i < $num)
     {
-      $objp = $db->fetch_object( $i);
+      $objp = $db->fetch_object($result);
       
       $info_box_contents[$i][0] = array('align' => 'left',
+					'logo' => 'object_company',
 					'text' => stripslashes($objp->nom),
 					'url' => DOL_URL_ROOT."/comm/prospect/fiche.php?id=".$objp->idp);
 
