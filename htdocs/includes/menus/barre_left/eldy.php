@@ -61,7 +61,7 @@ class MenuLeft {
     {
         global $user, $conf, $langs;
         
-        session_start();
+        if (! session_id()) session_start();    // En mode authentification PEAR, la session a déjà été ouverte
         
         $user->getrights("");
         
@@ -485,7 +485,7 @@ class MenuLeft {
                 
                   $langs->load("compta");
                   $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=accountancy&mainmenu=members",$langs->trans("Accountancy"),0,$user->rights->adherent->lire);
-                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cotisations.php?leftmenu=accountancy",$langs->trans("Subscriptions"),0,$user->rights->adherent->lire);
+                  $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cotisations.php?leftmenu=accountancy",$langs->trans("Subscriptions"),1,$user->rights->adherent->lire);
                   $langs->load("banks");
                   $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=accountancy",$langs->trans("Banks"),0,$user->rights->adherent->lire);
                 

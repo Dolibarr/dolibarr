@@ -35,7 +35,7 @@ if (!$user->admin)
   accessforbidden();
 
 
-if ($_POST["action"] == 'update')
+if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
   dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"]);
   dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"]);
@@ -59,7 +59,7 @@ print_titre($langs->trans("GlobalSetup"));
 
 print "<br>\n";
 
-if ($_GET["action"] == 'edit')
+if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
   /*
    * Edition des paramètres

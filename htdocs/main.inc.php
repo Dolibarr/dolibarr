@@ -94,9 +94,9 @@ if (! $user->login) accessforbidden();
 
 
 
-if (! defined(MAIN_INFO_SOCIETE_PAYS))
+if (! defined('MAIN_INFO_SOCIETE_PAYS'))
 {
-  define(MAIN_INFO_SOCIETE_PAYS,"1");
+  define('MAIN_INFO_SOCIETE_PAYS','1');
 }
 
 // On charge le fichier lang principal
@@ -203,7 +203,7 @@ function top_menu($head, $title="", $target="")
   print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->login.'</a>' ;
 
   // Lien logout
-  if (! $_SERVER["REMOTE_USER"])
+  if (! isset($_SERVER["REMOTE_USER"]) || ! $_SERVER["REMOTE_USER"])
     {
       print '<a href="'.DOL_URL_ROOT.'/user/logout.php">';
       print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png" alt="'.$langs->trans("Logout").'" title="'.$langs->trans("Logout").'"></a>';      

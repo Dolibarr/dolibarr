@@ -60,7 +60,7 @@ class MenuTop {
     {
         global $user, $conf, $langs;
         
-        session_start();
+        if (! session_id()) session_start();    // En mode authentification PEAR, la session a déjà été ouverte
         
         $user->getrights("");
         
