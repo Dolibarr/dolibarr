@@ -31,7 +31,7 @@
 */
 
 
-/*! \class Facture
+/**     \class      Facture
 		\brief      Classe permettant la gestion des factures clients
 */
 
@@ -1265,7 +1265,7 @@ class Facture
 
 
 
-/*!
+/**
   \class FactureLigne
   \brief Classe permettant la gestion des lignes de factures
 */

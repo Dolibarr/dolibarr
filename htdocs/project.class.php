@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +21,17 @@
  *
  */
 
+/**
+    	\file       htdocs/project.class.php
+		\ingroup    projet
+		\brief      Fichier de la classe de gestion des projets
+		\version    $Revision$
+*/
+
+
+/**     \class      Project
+		\brief      Classe permettant la gestion des projets
+*/
 
 class Project {
   var $id;
@@ -28,14 +40,17 @@ class Project {
   var $title;
   var $socidp;
 
+  /**
+   *    \brief  Constructeur de la classe
+   *    \param  DB          handler accès base de données
+   */
   function Project($DB) {
     $this->db = $DB;
   }
 	
   /*
-   *
-   *
-   *
+   *    \brief      Crée un projet en base
+   *    \param      creatorid   id utilisateur qui crée
    */
 
   function create($creatorid) {
@@ -52,9 +67,8 @@ class Project {
   }
 	
   /*
-   *
-   *
-   *
+   *    \brief      Charge objet projet depuis la base
+   *    \param      rowid       id du projet à charger
    */
 
   function fetch($rowid) {
@@ -76,6 +90,7 @@ class Project {
     }
   }
 	
+
   /*
    *
    *
@@ -113,6 +128,7 @@ class Project {
 	  print $this->db->error() . '<br>' .$sql;
 	}      
     }
+
 		
   /*
    *
@@ -154,5 +170,6 @@ class Project {
 	}
       
     }
+
 }
 ?>
