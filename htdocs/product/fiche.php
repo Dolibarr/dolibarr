@@ -273,7 +273,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
  
   $langs->load("bills");
   print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-  print $html->select_tva("tva_tx");
+  print $html->select_tva("tva_tx",$conf->defaulttx);
   print '</td></tr>';
  
   print '<tr><td>'.$langs->trans("Status").'</td><td>';

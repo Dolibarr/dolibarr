@@ -246,7 +246,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
     {
       print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="libelle" type="text"></td></tr>';
     }
-  print "<tr>".'<td>Date</td><td>';
+  print '<tr><td>'.$langs->trans("Date").'</td><td>';
   $html->select_date();
   print '</td></tr>';
   
@@ -254,7 +254,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
   print "</table><br>";
 
   print '<table class="border" width="100%">';
-  print '<tr class="liste_titre"><td>&nbsp;</td><td>'.$langs->trans("Label").'</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Tx TVA</td></tr>';
+  print '<tr class="liste_titre"><td>&nbsp;</td><td>'.$langs->trans("Label").'</td><td align="center">P.U. HT</td><td align="center">'.$langs->trans("Qty").'</td><td align="center">'.$langs->trans("VATRate").'</td></tr>';
 
   for ($i = 1 ; $i < 9 ; $i++)
     {
@@ -344,7 +344,7 @@ else
 	   */	  
 	  print "<p><form action=\"fiche.php?facid=$fac->id&amp;action=add_ligne\" method=\"post\">";
 	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td><td align="center">P.U. HT</td><td align="center">Quantité</td><td align="center">Total HT</td>';
+	  print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td><td align="center">P.U. HT</td><td align="center">'.$langs->trans("Qty").'</td><td align="center">'.$langs->trans("TotalHT").'</td>';
 	  print '<td align="center">'.$langs->trans("VATRate").'</td>';
 	  print '<td align="center">'.$langs->trans("VAT").'</td>';
 	  print '<td align="right">'.$langs->trans("TotalTTC").'</td><td>&nbsp;</td></tr>';
@@ -467,9 +467,9 @@ else
 		  $objp = $db->fetch_object();
 		  $var=!$var;
 		  print "<tr $bc[$var]>";
-		  print "<td>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
-		  print "<td>$objp->paiement_type $objp->num_paiement</TD>\n";
-		  print "<td align=\"right\">".price($objp->amount)."</TD><td>".MAIN_MONNAIE."</td>\n";
+		  print "<td>".strftime("%d %B %Y",$objp->dp)."</td>\n";
+		  print "<td>$objp->paiement_type $objp->num_paiement</td>\n";
+		  print "<td align=\"right\">".price($objp->amount)."</td><td>".MAIN_MONNAIE."</td>\n";
 
 		  if ($fac->statut == 1 && $fac->paye == 0 && $user->societe_id == 0)
 		    {

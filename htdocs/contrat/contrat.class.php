@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/contrat/contrat.class.php
         \ingroup    contrat
 		\brief      Fichier de la classe des contrats
@@ -29,7 +29,7 @@
 */
 
 
-/*!     \class      Contrat
+/**     \class      Contrat
 		\brief      Classe permettant la gestion des contrats
 */
 
@@ -51,7 +51,7 @@ class Contrat
     $this->user_cloture = new User($DB);
   }
 
-  /*
+  /**
    *    \brief      Modifie date de mise en service d'un contrat
    *                Si la duree est renseignée, date_start=date_start et date_end=date_start+duree
    *                sinon date_start=date_start et date_end=date_end
@@ -97,10 +97,11 @@ class Contrat
       }
   }
   
-  /*
-   *
-   *
-   *
+  /**
+   *    \brief      Active une ligne detail d'un contat
+   *    \param      user        objet User qui avtice le contrat
+   *    \param      line_id     id de la ligne de detail à activer
+   *    \param      date        date d'ouverture
    */
   function active_line($user, $line_id, $date)
   {
@@ -126,7 +127,7 @@ class Contrat
 
 
 
-  /*
+  /**
    *    \brief      Cloture un contrat
    *    \param      user    objet User qui cloture
    *
@@ -140,7 +141,7 @@ class Contrat
     $result = $this->db->query($sql) ;
   }
 
-  /*
+  /**
    *    \brief      Annule un contrat
    *    \param      user    objet User qui annule
    *
@@ -154,7 +155,7 @@ class Contrat
     $result = $this->db->query($sql) ;
   }
 
-  /*
+  /**
    *    \brief      Charge de la base les données du contrat
    *    \param      id      id du contrat à charger
    */ 
@@ -200,10 +201,9 @@ class Contrat
       return $result;
   }
 
-  /*
-   *
-   *
-   *
+  /**
+   *    \brief      Crée un contrat vierge
+   *    \param      user            utilisateur qui crée
    */
   function create($user)
     {
@@ -219,68 +219,69 @@ class Contrat
       else
 	{
 	  $result = 1;
-	  dolibarr_syslog("Contrat::create_from_facture - 10");
-	  dolibarr_print_error($this->db,"Contrat::create_from_facture - 10");
+	  dolibarr_syslog("Contrat::create - 10");
+	  dolibarr_print_error($this->db,"Contrat::create - 10");
 	}
  
       return $result;
     }
 
 
-  /*
+  /**
    *    \brief      Crée autant de contrats que de lignes de facture, pour une facture donnée
-   *
+   *    \param      factureid       id de la facture
+   *    \param      user            utilisateur qui crée
+   *    \param      socid           id société
    */
-  function create_from_facture($factureid, $user, $socid)
+    function create_from_facture($factureid, $user, $socid)
     {
-      $sql = "SELECT p.rowid as rowid, fd.rowid as fdrowid FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."facturedet as fd";
-      $sql .= " WHERE p.rowid = fd.fk_product AND p.fk_product_type = 1 AND fd.fk_facture = ".$factureid;
-
-      if ($this->db->query($sql))
-	{
-	  $num = $this->db->num_rows();
-
-	  if ($num > 0)
-	    {
-	      $i = 0;
-	  
-	      while ($i < $num)
-		{
-		  $objp = $this->db->fetch_object();
-		  $prowid[$i] = $objp->rowid;
-		  $fdrowid[$i] = $objp->fdrowid;
-		  $i++;
-		}
-	      
-	      $this->db->free();
-	      
-	      while (list($i, $value) = each ($prowid))
-		{
-		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (fk_product, fk_facture, fk_facturedet, fk_soc, fk_user_author)";
-		  $sql .= " VALUES (".$prowid[$i].", $factureid, ".$fdrowid[$i].", $socid, $user->id)";
-		  if (! $this->db->query($sql))
-		    {
-		      dolibarr_syslog("Contrat::create_from_facture - 10");
-		      dolibarr_print_error($this->db,"Contrat::create_from_facture - 10");
-		    }
-		}
-	    }
-	  else
-	    {
-	      $this->db->free();
-	    }
-	}
-      else
-	{
-	  dolibarr_syslog("Contrat::create_from_facture - 20");
-      dolibarr_print_error($this->db,"Contrat::create_from_facture - 20");
-	}
-      
-      return $result;
+        $sql = "SELECT p.rowid as rowid, fd.rowid as fdrowid FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."facturedet as fd";
+        $sql .= " WHERE p.rowid = fd.fk_product AND p.fk_product_type = 1 AND fd.fk_facture = ".$factureid;
+    
+        if ($this->db->query($sql))
+        {
+            $num = $this->db->num_rows();
+    
+            if ($num > 0)
+            {
+                $i = 0;
+    
+                while ($i < $num)
+                {
+                    $objp = $this->db->fetch_object();
+                    $prowid[$i] = $objp->rowid;
+                    $fdrowid[$i] = $objp->fdrowid;
+                    $i++;
+                }
+    
+                $this->db->free();
+                while (list($i, $value) = each ($prowid))
+                {
+                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."contrat (fk_product, fk_facture, fk_facturedet, fk_soc, fk_user_author)";
+                    $sql .= " VALUES (".$prowid[$i].", $factureid, ".$fdrowid[$i].", $socid, $user->id)";
+                    if (! $this->db->query($sql))
+                    {
+                        dolibarr_syslog("Contrat::create_from_facture - 10");
+                        dolibarr_print_error($this->db,"Contrat::create_from_facture - 10");
+                    }
+                }
+            }
+            else
+            {
+                $this->db->free();
+            }
+        }
+        else
+        {
+            dolibarr_syslog("Contrat::create_from_facture - 20");
+            dolibarr_print_error($this->db,"Contrat::create_from_facture - 20");
+        }
+    
+        return $result;
     }
 
   /**
-   * Ajoute une ligne de commande
+   *    \brief      Ajoute une ligne de commande
    *
    */
   function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
@@ -316,18 +317,12 @@ class Contrat
 	    $price = $pu - $remise;
 	  }
 	
-	/*
-	 * Insertion dans la base
-	 */	
-
+	// Insertion dans la base
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet ";
 	$sql .= "(fk_contrat,label,description,fk_product, price_ht,qty,tva_tx, remise_percent, subprice, remise)";
 	$sql .= " VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',$fk_product,".ereg_replace(",",".",$price).", '$qty', $txtva, $remise_percent,'".ereg_replace(",",".",$subprice)."','".ereg_replace(",",".", $remise)."') ;";
 	
-	/*
-	 * Retour
-	 */
-
+	// Retour
 	if ( $this->db->query( $sql) )
 	  {
 	    //$this->update_price();
@@ -342,8 +337,8 @@ class Contrat
   }
 
   /** 
-   * Supprime une ligne du contrat
-   *
+   *    \brief      Supprime une ligne de detail du contrat
+   *    \param      idligne     id de la ligne detail de contrat à supprimer
    */
   function delete_line($idligne)
     {

@@ -602,7 +602,7 @@ else
 
 	    if ( $db->query($sql) )
 	      {
-		$opt = "<option value=\"0\" SELECTED></option>";
+		$opt = "<option value=\"0\" selected></option>";
 
 		$num = $db->num_rows();	
 		$i = 0;	
@@ -625,8 +625,8 @@ else
 
 	    print "<tr class=\"liste_titre\">";
 	    print '<td width="54%">'.$langs->trans("Description").'</td>';
-	    print '<td width="8%" align="center">Tva</td>';
-	    print '<td width="8%" align="center">Quantité</td>';
+	    print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
+	    print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
 	    print '<td width="8%" align="right">Remise</td>';
 	    print '<td width="12%" align="right">P.U.</TD>';
 	    print '<td>&nbsp;</td><td>&nbsp;</td>'."</tr>\n";
@@ -635,7 +635,7 @@ else
 	    /*
 	    print "<tr $bc[$var]>".'<td><textarea name="desc" cols="60" rows="1"></textarea></td>';
 	    print '<td align="center">';
-	    print $html->select_tva("tva_tx");
+	    print $html->select_tva("tva_tx",$conf->defaulttx);
 	    print '</td>';
 	    print '<td align="center"><input type="text" name="qty" value="1" size="2"></td>';
 	    print '<td align="right"><input type="text" name="remise_percent" size="4" value="0">&nbsp;%</td>';
@@ -670,7 +670,7 @@ else
 	
 	    if ($contrat->statut == 0 && $user->rights->contrat->supprimer)
 	      {
-		print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=delete">Supprimer</a>';
+		print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 	      } 
 	    
 	    if ($contrat->statut > 0 && $contrat->statut < 3 && $user->rights->expedition->creer)
@@ -683,7 +683,7 @@ else
 	      {
 		if ($user->rights->contrat->valider)
 		  {
-		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=valid">Valider</a>';
+		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans("Valid").'</a>';
 		  }
 	      }
 	    
@@ -692,7 +692,7 @@ else
 		$nb_expedition = $contrat->nb_expedition();
 		if ($user->rights->contrat->valider && $nb_expedition == 0)
 		  {
-		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=annuler">Annuler la contrat</a>';
+		    print '<a class="tabAction" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans("Cancel").'</a>';
 		  }
 	      }
 
@@ -707,10 +707,11 @@ else
 	 */
 	if ($_GET["action"] == 'classer')
 	  {	    
+        $langs->load("project");
 	    print '<p><form method="post" action="fiche.php?id='.$contrat->id.'">';
 	    print '<input type="hidden" name="action" value="classin">';
-	    print '<table cellspacing="0" class="border" cellpadding="3">';
-	    print '<tr><td>Projet</td><td>';
+	    print '<table class="border">';
+	    print '<tr><td>'.$langs->trans("Project").'</td><td>';
 	    
 	    $proj = new Project($db);
 	    $html->select_array("projetid",$proj->liste_array($contrat->soc_id));
@@ -726,7 +727,7 @@ else
     else
       {
 	/* Contrat non trouvée */
-	print "Contrat inexistante ou accés refusé";
+	print "Contrat inexistant ou accés refusé";
       }
   }  
 }
