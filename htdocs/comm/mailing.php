@@ -1,4 +1,4 @@
-<?PHP
+<?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Guillaume Delecourt  <guillaume.delecourt@opensides.be>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
