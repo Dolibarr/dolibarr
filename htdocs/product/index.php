@@ -53,7 +53,7 @@ if ($_POST["action"] == 'update')
 
 llxHeader("","",$langs->trans("ProductsAndServices"));
 
-print_titre($langs->trans("ProductsAndServices"));
+print_titre($langs->trans("ProductsAndServicesArea"));
 
 print '<table border="0" width="100%">';
 

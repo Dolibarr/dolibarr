@@ -46,3 +46,4 @@ ErrorProductAlreadyExists=A product with reference %s already exists.
 ErrorProductBadRefOrLabel=Wrong value for reference or label.
 ShowProduct=Show product
 ShowService=Show service
+ProductsAndServicesArea=Product and Services area
