@@ -75,6 +75,8 @@ drop table if exists llx_boxes_def;
 
 drop table if exists llx_chargesociales;
 
+drop table if exists llx_contrat;
+
 drop table if exists llx_compta;
 
 drop table if exists llx_compta_account;
