@@ -48,6 +48,7 @@ class Contrat
   {
     $sql = "UPDATE llx_contrat SET enservice = 1";
     $sql .= " , mise_en_service = now(), fk_user_mise_en_service = ".$user->id;
+
     $sql .= " WHERE rowid = ".$this->id;
 
     $result = $this->db->query($sql) ;
@@ -67,10 +68,12 @@ class Contrat
   /*
    *
    *
-   */  Function fetch ($id)
-    {    
+   */ 
+  Function fetch ($id)
+  {    
       $sql = "SELECT rowid, enservice, fk_soc, fk_product, ".$this->db->pdate("mise_en_service")." as datemise";
       $sql .= ", fk_user_mise_en_service, ".$this->db->pdate("date_cloture")." as datecloture";
+      $sql .= ", ".$this->db->pdate("fin_validite")." as datefin";
       $sql .= ", fk_user_cloture";
       $sql .= " FROM llx_contrat WHERE rowid = $id";
 
@@ -80,14 +83,18 @@ class Contrat
 	{
 	  $result = $this->db->fetch_array();
 
-	  $this->id          = $result["rowid"];
-	  $this->enservice   = $result["enservice"];
+	  $this->id                = $result["rowid"];
+	  $this->enservice         = $result["enservice"];
 	  $this->mise_en_service   = $result["datemise"];
-	  $this->date_cloture   = $result["datecloture"];
-	  $this->product->fetch($result["fk_product"]);
-	  $this->societe->fetch($result["fk_soc"]);
+	  $this->date_cloture      = $result["datecloture"];
+	  $this->date_fin_validite = $result["datefin"];
+
 	  $this->user_service->id = $result["fk_user_mise_en_service"];
 	  $this->user_cloture->id = $result["fk_user_cloture"];
+
+	  $this->product->fetch($result["fk_product"]);
+	  $this->societe->fetch($result["fk_soc"]);
+
 	  $this->db->free();
 	}
       else
