@@ -50,15 +50,7 @@ function llxHeader($head = "") {
 
   $menu->add(DOL_URL_ROOT."/contrat/","Contrats");
 
-  /*
-   * Sécurité accés client
-   */
-  if ($user->societe_id == 0) 
-    {
 
-      $menu->add("charges/index.php","Charges");
-      $menu->add_submenu("sociales/","Prest. Sociales");
-    }
   $menu->add("stats/","Chiffre d'affaire");
 
   if ($conf->compta->tva && $user->societe_id == 0)
@@ -67,14 +59,6 @@ function llxHeader($head = "") {
     }
 
   $menu->add(DOL_URL_ROOT."/compta/caisse/index.php","Caisse");
-
-  if ($user->societe_id == 0) 
-    {
-      $menu->add("resultat/","Résultats");
-
-      $menu->add("bank/index.php","Banque");
-    }
-
 
   $menu->add(DOL_URL_ROOT."/fourn/index.php", "Fournisseurs");
 
