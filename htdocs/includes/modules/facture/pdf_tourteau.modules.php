@@ -45,7 +45,10 @@ Class pdf_tourteau {
 	  
 	  if (! file_exists($dir))
 	    {
-	      mkdir($dir, 755);
+	      if (! mkdir($dir, 755))
+		{
+		  print "Impossible de créer $dir !";
+		}
 	    }
 	  
 	  if (file_exists($dir))
@@ -190,79 +193,79 @@ Class pdf_tourteau {
 	      $pdf->MultiCell(42, 8, "Total TTC", 1, 'R', 1);
 	      
 	      $pdf->SetXY (174, $tab2_top + 0);
-	  $pdf->MultiCell(26, 8, price($fac->total_ht), 0, 'R', 0);
+	      $pdf->MultiCell(26, 8, price($fac->total_ht), 0, 'R', 0);
 	  
-	  $pdf->SetXY (174, $tab2_top + 8);
-	  $pdf->MultiCell(26, 8, price($fac->total_tva), 0, 'R', 0);
+	      $pdf->SetXY (174, $tab2_top + 8);
+	      $pdf->MultiCell(26, 8, price($fac->total_tva), 0, 'R', 0);
 	  
-	  $pdf->SetXY (174, $tab2_top + 16);
-	  $pdf->MultiCell(26, 8, price($fac->total_ttc), 1, 'R', 1);
+	      $pdf->SetXY (174, $tab2_top + 16);
+	      $pdf->MultiCell(26, 8, price($fac->total_ttc), 1, 'R', 1);
 	  
-	  /*
-	   *
-	   */
-
-	  $tab3_top = 240;
-	  $tab3_height = 18;
-	  $tab3_width = 60;
-	  
-	  $pdf->Rect(10, $tab3_top, $tab3_width, $tab3_height);
-	  
-	  $pdf->line(10, $tab3_top + 6, $tab3_width+10, $tab3_top + 6 );
-	  $pdf->line(10, $tab3_top + 12, $tab3_width+10, $tab3_top + 12 );
-	  
-	  $pdf->line(30, $tab3_top, 30, $tab3_top + $tab3_height );
-
-	  $pdf->SetFont('Arial','',8);
-	  $pdf->SetXY (10, $tab3_top - 6);
-	  $pdf->MultiCell(60, 6, "Informations complémentaires", 0, 'L', 0);
-	  $pdf->SetXY (10, $tab3_top );
-	  $pdf->MultiCell(20, 6, "Réglé le", 0, 'L', 0);
-	  $pdf->SetXY (10, $tab3_top + 6);
-	  $pdf->MultiCell(20, 6, "Chèque N°", 0, 'L', 0);
-	  $pdf->SetXY (10, $tab3_top + 12);
-	  $pdf->MultiCell(20, 6, "Banque", 0, 'L', 0);
-	  /*
-	   *
-	   */
-	  if (defined("FACTURE_RIB_NUMBER"))
-	    {
-	      if (FACTURE_RIB_NUMBER > 0)
+	      /*
+	       *
+	       */
+	      
+	      $tab3_top = 240;
+	      $tab3_height = 18;
+	      $tab3_width = 60;
+	      
+	      $pdf->Rect(10, $tab3_top, $tab3_width, $tab3_height);
+	      
+	      $pdf->line(10, $tab3_top + 6, $tab3_width+10, $tab3_top + 6 );
+	      $pdf->line(10, $tab3_top + 12, $tab3_width+10, $tab3_top + 12 );
+	      
+	      $pdf->line(30, $tab3_top, 30, $tab3_top + $tab3_height );
+	      
+	      $pdf->SetFont('Arial','',8);
+	      $pdf->SetXY (10, $tab3_top - 6);
+	      $pdf->MultiCell(60, 6, "Informations complémentaires", 0, 'L', 0);
+	      $pdf->SetXY (10, $tab3_top );
+	      $pdf->MultiCell(20, 6, "Réglé le", 0, 'L', 0);
+	      $pdf->SetXY (10, $tab3_top + 6);
+	      $pdf->MultiCell(20, 6, "Chèque N°", 0, 'L', 0);
+	      $pdf->SetXY (10, $tab3_top + 12);
+	      $pdf->MultiCell(20, 6, "Banque", 0, 'L', 0);
+	      /*
+	       *
+	       */
+	      if (defined("FACTURE_RIB_NUMBER"))
 		{
-		  $account = new Account($this->db);
-		  $account->fetch(FACTURE_RIB_NUMBER);
-
-		  $pdf->SetXY (10, 40);		  
-		  $pdf->SetFont('Arial','U',8);
-		  $pdf->MultiCell(40, 4, "Coordonnées bancaire", 0, 'L', 0);
-		  $pdf->SetFont('Arial','',8);
-		  $pdf->MultiCell(40, 4, "Code banque : " . $account->code_banque, 0, 'L', 0);
-		  $pdf->MultiCell(40, 4, "Code guichet : " . $account->code_guichet, 0, 'L', 0);
-		  $pdf->MultiCell(50, 4, "Numéro compte : " . $account->number, 0, 'L', 0);
-		  $pdf->MultiCell(40, 4, "Clé RIB : " . $account->cle_rib, 0, 'L', 0);
-		  $pdf->MultiCell(40, 4, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
-		  $pdf->MultiCell(40, 4, "Prefix IBAN : " . $account->iban_prefix, 0, 'L', 0);
-		  $pdf->MultiCell(40, 4, "BIC : " . $account->bic, 0, 'L', 0);
+		  if (FACTURE_RIB_NUMBER > 0)
+		    {
+		      $account = new Account($this->db);
+		      $account->fetch(FACTURE_RIB_NUMBER);
+		      
+		      $pdf->SetXY (10, 40);		  
+		      $pdf->SetFont('Arial','U',8);
+		      $pdf->MultiCell(40, 4, "Coordonnées bancaire", 0, 'L', 0);
+		      $pdf->SetFont('Arial','',8);
+		      $pdf->MultiCell(40, 4, "Code banque : " . $account->code_banque, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, "Code guichet : " . $account->code_guichet, 0, 'L', 0);
+		      $pdf->MultiCell(50, 4, "Numéro compte : " . $account->number, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, "Clé RIB : " . $account->cle_rib, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, "Domiciliation : " . $account->domiciliation, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, "Prefix IBAN : " . $account->iban_prefix, 0, 'L', 0);
+		      $pdf->MultiCell(40, 4, "BIC : " . $account->bic, 0, 'L', 0);
+		    }
 		}
+	      
+	      /*
+	       *
+	       *
+	       */
+	      
+	      $pdf->SetFont('Arial','U',12);
+	      $pdf->SetXY(10, 220);
+	      $pdf->MultiCell(190, 5, "Conditions de réglement : à réception de facture.", 0, 'J');
+	      
+	      $pdf->SetFont('Arial','',9);
+	      $pdf->SetXY(10, 265);
+	      $pdf->MultiCell(190, 5, "Accepte le réglement des sommes dues par chèques libellés à mon nom en ma qualité de Membre d'une Association de Gestion agréée par l'Administration Fiscale.", 0, 'J');
+	      
+	      $pdf->Output($file);
+	      
 	    }
-
-	  /*
-	   *
-	   *
-	   */
-
-	  $pdf->SetFont('Arial','U',12);
-	  $pdf->SetXY(10, 220);
-	  $pdf->MultiCell(190, 5, "Conditions de réglement : à réception de facture.", 0, 'J');
-	  
-	  $pdf->SetFont('Arial','',9);
-	  $pdf->SetXY(10, 265);
-	  $pdf->MultiCell(190, 5, "Accepte le réglement des sommes dues par chèques libellés à mon nom en ma qualité de Membre d'une Association de Gestion agréée par l'Administration Fiscale.", 0, 'J');
-	  
-	  $pdf->Output($file);
-	  
 	}
-    }
     }
 }
 
