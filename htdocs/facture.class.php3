@@ -295,11 +295,11 @@ class Facture
    *
    *
    */
-  Function set_valid($rowid, $userid)
+  Function set_valid($rowid, $user)
     {
       $action_notify = 2; // ne pas modifier cette valeur
 
-      $sql = "UPDATE llx_facture set fk_statut = 1, fk_user_valid = $userid WHERE rowid = $rowid ;";
+      $sql = "UPDATE llx_facture set fk_statut = 1, fk_user_valid = $user->id WHERE rowid = $rowid ;";
       $result = $this->db->query( $sql);
 
       /*
@@ -335,7 +335,12 @@ class Facture
 	      $i++;
 	    }
 	}
-
+      /*
+       * Contrats
+       */      
+      $contrat = new Contrat($this->db);
+      $contrat->create_from_facture($this->id, $user, $this->socidp);
+      
       return $result;
     }
   /*
