@@ -72,6 +72,11 @@ $modules["MAIN_MODULE_FOURNISSEUR"][1] = "MAIN_MODULE_FOURNISSEUR";
 $modules["MAIN_MODULE_FOURNISSEUR"][2] = MAIN_MODULE_FOURNISSEUR;
 $modules["MAIN_MODULE_FOURNISSEUR"][3] = "Module des gestion des fournisseurs";
 
+$modules["MAIN_MODULE_BOUTIQUE"][0] = "Module boutique";
+$modules["MAIN_MODULE_BOUTIQUE"][1] = "MAIN_MODULE_BOUTIQUE";
+$modules["MAIN_MODULE_BOUTIQUE"][2] = MAIN_MODULE_BOUTIQUE;
+$modules["MAIN_MODULE_BOUTIQUE"][3] = "Module des gestion des boutiques";
+
 if ($action == 'set')
 {
   $sql = "REPLACE INTO llx_const SET name = '".$value."', value='1'";
