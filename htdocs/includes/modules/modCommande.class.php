@@ -45,13 +45,20 @@ class modCommande extends modDolibarrModules
   Function init()
   {
     /*
-     *  Activation du module
+     * Permissions
      */
-
-    $sql = array();
+    $sql = array(
+		 "insert into llx_rights_def values (80,'Tous les droits sur les commandes','commande','a',0);",
+		 "insert into llx_rights_def values (81,'Lire les commandes','commande','r',1);",
+		 "insert into llx_rights_def values (82,'Créer modifier les commandes','commande','w',0);",
+		 //"insert into llx_rights_def values (83,'Modifier les commandes d\'autrui','commande','m',0);",
+		 "insert into llx_rights_def values (84,'Valider les commandes','commande','d',0);",
+		 "insert into llx_rights_def values (85,'Envoyer les commandes aux clients','commande','d',0);",
+		 "insert into llx_rights_def values (86,'Emettre des paiements sur les commandes','commande','d',0);",
+		 "insert into llx_rights_def values (89,'Supprimer les commandes','commande','d',0);",
+		 );
     
-    return $this->_init($this->const, $sql);
-
+    return $this->_init($sql);
   }
   /*
    *
