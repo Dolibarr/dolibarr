@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -46,7 +46,7 @@ if ($action == 'attribute_prefix') {
 
 if ($action == 'recontact') {
   $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
-  $sql = "INSERT INTO llx_soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $GLOBALS["REMOTE_USER"]."')";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $GLOBALS["REMOTE_USER"]."')";
   $result = $db->query($sql);
 }
 
@@ -57,7 +57,7 @@ if ($action == 'stcomm') {
     $result = @$db->query($sql);
 
     if ($result) {
-      $sql = "UPDATE llx_societe SET fk_stcomm=$stcommid WHERE idp=$socid";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=$socid";
       $result = $db->query($sql);
     } else {
       $errmesg = "ERREUR DE DATE !";
@@ -65,7 +65,7 @@ if ($action == 'stcomm') {
   }
 
   if ($actioncommid) {
-    $sql = "INSERT INTO llx_actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
     $result = @$db->query($sql);
 
     if (!$result) {
@@ -81,7 +81,7 @@ if ($action == 'stcomm') {
  */
 if ($mode == 'search') {
   if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM llx_societe as s ";
+    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
     $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
   }
       
@@ -115,7 +115,7 @@ if ($socid > 0)
 
   $societe = new Societe($db, $socid);
   
-  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM llx_societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
+  $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."c_typent as t, ".MAIN_DB_PREFIX."c_effectif as e ";
   $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
 
   if ($to == 'next') {
@@ -207,7 +207,7 @@ if ($socid > 0)
     $var = true;
     print '<table border="0" width="100%" cellspacing="0" cellpadding="1">';
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.remise, ".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-    $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
     $sql .= " AND s.idp = $objsoc->idp ORDER BY p.datep DESC";
 
     if ( $db->query($sql) )
@@ -242,7 +242,7 @@ if ($socid > 0)
      */
     print '<table border="0" width="100%" cellspacing="0" cellpadding="1">';
     $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.ref, ".$db->pdate("p.date_commande")." as dp";
-    $sql .= " FROM llx_societe as s, llx_commande as p WHERE p.fk_soc = s.idp ";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p WHERE p.fk_soc = s.idp ";
     $sql .= " AND s.idp = $objsoc->idp ORDER BY p.date_commande DESC";
 
     if ( $db->query($sql) )
@@ -278,7 +278,7 @@ if ($socid > 0)
      *
      */
     $sql  = "SELECT p.rowid,p.title,p.ref,".$db->pdate("p.dateo")." as do";
-    $sql .= " FROM llx_projet as p WHERE p.fk_soc = $objsoc->idp";
+    $sql .= " FROM ".MAIN_DB_PREFIX."projet as p WHERE p.fk_soc = $objsoc->idp";
     if ( $db->query($sql) ) {
       print "<table border=1 cellspacing=0 width=100% cellpadding=\"1\">";
       $i = 0 ; 
@@ -372,7 +372,7 @@ if ($socid > 0)
       print "<td>Fax</td><td>Email</td>";
       print "<td align=\"center\"><a href=\"people.php?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
     
-      $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM llx_socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
+      $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM ".MAIN_DB_PREFIX."socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
       $result = $db->query($sql);
       $i = 0 ; $num = $db->num_rows(); $tag = True;
       while ($i < $num)
@@ -414,7 +414,7 @@ if ($socid > 0)
       print '<td colspan="2" valign="top">';
 
       $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-      $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u ";
+      $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
       $sql .= " WHERE a.fk_soc = $objsoc->idp ";
       $sql .= " AND u.rowid = a.fk_user_author";
       $sql .= " AND c.id=a.fk_action AND a.percent < 100";
@@ -493,7 +493,7 @@ if ($socid > 0)
       print '<td valign="top">';
 
       $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-      $sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_user as u ";
+      $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
       $sql .= " WHERE a.fk_soc = $objsoc->idp ";
       $sql .= " AND u.rowid = a.fk_user_author";
       $sql .= " AND c.id=a.fk_action AND a.percent = 100";

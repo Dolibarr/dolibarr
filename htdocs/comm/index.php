@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -51,12 +51,12 @@ function valeur($sql)
 
 if ($action == 'add_bookmark')
 {
-  $sql = "DELETE FROM llx_bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE fk_soc = ".$socidp." AND fk_user=".$user->id;
   if (! $db->query($sql) )
     {
       print $db->error();
     }
-  $sql = "INSERT INTO llx_bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."bookmark (fk_soc, dateb, fk_user) VALUES ($socidp, now(),".$user->id.");";
   if (! $db->query($sql) )
     {
       print $db->error();
@@ -65,7 +65,7 @@ if ($action == 'add_bookmark')
 
 if ($action == 'del_bookmark')
 {
-  $sql = "DELETE FROM llx_bookmark WHERE rowid=$bid";
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."bookmark WHERE rowid=$bid";
   $result = $db->query($sql);
 }
 
@@ -85,7 +85,7 @@ if ($conf->propal->enabled) {
 	print "</table></form><br>\n";
 
 	$sql = "SELECT p.rowid, p.ref";
-	$sql .= " FROM llx_propal as p";
+	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p";
 	$sql .= " WHERE p.fk_statut = 0";
 	
 	if ( $db->query($sql) )
@@ -113,7 +113,7 @@ if ($conf->propal->enabled) {
 /*
  * Commandes à valider
  */
-$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM llx_commande as c, llx_societe as s";
+$sql = "SELECT c.rowid, c.ref, s.nom, s.idp FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
 if ($socidp)
 {
@@ -148,7 +148,7 @@ if ( $db->query($sql) )
  */
 
 $sql = "SELECT s.idp, s.nom,b.rowid as bid";
-$sql .= " FROM llx_societe as s, llx_bookmark as b";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
 $sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
 $sql .= " ORDER BY lower(s.nom) ASC";
 
@@ -183,7 +183,7 @@ if ( $db->query($sql) )
 print '</td><td valign="top" width="70%">';
 
 $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
-$sql .= " FROM llx_actioncomm as a, c_actioncomm as c, llx_societe as s";
+$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc AND a.fk_user_action = $user->id";
 $sql .= " ORDER BY a.datea DESC";
 
@@ -218,7 +218,7 @@ else
 }
 
 $sql = "SELECT s.nom, s.idp, p.rowid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-$sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut = 1";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut = 1";
 if ($socidp)
 { 
   $sql .= " AND s.idp = $socidp"; 
@@ -259,7 +259,7 @@ if ( $db->query($sql) )
 if ($conf->propal->enabled) {
 
 	$sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-	$sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut > 1";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut > 1";
 	if ($socidp)
 	{ 
 	  $sql .= " AND s.idp = $socidp"; 

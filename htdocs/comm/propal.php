@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -254,7 +254,7 @@ if ($_GET["propalid"])
    *
    */
   $sql = "SELECT s.nom, s.idp, p.price, p.fk_projet,p.remise, p.tva, p.total, p.ref,".$db->pdate("p.datep")." as dp, c.id as statut, c.label as lst, p.note, x.firstname, x.name, x.fax, x.phone, x.email, p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture";
-  $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c, llx_socpeople as x";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."socpeople as x";
   $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND x.idp = p.fk_soc_contact AND p.rowid = $propal->id";
 
   if ($socidp)
@@ -360,7 +360,7 @@ if ($_GET["propalid"])
 	  print "</TR>\n";
 
 	  $sql = "SELECT pt.rowid, p.label as product, p.ref, pt.price, pt.qty, p.rowid as prodid, pt.tva_tx, pt.remise_percent, pt.subprice";
-	  $sql .= " FROM llx_propaldet as pt, llx_product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propal->id";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt, ".MAIN_DB_PREFIX."product as p WHERE pt.fk_product = p.rowid AND pt.fk_propal = $propal->id";
 	  $sql .= " ORDER BY pt.rowid ASC";
 	  $result = $db->query($sql);
 	  if ($result) 
@@ -398,7 +398,7 @@ if ($_GET["propalid"])
 	    }
 
 	  $sql = "SELECT pt.rowid, pt.description, pt.price, pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice";
-	  $sql .= " FROM llx_propaldet as pt WHERE pt.fk_propal = $propal->id AND pt.fk_product = 0";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."propaldet as pt WHERE pt.fk_propal = $propal->id AND pt.fk_product = 0";
 	  
 	  if ($db->query($sql)) 
 	    {
@@ -431,7 +431,7 @@ if ($_GET["propalid"])
 
 	  if ($obj->statut == 0 && $user->rights->propale->creer)
 	    {
-	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM llx_product as p WHERE p.envente=1 ORDER BY p.nbvente DESC LIMIT 20";
+	      $sql = "SELECT p.rowid,p.label,p.ref,p.price FROM ".MAIN_DB_PREFIX."product as p WHERE p.envente=1 ORDER BY p.nbvente DESC LIMIT 20";
 	      // RyXéo on a ORDER BY p.ref et pas de limit
 	      if ( $db->query($sql) )
 		{
@@ -697,7 +697,7 @@ if ($_GET["propalid"])
 	   *
 	   */
 	  $sql = "SELECT ".$db->pdate("a.datea"). " as da, note, fk_user_author" ;
-	  $sql .= " FROM llx_actioncomm as a WHERE a.fk_soc = $obj->idp AND a.propalrowid = $propal->id ";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a WHERE a.fk_soc = $obj->idp AND a.propalrowid = $propal->id ";
 	  
 	  if ( $db->query($sql) )
 	    {
@@ -849,7 +849,7 @@ if ($_GET["propalid"])
   $pagenext = $_GET["page"] + 1;
 
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp,".$db->pdate("p.fin_validite")." as dfv, c.label as statut, c.id as statutid";
-  $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
 
   if ($socidp)
     { 
