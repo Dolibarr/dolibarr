@@ -510,19 +510,19 @@ class pdf_oursin extends ModelePDFFactures
    */
   function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $fac)
   {
-    global $langs;
-    $langs->load("main");
-    $langs->load("bills");
+        global $langs;
+        $langs->load("main");
+        $langs->load("bills");
         
     $pdf->line( $this->marges['g'], $tab_top+8, 210-$this->marges['d'], $tab_top+8 );
     $pdf->line( $this->marges['g'], $tab_top + $tab_height, 210-$this->marges['d'], $tab_top + $tab_height );
 
     $pdf->SetFont('Arial','B',10);
 
-    $pdf->Text($this->marges['g']+2,$tab_top + 5, $langs->trans("Label"));
+    $pdf->Text($this->marges['g']+2,$tab_top + 5, $langs->trans("Designation"));
     if ($this->franchise!=1) $pdf->Text($this->marges['g']+120, $tab_top + 5, $langs->trans("VAT"));
-    $pdf->Text($this->marges['g']+135, $tab_top + 5,'P.U. HT');
-    $pdf->Text($this->marges['g']+153, $tab_top + 5, $langs->trans("Qté"));
+    $pdf->Text($this->marges['g']+135, $tab_top + 5,$langs->trans("PriceUHT"));
+    $pdf->Text($this->marges['g']+153, $tab_top + 5, $langs->trans("Qty"));
 
     $nblignes = sizeof($fac->lignes);
     $rem=0;

@@ -514,13 +514,13 @@ class pdf_crabe extends ModelePDFFactures
 
         $pdf->SetFont('Arial','',10);
 
-        $pdf->Text(12,$tab_top + 5, $langs->trans("Label"));
+        $pdf->Text(12,$tab_top + 5, $langs->trans("Designation"));
 
         $pdf->line(120, $tab_top, 120, $tab_top + $tab_height);
         $pdf->Text(122, $tab_top + 5, $langs->trans("VAT"));
 
         $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-        $pdf->Text(135, $tab_top + 5,'P.U. HT');
+        $pdf->Text(135, $tab_top + 5,$langs->trans("PriceUHT"));
 
         $pdf->line(150, $tab_top, 150, $tab_top + $tab_height);
         $pdf->Text(153, $tab_top + 5, $langs->trans("Qty"));

@@ -71,6 +71,7 @@ Label=Label
 Info=Info
 Family=Family
 Description=Description
+Designation=Description
 Action=Action
 About=About
 WelcomeString=<font class="body">We are </font>%s<font class="body">, and you are connected with name</font> %s
@@ -112,6 +113,9 @@ Copy=Copy
 Paste=Paste
 Default=Default
 Price=Price
+UnitPrice=Unit price
+PriceU=U.P.
+PriceUHT=U.P. HT
 Amount=Amount
 AmountHT=Amount&nbsp;HT
 AmountTTC=Amount&nbsp;TTC

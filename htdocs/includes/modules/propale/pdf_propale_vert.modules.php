@@ -230,16 +230,18 @@ class pdf_propale_vert extends ModelePDFPropales
 
   function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
-      global $langs;
+        global $langs;
+        $langs->load("main");
+        $langs->load("bills");
       
       $yt = 100;
       $pdf->SetFont('Arial','',10);
             
       $pdf->SetXY(10, $yt);
-      $pdf->MultiCell(30,5,'Référence',0,'L');
+      $pdf->MultiCell(30,5,$langs->trans("Ref"),0,'L');
 
       $pdf->SetXY(40, $yt);
-      $pdf->MultiCell(90,5,'Désignation',0,'L');
+      $pdf->MultiCell(90,5,$langs->trans("Designation"),0,'L');
 
       $pdf->SetXY(132, $yt);
       $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
@@ -251,7 +253,7 @@ class pdf_propale_vert extends ModelePDFPropales
       
       $pdf->line(150, $tab_top, 150, $tab_top + $tab_height);
       $pdf->SetXY(150, $yt);
-      $pdf->MultiCell(16,5,'P.U.',0,'C');
+      $pdf->MultiCell(16,5,$langs->trans("PriceU"),0,'C');
       
       $pdf->line(166, $tab_top, 166, $tab_top + $tab_height);
       $pdf->SetXY(166, $yt);

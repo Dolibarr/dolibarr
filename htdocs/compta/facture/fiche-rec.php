@@ -157,7 +157,7 @@ if ($_GET["action"] == 'create')
 	      print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
 	      print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
 	      print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
-	      print '<td width="12%" align="right">P.U.</td>';
+	      print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
 	      print '<td width="12%" align="right">N.P.</td>';
 	      print "</tr>\n";
 	    }

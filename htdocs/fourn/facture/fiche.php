@@ -256,7 +256,7 @@ if ($_GET["action"] == 'create' or $_GET["action"] == 'copy')
   print "</table><br>";
 
   print '<table class="border" width="100%">';
-  print '<tr class="liste_titre"><td>&nbsp;</td><td>'.$langs->trans("Label").'</td><td align="center">P.U. HT</td><td align="center">'.$langs->trans("Qty").'</td><td align="center">'.$langs->trans("VATRate").'</td></tr>';
+  print '<tr class="liste_titre"><td>&nbsp;</td><td>'.$langs->trans("Label").'</td><td align="center">'.$langs->trans("PriceUHT").'</td><td align="center">'.$langs->trans("Qty").'</td><td align="center">'.$langs->trans("VATRate").'</td></tr>';
 
   for ($i = 1 ; $i < 9 ; $i++)
     {
@@ -354,7 +354,7 @@ else
 	  print "<form action=\"fiche.php?facid=$fac->id&amp;action=add_ligne\" method=\"post\">";
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td>';
-	  print '<td align="center">P.U. HT</td>';
+	  print '<td align="center">'.$langs->trans("PriceUHT").'</td>';
 	  print '<td align="center">'.$langs->trans("Qty").'</td>';
 	  print '<td align="center">'.$langs->trans("TotalHT").'</td>';
 	  print '<td align="center">'.$langs->trans("VATRate").'</td>';
@@ -522,7 +522,7 @@ else
 	   */	  
 	  print '<p><table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td>'.$langs->trans("Label").'</td>';
-	  print '<td align="center">P.U. HT</td>';
+	  print '<td align="center">'.$langs->trans("PriceUHT").'</td>';
 	  print '<td align="center">'.$langs->trans("Qty").'</td>';
 	  print '<td align="center">'.$langs->trans("TotalHT").'</td>';
 	  print '<td align="center">'.$langs->trans("VATRate").'</td>';

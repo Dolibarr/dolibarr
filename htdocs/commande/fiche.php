@@ -553,7 +553,7 @@ else
 		  print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
 		  print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
 		  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
-		  print '<td width="12%" align="right">P.U.</td>';
+		  print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
 		  print '<td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
 		  print "</tr>\n";
 		}
@@ -657,7 +657,7 @@ else
 	    print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
 	    print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
 	    print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
-	    print '<td width="12%" align="right">P.U.</td>';
+	    print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
 	    print '<td>&nbsp;</td><td>&nbsp;</td>'."</tr>\n";
 	    print '<input type="hidden" name="action" value="addligne">';
 	    print "<tr $bc[$var]>".'<td><textarea name="desc" cols="60" rows="1"></textarea></td>';

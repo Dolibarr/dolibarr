@@ -214,22 +214,25 @@ class pdf_propale_bleu extends ModelePDFPropales
 
   function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
+        global $langs;
+        $langs->load("main");
+        $langs->load("bills");
 
       $pdf->SetFont('Arial','',11);
             
-      $pdf->Text(30,$tab_top + 5,'Désignation');
+      $pdf->Text(30,$tab_top + 5,$langs->trans("Designation"));
       
       $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-      $pdf->Text(134,$tab_top + 5,'TVA');
+      $pdf->Text(134,$tab_top + 5,$langs->trans("VAT"));
       
       $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-      $pdf->Text(147,$tab_top + 5,'Qté');
+      $pdf->Text(147,$tab_top + 5,$langs->trans("Qty"));
       
       $pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-      $pdf->Text(160,$tab_top + 5,'P.U.');
+      $pdf->Text(160,$tab_top + 5,$langs->trans("PriceU"));
       
       $pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-      $pdf->Text(187,$tab_top + 5,'Total');
+      $pdf->Text(187,$tab_top + 5,$langs->trans("Total"));
       
       //      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
       $pdf->Rect(10, $tab_top, 190, $tab_height);

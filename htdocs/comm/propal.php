@@ -405,7 +405,7 @@ if ($_GET["propalid"])
 	  print '<table class="noborder" width="100%">';
 	  print "<tr class=\"liste_titre\">";
 	  print '<td>'.$langs->trans("Ref").'</td><td>'.$langs->trans("ProductOrService").'</td>';
-	  print '<td align="center">'.$langs->trans("VAT").'</td><td align="center">'.$langs->trans("Qty").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="right">P.U.</td>';
+	  print '<td align="center">'.$langs->trans("VAT").'</td><td align="center">'.$langs->trans("Qty").'</td><td align="center">'.$langs->trans("Discount").'</td><td align="right">'.$langs->trans("PriceU").'</td>';
       print "<td>&nbsp;</td>";
 	  print "</tr>\n";
 

@@ -1029,7 +1029,7 @@ else
 		  print "<tr class=\"liste_titre\">";
 		  print '<td width="54%">'.$langs->trans("Description").'</td>';
 		  print '<td width="8%" align="right">'.$langs->trans("VAT").'</td>';
-		  print '<td width="12%" align="right">P.U. HT</td>';
+		  print '<td width="12%" align="right">'.$langs->trans("PriceUHT").'</td>';
 		  print '<td width="8%" align="right">'.$langs->trans("Quantity").'</td>';
 		  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
 		  print '<td width="10%" align="right">'.$langs->trans("AmountHT").'</td>';
@@ -1144,7 +1144,7 @@ else
 	      print "<tr class=\"liste_titre\">";
 	      print '<td width="54%">'.$langs->trans("Description").'</td>';
 	      print '<td width="8%" align="right">'.$langs->trans("VAT").'</td>';
-	      print '<td width="12%" align="right">P.U. HT</td>';
+	      print '<td width="12%" align="right">'.$langs->trans("PriceUHT").'</td>';
 	      print '<td width="8%" align="right">'.$langs->trans("Quantity").'</td>';
 	      print '<td width="8%" align="right">'.$langs->trans("Dscount").'</td>';
 	      print '<td>&nbsp;</td>';

@@ -360,7 +360,7 @@ if ($id > 0)
 	      print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
 	      print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
 	      print '<td width="7%" align="right">'.$langs->trans("Discount").'</td>';
-	      print '<td width="10%" align="right">P.U.</td>';
+	      print '<td width="10%" align="right">'.$langs->trans("PriceU").'</td>';
 	      print '<td width="5%">&nbsp;</td><td width="10%">&nbsp;</td>';
 	      print "</tr>\n";
 	    }
@@ -469,7 +469,7 @@ if ($id > 0)
 	  print '<td width="8%" align="center">'.$langs->trans("VAT").'</td>';
 	  print '<td width="8%" align="center">'.$langs->trans("Qty").'</td>';
 	  print '<td width="8%" align="right">'.$langs->trans("Discount").'</td>';
-	  print '<td width="12%" align="right">P.U.</TD>';
+	  print '<td width="12%" align="right">'.$langs->trans("PriceU").'</td>';
 	  print '<td>&nbsp;</td><td>&nbsp;</td>'."</tr>\n";
 
 	  /*
