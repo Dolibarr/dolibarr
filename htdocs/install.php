@@ -62,10 +62,16 @@ if ($action == "set")
 
       if ($db->query($sql))
 	{
-	  print "- connexion réussie à la base de données<br>";
 
-	  print '<a href="'.$dolibarr_main_url_root .'/">Go !</a>';
+	  $sql = "REPLACE INTO llx_const SET name = 'FAC_OUTPUT_URL', value='".$dolibarr_main_url_root."/document', visible=0, type='chaine'";
 
+	  if ($db->query($sql))
+	    {
+
+	      print "- connexion réussie à la base de données<br>";
+
+	      print '<a href="'.$dolibarr_main_url_root .'/">Go !</a>';
+	    }
 	}
       else
 	{
