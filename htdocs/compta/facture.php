@@ -59,6 +59,8 @@ require_once "../lib/CMailFile.class.php";
 
 
 if ($_GET["socidp"]) { $socidp=$_GET["socidp"]; }
+if (isset($_GET["msg"])) { $msg=urldecode($_GET["msg"]); }
+
 /*
  * Sécurité accés client
  */
@@ -165,7 +167,7 @@ if ($_POST["action"] == 'add')
 		    }
 		  else
 		    {
-		      print "Erreur";
+		      print $langs->trans("UnknownError");
 		    }
 		}
 	    }
@@ -197,14 +199,14 @@ if ($_POST["action"] == 'add')
 		    }
 		  else
 		    {
-		      print "Erreur";
+		      print $langs->trans("UnknownError");
 		    }
 		}
 	      else
 		{
 		  print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
 		  print "<p>Retour à la <a href=\"propal.php?propalid=$propalid\">propale</a>";
-		  print $db->error();
+		  dolibarr_print_error($db);
 		}
 	    }
 	
@@ -334,7 +336,7 @@ if ($_POST["action"] == 'confirm_canceled' && $_POST["confirm"] == yes)
 
 
 /*
- *
+ * Action envoi de mail
  */
 if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 {
@@ -347,6 +349,8 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
       
       if (is_readable($file))
 	{
+      $soc = new Societe($db, $fac->socidp);
+
 	  if ($_POST["sendto"]) {
 	    // Le destinataire a été fourni via le champ libre
 	    $sendto = $_POST["sendto"];
@@ -354,7 +358,6 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 	  }
 	  elseif ($_POST["receiver"]) {
 	    // Le destinataire a été fourni via la liste déroulante
-	    $soc = new Societe($db, $fac->socidp);
 	    $sendto = $soc->contact_get_email($_POST["receiver"]);
 	    $sendtoid = $_POST["receiver"];
 	  }
@@ -374,8 +377,8 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 		$actionmsg2="Relance Facture par mail";
 	      }
 	      $message = $_POST["message"];
-	      $from = $_POST["fromname"] . " <".$_POST["frommail"] .">";
-	      $replyto = $_POST["replytoname"]. " <".$_POST["replytomail"].">";
+	      $from = $_POST["fromname"] . " <" . $_POST["frommail"] .">";
+	      $replyto = $_POST["replytoname"]. " <" . $_POST["replytomail"].">";
 
 	      $filepath[0] = $file;
 	      $filename[0] = $fac->ref.".pdf";
@@ -389,6 +392,8 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 
 	      if ( $mailfile->sendfile() )
 		{		  
+          $msg='<div class="ok">Mails envoyé avec succès à '.htmlentities($sendto).' (de la part de '.htmlentities($from).')</div>';
+
 		  $sendto = htmlentities($sendto);
 			  
 		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '$actioncode' ,'$fac->socidp' ,'$actionmsg','$fac->id','$sendtoid','$user->id', '$actionmsg2',100);";
@@ -400,16 +405,17 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 		  else
 		    {
 		      // Renvoie sur la page de la facture
-		      Header("Location: facture.php?facid=".$fac->id);
+		      Header("Location: facture.php?facid=".$fac->id."&msg=".urlencode($msg));
 		    } 	      	      
 		}
 	      else
 		{
-		  print $langs->trans("ErrorFailedToSendMail",$replyto,$sendto);
+		  $msg='<div class="error">'.$langs->trans("ErrorFailedToSendMail",htmlentities($from),htmlentities($sendto)).'</div>';
 		}	  
 	    }
 	  else
 	    {
+		  $msg='<div class="error">'.htmlentities($langs->trans("Le mail du destinataire est vide")).'</div>';
 	      dolibarr_syslog("Le mail du destinataire est vide");
 	    }
 
@@ -773,6 +779,10 @@ else
 
   if ($_GET["facid"] > 0)
     {      
+      if ($msg) {
+        print "$msg<br>";
+      }
+
       $fac = New Facture($db);
       if ( $fac->fetch($_GET["facid"], $user->societe_id) > 0)
 	{
@@ -1339,13 +1349,18 @@ else
 	      print '<br>';
 	      print_titre("Envoyer la facture par mail");
 
+	      $liste[0]="&nbsp;";
+	      foreach ($soc->contact_email_array() as $key=>$value) {
+	        $liste[$key]=$value; 
+	      }
+	      
 	      // Créé l'objet formulaire mail
 	      include_once("../html.formmail.class.php");
 	      $formmail = new FormMail($db);	    
 	      $formmail->fromname = $user->fullname;
 	      $formmail->frommail = $user->email;
           $formmail->withfrom=1;
-          $formmail->withto=array_merge(array("&nbsp;"),$soc->contact_email_array());
+          $formmail->withto=$liste;
           $formmail->withcc=1;
           $formmail->withtopic=1;
           $formmail->withfile=1;
