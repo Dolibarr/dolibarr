@@ -78,7 +78,6 @@ if ($action == 'add')
   if ($id) 
     {
       propale_pdf_create($db, $id);
-
       $propalid = $id;
     }
   else
@@ -213,7 +212,7 @@ if ($propalid) {
 	  print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
 
 	  print '<tr><td>Société</td><td colspan="2"><a href="fiche.php3?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-	  print '<td>Statut :</td><td colspan=2 align=center><b>'.$obj->lst.'</b></td></tr>';
+	  print '<td>Statut</td><td colspan=2 align=center><b>'.$obj->lst.'</b></td></tr>';
 
 	  print '<tr><td>Date</td><td colspan="2">'.strftime("%A %d %B %Y",$obj->dp).'</td>';
 

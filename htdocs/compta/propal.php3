@@ -48,21 +48,27 @@ if ($action == 'setstatut')
 }
 
 if ( $action == 'delete' )
- {
+{
   $sql = "DELETE FROM llx_propal WHERE rowid = $propalid;";
-  if ( $db->query($sql) ) {
+  if ( $db->query($sql) )
+    {
 
-    $sql = "DELETE FROM llx_propaldet WHERE fk_propal = $propalid ;";
-    if ( $db->query($sql) ) {
-      print "<b><font color=\"red\">Propal supprimée</font></b>";
-    } else {
+      $sql = "DELETE FROM llx_propaldet WHERE fk_propal = $propalid ;";
+      if ( $db->query($sql) )
+	{
+	  print "<b><font color=\"red\">Propal supprimée</font></b>";
+	}
+      else
+	{
+	  print $db->error();
+	  print "<p>$sql";
+	} 
+    }
+  else
+    {
       print $db->error();
       print "<p>$sql";
-    } 
-  } else {
-    print $db->error();
-    print "<p>$sql";
-  }
+    }
   $propalid = 0;
   $brouillon = 1;
 }
