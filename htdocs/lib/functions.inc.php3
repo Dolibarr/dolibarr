@@ -311,9 +311,19 @@ function block_access()
  *
  */
 
-function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $form='')
+function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $form='', $num=-1)
  {
   global $conf;
+
+  if ($num > $conf->liste_limit or $num == -1)
+    {
+      $nextpage = 1;
+    }
+  else
+    {
+      $nextpage = 0;
+    }
+
   print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
 
  if ($page > 0) 
@@ -343,14 +353,9 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
     }
 
   // affichage des fleches de navigation
-  print_fleche_navigation($page,$file,$options);
-  /*
-  if ($page > 0) 
-    {
-      print '<a href="'.$file.'?page='.($page-1).$options.'"><img alt="Page précédente" src="/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
-    }
-  print '<a href="'.$file.'?page='.($page+1).$options.'"><img alt="Page suivante" src="/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
-  */
+
+  print_fleche_navigation($page,$file,$options, $nextpage);
+
   print '</td></tr></table><p>';
 }
 
@@ -358,14 +363,18 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
  * fonction servant a afficher les fleches de navigation dans les
  * pages de liste
  */
-function print_fleche_navigation($page,$file,$options='')
+function print_fleche_navigation($page,$file,$options='', $nextpage)
 {
   global $conf;
   if ($page > 0) 
     {
       print '<a href="'.$file.'?page='.($page-1).$options.'"><img alt="Page précédente" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
     }
-  print '<a href="'.$file.'?page='.($page+1).$options.'"><img alt="Page suivante" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
+
+  if ($nextpage > 0) 
+    {
+      print '<a href="'.$file.'?page='.($page+1).$options.'"><img alt="Page suivante" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
+    }
 }
 /*
  *

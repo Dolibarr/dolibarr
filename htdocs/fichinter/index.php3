@@ -47,9 +47,6 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-
-print_barre_liste("Liste des fiches d'intervention", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder);
-
 $sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
 $sql .= " FROM llx_societe as s, llx_fichinter as f ";
 $sql .= " WHERE f.fk_soc = s.idp ";
@@ -59,11 +56,13 @@ if ($user->societe_id > 0)
   $sql .= " AND s.idp = " . $user->societe_id;
 }
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit ,$offset);
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
 
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
+  print_barre_liste("Liste des fiches d'intervention", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder,'',$num);
+
   $i = 0;
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
   print "<TR class=\"liste_titre\">";

@@ -837,8 +837,6 @@ else
 	$sortfield="f.datef";
       }
 
-    print_barre_liste("Factures",$page,$PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder);
-
     $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
     $sql .= " FROM llx_societe as s,llx_facture as f WHERE f.fk_soc = s.idp";
   
@@ -857,48 +855,50 @@ else
       }
   
     $sql .= " ORDER BY $sortfield $sortorder ";
-    $sql .= $db->plimit( $limit ,$offset);
+    $sql .= $db->plimit($limit + 1,$offset);
 
     $result = $db->query($sql);
-    if ($result) {
-      $num = $db->num_rows();
-    
-      $i = 0;
-      print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-      print '<TR class="liste_titre">';
-      print '<TD>Num&eacute;ro</TD>';
-      print '<td>';
-      print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&socidp=$socidp");
-      print '</td><TD align="right">';
-      print_liste_field_titre("Date",$PHP_SELF,"f.datef","","&socidp=$socidp");
-      print '</td><TD align="right">Montant</TD>';
-      print '<td>&nbsp;</td>';
-      print "</TR>\n";
-    
-      if ($num > 0) {
-	$var=True;
-	while ($i < $num) {
-	  $objp = $db->fetch_object( $i);
-	  $var=!$var;
-		
-	  print "<TR $bc[$var]>";
-	  print "<td><a href=\"facture.php3?facid=$objp->facid\">";
-	  if ($objp->paye)
-	    {
-	      print $objp->facnumber;
-	    }
-	  else
-	    {
-	      print '<b>'.$objp->facnumber.'</b>';
-	    }
+    if ($result)
+      {
+	$num = $db->num_rows();
+	print_barre_liste("Factures",$page,$PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder,'',$num);
+
+	$i = 0;
+	print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+	print '<TR class="liste_titre">';
+	print '<TD>Num&eacute;ro</TD>';
+	print '<td>';
+	print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&socidp=$socidp");
+	print '</td><TD align="right">';
+	print_liste_field_titre("Date",$PHP_SELF,"f.datef","","&socidp=$socidp");
+	print '</td><TD align="right">Montant</TD>';
+	print '<td>&nbsp;</td>';
+	print "</TR>\n";
+      
+	if ($num > 0) {
+	  $var=True;
+	  while ($i < $num) {
+	    $objp = $db->fetch_object( $i);
+	    $var=!$var;
+	    
+	    print "<TR $bc[$var]>";
+	    print "<td><a href=\"facture.php3?facid=$objp->facid\">";
+	    if ($objp->paye)
+	      {
+		print $objp->facnumber;
+	      }
+	    else
+	      {
+		print '<b>'.$objp->facnumber.'</b>';
+	      }
 	  print "</a></TD>\n";
 	  print "<TD><a href=\"fiche.php3?socid=$objp->idp\">$objp->nom</a></TD>\n";
-	
+	  
 	  if ($objp->df > 0 ) {
 	    print "<TD align=\"right\">";
 	    $y = strftime("%Y",$objp->df);
 	    $m = strftime("%m",$objp->df);
-	  
+	    
 	    print strftime("%d",$objp->df)."\n";
 	    print " <a href=\"facture.php3?year=$y&month=$m\">";
 	    print strftime("%B",$objp->df)."</a>\n";

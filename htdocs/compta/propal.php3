@@ -354,8 +354,6 @@ if ($propalid)
   $limit = $conf->liste_limit;
   $offset = $limit * $page ;
 
-  print_barre_liste("Propositions commerciales", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder);
-
   $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price - p.remise as price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
   $sql .= " FROM llx_societe as s, llx_propal as p, c_propalst as c ";
   $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id AND p.fk_statut in(2,4)";
@@ -381,11 +379,14 @@ if ($propalid)
     }
   
   $sql .= " ORDER BY $sortfield $sortorder ";
-  $sql .= $db->plimit($limit ,$offset);
+  $sql .= $db->plimit($limit + 1,$offset);
 
   if ( $db->query($sql) )
     {
       $num = $db->num_rows();
+
+      print_barre_liste("Propositions commerciales", $page, $PHP_SELF,"&socidp=$socidp",$sortfield,$sortorder,'',$num);
+
       $i = 0;
       print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
       print '<TR class="liste_titre">';
@@ -396,7 +397,7 @@ if ($propalid)
       print_liste_field_titre_new ("Statut",$PHP_SELF,"p.fk_statut","","",'align="center"',$sortfield);
       print "</tr>\n";
 
-      while ($i < $num)
+      while ($i < min($num, $limit))
 	{
 	  $objp = $db->fetch_object( $i);
 	
