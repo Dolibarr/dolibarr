@@ -116,13 +116,9 @@ if ($socid > 0)
     print '<tr><td valign="top">';
     print '<table class="border" cellspacing="0" border="1" width="100%">';
 
-    print "<tr><td>Téléphone</td><td> $societe->tel&nbsp;</td><td>fax</td><td>$societe->fax&nbsp;</td></tr>";
+    print "<tr><td>Téléphone</td><td>".dolibarr_print_phone($societe->tel)."&nbsp;</td><td>fax</td><td>".dolibarr_print_phone($societe->fax)."&nbsp;</td></tr>";
     print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($societe->address)."<br>$societe->cp $societe->ville</td></tr>";
 
-    print "<tr><td>Siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$societe->siren\">$societe->siren</a>&nbsp;</td>";
-    print "<td>APE</td><td>";
-    print $societe->ape;
-    print "</td></tr>";
     print '<tr><td>Siret</td><td>'.$societe->siret.'</td>';
     print '<td>Capital</td><td>'.$societe->capital.'</td></tr>';
 
@@ -234,7 +230,7 @@ if ($socid > 0)
     print '<table width="100%" cellspacing="1" border="0" cellpadding="2">';
 
     print '<tr class="liste_titre"><td>Pr&eacute;nom Nom</td>';
-    print '<td>Poste</td><td>T&eacute;l</td>';
+    print '<td>Poste</td><td colspan="2">T&eacute;l</td>';
     print "<td>Fax</td><td>Email</td>";
     print "<td align=\"center\"><a href=\"../../contact/fiche.php?socid=$societe->id&action=create\">Ajouter</a></td></tr>";
     
@@ -257,7 +253,15 @@ if ($socid > 0)
 	  }
 	print "</td>";
 	print "<td>$obj->poste&nbsp;</td>";
-	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
+
+	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">';
+	print img_phone_out("Appel émis") ;
+	print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">';
+	print img_phone_in("Appel reçu") .'</a></td>';
+
+	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">';
+
+	print ' '.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
 	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
 	print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
 	print "<td align=\"center\">";
