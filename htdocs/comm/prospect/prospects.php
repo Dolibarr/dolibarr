@@ -117,7 +117,7 @@ if ($result)
 
   $urladd="page=$page&amp;stcomm=$stcomm";
 
-  print_barre_liste("Liste des prospects", $page, $PHP_SELF,"","","",'',$num);
+  print_barre_liste("Liste des prospects", $page, $PHP_SELF,'&amp;stcomm='.$_GET["stcomm"],"","",'',$num);
 
   print '<div align="center">';
 
