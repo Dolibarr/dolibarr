@@ -32,9 +32,9 @@ llxHeader();
 print_fiche_titre('Statistiques commandes', $mesg);
       
 print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr><td width="40%">Nb de commande</td><td>Année</td></tr>';
+print '<tr><td>Année</td><td width="40%">Nb de commande</td><td>Somme des factures</td></tr>';
 
-$sql = "SELECT count(*), date_format(date_commande,'%Y') as dm  FROM llx_commande GROUP BY dm DESC";
+$sql = "SELECT count(*), date_format(date_commande,'%Y') as dm, sum(total_ht)  FROM llx_commande GROUP BY dm DESC";
 if ($db->query($sql))
 {
   $num = $db->num_rows();
@@ -45,7 +45,7 @@ if ($db->query($sql))
       $nbproduct = $row[0];
       $year = $row[1];
       print "<tr>";
-      print '<td>'.$nbproduct.'</td><td><a href="month.php?year='.$year.'">'.$year.'</a></td></tr>';
+      print '<td><a href="month.php?year='.$year.'">'.$year.'</a></td><td>'.$nbproduct.'</td><td>'.price($row[2]).'</td></tr>';
       $i++;
     }
 }
