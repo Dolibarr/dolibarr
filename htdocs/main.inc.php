@@ -352,6 +352,8 @@ function top_menu($head, $title="")
   print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1" />';
   print '<link rel="author" title="Equipe de développement" href="http://www.dolibarr.com/dev.fr.html" />';
 
+  //print '<link rel="next" title="Equipe de développement" href="http://www.dolibarr.com/dev.fr.html" />';
+
   print '<LINK REL="stylesheet" TYPE="text/css" HREF="'.DOL_URL_ROOT.'/'.$conf->css.'">';
   print '<LINK REL="stylesheet" TYPE="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">';
   print "\n";
@@ -449,7 +451,7 @@ Function left_menu($menu, $help_url='')
 
       for ($j = 2 ; $j < sizeof($menu[$i]) - 1 ; $j = $j +2) 
 	{
-	  print '<br>&nbsp;-&nbsp;<a class="submenu" href="'.$menu[$i][$j].'">'.$menu[$i][$j+1].'</A>';
+	  print '<br>&nbsp;-&nbsp;<a class="submenu" href="'.$menu[$i][$j].'">'.$menu[$i][$j+1].'</a>';
 	}
       print '</td></tr>';
       
@@ -541,6 +543,4 @@ function llxFooter($foot='')
     }
   print "</body></html>";
 }
-
-
 ?>
