@@ -333,7 +333,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 	  if (strlen($sendto))
 	    {	  
 	      if ($_POST["action"] == 'send') {
-		$subject = "Facture $fac->ref";
+		$subject = $langs->trans("Bill")." $fac->ref";
 		$actioncode=9;
 		$actionmsg="Envoyée à $sendto";
 		$actionmsg2="Envoi Facture par mail";
@@ -391,12 +391,10 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
  */
 if ($_GET["action"] == 'pdf')
 {
-  /*
-   * Generation de la facture
-   * définit dans /includes/modules/facture/modules_facture.php
-   */
+  // Generation de la facture définie dans /includes/modules/facture/modules_facture.php
   facture_pdf_create($db, $_GET["facid"]);
 } 
+
 
 llxHeader('','Facture','Facture');
 
@@ -406,7 +404,6 @@ $html = new Form($db);
 /*********************************************************************
  *
  * Mode creation
- *
  *
  ************************************************************************/
 if ($_GET["action"] == 'create') 
@@ -669,11 +666,11 @@ if ($_GET["action"] == 'create')
 
 	      print '</table>';
 	    }
+
 	  /*
 	   * Produits dans la commande
 	   *
 	   */
-
 	  if ($_GET["commandeid"])
 	    {
 	      print_titre("Produits");
@@ -933,13 +930,17 @@ else
 		  if ($objp->fk_product > 0)
 		    {
 		      print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.stripslashes(nl2br($objp->description)).'</a>';
-		      if ($objp->date_start) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
+		      if ($objp->date_start && $objp->date_end) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
+		      if ($objp->date_start && ! $objp->date_end) { print " (A partir du ".dolibarr_print_date($objp->date_start).")"; }
+		      if (! $objp->date_start && $objp->date_end) { print " (Jusqu'au ".dolibarr_print_date($objp->date_end).")"; }
 		      print '</td>';
 		    }
 		  else
 		    {
 		      print "<td>".stripslashes(nl2br($objp->description));
-		      if ($objp->date_start) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
+		      if ($objp->date_start && $objp->date_end) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }
+		      if ($objp->date_start && ! $objp->date_end) { print " (A partir du ".dolibarr_print_date($objp->date_start).")"; }
+		      if (! $objp->date_start && $objp->date_end) { print " (Jusqu'au ".dolibarr_print_date($objp->date_end).")"; }
 		      print "</td>\n";
 		    }
 
