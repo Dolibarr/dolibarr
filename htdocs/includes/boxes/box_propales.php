@@ -44,7 +44,7 @@ if ($user->rights->propale->lire)
 	{
 	  $objp = $db->fetch_object( $i);
 	  
-	  $info_box_contents[$i][0] = array('align' => 'center',
+	  $info_box_contents[$i][0] = array('align' => 'left',
 					    'text' => $objp->ref,
 					    'url' => DOL_URL_ROOT."/comm/propal.php3?propalid=".$objp->rowid);
 	  
