@@ -20,7 +20,6 @@
  * $Source$
  *
  */
-
 class pdfdetail_standard_modeles extends FPDF {
 
   var $client_nom;
@@ -34,8 +33,14 @@ class pdfdetail_standard_modeles extends FPDF {
     $this->SetXY(10,5);
     
     // 400x186
-    $this->Image(DOL_DOCUMENT_ROOT."/../documents/logo.jpg", 10, 5, 60, 27.9, 'JPG');
-    
+
+    $logo_file = DOL_DOCUMENT_ROOT."/../documents/logo.jpg";
+
+    if (file_exists($logo_file))
+    {
+      $this->Image($logo_file, 10, 5, 60, 27.9, 'JPG');
+    }
+
     $this->SetTextColor(0,90,200);
     $this->SetFont('Arial','',10);
     $this->SetXY(11,31);
@@ -49,7 +54,6 @@ class pdfdetail_standard_modeles extends FPDF {
     $libelle = "Du ".strftime("%d/%m/%Y",$this->factel->get_comm_min_date($this->year.$this->month));
     $libelle .= " au ".strftime("%d/%m/%Y",$this->factel->get_comm_max_date($this->year.$this->month));
     $this->MultiCell(89, 4, $libelle, 0);
-    
 
     $this->SetX(11);
     $this->MultiCell(80, 4, "Page : ". $this->page ."/".$this->nombre_pages, 0);
