@@ -86,7 +86,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 // Action mise a jour d'un produit ou service
 if ($_POST["action"] == 'update' && 
     $_POST["cancel"] <> $langs->trans("Cancel") && 
-    ( $user->rights->produit->modifier || $user->rights->produit->creer))
+    $user->rights->produit->creer)
 {
   $product = new Product($db);
   if ($product->fetch($_POST["id"]))
@@ -140,8 +140,7 @@ if ($_POST["action"] == 'addinpropal')
 }
 
 
-if ($_POST["action"] == 'addinfacture' && 
-    ( $user->rights->facture->modifier || $user->rights->facture->creer))
+if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 {
   $product = new Product($db);
   $result = $product->fetch($_GET["id"]);
@@ -195,8 +194,7 @@ if ($_GET["action"] == 'remove_fourn')
 
 
 if ($_POST["action"] == 'update_price' && 
-    $_POST["cancel"] <> $langs->trans("Cancel") && 
-    ( $user->rights->produit->modifier || $user->rights->produit->creer))
+    $_POST["cancel"] <> $langs->trans("Cancel") && $user->rights->produit->creer)
 {
   $product = new Product($db);
 
@@ -401,11 +399,11 @@ else
 	      
 	      if ( $db->query($sql) )
 		{
-		  $num = $db->num_rows();
+		  $num_fournisseur = $db->num_rows();
 		  $i = 0;
 		  print '<table class="noborder" width="100%">';
 		  $var=True;      
-		  while ($i < $num)
+		  while ($i < $num_fournisseur)
 		    {
 		      $objp = $db->fetch_object($i);	  
 		      $var=!$var;
@@ -613,19 +611,25 @@ print "\n<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] == '')
 {
-  if ($user->rights->produit->modifier || $user->rights->produit->creer)
+  if ($product->type == 0 && $user->rights->produit->commander && $num_fournisseur == 1)
+    {
+      print '<a class="tabAction" href="fiche.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("Commander").'</a>';
+    }
+
+
+
+
+  if ( $user->rights->produit->creer)
     {
       print '<a class="tabAction" href="fiche.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("UpdatePrice").'</a>';
     }
-}
 
-if ($_GET["action"] == '')
-{
-  if ($user->rights->produit->modifier || $user->rights->produit->creer)
+  if ( $user->rights->produit->creer)
     {
       print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
     }
 }
+
 if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
 {
   print '<a class="tabAction" href="stock/product.php?id='.$product->id.'&amp;action=correction">Correction stock</a>';
