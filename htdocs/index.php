@@ -66,7 +66,7 @@ for ($ii=0, $ni=sizeof($boxes); $ii<$ni; $ii++)
   print '<td valign="top" width="50%">';
 
   // Affichage boite ii
-  include_once("./includes/boxes/".$boxes[$ii].".php");
+  include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$boxes[$ii].".php");
   $box=new $boxes[$ii]();
   $box->loadBox();
   $box->showBox();

@@ -27,21 +27,43 @@
     \brief      Module de génération de l'affichage de la box commandes
 */
 
-include_once("./includes/boxes/modules_boxes.php");
+include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
 
 class box_commandes extends ModeleBoxes {
 
+    var $boxcode="lastcustomerorders";
+    var $boximg="order";
+    var $boxlabel;
+    var $depends = array("commercial");
+
     var $info_box_head = array();
     var $info_box_contents = array();
 
+    /**
+     *      \brief      Constructeur de la classe
+     */
+    function box_commandes()
+    {
+        global $langs;
+        $langs->load("boxes");
+
+        $this->boxlabel=$langs->trans("BoxLastCustomerOrders");
+    }
+
+    /**
+     *      \brief      Charge les données en mémoire pour affichage ultérieur
+     *      \param      $max        Nombre maximum d'enregistrements à charger
+     */
     function loadBox($max=5)
     {
         global $user, $langs, $db;
 
         if ($user->rights->commande->lire)
         {
-            $this->info_box_head = array('text' => "Les $max dernières commandes");
+            $langs->load("boxes");
+            
+            $this->info_box_head = array('text' => "Les $max dernières commandes clients");
 
             $sql = "SELECT s.nom,s.idp,p.ref,".$db->pdate("p.date_commande")." as dp,p.rowid";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p WHERE p.fk_soc = s.idp";

@@ -27,17 +27,39 @@
     \brief      Module de génération de l'affichage de la box produits
 */
 
-include_once("./includes/boxes/modules_boxes.php");
+include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
 
 class box_produits extends ModeleBoxes {
 
+    var $boxcode="lastproducts";
+    var $boximg="product";
+    var $boxlabel;
+    var $depends = array("produit");
+    
     var $info_box_head = array();
     var $info_box_contents = array();
 
+
+    /**
+     *      \brief      Constructeur de la classe
+     */
+    function box_produits()
+    {
+        global $langs;
+        $langs->load("boxes");
+
+        $this->boxlabel=$langs->trans("BoxLastProducts");
+    }
+    
+    /**
+     *      \brief      Charge les données en mémoire pour affichage ultérieur
+     *      \param      $max        Nombre maximum d'enregistrements à charger
+     */
     function loadBox($max=5)
     {
         global $user, $langs, $db;
+        $langs->load("boxes");
 
         $this->info_box_head = array('text' => "Les $max derniers produits/services enregistrés");
 

@@ -20,9 +20,10 @@
  * $Source$
  */
 
-/**	    \file       htdocs/admin/boxes.php
-		\brief      Page d'administration/configuration des boites
-		\version    $Revision$
+/**
+	    \file       htdocs/admin/boxes.php
+        \brief      Page d'administration/configuration des boites
+        \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -30,12 +31,12 @@ require("./pre.inc.php");
 $langs->load("admin");
 
 if (!$user->admin)
-  accessforbidden();
+accessforbidden();
 
 
 // Définition des positions possibles pour les boites
 $pos_array = array(0);                          // Positions possibles pour une boite (0,1,2,...)
-$pos_name = array($langs->trans("Home"));       // Nom des position 0=Homepage, 1=...
+$pos_name = array($langs->trans("Home"));       // Nom des positions 0=Homepage, 1=...
 $boxes = array();
 
 
@@ -49,24 +50,24 @@ print "<br>".$langs->trans("BoxesDesc")."<br>\n";
 /*
  * Actions
  */
- 
+
 if ($_POST["action"] == 'add')
 {
-  $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes WHERE box_id=".$_POST["boxid"]." AND position=".$_POST["pos"];
-  $result = $db->query($sql);
-
-  $num = $db->num_rows();
-  if ($num == 0) {
-    // Si la boite n'est pas deja active
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position) values (".$_POST["boxid"].",".$_POST["pos"].");";
+    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."boxes WHERE box_id=".$_POST["boxid"]." AND position=".$_POST["pos"];
     $result = $db->query($sql);
-  }
+
+    $num = $db->num_rows($result);
+    if ($num == 0) {
+        // Si la boite n'est pas deja active
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position) values (".$_POST["boxid"].",".$_POST["pos"].");";
+        $result = $db->query($sql);
+    }
 }
 
 if ($_GET["action"] == 'delete')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["rowid"];
-  $result = $db->query($sql);
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["rowid"];
+    $result = $db->query($sql);
 }
 
 if ($_GET["action"] == 'switch')
@@ -81,7 +82,7 @@ if ($_GET["action"] == 'switch')
         $objfrom = $db->fetch_object($resultfrom);
     } else
     {
-        dolibarr_print_error($db);   
+        dolibarr_print_error($db);
     }
     $sql="SELECT box_order FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=".$_GET["switchto"];
     $resultto = $db->query($sql);
@@ -90,7 +91,7 @@ if ($_GET["action"] == 'switch')
         $objto = $db->fetch_object($resultto);
     } else
     {
-        dolibarr_print_error($db);   
+        dolibarr_print_error($db);
     }
     if ($objfrom && $objto) {
         $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objto->box_order." WHERE rowid=".$_GET["switchfrom"];
@@ -99,7 +100,7 @@ if ($_GET["action"] == 'switch')
         $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objfrom->box_order." WHERE rowid=".$_GET["switchto"];
         $resultupdateto = $db->query($sql);
         if (! $resultupdateto) { dolibarr_print_error($db); }
-    }        
+    }
 
     if ($resultupdatefrom && $resultupdateto)
     {
@@ -115,7 +116,6 @@ if ($_GET["action"] == 'switch')
 /*
  * Recherche des boites actives par position possible
  * On stocke les boites actives par $boxes[position][id_boite]=1
- *
  */
 
 $sql  = "SELECT b.rowid, b.box_id, b.position, b.box_order, d.name";
@@ -124,18 +124,18 @@ $sql .= " where b.box_id = d.rowid";
 $sql .= " ORDER by position, box_order";
 $result = $db->query($sql);
 
-if ($result) 
+if ($result)
 {
-    $num = $db->num_rows();
+    $num = $db->num_rows($result);
     $i = 0;
-    $decalage=0;    
+    $decalage=0;
     while ($i < $num)
     {
         $var = ! $var;
         $obj = $db->fetch_object($result);
         $boxes[$obj->position][$obj->box_id]=1;
         $i++;
-        
+
         // On renumérote l'ordre des boites si l'une d'elle est à 0 (Ne doit arriver que sur des anciennes versions)
         if ($obj->box_order==0) $decalage++;
         if ($decalage) {
@@ -150,14 +150,13 @@ if ($result)
 
 /*
  * Boites disponibles
- *
  */
 print "<br>\n";
 print_titre($langs->trans("BoxesAvailable"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Boxe").'</td>';
+print '<td>'.$langs->trans("Box").'</td>';
 print '<td>'.$langs->trans("SourceFile").'</td>';
 print '<td align="center" width="180">'.$langs->trans("ActivateOn").'</td>';
 print '<td align="center" width="80">&nbsp;</td>';
@@ -167,24 +166,29 @@ $sql = "SELECT rowid, name, file FROM ".MAIN_DB_PREFIX."boxes_def";
 $result = $db->query($sql);
 $var=True;
 
-if ($result) 
+if ($result)
 {
-    $num = $db->num_rows();
+    $html=new Form($db);
+
+    $num = $db->num_rows($result);
     $i = 0;
-    
+
     // Boucle sur toutes les boites
     while ($i < $num)
     {
         $var = ! $var;
         $obj = $db->fetch_object($result);
-        
-        print '<form action="boxes.php" method="POST">';
-        print '<tr '.$bc[$var].'><td>'.$obj->name.'</td><td>' . $obj->file . '</td>';
 
-        // Pour chaque position possible, on affiche un lien 
+        $module=eregi_replace('.php$','',$obj->file);
+        include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
+        $box=new $module();
+
+        print '<form action="boxes.php" method="POST">';
+        print '<tr '.$bc[$var].'><td>'.img_object("",$box->boximg).' '.$box->boxlabel.'</td><td>' . $obj->file . '</td>';
+
+        // Pour chaque position possible, on affiche un lien
         // d'activation si boite non deja active pour cette position
         print '<td align="center">';
-        $html=new Form($db);
         print $html->select_array("pos",$pos_name);
         print '<input type="hidden" name="action" value="add">';
         print '<input type="hidden" name="boxid" value="'.$obj->rowid.'">';
@@ -195,7 +199,7 @@ if ($result)
 
         print '</tr>';
         print '</form>';
-    
+
         $i++;
     }
 
@@ -210,59 +214,63 @@ print_titre($langs->trans("BoxesActivated"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Boxe").'</td>';
+print '<td>'.$langs->trans("Box").'</td>';
 print '<td>&nbsp;</td>';
 print '<td align="center" width="180">'.$langs->trans("ActiveOn").'</td>';
 print '<td align="center" width="60" colspan="2">'.$langs->trans("Position").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Disable").'</td>';
 print "</tr>\n";
 
-$sql  = "SELECT b.rowid, b.box_id, b.position, d.name";
+$sql  = "SELECT b.rowid, b.box_id, b.position, d.name, d.file";
 $sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
 $sql .= " where b.box_id = d.rowid";
 $sql .= " ORDER by position, box_order";
 $result = $db->query($sql);
 
-if ($result) 
+if ($result)
 {
-  $num = $db->num_rows();
-  $i = 0;
-  
-  $box_order=1;
-  $foundrupture=1;
-  
-  // On lit avec un coup d'avance
-  $obj = $db->fetch_object($result);
+    $num = $db->num_rows();
+    $i = 0;
 
-  while ($obj && $i < $num)
+    $box_order=1;
+    $foundrupture=1;
+
+    // On lit avec un coup d'avance
+    $obj = $db->fetch_object($result);
+
+    while ($obj && $i < $num)
     {
-      $var = ! $var; 
-      $objnext = $db->fetch_object($result);
+        $var = ! $var;
+        $objnext = $db->fetch_object($result);
 
-      print '<tr '.$bc[$var].'><td>'.$obj->name.'</td>';
-      print '<td>&nbsp;</td>';
-      print '<td align="center">' . $pos_name[$obj->position] . '</td>';
-      $hasnext=true;
-      $hasprevious=true;
-      if ($foundrupture) { $hasprevious=false; $foundrupture=0; }
-      if (! $objnext || $obj->position != $objnext->position) { $hasnext=false; $foundrupture=1; }
-      print '<td align="center" width="10">'.$box_order.'</td>';
-      print '<td align="center" width="50">';
-      print ($hasnext?'<a href="boxes.php?action=switch&switchfrom='.$obj->rowid.'&switchto='.$objnext->rowid.'">'.img_down().'</a>&nbsp;':'');
-      print ($hasprevious?'<a href="boxes.php?action=switch&switchfrom='.$obj->rowid.'&switchto='.$objprevious->rowid.'">'.img_up().'</a>':'');
-      print '</td>';
-      print '<td align="center">';
-      print '<a href="boxes.php?rowid='.$obj->rowid.'&amp;action=delete">'.img_delete().'</a>';
-      print '</td>';
-      
-      print "</tr>\n";
-      $i++;
+        $module=eregi_replace('.php$','',$obj->file);
+        include_once(DOL_DOCUMENT_ROOT."/includes/boxes/".$module.".php");
+        $box=new $module();
 
-      $box_order++;
-      
-      if (! $foundrupture) $objprevious = $obj;
-      else $box_order=1;
-      $obj=$objnext;
+        print '<tr '.$bc[$var].'><td>'.img_object("",$box->boximg).' '.$box->boxlabel.'</td>';
+        print '<td>&nbsp;</td>';
+        print '<td align="center">' . $pos_name[$obj->position] . '</td>';
+        $hasnext=true;
+        $hasprevious=true;
+        if ($foundrupture) { $hasprevious=false; $foundrupture=0; }
+        if (! $objnext || $obj->position != $objnext->position) { $hasnext=false; $foundrupture=1; }
+        print '<td align="center" width="10">'.$box_order.'</td>';
+        print '<td align="center" width="50">';
+        print ($hasnext?'<a href="boxes.php?action=switch&switchfrom='.$obj->rowid.'&switchto='.$objnext->rowid.'">'.img_down().'</a>&nbsp;':'');
+        print ($hasprevious?'<a href="boxes.php?action=switch&switchfrom='.$obj->rowid.'&switchto='.$objprevious->rowid.'">'.img_up().'</a>':'');
+        print '</td>';
+        print '<td align="center">';
+        print '<a href="boxes.php?rowid='.$obj->rowid.'&amp;action=delete">'.img_delete().'</a>';
+        print '</td>';
+
+        print "</tr>\n";
+        $i++;
+
+        $box_order++;
+
+        if (! $foundrupture) $objprevious = $obj;
+        else $box_order=1;
+        $obj=$objnext;
     }
 
     $db->free($result);

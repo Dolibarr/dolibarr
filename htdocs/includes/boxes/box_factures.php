@@ -27,20 +27,42 @@
     \brief      Module de génération de l'affichage de la box factures
 */
 
-include_once("./includes/boxes/modules_boxes.php");
+include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
 
 class box_factures extends ModeleBoxes {
 
+    var $boxcode="lastcustomerbills";
+    var $boximg="bill";
+    var $boxlabel;
+    var $depends = array("facture");
+
     var $info_box_head = array();
     var $info_box_contents = array();
 
+    /**
+     *      \brief      Constructeur de la classe
+     */
+    function box_factures()
+    {
+        global $langs;
+        $langs->load("boxes");
+
+        $this->boxlabel=$langs->trans("BoxLastCustomerBills");
+    }
+
+    /**
+     *      \brief      Charge les données en mémoire pour affichage ultérieur
+     *      \param      $max        Nombre maximum d'enregistrements à charger
+     */
     function loadBox($max=5)
     {
         global $user, $langs, $db;
 
         if ($user->rights->facture->lire)
         {
+            $langs->load("boxes");
+            
             $this->info_box_head = array('text' => "Les $max dernières factures clients enregistrées");
 
             $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";

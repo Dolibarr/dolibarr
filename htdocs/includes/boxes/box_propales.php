@@ -27,20 +27,42 @@
     \brief      Module de génération de l'affichage de la box propales
 */
 
-include_once("./includes/boxes/modules_boxes.php");
+include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
 
 class box_propales extends ModeleBoxes {
 
+    var $boxcode="lastpropals";
+    var $boximg="propal";
+    var $boxlabel;
+    var $depends = array("propale");
+
     var $info_box_head = array();
     var $info_box_contents = array();
 
+    /**
+     *      \brief      Constructeur de la classe
+     */
+    function box_propales()
+    {
+        global $langs;
+        $langs->load("boxes");
+
+        $this->boxlabel=$langs->trans("BoxLastProposals");
+    }
+
+    /**
+     *      \brief      Charge les données en mémoire pour affichage ultérieur
+     *      \param      $max        Nombre maximum d'enregistrements à charger
+     */
     function loadBox($max=5)
     {
         global $user, $langs, $db;
 
         if ($user->rights->propale->lire)
         {
+            $langs->load("boxes");
+
             $this->info_box_head = array('text' => "Les $max dernières propositions");
 
             $sql = "SELECT s.nom,s.idp,p.ref,".$db->pdate("p.datep")." as dp,p.rowid";

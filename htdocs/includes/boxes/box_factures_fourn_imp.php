@@ -27,20 +27,42 @@
 		\version    $Revision$
 */
 
-include_once("./includes/boxes/modules_boxes.php");
+include_once(DOL_DOCUMENT_ROOT."/includes/boxes/modules_boxes.php");
 
 
 class box_factures_fourn_imp extends ModeleBoxes {
 
+    var $boxcode="oldestunpayedsupplierbills";
+    var $boximg="bill";
+    var $boxlabel;
+    var $depends = array("facture","fournisseur");
+
     var $info_box_head = array();
     var $info_box_contents = array();
 
+    /**
+     *      \brief      Constructeur de la classe
+     */
+    function box_factures_fourn_imp()
+    {
+        global $langs;
+        $langs->load("boxes");
+
+        $this->boxlabel=$langs->trans("BoxOldesUnpayedSupplierBills");
+    }
+
+    /**
+     *      \brief      Charge les données en mémoire pour affichage ultérieur
+     *      \param      $max        Nombre maximum d'enregistrements à charger
+     */
     function loadBox($max=5)
     {
         global $user, $langs, $db;
 
         if ($user->rights->facture->lire)
         {
+            $langs->load("boxes");
+            
             $this->info_box_head = array('text' => "Les $max plus anciennes factures fournisseurs impayées");
 
             $sql = "SELECT s.nom,s.idp,f.facnumber,f.amount,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid";
