@@ -19,13 +19,7 @@
  * $Source$
  *
  */
-require("../../main.inc.php3");
-require("../../projetdon.class.php");
-
-$libelle[0] = "Promesses non validées";
-$libelle[1] = "Promesses validées";
-$libelle[2] = "Dons payés";
-$libelle[3] = "Dons encaissés";
+require("../main.inc.php3");
 
 function llxHeader($head = "") {
   global $user, $conf;
@@ -39,10 +33,13 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("/compta/dons/","Dons");
-  $menu->add_submenu("fiche.php?action=create","Saisir un don");
+  $menu->add("index.php","Adherents");
+  $menu->add_submenu("liste.php","liste");
+  $menu->add_submenu("fiche.php?action=create","nouvel adhérent");
 
-  $menu->add("/compta/bank/index.php3","Bank");
+  $menu->add("cotisations.php","Cotisations");
+
+  $menu->add("type.php","Configuration");
 
   left_menu($menu->liste);
 

@@ -28,5 +28,6 @@ create table llx_adherent_type
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
   libelle          varchar(50),
+  cotisation       enum('yes','no') NOT NULL DEFAULT 'yes',
   note             text
 );
