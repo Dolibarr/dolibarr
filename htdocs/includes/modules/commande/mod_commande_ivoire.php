@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +22,41 @@
  *
  */
 
-Class mod_commande_ivoire
+/*!	\file htdocs/includes/modules/commande/mod_commande_ivoire.php
+		\ingroup    commande
+		\brief      Fichier contenant la classe du modèle de numérotation de référence de commande Ivoire
+		\version    $Revision$
+*/
+
+
+/*!	\class mod_commande_ivoire
+		\brief      Classe du modèle de numérotation de référence de commande Ivoire
+*/
+
+class mod_commande_ivoire
 {
+
+  /*!   \brief      Constructeur
+   */
   function mod_commande_ivoire()
     {
       $this->nom = "Ivoire";
     }
 
+
+  /*!   \brief      Renvoie le descriptif du module
+        \return     string      Texte descriptif
+   */
   function info()
     {
       return "Renvoie le numéro sous la forme numérique C0M1, COM2, COM3, ...";      
     }
 
+
+  /*!   \brief      Renvoie le prochaine numéro de référence de commande non utilisé
+        \param      obj_soc     objet société
+        \return     string      numéro de référence de commande non utilisé
+   */
   function commande_get_num($obj_soc=0)
     { 
       global $db;
