@@ -97,6 +97,38 @@ class Societe {
    *
    *
    */
+  Function factures_impayes()
+    {
+      $facimp = array();
+      /*
+       * Lignes
+       */      
+      $sql = "SELECT f.rowid";
+      $sql .= " FROM llx_facture as f WHERE f.fk_soc = ".$this->id;
+      $sql .= " AND f.fk_statut = 1 AND f.paye = 0";
+
+      if ($this->db->query($sql))
+	{
+	  $num = $this->db->num_rows();
+	  $i = 0;
+	  
+	  while ($i < $num)
+	    {
+	      $objp = $this->db->fetch_object($i);
+	      $array_push($facimp, $objp->rowid);
+	      $i++;
+	      print $i;
+	    }
+	  
+	  $this->db->free();
+	} 
+      return $facimp;
+    }
+
+  /*
+   *
+   *
+   */
   Function fetch($socid) {
     $this->id = $socid;
 
@@ -114,15 +146,14 @@ class Societe {
       if ($this->db->num_rows()) {
 	$obj = $this->db->fetch_object(0);
 
-	$this->nom = $obj->nom;
-
-	$this->tel = $obj->tel;
-	$this->fax = $obj->fax;
+	$this->nom = stripslashes($obj->nom);
+	$this->adresse =  stripslashes($obj->address);
+	$this->cp = $obj->cp;
+	$this->ville =  stripslashes($obj->ville);
 
 	$this->url = $obj->url;
-	$this->adresse = $obj->address;
-	$this->cp = $obj->cp;
-	$this->ville = $obj->ville;
+	$this->tel = $obj->tel;
+	$this->fax = $obj->fax;
 
 	$this->siren = $obj->siren;
 
