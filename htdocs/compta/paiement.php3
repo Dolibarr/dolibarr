@@ -35,34 +35,6 @@ if ($user->societe_id > 0)
 }
 
 /*
- * Traitement des action
- */
-/*
-if ($action == 'add')
-{
-  $datepaye = $db->idate(mktime(12, 0 , 0, $remonth, $reday, $reyear));
-  print $reday;
-  $paiement = new Paiement($db);
-
-  $paiement->facid        = $facid;  
-  $paiement->datepaye     = $datepaye;
-  $paiement->amount       = $amount;
-  $paiement->author       = $author;
-  $paiement->paiementid   = $paiementid;
-  $paiement->num_paiement = $num_paiement;
-  $paiement->note         = $note;
-
-  $paiement->create();
-
-  $label = "Réglement facture N°";
-
-  $acc = new Account($db, $HTTP_POST_VARS["accountid"]);
-  $acc->addline($datepaye, $paiementid, $label, $amount, $num_paiement);
-
-  $action = '';
-}
-*/
-/*
  * Affichage
  */
 
