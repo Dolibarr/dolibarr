@@ -36,7 +36,50 @@ class mod_codeclient_zebre
       return "Vérifie si le code client est de la forme ABCD5600. Les quatres premières lettres étant une représentation mnémotechnique, suivi du code postal en 2 chiffres et un numéro d'ordre pour la prise en compte des doublons.";
     }
 
-  function verif($db, &$code)
+  /**
+   * Vérifie la validité du code
+   *
+   *
+   */
+
+  function verif($db, $code)
+    { 
+      if ($this->verif_syntax($code) == 0)
+	{	  
+	  $i = 1;
+
+	  $is_dispo = $this->verif_dispo($db, $code);
+
+	  while ( $is_dispo <> 0 && $i < 99)
+	    {
+	      $arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	      
+	      $code = substr($code,0,6) . substr("00".$i, -2);
+	      
+	      $is_dispo = $this->verif_dispo($db, $code);
+	      
+	      $i++;
+	    }
+
+	  if ($is_dispo <> 0)
+	    {
+	      return -3;
+	    }
+	}
+      else
+	{
+	  if (strlen(trim($code)) == 0)
+	    {
+	      return -2;
+	    }
+	  else
+	    {
+	      return -1;
+	    }
+	}
+    }
+
+  function get_correct($db, &$code)
     { 
 
       if ($this->verif_syntax($code) == 0)
@@ -61,7 +104,7 @@ class mod_codeclient_zebre
 	}
       else
 	{
-	  retrun -1;
+	  return -1;
 	}
 
     }
