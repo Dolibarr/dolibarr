@@ -36,7 +36,7 @@ if ($conf->webcal->enabled) {
     require("../lib/webcal.class.php");
 }
 
-$langs->laod("companies");
+$langs->load("companies");
 
 llxHeader();
 
