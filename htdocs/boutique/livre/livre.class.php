@@ -385,11 +385,18 @@ class Livre {
 
     $sql .= " WHERE products_id = " . $this->oscid;
 
+    $this->image = $this->ref.".jpg";
+
+    if(! file_exists(OSC_CATALOG_DIRECTORY."images/".$this->ref.".jpg"))
+      {
+	$this->image = OSC_IMAGE_DEFAULT;
+      }
+
     if ( $this->db->query($sql) )
       {
 	$sql = "UPDATE ".DB_NAME_OSC.".products ";
 	$sql .= "SET products_model = '".$this->ref."'";
-	$sql .= ", products_image = '".strtolower($this->ref).".jpg'";
+	$sql .= ", products_image = '".$this->image."'";
 	$sql .= ", products_price = ".$this->price."";
 
 	$sql .= " WHERE products_id = " . $this->oscid;
