@@ -159,10 +159,10 @@ if ($action == '') {
   $limit = $conf->liste_limit;
   $offset = $limit * $page ;
 
-  $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber";
+  $sql = "SELECT ".$db->pdate("p.datep")." as dp, p.amount, f.amount as fa_amount, f.facnumber, s.nom";
   $sql .=", f.rowid as facid, c.libelle as paiement_type, p.num_paiement";
-  $sql .= " FROM llx_paiementfourn as p, llx_facture_fourn as f, c_paiement as c";
-  $sql .= " WHERE p.fk_facture_fourn = f.rowid AND p.fk_paiement = c.id";
+  $sql .= " FROM llx_paiementfourn as p, llx_facture_fourn as f, c_paiement as c, societe as s";
+  $sql .= " WHERE p.fk_facture_fourn = f.rowid AND p.fk_paiement = c.id AND s.idp = f.fk_soc";
 
   if ($socidp)
     {
@@ -181,14 +181,14 @@ if ($action == '') {
 
       print_barre_liste("Paiements", $page, $PHP_SELF);
 
-      print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
+      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
       print '<TR class="liste_titre">';
       print "<td>Facture</td>";
+      print "<td>Société</td>";
       print "<td>Date</td>";
       print "<td>Type</TD>";
       print '<td align="right">Montant</TD>';
-      print "<td>&nbsp;</td>";
-      print "</TR>\n";
+      print "<td>&nbsp;</td></tr>";
     
       while ($i < $num)
 	{
@@ -196,6 +196,7 @@ if ($action == '') {
 	  $var=!$var;
 	  print "<TR $bc[$var]>";
 	  print "<TD><a href=\"fiche.php?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
+	  print '<td>'.$objp->nom.'</td>';
 	  print "<TD>".strftime("%d %B %Y",$objp->dp)."</TD>\n";
 	  print "<TD>$objp->paiement_type $objp->num_paiement</TD>\n";
 	  print '<TD align="right">'.price($objp->amount).'</TD><td>&nbsp;</td>';	
