@@ -27,12 +27,16 @@ if ($action == 'add')
 {
   $groupart = new Groupart($db);
   $groupart->nom = $nom;
+  $groupart->desc = $desc;
+  $groupart->grar = $grar;
   $id = $groupart->create($user);
 }
 
 if ($action == 'update') {
   $groupart = new Groupart($db);
   $groupart->nom = $nom;
+  $groupart->desc = $desc;
+  $groupart->grar = $grar;
   $groupart->update($id, $user);
 }
 
@@ -57,7 +61,7 @@ if ($action == 'create')
   print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
   print "<tr>";
   print '<td>Nom</td><td><input name="nom" size="40" value=""></td></tr>';
-  print '<tr><td>Artiste/Groupe</td><td><select name="groupart"><option value="artiste">Artiste</option>';
+  print '<tr><td>Artiste/Groupe</td><td><select name="grar"><option value="artiste">Artiste</option>';
   print '<option value="groupe">Groupe</option></select></td></tr>';
   print "<tr><td valign=\"top\">Description</td><td>";
   print '<textarea name="desc" rows="8" cols="50">';
@@ -82,8 +86,8 @@ else
       
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print "<td>Nom</td><td>$groupart->nom</td></tr>\n";
-	  print "<tr><td valign=\"top\">Description</td><td>".nl2br($groupart->description)."</td></tr>";
+	  print "<td>Nom</td><td>".$groupart->nom."</td></tr>\n";
+	  print "<tr><td valign=\"top\">Description</td><td>".nl2br($groupart->desc)."</td></tr>";
 
 	  $gas = $groupart->liste_albums();
 	  print '<tr><td>Album(s)</td><td><ul>';
@@ -107,7 +111,7 @@ else
 
 	  print "<tr><td valign=\"top\">Description</td><td>";
 	  print '<textarea name="desc" rows="8" cols="50">';
-	  print $groupart->description;
+	  print $groupart->desc;
 	  print "</textarea></td></tr>";
 	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Enregistrer"></td></tr>';
 	  print '</table>';
