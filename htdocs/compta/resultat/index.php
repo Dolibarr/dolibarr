@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,179 +21,150 @@
  *
  */
 require("./pre.inc.php");
-require("../../tva.class.php");
-require("../../chargesociales.class.php");
 
 /*
  *
  */
-$user->getrights('compta');
-if (!$user->rights->compta->resultat)
-  accessforbidden();
 
 llxHeader();
 
-print_titre("Résultat");
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $socidp = $user->societe_id;
+}
 
-print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
-print '<TR class="liste_titre">';
-print '<td width="10%">&nbsp;</td><TD>Elément</TD>';
-print "<TD align=\"right\">Montant</td>";
+$year_current = $_GET["year"];;
+if (! $year_current) { $year_current = strftime("%Y", time()); }
+
+
+print_titre("Résultat comptable, résumé annuel");
+print '<br>';
+
+
+$sql = "SELECT sum(f.total) as amount, date_format(f.datef,'%Y-%m') as dm";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
+if ($year) {
+	$sql .= " AND f.datef between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
+}
+if ($socidp)
+{
+  $sql .= " WHERE f.fk_soc = $socidp";
+}
+$sql .= " GROUP BY dm DESC";
+
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $i = 0; 
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($i);
+      $encaiss[$row[1]] = $row[0];
+      $i++;
+    }
+}
+else {
+	print $db->error();	
+}
+
+$sql = "SELECT sum(f.total_ht) as amount, date_format(f.datef,'%Y-%m') as dm";
+$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f WHERE f.fk_soc = s.idp"; 
+if ($year) {
+	$sql .= " AND f.datef between '$year-01-01 00:00:00' and '$year-12-31 23:59:59'";
+}
+if ($socidp)
+{
+  $sql .= " AND f.fk_soc = $socidp";
+}
+$sql .= " GROUP BY dm DESC";
+
+if ($db->query($sql))
+{
+  $num = $db->num_rows();
+  $i = 0; 
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($i);
+      $decaiss[$row[1]] = $row[0];
+      $i++;
+    }
+}
+else {
+	print $db->error();	
+}
+
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td rowspan=2>Mois</td>';
+
+
+if ($year_current < (MAIN_START_YEAR + 2))
+{
+  $year_start = MAIN_START_YEAR;
+  $year_end = (MAIN_START_YEAR + 2);
+}
+else
+{
+  $year_start = $year_current - 2;
+  $year_end = $year_current;
+}
+
+for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+{
+  print '<td align="center" width="20%" colspan="2"><a href="clientfourn.php?year='.$annee.'">'.$annee.'</a></td>';
+}
+print '</tr>';
+print '<tr class="liste_titre">';
+for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+{
+  print '<td align="right">Recettes</td><td align="right">Dépenses</td>';
+}
+print '</tr>';
+
+$var=True;
+for ($mois = 1 ; $mois < 13 ; $mois++)
+{
+  $var=!$var;
+  print '<tr '.$bc[$var].'>';
+  print "<td>".strftime("%B",mktime(1,1,1,$mois,1,$annee))."</td>";
+  for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+    {
+      print '<td align="right" width="10%">&nbsp;';
+      $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
+      if ($encaiss[$case]>0)
+	{
+	  print price($encaiss[$case]);
+	  $totentrees[$annee]+=$encaiss[$case];
+	}
+      print "</td>";
+
+      print '<td align="right" width="10%">&nbsp;';
+      $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
+      if ($decaiss[$case]>0)
+	{
+	  print price($decaiss[$case]);
+	  $totsorties[$annee]+=$decaiss[$case];
+	}
+      print "</td>";
+    }
+
+  print '</tr>';
+}
+
+$var=!$var;
+print "<tr $bc[$var]><td><b>Total annuel</b></td>";
+for ($annee = $year_start ; $annee <= $year_end ; $annee++)
+{
+  print '<td align="right">'.price($totentrees[$annee]).'</td><td align="right">'.price($totsorties[$annee]).'</td>';
+}
 print "</tr>\n";
 
-$sql = "SELECT s.nom,s.idp,sum(f.amount) as amount";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.fk_statut = 1 AND f.fk_user_valid is not NULL"; 
-
-$sql .= " GROUP BY s.nom ASC";
-
-print '<tr><td colspan="4">Factures</td></tr>';
-
-$result = $db->query($sql);
-if ($result) {
-  $num = $db->num_rows();
-    
-  $i = 0;
-  
-  if ($num > 0) {
-    $var=True;
-    while ($i < $num) {
-      $objp = $db->fetch_object( $i);
-      $var=!$var;
-            
-      print "<TR $bc[$var]><td>&nbsp</td>";
-      print "<td>Factures  <a href=\"../facture.php?socidp=$objp->idp\">$objp->nom</TD>\n";
-      
-      print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
-      
-      $total = $total + $objp->amount;
-      print "</TR>\n";
-      $i++;
-    }
-  }
-  $db->free();
-} else {
-  print $db->error();
-}
-print '<tr><td colspan="3" align="right">'.price($total).'</td></tr>';
-/*
- * Frais, factures fournisseurs.
- *
- *
- */
-$sql = "SELECT s.nom,s.idp,sum(f.total_ht) as amount";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f WHERE f.fk_soc = s.idp"; 
-  
-$sql .= " GROUP BY s.nom ASC, s.idp";
-
-print '<tr><td colspan="4">Frais</td></tr>';
-$subtotal = 0;
-$result = $db->query($sql);
-if ($result) {
-  $num = $db->num_rows();
-  $i = 0;
-  
-  if ($num > 0) {
-    $var=True;
-    while ($i < $num) {
-      $objp = $db->fetch_object( $i);
-      $var=!$var;
-            
-      print "<TR $bc[$var]><td>&nbsp</td>";
-      print "<td>Factures <a href=\"../../fourn/facture/index.php?socid=".$objp->idp."\">$objp->nom</a></TD>\n";
-      
-      print "<TD align=\"right\">".price($objp->amount)."</TD>\n";
-      
-      $total = $total - $objp->amount;
-      $subtotal = $subtotal + $objp->amount;
-      print "</TR>\n";
-      $i++;
-    }
-  }
-  $db->free();
-} else {
-  print $db->error();
-}
-print '<tr><td colspan="3" align="right">'.price($subtotal).'</td></tr>';
-
-/*
- * Charges sociales
- *
- */
-$subtotal = 0;
-print '<tr><td colspan="4">Prestations déductibles</td></tr>';
-
-$sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
-$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
-$sql .= " WHERE s.fk_type = c.id AND c.deductible=1";
-
-$sql .= " GROUP BY c.libelle DESC";
-
-if ( $db->query($sql) ) {
-  $num = $db->num_rows();
-  $i = 0;
-
-  while ($i < $num) {
-    $obj = $db->fetch_object( $i);
-
-    $total = $total - $obj->amount;
-    $subtotal = $subtotal + $obj->amount;
-
-    $var = !$var;
-    print "<tr $bc[$var]><td>&nbsp</td>";
-    print '<td>'.$obj->nom.'</td>';
-    print '<td align="right">'.price($obj->amount).'</td>';
-    print '</tr>';
-    $i++;
-  }
-} else {
-  print $db->error();
-}
-print '<tr><td colspan="3" align="right">'.price($subtotal).'</td></tr>';
-
-print '<tr><td align="right" colspan="2">Résultat</td><td class="border" align="right">'.price($total).'</td></tr>';
-/*
- * Charges sociales non déductibles
- *
- */
-$subtotal = 0;
-print '<tr><td colspan="4">Prestations NON déductibles</td></tr>';
-
-$sql = "SELECT c.libelle as nom, sum(s.amount) as amount";
-$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
-$sql .= " WHERE s.fk_type = c.id AND c.deductible=0";
-
-$sql .= " GROUP BY c.libelle DESC";
-
-if ( $db->query($sql) ) {
-  $num = $db->num_rows();
-  $i = 0;
-
-  while ($i < $num) {
-    $obj = $db->fetch_object( $i);
-
-    $total = $total - $obj->amount;
-    $subtotal = $subtotal + $obj->amount;
-
-    $var = !$var;
-    print "<tr $bc[$var]><td>&nbsp</td>";
-    print '<td>'.$obj->nom.'</td>';
-    print '<td align="right">'.price($obj->amount).'</td>';
-    print '</tr>';
-    $i++;
-  }
-} else {
-  print $db->error();
-}
-print '<tr><td colspan="3" align="right">'.price($subtotal).'</td></tr>';
-
-print '<tr><td align="right" colspan="2">Résultat</td><td class="border" align="right">'.price($total).'</td></tr>';
-
-
-print "</TABLE>";
-
-
+print "</table>";
 
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+
 ?>

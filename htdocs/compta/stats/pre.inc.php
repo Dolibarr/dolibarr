@@ -34,17 +34,20 @@ function llxHeader($head = "") {
 	$menu = new Menu();
 	
 	$menu->add(DOL_URL_ROOT."/compta/resultat/","Résultat / Exercice");
+    $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/resbysource.php","Détail client/fourn.");
+    $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/compteres.php","Compte de résultat");
+    $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/bilan.php","Bilan");
 	
-	$menu->add("index.php","Chiffre d'affaire");
+	$menu->add(DOL_URL_ROOT."/compta/stats/index.php","Chiffre d'affaire");
 	
-	$menu->add_submenu("cumul.php","Cumulé");
+	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/cumul.php","Cumulé");
 	if ($conf->propal->enabled) {
-		$menu->add_submenu("prev.php","Prévisionnel");
-		$menu->add_submenu("comp.php","Transformé");
+		$menu->add_submenu(DOL_URL_ROOT."/compta/stats/prev.php","Prévisionnel");
+		$menu->add_submenu(DOL_URL_ROOT."/compta/stats/comp.php","Transformé");
 	}
-	$menu->add_submenu("exercices.php","Evolution");
-	$menu->add_submenu("casoc.php","Par société");
-	$menu->add_submenu("cabyuser.php","Par utilisateur");
+	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/exercices.php","Evolution");
+	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php","Par société");
+	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php","Par utilisateur");
 	
 	left_menu($menu->liste);
 }

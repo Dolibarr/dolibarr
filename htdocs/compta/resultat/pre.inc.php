@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +25,6 @@ require("../../main.inc.php");
 function llxHeader($head = "") {
   global $conf;
 
-
   /*
    *
    *
@@ -33,19 +33,21 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/compta/resultat/","Résultat / Exercice");
-
-  $menu->add(DOL_URL_ROOT."/compta/stats/index.php","Chiffre d'affaire");
-
-
-  $menu->add_submenu(DOL_URL_ROOT."/compta/stats/cumul.php","Cumulé");
-  if ($conf->propal->enabled) {
-  	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/prev.php","Prévisionnel");
-  	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/comp.php","Transformé");
-  }
-  $menu->add_submenu(DOL_URL_ROOT."/compta/stats/exercices.php","Evolution");
-  $menu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php","Par société");
-  $menu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php","Par utilisateur");
+	$menu->add(DOL_URL_ROOT."/compta/resultat/","Résultat / Exercice");
+    $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php","Détail client/fourn.");
+    $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/compteres.php","Compte de résultat");
+    $menu->add_submenu(DOL_URL_ROOT."/compta/resultat/bilan.php","Bilan");
+	
+	$menu->add(DOL_URL_ROOT."/compta/stats/index.php","Chiffre d'affaire");
+	
+	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/cumul.php","Cumulé");
+	if ($conf->propal->enabled) {
+		$menu->add_submenu(DOL_URL_ROOT."/compta/stats/prev.php","Prévisionnel");
+		$menu->add_submenu(DOL_URL_ROOT."/compta/stats/comp.php","Transformé");
+	}
+	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/exercices.php","Evolution");
+	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/casoc.php","Par société");
+	$menu->add_submenu(DOL_URL_ROOT."/compta/stats/cabyuser.php","Par utilisateur");
 
   left_menu($menu->liste);
 }
