@@ -23,14 +23,16 @@
  *
  */
 
-/**	    \file       htdocs/includes/modules/mailings/modules_mailings.php
+/**
+	    \file       htdocs/includes/modules/mailings/modules_mailings.php
 		\ingroup    mailing
 		\brief      Fichier contenant la classe mère des classes de liste de destinataires mailing
 		\version    $Revision$
 */
 
 
-/**	    \class      MailingTargets
+/**
+	    \class      MailingTargets
 		\brief      Classe mère des classes de liste de destinataires mailing
 */
 
@@ -67,7 +69,7 @@ class MailingTargets
     /**
      *    \brief      Retourne nombre de destinataires
      *    \param      sql         Requete sql de comptage
-     *    \return     int         Nb de destinataires
+     *    \return     int         Nb de destinataires si ok, < 0 si erreur
      */
     function getNbOfRecipients($sql)
     {
@@ -77,7 +79,9 @@ class MailingTargets
             $obj = $this->db->fetch_object($result);
             return $obj->nb;
         }
-        return 0;
+        else {
+            return -1;
+        }
     }
 
     /**
@@ -101,6 +105,7 @@ class MailingTargets
             if (!$this->db->query($sql))
             {
                 dolibarr_syslog($this->db->error());
+                $this->error=$this->db->error();
                 return -1;
             }
         }
@@ -147,6 +152,7 @@ class MailingTargets
         else
         {
             dolibarr_syslog($this->db->error());
+            $this->error=$this->db->error();
             return -1;
         }
 

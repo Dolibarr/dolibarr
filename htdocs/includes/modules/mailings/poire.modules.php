@@ -36,7 +36,8 @@
  *
  */
 
-/**   	\file       htdocs/includes/modules/mailings/poire.modules.php
+/**
+       	\file       htdocs/includes/modules/mailings/poire.modules.php
 		\ingroup    mailing
 		\brief      Fichier de la classe permettant de générer la liste de destinataires Poire
 		\version    $Revision$
@@ -45,14 +46,15 @@
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 
 
-/**	    \class      mailing_poire
+/**
+	    \class      mailing_poire
 		\brief      Classe permettant de générer la liste des destinataires Poire
 */
 
 class mailing_poire extends MailingTargets
 {
     var $name='ContactCustomers';                       // Identifiant du module mailing
-    var $desc='Tous les contacts de toutes les sociétés clientes'; // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+    var $desc='Tous les contacts uniques de toutes les sociétés clientes'; // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
     var $require_module=array("commercial");            // Module mailing actif si modules require_module actifs
     var $require_admin=0;                               // Module mailing actif pour user admin ou non
     var $picto='contact';
@@ -69,19 +71,19 @@ class mailing_poire extends MailingTargets
         $this->db=$DB;
 
         // Liste des tableaux des stats espace mailing
-        $this->statssql[0]="SELECT '".$langs->trans("Customers")."' label, count(*) nb FROM ".MAIN_DB_PREFIX."societe WHERE client = 1";
-        $this->statssql[1]="SELECT '".$langs->trans("NbOfCustomersContacts")."' label, count(distinct(c.email)) nb FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = c.fk_soc AND s.client = 1 AND c.email IS NOT NULL";
+        $this->statssql[0]="SELECT '".$langs->trans("Customers")."' as label, count(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE client = 1";
+        $this->statssql[1]="SELECT '".$langs->trans("NbOfCustomersContacts")."' as label, count(distinct(c.email)) as nb FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = c.fk_soc AND s.client = 1 AND c.email != ''";
     }
     
     function getNbOfRecipients()
     {
         // La requete doit retourner: nb
-        $sql  = "SELECT count(distinct(c.email)) nb";
+        $sql  = "SELECT count(distinct(c.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= ", ".MAIN_DB_PREFIX."societe as s";
         $sql .= " WHERE s.idp = c.fk_soc";
         $sql .= " AND s.client = 1";
-        $sql .= " AND c.email IS NOT NULL";
+        $sql .= " AND c.email != ''";
 
         return parent::getNbOfRecipients($sql); 
     }
@@ -89,14 +91,14 @@ class mailing_poire extends MailingTargets
     function add_to_target($mailing_id)
     {
         // La requete doit retourner: email, fk_contact, name, firstname
-        $sql = "SELECT c.email email, c.idp fk_contact, c.name name, c.firstname firstname";
+        $sql = "SELECT c.email as email, c.idp as fk_contact, c.name as name, c.firstname as firstname";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= ", ".MAIN_DB_PREFIX."societe as s";
         $sql .= " WHERE s.idp = c.fk_soc";
         $sql .= " AND s.client = 1";
-        $sql .= " AND c.email IS NOT NULL";
+        $sql .= " AND c.email != ''";
         $sql .= " ORDER BY c.email";
-            
+
         return parent::add_to_target($mailing_id, $sql);
     }
 

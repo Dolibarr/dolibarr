@@ -70,13 +70,13 @@ class mailing_fraise extends MailingTargets
         $this->db=$DB;
 
         // Liste des tableaux des stats espace mailing
-        $this->statssql[0]="SELECT '".$langs->trans("MembersStatusValidated")."' label, count(*) nb FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
+        $this->statssql[0]="SELECT '".$langs->trans("MembersStatusValidated")."' as label, count(*) as nb FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
     }
     
     function getNbOfRecipients()
     {
         // La requete doit retourner: nb
-        $sql  = "SELECT count(distinct(a.email)) nb";
+        $sql  = "SELECT count(distinct(a.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
         $sql .= " WHERE a.email IS NOT NULL and statut=1";
 
@@ -86,7 +86,7 @@ class mailing_fraise extends MailingTargets
     function add_to_target($mailing_id)
     {
         // La requete doit retourner: email, fk_contact, name, firstname
-        $sql = "SELECT a.email email, null fk_contact, a.nom name, a.prenom firstname";
+        $sql = "SELECT a.email as email, null as fk_contact, a.nom as name, a.prenom as firstname";
         $sql .= " FROM ".MAIN_DB_PREFIX."adherent as a";
         $sql .= " WHERE a.email IS NOT NULL AND a.statut=1";
         $sql .= " ORDER BY a.email";

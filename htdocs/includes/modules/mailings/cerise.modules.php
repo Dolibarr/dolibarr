@@ -36,7 +36,8 @@
  *
  */
 
-/**   	\file       htdocs/includes/modules/mailings/cerise.modules.php
+/**
+       	\file       htdocs/includes/modules/mailings/cerise.modules.php
 		\ingroup    mailing
 		\brief      Fichier de la classe permettant de générer la liste de destinataires Cerise
 		\version    $Revision$
@@ -45,14 +46,15 @@
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 
 
-/**	    \class      mailing_cerise
+/**
+	    \class      mailing_cerise
 		\brief      Classe permettant de générer la liste des destinataires Cerise
 */
 
 class mailing_cerise extends MailingTargets
 {
     var $name="ContactProspects";                           // Identifiant du module mailing
-    var $desc='Tous les contacts de toutes les sociétés prospects';   // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+    var $desc='Tous les contacts emails uniques de toutes les sociétés prospects';   // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
     var $require_module=array("commercial");                // Module mailing actif si modules require_module actifs
     var $require_admin=0;                                   // Module mailing actif pour user admin ou non
     var $picto='contact';
@@ -69,14 +71,14 @@ class mailing_cerise extends MailingTargets
         $this->db=$DB;
 
         // Liste des tableaux des stats espace mailing
-        $this->statssql[0]="SELECT '".$langs->trans("Prospects")."' label, count(*) nb FROM ".MAIN_DB_PREFIX."societe WHERE client = 2";
-        $this->statssql[1]="SELECT '".$langs->trans("NbOfProspectsContacts")."' label, count(distinct(c.email)) nb FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = c.fk_soc AND s.client = 2 AND c.email IS NOT NULL";
+        $this->statssql[0]="SELECT '".$langs->trans("Prospects")."' as label, count(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE client = 2";
+        $this->statssql[1]="SELECT '".$langs->trans("NbOfProspectsContacts")."' as label, count(distinct(c.email)) as nb FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = c.fk_soc AND s.client = 2 AND c.email IS NOT NULL";
     }
     
     function getNbOfRecipients()
     {
         // La requete doit retourner: nb
-        $sql  = "SELECT count(distinct(c.email)) nb";
+        $sql  = "SELECT count(distinct(c.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= ", ".MAIN_DB_PREFIX."societe as s";
         $sql .= " WHERE s.idp = c.fk_soc";
@@ -89,7 +91,7 @@ class mailing_cerise extends MailingTargets
     function add_to_target($mailing_id)
     {
         // La requete doit retourner: email, fk_contact, name, firstname
-        $sql = "SELECT c.email email, c.idp fk_contact, c.name name, c.firstname firstname";
+        $sql = "SELECT c.email as email, c.idp as fk_contact, c.name as name, c.firstname as firstname";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= ", ".MAIN_DB_PREFIX."societe as s";
         $sql .= " WHERE s.idp = c.fk_soc";

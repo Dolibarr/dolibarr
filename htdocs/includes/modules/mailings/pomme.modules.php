@@ -35,7 +35,8 @@
  *
  */
 
-/**   	\file       htdocs/includes/modules/mailings/pomme.modules.php
+/**
+       	\file       htdocs/includes/modules/mailings/pomme.modules.php
 		\ingroup    mailing
 		\brief      Fichier de la classe permettant de générer la liste de destinataires Pomme
 		\version    $Revision$
@@ -44,14 +45,15 @@
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 
 
-/**	    \class      mailing_pomme
+/**
+	    \class      mailing_pomme
 		\brief      Classe permettant de générer la liste des destinataires Pomme
 */
 
 class mailing_pomme extends MailingTargets
 {
     var $name='DolibarrUsers';                      // Identifiant du module mailing
-    var $desc='Tous les utilisateurs de Dolibarr';  // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
+    var $desc='Tous les utilisateurs avec emails de Dolibarr';  // Libellé utilisé si aucune traduction pour MailingModuleDescXXX ou XXX=name trouvée
     var $require_module=array();                    // Module mailing actif si modules require_module actifs
     var $require_admin=1;                           // Module mailing actif pour user admin ou non
     var $picto='user';
@@ -68,13 +70,13 @@ class mailing_pomme extends MailingTargets
         $this->db=$DB;
 
         // Liste des tableaux des stats espace mailing
-        $this->statssql[0]="SELECT '".$langs->trans("DolibarrUsers")."' label, count(*) nb FROM ".MAIN_DB_PREFIX."user";
+        $this->statssql[0]="SELECT '".$langs->trans("DolibarrUsers")."' as label, count(*) as nb FROM ".MAIN_DB_PREFIX."user";
     }
     
     function getNbOfRecipients()
     {
         // La requete doit retourner: nb
-        $sql  = "SELECT count(distinct(u.email)) nb";
+        $sql  = "SELECT count(distinct(u.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql .= " WHERE u.email IS NOT NULL";
 
@@ -84,7 +86,7 @@ class mailing_pomme extends MailingTargets
     function add_to_target($mailing_id)
     {
         // La requete doit retourner: email, fk_contact, name, firstname
-        $sql = "SELECT u.email email, null fk_contact, u.name name, u.firstname firstname";
+        $sql = "SELECT u.email as email, null as fk_contact, u.name as name, u.firstname as firstname";
         $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql .= " WHERE u.email IS NOT NULL";
         $sql .= " ORDER BY u.email";
