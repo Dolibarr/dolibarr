@@ -45,6 +45,7 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_chargesociales.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_compta.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_compta_account.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_const.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_cotisation.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_don.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_don_projet.sql

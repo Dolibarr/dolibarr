@@ -65,6 +65,8 @@ drop table if exists llx_compta;
 
 drop table if exists llx_compta_account;
 
+drop table if exists llx_const;
+
 drop table if exists llx_cotisation;
 
 drop table if exists llx_don;
