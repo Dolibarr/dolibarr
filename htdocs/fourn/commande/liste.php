@@ -95,7 +95,7 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Commandes fournisseurs", $page, "index.php", "", $sortfield, $sortorder, '', $num);
+  print_barre_liste("Commandes fournisseurs", $page, "liste.php", "", $sortfield, $sortorder, '', $num);
   if ($sortorder == "DESC")
     {
       $sortorder="ASC";
