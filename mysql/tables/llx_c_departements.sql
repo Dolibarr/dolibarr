@@ -22,8 +22,8 @@
 
 create table llx_c_departements
 (
-  rowid       integer AUTO_INCREMENT UNIQUE,
-  code_departement char(3) PRIMARY KEY,
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  code_departement char(3),
   fk_region   integer,
   cheflieu    varchar(7),
   tncc        integer,

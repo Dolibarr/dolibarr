@@ -58,7 +58,7 @@ insert into llx_const (name, value, type, note) values ('MAIN_UPLOAD_DOC','1','c
 insert into llx_const (name, value, type, note) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation');
 insert into llx_const (name, value, type, note) values ('MAIN_MAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr');
 
-insert into llx_const (name, value, type, note) values ('MAIN_START_YEAR','2003','chaine','Année de départ');
+insert into llx_const (name, value, type, note) values ('MAIN_START_YEAR','2004','chaine','Année de départ');
 
 insert into llx_const (name, value, type, note) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages');
 insert into llx_const (name, value, type, note) values ('MAIN_DEBUG','1','yesno','Debug ..');
@@ -152,7 +152,7 @@ delete from llx_c_actioncomm;
 insert into llx_c_actioncomm (id,libelle) values ( 0, '-');
 insert into llx_c_actioncomm (id,libelle) values ( 1, 'Appel Téléphonique');
 insert into llx_c_actioncomm (id,libelle) values ( 2, 'Envoi Fax');
-insert into llx_c_actioncomm (id,libelle) values ( 3, 'Envoi propal par mail');
+insert into llx_c_actioncomm (id,libelle) values ( 3, 'Envoi proposition par mail');
 insert into llx_c_actioncomm (id,libelle) values ( 4, 'Envoi d\'un email'); 
 insert into llx_c_actioncomm (id,libelle) values ( 5, 'Rendez-vous'); 
 insert into llx_c_actioncomm (id,libelle) values ( 9, 'Envoi Facture');
@@ -208,34 +208,46 @@ insert into llx_c_pays (rowid,libelle,code) values (23, 'Sénégal',        'SN');
 insert into llx_c_pays (rowid,libelle,code) values (24, 'Argentine',      'AR');
 insert into llx_c_pays (rowid,libelle,code) values (25, 'Cameroun',       'CM');
 
-insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (0,0,0,'0',0,'-');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (01,'97105',3,'Guadeloupe');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (02,'97209',3,'Martinique');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (03,'97302',3,'Guyane');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (04,'97411',3,'Réunion');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (11,'75056',1,'Île-de-France');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (21,'51108',0,'Champagne-Ardenne');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (22,'80021',0,'Picardie');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (23,'76540',0,'Haute-Normandie');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (24,'45234',2,'Centre');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (25,'14118',0,'Basse-Normandie');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (26,'21231',0,'Bourgogne');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (31,'59350',2,'Nord-Pas-de-Calais');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (41,'57463',0,'Lorraine');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (42,'67482',1,'Alsace');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (43,'25056',0,'Franche-Comté');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (52,'44109',4,'Pays de la Loire');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (53,'35238',0,'Bretagne');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (54,'86194',2,'Poitou-Charentes');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (72,'33063',1,'Aquitaine');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (73,'31555',0,'Midi-Pyrénées');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (74,'87085',2,'Limousin');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (82,'69123',2,'Rhône-Alpes');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (83,'63113',1,'Auvergne');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (91,'34172',2,'Languedoc-Roussillon');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (93,'13055',0,'Provence-Alpes-Côte d\'Azur');
-insert into llx_c_regions (code_region,cheflieu,tncc,nom) values (94,'2A004',0,'Corse');
+--
+-- Regions
+--
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (  0,0,0,'0',0,'-');
+-- Regions de France
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (101,1,  1,'97105',3,'Guadeloupe');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (102,1,  2,'97209',3,'Martinique');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (103,1,  3,'97302',3,'Guyane');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (104,1,  4,'97411',3,'Réunion');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (105,1, 11,'75056',1,'Île-de-France');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (106,1, 21,'51108',0,'Champagne-Ardenne');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (107,1, 22,'80021',0,'Picardie');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (108,1, 23,'76540',0,'Haute-Normandie');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (109,1, 24,'45234',2,'Centre');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (110,1, 25,'14118',0,'Basse-Normandie');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (111,1, 26,'21231',0,'Bourgogne');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (112,1, 31,'59350',2,'Nord-Pas-de-Calais');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (113,1, 41,'57463',0,'Lorraine');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (114,1, 42,'67482',1,'Alsace');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (115,1, 43,'25056',0,'Franche-Comté');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (116,1, 52,'44109',4,'Pays de la Loire');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (117,1, 53,'35238',0,'Bretagne');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (118,1, 54,'86194',2,'Poitou-Charentes');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (119,1, 72,'33063',1,'Aquitaine');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (120,1, 73,'31555',0,'Midi-Pyrénées');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (121,1, 74,'87085',2,'Limousin');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (122,1, 82,'69123',2,'Rhône-Alpes');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (123,1, 83,'63113',1,'Auvergne');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (124,1, 91,'34172',2,'Languedoc-Roussillon');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (125,1, 93,'13055',0,'Provence-Alpes-Côte d\'Azur');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (126,1, 94,'2A004',0,'Corse');
+-- Regions de Belgique
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (201,2,201,'',1,'Flandre');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (202,2,202,'',2,'Wallonie');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (203,2,203,'02408',3,'Bruxelles-Capitale');
 
+--
+-- Departements/Cantons/Provinces
+--
+-- Departements de France
 insert into llx_c_departements (rowid, fk_region, code_departement,cheflieu,tncc,ncc,nom) values (0,0,0,'0',0,'-','-');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (82,'01','01053',5,'AIN','Ain');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (22,'02','02408',5,'AISNE','Aisne');
@@ -333,10 +345,23 @@ insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,no
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'93','93008',3,'SEINE-SAINT-DENIS','Seine-Saint-Denis');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'94','94028',2,'VAL-DE-MARNE','Val-de-Marne');
 insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (11,'95','95500',2,'VAL-D\'OISE','Val-d\'Oise');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (01,'971','97105',3,'GUADELOUPE','Guadeloupe');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (02,'972','97209',3,'MARTINIQUE','Martinique');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (03,'973','97302',3,'GUYANE','Guyane');
-insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (04,'974','97411',3,'REUNION','Réunion');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 1,'971','97105',3,'GUADELOUPE','Guadeloupe');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 2,'972','97209',3,'MARTINIQUE','Martinique');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 3,'973','97302',3,'GUYANE','Guyane');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values ( 4,'974','97411',3,'REUNION','Réunion');
+-- Province de Belgique
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'01','01053',1,'ANVERS','Anvers');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (203,'02','02408',3,'BRUXELLES-CAPITALE','Bruxelles-Capitale');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'03','03190',2,'BRABANT-WALLON','Brabant-Wallon');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'04','04070',1,'BRABANT-FLAMAND','Brabant-Flamand');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'05','05061',1,'FLANDRE-OCCIDENTALE','Flandre-Occidentale');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'06','06088',1,'FLANDRE-ORIENTALE','Flandre-Orientale');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'07','07186',2,'HAINAUT','Hainaut');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (201,'08','08105',2,'LIEGE','Liège');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) values (202,'09','09105',1,'LIMBOURG','Limbourg');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) VALUES (202,'10','10387',2,'LUXEMBOURG','Luxembourg');
+insert into llx_c_departements (fk_region, code_departement,cheflieu,tncc,ncc,nom) VALUES (201,'11','11069',2,'NAMUR','Namur');
+
  
 --
 -- Effectif des sociétés
@@ -357,7 +382,7 @@ insert into llx_c_paiement (id,libelle,type) values (2, 'Virement', 2);
 insert into llx_c_paiement (id,libelle,type) values (3, 'Prélèvement', 1);
 insert into llx_c_paiement (id,libelle,type) values (4, 'Liquide', 0);
 insert into llx_c_paiement (id,libelle,type) values (5, 'Paiement en ligne', 0);
-insert into llx_c_paiement (id,libelle,type) values (6, 'CB', 1);
+insert into llx_c_paiement (id,libelle,type) values (6, 'Carte Bancaire', 1);
 insert into llx_c_paiement (id,libelle,type) values (7, 'Chèque', 2);
 
 delete from llx_c_propalst;

@@ -32,42 +32,62 @@ class Form {
 
       return 1;
     }
+
   /*
-   *
+   * Retourne la liste déroulante des départements/province/cantons
+   * avec un affichage avec rupture sur le pays
    *
    */
-  Function select_departement($selected='', $addnsp=0)
-  {
-    print '<select name="departement_id">';
-
-    $sql = "SELECT rowid, code_departement as code , nom, active FROM llx_c_departements";
-    $sql .= " WHERE active = 1 ORDER BY code ASC";
+    Function select_departement($selected='', $addnsp=0)
+    {
+        print '<select name="departement_id">';
     
-    if ($this->db->query($sql))
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	if ($num)
-	  {
-	    while ($i < $num)
-	      {
-		$obj = $this->db->fetch_object( $i);
-		if ($selected == $obj->rowid)
-		  {
-		    print '<option value="'.$obj->rowid.'" SELECTED>['.$obj->code.'] '.$obj->nom.'</option>';
-		  }
-		else
-		  {
-		    print '<option value="'.$obj->rowid.'">['.$obj->code.'] '.$obj->nom.'</option>';
-		  }
-		$i++;
-	      }
-	  }
-      }
-    print '</select>';
-  }
-  /*
-   *
+        // On recherche les départements/cantons/province active d'une region et pays actif
+        $sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM llx_c_departements as d, llx_c_regions as r, llx_c_pays as p";
+        $sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
+        $sql .= " AND d.active = 1 AND r.active = 1 AND p.active = 1 ORDER BY code_pays, code ASC";
+    
+        if ($this->db->query($sql))
+        {
+            $num = $this->db->num_rows();
+            $i = 0;
+            if ($num)
+            {
+                $pays='';
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object( $i);
+                    if ($obj->code == 0) {
+                        print '<option value="0">&nbsp;</option>';
+                    }
+                    else {
+                        if ($pays == '' || $pays != $obj->libelle_pays) {
+                            // Affiche la rupture
+                            print '<option value="-1">----- '.$obj->libelle_pays.' -----</option>';
+                            $pays=$obj->libelle_pays;   
+                        }
+    
+                        if ($selected > 0 && $selected == $obj->rowid)
+                        {
+                            print '<option value="'.$obj->rowid.'" selected>['.$obj->code.'] '.$obj->nom.'</option>';
+                        }
+                        else
+                        {
+                            print '<option value="'.$obj->rowid.'">['.$obj->code.'] '.$obj->nom.'</option>';
+                        }
+                    }
+                    $i++;
+                }
+            }
+        }
+        else {
+            print "Erreur : $sql : ".$this->db->error();
+        }
+        print '</select>';
+    }
+
+ /*
+   * Retourne la liste déroulante des pays actifs
    *
    */
   Function select_pays($selected='', $addnsp=0)
@@ -75,8 +95,8 @@ class Form {
     print '<select name="pays_id">';
 
     $sql = "SELECT rowid, libelle, active FROM llx_c_pays";
-    $sql .= " WHERE active = 1 ORDER BY code ASC";
-    
+    $sql .= " WHERE active = 1 ORDER BY libelle ASC";
+
     if ($this->db->query($sql))
       {
 	$num = $this->db->num_rows();
@@ -88,7 +108,7 @@ class Form {
 		$obj = $this->db->fetch_object( $i);
 		if ($selected == $obj->rowid)
 		  {
-		    print '<option value="'.$obj->rowid.'" SELECTED>'.$obj->libelle.'</option>';
+		    print '<option value="'.$obj->rowid.'" selected>'.$obj->libelle.'</option>';
 		  }
 		else
 		  {

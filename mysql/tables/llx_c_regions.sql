@@ -22,8 +22,8 @@
 
 create table llx_c_regions
 (
-  rowid       integer AUTO_INCREMENT UNIQUE,
-  code_region integer PRIMARY KEY,
+  rowid       integer AUTO_INCREMENT PRIMARY KEY,
+  code_region integer UNIQUE,
   fk_pays     integer default 1,
   cheflieu    varchar(7),
   tncc        integer,
