@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,46 +20,122 @@
  */
 
 /*!
-	    \file       htdocs/admin/modules.php
-        \brief      Page de configuration et activation des modules
-		\version    $Revision$
+  \file       htdocs/compta/prelevement/index.php
+  \brief      Prelevement
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
 
 require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
 
-$user->getrights('banque');
-
+if ($user->societe_id > 0)
+{
+  $socidp = $user->societe_id;
+}
 
 llxHeader();
 
-print_titre($langs->trans("Bons de prélèvements"));
+print_titre($langs->trans("Prélèvements"));
 
 print '<br>';
-print '<table class="noborder">';
-print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Name").'</td>';
-print '<td>'.$langs->trans("Date").'</td>';
-print '<td>&nbsp;</td>';
-print "</tr>\n";
 
+print '<table border="0" width="100%">';
 
-$dir = $conf->prelevement->dir_output;
-$handle=opendir($dir."/bon");
+print '<tr><td valign="top" width="30%">';
+/*
+ * Bon de prélèvement
+ *
+ */
+$sql = "SELECT p.rowid, p.ref, p.amount,".$db->pdate("p.datec")." as datec";
+$sql .= " FROM ".MAIN_DB_PREFIX."prelevement as p";
+$sql .= " ORDER BY datec DESC LIMIT 5";
 
-while (($file = readdir($handle))!==false)
+$result = $db->query($sql);
+if ($result)
 {
-    $relativepath="/bon/".$file;
-    if (is_readable($dir."/".$relativepath) && is_file($dir."/".$relativepath))
+  $num = $db->num_rows();
+  $i = 0;  
+  $var=True;
+
+  print"\n<!-- debut table -->\n";
+  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+  print '<tr class="liste_titre"><td>Bon</td><td>Date</td>';
+  print '<td align="right">Montant</td>';
+  print '</tr>';
+
+  while ($i < $num)
     {
-      print '<tr><td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=prelevement&file='.urlencode($relativepath).'&amp;type=text/plain">'.$file.'</a><td>';
-      print '</tr>';
+      $obj = $db->fetch_object($i);	
+      $var=!$var;
+
+      print "<tr $bc[$var]><td>";
+
+      print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
+
+      print '<td>'.strftime("%d/%m/%Y %H:%M",$obj->datec)."</td>\n";
+
+      print '<td align="right">'.price($obj->amount)." euros</td>\n";
+
+      print "</tr>\n";
+      $i++;
     }
+  print "</table>";
+  $db->free();
+}
+else 
+{
+  print $db->error() . ' ' . $sql;
 }
 
+print '</td><td width="70%">';
+/*
+ * Factures
+ *
+ */
+$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp";
+$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+$sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
+$sql .= " WHERE s.idp = f.fk_soc";
+$sql .= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
 
-print "</table>";
+if ($socidp)
+{
+  $sql .= " AND f.fk_soc = $socidp";
+}
+
+if ( $db->query($sql) )
+{
+  $num = $db->num_rows();
+  $i = 0;
+  
+  if ($num)
+    {
+      print '<table class="noborder" width="100%">';
+      print '<tr class="liste_titre">';
+      print '<td colspan="2">Factures en attente de prélèvement ('.$num.')</td></tr>';
+      $var = True;
+      while ($i < $num && $i < 20)
+	{
+	  $obj = $db->fetch_object();
+	  $var=!$var;
+	  print '<tr '.$bc[$var].'><td>';
+	  print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.img_file().'</a>&nbsp;';
+	  print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.$obj->facnumber.'</a></td>';
+	  print '<td>'.$obj->nom.'</td></tr>';
+	  $i++;
+	}
+      
+      print "</table><br>";
+
+    }
+}
+else
+{
+  dolibarr_print_error($db);
+}  
+
+print '</td></tr></table>';
 
 llxFooter();
 ?>
