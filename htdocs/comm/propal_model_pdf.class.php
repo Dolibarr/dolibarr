@@ -65,4 +65,3 @@ class Propal_Model_Pdf {
     }
 }    
 ?>
-    
