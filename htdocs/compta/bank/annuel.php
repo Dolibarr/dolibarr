@@ -84,7 +84,7 @@ if ($db->query($sql))
 $sql = "SELECT sum(f.amount), date_format(f.dateo,'%Y-%m') as dm";
 $sql .= " FROM llx_bank as f";
 $sql .= " WHERE f.amount <= 0";
-if ($account) { $sql .= " AND fk_account = $account"; }
+if ($_GET["account"]) { $sql .= " AND fk_account = ".$_GET["account"]; }
 $sql .= " GROUP BY dm";
 
 if ($db->query($sql))
