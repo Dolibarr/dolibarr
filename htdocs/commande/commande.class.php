@@ -25,16 +25,23 @@ class Commande
   var $db ;
   var $id ;
   var $brouillon;
-
+  /**
+   * Initialisation
+   *
+   */
   Function Commande($DB)
     {
       $this->db = $DB;
 
       $this->sources[0] = "Proposition commerciale";
-      $this->sources[1] = "OsCommerce";
-      $this->sources[2] = "Papier";
+      $this->sources[1] = "Internet";
+      $this->sources[2] = "Courrier";
       $this->sources[3] = "Téléphone";
       $this->sources[4] = "Fax";
+
+      $this->statuts[-1] = "Annulée";
+      $this->statuts[0] = "Brouillon";
+      $this->statuts[1] = "Validée";
 
       $this->products = array();
     }
@@ -50,7 +57,8 @@ class Commande
 
       $this->lines = array();
 
-      $this->date_commande = "now()";
+      $this->date_commande = time();
+      $this->source = 0;
 
       for ($i = 0 ; $i < sizeof($propal->lignes) ; $i++)
 	{
@@ -78,11 +86,49 @@ class Commande
    */
   Function valid($user)
     {
+      $result = 0;
+      if ($user->rights->commande->valider)
+	{
+	  if (defined("COMMANDE_ADDON"))
+	    {
+	      if (is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/commande/".COMMANDE_ADDON.".php"))
+		{
+		  require_once DOL_DOCUMENT_ROOT ."/includes/modules/commande/".COMMANDE_ADDON.".php";
+		  
+		  $modName = COMMANDE_ADDON;
+		  $objMod = new $modName($this->db);
+		  $num = $objMod->commande_get_num();
+
+		  $sql = "UPDATE llx_commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+		  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+		  
+		  if ($this->db->query($sql) )
+		    {
+		      $result = 1;
+		    }
+		  else
+		    {
+		      $result = -1;
+		      print $this->db->error() . ' in ' . $sql;
+		    }
+		  
+		}
+	    }
+	}
+      return $result ;
+    }
+  /**
+   * Annule la commande
+   *
+   *
+   */
+  Function cancel($user)
+    {
       if ($user->rights->commande->valider)
 	{
 
-	  $sql = "UPDATE llx_commande SET fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
-	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+	  $sql = "UPDATE llx_commande SET fk_statut = -1";
+	  $sql .= " WHERE rowid = $this->id AND fk_statut = 1 ;";
 	  
 	  if ($this->db->query($sql) )
 	    {
@@ -96,13 +142,13 @@ class Commande
   }
 
   /**
-   * Créé la facture
+   * Créé la commande
    *
    *
    */
   Function create($user)
     {
-      /* On positionne en mode brouillon la facture */
+      /* On positionne en mode brouillon la commande */
       $this->brouillon = 1;
 
       if (! $remise)
@@ -115,8 +161,8 @@ class Commande
 	  $this->projetid = 0;
 	}
       
-      $sql = "INSERT INTO llx_commande (fk_soc, date_creation, fk_user_author, fk_projet, date_commande) ";
-      $sql .= " VALUES ($this->soc_id, now(), $user->id, $this->projetid, $this->date_commande)";
+      $sql = "INSERT INTO llx_commande (fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source) ";
+      $sql .= " VALUES ($this->soc_id, now(), $user->id, $this->projetid, ".$this->db->idate($this->date_commande).", $this->source)";
       
       if ( $this->db->query($sql) )
 	{
@@ -196,10 +242,6 @@ class Commande
     {
       if ($this->statut == 0)
 	{
-
-
-	  print $p_product_id;
-
 	  if (strlen(trim($p_qty)) == 0)
 	    {
 	      $p_qty = 1;
@@ -315,7 +357,7 @@ class Commande
   Function fetch ($id)
     {
       $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva";
-      $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent";
+      $sql .= ", ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source";
       $sql .= " FROM llx_commande as c";
       $sql .= " WHERE c.rowid = $id";
 
@@ -336,6 +378,8 @@ class Commande
 	  $this->date            = $obj->date_commande;
 	  $this->remise_percent  = $obj->remise_percent;
 
+	  $this->source          = $obj->source;
+
 	  $this->projet_id       = $obj->fk_projet;
 
 	  $this->db->free();
@@ -343,8 +387,20 @@ class Commande
 	  if ($this->statut == 0)
 	    $this->brouillon = 1;
 	  
-	  return 1;
+	  /*
+	   * Propale associée
+	   */
+	  $sql = "SELECT fk_propale FROM llx_co_pr WHERE fk_commande = ".$this->id;
+	  if ($this->db->query($sql) )
+	    {
+	      if ($this->db->num_rows())
+		{
+		  $obj = $this->db->fetch_object(0);
+		  $this->propale_id = $obj->fk_propale;
+		}
+	    }
 
+	  return 1;
 	}
       else
 	{
@@ -374,8 +430,35 @@ class Commande
 	    }
 	}
     }
+  /**
+   *
+   *
+   *
+   *
+   */
+  Function set_remise($user, $remise)
+    {
+      if ($user->rights->commande->creer)
+	{
 
-  /*
+	  $remise = ereg_replace(",",".",$remise);
+
+	  $sql = "UPDATE llx_commande SET remise_percent = ".$remise;
+	  $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+	  
+	  if ($this->db->query($sql) )
+	    {
+	      $this->remise_percent = $remise;
+	      $this->update_price();
+	      return 1;
+	    }
+	  else
+	    {
+	      print $this->db->error() . ' in ' . $sql;
+	    }
+	}
+    }
+  /**
    *
    *
    */
@@ -452,7 +535,7 @@ class Commande
       }
   }
   /**
-   * Class la facture
+   * Class la commande
    *
    *
    */
