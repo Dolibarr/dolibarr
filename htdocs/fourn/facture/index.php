@@ -112,15 +112,6 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  if ($sortorder == "DESC")
-    {
-      $sortorder="ASC";
-    }
-  else
-    {
-      $sortorder="DESC";
-    }
-
   print_barre_liste("Liste des factures fournisseurs", $page, $PHP_SELF,'', $sortfield, $sortorder,'',$num);
 
 
