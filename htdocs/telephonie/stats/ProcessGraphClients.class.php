@@ -136,7 +136,7 @@ class ProcessGraphClients
 	    $graphgain = new GraphAppelsDureeMoyenne ($this->db, $file);
 	    $graphgain->client = $client;
 	    $graphgain->show_console = 0 ;
-	    $graphgain->GraphDraw();
+	    $graphgain->Graph();
 	    
 	    $file = $img_root . $client."/nb-comm-mensuel.png";
 	    
