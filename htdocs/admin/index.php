@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -50,7 +51,7 @@ print '<td>Nom</td><td>Valeur</td><td>Action</td>';
 print "</TR>\n";
 
 print '<tr class="pair"><td>Version</td><td>' . DOL_VERSION . '</td><td>&nbsp;</td></tr>';
-print '<tr class="impair"><td>theme</td>';
+print '<tr class="impair"><td>Theme</td>';
 
 if ($_GET["action"] == 'modtheme')
 {
@@ -91,9 +92,9 @@ if ($_GET["action"] == 'edit')
   print '<input type="hidden" name="action" value="update">';
 
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr class="liste_titre"><td colspan="3">Informations sur la société</td></tr>';
+  print '<tr class="liste_titre"><td colspan="3">Informations sur la société ou association</td></tr>';
 
-  print '<tr class="impair"><td>Nom de la société</td><td>';
+  print '<tr class="impair"><td>Nom de la société/association</td><td>';
   print '<input name="nom" value="'. MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
 
   print '<tr class="pair"><td width="50%">Numéro de tva intracommunautaire</td><td>';
@@ -107,8 +108,8 @@ else
 {
 
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr class="liste_titre"><td colspan="3">Informations sur la société</td></tr>';
-  print '<tr class="impair"><td width="50%">Nom de la société</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
+  print '<tr class="liste_titre"><td colspan="3">Informations sur la société ou association</td></tr>';
+  print '<tr class="impair"><td width="50%">Nom de la société/association</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
   print '<tr class="pair"><td>Numéro de tva intracommunautaire</td><td>' . MAIN_INFO_TVAINTRA . '</td></tr>';
   print '</table><br>';
 
