@@ -24,11 +24,8 @@
 
 delete from c_actioncomm;
 insert into c_actioncomm (id,libelle) values ( 1, 'Appel Téléphonique');
+insert into c_actioncomm (id,libelle) values ( 3, 'Envoi propal par mail');
 insert into c_actioncomm (id,libelle) values ( 4, 'Envoi d\'un email'); 
-insert into c_actioncomm (id,libelle) values ( 5, 'Envoi propal - FE');
-insert into c_actioncomm (id,libelle) values ( 6, 'Envoi propal - SP-CA');
-insert into c_actioncomm (id,libelle) values ( 7, 'Envoi propal - SP-OF');
-insert into c_actioncomm (id,libelle) values ( 8, 'Envoi propal - SP-IRHP');
 insert into c_actioncomm (id,libelle) values ( 9, 'Envoi Facture');
 insert into c_actioncomm (id,libelle) values (10, 'Relance effectuée');
 insert into c_actioncomm (id,libelle) values (11, 'Clôture');
