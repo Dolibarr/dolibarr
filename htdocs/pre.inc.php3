@@ -51,14 +51,16 @@ function llxHeader($head = "") {
 
       $menu->add_submenu(DOL_URL_ROOT."/comm/clients.php3", "Clients");
 
-      $menu->add_submenu(DOL_URL_ROOT."/comm/propal.php3", "Propales");
+      if ($user->rights->propale->lire)
+	$menu->add_submenu(DOL_URL_ROOT."/comm/propal.php3", "Propales");
     }
 
   if ($conf->compta->enabled ) 
     {
       $menu->add(DOL_URL_ROOT."/compta/", "Comptabilité");
 
-      $menu->add_submenu(DOL_URL_ROOT."/compta/facture.php3", "Factures");
+      if ($user->rights->facture->lire)
+	$menu->add_submenu(DOL_URL_ROOT."/compta/facture.php3", "Factures");
     }
 
   if ($conf->fichinter->enabled ) 
