@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -58,7 +58,7 @@ class modAdherent extends DolibarrModules
     $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     $this->const_name = "MAIN_MODULE_ADHERENT";
     $this->const_config = MAIN_MODULE_ADHERENT;
-    $this->special = 0;
+    $this->special = 1;
 
     // Dir
     $this->dirs = array();
