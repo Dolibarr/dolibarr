@@ -21,9 +21,9 @@
  */
 
 /**
-        \file       htdocs/user/pre.inc.php
-        \brief      Gestionnaire menu fichier users
-        \version    $Revision$
+   \file       htdocs/user/pre.inc.php
+   \brief      Gestionnaire menu fichier users
+   \version    $Revision$
 */
 
 require("../main.inc.php");
@@ -41,6 +41,8 @@ function llxHeader($head = "", $urlp = "")
   $menu = new Menu();
 
   $menu->add(DOL_URL_ROOT."/user/", $langs->trans("Users"));
+  
+  $menu->add_submenu(DOL_URL_ROOT."/user/", $langs->trans("List"));
 
   if($user->admin)
     {
@@ -48,6 +50,8 @@ function llxHeader($head = "", $urlp = "")
     }
 
   $menu->add(DOL_URL_ROOT."/user/group/", $langs->trans("Groups"));
+
+  $menu->add_submenu(DOL_URL_ROOT."/user/group/", $langs->trans("List"));
 
   if($user->admin)
     {
