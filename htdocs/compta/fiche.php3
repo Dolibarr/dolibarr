@@ -150,7 +150,8 @@ if ($mode == 'search')
  *
  *
  */  
-if ($socid > 0) {
+if ($socid > 0)
+{
   $societe = new Societe($db, $socid);
   
 
@@ -199,23 +200,26 @@ if ($socid > 0) {
      *
      */
 
-    print "<table width=\"100%\" border=0><tr>\n";
+    print '<table width="100%" border="0"><tr>';
     print "<td valign=\"top\">";
     print "<table cellspacing=\"0\" border=\"1\" width=\"100%\">";
-    print "<tr><td>Tel</td><td> $objsoc->tel&nbsp;</td><td>Fax</td><td>$objsoc->fax&nbsp;</td></tr>";
-    print "<tr><td>Ville</td><td colspan=\"3\">".nl2br($objsoc->address)."<br>$objsoc->cp $objsoc->ville</td></tr>";
+    print '<tr class="fiche"><td>Tel</td><td>'.$objsoc->tel.'&nbsp;</td><td>Fax</td><td>'.$objsoc->fax.'&nbsp;</td></tr>';
+    print '<tr class="fiche"><td>Ville</td><td colspan="3">'.nl2br($objsoc->address)."<br>$objsoc->cp $objsoc->ville</td></tr>";
 
-    print "<tr><td>siren</td><td><a href=\"http://www.societe.com/cgi-bin/recherche?rncs=$objsoc->siren\">$objsoc->siren</a>&nbsp;</td>";
+    print '<tr class="fiche"><td>siren</td><td><a href="http://www.societe.com/cgi-bin/recherche?rncs='.$objsoc->siren.'">'.$objsoc->siren.'</a>&nbsp;</td>';
     print "<td>prefix</td><td>";
-    if ($objsoc->prefix_comm) {
-      print $objsoc->prefix_comm;
-    } else {
-      print "[<a href=\"$PHP_SELF?socid=$objsoc->idp&action=attribute_prefix\">Attribuer</a>]";
-    }
+    if ($objsoc->prefix_comm)
+      {
+	print $objsoc->prefix_comm;
+      }
+    else
+      {
+	print "[<a href=\"$PHP_SELF?socid=$objsoc->idp&action=attribute_prefix\">Attribuer</a>]";
+      }
 
     print "</td></tr>";
 
-    print "<tr><td>Site</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
+    print "<tr class=\"fiche\"><td>Site</td><td colspan=\"3\"><a href=\"http://$objsoc->url\">$objsoc->url</a>&nbsp;</td></tr>";
 
     print "</table>";
 
@@ -324,43 +328,45 @@ if ($socid > 0) {
        * Liste des contacts
        *
        */
-      print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=2>";
+      print '<table width="100%" cellspacing="0" border="0" cellpadding="2">';
 
-      print "<tr><td><b>Pr&eacute;nom Nom</b></td>";
+      print '<tr class="liste_titre"><td><b>Pr&eacute;nom Nom</b></td>';
       print '<td><b>Poste</b></td><td><b>T&eacute;l</b></td>';
       print "<td><b>Fax</b></td><td><b>Email</b></td>";
       print "<td><a href=\"../comm/people.php3?socid=$objsoc->idp&action=addcontact\">Ajouter</a></td></tr>";
     
       $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note FROM socpeople as p WHERE p.fk_soc = $objsoc->idp  ORDER by p.datec";
       $result = $db->query($sql);
-      $i = 0 ; $num = $db->num_rows(); $tag = True;
-      while ($i < $num) {
-	$obj = $db->fetch_object( $i);
-	if ($tag) {
-	  print "<tr bgcolor=\"e0e0e0\">";
-	} else {
-	  print "<tr>";
-	}
-	print '<td>';
-	//print '<a href="action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">';
-	//print '<img border="0" src="/theme/'.$conf->theme.'/img/filenew.png"></a>&nbsp;';
-	print '<a href="action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;</td>';
+      $i = 0 ; $num = $db->num_rows(); 
 
-	if ($obj->note) {
-	  print "<br><b>".nl2br($obj->note);
+      while ($i < $num)
+	{
+	  $obj = $db->fetch_object( $i);
+	  $var = !$var;
+
+	  print "<tr $bc[$var]>";
+
+	  print '<td>';
+	  //print '<a href="action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">';
+	  //print '<img border="0" src="/theme/'.$conf->theme.'/img/filenew.png"></a>&nbsp;';
+	  print '<a href="action/fiche.php3?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->firstname.' '. $obj->name.'</a>&nbsp;</td>';
+	  
+	  if ($obj->note)
+	    {
+	      print "<br><b>".nl2br($obj->note);
+	    }
+	  print "</td>";
+	  print "<td>$obj->poste&nbsp;</td>";
+	  print '<td><a href="action/fiche.php3?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
+	  print '<td><a href="action/fiche.php3?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
+	  print '<td><a href="action/fiche.php3?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
+	  print "<td><a href=\"../comm/people.php3?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
+	  print "</tr>\n";
+	  $i++;
+	  $tag = !$tag;
 	}
-	print "</td>";
-	print "<td>$obj->poste&nbsp;</td>";
-	print '<td><a href="action/fiche.php3?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->phone.'</a>&nbsp;</td>';
-	print '<td><a href="action/fiche.php3?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->fax.'</a>&nbsp;</td>';
-	print '<td><a href="action/fiche.php3?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$objsoc->idp.'">'.$obj->email.'</a>&nbsp;</td>';
-	print "<td><a href=\"../comm/people.php3?socid=$objsoc->idp&action=editcontact&contactid=$obj->idp\">Modifier</a></td>";
-	print "</tr>\n";
-	$i++;
-	$tag = !$tag;
-      }
       print "</table>";
-    
+      
       print "\n<hr noshade size=1>\n";
       /*
        *
