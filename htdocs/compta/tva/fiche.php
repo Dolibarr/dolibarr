@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,12 @@
  * $Source$
  *
  */
+
+/**	    \file       htdocs/compta/tva/fiche.php
+		\brief      Page des règlements de TVA
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require("../../tva.class.php");
 
@@ -52,22 +58,22 @@ llxHeader();
  *
  */
 $html = new Form($db);
-if ($action == 'create')
+if ($_GET["action"] == 'create')
 {
   print "<form action=\"fiche.php\" method=\"post\">\n";
   print '<input type="hidden" name="action" value="add">';
 
   print '<div class="titre">Nouveau réglement TVA</div><br>';
       
-  print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
+  print '<table class="border" width="100%">';
   print "<tr>";
-  print '<td>Date de paiement</td><td>';
+  print '<td>'.$langs->trans("DatePayment").'</td><td>';
   print $html->select_date("","datev");
   print '</td></tr>';
-  print '<td>Date de valeur</td><td>';
+  print '<td>'.$langs->trans("DateValue").'</td><td>';
   print $html->select_date("","datep");
   print '</td></tr>';
-  print '<tr><td>Montant</td><td><input name="amount" size="10" value=""></td></tr>';    
+  print '<tr><td>'.$langs->trans("Amount").'</td><td><input name="amount" size="10" value=""></td></tr>';    
   print '<tr><td>&nbsp;</td><td><input type="submit" value="'.$langs->trans("Save").'">&nbsp;';
   print '<input type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
   print '</table>';
