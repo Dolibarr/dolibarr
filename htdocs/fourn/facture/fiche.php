@@ -212,7 +212,7 @@ if ($action == 'create' or $action == 'copy')
 	  $value_qty = "1";
 	}
       print '<tr><td>Ligne '.$i.' :</td>';
-      print '<td><input size="30" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
+      print '<td><input size="50" name="label'.$i.'" value="'.$value_label.'" type="text"></td>';
       print '<td align="center"><input type="text" size="8" name="amount'.$i.'" value="'.$value_pu.'"></td>';
       print '<td align="center"><input type="text" size="3" name="qty'.$i.'" value="'.$value_qty.'"></td><td align="center">';
       $html->select_tva("tauxtva".$i);
