@@ -20,14 +20,15 @@
  *
  */
 
-/*!	\file adherent_type.class.php
-		\brief Fichier de la classe gérant les types d'adhérents
-		\author Rodolphe Quiedeville
-		\version $Revision$
+/*!	\file htdocs/adherents/adherent_type.class.php
+        \ingroup    adherent
+		\brief      Fichier de la classe gérant les types d'adhérents
+		\author     Rodolphe Quiedeville
+		\version    $Revision$
 */
 
 /*! \class AdherentType
-		\brief Classe gérant les types d'adhérents
+		\brief      Classe gérant les types d'adhérents
 */
 
 

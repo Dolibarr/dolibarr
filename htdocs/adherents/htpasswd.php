@@ -20,6 +20,14 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/adherents/htpasswd.php
+        \ingroup    adherent
+		\brief      Page d'export htpasswd du fichier des adherents
+		\author     Rodolphe Quiedeville
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 llxHeader();

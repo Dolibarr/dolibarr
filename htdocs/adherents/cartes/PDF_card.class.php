@@ -58,13 +58,15 @@
 
 //require_once('fpdf.php');
 
-/*!	\file PDF_card.class.php
-		\brief  Fichier de la classe permettant d'éditer au format PDF des étiquettes au format Avery ou personnalisé
-		\author Steve Dillon
-		\author	Laurent Passebecq
-		\author	Rodolphe Quiedville
-		\author	Jean Louis Bergamo.
-		\version $Revision$
+
+/*!	\file htdocs/adherents/cartes/PDF_card.class.php
+        \ingroup    adherent
+		\brief      Fichier de la classe permettant d'éditer au format PDF des étiquettes au format Avery ou personnalisé
+		\author     Steve Dillon
+		\author	    Laurent Passebecq
+		\author	    Rodolphe Quiedville
+		\author	    Jean Louis Bergamo.
+		\version    $Revision$
 */
 
 /*! \class PDF_card

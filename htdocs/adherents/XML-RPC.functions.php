@@ -18,14 +18,14 @@
  *
  */
 
-/*!	\file XML-RPC.functions.php
-		\brief  Fichier de gestion XML-RPC pour dolibarr
-		\author Keith Devens
-		\author Jean-Louis Bergamo
-		\auhtor Laurent Destailleur
-		\version $Revision$
+/*!	\file htdocs/adherents/XML-RPC.functions.php
+        \ingroup    adherent
+		\brief      Fichier de gestion XML-RPC pour dolibarr
+		\author     Keith Devens
+		\author     Jean-Louis Bergamo
+		\auhtor     Laurent Destailleur
+		\version    $Revision$
 */
-
 
 
 function & XML_serialize(&$data, $level = 0, $prior_key = NULL){

@@ -21,6 +21,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/adherents/liste.php
+        \ingroup    adherent
+		\brief      Page listant les adhérents
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 require("./adherent.class.php");

@@ -22,18 +22,19 @@
  *
  */
 
-/*!	\file adherent.class.php
-		\brief Fichier de la classe permettant la gestion d'un adhérent
-		\author Rodolphe Qiedeville
-		\author	Jean-Louis Bergamo
-		\author	Laurent Destailleur
-		\version $Revision$
+/*!	\file htdocs/adherents/adherent.class.php
+        \ingroup    adherent
+		\brief      Fichier de la classe permettant la gestion d'un adhérent
+		\author     Rodolphe Qiedeville
+		\author	    Jean-Louis Bergamo
+		\author	    Laurent Destailleur
+		\version    $Revision$
 */
+
 
 /*! \class Adherent
-		\brief Classe permettant la gestion d'un adhérent
+		\brief      Classe permettant la gestion d'un adhérent
 */
-
 
 class Adherent
 {

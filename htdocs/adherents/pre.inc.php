@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/adherents/pre.inc.php
+        \ingroup    adherent
+		\brief      Fichier de gestion du menu gauche du module adherent
+		\version    $Revision$
+*/
+
 require("../main.inc.php");
 
 function llxHeader($head = "") {

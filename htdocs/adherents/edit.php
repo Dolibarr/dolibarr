@@ -21,6 +21,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/adherents/edit.php
+        \ingroup    adherent
+		\brief      Page d'edition d'un adherent
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");

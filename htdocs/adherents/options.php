@@ -21,6 +21,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/adherents/options.php
+        \ingroup    adherent
+		\brief      Page de configuratin des champs optionnels
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 

@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/adherents/cartes/etiquette.php
+        \ingroup    adherent
+		\brief      Page de creation d'etiquettes
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 

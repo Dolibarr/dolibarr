@@ -20,14 +20,15 @@
  *
  */
 
-/*!	\file cotisation.class.php
-		\brief Fichier de la classe permettant de gèrer les cotisations
-		\author Rodolphe Quiedeville
-		\version $Revision$
+/*! \file htdocs/adherents/cotisation.class.php
+        \ingroup    adherent
+		\brief      Fichier de la classe permettant de gèrer les cotisations
+		\author     Rodolphe Quiedeville
+		\version    $Revision$
 */
 
 /*! \class Cotisation
-		\brief Classe permettant de gèrer les cotisations
+		\brief      Classe permettant de gèrer les cotisations
 */
 
 class Cotisation

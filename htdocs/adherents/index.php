@@ -21,6 +21,14 @@
  * $Source$
  *
  */
+
+/*!
+    \file       htdocs/adherents/index.php
+    \ingroup    adherent
+    \brief      Page accueil module adherents
+*/
+
+
 require("./pre.inc.php");
 
 $langs->load("companies");

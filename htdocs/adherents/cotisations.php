@@ -21,6 +21,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/adherents/cotisations.php
+        \ingroup    adherent
+		\brief      Page de consultation et insertion d'une cotisation
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 

@@ -20,6 +20,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/adherents/cartes/carte.php
+        \ingroup    adherent
+		\brief      Page de creation d'une carte PDF
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 

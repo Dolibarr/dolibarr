@@ -21,6 +21,13 @@
  * $Source$
  *
  */
+
+/*! \file htdocs/adherents/fiche.php
+        \ingroup    adherent
+		\brief      Page d'ajout, edition, suppression d'une fiche adhérent
+		\version    $Revision$
+*/
+
 require("./pre.inc.php");
 
 $langs->load("companies");

@@ -21,15 +21,16 @@
  *
  */
 
-/*!	\file adherent_options.class.php
-		\brief Fichier de la classe de gestion de la table des champs optionels adhérents
-		\author Rodolphe Quiedville
-		\author	Jean-Louis Bergamo
-		\version $Revision$
+/*!	\file htdocs/adherents/adherent_options.class.php
+        \ingroup    adherent
+		\brief      Fichier de la classe de gestion de la table des champs optionels adhérents
+		\author     Rodolphe Quiedville
+		\author	    Jean-Louis Bergamo
+		\version    $Revision$
 */
 
 /*! \class AdherentOptions
-		\brief Classe de gestion de la table des champs optionels adhérents
+		\brief      Classe de gestion de la table des champs optionels adhérents
 */
 
 class AdherentOptions
