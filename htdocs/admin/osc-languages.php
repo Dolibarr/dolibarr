@@ -24,7 +24,7 @@ require("./pre.inc.php");
 
 llxHeader();
 
-if (! DB_NAME_OSC)
+if (! strlen(DB_NAME_OSC))
 {
   print "Non dispo";
   llxFooter();
@@ -43,7 +43,7 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
 
-print_barre_liste("Liste des produits oscommerce", $page, $PHP_SELF);
+print_barre_liste("Liste des langues oscommerce", $page, $PHP_SELF);
 
 $sql = "SELECT l.languages_id, l.name, l.code FROM ".DB_NAME_OSC.".languages as l";
 
