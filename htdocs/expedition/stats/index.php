@@ -21,7 +21,6 @@
  */
 require("./pre.inc.php");
 require("../expedition.class.php");
-require("../../graph.class.php");
 
 llxHeader();
 /*
