@@ -39,10 +39,17 @@ values ('Easter-Eggs','75013','Paris','01 55 55 03 18','01 55 55 55 55',1);
 insert into societe (nom,cp,ville,tel,fax,fournisseur)
 values ('JPG','75013','Paris','01 55 55 03 18','01 55 55 55 55',1);
 
+delete from llx_product;
 insert into llx_product (ref, label, description, price, duration)
 values ('CC-2M','Compilo','Compilateur GCC',10,'1 mois');
 
 insert into llx_product (ref, label, description, price, duration)
 values ('CC-2M','Config Alpha','Configurations a base de proc alpha',1000,'1 mois');
 
+delete from llx_propal;
 insert into llx_propal values (1,1,1,0,'PR-LO-020403','2002-04-03 13:44:04','2002-04-03 15:45:29',NULL,'2002-04-03',2,2,NULL,1,1010,0,197.96,1207.96,'');
+
+
+delete from llx_fichinter;
+insert into llx_fichinter (fk_soc, ref, datec, date_valid, datei, fk_user_author, fk_user_valid, fk_statut, duree, note)
+values (1, 'FI-LP-1','2001-12-05','2001-12-05','2001-12-05',1,1,1,4,'Mise à jour de la doc');

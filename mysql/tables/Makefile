@@ -40,6 +40,7 @@ create:
 	$(MYSQL) $(BASE) < llx_bookmark.sql
 	$(MYSQL) $(BASE) < llx_fa_pr.sql
 	$(MYSQL) $(BASE) < llx_facture.sql
+	$(MYSQL) $(BASE) < llx_fichinter.sql
 	$(MYSQL) $(BASE) < llx_paiement.sql
 	$(MYSQL) $(BASE) < llx_pointmort.sql
 	$(MYSQL) $(BASE) < llx_product.sql
