@@ -42,7 +42,7 @@ if ($_POST["action"] == 'add' && $user->rights->projet->creer)
   $pro->socidp = $_GET["socidp"];
   $pro->ref = $_POST["ref"];
   $pro->title = $_POST["title"];
-  $pro_id = $pro->create( $user->id);
+  $pro_id = $pro->create($user);
 
   if ($pro_id)
     {
