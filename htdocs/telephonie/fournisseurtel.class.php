@@ -52,9 +52,12 @@ class FournisseurTelephonie {
    *
    *
    */
-  function fetch()
+  function fetch($id)
     {
+      $this->id = $id;
+
       $sql = "SELECT f.rowid, f.nom, f.email_commande, f.commande_active";
+      $sql .= ", f.class_commande";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
       $sql .= " WHERE f.rowid = ".$this->id;
 	  
@@ -64,9 +67,10 @@ class FournisseurTelephonie {
 	    {
 	      $obj = $this->db->fetch_object(0);
 
-
-	      $this->email_commande = $obj->email_commande;
+	      $this->nom             = stripslashes($obj->nom);
+	      $this->email_commande  = $obj->email_commande;
 	      $this->commande_enable = $obj->commande_active;
+	      $this->class_commande  = $obj->class_commande;
 
 	      return 0;
 	    }
@@ -116,6 +120,46 @@ class FournisseurTelephonie {
       }
     return $res;
   }
-}
+  /**
+   *
+   *
+   *
+   *
+   */
+  function array_methode()
+  {
+    clearstatcache();
+ 
+    $dir = DOL_DOCUMENT_ROOT.'/telephonie/fournisseur/commande/';
 
+    $handle=opendir($dir);
+
+    $arr = array();
+
+    while (($file = readdir($handle))!==false)
+      {
+
+	dolibarr_syslog($file);
+	
+	if (is_readable($dir.$file) && substr($file, 0, 8) == 'commande' && substr($file, -10) == '.class.php')
+	  {
+
+	    $name = substr($file, 9, strlen($file) -19);
+
+	    $filebis = $dir . $file;
+      
+	    // Chargement de la classe de numérotation
+	    $classname = "CommandeMethode".ucfirst($name);
+
+	    require_once($filebis);
+	    
+	    $obj = new $classname($this->db);
+
+	    $arr[$name] = $obj->nom;
+	  }
+	
+      }
+    return $arr;
+  }
+}
 ?>
