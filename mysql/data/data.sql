@@ -52,8 +52,6 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DO
 insert into llx_const (name, value, type, note, visible) values ('MAIN_NOT_INSTALLED','1','chaine','Test d\'installation',1);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr',1);
 
-insert into llx_const (name, value, type, note, visible) values ('MAIN_START_YEAR','2004','chaine','Année de départ',1);
-
 insert into llx_const (name, value, type, note, visible) values ('MAIN_TITLE','Dolibarr','chaine','Titre des pages',1);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_DEBUG','1','yesno','Debug ..',1);
 

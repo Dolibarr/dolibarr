@@ -6,6 +6,7 @@
 -- ;
 
 delete from llx_const where name like '%_OUTPUT_URL';
+delete from llx_const where name like 'MAIN_START_YEAR';
 
 alter table llx_boxes add box_order smallint default 0 NOT NULL;
 
