@@ -106,4 +106,30 @@ Installation et mise à jour de Dolibarr
 </sect>
 
 
+<sect>
+<heading>Mise à jour</heading>
+
+  <p>
+    Certaines action sont nécessaires lors de la mise à jour de Dolibarr vers une version plus récente des sources.
+  </p>
+
+<sect1>
+<heading>Mise à jour de la base de données</heading>
+<p>
+      Il peut être nécessaire de faire des modifications sur la structure et/ou les données contenues dans la base Mysql lors de la mise à jour de Dolibarr. Pour cela des scripts sont fournis dans le répertoire <file>mysql/migration/</file>. Il se présente sous la forme a.b.c-e.d.f.sql, les trois premiers numéros indique la version de départ et les 3 suivants la version que vous souhaitez atteindre. Si vous passez par exemple de la version 0.1.3 à la version 0.1.6 il vous faudra appliquer les patchs 0.1.3-0.1.4.sql, 0.1.4-0.1.5.sql et 0.1.5-0.1.6.sql si un patch n'éxiste pas d'une version à une autre c'est qu'il n'y a pas eu de modification de base.
+</p>
+</sect1>
+
+<sect1>
+<heading>Autres actions</heading>
+<p>
+Il peut-être nécessaire d'éffectuer d'autres actions lors de la mise à
+jour, comme la désactivation et la réactivation des modules. Cette
+information est communiquée dans le fichier README à la racine des sources.
+</p>
+</sect1>
+</sect>
+
+
+
 </article>
