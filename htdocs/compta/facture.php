@@ -1247,8 +1247,8 @@ else
 	if ($sortfield == "")
 	  $sortfield="f.datef";
 
-	$sql = "SELECT s.nom,s.idp,f.facnumber,f.total,f.total_ttc,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid, f.fk_statut, sum(p.amount) as am";
-	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement as p on f.rowid=p.fk_facture WHERE f.fk_soc = s.idp";
+	$sql = "SELECT s.nom,s.idp,f.facnumber,f.total,f.total_ttc,".$db->pdate("f.datef")." as df,f.paye,f.rowid as facid, f.fk_statut, sum(pf.amount) as am";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture WHERE f.fk_soc = s.idp";
 	
 	if ($socidp)
 	  $sql .= " AND s.idp = $socidp";
@@ -1290,8 +1290,9 @@ else
 	$i = 0;
 	print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 	print '<tr class="liste_titre">';
-	print '<td>Num&eacute;ro</td>';
-	print '<td align="center">';
+	print '<td>';
+	print_liste_field_titre("Numéro",$PHP_SELF,"f.facnumber","","&amp;socidp=$socidp");
+	print '</td><td align="center">';
 	print_liste_field_titre("Date",$PHP_SELF,"f.datef","","&amp;socidp=$socidp");
 	print '</td><td>';
 	print_liste_field_titre("Société",$PHP_SELF,"s.nom","","&amp;socidp=$socidp");
