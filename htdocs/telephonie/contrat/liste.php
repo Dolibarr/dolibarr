@@ -62,28 +62,24 @@ $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sa";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 
-
 $sql .= " WHERE c.fk_client_comm = s.idp";
 $sql .= " AND c.fk_soc = sa.idp";
 $sql .= " AND c.fk_soc_facture = sf.idp";
-
 
 if ($socidp > 0)
 {
   $sql .= " AND s.idp = ".$socidp;
 }
 
-if ($_GET["search_ligne"])
+if ($_GET["search_contrat"])
 {
-  $sel =urldecode($_GET["search_ligne"]);
-  $sel = ereg_replace("\.","",$sel);
-  $sel = ereg_replace(" ","",$sel);
-  $sql .= " AND l.ligne LIKE '%".$sel."%'";
+  $sel = urldecode($_GET["search_contrat"]);
+  $sql .= " AND c.ref LIKE '%".$sel."%'";
 }
 
 if ($_GET["search_client"])
 {
-  $sel =urldecode($_GET["search_client"]);
+  $sel = urldecode($_GET["search_client"]);
   $sql .= " AND s.nom LIKE '%".$sel."%'";
 }
 
@@ -124,7 +120,7 @@ if ($result)
   print "</tr>\n";
 
   print '<tr class="liste_titre">';
-  print '<td><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>'; 
+  print '<td><input type="text" name="search_contrat" value="'. $_GET["search_contrat"].'" size="10"></td>'; 
   print '<td><input type="text" name="search_client" value="'. $_GET["search_client"].'" size="10"></td>';
   print '<td><input type="text" name="search_client_agence" value="'. $_GET["search_client_agence"].'" size="10"></td>';
   print '<td><input type="text" name="search_client_facture" value="'. $_GET["search_client_facture"].'" size="10"></td>';
