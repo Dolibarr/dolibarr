@@ -41,7 +41,11 @@ if ($conf->don->enabled)
   $don->cp          = $HTTP_POST_VARS["cp"];
   $don->ville       = $HTTP_POST_VARS["ville"];
   $don->pays        = $HTTP_POST_VARS["pays"];
-  $don->public      = $HTTP_POST_VARS["public"];
+  $don->public      = 1;
+  if ($HTTP_POST_VARS["public"] == "FALSE")
+    {
+      $don->public      = 0;
+    }
   $don->email       = $HTTP_POST_VARS["email"];
   $don->amount      = $HTTP_POST_VARS["montant"];
   $don->commentaire = $HTTP_POST_VARS["commentaire"];
