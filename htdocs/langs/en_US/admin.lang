@@ -209,14 +209,17 @@ WebCalSetupSaved=Webcalendar setup saved successfully.
 WebCalTestOk=Connection to server '%s' on database '%s' with user '%s' successfull.
 WebCalTestKo1=Connection to server '%s' succeed but database '%s' could not be reached.
 WebCalTestKo2=Connection to server '%s' with user '%s' failed.
+##### Bills #####
+BillsSetup=Bills module setup
 ##### Clicktodial setup #####
 ClickToDialSetup=Click To Dial module setup
+##### Interventions #####
+InterventionsSetup=Interventions module setup
 ##### LDAP setup ####
 LDAPSetup=LDAP Setup
 LDAPServer=LDAP Server
 ##### Propal #####
 PropalSetup=Commercial proposals module setup
-##### Bills #####
-BillsSetup=Bills module setup
-##### Interventions #####
-InterventionsSetup=Interventions module setup
+##### Sendings #####
+SendingsSetup=Sending module setup
+SendingsReceiptModel=Sending receipt model

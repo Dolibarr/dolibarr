@@ -209,14 +209,17 @@ WebCalSetupSaved=Les identifiants Webcalendar ont été sauvegardés avec succès.
 WebCalTestOk=La connection au serveur '%s' sur la base '%s' par le user '%s' a réussi.
 WebCalTestKo1=La connection au serveur '%s' a réussi mais la base '%s' n'a pu être accédée.
 WebCalTestKo2=La connection au serveur '%s' par le user '%s' à échoué.
+##### Bills #####
+BillsSetup=Configuration du module Factures
 ##### Clicktodial setup #####
 ClickToDialSetup=Configuration du module Click To Dial
+##### Interventions #####
+InterventionsSetup=Configuration du module Interventions
 ##### LDAP setup #####
 LDAPSetup=Configuration du module LDAP
 LDAPServer=Serveur LDAP
 ##### Propal #####
 PropalSetup=Configuration du module Propositions Commerciales
-##### Bills #####
-BillsSetup=Configuration du module Factures
-##### Interventions #####
-InterventionsSetup=Configuration du module Interventions
+##### Sendings #####
+SendingsSetup=Configuration du module Expédition/Livraisons
+SendingsReceiptModel=Modèle du bordereau de livraison
