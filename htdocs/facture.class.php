@@ -286,7 +286,7 @@ class Facture
    */
   function fetch($rowid, $societe_id=0)
     {
-      dolibarr_syslog("Facture::Fetch");
+      dolibarr_syslog("Facture::Fetch rowid : $rowid, societe_id : $societe_id");
 
       $sql = "SELECT f.fk_soc,f.facnumber,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent";
       $sql .= ",".$this->db->pdate("f.datef")." as df,f.fk_projet";
@@ -301,8 +301,9 @@ class Facture
 	  $sql .= " AND f.fk_soc = ".$societe_id;
 	}
 
-    $result=$this->db->query($sql);
-    if ($result)
+      $result = $this->db->query($sql);
+
+      if ($result)
 	{
 	  if ($this->db->num_rows($result))
 	    {
@@ -369,7 +370,7 @@ class Facture
 		    }
 	    
 		  $this->db->free($result2);
-          $this->db->free($result);
+		  $this->db->free($result);
 		  return 1;
 		} 
 	      else
