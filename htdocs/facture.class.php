@@ -129,7 +129,7 @@ class Facture
        * Lecture de la remise exceptionnelle
        *
        */
-      $sql  = "SELECT rc.amount_ht";
+      $sql  = "SELECT rowid, rc.amount_ht, fk_soc, fk_user";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
       $sql .= " WHERE rc.fk_soc =". $this->socidp;
       $sql .= " AND fk_facture IS NULL";
@@ -143,7 +143,7 @@ class Facture
 	  if ($nurmx > 0)
 	    {
 	      $row = $this->db->fetch_row($resql);
-	      $this->remise_exceptionnelle = $row[0];
+	      $this->remise_exceptionnelle = $row;
 	    }
 	  $this->db->free($resql);
 	}      
@@ -260,30 +260,16 @@ class Facture
 	   *
 	   */
 
-	  if ($this->remise_exceptionnelle > 0)
-	    {
-	      $result_insert = $this->addline($this->id, 
-					      addslashes("Remise exceptionnelle"),
-					      (0 - $this->remise_exceptionnelle),
-					      1,
-					      '19.6');
-
-	      $sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
-	      $sql .= " SET fk_facture = ".$this->id;
-	      $sql .= " WHERE fk_facture IS NULL";
-	      $sql .= " AND fk_soc =". $this->socidp;
-	      $this->db->query( $sql) ; 
-
-	    }
-
+	  $this->updateprice($this->id);
 
 	  /*
-	   *
-	   *
-	   *
+	   * Affectation de la remise exceptionnelle
 	   */
+	  $this->_affect_remise_exceptionnelle();
 
-	  $this->updateprice($this->id);	  
+
+	  $this->updateprice($this->id);
+
 	  return $this->id;
 	}
       else
@@ -291,6 +277,69 @@ class Facture
 	  dolibarr_print_error($this->db);
 	}
     }
+
+  /*
+   * Affecte la remise exceptionnelle
+   *
+   */
+
+  function _affect_remise_exceptionnelle()
+  {
+    if ($this->remise_exceptionnelle[1] > 0)
+      {
+	if ($this->remise_exceptionnelle[1] > ($this->total_ht * 0.9))
+	  {
+
+	    $remise = floor($this->total_ht * 0.9);
+
+	    $result_insert = $this->addline($this->id, 
+					    addslashes("Remise exceptionnelle"),
+					    (0 - $remise),
+					    1,
+					    '19.6');
+
+	    $reliquat = $this->remise_exceptionnelle[1] - $remise;
+
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
+	    $sql .= " SET fk_facture = ".$this->id;
+	    $sql .= " ,amount_ht = '".ereg_replace(",",".",$remise)."'";
+	    $sql .= " WHERE rowid =".$this->remise_exceptionnelle[0];
+	    $sql .= " AND fk_soc =". $this->socidp;
+	    $this->db->query( $sql) ; 
+
+
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except";
+	    $sql .= " (fk_soc, datec, amount_ht, fk_user) ";
+	    $sql .= " VALUES ";
+	    $sql .= " (".$this->socidp;
+	    $sql .= " ,now()";
+	    $sql .= " ,'".ereg_replace(",",".",$reliquat)."'";
+	    $sql .= " ,".$this->remise_exceptionnelle[3];
+	    $sql .= ")";
+
+	    $this->db->query( $sql) ; 
+
+	  }
+	else
+	  {
+	    $remise = $this->remise_exceptionnelle[1];
+
+	    $result_insert = $this->addline($this->id, 
+					    addslashes("Remise exceptionnelle"),
+					    (0 - $remise),
+					    1,
+					    '19.6');
+
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
+	    $sql .= " SET fk_facture = ".$this->id;
+	    $sql .= " WHERE rowid =".$this->remise_exceptionnelle[0];
+	    $sql .= " AND fk_soc =". $this->socidp;
+	    $this->db->query( $sql) ; 
+
+
+	  }
+      }    
+  }
 
   /**
    *    \brief      Recupére l'objet facture et ses lignes de factures
