@@ -175,7 +175,7 @@ class Facture
 		  
 		  $result_insert = $this->addline($this->id, 
 						  $_facrec->lignes[$i]->desc,
-						  $_facrec->lignes[$i]->price,
+						  $_facrec->lignes[$i]->subprice,
 						  $_facrec->lignes[$i]->qty,
 						  $_facrec->lignes[$i]->tva_taux,
 						  $_facrec->lignes[$i]->produit_id,
@@ -258,7 +258,7 @@ class Facture
 	       * Lignes
 	       */
 
-	      $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent";
+	      $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.remise_percent, l.subprice";
 	      $sql .= " FROM llx_facturedet as l WHERE l.fk_facture = ".$this->id;
 	
 	      $result = $this->db->query($sql);
@@ -274,6 +274,7 @@ class Facture
 		      $faclig->desc           = stripslashes($objp->description);
 		      $faclig->qty            = $objp->qty;
 		      $faclig->price          = $objp->price;
+		      $faclig->subprice       = $objp->subprice;
 		      $faclig->tva_taux       = $objp->tva_taux;
 		      $faclig->remise_percent = $objp->remise_percent;
 		      $faclig->produit_id     = $objp->fk_product;
