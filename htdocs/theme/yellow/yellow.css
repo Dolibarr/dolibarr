@@ -132,7 +132,17 @@ table.topbarre
     text-decoration: none;
 }
 
-a.tmenu
+
+a.tmenu:link
+{
+  color: #234046;
+  padding: 0em 1em;
+  margin: 0em 0em 1.5em 0em;
+  border: 1px solid #dcdcb3;
+  font-weight:bold;
+  font-size:12px;
+}
+a.tmenu:visited
 {
   color: #234046;
   padding: 0em 1em;
@@ -176,6 +186,7 @@ a.login:hover
 {
   color:black;
 }
+
 img.login
 {
   position: absolute;
@@ -336,7 +347,7 @@ div.FicheSubmit {
   text-align: center;
 }
 
-a.tab {
+a.tab:link {
   background: white;
   border: 1px solid #999999;
   color: #436976;
@@ -345,7 +356,15 @@ a.tab {
   text-decoration: none;
   white-space: nowrap;
 }
-
+a.tab:visited {
+  background: white;
+  border: 1px solid #999999;
+  color: #436976;
+  padding: 0em 1em;
+  margin: 0em 0.2em;
+  text-decoration: none;
+  white-space: nowrap;
+}
 a.tab#active {
   background: #dcdcd3;
   border-bottom: #dee7ec 1px solid;
@@ -365,7 +384,7 @@ a.tabimage {
 
 
 /*
- *   Case actions
+ *   Boutons actions
  */
 a.tabAction:link    { font: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.tabAction:visited { font: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
@@ -408,10 +427,10 @@ a.butDelete:hover    { font: helvetica, verdana, arial, sans-serif;
                       text-decoration: none; 
                       white-space: nowrap; }
                       
-
 /*
  * Tables
  */
+
 table.border {
 font: helvetica, verdana, arial, sans-serif; 
 border-collapse: collapse;
@@ -486,6 +505,8 @@ div.leftmenu {
                padding: 2px;
                }
 
+
+
 .alerte
 { 
   background: #FF9988; 
@@ -558,6 +579,7 @@ border-bottom: 1px solid #FFFFFF;
 white-space: nowrap;
 font-size: 1.0em;
 }
+
 th { 
 background: #BBBB88;
 font: helvetica, verdana, arial, sans-serif;
