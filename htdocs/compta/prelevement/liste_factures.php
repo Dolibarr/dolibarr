@@ -45,7 +45,7 @@ $offset = $conf->liste_limit * $page ;
 $sql = "SELECT p.rowid, p.ref, p.statut";
 $sql .= " ,f.rowid as facid, f.facnumber, f.total_ttc";
 $sql .= " , s.idp, s.nom";
-$sql .= " , pl.statut as statut_ligne";
+$sql .= " , pl.statut as statut_ligne, pl.rowid as rowid_ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
@@ -85,15 +85,15 @@ if ($result)
   print_barre_liste("Factures prélevées", $page, "liste_factures.php", $urladd, $sortfield, $sortorder, '', $num);
   print"\n<!-- debut table -->\n";
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre">';
+  print '<tr class="liste_titre"><td>Ligne</td>';
   print_liste_field_titre("Facture","liste_factures.php","f.facnumber",'',$urladd);
   print_liste_field_titre("Société","liste_factures.php","s.nom",'',$urladd);
-  print_liste_field_titre("Montant","liste_factures.php","f.total_ttc","",$urladd,'align="center"');
+  print_liste_field_titre("Montant","liste_factures.php","f.total_ttc","",$urladd,'align="right"');
   print_liste_field_titre("Bon","liste_factures.php","p.rowid","",$urladd,'align="center"');
   print '</tr>';
 
   print '<form method="get" action="liste_factures.php">';
-  print '<tr class="liste_titre">';
+  print '<tr class="liste_titre"><td>&nbsp;</td>';
   print '<td>';
   print '<input size="8" class="fat" type="text" name="search_fac" value="'.$_GET["search_fac"].'">';
   print '</td><td>';
@@ -118,7 +118,11 @@ if ($result)
 
       print '<img border="0" src="./statut'.$obj->statut_ligne.'.png"></a>&nbsp;';
 
-      print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
+      print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/ligne.php?id='.$obj->rowid_ligne.'">';
+      print substr('000000'.$obj->rowid_ligne, -6).'</a></td>';
+
+
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">';
       print img_object($langs->trans("ShowBill"),"bill");
       print '</a>&nbsp;';
 
@@ -127,7 +131,7 @@ if ($result)
       print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">';
       print img_object($langs->trans("ShowCompany"),"company"). ' '.stripslashes($obj->nom)."</a></td>\n";
 
-      print '<td align="center">'.price($obj->total_ttc)."</td>\n";
+      print '<td align="right">'.price($obj->total_ttc)."</td>\n";
 
       print '<td align="center">';
       print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
