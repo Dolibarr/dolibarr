@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2003 Xavier DUTOIT <doli@sydesy.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +80,7 @@ if ($result)
   $db->free();
 }
 
-print "<b>Edition de la ligne</b>";
+print_titre("Edition de la ligne");
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
 print "<TR class=\"liste_titre\">";
 print "<td>Date</td><td>Description</TD>";
