@@ -49,7 +49,7 @@ class Contrat
     $duree_value = substr($duree,0,strlen($duree)-1);
     $duree_unit = substr($duree,-1);
 
-    $month = date("j",$date);
+    $month = date("m",$date);
     $day = date("d",$date);
     $year = date("Y",$date);
 
