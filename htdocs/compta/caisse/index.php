@@ -28,8 +28,8 @@ require("./pre.inc.php");
 
 llxHeader();
 
-$mois=$_GET["mois"];
-$annee=$_GET["annee"];
+$mois=$_GET["month"];
+$annee=$_GET["year"];
 
 /*
  * Sécurité accés client
@@ -41,8 +41,9 @@ if ($user->societe_id > 0)
 
 if (!$mois)
 {
-  $mois = strftime("%m", time());
+	$mois = strftime("%m", time());
 }
+if ($mois == 'all') { $mois=0; }
 
 if (!$annee)
 {

@@ -103,7 +103,7 @@ else
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)
 {
-  print '<td align="center" width="20%" colspan="2">'.$annee.'</td>';
+  print '<td align="center" width="20%" colspan="2"><a href="index.php?year='.$annee.'&month=all">'.$annee.'</a></td>';
 }
 print '</tr>';
 print '<tr class="liste_titre">';
@@ -118,7 +118,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 {
   $var=!$var;
   print '<tr '.$bc[$var].'>';
-  print "<td><a href=\"index.php?year=$year_current&mois=$mois\">".strftime("%B",mktime(1,1,1,$mois,1,$annee))."</a></td>";
+  print "<td><a href=\"index.php?year=$year_current&month=$mois\">".strftime("%B",mktime(1,1,1,$mois,1,$annee))."</a></td>";
   for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
       print '<td align="right" width="10%">&nbsp;';
