@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,23 +26,27 @@ llxHeader();
 
 $db = new Db();
 
-if ($action == 'add') {
+if ($action == 'add')
+{
   $product = new Product($db);
 
   $product->ref = $ref;
   $product->libelle = $libelle;
   $product->price = $price;
+  $product->tva_tx = $HTTP_POST_VARS["tva_tx"];
   $product->description = $desc;
 
   $id = $product->create($user);
 }
 
-if ($action == 'update') {
+if ($action == 'update')
+{
   $product = new Product($db);
 
   $product->ref = $ref;
   $product->libelle = $libelle;
   $product->price = $price;
+  $product->tva_tx = $HTTP_POST_VARS["tva_tx"];
   $product->description = $desc;
 
   $product->update($id, $user);
@@ -64,6 +68,10 @@ if ($action == 'create')
   print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
   print '<td>Libellé</td><td><input name="libelle" size="40" value=""></td></tr>';
   print '<tr><td>Prix</td><TD><input name="price" size="10" value=""></td></tr>';    
+  print '<tr><td>Taux TVA</td><TD>';
+  $html = new Form($db);
+  print $html->select_tva("tva_tx");
+  print '</td></tr>';    
   print "<tr><td valign=\"top\">Description</td><td>";
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
@@ -87,9 +95,10 @@ else
       
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print "<td>Référence</td><td>$product->ref</td></tr>\n";
+	  print '<td width="20%">Référence</td><td>'.$product->ref.'</td></tr>';
 	  print "<td>Libellé</td><td>$product->label</td></tr>\n";
-	  print '<tr><td>Prix</td><TD>'.price($product->price).'</td></tr>';    
+	  print '<tr><td>Prix</td><TD>'.price($product->price).'</td></tr>';
+	  print '<tr><td>Taux TVA</td><TD>'.$product->tva_tx.'</td></tr>';
 	  print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
 	  print "</table>";
 	}
@@ -103,9 +112,13 @@ else
 	  
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
-	  print '<td>Référence</td><td><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
+	  print '<td width="20%">Référence</td><td><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
 	  print '<td>Libellé</td><td><input name="libelle" size="40" value="'.$product->label.'"></td></tr>';
 	  print '<tr><td>Prix</td><TD><input name="price" size="10" value="'.$product->price.'"></td></tr>';    
+	  print '<tr><td>Taux TVA</td><TD>';
+	  $html = new Form($db);
+	  print $html->select_tva("tva_tx", $product->tva_tx);
+	  print '</td></tr>';
 	  print "<tr><td valign=\"top\">Description</td><td>";
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $product->description;
