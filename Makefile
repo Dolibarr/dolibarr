@@ -25,8 +25,8 @@ FILE=dolibarr-0.1.6
 tar:
 	rm -f dolibarr-*.tar.gz*
 	mkdir $(FILE)
-	mv doc/ htdocs/ mysql/ misc/ COPY* http* INSTALL scripts/ templates/ tar.exclude pgsql/ $(FILE)
-	tar --exclude-from $(FILE)/tar.exclude -cvvf $(FILE).tar $(FILE)
+	rsync -av doc/ htdocs/ mysql/ misc/ COPY* http* INSTALL scripts/ templates/ pgsql/ $(FILE)/
+	tar --exclude-from tar.exclude -cvvf $(FILE).tar $(FILE)/
 	gzip $(FILE).tar
 	md5sum $(FILE).tar.gz > $(FILE).tar.gz.md5sum
 	scp $(FILE).tar.gz* rodolphe.quiedeville.org:/home/www/rodolphe.quiedeville.org/htdocs/projets/dolibarr/dl/
