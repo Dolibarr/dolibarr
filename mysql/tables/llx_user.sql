@@ -37,5 +37,5 @@ create table llx_user
   module_compta smallint default 1,
   note          text,
 
-  UNIQUE INDEX(code)
+  UNIQUE INDEX(login)
 );
