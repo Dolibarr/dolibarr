@@ -28,7 +28,6 @@ require("../facture.class.php");
 llxHeader();
 
 $id    = $_GET["id"];
-$socid = $_GET["socid"];
 $mesg = '';
 
 /*
@@ -37,7 +36,7 @@ $mesg = '';
 if ($user->societe_id > 0) 
 {
   $action = '';
-  $socid = $user->societe_id;
+  $id = $user->societe_id;
 }
 
 
@@ -103,7 +102,7 @@ if ($id)
       $h = 0;
       
       $hselected=$h;
-      $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$socid;
+      $head[$h][0] = DOL_URL_ROOT.'/contrat/fiche.php?id='.$id;
       $head[$h][1] = 'Fiche contrat : '.$contrat->id;
       $h++;
       
