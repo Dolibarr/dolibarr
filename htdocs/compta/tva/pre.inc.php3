@@ -33,13 +33,7 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("../ca.php3","Chiffres d'affaires");
-
   $menu->add("index.php3","TVA");
-  /*
-   * Liste les 2 dernières années
-   *
-   */
 
   $menu->add("reglement.php","Réglements");
 
