@@ -115,7 +115,7 @@ if ($_POST["action"] == 'add_action')
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
   $actioncomm = new ActionComm($db);
-  $actioncomm->delete($id);
+  $actioncomm->delete($_GET["id"]);
   Header("Location: index.php");
 }
 
@@ -312,21 +312,7 @@ if ($_GET["id"])
   // Confirmation suppression action
   if ($_GET["action"] == 'delete')
     {
-      print '<form method="post" action="fiche.php?id='.$_GET["id"].'">';
-      print '<input type="hidden" name="action" value="confirm_delete">';
-      print '<table id="actions" cellspacing="0" border="1" width="100%" cellpadding="3">';
-      
-      print '<tr><td colspan="3">Supprimer l\'action</td></tr>';
-      
-      print '<tr><td class="delete">Etes-vous sur de vouloir supprimer cette action ?</td><td class="delete">';
-      $htmls = new Form($db);
-      
-      $htmls->selectyesno("confirm","no");
-  
-      print "</td>\n";
-      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
-      print '</table>';
-      print "</form>\n";  
+      $html->form_confirm("fiche.php?id=".$_GET["id"],"Supprimer l'action","Etes-vous sûr de vouloir supprimer cette action ?","confirm_delete");
     }
   
   $act = new ActionComm($db);
@@ -375,7 +361,7 @@ if ($_GET["id"])
       // Affichage fiche action en mode visu
       print_titre ("Action commerciale");
       
-      print '<table class="border" width="100%" border="1" cellspacing="0" cellpadding="3">';
+      print '<table class="border" width="100%" cellspacing="0" cellpadding="3">';
       print '<tr><td width="20%">Type</td><td colspan="3">'.$act->type.'</td></tr>';
       print '<tr><td width="20%">Société</td>';
       print '<td width="30%"><a href="../fiche.php?socid='.$act->societe->id.'">'.$act->societe->nom.'</a></td>';
@@ -383,7 +369,7 @@ if ($_GET["id"])
       print '<td width="10%">Contact</td><td width="40%">'.$act->contact->fullname.'</td></tr>';
       print '<tr><td>'.$langs->trans("Author").'</td><td>'.strftime('%d %B %Y %H:%M',$act->date).'</td>';
       print '<td>'.$langs->trans("Author").'</td><td>'.$act->author->fullname.'</td></tr>';
-      print '<tr><td>Pourcentage réalisé</td><td colspan="4">'.$act->percent.' %</td></tr>';
+      print '<tr><td>Pourcentage réalisé</td><td colspan="3">'.$act->percent.' %</td></tr>';
       if ($act->objet_url)
 	{
 	  print '<tr><td>Objet lié</td>';
