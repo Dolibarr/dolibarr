@@ -1,6 +1,7 @@
 <?PHP
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,84 +25,87 @@ require("./pre.inc.php");
 
 $form = new Form($db);
 
+$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
+
 if ($_GET["subaction"] == 'addrights' && $user->admin)
 {
-  $edituser = new User($db,$_GET["id"]);
-  $edituser->addrights($_GET["rights"]);
+    $edituser = new User($db,$_GET["id"]);
+    $edituser->addrights($_GET["rights"]);
 }
 
 if ($_GET["subaction"] == 'delrights' && $user->admin)
 {
-  $edituser = new User($db,$_GET["id"]);
-  $edituser->delrights($_GET["rights"]);
+    $edituser = new User($db,$_GET["id"]);
+    $edituser->delrights($_GET["rights"]);
 }
 
-if ($HTTP_POST_VARS["action"] == 'confirm_delete' && $HTTP_POST_VARS["confirm"] == "yes")
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 {
-  if ($id <> $user->id)
+    if ($id <> $user->id)
     {
-      $edituser = new User($db, $id);
-      $edituser->fetch($id);
-      $edituser->delete();
-      Header("Location: index.php");
+        $edituser = new User($db, $id);
+        $edituser->fetch($id);
+        $edituser->delete();
+        Header("Location: index.php");
     }
 }
 
-
-if ($HTTP_POST_VARS["action"] == 'add' && $user->admin)
+if ($_POST["action"] == 'add' && $user->admin)
 {
-  $edituser = new User($db,0);
+    $edituser = new User($db,0);
 
-  $edituser->nom    = $HTTP_POST_VARS["nom"];
-  $edituser->note   = $HTTP_POST_VARS["note"];
-  $edituser->prenom = $HTTP_POST_VARS["prenom"];
-  $edituser->login  = $HTTP_POST_VARS["login"];
-  $edituser->email  = $HTTP_POST_VARS["email"];
-  $edituser->admin  = $HTTP_POST_VARS["admin"];
-  $edituser->webcal_login  = $HTTP_POST_VARS["webcal_login"];
+    $edituser->nom    = $_POST["nom"];
+    $edituser->note   = $_POST["note"];
+    $edituser->prenom = $_POST["prenom"];
+    $edituser->login  = $_POST["login"];
+    $edituser->email  = $_POST["email"];
+    $edituser->admin  = $_POST["admin"];
+    $edituser->webcal_login  = $_POST["webcal_login"];
 
-  $id = $edituser->create();
-  if (isset($_POST['password']) && $_POST['password']!='' )
+    $id = $edituser->create();
+    if (isset($_POST['password']) && $_POST['password']!='' )
     {
-      $edituser->password($_POST['password'],$conf->password_encrypted);
+        $edituser->password($_POST['password'],$conf->password_encrypted);
     }
 }
 
-if ($_POST["action"] == 'update' && $user->admin) 
+if ($_POST["action"] == 'update' && $user->admin)
 {
-  $edituser = new User($db, $id);
-  $edituser->fetch();
+    $edituser = new User($db, $id);
+    $edituser->fetch();
 
-  $edituser->nom           = $_POST["nom"];
-  $edituser->note          = $_POST["note"];
-  $edituser->prenom        = $_POST["prenom"];
-  $edituser->login         = $_POST["login"];
-  $edituser->email         = $_POST["email"];
-  $edituser->admin         = $_POST["admin"];
-  $edituser->webcal_login  = $_POST["webcal_login"];
+    $edituser->nom           = $_POST["nom"];
+    $edituser->note          = $_POST["note"];
+    $edituser->prenom        = $_POST["prenom"];
+    $edituser->login         = $_POST["login"];
+    $edituser->email         = $_POST["email"];
+    $edituser->admin         = $_POST["admin"];
+    $edituser->webcal_login  = $_POST["webcal_login"];
 
-  if (! $edituser->update())
+    if (! $edituser->update())
     {
-      print $edituser->error();
+        print $edituser->error();
     }
-  if (isset($password) && $password !='' )
+    if (isset($password) && $password !='' )
     {
-      $edituser->password($password,$conf->password_encrypted);
+        $edituser->password($password,$conf->password_encrypted);
     }
 }
 
-if ($action == 'password' && $user->admin) 
+if ($action == 'password' && $user->admin)
 {
-  $edituser = new User($db, $id);
-  $edituser->fetch();
+    $edituser = new User($db, $id);
+    $edituser->fetch();
 
-  if ($edituser->password('',$conf->password_encrypted))
+    if ($edituser->password('',$conf->password_encrypted))
     {
-      $message = "Mot de passe changé et envoyé à $edituser->email";
+        $message = "Mot de passe changé et envoyé à $edituser->email";
     }
 }
+
 
 llxHeader();
+
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -112,45 +116,46 @@ llxHeader();
 if ($action == 'create')
 {
 
-  print '<div class="titre">Nouvel utilisateur</div><br>';
-  print '<form action="'.$PHP_SELF.'" method="post">';
-  print '<input type="hidden" name="action" value="add">';
+    print_titre('Nouvel utilisateur');
 
-  print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
+    print '<form action="'.$PHP_SELF.'" method="post">';
+    print '<input type="hidden" name="action" value="add">';
 
-  print '<tr><td valign="top" width="20%">Prénom</td>';
-  print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
-  
-  print "<tr>".'<td valign="top">Nom</td>';
-  print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
-  
-  print "<tr>".'<td valign="top">Login</td>';
-  print '<td class="valeur"><input size="20" type="text" name="login" value=""></td></tr>';
+    print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
 
-  print "<tr>".'<td valign="top">Password</td>';
-  print '<td class="valeur"><input size="30" type="text" name="password" value=""></td></tr>';
+    print '<tr><td valign="top" width="20%">Prénom</td>';
+    print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
 
-  print "<tr>".'<td valign="top">Email</td>';
-  print '<td class="valeur"><input size="40" type="text" name="email" value=""></td></tr>';
-  
-  print "<tr>".'<td valign="top">Admin</td>';
-  print '<td class="valeur">';
-  $form->selectyesnonum('admin',0);
-  print '</td></tr>';
-  
-  if (defined("MAIN_MODULE_WEBCALENDAR"))
+    print "<tr>".'<td valign="top">Nom</td>';
+    print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
+
+    print "<tr>".'<td valign="top">Login</td>';
+    print '<td class="valeur"><input size="20" type="text" name="login" value=""></td></tr>';
+
+    print "<tr>".'<td valign="top">Password</td>';
+    print '<td class="valeur"><input size="30" type="text" name="password" value=""></td></tr>';
+
+    print "<tr>".'<td valign="top">Email</td>';
+    print '<td class="valeur"><input size="40" type="text" name="email" value=""></td></tr>';
+
+    print "<tr>".'<td valign="top">Admin</td>';
+    print '<td class="valeur">';
+    $form->selectyesnonum('admin',0);
+    print '</td></tr>';
+
+    if (defined("MAIN_MODULE_WEBCALENDAR"))
     {
-      print "<tr>".'<td valign="top">Login Webcal</td>';
-      print '<td class="valeur"><input size="30" type="text" name="webcal_login" value=""></td></tr>';
+        print "<tr>".'<td valign="top">Login Webcal</td>';
+        print '<td class="valeur"><input size="30" type="text" name="webcal_login" value=""></td></tr>';
     }
-  
-  print "<tr>".'<td valign="top">Note</td><td>';
-  print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
-  print "</textarea></td></tr>";
-      
-  print "<tr>".'<td align="center" colspan="2"><input value="Enregistrer" type="submit"></td></tr>';
-  print '</form>';
-  print '</table>';
+
+    print "<tr>".'<td valign="top">Note</td><td>';
+    print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
+    print "</textarea></td></tr>";
+
+    print "<tr>".'<td align="center" colspan="2"><input value="Enregistrer" type="submit"></td></tr>';
+    print '</form>';
+    print '</table>';
 }
 /* ************************************************************************** */
 /*                                                                            */
@@ -159,272 +164,263 @@ if ($action == 'create')
 /* ************************************************************************** */
 else
 {
-  if ($_GET["id"]) 
+    if ($_GET["id"])
     {
-      $fuser = new User($db, $_GET["id"]);
-      $fuser->fetch();
+        $fuser = new User($db, $_GET["id"]);
+        $fuser->fetch();
 
-      print_fiche_titre("Fiche utilisateur",$message);
+        /*
+         * Confirmation suppression
+         */
+        if ($action == 'delete')
+        {
+            print_fiche_titre("Suppression fiche utilisateur",$message);
+            print '<br>';
 
-      if ($request == 'delete')
-	{
-	  print '<form method="post" action="'.$PHP_SELF.'?id='.$fuser->id.'">';
-	  print '<input type="hidden" name="action" value="confirm_delete">';
-	  print '<table class="border" cellspacing="0" border="1" width="100%" cellpadding="3">';
-	  
-	  print "<tr>".'<td colspan="3">Supprimer cet utilisateur</td></tr>';	      
-	  print "<tr>".'<td class="delete">Etes-vous sur de vouloir supprimer cet utilisateur ?</td><td class="delete">';
-	  $htmls = new Form($db);
-	  
-	  $htmls->selectyesno("confirm","no");
-	  
-	  print "</td>\n";
-	  print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
-	  print '</table>';
-	  print "</form>\n";  
-	}
+            $html = new Form($db);
+            $html->form_confirm("$PHP_SELF?id=$fuser->id","Supprimer cet utilisateur","Etes-vous sûr de vouloir supprimer cet utilisateur ?","confirm_delete");
+        }
 
+        if ($_GET["action"] == 'perms')
+        {
+            print_fiche_titre("Permissions utilisateur",$message);
+            print '<br>';
 
-      if ($_GET["request"] == 'perms')
-	{
-	  /*
-	   * Droits
-	   */
+            /*
+             * Ecran ajout/suppression permission
+             */
 
-	  print '<table class="border" width="100%" border="0" cellpadding="3" cellspacing="0">';
-	  
-	  print '<tr><td width="25%" valign="top">Nom</td>';
-	  print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
-	  print '<td width="25%" valign="top">Prénom</td>';
-	  print '<td width="25%" class="valeur">'.$fuser->prenom.'</td></tr>';
+            print '<table class="border" width="100%" border="0" cellpadding="3" cellspacing="0">';
 
-	  print "<tr>".'<td valign="top" colspan="2">';
-	  print '<table width="100%" class="noborder" cellpadding="2" cellspacing="0">';
-	  $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r ORDER BY r.id ASC";
+            print '<tr><td width="25%" valign="top">Nom</td>';
+            print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
+            print '<td width="25%" valign="top">Prénom</td>';
+            print '<td width="25%" class="valeur">'.$fuser->prenom.'</td></tr>';
 
-	  if ($db->query($sql))
-	    {
-	      $num = $db->num_rows();
-	      $i = 0;
-	      $var = True;
-	      while ($i < $num)
-		{
-		  $obj = $db->fetch_object($i);
-		  if ($oldmod <> $obj->module)
-		    {
-		      $oldmod = $obj->module;
-		      $var = !$var;
-		    }
-		  print '<tr '. $bc[$var].'><td><a href="fiche.php?id='.$fuser->id.'&amp;request=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">Ajouter</a></td><td>';
-		  print $obj->libelle . '</td></tr>';
+            // Droits existant
+            print "<tr>".'<td valign="top" colspan="2">';
+            print '<table width="100%" class="noborder" cellpadding="2" cellspacing="0">';
+            $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r ORDER BY r.id ASC";
 
-		  $i++;
-		}
-	    }
-	  print '</table>';
+            if ($db->query($sql))
+            {
+                $num = $db->num_rows();
+                $i = 0;
+                $var = True;
+                while ($i < $num)
+                {
+                    $obj = $db->fetch_object($i);
+                    if ($oldmod <> $obj->module)
+                    {
+                        $oldmod = $obj->module;
+                        $var = !$var;
+                    }
+                    print '<tr '. $bc[$var].'><td><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=addrights&amp;rights='.$obj->id.'">Ajouter</a></td><td>';
+                    print $obj->libelle . '</td></tr>';
 
-	  print '</td><td colspan="2" valign="top">';
-	  /*
-	   * Droits
-	   */
-	  print '<table class="noborder" width="100%" cellpadding="2" cellspacing="0">';
-	  $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
-	  $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.id ASC";
-	  $var = True;
-	  if ($db->query($sql))
-	    {
-	      $num = $db->num_rows();
-	      $i = 0;
-	      while ($i < $num)
-		{
-		  $obj = $db->fetch_object($i);
-		  if ($oldmod <> $obj->module)
-		    {
-		      $oldmod = $obj->module;
-		      $var = !$var;
-		    }
-		  
-		  print "<tr $bc[$var]><td>".$obj->libelle . '</td>';
-		  print '<td align="right"><a href="fiche.php?id='.$fuser->id.'&amp;request=perms&amp;subaction=delrights&amp;rights='.$obj->id.'">Supprimer</a></td></tr>';
-		  $i++;
-		}
-	    }
-	  print '</table>';
-	  print '</td></tr>';
-	  print "<tr>".'<td align="center" colspan="4"><a href="fiche.php?id='.$id.'">ok</a></td></tr></table>';
-	}
-      else
-	{
+                    $i++;
+                }
+            }
+            print '</table>';
 
-      /* 
-       * Affichage
-       */      
+            print '</td><td colspan="2" valign="top">';
 
-      print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
-    
-      print "<tr>".'<td width="25%" valign="top">Nom</td>';
-      print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
-      print '<td>Droits</td></tr>';
+            // Droits possédés
+            print '<table class="noborder" width="100%" cellpadding="2" cellspacing="0">';
+            $sql = "SELECT r.id, r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
+            $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.id ASC";
+            $var = True;
+            if ($db->query($sql))
+            {
+                $num = $db->num_rows();
+                $i = 0;
+                while ($i < $num)
+                {
+                    $obj = $db->fetch_object($i);
+                    if ($oldmod <> $obj->module)
+                    {
+                        $oldmod = $obj->module;
+                        $var = !$var;
+                    }
 
-      print "<tr>".'<td width="25%" valign="top">Prénom</td>';
-      print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
-      if (defined("MAIN_MODULE_WEBCALENDAR"))
-	{      
-	  print '<td valign="top" rowspan="7">';
-	}
-      else
-	{
-	  print '<td valign="top" rowspan="6">';
-	}
-      /*
-       * Droits
-       */
-      print '<table width="100%" class="noborder" cellpadding="0" cellspacing="0">';
-      $sql = "SELECT r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
-      $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.id ASC";
-      $var = True;
-      if ($db->query($sql))
-	{
-	  $num = $db->num_rows();
-	  $i = 0;
-	  while ($i < $num)
-	    {
-	      $obj = $db->fetch_object($i);
-	      if ($oldmod <> $obj->module)
-		{
-		  $oldmod = $obj->module;
-		  $var = !$var;
-		}
-
-	      print "<tr $bc[$var]><td>".$obj->libelle . '</td></tr>';
-	      $i++;
-	    }
-	}
-      print '</table>';
-
-      print '</td></tr>';  
-      print "<tr>".'<td width="25%" valign="top">Login</td>';
-      print '<td width="25%"  class="valeur">'.$fuser->login.'</td></tr>';
-      print "<tr>".'<td width="25%" valign="top">Email</td>';
-      print '<td width="25%"  class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td></tr>';
-      if (defined("MAIN_MODULE_WEBCALENDAR"))
-	{      
-	  print "<tr>".'<td width="25%" valign="top">Webcal Login</td>';
-	  print '<td width="25%"  class="valeur">'.$fuser->webcal_login.'&nbsp;</td></tr>';
-	}
-      print "<tr>".'<td width="25%" valign="top">Administrateur</td>';
-      print '<td width="25%"  class="valeur">'.$yn[$fuser->admin].'</td></tr>';
-      
-      print "<tr>".'<td width="25%" valign="top">Id Société</td>';
-      print '<td width="25%"  class="valeur">'.$fuser->societe_id.'&nbsp;</td></tr>';
-      print "<tr>".'<td width="25%" valign="top">';
-      if ($fuser->contact_id)
-	{
-	  print '<a href="../comm/people.php?contactid='.$fuser->contact_id.'&amp;socid='.$fuser->societe_id.'">Fiche contact</a>';
-	}
-      else
-	{
-	  print "&nbsp;";
-	}
-      print '</td>';
-      print '<td width="25%"  class="valeur">&nbsp;</td></tr>';
-
-      print "<tr>".'<td width="25%" valign="top">Note</td>';
-      print '<td colspan="3"  class="valeur">'.nl2br($fuser->note).'&nbsp;</td></tr>';
-
-      print '</table>';
-      /*
-       * Barre d'action
-       */
-      print '<br><table id="actions" width="100%" border="1" cellspacing="0" cellpadding="2">'."<tr>";
-
-      if ($user->admin) 
-	{
-	  print '<td width="20%" align="center"><a href="fiche.php?action=edit&amp;id='.$fuser->id.'">Editer</a></td>';
-	}
-      else
-	{
-	  print '<td width="20%" align="center">-</td>';
-	}
-      print '<td width="20%" align="center">-</td>';
-
-      if ($user->id == $id or $user->admin)
-	{
-	  print '<td width="20%" align="center"><a href="fiche.php?action=password&amp;id='.$fuser->id.'">Nouveau mot de passe</a></td>';
-	}
-      else 
-	{
-      print '<td width="20%" align="center">-</td>';
-	}
-
-      if ($user->admin)
-	{
-	  print '<td width="20%" align="center"><a href="fiche.php?request=perms&amp;id='.$fuser->id.'">Permissions</a></td>';
-	}
-      else
-	{
-	  print '<td width="20%" align="center">-</td>';
-	}
+                    print "<tr $bc[$var]><td>".$obj->libelle . '</td>';
+                    print '<td align="right"><a href="fiche.php?id='.$fuser->id.'&amp;action=perms&amp;subaction=delrights&amp;rights='.$obj->id.'">Supprimer</a></td></tr>';
+                    $i++;
+                }
+            }
+            print '</table>';
+            print '</td></tr>';
+            print "<tr>".'<td align="center" colspan="4"><a href="fiche.php?id='.$id.'">ok</a></td></tr></table>';
+        }
 
 
-      if ($user->admin && $user->id <> $id)
-	{
-	  print '<td width="20%" align="center"><a href="fiche.php?request=delete&amp;id='.$fuser->id.'">Supprimer</a></td>';
-	}
-      else
-	{	  
-	  print '<td width="20%" align="center">-</td>';
-	}
+        if ($_GET["action"] != 'perms' && $_GET["action"] != 'edit')
+        {
 
-      print '</tr></table><br>';
+            /*
+             * Affichage onglet
+             */
+            $h = 0;
 
-      /* ************************************************************************** */
-      /*                                                                            */
-      /* Edition                                                                    */
-      /*                                                                            */
-      /* ************************************************************************** */
-      
-      if ($action == 'edit' && $user->admin && !$fuser->societe_id) 
-	{
-	  print '<hr><div class="titre">Edition de l\'utilisateur</div><br>';
-	  print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
-	  print '<input type="hidden" name="action" value="update">';
-	  print '<table class="border" border="1" cellpadding="3" cellspacing="0">';
-	  
-	  print "<tr>".'<td valign="top">Nom</td>';
-	  print '<td><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td></tr>';
+            $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$socid;
+            $head[$h][1] = "Fiche utilisateur";
+            $h++;
 
-	  print "<tr>".'<td valign="top">Prénom</td>';
-	  print '<td><input size="20" type="text" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
+            dolibarr_fiche_head($head, $hselected);
 
-	  print "<tr>".'<td valign="top">Login</td>';
-	  print '<td><input size="10" maxlength="8" type="text" name="login" value="'.$fuser->login.'"></td></tr>';
-	  
-	  print "<tr>".'<td valign="top">Email</td>';
-	  print '<td><input size="30" type="text" name="email" value="'.$fuser->email.'"></td></tr>';
-	  
-	  print "<tr>".'<td valign="top">Admin ?</td>';
-	  print '<td class="valeur">';
-	  $form->selectyesnonum('admin',$fuser->admin);
-	  print '</td></tr>';
 
-	  print "<tr>".'<td valign="top">Login Webcal</td>';
-	  print '<td class="valeur"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
-	  
-	  print "<tr>".'<td valign="top">Description</td><td>';
-	  print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
-	  print $fuser->note;
-	  print "</textarea></td></tr>";
-	  
-	  print "<tr>".'<td align="center" colspan="3"><input value="Enregistrer" type="submit"></td></tr>';
-	  print '</form>';
-	  print '</table>';
-	}
-     
-	}
-       
+            print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
+
+            print "<tr>".'<td width="25%" valign="top">Nom</td>';
+            print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
+            print '<td width="25%" valign="top">Prénom</td>';
+            print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
+            print '</tr>';
+
+            print "<tr>".'<td width="25%" valign="top">Login</td>';
+            print '<td width="25%"  class="valeur">'.$fuser->login.'</td>';
+            print '<td width="25%" valign="top">Email</td>';
+            print '<td width="25%"  class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td></tr>';
+
+            print "<tr>".'<td width="25%" valign="top">Administrateur</td>';
+            print '<td colspan="3" class="valeur">'.$yn[$fuser->admin].'</td>';
+
+            print "<tr>".'<td width="25%" valign="top">Id Société</td>';
+            print '<td colspan="3" class="valeur">'.$fuser->societe_id.'&nbsp;</td></tr>';
+
+            print "<tr>".'<td width="25%" valign="top">Fiche contact</td>';
+            print '<td colspan="3" valign="top">';
+            if ($fuser->contact_id)
+            {
+                print '<a href="../comm/people.php?contactid='.$fuser->contact_id.'&amp;socid='.$fuser->societe_id.'">Fiche contact</a>';
+            }
+            else
+            {
+                print "Pas de fiche parmi les Contacts";
+            }
+            print '</td>';
+
+            print "<tr>".'<td width="25%" valign="top">Note</td>';
+            print '<td colspan="3" class="valeur">'.nl2br($fuser->note).'&nbsp;</td></tr>';
+
+
+            // Autres caractéristiques issus des autres modules
+            if (defined("MAIN_MODULE_WEBCALENDAR"))
+            {
+                print "<tr>".'<td width="25%" valign="top">Webcal Login</td>';
+                print '<td colspan="3">'.$fuser->webcal_login.'&nbsp;</td></tr>';
+            }
+
+            print '</table>';
+            print '<br>';
+            
+            print '</div>';
+
+            /*
+             * Droits
+             */
+            print '<table width="100%" class="noborder" cellpadding="0" cellspacing="0">';
+            print '<tr class="liste_titre"><td>Droits</td><td>Module</td></tr>';
+            $sql = "SELECT r.libelle, r.module FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
+            $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.id ASC";
+            $var = True;
+            if ($db->query($sql))
+            {
+                $num = $db->num_rows();
+                $i = 0;
+                while ($i < $num)
+                {
+                    $obj = $db->fetch_object($i);
+                    if ($oldmod <> $obj->module)
+                    {
+                        $oldmod = $obj->module;
+                        $var = !$var;
+                    }
+
+                    print "<tr $bc[$var]><td>".$obj->libelle . '</td><td>'.$obj->module.'</td></tr>';
+                    $i++;
+                }
+            }
+            print '</table>';
+            print '<br>';
+
+            /*
+             * Barre d'actions
+             *
+             */
+            print '<div class="tabsAction">';
+
+            if ($user->admin)
+            {
+                print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$fuser->id.'">Editer</a>';
+            }
+
+            if ($user->id == $id or $user->admin)
+            {
+                print '<a class="tabAction" href="fiche.php?action=password&amp;id='.$fuser->id.'">Modifier mot de passe</a>';
+            }
+
+            if ($user->admin)
+            {
+                print '<a class="tabAction" href="fiche.php?action=perms&amp;id='.$fuser->id.'">Permissions</a>';
+            }
+
+            if ($user->admin && $user->id <> $id)
+            {
+                print '<a class="tabAction" href="fiche.php?action=delete&amp;id='.$fuser->id.'">Supprimer utilisateur</a></td>';
+            }
+
+            print '</div>';
+            print "<br>\n";
+
+        }
+
+        /* ************************************************************************** */
+        /*                                                                            */
+        /* Edition                                                                    */
+        /*                                                                            */
+        /* ************************************************************************** */
+        if ($action == 'edit' && $user->admin && !$fuser->societe_id)
+        {
+            print_fiche_titre("Edition fiche utilisateur",$message);
+            print '<br>';
+
+            print '<form action="'.$PHP_SELF.'?id='.$id.'" method="post">';
+            print '<input type="hidden" name="action" value="update">';
+            print '<table class="border" border="1" cellpadding="3" cellspacing="0">';
+
+            print "<tr>".'<td valign="top">Nom</td>';
+            print '<td><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td></tr>';
+
+            print "<tr>".'<td valign="top">Prénom</td>';
+            print '<td><input size="20" type="text" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
+
+            print "<tr>".'<td valign="top">Login</td>';
+            print '<td><input size="10" maxlength="8" type="text" name="login" value="'.$fuser->login.'"></td></tr>';
+
+            print "<tr>".'<td valign="top">Email</td>';
+            print '<td><input size="30" type="text" name="email" value="'.$fuser->email.'"></td></tr>';
+
+            print "<tr>".'<td valign="top">Admin ?</td>';
+            print '<td class="valeur">';
+            $form->selectyesnonum('admin',$fuser->admin);
+            print '</td></tr>';
+
+            print "<tr>".'<td valign="top">Login Webcal</td>';
+            print '<td class="valeur"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
+
+            print "<tr>".'<td valign="top">Note</td><td>';
+            print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
+            print $fuser->note;
+            print "</textarea></td></tr>";
+
+            print "<tr>".'<td align="center" colspan="3"><input value="Enregistrer" type="submit"></td></tr>';
+            print '</form>';
+            print '</table>';
+        }
+
     }
-  
+
 }
 
 $db->close();
