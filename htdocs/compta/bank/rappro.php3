@@ -62,7 +62,7 @@ if ($result) {
   $db->free();
 }
 
-$sql = "SELECT max(num_releve) FROM llx_bank";
+$sql = "SELECT max(num_releve) FROM llx_bank WHERE fk_account=$account";
 if ( $db->query($sql) ) {
   if ( $db->num_rows() ) {
     $last_releve = $db->result(0, 0);
@@ -72,12 +72,13 @@ if ( $db->query($sql) ) {
 
 print "<b>Rapprochement bancaire</b>";
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-print "<TR bgcolor=\"orange\">";
+print "<TR class=\"liste_titre\">";
 print "<td>Date</td><td>Description</TD>";
-print "<td align=\"right\"><a href=\"$PHP_SELF?vue=debit\">Debit</a></TD>";
-print "<td align=\"right\"><a href=\"$PHP_SELF?vue=credit\">Credit</a></TD>";
+print "<td align=\"right\">Debit</TD>";
+print "<td align=\"right\">Credit</TD>";
 print "<td align=\"center\">Releve</TD>";
-print "<td align=\"right\">Rappro</td>";
+print '<td align="center" colspan="2">Rappro</td>';
+print '<td align="center">&nbsp;</td>';
 print "</TR>\n";
 
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve";
@@ -116,7 +117,7 @@ if ($result) {
     if ($objp->rappro) {
       print "<td align=\"center\"><a href=\"releve.php3?num=$objp->num_releve\">$objp->num_releve</a></td>";
     } else {
-      print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid\">[Del]</a></td>";
+      print "<td align=\"center\"><a href=\"$PHP_SELF?account=$account&action=del&rowid=$objp->rowid\">[Del]</a></td>";
     }
     print "</tr>";
     print "<tr $bc[$var]><td>&nbsp;</td><td colspan=\"7\">";
