@@ -125,7 +125,8 @@ create table llx_paiement_facture
 )type=innodb;
 
 
-insert into llx_const(name, value, type, note) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document');
+insert into llx_const(name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','1','chaine','Authorise l\'upload de document',1);
+insert into llx_const(name, value, type, note, visible) values ('MAIN_SEARCHFORM_PRODUITSERVICE','1','yesno','Affichage formulaire de recherche des Produits et Services dans la barre de gauche',0);
 
 
 drop table if exists llx_c_forme_juridique;
