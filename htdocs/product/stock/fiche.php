@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -182,7 +182,7 @@ if ($action == '' && ($user->rights->produit->modifier || $user->rights->produit
 
 if ($action == '')
 {
-  print "<a class=\"tabAction\" href=\"fiche.php?action=edit&id=$entrepot->id\">Editer</a>";
+  print "<a class=\"tabAction\" href=\"fiche.php?action=edit&id=$entrepot->id\">".$langs->trans("Edit")."</a>";
 }
 
 print "</div>";

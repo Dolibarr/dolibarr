@@ -170,7 +170,7 @@ if ( $db->query($sql) )
 	  print '<td align="center"><a class="impayee" href="index.php?filtre=paye:0">Impayé</a></td>';
 	  print '<td align="center" nowrap>';
 	  if ($user->rights->compta->charges->creer) {
-	    print '<a href="charges.php?id='.$obj->id.'">'.img_edit().'</a>';
+	    print '<a href="charges.php?action=edit&id='.$obj->id.'">'.img_edit().'</a>';
 	  }
 	  if ($user->rights->compta->charges->supprimer) {
 	    print ' &nbsp; <a href="index.php?action=del&id='.$obj->id.'">'.img_delete().'</a>';

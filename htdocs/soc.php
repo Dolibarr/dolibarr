@@ -332,7 +332,7 @@ else
    */  
   print '<div class="tabsAction">';
 
-  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">Editer</a>';
+  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
 
   print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$soc->id.'&amp;action=create">Ajouter un contact</a>';
   

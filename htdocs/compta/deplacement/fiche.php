@@ -206,8 +206,8 @@ print '<div class="tabsAction">';
 
 if ($_GET["action"] != 'create')
 {
-  print '<a class="tabAction" href="fiche.php?action=edit&id='.$_GET["id"].'">Editer</a>';
-  print '<a class="tabAction" href="fiche.php?action=delete&id='.$_GET["id"].'">Supprimer</a>';
+  print '<a class="tabAction" href="fiche.php?action=edit&id='.$_GET["id"].'">'.$langs->trans('Edit').'</a>';
+  print '<a class="tabAction" href="fiche.php?action=delete&id='.$_GET["id"].'">'.$langs->trans('Delete').'</a>';
 }
 
 print '</div>';

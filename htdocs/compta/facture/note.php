@@ -136,7 +136,7 @@ if ($_GET["facid"])
 	  
 	  if ($user->rights->facture->creer && $_GET["action"] <> 'edit')
 	    {
-	      print "<a class=\"tabAction\" href=\"note.php?facid=$facture->id&amp;action=edit\">Editer</a>";
+	      print "<a class=\"tabAction\" href=\"note.php?facid=$facture->id&amp;action=edit\">".$langs->trans('Edit')."</a>";
 	    }
 	  
 	  print "</div>";

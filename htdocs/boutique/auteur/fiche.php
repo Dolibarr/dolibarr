@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -180,32 +181,19 @@ else
 /*                                                                            */ 
 /* ************************************************************************** */
 
-print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
+  print '<div class="tabsAction">';
 
-if ($action == 'create')
-{
-  print '<td width="20%" align="center">-</td>';
-}
-else
-{
-  print '<td width="20%" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
-}
+    if ($action != 'create')
+    {
+      print '<a class="tabAction" href="fiche.php?action=edit&id='.$id.'">'.$langs->trans("Edit").'</a>';
+    }
+    
+    if(sizeof($livres)==0 && $id)
+    {
+      print '<a class="tabAction" href="fiche.php?action=delete&id='.$id.'">'.$langs->trans("Delete").'</a>';
+    }
 
-print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
-print '<td width="20%" align="center">-</td>';
-
-if(sizeof($livres)==0 && $id)
-{
-  print '<td width="20%" align="center">[<a href="fiche.php?action=delete&id='.$id.'">Supprimer</a>]</td>';
-}
-else
-{
-  print '<td width="20%" align="center">[Supprimer]</td>';
-}
-
-print '</table><br>';
-
+  print '</div>';
 
 
 $db->close();

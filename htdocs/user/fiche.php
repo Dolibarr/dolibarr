@@ -366,7 +366,7 @@ else
 
             if ($user->admin)
             {
-                print '<a class="tabAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">Editer</a>';
+                print '<a class="tabAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
             }
 
             if ($user->id == $id or $user->admin)

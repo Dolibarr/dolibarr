@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -583,7 +584,7 @@ if ($_GET["action"] == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-      print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">Editer</a>';
+      print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
     }
 }
 if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))

@@ -104,7 +104,7 @@ else
 
   // Boutons d'action
   print '<div class="tabsAction">';
-  print '<a class="tabAction" href="index.php?action=edit">Editer</a>';
+  print '<a class="tabAction" href="index.php?action=edit">'.$langs->trans("Edit").'</a>';
   print '</div>';
 
 

@@ -552,7 +552,7 @@ print '<div class="tabsAction">';
 
 if ($user->admin)
 {
-    print "<a class=\"tabAction\" href=\"edit.php?rowid=$rowid\">Editer</a>";
+    print "<a class=\"tabAction\" href=\"edit.php?rowid=$rowid\">".$langs->trans("Edit")."</a>";
 
     if ($adh->statut < 1)
     {

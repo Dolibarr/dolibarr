@@ -548,13 +548,13 @@ else
 	    }
 	  else
 	    {
-	      print '<a class="tabAction" href="fiche.php?facid='.$fac->id.'&amp;action=edit">Editer</a>';
+	      print '<a class="tabAction" href="fiche.php?facid='.$fac->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
 	    }
 	}
       
       if ($fac->statut == 1 && price($resteapayer) <= 0 && $fac->paye == 0  && $user->societe_id == 0)
 	{
-	  print "<a class=\"tabAction\" href=\"fiche.php?facid=$fac->id&amp;action=payed\">Classer 'Payée'</a>";
+	  print "<a class=\"tabAction\" href=\"fiche.php?facid=$fac->id&amp;action=payed\">".$langs->trans('ClassifyPayed')."</a>";
 	}
       
       if ($user->societe_id == 0)
@@ -562,11 +562,11 @@ else
 	  if ($fac->statut == 0)
 	    {
 	      if ($_GET["action"] <> "edit")
-		print "<a class=\"tabAction\" href=\"fiche.php?facid=$fac->id&amp;action=valid\">Valider</a>";
+		print "<a class=\"tabAction\" href=\"fiche.php?facid=$fac->id&amp;action=valid\">".$langs->trans('Valid')."</a>";
 	    }
 	  else
 	    {
-	      print "<a class=\"tabAction\" href=\"fiche.php?facid=$fac->id&amp;action=copy&amp;socid=$fac->socidp\">Copier</a>";
+	      print "<a class=\"tabAction\" href=\"fiche.php?facid=$fac->id&amp;action=copy&amp;socid=$fac->socidp\">".$langs->trans('Copy')."</a>";
 	    }
 	}
       

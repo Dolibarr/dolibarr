@@ -222,7 +222,7 @@ else
 
       if ($user->admin) 
 	{
-	  print '<a class="tabAction" href="fiche.php?action=edit&id='.$account->id.'">Editer</a>';
+	  print '<a class="tabAction" href="fiche.php?action=edit&id='.$account->id.'">'.$langs->trans("Edit").'</a>';
 	}
 
     print '</div>';

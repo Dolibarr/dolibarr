@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -362,14 +363,14 @@ if ($_GET["id"])
 
   if ($_GET["action"] == 'edit')
     {
-      print '<a class="tabAction" href="fiche.php?id='.$act->id.'">Annuler</a>';
+      print '<a class="tabAction" href="fiche.php?id='.$act->id.'">'.$langs->trans("Cancel").'</a>';
     }
   else
     {
-      print '<a class="tabAction" href="fiche.php?action=edit&id='.$act->id.'">Editer</a>';
+      print '<a class="tabAction" href="fiche.php?action=edit&id='.$act->id.'">'.$langs->trans("Edit").'</a>';
     }
 
-  print '<a class="tabAction" href="fiche.php?action=delete&id='.$act->id.'">Supprimer</a>';
+  print '<a class="tabAction" href="fiche.php?action=delete&id='.$act->id.'">'.$langs->trans("Delete").'</a>';
   print '</div>';
 }
 

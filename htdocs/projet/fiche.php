@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -164,10 +165,10 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	}
       else
 	{
-	  print '<a class="tabAction" href="fiche.php?id='.$projet->id.'&amp;action=edit">Editer</a>';
+	  print '<a class="tabAction" href="fiche.php?id='.$projet->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
 	}
       
-      print '<a class="tabAction" href="fiche.php?id='.$projet->id.'&amp;action=delete">Supprimer</a>';
+      print '<a class="tabAction" href="fiche.php?id='.$projet->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
       
       print "</div>";
     }

@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -251,7 +252,7 @@ if ($rowid > 0 && $action == 'edit')
    * Case 1
    */
 
-  print '<td align="center" width="25%">[<a href="edit.php?rowid='.$don->id.'">Editer</a>]</td>';
+  print '<td align="center" width="25%">[<a href="edit.php?rowid='.$don->id.'">'.$langs->trans('Edit').'</a>]</td>';
 	
   /*
    * Case 2

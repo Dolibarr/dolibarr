@@ -141,13 +141,14 @@ else
 
   print "</div>";
 
+  // Barre d'actions
   if ($user->societe_id == 0)
     {
       print '<div class="tabsAction">';
       
-      print '<a class="tabAction" href="perso.php?id='.$_GET["id"].'&amp;action=edit">Editer</a>';    
+      print '<a class="tabAction" href="perso.php?id='.$_GET["id"].'&amp;action=edit">'.$langs->trans('Edit').'</a>';    
 
-      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=deleteWARNING">Supprimer</a>';
+      print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&amp;action=deleteWARNING">'.$langs->trans('Delete').'</a>';
       
       print "</div>";      
     }

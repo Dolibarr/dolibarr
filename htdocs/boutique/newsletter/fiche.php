@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -256,53 +257,27 @@ else
 /*                                                                            */ 
 /* ************************************************************************** */
 
-print '<br><table width="100%" border="1" cellspacing="0" cellpadding="3">';
-
-if ($action == 'create')
+print '<div class="tabsAction">';
+if ($newsletter->status == 0)
 {
-  print '<td width="20%" align="center">-</td>';
-}
-elseif ($newsletter->status == 0)
-{
-  print '<td width="20%" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
-}
-else
-{
-  print '<td width="20%" align="center">-</td>';
+  print '<a class="tabAction" href="fiche.php?action=edit&id='.$id.'">'.$langs->trans("Edit").'</a>';
 }
 
 if ($newsletter->status == 0 && $id)
 {
-  print '<td width="20%" align="center">[<a href="fiche.php?action=valid&id='.$id.'">Valider</a>]</td>';
-}
-else
-{
-  print '<td width="20%" align="center">-</td>';
+  print '<a class="tabAction" href="fiche.php?action=valid&id='.$id.'">'.$langs->trans("Valid").'</a>';
 }
 
 if ($newsletter->status == 1)
 {
-  print '<td width="20%" align="center">[<a href="fiche.php?action=send&id='.$id.'">Envoyer</a>]</td>';
+  print '<a class="tabAction" href="fiche.php?action=send&id='.$id.'">'.$langs->trans("Send").'</a>';
 }
-else
-{
-  print '<td width="20%" align="center">-</td>';
-}
-
-print '<td width="20%" align="center">-</td>';
 
 if($id && $newsletter->status == 0)
 {
-  print '<td width="20%" align="center">[<a href="fiche.php?action=delete&id='.$id.'">Supprimer</a>]</td>';
+  print '<a class="tabAction" href="fiche.php?action=delete&id='.$id.'">'.$langs->trans("Delete").'</a>';
 }
-else
-{
-  print '<td width="20%" align="center">-</td>';
-}
-
-
-print '</table><br>';
-
+print '</div>';
 
 
 $db->close();
