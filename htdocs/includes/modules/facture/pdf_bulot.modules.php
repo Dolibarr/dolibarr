@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -347,7 +347,7 @@ Class pdf_bulot {
       $pdf->SetXY(102,42);
       $pdf->MultiCell(66,5, $fac->client->nom);
       $pdf->SetFont('Arial','B',11);
-      $pdf->SetXY(102,47);
+      $pdf->SetXY(102,$pdf->GetY());
       $pdf->MultiCell(66,5, $fac->client->adresse . "\n" . $fac->client->cp . " " . $fac->client->ville);
       $pdf->rect(100, 40, 100, 40);
       
