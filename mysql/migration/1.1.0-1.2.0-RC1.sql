@@ -103,6 +103,20 @@ alter table llx_c_actioncomm add active tinyint default 1 NOT NULL after libelle
 alter table llx_c_paiement add code varchar(6) after id;
 
 
+create table llx_stock_mouvement
+(
+  rowid           integer AUTO_INCREMENT PRIMARY KEY,
+  tms             timestamp,
+  datem           datetime,
+  fk_product      integer NOT NULL,
+  fk_entrepot     integer NOT NULL,
+  value           integer,
+  type_mouvement  smallint,
+  fk_user_author  integer,
+  key(fk_product),
+  key(fk_entrepot)
+)type=innodb;
+
 
 create table llx_birthday_alert
 (
