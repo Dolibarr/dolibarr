@@ -22,6 +22,7 @@
  */
 require("./pre.inc.php");
 
+$langs->load("main");
 $langs->load("admin");
 
 if (! $user->admin)
