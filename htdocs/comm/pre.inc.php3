@@ -52,7 +52,8 @@ function llxHeader($head = "", $urlp = "") {
 
   print "<CENTER><A href=\"".$urlp."index.php3\">Sociétés</A></CENTER>\n";
   print "<A href=\"".$urlp."../soc.php3?&action=create\">Nouvelle société</A><BR>\n";
-  print "<A href=\"".$urlp."contact.php3\">Contacts</A><BR>\n";
+  print "<A href=\"".$urlp."contact.php3\">Contacts</A><BR><br>\n";
+  print "<A href=\"".$urlp."recontact.php3\">A Recontacter</A><BR>\n";
   print "</TD></TR>";
 
 

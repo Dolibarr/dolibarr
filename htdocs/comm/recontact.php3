@@ -20,7 +20,7 @@
  *
  */
 require("./pre.inc.php3");
-require("../lib/functions.inc.php3");
+
 llxHeader();
 $db = new Db();
 if ($sortfield == "") {
@@ -35,16 +35,9 @@ if ($action == 'del') {
   $result = $db->query( $sql);
 }
 
-$active["1"] = "Offres en ligne";
-$active["-1"] = "Moderation";
-$active["-2"] = "Refusées";
-$active["0"] = "Rédaction";
-$active["-3"] = "Désactivées";
-$active["-4"] = "Supprimées";
-
 $yn["t"] = "oui";
 $yn["f"] = "non";
-$deacmeth["b"] = "robots";
+
 
 if ($page == -1) { $page = 0 ; }
 $limit = 26;
