@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@
  *
  */
 
-/*!
+/**
 	    \file       htdocs/comm/index.php
         \ingroup    commercial
 		\brief      Page acceuil de la zone commercial
@@ -100,13 +100,32 @@ print '<tr><td valign="top" width="30%">';
  * Recherche Propal
  */
 if ($conf->propal->enabled) {
+    $var=true;
 	print '<form method="post" action="propal.php">';
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">Rechercher une proposition</td></tr>';
-	print "<tr $bc[1]><td>";
+	print '<tr '.$bc[$var].'><td>';
 	print $langs->trans("Ref").' : <input type="text" name="sf_ref">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
 	print "</table></form><br>\n";
+}
 
+/*
+ * Recherche Contrat
+ */
+if ($conf->contrat->enabled) {
+    $var=true;
+	print '<form method="post" action="'.DOL_URL_ROOT.'/contrat/liste.php">';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td colspan="2">Rechercher un contrat</td></tr>';
+	print '<tr '.$bc[$var].'><td>';
+	print $langs->trans("Ref").' : <input type="text" name="search_contract">&nbsp;<input type="submit" value="'.$langs->trans("Search").'" class="flat"></td></tr>';
+	print "</table></form><br>\n";
+}
+
+/*
+ * Liste des propal brouillons
+ */
+if ($conf->propal->enabled) {
 	$sql = "SELECT p.rowid, p.ref, p.price, s.nom";
 	$sql .= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE p.fk_statut = 0 and p.fk_soc = s.idp";
@@ -116,6 +135,7 @@ if ($conf->propal->enabled) {
 	  $total = 0;
 	  $num = $db->num_rows();
 	  $i = 0;
+	  $var=true;
 	  if ($num > 0 )
 	    {
 	      print '<table class="noborder" width="100%">';
@@ -126,12 +146,12 @@ if ($conf->propal->enabled) {
 		{
 		  $obj = $db->fetch_object();
 		  $var=!$var;
-		  print "<tr $bc[$var]><td><a href=\"propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td><td>".$obj->nom."</td><td align=\"right\">".price($obj->price)."</td></tr>";
+		  print "<tr $bc[$var]><td><a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".$obj->ref."</a></td><td>".$obj->nom."</td><td align=\"right\">".price($obj->price)."</td></tr>";
 		  $i++;
 		  $total += $obj->price;
 		}
 		if ($total>0) {
-		  print "<tr $bc[$var]><td colspan=\"2\" align=\"right\"><i>Total</i></td><td align=\"right\"><i>".price($total)."</i></td></tr>";
+		  print "<tr $bc[$var]><td colspan=\"2\" align=\"right\"><i>".$langs->trans("Total")."</i></td><td align=\"right\"><i>".price($total)."</i></td></tr>";
 		}
 	      print "</table><br>";
 	    }
@@ -208,7 +228,8 @@ if ( $db->query($sql) )
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
 	  print '<td align="right"><a href="index.php?action=del_bookmark&bid='.$obj->bid.'">';
-	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/editdelete.png" border="0"></a></td>';
+	  print img_delete();
+	  print '</a></td>';
 	  print '</tr>';
 	  $i++;
 	}
@@ -248,7 +269,7 @@ if ( $db->query($sql) )
 	  $var=!$var;
 	  
 	  print "<tr $bc[$var]>";
-	  print "<td width=\"40%\"><a href=\"action/fiche.php?id=$obj->id\">".img_file()."</a>&nbsp;";
+	  print "<td><a href=\"action/fiche.php?id=$obj->id\">".img_file()."</a>&nbsp;";
 	  print "<a href=\"action/fiche.php?id=$obj->id\">$obj->libelle $obj->label</a></td>";
 	  print "<td>".strftime("%d %b %Y",$obj->da)."</td>";
 	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->sname.'</a></td>';
@@ -408,7 +429,7 @@ if ($conf->propal->enabled) {
 		  $total += $obj->price;
 	    }
 		if ($total>0) {
-		  print "<tr $bc[$var]><td colspan=\"3\" align=\"right\"><i>Total</i></td><td align=\"right\"><i>".price($total)."</i></td></tr>";
+		  print "<tr $bc[$var]><td colspan=\"3\" align=\"right\"><i>".$langs->trans("Total")."</i></td><td align=\"right\"><i>".price($total)."</i></td></tr>";
 		}
 	  print "</table><br>";
 	}

@@ -72,6 +72,9 @@ if ($sortorder == "")
 $sql = "SELECT c.rowid as cid, c.statut, ".$db->pdate("c.fin_validite")." as fin_validite, c.fin_validite-sysdate() as delairestant,  s.nom, s.idp as sidp";
 $sql .= " FROM ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE c.fk_soc = s.idp ";
+if ($_POST["search_contract"]) {
+    $sql .= " AND c.rowid = ".$_POST["search_contract"];
+}
 if ($socid > 0)
 {
   $sql .= " AND s.idp = $socid";
