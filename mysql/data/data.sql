@@ -185,15 +185,15 @@ insert into llx_c_chargesociales (id,libelle,deductible) values ( 3, 'GSG/CRDS N
 -- Types action
 --
 delete from llx_c_actioncomm;
-insert into llx_c_actioncomm (id,libelle) values ( 0, 'system', 'all',   '-');
-insert into llx_c_actioncomm (id,libelle) values ( 1, 'system', 'fr_FR', 'Appel Téléphonique');
-insert into llx_c_actioncomm (id,libelle) values ( 2, 'system', 'fr_FR', 'Envoi Fax');
-insert into llx_c_actioncomm (id,libelle) values ( 3, 'system', 'fr_FR', 'Envoi Proposition');
-insert into llx_c_actioncomm (id,libelle) values ( 4, 'system', 'fr_FR', 'Envoi Email');
-insert into llx_c_actioncomm (id,libelle) values ( 5, 'system', 'fr_FR', 'Prendre rendez-vous');
-insert into llx_c_actioncomm (id,libelle) values ( 9, 'system', 'fr_FR', 'Envoi Facture');
-insert into llx_c_actioncomm (id,libelle) values (10, 'system', 'fr_FR', 'Relance effectuée');
-insert into llx_c_actioncomm (id,libelle) values (11, 'system', 'fr_FR', 'Clôture');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 0, 'all',   'system', '-');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 1, 'fr_FR', 'system', 'Appel Téléphonique');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 2, 'fr_FR', 'system', 'Envoi Fax');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 3, 'fr_FR', 'system', 'Envoi Proposition');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 4, 'fr_FR', 'system', 'Envoi Email');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 5, 'fr_FR', 'system', 'Prendre rendez-vous');
+insert into llx_c_actioncomm (id, lang, type, libelle) values ( 9, 'fr_FR', 'system', 'Envoi Facture');
+insert into llx_c_actioncomm (id, lang, type, libelle) values (10, 'fr_FR', 'system', 'Relance effectuée');
+insert into llx_c_actioncomm (id, lang, type, libelle) values (11, 'fr_FR', 'system', 'Clôture');
 
 --
 -- Types action
