@@ -22,6 +22,11 @@
  */
 require("./pre.inc.php");
 
+$user->getrights('compta');
+
+if (!$user->admin && !$user->rights->compta->bank)
+  accessforbidden();
+
 llxHeader();
 
 if ($HTTP_POST_VARS["action"] == 'confirm_delete_categ' && $HTTP_POST_VARS["confirm"] == yes)

@@ -304,6 +304,15 @@ class User
 		    $this->rights->adherent->supprimer = 1;
 
 		}
+
+	      if ($module == 'compta' or $module == '')
+		{
+
+		  if ($obj->fk_id == 91)
+		    $this->rights->compta->bank = 1;
+			
+		}
+		
 	      $i++;
 	      }
 	    //	    $this->db->free();	    

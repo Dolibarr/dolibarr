@@ -50,8 +50,10 @@ class modComptabilite extends modDolibarrModules
   {
     /*
      * Permissions
-     */
-    $sql = array();
+     */    
+    $sql = array(
+		 "insert into llx_rights_def values (91,'Gestion banquaire','compta','a',1);",
+		 );
     
     return $this->_init($sql);
   }
@@ -61,7 +63,7 @@ class modComptabilite extends modDolibarrModules
    */
   Function remove()
   {
-    $sql = array();
+    $sql = "DELETE FROM llx_rights_def WHERE module = 'compta';";
 
     return $this->_remove($sql);
   }

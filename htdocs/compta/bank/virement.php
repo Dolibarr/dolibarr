@@ -22,6 +22,11 @@
 require("./pre.inc.php");
 require("./bank.lib.php");
 
+$user->getrights('compta');
+
+if (!$user->admin && !$user->rights->compta->bank)
+  accessforbidden();
+
 llxHeader();
 
 if ($action == 'add')
@@ -89,7 +94,7 @@ if ($result)
     while ($i < $num)
       {
 	$objp = $db->fetch_object($i);
-	print "<option value=\"$objp->rowid\">$objp->label</option><br>";
+	print "<option value=\"$objp->rowid\">$objp->label</option>";
 	$i++;
       }
 }

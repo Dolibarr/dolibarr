@@ -23,6 +23,11 @@
 
 require("./pre.inc.php");
 
+$user->getrights('compta');
+
+if (!$user->admin && !$user->rights->compta->bank)
+  accessforbidden();
+
 if ($HTTP_POST_VARS["action"] == 'add' && $account)
 {    
   if ($credit > 0)

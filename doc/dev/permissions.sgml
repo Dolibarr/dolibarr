@@ -34,7 +34,8 @@
 	<item>6 - fiches d'intervention</item>
 	<item>7 - adhérents</item>
 	<item>8 - commandes</item>
-	<item>9 - <em>non attribué</em></item>
+	<item>9 - comptabilité</em></item>
+	<item>10 - <em>non attribué</em></item>
       </list>
     </p>
   </sect>
@@ -71,6 +72,7 @@
 | 61 | Lire les fiches d'intervention                    | ficheinter | r    |         1 |
 | 62 | Créer modifier les fiches d'intervention          | ficheinter | w    |         0 |
 | 64 | Supprimer les fiches d'intervention               | ficheinter | d    |         0 |
+| 91 | Gestion banquaire                                 | compta     | a    |         0 |
 +----+---------------------------------------------------+------------+------+-----------+
 
       </example>

@@ -21,6 +21,11 @@
 require("./pre.inc.php");
 require("./bank.lib.php");
 
+$user->getrights('compta');
+
+if (!$user->admin && !$user->rights->compta->bank)
+  accessforbidden();
+
 llxHeader();
 
 print_titre("Configuration");
