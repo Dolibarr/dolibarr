@@ -277,6 +277,10 @@ else
 	      
 	    }    
 
+	  /*
+	   * Affichage
+	   */
+
 	  print '<div class="titre">Fiche Livre : '.$livre->titre.'</div><br>';
 
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
@@ -294,7 +298,15 @@ else
 	      print '<br><a href="fiche.php?id='.$id.'&status=0&action=status">Changer</a>';
 	    }
 	  print "</td>\n";
-	  print '<td rowspan="6" valign="top">'.nl2br($livre->description)."</td>";
+	  print '<td rowspan="6" valign="top">'.nl2br($livre->description);
+
+	  $img = OSC_CATALOG_DIRECTORY."images/".$livre->image;
+
+	  if(file_exists($img))
+	    {
+	      print '<p><img src="'.OSC_CATALOG_URL.'/images/'.$livre->image.'">';
+	    }
+	  print "</td>";
 
 	  print '<td rowspan="6" valign="top">';
 	  $livre->listcategorie();
