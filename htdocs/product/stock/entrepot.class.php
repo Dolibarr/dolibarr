@@ -55,7 +55,7 @@ class Entrepot
 	      if ($id > 0)
 		{
 		  $this->id = $id;
-		  $this->statut = 1;
+
 		  if ( $this->update($id, $user) )
 		    {
 		      $this->db->query("COMMIT") ;
