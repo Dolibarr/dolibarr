@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  *
@@ -25,16 +25,16 @@
  */
 
 /**
-    	\file       htdocs/societe.class.php
-		\ingroup    societe
-		\brief      Fichier de la classe des societes
-		\version    $Revision$
+   \file       htdocs/societe.class.php
+   \ingroup    societe
+   \brief      Fichier de la classe des societes
+   \version    $Revision$
 */
 
 
 /**
-		\class 		Societe
-		\brief 		Classe permettant la gestion des societes
+   \class 		Societe
+   \brief 		Classe permettant la gestion des societes
 */
 
 class Societe {
@@ -90,7 +90,7 @@ class Societe {
 	$var = "mod_codeclient_leopard";
       }
 
-	$this->mod_codeclient = new $var;
+    $this->mod_codeclient = new $var;
 
 
     $this->codeclient_modifiable = $this->mod_codeclient->modifiable;
@@ -167,9 +167,9 @@ class Societe {
 	      }
 	    
 	    if ($rescode == -3)
-	  {
-	    $this->error_message .= "Ce code client est déjà utilisé.\n";
-	  }
+	      {
+		$this->error_message .= "Ce code client est déjà utilisé.\n";
+	      }
 	    
 	    $result = -3;
 	  }
@@ -301,19 +301,19 @@ class Societe {
 	  }
 	else
 	  {
-        if ($this->db->errno() == $this->db->ERROR_DUPLICATE)
-        {
-            // Doublon
-            $this->error_message = "Erreur, le prefix '".$this->prefix_comm."' existe déjà vous devez en choisir un autre";
-            $result =  -1;
-        }
-        else
-        {
-            dolibarr_syslog("Societe::Update echec sql=$sql");
-            $result =  -2;
-        }	    
+	    if ($this->db->errno() == $this->db->ERROR_DUPLICATE)
+	      {
+		// Doublon
+		$this->error_message = "Erreur, le prefix '".$this->prefix_comm."' existe déjà vous devez en choisir un autre";
+		$result =  -1;
+	      }
+	    else
+	      {
+		dolibarr_syslog("Societe::Update echec sql=$sql");
+		$result =  -2;
+	      }	    
 	  }
-    }
+      }
 
     return $result;
 
@@ -325,123 +325,125 @@ class Societe {
    */
 	 
   function fetch($socid)
-    {
-      $this->id = $socid;
+  {
+    $this->id = $socid;
 
-      $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm";
-      $sql .= ",". $this->db->pdate("s.tms")." as date_update";
-      $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
-      $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique, s.fk_effectif";
-      $sql .= ", e.libelle as effectif, e.id as effectif_id";
-      $sql .= ", s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique";
-      $sql .= ", s.code_client, s.code_compta";
-      $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client";
-      $sql .= ", p.libelle as pays";
-      $sql .= ", st.libelle as stcomm";
-      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-      $sql .= ", ".MAIN_DB_PREFIX."c_effectif as e";
-      $sql .= ", ".MAIN_DB_PREFIX."c_pays as p";
-      $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
-      $sql .= ", ".MAIN_DB_PREFIX."c_forme_juridique as fj";
-      $sql .= " WHERE s.idp = ".$this->id;
-      $sql .= " AND s.fk_stcomm = st.id";
-      $sql .= " AND s.fk_effectif = e.id";
-      $sql .= " AND s.fk_pays = p.rowid";
-      $sql .= " AND s.fk_forme_juridique = fj.code";
+    $sql = "SELECT s.idp, s.nom, s.address,".$this->db->pdate("s.datec")." as dc, prefix_comm";
+    $sql .= ",". $this->db->pdate("s.tms")." as date_update";
+    $sql .= ", s.tel, s.fax, s.url,s.cp,s.ville, s.note, s.siren, client, fournisseur";
+    $sql .= ", s.siret, s.capital, s.ape, s.tva_intra, s.rubrique, s.fk_effectif";
+    $sql .= ", e.libelle as effectif, e.id as effectif_id";
+    $sql .= ", s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique";
+    $sql .= ", s.code_client, s.code_compta, s.parent";
+    $sql .= ", s.fk_departement, s.fk_pays, s.fk_stcomm, s.remise_client";
+    $sql .= ", p.libelle as pays";
+    $sql .= ", st.libelle as stcomm";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+    $sql .= ", ".MAIN_DB_PREFIX."c_effectif as e";
+    $sql .= ", ".MAIN_DB_PREFIX."c_pays as p";
+    $sql .= ", ".MAIN_DB_PREFIX."c_stcomm as st";
+    $sql .= ", ".MAIN_DB_PREFIX."c_forme_juridique as fj";
+    $sql .= " WHERE s.idp = ".$this->id;
+    $sql .= " AND s.fk_stcomm = st.id";
+    $sql .= " AND s.fk_effectif = e.id";
+    $sql .= " AND s.fk_pays = p.rowid";
+    $sql .= " AND s.fk_forme_juridique = fj.code";
 
-      if ($this->db->query($sql))
-	{
-	  if ($this->db->num_rows())
-	    {
-	      $obj = $this->db->fetch_object();
+    if ($this->db->query($sql))
+      {
+	if ($this->db->num_rows())
+	  {
+	    $obj = $this->db->fetch_object();
 
-	      $this->date_update = $obj->date_update;
+	    $this->date_update = $obj->date_update;
 
-	      $this->nom = stripslashes($obj->nom);
-	      $this->adresse =  stripslashes($obj->address);
-	      $this->cp = $obj->cp;
-	      $this->ville =  stripslashes($obj->ville);
+	    $this->nom = stripslashes($obj->nom);
+	    $this->adresse =  stripslashes($obj->address);
+	    $this->cp = $obj->cp;
+	    $this->ville =  stripslashes($obj->ville);
 
-	      $this->adresse_full =  stripslashes($obj->address) . "\n". $obj->cp . " ". stripslashes($obj->ville);
+	    $this->adresse_full =  stripslashes($obj->address) . "\n". $obj->cp . " ". stripslashes($obj->ville);
 
-	      $this->departement_id = $obj->fk_departement;
-	      $this->pays_id = $obj->fk_pays;
-	      $this->pays = $obj->fk_pays?$obj->pays:'';
+	    $this->departement_id = $obj->fk_departement;
+	    $this->pays_id = $obj->fk_pays;
+	    $this->pays = $obj->fk_pays?$obj->pays:'';
 
-	      $this->stcomm_id = $obj->fk_stcomm; // statut commercial
-	      $this->statut_commercial = $obj->stcomm; // statut commercial
+	    $this->stcomm_id = $obj->fk_stcomm; // statut commercial
+	    $this->statut_commercial = $obj->stcomm; // statut commercial
 
-	      $this->url = $obj->url;
+	    $this->url = $obj->url;
 
-	      $this->tel = $obj->tel;
-	      $this->fax = $obj->fax;
+	    $this->tel = $obj->tel;
+	    $this->fax = $obj->fax;
 	      
-	      $this->siren     = $obj->siren;
-	      $this->siret     = $obj->siret;
-	      $this->ape       = $obj->ape;
-	      $this->capital   = $obj->capital;
+	    $this->parent    = $obj->parent;
 
-	      $this->code_client = $obj->code_client;
+	    $this->siren     = $obj->siren;
+	    $this->siret     = $obj->siret;
+	    $this->ape       = $obj->ape;
+	    $this->capital   = $obj->capital;
 
-	      if (strlen($this->code_client) == 0 && $this->mod_codeclient->code_modifiable_null == 1)
-		{
-		  $this->codeclient_modifiable = 1;
-		}
+	    $this->code_client = $obj->code_client;
+
+	    if (strlen($this->code_client) == 0 && $this->mod_codeclient->code_modifiable_null == 1)
+	      {
+		$this->codeclient_modifiable = 1;
+	      }
 
 
-	      $this->code_compta = $obj->code_compta;
+	    $this->code_compta = $obj->code_compta;
 
-	      $this->tva_intra      = $obj->tva_intra;
-	      $this->tva_intra_code = substr($obj->tva_intra,0,2);
-	      $this->tva_intra_num  = substr($obj->tva_intra,2);
+	    $this->tva_intra      = $obj->tva_intra;
+	    $this->tva_intra_code = substr($obj->tva_intra,0,2);
+	    $this->tva_intra_num  = substr($obj->tva_intra,2);
 
-	      $this->effectif       = $obj->effectif;
-	      $this->effectif_id    = $obj->effectif_id;
+	    $this->effectif       = $obj->effectif;
+	    $this->effectif_id    = $obj->effectif_id;
 
-	      $this->forme_juridique_code= $obj->forme_juridique_code;
-	      $this->forme_juridique     = $obj->forme_juridique;
+	    $this->forme_juridique_code= $obj->forme_juridique_code;
+	    $this->forme_juridique     = $obj->forme_juridique;
 
-	      $this->prefix_comm = $obj->prefix_comm;
+	    $this->prefix_comm = $obj->prefix_comm;
 
-	      $this->remise_client = $obj->remise_client;
+	    $this->remise_client = $obj->remise_client;
 	      
-	      $this->client = $obj->client;
-	      $this->fournisseur = $obj->fournisseur;
+	    $this->client = $obj->client;
+	    $this->fournisseur = $obj->fournisseur;
 
-	      if ($this->client == 1)
-		{
-		  $this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id.'">'.$obj->nom.'</a>';
-		}
-	      elseif($this->client == 2)
-		{
-		  $this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$this->id.'">'.$obj->nom.'</a>';
-		}
-	      else
-		{
-		  $this->nom_url = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">'.$obj->nom.'</a>';
-		}
+	    if ($this->client == 1)
+	      {
+		$this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$this->id.'">'.$obj->nom.'</a>';
+	      }
+	    elseif($this->client == 2)
+	      {
+		$this->nom_url = '<a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$this->id.'">'.$obj->nom.'</a>';
+	      }
+	    else
+	      {
+		$this->nom_url = '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$this->id.'">'.$obj->nom.'</a>';
+	      }
 
-	      $this->rubrique = $obj->rubrique;
+	    $this->rubrique = $obj->rubrique;
 	      
-	      $this->note = $obj->note;
+	    $this->note = $obj->note;
 
-	      $result = 1;	      
-	    }
-	  else
-	    {
-	      dolibarr_syslog("Erreur Societe::Fetch aucune societe avec id=".$this->id);
-	      $result = -2;
-	    }
+	    $result = 1;	      
+	  }
+	else
+	  {
+	    dolibarr_syslog("Erreur Societe::Fetch aucune societe avec id=".$this->id);
+	    $result = -2;
+	  }
 
-	  $this->db->free();
-	}
-      else
-	{
-	  dolibarr_syslog("Erreur Societe::Fetch echec sql=$sql");
-	  $result = -3;
-	}
+	$this->db->free();
+      }
+    else
+      {
+	dolibarr_syslog("Erreur Societe::Fetch echec sql=$sql");
+	$result = -3;
+      }
 
-      return $result;
+    return $result;
   }
 
   /**
@@ -450,74 +452,74 @@ class Societe {
    */
    
   function delete($id)
-    {
-      dolibarr_syslog("Societe::Delete");
-      $sqr = 0;
+  {
+    dolibarr_syslog("Societe::Delete");
+    $sqr = 0;
 
-      if ( $this->db->query("BEGIN") )
-	{	  
-	  $sql = "DELETE from ".MAIN_DB_PREFIX."socpeople ";
-	  $sql .= " WHERE fk_soc = " . $id .";";
+    if ( $this->db->query("BEGIN") )
+      {	  
+	$sql = "DELETE from ".MAIN_DB_PREFIX."socpeople ";
+	$sql .= " WHERE fk_soc = " . $id .";";
 	  
-	  if ($this->db->query($sql))
-	    {
-	      $sqr++;
-	    }
-	  else
-	    {
-	      $this->error_message .= "Impossible de supprimer les contacts.\n";
-	      dolibarr_syslog("Societe::Delete erreur -1");
-	    }
+	if ($this->db->query($sql))
+	  {
+	    $sqr++;
+	  }
+	else
+	  {
+	    $this->error_message .= "Impossible de supprimer les contacts.\n";
+	    dolibarr_syslog("Societe::Delete erreur -1");
+	  }
 
-	  $sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib ";
-	  $sql .= " WHERE fk_soc = " . $id .";";
+	$sql = "DELETE from ".MAIN_DB_PREFIX."societe_rib ";
+	$sql .= " WHERE fk_soc = " . $id .";";
 
-	  if ($this->db->query($sql))
-	    {
-	      $sqr++;
-	    }
-	  else
-	    {
-	      $this->error_message .= "Impossible de supprimer le RIB.\n";
-	      dolibarr_syslog("Societe::Delete erreur -2");
-	    }
+	if ($this->db->query($sql))
+	  {
+	    $sqr++;
+	  }
+	else
+	  {
+	    $this->error_message .= "Impossible de supprimer le RIB.\n";
+	    dolibarr_syslog("Societe::Delete erreur -2");
+	  }
 	  	  
-	  $sql = "DELETE from ".MAIN_DB_PREFIX."societe ";
-	  $sql .= " WHERE idp = " . $id .";";
+	$sql = "DELETE from ".MAIN_DB_PREFIX."societe ";
+	$sql .= " WHERE idp = " . $id .";";
 	
-	  if ($this->db->query($sql))
-	    {
-	      $sqr++;
-	    }
-	  else
-	    {
-	      $this->error_message .= "Impossible de supprimer la société.\n";
-	      dolibarr_syslog("Societe::Delete erreur -3");
-	    }
+	if ($this->db->query($sql))
+	  {
+	    $sqr++;
+	  }
+	else
+	  {
+	    $this->error_message .= "Impossible de supprimer la société.\n";
+	    dolibarr_syslog("Societe::Delete erreur -3");
+	  }
 
 
-	  if ($sqr == 3)
-	    {
-	      $this->db->query("COMMIT");
+	if ($sqr == 3)
+	  {
+	    $this->db->query("COMMIT");
 
-	      // Suppression du répertoire document
-	      $docdir = $conf->societe->dir_output . "/" . $id;
+	    // Suppression du répertoire document
+	    $docdir = $conf->societe->dir_output . "/" . $id;
 	      	      
-	      if (file_exists ($docdir))
-		{
-		  $this->deldir($docdir);
-		}
+	    if (file_exists ($docdir))
+	      {
+		$this->deldir($docdir);
+	      }
 
-	      return 0;
-	    }
-	  else
-	    {
-	      $this->db->query("ROLLBACK");
-	      return -1;
-	    }
-	}	  
+	    return 0;
+	  }
+	else
+	  {
+	    $this->db->query("ROLLBACK");
+	    return -1;
+	  }
+      }	  
 
-    }
+  }
 
   /**
    *    \brief      Cette fonction permet de supprimer le répertoire de la societe
@@ -575,7 +577,7 @@ class Societe {
 	
 	$this->db->free();
       } 
-      return $facimp;
+    return $facimp;
   }
 
   /**
@@ -626,7 +628,7 @@ class Societe {
       }
     else
       {
-	  dolibarr_print_error($this->db);
+	dolibarr_print_error($this->db);
       }
     return $prefix;
   }
@@ -669,16 +671,16 @@ class Societe {
    */
 	 
   function set_as_client()
-    {
-      if ($this->id)
-	{
-	  $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
-	  $sql .= " SET client = 1";
-	  $sql .= " WHERE idp = " . $this->id .";";
+  {
+    if ($this->id)
+      {
+	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
+	$sql .= " SET client = 1";
+	$sql .= " WHERE idp = " . $this->id .";";
 	  
-	  return $this->db->query($sql);
-	}
-    }
+	return $this->db->query($sql);
+      }
+  }
 
   /**
    *    \brief      Définit la société comme un client
@@ -688,26 +690,26 @@ class Societe {
    */
 	 
   function set_remise_client($remise, $user)
-    {
-      if ($this->id)
-	{
-	  $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
-	  $sql .= " SET remise_client = '".$remise."'";
-	  $sql .= " WHERE idp = " . $this->id .";";
+  {
+    if ($this->id)
+      {
+	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
+	$sql .= " SET remise_client = '".$remise."'";
+	$sql .= " WHERE idp = " . $this->id .";";
 	  
-	  $this->db->query($sql);
+	$this->db->query($sql);
 
-	  $sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise ";
-	  $sql .= " ( datec, fk_soc, remise_client, fk_user_author )";
-	  $sql .= " VALUES (now(),".$this->id.",'".$remise."',".$user->id.")";
+	$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise ";
+	$sql .= " ( datec, fk_soc, remise_client, fk_user_author )";
+	$sql .= " VALUES (now(),".$this->id.",'".$remise."',".$user->id.")";
 	  
-	  if (! $this->db->query($sql) )
-	    {
-	        dolibarr_print_error($this->db);
-	    }
+	if (! $this->db->query($sql) )
+	  {
+	    dolibarr_print_error($this->db);
+	  }
 
-	}
-    }
+      }
+  }
   /**
    *    \brief      Définit la société comme un client
    *    \param      remise      montant de la remise
@@ -716,27 +718,27 @@ class Societe {
    */
 	 
   function set_remise_except($remise, $user)
-    {
-      if ($this->id)
-	{
-	  $remise = ereg_replace(",",".",$remise);
+  {
+    if ($this->id)
+      {
+	$remise = ereg_replace(",",".",$remise);
 
-	  $sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_remise_except ";
-	  $sql .= " WHERE fk_soc = " . $this->id ." AND fk_facture IS NULL;";
+	$sql  = "DELETE FROM  ".MAIN_DB_PREFIX."societe_remise_except ";
+	$sql .= " WHERE fk_soc = " . $this->id ." AND fk_facture IS NULL;";
 	  
-	  $this->db->query($sql);
+	$this->db->query($sql);
 
-	  $sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except ";
-	  $sql .= " ( datec, fk_soc, amount_ht, fk_user )";
-	  $sql .= " VALUES (now(),".$this->id.",'".$remise."',".$user->id.")";
+	$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except ";
+	$sql .= " ( datec, fk_soc, amount_ht, fk_user )";
+	$sql .= " VALUES (now(),".$this->id.",'".$remise."',".$user->id.")";
 	  
-	  if (! $this->db->query($sql) )
-	    {
-	        dolibarr_print_error($this->db);
-	    }
+	if (! $this->db->query($sql) )
+	  {
+	    dolibarr_print_error($this->db);
+	  }
 
-	}
-    }
+      }
+  }
 
   /**
    *    \brief      Renvoie le nom d'une societe a partir d'un id
@@ -745,11 +747,11 @@ class Societe {
    */
 	 
   function get_nom($id)
-    {
+  {
 
-      $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp='$id';";
+    $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp='$id';";
       
-      $result = $this->db->query($sql);
+    $result = $this->db->query($sql);
       
     if ($result)
       {
@@ -759,12 +761,12 @@ class Societe {
     	    return $obj->nom;
     	  }
     	$this->db->free();
-       }
-     else {
-        dolibarr_print_error($this->db);   
-       }    
+      }
+    else {
+      dolibarr_print_error($this->db);   
+    }    
        
-    }
+  }
 
   /**
    *    \brief      Renvoie la liste des contacts emails existant pour la société
@@ -772,34 +774,34 @@ class Societe {
    */
 	 
   function contact_email_array()
-    {
-      $contact_email = array();
+  {
+    $contact_email = array();
 
-      $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '$this->id'";
+    $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '$this->id'";
       
-      if ($this->db->query($sql) )
-	{
-	  $nump = $this->db->num_rows();
+    if ($this->db->query($sql) )
+      {
+	$nump = $this->db->num_rows();
 
-	  if ($nump)
-	    {
-	      $i = 0;
-	      while ($i < $nump)
-		{
-		  $obj = $this->db->fetch_object();
+	if ($nump)
+	  {
+	    $i = 0;
+	    while ($i < $nump)
+	      {
+		$obj = $this->db->fetch_object();
 	      
-		  $contact_email[$obj->idp] = "$obj->firstname $obj->name &lt;$obj->email&gt;";
-		  $i++;
-		}
-	    }
-	  return $contact_email;
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	}
+		$contact_email[$obj->idp] = "$obj->firstname $obj->name &lt;$obj->email&gt;";
+		$i++;
+	      }
+	  }
+	return $contact_email;
+      }
+    else
+      {
+	dolibarr_print_error($this->db);
+      }
       
-    }
+  }
 
   /**
    *    \brief      Renvoie la liste des contacts de cette société
@@ -807,34 +809,34 @@ class Societe {
    */
 	 
   function contact_array()
-    {
-      $contacts = array();
+  {
+    $contacts = array();
 
-      $sql = "SELECT idp, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '$this->id'";
+    $sql = "SELECT idp, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '$this->id'";
       
-      if ($this->db->query($sql) )
-	{
-	  $nump = $this->db->num_rows();
+    if ($this->db->query($sql) )
+      {
+	$nump = $this->db->num_rows();
 
-	  if ($nump)
-	    {
-	      $i = 0;
-	      while ($i < $nump)
-		{
-		  $obj = $this->db->fetch_object();
+	if ($nump)
+	  {
+	    $i = 0;
+	    while ($i < $nump)
+	      {
+		$obj = $this->db->fetch_object();
 	      
-		  $contacts[$obj->idp] = "$obj->firstname $obj->name";
-		  $i++;
-		}
-	    }
-	  return $contacts;
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	}
+		$contacts[$obj->idp] = "$obj->firstname $obj->name";
+		$i++;
+	      }
+	  }
+	return $contacts;
+      }
+    else
+      {
+	dolibarr_print_error($this->db);
+      }
       
-    }
+  }
   
   /**
    *    \brief      Renvoie l'email d'un contact par son id
@@ -843,30 +845,30 @@ class Societe {
    */
 	 
   function contact_get_email($rowid)
-    {
+  {
 
-      $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE idp = '$rowid'";
+    $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE idp = '$rowid'";
       
-      if ($this->db->query($sql) )
-	{
-	  $nump = $this->db->num_rows();
+    if ($this->db->query($sql) )
+      {
+	$nump = $this->db->num_rows();
 
-	  if ($nump)
-	    {
+	if ($nump)
+	  {
 	      
-	      $obj = $this->db->fetch_object();
+	    $obj = $this->db->fetch_object();
 	      
-	      $contact_email = "$obj->firstname $obj->name <$obj->email>";
+	    $contact_email = "$obj->firstname $obj->name <$obj->email>";
 
-	    }
-	  return $contact_email;
-	}
-      else
-	{
-	  dolibarr_print_error($this->db);
-	}
+	  }
+	return $contact_email;
+      }
+    else
+      {
+	dolibarr_print_error($this->db);
+      }
       
-    }
+  }
 
   /**
    *    \brief      Renvoie la liste des types de parties
@@ -874,29 +876,29 @@ class Societe {
    */
 	 
   function typent_array()
-    {
-      $effs = array();
-      /*
-       * Lignes
-       */      
-      $sql = "SELECT id, libelle";
-      $sql .= " FROM ".MAIN_DB_PREFIX."c_typent";
-      $sql .= " ORDER BY id ASC";
-      if ($this->db->query($sql))
-	{
-	  $num = $this->db->num_rows();
-	  $i = 0;
+  {
+    $effs = array();
+    /*
+     * Lignes
+     */      
+    $sql = "SELECT id, libelle";
+    $sql .= " FROM ".MAIN_DB_PREFIX."c_typent";
+    $sql .= " ORDER BY id ASC";
+    if ($this->db->query($sql))
+      {
+	$num = $this->db->num_rows();
+	$i = 0;
 	  
-	  while ($i < $num)
-	    {
-	      $objp = $this->db->fetch_object();
-	      $effs[$objp->id] = $objp->libelle;
-	      $i++;
-	    }
-	  $this->db->free();
-	} 
-      return $effs;
-    }
+	while ($i < $num)
+	  {
+	    $objp = $this->db->fetch_object();
+	    $effs[$objp->id] = $objp->libelle;
+	    $i++;
+	  }
+	$this->db->free();
+      } 
+    return $effs;
+  }
 
 
   /**
@@ -905,29 +907,29 @@ class Societe {
    */
 	 
   function effectif_array()
-    {
-      $effs = array();
-      /*
-       * Lignes
-       */      
-      $sql = "SELECT id, libelle";
-      $sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
-      $sql .= " ORDER BY id ASC";
-      if ($this->db->query($sql))
-	{
-	  $num = $this->db->num_rows();
-	  $i = 0;
+  {
+    $effs = array();
+    /*
+     * Lignes
+     */      
+    $sql = "SELECT id, libelle";
+    $sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
+    $sql .= " ORDER BY id ASC";
+    if ($this->db->query($sql))
+      {
+	$num = $this->db->num_rows();
+	$i = 0;
 	  
-	  while ($i < $num)
-	    {
-	      $objp = $this->db->fetch_object();
-	      $effs[$objp->id] = $objp->libelle;
-	      $i++;
-	    }
-	  $this->db->free();
-	} 
-      return $effs;
-    }
+	while ($i < $num)
+	  {
+	    $objp = $this->db->fetch_object();
+	    $effs[$objp->id] = $objp->libelle;
+	    $i++;
+	  }
+	$this->db->free();
+      } 
+    return $effs;
+  }
 
   /**
    *    \brief      Renvoie la liste des formes juridiques existantes
@@ -1067,6 +1069,25 @@ class Societe {
       }
   }
 
+  /**
+   *  \brief     Définit la société mère pour les filiales
+   *
+   */
+	 
+  function set_parent($id)
+  {
+    if ($this->id)
+      {
+	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
+	$sql .= " SET parent = ".$id;
+	$sql .= " WHERE idp = " . $this->id .";";
+	  
+	if ( $this->db->query($sql) )
+	  {
+	    return 0;
+	  }
+      }
+  }
 }
 
 ?>
