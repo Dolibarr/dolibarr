@@ -35,14 +35,16 @@ class ActionComm
   var $note;
   var $percent;
 
-
+  /*
+   * Initialisation
+   *
+   */
   Function ActionComm($db) 
     {
       $this->db = $db;
       $this->societe = new Societe($db);
       $this->author = new User($db);
-      $this->contact = new Contact($db);
-      
+      $this->contact = new Contact($db);      
     }
   /*
    *
@@ -117,13 +119,13 @@ class ActionComm
    *
    */
   Function delete($id)
-    {
-      
+    {      
       $sql = "DELETE FROM llx_actioncomm WHERE id=$id;";
       
-      if ($this->db->query($sql) ) {
-	
-      }
+      if ($this->db->query($sql) )
+	{
+	  return 1;
+	}
     }
   /*
    *
