@@ -20,14 +20,16 @@
 --
 -- ========================================================================
 --
+-- Groupe de lignes
 --
-create table llx_telephonie_tarif_client (
-  rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  fk_tarif       integer NOT NULL,
-  fk_client      integer NOT NULL,
-  temporel       real default 0,
-  fixe           real default 0,
-  fk_user        integer NOT NULL,
+--
+--
 
-  UNIQUE INDEX(fk_tarif, fk_client)
+create table llx_telephonie_groupe_ligne (
+  rowid            integer AUTO_INCREMENT PRIMARY KEY,
+  fk_groupe        integer NOT NULL,  -- groupe
+  fk_ligne         integer NOT NULL,  -- ligne
+  fk_user          integer NOT NULL,
+
+  UNIQUE INDEX(fk_groupe, fk_ligne)
 )type=innodb;
