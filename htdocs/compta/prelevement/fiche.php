@@ -32,7 +32,6 @@ require("./pre.inc.php");
 
 $langs->load("bills");
 
-
 /*
  * Sécurité accés client
  */
@@ -50,10 +49,19 @@ if ($_POST["action"] == 'confirm_credite' && $_POST["confirm"] == yes)
 if ($_POST["action"] == 'infotrans')
 {
   $bon = new BonPrelevement($db,"");
-  $bon->id = $_GET["id"];
-  $dt = mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+  $bon->fetch($_GET["id"]);
 
-  $bon->set_infotrans($user, $dt, $_POST["methode"]);
+  if ($_FILES['userfile']['name'] && basename($_FILES['userfile']['name'],".ps") == $bon->ref)
+    {      
+      $dir = DOL_DATA_ROOT.'/prelevement/bon/';
+
+      if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $dir . "/" . $_FILES['userfile']['name']))
+	{
+	  $dt = mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+	  
+	  $bon->set_infotrans($user, $dt, $_POST["methode"]);
+	}
+    }
 
   Header("Location: fiche.php?id=".$_GET["id"]);
 }
@@ -155,7 +163,7 @@ if ($_GET["id"])
 
       if($bon->date_trans == 0)
 	{
-	  print '<form method="post" action="fiche.php?id='.$bon->id.'">';
+	  print '<form method="post" name="userfile" action="fiche.php?id='.$bon->id.'" enctype="multipart/form-data">';
 	  print '<input type="hidden" name="action" value="infotrans">';
 	  print '<table class="border" width="100%">';
 	  print '<tr><td width="20%">Date Transmission</td><td>';
@@ -163,6 +171,9 @@ if ($_GET["id"])
 	  print '</td></tr>';
 	  print '<tr><td width="20%">Méthode Transmission</td><td>';
 	  print $html->select_array("methode",$bon->methodes_trans);
+	  print '</td></tr>';
+	  print '<tr><td width="20%">Fichier</td><td>';
+	  print '<input type="file" name="userfile" size="30" maxlength="80"><br />';
 	  print '</td></tr>';
 	  print '<tr><td colspan="2" align="center">';
 	  print '<input type="submit">';
