@@ -26,6 +26,7 @@
       <list>
 	<item>php4</item>
 	<item>php4-mysql</item>
+	<item>php4-curl (pour la partie gestion des adhérents)</item>
 	<item>Apache</item>
 	<item>libapache-mod-auth-mysql</item>
       </list>
