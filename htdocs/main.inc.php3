@@ -105,7 +105,7 @@ else
     }
 }
 /*
- * Definition de toutes les Constantes globales d'envirronement
+ * Definition de toutes les Constantes globales d'environement
  *
  */
 $sql = "SELECT name, value FROM llx_const";
@@ -128,6 +128,12 @@ if ($result)
  */
 
 //$db->close();
+
+if (defined("MAIN_NOT_INSTALLED"))
+{
+  Header("Location: install.php");
+}
+
 
 /*
  * Inclusion de librairies dépendantes de paramètres de conf
