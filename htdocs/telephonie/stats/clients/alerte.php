@@ -45,6 +45,8 @@ $h++;
 
 dolibarr_fiche_head($head, $hselected, "Clients");
 
+print "Clients dont la marge est inférieure à 20 %";
+
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td width="70%" valign="top">';
