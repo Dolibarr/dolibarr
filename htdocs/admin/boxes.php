@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,16 @@ if ($HTTP_POST_VARS["action"] == 'add')
   $result = $db->query($sql);
 }
 
-if ($action == 'delete')
+if ($_GET["action"] == 'add')
+{
+
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position) values (".$_GET["rowid"].",0);";
+
+  $result = $db->query($sql);
+}
+
+
+if ($_GET["action"] == 'delete')
 {
   $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes WHERE rowid=$rowid";
 
@@ -98,37 +107,36 @@ if ($result)
 
       print '<tr class="pair"><td>'.$obj->name.'</td><td>' . $obj->file . '</td><td align="center">';
 
+      /*
+
       if ($rowid == $obj->rowid && $action == 'edit')
 	{
 	  print '<form action="'.$PHP_SELF.'" method="POST">';
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-
-	  print '<select name="constvalue">';
 	  
+	  print '<select name="constvalue">';	  
 	  print '<option value="0">Homepage</option>';
-	  /*
 	  print '<option value="1">Gauche</option>';
 	  print '<option value="1">Droite</option>';
-	  */
-
 	  print '</select>';
-	
+
+	  print '<input type="hidden" name="constvalue" value="0">';
 	  print '<input type="submit" value="Ajouter">';
 	  print '</form>';
-	}
-      else 
+	  }
+	  else 
+	  {
+      */
+      if (! in_array($obj->rowid, $boxes))
 	{
-	  if (! in_array($obj->rowid, $boxes))
-	    {
-	      print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;action=edit">Ajouter</a>';
-	    }
-	  else
-	    {
-	      print "&nbsp;";
-	    }
+	  print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&amp;action=add">Ajouter</a>';
 	}
-
+      else
+	{
+	  print "&nbsp;";
+	}
+      
       print '</td></tr>';
 
       $i++;
