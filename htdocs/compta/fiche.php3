@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,6 +15,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 require("./pre.inc.php3");
 require("../contact.class.php3");
@@ -25,16 +25,20 @@ require("../lib/webcal.class.php3");
 require("../cactioncomm.class.php3");
 require("../actioncomm.class.php3");
 
+/*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0)
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
+
+
 llxHeader();
 
 $db = new Db();
 
-if ($sortorder == "") {
-  $sortorder="ASC";
-}
-if ($sortfield == "") {
-  $sortfield="nom";
-}
 
 if ($action=='add_action') {
   /*
@@ -54,55 +58,58 @@ if ($action=='add_action') {
 
   $societe = new Societe($db);
   $societe->fetch($socid);
-
-
 }
 
 
-if ($action == 'attribute_prefix') {
+if ($action == 'attribute_prefix')
+{
   $societe = new Societe($db, $socid);
   $societe->attribute_prefix($db, $socid);
 }
 
-if ($action == 'recontact') {
+if ($action == 'recontact')
+{
   $dr = mktime(0, 0, 0, $remonth, $reday, $reyear);
   $sql = "INSERT INTO llx_soc_recontact (fk_soc, datere, author) VALUES ($socid, $dr,'". $GLOBALS["REMOTE_USER"]."')";
   $result = $db->query($sql);
 }
 
-if ($action == 'note') {
+if ($action == 'note')
+{
   $sql = "UPDATE societe SET note='$note' WHERE idp=$socid";
   $result = $db->query($sql);
 }
 
-if ($action == 'stcomm') {
-  if ($stcommid <> 'null' && $stcommid <> $oldstcomm) {
-    $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
-    $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $GLOBALS["REMOTE_USER"] . "')";
-    $result = @$db->query($sql);
-
-    if ($result) {
-      $sql = "UPDATE societe SET fk_stcomm=$stcommid WHERE idp=$socid";
-      $result = $db->query($sql);
-    } else {
-      $errmesg = "ERREUR DE DATE !";
+if ($action == 'stcomm')
+{
+  if ($stcommid <> 'null' && $stcommid <> $oldstcomm)
+    {
+      $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
+      $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $GLOBALS["REMOTE_USER"] . "')";
+      $result = @$db->query($sql);
+      
+      if ($result)
+	{
+	  $sql = "UPDATE societe SET fk_stcomm=$stcommid WHERE idp=$socid";
+	  $result = $db->query($sql);
+	}
+      else
+	{
+	  $errmesg = "ERREUR DE DATE !";
+	}
     }
-  }
-
-  if ($actioncommid) {
-    $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
-    $result = @$db->query($sql);
-
-    if (!$result) {
-      $errmesg = "ERREUR DE DATE !";
+  
+  if ($actioncommid)
+    {
+      $sql = "INSERT INTO actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
+      $result = @$db->query($sql);
+      
+      if (!$result)
+	{
+	  $errmesg = "ERREUR DE DATE !";
+	}
     }
-  }
 }
-if ($page == -1) { $page = 0 ; }
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 
 /*
@@ -110,19 +117,29 @@ $pagenext = $page + 1;
  *
  *
  */
-if ($mode == 'search') {
-  if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM societe as s ";
-    $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
-  }
-      
-  if ( $db->query($sql) ) {
-    if ( $db->num_rows() == 1) {
-      $obj = $db->fetch_object(0);
-      $socid = $obj->idp;
+if ($mode == 'search')
+{
+  if ($mode-search == 'soc')
+    {
+      $sql = "SELECT s.idp FROM societe as s ";
+      $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
     }
-    $db->free();
-  }
+  
+  if ( $db->query($sql) )
+    {
+      if ( $db->num_rows() == 1)
+	{
+	  $obj = $db->fetch_object(0);
+	  $socid = $obj->idp;
+	}
+      $db->free();
+    }
+
+  if ($user->societe_id > 0)
+    {
+      $socid = $user->societe_id;
+    }
+
 }
 
 
@@ -140,9 +157,11 @@ if ($socid > 0) {
   $sql = "SELECT s.idp, s.nom, ".$db->pdate("s.datec")." as dc, s.tel, s.fax, st.libelle as stcomm, s.fk_stcomm, s.url,s.address,s.cp,s.ville, s.note, t.libelle as typent, e.libelle as effectif, s.siren, s.prefix_comm, s.services,s.parent, s.description FROM societe as s, c_stcomm as st, c_typent as t, c_effectif as e ";
   $sql .= " WHERE s.fk_stcomm=st.id AND s.fk_typent = t.id AND s.fk_effectif = e.id";
 
-  if ($to == 'next') {
-    $sql .= " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
-  } elseif ($to == 'prev') {
+  if ($to == 'next')
+    {
+      $sql .= " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
+    }
+  elseif ($to == 'prev') {
     $sql .= " AND s.idp < $socid ORDER BY idp DESC LIMIT 1";
   } else {
     $sql .= " AND s.idp = $socid";
@@ -164,18 +183,21 @@ if ($socid > 0) {
     print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
 
     print "<tr><td><div class=\"titre\">Fiche client : $objsoc->nom</div></td>";
-    print "<td align=\"center\"><a href=\"../comm/fiche.php3?socid=$objsoc->idp\">Commercial</a></td>";
-    print "<td align=\"center\"><a href=\"bookmark.php3?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
-    print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
-    print "<td><a href=\"facture.php3?action=create&socidp=$objsoc->idp\">".translate("Bill")."</a></td>";
-    print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
-    print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
+
+    if ($user->societe_id == 0)
+      {
+	print "<td align=\"center\"><a href=\"../comm/fiche.php3?socid=$objsoc->idp\">Commercial</a></td>";
+	print "<td align=\"center\"><a href=\"bookmark.php3?socidp=$objsoc->idp&action=add\">[Bookmark]</a></td>";
+	print "<td align=\"center\"><a href=\"projet/fiche.php3?socidp=$objsoc->idp&action=create\">[Projet]</a></td>";
+	print "<td><a href=\"facture.php3?action=create&socidp=$objsoc->idp\">".translate("Bill")."</a></td>";
+	print "<td><a href=\"socnote.php3?socid=$objsoc->idp\">Notes</a></td>";
+	print "<td align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
+      }
     print "</tr></table>";
     /*
      *
      *
      */
-
 
     print "<table width=\"100%\" border=0><tr>\n";
     print "<td valign=\"top\">";
