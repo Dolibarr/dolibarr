@@ -51,6 +51,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
   $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
 
   $id = $product->create($user);
+
   Header("Location: fiche.php?id=$id");
 }
 
@@ -59,7 +60,7 @@ if ($_POST["action"] == 'update' &&
     ( $user->rights->produit->modifier || $user->rights->produit->creer))
 {
   $product = new Product($db);
-  if ($product->fetch($_GET["id"]))
+  if ($product->fetch($_POST["id"]))
     {
 
       $product->ref                = $_POST["ref"];
@@ -73,25 +74,27 @@ if ($_POST["action"] == 'update' &&
       $product->duration_unit = $_POST["duration_unit"];
       
       if ($product->check())
-	{
-	  if ($product->update($_GET["id"], $user))
-	    {
-	      $action = '';
-	      $mesg = 'Fiche mise à jour';
-	    }
-	  else
-	    {
-	      $action = 're-edit';
-	      $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
-	    }
-	}
+				{
+					if ($product->update($product->id, $user))
+						{
+							$_GET["action"] = '';
+							$mesg = 'Fiche mise à jour';
+						}
+					else
+						{
+							$_GET["action"] = 're-edit';
+							$mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+						}
+				}
       else
-	{
-	  $action = 're-edit';
-	  $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
-	}
+				{
+					$_GET["action"] = 're-edit';
+					$mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
+				}
     }
+  Header("Location: fiche.php?id=".$product->id);
 }
+
 
 if ($_POST["action"] == 'addinpropal')
 {
@@ -108,14 +111,14 @@ if ($_POST["action"] == 'addinpropal')
       $mesg = ucfirst($types[$type]) . ' ajouté à la proposition ';
       $mesg .= '<a href="../comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
     }
-  $action = '';
+  $_GET["action"] = '';
 }
 
 if ($_POST["action"] == 'addinfacture' && 
     ( $user->rights->facture->modifier || $user->rights->facture->creer))
 {
   $product = new Product($db);
-  $result = $product->fetch($id);
+  $result = $product->fetch($_GET["id"]);
 
   $facture = New Facture($db);
 
@@ -124,7 +127,7 @@ if ($_POST["action"] == 'addinfacture' &&
 		    addslashes($product->libelle), 
 		    $product->price, 
 		    $_POST["qty"], 
-		    $product->tva_tx, $id);
+		    $product->tva_tx, $product->id);
 
   $action = '';
   $mesg = 'Produit ajouté à la facture ';
@@ -133,6 +136,7 @@ if ($_POST["action"] == 'addinfacture' &&
 
 if ($_POST["action"] == 'add_fourn' && $_POST["cancel"] <> 'Annuler')
 {
+
   $product = new Product($db);
   if( $product->fetch($_GET["id"]) )
     {
@@ -164,30 +168,36 @@ if ($_GET["action"] == 'remove_fourn')
     }
 }
 
+
 if ($_POST["action"] == 'update_price' && 
     $_POST["cancel"] <> 'Annuler' && 
     ( $user->rights->produit->modifier || $user->rights->produit->creer))
 {
   $product = new Product($db);
-  $result = $product->fetch($_GET["id"]);
-  $product->price = $_POST["price"];
 
-  if ( $product->update_price($_GET["id"], $user) > 0 )
+  $result = $product->fetch($_GET["id"]);
+
+  $product->price = ereg_replace(" ","",$_POST["price"]);
+
+
+	  if ( $product->update_price($product->id, $user) > 0 )
+
     {
-      $action = '';
+      $_GET["action"] = '';
       $mesg = 'Fiche mise à jour';
     }
   else
     {
-      $action = 'edit_price';
+      $_GET["action"] = 'edit_price';
       $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
     }
 }
 
 
-if ($cancel == 'Annuler')
+if ($_POST["cancel"] == 'Annuler')
 {
   $action = '';
+  Header("Location: fiche.php?id=".$_POST["id"]);
 }
 
 
@@ -204,7 +214,8 @@ if ($_GET["action"] == 'create')
 {
   $nbligne=0;
   
-  print '<form action="fiche.php?type='.$_GET["type"].'" method="post">';
+
+  print "<form action=\"fiche.php\" method=\"post\">\n";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">\n";
   print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
   print '<div class="titre">Nouveau '.$types[$_GET["type"]].'</div><br>'."\n";
@@ -253,16 +264,18 @@ if ($_GET["action"] == 'create')
 }
 else
 {
+
   if ($_GET["id"])
     {
       if ($_GET["action"] <> 're-edit')
-	{
-	  $product = new Product($db);
-	  $result = $product->fetch($_GET["id"]);
-	}
+				{
+					$product = new Product($db);
+					$result = $product->fetch($_GET["id"]);
+				}
 
       if ( $result )
 	{ 
+
 	  if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	    {
 	      /*
@@ -272,13 +285,15 @@ else
 	      // Zone recherche
 	      print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
 	      print '<tr class="liste_titre">';
-	      print '<form action="liste.php?type='.$product->type.'" method="post"><td>';
+	      print '<form action="liste.php" method="post"><td>';
+				print '<input type="hidden" name="type" value="'.$product->type.'">';
 	      print 'Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go">';
 	      print '</td></form><form action="liste.php" method="post"><td>';
 	      print 'Libellé : <input class="flat" type="text" size="20" name="snom">&nbsp;<input class="flat" type="submit" value="go">';
 	      print '</td></form></tr></table>';
 	      print '<br>';
           
+
 	      $head[0][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
 	      $head[0][1] = 'Fiche';
 	      
@@ -304,7 +319,6 @@ else
 		}
 	      print '</td></tr>';
 	      print '<tr><td>Libellé</td><td colspan="2">'.$product->libelle.'</td></tr>';
-
 	      print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td>';
           if ($product->type == 1) {
           	$nblignefour=4;
@@ -327,7 +341,7 @@ else
 		  $var=True;      
 		  while ($i < $num)
 		    {
-		      $objp = $db->fetch_object( $i);	  
+		      $objp = $db->fetch_object($i);	  
 		      $var=!$var;
 		      print "<TR $bc[$var]>";
 		      print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
@@ -394,11 +408,12 @@ else
 
       print "<br></div>\n";
       
-      if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
+    if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 	{
 	  print '<div class="titre">Nouveau prix</div>';
-	  print "<form action=\"fiche.php?id=$product->id\" method=\"post\">\n";
+	  print "<form action=\"fiche.php\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update_price">';
+	  print '<input type="hidden" name="id" value="'.$product->id.'">';
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr><td width="20%">Prix de vente</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
 	  print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
@@ -414,8 +429,9 @@ else
       if ($_GET["action"] == 'ajout_fourn' && $user->rights->produit->creer)
 	{
 	  print_titre ("Ajouter un fournisseur");
-	  print '<form action="fiche.php?id='.$product->id.'" method="post">';
+	  print '<form action="fiche.php" method="post">';
 	  print '<input type="hidden" name="action" value="add_fourn">';
+	  print '<input type="hidden" name="id" value="'.$product->id.'">';
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4"><tr>';
 	  print '<td>Fournisseurs</td><td><select name="id_fourn">';
 	  
@@ -423,15 +439,16 @@ else
 	  $sql .= " ORDER BY lower(s.nom)";
 	  
 	  if ($db->query($sql))
-	    {
-	      $num = $db->num_rows();
-	      $i = 0;		  		  
-	      while ($i < $num)
 		{
-		  $obj = $db->fetch_object( $i);
-		  print '<option value="'.$obj->idp.'">'.$obj->nom . ($obj->ville?" ($obj->ville)":"");
-		  $i++;
-		}
+		  $num = $db->num_rows();
+		  $i = 0;		  		  
+		  while ($i < $num)
+		    {
+		      $obj = $db->fetch_object($i);
+		      print '<option value="'.$obj->idp.'">'.$obj->nom . ($obj->ville?" ($obj->ville)":"");
+		      $i++;
+		    }
+
 	    }
 	  print '</select></td><td>Référence</td><td><input name="ref_fourn" size="25" value=""></td></tr>';
 	  print '<tr><td colspan="4" align="center"><input type="submit" value="Enregistrer">&nbsp;';
@@ -450,9 +467,10 @@ else
 	{
 	  print_fiche_titre('Edition de la fiche '.$types[$product->type].' : '.$product->ref, $mesg);
 
-	  print "<form action=\"fiche.php?id=$product->id\" method=\"post\">\n";
+
+	  print "<form action=\"fiche.php\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update">';
-	  
+	  print '<input type="hidden" name="id" value="'.$product->id.'">';
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>".'<td width="20%">Référence</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
 	  print '<td>Libellé</td><td colspan="2"><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
@@ -572,7 +590,8 @@ print "</div>";
 
 
 
-if ($id && $_GET["action"] == '' && $product->envente)
+
+if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 {
 
   $htmls = new Form($db);
@@ -602,14 +621,15 @@ if ($id && $_GET["action"] == '' && $product->envente)
 	  $var=True;      
 	  while ($i < $num)
 	    {
-	      $objp = $db->fetch_object( $i);	  
+	      $objp = $db->fetch_object($i);	  
 	      $var=!$var;
 	      print "<TR $bc[$var]>";
 	      print "<td><a href=\"../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
 	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
 	      print "<td>". strftime("%d %B %Y",$objp->dp)."</td>\n";
-	      print '<form method="POST" action="fiche.php?id='.$id.'">';
+	      print '<form method="POST" action="fiche.php">';
 	      print '<input type="hidden" name="action" value="addinpropal">';
+	      print '<input type="hidden" name="id" value="'.$product->id.'">';
 	      print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
 	      print '<input type="text" name="qty" size="3" value="1">&nbsp;Rem.';
 	      print '<input type="text" name="remise_percent" size="3" value="0"> %';
@@ -679,8 +699,9 @@ if ($id && $_GET["action"] == '' && $product->envente)
 	      print "<td><a href=\"../compta/facture.php?facid=$objp->factureid\">$objp->facnumber</a></TD>\n";
 	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      	 
 	      print "<td>". strftime("%d %B %Y",$objp->df)."</td>\n";
-	      print '<form method="POST" action="fiche.php?id='.$id.'">';
+	      print '<form method="POST" action="fiche.php">';
 	      print '<input type="hidden" name="action" value="addinfacture">';
+	      print '<input type="hidden" name="id" value="'.$product->id.'">';
 	      print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
 	      print '<input type="text" name="qty" size="3" value="1">&nbsp;Rem.';
 	      print '<input type="text" name="remise_percent" size="3" value="0"> %';
