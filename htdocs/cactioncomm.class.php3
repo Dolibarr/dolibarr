@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,36 +15,77 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
+ * $Id$
+ * $Source$
+ *
  */
 
 class CActioncomm {
   var $id;
   var $libelle;
 
-  Function CActioncomm() {
-
-  }
+  Function CActioncomm($DB=0)
+    {
+      $this->db = $DB;
+    }
   /*
    *
    *
    *
    */
-  Function fetch($db, $id) {
 
-    $sql = "SELECT libelle FROM c_actioncomm WHERE id=$id;";
+  Function liste_array()
+  {
+    $ga = array();
 
-    if ($db->query($sql) ) {
-      if ($db->num_rows()) {
-	$obj = $db->fetch_object(0);
+    $sql = "SELECT id, libelle FROM c_actioncomm";
+    $sql .= " ORDER BY id";
 
-	$this->id = $id;
-	$this->libelle = $obj->libelle;
+    if ($this->db->query($sql) )
+      {
+	$nump = $this->db->num_rows();
 	
-	$db->free();
+	if ($nump)
+	  {
+	    $i = 0;
+	    while ($i < $nump)
+	      {
+		$obj = $this->db->fetch_object($i);
+		
+		$ga[$obj->id] = $obj->libelle;
+		$i++;
+	      }
+	  }
+	return $ga;
       }
-    } else {
-      print $db->error();
-    }    
+    else
+      {
+	print $this->db->error();
+      }    
   }
+
+
+  Function fetch($db, $id)
+    {
+
+      $sql = "SELECT libelle FROM c_actioncomm WHERE id=$id;";
+      
+      if ($db->query($sql) )
+	{
+	  if ($db->num_rows())
+	    {
+	      $obj = $db->fetch_object(0);
+	      
+	      $this->id = $id;
+	      $this->libelle = $obj->libelle;
+	      
+	      $db->free();
+	    }
+	}
+      else
+	{
+	  print $db->error();
+	}    
+    }
 }    
 ?>
