@@ -62,7 +62,8 @@ if (!strlen(getenv("LLX_DBNAME")))
 require (DOL_DOCUMENT_ROOT ."/lib/mysql.lib.php");
 require (DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
 require (DOL_DOCUMENT_ROOT ."/html.form.class.php");
-require (DOL_DOCUMENT_ROOT ."/user.class.php");
+require DOL_DOCUMENT_ROOT ."/user.class.php";
+//require "Smarty.class.php";
 
 $db = new DoliDb();
 
