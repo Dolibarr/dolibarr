@@ -903,11 +903,23 @@ create table llx_paiementfourn
 
 insert into llx_sqltables (name, loaded) values ('llx_album',0);
 
+delete from llx_boxes_def;
 insert into llx_boxes_def (name, file) values ('Factures','box_factures.php');
 insert into llx_boxes_def (name, file) values ('Factures impayées','box_factures_imp.php');
 insert into llx_boxes_def (name, file) values ('Propales','box_propales.php');
+insert into llx_boxes_def (name, file) values ('Derniers clients','box_clients.php');
+
+insert into llx_const(name, value, type) values ('FAC_PDF_FAX','01 02 03 04 05','chaine');
+insert into llx_const(name, value, type) values ('FAC_PDF_SIRET','123 456 789','chaine');
+insert into llx_const(name, value, type) values ('FAC_PDF_INTITULE','Dolibarr','chaine');
+insert into llx_const(name, value, type) values ('FAC_PDF_SIREN','123 456 789 123','chaine');
+insert into llx_const(name, value, type) values ('FAC_PDF_TEL','05 04 03 02 01','chaine');
+insert into llx_const(name, value, type) values ('FAC_PDF_ADRESSE','1 quai Martin\n56400 Auray','texte');
+
+
 
 insert into llx_const(name, value, type, note) values ('MAIN_START_YEAR','2001','chaine','Année de départ');
+
 insert into llx_const(name, value, type) values ('DONS_FORM','fsfe.fr.php','chaine');
 
 insert into llx_const(name, value, type) values ('FACTURE_ADDON','venus','chaine');
@@ -949,22 +961,21 @@ INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_USER','user',
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_PASS','pass','chaine','Pass de connection');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_SERVEUR','localhost','chaine','serveur spip');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_SPIP_DB','spip','chaine','db spip');
-
 INSERT INTO llx_const(name, value, type) VALUES ('DB_NAME_OSC','catalog','chaine');
 INSERT INTO llx_const(name, value, type) VALUES ('OSC_LANGUAGE_ID','1','chaine');
 INSERT INTO llx_const(name, value, type) VALUES ('OSC_CATALOG_URL','http://osc.lafrere.lan/','chaine');
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MAIL_FROM','adherents@domain.com','chaine','From des mails');
-
 INSERT INTO llx_const (name, value, type, note) VALUES ('MAIN_MENU_BARRETOP','default.php','chaine','Module commande');
 
 
-INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_COMMANDE','0','yesno',0);
-INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_PROPALE','0','yesno',0);
-INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_DON','0','yesno',0);
-INSERT INTO llx_const (name, value, type, visible) VALUES ('MAIN_MODULE_ADHERENT','0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_COMMANDE','0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_PROPALE', '0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_FACTURE', '0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_DON',     '0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('MAIN_MODULE_ADHERENT','0','yesno',0);
 
-INSERT INTO llx_const (name, value, type, visible) VALUES ('BOUTIQUE_LIVRE','0','yesno',0);
-INSERT INTO llx_const (name, value, type, visible) VALUES ('BOUTIQUE_ALBUM','0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('BOUTIQUE_LIVRE','0','yesno',0);
+INSERT INTO llx_const (name,value,type,visible) VALUES ('BOUTIQUE_ALBUM','0','yesno',0);
 
 delete from c_chargesociales;
 insert into c_chargesociales (id,libelle,deductible) values ( 1, 'Allocations familiales',1);
@@ -1051,3 +1062,5 @@ insert into c_propalst (id,label) values (3, 'Non Signée');
 insert into c_propalst (id,label) values (4, 'Facturée');
 
 
+insert into llx_user (name,firstname,code,login,pass,module_comm,module_compta,admin)
+values ('Admin','Admin','ADM','admin','admin',1,1,1);
