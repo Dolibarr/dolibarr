@@ -74,7 +74,6 @@ class Contact
    */
   Function update($id)
     {
-
       $this->email = trim($this->email);
 
       $sql = "UPDATE llx_socpeople SET name='$this->name', firstname='$this->firstname'";
@@ -94,18 +93,13 @@ class Contact
 	  print $this->db->error() . '<br>' . $sql;
 	}
 
-
-      $host = "localhost";
-      $dn   = "cn=admin, dc=rodo, dc=lan";
-      $pass = "secret";
-
-      $ds = ldap_connect($host);
+      $ds = dolibarr_ldap_connect();
 
       if ($ds)
 	{
 	  ldap_set_option($ds, LDAP_OPT_PROTOCOL_VERSION, 3);
 
-	  $ldapbind=ldap_bind($ds, $dn, $pass);
+	  $ldapbind=dolibarr_ldap_bind($ds);
       
 	  if ($ldapbind)
 	    {
