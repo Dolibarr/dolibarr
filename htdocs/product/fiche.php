@@ -36,7 +36,7 @@ if (!$user->rights->produit->lire)
 
 llxHeader("","","Fiche produit");
 
-if ($action == 'add')
+if ($_POST["action"] == 'add')
 {
   $product = new Product($db);
 
@@ -116,12 +116,12 @@ if ($_GET["action"] == 'remove_fourn')
     {
       if ($product->remove_fournisseur($user, $_GET["id_fourn"]) > 0)
 	{
-	  $action = '';
+	  $_GET["action"] = '';
 	  $mesg = 'Founisseur supprimé';
 	}
       else
 	{
-	  $action = '';
+	  $_GET["action"] = '';
 	}
     }
 }
@@ -166,14 +166,14 @@ if ($_POST["action"] == 'update' &&
 }
 
 if ($_POST["action"] == 'update_price' && 
-    $cancel <> 'Annuler' && 
+    $_POST["cancel"] <> 'Annuler' && 
     ( $user->rights->produit->modifier || $user->rights->produit->creer))
 {
   $product = new Product($db);
-  $result = $product->fetch($id);
+  $result = $product->fetch($_GET["id"]);
   $product->price = $_POST["price"];
 
-  if ( $product->update_price($id, $user) > 0 )
+  if ( $product->update_price($_GET["id"], $user) > 0 )
     {
       $action = '';
       $mesg = 'Fiche mise à jour';
@@ -194,11 +194,11 @@ if ($cancel == 'Annuler')
  *
  *
  */
-if ($action == 'create')
+if ($_GET["action"] == 'create')
 {
   $nbligne=0;
   
-  print "<form action=\"$PHP_SELF?type=$type\" method=\"post\">\n";
+  print "<form action=\"fiche.php?type=$type\" method=\"post\">\n";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">\n";
   print '<input type="hidden" name="type" value="'.$type.'">'."\n";
   print '<div class="titre">Nouveau '.$types[$type].'</div><br>'."\n";
@@ -249,7 +249,7 @@ else
 {
   if ($_GET["id"])
     {
-      if ($action <> 're-edit')
+      if ($_GET["action"] <> 're-edit')
 	{
 	  $product = new Product($db);
 	  $result = $product->fetch($_GET["id"]);
@@ -257,7 +257,7 @@ else
 
       if ( $result )
 	{ 
-	  if ($action <> 'edit' && $action <> 're-edit')
+	  if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	    {
 	      /*
 	       *  Fiche en visu
@@ -391,10 +391,10 @@ else
 
       print "<br></div>\n";
       
-      if ($action == 'edit_price' && $user->rights->produit->creer)
+      if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 	{
 	  print '<div class="titre">Nouveau prix</div>';
-	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	  print "<form action=\"fiche.php?id=$product->id\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update_price">';
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr><td width="20%">Prix de vente</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
@@ -443,11 +443,11 @@ else
      * Fiche en mode edition
      */
     
-      if (($action == 'edit' || $action == 're-edit') && $user->rights->produit->creer)
+      if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && $user->rights->produit->creer)
 	{
 	  print_fiche_titre('Edition de la fiche '.$types[$product->type].' : '.$product->ref, $mesg);
 
-	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
+	  print "<form action=\"fiche.php?id=$product->id\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update">';
 	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
@@ -545,31 +545,31 @@ else
 
 print "<div class=\"tabsAction\">\n";
 
-if ($action == '')
+if ($_GET["action"] == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-      print '<a class="tabAction" href="fiche.php?action=edit_price&amp;id='.$id.'">Changer le prix</a>';
+      print '<a class="tabAction" href="fiche.php?action=edit_price&amp;id='.$product->id.'">Changer le prix</a>';
     }
 }
 
-if ($action == '')
+if ($_GET["action"] == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-      print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$id.'">Editer</a>';
+      print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">Editer</a>';
     }
 }
 if ($product->type == 0 && defined("MAIN_MODULE_STOCK"))
 {
-  print '<a class="tabAction" href="stock/product.php?id='.$id.'&amp;action=correction">Correction stock</a>';
+  print '<a class="tabAction" href="stock/product.php?id='.$product->id.'&amp;action=correction">Correction stock</a>';
 }
 
 print "</div>";
 
 
 
-if ($id && $action == '' && $product->envente)
+if ($id && $_GET["action"] == '' && $product->envente)
 {
 
   $htmls = new Form($db);
