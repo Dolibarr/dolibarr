@@ -30,3 +30,4 @@ NewGroup=Nouveau groupe
 CreateGroup=Créér le groupe
 RemoveFromGroup=Supprimer du groupe
 PasswordChangedAndSentTo=Mot de passe changé et envoyé à %s
+MenuUsersAndGroups=Utilisateur & Groupes
