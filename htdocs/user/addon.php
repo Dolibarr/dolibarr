@@ -50,7 +50,6 @@ llxHeader("","Addon Utilisateur");
 
 /* ************************************************************************** */
 /*                                                                            */
-/* Nouvel utilisateur                                                         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,16 +71,15 @@ if ($_GET["id"])
   
   $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id;
   $head[$h][1] = $langs->trans("UserCard");
-  if ($_GET["action"] != 'perms') { $hselected=$h; }
   $h++;
-  
+
   if ($user->admin)
     {
-      $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?action=perms&amp;id='.$fuser->id;
-      $head[$h][1] = $langs->trans("Permissions");
-      $h++;
+  $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
+  $head[$h][1] = $langs->trans("Permissions");
+  $h++;
     }
-  
+
   if ($conf->bookmark4u->enabled)
     {
   $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
