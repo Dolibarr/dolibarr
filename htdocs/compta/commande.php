@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -24,12 +24,12 @@ require("./pre.inc.php");
 
 $user->getrights('commande');
 $user->getrights('facture');
-if (!$user->rights->commande->lire)
-  accessforbidden();
 
-require("../project.class.php");
-require("../propal.class.php");
-require("../commande/commande.class.php");
+if (!$user->rights->commande->lire) accessforbidden();
+
+require_once DOL_DOCUMENT_ROOT."/project.class.php";
+require_once DOL_DOCUMENT_ROOT."/propal.class.php";
+require_once DOL_DOCUMENT_ROOT."/commande/commande.class.php";
 
 /*
  * Sécurité accés client
@@ -49,7 +49,6 @@ if ($_GET["action"] == 'facturee')
   $commande->fetch($_GET["id"]);
   $commande->classer_facturee();
 }
-
 
 llxHeader();
 
@@ -71,7 +70,6 @@ if ($_GET["id"] > 0)
       $author = new User($db);
       $author->id = $commande->user_author_id;
       $author->fetch();
-
 
       $head[0][0] = DOL_URL_ROOT.'/compta/commande.php?id='.$commande->id;
       $head[0][1] = "Commande : $commande->ref";
@@ -126,16 +124,14 @@ if ($_GET["id"] > 0)
       
       print $commande->remise_percent.' %</td><td>&nbsp;';
       
+      print '</td><td rowspan="3">';
+      print nl2br($commande->note)."&nbsp;\n";
       print '</td></tr>';
       
       print '<tr><td>'.$langs->trans("VAT").'</td><td align="right">'.price($commande->total_tva).'</td>';
       print '<td>'.$conf->monnaie.'</td></tr>';
       print '<tr><td>'.$langs->trans("TotalTTC").'</td><td align="right">'.price($commande->total_ttc).'</td>';
       print '<td>'.$conf->monnaie.'</td></tr>';
-      if ($commande->note)
-	{
-	  print '<tr><td colspan="5">'.$langs->trans("Note").' : '.nl2br($commande->note)."</td></tr>";
-	}
       
       print "</table>";
       
@@ -143,7 +139,7 @@ if ($_GET["id"] > 0)
        * Lignes de commandes
        *
        */
-      echo '<br><table border="0" width="100%">';	  
+      echo '<br><table class="noborder" width="100%">';	  
       
       $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
       $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as l WHERE l.fk_commande =".$commande->id." ORDER BY l.rowid";
@@ -315,13 +311,13 @@ if ($_GET["id"] > 0)
 
 	  if ($user->rights->facture->creer)
 	    {
-	      print '<a class="tabAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">Facturer</a>';
+	      print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/facture.php?action=create&amp;commandeid='.$commande->id.'&amp;socidp='.$commande->soc_id.'">Facturer</a>';
 	    }
 
 	  if (!$commande->facturee && $num_fac_asso)
 	    {
 	      if ($user->rights->commande->creer)
-		print '<a class="tabAction" href="'.DOL_URL_ROOT.'/compta/commande.php?action=facturee&amp;id='.$commande->id.'">Classer comme facturée</a>';
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/compta/commande.php?action=facturee&amp;id='.$commande->id.'">Classer comme facturée</a>';
 
 	    }
 	  print '</div>';
