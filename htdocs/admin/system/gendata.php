@@ -74,7 +74,7 @@ if ($action == 'product')
 
 if ($action == 'facture')
 {
-  $randf = rand(1,200);
+  $randf = rand(1,2);
 
   print "Génère $randf factures<br>";
   for ($f = 0 ; $f < $randf ; $f++)
@@ -91,7 +91,7 @@ if ($action == 'facture')
       $facture->cond_reglement = 1;
       $facture->remise_percent = rand(0,50);
 
-      $prand = rand(1,20);
+      $prand = rand(1,200);
       for ($p = 0 ; $p < $prand ; $p++)
 	{
 	  $pidrand = rand(1, sizeof($productsid)-1);
