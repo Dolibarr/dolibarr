@@ -43,8 +43,8 @@ BASE=dolibarr
 OPTIONS=-U postgres
 OWNER=dolibarradm
 OWNERPASS=azaz
-FIND=find
-#FIND="c:/Program files/cygwin/bin/find"
+#FIND=find
+FIND="c:/Program files/cygwin/bin/find"
 
 
 TABLES=$(shell $(FIND) tables/ -name "*sql")
