@@ -76,6 +76,10 @@ MessageOfDay=Message du jour
 DefaultLanguage=Langue par défaut à utiliser (code langue)
 PermanentLeftSearchForm=Zone de recherche permanente du menu de gauche
 SystemSuccessfulyUpdated=Votre système a été mis à jour avec succès
+CompanyInfo=Informations sur la société ou association
+CompanyIds=Identifiants de la société ou association
+CompanyName=Nom/Enseigne de la société/association
+CompanyCurrency=Devise de la société/association
 ##### Webcal setup #####
 WebCalSetup=Configuration du lien vers le calendrier Webcalendar
 WebCalSyncro=Intégrer les évênements Dolibarr dans WebCalendar

@@ -76,6 +76,10 @@ MessageOfDay=Message of day
 PermanentLeftSearchForm=Permanent search form on left menu
 DefaultLanguage=Default language to use (language code)
 SystemSuccessfulyUpdated=Your sustem has been updated successfully
+CompanyInfo=Company/foundation informations
+CompanyIds=Company/Foundation identities
+CompanyName=Company/foundation name
+CompanyCurrency=Company/foundation currency
 ##### Webcal setup #####
 WebCal Setup=Webcalendar link setup
 WebCalSyncro=Add Dolibarr Event to WebCalendar
