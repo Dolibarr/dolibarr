@@ -34,8 +34,6 @@
   </xsl:template> 
 
 
-
-
   <xsl:template match="/html[@lang='fr']/body/div[@class='main']/form/table/tr[@id='projet']">
     <input type="hidden" name="projetid" value="1" />
   </xsl:template> 
