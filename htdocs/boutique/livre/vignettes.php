@@ -45,7 +45,7 @@ $form = '<form action="index.php">'.
 '<input type="submit" class="flat" value="go"></form>';
 
 
-print_barre_liste("Liste des Livres", $page, $PHP_SELF, "", $sortfield, $sortorder, $form);
+print_barre_liste("Liste des vignettes manquantes", $page, $PHP_SELF, "", $sortfield, $sortorder, $form);
 
 $sql = "SELECT l.rowid, l.title, l.oscid, l.ref, l.status FROM llx_livre as l";
 
