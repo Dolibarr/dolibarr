@@ -37,3 +37,5 @@ ActionsOnBill=Actions sur la facture
 NewBill=Nouvelle facture
 Prélèvements=Prélèvement
 Prélèvements=Prélèvements
+LastBills=Les %s dernieres factures
+AllBills=Toutes les factures

@@ -14,3 +14,5 @@ CreateOrder=Create Order
 RefuseOrder=Refuse order
 ApproveOrder=Accept order
 AddOrder=Add order
+LastOrders=Last %s orders
+AllOrders=All orders

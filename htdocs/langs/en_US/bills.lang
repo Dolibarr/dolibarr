@@ -35,3 +35,8 @@ BillTo=To
 AmountInCurrency=Amount in
 ActionsOnBill=Actions on bill
 NewBill=New bill
+Prélèvements=Prelevment
+Prélèvements=Prelevments
+LastBills=Last %s bills
+AllBills=All bills
+
