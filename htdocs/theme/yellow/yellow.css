@@ -78,7 +78,6 @@ div.menus {
             border-left:   1px dashed #ccccb3;
             }
 
-
 .menu 
 { 
   background: #ccccb3; 
@@ -109,17 +108,13 @@ a.impayee { font-weight: bold }
 
 a.leftmenu { 
              
-             font-size: 1.0em; 
              font-weight: bold; 
-             color: #202020; 
-  }
+             color: #202020; }
 
 td.barre { 
            border-right: 1px solid #000000;
            border-bottom: 1px solid #000000;
            background: #ccccb3;
-           font-family: Helvetica, Verdana;
-           font-size: 1.0em; 
            color: #000000; 
            text-decoration: none }
 
@@ -129,8 +124,6 @@ td.barre_select {
                   }
 
 div.titre { 
-            
-            font-size: 1.0em; 
             font-weight: bold; 
             color: #666633; 
             text-decoration: none }
@@ -145,42 +138,34 @@ tr.liste_titre {
                  }
 
 tr.pair { 
-          background: #dcdcb3; 
-          
+          background: #dcdcb3;           
           font-size: 1.0em; 
           }
 
 tr.impair { 
             background: #eeeecc; 
-            font-family: Helvetica, Verdana;
             font-size: 1.0em; 
             }
 /*
  *
  */
-
 tr.box_titre { 
                font-family: Helvetica, Verdana;
                font-size: 1.0em;
-               font-weight: bold;
-               }
+               font-weight: bold; }
 
 tr.box_pair { 
               background: #dcdcb3; 
-              font-size: 0.9em; 
-              }
+              font-size: 0.9em; }
 
 tr.box_impair { 
                 background: #eeeecc; 
                 font-family: Helvetica, Verdana;
-                font-size: 0.9em; 
-                }
+                font-size: 0.9em; }
 
 tr.fiche { 
            font-family: Helvetica, Verdana;
-           font-size: 0.6em; 
-           }
-
+           font-size: 0.6em; }
 /*
  *
  */
