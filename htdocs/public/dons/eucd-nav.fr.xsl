@@ -189,7 +189,7 @@
 	<xsl:apply-templates select="@*|node()"/>
 	<div class="commentaire">
 	  Acceptez-vous vos noms et prénoms ou le nom de votre société soient affichés dans la liste des <a href="donateurs.php">donateurs</a> ?<br />
-	  Do you allow us to list your name, firstaname or company name on the donations list ?
+	  Do you allow us to list your name, firstname or company name on the donations list ?
 	</div>
       </td>
       <td valign="top" class="titre">
