@@ -1,0 +1,9 @@
+# Dolibarr language file - en_US - orders
+OrdersArea=Orders area
+Order=Order
+Orders=Orders
+OrdersToValid=Orders to valid
+OrdersToBill=Orders to bill
+OrdersInProcess=Orders in process
+OrdersToProcess=Orders to process
+SearchOrder=Search order
