@@ -575,12 +575,19 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
   /*
    * Affichage des zones de recherche permanantes
    */
-  print '<div class="leftmenu">'."\n";
+  $addzonerecherche=0;
+  if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0) $addzonerecherche=1;
+  if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0) $addzonerecherche=1;
+  if (($conf->produit->enabled || $conf->service->enabled) && defined("MAIN_SEARCHFORM_PRODUITSERVICE") && MAIN_SEARCHFORM_PRODUITSERVICE > 0) $addzonerecherche=1;
+  
+  if ($addzonerecherche) {
+    
+    print '<div class="leftmenu">'."\n";
 
-  if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
+    if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_SOCIETE") && MAIN_SEARCHFORM_SOCIETE > 0)
     {
       $langs->load("companies");
-
+    
       if (strstr($_SERVER["SCRIPT_URL"], "/comm/prospect/"))
       {
         $url=DOL_URL_ROOT.'/comm/prospect/prospects.php';
@@ -589,24 +596,25 @@ function left_menu($menu, $help_url='', $form_search='', $author='')
       {
         $url=DOL_URL_ROOT.'/societe.php';
       }
-
+    
       printSearchForm($url,DOL_URL_ROOT.'/comm/clients.php',$langs->trans("Companies"),'soc','socname');
     }
-
-  if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
-	{
+    
+    if ($conf->societe->enabled && defined("MAIN_SEARCHFORM_CONTACT") && MAIN_SEARCHFORM_CONTACT > 0)
+    {
       $langs->load("companies");
       printSearchForm(DOL_URL_ROOT.'/contact/index.php',DOL_URL_ROOT.'/contact/index.php',$langs->trans("Contacts"),'contact','contactname');
-	}
-
-  if (($conf->produit->enabled || $conf->service->enabled) && defined("MAIN_SEARCHFORM_PRODUITSERVICE") && MAIN_SEARCHFORM_PRODUITSERVICE > 0)
-	{
+    }
+    
+    if (($conf->produit->enabled || $conf->service->enabled) && defined("MAIN_SEARCHFORM_PRODUITSERVICE") && MAIN_SEARCHFORM_PRODUITSERVICE > 0)
+    {
       $langs->load("products");
       printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/',$langs->trans("Products")."/".$langs->trans("Services"),'products','sall');
     }
 
-  print "</div>";
+    print "</div>";
 
+  }
 
   /*
    * Zone de recherche supplémentaire
