@@ -32,9 +32,6 @@ require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
 $user->getrights('banque');
 
 
-$mod = new modPrelevement($db);
-$dir = $mod->data_directory;
-
 llxHeader();
 
 print_titre($langs->trans("Bons de prélèvements"));
@@ -47,17 +44,16 @@ print '<td>'.$langs->trans("Date").'</td>';
 print '<td>&nbsp;</td>';
 print "</tr>\n";
 
-$handle=opendir($dir);
+
+$dir = $conf->prelevement->dir_output;
+$handle=opendir($dir."/bon");
 
 while (($file = readdir($handle))!==false)
 {
-  if (is_readable($dir.$file) && is_file($dir.$file))
+    $relativepath="/bon/".$file;
+    if (is_readable($dir."/".$relativepath) && is_file($dir."/".$relativepath))
     {
-      print '<tr><td><a href="'.DOL_URL_ROOT.'/document.php?file='.$dir.$file.'&amp;type=text/plain">'.$file.'</a><td>';
-
-
-
-
+      print '<tr><td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=prelevement&file='.urlencode($relativepath).'&amp;type=text/plain">'.$file.'</a><td>';
       print '</tr>';
     }
 }

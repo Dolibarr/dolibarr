@@ -146,7 +146,7 @@ if ($year)
     	  $var=!$var;
     	  $tfile = $dir . '/'.$year.'/'.$file;
     	  $relativepath = $year.'/'.$file;
-    	  print "<tr $bc[$var]>".'<td><a href="/document.php?modulepart=facture_paiement&file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+    	  print "<tr $bc[$var]>".'<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
     	  print '<td align="right">'.filesize($tfile). ' bytes</td>';
     	  print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($tfile)).'</td></tr>';
     	}

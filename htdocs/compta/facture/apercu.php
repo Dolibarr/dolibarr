@@ -129,23 +129,27 @@ if ($_GET["facid"] > 0)
        * Documents
        *
        */      
-			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-			$facref = str_replace($forbidden_chars,"_",$fac->ref);
-			$file = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
-			$filedetail = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . "-detail.pdf";
-            $fileimage = $file.".png";
+      $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+	  $facref = str_replace($forbidden_chars,"_",$fac->ref);
+	  $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
+      $filedetail = $conf->facture->dir_output . "/" . $facref . "/" . $facref . "-detail.pdf";
+      $relativepath = "${facref}/${facref}.pdf";
+      $relativepathdetail = "${facref}/${facref}-detail.pdf";
+
+      $fileimage = $file.".png";
 	
-        // Si fichier PDF existe
+	  $var=true;
+	  
+      // Si fichier PDF existe
       if (file_exists($file))
 	{
         $encfile = urlencode($file);
         print_titre("Documents");
         print '<table class="border" width="100%">';
         
-        print "<tr $bc[0]><td>".$langs->trans("Bill")." PDF</td>";
+        print "<tr $bc[$var]><td>".$langs->trans("Bill")." PDF</td>";
         
-        print '<td><a href="'.DOL_URL_ROOT . '/document.php?file='.$encfile.'">'.$fac->ref.'.pdf</a></td>';
-        
+        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepath).'">'.$fac->ref.'.pdf</a></td>';
         print '<td align="right">'.filesize($file). ' bytes</td>';
         print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
         print '</tr>';
@@ -153,10 +157,9 @@ if ($_GET["facid"] > 0)
         // Si fichier detail PDF existe
         if (file_exists($filedetail)) // facture détaillée supplémentaire
         {
-            $encfile = urlencode($filedetail);
-            print "<tr $bc[0]><td>Facture détaillée</td>";
+            print "<tr $bc[$var]><td>Facture détaillée</td>";
             
-            print '<td><a href="'.DOL_URL_ROOT . '/document.php?file='.$encfile.'">'.$fac->ref.'-detail.pdf</a></td>';		  
+            print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$fac->ref.'-detail.pdf</a></td>';		  
             print '<td align="right">'.filesize($filedetail). ' bytes</td>';
             print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedetail)).'</td>';
             print '</tr>';

@@ -1205,19 +1205,22 @@ else
 	  $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 	  $facref = str_replace($forbidden_chars,"_",$fac->ref);
 	  $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
-       
-	  print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
+      $filedetail = $conf->facture->dir_output . "/" . $facref . "/" . $facref . "-detail.pdf";
+      $relativepath = "${facref}/${facref}.pdf";
+      $relativepathdetail = "${facref}/${facref}-detail.pdf";
+
+      $var=true;
+             
+	  print "<table width=\"100%\"><tr><td width=\"50%\" valign=\"top\">";
 
 	  if (file_exists($file))
 	    {
-	      $encfile = urlencode($file);
 	      print_titre("Documents");
 	      print '<table class="border" width="100%">';
 	    
-	      print "<tr $bc[0]><td>Facture PDF</td>";
+	      print "<tr $bc[$var]><td>".$langs->trans("Bill")." PDF</td>";
 
-	      print '<td><a href="'.DOL_URL_ROOT . '/document.php?file='.$encfile.'">'.$fac->ref.'.pdf</a></td>';
-
+	      print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepath).'">'.$fac->ref.'.pdf</a></td>';
 	      print '<td align="right">'.filesize($file). ' bytes</td>';
 	      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
 	      print '</tr>';
@@ -1230,12 +1233,11 @@ else
 		{
 		  if (is_readable($dir.$file) && substr($file, -10) == 'detail.pdf')
 		    {
-		      $encfile = urlencode($dir.$file);
-		      print "<tr $bc[0]><td>Facture détaillée</td>";
+		      print "<tr $bc[$var]><td>Facture détaillée</td>";
 		      
-		      print '<td><a href="'.DOL_URL_ROOT . '/document.php?file='.$encfile.'">'.$fac->ref.'-detail.pdf</a></td>';		  
-		      print '<td align="right">'.filesize($dir.$file). ' bytes</td>';
-		      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($dir.$file)).'</td>';
+		      print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepathdetail).'">'.$fac->ref.'-detail.pdf</a></td>';		  
+		      print '<td align="right">'.filesize($filedetail). ' bytes</td>';
+		      print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedetail)).'</td>';
 		      print '</tr>';
 		    }
 		}
