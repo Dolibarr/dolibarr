@@ -36,7 +36,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php", "Contacts");
 
-  $menu->add(DOL_URL_ROOT."/comm/action/", "Actions");
+  $menu->add(DOL_URL_ROOT."/comm/action/index.php", "Actions");
 
   if ($user->rights->propale->lire)
     {
@@ -47,22 +47,22 @@ function llxHeader($head = "", $urlp = "") {
 
   if ($conf->fichinter->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/fichinter/", "Fiches d'intervention");
+      $menu->add(DOL_URL_ROOT."/fichinter/index.php", "Fiches d'intervention");
     }
 
   if ($conf->produit->enabled )
     {
-      $menu->add(DOL_URL_ROOT."/product/", "Produits");
+      $menu->add(DOL_URL_ROOT."/product/index.php", "Produits");
     }
 
-  $menu->add(DOL_URL_ROOT."/contrat/", "Contrats");
+  $menu->add(DOL_URL_ROOT."/contrat/index.php", "Contrats");
 
   if ($conf->service->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/service/", "Services");
+      $menu->add(DOL_URL_ROOT."/service/index.php", "Services");
     }
 
-  $menu->add(DOL_URL_ROOT."/projet/", "Projets");
+  $menu->add(DOL_URL_ROOT."/projet/index.php", "Projets");
 
   left_menu($menu->liste);
 
