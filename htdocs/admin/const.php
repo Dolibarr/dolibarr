@@ -47,7 +47,7 @@ $typeconst=array('yesno','texte','chaine');
 
 if ($HTTP_POST_VARS["action"] == 'update' || $HTTP_POST_VARS["action"] == 'add')
 {
-	if (! dolibarr_set_const($db, $HTTP_POST_VARS["constname"],$HTTP_POST_VARS["constvalue"],$typeconst[$HTTP_POST_VARS["consttype"]],0,isset($HTTP_POST_VARS["constnote"])?$HTTP_POST_VARS["constnote"]:''));
+	if (! dolibarr_set_const($db, $HTTP_POST_VARS["constname"],$HTTP_POST_VARS["constvalue"],$typeconst[$HTTP_POST_VARS["consttype"]],1,isset($HTTP_POST_VARS["constnote"])?$HTTP_POST_VARS["constnote"]:''));
 	{
 	  	print $db->error();
 	}
