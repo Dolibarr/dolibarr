@@ -42,3 +42,6 @@ ALTER TABLE llx_facturedet       ADD FOREIGN KEY (fk_facture)  REFERENCES llx_fa
 ALTER TABLE llx_facture_tva_sum  ADD FOREIGN KEY (fk_facture)  REFERENCES llx_facture (rowid);
 
 ALTER TABLE llx_socpeople        ADD FOREIGN KEY (fk_soc)      REFERENCES llx_societe (idp);
+
+ALTER TABLE llx_c_departements   ADD FOREIGN KEY (fk_region)  REFERENCES llx_c_regions (code_region);
+ALTER TABLE llx_c_regions        ADD FOREIGN KEY (fk_pays)    REFERENCES llx_c_pays    (rowid);
