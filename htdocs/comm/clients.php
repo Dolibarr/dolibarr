@@ -107,7 +107,7 @@ if ($result)
   print '<form method="get" action="clients.php">';
   print '<tr class="liste_titre">';
   print '<td valign="right">';
-  print '<input type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
+  print '<input type="text" name="search_nom" value="'.stripslashes($_GET["search_nom"]).'">';
   print '</td><td valign="right">';
   print '<input type="text" name="search_code" value="'.$_GET["search_code"].'">';
   print '</td><td colspan="2"><input type="submit">';
@@ -125,7 +125,7 @@ if ($result)
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?socid='.$obj->idp.'">';
       print img_file();
-      print "</a>&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
+      print "</a>&nbsp;<a href=\"fiche.php?socid=$obj->idp\">".stripslashes($obj->nom)."</A></td>\n";
       print "<td>".$obj->code_client."&nbsp;</td>\n";
       print "<td>".$obj->ville."&nbsp;</td>\n";
       print '<td><a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';
