@@ -128,17 +128,6 @@ class FactureConf
 }
 
 /*
- * Fiche d'intervention
- *
- */
-class FicheInterConf
-{
-  Function FicheInterConf()
-    {
-      $this->enabled = 1;
-    }
-}
-/*
  * Dons
  *
  */
