@@ -20,11 +20,6 @@
  * $Source$
  *
  */
-//function translate($texte) {
-//  return $texte;
-//}
-
-
 
 function transcoS2L($zonein,$devise)
 { 
@@ -44,18 +39,18 @@ function transcoS2L($zonein,$devise)
 
 
   if ($devise == "F")
-	{
-	  $unite_singulier = " franc ";
-	  $unite_pluriel = " francs ";
-	  $cent_singulier = " centime";
-	}
+    {
+      $unite_singulier = " franc ";
+      $unite_pluriel = " francs ";
+      $cent_singulier = " centime";
+    }
   else
     {
       $unite_singulier = " euro ";
       $unite_pluriel = " euros ";
       $cent_singulier = " centime";
     }
-
+  
   $arr1_99 = array("zéro","un","deux","trois",
 		   "quatre","cinq","six","sept",
 		   "huit","neuf","dix","onze","douze",
