@@ -115,7 +115,7 @@ td.menusel {
             }
 
 div.menus { 
-            background: #444444; 
+            background: #444444 url(img/div_menu_background.png) center right no-repeat; 
             border-top:    1px solid #555555;
             border-right:  1px solid #888888;
             border-bottom: 1px solid #777777;
