@@ -246,7 +246,14 @@ if ($result)
 
       if ($user->societe_id == 0)
 	{
-	  print "<TD align=\"center\"><a href=\"addpropal.php3?socidp=$obj->idp&action=create\">[Propal]</A></td>\n";
+	  if ($user->rights->propale->creer)
+	    {
+	      print "<TD align=\"center\"><a href=\"addpropal.php3?socidp=$obj->idp&action=create\">[Propal]</A></td>\n";
+	    }
+	  else
+	    {
+	      print "<td>&nbsp;</td>\n";
+	    }
 	  if ($conf->fichinter->enabled)
 	    {
 	      print "<TD align=\"center\"><a href=\"../fichinter/fiche.php3?socidp=$obj->idp&action=create\">[Fiche Inter]</A></td>\n";
