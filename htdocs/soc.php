@@ -155,7 +155,9 @@ elseif ($action == 'edit')
       print '</table>';
       print '</form>';
     }
-} else {
+}
+else
+{
   
   
   print_titre("Fiche société");
@@ -164,33 +166,33 @@ elseif ($action == 'edit')
   $soc->id = $socid;
   $soc->fetch($socid);
   
-  print '<table class="tablefsoc" border="1" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr><td width="20%">Nom</td><td class="valeur">'.$soc->nom.'</td></tr>';
-  print '<tr><td valign="top">Adresse</td><td class="valeur">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
-  print '<tr><td>CP</td><td class="valeur">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
+  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+  print '<tr><td width="20%">Nom</td><td colspan="3">'.$soc->nom.'</td></tr>';
+  print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
+  print '<tr><td>CP</td><td colspan="3">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
   
-  print '<tr><td>Tel</td><td class="valeur">'.$soc->tel.'</td></tr>';
-  print '<tr><td>Fax</td><td class="valeur">'.$soc->fax.'</td></tr>';
-  print '<tr><td>Web</td><td><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
+  print '<tr><td>Tel</td><td>'.$soc->tel.'</td>';
+  print '<td>Fax</td><td>'.$soc->fax.'</td></tr>';
+  print '<tr><td>Web</td><td colspan="3"><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
   
-  print '<tr><td>Siren</td><td>'.$soc->siren.'&nbsp;</td></tr>';
-  
+  print '<tr><td>Siren</td><td colspan="3"><a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;</td></tr>';
+
   if ($soc->client)
     {
-      print '<tr><td>Client</td><td>oui <a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
+      print '<tr><td>Client</td><td colspan="3">oui <a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
     }
   else
     {
-      print '<tr><td>Client</td><td>non</td></tr>';
+      print '<tr><td>Client</td><td colspan="3">non</td></tr>';
     }
   
   if ($soc->fournisseur)
     {
-      print '<tr><td>Fournisseur</td><td>oui <a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
+      print '<tr><td>Fournisseur</td><td colspan="3">oui <a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
     }
   else
     {
-      print '<tr><td>Fournisseur</td><td>non</td></tr>';
+      print '<tr><td>Fournisseur</td><td colspan="3">non</td></tr>';
     }
 
   print '</table>';
@@ -199,7 +201,7 @@ elseif ($action == 'edit')
    *
    */
   
-  print '<br><table class="tableab" width="100%" border="1" cellspacing="0" cellpadding="3">';
+  print '<br><table id="actions" width="100%" cellspacing="0" cellpadding="3">';
 
   print '<td width="20%" align="center">[<a href="soc.php?socid='.$socid.'&action=edit">Editer</a>]</td>';
   print '<td width="20%" align="center">-</td>';
