@@ -97,7 +97,7 @@ if ($result)
 	  print '<a href="fiche.php?rowid='.$objp->rowid.'">A valider</a>';
 	}
       print "</td>";
-      print "<TD><a href=\"edit.php?rowid=$objp->rowid\">Editer</a><br><a href=\"fiche.php?rowid=$objp->rowid&action=resign\">Resilier</a><br><a href=\"fiche.php?rowid=$objp->rowid&action=delete\">Supprimer</a></TD>\n";"
+      print "<TD><a href=\"edit.php?rowid=$objp->rowid\">Editer</a><br><a href=\"fiche.php?rowid=$objp->rowid&action=resign\">Resilier</a><br><a href=\"fiche.php?rowid=$objp->rowid&action=delete\">Supprimer</a></TD>\n";
       print "</tr>";
       $i++;
     }
