@@ -25,7 +25,7 @@ $info_box_head[] = array('text' => "Les 5 derniers services vendus");
 
 $info_box_contents = array();
 
-$sql = "SELECT s.nom,s.idp, p.label";
+$sql = "SELECT s.nom,s.idp, p.label, c.rowid";
 $sql .= " FROM llx_societe as s, llx_contrat as c, llx_product as p WHERE s.idp = c.fk_soc AND c.fk_product = p.rowid";  
 $sql .= " ORDER BY c.tms DESC ";
 /*
@@ -52,7 +52,7 @@ if ($result)
 
       $info_box_contents[$i][1] = array('align' => 'left',
 					'text' => $objp->label,
-					'url' => DOL_URL_ROOT."/comm/fiche.php3?socid=".$objp->idp);
+					'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);
 
       $i++;
     }
