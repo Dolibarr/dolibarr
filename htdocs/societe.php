@@ -170,16 +170,16 @@ if ($result)
   print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
   print '<tr class="liste_titre">';
   print '<td valign="right">';
-  print '<input type="text" name="search_nom" value="'.$search_nom.'">';
+  print '<input class="fat" type="text" name="search_nom" value="'.$search_nom.'">';
   print '</td>';
   print '<td valign="right">';
-  print '<input type="text" name="search_ville" value="'.$search_ville.'">';
+  print '<input class="fat" type="text" name="search_ville" value="'.$search_ville.'">';
   print '</td><td colspan="2" align="center">';
   print '<input type="submit" class="button" name="button_search" value="'.$langs->trans("Search").'">';
   print '&nbsp; <input type="submit" class="button" name="button_removefilter" value="'.$langs->trans("RemoveFilter").'">';
   print '</td>';
   print "</tr>\n";
-
+  print '</form>';
 
   $var=True;
 
