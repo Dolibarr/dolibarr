@@ -97,7 +97,7 @@ if ($action == 'add')
       $facture->amount = $amount;
       $facture->remise = $remise;
       
-      $facture->create($user->id, $statut, $note);
+      $facid = $facture->create($user->id, $statut, $note);
 
     }
   else
@@ -111,15 +111,17 @@ if ($action == 'add')
       $facture->remise   = $remise;
       $facture->propalid = $propalid;
 
-      if (! $facture->create($user->id) )
+      $facid = $facture->create($user->id);
+
+      if (! $facid )
 	{
 	  print "<p><b>Erreur : la facture n'a pas été créée, vérifier le numéro !</b>";
 	  print "<p>Retour à la <a href=\"propal.php3?propalid=$propalid\">propal</a>";
 	  print $db->error();
 	}
     }
-  $facid = $facid;
   $action = '';  
+
 }
 /*
  *
@@ -220,7 +222,7 @@ if ($action == 'create')
 	$numfa = facture_get_num(); // définit dans includes/modules/facture
 	
 	print "<form action=\"$PHP_SELF\" method=\"post\">";
-	print "<input type=\"hidden\" name=\"action\" value=\"add\">";
+	print '<input type="hidden" name="action" value="add">';
 	print "<input type=\"hidden\" name=\"socid\" value=\"$obj->idp\">";
 	
 	print '<table cellspacing="0" border="1" width="100%">';
@@ -417,8 +419,8 @@ else
 	    echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
 	    print "<TR class=\"liste_titre\">";
 	    print '<td width="62%">Description</td>';
-	    print '<td width="8%"align="center">Tva Tx</td>';
-	    print '<td width="8%"align="center">Quantité</td>';
+	    print '<td width="8%" align="center">Tva Tx</td>';
+	    print '<td width="8%" align="center">Quantité</td>';
 	    print '<td width="12%" align="right">Montant</TD><td width="10%">&nbsp;</td><td width="10%">&nbsp;</td>';
 	    print "</TR>\n";
 	    
@@ -462,7 +464,7 @@ else
 	      }
 	    
 	    $db->free();
-	    print "</table>";
+	    //	    print "</table>";
 	  } 
 	else
 	  {
@@ -476,22 +478,26 @@ else
 	if ($obj->statut == 0) 
 	  {
 	    print "<form action=\"$PHP_SELF?facid=$facid\" method=\"post\">";
-	    echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="1">';
+	    //	    echo '<TABLE border="1" width="100%" cellspacing="0" cellpadding="1">';
 	    print "<TR class=\"liste_titre\">";
-	    print "<td>Description</td>";
-	    print "<td>Quantité</td>";
-	    print "<td align=\"right\">Montant</TD>";
+	    print '<td width="62%">Description</td>';
+	    print '<td width="8%" align="center">Tva Tx</td>';
+	    print '<td width="8%" align="center">Quantité</td>';
+	    print '<td width="12%" align="right">Montant</TD>';
+	    print '<td>&nbsp;</td>';
+	    print '<td>&nbsp;</td>';
 	    print "</TR>\n";
 	    print '<input type="hidden" name="action" value="addligne">';
 	    print '<tr><td><textarea name="desc" cols="60" rows="3"></textarea></td>';
-	    print '<td><input type="text" name="qty" size="2"></td>';
-	    print '<td><input type="text" name="pu" size="8"></td>';
+	    print '<td align="center"><input type="text" name="tva_tx" size="4" value="19.6"></td>';
+	    print '<td align="center"><input type="text" name="qty" size="2"></td>';
+	    print '<td align="right"><input type="text" name="pu" size="8"></td>';
 	    print '</tr>';       
-	    print '<tr><td align="center" colspan="3"><input type="submit"></td></tr>';
-	    print "</table>";
+	    print '<tr><td align="center" colspan="3"><input type="submit" value="Ajouter"></td></tr>';
+	    //	    print "</table>";
 	    print "</form>";
 	  }
-	
+	print "</table>";
 	/*
 	 * Fin Ajout ligne
 	 *
