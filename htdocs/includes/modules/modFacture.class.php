@@ -43,7 +43,8 @@ include_once "DolibarrModules.class.php";
 class modFacture extends DolibarrModules
 {
 
-   /*!  \brief      Constructeur. Definit les noms, constantes et boites
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
     *   \param      DB      handler d'accès base
     */
   function modFacture($DB)
@@ -56,15 +57,20 @@ class modFacture extends DolibarrModules
     $this->description = "Gestion des factures";
     $this->const_name = "MAIN_MODULE_FACTURE";
     $this->const_config = MAIN_MODULE_FACTURE;
+    $this->special = 0;
+
+    // Dir
+    $this->dirs = array();
 
     // Dépendances
     $this->depends = array("modSociete","modComptabilite");
     $this->requiredby = array();
 
+    // Config pages
     $this->config_page_url = "facture.php";
 
+    // Constantes
     $this->const = array();
-    $this->boxes = array();
 
     $this->const[0][0] = "FAC_PDF_INTITULE";
     $this->const[0][1] = "chaine";
@@ -102,6 +108,8 @@ class modFacture extends DolibarrModules
     $this->const[8][2] = "pluton";
 
     // Boxes
+    $this->boxes = array();
+
     $this->boxes[0][0] = "Factures clients récentes impayées";
     $this->boxes[0][1] = "box_factures_imp.php";
 
@@ -116,9 +124,10 @@ class modFacture extends DolibarrModules
 
   }
 
-   /*!  \brief      Fonction d'activation. Insère en base les constantes, boites et permissions du module
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
     */
-		
   function init()
   {
 	  $this->remove();
@@ -136,9 +145,10 @@ class modFacture extends DolibarrModules
     return $this->_init($sql);
   }
 
-   /*!  \brief      Fonction de désactivation. Supprime de la base les constantes, boites et permissions du module
-    */
-		
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
+   */
   function remove()
   {
     $sql = array(

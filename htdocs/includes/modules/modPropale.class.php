@@ -42,11 +42,10 @@ include_once "DolibarrModules.class.php";
 class modPropale extends DolibarrModules
 {
 
-  /*
-   * Initialisation
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modPropale($DB)
   {
     $this->db = $DB ;
@@ -57,17 +56,18 @@ class modPropale extends DolibarrModules
     $this->description = "Gestion des propositions commerciales";
     $this->const_name = "MAIN_MODULE_PROPALE";
     $this->const_config = MAIN_MODULE_PROPALE;
+    $this->special = 0;
+
+    // Dir
+    $this->dirs = array();
 
     // Dépendances
     $this->depends = array("modSociete","modCommercial");
     $this->config_page_url = "propale.php";
 
+    // Constantes
     $this->const = array();
-    $this->boxes = array();
 
-    /*
-     *  Constantes
-     */
     $this->const[0][0] = "PROPALE_ADDON_PDF";
     $this->const[0][1] = "chaine";
     $this->const[0][2] = "rouge";
@@ -80,18 +80,16 @@ class modPropale extends DolibarrModules
     $this->const[1][3] = 'Nom du gestionnaire de numérotation des propales';
     $this->const[1][4] = 0;
 
-    /*
-     * Boites
-     */
+    // Boxes
+    $this->boxes = array();
     $this->boxes[0][0] = "Proposition commerciales";
     $this->boxes[0][1] = "box_propales.php";
   }
-  /*
-   *
-   *
-   *
-   */
 
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {       
     /*
@@ -115,9 +113,10 @@ class modPropale extends DolibarrModules
     return $this->_init($sql);
 
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

@@ -42,11 +42,10 @@ include_once "DolibarrModules.class.php";
 class modCommande extends DolibarrModules
 {
 
-  /*
-   * Initialisation
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modCommande($DB)
   {
     $this->db = $DB ;
@@ -57,6 +56,10 @@ class modCommande extends DolibarrModules
     $this->description = "Gestion des commandes";
     $this->const_name = "MAIN_MODULE_COMMANDE";
     $this->const_config = MAIN_MODULE_COMMANDE;
+    $this->special = 0;
+
+    // Dir
+    $this->dirs = array();
 
     // Config pages
     $this->config_page_url = "commande.php";
@@ -65,17 +68,19 @@ class modCommande extends DolibarrModules
     $this->depends = array();
     $this->requiredby = array();
 
+    // Constantes
     $this->const = array();
+
+    // Boxes
     $this->boxes = array();
     $this->boxes[0][0] = "Commandes";
     $this->boxes[0][1] = "box_commandes.php";
   }
-  /*
-   *
-   *
-   *
-   */
 
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
     /*
@@ -95,9 +100,11 @@ class modCommande extends DolibarrModules
     
     return $this->_init($sql);
   }
-  /*
-   *
-   *
+
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

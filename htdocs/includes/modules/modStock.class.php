@@ -40,11 +40,10 @@ include_once "DolibarrModules.class.php";
 class modStock extends DolibarrModules
 {
 
-  /*
-   * Initialisation
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modStock($DB)
   {
     $this->db = $DB ;
@@ -55,21 +54,27 @@ class modStock extends DolibarrModules
     $this->description = "Gestion des stocks";
     $this->const_name = "MAIN_MODULE_STOCK";
     $this->const_config = MAIN_MODULE_STOCK;
+    $this->special = 0;
+
+    // Dir
+    $this->dirs = array();
 
     // Dépendences
     $this->depends = array("modProduit");
     $this->requiredby = array();
 
+    // Constantes
     $this->const = array();
+    
+    // Boxes
     $this->boxes = array();
 
   }
-  /*
-   *
-   *
-   *
-   */
 
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
     /*
@@ -81,9 +86,10 @@ class modStock extends DolibarrModules
     
     return $this->_init($sql);
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

@@ -43,11 +43,10 @@ include_once "DolibarrModules.class.php";
 class modAdherent extends DolibarrModules
 {
 
-  /*
-   * Initialisation
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modAdherent($DB)
   {
     $this->db = $DB ;
@@ -58,6 +57,10 @@ class modAdherent extends DolibarrModules
     $this->description = "Gestion des adhérents d'une association";
     $this->const_name = "MAIN_MODULE_ADHERENT";
     $this->const_config = MAIN_MODULE_ADHERENT;
+    $this->special = 0;
+
+    // Dir
+    $this->dirs = array();
 
     // Config pages
     $this->config_page_url = "adherent.php";
@@ -66,9 +69,8 @@ class modAdherent extends DolibarrModules
     $this->depends = array();
     $this->requiredby = array();
 
+    // Constantes
     $this->const = array();
-    $this->boxes = array();
-
     $this->const[0]= array("ADHERENT_MAIL_RESIL","texte","Votre adhesion sur %SERVEUR% vient d'etre resilie.\r\nNous esperons vous revoir tres bientot","Mail de résiliation");
     $this->const[1]=array("ADHERENT_MAIL_VALID","texte","Votre adhesion vient d'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante : \r\n%SERVEUR%public/adherents/","Mail de validation");
     $this->const[2]= array("ADHERENT_MAIL_EDIT","texte","Voici le rappel des coordonnees que vous avez modifiees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\r\n%SERVEUR%public/adherents/","Mail d'edition");
@@ -104,13 +106,16 @@ class modAdherent extends DolibarrModules
     $this->const[32] = array("ADHERENT_BANK_ACCOUNT","chaine","","ID du Compte banquaire utilise");
     $this->const[33] = array("ADHERENT_BANK_CATEGORIE","chaine","","ID de la categorie banquaire des cotisations");
     $this->const[34] = array("ADHERENT_ETIQUETTE_TYPE","chaine","L7163","Type d etiquette (pour impression de planche d etiquette)");
-  }
-  /*
-   *
-   *
-   *
-   */
 
+    // Boites
+    $this->boxes = array();
+
+  }
+
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
     /*
@@ -127,9 +132,10 @@ class modAdherent extends DolibarrModules
     
     return $this->_init($sql);
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

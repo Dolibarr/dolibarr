@@ -40,11 +40,10 @@ include_once "DolibarrModules.class.php";
 class modPostnuke extends DolibarrModules
 {
 
-  /*
-   * Initialisation
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modPostnuke($DB)
   {
     $this->db = $DB ;
@@ -55,22 +54,26 @@ class modPostnuke extends DolibarrModules
     $this->description = "Gestion de l'outil Postnuke";
     $this->const_name = "MAIN_MODULE_POSTNUKE";
     $this->const_config = MAIN_MODULE_POSTNUKE;
-
     $this->special = 1;
+
+    // Dir
+    $this->dirs = array();
 
     // Dépendances
     $this->depends = array();
     $this->requiredby = array();
 
+    // Constantes
     $this->const = array();
+    
+    // Boxes
     $this->boxes = array();
   }
-  /*
-   *
-   *
-   *
-   */
 
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
     /*
@@ -82,9 +85,10 @@ class modPostnuke extends DolibarrModules
     
     return $this->_init($sql);
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

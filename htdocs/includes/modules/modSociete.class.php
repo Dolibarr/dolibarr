@@ -42,10 +42,10 @@ include_once "DolibarrModules.class.php";
 class modSociete extends DolibarrModules
 {
 
-  /*
-   * Initialisation
-   *
-   */
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modSociete($DB)
   {
     $this->db = $DB ;
@@ -56,20 +56,26 @@ class modSociete extends DolibarrModules
     $this->description = "Gestion des sociétés et contacts";
     $this->const_name = "MAIN_MODULE_SOCIETE";
     $this->const_config = MAIN_MODULE_SOCIETE;
+    $this->special = 0;
+
+    // Dir
+    $this->dirs = array();
 
     // Dépendances
     $this->depends = array();
     $this->requiredby = array("modFacture","modFournisseur","modFicheinter","modPropale","modContrat","modCommande");
 
+    // Constantes
     $this->const = array();
+
+    // Boxes
     $this->boxes = array();
   }
-  /*
-   *
-   *
-   *
-   */
 
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
     /*
@@ -85,9 +91,10 @@ class modSociete extends DolibarrModules
     
     return $this->_init($sql);
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

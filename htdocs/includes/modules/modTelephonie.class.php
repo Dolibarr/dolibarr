@@ -39,11 +39,10 @@ include_once "DolibarrModules.class.php";
 class modTelephonie extends DolibarrModules
 {
 
-  /** Initialisation de l'objet
-   *
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modTelephonie($DB)
   {
     $this->db = $DB ;
@@ -54,9 +53,9 @@ class modTelephonie extends DolibarrModules
     $this->description = "Gestion de la Telephonie (experimental)";
     $this->const_name = "MAIN_MODULE_TELEPHONIE";
     $this->const_config = MAIN_MODULE_TELEPHONIE;
-
     $this->special = 1;
 
+    // Dir
     $this->dirs = array();
 
     // Dépendances
@@ -66,12 +65,11 @@ class modTelephonie extends DolibarrModules
     $this->const = array();
     $this->boxes = array();
   }
-  /** initialisation du module
-   *
-   *
-   *
-   */
 
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
     /*
@@ -101,9 +99,10 @@ class modTelephonie extends DolibarrModules
 
 
   }
-  /** suppression du module
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

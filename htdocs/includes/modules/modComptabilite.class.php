@@ -42,11 +42,10 @@ include_once "DolibarrModules.class.php";
 class modComptabilite extends DolibarrModules
 {
 
-  /** Initialisation de l'objet
-   *
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modComptabilite($DB)
   {
     $this->db = $DB ;
@@ -68,12 +67,11 @@ class modComptabilite extends DolibarrModules
     $this->const = array();
     $this->boxes = array();
   }
-  /** initialisation du module
-   *
-   *
-   *
-   */
 
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
     /*
@@ -91,9 +89,10 @@ class modComptabilite extends DolibarrModules
     
     return $this->_init($sql);
   }
-  /** suppression du module
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

@@ -41,11 +41,10 @@ include_once "DolibarrModules.class.php";
 class modWebcalendar extends DolibarrModules
 {
 
-  /*
-   * Initialisation
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modWebcalendar($DB)
   {
     $this->db = $DB ;
@@ -56,6 +55,10 @@ class modWebcalendar extends DolibarrModules
     $this->description = "Gestion de l'outil Webcalendar";
     $this->const_name = "MAIN_MODULE_WEBCALENDAR";
     $this->const_config = MAIN_MODULE_WEBCALENDAR;
+    $this->special = 0;
+
+    // Dir
+    $this->dirs = array();
 
     // Config pages
     $this->config_page_url = "webcalendar.php";
@@ -67,12 +70,11 @@ class modWebcalendar extends DolibarrModules
     $this->const = array();
     $this->boxes = array();
   }
-  /*
-   *
-   *
-   *
-   */
 
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
     /*
@@ -84,9 +86,10 @@ class modWebcalendar extends DolibarrModules
     
     return $this->_init($sql);
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

@@ -39,11 +39,10 @@ include_once "DolibarrModules.class.php";
 class modPrelevement extends DolibarrModules
 {
 
-  /** Initialisation de l'objet
-   *
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modPrelevement($DB)
   {
     $this->db = $DB ;
@@ -54,7 +53,10 @@ class modPrelevement extends DolibarrModules
     $this->description = "Gestion des Prélèvements (experimental)";
     $this->const_name = "MAIN_MODULE_PRELEVEMENT";
     $this->const_config = MAIN_MODULE_PRELEVEMENT;
+    $this->special = 0;
 
+    // Dir
+    $this->dirs = array();
     $this->data_directory = DOL_DATA_ROOT . "/prelevement/bon/";
 
     // Dépendances
@@ -64,12 +66,11 @@ class modPrelevement extends DolibarrModules
     $this->const = array();
     $this->boxes = array();
   }
-  /** initialisation du module
-   *
-   *
-   *
-   */
 
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
     /*
@@ -85,42 +86,15 @@ class modPrelevement extends DolibarrModules
      * Documents
      *
      */
-    if (defined("DOL_DATA_ROOT"))
-	{
-	  $dir[0] = DOL_DATA_ROOT . "/prelevement/" ;
-	  $dir[1] = DOL_DATA_ROOT . "/prelevement/bon" ;
-	  
-	  for ($i = 0 ; $i < sizeof($dir) ; $i++)
-	    {
-	      if (is_dir($dir[$i]))
-		{
-		  dolibarr_syslog ("Le dossier '".$dir[$i]."' existe");
-		}
-	      else
-		{
-		  if (! @mkdir($dir[$i], 0755))
-		    {
-		      print "<tr><td>Impossible de créer : ".$dir[$i]."</td><td bgcolor=\"red\">Erreur</td></tr>";
-		      dolibarr_syslog ("Impossible de créer '".$dir[$i]);
-		      $error++;
-		    }
-		  else
-		    {
-		      dolibarr_syslog ("Le dossier '".$dir[$i]."' a ete créé");
-		    }
-		}
-	    }
-	}
-
+    $this->dirs[0] = DOL_DATA_ROOT . "/prelevement/" ;
+    $this->dirs[1] = DOL_DATA_ROOT . "/prelevement/bon" ;
 
     return $this->_init($sql);
-
-
-
   }
-  /** suppression du module
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

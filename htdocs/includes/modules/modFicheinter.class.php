@@ -42,11 +42,10 @@ include_once "DolibarrModules.class.php";
 class modFicheinter  extends DolibarrModules
 {
 
-  /*
-   * Initialisation
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modFicheinter($DB)
   {
     $this->db = $DB ;
@@ -57,6 +56,10 @@ class modFicheinter  extends DolibarrModules
     $this->description = "Gestion des fiches d'intervention";
     $this->const_name = "MAIN_MODULE_FICHEINTER";
     $this->const_config = MAIN_MODULE_FICHEINTER;
+    $this->special = 0;
+
+    // Dir
+    $this->dirs = array();
 
     // Config pages
     $this->config_page_url = "fichinter.php";
@@ -68,12 +71,11 @@ class modFicheinter  extends DolibarrModules
     $this->const = array();
     $this->boxes = array();
   }
-  /*
-   *
-   *
-   *
-   */
 
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
     /*
@@ -93,9 +95,10 @@ class modFicheinter  extends DolibarrModules
 
     return $this->_init($sql);
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

@@ -42,11 +42,10 @@ include_once "DolibarrModules.class.php";
 class modBoutique extends DolibarrModules
 {
 
-  /*
-   * Initialisation
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modBoutique($DB)
   {
     $this->db = $DB ;
@@ -57,9 +56,9 @@ class modBoutique extends DolibarrModules
     $this->description = "Gestion des boutiques";
     $this->const_name = "MAIN_MODULE_BOUTIQUE";
     $this->const_config = MAIN_MODULE_BOUTIQUE;
+    $this->special = 0;
 
-    $this->special = 1;
-
+    // Dir
     $this->dirs = array();
 
     // Config pages
@@ -69,19 +68,19 @@ class modBoutique extends DolibarrModules
     $this->depends = array();
     $this->requiredby = array();
 
+    // Constantes
     $this->const = array();
+
+    // Boxes
     $this->boxes = array();
-    /*
-     * Boites
-     */
     $this->boxes[0][0] = "Livres";
     $this->boxes[0][1] = "box_boutique_livre.php";
   }
-  /*
-   *
-   *
-   *
-   */
+  
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
     /*
@@ -92,9 +91,10 @@ class modBoutique extends DolibarrModules
  
     return $this->_init($sql);
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

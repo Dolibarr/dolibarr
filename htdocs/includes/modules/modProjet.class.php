@@ -42,11 +42,10 @@ include_once "DolibarrModules.class.php";
 class modProjet extends DolibarrModules
 {
 
-  /*
-   * Initialisation
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modProjet($DB)
   {
     $this->db = $DB ;
@@ -65,17 +64,13 @@ class modProjet extends DolibarrModules
     $this->const = array();
     $this->boxes = array();
   }
-  /*
-   *
-   *
-   *
-   */
 
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
-    /*
-     *  Activation du module
-     */
     /*
      * Permissions
      */
@@ -90,9 +85,10 @@ class modProjet extends DolibarrModules
     
     return $this->_init($sql);
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

@@ -41,11 +41,10 @@ include_once "DolibarrModules.class.php";
 class modFournisseur extends DolibarrModules
 {
 
-  /** Initialisation de l'objet
-   *
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modFournisseur($DB)
   {
     $this->db = $DB ;
@@ -56,22 +55,28 @@ class modFournisseur extends DolibarrModules
     $this->description = "Gestion des fournisseurs";
     $this->const_name = "MAIN_MODULE_FOURNISSEUR";
     $this->const_config = MAIN_MODULE_FOURNISSEUR;
+    $this->special = 0;
+
+    // Dir
+    $this->dirs = array();
 
     // Dépendances
     $this->depends = array("modSociete");
     $this->requiredby = array();
 
+    // Constantes
     $this->const = array();
+
+    // Boxes
     $this->boxes = array();
     $this->boxes[0][0] = "Derniers founisseurs";
     $this->boxes[0][1] = "box_fournisseurs.php";
   }
-  /** 
-   * initialisation du module
-   *
-   *
-   */
 
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
     /*
@@ -81,9 +86,10 @@ class modFournisseur extends DolibarrModules
   
     return $this->_init($sql);
   }
-  /** suppression du module
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {

@@ -39,11 +39,10 @@ include_once "DolibarrModules.class.php";
 class modContrat extends DolibarrModules
 {
 
-  /*
-   * Initialisation
-   *
-   */
-
+   /**
+    *   \brief      Constructeur. Definit les noms, constantes et boites
+    *   \param      DB      handler d'accès base
+    */
   function modcontrat($DB)
   {
     $this->db = $DB ;
@@ -54,6 +53,10 @@ class modContrat extends DolibarrModules
     $this->description = "Gestion des contrats de services";
     $this->const_name = "MAIN_MODULE_CONTRAT";
     $this->const_config = MAIN_MODULE_CONTRAT;
+    $this->special = 0;
+
+    // Dir
+    $this->dirs = array();
 
     // Dépendances
     $this->depends = array("modService");
@@ -63,12 +66,11 @@ class modContrat extends DolibarrModules
     $this->boxes = array();
 
   }
-  /*
-   *
-   *
-   *
-   */
 
+   /**
+    *   \brief      Fonction appelé lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
   function init()
   {
     /*
@@ -80,9 +82,10 @@ class modContrat extends DolibarrModules
   
     return $this->_init($sql);
   }
-  /*
-   *
-   *
+
+  /**
+   *    \brief      Fonction appelée lors de la désactivation d'un module.
+   *                Supprime de la base les constantes, boites et permissions du module.
    */
   function remove()
   {
