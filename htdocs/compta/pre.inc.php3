@@ -33,7 +33,7 @@ function llxHeader($head = "") {
 
   $menu = new Menu();
 
-  $menu->add("/compta/index.php3","Factures");
+  $menu->add("/compta/facture.php3","Factures");
   $menu->add_submenu("paiement.php3","Paiements");
   $menu->add_submenu("fac.php3","admin fac");
 
@@ -46,10 +46,14 @@ function llxHeader($head = "") {
   $menu->add_submenu("pointmort.php3","Point mort");
   $menu->add_submenu("tva.php3","TVA");
 
-  $menu->add("/comm/propal.php3","Propal");
+  $menu->add("/compta/propal.php3","Propales");
 
   $menu->add("bank/index.php3","Bank");
 
+  $menu->add("voyage/index.php3","Voyages");
+
+  $menu->add_submenu("voyage/index.php3","Voyages");
+  $menu->add_submenu("voyage/reduc.php3","Reduc");
 
   left_menu($menu->liste);
 

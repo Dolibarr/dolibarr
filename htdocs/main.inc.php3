@@ -86,8 +86,10 @@ function top_menu($head) {
 
   print '<TD width="15%" class="menu" align="center">-</TD>';
   print '<TD width="15%" class="menu" align="center">';
-  print '<a class="menu" href="'.$conf->webcal->url.'">Calendrier</a>';
-  print '</TD>';
+  if ($conf->webcal->enabled) {
+    print '<a class="menu" href="'.$conf->webcal->url.'">Calendrier</a>';
+  };
+  print '&nbsp;</TD>';
   print '<TD width="15%" class="menu" align="center">-</TD>';
 
   print '<TD width="10%" class="menu" align="center">'.$user->code.'</td>';
