@@ -36,31 +36,85 @@ class mod_codeclient_zebre
       return "Vérifie si le code client est de la forme ABCD5600. Les quatres premières lettres étant une représentation mnémotechnique, suivi du code postal en 2 chiffres et un numéro d'ordre pour la prise en compte des doublons.";
     }
 
-  function verif($db, $code)
+  function verif($db, &$code)
     { 
-      $res = 0;
 
+      if ($this->verif_syntax($code) == 0)
+	{	  
+	  $i = 1;
 
-      $code = strtoupper(trim($code));
+	  $is_dispo = $this->verif_dispo($db, $code);
 
-      if (strlen($code) <> 8)
-	{
-	  $res = -1;
+	  while ( $is_dispo <> 0 && $i < 99)
+	    {
+	      $arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	      
+	      $code = substr($code,0,6) . substr("00".$i, -2);
+	      
+	      $is_dispo = $this->verif_dispo($db, $code);
+	      
+	      $i++;
+	    }
+
+	  return $is_dispo;
+
 	}
       else
 	{
-	  if ($this->is_alpha(substr($code,0,4)) == 0 && $this->is_num(substr($code,4,4)) == 0 )
-	    {
-	      $res = 0;	      
-	    }
-	  else
-	    {
-	      $res = -2; 
-	    }
-
+	  retrun -1;
 	}
-      return $res;
+
     }
+
+  function verif_dispo($db, $code)
+  {
+    $sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
+    $sql .= " WHERE code_client = '".$code."'";
+
+    if ($db->query($sql))
+      {
+	if ($db->num_rows() == 0)
+	  {
+	    return 0;
+	  }
+	else
+	  {
+	    return -1;
+	  }
+      }
+    else
+      {
+	return -2;
+      }
+
+  }
+
+
+  function verif_syntax($code)
+  {
+    $res = 0;
+    
+    $code = strtoupper(trim($code));
+    
+    if (strlen($code) <> 8)
+      {
+	$res = -1;
+      }
+    else
+      {
+	if ($this->is_alpha(substr($code,0,4)) == 0 && $this->is_num(substr($code,4,4)) == 0 )
+	  {
+	    $res = 0;	      
+	  }
+	else
+	  {
+	    $res = -2; 
+	  }
+	
+      }
+    return $res;
+  }
+
 
   function is_alpha($str)
   {
