@@ -531,12 +531,9 @@ if ($propalid)
 		}
 	      print "</tr></table>";
 	    }
+
 	  /*
-	   *
-	   */
-	  
-	  /*
-	   * Send
+	   * Envoi de la propale par mail
 	   *
 	   */
 	  if ($action == 'send')
@@ -826,9 +823,8 @@ if ($propalid)
 	  
 	  $i++;
 	}
-      
-      
-      print "</TABLE>";
+            
+      print "</table>";
       $db->free();
     }
   else
