@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -445,6 +446,8 @@ class Facture
 	  $sql = "UPDATE llx_facture set facnumber='$numfa', fk_statut = 1, fk_user_valid = $user->id WHERE rowid = $rowid ;";
 	  $result = $this->db->query( $sql);
 
+	  if (! $result) { print "Err : ".$this->db->error(); return -1; }
+     
 	  /*
 	   * Notify
 	   *
