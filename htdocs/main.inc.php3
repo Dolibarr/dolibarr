@@ -138,7 +138,7 @@ if (defined("MAIN_MODULE_COMMANDE"))
   $conf->commande->enabled=MAIN_MODULE_COMMANDE;
 }
 
-if (defined("MAIN_MODULE_SOCIETE"))
+if (defined("MAIN_MODULE_SOCIETE") && MAIN_MODULE_SOCIETE)
 {
   $conf->societe = 1 ; 
 }
@@ -164,8 +164,10 @@ if (defined("MAIN_MODULE_FOURNISSEUR"))
   $conf->fournisseur->enabled=MAIN_MODULE_FOURNISSEUR;
 }
 
-if (defined("MAIN_MODULE_FICHEINTER"))
+if (defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
 {
+  require ($GLOBALS["DOCUMENT_ROOT"]."/includes/modules/fichinter/modules_fichinter.php");
+
   $conf->fichinter->enabled=MAIN_MODULE_FICHEINTER;
 }
 
