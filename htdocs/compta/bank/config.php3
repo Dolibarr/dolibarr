@@ -40,7 +40,7 @@ if ($action == 'del') {
 print "<b>Configuration</b>";
 
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
-print "<TR bgcolor=\"orange\">";
+print "<TR class=\"liste_titre\">";
 print "<td>id</td><td>Label</td><td>Description</TD>";
 print "<td align=\"left\">Number</a></TD>";
 print "</TR>\n";
