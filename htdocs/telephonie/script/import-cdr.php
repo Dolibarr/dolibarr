@@ -70,9 +70,9 @@ else
  *
  */
 
-$sql = "SELECT count(*)";
+$sql = "SELECT count(fichier)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
-$sql .= " WHERE fichier = '".$file."'";
+$sql .= " WHERE fichier = '".basename($file)."'";
 
 if ($db->query($sql))
 {  
@@ -105,9 +105,9 @@ else
  *
  */
 
-$sql = "SELECT count(*)";
+$sql = "SELECT count(fichier_cdr)";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
-$sql .= " WHERE fichier = '".$file."'";
+$sql .= " WHERE fichier_cdr = '".basename($file)."'";
 
 if ($db->query($sql))
 {  
@@ -131,6 +131,7 @@ if ($db->query($sql))
 else
 {
   dolibarr_syslog("Erreur SQL vérification du fichier dans les comm");
+  dolibarr_syslog($sql);
   exit ;
 }
 
@@ -187,7 +188,7 @@ if (is_readable($file))
 	      $sql .= ",'".ereg_replace('"','',$tarif_fourn)."'";
 	      $sql .= ",".ereg_replace(',','.',$montant);
 	      $sql .= ",".$duree_secondes;
-	      $sql .= ",'".ereg_replace('"','',$file)."'";
+	      $sql .= ",'".basename($file)."'";
 	      $sql .= " ,".$id_fourn;
 	      $sql .= ")";
 	      
