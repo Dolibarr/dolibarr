@@ -1201,7 +1201,10 @@ else
 	   */
 	  $sql = "SELECT id, ".$db->pdate("a.datea")." as da,  a.note, code ";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."user as u ";
-	  $sql .= " WHERE a.fk_user_author = u.rowid and a.fk_soc = $fac->socidp AND a.fk_action in (9,10) AND a.fk_facture = $fac->id";
+	  $sql .= " WHERE a.fk_user_author = u.rowid ";
+	  $sql .= " AND a.fk_action in (9,10) ";
+	  $sql .= " AND a.fk_soc = ".$fac->socidp ;
+	  $sql .= " AND a.fk_facture = ".$fac->id;
     
 	  $result = $db->query($sql);
 	  if ($result)
