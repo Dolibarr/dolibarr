@@ -41,7 +41,7 @@ if (! $num) {
 
   print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
   print "<TR class=\"liste_titre\">";
-  print "<td>Date</td><td>Description</TD>";
+  print "<td>Date</td>";
 
   print "</TR>\n";
  
@@ -56,7 +56,7 @@ if (! $num) {
     while ($i < $numrows) {
       $objp = $db->fetch_object( $i);
       $var=!$var;
-      print "<tr $bc[$var]><td><a href=\"$PHP_SELF?num=$objp->numr\">$objp->numr</a></td></tr>\n";
+      print "<tr $bc[$var]><td><a href=\"$PHP_SELF?num=$objp->numr&account=$account\">$objp->numr</a></td></tr>\n";
       $i++;
     }
   }
