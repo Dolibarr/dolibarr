@@ -29,7 +29,8 @@ NewPrice=New price
 ContractStatus=Contract status
 ContractStatusClosed=Closed
 ContractStatusRunning=Running
-ContractStatusRunningExpired=Running, expired
+ContractStatusExpired=expired
 ContractStatusOnHold=Not running
+ContractStatusToRun=A mettre en service
 ContractNotRunning=This contract is not running
 
