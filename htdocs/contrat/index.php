@@ -36,9 +36,10 @@ $langs->load("companies");
 
 llxHeader();
 
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
-$page=$_GET["page"];
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
+
 $statut=isset($_GET["statut"])?$_GET["statut"]:1;
 $socid=$_GET["socid"];
 
@@ -90,12 +91,12 @@ if ( $db->query($sql) )
   print '<table class="noborder" width="100%">';
 
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"index.php", "c.rowid");
-  print_liste_field_titre($langs->trans("Label"),"index.php", "p.label");
-  print_liste_field_titre($langs->trans("Company"),"index.php", "s.nom");
-  print_liste_field_titre($langs->trans("Status"),"index.php", "c.enservice","","",'align="center"');
-  print_liste_field_titre("Date Fin","index.php", "c.fin_validite","","",'align="center"');
-  print_liste_field_titre($langs->trans("Action"),"index.php", "c.next","","",'align="center"');
+  print_liste_field_titre($langs->trans("Ref"),"index.php", "c.rowid","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Label"),"index.php", "p.label","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"index.php", "s.nom","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Status"),"index.php", "c.enservice","","",'align="center"',$sortfield);
+  print_liste_field_titre("Date Fin","index.php", "c.fin_validite","","",'align="center"',$sortfield);
+  print '<td>'.$langs->trans("Action").'</td>';
   print "</tr>\n";
     
   $now=mktime();
