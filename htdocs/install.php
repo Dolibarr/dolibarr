@@ -2,6 +2,7 @@
 
 if ($HTTP_POST_VARS["action"] == "set")
 {
+  umask(0);
   print '<h2>Enregistrement des valeurs</h2>';
 
   print '<table cellspacing="0" cellpadding="4" border="1">';
@@ -88,7 +89,7 @@ if ($HTTP_POST_VARS["action"] == "set")
 		    }
 		  else
 		    {
-		      if (! @mkdir($dir[$i]))
+		      if (! @mkdir($dir[$i], 0755))
 			{
 			  print "<tr><td>Impossible de créer : ".$dir[$i]."</td><td>Erreur</td></tr>";
 			  $error++;
