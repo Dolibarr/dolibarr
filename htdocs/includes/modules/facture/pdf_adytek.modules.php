@@ -45,15 +45,19 @@ class pdf_adytek extends ModelePDFFactures {
    function write_pdf_file($facid)
     {
       global $user;
+        global $langs;
+        $langs->load("main");
+        $langs->load("bills");
+        $langs->load("products");
+
       $fac = new Facture($this->db,"",$facid);
       $fac->fetch($facid);
-
-      if (defined("FAC_OUTPUTDIR"))
+        if ($conf->facture->dir_output)
 	{
 
 			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 			$facref = str_replace($forbidden_chars,"_",$fac->ref);
-			$dir = FAC_OUTPUTDIR . "/" . $facref . "/" ;
+			$dir = $conf->facture->dir_output . "/" . $facref . "/" ;
 			$file = $dir . $facref . ".pdf";
 
 	  if (! file_exists($dir))
@@ -61,13 +65,14 @@ class pdf_adytek extends ModelePDFFactures {
 	      umask(0);
 	      if (! mkdir($dir, 0755))
 		{
-                    $this->error="Erreur: Le répertoire '$dir' n'existe pas et Dolibarr n'a pu le créer.";
+                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                     return 0;
 		}
 	    }
 
 	  if (file_exists($dir))
 	    {
+                // Initialisation facture vierge
 	      $pdf=new FPDF('P','mm','A4');
 	      $pdf->Open();
 	      $pdf->AddPage();
@@ -75,8 +80,8 @@ class pdf_adytek extends ModelePDFFactures {
 	      $this->_pagehead($pdf, $fac);
 
 	      $pdf->SetTitle($fac->ref);
-	      $pdf->SetSubject("Facture");
-	      $pdf->SetCreator("ADYTEK Dolibarr ".DOL_VERSION);
+                $pdf->SetSubject($langs->trans("Bill"));
+                $pdf->SetCreator("ADYTEK Dolibarr ".DOL_VERSION);
 	      $pdf->SetAuthor($user->fullname);
               $pdf->SetMargins(10, 10, 10);
               $pdf->SetAutoPageBreak(1,0);

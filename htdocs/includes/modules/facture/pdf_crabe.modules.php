@@ -57,7 +57,6 @@ class pdf_crabe extends ModelePDFFactures
     		\param	    facid	id de la facture à générer
     		\return	    int     1=ok, 0=ko
             \remarks Variables utilisées
-    		\remarks FAC_OUTPUTDIR
             \remarks FAC_PDF_LOGO
     		\remarks FACTURE_CODEPRODUITSERVICE
     		\remarks FACTURE_CHQ_NUMBER
@@ -75,21 +74,21 @@ class pdf_crabe extends ModelePDFFactures
     */
     function write_pdf_file($facid)
     {
-        global $user;
-        global $langs;
+        global $user,$langs,$conf;
+
         $langs->load("main");
         $langs->load("bills");
         $langs->load("products");
 
-        $fac = new Facture($this->db,"",$facid);
-        $fac->fetch($facid);
-        if (defined("FAC_OUTPUTDIR"))
+        if ($conf->facture->dir_output)
         {
+            $fac = new Facture($this->db,"",$facid);
+            $fac->fetch($facid);
 
-					$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
-					$facref = str_replace($forbidden_chars,"_",$fac->ref);
-					$dir = FAC_OUTPUTDIR . "/" . $facref . "/" ;
-					$file = $dir . $facref . ".pdf";
+			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
+			$facref = str_replace($forbidden_chars,"_",$fac->ref);
+			$dir = $conf->facture->dir_output . "/" . $facref;
+			$file = $dir . "/" . $facref . ".pdf";
 
             if (! file_exists($dir))
             {

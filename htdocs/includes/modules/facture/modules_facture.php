@@ -119,7 +119,9 @@ function facture_pdf_create($db, $facid, $message="")
 
       if ( $obj->write_pdf_file($facid) > 0)
 	{
-	  return 1;
+        // Succès de la création de la facture. On génère le fichier meta
+        facture_meta_create($db, $_GET["facid"]);
+        return 1;
 	}
       else
 	{
@@ -135,28 +137,35 @@ function facture_pdf_create($db, $facid, $message="")
     }
 }
 
-/*!
-  \brief      Créé un meta fichier à côté de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payée ou compliquée à gérer ... avec un rgrep c'est vite fait bien fait [eric seigne]
-  \param	    db  		objet base de donnée
-  \param	    facid		id de la facture à créer
+/**
+        \brief      Créé un meta fichier à côté de la facture sur le disque pour faciliter les recherches en texte plein. Pourquoi ? tout simplement parcequ'en fin d'exercice quand je suis avec mon comptable je n'ai pas de connexion internet "rapide" pour retrouver en 2 secondes une facture non payée ou compliquée à gérer ... avec un rgrep c'est vite fait bien fait [eric seigne]
+        \param	    db  		objet base de donnée
+        \param	    facid		id de la facture à créer
+        \param      message     message
 */
 function facture_meta_create($db, $facid, $message="")
 {
+    global $langs,$conf;
+    
   $fac = new Facture($db,"",$facid);
   $fac->fetch($facid);  
   $fac->fetch_client();
-  if (defined("FAC_OUTPUTDIR"))
+
+  if ($conf->facture->dir_output)
     {
-      $dir = FAC_OUTPUTDIR . "/" . $fac->ref . "/" ;
-      $file = $dir . $fac->ref . ".meta";
+      $dir = $conf->facture->dir_output . "/" . $fac->ref ;
+      $file = $dir . "/" . $fac->ref . ".meta";
+
       if (! file_exists($dir))
-	{
-	  umask(0);
-	  if (! mkdir($dir, 0755))
-	    {
-	      print "Impossible de créer $dir !";
-	    }
-	}
+        {
+            umask(0);
+            if (! mkdir($dir, 0755))
+            {
+                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                return 0;
+            }
+        }
+
       if (file_exists($dir))
 	{
 	  $nblignes = sizeof($fac->lignes);

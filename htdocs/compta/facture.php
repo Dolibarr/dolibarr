@@ -343,7 +343,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
     {
 			$forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 			$facref = str_replace($forbidden_chars,"_",$fac->ref);
-			$file = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
+			$file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
       
       if (is_readable($file))
 	{
@@ -432,10 +432,8 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 if ($_GET["action"] == 'pdf')
 {
   // Generation de la facture définie dans /includes/modules/facture/modules_facture.php
+  // Génère également le fichier meta dans le m$eme répertoire (pour faciliter les recherches et indexation)
   facture_pdf_create($db, $_GET["facid"]);
-  // Plus ajout des meta informations dans le même répertoire pour faciliter les
-  //recherches en texte plein (grep etc.)
-  facture_meta_create($db, $_GET["facid"]);
 } 
 
 
@@ -592,7 +590,7 @@ if ($_GET["action"] == 'create')
 		  dolibarr_print_error($db);
 		}
 	      	      
-	      print '<table class="noborder" cellspacing="0" cellpadding="2">';
+	      print '<table class="noborder">';
 	      print '<tr><td>Services/Produits prédéfinis</td><td>'.$langs->trans("Qty").'</td><td>'.$langs->trans("Discount").'</td><td> &nbsp; &nbsp; </td>';
 	      if ($conf->service->enabled) {
 		print '<td>Si produit de type service à durée limitée</td></tr>';
@@ -647,7 +645,7 @@ if ($_GET["action"] == 'create')
 		}
 	      else
 		{
-		  print "$sql";
+		  dolibarr_print_error($db);
 		}
 	    }
 	  /*
@@ -664,7 +662,7 @@ if ($_GET["action"] == 'create')
 	       */
 	      print_titre("Produits");
 	      
-	      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
+	      print '<table class="noborder" width="100%">';
 	      print '<tr class="liste_titre"><td>'.$langs->trans("Ref").'</td><td>Produit</td>';
 	      print '<td align="right">'.$langs->trans("Price").'</td><td align="center">Remise</td><td align="center">Qté.</td></tr>';
 	      
@@ -710,7 +708,7 @@ if ($_GET["action"] == 'create')
 		}
 	      else
 		{
-		  print $sql;
+		  dolibarr_print_error($db);
 		}
 
 	      print '</table>';
@@ -753,7 +751,7 @@ if ($_GET["action"] == 'create')
 		}
 	      else
 		{
-		  print $sql;
+		  dolibarr_print_error($db);
 		}
 
 	      print '</table>';
@@ -1068,7 +1066,6 @@ else
 		}
 	    
 	      $db->free();
-	      //	    print "</table>";
 	    } 
 	  else
 	    {
@@ -1148,7 +1145,7 @@ else
 			}		  	
 		    }
 		}
-	      print "  <a class=\"tabAction\" href=\"facture.php?facid=$fac->id&amp;action=pdf\">".$langs->trans("RebuildPDF")."</a>\n";
+
 	      // Supprimer
 	      if ($fac->statut == 0 && $user->rights->facture->supprimer && $_GET["action"] != 'delete')
 		{
@@ -1207,7 +1204,7 @@ else
 
 	  $forbidden_chars=array("/","\\",":","*","?","\"","<",">","|","[","]",",",";","=");
 	  $facref = str_replace($forbidden_chars,"_",$fac->ref);
-	  $file = FAC_OUTPUTDIR . "/" . $facref . "/" . $facref . ".pdf";
+	  $file = $conf->facture->dir_output . "/" . $facref . "/" . $facref . ".pdf";
        
 	  print "<table width=\"100%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
 
@@ -1226,7 +1223,7 @@ else
 	      print '</tr>';
 	     
 
-	      $dir = FAC_OUTPUTDIR . "/" . $facref . "/";
+	      $dir = $conf->facture->dir_output . "/" . $facref . "/";
 	      $handle=opendir($dir);
 
 	      while (($file = readdir($handle))!==false)
