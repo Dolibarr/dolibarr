@@ -140,8 +140,8 @@ class Contact
 		  $info["objectclass"][1] = "person";
 		  $info["objectclass"][2] = "organizationalPerson";
 		  */
-		  $info["objectclass"][0] = "inetOrgPerson";
-		  $info["objectclass"][1] = "phpgwContact"; // compatibilite egroupware
+		  $info["objectclass"] = "inetOrgPerson";
+		  // $info["objectclass"][1] = "phpgwContact"; // compatibilite egroupware
 
 		  // add data to directory
 		  $dn = utf8_encode("cn=".$this->old_firstname." ".$this->old_name).", ".LDAP_SERVER_DN ;
