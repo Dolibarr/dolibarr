@@ -80,7 +80,6 @@ if ($action == 'del' && $account && $user->rights->banque->modifier)
 
 llxHeader();
 
-//print "<p>Page: $page - Account: " . $_GET["account"] . " - " . $HTTP_POST_VARS["account"]."</p>\n";
 
 if ($account > 0)
 {
@@ -94,8 +93,6 @@ if ($account > 0)
     }
   $acct = new Account($db);
   $acct->fetch($account);
-  print_titre("Journal de trésorerie du compte : " .$acct->label);
-  print '<br>';
 
   // Chargement des categories dans $options
   $sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
@@ -118,21 +115,21 @@ if ($account > 0)
    *
    *
    */
-  if ($HTTP_POST_VARS["req_desc"]) 
+  if ($_POST["req_desc"]) 
     { 
-      $sql_rech = " AND lower(b.label) like '%".strtolower($HTTP_POST_VARS["req_desc"])."%'";
+      $sql_rech = " AND lower(b.label) like '%".strtolower($_POST["req_desc"])."%'";
       $mode_search = 1;
     }
   else 
     {
   	  $mode_search = 0;
     }
+
   /*
    *
    *
    */
   $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."bank as b WHERE 1=1";
-//  $sql .= " AND b.dateo <= now()";
   $sql .= " AND b.fk_account=".$acct->id;
 
   $sql .= $sql_rech;
@@ -166,30 +163,34 @@ if ($account > 0)
       $page = 0;
       $limitsql = $nbline;
     }
-  //print "$page $viewline $nbline $limitsql";
 
   /*
    * Formulaire de recherche
    *
    */  
+  $mesg='';
+  $nbpage=round($total_lines/$viewline)+($total_lines % $viewline > 0?1:0);  // Nombre de page total
+  if ($limitsql > $viewline)
+    {
+      $mesg.='<a href="account.php?account='.$acct->id.'&amp;page='.($page+1).'">'.img_previous().'</a>';
+    }
+  $mesg.= ' Page '.($nbpage-$page).'/'.$nbpage.' ';
+  if ($total_lines > $limitsql )
+    {
+      $mesg.= '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).'">'.img_next().'</a>';
+    }
+  print_fiche_titre("Journal de trésorerie du compte : " .$acct->label,$mesg);
+  print '<br>';
+
   print '<form method="post" action="'.$PHP_SELF.'">';
   print '<input type="hidden" name="action" value="search">';
   print '<input type="hidden" name="account" value="' . $acct->id . '">';
   print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
   print "<tr>";
-  print '<td>';
-  if ($limitsql > $viewline)
-    {
-      print '<a href="account.php?account='.$acct->id.'&amp;page='.($page+1).'"><img alt="Page précédente" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0"></a>';
-    }
-  if ($total_lines > $limitsql )
-    {
-      print '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).'"><img alt="Page suivante" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0"></a>';
-    }
-  print '</td>';
-  print '<td colspan="3"><input type="text" name="req_desc" value="'.$HTTP_POST_VARS["req_desc"].'" size="40"></TD>';
-  print '<td align="right"><input type="text" name="req_debit" value="'.$HTTP_POST_VARS["req_debit"].'" size="6"></TD>';
-  print '<td align="right"><input type="text" name="req_credit" value="'.$HTTP_POST_VARS["req_credit"].'" size="6"></TD>';
+  print '<td>&nbsp;</td>';
+  print '<td colspan="3"><input type="text" name="req_desc" value="'.$_POST["req_desc"].'" size="40"></TD>';
+  print '<td align="right"><input type="text" name="req_debit" value="'.$_POST["req_debit"].'" size="6"></TD>';
+  print '<td align="right"><input type="text" name="req_credit" value="'.$_POST["req_credit"].'" size="6"></TD>';
   print '<td align="center"><input type="submit" value="Chercher"></td>';
   print '<td align="center">';
   if ($user->rights->banque->modifier)

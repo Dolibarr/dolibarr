@@ -29,29 +29,29 @@ if (!$user->admin && !$user->rights->compta->bank)
 
 llxHeader();
 
-if ($HTTP_POST_VARS["action"] == 'add')
+if ($_POST["action"] == 'add')
 {
   $account = new Account($db,0);
 
-  $account->bank          = $HTTP_POST_VARS["bank"];
-  $account->label         = $HTTP_POST_VARS["label"];
+  $account->bank          = $_POST["bank"];
+  $account->label         = $_POST["label"];
 
-  $account->courant       = $HTTP_POST_VARS["courant"];
-  $account->clos          = $HTTP_POST_VARS["clos"];
+  $account->courant       = $_POST["courant"];
+  $account->clos          = $_POST["clos"];
 
-  $account->code_banque   = $HTTP_POST_VARS["code_banque"];
-  $account->code_guichet  = $HTTP_POST_VARS["code_guichet"];
-  $account->number        = $HTTP_POST_VARS["number"];
-  $account->cle_rib       = $HTTP_POST_VARS["cle_rib"];
-  $account->bic           = $HTTP_POST_VARS["bic"];
-  $account->iban_prefix   = $HTTP_POST_VARS["iban_prefix"];
-  $account->domiciliation = $HTTP_POST_VARS["domiciliation"];
+  $account->code_banque   = $_POST["code_banque"];
+  $account->code_guichet  = $_POST["code_guichet"];
+  $account->number        = $_POST["number"];
+  $account->cle_rib       = $_POST["cle_rib"];
+  $account->bic           = $_POST["bic"];
+  $account->iban_prefix   = $_POST["iban_prefix"];
+  $account->domiciliation = $_POST["domiciliation"];
 
-  $account->proprio 	  = $HTTP_POST_VARS["proprio"];
-  $account->adresse_proprio = $HTTP_POST_VARS["adresse_proprio"];
+  $account->proprio 	  = $_POST["proprio"];
+  $account->adresse_proprio = $_POST["adresse_proprio"];
 
-  $account->solde         = $HTTP_POST_VARS["solde"];
-  $account->date_solde    = mktime(12,0,0,$HTTP_POST_VARS["remonth"],$HTTP_POST_VARS["reday"],$HTTP_POST_VARS["reyear"]);
+  $account->solde         = $_POST["solde"];
+  $account->date_solde    = mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 
   $id = $account->create($user->id);
 }
@@ -61,22 +61,22 @@ if ($action == 'update')
   $account = new Account($db, $id);
   $account->fetch($id);
 
-  $account->bank         = $HTTP_POST_VARS["bank"];
-  $account->label        = $HTTP_POST_VARS["label"];
+  $account->bank         = $_POST["bank"];
+  $account->label        = $_POST["label"];
 
-  $account->courant      = $HTTP_POST_VARS["courant"];
-  $account->clos         = $HTTP_POST_VARS["clos"];
+  $account->courant      = $_POST["courant"];
+  $account->clos         = $_POST["clos"];
 
-  $account->code_banque  = $HTTP_POST_VARS["code_banque"];
-  $account->code_guichet = $HTTP_POST_VARS["code_guichet"];
-  $account->number       = $HTTP_POST_VARS["number"];
-  $account->cle_rib      = $HTTP_POST_VARS["cle_rib"];
-  $account->bic          = $HTTP_POST_VARS["bic"];
-  $account->iban_prefix  = $HTTP_POST_VARS["iban_prefix"];
-  $account->domiciliation = $HTTP_POST_VARS["domiciliation"];
+  $account->code_banque  = $_POST["code_banque"];
+  $account->code_guichet = $_POST["code_guichet"];
+  $account->number       = $_POST["number"];
+  $account->cle_rib      = $_POST["cle_rib"];
+  $account->bic          = $_POST["bic"];
+  $account->iban_prefix  = $_POST["iban_prefix"];
+  $account->domiciliation = $_POST["domiciliation"];
 
-  $account->proprio 	 = $HTTP_POST_VARS["proprio"];
-  $account->adresse_proprio = $HTTP_POST_VARS["adresse_proprio"];
+  $account->proprio 	 = $_POST["proprio"];
+  $account->adresse_proprio = $_POST["adresse_proprio"];
 
   $account->update($id, $user);
 }
@@ -158,9 +158,18 @@ else
       $account = new Account($db, $id);
       $account->fetch($id);
 
-      print '<div class="titre">Compte bancaire</div><br>';
+    /*
+     * Affichage onglets
+     */
+    $h = 0;
+    
+    $head[$h][0] = DOL_URL_ROOT."$PHP_SELF";
+    $head[$h][1] = "Compte bancaire $account->number";
+    $h++;
 
-      print '<table border="1" cellpadding="3" cellspacing="0">';
+      dolibarr_fiche_head($head, $hselected);
+
+      print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
       
       print '<tr><td valign="top">Banque</td>';
       print '<td colspan="3">'.$account->bank.'</td></tr>';
@@ -204,23 +213,22 @@ else
       print "</td></tr>\n";
 
       print '</table>';
+      print '<br>';
 
-      print '<br><table width="100%" border="1" cellspacing="0" cellpadding="2">';
+      print '</div>';
+     
+    /*
+     * Barre d'actions
+     *
+     */
+    print '<div class="tabsAction">';
 
       if ($user->admin) 
 	{
-	  print '<td width="25%" bgcolor="#e0E0E0" align="center">[<a href="fiche.php?action=edit&id='.$id.'">Editer</a>]</td>';
-	}
-      else
-	{
-	  print '<td width="25%" align="center">-</td>';
+	  print '<a class="tabAction" href="fiche.php?action=edit&id='.$id.'">Editer</a>';
 	}
 
-      print '<td width="25%" align="center">-</td>';
-      print '<td width="25%" align="center">-</td>';
-      print '<td width="25%" align="center">-</td>';
-
-      print '</table><br>';
+    print '</div>';
 
     }
 

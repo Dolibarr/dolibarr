@@ -38,6 +38,7 @@ if ($_GET["bid"] == 0)
    *   Liste
    */
   print_titre("Budgets");
+  print '<br>';
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
   print "<tr class=\"liste_titre\">";

@@ -30,6 +30,7 @@ if (!$user->admin && !$user->rights->compta->bank)
 llxHeader();
 
 print_titre("Configuration");
+print '<br>';
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
 print "<tr class=\"liste_titre\">";

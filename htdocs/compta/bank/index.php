@@ -31,6 +31,7 @@ if (!$user->rights->banque->lire)
 llxHeader();
 
 print_titre ("Comptes bancaires");
+print '<br>';
 
 $sql = "SELECT rowid, label,number,bank FROM ".MAIN_DB_PREFIX."bank_account";
 

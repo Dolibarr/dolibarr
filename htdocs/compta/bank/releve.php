@@ -50,11 +50,12 @@ llxHeader();
 $acct = new Account($db);
 $acct->fetch($_GET["account"]);
 
+
 if (! isset($_GET["num"]))
 {
   /*
    *
-   * Vue liste
+   * Vue liste tous relevés confondus
    *
    *
    */
@@ -78,7 +79,8 @@ if (! isset($_GET["num"]))
       $i = 0; 
       
       print_barre_liste("Relevés bancaires, compte : <a href=\"account.php?account=".$acct->id."\">".$acct->label."</a>", $page, $PHP_SELF,"&amp;account=$account",$sortfield,$sortorder,'',$numrows);
-
+      print '<br>';
+      
       print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
       print "<tr class=\"liste_titre\">";
       print "<td>Relevé</td></tr>";
@@ -102,11 +104,12 @@ if (! isset($_GET["num"]))
 else
 {
   /*
-   * Vue d'un releves
+   * Vue d'un releve
    *
    */
-  if ($rel == 'prev')
+  if ($_GET["rel"] == 'prev')
     {
+      // Recherche valeur pour num = numéro relevé précédent
       $sql = "SELECT distinct(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve < ".$_GET["num"]." AND fk_account = $account ORDER BY num_releve DESC";
       $result = $db->query($sql);
       if ($result)
@@ -121,8 +124,9 @@ else
 	    }
 	}
     }
-  elseif ($rel == 'next')
+  elseif ($_GET["rel"] == 'next')
     {
+      // Recherche valeur pour num = numéro relevé précédent
       $sql = "SELECT distinct(num_releve) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve > ".$_GET["num"]." AND fk_account = $account ORDER BY num_releve ASC";
       $result = $db->query($sql);
       if ($result)
@@ -137,26 +141,30 @@ else
 	    }
 	}
     }
+  else {
+    // On veut le relevé num
+    $num=$_GET["num"];
+  }
 
-  print_titre('Relevé num&eacute;ro '.$_GET["num"].', compte : <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>');
+  $mesprevnext ="<a href=\"$PHP_SELF?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_previous()."</a>";
+  $mesprevnext.=" Relevé $num ";
+  $mesprevnext.="<a href=\"$PHP_SELF?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_next()."</a>";
+  print_fiche_titre('Relevé numéro '.$num.', compte : <a href="account.php?account='.$acct->id.'">'.$acct->label.'</a>',$mesprevnext);
   
-  print "<table border=0 width=100%><tr><td>&nbsp;</td>";
-  print "<td align=right><a href=\"$PHP_SELF?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">&lt;- Relevé précédent</a>";
-  print "&nbsp; - &nbsp;<a href=\"$PHP_SELF?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">Relevé suivant -&gt;</a></td></tr>";
-  print "</table>";
+
   print "<form method=\"post\" action=\"$PHP_SELF\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   print '<table class="border" width="100%" cellspacing="0" cellpadding="2">';
-  print "<TR class=\"liste_titre\">";
-  print '<td>Date Ope</td><td>Valeur</td><td>Type</td><td width="30%">Description</TD>';
-  print '<td align="right">Debit</TD>';
-  print '<td align="right">Credit</TD>';
-  print '<td align="right">Solde</TD>';
+  print "<tr class=\"liste_titre\">";
+  print '<td>Date Ope</td><td>Valeur</td><td>Type</td><td width="30%">Description</td>';
+  print '<td align="right">Debit</td>';
+  print '<td align="right">Credit</td>';
+  print '<td align="right">Solde</td>';
   print '<td>&nbsp;</td>';
-  print "</TR>\n";
+  print "</tr>\n";
  
 
-  $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve < ".$_GET["num"]." AND fk_account = ".$acct->id;
+  $sql = "SELECT sum(amount) FROM ".MAIN_DB_PREFIX."bank WHERE num_releve < $num AND fk_account = ".$acct->id;
   if ( $db->query($sql) )
     {
       $total = $db->result (0, 0);
@@ -166,8 +174,8 @@ else
 
   $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
   $sql .= " FROM ".MAIN_DB_PREFIX."bank as b WHERE";
-  $sql .= " num_releve='".$_GET["num"]."'";
-  if (! $_GET["num"]) {
+  $sql .= " num_releve='".$num."'";
+  if (! $num) {
   	$sql .= " or num_releve is null";
   }
   $sql .= " AND fk_account = ".$acct->id;
@@ -178,7 +186,7 @@ else
       $var=True;  
       $numrows = $db->num_rows();
       $i = 0; 
-      print "<tr><td colspan=\"3\"><a href=\"$PHP_SELF?num=".$_GET["num"]."&amp;ve=1&amp;rel=$rel&amp;account=".$acct->id."\">Vue etendue</a></td>";
+      print "<tr><td colspan=\"3\"><a href=\"$PHP_SELF?num=$num&amp;ve=1&amp;rel=$rel&amp;account=".$acct->id."\">Vue etendue</a></td>";
       print "<td align=\"right\" colspan=\"2\">&nbsp;</td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
 
       while ($i < $numrows)
@@ -189,14 +197,14 @@ else
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  
-	  print '<td>'.strftime("%d %b %Y",$objp->do).'</td><td valign="center">';
+	  print '<td>'.dolibarr_print_date($objp->do).'</td><td valign="center">';
 
 	  /* Mise à jour de la date de valeur */
 
-	  print '<a href="releve.php?action=dvprev&amp;num='.$_GET["num"].'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
+	  print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
 	  print img_previous() . "</a> ";
 	  print strftime("%d/%m/%Y",$objp->dv) ." ";
-	  print '<a href="releve.php?action=dvnext&amp;num='.$_GET["num"].'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
+	  print '<a href="releve.php?action=dvnext&amp;num='.$num.'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
 	  print img_next();
 
 	  print "</td>\n";

@@ -55,6 +55,7 @@ if ($action == 'add')
 }
 
 print_titre("Virement");
+print '<br>';
 
 print "<form method=\"post\" action=\"$PHP_SELF\">";
 

@@ -44,6 +44,7 @@ function valeur($sql)
 
 
 print_titre("Bilan");
+print '<br>';
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="2">';
 print "<tr class=\"liste_titre\">";
