@@ -313,7 +313,6 @@ class Facture
       $client = new Societe($this->db);
       $client->fetch($this->socidp);
       $this->client = $client;
-	
     }
   /**
    * Valide la facture
