@@ -58,7 +58,7 @@ class modComptabilite extends DolibarrModules
     $this->const_config = MAIN_MODULE_COMPTABILITE;
 
     // Config pages
-	$this->config_page_url = "compta.php";
+    $this->config_page_url = "compta.php";
 
     // Dépendances
     $this->depends = array();
@@ -66,6 +66,8 @@ class modComptabilite extends DolibarrModules
 
     // Constantes
     $this->const = array();
+
+    $this->dirs = array();
 
     // Boites
     $this->boxes = array();
@@ -93,6 +95,13 @@ class modComptabilite extends DolibarrModules
 		 "$isq (96,'Paramétrer la ventilation','compta','ventilation','param','r',0);",
 		 "$isq (97,'Ventiler les lignes de facture','compta','ventiler',NULL,'r',0);"
 		 );
+
+
+    // Dir
+    $this->dirs[0] = DOL_DATA_ROOT."/compta/";
+    $this->dirs[1] = DOL_DATA_ROOT."/compta/export/";
+    
+
     
     return $this->_init($sql);
   }
