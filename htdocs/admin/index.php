@@ -58,8 +58,16 @@ if ($action == 'modtheme')
     {
       if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 	{
-	  print '<option value="'.$file.'">'.$file;
+	  if ($file == MAIN_THEME)
+	    {
+	      print '<option value="'.$file.'" SELECTED>'.$file;
+	    }
+	  else
+	    {
+	      print '<option value="'.$file.'">'.$file;
+	    }
 	}
+      
     }
   print '</td><td><input type="submit" value="Enregistrer"></td></form>';
 }
