@@ -65,7 +65,7 @@ if ($result)
   while ($i < $num)
     {
       $objp = $db->fetch_object( $i);
-      $pdf->Add_PDF_card(sprintf("%s\n%s\n%s\n%s\n%s, %s\n%s", $objp->type." n°".$objp->rowid,ucfirst(strtolower($objp->prenom))." ".strtoupper($objp->nom),"<".$objp->email.">", ucwords(strtolower($objp->adresse)), $objp->cp, strtoupper($objp->ville), ucfirst(strtolower($objp->pays))),$annee,"Association FreeLUG http://www.freelug.org/");
+      $pdf->Add_PDF_card(sprintf("%s\n%s\n%s\n%s\n%s, %s\n%s", $objp->type." n° ".$objp->rowid,ucfirst(strtolower($objp->prenom))." ".strtoupper($objp->nom),"<".$objp->email.">", ucwords(strtolower($objp->adresse)), $objp->cp, strtoupper($objp->ville), ucfirst(strtolower($objp->pays))),$annee,"Association FreeLUG http://www.freelug.org/");
       $i++;
     }
   // On imprime les étiquettes
