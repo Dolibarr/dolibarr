@@ -161,7 +161,7 @@ class MenuTop {
             $langs->load("suppliers");
         
             $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "supplier")
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "suppliers")
             {
                 $class='class="tmenu" id="sel"';
             }
@@ -174,7 +174,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=supplier"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a>';
+            print '<a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a>';
         }
         
         
