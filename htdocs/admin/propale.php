@@ -120,7 +120,7 @@ if ($handle)
 
 	  $modPropale = new $file;
 
-	  print '<tr><td>'.$file."</td><td>\n";
+	  print '<tr class="pair"><td>'.$file."</td><td>\n";
 	  print $modPropale->info();
 	  print '</td><td align="center">';
 	  
@@ -195,7 +195,7 @@ while (($file = readdir($handle))!==false)
       $name = substr($file, 12, strlen($file) - 24);
       $classname = substr($file, 0, strlen($file) -12);
 
-      print '<tr><td>';
+      print '<tr class="pair"><td>';
       echo "$name";
       print "</td><td>\n";
       require_once($dir.$file);

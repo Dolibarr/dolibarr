@@ -72,7 +72,7 @@ if ($bid == 0)
 	}
       $db->free();
 
-      print '<tr><td colspan="2" align="right">Total</td>';
+      print "<tr $bc[1]>".'<td colspan="2" align="right">Total</td>';
       print '<td align="right"><b>'.price($total).'</b></td><td colspan="2">&nbsp;</td></tr>';
     }
   else

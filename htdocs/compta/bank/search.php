@@ -45,7 +45,7 @@ print "</TR>\n";
 ?>
 
 <form method="post" action="search.php">
-<tr>
+<? print "<tr $bc[1]>"; ?>
 <td></td>
 <td>
 <input type="text" name="description">
@@ -157,7 +157,7 @@ if ($result) {
   }
   $db->free();
 } else {
-  print $db->error() ."<p>" . $sql;
+  print $db->error() .'<div class="div.titre">' . $sql .'</div';
 }
 
 

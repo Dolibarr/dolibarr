@@ -149,21 +149,21 @@ if ($action == 'create')
   print '<input type="hidden" name="type" value="'.$type.'">'."\n";
   print '<div class="titre">Nouveau '.$types[$type].'</div><br>'."\n";
       
-  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-  print "<tr>";
+  print '<table class="liste_titre" border="1" width="100%" cellspacing="0" cellpadding="4">';
+  print "<tr $bc[1]>";
   print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
-  print '<td>Libellé</td><td><input name="libelle" size="40" value=""></td></tr>';
-  print '<tr><td>Prix de vente</td><TD><input name="price" size="10" value=""></td></tr>';    
-  print '<tr><td>Taux TVA</td><TD>';
+  print "<tr $bc[0]>".'<td>Libellé</td><td><input name="libelle" size="40" value=""></td></tr>';
+  print "<tr $bc[1]>".'<td>Prix de vente</td><TD><input name="price" size="10" value=""></td></tr>';    
+  print "<tr $bc[0]>".'<td>Taux TVA</td><TD>';
   $html = new Form($db);
   print $html->select_tva("tva_tx");
   print '</td></tr>';    
-  print "<tr><td valign=\"top\">Description</td><td>";
+  print "<tr $bc[1]>".'<td valign="top">Description</td><td>';
   print '<textarea name="desc" rows="8" cols="50">';
   print "</textarea></td></tr>";
   if ($type == 1)
     {
-      print '<tr><td>Durée</td><TD><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'">';
+      print "<tr $bc[0]>".'<td>Durée</td><TD><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'">';
       print '<input name="duration_unit" type="radio" value="d">jour&nbsp;';
       print '<input name="duration_unit" type="radio" value="w">semaine&nbsp;';
       print '<input name="duration_unit" type="radio" value="m">mois&nbsp;';
@@ -171,7 +171,7 @@ if ($action == 'create')
       print '</td></tr>';
     }
   
-  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
+  print "<tr $bc[1]>".'<td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
   print '</table>';
   print '</form>';      
 }
@@ -185,7 +185,7 @@ else
       if ( $result )
 	{ 
 	  print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
-	  print '<tr class="liste_titre">';
+	  print "<tr $bc[1]>";
 	  print '<form action="liste.php?type='.$product->type.'" method="post">';
 	  print '<td valign="center">Réf : <input class="flat" type="text" size="10" name="sref">&nbsp;<input class="flat" type="submit" value="go"></td>';
 	  print '</form><form action="liste.php" method="post">';
@@ -196,7 +196,7 @@ else
 	  print_fiche_titre('Fiche '.$types[$product->type].' : '.$product->ref, $mesg);
       
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
-	  print "<tr>";
+	  print "<tr $bc[1]>";
 	  print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
 	  print '<td>';
 	  if ($product->envente)
@@ -210,19 +210,19 @@ else
 	  print '</td></tr>';
 	  print "<td>Libellé</td><td>$product->label</td>";
 	  print '<td><a href="stats/fiche.php?id='.$id.'">Statistiques</a></td></tr>';
-	  print '<tr><td>Prix de vente</td><TD>'.price($product->price).'</td>';
+	  print '<tr $bc[1]><td>Prix de vente</td><TD>'.price($product->price).'</td>';
 	  print '<td valign="top" rowspan="4">';
 	  print "Propositions commerciales : ".$product->count_propale();
 	  print "<br>Proposé à <b>".$product->count_propale_client()."</b> clients";
 	  print "<br>Factures : ".$product->count_facture();
 	  print '</td></tr>';
 
-	  print '<tr><td>Taux TVA</td><TD>'.$product->tva_tx.' %</td></tr>';
-	  print "<tr><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
+	  print "<tr $bc[1]>".'<td>Taux TVA</td><TD>'.$product->tva_tx.' %</td></tr>';
+	  print "<tr $bc[1]><td valign=\"top\">Description</td><td>".nl2br($product->description)."</td></tr>";
 
 	  if ($product->type == 1)
 	    {
-	      print '<tr><td>Durée</td><TD>'.$product->duration_value.'&nbsp;';
+	      print "<tr $bc[1]>".'<td>Durée</td><TD>'.$product->duration_value.'&nbsp;';
 	      if ($product->duration_value > 1)
 		{
 		  $plu = "s";
@@ -255,11 +255,11 @@ else
 	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update_price">';
 	  
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4"><tr>';
+	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 
-	  print '<tr><td width="20%">Prix de vente</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
+	  print "<tr $bc[1]>".'<td width="20%">Prix de vente</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
 
-	  print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
+	  print "<tr $bc[1]>".'<td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
 	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
 	  print '</table>';
 	  print '</form>';
@@ -274,16 +274,16 @@ else
 	  print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="update">';
 	  
-	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4"><tr>';
-	  print '<td width="20%">Référence</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
+	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+	  print "<tr $bc[1]>".'<td width="20%">Référence</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
 	  print '<td>Libellé</td><td colspan="2"><input name="libelle" size="40" value="'.$product->label.'"></td></tr>';
 
-	  print '<tr><td>Prix de vente</td><td>'.price($product->price).'</td></tr>';
-	  print '<tr><td>Taux TVA</td><td colspan="2">';
+	  print "<tr $bc[1]>".'<td>Prix de vente</td><td>'.price($product->price).'</td></tr>';
+	  print "<tr $bc[1]>".'<td>Taux TVA</td><td colspan="2">';
 	  $html = new Form($db);
 	  print $html->select_tva("tva_tx", $product->tva_tx);
 	  print '</td></tr>';
-	  print '<tr><td>Statut</td><td colspan="2">';
+	  print "<tr $bc[1]>".'<td>Statut</td><td colspan="2">';
 	  print '<select name="statut">';
 	  if ($product->envente)
 	    {
@@ -296,14 +296,14 @@ else
 	      print '<option value="0" SELECTED>Hors Vente</option>';
 	    }
 	  print '</td></tr>';
-	  print '<tr><td valign="top">Description</td><td colspan="2">';
+	  print "<tr $bc[1]>".'<td valign="top">Description</td><td colspan="2">';
 	  print '<textarea name="desc" rows="8" cols="50">';
 	  print $product->description;
 	  print "</textarea></td></tr>";
 
 	  if ($product->type == 1)
 	    {
-	      print '<tr><td>Durée</td><td colspan="2"><input name="duration_value" size="6" maxlength="5" value="'.$product->duration_value.'">';
+	      print "<tr $bc[1]>".'<td>Durée</td><td colspan="2"><input name="duration_value" size="6" maxlength="5" value="'.$product->duration_value.'">';
 	      switch ($product->duration_unit) 
 		{
 		case "d":
@@ -340,7 +340,7 @@ else
 	      print '</td></tr>';
 	    }
 
-	  print '<tr><td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
+	  print "<tr $bc[1]>".'<td colspan="3" align="center"><input type="submit" value="Enregistrer">&nbsp;';
 	  print '<input type="submit" name="cancel" value="Annuler"></td></tr>';
 	  print '</table>';
 	  print '</form>';
@@ -404,7 +404,7 @@ if ($id && $action == '' && $product->envente)
   print '<table width="100%" border="0" cellpadding="3" cellspacing="0">';
   if($user->rights->propale->creer)
     {
-      print '<tr><td width="50%" valign="top">';
+      print "<tr $bc[1]>".'<td width="50%" valign="top">';
       print_titre("Ajouter à ma proposition") . '</td>';
       if($user->rights->propale->creer)
 	{
@@ -412,7 +412,7 @@ if ($id && $action == '' && $product->envente)
 	  print_titre("Ajouter aux autres propositions") . '</td>';
 	}
       print '</tr>';
-      print '<tr><td width="50%" valign="top">';
+      print "<tr $bc[1]>".'<td width="50%" valign="top">';
       $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.ref,".$db->pdate("p.datep")." as dp";
       $sql .= " FROM llx_societe as s, llx_propal as p";
       $sql .=" WHERE p.fk_soc = s.idp AND p.fk_statut = 0 AND p.fk_user_author = ".$user->id;
@@ -458,13 +458,13 @@ if ($id && $action == '' && $product->envente)
 	      print '<form method="POST" action="fiche.php?id='.$id.'">';
 	      print '<input type="hidden" name="action" value="addinpropal">';
 	      print '<table border="1" width="100%" cellpadding="3" cellspacing="0">';
-	      print "<tr><td>Autres Propositions</td><td>";
+	      print "<tr $bc[1]>".'<td>Autres Propositions</td><td>';
 	      $htmls->select_array("propalid", $otherprop);
 	      print '</td><td>';
 	      print '<input type="text" name="qty" size="3" value="1">';
 	      print '</td><td>';
 	      print '<input type="submit" value="Ajouter">';
-	      print "</td></tr>";
+	      print '</td></tr>';
 	      print '</table></form>';
 	    }
 	  print '</td>';
@@ -474,12 +474,12 @@ if ($id && $action == '' && $product->envente)
 
   if($user->rights->facture->creer)
     {
-      print '<tr><td width="50%" valign="top">';
+      print "<tr $bc[1]>".'<td width="50%" valign="top">';
       print_titre("Ajouter à ma facture");
       print '</td><td width="50%" valign="top">';
       print_titre("Ajouter aux autres factures");
       print '</td></tr>';
-      print '<tr><td width="50%" valign="top">';
+      print "<tr $bc[1]>".'<td width="50%" valign="top">';
       $sql = "SELECT s.nom, s.idp, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
       $sql .= " FROM llx_societe as s, llx_facture as f";
       $sql .=" WHERE f.fk_soc = s.idp AND f.fk_statut = 0 AND f.fk_user_author = ".$user->id;

@@ -46,7 +46,7 @@ if ($result)
   while ($i < $num) {
     $objp = $db->fetch_object( $i);
 
-    print "<tr><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td><td>$objp->bank&nbsp;</td><td>$objp->number&nbsp;</td><td align=\"center\">".$yn[$objp->clos]."</td></tr>";
+    print "<tr $bc[1]><td>$objp->rowid</td><td><a href=\"fiche.php?id=$objp->rowid\">$objp->label</a></td><td>$objp->bank&nbsp;</td><td>$objp->number&nbsp;</td><td align=\"center\">".$yn[$objp->clos]."</td></tr>";
 
 
     $i++;
@@ -56,7 +56,7 @@ if ($result)
 print "</table>";
 
 
-print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr $bc[1]>";
 
 /*
  * Case 1

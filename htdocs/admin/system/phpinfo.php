@@ -22,7 +22,7 @@
 require("./pre.inc.php");
 
 llxHeader();
-
+print "<div class=\"menus\">";
 if ($what == 'conf')
 {
   phpinfo(INFO_CONFIGURATION);
@@ -39,5 +39,6 @@ else
 {
   phpinfo();
 }
+print "</div>";
 llxfooter();
 ?>

@@ -43,10 +43,10 @@ if ($result)
 
   print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">";
 
-  print '<TR>';
+  print "<tr $bc[1]>";
   print '<td>Nombre de dons</td><td align="right">'.$i.'</td></tr>';
-  print '<tr><td>Total</td><td align="right">'.price($total).'</td>';
-  print '<tr><td>Moyenne</td><td align="right">'.price($total / $i).'</td>';
+  print "<tr $bc[0]>".'<td>Total</td><td align="right">'.price($total).'</td>';
+  print "<tr $bc[1]>".'<td>Moyenne</td><td align="right">'.price($total / $i).'</td>';
   print "</tr>";
 
   print "</table>";

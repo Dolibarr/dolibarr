@@ -196,7 +196,7 @@ foreach ($modules as $key => $value)
   $const_value = $modules[$key][2];
   $desc = $modules[$key][3];
 
-  print '<tr><td>';
+  print '<tr class="pair"><td>';
   echo "$titre";
   print "</td><td>\n";
   echo "$desc";

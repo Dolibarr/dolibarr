@@ -144,7 +144,7 @@ if ($action == 'create')
   print '<form action="'.$PHP_SELF.'" method="post">';
   print '<input type="hidden" name="action" value="add">';
   print '<table cellspacing="0" cellpadding="3" border="1" width="100%">';
-  print '<tr><td>Société :</td>';
+  print "<tr $bc[1]>".'<td>Société :</td>';
 
   print '<td><select name="socidp">';
 
@@ -174,51 +174,51 @@ if ($action == 'create')
   print '</select></td>';
   print "<td>Commentaires :</td></tr>";
 
-  print '<tr><td>Numéro :</td><td><input name="facnumber" type="text"></td>';
+  print "<tr $bc[1]>".'<td>Numéro :</td><td><input name="facnumber" type="text"></td>';
 
   print '<td rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="30" rows="6"></textarea></td></tr>';
 
-  print '<tr><td>Libellé :</td><td><input size="30" name="libelle" type="text"></td></tr>';
+  print "<tr $bc[1]>".'<td>Libellé :</td><td><input size="30" name="libelle" type="text"></td></tr>';
 
-  print '<tr><td>Date :</td><td>';
+  print "<tr $bc[1]>".'<td>Date :</td><td>';
   $html->select_date();
   print '</td></tr>';
   
-  print "<tr><td>Auteur :</td><td>".$user->fullname."</td></tr>";
+  print "<tr $bc[1]><td>Auteur :</td><td>".$user->fullname."</td></tr>";
 
   print "</table><br>";
   print '<table cellspacing="0" cellpadding="3" border="1" width="100%">';
-  print '<tr><td>&nbsp;</td><td>Libellé</td><td align="center">P.U.</td><td align="center">Qty</td><td align="center">Tx TVA</td></tr>';
+  print "<tr $bc[1]>".'<td>&nbsp;</td><td>Libellé</td><td align="center">P.U.</td><td align="center">Qty</td><td align="center">Tx TVA</td></tr>';
 
-  print '<tr><td>Ligne 1 :</td>';
+  print "<tr $bc[1]>".'<td>Ligne 1 :</td>';
   print '<td><input size="30" name="label1" type="text"></td>';
   print '<td align="center"><input type="text" size="8" name="amount1"></td>';
   print '<td align="center"><input type="text" size="3" name="qty1" value="1"></td><td align="center">';
   $html->select_tva("tauxtva1");
   print '</td></tr>';
 
-  print '<tr><td>Ligne 2 :</td>';
+  print "<tr $bc[1]>".'<td>Ligne 2 :</td>';
   print '<td><input size="30" name="label2" type="text"></td>';
   print '<td align="center"><input type="text" size="8" name="amount2"></td>';
   print '<td align="center"><input type="text" size="3" name="qty2" value="1"></td><td align="center">';
   $html->select_tva("tauxtva2");
   print '</td></tr>';
 
-  print '<tr><td>Ligne 3 :</td>';
+  print "<tr $bc[1]>".'<td>Ligne 3 :</td>';
   print '<td><input size="30" name="label3" type="text"></td>';
   print '<td align="center"><input type="text" size="8" name="amount3"></td>';
   print '<td align="center"><input type="text" size="3" name="qty3" value="1"></td><td align="center">';
   $html->select_tva("tauxtva3");
   print '</td></tr>';
 
-  print '<tr><td>Ligne 4 :</td>';
+  print "<tr $bc[1]>".'<td>Ligne 4 :</td>';
   print '<td><input size="30" name="label4" type="text"></td>';
   print '<td align="center"><input type="text" size="8" name="amount4"></td>';
   print '<td align="center"><input type="text" size="3" name="qty4" value="1"></td><td align="center">';
   $html->select_tva("tauxtva4");
   print '</td></tr>';
 
-  print '<tr><td colspan="5" align="center"><input type="submit" value="Enregistrer"></td></tr>';
+  print "<tr $bc[1]>".'<td colspan="5" align="center"><input type="submit" value="Enregistrer"></td></tr>';
   print "</form>";
   print "</table>";
   
@@ -262,13 +262,13 @@ else
 	  print '<input type="hidden" name="action" value="update">';
     
 	  print '<table cellspacing="0" border="1" width="100%">';
-	  print "<tr><td width=\"20%\">Société :</td>";
+	  print "<tr $bc[1]><td width=\"20%\">Société :</td>";
 	
 	  print '<td width="20%">'.stripslashes($obj->socnom);
 	  print '</td>';
 	  print '<td width="60%" valign="top">Commentaires :</tr>';
 	
-	  print '<tr><td valign="top">Numéro :</td><td valign="top">';
+	  print "<tr $bc[1]>".'<td valign="top">Numéro :</td><td valign="top">';
 	  print '<input name="facnumber" type="text" value="'.$obj->facnumber.'"></td>';
 	
 	  print '<td rowspan="8" width="60%" valign="top">';
@@ -276,20 +276,20 @@ else
 	  print stripslashes($obj->note);
 	  print '</textarea></td></tr>';
 
-	  print '<tr><td valign="top">Libellé :</td><td>';
+	  print "<tr $bc[1]>".'<td valign="top">Libellé :</td><td>';
 	  print '<input size="30" name="libelle" type="text" value="'.stripslashes($obj->libelle).'"></td></tr>';
     
-	  print '<tr><td>Montant HT :</td>';
+	  print "<tr $bc[1]>".'<td>Montant HT :</td>';
 	  print '<td valign="top">'.price($fac->total_ht).'</td></tr>';
         
-	  print "<tr><td>Date :</td><td>";
+	  print "<tr $bc[1]><td>Date :</td><td>";
 
 	  print_date_select($obj->df);
 
 	  print "</td></tr>";
     
-	  print "<tr><td>Auteur :</td><td>".'&nbsp;'."</td></tr>";
-	  print "<tr><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
+	  print "<tr $bc[1]><td>Auteur :</td><td>".'&nbsp;'."</td></tr>";
+	  print "<tr $bc[1]><td colspan=\"2\" align=\"center\"><input type=\"submit\" value=\"Enregistrer\"></td></tr>";
 	  print "</form>";
 	  print "</table>";
 
@@ -304,7 +304,7 @@ else
 	  print '<td align="right" class="small">Total TTC</td><td>&nbsp;</td></tr>';
 	  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 	    {
-	      print '<tr><td>'.$fac->lignes[$i][0]."</td>";
+	      print "<tr $bc[1]>".'<td>'.$fac->lignes[$i][0]."</td>";
 	      print '<td align="center">'.price($fac->lignes[$i][1])."</td>";
 	      print '<td align="center">'.$fac->lignes[$i][3]."</td>";
 	      print '<td align="center">'.price($fac->lignes[$i][4])."</td>";
@@ -318,7 +318,7 @@ else
 
 	  /* Nouvelle ligne */
 	  print "<form action=\"$PHP_SELF?facid=$obj->rowid&action=add_ligne\" method=\"post\">";
-	  print '<tr>';
+	  print "<tr $bc[1]>";
 	  print '<td>';
 	  print '<input size="30" name="label" type="text">';
 	  print '</td>';
@@ -346,24 +346,24 @@ else
 	   */
 	  
 	  print "<table border=\"0\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
-	  print '<tr><td width="50%" valign="top">';
+	  print "<tr $bc[1]>".'<td width="50%" valign="top">';
 	  /*
 	   *   Facture
 	   */
 	  print '<table border="1" cellspacing="0" cellpadding="2" width="100%">';
-	  print "<tr><td>Société</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$obj->socidp\">$obj->socnom</a></b></td>";
+	  print "<tr $bc[1]><td>Société</td><td colspan=\"3\"><b><a href=\"../fiche.php?socid=$obj->socidp\">$obj->socnom</a></b></td>";
 	  print "<td align=\"right\"><a href=\"index.php?socidp=$obj->socidp\">Autres factures</a></td>\n";
 	  print "</tr>";
-	  print "<tr><td>Date</td><td colspan=\"4\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
-	  print "<tr><td>Libelle</td><td colspan=\"4\">$obj->libelle</td>";
-	  print '<tr><td>Auteur</td><td colspan="4">'.$fac->author.'&nbsp;</td>';
+	  print "<tr $bc[1]><td>Date</td><td colspan=\"4\">".strftime("%A %d %B %Y",$obj->df)."</td></tr>\n";
+	  print "<tr $bc[1]><td>Libelle</td><td colspan=\"4\">$obj->libelle</td>";
+	  print "<tr $bc[1]>".'td>Auteur</td><td colspan="4">'.$fac->author.'&nbsp;</td>';
 	  
-	  print '<tr><td>&nbsp</td><td>Total HT</td><td align="right"><b>'.price($fac->total_ht)."</b></td>";
+	  print "<tr $bc[1]>".'<td>&nbsp</td><td>Total HT</td><td align="right"><b>'.price($fac->total_ht)."</b></td>";
 	  print '<td align="right">TVA</td><td align="right">'.price($fac->total_tva)."</td></tr>";
-	  print '<tr><td>&nbsp</td><td>Total TTC</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
+	  print "<tr $bc[1]>".'<td>&nbsp</td><td>Total TTC</td><td colspan="3" align="center">'.price($fac->total_ttc)."</td></tr>";
 	  if (strlen($obj->note))
 	    {
-	      print '<tr><td>Commentaires</td><td colspan="4">';
+	      print "<tr $bc[1]>".'<td>Commentaires</td><td colspan="4">';
 	      print nl2br(stripslashes($obj->note));
 	      print '</td></tr>';
 	    }
@@ -407,11 +407,11 @@ else
 		  $total = $total + $objp->amount;
 		  $i++;
 		}
-	      print "<tr><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>$_MONNAIE</td></tr>\n";
+	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>$_MONNAIE</td></tr>\n";
 	      
 	      $resteapayer = $fac->total_ttc - $total;
 	      
-	      print "<tr><td colspan=\"2\" align=\"right\">Reste a payer :</td>";
+	      print "<tr $bc[1]><td colspan=\"2\" align=\"right\">Reste a payer :</td>";
 	      print '<td align="right"><b>'.price($resteapayer)."</b></td><td>$_MONNAIE</td></tr>\n";
 	      
 	      print "</table>";
@@ -435,7 +435,7 @@ else
 	  print '<td align="right" class="small">Total TTC</td></tr>';
 	  for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 	    {
-	      print '<tr><td>'.$fac->lignes[$i][0]."</td>";
+	      print "<tr $bc[1]>".'<td>'.$fac->lignes[$i][0]."</td>";
 	      print '<td align="center">'.price($fac->lignes[$i][1])."</td>";
 	      print '<td align="center">'.$fac->lignes[$i][3]."</td>";  
 	      print '<td align="center">'.price($fac->lignes[$i][4])."</td>";  
@@ -455,7 +455,7 @@ else
        *
        */
 
-      print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+      print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr $bc[1]>";
   
       if ($obj->statut == 0 && $user->societe_id == 0)
 	{

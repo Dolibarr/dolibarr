@@ -632,7 +632,7 @@ if ($propalid)
 	    {
 	      print '<form action="propal.php?propalid='.$propalid.'" method="post">';
 	      print '<input type="hidden" name="action" value="setpdfmodel">';
-	      print '<tr><td>Modèle</td><td align="right">';
+	      print "<tr $bc[1]><td>Modèle</td><td align=\"right\">";
 
 	      $html = new Form($db);
 	      $modelpdf = new Propal_Model_pdf($db);

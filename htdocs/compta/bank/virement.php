@@ -57,8 +57,8 @@ print "<form method=\"post\" action=\"$PHP_SELF\">";
 print '<input type="hidden" name="action" value="add">';
 
 print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="2">';
-print "<tr><td>De</td><td>Vers</td><td>Date</td><td>Libelle</td><td>Montant</td></tr>";
-print "<tr><td>";
+print "<tr $bc[1]><td>De</td><td>Vers</td><td>Date</td><td>Libelle</td><td>Montant</td></tr>";
+print "<tr $bc[1]><td>";
 print "<select name=\"account_from\">";
 $sql = "SELECT rowid, label FROM llx_bank_account";
 $result = $db->query($sql);
@@ -102,7 +102,7 @@ print "<td><input name=\"label\" type=\"text\" size=40></td>";
 print "<td><input name=\"amount\" type=\"text\" size=8></td>";
 
 
-print '<tr><td colspan="5" align="center"><input type="submit" value="ajouter"</td></tr>';
+print "<tr $bc[1]>".'<td colspan="5" align="center"><input type="submit" value="ajouter"</td></tr>';
 
 print "</table></form>";
 

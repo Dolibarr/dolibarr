@@ -73,7 +73,7 @@ while (($file = readdir($handle))!==false)
       $name = substr($file, 4, strlen($file) -16);
       $classname = substr($file, 0, strlen($file) -12);
 
-      print '<tr><td>';
+      print '<tr class="pair"><td>';
       echo "$name";
       print "</td><td>\n";
       require_once($dir.$file);

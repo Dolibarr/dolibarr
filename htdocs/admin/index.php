@@ -40,9 +40,9 @@ print '<TR class="liste_titre">';
 print '<td>Nom</td><td>Valeur</td><td>Action</td>';
 print "</TR>\n";
 
-print '<tr><td>Version</td><td>' . DOL_VERSION . '</td><td>&nbsp;</td></tr>';
+print '<tr class="pair"><td>Version</td><td>' . DOL_VERSION . '</td><td>&nbsp;</td></tr>';
 
-print '<tr><td>theme</td>';
+print '<tr class="impair"><td>theme</td>';
 
 if ($action == 'modtheme')
 {
@@ -68,12 +68,12 @@ else
 print '<td>' . $conf->theme . '</td><td><a href="index.php?action=modtheme">Changer</a></td></tr>';
 }
 
-print '<tr><td>Document root</td><td>' . DOL_DOCUMENT_ROOT . '</td><td>&nbsp;</td></tr>';
+print '<tr class="pair"><td>Document root</td><td>' . DOL_DOCUMENT_ROOT . '</td><td>&nbsp;</td></tr>';
 
 print '<tr class="liste_titre"><td colspan="3">Base de données</td></tr>';
-print '<tr><td>Type</td><td>' . $conf->db->type . '</td><td>&nbsp;</td></tr>';
-print '<tr><td>Serveur</td><td>' . $conf->db->host . '</td><td>&nbsp;</td></tr>';
-print '<tr><td>Nom</td><td>' . $conf->db->name . '</td><td>&nbsp;</td></tr>';
+print '<tr class="pair"><td>Type</td><td>' . $conf->db->type . '</td><td>&nbsp;</td></tr>';
+print '<tr class="impair"><td>Serveur</td><td>' . $conf->db->host . '</td><td>&nbsp;</td></tr>';
+print '<tr class="pair"><td>Nom</td><td>' . $conf->db->name . '</td><td>&nbsp;</td></tr>';
 
 print '</table>';
 

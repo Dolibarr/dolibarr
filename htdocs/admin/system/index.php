@@ -29,18 +29,18 @@ print '<TR class="liste_titre">';
 print '<td>Nom</td><td>Valeur</td><td>Action</td>';
 print "</TR>\n";
 
-print '<tr><td>Version</td><td>' . DOL_VERSION . '</td><td>&nbsp;</td></tr>';
-print '<tr><td>css</td><td>' . $conf->css . '</td><td>&nbsp;</td></tr>';
-print '<tr><td>theme</td><td>' . $conf->theme . '</td><td>&nbsp;</td></tr>';
-print '<tr><td>document root</td><td>' . DOL_DOCUMENT_ROOT . '</td><td>&nbsp;</td></tr>';
+print "<tr $bc[1]><td>Version</td><td>" . DOL_VERSION . '</td><td>&nbsp;</td></tr>';
+print "<tr $bc[0]><td>css</td><td>" . $conf->css . '</td><td>&nbsp;</td></tr>';
+print "<tr $bc[1]><td>theme</td><td>" . $conf->theme . '</td><td>&nbsp;</td></tr>';
+print "<tr $bc[0]><td>document root</td><td>" . DOL_DOCUMENT_ROOT . '</td><td>&nbsp;</td></tr>';
 
 
 print '<tr class="liste_titre"><td colspan="3">Database</td></tr>';
-print '<tr><td>type</td><td>' . $conf->db->type . '</td><td>&nbsp;</td></tr>';
-print '<tr><td>host</td><td>' . $conf->db->host . '</td><td>&nbsp;</td></tr>';
-print '<tr><td>user</td><td>' . $conf->db->user . '&nbsp;</td><td>&nbsp;</td></tr>';
-print '<tr><td>pass</td><td>' . $conf->db->pass . '&nbsp;</td><td>&nbsp;</td></tr>';
-print '<tr><td>Database name</td><td>' . $conf->db->name . '</td><td>&nbsp;</td></tr>';
+print "<tr $bc[1]><td>type</td><td>" . $conf->db->type . '</td><td>&nbsp;</td></tr>';
+print "<tr $bc[0]><td>host</td><td>" . $conf->db->host . '</td><td>&nbsp;</td></tr>';
+print "<tr $bc[1]><td>user</td><td>" . $conf->db->user . '&nbsp;</td><td>&nbsp;</td></tr>';
+print "<tr $bc[0]><td>pass</td><td>" . $conf->db->pass . '&nbsp;</td><td>&nbsp;</td></tr>';
+print "<tr $bc[1]><td>Database name</td><td>" . $conf->db->name . '</td><td>&nbsp;</td></tr>';
 
 print '</table>';
 

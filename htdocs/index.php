@@ -25,7 +25,7 @@ llxHeader();
 
 print_fiche_titre( "Dolibarr ".DOL_VERSION,'<a href="about.php">A propos</a>');
 
-print 'Connecté en tant que : <b>' . $user->prenom . ' ' . $user->nom .'</b> ['.$user->code.']';
+print '<div class="titre">Connecté en tant que : <b>' . $user->prenom . ' ' . $user->nom .'</b> ['.$user->code.']</div>';
 print "<br>";
 /*
  * Boites

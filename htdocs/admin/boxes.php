@@ -62,7 +62,7 @@ if ($result)
     {
       $obj = $db->fetch_object( $i);
 
-      print '<tr><td>'.$obj->name.'</td><td>' . $pos[$obj->position] . '</td><td>';
+      print '<tr class="pair"><td>'.$obj->name.'</td><td>' . $pos[$obj->position] . '</td><td>';
 
 
       print '<a href="'.$PHP_SELF.'?rowid='.$obj->rowid.'&action=delete">Supprimer</a>';
@@ -96,7 +96,7 @@ if ($result)
     {
       $obj = $db->fetch_object( $i);
 
-      print '<tr><td>'.$obj->name.'</td><td>' . $obj->file . '</td><td align="center">';
+      print '<tr class="pair"><td>'.$obj->name.'</td><td>' . $obj->file . '</td><td align="center">';
 
       if ($rowid == $obj->rowid && $action == 'edit')
 	{

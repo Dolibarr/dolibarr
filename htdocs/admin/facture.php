@@ -91,7 +91,7 @@ while (($file = readdir($handle))!==false)
 {
   if (is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
     {
-      print '<tr><td>';
+      print '<tr class="pair"><td>';
       echo "$file";
       print "</td><td>\n";
 
@@ -145,7 +145,7 @@ while (($file = readdir($handle))!==false)
       $name = substr($file, 4, strlen($file) -16);
       $classname = substr($file, 0, strlen($file) -12);
 
-      print '<tr><td>';
+      print '<tr class="pair"><td>';
       echo "$name";
       print "</td><td>\n";
       require_once($dir.$file);
@@ -190,7 +190,7 @@ print '<TR class="liste_titre">';
 print '<td>Nom</td>';
 print '<td>&nbsp;</td>';
 print "</TR>\n";
-print '<tr><td><select name="value">';
+print '<tr class="pair"><td><select name="value">';
 print '<option value="0">Aucun</option>';
 $sql = "SELECT rowid, label FROM llx_bank_account";
 if ($db->query($sql))
@@ -228,8 +228,8 @@ print '<table border="1" cellpadding="3" cellspacing="0">';
 print '<TR class="liste_titre">';
 print '<td>Nom</td><td>Valeur</td>';
 print "</TR>\n";
-print '<tr><td>Répertoire</td><td>'.FAC_OUTPUTDIR.'</td></tr>';
-print '<tr><td>URL</td><td><a href="'.FAC_OUTPUT_URL.'">'.FAC_OUTPUT_URL.'</a></td></tr>';
+print '<tr class="pair"><td>Répertoire</td><td>'.FAC_OUTPUTDIR.'</td></tr>';
+print '<tr class="pair"><td>URL</td><td><a href="'.FAC_OUTPUT_URL.'">'.FAC_OUTPUT_URL.'</a></td></tr>';
 print "</table>";
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");

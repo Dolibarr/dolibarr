@@ -65,7 +65,7 @@ if ($action == 'save')
   
 print_fiche_titre("Configuration du lien vers un site syndiqué", $mesg);
   
-print "\n<p align=\"justify\">Attention, pour la récupération des données au format RSS, les urls en https ne marchent pas pour l'instant. </p>
+print "\n<div class=\"titre\"><p align=\"justify\">Attention, pour la récupération des données au format RSS, les urls en https ne marchent pas pour l'instant. </p>
 <p>Exemples:
  <ul>
   <li>WikiApril / http://wiki.april.org / http://wiki.april.org/RecentChanges?format=rss (et tous les sites phpwiki)</li>
@@ -75,7 +75,7 @@ print "\n<p align=\"justify\">Attention, pour la récupération des données au for
   <li>Parinux / http://parinux.org/ / http://parinux.org/backend.rss</li>
   <li>Docs d'AbulÉdu / http://docs.abuledu.org / http://docs.abuledu.org/backend.php3 (et tous les sites spip)</li>
  </ul>
-</p>
+</p></div>
 <form name=\"externalrssconfig\" action=\"" . $_SERVER['SCRIPT_NAME'] . "\" method=\"post\">
 <table border=\"1\" cellpadding=\"3\" cellspacing=\"0\">\n";
 
@@ -83,7 +83,7 @@ print "\n<p align=\"justify\">Attention, pour la récupération des données au for
 // ptet définir une variable pour NBMAX_RSS_EXTERNE ... modifier en fonction le fichier
 // ../pre.inc.php
 for($i = 0; $i < $nbexternalrss; $i++) {
-  print "<tr>
+  print "<tr class=\"pair\">
   <th colspan=\"2\">Syndication du site numéro " . ($i+1) . "</th>
 </tr>
 <tr>
@@ -127,7 +127,7 @@ if (defined("MAIN_MODULE_EXTERNAL_RSS") && MAIN_MODULE_EXTERNAL_RSS)
     {
       $href = $item['link'];
       $title = $item['title'];
-      print '<a href="'.$href.'">'.$title.'</a><br>';
+      print '<div class="titre"><a href="'.$href.'">'.$title.'</a></div><br>';
     }
 }
 

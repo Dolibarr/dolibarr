@@ -128,13 +128,13 @@ if ($action == 'create') {
   
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
   
-  print "<tr><td>Date du don</td><td>";
+  print "<tr $bc[1]>".'<td>Date du don</td><td>';
   print_date_select();
-  print "</td>";
+  print '</td>';
   
   print '<td rowspan="11" valign="top">Commentaires :<br>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"40\" rows=\"15\"></textarea></td></tr>";
-  print "<tr><td>Mode de paiement</td><td>\n";
+  print "<tr $bc[1]><td>Mode de paiement</td><td>\n";
   
   $paiement = new Paiement($db);
 
@@ -142,7 +142,7 @@ if ($action == 'create') {
 
   print "</td></tr>\n";
 
-  print "<tr><td>Projet</td><td><select name=\"projetid\">\n";
+  print "<tr $bc[1]><td>Projet</td><td><select name=\"projetid\">\n";
   
   $sql = "SELECT rowid, libelle FROM llx_don_projet ORDER BY rowid";
   
@@ -164,7 +164,7 @@ if ($action == 'create') {
   print "</select><br>";
   print "</td></tr>\n";
 
-  print "<tr><td>Don public</td><td><select name=\"public\">\n";
+  print "<tr $bc[1]><td>Don public</td><td><select name=\"public\">\n";
   
   print '<option value="1">oui</option>';
   print '<option value="0">non</option>';
@@ -172,16 +172,16 @@ if ($action == 'create') {
   print "</select><br>";
   print "</td></tr>\n";
 
-  print '<tr><td>Prénom</td><td><input type="text" name="prenom" size="40"></td></tr>';
-  print '<tr><td>Nom</td><td><input type="text" name="nom" size="40"></td></tr>';
-  print '<tr><td>Societe</td><td><input type="text" name="societe" size="40"></td></tr>';
-  print '<tr><td>Adresse</td><td>';
+  print "<tr $bc[1]>".'<td>Prénom</td><td><input type="text" name="prenom" size="40"></td></tr>';
+  print "<tr $bc[1]>".'<td>Nom</td><td><input type="text" name="nom" size="40"></td></tr>';
+  print "<tr $bc[1]>".'<td>Societe</td><td><input type="text" name="societe" size="40"></td></tr>';
+  print "<tr $bc[1]>".'<td>Adresse</td><td>';
   print '<textarea name="adresse" wrap="soft" cols="40" rows="3"></textarea></td></tr>';
-  print '<tr><td>CP Ville</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
-  print '<tr><td>Pays</td><td><input type="text" name="pays" size="40"></td></tr>';
-  print '<tr><td>Email</td><td><input type="text" name="email" size="40"></td></tr>';
-  print '<tr><td>Montant</td><td><input type="text" name="amount" size="10"> euros</td></tr>';
-  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
+  print "<tr $bc[1]>".'<td>CP Ville</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="40"></td></tr>';
+  print "<tr $bc[1]>".'<td>Pays</td><td><input type="text" name="pays" size="40"></td></tr>';
+  print "<tr $bc[1]>".'<td>Email</td><td><input type="text" name="email" size="40"></td></tr>';
+  print "<tr $bc[1]>".'<td>Montant</td><td><input type="text" name="amount" size="10"> euros</td></tr>';
+  print "<tr $bc[1]>".'<td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
   print "</form>\n";
   print "</table>\n";
   
@@ -203,7 +203,7 @@ if ($rowid > 0 && $action == 'edit')
   print "<form action=\"$PHP_SELF\" method=\"post\">";
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
   
-  print "<tr><td>Date du don</td><td>";
+  print "<tr $bc[1]><td>Date du don</td><td>";
   print strftime("%d %B %Y",$don->date);
   print "</td>";
   
@@ -212,7 +212,7 @@ if ($rowid > 0 && $action == 'edit')
 
   if ($don->statut == 1)
     {
-      print "<tr><td>Mode de paiement</td><td>";
+      print "<tr $bc[1]><td>Mode de paiement</td><td>";
       $paiement = new Paiement($db);
       $paiement->select("modepaiement","crédit", $don->modepaiementid);
       print "</td></tr>\n";
@@ -225,27 +225,27 @@ if ($rowid > 0 && $action == 'edit')
       print "</td></tr>\n";
     }
 
-  print '<tr><td>Projet</td><td>'.$don->projet.'</td></tr>';
+  print "<tr $bc[1]>".'<td>Projet</td><td>'.$don->projet.'</td></tr>';
 
-  print "<tr><td>Don public</td><td>";
+  print "<tr $bc[1]><td>Don public</td><td>";
 
   print $yn[$don->public];
   print "</td></tr>\n";
 
 
-  print '<tr><td>Prénom</td><td>'.$don->prenom.'&nbsp;</td></tr>';
-  print '<tr><td>Nom</td><td>'.$don->nom.'&nbsp;</td></tr>';
-  print '<tr><td>Société</td><td>'.$don->societe.'&nbsp;</td></tr>';
-  print '<tr><td>Adresse</td><td>'.nl2br($don->adresse).'&nbsp;</td></tr>';
-  print '<tr><td>CP Ville</td><td>'.$don->cp.' '.$don->ville.'&nbsp;</td></tr>';
-  print '<tr><td>Pays</td><td>'.$don->pays.'&nbsp;</td></tr>';
-  print '<tr><td>Email</td><td>'.$don->email.'&nbsp;</td></tr>';
-  print '<tr><td>Montant</td><td>'.price($don->amount).' euros</td></tr>';
+  print "<tr $bc[1]>".'<td>Prénom</td><td>'.$don->prenom.'&nbsp;</td></tr>';
+  print "<tr $bc[1]>".'<td>Nom</td><td>'.$don->nom.'&nbsp;</td></tr>';
+  print "<tr $bc[1]>".'<td>Société</td><td>'.$don->societe.'&nbsp;</td></tr>';
+  print "<tr $bc[1]>".'<td>Adresse</td><td>'.nl2br($don->adresse).'&nbsp;</td></tr>';
+  print "<tr $bc[1]>".'<td>CP Ville</td><td>'.$don->cp.' '.$don->ville.'&nbsp;</td></tr>';
+  print "<tr $bc[1]>".'<td>Pays</td><td>'.$don->pays.'&nbsp;</td></tr>';
+  print "<tr $bc[1]>".'<td>Email</td><td>'.$don->email.'&nbsp;</td></tr>';
+  print "<tr $bc[1]>".'<td>Montant</td><td>'.price($don->amount).' euros</td></tr>';
 
   print "</table>\n";
 
   
-  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr $bc[1]>";
   
   /*
    * Case 1
@@ -318,9 +318,9 @@ if ($rowid > 0 && $action == 'edit')
   print '<input type="hidden" name="action" value="commentaire">';
   print '<input type="hidden" name="rowid" value="'.$don->id.'">';
   print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-  print '<tr><td align="center">Commentaires</td></tr>';
-  print '<tr><td><textarea cols="60" rows="20" name="commentaire">'.$don->commentaire.'</textarea></td></tr>';
-  print '<tr><td align="center"><input type="submit" value="Enregistrer"></td></tr>';
+  print "<tr $bc[1]>".'<td align="center">Commentaires</td></tr>';
+  print "<tr $bc[1]>".'<td><textarea cols="60" rows="20" name="commentaire">'.$don->commentaire.'</textarea></td></tr>';
+  print "<tr $bc[1]>".'<td align="center"><input type="submit" value="Enregistrer"></td></tr>';
   print '</table></form>';
   
 }

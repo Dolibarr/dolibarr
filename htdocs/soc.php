@@ -89,26 +89,26 @@ if ($action == 'create')
   print '<input type="hidden" name="fournisseur" value="0">';
 
   print '<table border="1" cellpadding="3" cellspacing="0">';
-  print '<tr><td>Nom</td><td><input type="text" name="nom"></td></tr>';
-  print '<tr><td>Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
-  print '<tr><td>CP</td><td><input size="6" type="text" name="cp">&nbsp;';
+  print '<tr class="pair"><td>Nom</td><td><input type="text" name="nom"></td></tr>';
+  print '<tr class="impair"><td>Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
+  print '<tr class="pair"><td>CP</td><td><input size="6" type="text" name="cp">&nbsp;';
   print 'Ville&nbsp;<input type="text" name="ville"></td></tr>';
 
-  print '<tr><td>Tel</td><td><input type="text" name="tel"></td></tr>';
-  print '<tr><td>Fax</td><td><input type="text" name="fax"></td></tr>';
-  print '<tr><td>Web</td><td>http://<input type="text" name="url"></td></tr>';
+  print '<tr class="impair"><td>Tel</td><td><input type="text" name="tel"></td></tr>';
+  print '<tr class="pair"><td>Fax</td><td><input type="text" name="fax"></td></tr>';
+  print '<tr class="impair"><td>Web</td><td>http://<input type="text" name="url"></td></tr>';
 
-  print '<tr><td>Siren</td><td><input type="text" name="siren"></td></tr>';
+  print '<tr class="pair"><td>Siren</td><td><input type="text" name="siren"></td></tr>';
 
-  print '<tr><td>Client</td><td><select name="client">';
+  print '<tr class="impair"><td>Client</td><td><select name="client">';
   print_oui_non($soc->client);
   print '</select>';
 
-  print '<tr><td>Fournisseur</td><td><select name="fournisseur">';
+  print '<tr class="pair"><td>Fournisseur</td><td><select name="fournisseur">';
   print_oui_non($soc->fournisseur);
   print '</select>';
 
-  print '<tr><td colspan="2" align="center"><input type="submit" value="Ajouter"></td></tr>';
+  print '<tr class="impair"><td colspan="2" align="center"><input type="submit" value="Ajouter"></td></tr>';
   print '</table>';
   print '</form>';
 }
@@ -127,31 +127,31 @@ elseif ($action == 'edit')
       print '<input type="hidden" name="action" value="update">';
 
       print '<table border="1" cellpadding="3" cellspacing="0">';
-      print '<tr><td>Nom</td><td><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
-      print '<tr><td valign="top">Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft">';
+      print '<tr class="pair"><td>Nom</td><td><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
+      print '<tr class="impair"><td valign="top">Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft">';
       print $soc->adresse;
       print '</textarea></td></tr>';
       
-      print '<tr><td>CP</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
+      print '<tr class="pair"><td>CP</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
       print 'Ville&nbsp;<input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
       
-      print '<tr><td>Tel</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td></tr>';
-      print '<tr><td>Fax</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
-      print '<tr><td>Web</td><td>http://<input type="text" name="url" value="'.$soc->url.'"></td></tr>';
+      print '<tr class="impair"><td>Tel</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td></tr>';
+      print '<tr class="pair"><td>Fax</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
+      print '<tr class="impair"><td>Web</td><td>http://<input type="text" name="url" value="'.$soc->url.'"></td></tr>';
       
-      print '<tr><td>Siren</td><td><input type="text" name="siren" value="'.$soc->siren.'"></td></tr>';
+      print '<tr class="pair"><td>Siren</td><td><input type="text" name="siren" value="'.$soc->siren.'"></td></tr>';
       
-      print '<tr><td>Client</td><td><select name="client">';
+      print '<tr class="impair"><td>Client</td><td><select name="client">';
       print_oui_non($soc->client);
       print '</select>';
       
-      print '<tr><td>Fournisseur</td><td><select name="fournisseur">';
+      print '<tr class="pair"><td>Fournisseur</td><td><select name="fournisseur">';
       print_oui_non($soc->fournisseur);
       print '</select>';
       
       print '</td></tr>';
       
-      print '<tr><td align="center" colspan="2"><input type="submit" value="Mettre à jour"></td></tr>';
+      print '<tr class="impair"><td align="center" colspan="2"><input type="submit" value="Mettre à jour"></td></tr>';
       print '</table>';
       print '</form>';
     }
@@ -165,32 +165,32 @@ elseif ($action == 'edit')
   $soc->fetch($socid);
   
   print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
-  print '<tr><td width="20%">Nom</td><td class="valeur">'.$soc->nom.'</td></tr>';
-  print '<tr><td valign="top">Adresse</td><td class="valeur">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
-  print '<tr><td>CP</td><td class="valeur">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
+  print '<tr class="pair"><td width="20%">Nom</td><td class="valeur">'.$soc->nom.'</td></tr>';
+  print '<tr class="impair"><td valign="top">Adresse</td><td class="valeur">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
+  print '<tr class="pair"><td>CP</td><td class="valeur">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
   
-  print '<tr><td>Tel</td><td class="valeur">'.$soc->tel.'</td></tr>';
-  print '<tr><td>Fax</td><td class="valeur">'.$soc->fax.'</td></tr>';
-  print '<tr><td>Web</td><td><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
+  print '<tr class="impair"><td>Tel</td><td class="valeur">'.$soc->tel.'</td></tr>';
+  print '<tr class="pair"><td>Fax</td><td class="valeur">'.$soc->fax.'</td></tr>';
+  print '<tr class="impair"><td>Web</td><td><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
   
-  print '<tr><td>Siren</td><td>'.$soc->siren.'&nbsp;</td></tr>';
+  print '<tr class="pair"><td>Siren</td><td>'.$soc->siren.'&nbsp;</td></tr>';
   
   if ($soc->client)
     {
-      print '<tr><td>Client</td><td>oui <a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
+      print '<tr class="impair"><td>Client</td><td>oui <a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
     }
   else
     {
-      print '<tr><td>Client</td><td>non</td></tr>';
+      print '<tr class="impair"><td>Client</td><td>non</td></tr>';
     }
   
   if ($soc->fournisseur)
     {
-      print '<tr><td>Fournisseur</td><td>oui <a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
+      print '<tr class="impair"><td>Fournisseur</td><td>oui <a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$socid.'">Fiche</a></td></tr>';
     }
   else
     {
-      print '<tr><td>Fournisseur</td><td>non</td></tr>';
+      print '<tr class="impair"><td>Fournisseur</td><td>non</td></tr>';
     }
 
   print '</table>';

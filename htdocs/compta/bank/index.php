@@ -60,7 +60,7 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++)
     {
       $solde = $acc->solde();
   
-      print "<tr><td>";
+      print "<tr $bc[1]><td>";
       print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
     
       print "</td><td>$acc->bank</td><td>$acc->number</td>";
@@ -71,7 +71,7 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++)
     }
 }
 
-print '<tr><td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>euros</td></tr>';
+print "<tr $bc[1]>".'<td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>euros</td></tr>';
 print '<tr class="liste_titre"><td colspan="5">Dettes</td></tr>';
 /*
  * TVA
@@ -84,7 +84,7 @@ if ($conf->compta->tva)
 
   $total = $total + $tva_solde;
 
-  print '<tr><td colspan="3">TVA</td><td align="right">'.price($tva_solde).'</td><td>&nbsp;</td></tr>';
+  print "<tr $bc[1]>".'<td colspan="3">TVA</td><td align="right">'.price($tva_solde).'</td><td>&nbsp;</td></tr>';
 }
 /*
  * Charges sociales
@@ -95,12 +95,12 @@ $chs_a_payer = $chs->solde();
 
 $total = $total - $chs_a_payer;
 
-print '<tr><td colspan="3">URSSAF</td><td align="right">'.price($chs_a_payer).'</td><td>&nbsp;</td></tr>';
+print "<tr $bc[1]>".'<td colspan="3">URSSAF</td><td align="right">'.price($chs_a_payer).'</td><td>&nbsp;</td></tr>';
 /*
  *
  */
 
-print '<tr><td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>euros</td></tr>';
+print "<tr $bc[1]>".'<td colspan="3" align="right"><b>Total</b></td><td align="right"><b>'.price($total).'</b></td><td>euros</td></tr>';
 
 /*
  *
@@ -118,7 +118,7 @@ for ($i = 0 ; $i < sizeof($accounts) ; $i++) {
 
     $solde = $acc->solde();
   
-    print "<tr><td>";
+    print "<tr $bc[1]><td>";
     print '<a href="account.php?account='.$acc->id.'">'.$acc->label.'</a>';
     
     print "</td><td>$acc->bank</td><td>$acc->number</td>";

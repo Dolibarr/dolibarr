@@ -65,7 +65,7 @@ if ($result) {
   while ($i < $num) {
     $objp = $db->fetch_object( $i);
 
-    print "<tr>";
+    print "<tr $bc[1]>";
 
     $type = substr($objp->ref_commande, strlen($objp->ref_commande) - 2 );
     $id = substr($objp->ref_commande, 0 , strlen($objp->ref_commande) - 2 );

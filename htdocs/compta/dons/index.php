@@ -60,7 +60,7 @@ for ($i = 0 ; $i < 4 ; $i++)
   $total += $somme[$i];
   print "</tr>";
 }
-print '<tr><td>Total</td><td align="right">'.price($total).'</TD></tr>';
+print "<tr $bc[0]>".'<td>Total</td><td align="right">'.price($total).'</TD></tr>';
 print "</table>";
 
 
