@@ -23,9 +23,9 @@
  */
 
 /**
-    \file       htdocs/user/fiche.php
-    \brief      Onglet user et permissions de la fiche utilisateur
-    \version    $Revision$
+   \file       htdocs/user/fiche.php
+   \brief      Onglet user et permissions de la fiche utilisateur
+   \version    $Revision$
 */
 
 
@@ -41,14 +41,14 @@ $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
 if ($_GET["subaction"] == 'addrights' && $user->admin)
 {
-    $edituser = new User($db,$_GET["id"]);
-    $edituser->addrights($_GET["rights"]);
+  $edituser = new User($db,$_GET["id"]);
+  $edituser->addrights($_GET["rights"]);
 }
 
 if ($_GET["subaction"] == 'delrights' && $user->admin)
 {
-    $edituser = new User($db,$_GET["id"]);
-    $edituser->delrights($_GET["rights"]);
+  $edituser = new User($db,$_GET["id"]);
+  $edituser->delrights($_GET["rights"]);
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
@@ -67,41 +67,41 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
  */
 if ($_POST["action"] == 'add' && $user->admin)
 {
-    $message="";
-    if (! $_POST["nom"]) {
-            $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
-            $action="create";       // Go back to create page
+  $message="";
+  if (! $_POST["nom"]) {
+    $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
+    $action="create";       // Go back to create page
+  }
+  if (! $_POST["login"]) {
+    $message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
+    $action="create";       // Go back to create page
+  }
+  if (! $message) {
+    $edituser = new User($db,0);
+    
+    $edituser->nom           = trim($_POST["nom"]);
+    $edituser->note          = trim($_POST["note"]);
+    $edituser->prenom        = trim($_POST["prenom"]);
+    $edituser->login         = trim($_POST["login"]);
+    $edituser->email         = trim($_POST["email"]);
+    $edituser->admin         = trim($_POST["admin"]);
+    $edituser->webcal_login  = trim($_POST["webcal_login"]);
+    
+    $id = $edituser->create();
+    
+    if ($id) {
+      if (isset($_POST['password']) && trim($_POST['password']))
+	{
+	  $edituser->password(trim($_POST['password']),$conf->password_encrypted);
+	}
+    
+      Header("Location: fiche.php?id=$id");
+    }           
+    else {
+      $message='<div class="error">'.$langs->trans("LoginAlreadyExists",$edituser->login).'</div>';
+      $action="create";       // Go back to create page
     }
-    if (! $_POST["login"]) {
-            $message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
-            $action="create";       // Go back to create page
-    }
-    if (! $message) {
-        $edituser = new User($db,0);
-    
-        $edituser->nom           = trim($_POST["nom"]);
-        $edituser->note          = trim($_POST["note"]);
-        $edituser->prenom        = trim($_POST["prenom"]);
-        $edituser->login         = trim($_POST["login"]);
-        $edituser->email         = trim($_POST["email"]);
-        $edituser->admin         = trim($_POST["admin"]);
-        $edituser->webcal_login  = trim($_POST["webcal_login"]);
-    
-        $id = $edituser->create();
-    
-        if ($id) {
-            if (isset($_POST['password']) && trim($_POST['password']))
-            {
-              $edituser->password(trim($_POST['password']),$conf->password_encrypted);
-            }
-    
-            Header("Location: fiche.php?id=$id");
-        }           
-        else {
-            $message='<div class="error">'.$langs->trans("LoginAlreadyExists",$edituser->login).'</div>';
-            $action="create";       // Go back to create page
-        }
-    }
+  }
 }
 
 if ($_POST["action"] == 'update' && $user->admin)
@@ -129,12 +129,12 @@ if ($_POST["action"] == 'update' && $user->admin)
 
 if ($_GET["action"] == 'password' && $user->admin)
 {
-    $edituser = new User($db, $_GET["id"]);
-    $edituser->fetch();
+  $edituser = new User($db, $_GET["id"]);
+  $edituser->fetch();
 
-    if ($edituser->password('',$conf->password_encrypted))
+  if ($edituser->password('',$conf->password_encrypted))
     {
-        $message = "Mot de passe changé et envoyé à $edituser->email";
+      $message = "Mot de passe changé et envoyé à $edituser->email";
     }
 }
 
@@ -151,49 +151,49 @@ llxHeader();
 if ($action == 'create')
 {
 
-    print_titre($langs->trans("NewUser"));
+  print_titre($langs->trans("NewUser"));
 
-    if ($message) { print "<br>".$message."<br>"; }
+  if ($message) { print "<br>".$message."<br>"; }
 
-    print '<form action="fiche.php" method="post">';
-    print '<input type="hidden" name="action" value="add">';
+  print '<form action="fiche.php" method="post">';
+  print '<input type="hidden" name="action" value="add">';
 
-    print '<table class="border" width="100%">';
+  print '<table class="border" width="100%">';
 
-    print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
-    print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
+  print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
+  print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
 
-    print '<tr><td valign="top" width="20%">'.$langs->trans("Firstname").'</td>';
-    print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
+  print '<tr><td valign="top" width="20%">'.$langs->trans("Firstname").'</td>';
+  print '<td class="valeur"><input size="30" type="text" name="prenom" value=""></td></tr>';
 
-    print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';
-    print '<td class="valeur"><input size="20" type="text" name="login" value=""></td></tr>';
+  print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';
+  print '<td class="valeur"><input size="20" type="text" name="login" value=""></td></tr>';
 
-    print "<tr>".'<td valign="top">'.$langs->trans("Password").'</td>';
-    print '<td class="valeur"><input size="30" type="text" name="password" value=""></td></tr>';
+  print "<tr>".'<td valign="top">'.$langs->trans("Password").'</td>';
+  print '<td class="valeur"><input size="30" type="text" name="password" value=""></td></tr>';
 
-    print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
-    print '<td class="valeur"><input size="40" type="text" name="email" value=""></td></tr>';
+  print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
+  print '<td class="valeur"><input size="40" type="text" name="email" value=""></td></tr>';
 
-    print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
-    print '<td class="valeur">';
-    $form->selectyesnonum('admin',0);
-    print "</td></tr>\n";
+  print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
+  print '<td class="valeur">';
+  $form->selectyesnonum('admin',0);
+  print "</td></tr>\n";
 
-    print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
-    print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
-    print "</textarea></td></tr>\n";
+  print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
+  print "<textarea name=\"note\" rows=\"12\" cols=\"40\">";
+  print "</textarea></td></tr>\n";
 
-    // Autres caractéristiques issus des autres modules
-    if ($conf->webcal->enabled)
+  // Autres caractéristiques issus des autres modules
+  if ($conf->webcal->enabled)
     {
-        print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-        print '<td class="valeur"><input size="30" type="text" name="webcal_login" value=""></td></tr>';
+      print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
+      print '<td class="valeur"><input size="30" type="text" name="webcal_login" value=""></td></tr>';
     }
 
-    print "<tr>".'<td align="center" colspan="2"><input value="'.$langs->trans("CreateUser").'" type="submit"></td></tr>';
-    print "</form>";
-    print "</table>\n";
+  print "<tr>".'<td align="center" colspan="2"><input value="'.$langs->trans("CreateUser").'" type="submit"></td></tr>';
+  print "</form>";
+  print "</table>\n";
 }
 
 
@@ -204,50 +204,50 @@ if ($action == 'create')
 /* ************************************************************************** */
 else
 {
-    if ($_GET["id"])
+  if ($_GET["id"])
     {
-        $fuser = new User($db, $_GET["id"]);
-        $fuser->fetch();
-	    $fuser->getrights();
+      $fuser = new User($db, $_GET["id"]);
+      $fuser->fetch();
+      $fuser->getrights();
 
-        /*
-         * Affichage onglets
-         */
+      /*
+       * Affichage onglets
+       */
     
-        $h = 0;
+      $h = 0;
     
-        $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id;
-        $head[$h][1] = $langs->trans("UserCard");
-        if ($_GET["action"] != 'perms') { $hselected=$h; }
-        $h++;
+      $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id;
+      $head[$h][1] = $langs->trans("UserCard");
+      if ($_GET["action"] != 'perms') { $hselected=$h; }
+      $h++;
     
-        if ($user->admin)
+      if ($user->admin)
         {
-            $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?action=perms&amp;id='.$fuser->id;
-            $head[$h][1] = $langs->trans("Permissions");
-            if ($_GET["action"] == 'perms') { $hselected=$h; }
-            $h++;
+	  $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?action=perms&amp;id='.$fuser->id;
+	  $head[$h][1] = $langs->trans("Permissions");
+	  if ($_GET["action"] == 'perms') { $hselected=$h; }
+	  $h++;
         }
     
-        $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
-        $head[$h][1] = $langs->trans("Addons");
-        $h++;
+      $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
+      $head[$h][1] = $langs->trans("Addons");
+      $h++;
     
-        dolibarr_fiche_head($head, $hselected, $fuser->fullname);
+      dolibarr_fiche_head($head, $hselected, $fuser->fullname);
 
 
-        /*
-         * Confirmation suppression
-         */
-        if ($action == 'delete')
+      /*
+       * Confirmation suppression
+       */
+      if ($action == 'delete')
         {
-            $html = new Form($db);
-            $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_delete");
+	  $html = new Form($db);
+	  $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("DisableAUser"),$langs->trans("ConfirmDisableUser",$fuser->login),"confirm_delete");
         }
 
 
 
-        if ($_GET["action"] == 'perms')
+      if ($_GET["action"] == 'perms')
         {
 	  if ($message) { print "$message<br>"; }
 	  
@@ -320,187 +320,146 @@ else
         }
 	
 	
-        if ($_GET["action"] != 'perms' && $_GET["action"] != 'edit')
-	  {
-            /*
-             * Fiche en mode visu
-             */
+      if ($_GET["action"] != 'perms' && $_GET["action"] != 'edit')
+	{
+	  /*
+	   * Fiche en mode visu
+	   */
 	    
-            print '<table class="border" width="100%">';
+	  print '<table class="border" width="100%">';
 	    
-            print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-            print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
-            print '<td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
-            print "</tr>\n";
+	  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
+	  print '<td width="25%" class="valeur">'.$fuser->nom.'</td>';
+	  print '<td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
+	  print '<td width="25%" class="valeur">'.$fuser->prenom.'</td>';
+	  print "</tr>\n";
 	    
-            print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Login").'</td>';
-            print '<td width="25%" class="valeur">'.$fuser->login.'</td>';
-            print '<td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
-            print '<td width="25%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
-            print "</tr>\n";
+	  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Login").'</td>';
+	  print '<td width="25%" class="valeur">'.$fuser->login.'</td>';
+	  print '<td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
+	  print '<td width="25%" class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
+	  print "</tr>\n";
             
-            print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
-            print '<td colspan="3" class="valeur">'.yn($fuser->admin).'</td>';
-            print "</tr>\n";
+	  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';
+	  print '<td colspan="3" class="valeur">'.yn($fuser->admin).'</td>';
+	  print "</tr>\n";
 
-	    if ($fuser->societe_id > 0)
-	      {
-		$societe = new Societe($db);
-		$societe->fetch($fuser->societe_id);
-		print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Company").'</td>';
-		print '<td colspan="3">'.$societe->nom.'&nbsp;</td>';
-		print "</tr>\n";
-	      }
+	  if ($fuser->societe_id > 0)
+	    {
+	      $societe = new Societe($db);
+	      $societe->fetch($fuser->societe_id);
+	      print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Company").'</td>';
+	      print '<td colspan="3">'.$societe->nom.'&nbsp;</td>';
+	      print "</tr>\n";
+	    }
 
-            print "<tr>".'<td width="25%" valign="top">'.$langs->trans("ContactCard").'</td>';
-            print '<td colspan="3" valign="top">';
-            if ($fuser->contact_id)
+	  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("ContactCard").'</td>';
+	  print '<td colspan="3" valign="top">';
+	  if ($fuser->contact_id)
             {
-	            print '<a href="../contact/fiche.php?id='.$fuser->contact_id.'">'.$langs->trans("ContactCard").'</a>';
+	      print '<a href="../contact/fiche.php?id='.$fuser->contact_id.'">'.$langs->trans("ContactCard").'</a>';
             }
-            else
+	  else
             {
-                print $langs->trans("NoContactCard");
+	      print $langs->trans("NoContactCard");
             }
-            print '</td>';
-            print "</tr>\n";
+	  print '</td>';
+	  print "</tr>\n";
 
-            print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-            print '<td colspan="3" class="valeur">'.nl2br($fuser->note).'&nbsp;</td>';
-            print "</tr>\n";
+	  print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Note").'</td>';
+	  print '<td colspan="3" class="valeur">'.nl2br($fuser->note).'&nbsp;</td>';
+	  print "</tr>\n";
 
-            // Autres caractéristiques issus des autres modules
-            if ($conf->webcal->enabled)
+	  // Autres caractéristiques issus des autres modules
+	  if ($conf->webcal->enabled)
             {
-                $langs->load("other");
-                print '<tr><td width="25%" valign="top">'.$langs->trans("LoginWebcal").'</td>';
-                print '<td colspan="3">'.$fuser->webcal_login.'&nbsp;</td>';
-                print "</tr>\n";
+	      $langs->load("other");
+	      print '<tr><td width="25%" valign="top">'.$langs->trans("LoginWebcal").'</td>';
+	      print '<td colspan="3">'.$fuser->webcal_login.'&nbsp;</td>';
+	      print "</tr>\n";
             }
 
-            print "</table>\n";
-            print "<br>\n";
+	  print "</table>\n";
+	  print "<br>\n";
             
-            print "</div>\n";
+	  print "</div>\n";
 
 
-            /*
-             * Barre d'actions
-             *
-             */
-            print '<div class="tabsAction">';
+	  /*
+	   * Barre d'actions
+	   *
+	   */
+	  print '<div class="tabsAction">';
 
-            if ($user->admin)
+	  if ($user->admin)
             {
-                print '<a class="tabAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+	      print '<a class="tabAction" href="fiche.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
             }
 
-            if ($user->id == $_GET["id"] or $user->admin)
+	  if ($user->id == $_GET["id"] or $user->admin)
             {
-                print '<a class="tabAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("SendNewPassword").'</a>';
+	      print '<a class="tabAction" href="fiche.php?id='.$fuser->id.'&amp;action=password">'.$langs->trans("SendNewPassword").'</a>';
             }
 
-            if ($user->id <> $_GET["id"] && $user->admin)
+	  if ($user->id <> $_GET["id"] && $user->admin)
             {
-                print '<a class="butDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
+	      print '<a class="butDelete" href="fiche.php?action=delete&amp;id='.$fuser->id.'">'.$langs->trans("DisableUser").'</a>';
             }
 
-            print "</div>\n";
-            print "<br>\n";
-
-
-            /*
-             * Droits
-             */
-            print '<table width="100%" class="noborder">';
-            print '<tr class="liste_titre"><td>'.$langs->trans("Module").'</td><td>'.$langs->trans("Permissions").'</td></tr>';
-            $sql = "SELECT r.libelle, r.module, r.perms, r.subperms FROM ".MAIN_DB_PREFIX."rights_def as r, ".MAIN_DB_PREFIX."user_rights as ur";
-            $sql .= " WHERE ur.fk_id = r.id AND ur.fk_user = ".$fuser->id. " ORDER BY r.module, r.id ASC";
-            $var = True;
-            if ($db->query($sql))
-            {
-                $num = $db->num_rows();
-                $i = 0;
-                while ($i < $num)
-                {
-                    $obj = $db->fetch_object($i);
-                    if ($oldmod <> $obj->module)
-                    {
-                        $oldmod = $obj->module;
-                        $var = !$var;
-                    }
-                    if (! $obj->perms) {
-                        // Si droit selon ancien modèle
-                        print "<tr $bc[$var]><td>".$obj->module."</td><td>".$obj->libelle . "</td></tr>\n";
-                    } else {
-                        // Si droit selon nouveau modèle (avec sous niveaux de droits)
-                        $mod=$obj->module;
-                        $perm=$obj->perms;
-                        $subperm=$obj->subperms;
-                        $droit = $fuser->rights->$mod->$perm->$subperm;
-                        if ($droit)
-                        {
-                            print "<tr $bc[$var]><td>".$obj->module."</td><td>".$obj->libelle."</td></tr>\n";
-                        }
-                    }
-                    $i++;
-                }
-            }
-            print "</table>\n";
-            print "<br>\n";
+	  print "</div>\n";
+	  print "<br>\n";
 	    
-	  }
+	}
 	
-        /*
-         * Fiche en mode edition
-         */
-        if ($_GET["action"] == 'edit' && $user->admin)
+      /*
+       * Fiche en mode edition
+       */
+      if ($_GET["action"] == 'edit' && $user->admin)
         {
-            print '<form action="fiche.php?id='.$fuser->id.'" method="post">';
-            print '<input type="hidden" name="action" value="update">';
-            print '<table wdith="100%" class="border">';
+	  print '<form action="fiche.php?id='.$fuser->id.'" method="post">';
+	  print '<input type="hidden" name="action" value="update">';
+	  print '<table wdith="100%" class="border">';
 
-            print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
-            print '<td><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td></tr>';
+	  print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
+	  print '<td><input size="30" type="text" name="nom" value="'.$fuser->nom.'"></td></tr>';
 
-            print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td><input size="20" type="text" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
+	  print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
+	  print '<td><input size="20" type="text" name="prenom" value="'.$fuser->prenom.'"></td></tr>';
 
-            print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';
-            print '<td><input size="10" maxlength="8" type="text" name="login" value="'.$fuser->login.'"></td></tr>';
+	  print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';
+	  print '<td><input size="10" maxlength="8" type="text" name="login" value="'.$fuser->login.'"></td></tr>';
 
-            print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
-            print '<td><input size="30" type="text" name="email" value="'.$fuser->email.'"></td></tr>';
+	  print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
+	  print '<td><input size="30" type="text" name="email" value="'.$fuser->email.'"></td></tr>';
 
-    	    print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
-    	    if ($fuser->societe_id > 0)
-    	      {
-        		print '<td class="valeur">';
-        		print '<input type="hidden" name="admin" value="0">'.$langs->trans("No");
-        		print '</td></tr>';
-    	      }
-    	    else
-    	      {
-        		print '<td class="valeur">';
-        		$form->selectyesnonum('admin',$fuser->admin);
-        		print '</td></tr>';
-    	      }
+	  print "<tr>".'<td valign="top">'.$langs->trans("Administrator").'</td>';
+	  if ($fuser->societe_id > 0)
+	    {
+	      print '<td class="valeur">';
+	      print '<input type="hidden" name="admin" value="0">'.$langs->trans("No");
+	      print '</td></tr>';
+	    }
+	  else
+	    {
+	      print '<td class="valeur">';
+	      $form->selectyesnonum('admin',$fuser->admin);
+	      print '</td></tr>';
+	    }
 
-            print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
-            print "<textarea name=\"note\" rows=\"10\" cols=\"40\">";
-            print $fuser->note;
-            print "</textarea></td></tr>";
+	  print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
+	  print "<textarea name=\"note\" rows=\"10\" cols=\"40\">";
+	  print $fuser->note;
+	  print "</textarea></td></tr>";
 
-            // Autres caractéristiques issus des autres modules
-            $langs->load("other");
-            print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-            print '<td class="valeur"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
+	  // Autres caractéristiques issus des autres modules
+	  $langs->load("other");
+	  print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
+	  print '<td class="valeur"><input size="30" type="text" name="webcal_login" value="'.$fuser->webcal_login.'"></td></tr>';
 
-            print "<tr>".'<td align="center" colspan="2"><input value="'.$langs->trans("Save").'" type="submit"></td></tr>';
+	  print "<tr>".'<td align="center" colspan="2"><input value="'.$langs->trans("Save").'" type="submit"></td></tr>';
 
-            print '</table><br>';
-            print '</form>';
+	  print '</table><br>';
+	  print '</form>';
         }
 
     }
