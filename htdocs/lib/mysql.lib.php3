@@ -189,6 +189,7 @@ class Db {
     {
       return mysql_affected_rows();
     }
+
 }
 
 ?>
