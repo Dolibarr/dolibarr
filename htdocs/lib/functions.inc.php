@@ -1320,40 +1320,52 @@ function departement_rowid($db,$code, $pays_id)
     }
 }
 
+/**
+ *      \brief      Renvoi un chemin de classement répertoire en fonction d'un id
+ *                  Examples: 1->"0/0/1/", 15->"0/1/5/"
+ *      \param      $num        id à décomposer
+ */
 function get_exdir($num)
 {
-  $num = substr("000".$num, -3);
-  return substr($num, 0,1).'/'.substr($num, 1,1).'/'.substr($num, 2,1).'/';
+    $num = substr("000".$num, -3);
+    return substr($num, 0,1).'/'.substr($num, 1,1).'/'.substr($num, 2,1).'/';
 }
 
-/*
- * Création de répertoire recursive
- *
+/**
+ *      \brief      Création de répertoire recursive
+ *      \param      $dir        Répertoire à créer
+ *      \return     int         < 0 si erreur, >= 0 si succès
  */
 function create_exdir($dir)
 {
-  $ccdir = '';
+    $nberr=0;
+    $nbcreated=0;
 
-  $cdir = explode("/",substr($dir,1));
+    $ccdir = '';
+    $cdir = explode("/",$dir);
+    for ($i = 0 ; $i < sizeof($cdir) ; $i++)
+    {
+        if ($i > 0) $ccdir .= '/'.$cdir[$i];
+        else $ccdir = $cdir[$i];
+        if (eregi("^.:$",$ccdir,$regs)) continue;     // Si chemin Windows incomplet, on poursuit par rep suivant
 
-  for ($i = 0 ; $i < sizeof($cdir) ; $i++)
-  {
-    $ccdir .= "/".$cdir[$i];
- 
-    if (! file_exists($ccdir))
-      {
-	umask(0);
-	if (! @mkdir($ccdir, 0755))
-	  {
-	    dolibarr_syslog("create_exdir Erreur: Le répertoire '$ccdir' n'existe pas et Dolibarr n'a pu le créer.");
-	  }
-	else
-	  {
-	    dolibarr_syslog("create_exdir Le répertoire '$ccdir' created");
-	  }
-      }	
-  }
-
+        //print "${ccdir}<br>\n";
+        if ($ccdir && ! file_exists($ccdir))
+        {
+            umask(0);
+            if (! @mkdir($ccdir, 0755))
+            {
+                dolibarr_syslog("functions.inc.php::create_exdir Erreur: Le répertoire '$ccdir' n'existe pas et Dolibarr n'a pu le créer.");
+                $nberr++;
+            }
+            else
+            {
+                dolibarr_syslog("functions.inc.php::create_exdir Répertoire '$ccdir' created");
+                $nbcreated++;
+            }
+        }
+    }
+    return ($nberr ? -$nberr : $nbcreated);
 }
 
 ?>
