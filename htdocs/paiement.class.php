@@ -60,7 +60,8 @@ class Paiement
     
     if ($result) 
       {
-
+	$this->id = $this->db->last_insert_id();
+	return $this->id;
       }
     else
       {
