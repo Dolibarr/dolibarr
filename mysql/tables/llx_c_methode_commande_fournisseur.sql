@@ -22,7 +22,7 @@
 
 create table llx_c_methode_commande_fournisseur
 (
-  rowid    integer      PRIMARY KEY,
+  rowid    integer AUTO_INCREMENT PRIMARY KEY,
   libelle  varchar(30),
   active   tinyint default 1  NOT NULL
 )type=innodb;
