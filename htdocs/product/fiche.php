@@ -655,7 +655,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	      print "<TR $bc[$var]>";
 	      print "<td><a href=\"../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></TD>\n";
 	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
-	      print "<td>". strftime("%d %B %Y",$objp->dp)."</td>\n";
+	      print "<td>". strftime("%d %b",$objp->dp)."</td>\n";
 	      print '<form method="POST" action="fiche.php?id='.$product->id.'">';
 	      print '<input type="hidden" name="action" value="addinpropal">';	     
 	      print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
@@ -726,7 +726,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->envente)
 	      print "<TR $bc[$var]>";
 	      print "<td><a href=\"../compta/facture.php?facid=$objp->factureid\">$objp->facnumber</a></TD>\n";
 	      print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></TD>\n";      	 
-	      print "<td>". strftime("%d %B %Y",$objp->df)."</td>\n";
+	      print "<td>". strftime("%d %b",$objp->df)."</td>\n";
 	      print '<form method="POST" action="fiche.php?id='.$product->id.'">';
 	      print '<input type="hidden" name="action" value="addinfacture">';
 	      print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
