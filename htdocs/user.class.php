@@ -992,6 +992,39 @@ class User
 	  print $this->db->error();
 	}
     }
+
+  /**
+   *    \brief  Ajoute l'utilisateur dans un groupe
+   */
+
+  function SetInGroup($group)
+    {
+
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
+      $sql .= " WHERE fk_user  = ".$this->id;
+      $sql .= " AND fk_usergroup = ".$group;
+  
+      $result = $this->db->query($sql);
+
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_user (fk_user, fk_usergroup)";
+      $sql .= " VALUES (".$this->id.",".$group.")";
+	    
+      $result = $this->db->query($sql);
+    }
+
+  /**
+   *    \brief  Ajoute l'utilisateur dans un groupe
+   */
+
+  function RemoveFromGroup($group)
+    {
+
+      $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
+      $sql .= " WHERE fk_user  = ".$this->id;
+      $sql .= " AND fk_usergroup = ".$group;
+  
+      $result = $this->db->query($sql);
+    }
 }
 
 ?>
