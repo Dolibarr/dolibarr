@@ -33,60 +33,36 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-if ($action == 'add')
+if ($HTTP_POST_VARS["action"] == 'add' or $HTTP_POST_VARS["action"] == 'update')
 {
   $soc = new Societe($db);
-  $soc->nom = $nom;
-
-  $soc->adresse = $adresse;
-  $soc->cp      = $cp;
-  $soc->ville   = $ville;
-
-  $soc->tel     = $tel;
-  $soc->fax     = $fax;
-  $soc->url     = ereg_replace( "http://", "", $url );
-  $soc->siren   = $siren;
-
-  $soc->siret      = $HTTP_POST_VARS["siret"];
-  $soc->ape        = $HTTP_POST_VARS["ape"];
-  $soc->capital    = $HTTP_POST_VARS["capital"];
-  $soc->tva_intra  = $HTTP_POST_VARS["tva_intra_code"] . $HTTP_POST_VARS["tva_intra_num"];
+  $soc->nom            = $HTTP_POST_VARS["nom"];
+  $soc->adresse        = $HTTP_POST_VARS["adresse"];
+  $soc->cp             = $HTTP_POST_VARS["cp"];
+  $soc->ville          = $HTTP_POST_VARS["ville"];
+  $soc->departement_id = $HTTP_POST_VARS["departement_id"];
+  $soc->tel            = $HTTP_POST_VARS["tel"];
+  $soc->fax            = $HTTP_POST_VARS["fax"];
+  $soc->url            = ereg_replace( "http://", "", $HTTP_POST_VARS["url"] );
+  $soc->siren          = $HTTP_POST_VARS["siren"];
+  $soc->siret          = $HTTP_POST_VARS["siret"];
+  $soc->ape            = $HTTP_POST_VARS["ape"];
+  $soc->capital        = $HTTP_POST_VARS["capital"];
+  $soc->tva_intra      = $HTTP_POST_VARS["tva_intra_code"] . $HTTP_POST_VARS["tva_intra_num"];
 
   $soc->forme_juridique_id  = $HTTP_POST_VARS["forme_juridique_id"];
-  $soc->effectif_id  = $HTTP_POST_VARS["effectif_id"];
+  $soc->effectif_id         = $HTTP_POST_VARS["effectif_id"];
+  $soc->client              = $HTTP_POST_VARS["client"];
+  $soc->fournisseur         = $HTTP_POST_VARS["fournisseur"];
 
-  $soc->client   = $client;
-  $soc->fournisseur = $fournisseur;
-
-  $socid = $soc->create();
-}
-
-if ($action == 'update')
-{
-  $soc = new Societe($db);
-
-  $soc->nom = $nom;
-
-  $soc->adresse = $adresse;
-  $soc->cp = $cp;
-  $soc->ville = $ville;
-
-  $soc->tel = $tel;
-  $soc->fax = $fax;
-  $soc->url = ereg_replace( "http://", "", $url );
-
-  $soc->siren      = $HTTP_POST_VARS["siren"];
-  $soc->siret      = $HTTP_POST_VARS["siret"];
-  $soc->ape        = $HTTP_POST_VARS["ape"];
-  $soc->capital    = $HTTP_POST_VARS["capital"];
-  $soc->tva_intra  = $HTTP_POST_VARS["tva_intra_code"] . $HTTP_POST_VARS["tva_intra_num"];
-
-  $soc->forme_juridique_id  = $HTTP_POST_VARS["forme_juridique_id"];
-  $soc->effectif_id  = $HTTP_POST_VARS["effectif_id"];
-  $soc->client = $client;
-  $soc->fournisseur = $fournisseur;
-
-  $soc->update($socid);
+  if ($HTTP_POST_VARS["action"] == 'update')
+    {
+      $soc->update($socid);
+    }
+  if ($HTTP_POST_VARS["action"] == 'add')
+    {
+      $socid = $soc->create();
+    }
 }
 
 /*
@@ -94,6 +70,7 @@ if ($action == 'update')
  *
  */
 llxHeader();
+$form = new Form($db);
 
 if ($action == 'create') 
 {
@@ -106,8 +83,12 @@ if ($action == 'create')
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr><td>Nom</td><td colspan="3"><input type="text" name="nom"></td></tr>';
   print '<tr><td>Adresse</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
-  print '<tr><td>CP</td><td colspan="3"><input size="6" type="text" name="cp">&nbsp;';
-  print 'Ville&nbsp;<input type="text" name="ville"></td></tr>';
+  print '<tr><td>CP</td><td><input size="6" type="text" name="cp">&nbsp;';
+  print 'Ville&nbsp;<input type="text" name="ville"></td>';
+
+  print '<td>Département</td><td>';
+  print $form->select_departement(0);
+  print '</td></tr>';
 
   print '<tr><td>Téléphone</td><td><input type="text" name="tel"></td>';
   print '<td>Fax</td><td><input type="text" name="fax"></td></tr>';
@@ -122,12 +103,11 @@ if ($action == 'create')
   print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
   
   print '<tr><td>Forme juridique</td><td colspan="3">';
-  $html = new Form($db);
-  print $html->select_array("forme_juridique_id",$soc->forme_juridique_array(), $soc->forme_juridique, 0, 1);
+  print $form->select_array("forme_juridique_id",$soc->forme_juridique_array(), $soc->forme_juridique, 0, 1);
   print '</td></tr>';
   
   print '<tr><td>Effectif</td><td colspan="3">';
-  print $html->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
+  print $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
   print '</td></tr>';
 
   print '<tr><td colspan="2">Numéro de TVA Intracommunautaire</td><td colspan="2">';
@@ -165,14 +145,16 @@ elseif ($action == 'edit')
       print '<input type="hidden" name="action" value="update">';
 
       print '<table class="border" width="100%" cellpadding="3" cellspacing="0">';
-      print '<tr><td>Nom</td><td colspan="3"><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
+      print '<tr><td>Nom</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td></tr>';
       print '<tr><td valign="top">Adresse</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft">';
       print $soc->adresse;
       print '</textarea></td></tr>';
       
-      print '<tr><td>CP</td><td colspan="3"><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
-      print 'Ville&nbsp;<input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
-      
+      print '<tr><td>CP</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
+      print 'Ville&nbsp;<input type="text" name="ville" value="'.$soc->ville.'"></td>';
+      print '<td>Département</td><td>';
+      print $form->select_departement($soc->departement_id);
+      print '</td></tr>';      
       print '<tr><td>Téléphone</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td>';
       print '<td>Fax</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
       print '<tr><td>Web</td><td colspan="3">http://<input type="text" name="url" size="40" value="'.$soc->url.'"></td></tr>';
@@ -289,8 +271,8 @@ else
   print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($soc->adresse).'&nbsp;';
   print '<br>'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
   
-  print '<tr><td>Tel</td><td>'.$soc->tel.'</td>';
-  print '<td>Fax</td><td>'.$soc->fax.'</td></tr>';
+  print '<tr><td>Téléphone</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
+  print '<td>Fax</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
   print '<tr><td>Web</td><td colspan="3">';
   if ($soc->url) { print '<a href="http://'.$soc->url.'">http://'.$soc->url.'</a>'; }
   print '</td></tr>';
