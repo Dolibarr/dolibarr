@@ -233,6 +233,10 @@ if (defined("MAIN_MODULE_POSTNUKE"))
 {
   $conf->postnuke->enabled=MAIN_MODULE_POSTNUKE;
 }
+if (defined("MAIN_MODULE_TELEPHONIE"))
+{
+  $conf->telephonie->enabled=MAIN_MODULE_TELEPHONIE;
+}
 if (defined("MAIN_MODULE_WEBCALENDAR"))
 {
   $conf->webcal->enabled=MAIN_MODULE_WEBCALENDAR;
