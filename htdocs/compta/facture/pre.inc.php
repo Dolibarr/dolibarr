@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,17 +20,18 @@
  *
  */
 
-/*! \file htdocs/compta/facture/pre.inc.php
-        \ingroup    facture
-		\brief      Fichier de gestion du menu gauche du module facture
-		\version    $Revision$
+/*!
+  \file htdocs/compta/facture/pre.inc.php
+  \ingroup    facture
+  \brief      Fichier de gestion du menu gauche du module facture
+  \version    $Revision$
 */
 
 require("../../main.inc.php");
-require("../../facture.class.php");
+require_once("../../facture.class.php");
 
 function llxHeader($head = "", $title="", $help_url='') {
-  global $user, $conf;
+  global $conf, $langs;
 
   /*
    *
@@ -42,20 +43,8 @@ function llxHeader($head = "", $title="", $help_url='') {
 
   $menu->add(DOL_URL_ROOT."/compta/clients.php", "Clients");
 
-  if ($conf->don->enabled)
-    {
-      $menu->add(DOL_URL_ROOT."/compta/dons/","Dons");
-    }
-
-  if ($conf->facture->enabled)
-    {
-  	$menu->add(DOL_URL_ROOT."/compta/facture.php","Factures");
-	$menu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php","Récurrentes");
-	}
-  if ($conf->contrat->enabled)
-    {
-  $menu->add(DOL_URL_ROOT."/contrat/","Contrats");
-	}
+  $langs->load("bills");
+  $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
 
   left_menu($menu->liste, $help_url);
 }
