@@ -27,18 +27,24 @@ if (!$user->admin)
 
 if ($_POST["action"] == 'update')
 {
-  dolibarr_set_const($db, "MAIN_THEME",$_POST["main_theme"]);
-  dolibarr_set_const($db, "SIZE_LISTE_LIMIT",$_POST["size_liste_limit"]);
-  dolibarr_set_const($db, "MAIN_MENU_BARRETOP",$_POST["main_menu_barretop"]);
+  dolibarr_set_const($db, "MAIN_THEME",             $_POST["main_theme"]);
+  dolibarr_set_const($db, "SIZE_LISTE_LIMIT",       $_POST["size_liste_limit"]);
+  dolibarr_set_const($db, "MAIN_MENU_BARRETOP",     $_POST["main_menu_barretop"]);
   dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",$_POST["main_searchform_contact"]);
   dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",$_POST["main_searchform_societe"]);
-  dolibarr_set_const($db, "MAIN_LANG_DEFAULT",$_POST["main_lang_default"]);
+  dolibarr_set_const($db, "MAIN_LANG_DEFAULT",      $_POST["main_lang_default"]);
+  dolibarr_set_const($db, "MAIN_MOTD",              trim($_POST["main_motd"]));
 
   Header("Location: ihm.php");
 }
 
 
 llxHeader();
+
+if (!defined("MAIN_MOTD") && strlen(trim(MAIN_MOTD)))
+{
+  define("MAIN_MOTD","");
+}
 
 print_titre("Configuration IHM (Dolibarr version ".DOL_VERSION.")");
 
@@ -115,6 +121,10 @@ if ($_GET["action"] == 'edit')
   print '<tr class="impair"><td width="50%">Afficher formulaire de recherche Contacts dans la barre de gauche</td><td><input name="main_searchform_contact" size="20" value="' . MAIN_SEARCHFORM_CONTACT . '"></td></tr>';
   print '<tr class="pair"><td width="50%">Afficher formulaire de recherche Sociétés dans la barre de gauche</td><td><input name="main_searchform_societe" size="20" value="' . MAIN_SEARCHFORM_SOCIETE . '"></td></tr>';
 
+
+  print '<tr class="pair"><td width="50%">Message du jour</td><td><textarea cols="40" rows="3" name="main_motd" size="20">' .stripslashes(MAIN_MOTD) . '</textarea></td></tr>';
+
+
   print '</table><br>';
   
   print '<div class="tabsAction">';
@@ -137,7 +147,14 @@ else
   print '<tr class="pair"><td width="50%">Langue par défaut à utiliser (code langue)</td><td>' . MAIN_LANG_DEFAULT . '</td></tr>';
   print '<tr class="impair"><td>Afficher zone de recherche Contacts dans le menu gauche</td><td>' . (MAIN_SEARCHFORM_CONTACT?"oui":"non") . '</td></tr>';
   print '<tr class="pair"><td>Afficher zone de recherche Sociétés dans le menu gauche</td><td>' . (MAIN_SEARCHFORM_SOCIETE?"oui":"non") . '</td></tr>';
+
+
+  print '<tr class="pair"><td width="50%">Message du jour</td><td>' . stripslashes(nl2br(MAIN_MOTD)) . '</td></tr>';
+
   print '</table><br>';
+
+
+
 
   print '<div class="tabsAction">';
   print '<a class="tabAction" href="ihm.php?action=edit">Editer</a>';
