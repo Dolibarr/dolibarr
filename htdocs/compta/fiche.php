@@ -21,7 +21,8 @@
  *
  */
 
-/*!	\file htdocs/compta/fiche.php
+/**
+    	\file       htdocs/compta/fiche.php
 		\ingroup    compta
 		\brief      Page de fiche compta
 		\version    $Revision$
@@ -519,7 +520,7 @@ if ($socid > 0)
          *
          */
         if ($societe->note) {
-            print '<table border="1" width="100%" cellspacing="0" bgcolor="#e0e0e0">';
+            print '<table class="border" width="100%" bgcolor="#e0e0e0">';
             print "<tr><td>".nl2br($societe->note)."</td></tr>";
             print "</table>";
         }
