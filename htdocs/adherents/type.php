@@ -204,7 +204,7 @@ if ($action == 'create') {
   print '<tr><td valign="top">Commentaires :</td><td>';
   print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\"></textarea></td></tr>";
 
-  print '<tr><td valign="top">Mail d\'acceuil :</td><td>';
+  print '<tr><td valign="top">Mail d\'accueil :</td><td>';
   print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\"></textarea></td></tr>";
 
   print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"></td></tr>';
