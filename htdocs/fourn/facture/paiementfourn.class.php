@@ -64,56 +64,56 @@ class PaiementFourn
 
     if (isset($result))
       {
-		$this->id = $this->db->last_insert_id();
-
-		$label = "Règlement facture $this->facnumber - $this->societe";
-
+	$this->id = $this->db->last_insert_id();
+	
+	$label = "Règlement facture $this->facnumber - $this->societe";
+	
 	// Portion de code qui mériterait de se baser sur la table des types 
 	// de paiement, mais comme cette portion est aussi en dur dans l'ajout
 	// des factures clients, je fais pareil pour les factures fournisseurs
-    switch ($this->paiementid)
-      {
-      case 1:
-        $this->paiementid = 'TIP';
-        break;
-      case 2:
-        $this->paiementid = 'VIR';
-        break;
-      case 3:
-        $this->paiementid = 'PRE';
-        break;
-      case 4:
-        $this->paiementid = 'LIQ';
-        break;
-      case 5:
-        $this->paiementid = 'WWW';
-        break;
-      case 6:
-        $this->paiementid = 'CB';
-        break;
-      case 7:
-        $this->paiementid = 'CHQ';
-        break;
-      }
-
+	switch ($this->paiementid)
+	  {
+	  case 1:
+	    $this->paiementid = 'TIP';
+	    break;
+	  case 2:
+	    $this->paiementid = 'VIR';
+	    break;
+	  case 3:
+	    $this->paiementid = 'PRE';
+	    break;
+	  case 4:
+	    $this->paiementid = 'LIQ';
+	    break;
+	  case 5:
+	    $this->paiementid = 'WWW';
+	    break;
+	  case 6:
+	    $this->paiementid = 'CB';
+	    break;
+	  case 7:
+	    $this->paiementid = 'CHQ';
+	    break;
+	  }
+	
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, amount, author, label, fk_type, fk_account, num_chq)";
 	$sql .= " VALUES (now(), '$this->datepaye', -$this->amount, '$this->author', '$label', '$this->paiementid', '$this->accountid', '$this->num_paiement')";
 	$result = $this->db->query($sql);
-
-	// Mise a jour fk_bank dans llx_paiement_fourn
-   	if ($result) {   
- 		$this->bankid = $this->db->last_insert_id();
 	
-		$sql = "UPDATE ".MAIN_DB_PREFIX."paiementfourn SET fk_bank=$this->bankid WHERE rowid=$this->id";
-		$result = $this->db->query($sql);
+	// Mise a jour fk_bank dans llx_paiement_fourn
+	if ($result) {   
+	  $this->bankid = $this->db->last_insert_id();
+	  
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."paiementfourn SET fk_bank=$this->bankid WHERE rowid=$this->id";
+	  $result = $this->db->query($sql);
 	}
-
+	
       }
     else
       {
 	print "$sql";
       }  
-
+    
     return 1;
   }
   /*
