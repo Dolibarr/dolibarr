@@ -106,7 +106,6 @@ if ($sortfield == "")
   $sortfield="nom";
 }
 
-
 print_barre_liste("Liste des fournisseurs",$page, $PHP_SELF);
 
 $sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm FROM llx_societe as s, c_stcomm as st WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
@@ -137,11 +136,14 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  if ($sortorder == "DESC") {
-    $sortorder="ASC";
-  } else {
-    $sortorder="DESC";
-  }
+  if ($sortorder == "DESC")
+    {
+      $sortorder="ASC";
+    }
+  else
+    {
+      $sortorder="DESC";
+    }
   print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print '<TR class="liste_titre"><td>';
   print_liste_field_titre("Société",$PHP_SELF,"s.nom");
@@ -151,17 +153,15 @@ if ($result)
   $var=True;
   while ($i < $num)
     {
-      $obj = $db->fetch_object( $i);
-	
+      $obj = $db->fetch_object($i);	
       $var=!$var;
 
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
-      print "<TD>".$obj->ville."</TD>\n";
-	
-      print "<TD align=\"center\">$obj->prefix_comm&nbsp;</TD>\n";
+      print "<td>".$obj->ville."</td>\n";       
+      print "<td align=\"center\">$obj->prefix_comm&nbsp;</td>\n";
       
-      print '<td><a href="facture/fiche.php?action=create&socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
+      print '<td><a href="facture/fiche.php?action=create&amp;socid='.$obj->idp.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
 
       print "</tr>\n";
       $i++;
