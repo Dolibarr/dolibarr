@@ -1,0 +1,1138 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<title>dolibarr: DoliDb class Reference</title>
+<link href="doxygen.css" rel="stylesheet" type="text/css">
+</head><body>
+<!-- Généré par Doxygen 1.3.7 -->
+<div class="qindex"><a class="qindex" href="index.html">Page&nbsp;principale</a> | <a class="qindex" href="classes.html">Liste&nbsp;alphabétique</a> | <a class="qindex" href="annotated.html">Liste&nbsp;des&nbsp;classes</a> | <a class="qindex" href="files.html">Liste&nbsp;des&nbsp;fichiers</a> | <a class="qindex" href="functions.html">Membres&nbsp;de&nbsp;classe</a> | <a class="qindex" href="globals.html">Membres&nbsp;de&nbsp;fichier</a></div>
+<h1>Référence de la classe DoliDb</h1>Classe permettant de gérér la database de dolibarr.  
+<a href="#_details">Plus de détails...</a>
+<p>
+<a href="classDoliDb-members.html">Liste de tous les membres</a><table border=0 cellpadding=0 cellspacing=0>
+<tr><td></td></tr>
+<tr><td colspan=2><br><h2>Fonctions membres publiques</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a0">DoliDb</a> ($type= 'mysql', $host= '', $user= '', $pass= '', $name= '')</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">ouverture d'une connection vers le serveur et/ou une database.  <a href="#a0"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a1">select_db</a> ($database)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">selectionne une database.  <a href="#a1"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a2">connect</a> ($host, $login, $passwd)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">connection vers une database.  <a href="#a2"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a3">create_db</a> ($database)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">création d'une database.  <a href="#a3"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a4">clone</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">copie d'une database.  <a href="#a4"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a5">pconnect</a> ($host, $login, $passwd)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">ouverture d'une connection vers une database.  <a href="#a5"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a6">close</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fermeture d'une connection vers une database.  <a href="#a6"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a7">begin</a> ($do=1)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">debut d'une transaction.  <a href="#a7"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a8">commit</a> ($do=1)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">écriture d'une transaction.  <a href="#a8"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a9">rollback</a> ($do=1)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">éffacement d'une transaction et retour au ancienne valeurs.  <a href="#a9"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a10">query</a> ($query, $limit="", $offset="")</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">requete vers une database.  <a href="#a10"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a11">list_tables</a> ($database)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">liste des tables dans une database.  <a href="#a11"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a12">result</a> ($nb, $fieldname)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">renvoie les données de la requete.  <a href="#a12"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a13">free</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">désalloue la memoire de la requete.  <a href="#a13"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a14">fetch_object</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">renvoie les données comme un objet.  <a href="#a14"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a15">plimit</a> ($limit=0, $offset=0)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">défini les limites de la requète.  <a href="#a15"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a17">idate</a> ($fname)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">formatage de la date en fonction des locales.  <a href="#a17"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a18">fetch_array</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">renvoie les données dans un tableau.  <a href="#a18"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a19">fetch_row</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">renvoie les données comme un tableau.  <a href="#a19"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a20" doxytag="DoliDb::fetch_field" ></a>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a20">fetch_field</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">obtient les données d'un colonne et renvoie les données sous forme d'objet. <br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a21">num_rows</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">renvoie le nombre de lignes dans le resultat de la requete.  <a href="#a21"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a22">num_fields</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">renvoie le nombre de champs dans le resultat de la requete.  <a href="#a22"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a23">error</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">renvoie le texte de l'erreur mysql de l'operation precedente.  <a href="#a23"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a24">errno</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">renvoie la valeur numerique de l'erreur mysql de l'operation precedente.  <a href="#a24"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a25">last_insert_id</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">obtient l'id genéré par le précedent INSERT.  <a href="#a25"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="classDoliDb.html#a26">affected_rows</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">obtient le nombre de lignes affectées dans la précédente opération.  <a href="#a26"></a><br><br></td></tr>
+</table>
+<hr><a name="_details"></a><h2>Description détaillée</h2>
+Classe permettant de gérér la database de dolibarr. 
+<p>
+Ensemble des fonctions permettant de gérer la database de dolibarr 
+<p>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00041">41</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.<hr><h2>Documentation des contructeurs et destructeur</h2>
+<a class="anchor" name="a0" doxytag="DoliDb::DoliDb" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::DoliDb           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>type</em> = <code>'mysql'</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>host</em> = <code>''</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>user</em> = <code>''</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>pass</em> = <code>''</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>name</em> = <code>''</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+ouverture d'une connection vers le serveur et/ou une database. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>type</em>&nbsp;</td><td>type de base de données (mysql ou pgsql) </td></tr>
+    <tr><td></td><td valign=top><em>host</em>&nbsp;</td><td>addresse de la base de données </td></tr>
+    <tr><td></td><td valign=top><em>user</em>&nbsp;</td><td>nom de l'utilisateur autorisé </td></tr>
+    <tr><td></td><td valign=top><em>pass</em>&nbsp;</td><td>mot de passe </td></tr>
+    <tr><td></td><td valign=top><em>name</em>&nbsp;</td><td>nom de la database </td></tr>
+  </table>
+</dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00057">57</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.
+<p>
+Références <a class="el" href="mysql_8lib_8php-source.html#l00149">connect()</a>, et <a class="el" href="mysql_8lib_8php-source.html#l00136">select_db()</a>.    </td>
+  </tr>
+</table>
+<hr><h2>Documentation des fonctions membres</h2>
+<a class="anchor" name="a26" doxytag="DoliDb::affected_rows" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::affected_rows           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+obtient le nombre de lignes affectées dans la précédente opération. 
+<p>
+<dl compact><dt><b>Renvoie:</b></dt><dd>rows </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00448">448</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a7" doxytag="DoliDb::begin" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::begin           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>do</em> = <code>1</code>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+debut d'une transaction. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>do</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>string </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00216">216</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.
+<p>
+Références <a class="el" href="mysql_8lib_8php-source.html#l00216">begin()</a>, et <a class="el" href="mysql_8lib_8php-source.html#l00272">query()</a>.
+<p>
+Référencé par <a class="el" href="mysql_8lib_8php-source.html#l00216">begin()</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a4" doxytag="DoliDb::clone" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::clone           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+copie d'une database. 
+<p>
+<dl compact><dt><b>Renvoie:</b></dt><dd>resource </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00179">179</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a6" doxytag="DoliDb::close" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::close           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fermeture d'une connection vers une database. 
+<p>
+<dl compact><dt><b>Renvoie:</b></dt><dd>resource </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00205">205</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a8" doxytag="DoliDb::commit" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::commit           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>do</em> = <code>1</code>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+écriture d'une transaction. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>do</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>string </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00234">234</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.
+<p>
+Références <a class="el" href="mysql_8lib_8php-source.html#l00234">commit()</a>, et <a class="el" href="mysql_8lib_8php-source.html#l00272">query()</a>.
+<p>
+Référencé par <a class="el" href="mysql_8lib_8php-source.html#l00234">commit()</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a2" doxytag="DoliDb::connect" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::connect           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>host</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>login</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>passwd</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+connection vers une database. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>host</em>&nbsp;</td><td>addresse de la base de données </td></tr>
+    <tr><td></td><td valign=top><em>login</em>&nbsp;</td><td>nom de l'utilisateur autorisé </td></tr>
+    <tr><td></td><td valign=top><em>passwd</em>&nbsp;</td><td>mot de passe </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>resource </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00149">149</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.
+<p>
+Références <a class="el" href="mysql_8lib_8php-source.html#l00149">connect()</a>.
+<p>
+Référencé par <a class="el" href="mysql_8lib_8php-source.html#l00149">connect()</a>, et <a class="el" href="mysql_8lib_8php-source.html#l00057">DoliDb()</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a3" doxytag="DoliDb::create_db" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::create_db           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>database</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+création d'une database. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>database</em>&nbsp;</td><td>nom de la database </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>result resultat 1 pour ok, 0 pour non ok </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00162">162</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.
+<p>
+Références <a class="el" href="mysql_8lib_8php-source.html#l00162">create_db()</a>.
+<p>
+Référencé par <a class="el" href="mysql_8lib_8php-source.html#l00162">create_db()</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a24" doxytag="DoliDb::errno" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::errno           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+renvoie la valeur numerique de l'erreur mysql de l'operation precedente. 
+<p>
+<dl compact><dt><b>Renvoie:</b></dt><dd>error_num </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00425">425</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a23" doxytag="DoliDb::error" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::error           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+renvoie le texte de l'erreur mysql de l'operation precedente. 
+<p>
+<dl compact><dt><b>Renvoie:</b></dt><dd>error_text </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00415">415</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a18" doxytag="DoliDb::fetch_array" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::fetch_array           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+renvoie les données dans un tableau. 
+<p>
+<dl compact><dt><b>Renvoie:</b></dt><dd>array </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00365">365</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a14" doxytag="DoliDb::fetch_object" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::fetch_object           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+renvoie les données comme un objet. 
+<p>
+<dl compact><dt><b>Renvoie:</b></dt><dd>resource </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00319">319</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a19" doxytag="DoliDb::fetch_row" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::fetch_row           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+renvoie les données comme un tableau. 
+<p>
+<dl compact><dt><b>Renvoie:</b></dt><dd>array </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00375">375</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a13" doxytag="DoliDb::free" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::free           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+désalloue la memoire de la requete. 
+<p>
+<dl compact><dt><b>Renvoie:</b></dt><dd>resource </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00309">309</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a17" doxytag="DoliDb::idate" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::idate           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>fname</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+formatage de la date en fonction des locales. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>fname</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>date </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00355">355</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.
+<p>
+Références <a class="el" href="mysql_8lib_8php-source.html#l00355">idate()</a>.
+<p>
+Référencé par <a class="el" href="mysql_8lib_8php-source.html#l00355">idate()</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a25" doxytag="DoliDb::last_insert_id" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::last_insert_id           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+obtient l'id genéré par le précedent INSERT. 
+<p>
+<dl compact><dt><b>Renvoie:</b></dt><dd>id </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00438">438</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a11" doxytag="DoliDb::list_tables" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::list_tables           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>database</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+liste des tables dans une database. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>database</em>&nbsp;</td><td>nom de la database </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>resource </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00286">286</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.
+<p>
+Références <a class="el" href="mysql_8lib_8php-source.html#l00286">list_tables()</a>.
+<p>
+Référencé par <a class="el" href="mysql_8lib_8php-source.html#l00286">list_tables()</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a22" doxytag="DoliDb::num_fields" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::num_fields           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+renvoie le nombre de champs dans le resultat de la requete. 
+<p>
+<dl compact><dt><b>Renvoie:</b></dt><dd>int </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00405">405</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a21" doxytag="DoliDb::num_rows" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::num_rows           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+renvoie le nombre de lignes dans le resultat de la requete. 
+<p>
+<dl compact><dt><b>Renvoie:</b></dt><dd>int </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00395">395</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a5" doxytag="DoliDb::pconnect" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::pconnect           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>host</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>login</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>passwd</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+ouverture d'une connection vers une database. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>host</em>&nbsp;</td><td>addresse de la base de données </td></tr>
+    <tr><td></td><td valign=top><em>login</em>&nbsp;</td><td>nom de l'utilisateur autorisé </td></tr>
+    <tr><td></td><td valign=top><em>passwd</em>&nbsp;</td><td>mot de passe </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>resource </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00194">194</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.
+<p>
+Références <a class="el" href="mysql_8lib_8php-source.html#l00194">pconnect()</a>.
+<p>
+Référencé par <a class="el" href="mysql_8lib_8php-source.html#l00194">pconnect()</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a15" doxytag="DoliDb::plimit" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::plimit           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>limit</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>offset</em> = <code>0</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+défini les limites de la requète. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>limit</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>offset</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>limit </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00331">331</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.
+<p>
+Références <a class="el" href="mysql_8lib_8php-source.html#l00331">plimit()</a>.
+<p>
+Référencé par <a class="el" href="mysql_8lib_8php-source.html#l00331">plimit()</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a10" doxytag="DoliDb::query" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::query           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>query</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>limit</em> = <code>""</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>offset</em> = <code>""</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+requete vers une database. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>query</em>&nbsp;</td><td>contenu de la query </td></tr>
+    <tr><td></td><td valign=top><em>limit</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>offset</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>resource </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00272">272</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.
+<p>
+Références <a class="el" href="mysql_8lib_8php-source.html#l00272">query()</a>.
+<p>
+Référencé par <a class="el" href="mysql_8lib_8php-source.html#l00216">begin()</a>, <a class="el" href="mysql_8lib_8php-source.html#l00234">commit()</a>, <a class="el" href="mysql_8lib_8php-source.html#l00272">query()</a>, et <a class="el" href="mysql_8lib_8php-source.html#l00252">rollback()</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a12" doxytag="DoliDb::result" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::result           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>nb</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>fieldname</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+renvoie les données de la requete. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>nb</em>&nbsp;</td><td>contenu de la query </td></tr>
+    <tr><td></td><td valign=top><em>fieldname</em>&nbsp;</td><td>nom du champ </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>resource </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00299">299</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.
+<p>
+Références <a class="el" href="mysql_8lib_8php-source.html#l00299">result()</a>.
+<p>
+Référencé par <a class="el" href="mysql_8lib_8php-source.html#l00299">result()</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a9" doxytag="DoliDb::rollback" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::rollback           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>do</em> = <code>1</code>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+éffacement d'une transaction et retour au ancienne valeurs. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>do</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>string </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00252">252</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.
+<p>
+Références <a class="el" href="mysql_8lib_8php-source.html#l00272">query()</a>, et <a class="el" href="mysql_8lib_8php-source.html#l00252">rollback()</a>.
+<p>
+Référencé par <a class="el" href="mysql_8lib_8php-source.html#l00252">rollback()</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a1" doxytag="DoliDb::select_db" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DoliDb::select_db           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>database</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+selectionne une database. 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>database</em>&nbsp;</td><td>nom de la database </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>resource </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="mysql_8lib_8php-source.html#l00136">136</a> du fichier <a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a>.
+<p>
+Références <a class="el" href="mysql_8lib_8php-source.html#l00136">select_db()</a>.
+<p>
+Référencé par <a class="el" href="mysql_8lib_8php-source.html#l00057">DoliDb()</a>, et <a class="el" href="mysql_8lib_8php-source.html#l00136">select_db()</a>.    </td>
+  </tr>
+</table>
+<hr>La documentation de cette classe a été générée à partir du fichier suivant:<ul>
+<li>htdocs/lib/<a class="el" href="mysql_8lib_8php-source.html">mysql.lib.php</a></ul>
+<hr size="1"><address style="align: right;"><small>Généré le Fri Jul 16 00:31:07 2004 pour dolibarr par
+<a href="http://www.doxygen.org/index.html">
+<img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.7 </small></address>
+</body>
+</html>

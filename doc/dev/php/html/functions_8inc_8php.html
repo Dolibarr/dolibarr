@@ -1,0 +1,1518 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1">
+<title>dolibarr: functions.inc.php File Reference</title>
+<link href="doxygen.css" rel="stylesheet" type="text/css">
+</head><body>
+<!-- Généré par Doxygen 1.3.7 -->
+<div class="qindex"><a class="qindex" href="index.html">Page&nbsp;principale</a> | <a class="qindex" href="classes.html">Liste&nbsp;alphabétique</a> | <a class="qindex" href="annotated.html">Liste&nbsp;des&nbsp;classes</a> | <a class="qindex" href="files.html">Liste&nbsp;des&nbsp;fichiers</a> | <a class="qindex" href="functions.html">Membres&nbsp;de&nbsp;classe</a> | <a class="qindex" href="globals.html">Membres&nbsp;de&nbsp;fichier</a></div>
+<h1>Référence du fichier htdocs/lib/functions.inc.php</h1>Ensemble de fonctions de base de dolibarr sous forme d'include.  
+<a href="#_details">Plus de détails...</a>
+<p>
+
+<p>
+<a href="functions_8inc_8php-source.html">Aller au code source de ce fichier.</a><table border=0 cellpadding=0 cellspacing=0>
+<tr><td></td></tr>
+<tr><td colspan=2><br><h2>Fonctions</h2></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a1">dolibarr_syslog</a> ($message)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">envoi des messages dolibarr dans syslog  <a href="#a1"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a2">dolibarr_fiche_head</a> ($links, $active=0)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">header d'une fiche  <a href="#a2"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a3">dolibarr_set_const</a> ($db, $name, $value, $type='chaine', $visible=0, $note='')</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">insertion d'une constantes dans la base de données  <a href="#a3"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a4">dolibarr_del_const</a> ($db, $name)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">effacement d'une constante dans la base de données  <a href="#a4"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a5">dolibarr_print_ca</a> ($ca)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">formattage des nombres  <a href="#a5"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a6">dolibarr_print_date</a> ($time, $format="%d %b %Y")</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">formattage de la date  <a href="#a6"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a7">dolibarr_print_object_info</a> ($object)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">affiche les informations d'un objet  <a href="#a7"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a8">dolibarr_print_phone</a> ($phone)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">formattage du telephone  <a href="#a8"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a21">loginfunction</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction de login  <a href="#a21"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a22" doxytag="functions.inc.php::accessforbidden" ></a>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a22">accessforbidden</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">acces interdit <br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a23">doliMoveFileUpload</a> ($src_file, $dest_file)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">deplacer les fichiers telechargés  <a href="#a23"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a25">transcoS2L</a> ($zonein, $devise)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">transcodage de francs en euros  <a href="#a25"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a26">print_liste_field_titre</a> ($name, $file, $field, $begin="", $options="")</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">affichage du titre d'une liste  <a href="#a26"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a27">print_liste_field_titre_new</a> ($name, $file, $field, $begin="", $options="", $td="", $sortfield="")</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">affichage du titre d'une liste avec possibilité de tri et de choix du type de la balise td  <a href="#a27"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a28">print_titre</a> ($titre)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">affichage d'un titre  <a href="#a28"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a29">print_fiche_titre</a> ($titre, $mesg='')</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">affichage d'un titre d'une fiche aligné a droite  <a href="#a29"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a30">dol_delete_file</a> ($file)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">effacement d'un fichier  <a href="#a30"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a31" doxytag="functions.inc.php::block_access" ></a>
+&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a31">block_access</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">accès refusé <br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a33">print_fleche_navigation</a> ($page, $file, $options='', $nextpage)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction servant a afficher les fleches de navigation dans les pages de listes  <a href="#a33"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a34">print_oui_non</a> ($value)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction servant a afficher un menu déroulant avec oui ou non  <a href="#a34"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a35">print_date_select</a> ($set_time='')</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction servant a afficher les mois dans un liste déroulante  <a href="#a35"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a36">print_heure_select</a> ($prefix, $begin=1, $end=23)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction servant a afficher les heures/minutes dans un liste déroulante  <a href="#a36"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a37">print_duree_select</a> ($prefix)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction servant a afficher une durée dans une liste déroulante  <a href="#a37"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a38">price</a> ($amount, $html=0)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction qui retourne un montant monétaire formaté  <a href="#a38"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a39">francs</a> ($euros)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction qui convertit des euros en francs  <a href="#a39"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a40">tva</a> ($euros, $taux=19.6)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction qui calcule la tva  <a href="#a40"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a41">inctva</a> ($euros, $taux=1.196)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction qui calcule le montant tva incluse  <a href="#a41"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a42">stat_print</a> ($basename, $bc1, $bc2, $ftc, $jour)</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction qui affiche des statistiques  <a href="#a42"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a44">logfile</a> ($str, $log="/var/log/dolibarr/dolibarr.log")</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction qui permet d'envoyer les infos dans un fichier de log  <a href="#a44"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a45">creer_pass_aleatoire</a> ($longueur=8, $sel="")</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction pour créer un mot de passe aléatoire  <a href="#a45"></a><br><br></td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="functions_8inc_8php.html#a46">initialiser_sel</a> ()</td></tr>
+
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">fonction pour initialiser sel  <a href="#a46"></a><br><br></td></tr>
+</table>
+<hr><a name="_details"></a><h2>Description détaillée</h2>
+Ensemble de fonctions de base de dolibarr sous forme d'include. 
+<p>
+<dl compact><dt><b>Auteur:</b></dt><dd>Rodolphe Quiedeville <p>
+Jean-Louis Bergamo <p>
+Laurent Destailleur </dd></dl>
+<dl compact><dt><b>Version:</b></dt><dd>1.2.</dd></dl>
+Ensemble de fonctions de base de dolibarr sous forme d'include
+<p>
+Définition dans le fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.<hr><h2>Documentation des fonctions</h2>
+<a class="anchor" name="a45" doxytag="functions.inc.php::creer_pass_aleatoire" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> creer_pass_aleatoire           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>longueur</em> = <code>8</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>sel</em> = <code>""</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction pour créer un mot de passe aléatoire 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>longueur</em>&nbsp;</td><td>longueur du mot de passe </td></tr>
+    <tr><td></td><td valign=top><em>sel</em>&nbsp;</td><td>donnée aléatoire </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>la longueur est fixée a 8 par défaut <p>
+la fonction a été prise sur <a href="http://www.uzine.net/spip">http://www.uzine.net/spip</a> </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l01224">1224</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a30" doxytag="functions.inc.php::dol_delete_file" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dol_delete_file           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>file</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+effacement d'un fichier 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>file</em>&nbsp;</td><td>fichier a effacer </td></tr>
+  </table>
+</dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00735">735</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a4" doxytag="functions.inc.php::dolibarr_del_const" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_del_const           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>db</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>name</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+effacement d'une constante dans la base de données 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>db</em>&nbsp;</td><td>base de données </td></tr>
+    <tr><td></td><td valign=top><em>name</em>&nbsp;</td><td>nom de la constante </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>retourne 0 pour raté, 1 pour réussi </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00124">124</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a2" doxytag="functions.inc.php::dolibarr_fiche_head" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_fiche_head           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>links</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>active</em> = <code>0</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+header d'une fiche 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>links</em>&nbsp;</td><td>liens </td></tr>
+    <tr><td></td><td valign=top><em>active</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>active = 0 par défaut </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00063">63</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a5" doxytag="functions.inc.php::dolibarr_print_ca" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_print_ca           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>ca</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+formattage des nombres 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>ca</em>&nbsp;</td><td>valeur a formater </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>cat valeur formatée </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00144">144</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a6" doxytag="functions.inc.php::dolibarr_print_date" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_print_date           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>time</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>format</em> = <code>"%d&nbsp;%b&nbsp;%Y"</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+formattage de la date 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>time</em>&nbsp;</td><td>date </td></tr>
+    <tr><td></td><td valign=top><em>format</em>&nbsp;</td><td>format de la date "%d %b %Y" </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>retourne la date formatée </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00173">173</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a7" doxytag="functions.inc.php::dolibarr_print_object_info" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_print_object_info           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>object</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+affiche les informations d'un objet 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>object</em>&nbsp;</td><td>objet a afficher </td></tr>
+  </table>
+</dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00184">184</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a8" doxytag="functions.inc.php::dolibarr_print_phone" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_print_phone           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>phone</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+formattage du telephone 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>phone</em>&nbsp;</td><td>numéro de telephone à formater </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>phone numéro de téléphone formaté </dd></dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>net tient pas en compte le format belge 02/211 34 83 </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00199">199</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a3" doxytag="functions.inc.php::dolibarr_set_const" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_set_const           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>db</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>value</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>type</em> = <code>'chaine'</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>visible</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>note</em> = <code>''</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+insertion d'une constantes dans la base de données 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>db</em>&nbsp;</td><td>base de données </td></tr>
+    <tr><td></td><td valign=top><em>name</em>&nbsp;</td><td>nom de la constante </td></tr>
+    <tr><td></td><td valign=top><em>value</em>&nbsp;</td><td>valeur de la constante </td></tr>
+    <tr><td></td><td valign=top><em>type</em>&nbsp;</td><td>type de constante </td></tr>
+    <tr><td></td><td valign=top><em>visible</em>&nbsp;</td><td>la constante est t'elle visible </td></tr>
+    <tr><td></td><td valign=top><em>note</em>&nbsp;</td><td>explication de la constante </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>type = chaine par défaut <p>
+visible = 0 par défaut <p>
+retourne 0 pour raté, 1 pour réussi </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00103">103</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a1" doxytag="functions.inc.php::dolibarr_syslog" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> dolibarr_syslog           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>message</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+envoi des messages dolibarr dans syslog 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>message</em>&nbsp;</td><td>message a envoyer a syslog </td></tr>
+  </table>
+</dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00044">44</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a23" doxytag="functions.inc.php::doliMoveFileUpload" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> doliMoveFileUpload           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>src_file</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>dest_file</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+deplacer les fichiers telechargés 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>src_file</em>&nbsp;</td><td>fichier source </td></tr>
+    <tr><td></td><td valign=top><em>dest_file</em>&nbsp;</td><td>fichier de destination </td></tr>
+  </table>
+</dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00377">377</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a39" doxytag="functions.inc.php::francs" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> francs           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>euros</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction qui convertit des euros en francs 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>euros</em>&nbsp;</td><td>somme en euro à convertir </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>price </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l01007">1007</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.
+<p>
+Références <a class="el" href="functions_8inc_8php-source.html#l00985">price()</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a41" doxytag="functions.inc.php::inctva" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> inctva           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>euros</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>taux</em> = <code>1.196</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction qui calcule le montant tva incluse 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>euros</em>&nbsp;</td><td>somme en euro </td></tr>
+    <tr><td></td><td valign=top><em>taux</em>&nbsp;</td><td>taux de tva </td></tr>
+  </table>
+</dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l01031">1031</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a46" doxytag="functions.inc.php::initialiser_sel" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> initialiser_sel           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction pour initialiser sel 
+<p>
+<dl compact><dt><b>Remarques:</b></dt><dd>la fonction a été prise sur <a href="http://www.uzine.net/spip">http://www.uzine.net/spip</a> </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l01251">1251</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a44" doxytag="functions.inc.php::logfile" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> logfile           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>str</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>log</em> = <code>"/var/log/dolibarr/dolibarr.log"</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction qui permet d'envoyer les infos dans un fichier de log 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>str</em>&nbsp;</td><td>chaine a mettre dans le fichier </td></tr>
+    <tr><td></td><td valign=top><em>log</em>&nbsp;</td><td>nom du fichier de log </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>cette fonction ne marchera qui si la constante MAIN_DEBUG = 1 </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l01188">1188</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a21" doxytag="functions.inc.php::loginfunction" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> loginfunction           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction de login 
+<p>
+<dl compact><dt><b>Remarques:</b></dt><dd>if faut changer le code html dans la fonction pour changer le design <p>
+le css devrait etre pris dans le repetoire de dolibarr et ne pas etre en dur ! </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00281">281</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a38" doxytag="functions.inc.php::price" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> price           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>amount</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>html</em> = <code>0</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction qui retourne un montant monétaire formaté 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>amount</em>&nbsp;</td><td>montant a formater </td></tr>
+    <tr><td></td><td valign=top><em>html</em>&nbsp;</td><td>formatage html ou pas </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>html = 0 par défaut <p>
+fnction utilisée dans les pdf et les pages html </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00985">985</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.
+<p>
+Référencé par <a class="el" href="functions_8inc_8php-source.html#l01007">francs()</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a35" doxytag="functions.inc.php::print_date_select" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> print_date_select           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>set_time</em> = <code>''</code>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction servant a afficher les mois dans un liste déroulante 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>set_time</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>set_time = '' par défaut </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00852">852</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a37" doxytag="functions.inc.php::print_duree_select" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> print_duree_select           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>prefix</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction servant a afficher une durée dans une liste déroulante 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>prefix</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00957">957</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a29" doxytag="functions.inc.php::print_fiche_titre" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> print_fiche_titre           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>titre</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>mesg</em> = <code>''</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+affichage d'un titre d'une fiche aligné a droite 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>titre</em>&nbsp;</td><td>le titre a afficher </td></tr>
+    <tr><td></td><td valign=top><em>mesg</em>&nbsp;</td><td>message afficher </td></tr>
+  </table>
+</dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00719">719</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a33" doxytag="functions.inc.php::print_fleche_navigation" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> print_fleche_navigation           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>page</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>file</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>options</em> = <code>''</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>nextpage</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction servant a afficher les fleches de navigation dans les pages de listes 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>page</em>&nbsp;</td><td>numéro de la page </td></tr>
+    <tr><td></td><td valign=top><em>file</em>&nbsp;</td><td>lien </td></tr>
+    <tr><td></td><td valign=top><em>options</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>nextpage</em>&nbsp;</td><td>page suivante </td></tr>
+  </table>
+</dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00812">812</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a36" doxytag="functions.inc.php::print_heure_select" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> print_heure_select           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>prefix</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>begin</em> = <code>1</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>end</em> = <code>23</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction servant a afficher les heures/minutes dans un liste déroulante 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>prefix</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>begin</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>end</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>begin = 1 par défaut <p>
+end = 23 par défaut </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00935">935</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a26" doxytag="functions.inc.php::print_liste_field_titre" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> print_liste_field_titre           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>file</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>field</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>begin</em> = <code>""</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>options</em> = <code>""</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+affichage du titre d'une liste 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>name</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>file</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>field</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>begin</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>options</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>begin = "" par défaut <p>
+options = "" par défaut </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00658">658</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a27" doxytag="functions.inc.php::print_liste_field_titre_new" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> print_liste_field_titre_new           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>file</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>field</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>begin</em> = <code>""</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>options</em> = <code>""</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>td</em> = <code>""</code>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>sortfield</em> = <code>""</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+affichage du titre d'une liste avec possibilité de tri et de choix du type de la balise td 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>name</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>file</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>field</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>begin</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>options</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>td</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>sortfield</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>begin = "" par défaut <p>
+options = "" par défaut <p>
+td = "" par défaut <p>
+sortfield = "" par défaut </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00684">684</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a34" doxytag="functions.inc.php::print_oui_non" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> print_oui_non           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>value</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction servant a afficher un menu déroulant avec oui ou non 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>value</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Remarques:</b></dt><dd>value peut avoir la valeur 0 ou 1 </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00832">832</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a28" doxytag="functions.inc.php::print_titre" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> print_titre           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname1" valign="top" nowrap> <em>titre</em>          </td>
+          <td class="md" valign="top">&nbsp;)&nbsp;</td>
+          <td class="md" nowrap></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+affichage d'un titre 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>titre</em>&nbsp;</td><td>le titre a afficher </td></tr>
+  </table>
+</dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00708">708</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a42" doxytag="functions.inc.php::stat_print" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> stat_print           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>basename</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>bc1</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>bc2</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>ftc</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>jour</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction qui affiche des statistiques 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>basename</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>bc1</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>bc2</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>ftc</em>&nbsp;</td><td></td></tr>
+    <tr><td></td><td valign=top><em>jour</em>&nbsp;</td><td></td></tr>
+  </table>
+</dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l01046">1046</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a25" doxytag="functions.inc.php::transcoS2L" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> transcoS2L           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>zonein</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>devise</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+transcodage de francs en euros 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>zonein</em>&nbsp;</td><td>zone de depart </td></tr>
+    <tr><td></td><td valign=top><em>devise</em>&nbsp;</td><td>type de devise </td></tr>
+  </table>
+</dl>
+<dl compact><dt><b>Renvoie:</b></dt><dd>r </dd></dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l00451">451</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.    </td>
+  </tr>
+</table>
+<a class="anchor" name="a40" doxytag="functions.inc.php::tva" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> tva           </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">$&nbsp;</td>
+          <td class="mdname" nowrap> <em>euros</em>, </td>
+        </tr>
+        <tr>
+          <td class="md" nowrap align="right"></td>
+          <td></td>
+          <td class="md" nowrap>$&nbsp;</td>
+          <td class="mdname" nowrap> <em>taux</em> = <code>19.6</code></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+fonction qui calcule la tva 
+<p>
+<dl compact><dt><b>Paramètres:</b></dt><dd>
+  <table border="0" cellspacing="2" cellpadding="0">
+    <tr><td></td><td valign=top><em>euros</em>&nbsp;</td><td>somme en euro </td></tr>
+    <tr><td></td><td valign=top><em>taux</em>&nbsp;</td><td>taux de tva </td></tr>
+  </table>
+</dl>
+
+<p>
+Définition à la ligne <a class="el" href="functions_8inc_8php-source.html#l01018">1018</a> du fichier <a class="el" href="functions_8inc_8php-source.html">functions.inc.php</a>.
+<p>
+Référencé par <a class="el" href="price_8lib_8php-source.html#l00038">calcul_price()</a>.    </td>
+  </tr>
+</table>
+<hr size="1"><address style="align: right;"><small>Généré le Fri Jul 16 00:31:07 2004 pour dolibarr par
+<a href="http://www.doxygen.org/index.html">
+<img src="doxygen.png" alt="doxygen" align="middle" border=0 ></a> 1.3.7 </small></address>
+</body>
+</html>

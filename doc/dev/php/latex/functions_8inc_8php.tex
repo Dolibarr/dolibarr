@@ -1,0 +1,615 @@
+\hypertarget{functions_8inc_8php}{
+\section{R\'{e}f\'{e}rence du fichier htdocs/lib/functions.inc.php}
+\label{functions_8inc_8php}\index{htdocs/lib/functions.inc.php@{htdocs/lib/functions.inc.php}}
+}
+Ensemble de fonctions de base de dolibarr sous forme d'include.  
+
+
+\subsection*{Fonctions}
+\begin{CompactItemize}
+\item 
+\hyperlink{functions_8inc_8php_a1}{dolibarr\_\-syslog} (\$message)
+\begin{CompactList}\small\item\em envoi des messages dolibarr dans syslog \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a2}{dolibarr\_\-fiche\_\-head} (\$links, \$active=0)
+\begin{CompactList}\small\item\em header d'une fiche \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a3}{dolibarr\_\-set\_\-const} (\$db, \$name, \$value, \$type='chaine', \$visible=0, \$note='')
+\begin{CompactList}\small\item\em insertion d'une constantes dans la base de donn\'{e}es \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a4}{dolibarr\_\-del\_\-const} (\$db, \$name)
+\begin{CompactList}\small\item\em effacement d'une constante dans la base de donn\'{e}es \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a5}{dolibarr\_\-print\_\-ca} (\$ca)
+\begin{CompactList}\small\item\em formattage des nombres \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a6}{dolibarr\_\-print\_\-date} (\$time, \$format=\char`\"{}\%d \%b \%Y\char`\"{})
+\begin{CompactList}\small\item\em formattage de la date \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a7}{dolibarr\_\-print\_\-object\_\-info} (\$object)
+\begin{CompactList}\small\item\em affiche les informations d'un objet \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a8}{dolibarr\_\-print\_\-phone} (\$phone)
+\begin{CompactList}\small\item\em formattage du telephone \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a21}{loginfunction} ()
+\begin{CompactList}\small\item\em fonction de login \item\end{CompactList}\item 
+\hypertarget{functions_8inc_8php_a22}{
+\hyperlink{functions_8inc_8php_a22}{accessforbidden} ()}
+\label{functions_8inc_8php_a22}
+
+\begin{CompactList}\small\item\em acces interdit \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a23}{doli\-Move\-File\-Upload} (\$src\_\-file, \$dest\_\-file)
+\begin{CompactList}\small\item\em deplacer les fichiers telecharg\'{e}s \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a25}{transco\-S2L} (\$zonein, \$devise)
+\begin{CompactList}\small\item\em transcodage de francs en euros \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a26}{print\_\-liste\_\-field\_\-titre} (\$name, \$file, \$field, \$begin=\char`\"{}\char`\"{}, \$options=\char`\"{}\char`\"{})
+\begin{CompactList}\small\item\em affichage du titre d'une liste \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a27}{print\_\-liste\_\-field\_\-titre\_\-new} (\$name, \$file, \$field, \$begin=\char`\"{}\char`\"{}, \$options=\char`\"{}\char`\"{}, \$td=\char`\"{}\char`\"{}, \$sortfield=\char`\"{}\char`\"{})
+\begin{CompactList}\small\item\em affichage du titre d'une liste avec possibilit\'{e} de tri et de choix du type de la balise td \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a28}{print\_\-titre} (\$titre)
+\begin{CompactList}\small\item\em affichage d'un titre \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a29}{print\_\-fiche\_\-titre} (\$titre, \$mesg='')
+\begin{CompactList}\small\item\em affichage d'un titre d'une fiche align\'{e} a droite \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a30}{dol\_\-delete\_\-file} (\$file)
+\begin{CompactList}\small\item\em effacement d'un fichier \item\end{CompactList}\item 
+\hypertarget{functions_8inc_8php_a31}{
+\hyperlink{functions_8inc_8php_a31}{block\_\-access} ()}
+\label{functions_8inc_8php_a31}
+
+\begin{CompactList}\small\item\em acc\`{e}s refus\'{e} \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a33}{print\_\-fleche\_\-navigation} (\$page, \$file, \$options='', \$nextpage)
+\begin{CompactList}\small\item\em fonction servant a afficher les fleches de navigation dans les pages de listes \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a34}{print\_\-oui\_\-non} (\$value)
+\begin{CompactList}\small\item\em fonction servant a afficher un menu d\'{e}roulant avec oui ou non \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a35}{print\_\-date\_\-select} (\$set\_\-time='')
+\begin{CompactList}\small\item\em fonction servant a afficher les mois dans un liste d\'{e}roulante \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a36}{print\_\-heure\_\-select} (\$prefix, \$begin=1, \$end=23)
+\begin{CompactList}\small\item\em fonction servant a afficher les heures/minutes dans un liste d\'{e}roulante \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a37}{print\_\-duree\_\-select} (\$prefix)
+\begin{CompactList}\small\item\em fonction servant a afficher une dur\'{e}e dans une liste d\'{e}roulante \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a38}{price} (\$amount, \$html=0)
+\begin{CompactList}\small\item\em fonction qui retourne un montant mon\'{e}taire format\'{e} \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a39}{francs} (\$euros)
+\begin{CompactList}\small\item\em fonction qui convertit des euros en francs \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a40}{tva} (\$euros, \$taux=19.6)
+\begin{CompactList}\small\item\em fonction qui calcule la tva \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a41}{inctva} (\$euros, \$taux=1.196)
+\begin{CompactList}\small\item\em fonction qui calcule le montant tva incluse \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a42}{stat\_\-print} (\$basename, \$bc1, \$bc2, \$ftc, \$jour)
+\begin{CompactList}\small\item\em fonction qui affiche des statistiques \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a44}{logfile} (\$str, \$log=\char`\"{}/var/log/dolibarr/dolibarr.log\char`\"{})
+\begin{CompactList}\small\item\em fonction qui permet d'envoyer les infos dans un fichier de log \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a45}{creer\_\-pass\_\-aleatoire} (\$longueur=8, \$sel=\char`\"{}\char`\"{})
+\begin{CompactList}\small\item\em fonction pour cr\'{e}er un mot de passe al\'{e}atoire \item\end{CompactList}\item 
+\hyperlink{functions_8inc_8php_a46}{initialiser\_\-sel} ()
+\begin{CompactList}\small\item\em fonction pour initialiser sel \item\end{CompactList}\end{CompactItemize}
+
+
+\subsection{Description d\'{e}taill\'{e}e}
+Ensemble de fonctions de base de dolibarr sous forme d'include. 
+
+\begin{Desc}
+\item[Auteur:]Rodolphe Quiedeville 
+
+Jean-Louis Bergamo 
+
+Laurent Destailleur \end{Desc}
+\begin{Desc}
+\item[Version:]1.2.\end{Desc}
+Ensemble de fonctions de base de dolibarr sous forme d'include
+
+D\'{e}finition dans le fichier \hyperlink{functions_8inc_8php-source}{functions.inc.php}.
+
+\subsection{Documentation des fonctions}
+\hypertarget{functions_8inc_8php_a45}{
+\index{functions.inc.php@{functions.inc.php}!creer_pass_aleatoire@{creer\_\-pass\_\-aleatoire}}
+\index{creer_pass_aleatoire@{creer\_\-pass\_\-aleatoire}!functions.inc.php@{functions.inc.php}}
+\subsubsection[creer\_\-pass\_\-aleatoire]{\setlength{\rightskip}{0pt plus 5cm}creer\_\-pass\_\-aleatoire (\$ {\em longueur} = {\tt 8}, \$ {\em sel} = {\tt \char`\"{}\char`\"{}})}}
+\label{functions_8inc_8php_a45}
+
+
+fonction pour cr\'{e}er un mot de passe al\'{e}atoire 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em longueur}]longueur du mot de passe \item[{\em sel}]donn\'{e}e al\'{e}atoire \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Remarques:]la longueur est fix\'{e}e a 8 par d\'{e}faut 
+
+la fonction a \'{e}t\'{e} prise sur \href{http://www.uzine.net/spip}{\tt http://www.uzine.net/spip} \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 1224 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a30}{
+\index{functions.inc.php@{functions.inc.php}!dol_delete_file@{dol\_\-delete\_\-file}}
+\index{dol_delete_file@{dol\_\-delete\_\-file}!functions.inc.php@{functions.inc.php}}
+\subsubsection[dol\_\-delete\_\-file]{\setlength{\rightskip}{0pt plus 5cm}dol\_\-delete\_\-file (\$ {\em file})}}
+\label{functions_8inc_8php_a30}
+
+
+effacement d'un fichier 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em file}]fichier a effacer \end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 735 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a4}{
+\index{functions.inc.php@{functions.inc.php}!dolibarr_del_const@{dolibarr\_\-del\_\-const}}
+\index{dolibarr_del_const@{dolibarr\_\-del\_\-const}!functions.inc.php@{functions.inc.php}}
+\subsubsection[dolibarr\_\-del\_\-const]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-del\_\-const (\$ {\em db}, \$ {\em name})}}
+\label{functions_8inc_8php_a4}
+
+
+effacement d'une constante dans la base de donn\'{e}es 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em db}]base de donn\'{e}es \item[{\em name}]nom de la constante \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Remarques:]retourne 0 pour rat\'{e}, 1 pour r\'{e}ussi \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 124 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a2}{
+\index{functions.inc.php@{functions.inc.php}!dolibarr_fiche_head@{dolibarr\_\-fiche\_\-head}}
+\index{dolibarr_fiche_head@{dolibarr\_\-fiche\_\-head}!functions.inc.php@{functions.inc.php}}
+\subsubsection[dolibarr\_\-fiche\_\-head]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-fiche\_\-head (\$ {\em links}, \$ {\em active} = {\tt 0})}}
+\label{functions_8inc_8php_a2}
+
+
+header d'une fiche 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em links}]liens \item[{\em active}]\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Remarques:]active = 0 par d\'{e}faut \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 63 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a5}{
+\index{functions.inc.php@{functions.inc.php}!dolibarr_print_ca@{dolibarr\_\-print\_\-ca}}
+\index{dolibarr_print_ca@{dolibarr\_\-print\_\-ca}!functions.inc.php@{functions.inc.php}}
+\subsubsection[dolibarr\_\-print\_\-ca]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-print\_\-ca (\$ {\em ca})}}
+\label{functions_8inc_8php_a5}
+
+
+formattage des nombres 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em ca}]valeur a formater \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Renvoie:]cat valeur format\'{e}e \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 144 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a6}{
+\index{functions.inc.php@{functions.inc.php}!dolibarr_print_date@{dolibarr\_\-print\_\-date}}
+\index{dolibarr_print_date@{dolibarr\_\-print\_\-date}!functions.inc.php@{functions.inc.php}}
+\subsubsection[dolibarr\_\-print\_\-date]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-print\_\-date (\$ {\em time}, \$ {\em format} = {\tt \char`\"{}\%d\ \%b\ \%Y\char`\"{}})}}
+\label{functions_8inc_8php_a6}
+
+
+formattage de la date 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em time}]date \item[{\em format}]format de la date \char`\"{}\%d \%b \%Y\char`\"{} \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Remarques:]retourne la date format\'{e}e \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 173 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a7}{
+\index{functions.inc.php@{functions.inc.php}!dolibarr_print_object_info@{dolibarr\_\-print\_\-object\_\-info}}
+\index{dolibarr_print_object_info@{dolibarr\_\-print\_\-object\_\-info}!functions.inc.php@{functions.inc.php}}
+\subsubsection[dolibarr\_\-print\_\-object\_\-info]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-print\_\-object\_\-info (\$ {\em object})}}
+\label{functions_8inc_8php_a7}
+
+
+affiche les informations d'un objet 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em object}]objet a afficher \end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 184 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a8}{
+\index{functions.inc.php@{functions.inc.php}!dolibarr_print_phone@{dolibarr\_\-print\_\-phone}}
+\index{dolibarr_print_phone@{dolibarr\_\-print\_\-phone}!functions.inc.php@{functions.inc.php}}
+\subsubsection[dolibarr\_\-print\_\-phone]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-print\_\-phone (\$ {\em phone})}}
+\label{functions_8inc_8php_a8}
+
+
+formattage du telephone 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em phone}]num\'{e}ro de telephone \`{a} formater \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Renvoie:]phone num\'{e}ro de t\'{e}l\'{e}phone format\'{e} \end{Desc}
+\begin{Desc}
+\item[Remarques:]net tient pas en compte le format belge 02/211 34 83 \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 199 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a3}{
+\index{functions.inc.php@{functions.inc.php}!dolibarr_set_const@{dolibarr\_\-set\_\-const}}
+\index{dolibarr_set_const@{dolibarr\_\-set\_\-const}!functions.inc.php@{functions.inc.php}}
+\subsubsection[dolibarr\_\-set\_\-const]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-set\_\-const (\$ {\em db}, \$ {\em name}, \$ {\em value}, \$ {\em type} = {\tt 'chaine'}, \$ {\em visible} = {\tt 0}, \$ {\em note} = {\tt ''})}}
+\label{functions_8inc_8php_a3}
+
+
+insertion d'une constantes dans la base de donn\'{e}es 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em db}]base de donn\'{e}es \item[{\em name}]nom de la constante \item[{\em value}]valeur de la constante \item[{\em type}]type de constante \item[{\em visible}]la constante est t'elle visible \item[{\em note}]explication de la constante \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Remarques:]type = chaine par d\'{e}faut 
+
+visible = 0 par d\'{e}faut 
+
+retourne 0 pour rat\'{e}, 1 pour r\'{e}ussi \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 103 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a1}{
+\index{functions.inc.php@{functions.inc.php}!dolibarr_syslog@{dolibarr\_\-syslog}}
+\index{dolibarr_syslog@{dolibarr\_\-syslog}!functions.inc.php@{functions.inc.php}}
+\subsubsection[dolibarr\_\-syslog]{\setlength{\rightskip}{0pt plus 5cm}dolibarr\_\-syslog (\$ {\em message})}}
+\label{functions_8inc_8php_a1}
+
+
+envoi des messages dolibarr dans syslog 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em message}]message a envoyer a syslog \end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 44 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a23}{
+\index{functions.inc.php@{functions.inc.php}!doliMoveFileUpload@{doliMoveFileUpload}}
+\index{doliMoveFileUpload@{doliMoveFileUpload}!functions.inc.php@{functions.inc.php}}
+\subsubsection[doliMoveFileUpload]{\setlength{\rightskip}{0pt plus 5cm}doli\-Move\-File\-Upload (\$ {\em src\_\-file}, \$ {\em dest\_\-file})}}
+\label{functions_8inc_8php_a23}
+
+
+deplacer les fichiers telecharg\'{e}s 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em src\_\-file}]fichier source \item[{\em dest\_\-file}]fichier de destination \end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 377 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a39}{
+\index{functions.inc.php@{functions.inc.php}!francs@{francs}}
+\index{francs@{francs}!functions.inc.php@{functions.inc.php}}
+\subsubsection[francs]{\setlength{\rightskip}{0pt plus 5cm}francs (\$ {\em euros})}}
+\label{functions_8inc_8php_a39}
+
+
+fonction qui convertit des euros en francs 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em euros}]somme en euro \`{a} convertir \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Renvoie:]price \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 1007 du fichier functions.inc.php.
+
+R\'{e}f\'{e}rences price().\hypertarget{functions_8inc_8php_a41}{
+\index{functions.inc.php@{functions.inc.php}!inctva@{inctva}}
+\index{inctva@{inctva}!functions.inc.php@{functions.inc.php}}
+\subsubsection[inctva]{\setlength{\rightskip}{0pt plus 5cm}inctva (\$ {\em euros}, \$ {\em taux} = {\tt 1.196})}}
+\label{functions_8inc_8php_a41}
+
+
+fonction qui calcule le montant tva incluse 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em euros}]somme en euro \item[{\em taux}]taux de tva \end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 1031 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a46}{
+\index{functions.inc.php@{functions.inc.php}!initialiser_sel@{initialiser\_\-sel}}
+\index{initialiser_sel@{initialiser\_\-sel}!functions.inc.php@{functions.inc.php}}
+\subsubsection[initialiser\_\-sel]{\setlength{\rightskip}{0pt plus 5cm}initialiser\_\-sel ()}}
+\label{functions_8inc_8php_a46}
+
+
+fonction pour initialiser sel 
+
+\begin{Desc}
+\item[Remarques:]la fonction a \'{e}t\'{e} prise sur \href{http://www.uzine.net/spip}{\tt http://www.uzine.net/spip} \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 1251 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a44}{
+\index{functions.inc.php@{functions.inc.php}!logfile@{logfile}}
+\index{logfile@{logfile}!functions.inc.php@{functions.inc.php}}
+\subsubsection[logfile]{\setlength{\rightskip}{0pt plus 5cm}logfile (\$ {\em str}, \$ {\em log} = {\tt \char`\"{}/var/log/dolibarr/dolibarr.log\char`\"{}})}}
+\label{functions_8inc_8php_a44}
+
+
+fonction qui permet d'envoyer les infos dans un fichier de log 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em str}]chaine a mettre dans le fichier \item[{\em log}]nom du fichier de log \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Remarques:]cette fonction ne marchera qui si la constante MAIN\_\-DEBUG = 1 \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 1188 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a21}{
+\index{functions.inc.php@{functions.inc.php}!loginfunction@{loginfunction}}
+\index{loginfunction@{loginfunction}!functions.inc.php@{functions.inc.php}}
+\subsubsection[loginfunction]{\setlength{\rightskip}{0pt plus 5cm}loginfunction ()}}
+\label{functions_8inc_8php_a21}
+
+
+fonction de login 
+
+\begin{Desc}
+\item[Remarques:]if faut changer le code html dans la fonction pour changer le design 
+
+le css devrait etre pris dans le repetoire de dolibarr et ne pas etre en dur ! \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 281 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a38}{
+\index{functions.inc.php@{functions.inc.php}!price@{price}}
+\index{price@{price}!functions.inc.php@{functions.inc.php}}
+\subsubsection[price]{\setlength{\rightskip}{0pt plus 5cm}price (\$ {\em amount}, \$ {\em html} = {\tt 0})}}
+\label{functions_8inc_8php_a38}
+
+
+fonction qui retourne un montant mon\'{e}taire format\'{e} 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em amount}]montant a formater \item[{\em html}]formatage html ou pas \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Remarques:]html = 0 par d\'{e}faut 
+
+fnction utilis\'{e}e dans les pdf et les pages html \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 985 du fichier functions.inc.php.
+
+R\'{e}f\'{e}renc\'{e} par francs().\hypertarget{functions_8inc_8php_a35}{
+\index{functions.inc.php@{functions.inc.php}!print_date_select@{print\_\-date\_\-select}}
+\index{print_date_select@{print\_\-date\_\-select}!functions.inc.php@{functions.inc.php}}
+\subsubsection[print\_\-date\_\-select]{\setlength{\rightskip}{0pt plus 5cm}print\_\-date\_\-select (\$ {\em set\_\-time} = {\tt ''})}}
+\label{functions_8inc_8php_a35}
+
+
+fonction servant a afficher les mois dans un liste d\'{e}roulante 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em set\_\-time}]\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Remarques:]set\_\-time = '' par d\'{e}faut \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 852 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a37}{
+\index{functions.inc.php@{functions.inc.php}!print_duree_select@{print\_\-duree\_\-select}}
+\index{print_duree_select@{print\_\-duree\_\-select}!functions.inc.php@{functions.inc.php}}
+\subsubsection[print\_\-duree\_\-select]{\setlength{\rightskip}{0pt plus 5cm}print\_\-duree\_\-select (\$ {\em prefix})}}
+\label{functions_8inc_8php_a37}
+
+
+fonction servant a afficher une dur\'{e}e dans une liste d\'{e}roulante 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em prefix}]\end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 957 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a29}{
+\index{functions.inc.php@{functions.inc.php}!print_fiche_titre@{print\_\-fiche\_\-titre}}
+\index{print_fiche_titre@{print\_\-fiche\_\-titre}!functions.inc.php@{functions.inc.php}}
+\subsubsection[print\_\-fiche\_\-titre]{\setlength{\rightskip}{0pt plus 5cm}print\_\-fiche\_\-titre (\$ {\em titre}, \$ {\em mesg} = {\tt ''})}}
+\label{functions_8inc_8php_a29}
+
+
+affichage d'un titre d'une fiche align\'{e} a droite 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em titre}]le titre a afficher \item[{\em mesg}]message afficher \end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 719 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a33}{
+\index{functions.inc.php@{functions.inc.php}!print_fleche_navigation@{print\_\-fleche\_\-navigation}}
+\index{print_fleche_navigation@{print\_\-fleche\_\-navigation}!functions.inc.php@{functions.inc.php}}
+\subsubsection[print\_\-fleche\_\-navigation]{\setlength{\rightskip}{0pt plus 5cm}print\_\-fleche\_\-navigation (\$ {\em page}, \$ {\em file}, \$ {\em options} = {\tt ''}, \$ {\em nextpage})}}
+\label{functions_8inc_8php_a33}
+
+
+fonction servant a afficher les fleches de navigation dans les pages de listes 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em page}]num\'{e}ro de la page \item[{\em file}]lien \item[{\em options}]\item[{\em nextpage}]page suivante \end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 812 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a36}{
+\index{functions.inc.php@{functions.inc.php}!print_heure_select@{print\_\-heure\_\-select}}
+\index{print_heure_select@{print\_\-heure\_\-select}!functions.inc.php@{functions.inc.php}}
+\subsubsection[print\_\-heure\_\-select]{\setlength{\rightskip}{0pt plus 5cm}print\_\-heure\_\-select (\$ {\em prefix}, \$ {\em begin} = {\tt 1}, \$ {\em end} = {\tt 23})}}
+\label{functions_8inc_8php_a36}
+
+
+fonction servant a afficher les heures/minutes dans un liste d\'{e}roulante 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em prefix}]\item[{\em begin}]\item[{\em end}]\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Remarques:]begin = 1 par d\'{e}faut 
+
+end = 23 par d\'{e}faut \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 935 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a26}{
+\index{functions.inc.php@{functions.inc.php}!print_liste_field_titre@{print\_\-liste\_\-field\_\-titre}}
+\index{print_liste_field_titre@{print\_\-liste\_\-field\_\-titre}!functions.inc.php@{functions.inc.php}}
+\subsubsection[print\_\-liste\_\-field\_\-titre]{\setlength{\rightskip}{0pt plus 5cm}print\_\-liste\_\-field\_\-titre (\$ {\em name}, \$ {\em file}, \$ {\em field}, \$ {\em begin} = {\tt \char`\"{}\char`\"{}}, \$ {\em options} = {\tt \char`\"{}\char`\"{}})}}
+\label{functions_8inc_8php_a26}
+
+
+affichage du titre d'une liste 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em name}]\item[{\em file}]\item[{\em field}]\item[{\em begin}]\item[{\em options}]\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Remarques:]begin = \char`\"{}\char`\"{} par d\'{e}faut 
+
+options = \char`\"{}\char`\"{} par d\'{e}faut \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 658 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a27}{
+\index{functions.inc.php@{functions.inc.php}!print_liste_field_titre_new@{print\_\-liste\_\-field\_\-titre\_\-new}}
+\index{print_liste_field_titre_new@{print\_\-liste\_\-field\_\-titre\_\-new}!functions.inc.php@{functions.inc.php}}
+\subsubsection[print\_\-liste\_\-field\_\-titre\_\-new]{\setlength{\rightskip}{0pt plus 5cm}print\_\-liste\_\-field\_\-titre\_\-new (\$ {\em name}, \$ {\em file}, \$ {\em field}, \$ {\em begin} = {\tt \char`\"{}\char`\"{}}, \$ {\em options} = {\tt \char`\"{}\char`\"{}}, \$ {\em td} = {\tt \char`\"{}\char`\"{}}, \$ {\em sortfield} = {\tt \char`\"{}\char`\"{}})}}
+\label{functions_8inc_8php_a27}
+
+
+affichage du titre d'une liste avec possibilit\'{e} de tri et de choix du type de la balise td 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em name}]\item[{\em file}]\item[{\em field}]\item[{\em begin}]\item[{\em options}]\item[{\em td}]\item[{\em sortfield}]\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Remarques:]begin = \char`\"{}\char`\"{} par d\'{e}faut 
+
+options = \char`\"{}\char`\"{} par d\'{e}faut 
+
+td = \char`\"{}\char`\"{} par d\'{e}faut 
+
+sortfield = \char`\"{}\char`\"{} par d\'{e}faut \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 684 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a34}{
+\index{functions.inc.php@{functions.inc.php}!print_oui_non@{print\_\-oui\_\-non}}
+\index{print_oui_non@{print\_\-oui\_\-non}!functions.inc.php@{functions.inc.php}}
+\subsubsection[print\_\-oui\_\-non]{\setlength{\rightskip}{0pt plus 5cm}print\_\-oui\_\-non (\$ {\em value})}}
+\label{functions_8inc_8php_a34}
+
+
+fonction servant a afficher un menu d\'{e}roulant avec oui ou non 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em value}]\end{description}
+\end{Desc}
+\begin{Desc}
+\item[Remarques:]value peut avoir la valeur 0 ou 1 \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 832 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a28}{
+\index{functions.inc.php@{functions.inc.php}!print_titre@{print\_\-titre}}
+\index{print_titre@{print\_\-titre}!functions.inc.php@{functions.inc.php}}
+\subsubsection[print\_\-titre]{\setlength{\rightskip}{0pt plus 5cm}print\_\-titre (\$ {\em titre})}}
+\label{functions_8inc_8php_a28}
+
+
+affichage d'un titre 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em titre}]le titre a afficher \end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 708 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a42}{
+\index{functions.inc.php@{functions.inc.php}!stat_print@{stat\_\-print}}
+\index{stat_print@{stat\_\-print}!functions.inc.php@{functions.inc.php}}
+\subsubsection[stat\_\-print]{\setlength{\rightskip}{0pt plus 5cm}stat\_\-print (\$ {\em basename}, \$ {\em bc1}, \$ {\em bc2}, \$ {\em ftc}, \$ {\em jour})}}
+\label{functions_8inc_8php_a42}
+
+
+fonction qui affiche des statistiques 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em basename}]\item[{\em bc1}]\item[{\em bc2}]\item[{\em ftc}]\item[{\em jour}]\end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 1046 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a25}{
+\index{functions.inc.php@{functions.inc.php}!transcoS2L@{transcoS2L}}
+\index{transcoS2L@{transcoS2L}!functions.inc.php@{functions.inc.php}}
+\subsubsection[transcoS2L]{\setlength{\rightskip}{0pt plus 5cm}transco\-S2L (\$ {\em zonein}, \$ {\em devise})}}
+\label{functions_8inc_8php_a25}
+
+
+transcodage de francs en euros 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em zonein}]zone de depart \item[{\em devise}]type de devise \end{description}
+\end{Desc}
+\begin{Desc}
+\item[Renvoie:]r \end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 451 du fichier functions.inc.php.\hypertarget{functions_8inc_8php_a40}{
+\index{functions.inc.php@{functions.inc.php}!tva@{tva}}
+\index{tva@{tva}!functions.inc.php@{functions.inc.php}}
+\subsubsection[tva]{\setlength{\rightskip}{0pt plus 5cm}tva (\$ {\em euros}, \$ {\em taux} = {\tt 19.6})}}
+\label{functions_8inc_8php_a40}
+
+
+fonction qui calcule la tva 
+
+\begin{Desc}
+\item[Param\`{e}tres:]
+\begin{description}
+\item[{\em euros}]somme en euro \item[{\em taux}]taux de tva \end{description}
+\end{Desc}
+
+
+D\'{e}finition \`{a} la ligne 1018 du fichier functions.inc.php.
+
+R\'{e}f\'{e}renc\'{e} par calcul\_\-price().
