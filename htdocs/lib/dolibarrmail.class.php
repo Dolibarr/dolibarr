@@ -28,13 +28,13 @@ to chunk_split
 */
 
 /*! \class CMailFile
-		\brief Classe permettant d'envoyer des attachements par mail
-		\remarks Eric Seigne <eric.seigne@ryxeo.com> 2004.01.08
-		\remarks ajout de la gestion des cc:
-		\remarks ajout de l'expedition de plusieurs fichiers
-
-		\remarks Laurent Destailleur 2004.02.10
-		\remarks correction d'un disfonctionnement à la gestion des attachements multiples
+  \brief Classe permettant d'envoyer des attachements par mail
+  \remarks Eric Seigne <eric.seigne@ryxeo.com> 2004.01.08
+  \remarks ajout de la gestion des cc:
+  \remarks ajout de l'expedition de plusieurs fichiers
+  
+  \remarks Laurent Destailleur 2004.02.10
+  \remarks correction d'un disfonctionnement à la gestion des attachements multiples
 */
 
 // simple class that encapsulates mail() with addition of mime file attachment.
@@ -68,34 +68,37 @@ class DolibarrMail
     {
       $this->from = $from;
 
-      $this->message = wordwrap( $msg, 78);
+      $this->message = wordwrap($msg, 78);
 
       $this->subject = $subject;
       $this->addr_to = $to;
       $this->addr_bcc = "";
       $this->addr_cc = "";
       $this->reply_to = "";
-
     }
-  
+
+  /*!
+    \brief PrepareFile
+    \param filename_list
+    \param mimetype_list
+    \param mimefilename_list
+  */
 
   function PrepareFile($filename_list,$mimetype_list,$mimefilename_list)
   {
-
     $this->mime_headers="";
 
-    
     $this->smtp_headers = $this->write_smtpheaders();
 
     if (count($filename_list))
       {
 	$this->mime_headers = $this->write_mimeheaders($filename_list, $mimefilename_list);
+
 	$this->text_encoded = $this->attach_file($filename_list,
 						  $mimetype_list,
 						  $mimefilename_list);
       }
     $this->text_body = $this->write_body($this->message, $filename_list);
-
   }
     
   /*!
