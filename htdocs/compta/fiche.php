@@ -227,7 +227,7 @@ if ($socid > 0)
     print '<tr><td>'.$langs->trans("Phone").'</td><td>'.$societe->tel.'&nbsp;</td><td>Fax</td><td>'.$societe->fax.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
 
-    print '<tr><td>'.$langs->trans("ProfIdSiren").'</td><td><a href="http://www.societe.com/cgi-bin/recherche?rncs='.$societe->siren.'">'.$societe->siren.'</a>&nbsp;</td>';
+    print '<tr><td nowrap>'.$langs->trans("ProfIdSiren").'</td><td><a href="http://www.societe.com/cgi-bin/recherche?rncs='.$societe->siren.'">'.$societe->siren.'</a>&nbsp;</td>';
     print '<td>'.$langs->trans("Prefix").'</td><td>';
     if ($societe->prefix_comm)
       {
@@ -422,15 +422,15 @@ if ($socid > 0)
 
             print '<td>';
             print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
-            print img_file();
+            print img_object($langs->trans("Show"),"contact");
             print '&nbsp;'.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
-            if ($obj->note)
+            if (trim($obj->note))
             {
-                print "<br>".nl2br($obj->note);
+                print '<br>'.nl2br(trim($obj->note));
             }
-            print "</td>";
-            print "<td>$obj->poste&nbsp;</td>";
+            print '</td>';
+            print '<td>'.$obj->poste.'&nbsp;</td>';
             print '<td><a href="../comm/action/fiche.php?action=create&actionid=1&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
             print '<td><a href="../comm/action/fiche.php?action=create&actionid=2&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
             print '<td><a href="../comm/action/fiche.php?action=create&actionid=4&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
@@ -441,7 +441,7 @@ if ($socid > 0)
         	print '</a></td>';
         	
             print '<td align="center"><a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$societe->id.'">';
-            print img_actions();
+            print img_object($langs->trans("Rendez-Vous"),"action");
             print '</a></td>';
 
             print "</tr>\n";

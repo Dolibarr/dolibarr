@@ -33,6 +33,7 @@
 require("./pre.inc.php");
 
 $langs->load("companies");
+$langs->load("suppliers");
 
 
 /*
@@ -78,7 +79,7 @@ if ($type == "c") { $text.=$langs->trans("Customers")." "; }
 if ($view == 'phone')  { $text="(Vue Téléphones)"; }
 if ($view == 'mail')   { $text="(Vue EMail)"; }
 if ($view == 'recent') { $text="(Récents)"; }
-$titre = "Liste des contacts $text";
+$titre = $langs->trans("ListOfContacts").": $text";
 
 if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
     $search_nom="";
