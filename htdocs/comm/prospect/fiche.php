@@ -30,6 +30,12 @@ $user->getrights('fichinter');
 $user->getrights('commande');
 $user->getrights('projet');
 
+if ($_GET["action"] == 'cstc')
+{
+  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["stcomm"];
+  $sql .= " WHERE idp = ".$_GET["id"];
+  $db->query($sql);
+}
 
 llxHeader();
 
@@ -65,7 +71,6 @@ if ($socid > 0)
 
   if ($result)
     {
-
       $head[0][0] = DOL_URL_ROOT.'/soc.php?socid='.$societe->id;
       $head[0][1] = "Fiche société";
       $h = 1;
@@ -111,7 +116,6 @@ if ($socid > 0)
     print "<td>APE</td><td>";
     print $societe->ape;
     print "</td></tr>";
-
     print '<tr><td>Siret</td><td>'.$societe->siret.'</td>';
     print '<td>Capital</td><td>'.$societe->capital.'</td></tr>';
 
@@ -128,7 +132,18 @@ if ($socid > 0)
       }
 
     print "<tr><td>Forme juridique</td><td colspan=\"3\">$societe->forme_juridique</td></tr>";
-
+    print "<tr><td>Statut</td><td colspan=\"2\">$societe->statut_commercial</td>";
+    print '<td> ';
+    print '<a href="fiche.php?id='.$societe->id.'&amp;stcomm=-1&amp;action=cstc">';
+    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm-1.png" border="0" alt="'.$alt.'">';
+    print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=0&amp;action=cstc">';
+    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm0.png" border="0" alt="'.$alt.'">';
+    print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=1&amp;action=cstc">';
+    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm1.png" border="0" alt="'.$alt.'">';
+    print '</a> <a href="fiche.php?id='.$societe->id.'&amp;stcomm=2&amp;action=cstc">';
+    print '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/stcomm2.png" border="0" alt="'.$alt.'">';
+    print '</a>';
+    print '</td></tr>';
     print "</table></div>";
 
     /*
