@@ -46,12 +46,10 @@ if ($sortorder == "")
   $sortorder="DESC";
 }
 
-if ($page == -1) { $page = 0 ; }
-
 $limit = $conf->liste_limit;
-$offset = $limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+$offset = $limit * $_GET["page"] ;
+$pageprev = $_GET["page"] - 1;
+$pagenext = $_GET["page"] + 1;
 
 $sql = "SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht,".$db->pdate("c.date_commande")." as date_commande, c.fk_statut" ;
 $sql .= " FROM llx_societe as s, llx_commande as c WHERE c.fk_soc = s.idp";
@@ -81,7 +79,7 @@ $sql .= $db->plimit($limit + 1,$offset);
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
-  print_barre_liste("Commandes", $page, $PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+  print_barre_liste("Commandes", $_GET["page"], $PHP_SELF,"&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
     
   $i = 0;
   print '<TABLE border="0" width="100%" cellspacing="0" cellpadding="4">';
