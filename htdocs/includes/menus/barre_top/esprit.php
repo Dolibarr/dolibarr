@@ -26,11 +26,11 @@ print '<A class="menu" href="/boutique/livre/">Livres</A></TD>';
 
 print '<TD width="15%" class="menu" align="center">';
 
-print '<A class="menu" href="/product/osc-reviews.php">Critiques</A></TD>';
+print '<A class="menu" href="/product/critiques/">Critiques</A></TD>';
 
 print '<TD width="15%" class="menu" align="center">';
 
-print '<A class="menu" href="/boutique/editeur/">Editeurs</a>';
+print '<A class="menu" href="/product/categorie/">Catégories</a>';
 
 print '</td><td width="15%" class="menu" align="center">';
 
