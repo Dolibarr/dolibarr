@@ -31,7 +31,7 @@ if ($vline) {
   $viewline = 50;
 }
 
-print_titre("Bank");
+print_titre("Recherche compte bancaire");
 
 print "<input type=\"hidden\" name=\"action\" value=\"add\">";
 print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"2\">";
@@ -160,10 +160,8 @@ if ($result) {
   print $db->error() .'<div class="div.titre">' . $sql .'</div';
 }
 
+print "</table>";
 
-print "</table><p><small>";
-
-print "$sql</small>";
 $db->close();
 
 llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
