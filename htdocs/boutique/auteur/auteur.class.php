@@ -20,7 +20,7 @@
  *
  */
 
-/*!	\file auteur.class.php
+/*!	\file htdocs/boutique/auteur/auteur.class.php
 		\brief Classe permettant de gèrer des auteurs
 		\author	Rodolphe Quideville
 		\version $Revision$

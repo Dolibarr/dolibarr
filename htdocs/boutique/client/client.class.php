@@ -20,7 +20,7 @@
  *
  */
 
-/*!	\file client.class.php
+/*!	\file htdocs/boutique/client/client.class.php
 		\brief Classe permettant de gèrer des clients de la boutique online
 		\author	Rodolphe Quiedeville
 		\version $Revision$
