@@ -69,7 +69,6 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_projet.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_propal.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_propaldet.sql
-#	$(MYSQL) $(OPTIONS) $(BASE) < llx_service.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_soc_recontact.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_sqltables.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_tva.sql
@@ -91,9 +90,11 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_product_price.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_propal_model_pdf.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_rights_def.sql
-#ajout tabes oubliees 2004.01.31
+#ajout tables oubliees 2004.01.31
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_co_fa.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_co_pr.sql
+#ajout tables 2004.06.08
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_paiementcharge.sql
 
 show:
 	$(MYSQL) $(OPTIONS) $(BASE) -e 'show tables'
