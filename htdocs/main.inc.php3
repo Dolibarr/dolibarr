@@ -49,10 +49,10 @@ $sql = "SELECT name, value FROM llx_const";
 $result = $db->query($sql);
 if ($result) 
 {
-  $num = $db->num_rows();
+  $numr = $db->num_rows();
   $i = 0;
   
-  while ($i < $num)
+  while ($i < $numr)
     {
       $objp = $db->fetch_object( $i);
       define ("$objp->name", $objp->value);
