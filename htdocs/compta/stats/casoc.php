@@ -55,7 +55,7 @@ if ($result)
     }
 }
 
-print "<b>Total : ".price($catotal)."</b>";
+print "<div class=\"titre\"><b>Total : ".price($catotal)."</b></div>";
 
 if ($catotal == 0) { $catotal = 1; };
 

@@ -62,7 +62,7 @@ $sql .= " GROUP BY dm";
 pt($db, $sql,"Mois cumulés");
 
 
-print "<P>";
+print "<br>"; 
 
 $sql = "SELECT sum(f.total) as amount, year(f.datef) as dm";
 $sql .= " FROM llx_facture as f WHERE f.paye = 1";
@@ -94,7 +94,7 @@ function pt ($db, $sql, $date)
   if ($result) {
     $num = $db->num_rows();
     $i = 0; $total = 0 ;
-    print '<p><TABLE border="1" width="100%" cellspacing="0" cellpadding="3">';
+    print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="3">';
     print "<TR class=\"liste_titre\">";
     print "<TD width=\"60%\">$date</TD>";
     print "<TD align=\"right\">Montant</TD>";
@@ -113,7 +113,7 @@ function pt ($db, $sql, $date)
       
       $i++;
     }
-    print '<tr><td align="right">Total :</td><td align="right"><b>'.price($total).'</b></td><td>euros&nbsp;HT</td></tr>';
+    print '<tr class="total"><td  align="right">Total :</td><td align="right"><b>'.price($total).'</b></td><td>euros&nbsp;HT</td></tr>';
     
     print "</TABLE>";
     $db->free();

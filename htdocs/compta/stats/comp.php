@@ -37,7 +37,7 @@ function propals ($db, $year, $month) {
   $result = $db->query($sql);
   $num = $db->num_rows();
   $i = 0;
-  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
   print "<TR bgcolor=\"#e0e0e0\"><td colspan=\"3\"><b>Propal</b></td></tr>";
 
   $oldstatut = -1;
@@ -109,7 +109,7 @@ function factures ($db, $year, $month, $paye) {
       if ($num > 0)
 	{
 	  $i = 0;
-	  print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+	  print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
 	  print "<TR bgcolor=\"orange\"><td colspan=\"3\"><b>Factures</b></td></tr>";
 	  print "<TR bgcolor=\"orange\">";
 	  print "<TD>Societe</td>";
@@ -167,7 +167,7 @@ function pt ($db, $sql, $year) {
   if ($result) {
     $num = $db->num_rows();
     $i = 0; $total = 0 ;
-    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+    print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
     print "<TR class=\"liste_titre\">";
     print "<TD>Mois</TD>";
     print "<td align=\"right\">Montant</td></tr>\n";
@@ -220,7 +220,7 @@ function pt ($db, $sql, $year) {
       }
     }
 
-    print "<tr><td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td></tr>";    
+    print "<tr class=\"total\"><td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td></tr>";    
     print "</table>";
 
     $db->free();
@@ -235,7 +235,7 @@ function ppt ($db, $year, $socidp)
   global $bc;
   print "<table width=\"100%\">";
 
-  print "<tr><td valign=\"top\" width=\"30%\">";
+  print "<tr class=\"liste_titre\"><td valign=\"top\" width=\"30%\">";
   print "CA Prévisionnel basé sur les propal $year";
   
   print "</td><td valign=\"top\">CA Réalisé $year</td>";
@@ -269,7 +269,7 @@ function ppt ($db, $year, $socidp)
   
   print "</td><td valign=\"top\" width=\"30%\">";
   
-  print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
+  print "<TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"3\">";
   print "<TR class=\"liste_titre\">";
   print "<TD>Mois</TD>";
   print "<TD align=\"right\">Montant</TD>";
@@ -292,9 +292,9 @@ function ppt ($db, $year, $socidp)
   $acat = get_ca($db, $ayear, $socidp) - get_ca_propal($db, $ayear, $socidp);
 
 
-  print "<tr><td align=\"right\">Total :</td><td align=\"right\">".price($deltat)."</td></tr>";
-  print "<tr><td align=\"right\">Rappel $ayear :</td><td align=\"right\">".price($acat)."</td></tr>";
-  print "<tr><td align=\"right\">Soit :</td><td align=\"right\"><b>".price($acat+$deltat)."</b></td></tr>";
+  print "<tr class=\"total\"><td align=\"right\">Total :</td><td align=\"right\">".price($deltat)."</td></tr>";
+  print "<tr class=\"total\"><td align=\"right\">Rappel $ayear :</td><td align=\"right\">".price($acat)."</td></tr>";
+  print "<tr class=\"total\"><td align=\"right\">Soit :</td><td align=\"right\"><b>".price($acat+$deltat)."</b></td></tr>";
 
   print "</table>";
   print "</td></tr></table>";

@@ -33,7 +33,7 @@ if ($user->societe_id > 0)
 function pt ($db, $sql, $title) {
   global $bc;
 
-  print '<p><TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
+  print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
   print "<TR class=\"liste_titre\">";
   print "<TD>$title</TD>";
   print "<TD align=\"right\">Montant</TD>";
@@ -58,7 +58,7 @@ function pt ($db, $sql, $title) {
 	  $total = $total + $obj->amount;
 	  $i++;
 	}
-      print "<tr><td colspan=\"2\" align=\"right\"><b>Total : ".price($total)."</b> euros HT</td></tr>";
+      print "<tr class=\"total\"><td colspan=\"2\" align=\"right\"><b>Total : ".price($total)."</b> euros HT</td></tr>";
     
       $db->free();
     } 
@@ -116,7 +116,7 @@ $sql .= " GROUP BY dm DESC";
 
 pt($db, $sql, "Année");
 
-print "<P>";
+print "<br>";
 
 $sql = "SELECT sum(f.price) as amount, month(f.datep) as dm";
 $sql .= " FROM llx_propal as f WHERE fk_statut in $in";

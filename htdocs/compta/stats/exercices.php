@@ -210,7 +210,7 @@ function pt ($db, $sql, $year) {
       }
     }
 
-    print "<tr><td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td></tr>";    
+    print "<tr class=\"total\"><td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td></tr>";    
     print "</table>";
 
     $db->free();
@@ -225,7 +225,7 @@ function ppt ($db, $year, $socidp)
   global $bc;
   print "<table width=\"100%\">";
 
-  print "<tr><td align=\"center\" width=\"30%\">";
+  print "<tr class=\"liste_titre\"><td align=\"center\" width=\"30%\">";
   print "CA ".($year - 1);
   
   print "</td><td align=\"center\">CA $year</td>";
@@ -279,7 +279,7 @@ function ppt ($db, $year, $socidp)
     }
 
 
-  print '<tr><td align="right">Total :</td><td align="right"><b>'.price($deltat).'<b></td></tr>';
+  print '<tr class="total"><td align="right">Total :</td><td align="right"><b>'.price($deltat).'<b></td></tr>';
 
   print '</table>';
   print '</td></tr></table>';
