@@ -21,8 +21,19 @@
  */
 require("./pre.inc.php");
 
+$langs->load("companies");
+$langs->load("products");
+
+
 if (!$user->admin)
   accessforbidden();
+
+
+// Liste des zone de recherche permanantes supportées
+$searchform=array("main_searchform_societe","main_searchform_contact","main_searchform_produitservice");
+$searchformconst=array(MAIN_SEARCHFORM_SOCIETE,MAIN_SEARCHFORM_CONTACT,MAIN_SEARCHFORM_PRODUITSERVICE);
+$searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
+
 
 
 if ($_POST["action"] == 'update')
@@ -30,10 +41,12 @@ if ($_POST["action"] == 'update')
   dolibarr_set_const($db, "MAIN_THEME",             $_POST["main_theme"]);
   dolibarr_set_const($db, "SIZE_LISTE_LIMIT",       $_POST["size_liste_limit"]);
   dolibarr_set_const($db, "MAIN_MENU_BARRETOP",     $_POST["main_menu_barretop"]);
-  dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",$_POST["main_searchform_contact"]);
-  dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",$_POST["main_searchform_societe"]);
   dolibarr_set_const($db, "MAIN_LANG_DEFAULT",      $_POST["main_lang_default"]);
   dolibarr_set_const($db, "MAIN_MOTD",              trim($_POST["main_motd"]));
+
+  dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT",$_POST["main_searchform_contact"]);
+  dolibarr_set_const($db, "MAIN_SEARCHFORM_SOCIETE",$_POST["main_searchform_societe"]);
+  dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["main_searchform_produitservice"]);
 
   Header("Location: ihm.php");
 }
@@ -49,6 +62,8 @@ if (!defined("MAIN_MOTD") && strlen(trim(MAIN_MOTD)))
 print_titre($langs->trans("GUISetup"));
 
 print "<br>\n";
+
+
 
 if ($_GET["action"] == 'edit')
 {
@@ -110,16 +125,22 @@ if ($_GET["action"] == 'edit')
   $html=new Form($db);
   $html->select_lang(MAIN_LANG_DEFAULT,'main_lang_default');
   print '</td></tr>';
-
-  print '<tr class="impair"><td width="50%">Afficher formulaire de recherche Contacts dans la barre de gauche</td><td><input name="main_searchform_contact" size="20" value="' . MAIN_SEARCHFORM_CONTACT . '"></td></tr>';
-  print '<tr class="pair"><td width="50%">Afficher formulaire de recherche Sociétés dans la barre de gauche</td><td><input name="main_searchform_societe" size="20" value="' . MAIN_SEARCHFORM_SOCIETE . '"></td></tr>';
-
-
   print '<tr class="impair"><td width="50%">Message du jour</td><td><textarea cols="40" rows="3" name="main_motd" size="20">' .stripslashes(MAIN_MOTD) . '</textarea></td></tr>';
 
-
   print '</table><br>';
-  
+
+  // Liste des zone de recherche permanantes supportées
+  print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+  print '<tr class="liste_titre"><td>Zone de recherche permanante du menu de gauche</td><td>'.$langs->trans("Active").'</td></tr>';
+  $var=True;
+  foreach ($searchform as $key => $value) {
+    $var=!$var;
+    print '<tr '.$bc[$var].'"><td>'.$searchformtitle[$key].'</td><td>';
+    $html->selectyesnonum($searchform[$key],$searchformconst[$key]);
+    print '</td></tr>';
+  }
+  print '</table><br>';
+
   print '<div class="tabsAction">';
   print '<input class="tabAction" type="submit" value="'.$langs->trans("Save").'">';
   print '</div>';
@@ -138,16 +159,20 @@ else
   print $filelib;
   print '</td></tr>';
   print '<tr class="pair"><td width="50%">Langue par défaut à utiliser (code langue)</td><td>' . MAIN_LANG_DEFAULT . '</td></tr>';
-  print '<tr class="impair"><td>Afficher zone de recherche Contacts dans le menu gauche</td><td>' . (MAIN_SEARCHFORM_CONTACT?"oui":"non") . '</td></tr>';
-  print '<tr class="pair"><td>Afficher zone de recherche Sociétés dans le menu gauche</td><td>' . (MAIN_SEARCHFORM_SOCIETE?"oui":"non") . '</td></tr>';
-
 
   print '<tr class="impair"><td width="50%">Message du jour</td><td>' . stripslashes(nl2br(MAIN_MOTD)) . '</td></tr>';
 
   print '</table><br>';
 
-
-
+  // Liste des zone de recherche permanantes supportées
+  print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
+  print '<tr class="liste_titre"><td>Zone de recherche permanante du menu de gauche</td><td>'.$langs->trans("Active").'</td></tr>';
+  $var=True;
+  foreach ($searchform as $key => $value) {
+    $var=!$var;
+    print '<tr '.$bc[$var].'"><td>'.$searchformtitle[$key].'</td><td>' . ($searchformconst[$key]?"oui":"non") . '</td></tr>';
+  }
+  print '</table><br>';
 
   print '<div class="tabsAction">';
   print '<a class="tabAction" href="ihm.php?action=edit">'.$langs->trans("Edit").'</a>';
