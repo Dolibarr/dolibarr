@@ -21,7 +21,7 @@
  *
  */
 
-/**	    \file       htdocs/product/fournisseur.php
+/**	    \file       htdocs/product/fournisseurs.php
         \ingroup    product,fournisseur
 		\brief      Page fournisseur de produit
 		\version    $Revision$

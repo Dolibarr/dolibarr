@@ -110,7 +110,7 @@ if (defined("MAIN_NOT_INSTALLED"))
  *  \brief      Affiche en-tête html + la barre de menu supérieure
  *  \param      head    lignes d'en-tete head
  *  \param      title   titre page web
- *  \param      head    target du menu Accueil
+ *  \param      target  target du menu Accueil
  */
 
 function top_menu($head, $title="", $target="") 
@@ -313,6 +313,7 @@ function left_menu($menu, $help_url='', $form_search='')
  * \param   urlaction       url du post
  * \param   urlobject       url du lien sur titre de la zone de recherche
  * \param   title           titre de la zone de recherche
+ * \param   htmlmodesearch  'search'
  * \param   htmlinputname   nom du champ input du formulaire
  */
  

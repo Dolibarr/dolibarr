@@ -21,15 +21,14 @@
  *
  */
 
-/*!
-        \file       htdocs/cactioncomm.class.php
+/**     \file       htdocs/cactioncomm.class.php
         \ingroup    commercial
         \brief      Fichier de la classe des types d'actions commerciales
         \version    $Revision$
 */
 
 
-/*!     \class      CActionComm
+/**     \class      CActioncomm
 	    \brief      Classe permettant la gestion des différents types d'actions commerciales
 */
 

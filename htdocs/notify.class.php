@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,17 @@
  *
  */
 
-class Notify 
+/**	    \file       htdocs/notify.class.php
+		\brief      Fichier de la classe de gestion des notifications
+		\version    $Revision$
+*/
+
+
+/**	    \class      Notify
+		\brief      Classe de gestion des notifications
+*/
+
+class Notify
 {
   var $id;
   var $db;

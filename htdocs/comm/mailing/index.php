@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +21,10 @@
  *
  */
 
-/*!
-  \file       htdocs/comm/index.php
-  \ingroup    commercial
-  \brief      Page acceuil de la zone mailing
-  \version    $Revision$
+/**     \file       htdocs/comm/mailing/index.php
+        \ingroup    commercial
+        \brief      Page accueil de la zone mailing
+        \version    $Revision$
 */
  
 require("./pre.inc.php");

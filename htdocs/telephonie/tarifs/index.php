@@ -20,7 +20,7 @@
  *
  */
 
-/**	        \file       htdocs/telephonie/tarif/index.php
+/**	        \file       htdocs/telephonie/tarifs/index.php
 	        \ingroup    telephonie
 	        \brief      Page accueil tarif telephonie
 	        \version    $Revision$

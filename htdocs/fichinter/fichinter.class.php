@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +21,18 @@
  *
  */
 
-class Fichinter 
+/**	    \file       htdocs/fichinter/fichinter.class.php
+		\ingroup    fucheinter
+		\brief      Fichier de la classe des gestion des fiches interventions
+		\version    $Revision$
+*/
+
+
+/**	    \class      Ficheinter
+		\brief      Classe des gestion des fiches interventions
+*/
+
+class Fichinter
 {
   var $id;
   var $db;
