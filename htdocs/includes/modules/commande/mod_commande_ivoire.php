@@ -22,21 +22,22 @@
  *
  */
 
-/*!	\file htdocs/includes/modules/commande/mod_commande_ivoire.php
+/** 	\file       htdocs/includes/modules/commande/mod_commande_ivoire.php
 		\ingroup    commande
 		\brief      Fichier contenant la classe du modèle de numérotation de référence de commande Ivoire
 		\version    $Revision$
 */
 
 
-/*!	\class mod_commande_ivoire
+/**
+    	\class      mod_commande_ivoire
 		\brief      Classe du modèle de numérotation de référence de commande Ivoire
 */
 
-class mod_commande_ivoire
+class mod_commande_ivoire extends ModeleNumRefCommandes
 {
 
-  /*!   \brief      Constructeur
+  /**   \brief      Constructeur
    */
   function mod_commande_ivoire()
     {
@@ -44,16 +45,16 @@ class mod_commande_ivoire
     }
 
 
-  /*!   \brief      Renvoie le descriptif du module
-        \return     string      Texte descriptif
-   */
+    /**     \brief      Renvoi la description du modele de numérotation
+     *      \return     string      Texte descripif
+     */
   function info()
     {
       return "Renvoie le numéro sous la forme numérique C0M1, COM2, COM3, ...";      
     }
 
 
-  /*!   \brief      Renvoie le prochaine numéro de référence de commande non utilisé
+  /**   \brief      Renvoie le prochaine numéro de référence de commande non utilisé
         \param      obj_soc     objet société
         \return     string      numéro de référence de commande non utilisé
    */
