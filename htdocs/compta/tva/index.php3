@@ -33,7 +33,8 @@ function pt ($db, $sql, $date) {
   $result = $db->query($sql);
   if ($result) {
     $num = $db->num_rows();
-    $i = 0; $total = 0 ;
+    $i = 0; 
+    $total = 0 ;
     print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
     print "<TR class=\"liste_titre\">";
     print "<TD width=\"60%\">$date</TD>";
@@ -46,11 +47,11 @@ function pt ($db, $sql, $date) {
       $var=!$var;
       print "<TR $bc[$var]>";
       print "<TD>$obj->dm</TD>\n";
-      print "<TD align=\"right\">".price($obj->amount)."</TD><td>&nbsp;</td>\n";
-      print "</TR>\n";
-      
       $total = $total + $obj->amount;
-      
+
+      print "<TD align=\"right\">".price($obj->amount)."</TD><td align=\"right\">".$total."</td>\n";
+      print "</TR>\n";
+            
       $i++;
     }
     print "<tr><td align=\"right\">Total :</td><td align=\"right\"><b>".price($total)."</b></td><td>euros&nbsp;HT</td></tr>";
@@ -92,7 +93,7 @@ for ($y = $yearc ; $y >= $conf->years ; $y=$y-1 ) {
 
   $sql = "SELECT sum(f.tva) as amount , date_format(f.datef,'%Y-%m') as dm";
   $sql .= " FROM llx_facture as f WHERE f.paye = 1 AND f.datef >= '$y-01-01' AND f.datef <= '$y-12-31' ";
-  $sql .= " GROUP BY dm DESC";
+  $sql .= " GROUP BY dm ASC";
   
   pt($db, $sql,"Année $y");
   
