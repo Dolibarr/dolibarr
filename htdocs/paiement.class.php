@@ -58,10 +58,7 @@ class Paiement
     
     if ($result) 
       {
-	$label = "Facture $this->facnumber - $this->societe";
-	$sql = "INSERT INTO llx_bank (datec, dateo, amount, author, label)";
-	$sql .= " VALUES (now(), $this->datepaye, $this->amount,'$this->author', '$this->label')";
-	$result = $this->db->query($sql);
+
       }
     else
       {
