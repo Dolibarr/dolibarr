@@ -34,36 +34,48 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add(DOL_URL_ROOT."/comm/clients.php", "Clients");
 
-  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php", "Contacts");
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=c", "Contacts");
 
-  $menu->add(DOL_URL_ROOT."/comm/action/", "Actions");
+  $menu->add(DOL_URL_ROOT."/comm/prospect/prospects.php", "Prospects");
 
-  if ($user->rights->propale->lire)
+  $menu->add_submenu(DOL_URL_ROOT."/comm/contact.php?type=p", "Contacts");
+
+  $menu->add(DOL_URL_ROOT."/comm/action/index.php", "Actions");
+
+  if ($conf->propal->enabled && $user->rights->propale->lire)
     {
-      $menu->add(DOL_URL_ROOT."/comm/propal.php", "Propales");
+      $menu->add(DOL_URL_ROOT."/comm/propal.php", "Prop. commerciales");
       $menu->add_submenu("propal.php?viewstatut=0", "Brouillons");
       $menu->add_submenu("propal.php?viewstatut=1", "Ouvertes");
+      $menu->add_submenu("./propal/stats/", "Statistiques");
+    }
+
+  $menu->add(DOL_URL_ROOT."/contrat/index.php", "Contrats");
+
+  if ($conf->commande->enabled ) 
+    {
+      $menu->add(DOL_URL_ROOT."/commande/index.php", "Commandes");
     }
 
   if ($conf->fichinter->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/fichinter/", "Fiches d'intervention");
+      $menu->add(DOL_URL_ROOT."/fichinter/index.php", "Fiches d'intervention");
     }
 
-  if ($conf->produit->enabled )
+  if ($conf->produit->enabled || $conf->service->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/product/", "Produits");
+	  $chaine="";
+	  if ($conf->produit->enabled) { $chaine.="Produits"; }
+	  if ($conf->produit->enabled && $conf->service->enabled) { $chaine.="/"; }
+	  if ($conf->service->enabled) { $chaine.="Services"; }
+      $menu->add(DOL_URL_ROOT."/product/index.php", "$chaine");
     }
 
-  $menu->add(DOL_URL_ROOT."/contrat/", "Contrats");
-
-  if ($conf->service->enabled ) 
+  if ($conf->projet->enabled ) 
     {
-      $menu->add(DOL_URL_ROOT."/service/", "Services");
-    }
-
-  $menu->add("projet/", "Projets");
-
+	  $menu->add(DOL_URL_ROOT."/projet/index.php", "Projets");
+	}
+	
   left_menu($menu->liste);
 
 }
