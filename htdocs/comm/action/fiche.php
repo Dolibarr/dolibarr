@@ -117,7 +117,12 @@ if ($_POST["action"] == 'add_action')
               $libelle = $actioncomm->libelle;
             }
             
-            $webcal->date=$actioncomm->date;
+            $webcal->date=mktime($_POST["heurehour"],
+    			    $_POST["heuremin"],
+    			    0,
+    			    $_POST["acmonth"],
+    			    $_POST["acday"],
+    			    $_POST["acyear"]);
             $webcal->texte=$societe->nom;
             $webcal->desc=$libelle;
         }
