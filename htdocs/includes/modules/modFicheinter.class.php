@@ -31,6 +31,7 @@ class modFicheinter
   Function modFicheinter($DB)
   {
     $this->db = $DB ;
+    $this->depends = array("MAIN_MODULE_SOCIETE");
   }
   /*
    *
