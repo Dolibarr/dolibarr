@@ -181,7 +181,7 @@ else
 	  if ($action == 'delete')
 	    {
 	      
-	      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">';
+	      print '<form method="post" action="'.$PHP_SELF.'?id='.$id.'">';
 	      print '<input type="hidden" name="action" value="confirm_delete">';
 	      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 	      
