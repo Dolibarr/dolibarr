@@ -323,6 +323,36 @@ else
   if ($contact->email)
     print 'Email : '.$contact->email ."<br>";
 
+  /* 
+   * Pas le temps de comprendre les 2 regexp
+   * je laisse les deux, vu ce que cela coute ;-)
+   */
+
+  if (!ValidEmail($contact->email))
+    {
+      print "<b>Email invalide !</b><br>";
+    }
+
+  if (!valid_email($contact->email))
+    {
+      print "<b>Email invalide, syntaxe incorrecte !</b><br>";
+    }
+
+  /*
+   * Risque de poser des problèmes en cas de non connexion au Réseau
+   * TODO : ajouter une option pour désactiver ce test
+   *
+   */
+
+  if (!check_mail($contact->email))
+    {
+      print "<b>Email invalide, nom de domaine incorrecte !</b><br>";
+    }
+
+  /*
+   *
+   */
+
   if ($contact->jabberid)
     print 'Jabber : '.$contact->jabberid ."<br>";
 
