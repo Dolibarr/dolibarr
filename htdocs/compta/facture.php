@@ -580,7 +580,7 @@ else
 	  /*
 	   *   Facture
 	   */
-	  print "<table border=\"1\" cellspacing=\"0\" cellpadding=\"2\" width=\"100%\">";
+	  print '<table class="border" cellspacing="0" cellpadding="2" width="100%">';
 	  print "<tr><td>Client</td>";
 	  print "<td colspan=\"3\">";
 	  print '<b><a href="fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
@@ -613,7 +613,7 @@ else
 	    $num = $db->num_rows();
 	    $i = 0; $total = 0;
 	    print "<b>Paiements</b>";
-	    echo '<TABLE border="0" width="100%" cellspacing="0" cellpadding="3">';
+	    echo '<table class="noborder" width="100%" cellspacing="0" cellpadding="3">';
 	    print "<TR class=\"liste_titre\">";
 	    print "<td>Date</td>";
 	    print "<td>Type</td>";
@@ -818,7 +818,7 @@ else
 	 */
 	if ($user->societe_id == 0)
 	  {
-	    print "<p><TABLE border=\"1\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\"><tr>";
+	    print '<p><table id="actions" width="100%" cellspacing="0" cellpadding="4"><tr>';
 	
 	    if ($fac->statut == 0 && $user->rights->facture->supprimer)
 	      {
@@ -1050,7 +1050,7 @@ else
 		    print_titre("Proposition commerciale associée");
 		  }
 
-		print '<TABLE border="1" width="100%" cellspacing="0" cellpadding="4">';
+		print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 		print '<tr class="liste_titre">';
 		print "<td>Numéro</td>";
 		print "<td>Date</td>";
