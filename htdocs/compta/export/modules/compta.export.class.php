@@ -17,7 +17,6 @@
  *
  * $Id$
  * $Source$
- * $File$
  */
 
 /*!
@@ -40,6 +39,7 @@ class ComptaExport
     \brief      Createur Classe
     \param      DB       object de base de données
     \param      USER     object utilisateur    
+    \param      class    nom de la classe utilisée pour formater les rapports
   */
 
   function ComptaExport ($DB, $USER, $classe)
