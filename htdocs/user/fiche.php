@@ -295,7 +295,7 @@ else
       print "<tr>".'<td width="25%" valign="top">Login</td>';
       print '<td width="25%"  class="valeur">'.$fuser->login.'</td></tr>';
       print "<tr>".'<td width="25%" valign="top">Email</td>';
-      print '<td width="25%"  class="valeur">'.$fuser->email.'</td></tr>';
+      print '<td width="25%"  class="valeur"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td></tr>';
       
       print "<tr>".'<td width="25%" valign="top">Webcal Login</td>';
       print '<td width="25%"  class="valeur">'.$fuser->webcal_login.'&nbsp;</td></tr>';
