@@ -19,33 +19,32 @@
  *
  */
 
-BODY 
-{
+body {
   background: #e0ebeb; 
   font-family: Helvetica, Verdana; font-size: 12px; 
-  text-decoration: none 
+  text-decoration: none ;
 }
-/*
- *   Menu superieur
- */
 
 a { 
     text-decoration: none; 
     }
 
-a.leftmenu 
-{ 
-  background: #b3cccc;
-  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
-  color: #202020; 
-  }
+/*
+   *   Menu superieur
+ */
 
-.menu 
-{ 
-  background: #b3cccc; 
-  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
-  color: #000000; 
-  text-decoration: none }
+
+td.menu { 
+          border-right: 1px solid #000000;
+          border-bottom: 1px solid #000000;
+          }
+
+
+.menu { 
+        background: #b3cccc; 
+        font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
+        color: #000000; 
+        text-decoration: none }
 
 
 .submenu 
@@ -60,27 +59,35 @@ a.leftmenu
  *   Barre de gauche
  */
 
-TD.barre 
+a.leftmenu 
 { 
-  border: 1px solid #000000;
-  background: #b3cccc;
-  font-family: Helvetica, Verdana; font-size: 14px; 
-  color: #000000; 
-  text-decoration: none }
+  font-family: Helvetica, Verdana; 
+  font-size: 14px; 
+  font-weight: bold; 
+  color: #202020; 
+  }
 
-TD.barre_select 
-{ 
-  background: #b3cccc; 
-  color: #000000 
+
+td.barre { 
+           border-right: 1px solid #000000;
+           border-bottom: 1px solid #000000;
+           background: #b3cccc;
+           font-family: Helvetica, Verdana; font-size: 14px; 
+           color: #000000; 
+           text-decoration: none }
+
+
+td.barre_select { 
+                  background: #b3cccc; 
+                  color: #000000 
   }
 
 
 
-DIV.titre 
-{ 
-  font-family: Helvetica, Verdana; font-size: 16px; font-weight: bold; 
-  color: #336666; 
-  text-decoration: none }
+div.titre { 
+            font-family: Helvetica, Verdana; font-size: 16px; font-weight: bold; 
+            color: #336666; 
+            text-decoration: none }
 /*
  *
  */
