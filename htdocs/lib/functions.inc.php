@@ -25,6 +25,11 @@
 $yn[0] = "non";
 $yn[1] = "oui";
 
+Function img_file($alt = "Voir")
+{
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.MAIN_THEME.'/img/file.png" border="0" alt="'.$alt.'">';
+}
+
 function loginFunction()
 {
   /**
