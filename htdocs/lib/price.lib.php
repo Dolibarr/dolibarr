@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +21,18 @@
  */
 
 /*!	\file price.lib.php
-		\brief librairie contenant les fonctions pour calculer un prix.
-		\author Rodolphe Quiedeville.
-		\version 1.2.
-
-		Ensemble des fonctions permettant de calculer un prix.
+  \brief librairie contenant les fonctions pour calculer un prix.
+  \author Rodolphe Quiedeville.
+  \version 1.2.
+  
+  Ensemble des fonctions permettant de calculer un prix.
 */
 
 /*!
-		\brief permet de calculer un prix.
-		\param products
-		\param remise_percent
-		\return result
+  \brief permet de calculer un prix.
+  \param products
+  \param remise_percent
+  \return result
 */
 
 function calcul_price($products, $remise_percent)
