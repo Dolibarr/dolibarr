@@ -27,7 +27,7 @@ create table llx_paiementfourn
   fk_facture_fourn  integer,           -- facture
   datep             datetime,          -- date de paiement
   amount            real default 0,    -- montant
-  fk_user_author    integer            -- auteur
+  fk_user_author    integer,           -- auteur
   fk_paiement       integer NOT NULL,  -- moyen de paiement
   num_paiement      varchar(50),       -- numéro de paiement (cheque)
   note              text
