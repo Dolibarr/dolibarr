@@ -91,7 +91,7 @@ class modContrat extends DolibarrModules
     $this->rights[0][3] = 0; // La permission est-elle une permission par défaut
 
     $this->rights[1][0] = 161;
-    $this->rights[1][1] = 'Consulter les contrats';
+    $this->rights[1][1] = 'Lire les contrats';
     $this->rights[1][2] = 'r';
     $this->rights[1][3] = 1;
     $this->rights[1][4] = 'lire';
