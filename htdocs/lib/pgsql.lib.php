@@ -49,9 +49,6 @@ class DoliDb
     
     var $ok;
     
-    // Constantes pour code erreurs
-    var $ERROR_DUPLICATE="23505";
-    var $ERROR_TABLEEXISTS='42P07';
     
     /**
         \brief      Ouverture d'une connection vers le serveur et une database.
@@ -457,25 +454,41 @@ class DoliDb
     }
     
     /**
-        \brief 		Renvoie le texte de l'erreur mysql de l'operation precedente.
+         \brief     Renvoie le code erreur generique de l'operation precedente.
+         \return    error_num       (Exemples: DB_ERROR_TABLE_ALREADY_EXISTS, DB_ERROR_RECORD_ALREADY_EXISTS...)
+    */
+    
+    function errno()
+    {
+        static $error_regexps;
+        if (empty($error_regexps)) {
+            $error_regexps = array(
+                '/(Table does not exist\.|Relation [\"\'].*[\"\'] does not exist|sequence does not exist|class ".+" not found)$/' => DB_ERROR_NOSUCHTABLE,
+                '/table [\"\'].*[\"\'] does not exist/' => DB_ERROR_NOSUCHTABLE,
+                '/Relation [\"\'].*[\"\'] already exists|Cannot insert a duplicate key into (a )?unique index.*/'      => DB_ERROR_ALREADY_EXISTS,
+                '/divide by zero$/'                     => DB_ERROR_DIVZERO,
+                '/pg_atoi: error in .*: can\'t parse /' => DB_ERROR_INVALID_NUMBER,
+                '/ttribute [\"\'].*[\"\'] not found$|Relation [\"\'].*[\"\'] does not have attribute [\"\'].*[\"\']/' => DB_ERROR_NOSUCHFIELD,
+                '/parser: parse error at or near \"/'   => DB_ERROR_SYNTAX,
+                '/referential integrity violation/'     => DB_ERROR_CONSTRAINT
+            );
+        }
+        foreach ($error_regexps as $regexp => $code) {
+            if (preg_match($regexp, pg_last_error($this->db))) {
+                return $code;
+            }
+        }
+        return DB_ERROR;
+    }
+    
+    }
+    
+    /**
+        \brief 		Renvoie le texte de l'erreur pgsql de l'operation precedente.
         \return		error_text
     */
     
     function error()
-    {
-        return pg_last_error($this->db);
-    }
-    
-    /**
-        \brief      Renvoie la valeur numerique de l'erreur de l'operation precedente.
-        pour etre exploiter par l'appelant et détecter les erreurs du genre:
-        echec car doublons, table deja existante...
-        \return 	error_num
-        \remark		pgsql ne permet pas de renvoyer un code générique d'une erreur,
-        mais juste un message. On utilise donc ces messages plutot qu'un code.
-    */
-    
-    function errno()
     {
         return pg_last_error($this->db);
     }
@@ -487,7 +500,7 @@ class DoliDb
     
     function last_insert_id($tab)
     {
-        $result = pg_query($this->db,"select max(rowid) from ".$tab." ;");
+        $result = pg_query($this->db,"SELECT MAX(rowid) FROM ".$tab." ;");
         $nbre = pg_num_rows($result);
         $row = pg_fetch_result($result,0,0);
         return $row;

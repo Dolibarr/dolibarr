@@ -135,7 +135,7 @@ if ($_POST["action"] == "set")
 		}
 	      else
 		{
-		  if ($db->errno() == 1050)
+		  if ($db->errno() == DB_ERROR_TABLE_ALREADY_EXISTS)
 		    {
 		      //print "<td>Déjà existante</td></tr>";
 		      $table_exists = 1;
@@ -195,7 +195,7 @@ if ($_POST["action"] == "set")
 			}
 		      else
 			{
-			  if ($db->errno() == 1062)
+			  if ($db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
 			    {
 			      // print "<tr><td>Insertion ligne : $buffer</td><td>
 			    }
@@ -228,7 +228,7 @@ if ($_POST["action"] == "set")
 		}
 	      else
 		{
-		  if ($db->errno() == 1062)
+		  if ($db->errno() == DB_ERROR_RECORD_ALREADY_EXISTS)
 		    {
 		      // print "<tr><td>Insertion ligne : $buffer</td><td>Déja existante</td></tr>";
 		    }	
