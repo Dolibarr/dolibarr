@@ -117,23 +117,32 @@ class Don
 	    {
 	      $error_string[$err] = "Le montant du don contient un/des caractère(s) invalide(s)";
 	      $err++;
+	      $amount_invalid = 1;
 	      break;
 	    } 	      
 	}
 
-      if ($this->amount == 0)
+      if (! $amount_invalid)
 	{
-	  $error_string[$err] = "Le montant du don est null";
-	  $err++;
-	}
-      else
-	{
-	  if ($this->amount < $minimum && $minimum > 0)
+	  if ($this->amount == 0)
 	    {
-	      $error_string[$err] = "Le montant minimum du don est de $minimum";
+	      $error_string[$err] = "Le montant du don est null";
 	      $err++;
 	    }
+	  else
+	    {
+	      if ($this->amount < $minimum && $minimum > 0)
+		{
+		  $error_string[$err] = "Le montant minimum du don est de $minimum";
+		  $err++;
+		}
+	    }
 	}
+      
+      /*
+       * Return errors
+       *
+       */
 
       if ($err)
 	{

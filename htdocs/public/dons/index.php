@@ -50,7 +50,7 @@ if ($conf->don->enabled)
   if ($HTTP_POST_VARS["action"] == 'add')
     {
       
-      if ($don->check())
+      if ($don->check($conf->don->minimum))
 	{
 	  require("valid.php");
 	}
@@ -62,7 +62,7 @@ if ($conf->don->enabled)
   elseif ($HTTP_POST_VARS["action"] == 'valid')
     {
       
-      if ($don->check())
+      if ($don->check($conf->don->minimum))
 	{
 	  $return = $don->create(0);
 	  
