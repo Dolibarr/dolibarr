@@ -80,6 +80,9 @@ else
 
       if ( $result )
 	{ 
+
+	  $livres = $auteur->liste_livre();
+
 	  if ($action == 'edit')
 	    {
 	      print '<div class="titre">Edition de la fiche Auteur : '.$auteur->nom.'</div><br>';
@@ -105,6 +108,15 @@ else
 	  print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
 	  print "<tr>";
 	  print '<td width="20%">Nom</td><td width="30%">'.$auteur->nom.'</td></tr>';
+
+	  print '<tr><td>Livres</td><td>';
+
+	  foreach ($livres as $key => $value)
+	    {
+	      print '<a href="../livre/fiche.php?id='.$key.'">'.$value."<br>\n";
+	    }
+	  print "</td></tr>";
+
 	  print "</table>";
 
 

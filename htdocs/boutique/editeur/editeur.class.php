@@ -55,13 +55,11 @@ class Editeur {
    *
    *
    */
-  Function liste_groupart()
+  Function liste_array ()
   {
     $ga = array();
 
-    $sql = "SELECT g.rowid, g.nom FROM llx_groupart as g, llx_livre_to_groupart as l";
-    $sql .= " WHERE g.rowid = l.fk_groupart AND l.fk_livre = ".$this->id;
-    $sql .= " ORDER BY g.nom";
+    $sql = "SELECT rowid, nom FROM llx_editeur ORDER BY nom";
 
     if ($this->db->query($sql) )
       {
@@ -83,7 +81,8 @@ class Editeur {
     else
       {
 	print $this->db->error();
-      }    
+      }
+    
   }
   /*
    *
@@ -120,7 +119,7 @@ class Editeur {
 	$result = $this->db->fetch_array();
 
 	$this->id      = $result["rowid"];
-	$this->nom     = $result["nom"];
+	$this->nom     = stripslashes($result["nom"]);
 	
 	$this->db->free();
       }

@@ -23,7 +23,6 @@ require("../../main.inc.php3");
 require("../livre/livre.class.php");
 require("./editeur.class.php");
 
-
 function llxHeader($head = "", $urlp = "") {
   global $user, $conf;
 
@@ -39,12 +38,15 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu("/boutique/livre/fiche.php?&action=create","Nouvel ouvrage");
 
+  $menu->add("/boutique/auteur/", "Auteurs");
+
+  $menu->add_submenu("/boutique/auteur/fiche.php?&action=create","Nouvel auteur");
 
   $menu->add("/boutique/editeur/", "Editeurs");
 
   $menu->add_submenu("/boutique/editeur/fiche.php?&action=create","Nouvel éditeur");
 
-
+  $menu->add("/product/categorie/", "Catégories");
 
 
   left_menu($menu->liste);

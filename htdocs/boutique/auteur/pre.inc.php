@@ -38,7 +38,7 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu("/boutique/livre/fiche.php?&action=create","Nouvel ouvrage");
 
-  $menu->add("/boutique/auteur/", "Auteur");
+  $menu->add("/boutique/auteur/", "Auteurs");
 
   $menu->add_submenu("/boutique/auteur/fiche.php?&action=create","Nouvel auteur");
 
