@@ -184,7 +184,7 @@ if ($action == 'create')
   print '<input type="hidden" name="type" value="'.$type.'">'."\n";
   print '<div class="titre">Nouveau '.$types[$type].'</div><br>'."\n";
       
-  print '<table class="border" border="1" width="100%" cellspacing="0" cellpadding="4">';
+  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr>';
   print '<td>Référence</td><td><input name="ref" size="20" value=""></td></tr>';
   print "<tr>".'<td>Libellé</td><td><input name="libelle" size="40" value=""></td></tr>';
@@ -235,7 +235,7 @@ else
 
 	      print_fiche_titre('Fiche '.$types[$product->type].' : '.$product->ref, $mesg);
       
-	      print '<table class="border" border="1" width="100%" cellspacing="0" cellpadding="4">';
+	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	      print "<tr>";
 	      print '<td width="20%">Référence</td><td width="40%">'.$product->ref.'</td>';
 	      print '<td>';
@@ -263,7 +263,7 @@ else
 		{
 		  $num = $db->num_rows();
 		  $i = 0;
-		  print '<table class="noborder" border="0" width="100%" cellspacing="0" cellpadding="4">';
+		  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 		  $var=True;      
 		  while ($i < $num)
 		    {
@@ -447,7 +447,7 @@ else
 /*                                                                            */ 
 /* ************************************************************************** */
 
-print '<br><table id="actions" width="100%" border="1" cellspacing="0" cellpadding="3">';
+print '<br><table id="actions" width="100%" cellspacing="0" cellpadding="3">';
 if ($action == '')
 {
   if ($user->rights->produit->modifier || $user->rights->produit->creer)
@@ -577,7 +577,7 @@ if ($id && $action == '' && $product->envente)
 	{
 	  $num = $db->num_rows();
 	  $i = 0;
-	  print '<table id="actions" border="0" width="100%" cellspacing="0" cellpadding="4">';
+	  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 	  $var=True;      
 	  while ($i < $num)
 	    {
