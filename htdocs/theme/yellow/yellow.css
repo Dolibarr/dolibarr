@@ -1,4 +1,5 @@
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -274,7 +275,7 @@ div.formsearch
   display: block;
   float: none;
   clear: right;
-  background: #dee7ec;
+  background: #ddddcc;
   top: 0px;
   left: 130px;
   padding: 4px; 
@@ -393,6 +394,7 @@ table.liste {
 border-collapse: collapse;
 border: 0px;
 width: 100%;
+background: #ddddcc;
 }
 
 table.noborder td {

@@ -1,4 +1,5 @@
 /* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,11 +55,6 @@ div.body
     font-family:arial,tahoma,verdana,helvetica;
     font-size:12px;
 }
-
-td.menu { 
-          border-right: 1px solid #000000;
-          border-bottom: 1px solid #000000;
-          }
 
 div.tmenu
 {
@@ -116,6 +112,7 @@ div.fiche
 }
 .menusel
 { 
+    background: #DDDDDD;
     font-size: 12px; font-weight: bold; 
     color: #000000; 
     text-decoration: none;
@@ -393,6 +390,7 @@ table.liste {
 border-collapse: collapse;
 border: 0px;
 width: 100%;
+background: #ddddcc;
 }
 
 table.noborder td {
