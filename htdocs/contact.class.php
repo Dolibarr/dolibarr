@@ -233,6 +233,14 @@ class Contact
 		    }
 		}
 	    }
+	  else
+	    {
+	      print "Erreur bad id";
+	    }
+	}
+      else
+	{
+	  print $this->db->error();
 	}
     }
   /*
