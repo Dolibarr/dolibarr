@@ -107,42 +107,45 @@ elseif ($action == 'edit')
 {
   print_titre("Edition de la société");
 
-  $soc = new Societe($db);
-  $soc->id = $socid;
-  $soc->fetch($socid);
+  if ($socid)
+    {
 
-  print '<form action="soc.php3?socid='.$socid.'" method="post">';
-  print '<input type="hidden" name="action" value="update">';
+      $soc = new Societe($db);
+      $soc->id = $socid;
+      $soc->fetch($socid);
 
-  print '<table border="1" cellpadding="3" cellspacing="0">';
-  print '<tr><td>Nom</td><td><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
-  print '<tr><td valign="top">Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft">';
-  print $soc->adresse;
-  print '</textarea></td></tr>';
+      print '<form action="soc.php3?socid='.$socid.'" method="post">';
+      print '<input type="hidden" name="action" value="update">';
 
-  print '<tr><td>CP</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
-  print 'Ville&nbsp;<input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
-
-  print '<tr><td>Tel</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td></tr>';
-  print '<tr><td>Fax</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
-  print '<tr><td>Web</td><td>http://<input type="text" name="url" value="'.$soc->url.'"></td></tr>';
-
-  print '<tr><td>Siren</td><td><input type="text" name="siren" value="'.$soc->siren.'"></td></tr>';
-
-  print '<tr><td>Client</td><td><select name="client">';
-  print_oui_non($soc->client);
-  print '</select>';
-
-  print '<tr><td>Fournisseur</td><td><select name="fournisseur">';
-  print_oui_non($soc->fournisseur);
-  print '</select>';
-
-  print '</td></tr>';
-
-  print '<tr><td align="center" colspan="2"><input type="submit" value="Mettre a jour"></td></tr>';
-  print '</table>';
-  print '</form>';
-
+      print '<table border="1" cellpadding="3" cellspacing="0">';
+      print '<tr><td>Nom</td><td><input type="text" name="nom" value="'.$soc->nom.'"></td></tr>';
+      print '<tr><td valign="top">Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft">';
+      print $soc->adresse;
+      print '</textarea></td></tr>';
+      
+      print '<tr><td>CP</td><td><input size="6" type="text" name="cp" value="'.$soc->cp.'">&nbsp;';
+      print 'Ville&nbsp;<input type="text" name="ville" value="'.$soc->ville.'"></td></tr>';
+      
+      print '<tr><td>Tel</td><td><input type="text" name="tel" value="'.$soc->tel.'"></td></tr>';
+      print '<tr><td>Fax</td><td><input type="text" name="fax" value="'.$soc->fax.'"></td></tr>';
+      print '<tr><td>Web</td><td>http://<input type="text" name="url" value="'.$soc->url.'"></td></tr>';
+      
+      print '<tr><td>Siren</td><td><input type="text" name="siren" value="'.$soc->siren.'"></td></tr>';
+      
+      print '<tr><td>Client</td><td><select name="client">';
+      print_oui_non($soc->client);
+      print '</select>';
+      
+      print '<tr><td>Fournisseur</td><td><select name="fournisseur">';
+      print_oui_non($soc->fournisseur);
+      print '</select>';
+      
+      print '</td></tr>';
+      
+      print '<tr><td align="center" colspan="2"><input type="submit" value="Mettre a jour"></td></tr>';
+      print '</table>';
+      print '</form>';
+    }
 } else {
 
   print_titre("Fiche société");
@@ -151,8 +154,8 @@ elseif ($action == 'edit')
   $soc->id = $socid;
   $soc->fetch($socid);
 
-  print '<table border="1" cellpadding="3" cellspacing="0">';
-  print '<tr><td>Nom</td><td class="valeur">'.$soc->nom.'</td></tr>';
+  print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+  print '<tr><td width="20%">Nom</td><td class="valeur">'.$soc->nom.'</td></tr>';
   print '<tr><td valign="top">Adresse</td><td class="valeur">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
   print '<tr><td>CP</td><td class="valeur">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
 
@@ -164,7 +167,7 @@ elseif ($action == 'edit')
 
   if ($soc->client)
     {
-      print '<tr><td>Client</td><td>oui</td></tr>';
+      print '<tr><td>Client</td><td>oui <a href="'.DOL_URL_ROOT.'/comm/fiche.php3?socid='.$socid.'">Fiche</a></td></tr>';
     }
   else
     {
@@ -173,7 +176,7 @@ elseif ($action == 'edit')
 
   if ($soc->fournisseur)
     {
-      print '<tr><td>Fournisseur</td><td>oui</td></tr>';
+      print '<tr><td>Fournisseur</td><td>oui <a href="'.DOL_URL_ROOT.'/compta/fiche.php3?socid='.$socid.'">Fiche</a></td></tr>';
     }
   else
     {
