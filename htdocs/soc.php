@@ -34,8 +34,6 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-llxHeader();
-
 if ($action == 'add')
 {
   $soc = new Societe($db);
@@ -49,6 +47,11 @@ if ($action == 'add')
   $soc->fax     = $fax;
   $soc->url     = ereg_replace( "http://", "", $url );
   $soc->siren   = $siren;
+
+  $soc->siret      = $HTTP_POST_VARS["siret"];
+  $soc->ape        = $HTTP_POST_VARS["ape"];
+  $soc->capital    = $HTTP_POST_VARS["capital"];
+  $soc->tva_intra  = $HTTP_POST_VARS["tva_intra_code"] . $HTTP_POST_VARS["tva_intra_num"];
 
   $soc->client   = $client;
   $soc->fournisseur = $fournisseur;
@@ -87,6 +90,7 @@ if ($action == 'update')
  *
  *
  */
+llxHeader();
 
 if ($action == 'create') 
 {
@@ -95,27 +99,41 @@ if ($action == 'create')
   print '<input type="hidden" name="action" value="add">';
   print '<input type="hidden" name="fournisseur" value="0">';
 
-  print '<table class="border" cellpadding="3" cellspacing="0">';
-  print '<tr><td>Nom</td><td><input type="text" name="nom"></td></tr>';
-  print '<tr><td>Adresse</td><td><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
-  print '<tr><td>CP</td><td><input size="6" type="text" name="cp">&nbsp;';
+  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
+  print '<tr><td>Nom</td><td colspan="3"><input type="text" name="nom"></td></tr>';
+  print '<tr><td>Adresse</td><td colspan="3"><textarea name="adresse" cols="30" rows="3" wrap="soft"></textarea></td></tr>';
+  print '<tr><td>CP</td><td colspan="3"><input size="6" type="text" name="cp">&nbsp;';
   print 'Ville&nbsp;<input type="text" name="ville"></td></tr>';
 
-  print '<tr><td>Tel</td><td><input type="text" name="tel"></td></tr>';
-  print '<tr><td>Fax</td><td><input type="text" name="fax"></td></tr>';
-  print '<tr><td>Web</td><td>http://<input type="text" name="url"></td></tr>';
+  print '<tr><td>Téléphone</td><td><input type="text" name="tel"></td>';
+  print '<td>Fax</td><td><input type="text" name="fax"></td></tr>';
 
-  print '<tr><td>Siren</td><td><input type="text" name="siren"></td></tr>';
+  print '<tr><td>Web</td><td colspan="3">http://<input size="40" type="text" name="url"></td></tr>';
+
+  print '<tr><td>Siren</td><td><input type="text" name="siren"></td>';
+
+  print '<td>Siret</td><td><input type="text" name="siret" size="15" maxlength="14" value="'.$soc->siret.'"></td></tr>';
+
+  print '<tr><td>Ape</td><td><input type="text" name="ape" size="5" maxlength="4" value="'.$soc->ape.'"></td>';
+  print '<td>Capital</td><td><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.MAIN_MONNAIE.'</td></tr>';
+  
+  print '<tr><td colspan="2">Numéro de TVA Intracommunautaire</td><td colspan="2">';
+  
+  print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
+  print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
+  print '<br>Vous pouvez vérifier ce numéro sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la commission européenne';
+  print '</td></tr>';
+  
 
   print '<tr><td>Client</td><td><select name="client">';
   print_oui_non($soc->client);
-  print '</select>';
+  print '</select></td>';
 
-  print '<tr><td>Fournisseur</td><td><select name="fournisseur">';
+  print '<td>Fournisseur</td><td><select name="fournisseur">';
   print_oui_non($soc->fournisseur);
-  print '</select>';
+  print '</select></td></tr>';
 
-  print '<tr><td colspan="2" align="center"><input type="submit" value="Ajouter"></td></tr>';
+  print '<tr><td colspan="4" align="center"><input type="submit" value="Ajouter"></td></tr>';
   print '</table>';
   print '</form>';
 }
@@ -156,12 +174,9 @@ elseif ($action == 'edit')
 
       print '<input type="text" name="tva_intra_code" size="3" maxlength="2" value="'.$soc->tva_intra_code.'">';
       print '<input type="text" name="tva_intra_num" size="18" maxlength="18" value="'.$soc->tva_intra_num.'">';
-      print '<br>Vous pouvez vérifier ce numéro sur ce <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htmsite" target="_blank">site</a>';
+      print '<br>Vous pouvez vérifier ce numéro sur le <a href="http://europa.eu.int/comm/taxation_customs/vies/fr/vieshome.htm" target="_blank">site</a> de la commission européenne';
       print '</td></tr>';
 
-
-
-      
       print '<tr><td>Client</td><td><select name="client">';
       print_oui_non($soc->client);
       print '</select>';
@@ -179,12 +194,26 @@ elseif ($action == 'edit')
 }
 else
 {
-  print_titre("Fiche société");
-  
   $soc = new Societe($db);
   $soc->id = $socid;
   $soc->fetch($socid);
+
+
+  print '<div class="tabs">';
+  print '<a href="soc.php?socid='.$_GET["socid"].'" id="active" class="tab">Fiche société</a>';
+
+  if ($soc->client)
+    {
+      print '<a class="tab" href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">Fiche commerciale</a>';
+    }
+  if ($soc->fournisseur)
+    {
+      print '<a class="tab" href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid.'">Fiche fournisseur</a>';
+    }
   
+  print '</div>';
+  print '<div class="tabBar"><br>';
+    
   print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
   print '<tr><td width="20%">Nom</td><td width="80%" colspan="3">'.$soc->nom.'</td></tr>';
   print '<tr><td valign="top">Adresse</td><td colspan="3">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
@@ -194,47 +223,30 @@ else
   print '<td>Fax</td><td>'.$soc->fax.'</td></tr>';
   print '<tr><td>Web</td><td colspan="3"><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
   
-  print '<tr><td>Siren</td><td colspan="3"><a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;</td></tr>';
+  print '<tr><td>Siren</td><td><a target="_blank" href="http://www.societe.com/cgi-bin/recherche?rncs='.$soc->siren.'">'.$soc->siren.'</a>&nbsp;</td>';
 
+  print '<td>Siret</td><td>'.$soc->siret.'</td></tr>';
+  print '<tr><td>Ape</td><td>'.$soc->ape.'</td>';
+  print '<td>Capital</td><td>'.$soc->capital.' '.MAIN_MONNAIE.'</td></tr>';
 
   print '<tr><td colspan="2">Numéro de TVA Intracommunautaire</td><td colspan="2">';
   print $soc->tva_intra;
   print '</td></tr>';
 
-  if ($soc->client)
-    {
-      print '<tr><td>Client</td><td colspan="3">oui <a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$socid.'">'.img_file().'</a></td></tr>';
-    }
-  else
-    {
-      print '<tr><td>Client</td><td colspan="3">non</td></tr>';
-    }
-  
-  if ($soc->fournisseur)
-    {
-      print '<tr><td>Fournisseur</td><td colspan="3">oui <a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid.'">'.img_file().'</a></td></tr>';
-    }
-  else
-    {
-      print '<tr><td>Fournisseur</td><td colspan="3">non</td></tr>';
-    }
-
   print '</table>';
-
+  print '<br></div>';
   /*
    *
    */
   
-  print '<br><table id="actions" width="100%" cellspacing="0" cellpadding="3">';
+  print '<div class="tabsAction">';
 
-  print '<td width="20%" align="center"><a href="soc.php?socid='.$socid.'&action=edit">Editer</a></td>';
-  print '<td width="20%" align="center">-</td>';
-  print '<td width="20%" align="center">';
-  print '<a href="./contact/fiche.php?socid='.$socid.'&amp;action=create">Ajouter un contact</a></td>';
+  print '<a class="tabAction" href="soc.php?socid='.$socid.'&action=edit">Editer</a>';
+
+  print '<a class="tabAction" href="./contact/fiche.php?socid='.$socid.'&amp;action=create">Ajouter un contact</a>';
   
-  print '<td width="20%" align="center">-</td>';
-  print '<td width="20%" align="center"><a href="societe/notify/fiche.php?socid='.$socid.'">Notifications</a></td>';
-  print '</table><br>';
+  print '<a class="tabAction" href="societe/notify/fiche.php?socid='.$socid.'">Notifications</a>';
+  print '</div>';
 /*
  *
  */
