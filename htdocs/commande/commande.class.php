@@ -42,12 +42,13 @@ class Commande
       $this->statuts[-1] = "Annulée";
       $this->statuts[0] = "Brouillon";
       $this->statuts[1] = "Validée";
+      $this->statuts[2] = "En traitement";
+      $this->statuts[3] = "Traitée";
 
       $this->products = array();
     }
   /**
    * Créé la facture depuis une propale existante
-   *
    *
    */
   Function create_from_propale($user, $propale_id)
@@ -82,7 +83,6 @@ class Commande
   /**
    * Valide la commande
    *
-   *
    */
   Function valid($user)
     {
@@ -113,13 +113,43 @@ class Commande
 		    }
 		  
 		}
+	      else
+		{
+		  print "Impossible de lire " ;
+		}
+	    }
+	  else
+	    {
+	      print "Impossible de lire " ;
 	    }
 	}
       return $result ;
     }
   /**
-   * Annule la commande
+   * Cloture la commande
    *
+   */
+  Function cloture($user)
+    {
+      if ($user->rights->commande->valider)
+	{
+
+	  $sql = "UPDATE llx_commande SET fk_statut = 3";
+	  $sql .= " WHERE rowid = $this->id AND fk_statut > 0 ;";
+	  
+	  if ($this->db->query($sql) )
+	    {
+	      return 1;
+	    }
+	  else
+	    {
+	      print $this->db->error() . ' in ' . $sql;
+	    }
+	}
+  }
+
+  /**
+   * Annule la commande
    *
    */
   Function cancel($user)
@@ -143,7 +173,6 @@ class Commande
 
   /**
    * Créé la commande
-   *
    *
    */
   Function create($user)
@@ -209,8 +238,9 @@ class Commande
 								 $this->lines[$i]->price,
 								 $this->lines[$i]->qty,
 								 $this->lines[$i]->tva_tx, 
-								 $this->lines[$i]->remise_percent,
-								 $this->lines[$i]->product_id);
+								 $this->lines[$i]->product_id,
+								 $this->lines[$i]->remise_percent);
+								 
 		  if ( $result_insert < 0)
 		    {
 		      print $sql . '<br>' . $this->db->error() .'<br>';
@@ -332,7 +362,6 @@ class Commande
   /**
    * Ajoute un produit dans la commande
    *
-   *
    */
   Function add_product($idproduct, $qty, $remise_percent=0)
     {
@@ -350,7 +379,6 @@ class Commande
     }
 
   /** 
-   *
    * Lit une commande
    *
    */
@@ -408,8 +436,93 @@ class Commande
 	  return -1;
 	}
     }
-  /** 
+  /**
    *
+   *
+   */
+  Function fetch_lignes()
+  {
+    $this->lignes = array();
+    $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
+    $sql .= " FROM llx_commandedet as l WHERE l.fk_commande = $this->id ORDER BY l.rowid";
+	  
+    $result = $this->db->query($sql);
+    if ($result)
+      {
+	$num = $this->db->num_rows();
+	$i = 0;
+	while ($i < $num)
+	  {
+	    $ligne = new CommandeLigne();
+
+	    $objp = $this->db->fetch_object( $i);
+
+	    $ligne->id = $objp->rowid;
+
+	    $ligne->product_id = $objp->fk_product;
+
+	    $ligne->description = stripslashes($objp->description);
+	    
+	    $ligne->qty = $objp->qty;
+
+	    $this->lignes[$i] = $ligne;	    
+	    $i++;
+	  }	      
+	$this->db->free();
+      }
+
+    return $lignes;
+  }
+  /**
+   * Renvoie un tableau avec les livraison par ligne
+   *
+   *
+   */
+  Function livraison_array()
+  {
+    $this->livraisons = array();
+
+    $sql = "SELECT fk_product, sum(ed.qty)";
+    $sql .= " FROM llx_expeditiondet as ed, llx_commande as c, llx_commandedet as cd";
+    $sql .=" WHERE ed.fk_commande_ligne = cd .rowid AND cd.fk_commande = c.rowid";
+    $sql .= " AND cd.fk_commande =" .$this->id;
+    $sql .= " GROUP BY fk_product ";
+    $result = $this->db->query($sql);
+    if ($result)
+      {
+	$num = $this->db->num_rows();
+	$i = 0;
+	while ($i < $num)
+	  {
+	    $row = $this->db->fetch_row( $i);
+
+	    $this->livraisons[$row[0]] = $row[1];
+
+	    $i++;
+	  }	      
+	$this->db->free();
+      }
+  }
+  /**
+   * Renvoie un tableau avec les livraison par ligne
+   *
+   */
+  Function nb_expedition()
+  {
+    $sql = "SELECT count(*) FROM llx_expedition as e";
+    $sql .=" WHERE e.fk_commande = $this->id";
+
+    $result = $this->db->query($sql);
+    if ($result)
+      {
+	$row = $this->db->fetch_row(0);
+
+	return $row[0];
+      }
+  }
+
+  /** 
+   * Supprime une ligne de la commande
    *
    */
   Function delete_line($idligne)
@@ -431,8 +544,6 @@ class Commande
 	}
     }
   /**
-   *
-   *
    *
    *
    */
@@ -459,7 +570,7 @@ class Commande
 	}
     }
   /**
-   *
+   * Mettre à jour le prix
    *
    */
   Function update_price()
@@ -509,6 +620,43 @@ class Commande
 	  return -1;
 	}
     }
+  /**
+   * Mets à jour une ligne de commande
+   *
+   */
+  Function update_line($rowid, $desc, $pu, $qty, $remise_percent=0)
+    {
+      if ($this->brouillon)
+	{
+	  if (strlen(trim($qty))==0)
+	    {
+	      $qty=1;
+	    }
+	  $remise = 0;
+	  $price = round(ereg_replace(",",".",$pu), 2);
+	  $subprice = $price;
+	  if (trim(strlen($remise_percent)) > 0)
+	    {
+	      $remise = round(($pu * $remise_percent / 100), 2);
+	      $price = $pu - $remise;
+	    }
+	  else
+	    {
+	      $remise_percent=0;
+	    }
+
+	  $sql = "UPDATE llx_commandedet SET description='$desc',price=$price,subprice=$subprice,remise=$remise,remise_percent=$remise_percent,qty=$qty WHERE rowid = $rowid ;";
+	  if ( $this->db->query( $sql) )
+	    {
+	      $this->update_price($this->id);
+	    }
+	  else
+	    {
+	      print "Erreur : $sql";
+	    }
+	}
+    }
+
 
   /**
    * Supprime la commande
@@ -516,27 +664,41 @@ class Commande
    */
   Function delete()
   {
+    $err = 0;
+
+    $this->db->begin();
+
     $sql = "DELETE FROM llx_commandedet WHERE fk_commande = $this->id ;";
-    if ( $this->db->query($sql) ) 
+    if (! $this->db->query($sql) ) 
       {
-	$sql = "DELETE FROM llx_commande WHERE rowid = $this->id;";
-	if ( $this->db->query($sql) ) 
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    return -2;
-	  }
+	$err++;
+      }
+
+    $sql = "DELETE FROM llx_commande WHERE rowid = $this->id;";
+    if (! $this->db->query($sql) ) 
+      {
+	$err++;
+      }
+
+    $sql = "DELETE FROM llx_co_pr WHERE fk_commande = $this->id;";
+    if (! $this->db->query($sql) ) 
+      {
+	$err++;
+      }
+
+    if ($err == 0)
+      {
+	$this->db->commit();
+	return 1;
       }
     else
       {
+	$this->db->rollback();
 	return -1;
       }
   }
   /**
-   * Class la commande
-   *
+   * Classe la commande
    *
    */
   Function classin($cat_id)
@@ -553,7 +715,6 @@ class Commande
 	  print $this->db->error() . ' in ' . $sql;
 	}
     }
-
 
 }
 
