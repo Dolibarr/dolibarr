@@ -86,9 +86,9 @@ if ($sortorder == "")
   $sortorder="ASC";
 }
 
-$in = "(1,2)";
+$in = "(1,2,4)";
 
-print_titre ("CA Prévisionnel basé sur les propal <b>ouvertes</b> et <b>signées</b>");
+print_titre ("CA Prévisionnel basé sur les propositions <b>ouvertes</b> et <b>signées</b>");
 
 print '<table width="100%">';
 
