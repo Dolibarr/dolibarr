@@ -24,6 +24,7 @@ class Categorie {
   var $db ;
 
   var $id ;
+  var $parent_id ;
   var $oscid ;
   var $ref;
   var $titre;
@@ -212,7 +213,7 @@ class Categorie {
    */
   Function fetch ($id) {
     
-    $sql = "SELECT c.categories_id, cd.categories_name";
+    $sql = "SELECT c.categories_id, cd.categories_name, c.parent_id";
     $sql .= " FROM ".DB_NAME_OSC.".categories as c,".DB_NAME_OSC.".categories_description as cd";
     $sql .= " WHERE c.categories_id = cd.categories_id AND cd.language_id = ".OSC_LANGUAGE_ID;
     $sql .= " AND c.categories_id = $id";
@@ -222,6 +223,7 @@ class Categorie {
       $result = $this->db->fetch_array();
 
       $this->id          = $result["categories_id"];
+      $this->parent_id   = $result["parent_id"];
       $this->name        = $result["categories_name"];
       $this->titre       = $result["title"];
       $this->description = $result["description"];

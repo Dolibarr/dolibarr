@@ -48,10 +48,6 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add_submenu("/boutique/editeur/fiche.php?&action=create","Nouvel éditeur");
 
-  $menu->add("/product/osc-reviews.php", "Critiques");
-
-  $menu->add_submenu("/product/osc-productsbyreviews.php", "Meilleurs produits");
-
   $menu->add("/product/categorie/", "Catégories");
 
   left_menu($menu->liste);

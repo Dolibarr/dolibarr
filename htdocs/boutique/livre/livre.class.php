@@ -160,6 +160,27 @@ class Livre {
    *
    *
    */
+  Function unlinkcategorie($categories_id)
+  {
+
+    $sql = "DELETE FROM ".DB_NAME_OSC.".products_to_categories ";
+
+    $sql .= " WHERE products_id=".$this->oscid;
+    $sql .= " AND categories_id=".$categories_id;
+
+    if ( $this->db->query($sql) )
+      {
+	return 1;
+      }
+    else
+      {
+	print $this->db->error() . ' in ' . $sql;
+      }
+    }
+  /*
+   *
+   *
+   */
   Function linkcategorie($categories_id)
   {
 
@@ -183,6 +204,8 @@ class Livre {
    */
   Function listcategorie()
   {
+    global $conf;
+
     $listecat = new Categorie($this->db);
     $cats = $listecat->liste_array();
 
@@ -220,13 +243,43 @@ class Livre {
 	    }
 	  if ($test)
 	    {
-	      print "<b>$value</b><br>";
+	      print '<a href="/boutique/livre/fiche.php?id='.$this->id.'&action=delcat&catid='.$key.'">';
+	      print '<img src="/theme/'.$conf->theme.'/img/editdelete.png" height="16" width="16" alt="Supprimer" border="0">';
+	      print "</a><b>$value</b><br>";
 	    }
 	  else
 	    {
+	      print '<img src="/theme/'.$conf->theme.'/img/transparent.png" height="16" width="16" alt="Supprimer" border="0">';
 	      print "$value<br>";
 	    }
 	}
+  }
+  /*
+   *
+   *
+   */
+  Function update_status($status)
+  {
+    $sql = "UPDATE ".DB_NAME_OSC.".products ";
+    $sql .= " SET products_status = ".$status;
+    $sql .= " WHERE products_id = " . $this->oscid;
+
+    if ( $this->db->query($sql) )
+      {
+	$sql = "UPDATE llx_livre ";
+	$sql .= " SET status = ".$status;
+	$sql .= " WHERE rowid = " . $this->id;
+	
+	if ( $this->db->query($sql) )
+	  {
+	    return 1;
+	  }
+
+      }
+    else
+      {
+	print $this->db->error() . ' in ' . $sql;
+      }
   }
   /*
    *
@@ -235,69 +288,106 @@ class Livre {
    */
   Function updateosc()
   {
+    $desc = trim(addslashes($this->description));
+    $desc .= "<p>";
+
+    $auteurs = array();
+    $auteurs = $this->liste_auteur();
+    foreach ($auteurs as $key => $value)
+      {
+	$auteursid = $key;
+	$auteur = new Auteur($this->db);
+	$result = $auteur->fetch($auteursid);
+
+	if ( $result )
+	  { 
+	    $liste_auteurs .= '<a href="">'.addslashes($auteur->nom)."</a>, ";
+	  }
+      }
+    $desc .= 'Auteur';
+
+    if (sizeof($auteurs)>1)
+      {
+	$desc .= "s";
+      }
+    $desc .= ' : ' . substr($liste_auteurs, 0, strlen($liste_auteurs) - 2);
+
+    $desc .= '<br>Année de parution : '.$this->annee;
+
+
+    $editeur = new Editeur($this->db);
+    $result = $editeur->fetch($this->editeurid);
+    if (result)
+      {
+	$desc .= '<br>Editeur : ' . addslashes($editeur->nom);
+      }
+
 
     $sql = "UPDATE ".DB_NAME_OSC.".products_description ";
 
     $sql .= " SET products_name = '".$this->titre."'";
 
-    $desc .= '<br>Info supplémentaires';
-    $ga = array();
-    $ga = $this->liste_groupart();
-    if (sizeof($ga) == 1)
-    {
-      foreach ($ga as $key => $value)
-	{
-	  $gaid = $key;
-	}
-
-
-      $groupart = new Groupart($this->db);
-      $result = $groupart->fetch($gaid);
-
-      if ( $result )
-	{ 
-
-	  $desc = $groupart->nom."<p>";
-
-	  $desc .= addslashes($this->description);
-	  
-	  $desc .= "<p><b>Autres livres</b> : ";
-
-	  $gas = $groupart->liste_livres();
-	  $i = 0;
-	  $sizegas = sizeof($gas) - 1;
-	  foreach ($gas as $key => $value)
-	    {
-	      if ($key <> $this->id)
-		{
-
-		  $otha = new Livre($this->db);
-		  $otha->fetch($key);
-
-		  $desc .= '<a href="'.OSC_CATALOG_URL.'product_info.php?products_id='.$otha->oscid.'">'.$value."</a>";
-		  $i++; 
-		  if ($sizegas > $i)
-		    {
-		      $desc .= ", ";
-		    }
-		}
-	    }
-	}
-    }
-
-
     $sql .= ", products_description = '$desc'";
 
     $sql .= " WHERE products_id = " . $this->oscid;
 
-    if ( $this->db->query($sql) ) {
-      return 1;
-    } else {
-      print $this->db->error() . ' in ' . $sql;
-    }
+    if ( $this->db->query($sql) )
+      {
+	$sql = "UPDATE ".DB_NAME_OSC.".products ";
+	$sql .= "SET products_model = '".$this->ref."'";
+	$sql .= ", products_price = ".$this->price."";
+
+	$sql .= " WHERE products_id = " . $this->oscid;
+
+	if ( $this->db->query($sql) )
+	  {
+	    return 1;
+	  }
+	else
+	  {
+	    print $this->db->error() . ' in ' . $sql;
+	  }
+      }
+    else
+      {
+	print $this->db->error() . ' in ' . $sql;
+      }
   }
   /*
    *
+   *
+   */
+  Function liste_auteur()
+  {
+    $ga = array();
+
+    $sql = "SELECT a.rowid, a.nom FROM llx_auteur as a, llx_livre_to_auteur as l";
+    $sql .= " WHERE a.rowid = l.fk_auteur AND l.fk_livre = ".$this->id;
+    $sql .= " ORDER BY a.nom";
+
+    if ($this->db->query($sql) )
+      {
+	$nump = $this->db->num_rows();
+	
+	if ($nump)
+	  {
+	    $i = 0;
+	    while ($i < $nump)
+	      {
+		$obj = $this->db->fetch_object($i);
+		
+		$ga[$obj->rowid] = $obj->nom;
+		$i++;
+	      }
+	  }
+	return $ga;
+      }
+    else
+      {
+	print $this->db->error();
+      }    
+  }
+  /*
    *
    *
    */
@@ -330,9 +420,17 @@ class Livre {
    *
    *
    */
-  Function fetch ($id) {
+  Function fetch ($id, $oscid=0) {
     
-    $sql = "SELECT rowid, fk_editeur, ref, prix, annee, oscid, title, description FROM llx_livre WHERE rowid = $id";
+    $sql = "SELECT rowid, fk_editeur, ref, prix, annee, oscid, title, description FROM llx_livre";
+    if ($id)
+      {
+	$sql .= " WHERE rowid = $id";
+      }
+    if ($oscid)
+      {
+	$sql .= " WHERE oscid = $oscid";
+      }
 
     $result = $this->db->query($sql) ;
 

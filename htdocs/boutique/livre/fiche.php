@@ -52,6 +52,23 @@ if ($action == 'linkcat')
   $livre->linkcategorie( $catid);
 }
 
+if ($action == 'delcat')
+{
+  $livre = new Livre($db);
+  $livre->fetch($id);
+  $livre->unlinkcategorie($catid);
+}
+
+
+if ($action == "status")
+{
+  $livre = new Livre($db);
+  $livre->fetch($id);
+  if ($livre->update_status($status))
+    {
+      
+    }
+}
 
 if ($action == 'update' && !$cancel) {
   $livre = new Livre($db);
@@ -109,11 +126,19 @@ if ($action == 'create')
 }
 else
 {
-  if ($id)
+  if ($id or $oscid)
     {
-
       $livre = new Livre($db);
-      $result = $livre->fetch($id);
+
+      if ($id)
+	{
+	  $result = $livre->fetch($id, 0);
+	}
+      if ($oscid)
+	{
+	  $result = $livre->fetch(0, $oscid);
+	  $id = $livre->id;
+	}
 
       if ( $result )
 	{ 
@@ -145,7 +170,7 @@ else
 	      $htmls->select_array("editeurid",  $edits->liste_array(), $livre->editeurid);
 	      print "</td></tr>";
 
-	      print '<tr><td>Co-Auteurs</td><td>';
+	      print '<tr><td>Auteur(s)</td><td>';
 
 	      foreach ($auteurs as $key => $value)
 		{
@@ -164,7 +189,7 @@ else
 	      print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">\n";
 	      print "<input type=\"hidden\" name=\"action\" value=\"addga\">";
 
-	      print "<tr><td>Co-Auteur</td><td>";
+	      print "<tr><td>Auteur(s)</td><td>";
 	      $htmls->select_array("coauteurid",  $auteur->liste_array());
 	      print '&nbsp;<input type="submit" value="Ajouter"></td></tr>';
 	      print "</form>";
@@ -190,7 +215,16 @@ else
 	  print '<td width="15%">Référence</td><td width="20%">'.$livre->ref.'</td>';
 	  print '<td width="50%" valign="top">Description</td>';
 	  print '<td valign="top">Catégories</td></tr>';
-	  print "<tr><td>Statut</td><td>$livre->status_text</td>\n";
+	  print "<tr><td>Statut</td><td>$livre->status_text";
+	  if ($livre->status == 0)
+	    {
+	      print '<br><a href="fiche.php?id='.$id.'&status=1&action=status">Changer</a>';
+	    }
+	  else
+	    {
+	      print '<br><a href="fiche.php?id='.$id.'&status=0&action=status">Changer</a>';
+	    }
+	  print "</td>\n";
 	  print '<td rowspan="6" valign="top">'.nl2br($livre->description)."</td>";
 
 	  print '<td rowspan="6" valign="top">';
@@ -209,7 +243,7 @@ else
 	      print $editeur->nom;    
 	    }
 	  print '</td></tr>';
-	  print '<tr><td>Co-Auteurs</td><td>';
+	  print '<tr><td>Auteur(s)</td><td>';
 
 	  foreach ($auteurs as $key => $value)
 	    {
