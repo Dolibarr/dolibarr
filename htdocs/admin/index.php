@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,8 @@
  * $Source$
  */
 
-/*!	\file htdocs/admin/index.php
+/**
+    	\file       htdocs/admin/index.php
 		\brief      Page d'accueil de l'espace administration/configuration
 		\version    $Revision$
 */
@@ -28,6 +29,7 @@
 require("./pre.inc.php");
 
 $langs->load("admin");
+$langs->load("companies");
 
 if (!$user->admin)
   accessforbidden();
@@ -37,11 +39,13 @@ if ($_POST["action"] == 'update')
 {
   dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"]);
   dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"]);
-  dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
+  dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"]);
   dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
-  dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"]);
+
   dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"]);
+  dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"]);
   dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"]);
+  dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
 
   Header("Location: index.php");
 }
@@ -57,57 +61,90 @@ print "<br>\n";
 
 if ($_GET["action"] == 'edit')
 {
+  /*
+   * Edition des paramètres
+   */
   print '<form method="post" action="index.php">';
   print '<input type="hidden" name="action" value="update">';
 
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="2">Informations sur la société ou association</td></tr>';
+  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("CompanyInfo").'</td></tr>';
 
-  print '<tr class="impair"><td>Nom de la société/association</td><td>';
+  print '<tr class="impair"><td>'.$langs->trans("CompanyName").'</td><td>';
   print '<input name="nom" value="'. MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
 
-  print '<tr class="pair"><td>Pays de la société</td><td>';
+  print '<tr class="pair"><td>'.$langs->trans("Country").'</td><td>';
   $form->select_pays(MAIN_INFO_SOCIETE_PAYS);
   print '</td></tr>';
 
-  print '<tr class="impair"><td width="50%">Numéro de TVA intracommunautaire</td><td>';
-  print '<input name="tva" size="20" value="' . MAIN_INFO_TVAINTRA . '"></td></tr>';
+  print '<tr class="impair"><td>'.$langs->trans("CompanyCurrency").'</td><td>';
+  print '<input name="currency" value="'. MAIN_MONNAIE . '"></td></tr>';
 
-  print '<tr class="pair"><td width="50%">Capital</td><td>';
+  print '<tr class="pair"><td width="50%">'.$langs->trans("Capital").'</td><td>';
   print '<input name="capital" size="20" value="' . MAIN_INFO_CAPITAL . '"></td></tr>';
 
-  print '<tr class="impair"><td width="50%">Identifiant professionnel (SIREN,SIRET,...)</td><td>';
+  print '</table>';
+
+  print '<br>';
+  
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
+
+  print '<tr class="impair"><td width="50%">'.$langs->trans("ProfIdSiret").'</td><td>';
+  print '<input name="siret" size="20" value="' . MAIN_INFO_SIRET . '"></td></tr>';
+
+  print '<tr class="pair"><td width="50%">'.$langs->trans("ProfIdSiren").'</td><td>';
   print '<input name="siren" size="20" value="' . MAIN_INFO_SIREN . '"></td></tr>';
 
-  print '<tr class="pair"><td width="50%">Code de l\'activité économique</td><td>';
+  print '<tr class="impair"><td width="50%">'.$langs->trans("ProfIdApe").'</td><td>';
   print '<input name="ape" size="20" value="' . MAIN_INFO_APE . '"></td></tr>';
 
-  print '<tr><td colspan="2" align="center">';
-  print '<input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
-  print '</table></form>';
+  print '<tr class="pair"><td width="50%">'.$langs->trans("TVAIntra").'</td><td>';
+  print '<input name="tva" size="20" value="' . MAIN_INFO_TVAINTRA . '"></td></tr>';
+
+  print '</table>';
+
+  print '<br><center><input type="submit" value="'.$langs->trans("Save").'"></center>';
+
+  print '</form>';
 }
 else
 {
+  /*
+   * Affichage des paramètres
+   */
 
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>Informations sur la société/association</td><td>'.$langs->trans("Value").'</td></tr>';
-  print '<tr class="impair"><td width="50%">Nom de la société/association</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
+  print '<tr class="liste_titre"><td>'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-  print '<tr class="pair"><td>Pays de la société</td><td>';
+  print '<tr class="impair"><td width="50%">'.$langs->trans("CompanyName").'</td><td>' . MAIN_INFO_SOCIETE_NOM . '</td></tr>';
+
+  print '<tr class="pair"><td>'.$langs->trans("Country").'</td><td>';
   print $form->pays_name(MAIN_INFO_SOCIETE_PAYS);
   print '</td></tr>';
 
-  print '<tr class="impair"><td>Numéro de TVA intracommunautaire</td><td>' . MAIN_INFO_TVAINTRA . '</td></tr>';
+  print '<tr class="impair"><td width="50%">'.$langs->trans("CompanyCurrency").'</td><td>' . MAIN_MONNAIE . '</td></tr>';
 
-  print '<tr class="pair"><td width="50%">Capital</td><td>';
+  print '<tr class="pair"><td width="50%">'.$langs->trans("Capital").'</td><td>';
   print MAIN_INFO_CAPITAL . '</td></tr>';
 
-  print '<tr class="impair"><td width="50%">Identifiant professionnel (SIREN,...)</td><td>';
+  print '</table>';
+
+  print '<br>';
+  
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
+
+  print '<tr class="impair"><td width="50%">'.$langs->trans("ProfIdSiret").'</td><td>';
+  print MAIN_INFO_SIRET . '</td></tr>';
+
+  print '<tr class="pair"><td width="50%">'.$langs->trans("ProfIdSiren").'</td><td>';
   print MAIN_INFO_SIREN . '</td></tr>';
 
-  print '<tr class="pair"><td width="50%">Code de l\'activité économique</td><td>';
+  print '<tr class="impair"><td width="50%">'.$langs->trans("ProfIdApe").'</td><td>';
   print MAIN_INFO_APE . '</td></tr>';
 
+  print '<tr class="pair"><td>'.$langs->trans("TVAIntra").'</td><td>' . MAIN_INFO_TVAINTRA . '</td></tr>';
 
   print '</table><br>';
 
