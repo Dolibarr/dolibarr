@@ -263,13 +263,21 @@ if ($action == 'send')
       
       if (is_readable($file))
 	{
-	  $sendto = $soc->contact_get_email($HTTP_POST_VARS["destinataire"]);
-	  $sendtoid = $HTTP_POST_VARS["destinataire"];
+	  if ($HTTP_POST_VARS["sendto"]) {
+	    // Le destinataire a été fourni via le champ libre
+		$sendto = $HTTP_POST_VARS["sendto"];
+		$sendtoid = 0;
+	  }
+	  else {
+  	    // Le destinataire a été fourni via la liste déroulante
+	  	$sendto = $soc->contact_get_email($HTTP_POST_VARS["destinataire"]);
+	    $sendtoid = $HTTP_POST_VARS["destinataire"];
+	  }
 	  
 	  if (strlen($sendto))
 	    {	  
 	      $subject = "Facture $fac->ref";
-	      $message = "Veuillez trouver ci-joint la facture $fac->ref\n\nCordialement\n\n";
+	      $message = $HTTP_POST_VARS["message"];
 	      $filename = $fac->ref.".pdf";
 	      
 	      $replyto = $HTTP_POST_VARS["replytoname"] . " <".$HTTP_POST_VARS["replytomail"] .">";
@@ -281,7 +289,7 @@ if ($action == 'send')
 		  $sendto = htmlentities($sendto);
 		  
 		  $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea,fk_action,fk_soc,note,fk_facture, fk_contact,fk_user_author, label, percent) VALUES (now(), '9' ,'$fac->socidp' ,'Envoyée à $sendto','$fac->id','$sendtoid','$user->id', 'Envoi Facture par mail',100);";
-		  
+
 		  if (! $db->query($sql) )
 		    {
 		      print $db->error();
@@ -980,7 +988,7 @@ else
 	    // Emettre paiement 
 	    if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->paiement)
 	      {
-		print '<a class=\"tabAction\" href="paiement.php?facid='.$fac->id.'&amp;action=create">Emettre un paiement</a>';
+		print "<a class=\"tabAction\" href=\"paiement.php?facid=".$fac->id."&amp;action=create\">Emettre un paiement</a>";
 	      }
 	    
 	    // Classer 'payé'
@@ -1103,18 +1111,24 @@ else
 	    print '<input type="hidden" name="replytomail" value="'.$replytomail.'">';
 	    
 	    print "<p><b>Envoyer la facture par mail</b>";
-	    print "<table cellspacing=0 border=1 cellpadding=3>";
-	    print "<tr><td>Expéditeur</td><td colspan=\"5\">$from_name</td><td>$from_mail &nbsp;</td></tr>";
-	    print "<tr><td>Reply-to</td><td colspan=\"5\">$replytoname</td><td>$replytomail &nbsp;</td></tr>";
-	    print '<tr><td>Destinataire</td><td colspan="5">';
+	    print "<table cellspacing=\"0\" border=\"1\" cellpadding=\"3\" width=\"100%\">";
+	    print "<tr><td>Expéditeur</td><td>$from_name</td><td>$from_mail &nbsp;</td></tr>";
+	    print "<tr><td>Répondre à</td><td>$replytoname</td><td>$replytomail &nbsp;</td></tr>";
+	    print '<tr><td>Destinataire</td><td colspan=\"2\">';
 	    
 	    $form = new Form($db);	    
 	    $form->select_array("destinataire",$soc->contact_email_array());
 	    
-	    print "</td><td><input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
-	    print "</table>";
+	    print " ou <input size=\"30\" name=\"sendto\" value=\"$fac->email\"></td></tr>";
+
+	    print '<tr><td>Message</td><td colspan=\"2\">';
+	    print "<textarea rows=\"4\" cols=\"60\" name=\"message\">";
+	    print "Veuillez trouver ci-joint la facture $fac->ref\n\nCordialement\n\n";
+	    print "</textarea></td></tr>";
+
+	    print "</table><br>\n";
 	    
-	    print "<input type=\"submit\" value=\"Envoyer\"></form>";
+	    print "<center><input class=\"flat\" type=\"submit\" value=\"Envoyer\"></center></form>\n";
 	  }
 
 	if ($action == 'prerelance')
