@@ -54,7 +54,24 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-
+$sql = "SELECT c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
+$sql .= " FROM llx_adherent as d, llx_cotisation as c";
+$sql .= " WHERE d.rowid = c.fk_adherent";
+if(isset($date_select) && $date_select != ''){
+  $sql .= " AND dateadh LIKE '$date_select%'";
+}
+$result = $db->query($sql);
+if ($result) 
+{
+  $num = $db->num_rows();
+  $i = 0;
+  while ($i < $num)
+    {
+      $objp = $db->fetch_object( $i);
+      $Total[strftime("%Y",$objp->dateadh)]+=price($objp->cotisation);
+      $i++;
+    }
+}
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
 $sql .= " FROM llx_adherent as d, llx_cotisation as c";
 $sql .= " WHERE d.rowid = c.fk_adherent";
@@ -70,6 +87,19 @@ if ($result)
   $i = 0;
   
   print_barre_liste("Liste des cotisations", $page, $PHP_SELF, "&statut=$statut");
+
+  print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">\n";
+  print '<TR class="liste_titre">';
+  print "<td>Annee</td>";
+  print "<td align=\"right\">Montant</TD>";
+  //  print "<td>Prenom Nom / Société</td>";
+  print "</TR>\n";
+  foreach ($Total as $key=>$value){
+    $var=!$var;
+    print "<TR $bc[$var]><TD><A HREF=\"$PHP_SELF?statut=$statut&date_select=$key\">$key</A></TD><TD align=\"right\">".price($value)."</TD></TR>\n";
+  }
+  print "</table><BR>\n";
+
   print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">";
 
   print '<TR class="liste_titre">';
@@ -87,7 +117,7 @@ if ($result)
       print "<TR $bc[$var]>";
       print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".strftime("%d %B %Y",$objp->dateadh)."</a></td>\n";
       print '<TD align="right">'.price($objp->cotisation).'</TD>';
-      $Total[strftime("%Y",$objp->dateadh)]+=price($objp->cotisation);
+      //$Total[strftime("%Y",$objp->dateadh)]+=price($objp->cotisation);
       $total+=price($objp->cotisation);
       print "<TD><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></TD>\n";
       print "</tr>";
@@ -102,17 +132,7 @@ if ($result)
   print "</table>";
   print "<BR>\n";
 
-  print "<TABLE border=\"0\" cellspacing=\"0\" cellpadding=\"4\">\n";
-  print '<TR class="liste_titre">';
-  print "<td>Annee</td>";
-  print "<td align=\"right\">Montant</TD>";
-  //  print "<td>Prenom Nom / Société</td>";
-  print "</TR>\n";
-  foreach ($Total as $key=>$value){
-    $var=!$var;
-    print "<TR $bc[$var]><TD><A HREF=\"$PHP_SELF?statut=$statut&date_select=$key\">$key</A></TD><TD align=\"right\">".price($value)."</TD></TR>\n";
-  }
-  print "</table>";
+
 }
 else
 {
