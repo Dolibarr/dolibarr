@@ -428,8 +428,10 @@ if ($socid > 0)
          *      Listes des actions effectuées
          *
          */
-        print '<table width="100%" cellspacing=0 border=0 cellpadding=2>';
-        print '<tr class="liste_titre"><td><a href="../comm/action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
+
+        print '<table width="100%" cellspacing=0 class="noborder" cellpadding=2>';
+        print '<tr class="liste_titre"><td><a href="action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
+
         print '<tr>';
         print '<td valign="top">';
 
