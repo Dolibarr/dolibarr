@@ -44,9 +44,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
   
   if ($don->check())
     {
-      $return = $don->create(0);
-
-      require("merci.php");
+      require("valid.php");
     }
   else
     {
@@ -54,6 +52,37 @@ if ($HTTP_POST_VARS["action"] == 'add')
     }
 
 
+}
+elseif ($HTTP_POST_VARS["action"] == 'valid')
+{
+  $conf = new Conf();
+  $db = new Db();
+  $don = new Don($db);
+  
+  $don->projetid = $HTTP_POST_VARS["projetid"];
+  $don->date     = time();
+  $don->nom      = $HTTP_POST_VARS["nom"];
+  $don->adresse  = $HTTP_POST_VARS["adresse"];
+  $don->cp       = $HTTP_POST_VARS["cp"];
+  $don->ville    = $HTTP_POST_VARS["ville"];
+  $don->public   = $HTTP_POST_VARS["public"];
+  $don->email    = $HTTP_POST_VARS["email"];
+  $don->amount   = $HTTP_POST_VARS["montant"];
+  
+  
+  if ($don->check())
+    {
+      $return = $don->create(0);
+
+      if ($return)
+	{
+	  require("merci.php");
+	}
+    }
+  else
+    {
+      require("erreur.php");
+    }
 }
 else
 {
