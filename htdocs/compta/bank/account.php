@@ -109,8 +109,9 @@ if ($account)
   print '<td>&nbsp;</td><td><input type="text" name="req_desc" size="24"></TD>';
   print '<td align="right"><input type="text" name="req_debit" size="6"></TD>';
   print '<td align="right"><input type="text" name="req_credit" size="6"></TD>';
-  print '<td>&nbsp;</td>';
-  print '<td align="right"><input type="submit" value="Chercher"></td>';
+  print '<td align="center"><input type="submit" value="Chercher"></td>';
+  print '<td align="center"><a href="rappro.php?account='.$account.'">Rappro</a></td>';
+
   print "</tr>\n";
   print "</form>";
   /*
