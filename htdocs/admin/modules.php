@@ -171,7 +171,8 @@ $familylib=array(
 'projects'=>$langs->trans("ModuleFamilyProjects"),
 'other'=>$langs->trans("ModuleFamilyOther"),
 'technic'=>$langs->trans("ModuleFamilyTechnic"),
-'financial'=>$langs->trans("ModuleFamilyFinancial")
+'financial'=>$langs->trans("ModuleFamilyFinancial"),
+'experimental'=>$langs->trans("ModuleFamilyExperimental")
 );
 foreach ($orders as $key => $value)
 {
