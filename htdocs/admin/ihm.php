@@ -85,13 +85,13 @@ if ($_GET["action"] == 'edit')
   print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
   // Langue par defaut
-  print '<tr class="pair"><td width="50%">'.$langs->trans("DefaultLanguage").'</td><td>';
+  print '<tr class="pair"><td width="25%">'.$langs->trans("DefaultLanguage").'</td><td>';
   $html=new Form($db);
   $html->select_lang(MAIN_LANG_DEFAULT,'main_lang_default');
   print '</td></tr>';
 
   // Menu top
-  print '<tr class="impair"><td width="50%">'.$langs->trans("MenuTopManager").'</td>';
+  print '<tr class="impair"><td width="25%">'.$langs->trans("MenuTopManager").'</td>';
   print '<td><select name="main_menu_barretop">';
   $dir = "../includes/menus/barre_top/";
   $handle=opendir($dir);
@@ -115,7 +115,7 @@ if ($_GET["action"] == 'edit')
   print '</td></tr>';
 
   // Menu left
-  print '<tr class="pair"><td width="50%">'.$langs->trans("MenuLeftManager").'</td>';
+  print '<tr class="pair"><td width="25%">'.$langs->trans("MenuLeftManager").'</td>';
   print '<td><select name="main_menu_barreleft">';
   $dir = "../includes/menus/barre_left/";
   $handle=opendir($dir);
@@ -162,10 +162,10 @@ if ($_GET["action"] == 'edit')
   print '</td></tr>';
 
   // Taille max des listes
-  print '<tr class="pair"><td width="50%">'.$langs->trans("MaxSizeList").'</td><td><input name="size_liste_limit" size="20" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
+  print '<tr class="pair"><td width="25%">'.$langs->trans("MaxSizeList").'</td><td><input name="size_liste_limit" size="20" value="' . SIZE_LISTE_LIMIT . '"></td></tr>';
 
   // Message of the day
-  print '<tr class="impair"><td width="50%">'.$langs->trans("MessageOfDay").'</td><td><textarea cols="40" rows="3" name="main_motd" size="20">' .stripslashes(MAIN_MOTD) . '</textarea></td></tr>';
+  print '<tr class="impair"><td width="25%">'.$langs->trans("MessageOfDay").'</td><td><textarea cols="40" rows="3" name="main_motd" size="20">' .stripslashes(MAIN_MOTD) . '</textarea></td></tr>';
 
   print '</table><br>';
 
@@ -193,19 +193,19 @@ else
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>';
 
-  print '<tr class="pair"><td width="50%">'.$langs->trans("DefaultLanguage").'</td><td>' . MAIN_LANG_DEFAULT . '</td></tr>';
-  print '<tr class="impair"><td width="50%">'.$langs->trans("MenuTopManager").'</td><td>';
+  print '<tr class="pair"><td width="25%">'.$langs->trans("DefaultLanguage").'</td><td>' . MAIN_LANG_DEFAULT . '</td></tr>';
+  print '<tr class="impair"><td width="25%">'.$langs->trans("MenuTopManager").'</td><td>';
   $filelib=eregi_replace('\.php$','',MAIN_MENU_BARRETOP);
   print $filelib;
   print '</td></tr>';
-  print '<tr class="pair"><td width="50%">'.$langs->trans("MenuLeftManager").'</td><td>';
+  print '<tr class="pair"><td width="25%">'.$langs->trans("MenuLeftManager").'</td><td>';
   $filelib=eregi_replace('\.php$','',MAIN_MENU_BARRELEFT);
   print $filelib;
   print '</td></tr>';
-  print '<tr class="impair"><td width="50%">'.$langs->trans("Skin").'</td><td>' . MAIN_THEME . '</td></tr>';
+  print '<tr class="impair"><td width="25%">'.$langs->trans("Skin").'</td><td>' . MAIN_THEME . '</td></tr>';
   print '<tr class="pair"><td>'.$langs->trans("MaxSizeList").'</td><td>' . SIZE_LISTE_LIMIT . '</td></tr>';
 
-  print '<tr class="impair"><td width="50%">'.$langs->trans("MessageOfDay").'</td><td>' . stripslashes(nl2br(MAIN_MOTD)) . '</td></tr>';
+  print '<tr class="impair"><td width="25%">'.$langs->trans("MessageOfDay").'</td><td>' . stripslashes(nl2br(MAIN_MOTD)) . '</td></tr>';
 
   print '</table><br>';
 
