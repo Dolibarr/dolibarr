@@ -29,7 +29,7 @@ create table llx_mailing_cibles
   fk_contact         integer NOT NULL,
   nom                varchar(160),
   prenom             varchar(160),
-  email              varchar(160)
+  email              varchar(160) NOT NULL
 
 )type=innodb;
 

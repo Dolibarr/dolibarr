@@ -154,10 +154,11 @@ create table llx_mailing_cibles
   fk_contact         integer NOT NULL,
   nom                varchar(160),
   prenom             varchar(160),
-  email              varchar(160)
+  email              varchar(160) NOT NULL
 
 )type=innodb;
 
+alter table llx_mailing_cibles ADD UNIQUE uk_mailing_cibles (fk_mailing, email);
 
 create table llx_stock_mouvement
 (
