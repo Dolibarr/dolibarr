@@ -59,6 +59,7 @@ class Graph
 
     if (isset($this->MaxValue))
       {
+	$nts = array();
 	$this->MaxValue = $this->MaxValue + 1;
 	$max = $this->MaxValue;
 	if (($max % 2) <> 0)
