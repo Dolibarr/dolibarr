@@ -36,6 +36,7 @@ function llxHeader($head = "") {
   $menu->add("index.php3","TVA");
 
   $menu->add("reglement.php","Réglements");
+  $menu->add_submenu("fiche.php?action=create","Nouveau réglement");
 
   left_menu($menu->liste);
 }
