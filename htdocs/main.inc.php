@@ -191,11 +191,7 @@ function top_menu($head, $title="", $target="")
 
   print '<a class="tmenu" id="'.$id.'" href="'.DOL_URL_ROOT.'/index.php"'.($target?" target=$target":"").'>'.$langs->trans("Home").'</a>';
 
-  if (!defined(MAIN_MENU_BARRETOP))
-    {
-      define("MAIN_MENU_BARRETOP","default.php");
-    }
-  require(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".MAIN_MENU_BARRETOP);
+  require(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
 
   // Lien sur fiche du login
   print '<a class="login" href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'">'.$user->login.'</a>' ;
@@ -224,17 +220,9 @@ function left_menu($menu, $help_url='', $form_search='')
 {
   global $user, $conf, $langs;
 
-
-  if (! defined(MAIN_MENU_BARRELEFT))
-    {
-      define("MAIN_MENU_BARRELEFT","default.php");
-    }
-
   // Si un gestionnaire de menu gauche est actif, on l'utilise:
   // Ce gestionnnaire est libre d'écrasé ou non l'objet $menu qui détermine le menu à afficher.
-  require(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".MAIN_MENU_BARRELEFT);
-
- 
+  require(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
 
   print '<div class="vmenuplusfiche" width="158">'."\n";
 

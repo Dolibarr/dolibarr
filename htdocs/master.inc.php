@@ -24,7 +24,7 @@
  *
  */
 
-/*!
+/**
     \file       htdocs/master.inc.php
     \brief      Fichier de preparation de l'environnement Dolibarr
     \version    $Revision$
@@ -136,6 +136,21 @@ if ($result)
       $i++;
     }
 }
+
+
+/*
+ * Positionne les gestionnaires de menu
+ */
+if (! defined(MAIN_MENU_BARRETOP))
+{
+  define("MAIN_MENU_BARRETOP","default.php");
+}
+if (! defined(MAIN_MENU_BARRELEFT))
+{
+  define("MAIN_MENU_BARRELEFT","default.php");
+}
+$conf->top_menu=MAIN_MENU_BARRETOP;
+$conf->left_menu=MAIN_MENU_BARRELEFT;
 
 /*
  * Positionne le langage et localisation dans $conf->langage
