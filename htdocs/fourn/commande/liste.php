@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,51 +21,36 @@
  *
  */
 
-/**	        \file       htdocs/fourn/commande/liste.php
-	        \ingroup    commande
-	        \brief      Liste des commandes fournisseurs
-	        \version    $Revision$
+/*! 
+  \file       htdocs/fourn/commande/liste.php
+  \ingroup    commande
+  \brief      Liste des commandes fournisseurs
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
-require_once DOL_DOCUMENT_ROOT."/contact.class.php";
-
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
+$socid = $_GET["socid"];
 
+if (!$user->rights->fournisseur->commande->lire) accessforbidden();
 
-llxHeader();
+llxHeader('','Liste des commandes fournisseurs');
 
 /*
- * Sécurité accés client
+ * Sécurité accés client/fournisseur
  */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socidp = $user->societe_id;
-}
+if ($user->societe_id > 0) $socid = $user->societe_id;
 
-if ($sortorder == "") {
-  $sortorder="DESC";
-}
-if ($sortfield == "") {
-  $sortfield="cf.date_creation";
-}
-
-
-if ($page == -1) { $page = 0 ; }
-
+if ($sortorder == "") $sortorder="DESC";
+if ($sortfield == "") $sortfield="cf.date_creation";
 $offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
+
 
 /*
  * Mode Liste
- *
- *
- *
  */
 
 $sql = "SELECT s.idp, s.nom, ".$db->pdate("cf.date_commande")." as dc";
@@ -76,7 +61,7 @@ $sql .= " WHERE cf.fk_soc = s.idp ";
 
 if ($socid)
 {
-  $sql .= " AND s.idp=".$_GET["socid"];
+  $sql .= " AND s.idp=$socid";
 }
 
 if (strlen($_GET["statut"]))
@@ -96,27 +81,20 @@ if (strlen($_GET["search_nom"]))
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
-$result = $db->query($sql);
-if ($result)
+$resql = $db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows($result);
+  $num = $db->num_rows($resql);
   $i = 0;
   
-  $langs->load("orders");
+
   print_barre_liste($langs->trans("SuppliersOrders"), $page, "liste.php", "", $sortfield, $sortorder, '', $num);
-  if ($sortorder == "DESC")
-    {
-      $sortorder="ASC";
-    }
-  else
-    {
-      $sortorder="DESC";
-    }
+
   print '<table class="liste">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.idp");
+  print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref");
   print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom");
-  print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"dc");
+  print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc");
   print "</tr>\n";
 
   print '<tr class="liste_titre">';
@@ -131,7 +109,7 @@ if ($result)
 
   while ($i < min($num,$conf->liste_limit))
     {
-      $obj = $db->fetch_object($result);	
+      $obj = $db->fetch_object($resql);	
       $var=!$var;
 
       print "<tr $bc[$var]>";
@@ -141,20 +119,20 @@ if ($result)
       print $obj->nom.'</a></td>'."\n";
 
       print "<td align=\"right\" width=\"100\">";
-	  if ($obj->dc)
-	    {
-	      print dolibarr_print_date($obj->dc);
-	    }
-	  else
-	    {
-	      print "-";
-	    }
-	  print '</td>';
+      if ($obj->dc)
+	{
+	  print dolibarr_print_date($obj->dc,"%e %b %Y");
+	}
+      else
+	{
+	  print "-";
+	}
+      print '</td>';
       print "</tr>\n";
       $i++;
     }
   print "</table>";
-  $db->free($result);
+  $db->free($resql);
 }
 else 
 {
