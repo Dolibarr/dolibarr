@@ -311,15 +311,16 @@ if ($propalid)
 	  if ($action == 'statut') 
 	    {
 	      print "<form action=\"$PHP_SELF?propalid=$propalid\" method=\"post\">";
-	      print "<input type=\"hidden\" name=\"action\" value=\"setstatut\">";
+	      print '<table border="1" cellpadding="3" cellspacing="0">';
+	      print "<tr><td>Clôturer comme : <input type=\"hidden\" name=\"action\" value=\"setstatut\">";
 	      print "<select name=\"statut\">";
 	      print "<option value=\"2\">Signée";
 	      print "<option value=\"3\">Non Signée";
 	      print '</select>';
-	      print '<br><textarea cols="60" rows="6" wrap="soft" name="note">';
-	      print $obj->note . "\n----------\n";
-	      print '</textarea><br><input type="submit" value="Valider">';
-	      print "</form>";
+	      print '</td></tr><tr><td>Commentaires : <br><textarea cols="60" rows="6" wrap="soft" name="note">';
+	      print $obj->note;
+	      print '</textarea></td></tr><tr><td align="center"><input type="submit" value="Valider"></td>';
+	      print "</tr></table></form>";
 	    }
 	  /*
 	   *
