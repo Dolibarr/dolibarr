@@ -210,7 +210,7 @@ Class rtplang {
 
       //      print "fichier indice $ind $search / $charset" ;
       
-      header("Content-Type: text/html; charset=$charset");
+      //header("Content-Type: text/html; charset=$charset");
       $texte .= "$htmltag
 <head>
 <meta http-equiv=\"Content-Type\" content=\"text/html; charset=$charset\">\n";
@@ -219,7 +219,7 @@ Class rtplang {
     }
 }
 
-/**
+/*
  *  Return translated version of parameter string 
  *  [fr] Retourne la version traduite du texte passé en paramètre
  *       Si il n'y a pas de correspondance pour ce texte, il est retourné
