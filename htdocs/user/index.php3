@@ -22,15 +22,18 @@
 require("./pre.inc.php3");
 
 llxHeader();
+
 $db = new Db();
 
 print_titre("Liste des utilisateurs");
 
-$sql = "SELECT u.rowid, u.name, u.firstname, u.code, u.login, u.module_comm, u.module_compta FROM llx_user as u";
+$sql = "SELECT u.rowid, u.name, u.firstname, u.code, u.login, u.module_comm, u.module_compta";
+$sql .= " FROM llx_user as u";
 $sql .= " ORDER BY u.name";
 
 $result = $db->query($sql);
-if ($result) {
+if ($result)
+{
   $num = $db->num_rows();
   $i = 0;
   
@@ -42,21 +45,24 @@ if ($result) {
   print '<TD>login</TD>';
   print "</TR>\n";
   $var=True;
-  while ($i < $num) {
-    $obj = $db->fetch_object( $i);
-    $var=!$var;
-    
-    print "<TR $bc[$var]>";
-    print '<TD><a href="fiche.php3?id='.$obj->rowid.'">'.$obj->firstname.'</a></td>';
-    print '<TD>'.$obj->name.'</TD>';
-    print '<TD><a href="fiche.php3?id='.$obj->rowid.'">'.$obj->login.'</a></TD>';
-    print '<TD>'.$obj->code.'</TD>';
-    print "</TR>\n";
-    $i++;
-  }
+  while ($i < $num)
+    {
+      $obj = $db->fetch_object( $i);
+      $var=!$var;
+      
+      print "<TR $bc[$var]>";
+      print '<TD><a href="fiche.php3?id='.$obj->rowid.'">'.$obj->firstname.'</a></td>';
+      print '<TD>'.$obj->name.'</TD>';
+      print '<TD><a href="fiche.php3?id='.$obj->rowid.'">'.$obj->login.'</a></TD>';
+      print '<TD>'.$obj->code.'</TD>';
+      print "</TR>\n";
+      $i++;
+    }
   print "</TABLE>";
   $db->free();
-} else {
+}
+else 
+{
   print $db->error();
 }
 
