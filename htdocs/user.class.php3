@@ -34,17 +34,18 @@ class User {
   var $comm;
   var $compta;
   var $webcal_login;
-
+  var $errorstr;
   var $limite_liste;
 
-  Function User($DB, $id=0) {
+  Function User($DB, $id=0)
+    {
 
-    $this->db = $DB;
-    $this->id = $id;
+      $this->db = $DB;
+      $this->id = $id;
     
-    $this->limite_liste = 20;
+      $this->limite_liste = 20;
 
-    return 1;
+      return 1;
   }
   /*
    *
@@ -52,7 +53,8 @@ class User {
    *
    */
 
-  Function fetch($login='') {
+  Function fetch($login='')
+    {
 
     $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.code, u.admin, u.module_comm, u.module_compta, u.login, u.webcal_login";
     $sql .= " FROM llx_user as u";
@@ -65,34 +67,133 @@ class User {
   
     $result = $this->db->query($sql);
 
-    if ($result) {
-      if ($this->db->num_rows()) {
-	$obj = $this->db->fetch_object($result , 0);
+    if ($result) 
+      {
+	if ($this->db->num_rows()) 
+	  {
+	    $obj = $this->db->fetch_object($result , 0);
 
-	$this->id = $obj->rowid;
-	$this->nom = $obj->name;
-	$this->prenom = $obj->firstname;
-
-	$this->fullname = $this->prenom . ' ' . $this->nom;
-	$this->admin = $obj->admin;
-	$this->webcal_login = $obj->webcal_login;
-	$this->code = $obj->code;
-	$this->email = $obj->email;
-
-	$this->comm = $obj->module_comm;
-	$this->compta = $obj->module_compta;
+	    $this->id = $obj->rowid;
+	    $this->nom = $obj->name;
+	    $this->prenom = $obj->firstname;
+	    
+	    $this->fullname = $this->prenom . ' ' . $this->nom;
+	    $this->admin = $obj->admin;
+	    $this->webcal_login = $obj->webcal_login;
+	    $this->code = $obj->code;
+	    $this->email = $obj->email;
+	    
+	    $this->comm = $obj->module_comm;
+	    $this->compta = $obj->module_compta;
+	    
+	    $this->login = $obj->login;
+	    $this->pass  = $obj->pass;
+	    $this->webcal_login = $obj->webcal_login;
+	    
+	  }
+	$this->db->free();
 	
-	$this->login = $obj->login;
-	$this->webcal_login = $obj->webcal_login;
-
       }
-      $this->db->free();
-
-    } else {
-      print $this->db->error();
-    }
+    else
+      {
+	print $this->db->error();
+      }
   }
 
+
+  /*
+   *
+   *
+   *
+   */
+  Function update()
+    {
+      $sql = "SELECT login FROM llx_user WHERE login ='$this->login'";
+
+      if ($this->db->query($sql)) 
+	{
+	  $num = $this->db->num_rows();
+	  $this->db->free();
+
+	  if ($num) 
+	    {
+	      $this->errorstr = "Ce login existe déjà";
+	      return 0;
+	    }
+	  else
+	    {            
+
+	      $sql = "UPDATE llx_user SET ";
+	      $sql .= " name = '$this->nom'";
+	      $sql .= ", firstname = '$this->prenom'";
+	      $sql .= ", login = '$this->login'";
+	      $sql .= ", email = '$this->email'";
+	      $sql .= " WHERE rowid = $this->id";
+	      
+	      $result = $this->db->query($sql);
+	      
+	      if ($result) 
+		{
+		  if ($this->db->affected_rows()) 
+		    {
+		      return 1;		      
+		    }
+		  
+		}
+	      else
+		{
+		  print $this->db->error();
+		}
+	    }
+	}
+    }
+  /*
+   *
+   *
+   */
+  Function error()
+    {
+      return $this->errorstr;
+    }
+  /*
+   * Change le mot de passe et l'envoie par mail
+   *
+   *
+   */
+  Function password()
+    {
+
+      $password =  substr(crypt(uniqid("")),0,8);
+
+      $sql = "UPDATE llx_user SET pass = '".crypt($password, "CRYPT_STD_DES")."'";
+      $sql .= " WHERE rowid = $this->id";
+      
+      $result = $this->db->query($sql);
+
+      if ($result) 
+	{
+	  if ($this->db->affected_rows()) 
+	    {
+	      $mesg = "Login : $this->login\nMot de passe : $password";
+	      
+	      if (mail($this->email, "Mot de passe Dolibarr", $mesg))
+		{
+		  return 1;
+		}
+	    }
+	  
+	}
+      else
+	{
+	  print $this->db->error();
+	}
+    }
+  /*
+   *
+   *
+   *
+   */
+  
 
 }
 /*
