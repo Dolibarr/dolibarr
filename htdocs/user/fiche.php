@@ -108,8 +108,10 @@ if ($_POST["action"] == 'add' && $user->admin)
 
 if ($_POST["action"] == 'update' && $user->admin)
 {
-    $db->begin();
+    $message="";
 
+    $db->begin();
+    
     $edituser = new User($db, $_GET["id"]);
     $edituser->fetch();
 
@@ -124,18 +126,33 @@ if ($_POST["action"] == 'update' && $user->admin)
     $ret=$edituser->update();
     if ($ret < 0)
     {
-        $message='<div class="error">'.$edituser->error.'</div>';
+        $message.='<div class="error">'.$edituser->error.'</div>';
     }
     if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='' )
     {
         $ret=$edituser->password($user,$password,$conf->password_encrypted);
         if ($ret < 0) {
-            $message='<div class="error">'.$edituser->error.'</div>';
+            $message.='<div class="error">'.$edituser->error.'</div>';
+        }
+    }
+
+    if ($_FILES['photo']['tmp_name']) {
+        // Si une photo est fournie avec le formulaire
+        if (! is_dir($conf->users->dir_output))
+        {
+            mkdir($conf->users->dir_output);
+        }
+        if (is_dir($conf->users->dir_output)) {
+            $newfile=$conf->users->dir_output . "/" . $edituser->id . ".jpg";
+            if (! doliMoveFileUpload($_FILES['photo']['tmp_name'],$newfile))
+            {
+            $message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+            }
         }
     }
 
     if ($ret >= 0) {
-        $message.='<div class="ok">'.$langs->trans("UserModififed").'</div>';
+        $message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
         $db->commit();
     } else {
         $db->rollback;
@@ -170,7 +187,7 @@ if ($action == 'create')
   print "<br>";
   if ($message) { print $message."<br>"; }
 
-  print '<form action="fiche.php" method="post">';
+  print '<form action="fiche.php" method="post" name="createuser>';
   print '<input type="hidden" name="action" value="add">';
 
   print '<table class="border" width="100%">';
@@ -274,7 +291,7 @@ else
 	  print '<td align="center" valign="middle" width="25%" rowspan="8">';
 	  if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
 	    {
-	      print '<img src="'.DOL_URL_ROOT.'/image.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
+	      print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
 	    }
 	  else
 	    {
@@ -379,7 +396,7 @@ else
       if ($_GET["action"] == 'edit' && $user->admin)
         {
 
-	  print '<form action="fiche.php?id='.$fuser->id.'" method="post">';
+	  print '<form action="fiche.php?id='.$fuser->id.'" method="post" name="updateuser" enctype="multipart/form-data">';
 	  print '<input type="hidden" name="action" value="update">';
 	  print '<table width="100%" class="border">';
 
@@ -388,12 +405,13 @@ else
 	  print '<td align="center" valign="middle" width="25%" rowspan="6">';
 	  if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
 	    {
-	      print '<img src="'.DOL_URL_ROOT.'/image.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
+	      print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
 	    }
 	  else
 	    {
 	      print '<img src="'.DOL_URL_ROOT.'/theme/nophoto.jpg">';
 	    }
+	  print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr><tr><td><input type="file" name="photo" class="flat"></td></tr></table>';
 	  print '</td></tr>';
 	  
 	  print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';

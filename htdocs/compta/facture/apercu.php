@@ -147,7 +147,8 @@ if ($_GET["facid"] > 0)
       $filedetail = $conf->facture->dir_output . "/" . $facref . "/" . $facref . "-detail.pdf";
       $relativepath = "${facref}/${facref}.pdf";
       $relativepathdetail = "${facref}/${facref}-detail.pdf";
-
+      $relativepathimage = "${facref}/${facref}.pdf.png";
+      
       $fileimage = $file.".png";
 	
 	  $var=true;
@@ -156,7 +157,7 @@ if ($_GET["facid"] > 0)
       if (file_exists($file))
 	{
         $encfile = urlencode($file);
-        print_titre("Documents");
+        print_titre($langs->trans("Documents"));
         print '<table class="border" width="100%">';
         
         print "<tr $bc[$var]><td>".$langs->trans("Bill")." PDF</td>";
@@ -220,32 +221,31 @@ if ($_GET["facid"] > 0)
       
       print "<tr><td height=\"10\">".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td>";
       
-      print '<tr><td height=\"10\">Remise globale</td>';
+      print '<tr><td height=\"10\">'.$langs->trans("GlobalDiscount").'</td>';
       print '<td align="right" colspan="2">'.$fac->remise_percent.'</td>';
       print '<td>%</td></tr>';
       
       print '<tr><td height=\"10\">'.$langs->trans("AmountHT").'</td>';
       print '<td align="right" colspan="2"><b>'.price($fac->total_ht).'</b></td>';
-      print '<td>'.$conf->monnaie.' HT</td></tr>';
+      print '<td>'.$conf->monnaie.'</td></tr>';
                 
       print "</table><br>";
-	  
-
-      
       
     }
   else
     {
-      /* Facture non trouvée */
+      // Facture non trouvée
       print $langs->trans("ErrorBillNotFound");
     }
 }  
 
+  print 'xxxxxxxxxximg src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($relativepathimage).'"';
 if (file_exists($fileimage))
 {	  
-  print '<img src="'.DOL_URL_ROOT . '/viewimage.php?file='.urlencode($fileimage).'">';
+  print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufacture&file='.urlencode($relativepathimage).'">';
 }
 print '</div>';
+
 
 $db->close();
 

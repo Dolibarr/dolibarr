@@ -173,6 +173,8 @@ $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf->langage);
 
 
 
+$conf->users->dir_output=DOL_DATA_ROOT."/users";
+
 /*
  * Activation des modules
  * et inclusion de librairies dépendantes
