@@ -58,11 +58,17 @@ if ($action == 'addinpropal')
   $propal = New Propal($db);
 
   $propal->fetch($HTTP_POST_VARS["propalid"]);
-  $propal->insert_product($id, $HTTP_POST_VARS["qty"]);
-
+  $result =  $propal->insert_product($id, $HTTP_POST_VARS["qty"]);
+  if ( $result < 0)
+    {
+      $mesg = "erreur $result";
+    }
+  else
+    {
+      $mesg = ucfirst($types[$type]) . ' ajouté à la proposition ';
+      $mesg .= '<a href="../comm/propal.php3?propalid='.$propal->id.'">'.$propal->ref.'</a>';
+    }
   $action = '';
-  $mesg = ucfirst($types[$type]) . ' ajouté à la proposition ';
-  $mesg .= '<a href="../comm/propal.php3?propalid='.$propal->id.'">'.$propal->ref.'</a>';
 }
 
 if ($action == 'addinfacture')
