@@ -190,7 +190,12 @@ alter table llx_paiement add fk_user_modif integer;
 
 alter table llx_propal add fin_validite datetime ;
 
-alter table llx_entrepot add statut tinyint default 1;
+alter table llx_entrepot add statut  tinyint default 1;
+alter table llx_entrepot add lieu    varchar(64);
+alter table llx_entrepot add address varchar(255);
+alter table llx_entrepot add cp      varchar(10);
+alter table llx_entrepot add ville   varchar(50);
+alter table llx_entrepot add fk_pays integer DEFAULT 0;
 
 alter table llx_product add stock_propale integer default 0;
 alter table llx_product add stock_commande integer default 0;
