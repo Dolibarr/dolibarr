@@ -59,15 +59,8 @@ if ($user->societe_id > 0)
 }
 
 
-if (! $sortfield)
-{
-  $sortfield="p.name";
-}
-if (! $sortorder)
-{
-  $sortorder="ASC";
-}
-
+if (! $sortfield) $sortfield="p.name";
+if (! $sortorder) $sortorder="ASC";
 if ($page == -1) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
@@ -75,17 +68,17 @@ $offset = $limit * $page ;
 
 if ($type == "c")
 {
-  $label = " clients";
+  $label = $langs->trans("Customers");
   $urlfiche="fiche.php";
 }
 if ($type == "p")
 {
-  $label = " prospects";
+  $label = $langs->trans("Prospects");
   $urlfiche="prospect/fiche.php";
 }
 if ($type == "f")
 {
-  $label = " fournisseurs";
+  $label = $langs->trans("Suppliers");
   $urlfiche="fiche.php";
 }
 
@@ -151,7 +144,7 @@ if ($result)
 {
   $num = $db->num_rows();
   
-  print_barre_liste("Liste des contacts $label",$page, "contact.php", "&amp;type=$type",$sortfield,$sortorder,"",$num);
+  print_barre_liste($langs->trans("ListOfContacts").($label?" (".$label.")":""),$page, "contact.php", "&amp;type=$type",$sortfield,$sortorder,"",$num);
   
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';

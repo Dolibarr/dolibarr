@@ -99,7 +99,7 @@ if ($result)
 
   llxHeader();
 
-  print_barre_liste("Liste des clients", $page, "clients.php","",$sortfield,$sortorder,"",$num);
+  print_barre_liste($langs->trans("ListOfCustomers"), $page, "clients.php","",$sortfield,$sortorder,"",$num);
 
   $i = 0;
   

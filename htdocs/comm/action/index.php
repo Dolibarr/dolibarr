@@ -103,11 +103,11 @@ if ( $db->query($sql) )
       $societe = new Societe($db);
       $societe->fetch($socid);
       
-      print_barre_liste("Liste des actions commerciales réalisées ou à faire sur " . $societe->nom, $page, "index.php",'',$sortfield,$sortorder,'',$num);
+      print_barre_liste($langs->trans("DoneAndToDoTasksFor",$societe->nom), $page, "index.php",'',$sortfield,$sortorder,'',$num);
     }
   else
     {      
-      print_barre_liste("Liste des actions commerciales réalisées ou à faire", $page, "index.php",'',$sortfield,$sortorder,'',$num);
+      print_barre_liste($langs->trans("DoneAndToDoTasks"), $page, "index.php",'',$sortfield,$sortorder,'',$num);
     }
   $i = 0;
   print "<table class=\"noborder\" width=\"100%\">";

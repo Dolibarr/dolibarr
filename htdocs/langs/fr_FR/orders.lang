@@ -21,3 +21,4 @@ AllOrders=Toutes les commandes
 NbOfOrders=Nombre de commandes
 OrdersStatistics=Statistiques des commandes
 NumberOfOrdersByMonth=Nombre de commandes par mois
+ListOfOrders=Liste des commandes

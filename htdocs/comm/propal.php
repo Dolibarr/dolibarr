@@ -827,9 +827,7 @@ else
 {
   /****************************************************************************
    *                                                                          *
-   *                                                                          *
    *                         Mode Liste des propales                          *
-   *                                                                          *
    *                                                                          *
    ****************************************************************************/
 
@@ -838,15 +836,8 @@ else
   $page=$_GET["page"];
   $viewstatut=$_GET["viewstatut"];
 
-  if ($sortfield == "")
-    {
-      $sortfield="p.datep";
-    }
-  if ($sortorder == "")
-    {
-      $sortorder="DESC";
-    }
-
+  if (! $sortfield) $sortfield="p.datep";
+  if (! $sortorder) $sortorder="DESC";
   $limit = $conf->liste_limit;
   $offset = $limit * $page ;
   $pageprev = $page - 1;
@@ -886,7 +877,7 @@ else
   if ( $db->query($sql) )
     {
       $num = $db->num_rows();
-      print_barre_liste($langs->trans("Proposals"), $page,"propal.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+      print_barre_liste($langs->trans("ListOfProposals"), $page,"propal.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
 
 
       $i = 0;

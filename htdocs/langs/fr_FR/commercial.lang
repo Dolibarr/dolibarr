@@ -24,3 +24,5 @@ ListOfProspects=Liste des prospects
 ListOfCustomers=Liste des clients
 LastDoneTasks=Dernières actions effectuées
 LastRecordedTasks=Dernières actions enregistrées
+DoneAndToDoTasksFor=Liste des actions commerciales réalisées ou à faire pour
+DoneAndToDoTasks=Liste des actions commerciales réalisées ou à faire

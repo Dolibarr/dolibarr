@@ -93,7 +93,7 @@ $sql .= $db->plimit($limit + 1,$offset);
 if ( $db->query($sql) )
 {
   $num = $db->num_rows();
-  print_barre_liste($langs->trans("Orders"), $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
+  print_barre_liste($langs->trans("ListOfOrders"), $_GET["page"], "liste.php","&amp;socidp=$socidp",$sortfield,$sortorder,'',$num);
     
   $i = 0;
   print '<table class="noborder" width="100%">';

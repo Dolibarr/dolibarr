@@ -87,7 +87,7 @@ $result = $db->query($sql);
 if ($result) {
   $num = $db->num_rows();
   
-  print_barre_liste("Liste des contacts fournisseurs",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
+  print_barre_liste($langs->trans("ListOfContacts")." (".$langs->trans("Suppliers").")",$page, "contact.php", "",$sortfield,$sortorder,"",$num);
     
   print '<table class="noborder" width="100%">';
   print "<tr class=\"liste_titre\">";

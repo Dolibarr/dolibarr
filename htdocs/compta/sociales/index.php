@@ -107,7 +107,7 @@ $year=$_GET["year"];
 $filtre=$_GET["filtre"];
 //if (! $year) { $year=date("Y", time()); }
 
-print_fiche_titre("Charges sociales",($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
+print_fiche_titre($langs->trans("SocialContributions"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
 print "<br>\n";
 
 if ($mesg) {

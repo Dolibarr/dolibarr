@@ -23,7 +23,7 @@
  */
 
 
-/*!
+/**
 	    \file       htdocs/contact/index.php
         \ingroup    societe
 		\brief      Page liste des contacts
@@ -61,25 +61,18 @@ $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = isset($_GET["page"])?$_GET["page"]:$_POST["page"];
 
-if ($sortorder == "")
-{
-  $sortorder="ASC";
-}
-if ($sortfield == "")
-{
-  $sortfield="p.name";
-}
-
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="p.name";
 if ($page < 0) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-if ($type == "f") { $text.=$langs->trans("Suppliers")." "; }
-if ($type == "c") { $text.=$langs->trans("Customers")." "; }
+if ($type == "f") { $text.=$langs->trans("Suppliers"); }
+if ($type == "c") { $text.=$langs->trans("Customers"); }
 if ($view == 'phone')  { $text="(Vue Téléphones)"; }
 if ($view == 'mail')   { $text="(Vue EMail)"; }
 if ($view == 'recent') { $text="(Récents)"; }
-$titre = $langs->trans("ListOfContacts").": $text";
+$titre = $langs->trans("ListOfContacts")." ($text)";
 
 if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
     $search_nom="";
@@ -90,9 +83,7 @@ if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
 
 
 /*
- *
  * Mode liste
- *
  *
  */
 
