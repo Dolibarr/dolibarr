@@ -2,6 +2,8 @@
 GlobalSetup=Général
 GUISetup=Interface
 DictionnarySetup=Dictionnaires
+ComptaSetup=Configuration du module Comptabilité
+OtherOptions=Autres options
 OtherSetup=Divers
 Modules=Modules
 Boxe=Boite
