@@ -1,8 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *
- * $Id$
- * $Source$
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +14,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
  *
  */
 
@@ -110,7 +110,6 @@ if ($account)
   print '<td align="right"><input type="text" name="req_debit" class="flat" size="6"></TD>';
   print '<td align="right"><input type="text" name="req_credit" class="flat" size="6"></TD>';
   print "<td align=\"right\">-</TD>";
-  print "<td align=\"right\">-</td>";
   print '<td align="right"><input type="submit" value="Chercher" class="flat"></td>';
   print "</TR>\n";
   print "</form>";
@@ -125,8 +124,7 @@ if ($account)
   print "<td align=\"right\">Débit</TD>";
   print "<td align=\"right\">Crédit</TD>";
   print "<td align=\"right\">Solde</TD>";
-  print "<td align=\"right\">Rel</td>";
-  print "<td align=\"right\">Francs</td>";
+  print "<td align=\"right\">Relevé</td>";
   print "</TR>\n";
   
   $sql = "SELECT count(*) FROM llx_bank";
@@ -183,6 +181,11 @@ if ($account)
       $sql .= " AND b.amount = -".$req_debit;
     }
 
+  if ($HTTP_POST_VARS["req_desc"]) 
+    { 
+      $sql .= " AND lower(b.label) like '%".strtolower($HTTP_POST_VARS["req_desc"])."%'";
+    }
+
   if ($vue)
     {
       if ($vue == 'credit')
@@ -195,7 +198,7 @@ if ($account)
 	}
     }
   $sql .= " ORDER BY b.dateo ASC";
-  
+
   $result = $db->query($sql);
   if ($result)
     {
@@ -217,10 +220,8 @@ if ($account)
 		{
 		  print "<tr $bc[$var]><td colspan=\"4\">&nbsp;</td>";
 		  print "<td align=\"right\">".price($total)."</b></td><td>&nbsp;</td>";
-		  print "<td align=\"right\">".francs($total)."</td>\n";
 		  print '<td colspan="2">&nbsp;</td></tr>';
-		  $psol = 1;
-		  
+		  $psol = 1;		  
 		}
 	      else
 		{
@@ -232,7 +233,6 @@ if ($account)
 		      print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
 		      print "<td align=\"right\"><b>".price($total - $objp->amount)."</b></td>";
 		      print "<td>&nbsp;</td>";
-		      print '<td align="right"><small>'.francs($total - $objp->amount).'</small></td>';
 		      print '</tr><tr>';
 		      print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
 		      print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
@@ -300,22 +300,12 @@ if ($account)
 		    {
 		      print "<td align=\"center\"><a href=\"$PHP_SELF?action=del&rowid=$objp->rowid&account=$account\">[Del]</a></td>";
 		    }
-		  
-		  if ($action !='search')
-		    {
-		      print "<td align=\"right\"><small>".francs($objp->amount)."</small></TD>\n";
-		    }
-		  else
-		    {
-		      print '<td align="right">-</TD>';
-		    }
-		  
+		  		  
 		  print "</tr>";
 		  
 		}
 	    }
-	  
-	  
+	  	  
 	  $i++;
 	}
       $db->free();
@@ -327,13 +317,13 @@ if ($account)
   if ($sep)
     {
       print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
-      print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td><td align=\"right\">".francs($total)."</td></tr>\n";
+      print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
     }
   else
     {
 
       print "<tr><td align=\"right\" colspan=\"5\">&nbsp;</td>";
-      print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td><td align=\"right\">".francs($total)."</td></tr>\n";
+      print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
       print "<tr>";
       print '<td><input name="dateoy" type="text" size="4" value="'.strftime("%Y",time()).'" maxlength="4">';
       print '<input name="dateo" type="text" size="4" maxlength="4"></td>';
@@ -351,10 +341,10 @@ if ($account)
       print '<input name="label" type="text" size=40></td>';
       print '<td><input name="debit" type="text" size="8"></td>';
       print '<td><input name="credit" type="text" size="8"></td>';
-      print "<td colspan=\"3\" align=\"center\"><select name=\"cat1\">$options</select></td>";
+      print "<td colspan=\"2\" align=\"center\"><select name=\"cat1\">$options</select></td>";
       print '</tr><tr><td colspan="2"><small>YYYYMMDD</small></td><td>0000.00</td>';
       
-      print '<td colspan="5" align="center"><input type="submit" value="Ajouter"></td></tr>';
+      print '<td colspan="4" align="center"><input type="submit" value="Ajouter"></td></tr>';
       
   }
 
