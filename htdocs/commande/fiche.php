@@ -69,7 +69,7 @@ if ($HTTP_POST_VARS["action"] == 'add')
   
   $commande_id = $commande->create($user);
   
-  $id = $commande->id;
+  $_GET["id"] = $commande->id;
 
   $action = '';  
 }
