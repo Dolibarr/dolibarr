@@ -84,13 +84,22 @@ function llxHeader($head = "") {
       $menu->add("/commande/", "Commandes");
     }
 
-  $menu->add("/compta/dons/", "Dons");
+  if ($conf->don->enabled)
+    {
+      $menu->add("/compta/dons/", "Dons");
+    }
 
-  $menu->add("/fourn/index.php3", "Fournisseurs");
+  if ($conf->fournisseur->enabled)
+    {
+      $menu->add("/fourn/index.php3", "Fournisseurs");
+    }
 
   $menu->add("/user/", "Utilisateurs");
 
-  $menu->add("/admin/", "Configuration");
+  if ($user->admin)
+    {      
+      $menu->add("/admin/", "Configuration");
+    }
 
   if ($conf->voyage) 
     {
