@@ -367,6 +367,33 @@ class Adherent
 	  return 0;
 	}  
     }
+  /*
+   * Résiliation
+   *
+   *
+   */
+  Function resiliate($userid) 
+    {
+      
+      $sql = "UPDATE llx_adherent SET ";
+      $sql .= "statut=0";
+      $sql .= ",fk_user_valid=".$userid;
+
+      $sql .= " WHERE rowid = $this->id";
+      
+      $result = $this->db->query($sql);
+      
+      if ($result) 
+	{
+	  return 1;
+	}
+      else
+	{
+	  print $this->db->error();
+	  print "<h2><br>$sql<br></h2>";
+	  return 0;
+	}  
+    }
 
 
 }

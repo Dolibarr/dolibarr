@@ -81,6 +81,12 @@ if ($HTTP_POST_VARS["action"] == 'confirm_valid' && $HTTP_POST_VARS["confirm"] =
   $adh->validate($user->id);
 }
 
+if ($HTTP_POST_VARS["action"] == 'confirm_resign' && $HTTP_POST_VARS["confirm"] == yes)
+{
+  $adh = new Adherent($db, $rowid);
+  $adh->resiliate($user->id);
+}
+
 
 llxHeader();
 
@@ -214,7 +220,7 @@ if ($rowid > 0)
        * Case 2
        */
       
-      if ($adh->statut == -1) 
+      if ($adh->statut < 1) 
 	{
 	  print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$rowid&action=valid\">Valider l'adhésion</a>]</td>";
 	}
@@ -225,7 +231,14 @@ if ($rowid > 0)
       /*
        * Case 3
        */
-      print "<td align=\"center\" width=\"25%\">-</td>";
+      if ($adh->statut == 1) 
+	{
+	  print "<td align=\"center\" width=\"25%\">[<a href=\"$PHP_SELF?rowid=$rowid&action=resign\">Résilier l'adhésion</a>]</td>";
+	}
+      else
+	{
+	  print "<td align=\"center\" width=\"25%\">-</td>";
+	}
       
       /*
        * Case 4
@@ -239,7 +252,7 @@ if ($rowid > 0)
 
   /*
    *
-   *
+   * Liste des cotisations
    *
    */
   $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
@@ -280,41 +293,44 @@ if ($rowid > 0)
     }
 
   /*
-   *
+   * Ajout d'une nouvelle cotis
    *
    *
    */
-  print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'&action=edit">';
-  print '<input type="hidden" name="action" value="cotisation">';
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-
-  print '<tr><td width="15%">Fin adhésion</td><td width="35%" class="valeur">'.strftime("%d %B %Y",$adh->datefin).'&nbsp;</td>';
-
-  print '<td valign="top" width="50%">&nbsp;</td></tr>';
-
-  print '<tr><td colspan="3">Nouvelle adhésion</td></tr>';
-
-  print "<tr><td>Date de cotisation</td><td>";
-  if ($adh->datefin > 0)
+  if ($user->admin)
     {
-      print_date_select($adh->datefin + (3600*24));
-    }
-  else
-    {
-      print_date_select();
-    }
-  print "</td><td>&nbsp;</td></tr>";
-  print "<tr><td>Mode de paiement</td><td>\n";
-  
-  $paiement = new Paiement($db);
+      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'&action=edit">';
+      print '<input type="hidden" name="action" value="cotisation">';
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
-  $paiement->select("modepaiement","crédit");
-
-  print "</td><td>&nbsp;</td></tr>\n";
-  print '<tr><td>Cotisation</td><td colspan="2"><input type="text" name="cotisation" size="6"> euros</td></tr>';
-  print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"</td></tr>';
-  print '</table>';
-  print "</form>";  
+      print '<tr><td width="15%">Fin adhésion</td><td width="35%" class="valeur">'.strftime("%d %B %Y",$adh->datefin).'&nbsp;</td>';
+      
+      print '<td valign="top" width="50%">&nbsp;</td></tr>';
+      
+      print '<tr><td colspan="3">Nouvelle adhésion</td></tr>';
+      
+      print "<tr><td>Date de cotisation</td><td>";
+      if ($adh->datefin > 0)
+	{
+	  print_date_select($adh->datefin + (3600*24));
+	}
+      else
+	{
+	  print_date_select();
+	}
+      print "</td><td>&nbsp;</td></tr>";
+      print "<tr><td>Mode de paiement</td><td>\n";
+      
+      $paiement = new Paiement($db);
+      
+      $paiement->select("modepaiement","crédit");
+      
+      print "</td><td>&nbsp;</td></tr>\n";
+      print '<tr><td>Cotisation</td><td colspan="2"><input type="text" name="cotisation" size="6"> euros</td></tr>';
+      print '<tr><td colspan="2" align="center"><input type="submit" value="Enregistrer"</td></tr>';
+      print '</table>';
+      print "</form>";  
+    }
 
   /*
    * Confirmation de la suppression de l'adhérent
@@ -368,6 +384,30 @@ if ($rowid > 0)
       print "</form>";  
     }
 
+  /*
+   * Confirmation de la Résiliation
+   *
+   */
+
+  if ($action == 'resign')
+    {
+
+      print '<form method="post" action="'.$PHP_SELF.'?rowid='.$rowid.'">';
+      print '<input type="hidden" name="action" value="confirm_resign">';
+      print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+      
+      print '<tr><td colspan="3">Résilier une adhésion</td></tr>';
+      
+      print '<tr><td class="delete">Etes-vous sur de vouloir résilier cette adhésion ?</td><td class="delete">';
+      $htmls = new Form($db);
+      
+      $htmls->selectyesno("confirm","no");
+      
+      print "</td>";
+      print '<td class="delete" align="center"><input type="submit" value="Confirmer"</td></tr>';
+      print '</table>';
+      print "</form>";  
+    }
 
 }
 

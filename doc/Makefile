@@ -21,6 +21,7 @@ DOC=manual
 DEBIANDOC2PS= debiandoc2ps
 DEBIANDOC2PDF= debiandoc2pdf
 DEBIANDOC2HTML= debiandoc2html
+DEBIANDOC2LATEX= debiandoc2latex
 
 OPTIONS=-v -lfr_FR.ISO8859-1 -pa4
 HOPTIONS=-lfr_FR.ISO8859-1
@@ -33,6 +34,9 @@ FRPAGES = $(shell find * -regex '.*\.sgml' -print )
 
 all: $(DOC).ps $(DOC).pdf $(DOC).html
 
+
+%.tex:	%.sgml $(FRPAGES)
+	$(DEBIANDOC2LATEX) $(HOPTIONS) $<
 
 %.ps:	%.sgml $(FRPAGES)
 	$(DEBIANDOC2PS) $(OPTIONS) $<

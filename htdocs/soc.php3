@@ -96,7 +96,7 @@ if ($action == 'create')
 }
 elseif ($action == 'edit')
 {
-  print '<div class="titre">Edition de la société</div><br>';
+  print_titre("Edition de la société");
 
   $soc = new Societe($db);
   $soc->id = $socid;
@@ -136,23 +136,27 @@ elseif ($action == 'edit')
 
 } else {
 
+  print_titre("Fiche société");
+
   $soc = new Societe($db);
   $soc->id = $socid;
   $soc->fetch($socid);
-  print "[<a href=\"soc.php3?socid=$socid&action=edit\">Editer</a>]";
-  print '<table border="1" cellpadding="3" cellspacing="0">';
-  print '<tr><td>Nom</td><td>'.$soc->nom.'</td></tr>';
-  print '<tr><td valign="top">Adresse</td><td>'.nl2br($soc->adresse).'&nbsp;</td></tr>';
-  print '<tr><td>CP</td><td>'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
 
-  print '<tr><td>Tel</td><td>'.$soc->tel.'</td></tr>';
-  print '<tr><td>Fax</td><td>'.$soc->fax.'</td></tr>';
+  print '<table border="1" cellpadding="3" cellspacing="0">';
+  print '<tr><td>Nom</td><td class="valeur">'.$soc->nom.'</td></tr>';
+  print '<tr><td valign="top">Adresse</td><td class="valeur">'.nl2br($soc->adresse).'&nbsp;</td></tr>';
+  print '<tr><td>CP</td><td class="valeur">'.$soc->cp.'&nbsp;'.$soc->ville.'</td></tr>';
+
+  print '<tr><td>Tel</td><td class="valeur">'.$soc->tel.'</td></tr>';
+  print '<tr><td>Fax</td><td class="valeur">'.$soc->fax.'</td></tr>';
   print '<tr><td>Web</td><td><a href="http://'.$soc->url.'">http://'.$soc->url.'</a></td></tr>';
 
   print '<tr><td>Siren</td><td>'.$soc->siren.'&nbsp;</td></tr>';
   print '<tr><td>Client</td><td>'.$soc->client.'</td></tr>';
   print '<tr><td>Fournisseur</td><td>'.$soc->fournisseur.'</td></tr>';
   print '</table>';
+
+  print "[<a href=\"soc.php3?socid=$socid&action=edit\">Editer</a>]";
 
   clearstatcache();
 

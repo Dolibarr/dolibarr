@@ -36,6 +36,7 @@ class Conf {
     $this->commercial = 0;
     $this->voyage     = 0;
 
+    $this->compta   = new ComptaConf();
     $this->propal = new PropalConf();
     $this->facture = new FactureConf();
     $this->fichinter = new FicheInterConf();
@@ -53,6 +54,14 @@ class Conf {
 
     $this->css = "theme/dolibarr/dolibarr.css";
   }  
+}
+
+class ComptaConf
+{
+  Function ComptaConf() 
+    {
+      $this->tva = 1;
+    }
 }
 
 class PropalConf {

@@ -38,7 +38,6 @@ function llxHeader($head = "", $urlp = "") {
       $menu->add_submenu("fiche.php3?&action=create","Nouvel utilisateur");
     }
 
-  $menu->add("/info.php3", "Configuration");
 
   left_menu($menu->liste);
 }
