@@ -33,7 +33,17 @@ function llxHeader($head = "", $urlp = "") {
 
   $menu->add("index.php", "Dolibarr");
   $menu->add_submenu("modules.php", "Modules");
-  $menu->add_submenu("facture.php", "Factures");
+
+  if(defined("MAIN_MODULE_FACTURE") && MAIN_MODULE_FACTURE)
+    {
+      $menu->add_submenu("facture.php", "Factures");
+    }
+
+  if(defined("MAIN_MODULE_FICHEINTER") && MAIN_MODULE_FICHEINTER)
+    {
+      $menu->add_submenu("fichinter.php", "Fiches d'intervention");
+    }
+
 
   $menu->add("boxes.php", "Boites");
 
