@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,11 +21,11 @@
  *
  */
 
-/**
-	    \file       htdocs/product/stats/fiche.php
-        \ingroup    product
-		\brief      Page des stats produits
-		\version    $Revision$
+/*!
+  \file       htdocs/product/stats/fiche.php
+  \ingroup    product
+  \brief      Page des stats produits
+  \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -36,7 +36,6 @@ $langs->load("bills");
 
 $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
-
 
 if ($user->societe_id > 0)
 {
@@ -49,10 +48,9 @@ else
 }
 
 
-llxHeader();
+llxHeader('','Statistiques produits');
 
 $mesg = '';
-
 
 /*
  *
@@ -67,14 +65,17 @@ if ($_GET["id"])
   if ( $result )
     { 
       // Efface rep obsolete
-	  if(is_dir(DOL_DOCUMENT_ROOT."/document/produits"))
-	    rmdir(DOL_DOCUMENT_ROOT."/document/produits");
+      if(is_dir(DOL_DOCUMENT_ROOT."/document/produits"))
+	rmdir(DOL_DOCUMENT_ROOT."/document/produits");
 
       // Création répertoire pour images générées
+      // TODO A CORRIGER
+      $conf->produit->dir_images = DOL_DATA_ROOT.'/graph/produits';
+
       $dir = $conf->produit->dir_images."/".$product->id;
+
       if (! file_exists($dir))
-	{
-	  
+	{	  
 	  umask(0);
 	  if(!file_exists($conf->produit->dir_images)) {
   	    mkdir($conf->produit->dir_images);
@@ -84,7 +85,7 @@ if ($_GET["id"])
 	      $mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
 	    }
 	}
-
+      
       $img_propal_name = "propal12mois.png";
       $filenbpropal = $dir . "/" . $img_propal_name;
       $filenbvente  = $dir . "/vente12mois.png";
@@ -120,14 +121,14 @@ if ($_GET["id"])
       $head[$h][1] = $langs->trans("Price");
 	  $h++;
 	  
-      if($product->type == 0)
-      {
-          if ($conf->stock->enabled)
-            {
-                $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-                $head[$h][1] = $langs->trans('Stock');
-                $h++;
-            }
+	  if($product->type == 0)
+	    {
+	      if ($conf->stock->enabled)
+		{
+		  $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+		  $head[$h][1] = $langs->trans('Stock');
+		  $h++;
+		}
 
           if ($conf->fournisseur->enabled) {
                 $head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
