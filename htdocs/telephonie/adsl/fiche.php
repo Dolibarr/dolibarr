@@ -113,7 +113,19 @@ if ($_GET["action"] == 'resilier')
   $ligne = new LigneAdsl($db);
   $ligne->fetch_by_id($_GET["id"]);
 
-  if ( $ligne->set_statut($user, 4) == 0)
+  $datea = $db->idate(mktime($h, $m , $s,
+			    $_POST["remonth"], 
+			    $_POST["reday"],
+			    $_POST["reyear"]));
+
+  if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 4)
+    {
+      if ( $ligne->set_statut($user, 5, $datea, $_POST["commentaire"]) == 0)
+	{
+	  Header("Location: fiche.php?id=".$ligne->id);
+	}
+    }
+  else
     {
       Header("Location: fiche.php?id=".$ligne->id);
     }
@@ -124,7 +136,60 @@ if ($_GET["action"] == 'annuleresilier')
   $ligne = new LigneAdsl($db);
   $ligne->fetch_by_id($_GET["id"]);
 
-  if ( $ligne->set_statut($user, 3) == 0)
+  if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 5)
+    {
+      if ( $ligne->set_statut($user, 4) == 0)
+	{
+	  Header("Location: fiche.php?id=".$ligne->id);
+	}
+    }
+  else
+    {
+      Header("Location: fiche.php?id=".$ligne->id);
+    }
+}
+
+if ($_GET["action"] == 'resilierfourn')
+{
+  $ligne = new LigneAdsl($db);
+  $ligne->fetch_by_id($_GET["id"]);
+
+  $datea = $db->idate(mktime($h, $m , $s,
+			    $_POST["remonth"], 
+			    $_POST["reday"],
+			    $_POST["reyear"]));
+
+  if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 5)
+    {
+      if ( $ligne->set_statut($user, 6, $datea, $_POST["commentaire"]) == 0)
+	{
+	  Header("Location: fiche.php?id=".$ligne->id);
+	}
+    }
+  else
+    {
+      Header("Location: fiche.php?id=".$ligne->id);
+    }
+}
+
+if ($_GET["action"] == 'acquitresilierfourn')
+{
+  $ligne = new LigneAdsl($db);
+  $ligne->fetch_by_id($_GET["id"]);
+
+  $datea = $db->idate(mktime($h, $m , $s,
+			    $_POST["remonth"], 
+			    $_POST["reday"],
+			    $_POST["reyear"]));
+
+  if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 6)
+    {
+      if ( $ligne->set_statut($user, 7, $datea, $_POST["commentaire"]) == 0)
+	{
+	  Header("Location: fiche.php?id=".$ligne->id);
+	}
+    }
+  else
     {
       Header("Location: fiche.php?id=".$ligne->id);
     }
@@ -606,13 +671,13 @@ else
     }
 }
 
+$form = new Form($db);
 
 if ( $user->rights->telephonie->adsl->commander && $ligne->statut == 1)
 {
   /**
    * 
    */
-  $form = new Form($db);
 
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
@@ -636,7 +701,6 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 2)
   /**
    * 
    */
-  $form = new Form($db);
 
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
@@ -667,7 +731,6 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 3)
   /**
    * 
    */
-  $form = new Form($db);
 
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
@@ -684,6 +747,50 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 3)
   print '&nbsp;</td></tr></table>';
 }
 
+if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 4)
+{
+  print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
+  print '<form action="fiche.php?id='.$ligne->id.'&amp;action=resilier" method="POST">';
+  print '<table class="noborder" cellpadding="4" cellspacing="0">';
+  print '<tr class="liste_titre"><td colspan="2">A résilier</td><td>';
+  print '<tr class="pair"><td>Date de résiliation demandée</td><td>';
+  print $form->select_date();
+  print '</td></tr>';
+  print '<tr class="pair"><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
+  print '<tr class="pair"><td colspan="2" align="center"><input type="submit" name="Commander"></td></tr>';
+  print '</table></form></td><td>';
+  print '&nbsp;</td></tr></table>';
+}
+
+if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 5)
+{
+  print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
+  print '<form action="fiche.php?id='.$ligne->id.'&amp;action=resilierfourn" method="POST">';
+  print '<table class="noborder" cellpadding="4" cellspacing="0">';
+  print '<tr class="liste_titre"><td colspan="2">Demande de résiliatin fournisseur</td><td>';
+  print '<tr class="pair"><td>Date de la demande de résiliation</td><td>';
+  print $form->select_date();
+  print '</td></tr>';
+  print '<tr class="pair"><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
+  print '<tr class="pair"><td colspan="2" align="center"><input type="submit" name="Commander"></td></tr>';
+  print '</table></form></td><td>';
+  print '&nbsp;</td></tr></table>';
+}
+
+if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 6)
+{
+  print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
+  print '<form action="fiche.php?id='.$ligne->id.'&amp;action=acquitresilierfourn" method="POST">';
+  print '<table class="noborder" cellpadding="4" cellspacing="0">';
+  print '<tr class="liste_titre"><td colspan="2">Confirmation de résiliatin fournisseur</td><td>';
+  print '<tr class="pair"><td>Date de la confirmation de résiliation</td><td>';
+  print $form->select_date();
+  print '</td></tr>';
+  print '<tr class="pair"><td>Commentaire</td><td><input size="30" type="text" name="commentaire"></td></tr>';
+  print '<tr class="pair"><td colspan="2" align="center"><input type="submit" name="Commander"></td></tr>';
+  print '</table></form></td><td>';
+  print '&nbsp;</td></tr></table>';
+}
 
 /* ************************************************************************** */
 /*                                                                            */ 
@@ -704,6 +811,12 @@ if ($_GET["action"] == '')
   if ( $user->rights->telephonie->adsl->requete && $ligne->statut == 1)
     {
       print "<a class=\"tabAction\" href=\"fiche.php?action=cancelordertech&amp;id=$ligne->id\">".$langs->trans("Annuler la commande")."</a>";
+
+    }
+
+  if ( $user->rights->telephonie->adsl->requete && $ligne->statut == 5)
+    {
+      print "<a class=\"tabAction\" href=\"fiche.php?action=annuleresilier&amp;id=$ligne->id\">".$langs->trans("Annuler la demande de résiliation")."</a>";
 
     }
 
