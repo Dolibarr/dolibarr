@@ -36,7 +36,7 @@ if ($user->societe_id > 0)
   $socidp = $user->societe_id;
 }
 
-print_titre("Chiffres d'affaires (euros HT)");
+print_titre("Chiffre d'affaire cumulé (euros HT)");
 
 print '<table width="100%"><tr><td valign="top">';
 
