@@ -1,0 +1,61 @@
+<!-- $Id$ -->
+<!-- $Source$ -->
+<chapt id="main">Règles générales
+
+  <p>
+    Quelques grandes règles.
+  </p>
+  
+  <sect id="main-java">Languages
+    <p>
+      Dolibarr est écrit en PHP version 4, les fichiers doivent tous
+      comporter l'extention .php
+    </p>
+
+    <p>
+      Les smart tags PHP ne sont pas utilisés les sections de code
+      doivent commencer par <em>&lt;?PHP</em>
+    </p>
+
+    <p>
+      Le javascript et l'appel aux scripts java dans les pages php
+      est à proscrire.
+    </p>
+
+    <sect1 id="main-scripts">Scripts externes
+      <p>
+	Les scripts externes sont écrits en Perl, l'utilisation d'un
+	autre language n'est pas interdit mais doit être discuté au
+	préalable dans la mailing list des développeurs. Le language
+	devra être maitrisé par au moins 2 développeurs pour en
+	assurer la maintenance.
+      </p>
+    </sect1>
+
+    <sect1 id="main-popup">Popup
+      <p>
+	Les popup windows ne doivent pas être authorisé.
+      </p>
+    </sect1>
+
+  </sect>
+  
+
+</chapt>
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:nil
+sgml-shorttag:t
+sgml-namecase-general:t
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:t
+sgml-parent-document:("dolibarr-dev.sgml" "book" "chapt")
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->
