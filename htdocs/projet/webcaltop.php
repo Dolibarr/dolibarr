@@ -20,6 +20,13 @@
  *
  */
 
+/*!	\file htdocs/projet/webcaltop.php
+        \ingroup    webcalendar
+		\brief      Frame du haut Dolibarr pour l'affichage du calendrier
+		\author	    Laurent Destailleur
+		\version    $Revision$
+*/
+
 require ("../main.inc.php");
 
 top_menu("","","_top");

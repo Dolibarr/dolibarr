@@ -20,10 +20,11 @@
  *
  */
 
-/*!	\file webcal.php
-		\brief  Page générant 2 frames, une pour le menu Dolibarr, l'autre pour l'affichage du calendrier
-		\author	Laurent Destailleur
-		\version $Revision$
+/*!	\file htdocs/projet/webcal.php
+        \ingroup    webcalendar
+		\brief      Page générant 2 frames, une pour le menu Dolibarr, l'autre pour l'affichage du calendrier
+		\author	    Laurent Destailleur
+		\version    $Revision$
 */
 
 require("./pre.inc.php");
