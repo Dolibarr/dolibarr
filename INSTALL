@@ -1,54 +1,6 @@
-Paquets Debian
---------------
-Liste des paquets à installer pour faire fonctionner Dolibarr,
-certains paquets ne sont pas indiqués car ils sont des dépendances de
-ceux-ci.
+Remplacé par :
 
+http://rodolphe.quiedeville.org/projets/dolibarr/doc/dolibarr-user.html/
 
-	- php4
-	- php4-mysql
-	- tetex-bin
-	- tetex-extra
-	- perl
-	- apache
-	- libdbd-mysql-perl
-	- libapache-mod-auth-mysql
-	- recode
-	- libtext-unaccent-perl
+Vous pouvez trouver aussi ce document dans doc/ au format pdf.
 
-
-Installation
-------------
-
-1- créer une base de données mysql appelée 'dolibarr' (vous
-pouvez changer le nom, dans ce cas remplacer dans la suite des
-commandes 'dolibarr' par le nom de votre base de données)
-
-	# mysqladmin create dolibarr
-
-	
-2- charger la base en exécutant :
-
-	# mysql dolibarr < mysql/mysql.sql
-
-Configuration
--------------
-
-1- dans le repertoire dolibarr/htdocs/conf recopier le fichier
-conf.inc.php3.sample vers conf.inc.php3 et paramétrer selon vos
-besoins
-
-
-2- configurer Apache : un fichier httpd.conf.sample est fournit vous
-pouvez vous en servir pour configurer votre serveur, il est prévu pour
-que vous ayez juste à ajouter une régle Include dans votre fichier
-principal httpd.conf
-
-
-Initialisation
---------------
-
-	Pour créer votre premier compte qui sera admin/admin allez à
-l'url /public/password.php, cette page créé un compte avec le login
-'admin' et le passe 'admin' dans la base, si et seulement si la table
-des login est vide.
