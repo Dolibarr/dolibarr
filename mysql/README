@@ -1,0 +1,11 @@
+- show       Affiche la liste des tables
+
+- table      Crée les tables dans la base de données
+
+- drop       Supprime toutes les tables de la base
+
+- fulldev    Supprime toutes la tables, les crée à nouveau et charges les données de dev
+
+- load       Charge les données minimales définit dans data/data.sql
+
+- mysql.sql  Génère un fichier unique sql pour l'installation
