@@ -127,7 +127,13 @@ if ($socid > 0) {
     print "<table width=\"100%\" border=\"0\" cellspacing=\"1\">\n";
 
     print "<tr><td><div class=\"titre\">Fiche fournisseur : $objsoc->nom</div></td>";
+
+    print '<td><a href="facture/fiche.php3?action=create&socid='.$objsoc->idp.'">Nouvelle Facture <img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Nouvelle facture"></a></td>';
+
     print "<td bgcolor=\"#e0E0E0\" align=\"center\">[<a href=\"../soc.php3?socid=$objsoc->idp&action=edit\">Editer</a>]</td>";
+
+
+
     print "</tr></table>";
     /*
      *
