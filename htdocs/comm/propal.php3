@@ -40,11 +40,9 @@ if ($user->societe_id > 0)
   $action = '';
   $socidp = $user->societe_id;
 }
-
+$user->getrights('propale');
 
 llxHeader();
-
-$db = new Db();
 
 /******************************************************************************/
 /*                     Actions                                                */
