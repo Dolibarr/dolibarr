@@ -39,18 +39,16 @@ if (!$user->admin)
   exit;
 }
 
-if ($action == 'set')
+if ($_GET["action"] == 'set')
 {
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal_model_pdf (nom) VALUES ('".$value."')";
+  $file = DOL_DOCUMENT_ROOT . '/includes/modules/expedition/methode_expedition_'.$_GET["value"].'.modules.php';
+  $classname = 'methode_expedition_'.$_GET["value"];
+  require_once($file);
+  
+  $obj = new $classname();
 
-  if ($db->query($sql))
-    {
-
-    }
-}
-if ($action == 'del')
-{
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."propal_model_pdf WHERE nom='".$value."'";
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."expedition_methode (rowid,code,libelle, description, statut)";
+  $sql .= " VALUES (".$obj->id.",'".$obj->code."','".$obj->name."','".addslashes($obj->description)."',".$_GET["statut"].")";
 
   if ($db->query($sql))
     {
@@ -62,7 +60,7 @@ if ($action == 'del')
 
 $expedition_addon_var_pdf = EXPEDITION_ADDON_PDF;
 
-if ($action == 'setpdf')
+if (action == 'setpdf')
 {
   $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXPEDITION_ADDON_PDF', value='".$value."', visible=0";
 
@@ -83,17 +81,17 @@ if ($action == 'setpdf')
     }
 }
 
-$expedition_addon_var = EXPEDITION_ADDON;
+$expedition_default = EXPEDITION_DEFAULT;
 
-if ($action == 'setmod')
+if ($_GET["action"] == 'setdef')
 {
-  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXPEDITION_ADDON', value='".$value."', visible=0";
 
+  $sql = "REPLACE INTO ".MAIN_DB_PREFIX."const SET name = 'EXPEDITION_ADDON', value='".$value."', visible=0";
   if ($db->query($sql))
     {
       // la constante qui a été lue en avant du nouveau set
       // on passe donc par une variable pour avoir un affichage cohérent
-      $expedition_addon_var = $value;
+      $expedition_default = $_GET["value"];
     }
 }
 
@@ -102,62 +100,6 @@ if ($action == 'setmod')
  *
  *
  */
-
-print_titre("Module de numérotation");
-
-print '<table class="border" cellpadding="3" cellspacing="0">';
-print '<TR class="liste_titre">';
-print '<td>Nom</td>';
-print '<td>Info</td>';
-print '<td align="center">Activé</td>';
-print '<td>&nbsp;</td>';
-print "</TR>\n";
-
-clearstatcache();
-
-$dir = "../includes/modules/expedition/";
-$handle = opendir($dir);
-if ($handle)
-{
-  while (($file = readdir($handle))!==false)
-    {
-      if (substr($file, 0, 12) == 'mod_expedition_' && substr($file, strlen($file)-3, 3) == 'php')
-	{
-	  $file = substr($file, 0, strlen($file)-4);
-
-	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/expedition/".$file.".php");
-
-	  $modExpedition = new $file;
-
-	  print '<tr class="pair"><td>'.$file."</td><td>\n";
-	  print $modExpedition->info();
-	  print '</td><td align="center">';
-	  
-	  if ($expedition_addon_var == "$file")
-	    {
-	      print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
-	    }
-	  else
-	    {
-	      print "&nbsp;";
-	    }
-	  
-	  print "</td><td>\n";
-	  
-	  print '<a href="expedition.php?action=setmod&amp;value='.$file.'">activer</a>';
-	  
-	  print '</td></tr>';
-	}
-    }
-  closedir($handle);
-}
-print '</table>';
-/*
- * PDF
- */
-
-
-
 
 $def = array();
 
@@ -177,7 +119,7 @@ else
   print $db->error();
 }
 
-$dir = "../includes/modules/expedition/";
+$dir = DOL_DOCUMENT_ROOT."/includes/modules/expedition/";
 
 /*
  * Méthode de livraison
@@ -192,25 +134,23 @@ print '<td align="center" colspan="2">Actif</td>';
 print '<td align="center" colspan="2">Défaut</td>';
 print "</tr>\n";
 
-clearstatcache();
-
 $handle=opendir($dir);
 
 while (($file = readdir($handle))!==false)
 {
   if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,19) == 'methode_expedition_')
     {
-      $name = substr($file, 19, strlen($file) - 27);
+      $name = substr($file, 19, strlen($file) - 31);
       $classname = substr($file, 0, strlen($file) - 12);
 
       require_once($dir.$file);
+
       $obj = new $classname();
 
       print '<tr class="pair"><td>';
       echo $obj->name;
       print "</td><td>\n";
 
-      
       print $obj->description;
 
       print '</td><td align="center">';
@@ -219,18 +159,18 @@ while (($file = readdir($handle))!==false)
 	{
 	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
 	  print "</td><td>\n";
-	  print '<a href="expedition.php?action=del&amp;value='.$name.'">désactiver</a>';
+	  print '<a href="expedition.php?action=set&amp;statut=0&amp;value='.$name.'">désactiver</a>';
 	}
       else
 	{
 	  print "&nbsp;";
 	  print "</td><td>\n";
-	  print '<a href="expedition.php?action=set&amp;value='.$name.'">activer</a>';
+	  print '<a href="expedition.php?action=set&amp;statut=1&amp;value='.$name.'">activer</a>';
 	}
 
       print '</td><td align="center">';
 
-      if ($expedition_addon_var_pdf == "$name")
+      if ($expedition_default == "$name")
 	{
 	  print '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/tick.png" border="0"></a>';
 	}
@@ -241,7 +181,7 @@ while (($file = readdir($handle))!==false)
 
       print "</td><td>\n";
 
-      print '<a href="expedition.php?action=setpdf&amp;value='.$name.'">activer</a>';
+      print '<a href="expedition.php?action=setdef&amp;value='.$name.'">activer</a>';
 
       print '</td></tr>';
     }

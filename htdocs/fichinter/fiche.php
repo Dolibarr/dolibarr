@@ -147,7 +147,7 @@ if ($action == 'create')
       
       $smonth = 1;
       $syear = date("Y", time());
-      print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+      print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
       
       print "<tr><td>Société</td><td><b>".$objsoc->nom."</td></tr>";
       
@@ -194,7 +194,6 @@ if ($action == 'create')
       print "<tr><td>Durée (en jours)</td><td><input name=\"duree\"></td></tr>\n";
       
       /*
-       *
        * Projet associé
        *
        */
@@ -207,11 +206,12 @@ if ($action == 'create')
 	{
 	  $i = 0 ;
 	  $numprojet = $db->num_rows();
-	  while ($i < $numprojet) {
-	    $projet = $db->fetch_object($i);
-	    print "<option value=\"$projet->rowid\">$projet->title</option>";
-	    $i++;
-	  }
+	  while ($i < $numprojet)
+	    {
+	      $projet = $db->fetch_object($i);
+	      print "<option value=\"$projet->rowid\">$projet->title</option>";
+	      $i++;
+	    }
 	  $db->free();
 	} else {
 	  print $db->error();
@@ -219,7 +219,7 @@ if ($action == 'create')
       print '</select>';
       if ($numprojet==0) {
 	print 'Cette société n\'a pas de projet.&nbsp;';
-	print '<a href='.DOL_URL_ROOT.'/comm/projet/fiche.php?socidp='.$socidp.'&action=create>Créer un projet</a>';
+	print '<a href='.DOL_URL_ROOT.'/projet/fiche.php?socidp='.$socidp.'&action=create>Créer un projet</a>';
       }
       print '</td></tr>';
             
@@ -262,7 +262,7 @@ if ($action == 'edit')
 
   print "<form action=\"$PHP_SELF?id=$id\" method=\"post\">";
   
-  print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
   print "<tr><td>Date</td><td>";
   /*
    * set $reday, $remonth, $reyear
@@ -328,7 +328,7 @@ if ($id)
     {
       $fichinter->fetch_client();
 
-      print '<table border="1" cellpadding="3" cellspacing="0" width="100%">';
+      print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
       print '<tr><td>Société</td><td><a href="../comm/fiche.php?socid='.$fichinter->client->id.'">'.$fichinter->client->nom.'</a></td></tr>';
       print '<tr><td width="20%">Date</td><td>'.strftime("%A %d %B %Y",$fichinter->date).'</td></tr>';
       print '<tr><td>Numéro</td><td>'.$fichinter->ref.'</td></tr>';
@@ -345,7 +345,7 @@ if ($id)
       /*
        *
        */
-      print '<br><table border="1" cellpadding="3" cellspacing="0" width="100%"><tr>';
+      print '<br><table class="border" cellpadding="3" cellspacing="0" width="100%"><tr>';
 
       if ($user->societe_id == 0)
 	{
@@ -395,9 +395,9 @@ if ($id)
   
       print '</tr></table>';
   
-      print "<table width=\"50%\" cellspacing=2><tr><td width=\"50%\" valign=\"top\">";
+      print '<table width="50%" cellspacing="2"><tr><td width="50%" valign="top">';
       print_titre("Documents générés");
-      print "<table width=\"100%\" cellspacing=0 border=1 cellpadding=3>";
+      print '<table width="100%" cellspacing="0" class="border" cellpadding="3">';
       
       $file = FICHEINTER_OUTPUTDIR . "/$fichinter->ref/$fichinter->ref.pdf";
       if (file_exists($file))

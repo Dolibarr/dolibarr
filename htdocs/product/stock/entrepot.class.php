@@ -42,10 +42,8 @@ class Entrepot
    */
   Function create($user) 
     {
-
       if ($this->db->query("BEGIN") )
 	{
-
 	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author)";
 	  $sql .= " VALUES (now(),".$user->id.")";
 
@@ -160,6 +158,28 @@ class Entrepot
 	  $this->db->free();
 	}
       return $liste;
+  }
+  /**
+   * Renvoie la liste des entrepôts ouverts
+   *
+   */
+  Function nb_products()
+  {
+    $sql = "SELECT sum(reel) FROM llx_product_stock WHERE fk_entrepot = ".$this->id;
+
+      $result = $this->db->query($sql) ;
+
+      if ( $result )
+	{
+	  $row = $this->db->fetch_row(0);
+	  return $row[0];
+
+	  $this->db->free();
+	}
+      else
+	{
+	  return 0;
+	}
   }
 }
 ?>
