@@ -284,6 +284,12 @@ if ($_POST["action"] == "set")
 						 where name  = 'SOCIETE_OUTPUTDIR';" ;
 				
       $sql[4] = "DELETE from llx_const where name like '%_OUTPUT_URL';";
+
+
+      $sql[5] = "UPDATE llx_const SET value='".$langs->defaultlang."',
+	                     type = 'chaine',
+						 visible = 0
+						 where name  = 'MAIN_LANG_DEFAULT';" ;
       
       $result = 0;
 			
