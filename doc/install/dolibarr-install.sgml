@@ -1,0 +1,109 @@
+<!doctype linuxdoc system>
+
+<article>
+
+<!-- Title information -->
+
+<title>Dolibarr Installation</title>
+<author>
+ <name>Rodolphe Quiédeville</name>
+</author>
+<date>$Id$</date>
+
+<abstract>
+Installation et mise à jour de Dolibarr
+</abstract>
+
+<!-- Table of contents -->
+<toc>
+
+<!-- Begin the document -->
+  
+<sect>
+<heading>Installation</heading>
+
+<sect1>
+<heading>Récupérer les sources</heading>
+<p>
+ Récupérer les sources sur <url url="http://www.dolibarr.com/">
+</p>
+
+    <p>
+      Les sources se présentent sous la forme d'un fichier tar compressé avec gzip.
+    </p>
+</sect1>
+
+  
+<sect1>
+<heading>Pré-requis</heading>
+    <p>
+      Liste des logiciels à installer pour faire fonctionner Dolibarr :
+      
+      <itemize>
+	<item>php4</item>
+	<item>php4-mysql</item>
+	<item>php4-curl (pour la partie gestion des adhérents)</item>
+	<item>Apache</item>
+	<item>libapache-mod-auth-mysql</item>
+      </itemize>
+    </p>
+</sect1>
+
+<sect1>
+<heading>Base de données</heading>
+    <p>
+      1- créer une base de données mysql appelée 'dolibarr' (vous
+      pouvez changer le nom, dans ce cas remplacer dans la suite des
+      commandes 'dolibarr' par le nom de votre base de données)
+    </p>
+    <p>
+  <tscreen>
+   <verb>
+	# mysqladmin create dolibarr
+   </verb>
+  </tscreen>
+    </p>
+    <p>	
+      2- charger la base en exécutant :
+    </p>
+    <p>
+  <tscreen>
+   <verb>
+	# mysql dolibarr < mysql/mysql.sql
+   </verb>
+  </tscreen>
+    </p>
+</sect1>
+
+<sect1>
+<heading>Apache</heading>
+    <p>
+      Pour configurer Apache : un fichier httpd.conf.dist est fournit
+      avec les sources, vous pouvez vous en servir pour configurer
+      votre serveur, il est prévu pour que vous ayez juste à ajouter
+      une régle Include dans votre fichier principal <file>httpd.conf</file>.
+    </p>
+</sect1>
+
+<sect1>
+<heading>Dolibarr</heading>
+    <p>
+      Créer un répertoire appelé <file>document</file> dans le répertoire <file>htdocs</file> des sources et affectez les droits d'écriture dans ce répertoire à l'utilisateur exécutant le serveur web.
+    </p>
+
+    <p>
+      Créer un fichier <file>conf/conf.php</file> et donnez les droits d'écriture dans ce fichier à l'utilisateur exécutant le serveur web.
+    </p>
+
+    <p>
+      Pour configurer Dolibarr accéder à la page <tscreen><verb>/install.php</verb></tscreen>, pour vous logger utlisez le login admin avec le mot de passe admin.
+    </p>
+
+    <p>
+      Une fois les valeurs enregistrés, si les controles sont correctes vous n'avez qu'a cliquer sur le lien, 'phase finale de configuration'.
+    </p>
+ </sect1>
+</sect>
+
+
+</article>
