@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+# Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 #
 # $Id$
 # $Source$
@@ -49,6 +49,7 @@ create:
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_don_projet.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_fa_pr.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_facture.sql
+	$(MYSQL) $(OPTIONS) $(BASE) < llx_facturedet.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_facture_fourn.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_fichinter.sql
 	$(MYSQL) $(OPTIONS) $(BASE) < llx_paiement.sql
