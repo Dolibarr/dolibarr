@@ -1,0 +1,9 @@
+# Dolibarr language file - nl_BE - orders
+OrdersArea=Bestelt Gebied
+Order=Bestel
+Orders=Bestelen
+OrdersToValid=Bestellingen naar geldig
+OrdersToBill=Bestellingen zullen factureren
+OrdersInProcess=Bestellingen in proces
+OrdersToProcess=Bestellingen zullen verwerken
+SearchOrder=De zoektocht bestelt

@@ -1,0 +1,15 @@
+# Dolibarr language file - nl_BE - users
+UserCard=De gebruiker kaart
+ContactCard=De contactkaart
+NoContactCard=Geen contactkaart
+Permission=De toestemming
+Permissions=Toestemmingen
+SendNewPassword=Stuur nieuwe wachtwoord
+AvailableRights=Verkrijgbare rechten
+OwnedRights=Bezeten rechten
+DisableUser=Maak onbruikbaar gebruiker
+NewUser=De nieuwe gebruiker
+CreateUser=Creëer gebruiker
+LoginAlreadyExists=login bestaat reeds
+ListOfUsers=Lijsten van gebruikers
+Administrator=De administrateur
