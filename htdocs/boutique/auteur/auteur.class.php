@@ -108,6 +108,41 @@ class Auteur {
    *
    *
    */
+  Function liste_livre()
+  {
+    $ga = array();
+
+    $sql = "SELECT a.rowid, a.title FROM llx_livre as a, llx_livre_to_auteur as l";
+    $sql .= " WHERE a.rowid = l.fk_livre AND l.fk_auteur = ".$this->id;
+    $sql .= " ORDER BY a.title";
+
+    if ($this->db->query($sql) )
+      {
+	$nump = $this->db->num_rows();
+	
+	if ($nump)
+	  {
+	    $i = 0;
+	    while ($i < $nump)
+	      {
+		$obj = $this->db->fetch_object($i);
+		
+		$ga[$obj->rowid] = $obj->title;
+		$i++;
+	      }
+	  }
+	return $ga;
+      }
+    else
+      {
+	print $this->db->error();
+      }    
+  }
+  /*
+   *
+   *
+   *
+   */
   Function fetch ($id) {
     
     $sql = "SELECT rowid, nom FROM llx_auteur WHERE rowid = $id";
