@@ -1,4 +1,6 @@
 -- ===================================================================
+-- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+--
 -- $Id$
 -- $Source$
 --
@@ -18,7 +20,7 @@
 --
 -- ===================================================================
 
-create table c_propalst
+create table llx_c_propalst
 (
   id              smallint PRIMARY KEY,
   label           varchar(30)
