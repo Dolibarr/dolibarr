@@ -65,14 +65,14 @@ td.border
 .menu 
 { 
   background: #ccccb3; 
-  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
+  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
   color: #000000; 
   text-decoration: none }
 
 .menusel
 { 
   background: #bbbb88; 
-  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
+  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
   color: #000000; 
   text-decoration: none }
 
@@ -80,7 +80,7 @@ td.border
 .submenu 
 { 
   background: #ccccb3; 
-  font-family: Helvetica, Verdana; font-size: 14px;
+  font-family: Helvetica, Verdana; font-size: 1.0em;
   color: #000000; 
   text-decoration: none }
 
@@ -94,7 +94,7 @@ a.impayee { font-weight: bold }
 
 a.leftmenu 
 { 
-  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold; 
+  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
   color: #202020; 
   }
 
@@ -103,7 +103,7 @@ td.barre
   border-right: 1px solid #000000;
   border-bottom: 1px solid #000000;
   background: #ccccb3;
-  font-family: Helvetica, Verdana; font-size: 14px; 
+  font-family: Helvetica, Verdana; font-size: 1.0em; 
   color: #000000; 
   text-decoration: none }
 
@@ -117,7 +117,7 @@ td.barre_select
 
 div.titre 
 { 
-  font-family: Helvetica, Verdana; font-size: 16px; font-weight: bold; 
+  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold; 
   color: #666633; 
   text-decoration: none }
 /*
@@ -126,19 +126,19 @@ div.titre
 tr.liste_titre  
 { 
   background: #BBBB88; 
-  font-family: Helvetica, Verdana; font-size: 14px; font-weight: bold;
+  font-family: Helvetica, Verdana; font-size: 1.0em; font-weight: bold;
   }
 
 tr.pair
 { 
   background: #dcdcb3; 
-  font-family: Helvetica, Verdana; font-size: 1em; 
+  font-family: Helvetica, Verdana; font-size: 1.0em; 
   }
 
 tr.impair	
 { 
   background: #eeeecc; 
-  font-family: Helvetica, Verdana; font-size: 1em; 
+  font-family: Helvetica, Verdana; font-size: 1.0em; 
   }
 /*
  *
